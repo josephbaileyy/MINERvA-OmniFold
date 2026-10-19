@@ -1,0 +1,115 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'cd /cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-debug/nuwro-nuwro_21.09.1/src && sed -n 280,330p nuwro.cc; echo ...; sed -n 384,404p nuwro.cc; echo ...; sed -n 500,520p nuwro.cc; echo "== qelevent neutron selection"; grep -n -E "pdg|neutron|proton|nucleus.*n\(\)|nucleus.*p\(\)" qelevent.cc | head -30; echo "== coh A dependence"; grep -n -E "A\(\)|nucleus\.p|Zt|At" coh.cc | head -20; echo "== nucleus free"; grep -n -E "nucleus_target|case 0|free" nucleus.cc | head -30; echo "== kaskada A<=1"; grep -n -E "A\(\) *<= *1|A\(\)==1|A\(\) *< *2|kaskada_on" kaskada7.cc | head'
+# utc: 2026-10-19 16:49:54 UTC
+# ---
+	if(p.cc_smoothing and dyn==0) //only in qel_cc
+	{
+		if(e->in[0].pdg>0)
+		{
+			factor=_nucleus->frac_neutron();
+			e->in[1].set_neutron();
+		}
+		else
+		{
+			factor=_nucleus->frac_proton();
+			e->in[1].set_proton();
+		}
+	}
+	e->par =p;
+	
+	
+	if(  // (anty)-neutrino interaction
+	   abs(nu.pdg)==12 or abs(nu.pdg)==14 or abs(nu.pdg)==16
+	  )
+	switch (dyn)
+	{
+		case 0: 
+			e->flag.qel=e->flag.cc=true;
+			if (p.dyn_qel_cc) // qel cc
+			{
+				if(p.sf_method>0 and has_sf(*_nucleus, p.sf_method))
+					sfevent (p, *e, *_nucleus);
+				else
+					qelevent1 (p, *e, *_nucleus, false);
+			}
+			break;				 
+		case 1:
+			e->flag.qel=e->flag.nc=true;
+			if (p.dyn_qel_nc) // qel nc
+			{
+				if(p.sf_method>0 and has_sf(*_nucleus, p.sf_method))
+					sfevent (p, *e, *_nucleus);
+				else
+				qelevent1 (p, *e, *_nucleus, true);
+			}
+			break;				 
+		case 2:
+			e->flag.res=e->flag.cc=true;
+			if (p.dyn_res_cc) // res cc
+			{
+				resevent2 (p, *e, *_nucleus, true);
+				if (p.pauli_blocking)
+					mypauli_spp (*e, *_nucleus);
+			}
+			break;				
+		case 3:
+...
+			break;
+		case 8:
+			e->flag.mec=e->flag.cc=true;
+			if (p.dyn_mec_cc) // mec cc
+			//if( nu.pdg>0 || !(p.mec_kind==3) )// al flavor states/antineutrinos available
+			{
+				if(_nucleus->A()<=1)
+					break;
+				switch(p.mec_kind)
+				{
+					case 1:mecevent_tem (p, *e, *_nucleus, true);break;
+					case 2:mecevent2 (p, *e, *_nucleus, true, false);break;
+					case 3:mecevent_Nieves (p, *e, *_nucleus, true);break;
+					case 4:mecevent2 (p, *e, *_nucleus, true, true);break;
+					case 5:mecevent_SuSA (p, *e, *_nucleus, true);break;
+					default:mecevent_tem (p, *e, *_nucleus, true);break;
+				}
+				for(int i=0;i<e->out.size();i++)
+				{
+					e->out[i].r=e->in[1].r;
+					e->out[i].set_momentum(e->out[i].p().fromZto(e->in[0].p()));
+...
+		particle p=e->in[j];
+		p.endproc=e->dyn;
+		registration(e->all,p);
+	}
+
+	//e->pr=_nucleus->Zr(); 	// 1. po co to?
+	//e->nr=_nucleus->Nr(); 	// 2. powoduje break, segmentation fault
+
+								 // copy particle from out to post if coherent interaction
+	
+	if (!e->flag.coh && !e->flag.lep)
+	{
+		kaskada k(p, *e, &input);
+		k.kaskadaevent();		 // runs only if p.kaskada_on is true
+	}
+	else
+//	if(e->post.size()==0)   // copy out to post if no fsi
+	{
+		for (int j = 0; j<e->out.size(); j++)
+		{
+			particle p = e->out[j];
+== qelevent neutron selection
+== coh A dependence
+59:	if(jadro.A()<4)
+78:    int A = jadro.A();
+158:	if(jadro.A()<4)
+177:    int A = jadro.A();
+257:	if(jadro.A()<4)
+276:    int A = jadro.A();
+grep: qelevent.cc: No such file or directory
+== nucleus free
+20:	kMomDist(par.nucleus_target)
+75:	if(p+n==1)	//free nucleon
+123:		case  0: // free nucleon
+151:		case 0: case 5: case 6: return 0; break;
+== kaskada A<=1
+53:  if(not par.kaskada_on)  // skip the cascade if it is turn off in params,
+# --- rc=0

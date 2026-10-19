@@ -1,0 +1,151 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'hostname; date -u; ls -la /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/; du -sh /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/ 2>/dev/null; ls -la /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_flat5d /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p1 2>&1 | head -40; ls /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr | head; ls -la /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task1/'
+# UTC: 2026-10-19T16:49:06Z
+login33
+Mon Oct 19 04:49:10 PM UTC 2026
+total 1958800
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 .
+drwxrwx--- 31 josephrb josephrb     57344 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb     29799 Jun 10 10:37 ascencio_2110.13372_supplemental.txt
+drwxr-xr-x 12 josephrb josephrb      4096 May  2  2019 buuinput_local
+-rw-rw----  1 josephrb josephrb     28901 Jul  3 22:10 compare_3d_fullcov.pdf
+-rw-rw----  1 josephrb josephrb     68758 Jul  3 22:10 compare_3d_fullcov.png
+-rw-rw----  1 josephrb josephrb      8274 Jul  2 04:47 compare_3d_fullcov.py
+-rw-rw----  1 josephrb josephrb      5148 Aug 29 13:56 compare_ascencio_eavail.py
+-rw-rw----  1 josephrb josephrb     21945 Jul  3 22:10 compare_mec_eavail.pdf
+-rw-rw----  1 josephrb josephrb     36503 Jul  3 22:10 compare_mec_eavail.png
+-rw-rw----  1 josephrb josephrb      4909 Aug 29 13:56 compare_mec_eavail.py
+-rw-rw----  1 josephrb josephrb      2498 Aug 11 15:56 eavailW_band_20260811_allfour.log
+-rw-rw----  1 josephrb josephrb     16700 Aug 11 15:56 eavailW_band_20260811_allfour.pdf
+-rw-rw----  1 josephrb josephrb     20869 Aug 11 15:56 eavailW_band_20260811_allfour.png
+-rw-r-----  1 josephrb josephrb     14142 Aug 11 15:56 eavailW_band_20260811_allfour.root
+-rw-rw----  1 josephrb josephrb     16683 Jul  3 22:12 eavailW_band.pdf
+-rw-rw----  1 josephrb josephrb     20869 Jul  3 22:12 eavailW_band.png
+-rw-r-----  1 josephrb josephrb     14074 Jul  3 22:12 eavailW_band.root
+-rw-r-----  1 josephrb josephrb      5580 May 30 23:10 flux_mefhc_numu_nuwro.root
+-rw-r-----  1 josephrb josephrb      5538 May 30 23:10 flux_mefhc_numu.root
+-rw-rw----  1 josephrb josephrb      9802 Aug 29 13:56 fsi_variation_xsec3d.py
+-rw-rw----  1 josephrb josephrb     35990 Jul 15 20:47 generators_vs_unfolded_band.pdf
+-rw-rw----  1 josephrb josephrb    110278 Jul 15 20:47 generators_vs_unfolded_band.png
+-rw-r-----  1 josephrb josephrb     17220 May 30 18:47 genie_cv_xsec3d.root
+-rw-r-----  1 josephrb josephrb      5656 Jun  8 12:50 genie_cv_xsec_eavailW.root
+-rw-r-----  1 josephrb josephrb     49534 Jun  3 00:04 genie_fsi_FrAbs_pi_xsec3d.root
+-rw-rw----  1 josephrb josephrb       795 Jun  3 16:41 genie_fsi_FrAbs_pi_xsec3d_summary.txt
+-rw-r-----  1 josephrb josephrb     49601 May 31 02:41 genie_fsi_FrInel_pi_xsec3d.root
+-rw-rw----  1 josephrb josephrb       796 May 31 02:41 genie_fsi_FrInel_pi_xsec3d_summary.txt
+-rw-r-----  1 josephrb josephrb     18120 Jun  3 05:37 genie_mec_cv_xsec3d.root
+-rw-rw----  1 josephrb josephrb      6115 Jun  3 16:41 genie_mec_to_xsec3d.py
+-rw-r-----  1 josephrb josephrb      5665 Jun  8 13:04 genie_mec_xsec_eavailW.root
+-rw-r-----  1 josephrb josephrb 999514329 Jun  8 12:37 genie_mefhc_cv_ALL.gst.root
+-rw-r-----  1 josephrb josephrb 997606940 Jun  8 12:51 genie_mefhc_mec_ALL.gst.root
+-rw-rw----  1 josephrb josephrb      7778 May 30 16:00 genie_to_xsec3d.py
+-rw-rw----  1 josephrb josephrb      6064 Jun  8 19:45 gen_to_xsec_eavailW.py
+-rw-rw----  1 josephrb josephrb        29 Jun  3 05:23 gevgen_mec_jid.txt
+-rw-r-----  1 josephrb josephrb     29486 Jun  3 04:50 gibuu_cv_xsec3d.root
+-rw-r-----  1 josephrb josephrb      5631 Jun  9 10:47 gibuu_cv_xsec_eavailW.root
+-rw-rw----  1 josephrb josephrb        13 Jun  3 00:46 gibuu_jid.txt
+-rw-rw----  1 josephrb josephrb         9 Jun  8 20:34 .gibuu_regen_job.txt
+-rw-r-----  1 josephrb josephrb     25234 Jun  3 00:41 gibuu_smoke_xsec3d.root
+-rw-rw----  1 josephrb josephrb        29 Jun  3 00:46 gibuu_submit.txt
+-rw-rw----  1 josephrb josephrb      7626 Jun  3 16:41 gibuu_to_xsec3d.py
+-rw-rw----  1 josephrb josephrb      5707 Jun  8 20:22 gibuu_to_xsec_eavailW.py
+-rw-rw----  1 josephrb josephrb      1903 May 31 02:26 gst_reader.py
+-rw-rw----  1 josephrb josephrb   4780351 May 30 16:43 gxspl_CH.xml.gz
+-rw-rw----  1 josephrb josephrb       544 May 30 18:37 hadd_cv.log
+-rw-rw----  1 josephrb josephrb      1579 May 30 21:15 inspect_nuwro.C
+-rw-rw----  1 josephrb josephrb      3332 May 30 23:10 make_flux_for_genie.py
+-rw-rw----  1 josephrb josephrb     24475 Jul  3 22:11 mode_decomp_eavail.pdf
+-rw-rw----  1 josephrb josephrb     42066 Jul  3 22:11 mode_decomp_eavail.png
+-rw-rw----  1 josephrb josephrb      9143 Aug 29 13:56 mode_decomp_eavail.py
+-rw-r-----  1 josephrb josephrb     33339 May 30 20:46 model_tunev1_xsec3d.root
+-rw-rw----  1 josephrb josephrb      4519 May 30 20:05 model_tune_xsec3d.py
+-rw-r-----  1 josephrb josephrb     31202 May 30 22:19 nuwro_cv_xsec3d.root
+-rw-r-----  1 josephrb josephrb      6018 Jun  8 13:04 nuwro_cv_xsec_eavailW.root
+drwxrwx---  3 josephrb josephrb      4096 May 30 21:10 nuwro_home
+drwxrwx---  3 josephrb josephrb      4096 May 30 22:05 nuwro_home_dbg
+-rw-rw----  1 josephrb josephrb      3010 Jun  8 19:45 nuwro_to_flat.C
+-rw-rw----  1 josephrb josephrb      4049 May 30 23:07 nuwro_to_xsec3d.py
+-rw-rw----  1 josephrb josephrb      3683 Jun  8 19:45 nuwro_to_xsec_eavailW.py
+-rw-rw----  1 josephrb josephrb      8302 Aug 29 13:56 overlay_eavailW_band.py
+-rw-rw----  1 josephrb josephrb     12674 Jul 15 20:39 overlay_generators_band.py
+-rw-rw----  1 josephrb josephrb      3501 Aug 29 13:56 overlay_generators.py
+drwxrwx---  2 josephrb josephrb      4096 Jul 15 21:19 __pycache__
+-rw-rw----  1 josephrb josephrb     15930 Jun  3 16:41 README.md
+-rwxrwx---  1 josephrb josephrb      1348 May 30 16:43 reduce_splines.sh
+-rw-rw----  1 josephrb josephrb      2263 Jun  8 19:45 run_eavailW_band.sh
+-rwxrwx---  1 josephrb josephrb      1912 Jun 14 15:01 run_fsi_reweight.sh
+-rwxrwx---  1 josephrb josephrb      2466 Jun  3 16:41 run_gevgen.sh
+-rw-rw----  1 josephrb josephrb      1557 May 30 22:12 run_nuwro.sh
+-rwxrwx---  1 josephrb josephrb       748 May 30 18:28 run_parallel_cv.sh
+-rwxrwx---  1 josephrb josephrb      1020 May 31 02:26 run_parallel_fsi.sh
+-rwxrwx---  1 josephrb josephrb       370 May 30 22:14 run_parallel_nuwro.sh
+-rw-rw----  1 josephrb josephrb      1420 Jun  3 16:41 sbatch_gevgen_mec.sh
+-rwxrwx---  1 josephrb josephrb      1312 Jun  8 19:45 sbatch_gevgen_mefhc.sh
+-rw-rw----  1 josephrb josephrb      2211 Aug  3 22:37 sbatch_gibuu_mefhc.sh
+-rw-rw----  1 josephrb josephrb      1416 Jun  8 20:22 sbatch_gibuu_mirror.sh
+-rw-rw----  1 josephrb josephrb      1031 Jun  8 19:45 sbatch_nuwro_mefhc.sh
+-rwxrwx---  1 josephrb josephrb      3724 May 30 18:16 setup_genie.sh
+-rw-rw----  1 josephrb josephrb      1512 Jun  3 16:41 setup_gibuu.sh
+-rw-rw----  1 josephrb josephrb      2680 May 30 22:12 setup_nuwro.sh
+drwxrwx---  2 josephrb josephrb      4096 Jun  3 16:41 work_gibuu
+drwxrwx--- 82 josephrb josephrb      4096 Jun  9 03:35 work_gibuu_arr
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:03 work_mecseed1001
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:03 work_mecseed1002
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:27 work_mecseed1003
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:37 work_mecseed1004
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:18 work_mecseed1005
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:18 work_mecseed1006
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:38 work_mecseed1007
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:38 work_mecseed1008
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:05 work_nuwro_p1
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:04 work_nuwro_p2
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:28 work_nuwro_p3
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:49 work_nuwro_p4
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:49 work_nuwro_p5
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:19 work_nuwro_p6
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:20 work_nuwro_p7
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:38 work_nuwro_p8
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:16 work_seed1
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:12 work_seed10
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:17 work_seed2
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:27 work_seed3
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:27 work_seed4
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:36 work_seed5
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:36 work_seed6
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:48 work_seed7
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:48 work_seed8
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:12 work_seed9
+-rw-rw----  1 josephrb josephrb      1237 Jun  4 10:11 write_combined_splitml.py
+-rw-r-----  1 josephrb josephrb   2510485 Jun  3 05:14 xsec_graphs.root
+12G	/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/
+ls: cannot access '/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_flat5d': No such file or directory
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p1:
+total 311088
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:05 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb       182 Jun  8 11:05 flat_p1.log
+-rw-r-----  1 josephrb josephrb   7687469 Jun  8 11:05 nuwro_flat.root
+-rw-rw----  1 josephrb josephrb    284763 Jun  8 11:04 nuwro_p1.log
+-rw-r-----  1 josephrb josephrb 310474649 Jun  8 11:04 nuwro_p1.root
+-rw-rw----  1 josephrb josephrb      3460 Jun  8 10:59 nuwro_p1.root.par
+-rw-rw----  1 josephrb josephrb       328 Jun  8 10:59 nuwro_p1.root.txt
+-rw-rw----  1 josephrb josephrb       361 Jun  8 10:58 params.txt
+-rw-rw----  1 josephrb josephrb      1401 Jun  8 10:59 q0.txt
+-rw-rw----  1 josephrb josephrb      1355 Jun  8 10:59 q2.txt
+-rw-rw----  1 josephrb josephrb      1420 Jun  8 10:59 qv.txt
+-rw-rw----  1 josephrb josephrb      6708 Jun  8 11:04 random_seed
+-rw-rw----  1 josephrb josephrb        89 Jun  8 10:59 totals.txt
+-rw-rw----  1 josephrb josephrb      1304 Jun  8 10:59 T.txt
+task1
+task10
+task11
+task12
+task13
+task14
+task15
+task16
+task17
+task18
+total 25720
+drwxrwx---  2 josephrb josephrb   176128 Jun 10 11:54 .
+drwxrwx--- 82 josephrb josephrb     4096 Jun  9 03:35 ..
+-rw-rw----  1 josephrb josephrb 26152151 Jun  8 20:50 FinalEvents.dat

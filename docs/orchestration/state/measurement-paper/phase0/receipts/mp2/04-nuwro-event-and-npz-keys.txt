@@ -1,0 +1,54 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'date -u; hostname; cd /tmp && timeout 900 ~/.conda/envs/omnifold_py310/bin/python -I -' < mp2_read2.py   (script below, on stdin)
+# UTC: 2026-10-19T16:50:51Z
+# --- script ---
+import os, glob, zipfile, json
+import numpy as np, uproot
+G = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie"
+t = uproot.open(G + "/work_nuwro_p1/nuwro_p1.root")["treeout;11"]
+names = t.keys(recursive=True)
+print("NuWro treeout;11 entries", t.num_entries, "nbranches", len(names))
+print("top+second level:", sorted({"/".join(n.split("/")[:2]) for n in names}))
+print("post.* :", [n for n in names if n.startswith("e/post/")][:30])
+print("weight-like:", [n for n in names if "weight" in n.lower()][:10])
+def npz_keys(p):
+    try:
+        with zipfile.ZipFile(p) as z:
+            out = []
+            for i in z.infolist():
+                if i.filename.endswith(".npy"):
+                    with z.open(i) as f:
+                        v = np.lib.format.read_magic(f); sh, fo, dt = np.lib.format._read_array_header(f, v)
+                    out.append((i.filename[:-4], sh, str(dt)))
+            return out
+    except Exception as e:
+        return "ERR %r" % e
+for p in ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz"]:
+    print("=== NPZ", p, os.path.getsize(p), npz_keys(p))
+cands = sorted(glob.glob("/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps*.npz"))
+print("PC candidates:", [(c, os.path.getsize(c)) for c in cands])
+for c in cands[:3]:
+    print("=== NPZ", c, npz_keys(c))
+g5 = sorted(glob.glob("/pscratch/sd/j/josephrb/s5p-20260926/gen5d*/*"))
+print("gen5d entries:", [(x, os.path.getsize(x)) for x in g5 if os.path.isfile(x)][:40])
+print("gen5d dirs:", [x for x in g5 if os.path.isdir(x)])
+m = "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz"
+if os.path.exists(m):
+    z = np.load(m, allow_pickle=True); print("mnvtune keys", z.files)
+    for k in ("meta_json", "meta"):
+        if k in z.files: print(str(z[k])[:1500])
+# --- output ---
+Mon Oct 19 04:50:54 PM UTC 2026
+login01
+NuWro treeout;11 entries 250000 nbranches 286
+top+second level: ['e', 'e/TObject', 'e/all', 'e/density', 'e/dyn', 'e/flag', 'e/in', 'e/nod[18]', 'e/norm', 'e/nr', 'e/out', 'e/par', 'e/post', 'e/pr', 'e/r', 'e/r_distance', 'e/res_angrew', 'e/res_jacobian', 'e/res_nu', 'e/res_q', 'e/temp', 'e/weight']
+post.* : ['e/post/post.t', 'e/post/post.x', 'e/post/post.y', 'e/post/post.z', 'e/post/post._mass', 'e/post/post.r.t', 'e/post/post.r.x', 'e/post/post.r.y', 'e/post/post.r.z', 'e/post/post.pdg', 'e/post/post.ks', 'e/post/post.orgin', 'e/post/post.travelled', 'e/post/post.id', 'e/post/post.mother', 'e/post/post.endproc', 'e/post/post.his_fermi', 'e/post/post.primary']
+weight-like: ['e/par/par.beam_weighted', 'e/weight']
+=== NPZ /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz 1548438020 [('axes', (3,), 'object'), ('MCgen', (32849103, 5), 'float32'), ('MCreco', (32849103, 5), 'float32'), ('measured', (4091707, 5), 'float32'), ('pass_reco', (32849103,), 'bool'), ('pass_truth', (32849103,), 'bool'), ('w_truth', (32849103,), 'float64'), ('w_reco', (32849103,), 'float64'), ('measured_weights', (4091707,), 'float64'), ('denom_nd', (14, 16, 7, 7, 6), 'float64'), ('flux', (14,), 'float64'), ('data_pot', (), 'float64'), ('n_nucleons', (), 'float64'), ('edges_0', (15,), 'float64'), ('edges_1', (17,), 'float64'), ('edges_2', (8,), 'float64'), ('edges_3', (8,), 'float64'), ('edges_4', (7,), 'float64'), ('nedges', (), 'int64')]
+PC candidates: [('/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps.npz', 6575612207), ('/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps_xps.npz', 7375010651), ('/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps_xps2.npz', 9032877215)]
+=== NPZ /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps.npz [('num_part', (), 'int64'), ('part_gen', (32917278, 12, 5), 'float32'), ('part_reco', (32917278, 12, 3), 'float32'), ('measured_pc', (4091707, 12, 3), 'float32'), ('pass_reco', (32917278,), 'bool'), ('pass_truth', (32917278,), 'bool'), ('w_truth', (32917278,), 'float64'), ('w_reco', (32917278,), 'float64'), ('measured_weights', (4091707,), 'float64'), ('truth_scalars', (32917278, 4), 'float32'), ('reco_scalars', (32917278, 4), 'float32'), ('edges_0', (15,), 'float64'), ('edges_1', (17,), 'float64'), ('edges_2', (8,), 'float64'), ('edges_3', (8,), 'float64'), ('gen_feats', (5,), 'object'), ('reco_feats', (3,), 'object'), ('data_pot', (), 'float64')]
+=== NPZ /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps_xps.npz [('num_part', (), 'int64'), ('part_gen', (38643338, 12, 5), 'float32'), ('part_reco', (38643338, 12, 3), 'float32'), ('measured_pc', (4091707, 12, 3), 'float32'), ('pass_reco', (38643338,), 'bool'), ('pass_truth', (38643338,), 'bool'), ('w_truth', (38643338,), 'float64'), ('w_reco', (38643338,), 'float64'), ('measured_weights', (4091707,), 'float64'), ('truth_scalars', (38643338, 4), 'float32'), ('reco_scalars', (38643338, 4), 'float32'), ('edges_0', (15,), 'float64'), ('edges_1', (17,), 'float64'), ('edges_2', (8,), 'float64'), ('edges_3', (8,), 'float64'), ('gen_feats', (5,), 'object'), ('reco_feats', (3,), 'object'), ('data_pot', (), 'float64')]
+=== NPZ /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps_xps2.npz [('num_part', (), 'int64'), ('part_gen', (49152885, 12, 5), 'float32'), ('part_reco', (49152885, 12, 3), 'float32'), ('measured_pc', (4116128, 12, 3), 'float32'), ('pass_reco', (49152885,), 'bool'), ('pass_truth', (49152885,), 'bool'), ('w_truth', (49152885,), 'float64'), ('w_reco', (49152885,), 'float64'), ('measured_weights', (4116128,), 'float64'), ('truth_scalars', (49152885, 4), 'float32'), ('reco_scalars', (49152885, 4), 'float32'), ('edges_0', (16,), 'float64'), ('edges_1', (20,), 'float64'), ('edges_2', (8,), 'float64'), ('edges_3', (8,), 'float64'), ('gen_feats', (5,), 'object'), ('reco_feats', (3,), 'object'), ('data_pot', (), 'float64')]
+gen5d entries: [('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_dump_existing.py', 1370), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_genie_cv_stageA_shape.out', 574), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_genie_cv_stageA_shape.py', 1379), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_make_receipt.py', 2831), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_probe_branches.py', 701), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_probe_mad_q2.out', 1959), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_probe_mad_q2.py', 1520), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_summarize.py', 862), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_summary.json', 2370), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gen5d-build.json', 47380), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.log', 3058), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.meta.json', 8054), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.npz', 1612628), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_mec_xsec5d.log', 3271), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_mec_xsec5d.meta.json', 8294), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_mec_xsec5d.npz', 1613520), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.log', 2297), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.meta.json', 26093), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.npz', 1679456), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz', 224713), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_cv_xsec5d.log', 5646), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_cv_xsec5d.meta.json', 16663), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_cv_xsec5d.npz', 1643632), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix-2.json', 47690), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix-3.json', 22769), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix.json', 70193), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d_fluxfix_marginals.json', 39730), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d_fluxfix_marginals.npz', 203382), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_checks.json', 6153), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_full.log', 5314), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.log', 3289), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.meta.json', 16693), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.npz', 1640728), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.meta.json', 12550), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz', 1627680), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_checks.json', 11933), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_full.log', 5434), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.log', 3749), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.meta.json', 23133), ('/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.npz', 1660240)]
+gen5d dirs: ['/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code', '/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d', '/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code', '/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp']
+mnvtune keys ['xsec_flat', 'sumw2_flat', 'nevt_flat', 'shape', 'edges_pt', 'edges_pz', 'edges_eavail', 'edges_q3', 'edges_W', 'meta_json']
+{"schema": "s5p-mc-truth-pred/1", "prediction": "MINERvA Tune v1 (analysis MC truth, w_truth)", "npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz", "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f", "code_sha256": "e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5", "definition": "extract_cross_section_nd of the truth-passing rows at w_truth with completeness truth/denominator; variance = sum w^2 through the same per-cell scale"}

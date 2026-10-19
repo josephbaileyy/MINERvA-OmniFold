@@ -1,0 +1,49 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'C=/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019; ls $C; ls $C/testRun 2>/dev/null | head; find $C -iname "*.job" | wc -l; echo "== jobcards with target_A=1"; grep -rlE "target_A *= *1 *(!|$)" $C --include=*.job 2>/dev/null | head; grep -rlE "target_A *= *1 *(!|$)" $C --include="*job*" 2>/dev/null | head; echo "== nucleus.f90 A=1 / elementary handling"; grep -n -i -E "mass *== *1|massNumber *== *1|elementary|target_A *== *1|A *== *1\b" $C/code/density/nucleus.f90 | head -20; echo "== initNeutrino A=1"; grep -rn -i -E "mass *== *1|massNumber *== *1|elementary|ReAdjust|fixedNucleon" $C/code/init/neutrino/*.f90 | head -30'
+# utc: 2026-10-19 16:53:09 UTC
+# ---
+code
+GiBUU.vfproj
+GREP
+GREP_SVN
+LICENSE
+Makefile
+Makefile.objects
+Makefile.SUBlink
+Makefile.testRun.List
+objects
+README.libraries.txt
+README.Makefile.txt
+README.md
+robodoc
+scripts
+testRun
+ClusterCode
+GiBUU.x
+jobCards
+76
+== jobcards with target_A=1
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/OpticalGlauber.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/testNucleusMass.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/300_HADES_pNb_Kaons.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/012_pionDilep.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/002_Pion.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/014_HiLepton_A.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/014_HiLepton_N.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/003_realPhoton.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/300_Hadron.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/014_Photo_N.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Cu
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Sn
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_C
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Kr
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Pb
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/OpticalGlauber.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/testNucleusMass.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Ne
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Be
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Ta
+== nucleus.f90 A=1 / elementary handling
+479:    if (Target_A == 1) ReAdjustForConstBinding = .false.
+== initNeutrino A=1
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/singlePionProductionMAIDlike.f90:20:  ! Switch to use fit to ANL or BNL elementary pion production data
+# --- rc=0

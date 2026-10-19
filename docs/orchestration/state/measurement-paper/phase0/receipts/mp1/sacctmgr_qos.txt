@@ -1,0 +1,12 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'date -u; sacctmgr -n -P show qos format=Name,MaxWall,Priority 2>&1 | grep -E "^(debug|regular|shared|premium|regular_1|debug_preempt|shared_)" | head -20'
+Mon Oct 19 04:53:28 PM UTC 2026
+regular_1|2-00:00:00|67679
+regular_0|2-00:00:00|67679
+shared|2-00:00:00|67679
+debug|00:30:00|69119
+shared_overrun|2-00:00:00|0
+debug_preempt|00:30:00|69119
+shared_interactive|04:00:00|73320
+premium|2-00:00:00|73440
+shared_express_amsc_g|06:00:00|253440
+shared_express_amsc|06:00:00|253440

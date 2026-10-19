@@ -1,0 +1,18 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'date -u; G=/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie; head -c 1500 $G/work_gibuu_arr/task1/FinalEvents.dat; echo; echo ---; wc -l $G/work_gibuu_arr/task1/FinalEvents.dat; ~/.conda/envs/omnifold_py310/bin/python -c "import uproot; print(\"uproot\", uproot.__version__)" 2>&1; ls ~/.conda/envs/'
+# UTC: 2026-10-19T16:49:26Z
+Mon Oct 19 04:49:30 PM UTC 2026
+# 1:Run  2:Event  3:ID 4:Charge     5:perweight   6:position(1)   7:position(2)   8:position(3)   9:momentum(0)  10:momentum(1)  11:momentum(2)  12:momentum(3)     13:history  14:production_ID  15:enu
+      1      1    902     -1  2.311737E-04  0.000000E+00  0.000000E+00  0.000000E+00  4.756883E+00  2.995046E-02  1.190129E-01  4.754126E+00          0   2  5.355752E+00
+      1      1      1      1  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  9.209795E-01  7.913175E-02  1.859812E-02 -2.176280E-01          0   2  5.355752E+00
+      1      1    101      1  2.311737E-04  5.858156E+00  2.188159E+01  1.385147E+01  4.723913E-01  8.039167E-02  3.935631E-01  2.067725E-01    1000002   2  5.355752E+00
+      1      1      1      1  2.311737E-04 -4.209942E-01 -1.385629E+01  5.311005E+00  1.047518E+00 -5.395050E-02 -4.410982E-01  1.413181E-01    1000002   2  5.355752E+00
+      1      2    902     -1  5.281416E-05  0.000000E+00  0.000000E+00  0.000000E+00  3.117946E+00 -2.416924E-01  2.200871E-02  3.106690E+00          0  34  5.867827E+00
+      1      2      1      1  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  8.922325E-01  1.542639E-01 -1.192138E-02  1.002751E-01          0  34  5.867827E+00
+      1      2      1      0  5.281416E-05 -2.907801E+00  1.295401E-01 -2.988312E+00  9.430073E-01 -5.707119E-02  1.033639E-01  1.474385E-02    6000002  34  5.867827E+00
+      1      2      1      1  5.281416E-05 -1.662714E+00  5.736123E-01  4.904193E+00  9.464356E-01 -9.069542E
+---
+153836 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task1/FinalEvents.dat
+uproot 5.6.9
+cernroot
+omnifold_py310
+root_6_28

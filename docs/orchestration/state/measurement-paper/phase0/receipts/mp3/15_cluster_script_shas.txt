@@ -1,0 +1,27 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie && sha256sum setup_nuwro.sh run_nuwro.sh; sha256sum /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py; ls /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/; ls /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/ | grep -i -E "nuwro|setup"; ls -la ~/.genie_compatlibs; sinfo -h -p debug -o "%P %a %l %D" 2>/dev/null | head -3'
+# utc: 2026-10-19 16:57:55 UTC
+# ---
+15007d6fe339ea055b362fd750e0dbf50fc19708ec2da0794ad8f83f0bfac000  setup_nuwro.sh
+f02dfcc492a50279c4dcf0648b68e94845ddf7bd129be5b904a6dad4cfa644ca  run_nuwro.sh
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py
+gen_to_xsec5d.py
+nuwro_home_dbg
+nuwro_to_flat_5d.C
+setup_nuwro.sh
+tree
+tree.tar
+nuwro_to_flat_5d.C
+nuwro_to_flat.C
+nuwro_to_xsec3d.py
+nuwro_to_xsec_eavailW.py
+total 79
+drwxrwx---  2 josephrb josephrb  4096 Sep 27 01:51 .
+drwx------ 52 josephrb josephrb 32768 Oct 10 13:13 ..
+lrwxrwxrwx  1 josephrb josephrb    96 Sep 27 01:51 libcrypto.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.10
+lrwxrwxrwx  1 josephrb josephrb    98 Sep 27 01:51 libpcreposix.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0
+lrwxrwxrwx  1 josephrb josephrb   102 Sep 27 01:51 libpcreposix.so.0.0.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0
+lrwxrwxrwx  1 josephrb josephrb    89 Sep 27 01:51 libpcre.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0
+lrwxrwxrwx  1 josephrb josephrb    93 Sep 27 01:51 libpcre.so.0.0.1 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1
+lrwxrwxrwx  1 josephrb josephrb    93 Sep 27 01:51 libssl.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libssl.so.10
+lrwxrwxrwx  1 josephrb josephrb    65 May 30 20:58 libxxhash.so.0 -> /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0
+# --- rc=0

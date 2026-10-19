@@ -1,0 +1,78 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'C=/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019; ls $C/testRun/jobCards | grep -i -E "nu|neut|lept" ; echo "== target blocks of neutrino jobcards"; for f in $(ls $C/testRun/jobCards/*.job | grep -i -E "neutrino|_nu"); do echo "-- $f"; grep -n -E "target_[ZA]" $f; done; echo "== nucleus.f90 470-490"; sed -n 470,490p $C/code/density/nucleus.f90; echo "== mass==1 in init/neutrino + init/lepton"; grep -rn -i -E "%mass *(==|\.eq\.) *1\b|mass *== *1\)|nucleus%mass *<= *1" $C/code/init $C/code/density $C/code/run 2>/dev/null | head -30'
+# utc: 2026-10-19 16:53:27 UTC
+# ---
+005_NeutrinoClean_T2K-numu.job
+005_NeutrinoClean_T2K-numu_withAna.job
+005_Neutrino_DUNE_nu.job
+005_Neutrino_forMigrationMatrices.job
+005_Neutrino_MicroBooNE-nu.job
+005_Neutrino_MINERvA-nu.job
+005_Neutrino_NOVA-FD-numubar.job
+005_Neutrino_T2K-numu.job
+014_HiLepton_A_E665neutrons.job
+014_HiLepton_A.EIC.job
+014_HiLepton_A.job
+014_HiLepton_N.EIC.job
+014_HiLepton_N.job
+031_NucleonBox_ElasticCascade.job
+031_NucleonBox_VlasovSkyrme.job
+031_NucleonsInBox.job
+200_offshell_test_nucleon.job
+== target blocks of neutrino jobcards
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_NeutrinoClean_T2K-numu.job
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_NeutrinoClean_T2K-numu_withAna.job
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_Neutrino_DUNE_nu.job
+67:	target_Z=18
+68:	target_A=40
+93:! to target_A * numEnsembles * num_runs_SameEnergy
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_Neutrino_forMigrationMatrices.job
+107:	target_Z=6
+108:	target_A=12
+146:! to target_A * numEnsembles * num_runs_SameEnergy
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_Neutrino_MicroBooNE-nu.job
+121:	target_Z=18
+122:	target_A=40
+149:! to target_A * numEnsembles * num_runs_SameEnergy
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_Neutrino_MINERvA-nu.job
+112:	target_Z=6
+113:	target_A=12
+138:! to target_A * numEnsembles * num_runs_SameEnergy
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_Neutrino_NOVA-FD-numubar.job
+91:	target_Z=6
+92:	target_A=12
+117:! to target_A * numEnsembles * num_runs_SameEnergy
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/005_Neutrino_T2K-numu.job
+114:	target_Z=6
+115:	target_A=12
+142:! to target_A * numEnsembles * num_runs_SameEnergy
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/031_NucleonBox_ElasticCascade.job
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/031_NucleonBox_VlasovSkyrme.job
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/031_NucleonsInBox.job
+-- /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/testRun/jobCards/200_offshell_test_nucleon.job
+== nucleus.f90 470-490
+       write(*,*) '    Fermi momentum = ',fermiMomentum_input
+       targetNuc%fermiMomentum_input=fermiMomentum_input
+    end if
+
+    targetNuc%mass   = Target_A
+    targetNuc%charge = Target_Z
+    targetNuc%fermiMotion=fermiMotion
+    targetNuc%densitySwitch_static=densitySwitch_static
+
+    if (Target_A == 1) ReAdjustForConstBinding = .false.
+
+    if (ReAdjustForConstBinding) then
+       write(*,*)
+       write(*,*) 'We us the initial density distribution only'
+       write(*,*) 'for getting some educated guess of the baryonic'
+       write(*,*) 'potential. With this we get a density distribution'
+       write(*,*) 'ensuring a constant binding energy. !!!!!!!!!!!'
+       write(*,*) 'E_binding = ',ConstBinding
+
+       if (ConstBinding>0.) then
+          write(*,*) 'Binding energy must be negative. stop'
+== mass==1 in init/neutrino + init/lepton
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/initNucPhaseSpace.f90:359:    if (nuc%Mass==1) then
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/pauliBlocking.f90:464:          if (targetNuc%mass==1) then
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/density.f90:259:       if (targetNuc%mass==1) then
+# --- rc=0

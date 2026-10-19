@@ -1,0 +1,167 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'P=/cvmfs/larsoft.opensciencegrid.org/products/nuwro; ls -la $P; ls $P/v21_09_1; ls $P/v21_09_1/*/ ; D=$(ls -d $P/v21_09_1/*debug* | head -1); echo "DEBUGDIR=$D"; ls -la $D/bin | head; ls $D/nuwro-nuwro_21.09.1/; ls $D/nuwro-nuwro_21.09.1/data | head -50; echo "== shipped params.txt (target/dyn/nucleus lines)"; grep -n -i -E "target|nucleus|dyn_|kaskada|pauli|res_dis|qel_|mec_|coh_|sf_|spp|delta" $D/nuwro-nuwro_21.09.1/data/params.txt'
+# utc: 2026-10-19 16:48:58 UTC
+# ---
+total 6
+drwxr-xr-x   4 cvmfs trusted   46 May 17  2022 .
+drwxr-xr-x 202 cvmfs trusted 4096 May 26 09:14 ..
+drwxr-xr-x   5 cvmfs trusted  113 May 17  2022 v21_09_1
+drwxr-xr-x   2 cvmfs trusted   81 May 17  2022 v21_09_1.version
+Linux64bit+3.10-2.17-e20-debug
+Linux64bit+3.10-2.17-e20-prof
+ups
+/cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-debug/:
+bin
+nuwro-nuwro_21.09.1
+nuwro-nuwro_21.09.1.stamp
+patch-00.stamp
+
+/cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-prof/:
+bin
+nuwro-nuwro_21.09.1
+nuwro-nuwro_21.09.1.stamp
+patch-00.stamp
+
+/cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/ups/:
+nuwro.table
+DEBUGDIR=/cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-debug
+total 69309
+drwxr-xr-x 2 cvmfs trusted      239 May 17  2022 .
+drwxr-xr-x 4 cvmfs trusted       99 May 17  2022 ..
+-rwxr-xr-x 1 cvmfs trusted   285968 May 17  2022 dumpParams
+-rw-r--r-- 1 cvmfs trusted     7992 May 17  2022 event1Dict_rdict.pcm
+-rwxr-xr-x 1 cvmfs trusted  1264904 May 17  2022 event1.so
+-rwxr-xr-x 1 cvmfs trusted  1470328 May 17  2022 glue
+-rwxr-xr-x 1 cvmfs trusted  4479688 May 17  2022 kaskada
+-rwxr-xr-x 1 cvmfs trusted  1381312 May 17  2022 myroot
+-rwxr-xr-x 1 cvmfs trusted 18259464 May 17  2022 nuwro
+bin
+CMakeLists.txt
+data
+doc
+LICENSE
+Makefile
+README.md
+src
+beam
+input
+isotops.txt
+kaskada.txt
+params.txt
+pfew.txt
+sf
+target
+== shipped params.txt (target/dyn/nucleus lines)
+43:# Target specification
+47:# *default* predefined LFG Carbon target "C.txt"
+49:# Define the nucleus by hand:
+50:#nucleus_p = 6
+51:#nucleus_n = 6
+53:# Models for the description of nucleus as a target:
+54:#nucleus_target = 0 // free target; 
+55:#nucleus_target = 1 // Fermi gas; 
+56:#nucleus_target = 2 // local Fermi gas; 
+57:#nucleus_target = 3 // Bodek-Ritchie; 
+58:#nucleus_target = 4 // "effective" spectral function (carbon or oxygen); 
+59:#nucleus_target = 5 // deuterium; 
+60:#nucleus_target = 6 // effective potential
+63:#nucleus_E_b         =  34   // [MeV] binding energy 
+64:#nucleus_kf          = 220   // [MeV] Fermi momentum, used in Fermi gas model and in Pauli blocking
+66:# Enable Pauli blocking:
+67:pauli_blocking   = 1 // enable (1) or not (0) Pauli blocking
+69:# It is convenient to include one of the predefined target specifications
+71:#@target/proton.txt
+72:@target/C.txt
+73:#@target/CH.txt
+74:#@target/ND280_975.txt
+75:#@target/proton.txt
+76:#@target/neutron.txt
+77:#@target/CH2.txt
+85:dyn_qel_cc =1      // Quasi elastic charged current
+86:dyn_qel_nc =0      // Quasi elastic neutral current
+87:dyn_res_cc =1      // Resonant charged current
+88:dyn_res_nc =0      // Resonant neutral current
+89:dyn_dis_cc =1      // Deep inelastic charged current
+90:dyn_dis_nc =0      // Deep inelastic neutral current
+91:dyn_coh_cc =1      // Coherent charged current
+92:dyn_coh_nc =0      // Coherent neutral current
+93:dyn_mec_cc =1      // Meson exchange charged current
+94:dyn_mec_nc =0      // Meson exchange neutral current
+95:dyn_hyp_cc =1      // Quasi elastic hyperon production
+96:dyn_lep    =1      // Neutrino-electron
+99:dyn_qel_el =0      // (Quasi) elastic electron scattering
+114:#qel_vector_ff_set = 1 // dipole, dipole electric form factor G_E^V
+115: qel_vector_ff_set = 2 // BBBA05, hep-ex/0602017 BBBA05 for Q2<18 GeV	
+116:#qel_vector_ff_set = 3 // BBA03, hep-ex/0308005 BBA-2003 for Q2<6 GeV
+117:#qel_vector_ff_set = 4 // JLab, PHYSICAL REVIEW C, VOLUME 65, 051001(R)
+118:#qel_vector_ff_set = 5 // Kgraczyk
+119:#qel_vector_ff_set = 6 // (1990:) parametryzacja JS z old qelcc
+122: qel_axial_ff_set = 1 // dipole,
+123:#qel_axial_ff_set = 2 // 2-fold parabolic modification of axial FF
+124:#qel_axial_ff_set = 3 // 3-fold parabolic modification of axial FF
+125:#qel_axial_ff_set = 4 // 4-fold parabolic modification of axial FF
+128:#qel_strange=0      // don't use the strangenes
+129:qel_strange = 1    // use the strangenes in the axial ff
+130:qel_strangeEM = 0  // dont use the strangenes in the vector ff
+131:delta_s = 0
+134:qel_cc_axial_mass = 1030   // [MeV] axial mass
+135:qel_nc_axial_mass = 1030   // [MeV] axial mass
+136:qel_s_axial_mass  = 1030   // [MeV] axial mass used in the strange dipole ff
+141:#qel_strange     = 1     // use the strangeness corrections in the axial factors
+142:#qel_strangeEM   = 1     // use the strangeness corrections in the vector factors
+143:#delta_s         =-0.21  // 
+144:#qel_s_axial_mass= 1012  //[MeV] axial mass used in the strange dipole ff
+156:sf_method = 0 // don't use spectral function
+157:#sf_method = 1 // use grid spectral function: (C12, O16, Ar40, Fe56)
+158:#sf_method = 2 // use factorized spectral function: (O16, Ar40, Ca40)
+160:sf_fsi = 1      # FSI correction for SF (0 - disabled, 1 - enabled)
+161:sf_coulomb = 1  # Coulomb correction for SF (0 - disabled, 1 - enabled)
+166:sf_pb = 1
+174:#qel_rpa = 0    // Don't use rpa
+175:qel_rpa = 1     // Use rpa without effective mass of nucleon
+176:#qel_rpa = 2    // Use effectove mass without rpa (test only)
+177:#qel_rpa = 3    // Use rpa with effective mass of nucleon (test only) 
+183:# The choice of Delta production FF
+185:# The dipole delta FF with pion_axial_mass=0.94 and pion_C5A=1.19
+187:delta_FF_set    = 1    // Dipole delta form factors
+193:#delta_FF_set = 2 // Paschos Lalakulich, 2.12 MA=1.05 BNL fit
+194:#delta_FF_set = 3 // Paschos Lalakulich, 2.12 MA=0.84 ANL fit
+195:#delta_FF_set = 4 // Paschos Lalakulich, page 4, bottom right
+196:#delta_FF_set = 5 // Paschos Lalakulich, page 5, top left
+198:#delta_FF_set = 6 // Eq.(13), L. Alvarez-Ruso et al., Eq. (13)
+200:#delta_FF_set = 7 // Bariquila-Cano et al., chiral quark model
+203:# Angular distribution for Delta decays:
+204:#delta_angular = 0 // isotropic in the Delta rest frame
+205:#delta_angular = 1 // ANL distribution
+207:delta_angular = 2 // BNL distribution, produces 4-momenta of final pair: nucleon + pion with density matrix information
+209:#delta_angular = 3 // from the Rein-Sehgal model
+216:spp_precision = 500   // precision of he boundary, default 500
+217:res_dis_cut   = 1600	// position of the boundary, default 1600 [MeV]
+227:coh_kind = 2            // Switch between Rein-Sehgal (1) and Berger Sehgal(2) models
+228:coh_mass_correction = 1 // Rein Sehgal correction to CC coherent single pion production
+235:#mec_kind = 1  // TEM model
+236:#mec_kind = 2  // Marteau model
+237:mec_kind = 3  // Nieves model
+238:#mec_kind = 5  // SuSAv2 model
+241:mec_ratio_pp = 0.85 // fraction of the initial neutron-proton pairs
+244:mec_central_motion        = 0  // motion of correlated pairs, sigma in gaussian distribution; default 0.0
+245:mec_back_to_back_smearing = 0  // smearing of originally back-to-back correlated pair nucleons momenta; default 0.0
+246:MEC_pauli_blocking        = 1  // switch on/off Pauli blocking for nucleons from MEC dynamics; default 1 (on)
+247:mec_pb_trials             = 30 // how many times configuration satisfying Pauli blocking is searched for; default 25
+248:MEC_cm_direction          = 0  // in CM frame prefered directions along (>0.0) or perpendicular (<0.0) wrt momentum transfer; its modulus cannot be larger than 1
+253:mec_scaling = 0
+272:hyp_Lambda_Eb   = 27     // Lambda-nucleus potential strength; literature says [25 MeV, 29 MeV]; default is the average
+273:hyp_Sigma_Eb    = -70    // Sigma-nucleus potential strength; literature says [10 MeV, -150 MeV]; default is the average
+287:kaskada_on       = 1  // use (1) or not (0) the cascade 
+289:# Models for the description of nucleus in the cascade:
+290:#nucleus_model    = 0  // "flatnucleus" ball with constant density
+291:nucleus_model    = 1  // "anynucleus" i.e. realistic density profile
+294:kaskada_w = 7        // literature [7 MeV, 9 MeV] 
+297:kaskada_writeall = 0 // store all intermedate cascade particles in the event.all vector
+305:kaskada_NN_mfp_scale = 1.0
+308:kaskada_NN_xsec  = 2  // NN cross sections:  (0) Metropolis et al., (2) PDG2016, (3) Liege
+309:kaskada_NN_inel  = 2  // NN inelastic frac.: (0) Metropolis et al., (1) Oset et al., (2) PDG2016 & Bystricky et al.
+310:kaskada_NN_angle = 3  // NN angular distr.:  (0) Metropolis et al., (3) Liege
+311:kaskada_NN_corr  = 1  // Effective density:  (0) No correlations,   (1) arXiv:1902.05618
+312:kaskada_piN_xsec = 1  // Full sets of input data for pions: (0) Metropolis et al., (1) Oset et al.
+326:#formation_zone   = delta
+# --- rc=0

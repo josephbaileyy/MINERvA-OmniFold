@@ -1,0 +1,155 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'cd /cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-debug/nuwro-nuwro_21.09.1/src && ls | head -100; echo "== grep free-target handling"; grep -n -E "nucleus_target *== *0|A\(\) *== *1|A\(\)==1|p\.nucleus_p *\+ *p\.nucleus_n|nucleus_p\+p\.nucleus_n|Zt\+Nt|nucleus_n *== *0|n\(\) *== *0|\.n\(\)==0" *.cc *.h 2>/dev/null | head -60; echo "== nuwro.cc dyn setup / mec / coh guards"; grep -n -E "mec|coh|kaskada_on|if *\(.*nucleus" nuwro.cc | head -80'
+# utc: 2026-10-19 16:49:34 UTC
+# ---
+Analyser1.h
+Analyser.h
+args.h
+beam_atmo.h
+beam.cc
+beam.h
+beamHist.cc
+beamHist.h
+beam_mixed.h
+beam_mixedroothist.h
+beam_nomad.cc
+beamRF.h
+beam_singleroothist.h
+beam_uniform.h
+boone1.h
+boone2.h
+calculations.cc
+calculations.h
+calg5.h
+calga5.h
+calga.h
+calgauss20.h
+chooser.h
+CMakeLists.txt
+coh.cc
+cohdynamics2.cc
+cohdynamics2.h
+cohevent2.cc
+cohevent2.h
+coh.h
+data_container.cc
+data_container.h
+data.h
+di_a3.h
+di_nov22.h
+dirs.cc
+dirs.h
+dis
+Doxyfile
+Dpion_a3.h
+Dpion_nov22.h
+dr_a3.h
+dr_nov22.h
+dumpParams.cc
+e_el_event.cc
+e_el_event.h
+e_el_sigma.cc
+e_el_sigma.h
+elements.cc
+elements.h
+EnergyProfile.h
+espp
+e_spp_event.cc
+e_spp_event.h
+event1.cc
+event1.h
+event1LinkDef.h
+ff.cc
+ff.h
+form_factory_nnff.h
+fsi.cc
+fsi.h
+fsi_main.cc
+ganalysis.cc
+ganalysis.h
+generatormt.cc
+generatormt.h
+geomy.h
+glue.cc
+hiperon_sigma.h
+hist.h
+hyperon_cascade.cc
+hyperon_cascade.h
+hyperon_hadron_tensor.h
+hyperon_interaction.cc
+hyperon_interaction.h
+hypevent.cc
+hypevent.h
+indexer.h
+input_data.cc
+input_data.h
+Interaction.cc
+Interaction.h
+isotopes.cc
+isotopes.h
+jednostki.h
+kaskada7.cc
+kaskada7.h
+kaskada.cc
+kinematics.cc
+kinematics.h
+kinsolver.cc
+kinsolver.h
+ladek_topologies.cc
+lepevent.cc
+lepevent.h
+los.h
+main.cc
+Makefile
+makeHist.h
+== grep free-target handling
+lepevent.cc:119:  e.weight = weight_tot*p.nucleus_p/(p.nucleus_p+p.nucleus_n);
+nuwro2rootracker.cc:330:                    if (e->par.nucleus_p==1 && e->par.nucleus_n==0){ //hydrogen
+nuwro2rootracker.cc:357:                  if (e->par.nucleus_p==1 && e->par.nucleus_n==0){ //hydrogen
+== nuwro.cc dyn setup / mec / coh guards
+23:#include "cohevent2.h"
+24:#include "coh.h"
+25:#include "mecevent.h"
+232:	if(_detector or _mixer) // _nucleus not reusable
+265:	e->flag.coh = false;
+266:	e->flag.mec = false;
+305:				if(p.sf_method>0 and has_sf(*_nucleus, p.sf_method))
+315:				if(p.sf_method>0 and has_sf(*_nucleus, p.sf_method))
+358:			e->flag.coh=e->flag.cc=true;
+359:			if (p.dyn_coh_cc) // coh cc
+361:				if(p.coh_new)
+362:				switch(p.coh_kind)
+364:					case 1:cohevent_cj (p, *e, *_nucleus, true);break;
+365:					case 2:cohevent_bs (p, *e, *_nucleus, true);break;
+366:					default:cohevent_bs (p, *e, *_nucleus, true);break;
+368:				else          cohevent2   (p, *e, *_nucleus, true);
+372:			e->flag.coh=e->flag.nc=true;
+373:			if (p.dyn_coh_nc) // coh nc
+375:				if(p.coh_new)
+376:				switch(p.coh_kind)
+378:					case 1:cohevent_cj (p, *e, *_nucleus, false);break;
+379:					case 2:cohevent_bs (p, *e, *_nucleus, false);break;
+380:					default:cohevent_bs (p, *e, *_nucleus, false);break;
+382:				else          cohevent2   (p, *e, *_nucleus, false);
+386:			e->flag.mec=e->flag.cc=true;
+387:			if (p.dyn_mec_cc) // mec cc
+388:			//if( nu.pdg>0 || !(p.mec_kind==3) )// al flavor states/antineutrinos available
+390:				if(_nucleus->A()<=1)
+392:				switch(p.mec_kind)
+394:					case 1:mecevent_tem (p, *e, *_nucleus, true);break;
+395:					case 2:mecevent2 (p, *e, *_nucleus, true, false);break;
+396:					case 3:mecevent_Nieves (p, *e, *_nucleus, true);break;
+397:					case 4:mecevent2 (p, *e, *_nucleus, true, true);break;
+398:					case 5:mecevent_SuSA (p, *e, *_nucleus, true);break;
+399:					default:mecevent_tem (p, *e, *_nucleus, true);break;
+409:			e->flag.mec=e->flag.nc=true;
+410:			if (p.dyn_mec_nc) //mec nc
+411:			if(p.mec_kind==1)      // only TEM for NC
+413:				if(_nucleus->A()<=1)
+415:				switch(p.mec_kind)
+417:					case 1: mecevent_tem(p, *e, *_nucleus, false);break;
+418:					default: mecevent_tem (p, *e, *_nucleus, false);break; 
+456:                if(p.sf_method>0 and has_sf(*_nucleus, p.sf_method))
+508:								 // copy particle from out to post if coherent interaction
+510:	if (!e->flag.coh && !e->flag.lep)
+513:		k.kaskadaevent();		 // runs only if p.kaskada_on is true
+# --- rc=0
