@@ -1,0 +1,12 @@
+-rw-rw---- 1 josephrb josephrb 1548438020 Jun 27 18:31 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+prod
+queue-prod-GENIE_2_12_10_CV.log
+queue-prod-GENIE_2_12_10_MEC.log
+queue-prod-GiBUU_2019.log
+queue-prod-MnvTune_v1.log
+queue-prod-NuWro_21_09.log
+queue-prod-pow.log
+queue-prod-r1-GENIE_2_12_10_CV.log
+queue-prod-r1-GENIE_2_12_10_MEC.log
+queue-prod-r1-MnvTune_v1.log
+rc=0

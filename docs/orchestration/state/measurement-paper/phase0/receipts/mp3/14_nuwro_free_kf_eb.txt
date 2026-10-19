@@ -1,0 +1,43 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'cd /cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-debug/nuwro-nuwro_21.09.1/src && sed -n 1,40p nucleus.cc | grep -n -E "kf|Eb|_E_b|nucleus_target|p\+n" ; echo "== 140-160"; sed -n 140,160p nucleus.cc; echo "== Eb uses in resevent/dis"; grep -n -E "Eb\(\)|_Eb|E_b" resevent2.cc dis/*.cc 2>/dev/null | head -10; echo "== mypauli_spp"; grep -rn -A8 "void mypauli_spp" *.cc | head -14'
+# utc: 2026-10-19 16:57:29 UTC
+# ---
+18:	_Eb  (par.nucleus_E_b*MeV),
+19:	_kf  (par.nucleus_kf*MeV),
+20:	kMomDist(par.nucleus_target)
+25:	if(p+n==1) 
+26:		_Eb=_kf=_r=0; /// ?????? 	    
+29:		_Eb=i->binding_energy*keV;
+37:		_kf=d->kF();
+== 140-160
+	
+	return p0;
+}
+
+double nucleus :: Ef (particle &pa)
+{
+	double const M = 0.5*(PDG::mass_proton + PDG::mass_neutron);
+	double kmom = 0;
+	
+	switch (kMomDist)
+	{
+		case 0: case 5: case 6: return 0; break;
+		case 2: kmom = localkf (pa); break;
+		default: kmom = kF(); break;
+	};
+
+	
+	return sqrt(kmom*kmom + M*M) - M;
+}
+== Eb uses in resevent/dis
+dis/disevent.cc:45:double _E_bind=0;	//binding energy
+dis/disevent.cc:56:	case 0: _E_bind=0;
+dis/disevent.cc:58:	case 1: _E_bind= p.nucleus_E_b;
+dis/disevent.cc:60:	case 2: _E_bind= t.Ef(e.in[1]) + p.kaskada_w;
+dis/disevent.cc:62:	case 3: _E_bind=p.nucleus_E_b;//Bodek-Ritchie, temporary prescription
+dis/disevent.cc:64:	case 4: _E_bind = binen (ped, numpro, numneu);//efective SF
+dis/disevent.cc:66:	case 5: _E_bind= deuter_binen (ped);//deuterium 
+dis/disevent.cc:69:        _E_bind = p.nucleus_E_b; //effective potential
+dis/disevent.cc:71:	default: _E_bind=0;
+dis/disevent.cc:76:nuc0.t-=_E_bind;
+== mypauli_spp
+# --- rc=0

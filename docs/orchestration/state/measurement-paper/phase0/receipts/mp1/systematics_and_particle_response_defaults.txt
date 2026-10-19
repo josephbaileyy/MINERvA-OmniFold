@@ -1,0 +1,167 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'C=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101; date -u; hostname; for f in $C/MINERvA-101-Cross-Section/systematics/Systematics.h $C/MAT-MINERvA/utilities/ParticleResponseDefaults.h $C/opt/include/PlotUtils/ParticleResponseDefaults.h; do echo "=== $f"; stat -c "%s bytes mtime=%y" $f; sha256sum $f; cat -n $f; done; cd $C/MAT-MINERvA && (git log -1 --format="%H %cd" 2>&1; git remote -v 2>&1 | head -2)'
+Mon Oct 19 04:48:28 PM UTC 2026
+login39
+=== /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MINERvA-101-Cross-Section/systematics/Systematics.h
+3973 bytes mtime=2025-12-17 23:30:06.000000000 -0800
+1bdfa4f028e7e5f3d4e39a60d2cadc0c05b366fd12ff345d5183177a9b555086  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MINERvA-101-Cross-Section/systematics/Systematics.h
+     1	#ifndef Systematics_h
+     2	#define Systematics_h
+     3	
+     4	//==============================================================================
+     5	// Get Several standard MINERvA systematics
+     6	//==============================================================================
+     7	
+     8	#include "event/CVUniverse.h"
+     9	#include "PlotUtils/FluxSystematics.h"
+    10	#include "PlotUtils/GenieSystematics.h"
+    11	#include "PlotUtils/MinosEfficiencySystematics.h"
+    12	#include "PlotUtils/MuonSystematics.h"
+    13	#include "PlotUtils/MnvTuneSystematics.h"
+    14	#include "PlotUtils/MuonResolutionSystematics.h"
+    15	#include "PlotUtils/AngleSystematics.h"
+    16	
+    17	typedef std::map<std::string, std::vector<CVUniverse*>> UniverseMap;
+    18	
+    19	UniverseMap GetStandardSystematics(PlotUtils::ChainWrapper* chain)
+    20	{
+    21	  // return map
+    22	  UniverseMap error_bands;
+    23	
+    24	  // CV
+    25	  error_bands[std::string("cv")].push_back(new CVUniverse(chain));
+    26	
+    27	  //========================================================================
+    28	  // FLUX
+    29	  //========================================================================
+    30	  UniverseMap bands_flux =
+    31	      PlotUtils::GetFluxSystematicsMap<CVUniverse>(chain, CVUniverse::GetNFluxUniverses());
+    32	  error_bands.insert(bands_flux.begin(), bands_flux.end());
+    33	
+    34	  //========================================================================
+    35	  // GENIE
+    36	  //========================================================================
+    37	  // Standard
+    38	  UniverseMap bands_genie =
+    39	      PlotUtils::GetGenieSystematicsMap<CVUniverse>(chain); //PlotUtils::GetStandardGenieSystematicsMap<CVUniverse>(chain);
+    40	  error_bands.insert(bands_genie.begin(), bands_genie.end());
+    41	
+    42	  //========================================================================
+    43	  // MnvTunes
+    44	  //========================================================================
+    45	  // RPA
+    46	  UniverseMap bands_rpa = PlotUtils::GetRPASystematicsMap<CVUniverse>(chain);
+    47	  error_bands.insert(bands_rpa.begin(), bands_rpa.end());
+    48	
+    49	  // 2P2H
+    50	  UniverseMap bands_2p2h = PlotUtils::Get2p2hSystematicsMap<CVUniverse>(chain);
+    51	  error_bands.insert(bands_2p2h.begin(), bands_2p2h.end());
+    52	
+    53	  //========================================================================
+    54	  // Muons
+    55	  //========================================================================
+    56	  // Muon reco in MINERvA -- Catchall systematic for pmu reco in minerva.
+    57	  // Lateral-only. Shifts pmu.
+    58	  UniverseMap bands_muon_minerva =
+    59	      PlotUtils::GetMinervaMuonSystematicsMap<CVUniverse>(chain);
+    60	  error_bands.insert(bands_muon_minerva.begin(), bands_muon_minerva.end());
+    61	
+    62	  // Muons in MINOS -- Catchall systematic for wiggle solution -- correlates
+    63	  // flux universes and minos muon momentum reco.
+    64	  // Lateral AND Vertical systematic. Shifts Pmu and GetFluxAndCVUniverse.
+    65	  //
+    66	  // Expect a non-zero systematic even when no pmu involved.
+    67	  UniverseMap bands_muon_minos =
+    68	     PlotUtils::GetMinosMuonSystematicsMap<CVUniverse>(chain);
+    69	  error_bands.insert(bands_muon_minos.begin(), bands_muon_minos.end());
+    70	
+    71	  // Vertical only
+    72	  UniverseMap bands_minoseff =
+    73	      PlotUtils::GetMinosEfficiencySystematicsMap<CVUniverse>(chain);
+    74	  error_bands.insert(bands_minoseff.begin(), bands_minoseff.end());
+    75	
+    76	  UniverseMap bands_muon_resolution = PlotUtils::GetMuonResolutionSystematicsMap<CVUniverse>(chain);
+    77	  error_bands.insert(bands_muon_resolution.begin(), bands_muon_resolution.end());
+    78	
+    79	  UniverseMap bands_geant = PlotUtils::GetGeantHadronSystematicsMap<CVUniverse>(chain);
+    80	  error_bands.insert(bands_geant.begin(), bands_geant.end());
+    81	
+    82	  // Beam angle
+    83	  UniverseMap bands_angle = PlotUtils::GetAngleSystematicsMap<CVUniverse>(chain);
+    84	  error_bands.insert(bands_angle.begin(), bands_angle.end());
+    85	
+    86	  // Hadron inelastics cross sections
+    87	  //TODO: There's some special recoil function I need to write for the response systematics to work correctly
+    88	  /*UniverseMap bands_response = PlotUtils::GetResponseSystematicsMap<CVUniverse>(chain);
+    89	  error_bands.insert(bands_response.begin(), bands_response.end());*/
+    90	
+    91	  return error_bands;
+    92	}
+    93	
+    94	#endif  // Systematics_h
+=== /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/ParticleResponseDefaults.h
+1178 bytes mtime=2025-12-17 23:30:05.000000000 -0800
+ce5c32827e7685de96cb9eb9b66fb721170b7c1044cd0053e94bfdb8cd199399  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT-MINERvA/utilities/ParticleResponseDefaults.h
+     1	#ifndef PARTICLERESPONSECONSTANTS_H
+     2	#define PARTICLERESPONSECONSTANTS_H 1
+     3	#include <iostream>
+     4	
+     5	//Placing the standard particle response fractional uncertainties here
+     6	// $ANAUTILSROOT/src/ParticleResponseUtils.cpp has the standard responses used by the Anatool
+     7	// https://cdcvs.fnal.gov/redmine/projects/minerva/wiki/NX_systematics has references on where these comes from
+     8	namespace PlotUtils
+     9	{
+    10	  namespace PartRespDefaults
+    11	  {
+    12	    const double protonResponse          = 0.035 ; // %
+    13	    const double protonResponseLowEkin   = 0.04  ; // %  
+    14	    const double protonResponseMidEkin   = 0.035 ; // %
+    15	    const double protonResponseHighEkin  = 0.03  ; // %
+    16	    const double neutronResponseLowEkin  = 0.25  ; // %
+    17	    const double neutronResponseMidEkin  = 0.10  ; // %
+    18	    const double neutronResponseHighEkin = 0.20  ; // %
+    19	    const double mesonResponse           = 0.05  ; // %
+    20	    const double electromagneticResponse = 0.03  ; // %
+    21	    const double otherParticleResponse   = 0.20  ; // %
+    22	    const double muonResponse            = 0.024 ; // %
+    23	    const double xtalkResponse           = 0.20  ; // %
+    24	
+    25	    double GetDefaultPartRespFracUnc( std::string particle );
+    26	  }
+    27	}
+    28	
+    29	#endif
+=== /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/ParticleResponseDefaults.h
+1178 bytes mtime=2025-12-17 23:30:05.000000000 -0800
+ce5c32827e7685de96cb9eb9b66fb721170b7c1044cd0053e94bfdb8cd199399  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/ParticleResponseDefaults.h
+     1	#ifndef PARTICLERESPONSECONSTANTS_H
+     2	#define PARTICLERESPONSECONSTANTS_H 1
+     3	#include <iostream>
+     4	
+     5	//Placing the standard particle response fractional uncertainties here
+     6	// $ANAUTILSROOT/src/ParticleResponseUtils.cpp has the standard responses used by the Anatool
+     7	// https://cdcvs.fnal.gov/redmine/projects/minerva/wiki/NX_systematics has references on where these comes from
+     8	namespace PlotUtils
+     9	{
+    10	  namespace PartRespDefaults
+    11	  {
+    12	    const double protonResponse          = 0.035 ; // %
+    13	    const double protonResponseLowEkin   = 0.04  ; // %  
+    14	    const double protonResponseMidEkin   = 0.035 ; // %
+    15	    const double protonResponseHighEkin  = 0.03  ; // %
+    16	    const double neutronResponseLowEkin  = 0.25  ; // %
+    17	    const double neutronResponseMidEkin  = 0.10  ; // %
+    18	    const double neutronResponseHighEkin = 0.20  ; // %
+    19	    const double mesonResponse           = 0.05  ; // %
+    20	    const double electromagneticResponse = 0.03  ; // %
+    21	    const double otherParticleResponse   = 0.20  ; // %
+    22	    const double muonResponse            = 0.024 ; // %
+    23	    const double xtalkResponse           = 0.20  ; // %
+    24	
+    25	    double GetDefaultPartRespFracUnc( std::string particle );
+    26	  }
+    27	}
+    28	
+    29	#endif
+50d7631416d1c93edd4db6886a2ca29da64fee60 Thu Oct 9 06:17:39 2025 -0500
+origin	https://github.com/MinervaExpt/MAT-MINERvA.git (fetch)
+origin	https://github.com/MinervaExpt/MAT-MINERvA.git (push)

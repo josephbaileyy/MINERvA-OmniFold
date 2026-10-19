@@ -1,0 +1,108 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'G=/cvmfs/nova.opensciencegrid.org/externals/gibuu; ls -la $G; ls $G/v2019; H=$G/v2019/Linux64bit+2.6-2.12-e15/GiBUU; ls -la $H; ls -la $H/bin; ls $H/* -d; echo "== find jobcards/sources mentioning target_A=1 or hydrogen"; find $H -maxdepth 4 -type d | head -40; grep -rIl -E "target_A *= *1([^0-9]|$)" $H 2>/dev/null | head -20; echo "== larsoft products gibuu?"; ls -d /cvmfs/larsoft.opensciencegrid.org/products/gibuu 2>&1; ls /cvmfs/larsoft.opensciencegrid.org/products | grep -i -E "gibuu|nuwro|genie" '
+# utc: 2026-10-19 16:50:24 UTC
+# ---
+total 27
+drwxr-xr-x   6 cvmfs trusted 4096 May  2  2019 .
+drwxr-xr-x 266 cvmfs trusted 4096 Aug  6 13:55 ..
+drwxr-xr-x   8 cvmfs trusted 4096 Apr 13  2017 v2016
+drwxr-xr-x   2 cvmfs trusted 4096 Apr 13  2017 v2016.version
+drwxr-xr-x   6 cvmfs trusted 4096 May  2  2019 v2019
+drwxr-xr-x   2 cvmfs trusted 4096 May  2  2019 v2019.version
+autobuild.sh
+build_gibuu.sh
+fakedb
+Linux64bit+2.6-2.12-e15
+tar
+ups
+total 33
+drwxr-xr-x  7 cvmfs trusted 4096 May  2  2019 .
+drwxr-xr-x  3 cvmfs trusted 4096 May  2  2019 ..
+drwxr-xr-x  2 cvmfs trusted 4096 May  2  2019 bin
+lrwxrwxrwx  1 cvmfs trusted   13 May  2  2019 buuinput -> buuinput2019/
+drwxr-xr-x 12 cvmfs trusted 4096 May  2  2019 buuinput2019
+drwxr-xr-x  2 cvmfs trusted 4096 May  2  2019 lib
+lrwxrwxrwx  1 cvmfs trusted   14 May  2  2019 libraries -> libraries2019/
+drwxr-xr-x  3 cvmfs trusted 4096 May  2  2019 libraries2019
+lrwxrwxrwx  1 cvmfs trusted   12 May  2  2019 release -> release2019/
+drwxr-xr-x  7 cvmfs trusted 4096 May  2  2019 release2019
+total 19470
+drwxr-xr-x 2 cvmfs trusted     4096 May  2  2019 .
+drwxr-xr-x 7 cvmfs trusted     4096 May  2  2019 ..
+-rwxr-xr-x 1 cvmfs trusted 19927883 May  2  2019 GiBUU.x
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/bin
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput2019
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/lib
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/libraries
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/libraries2019
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019
+== find jobcards/sources mentioning target_A=1 or hydrogen
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/lib
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/typeDefinitions
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/typeDefinitions/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/database
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/database/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/propagation
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/propagation/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/storage
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/storage/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/phaseSpace
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/threeBodyReactions
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/twoBodyReactions
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/oneBodyReactions
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/spectralFunctions
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/spectralFunctions/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/lepton
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/lowPhoton
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/ElectronGenerator
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/photon
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/lowElectron
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/run
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/run/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/rmf
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/rmf/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/analysis
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/analysis/root
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/analysis/testRun
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/analysis/sourceAnalysis
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/analysis/dls
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/width
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/width/testRun_collWidth
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Cu
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Sn
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_C
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Kr
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Pb
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/OpticalGlauber.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/testNucleusMass.job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Ne
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Be
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Ta
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_Xe
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/density/testRun/jobGlauber000_S
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/storage/testRun/jobHHH
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/phaseSpace/testRun/jobAssignMassMC
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/threeBodyReactions/testRun/job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/testRun/job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/twoBodyReactions/HiEnergy/testRun/jobDUMMY
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/twoBodyReactions/testRun/job
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/twoBodyReactions/testRun/jobPlotter
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/collisions/oneBodyReactions/testRun/job
+== larsoft products gibuu?
+ls: cannot access '/cvmfs/larsoft.opensciencegrid.org/products/gibuu': No such file or directory
+dk2nugenie
+genie
+genie_phyopt
+genie_xsec
+nuwro
+# --- rc=0

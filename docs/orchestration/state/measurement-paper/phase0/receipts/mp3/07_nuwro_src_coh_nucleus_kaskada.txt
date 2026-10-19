@@ -1,0 +1,105 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'cd /cvmfs/larsoft.opensciencegrid.org/products/nuwro/v21_09_1/Linux64bit+3.10-2.17-e20-debug/nuwro-nuwro_21.09.1/src && echo "== coh.cc 55-64"; sed -n 55,64p coh.cc; echo "== nucleus.cc 70-80"; sed -n 70,80p nucleus.cc; echo "== nucleus.cc 118-128"; sed -n 118,128p nucleus.cc; echo "== kaskada7.cc 45-75"; sed -n 45,75p kaskada7.cc; echo "== nucleus.h frac_neutron"; grep -n -A3 "frac_neutron\|frac_proton" nucleus.h | head -20; echo "== target_type mixture code"; grep -n -E "target_type|_mixer" nuwro.cc | head -20'
+# utc: 2026-10-19 16:50:08 UTC
+# ---
+== coh.cc 55-64
+  particle nu = e.in[0];
+  particle lepton(nu);
+  particle pion;
+ 
+	if(jadro.A()<4)
+		return; // no coherent scattering if A<4
+  if (not cc)  pion.pdg = 111;//pi0
+  else if (nu.pdg > 0)
+    { //CC pi+ production by neutrino
+      lepton.pdg --;
+== nucleus.cc 70-80
+		return _r*frandom_sqr();
+} 
+///////////////////////////////////////////////////////////////////////
+particle nucleus::get_nucleon ()
+{ 
+	if(p+n==1)	//free nucleon
+	{
+		int pdg= ( p==1 ? PDG::pdg_proton : PDG::pdg_neutron);  
+		return particle(pdg,PDG::mass(pdg)); //r=(0,0,0) //p=(0,0,0)
+	}
+
+== nucleus.cc 118-128
+		case  1: p0.set_momentum(rand_from_ball(_kf)); break; // global fermi gas
+		case  2: p0.set_momentum(rand_from_ball(localkf(p0)));break; // local fermi gas		
+		case  3: p0.set_momentum(bodek_rand_from_ball(_kf)); break; //Bodek Ritchie
+		case  4: assert ("effective SF can be run only for carbon and oxygen" && p==n && (p==6 || p==8) ); //effective SF is defined only for two targets
+					p0.set_momentum(spectral_choice(p,n));	break;
+		case  0: // free nucleon
+		case  5: p0.set_momentum(deuterium()); break; //deuterium
+		case  6: p0.set_momentum(rand_from_ball(localkf(p0)));//effective potential
+
+		default: p0.set_momentum(rand_from_ball(localkf(p0)));  //local Fermi Gas
+	}
+== kaskada7.cc 45-75
+  
+  if (e->in[0].lepton())  // if lepton scattering -> remove nucleon from primary vertex 
+                          // (in pion or nucleon scattering there is no primary vertex just the cascade)
+  {
+    for(int i=1;i< e->in.size();i++)
+      nucl->remove_nucleon(e->in[i]); // ignores nonnucleons
+  }
+      
+  if(not par.kaskada_on)  // skip the cascade if it is turn off in params,
+                          // but make sure about the energy balance
+  {
+    while (parts.size () > 0)
+    {
+      particle p1 = parts.front();    // point a particle from a queue
+      parts.pop();                    // remove this particle from a temp vector
+      p = &p1;
+      
+      leave_nucleus();    // check if the particle is jailed or escapes (and returns on the mass shell)
+    }
+    
+    return result;
+  }
+        
+  while (parts.size () > 0 and nucl->Ar() > 0)  // main loop in cascade
+  {           
+
+
+    particle p1 = parts.front();                // point a particle from a queue
+    parts.pop();                                // remove this particle from a temp vector
+    p = &p1;
+
+== nucleus.h frac_neutron
+68:	double frac_proton ();                   ///< percentage of protons 
+69:	double frac_neutron ();                  ///< percentage of neutrons
+70-	double density (double r);               ///< nucleon density at dist r from center
+71-	double get_random_r ();                  ///< random distance from the center 
+72-	bool remove_nucleon (particle P);	     ///< remove nucleon from the nucleus
+--
+147:inline double nucleus::frac_proton ()  ///< percentage of protons 
+148-{ 
+149-	return double (pr) / (pr + nr); 
+150-}
+--
+153:inline double nucleus::frac_neutron () ///< percentage of neutrons
+154-{ 
+155-	return double (nr) / (pr + nr); 
+156-}
+== target_type mixture code
+17:#include "target_mixer.h"
+54:	delete _mixer;
+62:	_mixer = NULL;
+76:	if(par.target_type == 1)
+77:		_mixer = new target_mixer (par);
+101:	if(p.target_type!=2)
+121:		cerr<<"Failed to make detector. Parameter geo_file must not be empty if target_type=2."<<endl;
+159:		if(p.target_type==1)
+160:			_mixer=new target_mixer(p);
+162:			_mixer = NULL;
+232:	if(_detector or _mixer) // _nucleus not reusable
+627:			if(_mixer)
+628:				_mixer->prepare(p);
+743:			if(_mixer)
+744:				_mixer->prepare(p);
+833:					if(_mixer)
+834:						_mixer->prepare(p);
+# --- rc=0

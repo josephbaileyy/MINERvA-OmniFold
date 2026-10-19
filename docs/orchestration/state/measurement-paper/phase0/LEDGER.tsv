@@ -1,0 +1,3 @@
+jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
+60003966	mp3_nuwro_h_probe	m3246	debug	COMPLETED	0:0	2026-10-19T10:02:47	2026-10-19T10:03:49	62	256	0.017222	0	MP-3	P-MP3: NuWro v21_09_1 numu CC on a free proton (20k events) with a paired C12 control on the production card; channel content, sigma per nucleon, timing	receipts/probe-mp3/job-60003966.txt
+TOTAL								62		0.017222	0		phase-0 grant: <=15 CPU and <=5 GPU node-h; charge = ElapsedRaw x billing / 256 / 3600 from sacct -X	

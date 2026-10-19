@@ -1,0 +1,622 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie && for d in work_nuwro_p1 work_nuwro_p8 work_seed1 work_mecseed1001 work_gibuu; do echo "== $d"; ls -la $d; done; echo "== work_gibuu_arr summary"; ls work_gibuu_arr | head -5; ls work_gibuu_arr | wc -l; du -sh work_gibuu_arr work_nuwro_p* work_seed* work_mecseed* 2>/dev/null; echo "== nuwro params p1"; cat work_nuwro_p1/params.txt; echo "== jobcard"; cat work_gibuu/gibuu_mefhc_numu.job; echo "== task1"; ls -la work_gibuu_arr/task1 | head; echo "== sbatch_gibuu"; cat sbatch_gibuu_mefhc.sh; echo "== setup_gibuu"; cat setup_gibuu.sh'
+# utc: 2026-10-19 16:48:44 UTC
+# ---
+== work_nuwro_p1
+total 311088
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:05 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb       182 Jun  8 11:05 flat_p1.log
+-rw-r-----  1 josephrb josephrb   7687469 Jun  8 11:05 nuwro_flat.root
+-rw-rw----  1 josephrb josephrb    284763 Jun  8 11:04 nuwro_p1.log
+-rw-r-----  1 josephrb josephrb 310474649 Jun  8 11:04 nuwro_p1.root
+-rw-rw----  1 josephrb josephrb      3460 Jun  8 10:59 nuwro_p1.root.par
+-rw-rw----  1 josephrb josephrb       328 Jun  8 10:59 nuwro_p1.root.txt
+-rw-rw----  1 josephrb josephrb       361 Jun  8 10:58 params.txt
+-rw-rw----  1 josephrb josephrb      1401 Jun  8 10:59 q0.txt
+-rw-rw----  1 josephrb josephrb      1355 Jun  8 10:59 q2.txt
+-rw-rw----  1 josephrb josephrb      1420 Jun  8 10:59 qv.txt
+-rw-rw----  1 josephrb josephrb      6708 Jun  8 11:04 random_seed
+-rw-rw----  1 josephrb josephrb        89 Jun  8 10:59 totals.txt
+-rw-rw----  1 josephrb josephrb      1304 Jun  8 10:59 T.txt
+== work_nuwro_p8
+total 310876
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 12:38 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb       182 Jun  8 12:39 flat_p8.log
+-rw-r-----  1 josephrb josephrb   7687156 Jun  8 12:39 nuwro_flat.root
+-rw-rw----  1 josephrb josephrb    286805 Jun  8 12:38 nuwro_p8.log
+-rw-r-----  1 josephrb josephrb 310252507 Jun  8 12:38 nuwro_p8.root
+-rw-rw----  1 josephrb josephrb      3460 Jun  8 12:33 nuwro_p8.root.par
+-rw-rw----  1 josephrb josephrb       328 Jun  8 12:33 nuwro_p8.root.txt
+-rw-rw----  1 josephrb josephrb       361 Jun  8 12:33 params.txt
+-rw-rw----  1 josephrb josephrb      1405 Jun  8 12:33 q0.txt
+-rw-rw----  1 josephrb josephrb      1362 Jun  8 12:33 q2.txt
+-rw-rw----  1 josephrb josephrb      1418 Jun  8 12:33 qv.txt
+-rw-rw----  1 josephrb josephrb      6700 Jun  8 12:38 random_seed
+-rw-rw----  1 josephrb josephrb        91 Jun  8 12:33 totals.txt
+-rw-rw----  1 josephrb josephrb      1211 Jun  8 12:33 T.txt
+== work_seed1
+total 274396
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:16 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb      5754 Jun  8 10:16 genie-mcjob-1.status
+-rw-r-----  1 josephrb josephrb 100023729 Jun  8 10:16 genie_mefhc_seed1.gst.root
+-rw-rw----  1 josephrb josephrb   1315524 Jun  8 10:16 gevgen_seed1.log
+-rw-r-----  1 josephrb josephrb 179559848 Jun  8 10:16 gntp.1.ghep.root
+-rw-r-----  1 josephrb josephrb      5121 Jun  8 10:09 input-flux.root
+== work_mecseed1001
+total 341764
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:03 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb      4912 Jun  8 11:03 genie-mcjob-1001.status
+-rw-r-----  1 josephrb josephrb 124750936 Jun  8 11:04 genie_mefhc_mecseed1001.gst.root
+-rw-rw----  1 josephrb josephrb   1638301 Jun  8 11:03 gevgen_mecseed1001.log
+-rw-r-----  1 josephrb josephrb 223496938 Jun  8 11:03 gntp.1001.ghep.root
+-rw-r-----  1 josephrb josephrb      5121 Jun  8 10:54 input-flux.root
+== work_gibuu
+total 68
+drwxrwx---  2 josephrb josephrb  4096 Jun  3 16:41 .
+drwxrwx--- 34 josephrb josephrb 40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb 18215 Jun  3 16:41 gibuu_mefhc_numu.job
+== work_gibuu_arr summary
+task1
+task10
+task11
+task12
+task13
+80
+2.0G	work_gibuu_arr
+304M	work_nuwro_p1
+304M	work_nuwro_p2
+304M	work_nuwro_p3
+304M	work_nuwro_p4
+304M	work_nuwro_p5
+304M	work_nuwro_p6
+305M	work_nuwro_p7
+304M	work_nuwro_p8
+268M	work_seed1
+268M	work_seed10
+268M	work_seed2
+268M	work_seed3
+268M	work_seed4
+268M	work_seed5
+268M	work_seed6
+268M	work_seed7
+268M	work_seed8
+268M	work_seed9
+334M	work_mecseed1001
+334M	work_mecseed1002
+334M	work_mecseed1003
+334M	work_mecseed1004
+334M	work_mecseed1005
+334M	work_mecseed1006
+334M	work_mecseed1007
+334M	work_mecseed1008
+== nuwro params p1
+random_seed = 21
+number_of_events = 250000
+number_of_test_events = 50000
+beam_particle = 14
+beam_type = 5
+beam_inputroot = /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu_nuwro.root
+beam_inputroot_flux = flux_numu
+target_type = 0
+nucleus_p = 6
+nucleus_n = 6
+dyn_qel_cc = 1
+dyn_res_cc = 1
+dyn_dis_cc = 1
+dyn_coh_cc = 1
+dyn_mec_cc = 1
+== jobcard
+!--------------------------------------------------------- -*- fortran -*- ----
+!* MasterJobCard for eventType=5 (neutrino induced)
+!------------------------------------------------------------------------------
+! please visit the GiBUU homepage for further information:
+! https://gibuu.hepforge.org
+!------------------------------------------------------------------------------
+! DON'T  FORGET to change  "path_to_input" in the namelist &input according to your local GiBUU installation
+!------------------------------------------------------------------------------
+! This jobcard is set up for MINERvA flux, to use another flux change "nuExp" in the namelist &neutrino_induced
+!------------------------------------------------------------------------------
+! In this jobcard some of the analysis is switched OFF, see namelist &neutrinoAnalysis;
+! the output of final events and particles in each event is given to the file FinalEvents.dat
+! to turn it OFF switch outputEvents=.false. in the namelist &neutrinoAnalysis
+! To produce the output in the LesHouches format to files EventOutput.Pert.*.lhe
+! switch WritePerturbativeParticles=T in the namelist &EventOutput
+!
+!******************************************************************************
+! Some hints on output:
+!
+! for kinetic energy distribution of pions see diff_000_dSigma_dEkin_pi_charge..... .dat  (1 pion in the final state )
+! for kinetic energy distribution of nucleons see diff_000_dSigma_dEkin_N_charge..... .dat  (1 pion in the final state )
+! for kinetic energy distribution of kaons see diff_000_dSigma_dEkin_K_charge..... .dat  (1 pion in the final state )
+!       these files will only be in output if in the namelist &detailed_diff  you set forkaon=.true.
+!       the same applies for eta, antikaons, Lambda and Sigma hyperons
+! to change the maximal kinetic energy (in the output file only) and binning, change ekinMax and dEkin  in the same namelist
+!
+! for Q2, outgoing-lepton-kinetic-energy and outgoing-lepton-angle-with-respect-to-neutrino-direction  distributions
+!       for "0 pion in the final state" (QE-like) events see  files diff_000_dSigma_ ..... lepton_no_pi.dat
+!       These will only appear on the output only if specificEventAnalysis=.true. and  in the namelist &nl_specificEvent you set no_pi=.true.
+!       In the same namelist other type of final states can also be choosen, output will be produced for all of them
+!
+! For energy reconstruction and oscillation analysis for the specific final states, as set in the &nl_specificEvent,
+!       set "reconstruct_neutrino_energy=.true. ; for output see files reconstruction....dat   and oscillation....dat
+!
+
+
+!##############################################################################
+!init flags
+!##############################################################################
+!******************************************************************************
+! neutrino init:
+!******************************************************************************
+! file: code/init/neutrino/initNeutrino.f90
+
+&neutrino_induced
+       process_ID      =  2 ! 2:CC, 3:NC, -2:antiCC, -3:antiNC
+       flavor_ID       =  2 ! 1:electron, 2:muon, 3:tau
+!
+!       for calculations with given, fixed neutrino energy
+!       nuXsectionMode  =  6 !  6: dSigmaMC
+! calculation for flux-veraged cross sections (choose with flag nuExp): above  plus 10
+       nuXsectionMode  = 16 ! 16: EXP_dSigmaMC
+!
+! The values for nuExp are ! only relevant if nuXsectionmode.ge.10
+!
+!       nuExp           =  0 !  0: noExp
+!       nuExp           =  1 !  1: MiniBooNE-nu
+!       nuExp           =  2 !  2: ANL
+!       nuExp           =  3 !  3: K2K
+!       nuExp           =  4 !  4: BNL
+!       nuExp           =  5 !  5: MinibooNE-barnu
+!       nuExp           =  6 !  6: MINOS-numu-numode
+!       nuExp           =  7 !  7: MINOS-barnumu-numode
+!       nuExp           =  8 !  8: NOvA
+!       nuExp           =  9 !  9: T2K-2.5kA-ND280
+!       nuExp           = 10 ! 10: uniform-distribution
+!       nuExp           = 11 ! 11: MINOS-numu-barnumode
+!       nuExp           = 12 ! 12: MINOS-barnumu-barnumode
+!      nuExp           = 13 ! 13: MINERvA-nu      !this is the old MINERvA flux
+!       nuExp           = 14 ! 14: MINERvA-barnu
+!       nuExp           = 15 ! 15: DUNE neutrino mode flux
+!       nuExp           = 16 ! 16: DUNE antineutrino mode flux
+!       nuExp           = 17 ! 17: LBNO
+!       nuExp           = 18 ! 18: NOMAD
+!       nuExp           = 19 ! 19: BNB nue
+!       nuExp           = 20 ! 10: BNB nuebar
+!       nuExp           = 21 ! 21: BNB numu
+!       nuExp           = 22 ! 22: BNB numubar
+!       nuExp           = 23 ! NOvA ND    !various modes for near detector                                       
+!       nuExp           = 24 ! T2K on axis beam (INGRID)
+!       nuExp           = 25 ! 25: MINERvA new 2016 flux
+       nuExp           = 99 ! new, own flux. Must be in buuinput as .dat file 
+                             ! with 2 columns,
+                             ! 1st col: energy, 2nd col: flux,
+                             ! energies must be linear and equidistant
+                             ! name of the flux file is given in the next line: 
+       FileNameFlux = '/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput2019/neutrino/MINERvA_MEflux.dat'
+                             ! for nuExp=99
+                             ! this is an example for the MINERvA medium energy
+                             ! flux, but any other flux could be inserted here
+
+!
+       includeQE       = T
+       includeDELTA    = T
+       includeRES      = T
+       include1pi      = T
+       includeDIS      = T
+       include2p2hQE   = T
+/
+
+!   Flux cuts
+&nl_fluxcuts
+       Enu_lower_cut    = 0.0
+       Enu_upper_cut    = 20.0
+       energylimit_for_Qsrec = T   ! switch for using fluxcuts also in Q^2 reconstr.
+/
+!
+
+
+! file: code/density/nucleus.f90
+&target
+	target_Z=6
+	target_A=12
+	densitySwitch_Static=2          ! 0: density=0.0, 1: Woods-Saxon by Lenske, 2 : NPA 554, 3: Woods-Saxon by Lenske, different neutron and proton radii,
+					! 5: density distribution is a sphere with density according to the input value of "fermiMomentum_input".
+	fermiMomentum_input=0.225       ! Input value of the fermi momentum for densitySwitch_static=5.
+	fermiMotion=.true.
+	ReAdjustForConstBinding=.true.
+  ConstBinding=-0.008             ! binding energy at Fermi surface, only valid for ReAdjustForConstBinding=true
+/
+
+! file: code/density/density.f90
+&initDensity
+    densitySwitch=2                 ! 1=dynamic density according to testparticle density, 2=analytic density prescription
+/
+
+! file: code/density/pauliBlocking.f90
+&initPauli
+    pauliSwitch=2                   ! 1=dynamic, 2=analytic
+/
+!##############################################################################
+! general input, controls among others the statistics of output
+!##############################################################################
+
+
+! file: code/inputOutput/input.f90
+! the number of generated events is proportional (but not equal, because some "events" can be in prohibited phase space)
+! to target_A * numEnsembles * num_runs_SameEnergy
+&input
+	numEnsembles=4000              ! for C12 you can use 4000, for heavier nuclei should be lower; decrease it if there are problems with memory,
+	eventtype=5                     ! 5=neutrino, 200=simple transport of a given particle
+	numTimeSteps=150               ! the distance numTimeSteps*delta_T (100*0.2=20 fm in this example) should significantly exceed the radius of the target nucleus
+	delta_T=0.2
+	fullensemble=.true.
+	localEnsemble=.true.
+	num_runs_SameEnergy=1         ! increase these if you want to increase statistics (= number of generated events)
+	num_Energies=1                  ! for nuXsectionMode=6 or 16 keep this 1, for other nuXsectionMode this is the number of the running Q2/Elepton/cosTheta variables, respectively
+	printParticleVectors=.false.
+	freezeRealParticles=.true.
+	LRF_equals_CALC_frame=.true.          !if .false.: no offshelltransport possible
+	path_to_input='/pscratch/sd/j/josephrb/gbi'
+/
+
+! file: code/init/neutrino/neutrinoXsection.f90
+&nl_neutrinoxsection
+	singlePiModel=1                 ! 0 for HNV, 1 for MAID
+
+  !   the following parameters determine the transition from resonance to DIS excitations, determined by
+  !   the invariant mass W,  see "Lalakulich Gallmeister Mosel PRC86(2012)014607" for details
+      REScutW1=1.9
+      REScutW2=2.0
+      DIScutW1=1.55
+      DIScutW2=1.65
+
+  invariantMasscut=20.           ! mass cuts on Wrec
+  invariantMassCut_BG = 20.      ! mass cuts on Wrec
+/
+
+
+! SPECFIC NEUTRINO FLAGS depending on nuXsectionMode
+! file: (for all of them) code/init/neutrino/neutrinoXsection.f90
+! relevant for nuXsectionMode=6 and (except parameter enu) 16
+&nl_SigmaMC
+    MC_xmax=2.0		! to get QE peak in nuclei, where Bjorken_x can be larger than 1
+    enu=1.0
+/
+
+
+
+!##############################################################################
+!analysis flags
+!##############################################################################
+
+
+!******************************************************************************
+! Neutrino analysis
+!******************************************************************************
+
+! file: code/init/neutrino/expNeutrinofluxes.f90
+&MiniBooNE_energyFlux           !
+    Eb=0.030                       ! which binding energy to use in the muon-kinematics-based formular for neutrino energy reconstruction for "0-pion" events
+/
+
+! file: code/analysis/neutrinoAnalysis.f90
+
+&neutrinoAnalysis
+	detailed_diff_output=.true.     ! differential xsec; see namelist detailed_diff for max values and bins of the histograms
+	kineticEnergyDetectionThreshold_nucleon=0.
+	kineticEnergyDetectionThreshold_chargedpion=0.
+	kineticEnergyDetectionThreshold_neutralpion=0.
+	calorimetric_analysis=.false.        ! calorimetric reconstruction of energy; see namelist nl_calorimetric_analysis
+	ZeroPion_analysis=.true.            ! extra cross sections  for events with 0 pions in the final state
+	reconstruct_neutrino_energy=.true.  ! calculate neutrino energy reconstruction for varios final states (see nl_specificEvent)
+	specificEvent_analysis=.true.       ! extra cross sections for specific final states; see namelist nl_specificEvent
+										                  ! also provides Q2 and energy reconstruction
+	inclusiveAnalysis=.false.            !if .true. we don't care whether particles have made it out
+	outputEvents=.true.                   ! output list of events and all outgoing particles in each event to the file FinalEvents.dat
+!  AngleUpperDetectionThresholdDegrees_lepton = 20.    ! outgoing lepton acceptance cut
+!  kineticEnergyDetectionThreshold_lepton=0.0          ! outgoing lepton acceptance cut
+
+  include_W_dist=.true.               !printout of W-distributions for outgoing channel
+/
+
+! file: code/analysis/EventOutputAnalysis.f90
+&EventOutput
+!     WritePerturbativeParticles = T  ! if you want that output
+!     EventFormat=1 ! 1=LesHouches(default), 2=Oscar, 3=Shanghai, 4=ROOT
+/
+
+
+
+! file: code/analysis/neutrinoAnalysis.f90
+&nl_calorimetric_analysis
+	numax=30
+	nubin=0.02
+	Enumax=30
+	enubin=0.05
+/
+
+! file: code/analysis/neutrinoAnalysis.f90
+$nl_specificEvent
+!     any .true. in this namelist must be combined with
+!     specificEvent_analysis=.true. in &neutrinoAnalysis
+
+!     cross sections for various event types
+!     Example: set no_pi to .true. if you want to produce one-diff xsec versus lepton
+!     variables (Ekin, Q2, costheta) for "no pions in the final state" events
+
+      no_pi         = T         ! specificEvent=1
+      p_Xn_no_pi    = T         ! specificEvent=2
+      piplus        = T         ! specificEvent=3
+      piplus_MULTI  = T         ! specificEvent=4
+      pi0           = T         ! specificEvent=5
+      pi0_MULTI     = T         ! specificEvent=6
+      piminus       = T         ! specificEvent=7
+      piminus_MULTI = T         ! specificEvent=8
+      pp_no_pi      = T         ! specificEvent=9
+      pn_no_pi      = T         ! specificEvent=8
+      nn_no_pi      = T         ! specificEvent=11
+      pp_Xn_no_pi   = F         ! specificEvent=12
+      nn_Xp_no_pi   = F         ! specificEvent=13
+      ppp_Xn_no_pi  = F         ! specificEvent=14
+      pppp_Xn_no_pi = F         ! specificEvent=15
+      p_no_pi       = T         ! specificEvent=16
+      n_no_pi       = T         ! specificEvent=17
+      Xn_no_pi      = T         ! specificEvent=18
+
+      full_incl     = T         ! specificEvent=22
+
+      QEp=.true.
+
+!
+!  binning for reconstruction of Q2 and Enu
+!
+  binsizeQ2=0.01
+  binsizeEnu=0.05
+  maxQ2=5.0
+  maxEnu=8.0
+/
+
+
+! file: code/analysis/neutrinoAnalysis.f90
+&detailed_diff
+	ekinMax=5.0         ! maximum value of Ekin in the output of distribution of hadrons versus kinetic energy
+	dEkin=0.02          ! binning of Ekin in the output versus kinetic energy
+	fornucleon=.true.   ! produce output versus kinetic energy, angle, ... for this outgoing hadron
+	forpion=.true.      ! to the files diff_....
+	foreta=.true.
+	forkaon=.true.
+	forkaonBar=.true.
+	forLambda=.true.
+	forSigmaResonance=.false.
+/
+
+
+!******************************************************************************
+! Model ingredients
+!******************************************************************************
+
+! file: code/init/lowElectron/lepton2p2h.f90
+&lepton2p2h
+    ME_Version=4                    !
+/
+
+
+! file: code/init/neutrino/matrixelement.f90
+&neutrino_matrixelement
+    which_resonanceModel=0          !0=QE + matrixelements from MAID, 1=QE matrixelements + old Delta, 2=Rein-Sehgal
+/
+
+
+! file: code/init/lepton/formfactors_QE_nucleon/FF_QE_nucleonScattering.f90
+&ff_QE
+	parametrization=3               ! 1=BBA03, 2=BBBA05, 3=BBBA07
+	useNonStandardMA=.false.        ! if true, use value of MA_in for axial mass MA, if false, use best fit
+!   MA_in=1.0
+/
+
+!******************************************************************************
+! form factors for resonance production
+!******************************************************************************
+! file: code/init/lepton/formfactors_ResProd/formFactor_ResProd.f90
+&input_FF_ResProd
+  FF_ResProd=0                    ! 0=MAID in CM-frame, 1=fit of Lalakulich ,2=MAID in LAB-frame
+  !MA=1.3                         ! axial mass in the Delta resonance form factors based on ANL=0.95 (default)  or BNL=1.3
+/
+
+!******************************************************************************
+!background parameters for fit to ANL or BNL pion data
+!******************************************************************************
+! file: code/init/neutrino/singlePionProductionMAIDlike.f90
+&neutrino_MAIDlikeBG
+!  b_proton_pinull=3.0            ! parameters for 1-pion background  ANL=3   (default)            BNL=6
+!  b_neutron_piplus=1.5           !                                   ANL=1.5 (default)            BNL=3.0
+/
+
+
+!##############################################################################
+! in-medium width
+!##############################################################################
+
+! file: code/width/baryonWidthMedium.f90
+&width_Baryon
+    mediumSwitch=.false.               ! if .false. vacuum widths will be used for all resonances
+                                      ! and other switches are not meaningful/relevant
+    mediumSwitch_Delta=.false.         ! Use Oset broadening of the Delta (only relevant for mediumSwitch_coll=.false.)
+    mediumSwitch_coll=.false.         ! Use collisional broadening of all resonances
+/
+
+
+! file: code/spectralFunctions/spectralFunc.f90
+&spectralFunction
+   nuclwidth=0.001                 ! if mediumSwitch_coll=.false.: this parameter determines the "bare nucleon width", for numerical purpose
+   relativistic=.true.             ! if mediumSwitch_coll=.false.: relativistic or non-rel. spectral function
+/
+
+
+!##############################################################################
+! propagation
+!##############################################################################
+! file: code/propagation/propagation.f90
+&propagation
+	RungeKuttaOrder=2                ! 1=first order Runge-Kutta, 2=second order Runge-Kutta
+/
+
+
+! file: code/width/offShellPotential.f90
+&offShellPotential
+	useOffShellPotentialBaryons=.false.     ! if inMediumSwitch=.false. also useOffShellpotential will be set to .false.
+	extrapolateBaryonWidth=.false.          ! whether to extrapolate the baryon width below minimal mass
+/
+
+
+!##############################################################################
+! potentials
+!##############################################################################
+! file: code/potential/baryonPotential.f90
+&baryonPotential
+	EQS_Type=5                      ! 1=soft mom-dep, 2=hard mom-dep, 3=soft non-mom-dep, 4=hard non-mom-dep, 5=medium mom-dep
+	DeltaPot=1                      ! 1=2/3 of nucleon potential, 2=100 MeV*rho/rhoNull
+/
+
+
+!##############################################################################
+! collision term
+!##############################################################################
+
+! file: code/collisions/collisionTerm.f90
+&collisionTerm
+	oneBodyProcesses=.true.
+	twoBodyProcesses=.true.
+	threeBodyProcesses=.true.
+	DoJustAbsorptive=.false.
+/
+
+
+! file: code/collisions/twoBodyReactions/hadronFormation.f90
+!&hadronFormation
+!   useJetSetVec=.false.  ! use .false. to switch to old JETSET model for hadron formation
+!   tauForma=0.01         ! only valid for useJetSetVec=.false. ,   the value 0.01 is equivalent to 0, default is 0.8
+!/
+
+
+! file: code/collisions/twoBodyReactions/master_2Body.f90
+&master_2Body
+	baryonBaryonScattering=.true.
+	baryonMesonScattering=.true.
+	mesonMesonScattering=.false.
+  NN_inmed=.true.
+/
+
+
+! file: code/collisions/twoBodyReactions/baryonMeson/resonanceCrossSections.f90
+&resonanceCrossSections
+	fullPropagator=.false.          ! Use self energies in resonance propagators (only when collisional broadening is switched on)
+/
+
+
+
+! file: code/collisions/insertion.f90
+&insertion
+    minimumEnergy=0.005  ! default is 0.005 GeV
+/
+
+
+! file: code/collisions/twoBodyReactions/HiEnergy/DoCollTools.f90
+&pythia
+   PARP(91)=0.44
+/
+== task1
+total 25720
+drwxrwx---  2 josephrb josephrb   176128 Jun 10 11:54 .
+drwxrwx--- 82 josephrb josephrb     4096 Jun  9 03:35 ..
+-rw-rw----  1 josephrb josephrb 26152151 Jun  8 20:50 FinalEvents.dat
+== sbatch_gibuu
+#!/bin/bash
+#SBATCH --job-name=gibuu_mefhc
+#SBATCH --account=m3246
+#SBATCH --qos=shared
+#SBATCH --constraint=cpu
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32G
+#SBATCH --time=00:45:00
+#SBATCH --array=1-80%40
+#SBATCH --output=gibuu_mefhc_%a_%A.out
+#SBATCH --error=gibuu_mefhc_%a_%A.err
+
+# GiBUU 2019 (NOvA CVMFS, native) MINERvA ME FHC nu_mu CC generation.
+# Each array task is one independent GiBUU run (numEnsembles=4000,
+# num_runs_SameEnergy=1) with a UNIQUE random seed -> work_gibuu_arr/task<N>/
+# FinalEvents.dat. ~24k events / ~11.6k in-PS per task (~7 min); 80 tasks ->
+# ~0.9M in-PS, comparable to the GENIE/NuWro samples. Combine all FinalEvents.dat
+# with gibuu_to_xsec3d.py (divides by the number of files = runs).
+#
+# perweight already includes 1/numEnsembles, so each run's sum(perweight) is a
+# full sigma estimate; averaging over runs = dividing by N files (the converter
+# does this). Keep num_runs_SameEnergy=1 so that statement stays exact.
+
+set -eo pipefail
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
+
+REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
+G=$REPO/3d-unfolding/genie
+source "$G/setup_gibuu.sh"
+
+N=${SLURM_ARRAY_TASK_ID}
+SEED=$(( N * 7919 + 12345 ))
+WORK="$G/work_gibuu_arr/task${N}"
+SHORT_INPUT=/pscratch/sd/j/josephrb/gbi          # short path -> buuinput_local (avoids GiBUU filename truncation)
+OUT="$WORK/FinalEvents.dat"
+
+rg_skip_if_complete "$OUT" && exit 0
+mkdir -p "$WORK"; cd "$WORK"
+
+# per-task jobcard: base ME jobcard + a unique &initRandom seed prepended
+{
+  echo "&initRandom"
+  echo "      SEED=${SEED}"
+  echo "/"
+  cat "$G/work_gibuu/gibuu_mefhc_numu.job"
+} > task.job
+# ensure path_to_input points at the short writable mirror
+sed -i "s|path_to_input='[^']*'|path_to_input='${SHORT_INPUT}'|" task.job
+
+echo "[gibuu] task $N seed=$SEED node=$(hostname) start $(date -u '+%F %T UTC')"
+rg_run "$OUT" "$GIBUU_BIN" < task.job > gibuu.log 2>&1
+RC=$?
+echo "[gibuu] task $N rc=$RC end $(date -u '+%F %T UTC')"
+grep -iE "error opening|Directory does not|STOP:" gibuu.log | head -3 || true
+ls -la "$OUT" 2>/dev/null && grep -vc '^#' "$OUT"
+== setup_gibuu
+#!/bin/bash
+# Native GiBUU 2019 (NOvA CVMFS build) on Perlmutter -- NO container needed.
+#
+# GiBUU.x is dynamically linked against ROOT (libCore/libRIO/libTree/...) and the
+# old Fortran runtime libgfortran.so.3. We resolve:
+#   - ROOT from the conda root_6_28 env (its libstdc++.so.6 is new enough to
+#     satisfy ROOT's GLIBCXX_3.4.29/30 + CXXABI_1.3.15 requirements), and
+#   - libgfortran.so.3 from the larsoft gcc v6_3_0 product.
+# ORDER MATTERS: the conda lib dir (new libstdc++) MUST precede the old gcc lib
+# dir, or the stale gcc libstdc++ wins and ROOT fails to load. Verified: with
+# this order `ldd GiBUU.x` resolves cleanly and the binary starts.
+#
+# Usage:  source setup_gibuu.sh   (then run "$GIBUU_BIN" < jobcard)
+GIBUU_HOME=/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU
+export GIBUU_BIN="$GIBUU_HOME/bin/GiBUU.x"
+export GIBUU_INPUT="$GIBUU_HOME/buuinput2019"
+export GIBUU_FLUX="$GIBUU_INPUT/neutrino/MINERvA_MEflux.dat"   # MINERvA medium-energy nu flux (0.25-94.75 GeV)
+
+CONDA_ROOTLIB=/global/homes/j/josephrb/.conda/envs/root_6_28/lib
+GCC3LIB=/cvmfs/larsoft.opensciencegrid.org/products/gcc/v6_3_0/Linux64bit+3.10-2.17/lib64
+export LD_LIBRARY_PATH="$CONDA_ROOTLIB:$GCC3LIB:$GIBUU_HOME/lib:$LD_LIBRARY_PATH"
+
+if [ ! -x "$GIBUU_BIN" ]; then echo "[setup_gibuu] FAIL: $GIBUU_BIN missing" >&2; return 1 2>/dev/null || exit 1; fi
+echo "[setup_gibuu] GiBUU.x = $GIBUU_BIN"
+echo "[setup_gibuu] input   = $GIBUU_INPUT"
+echo "[setup_gibuu] flux    = $GIBUU_FLUX"
+# --- rc=0
