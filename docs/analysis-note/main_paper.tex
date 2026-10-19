@@ -35,8 +35,9 @@
 \begin{document}
 \raggedbottom % reprint-mode layout: avoid stretched inter-paragraph gaps (cosmetic; the journal re-typesets)
 
-\title{Multidimensional unbinned unfolding of MINERvA inclusive charged-current
-neutrino data: validation and calibrated model tests}
+% Methods rewrite (OUTLINE-DECISION sec. 2; GPT-6.1-sol framing Part 2, title 1): provisional until the Ben review.
+\title{Performance and limitations of multidimensional OmniFold unfolding with
+MINERvA open data}
 
 \author{Joseph Bailey}
 \email{josephrb@stanford.edu}
@@ -50,36 +51,31 @@ neutrino data: validation and calibrated model tests}
 
 \begin{abstract}
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): abstract cut to about 150 words; headline
-% results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15). Moved to the body
-% only: the five prediction names (Secs. II, VI A), the marginal-normalization and closure checks (Intro, Sec. IV C,
-% Conclusions), "of the same cells" (Intro, Sec. VI C), the seed and coverage
-% limits (Secs. IV, V), "These rejections hold only under stated conditions" (the two that limit interpretation are
-% named), and "The tests recover known discrepancies" (Sec. VI C).
-% Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json),
-% as printed in the Introduction; "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
-% for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :133, :144.
-We apply OmniFold to MINERvA open data for medium-energy $\nu_{\mu}$
-charged-current inclusive interactions.  The analysis reproduces the
-published double-differential cross section in muon kinematics, with the
-integrated cross section within about one percent, and extends it to five
-simultaneous observables by adding available energy, three-momentum transfer,
-and hadronic invariant mass.  The three- to five-observable results are
-central values only.  Pseudo-experiments reveal background-subtraction and
-regularization biases, and the measured model dependence, a median of about
-% plain-language pass 2, review fix R-m1 (DECISION-20261018-joseph-plain-language-pass2)
-10--13\% per cell, prevents a five-dimensional measurement whose total
-uncertainties meet our predefined 10\% precision target.
-% plain-language pass, review fix R4 (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass 2, review fix R-M1 (DECISION-20261018-joseph-plain-language-pass2)
-Tests calibrated with pseudo-experiments that rerun the full analysis chain
-under a stated nuisance model reject the hybrid null hypotheses built from five generator predictions, in
-total and in shape, at the 5\% familywise level.
-% plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass, review fix R5 (DECISION-20261018-joseph-plain-language-pass)
-Their interpretation is limited: the nuisance model has no calorimetric
-recoil-response uncertainty, convergence of the fine grid defining the null
-hypotheses has not been shown, and the joint five-observable information is not shown to
-discriminate beyond matched coarse projections.
+% results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15).
+% Methods rewrite (OUTLINE-DECISION sec. 2-3; GPT-6.1-sol framing Part 4): recast as a methods abstract; provisional.
+% Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json);
+% \binsTen (values.tex:85); "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
+% for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144.
+% Moved to the body only (Sec. I scope, Sec. VIII): the nuisance-averaged size and the 0.9 alpha bound.
+We study the performance and limitations of OmniFold unbinned unfolding on
+MINERvA open data for medium-energy $\nu_{\mu}$ charged-current inclusive
+interactions.  The implementation reproduces the published muon-kinematic
+double-differential cross section, with the integrated cross section within
+about one percent and \SI{\binsTen}{\percent} of the bins within
+\SI{10}{\percent}.  Extended to five simultaneous observables (adding available
+energy, three-momentum transfer, and hadronic invariant mass), it preserves
+the marginal normalizations, but pseudo-experiments reveal
+background-subtraction and regularization biases, and a coverage test of its
+statistical intervals fails at the tested truths.  An envelope over five
+tested truth deformations, a median of about 10--13\% per cell, keeps the
+definitions studied from meeting our predefined 10\% precision target.
+% SF-1 pending
+Tests of hybrid null hypotheses built from five generator predictions,
+calibrated by rerunning the full analysis chain, all reject at the 5\%
+familywise level under a nuisance model without calorimetric recoil-response
+uncertainty.  They are not physical generator exclusions, convergence of the
+fine grid defining the hypotheses is not shown, and no gain over matched coarse
+projections is shown.
 \end{abstract}
 
 \maketitle

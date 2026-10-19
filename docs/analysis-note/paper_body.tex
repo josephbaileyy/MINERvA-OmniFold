@@ -6,9 +6,19 @@
 % article was shortened on 2026-10-11 and every removed detail has a home in
 % the note (joint tests: sec_joint.tex; 2D coverage: sec_validation.tex;
 % five-axis validation and uncertainty: sec_5d.tex).
+% 2026-10-19: restructured as the methods paper (Stage F, methods rewrite), following
+% docs/orchestration/state/2d-closeout/stageF/methods/OUTLINE-DECISION.md sec. 2 (sections I-IX) and sec. 3.
+% The writer's ledger of removed, moved and collapsed sentences, the new numbers and the claim changes (M8)
+% is the methods-rewrite WRITER-REPORT. Markers: "% SF-1 pending" (wording depends on the SF-1 study,
+% stageF/methods/SF1-SPEC.md); "% M5 for Joseph".
 % ====================================================================
 
-\section{Introduction}
+% Table cells: l columns with fixed-width \parbox cells, not p{} columns (RevTeX 4.2f replaces the array
+% preamble parser; see result_status_rows.tex and commit e25abfd5).
+\newcommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
+
+\section{Introduction and scope}
+\label{sec:intro}
 
 Multidifferential neutrino cross sections test interaction models across muon
 and hadronic observables.  Their interpretation depends on correcting detector
@@ -37,32 +47,35 @@ invariant mass $W$ to obtain simultaneous three-, four-, and five-observable
 central values.  Multi-differential neutrino measurements on data reach three
 dimensions~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme,MicroBooNE:2023inc3d,NOvA:2026inc3d}.
 The observables share reconstructed inputs: $\Eavail$, $q_{3}$, and $W$ are all
-built from reconstructed hadronic energy.
+built from reconstructed hadronic energy (Sec.~\ref{sec:data}).
 
-We assess how reliable the method is in practice on data.  The
-two-dimensional reproduction provides an external reference.  As observables
-are added, comparisons with the lower-dimensional projections test consistency,
-closure tests with injected shape changes test shape recovery, and
-pseudo-experiments that include backgrounds, together with the ensembles of
-repeated unfoldings used for the uncertainties, test the sensitivity to the
-background treatment, the regularization, and the estimator's random seed
-(Secs.~\ref{sec:validation} and~\ref{sec:uncertainty-status}).  Together
-they identify which parts of the method work and which limit a
-five-dimensional measurement with total uncertainties.
-
-As an application, we test specified generator predictions.  The published
-muon-kinematic measurement already disfavours these generator
-families~\cite{MINERvA:2021owq}.  We calibrate each test through the full
-analysis chain, using an estimator with unbinned background refinement, so that the
-estimator's bias toward its prior enters each simulated null distribution
-(Sec.~\ref{sec:joint}).
+% Methods rewrite (OUTLINE-DECISION sec. 2, row I): the framing. "Calibration without validated intervals":
+% docs/orchestration/RECORD-20260927-s5p-stage2-exit.md sec. 5 ("Its validity does not rest on the measurement's
+% bounded model component: the estimator's bias under G is part of the simulated null").
+This paper evaluates that implementation as a case study of multidimensional
+unfolding and of inference with a biased estimator; it does not deliver a
+validated five-observable cross-section measurement.  Two requirements are kept
+apart.  The coverage of unfolded intervals is the rate at which they contain
+the true cross section.  The calibration of a test is the rate at which it
+rejects a true hypothesis; it can be obtained without validated intervals, by
+simulating the whole analysis chain at the hypothesis, so that the estimator's
+bias enters the simulated null distribution.  The two-dimensional reproduction provides an external benchmark.  As
+observables are added, projections, closure tests with injected shape
+changes, pseudo-experiments that include backgrounds, and the ensembles of
+repeated unfoldings used for the uncertainties test consistency, shape
+recovery, and the sensitivity to the background treatment, the regularization,
+and the estimator's random seed.  As an application of calibration, we test
+specified generator predictions.  The published muon-kinematic measurement
+already disfavours these generator families~\cite{MINERvA:2021owq}.  We
+calibrate each test through the full analysis chain, using an estimator with
+unbinned background refinement (Sec.~\ref{sec:joint}).
 
 The two-dimensional reproduction agrees with the published total cross section
 to about one percent (ratio $\ratioTot$), with \SI{\binsTen}{\percent} of the
 205 bins within \SI{10}{\percent}.  The higher-dimensional central values agree
-in normalization with the lower-dimensional results they extend and recover
-the known low-recoil discrepancy; the three- and four-observable central values
-also pass closure tests with injected shape changes.
+in normalization with the lower-dimensional results they extend, and the
+three- and four-observable central values pass closure tests with injected
+shape changes.
 % plain-language pass, review fix R1, R4 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): "the quoted uncertainties do not include it"
 % is stated once, at the claim (Sec. IV C); the failed five-dimensional coverage test is named (theme C, F1).
@@ -73,18 +86,22 @@ treatment, used only for the generator tests, largely removes.  The unfolding
 also recovers only part of a change of the $\Eavail$ shape as large as the
 difference between generators, and a coverage test of statistical intervals
 from a deterministic variant of the five-dimensional estimator fails at the
-tested truths.  These biases, the dependence on the estimator's random seed,
-and the untested or failed interval coverage limit the method, and the
-measured model
+tested truths.
+% Methods rewrite: "These biases, the dependence on the estimator's random seed, and the untested or failed interval
+% coverage limit the method" collapsed into the scope statement below (no validated coverage) and Sec. IX.
 % J3/J4 provisional (DECISION-20261018, packet C4: kept; the D1 register and D2 are in sec:uq2d)
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A (paper F4), the size and the target.
 % Source: note sec_5d.tex "Reporting definitions for a five-dimensional measurement" (about 10--13% per coarse joint
 % cell; median 68% half-width at most 10%); RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :133, :144.
-dependence, a median of about 10--13\% per cell, prevents a five-dimensional measurement
-whose total uncertainties meet the \SI{10}{\percent} precision target we set
-in advance (Sec.~\ref{sec:uncertainty-status}).
+% Methods rewrite (OUTLINE-DECISION sec. 3): "the measured model dependence" renamed the envelope over the five
+% tested truth deformations; "prevents a five-dimensional measurement" scoped to the definitions studied (M8).
+An envelope over the five tested truth deformations, a median of about
+10--13\% per cell, keeps each reporting definition we studied from meeting
+the \SI{10}{\percent} precision target we set in advance
+(Sec.~\ref{sec:uncertainty-status}).
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme C (F15), the hybrid null hypotheses.
+% SF-1 pending
 All ten calibrated tests, in total and in shape, reject the hybrid null
 hypotheses built from the five predictions at the 5\% familywise level under
 six stated conditions (Sec.~\ref{sec:conditions}).
@@ -96,16 +113,85 @@ interpretation.  Each test also has $p<0.05$ in at least one matched coarse
 projection of the same cells, so the joint information is not shown to add
 discrimination.
 
+% Methods rewrite: the scope statement, stated once (OUTLINE-DECISION sec. 3; GPT-6.1-sol Part 3 draft, corrected by
+% the M2 records). Null below the fine grid: stageF/methods/M2-AUDIT.md:39, :46 (Q1 text fix) and
+% M2-ARCHIVE-CHECKS.md:8. Nuisance-averaged size: M2-AUDIT.md:143, :152 (Q3). 0.9 alpha: M2-FWER-RECORD.md:49-52,
+% assumptions :56-66. Carbon targets: KNOWN_ISSUES.md row 97.
+\emph{Scope.}  This paper studies one OmniFold implementation on one data
+set.  The three- to five-observable central values are outputs of the
+estimators of Sec.~\ref{sec:method} under the implemented observable
+definitions, simulated detector response, background treatment, and
+regularization; their total intervals have no validated coverage, and we
+quote no covariance-based generator significance for them.  The generator
+tests are conditional tests of explicitly simulated hybrid hypotheses.  Each
+null hypothesis sets the cross section equal to a prediction on every cell of
+a fine five-observable grid.  Below that grid the event composition is the
+MINERvA Tune~v1 simulation's, varied by the drawn interaction-model universes
+with every fine-cell integral held fixed.  The calibrated size is averaged
+over the stated nuisance priors; it is not guaranteed at each fixed value of
+the nuisance parameters.  The detector model has the implemented variations
+but no calorimetric recoil-response uncertainty, and two of the predictions
+are for a carbon target, the data for CH.  Under the assumptions of
+Sec.~\ref{sec:calibration}, the familywise error rate of the ten decisions is
+at most $0.9\alpha$.  The rejections apply to these hypotheses under this
+model: they are not physical exclusions of the generators, and they provide
+no measurement uncertainty.
+
+% Methods rewrite: the claims-and-evidence table (OUTLINE-DECISION sec. 2, row I; organizational, no new result).
+% Sources per row: \ratioTot, \binsTen, \chiPaper (values.tex:48, :85, :125); \uqMedian (values.tex:140); the
+% 1--2% normalizations (Sec. V text); the envelope medians 9.6--13.4%: RECORD-20260927-s5p-stage2-exit.md:129-131.
+\begin{table*}[t]
+  \caption{Claims and evidence.  Each result is tied to the estimator
+  configuration of Table~\ref{tab:estimators} that produced it and to the
+  interpretation it supports.}
+  \label{tab:claims}
+  \centering\scriptsize
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \pcell{0.18\textwidth}{Result} & \pcell{0.20\textwidth}{Estimator} &
+    \pcell{0.30\textwidth}{Evidence} & \pcell{0.26\textwidth}{Supported interpretation} \\
+    \midrule
+    \pcell{0.18\textwidth}{Two-observable reproduction} &
+    \pcell{0.20\textwidth}{(a); (b) as cross-check} &
+    \pcell{0.30\textwidth}{integral ratio $\ratioTot$; \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}; $\chi^{2}/\mathrm{ndf}=\chiPaper$ (Fig.~\ref{fig:validation})} &
+    \pcell{0.26\textwidth}{end-to-end benchmark on the same data; $\chi^{2}$ is a descriptive distance} \\
+    \pcell{0.18\textwidth}{Two-observable covariance} &
+    \pcell{0.20\textwidth}{(a)} &
+    \pcell{0.30\textwidth}{four blocks, median \SI{\uqMedian}{\percent} per bin (Table~\ref{tab:cov2d})} &
+    \pcell{0.26\textwidth}{the specified variations; coverage untested} \\
+    \pcell{0.18\textwidth}{Three- to five-observable central values} &
+    \pcell{0.20\textwidth}{(a)} &
+    \pcell{0.30\textwidth}{marginal normalizations agree; three- and four-observable closure} &
+    \pcell{0.26\textwidth}{estimator outputs for qualitative comparison (Sec.~\ref{sec:central})} \\
+    \pcell{0.18\textwidth}{Five-observable bias} &
+    \pcell{0.20\textwidth}{(c), (d), (e)} &
+    \pcell{0.30\textwidth}{background and deformation residuals (Figs.~\ref{fig:bkg-residual} and~\ref{fig:deformation})} &
+    \pcell{0.26\textwidth}{limitations demonstrated at the tested truths} \\
+    \pcell{0.18\textwidth}{Five-observable coverage} &
+    \pcell{0.20\textwidth}{(c)} &
+    \pcell{0.30\textwidth}{failed test at two truths (Fig.~\ref{fig:coverage})} &
+    \pcell{0.26\textwidth}{statistical intervals miscover there} \\
+    \pcell{0.18\textwidth}{Precision target} &
+    \pcell{0.20\textwidth}{(e)} &
+    \pcell{0.30\textwidth}{deformation-envelope medians 9.6--13.4\% (Table~\ref{tab:reporting})} &
+    \pcell{0.26\textwidth}{the definitions studied miss the target} \\
+    % SF-1 pending
+    \pcell{0.18\textwidth}{Generator tests} &
+    \pcell{0.20\textwidth}{(e)} &
+    \pcell{0.30\textwidth}{ten rejections, calibrated through the full chain (Table~\ref{tab:joint})} &
+    \pcell{0.26\textwidth}{conditional on the hybrid nulls and the nuisance model; not physical exclusions} \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): the section order after the uncertainty
 % status was moved before the central values (director's structure decision).
-Sections~\ref{sec:data} and~\ref{sec:method} describe the data and estimators,
-Sec.~\ref{sec:validation} the validation, Sec.~\ref{sec:uncertainty-status}
-the status of a five-dimensional uncertainty, Sec.~\ref{sec:central} the
-central values, and Sec.~\ref{sec:joint} the joint tests.  The companion
-analysis note~\cite{AnalysisNote2026} gives the full details of the
-validation, the uncertainties, and the joint tests.
+% Methods rewrite: the order of OUTLINE-DECISION sec. 2.
+Table~\ref{tab:claims} maps the results to Secs.~\ref{sec:data}--\ref{sec:conclusions}, and the companion analysis
+note~\cite{AnalysisNote2026} gives the full details of the validation, the
+uncertainties, and the joint tests.
 
-\section{Data, signal, and simulation}
+\section{Data, observables, and domains}
 \label{sec:data}
 
 The analysis uses the twelve MINERvA medium-energy, forward-horn-current
@@ -116,23 +202,77 @@ MINERvA open-data release of pre-selected analysis ntuples
 MINOS near detector that serves as its muon spectrometer, is described in
 Ref.~\cite{MINERvA:2013zvz}.  The files analysed are an earlier production of
 that release; their names and sizes are recorded for reproduction
-(see Data availability).  The signal definition, fiducial volume, flux
-treatment~\cite{MINERvA:2016iqn}, and reconstruction-level selection follow
-Ref.~\cite{MINERvA:2021owq}.  After selection, the sample contains $4.12$
+(see Data availability).
+% Methods rewrite (M4): the signal, fiducial volume and selection stated in the article (DEFINITIONS sec. 1-2).
+% Fiducial box and muon limits: MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:1708, :1717-1721,
+% :1737-1740 (theta < 20 deg, PZMuMin 1500, MaxPzMu 60000, MaxPtMu 4500 with <=). Background and fakes: same file
+% :1447-1456. Selection: :1710-1715 (ZRange, Apothem, MaxMuonAngle 20, HasMINOSMatch, NoDeadtime, IsNeutrino);
+% charge from MINOS curvature, CVUniverse.h:380-382. Note: sec_experiment.tex:33-66.
+The signal is a $\nu_{\mu}$ charged-current interaction, with any final state,
+whose true vertex lies in the tracker fiducial volume ($5980<z<\SI{8422}{mm}$,
+inside a hexagon of apothem \SI{850}{mm}) and whose muon has
+$\theta_{\mu}<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$, and
+$\pT\le\SI{4.5}{GeV/c}$.  Selected simulated events outside this definition,
+including charged-current $\nu_{\mu}$ events whose muon lies outside these
+limits, are background.  The selection requires a reconstructed vertex in the
+same volume and a reconstructed muon with $\theta_{\mu}<20^{\circ}$, matched to
+a MINOS track of negative charge, with a dead-time requirement, as in
+Ref.~\cite{MINERvA:2021owq}; the flux treatment follows
+Ref.~\cite{MINERvA:2016iqn}.  After selection, the sample contains $4.12$
 million data events, and the simulation contains $32.8$ million true signal
 events, generated with GENIE~2.12.6~\cite{Andreopoulos:2009rq} and the MINERvA
 Tune~v1, which reweights GENIE with a non-resonant pion reduction, a
 random-phase-approximation correction, and an empirical low-recoil
 two-particle--two-hole (2p2h) enhancement~\cite{MINERvA:2016lowrecoil}.
+Event selection is held fixed as the classifier inputs and unfolded observables
+grow from $(\pT,\pPar)$ to $(\pT,\pPar,\Eavail,q_3,W)$; adding features does
+not add selected events or relax the signal definition.
 
-The unfolded observables are defined at truth level.  Besides the muon
+% Methods rewrite (M4): the observable-definition table. Sources: DEFINITIONS sec. 3; CVUniverse.h (CVU) at this
+% tree: pT, p_par CVU:61-79; E_avail truth CVU:361-374 (135 MeV, 938.27 MeV); reco E_avail CVU:185-193 (scale 1.17);
+% truth W CVU:385-410 with M_n, M_p, M_nucleon = (1.5 M_n + M_p)/2.5 at CVU:39-41 and the massless Q^2 at CVU:389-394;
+% reco q3 CVU:208-218, reco W CVU:227-240 (q0 = <tree>_recoil_E; clamps Q^2 >= 0, W^2 >= 0). Truth q3:
+% docs/orchestration/state/s5p/gen5d/README-gen5d-build.md:50-58 (calcq3 of mc_Q2, exact lab-frame Q^2).
+\begin{table*}[t]
+  \caption{The five observables.  $E_{\mu}$, $p_{\mu}$, and $\theta_{\mu}$ are the
+  muon energy, momentum, and angle; $q_{0}$ is the calorimetric estimate of the
+  energy transfer; $M$ is the struck-nucleon mass, $\bar M=(1.5M_{n}+M_{p})/2.5$.
+  Exact $Q^{2}$ is $-(k-k')^{2}$ from the generator's four-vectors.}
+  \label{tab:observables}
+  \centering\scriptsize
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \pcell{0.07\textwidth}{} & \pcell{0.30\textwidth}{Truth definition} &
+    \pcell{0.32\textwidth}{Reconstructed definition} & \pcell{0.23\textwidth}{Shared inputs and conventions} \\
+    \midrule
+    \pcell{0.07\textwidth}{$\pT$, $\pPar$} &
+    \pcell{0.30\textwidth}{$p_{\mu}\sin\theta_{\mu}$, $p_{\mu}\cos\theta_{\mu}$, $\theta_{\mu}$ from the beam axis} &
+    \pcell{0.32\textwidth}{the same, from the MINERvA--MINOS muon} &
+    \pcell{0.23\textwidth}{muon only} \\
+    \pcell{0.07\textwidth}{$\Eavail$} &
+    \pcell{0.30\textwidth}{Eq.~(\ref{eq:eavail}): proton kinetic energy, $E_{\pi^{\pm}}-\SI{135}{MeV}$, $\pi^{0}$ and $\gamma$ energy} &
+    \pcell{0.32\textwidth}{$1.17\times$ calorimetric recoil energy in the tracker and electromagnetic calorimeter, muon deposits removed} &
+    \pcell{0.23\textwidth}{its own calorimetric estimator; \SI{135}{MeV} convention} \\
+    \pcell{0.07\textwidth}{$q_{3}$} &
+    \pcell{0.30\textwidth}{$\sqrt{Q^{2}+(E_{\nu}-E_{\mu})^{2}}$, exact $Q^{2}$} &
+    \pcell{0.32\textwidth}{$\sqrt{Q^{2}+q_{0}^{2}}$, $Q^{2}=2E_{\nu}(E_{\mu}-\pPar)-m_{\mu}^{2}$, $E_{\nu}=E_{\mu}+q_{0}$} &
+    \pcell{0.23\textwidth}{muon kinematics and $q_{0}$} \\
+    \pcell{0.07\textwidth}{$W$} &
+    \pcell{0.30\textwidth}{$\sqrt{M^{2}+2M(E_{\nu}-E_{\mu})-Q^{2}}$, $Q^{2}=4E_{\nu}E_{\mu}\sin^{2}(\theta_{\mu}/2)$} &
+    \pcell{0.32\textwidth}{$\sqrt{\bar M^{2}+2\bar Mq_{0}-Q^{2}}=\sqrt{(\bar M+q_{0})^{2}-q_{3}^{2}}$} &
+    \pcell{0.23\textwidth}{fixed by $(\pT,\pPar,q_{3})$ when reconstructed; nearly so at truth} \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+The unfolded observables are defined at truth level (Table~\ref{tab:observables}).  Besides the muon
 momentum components $\pT$ and $\pPar$, they are the three-momentum transfer
-$q_{3}=|\vec{q}\,|$ from the generator, the hadronic invariant mass
-$W=\sqrt{M^{2}+2M(E_{\nu}-E_{\mu})-Q^{2}}$ with the struck-nucleon mass $M$, and
-the available energy
+$q_{3}=|\vec{q}\,|$ from the generator, the hadronic invariant mass $W$ with
+the struck-nucleon mass $M$, and the available energy
 \begin{equation}
   \Eavail=\sum_{p}(E_{p}-m_{p})+\sum_{\pi^{\pm}}(E_{\pi}-\SI{135}{MeV})
   +\sum_{\pi^{0}}E_{\pi}+\sum_{\gamma}E_{\gamma},
+  \label{eq:eavail}
 \end{equation}
 in which protons contribute kinetic energy, charged pions their energy minus an
 inherited constant of \SI{135}{MeV} rather than the charged-pion mass, and
@@ -141,36 +281,138 @@ including neutrons, contribute nothing.  We have not corrected this
 constant.  Relative to the charged-pion mass, in a simulated sample it moves \SI{0.67}{\percent} of
 events into another true-$\Eavail$ bin and changes no true-$\Eavail$ bin by more than
 \SI{1.05}{\percent}; this effect has not been compared with the full
-covariance.  Reconstructed
-$\Eavail$ is the calorimetric recoil energy in the tracker and electromagnetic
-calorimeter after removal of the muon's energy deposits.  Reconstructed $q_{3}$
-and $W$ combine the muon kinematics with a separate calorimetric estimate of
-the energy transfer, so the five reconstructed inputs share information and do
-not, by themselves, provide five independent constraints.  The implemented
-reconstructed and truth definitions are given in the analysis note's section on
-the higher-dimensional extensions~\cite{AnalysisNote2026}.
+covariance.
 % Sources: CVUniverse::GetEAvailableTrue(), Getq3True(), GetTrueExperimentersW(), NewEavail(), RecoQ3(), RecoW();
 % note sec_3d.tex eq:eavail-implemented (the 135 MeV charged-pion term) and scalar_kinematics.tex
 % eq:shared-reco-inputs, which the article input until 2026-10-11; sec_eavailw.tex sec:eavailw-axis (truth W).
 % 135 MeV effect: docs/EAVAIL_DEFINITION.md sec. 3 (439/65,911 = 0.666% of events change truth bin; worst bin +1.049%;
 % the comparison against the adopted covariance with off-diagonals "has not been done").
+% Methods rewrite (M4): every prediction uses the same 135 MeV definition (docs/EAVAIL_DEFINITION.md:135-141, the six
+% sites; README-gen5d-build.md:44-49, 0 mismatches in a 20,000-event GENIE parity check).
+All five predictions compared below use the same definition.
+Reconstructed $q_{3}$ and $W$ combine the muon kinematics with a calorimetric
+estimate $q_{0}$ of the energy transfer that is separate from reconstructed
+$\Eavail$.
+% Methods rewrite (M4): the algebra W_reco^2 = (M_bar + q0)^2 - q3_reco^2 is derived from CVU:208-240 in
+% scratchpad/methods-m4/DEFINITIONS.md sec. 3 ("Algebra (derived from the code, not computed)"); q3 is strictly
+% increasing in q0 >= 0 at fixed muon kinematics, so (pT, p_par, q3) fixes q0 and W, apart from the two clamps.
+% Measured exact: docs/orchestration/state/2d-closeout/stageF/methods/M4-W-RECORD.md (origin/main c679aabc) :8, :104-111
+% (max |residual| 3.2e-7 MeV over 20,498,013 simulated events; Q^2 clamp never fires; W^2 clamp 1.5%).
+Since $W_{\mathrm{reco}}^{2}=(\bar M+q_{0})^{2}-q_{3,\mathrm{reco}}^{2}$ and
+$q_{3,\mathrm{reco}}$ increases with $q_{0}$ at fixed muon kinematics,
+reconstructed $W$ is an exact function of $(\pT,\pPar,q_{3})$, apart from the
+clamp at $W^{2}=0$, which applies to \SI{1.5}{\percent} of simulated events.
+% Methods rewrite (M4, the truth-W residual): M4-W-RECORD.md (origin/main c679aabc) :6 (theta_true from a fixed beam
+% axis tilted -58.87 mrad about x, MAT TruthFunctions.h:21-27, PlotUtilsPhysicalConstants.h:44), :7 and :74-81
+% (W_true - W_pred with M_bar: 68% within about +-2 MeV, 99.9% within -49/+67 MeV), :85-90 (0.25% of events, weighted,
+% change coarse W bin; 0.15% have no real solution), :63 (the tilt is the only other cause), :55-59 (median 1.03 mrad
+% between the true neutrino and that axis); q3 from the true four-vectors, README-gen5d-build.md:50-58.
+At truth level, $q_{3}$ is computed from the true neutrino and muon
+four-vectors, but $\theta_{\mu}$, and with it $\pT$ and $\pPar$, is measured
+from a fixed beam axis tilted by \SI{58.87}{mrad} from the detector axis
+rather than from the true neutrino direction.  Truth $W$ is therefore fixed
+by $(\pT,\pPar,q_{3})$ only up to that event-by-event angle, of about
+\SI{1}{mrad}, and the choice of $M$: the residual is within \SI{\pm2}{MeV} for
+68\% of events and within $-49$ to $+67$~MeV for 99.9\%, and
+\SI{0.25}{\percent} of events (weighted) change their coarse $W$ bin.
+The five reconstructed inputs therefore share information and do not, by
+themselves, provide five independent constraints: the result is five
+simultaneous observables, not five independent measurements.  The implemented
+reconstructed and truth definitions are given in the analysis note's section on
+the higher-dimensional extensions~\cite{AnalysisNote2026}.
 
-Event selection is held fixed as the classifier inputs and unfolded observables grow from
-$(\pT,\pPar)$ to $(\pT,\pPar,\Eavail,q_3,W)$. It requires a tracker vertex
-and a MINOS-matched muon; adding features does not add selected events or
-relax the signal definition. The external
+% Methods rewrite (M4): the W mass convention of the external predictions. Source:
+% docs/orchestration/state/s5p/gen5d/README-gen5d-build.md:60-77 (fixed M_n = 0.939565, W = 0 when W^2 <= 0; CVU uses
+% the struck-nucleon mass and NaN; W-bin changes 1,438/938,141 GENIE CV = 0.153%, 1,449/960,128 GENIE MEC = 0.151%,
+% 1,757/1,261,997 NuWro = 0.139%; GiBUU not evaluable; kept deliberately :76-77). The analysis drops truth-W NaN rows
+% from its five-observable truth sample: nd-unfolding/unfold_nd_omnifold_unbinned.py:333-335 (DEFINITIONS item 5).
+% Effect on the coarse-cell predictions: M4-W-RECORD.md (origin/main c679aabc) :9, :129-139 (median |shift| 0.13% GENIE
+% CV, 0.087% NuWro; maximum 1.57%, 2.19%; shift / per-cell MC statistical error median 0.08 / 0.05, maximum 0.88 /
+% 1.13, i.e. "at or below"; GiBUU inferred, not measured; the 50-100 GeV supplements not included; no comparison with
+% the data covariance, :14, :145).
+The external predictions compute $W$ with the neutron mass for every event and
+place events with $W^{2}\le0$ in the lowest $W$ bin, whereas the analysis uses
+the struck-nucleon mass and excludes such events from its five-observable
+truth sample.  In the GENIE and NuWro samples this convention moves
+0.14--0.15\% of the events into another $W$ bin, and it changes their
+coarse-cell predictions by about \SI{0.1}{\percent} at the median and at most
+\SI{2.2}{\percent}, at or below each prediction's own finite-sample
+uncertainty in that cell; it cannot be evaluated for GiBUU.
+% Methods rewrite (M4, new point): M4-W-RECORD.md (origin/main c679aabc) :10, :99-102 (pT(beam axis) - pT(neutrino axis):
+% 68% within +-4.3 MeV; 3.1% of signal events change fine pT bin; net effect on cell contents not computed, :14).
+The generators instead measure $\pT$ and $\pPar$ about their own neutrino
+axis.  Their $\pT$ differs from the analysis truth $\pT$ by
+\SI{\pm4}{MeV} for 68\% of events; the net effect of this difference on the
+cell contents has not been measured.
+
+% Methods rewrite (M4): the generator table. Sources: DEFINITIONS sec. 6; README-gen5d-fluxfix.md:36-41 (GENIE
+% [0, 50] GeV, NuWro [0.5, 50] GeV), :138-148 (GiBUU Enu_upper_cut = 20, 5.2% of sigma_CC above 20 GeV);
+% KNOWN_ISSUES.md rows 82, 83, 97; the 72-cell GiBUU domain: contract-amendment-7-production-admission.json:9.
+\begin{table}[tb]
+  \caption{Generator predictions.  All are per nucleon of the stated target
+  and are binned with the same fine-grid-to-cell map.}
+  \label{tab:generators}
+  \centering\footnotesize
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    Prediction & Target & $E_{\nu}$ coverage and flux & Test cells \\
+    \midrule
+    Tune~v1 (GENIE~2.12.6) & CH & analysis simulation & \jtNcells{} \\
+    GENIE~2.12.10 CV & CH & \pcell{0.17\textwidth}{0--\SI{50}{GeV}, reweighted; 50--\SI{100}{GeV} added} & \jtNcells{} \\
+    GENIE~2.12.10 + MEC & CH & as GENIE CV & \jtNcells{} \\
+    NuWro~21.09 & C & \pcell{0.17\textwidth}{0.5--\SI{50}{GeV}, reweighted; 50--\SI{100}{GeV} added} & \jtNcells{} \\
+    GiBUU~2019 & C & \pcell{0.17\textwidth}{below \SI{20}{GeV}, reweighted} & \jtNcellsGiBUU{} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The external
 generator predictions compared below are the untuned GENIE~2.12.10 on CH without (``GENIE
 CV'') and with (``GENIE + MEC'') the Valencia 2p2h
 component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
 and NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx}, both on
-carbon.
+carbon (Table~\ref{tab:generators}).
 The GENIE and NuWro predictions use a corrected flux sampling: they are
 reweighted exactly, event by event, to the analysis flux, with added
 50--\SI{100}{GeV} samples;
 % plain-language pass, review fix R3 (DECISION-20261018-joseph-plain-language-pass)
 the GiBUU sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
+% Methods rewrite (M4, BINDING-PHASE1-20261019 sec. 5): the target consequence, quantified for GENIE. Source:
+% docs/orchestration/state/inelastic-high-region-20261011/results/r5_genie_events.json:240 (W0, W < 1.1 GeV:
+% Conly_over_CH_per_nucleon 1.0829), :283 (W1, 1.1 <= W < 1.4 GeV: 0.9779), :271 and :314 (rel_to_total 1.0560,
+% 0.9537); W bins are the fine W bins (code/r5_genie_events.py:126-127); KNOWN_ISSUES.md row 97.
+Hydrogen has no quasielastic, 2p2h, or coherent $\nu_{\mu}$ charged-current
+channel, so normalizing per nucleon does not remove the difference between
+the targets.  In GENIE's own CH sample, the carbon-only cross section per
+nucleon exceeds that of CH by \SI{8.3}{\percent} for $W<\SI{1.1}{GeV}$ and is
+\SI{2.2}{\percent} below it for $1.1\le W<\SI{1.4}{GeV}$ (\SI{+5.6}{\percent}
+and \SI{-4.6}{\percent} with the overall normalization removed).  The NuWro
+and GiBUU comparisons contain a target difference of this kind, which we have
+not corrected.
 
-\section{Unbinned unfolding}
+% Methods rewrite (M4): the grids and supported cells, moved here from the joint-test section. Fine grid:
+% nd-unfolding/s5p_stage1_inspect.py:38-44; contract s5c/contract.json:72 (65,856 cells). Coarse edges:
+% s5p_stage1_inspect.py:45 (J_EDGES); edge and level rule nd-unfolding/s5c_partition.py:9-15, :35, :45-52.
+% Support rule and the 0.47%: docs/orchestration/state/s5c/contract.json:75. GiBUU domain: amendment 7 claims.family.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A (paper F7), the fine grid. Source:
+% note sec_joint.tex sec:joint5d-design (b3fc422b, :27-33: "the analysis binning of sec:method-binning,
+% 14x16x7x7x6 bins"); nd-unfolding/s5p_stage1_inspect.py:38-44 (FINE); RC4 fine-to-J map U (109, 65856),
+% audit-20261008 mapping-notes-C.md:25; the 14 x 16 muon bins are the published binning (themeA-sources, F7).
+The fine grid is the analysis binning: the published $14\times16$ muon-momentum
+bins times 7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins.  The generator tests use a
+coarse $3^{5}$ grid in $(\pT,\pPar,\Eavail,q_{3},W)$ with edges
+$\pT\in[0,0.55,0.85,4.5]\,\si{GeV/c}$, $\pPar\in[1.5,3.5,6,60]\,\si{GeV/c}$,
+$\Eavail\in[0,0.4,1.5,100]\,\si{GeV}$, $q_{3}\in[0,1.2,2,100]\,\si{GeV}$ and
+$W\in[0,1.4,2.2,100]\,\si{GeV}$, taken from the fine edges nearest the
+simulated tertiles.  A coarse cell is reported if its expected reconstructed
+signal and its truth weight at the data exposure both exceed 1000 events;
+\jtNcells{} cells pass, and the others, which hold \SI{0.47}{\percent} of the
+expected signal, stay in the total only.  For GiBUU, whose sample lacks
+high-energy neutrinos, the domain is the \jtNcellsGiBUU{} supported cells with
+$\pPar<\SI{6}{GeV/c}$.
+% Source: amendment 7 claims.family; nd-unfolding/s5p_stage1_inspect.py:45 (J_EDGES).
+
+\section{Estimators and validation design}
 \label{sec:method}
 
 Each OmniFold iteration consists of two classification steps.  A
@@ -180,6 +422,16 @@ truth, including unmatched events, and a truth-level classifier propagates a
 smooth reweighting to the next iteration.  Cross sections are formed by
 histogramming the reweighted truth events in the reporting binning and
 dividing by integrated flux, target count, and bin width.
+% Methods rewrite (M4): the normalization constants. Phi = 6.243343e-4 m^-2/POT over 0-100 GeV after the
+% nu-e constraint: docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:43-49, :74; N =
+% 3.2352943296224835e30: 2d-unfolding/unfold_2d_omnifold_unbinned.py:41-44; formula nd-unfolding/xsec_nd.py:14,
+% 54-83. POT 1.057e21 as in Sec. II. Truth-only misses are appended, so the completeness is 1 (note
+% sec_experiment.tex:88-89).
+The integrated flux is $\Phi=\SI{6.243e-8}{cm^{-2}}$ per proton on target,
+from 0 to \SI{100}{GeV} after the neutrino--electron-scattering constraint, and
+the target contains $3.235\times10^{30}$ nucleons.  Events that fail
+reconstruction enter as unmatched truth events, so no separate efficiency
+correction is applied.
 
 Backgrounds enter the reconstruction-level step through the density the
 classifier learns to match.  In the purity-based subtraction every data event in
@@ -195,10 +447,10 @@ note's appendix on negative-weight background subtraction~\cite{AnalysisNote2026
 
 All estimator configurations use five OmniFold iterations with
 gradient-boosted decision-tree classifiers~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm}, and each result
-below states which configuration it uses.  The iteration count and classifier capacity regularize
+below states which configuration it uses (Table~\ref{tab:estimators}).  The iteration count and classifier capacity regularize
 the unfolding, and no hyperparameter search was performed on data: the nominal
 settings are scikit-learn defaults, with LightGBM matched to their capacity,
-and the refinement capacity of the joint-test estimator (below) was chosen in
+and the refinement capacity of the joint-test estimator was chosen in
 simulation closure studies.
 % plain-language pass, review fix reader-E (DECISION-20261018-joseph-plain-language-pass)
 A
@@ -234,22 +486,90 @@ note's estimator-configuration section~\cite{AnalysisNote2026}.
 % iterations): total ratio 1.0078; median projection differences 1.20% (pT), 1.36% (p||), 0.66% (E_avail).
 The use of AI tools in this work is described in the Acknowledgments.
 
-\section{Validation}
-\label{sec:validation}
+% Methods rewrite: the estimator matrix (OUTLINE-DECISION sec. 2, row III). Sources: note sec_method.tex sec:method-config
+% (100 trees, 8 leaves, seed 42; exact-split seed not pinned; "The estimator configurations": joint-test refinement
+% 400 trees, 31 leaves, sec_method.tex:157-163); configurations (c)-(d): OUTCOME-20260925-s5c-purity-background-bias-
+% at-high-W.md:23-31 (candidate F2) and OUTCOME-20260925-s5n-stage1-development-fail.md:25-28 (family N, refinement
+% with the F2 parameters); methods-m3 REPORT (F2: 5 iterations, 100 trees, 8 leaves).
+\begin{table*}[t]
+  \caption{Estimator configurations.  All use five OmniFold iterations and
+  gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both
+  OmniFold steps.  ``Deterministic'' means fixed seeds and reproducible
+  training.  Results from different configurations are not combined.}
+  \label{tab:estimators}
+  \centering\scriptsize
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \pcell{0.20\textwidth}{Configuration} & \pcell{0.20\textwidth}{Learner} &
+    \pcell{0.22\textwidth}{Background treatment} & \pcell{0.30\textwidth}{Results} \\
+    \midrule
+    \pcell{0.20\textwidth}{(a) central-value estimator} & \pcell{0.20\textwidth}{LightGBM; seed 42 in two dimensions} &
+    \pcell{0.22\textwidth}{purity-based subtraction} &
+    \pcell{0.30\textwidth}{two- to five-observable central values; two-observable covariance (Figs.~\ref{fig:validation}, \ref{fig:joint}, \ref{fig:generator-context})} \\
+    \pcell{0.20\textwidth}{(b) exact-split cross-check} & \pcell{0.20\textwidth}{scikit-learn exact splits; seed not fixed} &
+    \pcell{0.22\textwidth}{purity-based subtraction} &
+    \pcell{0.30\textwidth}{two-observable cross-check (Sec.~\ref{sec:repro2d})} \\
+    \pcell{0.20\textwidth}{(c) deterministic variant} & \pcell{0.20\textwidth}{LightGBM, deterministic} &
+    \pcell{0.22\textwidth}{purity-based subtraction} &
+    \pcell{0.30\textwidth}{background bias (Fig.~\ref{fig:bkg-residual}); coverage test (Fig.~\ref{fig:coverage})} \\
+    \pcell{0.20\textwidth}{(d) deterministic variant with refinement} & \pcell{0.20\textwidth}{as (c)} &
+    \pcell{0.22\textwidth}{negative weights; refinement classifier 100 trees, 8 leaves} &
+    \pcell{0.30\textwidth}{background bias (Fig.~\ref{fig:bkg-residual}); generator-sized $\Eavail$ change (Fig.~\ref{fig:deformation}a)} \\
+    \pcell{0.20\textwidth}{(e) joint-test estimator} & \pcell{0.20\textwidth}{as (c)} &
+    \pcell{0.22\textwidth}{negative weights; refinement classifier 400 trees, 31 leaves} &
+    \pcell{0.30\textwidth}{withheld generator shapes (Fig.~\ref{fig:deformation}b); precision study (Table~\ref{tab:reporting}); generator tests (Sec.~\ref{sec:joint})} \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
 
 In closure tests, truth denotes the known simulated target, the prior is
 the initial truth distribution, and the response maps truth to selected
 observations.  A closure test measures how well a specified deformation is
 recovered.  Coverage measures how often intervals contain their target over
 repeated experiments; it tests the estimator and the interval construction
-together.
+together.  Table~\ref{tab:validation-design} lists the studies.
 % plain-language pass, review fix R8 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, P2. The sentence on the missed-event
 % bookkeeping and the iteration-number stability diagnostic ("neither establishes recovery or coverage") moved to the
 % note: sec_validation.tex tab:validation-questions, rows "Miss completeness" ("no recovery or coverage claim") and
 % "Iteration stability" ("not a known-truth accuracy test").
 
-\subsection{Two-dimensional reproduction}
+% Methods rewrite: the validation-design table (OUTLINE-DECISION sec. 2, row III). Sources: 3D/4D closure, note
+% sec_validation.tex (thresholds) and Sec. V text; background closure OUTCOME-20260925-s5c-purity-background-bias-at-
+% high-W.md:1-10 (development measurement) and s5n stage 1 (same); generator-sized change, note sec_5d.tex:103-104
+% ("predeclared GiBUU-to-GENIE departure screen"); withheld shapes, OUTCOME-20260926-s5e-oi192-diagnosis-and-
+% candidate.md (assessment A4, compared with the adopted sigma); coverage, OUTCOME-20260925-s5c-tier-s-futility-
+% fail.md:30-36; calibration, amendment 7 and Sec. VIII.
+\begin{table*}[t]
+  \caption{Validation studies.  Every study uses the analysis simulation's
+  detector response, except the calibration of the tests, which also draws the
+  detector bands.  Letters refer to Table~\ref{tab:estimators}.}
+  \label{tab:validation-design}
+  \centering\scriptsize
+  \begin{tabular}{@{}lllll@{}}
+    \toprule
+    \pcell{0.17\textwidth}{Study} & \pcell{0.22\textwidth}{Truth change} & \pcell{0.10\textwidth}{Backgrounds} &
+    \pcell{0.17\textwidth}{Domain} & \pcell{0.24\textwidth}{Criterion} \\
+    \midrule
+    \pcell{0.17\textwidth}{Two-dimensional reproduction (a), (b)} & \pcell{0.22\textwidth}{none: data against the publication} &
+    \pcell{0.10\textwidth}{data} & \pcell{0.17\textwidth}{205 published bins} & \pcell{0.24\textwidth}{none; descriptive} \\
+    \pcell{0.17\textwidth}{Three-, four-observable closure (a)} & \pcell{0.22\textwidth}{injected $\Eavail$ distortion} &
+    \pcell{0.10\textwidth}{none} & \pcell{0.17\textwidth}{projections} & \pcell{0.24\textwidth}{thresholds fixed in advance~\cite{AnalysisNote2026}} \\
+    \pcell{0.17\textwidth}{Background closure (c), (d)} & \pcell{0.22\textwidth}{none (nominal truth)} &
+    \pcell{0.10\textwidth}{included} & \pcell{0.17\textwidth}{42 $(\Eavail,W)$ and \jtNcells{} joint cells} & \pcell{0.24\textwidth}{none; development measurement} \\
+    \pcell{0.17\textwidth}{Generator-sized change (d)} & \pcell{0.22\textwidth}{GiBUU/GENIE $\Eavail$ shape ratio} &
+    \pcell{0.10\textwidth}{included} & \pcell{0.17\textwidth}{42 $(\Eavail,W)$ cells} & \pcell{0.24\textwidth}{departure screen fixed in advance; not met} \\
+    \pcell{0.17\textwidth}{Withheld shapes (e)} & \pcell{0.22\textwidth}{NuWro and GENIE + MEC shapes} &
+    \pcell{0.10\textwidth}{included} & \pcell{0.17\textwidth}{42 $(\Eavail,W)$ cells} & \pcell{0.24\textwidth}{compared with the quoted total $\sigma$} \\
+    \pcell{0.17\textwidth}{Coverage (c)} & \pcell{0.22\textwidth}{nominal; $\Eavail$ tilt} &
+    \pcell{0.10\textwidth}{included} & \pcell{0.17\textwidth}{153 cell and projection integrals} & \pcell{0.24\textwidth}{upper bound on coverage at least 0.66 (0.94), fixed in advance} \\
+    \pcell{0.17\textwidth}{Test calibration (e)} & \pcell{0.22\textwidth}{each null hypothesis} &
+    \pcell{0.10\textwidth}{included} & \pcell{0.17\textwidth}{\jtNcells{} (GiBUU \jtNcellsGiBUU) joint cells} & \pcell{0.24\textwidth}{size set by the calibration (Sec.~\ref{sec:calibration})} \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\section{Two-dimensional benchmark}
 \label{sec:repro2d}
 
 The two-dimensional result is an end-to-end test of the unfolding against a
@@ -257,9 +577,11 @@ measurement from the same data.  Its integrated cross section is \SI{\sigTwoD}{c
 \SI{\sigTwoDpaper}{cm^2/nucleon} in the published analysis, a ratio of
 $\ratioTot$.  Of the 205 reported bins, \SI{\binsTen}{\percent} agree within
 \SI{10}{\percent}; the standardized bin differences formed with the published
-uncertainties have an RMS of $\pullRMS$; against the full published covariance,
-$\chi^{2}/\mathrm{ndf}=\chiPaper$, a correlated shape difference (indicative
-only; see below).  This value depends on the learner: ten LightGBM training
+uncertainties have an RMS of $\pullRMS$.
+% Methods rewrite (OUTLINE-DECISION sec. 2, row IV): the covariance-weighted value called a descriptive distance (M8).
+The covariance-weighted distance against the full published covariance is
+$\chi^{2}/\mathrm{ndf}=\chiPaper$, which indicates a correlated shape
+difference; we use it only as a descriptive distance (see below).  This value depends on the learner: ten LightGBM training
 seeds give 2.64--2.75, and the exact-split estimator gives $\chiPaperExact$
 unseeded and $\chiPaperExactSeeded$ in one run with a fixed seed (its spread
 over seeds has not been measured).
@@ -282,7 +604,7 @@ estimates.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=\textwidth]{paper_fig1_validation}
+  \includegraphics[width=0.86\textwidth]{paper_fig1_validation}
   \caption{Comparison with the published result~\cite{MINERvA:2021owq}.  Top:
   $\pT$ and $\pPar$ projections of the published result and of this analysis,
   each with its total $\pm1\sigma$ band (this analysis: statistical,
@@ -302,12 +624,165 @@ estimates.
   \label{fig:validation}
 \end{figure*}
 
-\subsection{Two-dimensional uncertainty and its coverage}
+\section{Bias and coverage in five dimensions}
+\label{sec:validation}
+
+Each higher-dimensional central value is checked against the
+lower-dimensional result it extends.  The three-, four-, and five-observable marginal
+normalizations agree at the approximately $1$--$2\%$ level, and a closure test
+recovers an injected $\Eavail$ distortion.  These closure tests reweight the
+simulated signal only.  End-to-end pseudo-experiments that include the
+purity-based background subtraction reproduce the input at nominal truth
+except in the highest-$W$ cells, which are biased by up to \SI{4}{\percent} in
+simulation, about one quoted standard deviation in one $(\Eavail,W)$ cell; the
+quoted uncertainties omit this bias (Fig.~\ref{fig:bkg-residual}).
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, "as first measured" (history) dropped.
+% Methods rewrite (M3 REPORT, Figure 1 discrepancies): "below 0.3%" is the highest-W cells; the refinement arm's largest
+% (E_avail, W) residual elsewhere is 0.387% (EW36), visible in Fig. 2(a).
+The unbinned negative-weight background
+treatment, measured with a deterministic variant of the
+five-dimensional LightGBM central-value estimator, reduces it to below \SI{0.3}{\percent}, leaving up to
+\SI{1}{\percent} in some joint cells; on data the two treatments
+differ by at most \SI{1.4}{\percent}.
+% Source: OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; VL149,
+% VL151, VL152; KNOWN_ISSUES 75.
+
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A (paper F12), the estimator of the 74%.
+% Source: the comment below ("The 74% is the F2/N estimator (VL151)"); OUTCOME-20260925-s5n-stage1-development-fail.md
+% :25 (family N = the s5c F2 deterministic LightGBM with the negweight-refined measured side), :57, :75-82; the same
+% dev_receipt (s5n/stage1) backs the negative-weight values above (check_sec4_receipts.py); audit CLAIM-TABLE V19.
+The unfolding recovers only part of a change of the $\Eavail$ shape as large as
+the difference between generators (Fig.~\ref{fig:deformation}).  When the true shape is reweighted by the
+GiBUU-to-GENIE ratio, the $(\Eavail,W)$ cells unfolded with the same
+deterministic variant deviate from it by
+several percent in the largest cells and by up to \SI{74}{\percent} at high
+$W$, with or without background, so background subtraction alone does not
+explain the residual.  This regularization bias is not included in the quoted
+uncertainties, and it persists over the tested ranges of iteration number and
+classifier capacity:
+% Methods rewrite (GPT-6.1-sol Part 6: show the iteration and capacity dependence). Source: note sec_5d.tex:96-101
+% (thirty iterations reduce the E_avail residual by 26%; a larger classifier improves the reco fit, not the truth
+% residual); OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md sec. 1 ("-26% from k = 5 to 30, still falling").
+thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}, and a
+larger classifier improves the reconstruction-level fit without reducing it.
+For other fixed generator shapes, measured with the joint-test estimator, it is
+\SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell and within
+the quoted total uncertainty in about half of those cells.  Input changes at
+the level of floating-point rounding move the unfolded values on data by up to
+a few statistical standard deviations; for the joint-test estimator this
+spread lies inside the data-bootstrap statistical uncertainty, but it limits
+how exactly the central values can be reproduced.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme C (paper F1), the failed test stated as
+% miscoverage at the tested truths; theme A, its size. Source: note sec_5d.tex sec:coverage-5d (b3fc422b, :357-366:
+% UCB < 0.66 / < 0.94; tilt 51 and 42 of 153, as low as 0.060; nominal two at 95%, lowest 0.850; "1,200
+% pseudo-experiments over three truths", of which two enter the verdict); OUTCOME-20260925-s5c-tier-s-futility-fail.md
+% :30-36, :41-43; state/s5c/tier_s/interim_400.json (aa574c17...), VL150.
+% Methods rewrite (M3 REPORT, Figure 3 discrepancy): "confidently below nominal" restated as the predeclared gate.
+An end-to-end coverage test
+of bias-corrected statistical intervals from a deterministic variant of the
+estimator, with 400 pseudo-experiments per truth, failed its criterion, fixed
+in advance (Fig.~\ref{fig:coverage}): under an $\Eavail$ tilt, 51 of the 153 reported cell and
+projection integrals have a 68\% coverage whose upper confidence bound lies
+below the predeclared 0.66 gate, with coverage as low as 0.06, and 42 lie
+below the predeclared 0.94 gate at 95\%; at nominal truth two lie below the
+0.94 gate, the lowest at 0.85.  These intervals therefore miscover at the
+tested truths, and no frequentist coverage is claimed for the
+five-dimensional intervals.  In this implementation, then, agreement in the
+marginal normalizations coexists with substantial regularization bias, and the
+envelope over the tested deformations and the calibration of the
+uncertainties remain limiting (Sec.~\ref{sec:uncertainty-status}).
+% plain-language pass, review fix R1 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): "This motivates the full-chain calibrated
+% comparisons of Sec. VI" merged into the end of Sec. V (sec:uncertainty-status), which now follows.
+% Sources: OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
+% OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL153, VL154);
+% RECORD-20260927-s5p-stage2-exit.md (VL155); OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150).
+% 16-31%: VL154 A4, candidate R (refinement 400/31 = the joint-test estimator), max over the 42 (E_avail,W)
+% cells for W2/W1 (16.4/31.3%); 20/42 cells within the adopted sigma. The 74% is the F2/N estimator (VL151).
+% 2026-10-11: the prior-mismatch/response-mismatch taxonomy paragraph and the flux-sampling caveat on the
+% GiBUU/GENIE ratio moved to the note (sec_5d.tex, sec:val-fiveaxis and sec:val-departure).
+
+% Methods rewrite (M3): three figures from existing receipts. Scripts: figures/methods_m3/ (inputs sha256-asserted;
+% every quoted number re-derived before drawing). Inputs: state/s5c/d1/d1_summary.json (f5c802e3...),
+% state/s5n/stage1/dev_receipt.json (1ef4096c...), state/s5n/stage1/truth_check.json (14ee2800...),
+% state/s5e/cand/assess_receipt.json (84266e30...), state/s5c/tier_s/interim_400.json (aa574c17...).
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.84\textwidth]{paper_fig_bkg_residual}
+  \caption{Fractional closure residual, (unfolded $-$ truth)/truth, at nominal
+  truth, for pseudo-experiments that include backgrounds.  Both arms use the
+  deterministic LightGBM unfolding of Table~\ref{tab:estimators} (five
+  iterations, 100 trees, 8 leaves).  Circles: purity-based background
+  subtraction, configuration (c) (9 pseudo-experiments).  Squares: the unbinned
+  negative-weight treatment with a 100-tree, 8-leaf refinement classifier,
+  configuration (d) (60 pseudo-experiments).  The pseudo-experiments are not
+  paired.  (a) The 42 $(\Eavail,W)$ projection cells, grouped by $\Eavail$
+  bin.  (b) The \jtNcells{} coarse joint cells, labelled by their index in the
+  $3^{5}$ grid, then the total integrated cross section.  Error bars are the
+  standard error of the mean.}
+  % Source: methods-m3 REPORT, Figure 1 (purity: d1_summary.json split_F2, 9 experiments; refinement: dev_receipt.json
+  % grid.C3_nominal, 60 experiments). Reproduced: 4.111% (EW29), 0.241% (EW41), 1.004% (J93), 1.419% (C7, not plotted).
+  \label{fig:bkg-residual}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.84\textwidth]{paper_fig_deformation}
+  \caption{Fractional recovery residual, (unfolded $-$ truth)/truth, per
+  $(\Eavail,W)$ cell, where the truth is each pseudo-experiment's deformed
+  truth; all pseudo-experiments include backgrounds.  (a) Configuration (d):
+  the deterministic LightGBM unfolding with the unbinned negative-weight
+  treatment and a 100-tree, 8-leaf refinement classifier.  Top: nominal truth,
+  60 pseudo-experiments.  Bottom: truth reweighted by the GiBUU/GENIE $\Eavail$
+  shape ratio, 60 pseudo-experiments; the grey step is the injected change of
+  the cell truth.  (b) Configuration (e), the joint-test estimator, with a
+  400-tree, 31-leaf refinement classifier.  Top: nominal truth, 40
+  pseudo-experiments.  Bottom: three withheld shape changes (NuWro in
+  $\Eavail$; GENIE + MEC in $(\Eavail,W)$; NuWro in $(\pT,\pPar,\Eavail)$), 20
+  pseudo-experiments each; the grey band is $\pm$ the quoted total uncertainty
+  of the $(\Eavail,W)$ projection.  Error bars are the standard error of the
+  mean.}
+  % Source: methods-m3 REPORT, Figure 2 (dev_receipt.json C3_nominal, C4_eavail_shape; truth_check.json M1_ratio;
+  % assess_receipt.json points.nominal, W1, W2, W3; band A4.adopted_total_sigma_pct). Reproduced: 74.07% (EW29),
+  % EW7 -6.66%, W2 16.38% (EW37), W1 31.32% (EW29), W3 23.67% (EW29), 20 of 42 cells within the band.
+  \label{fig:deformation}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.84\textwidth]{paper_fig_coverage}
+  \caption{Empirical coverage of the 153 reported cell and projection
+  integrals for statistical intervals corrected for the nominal-truth bias,
+  from configuration (c) of Table~\ref{tab:estimators}, with 400
+  pseudo-experiments per truth.  (a) Nominal truth.  (b) $\Eavail$ tilt of
+  amplitude 0.2.  Circles: 68\% intervals; squares: 95\% intervals.  Bars are
+  one-sided Clopper--Pearson lower and upper bounds, each at level
+  $0.05/459$.  Solid lines mark the nominal coverage and dashed lines the gates
+  0.66 and 0.94 fixed in advance; filled markers have an upper bound below the
+  gate.  The integrals are ordered as the $(\Eavail,W)$ projection (42 cells and
+  their sum), the \jtNcells{} coarse joint cells, and the total.}
+  % Source: methods-m3 REPORT, Figure 3 (interim_400.json; evaluator nd-unfolding/s5c_coverage.py:147-174; bounds
+  % re-derived with scipy.stats.beta to 2e-16). The receipt's third truth is not drawn (OUTCOME-20260925-s5c-tier-s-
+  % futility-fail.md sec. 3: a construction defect the verdict does not use). Reproduced: 51, 0.060 (J224), 42; 2
+  % (EW36, J161), 0.850 (EW36).
+  \label{fig:coverage}
+\end{figure*}
+
+\section{What the uncertainty studies establish}
+\label{sec:uncertainty-status}
+
+% Methods rewrite (OUTLINE-DECISION sec. 2, row VI): the uncertainty studies quantify specified variations; they are
+% not validated total intervals. The two-dimensional budget (formerly Sec. IV B) and the five-dimensional status
+% (formerly Sec. V) are collected here.
+The covariances below quantify specified variations; none is a validated
+total interval.
+
+\subsection{Two-dimensional covariance}
 \label{sec:uq2d}
 
 The covariance of our two-dimensional result is the sum of four terms, which
 we call blocks: systematic universes, statistical, training seed, and run
-period.  The first three are obtained from ensembles of LightGBM unfoldings with
+period (Table~\ref{tab:cov2d}).  The first three are obtained from ensembles of LightGBM unfoldings with
 % plain-language pass, director ruling on base defect paper F3 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
 the central value's estimator, and the fourth from LightGBM unfoldings of three
 groups of run periods.
@@ -352,6 +827,33 @@ about \SI{70}{\percent}.
 % S3.5 (seeds 42, 45, 48, 51, 54); C08 median budget_Q.json.gz c08.median_pct (0.0572); 4 degrees of freedom, Gaussian
 % relative SE of its variance 71 % (stageC/production/REPORT.md §3, §12). The learner dependence (D3, W6) is in sec:repro2d.
 % The VL170-era 0.30 sigma (0.18 %) compared the seed-1 block's central value.
+
+% Methods rewrite (OUTLINE-DECISION sec. 2, row VI): the covariance-component table. Source:
+% docs/orchestration/state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz keys universe.median_pct (5.969),
+% universe.integral_sigma_pct (4.328), stat.median_pct (0.684), stat.integral_sigma_pct (0.061), c08.median_pct (0.057),
+% c08.integral_sigma_pct (0.0025), C_PL.median_pct (2.137), C_PL.integral_sigma_pct (1.968), Q.median_pct (6.448),
+% Q.integral_sigma_pct (4.755). Ensemble sizes: 187 universes, 300 replicas, five seed settings, three period groups
+% (this section's text).
+\begin{table}[tb]
+  \caption{Blocks of the two-dimensional covariance: median relative
+  uncertainty per bin and relative uncertainty of the integrated cross section,
+  in percent.  The total is the sum of the four blocks.  None includes the
+  learner dependence or the regularization dependence.}
+  \label{tab:cov2d}
+  \centering\footnotesize
+  \begin{tabular}{@{}llrr@{}}
+    \toprule
+    Block & Ensemble & Median & Integral \\
+    \midrule
+    Systematic universes & 187 universes & 5.97 & 4.33 \\
+    Statistical & 300 bootstrap replicas & 0.68 & 0.06 \\
+    Training seed & five seed settings & 0.06 & $<0.01$ \\
+    Run period & three period groups & 2.14 & 1.97 \\
+    \midrule
+    Total & & \uqMedian & \uqIntegral \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 The systematic-universe unfoldings approximate the weighting of events that fail
 reconstruction, and we do not correct this approximation.
@@ -511,75 +1013,7 @@ the further approximations and limits.
 % bootstrap diagnostic and the full list of construction findings are in the note, sec_validation.tex
 % (sec:coverage) and sec_systematics.tex.
 
-\subsection{Higher-dimensional central values}
-
-Each higher-dimensional central value is checked against the
-lower-dimensional result it extends.  The three-, four-, and five-observable marginal
-normalizations agree at the approximately $1$--$2\%$ level, and a closure test
-recovers an injected $\Eavail$ distortion.  These closure tests reweight the
-simulated signal only.  End-to-end pseudo-experiments that include the
-purity-based background subtraction reproduce the input at nominal truth
-except in the highest-$W$ cells, which are biased by up to \SI{4}{\percent} in
-simulation, about one quoted standard deviation in one $(\Eavail,W)$ cell; the
-quoted uncertainties omit this bias.
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, "as first measured" (history) dropped.
-The unbinned negative-weight background
-treatment, measured with a deterministic variant of the
-five-dimensional LightGBM central-value estimator, reduces it to below \SI{0.3}{\percent}, leaving up to
-\SI{1}{\percent} in some joint cells; on data the two treatments
-differ by at most \SI{1.4}{\percent}.
-% Source: OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; VL149,
-% VL151, VL152; KNOWN_ISSUES 75.
-
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A (paper F12), the estimator of the 74%.
-% Source: the comment below ("The 74% is the F2/N estimator (VL151)"); OUTCOME-20260925-s5n-stage1-development-fail.md
-% :25 (family N = the s5c F2 deterministic LightGBM with the negweight-refined measured side), :57, :75-82; the same
-% dev_receipt (s5n/stage1) backs the negative-weight values above (check_sec4_receipts.py); audit CLAIM-TABLE V19.
-The unfolding recovers only part of a change of the $\Eavail$ shape as large as
-the difference between generators.  When the true shape is reweighted by the
-GiBUU-to-GENIE ratio, the $(\Eavail,W)$ cells unfolded with the same
-deterministic variant deviate from it by
-several percent in the largest cells and by up to \SI{74}{\percent} at high
-$W$, with or without background, so background subtraction alone does not
-explain the residual.  This regularization bias is not included in the quoted
-uncertainties, and it persists over the tested ranges of iteration number and
-classifier capacity; for
-other fixed generator shapes, measured with the joint-test estimator, it is
-\SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell and within
-the quoted total uncertainty in about half of those cells.  Input changes at
-the level of floating-point rounding move the unfolded values on data by up to
-a few statistical standard deviations; for the joint-test estimator this
-spread lies inside the data-bootstrap statistical uncertainty, but it limits
-how exactly the central values can be reproduced.
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme C (paper F1), the failed test stated as
-% miscoverage at the tested truths; theme A, its size. Source: note sec_5d.tex sec:coverage-5d (b3fc422b, :357-366:
-% UCB < 0.66 / < 0.94; tilt 51 and 42 of 153, as low as 0.060; nominal two at 95%, lowest 0.850; "1,200
-% pseudo-experiments over three truths", of which two enter the verdict); OUTCOME-20260925-s5c-tier-s-futility-fail.md
-% :30-36, :41-43; state/s5c/tier_s/interim_400.json (aa574c17...), VL150.
-An end-to-end coverage test
-of bias-corrected statistical intervals from a deterministic variant of the
-estimator, with 400 pseudo-experiments per truth, failed its criterion, fixed
-in advance: under an $\Eavail$ tilt, 51 of the 153 reported cell and
-projection integrals have 68\% coverage confidently below nominal, as low as
-0.06, and 42 fail at 95\%; at nominal truth two fail at 95\%, the lowest at
-0.85.  These intervals therefore miscover at the tested truths, and no
-frequentist coverage is claimed for the five-dimensional intervals.  In this
-implementation, then, agreement in the marginal normalizations coexists with
-substantial regularization bias, and the model dependence and the calibration
-of the uncertainties remain limiting (Sec.~\ref{sec:uncertainty-status}).
-% plain-language pass, review fix R1 (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): "This motivates the full-chain calibrated
-% comparisons of Sec. VI" merged into the end of Sec. V (sec:uncertainty-status), which now follows.
-% Sources: OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
-% OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL153, VL154);
-% RECORD-20260927-s5p-stage2-exit.md (VL155); OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150).
-% 16-31%: VL154 A4, candidate R (refinement 400/31 = the joint-test estimator), max over the 42 (E_avail,W)
-% cells for W2/W1 (16.4/31.3%); 20/42 cells within the adopted sigma. The 74% is the F2/N estimator (VL151).
-% 2026-10-11: the prior-mismatch/response-mismatch taxonomy paragraph and the flux-sampling caveat on the
-% GiBUU/GENIE ratio moved to the note (sec_5d.tex, sec:val-fiveaxis and sec:val-departure).
-
-\section{Status of a five-dimensional uncertainty}
-\label{sec:uncertainty-status}
+\subsection{Five-dimensional covariance}
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): section moved before the central values
 % (director's structure decision, after the GPT outline analysis), so that the reader knows what the uncertainty
@@ -617,6 +1051,8 @@ Their
 seed sensitivity, and its effect on the total in either direction, has not
 been measured.
 
+\subsection{Reporting definitions and the precision target}
+
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A (paper F4; also resolves pass-1 F8,
 % "bounded component exceeded"). Source: note sec_5d.tex "Reporting definitions for a five-dimensional measurement"
 % (RD3 = the 39 EW cells, the fallback; bounded model component = the largest shift over five generator-sized truth
@@ -625,15 +1061,17 @@ been measured.
 % (VL155) :127-133, :139, :144. RD2's model median is 9.6% (it fails only with the 1.4% normalization), so the text does
 % not say the model component alone exceeds 10% in every definition. "Came from the same study" (chronology) moved to
 % the note (sec_5d.tex: "The calibrated joint tests ... were the separately admitted inference branch").
+% Methods rewrite (OUTLINE-DECISION sec. 3): "the bounded model-dependence component" renamed the envelope over the
+% five tested truth deformations (M8).
 A separate study looked for a definition of a five-dimensional measurement
 whose total uncertainties could meet precision targets set in advance.  None
 of the definitions it considered could meet them, within the study's rules
-and computing budget.  For its fallback definition, the 39 supported
-$(\Eavail,W)$ cells, the bounded model-dependence component (the largest
-shift over five generator-sized changes of the truth) alone has a median of
+and computing budget (Table~\ref{tab:reporting}).  For its fallback definition, the 39 supported
+$(\Eavail,W)$ cells, the envelope over the five tested truth deformations (the
+largest shift over five generator-sized changes of the truth) alone has a median of
 \SI{13.4}{\percent}, above the target of a \SI{10}{\percent} median
 half-width for the total 68\% interval.  Over the definitions considered,
-this model dependence has a median of about 10--13\% per cell, comparable to the generator
+this envelope has a median of about 10--13\% per cell, comparable to the generator
 differences that such a measurement would need to resolve.  It motivates the
 full-chain calibrated comparisons of Sec.~\ref{sec:joint}, a different route
 to inference: they test the generator predictions as hypotheses and provide
@@ -645,42 +1083,52 @@ no new measurement uncertainty.
 % CORRECTION-20260920/-20260921; RECORD-20260927-s5p-stage2-exit.md; amendment 4.
 % 2026-10-11: the projected central-value movement under the seed variation is in the note.
 
-\section{Central-value results}
+% Methods rewrite: the reporting-definition table. Source: docs/orchestration/RECORD-20260927-s5p-stage2-exit.md:125-136
+% (h median / 90%: RD1 J 12.0 / 38.6, RD2 H2 9.6 / 22.5, RD3 EW 13.4 / 39.2; T1 unattainable in RD1 and RD3 from h
+% alone; RD2 half-width >= h + 1.4%, median >= 11.0%); cell counts: note sec_5d.tex:158-159 (109 J, 27 H2, 39 EW).
+\begin{table}[tb]
+  \caption{Reporting definitions studied, with the joint-test estimator: the
+  median and 90th percentile over cells of the envelope over five tested truth
+  deformations (percent), and the outcome against the target of a
+  \SI{10}{\percent} median half-width for the total 68\% interval.}
+  \label{tab:reporting}
+  \centering\footnotesize
+  \begin{tabular}{@{}lrrrl@{}}
+    \toprule
+    Definition & Cells & Median & 90\% & Target \\
+    \midrule
+    coarse joint cells & 109 & 12.0 & 38.6 & missed by the envelope alone \\
+    coarser joint cells & 27 & 9.6 & 22.5 & missed with the \SI{1.4}{\percent} normalization \\
+    $(\Eavail,W)$ cells & 39 & 13.4 & 39.2 & missed by the envelope alone \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Central values as illustrations}
 \label{sec:central}
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, the section's two repeated
 % "descriptive; no significance is assigned" statements (Fig. 2 and Fig. 3 paragraphs) collected here once.
-The comparisons in this section are descriptive: they use central values
-only, and no significance is assigned to them
-(Sec.~\ref{sec:uncertainty-status}).  The $\Eavail$ dimension provides an independent view of the established
-low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}.  GENIE,
+% Methods rewrite (OUTLINE-DECISION sec. 2, row VII; sec. 3): the central values are estimator outputs for qualitative
+% comparison. Moved to the note (each already there, checked by grep): the pion-FSI variations and their scope
+% (sec_3d.tex:306-326), the 52% of the gap filled by Valencia 2p2h (sec_3d.tex:350-365), the comparison with the
+% published low-recoil measurement and its E_avail-definition caveat (sec_3d.tex:470-495; sec_eavailw.tex:153-155).
+% Sources of the kept sentence: VL159 (generator comparison at low E_avail).
+The comparisons in this section are descriptive: they use central values of
+the central-value estimator only, and no significance is assigned to them
+(Sec.~\ref{sec:uncertainty-status}).  GENIE,
 the MINERvA Tune~v1, NuWro, and GiBUU all underpredict the unfolded central
-value at low $\Eavail$, between the quasielastic and $\Delta$ peaks.  Pion
-final-state-interaction (FSI) variations (same-sample ratios computed with GENIE
-before its flux sampling was corrected) change $d\sigma/d\Eavail$ by less than one percent, whereas adding
-GENIE's Valencia 2p2h contribution fills \SI{52}{\percent} of the
-data--GENIE gap below $\Eavail=\SI{0.4}{GeV}$.  The conclusion about FSI applies
-to the chosen pion variations.
-% plain-language pass, review fix R3 (DECISION-20261018-joseph-plain-language-pass)
-Adding $q_{3}$ resolves
-the momentum-transfer dependence of this feature: on the maximal common
-$(\Eavail,q_{3})$ grid, the central value lies within \SI{10}{\percent} of the
-dedicated published low-recoil measurement~\cite{MINERvA:2022incl} (ratios $1.09$
-and $1.06$ in its two cells).  That measurement defines true $\Eavail$ more
-broadly, counting every final-state particle except neutrons, several species of
-which our definition omits; in our simulation this moves about \SI{11}{\percent} of our lowest
-true-$\Eavail$ bin out of it, with the sign of the residual, but its effect on
-the two common cells has not been computed, so the comparison is not quantitative.
-% Sources: VL159 (generator comparison at low E_avail), VL160 (2p2h fills 52%). Pion FSI < 1%:
-% 3d-unfolding/genie/genie_fsi_{FrAbs,FrInel}_pi_xsec3d_summary.txt (maxima 0.82%, 0.75%). Ascencio
-% cross-check: VALIDATION_LEDGER.md "Ascencio bin-identical cross-check (2026-06-10)" (ratios 1.092, 1.063;
-% no VL id) and its fourth caveat (OI-59, open). Definitions and the -10.99% migration out of truth bin 1 only
-% (E_avail < 0.1 GeV; the common cells span bins 1-3, whose aggregate is measured nowhere): docs/EAVAIL_DEFINITION.md
-% sec. 2-4 (sec. 3: the 135 MeV charged-pion mass, at most +1.049% in one bin); Ref. Eq. 1 checked against arXiv:2110.13372.
+value at low $\Eavail$, between the quasielastic and $\Delta$ peaks, as do the
+generators compared with the established low-recoil
+discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}.  The analysis note
+compares this region with pion final-state-interaction variations, with
+GENIE's Valencia 2p2h component, and with the published low-recoil
+measurement~\cite{AnalysisNote2026}.
 
-The fifth observable, $W$, separates the remaining discrepancy from the
-low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
-projection of the five-dimensional result (LightGBM central-value estimator)
+% Methods rewrite (OUTLINE-DECISION sec. 3): "The fifth observable, W, separates the remaining discrepancy from the
+% low-mass enhancement" removed (M8); the map is described relative to the Tune v1 only.
+Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
+projection of the five-dimensional result (central-value estimator)
 relative to the MINERvA Tune~v1.  In cell-integrated terms, two
 thirds of the positive difference lies at $\Eavail\ge\SI{0.8}{GeV}$ and most of
 that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest overflow
@@ -689,7 +1137,9 @@ cells and by \SIrange{\figTwoLowWLo}{\figTwoLowWHi}{\percent} at $W<\SI{1.1}{GeV
 so the relative excess also extends to low $W$.  No closure test with a
 mismodelled detector response has been run for this map, and the high-$\Eavail$,
 high-$W$ region is also where the regularization bias of
-Sec.~\ref{sec:validation} is largest.
+Sec.~\ref{sec:validation} is largest.  The map therefore describes where the
+central value differs from the Tune~v1; it does not locate an interaction
+mechanism.
 % Source: shares 67%/83% (sec_eavailw.tex, cell-integrated) and the catch-cell 22% and ratio ranges
 % recomputed from the released figure arrays (fig_arrays.npz sha256 72394a2b..., release/article-figures-20261006).
 
@@ -705,6 +1155,10 @@ Sec.~\ref{sec:validation} is largest.
   \label{fig:joint}
 \end{figure}
 
+% Methods rewrite (OUTLINE-DECISION sec. 3): the GiBUU tail substitution ("when the higher-energy share present in
+% GENIE and NuWro is added to it, its contrast ... becomes about that of the others"), the Valencia 2p2h sentence and
+% the shallow-inelastic sentence moved to the note (sec_eavailw.tex:111-124, :128-130, :146-152); the target clause added
+% (KNOWN_ISSUES row 97; Sec. II).
 The one-dimensional projections in Fig.~\ref{fig:generator-context} compare the
 same central result with the four external predictions: GENIE CV, GENIE + MEC,
 NuWro, and GiBUU.  All four lie below the data overall (integrated data-to-prediction
@@ -716,20 +1170,15 @@ $2.2\le W<\SI{3.0}{GeV}$, against $\genRatioTotGNLo$--$\genRatioTotGNHi$ integra
 high-$\Eavail$, high-$W$ region ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$)
 it is $\genRatioCornerLo$--$\genRatioCornerHi$, within \SI{\genCornerDevMax}{\percent} of their integrated ratios.
 GiBUU, the most deficient, falls furthest behind there ($\gibuuCorner$, against $\gibuuTotal$
-overall), but its sample stops at $E_\nu\approx\SI{20}{GeV}$; when the
-higher-energy share present in GENIE and NuWro is added to it, its contrast
-between this region and its overall ratio becomes about that of the others.  Adding the Valencia
-2p2h component leaves that region unchanged because it primarily populates
-lower $W$.  The high-$\Eavail$, high-$W$ difference of Fig.~\ref{fig:joint} is thus
-a statement relative to the MINERvA Tune~v1.  Dedicated MINERvA
-shallow-inelastic measurements also report generator
-disagreements~\cite{MINERvA:2026sis}; their different selections preclude
-treating them as independent confirmation of this high-$\Eavail$, high-$W$ difference.
+overall), but its sample stops at $E_\nu\approx\SI{20}{GeV}$, and the NuWro and
+GiBUU ratios also contain the target difference of Sec.~\ref{sec:data}.  The
+high-$\Eavail$, high-$W$ difference of Fig.~\ref{fig:joint} is thus
+a statement relative to the MINERvA Tune~v1.
 % Sources: VL156-VL161; KNOWN_ISSUES 82.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.84\textwidth]{paper_fig3_generators}
+  \includegraphics[width=0.72\textwidth]{paper_fig3_generators}
   \caption{Unfolded $\Eavail$ (left) and $W$ (right) central-value projections
   (uncertainties not shown; Sec.~\ref{sec:uncertainty-status}) compared with the
   generator predictions of Sec.~\ref{sec:data}, with data-to-prediction ratios
@@ -737,31 +1186,112 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
   \label{fig:generator-context}
 \end{figure*}
 
-\section{Calibrated joint tests of generator predictions}
+\section{Conditional hypothesis tests}
 \label{sec:joint}
 
-\subsection{Hypotheses, statistics, and calibration}
+\subsection{Hypotheses}
 
+% Methods rewrite (M2-AUDIT.md Q1 text fix, :46, as corrected by M2-ARCHIVE-CHECKS.md:6-8): H0(G) restated; below the
+% fine grid the null is a family (M8: "with the MINERvA Tune v1's shape ... below that grid" and "it is H0 exactly").
+% Code: nd-unfolding/s5p_nullexp.py:299 (fine-cell truth weight), :158-174, :215 (per-fine-cell renormalization of the
+% signal knobs), :213 (background); s5n_pseudo.py:135-142 (background source and template, no truth weight).
 For each of five predictions $G$ (the MINERvA Tune~v1, GENIE CV, GENIE + MEC,
-NuWro~21.09, and GiBUU~2019), the null hypothesis $H_{0}(G)$ is that the true cross section equals
-$G$ on a fine five-dimensional grid, with the MINERvA Tune~v1's shape and $G$'s
-finite-sample fluctuations below that grid.
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A (paper F7), the fine grid. Source:
-% note sec_joint.tex sec:joint5d-design (b3fc422b, :27-33: "the analysis binning of sec:method-binning,
-% 14x16x7x7x6 bins"); nd-unfolding/s5p_stage1_inspect.py:38-44 (FINE); RC4 fine-to-J map U (109, 65856),
-% audit-20261008 mapping-notes-C.md:25; the 14 x 16 muon bins are the published binning (themeA-sources, F7).
-The fine grid is the analysis binning: the published $14\times16$ muon-momentum
-bins times 7 $\Eavail$, 7 $q_{3}$, and 6 $W$ bins.  We call this hypothesis the hybrid
-null: it is
-the hypothesis the calibration simulates, and for the Tune~v1, the analysis
-simulation itself, it is $H_{0}$ exactly.  The tests are evaluated on a coarse
-$3^{5}$ grid in $(\pT,\pPar,\Eavail,q_{3},W)$ with edges
-$\pT\in[0,0.55,0.85,4.5]\,\si{GeV/c}$, $\pPar\in[1.5,3.5,6,60]\,\si{GeV/c}$,
-$\Eavail\in[0,0.4,1.5,100]\,\si{GeV}$, $q_{3}\in[0,1.2,2,100]\,\si{GeV}$ and
-$W\in[0,1.4,2.2,100]\,\si{GeV}$, restricted to the \jtNcells{} supported cells;
-for GiBUU, whose sample lacks high-energy neutrinos, the domain is the
-\jtNcellsGiBUU{} cells with $\pPar<\SI{6}{GeV/c}$.
+NuWro~21.09, and GiBUU~2019), the null hypothesis $H_{0}(G)$ is that the true
+cross section equals $G$ on every cell of the fine grid of
+Sec.~\ref{sec:data}.  Below that grid, the null truth has the MINERvA
+Tune~v1 simulation's event composition, varied in each pseudo-experiment by
+the drawn interaction-model universes with every fine-cell integral held fixed,
+and the background is the Tune~v1 simulation's, with its uncertainty bands.
+We call this hypothesis the hybrid null: it is the hypothesis the calibration
+simulates.  For the Tune~v1, the analysis simulation itself, no external
+prediction is combined with the Tune~v1 composition.  The tests are evaluated
+on the \jtNcells{} supported coarse cells of Sec.~\ref{sec:data}, and on
+\jtNcellsGiBUU{} of them for GiBUU.
 % Source: amendment 7 claims.family; nd-unfolding/s5p_stage1_inspect.py:45 (J_EDGES).
+
+\subsection{Generative model of one pseudo-experiment}
+\label{sec:genmodel}
+
+% Methods rewrite (M2, OUTLINE-DECISION sec. 2 row VIII): the generative model and the calibration flowchart. Code
+% (at 19b46af9, byte-identical to the frozen 4f5a613f, M2-ARCHIVE-CHECKS.md:26): M2-AUDIT.md:10-33 (Q1). Split per
+% seed, s5c_pseudo.py:278-281, s5p_nullexp.py:318-321; pseudo-data Poisson on half B, s5n_pseudo.py:133-134; half A at
+% CV weights with the Tune v1 prior, :146-151; flux one PPFX universe of 100, s5p_nullexp.py:206-209; 34 bands at one
+% universe each, :79-87, :130, signal renormalized per fine truth cell, :158-174, :215; clipping of LowQ2_1 and
+% HighQ2_1, :103-115, :149-154; four detector bands at +-1 sigma with probability 1/2, :216-220; additive terms
+% s5p_joint.py:115-121, :158-159. Truth equals G on populated fine cells: M2-ARCHIVE-CHECKS.md:6, :64-69.
+Each calibration pseudo-experiment splits the simulation at random into two
+halves (Table~\ref{tab:genmodel}): Poisson pseudo-data, with Poisson
+background, are drawn from one half reweighted fine cell by fine cell to $G$,
+and the other half unfolds them.  The pseudo-experiment's truth equals $G$ on
+every fine cell that the source half populates; cells it leaves empty lower a
+coarse cell by at most \SI{0.2}{\percent}, at most \SI{1.4}{\percent} of the
+null standard deviation.  The nuisance parameters are drawn from their priors
+and act on the source only.  A flux universe changes the event rate, not the
+cross section, because the analysis divides by the central flux.  On the
+signal, each interaction-model band is renormalized within each fine truth
+cell, so it moves only the composition within the cell, and with it the
+efficiency and the migrations; on the background it applies directly.  The
+lateral bands enter as $\sum_{b}z_{b}\Delta_{b}$, with $\Delta_{b}$ from
+endpoint unfoldings of the data; the detector weight bands are MINOS
+muon-matching efficiency and the GEANT4~\cite{GEANT4:2002zbu} neutron, pion,
+and proton reweights.  The data are unfolded once with the
+full simulation, with no nuisance draws and no added terms.
+
+% The flowchart is drawn with the LaTeX picture environment (no package needed) and placed in the table float with the
+% generative model, so that the figure numbering cited by the Data availability statement is unchanged.
+\begin{table*}[t]
+  \caption{Generative model of the calibration.  Left: the flow of one test,
+  repeated over $B$ pseudo-experiments.  Right: what each element of a
+  pseudo-experiment does, and the corresponding element of the data analysis.
+  Nuisance draws act on the pseudo-data source only.}
+  \label{tab:genmodel}
+  \centering\scriptsize
+  \begin{minipage}[t]{0.34\textwidth}
+    \vspace{0pt}
+    \setlength{\unitlength}{1pt}
+    \begin{picture}(170,176)(0,0)
+      \put(10,160){\framebox(158,16){\parbox{154pt}{\centering $H_{0}(G)$: $\sigma=G$ on every fine cell}}}
+      \put(52,160){\vector(0,-1){7}}
+      \put(10,123){\framebox(92,30){\parbox{88pt}{\centering source half reweighted to $G$; nuisance draws; Poisson pseudo-data and background}}}
+      \put(112,123){\framebox(56,30){\parbox{52pt}{\centering data}}}
+      \put(56,123){\vector(0,-1){7}}
+      \put(140,123){\vector(0,-1){7}}
+      \put(10,92){\framebox(92,24){\parbox{88pt}{\centering unfold with the other half (joint-test estimator)}}}
+      \put(112,92){\framebox(56,24){\parbox{52pt}{\centering unfold with the full simulation}}}
+      \put(56,92){\vector(0,-1){7}}
+      \put(140,92){\vector(0,-1){7}}
+      \put(10,61){\framebox(92,24){\parbox{88pt}{\centering add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$}}}
+      \put(112,61){\framebox(56,24){\parbox{52pt}{\centering $T_{\mathrm{obs}}$}}}
+      \put(56,61){\vector(0,-1){7}}
+      \put(140,61){\vector(0,-1){7}}
+      \put(10,30){\framebox(158,24){\parbox{154pt}{\centering $k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls}}}
+      \put(89,30){\vector(0,-1){7}}
+      \put(10,0){\framebox(158,23){\parbox{154pt}{\centering Holm steps with the 95\% Clopper--Pearson gate; batches of \jtBatch{}, $B\le\jtBcap$}}}
+      \put(10,42){\line(-1,0){8}}
+      \put(2,42){\line(0,1){96}}
+      \put(2,138){\vector(1,0){8}}
+    \end{picture}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.63\textwidth}
+    \vspace{0pt}
+    \begin{tabular}{@{}lll@{}}
+      \toprule
+      \pcell{0.12\textwidth}{Element} & \pcell{0.29\textwidth}{Pseudo-experiment} & \pcell{0.18\textwidth}{Data analysis} \\
+      \midrule
+      \pcell{0.12\textwidth}{Truth} & \pcell{0.29\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.18\textwidth}{unknown} \\
+      \pcell{0.12\textwidth}{Unfolding simulation} & \pcell{0.29\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.18\textwidth}{full simulation at Tune~v1 weights} \\
+      \pcell{0.12\textwidth}{Background} & \pcell{0.29\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.18\textwidth}{full background template} \\
+      \pcell{0.12\textwidth}{Flux} & \pcell{0.29\textwidth}{one of \jtFluxUniverses{} universes on the source} & \pcell{0.18\textwidth}{central flux} \\
+      \pcell{0.12\textwidth}{Interaction model} & \pcell{0.29\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.18\textwidth}{Tune~v1} \\
+      \pcell{0.12\textwidth}{Detector} & \pcell{0.29\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.18\textwidth}{nominal} \\
+      \pcell{0.12\textwidth}{Added terms} & \pcell{0.29\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.18\textwidth}{none} \\
+      \pcell{0.12\textwidth}{Statistic} & \pcell{0.29\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.18\textwidth}{the same} \\
+      \bottomrule
+    \end{tabular}
+  \end{minipage}
+\end{table*}
+
+\subsection{Statistics and metric}
 
 A total statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$ is formed from
 the residual $r=F-\mu_{G}$ of the unfolded cell values $F$ and the prediction
@@ -775,45 +1305,73 @@ Tune~v1 null.  The metric influences each test's power; the null calibration
 determines its size.
 % Source: nd-unfolding/s5p_inference.py:30-49; nd-unfolding/s5p_joint.py:147-162;
 % amendment 7 calibration.metric and metric_frozen.
+% Methods rewrite (M2-AUDIT.md Q4a, :159-161, as corrected by M2-ARCHIVE-CHECKS.md:7, :92-97, :127): the pilot's
+% seeds are disjoint from production but it reuses the same simulated events and lacked the MINOS-efficiency band
+% (A7 :25); V's diagonal matches the production null variances (median ratio 1.00); lambda = 0.0155; 82 of 109
+% eigenvalues below lambda ("about 80"); whitened trace 46.8 ("about 47"), median T_tot 49.2; power only.
+The pilot's seeds are disjoint from those of the calibration, but it reuses the
+same simulated events and omitted the MINOS-efficiency band.  The diagonal of
+$V$ matches the calibration's null variances (median ratio 1.00), but the
+shrinkage (intensity 0.015) floors about 80 of the 109 nearly degenerate
+correlation directions, so the null statistic has a whitened trace of about 47
+rather than 109.  Since $V$ was fixed before the calibration, this affects
+power only.
 
-The null distribution of each statistic is obtained from pseudo-experiments that
-run the full analysis chain at the null truth.  Each draws Poisson pseudo-data
-from one half of the simulation together with an independent background source,
-refits the background-refinement classifier, and unfolds with the joint-test
-estimator trained on the other half.  It also draws the nuisance terms of the
-model:
-one of \jtFluxUniverses{} flux universes, each of the \jtModelBands{}
-interaction-model uncertainty bands at one of its universes, the weight-based detector bands
-(including the GEANT4~\cite{GEANT4:2002zbu} hadron-interaction reweights), the
-muon and beam-angle lateral bands through a linear surrogate, a
-\SI{1.4}{\percent} normalization, the data's rounding-level noise, and the
-predictions' finite-sample residual.  The data are unfolded once with the full
-simulation.  The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$
+\subsection{Calibration and familywise error}
+\label{sec:calibration}
+
+% plain-language pass 2, director ruling on base defect F-p2-1 (DECISION-20261018-joseph-plain-language-pass2; PLAIN-LANGUAGE.md C7):
+% the stopping rule uses a 99.5% look interval plus a precision tier (nd-unfolding/s5p_inference.py:89-114, look_level=0.995),
+% the decision the 95% interval above (:127-155); the base sentence described stopping with the decision interval.
+The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$
 of $B$ null pseudo-experiments reach the observed statistic; it is never zero.
 Each decision uses the largest $p$ value over a set of shifted nulls fixed in
-advance: shifts by an upper bound
-on the simulation-size difference (half of the simulation in the
-pseudo-experiments, all of it for the data), and by $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, where
+advance.  Each shifted null adds a fixed vector to every null draw: $cD$ with
+$c\in\{0,\tfrac12,1\}$, where $D$ is an upper bound on the simulation-size
+difference along the null's bias direction (half of the simulation in the
+pseudo-experiments, all of it for the data), and $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, where
 $\delta_{\mathrm{fine}}$ is the change of the noise-free unfolded result in the
 last step of a refinement of the null truth's grid (Sec.~\ref{sec:conditions}).  The
 null distributions for the external predictions are strongly non-central, with
 non-centralities $\lambda$ of \jtLambdaMin{}--\jtLambdaMax{} in these units,
 because the calibration reproduces the estimator's pull toward its prior.
 % Source: amendment 7 calibration.process, calibration.process_shift, m1_shift,
-% prefreeze_measurements.summary.
+% prefreeze_measurements.summary. Variants c in {0, 1/2, 1} D and +-2 delta_M1: nd-unfolding/s5p_joint.py:228-258
+% (M2-AUDIT.md:61).
 
 The ten tests are controlled at a familywise level $\alpha=\jtAlpha$ by the
-Holm procedure~\cite{Holm:1979}, and a step rejects only when the 95\%
-Clopper--Pearson interval~\cite{Clopper:1934} of $k/B$ lies entirely below its
-Holm threshold.
-% plain-language pass 2, director ruling on base defect F-p2-1 (DECISION-20261018-joseph-plain-language-pass2; PLAIN-LANGUAGE.md C7):
-% the stopping rule uses a 99.5% look interval plus a precision tier (nd-unfolding/s5p_inference.py:89-114, look_level=0.995),
-% the decision the 95% interval above (:127-155); the base sentence described stopping with the decision interval.
-Calibration proceeded in batches of \jtBatch{}
+Holm procedure~\cite{Holm:1979}, with the tests taken in increasing
+$(k+1)/(B+1)$.  Calibration proceeded in batches of \jtBatch{}
 pseudo-experiments per null, to at most \jtBcap{}, until both of a null's
 decisions were determined: a null stopped when a 99.5\% Clopper--Pearson
-interval of $k/B$ lay entirely on one side of each of its thresholds and met a
-fixed precision requirement.  The hypotheses, statistics, shifted nulls,
+interval~\cite{Clopper:1934} of $k/B$ lay entirely on one side of each of its
+thresholds and met a fixed precision requirement.
+% Methods rewrite (M2): the replacement for "the Monte Carlo p values remain valid at the number of pseudo-experiments
+% reached". Text: docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md:69-74 (provisional, J4).
+% Bound: :49-52 (max_j R(c_j)/c_j = 0.8902, certified, m2-calc/certify_out.json; "the paper states at most 0.9 alpha");
+% assumptions A1, A2 and the rule: :56-66. Ordering, ties, shared ensembles: M2-AUDIT.md:88-90, :113 and
+% gpt-6.1-sol-check (M2-FWER-RECORD.md:25-27). Nuisance-averaged size: M2-AUDIT.md:143 (Q3).
+A hypothesis is rejected only when the upper end of the 95\% Clopper--Pearson
+interval of its exceedance fraction lies below its Holm threshold.  If each
+true null's calibrated tail probability is uniformly distributed or
+conservative, and the pseudo-experiments' exceedances are independent given
+the data, the probability of passing this gate at any number of
+pseudo-experiments up to \jtBcap{} is at most 0.9 times the threshold,
+whatever rule determines when sampling stops, including the budget
+extensions.  The familywise error rate of the ten decisions is therefore at
+most $0.9\alpha$.  The point estimates $(k+1)/(B+1)$ carry no separate
+validity claim.  The bound does not depend on the order of the Holm steps, so
+the ranking, its ties, the shared ensemble of each null's total and shape
+tests, and their unequal stopping counts do not affect it.  The second
+assumption requires the lost pseudo-experiments (below) to be lost
+independently of their outcomes; they were lost to time limits on slow nodes,
+which has not been shown to be independent of the outcome.  The first
+assumption is the calibration's fidelity, discussed under conditions (i) and
+(iv) below.  The calibrated size is averaged over the nuisance priors: at a
+fixed true value of the nuisance parameters it can exceed $\alpha$.
+
+% Methods rewrite: "An independent recomputation ... agrees" kept; the frozen design paragraph kept.
+The hypotheses, statistics, shifted nulls,
 multiplicity and stopping rules, and every input were fixed before any
 production pseudo-experiment was run or any observed statistic computed.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, P8. The count of compared quantities
@@ -832,6 +1390,8 @@ joint-test section~\cite{AnalysisNote2026}.
 % were seen, collected in one paragraph. From VI A (design review; budget extension), VI C (the scan's, the recovery's
 % and the coarse-projection comparison's timing) and VI D (post hoc); the 2D learner choice stays at its claim (IV A).
 % Each source comment stays at its claim. Register: "the reviewers of the design" rephrased.
+% Methods rewrite (M2): "and the Monte Carlo p values remain valid at the number of pseudo-experiments reached"
+% replaced by the bound above, which covers the budget extension (M8).
 Some choices were made after results had been seen.  Besides the choice of the
 two-dimensional central value (Sec.~\ref{sec:repro2d}), two parts of this
 procedure were informed by the data.
@@ -840,8 +1400,8 @@ Those who reviewed the test design had seen descriptive per-cell residuals of
 the data before it was fixed.  A bounded extension of
 the production computing budget was decided while the outputs of the
 computing jobs showed the observed $p$ values used for the decisions; it
-changed no statistic, shifted null, threshold, or stopping rule, and the Monte
-Carlo $p$ values remain valid at the number of pseudo-experiments reached.
+changed no statistic, shifted null, threshold, or stopping rule, and the bound
+above holds whatever rule determined when sampling stopped.
 Three studies ran after the decisions and are not part of the decision rule,
 each to a specification fixed before it ran: the scan of the shift multiplier
 and the rerun of the lost pseudo-experiments (Sec.~\ref{sec:joint-results}),
@@ -854,8 +1414,12 @@ muon-kinematic projection (Sec.~\ref{sec:response}) is a post hoc observation.
 
 The decisions test the hybrid null.  Each holds under six conditions on the
 nuisance model, numbered as in the specification fixed in
-advance~\cite{JointTestRecord2026}.  (i) Within each fine-grid cell the null
-truth has the Tune~v1's shapes, and convergence of the fine grid has not been
+advance~\cite{JointTestRecord2026}.
+% Methods rewrite (M2-AUDIT.md Q1): "the null truth has the Tune v1's shapes" restated as the composition of the
+% hypothesis definition (M8).
+(i) Within each fine-grid cell the null
+truth has the Tune~v1 composition of the hypothesis definition, and
+convergence of the fine grid has not been
 shown.  In the $L_{2}$ norm of the per-cell relative changes, the last
 refinement step, from a twofold-merged grid to the fine grid, is
 \jtMoneMin--\jtMoneMax{} of the whole change from the coarse test grid.  The
@@ -883,17 +1447,36 @@ $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ along $\delta_{\mathrm{fine}}$.
 A scan along that direction is reported in Sec.~\ref{sec:joint-results}.  (ii) The
 detector model is the simulation's, varied only by the drawn detector bands and
 the lateral surrogate; there is no band for the calorimetric recoil-energy
-response (Sec.~\ref{sec:response}).  (iii) The interaction-model prior is the
+response (Sec.~\ref{sec:response}).
+% Methods rewrite (M2-AUDIT.md Q4d, :183-184): the surrogate's only recorded check is endpoint symmetry.
+The surrogate has been checked only for the symmetry of its endpoints.
+(iii) The interaction-model prior is the
 analysis's \jtModelBands-band set, with negative weights of two bands clipped.
+% Methods rewrite (M2-AUDIT.md Q4b, Q4c, Q4e, :165-193; SF1-SPEC.md sec. 1): only the mean of the half-versus-full shift
+% is measured, in a noise-free, nuisance-free process; the null is conditional on the simulated sample; no rejection
+% rate of null pseudo-data processed like the data exists. Margins (min over variants of (T_obs - median)/SD,
+% joint-evaluate.json): M2-AUDIT.md:194 (2.8 NuWro shape, 4.5 GENIE CV shape, 4.9 MEC shape; 5.7-207 the other seven).
 (iv) The pseudo-experiments use half of the simulation and the data all of it;
 the resulting shift, at most about 0.07 null standard deviations but not
-always consistent with zero, enters as the upper-bound shift described above.  (v) GiBUU lacks $E_{\nu}>\SI{20}{GeV}$, and
+always consistent with zero, enters as the upper-bound shift described above.
+% SF-1 pending
+This is a measurement of the mean shift only, in a process without noise or
+nuisance draws; its effect on the width and tails of the null distributions
+has not been measured.  Every pseudo-experiment resamples the same simulated
+events, so the null distributions are conditional on that simulation.  The
+three tests closest to their thresholds are the shape tests of NuWro, GENIE
+CV, and GENIE + MEC, whose observed statistics lie 2.8, 4.5, and 4.9 null
+standard deviations above their null medians; the other seven lie 5.7 or
+more.  (v) GiBUU lacks $E_{\nu}>\SI{20}{GeV}$, and
 its out-of-domain truth enters the migrations into its domain.  (vi) The
 predictions' own finite samples enter the metric and the simulated residuals.
-The Monte Carlo $p$ values are exact for the simulated null to the extent that
-the pseudo-experiment chain reproduces the analysis applied to the data; the
+% Methods rewrite (M2-AUDIT.md Q3, Q4e): "The Monte Carlo p values are exact for the simulated null to the extent that"
+% restated as the calibration's validity (M8); the absence of a size check of the data process added (M2-AUDIT.md:187-193).
+The calibration is valid for the simulated null to the extent that the
+pseudo-experiment chain reproduces the analysis applied to the data; the
 independent recomputation verifies the calculation, not whether the chain does
-so.
+so.  No rejection rate has been measured for null pseudo-data processed like
+the data, which would require an independent simulation sample.
 % Source: amendment 7 claims.conditions_stated_with_every_claim (all six); claims.rejection (the
 % W-norm rate 0.45-0.76 per halving, "residual ... ~1-3 times the last step; kappa = 2 is its central
 % value"; kappa_robust 3); validation_and_assurance (iv)-(v); RECORD-20261005 sec. 4 (scope of the
@@ -909,6 +1492,7 @@ so.
 \subsection{Results}
 \label{sec:joint-results}
 
+% SF-1 pending
 Table~\ref{tab:joint} lists the ten decisions.  Every test is rejected at
 familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has
 $k=1$.
@@ -929,25 +1513,32 @@ prior, which the calibration reproduces.
 % "up to about 5.2" covers both readings; the exact endpoints and the tests that first lose determinacy are in
 % the note (sec:joint5d-kappa).
 
+% Methods rewrite (OUTLINE-DECISION sec. 2, row VIII; GPT-6.1-sol Part 2 VIII): the displayed shift defined
+% mathematically; the variant set is nd-unfolding/s5p_joint.py:228-258 (M2-AUDIT.md:61, :146-150).
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.98\textwidth]{paper_joint_nulls}
+  \includegraphics[width=0.9\textwidth]{paper_joint_nulls}
   \caption{Calibrated null distributions of the total (top) and shape (bottom)
   statistics for each prediction, for the shifted null with the largest null
   median among those used in the decisions (labelled ``claim variant'' in the
-  legend), on a logarithmic axis.
+  legend), on a logarithmic axis.  Each shifted null adds the same fixed vector
+  $s$ to every null draw before the statistic is formed, with
+  $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$
+  (Sec.~\ref{sec:calibration}); the claim $p$ value is the largest over these
+  shifts and need not come from the one shown.
   % plain-language pass, review fix R11, N7 (DECISION-20261018-joseph-plain-language-pass)
   Vertical lines mark the observed statistics; $k/B$ is as
   in Table~\ref{tab:joint}.}
   \label{fig:joint-nulls}
 \end{figure*}
 
+% Methods rewrite (M8): "for which the null is exact" restated as in Sec. VIII A.
 \begin{table}[t]
   \caption{Joint-test decisions.  $B$: null pseudo-experiments completed at the
   stopping point, of 1400 submitted per null (1800 for NuWro); $p=(k+1)/(B+1)$;
   Holm thr.: Holm step threshold $\alpha/(11-i)$ at rank $i$; CP: 95\% Clopper--Pearson interval of $k/B$.
-  Tune~v1 is the prediction of the analysis simulation, for which the null
-  is exact.}
+  Tune~v1 is the prediction of the analysis simulation, for which no external
+  prediction enters the null.}
   \label{tab:joint}
   \centering\scriptsize
   \begin{tabular}{@{}llrrlll@{}}
@@ -1055,41 +1646,48 @@ response.
 % 2026-10-11: the unscaled-recoil control, the test-beam population limits (neutrons, higher momenta) and the full
 % list of untested effects are in the note (sec:joint5d-response).
 
-\section{Conclusions}
+\section{Discussion and conclusions}
 \label{sec:conclusions}
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, the conclusions' repeated limitation
 % list merged into the three kinds of result; theme A (F4) as in the Introduction (source there); theme C (F15); the
 % lost-pseudo-experiment recovery is stated once, in Sec. VI C.
-This study applies OmniFold to MINERvA inclusive charged-current data,
-reproduces the published two-dimensional result, and extends the unfolding
-to five simultaneous observables.  The results are of three kinds.  The
-two-dimensional comparison is an end-to-end test of the unfolding against a
-measurement from the same data; it depends on the learner at the level of one
+% Methods rewrite (OUTLINE-DECISION sec. 2, row IX): what worked, what failed, what is untested; the scope statement
+% is not repeated.
+\emph{What worked.}  The two-dimensional comparison is an end-to-end test of
+the unfolding against a measurement from the same data, and it agrees in
+normalization to about one percent; it depends on the learner at the level of one
 unit of $\chi^{2}/\mathrm{ndf}$, and the quoted two-dimensional
 statistical block has had no coverage test.
 % J3/J4 provisional (DECISION-20261018, packet C4: kept): the quoted block is S1 (Q); untested (KNOWN_ISSUES 85, J5).
 % plain-language pass, verification fix V4 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, review fix N3 (DECISION-20261018-joseph-plain-language-pass)
+% Methods rewrite (M8): "and recover the established low-recoil discrepancy" removed from the conclusions (Sec. VII
+% keeps the descriptive low-E_avail statement).
 The higher-dimensional central values agree in normalization with the
-lower-dimensional results they extend and recover the established low-recoil
-discrepancy, and the three- and four-observable central values pass closure
-tests with injected shape changes.
+lower-dimensional results they extend, and the three- and four-observable
+central values pass closure tests with injected shape changes.  The unbinned
+background refinement reduces the subtraction bias that pseudo-experiments
+with backgrounds reveal.  Calibration through the full analysis chain yields
+tests whose familywise error rate is bounded under stated assumptions even
+though the estimator is biased.
+
+\emph{What failed.}
+% plain-language pass, review fix R1, R4 (DECISION-20261018-joseph-plain-language-pass)
+A regularization bias persists under the tested shape changes of generator
+size, and a coverage test of five-dimensional statistical intervals fails at
+the tested truths.  Covariances from this estimator depend on its random
+seed.  The envelope over the five tested truth deformations, a median of about
+10--13\% per cell, keeps each reporting definition we studied from meeting
+the \SI{10}{\percent} precision target we set in advance.
 % plain-language pass 2, review fix R-m2 (DECISION-20261018-joseph-plain-language-pass2)
-All the higher-dimensional central values support only descriptive
+All the higher-dimensional central values therefore support only descriptive
 comparisons, without validated coverage of their total intervals and without
 a covariance-based generator significance.
-% plain-language pass, review fix R1, R4 (DECISION-20261018-joseph-plain-language-pass)
-Pseudo-experiments that include
-backgrounds reveal a subtraction bias, which the unbinned background
-refinement reduces, while a regularization bias persists under the tested
-shape changes of generator size; covariances from this estimator depend on its
-random seed; and the measured model dependence, a median of about 10--13\% per cell,
-prevents a five-dimensional measurement whose total uncertainties meet the
-\SI{10}{\percent} precision target we set in advance.  These outcomes provide
-practical checks for future multidimensional neutrino unfolding.
 
+\emph{What is untested.}
+% SF-1 pending
 The joint tests are calibrated generator tests: they illustrate calibration
 through the full analysis chain with an estimator that retains substantial
 model dependence, and they provide no new measurement uncertainty.  Under six
@@ -1100,4 +1698,21 @@ shown that the joint information adds discrimination.  The physical
 interpretation depends on the simulation's calorimetric recoil response and on
 the assumed convergence below the fine grid; extending it would require a
 response band drawn through the calibration and a demonstrated bound on the
-residual below the fine grid.
+residual below the fine grid.  The effect of the simulation size on the width
+and tails of the null distributions, and the rejection rate of null
+pseudo-data processed like the data, have not been measured.
+
+% M5 for Joseph
+% Methods rewrite, item M5 (METHODS-FRAMING.md sec. 2): why unfold before testing. The writer's argument, for Joseph;
+% no comparison with a reconstruction-level test was computed.
+\emph{Why unfold before testing.}  Unfolded results can be compared with any
+prediction at truth level without simulating each generator through the
+detector, which is what makes the two-dimensional result and the central
+values reusable.  For the hypothesis tests the advantage is smaller.  A test at
+reconstruction level would avoid the regularization bias, but it would still
+need the same response model: each external prediction would have to be folded
+through the analysis simulation's response, which is the hybrid construction of
+Sec.~\ref{sec:joint}, with the same composition below the fine grid.  Our tests
+instead calibrate the unfolded statistic through the full chain, so the bias
+enters the null distribution rather than the decision.  We have not compared
+their power with that of a reconstruction-level test.
