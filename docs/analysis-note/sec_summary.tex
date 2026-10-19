@@ -12,13 +12,18 @@ scope; this section states the conclusions they support.
         whose size depends on the learner (exact-split cross-check
         $\chiPaperExact$). The central value and its uncertainty use the same
         LightGBM estimator, a choice made after both comparisons were known
-        (\S\ref{sec:method-config}); the first-built statistical band failed a fixed-truth coverage test in its
-        tails, and neither the rebuilt band, which was only rescored post hoc, nor the quoted statistical block has been
-        independently tested (\S\ref{sec:coverage}).
+        % plain-language pass, director ruling on base defect note F2 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
+        (\S\ref{sec:method-config}). The statistical band in use when the fixed-truth coverage test ran
+        % plain-language pass, review fix m2 (DECISION-20261018-joseph-plain-language-pass)
+        % plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
+        failed it in its tails. A rebuilt band was only re-evaluated post hoc, on the same pseudo-experiments, and has not
+        been tested independently; the statistical block quoted now has not been tested (\S\ref{sec:coverage}).
         % J3/J4 provisional (DECISION-20261018, packet C1 "uncertainty scale" kept, C4 kept, W3: D2).
+        % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
   \item Simultaneous unbinned three-, four- and five-observable unfolds
-        ($+\Eavail$, $+q_{3}$, $+W$) agree with their lower-dimensional
-        predecessors to $\approx$1--2\,\% and recover an injected $\Eavail$
+        ($+\Eavail$, $+q_{3}$, $+W$) pass marginal-normalization checks against
+        % plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
+        the lower-dimensional results to $\approx$1--2\,\% and recover an injected $\Eavail$
         shape (\S\ref{sec:3d}). They recover the established low-recoil 2p2h
         deficit (\S\ref{sec:3d-2p2h}), resolve its momentum-transfer structure
         (\S\ref{sec:4d}), and place the remaining high-$\Eavail$ excess over the
@@ -26,18 +31,18 @@ scope; this section states the conclusions they support.
         generators lie below the data, each by about its overall shortfall after
         accounting for the $E_\nu>\SI{20}{GeV}$ events missing from GiBUU
         (\S\ref{sec:eavailw-band}).
-  \item The five-axis estimator does not follow generator-sized truth changes,
-        and its measured model dependence rules out every predeclared
-        five-dimensional reporting definition at useful precision; no
-        five-dimensional interval coverage is established (\S\ref{sec:5d}). The
-        one adopted five-axis covariance carries estimator-seed sensitivity
-        above its declared limit, so no covariance-based significance is quoted
-        (\S\ref{sec:eavailw-adopted}).
-  \item Calibrated through the full analysis chain, frozen joint tests reject
-        all ten simple generator hypotheses under six stated conditions. They
-        recover established discrepancies, show no discrimination beyond matched
-        coarse projections, and add no reportable uncertainty
-        (\S\ref{sec:joint5d}).
+  \item The five-axis estimator does not follow truth changes of about the size
+        of generator differences, and its measured model dependence rules out, at
+        useful precision, every five-dimensional reporting definition specified in
+        advance; no five-dimensional interval coverage is established
+        (\S\ref{sec:5d}). The one five-axis covariance in use has an
+        estimator-seed sensitivity above the limit set before production, so no
+        covariance-based significance is quoted (\S\ref{sec:eavailw-adopted}).
+  \item Joint tests specified in advance and calibrated through the full
+        analysis chain reject all ten simple generator hypotheses under six stated
+        conditions. They recover established discrepancies, do not show
+        discrimination beyond matched coarse projections, and provide no new
+        uncertainty on the cross section (\S\ref{sec:joint5d}).
   \item Point-cloud (PET) representations of the full event are future work
         (App.~\ref{sec:pet}); no result here depends on them.
 \end{itemize}
@@ -59,10 +64,11 @@ development as future work (App.~\ref{sec:pet}).
 % $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
 % covariance is adopted. Its remaining closure and complete-UQ requirements are
 % method development and are not on the publication critical path.
-A selection-complete scalar five-dimensional covariance has been adopted
-under a documented exception (\S\ref{sec:eavailw-adopted}). A five-dimensional measurement with qualified total uncertainties at
-useful precision was not obtained: the study of reporting definitions found none
-that meets its precision targets within its rules and budget (\S\ref{sec:gbdt-model-dependence}).
+A selection-complete scalar five-dimensional covariance is in use under a
+documented exception (\S\ref{sec:eavailw-adopted}). No five-dimensional measurement
+was obtained with total uncertainties at useful precision that meet the criteria set
+in advance: the study of reporting definitions found none that meets its precision
+targets within its rules and budget (\S\ref{sec:gbdt-model-dependence}).
 % Resolves the demoted TODO (lane 5 R12) on the scalar-5D campaign (s5p, OI-193) closing.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md section 7 (NOT ADMITTED,
 % no new reportable uncertainty, NOT READY); CHECKLIST-20261001-s5p-terminal-and-claims.md section 4.
@@ -87,10 +93,10 @@ identity, estimator and uncertainty-family definitions, units, support,
 normalization, and a reproducible projection example.
 App.~\ref{app:release} specifies this release for our analysis. It records
 which objects have fixed identities today and which do not exist yet.
-A local release candidate with checksums and a replay verifier exists
-(App.~\ref{app:release}), but \textbf{no release has been tagged or
+A local candidate data package, with checksums and a script that recomputes and
+checks its results, exists (App.~\ref{app:release}), but \textbf{no release has been tagged or
 deposited}; rebuilding the documents reproduces no result here. New projections
 require their own applicability checks; nominal weights alone cannot certify arbitrary
 downstream inference (App.~\ref{sec:unbinned-inference}). The release design and
-public example have no bearing on the separately settled covariance adoption
+public example do not affect the choice of covariance, which was made separately
 (\S\ref{sec:eavailw-adopted}).

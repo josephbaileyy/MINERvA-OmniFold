@@ -40,19 +40,20 @@ both ready: the production REPORT, its verification and the combination are on `
 | 13 | The budget against VL175 and against the published analysis | [`rebuild/REPORT.md`](rebuild/REPORT.md) §3–§4; paper §IV B as built |
 | 14 | The disclosure set with final numbers, as written into the four documents | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 4; the built PDFs (below) |
 | 15 | The claim wording, inside the narrower endpoint: Joseph's provisional J3–J5 (all as recommended) | [`DECISION-PACKET-J3-J6.md`](DECISION-PACKET-J3-J6.md); [`DECISION-20261018`](../../../DECISION-20261018-joseph-2d-j3-j5-provisional.md); [`J3-J5-WORDING-IMPLEMENTATION.md`](J3-J5-WORDING-IMPLEMENTATION.md) |
+| 16 | The plain-language pass (2026-10-18), with content unchanged. Its decisions left to Joseph: A, state the numbers the hedges stand in for; B, move history and repeated caveats from the paper and primer to the note; C, claim-strength wording; D, items outside the pass (bibliography titles, figure legends, the result-status table) | [`PLAIN-LANGUAGE-IMPLEMENTATION.md`](PLAIN-LANGUAGE-IMPLEMENTATION.md) §7–§8; [`DECISION-20261018-joseph-plain-language-pass`](../../../DECISION-20261018-joseph-plain-language-pass.md) |
 
-**The built PDFs** (note, paper, primer, PET note) are built locally from the wording branch, and their sha256 are in
-`J3-J5-WORDING-IMPLEMENTATION.md`. They are not committed and have not been sent anywhere. Joseph decides whether and how Ben receives them (J6).
+**The built PDFs** (note, paper, primer, PET note) are built locally from the plain-language branch, and their sha256
+are in `PLAIN-LANGUAGE-IMPLEMENTATION.md` §6. They supersede the builds listed in `J3-J5-WORDING-IMPLEMENTATION.md`. They are not committed and have not been sent anywhere. Joseph decides whether and how Ben receives them (J6).
 
 **Points for Joseph to confirm at the review** (raised by the independent review of the wording):
 
 | # | point | where |
 |---|---|---|
 | 15a | **A director's factual correction to approved wording.** The ~7% run-period step belongs to the double ratio: each period group's unfolded distribution taken relative to its own simulation. The unfolded distributions themselves step by 10.29%. The disclosure's meaning is unchanged. | paper §IV B; note §uq-combine; DRAFT D5 revision 4 |
-| 15b | **Readability of the decided register W1(c).** "Full scientific closeout", "population or simultaneous interval coverage" and "calibrated covariance-based generator significance" are not defined for an outside reader. | paper §IV B; note §sec:uq-2d-scope |
+| 15b | **Readability of the decided register W1(c).** "Full scientific closeout", "population or simultaneous interval coverage" and "calibrated covariance-based generator significance" are not defined for an outside reader. **Addressed by the plain-language pass:** paper and note now say "The result's intervals, bias and covariance have not been independently validated", with the coverage cases spelled out. Joseph to confirm. | paper §IV B; note §sec:uq-2d-scope |
 | 15c | **The endpoint statement carries more than W1(c)'s sentences:** the three missing inputs and "no coverage claim is made" (D1's required content, DECISION-20261014 §2), and the note's "goodness-of-fit values are indicative" clause. | paper §IV B; note §sec:uq-2d-scope |
 | 15d | **The primer says nothing about the run-period inconsistency.** The decision placed D0–D5 in the paper and the note, not the primer. | primer |
-| 15e | **To keep the paper at 11 pages**, one parenthetical moved to the note: the post hoc diagnostic pointing to under-scatter of the closure pseudo-experiments. Restoring it makes the paper 12 pages. | paper §IV B; note §sec:coverage |
+| 15e | **To keep the paper at 11 pages**, one parenthetical moved to the note: the post hoc diagnostic pointing to under-scatter of the closure pseudo-experiments. Restoring it made the paper 12 pages; after the plain-language pass the paper is 12 pages anyway (page 12 is references), and the space cost of restoring it is unmeasured. | paper §IV B; note §sec:coverage |
 
 ## Part 3 — housekeeping that needs Ben
 

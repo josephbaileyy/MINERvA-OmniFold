@@ -47,17 +47,19 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 We study multidimensional medium-energy charged-current neutrino--nucleus
 cross sections on MINERvA open data with OmniFold, an unbinned machine-learning
 unfolding method. An independent unfolding method reproduces the published double-differential cross section in muon transverse and longitudinal
-momentum, including its spectrum and uncertainty scale; that uncertainty is computed with the
-central value's tree-learning implementation, its universe and statistical blocks at the central
-value's training seed, and whether it describes the central value has not been measured.
+momentum, including its spectrum and uncertainty scale. That uncertainty is computed with the
+central value's own tree-learning implementation, with its universe and statistical blocks at the
+central value's training seed; whether it describes the central value has not been measured.
 % FACT (2026-10-18): the "different tree-learning implementation" clause was stale since 2026-10-11 (DECISION-20261011);
 % the universe and statistical blocks of Q are at the central value's seed (stageC/production/DESIGN.md §3.4), the
 % training-seed block spans five seed settings (§3.5). Review M1.
 % J3/J4 provisional (DECISION-20261018, packet C1 and C8: kept; W3: D10 KI-88 in sec:uq-boot).
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 Adding available energy
 ($\Eavail$), three-momentum transfer ($q_{3}$), and hadronic invariant mass ($W$)
 gives simultaneous \emph{unbinned} three-, four-, and five-observable MINERvA unfolds.
-Each passes projection anchors against its lower-dimensional predecessor to
+Each passes marginal-normalization checks against the lower-dimensional result to
+% plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
 $\approx$1--2\,\%. Binned MINERvA measurements already reach triple-differential;
 the methodological feature here is simultaneous unbinned unfolding. The unfolds
 recover the established MINERvA low-recoil discrepancy, better described with the
@@ -65,17 +67,21 @@ tested multinucleon contribution, and show a descriptive excess over the
 MINERvA-tuned simulation at high $\Eavail$ and high $W$, where four external
 generators also under-predict the data, each by about its overall shortfall
 after accounting for high-energy neutrinos absent from the GiBUU sample.
-Background-inclusive tests expose a purity-subtraction bias, which a
-negative-weight background treatment largely removes; generator-sized
-shape-reweighting tests expose a regularization bias that no quoted uncertainty
-includes; and coverage and estimator-seed studies expose further limits. The
-measured model dependence prevents a qualified five-dimensional measurement
-with total uncertainties at useful precision. Calibrated joint tests reject all
-five tested generator predictions in total and in shape at the 5\% familywise
-level. These conditional tests recover known discrepancies without demonstrated
-discrimination beyond matched coarse projections, and their interpretation is
-limited by an omitted calorimetric recoil-response uncertainty and unresolved
-fine-grid convergence. A scalar study examines the effect of removing
+Closure tests that include backgrounds show a bias from the purity subtraction,
+which a negative-weight background treatment largely removes. Tests that reweight the
+truth shape by about the size of the differences between generators show a
+regularization bias that no quoted uncertainty includes. Coverage and
+% plain-language pass, review fix N2 (DECISION-20261018-joseph-plain-language-pass)
+estimator-seed studies show further limitations. The measured model dependence is too
+large for a five-dimensional measurement with total uncertainties that meet the
+useful-precision targets set in advance. Calibrated joint tests reject all
+five tested generator predictions, in total and in shape, at a 5\% family-wise
+error rate. These tests are valid only under stated conditions. They recover known
+% plain-language pass, review fix m6 (DECISION-20261018-joseph-plain-language-pass)
+discrepancies, but do not demonstrate discriminating power beyond that of matched
+coarse projections. Their interpretation is limited by the omission of an uncertainty
+on the calorimetric recoil response, and by the fine grid on which the null hypotheses
+are defined, whose convergence has not been shown. A scalar study examines the effect of removing
 the truth-level muon kinematic cuts. Point-cloud (PET) representations of the
 full event are future work, documented separately; this note uses no PET result.
 
