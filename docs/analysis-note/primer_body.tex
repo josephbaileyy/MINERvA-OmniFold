@@ -91,38 +91,37 @@ also fluctuate. Coverage tests the estimate and its interval together.}
 \end{table}
 
 % plain-language pass, review fix RD1 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B: the PET sentences moved to "Alternative representations and signal definitions" (primer P-new-3), the
+% truth-cut sentence to the signal-definition paragraph there (P-new-3), and the pointer to the selection-versus-inputs
+% table (P9) to the note, which carries the table (selection_features.tex, tab:selection-features, input by
+% sec_experiment.tex) and the signal-only design-study samples (its "PET design studies" row).
 One more distinction matters later: which events are kept (the selection) and
 what the learner is shown (its inputs) are separate choices. Every analysis of
 real data here requires a reconstructed muon matched to MINOS, a second detector
 downstream of MINERvA that measures the muon's momentum. The classifiers that
 read summary quantities of each event use that momentum. They are
 gradient-boosted decision trees, a standard machine-learning method, and from
-here on we call them the \emph{tree learner}. PET is a different learner: a
-neural network (a ``point-cloud transformer'') that reads the individual energy
-deposits in the detector rather than summary quantities. The original version
-of PET reads only the hadronic recoil (the energy deposited by particles other
-than the muon), so it does not use the muon, even though the muon is needed to
-select the event. A later, full-event version of PET also reads the muon.
-Removing the cuts on the true muon's motion enlarges the population being
-estimated without adding selected observations. A table in the companion
-analysis note lists, for each analysis, what it selects on and what its learner
-reads; the PET design studies use simulated samples that contain signal events
-only.
+here on we call them the \emph{tree learner}.
 
 \section{What we found}
 
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 Our results have different levels of validation, so we first list each finding
-with how far it has been tested. The rest of this section gives the details.
+with how far it has been tested. The rest of this section gives the details: the
+findings, then the limits that matter most, then a separate test of five
+simulations, and finally two exploratory studies.
 \begin{itemize}
 % plain-language pass, review fix R7, RD2 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 \item \textbf{A published result, reproduced.} The two-variable central value
   (the best estimate itself, apart from its error bars) reproduces MINERvA's
-  published measurement, although a shape difference remains when judged with
-  the published correlations between cells. Its size depends on which of two implementations of the tree learner
+  published measurement: the overall rate agrees to about one percent, although
+  a shape difference remains when judged with the published correlations between
+  cells. Its size depends on which of two implementations of the tree learner
   is used, and we chose which one to quote after both comparisons were known.
-  Its error budget was built with the same tree learner as the central value.
-  Some effects are not included in that budget, and we make no coverage claim
-  for it.
+  Some effects are not included in its error budget, and we make no coverage
+  claim for it.
   % plain-language pass, verification fix V4 (DECISION-20261018-joseph-plain-language-pass)
   The quoted statistical error bars have had no coverage test, that is, no check, on simulated repeats of the
   experiment, that they contain the truth as often as stated.
@@ -130,34 +129,44 @@ with how far it has been tested. The rest of this section gives the details.
 % (2026-10-17), untested (KNOWN_ISSUES 85, re-scoped to S1 under J5).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, review fix R2, R4, RD3 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme A (primer F-new-1): "about 10%" is the median (E_avail, W) residual, 9.7 %, under the GiBUU-to-GENIE
+% E_avail-shape departure. 9.7 % median: sec_5d.tex:73; OUTCOME-20260925-s5n-stage1-development-fail.md:76.
 \item \textbf{More quantities at once.} The higher-dimensional central values
-  pass particular recovery checks. Other end-to-end tests show biases that are
-  not included in their quoted uncertainty: the unfolding follows a changed
-  simulated truth only partly, and the background removal leaves a bias in
-  some cells. That uncertainty has not met the requirements we set in advance,
-  and it is used only under a documented exception to them, so their error
-  bars have not been shown to be right. The one direct test of whether such
-  error bars contain the truth as often as stated, made on a variant of the
-  method, failed. Their plots show central values only, and no significance is
-  assigned to their differences from the simulations, because the uncertainty
-  depends measurably on the learner's random seed.
+  pass particular recovery checks, but they are shown as central values only.
+  Other end-to-end tests show biases that are not included in their quoted
+  uncertainty: when the simulated truth is changed by a test pattern of the size
+  of a difference between generators, typical cells come back about
+  \SI{10}{\percent} off, and the background removal leaves a bias in some cells.
+  That uncertainty has not met the requirements we set in advance, and it is used
+  only under a documented exception to them, so their error bars have not been
+  shown to be right. The one direct test of whether such error bars contain the
+  truth as often as stated, made on a variant of the method, failed. No
+  significance is assigned to their differences from the simulations, because
+  the uncertainty depends measurably on the learner's random seed.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 \item \textbf{Known and new features in the data.} In these central values, all
   four tested simulations fall short of the data at low available energy,
   resembling an established low-recoil discrepancy. Adding a two-nucleon
   process fills part of the gap, without uniquely establishing the cause. The
   excess over MINERvA's tuned simulation is concentrated in one corner, at high
   available energy and high hadronic mass. Neither feature is assigned a
-  statistical significance. The learner's random seed also moves these central
-  values, by an amount given below, and how far that could shift the corner's
-  share of the excess was not measured.
-\item \textbf{A joint test of five simulations.} This is a separate inference
-  from the measurements. Under stated modelling assumptions and six stated
+  statistical significance.
 % plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
-  conditions, each of five widely used simulations is rejected at a combined
-  error level of five percent, both overall and in shape alone. It is a test of the simulations, not a new measurement
-  with new error bars, and the possible error from structure finer than the
-  test's grid is not bounded.
-\item \textbf{A neural network on raw detector data.} PET remains method
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+\item \textbf{A joint test of five simulations.} This is a separate inference
+  from the measurements, a test of the simulations rather than a new measurement
+  with new error bars. Under stated modelling assumptions and six stated
+  conditions, each of five widely used simulations, in the hybrid form defined
+  below, is rejected at a combined error level of five percent, both overall and
+  in shape alone. The two conditions that matter most are that the test has no
+  uncertainty for the calorimeter's response to the hadronic recoil energy, and
+  that the possible error from structure finer than the test's grid is not
+  bounded. The test does not show that the five quantities together discriminate
+  better than matched coarse projections of them.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+\item \textbf{A neural network on raw detector data.} PET, a neural network that
+  reads the individual energy deposits in the detector, remains method
   development. Simulation studies improved how well it recovers deliberately
   changed distributions, but no design met every requirement fixed in advance,
   and PET contributes no cross section or error bar.
@@ -209,14 +218,14 @@ originally quoted the slower one. We made this choice after both comparisons wit
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 published result were known.
 
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P1): the list of repaired defects moved to the note, sec_systematics.tex sec:uq-2d-construction
+% (the May-sweep truth-input mismatch, the Rvn1pi/Rvp1pi double count, the background-template statistics, the
+% selection-complete lateral re-unfolds); the paper keeps its version in sec:uq2d.
 The error budget also has known limits. An assessment of the saved analysis
 outputs found errors in how an earlier version of the two-variable error budget
 was put together~\cite{TwoDFollowup2026}. The quoted budget was rebuilt without
-them. Its set of systematic variations and the reference those variations are
-compared with now use the same truth inputs. A pion-model variation that
-appeared twice is counted once. The statistical fluctuations of the background
-simulation are propagated. And the detector variations that change which events
-are selected come from complete re-runs of the analysis. Some effects are not
+them; the analysis note lists the repairs. Some effects are not
 included in any part of the budget: an approximation in how events that fail
 reconstruction are weighted, the difference between the two implementations of
 the tree learner, and the dependence on the unfolding model.
@@ -258,12 +267,20 @@ been tested.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 The published numbers are unchanged by this check.
 
-\begin{figure}[H]
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): placement [tbp], so the near-full-page figure
+% no longer leaves the preceding page half empty.
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.62\textwidth]{MEFHC_5iter_fig13}
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme A (primer F-new-8): legend "GENIE 2.12.6 + MnvTune v1", color red, in 2d-unfolding/plot_2d_threeway_fig13.py:200
+% (called by make_figures.sh:35); paper_body.tex:110-111; note sec_experiment.tex:24.
   \caption{The unfolded muon cross section as a function of the two momentum
   components. This reproduces a published MINERvA measurement, but was produced
-  by the machine-learning method described above.}
+  by the machine-learning method described above. The red curve is MINERvA's
+  tuned simulation (Tune~v1, built on GENIE~2.12.6), the starting point of the
+  unfolding; the untuned GENIE~2.12.10 of Fig.~\ref{fig:primergen} is a
+  different simulation.}
 \end{figure}
 
 \subsection*{Then, measure more at once --- and rediscover known physics}
@@ -310,10 +327,12 @@ is not quantitative.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P8): the clause "the GENIE and NuWro predictions were rebuilt with a correctly sampled beam
+% spectrum" moved to the note, sec_3d.tex (flux-repaired predictions, l.239-245) and sec_eavailw.tex (l.97-98, l.139).
   \caption{The unfolded central values (black points) compared to four tested
   simulation predictions --- GENIE's own untuned central configuration (version 2.12.10), the same GENIE
-  with the two-nucleon process added, NuWro (21.09) and GiBUU (2019); the GENIE and NuWro
-  predictions were rebuilt with a correctly sampled beam spectrum. \emph{Left:} available
+  with the two-nucleon process added, NuWro (21.09) and GiBUU (2019). \emph{Left:} available
   energy; all four fall below the data at low available energy (between about
   $0.1$ and $0.4$~GeV), the known
   ``low-recoil'' shortfall, here rediscovered by a different unfolding method.
@@ -329,11 +348,18 @@ is not quantitative.
 
 \subsection*{A new puzzle for the tuned simulation}
 
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme A (primer F-new-2): shares of the cell-integrated positive excess over Tune v1: 67 % at E_avail >= 0.8 GeV,
+% 83 % of that at W >= 1.8 GeV, 22 % in the E_avail > 3 GeV, W > 3 GeV catch cell. Note sec_eavailw.tex:49-53;
+% paper_body.tex:571-574 (the 22 % from the released figure arrays, fig_arrays.npz sha256 72394a2b...).
 Adding the hadronic-mass axis $W$ lets us look where MINERvA's tuned simulation,
 which already includes an enhanced two-nucleon process, still misses. The
 leftover discrepancy sits
 in a specific corner: high available energy \emph{and} high $W$ --- the
-``deep-inelastic'' region where the neutrino shatters the nucleon. That corner
+``deep-inelastic'' region where the neutrino shatters the nucleon. Of the extra
+cross section, summed over cells, about two thirds lies at high available
+energy, most of it at high $W$, and about a fifth sits in the single widest
+corner cell. That corner
 is a statement about the two quantities \emph{jointly}, so
 Fig.~\ref{fig:primerjoint} shows the joint map rather than the two separate
 one-dimensional views of Fig.~\ref{fig:primergen}: neither of those alone
@@ -346,18 +372,26 @@ data are \SI{61}{\percent} above it in the corner, \SI{39}{\percent} overall), b
 because its simulated sample leaves out neutrinos above \SI{20}{GeV}, which in the other
 simulations make up about \SI{15}{\percent} of the corner and \SI{7}{\percent} of everything.
 With them supplied, GiBUU too falls short in the corner by about as much as overall.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme A (primer F7): \cvMoveOverSigmaMax = 6.02 (values.tex:458; CENTRAL-VALUE-VS-SIGMA-20260920.json
+% movement_over_uncertainty.max 0.0602), printed rounded to the nearest percent by siunitx (prints 6).
 Its statistical significance is not assigned. The learner's random seed,
 % plain-language pass, review fix R10 (DECISION-20261018-joseph-plain-language-pass)
-described under ``Limits on the multi-quantity results'' below, moves these central values as well, by at most
-\SI{\cvMoveOverSigmaMax}{\percent} of their own uncertainty; how far the
+described under ``Limits on the multi-quantity results'' below, moves these central values as well, by at most about
+\SI[round-mode=places,round-precision=0]{\cvMoveOverSigmaMax}{\percent} of their own uncertainty; how far the
 corner's share of the excess could shift with it was not separately measured.
-This is the kind of localized discrepancy that points theorists toward what
-their models are missing --- and it was only visible because we measured
-available energy and $W$ jointly.
+% plain-language pass 2, director ruling on F-p2-1 and F-p2-2 (DECISION-20261018-joseph-plain-language-pass2; PLAIN-LANGUAGE.md C7): the
+% corner carries the paper's caveat (paper_body.tex at 34650231, l.577-580: no mismodelled-response closure for this map; largest
+% regularization bias there), and "points theorists toward what their models are missing" is cut as stronger than the body supports.
+No test with a deliberately wrong detector response has been run for this map,
+and this corner is also where the unfolding's bias toward its starting
+simulation is largest. The localized difference was only visible because we
+measured available energy and $W$ jointly.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{paper_joint_localization}
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
   \caption{The unfolded data compared to the MINERvA-tuned GENIE simulation (MINERvA Tune~v1, the simulation the unfolding starts from, not the untuned ``central configuration'' of Fig.~\ref{fig:primergen}) across
   the available-energy / hadronic-mass plane \emph{jointly}. Both panels are
   measured on the same seven-by-six grid of cells, with available-energy
@@ -373,8 +407,8 @@ available energy and $W$ jointly.
   moderate, and the two panels should be read together. The excess concentrates
   in the top-right corner: high available energy \emph{and} high hadronic mass.
   Central values only; no uncertainty is drawn and no significance is assigned.
-  The learner's random seed moves these central values by at most
-  \SI{\cvMoveOverSigmaMax}{\percent} of their own uncertainty.}
+  The learner's random seed moves these central values by at most about
+  \SI[round-mode=places,round-precision=0]{\cvMoveOverSigmaMax}{\percent} of their own uncertainty.}
   \label{fig:primerjoint}
 \end{figure}
 
@@ -382,99 +416,107 @@ available energy and $W$ jointly.
 \subsection*{Limits on the multi-quantity results}
 
 % plain-language pass, review fix RD3 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 The multi-quantity central values above pass the validation tests stated with
-them. We have built an uncertainty for the five-quantity result, and the
-two-quantity $(\Eavail,W)$ version of that uncertainty. It is the uncertainty
-we quote for the five-quantity result, but it has not met the requirements we
-set in advance, so it is used only under a documented exception to them. The
-multi-quantity plots still show central values only, and we still do not
-assign statistical significance to their differences from the simulations. The reason is worth
-stating plainly, because it is something we measured rather than a precaution.
+them. Three limits matter most, in this order. First, the unfolding follows a
+changed simulated truth only partly, which leaves biases that are not in the
+quoted uncertainty. Second, that uncertainty has not met the requirements we
+set in advance, and it depends measurably on the learner's random seed. Third,
+a test of numerical stability, fixed in advance, failed. The multi-quantity
+plots therefore show central values only, and we do not assign statistical
+significance to their differences from the simulations.
 
-Our method has a random component: the learner is started from a random seed.
-Change that seed, leaving everything else alone, and the \emph{uncertainty} we
-report on the two-quantity $(\Eavail,W)$ projection of the result shifts by
-about \SI{\sprojMeasured}{\percent}. That was measured on two test versions of
-% plain-language pass, review fix RD3 (DECISION-20261018-joseph-plain-language-pass)
-the uncertainty built for exactly this comparison, not on the one we quote.
-It is more than the \SI{\sprojBound}{\percent} we had decided in advance we
-would tolerate. The natural hope is that this is just statistical noise from
-having a finite number of simulated variations, which would shrink if we ran
-more of them. We checked over the range we have, and it does not shrink: the
-shift is the same size whether we use a quarter, a half, or all of our
-variations, while genuine statistical noise, measured between the quarter and
-the half, falls by a factor of nearly three over the same step. So the shift
-behaves like a real property of the learner rather than like noise, and we saw
-no reduction between a quarter and the full set. What we did \emph{not}
-establish is what a much larger set would give: we compared only one pair of
-random seeds, and nested subsets of one set of variations cannot rule out every
-larger one.
-
-Two further facts qualify the shift. First, five of the forty-five uncertainty
-components are built with a fixed seed that this change cannot reach, so the
-shift is the effect of the other forty, and we have not measured which way
-those five would move it. Second, the same seed change moves the
-\emph{central values} too, though only by at most
-\SI{\cvMoveOverSigmaMax}{\percent} of their own uncertainty. Reporting a
-significance on top of that would claim a precision the input does not have.
-
-One more thing is worth saying plainly about what the detector uncertainties
-cover. Five of them describe effects that move a muon's measured momentum or
-angle, and for those we rebuilt the simulation end to end so that events
-crossing into or out of the selection are counted properly. Four others ---
-the efficiency of MINOS for the muon, and three describing how hadrons interact
-in the detector --- are applied instead by reweighting the simulated events, so
-there is nothing to rebuild. That explains why those four are not rebuilt.
-% plain-language pass, review fix RD5 (DECISION-20261018-joseph-plain-language-pass)
-By itself, it says nothing about whether the hadronic-response variations we
-include are the complete set this measurement needs.
-
-Two end-to-end tests limit what passing those validation tests means. When the
-simulated pseudo-data include background and are processed exactly as the data
-are, the way we remove background biases the highest-$W$ cells by about
-\SI{4}{\percent}. A finer, unbinned removal cuts that to below
-\SI{0.3}{\percent}, but leaves about \SI{1}{\percent} in a few combined cells.
-More importantly, when the simulated ``true'' distribution of available energy
-is changed by a test pattern taken from the ratio of two standard generators,
-the unfolding follows it only partly. (One of the two predictions behind that
-pattern was made with a wrongly sampled beam spectrum, so the pattern is a test
-of a chosen size, not a measured difference between generators.) In that test
-typical cells come back about \SI{10}{\percent} off, and the highest-$W$ cells
-much more. Neither effect is in the quoted uncertainty yet.
-
-A follow-up study looked inside the unfolding to find out why. The tested
-changes to the number of iterations and to the learner's capacity do not remove
-the bias; their effects depend on the injected truth and the quantity reported.
-For test patterns from other generators the effect is
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P7): the wrong beam-spectrum sampling behind the test pattern moved to the note, sec_5d.tex
+% sec:val-fiveaxis "Generator-sized truth changes" (l.67-71: "mis-sampled flux ... not a measured GiBUU--GENIE
+% difference"); the primer keeps that it is not a measured difference between generators.
+\emph{Biases in following a changed truth.} When the simulated ``true''
+distribution of available energy is changed by a test pattern of the size of a
+difference between two standard generators (a test of chosen size, not a
+measured difference between them), the unfolding follows it only partly.
+Typical cells come back about \SI{10}{\percent} off, and the highest-$W$ cells
+much more. The tested changes to the number of iterations and to the learner's
+capacity do not remove the bias; their effects depend on the injected truth and
+the quantity reported. For test patterns from other generators the effect is
 \SIrange{16}{31}{\percent} in the worst cell and smaller than the quoted
 uncertainty in about half of the $(\Eavail,W)$ cells. This dependence on the
-truth is not included in the quoted uncertainty. The study did find the source
-of the remaining background bias: an auxiliary classifier used in the
-background removal was too simple, and a larger one removes the bias. But the
-study also found that the result on the real data shifts by up to a few times
-its statistical uncertainty when the inputs are rounded differently, which fails
-a stability test fixed in advance.
+truth is not included in the quoted uncertainty. A second end-to-end test
+includes background in the simulated pseudo-data and processes them exactly as
+the data are: the way we remove background biases the highest-$W$ cells by
+about \SI{4}{\percent}. A finer, unbinned removal cuts that to below
+\SI{0.3}{\percent}, but leaves about \SI{1}{\percent} in a few combined cells.
+A follow-up study found the source of this remaining bias: an auxiliary
+classifier used in the background removal was too simple, and a larger one
+removes the bias. Neither effect is in the quoted uncertainty yet.
+% plain-language pass, review fix RD7 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P6): the remedies are compressed to one sentence; the note carries them in sec_5d.tex
+% "Variability and interval behavior at five iterations" (no tradeoff; coarser cells estimate different integrals)
+% and the prior-shift paragraph ("no ... guaranteed bias bounds").
+Three possible remedies each have a limit: longer runs sometimes improve
+recovery, but how much they vary from one repeat to the next was not measured
+at the same settings, so no tradeoff between bias and variability is
+established; combining cells changes what is measured; and changing the
+starting model gives no guaranteed error bound.
+% plain-language pass, review fix R1 (DECISION-20261018-joseph-plain-language-pass)
+None of these studies changed the five-quantity central value or its quoted
+uncertainty.
+
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme A (primer F7): \sprojMeasured = 6.145 (values.tex:407; GRADE-20260920-cause3-two-member.json s_proj
+% 0.06145), printed rounded to the nearest percent by siunitx (prints 6); \sprojBound = 5 (values.tex:408).
+\emph{An uncertainty that has not been validated.} We have built an
+uncertainty for the five-quantity result, and the two-quantity $(\Eavail,W)$
+version of that uncertainty. It is the uncertainty we quote for the
+five-quantity result, but it has not met the requirements we set in advance, so
+it is used only under a documented exception to them. The reason we assign no
+significance is worth stating plainly, because it is something we measured
+rather than a precaution. Our method has a random component: the learner is
+started from a random seed. Change that seed, leaving everything else alone, and
+the \emph{uncertainty} we report on the $(\Eavail,W)$ projection shifts by
+about \SI[round-mode=places,round-precision=0]{\sprojMeasured}{\percent}, more
+than the \SI{\sprojBound}{\percent} we had decided in advance we would
+% plain-language pass, review fix RD3 (DECISION-20261018-joseph-plain-language-pass)
+tolerate. That was measured on two test versions of the uncertainty built for
+exactly this comparison, not on the one we quote. The shift is the same size
+whether we use a quarter, a half, or all of our simulated variations, while
+genuine statistical noise, measured between the quarter and the half, falls by a
+factor of nearly three over the same step, so it behaves like a real property of
+the learner rather than like noise. We compared only one pair of random seeds,
+however, and nested subsets of one set of variations cannot rule out what a
+much larger set would give. Five of the forty-five uncertainty components are
+built with a fixed seed that this change cannot reach, and we have not measured
+which way those five would move the shift. The same seed change moves the
+\emph{central values} too, though only by at most about
+\SI[round-mode=places,round-precision=0]{\cvMoveOverSigmaMax}{\percent} of their
+own uncertainty. Reporting a significance on top of that would claim a
+precision the input does not have. Finally, the one direct test of whether
+five-quantity statistical error bars contain the truth as often as stated was
+made on a variant of the method, and it failed, so we claim no such coverage.
+
 % plain-language pass, review fix R12, RD6 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass, director ruling on base defect F4 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+\emph{Numerical stability.} The follow-up study also found that the result on
+the real data shifts by up to a few times its statistical uncertainty when the
+inputs are rounded differently, which fails a stability test fixed in advance.
 A later study found that the bootstrap of the version of the method with the
 larger classifier (its own resampling estimate of its statistical error)
 already carries this rounding variability.
-% plain-language pass, director ruling on base defect F4 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
 That finding is limited to that version's own bootstrap: it does not carry over
 to the uncertainty quoted for the five-quantity central value,
 and the stability test still counts as failed.
 
-% plain-language pass, review fix RD7 (DECISION-20261018-joseph-plain-language-pass)
-Three possible remedies each have a limit. Longer runs sometimes improve
-recovery and sometimes leave a persistent residual, but how much they vary from
-one repeat to the next was not measured at the same settings, so no tradeoff
-between bias and variability is established. Combining cells changes what is
-measured. Changing the starting model gives no guaranteed error bound. The one
-direct test of whether five-quantity statistical error bars contain the truth
-as often as stated was made on a variant of the method, and it failed, so we
-claim no such coverage.
-% plain-language pass, review fix R1 (DECISION-20261018-joseph-plain-language-pass)
-None of these studies changed the five-quantity central value or its quoted
-uncertainty.
+% plain-language pass, review fix RD5 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+A narrower point concerns what the detector uncertainties cover. Five of them
+describe effects that move a muon's measured momentum or angle, and for those we
+rebuilt the simulation end to end so that events crossing into or out of the
+selection are counted properly. Four others --- the efficiency of MINOS for the
+muon, and three describing how hadrons interact in the detector --- are applied
+instead by reweighting the simulated events, so there is nothing to rebuild.
+By itself, that says nothing about whether the hadronic-response variations we
+include are the complete set this measurement needs.
 
 None of these five-quantity findings affects the two-dimensional trust check,
 which retains its independently constructed uncertainty, with the qualification
@@ -486,17 +528,31 @@ We also asked a sharper question: under stated modelling assumptions, is each
 of five widely used simulations (MINERvA Tune~v1, GENIE with and without MEC,
 NuWro, GiBUU) statistically compatible with the five-dimensional data, both
 % plain-language pass, review fix R11, RD8 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 overall (rate and shape together) and in shape alone? Here MEC (meson-exchange
 currents) labels GENIE with its model of the two-nucleon process added, and
 Tune~v1 is MINERvA's tuned simulation, the one the unfolding starts from.
-Strictly, each hypothesis sets the true cross section, in each cell of a finite
-grid of true values, to that generator's rate, with Tune~v1's shape inside each
-cell. The unfolding still learns from unbinned
-events; the grid specifies the hypothesis and the quantities tested. Rather than
-rely on a textbook formula for how the test statistic is distributed, we
+Strictly, each hypothesis is a hybrid: it sets the true cross section, in each
+cell of a finite grid of true values, to that generator's rate, with Tune~v1's
+shape inside each cell. The unfolding still learns from unbinned
+events; the grid specifies the hypothesis and the quantities tested.
+
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Calibration sentences: paper_body.tex sec:joint ("The null distribution of each statistic is obtained from
+% pseudo-experiments that run the full analysis chain at the null truth"; "The metric influences each test's power;
+% the null calibration determines its size"; the estimator's pull toward its prior is reproduced) and
+% sec:uncertainty-status (the five-dimensional covariance "is separate from the joint-test calibration").
+Rather than rely on a textbook formula for how the test statistic is distributed, we
 simulated about 1,340 to 1,750 pseudo-experiments (simulated repeats of the
-experiment) under each simulation's hypothesis, unfolded each one, and counted
-how often one looked as discrepant as the data. In each test at most one did.
+experiment) under each simulation's hypothesis, unfolded each one through the
+full analysis, and counted how often one looked as discrepant as the data.
+Because each pseudo-experiment repeats the whole analysis, including the
+unfolding's pull toward its starting simulation and the modelled uncertainties,
+these repeats set how often the test would wrongly reject a true hypothesis.
+The test therefore does not rely on the five-quantity error bars described
+above, which were built separately; the matrix used to weigh the differences
+affects only how sensitive the test is. In each test at most one
+pseudo-experiment looked as discrepant as the data.
 So all ten hypotheses (five simulations, each tested overall and in shape) are
 rejected at a combined 5\% error level for the ten tests, as the test was
 designed. Some pseudo-experiments were lost to computing time limits.
@@ -504,22 +560,28 @@ Rerunning exactly those seeds recovered them, in a check reported separately
 from the result: none looked as discrepant as the data, though in one
 robustness variant one came close.
 
-This is a test of the simulations under six conditions:
-\begin{itemize}
-\item structure finer than the grid, which the test does not resolve;
-\item the detector-uncertainty model as stated, which has no uncertainty band
-  for the calorimeter's response to the hadronic recoil energy;
-\item the interaction-model variations as stated, including the clipping of
-  some negative event weights;
-\item a calibration shift, with a stated bound, that arises because the
-  pseudo-experiments use half the simulation and the data unfolding uses all
-  of it;
-\item the range of neutrino energies each generator covers;
-\item the finite size of each generator's simulated sample.
-\end{itemize}
-Sensitivity to numerical rounding is also checked. These conditions are detailed
-in the analysis note (``Joint five-dimensional generator tests''). The result
-is not a new measurement with new error bars.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P4, P5): the six-item list moved to the note's sec_joint.tex sec:joint5d-conditions (the six
+% conditions, grouped by kind) and the kappa scan (the multiplier's meaning, the first loss of a determinate
+% rejection near 5.26, or 5.17 with the recovered draws) to sec:joint5d-kappa; the paper keeps them in
+% sec:conditions and its Results. Every condition stays named here.
+This is a test of the simulations under six conditions, detailed in the analysis
+note (``Joint five-dimensional generator tests''). Two matter most for what the
+rejections mean physically. The detector-uncertainty model has no uncertainty
+band for the calorimeter's response to the hadronic recoil energy, so the
+rejections are conditional on the simulation's hadronic response. And the test
+does not resolve structure finer than its grid: convergence as the grid is
+refined has not been shown, and the possible error from that finer structure is
+not bounded.
+% plain-language pass, review fix RD9 (DECISION-20261018-joseph-plain-language-pass)
+A sensitivity scan probes this error in one direction only and
+gives no bound on it. The other four conditions are the interaction-model
+variations as stated, including the clipping of some negative event weights; a
+calibration shift, with a stated bound, that arises because the
+pseudo-experiments use half the simulation and the data unfolding uses all of
+it; the range of neutrino energies each generator covers; and the finite size of
+each generator's simulated sample. Sensitivity to numerical rounding is also
+checked. The result is not a new measurement with new error bars.
 
 In a comparison chosen after the result was known (post hoc), GENIE's untuned
 central configuration (GENIE CV) is not rejected on the same coarse projection
@@ -528,17 +590,6 @@ variables is rejected. Hadronic information therefore takes part in this rejecti
 establish that the joint five-variable test adds power beyond all the matched
 lower-dimensional projections. A simulation that is not rejected is not thereby
 accepted as true.
-
-How robust are the rejections to the error from structure finer than the grid,
-which was not measured? We scaled the last measured change from refining the
-grid by a sensitivity multiplier $\kappa$, which counts multiples of that shift;
-it is not a confidence level. In the tests as fixed in advance, the first
-decision stops being a clear-cut (determinate) rejection near $\kappa=5.26$, or
-$5.17$ when the recovered pseudo-experiments are included.
-% plain-language pass, review fix RD9 (DECISION-20261018-joseph-plain-language-pass)
-At that point the decision becomes ambiguous, not a clear non-rejection. The
-scan moves in one direction only and gives no bound on the unmeasured error
-from structure below the grid.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
 % Wording review: docs/orchestration/REVIEW-20261006-s5p-stage7-note-wording.md.
 
@@ -546,94 +597,68 @@ from structure below the grid.
 
 Two studies test the method's limits rather than adding to the measurement.
 
-We ran PET, the ``point-cloud transformer'' introduced above, on the raw detector
-deposits instead of the summary quantities. It shows that the machinery runs end
-to end on low-level detector data, pairing reconstructed recoil clusters with
-the hadrons in the simulated true final state. The muon was withheld from both
-of its classifiers (the one that compares measured events and the one that
-carries the weights back to true events), so this is a recoil-only diagnostic and
-a method-development cross-check, not a measurement of the whole event; it
-contributes no cross section or error bar. A later full-event version that adds
-the muon is also method development only; no point-cloud error bar is used for
-any result.
-
-Completed simulation studies then improved how well PET recovers truth
-distributions that were deliberately changed. More iterations, summary
-quantities from the detector, and a revised treatment of events the detector
-% plain-language pass, review fix RD10 (DECISION-20261018-joseph-plain-language-pass)
-missed all helped. But in the first of these studies, none of the designs
-tried, each fixed in advance at ten iterations, met the requirements for going
-on to a coverage test. A later study to choose a final design raised the
-recovered fraction of a deliberate tilt in the available-energy distribution to
-about 90\% and 86\% for its two best designs, against 31\% for the original
-PET~\cite{PETImprovement2026,PETFinalDesign2026}.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P-new-3): the PET description moved here from Sec. 2.
+PET is a different learner from the tree learner: a neural network (a
+``point-cloud transformer'') that reads the individual energy deposits in the
+detector rather than summary quantities. The original version of PET reads only
+the hadronic recoil (the energy deposited by particles other than the muon), so
+it does not use the muon, even though the muon is needed to select the event.
+It shows that the machinery runs end to end on low-level detector data,
+pairing reconstructed recoil clusters with the hadrons in the simulated true
+final state. Because the muon was withheld from both of its classifiers, this
+is a recoil-only diagnostic and a method-development cross-check, not a
+measurement of the whole event. A later, full-event version of PET also reads
+the muon; it too is method development only.
 
 % plain-language pass, review fix RD10 (DECISION-20261018-joseph-plain-language-pass)
-Better recovery was not enough: no design met every requirement fixed in
-advance. One of the two best designs failed a robustness threshold under the
-rule, fixed in advance, that judges the point estimate. The statistical
-comparison did not establish which of the two was more robust, and this
-design's coverage was never measured. The other passed the rules for the point estimate but failed the
-test of its intervals, which are built from six repeated fits. Intervals meant
-to contain the truth 68\% of the time contained their bin's target 90\% of the
-time over the overall distribution, yet only 26\% of the time in regions where
+% plain-language pass, review fix RD10 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, review fix R8 (DECISION-20261018-joseph-plain-language-pass)
-the detector records only a small fraction of the true events (low
-acceptance); there, intervals meant for
-95\% contained it 79\% of the time. This design over-covers overall (its intervals contain the truth more
-often than stated) and under-covers where acceptance is low (less often than
-stated). No design or default was selected, and no PET uncertainty is used for
-any result.
-
 % plain-language pass, review fix RD11 (DECISION-20261018-joseph-plain-language-pass)
-Our diagnosis of the saved outputs of these studies gives a partial explanation~\cite{PETIntervalDiagnosis2026}.
-The point checks used one fit, while the intervals surrounded an average of six
-fits, each to a randomly resampled copy of the events (bootstrap fits). If the
-sources of variation simply add (an additive variance model), much of the
-fit-to-fit variation averages away in that average, which helps explain the
-excess width overall. The part that comes from the finite event sample, and any
-bias, do not average away. A diagnostic width adjustment still leaves poor
-coverage, especially at low acceptance, so dividing the width by the square root
-of six is not a validated repair. This diagnosis covers only the
-available-energy tilt used in development, at the size of the study's samples;
-the coverage of the six-fit average for the generator-based test cases, and at
-the size of the real data set, remains unmeasured.
-
 % plain-language pass, review fix RD12 (DECISION-20261018-joseph-plain-language-pass)
-An exploratory comparison then ran OmniFold with each of the two learners, PET
-and the tree learner, on exactly the same simulated events~\cite{PETGBDT2026}. Figure~\ref{fig:primerpet}
-shows PET's advantage on the two energy tilts. Which learner does better depends
-on the test: the tree learner does better on all three tests that reweight to
-other generator models and on the narrow energy bump, while the gap between
-them on the proton-content test shrinks as the tree learner runs more
-iterations. In
-development tests a binned method already matches PET on the one-dimensional
-tilt, so this is not a general ranking of neural-network unfolding against
-unfolding on summary quantities. The tree learner in this comparison is a
-separate configuration, not the one used for the five-quantity results. Its
 % plain-language pass, review fix RD10 (DECISION-20261018-joseph-plain-language-pass)
-uncertainty was not tested here, so no comparison of precision, and no ranking of
-the two PET designs, follows. All of these results hold only for the study's
-finite simulated samples and their size.
-
 % plain-language pass, review fix RD11 (DECISION-20261018-joseph-plain-language-pass)
-For the three generator-model tests, a separate diagnosis of the saved outputs finds two shortfalls in PET: it underfits at the detector-level step, and it
-extrapolates weakly to events the detector missed~\cite{PETGeneratorDiagnosis2026}.
-Applying the exact weights that define each distortion recovers the changes well
-on those same samples. PET already receives the reconstructed muon and the
-summary-quantity inputs; the effect of adding the tree learner's summary
-truth-level inputs is untested. These findings show where the shortfalls arise,
 % plain-language pass, review fix RD10 (DECISION-20261018-joseph-plain-language-pass)
-without establishing a cause that holds in general, and they leave the outcome
-unchanged: no PET design met every requirement fixed in advance.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme B (primer P2): the PET design-study chronology and narrative moved to the PET note (pet_note.tex, which
+% inputs sec_pet.tex and sec_pet_campaigns.tex): sec:pet-campaigns (the ten-iteration improvement study; recovery
+% 0.316/0.306 for the original PET, 0.895 and 0.863 for the two finalists; the robustness failure, statistically
+% unresolved; tab:pet-final-coverage, 0.896 aggregate and 0.257/0.789 at low acceptance; "What the saved intervals
+% diagnose", the six-fit mean and the square-root-of-six point; member-mean coverage unmeasured on generator cases and
+% at data scale), sec:pet-gbdt-paired (which learner does better per test; the binned methods on the one-dimensional
+% tilt; the separate GBDT configuration) and "Where generator recovery is lost" (detector-step underfitting, weak
+% extrapolation to missed events, exact weights recover the change, untested truth-level inputs).
+Studies on simulated samples that contain signal events only then improved how
+well PET recovers deliberately changed truth
+distributions~\cite{PETImprovement2026,PETFinalDesign2026}. Better recovery was
+not enough: no design met every requirement fixed in advance. One of the two
+best designs failed a robustness rule, fixed in advance, for its point estimate.
+The other failed the test of its error intervals, which contained the truth more
+often than stated over the whole distribution and much less often than stated
+where the detector records only a small fraction of the true events (low
+acceptance). A diagnosis of these intervals explains part of this behavior but
+gives no validated repair~\cite{PETIntervalDiagnosis2026}. An exploratory
+comparison ran OmniFold with each of the two learners on exactly the same
+simulated events~\cite{PETGBDT2026}. Figure~\ref{fig:primerpet} shows PET's
+advantage on the two energy tilts, but the tree learner does better on all three
+tests that reweight to other generator models, so which learner does better
+depends on the test. This is not a general ranking of the two kinds of
+unfolding, and it compares neither their precision nor the two PET designs. A
+separate diagnosis locates where PET falls short on the generator-model tests,
+without establishing a cause that holds in
+general~\cite{PETGeneratorDiagnosis2026}. These results hold only for the
+study's finite simulated samples. No design or default was selected, and no PET
+uncertainty is used for any result.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.90\textwidth]{pet_gbdt_paired_differences.pdf}
 % plain-language pass, review fix RD10 (DECISION-20261018-joseph-plain-language-pass)
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
   \caption{Exploratory simulation comparison: gain in recovered fraction for
   each of the two best PET designs relative to the tree learner (labelled GBDT, for
-  gradient-boosted decision trees) on the same events, at the seven iterations
+  gradient-boosted decision trees, in a separate configuration from the one used
+  for the five-quantity results) on the same events, at the seven iterations
   chosen in development. Positive is better recovery.
   E0 and E3 are opposite energy tilts; E1 separates acceptance regions;
   E4 tests proton content and E5 the joint energy--momentum-transfer
@@ -643,15 +668,20 @@ unchanged: no PET design met every requirement fixed in advance.
   \label{fig:primerpet}
 \end{figure}
 
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+% Theme A (primer F7): \fpsSigma = 4.502e-38 (values.tex:273; VALIDATION_LEDGER.md:1615; three-prior values
+% 4.502/4.475/4.367e-38 at :1625), printed to two significant figures by siunitx (prints 4.5 x 10^-38).
 Separately, the published signal definition excludes about a third of the
 simulated interaction rate because of its muon kinematic cuts. This fraction
-is a simulation estimate, not a measured number. We relaxed those truth-level cuts while retaining the
-same tracker interaction volume and reconstructed MINOS-based selection. The
-preliminary central value of the extended cross section is
-$\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, but only about
-\SI{6}{\percent} of the rate is a newly detector-supported extension; about
-\SI{28}{\percent} lies in low- or zero-efficiency cells and remains a
-separately labeled, simulation-dependent extrapolation.
+is a simulation estimate, not a measured number. We relaxed those truth-level
+cuts while retaining the same tracker interaction volume and reconstructed
+MINOS-based selection. Removing these cuts enlarges the population being
+estimated without adding selected observations. The preliminary central value
+of the extended cross section is
+$\sigma_{\mathrm{ext}}\approx\SI[round-mode=figures,round-precision=2]{\fpsSigma}{cm^2/nucleon}$,
+but only about \SI{6}{\percent} of the rate is a newly detector-supported
+extension; about \SI{28}{\percent} lies in low- or zero-efficiency cells and
+remains a separately labeled, simulation-dependent extrapolation.
 
 \begin{figure}[H]
   \centering
@@ -681,3 +711,11 @@ detector provides too little information for a model-independent result.
 The multi-quantity measurements are shown as central values only: their error
 bars have not been shown to be reliable, and end-to-end tests on simulation
 show biases that are not included in their quoted uncertainty.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
+Separately, a joint test calibrated with simulated repeats of the whole analysis
+rejects the hybrid hypotheses for all five tested simulations, overall and in
+shape alone, at a combined five-percent error level. That holds only under
+stated conditions: the test has no uncertainty for the calorimeter's response to
+the hadronic recoil, convergence as its grid is refined has not been shown, and it does not
+show that the five quantities together discriminate better than matched coarse
+projections.
