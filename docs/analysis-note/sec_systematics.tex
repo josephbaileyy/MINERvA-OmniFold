@@ -125,8 +125,9 @@ tails, unevenly across bins.
 % plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
 The rebuilt band was
 only re-evaluated post hoc, on the same pseudo-experiments and partly circularly, and
-it has not been tested independently; the statistical block quoted here has not been
-tested at all. A
+it has not been tested independently; the statistical block quoted here has had no
+% plain-language pass, verification fix V3 (DECISION-20261018-joseph-plain-language-pass)
+coverage test at all. A
 re-test on held-out simulation, tracked in the analysis repository's known-issues log,
 is deferred until after the publication package, and
 % plain-language pass, director ruling on base defect note F1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
@@ -250,7 +251,8 @@ Lateral systematics use a single unfold at the central training seed each, so th
 include that seed's training noise. The flux-universe index identity behind the
 $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events
 $\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe
-fails at $\ge0.245$; the identity is tracked in the analysis repository's known-issues
+fails at $\ge0.245$; this check is recorded in the analysis repository's known-issues
+% plain-language pass, verification fix V5 (DECISION-20261018-joseph-plain-language-pass)
 log. The production flux weights equal the
 constraint file and the earlier budget's in all 12 playlists. These findings left the
 earlier printed budget unchanged.
@@ -310,8 +312,9 @@ Taking 1A--1F as the reference would give a smaller block (median \SI{1.45}{\per
 \SI{1.09}{\percent}). The block uses each period's unfolded result over that period's own
 simulated truth, with each period unfolded through its own simulated detector response.
 % plain-language pass, review fix M1 (DECISION-20261018-joseph-plain-language-pass)
-Because each period is compared with the exposure-weighted mean of the three, the block
-needs no reference period, and it does not identify which period is correct. Its interpretation is limited by the small number of
+% plain-language pass, verification fix V2 (DECISION-20261018-joseph-plain-language-pass)
+Each period is compared with the exposure-weighted mean of the three, so the block needs
+no reference period. It does not identify which period is correct. Its interpretation is limited by the small number of
 period groups, by possible shrinkage from the regularization, and by the statistical and
 training noise it retains. Because the block is built from the observed differences among
 the periods, it contains them automatically; this says nothing about its coverage, that

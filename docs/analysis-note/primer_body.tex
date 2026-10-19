@@ -122,9 +122,10 @@ with how far it has been tested. The rest of this section gives the details.
   is used, and we chose which one to quote after both comparisons were known.
   Its error budget was built with the same tree learner as the central value.
   Some effects are not included in that budget, and we make no coverage claim
-  for it. The quoted statistical error bars await an independent coverage
-  test, that is, a check on simulated repeats of the experiment that they
-  contain the truth as often as stated.
+  for it.
+  % plain-language pass, verification fix V4 (DECISION-20261018-joseph-plain-language-pass)
+  The quoted statistical error bars have had no coverage test, that is, no check, on simulated repeats of the
+  experiment, that they contain the truth as often as stated.
 % J3/J4 provisional (DECISION-20261018, packet C4: kept): the quoted statistical block is S1 of Q = S5 total + C_PL
 % (2026-10-17), untested (KNOWN_ISSUES 85, re-scoped to S1 under J5).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -585,7 +586,7 @@ stated). No design or default was selected, and no PET uncertainty is used for
 any result.
 
 % plain-language pass, review fix RD11 (DECISION-20261018-joseph-plain-language-pass)
-Our diagnosis of these studies gives a partial explanation~\cite{PETIntervalDiagnosis2026}.
+Our diagnosis of the saved outputs of these studies gives a partial explanation~\cite{PETIntervalDiagnosis2026}.
 The point checks used one fit, while the intervals surrounded an average of six
 fits, each to a randomly resampled copy of the events (bootstrap fits). If the
 sources of variation simply add (an additive variance model), much of the
@@ -616,7 +617,7 @@ the two PET designs, follows. All of these results hold only for the study's
 finite simulated samples and their size.
 
 % plain-language pass, review fix RD11 (DECISION-20261018-joseph-plain-language-pass)
-For the three generator-model tests, a separate diagnosis finds two shortfalls in PET: it underfits at the detector-level step, and it
+For the three generator-model tests, a separate diagnosis of the saved outputs finds two shortfalls in PET: it underfits at the detector-level step, and it
 extrapolates weakly to events the detector missed~\cite{PETGeneratorDiagnosis2026}.
 Applying the exact weights that define each distortion recovers the changes well
 on those same samples. PET already receives the reconstructed muon and the

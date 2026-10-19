@@ -361,10 +361,11 @@ period is correct.  We include the effect of this inconsistency on the combined
 result as the run-period block.  It is built from the differences among three
 period groups, without choosing any as the reference.  Its median is
 \SI{2.1}{\percent} per bin; it is \SIrange{1.2}{3.4}{\percent} on the $\pPar$
-projections and \SI{2.0}{\percent} on the integrated cross section.  The block
-uses double ratios between groups, each group's unfolded result being taken
-over its own simulated truth, so it relies on the periods' own simulated
-responses.  It does not identify a correct period.
+projections and \SI{2.0}{\percent} on the integrated cross section.
+% plain-language pass, verification fix V1 (DECISION-20261018-joseph-plain-language-pass)
+The block uses double ratios between groups: each group's unfolded result is
+taken over its own simulated truth, and each group is unfolded through its own
+simulated detector response.  It does not identify a correct period.
 % plain-language pass, review fix R10 (DECISION-20261018-joseph-plain-language-pass)
 Its interpretation is limited by the small number
 of groups, by possible shrinkage from the regularization, and by the
@@ -979,8 +980,9 @@ backgrounds reveal a subtraction bias, which the unbinned background
 refinement reduces, while a regularization bias persists under the tested
 shape changes of generator size.  Studies of coverage and of the dependence on
 the estimator's seed show further limits: the quoted two-dimensional
-statistical block awaits an independent coverage test,
+statistical block has had no coverage test,
 % J3/J4 provisional (DECISION-20261018, packet C4: kept): the quoted block is S1 (Q); untested (KNOWN_ISSUES 85, J5).
+% plain-language pass, verification fix V4 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
  the two-dimensional comparison depends on the
 learner at the level of one unit of $\chi^{2}/\mathrm{ndf}$, and the measured model
