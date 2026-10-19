@@ -24,6 +24,13 @@ fluctuations below that grid. This \emph{hybrid null} is the hypothesis the
 calibration simulates; for the Tune~v1, the analysis simulation itself, it is
 $H_{0}$ exactly. Each prediction is tested in total (rate and shape together)
 and in shape alone: \jtNtests{} tests.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): pass-1 paper F7, note home first.
+% Source: nd-unfolding/s5p_stage1_inspect.py:38-44 (FINE, the edges of sec_method.tex:270-275, beside J_EDGES,
+% the coarse test grid below); RC4 fine-to-J map U (109, 65856), 65856 = 14*16*7*7*6,
+% docs/publication/audit-20261008/notes/mapping-notes-C.md:25.
+The fine grid is the analysis binning of \S\ref{sec:method-binning},
+$14\times16\times7\times7\times6$ bins in $(\pT,\pPar,\Eavail,q_{3},W)$; the
+test cells below are its integrals.
 
 The tests are evaluated on a coarse $3^{5}$ grid in
 $(\pT,\pPar,\Eavail,q_{3},W)$ with edges

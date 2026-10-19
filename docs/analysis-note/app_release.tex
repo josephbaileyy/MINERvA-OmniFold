@@ -14,7 +14,18 @@ $p$ values, decisions, robustness and power results, the lost-seed resolution
 under reading~(a),
 coarse-projection comparison and fine-grid $L_2$ ratios. It also regenerates
 the article's first three figures from packaged arrays and its joint-null
-figure. It has not been
+figure.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): note home for the paper's
+% Data availability sentence (pass-1 paper P6), from main_paper.tex "The package was assembled before ...".
+% Source (as the paper's comment): Fig. 1 is stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...),
+% drawn by rebuild/scripts/make_fig1_q.py with the release's make_figs.py (9c4dbf24...) from cov2d_Q_205
+% (rebuild/outputs/outA/cov2d_Q_205.json.gz) and budget_Q.
+RC7 was assembled before the two-dimensional central value was changed to
+LightGBM, so its two-dimensional curve is the exact-split one. The article's
+two-dimensional validation figure and its numbers were instead regenerated
+separately, from the committed LightGBM values and covariance, with RC7's
+plotting code extended to draw this analysis's band.
+It has not been
 deposited or released under a publication tag. The schema below remains a
 specification for the broader central-value and covariance products, not a
 claim that RC7 contains them all. Fixed identities do not supply missing
