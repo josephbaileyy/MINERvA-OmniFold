@@ -9,13 +9,20 @@
 \toprule
 \rsA{Result / central estimator} & \rsB{Uncertainty construction} & \rsC{Recovery and interval checks} & \rsD{Interpretation} \\
 \midrule
-\rsA{2D: LightGBM, five iterations, seed 42 (exact-split cross-check)} & \rsB{LightGBM systematic and statistical ensembles at the central value's seed, a five-setting seed ensemble, and a run-period block} & \rsC{Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band and quoted statistical block lack an independent test.} & \rsD{Central reproduction stands; learner chosen after the comparisons were known. Publication readiness unresolved.} \\
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme D; register only, same content.
+% Was "Publication readiness unresolved." in rsD.
+\rsA{2D: LightGBM, five iterations, seed 42 (exact-split cross-check)} & \rsB{LightGBM systematic and statistical ensembles at the central value's seed, a five-setting seed ensemble, and a run-period block} & \rsC{Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band and quoted statistical block lack an independent test.} & \rsD{Central reproduction stands; learner chosen after the comparisons were known. Readiness for publication not yet established.} \\
 % 2026-10-18 (Q = S5 total + C_PL): rsB and rsC state the construction; rsD's "Seed pairing of the statistical block
 % unmeasured" was false of Q (S1 at seed 42) and is removed.
 % J3/J4 provisional (DECISION-20261018, packet W3: D0, D2, D5, D10 KI-88; no row wording change).
 \addlinespace
-\rsA{3D--5D: LightGBM, five iterations, purity subtraction} & \rsB{One scalar-5D covariance adopted under exception} & \rsC{Marginal anchors and selected injections pass; background and large-deformation tests expose bias. No validated total-interval coverage.} & \rsD{Central comparisons; all four adoption measurements apply. No covariance-based generator significance.} \\
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme D; register only, same content.
+% Was "adopted under exception" (rsB) and "Central comparisons; all four adoption measurements apply." (rsD);
+% the four are the measurements of sec_5d.tex "What the covariance supports" (sec:eavailw-adopted).
+\rsA{3D--5D: LightGBM, five iterations, purity subtraction} & \rsB{One scalar-5D covariance, used under a documented exception} & \rsC{Marginal anchors and selected injections pass; background and large-deformation tests expose bias. No validated total-interval coverage.} & \rsD{Central-value comparisons; the covariance's four measured limitations apply. No covariance-based generator significance.} \\
 \addlinespace
-\rsA{Joint tests: deterministic LightGBM with enlarged background refinement} & \rsB{Null-specific full-chain calibration; no new measurement covariance} & \rsC{Frozen tests and arithmetic recomputation; calibration adequacy remains conditional.} & \rsD{Tests of hybrid generator hypotheses under six stated conditions; no new reportable uncertainty.} \\
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme D; register only, same content.
+% Was "Frozen tests and arithmetic recomputation" (rsC) and "no new reportable uncertainty" (rsD).
+\rsA{Joint tests: deterministic LightGBM with enlarged background refinement} & \rsB{Null-specific full-chain calibration; no new measurement covariance} & \rsC{Tests specified in advance; independent recomputation of the arithmetic; calibration adequacy remains conditional.} & \rsD{Tests of hybrid generator hypotheses under six stated conditions; no new uncertainty on the cross section.} \\
 \bottomrule
 }

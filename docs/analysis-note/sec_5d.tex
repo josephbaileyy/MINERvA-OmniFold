@@ -213,8 +213,15 @@ truth departures at the smallest envelope the vertices allow, has median
 vertex in most cells. The frozen total-width target (median 68\% half-width at most
 \SI{10}{\percent}) is therefore unattainable in RD1 and RD3 from the model component
 alone, and in RD2 once the flat \SI{1.4}{\percent} normalization is added (median at
-least \SI{11.0}{\percent}). The model-component and recovery targets (median at most
-\SI{5}{\percent}; recovery of at least 75\% of a generator-sized departure, against
+least \SI{11.0}{\percent}).
+% plain-language pass 2, director ruling on base defect sec_5d-31-63 (DECISION-20261018-joseph-plain-language-pass2)
+% Base read "recovery of at least 75% of a generator-sized departure, against 0.31--0.63 measured", which reads
+% as 31-63% recovered. RECORD-20260927-s5p-stage2-exit.md:76-78 (the T2 proxy is the median over reported cells
+% with a >1% departure of |bias|/|departure|; M is its maximum over the development alternatives) and :96, :138
+% ("0.25 against the measured 0.31-0.63"): 0.31-0.63 is the measured residual proxy M, whose target is <= 0.25.
+The model-component and recovery targets (median at most
+\SI{5}{\percent}; recovery of at least 75\% of a generator-sized departure, that is,
+a residual proxy of Fig.~\ref{fig:gbdt-recovery} of at most 0.25, against
 0.31--0.63 measured) fail in every definition. By the frozen selection procedure RD3
 is the fallback, and it fails the total-width target. No reporting definition can meet
 the useful-precision targets with any configuration the rules support within the
@@ -347,6 +354,16 @@ deterministic five-dimensional estimator variant with nominal-truth bias
 correction (1,200 pseudo-experiments over three truths). It failed its predeclared
 futility criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist coverage is
 claimed for any five-dimensional interval.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A, note home for the paper's
+% Sec. IV C numbers. Source: OUTCOME-20260925-s5c-tier-s-futility-fail.md:30-36 (table: nominal 0 / 2 futile,
+% min 0.570 / 0.850; E_avail tilt a=0.2 51 / 42 futile, min 0.060 / 0.288; UCB < 0.66 / < 0.94; per-comparison
+% level 0.05/459) and :41-43; receipt state/s5c/tier_s/interim_400.json (aa574c17...): 153 functionals =
+% 109 J cells + 42 EW cells + the EW all-ones sum + the total integrated rate.
+A quantity fails when the upper confidence bound on its coverage lies below
+0.66 for 68\% intervals or below 0.94 for 95\% intervals. Under the $\Eavail$
+tilt, 51 of the 153 reported cell and projection integrals have 68\% coverage
+confidently below nominal, with coverage as low as 0.060, and 42 fail at
+95\%. At nominal truth two fail at 95\%, the lowest at 0.850.
 
 % Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 

@@ -49,33 +49,37 @@ neutrino data: validation and calibrated model tests}
 \date{\today}
 
 \begin{abstract}
-We test the practical limits of multidimensional unbinned unfolding with
-OmniFold on MINERvA open data for medium-energy $\nu_{\mu}$ charged-current
-inclusive interactions.  The analysis reproduces the published
-double-differential cross section in muon kinematics and extends it to five
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): abstract cut to about 150 words; headline
+% results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15). Moved to the body
+% only: the five prediction names (Secs. II, VI A), the marginal-normalization and closure checks (Intro, Sec. IV C,
+% Conclusions), "of the same cells" (Intro, Sec. VI C), the seed and coverage
+% limits (Secs. IV, V), "These rejections hold only under stated conditions" (the two that limit interpretation are
+% named), and "The tests recover known discrepancies" (Sec. VI C).
+% Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json),
+% as printed in the Introduction; "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
+% for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :133, :144.
+We apply OmniFold to MINERvA open data for medium-energy $\nu_{\mu}$
+charged-current inclusive interactions.  The analysis reproduces the
+published double-differential cross section in muon kinematics, with the
+integrated cross section within about one percent, and extends it to five
 simultaneous observables by adding available energy, three-momentum transfer,
-and hadronic invariant mass.  The higher-dimensional central values pass checks of
-their marginal normalizations against the lower-dimensional results, and the three- and
-four-observable central values pass closure checks with injected shape changes.
+and hadronic invariant mass.  The three- to five-observable results are
+central values only.  Pseudo-experiments reveal background-subtraction and
+regularization biases, and the measured model dependence, a median of about
+% plain-language pass 2, review fix R-m1 (DECISION-20261018-joseph-plain-language-pass2)
+10--13\% per cell, prevents a five-dimensional measurement whose total
+uncertainties meet our predefined 10\% precision target.
 % plain-language pass, review fix R4 (DECISION-20261018-joseph-plain-language-pass)
-Pseudo-experiments that include backgrounds, and studies of the uncertainties,
-show limitations of the background treatment, the regularization, the interval
-coverage, and the stability under changes of the estimator's random seed.  The
-measured model dependence prevents a five-dimensional measurement with total
-uncertainties that meet our predefined criteria at useful precision.  Generator
-tests, calibrated with pseudo-experiments that rerun the full analysis chain
-under a stated nuisance model, reject all five tested predictions (MINERvA
-Tune~v1, GENIE~2.12.10 with and without Valencia two-particle--two-hole
-contributions, NuWro~21.09, and GiBUU~2019) in total and in shape at the 5\%
-familywise level.  These rejections hold only under stated conditions.
+% plain-language pass 2, review fix R-M1 (DECISION-20261018-joseph-plain-language-pass2)
+Tests calibrated with pseudo-experiments that rerun the full analysis chain
+under a stated nuisance model reject the hybrid null hypotheses built from five generator predictions, in
+total and in shape, at the 5\% familywise level.
 % plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
-The tests recover known discrepancies, but they do not show that the tested
-joint five-observable information discriminates beyond matched coarse
-projections of the same cells.
 % plain-language pass, review fix R5 (DECISION-20261018-joseph-plain-language-pass)
-Their physical interpretation is limited because the nuisance model has no
-calorimetric recoil-response uncertainty and because convergence of the fine
-grid on which the null hypotheses are defined has not been shown.
+Their interpretation is limited: the nuisance model has no calorimetric
+recoil-response uncertainty, convergence of the fine grid defining the null
+hypotheses has not been shown, and the joint five-observable information is not shown to
+discriminate beyond matched coarse projections.
 \end{abstract}
 
 \maketitle
@@ -140,11 +144,12 @@ and~\ref{fig:generator-context}.  Rerunning the packaged files from an empty
 directory reproduces every value recorded in the package and every figure
 number that it checks.
 % plain-language pass, review fix N6 (DECISION-20261018-joseph-plain-language-pass)
-The package was assembled before the two-dimensional central value was
-changed to LightGBM, and it carries the exact-split curve.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, P6. The assembly chronology ("assembled
+% before the two-dimensional central value was changed to LightGBM") and the extension of the plotting code moved to
+% the note, app_release.tex app:release (b3fc422b, :17-28); the package's limitation stays here.
+The package carries the exact-split two-dimensional curve;
 Fig.~\ref{fig:validation} and its numbers were instead regenerated
-separately, from this paper's LightGBM values and covariance, with the
-package's plotting code extended to draw this analysis's band.
+separately, from this paper's LightGBM values and covariance.
 % 2026-10-18 (Stage F rebuild phase 2): true of Q. Fig. 1 is stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...),
 % drawn by rebuild/scripts/make_fig1_q.py with the release's make_figs.py (9c4dbf24...) from cov2d_Q_205 (committed as
 % rebuild/outputs/outA/cov2d_Q_205.json.gz) and budget_Q.

@@ -41,9 +41,10 @@ both ready: the production REPORT, its verification and the combination are on `
 | 14 | The disclosure set with final numbers, as written into the four documents | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 4; the built PDFs (below) |
 | 15 | The claim wording, inside the narrower endpoint: Joseph's provisional J3–J5 (all as recommended) | [`DECISION-PACKET-J3-J6.md`](DECISION-PACKET-J3-J6.md); [`DECISION-20261018`](../../../DECISION-20261018-joseph-2d-j3-j5-provisional.md); [`J3-J5-WORDING-IMPLEMENTATION.md`](J3-J5-WORDING-IMPLEMENTATION.md) |
 | 16 | The plain-language pass (2026-10-18), with content unchanged. Its decisions left to Joseph: A, state the numbers the hedges stand in for; B, move history and repeated caveats from the paper and primer to the note; C, claim-strength wording; D, items outside the pass (bibliography titles, figure legends, the result-status table) | [`PLAIN-LANGUAGE-IMPLEMENTATION.md`](PLAIN-LANGUAGE-IMPLEMENTATION.md) §7–§8; [`DECISION-20261018-joseph-plain-language-pass`](../../../DECISION-20261018-joseph-plain-language-pass.md) |
+| 17 | Plain-language pass 2 (2026-10-19): themes A–D as decided; the paper's abstract 233 → 163 words; the 5D uncertainty status now precedes the results; two outside models (Gemini 3.8 Flash, GPT-6.1-sol) critiqued and rewrote; both still read the paper as audit-like. The physics points they raised, triaged: calorimetric response (high); W fixed by (pT, p∥, q3); the sequential p-value sentence; carbon vs hydrocarbon targets; the null's hadron composition; the background treatment in the figures. Framing as a methods paper is the lever left | [`PLAIN-LANGUAGE-PASS2-IMPLEMENTATION.md`](PLAIN-LANGUAGE-PASS2-IMPLEMENTATION.md) §3, §5, §7 |
 
-**The built PDFs** (note, paper, primer, PET note) are built locally from the plain-language branch, and their sha256
-are in `PLAIN-LANGUAGE-IMPLEMENTATION.md` §6. They supersede the builds listed in `J3-J5-WORDING-IMPLEMENTATION.md`. They are not committed and have not been sent anywhere. Joseph decides whether and how Ben receives them (J6).
+**The built PDFs** (note, paper, primer, PET note) are built locally from the plain-language pass-2 branch, and their sha256
+are in `PLAIN-LANGUAGE-PASS2-IMPLEMENTATION.md` §6. They supersede the earlier builds. They are not committed and have not been sent anywhere. Joseph decides whether and how Ben receives them (J6).
 
 **Points for Joseph to confirm at the review** (raised by the independent review of the wording):
 
