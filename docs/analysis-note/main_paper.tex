@@ -56,7 +56,8 @@ double-differential cross section in muon kinematics and extends it to five
 simultaneous observables by adding available energy, three-momentum transfer,
 and hadronic invariant mass.  The higher-dimensional central values pass checks of
 their marginal normalizations against the lower-dimensional results, and the three- and
-four-observable central values recover injected shape changes in closure tests.
+four-observable central values pass closure checks with injected shape changes.
+% plain-language pass, review fix R4 (DECISION-20261018-joseph-plain-language-pass)
 Pseudo-experiments that include backgrounds, and studies of the uncertainties,
 show limitations of the background treatment, the regularization, the interval
 coverage, and the stability under changes of the estimator's random seed.  The
@@ -66,9 +67,12 @@ tests, calibrated with pseudo-experiments that rerun the full analysis chain
 under a stated nuisance model, reject all five tested predictions (MINERvA
 Tune~v1, GENIE~2.12.10 with and without Valencia two-particle--two-hole
 contributions, NuWro~21.09, and GiBUU~2019) in total and in shape at the 5\%
-familywise level.  These tests hold only under stated conditions.  They recover
-known discrepancies, but they do not show that the joint five-observable
-information discriminates beyond matched coarse projections of the same cells.
+familywise level.  These rejections hold only under stated conditions.
+% plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
+The tests recover known discrepancies, but they do not show that the tested
+joint five-observable information discriminates beyond matched coarse
+projections of the same cells.
+% plain-language pass, review fix R5 (DECISION-20261018-joseph-plain-language-pass)
 Their physical interpretation is limited because the nuisance model has no
 calorimetric recoil-response uncertainty and because convergence of the fine
 grid on which the null hypotheses are defined has not been shown.
@@ -122,17 +126,20 @@ generated or edited by a generative-AI image tool.  AI tools are not authors.  T
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
 release, whose 2,374 input files are listed with their SHA256
-checksums~\cite{AnaTuplePreservation2026}.  A release package of about
-\SI{16}{MB}~\cite{ReleaseCandidate2026}, prepared locally but not yet
-deposited, needs only numpy, scipy, and matplotlib.  With it a reader can
+checksums~\cite{AnaTuplePreservation2026}.  A candidate release package of
+about \SI{16}{MB}~\cite{ReleaseCandidate2026}, prepared locally but not yet
+deposited, needs only numpy, scipy, and matplotlib.
+% plain-language pass, review fix R13 (DECISION-20261018-joseph-plain-language-pass)
+With it a reader can
 recompute every $p$ value, decision, robustness result, and power figure of
 the joint tests, together with the recovery of the lost pseudo-experiments,
 the coarse-projection comparison, and the fine-grid $L_{2}$ ratios of
 condition~(i); regenerate Figs.~\ref{fig:joint}--\ref{fig:joint-nulls}; and
 recompute the numbers quoted from Figs.~\ref{fig:joint}
 and~\ref{fig:generator-context}.  Rerunning the packaged files from an empty
-directory reproduces every value recorded in the package and every checked figure
-number.
+directory reproduces every value recorded in the package and every figure
+number that it checks.
+% plain-language pass, review fix N6 (DECISION-20261018-joseph-plain-language-pass)
 The package was assembled before the two-dimensional central value was
 changed to LightGBM, and it carries the exact-split curve.
 Fig.~\ref{fig:validation} and its numbers were instead regenerated

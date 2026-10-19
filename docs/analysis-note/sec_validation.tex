@@ -288,11 +288,12 @@ consistent with zero). The residual excess width lies in the data-statistics com
 per-bin pull RMS falls as that component's share of the band's variance rises, which corresponds
 to a data-statistics part about $1.6\times$ wider in $\sigma$ than the toys produce. Background
 purity does not explain it, and its cause is not established. A post hoc diagnostic that
-bootstraps a single toy, with a decision rule fixed before it ran, is consistent with the closure toys
+bootstraps a single toy, with a decision rule recorded before it ran, is consistent with the closure toys
 under-scattering, because their pseudo-data sit on the training MC events, rather than with the
 data bootstrap over-scattering; it is neither an independent-population coverage test nor a
-real-data calibration. The re-test on held-out simulation that would separate the two is
-deferred until after the publication package. Split-sample width checks that
+real-data calibration. The re-test on held-out simulation that would separate the two,
+tracked in the analysis repository's known-issues log, is deferred until after the
+publication package. Split-sample width checks that
 condition on the existing MC bank, binning maps and purity cannot establish repeated-sampling
 coverage across independent populations, so validated total intervals over the full reporting
 domain need new inputs (\S\ref{sec:uq-2d-scope}), which also lists what the quoted covariance
@@ -307,6 +308,8 @@ does not include.
 % article on 2026-10-11, when its 2D-coverage subsection was shortened.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass). Printed pointer moved to this comment: the deferred
 % re-test's (\texttt{KNOWN\_ISSUES.md} 85).
+% plain-language pass, review fix N1 and N3 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 85); "fixed before it
+% ran" becomes "recorded before it ran" (the rule was committed before the run, 8eb40e5f).
 
 \textbf{Scope.} The result concerns the statistical band only.
 \begin{itemize}[nosep]

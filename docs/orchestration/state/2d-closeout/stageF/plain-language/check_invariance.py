@@ -108,6 +108,24 @@ for name, files in DELIVERABLES.items():
         for c in added_c.elements():
             print(f"      {c}")
 
+# A comment that starts mid-line hides the rest of that line from the PDF; the multisets above see it only when the
+# hidden words carry a numeral or macro. List every line, new since the base, whose comment starts after text.
+print("== new lines with a mid-line comment (text before an unescaped %)")
+midline = []
+for fs in DELIVERABLES.values():
+    for f in fs:
+        base_lines = Counter(base_text(AN + f).splitlines())
+        for n, ln in enumerate((ROOT / AN / f).read_text().splitlines(), 1):
+            m = re.search(r"(?<!\\)%", ln)
+            if m and ln[:m.start()].strip() and base_lines[ln] == 0:
+                midline.append(f"{f}:{n}: {ln.strip()[:150]}")
+if midline:
+    bad = True
+    for x in midline:
+        print(f"  [DIFF] {x}")
+else:
+    print("  [SAME] none")
+
 changed = subprocess.run(["git", "-C", str(ROOT), "diff", "--name-only", BASE, "--"], check=True,
                          capture_output=True, text=True).stdout.split()
 untracked = subprocess.run(["git", "-C", str(ROOT), "ls-files", "--others", "--exclude-standard"], check=True,

@@ -60,9 +60,11 @@ estimator's bias toward its prior enters each simulated null distribution
 The two-dimensional reproduction agrees with the published total cross section
 to about one percent (ratio $\ratioTot$), with \SI{\binsTen}{\percent} of the
 205 bins within \SI{10}{\percent}.  The higher-dimensional central values agree
-with their lower-dimensional marginals and recover the known low-recoil
-discrepancy; the three- and four-observable central values also recover
-injected shape changes in closure tests.  Pseudo-experiments that include
+in normalization with the lower-dimensional results they extend and recover
+the known low-recoil discrepancy; the three- and four-observable central values
+also pass closure tests with injected shape changes.
+% plain-language pass, review fix R1, R4 (DECISION-20261018-joseph-plain-language-pass)
+Pseudo-experiments that include
 backgrounds, however, reveal a background-subtraction bias of up to
 \SI{4}{\percent} in simulation in the highest-$W$ cells.  An unbinned
 treatment, used only for the generator tests, largely removes it; the quoted
@@ -75,8 +77,9 @@ the untested coverage limit the method, and the measured model
 dependence prevents a five-dimensional measurement with total uncertainties
 that meet our predefined criteria at useful precision.  All ten calibrated
 tests, in total and in shape for each of the five predictions, reject at the
-5\% familywise level.  They hold under six stated conditions
-(Sec.~\ref{sec:conditions}); two of them, the absence of a calorimetric
+5\% familywise level under six stated conditions (Sec.~\ref{sec:conditions}).
+% plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
+Two of them, the absence of a calorimetric
 recoil-response uncertainty and the undemonstrated convergence of the fine
 grid on which the null hypotheses are defined, limit their physical
 interpretation.  Each test also has $p<0.05$ in at least one matched coarse
@@ -149,8 +152,10 @@ CV'') and with (``GENIE + MEC'') the Valencia 2p2h
 component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
 and NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx}, both on
 carbon.
-The GENIE and NuWro predictions are reweighted exactly, event by event, to the
-analysis flux, with added 50--\SI{100}{GeV} samples;
+The GENIE and NuWro predictions use a corrected flux sampling: they are
+reweighted exactly, event by event, to the analysis flux, with added
+50--\SI{100}{GeV} samples;
+% plain-language pass, review fix R3 (DECISION-20261018-joseph-plain-language-pass)
 the GiBUU sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
 
 \section{Unbinned unfolding}
@@ -181,15 +186,18 @@ gradient-boosted decision-tree classifiers~\cite{Pedregosa:2011sklearn,Ke:2017li
 below states which configuration it uses.  The iteration count and classifier capacity regularize
 the unfolding, and no hyperparameter search was performed on data: the nominal
 settings are scikit-learn defaults, with LightGBM matched to their capacity,
-and the joint-test estimator's refinement capacity was chosen in simulation
-closure studies.  A
+and the refinement capacity of the joint-test estimator (below) was chosen in
+simulation closure studies.
+% plain-language pass, review fix reader-E (DECISION-20261018-joseph-plain-language-pass)
+A
 neural-network classifier in the same five-iteration loop changes the
 three-dimensional total cross section by \SI{0.8}{\percent} and the
 one-dimensional projections by median absolute differences of
 \SIrange{0.7}{1.4}{\percent}.  The two- to five-dimensional central values use
-LightGBM at matched nominal capacity with the purity-based subtraction; the
-two-dimensional one is the central value of its systematic-universe ensemble,
+LightGBM at matched nominal capacity with the purity-based subtraction, which
+we call the central-value estimator; the two-dimensional one is the central value of its systematic-universe ensemble,
 so its covariance is built with the same estimator.
+% plain-language pass, review fix reader-E (DECISION-20261018-joseph-plain-language-pass)
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-88 in the note): since Q (2026-10-17) the statistical block is
 % also at the central value's seed 42 (sec:uq2d).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -197,8 +205,10 @@ An exact-split
 scikit-learn estimator (one that evaluates tree splits on the exact feature
 values rather than on histogram bins), which was the original two-dimensional
 choice, is kept as a cross-check (Sec.~\ref{sec:repro2d}).  The joint tests
-(Sec.~\ref{sec:joint}) use a deterministic LightGBM configuration, selected
-before the joint-test design was fixed.  Its unbinned negative-weight background
+(Sec.~\ref{sec:joint}) use a deterministic LightGBM configuration, the
+joint-test estimator, selected before the joint-test design was fixed.
+% plain-language pass, review fix reader-E (DECISION-20261018-joseph-plain-language-pass)
+Its unbinned negative-weight background
 treatment and higher-capacity refinement classifier together remove most of the
 bias of the purity method at nominal truth in the highest-$W$ cells
 (Sec.~\ref{sec:validation}).  Classifier settings are given in the analysis
@@ -219,8 +229,10 @@ observations.  A closure test measures how well a specified deformation is
 recovered.  Coverage measures how often intervals contain their target over
 repeated experiments; it tests the estimator and the interval construction
 together.  The bookkeeping of missed events (those that fail reconstruction)
-is checked for invariance, and the dependence on the number of iterations is
-a stability diagnostic; neither establishes recovery or coverage.
+is checked for completeness, an identity that must hold, and the dependence on
+the number of iterations is a stability diagnostic; neither establishes
+recovery or coverage.
+% plain-language pass, review fix R8 (DECISION-20261018-joseph-plain-language-pass)
 
 \subsection{Two-dimensional reproduction}
 \label{sec:repro2d}
@@ -259,7 +271,9 @@ estimates.
   \caption{Comparison with the published result~\cite{MINERvA:2021owq}.  Top:
   $\pT$ and $\pPar$ projections of the published result and of this analysis,
   each with its total $\pm1\sigma$ band (this analysis: statistical,
-  systematic-universe, normalization, training-seed and run-period covariance,
+  systematic-universe (including the normalization), training-seed and
+  run-period blocks of the covariance,
+  % plain-language pass, review fix reader-B (DECISION-20261018-joseph-plain-language-pass)
   Sec.~\ref{sec:uq2d}; it omits the learner dependence, and the two bands are
   correlated, so their overlap is not a compatibility test), and the MINERvA
   Tune~v1, with ratios to the published result below.  Bottom left:
@@ -278,10 +292,11 @@ estimates.
 
 The covariance of our two-dimensional result is the sum of four terms, which
 we call blocks: systematic universes, statistical, training seed, and run
-period.  The first three are obtained from ensembles of LightGBM unfolds with
+period.  The first three are obtained from ensembles of LightGBM unfoldings with
 % plain-language pass, director ruling on base defect paper F3 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-the central value's estimator, and the fourth from LightGBM unfolds of three
+the central value's estimator, and the fourth from LightGBM unfoldings of three
 groups of run periods.
+% plain-language pass, review fix reader-U (DECISION-20261018-joseph-plain-language-pass)
 % Review m4. Period-unfold record: state/2d-closeout/period-unfold-20261014/scripts/sbatch_period_unfold.sh:76
 % (--estimator lgbm, production driver 74a4ed69), REPORT.md §1 (control pu_CTRL_s42 reproduces E_U to 3.0e-13).
 % Q = S5 total + C_PL (docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md).
@@ -297,8 +312,10 @@ of the variance) and in the integral, and the run-period block raises the per-bi
 % REPORT §3). \uqPaperIntegral (4.61): values.tex, the note's worked
 % example (app_statmethods.tex sec:chisq) and docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md l.60-61.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
-The flux block applies the MINERvA analysis toolkit's per-universe
-neutrino--electron-scattering and inverse-muon-decay constraint weights.
+In the systematic-universe block, the flux universes carry the MINERvA analysis
+toolkit's per-universe neutrino--electron-scattering and inverse-muon-decay
+constraint weights.
+% plain-language pass, review fix reader-B (DECISION-20261018-joseph-plain-language-pass)
 % J3/J4 provisional (DECISION-20261018, packet W5): the "an earlier version omitted them and quoted 6.87 %" clause is
 % dropped from the paper; the chain stays in the note's App. history (errata) and App. history-vl175.
 The published flux uncertainty (median \SI{4.01}{\percent}) is larger than
@@ -316,8 +333,10 @@ about \SI{70}{\percent}.
 % relative SE of its variance 71 % (stageC/production/REPORT.md §3, §12). The learner dependence (D3, W6) is in sec:repro2d.
 % The VL170-era 0.30 sigma (0.18 %) compared the seed-1 block's central value.
 
-The systematic-universe unfolds approximate the weighting of events that fail
-reconstruction, and we do not correct this approximation.  We tested it in two
+The systematic-universe unfoldings approximate the weighting of events that fail
+reconstruction, and we do not correct this approximation.
+% plain-language pass, review fix reader-U (DECISION-20261018-joseph-plain-language-pass)
+We tested it in two
 of the 187 universes (one resonance-production and one flux universe), each at
 two training seeds.  Neither showed an effect above the noise of an earlier
 ten-seed training scan, which is about three times the training-seed block.
@@ -345,11 +364,15 @@ period groups, without choosing any as the reference.  Its median is
 projections and \SI{2.0}{\percent} on the integrated cross section.  The block
 uses double ratios between groups, each group's unfolded result being taken
 over its own simulated truth, so it relies on the periods' own simulated
-responses and does not identify a correct period.  Its interpretation is limited by the small number
+responses.  It does not identify a correct period.
+% plain-language pass, review fix R10 (DECISION-20261018-joseph-plain-language-pass)
+Its interpretation is limited by the small number
 of groups, by possible shrinkage from the regularization, and by the
 statistical and training noise it retains.  Because the block is built from
-the differences among the periods, it covers them automatically; this says
-nothing about whether its size is right.  For the same reason, the block's own
+the differences among the periods, it contains them by construction; this says
+nothing about its coverage, that is, whether its size is right.
+% plain-language pass, review fix R9 (DECISION-20261018-joseph-plain-language-pass)
+For the same reason, the block's own
 consistency check passes whatever the data, and it is not a test.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % Review m12: the J2 condition (DECISION-20261017 §3; COMBINATION-REPORT §3: the double-ratio chi2 against any total
@@ -367,8 +390,9 @@ value's training seed (data, signal simulation and background simulation
 resampled in three independent streams), with a median statistical uncertainty of
 \SI{0.684}{\percent}.  The mean of the replicas differs from the central value
 by a per-bin median of 0.26 statistical standard deviations; the block is a
-covariance about that mean, so it does not include this offset.  The coverage
-of this block has not been independently tested, and the coverage of the total
+covariance about that mean, so it does not include this offset.
+% plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
+The coverage of this block has not been tested, and the coverage of the total
 remains untested.
 % J3/J4 provisional (DECISION-20261018, packet C4, W3: D2, D8; J5 KNOWN_ISSUES 85 re-scoped to S1). 0.684 =
 % rebuild/outputs/outA/budget_Q.json.gz stat.median_pct (0.6843); bound by check_sec4_receipts.py. Construction:
@@ -376,8 +400,9 @@ remains untested.
 % 4.43, i.e. 0.26 sigma; s5.json centring, stageC/production/REPORT.md §3 R9).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 An earlier version of the statistical band undercovered in its tails in
-\covTwoDNtoy{} closure pseudo-experiments against a fixed truth, specified
-before they were run: pooled over experiments and bins,
+\covTwoDNtoy{} closure pseudo-experiments, specified in advance, against a
+fixed truth: pooled over experiments and bins,
+% plain-language pass, review fix R7 (DECISION-20261018-joseph-plain-language-pass)
 \SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two
 standard deviations, against \SI{95.4}{\percent} nominal.  The main cause, a division by the completeness that the bootstrap
 replicas carried and the central value does not, was removed in a rebuilt
@@ -396,9 +421,10 @@ different ensemble from it.
 % note only (sec_validation.tex sec:coverage, "The rebuilt band, scored post hoc"; KNOWN_ISSUES 85). Not D2 must-carry.
 A review of the stored analysis products found errors in an earlier version of
 the uncertainty budget, among them a mismatch between the truth input of its
-systematic-universe unfolds and that of their reference, and statistical
+systematic-universe unfoldings and that of their reference, and statistical
 fluctuations of the background templates that were not
 propagated~\cite{TwoDFollowup2026}; the quoted covariance is free of both.
+% plain-language pass, review fix reader-U (DECISION-20261018-joseph-plain-language-pass)
 % Shortened 2026-10-18 for the page count (review dispositions): how (the July sweep; S1's background stream) is in the
 % note, sec:uq-2d-construction and sec:uq-boot.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93, KI-94 in the note): the July sweep
@@ -406,12 +432,19 @@ propagated~\cite{TwoDFollowup2026}; the quoted covariance is free of both.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 In summary, we report a reproducible two-dimensional central value with a
-covariance built with the same estimator, under stated conventions.  The
-result is not fully validated.  Neither the average coverage of its per-bin
-intervals nor their simultaneous coverage over all bins has been independently
-validated, and the covariance provides no calibrated significance for generator
-comparisons.  The following are not included in any block of the covariance:
-the approximation in the systematic-universe unfolds above, the dependence on
+covariance built with the same estimator, under the conventions stated in the
+analysis note~\cite{AnalysisNote2026}.
+% plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass)
+The result's intervals, bias and covariance have not been independently
+validated.
+% plain-language pass, review fix W1 (DECISION-20261018-joseph-plain-language-pass)
+In particular, the coverage of its intervals has not been validated on
+independent simulated samples, nor simultaneously over all reported bins and
+projections.  The covariance also provides no calibrated significance for
+generator comparisons.
+% plain-language pass, review fix R2 (DECISION-20261018-joseph-plain-language-pass)
+The following are not included in any block of the covariance:
+the approximation in the systematic-universe unfoldings above, the dependence on
 the machine-learning estimator (Sec.~\ref{sec:repro2d}), and the dependence on
 the unfolding model and its regularization, whose estimate would require
 independent-generator samples.  We assume that the detector response varies
@@ -419,9 +452,9 @@ only within its parametrized family.  Validated total intervals over the full
 reporting domain would require new inputs: an independent simulation sample of
 production size, a validated generator of continuous nuisance-parameter
 variations, and independent-generator samples that have not already been
-inspected.  We make no claim about coverage.  The analysis
-note~\cite{AnalysisNote2026} states these conventions and the further
-approximations and limits.
+inspected.  We make no claim about coverage.  The analysis note also states
+the further approximations and limits.
+% plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145),
 % then the director's list of what lies outside every block; C3: "construction repairs" replaced by the new inputs and
@@ -488,9 +521,11 @@ of bias-corrected statistical intervals from a deterministic variant of the
 estimator failed its criterion, fixed in advance, at
 nominal truth and under an $\Eavail$ tilt, so frequentist coverage of the
 five-dimensional intervals has not been established.  In this implementation,
-then, agreement with the lower-dimensional marginals coexists with substantial
+then, agreement in the marginal normalizations coexists with substantial
 regularization bias, and the model dependence and the calibration of the
-uncertainties remain limiting.  This motivates the full-chain calibrated
+uncertainties remain limiting.
+% plain-language pass, review fix R1 (DECISION-20261018-joseph-plain-language-pass)
+This motivates the full-chain calibrated
 comparisons of Sec.~\ref{sec:joint}.
 % Sources: OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
 % OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL153, VL154);
@@ -508,10 +543,12 @@ low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}.  GENIE,
 the MINERvA Tune~v1, NuWro, and GiBUU all underpredict the unfolded central
 value at low $\Eavail$, between the quasielastic and $\Delta$ peaks.  Pion
 final-state-interaction (FSI) variations (same-sample ratios computed with GENIE
-without its exact flux reweighting) change $d\sigma/d\Eavail$ by less than one percent, whereas adding
+before its flux sampling was corrected) change $d\sigma/d\Eavail$ by less than one percent, whereas adding
 GENIE's Valencia 2p2h contribution fills \SI{52}{\percent} of the
 data--GENIE gap below $\Eavail=\SI{0.4}{GeV}$.  The conclusion about FSI applies
-to the chosen pion variations.  Adding $q_{3}$ resolves
+to the chosen pion variations.
+% plain-language pass, review fix R3 (DECISION-20261018-joseph-plain-language-pass)
+Adding $q_{3}$ resolves
 the momentum-transfer dependence of this feature: on the maximal common
 $(\Eavail,q_{3})$ grid, the central value lies within \SI{10}{\percent} of the
 dedicated published low-recoil measurement~\cite{MINERvA:2022incl} (ratios $1.09$
@@ -656,7 +693,9 @@ decisions were determined, that is, until each interval lay entirely on one
 side of its threshold.  The hypotheses, statistics, shifted nulls,
 multiplicity and stopping rules, and every input were fixed before any
 production pseudo-experiment was run or any observed statistic computed.  Two
-choices were informed by the data.  The reviewers of the design had seen
+parts of the procedure were informed by the data.
+% plain-language pass, review fix reader-D (DECISION-20261018-joseph-plain-language-pass)
+The reviewers of the design had seen
 descriptive per-cell residuals before it was fixed.  A bounded extension of
 the production computing budget was decided while the outputs of the
 computing jobs showed the observed $p$ values used for the decisions; it
@@ -750,9 +789,11 @@ prior, which the calibration reproduces.
   \centering
   \includegraphics[width=0.98\textwidth]{paper_joint_nulls}
   \caption{Calibrated null distributions of the total (top) and shape (bottom)
-  statistics for each prediction, for the shifted null used in the decisions
-  (the ``claim variants'' of the legend) with the largest null median, on a
-  logarithmic axis.  Vertical lines mark the observed statistics; $k/B$ is as
+  statistics for each prediction, for the shifted null with the largest null
+  median among those used in the decisions (labelled ``claim variant'' in the
+  legend), on a logarithmic axis.
+  % plain-language pass, review fix R11, N7 (DECISION-20261018-joseph-plain-language-pass)
+  Vertical lines mark the observed statistics; $k/B$ is as
   in Table~\ref{tab:joint}.}
   \label{fig:joint-nulls}
 \end{figure*}
@@ -874,9 +915,11 @@ We have built a covariance for the five-dimensional central value and formed
 its \zprojCells-cell $(\Eavail,W)$ projection; it is separate from the
 joint-test calibration.  It has not met the criteria that the analysis set in
 advance for an uncertainty.  One of these criteria requires a bound fixed
-before production and can no longer be applied to it, and the covariance is
-used only under a documented exception to the criteria, limited to this one
-covariance.  We quote no covariance-based generator
+before the covariance was produced and can no longer be applied to it.  We use
+the covariance only under an exception to the criteria, recorded in the analysis
+note and limited to this one covariance.
+% plain-language pass, review fix N2, reader-X (DECISION-20261018-joseph-plain-language-pass)
+We quote no covariance-based generator
 significance, because covariances from this estimator depend measurably on
 its random seed.  In two further covariances built at two seed settings (separate
 from the one in use), changing the seed moves the projected uncertainty by
@@ -890,8 +933,11 @@ fixed seed, a noise floor, fell from \SI{\floorNforty}{\percent} to
 seed pair, with nested subsets of the throws, so the spread over seed pairs and
 the behaviour at much larger ensembles have not been measured.  Five of the
 covariance's 45 uncertainty bands are built at a fixed seed that the variation
-cannot change; they make up \SI{\pinnedBandsSqrtTr}{\percent} of
-$\sqrt{\mathrm{Tr}\,C}$, the square root of the covariance's trace.  Their
+cannot change.  The square root of their contribution to the trace is
+\SI{\pinnedBandsSqrtTr}{\percent} of $\sqrt{\mathrm{Tr}\,C}$, the square root
+of the covariance's trace.
+% plain-language pass, review fix R12 (DECISION-20261018-joseph-plain-language-pass)
+Their
 seed sensitivity, and its effect on the total in either direction, has not
 been measured.
 
@@ -900,8 +946,10 @@ whose total uncertainties could meet these criteria.  None of the definitions
 it considered could meet the precision targets set in advance, within the
 study's rules and computing budget.  For its fallback definition, the bounded
 model-dependence component alone exceeded the target total width.  The joint
-tests above came from the same study, as a separate route to inference, and
-they produce no new uncertainty that could be reported for a measurement.
+tests above came from the same study, as a different route to inference: they
+test the generator predictions as hypotheses and provide no new measurement
+uncertainty.
+% plain-language pass, review fix N3 (DECISION-20261018-joseph-plain-language-pass)
 % PET (full-event point-cloud classifiers) is not discussed in the article: Joseph, 2026-10-08 ("drop PET"). It is
 % diagnostic and method development (ruling 2026-08-20); the companion note carries the PET record (sec_pet_campaigns.tex).
 % Sources: VL142-VL144; DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md sec. 4;
@@ -919,11 +967,14 @@ measurement from the same data.  The three- to five-dimensional central values
 support only descriptive comparisons, without validated coverage of their
 total intervals and without a covariance-based generator significance.  The
 joint tests are calibrated generator tests; they are conditional on six stated
-conditions and yield no new uncertainty that could be reported for a
-measurement.  The higher-dimensional central values agree with their
-lower-dimensional marginals and recover the established low-recoil
-discrepancy, and the three- and four-observable central values recover
-injected shape changes in closure tests.  Pseudo-experiments that include
+conditions and provide no new measurement uncertainty.
+% plain-language pass, review fix N3 (DECISION-20261018-joseph-plain-language-pass)
+The higher-dimensional central values agree in normalization with the
+lower-dimensional results they extend and recover the established low-recoil
+discrepancy, and the three- and four-observable central values pass closure
+tests with injected shape changes.
+% plain-language pass, review fix R1, R4 (DECISION-20261018-joseph-plain-language-pass)
+Pseudo-experiments that include
 backgrounds reveal a subtraction bias, which the unbinned background
 refinement reduces, while a regularization bias persists under the tested
 shape changes of generator size.  Studies of coverage and of the dependence on
