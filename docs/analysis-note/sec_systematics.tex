@@ -16,8 +16,9 @@ The historical 3D budget uses the analogous 3D grid construction
 (\S\ref{sec:3d-syst}); no 4D uncertainty magnitude is reported (\S\ref{sec:4d}).
 App.~\ref{app:statmethods} gives the full mathematics and worked examples using
 the reported numbers (N-D declarations in App.~\ref{app:statmethods-nd}). The resulting budget and its agreement with the published
-total appear in \S\ref{sec:results-uq}; what the construction does and does not
-include, and its declared conventions, are in \S\ref{sec:uq-2d-scope}.
+total appear in \S\ref{sec:results-uq}; what the covariance includes and omits,
+and the conventions it follows, are in \S\ref{sec:uq-2d-scope}.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 \subsection{Systematic universes}
 \label{sec:uq-universes}
@@ -27,8 +28,10 @@ set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
 against a reference central-value unfold with the same estimator and seed;
 since 2026-10-11 this reference is the quoted 2D central value. The five
 lateral bands are taken from selection-complete re-unfolds at the same seed. The
-rollup drops Rvp1pi, which encodes the same shift as Rvn1pi
-(\texttt{KNOWN\_ISSUES.md} 92), and holds 43 bands plus the flat normalization.
+rollup drops Rvp1pi, which encodes the same shift as Rvn1pi, and holds 43 bands
+plus the flat normalization.
+% Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92, KI-93 in sec:uq-2d-construction). Receipt: rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble (s5.json
 % checks july_44_bands_187_universes, universe_bands_43_plus_norm); construction stageC/production/DESIGN.md §S5
 % (universe row). No universe count after the Rvp1pi drop is printed: no receipt field (PHASE2 Q1).
@@ -38,11 +41,11 @@ excluding any common endpoint displacement from CV. The 100 PPFX universes
 use the same mean-centered $1/N$ formula.
 
 Top 2D bands: Flux \SI{\fluxBand}{\percent} (with MAT's $\nu$--$e$ and
-inverse-muon-decay constraint weights,
-\texttt{KNOWN\_ISSUES.md} 95), Muon\_Energy\_MINOS
+inverse-muon-decay constraint weights), Muon\_Energy\_MINOS
 \SI{2.39}{\percent}, MinosEfficiency \SI{1.58}{\percent},
 Muon\_Energy\_MINERvA \SI{1.38}{\percent}.
 % Q's universe block: rebuild/outputs/outA/budget_Q.json.gz bands.<band>.median_pct (2.390, 1.578, 1.376).
+% Printed pointer moved to this comment by the plain-language pass: the flux band's \texttt{KNOWN\_ISSUES.md} 95.
 % The unweighted flux band (4.99 %, VL172) has no S5 counterpart and is in App. history (PHASE2 Q12).
 Figure~\ref{fig:uqbands} shows the
 grouped fractional-uncertainty projections in the published Fig.~6/7 style
@@ -65,14 +68,15 @@ before dividing by the 1D central value).
 \paragraph{Flux $1/\Phi$ normalization.}
 Varying $\Phi$ per flux universe in the dominant $\sigma\propto1/\Phi$ term
 gives a Flux band of \SI{\fluxBand}{\percent} with the constraint weights,
-and a standalone combined budget of \SI{\uqMedian}{\percent}. The unweighted
-and CV-$\Phi$ values of the earlier construction are in App.~\ref{app:history-vl175}.
+and a combined budget, from our covariance alone, of \SI{\uqMedian}{\percent}. The
+unweighted and CV-$\Phi$ values of the earlier budget are in App.~\ref{app:history-vl175}.
 % NR (PHASE2 Q12): 4.99 % (unweighted) and ~1 % (CV Phi) are VL-era diagnostics with no S5 counterpart.
 Target-nucleon normalization
 contributes a fully-correlated rank-1 band of \SI{1.4}{\percent}. The two
 Muon\_Energy\_MINOS universes carry the correlated-flux weight, so each is
-divided by its own flux, not by the CV flux (\texttt{KNOWN\_ISSUES.md} 96); that
-band's integral $\sigma$ is \SI{0.31}{\percent}.
+divided by its own flux, not by the CV flux; that band's integral $\sigma$ is
+\SI{0.31}{\percent}.
+% Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 96).
 % rebuild/outputs/outA/budget_Q.json.gz bands.Muon_Energy_MINOS.integral_sigma_pct (0.306). The VL175 "from 0.11 % to
 % 0.37 %" has no S5 "before" value (NR) and is in App. history.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10; no wording change).
@@ -112,13 +116,18 @@ block is the covariance about the replica mean, so this offset is not included i
 genuinely smaller than the published statistical block (square-root-trace ratio
 0.428). This \emph{observed} covariance difference does not
 demonstrate a causal efficiency advantage (App.~\ref{sec:rank}); the split data/MC
-streams of the earlier (VL170) bootstrap are in App.~\ref{app:history-vl175}. The fixed-truth coverage test
-(\S\ref{sec:coverage}) found that the earlier statistical band undercovered
-in its tails, unevenly across bins. Neither the rebuilt (VL170) band, which was only rescored post hoc and partly
-circularly, nor the statistical block quoted here has been independently tested; the
-held-out re-test is deferred until after the publication package and was not
-pre-registered (\texttt{KNOWN\_ISSUES.md} 85). The original test cannot
-decide between these explanations, because its truth equals the prior.
+streams of the earlier bootstrap are in App.~\ref{app:history-vl175}. The fixed-truth coverage test
+(\S\ref{sec:coverage}) found that an earlier statistical band undercovered
+in its tails, unevenly across bins. That band was then rebuilt. The rebuilt band was
+only re-evaluated post hoc, on the same pseudo-experiments and partly circularly, and
+neither it nor the statistical block quoted here has been tested independently. A
+re-test on held-out simulation is deferred until after the publication package, and
+% plain-language pass, director ruling on base defect note F1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
+its design was not fixed in advance. Because its truth equals the prior, the original test
+also cannot decide whether the smaller statistical block reflects an efficiency gain,
+regularization bias or undercoverage.
+% Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 85); the earlier
+% bootstrap and the rebuilt band are VL170 (printed identifier removed).
 % Q's statistical block S1 (stageC/production/DESIGN.md §3.4: --seed 42 --bootstrap-streams three; S5 stat row:
 % ddof 1 about the replica mean). rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble.stat_rel_se_of_sigma
 % (0.0409 = 1/sqrt(2*299); s5.json numbers.stat.ensemble_rel_se_of_sigma, a formula value, production
@@ -129,6 +138,7 @@ decide between these explanations, because its truth equals the prior.
 % KI-94: REPORT.md §3 (bkg-only separable term S2, median sigma_bkg/sigma_stat 0.263). Nested 150-vs-300 sigma ratio,
 % median 1.0012 (REPORT.md §3 ensemble error). 0.26 sigma = 4.43/sqrt(300) (rebuild REPORT §3). D2 history:
 % KNOWN_ISSUES 85; sec:coverage.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 \begin{figure}[H]
   \centering
@@ -180,34 +190,39 @@ unmeasured.
 % traced to an operand by the 2026-10-09 correction, and it did not name which central value it compared.
 % Fig. seedscan (seedscan_spread_2d, seedscan_band_pt: the ten-seed scan) removed 2026-10-18 (PHASE2 Q6); no Q version.
 
-\subsection{Remaining checks of the 2D construction}
+\subsection{Further checks of the 2D covariance}
 \label{sec:uq-2d-construction}
-A saved-product and code review identified additional construction issues
-in the earlier (VL175) 2D budget~\cite{TwoDFollowup2026}. The May systematic
+A review of the saved products and code found further defects in the way the
+earlier 2D budget was built~\cite{TwoDFollowup2026}. The May systematic
 sweep that it used has a different simulated truth input from its seed-42 reference:
 even a no-op EtaNCEL universe differs in all 205 truth-input cells, while
 its saved reconstructed inputs agree. A common displacement cancels to
-first order in the MAT mean-centered covariance; this observation neither
-invalidates the entire covariance nor supplies a correction to subtract.
+first order in the MAT mean-centered covariance; this observation does not
+invalidate the entire covariance, and it does not supply a correction to subtract.
 The July sweep, which the quoted universe block uses, does not have this
-mismatch. The unavailable May input and
-code revision prevent a more specific attribution. The July sweep's products record
-no driver digest and came from an uncommitted driver revision. Seven of its universes,
-four of them also in the pilot, are reproduced to $\le1.4\times10^{-11}$ by the
-committed driver; the rest are qualified by inference from the same producer.
+mismatch. Because the May input and code revision are not available, the
+mismatch cannot be attributed more specifically. The July sweep's products do not
+record a checksum of the driver code that produced them, and that driver version was
+not committed. Seven of its universes, four of them also checked in an earlier pilot,
+are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are
+accepted by inference, because the same code produced them.
+% Printed identifier removed by the plain-language pass: the earlier 2D budget is VL175.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July
 % sweep); stageC/pilot/REPORT.md l.70-80, K1: five comparisons over four universes (NormDISCC:0, MaRES:0, Flux:23,
 % Muon_Energy_MINOS:0 on the derived and the default path), max rel <= 1.38e-11; stageC/production/REPORT.md l.65,
 % S4(ii): seven July seed-42 universes (2p2h:0, Flux:23, MaCCQE:0, MaRES:0, MinosEfficiency:0, Muon_Energy_MINOS:0,
 % NormDISCC:0), 7/7 PASS, worst 1.38e-11, which include the four pilot universes. Review M2: "Five of its universes"
 % (inherited from DRAFT-disclosures D10, corrected in revision 4) was the wrong count.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
 nonresonant-pion tune, counting it twice. This is a small, \SI{0.088}{\percent}
-band, but a real construction defect; no conclusion about the published
+band, but a real defect in how the covariance was built; no conclusion about the published
 analysis's implementation follows. The quoted universe block drops Rvp1pi and
-counts the shift once (\texttt{KNOWN\_ISSUES.md} 92).
+counts the shift once.
+% Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92; the sentence already states it). Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 The two examined small-input responses,
 EtaNCEL and NormNCRES, are consistent with trainer instability contributing
 at the ML-noise scale. They do not establish a mechanism for every small
@@ -224,7 +239,7 @@ Lateral systematics use a single unfold at the central training seed each, so th
 include that seed's training noise. The flux-universe index identity behind the
 $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events
 $\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe
-fails at $\ge0.245$ (\texttt{KNOWN\_ISSUES.md} 91). The production flux weights equal the
+fails at $\ge0.245$. The production flux weights equal the
 constraint file and the earlier budget's in all 12 playlists. These findings left the
 earlier printed budget unchanged.
 % J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
@@ -232,6 +247,8 @@ earlier printed budget unchanged.
 % 42); stageC/production/REPORT.md §12. KI-91: stageB/REPORT.md (Stage B §2.1: max residual 5.5e-14; shifted-by-one control
 % minimum residual 0.245); s5.json checks weights_identical_across_playlists, weights_equal_constraint_file,
 % weights_equal_vl175_build_json (all ok; F4 part A).
+% Printed pointer moved to this comment by the plain-language pass: the index identity's (\texttt{KNOWN\_ISSUES.md} 91).
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 \subsection{Combination and the unified-throw test}
 \label{sec:uq-combine}
@@ -242,7 +259,7 @@ simultaneous perturbations, allowing per-band covariances to add. The
 \emph{unified throw} directly tests linearity (App.~\ref{sec:universes};
 \S\ref{sec:eavailw-construction}) by jointly re-unfolding all reweightable
 knob bands and the flux multisim, perturbed simultaneously per event.
-The corrected construction interpolates asymmetrically between actual
+The corrected procedure interpolates asymmetrically between actual
 $-1\sigma$ and $+1\sigma$ event-weight endpoints, fixes the estimator seed
 for every throw, and centers the joint covariance on the throw mean.
 That mean's displacement from CV is stored separately as a per-bin vector
@@ -254,16 +271,17 @@ subtracted. The 5D result uses the strict joint ensemble and matched-endpoint
 comparator.
 % Implementation: nd-unfolding/unified_throw_cov.py
 
-The run-period block $C_{\mathrm{PL}}$ carries an observed run-period inconsistency of
-unknown cause as an uncertainty; it is not a measured systematic of a known source.
+The run-period block $C_{\mathrm{PL}}$ is an uncertainty assigned for an observed
+inconsistency between run periods whose cause is unknown; it is not a measured
+systematic uncertainty from an identified source.
 Subsets of the data taken in different run periods are not mutually consistent within
 the other uncertainties: after unfolding, the double ratio (data over simulated truth) of
 playlists 1G--1M to the earliest periods, 1A--1F, has a $\pPar$ step of
 $(+6.94\pm0.41)\%$ at \SI{8}{GeV/c}. Diluted into the combined result, the raw shift of
 those playlists is small bin by bin, with every marginal $z$ below 0.7, but its $\pPar$
-$\chi^{2}$ against the earlier (VL175) budget is 33.8, where noise would give 1.8. The cause is not known, and these data cannot establish which
+$\chi^{2}$ against the earlier budget is 33.8, where noise would give 1.8. The cause is not known, and these data cannot establish which
 period, if any, is correct. The block is built from separate seed-42 unfolds of
-three run periods (groups of playlists; 1N--1P is treated in the same construction): each
+three run periods (groups of playlists; 1N--1P is treated in the same way): each
 period's unfolded-to-simulated ratio is compared with the exposure-weighted mean of the
 three, without choosing any period as the reference, and the spread, applied to the
 central value, gives the block. It is added after the other blocks. It has rank at most
@@ -274,16 +292,18 @@ it is \SIrange{1.24}{3.36}{\percent} on the $\pPar$ projections and \SI{1.97}{\p
 integrated cross section. Added to the other blocks, it raises the per-bin $\sigma$ by a
 median of \SI{5.4}{\percent} (at most \SI{34.5}{\percent}), the integral by \SI{9.9}{\percent}
 and the $\pPar$ projections by at most \SI{21}{\percent} (at 6--\SI{7}{GeV/c}); it carries a
-median \SI{9.9}{\percent} of the per-bin variance and \SI{17.1}{\percent} of the integral's. A
-construction with 1A--1F as the reference would be smaller (median \SI{1.45}{\percent}, integral
-\SI{1.09}{\percent}). Its reference-free double-ratio construction uses the periods' own simulated
-responses; it does not identify a correct period. The small number of groups, possible
-regularization shrinkage and retained statistical and training noise limit its
-interpretation. Containment of the observed differences by this construction is not
-evidence of coverage. The block's own double-ratio $\chi^{2}$ against any total that
-contains it is bounded by construction, whatever the data, so it is not a test. The raw
-1G--1M $\pPar$ $\chi^{2}$, 34.8 against the other blocks alone and 1.97 with the block added,
-is a sensitivity reading only.
+median \SI{9.9}{\percent} of the per-bin variance and \SI{17.1}{\percent} of the integral's.
+Taking 1A--1F as the reference would give a smaller block (median \SI{1.45}{\percent}, integral
+\SI{1.09}{\percent}). Because the block is built from double ratios, each period's unfolded
+result over that period's own simulated truth, it needs no reference period; it does not
+identify which period is correct. Its interpretation is limited by the small number of
+period groups, by possible shrinkage from the regularization, and by the statistical and
+training noise it retains. Because the block is built from the observed differences among
+the periods, it contains them automatically; this says nothing about its coverage, that
+is, about whether its size is right. For the same reason, the block's own double-ratio
+$\chi^{2}$ against any total that contains it is bounded whatever the data, so it is not a
+test. The raw 1G--1M $\pPar$ $\chi^{2}$, 34.8 against the other blocks alone and 1.97 with
+the block added, is a sensitivity reading only.
 % J3/J4 provisional (DECISION-20261018, packet W2, W3: D5 in full; the three sentences from "Its reference-free" to
 % "evidence of coverage" are D5's Required clause, verbatim; the next sentence is D5's "its own check cannot fail"). Construction: state/2d-closeout/playlist-term/DESIGN.md §2 (double ratio, reference-free, rank <= 2).
 % Step and chi2: state/2d-closeout/period-unfold-20261014/REPORT.md (dr P_B/P_A +6.94 % +- 0.41; 1G-1M raw bias_PB
@@ -293,37 +313,41 @@ is a sensitivity reading only.
 % the double-ratio chi2 against a total containing C_PL is at or below the first-order bound, 0.68 in 1G-1M p_par).
 % DECISION-20261015-joseph-playlist-consistency-term.md §2. Median: budget_Q.json.gz C_PL.median_pct (2.137).
 % D9 (J36) is in sec:uq-2d-scope.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass): D5's Required clause is now in equivalent
+% wording (DRAFT-disclosures D5: "or equivalent wording used"), from "Because the block is built from double ratios" to
+% "whether its size is right"; the "its own check cannot fail" sentence follows it. The earlier budget is VL175.
 
 More generally, this reframes the block sum as an approximation --- valid only
-where the unfolding responds linearly --- rather than as a default
-construction.  We retain the per-source decomposition for attribution and use it only after
+where the unfolding responds linearly --- rather than as the default
+way to build the covariance.  We retain the per-source decomposition for attribution and use it only after
 joint throws and matched block endpoints pass the stated validation tests.
 
-\subsection{Scope, conventions and limits of the 2D construction}
+\subsection{Scope, conventions and limitations of the 2D covariance}
 \label{sec:uq-2d-scope}
 
-\paragraph{Endpoint.}
-We report a reproducible two-dimensional central value with a matched
-uncertainty construction under declared conventions. Full scientific closeout
-is not achieved: the construction has not been independently validated for
-population or simultaneous interval coverage, and it supplies no calibrated
-covariance-based generator significance. That validation would need
-independent production-size simulation, a validated continuous nuisance
-generator, and independent-generator samples beyond the truth-level ones
-already inspected; none is available. No coverage claim is made, and
-goodness-of-fit values computed with this covariance are indicative. The
-following are not included in any uncertainty block:
+\paragraph{Status of the 2D result.}
+We report a reproducible two-dimensional central value, with a covariance computed
+with the central value's own estimator, under the conventions stated below. Full validation of the
+result has not been achieved. The coverage of its intervals has not been validated
+independently, either over repeated experiments drawn from independent simulated
+samples or simultaneously over all bins. The covariance also gives no calibrated
+significance for comparisons with generator predictions. Such validation would need
+an independent simulation sample of production size, a validated generator of
+pseudo-data with continuously varied nuisance parameters, and samples from independent
+event generators beyond the truth-level ones already examined; none is available. We
+therefore make no claim about coverage, and goodness-of-fit values computed with this
+covariance are indicative only. The following are not included in the covariance:
 \begin{itemize}[nosep]
-  \item the approximation in the systematic-universe unfolds' weighting of
-        events that fail reconstruction (below), which is not measured beyond the
-        weak test below;
+  \item the approximation in how the systematic-universe unfolds weight events that
+        fail reconstruction (below); beyond the weak test described below, its effect
+        has not been measured;
   \item the dependence on the machine-learning estimator: a per-bin median of
         \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}) between the LightGBM
         central value and the exact-split cross-check (\S\ref{sec:uq-ml});
   \item the dependence on the unfolding model and its regularization, whose
         estimate requires independent-generator samples, and departures of the
         detector response from its parametrized family, which we assume absent;
-        neither is priced.
+        we assign no uncertainty for either.
 \end{itemize}
 % J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145),
 % then the director's list of what lies outside every block; the note carries D1's full content, including the reason
@@ -334,34 +358,40 @@ following are not included in any uncertainty block:
 % Stage D, unpriced, Stage B REPORT §3 R8). Learner maximum: receipts/2d-lgbm42-20261011/lgbm_central_metrics.out (12.18 %).
 % Review M3: Stage B REPORT §3 (l.313-314) lists C09 (needs independent-generator 2D truths) and C10 ("none outside the
 % parametrized family | stated assumption") separately; only C09 needs independent-generator samples. Review m8 applied.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass): W1's "Full scientific closeout is not achieved" is
+% carried by "Full validation of the result has not been achieved"; "population or simultaneous interval coverage" by
+% the two coverage cases; "no calibrated covariance-based generator significance" by the next sentence; "not
+% included in any uncertainty block" by "not included in the covariance"; "neither is priced" by "we assign no uncertainty".
 
-\paragraph{Declared conventions.}
+\paragraph{Conventions.}
 Each systematic band's covariance is computed about the mean of its universes
 (constraint-weighted for the flux), with $1/N$ normalization, not about the
-central value: the MAT universe law (\S\ref{sec:uq-universes}), a declared
-convention. The band centres lie a median \SIrange{0.12}{0.50}{\percent} of the
+central value. This follows the MAT treatment of universes (\S\ref{sec:uq-universes}),
+which we use as a stated convention. The band centres lie a median \SIrange{0.12}{0.50}{\percent} of the
 central value from it, or 0.08--2.26 of the band's $\sigma$. The statistical
 block is the covariance about the replica mean (\S\ref{sec:uq-boot}). A
 \SI{1.4}{\percent} normalization uncertainty is included as a rank-one block.
 % J3/J4 provisional (DECISION-20261018, packet W3: D12). DECISION-20261014 §2 (the MAT law as a declared convention, Q5);
 % stageC/production/DESIGN.md §8; stageC/production/REPORT.md §3 "Centring (R9)" (0.12-0.50 % of E_U, 0.08-2.26 sigma_band;
 % null bands EtaNCEL, NormDISCC at <= 4.2e-8 %); normalization 1.4 %, rank 1 (ruling R6; budget_Q bands).
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 \paragraph{Approximations and omitted terms.}
 The systematic-universe unfolds approximate the weighting of events that fail
 reconstruction (the miss rows), which enters through each universe's
-completeness; the approximation is not repaired. It was tested in two of the
+completeness; the approximation is not corrected. It was tested in two of the
 187 universes, \texttt{MaRES\_0} and \texttt{Flux:23} (the flux universe with
 the largest median completeness change), each at seeds 42 and 43. In neither was
-an effect resolved above the trainer's seed noise. The tests measured the
-difference against the $\sigma$ of the earlier ten-seed block, about three times
-the training-seed block used here, and exclude only a median effect above twice
-that $\sigma$: an effect below trainer noise is not excluded, and the test is not
-tight. Separately, retraining moves these two universes' shifts by a median
+an effect resolved above the training-seed noise. The tests compared the
+difference with the $\sigma$ of the earlier ten-seed block, which is about three
+times the training-seed block used here, and they exclude only a median effect above
+twice that $\sigma$. An effect below the training noise is not excluded, and the
+test is not tight. Separately, retraining moves these two universes' shifts by a median
 1.28--1.29 of that $\sigma$.
 % J3/J4 provisional (DECISION-20261018, packet W3: D4). DECISION-20261015-joseph-g2-carry.md §1-§2 (MaRES_0, Stage B
 % diagnostics P5; Flux:23, Stage C pilot K2 (P2-G2); NOT RESOLVED ABOVE TRAINER NOISE at both seeds; K2 bounds only a median
 % r3 above 2 sigma_ML). stageC/production/REPORT.md §3 (median sigma_c08/sigma_ML 0.304; X03 Flux:23 1.29, MaRES:0 1.28).
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 One systematic category provided in the input products,
 \texttt{NormDISCC}, is identically zero; we carry it as zero, which we have
@@ -389,12 +419,12 @@ pooled result by \SIrange{-1.79}{3.13}{\percent}, each with $|z|$ at most 0.28.
 % paragraph) and outputs/analysis.json comparisons.J36 (integral_shift_pct -0.0841; pz_marginal_shift_pct min -0.5725;
 % pt_marginal_shift_pct within +-0.171; cell_shift_pct -1.793 to +3.133; cell_z_max 0.278).
 
-\paragraph{Construction limits.}
-The two publication consumers of the covariance, the $\chi^{2}$ comparison
-(\S\ref{sec:chisq}) and the Fig.~\ref{fig:uqbands} producer, check that a
-covariance's stored cell set equals the published one, and the check passes in
-every run of both consumers on the quoted covariance. The other limits are stated with their
-blocks: the estimator and seed pairing, the background stream and the
+\paragraph{Other limitations.}
+The two programs that use the covariance for the reported results, the $\chi^{2}$
+comparison (\S\ref{sec:chisq}) and the one that draws Fig.~\ref{fig:uqbands}, check
+that a covariance's stored set of cells equals the published one, and the check passes in
+every run of both on the quoted covariance. The other limitations are stated with their
+blocks: the matching of estimator and seed, the background stream and the
 statistical ensemble's precision (\S\ref{sec:uq-boot}); the training-seed block's
 size and precision (\S\ref{sec:uq-ml}); the universe sweep's provenance, the
 duplicated pion band, the lateral bands and the flux-universe index identity
@@ -403,6 +433,7 @@ duplicated pion band, the lateral bands and the flux-universe index identity
 % §2 (every Q run shows the identity check passing on hReportedCells: the three chi2 forms and fig. 6/7; KI-90's
 % "verify they ran"). Not a remedy of KI-90's producers or of any other consumer (rebuild REPORT §2).
 % Review m7: the pass is shown on the consumers' Q runs (three chi2 forms, fig. 6/7), not on the budget runs.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 \paragraph{Seed-related terms reported, not added.}
 Two seed-related terms are reported and not added to the covariance. The
@@ -422,12 +453,13 @@ variance to a band rather than removing it (inferred), and these two bands are
 largely training noise (inferred from the medians). The
 universe\,$\times$\,retraining values and the band-centring numbers were not
 recomputed independently: they cannot be recomputed from the saved covariance
-products, and the verification compared only their inputs' digests.
+products, and the verification compared only the checksums of their inputs.
 % J3/J4 provisional (DECISION-20261018, packet W3: D11; W9: the two universes, note only). stageC/production/REPORT.md §3
 % (X02 median diag(C_int)/diag(C_stat) 0.0758; X03 table: 2p2h:0 0.114 % / 0.235 %, MaCCQE:0 0.266 % / 0.220 %, seed SD
 % over sigma_ML 1.24-1.33 in the six non-null universes, 4 dof each) and §14 (X03 and centring not recomputable from the
 % NPZ); stageC/production/DESIGN.md §8, §12 (rulings R5, R7: reported, not added); DECISION-20261017 §2.
 % Review m9: the inference labels follow DRAFT-disclosures D11; F4-VERIFICATION.md compares only the input digests.
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 \subsection{What changes for the higher-dimensional products}
 \label{sec:uq-higherdim}

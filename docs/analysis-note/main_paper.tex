@@ -52,23 +52,26 @@ neutrino data: validation and calibrated model tests}
 We test the practical limits of multidimensional unbinned unfolding with
 OmniFold on MINERvA open data for medium-energy $\nu_{\mu}$ charged-current
 inclusive interactions.  The analysis reproduces the published
-double-differential cross section in muon kinematics and extends to five
+double-differential cross section in muon kinematics and extends it to five
 simultaneous observables by adding available energy, three-momentum transfer,
-and hadronic invariant mass.  The higher-dimensional central values pass
-marginal-normalization checks, and the three- and four-observable central values
-pass injected-shape closure checks, but
-background-inclusive tests and uncertainty studies expose background-treatment,
-regularization, coverage, and estimator-seed limitations, and the measured model
-dependence prevents a qualified five-dimensional measurement with total
-uncertainties at useful precision.  Generator tests, calibrated with
-pseudo-experiments that rerun the full analysis chain under a stated nuisance
-model, reject all five tested predictions (MINERvA Tune~v1, GENIE~2.12.10 with
-and without Valencia two-particle--two-hole contributions, NuWro~21.09, and
-GiBUU~2019) in total and in shape at the 5\% familywise level.  These
-conditional tests recover known discrepancies without demonstrated
-discrimination from the tested joint information beyond matched coarse
-projections, and their physical interpretation is limited by an omitted
-calorimetric recoil-response uncertainty and unresolved fine-grid convergence.
+and hadronic invariant mass.  The higher-dimensional central values pass checks of
+their marginal normalizations against the lower-dimensional results, and the three- and
+four-observable central values recover injected shape changes in closure tests.
+Pseudo-experiments that include backgrounds, and studies of the uncertainties,
+show limitations of the background treatment, the regularization, the interval
+coverage, and the stability under changes of the estimator's random seed.  The
+measured model dependence prevents a five-dimensional measurement with total
+uncertainties that meet our predefined criteria at useful precision.  Generator
+tests, calibrated with pseudo-experiments that rerun the full analysis chain
+under a stated nuisance model, reject all five tested predictions (MINERvA
+Tune~v1, GENIE~2.12.10 with and without Valencia two-particle--two-hole
+contributions, NuWro~21.09, and GiBUU~2019) in total and in shape at the 5\%
+familywise level.  These tests hold only under stated conditions.  They recover
+known discrepancies, but they do not show that the joint five-observable
+information discriminates beyond matched coarse projections of the same cells.
+Their physical interpretation is limited because the nuisance model has no
+calorimetric recoil-response uncertainty and because convergence of the fine
+grid on which the null hypotheses are defined has not been shown.
 \end{abstract}
 
 \maketitle
@@ -118,29 +121,33 @@ generated or edited by a generative-AI image tool.  AI tools are not authors.  T
 
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
-release, whose 2,374 inventoried input files are identified by SHA256
-checksum~\cite{AnaTuplePreservation2026}.  A local release candidate, not yet deposited, of about
-\SI{16}{MB}~\cite{ReleaseCandidate2026} lets a reader, with numpy, scipy, and
-matplotlib only, recompute every $p$ value, decision, robustness label, and power
-figure of the joint tests, the lost-seed resolution, the coarse-projection
-comparison, and the fine-grid $L_{2}$ ratios of condition~(i); regenerate
-Figs.~\ref{fig:joint}--\ref{fig:joint-nulls}; and recompute the numbers
-quoted from Figs.~\ref{fig:joint} and~\ref{fig:generator-context}.  A replay
-of the packaged files from an empty directory reproduces every recorded value
-and every checked figure number.  The candidate predates the change of the
-two-dimensional central value to LightGBM and carries the exact-split curve;
-Fig.~\ref{fig:validation} and its numbers were instead regenerated with the
-release's plotting code, extended to draw this analysis's band, from the
-committed LightGBM values and covariance.
+release, whose 2,374 input files are listed with their SHA256
+checksums~\cite{AnaTuplePreservation2026}.  A release package of about
+\SI{16}{MB}~\cite{ReleaseCandidate2026}, prepared locally but not yet
+deposited, needs only numpy, scipy, and matplotlib.  With it a reader can
+recompute every $p$ value, decision, robustness result, and power figure of
+the joint tests, together with the recovery of the lost pseudo-experiments,
+the coarse-projection comparison, and the fine-grid $L_{2}$ ratios of
+condition~(i); regenerate Figs.~\ref{fig:joint}--\ref{fig:joint-nulls}; and
+recompute the numbers quoted from Figs.~\ref{fig:joint}
+and~\ref{fig:generator-context}.  Rerunning the packaged files from an empty
+directory reproduces every value recorded in the package and every checked figure
+number.
+The package was assembled before the two-dimensional central value was
+changed to LightGBM, and it carries the exact-split curve.
+Fig.~\ref{fig:validation} and its numbers were instead regenerated
+separately, from this paper's LightGBM values and covariance, with the
+package's plotting code extended to draw this analysis's band.
 % 2026-10-18 (Stage F rebuild phase 2): true of Q. Fig. 1 is stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...),
 % drawn by rebuild/scripts/make_fig1_q.py with the release's make_figs.py (9c4dbf24...) from cov2d_Q_205 (committed as
 % rebuild/outputs/outA/cov2d_Q_205.json.gz) and budget_Q.
 % J3/J4 provisional (DECISION-20261018, packet J4: no wording change; no packet item covers the release scope).
-The other quoted numbers, apart from the
-multiplier scan (recomputable from Ref.~\cite{JointTestKappa2026}), are not
-recomputable from this release; they and the event-level processing require the
-archived analysis products, the open-data AnaTuples, and the generator samples
-produced for this analysis; the analysis note's release
+% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
+Apart from the multiplier scan (recomputable from
+Ref.~\cite{JointTestKappa2026}), the other quoted numbers cannot be recomputed
+from this package.  They, and the event-level processing, require the archived
+analysis products, the open-data AnaTuples, and the generator samples produced
+for this analysis.  The analysis note's release
 appendix~\cite{AnalysisNote2026} states what each part of the release does and
 does not reproduce.
 \pubhold{deposit identifier and access route, after the separately authorized
