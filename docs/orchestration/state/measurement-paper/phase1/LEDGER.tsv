@@ -1,0 +1,2 @@
+jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
+60005151	mp3a	m3246	shared	COMPLETED	0:0	2026-10-19T10:35:07	2026-10-19T10:36:53	106	8	0.000920	0	MP-3	MP3-A: GENIE CV and MEC, CH vs carbon-only map over the 109 J cells (build with bitwise control, frozen evaluation)	mp3a/RECEIPT.txt
