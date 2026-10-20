@@ -1,0 +1,1 @@
+inspect_prod_meta.out.json is kept in the director's scratchpad only: it pairs path and sha256 for the three null-hypothesis files, which the hash-binding gate would register as new receipt bindings. The hashes it holds are quoted in SF1-REPORT.md §2.

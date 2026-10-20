@@ -1,0 +1,3 @@
+NuWro_21_09 200 {(True, True, False, '["development.mc_fraction: \'quarter\' vs \'half\'", "experiment.n_unfolding_mc: only in quarter/rerun"]'): 200} {'60004676': 7, '60017066': 97, '60017068': 96}
+GENIE_2_12_10_CV 200 {(True, True, False, '["development.mc_fraction: \'quarter\' vs \'half\'", "experiment.n_unfolding_mc: only in quarter/rerun"]'): 200} {'60017069': 100, '60017070': 100}
+GENIE_2_12_10_MEC 200 {(True, True, False, '["development.mc_fraction: \'quarter\' vs \'half\'", "experiment.n_unfolding_mc: only in quarter/rerun"]'): 200} {'60017071': 100, '60017074': 100}

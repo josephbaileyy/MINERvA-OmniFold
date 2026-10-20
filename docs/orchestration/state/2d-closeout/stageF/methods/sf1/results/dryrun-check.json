@@ -1,0 +1,133 @@
+{
+ "1260000": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/NuWro_21_09/cal_NuWro_21_09_s1260000.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/NuWro_21_09/sf1q_NuWro_21_09_s1260000.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 53.881 vs 24.979"
+   ],
+   "n_unfolding_mc": 8212400,
+   "seconds_unfold": 273.357,
+   "slurm_job": "60004676"
+  },
+  "half_rerun": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/halfcheck/NuWro_21_09/cal_NuWro_21_09_s1260000.npz",
+   "files_equal": true,
+   "xsec_bitwise_equal": true,
+   "xtrue_bitwise_equal": true,
+   "meta_differences": [
+    "refinement.seconds: 54.823 vs 24.979"
+   ],
+   "seconds_unfold": 415.861,
+   "production_seconds_unfold": 457.913
+  }
+ },
+ "1260001": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/NuWro_21_09/cal_NuWro_21_09_s1260001.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/NuWro_21_09/sf1q_NuWro_21_09_s1260001.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 53.079 vs 13.005"
+   ],
+   "n_unfolding_mc": 8212214,
+   "seconds_unfold": 277.306,
+   "slurm_job": "60004676"
+  }
+ },
+ "1260006": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/NuWro_21_09/cal_NuWro_21_09_s1260006.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/NuWro_21_09/sf1q_NuWro_21_09_s1260006.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 53.812 vs 31.089"
+   ],
+   "n_unfolding_mc": 8213862,
+   "seconds_unfold": 278.699,
+   "slurm_job": "60004676"
+  }
+ }
+}
