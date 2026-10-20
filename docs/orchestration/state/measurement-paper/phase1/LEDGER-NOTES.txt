@@ -13,3 +13,15 @@ Phase-1 ledger notes (measurement session). Charges in LEDGER.tsv are sacct -X E
   - Ledger the QOS of every job.
   - Anything still unfinished at 04:00 PDT 2026-10-21 is cancelled cleanly before the drain and recorded as
     deferred to after the maintenance.
+
+2026-10-20 ~08:30 PDT  MP-1 S1 regular fallback. After 1.5 h on shared only 2 of 132 passes had started (shared drained
+  for maintenance). The 130 PENDING shared copies were cancelled; sacct shows all CANCELLED and none ran. Four
+  exclusive regular nodes were packed with ~33 passes each at --mem=14G (one srun step per pass, sacct per step):
+  60034995 (1M 1L 1B), 60034996 (1F 1O 1C), 60034998 (1N 1P 1A), 60034999 (1D 1G 1E). The two passes already
+  running on shared (60034037 zero_1A, 60034038 proton_m1_1A) were skipped by the packed job and completed on shared.
+  DEVIATION: the director's addendum-5 §4 packing approval was 8 per node at 16G. 33 per node at 14G was used and
+  accepted by the director (message, 2026-10-20) on three conditions: per-step State and MaxRSS checked; a failed or
+  OOM step is rerun once or deferred and never read as a result; the deviation and any I/O slowdown are recorded here
+  and in the S1 report. The session should have flagged the deviation at submission and did not.
+  Outcome: all 130 steps COMPLETED, MaxRSS <= 14,678,660K (at the cap, which includes page cache), step ElapsedRaw
+  220-4927 s; whole-node charge ~3.80 node-h for the four jobs.

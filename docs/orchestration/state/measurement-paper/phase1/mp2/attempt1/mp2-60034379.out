@@ -1,0 +1,28 @@
+host nid004076 start 2026-10-20T14:26:38Z
+b921abf0f2a940e70d2ea27968701b83908af03fc889d550b1c741c88f9d8c31  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/event_identity.py
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/gen5d_flux_reweight.py
+ddd4b8786c444a69658ebbf134aa767995f22fe56cf5b944a260e2f2095e32f4  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_job.sh
+6ded06daaf13d537bed706283ed5ebf770a773eb4d2d05fe77faf99c15676244  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s0_declaration.json
+d3e754d9e6972479806d04e2743ae2e0cb4f1d2b681ce996f2c78b508a8cbc8b  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s0_features.py
+1929ef8893952c70816f672b34f5f36086e3effc60eb0c868ada342961b09720  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s0_fit.py
+803986cfb49fe3cfdbd7d80daa05f5185850b28a8e5995a687f34fcfbd75a981  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s1_dump.py
+C0 {"binding_pass": true, "g2_match_receipts": {"1A": true, "1B": true, "1C": true, "1D": true, "1E": true, "1F": true, "1G": true, "1L": true, "1M": true, "1N": true, "1O": true, "1P": true}, "manifest_match_receipts": {"1A": true, "1B": true, "1C": true, "1D": true, "1E": true, "1F": true, "1G": true, "1L": true, "1M": true, "1N": true, "1O": true, "1P": true}, "pass": true}
+of_inputs {"MCgen_shape": [32849103, 5], "MCgen_dtype": "float32", "w_truth_dtype": "float64", "n_pass_truth": 32849103, "axes": ["eavail", "q3", "W"]}
+1A {"g2_signal_entries": 4073230, "g2_in_kinematic_ps": 2682267, "near_20deg": 0}
+1B {"g2_signal_entries": 1095679, "g2_in_kinematic_ps": 721082, "near_20deg": 0}
+1C {"g2_signal_entries": 2090982, "g2_in_kinematic_ps": 1376832, "near_20deg": 0}
+1D {"g2_signal_entries": 6081602, "g2_in_kinematic_ps": 4003632, "near_20deg": 0}
+1E {"g2_signal_entries": 5090774, "g2_in_kinematic_ps": 3350021, "near_20deg": 0}
+1F {"g2_signal_entries": 7079651, "g2_in_kinematic_ps": 4660210, "near_20deg": 0}
+1G {"g2_signal_entries": 5960127, "g2_in_kinematic_ps": 3922748, "near_20deg": 0}
+1L {"g2_signal_entries": 583219, "g2_in_kinematic_ps": 383848, "near_20deg": 0}
+1M {"g2_signal_entries": 8991233, "g2_in_kinematic_ps": 5917406, "near_20deg": 0}
+1N {"g2_signal_entries": 5189689, "g2_in_kinematic_ps": 3416266, "near_20deg": 0}
+1O {"g2_signal_entries": 1584425, "g2_in_kinematic_ps": 1042088, "near_20deg": 0}
+1P {"g2_signal_entries": 2085497, "g2_in_kinematic_ps": 1372703, "near_20deg": 0}
+C1 {"n_mcgen_rows": 32849103, "n_g2_ps_rows": 32849103, "order": [], "unplaced": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P"], "rows_placed": 0, "MCgen_bitwise": false, "pass": false}
+S1_CONTROLS {'C0_digests': True, 'C1_admission': False} exit 3
+srun: error: nid004076: task 0: Exited with exit code 3
+srun: Terminating StepId=60034379.0
+S1 rc=3 2026-10-20T14:27:48Z
+STOP: an S1 control failed (rc=3); S0 does not run
