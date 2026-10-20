@@ -1,0 +1,14 @@
+{
+ "mode": "equal",
+ "a": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/base_cv.root",
+ "b": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/zero.root",
+ "trees": {
+  "mc_truth_denom": 2217328,
+  "mc_signal_reco": 2489136,
+  "mc_background": 52626,
+  "data": 360123
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS"
+}

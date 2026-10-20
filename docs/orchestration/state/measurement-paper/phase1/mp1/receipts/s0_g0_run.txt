@@ -1,0 +1,6 @@
+# CMD: ssh saul 'python -I - <1A run00110000 (train)> <1A run00110001 (held-out)> --table /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/g0/F_1A.txt --json /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/g0/G0_1A.json' < measurement-paper/phase1/mp1/s0_g0_ftable.py (sha256 c0ad504e4a079e9f59160458576517669f118c452516c134d50a7b1dd3989481)
+login01
+Mon Oct 19 10:13:39 PM UTC 2026
+g0_rc=0
+61f4dd8215244ee6e5859c354b9b949f4afa9f855cac1da301d7c4806ea87482  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/g0/F_1A.txt
+e1e44f3a671d6eda528c955ec9a7cd7f7e507820c671b54dc267b4b8a41e9a19  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/g0/G0_1A.json

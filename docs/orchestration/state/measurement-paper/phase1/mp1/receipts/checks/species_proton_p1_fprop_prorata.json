@@ -1,0 +1,39 @@
+{
+ "mode": "species",
+ "base": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/zero.root",
+ "shift": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/proton_p1_fprop_prorata.root",
+ "species": "proton",
+ "sign": 1,
+ "delta": 0.035,
+ "q0_convention": "fprop",
+ "fuzz_convention": "prorata",
+ "stats": {
+  "mc_background": {
+   "passing_rows": 52626,
+   "frac_rows_eavail_moved": 0.6809941853836506,
+   "eavail_wrong_sign": 2,
+   "eavail_rows_over_delta_E": 0,
+   "eavail_max_dE_over_deltaE": 1.0000000000000036,
+   "q0_rows_checked": 50954,
+   "q0_wrong_sign": 0,
+   "q0_rows_over_delta_q0": 133,
+   "q0_max_dq0_over_deltaq0": 1.0540170615653568
+  },
+  "mc_signal_reco": {
+   "passing_rows": 1736833,
+   "frac_rows_eavail_moved": 0.7801089684500467,
+   "eavail_wrong_sign": 9,
+   "eavail_rows_over_delta_E": 0,
+   "eavail_max_dE_over_deltaE": 1.0000000000000073,
+   "q0_rows_checked": 1711349,
+   "q0_wrong_sign": 0,
+   "q0_rows_over_delta_q0": 9087,
+   "q0_max_dq0_over_deltaq0": 1.066868620329701
+  }
+ },
+ "failures": [
+  "mc_background: 2 rows with E_avail moved against the shift",
+  "mc_signal_reco: 9 rows with E_avail moved against the shift"
+ ],
+ "verdict": "FAIL"
+}

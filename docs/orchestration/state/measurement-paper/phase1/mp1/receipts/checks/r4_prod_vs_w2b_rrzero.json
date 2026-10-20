@@ -1,0 +1,68 @@
+{
+ "production": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1A_universes_full_bkgaware.root",
+ "lateral": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rrzero/runEventLoopOmniFold_5D_1A_w2b_rrzero.root",
+ "trees": {
+  "mc_signal_reco": {
+   "cv_branches_prod_only": [],
+   "cv_branches_lat_only": [],
+   "entries_prod": 2682267,
+   "entries_lat": 2682267,
+   "cv_pass_rows_prod": 1736833,
+   "cv_pass_rows_lat": 1736833,
+   "non_pass_rows_prod": 945434,
+   "non_pass_rows_lat": 945434,
+   "same_in_file_order": true,
+   "same_as_multiset": true,
+   "columns_compared": [
+    "MC",
+    "MC_W",
+    "MC_eavail",
+    "MC_hadangle",
+    "MC_npip",
+    "MC_nproton",
+    "MC_pz",
+    "MC_q3",
+    "sim",
+    "sim_W",
+    "sim_eavail",
+    "sim_pz",
+    "sim_q3",
+    "w_reco",
+    "w_truth"
+   ],
+   "identical": true
+  },
+  "mc_background": {
+   "cv_branches_prod_only": [],
+   "cv_branches_lat_only": [],
+   "entries_prod": 52626,
+   "entries_lat": 52626,
+   "cv_pass_rows_prod": 52626,
+   "cv_pass_rows_lat": 52626,
+   "non_pass_rows_prod": 0,
+   "non_pass_rows_lat": 0,
+   "same_in_file_order": true,
+   "same_as_multiset": true,
+   "columns_compared": [
+    "bkg_current",
+    "bkg_inttype",
+    "bkg_nuPDG",
+    "bkg_vtx_x",
+    "bkg_vtx_y",
+    "bkg_vtx_z",
+    "sim_background",
+    "sim_background_W",
+    "sim_background_eavail",
+    "sim_background_pz",
+    "sim_background_q3",
+    "w_bkg"
+   ],
+   "identical": true
+  }
+ },
+ "truth_denom_entries": {
+  "prod": 2682267,
+  "lat": 2682267
+ },
+ "cv_selected_identical": true
+}
