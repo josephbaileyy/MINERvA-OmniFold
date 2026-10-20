@@ -1,2 +1,7 @@
 jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
 60005151	mp3a	m3246	shared	COMPLETED	0:0	2026-10-19T10:35:07	2026-10-19T10:36:53	106	8	0.000920	0	MP-3	MP3-A: GENIE CV and MEC, CH vs carbon-only map over the 109 J cells (build with bitwise control, frozen evaluation)	mp3a/RECEIPT.txt
+60017651	mp1s0_base_cv	m3246	shared	COMPLETED	0:0	2026-10-19T22:49:08	2026-10-19T23:15:46	1598	10	0.017339	0	MP-1	MP-1 S0 delta=0 reference pass (fresh unmodified binary), 1A	mp1/S0-REPORT-draft.md
+60017653	mp1s0_zero	m3246	shared	COMPLETED	0:0	2026-10-19T22:49:08	2026-10-19T23:15:57	1609	10	0.017459	0	MP-1	MP-1 S0 delta=0 control pass (species universe at k=0), 1A	mp1/S0-REPORT-draft.md
+60022605	mp3b	m3246	debug	FAILED	5:0	2026-10-19T20:19:34	2026-10-19T20:24:09	275	256	0.076389	0	MP-3	MP3-B attempt 1 (debug): NuWro H generation aborted (particle.h:227 E>=_mass) -> STOP before gates	mp3b/REPORT-draft.md
+60023575	a7margins	m3246	debug	COMPLETED	0:0	2026-10-19T20:52:54	2026-10-19T20:54:27	93	256	0.025833	0	A7	A7 decision-boundary margins, ten tests (read-only receipt from frozen products)	a7margins/RECEIPT.md
+60017813	mp3b	m3246	shared	CANCELLED	0:0	Unknown	Unknown	0	0	0.000000	0	MP-3	MP3-B attempt 1, shared copy: held while shared drained, cancelled after the debug copy 60022605 ran; never started	mp3b/ATTEMPT1-STOP.md

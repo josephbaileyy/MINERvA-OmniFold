@@ -1,0 +1,15 @@
+Phase-1 ledger notes (measurement session). Charges in LEDGER.tsv are sacct -X ElapsedRaw x billing/256/3600.
+
+2026-10-20 03:10 UTC  Perlmutter draining ahead of maintenance_20261021 (2026-10-21 06:00 -> 10-27 23:00 PDT);
+  shared_milan nearly all drng@/boot; all phase-1 shared jobs PENDING (Resources) ~5 h.
+  MP3-B: shared 60017813 held (scontrol hold) and the identical staged script resubmitted to QOS debug as 60022605
+  (-t 00:30:00; full-node billing). The held copy is cancelled once 60022605 runs, so no pass runs twice.
+  Approved by the director (message, 2026-10-20).
+
+2026-10-20  Director pre-authorization (message; to be recorded in the binding record):
+  - If MP-5 or MP-1 S0 jobs have not started on shared by 16:00 PDT 2026-10-20: move them to QOS regular, packing
+    several passes per node as concurrent processes where memory allows; cancel each shared copy before its
+    regular copy can start (no pass runs twice). Within the phase-1 ceiling (35 CPU node-h).
+  - Ledger the QOS of every job.
+  - Anything still unfinished at 04:00 PDT 2026-10-21 is cancelled cleanly before the drain and recorded as
+    deferred to after the maintenance.
