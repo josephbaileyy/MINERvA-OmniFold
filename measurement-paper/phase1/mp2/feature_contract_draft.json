@@ -1,0 +1,176 @@
+{
+ "schema": "mp2-feature-contract/0-draft",
+ "status": "DRAFT for the director's review (BINDING-PHASE1-20261019 section 2). Nothing in it authorizes a fit. Every value here is frozen only when the director accepts it; then its sha256 is asserted by every S2/S3 job.",
+ "worktree_head": "a32bd350",
+ "informed_by_S0": {
+  "statement": "S0 (jobs 60045652/60045657; docs/orchestration/state/measurement-paper/phase1/mp2/s0_fit.json sha256 618823cb...) informed this contract. V1-V5 are NOT changed because of it. Every S0 number used is listed here.",
+  "numbers": {
+   "auc_tune_vs_nuwro": {"scalars5": 0.6492, "full": 0.7767},
+   "auc_gap_vs_nuwro_split": {"scalars5": 0.1511, "full": 0.2752},
+   "auc_split_controls": {"nuwro_scalars5": 0.4980, "nuwro_full": 0.5015, "tune_scalars5": 0.4997, "tune_full": 0.5001},
+   "split_control_best_iterations": {"nuwro_scalars5": 1, "nuwro_full": 1, "tune_scalars5": 2, "tune_full": 19},
+   "kish_ess_over_ess_wtruth": {"scalars5": 0.630, "full": 0.116},
+   "kish_ess_over_N": {"scalars5": 0.536, "full": 0.099, "tune_split_control": 0.851},
+   "max_w_normalised": {"scalars5": 311.2, "full": 1700.0},
+   "var_logw_total": {"scalars5": 0.292, "full": 1.427},
+   "var_logw_within_fine_cell_pooled": {"scalars5": 0.185, "full": 1.176},
+   "fit": {"scalars5": {"best_iteration": 496, "fit_s": 11.33}, "full": {"best_iteration": 1246, "fit_s": 34.48, "predict_1.30M_rows_s": 2.43},
+           "train_rows": 1631597, "threads": 64, "node": "debug CPU node (whole node billed)"},
+   "samples": {"nuwro_c12_in_ps": 1261997, "tune_eligible_no_H": 31088826, "tune_H_rows_excluded": 1632529, "tune_non_carbon_share_of_S0_sample": 0.0378}
+  },
+  "uses": [
+   "full-feature weights failed V4 by a wide margin in S0 (descriptive, NuWro C12 vs Tune no-H, uncapped): a predeclared fallback feature set is declared, chosen on response grounds, not on S0's V4 numbers",
+   "split controls stopped at 1-19 iterations: the G-vs-G control of V1 is capacity-matched (fixed iteration count) instead of early-stopped",
+   "within-fine-cell log w variance is 64-82% of the total: motivates the event-level null; it sets no threshold",
+   "fit cost per row-iteration (34.48 s / (1.63e6 x 1246) = 17 ns at 64 threads) and S0's non-carbon share (3.8%) size S2 and motivate the target rule"
+  ]
+ },
+ "generators": {
+  "genie_cv": {
+   "label": "GENIE 2.12.10 CV (no MEC), CH",
+   "events": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root (gst, 2,000,000 entries, < 50 GeV)",
+              "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root (50-100 GeV)"],
+   "targets": "C12 rows tgt == 1000060120, H rows tgt == 2212 (mp3a/REPORT.md:22-25); the sample is a CH mixture by GENIE's own cross sections",
+   "weight": "r(E_nu) x A/B per event, A = <sigma_CC>_t,<50 (C12+H1)/13 graphs, B = sum over all CC of r (gen5d_flux_reweight.py:440-456, :726-738); supplement: constant r per gen5d_flux_supplement.py:165-212; the frozen product is gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+   "struck_nucleon": "gst hitnuc"
+  },
+  "genie_mec": {
+   "label": "GENIE 2.12.10 + Valencia MEC, CH",
+   "events": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root",
+              "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec/genie_supp_mec.gst.root"],
+   "targets": "as genie_cv",
+   "weight": "r(E_nu) x (<sigma_CC>_t,<50 / sum over non-MEC CC of r) (gen5d_flux_reweight.py:726-738, the 3D-converter convention); supplement as genie_cv; frozen product gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+   "struck_nucleon": "gst hitnuc"
+  },
+  "nuwro_ch": {
+   "label": "NuWro 21.09 on CH (MP3-B primary (A), kaskada_on = 1)",
+   "events_c12": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p{1..8}/nuwro_p{1..8}.root (treeout, 8 x 250,000, N_total 2,000,000; row-aligned to s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p{1..8}.root, S0 control N1)",
+                  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp.root (+ nuwro_supp_flat5d.root), 50-100 GeV"],
+   "events_h": ["/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01..c25/a<k>/nuwro.root (+ flat5d.root), 25 x 10,000, seeds 63101-63125 with declared alternates",
+                "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01..c05/a<k>/nuwro.root, 5 x 5,000, seeds 64101-64105",
+                "attempt k per chunk = the one named by that chunk's RESULT ('ok <k> <seed>'); aborted attempts are excluded (MP3-B section 2)"],
+   "weight": "C12: e.weight x r(E_nu) / N_total,C12 x 12/13; H: e.weight x r(E_nu) / N_total,H x 1/13 (mp3b REPORT section 1); r from gen5d_flux_reweight.flux_weights/r_of on [0.5, 50] GeV (:440-456), supplement constant r = 4.8375e-4 (gen5d_flux_supplement.py:177, :262); S0 control N0 rebuilt the C12 < 50 GeV product bitwise with this chain",
+   "struck_nucleon": "in[1].pdg (flat-tree hitnuc)"
+  },
+  "gibuu_ch": {
+   "label": "GiBUU 2019 on CH, under MP3-C's label: 'B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at <= 0.1 sigma_c'",
+   "events_c12": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task1..task80/FinalEvents.dat"],
+   "events_h": ["/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1001..task1080/FinalEvents.dat"],
+   "weight": "perweight x r(E_nu) / M x 1e-38 (M = number of runs), C12 x 12/13 and H x 1/13 (mp3c_build.py:4-9, :57); E_nu <= 20 GeV only (KNOWN_ISSUES 82); frozen r(E) (not the post-hoc alternative)",
+   "struck_nucleon": "the single perweight-0 nucleon row (ID 1; charge +1 proton, 0 neutron); if an event has not exactly one, the CVUniverse default mass (1.5 M_n + M_p)/2.5. UNSETTLED: to be verified on the files in S2 preflight (2p2h events)"
+  }
+ },
+ "tune_v1": {
+  "rows": "the 32,849,103 s5p MCgen rows via the admitted S1 dump (phase1/mp2/s1_receipt.json sha256 d240b41a...), global MCgen row index i",
+  "weight": "of_inputs_5d w_truth",
+  "training_rows": "mc_targetZ in {1, 6} (30,028,386 C + 1,632,529 H), inside the fine grid and inside G's E_nu support",
+  "particles": "mc_FSPart* rotated by RotateX(-0.05887) into the MAT beam frame (MP-5 section 1)"
+ },
+ "targets": {
+  "rule": "train only on C and H rows on both sides: Tune v1 C+H rows against G on CH (C12 and free-proton events at 12/13 : 1/13 per nucleon). The target is never a feature.",
+  "other_nuclei": "Tune v1 rows with mc_targetZ not in {1, 6} (1,188,188 rows: O, N, Al, Si, Cl, Ti, Z = 0) keep the A7 hybrid weight r_h at Tune v1's composition. Limitation, stated in every readout.",
+  "justification": "S0's sample had 3.8% non-carbon rows that no C12 or CH generator sample contains; any such row is a target-identity signal the classifier can learn. Restricting to C+H on both sides leaves only model differences on a common target."
+ },
+ "conventions": {
+  "rule": "every generator event is put in the analysis convention before any feature is computed (MP-5 sections 1-3): beam-axis theta, struck-nucleon W, NaN W dropped",
+  "rotation": {
+   "pool": "MP-5's nu-direction pool: /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b0..5.npy (sha256 in mp5_tune.json direction_pool), nu direction in the MAT frame with w_truth, by E_nu bin",
+   "enu_bins_GeV": [0.0, 3.0, 5.0, 8.0, 15.0, 30.0, "inf"],
+   "draw": "as mp5_declaration.json 'draw': per event in bin b, k = searchsorted(cdf_b, u, 'right') clipped, cdf over the w_truth of the bin's pool rows in pool order",
+   "rng": "numpy default_rng(seed_g), one uniform per generator event in the declared file order (C12 main, C12 supplement, H main, H supplement; entries in file order, CC or not)",
+   "seeds": {"genie_cv": 2026102131, "genie_mec": 2026102132, "nuwro_ch": 2026102133, "gibuu_ch": 2026102134},
+   "operation": "Rodrigues rotation R(n) with R z = n (mp5_declaration.json 'rotation'), applied to the lepton AND every final-state particle (the generator nu is along +z; asserted per event, GiBUU included)"
+  },
+  "pt_ppar": "pT = hypot((R p_mu)_x, (R p_mu)_y), p_par = (R p_mu)_z, GeV; phase-space decision u2d.in_truth_phase_space on them",
+  "W": "CVUniverse::GetTrueExperimentersW (gen_to_xsec5d.w_struck, gen_to_xsec5d.py:123-131) with theta from the beam axis and M by struck nucleon (2112: 939.56536, 2212: 938.272013, else (1.5 M_n + M_p)/2.5 MeV); NaN where W^2 < 0: the event is outside the grid, exactly as Tune v1's NaN-W rows (MCgen -9999)",
+  "q3": "gen_to_xsec5d.q3_true (:114-120), axis-independent",
+  "E_avail": "MAT GetEAvailableTrue (CVUniverse.h:361-374) over the harmonized final-state list, for both sides (S1 C3 shows it reproduces MC_eavail bitwise for Tune v1)",
+  "harmonized_products": "for V2 and the reference hybrid, each G's fine 5D CH product is rebuilt from these harmonized events with its frozen normalization (x = hist(w)/dV; sumw2 likewise)"
+ },
+ "particles": {
+  "excluded": "|pdg| in {11, 12, 13, 14, 16}, pdg >= 1e9 (nuclei, remnants), GENIE pseudo-particles (pdg >= 2e9)",
+  "gibuu_id_map": "GiBUU ID+charge to PDG: 1 -> 2212/2112, 101 -> 211/111/-211, 102 -> 221, 110/111 -> K, 32 -> 3122, 33 -> Sigma by charge, negative IDs -> antiparticles; anything else -> 'other'. UNSETTLED until S2 preflight lists the IDs present",
+  "kinetic_energy": "KE = E - sqrt(max(E^2 - |p|^2, 0)) (MeV)",
+  "thresholds_MeV": {"p": "KE > 100", "n": "KE > 50", "pipm": "KE > 50", "pi0": "none", "gamma": "E > 10", "other": "none"},
+  "de_excitation": "no generator emits nuclear de-excitation photons on C as far as checked; photons below 10 MeV are dropped from every feature. UNSETTLED for GiBUU and GENIE 2.12 (S2 preflight reports the photon spectrum per generator)"
+ },
+ "features": {
+  "F_primary": ["pt", "pz", "eavail", "q3", "W", "enu", "sum_p_KE", "sum_pipm_KE", "sum_em_E", "sum_n_KE", "E_other",
+                "n_p", "n_pipm", "p1_KE", "p1_cos", "pipm1_KE", "pipm1_cos", "n1_KE"],
+  "F_fallback": ["pt", "pz", "eavail", "q3", "W", "enu", "sum_p_KE", "sum_pipm_KE", "sum_em_E", "sum_n_KE", "E_other"],
+  "definitions": "sum_em_E = sum of pi0 E and gamma E (above thresholds); E_other = sum of E of 'other' species; leading = highest KE above threshold, cos in the beam frame, NaN when absent (LightGBM missing)",
+  "fallback_grounds": "the simulated response MINERvA applies is conditional on the per-species visible energy (proton, meson, EM, other: the MP-1 species bands, BINDING-PHASE1 D1) and on the neutron energy; leading-particle angles and multiplicities enter mainly through tracking and containment. F_fallback keeps the response-relevant species energy split and drops the rest. One fallback only, used only if F_primary fails V1-V4 for that G, and only before S3.",
+  "V3_heldout": ["neutron multiplicity at KE > 10 MeV", "per-neutron KE spectrum (all neutrons)", "proton multiplicity at KE > 20 MeV", "pi0 count"]
+ },
+ "model": {
+  "family": "lightgbm.LGBMClassifier 4.6.0, root_6_28 env",
+  "params": {"objective": "binary", "learning_rate": 0.05, "num_leaves": 63, "min_child_samples": 200, "n_estimators": 3000,
+             "subsample": 0.8, "subsample_freq": 1, "colsample_bytree": 1.0, "reg_lambda": 0.0, "deterministic": true,
+             "force_row_wise": true, "verbose": -1},
+  "early_stopping_rounds": 200,
+  "validation": "10% of each fold's training rows (seeded), weighted binary logloss",
+  "class_weights": "each class sums to half its split's row count (as S0)",
+  "tune_training_subsample": "per model at most 4,000,000 Tune rows drawn uniformly from its training rows (seed per model); prediction on ALL rows of the held-out fold",
+  "probability_clip": "p clipped to [1e-9, 1 - 1e-9] for numerics only; no weight cap",
+  "weight_cap": "NONE. A cap would bias the null and, set at or below 50, would satisfy V4's maximum-weight bound by construction. V4 is evaluated on uncapped weights.",
+  "normalisation": "w_G = c x p/(1-p); c fixed so that the in-grid C+H content sum(w_truth w_G) equals that under the reference hybrid H_CH,an (the generator's rate as the hybrid imposes it)"
+ },
+ "folds": {
+  "code_facts": "r_h is computed once over all MCgen rows (nd-unfolding/s5p_nullexp.py:299) and every experiment draws its own A/B split, half_mask(n, split_key_for(seed)) (s5p_nullexp.py:318-320; s5c_pseudo.py:44-51, :278-281). A fold structure cannot be nested in every experiment's split at once.",
+  "declared": "two-level: half h(i) = s5c_pseudo.half_mask(n, s5c_pseudo.split_key_for(ASIMOV_SEED)); within each half, fold f(i) = (splitmix64(i XOR fold_key_k) >> 1) mod 5 (the half_mask mixer, bits above the parity bit). Model (k, h, f) is trained on Tune rows of half h, folds != f, and on G events of G-fold != f; it predicts Tune rows of half h, fold f. G events: G-fold = splitmix64(j XOR (fold_key_k + 1)) mod 5 over the generator event index j.",
+  "consequence": "for the S3 Asimov split the weights are nested (no row is weighted by a model trained on it, and no pseudo-data-source row by a model trained on the unfolding half). For S4's per-experiment splits they are cross-fitted only. UNSETTLED for S4 (director)."
+ },
+ "seeds": {
+  "ASIMOV_SEED": 520261101,
+  "K_classifier_replicas": 5,
+  "fold_key_k": [2026102100, 2026102101, 2026102102, 2026102103, 2026102104],
+  "lgbm_random_state_k": [2026102110, 2026102111, 2026102112, 2026102113, 2026102114],
+  "tune_subsample_seed": "2026102120 + 100 k + 10 h + f",
+  "v1_split_seed": 2026102140,
+  "gvg_split_seed": 2026102141,
+  "rotation_seeds": "conventions.rotation.seeds",
+  "replica_role": "Delta_hyb primary = mean over the K replicas; V5 = their spread"
+ },
+ "support": {
+  "enu": "training restricted to G's E_nu support: GENIE and NuWro main+supplement 0-100 GeV (NuWro 0.5-100), GiBUU 0-20 GeV. Tune rows outside keep the A7 hybrid r_h; their in-grid w_truth share per J cell is reported",
+  "fine_cells": "G-only fine cells: Tune C+H has < 20 rows (FINE_N_MIN, s5p_truths.py:151) while G has rate. Event weights cannot populate them; that rate is NOT redistributed. Reported per G: fraction of in-grid G rate, and per J cell in sigma_c units (MP3-B reading (a)). Tune-only cells: the classifier's w there is reported (expected ~ 0 if G is empty)",
+  "feature_space": "share of G held-out events with p > 0.99 and of Tune rows carrying w > 50 <w>, and the J cells they fall in (report)",
+  "no_anchoring": "no per-cell renormalisation of w_G (that would make V2 trivial); only the global c"
+ },
+ "gates": {
+  "V1": "held-out two-sample test: pooled held-out Tune rows (at most 4,000,000, seed v1_split_seed, weighted w_truth x w_G) vs G's held-out events; a fresh classifier (model.params) on 50%, AUC on 50%; pass if AUC <= AUC(G vs G split) + 0.005, the control trained on G halves of the same sizes with n_estimators FIXED to the V1 classifier's best iteration (capacity-matched; S0's controls stopped at 1-19 iterations)",
+  "V2": "closure of the fine 5D and J marginals of the reweighted Tune C+H truth against G's harmonized CH product within the summed sumw2: chi2/ndf <= 1.5 over fine cells with >= 20 entries on both sides, and no J cell beyond 3 sigma",
+  "V3": "closure of the V3_heldout distributions (reweighted Tune C+H vs G, held-out rows). The draft gives NO threshold. PROPOSED, flagged: as V2 (chi2/ndf <= 1.5, no bin beyond 3 sigma)",
+  "V4": "Kish ESS of w_truth x w_G over the Tune C+H in-grid rows >= 0.3 N, N = the row count; and max(w_G)/<w_G>_{w_truth} <= 50. Uncapped. ESS/ESS(w_truth) also reported",
+  "V5": "per J cell, SD over the K replicas of Delta_hyb <= 0.2 |mean Delta_hyb| or <= 0.1 delta_fine(c), delta_fine = |delta_M1| of the frozen m1_shift declaration (s5p_joint.py:227-234); evaluated at S3",
+  "order": "V1-V4 at S2 on F_primary; on failure, F_fallback (once, before S3); failure again -> 'not established' for that G, A7's hybrid result stands. V5 at S3: failure -> 'not established'. No tuning after any S3 or S4 output.",
+  "threshold_changes": "none: V1, V2, V4, V5 as drafted in PLAN.md section 3.3; V3's threshold is new and flagged"
+ },
+ "replay": {
+  "asimov": "per G: noise-free unfolded J cells (s5p_nullexp --expectation --no-nuisance, s5p_nullexp.py:31-35, :240-241) at split_key_for(ASIMOV_SEED), the frozen estimator configuration, once with the event-level null (each replica k) and once with each reference hybrid",
+  "references": {"H_CH,an (primary)": "fine_ratio (s5p_truths.py:165-205) from G's harmonized CH product: isolates hybridization from target and convention", "H_A7 (secondary)": "the frozen A7 hybrid r_h: the total change of the null"},
+  "delta_hyb": "Delta_hyb(G, c) = J_event(c) - J_hyb(c), mean over replicas; readings over sigma_c (MP3-B (a), (b), (c)) and Delta^T W^-1 Delta",
+  "rule": "the kappa-scan/MP3-B replay: each null ensemble F of G shifted to F + Delta_hyb (with every declared shift variant; claim p = the largest), s5p_joint.statistics (s5p_joint.py:147), s5p_inference.mc_pvalue (:52), then Holm with determinacy (s5p_inference.py:127) over the frozen ten-test family, with established G's replaced and the others frozen; also at kappa = 3. As in mp3b_eval.py:166-169 and publication/kappa/RECORD-20261008-kappa-breakdown.md",
+  "status": "report only, beside A7, never a re-grade (D6); identity control first: Delta_hyb = 0 must return A7's decisions exactly"
+ },
+ "cost_estimate_cpu_node_h": {
+  "unit": "17 ns per training row-iteration at 64 threads (S0); prediction 1.9 us per row per model at 64 threads (S0: 2.43 s for 1.30M)",
+  "S2_features_and_harmonization": "0.2-0.4 (assumed; S1+S0 features took 0.10 node-h measured)",
+  "S2_fits": "4 G x 5 replicas x 2 halves x 5 folds = 200 models on <= 4M Tune + <= 2M G rows (~1,500 iterations, ~150 s each) plus prediction of ~3M rows each: ~0.7-1.2 node-h packed (64 threads per process, 4 per node)",
+  "S2_gates_V1_V4": "8 V1 classifiers + histograms: ~0.1",
+  "S2_fallback_if_used": "up to the same again for the affected G",
+  "S3": "4 G x (5 + 2) Asimov unfolds at 0.03-0.06 (M, W2A-REPORT-20261006.md:29) = 0.8-1.7, replay ~1 core-h",
+  "total_S2_S3": "~2-3.5 CPU node-h (PLAN 3.4 says S2 <= 1, S3 1-2: the nested two-level folds roughly double the fits)",
+  "S4": "~110-225 CPU node-h, only inside the combined campaign of PLAN section 6, under its own contract and grant; the S4 nesting question (folds) must be settled first"
+ },
+ "open_caveats": [
+  "50-100 GeV supplements: included in training for GENIE and NuWro at their constant r; GiBUU has nothing above 20 GeV; Tune rows above each G's range keep r_h",
+  "particle harmonization: pseudo-particles, remnants, de-excitation photons, GiBUU ID map and thresholds are declared, not yet verified on all four samples (S2 preflight lists them, report only)",
+  "split-control early stop (S0): addressed in V1 by capacity matching; S0's controls are themselves weak",
+  "GiBUU struck-nucleon identity for 2p2h events",
+  "S4 fold nesting across per-experiment splits",
+  "V3 threshold absent in the draft",
+  "V4's N read as the row count (the strict reading)",
+  "other nuclei keep r_h (limitation)"
+ ]
+}

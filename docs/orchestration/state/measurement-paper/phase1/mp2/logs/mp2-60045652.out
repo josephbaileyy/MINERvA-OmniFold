@@ -1,0 +1,39 @@
+host nid004522 start 2026-10-20T18:22:13Z
+b921abf0f2a940e70d2ea27968701b83908af03fc889d550b1c741c88f9d8c31  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/event_identity.py
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/gen5d_flux_reweight.py
+43aae102368ed0b740e0a0ae50ed14d0da747ad7c042c9f9d698d1267f28d2b8  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_job.sh
+6ded06daaf13d537bed706283ed5ebf770a773eb4d2d05fe77faf99c15676244  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s0_declaration.json
+d3e754d9e6972479806d04e2743ae2e0cb4f1d2b681ce996f2c78b508a8cbc8b  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s0_features.py
+1929ef8893952c70816f672b34f5f36086e3effc60eb0c868ada342961b09720  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s0_fit.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/code/mp2_s1_dump.py
+C0 {"binding_pass": true, "g2_match_receipts": {"1A": true, "1B": true, "1C": true, "1D": true, "1E": true, "1F": true, "1G": true, "1L": true, "1M": true, "1N": true, "1O": true, "1P": true}, "manifest_match_receipts": {"1A": true, "1B": true, "1C": true, "1D": true, "1E": true, "1F": true, "1G": true, "1L": true, "1M": true, "1N": true, "1O": true, "1P": true}, "pass": true}
+of_inputs {"MCgen_shape": [32849103, 5], "MCgen_dtype": "float32", "w_truth_dtype": "float64", "n_pass_truth": 32849103, "axes": ["eavail", "q3", "W"]}
+1A {"g2_signal_entries": 4073230, "g2_in_kinematic_ps": 2682267, "near_20deg": 0}
+1B {"g2_signal_entries": 1095679, "g2_in_kinematic_ps": 721082, "near_20deg": 0}
+1C {"g2_signal_entries": 2090982, "g2_in_kinematic_ps": 1376832, "near_20deg": 0}
+1D {"g2_signal_entries": 6081602, "g2_in_kinematic_ps": 4003632, "near_20deg": 0}
+1E {"g2_signal_entries": 5090774, "g2_in_kinematic_ps": 3350021, "near_20deg": 0}
+1F {"g2_signal_entries": 7079651, "g2_in_kinematic_ps": 4660210, "near_20deg": 0}
+1G {"g2_signal_entries": 5960127, "g2_in_kinematic_ps": 3922748, "near_20deg": 0}
+1L {"g2_signal_entries": 583219, "g2_in_kinematic_ps": 383848, "near_20deg": 0}
+1M {"g2_signal_entries": 8991233, "g2_in_kinematic_ps": 5917406, "near_20deg": 0}
+1N {"g2_signal_entries": 5189689, "g2_in_kinematic_ps": 3416266, "near_20deg": 0}
+1O {"g2_signal_entries": 1584425, "g2_in_kinematic_ps": 1042088, "near_20deg": 0}
+1P {"g2_signal_entries": 2085497, "g2_in_kinematic_ps": 1372703, "near_20deg": 0}
+C1 {"n_mcgen_rows": 32849103, "n_g2_ps_rows": 32849103, "order": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P"], "unplaced": [], "rows_placed": 32849103, "MCgen_bitwise": true, "n_rows_nonfinite_truth_sentinel": {"MC": 0, "MC_pz": 0, "MC_eavail": 0, "MC_q3": 1327, "MC_W": 1474}, "w_truth_bitwise": true, "w_truth_max_rel": 0.0, "pass_truth_recomputed_equal": true, "n_pass_truth_false": 0, "pass": true}
+1A {"g2_signal_entries": 4073230, "g2_in_kinematic_ps": 2682267, "near_20deg": 0, "mcgen_row0": 0, "n_mad_files": 41, "n_mad_truth_entries": 22191105, "n_mad_key_hits": 2682267, "n_mad_dup_keys": 0, "n_particles": 14545305, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1A.npz", "bytes": 1119102836, "wall_s": 16.5}
+1B {"g2_signal_entries": 1095679, "g2_in_kinematic_ps": 721082, "near_20deg": 0, "mcgen_row0": 2682267, "n_mad_files": 11, "n_mad_truth_entries": 6044672, "n_mad_key_hits": 721082, "n_mad_dup_keys": 0, "n_particles": 3909993, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1B.npz", "bytes": 300848534, "wall_s": 8.0}
+1C {"g2_signal_entries": 2090982, "g2_in_kinematic_ps": 1376832, "near_20deg": 0, "mcgen_row0": 3403349, "n_mad_files": 21, "n_mad_truth_entries": 11545183, "n_mad_key_hits": 1376832, "n_mad_dup_keys": 0, "n_particles": 7460881, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1C.npz", "bytes": 574257002, "wall_s": 8.1}
+1D {"g2_signal_entries": 6081602, "g2_in_kinematic_ps": 4003632, "near_20deg": 0, "mcgen_row0": 4780181, "n_mad_files": 61, "n_mad_truth_entries": 33578119, "n_mad_key_hits": 4003632, "n_mad_dup_keys": 0, "n_particles": 21699078, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1D.npz", "bytes": 1669981694, "wall_s": 20.6}
+1E {"g2_signal_entries": 5090774, "g2_in_kinematic_ps": 3350021, "near_20deg": 0, "mcgen_row0": 8783813, "n_mad_files": 51, "n_mad_truth_entries": 28117140, "n_mad_key_hits": 3350154, "n_mad_dup_keys": 133, "n_particles": 18160449, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1E.npz", "bytes": 1397489408, "wall_s": 13.4}
+1F {"g2_signal_entries": 7079651, "g2_in_kinematic_ps": 4660210, "near_20deg": 0, "mcgen_row0": 12133834, "n_mad_files": 71, "n_mad_truth_entries": 39082827, "n_mad_key_hits": 4660210, "n_mad_dup_keys": 0, "n_particles": 25259177, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1F.npz", "bytes": 1943905574, "wall_s": 16.8}
+1G {"g2_signal_entries": 5960127, "g2_in_kinematic_ps": 3922748, "near_20deg": 0, "mcgen_row0": 16794044, "n_mad_files": 61, "n_mad_truth_entries": 32462689, "n_mad_key_hits": 3922748, "n_mad_dup_keys": 0, "n_particles": 21259274, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1G.npz", "bytes": 1636192502, "wall_s": 14.7}
+1L {"g2_signal_entries": 583219, "g2_in_kinematic_ps": 383848, "near_20deg": 0, "mcgen_row0": 20716792, "n_mad_files": 6, "n_mad_truth_entries": 3269023, "n_mad_key_hits": 383848, "n_mad_dup_keys": 0, "n_particles": 2080480, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1L.npz", "bytes": 160120118, "wall_s": 3.1}
+1M {"g2_signal_entries": 8991233, "g2_in_kinematic_ps": 5917406, "near_20deg": 0, "mcgen_row0": 21100640, "n_mad_files": 98, "n_mad_truth_entries": 50435976, "n_mad_key_hits": 5917406, "n_mad_dup_keys": 0, "n_particles": 32084558, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1M.npz", "bytes": 2468716890, "wall_s": 22.2}
+1N {"g2_signal_entries": 5189689, "g2_in_kinematic_ps": 3416266, "near_20deg": 0, "mcgen_row0": 27018046, "n_mad_files": 31, "n_mad_truth_entries": 29114612, "n_mad_key_hits": 3416266, "n_mad_dup_keys": 0, "n_particles": 18515051, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1N.npz", "bytes": 1424961470, "wall_s": 15.1}
+1O {"g2_signal_entries": 1584425, "g2_in_kinematic_ps": 1042088, "near_20deg": 0, "mcgen_row0": 30434312, "n_mad_files": 16, "n_mad_truth_entries": 8884632, "n_mad_key_hits": 1042088, "n_mad_dup_keys": 0, "n_particles": 5648308, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1O.npz", "bytes": 434691206, "wall_s": 6.7}
+1P {"g2_signal_entries": 2085497, "g2_in_kinematic_ps": 1372703, "near_20deg": 0, "mcgen_row0": 31476400, "n_mad_files": 21, "n_mad_truth_entries": 11842905, "n_mad_key_hits": 1372703, "n_mad_dup_keys": 0, "n_particles": 7437920, "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1P.npz", "bytes": 572513768, "wall_s": 7.1}
+C2 {"n_rows": 32849103, "n_matched": 32849103, "n_mad_dup_keys": 133, "n_mad_dup_fields_differ": 0, "g2_identity_unique": true, "mu_true_maxabs_MeV": 1.4551915228366852e-11, "mu_true_E_maxabs_MeV": 0.0, "nFSPart_equals_len": true, "pass": true}
+C3 {"eavail_bitwise_rows": 32849103, "eavail_maxabs_GeV": 0.0, "rows_with_mu_in_fs_equal_primFSLepton_E": 32849103, "n_particles": 178060474, "max_particles_per_row": 55, "targetZ_counts": {"0": 174, "1": 1632529, "6": 30028386, "7": 22329, "8": 819392, "13": 50382, "14": 53952, "17": 2109, "22": 239850}, "n_rows_targetZ_1": 1632529, "pass": true}
+S1_CONTROLS {'C0_digests': True, 'C1_admission': True, 'C2_join': True, 'C3_fs_content': True} exit 0
+S1 rc=0 2026-10-20T18:25:56Z
