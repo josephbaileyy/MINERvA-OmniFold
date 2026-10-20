@@ -1,0 +1,23 @@
+{
+ "NuWro_21_09:shape": {
+  "decision_adjusted": "rejected",
+  "decision_adjusted_alone": "rejected",
+  "production_decision": "rejected",
+  "alone_agrees": true,
+  "result": "PASS"
+ },
+ "GENIE_2_12_10_CV:shape": {
+  "decision_adjusted": "rejected",
+  "decision_adjusted_alone": "rejected",
+  "production_decision": "rejected",
+  "alone_agrees": true,
+  "result": "PASS"
+ },
+ "GENIE_2_12_10_MEC:shape": {
+  "decision_adjusted": "rejected",
+  "decision_adjusted_alone": "rejected",
+  "production_decision": "rejected",
+  "alone_agrees": true,
+  "result": "PASS"
+ }
+}

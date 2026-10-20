@@ -1,0 +1,8002 @@
+{
+ "1240000": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240000.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240000.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 33.977 vs 41.391"
+   ],
+   "n_unfolding_mc": 8214046,
+   "seconds_unfold": 258.268,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240001": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240001.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240001.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.03 vs 28.838"
+   ],
+   "n_unfolding_mc": 8212883,
+   "seconds_unfold": 208.821,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240002": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240002.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240002.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.458 vs 16.229"
+   ],
+   "n_unfolding_mc": 8212729,
+   "seconds_unfold": 260.552,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240003": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240003.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240003.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.342 vs 21.75"
+   ],
+   "n_unfolding_mc": 8211877,
+   "seconds_unfold": 211.953,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240004": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240004.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240004.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.955 vs 16.802"
+   ],
+   "n_unfolding_mc": 8214847,
+   "seconds_unfold": 257.773,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240005": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240005.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240005.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.673 vs 60.919"
+   ],
+   "n_unfolding_mc": 8216151,
+   "seconds_unfold": 206.266,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240006": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240006.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240006.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 35.028 vs 25.824"
+   ],
+   "n_unfolding_mc": 8213244,
+   "seconds_unfold": 261.649,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240007": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240007.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240007.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.813 vs 12.128"
+   ],
+   "n_unfolding_mc": 8211542,
+   "seconds_unfold": 212.416,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240008": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240008.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240008.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.911 vs 12.169"
+   ],
+   "n_unfolding_mc": 8212079,
+   "seconds_unfold": 260.056,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240009": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240009.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240009.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.143 vs 11.175"
+   ],
+   "n_unfolding_mc": 8213219,
+   "seconds_unfold": 208.893,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240010": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240010.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240010.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.69 vs 11.829"
+   ],
+   "n_unfolding_mc": 8210749,
+   "seconds_unfold": 259.819,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240011": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240011.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240011.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.335 vs 13.826"
+   ],
+   "n_unfolding_mc": 8213045,
+   "seconds_unfold": 209.914,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240012": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240012.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240012.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.538 vs 32.075"
+   ],
+   "n_unfolding_mc": 8213495,
+   "seconds_unfold": 263.084,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240013": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240013.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240013.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.026 vs 20.319"
+   ],
+   "n_unfolding_mc": 8212958,
+   "seconds_unfold": 213.287,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240014": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240014.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240014.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.57 vs 18.211"
+   ],
+   "n_unfolding_mc": 8211971,
+   "seconds_unfold": 257.933,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240015": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240015.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240015.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.977 vs 18.534"
+   ],
+   "n_unfolding_mc": 8214063,
+   "seconds_unfold": 212.424,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240016": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240016.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240016.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 28.404 vs 17.842"
+   ],
+   "n_unfolding_mc": 8212042,
+   "seconds_unfold": 240.424,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240017": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240017.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240017.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.892 vs 17.168"
+   ],
+   "n_unfolding_mc": 8212531,
+   "seconds_unfold": 211.778,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240018": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240018.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240018.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 28.666 vs 36.5"
+   ],
+   "n_unfolding_mc": 8210933,
+   "seconds_unfold": 238.176,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240019": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240019.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240019.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.62 vs 19.959"
+   ],
+   "n_unfolding_mc": 8209971,
+   "seconds_unfold": 210.922,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240020": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240020.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240020.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.199 vs 21.366"
+   ],
+   "n_unfolding_mc": 8211699,
+   "seconds_unfold": 237.409,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240021": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240021.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240021.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.495 vs 59.289"
+   ],
+   "n_unfolding_mc": 8212213,
+   "seconds_unfold": 214.407,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240022": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240022.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240022.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.9 vs 22.004"
+   ],
+   "n_unfolding_mc": 8212577,
+   "seconds_unfold": 234.825,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240023": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240023.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240023.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.773 vs 21.315"
+   ],
+   "n_unfolding_mc": 8209266,
+   "seconds_unfold": 215.209,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240024": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240024.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240024.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.628 vs 30.539"
+   ],
+   "n_unfolding_mc": 8211598,
+   "seconds_unfold": 234.003,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240025": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240025.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240025.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.738 vs 21.752"
+   ],
+   "n_unfolding_mc": 8214859,
+   "seconds_unfold": 207.774,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240026": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240026.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240026.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 28.97 vs 21.58"
+   ],
+   "n_unfolding_mc": 8214883,
+   "seconds_unfold": 236.247,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240027": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240027.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240027.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.974 vs 22.009"
+   ],
+   "n_unfolding_mc": 8211149,
+   "seconds_unfold": 212.317,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240028": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240028.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240028.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.759 vs 24.25"
+   ],
+   "n_unfolding_mc": 8212257,
+   "seconds_unfold": 226.326,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240029": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240029.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240029.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.541 vs 23.761"
+   ],
+   "n_unfolding_mc": 8212827,
+   "seconds_unfold": 211.415,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240030": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240030.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240030.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.965 vs 34.478"
+   ],
+   "n_unfolding_mc": 8214164,
+   "seconds_unfold": 230.543,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240031": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240031.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240031.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.377 vs 18.728"
+   ],
+   "n_unfolding_mc": 8210319,
+   "seconds_unfold": 215.903,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240032": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240032.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240032.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.108 vs 19.048"
+   ],
+   "n_unfolding_mc": 8210839,
+   "seconds_unfold": 232.046,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240033": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240033.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240033.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.169 vs 19.498"
+   ],
+   "n_unfolding_mc": 8213496,
+   "seconds_unfold": 204.642,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240034": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240034.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240034.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.309 vs 24.926"
+   ],
+   "n_unfolding_mc": 8213666,
+   "seconds_unfold": 228.715,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240035": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240035.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240035.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.705 vs 25.271"
+   ],
+   "n_unfolding_mc": 8211553,
+   "seconds_unfold": 207.635,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240036": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240036.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240036.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.63 vs 28.136"
+   ],
+   "n_unfolding_mc": 8213464,
+   "seconds_unfold": 229.06,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240037": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240037.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240037.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.296 vs 13.978"
+   ],
+   "n_unfolding_mc": 8209380,
+   "seconds_unfold": 208.856,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240038": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240038.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240038.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.826 vs 21.63"
+   ],
+   "n_unfolding_mc": 8211937,
+   "seconds_unfold": 222.059,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240039": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240039.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240039.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.666 vs 16.424"
+   ],
+   "n_unfolding_mc": 8211315,
+   "seconds_unfold": 210.622,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240040": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240040.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240040.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.484 vs 20.205"
+   ],
+   "n_unfolding_mc": 8213646,
+   "seconds_unfold": 226.082,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240041": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240041.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240041.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.076 vs 17.144"
+   ],
+   "n_unfolding_mc": 8210430,
+   "seconds_unfold": 210.823,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240042": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240042.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240042.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.08 vs 91.817"
+   ],
+   "n_unfolding_mc": 8213667,
+   "seconds_unfold": 225.5,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240043": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240043.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240043.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.281 vs 57.841"
+   ],
+   "n_unfolding_mc": 8209094,
+   "seconds_unfold": 210.993,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240044": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240044.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240044.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.968 vs 18.586"
+   ],
+   "n_unfolding_mc": 8212298,
+   "seconds_unfold": 220.816,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240045": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240045.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240045.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.889 vs 26.479"
+   ],
+   "n_unfolding_mc": 8213158,
+   "seconds_unfold": 211.989,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240046": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240046.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240046.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.833 vs 31.637"
+   ],
+   "n_unfolding_mc": 8211906,
+   "seconds_unfold": 226.747,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240047": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240047.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240047.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.792 vs 33.638"
+   ],
+   "n_unfolding_mc": 8214309,
+   "seconds_unfold": 206.381,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240048": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240048.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240048.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.602 vs 45.77"
+   ],
+   "n_unfolding_mc": 8212794,
+   "seconds_unfold": 237.125,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240049": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240049.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240049.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.538 vs 33.502"
+   ],
+   "n_unfolding_mc": 8212608,
+   "seconds_unfold": 210.181,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240050": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240050.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240050.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.857 vs 54.32"
+   ],
+   "n_unfolding_mc": 8209838,
+   "seconds_unfold": 227.359,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240051": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240051.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240051.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.058 vs 108.213"
+   ],
+   "n_unfolding_mc": 8210473,
+   "seconds_unfold": 213.761,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240052": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240052.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240052.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.751 vs 108.493"
+   ],
+   "n_unfolding_mc": 8209224,
+   "seconds_unfold": 236.857,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240053": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240053.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240053.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.705 vs 25.894"
+   ],
+   "n_unfolding_mc": 8213754,
+   "seconds_unfold": 214.386,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240054": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240054.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240054.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.699 vs 61.85"
+   ],
+   "n_unfolding_mc": 8211622,
+   "seconds_unfold": 229.374,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240055": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240055.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240055.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.883 vs 38.986"
+   ],
+   "n_unfolding_mc": 8211534,
+   "seconds_unfold": 207.346,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240056": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240056.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240056.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.034 vs 107.905"
+   ],
+   "n_unfolding_mc": 8216322,
+   "seconds_unfold": 232.442,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240057": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240057.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240057.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.258 vs 32.135"
+   ],
+   "n_unfolding_mc": 8211521,
+   "seconds_unfold": 212.703,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240058": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240058.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240058.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.255 vs 23.767"
+   ],
+   "n_unfolding_mc": 8209638,
+   "seconds_unfold": 230.258,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240059": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240059.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240059.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.983 vs 100.777"
+   ],
+   "n_unfolding_mc": 8211731,
+   "seconds_unfold": 210.514,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240060": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240060.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240060.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.013 vs 27.696"
+   ],
+   "n_unfolding_mc": 8213987,
+   "seconds_unfold": 234.557,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240061": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240061.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240061.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.671 vs 12.29"
+   ],
+   "n_unfolding_mc": 8212614,
+   "seconds_unfold": 212.7,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240062": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240062.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240062.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.055 vs 12.135"
+   ],
+   "n_unfolding_mc": 8211882,
+   "seconds_unfold": 231.628,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240063": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240063.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240063.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.866 vs 12.599"
+   ],
+   "n_unfolding_mc": 8211505,
+   "seconds_unfold": 211.155,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240064": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240064.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240064.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.542 vs 13.16"
+   ],
+   "n_unfolding_mc": 8211655,
+   "seconds_unfold": 240.534,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240065": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240065.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240065.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.666 vs 11.502"
+   ],
+   "n_unfolding_mc": 8213484,
+   "seconds_unfold": 207.841,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240066": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240066.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240066.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 30.162 vs 124.273"
+   ],
+   "n_unfolding_mc": 8212879,
+   "seconds_unfold": 239.652,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240067": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240067.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240067.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.302 vs 68.326"
+   ],
+   "n_unfolding_mc": 8211232,
+   "seconds_unfold": 212.954,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240068": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240068.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240068.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.577 vs 46.063"
+   ],
+   "n_unfolding_mc": 8210574,
+   "seconds_unfold": 234.951,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240069": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240069.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240069.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.742 vs 99.888"
+   ],
+   "n_unfolding_mc": 8211222,
+   "seconds_unfold": 205.068,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240070": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240070.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240070.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 28.812 vs 71.063"
+   ],
+   "n_unfolding_mc": 8212618,
+   "seconds_unfold": 227.395,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240071": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240071.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240071.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.408 vs 19.478"
+   ],
+   "n_unfolding_mc": 8210130,
+   "seconds_unfold": 216.698,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240072": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240072.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240072.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.324 vs 24.99"
+   ],
+   "n_unfolding_mc": 8213256,
+   "seconds_unfold": 229.665,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240073": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240073.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240073.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.762 vs 12.133"
+   ],
+   "n_unfolding_mc": 8212568,
+   "seconds_unfold": 210.66,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240074": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240074.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240074.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.041 vs 12.255"
+   ],
+   "n_unfolding_mc": 8210790,
+   "seconds_unfold": 232.567,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240075": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240075.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240075.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.589 vs 12.418"
+   ],
+   "n_unfolding_mc": 8213288,
+   "seconds_unfold": 208.599,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240076": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240076.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240076.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.022 vs 12.424"
+   ],
+   "n_unfolding_mc": 8214057,
+   "seconds_unfold": 232.315,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240077": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240077.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240077.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.593 vs 24.195"
+   ],
+   "n_unfolding_mc": 8211979,
+   "seconds_unfold": 209.853,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240078": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240078.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240078.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 30.91 vs 25.385"
+   ],
+   "n_unfolding_mc": 8214322,
+   "seconds_unfold": 233.102,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240079": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240079.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240079.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.609 vs 63.082"
+   ],
+   "n_unfolding_mc": 8213774,
+   "seconds_unfold": 208.576,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240080": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240080.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240080.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.486 vs 49.165"
+   ],
+   "n_unfolding_mc": 8210991,
+   "seconds_unfold": 243.952,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240081": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240081.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240081.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.207 vs 15.426"
+   ],
+   "n_unfolding_mc": 8210419,
+   "seconds_unfold": 216.188,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240082": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240082.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240082.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.054 vs 12.933"
+   ],
+   "n_unfolding_mc": 8213623,
+   "seconds_unfold": 243.486,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240083": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240083.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240083.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.255 vs 29.298"
+   ],
+   "n_unfolding_mc": 8209590,
+   "seconds_unfold": 213.591,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240084": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240084.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240084.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.257 vs 26.869"
+   ],
+   "n_unfolding_mc": 8211604,
+   "seconds_unfold": 241.301,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240085": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240085.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240085.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.406 vs 13.545"
+   ],
+   "n_unfolding_mc": 8210955,
+   "seconds_unfold": 214.75,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240086": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240086.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240086.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.38 vs 17.007"
+   ],
+   "n_unfolding_mc": 8211693,
+   "seconds_unfold": 241.716,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240087": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240087.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240087.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.571 vs 18.62"
+   ],
+   "n_unfolding_mc": 8211223,
+   "seconds_unfold": 211.059,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240088": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240088.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240088.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.227 vs 23.751"
+   ],
+   "n_unfolding_mc": 8212373,
+   "seconds_unfold": 241.259,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240089": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240089.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240089.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.698 vs 14.17"
+   ],
+   "n_unfolding_mc": 8212835,
+   "seconds_unfold": 217.008,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240090": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240090.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240090.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.413 vs 25.38"
+   ],
+   "n_unfolding_mc": 8211286,
+   "seconds_unfold": 239.446,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240091": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240091.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240091.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.867 vs 14.227"
+   ],
+   "n_unfolding_mc": 8212362,
+   "seconds_unfold": 215.324,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240092": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240092.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240092.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.199 vs 14.38"
+   ],
+   "n_unfolding_mc": 8211814,
+   "seconds_unfold": 242.431,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240093": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240093.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240093.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.198 vs 13.48"
+   ],
+   "n_unfolding_mc": 8211804,
+   "seconds_unfold": 208.505,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240094": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240094.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240094.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.281 vs 13.471"
+   ],
+   "n_unfolding_mc": 8213456,
+   "seconds_unfold": 232.591,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240095": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240095.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240095.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.285 vs 12.482"
+   ],
+   "n_unfolding_mc": 8210461,
+   "seconds_unfold": 210.16,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240096": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240096.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240096.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.985 vs 42.688"
+   ],
+   "n_unfolding_mc": 8212260,
+   "seconds_unfold": 222.385,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240097": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240097.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240097.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.32 vs 23.277"
+   ],
+   "n_unfolding_mc": 8210498,
+   "seconds_unfold": 209.968,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240098": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240098.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240098.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.851 vs 12.455"
+   ],
+   "n_unfolding_mc": 8211011,
+   "seconds_unfold": 216.399,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240099": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240099.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240099.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 9.946 vs 13.359"
+   ],
+   "n_unfolding_mc": 8213647,
+   "seconds_unfold": 199.233,
+   "slurm_job": "60017071"
+  }
+ },
+ "1240100": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240100.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240100.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.312 vs 37.874"
+   ],
+   "n_unfolding_mc": 8213969,
+   "seconds_unfold": 258.549,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240101": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240101.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240101.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.166 vs 12.92"
+   ],
+   "n_unfolding_mc": 8212123,
+   "seconds_unfold": 214.453,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240102": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240102.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240102.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 35.137 vs 26.727"
+   ],
+   "n_unfolding_mc": 8211785,
+   "seconds_unfold": 263.766,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240103": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240103.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240103.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.178 vs 14.244"
+   ],
+   "n_unfolding_mc": 8212384,
+   "seconds_unfold": 214.574,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240104": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240104.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240104.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.778 vs 12.834"
+   ],
+   "n_unfolding_mc": 8211681,
+   "seconds_unfold": 265.657,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240105": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240105.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240105.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.787 vs 12.767"
+   ],
+   "n_unfolding_mc": 8213151,
+   "seconds_unfold": 212.828,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240106": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240106.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240106.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.913 vs 18.853"
+   ],
+   "n_unfolding_mc": 8212436,
+   "seconds_unfold": 263.097,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240107": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240107.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240107.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.167 vs 12.438"
+   ],
+   "n_unfolding_mc": 8210786,
+   "seconds_unfold": 212.283,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240108": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240108.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240108.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 34.867 vs 28.942"
+   ],
+   "n_unfolding_mc": 8212069,
+   "seconds_unfold": 264.888,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240109": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240109.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240109.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.302 vs 12.294"
+   ],
+   "n_unfolding_mc": 8209994,
+   "seconds_unfold": 215.647,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240110": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240110.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240110.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 35.178 vs 13.102"
+   ],
+   "n_unfolding_mc": 8212859,
+   "seconds_unfold": 257.383,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240111": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240111.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240111.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.491 vs 13.617"
+   ],
+   "n_unfolding_mc": 8213612,
+   "seconds_unfold": 209.522,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240112": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240112.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240112.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 35.187 vs 13.744"
+   ],
+   "n_unfolding_mc": 8211607,
+   "seconds_unfold": 265.828,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240113": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240113.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240113.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.346 vs 13.49"
+   ],
+   "n_unfolding_mc": 8212489,
+   "seconds_unfold": 213.312,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240114": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240114.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240114.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 35.125 vs 27.243"
+   ],
+   "n_unfolding_mc": 8212999,
+   "seconds_unfold": 260.441,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240115": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240115.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240115.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.834 vs 13.842"
+   ],
+   "n_unfolding_mc": 8211351,
+   "seconds_unfold": 209.725,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240116": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240116.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240116.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 21.723 vs 16.376"
+   ],
+   "n_unfolding_mc": 8211998,
+   "seconds_unfold": 227.926,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240117": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240117.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240117.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.755 vs 22.077"
+   ],
+   "n_unfolding_mc": 8213610,
+   "seconds_unfold": 207.34,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240118": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240118.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240118.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.385 vs 19.194"
+   ],
+   "n_unfolding_mc": 8213087,
+   "seconds_unfold": 232.437,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240119": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240119.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240119.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.525 vs 16.418"
+   ],
+   "n_unfolding_mc": 8211955,
+   "seconds_unfold": 212.38,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240120": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240120.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240120.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.285 vs 26.966"
+   ],
+   "n_unfolding_mc": 8211464,
+   "seconds_unfold": 233.497,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240121": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240121.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240121.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.774 vs 38.789"
+   ],
+   "n_unfolding_mc": 8214481,
+   "seconds_unfold": 208.693,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240122": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240122.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240122.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 21.678 vs 14.158"
+   ],
+   "n_unfolding_mc": 8214556,
+   "seconds_unfold": 227.317,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240123": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240123.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240123.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.138 vs 30.148"
+   ],
+   "n_unfolding_mc": 8212591,
+   "seconds_unfold": 210.84,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240124": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240124.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240124.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.607 vs 14.173"
+   ],
+   "n_unfolding_mc": 8212466,
+   "seconds_unfold": 226.417,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240125": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240125.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240125.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.508 vs 13.704"
+   ],
+   "n_unfolding_mc": 8214250,
+   "seconds_unfold": 210.453,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240126": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240126.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240126.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.313 vs 28.431"
+   ],
+   "n_unfolding_mc": 8212117,
+   "seconds_unfold": 228.306,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240127": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240127.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240127.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.919 vs 13.303"
+   ],
+   "n_unfolding_mc": 8212301,
+   "seconds_unfold": 210.288,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240128": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240128.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240128.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.503 vs 12.416"
+   ],
+   "n_unfolding_mc": 8213785,
+   "seconds_unfold": 225.423,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240129": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240129.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240129.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.082 vs 13.389"
+   ],
+   "n_unfolding_mc": 8210073,
+   "seconds_unfold": 210.184,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240130": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240130.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240130.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.161 vs 12.143"
+   ],
+   "n_unfolding_mc": 8211379,
+   "seconds_unfold": 215.39,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240131": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240131.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240131.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.379 vs 12.061"
+   ],
+   "n_unfolding_mc": 8212278,
+   "seconds_unfold": 212.23,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240132": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240132.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240132.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.783 vs 74.892"
+   ],
+   "n_unfolding_mc": 8212173,
+   "seconds_unfold": 222.292,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240133": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240133.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240133.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.928 vs 160.136"
+   ],
+   "n_unfolding_mc": 8211722,
+   "seconds_unfold": 215.715,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240134": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240134.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240134.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.569 vs 12.371"
+   ],
+   "n_unfolding_mc": 8209288,
+   "seconds_unfold": 230.847,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240135": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240135.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240135.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.44 vs 12.645"
+   ],
+   "n_unfolding_mc": 8210597,
+   "seconds_unfold": 215.575,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240136": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240136.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240136.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.283 vs 12.702"
+   ],
+   "n_unfolding_mc": 8212560,
+   "seconds_unfold": 225.96,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240137": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240137.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240137.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.564 vs 12.535"
+   ],
+   "n_unfolding_mc": 8211228,
+   "seconds_unfold": 215.244,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240138": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240138.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240138.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.841 vs 1923.738"
+   ],
+   "n_unfolding_mc": 8211435,
+   "seconds_unfold": 225.162,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240144": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240144.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240144.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.131 vs 29.421"
+   ],
+   "n_unfolding_mc": 8211584,
+   "seconds_unfold": 229.048,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240145": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240145.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240145.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.384 vs 13.517"
+   ],
+   "n_unfolding_mc": 8211191,
+   "seconds_unfold": 211.557,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240146": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240146.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240146.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.009 vs 12.653"
+   ],
+   "n_unfolding_mc": 8211528,
+   "seconds_unfold": 224.354,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240147": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240147.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240147.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.675 vs 12.082"
+   ],
+   "n_unfolding_mc": 8210627,
+   "seconds_unfold": 205.475,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240148": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240148.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240148.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.721 vs 13.146"
+   ],
+   "n_unfolding_mc": 8213056,
+   "seconds_unfold": 222.329,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240149": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240149.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240149.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.059 vs 11.267"
+   ],
+   "n_unfolding_mc": 8211565,
+   "seconds_unfold": 209.76,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240150": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240150.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240150.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.815 vs 25.014"
+   ],
+   "n_unfolding_mc": 8207967,
+   "seconds_unfold": 221.058,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240151": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240151.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240151.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.169 vs 12.28"
+   ],
+   "n_unfolding_mc": 8213944,
+   "seconds_unfold": 209.748,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240152": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240152.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240152.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.304 vs 13.359"
+   ],
+   "n_unfolding_mc": 8214571,
+   "seconds_unfold": 232.034,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240153": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240153.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240153.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.807 vs 25.431"
+   ],
+   "n_unfolding_mc": 8212278,
+   "seconds_unfold": 213.569,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240154": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240154.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240154.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.256 vs 11.309"
+   ],
+   "n_unfolding_mc": 8209469,
+   "seconds_unfold": 224.458,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240155": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240155.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240155.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.822 vs 19.964"
+   ],
+   "n_unfolding_mc": 8212395,
+   "seconds_unfold": 216.921,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240156": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240156.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240156.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 24.193 vs 39.697"
+   ],
+   "n_unfolding_mc": 8214818,
+   "seconds_unfold": 233.762,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240157": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240157.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240157.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.551 vs 12.811"
+   ],
+   "n_unfolding_mc": 8212518,
+   "seconds_unfold": 210.392,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240158": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240158.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240158.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.562 vs 27.077"
+   ],
+   "n_unfolding_mc": 8211765,
+   "seconds_unfold": 221.773,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240159": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240159.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240159.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.79 vs 11.741"
+   ],
+   "n_unfolding_mc": 8212930,
+   "seconds_unfold": 208.833,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240160": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240160.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240160.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.289 vs 44.5"
+   ],
+   "n_unfolding_mc": 8212511,
+   "seconds_unfold": 229.997,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240161": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240161.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240161.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.122 vs 13.084"
+   ],
+   "n_unfolding_mc": 8209780,
+   "seconds_unfold": 215.668,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240162": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240162.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240162.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 22.961 vs 1425.347"
+   ],
+   "n_unfolding_mc": 8211931,
+   "seconds_unfold": 222.582,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240163": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240163.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240163.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.95 vs 1205.001"
+   ],
+   "n_unfolding_mc": 8211946,
+   "seconds_unfold": 212.3,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240164": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240164.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240164.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.253 vs 152.065"
+   ],
+   "n_unfolding_mc": 8211700,
+   "seconds_unfold": 228.222,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240165": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240165.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240165.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.088 vs 81.65"
+   ],
+   "n_unfolding_mc": 8210812,
+   "seconds_unfold": 214.707,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240168": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240168.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240168.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.633 vs 587.306"
+   ],
+   "n_unfolding_mc": 8209750,
+   "seconds_unfold": 223.915,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240169": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240169.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240169.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 12.528 vs 65.362"
+   ],
+   "n_unfolding_mc": 8210993,
+   "seconds_unfold": 216.255,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240170": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240170.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240170.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 32.774 vs 24.478"
+   ],
+   "n_unfolding_mc": 8211313,
+   "seconds_unfold": 239.915,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240171": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240171.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240171.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.942 vs 23.223"
+   ],
+   "n_unfolding_mc": 8211624,
+   "seconds_unfold": 211.593,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240172": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240172.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240172.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.42 vs 19.731"
+   ],
+   "n_unfolding_mc": 8214194,
+   "seconds_unfold": 230.801,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240173": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240173.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240173.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.339 vs 240.061"
+   ],
+   "n_unfolding_mc": 8212171,
+   "seconds_unfold": 213.114,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240174": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240174.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240174.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.506 vs 72.154"
+   ],
+   "n_unfolding_mc": 8213041,
+   "seconds_unfold": 231.892,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240175": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240175.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240175.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.309 vs 19.907"
+   ],
+   "n_unfolding_mc": 8212205,
+   "seconds_unfold": 212.276,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240176": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240176.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240176.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.349 vs 60.471"
+   ],
+   "n_unfolding_mc": 8214499,
+   "seconds_unfold": 229.482,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240177": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240177.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240177.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.575 vs 28.938"
+   ],
+   "n_unfolding_mc": 8211888,
+   "seconds_unfold": 213.182,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240178": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240178.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240178.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.251 vs 22.63"
+   ],
+   "n_unfolding_mc": 8212095,
+   "seconds_unfold": 223.967,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240179": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240179.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240179.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.189 vs 26.25"
+   ],
+   "n_unfolding_mc": 8211404,
+   "seconds_unfold": 210.43,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240180": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240180.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240180.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 28.374 vs 72.041"
+   ],
+   "n_unfolding_mc": 8212211,
+   "seconds_unfold": 231.973,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240181": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240181.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240181.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.457 vs 19.928"
+   ],
+   "n_unfolding_mc": 8210186,
+   "seconds_unfold": 209.581,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240182": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240182.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240182.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 28.294 vs 14.63"
+   ],
+   "n_unfolding_mc": 8211882,
+   "seconds_unfold": 222.787,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240183": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240183.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240183.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.443 vs 14.256"
+   ],
+   "n_unfolding_mc": 8211891,
+   "seconds_unfold": 213.34,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240184": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240184.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240184.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.339 vs 16.261"
+   ],
+   "n_unfolding_mc": 8215215,
+   "seconds_unfold": 229.44,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240185": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240185.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240185.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.125 vs 15.918"
+   ],
+   "n_unfolding_mc": 8214289,
+   "seconds_unfold": 215.678,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240186": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240186.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240186.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 31.965 vs 56.521"
+   ],
+   "n_unfolding_mc": 8213512,
+   "seconds_unfold": 236.402,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240187": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240187.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240187.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.162 vs 23.012"
+   ],
+   "n_unfolding_mc": 8215307,
+   "seconds_unfold": 213.366,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240188": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240188.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240188.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.642 vs 17.868"
+   ],
+   "n_unfolding_mc": 8214573,
+   "seconds_unfold": 227.95,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240189": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240189.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240189.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.252 vs 23.426"
+   ],
+   "n_unfolding_mc": 8213001,
+   "seconds_unfold": 209.878,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240190": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240190.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240190.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.099 vs 80.363"
+   ],
+   "n_unfolding_mc": 8212385,
+   "seconds_unfold": 228.966,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240191": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240191.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240191.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.449 vs 24.877"
+   ],
+   "n_unfolding_mc": 8213012,
+   "seconds_unfold": 208.125,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240192": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240192.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240192.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 27.479 vs 55.403"
+   ],
+   "n_unfolding_mc": 8209651,
+   "seconds_unfold": 233.857,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240193": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240193.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240193.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.502 vs 20.793"
+   ],
+   "n_unfolding_mc": 8213002,
+   "seconds_unfold": 211.053,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240194": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240194.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240194.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.908 vs 13.95"
+   ],
+   "n_unfolding_mc": 8209379,
+   "seconds_unfold": 226.113,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240195": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240195.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240195.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.218 vs 14.153"
+   ],
+   "n_unfolding_mc": 8208333,
+   "seconds_unfold": 209.374,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240196": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240196.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240196.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 25.647 vs 18.839"
+   ],
+   "n_unfolding_mc": 8213879,
+   "seconds_unfold": 227.75,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240197": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240197.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240197.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.942 vs 24.604"
+   ],
+   "n_unfolding_mc": 8214100,
+   "seconds_unfold": 216.862,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240198": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240198.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240198.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 26.738 vs 63.349"
+   ],
+   "n_unfolding_mc": 8208601,
+   "seconds_unfold": 228.342,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240199": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240199.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240199.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.042 vs 29.49"
+   ],
+   "n_unfolding_mc": 8211217,
+   "seconds_unfold": 207.894,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240200": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240200.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240200.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 30.309 vs 63.725"
+   ],
+   "n_unfolding_mc": 8214218,
+   "seconds_unfold": 232.535,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240201": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240201.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240201.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.818 vs 11.944"
+   ],
+   "n_unfolding_mc": 8211413,
+   "seconds_unfold": 214.052,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240202": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240202.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240202.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 29.433 vs 12.369"
+   ],
+   "n_unfolding_mc": 8211974,
+   "seconds_unfold": 230.732,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240203": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240203.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240203.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 11.825 vs 12.764"
+   ],
+   "n_unfolding_mc": 8211530,
+   "seconds_unfold": 216.544,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240204": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240204.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240204.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 23.079 vs 12.509"
+   ],
+   "n_unfolding_mc": 8213856,
+   "seconds_unfold": 225.536,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240205": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240205.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240205.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 10.287 vs 11.324"
+   ],
+   "n_unfolding_mc": 8212762,
+   "seconds_unfold": 200.927,
+   "slurm_job": "60017074"
+  }
+ },
+ "1240206": {
+  "production": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240206.npz",
+  "quarter": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/sf1-20261019/runs/quarter/GENIE_2_12_10_MEC/sf1q_GENIE_2_12_10_MEC_s1240206.npz",
+   "files_equal": true,
+   "shapes": {
+    "xsec_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ],
+    "xtrue_flat": [
+     [
+      65856
+     ],
+     "float64",
+     [
+      65856
+     ],
+     "float64"
+    ]
+   },
+   "xtrue_bitwise_equal": true,
+   "xsec_bitwise_equal": false,
+   "xsec_rel_diff_median": 0.0,
+   "meta_differences": [
+    "development.mc_fraction: 'quarter' vs 'half'",
+    "experiment.n_unfolding_mc: only in quarter/rerun",
+    "refinement.seconds: 21.912 vs 146.46"
+   ],
+   "n_unfolding_mc": 8212872,
+   "seconds_unfold": 221.884,
+   "slurm_job": "60017074"
+  }
+ }
+}
