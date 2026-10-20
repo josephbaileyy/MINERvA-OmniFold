@@ -1,0 +1,4880 @@
+{
+ "schema": "mp4a-gate/1",
+ "utc": "2026-10-20T08:09:15Z",
+ "code_sha256": {
+  "osb.py": "23ab58159481cd588b1084fcbeca412f80f49ad685600f4e1c7331c031ced934",
+  "run_mp4a.py": "6a2211ae8a9afef245d6ae9e32f8bd7a5f5b5aee1254ee37f15f5922150d3f3e",
+  "build_problem.py": "3f3b2f64a89406346d68913bae99a26a6d01bcf8b339d2bd47748df8339b4275"
+ },
+ "psi2": 1.000043427117466,
+ "psi": 1.000021713322999,
+ "psi_minus_1": 2.1713322998939688e-05,
+ "tolerance": 1e-06,
+ "prepare": {
+  "reduction": {
+   "n": 1383,
+   "k": 1370,
+   "n_null": 13,
+   "eig_max": 0.3523334659229586,
+   "eig_min": -1.3587401311141652e-22,
+   "eig_min_kept": 5.02134254295617e-09
+  },
+  "null_mode_resid_rel_frobenius": [
+   1.2475111271998926e-18,
+   1.4278157537503249e-18,
+   6.93938266132294e-19,
+   1.7181968441554924e-18,
+   1.9109180987478313e-18,
+   1.6865793438475127e-18,
+   2.4239574253429285e-16,
+   2.0421358209455765e-15,
+   7.651821502528125e-15,
+   1.6809064495007241e-12,
+   1.0377882553722798e-15,
+   5.808101297330332e-16,
+   8.677934600833998e-14
+  ],
+  "n_zero_eff": 12,
+  "proportional_classes": [
+   {
+    "cells": [
+     1002,
+     1069
+    ],
+    "alpha": [
+     1.0,
+     1.4276587991542802
+    ],
+    "rep": 1002
+   }
+  ],
+  "reduction_check_rel": 1.9972912213006566e-13,
+  "merged_reduction": {
+   "n": 1382,
+   "k": 1370,
+   "n_null": 12,
+   "eig_max": 0.35233346592295905,
+   "eig_min": -1.7950471363030047e-20,
+   "eig_min_kept": 5.02134253212663e-09
+  },
+  "reduced_path": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/mp4a-scratch/reduced_T2.npz",
+  "reduced_sha256": "71c3a24a59c08b3ff38644300ab3ea2e2ccccdebf6de1dd365e5d864b966f92a"
+ },
+ "n_rows": 175,
+ "n_by_group": {
+  "J": 109,
+  "H2": 27,
+  "EW": 39
+ },
+ "worst_rel_dev": {
+  "unit_radius": 1.5210055437364645e-14,
+  "frozen_radius_normalized": 1.509903313490213e-14,
+  "frozen_radius_literal": 2.1713323006045115e-05
+ },
+ "hole_sets_agree": true,
+ "all_endpoints_converged": true,
+ "pass_unit_radius_reading": true,
+ "pass_literal_reading": false,
+ "rows": [
+  {
+   "group": "J",
+   "pos183": 42,
+   "row185": 43,
+   "name": "J0",
+   "null_fraction": 3.883931215863329e-12,
+   "did_sigma_rel": 0.00991297592226317,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.009912975922263098,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.00991319116591118,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 7.216449660063518e-15,
+   "dev_frozen_radius_normalized": 6.994405055138486e-15,
+   "dev_frozen_radius_literal": 2.171332299183426e-05
+  },
+  {
+   "group": "J",
+   "pos183": 43,
+   "row185": 44,
+   "name": "J1",
+   "null_fraction": 3.1636625678329193e-11,
+   "did_sigma_rel": 0.26926817542801157,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.26926817542801224,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.26927402213487844,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.4424906541753444e-15,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000716045e-05
+  },
+  {
+   "group": "J",
+   "pos183": 44,
+   "row185": 45,
+   "name": "J4",
+   "null_fraction": 1.0965336296850253e-11,
+   "did_sigma_rel": 0.6417155493452255,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6417155493452269,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6417294831222224,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-15,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.1713322999827867e-05
+  },
+  {
+   "group": "J",
+   "pos183": 45,
+   "row185": 46,
+   "name": "J7",
+   "null_fraction": 7.685323699739671e-11,
+   "did_sigma_rel": 1.5452407466666935,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.545240746666695,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.5452742989781383,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.1713322999827867e-05
+  },
+  {
+   "group": "J",
+   "pos183": 46,
+   "row185": 47,
+   "name": "J8",
+   "null_fraction": 2.5166292743081425e-11,
+   "did_sigma_rel": 0.6657123729843354,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6657123729843332,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6657268278121122,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-15,
+   "dev_frozen_radius_normalized": 3.219646771412954e-15,
+   "dev_frozen_radius_literal": 2.171332299560902e-05
+  },
+  {
+   "group": "J",
+   "pos183": 47,
+   "row185": 48,
+   "name": "J9",
+   "null_fraction": 0.3015113445851379,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 48,
+   "row185": 49,
+   "name": "J10",
+   "null_fraction": 1.4846102634955526e-11,
+   "did_sigma_rel": 0.034858977531919536,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.034858977531919556,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.03485973443615814,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 49,
+   "row185": 50,
+   "name": "J13",
+   "null_fraction": 2.731109393481025e-11,
+   "did_sigma_rel": 0.0787977362808945,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.07879773628089443,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.07879944724159403,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 50,
+   "row185": 51,
+   "name": "J16",
+   "null_fraction": 9.919756090435743e-11,
+   "did_sigma_rel": 0.600473091041262,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6004730910412612,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6004861293074394,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "J",
+   "pos183": 51,
+   "row185": 52,
+   "name": "J17",
+   "null_fraction": 1.011095377155604e-10,
+   "did_sigma_rel": 0.35500368291999956,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.35500368292000006,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.3550113912296325,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 3.3306690738754696e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 52,
+   "row185": 53,
+   "name": "J25",
+   "null_fraction": 8.907155511806944e-11,
+   "did_sigma_rel": 0.23089044477814774,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2308904447781482,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.23089545817695326,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 2.886579864025407e-15,
+   "dev_frozen_radius_literal": 2.1713323001826268e-05
+  },
+  {
+   "group": "J",
+   "pos183": 53,
+   "row185": 54,
+   "name": "J26",
+   "null_fraction": 1.1158728945990595e-10,
+   "did_sigma_rel": 0.03315463755127716,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.033154637551277205,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.03315535744863134,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 3.552713678800501e-15,
+   "dev_frozen_radius_literal": 2.1713323002492402e-05
+  },
+  {
+   "group": "J",
+   "pos183": 54,
+   "row185": 55,
+   "name": "J27",
+   "null_fraction": 1.3825592129720477e-11,
+   "did_sigma_rel": 0.006019288762991938,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.006019288762991947,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.00601941946175309,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 2.6645352591003757e-15,
+   "dev_frozen_radius_literal": 2.1713323001826268e-05
+  },
+  {
+   "group": "J",
+   "pos183": 55,
+   "row185": 56,
+   "name": "J28",
+   "null_fraction": 1.0210911765415327e-10,
+   "did_sigma_rel": 0.2183521620591952,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.21835216205919505,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.21835690321021772,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 56,
+   "row185": 57,
+   "name": "J31",
+   "null_fraction": 1.506327640777511e-11,
+   "did_sigma_rel": 0.620761249753254,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6207612497532548,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.620774728542775,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 0.0,
+   "dev_frozen_radius_literal": 2.1713322998939688e-05
+  },
+  {
+   "group": "J",
+   "pos183": 57,
+   "row185": 58,
+   "name": "J34",
+   "null_fraction": 1.1091148549736908e-11,
+   "did_sigma_rel": 1.640395814623822,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.6403958146238236,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.6404314330679937,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "J",
+   "pos183": 58,
+   "row185": 59,
+   "name": "J35",
+   "null_fraction": 2.9011523293415603e-11,
+   "did_sigma_rel": 0.9640371969925483,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.9640371969925471,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.9640581294435893,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.2212453270876722e-15,
+   "dev_frozen_radius_normalized": 3.3306690738754696e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 59,
+   "row185": 60,
+   "name": "J36",
+   "null_fraction": 0.30151134457579437,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 60,
+   "row185": 61,
+   "name": "J37",
+   "null_fraction": 3.634451288826382e-11,
+   "did_sigma_rel": 0.02500497421647844,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.025004974216478428,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.025005517157560202,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.1713322999827867e-05
+  },
+  {
+   "group": "J",
+   "pos183": 61,
+   "row185": 62,
+   "name": "J40",
+   "null_fraction": 1.4079719056624315e-11,
+   "did_sigma_rel": 0.07191803932945019,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.07191803932945029,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.07191960090906747,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.171332299716333e-05
+  },
+  {
+   "group": "J",
+   "pos183": 62,
+   "row185": 63,
+   "name": "J43",
+   "null_fraction": 1.470654802401554e-10,
+   "did_sigma_rel": 0.6993753479243753,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6993753479243763,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6993905336872038,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "J",
+   "pos183": 63,
+   "row185": 64,
+   "name": "J44",
+   "null_fraction": 2.4080454330084943e-11,
+   "did_sigma_rel": 0.422816410822076,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.42281641082207594,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4228255915713743,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-16,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.171332300093809e-05
+  },
+  {
+   "group": "J",
+   "pos183": 64,
+   "row185": 65,
+   "name": "J52",
+   "null_fraction": 1.852971961338935e-10,
+   "did_sigma_rel": 0.28664331751920674,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.28664331751920613,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2866495414981456,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.1094237467877974e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-16,
+   "dev_frozen_radius_literal": 2.1713322999161733e-05
+  },
+  {
+   "group": "J",
+   "pos183": 65,
+   "row185": 66,
+   "name": "J53",
+   "null_fraction": 5.805108880148478e-11,
+   "did_sigma_rel": 0.0497713044679292,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.049771304467929364,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.04977238516833929,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-15,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.171332300093809e-05
+  },
+  {
+   "group": "J",
+   "pos183": 66,
+   "row185": 67,
+   "name": "J54",
+   "null_fraction": 1.7435173875323016e-12,
+   "did_sigma_rel": 0.005425027368513442,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.005425027368513433,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.005425145163884966,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.171332299760742e-05
+  },
+  {
+   "group": "J",
+   "pos183": 67,
+   "row185": 68,
+   "name": "J55",
+   "null_fraction": 1.029761415044621e-12,
+   "did_sigma_rel": 0.1956082391713193,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.19560823917131934,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1956124864761974,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713322997385376e-05
+  },
+  {
+   "group": "J",
+   "pos183": 68,
+   "row185": 69,
+   "name": "J58",
+   "null_fraction": 3.2678854158167155e-12,
+   "did_sigma_rel": 0.5638597921986294,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.56385979219863,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5638720354684241,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 69,
+   "row185": 70,
+   "name": "J63",
+   "null_fraction": 0.31622776601644254,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 70,
+   "row185": 71,
+   "name": "J64",
+   "null_fraction": 5.551191520557308e-12,
+   "did_sigma_rel": 0.027096813826445403,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.027096813826445423,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.027097402188316293,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 71,
+   "row185": 72,
+   "name": "J67",
+   "null_fraction": 4.236119035462276e-12,
+   "did_sigma_rel": 0.07489954969379979,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.0748995496937998,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.07490117601191484,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 72,
+   "row185": 73,
+   "name": "J70",
+   "null_fraction": 2.0224668744754925e-12,
+   "did_sigma_rel": 0.7416267823941008,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.7416267823940995,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.7416428855759712,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.7763568394002505e-15,
+   "dev_frozen_radius_normalized": 5.551115123125783e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 73,
+   "row185": 74,
+   "name": "J71",
+   "null_fraction": 0.26726124190953965,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 74,
+   "row185": 75,
+   "name": "J80",
+   "null_fraction": 3.1667844571137675e-12,
+   "did_sigma_rel": 0.046341408926126676,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.046341408926126766,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.046342415152107005,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.171332300093809e-05
+  },
+  {
+   "group": "J",
+   "pos183": 75,
+   "row185": 76,
+   "name": "J81",
+   "null_fraction": 3.5281198816726136e-12,
+   "did_sigma_rel": 0.04194331891684323,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.04194331891684313,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.04194422964567442,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.3314683517128287e-15,
+   "dev_frozen_radius_normalized": 2.1094237467877974e-15,
+   "dev_frozen_radius_literal": 2.1713322996719242e-05
+  },
+  {
+   "group": "J",
+   "pos183": 76,
+   "row185": 77,
+   "name": "J85",
+   "null_fraction": 7.373836656314551e-11,
+   "did_sigma_rel": 0.5591598051211629,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5591598051211638,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5591719463386206,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.1713323000716045e-05
+  },
+  {
+   "group": "J",
+   "pos183": 77,
+   "row185": 78,
+   "name": "J88",
+   "null_fraction": 1.403666880372059e-10,
+   "did_sigma_rel": 1.0336774203079997,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.0336774203080008,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.0336998648797056,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.171332300093809e-05
+  },
+  {
+   "group": "J",
+   "pos183": 78,
+   "row185": 79,
+   "name": "J89",
+   "null_fraction": 2.5975629602519015e-10,
+   "did_sigma_rel": 0.955759809295193,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.9557598092951972,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.9557805620166445,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-15,
+   "dev_frozen_radius_normalized": 3.1086244689504383e-15,
+   "dev_frozen_radius_literal": 2.1713323002048313e-05
+  },
+  {
+   "group": "J",
+   "pos183": 79,
+   "row185": 80,
+   "name": "J90",
+   "null_fraction": 7.845416125602866e-11,
+   "did_sigma_rel": 0.10076779512211806,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.10076779512211807,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.10076998312580154,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 80,
+   "row185": 81,
+   "name": "J91",
+   "null_fraction": 8.34269732543302e-12,
+   "did_sigma_rel": 0.499721477904083,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.4997214779040821,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4997323285179419,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.7763568394002505e-15,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 81,
+   "row185": 82,
+   "name": "J93",
+   "null_fraction": 3.675699681596587e-11,
+   "did_sigma_rel": 0.4075835197666853,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.4075835197666865,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4075923697593006,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.886579864025407e-15,
+   "dev_frozen_radius_normalized": 3.774758283725532e-15,
+   "dev_frozen_radius_literal": 2.1713323002714446e-05
+  },
+  {
+   "group": "J",
+   "pos183": 82,
+   "row185": 83,
+   "name": "J94",
+   "null_fraction": 1.096509136134756e-10,
+   "did_sigma_rel": 0.10859865375115546,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.10859865375115565,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.10860101178880181,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.7763568394002505e-15,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.1713323000716045e-05
+  },
+  {
+   "group": "J",
+   "pos183": 83,
+   "row185": 84,
+   "name": "J97",
+   "null_fraction": 0.27735009811214495,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 84,
+   "row185": 85,
+   "name": "J98",
+   "null_fraction": 1.2467152237324888e-09,
+   "did_sigma_rel": 0.6335499285303923,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6335499285303826,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6335636850046169,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5210055437364645e-14,
+   "dev_frozen_radius_normalized": 1.509903313490213e-14,
+   "dev_frozen_radius_literal": 2.1713322983840655e-05
+  },
+  {
+   "group": "J",
+   "pos183": 85,
+   "row185": 86,
+   "name": "J106",
+   "null_fraction": 6.56857296084952e-10,
+   "did_sigma_rel": 0.13285257274061693,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.13285257274061654,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.13285545741143948,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.886579864025407e-15,
+   "dev_frozen_radius_normalized": 4.551914400963142e-15,
+   "dev_frozen_radius_literal": 2.171332299427675e-05
+  },
+  {
+   "group": "J",
+   "pos183": 86,
+   "row185": 87,
+   "name": "J107",
+   "null_fraction": 1.1153870444059213e-09,
+   "did_sigma_rel": 0.055707705892501125,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.055707705892501465,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.05570891549191298,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.995204332975845e-15,
+   "dev_frozen_radius_normalized": 5.10702591327572e-15,
+   "dev_frozen_radius_literal": 2.1713323004046714e-05
+  },
+  {
+   "group": "J",
+   "pos183": 87,
+   "row185": 88,
+   "name": "J108",
+   "null_fraction": 1.4318419914798188e-11,
+   "did_sigma_rel": 0.023464832265909515,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.023464832265909508,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.023465341765391605,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-16,
+   "dev_frozen_radius_normalized": 5.551115123125783e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 88,
+   "row185": 89,
+   "name": "J109",
+   "null_fraction": 2.377234410446202e-11,
+   "did_sigma_rel": 1.0353261371171931,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.0353261371171918,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.0353486174880164,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.1713322997829465e-05
+  },
+  {
+   "group": "J",
+   "pos183": 89,
+   "row185": 90,
+   "name": "J111",
+   "null_fraction": 4.003312491526171e-11,
+   "did_sigma_rel": 1.3756712430737306,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.3756712430737315,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.3757011134677748,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "J",
+   "pos183": 90,
+   "row185": 91,
+   "name": "J112",
+   "null_fraction": 7.590106557859083e-11,
+   "did_sigma_rel": 0.41184604264122293,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.41184604264122254,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4118549851873727,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-16,
+   "dev_frozen_radius_literal": 2.1713322998939688e-05
+  },
+  {
+   "group": "J",
+   "pos183": 91,
+   "row185": 92,
+   "name": "J115",
+   "null_fraction": 1.266494742320166e-10,
+   "did_sigma_rel": 0.9236210747016899,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.9236210747016899,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.923641129584414,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 0.0,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322999605822e-05
+  },
+  {
+   "group": "J",
+   "pos183": 92,
+   "row185": 93,
+   "name": "J116",
+   "null_fraction": 4.850318597151477e-11,
+   "did_sigma_rel": 1.196052551037794,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.196052551037794,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.1960785213131566,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 0.0,
+   "dev_frozen_radius_normalized": 1.4432899320127035e-15,
+   "dev_frozen_radius_literal": 2.171332299760742e-05
+  },
+  {
+   "group": "J",
+   "pos183": 93,
+   "row185": 94,
+   "name": "J117",
+   "null_fraction": 3.299741646301221e-10,
+   "did_sigma_rel": 0.06442660045957371,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.06442660045957375,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.06442799937515921,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 0.0,
+   "dev_frozen_radius_literal": 2.1713322998939688e-05
+  },
+  {
+   "group": "J",
+   "pos183": 94,
+   "row185": 95,
+   "name": "J118",
+   "null_fraction": 4.5780789671512537e-10,
+   "did_sigma_rel": 0.287929125432376,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2879291254323765,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2879353773304779,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.7763568394002505e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "J",
+   "pos183": 95,
+   "row185": 96,
+   "name": "J120",
+   "null_fraction": 1.884377094160717e-10,
+   "did_sigma_rel": 0.40521588848566675,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.40521588848566653,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.40522468706913733,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.551115123125783e-16,
+   "dev_frozen_radius_normalized": 9.992007221626409e-16,
+   "dev_frozen_radius_literal": 2.1713322997829465e-05
+  },
+  {
+   "group": "J",
+   "pos183": 96,
+   "row185": 97,
+   "name": "J121",
+   "null_fraction": 4.709630228672391e-10,
+   "did_sigma_rel": 0.07819389023706934,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.07819389023706907,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.07819558808626441,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-15,
+   "dev_frozen_radius_normalized": 2.4424906541753444e-15,
+   "dev_frozen_radius_literal": 2.1713322996497197e-05
+  },
+  {
+   "group": "J",
+   "pos183": 97,
+   "row185": 98,
+   "name": "J124",
+   "null_fraction": 9.363712852351621e-11,
+   "did_sigma_rel": 0.4150240742895363,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.41502407428953614,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.41503308584131415,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 98,
+   "row185": 99,
+   "name": "J125",
+   "null_fraction": 4.0789687973419747e-10,
+   "did_sigma_rel": 0.7513324566816842,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.7513324566816857,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.7513487706059964,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322999827867e-05
+  },
+  {
+   "group": "J",
+   "pos183": 99,
+   "row185": 100,
+   "name": "J133",
+   "null_fraction": 3.74159499493935e-10,
+   "did_sigma_rel": 0.13879949608432213,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.13879949608432196,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.13880250988261245,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.2212453270876722e-15,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.171332299716333e-05
+  },
+  {
+   "group": "J",
+   "pos183": 100,
+   "row185": 101,
+   "name": "J134",
+   "null_fraction": 2.665924590300374e-10,
+   "did_sigma_rel": 0.06561042597570481,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.06561042597570489,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.06561185059607623,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.1713323000716045e-05
+  },
+  {
+   "group": "J",
+   "pos183": 101,
+   "row185": 102,
+   "name": "J135",
+   "null_fraction": 0.21821789023596735,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 102,
+   "row185": 103,
+   "name": "J136",
+   "null_fraction": 1.8850468676229466e-11,
+   "did_sigma_rel": 0.7361283685666028,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.7361283685666018,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.7361443523596375,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "J",
+   "pos183": 103,
+   "row185": 104,
+   "name": "J139",
+   "null_fraction": 1.5855604006275576e-11,
+   "did_sigma_rel": 0.38210635304834506,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.3821063530483446,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.382114649847008,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.1713322996941287e-05
+  },
+  {
+   "group": "J",
+   "pos183": 104,
+   "row185": 105,
+   "name": "J142",
+   "null_fraction": 1.6933023647772208e-11,
+   "did_sigma_rel": 1.1654683076406818,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.1654683076406807,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.1654936138304894,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 9.992007221626409e-16,
+   "dev_frozen_radius_normalized": 9.992007221626409e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "J",
+   "pos183": 105,
+   "row185": 106,
+   "name": "J143",
+   "null_fraction": 6.407311576416458e-12,
+   "did_sigma_rel": 0.8734254726283388,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.8734254726283389,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.8734444375977414,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-16,
+   "dev_frozen_radius_literal": 2.1713322998717643e-05
+  },
+  {
+   "group": "J",
+   "pos183": 106,
+   "row185": 107,
+   "name": "J144",
+   "null_fraction": 2.8762323095472472e-11,
+   "did_sigma_rel": 0.045958474077277364,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.04595847407727737,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.0459594719884696,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 107,
+   "row185": 108,
+   "name": "J145",
+   "null_fraction": 7.711854968555196e-12,
+   "did_sigma_rel": 0.18901089048901418,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.18901089048901396,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1890149945435296,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.2212453270876722e-15,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 108,
+   "row185": 109,
+   "name": "J147",
+   "null_fraction": 1.2404499905604351e-11,
+   "did_sigma_rel": 0.5262305433469888,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5262305433469904,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5262419695607499,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.886579864025407e-15,
+   "dev_frozen_radius_normalized": 2.6645352591003757e-15,
+   "dev_frozen_radius_literal": 2.1713323001604223e-05
+  },
+  {
+   "group": "J",
+   "pos183": 109,
+   "row185": 110,
+   "name": "J148",
+   "null_fraction": 1.3361740313892596e-11,
+   "did_sigma_rel": 0.06700222700750871,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.06700222700750864,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.06700368184850534,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 9.992007221626409e-16,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 110,
+   "row185": 111,
+   "name": "J151",
+   "null_fraction": 1.5012766330370053e-12,
+   "did_sigma_rel": 0.4302762072299292,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.4302762072299293,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4302855499561954,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 3.3306690738754696e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 111,
+   "row185": 112,
+   "name": "J152",
+   "null_fraction": 1.9989762834744296e-11,
+   "did_sigma_rel": 0.5041585577788268,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5041585577788268,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5041695047364337,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 0.0,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713322997385376e-05
+  },
+  {
+   "group": "J",
+   "pos183": 112,
+   "row185": 113,
+   "name": "J160",
+   "null_fraction": 1.440022845401351e-11,
+   "did_sigma_rel": 0.18063365639145487,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.18063365639145462,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.18063757854838047,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 113,
+   "row185": 114,
+   "name": "J161",
+   "null_fraction": 1.1788651272600919e-11,
+   "did_sigma_rel": 0.04390587590866543,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.0439058759086655,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.043906829251130645,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 114,
+   "row185": 115,
+   "name": "J162",
+   "null_fraction": 0.45700913417990097,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "J",
+   "pos183": 115,
+   "row185": 116,
+   "name": "J165",
+   "null_fraction": 4.035542364934899e-11,
+   "did_sigma_rel": 0.6350835753718713,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6350835753718735,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6350973651466769,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.552713678800501e-15,
+   "dev_frozen_radius_normalized": 3.552713678800501e-15,
+   "dev_frozen_radius_literal": 2.1713323002492402e-05
+  },
+  {
+   "group": "J",
+   "pos183": 116,
+   "row185": 117,
+   "name": "J174",
+   "null_fraction": 1.2539011339549573e-10,
+   "did_sigma_rel": 0.1440591236498724,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.14405912364987253,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.14406225165215547,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "J",
+   "pos183": 117,
+   "row185": 118,
+   "name": "J175",
+   "null_fraction": 1.051802966266105e-10,
+   "did_sigma_rel": 0.24941703913034796,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2494170391303481,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.24942245480308026,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.1713322999827867e-05
+  },
+  {
+   "group": "J",
+   "pos183": 118,
+   "row185": 119,
+   "name": "J178",
+   "null_fraction": 7.103566136487671e-11,
+   "did_sigma_rel": 0.3387847755760168,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.33878477557601705,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.3387921317192764,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 119,
+   "row185": 120,
+   "name": "J179",
+   "null_fraction": 5.035679414363681e-11,
+   "did_sigma_rel": 0.6685416961277241,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6685416961277227,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6685562123895088,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 2.3314683517128287e-15,
+   "dev_frozen_radius_literal": 2.1713322996719242e-05
+  },
+  {
+   "group": "J",
+   "pos183": 120,
+   "row185": 121,
+   "name": "J187",
+   "null_fraction": 8.373027178133915e-11,
+   "did_sigma_rel": 0.09944584189501807,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.099445841895018,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.09944800119470393,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.1713322997829465e-05
+  },
+  {
+   "group": "J",
+   "pos183": 121,
+   "row185": 122,
+   "name": "J188",
+   "null_fraction": 2.676922052089973e-11,
+   "did_sigma_rel": 0.06736439427038389,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.06736439427038377,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.06736585697523534,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.887379141862766e-15,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.1713322999383777e-05
+  },
+  {
+   "group": "J",
+   "pos183": 122,
+   "row185": 123,
+   "name": "J189",
+   "null_fraction": 6.982172013978903e-12,
+   "did_sigma_rel": 0.10604278233000665,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.10604278233000673,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.10604508487119126,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "J",
+   "pos183": 123,
+   "row185": 124,
+   "name": "J192",
+   "null_fraction": 1.3563905402193793e-10,
+   "did_sigma_rel": 0.2537737991880428,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2537737991880433,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2537793094605137,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.1713323000716045e-05
+  },
+  {
+   "group": "J",
+   "pos183": 124,
+   "row185": 125,
+   "name": "J193",
+   "null_fraction": 5.899756029818473e-11,
+   "did_sigma_rel": 0.5727422692123086,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5727422692123088,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5727547053501947,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 9.992007221626409e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "J",
+   "pos183": 125,
+   "row185": 126,
+   "name": "J195",
+   "null_fraction": 4.0631007372101375e-11,
+   "did_sigma_rel": 0.6032848011366786,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6032848011366789,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.6032979004544256,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 7.771561172376096e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "J",
+   "pos183": 126,
+   "row185": 127,
+   "name": "J196",
+   "null_fraction": 2.7922939736155486e-10,
+   "did_sigma_rel": 0.34330837783727614,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.3433083778372765,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.3433158322029729,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "J",
+   "pos183": 127,
+   "row185": 128,
+   "name": "J197",
+   "null_fraction": 1.4169137684923288e-10,
+   "did_sigma_rel": 0.7766226879893594,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.776622687989362,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.7766395510486337,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "J",
+   "pos183": 128,
+   "row185": 129,
+   "name": "J198",
+   "null_fraction": 2.384407093857612e-11,
+   "did_sigma_rel": 0.16692638254979092,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.16692638254979075,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.16693000707625213,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 9.992007221626409e-16,
+   "dev_frozen_radius_normalized": 7.771561172376096e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "J",
+   "pos183": 129,
+   "row185": 130,
+   "name": "J201",
+   "null_fraction": 1.2416177706731345e-10,
+   "did_sigma_rel": 0.04393700861328866,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.043937008613288676,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.04393796263174827,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.17133229984956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 130,
+   "row185": 131,
+   "name": "J202",
+   "null_fraction": 5.3575688026588257e-11,
+   "did_sigma_rel": 0.08127272259188294,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.08127272259188295,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.08127448729275953,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 5.551115123125783e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 131,
+   "row185": 132,
+   "name": "J204",
+   "null_fraction": 4.18962395400199e-11,
+   "did_sigma_rel": 0.1685749272853954,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.16857492728539572,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.16857858760724123,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "J",
+   "pos183": 132,
+   "row185": 133,
+   "name": "J205",
+   "null_fraction": 9.333947940669591e-11,
+   "did_sigma_rel": 0.1268511794942002,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.12685117949420013,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.12685393385483346,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.1713322999827867e-05
+  },
+  {
+   "group": "J",
+   "pos183": 133,
+   "row185": 134,
+   "name": "J206",
+   "null_fraction": 3.493617673955941e-10,
+   "did_sigma_rel": 0.5117795395111705,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5117795395111702,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5117906519456158,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 134,
+   "row185": 135,
+   "name": "J214",
+   "null_fraction": 2.437236245358649e-10,
+   "did_sigma_rel": 0.03480955573737079,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.034809555737370816,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.03481031156849804,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.171332300093809e-05
+  },
+  {
+   "group": "J",
+   "pos183": 135,
+   "row185": 136,
+   "name": "J215",
+   "null_fraction": 2.3552080498489563e-10,
+   "did_sigma_rel": 0.036261887485301805,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.03626188748530181,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.03626267485137737,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "J",
+   "pos183": 136,
+   "row185": 137,
+   "name": "J216",
+   "null_fraction": 2.2659879416276536e-12,
+   "did_sigma_rel": 0.07876269834144858,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.07876269834144851,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.07876440854135786,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.1713322997829465e-05
+  },
+  {
+   "group": "J",
+   "pos183": 137,
+   "row185": 138,
+   "name": "J219",
+   "null_fraction": 8.048445842199908e-12,
+   "did_sigma_rel": 0.22906023805694933,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.22906023805694906,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2290652117158839,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.2212453270876722e-15,
+   "dev_frozen_radius_normalized": 2.55351295663786e-15,
+   "dev_frozen_radius_literal": 2.1713322996497197e-05
+  },
+  {
+   "group": "J",
+   "pos183": 138,
+   "row185": 139,
+   "name": "J220",
+   "null_fraction": 1.3173504661433606e-11,
+   "did_sigma_rel": 0.4913025278389416,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.49130252783894307,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4913131956494199,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.886579864025407e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "J",
+   "pos183": 139,
+   "row185": 140,
+   "name": "J222",
+   "null_fraction": 2.5556746154646347e-12,
+   "did_sigma_rel": 0.7075316203167205,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.707531620316721,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.7075469831793242,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 3.3306690738754696e-16,
+   "dev_frozen_radius_literal": 2.1713322998717643e-05
+  },
+  {
+   "group": "J",
+   "pos183": 140,
+   "row185": 141,
+   "name": "J223",
+   "null_fraction": 2.8768652419549114e-11,
+   "did_sigma_rel": 0.3328214426264359,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.33282144262643587,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.33282866928592075,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.1713322999161733e-05
+  },
+  {
+   "group": "J",
+   "pos183": 141,
+   "row185": 142,
+   "name": "J224",
+   "null_fraction": 1.626521405094203e-11,
+   "did_sigma_rel": 0.4755695416471435,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.475569541647143,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4755798678422098,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 9.992007221626409e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-16,
+   "dev_frozen_radius_literal": 2.1713322999161733e-05
+  },
+  {
+   "group": "J",
+   "pos183": 142,
+   "row185": 143,
+   "name": "J225",
+   "null_fraction": 3.86572276529112e-12,
+   "did_sigma_rel": 0.12165588742621072,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.12165588742621077,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.12165852897978938,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.171332300093809e-05
+  },
+  {
+   "group": "J",
+   "pos183": 143,
+   "row185": 144,
+   "name": "J228",
+   "null_fraction": 3.011514173107554e-11,
+   "did_sigma_rel": 0.04185983780602836,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.041859837806028345,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.0418607467222073,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-16,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 144,
+   "row185": 145,
+   "name": "J229",
+   "null_fraction": 8.727932826860305e-12,
+   "did_sigma_rel": 0.07471150755763172,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.07471150755763162,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.0747131297927269,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.1713322996941287e-05
+  },
+  {
+   "group": "J",
+   "pos183": 145,
+   "row185": 146,
+   "name": "J231",
+   "null_fraction": 1.586780992817442e-11,
+   "did_sigma_rel": 0.21382982092750977,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.21382982092750977,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.21383446388347815,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 0.0,
+   "dev_frozen_radius_normalized": 9.992007221626409e-16,
+   "dev_frozen_radius_literal": 2.1713322997829465e-05
+  },
+  {
+   "group": "J",
+   "pos183": 146,
+   "row185": 147,
+   "name": "J232",
+   "null_fraction": 4.889764185548971e-12,
+   "did_sigma_rel": 0.13274650296938315,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.13274650296938312,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1327493853370789,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.6653345369377348e-15,
+   "dev_frozen_radius_literal": 2.1713322997385376e-05
+  },
+  {
+   "group": "J",
+   "pos183": 147,
+   "row185": 148,
+   "name": "J233",
+   "null_fraction": 3.297838796308122e-11,
+   "did_sigma_rel": 0.2865593794413537,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2865593794413531,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.28656560159771766,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.887379141862766e-15,
+   "dev_frozen_radius_normalized": 7.771561172376096e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "J",
+   "pos183": 148,
+   "row185": 149,
+   "name": "J240",
+   "null_fraction": 1.1213255862738202e-11,
+   "did_sigma_rel": 0.28885268354565025,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2888526835456495,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2888589554972664,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.55351295663786e-15,
+   "dev_frozen_radius_normalized": 2.6645352591003757e-15,
+   "dev_frozen_radius_literal": 2.1713322996275153e-05
+  },
+  {
+   "group": "J",
+   "pos183": 149,
+   "row185": 150,
+   "name": "J241",
+   "null_fraction": 2.3602724236671418e-11,
+   "did_sigma_rel": 0.0407449425658766,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.040744942565876685,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.04074582727397511,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-16,
+   "dev_frozen_radius_literal": 2.1713322998939688e-05
+  },
+  {
+   "group": "J",
+   "pos183": 150,
+   "row185": 151,
+   "name": "J242",
+   "null_fraction": 4.2580914223100693e-11,
+   "did_sigma_rel": 0.011355727781029527,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.01135572778102954,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.011355974351614732,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322999605822e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 151,
+   "row185": 153,
+   "name": "H2_0",
+   "null_fraction": 0.0824786077307289,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 152,
+   "row185": 154,
+   "name": "H2_1",
+   "null_fraction": 1.569824797428865e-10,
+   "did_sigma_rel": 0.528261681449559,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5282616814495605,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5282731517660783,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.886579864025407e-15,
+   "dev_frozen_radius_normalized": 3.774758283725532e-15,
+   "dev_frozen_radius_literal": 2.1713323002714446e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 154,
+   "row185": 156,
+   "name": "H2_3",
+   "null_fraction": 5.397620957744147e-11,
+   "did_sigma_rel": 0.2845911461969927,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2845911461969944,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2845973256164745,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.773159728050814e-15,
+   "dev_frozen_radius_normalized": 6.217248937900877e-15,
+   "dev_frozen_radius_literal": 2.1713323005156937e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 155,
+   "row185": 157,
+   "name": "H2_4",
+   "null_fraction": 0.1825741858393399,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 156,
+   "row185": 158,
+   "name": "H2_5",
+   "null_fraction": 1.603406663416665e-10,
+   "did_sigma_rel": 0.13926917326039276,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.13926917326039287,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.13927219725693565,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322999605822e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 158,
+   "row185": 160,
+   "name": "H2_7",
+   "null_fraction": 1.414913655088889e-10,
+   "did_sigma_rel": 0.0294901566323405,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.02949015663234038,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.02949079696163667,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.9968028886505635e-15,
+   "dev_frozen_radius_normalized": 2.55351295663786e-15,
+   "dev_frozen_radius_literal": 2.1713322996275153e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 159,
+   "row185": 161,
+   "name": "H2_8",
+   "null_fraction": 3.839410076318409e-11,
+   "did_sigma_rel": 0.006614987580096483,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.006614987580096488,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.006615131213458455,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 160,
+   "row185": 162,
+   "name": "H2_9",
+   "null_fraction": 3.3155101693035965e-11,
+   "did_sigma_rel": 0.5148860846532054,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5148860846532056,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5148972645410693,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.1713322999383777e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 162,
+   "row185": 164,
+   "name": "H2_11",
+   "null_fraction": 9.620308259566206e-12,
+   "did_sigma_rel": 0.4771614394458845,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.47716143944588535,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4771718002063422,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.7763568394002505e-15,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322999605822e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 163,
+   "row185": 165,
+   "name": "H2_12",
+   "null_fraction": 0.2041241452331303,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 164,
+   "row185": 166,
+   "name": "H2_13",
+   "null_fraction": 2.4509130488802606e-10,
+   "did_sigma_rel": 0.1214953313940923,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.12149533139409256,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.12149796946146604,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-15,
+   "dev_frozen_radius_normalized": 2.6645352591003757e-15,
+   "dev_frozen_radius_literal": 2.1713323001604223e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 166,
+   "row185": 168,
+   "name": "H2_15",
+   "null_fraction": 0.11867815905034396,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 167,
+   "row185": 169,
+   "name": "H2_16",
+   "null_fraction": 0.14103608073710572,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 169,
+   "row185": 171,
+   "name": "H2_18",
+   "null_fraction": 0.26261286571944675,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 170,
+   "row185": 172,
+   "name": "H2_19",
+   "null_fraction": 0.13608276348795628,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 171,
+   "row185": 173,
+   "name": "H2_20",
+   "null_fraction": 0.19999830469209515,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 172,
+   "row185": 174,
+   "name": "H2_21",
+   "null_fraction": 6.018595059839996e-11,
+   "did_sigma_rel": 1.4679770428670924,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.4679770428670962,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.4680089175267816,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.6645352591003757e-15,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 173,
+   "row185": 175,
+   "name": "H2_22",
+   "null_fraction": 0.12828507514419318,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 174,
+   "row185": 176,
+   "name": "H2_23",
+   "null_fraction": 1.1631154060589705e-10,
+   "did_sigma_rel": 0.029015828924371274,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.029015828924371365,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.029016458954436858,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.1086244689504383e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713323001160134e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 175,
+   "row185": 177,
+   "name": "H2_24",
+   "null_fraction": 0.10482851218525863,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 176,
+   "row185": 178,
+   "name": "H2_25",
+   "null_fraction": 9.705505910448753e-12,
+   "did_sigma_rel": 2.0645360966005053,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 2.064536096600504,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 2.0645809245396123,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 6.661338147750939e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 177,
+   "row185": 179,
+   "name": "H2_26",
+   "null_fraction": 2.1378469817840567e-11,
+   "did_sigma_rel": 0.22306646841155953,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.2230664684115595,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.22307131192583793,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-16,
+   "dev_frozen_radius_normalized": 1.9984014443252818e-15,
+   "dev_frozen_radius_literal": 2.1713322996941287e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 178,
+   "row185": 180,
+   "name": "H2_27",
+   "null_fraction": 1.8692337025885144e-10,
+   "did_sigma_rel": 0.22774851788773173,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.22774851788773093,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.22775346306486266,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.552713678800501e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713322996719242e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 179,
+   "row185": 181,
+   "name": "H2_28",
+   "null_fraction": 0.1796059513808228,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "H2",
+   "pos183": 180,
+   "row185": 182,
+   "name": "H2_29",
+   "null_fraction": 1.5184220476821912e-10,
+   "did_sigma_rel": 0.5396676712772805,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5396676712772807,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5396793892557381,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 1.887379141862766e-15,
+   "dev_frozen_radius_literal": 2.171332299716333e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 181,
+   "row185": 183,
+   "name": "H2_30",
+   "null_fraction": 3.246526189798925e-11,
+   "did_sigma_rel": 0.039863888988712695,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.03986388898871271,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.03986475456621035,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "H2",
+   "pos183": 182,
+   "row185": 184,
+   "name": "H2_31",
+   "null_fraction": 2.426253896173262e-10,
+   "did_sigma_rel": 0.01720903822699072,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.017209038226990717,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.017209411892396248,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-16,
+   "dev_frozen_radius_literal": 2.1713322999161733e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 0,
+   "row185": 0,
+   "name": "EW0",
+   "null_fraction": 0.23930704685558896,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 1,
+   "row185": 1,
+   "name": "EW1",
+   "null_fraction": 0.21062895354596278,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 2,
+   "row185": 2,
+   "name": "EW2",
+   "null_fraction": 1.4482506187298775e-11,
+   "did_sigma_rel": 0.18642322994525157,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.1864232299452518,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1864272778130581,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.1102230246251565e-15,
+   "dev_frozen_radius_normalized": 1.1102230246251565e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 3,
+   "row185": 3,
+   "name": "EW3",
+   "null_fraction": 9.327472658389444e-11,
+   "did_sigma_rel": 0.3735146784099995,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.37351467841000013,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.37352278865485683,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.1713322999383777e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 4,
+   "row185": 4,
+   "name": "EW4",
+   "null_fraction": 1.5290512487996582e-10,
+   "did_sigma_rel": 0.4887992883219405,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.48879928832193975,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.48880990177876826,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.4432899320127035e-15,
+   "dev_frozen_radius_normalized": 2.55351295663786e-15,
+   "dev_frozen_radius_literal": 2.1713322996497197e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 5,
+   "row185": 5,
+   "name": "EW5",
+   "null_fraction": 0.21750751038887722,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 6,
+   "row185": 6,
+   "name": "EW6",
+   "null_fraction": 1.6939781110851138e-12,
+   "did_sigma_rel": 0.007943658670879811,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.00794365867087981,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.007943831154106318,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 7,
+   "row185": 7,
+   "name": "EW7",
+   "null_fraction": 0.06505109938934098,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 8,
+   "row185": 8,
+   "name": "EW8",
+   "null_fraction": 1.0417577875941674e-11,
+   "did_sigma_rel": 0.16505072403715693,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.16505072403715684,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1650543078368388,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.551115123125783e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.1713322996719242e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 9,
+   "row185": 9,
+   "name": "EW9",
+   "null_fraction": 8.773194114611116e-11,
+   "did_sigma_rel": 0.38013909225450393,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.38013909225450493,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.3801473463373998,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.6645352591003757e-15,
+   "dev_frozen_radius_normalized": 3.3306690738754696e-15,
+   "dev_frozen_radius_literal": 2.1713323002270357e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 10,
+   "row185": 10,
+   "name": "EW10",
+   "null_fraction": 1.763062410208885e-10,
+   "did_sigma_rel": 0.49481217629128976,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.49481217629128715,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4948229203078949,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.218048215738236e-15,
+   "dev_frozen_radius_normalized": 4.9960036108132044e-15,
+   "dev_frozen_radius_literal": 2.1713322993832662e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 12,
+   "row185": 12,
+   "name": "EW12",
+   "null_fraction": 0.14002800840280138,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 13,
+   "row185": 13,
+   "name": "EW13",
+   "null_fraction": 0.10319181617247734,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 14,
+   "row185": 14,
+   "name": "EW14",
+   "null_fraction": 2.3110726094244395e-10,
+   "did_sigma_rel": 0.1478206681051003,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.14782066810510006,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1478238777830127,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.6653345369377348e-15,
+   "dev_frozen_radius_normalized": 5.551115123125783e-16,
+   "dev_frozen_radius_literal": 2.1713322998273554e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 15,
+   "row185": 15,
+   "name": "EW15",
+   "null_fraction": 1.2408478933483112e-10,
+   "did_sigma_rel": 0.4963126723351458,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.49631267233514675,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.49632344893250907,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.9984014443252818e-15,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.1713322999605822e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 16,
+   "row185": 16,
+   "name": "EW16",
+   "null_fraction": 8.007740870232884e-11,
+   "did_sigma_rel": 0.6190120285777893,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.6190120285777906,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.619025469385906,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-15,
+   "dev_frozen_radius_normalized": 0.0,
+   "dev_frozen_radius_literal": 2.1713322998939688e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 17,
+   "row185": 17,
+   "name": "EW17",
+   "null_fraction": 3.9886895991333056e-11,
+   "did_sigma_rel": 1.8153049218719415,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 1.81530492187194,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 1.8153443381740522,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 2.220446049250313e-16,
+   "dev_frozen_radius_literal": 2.1713322999161733e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 18,
+   "row185": 18,
+   "name": "EW18",
+   "null_fraction": 0.24618298196036384,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 19,
+   "row185": 19,
+   "name": "EW19",
+   "null_fraction": 1.1360575803928604e-10,
+   "did_sigma_rel": 0.02513455978109595,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.025134559781095956,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.02513510553591093,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.1713322999605822e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 20,
+   "row185": 20,
+   "name": "EW20",
+   "null_fraction": 5.094057558125354e-10,
+   "did_sigma_rel": 0.052231228347500776,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.05223122834750086,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.052232362461032585,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.1713323000271956e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 21,
+   "row185": 21,
+   "name": "EW21",
+   "null_fraction": 1.9200089656266157e-10,
+   "did_sigma_rel": 0.3160551399053278,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.3160551399053286,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.3160620025126664,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.4424906541753444e-15,
+   "dev_frozen_radius_normalized": 1.3322676295501878e-15,
+   "dev_frozen_radius_literal": 2.171332300004991e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 22,
+   "row185": 22,
+   "name": "EW22",
+   "null_fraction": 1.49995066639306e-10,
+   "did_sigma_rel": 0.43138363848140215,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.43138363848140254,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.4313930052536806,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 8.881784197001252e-16,
+   "dev_frozen_radius_normalized": 8.881784197001252e-16,
+   "dev_frozen_radius_literal": 2.171332299805151e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 23,
+   "row185": 23,
+   "name": "EW23",
+   "null_fraction": 1.1271070704786967e-10,
+   "did_sigma_rel": 0.9888395587852271,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.9888395587852264,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.9888610297779612,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 0.0,
+   "dev_frozen_radius_literal": 2.1713322998939688e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 24,
+   "row185": 24,
+   "name": "EW24",
+   "null_fraction": 0.31975245355476656,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 25,
+   "row185": 25,
+   "name": "EW25",
+   "null_fraction": 0.22941516682030413,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 26,
+   "row185": 26,
+   "name": "EW26",
+   "null_fraction": 0.12403472330807337,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 27,
+   "row185": 27,
+   "name": "EW27",
+   "null_fraction": 1.0725308233318198e-10,
+   "did_sigma_rel": 0.11360516943042567,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.11360516943042571,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.11360763617616391,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 4.440892098500626e-16,
+   "dev_frozen_radius_normalized": 4.440892098500626e-16,
+   "dev_frozen_radius_literal": 2.1713322999383777e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 28,
+   "row185": 28,
+   "name": "EW28",
+   "null_fraction": 3.1639778609802407e-10,
+   "did_sigma_rel": 0.32851036584309484,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.328510365843093,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.32851749889477494,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.551115123125783e-15,
+   "dev_frozen_radius_normalized": 5.88418203051333e-15,
+   "dev_frozen_radius_literal": 2.1713322992944484e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 29,
+   "row185": 29,
+   "name": "EW29",
+   "null_fraction": 0.17677669519921646,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 30,
+   "row185": 30,
+   "name": "EW30",
+   "null_fraction": 5.023888161431765e-12,
+   "did_sigma_rel": 0.39699795763886586,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.3969979576388664,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.3970065777837507,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.3322676295501878e-15,
+   "dev_frozen_radius_normalized": 1.7763568394002505e-15,
+   "dev_frozen_radius_literal": 2.1713323000716045e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 31,
+   "row185": 31,
+   "name": "EW31",
+   "null_fraction": 0.33333333333333104,
+   "did_sigma_rel": Infinity,
+   "hole_mine": true,
+   "hole_did": true
+  },
+  {
+   "group": "EW",
+   "pos183": 32,
+   "row185": 32,
+   "name": "EW32",
+   "null_fraction": 1.6731581162817457e-10,
+   "did_sigma_rel": 0.12207794327794787,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.12207794327794758,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.1220805939957611,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.4424906541753444e-15,
+   "dev_frozen_radius_normalized": 1.6653345369377348e-15,
+   "dev_frozen_radius_literal": 2.171332299716333e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 33,
+   "row185": 33,
+   "name": "EW33",
+   "null_fraction": 1.1591591255142976e-10,
+   "did_sigma_rel": 0.032870558677269436,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.03287055867726952,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.03287127240632723,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.4424906541753444e-15,
+   "dev_frozen_radius_normalized": 2.220446049250313e-15,
+   "dev_frozen_radius_literal": 2.171332300138218e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 34,
+   "row185": 34,
+   "name": "EW34",
+   "null_fraction": 4.76241315707915e-10,
+   "did_sigma_rel": 0.04972662323500188,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.04972662323500215,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.04972770296523418,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 5.551115123125783e-15,
+   "dev_frozen_radius_normalized": 7.327471962526033e-15,
+   "dev_frozen_radius_literal": 2.1713323006045115e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 35,
+   "row185": 35,
+   "name": "EW35",
+   "null_fraction": 2.8048717985133867e-10,
+   "did_sigma_rel": 0.28293473949663545,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.28293473949663606,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.2829408829500222,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 2.220446049250313e-15,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 38,
+   "row185": 38,
+   "name": "EW38",
+   "null_fraction": 2.3434166450499888e-11,
+   "did_sigma_rel": 0.5579354525278775,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.5579354525278766,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.5579475671605694,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 1.5543122344752192e-15,
+   "dev_frozen_radius_normalized": 2.55351295663786e-15,
+   "dev_frozen_radius_literal": 2.1713322996497197e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 39,
+   "row185": 39,
+   "name": "EW39",
+   "null_fraction": 9.806933502880785e-11,
+   "did_sigma_rel": 0.11837954268645634,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.11837954268645626,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.11838211309970335,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 6.661338147750939e-16,
+   "dev_frozen_radius_normalized": 1.5543122344752192e-15,
+   "dev_frozen_radius_literal": 2.1713323000494e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 40,
+   "row185": 40,
+   "name": "EW40",
+   "null_fraction": 1.6898334799079807e-10,
+   "did_sigma_rel": 0.017701039211462575,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.017701039211462516,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.017701423559844304,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.3306690738754696e-15,
+   "dev_frozen_radius_normalized": 4.884981308350689e-15,
+   "dev_frozen_radius_literal": 2.1713322994054707e-05
+  },
+  {
+   "group": "EW",
+   "pos183": 41,
+   "row185": 41,
+   "name": "EW41",
+   "null_fraction": 8.935529842806406e-11,
+   "did_sigma_rel": 0.007816984085316437,
+   "hole_mine": false,
+   "hole_did": false,
+   "unit_radius": {
+    "half_width_rel": 0.007816984085316466,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "frozen_radius": {
+    "half_width_rel": 0.007817153818016781,
+    "lo_status": "converged",
+    "hi_status": "converged",
+    "lsq_status": [
+     3
+    ],
+    "evals": 2
+   },
+   "dev_unit_radius": 3.774758283725532e-15,
+   "dev_frozen_radius_normalized": 2.886579864025407e-15,
+   "dev_frozen_radius_literal": 2.1713323001826268e-05
+  }
+ ],
+ "resources": {
+  "cpu_s": 613.4590770000001,
+  "wall_s": 308.5489490032196,
+  "peak_rss_bytes": 355696640
+ }
+}

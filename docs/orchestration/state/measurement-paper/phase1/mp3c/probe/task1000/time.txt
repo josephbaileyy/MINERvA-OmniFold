@@ -1,0 +1,23 @@
+	Command being timed: "/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/bin/GiBUU.x"
+	User time (seconds): 73.26
+	System time (seconds): 7.83
+	Percent of CPU this job got: 92%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:27.77
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1841760
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 451
+	Minor (reclaiming a frame) page faults: 167047
+	Voluntary context switches: 29958
+	Involuntary context switches: 1713
+	Swaps: 0
+	File system inputs: 4936
+	File system outputs: 3154008
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

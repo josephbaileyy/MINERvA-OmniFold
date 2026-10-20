@@ -1,0 +1,198 @@
+{
+ "H": {
+  "n_rows": 90554,
+  "n_events": 19148,
+  "n_events_w_gt_0": 19148,
+  "n_events_without_muon": 0,
+  "pid_row_counts": {
+   "1": 37585,
+   "32": 290,
+   "33": 319,
+   "53": 4,
+   "56": 82,
+   "57": 20,
+   "101": 32236,
+   "110": 799,
+   "111": 60,
+   "114": 10,
+   "118": 1,
+   "902": 19148
+  },
+  "sigma_per_nucleon_cm2_cut_flux": 2.0157896027625298e-38,
+  "channels": {
+   "2 Delta": {
+    "n_events": 8316,
+    "sigma_fraction": 0.31873369683861774
+   },
+   "19 resonance": {
+    "n_events": 49,
+    "sigma_fraction": 0.0025761189198433175
+   },
+   "21 resonance": {
+    "n_events": 1613,
+    "sigma_fraction": 0.05283291684382015
+   },
+   "26 resonance": {
+    "n_events": 35,
+    "sigma_fraction": 0.0011977231625221471
+   },
+   "30 resonance": {
+    "n_events": 46,
+    "sigma_fraction": 0.0016016883992383368
+   },
+   "31 resonance": {
+    "n_events": 151,
+    "sigma_fraction": 0.004958035641241168
+   },
+   "34 DIS": {
+    "n_events": 8938,
+    "sigma_fraction": 0.618099820194717
+   }
+  },
+  "hadronic_charge_sum_counts": {
+   "2": 6,
+   "3": 19142
+  },
+  "mean_enu_GeV_sigma_weighted": 6.751423134929238,
+  "max_enu_GeV": 19.95869,
+  "effective_N": 8021.0674273276
+ },
+ "C12_reference_task": {
+  "n_rows": 153835,
+  "n_events": 23767,
+  "n_events_w_gt_0": 23617,
+  "n_events_without_muon": 0,
+  "pid_row_counts": {
+   "1": 94722,
+   "32": 550,
+   "33": 323,
+   "53": 5,
+   "56": 57,
+   "57": 9,
+   "101": 33107,
+   "110": 1146,
+   "111": 131,
+   "114": 16,
+   "118": 2,
+   "902": 23767
+  },
+  "sigma_per_nucleon_cm2_cut_flux": 3.5865440875141795e-38,
+  "channels": {
+   "1 QE": {
+    "n_events": 1836,
+    "sigma_fraction": 0.11680971302194083
+   },
+   "2 Delta": {
+    "n_events": 4890,
+    "sigma_fraction": 0.12239493967660992
+   },
+   "3 resonance": {
+    "n_events": 347,
+    "sigma_fraction": 0.00910249862650571
+   },
+   "4 resonance": {
+    "n_events": 190,
+    "sigma_fraction": 0.007535731718647984
+   },
+   "5 resonance": {
+    "n_events": 88,
+    "sigma_fraction": 0.0032128331120520326
+   },
+   "7 resonance": {
+    "n_events": 511,
+    "sigma_fraction": 0.02097225062258561
+   },
+   "10 resonance": {
+    "n_events": 76,
+    "sigma_fraction": 0.0029648281537144106
+   },
+   "14 resonance": {
+    "n_events": 30,
+    "sigma_fraction": 0.0020145047075129357
+   },
+   "16 resonance": {
+    "n_events": 64,
+    "sigma_fraction": 0.004001258951467793
+   },
+   "19 resonance": {
+    "n_events": 18,
+    "sigma_fraction": 0.0004337807955619754
+   },
+   "21 resonance": {
+    "n_events": 717,
+    "sigma_fraction": 0.016552602256401313
+   },
+   "26 resonance": {
+    "n_events": 6,
+    "sigma_fraction": 9.540444895720165e-05
+   },
+   "30 resonance": {
+    "n_events": 21,
+    "sigma_fraction": 0.0004700461184651016
+   },
+   "31 resonance": {
+    "n_events": 34,
+    "sigma_fraction": 0.0008672811924796121
+   },
+   "32 1pi bkg (32)": {
+    "n_events": 866,
+    "sigma_fraction": 0.02417685430572786
+   },
+   "33 1pi bkg (33)": {
+    "n_events": 463,
+    "sigma_fraction": 0.017718122112377006
+   },
+   "34 DIS": {
+    "n_events": 9430,
+    "sigma_fraction": 0.632229366354782
+   },
+   "35 2p2h QE": {
+    "n_events": 4030,
+    "sigma_fraction": 0.018447983824210666
+   }
+  },
+  "hadronic_charge_sum_counts": {
+   "-1": 1,
+   "0": 135,
+   "1": 6872,
+   "2": 3310,
+   "3": 7459,
+   "4": 2639,
+   "5": 1445,
+   "6": 778,
+   "7": 429,
+   "8": 248,
+   "9": 134,
+   "10": 75,
+   "11": 40,
+   "12": 29,
+   "13": 12,
+   "14": 5,
+   "15": 1,
+   "16": 4,
+   "20": 1
+  },
+  "mean_enu_GeV_sigma_weighted": 6.633573659485318,
+  "max_enu_GeV": 19.97277,
+  "effective_N": 919.5145878223544
+ },
+ "sigma_H_over_C12_per_nucleon_cut_flux": 0.5620423319986751,
+ "time": {
+  "User time": "73.26",
+  "Percent of CPU": "92%",
+  "Elapsed (wall clock)": "1:27.77",
+  "Maximum resident set size": "1841760",
+  "Exit status": "0"
+ },
+ "checks": {
+  "completed": true,
+  "no_QE_no_2p2h": true,
+  "hadronic_charge_plus2_every_event (free-proton CC)": false,
+  "sigma_ratio_in_0.55_0.75 (NuWro probe 0.642, GENIE 0.66)": true
+ },
+ "files": {
+  "H": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/probe/task1000/FinalEvents.dat",
+  "C12": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task1/FinalEvents.dat"
+ },
+ "PROBE_VERDICT": "FAIL"
+}

@@ -1,0 +1,20 @@
+host nid004768 start 2026-10-20T08:21:42Z job 60029251 seed 7931345
+d00a622c0f732a6089aae9e4b7c0cceb500a1b3133a53142462f01dc7cefeb63  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu/gibuu_mefhc_numu.job
+2a71de2b42a8453369a83926abe72a726bb1918e25f3f914ca61d9b2b03ea9e0  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/setup_gibuu.sh
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_card.py
+c1da680447eb6ec98b9c80d0e63782f3517e5e778da8ec1c5e0538655f0d866c  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_probe.py
+bb807b7aa5bc10ddf4f291215339d4654386365422392986d1bd40d6364f62e2  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_probe.sh
+b44aa6f578f98e9b8077212dcdc72bdbbc1a7b4a66511af1b29a016ee0023dca  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/SEEDS.txt
+cf71eeb1ca407bff43437a2640b7097ce30a02a6ecec5de3784dad2d0a733c63  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task1/FinalEvents.dat
+{"task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/probe/task1000/task.job", "seed": 7931345, "differences_vs_production": {"input:numensembles": ["4000", "48000"], "neutrino_induced:include2p2hqe": ["T", "F"], "target:target_a": ["12", "1"], "target:target_z": ["6", "1"]}, "required": {"target:target_z": ["6", "1"], "target:target_a": ["12", "1"], "neutrino_induced:include2p2hqe": ["T", "F"], "input:numensembles": ["4000", "48000"]}, "pass": true}
+[setup_gibuu] GiBUU.x = /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/bin/GiBUU.x
+[setup_gibuu] input   = /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput2019
+[setup_gibuu] flux    = /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput2019/neutrino/MINERvA_MEflux.dat
+GIBUU rc=139 2026-10-20T08:21:46Z
+total 9
+drwxrwx--- 2 josephrb josephrb  4096 Oct 20 01:21 .
+drwxrwx--- 3 josephrb josephrb  4096 Oct 20 01:21 ..
+-rw-rw---- 1 josephrb josephrb     0 Oct 20 01:21 gibuu.log
+-rw-rw---- 1 josephrb josephrb 18248 Oct 20 01:21 task.job
+-rw-rw---- 1 josephrb josephrb  1295 Oct 20 01:21 time.txt
+STOP: no FinalEvents.dat
