@@ -70,8 +70,8 @@ def main() -> None:
     mc.style()
     # Layout (methods rewrite, fix round 1, REVIEW-1 P3): the nominal-truth row is not drawn; its maxima are in the
     # numbers file and the caption (the (d) nominal squares are Fig. 2(a)'s refinement arm).
-    fig, (a_ng, a_rw) = plt.subplots(1, 2, figsize=(7.0, 3.3), sharex=True, gridspec_kw={"wspace": 0.16})
-    fig.subplots_adjust(left=0.075, right=0.99, top=0.74, bottom=0.15)
+    fig, (a_ng, a_rw) = plt.subplots(1, 2, figsize=(7.0, 2.9), sharex=True, gridspec_kw={"wspace": 0.16})
+    fig.subplots_adjust(left=0.075, right=0.99, top=0.82, bottom=0.17)
     x = np.arange(mc.N_EW)
     for ax in (a_ng, a_rw):
         ax.axhline(0, color="k", lw=0.6)
@@ -101,11 +101,7 @@ def main() -> None:
                    fontsize=7.2, loc="left", pad=11)
     a_rw.set_title("(b) joint-test estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
                    fontsize=7.2, loc="left", pad=11)
-    fig.text(0.075, 0.995, "\n".join([
-        "Both panels: deterministic LightGBM OmniFold unfolding (5 iterations, 100 trees, 8 leaves);",
-        "pseudo-experiments include backgrounds. (b): assessment seeds, since used in development.",
-        r"$W$ bin 6 is $W\geq3$ GeV. Error bars: standard error of the mean over experiments."]),
-        ha="left", va="top", fontsize=6.8, color="0.2")
+    # (X5 Gm9: the in-plot estimator header moved to the article caption.)
     mc.save(fig, a.outdir, "m3_fig2_deformation")
     (a.outdir / "m3_fig2_deformation_numbers.json").write_text(json.dumps(nums, indent=1) + "\n")
 

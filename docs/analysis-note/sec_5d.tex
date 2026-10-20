@@ -360,6 +360,9 @@ claimed for any five-dimensional interval.
 % min 0.570 / 0.850; E_avail tilt a=0.2 51 / 42 futile, min 0.060 / 0.288; UCB < 0.66 / < 0.94; per-comparison
 % level 0.05/459) and :41-43; receipt state/s5c/tier_s/interim_400.json (aa574c17...): 153 functionals =
 % 109 J cells + 42 EW cells + the EW all-ones sum + the total integrated rate.
+% Methods-paper rewrite draft 5: the interval definition, moved here from the article (nd-unfolding/s5c_coverage.py:77-80).
+The intervals divide each estimate by $1+\beta$, where $\beta$ is the relative closure bias at
+nominal truth, and add the standard error of $\beta$ in quadrature to the statistical half-width.
 A quantity fails when the upper confidence bound on its coverage lies below
 0.66 for 68\% intervals or below 0.94 for 95\% intervals. The second truth, labelled the
 $\Eavail$ tilt in the records, multiplies the true signal by $1+0.2\,(\Eavail/\SI{100}{GeV}-\tfrac12)$

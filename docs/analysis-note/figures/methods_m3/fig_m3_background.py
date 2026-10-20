@@ -55,8 +55,8 @@ def main() -> None:
                  "value": [round(float(np.max(np.abs(ref[ew]))), 3), names[ew[int(np.argmax(np.abs(ref[ew])))]]]})
 
     mc.style()
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7.0, 4.6), gridspec_kw={"hspace": 0.62})
-    fig.subplots_adjust(left=0.075, right=0.985, top=0.875, bottom=0.085)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7.0, 4.2), gridspec_kw={"hspace": 0.62})
+    fig.subplots_adjust(left=0.075, right=0.985, top=0.93, bottom=0.09)
     lab_p = "purity-based subtraction (9 experiments)"
     lab_r = "unbinned negative-weight refinement (60 experiments)"
     x = np.arange(mc.N_EW)
@@ -84,9 +84,7 @@ def main() -> None:
     ax2.set_ylabel(r"(unfolded $-$ truth)/truth (%)")
     ax2.set_ylim(-2.5, 3.2)
     ax2.text(0.0, 1.04, "(b) joint-cell integrals and total", transform=ax2.transAxes, fontsize=8)
-    fig.text(0.075, 0.99, "Estimator in both arms: deterministic LightGBM OmniFold (5 iterations, "
-             "100 trees, 8 leaves).\nNominal truth; pseudo-experiments include backgrounds.", ha="left", va="top",
-             fontsize=7.0, color="0.2")
+    # (X5 Gm9: the in-plot estimator header moved to the article caption.)
     mc.save(fig, a.outdir, "m3_fig1_background")
     (a.outdir / "m3_fig1_background_numbers.json").write_text(json.dumps(nums, indent=1) + "\n")
 

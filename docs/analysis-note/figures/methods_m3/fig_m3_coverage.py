@@ -72,8 +72,8 @@ def main() -> None:
     mc.style()
     # Layout (methods rewrite, fix round 1, REVIEW-1 P4 and finding 14): only the E_avail-tilt truth is drawn (the
     # nominal-truth counts stay in the numbers file and the caption); ticks are integral indices, not internal names.
-    fig, ax = plt.subplots(1, 1, figsize=(7.0, 3.0))
-    fig.subplots_adjust(left=0.075, right=0.985, top=0.66, bottom=0.17)
+    fig, ax = plt.subplots(1, 1, figsize=(7.0, 2.8))
+    fig.subplots_adjust(left=0.075, right=0.985, top=0.74, bottom=0.18)
     x = np.arange(153)
     sty = {"68": ("o", mc.BLUE, -0.18), "95": ("s", mc.RED, 0.18)}
     t = "eavail_tilt"
@@ -104,15 +104,9 @@ def main() -> None:
     ax.set_xticklabels([names[order[k]].lstrip("EWJ") if k < 152 else "total" for k in ticks], fontsize=5.8, rotation=0)
     ax.set_xlim(-1, 153)
     ax.set_xlabel("cell index (projection cell, or coarse joint cell in the $3^5$ grid), then the total", labelpad=2)
-    fig.text(0.075, 0.995, "\n".join([
-        "Estimator: deterministic LightGBM OmniFold (5 iterations, 100 trees, 8 leaves)",
-        "with purity-based background subtraction; statistical intervals corrected",
-        "for the nominal-truth bias; 400 pseudo-experiments.",
-        "Solid lines: nominal 0.68 / 0.95. Dashed: predeclared gate 0.66 / 0.94.",
-        r"Bars: one-sided Clopper–Pearson bounds, each at $\alpha=0.05/459$."]),
-        ha="left", va="top", fontsize=6.6, color="0.2")
+    # (X5 Gm9: the in-plot estimator header moved to the article caption.)
     h, lab = ax.get_legend_handles_labels()
-    fig.legend(h, lab, loc="upper right", bbox_to_anchor=(0.99, 0.995), ncol=1, frameon=False, fontsize=6.6,
+    fig.legend(h, lab, loc="upper center", bbox_to_anchor=(0.53, 0.995), ncol=2, frameon=False, fontsize=6.6,
                handletextpad=0.3)
     mc.save(fig, a.outdir, "m3_fig3_coverage")
     (a.outdir / "m3_fig3_coverage_numbers.json").write_text(json.dumps(nums, indent=1) + "\n")
