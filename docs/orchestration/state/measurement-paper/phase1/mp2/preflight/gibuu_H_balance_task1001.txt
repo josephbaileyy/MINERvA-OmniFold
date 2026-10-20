@@ -1,0 +1,10 @@
+prod 2 n 8364 pT imbalance MeV q50/q90 [0. 0.] frac>1MeV 0.0 pz-Enu q50 0.0 E-Enu q50 0.0
+prod 19 n 38 pT imbalance MeV q50/q90 [0. 0.] frac>1MeV 0.0 pz-Enu q50 -0.0 E-Enu q50 0.0
+prod 21 n 1676 pT imbalance MeV q50/q90 [0. 0.] frac>1MeV 0.0 pz-Enu q50 0.0 E-Enu q50 0.0
+prod 26 n 33 pT imbalance MeV q50/q90 [0. 0.] frac>1MeV 0.0 pz-Enu q50 0.0 E-Enu q50 0.0
+prod 30 n 39 pT imbalance MeV q50/q90 [0. 0.] frac>1MeV 0.0 pz-Enu q50 0.0 E-Enu q50 0.0
+prod 31 n 157 pT imbalance MeV q50/q90 [0. 0.] frac>1MeV 0.0 pz-Enu q50 0.0 E-Enu q50 0.0
+prod 34 n 8773 pT imbalance MeV q50/q90 [ 30.747 164.998] frac>1MeV 1.0 pz-Enu q50 -34.54 E-Enu q50 -44.64
+ids in bad events (array([  1,  32,  33,  53,  56,  57, 101, 110, 111, 114, 118, 902]), array([16922,   233,   315,     6,    70,    11, 20289,   725,    59,
+          10,     3,  8777]))
+ids in good (array([  1, 101, 902]), array([20606, 11976, 10303]))

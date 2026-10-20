@@ -8,8 +8,9 @@ monotone piecewise-linear interpolant:
   1. sort the (pc, q0) pairs by pc;
   2. split them greedily into maximal runs that lie on one straight line (each point within 1e-9 relative of the
      line through the run's first point and its first distinct successor);
-  3. fit each run's line by least squares; the knots are the intersections of consecutive lines, which must fall
-     between the two runs; single-point runs are refused (no line can be determined).
+  3. fit each run's line by least squares; the knots are the intersections of consecutive lines when they fall
+     between the two runs, and otherwise (near-parallel lines) the gap's midpoint on the mean of the two lines;
+     single-point runs are refused (no line can be determined).
 The table is the knot list (x, F(x)), from pc = 0 to the largest training pc, and F is extended beyond both ends with
 the end segments' slopes. G0: max |F(pc) - q0| / q0 <= 1e-4 over the HELD-OUT file's selected-like events with
 q0 > 0 (a different MC file of the same playlist). Descriptive: the same on all held-out events with pc, q0 > 0.
@@ -87,10 +88,17 @@ def build_table(P: np.ndarray, Q: np.ndarray) -> tuple[np.ndarray, np.ndarray, l
         if m1 == m2:
             raise ValueError(f"consecutive runs with equal slope near pc = {last1:.6g}")
         xk = (b2 - b1) / (m1 - m2)
-        if not (last1 - 1e-9 * last1 <= xk <= first2 + 1e-9 * first2):
-            raise ValueError(f"knot {xk:.6g} outside its gap [{last1:.6g}, {first2:.6g}]")
+        if last1 - 1e-9 * last1 <= xk <= first2 + 1e-9 * first2:
+            yk = m1 * xk + b1
+        else:
+            # Near-parallel neighbours (e.g. slopes 1.530447 / 1.530537): the intersection is ill-conditioned and
+            # falls outside the gap between the runs. Place the knot at the gap's midpoint, on the mean of the two
+            # lines; both runs then stay within |m1 - m2| * gap of their own lines (G0 measures the effect).
+            xk = 0.5 * (last1 + first2)
+            yk = 0.5 * ((m1 * xk + b1) + (m2 * xk + b2))
+            info[len(xs) - 1]["knot_after_is_gap_midpoint"] = True
         xs.append(xk)
-        ys.append(m1 * xk + b1)
+        ys.append(yk)
     xs.append(lines[-1][3])
     ys.append(lines[-1][0] * lines[-1][3] + lines[-1][1])
     xs, ys = np.array(xs), np.array(ys)
