@@ -63,18 +63,20 @@ MINERvA open data}
 % a median over cells).
 We study the performance and limitations of OmniFold unfolding on MINERvA
 open data for medium-energy $\nu_{\mu}$ charged-current inclusive
-interactions.  It reproduces the published muon-kinematic double-differential
-cross section, with the integral within about one percent.
+interactions.  It reproduces the published muon-kinematic cross section's integral
+within about one percent, with a correlated shape difference.
+% X5 G2 (M8): "reproduces the published ... double-differential cross section" narrowed to the integral.
 Extended to five simultaneous observables (adding available energy,
 three-momentum transfer, and hadronic invariant mass), it yields central values
-only: normalizations agree with lower-dimensional results, but
+only: normalizations match lower-dimensional ones, but
 pseudo-experiments reveal background-subtraction and regularization biases,
 statistical intervals miscover at the tested truths, and an envelope over five
 tested truth deformations, a median of about 10--13\% per cell, keeps the
 definitions studied from meeting our predefined 10\% precision target.
 % SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
-Tests of hybrid null hypotheses for five generator predictions, calibrated by
-rerunning the analysis chain, all reject at the 5\% familywise level.
+% NuWro-CH pending (X5 Gem3, class J: MP3-B, NuWro on CH, docs/orchestration/state/measurement-paper/phase1/mp3b; wording is Joseph's)
+Tests of hybrid null hypotheses for five generators, calibrated within the
+implemented simulation model, all reject at the 5\% familywise level.
 They assume a nuisance model without calorimetric recoil-response uncertainty
 and unshown convergence of the hypotheses' fine grid, are not physical
 generator exclusions, and show no gain over matched coarse projections.
@@ -140,7 +142,8 @@ condition~(i); regenerate Figs.~\ref{fig:joint} and~\ref{fig:joint-nulls} and
 the one-dimensional generator projections; and recompute the numbers
 quoted from Fig.~\ref{fig:joint} and in Sec.~\ref{sec:central}.
 % Methods rewrite fix round 1 (REVIEW-1 P1): the generator-context figure left the article (the note has fig:eavailWband); the release
-% still draws it (publication/release/figs/make_figs.py fig3) and checks the Sec. VII ratio (fig_numbers.py).  Rerunning the packaged files from an empty
+% still draws it (publication/release/figs/make_figs.py fig3) and checks the Sec. VII ratio (fig_numbers.py).
+Rerunning the packaged files from an empty
 directory reproduces every value recorded in the package and every figure
 number that it checks.
 % plain-language pass, review fix N6 (DECISION-20261018-joseph-plain-language-pass)

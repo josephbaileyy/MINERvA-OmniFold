@@ -352,7 +352,8 @@ synthesis; the precision-measurement objective remains unmet.
 An end-to-end independent-truth test assessed statistical intervals of a
 deterministic five-dimensional estimator variant with nominal-truth bias
 correction (1,200 pseudo-experiments over three truths). It failed its predeclared
-futility criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist coverage is
+futility criterion at the nominal truth and under a 10\% reduction of the signal rate with a weak
+$\Eavail$ slope (below), so no frequentist coverage is
 claimed for any five-dimensional interval.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A, note home for the paper's
 % Sec. IV C numbers. Source: OUTCOME-20260925-s5c-tier-s-futility-fail.md:30-36 (table: nominal 0 / 2 futile,
@@ -360,8 +361,13 @@ claimed for any five-dimensional interval.
 % level 0.05/459) and :41-43; receipt state/s5c/tier_s/interim_400.json (aa574c17...): 153 functionals =
 % 109 J cells + 42 EW cells + the EW all-ones sum + the total integrated rate.
 A quantity fails when the upper confidence bound on its coverage lies below
-0.66 for 68\% intervals or below 0.94 for 95\% intervals. Under the $\Eavail$
-tilt, 51 of the 153 reported cell and projection integrals have 68\% coverage
+0.66 for 68\% intervals or below 0.94 for 95\% intervals. The second truth, labelled the
+$\Eavail$ tilt in the records, multiplies the true signal by $1+0.2\,(\Eavail/\SI{100}{GeV}-\tfrac12)$
+without renormalization, with the background unchanged; below $\Eavail=\SI{3}{GeV}$ the weight is
+0.900--0.906, so it is in effect a \SI{10}{\percent} lower signal rate with a weak $\Eavail$ slope.
+% Methods-paper rewrite draft 4 (X5 G5b, verified by the director): nd-unfolding/s5c_pseudo.py:67-70 (weight),
+% :125-128 (applied to the pseudo-data signal, not renormalized; background unchanged); KNOWN_ISSUES row 98.
+Under that change, 51 of the 153 reported cell and projection integrals have 68\% coverage
 confidently below nominal, with coverage as low as 0.060, and 42 fail at
 95\%. At nominal truth two fail at 95\%, the lowest at 0.850.
 
