@@ -1,0 +1,39 @@
+{
+ "mode": "species",
+ "base": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/zero.root",
+ "shift": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/xtalk_p1_fprop_prorata.root",
+ "species": "xtalk",
+ "sign": 1,
+ "delta": 0.2,
+ "q0_convention": "fprop",
+ "fuzz_convention": "prorata",
+ "stats": {
+  "mc_background": {
+   "passing_rows": 52626,
+   "frac_rows_eavail_moved": 0.9932922889826321,
+   "eavail_wrong_sign": 4,
+   "eavail_rows_over_delta_E": 0,
+   "eavail_max_dE_over_deltaE": 1.0000000000000009,
+   "q0_rows_checked": 50954,
+   "q0_wrong_sign": 0,
+   "q0_rows_over_delta_q0": 0,
+   "q0_max_dq0_over_deltaq0": 1.00000000000003
+  },
+  "mc_signal_reco": {
+   "passing_rows": 1736833,
+   "frac_rows_eavail_moved": 0.9926003248441272,
+   "eavail_wrong_sign": 14,
+   "eavail_rows_over_delta_E": 0,
+   "eavail_max_dE_over_deltaE": 1.0000000000000018,
+   "q0_rows_checked": 1711349,
+   "q0_wrong_sign": 0,
+   "q0_rows_over_delta_q0": 0,
+   "q0_max_dq0_over_deltaq0": 1.0000000000010139
+  }
+ },
+ "failures": [
+  "mc_background: 4 rows with E_avail moved against the shift",
+  "mc_signal_reco: 14 rows with E_avail moved against the shift"
+ ],
+ "verdict": "FAIL"
+}

@@ -4,3 +4,4 @@
 87	OWNER	test-tmpdir-leaks lane (recorded 2026-10-07); test-only remedy first, production change only with its sha256 pins re-issued; docs/known-issues/ISSUE-87-guarded-run-tool-directories-outlive-exec.md
 97	OWNER	the measurement session (recorded 2026-10-19); remedy MP3-A/MP3-B under docs/orchestration/state/measurement-paper/BINDING-PHASE1-20261019.md; needs no decision
 98	OWNER	the paper-tighten lane (recorded 2026-10-20); remedy is the methods-paper and note text correction on branch stageF/methods-rewrite-20261019; needs no decision
+99	OWNER	the paper-tighten lane (recorded 2026-10-20); W2 conclusions re-checked and hold; remedy is a latest-cycle reader for new uses; needs no decision

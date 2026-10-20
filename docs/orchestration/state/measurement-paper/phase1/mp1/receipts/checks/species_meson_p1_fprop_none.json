@@ -1,0 +1,36 @@
+{
+ "mode": "species",
+ "base": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/zero.root",
+ "shift": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/evloop/meson_p1_fprop_none.root",
+ "species": "meson",
+ "sign": 1,
+ "delta": 0.05,
+ "q0_convention": "fprop",
+ "fuzz_convention": "none",
+ "stats": {
+  "mc_background": {
+   "passing_rows": 52626,
+   "frac_rows_eavail_moved": 0.8174096454224148,
+   "eavail_wrong_sign": 0,
+   "eavail_rows_over_delta_E": 3300,
+   "eavail_max_dE_over_deltaE": 6.768836392350216,
+   "q0_rows_checked": 50954,
+   "q0_wrong_sign": 0,
+   "q0_rows_over_delta_q0": 85,
+   "q0_max_dq0_over_deltaq0": 1.0534173505054643
+  },
+  "mc_signal_reco": {
+   "passing_rows": 1736833,
+   "frac_rows_eavail_moved": 0.6229309323348877,
+   "eavail_wrong_sign": 0,
+   "eavail_rows_over_delta_E": 90122,
+   "eavail_max_dE_over_deltaE": 29.455298637630015,
+   "q0_rows_checked": 1711349,
+   "q0_wrong_sign": 0,
+   "q0_rows_over_delta_q0": 5600,
+   "q0_max_dq0_over_deltaq0": 1.0656015432378034
+  }
+ },
+ "failures": [],
+ "verdict": "PASS"
+}

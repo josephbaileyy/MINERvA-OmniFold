@@ -1,0 +1,50 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov '<below>'
+# date -u; hostname; C=/pscratch/sd/j/josephrb/MINERvA-OmniFold; S=$C/MINERvA101/MINERvA-101-Cross-Section; echo "canonical HEAD $(git -C $C rev-parse HEAD)"; for f in runEventLoopOmniFold.cpp event/CVUniverse.h cuts/MaxPtMu.h CMakeLists.txt cuts/MaxPzMu.h systematics/Systematics.h; do echo "canon $(git -C $C hash-object $S/$f) $(sha256sum $S/$f | cut -d" " -f1) $f"; done; N=/pscratch/sd/j/josephrb/w2-recoil-20261006; echo "W2 repo HEAD $(git -C $N/repo rev-parse HEAD)"; for f in runEventLoopOmniFold.cpp event/CVUniverse.h event/RecoilResponseUniverse.h; do echo "w2 src_mod $(git -C $C hash-object $N/build/src_mod/$f) $f"; done; md5sum $N/build/bld_base/runEventLoopOmniFold $N/build/bld_mod/runEventLoopOmniFold; echo "w2 repo compare_omnifiles $(git -C $C hash-object $N/repo/publication/w2/compare_omnifiles.py)"; ls -la --time-style=full-iso $C/MINERvA101/opt/lib/*.so | awk "{print \$6, \$7, \$9}"; sha256sum $C/MINERvA101/opt/lib/*.so; sha256sum $C/2d-unfolding/playlist_manifests/1A_Data.txt $C/2d-unfolding/playlist_manifests/1A_MC.txt; ls -la /pscratch/sd/j/josephrb/measurement-paper/phase1/; squeue -u josephrb -h -o "%i %j %T" | head
+Mon Oct 19 09:59:48 PM UTC 2026
+login34
+canonical HEAD 32e403b84e9e8f9d9bc435028749f896653c7a43
+canon b7e1edbce21545f1f824fe706047bd0f943a60ea 57792e42fe3f5a663016f94b91a5631fc50349135c92b35a08eaefcb85812be3 runEventLoopOmniFold.cpp
+canon 04906da58fe1bd012661656b1148758d8ab4d536 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d event/CVUniverse.h
+canon 91e7fce42f57a545b86755c4c8fd98b416b16575 ae4adeb3a5ff0e2f8cab46a4dd9dc40d7b42da6b936311d776fdb7612e2d73ca cuts/MaxPtMu.h
+canon 4401b2d97a05bd77fbff6bee49efab48eef0b304 d77791ad0e866704d70ab5cf3db0c0c3c7a5aed0218c144c20f86081ad6814b0 CMakeLists.txt
+canon ecb5e53e61c272c3c153ad29cc68992d00ebe9c3 c50f6b5ae4e95e85de3f7a50b704232ead767231c1604951a597e9faafb3e56c cuts/MaxPzMu.h
+canon 055ea5f9ee9508feb1c40c27eb197155c18272a1 1bdfa4f028e7e5f3d4e39a60d2cadc0c05b366fd12ff345d5183177a9b555086 systematics/Systematics.h
+W2 repo HEAD 049eff95e1511769d3c54556daa076b62df47df1
+w2 src_mod 1ad3b7f922de0e6b653ecee666b9d20e2e0b1b50 runEventLoopOmniFold.cpp
+w2 src_mod 04906da58fe1bd012661656b1148758d8ab4d536 event/CVUniverse.h
+w2 src_mod 62d254c659bca17dccd170772eaa23e51de3ce0a event/RecoilResponseUniverse.h
+74c0717f779309f4b77e9ce73afe706c  /pscratch/sd/j/josephrb/w2-recoil-20261006/build/bld_base/runEventLoopOmniFold
+f3e9c97b82456d3fc7e898ea1d0579ee  /pscratch/sd/j/josephrb/w2-recoil-20261006/build/bld_mod/runEventLoopOmniFold
+w2 repo compare_omnifiles 3a8eeb0e54be47deda35bbecb624683e45ef8779
+2026-05-14 23:04:04.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libGENIEXSecExtract.so
+2026-05-14 23:05:00.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMATDict.so
+2026-05-14 23:05:39.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvADict.so
+2026-05-14 23:05:38.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvA.so
+2026-05-14 23:04:53.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so
+2026-05-14 23:06:15.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libUnfoldUtilsDict.so
+2026-05-14 23:06:03.000000000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libUnfoldUtils.so
+1fa3d24765a8d601eb2a9d11eb0c8ee0bb00aeacb354509386b79051a2dea795  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libGENIEXSecExtract.so
+5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMATDict.so
+db29dd6edce3dcd45603f8cd6266ed018b809d62ae5123221e557a5f039de8ea  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvADict.so
+db29dd6edce3dcd45603f8cd6266ed018b809d62ae5123221e557a5f039de8ea  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvA.so
+5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so
+1f70c14acb1a1ab239272936248f3054d17148c2859fe0869d96457910702305  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libUnfoldUtilsDict.so
+1f70c14acb1a1ab239272936248f3054d17148c2859fe0869d96457910702305  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libUnfoldUtils.so
+b74d89654a4fc0400e100c3f6d30d6b87082e3fba0444b7f2dcfda8682488495  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests/1A_Data.txt
+4100dca453de1beef0213a0feac1fe4faa77d769f2dd5f36f4e11c6cea4894f8  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests/1A_MC.txt
+total 16
+drwxrwx--- 4 josephrb josephrb 4096 Oct 19 10:34 .
+drwxrwx--- 4 josephrb josephrb 4096 Oct 19 10:25 ..
+drwxrwx--- 8 josephrb josephrb 4096 Oct 19 10:35 mp3a
+drwxrwx--- 2 josephrb josephrb 4096 Oct 19 10:25 receipts
+60017074 sf1-GENIE_2_12_10_MEC-b PENDING
+60017071 sf1-GENIE_2_12_10_MEC-a PENDING
+60017070 sf1-GENIE_2_12_10_CV-b PENDING
+60017069 sf1-GENIE_2_12_10_CV-a PENDING
+60017068 sf1-NuWro_21_09-b PENDING
+60017066 sf1-NuWro_21_09-a PENDING
+worktree b7e1edbce21545f1f824fe706047bd0f943a60ea runEventLoopOmniFold.cpp
+worktree 04906da58fe1bd012661656b1148758d8ab4d536 event/CVUniverse.h
+worktree 91e7fce42f57a545b86755c4c8fd98b416b16575 cuts/MaxPtMu.h
+worktree 4401b2d97a05bd77fbff6bee49efab48eef0b304 CMakeLists.txt
+worktree compare_omnifiles 3a8eeb0e54be47deda35bbecb624683e45ef8779
