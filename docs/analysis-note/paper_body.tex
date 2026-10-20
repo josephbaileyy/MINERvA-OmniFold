@@ -9,8 +9,8 @@
 % 2026-10-19: restructured as the methods paper (Stage F, methods rewrite), following
 % docs/orchestration/state/2d-closeout/stageF/methods/OUTLINE-DECISION.md sec. 2 (sections I-IX) and sec. 3.
 % The writer's ledger of removed, moved and collapsed sentences, the new numbers and the claim changes (M8)
-% is the methods-rewrite WRITER-REPORT. Markers: "% SF-1 pending" (wording depends on the SF-1 study,
-% stageF/methods/SF1-SPEC.md); "% M5 for Joseph".
+% is the methods-rewrite WRITER-REPORT. Markers: "% margins pending"; "% M5 for Joseph". The "% SF-1 pending" markers
+% were resolved on 2026-10-20 from stageF/methods/SF1-REPORT.md (SF-1 PASS).
 % ====================================================================
 
 % Table cells: l columns with fixed-width \parbox cells, not p{} columns (RevTeX 4.2f replaces the array
@@ -100,7 +100,7 @@ over the stated nuisance priors; it is not guaranteed at each fixed value of
 the nuisance parameters.  The detector model has the implemented variations
 but no calorimetric recoil-response uncertainty, and two of the predictions
 are for a carbon target, the data for CH.
-% SF-1 pending
+% SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
 Under the assumptions of
 Sec.~\ref{sec:calibration}, the familywise error rate of the ten decisions is
 at most $0.9\alpha$.  The rejections apply to these hypotheses under this
@@ -148,7 +148,7 @@ no measurement uncertainty.
     \pcell{0.20\textwidth}{(e)} &
     \pcell{0.30\textwidth}{deformation-envelope medians 9.6--13.4\% (Table~\ref{tab:reporting})} &
     \pcell{0.26\textwidth}{the definitions studied miss the target} \\
-    % SF-1 pending
+    % SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
     \pcell{0.18\textwidth}{Generator tests} &
     \pcell{0.20\textwidth}{(e)} &
     \pcell{0.30\textwidth}{ten rejections, calibrated through the full chain (Table~\ref{tab:joint})} &
@@ -1361,9 +1361,10 @@ independently of their outcomes; they were lost to time limits on slow nodes,
 which has not been shown to be independent of the outcome, although none of
 them reaches the observed statistic when rerun (Sec.~\ref{sec:joint-results}).
 % REVIEW-1 note 23: the lost-seed recovery cited (RECORD-20261006-s5p-lost-seed-recovery-resolution.md).
-% SF-1 pending
+% SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, :30-35): the first assumption's dependence on the simulation size was checked.
 The first assumption is the calibration's fidelity, discussed under conditions
-(i) and (iv) below.  The calibrated size is averaged over the nuisance priors: at a
+(i) and (iv) below; its dependence on the unfolding-simulation size has been
+checked (condition (iv)).  The calibrated size is averaged over the nuisance priors: at a
 fixed true value of the nuisance parameters it can exceed $\alpha$.
 
 % Methods rewrite: "An independent recomputation ... agrees" kept; the frozen design paragraph kept.
@@ -1456,11 +1457,24 @@ analysis's \jtModelBands-band set, with negative weights of two bands clipped.
 (iv) The pseudo-experiments use half of the simulation and the data all of it;
 the resulting shift, at most about 0.07 null standard deviations but not
 always consistent with zero, enters as the upper-bound shift described above.
-% SF-1 pending
-This is a measurement of the mean shift only, in a process without noise or
-nuisance draws; its effect on the width and tails of the null distributions
-has not been measured.  Every pseudo-experiment resamples the same simulated
-events, so the null distributions are conditional on that simulation.
+% SF-1 resolved: docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, :23-35 (all 600 quarter products; |Delta| <= 0.074 null SD, s 0.975-1.010, P95/P99
+% ratios 0.987-1.008, every interval containing 0 or 1; mean paired shift 0.006-0.034 null SD, resolved; NuWro shape
+% k = 2/1751 after the most adverse adjustment, GENIE CV and MEC shape k = 0; all ten decisions rejected); method
+% SF1-SPEC.md sec. 2-4 (first 200 seeds per null, quarter of the simulation, extrapolation to full simulation
+% conservative by about 2 under a 1/n law); NOT CITABLE FOR the data process (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:9).
+That shift was measured for the mean only, in a process without noise or
+nuisance draws.  A separate check reran the first 200 calibration
+pseudo-experiments of the NuWro, GENIE CV, and GENIE + MEC nulls with a quarter
+of the simulation.  It resolved no change of the null distributions' location,
+width, or tails between half and quarter simulation (medians within 0.074 null
+standard deviations, widths within 0.975--1.010 of the half-simulation
+values), only a mean paired shift of 0.006--0.034 null standard deviations.
+Under an assumed extrapolation from half to full simulation that is
+conservative by design, all three shape decisions, and so all ten, remain
+rejected.  The check concerns the
+simulation size only; it is not a test of the data process.  Every
+pseudo-experiment resamples the same simulated events, so the null
+distributions are conditional on that simulation.
 % margins pending
 The decisions' exposure to the fidelity of the calibration is concentrated in a
 few shape tests.
@@ -1489,7 +1503,7 @@ the data, which would require an independent simulation sample.
 \subsection{Results}
 \label{sec:joint-results}
 
-% SF-1 pending
+% SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
 Table~\ref{tab:joint} lists the ten decisions.  Every test is rejected at
 familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has
 $k=1$.
@@ -1517,8 +1531,7 @@ prior, which the calibration reproduces.
   \includegraphics[width=0.9\textwidth]{paper_joint_nulls}
   \caption{Calibrated null distributions of the total (top) and shape (bottom)
   statistics for each prediction, for the shifted null with the largest null
-  median among those used in the decisions (the legend's ``most conservative
-  claim variant''), on a logarithmic axis.  Each shifted null adds the same fixed vector
+  median among those used in the decisions, on a logarithmic axis.  Each shifted null adds the same fixed vector
   $s$ to every null draw before the statistic is formed, with
   $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$
   (Sec.~\ref{sec:calibration}); the $p$ value used for the decision is the
@@ -1526,6 +1539,10 @@ prior, which the calibration reproduces.
   % plain-language pass, review fix R11, N7 (DECISION-20261018-joseph-plain-language-pass)
   Vertical lines mark the observed statistics; $k/B$ is as
   in Table~\ref{tab:joint}.}
+  % Figure regenerated 2026-10-20 with the legend string only changed: figures/plot_joint_null_distributions_physlabels.py
+  % (sha256 bb1d7389...) on the frozen extract inference_sufficient.npz (7bd019c6..., RECEIPT-20261006-inference-
+  % sufficient-frozen.json), Slurm job 60029158 (debug, 65 s, 0.018 CPU node-h). The unmodified producer, run in the same
+  % job, gives a byte-identical numeric summary (sha256 fff8c09e...); k/B and the observed statistics equal Table IX.
   \label{fig:joint-nulls}
 \end{figure*}
 
@@ -1589,7 +1606,7 @@ information.
 It uses the same calibration ensembles,
 with the recovered pseudo-experiments included, and its $p$ values were
 reproduced independently~\cite{JointTestProjections2026}.
-% SF-1 pending
+% SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
 The rejections are global
 assessments of the hybrid null hypotheses built from the five specified
 generator versions under the stated nuisance model;
@@ -1692,11 +1709,12 @@ a covariance-based generator significance.
 % REVIEW-1 E6: the restatement of Sec. VIII F cut (the ten rejections, "they provide no new measurement uncertainty",
 % the coarse projections; each stays in Sec. VIII F and the scope statement). REVIEW-1 finding 4: the familywise bound
 % moved here from "What worked" and conditioned on the calibration's exactness (M2-FWER-RECORD.md:11-14, :58-60) (M8).
-% SF-1 pending
+% SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, :9): the simulation-size dependence checked; the data process not tested.
 The stopping rule keeps the familywise error at or below $0.9\alpha$ provided
-the calibration is exact; that exactness is the untested part.  The effect of
-the simulation size on the width and tails of the null distributions, and the
-rejection rate of null pseudo-data processed like the data, have not been
+the calibration is exact.  Of that exactness, the dependence on the
+unfolding-simulation size has been checked, with no resolved change of the
+null distributions; the rejection rate of null pseudo-data processed like the
+data, which would need an independent simulation sample, has not been
 measured.  The physical interpretation of the tests depends on the
 simulation's calorimetric recoil response and on the assumed convergence below
 the fine grid; extending it would require a response band drawn through the
