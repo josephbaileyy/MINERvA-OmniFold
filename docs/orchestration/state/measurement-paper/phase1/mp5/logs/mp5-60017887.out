@@ -1,0 +1,48 @@
+host nid004080 start 2026-10-20T11:29:56Z python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+3.11.14 1.26.4 1.16.3
+module __main__ /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/mp5_tune.py
+module gen5d_flux_reweight /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/gen5d_flux_reweight.py
+module event_identity /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/event_identity.py
+module s5p_stage1_inspect /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/s5p_stage1_inspect.py
+module xsec_nd /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/xsec_nd.py
+module gen_to_xsec5d /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py
+module unfold_2d_omnifold_unbinned /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/2d-unfolding/unfold_2d_omnifold_unbinned.py
+T0 {'pass': True, 'g2_match_receipts': {'1A': True, '1B': True, '1C': True, '1D': True, '1E': True, '1F': True, '1G': True, '1L': True, '1M': True, '1N': True, '1O': True, '1P': True}}
+1A {"n_g2_rows": 4073230, "n_g2_in_kinematic_ps": 2682267, "n_mad_files": 41, "n_mad_truth_entries": 22191105, "n_mad_prefiltered": 5789571, "n_mad_dup_keys": 0, "wall_s": 41.512420654296875}
+1B {"n_g2_rows": 1095679, "n_g2_in_kinematic_ps": 721082, "n_mad_files": 11, "n_mad_truth_entries": 6044672, "n_mad_prefiltered": 1558098, "n_mad_dup_keys": 0, "wall_s": 4.088614463806152}
+1C {"n_g2_rows": 2090982, "n_g2_in_kinematic_ps": 1376832, "n_mad_files": 21, "n_mad_truth_entries": 11545183, "n_mad_prefiltered": 2972160, "n_mad_dup_keys": 0, "wall_s": 6.206456422805786}
+1D {"n_g2_rows": 6081602, "n_g2_in_kinematic_ps": 4003632, "n_mad_files": 61, "n_mad_truth_entries": 33578119, "n_mad_prefiltered": 8640352, "n_mad_dup_keys": 0, "wall_s": 17.70126438140869}
+1E {"n_g2_rows": 5090774, "n_g2_in_kinematic_ps": 3350021, "n_mad_files": 51, "n_mad_truth_entries": 28117140, "n_mad_prefiltered": 7236682, "n_mad_dup_keys": 289, "wall_s": 14.38222336769104}
+1F {"n_g2_rows": 7079651, "n_g2_in_kinematic_ps": 4660210, "n_mad_files": 71, "n_mad_truth_entries": 39082827, "n_mad_prefiltered": 10063190, "n_mad_dup_keys": 0, "wall_s": 19.452959775924683}
+1G {"n_g2_rows": 5960127, "n_g2_in_kinematic_ps": 3922748, "n_mad_files": 61, "n_mad_truth_entries": 32462689, "n_mad_prefiltered": 8472061, "n_mad_dup_keys": 0, "wall_s": 18.011066675186157}
+1L {"n_g2_rows": 583219, "n_g2_in_kinematic_ps": 383848, "n_mad_files": 6, "n_mad_truth_entries": 3269023, "n_mad_prefiltered": 828129, "n_mad_dup_keys": 0, "wall_s": 2.7412524223327637}
+1M {"n_g2_rows": 8991233, "n_g2_in_kinematic_ps": 5917406, "n_mad_files": 98, "n_mad_truth_entries": 50435976, "n_mad_prefiltered": 12781955, "n_mad_dup_keys": 0, "wall_s": 25.904277086257935}
+1N {"n_g2_rows": 5189689, "n_g2_in_kinematic_ps": 3416266, "n_mad_files": 31, "n_mad_truth_entries": 29114612, "n_mad_prefiltered": 7378984, "n_mad_dup_keys": 0, "wall_s": 15.260666608810425}
+1O {"n_g2_rows": 1584425, "n_g2_in_kinematic_ps": 1042088, "n_mad_files": 16, "n_mad_truth_entries": 8884632, "n_mad_prefiltered": 2250593, "n_mad_dup_keys": 0, "wall_s": 4.9169721603393555}
+1P {"n_g2_rows": 2085497, "n_g2_in_kinematic_ps": 1372703, "n_mad_files": 21, "n_mad_truth_entries": 11842905, "n_mad_prefiltered": 2963496, "n_mad_dup_keys": 0, "wall_s": 5.962653160095215}
+T2 {"n_g2_rows": 49906108, "n_matched": 49906108, "n_unmatched": 0, "n_mad_dup_keys": 289, "n_mad_dup_content_differs": 0, "mu_true_maxabs_MeV": 2.9103830456733704e-11, "mu_true_E_maxabs_MeV": 0.0, "Enu_branch_vs_vec_maxabs_MeV": 0.0, "nu_vec_mass_maxabs_MeV": 4.3655745685100555e-11, "pass": true}
+T1 {"n_5d_rows": 32849103, "n_g2_ps_rows": 32849103, "order": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P"], "unplaced": [], "rows_matched_bitwise": 32849103, "pass": true}
+T3 {"denom_bitwise": true, "denom_max_rel": 0.0, "denom_cells_zero_mismatch": 0, "restated_extraction_with_frozen_denom_bitwise": [true, true], "extraction_with_beam_axis_content_bitwise": [true, true], "extraction_max_rel": 0.0, "pass": true}
+T4 {"pt_maxabs_GeV": 0.0, "pz_maxabs_GeV": 0.0, "W_maxabs_GeV": 0.0, "q3_maxabs_GeV": 0.0, "W_nan_pattern_differs": 0, "Tb_rec_vs_stored_J_max_rel": 6.389941646279768e-14, "Tb_rec_vs_stored_fine_max_abs_rel_to_total": 0.0, "pass": true}
+TUNE_CONTROLS {'T0_input_digests': True, 'T2_join': True, 'T1_alignment': True, 'T3_mnvtune_truth': True, 'T4_recompute': True} exit 0
+TUNE rc=0 2026-10-20T11:35:53Z
+module __main__ /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/mp5_genie.py
+module gen5d_flux_reweight /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/gen5d_flux_reweight.py
+module gen5d_flux_supplement /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/gen5d_flux_supplement.py
+module s5p_stage1_inspect /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/s5p_stage1_inspect.py
+module gen_to_xsec5d /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py
+module unfold_3d_omnifold_unbinned /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/unfold_3d_omnifold_unbinned.py
+module unfold_2d_omnifold_unbinned /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/2d-unfolding/unfold_2d_omnifold_unbinned.py
+module gen_to_xsec_eavailW /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec_eavailW.py
+G1 {"events_main_bitwise": {"pt": true, "pz": true, "eavail": true, "q3": true, "W": true, "is_mec": true}, "events_supp_bitwise": {"pt": true, "pz": true, "eavail": true, "q3": true, "W": true, "is_mec": true}, "nu_along_z": [true, true], "main_xsec_bitwise": true, "main_sumw2_bitwise": true, "full_xsec_bitwise": true, "full_sumw2_bitwise": true, "N_cc_vs_product": [1484189, 1484189], "pass": true}
+GENIE_CONTROLS {'G1_unrotated_rebuild': True} exit 0
+GENIE rc=0 2026-10-20T11:36:45Z
+module s5p_inference /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/s5p_inference.py
+module s5p_joint /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/s5p_joint.py
+module s5p_stage1_inspect /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/code/s5p_stage1_inspect.py
+GENIE_2_12_10_CV frozen statistic bitwise True
+GENIE_2_12_10_MEC frozen statistic bitwise True
+NuWro_21_09 frozen statistic bitwise True
+GiBUU_2019 frozen statistic bitwise True
+EVAL_CONTROLS {"mnvtune_J_from_beam_axis_content": true, "mnvtune_J_bitwise": true, "frozen_statistic_GENIE_2_12_10_CV": true, "frozen_statistic_GENIE_2_12_10_MEC": true, "frozen_statistic_NuWro_21_09": true, "frozen_statistic_GiBUU_2019": true, "genie_unrot_J_equals_frozen_prediction": true, "m4w_record_reproduces_its_summaries_genie_cv": true, "m4w_record_reproduces_its_summaries_nuwro": true} exit 0
+EVAL rc=0 end 2026-10-20T11:37:17Z

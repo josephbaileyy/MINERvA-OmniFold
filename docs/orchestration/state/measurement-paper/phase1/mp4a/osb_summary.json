@@ -1,0 +1,134 @@
+{
+ "schema": "mp4a-osb/1",
+ "utc": "2026-10-20T08:59:27Z",
+ "code_sha256": {
+  "osb.py": "455f2f5f182aac612af6fca8cdee777f0344df3ae00197e556ded01ed2e2c446",
+  "run_mp4a.py": "6a2211ae8a9afef245d6ae9e32f8bd7a5f5b5aee1254ee37f15f5922150d3f3e",
+  "build_problem.py": "3f3b2f64a89406346d68913bae99a26a6d01bcf8b339d2bd47748df8339b4275"
+ },
+ "psi2": 1.000043427117466,
+ "settings": {
+  "psi2": 1.000043427117466,
+  "g_rtol": 1e-09,
+  "max_evals": 60,
+  "floor_rtol": 1e-06,
+  "method": "bvls",
+  "lsq_solver": "exact",
+  "lsq_tol": 1e-12,
+  "lsq_max_iter": 6915,
+  "bracket_growth": 2.0,
+  "s_max_factor": 1000000000000.0
+ },
+ "verdict_J_T2": {
+  "holes_as_inf": "FAIL",
+  "excluding_holes": "FAIL",
+  "depends_on_hole_treatment": false
+ },
+ "summary": {
+  "J": {
+   "holes_as_inf": {
+    "n": 109,
+    "n_finite": 100,
+    "n_inf": 9,
+    "median": 0.2859445352016683,
+    "p90": 1.2079669868384804,
+    "p90_numpy_variants": {
+     "lower": 1.1842496921933263,
+     "higher": 1.3028361654190947,
+     "nearest": 1.1842496921933263
+    },
+    "min": 0.005425075603306351,
+    "max": Infinity
+   },
+   "excluding_did_holes": {
+    "n": 102,
+    "n_finite": 100,
+    "n_inf": 2,
+    "median": 0.26122776662374503,
+    "p90": 0.9372141303493345,
+    "p90_numpy_variants": {
+     "lower": 0.914189466845194,
+     "higher": 0.9397724262942388,
+     "nearest": 0.9397724262942388
+    },
+    "min": 0.005425075603306351,
+    "max": Infinity
+   },
+   "excluding_unresolved_only": {
+    "n": 107,
+    "n_finite": 100,
+    "n_inf": 7,
+    "median": 0.28440014227212634,
+    "p90": 1.0906918248294282,
+    "p90_numpy_variants": {
+     "lower": 1.08774464322301,
+     "higher": 1.0951125972390552,
+     "nearest": 1.08774464322301
+    },
+    "min": 0.005425075603306351,
+    "max": Infinity
+   },
+   "n_did_holes": 7,
+   "n_unresolved": 2,
+   "n_proved_infinite": 7,
+   "n_holes_made_finite": 0
+  },
+  "H2": {
+   "holes_as_inf": {
+    "n": 27,
+    "n_finite": 16,
+    "n_inf": 11,
+    "median": 0.5299464361659956,
+    "p90": Infinity,
+    "p90_numpy_variants": {
+     "lower": Infinity,
+     "higher": Infinity,
+     "nearest": Infinity
+    },
+    "min": 0.006496766038619041,
+    "max": Infinity
+   },
+   "excluding_did_holes": {
+    "n": 16,
+    "n_finite": 15,
+    "n_inf": 1,
+    "median": 0.2248391511685375,
+    "p90": 1.3765243829501848,
+    "p90_numpy_variants": {
+     "lower": 1.2208761354632034,
+     "higher": 1.5321726304371663,
+     "nearest": 1.5321726304371663
+    },
+    "min": 0.006496766038619041,
+    "max": Infinity
+   },
+   "excluding_unresolved_only": {
+    "n": 26,
+    "n_finite": 16,
+    "n_inf": 10,
+    "median": 0.5276379081896918,
+    "p90": Infinity,
+    "p90_numpy_variants": {
+     "lower": Infinity,
+     "higher": Infinity,
+     "nearest": Infinity
+    },
+    "min": 0.006496766038619041,
+    "max": Infinity
+   },
+   "n_did_holes": 11,
+   "n_unresolved": 1,
+   "n_proved_infinite": 10,
+   "n_holes_made_finite": 1
+  }
+ },
+ "n_tasks": 255,
+ "n_solved": 255,
+ "resources": {
+  "cpu_s_parent_and_children": 12612.992038,
+  "cpu_s_sum_endpoints": 12606.751465000001,
+  "wall_s": 1728.9088060855865,
+  "peak_rss_bytes_parent": 178585600,
+  "workers": 8
+ }
+}

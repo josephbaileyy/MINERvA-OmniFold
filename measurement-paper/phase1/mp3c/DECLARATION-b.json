@@ -1,0 +1,28 @@
+{
+ "title": "MP3-C option (b): POST-HOC DESCRIPTIVE bias check of B3's premise on hydrogen (director's ruling). It does NOT replace B3; B3 stays FAILED.",
+ "declared_utc": "2026-10-20, before any (b) number is computed",
+ "inputs": {
+  "H_events": "the 80 production FinalEvents.dat of job 60029398 (prod/task1001..1080), unchanged",
+  "frozen_weight": "w_e x r(E): GiBUU perweight x the frozen flux-fix weight r(E) = (phi_t/Phi_t)/phi_gibuu (mp3c_build.weights, = gen5d_flux_supplement.cmd_gibuu)",
+  "count_population": "all written H events with finite E_nu (the population of B3's count test), E_nu >= 1.5 GeV"
+ },
+ "alternative_reweight": {
+  "points": "GiBUU flux points k (width 0.5 GeV, edges g_edges of mp3c_build.gibuu_density) with lower edge >= 1.5 GeV and content > 0; events with E_nu < 1.5 GeV keep s = 1",
+  "sub_binning": "5 equal sub-bins per point (B3's N_SUB = 5); x = (E_nu - E_lo,k) / 0.5 GeV in [0,1); sub-bin centres x_j = 0.1, 0.3, 0.5, 0.7, 0.9",
+  "fit": "per point, unweighted linear least squares of the sub-bin counts n_j on (x_j - 0.5): n_j = alpha_k + beta_k (x_j - 0.5); slope b_k = beta_k / alpha_k",
+  "formula": "s_e = c_k / (1 + b_k (x_e - 0.5)) for an event in point k, with c_k = N_k / sum_{e in k} 1/(1 + b_k (x_e - 0.5)), N_k = the number of written events in point k (normalization preserved per point over the count population)",
+  "alternative_weight": "w_e x r(E_e) x s_e; the H product is then built by the same statements (mp3c_build.build) as under the frozen weight"
+ },
+ "readout": {
+  "delta": "Delta_c = mu_CH,alt(c) - mu_CH,frozen(c) = (1/13) U (x_H,alt - x_H,frozen), the change of the H contribution to the CH-combined prediction, per J cell",
+  "cells": "the 72 GiBUU-domain J cells (A7's GiBUU domain, p_par < 6 GeV/c)",
+  "sigma_c": "as MP3-B: (a) SD (ddof 1) of the J-cell result over GiBUU's frozen calibration ensemble (B = 1351), PRIMARY; (b) sqrt(diag W), W = V + diag Var(mu_GiBUU,C12); (c) SD of the simulated residual f - (mu + eps)",
+  "also_reported": "max/median |Delta_c/sigma_c| per reading; Delta_c relative to the H contribution and to mu_CH; Delta' W^-1 Delta (frozen W) on the domain; the fitted slopes b_k"
+ },
+ "acceptance": "PASS iff max over the 72 cells of |Delta_c / sigma_c(a)| <= 0.1 (reading (a) decides; (b), (c) reported beside it)",
+ "outcomes": {
+  "PASS": "the GiBUU-on-CH replay with the FROZEN r(E), beside A7, through the MP3-B readout (B4 first, Holm re-sort, frozen-position reading, kappa = 3), labelled exactly: 'B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at <= 0.1 sigma_c'; plus the same replay under the alternative reweight beside it",
+  "FAIL": "no GiBUU-on-CH number is reported; the effect size is reported; the target correction waits for a sampling fix after the maintenance"
+ },
+ "not_run": "option (c) (GENIE-H borrowed variant)"
+}

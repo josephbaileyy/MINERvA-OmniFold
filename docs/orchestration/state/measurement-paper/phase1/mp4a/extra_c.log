@@ -1,0 +1,381 @@
+{
+ "schema": "mp4a-extra-c/1",
+ "label": "DESCRIPTIVE: not part of the PASS rule",
+ "extra_c_sha256": "a7533670003ba27611e129f4f877596b0f4895346af461da3d5d5695adb6f597",
+ "build_problem_sha256": "3f3b2f64a89406346d68913bae99a26a6d01bcf8b339d2bd47748df8339b4275",
+ "admission": {
+  "A2_records": true,
+  "A1_event_digest": true,
+  "A10_keys_read": true,
+  "A9_edges": true,
+  "A4_functional_rows": true,
+  "A8_rows": true,
+  "A11_reweight_is_one_outside_grid_nominal": true,
+  "A7_reco_cells": true
+ },
+ "refinement": {
+  "n_ref_cells_total": 2107392,
+  "n_occupied": 113062,
+  "fold_vs_y_max_rel": 9.561087802951096e-15,
+  "y_total_vs_T2_y_total_rel": 0.0,
+  "b_total_vs_T2_b_total_rel": 4.440892098500626e-16
+ },
+ "radius": "unit (Cramer-Rao sigma, D-ID convention)",
+ "grids": {
+  "T1": {
+   "n_cells": 134,
+   "control_unrefined_equals_committed_bitwise": true,
+   "control_max_rel_dev": 0.0,
+   "refined_fold_vs_y_max_rel": 1.0244022646019031e-14,
+   "info_unrefined": {
+    "eig_max": 0.0009807822430366443,
+    "n_null": 1,
+    "n_reco_kept": 10499
+   },
+   "info_refined": {
+    "eig_max": 0.004324377609140667,
+    "n_null": 1,
+    "n_reco_kept": 113062
+   },
+   "J": {
+    "unrefined": {
+     "n": 109,
+     "n_finite": 109,
+     "n_inf": 0,
+     "median": 0.11252650814608389,
+     "p90": 0.5843302285126901,
+     "p90_numpy_variants": {
+      "lower": 0.5785773252718727,
+      "higher": 0.6073418414759594,
+      "nearest": 0.5785773252718727
+     },
+     "min": 0.0030368759642129153,
+     "max": 1.3995529736393617
+    },
+    "refined": {
+     "n": 109,
+     "n_finite": 109,
+     "n_inf": 0,
+     "median": 0.06862170868059632,
+     "p90": 0.2200383738061969,
+     "p90_numpy_variants": {
+      "lower": 0.2153682914090913,
+      "higher": 0.23871870339461898,
+      "nearest": 0.2153682914090913
+     },
+     "min": 0.002743873390543498,
+     "max": 0.3901882186401607
+    },
+    "unrefined_finite_only": {
+     "n": 109,
+     "n_finite": 109,
+     "n_inf": 0,
+     "median": 0.11252650814608389,
+     "p90": 0.5843302285126901,
+     "p90_numpy_variants": {
+      "lower": 0.5785773252718727,
+      "higher": 0.6073418414759594,
+      "nearest": 0.5785773252718727
+     },
+     "min": 0.0030368759642129153,
+     "max": 1.3995529736393617
+    },
+    "refined_finite_only": {
+     "n": 109,
+     "n_finite": 109,
+     "n_inf": 0,
+     "median": 0.06862170868059632,
+     "p90": 0.2200383738061969,
+     "p90_numpy_variants": {
+      "lower": 0.2153682914090913,
+      "higher": 0.23871870339461898,
+      "nearest": 0.2153682914090913
+     },
+     "min": 0.002743873390543498,
+     "max": 0.3901882186401607
+    },
+    "ratio_refined_over_unrefined": {
+     "n": 109,
+     "n_finite": 109,
+     "n_inf": 0,
+     "median": 0.5791847316699338,
+     "p90": 0.754045166618418,
+     "p90_numpy_variants": {
+      "lower": 0.7513286459604875,
+      "higher": 0.7649112492501398,
+      "nearest": 0.7513286459604875
+     },
+     "min": 0.27879489093258486,
+     "max": 0.9049652757194926
+    },
+    "median_ratio_of_medians_holes_inf": 0.6098270515202552,
+    "n_le_10pct_unrefined": 51,
+    "n_le_10pct_refined": 66
+   },
+   "H2": {
+    "unrefined": {
+     "n": 27,
+     "n_finite": 26,
+     "n_inf": 1,
+     "median": 0.029462020725709376,
+     "p90": 0.08885698431668528,
+     "p90_numpy_variants": {
+      "lower": 0.08627914874917048,
+      "higher": 0.09272373766795745,
+      "nearest": 0.08627914874917048
+     },
+     "min": 0.0011511706843790115,
+     "max": Infinity
+    },
+    "refined": {
+     "n": 27,
+     "n_finite": 26,
+     "n_inf": 1,
+     "median": 0.01516928513430116,
+     "p90": 0.04308247669690709,
+     "p90_numpy_variants": {
+      "lower": 0.041925230717474775,
+      "higher": 0.04481834566605554,
+      "nearest": 0.041925230717474775
+     },
+     "min": 0.0010560310473472037,
+     "max": Infinity
+    },
+    "unrefined_finite_only": {
+     "n": 26,
+     "n_finite": 26,
+     "n_inf": 0,
+     "median": 0.02543177494548709,
+     "p90": 0.08403956010321612,
+     "p90_numpy_variants": {
+      "lower": 0.08179997145726177,
+      "higher": 0.08627914874917048,
+      "nearest": 0.08179997145726177
+     },
+     "min": 0.0011511706843790115,
+     "max": 0.1266415648125235
+    },
+    "refined_finite_only": {
+     "n": 26,
+     "n_finite": 26,
+     "n_inf": 0,
+     "median": 0.013023473459902641,
+     "p90": 0.04006604191068934,
+     "p90_numpy_variants": {
+      "lower": 0.0382068531039039,
+      "higher": 0.041925230717474775,
+      "nearest": 0.0382068531039039
+     },
+     "min": 0.0010560310473472037,
+     "max": 0.04793417352507311
+    },
+    "ratio_refined_over_unrefined": {
+     "n": 26,
+     "n_finite": 26,
+     "n_inf": 0,
+     "median": 0.5194753144942144,
+     "p90": 0.6624825080624833,
+     "p90_numpy_variants": {
+      "lower": 0.6609489857341416,
+      "higher": 0.664016030390825,
+      "nearest": 0.6609489857341416
+     },
+     "min": 0.37850269456187996,
+     "max": 0.9173540133337134
+    },
+    "median_ratio_of_medians_holes_inf": 0.5148759236688752,
+    "n_le_10pct_unrefined": 25,
+    "n_le_10pct_refined": 26
+   }
+  },
+  "T2": {
+   "n_cells": 1383,
+   "control_unrefined_equals_committed_bitwise": true,
+   "control_max_rel_dev": 0.0,
+   "refined_fold_vs_y_max_rel": 9.561087802951096e-15,
+   "info_unrefined": {
+    "eig_max": 0.3523334659229586,
+    "n_null": 13,
+    "n_reco_kept": 10499
+   },
+   "info_refined": {
+    "eig_max": 3.1401836081089063,
+    "n_null": 12,
+    "n_reco_kept": 113062
+   },
+   "J": {
+    "unrefined": {
+     "n": 109,
+     "n_finite": 102,
+     "n_inf": 7,
+     "median": 0.28664331751920674,
+     "p90": 1.1715851563201043,
+     "p90_numpy_variants": {
+      "lower": 1.1654683076406818,
+      "higher": 1.196052551037794,
+      "nearest": 1.1654683076406818
+     },
+     "min": 0.005425027368513442,
+     "max": Infinity
+    },
+    "refined": {
+     "n": 109,
+     "n_finite": 102,
+     "n_inf": 7,
+     "median": 0.10830948068787145,
+     "p90": 0.31569079455457105,
+     "p90_numpy_variants": {
+      "lower": 0.31070525375229824,
+      "higher": 0.335632957763662,
+      "nearest": 0.31070525375229824
+     },
+     "min": 0.003541642094405259,
+     "max": Infinity
+    },
+    "unrefined_finite_only": {
+     "n": 102,
+     "n_finite": 102,
+     "n_inf": 0,
+     "median": 0.25159541915919537,
+     "p90": 0.8637451941644414,
+     "p90_numpy_variants": {
+      "lower": 0.7766226879893594,
+      "higher": 0.8734254726283388,
+      "nearest": 0.8734254726283388
+     },
+     "min": 0.005425027368513442,
+     "max": 1.640395814623822
+    },
+    "refined_finite_only": {
+     "n": 102,
+     "n_finite": 102,
+     "n_inf": 0,
+     "median": 0.09745725195298695,
+     "p90": 0.2629159957128759,
+     "p90_numpy_variants": {
+      "lower": 0.25168349093074255,
+      "higher": 0.26416405179977953,
+      "nearest": 0.26416405179977953
+     },
+     "min": 0.003541642094405259,
+     "max": 0.4136085157019824
+    },
+    "ratio_refined_over_unrefined": {
+     "n": 102,
+     "n_finite": 102,
+     "n_inf": 0,
+     "median": 0.35796634709416386,
+     "p90": 0.4958638497733445,
+     "p90_numpy_variants": {
+      "lower": 0.4794592515573806,
+      "higher": 0.4976865829084515,
+      "nearest": 0.4976865829084515
+     },
+     "min": 0.25213946049772856,
+     "max": 0.6528339589512033
+    },
+    "median_ratio_of_medians_holes_inf": 0.3778545462885738,
+    "n_le_10pct_unrefined": 32,
+    "n_le_10pct_refined": 54
+   },
+   "H2": {
+    "unrefined": {
+     "n": 27,
+     "n_finite": 16,
+     "n_inf": 11,
+     "median": 0.5396676712772805,
+     "p90": Infinity,
+     "p90_numpy_variants": {
+      "lower": Infinity,
+      "higher": Infinity,
+      "nearest": Infinity
+     },
+     "min": 0.006614987580096483,
+     "max": Infinity
+    },
+    "refined": {
+     "n": 27,
+     "n_finite": 17,
+     "n_inf": 10,
+     "median": 0.1562886097810697,
+     "p90": Infinity,
+     "p90_numpy_variants": {
+      "lower": Infinity,
+      "higher": Infinity,
+      "nearest": Infinity
+     },
+     "min": 0.0025933655258241766,
+     "max": Infinity
+    },
+    "unrefined_finite_only": {
+     "n": 16,
+     "n_finite": 16,
+     "n_inf": 0,
+     "median": 0.22540749314964564,
+     "p90": 1.0038223570721865,
+     "p90_numpy_variants": {
+      "lower": 0.5396676712772805,
+      "higher": 1.4679770428670924,
+      "nearest": 1.4679770428670924
+     },
+     "min": 0.006614987580096483,
+     "max": 2.0645360966005053
+    },
+    "refined_finite_only": {
+     "n": 17,
+     "n_finite": 17,
+     "n_inf": 0,
+     "median": 0.07479385300996678,
+     "p90": 0.2649091203256995,
+     "p90_numpy_variants": {
+      "lower": 0.17920010230858807,
+      "higher": 0.39347264735136656,
+      "nearest": 0.17920010230858807
+     },
+     "min": 0.0025933655258241766,
+     "max": 0.5081700221341215
+    },
+    "ratio_refined_over_unrefined": {
+     "n": 16,
+     "n_finite": 16,
+     "n_inf": 0,
+     "median": 0.3258542064063799,
+     "p90": 0.3855555225332849,
+     "p90_numpy_variants": {
+      "lower": 0.3790671455999663,
+      "higher": 0.3920438994666035,
+      "nearest": 0.3920438994666035
+     },
+     "min": 0.24614247383268406,
+     "max": 0.49235230371176225
+    },
+    "median_ratio_of_medians_holes_inf": 0.28960157908137657,
+    "n_le_10pct_unrefined": 5,
+    "n_le_10pct_refined": 11
+   }
+  }
+ },
+ "resources": {
+  "cpu_s": 43.255895,
+  "wall_s": 42.19483280181885,
+  "peak_rss_bytes": 3171139584
+ }
+}
+       43.12 real        36.20 user         7.25 sys
+          3171139584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1663143  page reclaims
+                1855  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1069  voluntary context switches
+               64237  involuntary context switches
+        237682817547  instructions retired
+        134588283473  cycles elapsed
+          4874769160  peak memory footprint
