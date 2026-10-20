@@ -1,0 +1,18 @@
+# MP3-B (PLAN.md §4.3, frozen by BINDING-PHASE1-20261019 §2): seeds and event counts of the NuWro v21_09_1
+# free-proton (H) samples, declared 2026-10-19 before any submission. mp3b_job.sh reads these KEY=VALUE lines;
+# mp3b_build.py refuses to continue unless the .par files NuWro wrote carry exactly these values.
+#
+# H main: the production card (3d-unfolding/genie/run_nuwro.sh params.txt, flux_mefhc_numu_nuwro.root, 0.5-50 GeV)
+#         with only the target lines changed to the shipped data/target/proton.txt.
+# H supp: the frozen 50-100 GeV supplement card (run_gen5d_supplement.sh nuwro: supp/flux_phi_t_50_100.root),
+#         with only the target lines changed the same way.
+H_MAIN_SEED=63001
+H_MAIN_N=250000
+H_SUPP_SEED=64001
+H_SUPP_N=25000
+#
+# Seeds already used, for the record (none reused): C12 production 21-28 (8 x 250k), C12 supplement 52001,
+# supplement timing runs 90001/90002, GENIE supplements 50001/51001, phase-0 probe 9101.
+# The C12 part is not regenerated: it is the frozen gen5d_fluxfix/nuwro_cv_xsec5d_full.npz, rebuilt as control B2.
+# B4 remedy ("more H events once, by a factor fixed in the contract"): no factor and no seed are declared;
+# on a B4 FAIL the study STOPs and reports.

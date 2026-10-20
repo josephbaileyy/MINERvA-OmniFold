@@ -1,0 +1,36 @@
+# MP3-A receipt (machine-assembled 2026-10-19; worktree branch measurement-paper/phase1-20261019 at da43e98d821bb4cf9b5937d64313aa543752a161)
+# staged copy on pscratch (/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3a/<rel>) | git hash-object of the staged copy | git hash-object of the worktree source | source path
+code/mp3a_build.py | 455581960c9f7bc13f452e5408e54ce31c17e2f6 | 455581960c9f7bc13f452e5408e54ce31c17e2f6 | measurement-paper/phase1/mp3a/mp3a_build.py | IDENTICAL
+code/mp3a_eval.py | 25aaa14a50e5ceb4ef062b3f852d8dcbecee6160 | 25aaa14a50e5ceb4ef062b3f852d8dcbecee6160 | measurement-paper/phase1/mp3a/mp3a_eval.py | IDENTICAL
+code/mp3a_job.sh | a687d5f6fc90c7e26e585930a6542bf5d2d3970f | a687d5f6fc90c7e26e585930a6542bf5d2d3970f | measurement-paper/phase1/mp3a/mp3a_job.sh | IDENTICAL
+code/gen5d_flux_reweight.py | 02700d4070899883b2eb1922d069ac138ef4b679 | 02700d4070899883b2eb1922d069ac138ef4b679 | 3d-unfolding/genie/gen5d_flux_reweight.py | IDENTICAL
+code/gen5d_flux_supplement.py | b8251ca5a5d653efb26d26dc397be35d3cd30fc0 | b8251ca5a5d653efb26d26dc397be35d3cd30fc0 | 3d-unfolding/genie/gen5d_flux_supplement.py | IDENTICAL
+code/s5p_joint.py | 51d3424fc4b1a02e13826e39e63e8cb03ead4087 | 51d3424fc4b1a02e13826e39e63e8cb03ead4087 | nd-unfolding/s5p_joint.py | IDENTICAL
+code/s5p_inference.py | f42e0e202fb18371c88a89ab5362f51a8c95d5b1 | f42e0e202fb18371c88a89ab5362f51a8c95d5b1 | nd-unfolding/s5p_inference.py | IDENTICAL
+code/s5p_stage1_inspect.py | b6aee05dda0568e400db2706df2d49c9448514e6 | b6aee05dda0568e400db2706df2d49c9448514e6 | nd-unfolding/s5p_stage1_inspect.py | IDENTICAL
+inputs/design.json | 5c30ba87181ae19ab2493650629433cb2bc9626c | 5c30ba87181ae19ab2493650629433cb2bc9626c | docs/orchestration/state/s5p/prod/design.json | IDENTICAL
+inputs/s5c_contract.json | 28125d964078ca4f3d2d78b3c8f1dbac7805e920 | 28125d964078ca4f3d2d78b3c8f1dbac7805e920 | docs/orchestration/state/s5c/contract.json | IDENTICAL
+inputs/joint-evaluate.json | daf92651b3e797fc33d3d21292fcfedd7767b693 | daf92651b3e797fc33d3d21292fcfedd7767b693 | docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json | IDENTICAL
+# sha256 of the staged files as read back on the cluster (sha256sum, after tar transfer):
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  code/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  code/gen5d_flux_supplement.py
+694ab3d84753c570459137911647323fa16feb2965d3f38ef9b53b600cebe952  code/mp3a_build.py
+ff27ddb2d992521940936710427869ac0756a35fcc4886a4f8130d48b4d99bc6  code/mp3a_eval.py
+5ee92da4e041ecb0263948fc459dc8228742d77e1c05b3a1b8d33a15520b2d12  code/mp3a_job.sh
+55239135b2a729cca478b661f59ad9ca00deccf27f96d9bac5974616280cf62c  code/s5p_inference.py
+2cd98235a4ad1c544cad7b3340b4b385c0904236351a04dc53d3f3c22e308bf9  code/s5p_joint.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  code/s5p_stage1_inspect.py
+404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285  inputs/design.json
+b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11  inputs/joint-evaluate.json
+d54fd7c9641901736e58430e666db1ee782a54d9c95bf4439541872567c39c93  inputs/s5c_contract.json
+# frozen modules: git diff 4f5a613f HEAD -- nd-unfolding/s5p_joint.py s5p_inference.py s5p_stage1_inspect.py is empty: yes
+# gen5d code: worktree gen5d_flux_reweight.py / gen5d_flux_supplement.py sha256 = the cluster copies in /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/ that built the products (89863318..., ff7a2d0e...; gen5d-fluxfix-2.json code list); gen_to_xsec5d.py imported from the frozen export gen5d/code/tree (SOURCE_COMMIT 81d94a95), sha256 1608acd5... = worktree file
+# commands
+stage:   tar cf - code inputs | ssh saul.nersc.gov 'mkdir -p $D/logs && tar xf - -C $D'   (D=/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3a; refused if D existed)
+submit:  ssh saul.nersc.gov 'cd $D && sbatch code/mp3a_job.sh'  -> 60005151
+job:     root_6_28 (python 3.11.14, numpy 1.26.4, scipy 1.16.3; the env that built the products and ran the frozen evaluation); python3 code/mp3a_build.py out/build; python3 code/mp3a_eval.py --design inputs/design.json --s5c-contract inputs/s5c_contract.json --v /pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz --frozen-eval inputs/joint-evaluate.json --build-dir out/build --out out/eval
+fetch:   ssh saul.nersc.gov 'cd $D && tar cf - out/build/* out/eval logs/mp3a-60005151.out' | tar xf - -C <this dir>; sha256 compared both sides: out_sha256.txt (match)
+# sacct -X -P -j 60005151 -o JobID,State,ExitCode,ElapsedRaw,AllocTRES,QOS,Account
+JobID|State|ExitCode|ElapsedRaw|AllocTRES|QOS|Account|Start|End|NodeList
+60005151|COMPLETED|0:0|106|billing=8,cpu=8,energy=57614,mem=15240M,node=1|shared|m3246|2026-10-19T10:35:07|2026-10-19T10:36:53|nid004089
+# charge = ElapsedRaw x billing / 256 / 3600 = 106 x 8 / 256 / 3600 = 0.000920 CPU node-h

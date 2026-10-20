@@ -1,0 +1,119 @@
+{
+ "schema": "mp3b-mixed/1",
+ "label": "mixed: NuWro carbon + GENIE hydrogen; not NuWro-on-CH",
+ "argv": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_mixed.py",
+  "--out",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/out/mixed_build"
+ ],
+ "environment": {
+  "python": "3.11.14",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "numpy": "1.26.4",
+  "host": "nid004585",
+  "PLOTUTILSROOT": null,
+  "cwd": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/run",
+  "ROOT": "6.28/12"
+ },
+ "code": {
+  "__main__": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_mixed.py",
+   "sha256": "224c9e5e5c577127a11d10d5fac14aa8d0172249756de918c7af6d29488d5f82"
+  },
+  "mp3b_build": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py",
+   "sha256": "d026a66bcd13342343655c940ce508d2f6c2b6c10c457631572684e4b4e841b0"
+  },
+  "gen5d_flux_reweight": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/gen5d_flux_reweight.py",
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+  },
+  "gen5d_flux_supplement": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/gen5d_flux_supplement.py",
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+  },
+  "gen_to_xsec5d": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py",
+   "sha256": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1"
+  }
+ },
+ "B2_C12_rebuild": {
+  "main": {
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "nevt": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "N_total": 2000000.0,
+   "N_total_frozen": 2000000,
+   "extract_parity_vs_old_flats": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "full": {
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "nevt": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   }
+  },
+  "full_from_rebuilt_main": {
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   }
+  },
+  "pass": true
+ },
+ "controls": {
+  "mp3a_fine_sha256": "f2599b71d90d34242379834edca2ef83f310d1a88a82445339bf4bb04fdafe2d",
+  "matches_mp3a_receipt": true,
+  "mp3a_frozen_CH_equals_genie_cv_full": true,
+  "split_closure_max_rel": 1.1197122270589317e-14,
+  "genie_cv_full_sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
+ },
+ "integrated": {
+  "sigma_in_grid_GENIE_H_per_H_nucleon_cm2": 1.921483441393011e-38,
+  "sigma_in_grid_NuWro_C12_per_nucleon_cm2": 2.662769663799976e-38,
+  "f_H_in_grid": 0.05672322826669263
+ },
+ "products": {
+  "mp3b_fine_mixed.npz": "762fcdde09279119ea24438dc1db3d3be71c861092e6b3c1eb5c53532c1aa0a8",
+  "mixed_NuWroC12_GENIEH_xsec5d_full.npz": "7391ee8032ef447f5947c7a92bce11b0fd8024a8d5ddfc7e70cdbdc2f83ccb57"
+ },
+ "verdict": "MIXED written: mixed: NuWro carbon + GENIE hydrogen; not NuWro-on-CH",
+ "exit_code": 0
+}

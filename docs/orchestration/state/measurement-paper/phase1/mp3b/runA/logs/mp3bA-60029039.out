@@ -1,0 +1,99 @@
+host nid004585 start 2026-10-20T08:06:23Z job 60029039 nproc 256
+chunks declared: 30  SEEDS sha256 0a6ebc5fdcfffe75ed906743f034eb0fee61fe015ed77f79a3997f7b7233e06d
+15007d6fe339ea055b362fd750e0dbf50fc19708ec2da0794ad8f83f0bfac000  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/setup_nuwro.sh
+15007d6fe339ea055b362fd750e0dbf50fc19708ec2da0794ad8f83f0bfac000  /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/setup_nuwro.sh
+01e89fb215f1641554b750377e33ba01c1f4bc9462ccd45ae969a4499dbd9b81  /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/nuwro_to_flat_5d.C
+1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu_nuwro.root
+6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root
+4707a56f8ed3fb33d2e1889ede13a531504dbbe3608f88dc80a22b20ae868151  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p1/nuwro_p1.root
+81de8415a6e0d1528e9a1ad9b3ccaa5c05866e3795199e549fe621205eb81a07  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp.root
+8481cc45a01c2149de683315da14fd66704e2f338bb56288f6ab1aa2804f896e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/compare_kaskada.C
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/gen5d_flux_supplement.py
+d026a66bcd13342343655c940ce508d2f6c2b6c10c457631572684e4b4e841b0  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py
+41ddced325cc71a38c4286e4655dfc9d331155d9825b5f005fc9f0de68412e7a  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_eval.py
+5eb0e96085c4457eae6465d30199c19efba798642b8d462a48dd0bce7118af5f  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_jobA.sh
+75b1d5924b954f10d576ce302728d81d46afa3b3109a80a08fd1416504e2c0ad  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_kaskada.py
+224c9e5e5c577127a11d10d5fac14aa8d0172249756de918c7af6d29488d5f82  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_mixed.py
+55239135b2a729cca478b661f59ad9ca00deccf27f96d9bac5974616280cf62c  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/s5p_inference.py
+2cd98235a4ad1c544cad7b3340b4b385c0904236351a04dc53d3f3c22e308bf9  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/s5p_joint.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/s5p_stage1_inspect.py
+0a6ebc5fdcfffe75ed906743f034eb0fee61fe015ed77f79a3997f7b7233e06d  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/SEEDS-chunked.txt
+404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/inputs/design.json
+b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/inputs/joint-evaluate.json
+d54fd7c9641901736e58430e666db1ee782a54d9c95bf4439541872567c39c93  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/inputs/s5c_contract.json
+setup copies sha256 (unique): 15007d6fe339ea055b362fd750e0dbf50fc19708ec2da0794ad8f83f0bfac000
+[H_main/c01] rc=0 k1: ok 0 63101 (1 attempts)  k0: ok 0 63101 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8894 
+[H_main/c02] rc=0 k1: ok 0 63102 (1 attempts)  k0: ok 0 63102 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8884 
+[H_main/c03] rc=0 k1: ok 0 63103 (1 attempts)  k0: ok 0 63103 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8856 
+[H_main/c04] rc=0 k1: ok 1 63204 (2 attempts)  k0: ok 1 63204 (2 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8858 
+[H_main/c05] rc=0 k1: ok 1 63205 (2 attempts)  k0: ok 1 63205 (2 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8838 
+[H_main/c06] rc=0 k1: ok 0 63106 (1 attempts)  k0: ok 0 63106 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8834 
+[H_main/c07] rc=0 k1: ok 0 63107 (1 attempts)  k0: ok 0 63107 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8826 
+[H_main/c08] rc=0 k1: ok 0 63108 (1 attempts)  k0: ok 0 63108 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8903 
+[H_main/c09] rc=0 k1: ok 0 63109 (1 attempts)  k0: ok 0 63109 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8912 
+[H_main/c10] rc=0 k1: ok 0 63110 (1 attempts)  k0: ok 0 63110 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8883 
+[H_main/c11] rc=0 k1: ok 0 63111 (1 attempts)  k0: ok 0 63111 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8834 
+[H_main/c12] rc=0 k1: ok 1 63212 (2 attempts)  k0: ok 1 63212 (2 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8872 
+[H_main/c13] rc=0 k1: ok 0 63113 (1 attempts)  k0: ok 0 63113 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8827 
+[H_main/c14] rc=0 k1: ok 0 63114 (1 attempts)  k0: ok 0 63114 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8846 
+[H_main/c15] rc=0 k1: ok 0 63115 (1 attempts)  k0: ok 0 63115 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8888 
+[H_main/c16] rc=0 k1: ok 0 63116 (1 attempts)  k0: ok 0 63116 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8877 
+[H_main/c17] rc=0 k1: ok 0 63117 (1 attempts)  k0: ok 0 63117 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8875 
+[H_main/c18] rc=0 k1: ok 0 63118 (1 attempts)  k0: ok 0 63118 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8922 
+[H_main/c19] rc=0 k1: ok 0 63119 (1 attempts)  k0: ok 0 63119 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8829 
+[H_main/c20] rc=0 k1: ok 0 63120 (1 attempts)  k0: ok 0 63120 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8871 
+[H_main/c21] rc=0 k1: ok 0 63121 (1 attempts)  k0: ok 0 63121 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8840 
+[H_main/c22] rc=0 k1: ok 0 63122 (1 attempts)  k0: ok 0 63122 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8924 
+[H_main/c23] rc=0 k1: ok 0 63123 (1 attempts)  k0: ok 0 63123 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8883 
+[H_main/c24] rc=0 k1: ok 0 63124 (1 attempts)  k0: ok 0 63124 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8804 
+[H_main/c25] rc=0 k1: ok 0 63125 (1 attempts)  k0: ok 0 63125 (1 attempts)  cmp: N_COMPARED 10000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 8857 
+[H_supp/c01] rc=0 k1: ok 0 64101 (1 attempts)  k0: ok 0 64101 (1 attempts)  cmp: N_COMPARED 5000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 4346 
+[H_supp/c02] rc=0 k1: ok 0 64102 (1 attempts)  k0: ok 0 64102 (1 attempts)  cmp: N_COMPARED 5000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 4388 
+[H_supp/c03] rc=0 k1: ok 1 64203 (2 attempts)  k0: ok 1 64203 (2 attempts)  cmp: N_COMPARED 5000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 4328 
+[H_supp/c04] rc=0 k1: ok 0 64104 (1 attempts)  k0: ok 0 64104 (1 attempts)  cmp: N_COMPARED 5000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 4380 
+[H_supp/c05] rc=0 k1: ok 0 64105 (1 attempts)  k0: ok 0 64105 (1 attempts)  cmp: N_COMPARED 5000 RNG_ALIGNED 1 N_POST_WITHIN_TOL 4343 
+GEN done 2026-10-20T08:07:41Z chunk_failure=0 parity_rc=0
+python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+3.11.14 1.26.4 1.16.3
+KASKADA {"n_pairs_compared": 30, "pairs_without_comparison": {}, "n_pairs_misaligned": 0, "misaligned_pairs": [], "events_compared": 275000, "events_post_exact": 169240, "events_post_within_tol": 243422, "events_post_momentum_different": 31578, "events_post_content_different": 0, "max_post_abs_diff_MeV": 330.4359018, "identical_on_every_completed_event": false, "pdg_shift_aggregate": {"2212": {"n_particles": 20084, "max_abs_dE_MeV": 0.0, "max_abs_dp_MeV": 0.030595305, "mean_dE_k1_minus_k0_MeV": 0.0}, "3122": {"n_particles": 5613, "max_abs_dE_MeV": 27.0, "max_abs_dp_MeV": 75.78002443, "mean_dE_k1_minus_k0_MeV": 27.0}, "3212": {"n_particles": 930, "max_abs_dE_MeV": 70.0, "max_abs_dp_MeV": 189.2169392, "mean_dE_k1_minus_k0_MeV": -70.0}, "3222": {"n_particles": 4977, "max_abs_dE_MeV": 70.0, "max_abs_dp_MeV": 330.4359018, "mean_dE_k1_minus_k0_MeV": -70.0}}, "events_with_fewer_of_pdg_in_k1": {}, "events_with_more_of_pdg_in_k1": {}, "PRIMARY_H_SAMPLE": "k1 (kaskada_on = 1, run A)"}
+KASKADA rc=0 2026-10-20T08:07:48Z
+CHUNKS {"H_main": {"chunks_declared": 25, "chunks_completed": 25, "chunks_dropped": [], "chunks_other": [], "alternates_used": [["04", 63204], ["05", 63205], ["12", 63212]], "aborts": 3, "events_in_completed_chunks": 250000.0, "dis_events_completed": 154622, "dis_events_processed_in_aborted_attempts_approx": 12049.344, "excluded_fraction_aborts_per_dis_event_approx": 1.7999494862176185e-05, "excluded_fraction_above_1e-4": false, "note": "approximation: each abort removes one DIS event configuration; the denominator counts DIS events generated in completed chunks plus those processed before each abort (progress %)"}, "H_supp": {"chunks_declared": 5, "chunks_completed": 5, "chunks_dropped": [], "chunks_other": [], "alternates_used": [["03", 64203]], "aborts": 1, "events_in_completed_chunks": 25000.0, "dis_events_completed": 24005, "dis_events_processed_in_aborted_attempts_approx": 2094.98, "excluded_fraction_aborts_per_dis_event_approx": 3.831420560475525e-05, "excluded_fraction_above_1e-4": false, "note": "approximation: each abort removes one DIS event configuration; the denominator counts DIS events generated in completed chunks plus those processed before each abort (progress %)"}}
+C0 {"n_cards": 34, "differing_key_sets": [["nucleus_n", "nucleus_p", "nucleus_target", "number_of_events", "random_seed"]], "pass": true}
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py", line 646, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py", line 544, in main
+    print("C1", json.dumps({k: v["pass"] for k, v in c1.items()}), flush=True)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py", line 544, in <dictcomp>
+    print("C1", json.dumps({k: v["pass"] for k, v in c1.items()}), flush=True)
+                               ~^^^^^^^^
+TypeError: 'bool' object is not subscriptable
+BUILD_k1 rc=1 2026-10-20T08:08:06Z
+EVAL_k1 rc=skipped 2026-10-20T08:08:06Z
+CHUNKS {"H_main": {"chunks_declared": 25, "chunks_completed": 25, "chunks_dropped": [], "chunks_other": [], "alternates_used": [["04", 63204], ["05", 63205], ["12", 63212]], "aborts": 3, "events_in_completed_chunks": 250000.0, "dis_events_completed": 154622, "dis_events_processed_in_aborted_attempts_approx": 12049.344, "excluded_fraction_aborts_per_dis_event_approx": 1.7999494862176185e-05, "excluded_fraction_above_1e-4": false, "note": "approximation: each abort removes one DIS event configuration; the denominator counts DIS events generated in completed chunks plus those processed before each abort (progress %)"}, "H_supp": {"chunks_declared": 5, "chunks_completed": 5, "chunks_dropped": [], "chunks_other": [], "alternates_used": [["03", 64203]], "aborts": 1, "events_in_completed_chunks": 25000.0, "dis_events_completed": 24005, "dis_events_processed_in_aborted_attempts_approx": 2094.98, "excluded_fraction_aborts_per_dis_event_approx": 3.831420560475525e-05, "excluded_fraction_above_1e-4": false, "note": "approximation: each abort removes one DIS event configuration; the denominator counts DIS events generated in completed chunks plus those processed before each abort (progress %)"}}
+C0 {"n_cards": 34, "differing_key_sets": [["kaskada_on", "nucleus_n", "nucleus_p", "nucleus_target", "number_of_events", "random_seed"]], "pass": true}
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py", line 646, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py", line 544, in main
+    print("C1", json.dumps({k: v["pass"] for k, v in c1.items()}), flush=True)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/code/mp3b_build.py", line 544, in <dictcomp>
+    print("C1", json.dumps({k: v["pass"] for k, v in c1.items()}), flush=True)
+                               ~^^^^^^^^
+TypeError: 'bool' object is not subscriptable
+BUILD_k0 rc=1 2026-10-20T08:08:17Z
+EVAL_k0 rc=skipped 2026-10-20T08:08:17Z
+B2 {"pass": true}
+CONTROLS {"mp3a_fine_sha256": "f2599b71d90d34242379834edca2ef83f310d1a88a82445339bf4bb04fdafe2d", "matches_mp3a_receipt": true, "mp3a_frozen_CH_equals_genie_cv_full": true, "split_closure_max_rel": 1.1197122270589317e-14, "genie_cv_full_sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"}
+MIXED written: mixed: NuWro carbon + GENIE hydrogen; not NuWro-on-CH
+B4 {"ratio": {"min": 0.0, "median": 0.26389028678732274, "max": 1.4092067238075037}, "worst_cell": "J152", "worst_ratio": 1.4092067238075037, "n_cells_ratio_gt_bound": 21, "pass": false}
+CONTROLS {"frozen_NuWro_test_recomputed": {"identical": true, "bitwise": true, "differing_paths": [], "interval_last_ulp_paths": [], "variants": ["0.0", "0.5", "1.0", "m1+2", "m1-2"], "B": 1751}, "robust_nulls_reproduce_frozen": {"identical": true, "bitwise": true, "differing_paths": [], "interval_last_ulp_paths": []}, "holm_determined_reproduces_frozen": {"decisions": {"identical": true, "bitwise": true, "differing_paths": [], "interval_last_ulp_paths": []}, "decisions_robust_kappa": {"identical": true, "bitwise": true, "differing_paths": [], "interval_last_ulp_paths": []}, "holm_point": {"identical": true, "bitwise": true, "differing_paths": [], "interval_last_ulp_paths": []}}, "replay_identity_mu_C12": {"T": {"total": 7427.144348737543, "shape": 9660.007441171016}, "claim_p": {"total": 0.0005707762557077625, "shape": 0.001141552511415525}, "frozen_margins_in_null_sd": {"total": 6.330026746727779, "shape": 2.864766770770627}, "frozen_T_minus_Tcrit_in_null_sd": {"total": 2.714960665049272, "shape": 1.1094726941085464}, "identical": true}}
+REPLAY {"frozen_W": {"T": {"total": 6480.719219515736, "shape": 8798.755531999372}, "claim": {"total": 0.33162100456621, "shape": 0.02511415525114155}, "in_null_sd": {"total": {"null_sd": 174.29401981671793, "null_median": 6323.858541503017, "frozen_margin_over_median": 6.330026746727779, "replay_margin_over_median": 0.8999773955392676, "change": -5.4300493511885115}, "shape": {"null_sd": 890.0258836310471, "null_median": 7110.290864619027, "frozen_margin_over_median": 2.864766770770627, "replay_margin_over_median": 1.8970961389256444, "change": -0.9676706318449823}}, "changes": {"NuWro_21_09:shape": ["rejected", "undetermined"], "NuWro_21_09:total": ["rejected", "undetermined"]}}, "W_CH": {"T": {"total": 6889.019120394559, "shape": 9356.861868149366}, "claim": {"total": 0.003424657534246575, "shape": 0.003424657534246575}, "in_null_sd": {"total": {"null_sd": 174.29401981671793, "null_median": 6323.858541503017, "frozen_margin_over_median": 6.330026746727779, "replay_margin_over_median": 3.242570109323585, "change": -3.0874566374041943}, "shape": {"null_sd": 890.0258836310471, "null_median": 7110.290864619027, "frozen_margin_over_median": 2.864766770770627, "replay_margin_over_median": 2.524163673043959, "change": -0.3406030977266678}}, "changes": {}}}
+CROSSES_FROZEN_THRESHOLD mixed: NuWro carbon + GENIE hydrogen; not NuWro-on-CH {"NuWro_shape_would_cross_frozen_threshold_frozen_W": true, "NuWro_shape_would_cross_frozen_threshold_W_CH": false, "any_family_decision_changes": true}
+DONE: B4 passed; readout and descriptive replay written
+BUILD_C rc=0 EVAL_C rc=0 end 2026-10-20T08:09:03Z

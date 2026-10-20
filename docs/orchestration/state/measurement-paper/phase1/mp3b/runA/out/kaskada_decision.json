@@ -1,0 +1,1815 @@
+{
+ "rule": "if every comparable pair is RNG-aligned and every event completed under kaskada_on = 1 has an identical\n  final state under kaskada_on = 0 (same particles, four-momenta within TOL), kaskada_on = 0 is the PRIMARY H\n  sample and (A) with kaskada_on = 1 is reported beside it, flagged. If any pair differs, (A) with kaskada_on = 1\n  stays primary and the differences are reported. A misaligned pair cannot be compared and is reported as such;\n  the switch condition is then not met (nothing shown identical), so kaskada_on = 1 stays primary.",
+ "n_pairs_compared": 30,
+ "pairs_without_comparison": {},
+ "n_pairs_misaligned": 0,
+ "misaligned_pairs": [],
+ "events_compared": 275000,
+ "events_post_exact": 169240,
+ "events_post_within_tol": 243422,
+ "events_post_momentum_different": 31578,
+ "events_post_content_different": 0,
+ "max_post_abs_diff_MeV": 330.4359018,
+ "identical_on_every_completed_event": false,
+ "pairs": {
+  "H_main_c01": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c01.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 790,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.02182257519
+    },
+    "3122": {
+     "n_particles": 136,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 57.12768597
+    },
+    "3212": {
+     "n_particles": 31,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 128.3004781
+    },
+    "3222": {
+     "n_particles": 150,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 166.6267457
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    6,
+    8,
+    24,
+    36,
+    39,
+    41,
+    61,
+    62
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c01/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.336726327e-38,
+   "weight_k0": 2.336726327e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6139,
+   "n_post_within_tol": 8894,
+   "n_post_momentum_different": 1106,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 166.6267457,
+   "tol_mev": 1e-06
+  },
+  "H_main_c02": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c02.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 777,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01912528909
+    },
+    "3122": {
+     "n_particles": 139,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 60.35701833
+    },
+    "3212": {
+     "n_particles": 15,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 171.8567603
+    },
+    "3222": {
+     "n_particles": 185,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 232.6434195
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    4,
+    21,
+    35,
+    39,
+    42,
+    74,
+    103,
+    110
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c02/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c02/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.343911385e-38,
+   "weight_k0": 2.343911385e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6201,
+   "n_post_within_tol": 8884,
+   "n_post_momentum_different": 1116,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 232.6434195,
+   "tol_mev": 1e-06
+  },
+  "H_main_c03": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c03.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 788,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01652605382
+    },
+    "3122": {
+     "n_particles": 163,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 54.53827269
+    },
+    "3212": {
+     "n_particles": 21,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 117.4164725
+    },
+    "3222": {
+     "n_particles": 172,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 183.8728598
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    12,
+    13,
+    26,
+    30,
+    53,
+    55,
+    57,
+    61
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c03/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c03/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.315562059e-38,
+   "weight_k0": 2.315562059e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 5893,
+   "n_post_within_tol": 8856,
+   "n_post_momentum_different": 1144,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 183.8728598,
+   "tol_mev": 1e-06
+  },
+  "H_main_c04": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c04.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 804,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01341899078
+    },
+    "3122": {
+     "n_particles": 140,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 54.26788719
+    },
+    "3212": {
+     "n_particles": 22,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 158.954335
+    },
+    "3222": {
+     "n_particles": 176,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 187.6742708
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    8,
+    15,
+    33,
+    42,
+    47,
+    67,
+    95,
+    100
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c04/a1/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c04/a1/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.296141824e-38,
+   "weight_k0": 2.296141824e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6038,
+   "n_post_within_tol": 8858,
+   "n_post_momentum_different": 1142,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 187.6742708,
+   "tol_mev": 1e-06
+  },
+  "H_main_c05": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c05.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 807,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01827387942
+    },
+    "3122": {
+     "n_particles": 166,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 56.39678319
+    },
+    "3212": {
+     "n_particles": 23,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 189.2169392
+    },
+    "3222": {
+     "n_particles": 166,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 202.7604292
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    8,
+    13,
+    32,
+    43,
+    51,
+    53,
+    61,
+    66
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c05/a1/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c05/a1/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.295111366e-38,
+   "weight_k0": 2.295111366e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6086,
+   "n_post_within_tol": 8838,
+   "n_post_momentum_different": 1162,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 202.7604292,
+   "tol_mev": 1e-06
+  },
+  "H_main_c06": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c06.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 829,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01324101165
+    },
+    "3122": {
+     "n_particles": 145,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 51.09574506
+    },
+    "3212": {
+     "n_particles": 22,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 158.758167
+    },
+    "3222": {
+     "n_particles": 170,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 184.4011812
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    13,
+    18,
+    23,
+    33,
+    36,
+    41,
+    50,
+    51
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c06/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c06/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.324270746e-38,
+   "weight_k0": 2.324270746e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6128,
+   "n_post_within_tol": 8834,
+   "n_post_momentum_different": 1166,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 184.4011812,
+   "tol_mev": 1e-06
+  },
+  "H_main_c07": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c07.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 827,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01678089549
+    },
+    "3122": {
+     "n_particles": 157,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 59.29734535
+    },
+    "3212": {
+     "n_particles": 37,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 165.4637929
+    },
+    "3222": {
+     "n_particles": 153,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 187.5173698
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    19,
+    21,
+    29,
+    34,
+    37,
+    38,
+    50,
+    59
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c07/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c07/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.301140128e-38,
+   "weight_k0": 2.301140128e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6140,
+   "n_post_within_tol": 8826,
+   "n_post_momentum_different": 1174,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 187.5173698,
+   "tol_mev": 1e-06
+  },
+  "H_main_c08": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c08.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 762,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01244118915
+    },
+    "3122": {
+     "n_particles": 154,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 58.9358476
+    },
+    "3212": {
+     "n_particles": 18,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 115.033964
+    },
+    "3222": {
+     "n_particles": 163,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 249.4956883
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    2,
+    3,
+    10,
+    14,
+    22,
+    53,
+    54,
+    58
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c08/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c08/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.295746813e-38,
+   "weight_k0": 2.295746813e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6034,
+   "n_post_within_tol": 8903,
+   "n_post_momentum_different": 1097,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 249.4956883,
+   "tol_mev": 1e-06
+  },
+  "H_main_c09": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c09.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 769,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.030595305
+    },
+    "3122": {
+     "n_particles": 138,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 63.60614324
+    },
+    "3212": {
+     "n_particles": 15,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 140.2891754
+    },
+    "3222": {
+     "n_particles": 166,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 202.0719576
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    10,
+    12,
+    25,
+    26,
+    35,
+    39,
+    50,
+    52
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c09/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c09/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.297892146e-38,
+   "weight_k0": 2.297892146e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6141,
+   "n_post_within_tol": 8912,
+   "n_post_momentum_different": 1088,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 202.0719576,
+   "tol_mev": 1e-06
+  },
+  "H_main_c10": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c10.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 770,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01835546712
+    },
+    "3122": {
+     "n_particles": 166,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 57.12048606
+    },
+    "3212": {
+     "n_particles": 22,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 114.309969
+    },
+    "3222": {
+     "n_particles": 159,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 202.6988401
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    4,
+    11,
+    14,
+    18,
+    45,
+    53,
+    57,
+    60
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c10/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c10/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.287365286e-38,
+   "weight_k0": 2.287365286e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6180,
+   "n_post_within_tol": 8883,
+   "n_post_momentum_different": 1117,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 202.6988401,
+   "tol_mev": 1e-06
+  },
+  "H_main_c11": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c11.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 833,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01499808919
+    },
+    "3122": {
+     "n_particles": 152,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 64.67488077
+    },
+    "3212": {
+     "n_particles": 22,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 183.9133445
+    },
+    "3222": {
+     "n_particles": 159,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 291.1153431
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    8,
+    15,
+    17,
+    22,
+    29,
+    36,
+    38,
+    51
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c11/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c11/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.328575425e-38,
+   "weight_k0": 2.328575425e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6057,
+   "n_post_within_tol": 8834,
+   "n_post_momentum_different": 1166,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 291.1153431,
+   "tol_mev": 1e-06
+  },
+  "H_main_c12": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c12.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 771,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01161240282
+    },
+    "3122": {
+     "n_particles": 165,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 56.18387474
+    },
+    "3212": {
+     "n_particles": 28,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 162.6839393
+    },
+    "3222": {
+     "n_particles": 164,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 140.9483288
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    18,
+    24,
+    33,
+    44,
+    55,
+    66,
+    69,
+    70
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c12/a1/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c12/a1/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.298107108e-38,
+   "weight_k0": 2.298107108e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6139,
+   "n_post_within_tol": 8872,
+   "n_post_momentum_different": 1128,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 162.6839393,
+   "tol_mev": 1e-06
+  },
+  "H_main_c13": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c13.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 805,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01520136645
+    },
+    "3122": {
+     "n_particles": 179,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 50.43908389
+    },
+    "3212": {
+     "n_particles": 26,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 183.8499673
+    },
+    "3222": {
+     "n_particles": 164,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 163.663888
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    3,
+    11,
+    16,
+    21,
+    34,
+    35,
+    36,
+    40
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c13/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c13/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.39562953e-38,
+   "weight_k0": 2.39562953e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6161,
+   "n_post_within_tol": 8827,
+   "n_post_momentum_different": 1173,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 183.8499673,
+   "tol_mev": 1e-06
+  },
+  "H_main_c14": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c14.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 837,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.02211037466
+    },
+    "3122": {
+     "n_particles": 130,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 51.06682512
+    },
+    "3212": {
+     "n_particles": 26,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 110.902515
+    },
+    "3222": {
+     "n_particles": 161,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 187.1841451
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    6,
+    7,
+    22,
+    34,
+    43,
+    45,
+    54,
+    57
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c14/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c14/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.361650277e-38,
+   "weight_k0": 2.361650277e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6126,
+   "n_post_within_tol": 8846,
+   "n_post_momentum_different": 1154,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 187.1841451,
+   "tol_mev": 1e-06
+  },
+  "H_main_c15": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c15.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 768,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01199991304
+    },
+    "3122": {
+     "n_particles": 161,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 61.04330364
+    },
+    "3212": {
+     "n_particles": 22,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 105.4309815
+    },
+    "3222": {
+     "n_particles": 161,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 193.1987441
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    1,
+    12,
+    14,
+    27,
+    35,
+    38,
+    41,
+    54
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c15/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c15/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.286367802e-38,
+   "weight_k0": 2.286367802e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6158,
+   "n_post_within_tol": 8888,
+   "n_post_momentum_different": 1112,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 193.1987441,
+   "tol_mev": 1e-06
+  },
+  "H_main_c16": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c16.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 788,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01802012151
+    },
+    "3122": {
+     "n_particles": 157,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 56.18805218
+    },
+    "3212": {
+     "n_particles": 26,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 174.9051645
+    },
+    "3222": {
+     "n_particles": 152,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 167.6413476
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    6,
+    21,
+    29,
+    30,
+    41,
+    44,
+    53,
+    60
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c16/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c16/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.322302083e-38,
+   "weight_k0": 2.322302083e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6122,
+   "n_post_within_tol": 8877,
+   "n_post_momentum_different": 1123,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 174.9051645,
+   "tol_mev": 1e-06
+  },
+  "H_main_c17": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c17.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 820,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01105025344
+    },
+    "3122": {
+     "n_particles": 121,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 47.81806053
+    },
+    "3212": {
+     "n_particles": 18,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 115.4226217
+    },
+    "3222": {
+     "n_particles": 166,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 204.5536006
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    10,
+    24,
+    35,
+    46,
+    51,
+    55,
+    66,
+    68
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c17/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c17/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.333985119e-38,
+   "weight_k0": 2.333985119e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6094,
+   "n_post_within_tol": 8875,
+   "n_post_momentum_different": 1125,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 204.5536006,
+   "tol_mev": 1e-06
+  },
+  "H_main_c18": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c18.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 739,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01672925021
+    },
+    "3122": {
+     "n_particles": 154,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 62.80599779
+    },
+    "3212": {
+     "n_particles": 26,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 121.4808346
+    },
+    "3222": {
+     "n_particles": 159,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 206.0418107
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    22,
+    28,
+    36,
+    44,
+    49,
+    61,
+    75,
+    89
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c18/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c18/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.281595965e-38,
+   "weight_k0": 2.281595965e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6116,
+   "n_post_within_tol": 8922,
+   "n_post_momentum_different": 1078,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 206.0418107,
+   "tol_mev": 1e-06
+  },
+  "H_main_c19": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c19.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 823,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.02016423909
+    },
+    "3122": {
+     "n_particles": 159,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 46.51536672
+    },
+    "3212": {
+     "n_particles": 25,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 112.351422
+    },
+    "3222": {
+     "n_particles": 164,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 162.9723388
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    8,
+    10,
+    17,
+    31,
+    51,
+    70,
+    71,
+    72
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c19/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c19/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.27949545e-38,
+   "weight_k0": 2.27949545e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6035,
+   "n_post_within_tol": 8829,
+   "n_post_momentum_different": 1171,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 162.9723388,
+   "tol_mev": 1e-06
+  },
+  "H_main_c20": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c20.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 803,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.02145397631
+    },
+    "3122": {
+     "n_particles": 121,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 65.76845953
+    },
+    "3212": {
+     "n_particles": 29,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 115.5056115
+    },
+    "3222": {
+     "n_particles": 176,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 330.4359018
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    5,
+    6,
+    28,
+    63,
+    72,
+    73,
+    79,
+    107
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c20/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c20/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.321083938e-38,
+   "weight_k0": 2.321083938e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6110,
+   "n_post_within_tol": 8871,
+   "n_post_momentum_different": 1129,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 330.4359018,
+   "tol_mev": 1e-06
+  },
+  "H_main_c21": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c21.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 807,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01609254696
+    },
+    "3122": {
+     "n_particles": 159,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 50.53462363
+    },
+    "3212": {
+     "n_particles": 29,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 115.6592307
+    },
+    "3222": {
+     "n_particles": 165,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 224.4019362
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    3,
+    4,
+    7,
+    15,
+    17,
+    25,
+    28,
+    29
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c21/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c21/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.271298783e-38,
+   "weight_k0": 2.271298783e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6074,
+   "n_post_within_tol": 8840,
+   "n_post_momentum_different": 1160,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 224.4019362,
+   "tol_mev": 1e-06
+  },
+  "H_main_c22": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c22.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 735,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01464539213
+    },
+    "3122": {
+     "n_particles": 156,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 69.81878683
+    },
+    "3212": {
+     "n_particles": 19,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 109.9271794
+    },
+    "3222": {
+     "n_particles": 166,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 199.3762098
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    5,
+    12,
+    22,
+    28,
+    33,
+    34,
+    35,
+    42
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c22/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c22/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.278212226e-38,
+   "weight_k0": 2.278212226e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6117,
+   "n_post_within_tol": 8924,
+   "n_post_momentum_different": 1076,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 199.3762098,
+   "tol_mev": 1e-06
+  },
+  "H_main_c23": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c23.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 792,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01899667829
+    },
+    "3122": {
+     "n_particles": 146,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 50.62154543
+    },
+    "3212": {
+     "n_particles": 26,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 117.1126866
+    },
+    "3222": {
+     "n_particles": 153,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 247.5782657
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    5,
+    8,
+    28,
+    31,
+    34,
+    38,
+    40,
+    89
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c23/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c23/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.326234694e-38,
+   "weight_k0": 2.326234694e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6175,
+   "n_post_within_tol": 8883,
+   "n_post_momentum_different": 1117,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 247.5782657,
+   "tol_mev": 1e-06
+  },
+  "H_main_c24": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c24.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 854,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01501790668
+    },
+    "3122": {
+     "n_particles": 149,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 55.29772873
+    },
+    "3212": {
+     "n_particles": 29,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 125.2592634
+    },
+    "3222": {
+     "n_particles": 164,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 307.5077625
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    17,
+    28,
+    33,
+    42,
+    48,
+    50,
+    55,
+    73
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c24/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c24/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.301767857e-38,
+   "weight_k0": 2.301767857e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6014,
+   "n_post_within_tol": 8804,
+   "n_post_momentum_different": 1196,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 307.5077625,
+   "tol_mev": 1e-06
+  },
+  "H_main_c25": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_main_c25.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 796,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01731395526
+    },
+    "3122": {
+     "n_particles": 147,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 53.02848799
+    },
+    "3212": {
+     "n_particles": 21,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 151.1285838
+    },
+    "3222": {
+     "n_particles": 179,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 203.2176843
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    2,
+    5,
+    18,
+    23,
+    29,
+    51,
+    57,
+    64
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c25/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_main/c25/a0/nuwro.root",
+   "n_k1": 10000,
+   "n_k0": 10000,
+   "n_compared": 10000,
+   "weight_k1": 2.338947815e-38,
+   "weight_k0": 2.338947815e-38,
+   "n_in_identical": 10000,
+   "n_out_identical": 10000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 6100,
+   "n_post_within_tol": 8857,
+   "n_post_momentum_different": 1143,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 203.2176843,
+   "tol_mev": 1e-06
+  },
+  "H_supp_c01": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_supp_c01.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 31,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.007188271105
+    },
+    "3122": {
+     "n_particles": 376,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 55.82349509
+    },
+    "3212": {
+     "n_particles": 69,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 124.8874303
+    },
+    "3222": {
+     "n_particles": 182,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 128.5958464
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    4,
+    7,
+    8,
+    22,
+    45,
+    46,
+    48,
+    58
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_supp/c01/a0/nuwro.root",
+   "n_k1": 5000,
+   "n_k0": 5000,
+   "n_compared": 5000,
+   "weight_k1": 2.407852864e-37,
+   "weight_k0": 2.407852864e-37,
+   "n_in_identical": 5000,
+   "n_out_identical": 5000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 3327,
+   "n_post_within_tol": 4346,
+   "n_post_momentum_different": 654,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 128.5958464,
+   "tol_mev": 1e-06
+  },
+  "H_supp_c02": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_supp_c02.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 36,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.006636783877
+    },
+    "3122": {
+     "n_particles": 359,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 75.78002443
+    },
+    "3212": {
+     "n_particles": 70,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 121.4624235
+    },
+    "3222": {
+     "n_particles": 152,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 274.0121154
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    0,
+    3,
+    22,
+    26,
+    28,
+    35,
+    47,
+    53
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c02/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_supp/c02/a0/nuwro.root",
+   "n_k1": 5000,
+   "n_k0": 5000,
+   "n_compared": 5000,
+   "weight_k1": 2.417778892e-37,
+   "weight_k0": 2.417778892e-37,
+   "n_in_identical": 5000,
+   "n_out_identical": 5000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 3380,
+   "n_post_within_tol": 4388,
+   "n_post_momentum_different": 612,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 274.0121154,
+   "tol_mev": 1e-06
+  },
+  "H_supp_c03": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_supp_c03.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 48,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.01654141035
+    },
+    "3122": {
+     "n_particles": 373,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 61.76033973
+    },
+    "3212": {
+     "n_particles": 70,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 125.0103438
+    },
+    "3222": {
+     "n_particles": 185,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 128.8804705
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    11,
+    17,
+    19,
+    26,
+    27,
+    29,
+    32,
+    44
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c03/a1/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_supp/c03/a1/nuwro.root",
+   "n_k1": 5000,
+   "n_k0": 5000,
+   "n_compared": 5000,
+   "weight_k1": 2.414033215e-37,
+   "weight_k0": 2.414033215e-37,
+   "n_in_identical": 5000,
+   "n_out_identical": 5000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 3289,
+   "n_post_within_tol": 4328,
+   "n_post_momentum_different": 672,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 128.8804705,
+   "tol_mev": 1e-06
+  },
+  "H_supp_c04": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_supp_c04.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 37,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.006958738248
+    },
+    "3122": {
+     "n_particles": 355,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 53.19522144
+    },
+    "3212": {
+     "n_particles": 63,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 115.1251031
+    },
+    "3222": {
+     "n_particles": 169,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 176.3269881
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    0,
+    5,
+    8,
+    19,
+    28,
+    32,
+    41,
+    50
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c04/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_supp/c04/a0/nuwro.root",
+   "n_k1": 5000,
+   "n_k0": 5000,
+   "n_compared": 5000,
+   "weight_k1": 2.373724269e-37,
+   "weight_k0": 2.373724269e-37,
+   "n_in_identical": 5000,
+   "n_out_identical": 5000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 3353,
+   "n_post_within_tol": 4380,
+   "n_post_momentum_different": 620,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 176.3269881,
+   "tol_mev": 1e-06
+  },
+  "H_supp_c05": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/compare/H_supp_c05.txt",
+   "pdg_shift": {
+    "2212": {
+     "n_particles": 38,
+     "mean_dE_k1_minus_k0_MeV": 0.0,
+     "max_abs_dE_MeV": 0.0,
+     "max_abs_dp_MeV": 0.005175562383
+    },
+    "3122": {
+     "n_particles": 390,
+     "mean_dE_k1_minus_k0_MeV": 27.0,
+     "max_abs_dE_MeV": 27.0,
+     "max_abs_dp_MeV": 47.09192195
+    },
+    "3212": {
+     "n_particles": 60,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 107.4606041
+    },
+    "3222": {
+     "n_particles": 176,
+     "mean_dE_k1_minus_k0_MeV": -70.0,
+     "max_abs_dE_MeV": 70.0,
+     "max_abs_dp_MeV": 200.1593787
+    }
+   },
+   "pdg_fewer_in_k1": {},
+   "pdg_more_in_k1": {},
+   "examples": [
+    13,
+    22,
+    23,
+    25,
+    26,
+    39,
+    43,
+    47
+   ],
+   "file_k1": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c05/a0/nuwro.root",
+   "file_k0": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen_k0/H_supp/c05/a0/nuwro.root",
+   "n_k1": 5000,
+   "n_k0": 5000,
+   "n_compared": 5000,
+   "weight_k1": 2.455240915e-37,
+   "weight_k0": 2.455240915e-37,
+   "n_in_identical": 5000,
+   "n_out_identical": 5000,
+   "n_dyn_different": 0,
+   "first_misaligned": -1,
+   "rng_aligned": 1,
+   "n_post_exact": 3313,
+   "n_post_within_tol": 4343,
+   "n_post_momentum_different": 657,
+   "n_post_content_different": 0,
+   "max_post_abs_diff_mev": 200.1593787,
+   "tol_mev": 1e-06
+  }
+ },
+ "pdg_shift_aggregate": {
+  "2212": {
+   "n_particles": 20084,
+   "max_abs_dE_MeV": 0.0,
+   "max_abs_dp_MeV": 0.030595305,
+   "mean_dE_k1_minus_k0_MeV": 0.0
+  },
+  "3122": {
+   "n_particles": 5613,
+   "max_abs_dE_MeV": 27.0,
+   "max_abs_dp_MeV": 75.78002443,
+   "mean_dE_k1_minus_k0_MeV": 27.0
+  },
+  "3212": {
+   "n_particles": 930,
+   "max_abs_dE_MeV": 70.0,
+   "max_abs_dp_MeV": 189.2169392,
+   "mean_dE_k1_minus_k0_MeV": -70.0
+  },
+  "3222": {
+   "n_particles": 4977,
+   "max_abs_dE_MeV": 70.0,
+   "max_abs_dp_MeV": 330.4359018,
+   "mean_dE_k1_minus_k0_MeV": -70.0
+  }
+ },
+ "events_with_fewer_of_pdg_in_k1": {},
+ "events_with_more_of_pdg_in_k1": {},
+ "PRIMARY_H_SAMPLE": "k1 (kaskada_on = 1, run A)"
+}
