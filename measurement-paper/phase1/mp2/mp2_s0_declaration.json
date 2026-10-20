@@ -1,0 +1,55 @@
+{
+ "schema": "mp2-s0-declaration/1",
+ "purpose": "MP-2 S0 descriptive probe (PLAN.md 3.3): Tune v1 analysis-MC truth vs NuWro 21.09 truth; sizes S2. Not a production reweighter; no J cell and no hybrid null is read.",
+ "population": {
+  "phase_space": "analysis truth phase space: pT in [0, 4.5], p_par in [1.5, 60] GeV/c, theta_mu < 20 deg (u2d.in_truth_phase_space), and inside the s5p fine 5D grid (edges of of_inputs_5d.npz; histogramdd convention)",
+  "enu_GeV": [0.5, 50.0],
+  "enu_note": "NuWro's generation range (gen5d_flux_reweight GEN_RANGE['nuwro']); the 50-100 GeV NuWro supplement is not used, so Tune v1 is cut to the same range",
+  "tune_v1": "of_inputs_5d rows with pass_truth, from the S1 dump; HYDROGEN EXCLUDED (mc_targetZ == 1 dropped) because NuWro is on C12 only",
+  "tune_v1_subsample": {"n": 2000000, "seed": 2026102001, "rule": "uniform without replacement over eligible rows"},
+  "nuwro": "work_nuwro_p1..p8 treeout (post arrays) row-aligned to gen5d/nuwro_flat5d_p1..p8; cc == 1; extract_nuwro's phase-space mask; all eligible events used",
+  "weights": {"tune_v1": "of_inputs_5d w_truth (POT-scaled, MnvTune v1 CV)", "nuwro": "e.weight x r(E_nu), r from gen5d_flux_reweight.flux_weights/r_of with gen5d_fluxfix/phi_t.npz and flux_mefhc_numu_nuwro.root:flux_numu on [0.5, 50] GeV"}
+ },
+ "frames": {"tune_v1": "mc_FSPart momenta rotated into the MAT beam frame, RotateX(-0.05887)", "nuwro": "as stored (beam along +z)"},
+ "particle_harmonization": {
+  "excluded": "|pdg| == 13 (the muon; its kinematics enter through pT, p_par), |pdg| in {11, 12, 14, 16}, pdg >= 1000000000 (nuclear remnants/fragments) and pdg >= 2000000000 (GENIE pseudo-particles)",
+  "kinetic_energy": "KE = E - sqrt(max(E^2 - |p|^2, 0)), MeV",
+  "species": {
+   "p":    {"pdg": [2212], "threshold": "KE > 100 MeV"},
+   "n":    {"pdg": [2112], "threshold": "KE > 50 MeV"},
+   "pipm": {"pdg": [211, -211], "threshold": "KE > 50 MeV"},
+   "pi0":  {"pdg": [111], "threshold": "none"},
+   "gamma":{"pdg": [22], "threshold": "E > 10 MeV"},
+   "other":{"pdg": "anything not excluded and not above (kaons, hyperons, eta, antinucleons, ...)", "threshold": "none"}
+  }
+ },
+ "features": {
+  "scalars5": ["pt", "pz", "eavail", "q3", "W"],
+  "full": ["pt", "pz", "eavail", "q3", "W", "enu", "n_p", "n_n", "n_pipm", "n_pi0", "n_gamma", "n_other",
+           "p1_KE", "p1_cos", "n1_KE", "pipm1_KE", "pipm1_cos", "pi01_E", "sum_p_KE", "sum_n_KE"],
+  "leading": "highest KE (E for pi0) above threshold; cos is the polar-angle cosine in the beam frame; NaN when absent (LightGBM missing)",
+  "scalar_conventions": "each sample's own frozen-product convention: Tune v1 = MCgen columns; NuWro = nuwro_flat5d pt, pz, eavail, q3, W (NuWro W uses M_n and a W = 0 clamp, MP-5 (b))"
+ },
+ "fits": {
+  "pairs": ["tune_vs_nuwro", "nuwro_vs_nuwro_split", "tune_vs_tune_split"],
+  "feature_sets": ["scalars5", "full"],
+  "split": {"train": 0.5, "valid": 0.1, "test": 0.4, "seed": 2026102002},
+  "gvg_split_seed": 2026102003,
+  "class_balance": "training, validation and test weights normalised so each class sums to half that split's row count (mean weight 1; keeps min_sum_hessian_in_leaf meaningful)",
+  "model": "lightgbm.LGBMClassifier",
+  "params": {"objective": "binary", "learning_rate": 0.05, "num_leaves": 63, "min_child_samples": 200, "n_estimators": 2000,
+             "subsample": 1.0, "colsample_bytree": 1.0, "reg_lambda": 0.0, "random_state": 2026102004, "deterministic": true,
+             "force_row_wise": true, "verbose": -1},
+  "early_stopping_rounds": 200,
+  "metric": "weighted binary logloss on valid"
+ },
+ "readouts": {
+  "auc": "weighted ROC AUC on test (sklearn roc_auc_score, class-balanced weights)",
+  "auc_gap": "AUC(tune_vs_nuwro) - AUC(nuwro_vs_nuwro_split), per feature set",
+  "w": "w = p/(1-p) on the Tune v1 test rows, normalised so sum(w_truth * w) = sum(w_truth)",
+  "kish": "ESS = (sum v)^2 / sum v^2 with v = w_truth * w; reported / N and / ESS(w_truth)",
+  "max_weight": "max(w) / <w>_{w_truth}",
+  "logw_within_cell": "w_truth-weighted variance of log w within each fine 5D cell (cells with >= 20 test rows), pooled by cell w_truth; and the total variance",
+  "timing": "wall seconds of each fit and prediction; best iteration"
+ }
+}
