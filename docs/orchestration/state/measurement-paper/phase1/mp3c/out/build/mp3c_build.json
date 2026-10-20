@@ -1,0 +1,6885 @@
+{
+ "schema": "mp3c-build/1",
+ "argv": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_build.py",
+  "--out",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/out/build",
+  "--h-glob",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task*/FinalEvents.dat",
+  "--frozen-jobcard",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu/gibuu_mefhc_numu.job",
+  "--seeds",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/SEEDS.txt",
+  "--nproc",
+  "96"
+ ],
+ "environment": {
+  "python": "3.11.14",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "numpy": "1.26.4",
+  "host": "nid005641",
+  "PLOTUTILSROOT": null,
+  "cwd": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/run",
+  "ROOT": "6.28/12"
+ },
+ "stages": {
+  "C0_card": {
+   "n_tasks": 80,
+   "pass": true,
+   "difference_sets": [
+    "{\"input:numensembles\": [\"4000\", \"48000\"], \"neutrino_induced:include2p2hqe\": [\"T\", \"F\"], \"target:target_a\": [\"12\", \"1\"], \"target:target_z\": [\"6\", \"1\"]}"
+   ],
+   "per_task": {
+    "1001": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1001/task.job",
+     "seed": 7939264,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1002": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1002/task.job",
+     "seed": 7947183,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1003": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1003/task.job",
+     "seed": 7955102,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1004": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1004/task.job",
+     "seed": 7963021,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1005": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1005/task.job",
+     "seed": 7970940,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1006": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1006/task.job",
+     "seed": 7978859,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1007": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1007/task.job",
+     "seed": 7986778,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1008": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1008/task.job",
+     "seed": 7994697,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1009": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1009/task.job",
+     "seed": 8002616,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1010": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1010/task.job",
+     "seed": 8010535,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1011": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1011/task.job",
+     "seed": 8018454,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1012": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1012/task.job",
+     "seed": 8026373,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1013": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1013/task.job",
+     "seed": 8034292,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1014": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1014/task.job",
+     "seed": 8042211,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1015": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1015/task.job",
+     "seed": 8050130,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1016": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1016/task.job",
+     "seed": 8058049,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1017": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1017/task.job",
+     "seed": 8065968,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1018": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1018/task.job",
+     "seed": 8073887,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1019": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1019/task.job",
+     "seed": 8081806,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1020": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1020/task.job",
+     "seed": 8089725,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1021": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1021/task.job",
+     "seed": 8097644,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1022": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1022/task.job",
+     "seed": 8105563,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1023": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1023/task.job",
+     "seed": 8113482,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1024": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1024/task.job",
+     "seed": 8121401,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1025": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1025/task.job",
+     "seed": 8129320,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1026": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1026/task.job",
+     "seed": 8137239,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1027": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1027/task.job",
+     "seed": 8145158,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1028": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1028/task.job",
+     "seed": 8153077,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1029": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1029/task.job",
+     "seed": 8160996,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1030": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1030/task.job",
+     "seed": 8168915,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1031": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1031/task.job",
+     "seed": 8176834,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1032": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1032/task.job",
+     "seed": 8184753,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1033": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1033/task.job",
+     "seed": 8192672,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1034": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1034/task.job",
+     "seed": 8200591,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1035": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1035/task.job",
+     "seed": 8208510,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1036": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1036/task.job",
+     "seed": 8216429,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1037": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1037/task.job",
+     "seed": 8224348,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1038": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1038/task.job",
+     "seed": 8232267,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1039": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1039/task.job",
+     "seed": 8240186,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1040": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1040/task.job",
+     "seed": 8248105,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1041": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1041/task.job",
+     "seed": 8256024,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1042": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1042/task.job",
+     "seed": 8263943,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1043": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1043/task.job",
+     "seed": 8271862,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1044": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1044/task.job",
+     "seed": 8279781,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1045": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1045/task.job",
+     "seed": 8287700,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1046": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1046/task.job",
+     "seed": 8295619,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1047": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1047/task.job",
+     "seed": 8303538,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1048": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1048/task.job",
+     "seed": 8311457,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1049": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1049/task.job",
+     "seed": 8319376,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1050": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1050/task.job",
+     "seed": 8327295,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1051": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1051/task.job",
+     "seed": 8335214,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1052": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1052/task.job",
+     "seed": 8343133,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1053": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1053/task.job",
+     "seed": 8351052,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1054": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1054/task.job",
+     "seed": 8358971,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1055": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1055/task.job",
+     "seed": 8366890,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1056": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1056/task.job",
+     "seed": 8374809,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1057": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1057/task.job",
+     "seed": 8382728,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1058": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1058/task.job",
+     "seed": 8390647,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1059": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1059/task.job",
+     "seed": 8398566,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1060": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1060/task.job",
+     "seed": 8406485,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1061": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1061/task.job",
+     "seed": 8414404,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1062": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1062/task.job",
+     "seed": 8422323,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1063": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1063/task.job",
+     "seed": 8430242,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1064": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1064/task.job",
+     "seed": 8438161,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1065": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1065/task.job",
+     "seed": 8446080,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1066": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1066/task.job",
+     "seed": 8453999,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1067": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1067/task.job",
+     "seed": 8461918,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1068": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1068/task.job",
+     "seed": 8469837,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1069": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1069/task.job",
+     "seed": 8477756,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1070": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1070/task.job",
+     "seed": 8485675,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1071": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1071/task.job",
+     "seed": 8493594,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1072": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1072/task.job",
+     "seed": 8501513,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1073": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1073/task.job",
+     "seed": 8509432,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1074": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1074/task.job",
+     "seed": 8517351,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1075": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1075/task.job",
+     "seed": 8525270,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1076": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1076/task.job",
+     "seed": 8533189,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1077": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1077/task.job",
+     "seed": 8541108,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1078": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1078/task.job",
+     "seed": 8549027,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1079": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1079/task.job",
+     "seed": 8556946,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    },
+    "1080": {
+     "task_jobcard": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/prod/task1080/task.job",
+     "seed": 8564865,
+     "differences_vs_production": {
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "target:target_z": [
+       "6",
+       "1"
+      ]
+     },
+     "required": {
+      "target:target_z": [
+       "6",
+       "1"
+      ],
+      "target:target_a": [
+       "12",
+       "1"
+      ],
+      "neutrino_induced:include2p2hqe": [
+       "T",
+       "F"
+      ],
+      "input:numensembles": [
+       "4000",
+       "48000"
+      ]
+     },
+     "pass": true
+    }
+   }
+  },
+  "C1_converter_identity": {
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "nevt": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "alignment_gibuu_events_vs_extract_gibuu": true,
+   "n_files": 80,
+   "inputs_match_frozen_meta": true,
+   "pass": true
+  },
+  "B2": {
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "nevt": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "frozen_sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+   "zero_flux_event": false,
+   "cut_GeV": [
+    0.0,
+    20.0
+   ],
+   "sampling_reproduced": [
+    {
+     "mine": {
+      "population": "all written events with E_nu >= 1.5 GeV (counts)",
+      "n_events": 1882659,
+      "across_chi2": 40.29489453414016,
+      "across_ndf": 33,
+      "across_p": 0.1787991658015524,
+      "within_chi2": 167.03274587597917,
+      "within_ndf": 148,
+      "within_p": 0.1355648356164867,
+      "pass": true
+     },
+     "frozen": {
+      "population": "all written events with E_nu >= 1.5 GeV (counts)",
+      "n_events": 1882659,
+      "across_chi2": 40.29489453414016,
+      "across_ndf": 33,
+      "across_p": 0.1787991658015524,
+      "within_chi2": 167.03274587597917,
+      "within_ndf": 148,
+      "within_p": 0.1355648356164867,
+      "pass": true
+     },
+     "identical": true
+    },
+    {
+     "mine": {
+      "population": "edge-jump test, all written events, edges in (1.5,20.0) GeV, delta=0.1 GeV",
+      "n_events": 1904367,
+      "across_chi2": 43.01017819527482,
+      "across_ndf": 36,
+      "across_p": 0.19617114195732546,
+      "within_chi2": null,
+      "within_ndf": 0,
+      "within_p": null,
+      "pass": true
+     },
+     "frozen": {
+      "population": "edge-jump test, all written events, edges in (1.5,20.0) GeV, delta=0.1 GeV",
+      "n_events": 1904367,
+      "across_chi2": 43.01017819527482,
+      "across_ndf": 36,
+      "across_p": 0.19617114195732546,
+      "within_chi2": null,
+      "within_ndf": 0,
+      "within_p": null,
+      "pass": true
+     },
+     "identical": true
+    }
+   ],
+   "pass": true
+  },
+  "B1": {
+   "per_task": {
+    "task1001": {
+     "n_events": 19080,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8364,
+       "sigma_fraction": 0.33392191860911646
+      },
+      "19 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.0014468460289558298
+      },
+      "21 resonance": {
+       "n_events": 1676,
+       "sigma_fraction": 0.05405954051180721
+      },
+      "26 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.0012430314674964009
+      },
+      "30 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0010897828186264007
+      },
+      "31 resonance": {
+       "n_events": 157,
+       "sigma_fraction": 0.005270168840664118
+      },
+      "34 DIS": {
+       "n_events": 8773,
+       "sigma_fraction": 0.6029687117233336
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19075
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0002644398886744144,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1002": {
+     "n_events": 19151,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8438,
+       "sigma_fraction": 0.33486824008149624
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.0020427318328027745
+      },
+      "21 resonance": {
+       "n_events": 1679,
+       "sigma_fraction": 0.05505509329291682
+      },
+      "26 resonance": {
+       "n_events": 35,
+       "sigma_fraction": 0.0009473852932283962
+      },
+      "30 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0012448728071044453
+      },
+      "31 resonance": {
+       "n_events": 145,
+       "sigma_fraction": 0.004313804875979155
+      },
+      "34 DIS": {
+       "n_events": 8767,
+       "sigma_fraction": 0.601527871816472
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19147
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00021158738406466246,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1003": {
+     "n_events": 19102,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8319,
+       "sigma_fraction": 0.3291864685550411
+      },
+      "19 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.0016819433329897993
+      },
+      "21 resonance": {
+       "n_events": 1684,
+       "sigma_fraction": 0.055239615592127735
+      },
+      "26 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.001099194147905384
+      },
+      "30 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0008032250639143547
+      },
+      "31 resonance": {
+       "n_events": 138,
+       "sigma_fraction": 0.0046636055689633525
+      },
+      "34 DIS": {
+       "n_events": 8840,
+       "sigma_fraction": 0.6073259477390583
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19098
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00028280807616373554,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1004": {
+     "n_events": 19225,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8412,
+       "sigma_fraction": 0.3248474752302615
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0012190500115555024
+      },
+      "21 resonance": {
+       "n_events": 1658,
+       "sigma_fraction": 0.052666947513028854
+      },
+      "26 resonance": {
+       "n_events": 22,
+       "sigma_fraction": 0.0009411773747221696
+      },
+      "30 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0014603064658967224
+      },
+      "31 resonance": {
+       "n_events": 157,
+       "sigma_fraction": 0.005532671369996961
+      },
+      "34 DIS": {
+       "n_events": 8895,
+       "sigma_fraction": 0.613332372034538
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 2,
+      "2": 19223
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 5.966308464357103e-05,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1005": {
+     "n_events": 19100,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8497,
+       "sigma_fraction": 0.3335325553376677
+      },
+      "19 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.001632072951938497
+      },
+      "21 resonance": {
+       "n_events": 1609,
+       "sigma_fraction": 0.0518670003807619
+      },
+      "26 resonance": {
+       "n_events": 28,
+       "sigma_fraction": 0.0007862322881751519
+      },
+      "30 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0007246671488332157
+      },
+      "31 resonance": {
+       "n_events": 140,
+       "sigma_fraction": 0.004374293243327643
+      },
+      "34 DIS": {
+       "n_events": 8760,
+       "sigma_fraction": 0.6070831786492961
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 9,
+      "2": 19091
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0010296666833173969,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1006": {
+     "n_events": 19074,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8311,
+       "sigma_fraction": 0.3222683355290792
+      },
+      "19 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.00138877441496991
+      },
+      "21 resonance": {
+       "n_events": 1638,
+       "sigma_fraction": 0.0527667853222107
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0007689108917145793
+      },
+      "30 resonance": {
+       "n_events": 46,
+       "sigma_fraction": 0.0014857003151043829
+      },
+      "31 resonance": {
+       "n_events": 137,
+       "sigma_fraction": 0.004009535682548293
+      },
+      "34 DIS": {
+       "n_events": 8875,
+       "sigma_fraction": 0.617311957844373
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 10,
+      "2": 19064
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.000979553032549597,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1007": {
+     "n_events": 18982,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8416,
+       "sigma_fraction": 0.33354688121384213
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.001895897486001435
+      },
+      "21 resonance": {
+       "n_events": 1636,
+       "sigma_fraction": 0.05429883242520135
+      },
+      "26 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.001108382541308759
+      },
+      "30 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.0007296054199180459
+      },
+      "31 resonance": {
+       "n_events": 148,
+       "sigma_fraction": 0.005691225601368103
+      },
+      "34 DIS": {
+       "n_events": 8665,
+       "sigma_fraction": 0.6027291753123603
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 1,
+      "2": 18981
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 3.412718883389137e-06,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1008": {
+     "n_events": 19140,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8212,
+       "sigma_fraction": 0.33170113074122703
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0018528520940460948
+      },
+      "21 resonance": {
+       "n_events": 1684,
+       "sigma_fraction": 0.0541953476772894
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.0007014045805758628
+      },
+      "30 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0010265345008052705
+      },
+      "31 resonance": {
+       "n_events": 146,
+       "sigma_fraction": 0.005127475450667329
+      },
+      "34 DIS": {
+       "n_events": 8988,
+       "sigma_fraction": 0.6053952549553892
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19134
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.001641529056930291,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1009": {
+     "n_events": 19037,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8314,
+       "sigma_fraction": 0.32344176231893845
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0019254375857246711
+      },
+      "21 resonance": {
+       "n_events": 1646,
+       "sigma_fraction": 0.05391051493846569
+      },
+      "26 resonance": {
+       "n_events": 25,
+       "sigma_fraction": 0.0006879549111691329
+      },
+      "30 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0012228357669745759
+      },
+      "31 resonance": {
+       "n_events": 142,
+       "sigma_fraction": 0.005005644015004725
+      },
+      "34 DIS": {
+       "n_events": 8830,
+       "sigma_fraction": 0.6138058504637229
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19033
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0011324362067593767,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1010": {
+     "n_events": 19073,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8384,
+       "sigma_fraction": 0.33347727112998826
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.001963660339705681
+      },
+      "21 resonance": {
+       "n_events": 1696,
+       "sigma_fraction": 0.05519374580225904
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.0011217385305956687
+      },
+      "30 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0015487108210968804
+      },
+      "31 resonance": {
+       "n_events": 143,
+       "sigma_fraction": 0.004622100072872888
+      },
+      "34 DIS": {
+       "n_events": 8727,
+       "sigma_fraction": 0.6020727733034816
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 19066
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0005966713214246676,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1011": {
+     "n_events": 18978,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8390,
+       "sigma_fraction": 0.3363311877492254
+      },
+      "19 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0017979821014416442
+      },
+      "21 resonance": {
+       "n_events": 1620,
+       "sigma_fraction": 0.05116190813564984
+      },
+      "26 resonance": {
+       "n_events": 22,
+       "sigma_fraction": 0.001040666166455301
+      },
+      "30 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0013645438483481948
+      },
+      "31 resonance": {
+       "n_events": 173,
+       "sigma_fraction": 0.005983669763173232
+      },
+      "34 DIS": {
+       "n_events": 8692,
+       "sigma_fraction": 0.6023200422357063
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 18975
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0005533576213378898,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1012": {
+     "n_events": 19144,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8509,
+       "sigma_fraction": 0.33951292995439536
+      },
+      "19 resonance": {
+       "n_events": 50,
+       "sigma_fraction": 0.002259889090833434
+      },
+      "21 resonance": {
+       "n_events": 1657,
+       "sigma_fraction": 0.053370350382962485
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.0010067049265226706
+      },
+      "30 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0007983200042581789
+      },
+      "31 resonance": {
+       "n_events": 134,
+       "sigma_fraction": 0.004440815321307101
+      },
+      "34 DIS": {
+       "n_events": 8733,
+       "sigma_fraction": 0.5986109903197209
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19140
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.000697634837746828,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1013": {
+     "n_events": 18982,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8223,
+       "sigma_fraction": 0.3192323456916872
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0014365091565946275
+      },
+      "21 resonance": {
+       "n_events": 1667,
+       "sigma_fraction": 0.054774226294942975
+      },
+      "26 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0010367930395084916
+      },
+      "30 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.0009129569409740977
+      },
+      "31 resonance": {
+       "n_events": 151,
+       "sigma_fraction": 0.005165404202308631
+      },
+      "34 DIS": {
+       "n_events": 8830,
+       "sigma_fraction": 0.6174417646739837
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 18977
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0005703922435124254,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1014": {
+     "n_events": 19210,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8504,
+       "sigma_fraction": 0.3287320189550615
+      },
+      "19 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0019194798949808704
+      },
+      "21 resonance": {
+       "n_events": 1684,
+       "sigma_fraction": 0.05341173542599672
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.000817603040552418
+      },
+      "30 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.0007693591910691814
+      },
+      "31 resonance": {
+       "n_events": 142,
+       "sigma_fraction": 0.004760763053486888
+      },
+      "34 DIS": {
+       "n_events": 8765,
+       "sigma_fraction": 0.6095890404388524
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19207
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00025462387024660513,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1015": {
+     "n_events": 19155,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8352,
+       "sigma_fraction": 0.3178969792999367
+      },
+      "19 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.0014977561048826085
+      },
+      "21 resonance": {
+       "n_events": 1689,
+       "sigma_fraction": 0.054131910601296025
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.0004959919441010551
+      },
+      "30 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0011915968276516
+      },
+      "31 resonance": {
+       "n_events": 153,
+       "sigma_fraction": 0.005385263778186974
+      },
+      "34 DIS": {
+       "n_events": 8852,
+       "sigma_fraction": 0.6194005014439452
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 1,
+      "2": 19154
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0002310916386360491,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1016": {
+     "n_events": 19196,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8473,
+       "sigma_fraction": 0.32908973363764277
+      },
+      "19 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0021938328694916746
+      },
+      "21 resonance": {
+       "n_events": 1619,
+       "sigma_fraction": 0.05364658193264069
+      },
+      "26 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.0011492777374168487
+      },
+      "30 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0011953095857201522
+      },
+      "31 resonance": {
+       "n_events": 141,
+       "sigma_fraction": 0.005222006221528788
+      },
+      "34 DIS": {
+       "n_events": 8842,
+       "sigma_fraction": 0.6075032580155589
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 19189
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0008230773683373206,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1017": {
+     "n_events": 19150,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8326,
+       "sigma_fraction": 0.3271671158072333
+      },
+      "19 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0016017104395581016
+      },
+      "21 resonance": {
+       "n_events": 1721,
+       "sigma_fraction": 0.056441223692937234
+      },
+      "26 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.000878759930676634
+      },
+      "30 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0011730474619019264
+      },
+      "31 resonance": {
+       "n_events": 146,
+       "sigma_fraction": 0.004543452293304332
+      },
+      "34 DIS": {
+       "n_events": 8838,
+       "sigma_fraction": 0.6081946903743887
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19147
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00017747793129481077,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1018": {
+     "n_events": 19155,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8418,
+       "sigma_fraction": 0.3306849702872734
+      },
+      "19 resonance": {
+       "n_events": 20,
+       "sigma_fraction": 0.0009922111236747733
+      },
+      "21 resonance": {
+       "n_events": 1629,
+       "sigma_fraction": 0.05033088540279484
+      },
+      "26 resonance": {
+       "n_events": 26,
+       "sigma_fraction": 0.0007536813522534442
+      },
+      "30 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.000856450668811416
+      },
+      "31 resonance": {
+       "n_events": 173,
+       "sigma_fraction": 0.005240158094060642
+      },
+      "34 DIS": {
+       "n_events": 8847,
+       "sigma_fraction": 0.6111416430711313
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19149
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009060123485485759,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1019": {
+     "n_events": 19134,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8405,
+       "sigma_fraction": 0.3349715076372435
+      },
+      "19 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.001335435405728966
+      },
+      "21 resonance": {
+       "n_events": 1642,
+       "sigma_fraction": 0.05352835948368676
+      },
+      "26 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.000829198402164141
+      },
+      "30 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.0012256008207334273
+      },
+      "31 resonance": {
+       "n_events": 126,
+       "sigma_fraction": 0.003973636783761486
+      },
+      "34 DIS": {
+       "n_events": 8854,
+       "sigma_fraction": 0.6041362614666818
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 2,
+      "2": 19132
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00025321989982433327,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1020": {
+     "n_events": 19089,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8282,
+       "sigma_fraction": 0.32921185906000083
+      },
+      "19 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.002272507937231865
+      },
+      "21 resonance": {
+       "n_events": 1700,
+       "sigma_fraction": 0.053248141073899226
+      },
+      "26 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.000612225423822319
+      },
+      "30 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0010329395575523204
+      },
+      "31 resonance": {
+       "n_events": 115,
+       "sigma_fraction": 0.003706721167398654
+      },
+      "34 DIS": {
+       "n_events": 8866,
+       "sigma_fraction": 0.6099156057800947
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 8,
+      "2": 19081
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0003802262330029362,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1021": {
+     "n_events": 19053,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8150,
+       "sigma_fraction": 0.32305725379675315
+      },
+      "19 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0016602650862242811
+      },
+      "21 resonance": {
+       "n_events": 1754,
+       "sigma_fraction": 0.05670565780691406
+      },
+      "26 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.0009248460024869457
+      },
+      "30 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0010041751400204156
+      },
+      "31 resonance": {
+       "n_events": 154,
+       "sigma_fraction": 0.0059541735566469136
+      },
+      "34 DIS": {
+       "n_events": 8890,
+       "sigma_fraction": 0.6106936286109541
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19049
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0003525095961740154,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1022": {
+     "n_events": 19154,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8436,
+       "sigma_fraction": 0.33867315839051293
+      },
+      "19 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.0018287446286651212
+      },
+      "21 resonance": {
+       "n_events": 1642,
+       "sigma_fraction": 0.05402336500041133
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.00044642118529841996
+      },
+      "30 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0006905144086422317
+      },
+      "31 resonance": {
+       "n_events": 135,
+       "sigma_fraction": 0.004207864667949103
+      },
+      "34 DIS": {
+       "n_events": 8835,
+       "sigma_fraction": 0.6001299317185209
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 19147
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0006800482528214592,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1023": {
+     "n_events": 19124,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8263,
+       "sigma_fraction": 0.3314353660134319
+      },
+      "19 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0017426598191065572
+      },
+      "21 resonance": {
+       "n_events": 1705,
+       "sigma_fraction": 0.05302780861641975
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0008363298408844208
+      },
+      "30 resonance": {
+       "n_events": 50,
+       "sigma_fraction": 0.0016888304725777548
+      },
+      "31 resonance": {
+       "n_events": 156,
+       "sigma_fraction": 0.004802108972842378
+      },
+      "34 DIS": {
+       "n_events": 8881,
+       "sigma_fraction": 0.6064668962647373
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19118
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0007324906192479981,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1024": {
+     "n_events": 19078,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8364,
+       "sigma_fraction": 0.3361962548037571
+      },
+      "19 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.0015810303223282075
+      },
+      "21 resonance": {
+       "n_events": 1622,
+       "sigma_fraction": 0.05083785882435845
+      },
+      "26 resonance": {
+       "n_events": 28,
+       "sigma_fraction": 0.000643606068561587
+      },
+      "30 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.000530121337137238
+      },
+      "31 resonance": {
+       "n_events": 126,
+       "sigma_fraction": 0.003930295988394972
+      },
+      "34 DIS": {
+       "n_events": 8872,
+       "sigma_fraction": 0.6062808326554623
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19074
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00011571532747459356,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1025": {
+     "n_events": 18919,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8194,
+       "sigma_fraction": 0.33116759177661775
+      },
+      "19 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.0014813255364385187
+      },
+      "21 resonance": {
+       "n_events": 1679,
+       "sigma_fraction": 0.051307088146690306
+      },
+      "26 resonance": {
+       "n_events": 22,
+       "sigma_fraction": 0.0005424184796218783
+      },
+      "30 resonance": {
+       "n_events": 52,
+       "sigma_fraction": 0.000985297196832617
+      },
+      "31 resonance": {
+       "n_events": 121,
+       "sigma_fraction": 0.003951645676280455
+      },
+      "34 DIS": {
+       "n_events": 8821,
+       "sigma_fraction": 0.6105646331875184
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 18913
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0007229609428921789,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1026": {
+     "n_events": 19154,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8334,
+       "sigma_fraction": 0.32622592030970504
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0017988122983388188
+      },
+      "21 resonance": {
+       "n_events": 1675,
+       "sigma_fraction": 0.05385351896684679
+      },
+      "26 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.0009417243747667128
+      },
+      "30 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.0013197267146787827
+      },
+      "31 resonance": {
+       "n_events": 145,
+       "sigma_fraction": 0.004324564132086461
+      },
+      "34 DIS": {
+       "n_events": 8892,
+       "sigma_fraction": 0.6115357332035775
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19151
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.000516420215730147,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1027": {
+     "n_events": 19284,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8504,
+       "sigma_fraction": 0.33004664337709205
+      },
+      "19 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.001650889883327264
+      },
+      "21 resonance": {
+       "n_events": 1637,
+       "sigma_fraction": 0.05148288893092223
+      },
+      "26 resonance": {
+       "n_events": 31,
+       "sigma_fraction": 0.0011154900312637154
+      },
+      "30 resonance": {
+       "n_events": 46,
+       "sigma_fraction": 0.0015189643239488064
+      },
+      "31 resonance": {
+       "n_events": 188,
+       "sigma_fraction": 0.007079107283840171
+      },
+      "34 DIS": {
+       "n_events": 8841,
+       "sigma_fraction": 0.6071060161696059
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 8,
+      "2": 19276
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.000974912274702554,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1028": {
+     "n_events": 19027,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8262,
+       "sigma_fraction": 0.3226912997503187
+      },
+      "19 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0016692141650156882
+      },
+      "21 resonance": {
+       "n_events": 1599,
+       "sigma_fraction": 0.05117531713199399
+      },
+      "26 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0015523646691336663
+      },
+      "30 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0009003366957805579
+      },
+      "31 resonance": {
+       "n_events": 149,
+       "sigma_fraction": 0.004683442606994445
+      },
+      "34 DIS": {
+       "n_events": 8907,
+       "sigma_fraction": 0.617328024980763
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19024
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0003627598657349294,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1029": {
+     "n_events": 19134,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8367,
+       "sigma_fraction": 0.3227393652723873
+      },
+      "19 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0019370651814346609
+      },
+      "21 resonance": {
+       "n_events": 1640,
+       "sigma_fraction": 0.05242532614968483
+      },
+      "26 resonance": {
+       "n_events": 31,
+       "sigma_fraction": 0.0007882520839755672
+      },
+      "30 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0006626705981280934
+      },
+      "31 resonance": {
+       "n_events": 153,
+       "sigma_fraction": 0.005054574898029613
+      },
+      "34 DIS": {
+       "n_events": 8852,
+       "sigma_fraction": 0.6163927458163599
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19130
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0001592148326488307,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1030": {
+     "n_events": 19293,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8405,
+       "sigma_fraction": 0.330559586999115
+      },
+      "19 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0018790667076630048
+      },
+      "21 resonance": {
+       "n_events": 1706,
+       "sigma_fraction": 0.05343628353554977
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.0008004559973112593
+      },
+      "30 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.0010306447164907416
+      },
+      "31 resonance": {
+       "n_events": 152,
+       "sigma_fraction": 0.004858278867283483
+      },
+      "34 DIS": {
+       "n_events": 8932,
+       "sigma_fraction": 0.6074356831765866
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19288
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.000397430219737865,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1031": {
+     "n_events": 19156,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8253,
+       "sigma_fraction": 0.3289651178686571
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0017108842163775144
+      },
+      "21 resonance": {
+       "n_events": 1684,
+       "sigma_fraction": 0.05318580623189899
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0007818423126378634
+      },
+      "30 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.001057993940082695
+      },
+      "31 resonance": {
+       "n_events": 159,
+       "sigma_fraction": 0.005254008234266354
+      },
+      "34 DIS": {
+       "n_events": 8947,
+       "sigma_fraction": 0.6090443471960796
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19151
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00041882737721009403,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1032": {
+     "n_events": 19175,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8479,
+       "sigma_fraction": 0.3326692532885883
+      },
+      "19 resonance": {
+       "n_events": 54,
+       "sigma_fraction": 0.0022600621973562327
+      },
+      "21 resonance": {
+       "n_events": 1621,
+       "sigma_fraction": 0.052454126693527364
+      },
+      "26 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.001112711248641742
+      },
+      "30 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0012192475430362112
+      },
+      "31 resonance": {
+       "n_events": 150,
+       "sigma_fraction": 0.005738796721926903
+      },
+      "34 DIS": {
+       "n_events": 8799,
+       "sigma_fraction": 0.6045458023069235
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19172
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00016198561506500773,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1033": {
+     "n_events": 19155,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8410,
+       "sigma_fraction": 0.3273455577039779
+      },
+      "19 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0015807660573417073
+      },
+      "21 resonance": {
+       "n_events": 1671,
+       "sigma_fraction": 0.05429008011483345
+      },
+      "26 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.000622457642994196
+      },
+      "30 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.001203228935588293
+      },
+      "31 resonance": {
+       "n_events": 149,
+       "sigma_fraction": 0.004635396202958229
+      },
+      "34 DIS": {
+       "n_events": 8817,
+       "sigma_fraction": 0.6103225133423061
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 9,
+      "2": 19146
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0008659619138043317,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1034": {
+     "n_events": 19179,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8328,
+       "sigma_fraction": 0.32609595680527254
+      },
+      "19 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0024585384556820872
+      },
+      "21 resonance": {
+       "n_events": 1730,
+       "sigma_fraction": 0.054388217577535536
+      },
+      "26 resonance": {
+       "n_events": 11,
+       "sigma_fraction": 0.00015363873077365233
+      },
+      "30 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.001232627138451496
+      },
+      "31 resonance": {
+       "n_events": 154,
+       "sigma_fraction": 0.00511774607882949
+      },
+      "34 DIS": {
+       "n_events": 8865,
+       "sigma_fraction": 0.6105532752134551
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19173
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00055269610575031,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1035": {
+     "n_events": 19239,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8534,
+       "sigma_fraction": 0.3324042707104977
+      },
+      "19 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.001331714497846624
+      },
+      "21 resonance": {
+       "n_events": 1728,
+       "sigma_fraction": 0.054492048805410344
+      },
+      "26 resonance": {
+       "n_events": 24,
+       "sigma_fraction": 0.0008511082130059256
+      },
+      "30 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0014074066111869799
+      },
+      "31 resonance": {
+       "n_events": 141,
+       "sigma_fraction": 0.004626470825313546
+      },
+      "34 DIS": {
+       "n_events": 8730,
+       "sigma_fraction": 0.604886980336739
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19235
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00034435963794510774,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1036": {
+     "n_events": 18982,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8213,
+       "sigma_fraction": 0.3232707353160501
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.001925208526901654
+      },
+      "21 resonance": {
+       "n_events": 1647,
+       "sigma_fraction": 0.05293963499668339
+      },
+      "26 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0009473851562288353
+      },
+      "30 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0010737848088845097
+      },
+      "31 resonance": {
+       "n_events": 153,
+       "sigma_fraction": 0.0055746121268987
+      },
+      "34 DIS": {
+       "n_events": 8850,
+       "sigma_fraction": 0.6142686390683528
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 18978
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00021298262170807366,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1037": {
+     "n_events": 19197,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8379,
+       "sigma_fraction": 0.32636615446788014
+      },
+      "19 resonance": {
+       "n_events": 51,
+       "sigma_fraction": 0.002318515739100794
+      },
+      "21 resonance": {
+       "n_events": 1674,
+       "sigma_fraction": 0.05639583359732774
+      },
+      "26 resonance": {
+       "n_events": 31,
+       "sigma_fraction": 0.0008614034089272751
+      },
+      "30 resonance": {
+       "n_events": 50,
+       "sigma_fraction": 0.0014403456226583268
+      },
+      "31 resonance": {
+       "n_events": 143,
+       "sigma_fraction": 0.0050548642198644115
+      },
+      "34 DIS": {
+       "n_events": 8869,
+       "sigma_fraction": 0.6075628829442414
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19193
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0006172455590624335,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1038": {
+     "n_events": 19286,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8388,
+       "sigma_fraction": 0.3250272743827779
+      },
+      "19 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0015146780352679713
+      },
+      "21 resonance": {
+       "n_events": 1674,
+       "sigma_fraction": 0.05311908536370866
+      },
+      "26 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0015875858385510492
+      },
+      "30 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.001404974965244024
+      },
+      "31 resonance": {
+       "n_events": 137,
+       "sigma_fraction": 0.004922604189035123
+      },
+      "34 DIS": {
+       "n_events": 8965,
+       "sigma_fraction": 0.6124237972254152
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19283
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00021295904908082407,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1039": {
+     "n_events": 19089,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8302,
+       "sigma_fraction": 0.3289794112104232
+      },
+      "19 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.0017739092874916877
+      },
+      "21 resonance": {
+       "n_events": 1614,
+       "sigma_fraction": 0.05129302772206409
+      },
+      "26 resonance": {
+       "n_events": 23,
+       "sigma_fraction": 0.0005643604656009152
+      },
+      "30 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0006617735688753518
+      },
+      "31 resonance": {
+       "n_events": 143,
+       "sigma_fraction": 0.004620922128588028
+      },
+      "34 DIS": {
+       "n_events": 8926,
+       "sigma_fraction": 0.6121065956169567
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19083
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0006767113166473526,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1040": {
+     "n_events": 19063,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8230,
+       "sigma_fraction": 0.3296761283146086
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.0018047688357739422
+      },
+      "21 resonance": {
+       "n_events": 1693,
+       "sigma_fraction": 0.05425082575430218
+      },
+      "26 resonance": {
+       "n_events": 31,
+       "sigma_fraction": 0.0007228914344783917
+      },
+      "30 resonance": {
+       "n_events": 51,
+       "sigma_fraction": 0.0012449550705463627
+      },
+      "31 resonance": {
+       "n_events": 139,
+       "sigma_fraction": 0.004426060424183427
+      },
+      "34 DIS": {
+       "n_events": 8872,
+       "sigma_fraction": 0.6078743701661071
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 10,
+      "2": 19053
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0016728393527654518,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1041": {
+     "n_events": 19198,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8503,
+       "sigma_fraction": 0.34513174971372973
+      },
+      "19 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.002239923825032588
+      },
+      "21 resonance": {
+       "n_events": 1621,
+       "sigma_fraction": 0.0497740123492007
+      },
+      "26 resonance": {
+       "n_events": 25,
+       "sigma_fraction": 0.0008693641089750324
+      },
+      "30 resonance": {
+       "n_events": 53,
+       "sigma_fraction": 0.001233990532517459
+      },
+      "31 resonance": {
+       "n_events": 137,
+       "sigma_fraction": 0.0041970552728612
+      },
+      "34 DIS": {
+       "n_events": 8814,
+       "sigma_fraction": 0.5965539041976831
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19195
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0002148410622006182,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1042": {
+     "n_events": 18935,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8275,
+       "sigma_fraction": 0.3297302435914906
+      },
+      "19 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.001954867647878034
+      },
+      "21 resonance": {
+       "n_events": 1656,
+       "sigma_fraction": 0.0522217656026854
+      },
+      "26 resonance": {
+       "n_events": 24,
+       "sigma_fraction": 0.0004502832192199338
+      },
+      "30 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0011471639294171922
+      },
+      "31 resonance": {
+       "n_events": 129,
+       "sigma_fraction": 0.005232623944783835
+      },
+      "34 DIS": {
+       "n_events": 8758,
+       "sigma_fraction": 0.6092630520645251
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 18928
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009441215157274905,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1043": {
+     "n_events": 19099,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8377,
+       "sigma_fraction": 0.3359843048077574
+      },
+      "19 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.00199907169443883
+      },
+      "21 resonance": {
+       "n_events": 1681,
+       "sigma_fraction": 0.05477097998769763
+      },
+      "26 resonance": {
+       "n_events": 24,
+       "sigma_fraction": 0.0006377118573910325
+      },
+      "30 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0009988044083322977
+      },
+      "31 resonance": {
+       "n_events": 152,
+       "sigma_fraction": 0.005055601701701077
+      },
+      "34 DIS": {
+       "n_events": 8784,
+       "sigma_fraction": 0.6005535255426818
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19096
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00025050842481023905,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1044": {
+     "n_events": 19043,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8442,
+       "sigma_fraction": 0.33254308217468176
+      },
+      "19 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0017336400542593989
+      },
+      "21 resonance": {
+       "n_events": 1628,
+       "sigma_fraction": 0.050805501529208895
+      },
+      "26 resonance": {
+       "n_events": 20,
+       "sigma_fraction": 0.0005010551001117025
+      },
+      "30 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.0011012852495285313
+      },
+      "31 resonance": {
+       "n_events": 150,
+       "sigma_fraction": 0.005235036630128352
+      },
+      "34 DIS": {
+       "n_events": 8717,
+       "sigma_fraction": 0.6080803992620814
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19038
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0005551719959938766,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1045": {
+     "n_events": 18988,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8288,
+       "sigma_fraction": 0.3399211392301824
+      },
+      "19 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0016894529790442878
+      },
+      "21 resonance": {
+       "n_events": 1648,
+       "sigma_fraction": 0.05302496102369869
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0009488309937301947
+      },
+      "30 resonance": {
+       "n_events": 53,
+       "sigma_fraction": 0.0014272103621740244
+      },
+      "31 resonance": {
+       "n_events": 121,
+       "sigma_fraction": 0.0033187864878222438
+      },
+      "34 DIS": {
+       "n_events": 8810,
+       "sigma_fraction": 0.5996696189233481
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 18981
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0007015075903503686,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1046": {
+     "n_events": 19293,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8407,
+       "sigma_fraction": 0.3225998270504569
+      },
+      "19 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0017617853302016454
+      },
+      "21 resonance": {
+       "n_events": 1683,
+       "sigma_fraction": 0.05404854236306039
+      },
+      "26 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0012014790560203716
+      },
+      "30 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0007041123172437295
+      },
+      "31 resonance": {
+       "n_events": 185,
+       "sigma_fraction": 0.005844430410026301
+      },
+      "34 DIS": {
+       "n_events": 8904,
+       "sigma_fraction": 0.6138398234729906
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19289
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0007126989029496406,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1047": {
+     "n_events": 19146,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8427,
+       "sigma_fraction": 0.32220007979762844
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0017706109597576559
+      },
+      "21 resonance": {
+       "n_events": 1678,
+       "sigma_fraction": 0.054375855867170135
+      },
+      "26 resonance": {
+       "n_events": 28,
+       "sigma_fraction": 0.0009904952823317104
+      },
+      "30 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0009026004726811316
+      },
+      "31 resonance": {
+       "n_events": 152,
+       "sigma_fraction": 0.005023745992885152
+      },
+      "34 DIS": {
+       "n_events": 8775,
+       "sigma_fraction": 0.6147366116275459
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19142
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0008153136278451789,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1048": {
+     "n_events": 19051,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8477,
+       "sigma_fraction": 0.3373371454985395
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0018855382191762858
+      },
+      "21 resonance": {
+       "n_events": 1670,
+       "sigma_fraction": 0.05366520053663846
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0006608441777724524
+      },
+      "30 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0010446224022230047
+      },
+      "31 resonance": {
+       "n_events": 154,
+       "sigma_fraction": 0.0052965497316190355
+      },
+      "34 DIS": {
+       "n_events": 8630,
+       "sigma_fraction": 0.6001100994340314
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19047
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0008401009345207751,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1049": {
+     "n_events": 19160,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8366,
+       "sigma_fraction": 0.3351090204889081
+      },
+      "19 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.001891512785108424
+      },
+      "21 resonance": {
+       "n_events": 1677,
+       "sigma_fraction": 0.051722713658547644
+      },
+      "26 resonance": {
+       "n_events": 16,
+       "sigma_fraction": 0.0006930030896528902
+      },
+      "30 resonance": {
+       "n_events": 53,
+       "sigma_fraction": 0.0011908916575243155
+      },
+      "31 resonance": {
+       "n_events": 150,
+       "sigma_fraction": 0.004816159546990943
+      },
+      "34 DIS": {
+       "n_events": 8859,
+       "sigma_fraction": 0.6045766987732678
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 10,
+      "2": 19150
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009059253770293138,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1050": {
+     "n_events": 19128,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8283,
+       "sigma_fraction": 0.3294330770542749
+      },
+      "19 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.001737300404470817
+      },
+      "21 resonance": {
+       "n_events": 1676,
+       "sigma_fraction": 0.05506121337490219
+      },
+      "26 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.0007554764218765399
+      },
+      "30 resonance": {
+       "n_events": 35,
+       "sigma_fraction": 0.0008920844154932262
+      },
+      "31 resonance": {
+       "n_events": 140,
+       "sigma_fraction": 0.004774671968501915
+      },
+      "34 DIS": {
+       "n_events": 8917,
+       "sigma_fraction": 0.6073461763604804
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19123
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.000861447098382124,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1051": {
+     "n_events": 19173,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8261,
+       "sigma_fraction": 0.33395616080081175
+      },
+      "19 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0019383012384449477
+      },
+      "21 resonance": {
+       "n_events": 1676,
+       "sigma_fraction": 0.05487039854252762
+      },
+      "26 resonance": {
+       "n_events": 20,
+       "sigma_fraction": 0.0005110317729313225
+      },
+      "30 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0010804543661684807
+      },
+      "31 resonance": {
+       "n_events": 126,
+       "sigma_fraction": 0.0043813274829967615
+      },
+      "34 DIS": {
+       "n_events": 8992,
+       "sigma_fraction": 0.6032623257961188
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 8,
+      "2": 19165
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00058184596879691,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1052": {
+     "n_events": 19183,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8429,
+       "sigma_fraction": 0.33423222837451555
+      },
+      "19 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.00132301502931943
+      },
+      "21 resonance": {
+       "n_events": 1645,
+       "sigma_fraction": 0.05228912691645981
+      },
+      "26 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.0005829534101552782
+      },
+      "30 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.0008031447122327865
+      },
+      "31 resonance": {
+       "n_events": 154,
+       "sigma_fraction": 0.004611041266026733
+      },
+      "34 DIS": {
+       "n_events": 8863,
+       "sigma_fraction": 0.6061584902912904
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19179
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0006724903883979207,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1053": {
+     "n_events": 19228,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8251,
+       "sigma_fraction": 0.32426728039321295
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.0016767020758374402
+      },
+      "21 resonance": {
+       "n_events": 1697,
+       "sigma_fraction": 0.05211882825678728
+      },
+      "26 resonance": {
+       "n_events": 26,
+       "sigma_fraction": 0.0007621467051997852
+      },
+      "30 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0014879599973897624
+      },
+      "31 resonance": {
+       "n_events": 151,
+       "sigma_fraction": 0.004536371604529467
+      },
+      "34 DIS": {
+       "n_events": 9011,
+       "sigma_fraction": 0.6151507109670432
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 8,
+      "2": 19220
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.001093702175650552,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1054": {
+     "n_events": 19130,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8427,
+       "sigma_fraction": 0.33556625906756765
+      },
+      "19 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.002312254006494718
+      },
+      "21 resonance": {
+       "n_events": 1698,
+       "sigma_fraction": 0.0544282653889795
+      },
+      "26 resonance": {
+       "n_events": 22,
+       "sigma_fraction": 0.0008434414003374665
+      },
+      "30 resonance": {
+       "n_events": 53,
+       "sigma_fraction": 0.001555286319727624
+      },
+      "31 resonance": {
+       "n_events": 161,
+       "sigma_fraction": 0.0051538947194924275
+      },
+      "34 DIS": {
+       "n_events": 8720,
+       "sigma_fraction": 0.6001405990974007
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19126
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00019858514121829252,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1055": {
+     "n_events": 19134,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8403,
+       "sigma_fraction": 0.3438342791685293
+      },
+      "19 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.0014505797551558868
+      },
+      "21 resonance": {
+       "n_events": 1606,
+       "sigma_fraction": 0.05078671423715417
+      },
+      "26 resonance": {
+       "n_events": 22,
+       "sigma_fraction": 0.0007389641400802957
+      },
+      "30 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.000695831539678135
+      },
+      "31 resonance": {
+       "n_events": 155,
+       "sigma_fraction": 0.005001097872390086
+      },
+      "34 DIS": {
+       "n_events": 8874,
+       "sigma_fraction": 0.5974925332870122
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 19127
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0010343699670760623,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1056": {
+     "n_events": 19139,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8358,
+       "sigma_fraction": 0.33250551561045666
+      },
+      "19 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.001310629602829182
+      },
+      "21 resonance": {
+       "n_events": 1632,
+       "sigma_fraction": 0.05282034453038165
+      },
+      "26 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.000980652875361615
+      },
+      "30 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0011619009443688396
+      },
+      "31 resonance": {
+       "n_events": 167,
+       "sigma_fraction": 0.006097659526281306
+      },
+      "34 DIS": {
+       "n_events": 8875,
+       "sigma_fraction": 0.6051232969103207
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 1,
+      "2": 19138
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00014787741731020018,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1057": {
+     "n_events": 19189,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8418,
+       "sigma_fraction": 0.32590951027183196
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0022119136298449095
+      },
+      "21 resonance": {
+       "n_events": 1639,
+       "sigma_fraction": 0.05413646277164773
+      },
+      "26 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.0012375325542775895
+      },
+      "30 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0009996241056873492
+      },
+      "31 resonance": {
+       "n_events": 169,
+       "sigma_fraction": 0.00569559525445641
+      },
+      "34 DIS": {
+       "n_events": 8838,
+       "sigma_fraction": 0.6098093614122542
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19183
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00031876798328870433,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1058": {
+     "n_events": 19099,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8406,
+       "sigma_fraction": 0.3265360014917961
+      },
+      "19 resonance": {
+       "n_events": 49,
+       "sigma_fraction": 0.0025256995926451003
+      },
+      "21 resonance": {
+       "n_events": 1613,
+       "sigma_fraction": 0.05321174814321548
+      },
+      "26 resonance": {
+       "n_events": 18,
+       "sigma_fraction": 0.00040990035576541316
+      },
+      "30 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0017572143789616548
+      },
+      "31 resonance": {
+       "n_events": 153,
+       "sigma_fraction": 0.005719791333076123
+      },
+      "34 DIS": {
+       "n_events": 8812,
+       "sigma_fraction": 0.6098396447045399
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19095
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0007209949695557397,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1059": {
+     "n_events": 19172,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8411,
+       "sigma_fraction": 0.3335080593906131
+      },
+      "19 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0017785913601187932
+      },
+      "21 resonance": {
+       "n_events": 1567,
+       "sigma_fraction": 0.050086209896443225
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0009710545566228338
+      },
+      "30 resonance": {
+       "n_events": 46,
+       "sigma_fraction": 0.0009135909723546662
+      },
+      "31 resonance": {
+       "n_events": 138,
+       "sigma_fraction": 0.0047828958428783675
+      },
+      "34 DIS": {
+       "n_events": 8933,
+       "sigma_fraction": 0.607959597980969
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 11,
+      "2": 19161
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00043929939565799544,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1060": {
+     "n_events": 19181,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8487,
+       "sigma_fraction": 0.32882807134371167
+      },
+      "19 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0015402234255914463
+      },
+      "21 resonance": {
+       "n_events": 1630,
+       "sigma_fraction": 0.05344605107965448
+      },
+      "26 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.001000885468272703
+      },
+      "30 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0009253058797995601
+      },
+      "31 resonance": {
+       "n_events": 153,
+       "sigma_fraction": 0.0048904916338545585
+      },
+      "34 DIS": {
+       "n_events": 8795,
+       "sigma_fraction": 0.6093689711691155
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 4,
+      "2": 19177
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00019675493226999796,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1061": {
+     "n_events": 19110,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8464,
+       "sigma_fraction": 0.33594294248371337
+      },
+      "19 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0017553579021790016
+      },
+      "21 resonance": {
+       "n_events": 1651,
+       "sigma_fraction": 0.05463556097931726
+      },
+      "26 resonance": {
+       "n_events": 35,
+       "sigma_fraction": 0.0010897831172920597
+      },
+      "30 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0011097689516232291
+      },
+      "31 resonance": {
+       "n_events": 140,
+       "sigma_fraction": 0.004787140086955961
+      },
+      "34 DIS": {
+       "n_events": 8740,
+       "sigma_fraction": 0.600679446478919
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19105
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0002296562303099687,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1062": {
+     "n_events": 19197,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8472,
+       "sigma_fraction": 0.3377800893670855
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0019487123463300226
+      },
+      "21 resonance": {
+       "n_events": 1639,
+       "sigma_fraction": 0.05188258009402986
+      },
+      "26 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.0008627648461095996
+      },
+      "30 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.001226979887061801
+      },
+      "31 resonance": {
+       "n_events": 142,
+       "sigma_fraction": 0.003702912663740086
+      },
+      "34 DIS": {
+       "n_events": 8829,
+       "sigma_fraction": 0.6025959607956434
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19194
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.001145912107428251,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1063": {
+     "n_events": 19126,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8426,
+       "sigma_fraction": 0.3285755289986153
+      },
+      "19 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.0021957430766080138
+      },
+      "21 resonance": {
+       "n_events": 1631,
+       "sigma_fraction": 0.05184270394120759
+      },
+      "26 resonance": {
+       "n_events": 31,
+       "sigma_fraction": 0.0010618446531428095
+      },
+      "30 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.001286214095248169
+      },
+      "31 resonance": {
+       "n_events": 152,
+       "sigma_fraction": 0.004851734031124128
+      },
+      "34 DIS": {
+       "n_events": 8794,
+       "sigma_fraction": 0.6101862312040541
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19121
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0006840255438525214,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1064": {
+     "n_events": 18958,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8150,
+       "sigma_fraction": 0.32237157115539355
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0015675196033313058
+      },
+      "21 resonance": {
+       "n_events": 1737,
+       "sigma_fraction": 0.05824637033510821
+      },
+      "26 resonance": {
+       "n_events": 28,
+       "sigma_fraction": 0.0009369517967834433
+      },
+      "30 resonance": {
+       "n_events": 35,
+       "sigma_fraction": 0.0007810675911126398
+      },
+      "31 resonance": {
+       "n_events": 139,
+       "sigma_fraction": 0.004711068101992082
+      },
+      "34 DIS": {
+       "n_events": 8833,
+       "sigma_fraction": 0.611385451416279
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 2,
+      "2": 18956
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0005015930873896276,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1065": {
+     "n_events": 18961,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8266,
+       "sigma_fraction": 0.32348047993400164
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0016515000865322993
+      },
+      "21 resonance": {
+       "n_events": 1663,
+       "sigma_fraction": 0.05363689138185203
+      },
+      "26 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.0007992490284005411
+      },
+      "30 resonance": {
+       "n_events": 47,
+       "sigma_fraction": 0.0010141451203767064
+      },
+      "31 resonance": {
+       "n_events": 130,
+       "sigma_fraction": 0.0039226733008727995
+      },
+      "34 DIS": {
+       "n_events": 8785,
+       "sigma_fraction": 0.6154950611479639
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 18958
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 8.254655127618206e-05,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1066": {
+     "n_events": 19180,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8321,
+       "sigma_fraction": 0.3284297493761671
+      },
+      "19 resonance": {
+       "n_events": 34,
+       "sigma_fraction": 0.001114762965967177
+      },
+      "21 resonance": {
+       "n_events": 1723,
+       "sigma_fraction": 0.05569711538748102
+      },
+      "26 resonance": {
+       "n_events": 25,
+       "sigma_fraction": 0.0005104575233606145
+      },
+      "30 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0014750249806087556
+      },
+      "31 resonance": {
+       "n_events": 158,
+       "sigma_fraction": 0.006584795863920317
+      },
+      "34 DIS": {
+       "n_events": 8876,
+       "sigma_fraction": 0.606188093902495
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 2,
+      "2": 19178
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 8.473755649632434e-05,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1067": {
+     "n_events": 19120,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8378,
+       "sigma_fraction": 0.3323918538716715
+      },
+      "19 resonance": {
+       "n_events": 44,
+       "sigma_fraction": 0.0017882348595604117
+      },
+      "21 resonance": {
+       "n_events": 1666,
+       "sigma_fraction": 0.052958460925162404
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.000808819571101388
+      },
+      "30 resonance": {
+       "n_events": 40,
+       "sigma_fraction": 0.0010118655429811971
+      },
+      "31 resonance": {
+       "n_events": 126,
+       "sigma_fraction": 0.003924987712614678
+      },
+      "34 DIS": {
+       "n_events": 8837,
+       "sigma_fraction": 0.6071157775169084
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 19113
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009021324814117365,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1068": {
+     "n_events": 19098,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8363,
+       "sigma_fraction": 0.32826721478947507
+      },
+      "19 resonance": {
+       "n_events": 30,
+       "sigma_fraction": 0.0015146343239547469
+      },
+      "21 resonance": {
+       "n_events": 1675,
+       "sigma_fraction": 0.053232733723895684
+      },
+      "26 resonance": {
+       "n_events": 25,
+       "sigma_fraction": 0.0004507677570777852
+      },
+      "30 resonance": {
+       "n_events": 46,
+       "sigma_fraction": 0.0011043385975232937
+      },
+      "31 resonance": {
+       "n_events": 148,
+       "sigma_fraction": 0.004998892676866567
+      },
+      "34 DIS": {
+       "n_events": 8811,
+       "sigma_fraction": 0.6104314181312067
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 9,
+      "2": 19089
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009025737646751296,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1069": {
+     "n_events": 19109,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8290,
+       "sigma_fraction": 0.3260293856940511
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0015088985657558626
+      },
+      "21 resonance": {
+       "n_events": 1716,
+       "sigma_fraction": 0.05552641590385267
+      },
+      "26 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0008964512345392232
+      },
+      "30 resonance": {
+       "n_events": 61,
+       "sigma_fraction": 0.0018480990576682265
+      },
+      "31 resonance": {
+       "n_events": 142,
+       "sigma_fraction": 0.004556694032506767
+      },
+      "34 DIS": {
+       "n_events": 8821,
+       "sigma_fraction": 0.6096340555116261
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19104
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0005944131299214983,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1070": {
+     "n_events": 19139,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8362,
+       "sigma_fraction": 0.3326892725416754
+      },
+      "19 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0016360585955499365
+      },
+      "21 resonance": {
+       "n_events": 1665,
+       "sigma_fraction": 0.05360549184520259
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.001178627439192384
+      },
+      "30 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.0006561858140954709
+      },
+      "31 resonance": {
+       "n_events": 136,
+       "sigma_fraction": 0.005393671824361165
+      },
+      "34 DIS": {
+       "n_events": 8878,
+       "sigma_fraction": 0.6048406919399231
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19133
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00042164410654565277,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1071": {
+     "n_events": 19172,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8396,
+       "sigma_fraction": 0.3280693773531388
+      },
+      "19 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.0020359841551311456
+      },
+      "21 resonance": {
+       "n_events": 1715,
+       "sigma_fraction": 0.05507193270090284
+      },
+      "26 resonance": {
+       "n_events": 28,
+       "sigma_fraction": 0.0006765314328792879
+      },
+      "30 resonance": {
+       "n_events": 51,
+       "sigma_fraction": 0.001340604369682007
+      },
+      "31 resonance": {
+       "n_events": 144,
+       "sigma_fraction": 0.004898840305566813
+      },
+      "34 DIS": {
+       "n_events": 8796,
+       "sigma_fraction": 0.6079067296826989
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19166
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0003534699760979192,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1072": {
+     "n_events": 18983,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8243,
+       "sigma_fraction": 0.32626613147173283
+      },
+      "19 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0019292638416584568
+      },
+      "21 resonance": {
+       "n_events": 1659,
+       "sigma_fraction": 0.052214508784654994
+      },
+      "26 resonance": {
+       "n_events": 29,
+       "sigma_fraction": 0.0009143170523145184
+      },
+      "30 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.0011718017517698125
+      },
+      "31 resonance": {
+       "n_events": 147,
+       "sigma_fraction": 0.0049765100887777134
+      },
+      "34 DIS": {
+       "n_events": 8819,
+       "sigma_fraction": 0.6125274670090917
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 18978
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00046800272811721406,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1073": {
+     "n_events": 19116,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8343,
+       "sigma_fraction": 0.33098519335181953
+      },
+      "19 resonance": {
+       "n_events": 39,
+       "sigma_fraction": 0.0014060339353480361
+      },
+      "21 resonance": {
+       "n_events": 1682,
+       "sigma_fraction": 0.052913496258008445
+      },
+      "26 resonance": {
+       "n_events": 38,
+       "sigma_fraction": 0.0011451601551234613
+      },
+      "30 resonance": {
+       "n_events": 51,
+       "sigma_fraction": 0.0009250728166276691
+      },
+      "31 resonance": {
+       "n_events": 147,
+       "sigma_fraction": 0.004859347942334733
+      },
+      "34 DIS": {
+       "n_events": 8816,
+       "sigma_fraction": 0.607765695540738
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 6,
+      "2": 19110
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0011515656906887107,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1074": {
+     "n_events": 19099,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8446,
+       "sigma_fraction": 0.331332045875532
+      },
+      "19 resonance": {
+       "n_events": 54,
+       "sigma_fraction": 0.002020687724300155
+      },
+      "21 resonance": {
+       "n_events": 1619,
+       "sigma_fraction": 0.05348849981569182
+      },
+      "26 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.0010815873820565322
+      },
+      "30 resonance": {
+       "n_events": 37,
+       "sigma_fraction": 0.0010286827629975778
+      },
+      "31 resonance": {
+       "n_events": 134,
+       "sigma_fraction": 0.0034517977041379497
+      },
+      "34 DIS": {
+       "n_events": 8773,
+       "sigma_fraction": 0.6075966987352841
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19094
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009456707750405531,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1075": {
+     "n_events": 18884,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8143,
+       "sigma_fraction": 0.3267649889184458
+      },
+      "19 resonance": {
+       "n_events": 33,
+       "sigma_fraction": 0.0015642452417530463
+      },
+      "21 resonance": {
+       "n_events": 1621,
+       "sigma_fraction": 0.05028400396468179
+      },
+      "26 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.0006476879409493245
+      },
+      "30 resonance": {
+       "n_events": 55,
+       "sigma_fraction": 0.0013486153871105002
+      },
+      "31 resonance": {
+       "n_events": 144,
+       "sigma_fraction": 0.0048741198900838
+      },
+      "34 DIS": {
+       "n_events": 8856,
+       "sigma_fraction": 0.6145163386569756
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 2,
+      "2": 18882
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 7.882642583887156e-05,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1076": {
+     "n_events": 19281,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8522,
+       "sigma_fraction": 0.34319983493500306
+      },
+      "19 resonance": {
+       "n_events": 43,
+       "sigma_fraction": 0.0017798997443765746
+      },
+      "21 resonance": {
+       "n_events": 1637,
+       "sigma_fraction": 0.050386637523385215
+      },
+      "26 resonance": {
+       "n_events": 25,
+       "sigma_fraction": 0.0005513292517333899
+      },
+      "30 resonance": {
+       "n_events": 36,
+       "sigma_fraction": 0.001005193479491534
+      },
+      "31 resonance": {
+       "n_events": 146,
+       "sigma_fraction": 0.004169937918149786
+      },
+      "34 DIS": {
+       "n_events": 8872,
+       "sigma_fraction": 0.5989071671478606
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 3,
+      "2": 19278
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0006151003539884275,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1077": {
+     "n_events": 18888,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8258,
+       "sigma_fraction": 0.33562476704169647
+      },
+      "19 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0018401815873492218
+      },
+      "21 resonance": {
+       "n_events": 1627,
+       "sigma_fraction": 0.050430644803102775
+      },
+      "26 resonance": {
+       "n_events": 27,
+       "sigma_fraction": 0.0006587019141953273
+      },
+      "30 resonance": {
+       "n_events": 41,
+       "sigma_fraction": 0.0011111120632418918
+      },
+      "31 resonance": {
+       "n_events": 137,
+       "sigma_fraction": 0.004558928380253993
+      },
+      "34 DIS": {
+       "n_events": 8753,
+       "sigma_fraction": 0.6057756642101602
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 8,
+      "2": 18880
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0009729557815173917,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1078": {
+     "n_events": 19224,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8449,
+       "sigma_fraction": 0.33258772965498085
+      },
+      "19 resonance": {
+       "n_events": 46,
+       "sigma_fraction": 0.0017478524743441421
+      },
+      "21 resonance": {
+       "n_events": 1681,
+       "sigma_fraction": 0.0531418224746327
+      },
+      "26 resonance": {
+       "n_events": 32,
+       "sigma_fraction": 0.0009157894393748684
+      },
+      "30 resonance": {
+       "n_events": 48,
+       "sigma_fraction": 0.0009350422043728292
+      },
+      "31 resonance": {
+       "n_events": 133,
+       "sigma_fraction": 0.003470524122256877
+      },
+      "34 DIS": {
+       "n_events": 8835,
+       "sigma_fraction": 0.6072012396300377
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 2,
+      "2": 19222
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.00031072074782104885,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1079": {
+     "n_events": 19193,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8326,
+       "sigma_fraction": 0.3344159609032602
+      },
+      "19 resonance": {
+       "n_events": 35,
+       "sigma_fraction": 0.0014887947624119323
+      },
+      "21 resonance": {
+       "n_events": 1690,
+       "sigma_fraction": 0.05261554577298381
+      },
+      "26 resonance": {
+       "n_events": 42,
+       "sigma_fraction": 0.0012801851640399941
+      },
+      "30 resonance": {
+       "n_events": 45,
+       "sigma_fraction": 0.0012581940770142125
+      },
+      "31 resonance": {
+       "n_events": 148,
+       "sigma_fraction": 0.005626399549085608
+      },
+      "34 DIS": {
+       "n_events": 8907,
+       "sigma_fraction": 0.6033149197712042
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 5,
+      "2": 19188
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0003382495192258849,
+     "n_events_without_muon": 0,
+     "pass": true
+    },
+    "task1080": {
+     "n_events": 19118,
+     "channels": {
+      "2 Delta": {
+       "n_events": 8290,
+       "sigma_fraction": 0.31807731372534453
+      },
+      "19 resonance": {
+       "n_events": 31,
+       "sigma_fraction": 0.0015397324092357213
+      },
+      "21 resonance": {
+       "n_events": 1665,
+       "sigma_fraction": 0.05241147605094829
+      },
+      "26 resonance": {
+       "n_events": 28,
+       "sigma_fraction": 0.0010226132528624694
+      },
+      "30 resonance": {
+       "n_events": 50,
+       "sigma_fraction": 0.0016494637623001213
+      },
+      "31 resonance": {
+       "n_events": 141,
+       "sigma_fraction": 0.004942733279948673
+      },
+      "34 DIS": {
+       "n_events": 8913,
+       "sigma_fraction": 0.6203566675193602
+      }
+     },
+     "forbidden_channels": [],
+     "target_is_one_real_proton_in_every_event": true,
+     "perturbative_hadronic_charge_counts (diagnostic)": {
+      "1": 7,
+      "2": 19111
+     },
+     "sigma_fraction_charge_not_2 (diagnostic)": 0.0007679430394625109,
+     "n_events_without_muon": 0,
+     "pass": true
+    }
+   },
+   "pass": true
+  },
+  "B3": {
+   "alignment_gibuu_events_vs_extract_gibuu": true,
+   "zero_flux_event": false,
+   "H_card_flux_density_equals_frozen": true,
+   "max_Enu_GeV": 19.99903,
+   "cut_GeV": [
+    0.0,
+    20.0
+   ],
+   "sampling_model": [
+    {
+     "population": "all written events with E_nu >= 1.5 GeV (counts)",
+     "n_events": 1520516,
+     "across_chi2": 40.02723963030324,
+     "across_ndf": 33,
+     "across_p": 0.18644691816185707,
+     "within_chi2": 248.81377765582414,
+     "within_ndf": 148,
+     "within_p": 4.1401752767814196e-07,
+     "pass": false
+    },
+    {
+     "population": "edge-jump test, all written events, edges in (1.5,20.0) GeV, delta=0.1 GeV",
+     "n_events": 1529523,
+     "across_chi2": 35.69659971538249,
+     "across_ndf": 36,
+     "across_p": 0.4829035089355631,
+     "within_chi2": null,
+     "within_ndf": 0,
+     "within_p": null,
+     "pass": true
+    }
+   ],
+   "frozen_C12_sampling_model": [
+    {
+     "population": "all written events with E_nu >= 1.5 GeV (counts)",
+     "n_events": 1882659,
+     "across_chi2": 40.29489453414016,
+     "across_ndf": 33,
+     "across_p": 0.1787991658015524,
+     "within_chi2": 167.03274587597917,
+     "within_ndf": 148,
+     "within_p": 0.1355648356164867,
+     "pass": true
+    },
+    {
+     "population": "edge-jump test, all written events, edges in (1.5,20.0) GeV, delta=0.1 GeV",
+     "n_events": 1904367,
+     "across_chi2": 43.01017819527482,
+     "across_ndf": 36,
+     "across_p": 0.19617114195732546,
+     "within_chi2": null,
+     "within_ndf": 0,
+     "within_p": null,
+     "pass": true
+    }
+   ],
+   "r_quantiles_1_50_99": [
+    0.8622820081222071,
+    0.9856047858042748,
+    1.2198527537913233
+   ],
+   "pass_rule": "alignment, no zero-flux event, the H card's flux density = the frozen one, and both sampling tests p >= 1e-3 (the frozen GiBUU build's own closure)",
+   "pass": false
+  }
+ },
+ "code": {
+  "__main__": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_build.py",
+   "sha256": "47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414"
+  },
+  "gen5d_flux_reweight": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/gen5d_flux_reweight.py",
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+  },
+  "gen5d_flux_supplement": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/gen5d_flux_supplement.py",
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+  },
+  "mp3c_card": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_card.py",
+   "sha256": "3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526"
+  },
+  "mp3c_probe": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/mp3c_probe.py",
+   "sha256": "41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42"
+  },
+  "gen_to_xsec5d": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py",
+   "sha256": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1"
+  },
+  "gibuu_to_xsec3d": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gibuu_to_xsec3d.py",
+   "sha256": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7"
+  },
+  "gibuu_to_xsec_eavailW": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gibuu_to_xsec_eavailW.py",
+   "sha256": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff"
+  }
+ },
+ "seeds_file": {
+  "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/code/SEEDS.txt",
+  "sha256": "c457093798c76ac4e1ce49c5b34dc185b24ec164cf10dd302c60b4580630781b"
+ },
+ "verdict": "STOP: gate B3 failed; no CH prediction",
+ "exit_code": 3,
+ "wall_s": 16.725606441497803,
+ "maxrss_kb": 660316
+}

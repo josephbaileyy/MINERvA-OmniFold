@@ -1,0 +1,80 @@
+{
+ "schema": "mp4a-declaration/2",
+ "declared_utc": "2026-10-20T08:25:19Z",
+ "statement": "Declared before any positivity-constrained OSB number on the real problem exists. Prototyping used synthetic problems only (records listed below). The real operands were used before this point only for D-ID's own admission checks, the bitwise reproduction of D-ID's committed T2 widths by D-ID's own widths() code, and the null-mode structure (eigenvalues, zero-efficiency cells, proportional columns): no OSB number, constrained or not.",
+ "governing": {
+  "plan": "docs/orchestration/state/measurement-paper/PLAN.md section 5.3 (head 208943e0 as frozen)",
+  "binding": "docs/orchestration/state/measurement-paper/BINDING-PHASE1-20261019.md section 2 (MP4-A frozen; psi2 = chi2_1 quantile at 0.6827)"
+ },
+ "code_sha256": {
+  "osb.py": "455f2f5f182aac612af6fca8cdee777f0344df3ae00197e556ded01ed2e2c446",
+  "run_mp4a.py": "6a2211ae8a9afef245d6ae9e32f8bd7a5f5b5aee1254ee37f15f5922150d3f3e",
+  "build_problem.py": "3f3b2f64a89406346d68913bae99a26a6d01bcf8b339d2bd47748df8339b4275"
+ },
+ "settings": {
+  "psi2": 1.000043427117466,
+  "g_rtol": 1e-09,
+  "max_evals": 60,
+  "floor_rtol": 1e-06,
+  "method": "bvls",
+  "lsq_solver": "exact",
+  "lsq_tol": 1e-12,
+  "lsq_max_iter": 6915,
+  "bracket_growth": 2.0,
+  "s_max_factor": 1000000000000.0
+ },
+ "psi2_definition": "scipy.stats.chi2.ppf(0.6827, 1) = 1.000043427117466; psi = 1.000021713322999; psi - 1 = 2.1713322998939688e-05",
+ "solver": {
+  "inner": "scipy.optimize.lsq_linear(G, -s u, bounds=(-t, inf), method='bvls', tol=1e-12, max_iter=6915 = 5 n); statuses 1, 2, 3 accepted, 0 and -1 are inner failures (the endpoint is then unresolved)",
+  "outer": "Lagrangian search in s = 1/(2 mu): start s0 = psi/||u|| (exact when positivity is idle), bracket by doubling (up to s0*1e12), then Illinois regula falsi on sqrt(g(s)) - psi with bisection safeguard; converged when |g(s)/psi2 - 1| <= 1e-9; at most 60 inner calls per endpoint",
+  "positivity_floor": "for a lower endpoint with h >= 0 (componentwise), h.lam >= 0 is implied by positivity; a feasible evaluated point (g <= psi2 (1 + 1e-9)) with h_r.delta <= -h.t + 1e-6 |h.t| is optimal and ends the search (status positivity-floor)",
+  "certificates_reported": "Lagrange dual value and best feasible value per endpoint (their gap), lsq_linear statuses, and a KKT residual on lsq_linear's active set (diagnostic only for trf, whose active mask is tolerance-based)",
+  "why_trf": null
+ },
+ "exact_reductions": [
+  "G = diag(sqrt(lambda_+)) V_+^T from numpy.linalg.eigh of D-ID's fisher(R, t, b) on D-ID's positive set lambda > 1e-12 max; ||G delta||^2 = delta^T F delta on the kept space; null modes checked against the sparse whitened response",
+  "u = diag(lambda_+^-1/2) V_+^T h so that h_r.delta = u.(G delta) with h_r = V_+ V_+^T h; non-hole functionals (D-ID null fraction <= 1e-6) are solved with h_r",
+  "Z: weight h_j > 0 on a zero-efficiency truth cell j: max = +inf (proved: lam_j is absent from the ball and bounded only below); the min sets lam_j = 0 (h with those entries zeroed)",
+  "P: exactly proportional response columns (identical sparsity pattern, constant ratio to 1e-12): merged into one cell w = sum alpha_i lam_i with coefficient min_i h_i/alpha_i (lower endpoint) or max_i h_i/alpha_i (upper endpoint); applied only where the null fraction after Z exceeds 1e-6",
+  "anything else with null fraction > 1e-6 after Z and P, or any endpoint whose search does not converge: unresolved (never solved by another method)"
+ ],
+ "gating_control": {
+  "rule": "positivity off, every reported functional (J 109, H2 27, EW 39): OSB half-width relative to |h.t| against D-ID tables.npz 'T2/nominal/widths_nom/sigma_rel' to 1e-6 relative, and identical hole sets (sigma = inf <=> null fraction > 1e-6)",
+  "radius_composition_flag": "With psi2 = chi2_1(0.6827) the unconstrained OSB half-width is exactly psi*sigma, psi - 1 = 2.17e-5 > 1e-6, so the gate read literally at the frozen radius cannot pass for a correct solver. Both readings are computed and reported: (i) at unit radius psi2 = 1, and equivalently the frozen-radius half-width divided by psi, against sigma_rel to 1e-6 (the machinery test); (ii) literal. The run proceeds on reading (i) and the literal reading's result is reported and FLAGGED for the director.",
+  "stop": "if reading (i) fails or the hole sets differ, nothing else is computed"
+ },
+ "pass_rule": "J (RD1) at grid T2: median relative half-width <= 0.10 AND 90th percentile <= 0.25 (numpy default linear quantile, extended to +inf: a neighbour with nonzero interpolation weight that is +inf gives +inf). Computed with holes (proved-infinite and unresolved) as +inf, and excluding the D-ID holes (null fraction > 1e-6); if the two verdicts differ the verdict is reported as a decision for the director. H2 descriptive.",
+ "statistic_convention_note": "the PLAN's 28.7% J floor (phase0 did_floor.py) is the median with holes as +inf, the same convention",
+ "inputs": {
+  "events": {
+   "path": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/mp4a-scratch/inputs/nd-unfolding/of_inputs_5d.npz",
+   "sha256_observed": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "sha256_pinned_by_DID": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "bytes": 1548438020,
+   "source": "saul.nersc.gov:/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz (scp -p, read-only, 2026-10-19T17:26:07Z..17:27:26Z)"
+  },
+  "operands_path": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/mp4a-scratch/operands.npz",
+  "operands_sha256": "d73636ffc99dbb3b4e9c62f18070a4ad4887d1d1a5f0faefb643893962692312",
+  "did_sha256": "d918c816080a292eecaa0cc182a73906b868bb75189056862cf88d7152c4bbbd",
+  "did_config_sha256": "aebd8c8e378de8354e05fa905c5671506acf1428928da512e9b3d4ea1ef955ab",
+  "did_tables_sha256": "2aab22703747bfbc33247fe015213c5d9d0a65dcfc0074f0e3c53a1de29327a4"
+ },
+ "synthetic_prototype_records": {
+  "synthetic_prototype_bvls.json": "b0e2dcab873352bbbee034a8c7bda93cebab92597035c4e9c221f6687846240d",
+  "synthetic_prototype_trf.json": "d751abf9373ff767158de13922fde7f3f93962a71dcbb82a187d8b7d4657807b",
+  "synthetic_inner_method_compare.log": "82be2a68cd692b25702bb976be442e718a5489966f4e83796d7e682dcf94a547"
+ },
+ "budget": {
+  "osb_stage_cpu_core_hours_cap": 7.0,
+  "order": "J endpoints first, then H2; endpoints beyond the cap are reported not-run",
+  "threads_per_worker": 1,
+  "workers": 8
+ },
+ "amendment_1": {
+  "supersedes": "DECLARATION-v1.json (declared 2026-10-20T08:03:59Z; inner method trf-exact, max_iter 1000)",
+  "reason": "Run 1 of the osb stage under v1 (osb-run1-aborted.log) returned lsq_linear status 0 or -1 (inner failure) on 51 of the first 138 endpoints. It was killed before it wrote any endpoint value; no OSB endpoint, half-width or statistic from run 1 was written or read (the log holds statuses, eval counts and CPU only). Diagnosis on two failing J inner calls at s0 (functional rows 46 min, 47 min), reading only lsq_linear status, iterations, CPU and the inner least-squares cost: trf returned status -1 (185 it) and 0 (1000 it); bvls on the same calls returned status 1 in 2 and 4 iterations (1.2 and 2.4 CPU-s) with lower inner cost (7.0472e-2 vs 7.1010e-2; 3.15089e-3 vs 3.15092e-3), i.e. trf also stops short of the inner optimum. bvls (exact active set, the same lsq_linear) is therefore the inner method; its synthetic agreement with trf and SLSQP is in the prototype records.",
+  "unchanged": "radius, positivity as the sole constraint, outer search and its tolerance (g_rtol 1e-9), positivity floor, hole reductions Z and P, gate rule and its radius flag, PASS rule, quantile convention, inputs, budget cap",
+  "gate": "re-run under this code (the v1 gate record is kept as gate-v1.json; it used only the unconstrained path, which is lsq_linear's lstsq branch, status 3, for either method)",
+  "run1_cpu_s_endpoints_sum": 4537.4
+ }
+}

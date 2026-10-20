@@ -1,0 +1,24 @@
+{
+ "schema": "mp5-declaration/1",
+ "declared": "2026-10-19, before any MP-5 batch job; its sha256 is recorded in PREP.md and asserted by mp5_genie.py",
+ "spec": "BINDING-PHASE1-ADDENDUM-1.md section 3 (origin/main b8207c7a) + the director's MP-5(a) amendment (by message, 2026-10-19)",
+ "rng": {
+  "generator": "numpy.random.default_rng(seed) (PCG64)",
+  "seed": 520261019,
+  "consumption": "one stream: u_main = rng.random(N_main), N_main = every entry of the < 50 GeV GENIE CV gst in entry order (CC or not); then u_supp = rng.random(N_supp) for every entry of the 50-100 GeV supplement gst. Nothing else draws from it."
+ },
+ "enu_bins_GeV": [0.0, 3.0, 5.0, 8.0, 15.0, 30.0, "inf"],
+ "enu_bin_rule": "bin b holds E in [e_b, e_{b+1}); gst Ev (GeV) for the GENIE event, mc_incomingE / 1000 for the pool event",
+ "direction_pool": "every analysis-MC truth event of the G2 FPS mc_truth_denom trees (nu_mu CC, tracker fiducial, any muon angle; MnvTune v1 w_truth, rows with finite w in [0, 1e4)) joined by (mc_run, mc_subrun, mc_nthEvtInFile) to its MasterAnaDev Truth-tree entry; pool order = playlists 1A,1B,1C,1D,1E,1F,1G,1L,1M,1N,1O,1P, rows in tree order. Each pool event carries n = RotateX(-0.05887) applied to mc_incomingPartVec[0:3] / |.|: the true nu direction in the MAT beam-axis frame.",
+ "draw": "for gst entry i in bin b: k = searchsorted(cdf_b, u_i, side='right') clipped to [0, n_b - 1], cdf_b = cumsum(w_b) / sum(w_b) over the bin-b pool events in pool order; n_i = n of pool event k (a w_truth-weighted draw from the bin's empirical distribution of the nu direction).",
+ "rotation": "The gst lepton momentum p is in GENIE's frame, nu along +z (asserted: pxv = pyv = 0 for every entry). With n_i = (nx, ny, nz), alpha = atan2(hypot(nx, ny), nz) and u = (-ny, nx, 0) / hypot(nx, ny) (= z x n / |z x n|), the beam-frame lepton is R p with R the rotation by alpha about u (Rodrigues: p cos(alpha) + (u x p) sin(alpha) + u (u.p)(1 - cos(alpha))); R z = n. hypot(nx, ny) = 0 leaves p unchanged. The twist about n is not physical: GENIE's lepton azimuth about nu is uniform.",
+ "beam_axis_quantities": "pT = hypot((Rp)_x, (Rp)_y), p_par = (Rp)_z, the phase-space decision on them (u2d.in_truth_phase_space), and W = gen_to_xsec_eavailW.w_true(nu, (E_l, Rp)) (the generator's own fixed-M, W = 0 if W^2 <= 0 formula, now with theta from the beam axis). E_avail and q3 are axis-independent and are taken unrotated (q3 from gen_to_xsec5d.q3_true on the unrotated vectors). Weights, flux factors r(E), A, B and the supplement normalization are the frozen product's.",
+ "proxy_check_threshold": {"quantity": "|mu_G,beam(c) - mu_G(c) R_c| / sigma_c, sigma_c = reading (a), GENIE CV", "threshold": 0.2, "rule": "above 0.2 in ANY of the 109 cells: the R_c proxy is labelled UNRELIABLE for GENIE MEC, NuWro and GiBUU, and reported. Descriptive; no gate."},
+ "controls_before_any_readout": [
+  "T1 alignment: the G2 FPS mc_truth_denom rows restricted to the analysis kinematic phase space, concatenated per playlist, equal the 5D analysis omnifile's mc_truth_denom rows (MC, MC_pz, MC_eavail, MC_q3, MC_W, w_truth) bitwise, row by row",
+  "T2 join: every G2 row has exactly one MasterAnaDev Truth entry with its identity; the MAT-frame muon (mu_true_px/py/pz) equals RotateX(-0.05887) mc_primFSLepton",
+  "T3 MnvTune truth: the beam-axis truth content of the stored analysis truth equals of_inputs_5d.npz denom_nd, and through s5p_mc_truth_pred's extraction reproduces the frozen mnvtune_v1_xsec5d.npz and its J-cell prediction",
+  "T4 recompute: beam-axis pT, p_par, W recomputed from the MAD branches reproduce the stored truth (so the nu-axis recompute differs from the analysis truth by the axis only)",
+  "G1 GENIE: the unrotated rebuild through the rotation code path (n = z for every event) reproduces gen_to_xsec5d.extract_genie's event arrays and the frozen genie_cv_xsec5d.npz / genie_cv_xsec5d_full.npz bitwise (xsec and sumw2) before any rotated build is read"
+ ]
+}
