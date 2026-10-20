@@ -1,0 +1,5 @@
+# command: cd /pscratch/sd/j/josephrb/s5p-20260926 && grep runs/prod/cal/ /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/SHA256SUMS | sha256sum -c
+# utc: 2026-10-19 17:25:16 UTC host login40
+# archive SHA256SUMS sha256: 1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935
+# sha256sum -c rc=0
+# OK lines: 7176  non-OK lines: 0

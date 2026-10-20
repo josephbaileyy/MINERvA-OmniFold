@@ -1,0 +1,48 @@
+# MP3-B run A (director's ruling after the 60022605 abort): chunked generation on the production card with
+# only the target lines, the seed and N changed. Declared 2026-10-20 BEFORE any chunk is submitted.
+# Chunk i (1-based) uses PRIMARY = BASE + i; on an abort the chunk is DISCARDED WHOLE and rerun with ALT1, then ALT2;
+# if all three abort, the chunk is DROPPED and N_total is the sum over completed chunks only.
+# Format: CHUNK <sample> <i> <N> <primary> <alt1> <alt2>   (read by mp3b_jobA.sh and checked by mp3b_build.py)
+# Bases: H_main 63100 / 63200 / 63300;  H_supp 64100 / 64200 / 64300. None collides with a seed used before
+# (C12 21-28, 52001, 90001/90002, GENIE 50001/51001, probe 9101, the aborted single runs 63001/64001).
+# H_main: 25 x 10,000 events, production card, 0.5-50 GeV flux.  H_supp: 5 x 5,000 events, frozen 50-100 GeV card.
+CHUNK H_main 01 10000 63101 63201 63301
+CHUNK H_main 02 10000 63102 63202 63302
+CHUNK H_main 03 10000 63103 63203 63303
+CHUNK H_main 04 10000 63104 63204 63304
+CHUNK H_main 05 10000 63105 63205 63305
+CHUNK H_main 06 10000 63106 63206 63306
+CHUNK H_main 07 10000 63107 63207 63307
+CHUNK H_main 08 10000 63108 63208 63308
+CHUNK H_main 09 10000 63109 63209 63309
+CHUNK H_main 10 10000 63110 63210 63310
+CHUNK H_main 11 10000 63111 63211 63311
+CHUNK H_main 12 10000 63112 63212 63312
+CHUNK H_main 13 10000 63113 63213 63313
+CHUNK H_main 14 10000 63114 63214 63314
+CHUNK H_main 15 10000 63115 63215 63315
+CHUNK H_main 16 10000 63116 63216 63316
+CHUNK H_main 17 10000 63117 63217 63317
+CHUNK H_main 18 10000 63118 63218 63318
+CHUNK H_main 19 10000 63119 63219 63319
+CHUNK H_main 20 10000 63120 63220 63320
+CHUNK H_main 21 10000 63121 63221 63321
+CHUNK H_main 22 10000 63122 63222 63322
+CHUNK H_main 23 10000 63123 63223 63323
+CHUNK H_main 24 10000 63124 63224 63324
+CHUNK H_main 25 10000 63125 63225 63325
+CHUNK H_supp 01 5000 64101 64201 64301
+CHUNK H_supp 02 5000 64102 64202 64302
+CHUNK H_supp 03 5000 64103 64203 64303
+CHUNK H_supp 04 5000 64104 64204 64304
+CHUNK H_supp 05 5000 64105 64205 64305
+#
+# kaskada_on CHECK (director's ruling 2): two card variants, the SAME seed list.
+#   CARD k1 = the H card above (production card, target lines from proton.txt; NuWro's default kaskada_on = 1)
+#   CARD k0 = the identical card plus the single line 'kaskada_on = 0'
+# Every chunk runs under BOTH cards with the declared seeds, each card with its own abort/alternate logic
+# (primary, then ALT1, then ALT2; an aborted attempt is discarded whole). Matched pairs for the event-by-event
+# comparison: every COMPLETED k1 attempt is compared with the k0 run of the SAME seed; if k0 did not run that
+# seed in its own chain, a k0 twin with that seed is run for the comparison only (it enters no sample).
+CARD k1 kaskada_on=default(1)
+CARD k0 kaskada_on=0

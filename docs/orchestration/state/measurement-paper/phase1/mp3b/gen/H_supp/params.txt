@@ -1,0 +1,16 @@
+random_seed = 64001
+number_of_events = 25000
+number_of_test_events = 50000
+beam_particle = 14
+beam_type = 5
+beam_inputroot = /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root
+beam_inputroot_flux = flux_numu
+target_type = 0
+nucleus_p = 1
+nucleus_n = 0
+nucleus_target = 0
+dyn_qel_cc = 1
+dyn_res_cc = 1
+dyn_dis_cc = 1
+dyn_coh_cc = 1
+dyn_mec_cc = 1
