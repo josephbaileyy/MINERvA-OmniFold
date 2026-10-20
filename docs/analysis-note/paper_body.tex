@@ -178,7 +178,7 @@ no measurement uncertainty.
     \pcell{0.18\textwidth}{Precision target} &
     \pcell{0.20\textwidth}{(e)} &
     \pcell{0.30\textwidth}{deformation-envelope medians 9.6--13.4\% (Table~\ref{tab:reporting})} &
-    \pcell{0.26\textwidth}{the definitions studied miss the target} \\
+    \pcell{0.26\textwidth}{no definition studied satisfies the adopted 10\% criterion} \\
     % SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
     % NuWro-CH resolved (docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md, provisional: the ten recorded decisions stand; the CH replays are stated once, at a high level, in Sec. VIII F and the abstract, with the detail in the note, sec_joint.tex sec:joint5d-ch).
     \pcell{0.18\textwidth}{Generator tests} &
@@ -293,8 +293,10 @@ defined constant of \SI{135}{MeV}, rather than the charged-pion mass, and
 neutral pions and photons their total energy; all other final-state particles,
 including neutrons, contribute nothing.  The sums run over the generator's
 final-state particles after final-state interactions, in which neutral pions
-appear undecayed.  The \SI{135}{MeV} constant is a convention of the analysis
-framework, used consistently by the analysis and every prediction.
+appear undecayed.  The \SI{135}{MeV} constant is inherited from the analysis framework's
+definition; it defines the reported observable and is used consistently by
+the analysis and every prediction.
+% Draft 8 (verification finding 6): "inherited", per docs/EAVAIL_DEFINITION.md:128-141; no record shows it as an intended convention.
 % X7 (sol minor; M8): described as a defined convention, not an uncorrected mistake; REVIEW-3 note 14 (the repeat with
 % "All five predictions compared below use the same definition" removed below).
 % X6 G-min: CVUniverse.h:361-374 (mc_FSPart; pi0 counted by its total energy); the 135 MeV is inherited and is used by
@@ -495,12 +497,21 @@ note's appendix on negative-weight background subtraction~\cite{AnalysisNote2026
 % miss regressor (sec_method.tex:12-20, sec:method-algo), the refinement clipping 0.01-0.05% (app_negweight.tex:378-380),
 % the 0.23% rounding spread (sec_5d.tex:113-119). Kept: the documentation gap.
 % REVIEW-2 finding 10: the three note sections named; the effective-sample-size gap restored (X5 G4).
-Events that fail reconstruction receive their weights from a regressor of the
-truth observables; this and the other implementation details are in the
-analysis note (sections on the algorithm, the negative-weight background
-subtraction, and the five-dimensional estimator~\cite{AnalysisNote2026}), which
-does not give the classifiers' training and evaluation split, their class
-normalization, or an effective sample size of the unfolded ensemble.
+% Draft 8: training details read from the code, docs/orchestration/state/2d-closeout/stageF/methods/M-TRAINING-DETAILS.md
+% (unbinned_unfolding/python/omnifold.py:203-272; nd-unfolding/omnifold_nn_core.py:145-155, :225, :249-266;
+% 2d-unfolding/unfold_2d_omnifold_unbinned.py:412-462). Replaces "the note does not give the split or the class normalization".
+Each classifier is trained on the full sample whose weights it then sets,
+with no held-out or cross-fitted split and no early stopping.  The two classes
+keep their physical weights, with no class balancing and no renormalization
+between iterations, so the learned ratio $p/(1-p)$, with $p$ restricted to
+$[10^{-6},1-10^{-6}]$, carries the normalization.  Truth events without a
+reconstructed partner receive the prediction of an unweighted regressor of the
+step-1 weight on the truth observables.  In the refined configurations, a
+classifier separating positive from negative weights, trained with $|w|$, gives
+each event the weight $|w|\max(0,2g-1)$.  No effective sample size of the
+unfolded ensemble is computed.  Further details are in the analysis note
+(sections on the algorithm, the negative-weight background subtraction, and
+the five-dimensional estimator~\cite{AnalysisNote2026}).
 
 All estimator configurations use five OmniFold iterations with
 gradient-boosted decision-tree classifiers~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm}, and each result
@@ -543,8 +554,8 @@ note's estimator-configuration section~\cite{AnalysisNote2026}.
 The central values keep the purity-based subtraction because they and their
 covariance were produced before the purity bias was found and the refinement
 was developed, and they were not regenerated; the higher-capacity refinement
-also failed a data-stability test with bounds of 0.3 and 1.0 statistical
-standard deviations: rounding-level input changes moved its results by up to
+also failed a data-stability test whose median and maximum bounds were 0.3 and
+1.0 statistical standard deviations: rounding-level input changes moved its results by up to
 2.6, as they move those of the baseline estimator (2.5) (Sec.~\ref{sec:validation}).
 % REVIEW-3 finding 3: OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md:81, :90-93 (bounds 0.3/1.0; baseline 0.80
 % median, 2.48 max; "the failure belongs to the estimator family"); note sec_5d.tex:110-111.
@@ -828,8 +839,9 @@ below the corresponding 0.94 gate at 95\%; at nominal truth two lie below the
 % the nominal-truth correction; per-functional means and spreads inferred from a Gaussian fit to each 68%/95% coverage
 % pair; source not established; the confirming test (no background; background scaled by 0.9) not run).
 A diagnosis from the stored outputs finds that the rate change itself is
-recovered (\SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected) and that
-the intervals are not too narrow: the miscoverage is a residual bias, growing
+recovered (in the one locally stored pseudo-experiment, \SI{-9.58}{\percent}
+against \SI{-9.56}{\percent} injected; over the 400, the total covers at 0.74 at
+68\%) and that the intervals are not, apart from a minor effect, too narrow: the miscoverage is a residual bias, growing
 with $W$, that the nominal-truth bias correction does not remove.  The
 per-quantity bias and spread are inferred from a Gaussian fit to each
 quantity's 68\% and 95\% coverage, not measured directly; the source of the
@@ -1390,7 +1402,7 @@ statement relative to the MINERvA Tune~v1.
 \label{sec:joint}
 
 % X6 G-prom: presented as an application, an illustration of calibrated inference with a biased estimator.
-It illustrates calibrated inference with a biased estimator.
+This application illustrates calibrated inference with a biased estimator.
 
 \subsection{Hypotheses}
 
@@ -1594,8 +1606,8 @@ determines when sampling stops, including the budget extensions.  The decision
 rule therefore controls the familywise error rate of the ten decisions at 5\%
 under the stated calibration assumptions; Appendix~\ref{app:fwer} derives the
 bound, $0.9\alpha$.
-% X7 (M8): the main-text familywise statement; M2-FWER-RECORD.md:49-52, :69-74.  The point
-estimates $(k+1)/(B+1)$ carry no separate validity claim.
+% X7 (M8): the main-text familywise statement; M2-FWER-RECORD.md:49-52, :69-74.
+The point estimates $(k+1)/(B+1)$ carry no separate validity claim.
 % Draft 5 readability pass: the order-independence sentence is in Appendix A; the second assumption kept as one clause.
 The second assumption requires the lost pseudo-experiments to have been lost
 independently of their outcomes, which has not been shown, although none of
@@ -2113,8 +2125,8 @@ points in $[0,6c]$.  Because $g_{c}$ is nonincreasing, a left Riemann sum
 over-estimates its integral on each grid interval, and with the tail term
 $(1-6c)\,g_{c}(6c)$ it is a rigorous upper bound on $\int_{0}^{1}g_{c}$, so the
 integration error is included in the bound.
-% X7: m2-calc/certify_crossing.py:1-4, :8-35 (kstar by bisection; absorbing state; overflow pooled; strict U < c).  The
-largest ratio $R(c)/c$, at $j=1$, lies in $[0.8892,0.8902]$; it decreases to
+% X7: m2-calc/certify_crossing.py:1-4, :8-35 (kstar by bisection; absorbing state; overflow pooled; strict U < c).
+The largest ratio $R(c)/c$, at $j=1$, lies in $[0.8892,0.8902]$; it decreases to
 $[0.5138,0.5148]$ at $j=10$.  Hence, for $\alpha=0.05$, the value used here,
 $\mathrm{FWER}\le0.8902\,\alpha<0.9\,\alpha$ under any stopping at or before \jtBcap{} pseudo-experiments.  The bound rests
 on A1, the calibration's fidelity, which Sec.~\ref{sec:conditions} discusses,

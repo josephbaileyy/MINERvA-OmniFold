@@ -1,0 +1,158 @@
+# Methods-paper rewrite: implementation record
+
+**Owner:** the paper-tighten lane, as director (Stage F), 2026-10-19/20.
+- **Brief:** [`../METHODS-FRAMING.md`](../METHODS-FRAMING.md).
+- **Outline:** [`OUTLINE-DECISION.md`](OUTLINE-DECISION.md).
+- **Decisions:** [`DECISION-20261019-joseph-methods-first-and-measurement-compute`](../../../../DECISION-20261019-joseph-methods-first-and-measurement-compute.md)
+  and [`DECISION-20261020-joseph-nuwro-ch-claim`](../../../../DECISION-20261020-joseph-nuwro-ch-claim.md).
+
+**CITABLE FOR:**
+- what the rewrite changed and how it was checked;
+- the outside-referee rounds and their triage;
+- the claim changes (M8), by category;
+- the open decisions for Joseph and the new work the referees asked for.
+
+**NOT CITABLE FOR:**
+- final wording or claims (provisional until the review with Ben; J3–J5 provisional);
+- any outward act (J6).
+
+## 1. Commits (branch `stageF/methods-rewrite-20261019`)
+
+Drafts 1–8 are on the branch, on base `51da2a62`. Each draft was built in a scratch copy
+(`build_copy.sh mrw1`–`mrw8`): rc 0, both gates PASS (Sec. IV receipts 15/15), no unresolved references.
+
+| draft | content |
+|---|---|
+| 1 | restructured to sections I–IX ([`OUTLINE-DECISION.md`](OUTLINE-DECISION.md)); scope statement; definition, estimator and validation tables; three bias/coverage figures (M3); the certified familywise bound and nuisance-averaged size (M2); the W and target statements (M4) |
+| 2 | fixes from the independent review REVIEW-1 (5 MATERIAL); abstract at 150 words; page cuts that moved content to note homes |
+| 3 | SF-1 result ([`SF1-REPORT.md`](SF1-REPORT.md), PASS); Fig. 6 legend |
+| 4 | outside round X5: the "E_avail tilt" corrected to a ~10% signal-rate reduction (KI 98); decision-boundary margins (a7margins receipt); Appendix A, the familywise derivation; "calibrated within the implemented simulation model" |
+| 5 | Joseph's NuWro-CH decision (a high-level statement in the paper, details in note §`sec:joint5d-ch`); readability pass moving technical detail to confirmed note homes |
+| 6 | REVIEW-2 (2 MATERIAL restored); outside round X6: validation findings made central, Sec. VIII presented as an application, the "total (rate-and-shape)" test defined, authorization language replaced by scientific content |
+| 7 | REVIEW-3 (3 MATERIAL); outside round X7: residual bias as the observation; 5% familywise statement in the main text with 0.9α only in Appendix A; Holm and dynamic program specified; the coverage-failure diagnosis ([`M2-RATEFAIL-DIAGNOSIS.md`](M2-RATEFAIL-DIAGNOSIS.md)) |
+| 8 | the draft-7 verification's findings (2 swallowed tails, 5 minor wordings), applied by the director; the classifier training details read from the code ([`M-TRAINING-DETAILS.md`](M-TRAINING-DETAILS.md)), replacing the stated documentation gap: in-sample training, raw class weights, no renormalization; no effective sample size computed |
+
+**Page count.** Draft 8 is 18 pages: a 16-page body, Appendix A and references. The 15-page target was the director's
+own. The remaining options are structural and are Joseph's call:
+- merging the repository-record references into the note (P7);
+- dropping a table;
+- moving the appendix.
+
+## 2. Evidence produced for the rewrite (all on `main`)
+
+- **M2 (calibration):**
+  - [`M2-AUDIT.md`](M2-AUDIT.md);
+  - [`M2-FWER-RECORD.md`](M2-FWER-RECORD.md), the certified bound FWER ≤ 0.8902α, with a GPT-6.1-sol check;
+  - [`M2-ARCHIVE-CHECKS.md`](M2-ARCHIVE-CHECKS.md);
+  - SF-1 ([`SF1-SPEC.md`](SF1-SPEC.md), [`SF1-REPORT.md`](SF1-REPORT.md));
+  - the rate-change coverage diagnosis.
+- **M3 (figures):** from existing receipts. The scripts are in `docs/analysis-note/figures/methods_m3/`.
+- **M4:** [`M4-DEFINITIONS.md`](M4-DEFINITIONS.md) and [`M4-W-RECORD.md`](M4-W-RECORD.md).
+- **From the measurement session** (beside A7, descriptive):
+  - the decision-boundary margins;
+  - MP3-A, MP3-B and MP3-C (the hydrocarbon replays);
+  - MP-5 (convention effects).
+- **Known issues:** KI 97 (target mismatch), KI 98 (the "tilt"), KI 99 (W2 stale-cycle reader).
+
+## 3. Reviews
+
+**Independent Claude reviews, in both directions.** Every finding was fixed or dispositioned in the next draft.
+
+| review | on | MATERIAL | MINOR | NOTE |
+|---|---|---|---|---|
+| REVIEW-1 | draft 1 | 5 | 15 | 6 |
+| REVIEW-2 | drafts 4–5 | 2 | 11 | 6 |
+| REVIEW-3 | draft 6 | 3 | 8 | 6 |
+| verification | draft 7 | see §6 | | |
+
+**A recurring defect:** edits that end a line in a comment, so that the sentence after it no longer prints. It
+recurred in drafts 2–7, with 16 cases found in all. A mechanical check, `scratchpad/tools/swallowed_text.py`, now
+flags prose that moved from printed text into a comment. Its flags are cleared by hand.
+
+**Outside-referee rounds**, run read-only through `stageF/plain-language/run_x.sh` (agy Gemini 3.8 Flash and
+codex-school GPT-6.1-sol):
+
+| round | on | GPT-6.1-sol | Gemini |
+|---|---|---|---|
+| X4 | pass-2 text | framing round (outline, scope, abstract, dispositions) | the same |
+| X5 | draft 3 | major revision | major revision |
+| X6 | draft 5 | major revision; "choose the validation-study paper" | major revision |
+| X7 | draft 7 | major revision; "a focused validation study … could be valuable" | major revision |
+
+The stopping rule of the brief (at most three X5-type rounds) has been reached. Gemini's overclaims were rejected each
+round: "first application", "eigenvalues collapse to zero", "three independent variables". GPT-6.1-sol's arithmetic
+found KI 98.
+
+## 4. Claim changes (M8), by category
+
+Each change is marked in a LaTeX comment at its site. The full lists are in the writer's per-draft reports, kept in
+the director's scratchpad.
+
+- **Framing.** New title ("Performance and limitations of multidimensional OmniFold unfolding with MINERvA open
+  data"). The validation findings are the main results. The generator tests are an application illustrating
+  calibrated inference with a biased estimator. "Five-observable", not "five-dimensional".
+- **Narrowed results:**
+  - the 2D result reproduces the integral within about 1%, with a correlated shape difference;
+  - residual bias under the tested deformations is the observation, interpreted as regularization bias;
+  - "none of the tested reporting definitions satisfies the adopted 10% criterion under the specified envelope
+    prescription";
+  - "envelope over the five tested truth deformations" replaces "model dependence";
+  - the 3D and 4D closure tests are stated with no recorded threshold;
+  - the low-recoil mechanism, the 52% gap and the corner localization were cut or moved to the note.
+- **The tests:**
+  - hybrid null hypotheses defined precisely (Tune v1 composition below the fine grid, varied by the drawn
+    universes);
+  - size averaged over the nuisance priors;
+  - familywise control at 5% under the stated calibration assumptions (≤ 0.9α in Appendix A);
+  - decision-boundary margins;
+  - SF-1 as a simulation-size check only;
+  - NuWro's total (rate-and-shape) test rejection not robust to the hydrocarbon correction (Joseph, provisional).
+- **Corrections:**
+  - the "tilt" is a ~10% rate reduction, and its coverage failure is residual bias;
+  - the W conventions and the truth-angle axis;
+  - the target per-nucleon effect;
+  - the truth deficit of the pseudo-experiments.
+- **Removed:**
+  - "We are not aware of an application to neutrino-scattering data";
+  - the unsupported "p values remain valid" sentence, replaced.
+
+## 5. Open for Joseph
+
+1. **Primary configuration (both referees).** The central values use the purity-subtraction estimator (a), and the
+   tests use the refined estimator (e). The options:
+   - keep this, as now, stated;
+   - regenerate the central values with the refinement, though it shares the estimator family's rounding instability;
+   - carry the bias, stability and coverage studies through one configuration.
+   The last two are new work.
+2. **Pages (18).** P7, or a structural cut.
+3. **The prominence of the generator tests.** They are now presented as an application. GPT-6.1-sol would shorten them
+   further unless a response model and end-to-end calibration validation are added (measurement-paper work).
+4. **New work the referees asked for**, not started:
+   - a binned iterative-unfolding baseline under matched conditions;
+   - an ablation with and without W, or with replacement observables;
+   - a null ensemble processed like the data (end-to-end size);
+   - a response model in the calibration (MP-1, under way in the measurement session);
+   - a target-correction uncertainty;
+   - the run-period step's cause;
+   - the source of the W-graded residual bias (a cheap cluster test is specified in the diagnosis);
+   - an effective sample size of the unfolded ensemble, which is not computed anywhere. The training split and class
+     normalization are now stated from the code.
+5. **The primer and note** follow the paper, as a next pass.
+
+## 6. Draft-7 verification and draft 8
+
+An independent verification of draft 7's changes found 2 MATERIAL, 5 MINOR and 6 NOTE findings.
+- **The two MATERIAL findings:** two swallowed tails, "The point" and "The", each before a line starting with math.
+  `swallowed_text.py` had missed both, so it now carries a short-tail rule.
+- **The MINOR findings and NOTE 8–10:** the note's "slightly too wide" qualified; single-experiment values scoped;
+  the background-fraction match hedged; 135 MeV "inherited"; the precision-target wording carried to the abstract and
+  Table I.
+- **The verification confirmed:**
+  - all of REVIEW-3 fixed;
+  - Appendix A's Holm description against `holm_determined`;
+  - the dynamic-program description, the power intervals, and the pseudo-inverse rank and condition number;
+  - the prior-versus-weights sentence and the diagnosis numbers.
+
+The director applied every MATERIAL and MINOR fix and NOTE 8–10 as draft 8. The build (`mrw8`) gave rc 0, gates PASS,
+no unresolved references, 18 pages and a 150-word abstract. The short-tail rule finds no case. The final PDFs are in
+the director's scratchpad, `methods-final/`, with SHA256SUMS.

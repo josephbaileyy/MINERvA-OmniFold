@@ -388,16 +388,18 @@ confidently below nominal, with coverage as low as 0.060, and 42 fail at
 % cross-checked on EW17, +1.04% against +1.05% recorded); :50 (intervals use one nominal bootstrap sigma, slightly too
 % wide at 0.9 of the events); :52-63 (failures by W band); :12, :87, :102 (source not established); :15, :104-109
 % (confirming test, not run, about 0.1-0.2 node-h).
-A diagnosis from the stored receipts and code explains the failure under the
-rate reduction.  The rate change itself is recovered: the total changes by
-\SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected, so this is not a
+A diagnosis from the stored receipts and code accounts for the failure under the
+rate reduction.  The rate change itself is recovered: in the one locally stored pseudo-experiment
+the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected,
+and over the 400 the total covers at 0.74 (68\%), so this is not a
 normalization failure.  Nor are the intervals too narrow: they use one nominal
-bootstrap $\sigma$ at every truth, slightly too wide for 10\% fewer events, and
+bootstrap $\sigma$ at every truth, slightly too wide for 10\% fewer events apart from the background
+not being redrawn (inferred spread about $1.15\sigma$ at $W\ge\SI{3}{GeV}$), and
 setting the spread equal to the half-width leaves the failing quantities'
 coverage at 0.06--0.22.  The purity subtraction does not apply a nominal signal
 fraction to the reduced data: it removes the absolute nominal background
-expectation, which is unchanged, and the subtracted total agrees with the
-pseudo-signal to 60 of 3.2 million events.  The miscoverage is a residual bias
+expectation, which is unchanged, and in the stored pseudo-experiment the subtracted
+total agrees with the pseudo-signal to 60 of 3.2 million events.  The miscoverage is a residual bias
 that the nominal-truth bias correction does not remove.  The rate change adds
 a positive bias that grows with $W$, about \SI{0.2}{\percent} for
 $1.4\le W<\SI{2.2}{GeV}$, \SI{0.4}{\percent} for $2.2\le W<\SI{3}{GeV}$, and
@@ -408,8 +410,9 @@ bias $\beta$; removing that bias restores coverage to 0.62--0.82 at 68\% and
 measured: the receipt records only hit counts, so each quantity's mean shift
 and spread come from a Gaussian fit to its 68\% and 95\% coverage, checked
 against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The
-source of the $W$-graded term is not established: its size and ordering match
-the rise of the background fraction by $0.111\,f_{\mathrm{bkg}}$, but it may also
+source of the $W$-graded term is not established: its size and ordering roughly match,
+under an approximate assignment of background fractions to $W$ bins, the rise
+of the background fraction by $0.111\,f_{\mathrm{bkg}}$, but it may also
 belong to the estimator alone.  The test that would decide, rerunning the same
 pseudo-experiments as run, without background, and with the background scaled
 by 0.9, has not been run.
