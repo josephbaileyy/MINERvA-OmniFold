@@ -78,8 +78,8 @@ def main() -> None:
     ax2.set_xlim(-1, len(jj))
     ticks = [k for k in range(len(jj) - 4) if k % 6 == 0] + [len(jj) - 1]
     ax2.set_xticks(ticks)
-    ax2.set_xticklabels([names[jj[k]] if k < len(jj) - 1 else "total" for k in ticks], fontsize=6.0, rotation=0)
-    ax2.set_xlabel("coarse joint cell (109 reported cells, in index order), then the total "
+    ax2.set_xticklabels([names[jj[k]].lstrip("J") if k < len(jj) - 1 else "total" for k in ticks], fontsize=6.0, rotation=0)
+    ax2.set_xlabel("coarse joint cell: index in the $3^5$ grid (109 reported cells), then the total "
                    "integrated cross section", fontsize=7.5)
     ax2.set_ylabel(r"(unfolded $-$ truth)/truth (%)")
     ax2.set_ylim(-2.5, 3.2)

@@ -68,19 +68,14 @@ def main() -> None:
     nums.append({"claim": "family N GiBUU: median |residual| over EW, %", "value": round(float(np.median(np.abs(ng))), 2)})
 
     mc.style()
-    fig, axs = plt.subplots(2, 2, figsize=(7.0, 4.9), sharex=True,
-                            gridspec_kw={"height_ratios": [1.0, 1.55], "hspace": 0.16, "wspace": 0.16})
-    fig.subplots_adjust(left=0.075, right=0.99, top=0.82, bottom=0.11)
+    # Layout (methods rewrite, fix round 1, REVIEW-1 P3): the nominal-truth row is not drawn; its maxima are in the
+    # numbers file and the caption (the (d) nominal squares are Fig. 2(a)'s refinement arm).
+    fig, (a_ng, a_rw) = plt.subplots(1, 2, figsize=(7.0, 3.3), sharex=True, gridspec_kw={"wspace": 0.16})
+    fig.subplots_adjust(left=0.075, right=0.99, top=0.74, bottom=0.15)
     x = np.arange(mc.N_EW)
-    (a_nn, a_rn), (a_ng, a_rw) = axs
-    for ax in axs.ravel():
+    for ax in (a_ng, a_rw):
         ax.axhline(0, color="k", lw=0.6)
-        mc.ew_axis(ax, label_rows=ax in axs[0])
-    a_nn.errorbar(x, nn, nn_se, fmt="s", ms=2.6, color=mc.RED, lw=0.7, label="nominal truth, 60 experiments")
-    a_rn.errorbar(x, rn, rn_se, fmt="s", ms=2.6, color=mc.RED, lw=0.7, label="nominal truth, 40 experiments")
-    for ax in (a_nn, a_rn):
-        ax.set_ylim(-0.6, 0.6)
-        ax.legend(loc="lower left", frameon=False)
+        mc.ew_axis(ax, label_rows=True)
     a_ng.stairs(inj, np.arange(mc.N_EW + 1) - 0.5, color=mc.GREY, lw=0.9,
                 label=r"injected truth change (deformed/nominal $-$ 1)")
     a_ng.errorbar(x, ng, ng_se, fmt="o", ms=3.0, color=mc.PURPLE, lw=0.7,
@@ -98,18 +93,17 @@ def main() -> None:
     a_rw.set_ylim(-40, 100)
     a_ng.legend(loc="upper left", frameon=False)
     a_rw.legend(loc="upper left", frameon=False)
-    a_nn.set_ylabel("residual (%)")
-    a_ng.set_ylabel("generator-sized deformation\n(unfolded $-$ truth)/truth (%)")
-    a_rn.tick_params(labelleft=True)
-    for ax in axs[1]:
+    a_ng.set_ylabel("(unfolded $-$ truth)/truth (%)")
+    a_rw.tick_params(labelleft=True)
+    for ax in (a_ng, a_rw):
         ax.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each $E_{\rm avail}$ bin (GeV, top)", fontsize=7.2)
-    a_nn.set_title("(a) with unbinned background refinement,\nrefinement classifier 100 trees, 8 leaves",
+    a_ng.set_title("(a) with unbinned background refinement,\nrefinement classifier 100 trees, 8 leaves",
                    fontsize=7.2, loc="left", pad=11)
-    a_rn.set_title("(b) joint-test estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
+    a_rw.set_title("(b) joint-test estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
                    fontsize=7.2, loc="left", pad=11)
     fig.text(0.075, 0.995, "\n".join([
-        "Both columns: deterministic LightGBM OmniFold unfolding (5 iterations, 100 trees, 8 leaves);",
-        "pseudo-experiments include backgrounds. Left: seeds used in development. Right: seeds not used before.",
+        "Both panels: deterministic LightGBM OmniFold unfolding (5 iterations, 100 trees, 8 leaves);",
+        "pseudo-experiments include backgrounds. (b): assessment seeds, since used in development.",
         r"$W$ bin 6 is $W\geq3$ GeV. Error bars: standard error of the mean over experiments."]),
         ha="left", va="top", fontsize=6.8, color="0.2")
     mc.save(fig, a.outdir, "m3_fig2_deformation")

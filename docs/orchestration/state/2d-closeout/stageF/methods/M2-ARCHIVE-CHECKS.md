@@ -3,7 +3,7 @@
 **Run by** a Claude agent for the director, 2026-10-19 17:08–17:13 UTC, on Perlmutter login nodes, about 2 CPU-minutes, no batch job. Scripts, outputs and input hashes are in [`m2-archive/`](m2-archive/). The agent could not write this file itself, so the director saved its final report verbatim below.
 
 **What it changes in [`M2-AUDIT.md`](M2-AUDIT.md).**
-- **Q1.** The per-experiment truth is not "a half-simulation realization of G". It equals G on every fine cell that the pseudo-data half populates. Unpopulated cells lower a J cell by at most 0.2%, which is at most 1.4% of the null SD.
+- **Q1.** The per-experiment truth is not "a half-simulation realization of G". It equals G on every fine cell that the pseudo-data half populates. Unpopulated cells lower a J cell by at most 0.2%, which is at most about 4% of the null SD (0.035 Tune v1, 0.026 GENIE CV, 0.039 NuWro; `m2-archive/m2_archive_results.json` `check1.xtrue_mean_minus_G_in_null_SD`). The per-experiment spread is below 1.5% of the null SD. *Corrected 2026-10-19 after the rewrite review: this line first gave 1.4%, which is the spread ratio, not the deficit.*
 - **Q4a.** "V is roughly twice the production covariance" is withdrawn. V's diagonal matches the production null variances (median ratio 1.00). The whitened trace of 47, against 109 cells, comes from the Ledoit–Wolf shrinkage (λ = 0.0155) flooring about 80 near-degenerate correlation directions. This affects power only.
 - The audit's other Q1 text fix still stands: below the fine grid the null is a family.
 

@@ -57,25 +57,27 @@ MINERvA open data}
 % \binsTen (values.tex:85); "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
 % for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144.
 % Moved to the body only (Sec. I scope, Sec. VIII): the nuisance-averaged size and the 0.9 alpha bound.
-We study the performance and limitations of OmniFold unbinned unfolding on
-MINERvA open data for medium-energy $\nu_{\mu}$ charged-current inclusive
-interactions.  The implementation reproduces the published muon-kinematic
-double-differential cross section, with the integrated cross section within
-about one percent and \SI{\binsTen}{\percent} of the bins within
-\SI{10}{\percent}.  Extended to five simultaneous observables (adding available
-energy, three-momentum transfer, and hadronic invariant mass), it preserves
-the marginal normalizations, but pseudo-experiments reveal
-background-subtraction and regularization biases, and a coverage test of its
-statistical intervals fails at the tested truths.  An envelope over five
+% Fix round 1 (REVIEW-1 finding 1, 6 and the proposed abstract): "central values only" restored; "preserves the marginal
+% normalizations" weakened to "normalizations agree with lower-dimensional results"; "95.6% of the bins within 10%"
+% moved to the body only (Sec. IV, Table I); "a median of" kept before "about 10--13% per cell" (RECORD-20260927 :129-131,
+% a median over cells).
+We study the performance and limitations of OmniFold unfolding on MINERvA
+open data for medium-energy $\nu_{\mu}$ charged-current inclusive
+interactions.  It reproduces the published muon-kinematic double-differential
+cross section, with the integral within about one percent.
+Extended to five simultaneous observables (adding available energy,
+three-momentum transfer, and hadronic invariant mass), it yields central values
+only: normalizations agree with lower-dimensional results, but
+pseudo-experiments reveal background-subtraction and regularization biases,
+statistical intervals miscover at the tested truths, and an envelope over five
 tested truth deformations, a median of about 10--13\% per cell, keeps the
 definitions studied from meeting our predefined 10\% precision target.
 % SF-1 pending
-Tests of hybrid null hypotheses built from five generator predictions,
-calibrated by rerunning the full analysis chain, all reject at the 5\%
-familywise level under a nuisance model without calorimetric recoil-response
-uncertainty.  They are not physical generator exclusions, convergence of the
-fine grid defining the hypotheses is not shown, and no gain over matched coarse
-projections is shown.
+Tests of hybrid null hypotheses for five generator predictions, calibrated by
+rerunning the analysis chain, all reject at the 5\% familywise level.
+They assume a nuisance model without calorimetric recoil-response uncertainty
+and unshown convergence of the hypotheses' fine grid, are not physical
+generator exclusions, and show no gain over matched coarse projections.
 \end{abstract}
 
 \maketitle
@@ -134,9 +136,11 @@ With it a reader can
 recompute every $p$ value, decision, robustness result, and power figure of
 the joint tests, together with the recovery of the lost pseudo-experiments,
 the coarse-projection comparison, and the fine-grid $L_{2}$ ratios of
-condition~(i); regenerate Figs.~\ref{fig:joint}--\ref{fig:joint-nulls}; and
-recompute the numbers quoted from Figs.~\ref{fig:joint}
-and~\ref{fig:generator-context}.  Rerunning the packaged files from an empty
+condition~(i); regenerate Figs.~\ref{fig:joint} and~\ref{fig:joint-nulls} and
+the one-dimensional generator projections; and recompute the numbers
+quoted from Fig.~\ref{fig:joint} and in Sec.~\ref{sec:central}.
+% Methods rewrite fix round 1 (REVIEW-1 P1): the generator-context figure left the article (the note has fig:eavailWband); the release
+% still draws it (publication/release/figs/make_figs.py fig3) and checks the Sec. VII ratio (fig_numbers.py).  Rerunning the packaged files from an empty
 directory reproduces every value recorded in the package and every figure
 number that it checks.
 % plain-language pass, review fix N6 (DECISION-20261018-joseph-plain-language-pass)

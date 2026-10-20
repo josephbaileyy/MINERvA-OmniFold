@@ -70,48 +70,48 @@ def main() -> None:
                          "value": [int(np.sum((cov(grid[t], l)[2] < THR[l]) & m)) for l in ("68", "95")]})
 
     mc.style()
-    fig, axs = plt.subplots(2, 1, figsize=(7.0, 4.9), sharex=True, gridspec_kw={"hspace": 0.28})
-    fig.subplots_adjust(left=0.075, right=0.99, top=0.825, bottom=0.075)
+    # Layout (methods rewrite, fix round 1, REVIEW-1 P4 and finding 14): only the E_avail-tilt truth is drawn (the
+    # nominal-truth counts stay in the numbers file and the caption); ticks are integral indices, not internal names.
+    fig, ax = plt.subplots(1, 1, figsize=(7.0, 3.0))
+    fig.subplots_adjust(left=0.075, right=0.985, top=0.66, bottom=0.17)
     x = np.arange(153)
     sty = {"68": ("o", mc.BLUE, -0.18), "95": ("s", mc.RED, 0.18)}
-    titles = {"nominal": "(a) nominal truth",
-              "eavail_tilt": r"(b) $E_{\rm avail}$ tilt, amplitude 0.2"}
-    for ax, t in zip(axs, ("nominal", "eavail_tilt")):
-        g = grid[t]
-        for l in ("68", "95"):
-            c, lo, hi = (v[order] for v in cov(g, l))
-            mk, col, dx = sty[l]
-            bad = hi < THR[l]
-            ax.axhline(NOMINAL[l], color=col, lw=0.7)
-            ax.axhline(THR[l], color=col, lw=0.6, ls=(0, (3, 2)))
-            ax.vlines(x + dx, lo, hi, color=col, lw=0.5, alpha=0.6)
-            ax.plot(x[~bad] + dx, c[~bad], mk, ms=2.4, mfc="white", mec=col, mew=0.6,
-                    label=f"{l}% interval, upper bound $\\geq$ {THR[l]:.2f}")
-            ax.plot(x[bad] + dx, c[bad], mk, ms=2.4, color=col, label=f"{l}% interval, upper bound < {THR[l]:.2f}")
-        for xb in (n_ew - 0.5, 152 - 0.5):
-            ax.axvline(xb, color="0.45", lw=0.6, ls=":")
-        ax.set_ylim(-0.02, 1.13)
-        ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
-        ax.set_ylabel("empirical coverage")
-        ax.set_title(f"{titles[t]}: upper bound below the gate for {below[(t, '68')]} (68%) and "
-                     f"{below[(t, '95')]} (95%) of 153", fontsize=7.4, loc="left")
-        for xc, txt in (((n_ew - 1) / 2, r"$(E_{\rm avail},W)$ projection: 42 cells and their sum"),
-                        (n_ew + (152 - n_ew) / 2, "integrals over the 109 coarse joint cells"),
-                        (153.4, "total")):
-            ax.text(xc, 1.075, txt, ha="right" if txt == "total" else "center", va="center", fontsize=6.4, color="0.3")
+    t = "eavail_tilt"
+    g = grid[t]
+    for l in ("68", "95"):
+        c, lo, hi = (v[order] for v in cov(g, l))
+        mk, col, dx = sty[l]
+        bad = hi < THR[l]
+        ax.axhline(NOMINAL[l], color=col, lw=0.7)
+        ax.axhline(THR[l], color=col, lw=0.6, ls=(0, (3, 2)))
+        ax.vlines(x + dx, lo, hi, color=col, lw=0.5, alpha=0.6)
+        ax.plot(x[~bad] + dx, c[~bad], mk, ms=2.4, mfc="white", mec=col, mew=0.6,
+                label=f"{l}% interval, upper bound $\\geq$ {THR[l]:.2f}")
+        ax.plot(x[bad] + dx, c[bad], mk, ms=2.4, color=col, label=f"{l}% interval, upper bound < {THR[l]:.2f}")
+    for xb in (n_ew - 0.5, 152 - 0.5):
+        ax.axvline(xb, color="0.45", lw=0.6, ls=":")
+    ax.set_ylim(-0.02, 1.13)
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    ax.set_ylabel("empirical coverage")
+    ax.set_title(rf"$E_{{\rm avail}}$ tilt, amplitude 0.2: upper bound below the gate for {below[(t, '68')]} (68%) and "
+                 f"{below[(t, '95')]} (95%) of 153", fontsize=7.4, loc="left")
+    for xc, txt in (((n_ew - 1) / 2, r"$(E_{\rm avail},W)$ cells 0–41 and their sum"),
+                    (n_ew + (152 - n_ew) / 2, "109 coarse joint cells, by index in the $3^5$ grid"),
+                    (152.6, "total")):
+        ax.text(xc, 1.075, txt, ha="right" if txt == "total" else "center", va="center", fontsize=6.4, color="0.3")
     ticks = [0, 10, 20, 30, 41] + list(range(n_ew + 7, 150, 15)) + [152]
-    axs[1].set_xticks(ticks)
-    axs[1].set_xticklabels([names[order[k]] if k < 152 else "total" for k in ticks], fontsize=5.8, rotation=60)
-    axs[1].set_xlim(-1, 153)
-    axs[1].set_xlabel("reported functional", labelpad=1)
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([names[order[k]].lstrip("EWJ") if k < 152 else "total" for k in ticks], fontsize=5.8, rotation=0)
+    ax.set_xlim(-1, 153)
+    ax.set_xlabel("cell index (projection cell, or coarse joint cell in the $3^5$ grid), then the total", labelpad=2)
     fig.text(0.075, 0.995, "\n".join([
         "Estimator: deterministic LightGBM OmniFold (5 iterations, 100 trees, 8 leaves)",
         "with purity-based background subtraction; statistical intervals corrected",
-        "for the nominal-truth bias; 400 pseudo-experiments per truth.",
+        "for the nominal-truth bias; 400 pseudo-experiments.",
         "Solid lines: nominal 0.68 / 0.95. Dashed: predeclared gate 0.66 / 0.94.",
         r"Bars: one-sided Clopper–Pearson bounds, each at $\alpha=0.05/459$."]),
         ha="left", va="top", fontsize=6.6, color="0.2")
-    h, lab = axs[0].get_legend_handles_labels()
+    h, lab = ax.get_legend_handles_labels()
     fig.legend(h, lab, loc="upper right", bbox_to_anchor=(0.99, 0.995), ncol=1, frameon=False, fontsize=6.6,
                handletextpad=0.3)
     mc.save(fig, a.outdir, "m3_fig3_coverage")
