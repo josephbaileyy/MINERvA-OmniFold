@@ -1,0 +1,56 @@
+{
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/base_cv.root": {
+  "mc_truth_denom;1": 131346,
+  "mc_signal_reco;1": 131346,
+  "mc_background;1": 2616,
+  "data;1": 15055
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_cv.root": {
+  "mc_truth_denom;1": 131346,
+  "mc_signal_reco;1": 131346,
+  "mc_background;1": 2616,
+  "data;1": 15055
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_rrzero.root": {
+  "mc_truth_denom;1": 131346,
+  "mc_signal_reco;1": 131346,
+  "mc_background;1": 2616,
+  "data;1": 15055
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_rr0.root": {
+  "mc_truth_denom;1": 131346,
+  "mc_signal_reco;1": 131346,
+  "mc_background;1": 2616,
+  "data;1": 15055
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_rr1.root": {
+  "mc_truth_denom;1": 131346,
+  "mc_signal_reco;1": 131346,
+  "mc_background;1": 2616,
+  "data;1": 15055
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/cost1A/evloop/mod_rr0.root": {
+  "mc_truth_denom;5": 2682267,
+  "mc_truth_denom;4": 2217328,
+  "mc_signal_reco;9": 2682267,
+  "mc_signal_reco;8": 2489136,
+  "mc_background;1": 52626,
+  "data;1": 360123
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/cost1A/evloop/mod_rr1.root": {
+  "mc_truth_denom;5": 2682267,
+  "mc_truth_denom;4": 2217328,
+  "mc_signal_reco;9": 2682267,
+  "mc_signal_reco;8": 2489136,
+  "mc_background;1": 52626,
+  "data;1": 360123
+ },
+ "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rrzero/runEventLoopOmniFold_5D_1A_w2b_rrzero.root": {
+  "mc_truth_denom;5": 2682267,
+  "mc_truth_denom;4": 2217328,
+  "mc_signal_reco;9": 2682267,
+  "mc_signal_reco;8": 2489136,
+  "mc_background;1": 52626,
+  "data;1": 360123
+ }
+}

@@ -1,0 +1,12 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov '~/.conda/envs/omnifold_py310/bin/python -I -' <<< (script below); entries and branch counts per tree (entries, nbranches)
+#   import uproot,os,datetime
+#   print("#", datetime.datetime.now(datetime.timezone.utc).isoformat())
+#   C="/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/"; N="/pscratch/sd/j/josephrb/w2-recoil-20261006/"
+#   for p in [N+"smoke/evloop/base_cv.root", N+"cost1A/evloop/mod_rr0.root", N+"w2b/evloop/rrzero/runEventLoopOmniFold_5D_1A_w2b_rrzero.root", C+"runEventLoopOmniFold_5D_1A_universes_full.root", C+"runEventLoopOmniFold_5D_1A_universes_full_bkgaware.root"]:
+#     f=uproot.open(p); print(p, "mtime", datetime.datetime.fromtimestamp(os.path.getmtime(p)).isoformat(), {k.split(";")[0]:(f[k].num_entries,len(f[k].keys())) for k,c in f.classnames().items() if c=="TTree"})
+# 2026-10-19T22:00:42.180254+00:00
+/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/base_cv.root mtime 2026-10-05T21:18:44 {'mc_truth_denom': (131346, 9), 'mc_signal_reco': (131346, 16), 'mc_background': (2616, 13), 'data': (15055, 6)}
+/pscratch/sd/j/josephrb/w2-recoil-20261006/cost1A/evloop/mod_rr0.root mtime 2026-10-05T22:27:18 {'mc_truth_denom': (2217328, 9), 'mc_signal_reco': (2489136, 16), 'mc_background': (52626, 13), 'data': (360123, 6)}
+/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rrzero/runEventLoopOmniFold_5D_1A_w2b_rrzero.root mtime 2026-10-06T03:25:02 {'mc_truth_denom': (2217328, 9), 'mc_signal_reco': (2489136, 16), 'mc_background': (52626, 13), 'data': (360123, 6)}
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1A_universes_full.root mtime 2026-06-29T22:47:52 {'mc_truth_denom': (2671290, 236), 'mc_signal_reco': (2679264, 470), 'mc_background': (52626, 7), 'data': (360123, 6)}
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1A_universes_full_bkgaware.root mtime 2026-07-13T21:23:31 {'mc_truth_denom': (2671290, 236), 'mc_signal_reco': (2679264, 470), 'mc_background': (39870, 240), 'data': (360123, 6)}

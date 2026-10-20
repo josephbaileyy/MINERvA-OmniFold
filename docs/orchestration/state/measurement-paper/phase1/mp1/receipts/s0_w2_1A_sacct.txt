@@ -1,0 +1,16 @@
+# CMD: ssh saul 'sacct -n -P -j 59408361,59408363,59421456,59421476,59421491 -o JobID,JobName%30,State,ExitCode,ElapsedRaw,TotalCPU,MaxRSS,AllocTRES'   (2026-10-19T22:26:00Z); W2's 1A passes, for timing and memory comparison
+59408361|w2a_cost1A_mod_rr0|COMPLETED|0:0|3849|49:35.149||billing=10,cpu=10,energy=1893792,mem=16G,node=1
+59408361.batch|batch|COMPLETED|0:0|3849|49:35.149|16746024K|cpu=10,mem=16G,node=1
+59408361.extern|extern|COMPLETED|0:0|3849|00:00:00||billing=10,cpu=10,mem=16G,node=1
+59408363|w2a_cost1A_mod_rr1|COMPLETED|0:0|4842|49:45.970||billing=10,cpu=10,energy=2592704,mem=16G,node=1
+59408363.batch|batch|COMPLETED|0:0|4842|49:45.970|16749400K|cpu=10,mem=16G,node=1
+59408363.extern|extern|COMPLETED|0:0|4842|00:00:00||billing=10,cpu=10,mem=16G,node=1
+59421456|w2b_ev_rr0_1A|COMPLETED|0:0|4392|43:21.148||billing=10,cpu=10,energy=2004601,mem=16G,node=1
+59421456.batch|batch|COMPLETED|0:0|4392|43:21.148|16749108K|cpu=10,mem=16G,node=1
+59421456.extern|extern|COMPLETED|0:0|4392|00:00:00||billing=10,cpu=10,mem=16G,node=1
+59421476|w2b_ev_rr1_1A|COMPLETED|0:0|4223|46:27.479||billing=10,cpu=10,energy=1979868,mem=16G,node=1
+59421476.batch|batch|COMPLETED|0:0|4223|46:27.479|16748864K|cpu=10,mem=16G,node=1
+59421476.extern|extern|COMPLETED|0:0|4223|00:00:00||billing=10,cpu=10,mem=16G,node=1
+59421491|w2b_ev_rrzero_1A|COMPLETED|0:0|2247|30:28.055||billing=10,cpu=10,energy=1027191,mem=16G,node=1
+59421491.batch|batch|COMPLETED|0:0|2247|30:28.055|16749116K|cpu=10,mem=16G,node=1
+59421491.extern|extern|COMPLETED|0:0|2248|00:00:00||billing=10,cpu=10,mem=16G,node=1

@@ -1,0 +1,102 @@
+# CMD (local): bash measurement-paper/phase1/mp1/test/run_test.sh <worktree> <scratch>/unittest2   (header sha256 a87cb157f77e5ce6d281b62b130969d8a15f280381fe49baeffc8e767bbaf577, patch 1ab5e08413b082f2e35f7feb24d1a0cc43e39f53337c0ed68707e78a754905c0)
+# 2026-10-19T22:23:47Z Apple clang version 15.0.0 (clang-1500.3.9.4)
+PASS  F table: loads and interpolates
+PASS  F table: extends beyond the last knot with the end slope
+PASS  F table: non-increasing x refused
+PASS  F table: decreasing y refused
+PASS  F table: one knot refused
+PASS  F table: malformed line refused
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 0, fuzz conv 0)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 0, fuzz conv 1)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 0, fuzz conv 2)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 1, fuzz conv 0)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 1, fuzz conv 1)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 1, fuzz conv 2)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 2, fuzz conv 0)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 2, fuzz conv 1)
+PASS  k = 0 reproduces CVUniverse bit for bit (q0 conv 2, fuzz conv 2)
+PASS  F-propagation without a table is refused
+PASS  proton -1s: E_avail, fuzz none
+PASS  proton -1s: E_avail, fuzz pro-rata
+PASS  proton -1s: E_avail, fuzz all
+PASS  proton -1s: q0 legacy = q0 + k pc_s
+PASS  proton -1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  proton -1s: q0 fprop = F(pc + k pc_s)
+PASS  proton: name and lateral flag
+PASS  proton 1s: E_avail, fuzz none
+PASS  proton 1s: E_avail, fuzz pro-rata
+PASS  proton 1s: E_avail, fuzz all
+PASS  proton 1s: q0 legacy = q0 + k pc_s
+PASS  proton 1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  proton 1s: q0 fprop = F(pc + k pc_s)
+PASS  proton: name and lateral flag
+PASS  meson -1s: E_avail, fuzz none
+PASS  meson -1s: E_avail, fuzz pro-rata
+PASS  meson -1s: E_avail, fuzz all
+PASS  meson -1s: q0 legacy = q0 + k pc_s
+PASS  meson -1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  meson -1s: q0 fprop = F(pc + k pc_s)
+PASS  meson: name and lateral flag
+PASS  meson 1s: E_avail, fuzz none
+PASS  meson 1s: E_avail, fuzz pro-rata
+PASS  meson 1s: E_avail, fuzz all
+PASS  meson 1s: q0 legacy = q0 + k pc_s
+PASS  meson 1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  meson 1s: q0 fprop = F(pc + k pc_s)
+PASS  meson: name and lateral flag
+PASS  em -1s: E_avail, fuzz none
+PASS  em -1s: E_avail, fuzz pro-rata
+PASS  em -1s: E_avail, fuzz all
+PASS  em -1s: q0 legacy = q0 + k pc_s
+PASS  em -1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  em -1s: q0 fprop = F(pc + k pc_s)
+PASS  em: name and lateral flag
+PASS  em 1s: E_avail, fuzz none
+PASS  em 1s: E_avail, fuzz pro-rata
+PASS  em 1s: E_avail, fuzz all
+PASS  em 1s: q0 legacy = q0 + k pc_s
+PASS  em 1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  em 1s: q0 fprop = F(pc + k pc_s)
+PASS  em: name and lateral flag
+PASS  other -1s: E_avail, fuzz none
+PASS  other -1s: E_avail, fuzz pro-rata
+PASS  other -1s: E_avail, fuzz all
+PASS  other -1s: q0 legacy = q0 + k pc_s
+PASS  other -1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  other -1s: q0 fprop = F(pc + k pc_s)
+PASS  other: name and lateral flag
+PASS  other 1s: E_avail, fuzz none
+PASS  other 1s: E_avail, fuzz pro-rata
+PASS  other 1s: E_avail, fuzz all
+PASS  other 1s: q0 legacy = q0 + k pc_s
+PASS  other 1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  other 1s: q0 fprop = F(pc + k pc_s)
+PASS  other: name and lateral flag
+PASS  xtalk -1s: E_avail, fuzz none
+PASS  xtalk -1s: E_avail, fuzz pro-rata
+PASS  xtalk -1s: E_avail, fuzz all
+PASS  xtalk -1s: q0 legacy = q0 + k pc_s
+PASS  xtalk -1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  xtalk -1s: q0 fprop = F(pc + k pc_s)
+PASS  xtalk: name and lateral flag
+PASS  xtalk 1s: E_avail, fuzz none
+PASS  xtalk 1s: E_avail, fuzz pro-rata
+PASS  xtalk 1s: E_avail, fuzz all
+PASS  xtalk 1s: q0 legacy = q0 + k pc_s
+PASS  xtalk 1s: q0 fractional = q0 (1 + k pc_s/pc)
+PASS  xtalk 1s: q0 fprop = F(pc + k pc_s)
+PASS  xtalk: name and lateral flag
+INFO  pc = 2365.400 MeV, q0 = 3726.128 MeV; other +1s: dq0 fprop 51.739289, fractional 50.723487
+PASS  parser: both unset -> disabled
+PASS  parser: both empty -> disabled
+PASS  parser: Q0 without FUZZ refused
+PASS  parser: FUZZ without Q0 refused
+PASS  parser: wrong case refused
+PASS  parser: old fuzz name refused
+PASS  parser: fprop/prorata accepted
+PASS  parser: fractional/none accepted
+PASS  parser: legacy/all accepted
+ALL PASS: 0 failure(s)
+# NEGATIVE CONTROL: header mutated (k=0 path x(1+1e-15); fprop shift x1.0000001; fuzz=all made equal to none) -> rc=1, 27 failing checks; first and the summary line:
+FAIL  k = 0 reproduces CVUniverse bit for bit (q0 conv 0, fuzz conv 0)
+FAILED: 27 failure(s)

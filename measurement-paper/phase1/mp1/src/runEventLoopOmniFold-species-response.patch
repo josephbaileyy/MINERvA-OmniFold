@@ -1,0 +1,127 @@
+--- a/runEventLoopOmniFold.cpp
++++ b/runEventLoopOmniFold.cpp
+@@ -39,6 +39,7 @@
+ 
+ //Includes from this package
+ #include "event/CVUniverse.h"
++#include "event/SpeciesResponseUniverse.h"
+ #include "event/MichelEvent.h"
+ #include "systematics/Systematics.h"
+ #include "cuts/MaxPzMu.h"
+@@ -142,6 +143,39 @@
+   catch(const std::exception&)
+   {
+     error = "invalid universe index in '" + spec + "'";
++    return false;
++  }
++  return true;
++}
++
++// Parse MNV101_SPECIES_RESPONSE_Q0 / _FUZZ (MP1-A S0; BINDING-PHASE1-ADDENDUM-2
++// R1-R2). Both unset or empty: no SpeciesResponse band is constructed and the
++// event loop is unchanged. Otherwise both must be set: Q0 in {fprop, fractional,
++// legacy}, FUZZ in {prorata, none, all}.
++inline bool ParseSpeciesResponseConventions(const char* q0Val, const char* fuzzVal,
++                                            bool& enabled,
++                                            species_response::Q0Convention& q0conv,
++                                            species_response::FuzzConvention& fuzzconv,
++                                            std::string& error)
++{
++  const std::string q0Text = q0Val ? q0Val : "";
++  const std::string fuzzText = fuzzVal ? fuzzVal : "";
++  enabled = !q0Text.empty() || !fuzzText.empty();
++  if(!enabled) return true;
++  if(q0Text == "fprop") q0conv = species_response::Q0Convention::kFPropagation;
++  else if(q0Text == "fractional") q0conv = species_response::Q0Convention::kFractional;
++  else if(q0Text == "legacy") q0conv = species_response::Q0Convention::kLegacyAbsolute;
++  else
++  {
++    error = "MNV101_SPECIES_RESPONSE_Q0 must be 'fprop', 'fractional' or 'legacy', got '" + q0Text + "'";
++    return false;
++  }
++  if(fuzzText == "prorata") fuzzconv = species_response::FuzzConvention::kProRata;
++  else if(fuzzText == "none") fuzzconv = species_response::FuzzConvention::kNone;
++  else if(fuzzText == "all") fuzzconv = species_response::FuzzConvention::kAll;
++  else
++  {
++    error = "MNV101_SPECIES_RESPONSE_FUZZ must be 'prorata', 'none' or 'all', got '" + fuzzText + "'";
+     return false;
+   }
+   return true;
+@@ -1788,6 +1822,76 @@
+   std::map<std::string, std::vector<CVUniverse*>> truth_bands;
+   if(doSystematics) truth_bands = GetStandardSystematics(options.m_truth);
+   truth_bands["cv"] = {new CVUniverse(options.m_truth)};
++
++  // Per-species calorimetric response bands (MP1-A S0): SpeciesResponse_<s> for
++  // s in {proton, meson, em, other, xtalk}, index 0 = -1 sigma, 1 = +1 sigma, at
++  // the D1 sizes; SpeciesResponse_zero:0 is the k = 0 control (identity).
++  // Constructed only when MNV101_SPECIES_RESPONSE_Q0 / _FUZZ are set; Q0=fprop
++  // also needs MNV101_SPECIES_RESPONSE_FTABLE (the playlist's tabulated F).
++  bool speciesResponseEnabled = false;
++  species_response::Q0Convention speciesQ0 = species_response::Q0Convention::kFPropagation;
++  species_response::FuzzConvention speciesFuzz = species_response::FuzzConvention::kProRata;
++  std::string speciesResponseError;
++  if(!ParseSpeciesResponseConventions(getenv("MNV101_SPECIES_RESPONSE_Q0"),
++                                      getenv("MNV101_SPECIES_RESPONSE_FUZZ"),
++                                      speciesResponseEnabled, speciesQ0, speciesFuzz,
++                                      speciesResponseError))
++  {
++    std::cerr << "Invalid species-response setting: " << speciesResponseError << "\n";
++    return badCmdLine;
++  }
++  const char* speciesFTable = getenv("MNV101_SPECIES_RESPONSE_FTABLE");
++  const bool speciesFTableSet = speciesFTable != nullptr && std::string(speciesFTable).size() > 0;
++  if(speciesFTableSet != (speciesResponseEnabled && speciesQ0 == species_response::Q0Convention::kFPropagation))
++  {
++    std::cerr << "MNV101_SPECIES_RESPONSE_FTABLE must be set exactly when MNV101_SPECIES_RESPONSE_Q0=fprop.\n";
++    return badCmdLine;
++  }
++  if(speciesResponseEnabled)
++  {
++    if(!doSystematics)
++    {
++      std::cerr << "MNV101_SPECIES_RESPONSE_* is incompatible with MNV101_SKIP_SYST.\n";
++      return badCmdLine;
++    }
++    // The shadow-universe and point-cloud dumps read unshifted getters (W2 review F5).
++    if(getenv("MNV101_DUMP_UNIVERSES") != nullptr || getenv("MNV101_DUMP_POINTCLOUD") != nullptr)
++    {
++      std::cerr << "MNV101_SPECIES_RESPONSE_* is incompatible with MNV101_DUMP_UNIVERSES "
++                   "and MNV101_DUMP_POINTCLOUD.\n";
++      return badCmdLine;
++    }
++    std::shared_ptr<const species_response::PiecewiseLinearMap> speciesF;
++    if(speciesFTableSet)
++    {
++      try { speciesF = species_response::PiecewiseLinearMap::Load(speciesFTable); }
++      catch(const std::exception& e)
++      {
++        std::cerr << "MNV101_SPECIES_RESPONSE_FTABLE: " << e.what() << "\n";
++        return badCmdLine;
++      }
++      std::cout << "[SPECIES_RESPONSE] F table " << speciesFTable << ": " << speciesF->Size()
++                << " knots, x in [" << speciesF->FirstX() << ", " << speciesF->LastX() << "] MeV\n";
++    }
++    for(const auto& sp : species_response::kAll)
++    {
++      const std::string band = std::string("SpeciesResponse_") + sp.label;
++      error_bands[band] = {
++          new SpeciesResponseUniverse(options.m_mc, -1.0, sp, speciesQ0, speciesFuzz, speciesF),
++          new SpeciesResponseUniverse(options.m_mc, +1.0, sp, speciesQ0, speciesFuzz, speciesF)};
++      truth_bands[band] = {
++          new SpeciesResponseUniverse(options.m_truth, -1.0, sp, speciesQ0, speciesFuzz, speciesF),
++          new SpeciesResponseUniverse(options.m_truth, +1.0, sp, speciesQ0, speciesFuzz, speciesF)};
++    }
++    error_bands["SpeciesResponse_zero"] = {new SpeciesResponseUniverse(
++        options.m_mc, 0.0, species_response::kProton, speciesQ0, speciesFuzz, speciesF)};
++    truth_bands["SpeciesResponse_zero"] = {new SpeciesResponseUniverse(
++        options.m_truth, 0.0, species_response::kProton, speciesQ0, speciesFuzz, speciesF)};
++    std::cout << "[SPECIES_RESPONSE] q0=" << getenv("MNV101_SPECIES_RESPONSE_Q0")
++              << " fuzz=" << getenv("MNV101_SPECIES_RESPONSE_FUZZ")
++              << ": bands SpeciesResponse_{proton 0.035, meson 0.05, em 0.03, other 0.20, xtalk 0.20}"
++                 " (0: -1 sigma, 1: +1 sigma) and SpeciesResponse_zero (0: identity) added.\n";
++  }
+ 
+   // Diagnostic: print the GetStandardSystematics inventory once so a fresh
+   // dump-all rebuild documents which bands are present and which are lateral.

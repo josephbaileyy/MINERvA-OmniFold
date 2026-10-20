@@ -1,0 +1,149 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'hostname; ~/.conda/envs/omnifold_py310/bin/python -I - /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root --entries 20000' < measurement-paper/phase1/mp1/s0_inspect_q0_g2.py
+# script sha256 73d8bbb097fec618924e8d48e986e4c2550cb4617c511a1b6ef378a2c58d5451 git-blob f970a9e49829e2ca76fead88c999af5282ab15d2
+login05
+# UTC 2026-10-19T17:39:50.687788+00:00 uproot 5.6.9 numpy 2.2.6
+# FILE /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root
+# branches requested 143; missing 0: []
+# entries read 20000 of 186439
+# selected-like events: 4561 (of which true numu CC 4551)
+
+## 0. MasterAnaDev_recoil_E (q0) on selected-like events
+  all     n=4561 min=3.04474 p1=38.0524 p50=1277.79 p99=19242 max=82445.6 mean=2431.71
+  negative: 0 events; distinct negative values (first 10): []
+  zero: 0
+
+## 1. G2: species pieces vs blob_recoil_E_<det> on selected-like events
+  tracker: events with total>0: 4559; sum(9 species)/total: max|r-1|=1.776e-15 frac(|r-1|<=1e-6)=1.000000; max|sum-total|=2.910e-11 MeV; events total==0 with sum!=0: 0
+    without _xtalk: frac(|r-1|<=1e-6)=0.0276 (events with _xtalk>0: 0.9724); share of tracker total: mean=0.0276
+    without _mu: frac(|r-1|<=1e-6)=0.2459 (events with _mu>0: 0.7541); share of tracker total: mean=0.0415
+    negative species pieces: {'p': 0, 'meson': 0, 'em': 0, 'other': 0, 'lown': 0, 'midn': 0, 'highn': 0, 'xtalk': 0, 'mu': 0}
+  ecal: events with total>0: 4109; sum(9 species)/total: max|r-1|=1.110e-15 frac(|r-1|<=1e-6)=1.000000; max|sum-total|=1.091e-11 MeV; events total==0 with sum!=0: 0
+    without _xtalk: frac(|r-1|<=1e-6)=0.1565 (events with _xtalk>0: 0.8435); share of ecal total: mean=0.2898
+    without _mu: frac(|r-1|<=1e-6)=0.5191 (events with _mu>0: 0.4809); share of ecal total: mean=0.2044
+    negative species pieces: {'p': 0, 'meson': 0, 'em': 0, 'other': 0, 'lown': 0, 'midn': 0, 'highn': 0, 'xtalk': 0, 'mu': 0}
+
+## 2. muon fuzz (CVUniverse::GetTrackerECALMuFuzz) vs the _mu pieces, selected-like
+  tracker: events fuzz>0: 3693; fuzz n=3693 min=0.165894 p1=0.37786 p50=58.4278 p99=1060.86 max=3439.08 mean=131.73
+    fuzz <= _mu + 1e-6: 0.1595; fuzz <= _mu + _xtalk + 1e-6: 0.2868; fuzz <= total + 1e-6: 1.0000
+    excess (fuzz - _mu)_+ over events fuzz>0: n=3693 min=0 p1=0 p50=39.745 p99=1001.92 max=3402.54 mean=109.343
+    _mu - fuzz (events fuzz>0): n=3693 min=-3402.54 p1=-1001.92 p50=-39.745 p99=42.219 max=678.684 mean=-107.378
+    _mu > 0 with fuzz == 0: 410
+  ecal: events fuzz>0: 2554; fuzz n=2554 min=0.278839 p1=0.530709 p50=14.308 p99=1302.65 max=14089.5 mean=101.264
+    fuzz <= _mu + 1e-6: 0.3751; fuzz <= _mu + _xtalk + 1e-6: 0.5532; fuzz <= total + 1e-6: 0.9996
+    excess (fuzz - _mu)_+ over events fuzz>0: n=2554 min=0 p1=0 p50=1.42615 p99=1234.26 max=14089.5 mean=87.3246
+    _mu - fuzz (events fuzz>0): n=2554 min=-14089.5 p1=-1234.26 p50=-1.42615 p99=49.2425 max=149.802 mean=-84.7646
+    _mu > 0 with fuzz == 0: 319
+  (fuzz - _mu)_+ summed over tracker+ECAL, as a fraction of the raw sum (selected, raw>0): n=4561 min=0 p1=0 p50=0.0517932 p99=0.395569 max=0.803198 mean=0.0806309
+  NewEavail (MeV) n=4561 min=0.338141 p1=10.1671 p50=654.996 p99=9952.16 max=44521.9 mean=1199.91
+  species shares of the raw tracker+ECAL sum (mean over selected, raw>0):
+    p      mean share=0.3628  frac events>0=0.7770
+    meson  mean share=0.3021  frac events>0=0.6132
+    em     mean share=0.1553  frac events>0=0.3515
+    other  mean share=0.0132  frac events>0=0.0392
+    lown   mean share=0.0080  frac events>0=0.1844
+    midn   mean share=0.0137  frac events>0=0.1747
+    highn  mean share=0.0641  frac events>0=0.2749
+    xtalk  mean share=0.0315  frac events>0=0.9934
+    mu     mean share=0.0494  frac events>0=0.8413
+  bound on species-s energy inside the subtracted fuzz, summed over selected events, as a fraction of sum E_s (E_s = tracker_s + ecal_s):
+    strict  = sum min(E_s, fuzz) / sum E_s;  indicative = sum min(E_s, (fuzz - _mu)_+) / sum E_s
+    p      strict=0.3239 indicative=0.2735
+    meson  strict=0.2722 indicative=0.2333
+    em     strict=0.2808 indicative=0.2522
+    other  strict=0.4469 indicative=0.4109
+    xtalk  strict=0.4031 indicative=0.3436
+  NewEavail / (1.17 * raw), i.e. the fractional-fuzz factor (selected, raw>0): n=4561 min=0.0895475 p1=0.467925 p50=0.912588 p99=1 max=1 mean=0.88446
+
+## 3. q0 convention: MasterAnaDev_recoil_E against candidate sums of parts (selected-like)
+  ratio r = MasterAnaDev_recoil_E / X, events with q0>0:
+  sum_s allNonMuonClusters_<s>_id (legacy parts, ID)         n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.55764 p1=1.49956 p99=14.6787
+  sum_s allNonMuonClusters_<s>_id + _od (legacy parts, ID+OD) n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.51403 p1=1.49956 p99=1.54878
+  part_response_total_recoil_passive_id                      n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.55764 p1=1.49956 p99=14.6787
+  part_response_total_recoil_passive_id + _od                n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.55764 p1=1.49956 p99=14.6787
+  sum_s part_response_recoil_passive_<s>_id                  n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.55764 p1=1.49956 p99=14.6787
+  sum_s part_response_recoil_passive_<s>_id + _od            n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.55764 p1=1.49956 p99=14.6787
+  MasterAnaDev_recoil_passivecorrected                       n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.51403 p1=1.49956 p99=1.54878
+  recoil_E_nopolyline                                        n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.48663 p1=0.891815 p99=1.54674
+  recoil_E_polylinecorrected                                 n=  4561 frac(|r-1|<=1e-6)=0.1934 frac(|r/median-1|<=1e-6)=0.0002 median=0.97859 p1=0.590816 p99=1
+  MasterAnaDev_recoil_E_wide_window                          n=  4561 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  blob_recoil_E                                              n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.48663 p1=0.891815 p99=1.54674
+  ratio r = MasterAnaDev_recoil_E / X, ALL selected-like events (incl. q0<=0):
+  recoil_E_polylinecorrected                                 n=  4561 frac(|r-1|<=1e-6)=0.1934 frac(|r/median-1|<=1e-6)=0.0002 median=0.97859 p1=0.590816 p99=1
+  recoil_E_nopolyline                                        n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.48663 p1=0.891815 p99=1.54674
+  MasterAnaDev_recoil_passivecorrected                       n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.51403 p1=1.49956 p99=1.54878
+  internal identities (selected-like):
+  sum_s passive_<s>_id / total_passive_id                    n=  4561 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  sum_s passive_<s>_od / total_passive_od                    n=0
+  passivecorrected / (total_passive_id + _od)                n=  4561 frac(|r-1|<=1e-6)=0.3815 frac(|r/median-1|<=1e-6)=0.0002 median=1.02104 p1=1 p99=9.53074
+  passivecorrected / total_passive_id                        n=  4561 frac(|r-1|<=1e-6)=0.3815 frac(|r/median-1|<=1e-6)=0.0002 median=1.02104 p1=1 p99=9.53074
+  recoil_E_nopolyline / passivecorrected                     n=  4561 frac(|r-1|<=1e-6)=0.1934 frac(|r/median-1|<=1e-6)=0.0004 median=1.02187 p1=1 p99=1.6956
+  legacy ID parts / blob_recoil_E                            n=  4561 frac(|r-1|<=1e-6)=0.1094 frac(|r/median-1|<=1e-6)=0.0004 median=0.910553 p1=0.102062 p99=1
+  legacy ID+OD parts / blob_recoil_E                         n=  4561 frac(|r-1|<=1e-6)=0.1934 frac(|r/median-1|<=1e-6)=0.0004 median=0.978594 p1=0.589764 p99=1
+  allNonMuon low+mid+high_proton_id / proton_id              n=  3546 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  allNonMuon_proton_id_err / _id                             n=  3546 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.035 p1=0.035 p99=0.035
+  allNonMuon_proton_od_err / _od                             n=   352 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.035 p1=0.035 p99=0.035
+  allNonMuon_meson_id_err / _id                              n=  2800 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.05 p1=0.05 p99=0.05
+  allNonMuon_meson_od_err / _od                              n=  1027 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.05 p1=0.05 p99=0.05
+  allNonMuon_em_id_err / _id                                 n=  1603 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.03 p1=0.03 p99=0.03
+  allNonMuon_em_od_err / _od                                 n=   628 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.03 p1=0.03 p99=0.03
+  allNonMuon_other_id_err / _id                              n=   182 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.2 p1=0.2 p99=0.2
+  allNonMuon_other_od_err / _od                              n=    71 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.2 p1=0.2 p99=0.2
+  allNonMuon_xtalk_id_err / _id                              n=  4550 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.2 p1=0.2 p99=0.2
+  allNonMuon_xtalk_od_err / _od                              n=   876 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=1.0000 median=0.2 p1=0.2 p99=0.2
+
+## 4. how the species pieces map between the two families (selected-like, mean over events with both>0)
+  blob tracker+ecal _p / allNonMuon_proton_id                n=  3542 frac(|r-1|<=1e-6)=0.7674 frac(|r/median-1|<=1e-6)=0.7674 median=1 p1=0.332082 p99=1.54021
+  passive_proton_id / allNonMuon_proton_id                   n=  3546 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  blob tracker+ecal _meson / allNonMuon_meson_id             n=  2797 frac(|r-1|<=1e-6)=0.4769 frac(|r/median-1|<=1e-6)=0.4769 median=1 p1=0.162156 p99=1.38829
+  passive_meson_id / allNonMuon_meson_id                     n=  2800 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  blob tracker+ecal _em / allNonMuon_em_id                   n=  1603 frac(|r-1|<=1e-6)=0.3525 frac(|r/median-1|<=1e-6)=0.3525 median=1 p1=0.490893 p99=1.54913
+  passive_em_id / allNonMuon_em_id                           n=  1603 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  blob tracker+ecal _other / allNonMuon_other_id             n=   179 frac(|r-1|<=1e-6)=0.1732 frac(|r/median-1|<=1e-6)=0.0056 median=1.00331 p1=0.0721258 p99=1.80765
+  passive_other_id / allNonMuon_other_id                     n=   182 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  blob tracker+ecal _xtalk / allNonMuon_xtalk_id             n=  4523 frac(|r-1|<=1e-6)=0.1537 frac(|r/median-1|<=1e-6)=0.0002 median=0.608353 p1=0.0762715 p99=24.5279
+  passive_xtalk_id / allNonMuon_xtalk_id                     n=  4550 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+
+## 5. the producer's own recoil shift MasterAnaDev_sys_recoil_energy_shift[0,1] (selected-like)
+  shift[0] n=4561 min=-107.806 p1=-107.806 p50=-60.3769 p99=-60.3769 max=-60.3769 mean=-62.883
+  shift[1] n=4561 min=60.3769 p1=60.3769 p50=60.3769 p99=107.806 max=107.806 mean=62.883
+  shift[1] / q0                                              n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=0.0472511 p1=0.00313779 p99=2.83314
+  -shift[0] / shift[1]                                       n=  4561 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  shift[1] / sqrt(sum_s _id_err^2)                           n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=2.82734 p1=0.14051 p99=77.2459
+  shift[1] / sum_s _id_err                                   n=  4561 frac(|r-1|<=1e-6)=0.0000 frac(|r/median-1|<=1e-6)=0.0002 median=1.94714 p1=0.104135 p99=60.6381
+
+## 6. is q0 a fixed multiple, or a nonlinear function, of pc = sum_s (allNonMuon_<s>_id + _od)?
+  MasterAnaDev_recoil_passivecorrected / pc                  n=  4561 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  low-energy constant k0 = 1.499556707; events at q0 = k0*pc (1e-6): 0.4385 of 4561
+    pc in [0,100) MeV: n=  241 frac at k0=1.000 q0/pc p1=1.49956 p50=1.49956 p99=1.49956
+    pc in [100,300) MeV: n=  646 frac at k0=1.000 q0/pc p1=1.49956 p50=1.49956 p99=1.49956
+    pc in [300,500) MeV: n=  678 frac at k0=1.000 q0/pc p1=1.49956 p50=1.49956 p99=1.49956
+    pc in [500,1000) MeV: n=  996 frac at k0=0.437 q0/pc p1=1.49956 p50=1.50435 p99=1.53218
+    pc in [1000,2000) MeV: n= 1008 frac at k0=0.000 q0/pc p1=1.53320 p50=1.54553 p99=1.54896
+    pc in [2000,5000) MeV: n=  741 frac at k0=0.000 q0/pc p1=1.53057 p50=1.53880 p99=1.54202
+    pc in [5000,inf) MeV: n=  251 frac at k0=0.000 q0/pc p1=1.50997 p50=1.52245 p99=1.53015
+  single-valuedness: 2852 neighbour pairs with pc within 0.1%; |dq0|/q0 > 1%: 0.0000; > 5%: 0.0000
+  q0 / recoil_E_polylinecorrected where pc == recoil_E_nopolyline n=   882 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  recoil_E_nopolyline / blob_recoil_E                        n=  4561 frac(|r-1|<=1e-6)=1.0000 frac(|r/median-1|<=1e-6)=1.0000 median=1 p1=1 p99=1
+  candidate conventions for one species s at +1 sigma, as (q0' - q0) / (delta_s * pc_s):
+    legacy absolute: 1 (by construction); fractional: q0/pc; the local slope of q0(pc) is what the
+    detector response would give, and equals q0/pc only where q0 = k0*pc.
+    fractional/legacy ratio q0/pc on selected q0>0: n=4561 min=1.49956 p1=1.49956 p50=1.51403 p99=1.54878 max=1.54905 mean=1.51905
+
+## 7. local slope dq0/dpc (least squares within log-spaced pc bins) against the secant q0/pc
+    pc in [    17.0,    26.0) n=   23 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [    26.0,    39.7) n=   34 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [    39.7,    60.8) n=   64 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [    60.8,    93.0) n=   85 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [    93.0,   142.2) n=  137 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [   142.2,   217.5) n=  230 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [   217.5,   332.6) n=  412 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [   332.6,   508.7) n=  578 slope=1.49956 secant=1.49956 slope/secant=1.0000
+    pc in [   508.7,   778.0) n=  567 slope=1.52179 secant=1.49956 slope/secant=1.0148
+    pc in [   778.0,  1190.0) n=  668 slope=1.61149 secant=1.52829 slope/secant=1.0544
+    pc in [  1190.0,  1820.0) n=  607 slope=1.53692 secant=1.54751 slope/secant=0.9932
+    pc in [  1820.0,  2783.5) n=  502 slope=1.53023 secant=1.54105 slope/secant=0.9930
+    pc in [  2783.5,  4257.2) n=  301 slope=1.52148 secant=1.53743 slope/secant=0.9896
+    pc in [  4257.2,  6511.1) n=  161 slope=1.51581 secant=1.53005 slope/secant=0.9907
+    pc in [  6511.1,  9958.3) n=   83 slope=1.48891 secant=1.52228 slope/secant=0.9781
+    pc in [  9958.3, 15230.5) n=   51 slope=1.50402 secant=1.51227 slope/secant=0.9945
+    pc in [ 15230.5, 23294.0) n=   26 slope=1.51433 secant=1.51040 slope/secant=1.0026
