@@ -43,7 +43,7 @@ finite hybrid hypothesis and a reporting statistic; it does not turn
 OmniFold's event-level training into binned unfolding.
 
 Two statistics are formed from the unfolded cell values $F$ and the
-prediction $\mu_{G}$: a total statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$
+prediction $\mu_{G}$: a total (rate-and-shape) statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$
 with $r=F-\mu_{G}$, and a shape statistic $T_{\mathrm{sh}}$ of the same form
 on the normalized cell fractions, with the normalization Jacobian applied to
 $\Sigma$ and one cell dropped. The metric
@@ -53,7 +53,7 @@ covariance~\cite{LedoitWolf:2004} of \jtVn{} pilot pseudo-experiments at the
 Tune~v1 null. The metric defines how hypotheses are compared and so affects
 power; the null calibration below, not the metric, sets each test's size.
 
-\subsection{Calibration through the full analysis chain}
+\subsection{Calibration within the implemented simulation model}
 \label{sec:joint5d-calibration}
 
 The null distribution of each statistic is obtained from pseudo-experiments
@@ -375,13 +375,93 @@ difference applied before calibration; and (c) larger variations. The
 rejections are therefore conditional on the simulation's hadronic response,
 and the response model is not shown to be complete.
 
+\subsection{Hydrocarbon target correction for NuWro and GiBUU (beside the recorded tests)}
+\label{sec:joint5d-ch}
+
+% Methods-paper rewrite draft 5 (DECISION-20261020-joseph-nuwro-ch-claim.md, provisional "for now"). Sources:
+% B = docs/orchestration/state/measurement-paper/phase1/mp3b/REPORT.md (NuWro on CH);
+% C = docs/orchestration/state/measurement-paper/phase1/mp3c/REPORT.md (GiBUU on CH);
+% M = docs/orchestration/state/measurement-paper/phase1/a7margins/RECEIPT.md (frozen margins).
+NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the
+other predictions are per nucleon of CH.
+These replays correct the two predictions to CH and re-evaluate their tests
+against the frozen null distributions.  They are descriptive: they do not
+re-grade the recorded decisions of Table~\ref{tab:joint5d}, which stand.
+
+\paragraph{Construction.}
+% B:29-34 (combination, sumw2, the frozen chain, the supplement); C:46-51 (GiBUU, frozen r(E), 72 cells).
+Each prediction is rebuilt per fine cell as
+$x_{\mathrm{CH}}=\tfrac{12}{13}\,x_{\mathrm{C}}+\tfrac{1}{13}\,x_{\mathrm{H}}$, with
+$x_{\mathrm{H}}$ the generator's own free-proton product run through the frozen
+conversion, flux-repair and binning chain, and its Monte Carlo variance
+combined with the same weights.  The hydrogen fraction is
+$f_{\mathrm{H}}=5.08\%$ for NuWro over the grid and 4.77\% for GiBUU over its 72 cells.
+% Draft 6 (REVIEW-2 finding 12): B:97 (grid integral; 0.0506 over the 109 cells, B:105), C:51 (72-cell domain).
+% B:97, :103-105; C:51, :56-58.
+Over the reported cells, the ratio $r_{c}=\mu_{\mathrm{CH}}/\mu_{\mathrm{C}}$
+has minimum, median, and maximum 0.923, 0.963, and 1.039 for NuWro (109
+cells) and 0.923, 0.963, and 1.036 for GiBUU (72 cells), and $f_{\mathrm{H}}$
+per cell reaches 0.112 and 0.109.  Both corrections move the prediction toward
+the data.
+% B:138-139; C:80-81 (the cross term is negative: the data lie on the CH side). REVIEW-2 finding 11: pointer moved here.
+
+\paragraph{Replays.}
+% B:123-137 (NuWro: T_total 7427.1 -> 6759.8, -3.83 null SD; T_shape 9660.0 -> 9333.1, -0.37; frozen position:
+% threshold 0.005, T_crit 6953.94, -1.11 SD, undetermined; re-sorted to the last position, threshold 0.05, CP
+% [0.0183, 0.0336], rejected; shape to threshold 0.025, 0.74 SD above its frozen T_crit; kappa = 3: total p 0.0748,
+% k = 130, not rejected; shape rejected). C:21, :72-79 (GiBUU: T_total -4.67, T_shape -1.33 null SD; margins 7.86 ->
+% 3.18 and 3.58 -> 2.24; frozen positions, no re-sort; kappa = 3 also rejected). M:65-78 (frozen margins).
+Under the frozen metric, NuWro's total statistic falls by 3.83 null standard
+deviations and its shape statistic by 0.37.  At its frozen Holm position
+(threshold 0.005) the total test would then lie 1.11 null standard deviations
+below its boundary, and so be undetermined.  It remains rejected only because
+its larger $p$ value moves it to the last Holm position (threshold 0.05), and in
+the report-only $\kappa=\jtMoneKappaRobust$ family it is not rejected ($p=0.075$).
+NuWro's shape test stays rejected, 0.74 null standard deviations above its
+frozen boundary.  GiBUU's statistics fall by 4.67 (total) and 1.33 (shape) null
+standard deviations; both tests stay rejected at their frozen positions,
+including at $\kappa=\jtMoneKappaRobust$, with margins that shrink from 7.86 to
+3.18 and from 3.58 to 2.24 null standard deviations.  With each CH
+prediction's own variance in the metric, no decision changes for either
+generator.
+% B:129 (W_CH: both rejected, no change); C:76.
+
+\paragraph{Generation checks.}
+% C:7-8 (the required label, verbatim), :23-44 (declaration 00efbb25..., recorded before computing; max |Delta_c/sigma_c|
+% 5.1e-4 against the 0.1 acceptance). B:48-56 (NuWro hydrogen chunks: 3 + 1 aborts rerun on alternate seeds; excluded
+% fraction 1.8e-5 main, 3.8e-5 supplement; the supplement's 95% bound 1.8e-4 above the 1e-4 bar, FLAGGED).
+The GiBUU replay carries the label ``B3 (sampling closure) failed on hydrogen; a
+post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$'': the
+sampling-closure check failed on the hydrogen sample, and a bias check of its
+premise, declared before it was computed, moves the CH prediction by about
+$5\times10^{-4}$ of $\sigma_{c}$, the standard deviation of the cell over the
+frozen null.
+% Draft 6: docs/orchestration/state/measurement-paper/BINDING-PHASE1-ADDENDUM-9.md:28-31 (sec. 4, "Recorded for the record";
+% in tree since the rebase onto 51da2a62): production_ID 34, 46% of the GiBUU-H sample; median energy loss
+% 45 MeV, median p_T imbalance 31 MeV; non-DIS hydrogen events balance exactly; cause not identified.
+A further caveat applies to the GiBUU replay: GiBUU's deep-inelastic events on
+hydrogen, 46\% of its hydrogen sample, do not conserve energy.  They lose a
+median of \SI{45}{MeV}, with a median transverse-momentum imbalance of
+\SI{31}{MeV}, while its other hydrogen events balance exactly; the cause has
+not been identified, and the available energy of those events may be low.  It
+may also affect GiBUU's carbon prediction, which cannot be checked in this way.
+% ADDENDUM-9 :29-31 ("Carbon cannot be checked this way"; "possibly on the frozen GiBUU product").
+In NuWro's hydrogen generation,
+four chunks aborted and were rerun on alternate seeds; the fraction of events
+this excludes is estimated as $1.8\times10^{-5}$ in the main sample and
+$3.8\times10^{-5}$ in the 50--\SI{100}{GeV} supplement, or $1.9\times10^{-5}$ and
+$6.2\times10^{-5}$ including the first attempt; these estimates rest on four to
+six events.  The supplement's 95\% upper bound
+of $1.8\times10^{-4}$ exceeds the $10^{-4}$ level set for it, so the supplement
+is flagged rather than assumed negligible.
+
 \subsection{What the tests establish}
 \label{sec:joint5d-reading}
 
 The comparisons recover the generator disagreements already established by
 the published two-dimensional measurement on the same
 data~\cite{MINERvA:2021owq}. Their methodological contribution is calibration
-through the full analysis chain, which puts the estimator's bias toward its
+within the implemented simulation model, which puts the estimator's bias toward its
 prior and the declared nuisances into each null distribution. The rejections
 are global assessments of the five specified predictions under the declared
 model; assigning a discrepancy to a kinematic region or nuclear mechanism

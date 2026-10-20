@@ -22,7 +22,20 @@ Truth $W$ is the experimenter's invariant mass
 $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^{2}}$, with struck-nucleon mass $M$
 (\texttt{CVUniverse::GetTrueExperimentersW()}). Reco $W$ uses the reco
 $q_{3}$ estimator's calorimetric transfer $q_{0}$ and muon-kinematic $Q^{2}$,
-with the average nucleon mass (\texttt{CVUniverse::RecoW()}). Like $q_{3}$ --- and unlike $\Eavail$ --- $W$
+with the average nucleon mass (\texttt{CVUniverse::RecoW()}).
+% Methods-paper rewrite draft 5 (readability pass): moved from the article with its sources.
+% docs/orchestration/state/s5p/gen5d/README-gen5d-build.md:60-77 (fixed M_n, W = 0 when W^2 <= 0; 1,438/938,141 GENIE CV,
+% 1,449/960,128 GENIE MEC, 1,757/1,261,997 NuWro change W bin); docs/orchestration/state/2d-closeout/stageF/methods/
+% M4-W-RECORD.md:9, :129-139 (J-cell shifts: median 0.13% GENIE CV, 0.087% NuWro; max 1.57%, 2.19%; shift / MC
+% error max 0.88 / 1.13; GENIE+MEC not measured at cell level; the 50-100 GeV supplements excluded; GiBUU not evaluable).
+The external generator predictions instead compute truth $W$ with the neutron mass for every
+event and place events with $W^{2}\le0$ in the lowest $W$ bin, whereas the analysis uses the
+struck-nucleon mass and excludes such events from its five-observable truth sample. In the GENIE
+and NuWro samples this moves 0.14--0.15\% of the events into another $W$ bin. In GENIE CV and
+NuWro (without their 50--\SI{100}{GeV} samples) it changes the coarse-cell predictions by about
+\SI{0.1}{\percent} at the median and at most \SI{2.2}{\percent}, at most about one Monte Carlo
+standard error of the prediction in any cell; it was not evaluated at cell level for GENIE$+$MEC
+and cannot be evaluated for GiBUU. Like $q_{3}$ --- and unlike $\Eavail$ --- $W$
 is not invariant under the lateral systematic shifts, so the event loop dumps
 shifted-$W$ lateral universes per universe, mirroring the $q_{3}$ treatment
 (\S\ref{sec:4d}); the dump also carries truth hadronic diagnostics (proton and
@@ -126,7 +139,12 @@ energy limit accounts for the larger corner shortfall.
 Valencia 2p2h raises the GENIE$+$MEC integrated prediction while leaving the corner
 essentially unchanged ($1.142\to1.139$), since it populates low $W$.
 At $W\in[2.2,3.0)\,\si{GeV}$, data/generator $=1.12$, $1.11$, $1.13$ and
-$1.34$, again close to the integrated ratios. These are central-value ratios; no compatibility metric is quoted, for the
+$1.34$, again close to the integrated ratios.
+% Methods-paper rewrite, fix round 1 (REVIEW-1 P1): moved from the article's generator-context paragraph (its figure left the article).
+% Source: publication/release/figs/fig_numbers.py:61-62, :106-107 (pred_over_data_Wmid_pct_GENIE-CV / _GENIE+MEC,
+% computed from the released figure arrays) and values.tex:476-483 (9.4% CV, 11.8% +MEC; \genieWmidLo, \genieWmidHi).
+At $1.4\le W<\SI{1.8}{GeV}$, instead, both GENIE predictions lie
+\SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above the data. These are central-value ratios; no compatibility metric is quoted, for the
 reason given in \S\ref{sec:eavailw-adopted}, item~1.
 
 The localization in \S\ref{sec:eavailw-map} is relative to MINERvA Tune~v1;

@@ -213,7 +213,9 @@ truth departures at the smallest envelope the vertices allow, has median
 vertex in most cells. The frozen total-width target (median 68\% half-width at most
 \SI{10}{\percent}) is therefore unattainable in RD1 and RD3 from the model component
 alone, and in RD2 once the flat \SI{1.4}{\percent} normalization is added (median at
-least \SI{11.0}{\percent}).
+least \SI{11.0}{\percent}); the study adds the model component linearly to the probabilistic
+half-width, cell by cell.
+% Methods-paper rewrite draft 6 (REVIEW-2 finding 9): RECORD-20260927-s5p-stage2-exit.md:133-135 (half-width = sigma_prob + h).
 % plain-language pass 2, director ruling on base defect sec_5d-31-63 (DECISION-20261018-joseph-plain-language-pass2)
 % Base read "recovery of at least 75% of a generator-sized departure, against 0.31--0.63 measured", which reads
 % as 31-63% recovered. RECORD-20260927-s5p-stage2-exit.md:76-78 (the T2 proxy is the median over reported cells
@@ -352,18 +354,68 @@ synthesis; the precision-measurement objective remains unmet.
 An end-to-end independent-truth test assessed statistical intervals of a
 deterministic five-dimensional estimator variant with nominal-truth bias
 correction (1,200 pseudo-experiments over three truths). It failed its predeclared
-futility criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist coverage is
+futility criterion at the nominal truth and under a 10\% reduction of the signal rate with a weak
+$\Eavail$ slope (below), so no frequentist coverage is
 claimed for any five-dimensional interval.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A, note home for the paper's
 % Sec. IV C numbers. Source: OUTCOME-20260925-s5c-tier-s-futility-fail.md:30-36 (table: nominal 0 / 2 futile,
 % min 0.570 / 0.850; E_avail tilt a=0.2 51 / 42 futile, min 0.060 / 0.288; UCB < 0.66 / < 0.94; per-comparison
 % level 0.05/459) and :41-43; receipt state/s5c/tier_s/interim_400.json (aa574c17...): 153 functionals =
 % 109 J cells + 42 EW cells + the EW all-ones sum + the total integrated rate.
+% Methods-paper rewrite draft 5: the interval definition, moved here from the article (nd-unfolding/s5c_coverage.py:77-80).
+The intervals divide each estimate by $1+\beta$, where $\beta$ is the relative closure bias at
+nominal truth, and add the standard error of $\beta$ times the corrected estimate in quadrature to
+the statistical standard deviation.
+% Draft 6 (REVIEW-2 finding 13): nd-unfolding/s5c_coverage.py:79-80, half-width z sqrt(sigma^2 + (se f)^2).
 A quantity fails when the upper confidence bound on its coverage lies below
-0.66 for 68\% intervals or below 0.94 for 95\% intervals. Under the $\Eavail$
-tilt, 51 of the 153 reported cell and projection integrals have 68\% coverage
+0.66 for 68\% intervals or below 0.94 for 95\% intervals. The second truth, labelled the
+$\Eavail$ tilt in the records, multiplies the true signal by $1+0.2\,(\Eavail/\SI{100}{GeV}-\tfrac12)$
+without renormalization, with the background unchanged; below $\Eavail=\SI{3}{GeV}$ the weight is
+0.900--0.906, so it is in effect a \SI{10}{\percent} lower signal rate with a weak $\Eavail$ slope.
+% Methods-paper rewrite draft 4 (X5 G5b, verified by the director): nd-unfolding/s5c_pseudo.py:67-70 (weight),
+% :125-128 (applied to the pseudo-data signal, not renormalized; background unchanged); KNOWN_ISSUES row 98.
+Under that change, 51 of the 153 reported cell and projection integrals have 68\% coverage
 confidently below nominal, with coverage as low as 0.060, and 42 fail at
 95\%. At nominal truth two fail at 95\%, the lowest at 0.850.
+
+\paragraph{Why the intervals miscover under the rate reduction.}
+% Methods-paper rewrite draft 7: docs/orchestration/state/2d-closeout/stageF/methods/M2-RATEFAIL-DIAGNOSIS.md (0 node-h, local receipts and code):
+% :8 (total -9.58% recovered against -9.56% injected); :9, :65-69 (spread set equal to the half-width: coverage 0.06-0.22;
+% bias removed: 0.62-0.82 at 68%, 0.92-0.99 at 95%); :10, :80-85 (the subtraction removes the nominal absolute
+% background expectation, unchanged; the excess is -60 of 3.197M events); :11, :71-76, :100 (W-graded positive residual:
+% about +0.2%, +0.4%, +0.7-1.1% for W 1.4-2.2, 2.2-3, >= 3 GeV, 1.3-2.6 sigma against intervals of 0.16-0.43%; added
+% whatever the sign of beta); :13, :24 (means and spreads inferred from a Gaussian fit to each 68%/95% coverage pair,
+% cross-checked on EW17, +1.04% against +1.05% recorded); :50 (intervals use one nominal bootstrap sigma, slightly too
+% wide at 0.9 of the events); :52-63 (failures by W band); :12, :87, :102 (source not established); :15, :104-109
+% (confirming test, not run, about 0.1-0.2 node-h).
+A diagnosis from the stored receipts and code accounts for the failure under the
+rate reduction.  The rate change itself is recovered: in the one locally stored pseudo-experiment
+the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected,
+and over the 400 the total covers at 0.74 (68\%), so this is not a
+normalization failure.  Nor are the intervals too narrow: they use one nominal
+bootstrap $\sigma$ at every truth, slightly too wide for 10\% fewer events apart from the background
+not being redrawn (inferred spread about $1.15\sigma$ at $W\ge\SI{3}{GeV}$), and
+setting the spread equal to the half-width leaves the failing quantities'
+coverage at 0.06--0.22.  The purity subtraction does not apply a nominal signal
+fraction to the reduced data: it removes the absolute nominal background
+expectation, which is unchanged, and in the stored pseudo-experiment the subtracted
+total agrees with the pseudo-signal to 60 of 3.2 million events.  The miscoverage is a residual bias
+that the nominal-truth bias correction does not remove.  The rate change adds
+a positive bias that grows with $W$, about \SI{0.2}{\percent} for
+$1.4\le W<\SI{2.2}{GeV}$, \SI{0.4}{\percent} for $2.2\le W<\SI{3}{GeV}$, and
+0.7--\SI{1.1}{\percent} for $W\ge\SI{3}{GeV}$, which is 1.3--2.6 standard
+deviations against intervals of 0.16--0.43\%, whatever the sign of the nominal
+bias $\beta$; removing that bias restores coverage to 0.62--0.82 at 68\% and
+0.92--0.99 at 95\%.  These per-quantity biases and spreads are inferred, not
+measured: the receipt records only hit counts, so each quantity's mean shift
+and spread come from a Gaussian fit to its 68\% and 95\% coverage, checked
+against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The
+source of the $W$-graded term is not established: its size and ordering roughly match,
+under an approximate assignment of background fractions to $W$ bins, the rise
+of the background fraction by $0.111\,f_{\mathrm{bkg}}$, but it may also
+belong to the estimator alone.  The test that would decide, rerunning the same
+pseudo-experiments as run, without background, and with the background scaled
+by 0.9, has not been run.
 
 % Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 

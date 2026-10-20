@@ -35,8 +35,9 @@
 \begin{document}
 \raggedbottom % reprint-mode layout: avoid stretched inter-paragraph gaps (cosmetic; the journal re-typesets)
 
-\title{Multidimensional unbinned unfolding of MINERvA inclusive charged-current
-neutrino data: validation and calibrated model tests}
+% Methods rewrite (OUTLINE-DECISION sec. 2; GPT-6.1-sol framing Part 2, title 1): provisional until the Ben review.
+\title{Performance and limitations of multidimensional OmniFold unfolding with
+MINERvA open data}
 
 \author{Joseph Bailey}
 \email{josephrb@stanford.edu}
@@ -50,36 +51,38 @@ neutrino data: validation and calibrated model tests}
 
 \begin{abstract}
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): abstract cut to about 150 words; headline
-% results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15). Moved to the body
-% only: the five prediction names (Secs. II, VI A), the marginal-normalization and closure checks (Intro, Sec. IV C,
-% Conclusions), "of the same cells" (Intro, Sec. VI C), the seed and coverage
-% limits (Secs. IV, V), "These rejections hold only under stated conditions" (the two that limit interpretation are
-% named), and "The tests recover known discrepancies" (Sec. VI C).
-% Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json),
-% as printed in the Introduction; "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
-% for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :133, :144.
-We apply OmniFold to MINERvA open data for medium-energy $\nu_{\mu}$
-charged-current inclusive interactions.  The analysis reproduces the
-published double-differential cross section in muon kinematics, with the
-integrated cross section within about one percent, and extends it to five
-simultaneous observables by adding available energy, three-momentum transfer,
-and hadronic invariant mass.  The three- to five-observable results are
-central values only.  Pseudo-experiments reveal background-subtraction and
-regularization biases, and the measured model dependence, a median of about
-% plain-language pass 2, review fix R-m1 (DECISION-20261018-joseph-plain-language-pass2)
-10--13\% per cell, prevents a five-dimensional measurement whose total
-uncertainties meet our predefined 10\% precision target.
-% plain-language pass, review fix R4 (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass 2, review fix R-M1 (DECISION-20261018-joseph-plain-language-pass2)
-Tests calibrated with pseudo-experiments that rerun the full analysis chain
-under a stated nuisance model reject the hybrid null hypotheses built from five generator predictions, in
-total and in shape, at the 5\% familywise level.
-% plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass, review fix R5 (DECISION-20261018-joseph-plain-language-pass)
-Their interpretation is limited: the nuisance model has no calorimetric
-recoil-response uncertainty, convergence of the fine grid defining the null
-hypotheses has not been shown, and the joint five-observable information is not shown to
-discriminate beyond matched coarse projections.
+% results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15).
+% Methods rewrite (OUTLINE-DECISION sec. 2-3; GPT-6.1-sol framing Part 4): recast as a methods abstract; provisional.
+% Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json);
+% \binsTen (values.tex:85); "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
+% for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144.
+% Moved to the body only (Sec. I scope, Sec. VIII): the nuisance-averaged size and the 0.9 alpha bound.
+% Fix round 1 (REVIEW-1 finding 1, 6 and the proposed abstract): "central values only" restored; "preserves the marginal
+% normalizations" weakened to "normalizations agree with lower-dimensional results"; "95.6% of the bins within 10%"
+% moved to the body only (Sec. IV, Table I); "a median of" kept before "about 10--13% per cell" (RECORD-20260927 :129-131,
+% a median over cells).
+We study OmniFold unfolding of MINERvA
+open data for medium-energy $\nu_{\mu}$ charged-current inclusive
+interactions.  It reproduces the published muon-kinematic cross section's integral
+within about one percent, with a correlated shape difference.
+% X5 G2 (M8): "reproduces the published ... double-differential cross section" narrowed to the integral.
+Extended to five simultaneous observables (adding available energy,
+three-momentum transfer, and hadronic invariant mass), it yields central values
+only: normalizations agree with lower-dimensional ones, but
+pseudo-experiments reveal background-subtraction bias and residual bias under
+generator-sized truth changes,
+statistical intervals miscover at the tested truths, and an envelope over five
+tested truth deformations, a median of about 10--13\% per cell, keeps the
+definitions studied from meeting our adopted 10\% criterion.
+% SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
+% NuWro-CH resolved (docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md, provisional: the ten recorded decisions stand; the CH replays are stated once, at a high level, in Sec. VIII F and the abstract, with the detail in the note, sec_joint.tex sec:joint5d-ch).
+% Draft 6 (X6 G-prom, G-total; REVIEW-2 finding 5; M8): one sentence on the tests, as an illustration, with the
+% NuWro clause (DECISION-20261020-joseph-nuwro-ch-claim.md, provisional; mp3b/REPORT.md:21-25).
+Tests of hybrid null hypotheses for five generator predictions, calibrated in a
+simulation without calorimetric recoil-response uncertainty and assuming
+fine-grid convergence, all reject at the 5\% familywise level, without being
+physical exclusions or gaining over matched coarse projections; NuWro's total
+(rate-and-shape) test rejection is not robust to a hydrocarbon-target correction.
 \end{abstract}
 
 \maketitle
@@ -138,9 +141,12 @@ With it a reader can
 recompute every $p$ value, decision, robustness result, and power figure of
 the joint tests, together with the recovery of the lost pseudo-experiments,
 the coarse-projection comparison, and the fine-grid $L_{2}$ ratios of
-condition~(i); regenerate Figs.~\ref{fig:joint}--\ref{fig:joint-nulls}; and
-recompute the numbers quoted from Figs.~\ref{fig:joint}
-and~\ref{fig:generator-context}.  Rerunning the packaged files from an empty
+condition~(i); regenerate Figs.~\ref{fig:joint} and~\ref{fig:joint-nulls} and
+the one-dimensional generator projections; and recompute the numbers
+quoted from Fig.~\ref{fig:joint} and in Sec.~\ref{sec:central}.
+% Methods rewrite fix round 1 (REVIEW-1 P1): the generator-context figure left the article (the note has fig:eavailWband); the release
+% still draws it (publication/release/figs/make_figs.py fig3) and checks the Sec. VII ratio (fig_numbers.py).
+Rerunning the packaged files from an empty
 directory reproduces every value recorded in the package and every figure
 number that it checks.
 % plain-language pass, review fix N6 (DECISION-20261018-joseph-plain-language-pass)
