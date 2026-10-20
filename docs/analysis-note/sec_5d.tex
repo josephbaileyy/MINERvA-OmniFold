@@ -213,7 +213,9 @@ truth departures at the smallest envelope the vertices allow, has median
 vertex in most cells. The frozen total-width target (median 68\% half-width at most
 \SI{10}{\percent}) is therefore unattainable in RD1 and RD3 from the model component
 alone, and in RD2 once the flat \SI{1.4}{\percent} normalization is added (median at
-least \SI{11.0}{\percent}).
+least \SI{11.0}{\percent}); the study adds the model component linearly to the probabilistic
+half-width, cell by cell.
+% Methods-paper rewrite draft 6 (REVIEW-2 finding 9): RECORD-20260927-s5p-stage2-exit.md:133-135 (half-width = sigma_prob + h).
 % plain-language pass 2, director ruling on base defect sec_5d-31-63 (DECISION-20261018-joseph-plain-language-pass2)
 % Base read "recovery of at least 75% of a generator-sized departure, against 0.31--0.63 measured", which reads
 % as 31-63% recovered. RECORD-20260927-s5p-stage2-exit.md:76-78 (the T2 proxy is the median over reported cells
@@ -362,7 +364,9 @@ claimed for any five-dimensional interval.
 % 109 J cells + 42 EW cells + the EW all-ones sum + the total integrated rate.
 % Methods-paper rewrite draft 5: the interval definition, moved here from the article (nd-unfolding/s5c_coverage.py:77-80).
 The intervals divide each estimate by $1+\beta$, where $\beta$ is the relative closure bias at
-nominal truth, and add the standard error of $\beta$ in quadrature to the statistical half-width.
+nominal truth, and add the standard error of $\beta$ times the corrected estimate in quadrature to
+the statistical standard deviation.
+% Draft 6 (REVIEW-2 finding 13): nd-unfolding/s5c_coverage.py:79-80, half-width z sqrt(sigma^2 + (se f)^2).
 A quantity fails when the upper confidence bound on its coverage lies below
 0.66 for 68\% intervals or below 0.94 for 95\% intervals. The second truth, labelled the
 $\Eavail$ tilt in the records, multiplies the true signal by $1+0.2\,(\Eavail/\SI{100}{GeV}-\tfrac12)$

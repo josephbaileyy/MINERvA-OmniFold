@@ -43,7 +43,7 @@ finite hybrid hypothesis and a reporting statistic; it does not turn
 OmniFold's event-level training into binned unfolding.
 
 Two statistics are formed from the unfolded cell values $F$ and the
-prediction $\mu_{G}$: a total statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$
+prediction $\mu_{G}$: a total (rate-and-shape) statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$
 with $r=F-\mu_{G}$, and a shape statistic $T_{\mathrm{sh}}$ of the same form
 on the normalized cell fractions, with the normalization Jacobian applied to
 $\Sigma$ and one cell dropped. The metric
@@ -53,7 +53,7 @@ covariance~\cite{LedoitWolf:2004} of \jtVn{} pilot pseudo-experiments at the
 Tune~v1 null. The metric defines how hypotheses are compared and so affects
 power; the null calibration below, not the metric, sets each test's size.
 
-\subsection{Calibration through the full analysis chain}
+\subsection{Calibration within the implemented simulation model}
 \label{sec:joint5d-calibration}
 
 The null distribution of each statistic is obtained from pseudo-experiments
@@ -394,14 +394,16 @@ Each prediction is rebuilt per fine cell as
 $x_{\mathrm{CH}}=\tfrac{12}{13}\,x_{\mathrm{C}}+\tfrac{1}{13}\,x_{\mathrm{H}}$, with
 $x_{\mathrm{H}}$ the generator's own free-proton product run through the frozen
 conversion, flux-repair and binning chain, and its Monte Carlo variance
-combined with the same weights.  Integrated over the grid, the hydrogen
-fraction is $f_{\mathrm{H}}=5.08\%$ for NuWro and 4.77\% for GiBUU.
+combined with the same weights.  The hydrogen fraction is
+$f_{\mathrm{H}}=5.08\%$ for NuWro over the grid and 4.77\% for GiBUU over its 72 cells.
+% Draft 6 (REVIEW-2 finding 12): B:97 (grid integral; 0.0506 over the 109 cells, B:105), C:51 (72-cell domain).
 % B:97, :103-105; C:51, :56-58.
 Over the reported cells, the ratio $r_{c}=\mu_{\mathrm{CH}}/\mu_{\mathrm{C}}$
 has minimum, median, and maximum 0.923, 0.963, and 1.039 for NuWro (109
 cells) and 0.923, 0.963, and 1.036 for GiBUU (72 cells), and $f_{\mathrm{H}}$
-per cell reaches 0.112 and 0.109.  Both predictions move toward the data: the
-data lie on the CH side of each carbon prediction (B:138-139; C:80-81).
+per cell reaches 0.112 and 0.109.  Both corrections move the prediction toward
+the data.
+% B:138-139; C:80-81 (the cross term is negative: the data lie on the CH side). REVIEW-2 finding 11: pointer moved here.
 
 \paragraph{Replays.}
 % B:123-137 (NuWro: T_total 7427.1 -> 6759.8, -3.83 null SD; T_shape 9660.0 -> 9333.1, -0.37; frozen position:
@@ -431,11 +433,25 @@ generator.
 The GiBUU replay carries the label ``B3 (sampling closure) failed on hydrogen; a
 post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$'': the
 sampling-closure check failed on the hydrogen sample, and a bias check of its
-premise, declared before it was computed, moves the CH prediction by at most
-$5\times10^{-4}$ of a null standard deviation.  In NuWro's hydrogen generation,
+premise, declared before it was computed, moves the CH prediction by about
+$5\times10^{-4}$ of $\sigma_{c}$, the standard deviation of the cell over the
+frozen null.
+% Draft 6: docs/orchestration/state/measurement-paper/BINDING-PHASE1-ADDENDUM-9.md:28-31 (sec. 4, "Recorded for the record";
+% origin/main fb6a203a, not in this branch's tree): production_ID 34, 46% of the GiBUU-H sample; median energy loss
+% 45 MeV, median p_T imbalance 31 MeV; non-DIS hydrogen events balance exactly; cause not identified.
+A further caveat applies to the GiBUU replay: GiBUU's deep-inelastic events on
+hydrogen, 46\% of its hydrogen sample, do not conserve energy.  They lose a
+median of \SI{45}{MeV}, with a median transverse-momentum imbalance of
+\SI{31}{MeV}, while its other hydrogen events balance exactly; the cause has
+not been identified, and the available energy of those events may be low.  It
+may also affect GiBUU's carbon prediction, which cannot be checked in this way.
+% ADDENDUM-9 :29-31 ("Carbon cannot be checked this way"; "possibly on the frozen GiBUU product").
+In NuWro's hydrogen generation,
 four chunks aborted and were rerun on alternate seeds; the fraction of events
 this excludes is estimated as $1.8\times10^{-5}$ in the main sample and
-$3.8\times10^{-5}$ in the 50--\SI{100}{GeV} supplement, whose 95\% upper bound
+$3.8\times10^{-5}$ in the 50--\SI{100}{GeV} supplement ($1.9\times10^{-5}$ and
+$6.2\times10^{-5}$ including the first attempt, estimates resting on four to six
+events), whose 95\% upper bound
 of $1.8\times10^{-4}$ exceeds the $10^{-4}$ level set for it, so the supplement
 is flagged rather than assumed negligible.
 
@@ -445,7 +461,7 @@ is flagged rather than assumed negligible.
 The comparisons recover the generator disagreements already established by
 the published two-dimensional measurement on the same
 data~\cite{MINERvA:2021owq}. Their methodological contribution is calibration
-through the full analysis chain, which puts the estimator's bias toward its
+within the implemented simulation model, which puts the estimator's bias toward its
 prior and the declared nuisances into each null distribution. The rejections
 are global assessments of the five specified predictions under the declared
 model; assigning a discrepancy to a kinematic region or nuclear mechanism
