@@ -28,6 +28,21 @@ truth-level reweighted simulation ensemble. Histogramming this ensemble in any b
 chosen afterwards gives the unfolded spectrum. The iteration count and
 learner capacity regularize the unfold.
 
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's training details, moved with their
+% sources: docs/orchestration/state/2d-closeout/stageF/methods/M-TRAINING-DETAILS.md (unbinned_unfolding/python/
+% omnifold.py:203-272; nd-unfolding/omnifold_nn_core.py:145-155, :225, :249-266; 2d-unfolding/unfold_2d_omnifold_unbinned.py:412-462).
+\paragraph{Training details.}
+Each classifier is trained on the full sample whose weights it then sets,
+with no held-out or cross-fitted split and no early stopping. The two classes
+keep their physical weights, with no class balancing and no renormalization
+between iterations, so the learned ratio $p/(1-p)$, with $p$ restricted to
+$[10^{-6},1-10^{-6}]$, carries the normalization. Truth events without a
+reconstructed partner receive the prediction of an unweighted regressor of the
+step-1 weight on the truth observables. In the refined configurations, a
+classifier separating positive from negative weights, trained with $|w|$, gives
+each event the weight $|w|\max(0,2g-1)$. No effective sample size of the
+unfolded ensemble is computed.
+
 \paragraph{Background subtraction (the one binned step).}
 All selected data events enter step 1; none is discarded and no
 negative-weight events are injected. Each receives a reco-bin \emph{purity}
@@ -170,6 +185,53 @@ iterations, and each result names the one it uses:
 % --estimator lgbm and the purity bkg-mode (review 2026-10-11). Added 2026-10-11 so that this subsection is the single home the article cites for all four configurations;
 % before, configurations 3-4 were described only in the article and in sec_5d.tex.
 
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's estimator matrix, moved with its
+% sources: this section (100 trees, 8 leaves, seed 42; exact-split seed not pinned; joint-test refinement 400 trees,
+% 31 leaves); configurations (c)-(d): OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:23-31 (candidate F2) and
+% OUTCOME-20260925-s5n-stage1-development-fail.md:25-28 (family N, refinement with the F2 parameters); methods-m3
+% REPORT (F2: 5 iterations, 100 trees, 8 leaves). REVIEW-1 finding 20: the five-observable covariance is that of the
+% five-dimensional central value (sec_5d.tex sec:eavailw-adopted). X5 G5a: the central values and their covariance were
+% adopted on 2026-09-20 (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md), before the purity bias was
+% found (OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md).
+\paragraph{Estimator configurations (a)--(e) used in the article.}
+The article labels five configurations, (a)--(e)
+(Table~\ref{tab:estimators-matrix}). All use five OmniFold iterations and
+gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both
+OmniFold steps; ``deterministic'' means fixed seeds and reproducible training.
+Results from different configurations are not combined. The central values
+keep the purity-based subtraction because they and their covariance were
+produced before the purity bias was found and the refinement was developed,
+and they were not regenerated.
+
+\providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
+\begin{table}[htbp]
+  \caption{Estimator configurations of the article.}
+  \label{tab:estimators-matrix}
+  \centering\small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \pcell{0.20\textwidth}{Configuration} & \pcell{0.20\textwidth}{Learner} &
+    \pcell{0.22\textwidth}{Background treatment} & \pcell{0.30\textwidth}{Results} \\
+    \midrule
+    \pcell{0.20\textwidth}{(a) central-value estimator} & \pcell{0.20\textwidth}{LightGBM; seed 42 in two dimensions} &
+    \pcell{0.22\textwidth}{purity-based subtraction} &
+    \pcell{0.30\textwidth}{two- to five-observable central values; two- and five-observable covariances (\S\ref{sec:results}, \S\ref{sec:eavailw-adopted})} \\
+    \pcell{0.20\textwidth}{(b) exact-split cross-check} & \pcell{0.20\textwidth}{scikit-learn exact splits; seed not fixed} &
+    \pcell{0.22\textwidth}{purity-based subtraction} &
+    \pcell{0.30\textwidth}{two-observable cross-check (above)} \\
+    \pcell{0.20\textwidth}{(c) deterministic variant} & \pcell{0.20\textwidth}{LightGBM, deterministic} &
+    \pcell{0.22\textwidth}{purity-based subtraction} &
+    \pcell{0.30\textwidth}{background bias (\S\ref{sec:val-negweight}); coverage test (\S\ref{sec:coverage-5d})} \\
+    \pcell{0.20\textwidth}{(d) deterministic variant with refinement} & \pcell{0.20\textwidth}{as (c)} &
+    \pcell{0.22\textwidth}{negative weights; refinement classifier 100 trees, 8 leaves} &
+    \pcell{0.30\textwidth}{background bias; generator-sized $\Eavail$ change (\S\ref{sec:val-negweight})} \\
+    \pcell{0.20\textwidth}{(e) joint-test estimator} & \pcell{0.20\textwidth}{as (c)} &
+    \pcell{0.22\textwidth}{negative weights; refinement classifier 400 trees, 31 leaves} &
+    \pcell{0.30\textwidth}{generator shapes held out of development; precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d})} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \paragraph{Hyperparameter choice.}
 The learner settings were fixed \emph{a priori} rather than tuned on data. They are the sklearn
 \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and
@@ -263,6 +325,15 @@ lower-dimensional extractions to $<10^{-12}$. Since
 $\sigma\propto1/\Phi$, $\Phi$ varies per flux universe when building the
 systematic covariance. This variation dominates the Flux band
 (\S\ref{sec:systematics}).
+
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's flux constant, moved with its source:
+% docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:43-49, :74 (Phi = 6.243343e-4 m^-2/POT over 0-100 GeV after
+% the nu-e constraint); N = 3.2352943296224835e30: 2d-unfolding/unfold_2d_omnifold_unbinned.py:41-44; formula
+% nd-unfolding/xsec_nd.py:14, 54-83.
+For the higher-dimensional extractions the integrated flux is
+$\Phi=\SI{6.243e-8}{cm^{-2}}$ per proton on target, from 0 to \SI{100}{GeV}
+after the neutrino--electron-scattering constraint, and the target contains
+$3.235\times10^{30}$ nucleons.
 
 \subsection{Binning}
 \label{sec:method-binning}

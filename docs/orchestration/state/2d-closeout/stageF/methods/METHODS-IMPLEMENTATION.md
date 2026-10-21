@@ -156,3 +156,39 @@ An independent verification of draft 7's changes found 2 MATERIAL, 5 MINOR and 6
 The director applied every MATERIAL and MINOR fix and NOTE 8–10 as draft 8. The build (`mrw8`) gave rc 0, gates PASS,
 no unresolved references, 18 pages and a 150-word abstract. The short-tail rule finds no case. The final PDFs are in
 the director's scratchpad, `methods-final/`, with SHA256SUMS.
+
+## 7. Shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta item 2)
+
+**Paper 18 → 13 pages; note 125 → 131.**
+
+**What stays in the paper:**
+- the scope statement;
+- Figs. 1–4 and two compact tables (estimators; joint decisions);
+- the familywise statement with its assumptions;
+- the margins sentence;
+- the NuWro CH clause;
+- the calorimetric-response and hybrid-null conditions;
+- every sentence the receipt gate checks.
+
+**What moved to named note sections:**
+- the definition, generator, estimator-matrix, validation-design, generative-model and reporting tables;
+- Appendix A, verbatim (note §B.5);
+- the Sec. VI and VIII detail;
+- Figs. 5–6;
+- the repository-record citations (P7).
+
+The 12-page target would require moving limitation text, so the pass stopped at 13.
+
+**Independent review:**
+- **1 MATERIAL, fixed.** The note citation pinned a 10-11 tree that has none of the moved material. It now points to the
+  repository's main tree, with a note that the archival identifier replaces the link at deposit.
+- **6 MINOR, fixed:**
+  - the strength of the two-universe test;
+  - a printed record pointer;
+  - "(moved from the article)" captions;
+  - the note's map section restated without mechanism claims, with the regularization-bias caveat;
+  - the note's condition (i) wording;
+  - the release-appendix figure list.
+- **1 NOTE applied:** the GEANT4 bands' inclusion is now stated.
+
+**Build `mrs2`:** rc 0, gates PASS (15/15), no unresolved references, and the swallowed-text checks are clean.

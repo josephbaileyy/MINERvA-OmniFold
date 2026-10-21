@@ -18,11 +18,24 @@ recorded result are in Ref.~\cite{JointTestRecord2026}.
 
 For each of five predictions $G$ (the MINERvA Tune~v1, GENIE~2.12.10 without
 and with MEC, NuWro~21.09 and GiBUU~2019; \S\ref{sec:eavailw-band}), the null
-$H_{0}(G)$ is that the true cross section equals $G$ on a fine
-five-dimensional grid, with the Tune~v1's shape and $G$'s finite-sample
-fluctuations below that grid. This \emph{hybrid null} is the hypothesis the
-calibration simulates; for the Tune~v1, the analysis simulation itself, it is
-$H_{0}$ exactly. Each prediction is tested in total (rate and shape together)
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the null restated as in the article (its M8 correction,
+% M2-AUDIT.md Q1 text fix, :46, as corrected by M2-ARCHIVE-CHECKS.md:6-8; code nd-unfolding/s5p_nullexp.py:299, :158-174,
+% :215, :213; s5n_pseudo.py:135-142). Replaces "with the Tune v1's shape and G's finite-sample fluctuations below that
+% grid" and "for the Tune v1 ... it is H0 exactly".
+$H_{0}(G)$ is that the true cross section equals $G$ on every cell of a fine
+five-dimensional grid. Below that grid, the null truth has the MINERvA Tune~v1
+simulation's event composition, varied in each pseudo-experiment by the drawn
+interaction-model universes with every fine-cell integral held fixed, and the
+background is the Tune~v1 simulation's, with its uncertainty bands. This
+\emph{hybrid null} is the hypothesis the calibration simulates; for the
+Tune~v1, the analysis simulation itself, no external prediction is combined
+with the Tune~v1 composition. Three requirements are distinct: the hybrid null
+is defined exactly on the finite grid, and no convergence is needed to define
+it; whether it represents the physical generator prediction depends on the
+composition below the fine grid and on convergence of that grid
+(condition~(i), \S\ref{sec:joint5d-conditions}); and whether the calibration
+reproduces the analysis of the data is a third requirement, calibration
+fidelity (conditions~(ii)--(iv)). Each prediction is tested in total (rate and shape together)
 and in shape alone: \jtNtests{} tests.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): pass-1 paper F7, note home first.
 % Source: nd-unfolding/s5p_stage1_inspect.py:38-44 (FINE, the edges of sec_method.tex:270-275, beside J_EDGES,
@@ -52,6 +65,24 @@ finite-sample variance to $V$, a Ledoit--Wolf-shrunk
 covariance~\cite{LedoitWolf:2004} of \jtVn{} pilot pseudo-experiments at the
 Tune~v1 null. The metric defines how hypotheses are compared and so affects
 power; the null calibration below, not the metric, sets each test's size.
+
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): moved verbatim from the article, with its sources.
+% M2-AUDIT.md Q4a, :159-161, as corrected by M2-ARCHIVE-CHECKS.md:7, :92-97, :127: the pilot's seeds are disjoint from
+% production but it reuses the same simulated events and lacked the MINOS-efficiency band (A7 :25); V's diagonal matches
+% the production null variances (median ratio 1.00); lambda = 0.0155; 82 of 109 eigenvalues below lambda ("about 80");
+% whitened trace 46.8 ("about 47"), median T_tot 49.2; power only. X5 Gemm5: M2-ARCHIVE-CHECKS.md:116-125 (size
+% unaffected; "Whether a different lambda would raise P2g or P3g was not measured"). The prediction variance is
+% diagonal because each simulated event of a prediction falls in one cell (s5p_joint.py:61-80).
+The prediction variance is diagonal because each simulated event of a
+prediction falls in one cell. The pilot's seeds are disjoint from those of the
+calibration, but it reuses the same simulated events and omitted the
+MINOS-efficiency band. The diagonal of $V$ matches the calibration's null
+variances (median ratio 1.00), but the shrinkage (intensity 0.015) floors about
+80 of the 109 nearly degenerate correlation directions, so at the Tune~v1 null
+the statistic has a whitened trace of about 47 rather than 109. Since $V$ was
+fixed before the calibration, this affects power only
+(\S\ref{sec:joint5d-power}); the power at other shrinkage intensities has not
+been measured.
 
 \subsection{Calibration within the implemented simulation model}
 \label{sec:joint5d-calibration}
@@ -88,6 +119,88 @@ because the calibration reproduces the estimator's pull toward its prior
 (\S\ref{sec:val-departure}); each observed statistic is compared with that
 displaced distribution (Fig.~\ref{fig:joint5d-nulls}).
 
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's generative model (its former
+% Sec. VIII B and Table VIII), moved verbatim with its sources. Code (at 19b46af9, byte-identical to the frozen 4f5a613f,
+% M2-ARCHIVE-CHECKS.md:26): M2-AUDIT.md:10-33 (Q1). Split per seed, s5c_pseudo.py:278-281, s5p_nullexp.py:318-321;
+% pseudo-data Poisson on half B, s5n_pseudo.py:133-134; half A at CV weights with the Tune v1 prior, :146-151; flux one
+% PPFX universe of 100, s5p_nullexp.py:206-209; 34 bands at one universe each, :79-87, :130, signal renormalized per fine
+% truth cell, :158-174, :215; clipping of LowQ2_1 and HighQ2_1, :103-115, :149-154; four detector bands at +-1 sigma with
+% probability 1/2, :216-220; additive terms s5p_joint.py:115-121, :158-159. Truth equals G on populated fine cells:
+% M2-ARCHIVE-CHECKS.md:6, :64-69. REVIEW-1 finding 3: the deficit is about 4% of the null SD
+% (m2-archive/m2_archive_results.json check1.xtrue_mean_minus_G_in_null_SD max_abs 0.035 Tune v1, 0.026 GENIE CV;
+% M2-ARCHIVE-CHECKS.md:60, 0.039 NuWro); the 1.4% is the spread ratio. M2-AUDIT.md:17-23 (one RNG keyed by the seed,
+% each band at one universe, product of weight ratios); s5p_nullexp.py:127-132, :206-215. X5 G8: the conditioning on
+% data-derived inputs (M2-AUDIT.md:182-184, Q4d; s5p_joint.py:108, :118).
+\paragraph{Generative model of one pseudo-experiment.}
+Each calibration pseudo-experiment splits the simulation at random into two
+halves (Table~\ref{tab:joint5d-genmodel}) and refits the background refinement.
+Its truth equals $G$ on every fine cell that the source half populates; cells
+it leaves empty lower a coarse cell by at most \SI{0.2}{\percent}, or about
+\SI{4}{\percent} of the null standard deviation (the per-experiment spread is
+below \SI{1.5}{\percent} of it). On the signal, each interaction-model band is
+renormalized within each fine truth cell, so it moves only the composition
+within the cell, and with it the efficiency and the migrations. The flux
+universe and the band universes are drawn independently, and their weight
+ratios multiply. The muon-energy, muon-resolution, and beam-angle lateral bands
+enter as $\sum_{b}z_{b}\Delta_{b}$, with $\Delta_{b}$ from endpoint unfoldings
+of the data; the detector weight bands include the GEANT4 hadron-interaction
+reweights. Because the $\Delta_{b}$ come from the observed data, the null
+distributions are conditional on these data-derived inputs, which would differ
+in a repeated experiment; that conditioning has not been validated.
+
+\providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
+\begin{table}[htbp]
+  \caption{Generative model of the calibration.  Left:
+  the flow of one test, repeated over $B$ pseudo-experiments.  Right: what each
+  element of a pseudo-experiment does, and the corresponding element of the
+  data analysis.  Nuisance draws act on the pseudo-data source only.}
+  \label{tab:joint5d-genmodel}
+  \centering\small
+  \begin{minipage}[t]{0.40\textwidth}
+    \vspace{0pt}
+    \setlength{\unitlength}{1pt}
+    \begin{picture}(170,176)(0,0)
+      \put(10,160){\framebox(158,16){\parbox{154pt}{\centering\scriptsize $H_{0}(G)$: $\sigma=G$ on every fine cell}}}
+      \put(52,160){\vector(0,-1){7}}
+      \put(10,123){\framebox(92,30){\parbox{88pt}{\centering\scriptsize source half reweighted to $G$; nuisance draws; Poisson pseudo-data and background}}}
+      \put(112,123){\framebox(56,30){\parbox{52pt}{\centering\scriptsize data}}}
+      \put(56,123){\vector(0,-1){7}}
+      \put(140,123){\vector(0,-1){7}}
+      \put(10,92){\framebox(92,24){\parbox{88pt}{\centering\scriptsize unfold with the other half (joint-test estimator)}}}
+      \put(112,92){\framebox(56,24){\parbox{52pt}{\centering\scriptsize unfold with the full simulation}}}
+      \put(56,92){\vector(0,-1){7}}
+      \put(140,92){\vector(0,-1){7}}
+      \put(10,61){\framebox(92,24){\parbox{88pt}{\centering\scriptsize add lateral, normalization, rounding, prediction terms: $T_{\mathrm{null}}$}}}
+      \put(112,61){\framebox(56,24){\parbox{52pt}{\centering\scriptsize $T_{\mathrm{obs}}$}}}
+      \put(56,61){\vector(0,-1){7}}
+      \put(140,61){\vector(0,-1){7}}
+      \put(10,30){\framebox(158,24){\parbox{154pt}{\centering\scriptsize $k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls}}}
+      \put(89,30){\vector(0,-1){7}}
+      \put(10,0){\framebox(158,23){\parbox{154pt}{\centering\scriptsize Holm steps with the 95\% Clopper--Pearson gate; batches of \jtBatch{}, $B\le\jtBcap$}}}
+      \put(10,42){\line(-1,0){8}}
+      \put(2,42){\line(0,1){96}}
+      \put(2,138){\vector(1,0){8}}
+    \end{picture}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.57\textwidth}
+    \vspace{0pt}\scriptsize
+    \begin{tabular}{@{}lll@{}}
+      \toprule
+      \pcell{0.15\textwidth}{Element} & \pcell{0.24\textwidth}{Pseudo-experiment} & \pcell{0.14\textwidth}{Data analysis} \\
+      \midrule
+      \pcell{0.15\textwidth}{Truth} & \pcell{0.24\textwidth}{source half reweighted per fine cell to $G$} & \pcell{0.14\textwidth}{unknown} \\
+      \pcell{0.15\textwidth}{Unfolding simulation} & \pcell{0.24\textwidth}{other half at Tune~v1 weights (the prior)} & \pcell{0.14\textwidth}{full simulation at Tune~v1 weights} \\
+      \pcell{0.15\textwidth}{Background} & \pcell{0.24\textwidth}{Poisson source and template from disjoint halves; Tune~v1 with its bands} & \pcell{0.14\textwidth}{full background template} \\
+      \pcell{0.15\textwidth}{Flux} & \pcell{0.24\textwidth}{one of \jtFluxUniverses{} universes on the source (changes the rate, not $\sigma$)} & \pcell{0.14\textwidth}{central flux} \\
+      \pcell{0.15\textwidth}{Interaction model} & \pcell{0.24\textwidth}{\jtModelBands{} bands, one universe each; signal renormalized per fine truth cell; two bands clipped} & \pcell{0.14\textwidth}{Tune~v1} \\
+      \pcell{0.15\textwidth}{Detector} & \pcell{0.24\textwidth}{four weight bands at $\pm1\sigma$; lateral bands by linear surrogate} & \pcell{0.14\textwidth}{nominal} \\
+      \pcell{0.15\textwidth}{Added terms} & \pcell{0.24\textwidth}{\SI{1.4}{\percent} normalization; rounding noise; prediction residual} & \pcell{0.14\textwidth}{none} \\
+      \pcell{0.15\textwidth}{Statistic} & \pcell{0.24\textwidth}{$T_{\mathrm{tot}}$, $T_{\mathrm{sh}}$ with fixed $\Sigma$} & \pcell{0.14\textwidth}{the same} \\
+      \bottomrule
+    \end{tabular}
+  \end{minipage}
+\end{table}
+
 \subsection{Multiplicity, stopping rule and the frozen design}
 \label{sec:joint5d-frozen}
 
@@ -99,6 +212,28 @@ Clopper--Pearson interval~\cite{Clopper:1934} of $k/B$ lies entirely below its
 Holm threshold. Calibration proceeded in batches of \jtBatch{}
 pseudo-experiments per null, to at most \jtBcap{}, under a sequential rule
 that stopped a null once both of its decisions were determined.
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): moved from the article with its sources.
+% Stopping: a 99.5% look interval plus a precision tier (nd-unfolding/s5p_inference.py:89-114, look_level=0.995), the
+% decision the 95% interval (:127-155). Gate and bound: docs/orchestration/state/2d-closeout/stageF/methods/
+% M2-FWER-RECORD.md:69-74 (text, provisional J4), :49-52 (bound), :56-66 (assumptions A1, A2 and the rule); X5 G9: the
+% one- vs two-sided wording (m2-calc/certify_crossing.py:1-2, U95 = beta.ppf(0.975, k+1, B-k)); nuisance-averaged size
+% M2-AUDIT.md:143 (Q3).
+A null stopped when a 99.5\% Clopper--Pearson interval of $k/B$ lay entirely
+on one side of each of its thresholds and met a fixed precision requirement.
+The decision gate is the upper end of the two-sided 95\% interval, a
+one-sided 97.5\% upper bound. If each true null's calibrated tail probability
+is uniformly distributed or conservative (A1), and the pseudo-experiments'
+exceedances are independent given the data (A2), the probability of passing
+this gate at any number of pseudo-experiments up to \jtBcap{} is below the
+threshold, whatever rule determines when sampling stops, including the budget
+extensions; the decision rule therefore controls the familywise error rate of
+the ten decisions at 5\% under these assumptions, with the bound
+$\mathrm{FWER}\le0.8902\,\alpha<0.9\,\alpha$ derived in
+\S\ref{sec:joint5d-fwer}. A2 requires the lost pseudo-experiments to have been
+lost independently of their outcomes, which has not been shown, although none
+of them reaches the observed statistic when rerun (\S\ref{sec:joint5d-lost}).
+The calibrated size is averaged over the nuisance priors: at a fixed true value
+of the nuisance parameters it can exceed $\alpha$.
 
 The hypotheses, statistics, variants, multiplicity rule, stopping rule and
 every input were frozen before any production pseudo-experiment or observed
@@ -108,11 +243,22 @@ controller's status outputs exposed observed claim $p$ values during
 production. A bounded extension of the production budget was decided while
 they were visible, to let the sequential rule reach its frozen stop rather
 than a budget stop. No statistic, variant, threshold or stopping rule was
-changed, and the Monte Carlo $p$ values remain valid at the number of
-pseudo-experiments reached. An independent recomputation of every $p$ value
-and decision from the stored products, with separately written code, agrees
+changed, and the familywise bound above holds whatever rule determined when
+sampling stopped.
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's M8 replacement of "the Monte Carlo
+% p values remain valid at the number of pseudo-experiments reached" (M2-FWER-RECORD.md:69-74), applied here.
+An independent recomputation of every $p$ value and decision from the stored products, with separately written code, agrees
 with the production evaluation on all \jtRecompRows{} compared rows; it
 verifies the calculation, not the adequacy of the calibration.
+
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's post hoc paragraph (its Sec. VIII C).
+Three studies ran after the decisions and are not part of the decision rule,
+each to a specification fixed before it ran: the scan of the shift multiplier
+(\S\ref{sec:joint5d-kappa}), the rerun of the lost pseudo-experiments
+(\S\ref{sec:joint5d-lost}), and the matched coarse-projection comparison
+(\S\ref{sec:joint5d-projections}), specified after the five-dimensional
+outcomes were known. The non-rejection of GENIE~2.12.10 in the muon-kinematic
+projection is a post hoc observation.
 
 \subsection{Conditions}
 \label{sec:joint5d-conditions}
@@ -121,7 +267,9 @@ Each decision holds under six conditions of the declared model, numbered as in
 the frozen contract and grouped here by kind.
 
 \paragraph{Numerical convergence.}
-(i) Below the fine grid the null truth carries the Tune~v1's shapes, and the
+(i) Below the fine grid the null truth has the Tune~v1 composition of the
+hypothesis definition (varied by the drawn interaction-model universes, with
+every fine-cell integral fixed), and the
 fine-grid convergence check has not shown convergence. In the $L_{2}$ norm of the
 per-cell relative changes, the last refinement, from a twofold-merged grid to
 the fine grid, is \jtMoneMin--\jtMoneMax{} of the whole change from the coarse
@@ -149,12 +297,45 @@ the metric as $\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ and the simulated
 residuals as a drawn term.
 
 \paragraph{Calibration validity.}
-The Monte Carlo $p$ values are exact for the simulated null to the extent that
-the pseudo-experiment chain reproduces the analysis applied to the data. Two
-known departures are bounded. (iv) The pseudo-experiments unfold with half of
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): "The Monte Carlo p values are exact for the
+% simulated null" restated as the calibration's validity, as in the article (M8; M2-AUDIT.md Q3, Q4e, :187-193).
+The calibration is valid for the simulated null to the extent that the
+pseudo-experiment chain reproduces the analysis applied to the data; the
+independent recomputation verifies the calculation, not whether the chain does
+so, and no rejection rate has been measured for null pseudo-data processed like
+the data, which would require an independent simulation sample. Two known
+departures are bounded. (iv) The pseudo-experiments unfold with half of
 the simulation and the data with all of it; the resulting shift, at most about
 0.07 null standard deviations but not always consistent with zero, enters as
-the bias-aligned upper-bound variant. The data unfold's rounding-level
+the bias-aligned upper-bound variant.
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's simulation-size check (SF-1) and
+% decision-boundary margins, moved with their sources. SF-1: docs/orchestration/state/2d-closeout/stageF/methods/
+% SF1-REPORT.md:5, :23-35 (all 600 quarter products; |Delta| <= 0.074 null SD, s 0.975-1.010, P95/P99 ratios
+% 0.987-1.008, every interval containing 0 or 1; mean paired shift 0.006-0.034 null SD, resolved; NuWro shape k = 2/1751
+% after the most adverse adjustment, GENIE CV and MEC shape k = 0; all ten decisions rejected); method SF1-SPEC.md
+% sec. 2-4; NOT CITABLE FOR the data process (SF1-REPORT.md:9). Margins:
+% docs/orchestration/state/measurement-paper/phase1/a7margins/RECEIPT.md:65-78, :89-102, :55; a7margins.json f0960dc6...;
+% descriptive, not a re-grade (:3).
+That shift was measured for the mean only, in a process without noise or
+nuisance draws. A separate check reran the first 200 calibration
+pseudo-experiments of the NuWro, GENIE~2.12.10, and GENIE~2.12.10 + MEC nulls
+with a quarter of the simulation. It resolved no change of the null
+distributions' location, width, or tails between half and quarter simulation
+(medians within 0.074 null standard deviations, widths within 0.975--1.010 of
+the half-simulation values), only a mean paired shift of 0.006--0.034 null
+standard deviations. Under an assumed extrapolation from half to full
+simulation that is conservative by design, all three shape decisions, and so
+all ten, remain rejected. The check concerns the simulation size only; it is
+not a test of the data process. Every pseudo-experiment resamples the same
+simulated events, so the null distributions are conditional on that
+simulation. The decisions closest to their boundary are the shape tests of
+NuWro and GENIE~2.12.10: their observed statistics exceed the value at which
+the decision would change by 1.11 and 1.30 null standard deviations, with the
+Holm order held fixed (1.01 and 0.67 with the robustness variants at
+$\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$); the other eight tests lie 2.7
+to 203 null standard deviations from it (2.0 to 203 with the robustness
+variants). Crossing that value would make a test undetermined, its
+Clopper--Pearson interval straddling the threshold, rather than not rejected. The data unfold's rounding-level
 nondeterminism, measured over the 20 re-unfolds, leaves every observed $p$ value
 unchanged except NuWro's shape test (2/1752 to 3/1752).
 % 0.07: the frozen-V prefreeze measurement (max 0.068, GENIE+MEC), which supersedes amendment 7 condition 4's
@@ -163,7 +344,10 @@ unchanged except NuWro's shape test (2/1752 to 3/1752).
 
 \paragraph{Physical-model adequacy.}
 (ii) The detector model is the simulation's, varied only by the drawn detector
-bands and the linear surrogate for the lateral bands. The analysis has no band
+bands and the linear surrogate for the lateral bands; the surrogate has been
+checked only for the symmetry of its endpoints.
+% M2-AUDIT.md Q4d, :183-184.
+The analysis has no band
 for the calorimetric recoil-energy response, so completeness of the
 hadronic-response model is not established (\S\ref{sec:joint5d-response}).
 (iii) The interaction-model prior is the analysis's \jtModelBands-band set,
@@ -172,7 +356,7 @@ every band drawn in every pseudo-experiment; negative weights in two of them
 0.35\% of a band's shift. (v) GiBUU lacks $E_{\nu}>\SI{20}{GeV}$, and its
 out-of-domain truth enters the migrations into its domain; for all
 predictions $E_{\nu}>\SI{100}{GeV}$ is absent, which is negligible. The use of
-the Tune~v1's shapes below the fine grid in (i) is also a modelling choice of
+the Tune~v1 composition below the fine grid in (i) is also a modelling choice of
 this kind.
 
 \subsection{Decisions}
@@ -223,9 +407,17 @@ by the estimator's pull toward its prior.
   \caption{Calibrated null distributions of the joint statistics for each
   prediction (columns), total statistic (top) and shape statistic (bottom),
   shown for the declared claim variant whose null distribution has the largest
-  median; the vertical line is the observed statistic and $k/B$ is as in
-  Table~\ref{tab:joint5d}. The horizontal axis is logarithmic. Plotted from
-  the released sufficient inputs (App.~\ref{app:release}), which reproduce
+  median among those used in the decisions; the vertical line is the observed
+  statistic and $k/B$ is as in Table~\ref{tab:joint5d}. The horizontal axis is
+  logarithmic. Each shifted null adds the same fixed vector $s$ to every null
+  draw before the statistic is formed, with
+  $s\in\{0,\tfrac12D,D,+\jtMoneKappa\,\delta_{\mathrm{fine}},-\jtMoneKappa\,\delta_{\mathrm{fine}}\}$;
+  the $p$ value used for the decision is the largest over these shifts and need
+  not come from the one shown.
+  % Shortening pass: the article's caption sentences added (nd-unfolding/s5p_joint.py:228-258; M2-AUDIT.md:61, :146-150).
+  % The article's figure was regenerated 2026-10-20 with the legend string only changed
+  % (figures/plot_joint_null_distributions_physlabels.py, sha256 bb1d7389...; Slurm job 60029158).
+  Plotted from the released sufficient inputs (App.~\ref{app:release}), which reproduce
   every recorded $p$ value and decision.}
   \label{fig:joint5d-nulls}
 \end{figure}
@@ -254,8 +446,13 @@ Every test rejects, so power is context only (the contract attaches power to
 non-rejections). At the Tune~v1 null, two of the three declared alternatives
 are detected in shape with power 1.0 at the 0.005 level, and the third, a
 MEC-like $(\Eavail,W)$ shape, with \jtPowPthree. At the GENIE~2.12.10 null the
-shape powers at 0.005 are \jtPowPonegShape, 0.02 and 0.00. These come from the
-frozen sets, each of which lost some of its 200 alternatives to time limits
+shape powers at 0.005 are \jtPowPonegShape, 0.02 and 0.00; the binomial 95\%
+intervals are $[0.98,1]$ for the first two Tune~v1 alternatives, $[0.17,0.30]$
+for the third, and $[0.67,0.80]$, $[0.01,0.05]$ and $[0,0.02]$ at the
+GENIE~2.12.10 null.
+% X7 (sol minor), moved from the article: docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json
+% power.<P>.shape["0.005"].claim_rule_determined.interval (n 193, 195, 195; 199, 193, 172).
+These come from the frozen sets, each of which lost some of its 200 alternatives to time limits
 (172--199 retained). Against the frozen null ensembles, the complete power sets
 recovered as in \S\ref{sec:joint5d-lost} agree within 0.01; with the null recomputed on all draws, the first
 GENIE~2.12.10 set moves to 0.72.
