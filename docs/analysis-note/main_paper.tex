@@ -19,7 +19,13 @@
 \usepackage{siunitx}
 \usepackage{xcolor}
 \usepackage{booktabs}
+% Numbered pointers into the companion analysis note (paper_body.tex \nsec, \napp): xr-hyper reads the note's
+% labels from main_note.aux with the prefix N-. build_all.sh builds main_note before main_paper; a paper built
+% without main_note.aux has undefined references, which build_all.sh treats as a failure. An arXiv source of the
+% paper must ship main_note.aux (or the numbers written in) for these to resolve.
+\usepackage{xr-hyper}
 \usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
+\externaldocument[N-]{main_note}
 \usepackage{xurl} % allow long repository-record URLs in the references to break
 
 \graphicspath{{figures/}}
@@ -74,7 +80,7 @@ transfer, and hadronic invariant mass), it yields central values only, whose
 normalizations agree with lower-dimensional results.  Pseudo-experiments
 reveal background-subtraction bias, incomplete recovery of generator-sized
 truth changes, and statistical undercoverage at the tested truths; under the
-adopted envelope prescription, no tested reporting definition meets our
+specified envelope prescription, no tested reporting definition meets our
 10\% precision criterion.
 % SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
 % NuWro-CH resolved (docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md, provisional: the ten recorded decisions stand; the CH replays are stated once, at a high level, in Sec. VIII F and the abstract, with the detail in the note, sec_joint.tex sec:joint5d-ch).
