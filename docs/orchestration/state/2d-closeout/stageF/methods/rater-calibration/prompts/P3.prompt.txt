@@ -1,0 +1,9 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below is the full text of a manuscript, extracted from its PDF; equations, tables and figure labels may be garbled by the extraction, and you should ignore such artifacts.
+
+List every sentence a PRD copy editor or referee would flag as departing from PRD register (internal-record tone, development history, procedural bookkeeping, jargon, defensive hedging), quoted exactly, one per line.
+
+Format: one flagged sentence per line, as
+[category] "exact sentence, copied character for character from the text"
+where category is one of: internal-record, development-history, bookkeeping, jargon, hedging. Quote only text that appears in the manuscript; do not paraphrase, abbreviate or join sentences. Give no other commentary. If no sentence qualifies, write NONE. End with a line containing only END.

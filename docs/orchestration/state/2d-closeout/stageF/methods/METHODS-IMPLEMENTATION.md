@@ -558,3 +558,38 @@ flags 0. Pages: paper 13, note 135, primer 15.
 
 **Rescoring.** Not done yet. It waits for the rater calibration (DECISION-20261021-joseph-register-loop-2 item 5),
 which picks the prompt and the target.
+
+## 16. Rater calibration, and the r12 scores (2026-10-21)
+
+**Calibration** (`rater-calibration/REPORT.md`; asked for in DECISION-20261021-joseph-register-loop-2 item 5).
+- **Anchors.** Three published PRD papers were blinded and rated alongside our paper. With the rubric-anchored
+  prompt P1:
+  - sol gave them 3.5, 3.5 and 4.0 (mean 3.67);
+  - Gemini gave them 3.39 on average;
+  - no anchor scored above 4.0 from either model on any prompt.
+- **Target.** The 4.5/5 target is replaced by the calibrated one: **P1 with sol ≥ 3.5 on 3 of 3 runs.**
+- **Prompts:**
+  - **P1 with sol** gives the absolute score. Its sd is 0.12, and it resolves our own revisions (2.50 → 3.00).
+  - **P2** is the go/no-go test between versions: new against previous, both orders, both models.
+  - **P3** is a source of flagged-sentence lists, not a metric.
+  - **The "revised several times" framing** (P0 against P0n) has no measured effect on our paper.
+
+**r12 scores** (`r12/scores/`). Rater copy: `make_rater_copy.sh` on `wt-reg2` at 5f717bf4. Its text is identical to the
+hand-built copy, with the holds removed and the data-availability text kept.
+
+| prompt | sol | Gemini |
+|---|---|---|
+| P1, r12 | 3, 3, 3 → 3.00 | 2.5, 2.5, 2.5 → 2.50 |
+| P1, r11 (from the calibration) | 3, 3, 3 → 3.00 | 2, 2.5, 2 → 2.17 |
+| P2, r12 against r11 (A/B and B/A orders) | r12 wins both orders (strength 2, 2) | r12 wins both orders (strength 3, 2) |
+
+- **Go.** r12 wins 4 of 4 comparisons, sol shows no order flip, and P1 with sol does not fall. r12 is adopted.
+- **The target is not met.** P1 with sol is 3.00, against the 3.5 target.
+- **The passages sol quotes in all three runs, and what governs each:**
+  - The design-review and budget-extension sentence in Sec. VII C, quoted 3 of 3 times. It is kept under the guardrail,
+    but it can be phrased as a design fact.
+  - The data-availability release bookkeeping, quoted 2 of 3 times. That text is Joseph's protected text.
+  - The rebuilt-band paragraph in Sec. IV B.
+  - The hydrocarbon-replay sentence in Sec. VII E.
+- **Gemini's rewrites of the 135 MeV caveat again assert what is not established** ("well below the experimental
+  uncertainties"). They are not adopted.

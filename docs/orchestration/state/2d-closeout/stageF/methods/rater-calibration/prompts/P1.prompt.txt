@@ -1,0 +1,21 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below is the full text of a manuscript, extracted from its PDF; equations, tables and figure labels may be garbled by the extraction, and you should ignore such artifacts. Rate ONLY its language and register: how closely the prose reads like a well-edited published PRD paper. Do not judge the science, the results, the completeness of the study, or the typesetting.
+
+Scale (half points allowed):
+5 = Indistinguishable from a well-edited published PRD paper. Direct, precise prose; each claim stated once with its scope; standard terminology, defined at first use; procedural detail only where a reader needs it to judge or reproduce the result; no internal bookkeeping.
+4 = A typical published PRD paper with minor lapses: occasional long or dense sentences, some redundant qualifiers or non-standard terms. Light line editing would suffice.
+3 = Competent, but recognizably departs from PRD register in several places: stacked qualifiers or defensive hedging, project-internal labels or jargon, development-history or procedural narrative, sentences a referee would ask to simplify. Needs a dedicated language pass.
+2 = Departs frequently: many paragraphs read like an internal note or report (record-keeping tone, undefined jargon, caveats dominating the argument). Needs substantial rewriting.
+1 = Not in journal register: largely memo, log or notebook style.
+
+Answer in exactly this format:
+RATING: <number from 1 to 5; half points allowed>
+JUSTIFICATION: <one sentence>
+Then the three passages that most depart from PRD register, each quoted exactly as it appears in the text, each with a rewrite:
+1. QUOTE: "<exact text>"
+   REWRITE: <rewrite>
+2. QUOTE: "<exact text>"
+   REWRITE: <rewrite>
+3. QUOTE: "<exact text>"
+   REWRITE: <rewrite>

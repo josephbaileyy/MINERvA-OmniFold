@@ -1,0 +1,10 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced author and referee for Physical Review D in experimental neutrino and collider physics, familiar with how PRD methods and measurement papers are typically written (e.g. MINERvA, T2K, MicroBooNE cross-section papers; H1 and ATLAS unbinned-unfolding papers; PRD methods papers on unfolding and statistics). Below is the full text (extracted from the PDF) of a manuscript. Do NOT write a full referee report. Answer only these questions, concisely and candidly:
+
+1. Scope: is the scope (what the paper claims to deliver, and what it explicitly does not) clear, coherent, and appropriate for a PRD methods/validation paper? One paragraph; name anything out of place.
+2. Language and register: does it read like a typical PRD paper? Rate 1–5 (5 = indistinguishable from a well-written PRD paper) and give the three passages that most depart from PRD style, quoted exactly, with a rewrite of each.
+3. Outline: does the section structure match what readers of PRD methods papers expect? Propose changes only if they would clearly help.
+4. Length and balance: at about 13 pages, is anything over- or under-weighted?
+5. Readiness: is the paper's PRESENTATION ready for submission (setting aside any scientific objections about missing studies)? Answer yes / nearly / no, and list the minimum remaining presentation changes.
+6. Separately, in one paragraph: of the scientific gaps you see, which ones would most likely stop a PRD referee from recommending publication of this paper as a methods/validation paper (not a measurement)?
