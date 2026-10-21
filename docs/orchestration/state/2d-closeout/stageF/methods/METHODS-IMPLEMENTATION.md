@@ -488,3 +488,73 @@ flags 0. Pages: paper 13, note 135, primer 15.
   - `build_all.sh` rc 0; the body-pointer lint and struck-value containment pass; no undefined references.
   - The Sec. IV receipts check skips there by design.
   - Pages: note 135, primer 15, paper 13, PET note 26.
+
+## 15. Register loop 2, round r12: the fresh rewrite (2026-10-21, DECISION-20261021-joseph-register-loop-2)
+
+**Why.**
+- GPT-6.1-sol's main complaint in rounds r8–r11 was the same each time: the paper "reads partly like an internal
+  validation record".
+- Joseph ruled that limitations and after-the-fact disclosures may move to the note where they print. That ruling
+  carries the director's guardrail: a qualifier stays only where leaving it out makes a printed sentence false.
+- **Method.** A writer with no history of the text did the work:
+  - reverse-outlined `paper_body.tex` at 1a74560c;
+  - built a fact ledger;
+  - wrote a target outline;
+  - rewrote each section from the outline and the ledger instead of patching sentences.
+
+**Records** (in `r12/`):
+- `OUTLINES.md`, before and target.
+- `ledger.md`, 341 rows, and its checker `check_ledger.py`. The checker is run as `python3 check_ledger.py
+  <worktree>`. It reports 457 probes and 0 failures, and a planted bad probe fails it.
+- `WRITER-REPORT.md`, the first pass.
+- `REVIEW.md`, the independent two-direction review and re-review.
+
+**What changed in the paper:**
+- **Length.** Printed prose went from 7,535 to 6,558 words. The paper stays at 13 pages.
+- **Moves to the note.** Chronology, acceptance-rule bookkeeping, lost-pseudo-experiment recovery and derivations
+  move to the note sections where they print.
+- **Additions to the note.** Five facts printed only in the paper were added to the note:
+  - §8.2, the W-redundancy reading of the test metric's near-degenerate directions;
+  - §9.2, the cell holding the 74% residual;
+  - §9.3, the 200-iteration values for W3 and q3;
+  - §9.4, the joint-test estimator's iteration rule;
+  - §10.7, the unmeasured power comparison.
+- **Structure.**
+  - "Why unfold before testing" now opens Sec. VII.
+  - The introduction has one scope paragraph.
+  - New Table III shows the D-ID comparison with exact binned unfolding. Its numbers are from note §9.3 and the D-ID
+    REPORT §9.3.
+- **Pointers.** All 38 descriptive note pointers now print as numbered sections ("Ref. [14], Sec. N"). They work
+  through `xr-hyper` and `main_note.aux`, which build_all builds first. A missing label fails the build.
+- **Protected text.** The `\pubhold`, funding, acknowledgment, AI-acknowledgment and data-availability text is
+  byte-identical, by source hash and by printed text.
+
+**The review.**
+- **First verdict: ADOPT-AFTER-FIXES.** It had four blocking findings, each a claim read stronger than its evidence
+  or a caveat lost:
+  - "checked against" had become "agrees with";
+  - the five-iteration sentence had lost its rule;
+  - the rebuilt 2D band read as the quoted block;
+  - the 135 MeV caveat that its materiality is not established was gone.
+- **Should-fix findings: eight.** All were fixed by the writer.
+- **Re-review.** All fourteen findings are resolved. It found one recast that overstated:
+  - "These corrected evaluations do not change the decisions";
+  - the director changed it to the note's own reading, "are descriptive and do not re-grade the recorded decisions".
+- **Optional fixes applied by the director:**
+  - "when rerun";
+  - "before it was fixed";
+  - Table III placed before Sec. VI, so it now prints on the page of its first citation.
+- **Not adopted.** "Applied to the stored outputs" for the recomputation sentence: not verified against its source.
+
+**Carried to Joseph for deposit (not done):**
+- the paper's arXiv source must include `main_note.aux`, or have the note section numbers written in;
+- Ref. [14] should cite the posted version of the note rather than its repository branch.
+
+**Mechanics** (`builds/r12`):
+- build_all rc 0, Sec. IV receipts 15/15;
+- no undefined references, and no `??` in the paper text;
+- `swallowed_text.py` flags 0;
+- pages: paper 13, note 136, primer 15.
+
+**Rescoring.** Not done yet. It waits for the rater calibration (DECISION-20261021-joseph-register-loop-2 item 5),
+which picks the prompt and the target.
