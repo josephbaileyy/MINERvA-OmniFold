@@ -1028,6 +1028,41 @@ pseudo-experiments and not removed by the nominal-truth correction; whether it
 has the same origin is not established, and the test that would separate the
 change in the background fraction from the estimator itself has not been run.
 
+% CLAIM-ADDITION D-ID BEGIN
+% Register round 2, claim addition (for Joseph; to be committed separately). Source:
+% docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md (simulation-only; NOT CITABLE FOR a coverage result
+% or an interval, :7-13): same 109 J cells, primary setting T2, same-sample, nominal-weighted, K = 5 (:394); J medians
+% at K = 5, GBDT 9.5% vs exact T2 IBU 8.3% for GiBUU (:432-440); approximation-dominated 15 of 144 eligible, 2 of them
+% identified, A share 0.014 (:398, :430-431, :530-532); CR widths > 10% at both truth resolutions, median 31% at T1
+% (:419-423, :516-518), "the regularization trades a large variance for the bias" (:524-529); longer exact iteration
+% (:441-451): GiBUU 3.3% at K = 200, 0.8% after 1e5; W3 8.9%, q3 6.7% after 1e5, binning bias growing; no run-level or
+% per-functional convergence (:452-455, :553-555); scope: binned, signal-only, noise-free, development truths (:5-13,
+% :547-565), resolution-stable residuals only, J keeps 38% of its > 2% population (:412-415); unbinned information not
+% bounded (:548); no interval validated (:563-565). Conclusion: regularization "consistent, and dominant at K = 5";
+% GBDT approximation "not supported as the main cause" (:524-534). Note: sec_5d.tex sec:val-departure, paragraph
+% "Comparison with exact binned unfolding".
+A diagnostic in simulation bears on the first of these results.  On the same
+\jtNcells{} joint cells and truth changes of the development studies, an exact
+binned iterative unfolding with the same simulation and five iterations leaves
+about the same median residual as the boosted-tree estimator (\SI{8.3}{\percent} against
+\SI{9.5}{\percent} for the GiBUU-to-GENIE change).  The tree approximation
+dominates only a small share of the residuals.  Most of the quantities that
+carry them are weakly constrained by the binned response at the analysis
+exposure, with Cram\'er--Rao widths above \SI{10}{\percent}, so the
+regularization trades a large variance for the bias.  Longer noise-free exact
+iteration removes much of the residual for the GiBUU-to-GENIE change, but not
+for every change; the long runs do not converge, so this rests on their last
+iterates.  The
+diagnostic is binned, signal-only and noise-free, with the detector response
+fixed at the simulation's, on development truths, and covers only the residuals whose diagnosis is stable under the truth resolution
+(\SI{38}{\percent} of the joint-cell residuals above \SI{2}{\percent}); it does
+not bound what unbinned information could recover, and it does not address the
+coverage failure or validate any interval.  Within that scope, the residual is
+consistent with the regularization of the inverse problem at this binning and
+prior, rather than with the tree approximation of the classifiers (analysis
+note, section on why the estimator does not follow a generator-sized change).
+% CLAIM-ADDITION D-ID END
+
 % Register round 2 (GPT-6.1-sol r9 sec. 4: which checks a reader should carry to another analysis). Each check is one
 % of this paper's studies (Secs. IV-V); the calibration sentence is Sec. I's, with its condition.
 Before unfolded intervals are interpreted, this study shows the need for closure with the backgrounds included;

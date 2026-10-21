@@ -142,6 +142,61 @@ reco-level fit without improving the $\Eavail$ truth residual, and removing the 
 for events that fail reconstruction does not help it. No single cause is established, and no estimator change within the
 study's rules meets the recovery requirement of the GiBUU-to-GENIE departure screen, which was set before the test.
 
+% CLAIM-ADDITION D-ID BEGIN
+% Register round 2 (methods paper, 2026-10-21), claim addition for Joseph, to be committed separately. Source:
+% docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md (simulation-only; NOT CITABLE FOR a coverage result
+% or an interval, :7-13). Setting: T2, same-sample, nominal-weighted, K = 5, pooled over GiBUU (= D1), W1, W3, q3 and W2
+% (:394); the IBU starts from the nominal prior (:74) with exact efficiency (:183-186); reco binning 10,499 cells (:97,
+% :382); W2's comparator is background-inclusive and the outcome is unchanged without it (:398, :204-207, :559). J
+% medians at K = 5 (:432-440). Eligible 144, approximation-dominated 15, 2 identified, A share 0.014 (:398, :430-431,
+% :530-532). C-counted 121 of 144, CR widths > 10% at both truth resolutions, median 31% at T1 = the J cells (:70-71,
+% :416-423, :516-518); "the regularization trades a large variance for the bias" (:524-529). Long iteration: K = 200
+% and 1e5 medians (:441-451), binning bias growing for W3 and q3 (:451), no run-level convergence, 9-34 of 109 J
+% functionals converged (:452-455, :553-555). Scope: :5-13, :412-415 (38% of the > 2% population), :547-565.
+% Conclusion: :524-534.
+\paragraph{Comparison with exact binned unfolding.}
+A later diagnostic in simulation compares the boosted-tree residual with that
+of an exact binned iterative unfolding. It uses the 109 J cells, noise-free,
+signal-only pseudo-data and the fixed historical truth deformations D1, W1, W3
+and the $q_3$ stress (labels as in \S\ref{sec:gbdt-model-dependence}), pooled
+with W2, whose boosted-tree comparator includes background and without which
+the outcome is unchanged. The binned unfolding unfolds the same simulated
+events, with their exact efficiency and the response binned in the 10,499
+occupied five-dimensional reconstructed cells, starting from the nominal
+prior. At five iterations the J-cell medians of the absolute residual agree:
+\SI{9.5}{\percent}, \SI{5.4}{\percent}, \SI{5.6}{\percent} and
+\SI{4.3}{\percent} for the boosted trees, against \SI{8.3}{\percent},
+\SI{5.4}{\percent}, \SI{4.9}{\percent} and \SI{5.3}{\percent} for the exact
+binned unfolding, for D1, W1, W3 and the $q_3$ stress. Of the 144 eligible
+residuals, pooled over the deformations, 15 are dominated by the tree
+approximation, 2 of them in identified quantities, a share of 0.014. Most of
+the 144 (121) lie in quantities that the binned response constrains weakly
+at the analysis exposure: their Cram\'er--Rao widths exceed \SI{10}{\percent}
+at both truth resolutions tested (median \SI{31}{\percent} at the coarser, the
+J cells themselves), so the regularization trades a large variance for the
+bias. Longer noise-free exact iteration removes much of the residual for D1
+(J median \SI{3.3}{\percent} after 200 iterations and \SI{0.8}{\percent} after
+$10^{5}$) and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent}),
+but not for W3 and the $q_3$ stress (\SI{8.9}{\percent} and \SI{6.7}{\percent}
+after $10^{5}$), whose within-cell binning bias grows with the iteration
+number. The long runs do not converge (only 9--34 of the 109 J quantities
+converge for each traced deformation), so these values are last iterates. The diagnostic is binned, signal-only and noise-free, with the detector
+response fixed at the simulation's, on development truths, and covers only the residuals whose diagnosis is stable under the
+truth resolution: of 376 J-cell and deformation combinations with residuals
+above \SI{2}{\percent}, 232 changed classification with the truth resolution or
+the response weighting and were excluded, leaving the 144 above
+(\SI{38}{\percent}). The coarser muon projection retained only three cases and
+is uninformative. The diagnostic does not bound what unbinned or biased
+estimators could recover, establishes no impossibility, and its proposed
+precision thresholds are not acceptance criteria for any result in this note;
+it does not address the coverage failure of \S\ref{sec:coverage-5d} or
+validate any interval. Within that scope, the residual is consistent with the
+regularization of the inverse problem at this binning and prior, and the tree
+approximation is not supported as its main cause. The exclusions, definitions
+and numerical verification are in the binned response diagnostic record
+(App.~\ref{app:provenance}, \texttt{response-diagnostic}).
+% CLAIM-ADDITION D-ID END
+
 \paragraph{Higher-capacity background refinement and data stability.}
 
 The refinement classifier underfits, causing the residual background bias
@@ -466,20 +521,13 @@ by 0.9, has not been run.
 
 % Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 
+% Register round 2 (2026-10-21): this paragraph's content (376/232/144/121 counts, the uninformative muon projection,
+% the scope, the provenance pointer) merged into the paragraph "Comparison with exact binned unfolding" of
+% sec:val-departure, which now states the diagnostic in full.
 \paragraph{A scoped response-information diagnostic.}
-A subsequent signal-only study compared binned exact-response inversions and
-local information widths with the stored GBDT residuals. Of 376
-joint-cell/departure combinations with residuals above 2\%, 232 changed
-classification with truth resolution or response weighting and were excluded.
-Among the remaining 144, 121 (84\%) were classified as weakly constrained
-under the study's binned, fixed-response assumptions. Thus the result supports
-weak response information for that subset, not a universal explanation of
-the unfolding residual. The coarser muon projection retained only three cases
-and was effectively uninformative. The diagnostic does not bound biased or
-unbinned estimators, validate intervals, or establish an impossibility theorem;
-its proposed precision thresholds are not acceptance criteria for any result in this note.
-The full exclusions, definitions and numerical verification are in the
-binned response diagnostic record (App.~\ref{app:provenance}, \texttt{response-diagnostic}).
+A binned, signal-only diagnostic of the boosted-tree residuals, and what it
+does and does not establish, is described in \S\ref{sec:val-departure}
+(paragraph on the comparison with exact binned unfolding).
 
 \subsection{The five-axis covariance in use and its $(\Eavail,W)$ projection}
 \label{sec:eavailw-construction}
