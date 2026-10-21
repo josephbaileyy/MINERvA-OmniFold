@@ -61,28 +61,32 @@ MINERvA open data}
 % normalizations" weakened to "normalizations agree with lower-dimensional results"; "95.6% of the bins within 10%"
 % moved to the body only (Sec. IV, Table I); "a median of" kept before "about 10--13% per cell" (RECORD-20260927 :129-131,
 % a median over cells).
-We study OmniFold unfolding of MINERvA
-open data for medium-energy $\nu_{\mu}$ charged-current inclusive
-interactions.  It reproduces the published muon-kinematic cross section's integral
-within about one percent, with a correlated shape difference.
+% Register round 1 (2026-10-21; GPT-6.1-sol and Gemini register checks, xmodel/r8): abstract simplified along the
+% sol rewrite, 147 words; every claim and limitation kept. The per-cell envelope size left the abstract (it stays in
+% Sec. VI C and Sec. VIII); the coverage failure is now worded as undercoverage at the tested truths; the comparison
+% with the coarse projections now uses the body's no-evidence wording (Sec. VII E). Earlier comments are kept above.
+We study OmniFold unfolding of MINERvA open data for medium-energy $\nu_{\mu}$
+charged-current inclusive interactions.  It reproduces the published
+muon-kinematic cross section's integral within about one percent, with a
+correlated shape difference.
 % X5 G2 (M8): "reproduces the published ... double-differential cross section" narrowed to the integral.
-Extended to five simultaneous observables (adding available energy,
-three-momentum transfer, and hadronic invariant mass), it yields central values
-only: normalizations agree with lower-dimensional ones, but
-pseudo-experiments reveal background-subtraction bias and residual bias under
-generator-sized truth changes,
-statistical intervals miscover at the tested truths, and an envelope over five
-tested truth deformations, a median of about 10--13\% per cell, keeps the
-definitions studied from meeting our adopted 10\% criterion.
+With five simultaneous observables (adding available energy, three-momentum
+transfer, and hadronic invariant mass), it yields central values only;
+normalizations agree with lower-dimensional results.  Pseudo-experiments
+reveal background-subtraction bias, incomplete recovery of generator-sized
+truth changes, and statistical undercoverage at the tested truths; under the
+adopted envelope prescription, no tested reporting definition meets our
+10\% precision criterion.
 % SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
 % NuWro-CH resolved (docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md, provisional: the ten recorded decisions stand; the CH replays are stated once, at a high level, in Sec. VIII F and the abstract, with the detail in the note, sec_joint.tex sec:joint5d-ch).
 % Draft 6 (X6 G-prom, G-total; REVIEW-2 finding 5; M8): one sentence on the tests, as an illustration, with the
 % NuWro clause (DECISION-20261020-joseph-nuwro-ch-claim.md, provisional; mp3b/REPORT.md:21-25).
-Tests of hybrid null hypotheses for five generator predictions, calibrated in a
-simulation without calorimetric recoil-response uncertainty and assuming
-fine-grid convergence, all reject at the 5\% familywise level, without being
-physical exclusions or gaining over matched coarse projections; NuWro's total
-(rate-and-shape) test rejection is not robust to a hydrocarbon-target correction.
+As an illustration of calibrated inference with a biased estimator, tests of
+hybrid null hypotheses for five generator predictions all reject at the 5\%
+familywise level.  They are not physical exclusions, show no evidence of a
+gain over matched coarse projections, and are calibrated in simulation without calorimetric
+recoil-response uncertainty, assuming fine-grid convergence; NuWro's total
+(rate-and-shape) rejection is not robust to a hydrocarbon-target correction.
 \end{abstract}
 
 \maketitle
@@ -102,18 +106,15 @@ Center (NERSC), a U.S.\ Department of Energy Office of Science User Facility,
 under project m3246.  \pubhold{funding and grant acknowledgments}
 % TODO(Joseph/Ben): grant numbers and funding sources; the note's acknowledgments (main_note.tex) list none.
 % NERSC, MAT/MINERvA-101, Wilkinson and McFarland: copied from the note's acknowledgments, 2026-10-11.
-The analysis code, statistical procedures, computing campaigns, independent
-recomputations and reviews, figures, and manuscript drafts were produced with
-substantial assistance from AI language-model tools, used through the Claude
-Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5,
-and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
-GPT-6 Astra, and GPT-6.1), including those used for independent review.  The authors directed this work through written
-specifications fixed before each study.  Results were accepted only after
-verification against committed evidence: predeclared criteria, independent
-recomputation by separately written code (for example, the joint-test
-evaluation and the lost-seed recovery), and independent read-only reviews.  The
-figures were drawn by plotting code from the analysis outputs; no image was
-generated or edited by a generative-AI image tool.  AI tools are not authors.  The authors take responsibility for the content.
+AI language-model tools (Anthropic Claude and OpenAI GPT models, used through
+the Claude Code and OpenAI Codex agents) gave substantial assistance with the
+analysis code, statistical procedures, computing campaigns, independent
+recomputations and reviews, figures, and manuscript drafts.  The
+authors directed the work and verified the results; the analysis
+note~\cite{AnalysisNote2026} gives the full statement, including the tool
+versions.  The figures were drawn by plotting code from the analysis outputs;
+no figure was generated or edited by a generative-AI image tool.  AI tools are
+not authors, and the authors take responsibility for the content.
 % AI-use disclosure: text and placement approved by Joseph Bailey, 2026-10-06
 % (docs/publication/DECISION-20261006-joseph-publication-approvals.md, last addendum;
 % proposed text docs/publication/submission/AI-DISCLOSURE-PROPOSED.md, transcribed verbatim).
@@ -123,6 +124,11 @@ generated or edited by a generative-AI image tool.  AI tools are not authors.  T
 % benchmark); that census is incomplete by construction; Joseph confirmed the list on 2026-10-08. See docs/publication/EDITORIAL-20261008-prd-presentation-pass.md sec. 9.
 % 2026-10-08: the figure sentence added at Joseph's instruction (APS Style Guide bars images "generated or modified by
 % generative AI or AI-assisted tools"; the APS AI policy allows AI help with data visualizations). Record sec. 12.
+% 2026-10-21 (register round 1): condensed at Joseph's instruction ("you can condense it (maybe just say the note will
+% have a more full acknowledgement and make sure its there?)"). Kept: the tools and agents, what they assisted with, that
+% the authors directed and verified the work, the figure sentence, not authors, responsibility, and the pointer. The
+% model versions, the written specifications, the verification methods and the methodological discussion are in the
+% note's full statement (main_note.tex, Acknowledgments), checked to carry every element of the earlier text.
 \end{acknowledgments}
 
 % Data Availability Statement: APS places it after the Acknowledgments and before the references
