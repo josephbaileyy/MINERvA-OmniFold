@@ -1,0 +1,23 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but repeated scope disclaimers, stacked qualifications, and detailed accounts of development and record keeping give several passages the register of an internal analysis report rather than a well-edited PRD paper.
+1. QUOTE: "The pseudo-experiments that
+computing time limits interrupted or prevented (224 for
+calibration, 53 for power) were rerun; none reaches the
+observed statistic in any test or shifted null, so no assignment of the lost outcomes changes any decision (Ref. [14],
+Sec. 10.6). Independently written code reproduces every
+p value and decision."
+   REWRITE: Recovering the interrupted or omitted pseudo-experiments (224 for calibration and 53 for power) leaves all decisions unchanged under every tested null shift (Ref. [14], Sec. 10.6). An independent implementation reproduces all p values and decisions.
+2. QUOTE: "The diagnostic is binned,
+signal-only and noise-free, with the detector response fixed
+at the simulation’s, on those same truth changes, and covers only the residuals whose diagnosis is stable under the
+truth resolution (38 % of the joint-cell residuals above
+2 %). What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its
+scope."
+   REWRITE: This diagnostic uses binned, noise-free signal samples, a fixed simulated detector response, and the truth changes used to develop the estimator. It covers the 38 % of joint-cell residuals above 2 % whose classification is stable under changes in truth resolution. It does not assess the information available to an unbinned method or establish the cause of the coverage failure or the validity of the intervals.
+3. QUOTE: "The package carries the exact-split
+two-dimensional curve; Fig. 1 and its numbers were instead regenerated separately, from this paper’s LightGBM
+values and covariance. Apart from the multiplier scan
+(recomputable from the record that the same appendix
+cites), the other quoted numbers cannot be recomputed
+from this package."
+   REWRITE: The package includes the exact-split two-dimensional result; reproducing Fig. 1 requires the LightGBM values and covariance reported here. The multiplier scan can be reproduced from the record cited in the appendix. Other numerical results require analysis products beyond those included in the package.

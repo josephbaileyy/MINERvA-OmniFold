@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A more often separates dense explanations into manageable sentences, particularly in the discussion of test calibration and the concluding paragraph.
+2. A presents the precision target and reporting definitions more directly, with less repetition and fewer embedded qualifications than B.
+3. A maintains a slightly more polished journal register, avoiding B’s awkward expressions such as “requirements are kept apart,” “its materiality,” and “re-grade the recorded decisions.”

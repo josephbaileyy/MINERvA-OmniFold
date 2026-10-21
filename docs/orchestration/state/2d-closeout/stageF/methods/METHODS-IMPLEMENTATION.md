@@ -593,3 +593,76 @@ hand-built copy, with the holds removed and the data-availability text kept.
   - The hydrocarbon-replay sentence in Sec. VII E.
 - **Gemini's rewrites of the 135 MeV caveat again assert what is not established** ("well below the experimental
   uncertainties"). They are not adopted.
+
+## 17. Register loop 2, round r13; the note's baseline (2026-10-21)
+
+**Round r13** (records in `r13/`). A fresh writer worked from the rater flags on r12: both P3 runs from sol, and the P1
+quotes.
+- **Triage of the 47 flagged sentences** (`triage.md`):
+  - 4 moved to the note, wholly or in part;
+  - 27 were restated as a design fact or a scope statement beside the claim they bound;
+  - 9 were left as standard register or as needed qualifiers;
+  - 7 sit in the protected Data availability text.
+- **Other edits:**
+  - the three passages sol quoted in every r12 run were rewritten (Sec. VII C, IV B and VII E);
+  - 7 long sentences were split.
+- **Only `paper_body.tex` changed.** `main_paper.tex` is byte-identical to main.
+
+**The review** (`REVIEW.md`, independent, two directions).
+- **Verdict: ADOPT-AFTER-FIXES**, with nothing blocking.
+  - No number was lost.
+  - The protected text has the same hash.
+  - The four moves print at the cited note sections.
+- **Three should-fix findings,** fixed by the writer:
+  - **Hydrocarbon sentence.** It again says the replays "are descriptive and do not re-grade the decisions of Table IV,
+    which concern each prediction on the target it was generated for and stand". This is the note's reading in
+    §10.9.
+  - **Five-iteration rule.** Its scoped statement, with the rule's measure, is restored in the paper.
+  - **Rebuilt-band rescoring.** It is called post hoc again.
+- **Item for the note pass.** Note §9.4 (`sec_5d.tex:311–313`) prints the rule unscoped: "only if they reduced the
+  model dependence; none did". That conflicts with "D1 and W1 improve slowly" in the same section.
+
+**The r13 scores** (`r13/scores/`). They were taken on the pre-fix r13 text; the three fixes are each a single sentence.
+
+| | sol | Gemini |
+|---|---|---|
+| P1, r13 | 3, 3, 3 → 3.00 | 3, 2.5, 2.5 → 2.67 |
+| P2, r13 against r12 | r13 wins both orders (strength 1 and 2) | r13 wins both orders (2, 2) |
+
+- **Go.** r13 is adopted. The calibrated target (P1 with sol ≥ 3.5) is not met.
+- **sol's P1 score has stayed at 3.00 for r11, r12 and r13,** while P2 preferred each new version in 4 of 4 runs.
+- **What sol now quotes:**
+  - the Data availability release bookkeeping, in 3 of 3 runs (protected, Joseph's);
+  - the guardrail-kept scope sentence of the binned diagnostic in Sec. VI, 3 of 3;
+  - the lost pseudo-experiments in Sec. VII C, 2 of 3;
+  - the design sentence, 1 of 3.
+
+**The account switch.**
+- On 2026-10-21 codex-school reported "Your workspace is out of credits", so one r13 P2 run failed twice.
+- `run_x.sh` gained a `sol2` route: the same model, gpt-6.1-sol, through codex-school2, which is on the account
+  allowlist.
+- **Routing check.** A smoke call returned "model: gpt-6.1-sol".
+- **Equivalence check.** sol2 scored r12 at P1 3, 3, the same as sol's 3, 3, 3.
+- The failed P2 run was redone with sol2.
+
+**Data availability proposal** (`r13/DA-proposal.md`, not applied). It shortens the paragraph from about 262 words to
+about 140, and sends every fact to note App. H. It is Joseph's decision, because:
+- the text is protected;
+- the draft would reverse the earlier P6 ruling, that the package's Fig. 1 limitation stays in the paper;
+- one proposed note sentence rests only on RC7's own README.
+
+**The note's baseline** (`rater-calibration/NOTE-BASELINE.md`; prompt P1N).
+- Two published long technical papers set the anchor: T2K, PRD 91, 072010, and ProtoDUNE-SP, JINST 15 P12004. They
+  score 3.875 with sol.
+- The note's 15 pieces score 2.83 with sol and 2.30 with Gemini.
+- The appendices are worst: App. J 2.25, Apps. D–G 2.25, Apps. H–I 2.50.
+- **Batch 0** (a glossary of project terms applied across the note) is in progress.
+- **Apps. G–J** are records by design. Whether they stay, are shortened or move to the repository is Joseph's
+  decision. It was already pending as "App. J placement".
+
+**Mechanics** (`builds/r13`):
+- build_all rc 0, Sec. IV receipts 15/15;
+- no undefined references, and no `??`;
+- `swallowed_text.py` flags 0;
+- the ledger check: 341 rows, 470 probes, 0 failures;
+- pages: paper 13, note 136.

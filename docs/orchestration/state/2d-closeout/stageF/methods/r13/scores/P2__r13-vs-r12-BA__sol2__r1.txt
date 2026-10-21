@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B more consistently divides overloaded sentences into manageable units, improving readability in the introduction, calibration discussion, and conclusions.
+2. B organizes definitions and qualifications more clearly, particularly when distinguishing coverage from calibration and explaining the precision target.
+3. B reduces repetition and replaces awkward wording such as “re-grade the recorded decisions” with more natural phrasing suited to PRD’s formal register.
