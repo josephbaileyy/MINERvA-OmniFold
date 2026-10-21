@@ -326,3 +326,83 @@ A structural round, built from the list above, is offered to Joseph. It is not s
 - **Standalone build** (`build_all.sh`): rc 0; body-pointer lint and struck-value containment PASS; no undefined
   references. The Sec. IV receipts check skips by design outside the canonical layout; it passed 15/15 in the
   canonical build `mrg2`. Pages: note 135, primer 15, paper 13, PET note 26.
+
+## 12. Register loop, round 2: the structural round (2026-10-21)
+
+**Asked for by Joseph.** The record is [`REVERSE-OUTLINE-R2.md`](REVERSE-OUTLINE-R2.md), which holds:
+- the request, verbatim;
+- the one-sentence reverse outline and the structural diagnosis drawn from it;
+- the plan;
+- Joseph's approval of the D-ID claim addition, and his reading of "move to the note".
+
+**Two commits:**
+- **Structural.** The outline is now:
+  - Sec. I: the coverage/calibration distinction stated as the organizing idea; Table I (findings) replaces the
+    listed results;
+  - Sec. IV: the 2D benchmark with its covariance;
+  - Sec. V A–E: five-observable bias, coverage, stability and precision;
+  - Sec. VI: "What limits the estimator", new;
+  - Sec. VII: condensed, with the recoil-response subsection folded into condition (ii);
+  - Sec. VIII: shortened to refer to Table I and Sec. VI.
+
+  Numbers and bookkeeping moved to note sections that already print them. Each paper site carries a
+  `% Register round 2:` comment naming the note line. Every limitation and post-hoc disclosure is still at least a
+  clause in the paper.
+- **The D-ID claim addition**, approved by Joseph:
+  - a paragraph in Sec. VI;
+  - `\paragraph{Comparison with exact binned unfolding.}` in note `sec:val-departure`, which absorbs the note's
+    former short summary in the coverage subsection;
+  - the provenance row repointed to the new section.
+
+  Source: `state/next-preparation-20261009/d-id/REPORT.md` §9.2, §9.3 and §11.
+
+**Writer and fixes.** A writer subagent did the edit. The director fixed:
+- the merge of the duplicate D-ID text in the note;
+- "show" to "point to" (Sec. VI);
+- note line citations shifted by the edit.
+
+**Independent two-direction review** (on build `mrg4`): 4 MATERIAL, 7 MINOR and 6 NOTE. All MATERIAL and MINOR
+findings are fixed, and N1, N3 and N6:
+- M1: "with the detector response fixed at the simulation's" restored to the D-ID scope, in both documents.
+- M2: "no *tested* reporting definition" in Table I.
+- M3: the generator-W clause's "GENIE CV and NuWro without their 50–100 GeV samples" restored.
+- M4: the carry-over list no longer calls the coverage test's truth change generator-sized.
+- m1: the conclusions again carry "its quoted statistical block has had no coverage test" (DECISION-20261018 J3 C4
+  site).
+- m2: "statistical intervals" in Table I.
+- m3: the D-ID convergence clause now says the values are last iterates, and the note gives 9–34 of 109.
+- m4: a forward reference added in condition (ii).
+- m5: the note stub travels in the D-ID commit.
+- m6: provenance row repointed.
+- m7: Table I column widths.
+
+The fixes made the paper 14 pages. Repetition was trimmed to return it to 13: Sec. VI's opening, the D-ID lead
+sentence, one clause each in Sec. I and the conclusions. Each trimmed fact still prints elsewhere in the paper.
+
+**Rescoring** (`xmodel/r10/`, on the final build `mrg9`, after the review this time):
+
+| | round 1 (r9) | round 2 (r10) |
+|---|---|---|
+| GPT-6.1-sol | 3/5, nearly | **3.5/5**, nearly |
+| Gemini | 3.5/5, nearly | 3.5/5, nearly |
+
+- **GPT-6.1-sol:** "Sec. VI provides a useful synthesis and should remain". The inverse-problem diagnostic "provides
+  some of the paper's most useful explanation of *why* the method fails". Remaining asks:
+  - a shorter abstract, with the generator application in one sentence;
+  - one concise scope paragraph, with the qualifications moved to their sections;
+  - Sec. VII C–D shorter;
+  - internal-process words ("gates", "frozen", "separately authorized release decision") replaced;
+  - Table I less dense.
+- **Gemini:** asks for Sec. VI to merge into Sec. V as V F, and for Sec. VII's decision-rule detail to move to an
+  appendix. It also asks for the internal commentary in the Fig. 3 and Fig. 4 captions to be removed.
+- **Not adopted:**
+  - Gemini's three rewrites, which drop the p-value visibility, the undocumented rate, and "lost independently …
+    not shown";
+  - its claims that the note is "private" (it is public at the cited URL) and that the target difference is
+    "uncorrected" (the hydrocarbon replays are in Sec. VII E).
+
+**Loop.** One rating rose, so the stopping rule does not end the loop. Round 3, the last allowed, takes the
+register asks above.
+
+**Mechanics** (`mrg9`): rc 0; gates PASS (Sec. IV receipts 15/15); no unresolved references; `swallowed_text.py`
+flags 0. Pages: paper 13, note 135, primer 15. The structural-only commit was built separately (`mrg9s`).
