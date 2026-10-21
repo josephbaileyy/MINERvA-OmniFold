@@ -473,3 +473,18 @@ All four rate the paper "nearly" ready.
 
 **Mechanics** (`mrg16`): rc 0; gates PASS (Sec. IV receipts 15/15); no unresolved references; `swallowed_text.py`
 flags 0. Pages: paper 13, note 135, primer 15.
+
+## 14. Standalone note repository synced again (2026-10-21)
+
+- **Canonical:** `MINERvA-OmniFold` main at `88354ebc` (PR #207 merge), which includes PRs #206 and #207.
+- **Standalone:** `MINERvA-OmniFold-Analysis-Note` main at `b2f22c8272775031db02ed1b0f59c0519c95ce18`, checked
+  with `git ls-remote` after the push.
+  - The remote held two commits by Joseph since §11: `5961b6c` (Updates from Overleaf) and its merge, `69febb7`.
+  - The merge's tree is identical to the §11 sync `8b08b46`: the Overleaf branch was based on the 10-13 sync and only
+    caught up. Nothing needed carrying back, so the checkout was fast-forwarded before the copy.
+- **Content:** six files changed, and all 141 tracked files are byte-identical to `88354ebc` (`cmp`, before and after
+  the build).
+- **Standalone build:**
+  - `build_all.sh` rc 0; the body-pointer lint and struck-value containment pass; no undefined references.
+  - The Sec. IV receipts check skips there by design.
+  - Pages: note 135, primer 15, paper 13, PET note 26.
