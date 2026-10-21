@@ -1,0 +1,43 @@
+{
+ "released_ours_v == E_C (all 224)": true,
+ "drawn_ours_v == E_U on mask": true,
+ "drawn_ours_v == E_U (all 224)": true,
+ "E_U nonzero off mask": 0,
+ "drawn_ours_v == E_C on mask": false,
+ "E_U/E_C on mask: min, median, max": [
+  0.8781630631435431,
+  1.0002601896287948,
+  1.053228600320029
+ ],
+ "released arrays have cov_ours": false,
+ "Q(8ccb4d72) shape": [
+  205,
+  205
+ ],
+ "drawn cov_ours[gids,gids] == s5_plus_playlist total_plus_C_PL": true,
+ "cov2d_Q_205.Q == s5_plus_playlist total_plus_C_PL": true,
+ "max|cov2d_Q_205.Q - Q|/max|Q|": 0.0,
+ "s5_plus_playlist cells_x_EU == E_U[gids]": true,
+ "cov_ours zero off the 205 cells": true,
+ "gids == flatnonzero(mask)": true,
+ "other keys identical released vs drawn": {
+  "paper_v": true,
+  "cov_total": true,
+  "cov_stat": true,
+  "area_paper": true,
+  "area_ours": true,
+  "tune_v1_v": true,
+  "mask_reported": true,
+  "pt_edges": true,
+  "pz_edges": true,
+  "hData2D": true,
+  "hGenCV2D": true,
+  "hExcess2D": true,
+  "eavail_edges": true,
+  "W_edges": true,
+  "gen_GENIE-CV": true,
+  "gen_GENIE+MEC": true,
+  "gen_NuWro": true,
+  "gen_GiBUU": true
+ }
+}
