@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but repeated caveats, dense qualifications, and extensive development and release bookkeeping make several sections read like an internal validation report and warrant a dedicated language pass.
+1. QUOTE: "The test design was fixed before any observed statistic
+was computed; its reviewers had seen descriptive per-cell
+residuals of the data before it was fixed, and a bounded extension of the calibration’s computing budget was decided
+with observed p values visible, which the result above
+covers, since it holds for any stopping rule (Ref. [14],
+Sec. 10.3)."
+   REWRITE: The test design was fixed before the observed statistics were computed, although its reviewers had examined descriptive per-cell data residuals. The calibration budget was subsequently extended with knowledge of the observed p values; the error-control result above permits arbitrary stopping rules (Ref. [14], Sec. 10.3).
+2. QUOTE: "These corrected evaluations are descriptive
+and do not re-grade the recorded decisions of Table IV
+(Ref. [14], Sec. 10.9)."
+   REWRITE: The target-corrected comparisons are descriptive; Table IV reports the hypothesis-test decisions obtained with the original predictions (Ref. [14], Sec. 10.9).
+3. QUOTE: "Rerunning
+the packaged files from an empty directory reproduces
+every value recorded in the package and every figure number that it checks."
+   REWRITE: The package reproduces its included numerical results and the numerical values checked in the accompanying figures.

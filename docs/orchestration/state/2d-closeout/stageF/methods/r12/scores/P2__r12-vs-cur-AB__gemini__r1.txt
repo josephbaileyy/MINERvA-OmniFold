@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 3
+REASONS:
+1. Document A strictly adheres to Physical Review citation conventions using formal numbered references (e.g., Ref. [14], Sec. X), whereas Document B repeatedly lapses into an informal working-draft style using descriptive, unnumbered parenthetical pointers (e.g., "analysis note, section on the fifth axis").
+2. Document A maintains a disciplined, objective scholarly tone throughout, avoiding Document B's conversational and editorializing phrasing (such as "by people who had seen," "whether its size is right," and "which did not document how the rate was calculated").
+3. The syntactic structure, transitions, and narrative organization in Document A are polished and cohesive, whereas Document B displays disjointed phrasing and awkward structural choices (such as an informal run-in heading abruptly placed within the conclusions).

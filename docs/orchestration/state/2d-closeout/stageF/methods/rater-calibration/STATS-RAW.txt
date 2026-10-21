@@ -1,0 +1,75 @@
+## Per-cell scores
+
+| prompt | model | document | runs | mean | sd |
+|---|---|---|---|---|---|
+| P0 | gemini | anchorA | 3.50, 3.50, 3.50 | 3.50 | 0.00 |
+| P0 | gemini | ours-current | 3.00, 3.00, 3.00 | 3.00 | 0.00 |
+| P0 | sol | anchorA | 4.00, 4.00, 4.00 | 4.00 | 0.00 |
+| P0 | sol | ours-current | 3.00, 3.00, 3.00 | 3.00 | 0.00 |
+| P0n | gemini | anchorA | 3.50, 3.50, 3.00 | 3.33 | 0.29 |
+| P0n | gemini | ours-current | 3.00, 3.00, 3.00 | 3.00 | 0.00 |
+| P0n | sol | anchorA | 3.00, 4.00, 4.00 | 3.67 | 0.58 |
+| P0n | sol | ours-current | 3.00, 3.00, 3.00 | 3.00 | 0.00 |
+| P1 | gemini | anchorA | 3.50, 3.50, 3.50 | 3.50 | 0.00 |
+| P1 | gemini | anchorB | 3.00, 3.00, 3.00 | 3.00 | 0.00 |
+| P1 | gemini | anchorC | 3.50, 3.50, 4.00 | 3.67 | 0.29 |
+| P1 | gemini | ours-current | 2.00, 2.50, 2.00 | 2.17 | 0.29 |
+| P1 | gemini | ours-holds | 2.00, 2.00, 2.50 | 2.17 | 0.29 |
+| P1 | gemini | ours-old | 2.50, 2.50, 2.50 | 2.50 | 0.00 |
+| P1 | sol | anchorA | 3.50, 3.50, 3.50 | 3.50 | 0.00 |
+| P1 | sol | anchorB | 3.50, 3.50, 3.50 | 3.50 | 0.00 |
+| P1 | sol | anchorC | 4.00, 4.00, 4.00 | 4.00 | 0.00 |
+| P1 | sol | ours-current | 3.00, 3.00, 3.00 | 3.00 | 0.00 |
+| P1 | sol | ours-holds | 3.00, 2.50, 2.50 | 2.67 | 0.29 |
+| P1 | sol | ours-old | 2.50, 2.50, 2.50 | 2.50 | 0.00 |
+| P3 | gemini | anchorA | 2.58, 1.72, 2.21 | 2.17 | 0.43 |
+| P3 | gemini | anchorB | 1.11, 0.56, 1.11 | 0.93 | 0.32 |
+| P3 | gemini | anchorC | 0.70, 3.50, 2.91 | 2.37 | 1.48 |
+| P3 | gemini | ours-current | 8.23, 5.28, 7.21 | 6.91 | 1.50 |
+| P3 | gemini | ours-old | 6.93, 7.03, 6.53 | 6.83 | 0.27 |
+| P3 | sol | anchorA | 5.15, 6.14, 5.40 | 5.56 | 0.51 |
+| P3 | sol | anchorB | 2.45, 1.89, 2.45 | 2.26 | 0.32 |
+| P3 | sol | anchorC | 1.51, 0.93, 0.93 | 1.13 | 0.34 |
+| P3 | sol | ours-current | 4.67, 5.49, 6.40 | 5.52 | 0.86 |
+| P3 | sol | ours-old | 5.12, 6.13, 4.92 | 5.39 | 0.65 |
+
+## Absolute prompts: separation, revision sensitivity, holds, framing
+
+Sign convention: every difference below is oriented so that POSITIVE = the direction a better-written text should go (higher rating; fewer P3 flags). z = difference / (pooled sd x sqrt(1/n1 + 1/n2)); 'resolved' means z >= 2.
+
+| prompt | model | pooled sd (dof) | anchors mean | ours-current | separation (anchors - ours)/sd | ours-old | current - old (z) | resolved? | holds - hold-free (z) | runs/round for a 0.5-pt change |
+|---|---|---|---|---|---|---|---|---|---|---|
+| P1 | sol | 0.12 (12) | 3.67 | 3.00 | 5.66 | 2.50 | 0.50 (5.2) | yes | -0.33 (-3.5) | 1 |
+| P1 | gemini | 0.20 (12) | 3.39 | 2.17 | 5.99 | 2.50 | -0.33 (-2.0) | no | 0.00 (0.0) | 2 |
+| P3 | sol | 0.57 (10) | 2.98 | 5.52 | 4.43 | 5.39 | -0.13 (-0.3) | no | – (–) | – |
+| P3 | gemini | 0.98 (10) | 1.82 | 6.91 | 5.20 | 6.83 | -0.08 (-0.1) | no | – (–) | – |
+| P0 | sol | 0.00 (4) | 4.00 | 3.00 | inf | – | – (–) | – | – (–) | 1 |
+| P0 | gemini | 0.00 (4) | 3.50 | 3.00 | inf | – | – (–) | – | – (–) | 1 |
+| P0n | sol | 0.41 (4) | 3.67 | 3.00 | 1.63 | – | – (–) | – | – (–) | 6 |
+| P0n | gemini | 0.20 (4) | 3.33 | 3.00 | 1.63 | – | – (–) | – | – (–) | 2 |
+
+## Framing effect (P0n - P0; positive = neutral framing scores higher)
+
+| model | document | P0 runs | P0n runs | P0n - P0 | z |
+|---|---|---|---|---|---|
+| sol | ours-current | 3.0, 3.0, 3.0 | 3.0, 3.0, 3.0 | 0.00 | 0.0 |
+| sol | anchorA | 4.0, 4.0, 4.0 | 3.0, 4.0, 4.0 | -0.33 | -1.4 |
+| gemini | ours-current | 3.0, 3.0, 3.0 | 3.0, 3.0, 3.0 | 0.00 | 0.0 |
+| gemini | anchorA | 3.5, 3.5, 3.5 | 3.5, 3.5, 3.0 | -0.17 | -1.4 |
+
+## P2 pairwise (blind, both orders)
+
+| model | opponent | AB: A=ours-current | BA: B=ours-current | ours wins | order-consistent? |
+|---|---|---|---|---|---|
+| sol | anchorA | A2 (ours) | A2 (anchorA) | 1/2 | NO (position decided) |
+| sol | anchorB | A2 (ours) | B2 (ours) | 2/2 | yes |
+| sol | anchorC | B2 (anchorC) | A2 (anchorC) | 0/2 | yes |
+| sol | ours-old | A2 (ours) | B2 (ours) | 2/2 | yes |
+| gemini | anchorA | A3 (ours) | B2 (ours) | 2/2 | yes |
+| gemini | anchorB | A3 (ours) | B3 (ours) | 2/2 | yes |
+| gemini | anchorC | A2 (ours) | B2 (ours) | 2/2 | yes |
+| gemini | ours-old | A2 (ours) | B2 (ours) | 2/2 | yes |
+
+sol: ours-current won 5/8; 'A' chosen in 5/8 runs (position bias = +0.12 vs 0.5).
+
+gemini: ours-current won 8/8; 'A' chosen in 4/8 runs (position bias = +0.00 vs 0.5).

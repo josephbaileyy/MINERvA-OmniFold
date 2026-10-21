@@ -112,7 +112,12 @@ valid known-truth
 deformation of this size but is not a measured GiBUU--GENIE difference.
 Residuals in $(\Eavail,W)$ are median \SI{9.7}{\percent}, up to
 \SI{74}{\percent} in the highest-$W$ column, and several percent in the largest
-cells. A $q_3$ deformation preserving $(\Eavail,W)$ truth shifts these cells by
+cells.
+% Register round r12 (2026-10-21): the cell and the unrecorded share moved from the article's Sec. V B; source
+% figures/methods_m3/fig_m3_deformation.py numbers output (EW29); dev_receipt.json and truth_check.json carry no yields.
+The \SI{74}{\percent} residual is in the cell $0.8\le\Eavail<\SI{1.5}{GeV}$,
+$W\ge\SI{3}{GeV}$, whose share of the cross section the deformation study did
+not record. A $q_3$ deformation preserving $(\Eavail,W)$ truth shifts these cells by
 up to \SI{37}{\percent}. Signal-only experiments with the same seeds reproduce both results,
 so they are a property of the estimator (five iterations, the GBDT configuration of
 \S\ref{sec:method}), not of the background treatment. This regularization (unfolding-model) bias enters no quoted uncertainty.
@@ -177,8 +182,11 @@ J cells themselves), so the regularization trades a large variance for the
 bias. Longer noise-free exact iteration removes much of the residual for D1
 (J median \SI{3.3}{\percent} after 200 iterations and \SI{0.8}{\percent} after
 $10^{5}$) and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent}),
-but not for W3 and the $q_3$ stress (\SI{8.9}{\percent} and \SI{6.7}{\percent}
-after $10^{5}$), whose within-cell binning bias grows with the iteration
+but not for W3 and the $q_3$ stress (\SI{4.4}{\percent} and \SI{6.6}{\percent}
+after 200 iterations, \SI{8.9}{\percent} and \SI{6.7}{\percent} after $10^{5}$),
+% Register round r12 review (S6): the 200-iteration W3 and q3 medians added from the binned response diagnostic
+% record (d-id REPORT.md, longer exact iteration table: J median of |r_IBU| at K = 200, nominal-weighted T2).
+whose within-cell binning bias grows with the iteration
 number. The long runs do not converge (only 9--34 of the 109 J quantities
 converge for each traced deformation), so these values are last iterates. The diagnostic is binned, signal-only and noise-free, with the detector
 response fixed at the simulation's, on development truths, and covers only the residuals whose diagnosis is stable under the
@@ -297,7 +305,12 @@ The capacity probe changes recovery, but at five iterations, the most the
 computing budget allowed at that capacity, it lowers the largest residual proxy
 over the development truths (lower row of Fig.~\ref{fig:gbdt-recovery}) by 3\% on J
 and 8\% on H2, against the improvement of
-at least 20\% required before the larger capacity would be used. Under the study's
+at least 20\% required before the larger capacity would be used.
+% Register round r12 (2026-10-21): the rule moved from the article's Sec. III; source
+% RECORD-20260927-s5p-stage2-exit.md sec. 3 (configuration 2, k in 10, 15, 20 against k = 5).
+For the joint-test estimator, a rule fixed before the comparison would have
+replaced its five iterations by 10, 15, or 20 only if they reduced the model
+dependence; none did, so five were kept. Under the study's
 usefulness criteria and computing budget, no reporting definition qualified
 (next paragraph), and no five-dimensional measurement with total uncertainties was
 constructed. These outcomes stand.
