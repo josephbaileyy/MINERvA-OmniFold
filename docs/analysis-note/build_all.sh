@@ -48,8 +48,44 @@
 #      79 columns, so a long `Reference ... undefined` warning can split across two lines and
 #      miss its own pattern; LaTeX's end-of-run "There were undefined references" summary is
 #      the pattern that carries the check (measured 2026-09-23 with a planted \ref).
+#
+# DEPOSIT EXPORT AND BODY-POINTER LINT, ADDED 2026-10-21 (DECISION-20261020-joseph-refined-estimator-shorten-delta.md
+# item 2: the note is to be made depositable; depositing it stays Joseph's act)
+# --------------------------------------------------------------------------------------------------------------
+#   5. Before any build, check_body_pointers.py fails the build if the note's BODY (everything main_note.tex inputs
+#      before \appendix) prints an internal-only pointer: a tracker row, repository path, file name, digest or
+#      "known-issues log" pointer. Those belong in the provenance appendix. Its self-test runs first and shows the
+#      patterns fire on a planted body pointer and stay silent on the appendix.
+#   6. `bash build_all.sh --export-deposit DIR` additionally writes a comment-free, single-file source tree for
+#      deposit to DIR after every gate above has passed: main_note.tex flattened by `latexpand --empty-comments`
+#      (comment text removed, the line-ending `%` kept, the sources themselves untouched), the two .bib files without
+#      their comment lines, and exactly the figures the note build read (from main_note.fls). The export then proves
+#      itself: no comment text may remain in it, it must build, and its PDF must have the same page count and the
+#      same extracted text as main_note.pdf. Without the flag nothing is exported.
 set -euo pipefail
 cd "$(dirname "$0")"
+
+export_dir=""
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --export-deposit)
+      if [ "$#" -lt 2 ] || [ -z "$2" ]; then echo "  FAIL --export-deposit needs a directory"; exit 1; fi
+      export_dir="$2"; shift 2 ;;
+    *) echo "  FAIL unknown argument: $1 (usage: bash build_all.sh [--export-deposit DIR])"; exit 1 ;;
+  esac
+done
+if [ -n "$export_dir" ]; then
+  case "$export_dir" in /*) ;; *) export_dir="$PWD/$export_dir" ;; esac
+  if [ -e "$export_dir" ] && [ -n "$(ls -A "$export_dir" 2>/dev/null)" ]; then
+    echo "  FAIL export directory $export_dir exists and is not empty; a deposit tree must not mix with old files"
+    exit 1
+  fi
+  for tool in latexpand pdftotext; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+      echo "  FAIL $tool not found -- the deposit export cannot be written or verified"; exit 1
+    fi
+  done
+fi
 
 module load texlive/2024 2>/dev/null || true
 
@@ -68,6 +104,15 @@ if ! command -v latexmk >/dev/null 2>&1; then
   echo "       not report success. Load the TeX module: module load texlive/2024"
   exit 1
 fi
+
+# (5) The body prints no internal-only pointer. Source-only, so it runs before the builds and a failure costs nothing.
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "  FAIL python3 not found -- the body-pointer lint cannot run, and an unchecked body must not pass"
+  exit 1
+fi
+echo "=== body-pointer lint (internal pointers belong in the provenance appendix) ==="
+python3 check_body_pointers.py --self-test   # fires on a planted body pointer, silent on the appendix
+python3 check_body_pointers.py
 
 # (2) The instant every PDF must postdate. `sleep 1` removes the same-second ambiguity in
 # `test -nt` on filesystems with coarse timestamps: one second, once, against a LaTeX build.
@@ -180,3 +225,50 @@ for t in "${targets[@]}"; do
   fi
   printf '  %-14s %s pp\n' "${t}.pdf" "${pages:-?}"
 done
+
+if [ -n "$export_dir" ]; then
+  echo
+  echo "=== deposit export: comment-free source tree in $export_dir ==="
+  mkdir -p "$export_dir"
+  latexpand --empty-comments -o "$export_dir/main_note.tex" main_note.tex
+  for b in publication.bib technote.bib; do
+    # biber reads a line whose first non-blank character is % as a comment; drop those lines.
+    grep -v '^[[:space:]]*%' "$b" > "$export_dir/$b" || true
+  done
+  # Exactly the figures this run's note build read, at the same relative paths.
+  n_fig=0
+  while IFS= read -r f; do
+    case "$f" in /*|*../*) continue ;; esac
+    [ -f "$f" ] || continue
+    mkdir -p "$export_dir/$(dirname "$f")"
+    cp "$f" "$export_dir/$f"
+    n_fig=$((n_fig + 1))
+  done < <(awk '/^INPUT /{p = $2; sub(/^\.\//, "", p); print p}' main_note.fls | grep -E '\.(pdf|png|jpe?g|eps)$' \
+           | grep -v '^main_note\.pdf$' | sort -u)
+  # Proof 1: no comment text survives (an escaped \% is text, a bare line-ending % is kept on purpose).
+  # The grep's own status is not read through a pipe: under pipefail a SIGPIPE from `head` would turn a hit into a pass.
+  comment_hits="$(grep -nE '(^|[^\\])%.*[^[:space:]]' "$export_dir/main_note.tex" "$export_dir"/*.bib || true)"
+  if [ -n "$comment_hits" ]; then
+    echo "  FAIL comment text survives in the export; first lines:"
+    printf '%s\n' "$comment_hits" | head -n 5 | sed 's/^/       /' || true
+    exit 1
+  fi
+  # Proof 2: it builds on its own, and prints what the source build printed.
+  if ! (cd "$export_dir" && latexmk -g -pdf -interaction=nonstopmode -halt-on-error main_note.tex >/dev/null 2>&1); then
+    echo "  FAIL the exported tree does not build; see $export_dir/main_note.log"; exit 1
+  fi
+  if grep -Eq "$unresolved_re" "$export_dir/main_note.log"; then
+    echo "  FAIL the exported tree has unresolved references; see $export_dir/main_note.log"; exit 1
+  fi
+  pdftotext main_note.pdf "$export_dir/.source.txt"
+  pdftotext "$export_dir/main_note.pdf" "$export_dir/.export.txt"
+  if ! cmp -s "$export_dir/.source.txt" "$export_dir/.export.txt"; then
+    echo "  FAIL the exported tree's PDF text differs from main_note.pdf:"
+    diff "$export_dir/.source.txt" "$export_dir/.export.txt" | head -n 10 | sed 's/^/       /' || true
+    exit 1
+  fi
+  rm -f "$export_dir/.source.txt" "$export_dir/.export.txt"
+  (cd "$export_dir" && latexmk -c >/dev/null 2>&1 || true)
+  echo "  OK   deposit tree written: main_note.tex (flattened, comment-free), 2 .bib files, ${n_fig} figures;"
+  echo "       it builds alone, and its PDF text equals main_note.pdf's. Depositing it is Joseph's act."
+fi

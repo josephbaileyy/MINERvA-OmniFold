@@ -133,7 +133,7 @@ docs/orchestration/DECISION-20260910-joseph-accepts-outcome-2-and-opens-replacem
 docs/orchestration/DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md	tracked	LIVE	document		20260910	open		route-only		no	5	126	9670
 docs/orchestration/DECISION-20260919-joseph-R6-reverses-the-k1-decline.md	tracked	LIVE	document		20260919	open		route-only		no	5	76	4639
 docs/orchestration/DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md	tracked	LIVE	document		20260919	open		route-only		no	16	123	10612
-docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md	tracked	LIVE	document		20260920	open		route-only	nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_run_m1_projection_refusals.py	no	28	127	8092
+docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md	tracked	LIVE	document		20260920	open		route-only	nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_run_m1_projection_refusals.py	no	29	127	8092
 docs/orchestration/DECISION-20260920-joseph-authorizes-typed-descriptor-audit-on-main.md	tracked	LIVE	document	z-two-member-campaign	20260920	open		route-only		no	2	102	9711
 docs/orchestration/DECISION-20260920-joseph-rules-clause-c-disposition.md	tracked	LIVE	document		20260920	open		route-only		no	8	153	10043
 docs/orchestration/DECISION-20261004-s5p-production-budget-extension.md	tracked	LIVE	document		20261004	open		route-only		no	11	85	5028
@@ -148,7 +148,7 @@ docs/orchestration/DECISION-20261018-joseph-plain-language-pass.md	tracked	LIVE	
 docs/orchestration/DECISION-20261018-joseph-plain-language-pass2.md	tracked	LIVE	document		20261018	open		route-only		no	5	58	4901
 docs/orchestration/DECISION-20261019-joseph-methods-first-and-measurement-compute.md	tracked	LIVE	document	20261006-s5p-campaign	20261019	open		route-only		no	8	86	6638
 docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md	tracked	LIVE	document		20261020	open		route-only		no	10	46	2849
-docs/orchestration/DECISION-20261020-joseph-refined-estimator-shorten-delta.md	tracked	LIVE	document		20261020	open		route-only		no	9	46	3079
+docs/orchestration/DECISION-20261020-joseph-refined-estimator-shorten-delta.md	tracked	LIVE	document		20261020	open		route-only	docs/analysis-note/build_all.sh	no	12	46	3079
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only		no	3	537	36540
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	nd-unfolding/tests/test_run_m1_projection_refusals.py	no	5	1369	92325
 docs/orchestration/DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md	tracked	LIVE	document		20261006	open		route-only	2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py;2d-unfolding/uq/coverage_fixed_truth/sbatch_ki85_arms.sh	no	13	89	4737
@@ -181,7 +181,7 @@ docs/orchestration/EVIDENCE-20260919-cause7-migration-census-and-declared-policy
 docs/orchestration/EVIDENCE-20260919-lateral-bands-are-seed-pinned.md	tracked	LIVE	document		20260919	open		route-only	nd-unfolding/tests/test_lateral_bands_are_seed_pinned.py	no	14	114	5861
 docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md	tracked	LIVE	document		20260920	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	11	230	15592
 docs/orchestration/EVIDENCE-20261005-scalar-measurement-successor.md	tracked	ARCHIVAL	document		20261005	terminal		exact-path-only		yes	2	168	9436
-docs/orchestration/EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md	tracked	LIVE	document		20260927	open		route-only		no	11	86	6815
+docs/orchestration/EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md	tracked	LIVE	document		20260927	open		route-only		no	12	86	6815
 docs/orchestration/FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md	tracked	LIVE	document		20260925	open		route-only		no	7	106	9821
 docs/orchestration/FINDING-20260730-event-feature-nonfinite.md	tracked	ARCHIVAL	finding		20260730	terminal		exact-path-only	nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/tests/test_b1_normalization_fix.py	yes	8	103	5781
 docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md	tracked	ARCHIVAL	finding		20260807	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/train_fullevent_nominal.py	yes	12	214	13382
@@ -259,7 +259,7 @@ docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	d
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	72	70	8866
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	6	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	76	679	56052
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;nd-unfolding/tests/test_object_identity_checks.py	no	129	3905	1276511
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;nd-unfolding/tests/test_object_identity_checks.py	no	129	3905	1276543
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	9	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	18	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	7	239	14244
@@ -1395,7 +1395,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md	tracked	LI
 docs/orchestration/state/2d-closeout/stageF/methods/M2-RATEFAIL-DIAGNOSIS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	8	110	12124
 docs/orchestration/state/2d-closeout/stageF/methods/M4-DEFINITIONS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	3	341	22563
 docs/orchestration/state/2d-closeout/stageF/methods/M4-W-RECORD.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	8	159	12984
-docs/orchestration/state/2d-closeout/stageF/methods/METHODS-IMPLEMENTATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	214	12699
+docs/orchestration/state/2d-closeout/stageF/methods/METHODS-IMPLEMENTATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	259	14579
 docs/orchestration/state/2d-closeout/stageF/methods/OUTLINE-DECISION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	4	59	5056
 docs/orchestration/state/2d-closeout/stageF/methods/RE1-REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	2	113	9249
 docs/orchestration/state/2d-closeout/stageF/methods/RE1-SPEC.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	4	59	3724

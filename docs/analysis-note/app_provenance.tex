@@ -1,4 +1,4 @@
-\section{Repository records cited in this note}
+\section{Provenance}
 \label{app:provenance}
 
 Several statements in this note rest on records in the analysis repository rather than on anything
@@ -6,8 +6,9 @@ a reader can recompute from the published inputs. Those records are collected he
 inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so
 in the body it interrupts a physics argument with a string that cannot be followed; and gathering
 them in one table means a path that moves has one place to be corrected instead of five.
-All paths below are relative to the code repository, \repolink, and are set breakably so they stay
-inside the text block.
+All paths, commits and tracker rows below refer to the snapshot of the code repository, \repolink,
+identified at deposit: \depositsnapshot. Paths are set breakably so they stay inside the text
+block.
 
 \textbf{This appendix is not the reproduction path.} What an external reader would need in order to
 recompute the quoted numbers --- the arrays, edges, orderings, masks, units, projection matrices and
@@ -20,8 +21,7 @@ the body becomes stronger because its record is listed. Where a claim depends on
 limitations matter---most importantly the adopted covariance's four measurements
 (\S\ref{sec:eavailw-adopted})---those limitations are stated at the claim, not delegated here.
 
-The tags are stable; the paths are current as of 2026-10-06. Rows are ordered by the
-section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path;
+The tags are stable. Rows are ordered by the section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path;
 Table~\ref{tab:prov-trackers} lists tracker rows and code identifiers that have no
 document of their own. Records cited only by the point-cloud (PET) studies moved with them to the
 companion PET note on 2026-10-12 (App.~\ref{sec:pet}).
@@ -40,7 +40,13 @@ Tag & Cited at & Record \\
 \midrule \multicolumn{3}{r}{\emph{continued\ldots}}\\ \endfoot
 \bottomrule
 \endlastfoot
-\texttt{coverage-fixed-truth} & \S\ref{sec:coverage} &
+\texttt{2d-central-value} & \S\ref{sec:method-config} &
+  \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root},
+  \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c} \\
+\texttt{bin-mapping} & \S\ref{sec:method-binning} &
+  \texttt{2d-unfolding/}\allowbreak\texttt{minerva\_paper\_anc/}\allowbreak\texttt{bin\_mapping.txt}, the
+  published data release's bin-mapping file~\cite{MINERvA:2021owq}, with its \texttt{README} \\
+\texttt{coverage-fixed-truth} & \S\ref{sec:uq-boot}, \S\ref{sec:coverage} &
   see below \\
 \texttt{coverage-toys} & \S\ref{sec:val-other} &
   see below \\
@@ -53,7 +59,10 @@ Tag & Cited at & Record \\
 \texttt{eavailw-excess} & Fig.~\ref{fig:eavailWexcess} &
   \texttt{nd-unfolding/}\allowbreak\texttt{excess\_eavail\_W.py} (cell-integrated differences;
   comparator weights \texttt{w\_truth}) \\
-\texttt{z-adoption} & \S\ref{sec:eavailw-construction}, App.~\ref{app:release-audit} &
+\texttt{response-diagnostic} & \S\ref{sec:coverage-5d} &
+  \repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit
+  \texttt{7d173bd0} \\
+\texttt{z-cv-record} & \S\ref{sec:eavailw-construction}, App.~\ref{app:release-audit} &
   see below \\
 \texttt{joint-5d} & \S\ref{sec:joint5d}, Table~\ref{tab:joint5d} &
   see below \\
@@ -122,7 +131,7 @@ column above, so they are given here at full width.
     3D integrated-rate shares; \texttt{VL160}: Valencia-2p2h fill), superseding
     \texttt{VL35}--\texttt{VL38}; receipt
     \repopath{docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json}.
-  \item[\texttt{z-adoption}.] The adoption itself at
+  \item[\texttt{z-cv-record}.] The adoption itself at
     \repopath{docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md};
     the seed measurements at
     \repopath{docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md}
@@ -221,6 +230,15 @@ Tag & Cited at & Record & Content \\
 \midrule \multicolumn{4}{r}{\emph{continued\ldots}}\\ \endfoot
 \bottomrule
 \endlastfoot
+\texttt{rvp1pi} & \S\ref{sec:uq-universes}, \S\ref{sec:uq-2d-construction} &
+  \texttt{KNOWN\_ISSUES.md} row 92 &
+  the Rvn1pi and Rvp1pi bands encode one shift; the quoted universe block counts it once \\
+\texttt{flux-index} & \S\ref{sec:uq-2d-construction} &
+  \texttt{KNOWN\_ISSUES.md} row 91 &
+  the flux-universe index identity behind the $1/\Phi_{u}$ rescale and its exact test \\
+\texttt{statband-retest} & \S\ref{sec:uq-boot}, \S\ref{sec:coverage} &
+  \texttt{KNOWN\_ISSUES.md} row 85 &
+  the held-out-simulation re-test of the 2D statistical band: deferred, not pre-registered, not run \\
 \texttt{pot-ratio} & \S\ref{sec:tension} (footnote) &
   \texttt{KNOWN\_ISSUES} \texttt{J36} &
   one global $\mathrm{POT}_{\mathrm{data}}/\mathrm{POT}_{\mathrm{MC}}$ ratio rather than a
@@ -232,10 +250,13 @@ Tag & Cited at & Record & Content \\
 \end{longtable}
 }
 
-\paragraph{One record is deliberately \emph{not} moved here.} The adopted five-axis covariance is
-identified in the body by its \texttt{sha256} (\S\ref{sec:eavailw-adopted}), and that digest stays
-in the body. It is not a routing pointer: it is the identity of the object every quoted
-uncertainty is computed from, it is checkable by anyone holding the file, and the pairing between
-the covariance and the central values is established \emph{by} that digest rather than by numerical
-agreement. Moving it to an appendix would relocate the one identifier a reader needs in order to
-know which object the numbers describe.
+\paragraph{The identity of the five-axis covariance.} Until the deposit pass the body printed the
+file name and digest of the five-axis covariance in use (\S\ref{sec:eavailw-adopted}); they now
+stand in the identities table of App.~\ref{app:release-identities}, with the digests of its
+projection, projection matrix, row index and paired central values. They remain the identity of the
+object every quoted five-dimensional uncertainty is computed from, checkable by anyone holding the
+file, and the pairing between the covariance and the central values is established \emph{by} those
+digests rather than by numerical agreement (\S\ref{sec:eavailw-construction}).
+% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: no internal-only pointers in
+% printed body text). This paragraph earlier explained why the digest stayed in the body; it now records the move to
+% App. H's identities table, which reverses that earlier choice and is flagged for Joseph (old text in git history).

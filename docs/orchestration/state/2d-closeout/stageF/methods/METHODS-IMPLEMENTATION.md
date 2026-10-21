@@ -212,3 +212,48 @@ the rejections' limits), 1 coupled MATERIAL (the status table) and 13 MINOR. All
 rc 0, gates PASS and no unresolved references.
 
 **Pages:** primer 15, note 133, paper 13.
+
+## 9. Note depositability pass (2026-10-21)
+
+### Mechanical
+
+- **Deposit export.** `build_all.sh --export-deposit DIR` writes a comment-free, flattened source tree with its
+  figures, then checks it: no comments remain, it builds standalone, and its PDF text equals the note's.
+- **Fixed title.** "Version 1.0 (review), 20 October 2026".
+- **Visible holds.** "[funding statement pending]" and "[snapshot identifier pending deposit]".
+- **Body pointers.** Every internal pointer left in the body is routed to App. G ("Provenance"), and the body states
+  the substance.
+- **Lint.** `check_body_pointers.py` runs before the build and fails it on internal pointers in the title block and
+  body.
+  - Self-test: 24 cases.
+  - It found 18 hits on main, and 0 after the pass.
+  - The build tests (49) pass.
+
+### Judgment
+
+- **§10 is self-contained.** It quotes the six pre-registered conditions verbatim, with bracketed annotations. It
+  also carries the lost-draw disposition, the projection p-value table and the recoil table.
+- **Governance language** in §9.3–9.6, Table 1, the executive summary and elsewhere is rewritten as criterion,
+  value and outcome.
+
+### Review
+
+An independent review found 1 MATERIAL and 7 MINOR issues. All are fixed except the export tests (m7):
+- Table 1 keeps "readiness … has not been established".
+- "no recovered draw".
+- "was constructed".
+- The metadata's "not to be used".
+- The annotation is placed correctly.
+- The lint covers the title block.
+- The export refuses `../` paths.
+
+### Open for Joseph
+
+- **Where App. J goes.** The superseded values are not moved.
+- **The funding text.**
+- **The release-state sentence**, to be worded at deposit.
+- **The deposit itself.**
+- **The z-cv and 2D digests** moved from the body to Apps. H and G. The director accepts that move; Joseph may
+  reverse it.
+
+**Pages:** note 135, paper 13, primer 15.
