@@ -1,0 +1,41 @@
+{
+ "schema": "mp1a-jitter-declaration/1",
+ "declared_at": "2026-10-21T04:13Z (written before any jitter unfold was submitted)",
+ "authority": "director approval of the input-jitter study, 2026-10-20 (after the noise-floor result; binding addendum 11)",
+ "status": "DESCRIPTIVE. No gate, no re-gating. It cannot revive MP1-A under the frozen PLAN 2.3 rule; it tests whether the G3 curvature is the estimator's response to rounding-scale input changes rather than a hadronic nonlinearity.",
+ "inputs": {
+  "note": "the S1 real-data lateral dumps (merged over all 12 playlists, 1A..1P), unchanged; each task re-verifies the dump sha256",
+  "variants": ["zero", "em_m1", "em_p1", "other_m1", "other_p1"]
+ },
+ "unfold": {
+  "deploy": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56 (pinned 4e4b4f56bb0c4715dcf567829ac0449bfac745de, through its s5c_array.sh)",
+  "argv": "s5p_numerics.py --npz/--bkg (expect sha256) --config R --iters 5 --construction data --pairs=-:<J> --threads 32 (estimator seed the default 42)",
+  "only_change_from_S1": "--pairs=-:<J> in place of --pairs=-:-: the edge-safe +-1/2 float32-ulp jitter of every coordinate (s5e_trace.jitter_coords with the grid edges; s5p_numerics refuses with rc 5 if any grid membership changes); the jittered path runs the estimators on float64 coordinates",
+  "jitter_seeds": [1, 2, 3, 4, 5],
+  "K": 5,
+  "pairing": "jitter seed J draws the same per-row uniform steps in every variant (each scaled by its own row's ulp), so the five variants at one J are paired",
+  "one_task_per_variant_and_seed": "25 tasks, so that no process runs two unfolds in sequence inside the 30 min limit"
+ },
+ "compute": {
+  "qos": "regular", "layout": "one exclusive node per jitter seed, the 5 variants as concurrent srun steps (32 cpus, 56G each)",
+  "jobs": 5, "time_limit": "00:30:00", "estimate_cpu_node_h": 1.0,
+  "deadline": "anything not complete by 04:00 PDT 2026-10-21 is cancelled and the study is deferred"
+ },
+ "readout": {
+  "f": "f = U x with U and xs from mp1_s2.u_matrix on the frozen design (404446eb...), exactly as G3",
+  "domains": {"all_109": "all J cells", "pz_lt_6 (GiBUU)": "pz_index <= 1"},
+  "per_species": ["em", "other"],
+  "quantities": {
+   "T_v": "sum over the domain of the per-cell sample variance (ddof=1) of f_v over the K jitter seeds, v in {0, s-, s+}",
+   "N_unpaired": "sqrt(T_+ + T_- + 4 T_0): the expected second-difference norm (rms) if each unfold carried independent jitter noise of the measured size",
+   "curv_S1": "||f_+ + f_- - 2 f_0|| for the unjittered S1 products (the G3 numerator)",
+   "curv_paired_k": "||f_+,k + f_-,k - 2 f_0,k|| for each jitter seed k (the same jitter seed in all three unfolds)",
+   "curv_jittermean": "||mean_k f_+ + mean_k f_- - 2 mean_k f_0||, compared with N_unpaired / sqrt(K)",
+   "span_k": "||f_+,k - f_-,k|| per jitter seed, and the span of the jitter means",
+   "zero_jitter_vs_S1": "||mean_k f_0,k - f_0,S1|| and the median per-cell relative SD of f_0 over k (descriptive; it mixes the jitter with the float32 -> float64 coordinate change)",
+   "reported_ratios": ["curv_S1 / N_unpaired", "median_k curv_paired_k / N_unpaired", "curv_jittermean / (N_unpaired/sqrt(K))", "curv_jittermean / span_jittermean (descriptive, the G3 form on jitter means, NOT a gate)"]
+  },
+  "reading_rule": "if N_unpaired is of the order of curv_S1 (ratio curv_S1/N_unpaired of order 1, i.e. below about 3), the G3 curvature is read as estimator discreteness under rounding-scale input changes rather than hadronic nonlinearity; if N_unpaired is far below curv_S1 (ratio above about 10), estimator discreteness at this scale is ruled out as the cause; between, undetermined",
+  "caveat_declared": "with K=5 each T_v carries a chi-square(4) relative uncertainty (about +-70% at 1 sigma on T, +-35% on N); the +-1/2-ulp jitter is far smaller than the +-1 sigma species shifts, so a negative result does not exclude a discreteness response at the scale of the shifts themselves"
+ }
+}

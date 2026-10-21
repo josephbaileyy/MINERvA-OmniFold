@@ -1,0 +1,5 @@
+60073901 mp1nj_j1 tasks 0..4
+60073905 mp1nj_j2 tasks 5..9
+60073907 mp1nj_j3 tasks 10..14
+60073908 mp1nj_j4 tasks 15..19
+60073909 mp1nj_j5 tasks 20..24

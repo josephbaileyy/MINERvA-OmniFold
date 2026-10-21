@@ -1,6 +1,6 @@
 # MP1-A S1–S3: report (G3 FAIL for em and other; S2 and S3 stopped)
 
-**Status, 2026-10-20 21:15 PDT.**
+**Status, 2026-10-20 22:40 PDT.**
 - The S1 event loops, merges, lateral dumps and data unfolds all completed, and unfold verification passes.
 - **G3 fails for em and other** (and for the xtalk variant). Under the frozen rule, S2 stops. No band number and no
   decision exists.
@@ -8,6 +8,9 @@
   - MP1-A is recorded as not calibrated, and MP1-A-full is priced (≈ 230–320 CPU node-h);
   - a descriptive noise-floor study was run: the unfold is seed-invariant, so training-seed noise is ruled out;
   - a descriptive partial S2 with proton and meson only was run, labelled post hoc: no decision moves.
+- The director then approved a descriptive input-jitter study (binding addendum 11). By its declared rule, **the G3
+  curvature is read as estimator discreteness under rounding-scale input changes, not hadronic nonlinearity**:
+  curv_S1/N = 1.00–1.19, below 3 (§ "Input-jitter study"). This revives nothing; MP1-A stays not calibrated.
 - Cluster access, lost at 15:04 PDT when the NERSC certificate expired, returned at 17:24 PDT after Joseph renewed it.
   That was before the maintenance drain, so no job was exposed to it (§ "On resumption").
 
@@ -206,7 +209,7 @@ band was evaluated.
 - **Reading, as first sent to the director.** The pattern seemed to fit a floor of unfold response to perturbed inputs
   better than a physical nonlinearity. The noise-floor study below has **refuted this reading in its training-seed form**:
   the unfold is seed-invariant, so the curvature is deterministic. Its other form, a non-smooth response to small input
-  changes, has not been tested.
+  changes, was then tested by the input-jitter study, which reads the curvature as estimator discreteness.
 
 ## The director's ruling on G3 (2026-10-20; binding addendum 10)
 
@@ -217,6 +220,9 @@ band was evaluated.
 2. **A descriptive noise-floor study** is approved (§ "Noise-floor study"). It cannot revive MP1-A.
 3. **A descriptive partial S2** is approved, with only the two bands that passed (§ "Partial S2"). It carries the label
    "not the MP-1 result; species restricted after the G3 outcome; post hoc".
+
+After the noise-floor result, **binding addendum 11** approved a descriptive input-jitter study (§ "Input-jitter
+study") and did not grant MP1-A-full, which waits for the jitter result and the combined-campaign planning.
 
 ## Noise-floor study (DESCRIPTIVE; no gate, no re-gating)
 
@@ -259,8 +265,83 @@ band was evaluated.
   - a physical nonlinearity of the em and other responses;
   - a deterministic but non-smooth response of the binned tree estimator to small input changes. The histogram bin
     edges are built from all rows, so shifting rows moves them.
-  - The second is a hypothesis only; it has not been tested.
+  - The second was a hypothesis only when this study ran. The input-jitter study below tests it.
 - **The declared ratios divide by a quantity at rounding level, so they carry no information beyond curvature ≫ N.**
+
+## Input-jitter study (DESCRIPTIVE; no gate, no re-gating)
+
+**CITABLE FOR:** whether a G3 curvature of the observed size is produced by rounding-scale input changes alone.
+
+**NOT CITABLE FOR:** a G3 result, a calibrated band, an MP-1 result, or a size of the hadronic nonlinearity.
+
+**What was declared.** The design is in `measurement-paper/phase1/mp1/jitter/DECLARATION-jitter.json` (sha256
+`10f7b500…`, recorded 04:13Z, before any submission). The director approved it (binding addendum 11).
+- K = 5 jitter seeds, J = 1–5, for each of zero, em±1σ and other±1σ, on the S1 all-playlist lateral dumps, re-verified
+  by sha.
+- The S1 unfold command, unchanged except for `--pairs=-:<J>` in place of `-:-`:
+  - an edge-safe ±½ float32-ulp jitter of every coordinate;
+  - `s5p_numerics` refuses with rc 5 if any grid membership changes;
+  - the jittered path runs on float64 coordinates.
+- Jitter seed J draws the same per-row steps in every variant, so the five variants at one J are paired.
+- **The reading rule, fixed before submission:**
+  - curv_S1/N_unpaired below about 3: the G3 curvature is read as estimator discreteness under rounding-scale input
+    changes, not hadronic nonlinearity;
+  - above about 10: discreteness at this scale is ruled out;
+  - in between: undetermined.
+
+**How it ran.**
+- Jobs 60073901, 60073905, 60073907, 60073908 and 60073909 on regular, one node per jitter seed, 21:36–22:23 PDT.
+  All COMPLETED 0:0, 712–724 s each. Total **0.997 CPU node-h** (billing 256 confirmed by sacct AllocTRES,
+  [`jitter-receipts/sacct_nj.txt`](jitter-receipts/sacct_nj.txt)), well before the 04:00 PDT cutoff.
+- **No task refused.** All 25 result lines carry rc 0, so no jitter moved any coordinate across a grid edge.
+- The verifier passes for all 25 tasks ([`jitter-receipts/verify_nj.json`](jitter-receipts/verify_nj.json)).
+  - It now takes the product name from `--pairs` (`530fc76c…`).
+  - Re-run on the S1 and noise-floor tables, it still passes both.
+- Each product's meta records its own `jitter_seed` and `jitter_mode` = edge_safe, with estimator seed 42.
+
+**Result** ([`jitter-receipts/jitter.json`](jitter-receipts/jitter.json), sha256 `ca450102…`):
+
+| species, domain | G3 curvature (S1) | jitter-noise expectation N | **curv_S1 / N** | median paired curvature / N | jitter-mean curvature / (N/√5) |
+|---|---:|---:|---:|---:|---:|
+| em, all 109 | 2.193e-41 | 2.003e-41 | **1.09** | 0.98 | 0.75 |
+| em, GiBUU p∥ < 6 | 2.007e-41 | 1.683e-41 | **1.19** | 0.98 | 0.81 |
+| other, all 109 | 1.896e-41 | 1.902e-41 | **1.00** | 0.98 | 0.78 |
+| other, GiBUU p∥ < 6 | 1.721e-41 | 1.646e-41 | **1.05** | 0.88 | 0.76 |
+
+**Reading, by the declared rule.** curv_S1/N is 1.00–1.19 in all four cells, below 3. **The G3 curvature is read as
+estimator discreteness under rounding-scale input changes, not hadronic nonlinearity.**
+- With K = 5, N carries about ±35% at 1σ (the declared caveat). If N were overestimated by that much, the ratios would
+  still be at most about 1.8.
+- **Rounding-scale changes alone produce a curvature of the full G3 size.** Each jittered triplet has a second
+  difference of 1.1–2.8e-41, against S1's 1.7–2.2e-41.
+- **Pairing does not cancel it.** Using the same jitter seed in all three unfolds leaves the curvature at the
+  unpaired-noise size (median ratio 0.88–0.98). The jitter response does not cancel between variants that share the
+  same per-row steps.
+- **Averaging over the five seeds shrinks it as noise.**
+  - The curvature of the jitter means falls to 0.30–0.35 of S1's. Its ratio to N/√5, the expectation for pure noise,
+    is 0.75–0.81, consistent with the residual being noise.
+  - The spans hardly move: the jitter-mean span is 1.02–1.05× S1's.
+  - On jitter means the G3 form is 0.073–0.083. **This is descriptive and NOT a gate.** It was not declared as a gate
+    and cannot revive MP1-A under the frozen PLAN §2.3 rule.
+- **The unjittered S1 product behaves as one more draw from the jitter scatter** (this ratio was not declared; I
+  computed it from the receipt).
+  - S1's f₀ differs from the jitter mean by 9.3e-42 (all 109).
+  - The expectation for one independent draw is √(T₀(1 + 1/K)) = 8.7e-42, so the ratio is 1.07 (1.18 for GiBUU
+    p∥ < 6).
+  - The median per-cell relative SD of f₀ under jitter is 0.21%.
+
+**What the study does not establish.**
+- **It does not measure the hadronic nonlinearity.** At K = 5 the jitter-mean curvature is consistent with residual
+  noise. A nonlinearity smaller than this noise is neither seen nor excluded.
+- **The declared caveat on scale.** The jitter is far smaller than the ±1σ shifts. The study shows that the estimator
+  responds non-smoothly at rounding scale. It does not show what the response looks like at the scale of the shifts.
+- **The mechanism is not identified.** Histogram bin edges built from all rows, or ties in split selection, are both
+  possible. Neither was tested.
+- **Proton, meson and xtalk were not jittered.** This bound is not declared; I derived it from the receipt.
+  - Every second difference uses the same f₀, so its jitter noise is at least 2√T₀ = 1.59e-41 (all 109).
+  - Against that, the G3 curvature norms of proton (2.30e-41), meson (2.35e-41) and xtalk (1.71e-41) are at most
+    1.45×, 1.48× and 1.08×.
+  - So proton's and meson's G3 PASS reflects their larger spans, not a measured linearity.
 
 ## Partial S2: proton and meson only (DESCRIPTIVE)
 
@@ -330,14 +411,17 @@ tests is therefore never used.
   started it.
 - **Design consequence.** The noise-floor study found no training-seed noise, so a seed-averaged MP1-A would change
   nothing, and that cheap redesign is closed.
-  - MP1-A-full replaces the linear surrogate. So whichever cause holds, physical nonlinearity or a non-smooth estimator
-    response, it enters each pseudo-experiment's calibration rather than failing a gate.
-  - The two causes would still read differently: a non-smooth response would be estimator structure carried into the
-    nulls, not hadronic physics.
-  - The design choice belongs to the director.
+  - The input-jitter study reads the G3 curvature as estimator discreteness. So MP1-A-full would carry estimator
+    structure into each pseudo-experiment's null, not a hadronic nonlinearity.
+  - Averaging the endpoints over input jitter shrinks the curvature as noise (§ "Input-jitter study"). Any design
+    built on that would be new and post hoc. It would need the director's ruling and a new declaration, and it cannot
+    revive MP1-A under PLAN §2.3.
+  - MP1-A-full is not granted (binding addendum 11). The design choice belongs to the director.
 
 ## UNCONFIRMED (S1)
 
 - G0 holds on selected-like events only. See the selection-handling note above.
-- The cause of the G3 failures is unmeasured. Training-seed noise is ruled out; physical nonlinearity and a non-smooth
-  estimator response remain.
+- The cause of the G3 failures is read, by the declared jitter rule, as estimator discreteness under rounding-scale
+  input changes. Training-seed noise is ruled out. A hadronic nonlinearity smaller than the jitter noise is neither
+  seen nor excluded, and the estimator's response at the scale of the ±1σ shifts is not measured.
+- The mechanism of the discreteness is not identified (bin edges built from all rows, or split ties).
