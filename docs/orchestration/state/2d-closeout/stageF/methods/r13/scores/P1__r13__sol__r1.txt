@@ -1,0 +1,29 @@
+RATING: 3
+JUSTIFICATION: The prose is technically controlled, but repeated caveats, densely stacked qualifications, and extensive development and record-keeping narrative make it read in several places like an internal validation report requiring a dedicated language pass.
+1. QUOTE: "The diagnostic is binned,
+signal-only and noise-free, with the detector response fixed
+at the simulation’s, on those same truth changes, and covers only the residuals whose diagnosis is stable under the
+truth resolution (38 % of the joint-cell residuals above
+2 %). What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its
+scope."
+   REWRITE: The diagnostic uses binned, signal-only, noise-free pseudo-data with the simulated detector response and the same truth deformations. It covers the 38% of joint-cell residuals above 2% whose diagnosis is stable under changes in truth resolution. It does not assess the information available to unbinned methods, explain the coverage failure, or validate the intervals.
+2. QUOTE: "The test design was fixed before any observed statistic
+was computed, although its reviewers had already seen
+descriptive per-cell residuals of the data. The calibration’s computing budget was later extended by a bounded
+amount with observed p values visible; the error control
+above permits this, because it holds for any stopping
+rule (Ref. [14], Sec. 10.3)."
+   REWRITE: The test design was fixed before the observed statistics were computed, although those reviewing the design had seen descriptive residuals for individual data cells. Calibration sampling was subsequently extended after inspection of the observed p values; the stated error control remains valid under this stopping rule (Ref. [14], Sec. 10.3).
+3. QUOTE: "A candidate release
+
+package of about 16 MB, described there and prepared
+locally but not yet deposited, needs only numpy, scipy,
+and matplotlib. With it a reader can recompute every
+p value, decision, robustness result, and power figure of
+the joint tests, together with the recovery of the lost
+pseudo-experiments, the coarse-projection comparison,
+and the fine-grid L2 ratios of condition (i); regenerate
+the null-distribution figure of the analysis note’s joint-test
+section, the joint (Eavail , W ) map of its fifth-axis section,
+and the one-dimensional generator projections; and recompute the numbers quoted in Sec. VII A."
+   REWRITE: A release package of approximately 16 MB has been prepared but has not yet been deposited. It requires NumPy, SciPy, and Matplotlib and supports reproduction of the joint-test p values, decisions, robustness checks, and power estimates; the recovery of interrupted pseudo-experiments; the coarse-projection comparison; the fine-grid L2 ratios; and the numerical comparisons in Sec. VII A. It also regenerates the null distributions, the joint (Eavail , W ) map, and the one-dimensional generator projections described in Ref. [14].

@@ -1,0 +1,18 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but recurrent audit-style bookkeeping, development history, dense qualifications, and internal terminology require a dedicated language pass to reach polished PRD register.
+1. QUOTE: "The test design was fixed before any observed statistic
+was computed; its reviewers had seen descriptive per-cell
+residuals of the data before it was fixed, and a bounded extension of the calibration’s computing budget was decided
+with observed p values visible, which the result above
+covers, since it holds for any stopping rule (Ref. [14],
+Sec. 10.3)."
+   REWRITE: The test design was finalized before the observed statistics were computed, although the reviewers had seen descriptive per-cell residuals. A limited extension of the calibration budget was subsequently approved with the observed p values available; the error-control result remains applicable because it holds for any stopping rule (Ref. [14], Sec. 10.3).
+2. QUOTE: "These corrected evaluations are descriptive
+and do not re-grade the recorded decisions of Table IV
+(Ref. [14], Sec. 10.9)."
+   REWRITE: The target-corrected comparisons are descriptive; Table IV reports the decisions for the original hypotheses (Ref. [14], Sec. 10.9).
+3. QUOTE: "A candidate release
+package of about 16 MB, described there and prepared
+locally but not yet deposited, needs only numpy, scipy,
+and matplotlib."
+   REWRITE: A release package of approximately 16 MB has been prepared but has not yet been deposited. It is described in the same appendix and requires only NumPy, SciPy, and Matplotlib.

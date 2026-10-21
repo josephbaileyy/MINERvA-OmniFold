@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B eliminates unidiomatic phrasing (e.g., "kept apart"), non-physical legalistic jargon ("materiality"), and British spellings ("analysed") present in Document A, adhering consistently to American Physical Society style.
+2. Document B systematically untangles Document A's clumsy run-on sentences, repetitive negations ("no... no... and no..."), and heavy semicolon chains into clear, well-cadenced declarative statements.
+3. Document B demonstrates superior copy editing by refining syntactic parallelism and integrating awkward trailing qualifiers smoothly into the main narrative.

@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but repeated scope disclaimers, densely stacked qualifications, and project-internal bookkeeping create a report-like register that requires a dedicated language pass.
+1. QUOTE: "A candidate release
+package of about 16 MB, described there and prepared
+locally but not yet deposited, needs only numpy, scipy,
+and matplotlib."
+   REWRITE: The analysis note describes a proposed 16 MB release package that requires NumPy, SciPy, and Matplotlib; the package has not yet been deposited.
+2. QUOTE: "The pseudo-experiments that
+computing time limits interrupted or prevented (224 for
+calibration, 53 for power) were rerun; none reaches the
+observed statistic in any test or shifted null, so no assignment of the lost outcomes changes any decision (Ref. [14],
+Sec. 10.6)."
+   REWRITE: Rerunning 224 calibration and 53 power pseudo-experiments affected by computing limits produced no statistic exceeding the observed value for any test or shifted null. The decisions are therefore unchanged under any assignment of the missing outcomes (Ref. [14], Sec. 10.6).
+3. QUOTE: "The diagnostic is binned,
+signal-only and noise-free, with the detector response fixed
+at the simulation’s, on those same truth changes, and covers only the residuals whose diagnosis is stable under the
+truth resolution (38 % of the joint-cell residuals above
+2 %). What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its
+scope."
+   REWRITE: This diagnostic uses binned, noise-free signal samples with a fixed simulated detector response and the truth changes used to develop the estimator. Its conclusions apply to the 38 % of joint-cell residuals above 2 % whose classification is stable under changes in truth resolution. It does not assess the information recoverable by unbinned methods, explain the coverage failure, or establish interval validity.
