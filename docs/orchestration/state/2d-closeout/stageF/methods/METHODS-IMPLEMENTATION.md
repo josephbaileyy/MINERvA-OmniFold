@@ -406,3 +406,70 @@ register asks above.
 
 **Mechanics** (`mrg9`): rc 0; gates PASS (Sec. IV receipts 15/15); no unresolved references; `swallowed_text.py`
 flags 0. Pages: paper 13, note 135, primer 15. The structural-only commit was built separately (`mrg9s`).
+
+## 13. Register loop, round 3, and the end of the loop (2026-10-21)
+
+**Edits** (writer subagent; paper body, abstract and one figure title):
+- Abstract shortened from 149 to 135 words. The validation findings come first; the generator application is two
+  sentences, with all six of its required caveats.
+- One scope paragraph in Sec. I. Each qualification stays as a clause, with a pointer to its section.
+- Internal-process vocabulary replaced in printed text: "gate" became "acceptance threshold", "the frozen design"
+  became "the design fixed in advance", "development truths" became "the truth changes of the estimator's
+  development studies". The plain "production" wording is gone.
+- GPT-6.1-sol's two r10 rewrites adopted, adapted to keep every fact.
+- The Fig. 3 and Fig. 4 captions are plain statements. The director corrected the writer's Fig. 3 text: "neither
+  panel is a held-out test" overstated the old caption, whose panel (b) shapes were held out when the estimator was
+  chosen. The new text says which seeds each panel uses.
+- Table I is a full-width `table*`.
+- Condition (iv)'s procedure moved to the note (`sec_joint.tex:369-376`).
+
+**Independent two-direction review** (build `mrg11`): 0 MATERIAL, 10 MINOR, several NOTE. All MINOR findings are
+fixed, plus the Fig. 4 verdict wording:
+- the central values "retain the bias" (a new inference) became "whose bias in simulation is given in Sec. V A";
+- the pre-registration sentence again covers the first pseudo-experiment of the calibration and power ensembles;
+- "a bounded extension of the calibration's computing budget was decided while … visible" (the decision, and the
+  budget, not the per-null cap);
+- D-ID's truths are "the truth changes of the estimator's development studies";
+- Table I's Test cells say what was tested;
+- the scope sentence says "the cross section equals a prediction on every cell";
+- "calibrated size";
+- the generative-model pointer;
+- the conditions pointer names its note section;
+- the shift-sizing sentence untangled.
+
+**Figure.** The Fig. 4 panel title said "gate". It is regenerated from its committed receipts by
+`figures/methods_m3/fig_m3_coverage.py`, with "threshold" and a shortened title (the first attempt clipped "153").
+All six of the script's number checks print OK. The PDF text differs from the previous figure only in the title.
+
+**Pages.** Three trims of short-tail paragraphs and a one-line table caption bring the paper back to 13 pages. The
+cross-covariance clause, "the treatments" and "the covariance of Sec. V D" each keep their fact.
+
+**Final rescoring** (`xmodel/r11/`, on the final build `mrg16`):
+
+| | r8 (before) | r9 (round 1) | r10 (round 2) | r11 (round 3) |
+|---|---|---|---|---|
+| GPT-6.1-sol | 3/5 | 3/5 | 3.5/5 | 3/5 |
+| Gemini | 3.5/5 | 3.5/5 | 3.5/5 | 3.5/5 |
+
+All four rate the paper "nearly" ready.
+
+- **Scoring noise.** GPT-6.1-sol's first r11 example of internal-record register is its own r10 rewrite, adopted
+  nearly verbatim. Its scores therefore vary by about ±0.5 between runs on similar text.
+- **Stop.** The loop's cap of three rounds is reached, and 4.5/5 was not reached. Round 3 is adopted on its
+  independent review, not on the scores.
+- **Both models' remaining asks:**
+  - Further reduction of the chronology in Sec. VII.
+  - "Why unfold before testing" moved to the opening of Sec. VII (GPT).
+  - A compact quantitative display of the D-ID comparison (GPT, twice).
+  - The note cited as Supplemental Material, or by stable references, instead of a repository pointer (both). This
+    is tied to the deposit decision, which is Joseph's.
+  - The `[HOLD]` items, which are Joseph's.
+- **Scientific asks (not register).** A controlled comparison that separates background treatment, classifier
+  approximation, regularization and interval construction (IBU-1 and JIT-1, after 2026-10-27), and a data-like
+  null rejection-rate check.
+- **Not adopted.** Gemini's rewrites that remove the chronology where it bears on interpretation. Its claims that
+  the note is "unpublished" or "informal" (it is public at the cited URL, and the deposit is Joseph's decision) and
+  that the paper was "unblinded".
+
+**Mechanics** (`mrg16`): rc 0; gates PASS (Sec. IV receipts 15/15); no unresolved references; `swallowed_text.py`
+flags 0. Pages: paper 13, note 135, primer 15.
