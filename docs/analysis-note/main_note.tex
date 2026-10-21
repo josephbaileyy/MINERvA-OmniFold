@@ -46,8 +46,11 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 
 We study multidimensional medium-energy charged-current neutrino--nucleus
 cross sections on MINERvA open data with OmniFold, an unbinned machine-learning
-unfolding method. An independent unfolding method reproduces the published double-differential cross section in muon transverse and longitudinal
-momentum, including its spectrum and uncertainty scale. That uncertainty is computed with the
+unfolding method. An independent unfolding method reproduces the integral of the published double-differential cross section in muon transverse and longitudinal
+momentum within about one percent, with a correlated shape difference, and reproduces its uncertainty scale.
+% Methods-paper sync (M8, narrowed: "including its spectrum" contradicted the paper's correlated shape difference;
+% main_paper.tex abstract; values.tex:48, :125).
+That uncertainty is computed with the
 central value's own tree-learning implementation, with its universe and statistical blocks at the
 central value's training seed; whether it describes the central value has not been measured.
 % FACT (2026-10-18): the "different tree-learning implementation" clause was stale since 2026-10-11 (DECISION-20261011);
@@ -61,22 +64,42 @@ gives simultaneous \emph{unbinned} three-, four-, and five-observable MINERvA un
 Each passes marginal-normalization checks against the lower-dimensional result to
 % plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
 $\approx$1--2\,\%. Binned MINERvA measurements already reach triple-differential;
-the methodological feature here is simultaneous unbinned unfolding. The unfolds
-recover the established MINERvA low-recoil discrepancy, better described with the
-tested multinucleon contribution, and show a descriptive excess over the
-MINERvA-tuned simulation at high $\Eavail$ and high $W$, where four external
+the methodological feature here is simultaneous unbinned unfolding of five
+related, not independent, observables. The tested generators
+under-predict the central values at low $\Eavail$, in the region of the
+established MINERvA low-recoil discrepancy, and the central values show a
+descriptive excess over the MINERvA-tuned simulation at high $\Eavail$ and high
+$W$, where four external
 generators also under-predict the data, each by about its overall shortfall
-after accounting for high-energy neutrinos absent from the GiBUU sample.
+after accounting for high-energy neutrinos absent from the GiBUU sample, and
+with an uncorrected carbon-versus-CH target difference for NuWro and GiBUU. A
+fifth of that excess sits in the single widest overflow cell, in ratio it also
+extends to low $W$, and the regularization bias is largest there; these
+comparisons locate no interaction mechanism.
+% Fix round (review MINOR 9, 12): the paper's caveats (paper_body.tex sec:central); grammar.
+% Methods-paper sync (M8, removed: the multinucleon attribution of the low-recoil discrepancy; paper_body.tex
+% sec:central).
 Closure tests that include backgrounds show a bias from the purity subtraction,
-which a negative-weight background treatment largely removes. Tests that reweight the
+which a negative-weight background treatment largely removes; that treatment is
+used only for the generator tests, and the central values keep the purity
+subtraction and its bias of up to 4\% in the highest-$W$ cells.
+% Fix round (review MINOR 13): paper_body.tex sec:conclusions.
+Tests that reweight the
 truth shape by about the size of the differences between generators show a
-regularization bias that no quoted uncertainty includes. Coverage and
+residual bias, interpreted as regularization bias, that no quoted uncertainty includes. Coverage and
 % plain-language pass, review fix N2 (DECISION-20261018-joseph-plain-language-pass)
-estimator-seed studies show further limitations. The measured model dependence is too
-large for a five-dimensional measurement with total uncertainties that meet the
-useful-precision targets set in advance. Calibrated joint tests reject all
-five tested generator predictions, in total and in shape, at a 5\% family-wise
-error rate. These tests are valid only under stated conditions. They recover known
+estimator-seed studies show further limitations: statistical intervals miscover at the tested truths.
+With an envelope over five tested truth deformations, none of the tested
+reporting definitions satisfies the adopted 10\% criterion. As an application
+illustrating calibrated inference with a biased estimator, calibrated joint
+tests reject the hybrid null hypotheses for all five tested generator
+predictions, in total and in shape, at a 5\% family-wise error rate under the
+stated calibration assumptions; they are not physical exclusions, and NuWro's
+total-test rejection is not robust to a hydrocarbon-target correction. These
+tests are valid only under stated conditions.
+% Methods-paper sync (M8: residual bias interpreted as regularization bias; miscoverage at the tested truths; the
+% 10% criterion wording; hybrid nulls; familywise statement; DECISION-20261020-joseph-nuwro-ch-claim.md, provisional).
+They recover known
 % plain-language pass, review fix m6 (DECISION-20261018-joseph-plain-language-pass)
 discrepancies, but do not demonstrate discriminating power beyond that of matched
 coarse projections. Their interpretation is limited by the omission of an uncertainty

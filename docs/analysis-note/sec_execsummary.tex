@@ -5,6 +5,11 @@
 We apply \emph{unbinned machine-learning unfolding}
 (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's
 medium-energy neutrino data.
+% Methods-paper sync (METHODS-IMPLEMENTATION.md sec. 4, framing; paper_body.tex sec:intro): validation study first,
+% the generator tests as an application.
+The validation findings, for this implementation and the configurations,
+observables and deformations tested, are the main results; the generator tests
+are an application illustrating calibrated inference with a biased estimator.
 % Cut (lane 1 skeleton; the migration-matrix/morphing mechanism): sec_method.tex:7-32, sec_3d.tex:4-11.
 % Cut (one-page summary): "Reporting binning is imposed only at the end, so a recorded observable
 % can be added without constructing a new response tensor, though higher dimensions complicate
@@ -23,7 +28,8 @@ medium-energy neutrino data.
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \textbf{Reproduction.}
-  Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published result~\cite{MINERvA:2021owq} bin by bin: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed uncertainty comparable to the published one (per-bin median \SI{\uqMedian}{\percent} vs.\ \SI{\uqPaper}{\percent}, integral \SI{\uqIntegral}{\percent} vs.\ \SI{\uqPaperIntegral}{\percent}); its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, which an earlier version omitted (\S\ref{sec:results-uq}). The central value and that uncertainty use the same LightGBM estimator; the quoted central value was changed to it from an exact-split estimator, now a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$ (exact-split $\chiPaperExact$): a correlated shape difference (\S\ref{sec:results-tension}).
+  Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published integrated cross section~\cite{MINERvA:2021owq} within about one percent, with a correlated shape difference: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed uncertainty comparable to the published one (per-bin median \SI{\uqMedian}{\percent} vs.\ \SI{\uqPaper}{\percent}, integral \SI{\uqIntegral}{\percent} vs.\ \SI{\uqPaperIntegral}{\percent}); its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, which an earlier version omitted (\S\ref{sec:results-uq}). The central value and that uncertainty use the same LightGBM estimator; the quoted central value was changed to it from an exact-split estimator, now a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$ (exact-split $\chiPaperExact$), a descriptive distance whose source is not identified (\S\ref{sec:results-tension}).
+  % Methods-paper sync (M8, narrowed: "bin by bin" withdrawn; paper abstract and sec:repro2d, values.tex:48, :85, :125).
   % \uqMedian, \uqIntegral are Q (values.tex; budget_Q.json.gz Q.median_pct, Q.integral_sigma_pct); \uqPaperIntegral 4.61.
   % J3/J4 provisional (DECISION-20261018, packet C2: median and integral; W5: the 6.87 % value is left to sec:results-uq
   % and App. history, to which this clause points (dropped here, and "cross-check" after "exact-split" below, to keep the summary at its page count); W3: the run-period block
@@ -34,20 +40,26 @@ medium-energy neutrino data.
   % "not a normalization one": sec_results.tex:174-175.
 
   \item \textbf{Unbinned 3D/4D/5D MINERvA unfolds.}
-  Adding $\Eavail$, $q_{3}$ and $W$ gives simultaneous unfolds, each passing marginal-normalization checks against the lower-dimensional result to $\approx$1--2\,\% (\S\ref{sec:3d}); binned MINERvA measurements already reach triple-differential~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme}.
+  Adding $\Eavail$, $q_{3}$ and $W$ gives simultaneous unfolds, each passing marginal-normalization checks against the lower-dimensional result to $\approx$1--2\,\% (\S\ref{sec:3d}); binned MINERvA measurements already reach triple-differential~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme}. The 3D and 4D injected-bump closures (residual 0.10 of the injected $\Eavail$ change; $q_{3}$ within \SI{1.1}{\percent}) have no acceptance threshold recorded in advance (\S\ref{sec:3d-closure}, \S\ref{sec:4d}). Reconstructed $W$ is fixed by $(\pT,\pPar,q_{3})$, so the five are simultaneous, not independent, observables (\S\ref{sec:eavailw-definitions}); the \SI{135}{MeV} charged-pion constant in $\Eavail$ is inherited (\S\ref{sec:eavail-definition}).
+  % Methods-paper sync (M8, narrowed and definitions): paper_body.tex sec:validation (0.10; 1.1%; "No record shows an
+  % acceptance threshold fixed before either test"), sec:data (W redundancy; 135 MeV "inherited").
   % plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
   % Cut (one-page summary): the axis names (available energy, momentum transfer, hadronic mass):
   % abstract, sec_3d.tex:12, sec_eavailw.tex:21-25; "the distinction here is the unbinned,
   % simultaneously-unfolded formulation, not multi-dimensionality itself": abstract (main_note.tex:53-54),
   % sec_3d.tex:20-22.
 
-  \item \textbf{Established low-recoil discrepancy recovered.}
-  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}; GENIE and NuWro flux-repaired, \S\ref{sec:3d-models}) under-predict data in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$). Tested pion-FSI dials shift the spectrum by less than \SI{1}{\percent} (same-sample ratio, pre-repair GENIE). Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} fills \SI{52}{\percent} of the data$-$CV gap below $\Eavail=\SI{0.4}{GeV}$, independently recovering the established MINERvA low-recoil/2p2h deficit~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl} (\S\ref{sec:3d-2p2h}, Fig.~\ref{fig:3dmodels}).
+  % Methods-paper sync (M8, removed: the low-recoil mechanism attribution and the 2p2h gap fraction as a measurement;
+  % paper_body.tex sec:central keeps a descriptive statement that points to these sections).
+  \item \textbf{Low-$\Eavail$ central values (descriptive).}
+  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}; GENIE and NuWro flux-repaired, \S\ref{sec:3d-models}) under-predict the unfolded central value in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$), the region of the established MINERvA low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}. The comparisons with the tested pion-FSI dials and with Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} are central-value comparisons without uncertainties and do not identify a nuclear mechanism (\S\ref{sec:3d-2p2h}, Fig.~\ref{fig:3dmodels}).
   % Cut (lane 1 R6, lane 5 R1a): "63 % of the integrated deficit": sec_3d.tex:376-378;
   % flux-repair scope and its ledger row: sec_3d.tex:245-270.
 
   \item \textbf{High-$\Eavail$, high-$W$ excess (descriptive).}
-  In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$ in the deep-inelastic corner; a fifth of the positive difference sits in the single widest overflow cell, this region carries the largest regularization bias, and in ratio the excess also extends to low $W$. The four external generators also underpredict data in the corner, each by about its overall shortfall after allowing for GiBUU's $E_\nu\approx\SI{20}{GeV}$ sample limit. The projection's covariance is used under a documented exception, but the estimator-seed sensitivity measured on two seed-varied companion covariances exceeds the limit fixed before production, so the comparison uses central values only (\S\ref{sec:eavailw-adopted}).
+  In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$; the map describes where the central value differs from Tune~v1 and does not locate an interaction mechanism; a fifth of the positive difference sits in the single widest overflow cell, this region carries the largest regularization bias, and in ratio the excess also extends to low $W$. The four external generators also underpredict data in the corner, each by about its overall shortfall after allowing for GiBUU's $E_\nu\approx\SI{20}{GeV}$ sample limit; the NuWro and GiBUU ratios also contain an uncorrected carbon-versus-CH target difference (\S\ref{sec:eavailw-generators}).
+  % Methods-paper sync (M8, corrections: the target per-nucleon effect, KNOWN_ISSUES 97; paper_body.tex sec:data, sec:central).
+  The projection's covariance is used under a documented exception, but the estimator-seed sensitivity measured on two seed-varied companion covariances exceeds the limit fixed before production, so the comparison uses central values only (\S\ref{sec:eavailw-adopted}).
   % plain-language pass, review fix m4 (DECISION-20261018-joseph-plain-language-pass)
   % Pointers \S\ref{sec:eavailw} and Fig.~\ref{fig:eavailWband} dropped (one-page summary): the
   % section is the item's subject and is reached from \S\ref{sec:eavailw-adopted}; the figure is
@@ -62,8 +74,12 @@ medium-energy neutrino data.
   % covariance digests and digest-identity pairing: sec_eavailw.tex:171-176, 256-260;
   % the exception: sec_eavailw.tex:175-179.
 
-  \item \textbf{Joint five-dimensional generator tests.}
-  Calibrated tests of five predictions (Tune~v1, GENIE with and without MEC, NuWro, GiBUU), in total and in shape, reject all ten simple hypotheses at a family-wise error rate of 0.05 under six stated conditions. Each rejection also holds in a robustness variant, not used for the decisions, that assumes a larger residual below the finest tested grid; that residual is unmeasured. Pseudo-experiments lost to time limits were all rerun and observed afterwards, outside the decisions; none changes a decision. Correcting the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data, and NuWro's total-test rejection does not survive that correction robustly (\S\ref{sec:joint5d-ch}). These are hypothesis tests, not a measured uncertainty (\S\ref{sec:joint5d}).
+  % Methods-paper sync (M8, tests): hybrid nulls, nuisance-averaged size, familywise control at 5% under the stated
+  % calibration assumptions (0.8902 alpha in sec:joint5d-fwer), margins, not physical exclusions, no gain over matched
+  % coarse projections, the missing calorimetric response (paper_body.tex sec:intro scope, sec:calibration,
+  % sec:conditions, sec:joint-results, sec:response). "Simple hypotheses" was wrong: the nulls are hybrid.
+  \item \textbf{Application: joint five-dimensional generator tests.}
+  Calibrated tests of hybrid null hypotheses for five predictions (Tune~v1, GENIE with and without MEC, NuWro, GiBUU; each prediction on the fine grid, with the Tune~v1 composition below it), in total (rate and shape) and in shape, reject all ten under six stated conditions, with the family-wise error rate controlled at 5\% under the stated calibration assumptions and the size averaged over the nuisance priors (\S\ref{sec:joint5d-fwer}). The closest decisions, the NuWro and GENIE~CV shape tests, lie 1.11 and 1.30 null standard deviations beyond their boundary (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions, matched coarse projections reject as well (\S\ref{sec:joint5d-projections}), and there is no calorimetric recoil-response band (\S\ref{sec:joint5d-response}). Each rejection also holds in a robustness variant, not used for the decisions, that assumes a larger residual below the finest tested grid; that residual is unmeasured. Pseudo-experiments lost to time limits were all rerun and observed afterwards, outside the decisions; none changes a decision. Correcting the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data, and NuWro's total-test rejection does not survive that correction robustly (\S\ref{sec:joint5d-ch}). These are hypothesis tests, not a measured uncertainty (\S\ref{sec:joint5d}).
   % Methods-paper rewrite draft 6 (REVIEW-2 finding 19): the CH caveat (DECISION-20261020-joseph-nuwro-ch-claim.md).
   % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
 
@@ -103,7 +119,9 @@ Point-cloud (PET) studies are future work and contribute no result here.}
 % (stageC/production/DESIGN.md §3.4).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, review fix N4 (DECISION-20261018-joseph-plain-language-pass)
-No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
+No frequentist coverage is claimed for any five-dimensional interval: the one test, of bias-corrected statistical intervals of a deterministic estimator variant, miscovers at the tested truths. Under an in-effect \SI{10}{\percent} signal-rate reduction (recorded as an ``$\Eavail$ tilt'') the rate is recovered, and the miscoverage is a residual bias growing with $W$ that the nominal-truth correction does not remove, inferred from fits to the coverage, with its source not established (\S\ref{sec:coverage-5d}).
+% Methods-paper sync (M8, corrections: KNOWN_ISSUES 98; M2-RATEFAIL-DIAGNOSIS.md, CITABLE FOR the decomposition with
+% its inferred status, NOT CITABLE FOR the source of the W-graded term; paper_body.tex sec:validation).
 % Source (2D): docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; VALIDATION_LEDGER VL169.
 % Source (5D): docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 % Shortened (one-page summary): "pre-registered", the interval [0.907, 0.918], where the deficit sits,
@@ -113,7 +131,9 @@ No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec
 % statistical intervals of a deterministic estimator variant and failed its predeclared futility
 % criterion" survives in the cited section, sec_eavailw.tex:590-594.
   \item \emph{Regularization bias.}
-  The estimator fails to follow a generator-sized $\Eavail$ shape change (a fixed-size known-truth deformation, not a measured generator difference), missing by up to \SI{74}{\percent} in the highest-$W$ column; no tested remedy removes this regularization bias, and no quoted uncertainty includes it. Negative-weight background treatment removes most of the purity method's high-$W$ bias, leaving up to about \SI{1}{\percent} in some joint cells (\S\ref{sec:val-negweight}, \S\ref{sec:val-departure}).
+  The estimator recovers only part of a generator-sized $\Eavail$ shape change (a fixed-size known-truth deformation, not a measured generator difference), missing by up to \SI{74}{\percent} in the highest-$W$ column, with or without background. This residual bias under the tested deformations is interpreted as regularization bias, because it persists over the tested iteration numbers and classifier capacities; no tested remedy removes it, and no quoted uncertainty includes it. Negative-weight background treatment removes most of the purity method's high-$W$ bias, leaving up to about \SI{1}{\percent} in some joint cells, but the central values keep the purity subtraction and its bias of up to \SI{4}{\percent} in the highest-$W$ cells; the refinement is used only for the generator tests (\S\ref{sec:val-negweight}, \S\ref{sec:val-departure}).
+% Methods-paper sync (M8, narrowed: residual bias as the observation, interpreted as regularization bias;
+% paper_body.tex sec:validation and sec:conclusions).
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151-VL152;
 % KNOWN_ISSUES 75, 77.
 % Cut (lane 1 #7, lane 5 R1d): "its GENIE input was later found flux-defective": sec_eavailw.tex:353-357.
@@ -131,7 +151,12 @@ No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec
 % Source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
 % Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md;
 % docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md; VL153-VL154; KNOWN_ISSUES 75, 77, 79, 80.
-  \item \emph{Mechanism.} The FSI statement concerns the tested pion dials only; it does not exclude other transport effects or uniquely identify the nuclear mechanism.
+  \item \emph{Mechanism.} The low-$\Eavail$ and $(\Eavail,W)$ comparisons are descriptive central-value statements; they do not identify a nuclear mechanism, and the tested pion-FSI dials do not exclude other transport effects.
+  % Methods-paper sync (M8, removed: the low-recoil mechanism; paper_body.tex sec:central).
+  \item \emph{Five-dimensional measurement.}
+  The envelope over the five tested truth deformations, a sensitivity diagnostic and not an interval, has a median of about 10--13\% per cell, and none of the tested reporting definitions satisfies the adopted \SI{10}{\percent} criterion under the specified envelope prescription, within the study's rules and computing budget (\S\ref{sec:gbdt-model-dependence}).
+  % Methods-paper sync (M8, narrowed: the 10% criterion wording and the five-deformation envelope; paper_body.tex
+  % sec:uncertainty-status; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144).
   \item \emph{Five-dimensional covariance.}
   Four measurements, led by an estimator-seed sensitivity above its preproduction limit (measured on companion covariances), limit every result built from the five-dimensional covariance in use (\S\ref{sec:eavailw-adopted}); no other corrected candidate is used in its place.
 % plain-language pass, review fix m5 (DECISION-20261018-joseph-plain-language-pass)

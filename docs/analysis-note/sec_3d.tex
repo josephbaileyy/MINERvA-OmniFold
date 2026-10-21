@@ -158,7 +158,8 @@ Marginal scatter is $\sim70\times$ tighter than the
 $\SI{4.4}{\percent}$ data-versus-2D scatter; total normalization matches
 to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation}
 ($\Eavail$ projection) the residual is \SI{1.84}{\percent} vs \SI{18.1}{\percent}
-injected (ratio $0.102$); the 3D test passes.
+injected (ratio $0.102$); no acceptance threshold fixed before the test is
+recorded, so it is not graded.
 
 \emph{What closes, stated exactly.} The deformation recovered is one shape: a
 $+\SI{30}{\percent}$ Gaussian in truth $\Eavail$ at
@@ -293,15 +294,17 @@ No 3D covariance, generator $\chi^{2}$, $p$-value or significance is quoted:
 the quotable 3D covariance is the exact projection of the adopted 5D covariance,
 and that projection is constructed but not adopted (App.~\ref{app:history}).
 
-\subsection{The low-available-energy excess recovers the known low-recoil 2p2h deficit}
+% Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism).
+\subsection{The low-available-energy excess and the known low-recoil deficit}
 \label{sec:3d-2p2h}
-The low-$\Eavail$ excess is the most physically interesting feature the third
-axis exposes, and the 3D framework lets us test candidate explanations by
-generating the relevant physics as well as reweighting. MINERvA first isolated the rate enhancement between quasielastic
+The 3D framework lets us compare the low-$\Eavail$ excess with candidate model
+changes, generating the relevant physics as well as reweighting; these are
+central-value comparisons without uncertainties, and they do not identify a
+nuclear mechanism. MINERvA first isolated the rate enhancement between quasielastic
 and $\Delta$ peaks, with multi-nucleon final states, in a
 low-three-momentum-transfer subsample~\cite{MINERvA:2016lowrecoil}.
 The empirical tune was built to absorb it; our muon-kinematics
-$\times\,\Eavail$ measurement re-exposes that established low-recoil feature.
+$\times\,\Eavail$ central values show the predictions falling short in the same region.
 
 \paragraph{The tested pion-FSI variations do not account for it.}
 A \texttt{grwght1p} reweight of 2M central-value GENIE events gives sub-percent
@@ -326,7 +329,7 @@ measurements point toward overestimated proton and charged-pion FSI in their mod
 comparisons~\cite{MINERvA:2026qeleme}. Their different signal definition prevents
 directly identifying that effect with our inclusive discrepancy.
 
-\paragraph{The shape and size match 2p2h.} The base GENIE central value uses
+\paragraph{Comparison with a missing 2p2h component.} The base GENIE central value uses
 the default event-generator list and contains \emph{no}
 meson-exchange-current (2p2h/MEC) events
 ($\texttt{mec}=0$ for all $1.48\times10^{6}$ CC events of the generated
@@ -341,13 +344,13 @@ positive gaps in the quasielastic--$\Delta$ dip,
 $[0.10,0.20)$ and $[0.20,0.40)$, while central values are much closer in the
 QE-dominated $[0,0.10)$ and $[0.40,1.50)$ regions.
 At central value, \SI{70}{\percent} of the positive deficit lies at
-$\Eavail\le\SI{0.4}{GeV}$, exactly where 2p2h lives. Closing the integrated deficit
+$\Eavail\le\SI{0.4}{GeV}$, where 2p2h events populate. Closing the integrated deficit
 requires 2p2h at $\approx\SI{45}{\percent}$ of the QE rate
 (\SIrange{68}{71}{\percent} in the two dip bins), the standard
 magnitude of the empirical and Valencia MEC models, compared with sub-percent FSI shifts
 (Fig.~\ref{fig:modedecomp}).
 
-\paragraph{Enabling Valencia 2p2h improves the description.} We regenerated the GENIE central
+\paragraph{GENIE with Valencia 2p2h enabled.} We regenerated the GENIE central
 value with Valencia 2p2h enabled (\texttt{--event-generator-list
 Default+CCMEC}, 2M events). Because the Nieves--Simo--Vacas MEC channel, though
 present in the splines, is absent from the \texttt{gspl2root} total-CC graph, we
@@ -355,7 +358,7 @@ normalize by the non-MEC CC count, anchoring QE$+$RES$+$DIS$+$COH to the known t
 adding MEC through $1/(1-f_{\mathrm{MEC}})$ with
 $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$.
 2p2h falls in the dip and brings all three low-$\Eavail$ bins toward data
-(Fig.~\ref{fig:mec}), filling
+(Fig.~\ref{fig:mec}), closing, in central values without uncertainties,
 \SI{52}{\percent} of the data$-$CV gap at $\Eavail\le\SI{0.4}{GeV}$ and \SI{63}{\percent} of the
 integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{2.6}{\percent}$;
 App.~\ref{app:history}). The prediction
@@ -364,10 +367,9 @@ still falls short in the dip, especially $[0.10,0.20)$, but its integral over
 the reported $\Eavail$ range is closer to data than
 Tune~v1 ($-\SI{2.6}{\percent}$ against $-\SI{9.5}{\percent}$). Tune v1
 layers MINERvA's empirical low-recoil 2p2h \emph{enhancement} and RPA on top of
-the stock Valencia MEC --- i.e.\ stock Valencia 2p2h is real but under-strength
-for MINERvA low recoil, which is precisely the known MINERvA-tune story and is
-consistent with NuWro and GiBUU (native, un-enhanced 2p2h) sitting low in the
-dip as well.
+the stock Valencia MEC. The central values are consistent with the known need
+for that enhancement, and with NuWro and GiBUU (native, un-enhanced 2p2h)
+sitting low in the dip as well, but they do not establish it.
 
 2p2h leaves the high-$\Eavail$ $[1.50,3.00)$ bin unchanged. There, data
 exceed the GENIE CV by about \SI{9}{\percent} (data/CV $1.09$;
@@ -375,8 +377,7 @@ App.~\ref{app:history}) and exceed Tune~v1 as well; the high-$\Eavail$
 excess over Tune~v1 is localized on the $(\Eavail,W)$ plane in
 \S\ref{sec:eavailw}.
 
-The improvement supports the tested multinucleon contribution's relevance
-without uniquely identifying a nuclear mechanism. For example, recent NEUT studies include
+These comparisons do not identify a nuclear mechanism. For example, recent NEUT studies include
 two-body currents contributing to one-particle--one-hole final states and examine their
 interplay with axial form factors
 \cite{FrancoMunoz:2026currents}. A two-body current is not synonymous with the
@@ -389,9 +390,9 @@ measurement for $q_{3}<\SI{1.2}{GeV}$ at the same
 $\langle E_\nu\rangle\sim\SI{6}{GeV}$, finding GENIE and NuWro underpredicting
 their low-$\Eavail$ data without enhanced 2p2h. Our muon-kinematics extension integrates all $q_3$
 instead of fixing $q_3$, limiting comparison to $\Eavail$ \emph{shape} and
-direction, without absolute normalization. The consistency confirms recovery
-of the established MINERvA low-recoil/2p2h feature as a by-product of the
-OmniFold 3D muon-kinematics unfolding. Bin-identical central values follow in
+direction, without absolute normalization. The central values are consistent
+in $\Eavail$ shape and direction with that established low-recoil deficit; the
+comparison is descriptive and does not measure its cause. Bin-identical central values follow in
 \S\ref{sec:4d}.
 
 \begin{figure}[H]
@@ -401,8 +402,8 @@ OmniFold 3D muon-kinematics unfolding. Bin-identical central values follow in
     \includegraphics[width=\textwidth]{mode_decomp_eavail_central}
     \caption{Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid
     with unfolded data. The excess lies in the quasielastic--$\Delta$ dip
-    ($\Eavail\le\SI{0.4}{GeV}$), matching a missing 2p2h component's shape and
-    size. Data carry no error bars because the quotable 3D covariance is not
+    ($\Eavail\le\SI{0.4}{GeV}$), where a missing 2p2h component would
+    populate. Data carry no error bars because the quotable 3D covariance is not
     yet adopted (App.~\ref{app:history}).}
     \label{fig:modedecomp}
   \end{minipage}\hfill
@@ -410,8 +411,8 @@ OmniFold 3D muon-kinematics unfolding. Bin-identical central values follow in
     \centering
     \includegraphics[width=\textwidth]{compare_mec_eavail_central}
     \caption{GENIE regenerated with Valencia 2p2h (red, stacked on
-    no-2p2h CV; both flux-repaired) fills about half the low-$\Eavail$
-    data$-$CV gap (\SI{52}{\percent}). The remainder occupies the region the
+    no-2p2h CV; both flux-repaired) closes about half the low-$\Eavail$
+    data$-$CV gap in central values (\SI{52}{\percent}). The remainder occupies the region the
     MINERvA tune's empirical enhancement is built to absorb. Data carry no
     error bars because the quotable 3D covariance is not yet adopted
     (App.~\ref{app:history}).}

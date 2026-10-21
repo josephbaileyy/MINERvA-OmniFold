@@ -147,7 +147,7 @@ docs/orchestration/DECISION-20261018-joseph-2d-j3-j5-provisional.md	tracked	LIVE
 docs/orchestration/DECISION-20261018-joseph-plain-language-pass.md	tracked	LIVE	document		20261018	open		route-only		no	5	45	2631
 docs/orchestration/DECISION-20261018-joseph-plain-language-pass2.md	tracked	LIVE	document		20261018	open		route-only		no	5	58	4901
 docs/orchestration/DECISION-20261019-joseph-methods-first-and-measurement-compute.md	tracked	LIVE	document	20261006-s5p-campaign	20261019	open		route-only		no	8	86	6638
-docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md	tracked	LIVE	document		20261020	open		route-only		no	7	46	2849
+docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md	tracked	LIVE	document		20261020	open		route-only		no	10	46	2849
 docs/orchestration/DECISION-20261020-joseph-refined-estimator-shorten-delta.md	tracked	LIVE	document		20261020	open		route-only		no	9	46	3079
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only		no	3	537	36540
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	nd-unfolding/tests/test_run_m1_projection_refusals.py	no	5	1369	92325
@@ -259,7 +259,7 @@ docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	d
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	72	70	8866
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	6	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	76	678	55966
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;nd-unfolding/tests/test_object_identity_checks.py	no	129	3861	1268122
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;nd-unfolding/tests/test_object_identity_checks.py	no	129	3861	1268123
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	9	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	18	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	7	239	14244
@@ -1392,10 +1392,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/M-TRAINING-DETAILS.md	tracke
 docs/orchestration/state/2d-closeout/stageF/methods/M2-ARCHIVE-CHECKS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	135	12073
 docs/orchestration/state/2d-closeout/stageF/methods/M2-AUDIT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	12	219	23349
 docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	7	74	4632
-docs/orchestration/state/2d-closeout/stageF/methods/M2-RATEFAIL-DIAGNOSIS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	110	12124
+docs/orchestration/state/2d-closeout/stageF/methods/M2-RATEFAIL-DIAGNOSIS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	8	110	12124
 docs/orchestration/state/2d-closeout/stageF/methods/M4-DEFINITIONS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	3	341	22563
 docs/orchestration/state/2d-closeout/stageF/methods/M4-W-RECORD.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	8	159	12984
-docs/orchestration/state/2d-closeout/stageF/methods/METHODS-IMPLEMENTATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	2	194	11644
+docs/orchestration/state/2d-closeout/stageF/methods/METHODS-IMPLEMENTATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	214	12699
 docs/orchestration/state/2d-closeout/stageF/methods/OUTLINE-DECISION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	4	59	5056
 docs/orchestration/state/2d-closeout/stageF/methods/RE1-REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	2	113	9249
 docs/orchestration/state/2d-closeout/stageF/methods/RE1-SPEC.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	4	59	3724

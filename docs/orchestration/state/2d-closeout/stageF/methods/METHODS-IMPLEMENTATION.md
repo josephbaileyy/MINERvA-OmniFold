@@ -192,3 +192,23 @@ The 12-page target would require moving limitation text, so the pass stopped at 
 - **1 NOTE applied:** the GEANT4 bands' inclusion is now stated.
 
 **Build `mrs2`:** rc 0, gates PASS (15/15), no unresolved references, and the swallowed-text checks are clean.
+
+## 8. Primer and note summaries brought in line with the paper (2026-10-21)
+
+**Files changed:**
+- the primer (`main_primer.tex`, `primer_body.tex`);
+- the note's executive summary, summary and abstract (`sec_execsummary.tex`, `sec_summary.tex`, `main_note.tex`);
+- the status table (`result_status_rows.tex`);
+- stale body statements in `sec_validation.tex`, `sec_3d.tex` and `sec_eavailw.tex`.
+
+**What changed:**
+- **The primer is reframed as a validation study.** Its title is now "How well does a machine-learning unfolding method
+  work on neutrino data?".
+- **The paper's narrowed claims and test conditions** are carried, including the NuWro CH sentence verbatim.
+- **Withdrawn mechanism and "first" claims are removed.**
+
+**Review.** An independent review found 2 MATERIAL problems (a count-type CH statement; the primer abstract lacking
+the rejections' limits), 1 coupled MATERIAL (the status table) and 13 MINOR. All are fixed, and the build `mps2` gives
+rc 0, gates PASS and no unresolved references.
+
+**Pages:** primer 15, note 133, paper 13.

@@ -9,9 +9,12 @@
 \PRIMERtrue
 \input{values}
 
-\title{Measuring a neutrino cross section by teaching a computer to
-re-weight a simulation\\[4pt]
-\large A plain-language guide to the unbinned-OmniFold MINERvA analysis}
+% Primer sync to the methods paper (METHODS-IMPLEMENTATION.md sec. 4, framing): the title follows the paper's
+% "Performance and limitations of multidimensional OmniFold unfolding with MINERvA open data" (main_paper.tex).
+\title{How well does a machine-learning unfolding method work on neutrino
+data?\\[4pt]
+\large A plain-language guide to a study of multidimensional OmniFold with
+MINERvA open data}
 \author{Joseph Bailey \and Benjamin Nachman}
 \date{\today}
 
@@ -19,26 +22,35 @@ re-weight a simulation\\[4pt]
 \maketitle
 
 \begin{abstract}
-This is a short, jargon-light guide to a measurement of how often
-muon-neutrinos interact in the MINERvA detector, and to the machine-learning
-method (``unbinned OmniFold'') used to make it. It explains why the method
 % plain-language pass, director ruling on base defect F2, F12 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 % plain-language pass 2, review fix P-8, P-10 (DECISION-20261018-joseph-plain-language-pass2)
 % P-8: the no-significance caveat the overview gives this feature; P-10: "what the method does in everyday terms"
 % and the closing "does" cut to keep the abstract near 150 words. "More practical than" (ruling F2) is kept.
-makes measuring several quantities at once more practical than the traditional
-method, and what we found. The method
-closely reproduces a published result, although its quoted statistical error
-bars have not been tested for coverage. Measuring up to five quantities at once,
-it recovers an established low-recoil discrepancy and locates an excess over
-MINERvA's tuned simulation; these are central values only, with no significance
-assigned. A separate
-test rejects hybrid versions of five widely used simulations, under stated
-conditions. A study of extending the signal definition (the set of interactions
-the measurement counts) beyond the published limits on the muon's motion keeps
-the part supported by the detector's data separate from the part dominated by
-the simulation.
+% Primer sync to the methods paper (METHODS-IMPLEMENTATION.md sec. 4; main_paper.tex abstract): the validation
+% findings lead; the generator tests are an illustration. The method-advantage clause kept under ruling F2 now lives only in
+% primer_body.tex Sec. 2 ("The decisive advantage"), to hold the abstract near 150 words. Withdrawn here: the low-recoil "recovery" and the located
+% excess (paper sec:central keeps both as descriptive central-value comparisons only). "About one percent" is
+% \ratioTot (values.tex:48); "10%" is the adopted criterion (paper_body.tex sec:uncertainty-status).
+% Fix round (review M2, MINOR 5): the paper's limits on the rejections (not physical exclusions; no evidence of
+% gain over matched coarse projections; NuWro's total test not robust to the CH correction, DECISION-20261020,
+% provisional); the 10% criterion "under the specified envelope prescription". The exploratory-studies sentence
+% was dropped for length (Sec. 3 lists both studies).
+This plain-language guide describes a study of OmniFold, a machine-learning
+unfolding method (correcting data for detector blurring),
+on public MINERvA neutrino data. It asks how well the method works when
+several quantities are unfolded at once. It reproduces the overall rate of a
+published MINERvA cross section to about one percent, with a shape
+difference. Unfolding five related quantities gives best estimates only:
+their totals agree with simpler results, but simulated tests show biases
+when the truth changes by as much as simulations differ, statistical error bars fail a
+direct test, and no tested way of reporting the result meets our adopted 10\%
+precision target under the study's prescription. As an illustration, tests
+calibrated by simulating the whole analysis reject hybrid versions of five
+simulations under stated conditions. These rejections are not
+physical exclusions, give no evidence of gain over matched simpler
+projections, and, for NuWro's overall test, are not robust to a
+hydrocarbon-target correction.
 \end{abstract}
 
 \input{primer_body}
