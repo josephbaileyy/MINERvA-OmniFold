@@ -1,0 +1,10 @@
+DESCRIPTIVE G3 DIAGNOSTIC, not an S2 number
+||f0(MP1 zero) - f0(W2b rrzero)||_2, all 109: 0
+  implied curvature-norm scale sqrt(6)/sqrt(2)*that: 0
+W2b rr0+rr1-2*rrzero norm 4.00955e-41, rr1-rr0 norm 4.77545e-40, ratio 0.0840
+median |f0-fw|/f0: 0
+bkg keys equal: True
+  bkg_nd float64 (14, 16, 7, 7, 6) (14, 16, 7, 7, 6) EQUAL
+  bkg_reco float64 (621547, 5) (621547, 5) EQUAL
+  bkg_w float64 (621547,) (621547,) EQUAL
+  meta <U651 () () DIFF

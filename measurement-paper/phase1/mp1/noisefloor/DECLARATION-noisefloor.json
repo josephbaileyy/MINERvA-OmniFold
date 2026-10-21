@@ -1,0 +1,38 @@
+{
+ "schema": "mp1a-noisefloor-declaration/1",
+ "declared_at": "2026-10-21T00:34Z (written before any noise-floor unfold was submitted)",
+ "authority": "director ruling on the MP1-A G3 outcome, 2026-10-20, item 2 (to be recorded in binding addendum 10)",
+ "status": "DESCRIPTIVE. No gate, no re-gating. It cannot revive MP1-A under the frozen PLAN 2.3 rule; it informs whether MP1-A-full is needed or a training-noise floor should be handled by a different design.",
+ "inputs": {
+  "note": "the S1 real-data lateral dumps (merged over all 12 playlists, 1A..1P), unchanged; each task re-verifies the dump sha256",
+  "variants": ["zero", "em_m1", "em_p1", "other_m1", "other_p1"]
+ },
+ "unfold": {
+  "deploy": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56 (pinned 4e4b4f56bb0c4715dcf567829ac0449bfac745de, through its s5c_array.sh)",
+  "argv": "s5p_numerics.py --npz/--bkg (expect sha256) --config R --iters 5 --construction data --pairs=-:- --threads 32 --estimator-seed <seed>",
+  "only_change_from_S1": "--estimator-seed (S1 used the default 42); for --construction data it is the only stochastic input (refinement and OmniFold estimator seeds)",
+  "perturbed_seeds": [1001, 1002, 1003, 1004, 1005],
+  "K": 5,
+  "seed_42_products": "the S1 products mp1s1_<v>_b-_j-.npz are reported beside the K seeds, never pooled into the scatter estimate"
+ },
+ "compute": {
+  "qos": "debug", "layout": "one exclusive node per seed, the 5 variants as concurrent srun steps (32 cpus, 56G each)",
+  "jobs": 5, "time_limit": "00:30:00", "cap_cpu_node_h": 4.0,
+  "deadline": "anything not complete by 05:30 PDT 2026-10-21 is cancelled and the study is deferred"
+ },
+ "readout": {
+  "f": "f = U x with U and xs from mp1_s2.u_matrix on the frozen design (404446eb...), exactly as G3",
+  "domains": {"all_109": "all J cells", "pz_lt_6 (GiBUU)": "pz_index <= 1"},
+  "per_species": ["em", "other"],
+  "quantities": {
+   "T_v": "sum over the domain of the per-cell sample variance (ddof=1) of f_v over the K seeds, v in {0, s-, s+}",
+   "N_unpaired": "sqrt(T_+ + T_- + 4 T_0): the expected second-difference norm (rms) if each unfold carried independent noise of the measured size",
+   "curv_S1": "||f_+ + f_- - 2 f_0|| for the seed-42 products (the G3 numerator)",
+   "curv_paired_k": "||f_+,k + f_-,k - 2 f_0,k|| for each seed k, the same seed in all three unfolds as in S1",
+   "curv_seedmean": "||mean_k f_+ + mean_k f_- - 2 mean_k f_0||, compared with N_unpaired / sqrt(K)",
+   "span_k": "||f_+,k - f_-,k|| per seed, and the span of the seed means",
+   "reported_ratios": ["curv_S1 / N_unpaired", "median_k curv_paired_k / N_unpaired", "curv_seedmean / (N_unpaired/sqrt(K))", "curv_seedmean / span_seedmean (descriptive, the G3 form on seed means, NOT a gate)"]
+  },
+  "caveat_declared": "with K=5 each T_v carries a chi-square(4) relative uncertainty (about +-70% at 1 sigma on T, +-35% on N); readings within a factor ~2 of 1 are not distinguished"
+ }
+}

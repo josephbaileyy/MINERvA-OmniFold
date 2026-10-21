@@ -1,0 +1,625 @@
+{
+ "unfolds": {
+  "mp1s1_unfold_zero": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+    "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "expected": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+    "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "expected": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task0-60046417.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_zero_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 656.093
+    }
+   ],
+   "s5c": [
+    "[s5c] task=0 name=mp1s1_unfold_zero job=60046417 host=nid004407 start=2026-10-20T18:40:58Z",
+    "[s5c] task=0 name=mp1s1_unfold_zero rc=0 end=2026-10-20T18:52:21Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_zero_b-_j-.npz",
+   "product_sha256": "f1d5178a86c1aa417d477d205669b642c66760b7e8e65f98b426e1d9d950d195",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_proton_m1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1.npz",
+    "sha256": "42d2c23bc6832b5cd3506fdf5a5b6cd7ddcbf9c4a901a548bf3daa40dd7598c1",
+    "expected": "42d2c23bc6832b5cd3506fdf5a5b6cd7ddcbf9c4a901a548bf3daa40dd7598c1",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1_bkg.npz",
+    "sha256": "7df9b35f34daa409bbb5d2873cab13a524e0df3ba05d4dc0f2fd6d7556d76789",
+    "expected": "7df9b35f34daa409bbb5d2873cab13a524e0df3ba05d4dc0f2fd6d7556d76789",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task1-60046417.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_proton_m1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 657.179
+    }
+   ],
+   "s5c": [
+    "[s5c] task=1 name=mp1s1_unfold_proton_m1 job=60046417 host=nid004407 start=2026-10-20T18:40:58Z",
+    "[s5c] task=1 name=mp1s1_unfold_proton_m1 rc=0 end=2026-10-20T18:52:23Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_proton_m1_b-_j-.npz",
+   "product_sha256": "bfffb8c54df3895ac1f98113027382418789ed43b59224fe3de8d7bc36419091",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_proton_p1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_p1.npz",
+    "sha256": "38c382d9ad34b1da181130a088fabd8785efb995eab5ab0317c74a91f274c73a",
+    "expected": "38c382d9ad34b1da181130a088fabd8785efb995eab5ab0317c74a91f274c73a",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_p1_bkg.npz",
+    "sha256": "1073c6e1cbec9f2c1217bd9262a51e36261df167c7a96f9fa7772598c895ba79",
+    "expected": "1073c6e1cbec9f2c1217bd9262a51e36261df167c7a96f9fa7772598c895ba79",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task2-60046417.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_proton_p1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 659.263
+    }
+   ],
+   "s5c": [
+    "[s5c] task=2 name=mp1s1_unfold_proton_p1 job=60046417 host=nid004407 start=2026-10-20T18:40:58Z",
+    "[s5c] task=2 name=mp1s1_unfold_proton_p1 rc=0 end=2026-10-20T18:52:24Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_proton_p1_b-_j-.npz",
+   "product_sha256": "8cbe49ae8407aafb2a67ecdcb6829717dfb8cd3ce1c0c8afe5469c9457f01390",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_meson_m1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_m1.npz",
+    "sha256": "eb2eaf7ed4fae35a36bc82e05e22b5d1c136e10ccd56493c0b1b3295e3da3ffc",
+    "expected": "eb2eaf7ed4fae35a36bc82e05e22b5d1c136e10ccd56493c0b1b3295e3da3ffc",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_m1_bkg.npz",
+    "sha256": "d661f59d97528066a9b58b04413f4056101308e350a3a6bddae2b8b835b0f080",
+    "expected": "d661f59d97528066a9b58b04413f4056101308e350a3a6bddae2b8b835b0f080",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task3-60046417.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_meson_m1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 655.492
+    }
+   ],
+   "s5c": [
+    "[s5c] task=3 name=mp1s1_unfold_meson_m1 job=60046417 host=nid004407 start=2026-10-20T18:40:58Z",
+    "[s5c] task=3 name=mp1s1_unfold_meson_m1 rc=0 end=2026-10-20T18:52:21Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_meson_m1_b-_j-.npz",
+   "product_sha256": "6f3fbb50ec9102fe198d08f323c20ddce420457f5f3c2e5b13ed7f541a652a21",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_meson_p1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_p1.npz",
+    "sha256": "de17924ff9cd548c0b6e461fb4da63fab2af8b5ff95fa7837f21f736537bf123",
+    "expected": "de17924ff9cd548c0b6e461fb4da63fab2af8b5ff95fa7837f21f736537bf123",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_p1_bkg.npz",
+    "sha256": "d06178f5caa1f1c6ba7cca72dcd0282c851ae65be7e20fda110d7ce337159c38",
+    "expected": "d06178f5caa1f1c6ba7cca72dcd0282c851ae65be7e20fda110d7ce337159c38",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task4-60046419.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_meson_p1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 657.029
+    }
+   ],
+   "s5c": [
+    "[s5c] task=4 name=mp1s1_unfold_meson_p1 job=60046419 host=nid004438 start=2026-10-20T18:40:59Z",
+    "[s5c] task=4 name=mp1s1_unfold_meson_p1 rc=0 end=2026-10-20T18:52:29Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_meson_p1_b-_j-.npz",
+   "product_sha256": "e54b01c1c44445362dc11d23c725fd957927348a91ad5ab2cda6ab25ba0e257c",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_em_m1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+    "sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "expected": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+    "sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "expected": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task5-60046419.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_em_m1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 658.738
+    }
+   ],
+   "s5c": [
+    "[s5c] task=5 name=mp1s1_unfold_em_m1 job=60046419 host=nid004438 start=2026-10-20T18:40:59Z",
+    "[s5c] task=5 name=mp1s1_unfold_em_m1 rc=0 end=2026-10-20T18:52:30Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_em_m1_b-_j-.npz",
+   "product_sha256": "a13521a902c855209e4b7faba3d6e199819a7735e234d8385526d36b56de71d2",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_em_p1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+    "sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "expected": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+    "sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "expected": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task6-60046419.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_em_p1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 658.366
+    }
+   ],
+   "s5c": [
+    "[s5c] task=6 name=mp1s1_unfold_em_p1 job=60046419 host=nid004438 start=2026-10-20T18:40:59Z",
+    "[s5c] task=6 name=mp1s1_unfold_em_p1 rc=0 end=2026-10-20T18:52:30Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_em_p1_b-_j-.npz",
+   "product_sha256": "15d8d224dba91f9f6ed80324e9bdd99403e1c9207b77c7f616fe70124418883c",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_other_m1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+    "sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "expected": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+    "sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "expected": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task7-60046419.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_other_m1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 657.513
+    }
+   ],
+   "s5c": [
+    "[s5c] task=7 name=mp1s1_unfold_other_m1 job=60046419 host=nid004438 start=2026-10-20T18:40:59Z",
+    "[s5c] task=7 name=mp1s1_unfold_other_m1 rc=0 end=2026-10-20T18:52:29Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_other_m1_b-_j-.npz",
+   "product_sha256": "6580cbde395d16bd3a2decf34dc1fd7dc06e7c87f1615af86826217115e4536e",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_other_p1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+    "sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "expected": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+    "sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "expected": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task8-60046421.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_other_p1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 656.076
+    }
+   ],
+   "s5c": [
+    "[s5c] task=8 name=mp1s1_unfold_other_p1 job=60046421 host=nid004155 start=2026-10-20T18:53:14Z",
+    "[s5c] task=8 name=mp1s1_unfold_other_p1 rc=0 end=2026-10-20T19:04:45Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_other_p1_b-_j-.npz",
+   "product_sha256": "b30f13fb4ea6813e01664c0c3e21c28f1ef7bb14c6dc79bf4a68e390788d799c",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_xtalk_m1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_m1.npz",
+    "sha256": "5cbc1f2c4e4c9ab9877170a2701d16233f43ac5bdd37710c3a6988e49d89fd75",
+    "expected": "5cbc1f2c4e4c9ab9877170a2701d16233f43ac5bdd37710c3a6988e49d89fd75",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_m1_bkg.npz",
+    "sha256": "9b7e6f486e23b28d4fac845cf49e4e495aa1928314d506b1d1552d3ab667c38e",
+    "expected": "9b7e6f486e23b28d4fac845cf49e4e495aa1928314d506b1d1552d3ab667c38e",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task9-60046421.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_xtalk_m1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 653.994
+    }
+   ],
+   "s5c": [
+    "[s5c] task=9 name=mp1s1_unfold_xtalk_m1 job=60046421 host=nid004155 start=2026-10-20T18:53:14Z",
+    "[s5c] task=9 name=mp1s1_unfold_xtalk_m1 rc=0 end=2026-10-20T19:04:43Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_xtalk_m1_b-_j-.npz",
+   "product_sha256": "c3d8134b28728af68a1e2d10cf4a38ca0061fe561a67cdb79b4d5742b446c882",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1s1_unfold_xtalk_p1": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_p1.npz",
+    "sha256": "268f89651bf7885a99736da37dccc30d1719434f970b8b2ee4d37ea30de26021",
+    "expected": "268f89651bf7885a99736da37dccc30d1719434f970b8b2ee4d37ea30de26021",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_p1_bkg.npz",
+    "sha256": "9b410d32dedf723fd6d46fbb942580805387f0cb06712b6b3793a666a5bafe2d",
+    "expected": "9b410d32dedf723fd6d46fbb942580805387f0cb06712b6b3793a666a5bafe2d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unfold-run-task10-60046421.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1s1_xtalk_p1_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 659.029
+    }
+   ],
+   "s5c": [
+    "[s5c] task=10 name=mp1s1_unfold_xtalk_p1 job=60046421 host=nid004155 start=2026-10-20T18:53:14Z",
+    "[s5c] task=10 name=mp1s1_unfold_xtalk_p1 rc=0 end=2026-10-20T19:04:48Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_xtalk_p1_b-_j-.npz",
+   "product_sha256": "6e0abe1572bd6624223259dab92017b316702dbb68782d5a4aac7ebe9a8d8ce8",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  }
+ },
+ "dump_inputs": {
+  "mp1s1_dump_zero": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_zero.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "out_sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+   "out_bkg_sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66"
+  },
+  "mp1s1_dump_proton_m1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_proton_m1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1.npz",
+   "out_sha256": "42d2c23bc6832b5cd3506fdf5a5b6cd7ddcbf9c4a901a548bf3daa40dd7598c1",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1_bkg.npz",
+   "out_bkg_sha256": "7df9b35f34daa409bbb5d2873cab13a524e0df3ba05d4dc0f2fd6d7556d76789"
+  },
+  "mp1s1_dump_proton_p1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_proton_p1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_p1.npz",
+   "out_sha256": "38c382d9ad34b1da181130a088fabd8785efb995eab5ab0317c74a91f274c73a",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_p1_bkg.npz",
+   "out_bkg_sha256": "1073c6e1cbec9f2c1217bd9262a51e36261df167c7a96f9fa7772598c895ba79"
+  },
+  "mp1s1_dump_meson_m1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_meson_m1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_m1.npz",
+   "out_sha256": "eb2eaf7ed4fae35a36bc82e05e22b5d1c136e10ccd56493c0b1b3295e3da3ffc",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_m1_bkg.npz",
+   "out_bkg_sha256": "d661f59d97528066a9b58b04413f4056101308e350a3a6bddae2b8b835b0f080"
+  },
+  "mp1s1_dump_meson_p1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_meson_p1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_p1.npz",
+   "out_sha256": "de17924ff9cd548c0b6e461fb4da63fab2af8b5ff95fa7837f21f736537bf123",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_p1_bkg.npz",
+   "out_bkg_sha256": "d06178f5caa1f1c6ba7cca72dcd0282c851ae65be7e20fda110d7ce337159c38"
+  },
+  "mp1s1_dump_em_m1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_em_m1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+   "out_sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+   "out_bkg_sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f"
+  },
+  "mp1s1_dump_em_p1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_em_p1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+   "out_sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+   "out_bkg_sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d"
+  },
+  "mp1s1_dump_other_m1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_other_m1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+   "out_sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+   "out_bkg_sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2"
+  },
+  "mp1s1_dump_other_p1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_other_p1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+   "out_sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+   "out_bkg_sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9"
+  },
+  "mp1s1_dump_xtalk_m1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_xtalk_m1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_m1.npz",
+   "out_sha256": "5cbc1f2c4e4c9ab9877170a2701d16233f43ac5bdd37710c3a6988e49d89fd75",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_m1_bkg.npz",
+   "out_bkg_sha256": "9b7e6f486e23b28d4fac845cf49e4e495aa1928314d506b1d1552d3ab667c38e"
+  },
+  "mp1s1_dump_xtalk_p1": {
+   "omnifile": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_xtalk_p1.root",
+   "exists": true,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_p1.npz",
+   "out_sha256": "268f89651bf7885a99736da37dccc30d1719434f970b8b2ee4d37ea30de26021",
+   "out_bkg": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_p1_bkg.npz",
+   "out_bkg_sha256": "9b410d32dedf723fd6d46fbb942580805387f0cb06712b6b3793a666a5bafe2d"
+  }
+ },
+ "failures": [],
+ "n_unfolds": 11,
+ "verdict": "PASS"
+}
