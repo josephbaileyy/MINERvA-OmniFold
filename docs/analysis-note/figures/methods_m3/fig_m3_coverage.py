@@ -93,7 +93,7 @@ def main() -> None:
     ax.set_ylim(-0.02, 1.13)
     ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.set_ylabel("empirical coverage")
-    ax.set_title(rf"signal rate lowered by about 10% with a weak $E_{{\rm avail}}$ slope: upper bound below the gate for {below[(t, '68')]} (68%) and "
+    ax.set_title(rf"signal rate lowered by about 10%, weak $E_{{\rm avail}}$ slope: upper bound below threshold for {below[(t, '68')]} (68%) and "
                  f"{below[(t, '95')]} (95%) of 153", fontsize=7.4, loc="left")
     for xc, txt in (((n_ew - 1) / 2, r"$(E_{\rm avail},W)$ cells 0–41 and their sum"),
                     (n_ew + (152 - n_ew) / 2, "109 coarse joint cells, by index in the $3^5$ grid"),
