@@ -1,0 +1,31 @@
+{
+ "verdict": "PASS",
+ "failures": [],
+ "products": {
+  "mp1nj_unfold_zero_j1": "fb503e295fd2",
+  "mp1nj_unfold_em_m1_j1": "c172ab3a7149",
+  "mp1nj_unfold_em_p1_j1": "efeb1667887f",
+  "mp1nj_unfold_other_m1_j1": "62a4797bd97c",
+  "mp1nj_unfold_other_p1_j1": "91d450d42d13",
+  "mp1nj_unfold_zero_j2": "c1622354582f",
+  "mp1nj_unfold_em_m1_j2": "c24a6ebeff13",
+  "mp1nj_unfold_em_p1_j2": "576f575ef937",
+  "mp1nj_unfold_other_m1_j2": "f1923842fbaf",
+  "mp1nj_unfold_other_p1_j2": "2314573e9a43",
+  "mp1nj_unfold_zero_j3": "c9a69b731c05",
+  "mp1nj_unfold_em_m1_j3": "1df24ce234bb",
+  "mp1nj_unfold_em_p1_j3": "732b384cb23d",
+  "mp1nj_unfold_other_m1_j3": "929386af5f37",
+  "mp1nj_unfold_other_p1_j3": "5aec72e9d14b",
+  "mp1nj_unfold_zero_j4": "16845b817c93",
+  "mp1nj_unfold_em_m1_j4": "d542dc9e50a1",
+  "mp1nj_unfold_em_p1_j4": "51c47031c568",
+  "mp1nj_unfold_other_m1_j4": "84b038184070",
+  "mp1nj_unfold_other_p1_j4": "43cef796d52b",
+  "mp1nj_unfold_zero_j5": "35f6b24ef310",
+  "mp1nj_unfold_em_m1_j5": "089d71dee47f",
+  "mp1nj_unfold_em_p1_j5": "ed16d6c9122a",
+  "mp1nj_unfold_other_m1_j5": "16e38c277e09",
+  "mp1nj_unfold_other_p1_j5": "c2eb63337740"
+ }
+}
