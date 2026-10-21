@@ -1,0 +1,193 @@
+{
+ "status": "DESCRIPTIVE. No gate, no re-gating. It cannot revive MP1-A under the frozen PLAN 2.3 rule; it tests whether the G3 curvature is the estimator's response to rounding-scale input changes rather than a hadronic nonlinearity.",
+ "reading_rule": "if N_unpaired is of the order of curv_S1 (ratio curv_S1/N_unpaired of order 1, i.e. below about 3), the G3 curvature is read as estimator discreteness under rounding-scale input changes rather than hadronic nonlinearity; if N_unpaired is far below curv_S1 (ratio above about 10), estimator discreteness at this scale is ruled out as the cause; between, undetermined",
+ "declaration_sha256": "10f7b5006838f71a806731501ae7b83e3856de9da0912bafc1aec47fda75552f",
+ "K": 5,
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "products_sha256": {
+  "mp1nj_zero_b-_j1.npz": "fb503e295fd275e08776ef9c112b04ac6aff73a69c4c728327efc3a03f4f1f8a",
+  "mp1nj_zero_b-_j2.npz": "c1622354582fd63083d003bb4ba5bf11f7185c2c34572be56b75e7843023431f",
+  "mp1nj_zero_b-_j3.npz": "c9a69b731c0523af64488bd2aa29805885f77f26089a8b54f64be417dfd2071c",
+  "mp1nj_zero_b-_j4.npz": "16845b817c93480b4746e235b6d21f72f60598be553c3b3cff788235f82ebf0d",
+  "mp1nj_zero_b-_j5.npz": "35f6b24ef3108636186d66b99acb58c844c575c8e6a73d68b153c12663204a2d",
+  "mp1s1_zero_b-_j-.npz": "f1d5178a86c1aa417d477d205669b642c66760b7e8e65f98b426e1d9d950d195",
+  "mp1nj_em_m1_b-_j1.npz": "c172ab3a71498772a41a26dd90fa4a9c3d1529abb76cc2ce531b6bd2457efb54",
+  "mp1nj_em_m1_b-_j2.npz": "c24a6ebeff13164f3b70676ef6af254bca1885aab53036769166e498521048e9",
+  "mp1nj_em_m1_b-_j3.npz": "1df24ce234bbc0da5d54a4ac465ac10b32ec9f58dc0e5501a55317d5198f27af",
+  "mp1nj_em_m1_b-_j4.npz": "d542dc9e50a161938c1519842ac2f5bacb1eb612f7cc81a4b6e71be799838330",
+  "mp1nj_em_m1_b-_j5.npz": "089d71dee47fe7a073335a282a0fb222cccfef7c2c7bf6f965098b365bdc6f78",
+  "mp1s1_em_m1_b-_j-.npz": "a13521a902c855209e4b7faba3d6e199819a7735e234d8385526d36b56de71d2",
+  "mp1nj_em_p1_b-_j1.npz": "efeb1667887f8f2fa1efeb358997270a7317c336c0268e76696b12e37b5f6213",
+  "mp1nj_em_p1_b-_j2.npz": "576f575ef937343465c650aadd91d1500ddb016594068cb027a686da920306fc",
+  "mp1nj_em_p1_b-_j3.npz": "732b384cb23d79d25b2778efc68bcad781b0a4b1a16fc2c153a55564434e59dc",
+  "mp1nj_em_p1_b-_j4.npz": "51c47031c5689f1e0afeba40b95f41ef701e31bf85f7d41916d1e3094d227f7d",
+  "mp1nj_em_p1_b-_j5.npz": "ed16d6c9122aa9870bb5388379cdf7b184a0f05f7d99cf333430ab5070a4eb81",
+  "mp1s1_em_p1_b-_j-.npz": "15d8d224dba91f9f6ed80324e9bdd99403e1c9207b77c7f616fe70124418883c",
+  "mp1nj_other_m1_b-_j1.npz": "62a4797bd97cf8977104fcf1daccaa520f24735e5127d6b11bbbf759565ea7ea",
+  "mp1nj_other_m1_b-_j2.npz": "f1923842fbaf0c1cf3a6cba2be7b2c65338acf12c30ce77232e0842ade021f00",
+  "mp1nj_other_m1_b-_j3.npz": "929386af5f3766dc5ef4f560440bf2cffbd5bce739ea524fc73c8c5c0d06d0bb",
+  "mp1nj_other_m1_b-_j4.npz": "84b0381840701754697546d2ff93ee1b0b94211cb79184ed8b74a2c2cbab7b2c",
+  "mp1nj_other_m1_b-_j5.npz": "16e38c277e09daa17acc97e39ed380e755f9a50bd4db29040dc59b26c0005053",
+  "mp1s1_other_m1_b-_j-.npz": "6580cbde395d16bd3a2decf34dc1fd7dc06e7c87f1615af86826217115e4536e",
+  "mp1nj_other_p1_b-_j1.npz": "91d450d42d13b2a50a0ff437c6a5249cdb0de3875c326af6e67f176258a5ef23",
+  "mp1nj_other_p1_b-_j2.npz": "2314573e9a432f2713715727af752e6b833c9d5e0db42c6cdbbe80f3e8075873",
+  "mp1nj_other_p1_b-_j3.npz": "5aec72e9d14bde2e9b0edfef987cc06b986305badba24ee4b6f209e2ef5a308e",
+  "mp1nj_other_p1_b-_j4.npz": "43cef796d52bb03d06db035a1f471ecd34410077a5b06e68c83486599f88d912",
+  "mp1nj_other_p1_b-_j5.npz": "c2eb633377403b229547730138a5a10f22e76bff47199ea3ab08164a28c7cc52",
+  "mp1s1_other_p1_b-_j-.npz": "b30f13fb4ea6813e01664c0c3e21c28f1ef7bb14c6dc79bf4a68e390788d799c"
+ },
+ "zero_seed_scatter": {
+  "all_109": {
+   "T_0": 6.321704634280596e-83,
+   "median_rel_sd": 0.0021299555325984872,
+   "S1_minus_jittermean_norm": 9.316519280358206e-42,
+   "S1_minus_jittermean_rel_median": 0.0017356756255143737
+  },
+  "pz_lt_6 (GiBUU)": {
+   "T_0": 4.6503220040925744e-83,
+   "median_rel_sd": 0.002079254457438183,
+   "S1_minus_jittermean_norm": 8.806754981479358e-42,
+   "S1_minus_jittermean_rel_median": 0.0014968073207864952
+  }
+ },
+ "species": {
+  "em": {
+   "all_109": {
+    "T": {
+     "minus": 6.2419739790114476e-83,
+     "plus": 8.59776224248132e-83,
+     "zero": 6.321704634280596e-83
+    },
+    "N_unpaired": 2.0031613703996778e-41,
+    "curv_S1": 2.192781244442894e-41,
+    "span_S1": 8.837779399136776e-41,
+    "curv_paired_k": [
+     1.9255886617903486e-41,
+     2.775313114332295e-41,
+     2.329744640515257e-41,
+     1.9634921988368695e-41,
+     1.8887249090800843e-41
+    ],
+    "span_k": [
+     9.303982100829204e-41,
+     9.248595679797456e-41,
+     9.280781079325737e-41,
+     9.535195538159502e-41,
+     8.793632894027896e-41
+    ],
+    "curv_jittermean": 6.693899073851896e-42,
+    "span_jittermean": 9.188122691235918e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 1.0946603088723614,
+     "median_k curv_paired_k/N_unpaired": 0.9801967169749817,
+     "curv_jittermean/(N_unpaired/sqrt(K))": 0.7472195493001772,
+     "curv_jittermean/span_jittermean (descriptive, NOT a gate)": 0.07285382769471359
+    }
+   },
+   "pz_lt_6 (GiBUU)": {
+    "T": {
+     "minus": 4.633943684427681e-83,
+     "plus": 5.084506170797105e-83,
+     "zero": 4.6503220040925744e-83
+    },
+    "N_unpaired": 1.6828469292123714e-41,
+    "curv_S1": 2.00700358433849e-41,
+    "span_S1": 7.781876530823809e-41,
+    "curv_paired_k": [
+     1.1724770600157602e-41,
+     2.571661695761075e-41,
+     1.6441738385756955e-41,
+     1.872092747627865e-41,
+     1.1434236904071214e-41
+    ],
+    "span_k": [
+     8.097648267564468e-41,
+     8.118517916685528e-41,
+     8.555737882715884e-41,
+     8.46811315342174e-41,
+     7.632897170874026e-41
+    ],
+    "curv_jittermean": 6.097451315465873e-42,
+    "span_jittermean": 8.143997771163068e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 1.192623969238744,
+     "median_k curv_paired_k/N_unpaired": 0.9770192463940994,
+     "curv_jittermean/(N_unpaired/sqrt(K))": 0.810193452191075,
+     "curv_jittermean/span_jittermean (descriptive, NOT a gate)": 0.07487049342101033
+    }
+   }
+  },
+  "other": {
+   "all_109": {
+    "T": {
+     "minus": 4.4276734604493295e-83,
+     "plus": 6.474421427073469e-83,
+     "zero": 6.321704634280596e-83
+    },
+    "N_unpaired": 1.902338388001598e-41,
+    "curv_S1": 1.8960247521014756e-41,
+    "span_S1": 7.869759543473275e-41,
+    "curv_paired_k": [
+     1.8563952410034178e-41,
+     2.590592337660007e-41,
+     2.0009508374391787e-41,
+     1.4599592467121596e-41,
+     1.6011705193505891e-41
+    ],
+    "span_k": [
+     7.893837440571661e-41,
+     8.211123006174032e-41,
+     8.182571577716363e-41,
+     8.115732031136245e-41,
+     8.051646777764883e-41
+    ],
+    "curv_jittermean": 6.673097227373755e-42,
+    "span_jittermean": 8.042455572593067e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 0.9966811183856965,
+     "median_k curv_paired_k/N_unpaired": 0.975849119542584,
+     "curv_jittermean/(N_unpaired/sqrt(K))": 0.7843766973839017,
+     "curv_jittermean/span_jittermean (descriptive, NOT a gate)": 0.08297338004718627
+    }
+   },
+   "pz_lt_6 (GiBUU)": {
+    "T": {
+     "minus": 3.528881277786922e-83,
+     "plus": 4.964262669866903e-83,
+     "zero": 4.6503220040925744e-83
+    },
+    "N_unpaired": 1.6460386375788425e-41,
+    "curv_S1": 1.720567905338173e-41,
+    "span_S1": 6.896016429799984e-41,
+    "curv_paired_k": [
+     1.3282879089992472e-41,
+     2.250894738262194e-41,
+     1.8519895039000105e-41,
+     1.2039491364835874e-41,
+     1.4475154298617114e-41
+    ],
+    "span_k": [
+     7.029382275941823e-41,
+     7.498031579815447e-41,
+     7.463591693698234e-41,
+     7.518951409136545e-41,
+     7.019698436018284e-41
+    ],
+    "curv_jittermean": 5.579589501271619e-42,
+    "span_jittermean": 7.269702487591268e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 1.0452779576723397,
+     "median_k curv_paired_k/N_unpaired": 0.8793933488650432,
+     "curv_jittermean/(N_unpaired/sqrt(K))": 0.7579616375068168,
+     "curv_jittermean/span_jittermean (descriptive, NOT a gate)": 0.07675127710928308
+    }
+   }
+  }
+ }
+}

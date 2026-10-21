@@ -102,7 +102,9 @@ for name, argv in rows(NS / "tables" / TABLE):
     r["inventory"]["outside_expect_root"] = outside
     if script_now != top["script_sha256"] or not top["allow_is_empty"] or not top["guard_installed"] or any(outside):
         fail.append(f"{name}: inventory")
-    prod = Path(opt(argv, "--out")) / f"{opt(argv, '--tag')}_b-_j-.npz"
+    pairs = [x for x in argv if x.startswith("--pairs=")]   # S1 and the noise floor pass -:-, the jitter study -:<J>
+    b, j = (pairs[0].split("=", 1)[1] if pairs else "-:-").split(":")
+    prod = Path(opt(argv, "--out")) / f"{opt(argv, '--tag')}_b{b}_j{j}.npz"
     r["product"] = str(prod)
     if not prod.is_file():
         fail.append(f"{name}: product missing")
