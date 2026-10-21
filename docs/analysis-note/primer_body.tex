@@ -4,7 +4,9 @@
 % are shared with the collaboration note via the common \graphicspath.
 % ====================================================================
 
-\section{What was measured, and why it is hard}
+% Primer sync to the methods paper (M8, framing): "measured" becomes "studied" (paper Sec. I: a case study, not a
+% validated five-observable measurement).
+\section{What was studied, and why it is hard}
 
 A neutrino is a nearly invisible particle: it passes through ordinary matter
 almost without a trace. To study neutrinos, the MINERvA experiment at Fermilab
@@ -23,6 +25,19 @@ being the detector's finite resolution and efficiency. The job of
 nature produced from the smeared distribution the detector recorded. It is the
 same problem as deblurring a photograph, and like deblurring it is delicate ---
 done carelessly it amplifies noise into artifacts.
+
+% Primer sync to the methods paper (M8, framing; paper_body.tex sec:intro, "This paper evaluates that implementation
+% as a case study [...] it does not deliver a validated five-observable cross-section measurement"; "These validation
+% studies are the paper's main results"; "As an application [...] illustrates calibrated inference with a biased
+% estimator"; "These findings concern this implementation [...], not multidimensional OmniFold in general").
+This guide describes a study of one newer unfolding method on MINERvA's public
+data. Its main results are the tests of the method: how well it reproduces a
+published measurement, and how far its answers can be trusted when it unfolds
+several quantities at once. A test of five simulations then serves as an
+example of how hypothesis tests can still be made with a method whose answers
+are known to be biased. The findings concern this implementation and the tests
+we ran, not the method in general, and the study does not deliver a validated
+five-quantity cross-section measurement.
 
 \section{The method, in plain language}
 
@@ -107,18 +122,22 @@ here on we call them the \emph{tree learner}.
 \section{What we found}
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
-Our results have different levels of validation, so we first list each finding
-with how far it has been tested. The rest of this section gives the details: the
-findings, then the limits that matter most, then a separate test of five
-simulations, and finally two exploratory studies.
+% Primer sync to the methods paper (M8, framing): the validation findings first, the generator tests as an
+% application (paper_body.tex sec:intro and sec:conclusions).
+Our main results are what the tests of the method found, so we first list each
+finding with how far it has been tested. The rest of this section gives the
+details: the findings, then the limits that matter most, then a test of five
+simulations as an application, and finally two exploratory studies.
 \begin{itemize}
 % plain-language pass, review fix R7, RD2 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
-\item \textbf{A published result, reproduced.} The two-variable central value
-  (the best estimate itself, apart from its error bars) reproduces MINERvA's
-  published measurement: the overall rate agrees to about one percent, although
-  a shape difference remains when judged with the published correlations between
-  cells. Its size depends on which of two implementations of the tree learner
+% Primer sync to the methods paper (M8, narrowed result; paper abstract, "reproduces the published muon-kinematic
+% cross section's integral within about one percent, with a correlated shape difference"; X5 G2).
+\item \textbf{A published result: the rate reproduced, the shape not exactly.}
+  The two-variable central value (the best estimate itself, apart from its
+  error bars) reproduces the overall rate of MINERvA's published measurement to
+  about one percent, but a shape difference remains when judged with the
+  published correlations between cells. Its size depends on which of two implementations of the tree learner
   is used, and we chose which one to quote after both comparisons were known.
   Some effects are not included in its error budget, and we make no coverage
   claim for it.
@@ -134,45 +153,73 @@ simulations, and finally two exploratory studies.
 % E_avail-shape departure. 9.7 % median: sec_5d.tex:73; OUTCOME-20260925-s5n-stage1-development-fail.md:76.
 % plain-language pass 2, review fix P-3 (DECISION-20261018-joseph-plain-language-pass2)
 % "the highest-W cells much more": up to 74 % at high W, sec_5d.tex:74; paper_body.tex sec:validation.
+% Primer sync to the methods paper (M8, narrowed results): the 3D/4D recovery checks carry no recorded threshold
+% (paper_body.tex sec:validation, "No record shows an acceptance threshold fixed before either test"); the residual
+% bias is the observation, interpreted as regularization bias; the coverage failure is a residual bias under a ~10%
+% rate reduction (KNOWN_ISSUES 98; M2-RATEFAIL-DIAGNOSIS.md); the 10% criterion wording and the five-deformation
+% envelope (paper sec:uncertainty-status). Project vocabulary ("documented exception") replaced.
 \item \textbf{More quantities at once.} The higher-dimensional central values
-  pass particular recovery checks, but they are shown as central values only.
-  Other end-to-end tests show biases that are not included in their quoted
-  uncertainty: when the simulated truth is changed by a test pattern of the size
-  of a difference between generators, typical cells come back about
-  \SI{10}{\percent} off and the highest-$W$ cells much more, and the background
-  removal leaves a bias in some cells.
-  That uncertainty has not met the requirements we set in advance, and it is used
-  only under a documented exception to them, so their error bars have not been
-  shown to be right. The one direct test of whether such error bars contain the
-  truth as often as stated, made on a variant of the method, failed. No
-  significance is assigned to their differences from the simulations, because
-  the uncertainty depends measurably on the learner's random seed.
+  agree in overall normalization with the simpler results they extend, but they
+  are shown as central values only. End-to-end tests on simulation show biases
+  that are not included in their quoted uncertainty: when the simulated truth
+  is changed by a test pattern of the size of a difference between generators,
+  typical cells come back about \SI{10}{\percent} off and the highest-$W$ cells
+  much more, which we read as the method's pull toward its starting simulation;
+  and the background removal leaves a bias in some cells.
+  That uncertainty has not met the requirements we set before building it, so
+  their error bars have not been shown to be right. The one direct test of
+  whether such error bars contain the truth as often as stated, made on a
+  variant of the method, failed under a simulated signal rate about
+  \SI{10}{\percent} lower; a diagnosis from the stored outputs attributes this
+  to a remaining bias rather than to error bars that are too narrow (inferred
+  from the coverage numbers; its source is not established). No tested way of
+  reporting a five-quantity measurement meets the \SI{10}{\percent} precision
+  we adopted as a target, under the reporting study's prescription.
+  % Fix round (review MINOR 2, 5).
+  No significance
+  is assigned to their differences from the simulations, because the
+  uncertainty depends measurably on the learner's random seed.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
-\item \textbf{Known and new features in the data.} In these central values, all
-  four tested simulations fall short of the data at low available energy,
-  resembling an established low-recoil discrepancy. Adding a two-nucleon
-  process fills part of the gap, without uniquely establishing the cause. The
-  excess over MINERvA's tuned simulation is concentrated in one corner, at high
-  available energy and high hadronic mass.
+% Primer sync to the methods paper (M8, removed): the two-nucleon "fills part of the gap" attribution and the corner
+% localization left the paper; sec:central keeps descriptive central-value comparisons that locate no mechanism.
+\item \textbf{Where the best estimates differ from simulations.} In these
+  central values, all four tested simulations fall short of the data at low
+  available energy, in the region of an established low-recoil discrepancy,
+  and the difference from MINERvA's tuned simulation lies mostly at high
+  available energy and high hadronic mass, although a fifth of it sits in the
+  single widest corner cell and, as a ratio, the excess also extends to low
+  hadronic mass. These comparisons describe where the best estimates differ;
+  they do not identify a physical cause.
+  % Fix round (review MINOR 9): the paper's caveats (paper_body.tex sec:central).
 % plain-language pass 2, review fix P-2 (DECISION-20261018-joseph-plain-language-pass2)
 % The body's caveat at the corner claim (paper_body.tex at 34650231, l.577-580: the regularization bias is largest there).
-  The corner is also where the unfolding's bias toward its starting simulation
-  is largest. Neither feature is assigned a statistical significance.
+  The high-energy, high-mass region is also where the unfolding's bias toward
+  its starting simulation is largest. Neither feature is assigned a statistical significance.
 % plain-language pass, review fix R6 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
-\item \textbf{A joint test of five simulations.} This is a separate inference
-  from the measurements, a test of the simulations rather than a new measurement
-  with new error bars. Under stated modelling assumptions and six stated
-  conditions, each of five widely used simulations, in the hybrid form defined
-  below, is rejected at a combined error level of five percent, both overall and
-  in shape alone. The two conditions that matter most are that the test has no
+% Primer sync to the methods paper (M8, framing and tests): an application illustrating calibrated inference with a
+% biased estimator; familywise 5% under the stated calibration assumptions; not physical exclusions; NuWro's total
+% (rate-and-shape) rejection not robust to the CH correction (DECISION-20261020-joseph-nuwro-ch-claim.md,
+% provisional; paper_body.tex sec:joint-results).
+\item \textbf{An application: a joint test of five simulations.} This is a
+  separate inference from the unfolded results, a test of the simulations rather
+  than a new measurement with new error bars, and it illustrates how a biased
+  method can still be used for calibrated hypothesis tests. Under stated
+  modelling assumptions and six stated conditions, each of five widely used
+  simulations, in the hybrid form defined below, is rejected at a combined
+  error level of five percent, both overall and in shape alone. The rejections
+  are of these hybrid hypotheses, not physical exclusions of the simulations,
+  and one of them, NuWro's overall test, does not survive robustly a
+  correction of its prediction to the detector's target material. The two conditions that matter most are that the test has no
   uncertainty for the calorimeter's response to the hadronic recoil energy, and
 % plain-language pass 2, review fix P-13 (DECISION-20261018-joseph-plain-language-pass2)
 % The two grids: the hypotheses are defined on the fine analysis grid, the tests are evaluated on a coarse 3^5 grid
 % (paper_body.tex sec:joint, "Hypotheses, statistics, and calibration"); the unbounded error is below the fine grid.
   that the possible error from structure finer than the grid on which the
-  hypotheses are defined is not bounded. The test does not show that the five quantities together discriminate
-  better than matched coarse projections of them.
+  hypotheses are defined is not bounded. The test gives no evidence that the
+  five quantities together discriminate better than matched coarse projections
+  of them.
+  % Fix round (review MINOR 7): the paper's "no evidence of additional discrimination".
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 \item \textbf{A neural network on raw detector data.} PET, a neural network that
   reads the individual energy deposits in the detector, remains method
@@ -193,12 +240,19 @@ Each result is only as validated as its own checks.
 
 Before trusting a new method, one must show it reproduces an established
 measurement. MINERvA already published this muon cross section using the
-traditional method. Our machine-learning result agrees with it closely: the
-overall interaction rate matches to about one percent (ratio $\ratioTot$), and
+traditional method. Our machine-learning result agrees with it in overall
+rate: the interaction rate matches to about one percent (ratio $\ratioTot$), and
 \SI{\binsTen}{\percent} of the individual measurement cells agree within ten
 percent. Judged with the published correlations between cells, a shape difference
 % plain-language pass, director ruling on base defect F11 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-remains. Just as important, our \emph{uncertainties} --- worked out
+% Primer sync to the methods paper (M8, narrowed 2D result): paper_body.tex sec:repro2d, chi2/ndf = \chiPaper
+% (values.tex:125), "a correlated shape difference [...] its source has not been identified", "a reproduction with a
+% learner chosen after the benchmark was seen, not an independent validation".
+remains, spread over many independent patterns of the published correlations,
+with no single band of either momentum carrying more than \SI{15}{\percent} of
+it; its source has not been identified.
+% Fix round (review MINOR 8): "many eigenmodes of the published covariance" (paper_body.tex sec:repro2d).
+ Just as important, our \emph{uncertainties} --- worked out
 independently of the published analysis --- come out close in size to the published ones
 (\SI{\uqMedian}{\percent} versus \SI{\uqPaper}{\percent} typical). Ours are a little smaller in the typical cell,
 % \uqMedian = 6.45, rebuild/outputs/outA/budget_Q.json.gz Q.median_pct (Q = S5 total + C_PL); still below \uqPaper.
@@ -214,8 +268,9 @@ published.
 % W5: the "earlier version ... 6.87 percent" clause dropped, the chain is in the note's App. history).
 % \uqIntegral = budget_Q.json.gz Q.integral_sigma_pct (4.755); \uqPaperIntegral = 4.61 (values.tex).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
-The new method reproduces the old answer, and its error bars are close in size
-to the published ones.
+% Primer sync to the methods paper (M8, narrowed 2D result): "reproduces the old answer" narrowed to its rate.
+The new method reproduces the old answer's overall rate, and its error bars are
+close in size to the published ones.
 
 One qualification: two software implementations of the tree learner give
 answers that differ by about one percent in a typical cell, and the size of the
@@ -225,7 +280,8 @@ originally quoted the slower one. We made this choice after both comparisons wit
 % J3/J4 provisional (DECISION-20261018, packet W3: D5 not in the primer): the run-period block is built from seed-42
 % per-period unfolds of the same pipeline (period-unfold REPORT §1).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
-published result were known.
+published result were known, so the comparison is a reproduction with a
+learner chosen after the result was seen, not an independent validation.
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 % Theme B (primer P1): the list of repaired defects moved to the note, sec_systematics.tex sec:uq-2d-construction
@@ -285,53 +341,75 @@ The published numbers are unchanged by this check.
 % Theme A (primer F-new-8): legend "GENIE 2.12.6 + MnvTune v1", color red, in 2d-unfolding/plot_2d_threeway_fig13.py:200
 % (called by make_figures.sh:35); paper_body.tex:110-111; note sec_experiment.tex:24.
   \caption{The unfolded muon cross section as a function of the two momentum
-  components. This reproduces a published MINERvA measurement, but was produced
-  by the machine-learning method described above. The red curve is MINERvA's
+  components. This reproduces the overall rate of a published MINERvA
+  measurement, with a difference in shape, but was produced by the
+  machine-learning method described above. The red curve is MINERvA's
   tuned simulation (Tune~v1, built on GENIE~2.12.6), the starting point of the
   unfolding; the untuned GENIE~2.12.10 of Fig.~\ref{fig:primergen} is a
   different simulation.}
 \end{figure}
 
-\subsection*{Then, measure more at once --- and rediscover known physics}
+% Primer sync to the methods paper (M8, removed): the heading's "rediscover known physics" (the low-recoil
+% attribution left the paper).
+\subsection*{Then, unfold more quantities at once}
 
 % plain-language pass, director ruling on base defect F3 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
 % plain-language pass, review fix R3 (DECISION-20261018-joseph-plain-language-pass)
-With the central value reproduced, and its error bars found close in size to
+With the overall rate reproduced, and the error bars found close in size to
 the published ones, we used OmniFold's defining ability and unfolded
-several quantities \emph{simultaneously} and \emph{without binning} --- a first
-at MINERvA, where earlier multi-quantity results used binned methods: the muon
+% Primer sync to the methods paper (M8, removed): the priority claim ("first application"; the paper's "We are not
+% aware of an application" sentence was removed). The 135 MeV convention: paper_body.tex sec:data ("inherited from the
+% analysis framework's definition"; 0.67% of events move bin, no bin changes by more than 1.05%).
+several quantities \emph{simultaneously} and \emph{without binning}: the muon
 momentum together with the available energy ($\Eavail$, roughly how much energy
 the struck nucleus released), the momentum transfer ($q_{3}$), and the hadronic
-mass ($W$).
+mass ($W$). Available energy, as defined here, counts each charged pion's
+energy minus a fixed \SI{135}{MeV} rather than minus its mass, a convention
+inherited from the analysis software and used alike for the data and every
+prediction; compared with the pion mass it moves \SI{0.67}{\percent} of
+simulated events into another bin.
 % plain-language pass, review fix N1, director instruction: normalization agreement only (DECISION-20261018-joseph-plain-language-pass)
-Each richer measurement, when collapsed back down, agrees with the simpler one
-in overall normalization --- a built-in consistency check.
+Each richer result, when collapsed back down, agrees with the simpler one
+in overall normalization, to about 1--2 percent --- a built-in consistency
+check. In two recovery checks, an injected bump in the true available energy
+comes back apart from a tenth of the injected change, and an injected bump in
+momentum transfer to about one percent. No pass mark was fixed in advance, so
+neither is graded.
+% Fix round (review MINOR 1; E3 "result" for the higher-dimensional outputs).
+% Primer sync to the methods paper (M8, narrowed): paper_body.tex sec:validation (1--2%; 0.10 of the injected change;
+% 1.1%; no record of an acceptance threshold fixed before either test).
 
-These are five recorded coordinates, not five demonstrated independent pieces
-of information. The reconstructed momentum transfer and hadronic mass reuse
-the muon's motion and the same recoil-energy estimate. Available energy is
-a different quantity: in particular it omits energy carried by neutrons at
-truth level. A new coordinate can help the learner describe correlations
-without revealing a new independently measurable direction.
+% Primer sync to the methods paper (M8, definitions: W redundancy; paper_body.tex sec:data and note
+% sec:eavailw-definitions): reconstructed W is an exact function of (pT, ppar, q3) apart from the W^2 = 0 clamp
+% (1.5% of events); truth W up to a ~1 mrad angle and the choice of M (within +-2 MeV for 68%); the information W adds
+% has not been measured.
+These are five simultaneous quantities, not five independent measurements.
+The measured hadronic mass is fixed exactly by the muon's motion and the
+measured momentum transfer (apart from \SI{1.5}{\percent} of events at the edge
+of its range), and the true one nearly so. Available energy is a different
+quantity: it comes from its own calorimeter estimate and is not fixed by the
+others, and at truth level it omits energy carried by neutrons. A new
+coordinate can help the learner describe correlations without adding an
+independently measurable direction, and how much information $W$ adds has not
+been measured.
 
-The first physics payoff appears in the available energy. When we compare the
-data to four state-of-the-art simulation predictions, all four fall short of
-the data in the low-energy region, just above the very lowest energies
-(Fig.~\ref{fig:primergen}, left). This is not a
-surprise --- it resembles an established low-recoil discrepancy that simulations
-have historically struggled to model. Adding a process in which the neutrino
-interacts with a pair of nucleons (``2p2h'') fills part of the gap. The two tested
-pion-rescattering variations have a much smaller effect, but that does not rule
-out other changes to how particles move through the nucleus. Related MINERvA
-measurements with a different event selection show why proton and pion
-rescattering also matter~\cite{MINERvA:2026qeleme}. These comparisons support the
-two-nucleon contribution without uniquely establishing the cause. And
-where MINERvA has a dedicated published measurement of this region, our central
-values lie \SI{9.2}{\percent} and \SI{6.3}{\percent} above it on the finest grid
-whose cell edges both measurements share.
-% plain-language pass, director ruling on base defect F6 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-That measurement defines true available energy more broadly, so this comparison
-is not quantitative.
+% Primer sync to the methods paper (M8, removed): the low-recoil mechanism attribution (the two-nucleon process
+% "fills part of the gap", "support the two-nucleon contribution") and the comparison with the dedicated low-recoil
+% measurement left the paper; sec:central keeps only the descriptive statement and points to the note, which carries
+% the 2p2h, pion-FSI and Ascencio comparisons (sec_3d.tex sec:3d-2p2h, sec:4d; sec_eavailw.tex).
+In the available energy, when we compare the central values with four
+simulation predictions, all four fall short of the data at low available
+energy, between the quasielastic peak (the neutrino knocks a single nucleon
+out) and the $\Delta$-resonance peak (it first excites the nucleon into a
+short-lived $\Delta$ state) (Fig.~\ref{fig:primergen}, left).
+% Fix round (review E2): gloss.
+This is the region of an established
+low-recoil discrepancy that simulations have historically struggled to
+model~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}. The analysis note compares this region with a
+process in which the neutrino interacts with a pair of nucleons (``2p2h''),
+with variations of how pions rescatter in the nucleus, and with MINERvA's
+dedicated measurement of the region. Those are comparisons of best estimates
+without uncertainties, and they do not identify the physical cause.
 
 \begin{figure}[H]
   \centering
@@ -343,10 +421,11 @@ is not quantitative.
   simulation predictions --- GENIE's own untuned central configuration (version 2.12.10), the same GENIE
   with the two-nucleon process added, NuWro (21.09) and GiBUU (2019). \emph{Left:} available
   energy; all four fall below the data at low available energy (between about
-  $0.1$ and $0.4$~GeV), the known
-  ``low-recoil'' shortfall, here rediscovered by a different unfolding method.
+  $0.1$ and $0.4$~GeV), the region of the known ``low-recoil'' shortfall.
+% Primer sync to the methods paper (M8, removed): the "rediscovered" claim (paper sec:central is descriptive).
   \emph{Right:} hadronic mass; all four sit below the data at high hadronic
-  mass, the first three by about as much as they fall short overall. \textbf{Central values only.} No uncertainty band is drawn and no
+  mass, the first three by about as much as they fall short overall. NuWro
+  and GiBUU are predictions for carbon, not for the detector's hydrocarbon. \textbf{Central values only.} No uncertainty band is drawn and no
 % plain-language pass, review fix R10 (DECISION-20261018-joseph-plain-language-pass)
   significance is assigned, for the reason given under ``Limits on the
   multi-quantity results'' below.
@@ -355,17 +434,20 @@ is not quantitative.
   \label{fig:primergen}
 \end{figure}
 
-\subsection*{A new puzzle for the tuned simulation}
+% Primer sync to the methods paper (M8, removed): the heading's "new puzzle", the "deep-inelastic ... shatters the
+% nucleon" mechanism label, and the claim that the joint measurement revealed a localized difference (the corner
+% localization left the paper; sec:central: "The map therefore describes where the central value differs from the
+% Tune v1; it does not locate an interaction mechanism").
+\subsection*{Where the best estimates differ from the tuned simulation}
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 % Theme A (primer F-new-2): shares of the cell-integrated positive excess over Tune v1: 67 % at E_avail >= 0.8 GeV,
 % 83 % of that at W >= 1.8 GeV, 22 % in the E_avail > 3 GeV, W > 3 GeV catch cell. Note sec_eavailw.tex:49-53;
 % paper_body.tex:571-574 (the 22 % from the released figure arrays, fig_arrays.npz sha256 72394a2b...).
-Adding the hadronic-mass axis $W$ lets us look where MINERvA's tuned simulation,
-which already includes an enhanced two-nucleon process, still misses. The
-leftover discrepancy sits
-in a specific corner: high available energy \emph{and} high $W$ --- the
-``deep-inelastic'' region where the neutrino shatters the nucleon.
+Adding the hadronic-mass axis $W$ lets us map where the central values differ
+from MINERvA's tuned simulation, which already includes an enhanced
+two-nucleon process. The difference lies mostly at high available energy
+\emph{and} high $W$.
 % plain-language pass 2, review fix P-5, P-12 (DECISION-20261018-joseph-plain-language-pass2)
 % P-12: the operand is the positive excess ("of all positive excess", sec_eavailw.tex:49-51; paper "of the positive
 % difference"). P-5: the catch-cell share is the paper's caveat ("but a fifth of it sits in the single widest overflow
@@ -373,11 +455,14 @@ in a specific corner: high available energy \emph{and} high $W$ --- the
 Of the excess, summed over the cells where the data lie above the simulation,
 about two thirds lies at high available energy, most of it at high $W$, but
 about a fifth of it sits in the single widest corner cell; as a ratio to the
-simulation, the excess also extends to low $W$. That corner
-is a statement about the two quantities \emph{jointly}, so
-Fig.~\ref{fig:primerjoint} shows the joint map rather than the two separate
-one-dimensional views of Fig.~\ref{fig:primergen}: neither of those alone
-would show it. The four other simulations also fall short of the data there,
+simulation, the excess also extends to low $W$: the data exceed the tuned
+simulation by \SIrange{\figTwoHiHiLo}{\figTwoHiHiHi}{\percent} in the
+high-energy, high-$W$ cells and by
+\SIrange{\figTwoLowWLo}{\figTwoLowWHi}{\percent} at the lowest $W$.
+% Primer sync to the methods paper: the ratio ranges are the paper's macros (values.tex:497-500; paper_body.tex
+% sec:central).
+Figure~\ref{fig:primerjoint} shows the joint map. The four other simulations
+also fall short of the data there,
 but three of them (the two GENIE versions and NuWro) fall short by roughly as
 much as they do everywhere: the data are \SIrange{14}{16}{\percent} above them
 in the corner and \SIrange{7}{15}{\percent} above them overall, so for them the
@@ -386,10 +471,15 @@ data are \SI{61}{\percent} above it in the corner, \SI{39}{\percent} overall), b
 because its simulated sample leaves out neutrinos above \SI{20}{GeV}, which in the other
 simulations make up about \SI{15}{\percent} of the corner and \SI{7}{\percent} of everything.
 With them supplied, GiBUU too falls short in the corner by about as much as overall.
+NuWro and GiBUU were also computed for carbon, whereas the detector is
+hydrocarbon, and normalizing per nucleon does not remove that difference,
+because hydrogen lacks several of carbon's interaction channels.
+% Primer sync to the methods paper (M8, corrections: the target per-nucleon effect; KNOWN_ISSUES 97; paper_body.tex
+% sec:data and sec:central).
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 % Theme A (primer F7): \cvMoveOverSigmaMax = 6.02 (values.tex:458; CENTRAL-VALUE-VS-SIGMA-20260920.json
 % movement_over_uncertainty.max 0.0602), printed rounded to the nearest percent by siunitx (prints 6).
-Its statistical significance is not assigned. The learner's random seed,
+No statistical significance is assigned to this map. The learner's random seed,
 % plain-language pass, review fix R10 (DECISION-20261018-joseph-plain-language-pass)
 described under ``Limits on the multi-quantity results'' below, moves these central values as well, by at most about
 \SI[round-mode=places,round-precision=0]{\cvMoveOverSigmaMax}{\percent} of their own uncertainty; how far the
@@ -399,8 +489,8 @@ corner's share of the excess could shift with it was not separately measured.
 % regularization bias there), and "points theorists toward what their models are missing" is cut as stronger than the body supports.
 No test with a deliberately wrong detector response has been run for this map,
 and this corner is also where the unfolding's bias toward its starting
-simulation is largest. The localized difference was only visible because we
-measured available energy and $W$ jointly.
+simulation is largest. The map therefore describes where the central values
+differ from the tuned simulation; it does not locate an interaction mechanism.
 
 \begin{figure}[H]
   \centering
@@ -418,8 +508,9 @@ measured available energy and $W$ jointly.
   cross section \emph{integrated over each cell}
   (\si{cm^2/nucleon}) --- because that includes the cell's area, the wide
   catch-all cells look large here even where the ratio on the left is
-  moderate, and the two panels should be read together. The excess concentrates
-  in the top-right corner: high available energy \emph{and} high hadronic mass.
+  moderate, and the two panels should be read together. The positive difference
+  lies mostly toward the top-right corner: high available energy \emph{and} high
+  hadronic mass.
   Central values only; no uncertainty is drawn and no significance is assigned.
   The learner's random seed moves these central values by at most about
   \SI[round-mode=places,round-precision=0]{\cvMoveOverSigmaMax}{\percent} of their own uncertainty.}
@@ -435,23 +526,35 @@ measured available energy and $W$ jointly.
 % The ranking follows the paper's own (paper_body.tex Introduction results paragraph and Conclusions): the biases,
 % the seed dependence, the untested or failed interval coverage, and the measured model dependence; rounding
 % stability "limits how exactly the central values can be reproduced" (paper_body.tex sec:validation).
-The multi-quantity central values above pass the validation tests stated with
-them. Four limits matter most. First, the unfolding follows a
+% Primer sync to the methods paper (M8, narrowed results): the order of paper_body.tex sec:conclusions (the residual
+% bias under the tested deformations, interpreted as regularization bias; miscoverage at the tested truths; seed
+% dependence; the envelope over the five tested deformations against the adopted 10% criterion).
+The multi-quantity central values above agree in normalization with the
+simpler results. Four limits matter most. First, the unfolding follows a
 changed simulated truth only partly, which leaves biases that are not in the
 quoted uncertainty. Second, that uncertainty has not met the requirements we
 set in advance, and it depends measurably on the learner's random seed. Third,
 whether the five-quantity error bars contain the truth as often as stated is
 untested, and the one direct test of it, made on a variant of the method,
-failed.
+failed at the truths it tested.
 % plain-language pass 2, director ruling on base defect P-9 (DECISION-20261018-joseph-plain-language-pass2)
 % Theme A (paper F4, as printed in the paper's abstract, Introduction and Conclusions): the bounded unfolding-model
 % component has median 12.0 / 9.6 / 13.4 % in the three reporting definitions; the target is a median total 68 %
 % half-width of at most 10 %. Source: note sec_5d.tex "Reporting definitions for a five-dimensional measurement";
 % RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :133, :144 ("prior dependence is ~10-13% per coarse joint cell").
-Fourth, the result depends on the simulation the unfolding starts from: this
-measured model dependence, a median of about \SIrange{10}{13}{\percent} per
-cell, prevents a five-quantity measurement whose total uncertainty meets the
-\SI{10}{\percent} precision target we set in advance. A test of numerical
+% Primer sync to the methods paper (M8, narrowed: "envelope over the five tested truth deformations" replaces
+% "model dependence"; "none of the tested reporting definitions satisfies the adopted 10% criterion under the
+% specified envelope prescription"; paper_body.tex sec:uncertainty-status, "Reporting definitions and the precision
+% target": the envelope is "a sensitivity diagnostic that tracks the regularization bias, not an interval", added
+% linearly to the probabilistic half-width).
+Fourth, the result depends on the simulation the unfolding starts from. The
+largest shift of each cell's result on the data when that starting simulation is changed in five
+tested ways, about the size of differences between generators, has a median
+of about \SIrange{10}{13}{\percent} per cell. This spread is a sensitivity
+measure, not an error bar. Added to the rest of each cell's uncertainty, as
+the reporting study prescribed, it keeps every tested way of reporting a
+five-quantity measurement from meeting the \SI{10}{\percent} precision we
+adopted as a target, within that study's rules and computing budget. A test of numerical
 stability, fixed in advance, also failed; it limits how exactly the central
 values can be reproduced. The multi-quantity
 plots therefore show central values only, and we do not assign statistical
@@ -466,9 +569,16 @@ distribution of available energy is changed by a test pattern of the size of a
 difference between two standard generators (a test of chosen size, not a
 measured difference between them), the unfolding follows it only partly.
 Typical cells come back about \SI{10}{\percent} off, and the highest-$W$ cells
-much more. The tested changes to the number of iterations and to the learner's
-capacity do not remove the bias; their effects depend on the injected truth and
-the quantity reported. For test patterns from other generators the effect is
+much more, with or without background in the simulated data. The tested
+changes to the number of iterations and to the learner's capacity do not
+remove the bias; their effects depend on the injected truth and the quantity
+reported. Because the bias persists over the tested settings, we interpret it
+as regularization bias: the method's pull toward the simulation it starts
+from.
+% Primer sync to the methods paper (M8, narrowed: residual bias as the observation, interpreted as regularization
+% bias; paper_body.tex sec:validation, "with or without background"; "persists over the tested ranges of iteration
+% number and classifier capacity").
+For test patterns from other generators the effect is
 \SIrange{16}{31}{\percent} in the worst cell and smaller than the quoted
 uncertainty in about half of the $(\Eavail,W)$ cells. This dependence on the
 truth is not included in the quoted uncertainty. A second end-to-end test
@@ -476,9 +586,16 @@ includes background in the simulated pseudo-data and processes them exactly as
 the data are: the way we remove background biases the highest-$W$ cells by
 about \SI{4}{\percent}. A finer, unbinned removal cuts that to below
 \SI{0.3}{\percent}, but leaves about \SI{1}{\percent} in a few combined cells.
-A follow-up study found the source of this remaining bias: an auxiliary
-classifier used in the background removal was too simple, and a larger one
-removes the bias. Neither effect is in the quoted uncertainty yet.
+A follow-up study traced this remaining bias to an auxiliary classifier in
+the background removal that was too simple; with a larger one the same test
+passes at the unchanged truth. The quoted five-quantity central values still
+use the original removal, with its bias of up to \SI{4}{\percent} in the
+highest-$W$ cells; the improved removal is used only for the test of five
+simulations below. Neither effect is in the quoted uncertainty yet.
+% Primer sync to the methods paper (paper_body.tex sec:conclusions, "The central values nevertheless keep the
+% purity-based subtraction and its bias of up to 4% in the highest-W cells; the refinement is used only for the
+% generator tests"; the larger refinement passes the nominal background-inclusive closure: note sec_5d.tex
+% "Higher-capacity background refinement and data stability"; "removes the bias" narrowed accordingly).
 % plain-language pass, review fix RD7 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 % Theme B (primer P6): the remedies are compressed to one sentence; the note carries them in sec_5d.tex
@@ -501,8 +618,11 @@ uncertainty.
 \emph{An uncertainty that has not been validated.} We have built an
 uncertainty for the five-quantity result, and the two-quantity $(\Eavail,W)$
 version of that uncertainty. It is the uncertainty we quote for the
-five-quantity result, but it has not met the requirements we set in advance, so
-it is used only under a documented exception to them. The reason we assign no
+five-quantity result, but it has not met the requirements we set before
+building it, and we use it nonetheless.
+% Primer sync to the methods paper (R2, project vocabulary; paper_body.tex sec:uncertainty-status, "It has not met
+% the validation criteria set for an uncertainty before it was built ... We nevertheless use this covariance").
+The reason we assign no
 significance is worth stating plainly, because it is something we measured
 rather than a precaution. Our method has a random component: the learner is
 started from a random seed. Change that seed, leaving everything else alone, and
@@ -533,9 +653,28 @@ precision the input does not have.
 % The coverage sentence moved from the end of the uncertainty paragraph into its own run-in paragraph, before
 % numerical stability, matching the ranked lead; the qualifier "untested" for the quoted bars: paper_body.tex
 % Introduction ("the untested or failed interval coverage") and Conclusions.
-\emph{Coverage.} The one direct test of whether
-five-quantity statistical error bars contain the truth as often as stated was
-made on a variant of the method, and it failed, so we claim no such coverage.
+% Primer sync to the methods paper (M8, corrections: the "tilt" is a ~10% rate reduction and its coverage failure is
+% residual bias; KNOWN_ISSUES 98; M2-RATEFAIL-DIAGNOSIS.md, CITABLE FOR the decomposition with its inferred status,
+% NOT CITABLE FOR the source of the W-graded term; paper_body.tex sec:validation: 400 pseudo-experiments per truth;
+% weight 0.900--0.906 below 3 GeV; 51 of 153 below the 0.66 gate, coverage as low as 0.06; 42 below 0.94; at nominal
+% truth two below 0.94, the lowest 0.85).
+\emph{Coverage.} The one direct test of whether five-quantity statistical
+error bars contain the truth as often as stated was made on a variant of the
+method, whose error bars correct each estimate for its bias at the unchanged
+truth, with 400 simulated repeats at each tested truth. It failed. The tested
+change multiplies the true signal by a weight that is 0.900--0.906 below
+\SI{3}{GeV} of available energy, so in effect it lowers the signal rate by
+about \SI{10}{\percent}, with only a weak dependence on available energy.
+Under that change, 51 of the 153 reported quantities contain the truth clearly
+less often than stated for 68\% error bars, some only 6\% of the time, and 42
+fall short for 95\% error bars; at the unchanged truth, two fall short for
+95\% error bars. A later look at the stored outputs finds that the lower rate
+itself is recovered, and that the error bars are not, apart from a minor
+effect, too narrow: the shortfall comes from a remaining bias, growing with
+$W$, that the correction made at the unchanged truth does not remove. Those
+per-quantity biases and spreads are inferred from the coverage numbers rather
+than measured directly, and their source is not established. We claim no coverage
+for the five-quantity error bars.
 
 % plain-language pass, review fix R12, RD6 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, director ruling on base defect F4 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
@@ -565,9 +704,12 @@ None of these five-quantity findings affects the two-dimensional trust check,
 which retains its independently constructed uncertainty, with the qualification
 about learner dependence explained there.
 
-\subsection*{A joint test of five simulations}
+% Primer sync to the methods paper (M8, framing): the generator tests are an application (paper_body.tex sec:joint,
+% "Application: conditional hypothesis tests").
+\subsection*{An application: a joint test of five simulations}
 
-We also asked a sharper question: under stated modelling assumptions, is each
+As an application, we asked how a method with known biases can still test
+simulations: under stated modelling assumptions, is each
 of five widely used simulations (MINERvA Tune~v1, GENIE with and without MEC,
 NuWro, GiBUU) statistically compatible with the five-dimensional data, both
 % plain-language pass, review fix R11, RD8 (DECISION-20261018-joseph-plain-language-pass)
@@ -580,7 +722,12 @@ Tune~v1 is MINERvA's tuned simulation, the one the unfolding starts from.
 % analysis grid; the tests are evaluated on a coarse 3^5 grid of supported cells.
 Strictly, each hypothesis is a hybrid: it sets the true cross section, in each
 cell of a fine grid of true values, to that generator's rate, with Tune~v1's
-shape inside each cell. The unfolding still learns from unbinned
+mix of events inside each cell, varied by the modelled interaction
+uncertainties while each cell's total stays fixed.
+% Primer sync to the methods paper (M8, tests: the hybrid null defined precisely; paper_body.tex sec:intro scope and
+% sec:joint, "Below that grid the event composition is the MINERvA Tune v1 simulation's, varied by the drawn
+% interaction-model universes with every fine-cell integral held fixed").
+The unfolding still learns from unbinned
 events; the fine grid specifies the hypothesis, and the test compares data and
 hypothesis in the cells of a coarser grid.
 
@@ -599,17 +746,48 @@ unfolding's pull toward its starting simulation and the modelled uncertainties,
 % Conditional, as in the note's sec_joint.tex "Calibration validity" ("exact for the simulated null to the extent
 % that the pseudo-experiment chain reproduces the analysis applied to the data. Two known departures are bounded").
 these repeats set how often the test would wrongly reject a true hypothesis, as
-far as they reproduce the analysis of the real data.
+far as they reproduce the analysis of the real data. That rate is an average
+over the assumed ranges of the uncertain model parameters; for one particular
+value of those parameters it could be higher.
+% Primer sync to the methods paper (M8, tests: size averaged over the nuisance priors; paper_body.tex
+% sec:calibration, "at a fixed true value of the nuisance parameters it can exceed alpha").
 The test therefore does not rely on the five-quantity error bars described
 above, which were built separately; the matrix used to weigh the differences
 affects only how sensitive the test is. In each test at most one
 pseudo-experiment looked as discrepant as the data.
 So all ten hypotheses (five simulations, each tested overall and in shape) are
-rejected at a combined 5\% error level for the ten tests, as the test was
-designed. Some pseudo-experiments were lost to computing time limits.
+rejected. The decision rule keeps the chance of any false rejection among the
+ten at or below 5\%, provided the simulated repeats reproduce each true hypothesis
+correctly or conservatively and their outcomes are independent given the
+data, whatever rule decided when to stop simulating. The two decisions closest
+to their boundary, the shape tests of NuWro and GENIE CV, lie 1.11 and 1.30
+standard deviations of the simulated repeats beyond the value at which they
+would no longer be decided; the other eight lie 2.7 to 203 beyond it.
+% Primer sync to the methods paper (M8, tests: familywise control at 5% under the stated calibration assumptions,
+% 0.8902 alpha only in the note's appendix sec:joint5d-fwer; decision-boundary margins; paper_body.tex
+% sec:calibration and sec:conditions (iv): 1.11 and 1.30, the other eight 2.7 to 203, Holm order fixed).
+Some pseudo-experiments were lost to computing time limits.
 Rerunning exactly those seeds recovered them, in a check reported separately
 from the result: none looked as discrepant as the data, though in one
-robustness variant one came close.
+robustness variant one came close. That the lost repeats were lost
+independently of their outcomes has not been shown.
+% Primer sync to the methods paper (paper_body.tex sec:calibration: "The second assumption requires the lost
+% pseudo-experiments to have been lost independently of their outcomes, which has not been shown").
+
+% Primer sync to the methods paper (M8, tests: NuWro's total (rate-and-shape) test not robust to the CH correction;
+% DECISION-20261020-joseph-nuwro-ch-claim.md, provisional; paper_body.tex sec:joint-results; note sec_joint.tex
+% sec:joint5d-ch; KNOWN_ISSUES 97).
+NuWro and GiBUU were computed for carbon, while the detector is hydrocarbon.
+Correcting both predictions to the hydrocarbon target moves both toward the
+data, and NuWro's total-test rejection does not survive that correction
+robustly: under the recorded rule it stays rejected only because the order of
+the tests changes, and at its original place it would be undecided. These
+corrected comparisons are reported beside the ten decisions, which they do not
+change. GiBUU's deep-inelastic events on hydrogen (collisions in which the
+struck nucleon breaks up into several hadrons) do not conserve energy, for a
+reason not identified, which may affect its prediction.
+% Fix round (review M1): the paper's sentence verbatim (paper_body.tex sec:joint-results); the gloss from note
+% sec_joint.tex sec:joint5d-ch (frozen Holm position: undetermined; rejected only after the Holm re-sort). E1: gloss.
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
 % Theme B (primer P4, P5): the six-item list moved to the note's sec_joint.tex sec:joint5d-conditions (the six
@@ -620,7 +798,12 @@ This is a test of the simulations under six conditions, detailed in the analysis
 note (``Joint five-dimensional generator tests''). Two matter most for what the
 rejections mean physically. The detector-uncertainty model has no uncertainty
 band for the calorimeter's response to the hadronic recoil energy, so the
-rejections are conditional on the simulation's hadronic response.
+rejections are conditional on the simulation's hadronic response. In an
+exploratory check, scaling the simulated recoil energy up or down by
+\SI{4}{\percent} leaves every rejection in place, but the simulated repeats
+were not redone with that change.
+% Primer sync to the methods paper (paper_body.tex sec:response: +-4%, every rejection holds, the null distributions
+% were not regenerated; "missing calorimetric response" kept as the leading condition).
 % plain-language pass 2, review fix P-13 (DECISION-20261018-joseph-plain-language-pass2)
 And the hypotheses are defined only down to the fine grid: convergence as that
 grid is refined has not been shown, and the possible error from structure finer
@@ -633,14 +816,27 @@ calibration shift, with a stated bound, that arises because the
 pseudo-experiments use half the simulation and the data unfolding uses all of
 it; the range of neutrino energies each generator covers; and the finite size of
 each generator's simulated sample. Sensitivity to numerical rounding is also
-checked. The result is not a new measurement with new error bars.
+checked, and rerunning part of the calibration with a quarter of the
+simulation resolved no change in the simulated distributions; that checks the
+simulation size only. The result is not a new measurement with new error bars,
+and the rejections are of the hybrid hypotheses under this model, not physical
+exclusions of the simulations.
+% Primer sync to the methods paper (M8, tests: SF-1 as a simulation-size check only, paper_body.tex sec:conditions
+% (iv); "not physical exclusions", sec:intro scope).
 
-In a comparison chosen after the result was known (post hoc), GENIE's untuned
-central configuration (GENIE CV) is not rejected on the same coarse projection
-onto the muon variables alone, whereas its projection onto the hadronic
-variables is rejected. Hadronic information therefore takes part in this rejection, but we did not
-establish that the joint five-variable test adds power beyond all the matched
-lower-dimensional projections. A simulation that is not rejected is not thereby
+% Primer sync to the methods paper (M8, tests: no gain over matched coarse projections; paper_body.tex
+% sec:joint-results, "gives p<0.05 for every test in at least one of the two projections, so this study provides no
+% evidence of additional discrimination"; the GENIE CV muon-projection observation is post hoc, sec:response).
+The same tests restricted to matched coarse projections, onto the two muon
+variables and onto available energy and $W$, also give $p<0.05$ for every
+test in at least one of the two, so the study gives no evidence that the five
+quantities together discriminate better than these projections; the power of the joint and projected tests has
+not been compared. In a comparison chosen after the result was known (post
+hoc), GENIE's untuned central configuration (GENIE CV) is not rejected on the
+projection onto the muon variables alone, whereas its projection onto the
+hadronic variables is rejected, so hadronic information, on which a
+calorimeter-response uncertainty would act, takes part in this rejection.
+The published muon measurement already disfavours these simulations~\cite{MINERvA:2021owq}. A simulation that is not rejected is not thereby
 accepted as true.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
 % Wording review: docs/orchestration/REVIEW-20261006-s5p-stage7-note-wording.md.
@@ -754,27 +950,41 @@ remains a separately labeled, simulation-dependent extrapolation.
 \section{The takeaway}
 
 % plain-language pass, director ruling on base defect F1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
-\emph{and} extends to many quantities at once without the larger response table
-the binned method would need, although training, simulation and uncertainty
-estimation still become more demanding. Using that, this analysis recovered a known low-recoil discrepancy with
-a different unfolding method, exposed a localized central-value difference from the
-MINERvA-tuned simulation, and
+% Primer sync to the methods paper (M8, framing and removed claims; paper_body.tex sec:conclusions): the validation
+% findings are the result; the low-recoil "recovery" and the "localized central-value difference" are withdrawn.
+Unbinned machine-learning unfolding reproduces the overall rate of a flagship
+MINERvA measurement to about one percent, with a shape difference, \emph{and}
+extends to many quantities at once without the larger response table the
+binned method would need, although training, simulation and uncertainty
+estimation still become more demanding. The tests of that extension are this
+study's main result, for this implementation: a background-removal bias of up
+to \SI{4}{\percent} in some cells; a remaining bias under generator-sized
+changes of the truth, read as the method's pull toward its starting
+simulation; statistical error bars, of a variant of the method, that miscover
+at the tested truths; and a spread of about \SIrange{10}{13}{\percent} per
+cell over five tested starting simulations, which keeps every tested way of
+reporting a five-quantity measurement from meeting the \SI{10}{\percent}
+precision we adopted as a target, under the reporting study's prescription. The analysis also
 mapped a possible extension of the signal definition while exposing where the
 detector provides too little information for a model-independent result.
 % plain-language pass, review fix R9, RD13 (DECISION-20261018-joseph-plain-language-pass)
-The multi-quantity measurements are shown as central values only: their error
+The multi-quantity results are shown as central values only: their error
 bars have not been shown to be reliable, and end-to-end tests on simulation
 show biases that are not included in their quoted uncertainty.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
-Separately, a joint test calibrated with simulated repeats of the whole analysis
-rejects the hybrid hypotheses for all five tested simulations, overall and in
-shape alone, at a combined five-percent error level.
+As an application, a joint test calibrated with simulated repeats of the whole
+analysis, so that the method's bias enters the calibration rather than the
+decision, rejects the hybrid hypotheses for all five tested simulations,
+overall and in shape alone, at a combined five-percent error level, provided
+the simulated repeats reproduce the analysis faithfully. These are not
+physical exclusions, and NuWro's total-test rejection does not survive
+robustly a correction of its prediction to the hydrocarbon target.
 % plain-language pass 2, review fix P-7, P-13 (DECISION-20261018-joseph-plain-language-pass2)
 % Six conditions, the two that limit interpretation named (paper_body.tex Conclusions); the coarse-projection limit
 % is not a condition and is stated separately.
-That holds only under six stated conditions, in particular that the test has no
+% Fix round (review MINOR 10, 11, 12): the calibration-fidelity proviso; the antecedent restored; "meeting".
+The rejections hold only under six stated conditions, in particular that the test has no
 uncertainty for the calorimeter's response to the hadronic recoil and that
 convergence as the fine grid defining the hypotheses is refined has not been
-shown; nor does the test show that the five quantities together discriminate
-better than matched coarse projections.
+shown; and the test gives no evidence that the five quantities together
+discriminate better than matched coarse projections.

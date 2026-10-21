@@ -137,7 +137,7 @@ Hidden variable & Bias in $\Delta\pT$, a resolution variable outside the feature
   Leakage linear in amplitude; $A=0.30$ exceeds its \SI{3}{\percent} threshold \\
 \addlinespace
 Injected $\Eavail$ bump & $+\SI{30}{\percent}$ Gaussian in truth $\Eavail$ at \SI{0.3}{GeV}, width \SI{0.15}{GeV} & 3D &
-  Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); pass.
+  Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); no predeclared threshold.
   Per-3D-bin spread \SI{3.2}{\percent} (\S\ref{sec:3d-closure}) \\
 \addlinespace
 Injected $q_3$ bump & Same Gaussian form in truth $q_3$ (mean weight 1.014) & 4D &
@@ -172,16 +172,17 @@ Response mismatch & Reconstructed $\Eavail$ of pseudo-data scaled & 5D &
 \bottomrule
 \end{longtable}
 
-\paragraph{Why injected bumps pass while generator-shaped tests do not.}
-The passing tests and the failing tests measure different things, so they do
+% Methods-paper sync fix round: aligned with paper_body.tex sec:validation (no record of a threshold for the 3D and 4D closures).
+\paragraph{Why injected bumps close while generator-shaped tests do not.}
+The closing tests and the failing tests measure different things, so they do
 not contradict each other.
 \begin{itemize}
-  \item \emph{Deformation.} The passing injections are single smooth bumps in
+  \item \emph{Deformation.} The closing injections are single smooth bumps in
         one variable the classifiers see directly. A generator ratio changes
         correlated structure across $\Eavail$, $W$ and $q_3$, including directions
         the reconstructed observables constrain weakly
         (\S\ref{sec:coverage-5d}, response-information diagnostic).
-  \item \emph{Metric.} The 3D, 4D and 5D passes are judged on one-dimensional
+  \item \emph{Metric.} The 3D, 4D and 5D closures are judged on one-dimensional
         marginals, where per-cell errors average out; the 3D test's per-bin
         spread is already \SI{3.2}{\percent}, and the 5D test's is
         \SI{3.7}{\percent}. The generator-shaped failures are
