@@ -1,0 +1,28 @@
+{
+ "control_equals_frozen": {
+  "decisions": true,
+  "decisions_robust_kappa": true,
+  "holm_point": true,
+  "tests": false
+ },
+ "control_tests_float_agreement": {
+  "leaves": 932,
+  "key_sets_equal": true,
+  "nonfloat_unequal": [],
+  "float_unequal": 131,
+  "max_rel_diff": 6.367608336886105e-12,
+  "worst": "/MnvTune_v1/variants/0.5/median_shift_in_null_sd/total"
+ },
+ "decision_changes": [],
+ "robust_decision_changes": []
+}
+NuWro_21_09:total            A7      rejected/rejected      p=0.000571 T=7427.144348737543 | partial      rejected/rejected      p=0.000571 k=0 B=1751 T=7427.144348737543
+GENIE_2_12_10_CV:total       A7      rejected/rejected      p=0.000732 T=1812.6600008919443 | partial      rejected/rejected      p=0.000732 k=0 B=1366 T=1812.6600008919415
+GENIE_2_12_10_CV:shape       A7      rejected/rejected      p=0.000732 T=1086.1446376781357 | partial      rejected/rejected      p=0.00146 k=1 B=1366 T=1086.1446376781357
+MnvTune_v1:total             A7      rejected/rejected      p=0.000732 T=2852.3045103570366 | partial      rejected/rejected      p=0.000732 k=0 B=1365 T=2852.3045103570166
+MnvTune_v1:shape             A7      rejected/rejected      p=0.000732 T=630.8813753847966 | partial      rejected/rejected      p=0.000732 k=0 B=1365 T=630.8813753847968
+GiBUU_2019:total             A7      rejected/rejected      p=0.00074 T=2866.95841380786 | partial      rejected/rejected      p=0.00074 k=0 B=1351 T=2866.9584138078594
+GiBUU_2019:shape             A7      rejected/rejected      p=0.00074 T=4013.3044476515465 | partial      rejected/rejected      p=0.00074 k=0 B=1351 T=4013.3044476515465
+GENIE_2_12_10_MEC:total      A7      rejected/rejected      p=0.000744 T=1647.124349202422 | partial      rejected/rejected      p=0.000744 k=0 B=1343 T=1647.1243492024253
+GENIE_2_12_10_MEC:shape      A7      rejected/rejected      p=0.000744 T=868.5851244287276 | partial      rejected/rejected      p=0.00149 k=1 B=1343 T=868.5851244287275
+NuWro_21_09:shape            A7      rejected/rejected      p=0.00114 T=9660.007441171016 | partial      rejected/rejected      p=0.000571 k=0 B=1751 T=9660.007441171023

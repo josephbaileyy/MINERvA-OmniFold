@@ -1,0 +1,11 @@
+DESCRIPTIVE; not the MP-1 result; species restricted after the G3 outcome; post hoc. z = (T_obs - null median)/null SD at variant 0.0; NOT a decision-boundary margin
+MnvTune_v1         total T    2852.3 | A7 med     49.2 sd   13.6 z 206.82 | partial med     90.2 sd   83.3 z  33.15 | sd ratio 6.148
+MnvTune_v1         shape T     630.9 | A7 med     48.7 sd   14.7 z  39.63 | partial med     83.9 sd   58.4 z   9.36 | sd ratio 3.976
+GENIE_2_12_10_CV   total T    1812.7 | A7 med    527.7 sd   58.4 z  21.99 | partial med    546.6 sd   77.0 z  16.45 | sd ratio 1.317
+GENIE_2_12_10_CV   shape T    1086.1 | A7 med    582.4 sd   95.0 z   5.30 | partial med    605.0 sd  105.7 z   4.55 | sd ratio 1.112
+GENIE_2_12_10_MEC  total T    1647.1 | A7 med    406.0 sd   38.7 z  32.05 | partial med    429.9 sd   56.4 z  21.58 | sd ratio 1.457
+GENIE_2_12_10_MEC  shape T     868.6 | A7 med    449.6 sd   67.7 z   6.19 | partial med    470.5 sd   79.0 z   5.04 | sd ratio 1.168
+NuWro_21_09        total T    7427.1 | A7 med   6323.9 sd  174.3 z   6.33 | partial med   6340.9 sd  200.9 z   5.41 | sd ratio 1.153
+NuWro_21_09        shape T    9660.0 | A7 med   7110.3 sd  890.0 z   2.86 | partial med   7124.4 sd  901.0 z   2.81 | sd ratio 1.012
+GiBUU_2019         total T    2867.0 | A7 med   1791.4 sd   88.8 z  12.12 | partial med   1799.7 sd  112.3 z   9.51 | sd ratio 1.265
+GiBUU_2019         shape T    4013.3 | A7 med   1975.0 sd  298.4 z   6.83 | partial med   1995.8 sd  306.1 z   6.59 | sd ratio 1.026

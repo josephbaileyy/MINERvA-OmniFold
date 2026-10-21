@@ -1,0 +1,5 @@
+60063770 mp1nf_s0 tasks 0..4
+60063771 mp1nf_s1 tasks 5..9
+60063772 mp1nf_s2 tasks 10..14
+60063773 mp1nf_s3 tasks 15..19
+60063774 mp1nf_s4 tasks 20..24

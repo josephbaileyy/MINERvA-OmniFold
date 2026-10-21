@@ -1,0 +1,12 @@
+{
+ "NuWro_21_09:total": "robust to the sub-fine residual",
+ "NuWro_21_09:shape": "robust to the sub-fine residual",
+ "GENIE_2_12_10_CV:total": "robust to the sub-fine residual",
+ "MnvTune_v1:total": "robust to the sub-fine residual",
+ "MnvTune_v1:shape": "robust to the sub-fine residual",
+ "GiBUU_2019:total": "robust to the sub-fine residual",
+ "GiBUU_2019:shape": "robust to the sub-fine residual",
+ "GENIE_2_12_10_MEC:total": "robust to the sub-fine residual",
+ "GENIE_2_12_10_CV:shape": "robust to the sub-fine residual",
+ "GENIE_2_12_10_MEC:shape": "robust to the sub-fine residual"
+}

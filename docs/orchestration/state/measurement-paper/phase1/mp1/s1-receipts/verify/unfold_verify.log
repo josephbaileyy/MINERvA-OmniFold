@@ -1,0 +1,17 @@
+{
+ "verdict": "PASS",
+ "failures": [],
+ "products": {
+  "mp1s1_unfold_zero": "f1d5178a86c1",
+  "mp1s1_unfold_proton_m1": "bfffb8c54df3",
+  "mp1s1_unfold_proton_p1": "8cbe49ae8407",
+  "mp1s1_unfold_meson_m1": "6f3fbb50ec91",
+  "mp1s1_unfold_meson_p1": "e54b01c1c444",
+  "mp1s1_unfold_em_m1": "a13521a902c8",
+  "mp1s1_unfold_em_p1": "15d8d224dba9",
+  "mp1s1_unfold_other_m1": "6580cbde395d",
+  "mp1s1_unfold_other_p1": "b30f13fb4ea6",
+  "mp1s1_unfold_xtalk_m1": "c3d8134b2872",
+  "mp1s1_unfold_xtalk_p1": "6e0abe1572bd"
+ }
+}

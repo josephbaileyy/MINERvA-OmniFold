@@ -1,0 +1,128 @@
+{
+ "tolerance": 0.2,
+ "zero_product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_zero_b-_j-.npz",
+ "zero_sha256": "f1d5178a86c1aa417d477d205669b642c66760b7e8e65f98b426e1d9d950d195",
+ "species": {
+  "proton": {
+   "minus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_proton_m1_b-_j-.npz",
+   "plus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_proton_p1_b-_j-.npz",
+   "minus_sha256": "bfffb8c54df3895ac1f98113027382418789ed43b59224fe3de8d7bc36419091",
+   "plus_sha256": "8cbe49ae8407aafb2a67ecdcb6829717dfb8cd3ce1c0c8afe5469c9457f01390",
+   "primary": true,
+   "domains": {
+    "all_109": {
+     "curvature_norm": 2.3047887215754254e-41,
+     "span_norm": 1.3429304681169848e-40,
+     "ratio": 0.1716238313370854,
+     "pass": true,
+     "median_abs_half_span_rel": 0.01017794292329612
+    },
+    "pz_lt_6 (GiBUU)": {
+     "curvature_norm": 1.8874146498952398e-41,
+     "span_norm": 1.2010246843286022e-40,
+     "ratio": 0.15715036289619175,
+     "pass": true,
+     "median_abs_half_span_rel": 0.009771642247685432
+    }
+   },
+   "G3": "PASS"
+  },
+  "meson": {
+   "minus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_meson_m1_b-_j-.npz",
+   "plus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_meson_p1_b-_j-.npz",
+   "minus_sha256": "6f3fbb50ec9102fe198d08f323c20ddce420457f5f3c2e5b13ed7f541a652a21",
+   "plus_sha256": "e54b01c1c44445362dc11d23c725fd957927348a91ad5ab2cda6ab25ba0e257c",
+   "primary": true,
+   "domains": {
+    "all_109": {
+     "curvature_norm": 2.345811779785475e-41,
+     "span_norm": 2.26014693913609e-40,
+     "ratio": 0.10379023324395577,
+     "pass": true,
+     "median_abs_half_span_rel": 0.015006863843993051
+    },
+    "pz_lt_6 (GiBUU)": {
+     "curvature_norm": 2.0719027011839713e-41,
+     "span_norm": 1.9597502141038142e-40,
+     "ratio": 0.10572279499055669,
+     "pass": true,
+     "median_abs_half_span_rel": 0.01801439179061096
+    }
+   },
+   "G3": "PASS"
+  },
+  "em": {
+   "minus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_em_m1_b-_j-.npz",
+   "plus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_em_p1_b-_j-.npz",
+   "minus_sha256": "a13521a902c855209e4b7faba3d6e199819a7735e234d8385526d36b56de71d2",
+   "plus_sha256": "15d8d224dba91f9f6ed80324e9bdd99403e1c9207b77c7f616fe70124418883c",
+   "primary": true,
+   "domains": {
+    "all_109": {
+     "curvature_norm": 2.192781244442894e-41,
+     "span_norm": 8.837779399136776e-41,
+     "ratio": 0.24811450313605615,
+     "pass": false,
+     "median_abs_half_span_rel": 0.005154376036197643
+    },
+    "pz_lt_6 (GiBUU)": {
+     "curvature_norm": 2.00700358433849e-41,
+     "span_norm": 7.781876530823809e-41,
+     "ratio": 0.2579074052882748,
+     "pass": false,
+     "median_abs_half_span_rel": 0.005957601847524439
+    }
+   },
+   "G3": "FAIL"
+  },
+  "other": {
+   "minus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_other_m1_b-_j-.npz",
+   "plus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_other_p1_b-_j-.npz",
+   "minus_sha256": "6580cbde395d16bd3a2decf34dc1fd7dc06e7c87f1615af86826217115e4536e",
+   "plus_sha256": "b30f13fb4ea6813e01664c0c3e21c28f1ef7bb14c6dc79bf4a68e390788d799c",
+   "primary": true,
+   "domains": {
+    "all_109": {
+     "curvature_norm": 1.8960247521014756e-41,
+     "span_norm": 7.869759543473275e-41,
+     "ratio": 0.24092537283098175,
+     "pass": false,
+     "median_abs_half_span_rel": 0.006188113120747912
+    },
+    "pz_lt_6 (GiBUU)": {
+     "curvature_norm": 1.720567905338173e-41,
+     "span_norm": 6.896016429799984e-41,
+     "ratio": 0.249501712017829,
+     "pass": false,
+     "median_abs_half_span_rel": 0.007002206062090575
+    }
+   },
+   "G3": "FAIL"
+  },
+  "xtalk": {
+   "minus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_xtalk_m1_b-_j-.npz",
+   "plus": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_xtalk_p1_b-_j-.npz",
+   "minus_sha256": "c3d8134b28728af68a1e2d10cf4a38ca0061fe561a67cdb79b4d5742b446c882",
+   "plus_sha256": "6e0abe1572bd6624223259dab92017b316702dbb68782d5a4aac7ebe9a8d8ce8",
+   "primary": false,
+   "domains": {
+    "all_109": {
+     "curvature_norm": 1.705855804486948e-41,
+     "span_norm": 5.644854878714152e-41,
+     "ratio": 0.3021965738958956,
+     "pass": false,
+     "median_abs_half_span_rel": 0.004819838152690618
+    },
+    "pz_lt_6 (GiBUU)": {
+     "curvature_norm": 1.5950977296511006e-41,
+     "span_norm": 5.010425857674071e-41,
+     "ratio": 0.31835571964566967,
+     "pass": false,
+     "median_abs_half_span_rel": 0.004868457283407625
+    }
+   },
+   "G3": "FAIL"
+  }
+ },
+ "G3_primary": "FAIL"
+}

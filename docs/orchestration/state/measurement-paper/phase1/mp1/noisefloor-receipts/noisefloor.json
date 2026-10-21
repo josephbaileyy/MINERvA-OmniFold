@@ -1,0 +1,190 @@
+{
+ "status": "DESCRIPTIVE. No gate, no re-gating. It cannot revive MP1-A under the frozen PLAN 2.3 rule; it informs whether MP1-A-full is needed or a training-noise floor should be handled by a different design.",
+ "declaration_sha256": "8e02bc4449b0a440ccc7eb26cc12440997fd61ed2cbb8520402280204035d175",
+ "K": 5,
+ "seeds": [
+  1001,
+  1002,
+  1003,
+  1004,
+  1005
+ ],
+ "products_sha256": {
+  "mp1nf_zero_e1001_b-_j-.npz": "286adeb8e8335792729bc0018511edb48eaf45c117b7870ba48a9fcbf35b8886",
+  "mp1nf_zero_e1002_b-_j-.npz": "f65b98ff48b1f5d1574c076f1d3b96199ba9a2c2e0ad594f62013f24fbe26870",
+  "mp1nf_zero_e1003_b-_j-.npz": "b3010fb514ecb63fe352996306d5f8bcfa825655c08b02ec0f1acc862565249f",
+  "mp1nf_zero_e1004_b-_j-.npz": "cc722a2469c42d4f773120fb626e1bdbf587f234699beced2baecac843bdc091",
+  "mp1nf_zero_e1005_b-_j-.npz": "837179e5a67e3cbf7e9a74310e9219ef18a859744418f7bcaa73d87adafb3dea",
+  "mp1s1_zero_b-_j-.npz": "f1d5178a86c1aa417d477d205669b642c66760b7e8e65f98b426e1d9d950d195",
+  "mp1nf_em_m1_e1001_b-_j-.npz": "892d55430c43c5c7414b4bd166789a2f179267e1aac130e2932ebd5a69b8f544",
+  "mp1nf_em_m1_e1002_b-_j-.npz": "a60bba91e58f8ad0ee3ad16e0e4924e880949ea296b79bd284fe0e951ca63ef0",
+  "mp1nf_em_m1_e1003_b-_j-.npz": "0d43071ea653147bbf4fc5707d008c485193af063d1f759ec36cf018bc31336e",
+  "mp1nf_em_m1_e1004_b-_j-.npz": "7b6ad9fe7a6539e4524f2d061fcfe227a5cb98a77ed7d06a9a2bfef24e9a63a6",
+  "mp1nf_em_m1_e1005_b-_j-.npz": "e4f5d659f0e7f9264850f87c2d28617c23e8586343644c8b16700a6343dacb27",
+  "mp1s1_em_m1_b-_j-.npz": "a13521a902c855209e4b7faba3d6e199819a7735e234d8385526d36b56de71d2",
+  "mp1nf_em_p1_e1001_b-_j-.npz": "7fd77fbd7f127d434c82753ef7e7714e81351e0fc2dd2c816e6a8834a4d22ba6",
+  "mp1nf_em_p1_e1002_b-_j-.npz": "1624c7c4333c2d246af490874ad827a3dc34fcb2782e4059d7f8bc4eaf617312",
+  "mp1nf_em_p1_e1003_b-_j-.npz": "638075ffed8a0fc165450126b0fcb61a3f97a640102bb818925b39e53ec57299",
+  "mp1nf_em_p1_e1004_b-_j-.npz": "481a52db6ac398a434723d51303b8743fb11ee453027e489945ff355f1a958fb",
+  "mp1nf_em_p1_e1005_b-_j-.npz": "4b2ba80ec6f1def577e482957cb0eae12c11f32dfd02109e9dd1a5513aafd56d",
+  "mp1s1_em_p1_b-_j-.npz": "15d8d224dba91f9f6ed80324e9bdd99403e1c9207b77c7f616fe70124418883c",
+  "mp1nf_other_m1_e1001_b-_j-.npz": "51881c831c82571626741d7a03bf0f4d3e686de6d73fca2466d0149928d77aac",
+  "mp1nf_other_m1_e1002_b-_j-.npz": "89cc3162f8c19c2fa5667424f9a073058492348fe906059db2db1524877fe218",
+  "mp1nf_other_m1_e1003_b-_j-.npz": "b8c739fb480d069854c1f3b02a7debc01b948e43c7f69f21e9f3c9c055bdc41f",
+  "mp1nf_other_m1_e1004_b-_j-.npz": "e0313cd15ff150b624b955679ea8771dfdafeaed96fd33cc97f664cafdbd97a0",
+  "mp1nf_other_m1_e1005_b-_j-.npz": "293dea7d68e24f1902c12d11087e4e0a60111c22937aae0c239294fc1a569126",
+  "mp1s1_other_m1_b-_j-.npz": "6580cbde395d16bd3a2decf34dc1fd7dc06e7c87f1615af86826217115e4536e",
+  "mp1nf_other_p1_e1001_b-_j-.npz": "7a63ee616dcefef2cd3a38bd61859f4048cae9d97352be92ad2c977de086ef58",
+  "mp1nf_other_p1_e1002_b-_j-.npz": "5d3f0edf8660140693642d81c50ef558c5dc0cd31473a2cdc3f37c3ed34d2372",
+  "mp1nf_other_p1_e1003_b-_j-.npz": "9b058090e8efc3636e3f0e6b6ecab829a1532393c6ebaa5a3c740d210a56eb0e",
+  "mp1nf_other_p1_e1004_b-_j-.npz": "d4010b57567a4d8c325dfff9f8abacc42f6f0ba5d91a90f4ed80d70fdfb2868f",
+  "mp1nf_other_p1_e1005_b-_j-.npz": "ea073cac4c3d86490c43c7da5463e39c31c4000813f1b74fa2bada60a3cf5d13",
+  "mp1s1_other_p1_b-_j-.npz": "b30f13fb4ea6813e01664c0c3e21c28f1ef7bb14c6dc79bf4a68e390788d799c"
+ },
+ "zero_seed_scatter": {
+  "all_109": {
+   "T_0": 2.0457029420846044e-109,
+   "median_rel_sd": 0.0,
+   "seed42_minus_seedmean_norm": 4.045444788484554e-55
+  },
+  "pz_lt_6 (GiBUU)": {
+   "T_0": 3.55393071362985e-110,
+   "median_rel_sd": 0.0,
+   "seed42_minus_seedmean_norm": 1.6861626762871605e-55
+  }
+ },
+ "species": {
+  "em": {
+   "all_109": {
+    "T": {
+     "minus": 7.947006516349746e-110,
+     "plus": 2.14681454488326e-109,
+     "zero": 2.0457029420846044e-109
+    },
+    "N_unpaired": 1.0547192500782685e-54,
+    "curv_S1": 2.192781244442894e-41,
+    "span_S1": 8.837779399136776e-41,
+    "curv_paired_k": [
+     2.192781244442894e-41,
+     2.192781244442894e-41,
+     2.192781244442894e-41,
+     2.192781244442894e-41,
+     2.192781244442894e-41
+    ],
+    "span_k": [
+     8.837779399136776e-41,
+     8.837779399136776e-41,
+     8.837779399136776e-41,
+     8.837779399136776e-41,
+     8.837779399136776e-41
+    ],
+    "curv_seedmean": 2.1927812444429028e-41,
+    "span_seedmean": 8.837779399136798e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 20790188898895.816,
+     "median_k curv_paired_k/N_unpaired": 20790188898895.816,
+     "curv_seedmean/(N_unpaired/sqrt(K))": 46488275642992.734,
+     "curv_seedmean/span_seedmean (descriptive, NOT a gate)": 0.2481145031360565
+    }
+   },
+   "pz_lt_6 (GiBUU)": {
+    "T": {
+     "minus": 7.838788676406607e-110,
+     "plus": 7.84934651444984e-110,
+     "zero": 3.55393071362985e-110
+    },
+    "N_unpaired": 5.468442012618937e-55,
+    "curv_S1": 2.00700358433849e-41,
+    "span_S1": 7.781876530823809e-41,
+    "curv_paired_k": [
+     2.00700358433849e-41,
+     2.00700358433849e-41,
+     2.00700358433849e-41,
+     2.00700358433849e-41,
+     2.00700358433849e-41
+    ],
+    "span_k": [
+     7.781876530823809e-41,
+     7.781876530823809e-41,
+     7.781876530823809e-41,
+     7.781876530823809e-41,
+     7.781876530823809e-41
+    ],
+    "curv_seedmean": 2.0070035843384747e-41,
+    "span_seedmean": 7.781876530823819e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 36701561060849.56,
+     "median_k curv_paired_k/N_unpaired": 36701561060849.56,
+     "curv_seedmean/(N_unpaired/sqrt(K))": 82067185412418.3,
+     "curv_seedmean/span_seedmean (descriptive, NOT a gate)": 0.2579074052882725
+    }
+   }
+  },
+  "other": {
+   "all_109": {
+    "T": {
+     "minus": 2.0092377937660532e-110,
+     "plus": 1.1205114729422084e-109,
+     "zero": 2.0457029420846044e-109
+    },
+    "N_unpaired": 9.748972776994113e-55,
+    "curv_S1": 1.8960247521014756e-41,
+    "span_S1": 7.869759543473275e-41,
+    "curv_paired_k": [
+     1.8960247521014756e-41,
+     1.8960247521014756e-41,
+     1.8960247521014756e-41,
+     1.8960247521014756e-41,
+     1.8960247521014756e-41
+    ],
+    "span_k": [
+     7.869759543473275e-41,
+     7.869759543473275e-41,
+     7.869759543473275e-41,
+     7.869759543473275e-41,
+     7.869759543473275e-41
+    ],
+    "curv_seedmean": 1.8960247521014695e-41,
+    "span_seedmean": 7.869759543473272e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 19448456729469.65,
+     "median_k curv_paired_k/N_unpaired": 19448456729469.65,
+     "curv_seedmean/(N_unpaired/sqrt(K))": 43488071304557.23,
+     "curv_seedmean/span_seedmean (descriptive, NOT a gate)": 0.2409253728309811
+    }
+   },
+   "pz_lt_6 (GiBUU)": {
+    "T": {
+     "minus": 2.0084256523781122e-110,
+     "plus": 7.826606555587492e-110,
+     "zero": 3.55393071362985e-110
+    },
+    "N_unpaired": 4.9041569165846444e-55,
+    "curv_S1": 1.720567905338173e-41,
+    "span_S1": 6.896016429799984e-41,
+    "curv_paired_k": [
+     1.720567905338173e-41,
+     1.720567905338173e-41,
+     1.720567905338173e-41,
+     1.720567905338173e-41,
+     1.720567905338173e-41
+    ],
+    "span_k": [
+     6.896016429799984e-41,
+     6.896016429799984e-41,
+     6.896016429799984e-41,
+     6.896016429799984e-41,
+     6.896016429799984e-41
+    ],
+    "curv_seedmean": 1.720567905338143e-41,
+    "span_seedmean": 6.896016429799981e-41,
+    "ratios": {
+     "curv_S1/N_unpaired": 35083867311007.9,
+     "median_k curv_paired_k/N_unpaired": 35083867311007.9,
+     "curv_seedmean/(N_unpaired/sqrt(K))": 78449912220995.05,
+     "curv_seedmean/span_seedmean (descriptive, NOT a gate)": 0.24950171201782476
+    }
+   }
+  }
+ }
+}

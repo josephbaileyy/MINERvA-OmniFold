@@ -1,0 +1,1208 @@
+{
+ "unfolds": {
+  "mp1nf_unfold_zero_e1001": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+    "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "expected": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+    "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "expected": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task0-60063770.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_zero_e1001_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 663.426
+    }
+   ],
+   "s5c": [
+    "[s5c] task=0 name=mp1nf_unfold_zero_e1001 job=60063770 host=nid004419 start=2026-10-21T00:36:22Z",
+    "[s5c] task=0 name=mp1nf_unfold_zero_e1001 rc=0 end=2026-10-21T00:47:52Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_zero_e1001_b-_j-.npz",
+   "product_sha256": "286adeb8e8335792729bc0018511edb48eaf45c117b7870ba48a9fcbf35b8886",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_m1_e1001": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+    "sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "expected": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+    "sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "expected": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task1-60063770.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_m1_e1001_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 665.368
+    }
+   ],
+   "s5c": [
+    "[s5c] task=1 name=mp1nf_unfold_em_m1_e1001 job=60063770 host=nid004419 start=2026-10-21T00:36:22Z",
+    "[s5c] task=1 name=mp1nf_unfold_em_m1_e1001 rc=0 end=2026-10-21T00:47:54Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_m1_e1001_b-_j-.npz",
+   "product_sha256": "892d55430c43c5c7414b4bd166789a2f179267e1aac130e2932ebd5a69b8f544",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_p1_e1001": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+    "sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "expected": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+    "sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "expected": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task2-60063770.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_p1_e1001_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 667.032
+    }
+   ],
+   "s5c": [
+    "[s5c] task=2 name=mp1nf_unfold_em_p1_e1001 job=60063770 host=nid004419 start=2026-10-21T00:36:22Z",
+    "[s5c] task=2 name=mp1nf_unfold_em_p1_e1001 rc=0 end=2026-10-21T00:47:55Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_p1_e1001_b-_j-.npz",
+   "product_sha256": "7fd77fbd7f127d434c82753ef7e7714e81351e0fc2dd2c816e6a8834a4d22ba6",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_m1_e1001": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+    "sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "expected": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+    "sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "expected": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task3-60063770.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_m1_e1001_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 661.513
+    }
+   ],
+   "s5c": [
+    "[s5c] task=3 name=mp1nf_unfold_other_m1_e1001 job=60063770 host=nid004419 start=2026-10-21T00:36:22Z",
+    "[s5c] task=3 name=mp1nf_unfold_other_m1_e1001 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_m1_e1001_b-_j-.npz",
+   "product_sha256": "51881c831c82571626741d7a03bf0f4d3e686de6d73fca2466d0149928d77aac",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_p1_e1001": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+    "sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "expected": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+    "sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "expected": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task4-60063770.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_p1_e1001_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 645.895
+    }
+   ],
+   "s5c": [
+    "[s5c] task=4 name=mp1nf_unfold_other_p1_e1001 job=60063770 host=nid004419 start=2026-10-21T00:36:22Z",
+    "[s5c] task=4 name=mp1nf_unfold_other_p1_e1001 rc=0 end=2026-10-21T00:47:37Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_p1_e1001_b-_j-.npz",
+   "product_sha256": "7a63ee616dcefef2cd3a38bd61859f4048cae9d97352be92ad2c977de086ef58",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_zero_e1002": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+    "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "expected": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+    "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "expected": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task5-60063771.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_zero_e1002_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 642.703
+    }
+   ],
+   "s5c": [
+    "[s5c] task=5 name=mp1nf_unfold_zero_e1002 job=60063771 host=nid004444 start=2026-10-21T00:36:23Z",
+    "[s5c] task=5 name=mp1nf_unfold_zero_e1002 rc=0 end=2026-10-21T00:47:35Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_zero_e1002_b-_j-.npz",
+   "product_sha256": "f65b98ff48b1f5d1574c076f1d3b96199ba9a2c2e0ad594f62013f24fbe26870",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_m1_e1002": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+    "sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "expected": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+    "sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "expected": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task6-60063771.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_m1_e1002_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 663.402
+    }
+   ],
+   "s5c": [
+    "[s5c] task=6 name=mp1nf_unfold_em_m1_e1002 job=60063771 host=nid004444 start=2026-10-21T00:36:23Z",
+    "[s5c] task=6 name=mp1nf_unfold_em_m1_e1002 rc=0 end=2026-10-21T00:47:52Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_m1_e1002_b-_j-.npz",
+   "product_sha256": "a60bba91e58f8ad0ee3ad16e0e4924e880949ea296b79bd284fe0e951ca63ef0",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_p1_e1002": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+    "sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "expected": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+    "sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "expected": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task7-60063771.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_p1_e1002_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 663.11
+    }
+   ],
+   "s5c": [
+    "[s5c] task=7 name=mp1nf_unfold_em_p1_e1002 job=60063771 host=nid004444 start=2026-10-21T00:36:23Z",
+    "[s5c] task=7 name=mp1nf_unfold_em_p1_e1002 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_p1_e1002_b-_j-.npz",
+   "product_sha256": "1624c7c4333c2d246af490874ad827a3dc34fcb2782e4059d7f8bc4eaf617312",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_m1_e1002": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+    "sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "expected": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+    "sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "expected": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task8-60063771.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_m1_e1002_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 663.985
+    }
+   ],
+   "s5c": [
+    "[s5c] task=8 name=mp1nf_unfold_other_m1_e1002 job=60063771 host=nid004444 start=2026-10-21T00:36:23Z",
+    "[s5c] task=8 name=mp1nf_unfold_other_m1_e1002 rc=0 end=2026-10-21T00:47:53Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_m1_e1002_b-_j-.npz",
+   "product_sha256": "89cc3162f8c19c2fa5667424f9a073058492348fe906059db2db1524877fe218",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_p1_e1002": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+    "sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "expected": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+    "sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "expected": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task9-60063771.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_p1_e1002_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 662.843
+    }
+   ],
+   "s5c": [
+    "[s5c] task=9 name=mp1nf_unfold_other_p1_e1002 job=60063771 host=nid004444 start=2026-10-21T00:36:23Z",
+    "[s5c] task=9 name=mp1nf_unfold_other_p1_e1002 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_p1_e1002_b-_j-.npz",
+   "product_sha256": "5d3f0edf8660140693642d81c50ef558c5dc0cd31473a2cdc3f37c3ed34d2372",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_zero_e1003": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+    "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "expected": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+    "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "expected": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task10-60063772.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_zero_e1003_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 655.181
+    }
+   ],
+   "s5c": [
+    "[s5c] task=10 name=mp1nf_unfold_zero_e1003 job=60063772 host=nid004728 start=2026-10-21T00:36:30Z",
+    "[s5c] task=10 name=mp1nf_unfold_zero_e1003 rc=0 end=2026-10-21T00:47:50Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_zero_e1003_b-_j-.npz",
+   "product_sha256": "b3010fb514ecb63fe352996306d5f8bcfa825655c08b02ec0f1acc862565249f",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_m1_e1003": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+    "sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "expected": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+    "sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "expected": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task11-60063772.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_m1_e1003_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 638.152
+    }
+   ],
+   "s5c": [
+    "[s5c] task=11 name=mp1nf_unfold_em_m1_e1003 job=60063772 host=nid004728 start=2026-10-21T00:36:30Z",
+    "[s5c] task=11 name=mp1nf_unfold_em_m1_e1003 rc=0 end=2026-10-21T00:47:36Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_m1_e1003_b-_j-.npz",
+   "product_sha256": "0d43071ea653147bbf4fc5707d008c485193af063d1f759ec36cf018bc31336e",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_p1_e1003": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+    "sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "expected": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+    "sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "expected": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task12-60063772.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_p1_e1003_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 654.551
+    }
+   ],
+   "s5c": [
+    "[s5c] task=12 name=mp1nf_unfold_em_p1_e1003 job=60063772 host=nid004728 start=2026-10-21T00:36:30Z",
+    "[s5c] task=12 name=mp1nf_unfold_em_p1_e1003 rc=0 end=2026-10-21T00:47:50Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_p1_e1003_b-_j-.npz",
+   "product_sha256": "638075ffed8a0fc165450126b0fcb61a3f97a640102bb818925b39e53ec57299",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_m1_e1003": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+    "sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "expected": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+    "sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "expected": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task13-60063772.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_m1_e1003_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 654.369
+    }
+   ],
+   "s5c": [
+    "[s5c] task=13 name=mp1nf_unfold_other_m1_e1003 job=60063772 host=nid004728 start=2026-10-21T00:36:30Z",
+    "[s5c] task=13 name=mp1nf_unfold_other_m1_e1003 rc=0 end=2026-10-21T00:47:50Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_m1_e1003_b-_j-.npz",
+   "product_sha256": "b8c739fb480d069854c1f3b02a7debc01b948e43c7f69f21e9f3c9c055bdc41f",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_p1_e1003": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+    "sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "expected": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+    "sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "expected": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task14-60063772.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_p1_e1003_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 655.133
+    }
+   ],
+   "s5c": [
+    "[s5c] task=14 name=mp1nf_unfold_other_p1_e1003 job=60063772 host=nid004728 start=2026-10-21T00:36:30Z",
+    "[s5c] task=14 name=mp1nf_unfold_other_p1_e1003 rc=0 end=2026-10-21T00:47:50Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_p1_e1003_b-_j-.npz",
+   "product_sha256": "9b058090e8efc3636e3f0e6b6ecab829a1532393c6ebaa5a3c740d210a56eb0e",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_zero_e1004": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+    "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "expected": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+    "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "expected": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task15-60063773.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_zero_e1004_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 662.82
+    }
+   ],
+   "s5c": [
+    "[s5c] task=15 name=mp1nf_unfold_zero_e1004 job=60063773 host=nid004830 start=2026-10-21T00:36:22Z",
+    "[s5c] task=15 name=mp1nf_unfold_zero_e1004 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_zero_e1004_b-_j-.npz",
+   "product_sha256": "cc722a2469c42d4f773120fb626e1bdbf587f234699beced2baecac843bdc091",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_m1_e1004": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+    "sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "expected": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+    "sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "expected": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task16-60063773.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_m1_e1004_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 664.053
+    }
+   ],
+   "s5c": [
+    "[s5c] task=16 name=mp1nf_unfold_em_m1_e1004 job=60063773 host=nid004830 start=2026-10-21T00:36:22Z",
+    "[s5c] task=16 name=mp1nf_unfold_em_m1_e1004 rc=0 end=2026-10-21T00:47:53Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_m1_e1004_b-_j-.npz",
+   "product_sha256": "7b6ad9fe7a6539e4524f2d061fcfe227a5cb98a77ed7d06a9a2bfef24e9a63a6",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_p1_e1004": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+    "sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "expected": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+    "sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "expected": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task17-60063773.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_p1_e1004_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 662.68
+    }
+   ],
+   "s5c": [
+    "[s5c] task=17 name=mp1nf_unfold_em_p1_e1004 job=60063773 host=nid004830 start=2026-10-21T00:36:22Z",
+    "[s5c] task=17 name=mp1nf_unfold_em_p1_e1004 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_p1_e1004_b-_j-.npz",
+   "product_sha256": "481a52db6ac398a434723d51303b8743fb11ee453027e489945ff355f1a958fb",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_m1_e1004": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+    "sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "expected": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+    "sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "expected": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task18-60063773.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_m1_e1004_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 647.349
+    }
+   ],
+   "s5c": [
+    "[s5c] task=18 name=mp1nf_unfold_other_m1_e1004 job=60063773 host=nid004830 start=2026-10-21T00:36:22Z",
+    "[s5c] task=18 name=mp1nf_unfold_other_m1_e1004 rc=0 end=2026-10-21T00:47:37Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_m1_e1004_b-_j-.npz",
+   "product_sha256": "e0313cd15ff150b624b955679ea8771dfdafeaed96fd33cc97f664cafdbd97a0",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_p1_e1004": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+    "sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "expected": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+    "sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "expected": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task19-60063773.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_p1_e1004_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 663.251
+    }
+   ],
+   "s5c": [
+    "[s5c] task=19 name=mp1nf_unfold_other_p1_e1004 job=60063773 host=nid004830 start=2026-10-21T00:36:22Z",
+    "[s5c] task=19 name=mp1nf_unfold_other_p1_e1004 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_p1_e1004_b-_j-.npz",
+   "product_sha256": "d4010b57567a4d8c325dfff9f8abacc42f6f0ba5d91a90f4ed80d70fdfb2868f",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_zero_e1005": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+    "sha256": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "expected": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero_bkg.npz",
+    "sha256": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "expected": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task20-60063774.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_zero_e1005_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 662.695
+    }
+   ],
+   "s5c": [
+    "[s5c] task=20 name=mp1nf_unfold_zero_e1005 job=60063774 host=nid004971 start=2026-10-21T00:36:22Z",
+    "[s5c] task=20 name=mp1nf_unfold_zero_e1005 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_zero_e1005_b-_j-.npz",
+   "product_sha256": "837179e5a67e3cbf7e9a74310e9219ef18a859744418f7bcaa73d87adafb3dea",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_m1_e1005": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz",
+    "sha256": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "expected": "dcaf079b43e509bd801ef5e52bf0a13c16fc7c3b7131127612719ed47bc72ff9",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz",
+    "sha256": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "expected": "c68351c9a093d167896f848d6e69d54e58eee2a9e7e777f71c82dae7dbcf005f",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task21-60063774.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_m1_e1005_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 664.824
+    }
+   ],
+   "s5c": [
+    "[s5c] task=21 name=mp1nf_unfold_em_m1_e1005 job=60063774 host=nid004971 start=2026-10-21T00:36:22Z",
+    "[s5c] task=21 name=mp1nf_unfold_em_m1_e1005 rc=0 end=2026-10-21T00:47:53Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_m1_e1005_b-_j-.npz",
+   "product_sha256": "e4f5d659f0e7f9264850f87c2d28617c23e8586343644c8b16700a6343dacb27",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_em_p1_e1005": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz",
+    "sha256": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "expected": "d0177f1ccc48f3b92424bbd65886b50d4763016ace030fad23b021471022e911",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz",
+    "sha256": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "expected": "cffdc91f5e4d6a34f450a7b13032256aec8a17b919fd67d2da89241d9ff23a3d",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task22-60063774.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_em_p1_e1005_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 662.391
+    }
+   ],
+   "s5c": [
+    "[s5c] task=22 name=mp1nf_unfold_em_p1_e1005 job=60063774 host=nid004971 start=2026-10-21T00:36:22Z",
+    "[s5c] task=22 name=mp1nf_unfold_em_p1_e1005 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_em_p1_e1005_b-_j-.npz",
+   "product_sha256": "4b2ba80ec6f1def577e482957cb0eae12c11f32dfd02109e9dd1a5513aafd56d",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_m1_e1005": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz",
+    "sha256": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "expected": "79586e49d5893ee0bd98c2aaf5f8624205ec3e5ba20513d5869aac3225fa8b92",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz",
+    "sha256": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "expected": "5f82d64ef0cf8ac294bf34b5ece3391fc6ece6f25e4fc3e3fc8e5bf3c2abe2c2",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task23-60063774.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_m1_e1005_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 662.544
+    }
+   ],
+   "s5c": [
+    "[s5c] task=23 name=mp1nf_unfold_other_m1_e1005 job=60063774 host=nid004971 start=2026-10-21T00:36:22Z",
+    "[s5c] task=23 name=mp1nf_unfold_other_m1_e1005 rc=0 end=2026-10-21T00:47:51Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_m1_e1005_b-_j-.npz",
+   "product_sha256": "293dea7d68e24f1902c12d11087e4e0a60111c22937aae0c239294fc1a569126",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  },
+  "mp1nf_unfold_other_p1_e1005": {
+   "--npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz",
+    "sha256": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "expected": "0cf92c3f7bd07f05a353043b34c98d423db06f304dbe05272b26ea58e471f4fa",
+    "ok": true
+   },
+   "--bkg": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz",
+    "sha256": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "expected": "f4305dbe1e43912c1adb8ba0b4381226746c40c652ee14c6bef636a0dd7587b9",
+    "ok": true
+   },
+   "logs": [
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unfold-run-task24-60063774.log"
+   ],
+   "log_lines": 42,
+   "result": [
+    {
+     "out": "mp1nf_other_p1_e1005_b-_j-.npz",
+     "rc": 0,
+     "seconds_unfold": 645.813
+    }
+   ],
+   "s5c": [
+    "[s5c] task=24 name=mp1nf_unfold_other_p1_e1005 job=60063774 host=nid004971 start=2026-10-21T00:36:22Z",
+    "[s5c] task=24 name=mp1nf_unfold_other_p1_e1005 rc=0 end=2026-10-21T00:47:37Z"
+   ],
+   "unexplained_lines": [],
+   "env_log_equals_w2b": true,
+   "inventory": {
+    "records": 1,
+    "script": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/4e4b4f56/nd-unfolding/s5p_numerics.py",
+    "script_sha256": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "script_sha256_on_disk": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "allow_is_empty": true,
+    "guard_installed": true,
+    "outside_expect_root": []
+   },
+   "product": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/noisefloor/unf/mp1nf_other_p1_e1005_b-_j-.npz",
+   "product_sha256": "ea073cac4c3d86490c43c7da5463e39c31c4000813f1b74fa2bada60a3cf5d13",
+   "product_keys": [
+    "meta",
+    "shape",
+    "xsec_flat"
+   ],
+   "product_nonfinite": {}
+  }
+ },
+ "dump_inputs": {},
+ "failures": [],
+ "n_unfolds": 25,
+ "verdict": "PASS"
+}

@@ -1,0 +1,23 @@
+{
+ "label": "not the MP-1 result; species restricted after the G3 outcome; post hoc",
+ "frozen_design": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/e9372b75/docs/orchestration/state/s5p/prod/design.json",
+ "frozen_sha256": "404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285",
+ "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/partial/run/design-mp1-partial_pm.json",
+ "sha256": "06a44c957318df1b329ed2850caa4e12d2abee76464ada66c6f97e1b702e9936",
+ "differing_leaves": [
+  "/lateral_endpoints/SpeciesResponse_meson[0]",
+  "/lateral_endpoints/SpeciesResponse_meson[1]",
+  "/lateral_endpoints/SpeciesResponse_proton[0]",
+  "/lateral_endpoints/SpeciesResponse_proton[1]",
+  "/species_bands/SpeciesResponse_meson",
+  "/species_bands/SpeciesResponse_proton",
+  "/species_z_key"
+ ],
+ "only_species_additions": true,
+ "endpoint_sha256": {
+  "proton_m1": "bfffb8c54df3895ac1f98113027382418789ed43b59224fe3de8d7bc36419091",
+  "proton_p1": "8cbe49ae8407aafb2a67ecdcb6829717dfb8cd3ce1c0c8afe5469c9457f01390",
+  "meson_m1": "6f3fbb50ec9102fe198d08f323c20ddce420457f5f3c2e5b13ed7f541a652a21",
+  "meson_p1": "e54b01c1c44445362dc11d23c725fd957927348a91ad5ab2cda6ab25ba0e257c"
+ }
+}
