@@ -1,0 +1,4 @@
+JobID|JobName|Account|QOS|State|Start|End|ElapsedRaw|AllocTRES
+60064887|re1-f-chain|m3246|debug|COMPLETED|2026-10-20T17:56:13|2026-10-20T17:59:24|191|billing=256,cpu=256,energy=58546,mem=487802M,node=1
+0
+charge node-h = 191/3600 * 256/256 = 0.0531

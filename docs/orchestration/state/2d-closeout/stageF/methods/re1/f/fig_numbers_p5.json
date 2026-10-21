@@ -1,0 +1,43 @@
+{
+ "values": {
+  "sigTwoD": 3.0733131599571655e-38,
+  "sigTwoDpaper": 3.03901139455691e-38,
+  "ratioTot": 1.0112871460310062,
+  "binsTen": 94.14634146341463,
+  "n_reported": 205,
+  "pullMean": 0.08894542701552118,
+  "pullRMS": 0.5981211651164514,
+  "chiPaper": 3.6609406827395268,
+  "chi2ndf_data_vs_tune": 33.03927965774954,
+  "chi2ndf_ours_vs_tune": 26.490912579045744,
+  "uqPaper_median_rel_pct": 6.852482845312499,
+  "data_total": 3.064955439714736e-38,
+  "ratio_total_GENIE-CV": 1.1086981939422254,
+  "ratio_corner_GENIE-CV": 1.1390621929909486,
+  "ratio_W2p2_GENIE-CV": 1.1228181623769578,
+  "ratio_total_GENIE+MEC": 1.065833859124904,
+  "ratio_corner_GENIE+MEC": 1.1355198264944062,
+  "ratio_W2p2_GENIE+MEC": 1.1108020814354433,
+  "ratio_total_NuWro": 1.15104039278441,
+  "ratio_corner_NuWro": 1.1569682868617928,
+  "ratio_W2p2_NuWro": 1.129907211429188,
+  "ratio_total_GiBUU": 1.383630559910567,
+  "ratio_corner_GiBUU": 1.602637476619436,
+  "ratio_W2p2_GiBUU": 1.342554674515843,
+  "pred_over_data_Wmid_pct_GENIE-CV": 9.469106539264782,
+  "pred_over_data_Wmid_pct_GENIE+MEC": 11.87392976154278,
+  "corner_over_total_max_dev_pct": 6.5381641587852535,
+  "note_share_hiEavail_pct": 67.07264520450096,
+  "note_share_hiW_of_hiEavail_pct": 82.98519988963633,
+  "ratio_hihi_min_pct": 12.039777822099552,
+  "ratio_hihi_max_pct": 28.918468449174316,
+  "ratio_lowW_min_pct": 22.513898295084278,
+  "ratio_lowW_max_pct": 30.29902784078009,
+  "share_catch_cell_pct": 21.09857989877173,
+  "fig2_excess_equals_data_minus_comparator_maxabs": 2.4469891754994467e-55
+ },
+ "pass": 0.0,
+ "not_covered": [
+  "paper_body.tex 'higher energies carry 14--15% of this region ... and 7% of the total' and '1.37 against 1.29': from VL161 (E_nu >= 20 GeV shares), not recomputable from these arrays"
+ ]
+}
