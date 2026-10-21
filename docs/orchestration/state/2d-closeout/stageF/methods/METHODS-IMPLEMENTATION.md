@@ -257,3 +257,57 @@ An independent review found 1 MATERIAL and 7 MINOR issues. All are fixed except 
   reverse it.
 
 **Pages:** note 135, paper 13, primer 15.
+
+## 10. Register loop, round 1 (2026-10-21, DECISION-20261021-joseph-ai-ack-and-register-loop)
+
+**Baseline scores** (paper at `e5ae5b11`, director's scratchpad `xmodel/r8/`):
+- GPT-6.1-sol: register 3/5, readiness "nearly";
+- Gemini: 3.5/5, "nearly".
+
+**Round-1 edits** (paper and note sources only):
+- Sec. VI renamed "Uncertainty estimates and their validation".
+- Former Sec. VII (descriptive comparison) folded into the application section as its first subsection. The
+  application section is now Sec. VII, "Application: comparison with generator predictions", and the conclusions
+  are Sec. VIII.
+- Repeated scope statements consolidated into Sec. I; audit phrasing rewritten as criterion, value and outcome.
+- Abstract simplified along the GPT-6.1-sol rewrite (about 149 words).
+- The lost-pseudo-experiment paragraph moved into the decision-rule subsection.
+- AI acknowledgment condensed, per item 1 of the decision. It points to the note's full statement, which is
+  unchanged and carries the tool versions (`main_note.tex`, the acknowledgments).
+
+**Rejected suggestions.** Gemini's rewrites were not adopted where they dropped or changed a fact:
+- its post-hoc paragraph, which removed who had seen the data residuals and when the budget extension was decided;
+- "computationally prohibitive" as the reason the covariance was not regenerated, which no record supports.
+
+**Rescoring** (`xmodel/r9/`, on build `mrg1`):
+- GPT-6.1-sol: 3/5, "nearly";
+- Gemini: 3.5/5, "nearly".
+
+Both models' remaining requests are structural, not register:
+- a summary table linking each finding to its configuration, test and limitation;
+- the five-observable coverage test moved into Sec. VI;
+- Sec. VII C–D condensed, with the sequential-sampling argument and development chronology moved to the note;
+- the generator tests made more clearly subordinate;
+- a clearer diagnosis of the recovery failures. IBU-1 and JIT-1 are specified for this
+  ([`IBU1-SPEC.md`](IBU1-SPEC.md), [`JIT1-SPEC.md`](JIT1-SPEC.md)).
+
+**Independent two-direction review** (of build `mrg1`): 2 MATERIAL, 4 MINOR. All fixed (build `mrg2`):
+- M1: the condensed acknowledgment had narrowed what the tools assisted with. Restored to "substantial assistance
+  with the analysis code, statistical procedures, computing campaigns, independent recomputations and reviews,
+  figures, and manuscript drafts".
+- M2: "within the implemented simulation model" restored to the methodological-contribution sentence.
+- m1: "calibrated in simulation" restored in the abstract.
+- m2: the projection study's ensembles and independent reproduction restored to the paper.
+- m3: the post-hoc pointer now cites Secs. VII C and VII E.
+- m4: "global assessments of the hybrid nulls".
+- Also: "the Tune v1 map", and stale section numbers in source comments.
+
+**Order deviation.** The decision says each round is reviewed before the models rescore it. Here the rescoring ran in
+parallel with the review, so the models scored `mrg1`, not `mrg2`. The review's fixes restore qualifiers and facts
+and do not simplify the register. Re-running the rescoring on `mrg2` would not change the stop decision below.
+
+**Mechanics** (`mrg2`): rc 0; both gates PASS (Sec. IV receipts 15/15); no unresolved references;
+`swallowed_text.py` flags 0. Pages: paper 13, note 135, primer 15.
+
+**Stop.** Neither rating rose between the two rounds, so the decision's stopping rule ends the loop after round 1.
+A structural round, built from the list above, is offered to Joseph. It is not started.
