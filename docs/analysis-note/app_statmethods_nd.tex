@@ -172,3 +172,86 @@ is also distinct from a rank-deficient sample covariance; neither truncating
 the latter nor validating a few projections certifies the full distribution.
 Any such benchmark would supplement the required scalar-5D uncertainty
 construction, not replace its adoption.
+
+% Methods rewrite draft 4 (X5 G9): the self-contained familywise-error derivation. Sources:
+% docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md:39-74 (bound, certified table, assumptions A1/A2,
+% the rule, replacement text); M2-AUDIT.md:76-117 (Q2: model, crossing-event inclusion, first-true-null Holm reduction
+% without independence, claim variants, ordering); m2-calc/certify_crossing.py:1-4 (U95, monotonicity of g_c in p, left
+% Riemann sum plus tail, exact dynamic program), certify_out.json per_threshold (ratio_upper 0.8902 at c = 0.05, grid
+% 6000, h = 6c); the outside check m2-calc/gpt-6.1-sol-check.md (M2-FWER-RECORD.md:23-29: uniform p is the worst case).
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's Appendix A, moved verbatim
+% (labels adapted).
+\subsection{Familywise error of the sequential joint-test decisions}
+\label{sec:joint5d-fwer}
+
+This derivation supports the familywise statement of \S\ref{sec:joint5d-frozen}.
+
+\emph{Probability model.}  Fix one test, and condition on the data and on the
+simulated sample.  The calibration pseudo-experiments, taken in their fixed
+seed order, give exceedance indicators $X_{b}=\mathbf{1}[T_{b}\ge
+t_{\mathrm{obs}}]$.  Assumption A2 is that, given the data, these are
+independent Bernoulli draws with a common probability $p$, the calibrated tail
+probability of the observed statistic; this requires the lost
+pseudo-experiments to be lost independently of their outcomes.  Assumption A1
+is that, for a true null, $p$ is super-uniform over repetitions of the
+experiment, $P(p\le u)\le u$, with the nuisance parameters drawn from their
+priors; the size statement is therefore averaged over the nuisance priors.
+Let $k_{B}$ be the number of exceedances among the first $B$ draws and
+$U(k,B)$ the upper end of the two-sided 95\% Clopper--Pearson interval, a
+one-sided 97.5\% upper bound.
+
+\emph{Crossing event.}  The rule rejects at threshold $c$ only if
+$U(k_{B},B)<c$ at the number $B\le\jtBcap$ at which sampling stopped.  Whatever
+rule chose that stopping point, including stops decided with results visible,
+irregular looks, lost draws, and the budget extensions, the rejection lies in
+the event $E_{c}=\bigcup_{B\le\jtBcap}\{U(k_{B},B)<c\}$ that the bound crosses
+below $c$ at some $B$.  Hence $P(\text{reject at }c)\le R(c)\equiv
+E_{p}[g_{c}(p)]$, with $g_{c}(p)=P(E_{c}\mid p)$.
+
+\emph{Uniform $p$ is the worst case.}  Coupling the Bernoulli draws in $p$ shows
+that $g_{c}(p)$ does not increase with $p$.  For any super-uniform $p$ its
+expectation is therefore at most its value for uniform $p$,
+$R(c)\le\int_{0}^{1}g_{c}(u)\,du$.
+
+\emph{The decision rule, operationally.}  The tests are ordered by increasing
+$(k+1)/(B+1)$, with ties broken in the fixed listing order (total before shape
+for each null).  At step $i$ the threshold is $\alpha/(m-i+1)$: the test is
+rejected if $U<\alpha/(m-i+1)$, it is not rejected if the lower end of its
+interval exceeds the threshold, and it is undetermined otherwise; a test that
+is not rejected or undetermined ends the step-down, and the tests after it
+take the same status.  Equality $U=c$ does not reject.
+% X7 (sol Appendix A): M2-AUDIT.md:68 (Holm with determinacy: reject if the upper end < threshold, stop "not rejected" if
+% the lower end > threshold, "undetermined" otherwise); a7margins/RECEIPT.md:46-49 (ties by the design's insertion
+% order, total before shape); nd-unfolding/s5p_inference.py:127-152.
+
+\emph{Holm reduction without independence.}  Let $m_{0}$ of the $m=10$
+hypotheses be true.  The first true null to be rejected is reached after at
+most $m-m_{0}$ rejections of false nulls, so its threshold is at most
+$\alpha/m_{0}$.  A familywise error therefore requires some true null to cross
+below $\alpha/m_{0}$, and by the union bound
+$\mathrm{FWER}\le m_{0}\,R(\alpha/m_{0})\le\max_{j\le m}j\,R(\alpha/j)$.  The
+argument uses neither independence between tests nor the order of the Holm
+steps, so the shared ensemble of a null's total and shape tests, their
+unequal stopping counts, and the ranking by $(k+1)/(B+1)$ with its ties do not
+affect it.  The decision $p$ value is the largest over shifted nulls that
+include the unshifted one, evaluated at the same $B$, so its exceedance count
+is at least that of the unshifted test; since $U$ increases with $k$, the bound for the unshifted test
+covers the decision rule.
+
+\emph{Certified constant.}  For each $c=\alpha/j$, $j=1,\dots,10$, let
+$k^{*}(B)$ be the largest $k$ with $U(k,B)<c$.  For fixed $p$, a dynamic
+program propagates the distribution of $k_{B}$ from $B=1$ to \jtBcap{}, moving
+the probability of every state with $k_{B}\le k^{*}(B)$ into an absorbing
+``crossed'' state at each $B$, and pooling the counts above
+$\max_{B}k^{*}(B)$, which can never cross because counts never decrease; the
+absorbed probability is $g_{c}(p)$ exactly.  This is evaluated on a grid of 6000
+points in $[0,6c]$.  Because $g_{c}$ is nonincreasing, a left Riemann sum
+over-estimates its integral on each grid interval, and with the tail term
+$(1-6c)\,g_{c}(6c)$ it is a rigorous upper bound on $\int_{0}^{1}g_{c}$, so the
+integration error is included in the bound.
+% X7: m2-calc/certify_crossing.py:1-4, :8-35 (kstar by bisection; absorbing state; overflow pooled; strict U < c).
+The largest ratio $R(c)/c$, at $j=1$, lies in $[0.8892,0.8902]$; it decreases to
+$[0.5138,0.5148]$ at $j=10$.  Hence, for $\alpha=0.05$, the value used here,
+$\mathrm{FWER}\le0.8902\,\alpha<0.9\,\alpha$ under any stopping at or before \jtBcap{} pseudo-experiments.  The bound rests
+on A1, the calibration's fidelity, which \S\ref{sec:joint5d-conditions} discusses,
+and on A2.

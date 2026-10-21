@@ -48,13 +48,150 @@ anchors. Integrating over $W$ recovers the frozen 4D normalization to
 differences of \SIrange{0.3}{1.5}{\percent}; $d\sigma/dW$ is finite and
 non-negative in all six bins.
 
+\subsection{Implemented definitions of the five observables}
+\label{sec:eavailw-definitions}
+
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): moved
+% verbatim from the article's Sec. II (its Table II and the W-redundancy paragraphs), with their sources.
+% Sources: DEFINITIONS sec. 3; CVUniverse.h (CVU) at this tree: pT, p_par CVU:61-79; E_avail truth CVU:361-374 (135 MeV,
+% 938.27 MeV); reco E_avail CVU:185-193 (scale 1.17); truth W CVU:385-410 with M_n, M_p, M_nucleon = (1.5 M_n + M_p)/2.5
+% at CVU:39-41 and the massless Q^2 at CVU:389-394; reco q3 CVU:208-218, reco W CVU:227-240 (q0 = <tree>_recoil_E;
+% clamps Q^2 >= 0, W^2 >= 0). Truth q3: docs/orchestration/state/s5p/gen5d/README-gen5d-build.md:50-58 (calcq3 of mc_Q2,
+% exact lab-frame Q^2). X5 Gm1: CVUniverse.h:385-410 (massless Q^2); M4-W-RECORD.md:6-7 (beam axis; residual).
+\providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
+Table~\ref{tab:observables-impl} gives the implemented truth and reconstructed
+definitions of the five unfolded observables, as used by the article.
+$E_{\mu}$, $p_{\mu}$, and $\theta_{\mu}$ are the muon energy, momentum, and
+angle; $q_{0}$ is the calorimetric estimate of the energy transfer; $M$ is the
+struck-nucleon mass, $\bar M=(1.5M_{n}+M_{p})/2.5$.  Exact $Q^{2}$ is
+$-(k-k')^{2}$ from the generator's four-vectors; truth $W$ instead uses the
+massless-muon $Q^{2}$ with $\theta_{\mu}$ from the beam axis, a difference
+whose effect on $W$ is given below.
+
+\begin{table}[htbp]
+  \caption{The five observables as implemented.}
+  \label{tab:observables-impl}
+  \centering\small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \pcell{0.09\textwidth}{} & \pcell{0.27\textwidth}{Truth definition} &
+    \pcell{0.32\textwidth}{Reconstructed definition} & \pcell{0.22\textwidth}{Shared inputs and conventions} \\
+    \midrule
+    \pcell{0.09\textwidth}{$\pT$, $\pPar$} &
+    \pcell{0.27\textwidth}{$p_{\mu}\sin\theta_{\mu}$, $p_{\mu}\cos\theta_{\mu}$, $\theta_{\mu}$ from the beam axis} &
+    \pcell{0.32\textwidth}{the same, from the MINERvA--MINOS muon} &
+    \pcell{0.22\textwidth}{muon only} \\
+    \pcell{0.09\textwidth}{$\Eavail$} &
+    \pcell{0.27\textwidth}{proton kinetic energy, $E_{\pi^{\pm}}-\SI{135}{MeV}$, $\pi^{0}$ and $\gamma$ energy (\S\ref{sec:eavail-definition})} &
+    \pcell{0.32\textwidth}{$1.17\times$ calorimetric recoil energy in the tracker and electromagnetic calorimeter, muon deposits removed} &
+    \pcell{0.22\textwidth}{its own calorimetric estimator; \SI{135}{MeV} convention} \\
+    \pcell{0.09\textwidth}{$q_{3}$} &
+    \pcell{0.27\textwidth}{$\sqrt{Q^{2}+(E_{\nu}-E_{\mu})^{2}}$, exact $Q^{2}$} &
+    \pcell{0.32\textwidth}{$\sqrt{Q^{2}+q_{0}^{2}}$, $Q^{2}=2E_{\nu}(E_{\mu}-\pPar)-m_{\mu}^{2}$, $E_{\nu}=E_{\mu}+q_{0}$} &
+    \pcell{0.22\textwidth}{muon kinematics and $q_{0}$} \\
+    \pcell{0.09\textwidth}{$W$} &
+    \pcell{0.27\textwidth}{$\sqrt{M^{2}+2M(E_{\nu}-E_{\mu})-Q^{2}}$, $Q^{2}=4E_{\nu}E_{\mu}\sin^{2}(\theta_{\mu}/2)$} &
+    \pcell{0.32\textwidth}{$\sqrt{\bar M^{2}+2\bar Mq_{0}-Q^{2}}=\sqrt{(\bar M+q_{0})^{2}-q_{3}^{2}}$} &
+    \pcell{0.22\textwidth}{fixed by $(\pT,\pPar,q_{3})$ when reconstructed; nearly so at truth} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% Methods rewrite (M4): the algebra W_reco^2 = (M_bar + q0)^2 - q3_reco^2 is derived from CVU:208-240 in
+% scratchpad/methods-m4/DEFINITIONS.md sec. 3 ("Algebra (derived from the code, not computed)"); q3 is strictly
+% increasing in q0 >= 0 at fixed muon kinematics, so (pT, p_par, q3) fixes q0 and W, apart from the two clamps.
+% Measured exact: docs/orchestration/state/2d-closeout/stageF/methods/M4-W-RECORD.md :8, :104-111
+% (max |residual| 3.2e-7 MeV over 20,498,013 simulated events; Q^2 clamp never fires; W^2 clamp 1.5%).
+Reconstructed $q_{3}$ and $W$ combine the muon kinematics with the calorimetric
+estimate $q_{0}$ of the energy transfer, which is separate from reconstructed
+$\Eavail$.  Since $W_{\mathrm{reco}}^{2}=(\bar M+q_{0})^{2}-q_{3,\mathrm{reco}}^{2}$ and
+$q_{3,\mathrm{reco}}$ increases with $q_{0}$ at fixed muon kinematics,
+reconstructed $W$ is an exact function of $(\pT,\pPar,q_{3})$, apart from the
+clamp at $W^{2}=0$, which applies to \SI{1.5}{\percent} of simulated events.
+% Methods rewrite (M4, the truth-W residual): M4-W-RECORD.md :6 (theta_true from a fixed beam axis tilted -58.87 mrad
+% about x, MAT TruthFunctions.h:21-27, PlotUtilsPhysicalConstants.h:44), :7 and :74-81 (W_true - W_pred with M_bar: 68%
+% within about +-2 MeV, 99.9% within -49/+67 MeV), :85-90 (0.25% of events, weighted, change coarse W bin; 0.15% have
+% no real solution), :63 (the tilt is the only other cause), :55-59 (median 1.03 mrad between the true neutrino and that
+% axis); q3 from the true four-vectors, README-gen5d-build.md:50-58. REVIEW-1 finding 18: M4-W-RECORD.md:7, :72.
+At truth level, $q_{3}$ is computed from the true neutrino and muon
+four-vectors, but $\theta_{\mu}$, and with it $\pT$ and $\pPar$, is measured
+from a fixed beam axis tilted by \SI{58.87}{mrad} from the detector axis
+rather than from the true neutrino direction.  Truth $W$ is therefore fixed
+by $(\pT,\pPar,q_{3})$ only up to that event-by-event angle, of about
+\SI{1}{mrad}, and the choice of $M$: the residual is within \SI{\pm2}{MeV} for
+68\% of events and within $-49$ to $+67$~MeV for 99.9\%;
+\SI{0.25}{\percent} of events (weighted) change their coarse $W$ bin, and
+\SI{0.15}{\percent} have no real solution.
+The five reconstructed inputs therefore share information and do not, by
+themselves, provide five independent constraints: the result is five
+simultaneous observables, not five independent measurements.  The article
+distinguishes the five classifier inputs, the lower-dimensional support they
+populate, and the five reported observables.  Only reconstructed $W$ is fixed
+by the other inputs; reconstructed $\Eavail$ comes from a separate
+calorimetric estimator and is not a function of them.
+% M4-W-RECORD.md :10, :99-102 (pT(beam axis) - pT(neutrino axis): 68% within +-4.3 MeV; 3.1% of signal events change
+% fine pT bin; net effect on cell contents not computed, :14). The negative-W^2 weight fraction 4.9e-5: the analysis drops
+% truth-W NaN rows from its five-observable truth sample, nd-unfolding/unfold_nd_omnifold_unbinned.py:333-335
+% (DEFINITIONS item 5).
+The analysis excludes events with negative truth $W^{2}$, a weight fraction of
+$4.9\times10^{-5}$, from its five-observable truth sample and normalization
+(the external predictions' convention is given in \S\ref{sec:eavailw-axis}).
+The generators measure $\pT$ and $\pPar$ about their own neutrino axis; their
+$\pT$ differs from the analysis truth $\pT$ by \SI{\pm4}{MeV} for 68\% of
+events, and the net effect of this difference on the cell contents has not
+been measured.
+
+\subsection{Generator predictions and the target difference}
+\label{sec:eavailw-generators}
+
+% Methods-paper shortening pass (2026-10-21): the article's generator table and target paragraph, moved verbatim.
+% Sources: DEFINITIONS sec. 6; README-gen5d-fluxfix.md:36-41 (GENIE [0, 50] GeV, NuWro [0.5, 50] GeV), :138-148 (GiBUU
+% Enu_upper_cut = 20, 5.2% of sigma_CC above 20 GeV); KNOWN_ISSUES.md rows 82, 83, 97; the 72-cell GiBUU domain:
+% contract-amendment-7-production-admission.json:9.
+Table~\ref{tab:generators-impl} lists the generator predictions compared in
+this note and tested in \S\ref{sec:joint5d}.  All are per nucleon of the stated
+target and are binned with the same fine-grid-to-cell map.
+
+\begin{table}[htbp]
+  \caption{Generator predictions.}
+  \label{tab:generators-impl}
+  \centering\small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    Prediction & Target & $E_{\nu}$ coverage and flux & Test cells \\
+    \midrule
+    Tune~v1 (GENIE~2.12.6) & CH & analysis simulation & \jtNcells{} \\
+    GENIE~2.12.10 CV & CH & 0--\SI{50}{GeV}, reweighted; 50--\SI{100}{GeV} added & \jtNcells{} \\
+    GENIE~2.12.10 + MEC & CH & as GENIE CV & \jtNcells{} \\
+    NuWro~21.09 & C & 0.5--\SI{50}{GeV}, reweighted; 50--\SI{100}{GeV} added & \jtNcells{} \\
+    GiBUU~2019 & C & below \SI{20}{GeV}, reweighted & \jtNcellsGiBUU{} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% Methods rewrite (M4, BINDING-PHASE1-20261019 sec. 5): the target consequence, quantified for GENIE. Source:
+% docs/orchestration/state/inelastic-high-region-20261011/results/r5_genie_events.json:240 (W0, W < 1.1 GeV:
+% Conly_over_CH_per_nucleon 1.0829), :283 (W1, 1.1 <= W < 1.4 GeV: 0.9779), :271 and :314 (rel_to_total 1.0560,
+% 0.9537); W bins are the fine W bins (code/r5_genie_events.py:126-127); KNOWN_ISSUES.md row 97.
+Hydrogen has no quasielastic, 2p2h, or coherent $\nu_{\mu}$ charged-current
+channel, so normalizing per nucleon does not remove the difference between
+the targets.  In GENIE's own CH sample, the carbon-only cross section per
+nucleon exceeds that of CH by \SI{8.3}{\percent} for $W<\SI{1.1}{GeV}$ and is
+\SI{2.2}{\percent} below it for $1.1\le W<\SI{1.4}{GeV}$ (\SI{+5.6}{\percent}
+and \SI{-4.6}{\percent} with the overall normalization removed).  The NuWro
+and GiBUU comparisons contain a target difference of this kind, which the
+recorded tests of \S\ref{sec:joint5d} do not correct; \S\ref{sec:joint5d-ch}
+gives replays with the correction.
+
 \subsection{Where the excess lives in the $(\Eavail,W)$ plane}
 \label{sec:eavailw-map}
 
 Projecting the unfolded five-axis result onto $(\Eavail,W)$ and subtracting
 the MINERvA Tune~v1 prediction shows where the excess concentrates
-(Fig.~\ref{fig:eavailWexcess}): mostly in the deep-inelastic region, in
-cell-integrated terms (descriptive).
+(Fig.~\ref{fig:eavailWexcess}): mostly at high $\Eavail$ and high $W$, in
+cell-integrated terms (descriptive); the map does not locate an interaction
+mechanism, and the regularization bias of Sec.~\ref{sec:5d} is largest in that
+region.
 The prediction is the OmniFold prior, the simulation's truth weighted by its
 full tune weight.
 % full tune weight: \texttt{w\_truth}
@@ -62,9 +199,9 @@ Untuned GENIE~CV in \S\ref{sec:eavailw-band} is a separate prediction.
 The two highest-$\Eavail$ bands carry \SI{57}{\percent} of the positive excess.
 High-$\Eavail$ ($\ge\SI{0.8}{GeV}$) contains \SI{67}{\percent} of all positive
 excess, with \SI{83}{\percent} of that at $W\ge\SI{1.8}{GeV}$. The largest
-cell, the deep-DIS corner ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$), holds
-\SI{22}{\percent}. A secondary low-$W$ QE-like excess lies below \SI{1.1}{GeV},
-with a small deficit in the $\Delta$ region ($W\simeq1.4$--$\SI{1.8}{GeV}$).
+cell, the corner $\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$, holds
+\SI{22}{\percent}. A secondary excess lies at $W<\SI{1.1}{GeV}$,
+with a small deficit at $W\simeq1.4$--$\SI{1.8}{GeV}$.
 These are central-value statements under the nominal detector response.
 Estimator-seed shifts are a small fraction of the projected uncertainties
 (\S\ref{sec:eavailw-adopted}, item~4), but seed sensitivity of the shares,
@@ -94,8 +231,9 @@ has not yet produced a result.
   \Delta\Eavail\,\Delta W$ in \si{cm^2/nucleon}
   (App.~\ref{app:provenance}, \texttt{eavailw-excess}). The catch-bin cells carry
   their large widths and look correspondingly bigger. Together the panels locate the positive excess
-  at high $\Eavail$ and high $W$ (deep-inelastic), with a secondary low-$W$
-  QE-like component and a small $\Delta$-region deficit. Quoted percentage shares
+  at high $\Eavail$ and high $W$, with a secondary component at $W<\SI{1.1}{GeV}$
+  and a small deficit at $W\simeq1.4$--$\SI{1.8}{GeV}$; they do not locate an
+  interaction mechanism. Quoted percentage shares
   refer to cell-integrated positive excess in the bottom panel.}
 
   \label{fig:eavailWexcess}
