@@ -59,7 +59,8 @@ are an application illustrating calibrated inference with a biased estimator.
   \item \textbf{High-$\Eavail$, high-$W$ excess (descriptive).}
   In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$; the map describes where the central value differs from Tune~v1 and does not locate an interaction mechanism; a fifth of the positive difference sits in the single widest overflow cell, this region carries the largest regularization bias, and in ratio the excess also extends to low $W$. The four external generators also underpredict data in the corner, each by about its overall shortfall after allowing for GiBUU's $E_\nu\approx\SI{20}{GeV}$ sample limit; the NuWro and GiBUU ratios also contain an uncorrected carbon-versus-CH target difference (\S\ref{sec:eavailw-generators}).
   % Methods-paper sync (M8, corrections: the target per-nucleon effect, KNOWN_ISSUES 97; paper_body.tex sec:data, sec:central).
-  The projection's covariance is used under a documented exception, but the estimator-seed sensitivity measured on two seed-varied companion covariances exceeds the limit fixed before production, so the comparison uses central values only (\S\ref{sec:eavailw-adopted}).
+  The projection's covariance is used although it has not passed its specification's acceptance criteria, and the estimator-seed sensitivity measured on two seed-varied companion covariances exceeds the limit fixed before production, so the comparison uses central values only (\S\ref{sec:eavailw-adopted}).
+  % Deposit pass: the exception restated as its content (sec:eavailw-adopted); old text in git history.
   % plain-language pass, review fix m4 (DECISION-20261018-joseph-plain-language-pass)
   % Pointers \S\ref{sec:eavailw} and Fig.~\ref{fig:eavailWband} dropped (one-page summary): the
   % section is the item's subject and is reached from \S\ref{sec:eavailw-adopted}; the figure is
@@ -103,8 +104,8 @@ are an application illustrating calibrated inference with a biased estimator.
 \begin{tabular}{@{}p{0.20\textwidth}p{0.20\textwidth}p{0.27\textwidth}p{0.24\textwidth}@{}}
 \resultstatusrows
 \end{tabular}
-\caption{Current scalar results: construction, adoption, testing and publication
-readiness are distinct. Details: \S\ref{sec:method-config},
+\caption{Current scalar results: how each uncertainty is built, what it has been
+tested against, and how far each result may be interpreted are distinct. Details: \S\ref{sec:method-config},
 \S\ref{sec:coverage}, \S\ref{sec:val-fiveaxis},
 \S\ref{sec:eavailw-adopted} and \S\ref{sec:joint5d}.
 Point-cloud (PET) studies are future work and contribute no result here.}
@@ -154,7 +155,7 @@ No frequentist coverage is claimed for any five-dimensional interval: the one te
   \item \emph{Mechanism.} The low-$\Eavail$ and $(\Eavail,W)$ comparisons are descriptive central-value statements; they do not identify a nuclear mechanism, and the tested pion-FSI dials do not exclude other transport effects.
   % Methods-paper sync (M8, removed: the low-recoil mechanism; paper_body.tex sec:central).
   \item \emph{Five-dimensional measurement.}
-  The envelope over the five tested truth deformations, a sensitivity diagnostic and not an interval, has a median of about 10--13\% per cell, and none of the tested reporting definitions satisfies the adopted \SI{10}{\percent} criterion under the specified envelope prescription, within the study's rules and computing budget (\S\ref{sec:gbdt-model-dependence}).
+  The envelope over the five tested truth deformations, a sensitivity diagnostic and not an interval, has a median of about 10--13\% per cell, and none of the tested reporting definitions satisfies the \SI{10}{\percent} total-width criterion, fixed before the study, under the specified envelope prescription, within the study's rules and computing budget (\S\ref{sec:gbdt-model-dependence}).
   % Methods-paper sync (M8, narrowed: the 10% criterion wording and the five-deformation envelope; paper_body.tex
   % sec:uncertainty-status; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144).
   \item \emph{Five-dimensional covariance.}

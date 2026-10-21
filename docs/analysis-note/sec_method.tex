@@ -97,9 +97,8 @@ value and its uncertainty ensembles --- the systematic universe sweep, the
 Poisson bootstrap, the training-seed block and the run-period unfolds --- all use \textbf{LightGBM}
 ($100$ trees, $8$ leaves, learning rate $0.1$; identical settings for the step-1
 classifier, step-2 classifier, and miss regressor). The central value is the
-universe sweep's own matched central value (seed~42,
-\texttt{2d\_xsec\_MEFHC\_5iter\_lgbm\_uni\_full\_CV.root}, sha256
-\texttt{4f5a1b6d}\ldots), so the systematic block shares its estimator and seed
+universe sweep's own matched central value (seed~42; its file and digest are in
+App.~\ref{app:provenance}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
 (\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
 training-seed block five seed settings that include it (\S\ref{sec:uq-boot},
 \S\ref{sec:uq-ml}); the bootstrap replica mean differs from the central value by a
@@ -349,8 +348,9 @@ marginals; truncating the top edge would break the marginalization anchors
 of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to
 be revisited without re-running the unfold. App.~\ref{app:release}
 (\S\ref{app:release-identities}) gives all five axes' edges.
-\S\ref{sec:205bins} defines the 205 reported cells, with the authoritative
-mapping in \texttt{minerva\_paper\_anc/bin\_mapping.txt}.
+\S\ref{sec:205bins} defines the 205 reported cells; the authoritative
+mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}
+(App.~\ref{app:provenance}, \texttt{bin-mapping}).
 
 Neither underflow nor overflow appears in the reported product, by
 construction rather than by truncation. Truth-level muon edges coincide with the

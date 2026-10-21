@@ -28,8 +28,8 @@ set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
 against a reference central-value unfold with the same estimator and seed;
 since 2026-10-11 this reference is the quoted 2D central value. The five
 lateral bands are taken from selection-complete re-unfolds at the same seed. The
-rollup drops Rvp1pi, which encodes the same shift as Rvn1pi (tracked in the analysis
-repository's known-issues log), and holds 43 bands plus the flat normalization.
+rollup drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-construction};
+App.~\ref{app:provenance}, \texttt{rvp1pi}), and holds 43 bands plus the flat normalization.
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -117,8 +117,9 @@ block is the covariance about the replica mean, so this offset is not included i
 genuinely smaller than the published statistical block (square-root-trace ratio
 0.428). This \emph{observed} covariance difference does not
 demonstrate a causal efficiency advantage (App.~\ref{sec:rank}); the split data/MC
-streams of the earlier, rebuilt bootstrap (labelled \texttt{VL170} in the appendices) are in
-App.~\ref{app:history-vl175}. The fixed-truth coverage test (\S\ref{sec:coverage}) found
+streams of the earlier, rebuilt bootstrap are in
+App.~\ref{app:history-vl175} (App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}, gives the
+label under which it is recorded there). The fixed-truth coverage test (\S\ref{sec:coverage}) found
 that the statistical band in use when it ran, before that rebuild, undercovered in its
 tails, unevenly across bins.
 % plain-language pass, review fix m3 (DECISION-20261018-joseph-plain-language-pass)
@@ -128,15 +129,17 @@ only re-evaluated post hoc, on the same pseudo-experiments and partly circularly
 it has not been tested independently; the statistical block quoted here has had no
 % plain-language pass, verification fix V3 (DECISION-20261018-joseph-plain-language-pass)
 coverage test at all. A
-re-test on held-out simulation, tracked in the analysis repository's known-issues log,
-is deferred until after the publication package, and
+re-test on held-out simulation is not part of this note: it has not been run, and
 % plain-language pass, director ruling on base defect note F1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-its design was not fixed in advance. Because its truth equals the prior, the original test
+% Deposit pass: the known-issues pointer and the schedule restated as substance (KNOWN_ISSUES.md row 85: deferred,
+% not pre-registered); the row is App. G tag statband-retest; old text in git history.
+no design for it has been registered in advance (App.~\ref{app:provenance}, \texttt{statband-retest}). Because its truth equals the prior, the original test
 also cannot decide whether the smaller statistical block reflects an efficiency gain,
 regularization bias or undercoverage.
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 85); the earlier
 % bootstrap and the rebuilt band are VL170 (printed identifier removed).
-% Review fix N1: the route is restored in words ("tracked in the analysis repository's known-issues log" = row 85).
+% Review fix N1: the route was restored in words (a known-issues-log sentence = row 85); the deposit pass routes it to
+% App. G, tag statband-retest.
 % Review fix m3: the VL170 label is restored in print for the rebuilt bootstrap, and the tested band (VL162) is named
 % "the statistical band in use when it ran", as in sec:coverage.
 % Q's statistical block S1 (stageC/production/DESIGN.md §3.4: --seed 42 --bootstrap-streams three; S5 stat row:
@@ -230,7 +233,7 @@ The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
 nonresonant-pion tune, counting it twice. This is a small, \SI{0.088}{\percent}
 band, but a real defect in how the covariance was built; no conclusion about the published
 analysis's implementation follows. The quoted universe block drops Rvp1pi and
-counts the shift once; the defect is tracked in the analysis repository's known-issues log.
+counts the shift once (App.~\ref{app:provenance}, \texttt{rvp1pi}).
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92; the sentence already states it). Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct.
@@ -251,9 +254,9 @@ Lateral systematics use a single unfold at the central training seed each, so th
 include that seed's training noise. The flux-universe index identity behind the
 $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events
 $\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe
-fails at $\ge0.245$; this check is recorded in the analysis repository's known-issues
+fails at $\ge0.245$ (App.~\ref{app:provenance}, \texttt{flux-index}).
 % plain-language pass, verification fix V5 (DECISION-20261018-joseph-plain-language-pass)
-log. The production flux weights equal the
+The production flux weights equal the
 constraint file and the earlier budget's in all 12 playlists. These findings left the
 earlier printed budget unchanged.
 % J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
@@ -496,8 +499,8 @@ products, and the verification compared only the checksums of their inputs.
 Dump-all shifted branches are limited to CV event-loop support. For the five
 kinematic bands (BeamAngleX/Y, MuonResolution, and
 Muon\_Energy\_MINERvA/MINOS), selection-complete active-universe event loops
-are the production migration gate. They supply the adopted five-axis
-covariance's lateral block; higher-dimensional products using dump-all lateral
+are the production migration gate. They supply the lateral block of the
+five-axis covariance in use; higher-dimensional products using dump-all lateral
 branches remain candidates. Replacing the support-limited lateral block by the
 selection-complete one moves that block's square-root trace by
 \SI{\latTraceMove}{\percent}. That is a change in a square-root trace and is
@@ -523,7 +526,7 @@ data and split closes this scope. Its covariance has
 $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
 \SI{\gbdtAiEstFrac}{\percent} of the candidate split-varied band
 (\SI{\gbdtMlSplitTrace}{cm^2/nucleon}). Genuine estimator stochasticity therefore
-dominates the adopted band over effects of the particular train/test partition.
+dominates the band in use over effects of the particular train/test partition.
 The scan remains an auxiliary robustness check; it is not an independent
 matrix, since split and estimator responses are not assumed uncorrelated. Both
 bands are minor components, about three percent of the combined budget in
@@ -531,7 +534,7 @@ $\sqrt{\mathrm{Tr}\,C}$.
 
 An earlier 5D candidate used both mean-centered and CV-centered unified
 throws (\S\ref{sec:uq-combine}); no magnitude from either is quoted, and
-neither is adopted. The adopted product is a later, separate
+neither is used. The covariance in use is a later, separate
 \texttt{cv}-variant build
 (\S\ref{sec:eavailw-construction}; App.~\ref{app:history-5dcandidates}).
 % Routed record (formerly App. E \texttt{gbdtfive-macros}; row removed 2026-10-04 because the
@@ -540,7 +543,7 @@ neither is adopted. The adopted product is a later, separate
 
 Per-universe background subtraction in all 187 universe unfolds and the CV
 changes the combined \emph{block-sum} sqrt-trace by only
-\SI{0.28}{\percent} and the \emph{adopted} covariance by \SI{0.18}{\percent},
+\SI{0.28}{\percent} and the covariance \emph{in use} by \SI{0.18}{\percent},
 a numerically negligible bound on the background-CV choice (App.~\ref{app:history}).
 % (\SI{0.18}{\percent} is after the flux (J28) correction; App. H keeps the
 % superseded-product wording and the inflation-damping explanation.)

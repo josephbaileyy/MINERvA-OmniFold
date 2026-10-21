@@ -9,9 +9,16 @@ observed statistic, with two disclosed data-informed elements
 its result and conditions and refers here for the detail. The tests evaluate
 simple hypotheses about five predictions. They are not a measured cross
 section, add no reportable uncertainty (App.~\ref{app:provenance},
-\texttt{joint-5d}), and do not re-qualify the adopted five-axis covariance of
-\S\ref{sec:eavailw-adopted}, which they do not use. The frozen contract and
-recorded result are in Ref.~\cite{JointTestRecord2026}.
+\texttt{joint-5d}), and do not re-qualify the five-axis covariance in use of
+\S\ref{sec:eavailw-adopted}, which they do not use. Everything the argument
+below needs is stated here: the pre-registered specification, including its six
+conditions in its own words (\S\ref{sec:joint5d-conditions}), the decisions, the
+recovery of the lost pseudo-experiments and the later sensitivity studies with
+their numbers. The records cited in this section are its provenance~\cite{JointTestRecord2026}.
+% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: the note made self-contained;
+% old text in git history): the six conditions verbatim (RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3), the recovery disposition (DECISION-20261005 sec. 5),
+% the projected p values (W1-RECORD-20261006.md sec. 1) and the recoil statistics (W2B-REPORT-20261006.md sec. 5)
+% are now printed in this section.
 
 \subsection{Hypotheses, grid and statistics}
 \label{sec:joint5d-design}
@@ -263,8 +270,51 @@ projection is a post hoc observation.
 \subsection{Conditions}
 \label{sec:joint5d-conditions}
 
-Each decision holds under six conditions of the declared model, numbered as in
-the frozen contract and grouped here by kind.
+Each decision holds under six conditions of the declared model. The
+pre-registered specification states them as follows, verbatim apart from
+typesetting; text in square brackets is editorial: it replaces the
+specification's references to internal files by their substance, and annotates
+the two statements that the implementation or a later measurement supersedes.
+% Deposit pass: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3 (amendment 7
+% claims.conditions_stated_with_every_claim, verbatim). Substitutions: (i) "M1" -> the fine-grid convergence check; the
+% null truth's below-grid description superseded by the M8 correction (M2-AUDIT.md Q1; sec:joint5d-design); (ii)
+% "(app_statmethods.tex)" -> App. A; (iii) "EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md" -> a recorded
+% ruling on the pilot; (iv) "~0.05 null SD" superseded by the frozen-V prefreeze measurement, max 0.068 (CLAIM-TABLE
+% row J12; this section's 0.07); (v) "KNOWN_ISSUES 82" -> the GiBUU sample's energy limit, sec:eavailw-band.
+\begin{quote}\small
+\begin{enumerate}[label=(\roman*), itemsep=1pt, topsep=2pt]
+  \item ``below the fine grid the null truth carries MnvTune's [MINERvA Tune~v1's] shapes
+        [as implemented, the Tune~v1 composition, varied by the drawn interaction-model
+        universes, with every fine-cell integral held fixed at G's; \S\ref{sec:joint5d-design}]
+        and G's finite-MC fine-cell fluctuations: the [fine-grid convergence] check is not
+        converged (fine vs merged-$\times2$ is 0.50--0.86 of coarse vs fine in $L_{2}$); its
+        effect enters the claim rule as the $\kappa=2$ variants and its size in null-$T$ units
+        (with the frozen $V$) is committed before the first look''
+  \item ``the MC detector simulation per event beyond the drawn detector bands
+        (MinosEfficiency, GEANT neutron/pion/proton, each $\pm1\sigma$) and the linear lateral
+        surrogate (five bands); there is no recoil-energy-scale band in the analysis's
+        systematic set [App.~\ref{app:statmethods}], so hadronic-response completeness is not
+        established''
+  \item ``the interaction-model prior is the analysis's vertical band set (34 bands, every
+        band drawn per experiment); negative weights of LowQ2\_1/HighQ2\_1 are clipped per
+        universe ([a recorded ruling on the pilot]: $\le0.35\%$ of a band's shift in whitened
+        norm)''
+  \item ``the pseudo-experiment process unfolds with half the MC, the data with all of it;
+        the MC-size shift $D$ (16 pairs) is at noise level per cell (median $|D|/f$
+        0.02--0.075\%); along the null's bias direction it is not always consistent with zero
+        (proxy $a/\mathrm{se}$ $+4.7$ MnvTune, $-3.4$ NuWro) but at most ${\sim}0.05$ null SD
+        [measured with the frozen $V$ before any observed statistic: at most 0.068, the value
+        used in (iv) below]; it enters as the bias-aligned upper-bound variant''
+  \item ``GiBUU: $E_{\nu}>\SI{20}{GeV}$ absent [the GiBUU sample's energy limit,
+        \S\ref{sec:eavailw-band}] and its out-of-domain truth ($p_{\parallel}\ge\SI{6}{GeV/c}$,
+        $E_{\nu}$-truncated) enters the migrations into the domain cells; all generators:
+        $E_{\nu}>\SI{100}{GeV}$ absent (only the data's flux integral stops there;
+        negligible)''
+  \item ``the predictions' own finite MC enters as $\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ in
+        the metric and as a drawn residual term''
+\end{enumerate}
+\end{quote}
+\noindent In the terms of this note, and grouped by kind, they read as follows.
 
 \paragraph{Numerical convergence.}
 (i) Below the fine grid the null truth has the Tune~v1 composition of the
@@ -442,8 +492,8 @@ potentially material.
 \paragraph{Power.}
 \label{sec:joint5d-power}
 
-Every test rejects, so power is context only (the contract attaches power to
-non-rejections). At the Tune~v1 null, two of the three declared alternatives
+Every test rejects, so power is context only (the specification attaches power
+only to non-rejections). At the Tune~v1 null, two of the three declared alternatives
 are detected in shape with power 1.0 at the 0.005 level, and the third, a
 MEC-like $(\Eavail,W)$ shape, with \jtPowPthree. At the GENIE~2.12.10 null the
 shape powers at 0.005 are \jtPowPonegShape, 0.02 and 0.00; the binomial 95\%
@@ -497,8 +547,15 @@ recomputation:
         re-application of the sequential rule.
 \end{itemize}
 The recovery is report-only: the primary decisions are those of the frozen
-evaluation, at the frozen $B$, and the recorded disposition of the recovery
-is ``certified, margin disclosed''.
+evaluation, at the frozen $B$. Because every submitted draw has now been
+observed and no recovered draw reaches the observed statistic, the ten rejections are stated
+as holding with every submitted draw observed, together with the closest margin
+and the earlier stops given above; the statement of the sensitivity analysis,
+that every decision could change under some assignment of the lost draws, no
+longer accompanies them.
+% Deposit pass: the disposition label Joseph selected (DECISION-20261005-s5p-recompute-extension-and-lost-seed-
+% recovery.md sec. 5) restated as its content, that section's "What it changes" and required disclosures 1-5, all
+% of which this subsection prints; old text in git history.
 % Source: RECORD-20261006-s5p-lost-seed-recovery-resolution.md (recovery, margins 4.6/49.8 T units, earlier
 % stops, power over the complete sets); RECORD-20261005 sec. 5 (pre-recovery sensitivity, |rho| <= 0.06);
 % DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md sec. 5 (Joseph's disposition).
@@ -519,6 +576,40 @@ In the muon-only $(\pT,\pPar)$ projection, GENIE~2.12.10 is not rejected
 observation), whereas its $(\Eavail,W)$ projection is. Hadronic information
 therefore participates in that rejection; this does not establish added power
 of the joint test over all matched projections, or accept GENIE as true.
+Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value. The
+criterion, fixed before the run, was that a test would count as evidence of
+additional joint discrimination only if both of its projected claim $p$ values
+were at least 0.05, both with the frozen variant shifts and with the shifts
+recomputed on all draws; no test meets it, and the values are the same in both
+readings.
+
+% Deposit pass: W1-RECORD-20261006.md sec. 1 (identical under both D2 readings; independently reproduced, sec. 4,
+% 40 of 40). Values copied as recorded.
+\begin{table}[htbp]
+  \centering\small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    $G$ & test & $(\pT,\pPar)$: claim $p$ ($k/B$) & $(\Eavail,W)$: claim $p$ ($k/B$) \\
+    \midrule
+    MINERvA Tune~v1     & total & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    MINERvA Tune~v1     & shape & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    GENIE~2.12.10       & total & 0.483 (676/1400) & 0.00071 (0/1400) \\
+    GENIE~2.12.10       & shape & 0.629 (880/1400) & 0.00071 (0/1400) \\
+    GENIE~2.12.10 + MEC & total & 0.0014 (1/1400)  & 0.00071 (0/1400) \\
+    GENIE~2.12.10 + MEC & shape & 0.0014 (1/1400)  & 0.0021 (2/1400) \\
+    NuWro~21.09         & total & 0.00056 (0/1800) & 0.00056 (0/1800) \\
+    NuWro~21.09         & shape & 0.00056 (0/1800) & 0.0033 (5/1800) \\
+    GiBUU~2019          & total & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    GiBUU~2019          & shape & 0.00071 (0/1400) & 0.00071 (0/1400) \\
+    \bottomrule
+  \end{tabular}
+  \caption{The joint tests restricted to matched $3\times3$ coarse projections of
+  the same cells (for GiBUU, 6 and 8 cells of its domain), with all submitted
+  calibration draws, the same variants and the same claim rule. Every test has
+  $p<0.05$ in at least one projection. The GENIE~2.12.10 values in the
+  $(\pT,\pPar)$ column are a post hoc observation.}
+  \label{tab:joint5d-projections}
+\end{table}
 
 \subsection{Hadronic-response condition and recoil-energy sensitivity}
 \label{sec:joint5d-response}
@@ -557,7 +648,32 @@ rejections holds. The observed statistics move by up to about \SI{11}{\percent}
 from their frozen values, nine tests keep $k=0$, and NuWro's shape test, the
 closest to its null, changes from $k=1$ to $k=3$ of 1751 at $+4\%$
 ($p=0.0023$, against a Holm threshold of 0.05). The evaluation was reproduced
-independently.
+independently. Table~\ref{tab:joint5d-recoil} gives the observed statistics.
+
+% Deposit pass: W2B-REPORT-20261006.md sec. 5, "Observed statistics" (descriptive) and the k/B table; values copied
+% as recorded. Null medians are the frozen unshifted (c = 0) null medians.
+\begin{table}[htbp]
+  \centering\small
+  \begin{tabular}{@{}lrrrrrrrr@{}}
+    \toprule
+    & \multicolumn{4}{c}{$T_{\mathrm{tot}}$} & \multicolumn{4}{c}{$T_{\mathrm{sh}}$} \\
+    \cmidrule(lr){2-5}\cmidrule(lr){6-9}
+    $G$ & recorded & $-4\%$ & $+4\%$ & null median & recorded & $-4\%$ & $+4\%$ & null median \\
+    \midrule
+    MINERvA Tune~v1     & 2852 & 2856 & 2540 & 49   & 631  & 647  & 600  & 49 \\
+    GENIE~2.12.10       & 1813 & 1796 & 1721 & 528  & 1086 & 1104 & 1040 & 582 \\
+    GENIE~2.12.10 + MEC & 1647 & 1652 & 1595 & 406  & 869  & 893  & 839  & 450 \\
+    NuWro~21.09         & 7427 & 7380 & 7361 & 6324 & 9660 & 9690 & 9540 & 7110 \\
+    GiBUU~2019          & 2867 & 3129 & 2665 & 1791 & 4013 & 4154 & 3901 & 1975 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Observed joint statistics with the simulation's reconstructed recoil
+  energy scaled by $\pm4\%$, beside the recorded values and the median of each
+  unshifted null distribution, which is not regenerated. Every test keeps $k=0$
+  at both signs except NuWro's shape test ($k=1$ of 1751 at $-4\%$, 3 at
+  $+4\%$); all ten remain rejected. Descriptive.}
+  \label{tab:joint5d-recoil}
+\end{table}
 
 The calibration distributions stay fixed in this study, which measures the
 sensitivity of the observed statistics and decisions to one coherent scale of

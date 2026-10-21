@@ -8,7 +8,7 @@ generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator doe
 not follow such changes (\S\ref{sec:val-departure}), model dependence and the
 reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the
 failed five-dimensional coverage test (\S\ref{sec:coverage-5d}), and the status
-of the one adopted five-axis covariance (\S\ref{sec:eavailw-construction}). The
+of the one five-axis covariance in use (\S\ref{sec:eavailw-construction}). The
 calibrated generator tests built on a variant of this estimator follow in
 \S\ref{sec:joint5d}. The unbinned negative-weight background method itself is
 derived in App.~\ref{app:negweight}.
@@ -100,7 +100,7 @@ errors, versus \SI{-0.2}{\percent} without background; the mechanism is not
 established. On data, the two treatments differ by median \SI{0.36}{\percent}
 and at most \SI{1.4}{\percent} over reported functionals. These differences
 measure method sensitivity; they do not measure bias. Negative-weight treatment
-is not adopted.
+is not used for the quoted central values.
 
 \paragraph{Generator-sized truth changes.}
 
@@ -139,8 +139,8 @@ Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}; it
 continues falling slowly, while the $q_3$ residual grows with iterations.
 A larger classifier improves the
 reco-level fit without improving the $\Eavail$ truth residual, and removing the regression
-for events that fail reconstruction does not help it. No single cause is established, and no authorized estimator change passes the
-predeclared GiBUU-to-GENIE departure screen.
+for events that fail reconstruction does not help it. No single cause is established, and no estimator change within the
+study's rules meets the recovery requirement of the GiBUU-to-GENIE departure screen, which was set before the test.
 
 \paragraph{Higher-capacity background refinement and data stability.}
 
@@ -168,7 +168,7 @@ For historical shapes withheld during that assessment (NuWro; GENIE with enhance
 meson-exchange currents), unfolding-model dependence is median
 \SIrange{2}{6}{\percent} and at most \SIrange{16}{31}{\percent}. It remains
 within quoted total uncertainty in 20 of the 42 $(\Eavail,W)$ cells.
-Nothing is adopted.
+No estimator or uncertainty from this assessment is used for the quoted results.
 % Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153);
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
 % independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
@@ -189,7 +189,7 @@ this estimator's missing variance measurement.
 The noise-free study unfolds the full simulation's reweighted reco events without
 background. Baseline classifiers and the missed-event regressor use 100 trees
 and 8 leaves; the capacity probe uses 400 trees and 31 leaves. Repeated experiments
-use candidate $R$ with five iterations, baseline OmniFold estimators and a separate
+use estimator $R$ with five iterations, baseline OmniFold estimators and a separate
 400-tree, 31-leaf background-refinement classifier. With seed 42, its 40 nominal
 experiments and 20 at each of five departures include Poisson pseudo-data, changing
 MC splits and background refinement. These samples have since informed development;
@@ -213,7 +213,7 @@ H2 & 27 supported coarser joint cells, not nested within J \\
 EW & 39 supported $(\Eavail,W)$ cells (42 before the later support rule) \\
 RD1--RD3 & reporting definitions at J, H2 and EW resolution (``Reporting definitions'' below) \\
 D1, W1--W3 & fixed historical truth deformations (next paragraph) \\
-candidate $R$ & the raised-refinement-capacity estimator of \S\ref{sec:val-departure}: baseline OmniFold classifiers with a 400-tree, 31-leaf background-refinement classifier \\
+$R$ & the raised-refinement-capacity estimator of \S\ref{sec:val-departure}: baseline OmniFold classifiers with a 400-tree, 31-leaf background-refinement classifier \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -238,19 +238,26 @@ makes no claim about infinite iterations or every possible classifier.
 The $q_3$ stress illustrates the importance of the functional:
 its EW median residual rises from \SI{4.99}{\percent} at iteration 5 to
 \SI{6.42}{\percent} at 30 even while some joint-cell summaries improve.
-The capacity probe changes recovery, but the affordable five-iteration setting
-fails the frozen improvement requirement. No reporting definition qualified under
-historical usefulness and budget rules; no measurement construction was admitted.
-These verdicts remain.
+The capacity probe changes recovery, but at five iterations, the most the
+computing budget allowed at that capacity, it lowers the largest residual proxy
+over the development truths (lower row of Fig.~\ref{fig:gbdt-recovery}) by 3\% on J
+and 8\% on H2, against the improvement of
+at least 20\% required before the larger capacity would be used. Under the study's
+usefulness criteria and computing budget, no reporting definition qualified
+(next paragraph), and no five-dimensional measurement with total uncertainties was
+constructed. These outcomes stand.
+% Deposit pass: the governance wording of these sentences restated as criterion, value and outcome (old text in git
+% history). Criterion and value: RECORD-20260927-s5p-stage2-exit.md sec. 3, configuration 3 (capacity at the
+% affordable k = 5 lowers M by 8% on H2 and 3% on J, against the rule's 20%; K_afford is 5 iterations at 400/31).
 
 \paragraph{Reporting definitions for a five-dimensional measurement.}
-The measurement branch assessed three reporting definitions at the development
+The five-dimensional measurement study assessed three reporting definitions at the development
 resolution: the 109 J cells (RD1), the 27 H2 cells (RD2) and the 39 EW cells (RD3).
 Its bounded unfolding-model component, the largest shift over five generator-sized
 truth departures at the smallest envelope the vertices allow, has median
 \SI{12.0}{\percent}, \SI{9.6}{\percent} and \SI{13.4}{\percent} respectively
 (90th percentile 38.6, 22.5 and \SI{39.2}{\percent}), with GiBUU the dominant
-vertex in most cells. The frozen total-width target (median 68\% half-width at most
+vertex in most cells. The total-width target, fixed before the study (median 68\% half-width at most
 \SI{10}{\percent}) is therefore unattainable in RD1 and RD3 from the model component
 alone, and in RD2 once the flat \SI{1.4}{\percent} normalization is added (median at
 least \SI{11.0}{\percent}); the study adds the model component linearly to the probabilistic
@@ -264,13 +271,13 @@ half-width, cell by cell.
 The model-component and recovery targets (median at most
 \SI{5}{\percent}; recovery of at least 75\% of a generator-sized departure, that is,
 a residual proxy of Fig.~\ref{fig:gbdt-recovery} of at most 0.25, against
-0.31--0.63 measured) fail in every definition. By the frozen selection procedure RD3
-is the fallback, and it fails the total-width target. No reporting definition can meet
-the useful-precision targets with any configuration the rules support within the
-budget; the limitation is the measured prior dependence, about 10--13\% per coarse
+0.31--0.63 measured) fail in every definition. The selection procedure, also fixed
+before the study, then takes RD3 as the fallback, and RD3 fails the total-width target.
+No reporting definition can meet these precision targets with any estimator
+configuration that the study's selection rules allow within its computing budget; the limitation is the measured prior dependence, about 10--13\% per coarse
 joint cell, which is comparable to the generator differences a user would need to
-resolve. The calibrated joint tests (\S\ref{sec:joint5d}) were the separately
-admitted inference branch.
+resolve. The calibrated joint tests (\S\ref{sec:joint5d}) were pursued instead, as
+a separate inference that reports no measured cross section.
 % Source: docs/orchestration/RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155). Added 2026-10-11: the article's
 % Sec. VII states this result, and the note carried only the one-line verdict above.
 
@@ -285,7 +292,7 @@ and capacity probes to 10; some baseline traces are partial checkpoints.
 The upper row gives median $|\hat f/f_{\rm true}-1|$ over supported cells.
 The lower row gives the historical proxy
 $\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$
-for departures above 1\%, with dotted frozen bound 0.25. Different denominators
+for departures above 1\%, with the required bound 0.25 dotted. Different denominators
 prevent interpreting one minus the proxy as an exact recovered fraction.
 The $q_3$ stress has no eligible EW departure. These traces measure no repeat variance.}
 
@@ -307,7 +314,7 @@ the longer iterations or larger OmniFold capacity from which to infer a tradeoff
 \centering
 \includegraphics[width=\linewidth]{figures/gbdt_bias_spread.pdf}
 
-\caption{Candidate $R$ at five iterations. Each supported J or H2 cell gives
+\caption{Estimator $R$ at five iterations. Each supported J or H2 cell gives
 the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$ in the same
 background-inclusive ensemble: 40 nominal experiments, 20 each for W2 and W3.
 Bars give pointwise 95\% Student-$t$ intervals for means and normal-model
@@ -339,7 +346,7 @@ EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above
 3 GeV), with pointwise 95\% Clopper--Pearson bounds. The dotted line gives
 nominal Gaussian 68.27\% coverage. Zero of 20 intervals contains truth;
 the upper 95\% bound is 16.8\%, without implying zero population coverage.
-Truth ratios are historical. No total-uncertainty construction or newly validated
+Truth ratios are historical. No total uncertainty or newly validated
 interval is shown.}
 
 \label{fig:gbdt-coverage}
@@ -351,8 +358,8 @@ J-cell median SD \SI{0.228}{\percent}, versus bootstrap SD
 \SI{0.368}{\percent}. Fifty bootstrap replicas with jittered partners give
 median consistency ratio 1.02 and estimated numerical share 0.37 of bootstrap
 variance. Adding this share again would double-count it in this design.
-The study does not regrade the stability failure, certify interval coverage,
-or transfer to the adopted covariance.
+The study does not change the stability failure, establish interval coverage,
+or transfer to the five-axis covariance in use.
 
 \paragraph{Prior sensitivity is not a measured real-data bias.}
 
@@ -428,7 +435,7 @@ confidently below nominal, with coverage as low as 0.060, and 42 fail at
 % cross-checked on EW17, +1.04% against +1.05% recorded); :50 (intervals use one nominal bootstrap sigma, slightly too
 % wide at 0.9 of the events); :52-63 (failures by W band); :12, :87, :102 (source not established); :15, :104-109
 % (confirming test, not run, about 0.1-0.2 node-h).
-A diagnosis from the stored receipts and code accounts for the failure under the
+A diagnosis from the stored outputs and code accounts for the failure under the
 rate reduction.  The rate change itself is recovered: in the one locally stored pseudo-experiment
 the total changes by \SI{-9.58}{\percent} against \SI{-9.56}{\percent} injected,
 and over the 400 the total covers at 0.74 (68\%), so this is not a
@@ -447,7 +454,7 @@ $1.4\le W<\SI{2.2}{GeV}$, \SI{0.4}{\percent} for $2.2\le W<\SI{3}{GeV}$, and
 deviations against intervals of 0.16--0.43\%, whatever the sign of the nominal
 bias $\beta$; removing that bias restores coverage to 0.62--0.82 at 68\% and
 0.92--0.99 at 95\%.  These per-quantity biases and spreads are inferred, not
-measured: the receipt records only hit counts, so each quantity's mean shift
+measured: the stored output records only hit counts, so each quantity's mean shift
 and spread come from a Gaussian fit to its 68\% and 95\% coverage, checked
 against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The
 source of the $W$-graded term is not established: its size and ordering roughly match,
@@ -470,27 +477,36 @@ weak response information for that subset, not a universal explanation of
 the unfolding residual. The coarser muon projection retained only three cases
 and was effectively uninformative. The diagnostic does not bound biased or
 unbinned estimators, validate intervals, or establish an impossibility theorem;
-its proposed precision thresholds are not scientific adoption gates.
+its proposed precision thresholds are not acceptance criteria for any result in this note.
 The full exclusions, definitions and numerical verification are in the
-\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/7d173bd0bad495c4dcbb404ae769cab718fb928c/docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md}{binned response diagnostic record}.
+binned response diagnostic record (App.~\ref{app:provenance}, \texttt{response-diagnostic}).
 
-\subsection{The adopted five-axis covariance and its $(\Eavail,W)$ projection}
+\subsection{The five-axis covariance in use and its $(\Eavail,W)$ projection}
 \label{sec:eavailw-construction}
 
 \paragraph{Status.}
 \label{sec:eavailw-adopted}
 
-The adopted five-axis covariance \texttt{z-cv.npz}
-(\texttt{sha256}~\zcvDigest\ldots, \num{890500272} bytes, variant \texttt{cv})
-has an $(\Eavail,W)$ projection with \texttt{sha256}~\zprojDigest\ldots\ on
-\zprojCells\ cells. Its digest-bound exception covers only these bytes.
-Metadata still reads $\texttt{scientific\_acceptance}=\text{\texttt{NON-PASSING}}$
-and $\texttt{adoptable}=\text{\texttt{false}}$: the specification's null bound
-could not be fixed before production (App.~\ref{app:release-audit}).
+The five-axis covariance in use, variant \texttt{cv}, has an $(\Eavail,W)$
+projection on \zprojCells\ cells; the file and the projection are identified by
+their SHA-256 digests in App.~\ref{app:release-identities}. It is used although it
+has not passed the acceptance criteria of its specification. The specification
+requires its null bound to be fixed before production; production had already
+taken place, so that requirement cannot be met for this object, and the
+object's own metadata records it as not passing and as not to be used
+(App.~\ref{app:release-audit}).
+Its use is limited to this file and its projection; it does not extend to any
+other covariance built to the same specification, including the two companion
+covariances of the measurements below.
+% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2; old text in git history): the file
+% name, size and digests move to App. H's identities table; the exception's scope
+% (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md sec. 3: 3d7465f6... and nothing else, explicitly
+% including the two companion products 361090f9... and 7e4636a3...) and the two metadata fields
+% (scientific_acceptance, adoptable) are stated as their content.
 The earlier direct 42-bin $(\Eavail,W)$ block sum (\S\ref{sec:eavailw-cov})
 is superseded and quoted nowhere in this note (App.~\ref{app:history}).
 
-\paragraph{Construction.} The adopted object projects the corrected five-axis
+\paragraph{Construction.} The covariance projects the corrected five-axis
 statistical covariance as $M C_{5D}M^{\top}$, without rebuilding it in the
 destination bins, and uses corrected systematic endpoints. Selection-complete
 active-universe event loops now bound migrations omitted by the
@@ -523,10 +539,10 @@ diagonal \emph{centered on the central value}. A zero denominator pins $g=1$
 by declaration; it does not compute unity. Band groups $V$ (vertical), $R$
 (residual) and $A$ (active lateral) must be disjoint and exhaust the 45 bands
 (implementation in App.~\ref{app:release-audit}).
-Adoption was conditioned (2026-07) on documenting low-rank treatment, mean shift
-and the selection-support bound above before transferring information onto a sweep block,
+Transferring this information onto a sweep block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
-($\mathbf{G}=\operatorname{diag}g$). This transfer is positive-semidefinite by construction
+($\mathbf{G}=\operatorname{diag}g$), was made conditional (2026-07) on documenting the low-rank
+treatment, the mean shift and the selection-support bound above. This transfer is positive-semidefinite by construction
 and never falls below the block baseline; a direct rank-$N$ swap is not positive-semidefinite.
 
 \paragraph{Centering, explicitly.} Per-band blocks $C_{b}$ use the MAT-conformant
@@ -545,7 +561,7 @@ differ by the outer product of measured joint mean shift $\mathbf{ms}$
 \end{equation}
 
 so CV centering retains the mean shift as variance; mean centering removes it.
-Retention is the deliberate adopted choice. The mean-centered sibling's
+Retaining it is deliberate: the variant in use is \texttt{cv}. The mean-centered sibling's
 $\sqrt{\Tr C}$ is \SI{7.13}{\percent} lower. The variant must be read and checked
 in product metadata, never inferred from a path (App.~\ref{app:release-audit}).
 
@@ -582,10 +598,10 @@ covariances at two estimator-seed settings; only item three describes these byte
 
 \begin{enumerate}
 
-\item Estimator-seed sensitivity exceeds its declared limit. Companion
+\item Estimator-seed sensitivity exceeds its limit. Companion
   covariances at seed offsets $\{0,1200\}$ give the correlation-sensitive leg
   $s_{\mathrm{proj}}=\sprojMeasured\,\%$, against the preproduction
-  \sprojBound\,\% movement limit. The limit was approved on 2026-09-18,
+  \sprojBound\,\% movement limit. The limit was set on 2026-09-18,
   before production, as a direct movement tolerance at the scale of the
   ensemble's own precision. A 160-throw ensemble determines a standard deviation
   only to a relative precision of about $1/\sqrt{2(N-1)}\approx\SI{5.6}{\percent}$
@@ -623,7 +639,7 @@ covariances at two estimator-seed settings; only item three describes these byte
   $s_{\mathrm{proj}}$ maximizes relative changes over functionals, rather than
   summing nonnegative component contributions.
 \item Seed shifts in central values are a small fraction of their uncertainty.
-  Across the grade's 43 projection functionals (\zprojCells\ destinations
+  Across the comparison's 43 projection functionals (\zprojCells\ destinations
   plus the all-ones total rate), shifts reach $\cvMoveProjMax\,\%$, versus
   relative uncertainties of order ten percent. They reach at most
   $\cvMoveOverSigmaMax\,\%$ of quoted uncertainty, with median
@@ -634,7 +650,7 @@ covariances at two estimator-seed settings; only item three describes these byte
 
 \end{enumerate}
 
-\noindent The estimator-seed magnitude criterion remains \emph{predeclared and
-not computed} for this object. It was computed only for the purpose-built
-companion products; their grades do not regrade these bytes
-(App.~\ref{app:provenance}, \texttt{z-adoption}).
+\noindent The estimator-seed magnitude criterion, specified before production,
+\emph{has not been computed} for this object. It was computed only for the two
+companion covariances built for that purpose, and their outcomes are not outcomes
+for this object (App.~\ref{app:provenance}, \texttt{z-cv-record}).

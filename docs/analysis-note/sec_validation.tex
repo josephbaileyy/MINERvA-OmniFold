@@ -214,8 +214,8 @@ not contradict each other.
 
 \subsection{Fixed-truth coverage of the 2D statistical band}
 \label{sec:coverage}
-This test asks whether the 2D statistical band in use when it ran (labelled \texttt{VL162} in the
-appendices; App.~\ref{app:history}) covers a \emph{fixed} truth at its nominal rate. Its design,
+This test asks whether the 2D statistical band in use when it ran (App.~\ref{app:history}, under
+the label listed in App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}) covers a \emph{fixed} truth at its nominal rate. Its design,
 criteria and positive control were fixed in advance, before any toy was generated
 (App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}).
 % J3/J4 provisional (DECISION-20261018, packet W3: D2). The quoted statistical block is now S1 (sec:uq-boot), which this
@@ -272,8 +272,8 @@ window. By the rule fixed before the full run (its undercoverage branch was writ
 pilot pulls had been seen), the primary undercoverage is attributed to this term of the band.
 The attribution is partial: in the replica form, the $\pPar$
 \SIrange{40}{60}{GeV/c} column still undercovers.
-That term was removed on 2026-10-06 and the band rebuilt (labelled \texttt{VL170} in the
-appendices; App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}). The quoted statistical block is now a
+That term was removed on 2026-10-06 and the band rebuilt (App.~\ref{app:provenance},
+\texttt{coverage-fixed-truth}, lists the labels of both bands). The quoted statistical block is now a
 different ensemble, 300 replicas at the central value's seed (\S\ref{sec:uq-boot}). This
 section's result is for the earlier band and was not re-tested.
 % FACT (2026-10-18): "the rebuilt band is the quoted one" was false of Q (stageC/production/DESIGN.md §3.4, S1).
@@ -292,9 +292,8 @@ purity does not explain it, and its cause is not established. A post hoc diagnos
 bootstraps a single toy, with a decision rule recorded before it ran, is consistent with the closure toys
 under-scattering, because their pseudo-data sit on the training MC events, rather than with the
 data bootstrap over-scattering; it is neither an independent-population coverage test nor a
-real-data calibration. The re-test on held-out simulation that would separate the two,
-tracked in the analysis repository's known-issues log, is deferred until after the
-publication package. Split-sample width checks that
+real-data calibration. The re-test on held-out simulation that would separate the two is not part of this
+note and has not been run (App.~\ref{app:provenance}, \texttt{statband-retest}). Split-sample width checks that
 condition on the existing MC bank, binning maps and purity cannot establish repeated-sampling
 coverage across independent populations, so validated total intervals over the full reporting
 domain need new inputs (\S\ref{sec:uq-2d-scope}), which also lists what the quoted covariance

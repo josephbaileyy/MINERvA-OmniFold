@@ -132,6 +132,16 @@ mode = "self" if "--self-test" in sys.argv[1:] else "check"
 sys.exit(1 if os.environ.get("BUILD_TEST_SEC4_FAIL") == mode else 0)
 """
 
+# The body-pointer lint (check_body_pointers.py) reads the note sources the sandbox does not have; it is stubbed like
+# the other checkers, and its own fixtures run in its --self-test.
+FAKE_BODY_LINT = r"""#!/usr/bin/env python3
+import os, sys
+with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
+    fh.write("bodylint: reached with args %r\n" % (sys.argv[1:],))
+mode = "self" if "--self-test" in sys.argv[1:] else "check"
+sys.exit(1 if os.environ.get("BUILD_TEST_BODYLINT_FAIL") == mode else 0)
+"""
+
 
 class BuildAllHarness(unittest.TestCase):
     maxDiff = None
@@ -155,6 +165,7 @@ class BuildAllHarness(unittest.TestCase):
         self._install(self.bin / "latexmk", FAKE_LATEXMK)
         self._install(self.sandbox / "check_dead_containment.py", FAKE_CHECKER)
         self._install(self.sandbox / "check_sec4_receipts.py", FAKE_SEC4)
+        self._install(self.sandbox / "check_body_pointers.py", FAKE_BODY_LINT)
 
     def _install(self, path, body):
         path.write_text(body)
@@ -173,7 +184,7 @@ class BuildAllHarness(unittest.TestCase):
             lg.write_text("stale clean log\n")
             os.utime(str(lg), (old, old))
 
-    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail=""):
+    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail="", bodylint_fail=""):
         env = dict(os.environ)
         # NERSC exports `module` as a Bash function and recreates it through
         # BASH_ENV.  If either reaches the fixture shell, build_all.sh loads the
@@ -187,6 +198,7 @@ class BuildAllHarness(unittest.TestCase):
         env["BUILD_TEST_LOG"] = str(self.log)
         env["BUILD_TEST_CONTAINMENT_RC"] = containment_rc
         env["BUILD_TEST_SEC4_FAIL"] = sec4_fail   # "check" or "self": that sec4 invocation exits 1
+        env["BUILD_TEST_BODYLINT_FAIL"] = bodylint_fail   # likewise for the body-pointer lint
         # A minimal PATH plus the shim dir, so the fake latexmk is the only one reachable.
         base = "/usr/bin:/bin:/usr/sbin:/sbin"
         env["PATH"] = base if drop_latexmk else "%s:%s" % (self.bin, base)
@@ -291,6 +303,21 @@ class TestTheHappyPath(BuildAllHarness):
                 self.assertNotEqual(0, proc.returncode, proc.stdout)
                 self.assertIn("sec4: reached", self.calls)
                 self.assertNotIn("page counts", proc.stdout)
+
+    def test_a_failing_body_pointer_lint_fails_the_build_before_any_latexmk(self):
+        """An internal pointer printed in the note body must stop the build, and cheaply: before any LaTeX run."""
+        for which in ("check", "self"):
+            with self.subTest(bodylint_fails=which):
+                self.log.write_text("")
+                proc = self.run_build("build", bodylint_fail=which)
+                self.assertNotEqual(0, proc.returncode, proc.stdout)
+                self.assertIn("bodylint: reached", self.calls)
+                self.assertNotIn("latexmk: fake invoked", self.calls)
+
+    def test_the_body_pointer_self_test_runs_before_its_verdict(self):
+        self.run_build("build")
+        self.assertLess(self.calls.index("bodylint: reached with args ['--self-test']"),
+                        self.calls.index("bodylint: reached with args []"))
 
     def test_the_sec4_self_test_runs_before_its_verdict(self):
         self.run_build("build")
