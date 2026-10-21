@@ -311,3 +311,18 @@ and do not simplify the register. Re-running the rescoring on `mrg2` would not c
 
 **Stop.** Neither rating rose between the two rounds, so the decision's stopping rule ends the loop after round 1.
 A structural round, built from the list above, is offered to Joseph. It is not started.
+
+## 11. Standalone note repository synced (2026-10-21, Joseph: "push to the analysis note only repo")
+
+- **Canonical:** `MINERvA-OmniFold` main at `4afaba5ca1b157c7a1f99ac9a5cda99731f55372` (PR #204 merge).
+- **Standalone:** `MINERvA-OmniFold-Analysis-Note` main at `8b08b464fc67d6d4c613d9f238f02c2f2d9cb5a3`. This was
+  checked with `git ls-remote` after the push. The previous head, `95b3474`, was the sync of `a5ac7380` (PR #113,
+  2026-10-13).
+- **Content:** all 141 tracked files under `docs/analysis-note/` at `4afaba5c` are byte-identical in the standalone
+  checkout (`cmp`, checked before and after the build). The standalone repo's own `AGENTS.md` and `.gitignore` are
+  kept.
+- **Reverse direction:** the standalone history's only non-sync commits (the two Overleaf commits of 2026-10-11) are
+  a whitespace toggle that cancels out, so nothing needed carrying back.
+- **Standalone build** (`build_all.sh`): rc 0; body-pointer lint and struck-value containment PASS; no undefined
+  references. The Sec. IV receipts check skips by design outside the canonical layout; it passed 15/15 in the
+  canonical build `mrg2`. Pages: note 135, primer 15, paper 13, PET note 26.
