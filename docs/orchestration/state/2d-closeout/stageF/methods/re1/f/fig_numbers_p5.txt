@@ -1,0 +1,32 @@
+[drift] values.tex \binsTen: built-in 94.1 -> values.tex 95.6 (values.tex used)
+[drift] values.tex \pullMean: built-in 0.089 -> values.tex 0.074 (values.tex used)
+[drift] values.tex \pullRMS: built-in 0.598 -> values.tex 0.564 (values.tex used)
+[drift] values.tex \chiPaper: built-in 3.66 -> values.tex 2.65 (values.tex used)
+[ok] sigTwoD: computed 3.0733131599571655e-38 | printed 3.073e-38 | values.tex \sigTwoD
+[ok] sigTwoDpaper: computed 3.03901139455691e-38 | printed 3.039e-38 | values.tex \sigTwoDpaper
+[ok] ratioTot: computed 1.0112871460310062 | printed 1.011 | values.tex \ratioTot
+[DISCREPANCY] binsTen: computed 94.14634146341463 | printed 95.6 | values.tex \binsTen
+[DISCREPANCY] pullMean: computed 0.08894542701552118 | printed 0.074 | values.tex \pullMean
+[DISCREPANCY] pullRMS: computed 0.5981211651164514 | printed 0.564 | values.tex \pullRMS
+[DISCREPANCY] chiPaper: computed 3.6609406827395268 | printed 2.65 | values.tex \chiPaper
+[ok] uqPaper_median_rel_pct: computed 6.852482845312499 | printed 6.85 | values.tex \uqPaper
+[ok] chi2ndf_data_vs_tune: computed 33.03927965774954 | printed 33.04 | packet/claims (receipt_model_chi2_2d.json 33.039)
+[ok] chi2ndf_ours_vs_tune: computed 26.490912579045744 | printed 26.49 | receipt_model_chi2_2d.json 26.491
+[DISCREPANCY] data_total: computed 3.064955439714736e-38 | printed 3.0699e-38 | VL157 data total
+[DISCREPANCY] ratio_corner_GiBUU: computed 1.602637476619436 | printed 1.61 | values.tex \gibuuCorner
+[DISCREPANCY] ratio_total_GiBUU: computed 1.383630559910567 | printed 1.39 | values.tex \gibuuTotal
+[DISCREPANCY] ratio_total_GENIE-CV,ratio_total_GENIE+MEC,ratio_total_NuWro,ratio_total_GiBUU: computed (1.065833859124904, 1.383630559910567) | printed 1.07--1.39 | values.tex \genRatioTotLo,\genRatioTotHi (integrated data/prediction, all four)
+[ok] ratio_W2p2_GENIE-CV,ratio_W2p2_GENIE+MEC,ratio_W2p2_NuWro: computed (1.1108020814354433, 1.129907211429188) | printed 1.11--1.13 | values.tex \genRatioWhiLo,\genRatioWhiHi (2.2<=W<3.0, GENIE, NuWro)
+[ok] ratio_total_GENIE-CV,ratio_total_GENIE+MEC,ratio_total_NuWro: computed (1.065833859124904, 1.15104039278441) | printed 1.07--1.15 | values.tex \genRatioTotGNLo,\genRatioTotGNHi (integrated, GENIE, NuWro)
+[ok] ratio_corner_GENIE-CV,ratio_corner_GENIE+MEC,ratio_corner_NuWro: computed (1.1355198264944062, 1.1569682868617928) | printed 1.14--1.16 | values.tex \genRatioCornerLo,\genRatioCornerHi (corner, GENIE, NuWro)
+[ok] pred_over_data_Wmid_pct_GENIE-CV,pred_over_data_Wmid_pct_GENIE+MEC: computed (9.469106539264782, 11.87392976154278) | printed 9--12 | values.tex \genieWmidLo,\genieWmidHi (GENIE above the data at 1.4<=W<1.8, percent; Fig. 3 caption)
+[DISCREPANCY] ratio_hihi_min_pct,ratio_hihi_max_pct: computed (12.039777822099552, 28.918468449174316) | printed 12--30 | values.tex \figTwoHiHiLo,\figTwoHiHiHi (Fig. 2 ratio, high-Eavail high-W cells, percent)
+[DISCREPANCY] ratio_lowW_min_pct,ratio_lowW_max_pct: computed (22.513898295084278, 30.29902784078009) | printed 23--31 | values.tex \figTwoLowWLo,\figTwoLowWHi (Fig. 2 ratio, W<1.1 GeV, percent)
+[ok] corner_over_total_max_dev_pct: computed 6.5381641587852535 | printed <= 7 | values.tex \genCornerDevMax (within this % of the integrated ratio)
+[ok] note_share_hiEavail_pct: computed 67.073 | printed [62.0, 71.0] | paper_body.tex: 'two thirds' of the positive cell-integrated difference at Eavail>=0.8
+[ok] note_share_hiW_of_hiEavail_pct: computed 82.985 | printed [50.0, 100.0] | paper_body.tex: 'most of that' at W>=1.8
+[ok] share_catch_cell_pct: computed 21.099 | printed [17.0, 23.0] | paper_body.tex: 'a fifth' in the single widest catch cell
+[ok] n_reported: computed 205 | printed 205 | 205 reported bins
+Fig. 2 consistency |hExcess2D - (data - comparator) x area| max: 2.4469891754994467e-55
+NOT COVERED: ["paper_body.tex 'higher energies carry 14--15% of this region ... and 7% of the total' and '1.37 against 1.29': from VL161 (E_nu >= 20 GeV shares), not recomputable from these arrays"]
+FIG NUMBERS: DISCREPANCY
