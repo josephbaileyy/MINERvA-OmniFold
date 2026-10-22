@@ -8,7 +8,13 @@ the broader event-level and covariance release, records fixed identities,
 and states the remaining reproduction limits.
 
 \paragraph{Release status.} A local release candidate, RC7, exists with a
-README, checksums and a replay verifier~\cite{ReleaseCandidate2026}. Its
+README, checksums and a replay verifier~\cite{ReleaseCandidate2026}.
+% Added 2026-10-21 with the shortened article Data availability (DECISION-20261021-joseph-da-and-note-records item 1;
+% DA-proposal row 17, review D-2): RC7-README.md:75-78, :105-106 (fresh environment, empty directory, verify_rc.py
+% VERIFY: PASS). RC7's own verifier, not an independent replay; the independent empty-directory replay was of RC1 (below).
+RC7's own verifier, run on the packaged files in an empty directory,
+reproduces every value recorded in the package and every figure number that
+it checks. Its
 approximately \SI{16}{MB} sufficient-input package reproduces the joint-test
 $p$ values, decisions, robustness and power results, the lost-seed resolution
 under reading~(a),
