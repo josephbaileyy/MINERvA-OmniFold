@@ -60,17 +60,26 @@ full unbinned kinematics. Binning enters only through this multiplicative
 correction, an ${\sim}\SI{3}{\percent}$ effect overall, largest where
 backgrounds concentrate (\S\ref{sec:selection}).
 
-This correction is, deliberately, the one place the analysis binning enters
-before the final histogramming. Other experiments' treatments are summarized in
-\S\ref{sec:intro}. Our per-reco-bin weight is a conservative middle ground
-at the sub-percent genuine-background scale. A fully unbinned alternative
+This correction is, by design, the one place the analysis binning enters
+before the final histogramming; other experiments' treatments are summarized in
+\S\ref{sec:intro}. At the sub-percent genuine-background scale, a per-reco-bin
+weight is a conservative middle ground. A fully unbinned alternative
 injects negatively weighted background simulation on the measured side,
 targeting the identical background-subtracted density $(D-B)/S$. It
 reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total
 2D cross section and its systematic and statistical covariances to within
 \SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning
 dependence and suits the extended-fiducial analysis, where backgrounds are
-larger. The quoted central values and uncertainties, including the extended-fiducial value, do not use it (App.~\ref{app:negweight}).
+larger. The quoted central values and uncertainties, including the
+extended-fiducial value, do not use it. Its refined form is the background
+treatment of configurations (d) and (e) (\S\ref{sec:method-config}): (d) in the
+background-bias and generator-sized-change studies of \S\ref{sec:val-negweight},
+and (e), the joint-test estimator, in
+\S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence} and the generator
+tests (App.~\ref{app:negweight}).
+% Note register batch b5, review B1: the uses follow Table tab:estimators-matrix and Table tab:validation-design-5d
+% (sec_5d.tex): background closure (c), (d); generator-sized change (d); held-out shapes (e, sec:val-departure);
+% precision study (e, sec:gbdt-model-dependence); test calibration and generator tests (e, sec:joint5d).
 % Background-practice survey (H1/LHCb/ATLAS, OmniFold-HI, generative unfolding),
 % production history and the Huang et al. comparison moved to sec_intro.tex
 % ("Prior OmniFold applications"); the n=5 rationale moved to "Hyperparameter
@@ -90,20 +99,20 @@ note; point-cloud representations are future work (App.~\ref{sec:pet}). Calibrat
 MLP/transformer cross-checks test the implementation in
 \S\ref{sec:3d-classifier}.
 
-The engine supports interchangeable backends (component terminology and
-code paths in App.~\ref{app:codebase}). Since 2026-10-11 the quoted 2D central
-value and its uncertainty ensembles --- the systematic universe sweep, the
-Poisson bootstrap, the training-seed block and the run-period unfolds --- all use \textbf{LightGBM}
-($100$ trees, $8$ leaves, learning rate $0.1$; identical settings for the step-1
-classifier, step-2 classifier, and miss regressor). The central value is the
-universe sweep's own matched central value (seed~42; its file name and checksum are listed in Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
+The unfolding code supports interchangeable learners (component terminology and
+code paths in App.~\ref{app:codebase}). The quoted 2D central value and all of its
+uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the
+training-seed block and the run-period unfolds) use LightGBM with $100$ trees,
+$8$ leaves and learning rate $0.1$, the same settings for the step-1
+classifier, the step-2 classifier and the miss regressor. The central value is the
+universe sweep's own matched central value at seed~42 (its file name and checksum are listed in Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
 (\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
-training-seed block five seed settings that include it (\S\ref{sec:uq-boot},
-\S\ref{sec:uq-ml}); the bootstrap replica mean differs from the central value by a
-per-bin median of 4.43 standard errors of the mean. The earlier statistical band was
-built at seed~1: the seed-42 central value differs from the seed-1 one by a
-per-bin median of \SI{0.18}{\percent} (maximum \SI{1.79}{\percent}), or 0.30
-(maximum 1.28) of that band's per-bin standard deviation. Both central values are
+training-seed block uses five seed settings that include it (\S\ref{sec:uq-boot},
+\S\ref{sec:uq-ml}). The bootstrap replica mean differs from the central value by a
+per-bin median of 4.43 standard errors of the mean. The seed-42 central value
+differs from the seed-1 one by a per-bin median of \SI{0.18}{\percent} (maximum
+\SI{1.79}{\percent}), or 0.30 (maximum 1.28) of the per-bin standard deviation of
+the earlier statistical band, which was built at seed~1. Both central values are
 regenerated to $\lesssim2\times10^{-11}$ with one driver and one input, the runs
 differing only in the seed, so the difference is attributable to the seed
 (inferred from the two regenerations).
@@ -112,15 +121,16 @@ differing only in the seed, so the difference is attributable to the seed
 % as the earlier budget's). Offset: rebuild/outputs/outA/budget_Q.json.gz s5_copied.stat_centring_offset (4.428).
 % The 0.18 % / 0.30 comparison is the earlier (VL170) seed-1 band's.
 % J3/J4 provisional (DECISION-20261018, packet W3: D2, D10 KI-88, KI-93; the note sentences are in sec:uq-boot and sec:uq-2d-construction).
-The seed-42 product itself has no execution
-log or recorded run configuration; it equals an independent rerun with a
-different driver and thread count to $1.4\times10^{-11}$, and a regeneration with the current driver, with its run configuration recorded, reproduces it to the same level. Against the
-ten seed-1--10 LightGBM central values it is mildly over-dispersed (RMS
-standardized difference 1.28, maximum 4.25). Seed~42 was chosen because a
-matched seed-42 statistical band was the cheaper of the two seed-matching routes
-costed in the analysis design; a seed-42 statistical band has since been built, with three
-independent streams (data, signal and background simulation); it is the quoted
-statistical block (\S\ref{sec:uq-boot}).
+There is no execution log or recorded run configuration for the seed-42 central
+value itself. An independent rerun with a different driver and thread count reproduces it
+to $1.4\times10^{-11}$, and so does a regeneration with the current driver whose run
+configuration is recorded. Against the ten LightGBM central values at seeds 1--10
+it is mildly over-dispersed (RMS standardized difference 1.28, maximum 4.25).
+Seed~42 was chosen on cost: of the two ways of matching the central value and the
+statistical band in seed that the analysis design costed, a matched seed-42
+statistical band was the cheaper. The quoted statistical block is a seed-42 band
+drawn in three independent streams (data, signal and background simulation;
+\S\ref{sec:uq-boot}).
 % Review m5: the costed band was the VL170 law at seed 42 (stageC/pilot/DESIGN.md §8); S1 is the three-stream
 % law (stageC/production/DESIGN.md §3.4). J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-88).
 % Source: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md; receipts
@@ -130,55 +140,40 @@ statistical block (\S\ref{sec:uq-boot}).
 % (job 59660487), L1 the seed-1 central to 2.4e-12; X0/X0' regenerate the exact-split E_C to <= 7.1e-15; X1 (seeded
 % exact) differs from X0 by median 0.18 %, max 1.6 % (P09b FAIL). X1 chi2/ndf 3.565, X0 control 3.661:
 % docs/orchestration/receipts/xr-x1-chi2-20261012/.
+% Note register batch b5 (2026-10-22): "Since 2026-10-11" dropped here and in sec:uq-universes; the date is kept once,
+% in the exact-split paragraph below.
 
 \paragraph{The exact-split cross-check.}
-Until 2026-10-11 the quoted 2D central value was an \texttt{exact} run: sklearn
-\texttt{GradientBoosting} with single-threaded exact-split CART, whose seed was
-not pinned (its production job script passed no seed, and the driver version it ran had no seed option, so scikit-learn's \texttt{random\_state} was
-\texttt{None}; the run's own log was not found). Two driver revisions
-regenerate it to $7\times10^{-15}$, but it is not invariant to the estimator
-seed: one reseeded run (\texttt{random\_state} 1/2/3) moves every bin, by a
-median of \SI{0.18}{\percent} (maximum \SI{1.6}{\percent}; the equality with the
-LightGBM seed-42/seed-1 median above is a coincidence), and gives
-$\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$; the spread over seeds is unmeasured. It differs from the LightGBM
-seed-42 central value by a per-bin median of \SI{0.98}{\percent} (maximum
-\SI{12.2}{\percent}), 1.32 statistical standard deviations, and gives
-$\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded, reproducible) against the published
-covariance, against $\chiPaper$ (\S\ref{sec:results-tension}). It has no matched covariance: no
-exact-split bootstrap, universe sweep or seed scan exists. The switch to
-LightGBM was made after both comparisons with the publication were known, so
-that the central value and its covariance share an estimator. Studies in this
-note labelled \emph{exact-split} were computed on the earlier central value and
-have not been recomputed. The third backend, \texttt{hist} (sklearn
-\texttt{HistGradientBoosting}, matched 8-leaf configuration), is retained for
-method-dependence studies (\S\ref{sec:results-tension}).
+The exact-split configuration (\texttt{exact}) uses scikit-learn
+\texttt{GradientBoosting} with single-threaded exact-split CART. It gave the
+quoted 2D central value until 2026-10-11, and studies in this note labeled
+\emph{exact-split} use that central value; they have not been recomputed. Its seed
+was not fixed: its production job script passed no seed, and the driver version it
+ran had no seed option, so scikit-learn's \texttt{random\_state} was \texttt{None};
+the run's own log was not found. Two driver revisions regenerate it to
+$7\times10^{-15}$, but it is not invariant to the estimator seed: one reseeded run
+(\texttt{random\_state} 1/2/3) moves every bin, by a median of \SI{0.18}{\percent}
+(maximum \SI{1.6}{\percent}; the agreement with the LightGBM seed-1 to seed-42
+median above is a coincidence), and gives
+$\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$; the spread over seeds is unmeasured.
+The exact-split central value differs from the LightGBM seed-42 central value by a
+per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}), 1.32
+statistical standard deviations, and gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$
+(unseeded, reproducible) against the published covariance, against $\chiPaper$
+for LightGBM (\S\ref{sec:results-tension}). It has no matched covariance: no
+exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for
+the central value after both comparisons with the publication were known, so that
+the central value and its covariance share an estimator. A third learner, the
+scikit-learn histogram backend (\texttt{hist}, \texttt{HistGradientBoosting}, matched 8-leaf
+configuration), is retained for method-dependence studies
+(\S\ref{sec:results-tension}).
 % Provenance: the production launcher passed no \texttt{-{}-estimator} flag; the driver revision it ran
 % (d1bc8813) had no estimator option and always used the exact backend. ASSESSMENT-20261008-2d-estimator-
 % pairing.md sec. 2.1 and P01 (launcher sbatch_unfold_2d_MEHFC.sh, job 53116554); KNOWN_ISSUES 88.
 
-\paragraph{The estimator configurations.}
-The note and the article use three configurations, all with five OmniFold
-iterations, and each result names the one it uses:
-\begin{enumerate}[itemsep=1pt, topsep=2pt]
-  \item the nominal LightGBM configuration above (100 trees, 8 leaves), with
-        purity-based background subtraction (\S\ref{sec:method-algo}): the 2D
-        central value (seed~42) and its uncertainty ensembles, and the three- to
-        five-dimensional central values (\S\S\ref{sec:3d}--\ref{sec:eavailw});
-  \item the joint-test estimator: a deterministic LightGBM variant with the unbinned
-        negative-weight background treatment (App.~\ref{app:negweight}), whose
-        refinement classifier has 400 trees and 31 leaves. The negative-weight
-        treatment reduces the purity method's nominal-truth bias in the highest-$W$
-        column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to
-        \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
-        removes most of the background-related bias that remains
-        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It was selected before the joint-test design was fixed (\S\ref{sec:joint5d});
-  \item the exact-split cross-check above, the 2D central value quoted until
-        2026-10-11.
-\end{enumerate}
 % Configuration 3: sec_5d.tex (100 trees, 8 leaves; purity footing) for 5D; the 3D/4D drivers default to
 % --estimator lgbm and the purity bkg-mode (review 2026-10-11). Added 2026-10-11 so that this subsection is the single home the article cites for all four configurations;
 % before, configurations 3-4 were described only in the article and in sec_5d.tex.
-
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's estimator matrix, moved with its
 % sources: this section (100 trees, 8 leaves, seed 42; exact-split seed not pinned; joint-test refinement 400 trees,
 % 31 leaves); configurations (c)-(d): OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:23-31 (candidate F2) and
@@ -187,15 +182,40 @@ iterations, and each result names the one it uses:
 % five-dimensional central value (sec_5d.tex sec:eavailw-adopted). X5 G5a: the central values and their covariance were
 % adopted on 2026-09-20 (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md), before the purity bias was
 % found (OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md).
-\paragraph{Estimator configurations (a)--(e) used in the article.}
-The article labels five configurations, (a)--(e)
-(Table~\ref{tab:estimators-matrix}). All use five OmniFold iterations and
-gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both
-OmniFold steps; ``deterministic'' means fixed seeds and reproducible training.
-Results from different configurations are not combined. The central values
-keep the purity-based subtraction because they and their covariance were
-produced before the purity bias was found and the refinement was developed,
-and they were not regenerated.
+% Note register batch b5 (2026-10-22): the note's three-item list and the article's (a)-(e) paragraph are merged; the
+% uses of (c), (d) and (e) follow the table below and Table tab:validation-design-5d (sec_5d.tex) (review B1).
+\paragraph{The estimator configurations.}
+Five estimator configurations, labeled (a)--(e) as in the article
+(Table~\ref{tab:estimators-matrix}), are used, and each result names the one it
+uses. All use five OmniFold iterations and gradient-boosted trees of nominal
+capacity (100 trees, 8 leaves) in both OmniFold steps; ``deterministic'' means
+fixed seeds and reproducible training. Results from different configurations are
+not combined. Three are described in this section:
+\begin{itemize}[itemsep=1pt, topsep=2pt]
+  \item (a), the nominal LightGBM configuration above, with
+        purity-based background subtraction (\S\ref{sec:method-algo}): the 2D
+        central value (seed~42) and its uncertainty ensembles, and the three- to
+        five-dimensional central values (\S\S\ref{sec:3d}--\ref{sec:eavailw});
+  \item (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned
+        negative-weight background treatment (App.~\ref{app:negweight}), whose
+        refinement classifier has 400 trees and 31 leaves. The negative-weight
+        treatment reduces the purity method's nominal-truth bias in the highest-$W$
+        column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to
+        \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
+        removes most of the background-related bias that remains
+        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It is used for the
+        generator tests (\S\ref{sec:joint5d}), the study of generator shapes held
+        out of its development (\S\ref{sec:val-departure}) and the precision study
+        (\S\ref{sec:gbdt-model-dependence}), and it was selected before the
+        joint-test design was fixed (\S\ref{sec:joint5d});
+  \item (b), the exact-split cross-check above.
+\end{itemize}
+Configuration (c), the deterministic variant with purity-based subtraction, and
+(d), the same variant with negative weights and a nominal-capacity refinement, are
+used in the background-bias, generator-sized-change and coverage studies listed in
+the table. The central values and their covariance use purity-based
+subtraction: they were produced before the purity bias was found and the
+refinement was developed, and they have not been regenerated with it.
 
 \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
 \begin{table}[htbp]
@@ -227,13 +247,13 @@ and they were not regenerated.
 \end{table}
 
 \paragraph{Hyperparameter choice.}
-The learner settings were fixed \emph{a priori} rather than tuned on data. They are the sklearn
+The learner settings were fixed \emph{a priori}; no hyperparameter search was
+performed on data, which avoids tuning on the result. They are the scikit-learn
 \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and
-depth-3 capacity. The LightGBM backend of the central value and its ensembles uses matched capacity
-($\texttt{num\_leaves}=8=2^{3}$), giving every backend the same deliberately
+depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity
+($\texttt{num\_leaves}=8=2^{3}$), giving every learner the same deliberately
 modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
-No hyperparameter search was performed on data, avoiding a tuning-on-result
-loop. The configuration is instead validated after the fact by closure and
+The configuration is instead validated after the fact by closure and
 classifier-calibration tests (\S\ref{sec:validation},
 \S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count
 (below), backend agreement in method-dependence studies
@@ -262,7 +282,7 @@ an independently published binned measurement of the same data
 
 The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the
 2D driver using an axis list and the same 2D helpers. The first two axes
-are always $(\pT,\pPar)$, carrying the fiducial gate and per-$\pT$ flux.
+are always $(\pT,\pPar)$, carrying the fiducial phase-space cut and the per-$\pT$ flux.
 Higher-dimensional runs extend the muon observables $(\pT,\pPar)$ with
 $\Eavail$, $q_{3}$, $W$ in the phase space of \S\ref{sec:selection}.
 Every production, universe-sweep, and closure run follows these conventions:
