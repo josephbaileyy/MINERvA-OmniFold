@@ -1,0 +1,10 @@
+RATING: 2
+JUSTIFICATION: Although grammatically competent, the manuscript frequently departs from journal register, reading throughout like an internal collaboration note or audit report dominated by procedural bookkeeping, developmental narrative, and defensive caveats that require substantial rewriting.
+
+Then the three passages that most depart from PRD register, each quoted exactly as it appears in the text, each with a rewrite:
+1. QUOTE: "The test design was fixed after its reviewers had seen descriptive per-cell residuals of the data, and before any observed statistic was computed (Ref. [14], Sec. 10.3). Every lost pseudo-experiment was rerun, and none reaches the observed statistic in any test or shifted null, so including the recovered outcomes changes no decision (Ref. [14], Sec. 10.6)."
+   REWRITE: The hypothesis-testing protocol was defined prior to unblinding the test statistics on data. All simulated pseudo-experiments were evaluated, and none exceeded the observed test statistic under any tested null hypothesis.
+2. QUOTE: "The LightGBM result, quoted as the central value because its covariance uses the same estimator, was chosen after both comparisons were known, so the benchmark is a reproduction rather than an independent validation."
+   REWRITE: The LightGBM implementation is adopted for the nominal central values and covariance matrix; this benchmark serves as a consistency check against the published result rather than an independent cross-validation.
+3. QUOTE: "The estimators are also unstable at the level of rounding: rounding-level input changes move the results of the higher-capacity refinement by up to 2.6 statistical standard deviations, as they move those of the baseline estimator (2.5), so the refinement fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations."
+   REWRITE: The estimators also exhibit sensitivity to machine precision: rounding-level variations in the inputs shift the refined and baseline results by up to 2.6 and 2.5 statistical standard deviations, respectively, exceeding our numerical stability tolerance.

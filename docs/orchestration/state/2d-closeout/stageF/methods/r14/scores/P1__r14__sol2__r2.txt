@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but repeated caveats, densely qualified sentences, and internal development history create a report-like register that needs a dedicated language pass.
+1. QUOTE: "Configuration (e) keeps five iterations under a rule fixed before the comparison, because 10, 15, or 20 did not reduce the rule’s measure of model dependence, the largest residual proxy over the development truth changes (Ref. [14], Sec. 9.4)."
+   REWRITE: Configuration (e) uses five iterations, selected before the comparison. Increasing the count to 10, 15, or 20 did not reduce the model-dependence metric, defined as the largest residual proxy over the truth deformations used to develop the estimator (Ref. [14], Sec. 9.4).
+2. QUOTE: "That invariance covers the bounded extension of the calibration’s computing budget, decided with observed p values visible."
+   REWRITE: This guarantee also applies to the extension of the calibration sample within the specified limit, although the extension was chosen after inspecting the observed p values.
+3. QUOTE: "These target-corrected evaluations are descriptive and do not re-grade the decisions of Table IV, which concern each prediction on the target it was generated for and stand (Ref. [14], Sec. 10.9)."
+   REWRITE: The target-corrected comparisons are descriptive; the decisions in Table IV apply to the original predictions for their respective simulated targets (Ref. [14], Sec. 10.9).

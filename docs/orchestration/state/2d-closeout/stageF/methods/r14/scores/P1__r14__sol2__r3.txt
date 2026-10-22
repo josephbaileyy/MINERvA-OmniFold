@@ -1,0 +1,19 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise, but repeated caveats, densely qualified sentences, and internal development bookkeeping create a report-like register that needs a dedicated language pass.
+1. QUOTE: "With the per-quantity bias and spread inferred from
+a Gaussian fit to each quantity’s 68% and 95% coverage rather than measured directly, a diagnosis of the
+stored pseudo-experiments attributes the miscoverage to
+a residual bias, of unestablished source, that grows with
+W and survives the nominal-truth bias correction; the
+rate change itself is recovered, and apart from a minor
+effect the intervals are not too narrow (Ref. [14], Sec. 9.5)."
+   REWRITE: Gaussian fits to each quantity’s 68% and 95% coverage indicate that the miscoverage arises from a residual bias that increases with W and persists after the nominal-truth bias correction. This diagnosis infers the bias and spread from coverage rather than measuring them directly. The source of the bias remains unknown. The signal-rate change is recovered, and underestimated interval widths make only a minor contribution to the miscoverage (Ref. [14], Sec. 9.5).
+2. QUOTE: "The test design was fixed after its reviewers had seen
+descriptive per-cell residuals of the data, and before any
+observed statistic was computed (Ref. [14], Sec. 10.3)."
+   REWRITE: The test design was finalized after the reviewers inspected the per-cell data residuals but before any observed test statistic was calculated (Ref. [14], Sec. 10.3).
+3. QUOTE: "These target-corrected evaluations are descriptive and do
+not re-grade the decisions of Table IV, which concern
+each prediction on the target it was generated for and
+stand (Ref. [14], Sec. 10.9)."
+   REWRITE: The target-corrected comparisons are descriptive; the decisions in Table IV apply to each prediction for its original target (Ref. [14], Sec. 10.9).

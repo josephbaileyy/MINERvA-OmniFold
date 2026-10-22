@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B more often divides heavily qualified statements into manageable sentences, particularly in the coverage and covariance discussions.
+2. B’s direct constructions, such as “We quote” and “We have not compared,” give the prose clearer agency and a more natural rhythm.
+3. Both documents maintain a formal PRD register and share most wording, but B’s smoother presentation gives it a slight editorial advantage.

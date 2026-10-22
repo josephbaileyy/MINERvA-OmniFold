@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B untangles several convoluted, heavily subordinated run-on sentences present in Document A (notably in Secs. IV B, V C, and VII C) into balanced, syntactically lucid statements appropriate for PRD.
+2. Document B replaces informal, telegraphic shorthand—such as the notebook-like parenthetical in Sec. VI of Document A—with fully articulated, professional academic prose.
+3. Document B significantly improves paragraph cohesion and information flow by leading with clear topic assertions rather than burying critical methodological caveats in secondary clauses.
