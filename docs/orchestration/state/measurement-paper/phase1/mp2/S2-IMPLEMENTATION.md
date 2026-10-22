@@ -437,7 +437,8 @@ for NuWro. In F_primary, GENIE CV and MEC are close to the GENIE-based Tune. Thi
 ### The verdict script
 
 `measurement-paper/phase1/mp2/mp2_s2_verdict.py`, sha256
-`c088e1261d0d405b766822e428c409cdab1ba336611c2e51f9deb5ea8dc687c5`: no refit, 0 node-h, root_6_28. It imports
+`6e6c1614ca5074a7fefdfc2b35a46306a0e2bff39e2b92dadc09c4bc0b1aad94`, revised after the independent review (below; the
+first version, c088e126, was never run on study data): no refit, 0 node-h, root_6_28. It imports
 `mp2_s2_fit.py` (91c2a64b, unchanged since code-v5) for the frozen bins, the 20-entry minimum and `chi2_shape`, so the
 statistics are those the gates computed. In order:
 
@@ -487,10 +488,68 @@ in production (the gates file stores `sys.argv`). The harmonized inputs' sha256 
 - **A finding the tests made:** the gates file's `argv` is the caller's argv when gates run in-process. That is why
   `--harm` and `--contract` are explicit arguments rather than read from it.
 
+### Revision after the independent review of PR #238
+
+The director had the first version, c088e126, reviewed against addendum 14 §2 before any run. The review's blocking
+finding was real: a NaN could produce a V3 PASS. `min(1, 2·NaN)` is 1, and `abs(a − b) > tol` is False for a NaN, so
+the equality check against the seal accepted NaN. The fixes, in 6e6c1614:
+
+- **Blocking: NaN.** `finite()` STOPs on any non-finite value, so a NaN or inf becomes neither PASS nor FAIL. It is
+  applied to:
+  - the inputs: G's xsec, sumw2 and nevt; Tune's w_truth; G's c; the fine widths; every replica's w_G and c; and the
+    V3 values;
+  - both sides of every recomputed-versus-sealed comparison;
+  - V2-fine's χ²/ndf;
+  - V3's χ², z_max, p_χ, p_z and p_d.
+- **Should-fix.** For every V3 distribution, the frozen-form `max_abs_pull_used` and `n_bins_used` are now compared
+  with the seal, as well as χ² and ndf.
+- **Minor:**
+  - Bin indices outside [0, nb) STOP, both at the upper edge and in `clustered`, so nothing wraps into the next
+    event's bin.
+  - The files actually opened from the `--harm` paths are hashed and must equal their records. The events and Tune
+    files are checked against the gates file's sources, path and sha256, and `harmonized_<G>.npz` against harmonize's
+    own `s2_harmonize.json` outputs. The gen5d modules that give the fine widths are recorded through
+    `gen5d_flux_reweight.code_files_of`.
+  - The seal is read once: those bytes are hashed and parsed.
+  - The overwrite check comes before the seal is opened, and the output is written with `O_EXCL`, then set to 0444.
+  - A distribution with ndf < 1 is reported as "FAIL-CLOSED" (p_d none) and fails V3. It is not reported as p_d = 0.
+  - `N_V3 == len(V3_BINS)` is asserted at import.
+  - atime is recorded beside the seal's stat. It is not compared, because the read itself may move it.
+
+**Tests of 6e6c1614.**
+- **Units** (`test_mp2_s2_verdict_units.py`): all of the above, plus:
+  - NaN and inf in `same` (5 cases) and in `v3_rule` (χ² and z_max), each a STOP;
+  - an empty or NaN vector to `finite`, a STOP;
+  - bin indices out of range in `clustered`, a STOP;
+  - the FAIL-CLOSED label;
+  - a 3-member V3 family, refused at import.
+- **End to end** (`test_mp2_s2_verdict_e2e.py` a703d271, on Perlmutter; output in
+  `s2-receipts/verdict-tests/e2e-6e6c1614.out`):
+  - `--blind-only` exits 0 and writes no verdict.
+  - The full run writes the verdict at 0444, with the seal's stat unchanged and four inputs hashed.
+  - **Refused:**
+    - a second run;
+    - an existing verdict beside an unreadable (mode 000) seal, refused before the seal is opened;
+    - weights perturbed by 1e-6;
+    - a NaN weight;
+    - a one-byte edit to the seal;
+    - a NaN planted through `chi2_shape` into V2-fine's χ², a frozen V3 χ², a frozen V3 z_max, V3-n's χ² and V3-n's
+      z_max, each a STOP.
+  - The blind shortfall stops with exit 5, in both modes.
+  - Both files ran byte-identical to the committed ones.
+
 ### The run (after this PR)
 
 The script runs from a read-only snapshot,
-`/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/verdict-v1/`: code-v7 plus this script, with its sha list in
-`s2-receipts/verdict-v1.sha256`. It runs on a login node for genie_cv, genie_mec and nuwro_ch on F_primary, and for
-GiBUU once it exists. Before the run, `stat` of each sealed file is recorded in
-`s2-receipts/sealed-stat-before-release.txt`.
+`/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/verdict-v2/`: code-v7 plus 6e6c1614, with its sha list in
+`s2-receipts/verdict-v2.sha256`. (`verdict-v1/`, holding c088e126, is superseded and never ran.) It runs on a login
+node, only after the director merges #233 and #238:
+
+1. `--blind-only` for genie_cv, genie_mec and nuwro_ch. §2's ndf_fine ≥ 200 holds for "any G", so all three are
+   checked before any verdict is read.
+2. The full run for each, on F_primary. NuWro's F_fallback and GiBUU follow when their seals exist.
+
+The seal stats were recorded before the run:
+- `s2-receipts/sealed-stat-before-release.txt` (16:28Z);
+- `s2-receipts/sealed-stat-atime-before-release.txt` (16:47Z), with atime. For all three seals, atime equals mtime
+  equals ctime, so none has been read since it was written.

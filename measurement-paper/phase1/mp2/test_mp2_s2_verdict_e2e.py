@@ -57,6 +57,7 @@ np.savez(harm / f"harmonized_{gen}.npz", xsec_flat=x, sumw2_flat=x * 1e-40, nevt
 rho = rng.uniform(0.5, 2.0, nf)
 np.savez_compressed(harm / f"rho_an_{gen}.npz", rho=rho)
 (harm / f"hybrid_an_{gen}.json").write_text(json.dumps({"rho_npz": {"path": str(harm / f"rho_an_{gen}.npz"), "sha256": F.sha256(harm / f"rho_an_{gen}.npz")}}))
+(harm / "s2_harmonize.json").write_text(json.dumps({"outputs": {f"harmonized_{gen}.npz": F.sha256(harm / f"harmonized_{gen}.npz")}}))
 out = WORK / "fit"
 fc = str(CODE / "feature_contract_draft.json")
 tasks = ",".join(f"{k}:{h}:{f}" for k in range(5) for h in range(2) for f in range(5))
@@ -68,37 +69,85 @@ g = json.loads((out / f"gates_{gen}_primary.json").read_text())
 sp = Path(g["V2_V3"]["sealed_file"])
 print("TEST gates rc", rc, json.dumps(g["verdict"]))
 import mp2_s2_verdict as V  # noqa: E402
+import shutil  # noqa: E402
 VA = ["--gen", gen, "--fset", "primary", "--harm", str(harm), "--contract", S5C]
-import subprocess
+print("TEST blind-only rc", V.main(VA + ["--fit", str(out), "--blind-only"]), "verdict file written:", (out / f"verdict_v2v3_{gen}_primary.json").exists())
 rcv = V.main(VA + ["--fit", str(out)])
 print("TEST verdict rc", rcv)
+
+
+def variant(name):
+    """A copy of the fit directory whose gates file points at its own seal, with no verdict file."""
+    t = WORK / f"fit_{name}"
+    shutil.copytree(out, t)
+    vf = t / f"verdict_v2v3_{gen}_primary.json"
+    if vf.exists():
+        vf.chmod(0o644)
+        vf.unlink()
+    gj = json.loads((t / f"gates_{gen}_primary.json").read_text())
+    gj["V2_V3"]["sealed_file"] = str(t / Path(gj["V2_V3"]["sealed_file"]).name)
+    (t / f"gates_{gen}_primary.json").write_text(json.dumps(gj))
+    return t, gj
+
+
+def expect_stop(label, fit_dir):
+    try:
+        V.main(VA + ["--fit", str(fit_dir)])
+    except SystemExit as e:
+        ok = str(e).startswith("STOP") or str(e).startswith("refusing")
+        print(f"TEST {label}: {'refused' if ok else 'UNEXPECTED EXIT'}: {e}")
+        return
+    print(f"TEST FAIL: {label} was accepted")
+
+
 if rcv == 0:
     vd = json.loads((out / f"verdict_v2v3_{gen}_primary.json").read_text())
     print("TEST verdict", json.dumps(vd["verdict"]), "blind", vd["blind"], "corr", vd["J_pull_correlation_across_replicas"])
     r0 = vd["replicas"]["0"]
-    print("TEST r0 V2_J", r0["V2_J"]["n_pulls"], "V3 p_d", {k: round(x["p_d"], 4) for k, x in r0["V3"]["distributions"].items()})
-    nk = r0["V3_statistics"]["neutron_KE_MeV"]
-    print("TEST V3-n variance tag", nk["variance"], "sealed stat unchanged", vd["sealed"]["stat_before"] == vd["sealed"]["stat_after"])
-    try:
-        V.main(VA + ["--fit", str(out)]); print("TEST FAIL: overwrote")
-    except SystemExit as e:
-        print("TEST refuses overwrite:", e)
-    # tampered weights -> STOP
-    import shutil
-    t2 = WORK / "fit_tamper_w"; shutil.copytree(out, t2); (t2 / f"verdict_v2v3_{gen}_primary.json").chmod(0o644); (t2 / f"verdict_v2v3_{gen}_primary.json").unlink()
-    gj = json.loads((t2 / f"gates_{gen}_primary.json").read_text()); gj["V2_V3"]["sealed_file"] = str(t2 / Path(gj["V2_V3"]["sealed_file"]).name)
-    (t2 / f"gates_{gen}_primary.json").write_text(json.dumps(gj))
-    wz = dict(np.load(t2 / f"weights_{gen}_primary.npz")); wz["wG_k3"] = wz["wG_k3"] * (1 + 1e-6 * rng.normal(size=wz["wG_k3"].size))
+    print("TEST r0 V2_J", r0["V2_J"]["n_pulls"], "V3 p_d", {k: round(x["p_d"], 4) for k, x in r0["V3"]["distributions"].items()},
+          "fail_closed", r0["V3"]["fail_closed"])
+    print("TEST V3-n variance tag", r0["V3_statistics"]["neutron_KE_MeV"]["variance"],
+          "| seal stat unchanged", {k: v for k, v in vd["sealed"]["stat_before"].items() if k != "atime_ns"}
+          == {k: v for k, v in vd["sealed"]["stat_after"].items() if k != "atime_ns"},
+          "| files hashed", sorted(vd["inputs"]["sha256_of_files_loaded"]))
+    print("TEST output mode", oct((out / f"verdict_v2v3_{gen}_primary.json").stat().st_mode & 0o777))
+    expect_stop("second run (overwrite)", out)
+    # the overwrite refusal comes before the seal is opened: an unreadable seal is never reached
+    t0, gj0 = variant("overwrite_first")
+    (t0 / f"verdict_v2v3_{gen}_primary.json").write_text("{}")
+    Path(gj0["V2_V3"]["sealed_file"]).chmod(0o000)
+    expect_stop("overwrite checked before the (unreadable) seal", t0)
+    Path(gj0["V2_V3"]["sealed_file"]).chmod(0o400)
+    t2, _ = variant("tamper_w")
+    wz = dict(np.load(t2 / f"weights_{gen}_primary.npz"))
+    wz["wG_k3"] = wz["wG_k3"] * (1 + 1e-6 * rng.normal(size=wz["wG_k3"].size))
     np.savez(t2 / f"weights_{gen}_primary.npz", **wz)
-    try:
-        V.main(VA + ["--fit", str(t2)]); print("TEST FAIL: tampered weights accepted")
-    except SystemExit as e:
-        print("TEST tampered weights refused:", e)
-    # tampered seal -> STOP
-    t3 = WORK / "fit_tamper_s"; shutil.copytree(t2, t3); np.savez(t3 / f"weights_{gen}_primary.npz", **dict(np.load(out / f"weights_{gen}_primary.npz")))
-    gj["V2_V3"]["sealed_file"] = str(t3 / Path(gj["V2_V3"]["sealed_file"]).name); (t3 / f"gates_{gen}_primary.json").write_text(json.dumps(gj))
-    sp3 = Path(gj["V2_V3"]["sealed_file"]); sp3.chmod(0o600); sp3.write_text(sp3.read_text().replace('"ndf"', '"ndf" ', 1))
-    try:
-        V.main(VA + ["--fit", str(t3)]); print("TEST FAIL: tampered seal accepted")
-    except SystemExit as e:
-        print("TEST tampered seal refused:", e)
+    expect_stop("weights perturbed 1e-6", t2)
+    t4, _ = variant("nan_w")
+    wz = dict(np.load(t4 / f"weights_{gen}_primary.npz"))
+    wz["wG_k1"] = wz["wG_k1"].copy()
+    wz["wG_k1"][7] = np.nan
+    np.savez(t4 / f"weights_{gen}_primary.npz", **wz)
+    expect_stop("a NaN weight", t4)
+    t3, gj3 = variant("tamper_s")
+    sp3 = Path(gj3["V2_V3"]["sealed_file"])
+    sp3.chmod(0o600)
+    sp3.write_text(sp3.read_text().replace('"ndf"', '"ndf" ', 1))
+    expect_stop("a one-byte edit to the seal", t3)
+    # a NaN planted in each statistic, through chi2_shape: per replica the calls are fine, the 4 frozen V3, then V3-n
+    real = V.F.chi2_shape
+    for label, call, fields in (("V2-fine chi2", 0, ("chi2", "chi2_ndf")), ("frozen V3 chi2", 1, ("chi2",)),
+                                ("frozen V3 z_max", 2, ("max_abs_pull_used",)), ("V3-n chi2", 5, ("chi2",)),
+                                ("V3-n z_max", 5, ("max_abs_pull_used",))):
+        n = {"i": 0}
+
+        def poisoned(*a, **k):
+            r = real(*a, **k)
+            if n["i"] == call:
+                r = dict(r, **{f: float("nan") for f in fields})
+            n["i"] += 1
+            return r
+        V.F.chi2_shape = poisoned
+        tn, _ = variant("nan_" + label.replace(" ", "_").replace("-", "").replace("/", ""))
+        expect_stop(f"NaN in {label}", tn)
+        V.F.chi2_shape = real

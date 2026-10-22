@@ -1,0 +1,4 @@
+# stat of each sealed V2/V3 file, with atime (%X), before the release (addendum 14 §2 step 3; PR #238 review); recorded 2026-10-22T16:47:45Z on login25; contents not read
+sealed_v2v3_genie_cv_primary.json size=37419 mode=400 uid=112498 atime=2026-10-22 07:44:12.000000000 -0700 mtime=2026-10-22 07:44:12.000000000 -0700 ctime=2026-10-22 07:44:12.000000000 -0700 atime_s=1792680252 inode=882727004837773371
+sealed_v2v3_genie_mec_primary.json size=37335 mode=400 uid=112498 atime=2026-10-22 07:45:01.000000000 -0700 mtime=2026-10-22 07:45:01.000000000 -0700 ctime=2026-10-22 07:45:01.000000000 -0700 atime_s=1792680301 inode=882727004854550587
+sealed_v2v3_nuwro_ch_primary.json size=36781 mode=400 uid=112498 atime=2026-10-22 09:23:59.000000000 -0700 mtime=2026-10-22 09:23:59.000000000 -0700 ctime=2026-10-22 09:23:59.000000000 -0700 atime_s=1792686239 inode=882727007622791175
