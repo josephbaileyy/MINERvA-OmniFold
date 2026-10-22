@@ -731,7 +731,10 @@ output is in `s2-receipts/power_diag_primary.json`, and it reads only what the S
 |---|---|---:|---:|---:|---:|
 | genie_cv | 29 / 41 / 64 | 0.00816 | 0.00418 | 0.00132–0.00135 | 0.00035 |
 | genie_mec | 14 / 28 / 43 | 0.00319 | 0.00330 | 0.00153–0.00158 | 0.00031 |
-| nuwro_ch | 1548 / 2710 / 2998 | 0.114 | 0.00917 | 0.00719–0.00758 | 0.00044 |
+| nuwro_ch | 1548 / 2747 / 2998 | 0.114 | 0.00917 | 0.00719–0.00758 | 0.00044 |
+
+NuWro's best iterations here are over all 50 models, including k4h1f2 from the re-run; the 2710 median above
+("NuWro: why it overran") is over the first job's 49.
 
 **What it shows, read narrowly:**
 - **The hypothesis as stated is not supported.** The GENIE models' achieved gain is about 10–25× the noise scale.
@@ -800,3 +803,37 @@ The table gives min–max over the five replicas.
   either, S2 ends with no generator established, and MP-2's next step is Joseph's decision.
 - **Compute:** tranche A 1.989 of 3.5; tranche B 0.611 of 2.3 before GiBUU's F_fallback; phase 1 10.485 of 35
   (`../LEDGER.tsv`).
+
+## GiBUU F_fallback (tranche B, 60122488, code-v8, 1973 s, 0.54806 CPU node-h): GiBUU not established
+
+The job ran on regular QOS: code-v8, `HARM_FIRST=harm_c` (R12 decayed), stop at 46 min, four concurrent model steps.
+It completed in 1973 s. The order was the same as before:
+1. seal stat (atime = mtime = 14:24:14 PDT, so the seal was unread before the release);
+2. blind-only (ndf_fine 4404 ≥ 200);
+3. the full verdict through verdict-v2.
+
+Receipts:
+- the gates file, the log and the model metadata: `s2-receipts/tranche-b/`;
+- the verdict and its logs: `s2-receipts/verdicts/`;
+- the seal stat: `s2-receipts/sealed-stat-atime-gibuu-fallback-before-release.txt`.
+
+| G, feature set | V1 AUC (control) | V4 ESS/N; max w/mean | blind ndf_fine | V2-fine χ²/ndf | V2-J max\|pull\| (cell) | V3 largest p_d | S2 |
+|---|---|---|---:|---|---|---|---|
+| gibuu_ch, fallback | 0.55240 (0.49866) fail | 0.035–0.051; 12,936–20,220 fail | 4404 | 6.13–6.28 | 31.8–32.5 (54) | 1.0e-134 | **fail** |
+
+- **Best iterations:** 1597 / 2892 / 3000 (min / median / max), with 30 of 50 at or above 2800.
+  - The V1 fit stopped at 21 trees.
+  - c is 1.123–1.132.
+  - J pulls correlate across replicas at ≥ 0.998.
+- **V3:** all four distributions fail on every replica. χ²/ndf ranges:
+  - neutron multiplicity above 10 MeV: 568–574;
+  - protons above 20 MeV: 358–365;
+  - neutron KE: 116–158;
+  - π⁰ count: 107–111.
+- **Power diagnostic (descriptive):** `s2-receipts/power_diag_gibuu_fallback.json`. The binned 5D JSD is 0.01097
+  before reweighting (debiased) and 0.01081–0.01123 after, so it is essentially unchanged.
+- **Consequence, under the contract's order:** GiBUU is **not established**. No G is established, so S3 is not
+  reachable. MP-2's next step is Joseph's decision.
+  - The closure summary is `S2-CLOSURE-SUMMARY.md`: per G and per gate, with the power diagnostic beside it.
+  - Fitting stops here, as the director ruled.
+- **Compute:** tranche A 1.990 of 3.5; tranche B 1.159 of 2.3; phase 1 11.033 of 35 (`../LEDGER.tsv`).

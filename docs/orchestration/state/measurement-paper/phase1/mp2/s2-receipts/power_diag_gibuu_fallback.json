@@ -1,0 +1,54 @@
+{
+ "schema": "mp2-s2-power-diag/1",
+ "status": "DESCRIPTIVE: a test of a hypothesis; changes no verdict",
+ "tune": {
+  "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+  "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+ },
+ "generators": {
+  "gibuu_ch": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "n_models": 50,
+   "fset": "fallback",
+   "best_iteration_min_median_max": [
+    1597,
+    2892,
+    3000
+   ],
+   "achieved_gain_nats_min_median_max": [
+    0.09959341870056759,
+    0.11533257963982929,
+    0.12733919121375026
+   ],
+   "binned_5D_JSD_nats": {
+    "T_vs_G": 0.017321959018582425,
+    "T_even_vs_odd": 0.00019657193656001112,
+    "G_even_vs_odd": 0.02521778708660513,
+    "T_vs_G_debiased_approx": 0.01096836926279114,
+    "n_cells_T": 9202,
+    "n_cells_G": 8039
+   },
+   "binned_5D_JSD_after_reweighting_debiased_approx_replicas": [
+    0.01109005299131751,
+    0.010943290723889665,
+    0.011234437679566299,
+    0.010810429100771752,
+    0.011058428799431873
+   ],
+   "weights": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/weights_gibuu_ch_fallback.npz",
+    "sha256": "29eee937427f98ef6456e8fa95bd06e8341e5981ca5a0ea4bbe689af177a1194"
+   },
+   "validation_counts_median": [
+    399935.0,
+    126401.0
+   ],
+   "gain_noise_scale_nats_median": 0.0004779038050843032,
+   "achieved_over_binned_debiased_median": 10.515016122868971,
+   "binned_debiased_over_noise_median": 22.95099797511823
+  }
+ }
+}
