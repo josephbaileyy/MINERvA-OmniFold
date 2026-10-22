@@ -543,9 +543,13 @@ against one recorded value (EW17: $+1.04\%$ fitted against $+1.05\%$).  The
 source of the $W$-graded term is not established: its size and ordering roughly match,
 under an approximate assignment of background fractions to $W$ bins, the rise
 of the background fraction by $0.111\,f_{\mathrm{bkg}}$, but it may also
-belong to the estimator alone.  Rerunning the same pseudo-experiments as run,
-without background, and with the background scaled by 0.9 would decide between
-the two; this test has not been run.
+belong to the estimator alone.  % 2026-10-22: the test was run (state/ki98-wbias-test/REPORT.md, PR #229; declared and bound before the run), five seeds
+% per arm, EW band W >= 3: R_a +2.29 (SE 0.72), R_c +3.40 (0.65), R_b +2.84 (0.46); verdict UNDETERMINED by its rule.
+A rerun of five of the same pseudo-experiments, without background and with the
+background scaled by 0.9 so that the background-to-signal ratio is restored,
+did not decide between the two: restoring the ratio raised the residual for
+$W\ge\SI{3}{GeV}$ rather than removing it, and without background the residual
+persists.
 
 % Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 

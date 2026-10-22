@@ -32,7 +32,7 @@ sha256 of the text plus a final newline begins `2a0ef9d8ead1f123`.
 
    **The director's reading:** RHC is a second measurement after a validated method, not the first step. A survey
    (inventory, sizes, a storage plan and compatibility) comes before any download.
-3. **Storage.**  is acceptable for new products if the work moves fast. CFS stays closed under the 3 TB
+3. **Storage.** `$PSCRATCH` is acceptable for new products if the work moves fast. CFS stays closed under the 3 TB
    rule.
 4. **The newer FHC release: undecided** ("maybe … but not sure").
    - **The director's recommendation:** keep the existing FHC inputs for the measurement chain, since switching means
