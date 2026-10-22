@@ -8,7 +8,8 @@
 #   dump        mp2_s2_dump.py (omnifold_py310: uproot) -> $D/dump
 #   harm <only> mp2_s2_harmonize.py (root_6_28: ROOT) -> $D/harm_<tag>; controls H0, N, A, Z before any harmonized output
 #   models G FSET 'k:h:f,..|k:h:f,..|..'  mp2_s2_fit.py models: each |-group is one concurrent srun step (256/n cpus)
-#   gates G FSET                          mp2_s2_fit.py gates (V1-V4)
+#   gates G FSET                          mp2_s2_fit.py gates (V1, V4; V2/V3 statistics sealed, addendum 13)
+#   modgates G FSET 'groups'              models, then (only if every model step exited 0) gates, on the same node
 # CODE (an immutable snapshot directory under $D, passed with --export) is the code every stage runs; default $D/code.
 # Writes only under $D. No set -u before the conda hook. sbatch runs a copy of this file, so $D is absolute.
 set -o pipefail
@@ -34,16 +35,17 @@ fi
 eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)"
 conda activate "$HOME/.conda/envs/root_6_28"
 unset PYTHONPATH
-if [ "$STAGE" = models ] || [ "$STAGE" = gates ]; then
+if [ "$STAGE" = models ] || [ "$STAGE" = gates ] || [ "$STAGE" = modgates ]; then
   GEN=${2:?gen}; FSET=${3:?fset}
   HARM="$D/harm_a $D/harm_b"
-  if [ "$STAGE" = gates ]; then
+  run_gates() {
     srun -n 1 -c 256 python3 "$CODE/mp2_s2_fit.py" gates --gen "$GEN" --fset "$FSET" --harm $HARM \
       --contract "$P1/mp5/inputs/s5c_contract.json" --fcontract "$CONTRACT" --out "$FITDIR" --threads 128
     rc=$?
     echo "gates $GEN $FSET rc=$rc end $(date -u +%FT%TZ)"
-    exit $rc
-  fi
+    return $rc
+  }
+  if [ "$STAGE" = gates ]; then run_gates; exit $?; fi
   IFS='|' read -r -a GROUPS_ <<< "${4:?task groups}"
   NG=${#GROUPS_[@]}
   C=$((256 / NG)); TH=$((C / 2))
@@ -56,6 +58,10 @@ if [ "$STAGE" = models ] || [ "$STAGE" = gates ]; then
   rc=0
   for p in "${pids[@]}"; do wait "$p" || rc=$?; done
   echo "models $GEN $FSET groups=$NG cpus=$C threads=$TH rc=$rc end $(date -u +%FT%TZ)"
+  if [ "$STAGE" = modgates ]; then
+    [ $rc = 0 ] || { echo "STOP: a model step failed (rc=$rc); gates do not run"; exit $rc; }
+    run_gates; exit $?
+  fi
   exit $rc
 fi
 TAG=${2:?tag}

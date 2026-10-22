@@ -78,7 +78,7 @@ was a premise drawn from the preflight's subsample. It failed:
 | R10 | V1 "G's held-out events" | all of G's events inside the grid and the support. Each Tune row is weighted by a model that did not see G's events of the row's own fold; a single classifier cannot keep that pairing | Stated as a limitation of V1's held-out property for G |
 | R11 | the struck nucleon (addendum 9) | GENIE `hitnuc` (2112 or 2212, else the default mass, which covers 0 and the pair codes). NuWro: in[1].pdg when n_in = 2; the default mass when n_in = 3 (MEC pair) or n_in = 1. GiBUU: the single perweight-0 ID-1 row by charge, the default mass for production_ID 35 or 36 or when the row is not unique | Addendum 9 |
 | R12 | GiBUU IDs not in the map | each (ID, charge) not mapped gets a code below 1e9 that is neither p, n, π, π⁰ nor γ, so it enters E_other, as "other". IDs 901 and 903 and negative IDs stop the job, since none was seen in the preflight and none is declared | Addendum 9 |
-| R13 | GENIE targets: "C12 rows tgt == 1000060120, H rows tgt == 2212" | the GENIE CH samples also carry **atomic-electron targets**, `tgt == 11` (CV main: 35 of 2,000,000 entries; supplement 11; MEC main 17). They stay in G's events and the harmonized product, labelled target 0, and are not separated | They are part of GENIE's CH sample and of the frozen CH product (control N reproduces it with them). Found on the first run, when the code's two-target assertion stopped job 60101976 |
+| R13 | GENIE targets: "C12 rows tgt == 1000060120, H rows tgt == 2212" | the GENIE CH samples also carry **atomic-electron targets**, `tgt == 11`. **CC** events with `tgt == 11`, from the receipt (`harm_a/s2_harmonize.controls.json`, `targets_*`): CV main 1, CV supplement 8, MEC main 0, MEC supplement 17. *(Corrected 2026-10-22: the first version of this row gave entry counts, 35, 11 and 17, that no receipt carries.)* **As ruled in addendum 13 (R13, ruled differently):** they stay in the harmonized product, H_CH,an and control N, as frozen, and are **excluded** from G's training, V1 and V3 samples (target code 0; `mp2_s2_fit.py` `load()`) | The contract's target rule, and MP3-A's precedent. Found on the first run, when the code's two-target assertion stopped job 60101976 |
 
 ## Cost correction (FLAGGED)
 
@@ -87,21 +87,29 @@ The draft's S2-fit estimate (0.7–1.2 CPU node-h for 200 models) does not follo
   no slowdown.
 - So S2 + S3 is more likely about 3.5–5.5 CPU node-h than 2–3.5.
 
-Before the fits, one debug-QOS timing probe (2 models, ≤ 0.1 node-h) measures the cost per model. The projection
+Before the fits, one debug-QOS timing probe (2 models announced; **4 ran**, at 0.098 node-h, within the stated
+≤ 0.1) measures the cost per model. The projection
 then goes to the director before the 200 models are submitted. Phase 1 has charged 7.60 of its 35 CPU node-h.
 
 ## Status at writing
 
-**First run** (code in `s2/code`). Its outputs are kept as `harm_a.failed-60101976` and `harm_b.failed-60101977`.
+**First run** (code in `s2/code`). Job 60101976 wrote **no receipt**: it stopped on a `SystemExit` before writing one, and its cluster directory `s2/harm_a.failed-60101976/` holds no JSON. Only its log is committed (`s2-receipts/logs/`). Job 60101977's receipt is committed as `s2-receipts/harm_b.failed-60101977.s2_harmonize.json`. *(Corrected 2026-10-22: the first version said both runs' outputs were "kept".)*
 - **60101975, the dump:** COMPLETED in 55 s. Eight samples written.
 - **60101976, harmonize GENIE and NuWro:** FAILED with exit 1. The target assertion stopped it (R13).
 - **60101977, harmonize GiBUU and Tune:** FAILED with exit 3. Control N passed (xsec 8.8e-15, sumw2 1.2e-14
   relative, nevt exact) and control A passed bitwise on both samples (913,859 C12 and 670,266 H native in-PS
   events). Z failed, as described above.
-- **A provenance slip.** 60101976 started 28 s before `mp2_s2_harmonize.py` was re-copied into `s2/code`: it ran
-  sha256 `0c92db3b…`, and the file changed under it. The change touched only the GiBUU reader, which that job never
-  ran. Since then every submission runs an **immutable** snapshot (`s2/code-v<n>/`, read-only, with its sha256
-  list), passed as `CODE`.
+- **A provenance slip** (corrected 2026-10-22, addendum 13 D4).
+  - The wrapper of 60101976 hashed `mp2_s2_harmonize.py` as `0c92db3b…` at job start. The file was re-copied into
+    `s2/code` about 28 s later, as `9dbcde93…`, which 60101977 then recorded for its own run.
+  - **Which version 60101976's interpreter read is unrecorded.** It is immaterial: the job produced only a failure,
+    and its finding (R13) was reproduced under the immutable `code-v2` and `code-v3`.
+  - **The difference between the two versions is shown, not asserted.** Both were rebuilt from the current file by
+    reversing the recorded edits in order. Their sha256 match the recorded `0c92db3b…` and `9dbcde93…` exactly, and
+    they are committed as `s2-receipts/d4/`. Their diff is one change inside `gibuu_file`, the 901/903 lepton-ID
+    stop. 60101976 harmonized GENIE and NuWro only and never called `gibuu_file`.
+  - Since then every submission runs an **immutable** snapshot (`s2/code-v<n>/`, read-only, with its sha256 list),
+    passed as `CODE`. Addendum 13 makes this standing practice.
 
 **Second run** (`s2/code-v2`, `code-v2.sha256`). Its outputs are kept as `harm_a.failed-60102168` and
 `harm_b.failed-60102169`.
@@ -160,6 +168,121 @@ then goes to the director before the 200 models are submitted. Phase 1 has charg
   1. rulings on R0–R13 and on the two Z redefinitions;
   2. authority to submit the 200 F_primary models and the gates. That is about 2.6 CPU node-h, regular QOS
      (debug's 30 min is too short for 12–13 models per step), as 4 jobs of 1 node each, about 45 min per job.
+     *(Inconsistent as written, as addendum 13 notes: 4 jobs × 45 min is 3.0 node-h, not 2.6. The 13th model wave
+     per stream and the gate time were left out.)*
 
-**No production model has been trained.** Only the four timing-probe models exist, in `fit_probe/`, and nothing
-reads them.
+At PR #231 no production model had been trained. Only the four timing-probe models existed, in `fit_probe/`, and
+nothing reads them.
+
+## After binding addendum 13 (2026-10-22)
+
+The rulings are in `../../BINDING-PHASE1-ADDENDUM-13.md`, with the reasoning in `../../ADDENDUM-13-ANALYSIS.md`.
+Everything in this section was done before any production model was trained.
+
+### Code-v5: the rulings, implemented
+
+The snapshot is `s2/code-v5/`. The directory and its files are read-only, and `s2-receipts/code-v5.sha256` lists
+them. It differs from v4 only in `mp2_s2_fit.py` (`91c2a64b…`) and `mp2_s2_job.sh` (`2b800af9…`).
+
+| ruling | where it is implemented |
+|---|---|
+| R13: `tgt == 11` excluded from G's training, V1 and V3 samples; kept in products, H_CH,an and N | `load()`: the mask `ev["tgt"] != 0`; V3's G side uses the same mask |
+| R10: the V1 gate is replica 0's Tune rows of fold 0 (both halves; ≤ 4M by `v1_split_seed`), weighted w_truth·w_G, against G's events of G-fold 0. The pooled V1 runs beside it, descriptive | `cmd_gates`: `V1`, and `V1_pooled_descriptive` |
+| R7: the control is two disjoint random subsets of all of G's events (R13 applied), each the size of V1's G sample, drawn with `gvg_split_seed`; V1's protocol; n_estimators fixed to V1's best iteration | `v1_test` |
+| R1b: the V1 and control `random_state` are `v1_split_seed` and `gvg_split_seed` | `v1_test` |
+| R5b: the 3σ check runs over the χ² bins. Every excluded bin is listed with each side's share, and one-sided bins are flagged as support gaps | `chi2_shape` |
+| R6: s is asserted equal across the replicas to ≤ 1e-12 relative (the job stops otherwise). s, ΣG, g0 and the identity s·k_T·f_CH,an are reported | `cmd_gates` (`R6`) |
+| R9: the out-of-support row count and its w_truth share per J cell | `cmd_gates` (`R9`) |
+| The iteration cap: n_estimators = 3000 as frozen; validation logloss recorded at 500, 1000, 2000, 2500, 2800 and 3000 trees in every fit. If V1's best iteration is ≥ 2800 it is reported "at the frozen capacity", and a descriptive V1 at 10000 trees runs beside it | `fit_one`, `v1_test` |
+| **V2 and V3 verdicts held for Joseph:** statistics, p-values and pulls are computed for every replica and written **only** to `fit/sealed_v2v3_<G>_primary.json` (mode 0400). Its sha256 is in the gates file. No V2/V3 pass/fail is computed, and nothing about V2 or V3 is printed. The gates file reports V1 and V4 | `cmd_gates` |
+| Production `--out` is `s2/fit/`, never `fit_probe/` | `mp2_s2_job.sh` (`FITDIR`) |
+
+- **Each grant job** runs the `modgates` stage: the 50 models, then, only if every model step exited 0, the gates,
+  on the same node.
+- **End-to-end test.** Before the snapshot, `mp2_s2_fit.py` `91c2a64b…` ran `models` and `gates` on synthetic
+  harmonize outputs: 60k Tune rows, 20k G events, and a **test-only** override to 60 trees. Everything worked:
+  - all 50 models, then the gates;
+  - V1's fold-0 sample sizes;
+  - the R7 control sizes;
+  - the R13 exclusion (197 events);
+  - R6's s spread (4e-16);
+  - the identity's net ratio against the real MCgen (0.9999999);
+  - the sealed file, written at mode 0400;
+  - no χ² or pull in the open gates file.
+
+  The test's outputs are in `s2/tmp/fittest/` and are never read by anything. Its sealed file was not opened.
+
+### R12: undecayed charmed hadrons (login node, 0 node-h; `s2-receipts/r12_d2_counts.json`)
+
+Counted in the in-grid events that S2 uses, rate-weighted by each sample's own weight. A charmed hadron is any
+|pdg| < 1e6 with a quark digit 4; for GiBUU, IDs 56–61 and 114–121.
+
+| sample | in-grid events | with a charmed hadron in the final state | share of in-grid rate |
+|---|---:|---:|---:|
+| Tune v1 C+H | 31,658,399 | 0 | 0 |
+| GENIE CV | 1,006,250 | 0 | 0 |
+| GENIE MEC | 1,028,171 | 0 | 0 |
+| NuWro-CH | 1,538,953 | 0 | 0 |
+| **GiBUU-CH** | 1,580,042 | **4,470** | **7.90e-3** |
+
+**The mismatch is 7.9e-3 of GiBUU's in-grid rate, above addendum 13's 1e-3.**
+- Tune, GENIE and NuWro decay charm. GiBUU leaves Λ_c, Σ_c, D and D_s undecayed, so their energy, rest mass
+  included, sits in E_other. That is a convention difference the classifier can learn.
+- **The GiBUU fit is held** for the director's ruling, as addendum 13 R12 requires. GENIE CV, GENIE MEC and NuWro
+  are not affected.
+
+### D2: NuWro's three-muon events (login node, 0 node-h; same receipt)
+
+- **The events:** 52 CC events (42 C12 main, 5 C12 supplement, 5 H main).
+- **The primary:** in **all 52**, `post[0]` is the μ⁻, the primary.
+- **The muon the frozen converter selects** (the last |pdg| = 13) is **never** `post[0]`. It is the μ⁺ in 34 events
+  and a secondary μ⁻ in 18.
+- **So in every one of the 52 the frozen NuWro converter, and the harmonized events that keep its convention, take a
+  non-primary muon.**
+- **Size:** 9 of the 52 are in the grid. Their share of NuWro's in-grid rate is **4.4e-6**, below addendum 13's
+  1e-4, so there is no re-run.
+- **Proposed KNOWN_ISSUES row, for the director to land:** "LOW. NuWro flat converter (`nuwro_to_flat_5d.C`, 'last
+  muon wins') takes a non-primary muon in CC events carrying a μ⁺μ⁻ pair: 52 of 2,374,491 CC events in the frozen
+  NuWro C12 and the MP3-B H samples, with the primary always `post[0]`; 9 in the grid, 4.4e-6 of the in-grid rate.
+  Affects the frozen NuWro product and MP-2's harmonized NuWro events equally; no re-run at this size
+  (`phase1/mp2/S2-IMPLEMENTATION.md`, D2)."
+
+### D1: what the record says (as addendum 13)
+
+- Z for GiBUU, as finally defined, was redefined twice after failures. Each redefinition corrected a mis-specified
+  population. The tolerance was unchanged, and the failing counts are kept.
+- **Established:** ν ∥ +z on 822,359 complete non-DIS H events (max 1.3e-6 GeV).
+- GiBUU C12 inherits this **by jobcard identity**, not by measurement (MP3-C C0). C12 and DIS events stay unmeasured
+  for direction.
+- The contract's per-event assertion is **not implementable** for GiBUU, and is recorded as such, not as passed.
+- **Caveat** beside addendum 9 item 4: about 0.04% of non-DIS GiBUU-H events lack a low-KE final nucleon.
+- The azimuthal-mean test that addendum 13 invites (report only) is not yet done.
+
+### The maintenance window (addendum 8's "after the maintenance window")
+
+- **Announced:** `maintenance_20261021`, from 10-21 06:00 to 10-27 23:00 PDT. It is no longer among the
+  reservations (`scontrol show reservation`, 2026-10-22).
+- **Measured return:** user jobs started again at **2026-10-21 17:28:57 PDT**. Source: `sacct -a -X`, the first
+  start after 06:00, read 2026-10-22.
+  - Starts per hour on 10-21: 365 at 17:00, 15 at 18:00, 11 at 19:00, 1,390 at 20:00, 4,046 at 21:00.
+  - The only other start in the window, 4662497 at exactly 06:00:00, is read as the reservation's own boundary.
+- **So:** every S2 job (from 2026-10-22 04:15 PDT) ran after Perlmutter's actual return.
+
+### A second, harmless write into a snapshot
+
+- My R12 login-node script imported from `s2/code-v4/` without `PYTHONDONTWRITEBYTECODE`. That created
+  `code-v4/__pycache__/` (one `.pyc`) at 07:10 PDT.
+- No `.py` changed: `sha256sum -c code-v4.sha256` gives 0 mismatches, and no job ran from v4 after the probe. The
+  directory was removed.
+- `code-v5/` is now read-only at the **directory** level too, so nothing can write into it.
+
+### Production plan (tranche A)
+
+- **Jobs:** one per generator. QOS regular, 1 node, `--time 1:30:00`. Stage `modgates`, F_primary, with the 50 tasks
+  (k, h, f) in 4 concurrent streams of 13, 13, 12 and 12.
+- **GENIE CV, GENIE MEC and NuWro** are submitted on this record. **GiBUU waits** for the R12 ruling.
+- **Projected wall time per job, from the probe:** about 45 min (13 waves of about 157 s, about 3 min of load, and
+  gates ≤ 8 min). That is about 0.75 CPU node-h per job and about 3.0 for tranche A.
+- **Stop rule (addendum 13):**
+  - a job past 56 min (1.25 × 45) is cancelled and reported;
+  - before each further submission, the charged total plus the remaining jobs' projections must stay ≤ 3.5.
