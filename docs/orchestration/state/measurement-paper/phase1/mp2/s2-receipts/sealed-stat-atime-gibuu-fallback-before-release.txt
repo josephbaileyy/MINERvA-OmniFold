@@ -1,0 +1,2 @@
+# stat of the GiBUU F_fallback seal before the release; recorded 2026-10-22T21:25:33Z on login15; contents not read
+sealed_v2v3_gibuu_ch_fallback.json size=35620 mode=400 atime=2026-10-22 14:24:14.000000000 -0700 mtime=2026-10-22 14:24:14.000000000 -0700 ctime=2026-10-22 14:24:14.000000000 -0700 atime_s=1792704254 inode=882727011884204091
