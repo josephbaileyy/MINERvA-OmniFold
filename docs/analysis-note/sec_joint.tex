@@ -2,18 +2,18 @@
 \label{sec:joint5d}
 
 % Campaign: s5p (terminal 2026-10-06).
-This section is the complete record of the joint five-dimensional generator
-tests, whose design was fixed before any production pseudo-experiment or
-observed statistic, with two disclosed data-informed elements
-(\S\ref{sec:joint5d-frozen}); the article states
-its result and conditions and refers here for the detail. The tests evaluate
+This section describes the joint five-dimensional tests of generator
+predictions. Their design was fixed before any production pseudo-experiment or
+observed statistic was computed, with two data-informed elements
+(\S\ref{sec:joint5d-frozen}). The tests evaluate
 hybrid null hypotheses about five predictions (\S\ref{sec:joint5d-design}). They are not a measured cross
 section, add no reportable uncertainty (Ref.~\cite{NoteRecords2026},
-\texttt{joint-5d}), and do not validate the five-axis covariance used elsewhere in this note (\S\ref{sec:eavailw-adopted}), which they do not use. Everything the argument
-below needs is stated here: the pre-registered specification, including its six
-conditions in its own words (\S\ref{sec:joint5d-conditions}), the decisions, the
-recovery of the lost pseudo-experiments and the later sensitivity studies with
-their numbers. The records cited in this section are its provenance~\cite{JointTestRecord2026}.
+\texttt{joint-5d}), and do not validate the five-axis covariance used elsewhere in this note (\S\ref{sec:eavailw-adopted}), which they do not use. The section
+gives the pre-registered specification, with its six conditions in its own
+words (\S\ref{sec:joint5d-conditions}), the decisions, the recovery of the lost
+pseudo-experiments and the later sensitivity studies with their numbers. The
+specification and the decisions are documented in Ref.~\cite{JointTestRecord2026};
+each later study cites its own record.
 % Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: the note made self-contained;
 % old text in git history): the six conditions verbatim (RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3), the recovery disposition (DECISION-20261005 sec. 5),
 % the projected p values (W1-RECORD-20261006.md sec. 1) and the recoil statistics (W2B-REPORT-20261006.md sec. 5)
@@ -35,13 +35,13 @@ interaction-model universes with every fine-cell integral held fixed, and the
 background is the Tune~v1 simulation's, with its uncertainty bands. This
 \emph{hybrid null} is the hypothesis the calibration simulates; for the
 Tune~v1, the analysis simulation itself, no external prediction is combined
-with the Tune~v1 composition. Three requirements are distinct: the hybrid null
+with the Tune~v1 composition. Three requirements are distinct. The hybrid null
 is defined exactly on the finite grid, and no convergence is needed to define
-it; whether it represents the physical generator prediction depends on the
+it. Whether it represents the physical generator prediction depends on the
 composition below the fine grid and on convergence of that grid
-(condition~(i), \S\ref{sec:joint5d-conditions}); and whether the calibration
-reproduces the analysis of the data is a third requirement, calibration
-fidelity (conditions~(ii)--(iv)). Each prediction is tested in total (rate and shape together)
+(condition~(i), \S\ref{sec:joint5d-conditions}). Whether the calibration
+reproduces the analysis of the data is calibration fidelity
+(conditions~(ii)--(iv)). Each prediction is tested in total (rate and shape together)
 and in shape alone: \jtNtests{} tests.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): pass-1 paper F7, note home first.
 % Source: nd-unfolding/s5p_stage1_inspect.py:38-44 (FINE, the edges of sec_method.tex:270-275, beside J_EDGES,
@@ -55,7 +55,14 @@ The tests are evaluated on a coarse $3^{5}$ grid in
 $(\pT,\pPar,\Eavail,q_{3},W)$ with edges
 $\pT\in[0,0.55,0.85,4.5]\,\si{GeV/c}$, $\pPar\in[1.5,3.5,6,60]\,\si{GeV/c}$,
 $\Eavail\in[0,0.4,1.5,100]\,\si{GeV}$, $q_{3}\in[0,1.2,2,100]\,\si{GeV}$ and
-$W\in[0,1.4,2.2,100]\,\si{GeV}$, restricted to the \jtNcells{} supported
+$W\in[0,1.4,2.2,100]\,\si{GeV}$.
+% Edge rule: nd-unfolding/s5c_partition.py:14-15 (docstring), :45-52 (coarse_edges: the interior fine edge nearest each
+% weighted quantile k/parts, parts = 3 for H3), :80 (MCgen truth coordinates weighted by w_truth); development MC only
+% (:2-7). No support threshold is applied in that file (it reports per-cell support only).
+Each inner edge is the fine-grid edge nearest a tertile of the weighted
+simulated truth distribution of the signal sample in that coordinate, taken
+from the development simulation, so the cells keep physical bin widths. The
+tests are restricted to the \jtNcells{} supported
 cells (J); for GiBUU, whose sample lacks high-energy neutrinos, the domain is
 the \jtNcellsGiBUU{} cells with $\pPar<\SI{6}{GeV/c}$. The grid specifies a
 finite hybrid hypothesis and a reporting statistic; it does not turn
@@ -243,13 +250,14 @@ of the nuisance parameters it can exceed $\alpha$.
 
 The hypotheses, statistics, variants, multiplicity rule, stopping rule and
 every input were fixed before any production pseudo-experiment or observed
-statistic. Two data-informed elements are disclosed. Reviewers of the design
-had seen descriptive per-cell residuals before it was fixed, and the job
-controller's status outputs exposed observed claim $p$ values during
-production. A bounded extension of the production budget was decided while
-they were visible, to let the sequential rule reach the stop set by its predeclared rule rather than a budget stop. No statistic, variant, threshold or stopping rule was
-changed, and the familywise bound above holds whatever rule determined when
-sampling stopped.
+statistic, with two data-informed elements. The design's reviewers had seen
+descriptive per-cell residuals of the data before it was fixed. During
+production, the calibration's monitoring output showed observed claim $p$
+values, and a bounded extension of the production budget was decided while
+they were visible, so that the sequential rule could reach the stop set by its
+predeclared rule rather than a budget stop. No statistic, variant, threshold or
+stopping rule was changed, and the familywise bound above holds whatever rule
+determined when sampling stopped.
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's M8 replacement of "the Monte Carlo
 % p values remain valid at the number of pseudo-experiments reached" (M2-FWER-RECORD.md:69-74), applied here.
 An independent recomputation of every $p$ value and decision from the stored products, with separately written code, agrees
@@ -257,22 +265,21 @@ with the production evaluation on all \jtRecompRows{} compared rows; it
 verifies the calculation, not the adequacy of the calibration.
 
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's post hoc paragraph (its Sec. VIII C).
-Three studies ran after the decisions and are not part of the decision rule,
-each to a specification fixed before it ran: the scan of the shift multiplier
+Three studies followed the decisions and are for reporting only (outside the
+decision rule); each was specified before it ran: the scan of the shift multiplier
 (\S\ref{sec:joint5d-kappa}), the rerun of the lost pseudo-experiments
 (\S\ref{sec:joint5d-lost}), and the matched coarse-projection comparison
-(\S\ref{sec:joint5d-projections}), specified after the five-dimensional
-outcomes were known. The non-rejection of GENIE~2.12.10 in the muon-kinematic
-projection is a post hoc observation.
+(\S\ref{sec:joint5d-projections}), which was specified after the
+five-dimensional outcomes were known.
 
 \subsection{Conditions}
 \label{sec:joint5d-conditions}
 
-Each decision holds under six conditions of the declared model. The
-pre-registered specification states them as follows, verbatim apart from
-typesetting; text in square brackets is editorial: it replaces the
-specification's references to internal files by their substance, and annotates
-the two statements that the implementation or a later measurement supersedes.
+Each decision holds under six conditions of the declared model. They are
+quoted below from the pre-registered specification, changed only in
+typesetting. Text in square brackets is ours: it replaces references to
+internal files by their content and annotates the two statements that the
+implementation or a later measurement supersedes.
 % Deposit pass: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3 (amendment 7
 % claims.conditions_stated_with_every_claim, verbatim). Substitutions: (i) "M1" -> the fine-grid convergence check; the
 % null truth's below-grid description superseded by the M8 correction (M2-AUDIT.md Q1; sec:joint5d-design); (ii)
@@ -312,7 +319,7 @@ the two statements that the implementation or a later measurement supersedes.
         the metric and as a drawn residual term''
 \end{enumerate}
 \end{quote}
-\noindent In the terms of this note, and grouped by kind, they read as follows.
+\noindent In the terms of this note, they fall into three kinds.
 
 \paragraph{Numerical convergence.}
 (i) Below the fine grid the null truth has the Tune~v1 composition of the
@@ -323,14 +330,14 @@ per-cell relative changes, the last refinement, from a twofold-merged grid to
 the fine grid, is \jtMoneMin--\jtMoneMax{} of the whole change from the coarse
 test grid to the fine grid, so in that norm the steps are not shown to shrink
 and the residual below the fine grid is unmeasured and potentially material.
-The predeclared design takes the step in a proxy of the test metric to shrink by
-\jtMoneWnormMin--\jtMoneWnormMax{} per halving, a design-review value whose
-calculation is not recorded. If it kept shrinking geometrically at that rate,
+The predeclared design takes the step, in a proxy of the test metric, to
+shrink by a factor of \jtMoneWnormMin--\jtMoneWnormMax{} per halving; this
+value comes from the design review, and its derivation is not given. If it kept shrinking geometrically at that rate,
 the residual would be about one to three times the last step,
 $\delta_{\mathrm{fine}}$ (the change of the noise-free unfolded result when the
 null truth is refined from the twofold-merged grid to the fine grid). This sets
 the claim variants at $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, the central
-extrapolated estimate, and the robustness check, for reporting only (outside the decision rule), at
+extrapolated estimate, and the robustness check, for reporting only, at
 $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$. The extrapolation assumes
 geometric convergence; the measured $L_{2}$ ratios also allow slower rates and
 larger residuals. Measured before any observed statistic, the claim variants
@@ -496,30 +503,31 @@ for the third, and $[0.67,0.80]$, $[0.01,0.05]$ and $[0,0.02]$ at the
 GENIE~2.12.10 null.
 % X7 (sol minor), moved from the article: docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json
 % power.<P>.shape["0.005"].claim_rule_determined.interval (n 193, 195, 195; 199, 193, 172).
-These come from the power sets as evaluated for the decisions, each of which lost some of its 200 alternatives to time limits
-(172--199 retained). Against the null ensembles used for the decisions, the complete power sets
-recovered as in \S\ref{sec:joint5d-lost} agree within 0.01; with the null recomputed on all draws, the first
-GENIE~2.12.10 set moves to 0.72.
+These values use the power sets as evaluated for the decisions, each of
+which had lost some of its 200 alternative pseudo-experiments to time limits
+(172--199 retained). The complete power sets, recovered as in
+\S\ref{sec:joint5d-lost}, agree with them within 0.01 against the null
+ensembles used for the decisions; with the null recomputed on all draws, the
+first GENIE~2.12.10 set moves to 0.72.
 
 \subsection{Lost pseudo-experiments and their recovery}
 \label{sec:joint5d-lost}
 
-Scheduler time limits interrupted or prevented \jtLostCal{} of the submitted
+Computing time limits interrupted or prevented \jtLostCal{} of the submitted
 calibration pseudo-experiments (\jtLostInterrupted{} interrupted,
-\jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments, so the
-decisions in Table~\ref{tab:joint5d} were evaluated on the completed draws. A
-sensitivity computed before the lost outcomes were known showed that every
-decision could change under a realizable assignment of them: had every
-interrupted draw exceeded the observed statistic, no test would have been
-rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is
-not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports
-but does not certify the decisions.
+\jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments. The
+decisions in Table~\ref{tab:joint5d} were evaluated on the completed draws.
+A sensitivity analysis computed before the lost outcomes were known showed that
+every decision could change under a realizable assignment of them: had every
+interrupted draw exceeded the observed statistic, no test would have been rejected ($p$ \jtWorstIntLo--\jtWorstIntHi).
+Among completed draws, runtime is not associated with the statistic
+($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
 
-The lost seeds were therefore rerun, for reporting only, under a procedure fixed and
+The lost seeds were rerun, for reporting only, under a procedure fixed and
 independently reviewed beforehand~\cite{JointTestRecovery2026}. A determinism
 check fixed in advance (16 of 16 completed seeds rerun bitwise identically)
 shows that each recovered draw is the lost draw, so every submitted draw has
-now been observed. No recovered draw reaches the observed statistic in any
+been observed. No recovered draw reaches the observed statistic in any
 test, claim variant or robustness variant, so no assignment of the lost draws
 changes any decision. The closest margin is 4.6 units of $T$ below the observed
 value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$
@@ -535,14 +543,14 @@ recomputation:
   \item the reading with the recovered draws added to the calibration (the
         shift recomputed on all draws) was reproduced only by a standalone rerun of the same code, a consistency check rather than an
         independent recomputation;
-  \item the earlier-stop decisions rest on the calibration run's own re-application of the sequential rule, which only that run has checked.
+  \item the earlier-stop decisions rest on the calibration run's own re-application of the sequential rule, with no independent check.
 \end{itemize}
-The recovery is for reporting only: the primary decisions are those of the evaluation before recovery, at the $B$ at which its rule stopped. Because every submitted draw has now been
-observed and no recovered draw reaches the observed statistic, the ten rejections are stated
-as holding with every submitted draw observed, together with the closest margin
-and the earlier stops given above; the statement of the sensitivity analysis,
-that every decision could change under some assignment of the lost draws, no
-longer accompanies them.
+The recovery is for reporting only: the primary decisions are those of the
+evaluation before recovery, at the $B$ at which its rule stopped. With every
+submitted draw observed and none reaching the observed statistic, the ten
+rejections hold, with the closest margin and the earlier stops given above. The finding of the
+sensitivity analysis, that every decision could change under some assignment of
+the lost draws, is superseded by their observed outcomes.
 % Deposit pass: the disposition label Joseph selected (DECISION-20261005-s5p-recompute-extension-and-lost-seed-
 % recovery.md sec. 5) restated as its content, that section's "What it changes" and required disclosures 1-5, all
 % of which this subsection prints; old text in git history.
@@ -554,13 +562,23 @@ longer accompanies them.
 \label{sec:joint5d-projections}
 
 Restricting the same calibrated tests to matched $3\times3$ coarse projections
-of the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$, gives $p<0.05$
-for every test in at least one of the two projections, so this study provides
-no evidence of additional discrimination from the joint five-observable
-information. The comparison was specified before it was run but after the
-five-dimensional outcomes were known; it uses the same calibration ensembles,
-with the recovered draws included, and the same variants and claim rule, and
-its $p$ values were reproduced independently~\cite{JointTestProjections2026}.
+of the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$, gives $p<0.05$,
+without a multiplicity correction, for every test in at least one of the two
+projections, so this study provides no evidence of additional discrimination
+from the joint five-observable information. The projected tests do not enter
+the Holm family and change no decision of Table~\ref{tab:joint5d}.
+% PACKET-20261005-publication-decision.md sec. 6 (W1, "Criteria, fixed now"): "The marginal tests are report-only.
+% They do not enter the Holm family and change no frozen decision." (docs/publication/, :252)
+The comparison and its criterion were specified after the
+five-dimensional outcomes were known but before the comparison was run: a test
+would count as evidence of additional joint discrimination only if both of its
+projected claim $p$ values were at least 0.05, both with the variant shifts of
+the primary evaluation and with the shifts recomputed on all draws; no test
+meets it, and the values are the same in both readings
+(Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value).
+The comparison uses the same calibration ensembles, with the recovered draws
+included, and the same variants and claim rule, and its $p$ values were
+reproduced independently~\cite{JointTestProjections2026}.
 In the muon-only $(\pT,\pPar)$ projection, GENIE~2.12.10 is not rejected
 ($p=\woneGcvPtTot$ in total, $\woneGcvPtShape$ in shape; a post hoc
 observation), whereas its $(\Eavail,W)$ projection is. Hadronic information
@@ -568,12 +586,6 @@ therefore participates in that rejection; this does not establish added power
 of the joint test over all matched projections, or accept GENIE as true.
 % Register round r12 (2026-10-21): moved from the article's Sec. VII E; source W1-RECORD-20261006.md (no power comparison).
 The powers of the joint and projected tests have not been compared.
-Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value. The
-criterion, fixed before the run, was that a test would count as evidence of
-additional joint discrimination only if both of its projected claim $p$ values
-were at least 0.05, both with the variant shifts of the primary evaluation and with the shifts
-recomputed on all draws; no test meets it, and the values are the same in both
-readings.
 
 % Deposit pass: W1-RECORD-20261006.md sec. 1 (identical under both D2 readings; independently reproduced, sec. 4,
 % 40 of 40). Values copied as recorded.
@@ -625,15 +637,15 @@ different estimator and calibration. The GENIE~2.12.10 projection result of
 \S\ref{sec:joint5d-projections} shows that the information rejecting that
 prediction involves the hadronic axes, on which a response band would act.
 
-For an exploratory response sensitivity study~\cite{JointTestRecoil2026}, the
-data are re-unfolded with the simulation's reconstructed recoil energy scaled
-by $\pm\SI{4}{\percent}$, and the predeclared tests are re-evaluated against the null distributions used for the decisions. The size is the level of data--simulation agreement
-reported for test-beam protons, pions and electrons of
-0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}; neutrons and
-higher-momentum hadrons, which matter at high $W$, lie outside that sample.
-The $\pm4\%$ size is a labelled exploratory sensitivity, not a validated
-uncertainty prescription. A re-unfold with unscaled recoil reproduces
-the recorded decisions, with every claim $p$ value inside the range spanned by
+In an exploratory sensitivity study of the response~\cite{JointTestRecoil2026},
+the data are re-unfolded with the simulation's reconstructed recoil energy
+scaled by $\pm\SI{4}{\percent}$, and the predeclared tests are re-evaluated
+against the null distributions used for the decisions. The size is the level
+of data--simulation agreement reported for test-beam protons, pions and
+electrons of 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}; neutrons and
+higher-momentum hadrons, which matter at high $W$, lie outside that sample, and
+the $\pm4\%$ size is not a validated uncertainty prescription. A re-unfold with unscaled recoil reproduces
+the decisions of Table~\ref{tab:joint5d}, with every claim $p$ value inside the range spanned by
 the data's rounding variations. At both $-4\%$ and $+4\%$ every one of the ten
 rejections holds. The observed statistics move by up to about \SI{11}{\percent}
 from their recorded values, nine tests keep $k=0$, and NuWro's shape test, the
@@ -688,8 +700,9 @@ and the response model is not shown to be complete.
 % M = docs/orchestration/state/measurement-paper/phase1/a7margins/RECEIPT.md (frozen margins).
 NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the
 other predictions are per nucleon of CH.
-This study corrects the two predictions to CH and re-evaluates their tests against the null distributions used for the decisions.  They are descriptive: they do not
-re-grade the recorded decisions of Table~\ref{tab:joint5d}, which stand.
+This study corrects the two predictions to CH and re-evaluates their tests
+against the null distributions used for the decisions. The re-evaluations are descriptive: they do not
+re-grade the decisions of Table~\ref{tab:joint5d}, which stand.
 
 \paragraph{Construction.}
 % B:29-34 (combination, sumw2, the frozen chain, the supplement); C:46-51 (GiBUU, frozen r(E), 72 cells).
@@ -730,12 +743,20 @@ generator.
 % C:7-8 (the required label, verbatim), :23-44 (declaration 00efbb25..., recorded before computing; max |Delta_c/sigma_c|
 % 5.1e-4 against the 0.1 acceptance). B:48-56 (NuWro hydrogen chunks: 3 + 1 aborts rerun on alternate seeds; excluded
 % fraction 1.8e-5 main, 3.8e-5 supplement; the supplement's 95% bound 1.8e-4 above the 1e-4 bar, FLAGGED).
-The GiBUU re-evaluation carries the label required for it, ``B3 (sampling closure) failed on hydrogen; a
-post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$'': the sampling-closure check failed on the hydrogen sample, and a post hoc bias check of that check's premise, declared before it was computed, met its criterion of at most $0.1\,\sigma_{c}$: it moves the CH prediction by about $5\times10^{-4}$ of $\sigma_{c}$, the standard deviation of the cell over the null distribution used for the decisions.
+The GiBUU re-evaluation is reported under the label ``B3 (sampling closure) failed on hydrogen; a
+post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$'': the
+sampling-closure check failed on the hydrogen sample, and a post hoc bias check
+of that check's premise, declared before it was computed, met its criterion of
+at most $0.1\,\sigma_{c}$ in every cell, moving the CH prediction by at most
+$5.1\times10^{-4}\,\sigma_{c}$, where $\sigma_{c}$ is the standard deviation of
+the cell's result over NuWro's null distribution used for the decisions
+($B=1751$).
+% sigma_c: mp3c/REPORT.md:31 takes sigma_c from MP3-B; mp3b/REPORT.md:37, reading (a), "the SD of the J-cell result
+% over NuWro's frozen B = 1751 null"; max |Delta_c/sigma_c| 5.1e-4 in reading (a), mp3c/REPORT.md:38.
 % Draft 6: docs/orchestration/state/measurement-paper/BINDING-PHASE1-ADDENDUM-9.md:28-31 (sec. 4, "Recorded for the record";
 % in tree since the rebase onto 51da2a62): production_ID 34, 46% of the GiBUU-H sample; median energy loss
 % 45 MeV, median p_T imbalance 31 MeV; non-DIS hydrogen events balance exactly; cause not identified.
-A further caveat applies to the GiBUU re-evaluation: GiBUU's deep-inelastic events on
+The GiBUU re-evaluation has a further limitation: GiBUU's deep-inelastic events on
 hydrogen, 46\% of its hydrogen sample, do not conserve energy.  They lose a
 median of \SI{45}{MeV}, with a median transverse-momentum imbalance of
 \SI{31}{MeV}, while its other hydrogen events balance exactly; the cause has
