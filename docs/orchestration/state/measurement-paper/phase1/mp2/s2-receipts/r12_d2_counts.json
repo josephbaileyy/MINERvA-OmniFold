@@ -1,0 +1,1547 @@
+{
+ "schema": "mp2-s2-r12-d2/1",
+ "rule_charm": "|pdg|<1e6 with a quark digit 4 (open charm and charmonium, the latter also counted alone); GiBUU IDs 56-61 (charmed baryons) and 114-121 (D, D*, Ds, Ds*)",
+ "genie_cv": {
+  "n_events_with_charm": 0,
+  "n_events": 1006250,
+  "rate_share": 0.0
+ },
+ "genie_mec": {
+  "n_events_with_charm": 0,
+  "n_events": 1028171,
+  "rate_share": 0.0
+ },
+ "nuwro_ch": {
+  "n_events_with_charm": 0,
+  "n_events": 1538953,
+  "rate_share": 0.0
+ },
+ "gibuu_ch": {
+  "n_events_with_charm": 4470,
+  "n_events": 1580042,
+  "rate_share": 0.007902096191127476
+ },
+ "tune_CH": {
+  "n_events_with_charm": 0,
+  "n_events": 31658399,
+  "rate_share": 0.0
+ },
+ "D2": {
+  "n_events": 52,
+  "n_post0_is_mu_minus": 52,
+  "n_selected_is_mu_minus": 18,
+  "n_selected_is_post0": 0,
+  "n_in_grid": 9,
+  "in_grid_rate_share": 4.366554290931327e-06,
+  "events": [
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 18842,
+    "j": 18842,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3279.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 176.8
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 226.9
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 84424,
+    "j": 84424,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3642.1
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 123.0
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 472.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 104233,
+    "j": 104233,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 584.4
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 3198.5
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 1163.4
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 170828,
+    "j": 170828,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 814.5
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 1673.3
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 636.0
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 173224,
+    "j": 173224,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4532.5
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 168.4
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 903.0
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 252185,
+    "j": 252185,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2647.7
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 2174.0
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 2631.7
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 364045,
+    "j": 364045,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1911.0
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 365.2
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 550.6
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 472088,
+    "j": 472088,
+    "n_post": 4,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1305.2
+     },
+     {
+      "pos": 1,
+      "pdg": -13,
+      "E_MeV": 240.4
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 626.2
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 481721,
+    "j": 481721,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 615.5
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 254.1
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 151.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 572232,
+    "j": 572232,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4406.4
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 267.3
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 448.7
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 578983,
+    "j": 578983,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3200.0
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 404.7
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 480.9
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 744568,
+    "j": 744568,
+    "n_post": 9,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 243.2
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 180.6
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 556.1
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 856971,
+    "j": 856971,
+    "n_post": 4,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2402.2
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 1601.1
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 1901.0
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 902919,
+    "j": 902919,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2062.8
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 1462.9
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 676.6
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 955493,
+    "j": 955493,
+    "n_post": 7,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4672.8
+     },
+     {
+      "pos": 1,
+      "pdg": -13,
+      "E_MeV": 164.0
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 3457.3
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": 13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1032384,
+    "j": 1032384,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1645.1
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 478.0
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 476.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1112948,
+    "j": 1112948,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3163.7
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 473.1
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 535.7
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1189762,
+    "j": 1189762,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4079.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 197.2
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 110.6
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1192808,
+    "j": 1192808,
+    "n_post": 4,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2262.1
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 318.9
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 551.2
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1218331,
+    "j": 1218331,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 5478.8
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 123.6
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 215.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1222342,
+    "j": 1222342,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1991.5
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 977.9
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 122.4
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1228069,
+    "j": 1228069,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4927.5
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 225.9
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 235.0
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1235044,
+    "j": 1235044,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 593.6
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 1716.9
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 2415.9
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1257817,
+    "j": 1257817,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 458.6
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 1950.9
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 718.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1292292,
+    "j": 1292292,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 469.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 1719.4
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 3265.4
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1300080,
+    "j": 1300080,
+    "n_post": 7,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3708.0
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 552.1
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 817.9
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1309053,
+    "j": 1309053,
+    "n_post": 19,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2841.5
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 809.8
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 1111.4
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1327046,
+    "j": 1327046,
+    "n_post": 9,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1404.7
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 450.5
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 837.5
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1330032,
+    "j": 1330032,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1115.0
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 1216.4
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 368.4
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1359999,
+    "j": 1359999,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4010.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 308.2
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 242.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1374805,
+    "j": 1374805,
+    "n_post": 11,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1801.0
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 523.6
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 1230.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1536561,
+    "j": 1536561,
+    "n_post": 4,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 5275.3
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 1094.3
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 1117.0
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1543224,
+    "j": 1543224,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 5049.4
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 738.5
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 305.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1631426,
+    "j": 1631426,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 5381.3
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 324.5
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 392.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1750041,
+    "j": 1750041,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2912.9
+     },
+     {
+      "pos": 1,
+      "pdg": -13,
+      "E_MeV": 224.6
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 2607.3
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": 13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1750141,
+    "j": 1750141,
+    "n_post": 7,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 424.8
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 245.9
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 763.9
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1776816,
+    "j": 1776816,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2370.2
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 177.1
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 157.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1792036,
+    "j": 1792036,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1920.0
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 361.7
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 338.9
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1803908,
+    "j": 1803908,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3130.6
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 1567.9
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 134.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1902726,
+    "j": 1902726,
+    "n_post": 7,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 3084.7
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 1412.9
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 1314.0
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1915638,
+    "j": 1915638,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2857.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 170.0
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 485.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_main",
+    "entry": 1922469,
+    "j": 1922469,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 4741.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 169.7
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 384.2
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_supp",
+    "entry": 15846,
+    "j": 2015846,
+    "n_post": 5,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 48633.2
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 193.5
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 187.6
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_supp",
+    "entry": 31562,
+    "j": 2031562,
+    "n_post": 13,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 11795.8
+     },
+     {
+      "pos": 1,
+      "pdg": 13,
+      "E_MeV": 3971.9
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 4988.2
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": -13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_supp",
+    "entry": 44964,
+    "j": 2044964,
+    "n_post": 10,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 34366.7
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 1203.9
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 259.7
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_c12_supp",
+    "entry": 67389,
+    "j": 2067389,
+    "n_post": 7,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 48153.3
+     },
+     {
+      "pos": 1,
+      "pdg": -13,
+      "E_MeV": 1229.4
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 2977.3
+     }
+    ],
+    "selected_last": {
+     "pos": 2,
+     "pdg": 13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_c12_supp",
+    "entry": 98036,
+    "j": 2098036,
+    "n_post": 11,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 38277.0
+     },
+     {
+      "pos": 6,
+      "pdg": -13,
+      "E_MeV": 209.6
+     },
+     {
+      "pos": 7,
+      "pdg": 13,
+      "E_MeV": 259.6
+     }
+    ],
+    "selected_last": {
+     "pos": 7,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_h_main",
+    "entry": 19012,
+    "j": 2119012,
+    "n_post": 6,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 347.5
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 2093.7
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 1276.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_h_main",
+    "entry": 64863,
+    "j": 2164863,
+    "n_post": 7,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 2778.1
+     },
+     {
+      "pos": 2,
+      "pdg": 13,
+      "E_MeV": 247.7
+     },
+     {
+      "pos": 3,
+      "pdg": -13,
+      "E_MeV": 744.5
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": -13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_h_main",
+    "entry": 94507,
+    "j": 2194507,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 601.8
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 751.1
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 2563.3
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": true
+   },
+   {
+    "sample": "nuwro_h_main",
+    "entry": 201776,
+    "j": 2301776,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1300.1
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 353.8
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 311.8
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   },
+   {
+    "sample": "nuwro_h_main",
+    "entry": 204668,
+    "j": 2304668,
+    "n_post": 8,
+    "post0_pdg": 13,
+    "muons": [
+     {
+      "pos": 0,
+      "pdg": 13,
+      "E_MeV": 1571.3
+     },
+     {
+      "pos": 2,
+      "pdg": -13,
+      "E_MeV": 156.4
+     },
+     {
+      "pos": 3,
+      "pdg": 13,
+      "E_MeV": 150.9
+     }
+    ],
+    "selected_last": {
+     "pos": 3,
+     "pdg": 13
+    },
+    "in_grid": false
+   }
+  ]
+ }
+}

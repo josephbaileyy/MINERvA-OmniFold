@@ -1,0 +1,50 @@
+{
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_nuwro_ch_primary_k4h1f2.npz": {
+  "best_iteration": 2959,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_nuwro_ch_primary_k4h1f2.npz",
+  "fit_s": 265.25,
+  "fset": "primary",
+  "gen": "nuwro_ch",
+  "h": 1,
+  "k": 4,
+  "maxrss_kb": 9220652,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1230583,
+  "n_iterations_recorded": 3000,
+  "n_pred": 3167141,
+  "n_train": [
+   3600077,
+   1107120
+  ],
+  "n_tune_pool": 12666321,
+  "n_valid": [
+   399923,
+   123463
+  ],
+  "predict_s": 6.2,
+  "slurm_job": "60112561",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a/events_nuwro_ch.npz",
+    "sha256": "b9995361550c9e2a4ccef3349c6d85b7436d1cbdb209434ff063c6d850492213"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 128,
+  "valid_logloss": 0.5747203860110697,
+  "valid_logloss_at": {
+   "1000": 0.5839012113063522,
+   "2000": 0.5776553990625642,
+   "2500": 0.5757320551675297,
+   "2800": 0.5750012414764845,
+   "3000": 0.5749116490438847,
+   "500": 0.594130011656318
+  },
+  "wall_s": 284.94
+ }
+}

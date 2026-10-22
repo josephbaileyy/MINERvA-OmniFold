@@ -1,0 +1,48 @@
+host nid005817 start 2026-10-22T16:16:14Z stage modgates
+code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/gen5d_flux_supplement.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp2_s1_dump.py
+d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp2_s2_dump.py
+91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp2_s2_fit.py
+3e1ad6e263f82e1251b376943ec7ef6c88b00fa919e409ba3396ff5fd309b9b8  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp2_s2_harmonize.py
+6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp3b_build.py
+47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp3c_build.py
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp3c_card.py
+41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp3c_probe.py
+371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp5_genie.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/s5p_stage1_inspect.py
+40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/s5p_truths.py
+98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/feature_contract_draft.json
+e84c9da48fe7d1215e36196feaf5469c23f3ef2f595cef9272be387192afde07  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp2_s2_job.sh
+8be8325374f7a4b65664202af815a1fa806a6fabe4f24da6914f120393031231  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7/mp2_s2_slurm_mem.sh
+model steps 1 x 463411M of 487802M
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "nuwro_ch", "fset": "primary", "k": 4, "h": 1, "f": 2, "best_iteration": 2959, "valid_logloss": 0.5747203860110697, "fit_s": 265.25, "predict_s": 6.2, "n_train": [3600077, 1107120], "n_pred": 3167141, "wall_s": 284.94}
+models nuwro_ch primary groups=1 cpus=256 threads=128 rc=0 end 2026-10-22T16:21:35Z
+REPLICA 0 {"c": 1.1378008099302888, "V4": {"N_rows": 31658381, "kish_ess": 805920.0196746305, "ess_over_N": 0.025456766714464348, "ess_over_ess_wtruth": 0.02962989194467337, "max_wG_over_mean": 25922.658572666, "share_rows_w_gt_50mean": 0.0001241377441253234, "pass": false}}
+REPLICA 1 {"c": 1.1380818930702896, "V4": {"N_rows": 31658381, "kish_ess": 1278066.7689758185, "ess_over_N": 0.040370566295724934, "ess_over_ess_wtruth": 0.04698850920482153, "max_wG_over_mean": 14425.462665501842, "share_rows_w_gt_50mean": 0.00012432726739879717, "pass": false}}
+REPLICA 2 {"c": 1.1397050626882288, "V4": {"N_rows": 31658381, "kish_ess": 1761985.891411298, "ess_over_N": 0.055656222325813125, "ess_over_ess_wtruth": 0.06477994130439044, "max_wG_over_mean": 12274.119424466557, "share_rows_w_gt_50mean": 0.00012107378453749736, "pass": false}}
+REPLICA 3 {"c": 1.1417791885161899, "V4": {"N_rows": 31658381, "kish_ess": 1258446.1386188564, "ess_over_N": 0.03975080528024653, "ess_over_ess_wtruth": 0.046267150827847756, "max_wG_over_mean": 17520.959970397846, "share_rows_w_gt_50mean": 0.0001318766111255026, "pass": false}}
+REPLICA 4 {"c": 1.138439616244203, "V4": {"N_rows": 31658381, "kish_ess": 1227577.7413051438, "ess_over_N": 0.03877575866261587, "ess_over_ess_wtruth": 0.045132264915372464, "max_wG_over_mean": 15868.069877208423, "share_rows_w_gt_50mean": 0.0001257486919498505, "pass": false}}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+V1 {"auc": 0.5532534834049563, "auc_control_GvsG": 0.502438907620607, "margin": 0.005, "n_tune": 4000000, "n_gen": 307235, "n_control_each": 307235, "pass": false, "at_frozen_capacity": false, "sample": "R10: replica 0, Tune fold 0 (both halves) vs G-fold 0; held out on both sides"}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+V1_pooled_descriptive {"auc": 0.5663984329630686, "auc_control_GvsG": 0.50040465521815, "margin": 0.005, "n_tune": 4000000, "n_gen": 1538953, "n_control_each": 769476, "pass": false, "at_frozen_capacity": false, "status": "DESCRIPTIVE (addendum 13 R10): pooled Tune rows vs all G events; G side not held out"}
+VERDICT nuwro_ch primary {"V1": false, "V1_at_frozen_capacity": false, "V4_all_replicas": false, "V2_V3": "held for Joseph", "S2": "not determined until the V2/V3 verdicts are released"}
+gates nuwro_ch primary rc=0 end 2026-10-22T16:24:02Z
