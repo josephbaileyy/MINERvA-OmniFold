@@ -146,6 +146,9 @@ then goes to the director before the 200 models are submitted. Phase 1 has charg
 
 - **Setup:** GiBUU, F_primary, k = 0, h = 0, folds 0–3. Four concurrent steps of 32 threads, writing to
   `fit_probe/`, which gates never read.
+  *(Corrected after tranche A: only three steps ran together. Step 3 started at 04:38:29, when step 2 ended,
+  because each step asked for 120 GiB against the job's 487802 MiB. The per-model figures stand; the 4-way
+  concurrency the projection below assumed was never measured. See "Tranche A results".)*
 - **Per model:** fit 120–124 s and prediction 20–24 s, so 152–161 s. Up to 9.4 GB resident.
 - **Training rows:** 3.6M Tune and 1.14M GiBUU.
 - **Best iterations: 3000, 2997, 2973 and 2970.** Early stopping almost never fires before the frozen
@@ -286,3 +289,92 @@ Counted in the in-grid events that S2 uses, rate-weighted by each sample's own w
 - **Stop rule (addendum 13):**
   - a job past 56 min (1.25 × 45) is cancelled and reported;
   - before each further submission, the charged total plus the remaining jobs' projections must stay ≤ 3.5.
+
+## Tranche A results (2026-10-22)
+
+All three jobs ran code-v5 (`mp2_s2_fit.py` 91c2a64b, `mp2_s2_job.sh` 2b800af9) on regular QOS. Receipts are in
+`s2-receipts/tranche-a/`:
+
+- the two open gates files;
+- every model's metadata (`tranche_a_model_meta.json`);
+- the three job logs.
+
+The sealed V2/V3 files are not copied, read or summarized here. Each gates file records only the sealed file's path
+and sha256.
+
+| job | generator | state | elapsed | CPU node-h | models | gates |
+|---|---|---|---:|---:|---:|---|
+| 60107470 | genie_cv | COMPLETED 0:0 | 479 s | 0.13306 | 50/50 | ran, rc 0 |
+| 60107471 | genie_mec | COMPLETED 0:0 | 460 s | 0.12778 | 50/50 | ran, rc 0 |
+| 60107472 | nuwro_ch | CANCELLED (stop rule, 3390 s) | 3397 s | 0.94361 | 49/50 | not run |
+| | | | | **1.20445** | | |
+
+Phase 1 now stands at 9.089 CPU node-h of its 35 (`../LEDGER.tsv`). Tranche A has 2.296 left of its 3.5.
+
+### V1 and V4 (reported normally, addendum 13)
+
+| generator | V1 AUC (R10 sample) | G-vs-G control | pass rule | V1 | V4, all 5 replicas | c (replicas 0–4) | best iteration min/median/max |
+|---|---:|---:|---|---|---|---|---|
+| genie_cv | 0.49723 | 0.50444 | AUC ≤ control + 0.005 | pass | pass | 1.0327–1.0336 | 29 / 41 / 64 |
+| genie_mec | 0.49351 | 0.50133 | AUC ≤ control + 0.005 | pass | pass | 1.0700–1.0711 | 14 / 28 / 43 |
+
+- **V4 detail:** ESS/N is 0.932–0.935 on every replica of both generators. max w_G/mean is ≤ 3.68, and no row is above
+  50× the mean.
+- **V1 provenance:** `at_frozen_capacity` is false for both generators. The V1 fits stopped early, at best
+  iteration 3 for genie_cv and 1 for genie_mec, far below 2800, so no `V1_10000_descriptive` was owed.
+  - The code fits each G-vs-G control at its V1 fit's best iteration, so the controls are also 3 and 1 trees.
+  - A V1 pass here means a fresh classifier found no separation at all. It is not a small separation under the
+    margin.
+- **V1 pooled (descriptive, R10):** AUC is 0.49878 for genie_cv (control 0.50147) and 0.49903 for genie_mec
+  (control 0.50066).
+- **R6:** s varies across replicas by ≤ 4.5e-15 relative. The identity's net ratio is 1 − 1.7e-8 for genie_cv and
+  1 + 8.7e-9 for genie_mec.
+- **R9:** 18 Tune rows are outside support. That is 6.9e-7 of w_truth, in 3 of the 109 J cells (the largest
+  share of a cell is 1.6e-5).
+- **R13:** 9 genie_cv and 16 genie_mec events on tgt 0 are excluded from training.
+- **S2 verdict for both generators:** not determined. It waits for the V2/V3 release.
+
+The GENIE classifiers learn almost nothing. Validation loss bottoms out within 14–64 trees, compared with 1548–2998
+for NuWro. In F_primary, GENIE CV and MEC are close to the GENIE-based Tune. This is a description, not a gate.
+
+### NuWro: why it overran, and what the stop rule caught
+
+- **Per model, as projected:** 49 models, wall time 91–162 s (median 148 s), best iteration 1548–2998 (median
+  2710). 23 of the 49 are at or above 2800.
+- **The concurrency was not as projected.** Each of the 4 concurrent model steps asked for `--mem=$((480/NG))G`,
+  which is 120 GiB, for 480 GiB in total. The allocation is 487802 MiB, about 476 GiB. Slurm therefore held
+  step 3 ("step creation temporarily disabled … Requested nodes are busy") until step 0 ended at 08:22:40. Step 3
+  started at 08:23:57 and ran its 12 models one after another. It had finished 11 when the stop rule cancelled it.
+  The missing model is k4h1f2.
+- **The same serialization in every code-v5 run:**
+  - in the probe (60102387: step 3 started 04:38:29, when step 2 ended);
+  - in both GENIE jobs (60107470 step 3 at 07:39:28; 60107471 at 07:40:21).
+- **Why GENIE didn't overrun:** its models take about 12 s, so the serialization cost under 3 min.
+- **What this corrects:** my 45-min projection for tranche A rested on four concurrent streams that the probe never
+  showed. The probe section above now says so.
+- **Gates:** they did not run for NuWro, so no V1, V4 or sealed V2/V3 file exists for it.
+
+### The fix: code-v6 (job script only)
+
+- `mp2_s2_job.sh` 72920b23 sizes each model step from the job's own allocation:
+  `--mem=$(( SLURM_MEM_PER_NODE × 95/100 / NG ))M`. That is 115852 MiB × 4, or 463411 MiB for a single step.
+- It prints the split. It fails loudly if `SLURM_MEM_PER_NODE` is unset.
+- The models peaked at 8.8 GiB resident, so 113 GiB per step leaves a wide margin.
+- Every other file is byte-identical to code-v5 (`s2-receipts/code-v5.sha256` against `code-v6.sha256`; the diff is
+  line 8 only).
+- Snapshot: `/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v6`, with the directory at 0555 and the
+  files at 0440.
+- **Not yet run:** the fix is unverified until a job shows four steps starting at the same time.
+- `mp2_s2_fit.py models` skips any model file that already exists. A rerun therefore trains only what is missing
+  and leaves the 49 NuWro models as they are.
+
+### Proposed next jobs (not submitted: the stop rule says stop and report)
+
+| step | job | projection | stop at (1.25×) | CPU node-h |
+|---|---|---|---|---:|
+| 0 | debug: 4 concurrent `srun --exact -c 64 --mem=<code-v6 split> sleep 60` steps; pass if all four start within 5 s | 2 min | 3 min | ≤ 0.04 |
+| 1 | nuwro_ch `modgates` on code-v6, one group `4:1:2` (128 threads), then gates | about 3 min load + 3 min model + ≤ 15 min gates (two V1 fits that run to about 3000 trees, plus `V1_10000_descriptive` if the V1 fit reaches 2800) | 26 min (projected 21) | about 0.35 |
+| 2 | gibuu_ch `modgates` on code-v6, after the R12 ruling | 13 waves × 157 s + 3 min load + ≤ 15 min gates, about 52 min | 65 min | about 0.87 |
+
+- **Total:** charged 1.204 plus about 1.26 projected, about 2.47. That is within tranche A's 3.5.
+- **Order:** step 1 runs only after step 0 passes, and step 2 only after the R12 ruling.
