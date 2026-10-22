@@ -38,14 +38,11 @@ NuWro (without their 50--\SI{100}{GeV} samples) it changes the coarse-cell predi
 \SI{0.1}{\percent} at the median and at most \SI{2.2}{\percent}, at most about one Monte Carlo
 standard error of the prediction in any cell; it was not evaluated at cell level for GENIE$+$MEC
 and cannot be evaluated for GiBUU. Like $q_{3}$ --- and unlike $\Eavail$ --- $W$
-is not invariant under the lateral systematic shifts, so the event loop dumps
-shifted-$W$ lateral universes per universe, mirroring the $q_{3}$ treatment
-(\S\ref{sec:4d}); the dump also carries truth hadronic diagnostics (proton and
+is not invariant under the lateral systematic shifts, so the event loop stores a shifted $W$ for each lateral universe, mirroring the $q_{3}$ treatment (\S\ref{sec:4d}); these trees also carry truth hadronic diagnostics (proton and
 pion multiplicities, leading-hadron angle). The $W$ edges
 $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ bracket the quasielastic peak,
 $\Delta$, transition region and DIS tail. The five-axis unfold
-$(\pT,\pPar,\Eavail,q_{3},W)$ passes its predecessors' marginalization
-anchors. Integrating over $W$ recovers the frozen 4D normalization to
+$(\pT,\pPar,\Eavail,q_{3},W)$ passes the marginalization checks against the lower-dimensional results. Integrating over $W$ recovers the reported 4D normalization to
 \SI{\eavailMargin}{\percent} (5D/4D total $=1.0011$), with per-axis median
 differences of \SIrange{0.3}{1.5}{\percent}; $d\sigma/dW$ is finite and
 non-negative in all six bins.
@@ -188,8 +185,7 @@ nucleon exceeds that of CH by \SI{8.3}{\percent} for $W<\SI{1.1}{GeV}$ and is
 \SI{2.2}{\percent} below it for $1.1\le W<\SI{1.4}{GeV}$ (\SI{+5.6}{\percent}
 and \SI{-4.6}{\percent} with the overall normalization removed).  The NuWro
 and GiBUU comparisons contain a target difference of this kind, which the
-recorded tests of \S\ref{sec:joint5d} do not correct; \S\ref{sec:joint5d-ch}
-gives replays with the correction.
+tests of \S\ref{sec:joint5d}, as run, do not correct; \S\ref{sec:joint5d-ch} re-evaluates them with the correction.
 
 \subsection{Where the excess lives in the $(\Eavail,W)$ plane}
 \label{sec:eavailw-map}

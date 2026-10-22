@@ -13,7 +13,7 @@ App.~\ref{app:statmethods}.
 \label{sec:nd-declarations}
 
 The 2D justification in \S\ref{sec:chisq} does not transfer to N-D.
-The pre-adoption standard-P4 5D candidate, distinct from adopted $C_Z$, has
+An earlier 5D covariance from the standard production chain, built before $C_Z$ was chosen for use and distinct from it, has
 $10\,694$ reported bins, effective positive rank $\mathbf{263}$ and infinite
 numerical condition number. Its $4825$-bin 5D$\to$4D projection retains rank
 $263$ exactly. About ${\sim}45$ two-endpoint MAT bands plus statistical and ML
@@ -27,8 +27,7 @@ Every N-D $\chi^{2}$ must state (i) the actual inverse, including
 pseudo-inverse \texttt{rcond} or truncation rank, at the point of quotation;
 (ii) retained rank as $\mathrm{ndf}$; (iii) that covariance's rank-truncation
 scan, expected to lack the smoothness supporting the 2D choice in
-\S\ref{sec:chisq}; (iv) covariance identity, since the 5D candidate, 4D
-projection and published 2D block differ in rank; and (v) for every sample
+\S\ref{sec:chisq}; (iv) covariance identity, since that earlier 5D covariance, its 4D projection and the published 2D block differ in rank; and (v) for every sample
 block in the sum, ensemble size $N$, biased $1/N$ or unbiased $1/(N-1)$
 normalization, effective inverted dimension $p$ after truncation, and the
 finite-ensemble treatment or explicit absence of one. Measurements,
@@ -42,7 +41,7 @@ uncorrected finite-ensemble bias to enter silently. The inverse of a noisy sampl
 standard debiasing factor is $(N-p-2)/(N-1)$, and for this analysis's biased $1/N$ production
 convention (universe-mean centered, biased $1/N$) it is
 % (\texttt{nd-unfolding/uq\_math.py}, ``universe-mean centered, biased 1/N'')
-$(N-p-2)/N$. The superseded unified-throw 5D candidate has $N=160$,
+$(N-p-2)/N$. The superseded unified-throw 5D covariance has $N=160$,
 truncated $p=100$, giving $58/160\simeq0.363$: uncorrected precision is too
 large by $\simeq2.76$. For fixed residuals this inflates $\chi^{2}$ and
 overstates tension; confidence regions from the same over-tight covariance
@@ -53,7 +52,7 @@ MAT outer products plus statistical and ML blocks has no single debiasing
 factor. The standard factor also assumes independent Gaussian realizations
 and a data-independent truncation dimension, neither established for a
 data-dependent cut. The treatment is to be decided for the covariance and
-inverse actually adopted, once declaration (v) makes its operands exist.
+inverse actually used, once declaration (v) has recorded the quantities the treatment needs.
 % The cheap half is unconditional: record $N$ beside each block in the construction receipts.
 
 \subsection{Scalar-5D diagnostic reductions and interval definitions}
@@ -114,7 +113,7 @@ reported quantities are
 \end{equation}
 The consistency ratio is $s_{\rm pair}/s_{\rm base}$; the estimated numerical
 share is $s_{\rm pair}^2/s_{\rm boot}^2$. The paired-model $\sqrt2$ factor
-introduces no physical noise source. The frozen design defines containment
+introduces no physical noise source. The predeclared design defines containment
 by median ratio in $[0.7,1.4]$ and
 $s_{\rm boot}^2\geq s_{\rm pair}^2$ in at least 95\% of supported cells.
 All supported cells meet the inequality. This finite-sample diagnostic
@@ -127,7 +126,7 @@ $h_f=\max_v|d_{vf}|$. Its denominator differs from the simulated residual's.
 Neither $h_f$ nor a closure-residual outer product receives a probability model.
 The reduction package preserves per-cell values, input identities, exclusions
 and the distinction between full products and metadata-free checkpoint
-prefixes. Prefixes use only committed ranges reproducing the original receipt;
+prefixes. Prefixes use only committed ranges that reproduce the originally recorded values;
 later entries are excluded. The analyst numerically cross-checked the new
 reductions; no fresh independent scientific review of the synthesis is claimed.
 % Reproduction: nd-unfolding/gbdt_model_dependence/{reduce.py,analyze.py,README.md}.
@@ -170,8 +169,7 @@ constraints and do not transfer automatically to a learned response with
 finite simulation and detector nuisances. A rank-deficient forward operator
 is also distinct from a rank-deficient sample covariance; neither truncating
 the latter nor validating a few projections certifies the full distribution.
-Any such benchmark would supplement the required scalar-5D uncertainty
-construction, not replace its adoption.
+Any such benchmark would supplement the required scalar-5D uncertainty construction, not replace the decision to use it.
 
 % Methods rewrite draft 4 (X5 G9): the self-contained familywise-error derivation. Sources:
 % docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md:39-74 (bound, certified table, assumptions A1/A2,

@@ -8,7 +8,7 @@ response and OmniFold's nominal response. Kevin McFarland suggested this
 distinction and proposed stressing the hadronic record, especially for
 quasielastic events, to inspect low-$W$ bias (private communication).
 
-\paragraph{Record-only test implemented in the pipeline.}
+\paragraph{Reconstruction-only test implemented in the pipeline.}
 The first-stage diagnostic uses the ordinary five-dimensional closure sample.
 After copying pseudo-data arrays, before background mixing or classifier
 training, it changes only the reconstructed pseudo-data record
@@ -28,26 +28,22 @@ Outputs include the full five-dimensional unfolded/reference residual,
 one-dimensional $\Eavail$ and $W$ projections, and an $(\Eavail,W)$ ratio map.
 The primary observable is signed bias versus $W$, reporting $W<\SI{1.1}{GeV}$
 separately from the high-$W$ tail. The global integral is a control rather than the decision statistic.
-The implementation refuses real-data mode, truth reweighting, bootstrapping,
-or a non-five-dimensional axis list, and marks every output
-\texttt{NONQUOTABLE-DIAGNOSTIC}.
+The implementation refuses to run on real data, with truth reweighting, with bootstrapping, or with any axis list other than the five observables, and labels every output as a diagnostic that must not be quoted.
 
 \paragraph{Physically correlated follow-up.}
-The record-only arm is intentionally cheap and adversarial; it is not a
+The reconstruction-only arm is intentionally cheap and adversarial; it is not a
 detector model. A more faithful follow-up would select quasielastic events,
 shift leading-nucleon energy up and down, and recompute reconstructed
 $\Eavail$, $q_{3}$, $W$, and any affected selection from the altered low-level
 record. Current scalar event-loop outputs lack enough information for that
 recomputation. This arm requires dedicated diagnostic event-loop output and
-is deferred unless the record-only test shows material bias or the
+is deferred unless the reconstruction-only test shows material bias or the
 collaboration requests the stronger model.
 
 \paragraph{Status and interpretation.}
 This appendix records a validation protocol, not a result or an uncertainty
 component. No
-response-mismatch artifact has been produced or pass threshold adopted.
-The test leaves the frozen central value and current covariance
-construction unchanged. A small observed bias would support stability of the
+response-mismatch output has been produced and no pass threshold has been set. The test leaves the quoted central value and the current covariance construction unchanged. A small observed bias would support stability of the
 $(\Eavail,W)$ interpretation only within the tested response envelope. A large
 bias would trigger a model/uncertainty decision and would not be silently
 absorbed as a non-closure error.

@@ -42,7 +42,7 @@ by itself.
 \label{sec:3d-method}
 \label{sec:eavail-definition}
 Truth available energy follows the code; ``low-recoil convention'' is
-shorthand. In MeV, \texttt{CVUniverse::GetEAvailableTrue()} implements
+shorthand. In MeV, the truth accessor (\texttt{CVUniverse::GetEAvailableTrue()}) implements
 \begin{equation}
  E_{\rm avail}^{\rm true}=
  \sum_{p}(E-938.27)
@@ -63,7 +63,7 @@ is the MAT calorimetric quantity
  -E_{\mu\text{-fuzz}}^{\rm ECAL})\right],
  \label{eq:eavail-reco-implemented}
 \end{equation}
-implemented by \texttt{CVUniverse::NewEavail()}; the code applies no final
+implemented in the reconstruction accessor (\texttt{CVUniverse::NewEavail()}); the code applies no final
 non-negative clamp.
 
 Both functions were inherited from MAT-MINERvA rather than selected in this
@@ -85,7 +85,7 @@ uses charged-pion total energy.  We therefore do not claim generically to
 Production subtracts the inherited constant
 \SI{135}{MeV} per charged pion rather than the physical charged-pion mass of
 approximately \SI{139.57}{MeV}; this was not corrected. The effect is measured
-but has not been assessed against the projection of the scalar-5D covariance in use. Its
+but has not been assessed against the projection of the five-dimensional covariance used in this note. Its
 materiality is not established, and this note does not call it immaterial.
 % This note neither applies the six-site correction nor triggers a rerun.
 
@@ -121,7 +121,7 @@ of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
 \subsection{Validation against the 2D measurement}
 \label{sec:3d-anchor}
 Marginalizing over $\Eavail$ must reproduce the 2D result of
-\S\ref{sec:results}, our validation anchor in the absence of a directly matched
+\S\ref{sec:results}, our validation reference in the absence of a directly matched
 published CC-inclusive 3D reference for this signal and phase space.
 The \emph{normalization} agrees closely, with total $\sigma$ at
 $+\SI{0.95}{\percent}$ and median per-bin marginal/2D ratio $1.0016$.
@@ -280,8 +280,7 @@ The $\Eavail$ axis exposes this excess, invisible in 2D.
   on $\Eavail$; all under-predict the quasielastic--$\Delta$
   dip ($0.1\le\Eavail<\SI{0.4}{GeV}$). The wide
   $\Eavail$ catch bin is omitted from the axis.
-  Data have no error bars because the quotable
-  3D covariance is not in use (App.~\ref{app:history}).}
+  Data have no error bars because the 3D covariance that would be quoted is not used for any result in this note (App.~\ref{app:history}).}
   \label{fig:3dmodels}
 \end{figure}
 
@@ -291,8 +290,7 @@ $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and
 $\SI{22.2}{\percent}$ below the data.
 % (flux-repaired predictions; ledger row \texttt{VL159})
 No 3D covariance, generator $\chi^{2}$, $p$-value or significance is quoted:
-the quotable 3D covariance is the exact projection of the 5D covariance in use,
-and that projection is constructed but not in use (App.~\ref{app:history}).
+the 3D covariance that would be quoted is the exact projection of the five-dimensional covariance used in this note, and that projection has been computed but is not used for any result in this note (App.~\ref{app:history}).
 
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism).
 \subsection{The low-available-energy excess and the known low-recoil deficit}
@@ -403,8 +401,7 @@ comparison is descriptive and does not measure its cause. Bin-identical central 
     \caption{Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid
     with unfolded data. The excess lies in the quasielastic--$\Delta$ dip
     ($\Eavail\le\SI{0.4}{GeV}$), where a missing 2p2h component would
-    populate. Data carry no error bars because the 3D covariance that would be quoted is not
-    yet in use (App.~\ref{app:history}).}
+    populate. Data carry no error bars because the 3D covariance that would be quoted is not yet used for any result in this note (App.~\ref{app:history}).}
     \label{fig:modedecomp}
   \end{minipage}\hfill
   \begin{minipage}{0.49\textwidth}
@@ -414,8 +411,7 @@ comparison is descriptive and does not measure its cause. Bin-identical central 
     no-2p2h CV; both flux-repaired) closes about half the low-$\Eavail$
     data$-$CV gap in central values (\SI{52}{\percent}). The remainder occupies the region the
     MINERvA tune's empirical enhancement is built to absorb. Data carry no
-    error bars because the 3D covariance that would be quoted is not in use
-    (App.~\ref{app:history}).}
+    error bars because the 3D covariance that would be quoted is not used for any result in this note (App.~\ref{app:history}).}
     \label{fig:mec}
   \end{minipage}
 \end{figure}
@@ -429,15 +425,13 @@ dedicated low-recoil $d^{2}\sigma/dq_{3}\,d\Eavail$ measurement
 (Ascencio \emph{et al.}~\cite{MINERvA:2022incl}). Truth $q_{3}$ comes from
 the generator (\texttt{CVUniverse::Getq3True()}); reco $q_{3}$ uses muon
 $Q^{2}$ and calorimetric recoil (\texttt{CVUniverse::RecoQ3()}). Both accessors
-run over all twelve playlists, as for $\Eavail$. Lateral systematic shifts
-change $q_{3}$ but leave $\Eavail$ invariant, requiring per-universe
-shifted-$q_{3}$ dumps instead of central-value reuse.
+run over all twelve playlists, as for $\Eavail$. Lateral systematic shifts change $q_{3}$ but leave $\Eavail$ invariant, so the event loop must store a shifted $q_{3}$ for each lateral universe instead of reusing the central value.
 The feature stack is $(\pT,\pPar,\Eavail,q_{3})$, with deliberately coarse
 $q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$
 (seven bins including a final catch bin), giving
 $14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
 
-\paragraph{Marginal anchor (4D$\to$3D).} The $q_{3}$ marginalization reproduces
+\paragraph{Marginalization check (4D$\to$3D).} The $q_{3}$ marginalization reproduces
 the 3D $\Eavail$ spectrum and low-recoil excess (Fig.~\ref{fig:q3excess}, right).
 The $\Eavail$-marginal data/Tune~v1 ratio is
 $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$
@@ -445,7 +439,7 @@ region, and rises to $1.16$--$1.23$ in the high-$\Eavail$ DIS tail
 (integrated data/Tune~v1 $=1.13$). These ratios compare to Tune~v1;
 \S\ref{sec:3d-2p2h} uses untuned GENIE. Recovery as a by-product
 of the higher-dimensional unfold provides the 4D$\to$3D analog of the
-3D$\to$2D Jacobian anchor (\S\ref{sec:3d-anchor}).
+3D$\to$2D marginalization check (\S\ref{sec:3d-anchor}).
 
 \paragraph{What $q_{3}$ adds.} The resolved $(\Eavail,q_{3})$ plane
 (Fig.~\ref{fig:q3excess}, left) reveals structure beneath the mild
@@ -465,8 +459,7 @@ are reported without a corrected 4D covariance (below).
 \paragraph{Why no 4D uncertainty is reported.} Corrected 4D covariance would use actual
 minus/plus endpoints, MAT mean-centered $1/N$ blocks, one fixed estimator seed,
 mean-centered joint throws with a separately reported mean shift, and no scalar
-jitter subtraction. Because dump-all lateral branches are CV-support-limited,
-selection-complete active-universe event loops must bound migration effects.
+jitter subtraction. Because the single-pass shifted observables exist only for events selected at the central value, re-selected event loops (\S\ref{sec:uq-higherdim}) must bound migration effects.
 No 4D uncertainty magnitude or unified/block ratio is reported.
 
 \paragraph{Bin-identical comparison to the published low-recoil measurement.}
@@ -504,7 +497,7 @@ sweep on that binning.
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
   $(\Eavail,q_{3})$ grid, used only for central-value comparison. Our points
   have no uncertainty or $\chi^{2}$ drawn because the
-  4D covariance that would be quoted is not in use (App.~\ref{app:history}); the
+  4D covariance that would be quoted is not used for any result in this note (App.~\ref{app:history}); the
   published points carry the published covariance.}
   \label{fig:ascencio}
 \end{figure}

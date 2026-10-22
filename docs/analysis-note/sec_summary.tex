@@ -18,7 +18,7 @@ illustrating calibrated inference with a biased estimator.
         $\chiPaperExact$). The central value and its uncertainty use the same
         LightGBM estimator, a choice made after both comparisons were known
         % plain-language pass, director ruling on base defect note F2 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-        (\S\ref{sec:method-config}). The statistical band in use when the fixed-truth coverage test ran
+        (\S\ref{sec:method-config}). The statistical band quoted when the fixed-truth coverage test ran
         % plain-language pass, review fix m2 (DECISION-20261018-joseph-plain-language-pass)
         % plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
         failed it in its tails. A rebuilt band was only re-evaluated post hoc, on the same pseudo-experiments, and has not
@@ -61,13 +61,12 @@ illustrating calibrated inference with a biased estimator.
         is such that none of the tested reporting definitions satisfies the
         \SI{10}{\percent} total-width criterion, fixed before the study, under the specified envelope
         prescription. Bias-corrected statistical intervals miscover at the
-        tested truths; under an in-effect \SI{10}{\percent} signal-rate
-        reduction the cause is a residual bias, inferred from the coverage and
+        tested truths; under a truth change that is in effect a \SI{10}{\percent} signal-rate reduction the cause is a residual bias, inferred from the coverage and
         with its source not established, not too-narrow intervals
         (\S\ref{sec:5d}, \S\ref{sec:coverage-5d}).
         % Methods-paper sync (M8, narrowed and corrections; paper_body.tex sec:validation, sec:uncertainty-status,
         % sec:conclusions; KNOWN_ISSUES 98; M2-RATEFAIL-DIAGNOSIS.md).
-        The one five-axis covariance in use has an
+        The one five-axis covariance used in this note has an
         estimator-seed sensitivity above the limit set before production, so no
         covariance-based significance is quoted (\S\ref{sec:eavailw-adopted}).
   \item As an application, joint tests specified in advance and calibrated
@@ -103,7 +102,7 @@ development as future work (App.~\ref{sec:pet}).
 % $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
 % covariance is adopted. Its remaining closure and complete-UQ requirements are
 % method development and are not on the publication critical path.
-A selection-complete scalar five-dimensional covariance is in use although it has
+A scalar five-dimensional covariance with re-selected lateral bands is used in this note although it has
 not passed its specification's acceptance criteria (\S\ref{sec:eavailw-adopted}). No five-dimensional measurement
 was obtained with total uncertainties that meet the criteria set in advance: none
 of the tested reporting definitions satisfies the \SI{10}{\percent}

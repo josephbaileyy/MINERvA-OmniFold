@@ -77,11 +77,9 @@ four flat trees per playlist: all true signal events (the efficiency
 denominator), reconstructed truth-matched simulated events, simulated
 background, and data. Entries carry truth and reconstructed observables
 ($\pT$, $\pPar$, and in extended runs $\Eavail$, $q_{3}$, $W$) and the
-MnvTune central-value weight. Universe-complete
+MINERvA Tune~v1 central-value weight. The systematic-universe trees
 % (\texttt{\_universes\_full})
-variants also carry all systematic-universe weights and laterally-shifted
-observables (\S\ref{sec:systematics}). Two invariants keep the result
-truth-tree authoritative:
+also carry every universe's weight and each lateral band's shifted observables (in MAT's terms, a lateral band shifts reconstructed kinematics and a vertical band reweights events; \S\ref{sec:systematics}). Two conditions make the truth tree the complete reference for the simulated signal:
 \begin{itemize}
   \item A reconstructed signal event is filled only if its
         $(\mathrm{run},\mathrm{subrun},\mathrm{event})$ key is in the truth
@@ -93,7 +91,7 @@ The loop takes one global playlist flux/calibration from the first event,
 so it always runs per playlist. The twelve outputs are then merged, using
 a tree-size-aware merger for
 % (\texttt{TTree::SetMaxTreeSize}-aware)
-the more-than-\SI{100}{GB} universe dumps. The corresponding baseline
+the trees with per-universe content, which exceed \SI{100}{GB}. The corresponding baseline
 histogram event loop supplies the flux histogram, POT-weighted across
 playlists; playlist-to-playlist flux differences are a
 $\sim\SI{0.2}{\percent}$ effect.
@@ -102,7 +100,7 @@ $\sim\SI{0.2}{\percent}$ effect.
 
 \subsection{Reco-level control distributions}
 \label{sec:controlplots}
-Selected data exceed the POT-scaled MnvTune-v1 prediction (signal $+$
+Selected data exceed the POT-scaled MINERvA Tune~v1 prediction (signal $+$
 background) by $\sim\SI{12}{\percent}$ in overall normalization.
 Figure~\ref{fig:control} compares all five reconstructed observables.
 The data/MC ratio has a clear $\pT$ trend, rising from $0.88$ in the lowest bin to $\sim1.2$
@@ -138,7 +136,7 @@ reflecting the low-recoil excess examined at truth level in
   stacked on background (orange); data/MC ratios appear below. Wide hadronic
   catch bins extend to \SI{100}{GeV} and are compressed at each panel's right
   edge. The gray MC-statistical band on the ratio is mostly narrower than the points.
-  The $\sim\SI{12}{\percent}$ data normalization excess over MnvTune v1
+  The $\sim\SI{12}{\percent}$ data normalization excess over MINERvA Tune~v1
   reflects the truth-level generator deficits in \S\ref{sec:3d-models}.}
   \label{fig:control}
 \end{figure}
