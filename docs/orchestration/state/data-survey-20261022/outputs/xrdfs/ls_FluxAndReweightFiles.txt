@@ -1,0 +1,2 @@
+-r-- 2026-02-20 17:46:54  2596125261 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/FluxAndReweightFiles/FluxAndReweightFiles_Tarred_Feb_20_2026_1145_FNALTime.tgz
+-r-- 2025-10-09 07:08:57         432 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/FluxAndReweightFiles/README.txt

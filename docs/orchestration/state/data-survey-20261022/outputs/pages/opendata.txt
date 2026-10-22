@@ -1,0 +1,45 @@
+Interact with MINERvA 
+Open Data Product
+What is this?
+This is an open data product that contains all the neutrino and antineutrino data from the MINERvA experiment, packaged in a way that you can use. The ultimate package will contain both neutrino and antineutrino data, and will contain both our Low energy and Medium Energy data, where the neutrino energy distributions peaked around 3GeV and 6GeV respectively. We also provide simulated data and a way to access our uncertainties on that simulation, including flux, neutrino interaction, and detector uncertainties.  The data (and simulated data) has already been pre-selected to contain either a muon candidate or an electron candidate.
+What do you get?
+The main data release are .root files for data and simulation for the forward horn current and reverse horn current data sets. The later, larger set with the flux peaking at Enu = 6 GeV and the earlier set with the flux peak at 3 GeV. They are relatively flat tuples (that could easily be exported out of root format) that contain a variety of reconstructed objects. These files are the same ones used by active MINERvA analyses as of 2025, and contain information to support nearly all current and previous minerva analysis topics, plus new topics we have not explored.
+Software to process the data files, make plots, track systematic uncertainties, and apply model weights and documented tunes at 
+https://github.com/MinervaExpt
+ . It includes a tutorial. Documentation will be a work in progress, with new and revised material available on an ongoing basis.
+In the near future, we will make available our event display viewer Arachne, which is based on html5, and the hit-level files, suitable for diagnosing events corresponding to unexpected features in the data or simulated distributions. We will also make available the hit-level “images” we use as input to our machine-learning pattern recognition efforts.
+Suggested Citations
+The reference for the Open Data Product is https://doi.org/10.15484/3022562.  You may find the BibTeX entry on iNSPIRE HEP at 
+https://inspirehep.net/literature/3128404 
+In addition, when you first describe the MINERvA data, please cite the MINERvA NIM 
+MINERvA NIM Paper (Nucl. Inst. and Meth. A743 (2014) 130)
+ publication which is a comprehensive reference describing the MINERvA experiment.
+If there is a MINERvA paper on the topic of your study, we encourage you to cite this.
+Suggested Acknowledgement
+“The authors thank the MINERvA Collaboration for making their data, simulated data, and analysis tools available to the community.”
+In addition, if you have obtained assistance from any MINERvA collaborators, we encourage you to thank those individuals explicitly, e.g., “We thank MINERvA collaborators V. Helpful and G.D. Sport for technical assistance and discussion”.
+Terms of Use
+This open data release and its software come without warranty and may not be fit for some uses.  The open data product is released under the CC0 license
+ http://creativecommons.org/publicdomain/zero/1.0 
+ The software licensing is available on the Software link below. We do not require MINERvA review of non-MINERvA manuscripts. We can offer, but not guarantee, limited support. For several years, the MINERvA collaboration will co-exist with this data release, keeping fresh most of our technical expertise. Your project might also benefit from direct partnership with one or more MINERvA collaborators.
+Get the Data Now!
+ Data 
+ Software 
+ Arachne Event Display 
+ (Fermilab Internal Link for now)
+ Web page 
+ describing GENIE2, the version MINERvA used to make the MC files
+Thank you for extending the physics reach of our data !
+Key Documentation:
+MINERvA Playlists
+MINERvA Tunes
+ Description of Branches in the Open Data Root Files (.xlsx) 
+ Tutorial in github (Medium Energy FHC Inclusive analysis Ruterbories, Filkins et al.Phys. Rev. D 104, 092007)
+MINERvA Detector Coordinate System Explained
+Article describing the NuMI Beam 
+ MINERvA Flux Release Page 
+ MINERvA Detector NIM Paper 
+ MINERvA Test Beam Calibration NIM Paper
+ Arachne Event Display NIM Paper 
+Questions? Contact the current MINERvA Spokespeople
+ The Spokespeople are listed here 
