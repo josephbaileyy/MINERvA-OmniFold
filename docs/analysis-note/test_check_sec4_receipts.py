@@ -49,10 +49,14 @@ def test_a_wrong_printed_value_fails(old, new):
     assert not all(good for _, good, _ in chk.evaluate(src))
 
 
+PHRASE = r"differ\s+by\s+at\s+most"  # the printed phrase, across any line wrap
+
+
 @needs_receipts
 def test_a_missing_value_fails():
     src = chk.load()
-    src["paper_body.tex"] = re.sub(r"differ by at most \\SI\{1\.4\}", "differ by a little", src["paper_body.tex"])
+    # The phrase may wrap across a source line (it does since register round r12), so match any whitespace.
+    src["paper_body.tex"] = re.sub(PHRASE + r"\s+\\SI\{1\.4\}", "differ by a little", src["paper_body.tex"])
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
     assert rows["treatments on data (VL152)"] is False
 
@@ -60,8 +64,8 @@ def test_a_missing_value_fails():
 @needs_receipts
 def test_a_value_kept_only_in_a_latex_comment_is_not_found():
     src = chk.load()
-    assert src["paper_body.tex"].count("differ by at most") == 1
-    src["paper_body.tex"] = src["paper_body.tex"].replace("differ by at most", "\n% differ by at most")
+    assert len(re.findall(PHRASE, src["paper_body.tex"])) == 1
+    src["paper_body.tex"] = re.sub(PHRASE, "\n% differ by at most", src["paper_body.tex"])
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
     assert rows["treatments on data (VL152)"] is False
 
@@ -92,7 +96,7 @@ def test_a_standalone_layout_skips():
 def test_the_self_test_fails_cleanly_when_a_printed_value_is_missing(monkeypatch, capsys):
     """Review cycle 2: it crashed (AttributeError) on a missing value; it must report it and fail."""
     original = chk.load()
-    original["paper_body.tex"] = original["paper_body.tex"].replace("differ by at most", "differ by roughly")
+    original["paper_body.tex"] = re.sub(PHRASE, "differ by roughly", original["paper_body.tex"])
     monkeypatch.setattr(chk, "load", lambda: dict(original))
     assert chk.self_test() == 1
     assert "NOT FOUND   treatments on data (VL152)" in capsys.readouterr().out
