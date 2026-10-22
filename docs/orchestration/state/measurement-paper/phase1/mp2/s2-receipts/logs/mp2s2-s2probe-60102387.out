@@ -1,0 +1,32 @@
+host nid004535 start 2026-10-22T11:35:29Z stage models
+code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/gen5d_flux_supplement.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp2_s1_dump.py
+d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp2_s2_dump.py
+e0819fb7c7d7fdfaf1090a1bb3896f228080d2de231444636f219b607fbe6838  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp2_s2_fit.py
+3e1ad6e263f82e1251b376943ec7ef6c88b00fa919e409ba3396ff5fd309b9b8  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp2_s2_harmonize.py
+6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp3b_build.py
+47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp3c_build.py
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp3c_card.py
+41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp3c_probe.py
+371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp5_genie.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/s5p_stage1_inspect.py
+40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/s5p_truths.py
+98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/feature_contract_draft.json
+e8b6e223504bc605b8ebbcf2175247c5865c5e0bb587a5e4c9da44cc5e434f9b  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v4/mp2_s2_job.sh
+srun: Job 60102387 step creation temporarily disabled, retrying (Requested nodes are busy)
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 2, "best_iteration": 3000, "valid_logloss": 0.5366781588196842, "fit_s": 120.01, "predict_s": 20.24, "n_train": [3599140, 1137213], "n_pred": 2988411, "wall_s": 153.64}
+srun: Step created for StepId=60102387.3
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 1, "best_iteration": 2973, "valid_logloss": 0.542363392425151, "fit_s": 120.64, "predict_s": 22.72, "n_train": [3600247, 1138407], "n_pred": 2992693, "wall_s": 156.73}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 3, "best_iteration": 2970, "valid_logloss": 0.5320062865145337, "fit_s": 123.92, "predict_s": 23.51, "n_train": [3599451, 1138843], "n_pred": 2989630, "wall_s": 160.82}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 0, "best_iteration": 2997, "valid_logloss": 0.5342311684211004, "fit_s": 122.84, "predict_s": 19.97, "n_train": [3599101, 1136869], "n_pred": 2989831, "wall_s": 152.07}
+models gibuu_ch primary groups=4 cpus=64 threads=32 rc=0 end 2026-10-22T11:41:18Z
