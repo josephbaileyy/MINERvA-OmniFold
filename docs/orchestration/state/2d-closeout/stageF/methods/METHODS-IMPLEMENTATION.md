@@ -900,3 +900,58 @@ re-pointed to b5's wording of the same facts, and it passes with 0 failures.
 - the "since superseded" label in place of "historical".
 
 The re-rating against the note's baseline is in progress.
+
+## 23. The note's register pass closes: re-rating, pairwise comparison, citation thinning (2026-10-22)
+
+**The rubric re-rating** (P1N, the baseline's prompt and splitter; 50 runs; table in `note-rating/P1N-rerating-compare.txt`).
+- **Whole note:** 3.04 with sol2 against the baseline's 2.83, and 2.46 with Gemini against 2.30. The anchors score
+  3.875 and 3.375.
+- **Body:** 3.08 against 2.98. With the drift control, sol2 shows +0.06 on unchanged text, so the body's change is
+  within noise.
+- **Appendices:** most of the like-for-like gain comes from the records move.
+- **Only §6 reaches 3.5.**
+- **Resolution:** sol2 gave 3.0 in 24 of 28 runs. P1N no longer resolves versions.
+- **The cause found:** the records citations ("Ref. [38]", 70 of them; 71 counted) read as bookkeeping. 31 of the 126
+  quotes contain one.
+
+**The blind pairwise comparison** (P2N, before = r12 against after = the final1 pieces, both orders, both models;
+`note-rating/P2N-pairwise-analyze.txt`).
+- **After won all 48 runs:** 12 of 12 pieces per model, in both orders, with no position flip.
+- **Sign test:** p = 0.00049 per model, counted by piece.
+- **Weakest piece:** N09 (§10), the least-changed chapter, at sol2 strength 1.
+- **Limit:** there is no before-against-before control.
+
+**Joseph's decision** (DECISION-20261022-joseph-note-records-refs-and-stop):
+- thin the citations to essentials;
+- stop model-scored note rounds;
+- he and Ben read next.
+
+**The thinning batch** (PR #243; records in `note-thin/`).
+- **Result:** 71 citations become 19, each where a reader needs the record to check a number or claim printed there,
+  plus one guide statement.
+- **Records removed with their citations:** six record sentences, each printed in the records at its tag.
+- **Guarded by `check_note_records.py`:**
+  - P6 accepts only listed drops;
+  - P7 checks the listed targets in the tree and at HEAD;
+  - P8 fails an unlisted or still-printed drop, and reports SKIP outside git;
+  - every kept citation is pinned to its sentence;
+  - self-test: 21 of 21 defects fire.
+- **The independent review:** ADOPT-AFTER-FIXES. C07 and C71 were restored, the guide clause was restored, SKIP
+  replaced PASS outside git, and the position probes were added.
+- **Out of scope:** the records document's "Cited at" column is now stale for 17 tags. The decision froze that
+  document.
+
+**Main at `9c10f6c1`:**
+- build_all rc 0, with every gate passing;
+- RECORDS-PIN: 19 citations;
+- RECORDS-MOVE passes;
+- pages: paper 13, note 119, primer 15, PET note 26, records 21.
+
+**The reading copy** for Joseph and Ben: `main_paper.pdf` `f3b02872…`, `main_note.pdf` `6b63c80d…` and
+`main_primer.pdf` `8f14122f…`, in the director's scratchpad `reading-copy-20261022/` with SHA256SUMS.
+
+**Pending with Joseph:**
+- the background-treatment revisit;
+- confirmation of the narrowed verifier sentence;
+- the separate "hybrid null hypotheses" commit;
+- the "since superseded" label.

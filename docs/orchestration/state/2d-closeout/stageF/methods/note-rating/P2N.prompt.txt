@@ -1,0 +1,13 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below are two manuscripts, Document A and Document B, each the full text of one chapter of a long technical companion note posted to arXiv alongside a PRD paper, written for specialists who want the full detail, each extracted from its PDF; equations, tables and figure labels may be garbled by the extraction, and you should ignore such artifacts. They may be on different topics. Judge ONLY language and register, not the science, topic, results or completeness: how closely the prose reads like a well-edited long technical write-up in particle physics, such as a long PRD or JINST paper, a technical design report, or a detailed supplement. Throughout the question and the instructions below, "PRD paper" means such a well-edited long technical write-up; length, depth of detail and specialist density appropriate to that genre are not departures.
+
+Question: which document reads more like a well-edited PRD paper?
+
+Answer in exactly this format:
+WINNER: <A or B>
+STRENGTH: <1, 2 or 3>   (1 = slight preference, 2 = clear preference, 3 = strong preference)
+REASONS:
+1. <one sentence>
+2. <one sentence>
+3. <one sentence>

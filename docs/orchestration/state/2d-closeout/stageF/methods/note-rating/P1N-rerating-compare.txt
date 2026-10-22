@@ -1,0 +1,38 @@
+| piece | title | pp | words | sol2 runs | sol2 mean | Gemini | baseline sol | baseline Gemini | Δ sol | Δ Gemini |
+|---|---|---|---|---|---|---|---|---|---|---|
+| N01 | Abstract, Executive summary, Sec. 1 Introduction and motivation | 1-10 | 3182 | 3, 3 | 3.00 | 2 | 3.00 | 2.50 | 0.00 | -0.50 |
+| N02 | Sec. 2 Experiment, data and simulation; Sec. 3 The unbinned OmniFold procedure | 10-20 | 4494 | 3, 3 | 3.00 | 3 | 3.00 | 3.00 | 0.00 | 0.00 |
+| N03 | Sec. 4 Uncertainty quantification: constructing the covariance blocks | 20-27 | 4025 | 3, 3 | 3.00 | 2 | 3.00 | 2.00 | 0.00 | 0.00 |
+| N04 | Sec. 5 Validation of the two-dimensional measurement | 27-33 | 2991 | 3, 3 | 3.00 | 3 | 3.00 | 2.50 | 0.00 | 0.50 |
+| N05 | Sec. 6 Results | 33-40 | 3193 | 3.5, 3.5 | 3.50 | 3.5 | 3.00 | 3.00 | 0.50 | 0.50 |
+| N06 | Sec. 7 Higher-dimensional extensions: available energy and momentum transfer | 40-50 | 4670 | 3, 3 | 3.00 | 2.5 | 3.00 | 2.50 | 0.00 | 0.00 |
+| N07 | Sec. 8 Fifth axis: W and the (Eavail, W) plane | 50-56 | 2422 | 3.5, 3 | 3.25 | 3 | 3.00 | 3.00 | 0.25 | 0.00 |
+| N08 | Sec. 9 Five-dimensional estimator: validation and uncertainty | 56-66 | 5852 | 3, 3 | 3.00 | 2 | 2.75 | 2.00 | 0.25 | 0.00 |
+| N09 | Sec. 10 Calibrated joint tests of generator predictions | 66-77 | 5930 | 3, 3 | 3.00 | 2.5 | 3.00 | 2.50 | 0.00 | 0.00 |
+| N10 | Sec. 11 Extended fiducial phase-space study; Sec. 12 Summary and outlook | 77-82 | 2197 | 3, 3 | 3.00 | 2 | 3.00 | 2.50 | 0.00 | -0.50 |
+| N11 | Guide to the appendices; App. A Statistical methods and the 2D comparison | 83-98 | 7693 | 3, 3 | 3.00 | 2.5 | 3.00 | 2.00 | 0.00 | 0.50 |
+| N12 | App. B Statistical methods for the multidimensional results and inference; App. C Negative-weight background subtraction | 98-108 | 5436 | 3, 2.5 | 2.75 | 2 | 2.75 | 2.00 | 0.00 | 0.00 |
+| N13 | App. D Response-mismatch closure; App. E Dimensionality survey; App. F Point clouds | 108-110 | 975 | 3, 3 | 3.00 | 2.5 | 2.25 | 2.00 | 0.75 | 0.50 |
+| N14 | App. G Result package and reproduction limits; App. H Codebase layout and terminology | 110-114 | 2093 | 3, 3 | 3.00 | 2 | 2.50 | 2.00 | 0.50 | 0.00 |
+
+| drift piece | baseline sol runs (Oct 21) | sol2 rescore | Δ | baseline Gemini | Gemini rescore | Δ |
+|---|---|---|---|---|---|---|
+| B02 = baseline N02 | 3, 3 (mean 3.00) | 3 | +0.00 | 3 | 2.5 | -0.50 |
+| B05 = baseline N05 | 3, 3 (mean 3.00) | 3 | +0.00 | 3 | 3 | +0.00 |
+| B08 = baseline N08 | 3, 2.5 (mean 2.75) | 3 | +0.25 | 2 | 2 | +0.00 |
+| B09 = baseline N09 | 3, 3 (mean 3.00) | 3 | +0.00 | 2.5 | 2 | -0.50 |
+| mean | | | +0.062 | | | -0.250 |
+
+| set | now sol2 | now Gemini | baseline sol | baseline Gemini |
+|---|---|---|---|---|
+| body N01–N10 | 3.08 | 2.55 | 2.98 | 2.55 |
+| appendices (now N11–N14; baseline N11–N15) | 2.94 | 2.25 | 2.55 | 1.80 |
+| appendices, matching pieces only (N11–N14 both) | 2.94 | 2.25 | 2.62 | 2.00 |
+| whole note (now 14 pieces; baseline 15) | 3.04 | 2.46 | 2.83 | 2.30 |
+| whole note, word-weighted | 3.02 | 2.44 | – | – |
+| anchors (baseline runs) | 3.875 (sol) | 3.375 | | |
+
+sol drift mean 0.0625 gemini drift mean -0.25
+pieces reaching sol2 mean >= 3.5: ['N05']
+pieces reaching Gemini >= 3.5: ['N05']
+lowest five by sol2 mean then Gemini: [('N12', 2.75, 2.0, 2.75, 2.0), ('N01', 3.0, 2.0, 3.0, 2.5), ('N03', 3.0, 2.0, 3.0, 2.0), ('N08', 3.0, 2.0, 2.75, 2.0), ('N10', 3.0, 2.0, 3.0, 2.5)]
