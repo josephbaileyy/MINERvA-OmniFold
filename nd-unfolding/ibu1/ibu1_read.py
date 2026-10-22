@@ -136,6 +136,8 @@ def count_reading(cI: dict, cO: dict) -> dict:
     0.94), so ``possible`` is every J functional whatever the coverage and the count can never resolve
     (admission review, finding 2). It is reported with its interval and does not enter the reading."""
     corners = {count_relation(a, b) for a in (cI["definite"], cI["possible"]) for b in (cO["definite"], cO["possible"])}
+    if {"better", "worse"} <= corners:  # the box interior then holds equal counts (re-review, NEW finding)
+        corners.add("within")
     rel = count_relation(cI["definite"], cO["definite"])
     decisive = min(cI["n"], cO["n"]) >= COUNT_DECISIVE_N
     return {"relation": rel, "resolved": corners == {rel}, "corners": sorted(corners), "decisive": decisive}

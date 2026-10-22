@@ -376,6 +376,15 @@ class Rule(unittest.TestCase):
         self.assertEqual(tilt_worse["possible"], ["IBU worse", "mixed"])
         self.assertEqual(rd.overall(dict(base, tilt=tilt_worse)), "mixed")
 
+    def test_count_box_spanning_better_and_worse_allows_within(self):
+        """Re-review: corners {better, worse} with an interior equal pair must keep "consistent" possible."""
+        c = rd.count_reading({"definite": 5, "possible": 100, "n": 400}, {"definite": 30, "possible": 40, "n": 400})
+        self.assertIn("within", c["corners"])
+        r = rd.truth_reading({"relation": "within", "possible": ["within"]}, c)
+        self.assertIn("consistent", r["possible"])
+        base = {k: {"possible": ["consistent"]} for k in ("gibuu", "w1", "w2", "w3")}
+        self.assertEqual(rd.overall(dict(base, tilt=r)), "unresolved")
+
     def test_small_n_count_cannot_resolve_and_is_descriptive(self):
         """Review finding 2: at n = 60 a functional covered 60/60 still has CP LB < 0.94 at 0.05/459."""
         rows = np.arange(109)
