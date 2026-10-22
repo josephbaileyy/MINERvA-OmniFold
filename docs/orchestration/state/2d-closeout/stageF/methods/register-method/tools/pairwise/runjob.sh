@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# usage: runjob.sh <id> <model> <prompt> <out> <inputA> <inputB>  -- one rater run via ../../run_x.sh, one retry on failure/empty.
+# Copy of note-cal2/tools/runjob.sh with NC pointed at note-p2 and the success check on WINNER:.
+set -u
+NC=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/ee772d13-75a3-4217-970c-8badb94dd2ba/scratchpad/xmodel/note-p2
+X=$NC/..
+id=$1; m=$2; p=$3; out=$4; shift 4
+if [ -s "$out" ] && [ "$(wc -w < "$out")" -gt 5 ]; then echo -e "$id\tskip-done" >> $NC/runs/status.tsv; exit 0; fi
+for attempt in 1 2; do
+  t0=$(date +%s)
+  bash $X/run_x.sh "$m" "$p" "$out" "$@" > /dev/null 2>&1; rc=$?
+  w=$(wc -w < "$out" 2>/dev/null || echo 0); w=$(echo $w)
+  echo -e "$id\tattempt=$attempt\trc=$rc\twords=$w\tsecs=$(( $(date +%s) - t0 ))\t$(date '+%H:%M:%S')" >> $NC/runs/status.tsv
+  if [ "$rc" = 0 ] && [ "$w" -gt 5 ] && grep -q "WINNER:" "$out"; then exit 0; fi
+  [ -f "$out" ] && mv "$out" "$out.failed$attempt"
+done
+echo -e "$id\tFAILED-TWICE" >> $NC/runs/status.tsv
+exit 1
