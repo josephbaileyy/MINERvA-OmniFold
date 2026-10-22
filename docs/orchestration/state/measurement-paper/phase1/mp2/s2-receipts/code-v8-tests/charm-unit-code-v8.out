@@ -1,0 +1,10 @@
+TEST pass True parents 6 events with charm 4 mix {'411': 1, '421': 1, '431': 1, '4122': 1, '4132': 1, '4222': 1}
+TEST checks {'known_codes': True, 'table_declared': True, 'br_sum_per_decayed_species': True, 'four_momentum': True, 'pythia_errors': True, 'no_charm': True, 'tune_species': True, 'event_four_momentum': True}
+TEST p4 worst 3.519939888967292e-16 BR max dev 4.440892098500626e-16 n decayed species 13
+TEST decayer 6e0fbd89ea709d5a {'MSTJ(22)': 1, 'MDCY(pi0,1)': 0, 'otherwise': 'PYTHIA 6.426 defaults'}
+TEST rebuild: untouched events identical, in-place replacement, event four-momentum kept, fs0 kept
+TEST deterministic (same products on a second call)
+TEST unknown code -> no decays: True [[61, 1]] {'known_codes': False}
+TEST Tune without K0L -> pass False not_in_tune [130]
+TEST product species {'-211': 8, '22': 3, '111': 7, '130': 1, '211': 11, '2112': 1, '2212': 2}
+TEST OK

@@ -37,7 +37,10 @@ conda activate "$HOME/.conda/envs/root_6_28"
 unset PYTHONPATH
 if [ "$STAGE" = models ] || [ "$STAGE" = gates ] || [ "$STAGE" = modgates ]; then
   GEN=${2:?gen}; FSET=${3:?fset}
-  HARM="$D/harm_a $D/harm_b"
+  # load() takes each file from the first directory that has it: HARM_FIRST (e.g. $D/harm_c, R12's GiBUU re-harmonization,
+  # passed with --export) is searched before harm_a and harm_b, so its events/harmonized/hybrid files win for that G only
+  HARM="${HARM_FIRST:+$HARM_FIRST }$D/harm_a $D/harm_b"
+  echo "harm search order: $HARM"
   run_gates() {
     srun -n 1 -c 256 python3 "$CODE/mp2_s2_fit.py" gates --gen "$GEN" --fset "$FSET" --harm $HARM \
       --contract "$P1/mp5/inputs/s5c_contract.json" --fcontract "$CONTRACT" --out "$FITDIR" --threads 128

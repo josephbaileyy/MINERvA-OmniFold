@@ -1,0 +1,5 @@
+SMOKE events 47562 charm parents 164 codes [(56, 1), (57, 0), (57, 1), (57, 2), (114, 0), (114, 1), (118, 1)]
+SMOKE tune species (one playlist) 28 has 130: True has 3122: True
+SMOKE branch decayed (PYTHIA6 tables, every check passed) | checks {'known_codes': True, 'table_declared': True, 'br_sum_per_decayed_species': True, 'four_momentum': True, 'pythia_errors': True, 'no_charm': True, 'tune_species': True, 'event_four_momentum': True}
+SMOKE mix {'411': 5, '421': 25, '431': 2, '4112': 4, '4122': 110, '4212': 5, '4222': 13} | products {'-321': 42, '-211': 130, '-13': 6, '-11': 5, '12': 5, '14': 6, '22': 20, '111': 215, '130': 24, '211': 207, '321': 8, '2112': 38, '2212': 94}
+SMOKE eavail shift MeV: n changed 162 min 0.0 median(changed) 3233.5289527744953 max 9700.897239915734
