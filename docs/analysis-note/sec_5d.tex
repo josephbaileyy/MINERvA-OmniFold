@@ -8,7 +8,7 @@ generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator doe
 not follow such changes (\S\ref{sec:val-departure}), model dependence and the
 reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the
 failed five-dimensional coverage test (\S\ref{sec:coverage-5d}), and the status
-of the one five-axis covariance in use (\S\ref{sec:eavailw-construction}). The
+of the one five-axis covariance used in this note (\S\ref{sec:eavailw-construction}). The
 calibrated generator tests built on a variant of this estimator follow in
 \S\ref{sec:joint5d}. The unbinned negative-weight background method itself is
 derived in App.~\ref{app:negweight}.
@@ -83,7 +83,7 @@ the highest-$W$ column of $(\Eavail,W)$ \SIrange{3.5}{4.1}{\percent} low and
 the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high. Without
 background, the same experiments close to \SI{0.22}{\percent}. Relative to
 these cells' quoted total uncertainty, the bias is 0.36--1.07 standard deviations.
-It comes from the purity footing (\S\ref{app:negweight}), enters no quoted
+It comes from the purity-based subtraction (\S\ref{app:negweight}), enters no quoted
 covariance, and has no established size on data.
 % Sources: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md,
 % docs/orchestration/state/s5c/d1/d1_summary.json, docs/orchestration/state/s5c/d1/bias_vs_adopted.json.
@@ -427,7 +427,7 @@ J-cell median SD \SI{0.228}{\percent}, versus bootstrap SD
 median consistency ratio 1.02 and estimated numerical share 0.37 of bootstrap
 variance. Adding this share again would double-count it in this design.
 The study does not change the stability failure, establish interval coverage,
-or transfer to the five-axis covariance in use.
+or transfer to the five-axis covariance used in this note.
 
 \paragraph{Prior sensitivity is not a measured real-data bias.}
 
@@ -542,19 +542,18 @@ A binned, signal-only diagnostic of the boosted-tree residuals, and what it
 does and does not establish, is described in \S\ref{sec:val-departure}
 (paragraph on the comparison with exact binned unfolding).
 
-\subsection{The five-axis covariance in use and its $(\Eavail,W)$ projection}
+\subsection{The five-axis covariance used in this note and its $(\Eavail,W)$ projection}
 \label{sec:eavailw-construction}
 
 \paragraph{Status.}
 \label{sec:eavailw-adopted}
 
-The five-axis covariance in use, variant \texttt{cv}, has an $(\Eavail,W)$
+The five-axis covariance used in this note, the variant centered on the central value (\texttt{cv}), has an $(\Eavail,W)$
 projection on \zprojCells\ cells; the file and the projection are identified by
-their SHA-256 digests in App.~\ref{app:release-identities}. It is used although it
+their SHA-256 checksums in App.~\ref{app:release-identities}. It is used although it
 has not passed the acceptance criteria of its specification. The specification
 requires its null bound to be fixed before production; production had already
-taken place, so that requirement cannot be met for this object, and the
-object's own metadata records it as not passing and as not to be used
+taken place, so that requirement cannot be met for this covariance, and the file's own metadata records it as not passing and as not to be used
 (App.~\ref{app:release-audit}).
 Its use is limited to this file and its projection; it does not extend to any
 other covariance built to the same specification, including the two companion
@@ -569,9 +568,7 @@ is superseded and quoted nowhere in this note (App.~\ref{app:history}).
 
 \paragraph{Construction.} The covariance projects the corrected five-axis
 statistical covariance as $M C_{5D}M^{\top}$, without rebuilding it in the
-destination bins, and uses corrected systematic endpoints. Selection-complete
-active-universe event loops now bound migrations omitted by the
-CV-support-limited dump-all sample (\S\ref{sec:uq-higherdim}). On the
+destination bins, and uses corrected systematic endpoints. Re-selected event loops now bound the selection migrations that the single-pass shifted observables omit (\S\ref{sec:uq-higherdim}). On the
 $\latBins$ reported cells of $(\pT,\pPar,\Eavail,q_{3},W)$, the covariance is
 
 \begin{equation}
@@ -598,7 +595,7 @@ Here $v_{\mathrm{blk}}=\diag\big(\sum_{V}C_{b}\big)$ is the vertical block-sum
 diagonal; $v^{\mathrm{cv}}_{\mathrm{uni}}$ is the unified-throw covariance
 diagonal \emph{centered on the central value}. A zero denominator pins $g=1$
 by declaration; it does not compute unity. Band groups $V$ (vertical), $R$
-(residual) and $A$ (active lateral) must be disjoint and exhaust the 45 bands
+(residual) and $A$ (re-selected lateral) must be disjoint and exhaust the 45 bands
 (implementation in App.~\ref{app:release-audit}).
 Transferring this information onto a sweep block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
@@ -607,8 +604,7 @@ treatment, the mean shift and the selection-support bound above. This transfer i
 and never falls below the block baseline; a direct rank-$N$ swap is not positive-semidefinite.
 
 \paragraph{Centering, explicitly.} Per-band blocks $C_{b}$ use the MAT-conformant
-mean-centered $\pm1\sigma$ estimator of \S\ref{app:pair}. Inflation in variant
-\texttt{cv} uses $v^{\mathrm{cv}}_{\mathrm{uni}}$. The unified-throw centerings
+mean-centered $\pm1\sigma$ estimator of \S\ref{app:pair}. Inflation in the CV-centered variant uses $v^{\mathrm{cv}}_{\mathrm{uni}}$. The unified-throw centerings
 differ by the outer product of measured joint mean shift $\mathbf{ms}$
 (joint throw mean minus central value),
 
@@ -622,9 +618,7 @@ differ by the outer product of measured joint mean shift $\mathbf{ms}$
 \end{equation}
 
 so CV centering retains the mean shift as variance; mean centering removes it.
-Retaining it is deliberate: the variant in use is \texttt{cv}. The mean-centered sibling's
-$\sqrt{\Tr C}$ is \SI{7.13}{\percent} lower. The variant must be read and checked
-in product metadata, never inferred from a path (App.~\ref{app:release-audit}).
+Retaining it is deliberate: the variant used is the CV-centered one. The $\sqrt{\Tr C}$ of the mean-centered variant (\texttt{mean}) is \SI{7.13}{\percent} lower. Which variant a file holds must be read and checked in its metadata, never inferred from its path (App.~\ref{app:release-audit}).
 
 \paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is
 $C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ of shape $\zprojCells\times\latBins$
@@ -633,8 +627,7 @@ giving a differential density in \si{cm^2/GeV^2/nucleon}. Integrating a
 destination cell requires its own $\Delta\Eavail\,\Delta W$. Rows follow the
 $7\times6$ $(\Eavail,W)$ grid in measured C order. No source cell is dropped;
 the result is exactly symmetric (App.~\ref{app:release-audit}). Support and
-pinned masks and row-index arrays accompany the covariance, byte-identical in
-\texttt{cv} and \texttt{mean}. We pair this covariance with the central values in Fig.~\ref{fig:eavailWexcess} \emph{by digest identity} rather than numerical agreement. The projected source's central-value array and the figure's share the same bytes. Numerical agreement provides only a corroborating check.
+pinned masks and row-index arrays accompany the covariance, byte-identical in the two variants. We pair this covariance with the central values in Fig.~\ref{fig:eavailWexcess} \emph{by checksum identity} rather than numerical agreement. The projected source's central-value array and the figure's share the same bytes. Numerical agreement provides only a corroborating check.
 
 \paragraph{Conditioning, and why no rank is quoted.}
 Measured extremes $\lambda_{\min}=+4.359104\times10^{-92}$ and
@@ -655,7 +648,7 @@ analysis does not supply silently (App.~\ref{app:release-audit}).
 \paragraph{What the covariance supports.}
 
 Four measurements bound the claims. Items one, two and four use two companion
-covariances at two estimator-seed settings; only item three describes these bytes.
+covariances at two estimator-seed settings; only item three describes this file.
 
 \begin{enumerate}
 
@@ -712,6 +705,5 @@ covariances at two estimator-seed settings; only item three describes these byte
 \end{enumerate}
 
 \noindent The estimator-seed magnitude criterion, specified before production,
-\emph{has not been computed} for this object. It was computed only for the two
-companion covariances built for that purpose, and their outcomes are not outcomes
-for this object (App.~\ref{app:provenance}, \texttt{z-cv-record}).
+\emph{has not been computed} for this covariance. It was computed only for the two
+companion covariances built for that purpose, and their outcomes are not outcomes for this covariance (App.~\ref{app:provenance}, \texttt{z-cv-record}).

@@ -2,9 +2,7 @@
 \label{sec:results}
 
 
-The unfolded points of Fig.~\ref{fig:xsec} carry the bin errors stored with the
-unfolded histogram (\texttt{hXSec2D}; in the projections, \texttt{hXSec\_pt} and
-\texttt{hXSec\_pz}); they are not drawn from the covariance of \S\ref{sec:systematics}.
+The unfolded points of Fig.~\ref{fig:xsec} carry the bin errors stored with the unfolded histogram and its projections (\texttt{hXSec2D}, \texttt{hXSec\_pt}, \texttt{hXSec\_pz}); they are not drawn from the covariance of \S\ref{sec:systematics}.
 The published points in its top panel carry the square root of the diagonal of the
 published statistical covariance. The uncertainty budget of \S\ref{sec:systematics}
 is shown in Fig.~\ref{fig:uqbands} and Table~\ref{tab:uq}.
@@ -188,7 +186,7 @@ of \SI{6.410}{\percent}.
     \toprule
     Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ & per-bin median rel.\ $\sigma$ \\
     \midrule
-    ML noise (lgbm training-seed settings) & 5 & \num{1.99e-41} & \SI{0.057}{\percent} \\
+    ML noise (LightGBM training-seed settings) & 5 & \num{1.99e-41} & \SI{0.057}{\percent} \\
     Statistical (Poisson bootstrap) & 300 & \num{1.98e-40} & \SI{0.684}{\percent} \\
     Systematic (universe sweep $+$ \SI{1.4}{\percent} norm) & 43 bands${+}1$ & \num{2.73e-39} & \SI{5.969}{\percent} \\
     Run period & 3 & \num{8.34e-40} & \SI{2.137}{\percent} \\

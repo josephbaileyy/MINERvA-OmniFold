@@ -70,8 +70,7 @@ reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total
 2D cross section and its systematic and statistical covariances to within
 \SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning
 dependence and suits the extended-fiducial analysis, where backgrounds are
-larger. It is not adopted, and the quoted extended-fiducial value does not
-use it (App.~\ref{app:negweight}).
+larger. The quoted central values and uncertainties, including the extended-fiducial value, do not use it (App.~\ref{app:negweight}).
 % Background-practice survey (H1/LHCb/ATLAS, OmniFold-HI, generative unfolding),
 % production history and the Huang et al. comparison moved to sec_intro.tex
 % ("Prior OmniFold applications"); the n=5 rationale moved to "Hyperparameter
@@ -97,8 +96,7 @@ value and its uncertainty ensembles --- the systematic universe sweep, the
 Poisson bootstrap, the training-seed block and the run-period unfolds --- all use \textbf{LightGBM}
 ($100$ trees, $8$ leaves, learning rate $0.1$; identical settings for the step-1
 classifier, step-2 classifier, and miss regressor). The central value is the
-universe sweep's own matched central value (seed~42; its file and digest are in
-App.~\ref{app:provenance}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
+universe sweep's own matched central value (seed~42; its file name and checksum are listed in App.~\ref{app:provenance}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
 (\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
 training-seed block five seed settings that include it (\S\ref{sec:uq-boot},
 \S\ref{sec:uq-ml}); the bootstrap replica mean differs from the central value by a
@@ -116,12 +114,11 @@ differing only in the seed, so the difference is attributable to the seed
 % J3/J4 provisional (DECISION-20261018, packet W3: D2, D10 KI-88, KI-93; the note sentences are in sec:uq-boot and sec:uq-2d-construction).
 The seed-42 product itself has no execution
 log or recorded run configuration; it equals an independent rerun with a
-different driver and thread count to $1.4\times10^{-11}$, and a receipted
-regeneration with the current driver reproduces it to the same level. Against the
+different driver and thread count to $1.4\times10^{-11}$, and a regeneration with the current driver, with its run configuration recorded, reproduces it to the same level. Against the
 ten seed-1--10 LightGBM central values it is mildly over-dispersed (RMS
 standardized difference 1.28, maximum 4.25). Seed~42 was chosen because a
 matched seed-42 statistical band was the cheaper of the two seed-matching routes
-costed in the design record; a seed-42 statistical band has since been built, with three
+costed in the analysis design; a seed-42 statistical band has since been built, with three
 independent streams (data, signal and background simulation); it is the quoted
 statistical block (\S\ref{sec:uq-boot}).
 % Review m5: the costed band was the VL170 law at seed 42 (stageC/pilot/DESIGN.md §8); S1 is the three-stream
@@ -137,8 +134,7 @@ statistical block (\S\ref{sec:uq-boot}).
 \paragraph{The exact-split cross-check.}
 Until 2026-10-11 the quoted 2D central value was an \texttt{exact} run: sklearn
 \texttt{GradientBoosting} with single-threaded exact-split CART, whose seed was
-not pinned (its production launcher passed no seed, and the driver revision it
-ran had no seed option, so scikit-learn's \texttt{random\_state} was
+not pinned (its production job script passed no seed, and the driver version it ran had no seed option, so scikit-learn's \texttt{random\_state} was
 \texttt{None}; the run's own log was not found). Two driver revisions
 regenerate it to $7\times10^{-15}$, but it is not invariant to the estimator
 seed: one reseeded run (\texttt{random\_state} 1/2/3) moves every bin, by a
@@ -175,8 +171,7 @@ iterations, and each result names the one it uses:
         column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to
         \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
         removes most of the background-related bias that remains
-        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It was selected
-        before the joint-test design was frozen (\S\ref{sec:joint5d});
+        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It was selected before the joint-test design was fixed (\S\ref{sec:joint5d});
   \item the exact-split cross-check above, the 2D central value quoted until
         2026-10-11.
 \end{enumerate}
@@ -284,7 +279,7 @@ Every production, universe-sweep, and closure run follows these conventions:
         measurement phase space.
   \item At histogramming, each simulated truth event carries its final
         OmniFold push-weight times its central-value simulation weight,
-        including MnvTune reweighting. No additional efficiency-histogram
+        including MINERvA Tune~v1 reweighting. No additional efficiency-histogram
         division is applied. Step-1 miss regression already gives an
         efficiency-corrected truth spectrum; dividing again would
         double-correct.
@@ -319,8 +314,7 @@ over other axes, $N$ the fiducial nucleon count
 The factor $10^{4}$ converts flux tabulated per square meter to the reported
 $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), giving units of
 $\si{cm^2}$ per axis unit per nucleon. The implementation
-(App.~\ref{app:codebase}) is self-tested to reproduce frozen
-lower-dimensional extractions to $<10^{-12}$. Since
+(App.~\ref{app:codebase}) is self-tested to reproduce stored lower-dimensional reference extractions to $<10^{-12}$. Since
 $\sigma\propto1/\Phi$, $\Phi$ varies per flux universe when building the
 systematic covariance. This variation dominates the Flux band
 (\S\ref{sec:systematics}).
@@ -344,8 +338,7 @@ $\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$;
 $q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$;
 $W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$.
 Each ends in a wide catch bin to capture the full CC-inclusive tails in
-marginals; truncating the top edge would break the marginalization anchors
-of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to
+marginals; truncating the top edge would break the marginalization checks of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to
 be revisited without re-running the unfold. App.~\ref{app:release}
 (\S\ref{app:release-identities}) gives all five axes' edges.
 \S\ref{sec:205bins} defines the 205 reported cells; the authoritative
@@ -399,7 +392,7 @@ forward-model nuisance parameters. Its distinct algorithmic construction
 complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}.
 Profiling nuisances with observed data would change our inference model,
 which propagates an external nuisance ensemble through a fixed procedure.
-Neither a profiled estimator nor its uncertainty is adopted here.
+Neither a profiled estimator nor its uncertainty is used here.
 
 SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces
 OmniFold's second step with a different loss and avoids the outer

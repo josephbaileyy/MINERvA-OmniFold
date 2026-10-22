@@ -18,3 +18,36 @@ The appendices fall into three groups.
         arguments (App.~\ref{app:history}). These are reference material; a physics reading
         can skip them.
 \end{itemize}
+
+\paragraph{Labels used in the repository.}
+The body describes each object in words. Where a repository label is needed to find the object, it is given once
+in parentheses at first use, or here.
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.27\textwidth}p{0.67\textwidth}@{}}
+\toprule
+Label & Meaning in this note \\
+\midrule
+\texttt{lgbm}, \texttt{exact}, \texttt{hist} & the learner backends: LightGBM (the quoted central values and their
+  uncertainty ensembles; also the joint-test estimator), the scikit-learn exact-split estimator (the exact-split cross-check), and the scikit-learn histogram
+  estimator (\S\ref{sec:method-config}) \\
+\texttt{purity}, \texttt{negweight}, \texttt{negweight-refined} & the values of the drivers' background-mode
+  option (\texttt{-{}-bkg-mode}): purity-based subtraction, negative-weight injection, and refined negative-weight
+  subtraction
+  (\S\ref{sec:method-algo}, App.~\ref{app:negweight}) \\
+\texttt{cv}, \texttt{mean} & the two variants of the five-axis covariance, with the unified-throw covariance
+  centered on the central value or on the throw mean; this note uses \texttt{cv}
+  (\S\ref{sec:eavailw-construction}) \\
+\texttt{MNV101\_ACTIVE\_UNIVERSE} & the event-loop mode that re-applies the selection with one lateral universe
+  active (``re-selected'' universes, \S\ref{sec:uq-higherdim}) \\
+July sweep, May sweep & the two productions of 2D systematic-universe re-unfolds; the quoted universe block uses
+  the July sweep (\S\ref{sec:uq-2d-construction}) \\
+J28 & the audit finding that the $N$-dimensional code divided every flux universe by the central-value flux;
+  ``flux-corrected'' and ``(J28)'' products are those repaired for it (App.~\ref{app:negweight},
+  App.~\ref{app:history}) \\
+VL170, VL172, VL175 & validation-ledger rows: the rebuilt 300-replica 2D statistical band, and the two earlier 2D
+  covariances built with it, before and after the flux-band repair; their values are kept in
+  App.~\ref{app:history} \\
+\bottomrule
+\end{tabular}
+\end{center}

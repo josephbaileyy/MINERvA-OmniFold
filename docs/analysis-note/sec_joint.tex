@@ -7,10 +7,9 @@ tests, whose design was fixed before any production pseudo-experiment or
 observed statistic, with two disclosed data-informed elements
 (\S\ref{sec:joint5d-frozen}); the article states
 its result and conditions and refers here for the detail. The tests evaluate
-simple hypotheses about five predictions. They are not a measured cross
+hybrid null hypotheses about five predictions (\S\ref{sec:joint5d-design}). They are not a measured cross
 section, add no reportable uncertainty (App.~\ref{app:provenance},
-\texttt{joint-5d}), and do not re-qualify the five-axis covariance in use of
-\S\ref{sec:eavailw-adopted}, which they do not use. Everything the argument
+\texttt{joint-5d}), and do not validate the five-axis covariance used elsewhere in this note (\S\ref{sec:eavailw-adopted}), which they do not use. Everything the argument
 below needs is stated here: the pre-registered specification, including its six
 conditions in its own words (\S\ref{sec:joint5d-conditions}), the decisions, the
 recovery of the lost pseudo-experiments and the later sensitivity studies with
@@ -98,7 +97,7 @@ The null distribution of each statistic is obtained from pseudo-experiments
 that run the full analysis chain at the null truth, using the joint-test
 estimator (\S\ref{sec:val-departure}: deterministic LightGBM OmniFold, five
 iterations, negative-weight background treatment with a 400-tree, 31-leaf
-refinement classifier, chosen before the design was frozen). Each
+refinement classifier, chosen before the design was fixed). Each
 pseudo-experiment
 \begin{itemize}[itemsep=1pt, topsep=2pt]
   \item draws Poisson pseudo-data from one half of the simulation together
@@ -208,7 +207,7 @@ in a repeated experiment; that conditioning has not been validated.
   \end{minipage}
 \end{table}
 
-\subsection{Multiplicity, stopping rule and the frozen design}
+\subsection{Multiplicity, stopping rule and the predeclared design}
 \label{sec:joint5d-frozen}
 
 The ten tests are controlled at familywise level $\alpha=\jtAlpha$ by the Holm
@@ -243,13 +242,12 @@ The calibrated size is averaged over the nuisance priors: at a fixed true value
 of the nuisance parameters it can exceed $\alpha$.
 
 The hypotheses, statistics, variants, multiplicity rule, stopping rule and
-every input were frozen before any production pseudo-experiment or observed
+every input were fixed before any production pseudo-experiment or observed
 statistic. Two data-informed elements are disclosed. Reviewers of the design
-had seen descriptive per-cell residuals before it was frozen, and the job
+had seen descriptive per-cell residuals before it was fixed, and the job
 controller's status outputs exposed observed claim $p$ values during
 production. A bounded extension of the production budget was decided while
-they were visible, to let the sequential rule reach its frozen stop rather
-than a budget stop. No statistic, variant, threshold or stopping rule was
+they were visible, to let the sequential rule reach the stop set by its predeclared rule rather than a budget stop. No statistic, variant, threshold or stopping rule was
 changed, and the familywise bound above holds whatever rule determined when
 sampling stopped.
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's M8 replacement of "the Monte Carlo
@@ -325,14 +323,14 @@ per-cell relative changes, the last refinement, from a twofold-merged grid to
 the fine grid, is \jtMoneMin--\jtMoneMax{} of the whole change from the coarse
 test grid to the fine grid, so in that norm the steps are not shown to shrink
 and the residual below the fine grid is unmeasured and potentially material.
-The frozen design takes the step in a proxy of the test metric to shrink by
+The predeclared design takes the step in a proxy of the test metric to shrink by
 \jtMoneWnormMin--\jtMoneWnormMax{} per halving, a design-review value whose
 calculation is not recorded. If it kept shrinking geometrically at that rate,
 the residual would be about one to three times the last step,
 $\delta_{\mathrm{fine}}$ (the change of the noise-free unfolded result when the
 null truth is refined from the twofold-merged grid to the fine grid). This sets
 the claim variants at $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, the central
-extrapolated estimate, and the report-only robustness check at
+extrapolated estimate, and the robustness check, for reporting only (outside the decision rule), at
 $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$. The extrapolation assumes
 geometric convergence; the measured $L_{2}$ ratios also allow slower rates and
 larger residuals. Measured before any observed statistic, the claim variants
@@ -442,8 +440,7 @@ by the estimator's pull toward its prior.
   \end{tabular}
   \caption{Joint five-dimensional generator tests, in Holm order; every test is
   rejected. $B$ is the number of completed calibration pseudo-experiments at
-  the frozen stop (1400 submitted per null, NuWro 1800; the rest were lost to
-  time limits and recovered report-only, \S\ref{sec:joint5d-lost}), and $k$
+  the stop set by the predeclared rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$
   the number at least as extreme as the data; claim $p=(k+1)/(B+1)$ is never
   zero.}
   \label{tab:joint5d}
@@ -477,10 +474,7 @@ by the estimator's pull toward its prior.
 
 The multiplier $\kappa$ scales the last measured refinement change
 $\delta_{\mathrm{fine}}$: $\kappa=1$ means one such change, not one standard
-deviation or a confidence level. A report-only scan along the frozen direction
-$\delta_{\mathrm{fine}}$~\cite{JointTestKappa2026} found all ten decisions to
-remain determinate rejections at every sampled multiplier up to 5.25 in the
-frozen ensembles. Determinate rejection is first lost between the sampled
+deviation or a confidence level. A scan along the predeclared direction $\delta_{\mathrm{fine}}$~\cite{JointTestKappa2026}, for reporting only, found all ten decisions to remain determinate rejections at every sampled multiplier up to 5.25 in the calibration ensembles used for the decisions. Determinate rejection is first lost between the sampled
 multipliers 5.2547 and 5.2563 (between 5.1688 and 5.1703 with the recovered
 draws included), by the GENIE~2.12.10 + MEC shape test, whose interval then
 contains its Holm threshold, and, through the Holm step-down, by the
@@ -502,8 +496,8 @@ for the third, and $[0.67,0.80]$, $[0.01,0.05]$ and $[0,0.02]$ at the
 GENIE~2.12.10 null.
 % X7 (sol minor), moved from the article: docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json
 % power.<P>.shape["0.005"].claim_rule_determined.interval (n 193, 195, 195; 199, 193, 172).
-These come from the frozen sets, each of which lost some of its 200 alternatives to time limits
-(172--199 retained). Against the frozen null ensembles, the complete power sets
+These come from the power sets as evaluated for the decisions, each of which lost some of its 200 alternatives to time limits
+(172--199 retained). Against the null ensembles used for the decisions, the complete power sets
 recovered as in \S\ref{sec:joint5d-lost} agree within 0.01; with the null recomputed on all draws, the first
 GENIE~2.12.10 set moves to 0.72.
 
@@ -521,7 +515,7 @@ rejected ($p$ \jtWorstIntLo--\jtWorstIntHi). Among completed draws, runtime is
 not associated with the statistic ($|\rho|\le\jtRuntimeRho$), which supports
 but does not certify the decisions.
 
-The lost seeds were therefore rerun, report-only, under a procedure fixed and
+The lost seeds were therefore rerun, for reporting only, under a procedure fixed and
 independently reviewed beforehand~\cite{JointTestRecovery2026}. A determinism
 check fixed in advance (16 of 16 completed seeds rerun bitwise identically)
 shows that each recovered draw is the lost draw, so every submitted draw has
@@ -530,24 +524,20 @@ test, claim variant or robustness variant, so no assignment of the lost draws
 changes any decision. The closest margin is 4.6 units of $T$ below the observed
 value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$
 variant); the next is 49.8 (GENIE~2.12.10 shape, same variant). With complete
-batches the frozen rule would have stopped the Tune~v1, GENIE~2.12.10,
+batches the predeclared rule would have stopped the Tune~v1, GENIE~2.12.10,
 GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same
 decisions.
 
 The scope of the recovery's checks is narrower than that of the main
 recomputation:
 \begin{itemize}[itemsep=1pt, topsep=2pt]
-  \item its independent cross-check (856 of 856 quantities) covers only the
-        reading with the frozen variant shifts;
+  \item its independent cross-check (856 of 856 quantities) covers only the reading with the variant shifts of the primary evaluation;
   \item the reading with the recovered draws added to the calibration (the
-        shift recomputed on all draws) was reproduced only by a standalone
-        replay of the same code, a consistency check rather than an
+        shift recomputed on all draws) was reproduced only by a standalone rerun of the same code, a consistency check rather than an
         independent recomputation;
-  \item the earlier-stop decisions rest on the campaign's self-validated
-        re-application of the sequential rule.
+  \item the earlier-stop decisions rest on the calibration run's own re-application of the sequential rule, which only that run has checked.
 \end{itemize}
-The recovery is report-only: the primary decisions are those of the frozen
-evaluation, at the frozen $B$. Because every submitted draw has now been
+The recovery is for reporting only: the primary decisions are those of the evaluation before recovery, at the $B$ at which its rule stopped. Because every submitted draw has now been
 observed and no recovered draw reaches the observed statistic, the ten rejections are stated
 as holding with every submitted draw observed, together with the closest margin
 and the earlier stops given above; the statement of the sensitivity analysis,
@@ -581,7 +571,7 @@ The powers of the joint and projected tests have not been compared.
 Table~\ref{tab:joint5d-projections} gives every projected claim $p$ value. The
 criterion, fixed before the run, was that a test would count as evidence of
 additional joint discrimination only if both of its projected claim $p$ values
-were at least 0.05, both with the frozen variant shifts and with the shifts
+were at least 0.05, both with the variant shifts of the primary evaluation and with the shifts
 recomputed on all draws; no test meets it, and the values are the same in both
 readings.
 
@@ -637,17 +627,16 @@ prediction involves the hadronic axes, on which a response band would act.
 
 For an exploratory response sensitivity study~\cite{JointTestRecoil2026}, the
 data are re-unfolded with the simulation's reconstructed recoil energy scaled
-by $\pm\SI{4}{\percent}$, and the frozen tests are re-evaluated against the
-frozen null distributions. The size is the level of data--simulation agreement
+by $\pm\SI{4}{\percent}$, and the predeclared tests are re-evaluated against the null distributions used for the decisions. The size is the level of data--simulation agreement
 reported for test-beam protons, pions and electrons of
 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}; neutrons and
 higher-momentum hadrons, which matter at high $W$, lie outside that sample.
 The $\pm4\%$ size is a labelled exploratory sensitivity, not a validated
 uncertainty prescription. A re-unfold with unscaled recoil reproduces
-the frozen decisions, with every claim $p$ value inside the range spanned by
+the recorded decisions, with every claim $p$ value inside the range spanned by
 the data's rounding variations. At both $-4\%$ and $+4\%$ every one of the ten
 rejections holds. The observed statistics move by up to about \SI{11}{\percent}
-from their frozen values, nine tests keep $k=0$, and NuWro's shape test, the
+from their recorded values, nine tests keep $k=0$, and NuWro's shape test, the
 closest to its null, changes from $k=1$ to $k=3$ of 1751 at $+4\%$
 ($p=0.0023$, against a Holm threshold of 0.05). The evaluation was reproduced
 independently. Table~\ref{tab:joint5d-recoil} gives the observed statistics.
@@ -699,16 +688,14 @@ and the response model is not shown to be complete.
 % M = docs/orchestration/state/measurement-paper/phase1/a7margins/RECEIPT.md (frozen margins).
 NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the
 other predictions are per nucleon of CH.
-These replays correct the two predictions to CH and re-evaluate their tests
-against the frozen null distributions.  They are descriptive: they do not
+This study corrects the two predictions to CH and re-evaluates their tests against the null distributions used for the decisions.  They are descriptive: they do not
 re-grade the recorded decisions of Table~\ref{tab:joint5d}, which stand.
 
 \paragraph{Construction.}
 % B:29-34 (combination, sumw2, the frozen chain, the supplement); C:46-51 (GiBUU, frozen r(E), 72 cells).
 Each prediction is rebuilt per fine cell as
 $x_{\mathrm{CH}}=\tfrac{12}{13}\,x_{\mathrm{C}}+\tfrac{1}{13}\,x_{\mathrm{H}}$, with
-$x_{\mathrm{H}}$ the generator's own free-proton product run through the frozen
-conversion, flux-repair and binning chain, and its Monte Carlo variance
+$x_{\mathrm{H}}$ the generator's own free-proton product run through the unchanged conversion, flux-repair and binning chain, and its Monte Carlo variance
 combined with the same weights.  The hydrogen fraction is
 $f_{\mathrm{H}}=5.08\%$ for NuWro over the grid and 4.77\% for GiBUU over its 72 cells.
 % Draft 6 (REVIEW-2 finding 12): B:97 (grid integral; 0.0506 over the 109 cells, B:105), C:51 (72-cell domain).
@@ -720,21 +707,19 @@ per cell reaches 0.112 and 0.109.  Both corrections move the prediction toward
 the data.
 % B:138-139; C:80-81 (the cross term is negative: the data lie on the CH side). REVIEW-2 finding 11: pointer moved here.
 
-\paragraph{Replays.}
+\paragraph{Re-evaluated tests.}
 % B:123-137 (NuWro: T_total 7427.1 -> 6759.8, -3.83 null SD; T_shape 9660.0 -> 9333.1, -0.37; frozen position:
 % threshold 0.005, T_crit 6953.94, -1.11 SD, undetermined; re-sorted to the last position, threshold 0.05, CP
 % [0.0183, 0.0336], rejected; shape to threshold 0.025, 0.74 SD above its frozen T_crit; kappa = 3: total p 0.0748,
 % k = 130, not rejected; shape rejected). C:21, :72-79 (GiBUU: T_total -4.67, T_shape -1.33 null SD; margins 7.86 ->
 % 3.18 and 3.58 -> 2.24; frozen positions, no re-sort; kappa = 3 also rejected). M:65-78 (frozen margins).
-Under the frozen metric, NuWro's total statistic falls by 3.83 null standard
-deviations and its shape statistic by 0.37.  At its frozen Holm position
-(threshold 0.005) the total test would then lie 1.11 null standard deviations
+Under the predeclared metric, NuWro's total statistic falls by 3.83 null standard
+deviations and its shape statistic by 0.37.  At its original Holm position (threshold 0.005) the total test would then lie 1.11 null standard deviations
 below its boundary, and so be undetermined.  It remains rejected only because
 its larger $p$ value moves it to the last Holm position (threshold 0.05), and in
-the report-only $\kappa=\jtMoneKappaRobust$ family it is not rejected ($p=0.075$).
-NuWro's shape test stays rejected, 0.74 null standard deviations above its
-frozen boundary.  GiBUU's statistics fall by 4.67 (total) and 1.33 (shape) null
-standard deviations; both tests stay rejected at their frozen positions,
+the $\kappa=\jtMoneKappaRobust$ family, which is for reporting only, it is not rejected ($p=0.075$).
+NuWro's shape test stays rejected, 0.74 null standard deviations above its decision boundary.  GiBUU's statistics fall by 4.67 (total) and 1.33 (shape) null
+standard deviations; both tests stay rejected at their original Holm positions,
 including at $\kappa=\jtMoneKappaRobust$, with margins that shrink from 7.86 to
 3.18 and from 3.58 to 2.24 null standard deviations.  With each CH
 prediction's own variance in the metric, no decision changes for either
@@ -745,16 +730,12 @@ generator.
 % C:7-8 (the required label, verbatim), :23-44 (declaration 00efbb25..., recorded before computing; max |Delta_c/sigma_c|
 % 5.1e-4 against the 0.1 acceptance). B:48-56 (NuWro hydrogen chunks: 3 + 1 aborts rerun on alternate seeds; excluded
 % fraction 1.8e-5 main, 3.8e-5 supplement; the supplement's 95% bound 1.8e-4 above the 1e-4 bar, FLAGGED).
-The GiBUU replay carries the label ``B3 (sampling closure) failed on hydrogen; a
-post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$'': the
-sampling-closure check failed on the hydrogen sample, and a bias check of its
-premise, declared before it was computed, moves the CH prediction by about
-$5\times10^{-4}$ of $\sigma_{c}$, the standard deviation of the cell over the
-frozen null.
+The GiBUU re-evaluation carries the label required for it, ``B3 (sampling closure) failed on hydrogen; a
+post-hoc bias check of its premise passed at $\le0.1\,\sigma_{c}$'': the sampling-closure check failed on the hydrogen sample, and a post hoc bias check of that check's premise, declared before it was computed, met its criterion of at most $0.1\,\sigma_{c}$: it moves the CH prediction by about $5\times10^{-4}$ of $\sigma_{c}$, the standard deviation of the cell over the null distribution used for the decisions.
 % Draft 6: docs/orchestration/state/measurement-paper/BINDING-PHASE1-ADDENDUM-9.md:28-31 (sec. 4, "Recorded for the record";
 % in tree since the rebase onto 51da2a62): production_ID 34, 46% of the GiBUU-H sample; median energy loss
 % 45 MeV, median p_T imbalance 31 MeV; non-DIS hydrogen events balance exactly; cause not identified.
-A further caveat applies to the GiBUU replay: GiBUU's deep-inelastic events on
+A further caveat applies to the GiBUU re-evaluation: GiBUU's deep-inelastic events on
 hydrogen, 46\% of its hydrogen sample, do not conserve energy.  They lose a
 median of \SI{45}{MeV}, with a median transverse-momentum imbalance of
 \SI{31}{MeV}, while its other hydrogen events balance exactly; the cause has

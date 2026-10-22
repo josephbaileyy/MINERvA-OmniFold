@@ -26,9 +26,7 @@ Detector and model systematics use the July universe sweep: MAT-MINERvA's 44 err
 universes, identical to the published analysis's \texttt{GetStandardSystematics}
 set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
 against a reference central-value unfold with the same estimator and seed;
-since 2026-10-11 this reference is the quoted 2D central value. The five
-lateral bands are taken from selection-complete re-unfolds at the same seed. The
-rollup drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-construction};
+since 2026-10-11 this reference is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-construction};
 App.~\ref{app:provenance}, \texttt{rvp1pi}), and holds 43 bands plus the flat normalization.
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
@@ -118,9 +116,8 @@ genuinely smaller than the published statistical block (square-root-trace ratio
 0.428). This \emph{observed} covariance difference does not
 demonstrate a causal efficiency advantage (App.~\ref{sec:rank}); the split data/MC
 streams of the earlier, rebuilt bootstrap are in
-App.~\ref{app:history-vl175} (App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}, gives the
-label under which it is recorded there). The fixed-truth coverage test (\S\ref{sec:coverage}) found
-that the statistical band in use when it ran, before that rebuild, undercovered in its
+App.~\ref{app:history-vl175} (its repository label is listed in App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}). The fixed-truth coverage test (\S\ref{sec:coverage}) found
+that the statistical band quoted when it ran, before that rebuild, undercovered in its
 tails, unevenly across bins.
 % plain-language pass, review fix m3 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
@@ -141,7 +138,7 @@ regularization bias or undercoverage.
 % Review fix N1: the route was restored in words (a known-issues-log sentence = row 85); the deposit pass routes it to
 % App. G, tag statband-retest.
 % Review fix m3: the VL170 label is restored in print for the rebuilt bootstrap, and the tested band (VL162) is named
-% "the statistical band in use when it ran", as in sec:coverage.
+% "the statistical band quoted when it ran", as in sec:coverage (batch-0 glossary: "in use" became "quoted").
 % Q's statistical block S1 (stageC/production/DESIGN.md §3.4: --seed 42 --bootstrap-streams three; S5 stat row:
 % ddof 1 about the replica mean). rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble.stat_rel_se_of_sigma
 % (0.0409 = 1/sqrt(2*299); s5.json numbers.stat.ensemble_rel_se_of_sigma, a formula value, production
@@ -249,7 +246,7 @@ of the data's Poisson error in 60 of 205 bins, so neglecting them everywhere
 is unsupported. This is a reconstructed-space diagnostic, not a measured
 unfolded uncertainty. The quoted statistical block draws the background
 simulation as its own bootstrap stream (\S\ref{sec:uq-boot}), and the quoted universe block
-takes its lateral bands from selection-complete re-unfolds (\S\ref{sec:uq-universes}).
+takes its lateral bands from re-unfolds of re-selected universes (\S\ref{sec:uq-universes}).
 Lateral systematics use a single unfold at the central training seed each, so they
 include that seed's training noise. The flux-universe index identity behind the
 $1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events
@@ -496,22 +493,16 @@ products, and the verification compared only the checksums of their inputs.
 
 \subsection{What changes for the higher-dimensional products}
 \label{sec:uq-higherdim}
-Dump-all shifted branches are limited to CV event-loop support. For the five
-kinematic bands (BeamAngleX/Y, MuonResolution, and
-Muon\_Energy\_MINERvA/MINOS), selection-complete active-universe event loops
-are the production migration gate. They supply the lateral block of the
-five-axis covariance in use; higher-dimensional products using dump-all lateral
-branches remain candidates. Replacing the support-limited lateral block by the
-selection-complete one moves that block's square-root trace by
+Two event-loop modes supply the lateral bands. The single-pass event loop, which writes every universe in one pass, stores each lateral universe's shifted observables only for events that pass the selection at the central value, so it omits events that the shift moves into the selection. Re-selected event loops re-run the selection with one lateral universe active at a time. For the five kinematic bands (BeamAngleX/Y, MuonResolution, and Muon\_Energy\_MINERvA/MINOS), production treats selection migration with the re-selected event loops. They supply the lateral-band block of the five-axis covariance used in this note. Higher-dimensional products built from the single-pass shifted observables are not used for any quoted uncertainty. Replacing the single-pass lateral-band block by the re-selected one moves that block's square-root trace by
 \SI{\latTraceMove}{\percent}. That is a change in a square-root trace and is
 \emph{not} a bound on any individual bin: across the \latBins\ reported bins
-the per-bin ratio of active to support standard deviation runs \latRatioMin\ to
-\latRatioMax, and within the top \SI{1}{\percent} of bins by support variance
+the per-bin ratio of re-selected to single-pass standard deviation runs \latRatioMin\ to
+\latRatioMax, and within the top \SI{1}{\percent} of bins by single-pass variance
 --- which carry \SI{\latTopVarShare}{\percent} of the total --- it runs
 \latRatioTopMin\ to \latRatioTopMax. A small share of the aggregate variance
 does not make a bin irrelevant to a quoted result.
 
-\paragraph{Scope of the selection-complete replacement.} The replacement covers
+\paragraph{Scope of the re-selected replacement.} The replacement covers
 the five detector bands using shifted reconstructed kinematics. MINOS
 efficiency and the three GEANT
 hadron-interaction bands (GEANT\_Neutron, GEANT\_Pion, GEANT\_Proton) retain
@@ -526,16 +517,14 @@ data and split closes this scope. Its covariance has
 $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
 \SI{\gbdtAiEstFrac}{\percent} of the candidate split-varied band
 (\SI{\gbdtMlSplitTrace}{cm^2/nucleon}). Genuine estimator stochasticity therefore
-dominates the band in use over effects of the particular train/test partition.
+dominates the band used in this note over effects of the particular train/test partition.
 The scan remains an auxiliary robustness check; it is not an independent
 matrix, since split and estimator responses are not assumed uncorrelated. Both
 bands are minor components, about three percent of the combined budget in
 $\sqrt{\mathrm{Tr}\,C}$.
 
-An earlier 5D candidate used both mean-centered and CV-centered unified
-throws (\S\ref{sec:uq-combine}); no magnitude from either is quoted, and
-neither is used. The covariance in use is a later, separate
-\texttt{cv}-variant build
+An earlier 5D covariance construction used both mean-centered and CV-centered unified throws (\S\ref{sec:uq-combine}); no magnitude from either is quoted, and
+neither is used. The covariance used in this note is a later, separate build in which the unified-throw covariance is centered on the central value (variant \texttt{cv})
 (\S\ref{sec:eavailw-construction}; App.~\ref{app:history-5dcandidates}).
 % Routed record (formerly App. E \texttt{gbdtfive-macros}; row removed 2026-10-04 because the
 % sentence above rests on App. H, whose struck-values table cites it directly):
@@ -543,7 +532,7 @@ neither is used. The covariance in use is a later, separate
 
 Per-universe background subtraction in all 187 universe unfolds and the CV
 changes the combined \emph{block-sum} sqrt-trace by only
-\SI{0.28}{\percent} and the covariance \emph{in use} by \SI{0.18}{\percent},
+\SI{0.28}{\percent} and the covariance \emph{used in this note} by \SI{0.18}{\percent},
 a numerically negligible bound on the background-CV choice (App.~\ref{app:history}).
 % (\SI{0.18}{\percent} is after the flux (J28) correction; App. H keeps the
 % superseded-product wording and the inflation-damping explanation.)

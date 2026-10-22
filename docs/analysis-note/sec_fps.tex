@@ -41,7 +41,7 @@ the prior cost.
 \subsection{Validation battery}
 Four results establish the extension (Fig.~\ref{fig:fpscmp}):
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Anchor.} In the published sub-block, the extended unfold reproduces the control
+  \item \textbf{Published-region check.} In the published sub-block, the extended unfold reproduces the control
         (standard 2D input, paper grid, identical settings) with
         integral ratio $0.9994$, median cell ratio $1.0013$, and median
         deviation \SI{\fpsAnchor}{\percent} across all 185 reported cells,
@@ -60,7 +60,7 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
         the published cells and median \SI{0.77}{\percent} (max
         \SI{4.05}{\percent}) in the extension, both well inside the prior envelope.
   \item \textbf{Three-prior envelope.} Repeating the unfold with three priors
-        (MnvTune~v1, bare GENIE, and NuWro-shaped) spans the
+        (MINERvA Tune~v1, bare GENIE, and NuWro-shaped) spans the
         total cross section by only $\pm\SI{1.5}{\percent}$. The NuWro-shaped
         prior reweights the truth $(\pT,\pPar)$ shape to two million raw
         NuWro events without phase-space cuts. Their mis-sampled flux
@@ -76,7 +76,7 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
         fixed truth in \SI{\covFPS}{\percent} of evaluation bin--toy cells,
         compared with the \SI{\covNominal}{\percent} Gaussian nominal.
         Bin correlations and estimated widths preclude a global binomial error
-        or calibrated test. This probes the statistical closure-toy stream, not the full band in use.
+        or calibrated test. This probes the statistical closure-toy stream, not the full quoted band.
         The statistical-band, pull and regional fractions are in App.~\ref{sec:fps-fractions};
         none is used as a covariance-certification test.
 \end{enumerate}
@@ -85,8 +85,7 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
   \centering
   \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC}
   \caption{Extended-fiducial validation battery (all playlists):
-  (a)~anchor ratio in the published sub-block (median $1.0013$),
-  (b)~MnvTune/bare-GENIE prior-swap ratio, and (c)~extended-fiducial
+  (a)~ratio to the control in the published sub-block (median $1.0013$), (b)~MINERvA Tune~v1/bare-GENIE prior-swap ratio, and (c)~extended-fiducial
   cross section (log$_{10}$). Panels (a) and (b) are \emph{ratios} (diverging
   scale centered at unity); (c) gives \emph{absolute} magnitude on a sequential
   scale --- hence the two color schemes. Black lines mark the published
@@ -106,8 +105,7 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
 
 \subsection{Central value and two-tier reporting}
 The preliminary extended-fiducial CC-inclusive central value on the tracker
-fiducial volume, produced with the binned purity correction rather than the
-designated negative-weight footing (App.~\ref{app:negweight}), is
+fiducial volume, produced with the binned purity correction rather than the negative-weight treatment designated for the extended-fiducial analysis (App.~\ref{app:negweight}), is
 \begin{equation*}
   \sigma_{\mathrm{ext}} = \SI{\fpsSigma}{cm^2/nucleon}
   \quad\text{(central value)},
@@ -122,7 +120,6 @@ covers dead cells ($\sim\SI{28}{\percent}$ of the rate), flagged separately with
 an explicit additional three-prior envelope band. Both tiers enter the
 sum; only tier~1 is interpreted as an acceptance-supported measurement.
 No uncertainty magnitude is assigned beyond the three-prior envelope because the extended-domain
-covariance has not been constructed with selection-complete lateral support
-under the contract of \S\ref{sec:uq-combine}.
+covariance has not been constructed with re-selected lateral bands under the procedure of \S\ref{sec:uq-combine}.
 % The former subsection "Recoil-PET feasibility study on the extended population"
 % (label sec:fps-pet) moved to sec_pet.tex, sec:pet-full-event-status (lane 3 §10.1).
