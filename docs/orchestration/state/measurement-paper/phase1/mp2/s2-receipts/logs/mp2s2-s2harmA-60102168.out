@@ -1,0 +1,26 @@
+host nid005168 start 2026-10-22T11:25:50Z stage harm
+code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/gen5d_flux_supplement.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s1_dump.py
+d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_dump.py
+e0819fb7c7d7fdfaf1090a1bb3896f228080d2de231444636f219b607fbe6838  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_fit.py
+e663d2d30f93a67282a6bb94a044b5c8764a8e58b3a49cff1e45949dc8f9e875  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_harmonize.py
+6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3b_build.py
+47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3c_build.py
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3c_card.py
+41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3c_probe.py
+371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp5_genie.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/s5p_stage1_inspect.py
+40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/s5p_truths.py
+98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/feature_contract_draft.json
+373a8fd1b9b7ca1c614e8dea4699f4db4cd82bc72a013e0e6cf1e9054816ed73  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_job.sh
+CONTROLS genie_cv {"N": {"xsec": {"max_rel": 7.648203366004702e-13, "zero_cells_equal": true, "bitwise": false, "pass": true}, "sumw2": {"max_rel": 3.6840113860843967e-13, "zero_cells_equal": true, "bitwise": false, "pass": true}, "nevt_equal": true, "frozen": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz", "pass": true}, "pass": true}
+HARMONIZED genie_cv {"n_entries": 2100000, "n_cc": 1559622, "n_in_ps": 1006278, "n_in_grid": 1006250, "n_in_grid_outside_support": 0, "n_W_nan_in_ps": 28, "n_default_mass_cc": 13408, "drawn_alpha_mrad_median": 1.051510499441963, "in_grid_rate_per_nucleon_cm2": 2.764385730901061e-38, "in_grid_rate_H_share": 0.05346195078902444, "wall_s": 41.5, "hybrid_an_stats": {"coarse_cells_carrying": 109, "coarse_cells_reverted_to_coarse": 0, "fine_cells_resolved": 3487, "fine_cells_fallback": 6403, "N_in_carrying_cells": 2.709128968653676e-38, "N_in_resolved_fine_cells": 2.5677871085411854e-38, "max_abs_coarse_integral_error_rel": 3.3306690738754696e-16, "fraction_of_N_in_resolved_fine_cells": 0.947827563121614, "n_min": 20, "clip": [0.1, 10.0], "fallback_clip": [0.0, 10.0], "rho_min": 0.1654676511758834, "rho_max": 8.987429629678104}}
+CONTROLS genie_mec {"N": {"xsec": {"max_rel": 5.288009558064985e-13, "zero_cells_equal": true, "bitwise": false, "pass": true}, "sumw2": {"max_rel": 6.302201222689298e-13, "zero_cells_equal": true, "bitwise": false, "pass": true}, "nevt_equal": true, "frozen": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz", "pass": true}, "pass": true}
+HARMONIZED genie_mec {"n_entries": 2100000, "n_cc": 1570857, "n_in_ps": 1028217, "n_in_grid": 1028171, "n_in_grid_outside_support": 0, "n_W_nan_in_ps": 46, "n_default_mass_cc": 56213, "drawn_alpha_mrad_median": 1.0519498031493053, "in_grid_rate_per_nucleon_cm2": 2.87543377734814e-38, "in_grid_rate_H_share": 0.05093477297171428, "wall_s": 25.4, "hybrid_an_stats": {"coarse_cells_carrying": 109, "coarse_cells_reverted_to_coarse": 0, "fine_cells_resolved": 3550, "fine_cells_fallback": 6340, "N_in_carrying_cells": 2.8192919608600843e-38, "N_in_resolved_fine_cells": 2.673732677505713e-38, "max_abs_coarse_integral_error_rel": 2.220446049250313e-16, "fraction_of_N_in_resolved_fine_cells": 0.9483702697786699, "n_min": 20, "clip": [0.1, 10.0], "fallback_clip": [0.0, 10.0], "rho_min": 0.10264517671033427, "rho_max": 8.490640264790077}}
+CONTROLS nuwro_ch {"N": {"xsec": {"max_rel": 7.312742966854064e-13, "zero_cells_equal": true, "bitwise": false, "pass": true}, "sumw2": {"max_rel": 4.176652634963353e-13, "zero_cells_equal": true, "bitwise": false, "pass": true}, "nevt_equal": true, "frozen": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/out_r2/build_k1/nuwro_CH_xsec5d_full.npz", "pass": true}, "pass": false}
+STOP: a control failed for nuwro_ch; nothing harmonized
+srun: error: nid005168: task 0: Exited with exit code 3
+srun: Terminating StepId=60102168.0
+harm a rc=3 end 2026-10-22T11:28:10Z

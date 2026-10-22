@@ -1,0 +1,650 @@
+{
+ "schema": "mp2-s2-dump/1",
+ "argv": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code/mp2_s2_dump.py",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump"
+ ],
+ "slurm_job": "60101975",
+ "code_sha256": "d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00",
+ "samples": {
+  "genie_cv_main": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root",
+     "sha256": "bafb698ceae7dc1a41b7bf1105dce5d2e073373f529573584b01dd7dff081a35"
+    }
+   ],
+   "flats": [],
+   "chunks": null,
+   "n_entries": 2000000,
+   "n_particles": 8650660,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/genie_cv_main.npz",
+   "out_sha256": "1f7417d8795be28d0d89f65672939032b660deb1b59d2e02de7908ce94638cf0",
+   "wall_s": 5.1
+  },
+  "genie_cv_supp": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root",
+     "sha256": "f19b6c31137b166cbf89613a07a14f741efabb325956290e93edef8288ca5312"
+    }
+   ],
+   "flats": [],
+   "chunks": null,
+   "n_entries": 100000,
+   "n_particles": 831886,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/genie_cv_supp.npz",
+   "out_sha256": "cf5be6e4a830ae4842e8563b88680acf50404bff1f025beb91d71acfbbc60164",
+   "wall_s": 0.4
+  },
+  "genie_mec_main": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root",
+     "sha256": "61463c871812c64ea710aa905da506556d1582e673aad7fb9d99e06295df2f74"
+    }
+   ],
+   "flats": [],
+   "chunks": null,
+   "n_entries": 2000000,
+   "n_particles": 8640288,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/genie_mec_main.npz",
+   "out_sha256": "230c90b6ec4304127ca0e6ad37d3701de035a9a013a52ed1120c896ac79f49af",
+   "wall_s": 4.5
+  },
+  "genie_mec_supp": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec/genie_supp_mec.gst.root",
+     "sha256": "9b593e1ea40aef8982969e8023898eac494b11f0210d2a5d1042472f8001a1b5"
+    }
+   ],
+   "flats": [],
+   "chunks": null,
+   "n_entries": 100000,
+   "n_particles": 831088,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/genie_mec_supp.npz",
+   "out_sha256": "3617f9da7eba04cf9a76c304360c4027fc4038a0ccc9dda487a4f3c7dc3183dc",
+   "wall_s": 0.5
+  },
+  "nuwro_c12_main": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p1/nuwro_p1.root",
+     "sha256": "4707a56f8ed3fb33d2e1889ede13a531504dbbe3608f88dc80a22b20ae868151"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p2/nuwro_p2.root",
+     "sha256": "191a1d3e580013a7113e5af2bda267a27b1339cd9f752d9f26febbfdbded4133"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p3/nuwro_p3.root",
+     "sha256": "d99e1c91ed3680fe7f94ac7d26e9d56042a9fc2ade921aa502c763e620393fb1"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p4/nuwro_p4.root",
+     "sha256": "80d1cc7bdd9fd7cb667de53cf328ca490d028c5435aecc4797dabe91171cafe0"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p5/nuwro_p5.root",
+     "sha256": "b4f55d30e7dcdedc3bf8f1c0135b208179687b0e311ddf2931e71f7592ee864e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p6/nuwro_p6.root",
+     "sha256": "51ed4e118a9181a94c4be12bf10a7f13ec3798d94d751afc24dee4c8e44594c7"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p7/nuwro_p7.root",
+     "sha256": "7f6df22e458b5c4c5feb298382c778c539d78982ff846fe3eabd2db96de9a20d"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p8/nuwro_p8.root",
+     "sha256": "f9636ed099fee57fb1175f099f13b2a8e42822b3d60854933bbed6b39e020298"
+    }
+   ],
+   "flats": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p1.root",
+     "sha256": "385d5ba62bca7252988a32c75cecb42a8ab5e710348da0fb440998b65deefc01"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p2.root",
+     "sha256": "47dbc870330cbc00e53953b69a58b7ec255edc0145fd89a5c7f215daa0af08e0"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p3.root",
+     "sha256": "4aaa9df3d190450498e4d7d6b06c1bcd0e2ee076d1c554b370457531eddf0232"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p4.root",
+     "sha256": "e830e4a7bf48d46c4b3518a2734f7992e4a1c8d4582f3d942abe6882408d0976"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p5.root",
+     "sha256": "46c78779432d45f89943c6b18430e2d9bad48908f7880891023e55537cf27bf8"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p6.root",
+     "sha256": "bddd3223889c6a2ef0d190ebc0d68690bcd19b8b23dd5cf7792fe8611a92363d"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p7.root",
+     "sha256": "364959421642748ee91a595a5c7c11bb8ffc75a0462c5591b67a52987876b549"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p8.root",
+     "sha256": "6ba095144165f252e63a1e4f3c78b2abc8df25a3a112981f26326683bc0f095e"
+    }
+   ],
+   "chunks": null,
+   "n_entries": 2000000,
+   "n_particles": 8891532,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/nuwro_c12_main.npz",
+   "out_sha256": "fb445ee8c2f7ab313360f485254e32fca63136dc3e9a3a0f70c9eaf7fd317712",
+   "wall_s": 8.1
+  },
+  "nuwro_c12_supp": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp.root",
+     "sha256": "81de8415a6e0d1528e9a1ad9b3ccaa5c05866e3795199e549fe621205eb81a07"
+    }
+   ],
+   "flats": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp_flat5d.root",
+     "sha256": "2a4ad5520c97ffc48095f06f007a8bdf393f19a28e42854e3feccf76ea830f2f"
+    }
+   ],
+   "chunks": null,
+   "n_entries": 100000,
+   "n_particles": 852040,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/nuwro_c12_supp.npz",
+   "out_sha256": "7ed4b781e53478fe73859a7030f126a4ba9b3e18cbbaa8a99c909bb627bfdf4f",
+   "wall_s": 0.8
+  },
+  "nuwro_h_main": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01/a0/nuwro.root",
+     "sha256": "63686804c53875a841d945367416e1c63320e562066514239fb955802496b538"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c02/a0/nuwro.root",
+     "sha256": "3b2487aade8fb693237f7d3d7e357056a1116bb1355523e4adcc27a9b6368b21"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c03/a0/nuwro.root",
+     "sha256": "c6ab8809c25610b1348f6e10c26b2782857b93703a8d000faf7fb7fb02def137"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c04/a1/nuwro.root",
+     "sha256": "2d0c3cd503b8b5a9a85e70b806be8c7ec98d9b971a9a91129921bbd529c13117"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c05/a1/nuwro.root",
+     "sha256": "a1d7f0a67a3d5559599d02ebd284083754ec582c18f07c39a3371e0b71543b01"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c06/a0/nuwro.root",
+     "sha256": "fd12303339338736187e7cef2379b44db29108db9b1e2923f04c302e67793964"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c07/a0/nuwro.root",
+     "sha256": "1e163d732120c61c990bba12aad6af351496f25c42cc076fcdcf9ad05f80882e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c08/a0/nuwro.root",
+     "sha256": "d6c1eed7867c46079bbd904c3bc16faf4de2242d97d5131fc9e82927c776f90d"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c09/a0/nuwro.root",
+     "sha256": "43b279cf6ca98d1271b1dbd8614e00c3c7d920ef7a883d9dd2e9e6ff6d3f1c35"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c10/a0/nuwro.root",
+     "sha256": "958d81b4df0127b888de6b0fe218f6a72d75a6502f1447e68e9857aea5e1f846"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c11/a0/nuwro.root",
+     "sha256": "0c2ce5232ac46eeee7f265ed5214acd3f07505d374d0a7026cfb66fdbf39a82e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c12/a1/nuwro.root",
+     "sha256": "d6519ecd4edfb031a0bab98be075dab665810911bf6da1f67d10bff427febce9"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c13/a0/nuwro.root",
+     "sha256": "19d82eff17c7b1cee1cbdbef2368db3454a4be18827f676b15f848d9606a7266"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c14/a0/nuwro.root",
+     "sha256": "a406e9c2dba01710d90dcf83f473e03f06a224878c98dc92a67764a889a959c0"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c15/a0/nuwro.root",
+     "sha256": "37e050ab5a07242adb14ee6231334e4d1a017dffd2a3e36091a9f681b8e7b57c"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c16/a0/nuwro.root",
+     "sha256": "79cafec6e7b1e8fb4676c3c28d68f7dea96c8fcac1658fd53fcc721fc45eb396"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c17/a0/nuwro.root",
+     "sha256": "fa4386a9e626ca84da3c12b6ca531458829182e9971d646690c2d7d367dc5f84"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c18/a0/nuwro.root",
+     "sha256": "612675723adfa01084885f4df0909e8f36f1105acadff0c51773059dbac38901"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c19/a0/nuwro.root",
+     "sha256": "5986b49165f72c39f6eae1c206fc020ee7861967e256d91477cca7692c2e9058"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c20/a0/nuwro.root",
+     "sha256": "18f0dfbbdce14c19bd4021daeb3c34aa39cae1edcf962b54d03ba6ef6f5dc1dd"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c21/a0/nuwro.root",
+     "sha256": "769e1c7df8797fa781210ddf51d6903065472092c26c8affd63112533c5efad8"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c22/a0/nuwro.root",
+     "sha256": "1e3335c7f6c965b291d62b371efe2ba726396429adcef1a53d55d346b0a70b75"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c23/a0/nuwro.root",
+     "sha256": "ed2e04e526128ed954d42e384a299ffe5a34de0bcf630437ecf1fb1e376e7743"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c24/a0/nuwro.root",
+     "sha256": "d117c22086db5c14871a65d79af02d43b03e08483d0dcf7ed88e68e32c13e865"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c25/a0/nuwro.root",
+     "sha256": "eb475fedcd8e253a66292878f57fc580c8495dcaa2b4559e9c1dda7aa0c14365"
+    }
+   ],
+   "flats": [
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01/a0/flat5d.root",
+     "sha256": "9ec33478bb590af1e966cdbca0a7f8f06e18a2a0274bf4e641bb0cabf7f1d3af"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c02/a0/flat5d.root",
+     "sha256": "93858b3f993ec647fdf14b258f91ed1b1ad98b62244e108d144114b024988bca"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c03/a0/flat5d.root",
+     "sha256": "80b9ba3db3e7a08d67db311ef5807314a5b150f6ab631cc3142e8e8faeb1a7ac"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c04/a1/flat5d.root",
+     "sha256": "0f35865d1d15ba4536869c72328f1cd005ecdcda6776fdff5fb941275c3c2a88"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c05/a1/flat5d.root",
+     "sha256": "63e7f9929fa6048556ff7b1af54ee90f71abbc0f45983a6acf7ff7d53648d1a5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c06/a0/flat5d.root",
+     "sha256": "7ee36519927b82fe16e3a644db92713b922bd61ce8a1018dea1eda04189079a8"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c07/a0/flat5d.root",
+     "sha256": "1118c9d72a2ede5d68f401f430012e6c6116d685599a18b8e8ddfd57efcb7a58"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c08/a0/flat5d.root",
+     "sha256": "eaeef31f86886f759aa161df401d0bc910ef1ab20a691997b6a28e464621acfa"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c09/a0/flat5d.root",
+     "sha256": "0a61476a74384141c6ce792209b2220a9157450db256c22261238d1936228507"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c10/a0/flat5d.root",
+     "sha256": "ca496d7fd8c77470e0bff6b6b1895dbf0e74b3031342cb18747ef9f5f3833398"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c11/a0/flat5d.root",
+     "sha256": "476b5abcbf6790d291ec241a26580a51c5b82ca42460eebcee66c989af7aa738"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c12/a1/flat5d.root",
+     "sha256": "ef86da4f8f0981818d8baaad9a44a5bcf261e208e1028658bf2afa48f934b62e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c13/a0/flat5d.root",
+     "sha256": "7b397cbb9dd46081f5755e5d6c9684ebd58479146ff8979ef724746f178612c2"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c14/a0/flat5d.root",
+     "sha256": "18a2d9236084261bcc330b1f1fcf09612022d375d0aaa06f522656462d5fb425"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c15/a0/flat5d.root",
+     "sha256": "0d1b2d034807cddb09b1dd0f7370c52a47c8dae415778db04ce2c49b92cd1083"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c16/a0/flat5d.root",
+     "sha256": "b832ddea838cd777ec7321aa2b1c091103c23a7b7ab778df02e6f89940243b41"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c17/a0/flat5d.root",
+     "sha256": "0c47785107961a09f7bd2e00c54debe5efa70a0b8eacb3d34a46d09d69e51959"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c18/a0/flat5d.root",
+     "sha256": "ee05f4edbf038dc274b9f933b2a518ba5cc3d9a994b9996a1e45f2b33a1638ae"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c19/a0/flat5d.root",
+     "sha256": "b86abc8e6cf0490bf61823bd9dd17981a72d32a73ef53505670bae3ba451b5ef"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c20/a0/flat5d.root",
+     "sha256": "ba9444fb537f1f1b249a15e86153387c31d825c429529f0e80d1778ec3113bd4"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c21/a0/flat5d.root",
+     "sha256": "b5013427759737f42338b6636449d716e602a5fcbc10427964ee3d51ddcb9b00"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c22/a0/flat5d.root",
+     "sha256": "29e8eca6c1ce2f888c0d087f00e733943ee0a1bb41a778bc7e9af785a873d2f5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c23/a0/flat5d.root",
+     "sha256": "383b68b0a3873dd6c3a0f9a12180c5fc7ed284391158be27522f3d452ab34afe"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c24/a0/flat5d.root",
+     "sha256": "fbc0ac6ef52464d6631cb0669f7ac48860e63e8b6ecdad1fe05b0cddb3172c64"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c25/a0/flat5d.root",
+     "sha256": "4bb1c6d83d09be4e92f456a2698f4bd31a3c3ca91065ddb55758e5eea7bb3669"
+    }
+   ],
+   "chunks": [
+    {
+     "chunk": 1,
+     "attempt": 0,
+     "seed": 63101,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01/a0/flat5d.root"
+    },
+    {
+     "chunk": 2,
+     "attempt": 0,
+     "seed": 63102,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c02/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c02/a0/flat5d.root"
+    },
+    {
+     "chunk": 3,
+     "attempt": 0,
+     "seed": 63103,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c03/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c03/a0/flat5d.root"
+    },
+    {
+     "chunk": 4,
+     "attempt": 1,
+     "seed": 63204,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c04/a1/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c04/a1/flat5d.root"
+    },
+    {
+     "chunk": 5,
+     "attempt": 1,
+     "seed": 63205,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c05/a1/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c05/a1/flat5d.root"
+    },
+    {
+     "chunk": 6,
+     "attempt": 0,
+     "seed": 63106,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c06/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c06/a0/flat5d.root"
+    },
+    {
+     "chunk": 7,
+     "attempt": 0,
+     "seed": 63107,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c07/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c07/a0/flat5d.root"
+    },
+    {
+     "chunk": 8,
+     "attempt": 0,
+     "seed": 63108,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c08/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c08/a0/flat5d.root"
+    },
+    {
+     "chunk": 9,
+     "attempt": 0,
+     "seed": 63109,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c09/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c09/a0/flat5d.root"
+    },
+    {
+     "chunk": 10,
+     "attempt": 0,
+     "seed": 63110,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c10/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c10/a0/flat5d.root"
+    },
+    {
+     "chunk": 11,
+     "attempt": 0,
+     "seed": 63111,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c11/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c11/a0/flat5d.root"
+    },
+    {
+     "chunk": 12,
+     "attempt": 1,
+     "seed": 63212,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c12/a1/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c12/a1/flat5d.root"
+    },
+    {
+     "chunk": 13,
+     "attempt": 0,
+     "seed": 63113,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c13/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c13/a0/flat5d.root"
+    },
+    {
+     "chunk": 14,
+     "attempt": 0,
+     "seed": 63114,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c14/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c14/a0/flat5d.root"
+    },
+    {
+     "chunk": 15,
+     "attempt": 0,
+     "seed": 63115,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c15/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c15/a0/flat5d.root"
+    },
+    {
+     "chunk": 16,
+     "attempt": 0,
+     "seed": 63116,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c16/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c16/a0/flat5d.root"
+    },
+    {
+     "chunk": 17,
+     "attempt": 0,
+     "seed": 63117,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c17/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c17/a0/flat5d.root"
+    },
+    {
+     "chunk": 18,
+     "attempt": 0,
+     "seed": 63118,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c18/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c18/a0/flat5d.root"
+    },
+    {
+     "chunk": 19,
+     "attempt": 0,
+     "seed": 63119,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c19/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c19/a0/flat5d.root"
+    },
+    {
+     "chunk": 20,
+     "attempt": 0,
+     "seed": 63120,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c20/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c20/a0/flat5d.root"
+    },
+    {
+     "chunk": 21,
+     "attempt": 0,
+     "seed": 63121,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c21/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c21/a0/flat5d.root"
+    },
+    {
+     "chunk": 22,
+     "attempt": 0,
+     "seed": 63122,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c22/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c22/a0/flat5d.root"
+    },
+    {
+     "chunk": 23,
+     "attempt": 0,
+     "seed": 63123,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c23/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c23/a0/flat5d.root"
+    },
+    {
+     "chunk": 24,
+     "attempt": 0,
+     "seed": 63124,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c24/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c24/a0/flat5d.root"
+    },
+    {
+     "chunk": 25,
+     "attempt": 0,
+     "seed": 63125,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c25/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c25/a0/flat5d.root"
+    }
+   ],
+   "n_entries": 250000,
+   "n_particles": 1015501,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/nuwro_h_main.npz",
+   "out_sha256": "16c252997b59a418621b0e81c4f230748e0843e2f9cfd803386301696cf17888",
+   "wall_s": 5.1
+  },
+  "nuwro_h_supp": {
+   "files": [
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01/a0/nuwro.root",
+     "sha256": "13859c503a9515f8130aba500499e08cbb9cf931e50cb64f28f7fda3947ed0bb"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c02/a0/nuwro.root",
+     "sha256": "8e9dd8962d1e3b35c378d4c46f99f3cad31d3570aa3fda39c4fda6d2d4302d89"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c03/a1/nuwro.root",
+     "sha256": "20f9121624029f1bfd971530ac7f1938efa63c71af53c6623ccb115bf877af10"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c04/a0/nuwro.root",
+     "sha256": "f10d2a0ce280060082409c2f9edf20206791eff8869fd4f0bec6150991a7cb76"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c05/a0/nuwro.root",
+     "sha256": "fee6d3a357355bebbc5f738e3c9d751b0ee09b58b35402583f7a519d2d3811c2"
+    }
+   ],
+   "flats": [
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01/a0/flat5d.root",
+     "sha256": "a3eecf8549797a1d4b1a278057befbdcfc681bd56fb8b1c4ca5dbdc3e906c922"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c02/a0/flat5d.root",
+     "sha256": "9fc2b239e97bd2e4719224e4f85c8c1a9f6fc7f815beb63fd6808be4b203449b"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c03/a1/flat5d.root",
+     "sha256": "15569414171990a8e55ba50a55f7e73a2d093c34283f9beaed8fe97400e86feb"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c04/a0/flat5d.root",
+     "sha256": "07992b90b862c1527cad70905101addfef078b9142d8a5a3feb283c014af7a18"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c05/a0/flat5d.root",
+     "sha256": "df99a1505ed8ccfd6cc52f0b9e9d557aae0fc31f246328991ac6b01bd5facd33"
+    }
+   ],
+   "chunks": [
+    {
+     "chunk": 1,
+     "attempt": 0,
+     "seed": 64101,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01/a0/flat5d.root"
+    },
+    {
+     "chunk": 2,
+     "attempt": 0,
+     "seed": 64102,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c02/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c02/a0/flat5d.root"
+    },
+    {
+     "chunk": 3,
+     "attempt": 1,
+     "seed": 64203,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c03/a1/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c03/a1/flat5d.root"
+    },
+    {
+     "chunk": 4,
+     "attempt": 0,
+     "seed": 64104,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c04/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c04/a0/flat5d.root"
+    },
+    {
+     "chunk": 5,
+     "attempt": 0,
+     "seed": 64105,
+     "root": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c05/a0/nuwro.root",
+     "flat": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c05/a0/flat5d.root"
+    }
+   ],
+   "n_entries": 25000,
+   "n_particles": 199449,
+   "out": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump/nuwro_h_supp.npz",
+   "out_sha256": "3b4b5e743456786af151fe95194f9142d472f21b0f1263e0a6834a7c1ba2ed0e",
+   "wall_s": 1.0
+  }
+ },
+ "versions": {
+  "numpy": "2.2.6",
+  "uproot": "5.6.9",
+  "awkward": "2.8.11"
+ },
+ "wall_s": 44.2,
+ "exit": 0
+}

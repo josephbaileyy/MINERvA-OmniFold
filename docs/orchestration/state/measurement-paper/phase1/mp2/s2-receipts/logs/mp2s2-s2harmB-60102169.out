@@ -1,0 +1,22 @@
+host nid006123 start 2026-10-22T11:27:44Z stage harm
+code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/gen5d_flux_supplement.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s1_dump.py
+d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_dump.py
+e0819fb7c7d7fdfaf1090a1bb3896f228080d2de231444636f219b607fbe6838  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_fit.py
+e663d2d30f93a67282a6bb94a044b5c8764a8e58b3a49cff1e45949dc8f9e875  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_harmonize.py
+6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3b_build.py
+47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3c_build.py
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3c_card.py
+41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp3c_probe.py
+371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp5_genie.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/s5p_stage1_inspect.py
+40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/s5p_truths.py
+98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/feature_contract_draft.json
+373a8fd1b9b7ca1c614e8dea4699f4db4cd82bc72a013e0e6cf1e9054816ed73  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v2/mp2_s2_job.sh
+CONTROLS gibuu_ch {"N": {"xsec": {"max_rel": 8.810624387478026e-15, "zero_cells_equal": true, "bitwise": false, "pass": true}, "sumw2": {"max_rel": 1.2169960304444675e-14, "zero_cells_equal": true, "bitwise": false, "pass": true}, "nevt_equal": true, "frozen": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/out_b/bcheck/mp3c_fine_gibuu_frozen.npz", "pass": true}, "pass": false}
+STOP: a control failed for gibuu_ch; nothing harmonized
+srun: error: nid006123: task 0: Exited with exit code 3
+srun: Terminating StepId=60102169.0
+harm b rc=3 end 2026-10-22T11:28:36Z
