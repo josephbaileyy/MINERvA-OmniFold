@@ -391,9 +391,14 @@ def write_product(out: Path, arrays: dict, meta: dict) -> int:
 
 
 def environment() -> dict:
+    """The run's environment. LightGBM's default thread count is joblib's CPU count of the process
+    affinity (it ignores OMP_NUM_THREADS), so the affinity and joblib's counts are what fix it."""
+    import joblib
     import lightgbm
     return {"python": platform.python_version(), "numpy": np.__version__, "lightgbm": lightgbm.__version__,
             "host": platform.node(), "omp_num_threads": os.environ.get("OMP_NUM_THREADS"),
+            "affinity_cpus": len(os.sched_getaffinity(0)), "joblib_cpu_count": joblib.cpu_count(),
+            "joblib_physical_cores": joblib.cpu_count(only_physical_cores=True),
             "slurm_job": os.environ.get("SLURM_JOB_ID"), "slurm_step": os.environ.get("SLURM_STEP_ID")}
 
 

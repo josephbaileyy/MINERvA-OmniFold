@@ -3,7 +3,8 @@
 Needs PyROOT and numpy. The unit tests stub LightGBM, so they also run where it is absent:
     PYTHONPATH=$(root-config --libdir) python3.13 -m unittest 2d-unfolding/re1/tests/test_re1_2d.py -v
 ``DriverEquivalence`` needs LightGBM and scikit-learn (the cluster's ``root_6_28`` environment) and is
-skipped otherwise. It runs the frozen driver's ``main()`` and this path on one synthetic omnifile, and
+skipped otherwise. LightGBM sizes its default thread pool from the process's CPU affinity and ignores
+OMP_NUM_THREADS, so on a login node run it pinned, e.g. ``taskset -c 8-11 python -m unittest ...``. It runs the frozen driver's ``main()`` and this path on one synthetic omnifile, and
 requires the same ``hXSec2D`` bit for bit: purity at the driver's settings, and the refinement with the
 400/31 override removed (the driver's ``negweight-refined``), so the only difference left in
 production is the override itself.
@@ -268,14 +269,22 @@ def write_fixture(path: Path, flux: Path, seed: int = 11, n: int = 6000) -> None
     data = {"measured": rng.uniform(0.02, 2.0, nd), "measured_pz": rng.uniform(1.6, 18.0, nd),
             "measured_pass": np.ones(nd, np.uint8)}
     den = {"MC": pt, "MC_pz": pz, "w_truth": cols["w_truth"]}
-    opts = ROOT.RDF.RSnapshotOptions()
-    opts.fMode = "RECREATE"
-    for i, (tree, c) in enumerate((("mc_signal_reco", cols), ("mc_background", bkg), ("data", data),
-                                   ("mc_truth_denom", den))):
-        df = ROOT.RDF.FromNumpy({k: np.ascontiguousarray(v) for k, v in c.items()})
-        opts.fMode = "RECREATE" if i == 0 else "UPDATE"
-        df.Snapshot(tree, str(path), list(c), opts)
-    f = ROOT.TFile.Open(str(path), "UPDATE")
+    from array import array
+    f = ROOT.TFile.Open(str(path), "RECREATE")
+    trees = []
+    for name, c in (("mc_signal_reco", cols), ("mc_background", bkg), ("data", data), ("mc_truth_denom", den)):
+        t = ROOT.TTree(name, name)
+        bufs = {}
+        for k, v in c.items():  # UChar_t for the pass flags, Double_t otherwise, as the real file
+            code, leaf = ("B", "b") if v.dtype == np.uint8 else ("d", "D")
+            bufs[k] = array(code, [0])
+            t.Branch(k, bufs[k], f"{k}/{leaf}")
+        for i in range(next(iter(c.values())).size):
+            for k, v in c.items():
+                bufs[k][0] = v[i].item()
+            t.Fill()
+        t.Write()
+        trees.append(t)  # keep each tree alive until the file is closed
     ROOT.TParameter("double")("dataPOTUsed", 1.0e20).Write()
     ROOT.TParameter("double")("mcPOTUsed", 4.0e20).Write()
     ROOT.TParameter("int")("hasTruthOnlyMisses", 1).Write()
