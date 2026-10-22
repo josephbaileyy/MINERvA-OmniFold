@@ -147,53 +147,24 @@ not authors, and the authors take responsibility for the content.
 % (APS Journals Style Guide for Authors, Feb. 2026; required for PRD since 2024-09-04).
 \section*{Data availability}
 \label{sec:data-availability}
-
+% Shortened 2026-10-21 (DECISION-20261021-joseph-da-and-note-records, item 1: Joseph adopted the r13 draft,
+% docs/orchestration/state/2d-closeout/stageF/methods/r13/DA-proposal.md, with review fixes D-1 and D-2). This reverses
+% the plain-language pass 2 ruling P6 (the package's Fig. 1 limitation now prints in the note, app_release.tex
+% app:release, "RC7 was assembled before ..."). Every fact of the earlier text prints here or in app:release (the
+% proposal's section 3 maps all 23). Sources as before: RC7-README.md, RC6-README.md, RC1-REPLAY-RECEIPT-20261006.md.
 The input data and simulation are the MINERvA open-data AnaTuples, released under
-CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
-release, whose 2,374 input files are listed with their SHA256 checksums in the
-records cited by the analysis note's appendix on the result package and fixed
-identities~\cite{AnalysisNote2026}.  A candidate release package of about
-\SI{16}{MB}, described there and prepared locally but not yet deposited, needs
-only numpy, scipy, and matplotlib.
-% Shortening (P7): the repository-record citations AnaTuplePreservation2026 and ReleaseCandidate2026 replaced by the
-% note, which cites both in app_release.tex (app:release, :11 and :57).
-% plain-language pass, review fix R13 (DECISION-20261018-joseph-plain-language-pass)
-With it a reader can
-recompute every $p$ value, decision, robustness result, and power figure of
-the joint tests, together with the recovery of the lost pseudo-experiments,
-the coarse-projection comparison, and the fine-grid $L_{2}$ ratios of
-condition~(i); regenerate the null-distribution figure of the analysis note's
-joint-test section, the joint $(\Eavail,W)$ map of its fifth-axis section, and
-the one-dimensional generator projections; and recompute the numbers quoted in
-Sec.~\ref{sec:central}.
-% Shortening: the (E_avail, W) map and the null-distribution figure left the article for the note (sec_eavailw.tex
-% fig:eavailWexcess and sec_joint.tex fig:joint5d-nulls, the same files paper_fig2_joint.pdf and paper_joint_nulls.pdf),
-% so their regeneration is named there; the package draws them as before.
-% Methods rewrite fix round 1 (REVIEW-1 P1): the generator-context figure left the article (the note has fig:eavailWband); the release
-% still draws it (publication/release/figs/make_figs.py fig3) and checks the Sec. VII ratio (fig_numbers.py).
-Rerunning the packaged files from an empty
-directory reproduces every value recorded in the package and every figure
-number that it checks.
-% plain-language pass, review fix N6 (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme B, P6. The assembly chronology ("assembled
-% before the two-dimensional central value was changed to LightGBM") and the extension of the plotting code moved to
-% the note, app_release.tex app:release (b3fc422b, :17-28); the package's limitation stays here.
-The package carries the exact-split two-dimensional curve;
-Fig.~\ref{fig:validation} and its numbers were instead regenerated
-separately, from this paper's LightGBM values and covariance.
-% 2026-10-18 (Stage F rebuild phase 2): true of Q. Fig. 1 is stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...),
-% drawn by rebuild/scripts/make_fig1_q.py with the release's make_figs.py (9c4dbf24...) from cov2d_Q_205 (committed as
-% rebuild/outputs/outA/cov2d_Q_205.json.gz) and budget_Q.
-% J3/J4 provisional (DECISION-20261018, packet J4: no wording change; no packet item covers the release scope).
-% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
-Apart from the multiplier scan (recomputable from the record that the same
-appendix cites), the other quoted numbers cannot be recomputed from this
-package.
-They, and the event-level processing, require the archived
-analysis products, the open-data AnaTuples, and the generator samples produced
-for this analysis.  That appendix states what each part of the release does and does not
+CC0~\cite{MINERvA:OpenData}.  This analysis used an earlier production of that
+release; its 2,374 input files are identified by SHA256 checksum in the records
+cited in \napp{app:release}.  A candidate release package of about \SI{16}{MB},
+not yet deposited, requires only numpy, scipy, and matplotlib.  It recomputes
+every $p$ value, decision, robustness result, and power figure of the joint
+tests and the numbers quoted in Sec.~\ref{sec:central}, and it regenerates the
+analysis note's figures of the joint-test null distributions and the
+$(\Eavail,W)$ map.  The other quoted numbers, except the multiplier scan, and
+the event-level processing require the archived analysis products, the
+open-data AnaTuples, and the generator samples produced for this analysis;
+\napp{app:release} states what each part of the release does and does not
 reproduce.
-% Shortening (P7): JointTestKappa2026 replaced by the note, which cites it in app_release.tex (app:release-scope, :47-49).
 \pubhold{deposit identifier and access route, after the separately authorized
 release decision.}
 % 2026-10-11: shortened; the multiplier-scan scope, the 2.3 GB product archive, the earlier independent replay, the
