@@ -2,11 +2,13 @@
 \label{sec:summary}
 
 \paragraph{Summary.}
-The executive summary (\S\ref{sec:execsummary}) lists each result with its
-scope; this section states the conclusions they support. The validation
-findings are the main results, for this implementation and the configurations,
-observables and deformations tested; the generator tests are an application
-illustrating calibrated inference with a biased estimator.
+The executive summary (p.~\pageref{sec:execsummary}) lists each result with its
+scope; this section states the conclusions they support. The main results are the validation
+findings, which hold for this implementation and for the configurations,
+observables and deformations tested; the generator tests are an application that
+illustrates calibrated inference with a biased estimator.
+% Register pass b8 (2026-10-22): each conclusion once, with its scope, in step with the rewritten body
+% (ledger.md rows S*).
 % Methods-paper sync (METHODS-IMPLEMENTATION.md sec. 4, framing; paper_body.tex sec:conclusions).
 \begin{itemize}[itemsep=2pt]
   \item Unbinned OmniFold with gradient-boosted trees reproduces the integral of
@@ -15,14 +17,14 @@ illustrating calibrated inference with a biased estimator.
         (\S\ref{sec:results}), with a correlated shape
         difference ($\chi^{2}/\mathrm{ndf}=\chiPaper$, \S\ref{sec:results-tension})
         whose size depends on the learner (exact-split cross-check
-        $\chiPaperExact$). The central value and its uncertainty use the same
-        LightGBM estimator, a choice made after both comparisons were known
+        $\chiPaperExact$). The central value and its uncertainty share the
+        LightGBM estimator, which was chosen after both comparisons were known
         % plain-language pass, director ruling on base defect note F2 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
-        (\S\ref{sec:method-config}). The statistical band quoted when the fixed-truth coverage test ran
+        (\S\ref{sec:method-config}). In the fixed-truth coverage test, the statistical band then quoted
         % plain-language pass, review fix m2 (DECISION-20261018-joseph-plain-language-pass)
         % plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
-        failed it in its tails. A rebuilt band was only re-evaluated post hoc, on the same pseudo-experiments, and has not
-        been tested independently; the statistical block quoted now has not been tested (\S\ref{sec:coverage}).
+        undercovers in its tails; a rebuilt band was rescored only post hoc, on the same pseudo-experiments, and
+        the quoted statistical block has not been tested (\S\ref{sec:coverage}).
         % J3/J4 provisional (DECISION-20261018, packet C1 "uncertainty scale" kept, C4 kept, W3: D2).
         % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
   \item Simultaneous unbinned three-, four- and five-observable unfolds
@@ -33,42 +35,56 @@ illustrating calibrated inference with a biased estimator.
         close $q_{3}$ to \SI{1.1}{\percent}, with no acceptance threshold
         recorded in advance (\S\ref{sec:3d}). The five are simultaneous, not
         independent, observables: reconstructed $W$ is fixed by
-        $(\pT,\pPar,q_{3})$ (\S\ref{sec:eavailw-definitions}). As descriptive
-        central values, they lie above all four external generators at low
-        $\Eavail$, in the region of the established low-recoil discrepancy
-        (\S\ref{sec:3d-2p2h}, \S\ref{sec:4d}), and above the Tune~v1 prior
-        mostly at high $\Eavail$ and high $W$, where all four external
-        generators lie below the data, each by about its overall shortfall after
-        accounting for the $E_\nu>\SI{20}{GeV}$ events missing from GiBUU
-        (\S\ref{sec:eavailw-band}), and the NuWro and GiBUU ratios contain an
-        uncorrected carbon-versus-CH target difference. A fifth of the positive
-        difference from Tune~v1 sits in the single widest overflow cell, in
+        $(\pT,\pPar,q_{3})$ (\S\ref{sec:eavailw-definitions}). The central values, read
+        descriptively, lie above all four truth-level generators of \S\ref{sec:3d-models} in the
+        quasielastic--$\Delta$ dip, the region of the established low-recoil discrepancy
+        (\S\ref{sec:3d-2p2h}, \S\ref{sec:4d}). They lie above the Tune~v1 prior
+        mostly at high $\Eavail$ and high $W$. A fifth of that positive
+        difference sits in the single widest overflow cell, in
         ratio the excess also extends to low $W$, and the regularization bias is
-        largest in the high-$\Eavail$, high-$W$ region
-        (\S\ref{sec:eavailw-map}); these comparisons locate no interaction
+        largest in this region (\S\ref{sec:eavailw-map}). There all four external
+        generators also lie below the data, each by about its overall shortfall once the
+        $E_\nu>\SI{20}{GeV}$ events missing from GiBUU are accounted for
+        (\S\ref{sec:eavailw-band}), and the NuWro and GiBUU ratios contain an
+        uncorrected carbon-versus-CH target difference. These comparisons locate no interaction
         mechanism.
+        % Register pass b8: the earlier low-Eavail clause named the wrong generator set and range: the four of the
+        % low-Eavail comparison are GENIE, Tune v1, NuWro and GiBUU (sec_3d.tex sec:3d-models), and the data lie above
+        % them in the dip, 0.1-0.4 GeV (in the lowest bin GiBUU reaches the data).
         % Fix round (review MINOR 9): the paper's caveats (paper_body.tex sec:central, sec:data).
         % Methods-paper sync (M8, narrowed and removed: the 3D/4D closures without a recorded threshold; the W
         % redundancy; the low-recoil 2p2h attribution and the deep-inelastic localization withdrawn; paper_body.tex
         % sec:validation, sec:data, sec:central).
   \item Pseudo-experiments with backgrounds reveal a purity-subtraction bias of
-        up to \SI{4}{\percent} in the highest-$W$ cells, which the central values
-        keep; the negative-weight refinement that largely removes it is used
-        only for the generator tests. The five-axis estimator recovers only part
+        up to \SI{4}{\percent} in the highest-$W$ cells, which the quoted central values keep and no
+        quoted uncertainty includes. The refined negative-weight subtraction that largely removes it is the
+        background treatment of estimator configurations (d) and (e) of Table~\ref{tab:estimators-matrix}, which give
+        validation studies of \S\S\ref{sec:val-negweight}--\ref{sec:gbdt-model-dependence} and the
+        generator tests. No full five-dimensional comparison of the two background treatments has been made, and the
+        choice of purity is to be revisited before submission (App.~\ref{app:negweight}).
+        The five-dimensional estimator recovers only part
         of truth changes of about the size of generator differences; this
-        residual bias is interpreted as regularization bias. The envelope over
-        the five tested truth deformations, a median of about 10--13\% per cell,
-        is such that none of the tested reporting definitions satisfies the
-        \SI{10}{\percent} total-width criterion, fixed before the study, under the specified envelope
-        prescription. Bias-corrected statistical intervals miscover at the
-        tested truths; under a truth change that is in effect a \SI{10}{\percent} signal-rate reduction the cause is a residual bias, inferred from the coverage and
-        with its source not established, not too-narrow intervals
+        residual bias is interpreted as regularization bias. Under the specified envelope
+        prescription, with an envelope over the five tested truth deformations of about 10--13\% per cell
+        at the median, none of the tested reporting definitions meets the predeclared
+        \SI{10}{\percent} total-width criterion. Bias-corrected statistical intervals miscover at the
+        tested truths. Under a truth change that is in effect a \SI{10}{\percent} signal-rate reduction,
+        the miscoverage comes from a residual bias, not from too-narrow intervals; the bias is inferred from the coverage, and
+        its source is not established
         (\S\ref{sec:5d}, \S\ref{sec:coverage-5d}).
+        % Register pass b8: the earlier generator-tests-only scope was incomplete. Scope from Table tab:estimators-matrix
+        % (sec_method.tex): (d) gives the sec:val-negweight background and generator-sized studies, (e) the held-out
+        % shapes, the sec:gbdt-model-dependence precision study and the generator tests (director correction
+        % 2026-10-22: App. C's "development studies of 9.2-9.4" sentence for the joint-test estimator is wrong and is
+        % being fixed by b5). The open obligation: app_negweight.tex sec:negweight-footing.
         % Methods-paper sync (M8, narrowed and corrections; paper_body.tex sec:validation, sec:uncertainty-status,
         % sec:conclusions; KNOWN_ISSUES 98; M2-RATEFAIL-DIAGNOSIS.md).
-        The one five-axis covariance used in this note has an
-        estimator-seed sensitivity above the limit set before production, so no
+        For the one five-dimensional covariance used in this note, two companion covariances built at
+        different estimator seeds show a seed sensitivity above the limit set before production, so no
         covariance-based significance is quoted (\S\ref{sec:eavailw-adopted}).
+        % Register pass b8: the earlier sentence attributed the seed sensitivity to this covariance itself, which is false
+        % as read: the sensitivity was measured on the two companion covariances, and the criterion has not been
+        % computed for this file (sec_5d.tex sec:eavailw-adopted, "What the covariance supports").
   \item As an application, joint tests specified in advance and calibrated
         through the full analysis chain reject all ten hybrid generator
         hypotheses under six stated conditions, with the family-wise error rate
@@ -77,7 +93,8 @@ illustrating calibrated inference with a biased estimator.
         recover established discrepancies, show no evidence of discrimination
         beyond matched coarse projections, depend on a nuisance model without a
         calorimetric recoil-response band, and provide no new uncertainty on the
-        cross section; NuWro's total (rate-and-shape) rejection is not robust to
+        cross section. In a descriptive re-evaluation that leaves the recorded decisions standing, NuWro's
+        total (rate-and-shape) rejection is not robust to
         correcting its carbon prediction to CH (\S\ref{sec:joint5d},
         \S\ref{sec:joint5d-ch}).
         % Methods-paper sync (M8, tests; DECISION-20261020-joseph-nuwro-ch-claim.md, provisional). "Simple" was wrong.
@@ -102,17 +119,15 @@ development as future work (App.~\ref{sec:pet}).
 % $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
 % covariance is adopted. Its remaining closure and complete-UQ requirements are
 % method development and are not on the publication critical path.
-A scalar five-dimensional covariance with re-selected lateral bands is used in this note although it has
-not passed its specification's acceptance criteria (\S\ref{sec:eavailw-adopted}). No five-dimensional measurement
-was obtained with total uncertainties that meet the criteria set in advance: none
-of the tested reporting definitions satisfies the \SI{10}{\percent}
-total-width criterion under the specified envelope prescription, within the study's rules and
-budget (\S\ref{sec:gbdt-model-dependence}).
+No five-dimensional measurement with total uncertainties that meet the criteria set in advance was
+obtained, within the study's rules and budget (\S\ref{sec:gbdt-model-dependence}), and the scalar
+five-dimensional covariance used in this note, built with re-selected lateral bands, has not passed its
+specification's acceptance criteria (\S\ref{sec:eavailw-adopted}).
 % Resolves the demoted TODO (lane 5 R12) on the scalar-5D campaign (s5p, OI-193) closing.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md section 7 (NOT ADMITTED,
 % no new reportable uncertainty, NOT READY); CHECKLIST-20261001-s5p-terminal-and-claims.md section 4.
-Further refinements are a fifth generator, NEUT, and a finer 44-cell Ascencio
-comparison (maximal-common-grid comparison in \S\ref{sec:4d}).
+Further refinements are a fifth external generator, NEUT, and a finer 44-cell comparison with the
+Ascencio \emph{et al.} measurement (the maximal-common-grid comparison is in \S\ref{sec:4d}).
 A flux--muon-energy-scale posterior derived from MAT-MINERvA, independent of the
 published analysis, would let the correlation $\rho$ between the leading flux mode
 and the muon-energy-scale band (\S\ref{sec:systematics}) be derived entirely
@@ -130,12 +145,12 @@ weight-family metadata, normalization, row alignment, and checksums.
 A MINERvA release should likewise specify event
 identity, estimator and uncertainty-family definitions, units, support,
 normalization, and a reproducible projection example.
-App.~\ref{app:release} specifies this release for our analysis. It records
-which objects have fixed identities today and which do not exist yet.
-A local candidate data package, with checksums and a script that recomputes and
-checks its results, exists (App.~\ref{app:release}), but \textbf{no release has been tagged or
-deposited}; rebuilding the documents reproduces no result here. New projections
+App.~\ref{app:release} specifies this release for our analysis, including which of its objects
+already have fixed identities and which are still to be produced.
+A local release candidate, with checksums and a verifier that recomputes and
+checks its results, exists, but \textbf{no release has been tagged or
+deposited}; rebuilding this note's PDFs assembles documents and reproduces no scientific result
+(App.~\ref{app:release}). New projections
 require their own applicability checks; nominal weights alone cannot certify arbitrary
-downstream inference (App.~\ref{sec:unbinned-inference}). The release design and
-public example do not affect the choice of covariance, which was made separately
-(\S\ref{sec:eavailw-adopted}).
+downstream inference (App.~\ref{sec:unbinned-inference}). The release design and its
+public example have no bearing on the choice of covariance (\S\ref{sec:eavailw-adopted}).

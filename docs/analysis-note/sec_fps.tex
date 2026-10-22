@@ -1,14 +1,13 @@
 \section{Extended fiducial phase-space study}
 \label{sec:fps}
 
-We report a preliminary scalar central value and
-three-prior dependence envelope, with hidden-variable closure and a 200-toy
-containment diagnostic for the extension. No corrected covariance is available for the extended
-fiducial domain, so the result is limited to central values and these validation
-tests. The signal remains
-$\nu_\mu$ CC in the tracker interaction fiducial volume. Truth-muon
-kinematic cuts are removed but the reconstructed MINOS-based selection is unchanged,
-so this is an extended \emph{fiducial} measurement domain, not unrestricted neutrino phase space.
+This section gives a preliminary scalar central value for an extended fiducial domain, with a three-prior
+dependence envelope, a hidden-variable closure and a 200-toy containment diagnostic for the extension. The
+signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume. The truth-muon
+kinematic cuts are removed, but the reconstructed MINOS-based selection is unchanged,
+so the domain is an extended \emph{fiducial} one, not unrestricted neutrino phase space. No corrected
+covariance exists for it, so the result consists of central values and these validation tests.
+% Register pass b8 (2026-10-22): register only; every number and limitation kept (ledger.md rows F*).
 
 \subsection{Acceptance and the extended domain}
 The published cuts ($\theta_\mu<20^{\circ}$, $1.5<\pPar<\SI{60}{GeV/c}$,
@@ -16,12 +15,12 @@ $\pT<\SI{4.5}{GeV/c}$) exclude a third of the signal. Of the weighted true
 $\nu_\mu$~CC rate in the tracker fiducial volume, \SI{66.4}{\percent} lies
 inside the cuts, \SI{22.3}{\percent} at $\pPar<\SI{1.5}{GeV/c}$,
 \SI{11.3}{\percent} at $\theta_\mu>20^{\circ}$, and the high-$\pT$/$\pPar$
-tails are negligible (Fig.~\ref{fig:fpsacc}). Because OmniFold's miss treatment corrects
-acceptance natively, removing the truth-level kinematic cuts is a configurational
-change: an event-loop switch enlarges the truth denominator from 32.8M to 49M events with unchanged
-reconstruction selection, including the MINOS match. The unfold extrapolates
-into unmeasured regions through the step-1 miss regressor; the validation tests quantify
-the prior cost.
+tails are negligible (Fig.~\ref{fig:fpsacc}). OmniFold's treatment of events that fail reconstruction
+already corrects for acceptance, so removing the truth-level kinematic cuts is a change of configuration
+only: the truth denominator grows from 32.8 million to 49 million events, and the reconstruction
+selection, including the MINOS match, is unchanged. In regions without acceptance the unfold extrapolates
+through the step-1 regressor for missed events; the validation tests below quantify the resulting
+prior dependence.
 
 \begin{figure}[H]
   \centering
@@ -32,26 +31,26 @@ the prior cost.
   $(\pT,\pPar)$ grid (bin number; catch bins are too wide for a linear
   axis). Cyan lines mark the published boundary. Efficiency is
   $\sim0.65$ and flat through the published region, degrades smoothly across
-  the $\theta>20^{\circ}$ wedge, and dies in the $\pPar<\SI{1.5}{GeV/c}$
+  the $\theta>20^{\circ}$ wedge, and falls to zero in the $\pPar<\SI{1.5}{GeV/c}$
   strip and the high-$\pT$ corner. The dead region carries
   \SI{27.7}{\percent} of the total truth rate.}
   \label{fig:fpsacc}
 \end{figure}
 
 \subsection{Validation battery}
-Four results establish the extension (Fig.~\ref{fig:fpscmp}):
+Four tests characterize the extension (Fig.~\ref{fig:fpscmp}):
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Published-region check.} In the published sub-block, the extended unfold reproduces the control
         (standard 2D input, paper grid, identical settings) with
         integral ratio $0.9994$, median cell ratio $1.0013$, and median
-        deviation \SI{\fpsAnchor}{\percent} across all 185 reported cells,
-        so opening the phase space does not damage the measurement where it was already made. The control
+        deviation \SI{\fpsAnchor}{\percent} across all 185 reported cells:
+        in the published region the extended unfold agrees with the control at this level. The control
         reproduces the 2D total at the printed precision
         ($\SI{\sigTwoD}{cm^2/nucleon}$, the same for the exact-split and LightGBM
         central values).
   \item \textbf{Closure.} Extended-grid self-closure using simulated reconstruction as
         pseudo-data returns recovered/truth $=1.0000$ in every cell,
-        including the extension, without bookkeeping or normalization bias
+        including the extension, with no event-accounting or normalization bias
         from the enlarged denominator. In \emph{hidden-variable} closure,
         a Gaussian truth bump is injected in true $E_{\mathrm{avail}}$,
         unseen by the $(\pT,\pPar)$ unfold. The recovered cross section
@@ -63,11 +62,11 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
         (MINERvA Tune~v1, bare GENIE, and NuWro-shaped) spans the
         total cross section by only $\pm\SI{1.5}{\percent}$. The NuWro-shaped
         prior reweights the truth $(\pT,\pPar)$ shape to two million raw
-        NuWro events without phase-space cuts. Their mis-sampled flux
+        NuWro events without phase-space cuts. The sample's mis-sampled flux
         (\S\ref{sec:3d-models})
         % \texttt{KNOWN\_ISSUES.md} row 83; flux repair of 2026-09-27
-        suppresses their high-$\pPar$ shape; the prior was not rebuilt after
-        flux repair. Per-cell half-spread/mean has median
+        suppresses its high-$\pPar$ shape, and this prior was not rebuilt after
+        the flux repair. Per-cell half-spread/mean has median
         \SI{2.9}{\percent} in the published region and \SI{7.9}{\percent}
         (90th percentile \SI{62}{\percent}) in the extension, concentrated
         in zero-acceptance cells (Fig.~\ref{fig:fpsenv}).
@@ -76,7 +75,7 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
         fixed truth in \SI{\covFPS}{\percent} of evaluation bin--toy cells,
         compared with the \SI{\covNominal}{\percent} Gaussian nominal.
         Bin correlations and estimated widths preclude a global binomial error
-        or calibrated test. This probes the statistical closure-toy stream, not the full quoted band.
+        or a calibrated test. The diagnostic probes the statistical closure-toy stream, not a full uncertainty band.
         The statistical-band, pull and regional fractions are in App.~\ref{sec:fps-fractions};
         none is used as a covariance-certification test.
 \end{enumerate}
@@ -105,21 +104,24 @@ Four results establish the extension (Fig.~\ref{fig:fpscmp}):
 
 \subsection{Central value and two-tier reporting}
 The preliminary extended-fiducial CC-inclusive central value on the tracker
-fiducial volume, produced with the binned purity correction rather than the negative-weight treatment designated for the extended-fiducial analysis (App.~\ref{app:negweight}), is
+fiducial volume is
 \begin{equation*}
   \sigma_{\mathrm{ext}} = \SI{\fpsSigma}{cm^2/nucleon}
   \quad\text{(central value)},
 \end{equation*}
 \SI{\fpsAbove}{\percent} above the restricted-phase-space
-$\SI{\sigTwoD}{cm^2/nucleon}$. We adopt \textbf{two-tier reporting}:
-\emph{tier~1} covers acceptance-supported cells with $\epsilon\gtrsim2\%$ in
-the published region and measurable extension ($\sim\SI{6}{\percent}$
-of the rate, chiefly the $\theta>20^{\circ}$ wedge and the
-$\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge). Prior-extrapolated \emph{tier~2}
-covers dead cells ($\sim\SI{28}{\percent}$ of the rate), flagged separately with
+$\SI{\sigTwoD}{cm^2/nucleon}$. It was produced with the binned purity correction, not with the
+negative-weight treatment designated for the extended-fiducial analysis; no extended-fiducial production
+with refined negative-weight subtraction has been run (App.~\ref{app:negweight}).
+We adopt \textbf{two-tier reporting}.
+\emph{Tier~1} comprises the acceptance-supported cells ($\epsilon\gtrsim2\%$): the published region and the
+measurable part of the extension, which carries $\sim\SI{6}{\percent}$
+of the rate, chiefly in the $\theta>20^{\circ}$ wedge and the
+$\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge. \emph{Tier~2}, prior-extrapolated,
+comprises the dead cells ($\sim\SI{28}{\percent}$ of the rate) and is flagged separately with
 an explicit additional three-prior envelope band. Both tiers enter the
 sum; only tier~1 is interpreted as an acceptance-supported measurement.
-No uncertainty magnitude is assigned beyond the three-prior envelope because the extended-domain
-covariance has not been constructed with re-selected lateral bands under the procedure of \S\ref{sec:uq-combine}.
+No uncertainty magnitude is assigned beyond the three-prior envelope, because no extended-domain
+covariance has been constructed with re-selected lateral bands under the procedure of \S\ref{sec:uq-combine}.
 % The former subsection "Recoil-PET feasibility study on the extended population"
 % (label sec:fps-pet) moved to sec_pet.tex, sec:pet-full-event-status (lane 3 §10.1).
