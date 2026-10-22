@@ -25,6 +25,7 @@ whether the build lets it see a stale PDF.
 """
 
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -36,7 +37,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SCRIPT = HERE / "build_all.sh"
-TARGETS = ("main_note", "main_primer", "main_paper", "pet_note")
+# main_records (2026-10-21) is the internal records document; it is last because it reads main_note.aux.
+TARGETS = ("main_note", "main_primer", "main_paper", "pet_note", "main_records")
 SHARED = ("preamble.tex", "values.tex", "technote.bib")
 
 # A fake latexmk. Its behaviour comes from BUILD_TEST_MODE so one shim covers every scenario.
@@ -62,6 +64,14 @@ case "$BUILD_TEST_MODE" in
     ;;
   build-no-log)
     printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"; rm -f "${t}.log"
+    ;;
+  multiply-defined)
+    # LaTeX's own duplicate-label warnings, in the records build only; the other targets are clean.
+    printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"; clean_log
+    if [ "$t" = "main_records" ]; then
+      printf "LaTeX Warning: Label \`app:history' multiply defined.\n" >> "${t}.log"
+      printf "LaTeX Warning: There were multiply-defined labels.\n" >> "${t}.log"
+    fi
     ;;
   unresolved-persist)
     # The KNOWN_ISSUES-50 cold tree, when one more invocation does NOT resolve it.
@@ -402,6 +412,40 @@ class TestUnresolvedReferences(BuildAllHarness):
         self.assert_containment_not_reached(proc)
 
 
+class TestMultiplyDefinedLabels(BuildAllHarness):
+    """Item 7 (2026-10-21): a duplicate label prints a wrong number with no `??`, so the log check must catch it."""
+
+    def test_a_multiply_defined_label_FAILS_before_containment(self):
+        proc = self.run_build("multiply-defined")
+        self.assertNotEqual(0, proc.returncode, proc.stdout)
+        self.assertIn("main_records.pdf has multiply-defined labels", proc.stdout)
+        self.assertIn("Label `app:history' multiply defined", proc.stdout)
+        self.assert_containment_not_reached(proc)
+
+    def test_a_duplicate_label_is_not_retried(self):
+        """It does not converge, so it must fail at once rather than spend the cold-tree invocation."""
+        self.run_build("multiply-defined")
+        self.assertEqual(1, self.calls.count("fake invoked for main_records.tex"), self.calls)
+
+    def test_the_clean_targets_before_it_still_report_ok(self):
+        proc = self.run_build("multiply-defined")
+        for t in ("main_note", "main_primer", "main_paper", "pet_note"):
+            self.assertIn("OK   %s.pdf written by this run; no unresolved references and no multiply-defined" % t,
+                          proc.stdout)
+
+
+class TestRecordsBuildOrder(BuildAllHarness):
+    """main_records reads main_note.aux through xr-hyper, so it must be built after main_note -- and last, so the
+    order of the earlier targets and their messages is unchanged."""
+
+    def test_records_are_built_last_and_after_the_note(self):
+        self.run_build("build")
+        order = [line.split("fake invoked for ")[1].split(" ")[0] for line in self.calls.splitlines()
+                 if "fake invoked for " in line]
+        self.assertEqual([t + ".tex" for t in TARGETS], order, self.calls)
+        self.assertEqual("main_records.tex", order[-1])
+
+
 class TestContractsThatMustNotDrift(unittest.TestCase):
     """Static properties of the real script. The containment contract is not mine to change."""
 
@@ -452,6 +496,9 @@ MUTANTS = [
      'if grep -Eq "$unresolved_re" "${t}.log"; then', "if false; then"),
     ("m7-no-extra-invocation", "max_invocations=2", "max_invocations=1"),
     ("m8-accept-a-missing-log", 'if [ ! -f "${t}.log" ]; then', "if false; then"),
+    ("m9-drop-the-multiply-defined-check", 'if grep -Eq "$multidef_re" "${t}.log"; then', "if false; then"),
+    ("m10-build-the-records-before-the-note", "targets=(main_note main_primer main_paper pet_note main_records)",
+     "targets=(main_records main_note main_primer main_paper pet_note)"),
 ]
 
 
@@ -586,14 +633,19 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     is edited to make one PDF stale. Both directions: fresh passes, stale fails in strict mode.
     """
 
-    BODIES = {"main_note": r"struck $\dead{1.234}$ here", "pet_note": r"struck $\dead{5.678}$ here",
-              "main_paper": "clean paper", "main_primer": "clean primer"}
-    # The note's struck values live in app_history.tex (the checker enforces it), so the
-    # fixture's note body carries that name; the outward bodies keep their generic names.
-    BODY_FILES = {"main_note": "app_history", "pet_note": "app_history_pet",
+    # Since 2026-10-21 the struck values live in the records document, whose app_history.tex the checker requires;
+    # the posted note (main_note) is an outward build with a clean body, like the paper and the primer.
+    # Each strike-carrying body also strikes the literal of one production CONTEXT_EXEMPT entry, and the directory
+    # carries each entry's source text, because the checker refuses a stale exemption (review F8).
+    BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$",
+              "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$",
+              "main_note": "clean posted note", "main_paper": "clean paper", "main_primer": "clean primer"}
+    EXEMPT_SOURCES = {"sec_validation.tex": "the injected bump (mean weight 1.014)\n",
+                      "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n"}
+    BODY_FILES = {"main_records": "app_history", "pet_note": "app_history_pet", "main_note": "body_main_note",
                   "main_paper": "body_main_paper", "main_primer": "body_main_primer"}
-    # What each fake PDF "renders": each note shows its own struck literal (its positive control).
-    PDF_TEXT = {"main_note": "1.234 rendered\n", "pet_note": "5.678 rendered\n"}
+    # What each fake PDF "renders": each strike-carrying build shows its own struck literal (its positive control).
+    PDF_TEXT = {"main_records": "1.234 rendered\n", "pet_note": "5.678 rendered\n"}
 
     def setUp(self):
         import hashlib
@@ -605,6 +657,8 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         (shim / "pdftotext").write_text('#!/bin/sh\ncat "$2" > "$3"\n')
         (shim / "pdftotext").chmod(0o755)
         self.env = dict(os.environ, PATH=f"{shim}{os.pathsep}{os.environ.get('PATH', '')}")
+        for name, text in ResultLineNamesItsObjectTest.EXEMPT_SOURCES.items():
+            (self.note / name).write_text(text)
         for driver, body in self.BODIES.items():
             stem = self.BODY_FILES[driver]
             (self.note / f"{driver}.tex").write_text(
@@ -643,7 +697,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         self.assertIn("mode=strict", line)
         digest = hashlib.sha256((self.note / "main_note.pdf").read_bytes()).hexdigest()
         self.assertIn(f"main_note.pdf@sha256:{digest}(fresh)", line)
-        self.assertEqual(line.count("(fresh)"), 4, line)
+        self.assertEqual(line.count("(fresh)"), 5, line)
 
     def test_a_stale_product_fails_strict_mode(self):
         (self.note / "body_main_paper.tex").write_text("clean paper, edited after the build\n")
@@ -668,24 +722,26 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("main_primer.pdf freshness UNKNOWN", out)
         self.assertIn("(unknown)", line)
-        self.assertEqual(line.count("(fresh)"), 3, line)
+        self.assertEqual(line.count("(fresh)"), 4, line)
 
     def test_absent_pdfs_are_named_absent(self):
         for driver in self.BODIES:
             (self.note / f"{driver}.pdf").unlink()
         code, line, out = self._run()
         self.assertEqual(code, 1, out)
-        self.assertIn("products=main_note.pdf=absent", line)
+        # The first PDF read is the first strike-carrying build's positive control.
+        self.assertIn("products=main_records.pdf=absent", line)
 
 
 class StruckOnlyInHistoryTest(unittest.TestCase):
-    r"""Inside the note, `\dead{}` may occur only in app_history.tex.
+    r"""Inside the records document, `\dead{}` may occur only in app_history.tex.
 
-    Same synthetic directory as ResultLineNamesItsObjectTest, whose note keeps its only strike in
-    app_history.tex and passes. Here a body file joins the note's closure: clean, it must still
+    Same synthetic directory as ResultLineNamesItsObjectTest, whose records document keeps its only strike in
+    app_history.tex and passes. Here a body file joins the records' closure: clean, it must still
     pass; carrying a `\dead{}` -- in any of the forms DEAD_RE reads -- it must FAIL and name the
-    file. Adding the file changes main_note.tex after its .fdb_latexmk was written, so these runs
+    file. Adding the file changes main_records.tex after its .fdb_latexmk was written, so these runs
     use --source-only and the PDF stage's staleness cannot be what fails or passes them.
+    (Until 2026-10-21 this was main_note's invariant; the posted note now may strike nothing: PostedNoteIsOutwardTest.)
     """
 
     BODIES = ResultLineNamesItsObjectTest.BODIES
@@ -696,7 +752,7 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
     _run = ResultLineNamesItsObjectTest._run
 
     def _add_body(self, text):
-        (self.note / "main_note.tex").write_text(
+        (self.note / "main_records.tex").write_text(
             "\\documentclass{article}\n\\input{app_history}\n\\input{sec_body}\n")
         (self.note / "sec_body.tex").write_text(text + "\n")
         return self._run("--source-only")
@@ -734,12 +790,12 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
         self.assertIn("belongs only in app_history_pet.tex", out)
 
     def test_each_note_runs_its_own_positive_control(self):
-        """main_note rendering its strikes must not vouch for a pet_note PDF that drops its own."""
+        """main_records rendering its strikes must not vouch for a pet_note PDF that drops its own."""
         (self.note / "pet_note.pdf").write_text("nothing struck\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
         self.assertIn("appear in pet_note.pdf", out)
-        self.assertIn("note.pdf carries 1/1 struck literals (positive control OK)", out)
+        self.assertIn("records.pdf carries 1/2 struck literals (positive control OK)", out)
 
     def test_a_pet_note_strike_in_the_paper_FAILS(self):
         """The outward builds are checked against the PET note's struck literals too."""
@@ -747,6 +803,67 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
         self.assertIn("main_paper.pdf contains struck literal(s) ['5.678']", out)
+
+
+class PostedNoteIsOutwardTest(unittest.TestCase):
+    r"""Since 2026-10-21 (DECISION-20261021-joseph-da-and-note-records.md item 2) the posted note strikes nothing.
+
+    Its struck values moved, with app_history.tex, to the internal records document main_records.tex. Both
+    directions of the outward check now apply to main_note: a `\dead{}` reaching its closure FAILS at the source
+    stage, and a struck literal some strike-carrying PDF renders FAILS when main_note.pdf prints it.
+    """
+
+    BODIES = ResultLineNamesItsObjectTest.BODIES
+    BODY_FILES = ResultLineNamesItsObjectTest.BODY_FILES
+    PDF_TEXT = ResultLineNamesItsObjectTest.PDF_TEXT
+    setUp = ResultLineNamesItsObjectTest.setUp
+    tearDown = ResultLineNamesItsObjectTest.tearDown
+    _run = ResultLineNamesItsObjectTest._run
+
+    def test_the_clean_posted_note_passes(self):
+        code, line, out = self._run()
+        self.assertEqual(code, 0, out)
+        self.assertIn("note.pdf: 0 of 2 struck literals", out)
+
+    def test_a_dead_in_the_posted_note_FAILS(self):
+        for form in (r"was $\dead{4.321}$ before", r"was $\dead {4.321}$ before", "was $\\dead%c\n{4.321}$ before"):
+            with self.subTest(form=form):
+                (self.note / "body_main_note.tex").write_text(form + "\n")
+                code, line, out = self._run("--source-only")
+                self.assertEqual(code, 1, out)
+                self.assertIn("main_note (note build) reaches 1 \\dead{} use(s) via body_main_note.tex", out)
+
+    def test_app_history_back_in_the_posted_note_FAILS(self):
+        """Re-inputting the history appendix is the likeliest regression, so it is tested by name."""
+        (self.note / "main_note.tex").write_text(
+            "\\documentclass{article}\n\\input{body_main_note}\n\\input{app_history}\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("main_note (note build) reaches 2 \\dead{} use(s) via app_history.tex", out)
+
+    def test_a_struck_literal_in_the_posted_note_pdf_FAILS(self):
+        for value in ("1.234", "5.678"):   # the records' strike, and the PET note's
+            for end in ("\n", ".\n"):    # also at the end of a sentence (review F7)
+                with self.subTest(value=value, end=end):
+                    (self.note / "main_note.pdf").write_text("the posted note prints %s%s" % (value, end))
+                    code, line, out = self._run("--source-only")
+                    self.assertEqual(code, 1, out)
+                    self.assertIn("main_note.pdf contains struck literal(s) ['%s']" % value, out)
+
+    def test_the_production_maps_name_the_records_and_not_the_note(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("cdc_maps", str(HERE / "check_dead_containment.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self.assertEqual(mod.STRUCK_ALLOWED, {"main_records": "app_history.tex", "pet_note": "app_history_pet.tex"})
+        self.assertEqual(mod.BUILDS["main_records"], "records")
+        self.assertEqual(mod.BUILDS["main_note"], "note")
+        note = (HERE / "main_note.tex").read_text()
+        self.assertNotIn("\\input{app_history}", note)
+        self.assertNotIn("\\input{app_provenance}", note)
+        records = (HERE / "main_records.tex").read_text()
+        for name in ("app_provenance", "app_release_records", "app_codebase_records", "app_history"):
+            self.assertIn("\\input{%s}" % name, records)
 
 
 class UnitRequiredLiteralTest(unittest.TestCase):
@@ -772,6 +889,18 @@ class UnitRequiredLiteralTest(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertTrue(self.mod.outward_hit("0.564", text))
 
+    def test_a_struck_literal_at_sentence_end_is_a_hit(self):
+        """Review F7: the old boundary `(?![\\d.])` refused any following full stop."""
+        for value, text in (("1.014", "a ratio of 1.014."), ("0.406", "rms 0.406."), ("0.912", "ratio of 0.912.\nNext")):
+            with self.subTest(text=text):
+                self.assertTrue(self.mod.token_hit(value, text))
+                self.assertTrue(self.mod.outward_hit(value, text))
+
+    def test_a_point_that_continues_the_number_still_blocks_the_match(self):
+        for value, text in (("1.014", "version 1.014.5"), ("1.014", "1.0140"), ("0.406", "0.4061.")):
+            with self.subTest(text=text):
+                self.assertFalse(self.mod.token_hit(value, text))
+
     def test_unlisted_literal_keeps_the_bare_token_test(self):
         self.assertTrue(self.mod.outward_hit("6.865", "a median of 6.865 in the table"))
         self.assertFalse(self.mod.outward_hit("6.865", "a median of 6.8650"))
@@ -782,6 +911,99 @@ class UnitRequiredLiteralTest(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertEqual(unit, "%")
                 self.assertIn("\\dead{" + value + "\\%}", hist)
+
+    def test_the_2026_10_21_keys_bare_in_the_posted_note_are_not_hits_but_their_percentages_are(self):
+        """1.008, 0.563 and 2.26 print bare as live quantities in the posted note (measured 2026-10-21)."""
+        for value, live in (("1.008", "The median per-bin ratio is 1.008; 82.9% of bins"),
+                            ("0.563", "0.56 0.564 0.563 0.565 (i) Iterations"),
+                            ("2.26", "of the central value from it, or 0.08-2.26 of the band's sigma")):
+            with self.subTest(value=value):
+                self.assertFalse(self.mod.outward_hit(value, live))
+                self.assertTrue(self.mod.outward_hit(value, "struck median %s%% per bin" % value))
+
+
+class ExemptionGuardTest(unittest.TestCase):
+    r"""Review F8: check_dead_containment.py's own main() refuses a stale CONTEXT_EXEMPT entry, so the build gate
+    enforces it, not only this suite. Same synthetic directory as ResultLineNamesItsObjectTest."""
+
+    BODIES = ResultLineNamesItsObjectTest.BODIES
+    BODY_FILES = ResultLineNamesItsObjectTest.BODY_FILES
+    PDF_TEXT = ResultLineNamesItsObjectTest.PDF_TEXT
+    setUp = ResultLineNamesItsObjectTest.setUp
+    tearDown = ResultLineNamesItsObjectTest.tearDown
+    _run = ResultLineNamesItsObjectTest._run
+
+    def test_live_exemptions_hold_and_say_so(self):
+        code, line, out = self._run()
+        self.assertEqual(code, 0, out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] holds", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] holds", out)
+
+    def test_a_context_that_no_longer_prints_FAILS(self):
+        (self.note / "sec_validation.tex").write_text("the injected bump, reworded\n")
+        code, line, out = self._run()
+        self.assertEqual(code, 1, out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: sec_validation.tex no longer contains", out)
+
+    def test_a_missing_source_file_FAILS(self):
+        (self.note / "values.tex").unlink()
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] is STALE: values.tex no longer contains", out)
+
+    def test_a_literal_that_is_no_longer_struck_FAILS(self):
+        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here" + "\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: 1.014 is no longer struck", out)
+
+
+class ContextExemptLiteralTest(unittest.TestCase):
+    r"""check_dead_containment.CONTEXT_EXEMPT removes one declared context, in one build, before the outward search.
+
+    Added 2026-10-21 when the posted note became outward-facing. Both directions: the declared context is not a hit
+    in its build, and the same literal anywhere else -- or in the context in another build -- still is. Each entry's
+    source text must still occur in its source file and its literal must still be struck, so a stale exemption fails.
+    """
+
+    setUp = UnitRequiredLiteralTest.setUp
+
+    def test_the_declared_context_is_not_a_hit_in_its_build(self):
+        for text in ("Same Gaussian form in truth q3 (mean weight 1.014) 4D",
+                     "Same Gaussian form in truth q3 (mean\nweight 1.014) 4D",
+                     "the bump had mean weight 1.014.",
+                     "Fixed-truth C2 = 0.912.",
+                     "the fraction within 2 sigma, C2 = 0.912, vs. 0.954",
+                     "Fixed-truth C2 = 0.912 (nominal 0.954)"):
+            with self.subTest(text=text):
+                searched = self.mod.exempt_text("main_note", text)
+                self.assertFalse(any(self.mod.outward_hit(v, searched) for v in ("1.014", "0.912")), searched)
+
+    def test_the_literal_elsewhere_in_that_build_is_still_a_hit(self):
+        for value, text in (("1.014", "(mean weight 1.014); the struck chi2/ndf 1.014 would leak"),
+                            ("0.912", "C2 = 0.912, and a PET/GBDT ratio of 0.912")):
+            with self.subTest(value=value):
+                self.assertTrue(self.mod.outward_hit(value, self.mod.exempt_text("main_note", text)))
+
+    def test_the_context_in_another_build_is_still_a_hit(self):
+        for build in ("main_paper", "main_primer", "main_records", "pet_note"):
+            with self.subTest(build=build):
+                self.assertTrue(self.mod.outward_hit("1.014", self.mod.exempt_text(build, "(mean weight 1.014)")))
+                self.assertTrue(self.mod.outward_hit("0.912", self.mod.exempt_text(build, "C2 = 0.912")))
+
+    def test_each_source_text_still_prints_and_each_literal_is_still_struck(self):
+        macros = self.mod.macro_table(HERE)
+        struck = set()
+        for name in ("app_history.tex", "app_history_pet.tex"):
+            for body in self.mod.dead_bodies(HERE / name):
+                struck |= self.mod.literals_from(body, macros)[0]
+        for (build, value), (pattern, source, printed) in self.mod.CONTEXT_EXEMPT.items():
+            with self.subTest(value=value):
+                self.assertEqual(build, "main_note")
+                self.assertIn(printed, (HERE / source).read_text(encoding="utf-8"))
+                self.assertIn(value, struck)
+                self.assertIsNotNone(re.search(pattern, printed.replace("\\newcommand{\\covTwoDCTwo}{0.912}",
+                                                                        "C2 = 0.912")))
 
 
 # The mutation runner points the whole suite at a mutated copy without editing anything.

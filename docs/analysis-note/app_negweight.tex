@@ -20,8 +20,10 @@ Negative-weight injection serves as an equivalence study and the natural
 extended-fiducial treatment; this appendix establishes no supported production
 path and changes no default. The two
 covariance ratios are agreement diagnostics between two realizations of one
-subtraction, not quoted uncertainties. Their provenance and the two limits
-attached to the production numbers are in App.~\ref{app:provenance}
+subtraction, not quoted uncertainties. Two provenance limits travel with the production numbers: the driver
+was uncommitted when they were written, so its executing revision is corroborated by a version-specific log line
+rather than pinned by a digest, and no output records the job that produced it. Their records are in
+Ref.~\cite{NoteRecords2026}
 (\texttt{negweight-hpss}, \texttt{negweight-toy}).
 
 \subsection{Estimator}
@@ -60,7 +62,7 @@ within the bin. The constructions agree \emph{exactly} on bin masses under the
 piecewise-constant sieve of \S\ref{sec:negweight-binned}; in general they differ
 by within-bin shape terms. Both target the \emph{bin-integrated} estimand
 $r^{\star}(b)=(D_{b}-B_{b})/S_{b}$; they do not share the continuous estimand
-$r^{\star}(x)=(D(x)-B(x))/S(x)$ (App.~\ref{app:history}).
+$r^{\star}(x)=(D(x)-B(x))/S(x)$ (Ref.~\cite{NoteRecords2026}, superseded values).
 \S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq} measure the effect
 of that difference. The injected background and data occupy the same
 reconstructed fiducial window, giving identical support.
@@ -254,23 +256,23 @@ unfolds and current production.
 
 Existing endpoint unfolds from 2026-07 are identified by elimination.
 Neither of the two possible job scripts sets the driver's background-mode option (\texttt{-{}-bkg-mode}); the driver defaults to purity and announces its mode only on its negative-weight code paths. The logs of the lateral-band unfolds contain the purity code path's signature line and no mode announcement. The option and announcements predate the files, making that absence informative without a version gap. Current production fixes the background treatment in a configuration object that rejects every other mode
-(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}). The standard job script passes the option explicitly from that configuration rather than inheriting the default, and the value is written into the record of every endpoint unfold as it is produced. Stating the previous default explicitly changes the provenance without changing the physics. Its effect is that a future component's background treatment is provable from the component instead of from the absence of an option.
+(Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-pins}). The standard job script passes the option explicitly from that configuration rather than inheriting the default, and the value is written into the record of every endpoint unfold as it is produced. Stating the previous default explicitly changes the provenance without changing the physics. Its effect is that a future component's background treatment is provable from the component instead of from the absence of an option.
 
-\textbf{This is a recorded choice, not a silent default} (App.~\ref{app:provenance}, \texttt{gbdt-closeout} and
+\textbf{This is a recorded choice, not a silent default} (Ref.~\cite{NoteRecords2026}, \texttt{gbdt-closeout} and
 \texttt{oi6-oi8-oi126}). Two grounds carried it. First, mixing background treatments inside one covariance is worse than either consistent choice: inserting a lateral-band block built with negative-weight subtraction into a central and vertical set built with purity subtraction is a mismatch, not an upgrade. Second, switching required rerunning every unfold above and would have invalidated the flux-corrected covariance (corrected for audit finding J28) chosen for use immediately beforehand. That consequence decided the choice; cost did
 not. The
 decision carries an explicit obligation to revisit the background treatment before submission. It is recorded as such, and nothing in this subsection meets that obligation.
 
 \paragraph{What the quoted extended-fiducial number used.}
 The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ in \S\ref{sec:fps}
-was not produced with negative-weight injection (App.~\ref{app:history}).
+was not produced with negative-weight injection (Ref.~\cite{NoteRecords2026}, superseded values).
 It comes from the extended-fiducial ME~FHC battery of 2026-06-10, run before the driver supported negative-weight subtraction. Its ten endpoint unfolds used the driver's purity default and are
-recorded as purity controls, not publication inputs (App.~\ref{app:provenance},
+recorded as purity controls, not publication inputs (Ref.~\cite{NoteRecords2026},
 \texttt{fps-battery}, \texttt{negweight-audit}). No extended-fiducial production with refined negative-weight subtraction has been run. The central value from that battery, recorded in the validation ledger with its passed published-region check against the control, remains
 \SI{\fpsSigma}{cm^2/nucleon}. Negative-weight injection is the intended
 extended-fiducial baseline; it did not produce the quoted number.
 
-\paragraph{The extended-fiducial measurement and its control are designated different background treatments.} The extended-fiducial analysis designates negative-weight injection with Stay-Positive refinement as its background treatment for publication. The code fixes it (App.~\ref{app:provenance}, \texttt{bkg-mode-pins}), and a check stops the run if any endpoint's recorded mode differs or is missing. What the number in
+\paragraph{The extended-fiducial measurement and its control are designated different background treatments.} The extended-fiducial analysis designates negative-weight injection with Stay-Positive refinement as its background treatment for publication. The code fixes it (Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-pins}), and a check stops the run if any endpoint's recorded mode differs or is missing. What the number in
 \S\ref{sec:fps} actually used is the separate matter stated above;
 the standard chain uses purity throughout. We claim an internally consistent background treatment for each side of the measurement and matched-control pair.
 Uniformity across both is not claimed.
@@ -304,7 +306,7 @@ in \S\ref{sec:negweight-uq} tests it at 2D and passes.
 \paragraph{Scope.}
 Measured agreement concerns these 2D systematic and statistical covariances at
 the stated configurations. It is not a theorem that the two background treatments give the same covariance, because the underlying estimands are not
-pointwise identical (App.~\ref{app:history}).
+pointwise identical (Ref.~\cite{NoteRecords2026}, superseded values).
 Covariance equivalence for the continuous estimator or in five dimensions is not established.
 The five-dimensional evidence is limited to the following two-universe spot check.
 
@@ -366,4 +368,4 @@ halves is not the cause.
 % is not adopted: the estimator it feeds failed a stability test on the data (\S\ref{sec:validation})."
 
 \paragraph{Background treatment chosen, its obligation not yet met; covariance choice separate.} Nothing here selects any five-dimensional covariance for use. The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the product used in this note. One five-axis covariance is used in this note under an exception limited to the file with its checksum (\S\ref{sec:eavailw-adopted}). Neither fact follows from or is needed by this appendix. The choice of background treatment and the choice of covariance are independent; the former removes one blocking decision and leaves every other precondition for using a component in place
-(App.~\ref{app:provenance}, \texttt{p4-verifier}).
+(Ref.~\cite{NoteRecords2026}, \texttt{p4-verifier}).

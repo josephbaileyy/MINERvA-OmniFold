@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Build the four audience-tiered PDFs from the shared source: the analysis note, the primer, the
-# paper and (since 2026-10-12) the companion PET note.
+# paper and (since 2026-10-12) the companion PET note; and, since 2026-10-21, the internal records
+# document, which is never posted (item 7 below).
 # Run on a NERSC LOGIN node (pdflatex/biber are not on the compute nodes):
 #     module load texlive/2024
 #     bash build_all.sh
@@ -54,14 +55,26 @@
 # --------------------------------------------------------------------------------------------------------------
 #   5. Before any build, check_body_pointers.py fails the build if the note's BODY (everything main_note.tex inputs
 #      before \appendix) prints an internal-only pointer: a tracker row, repository path, file name, digest or
-#      "known-issues log" pointer. Those belong in the provenance appendix. Its self-test runs first and shows the
-#      patterns fire on a planted body pointer and stay silent on the appendix.
+#      "known-issues log" pointer. Those belong in the records document (item 7), which the body cites by tag. Its
+#      self-test runs first and shows the patterns fire on a planted body pointer and stay silent on the appendix.
 #   6. `bash build_all.sh --export-deposit DIR` additionally writes a comment-free, single-file source tree for
 #      deposit to DIR after every gate above has passed: main_note.tex flattened by `latexpand --empty-comments`
 #      (comment text removed, the line-ending `%` kept, the sources themselves untouched), the two .bib files without
 #      their comment lines, and exactly the figures the note build read (from main_note.fls). The export then proves
 #      itself: no comment text may remain in it, it must build, and its PDF must have the same page count and the
 #      same extracted text as main_note.pdf. Without the flag nothing is exported.
+#
+# THE RECORDS DOCUMENT, ADDED 2026-10-21 (DECISION-20261021-joseph-da-and-note-records.md item 2: the analysis note
+# posted as supplementary material is not a records ledger)
+# ------------------------------------------------------------------------------------------------------------------
+#   7. main_records.tex builds the internal records document: the note's former provenance appendix, its audit trail of
+#      superseded values and withdrawn results, and the record parts of the release and codebase appendices, moved
+#      verbatim. It is never posted and never exported. It is built LAST, after main_note, because its references into
+#      the note resolve through main_note.aux (xr-hyper). It is the one build allowed to strike values; the posted note
+#      is now checked as outward-facing by the containment stage. Every build's log is also read for multiply-defined
+#      labels, which the moved text's labels could otherwise collide into silently: a reference would print the wrong
+#      number with no "??" to show it. That FAILS the build; it does not trigger another latexmk run, because a
+#      duplicate label does not converge.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -89,9 +102,10 @@ fi
 
 module load texlive/2024 2>/dev/null || true
 
-# pet_note is the companion PET note split from main_note on 2026-10-12; it is last so the order of
-# the three original targets, and every failure message that names one, is unchanged.
-targets=(main_note main_primer main_paper pet_note)
+# pet_note is the companion PET note split from main_note on 2026-10-12; it follows the three original
+# targets so their order, and every failure message that names one, is unchanged. main_records (item 7)
+# is last for the same reason, and because it reads main_note.aux.
+targets=(main_note main_primer main_paper pet_note main_records)
 
 # The sources every target genuinely depends on. Deliberately NOT "every .tex in this
 # directory": a note-only body edited after the paper's build would then fail the paper,
@@ -110,7 +124,7 @@ if ! command -v python3 >/dev/null 2>&1; then
   echo "  FAIL python3 not found -- the body-pointer lint cannot run, and an unchecked body must not pass"
   exit 1
 fi
-echo "=== body-pointer lint (internal pointers belong in the provenance appendix) ==="
+echo "=== body-pointer lint (internal pointers belong in the records document) ==="
 python3 check_body_pointers.py --self-test   # fires on a planted body pointer, silent on the appendix
 python3 check_body_pointers.py
 
@@ -123,6 +137,8 @@ sleep 1
 # (4) LaTeX's own unresolved-reference warnings. ERE, matched against the final `${t}.log`.
 unresolved_re='There were undefined (references|citations)|Reference .* undefined|Citation .* undefined'
 max_invocations=2
+# (7) LaTeX's own duplicate-label warnings, read from the same final log.
+multidef_re='There were multiply-defined labels|Label .* multiply defined'
 
 for t in "${targets[@]}"; do
   echo "=== building ${t}.pdf (forced with -g, so \"Nothing to do\" cannot pass for a build) ==="
@@ -172,13 +188,19 @@ for t in "${targets[@]}"; do
     grep -E "$unresolved_re|^LaTeX Warning: (Reference|Citation)" "${t}.log" | head -n 10 | sed 's/^/       /' || true
     exit 1
   fi
+  if grep -Eq "$multidef_re" "${t}.log"; then
+    echo "  FAIL ${t}.pdf has multiply-defined labels: a reference to one of them can print the wrong"
+    echo "       number without any \"??\". First matching lines of ${t}.log:"
+    grep -aE "$multidef_re" "${t}.log" | head -n 10 | sed 's/^/       /' || true
+    exit 1
+  fi
   # Report what was READ, not that a build was attempted: the size and mtime are the evidence.
-  echo "  OK   ${t}.pdf written by this run; no unresolved references in ${t}.log after ${invocation} latexmk invocation(s):"
+  echo "  OK   ${t}.pdf written by this run; no unresolved references and no multiply-defined labels in ${t}.log after ${invocation} latexmk invocation(s):"
   ls -l "${t}.pdf" | sed 's/^/       /'
 done
 
 echo
-echo "=== struck-value containment (retracted values must reach the NOTE build only) ==="
+echo "=== struck-value containment (struck values must reach the records and PET note builds only) ==="
 # Runs AFTER the builds so the PDF stage has PDFs to read -- and, since 2026-08-19, after
 # each PDF has been PROVEN to be this run's output, so a containment PASS is a statement
 # about current source rather than about whatever was on disk.

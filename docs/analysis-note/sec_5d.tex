@@ -202,7 +202,7 @@ validate any interval. Within that scope, the residual is consistent with the
 regularization of the inverse problem at this binning and prior, and the tree
 approximation is not supported as its main cause. The exclusions, definitions
 and numerical verification are in the binned response diagnostic record
-(App.~\ref{app:provenance}, \texttt{response-diagnostic}).
+(Ref.~\cite{NoteRecords2026}, \texttt{response-diagnostic}).
 % CLAIM-ADDITION D-ID END
 
 \paragraph{Higher-capacity background refinement and data stability.}
@@ -550,11 +550,11 @@ does and does not establish, is described in \S\ref{sec:val-departure}
 
 The five-axis covariance used in this note, the variant centered on the central value (\texttt{cv}), has an $(\Eavail,W)$
 projection on \zprojCells\ cells; the file and the projection are identified by
-their SHA-256 checksums in App.~\ref{app:release-identities}. It is used although it
+their SHA-256 checksums in Ref.~\cite{NoteRecords2026}, identities already fixed. It is used although it
 has not passed the acceptance criteria of its specification. The specification
 requires its null bound to be fixed before production; production had already
 taken place, so that requirement cannot be met for this covariance, and the file's own metadata records it as not passing and as not to be used
-(App.~\ref{app:release-audit}).
+(Ref.~\cite{NoteRecords2026}, construction and audit record).
 Its use is limited to this file and its projection; it does not extend to any
 other covariance built to the same specification, including the two companion
 covariances of the measurements below.
@@ -563,8 +563,8 @@ covariances of the measurements below.
 % (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md sec. 3: 3d7465f6... and nothing else, explicitly
 % including the two companion products 361090f9... and 7e4636a3...) and the two metadata fields
 % (scientific_acceptance, adoptable) are stated as their content.
-The earlier direct 42-bin $(\Eavail,W)$ block sum (\S\ref{sec:eavailw-cov})
-is superseded and quoted nowhere in this note (App.~\ref{app:history}).
+The earlier direct 42-bin $(\Eavail,W)$ block sum
+is superseded and quoted nowhere in this note (Ref.~\cite{NoteRecords2026}, superseded values: the earlier direct $(\Eavail,W)$ block sum).
 
 \paragraph{Construction.} The covariance projects the corrected five-axis
 statistical covariance as $M C_{5D}M^{\top}$, without rebuilding it in the
@@ -596,7 +596,7 @@ diagonal; $v^{\mathrm{cv}}_{\mathrm{uni}}$ is the unified-throw covariance
 diagonal \emph{centered on the central value}. A zero denominator pins $g=1$
 by declaration; it does not compute unity. Band groups $V$ (vertical), $R$
 (residual) and $A$ (re-selected lateral) must be disjoint and exhaust the 45 bands
-(implementation in App.~\ref{app:release-audit}).
+(implementation in Ref.~\cite{NoteRecords2026}, construction and audit record).
 Transferring this information onto a sweep block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
 ($\mathbf{G}=\operatorname{diag}g$), was made conditional (2026-07) on documenting the low-rank
@@ -618,7 +618,7 @@ differ by the outer product of measured joint mean shift $\mathbf{ms}$
 \end{equation}
 
 so CV centering retains the mean shift as variance; mean centering removes it.
-Retaining it is deliberate: the variant used is the CV-centered one. The $\sqrt{\Tr C}$ of the mean-centered variant (\texttt{mean}) is \SI{7.13}{\percent} lower. Which variant a file holds must be read and checked in its metadata, never inferred from its path (App.~\ref{app:release-audit}).
+Retaining it is deliberate: the variant used is the CV-centered one. The $\sqrt{\Tr C}$ of the mean-centered variant (\texttt{mean}) is \SI{7.13}{\percent} lower. Which variant a file holds must be read and checked in its metadata, never inferred from its path (Ref.~\cite{NoteRecords2026}, construction and audit record).
 
 \paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is
 $C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ of shape $\zprojCells\times\latBins$
@@ -626,7 +626,7 @@ over kept axes $(\Eavail,W)$. Each entry of $M$ is the product of the dropped ax
 giving a differential density in \si{cm^2/GeV^2/nucleon}. Integrating a
 destination cell requires its own $\Delta\Eavail\,\Delta W$. Rows follow the
 $7\times6$ $(\Eavail,W)$ grid in measured C order. No source cell is dropped;
-the result is exactly symmetric (App.~\ref{app:release-audit}). Support and
+the result is exactly symmetric (Ref.~\cite{NoteRecords2026}, construction and audit record). Support and
 pinned masks and row-index arrays accompany the covariance, byte-identical in the two variants. We pair this covariance with the central values in Fig.~\ref{fig:eavailWexcess} \emph{by checksum identity} rather than numerical agreement. The projected source's central-value array and the figure's share the same bytes. Numerical agreement provides only a corroborating check.
 
 \paragraph{Conditioning, and why no rank is quoted.}
@@ -643,7 +643,7 @@ counts are 26 at relative cutoff $10^{-6}$, 36 at the code default $10^{-12}$,
 41 at \texttt{numpy.linalg.matrix\_rank}'s default $n\epsilon=9.3\times10^{-15}$,
 and 42 without a cutoff. \textbf{A bare ``rank 36'' should not be quoted, and it is not a number of
 degrees of freedom.} An inverse requires declared regularization, which this
-analysis does not supply silently (App.~\ref{app:release-audit}).
+analysis does not supply silently (Ref.~\cite{NoteRecords2026}, construction and audit record).
 
 \paragraph{What the covariance supports.}
 
@@ -706,4 +706,4 @@ covariances at two estimator-seed settings; only item three describes this file.
 
 \noindent The estimator-seed magnitude criterion, specified before production,
 \emph{has not been computed} for this covariance. It was computed only for the two
-companion covariances built for that purpose, and their outcomes are not outcomes for this covariance (App.~\ref{app:provenance}, \texttt{z-cv-record}).
+companion covariances built for that purpose, and their outcomes are not outcomes for this covariance (Ref.~\cite{NoteRecords2026}, \texttt{z-cv-record}).

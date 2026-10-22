@@ -25,7 +25,7 @@ $\mathbf{C}$ and safely above floating-point round-off.
 
 \paragraph{Rank deficiency at $N \le n$.}
 A sample covariance from $N\le n$ replicas in $n$ bins has rank at most $N-1$
-(the superseded 50-replica bootstrap, App.~\ref{app:history}). The 300-replica bootstrap ($N=300 > 205$) is full-rank. Systematic rank
+(the superseded 50-replica bootstrap; Ref.~\cite{NoteRecords2026}, superseded values). The 300-replica bootstrap ($N=300 > 205$) is full-rank. Systematic rank
 limitations persist at any universe count (\S\ref{sec:rank}).
 
 \paragraph{Pseudo-inverse.}
@@ -49,7 +49,7 @@ It calls \texttt{np.linalg.pinv} with no \texttt{rcond} argument,
 so it uses NumPy's documented default cutoff,
 $\tau = \texttt{rcond}\cdot\sigma_{\max}$ with $\texttt{rcond}=10^{-15}$.
 The $n\,\sigma_{\max}\varepsilon_{\text{machine}}$ convention belongs to
-\texttt{np.linalg.lstsq} and MATLAB (App.~\ref{app:history}).
+\texttt{np.linalg.lstsq} and MATLAB (Ref.~\cite{NoteRecords2026}, superseded values).
 Modes below the cutoff receive inverse weight $0$ rather than $\infty$,
 keeping the quadratic form stable for zero or near-zero eigenvalues.
 
@@ -103,7 +103,7 @@ Block sum & Total uncertainty covariance &
 \bottomrule
 \end{tabular}
 \caption{Variance-source procedures for the 2D measurement ($205$ reported bins).
-Code pointers: App.~\ref{app:provenance} (\texttt{variance-sources}).}
+Code pointers: Ref.~\cite{NoteRecords2026} (\texttt{variance-sources}).}
 \label{tab:variance-sources}
 \end{table}
 
@@ -124,7 +124,7 @@ a sample covariance of rank $4$ that includes the bootstrap\,$\times$\,seed
 interaction at its $1/20$ share. Its total-$\sigma$ relative spread is
 $\boxed{0.0025\%}$, the per-bin median relative spread $\boxed{0.057\%}$,
 and $\sqrt{\Tr\mathbf{C}^{\ML}} = 1.989\times10^{-41}$. The ten-seed scan it
-replaces is recorded in App.~\ref{app:history-vl175}.
+replaces is recorded in Ref.~\cite{NoteRecords2026}, superseded values: retired material.
 % C08: stageC/production/DESIGN.md §S5 (c08 row: ddof 1 over the 5 seed triplets of the per-triplet mean of the
 % 20 bootstrap replicas; includes the interaction's 1/20 share) and §3.4 S4(i) (seed-42 column = S1 replicas 1-20).
 % rebuild/outputs/outA/budget_Q.json.gz c08.{integral_sigma_pct 0.00246, median_pct 0.0572, sqrt_trace 1.989e-41},
@@ -157,7 +157,7 @@ The quoted $N=300$ block varies only the bootstrap seed, carrying no
 training-seed variation
 % (flags \texttt{-{}-seed 42} pinned, \texttt{-{}-bootstrap-seed} varied, \texttt{-{}-bootstrap-streams three};
 % stageC/production/DESIGN.md §3.4, S1)
-(App.~\ref{app:history}).
+(Ref.~\cite{NoteRecords2026}, superseded values).
 
 For these replicas (205 bins, ME~FHC LightGBM, seed~42) the total-$\sigma$
 relative std is $\boxed{0.061\%}$, the per-bin median relative spread
@@ -189,7 +189,7 @@ $\mathcal{O}(1/\sqrt{N})$, far smaller than the per-bin Poisson variance.
 \subsubsection{Universes}
 \label{sec:universes}
 The July model sweep used by the quoted budget has 187 universes across 44 bands, dominated by the
-$100$-universe PPFX flux band (hadron-production sampling); the quoted band sum drops Rvp1pi (App.~\ref{app:provenance}, \texttt{rvp1pi}) and holds $43$ bands plus the normalization. Almost all other
+$100$-universe PPFX flux band (hadron-production sampling); the quoted band sum drops Rvp1pi (Ref.~\cite{NoteRecords2026}, \texttt{rvp1pi}) and holds $43$ bands plus the normalization. Almost all other
 bands are $\pm1\sigma$ pairs ($N_{u}=2$), including
 \texttt{Muon\_Energy\_MINOS} and lateral \texttt{Muon\_Energy\_MINERvA}
 (muon energy scale), \texttt{MinosEfficiency} (MINOS muon-match efficiency),
@@ -281,7 +281,7 @@ the lateral bands from re-unfolds of re-selected universes and Rvp1pi dropped): 
 relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins. Flux carries
 MAT's $\nu$--$e$ and inverse-muon-decay constraint weights and
 Muon\_Energy\_MINOS is divided by its own flux (earlier values in
-App.~\ref{app:history}).}
+Ref.~\cite{NoteRecords2026}, superseded values).}
 \label{tab:band-medians}
 \end{table}
 % Table tab:band-medians (Q, 2026-10-18): rebuild/outputs/outA/budget_Q.json.gz bands.<band>.median_pct and
@@ -289,9 +289,7 @@ App.~\ref{app:history}).}
 Grouped by category as in the Fig.~6/7 producer and the published grouping, the
 medians are: Muon reconstruction $3.455\%$, Models $1.581\%$, Flux
 $3.747\%$, Hadronic response $0.799\%$, Statistical $0.684\%$, Normalization
-$1.400\%$, Training seed $0.057\%$, Run period $2.137\%$. An earlier version of this sentence used a legacy grouping, with the
-flat $1.4\%$ band under Models and the GENIE normalization bands under
-Normalization (App.~\ref{app:history}).
+$1.400\%$, Training seed $0.057\%$, Run period $2.137\%$ (Ref.~\cite{NoteRecords2026}, superseded values: struck values).
 % 2026-10-18: rebuild/outputs/outA/budget_Q.json.gz groups.median_pct (grouping plot_uncertainty_fig6_7_style
 % .category_for_band; 'Training seed' = C08, 'Run period' = C_PL, labels kept, J3/J4 provisional (DECISION-20261018, packet W10)). The VL175
 % sentence on the muon-reconstruction median moved to App. history-vl175.
@@ -389,7 +387,7 @@ matching to seven digits. That check filled the \texttt{MnvH1D} without MAT's
 per-universe weights (\texttt{SetUnivWgts}), so both sides were unweighted, and
 it ran on the sweep before the flux fix: it could not detect that the Flux band
 omitted MAT's $\nu$--$e$ and inverse-muon-decay constraint weights
-(App.~\ref{app:history-errata}). The quoted Flux band now uses them. The quoted
+(Ref.~\cite{NoteRecords2026}, superseded values: struck values). The quoted Flux band now uses them. The quoted
 universe block, filled into an \texttt{MnvH1D} with MAT's universe weights on Flux,
 agrees with \texttt{GetTotalErrorMatrix} to $3.4\times10^{-16}$ of its largest element.
 % rebuild/outputs/outA/budget_Q.json.gz s5_copied.mat_agreement (s5.json mat_universe_block_le_1e-12, 3.43e-16;
@@ -485,7 +483,7 @@ rather than a combination of the printed medians.
 Tables~\ref{tab:band-medians} and~\ref{tab:combine} give the blocks of the quoted 2D covariance (\S\ref{sec:systematics}).
 % J3/J4 provisional (DECISION-20261018, packet W3: D0).
 Their pre-flux-fix predecessors and
-associated inference are retracted (App.~\ref{app:history}).
+associated inference are retracted (Ref.~\cite{NoteRecords2026}, superseded values).
 
 \subsection{Comparing to the paper}
 \label{sec:compare}
@@ -512,7 +510,7 @@ $\theta_{\mu}<20^{\circ}$ kinematic cut. The
 % removed; no Q receipt and no committed VL175 receipt (c04-repair/chi2/repaired_std.txt prints mean/rms only)
 % gives a maximum combined pull. J3/J4 provisional (DECISION-20261018, packet W3: D2).
 $185$-bin check tests whether the main tension comes from the boundary
-(mask origin: App.~\ref{app:history}).
+(mask origin: Ref.~\cite{NoteRecords2026}, superseded values).
 % Source: pre-freeze 2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:50-59 (Phase 4, unreported bins), :716-726.
 The canonical metric throughout uses the 205-bin set.
 
@@ -601,7 +599,7 @@ and spread of order $\sqrt{2/\mathrm{ndf}}$, about $0.10$ for
 $\mathrm{ndf}=205$. One realization near $1$ is not evidence of correct
 uncertainties, and the quoted $\chiCombined$ is such a realization; the
 exact-split cross-check's $1.47$, against an earlier covariance built before the flux-band repair, alone is not evidence against them
-(App.~\ref{app:history}).
+(Ref.~\cite{NoteRecords2026}, superseded values).
 
 \emph{(iii) The coverage question is untouched by it.} The only 2D coverage test,
 the fixed-truth test of \S\ref{sec:coverage}, covers an earlier statistical band alone and finds it
@@ -674,10 +672,12 @@ For each of the $205$ reported bins,
 summarized by mean, RMS, a $14\times16$ heatmap and histogram.
 % (\texttt{compare\_to\_paper\_fullcov.py})
 The combined covariance (paper TotalCov $+$ the quoted 2D covariance of \S\ref{sec:systematics}) gives mean $\boxed{0.042}$, centered on zero with no
-global offset, and RMS $\boxed{0.398}$ (the earlier construction of App.~\ref{app:history-vl175}: $0.048$ and $0.406$; before the flux-constraint repair $0.041$
-and $0.386$; exact-split cross-check $0.051$ and $0.405$, App.~\ref{app:history}).
+global offset, and RMS $\boxed{0.398}$. For the exact-split cross-check, on the earlier covariance built before the
+flux-band repair, they are $0.051$ and $0.405$.
 % rebuild/outputs/chi2/chi2_Q_std.txt "pull mean / rms : 0.042 / 0.398" (the "rms" is the SD about the mean;
-% rebuild REPORT §4). J3/J4 provisional (DECISION-20261018, packet W5: the note keeps the history clause).
+% rebuild REPORT §4). J3/J4 provisional (DECISION-20261018, packet W5: the note kept the history clause; on 2026-10-21
+% it left the posted note under DECISION-20261021-joseph-da-and-note-records item 2, director ruling Q4; the current
+% exact-split pair was restored on review F1, because Q4 covers superseded values only).
 RMS $< 1$ is descriptive and does not establish conservatism: the summed
 covariance is wrong by an unknown amount (Eq.~\eqref{eq:diffcov}).
 % PHASE2 Q3: "No reported bin has |pull| > 3" removed; the Q receipts give no maximum.
@@ -786,14 +786,14 @@ between the unbinned reweighting and the published binned D'Agostini unfold, a
 difference in what the paper's \texttt{StatOnlyCov} encompasses, or a
 regularization effect in our own estimator that suppresses dispersion without
 improving information. The split-bootstrap test of the earlier rebuilt bootstrap
-(App.~\ref{app:history-vl175}) separated the first two
+(Ref.~\cite{NoteRecords2026}, superseded values: retired material) separated the first two
 from an MC-statistics omission; \textbf{it did not separate them from the
 third}, and it has not been repeated for the quoted statistical block.
 
 \paragraph{Resolution (data/MC split bootstrap).}
 The data/MC split bootstrap was run on the earlier rebuilt bootstrap; its closure, its
 data-only stream and the structure comparison, with what they do and do not license, are
-recorded in App.~\ref{app:history-vl175}. For the quoted statistical block,
+recorded in Ref.~\cite{NoteRecords2026}, superseded values: retired material. For the quoted statistical block,
 $\sqrt{\Tr\mathbf{C}^{\boot}}/\sqrt{\Tr\,\texttt{StatOnly}}=0.428$ and the per-bin median
 ratio of the two $\sigma$ is $0.435$. The fixed-truth test of \S\ref{sec:coverage} measured an
 earlier band against the estimator's own scatter; its truth equals the prior, so it cannot see
@@ -807,7 +807,7 @@ An ours-only $\chi^{2}$ must use our own $\mathbf{C}^{\ours}$.
 Its inverse remains regularizer-dependent, so pulls and the scan lead the
 reporting. The ours-only goodness-of-fit uses truncated-spectral $\chi^{2}$
 (retain $\lambda>10^{-10}\lambda_{\max}$), the historical 3D generator-scan
-convention over all $1431$ reported bins (App.~\ref{app:history-superseded}).
+convention over all $1431$ reported bins (Ref.~\cite{NoteRecords2026}, superseded values: superseded uncertainty constructions).
 
 \paragraph{Regularization scans (historical; all cutoff-dependent).}
 On an earlier $\mathbf{C}^{\ours}$ (not recomputed for the quoted covariance) over the $205$ reported bins, for the exact-split
@@ -875,7 +875,7 @@ reference has been identified.
 The combined $\chi^{2}/\mathrm{ndf}=\chiCombined$ is a descriptive distance,
 not a quoted result or validation statistic. Equation~\eqref{eq:diffcov}
 and its three limits govern every use. The per-band sum is MAT-conformant,
-with the Flux band weighted as MAT weights it (App.~\ref{app:history-errata}; the
+with the Flux band weighted as MAT weights it (Ref.~\cite{NoteRecords2026}, superseded values: struck values; the
 byte-for-byte check of \S\ref{sec:minerva} covers the unweighted bands), with $1.4\%$ normalization
 as a rank-1 band. Ours-only truncated-spectral $\chi^{2}$ uses
 $\mathbf{C}^{\mathrm{ours}}$ (for the quoted covariance, rank $197$ above $10^{-10}\lambda_{\max}$; the disclosed scan is of an earlier
@@ -966,7 +966,7 @@ the largest bands and only named cross-band correlation (Bashyal,
 freedom to absorb a coherent $\sim1$--$2\%$ shape difference, so a small
 OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.%
 \footnote{The pipeline uses one global $\mathrm{POT}_{\mathrm{data}}/\mathrm{POT}_{\mathrm{MC}}$
-ratio (App.~\ref{app:provenance}, \texttt{pot-ratio}); per-playlist ratios span
+ratio (Ref.~\cite{NoteRecords2026}, \texttt{pot-ratio}); per-playlist ratios span
 $0.1707$--$0.2371$. Sensitivity at $1$--$2\%$ motivated a direct mixture check:
 $R_{\mathrm{glob}}\sum_p \mathrm{MC}_p$ versus $\sum_p R_p\,\mathrm{MC}_p$
 over twelve playlists changes reco shape by at most $0.07\%$ in $\pT$,
@@ -1032,7 +1032,7 @@ $0.166\%$ ML floor of the ten-seed scan in force when the tests were graded.
 % PHASE2 Q6: the floor in force at grading; the quoted training-seed block is C08 (0.057 %).
 All use playlist-1A LightGBM 5-iteration unfolds. Thresholds and results
 are in \S\ref{sec:validation}; procedures and otherwise unreported values
-follow (scripts: App.~\ref{app:provenance}, \texttt{closure-scripts}).
+follow (scripts: Ref.~\cite{NoteRecords2026}, \texttt{closure-scripts}).
 
 \subsubsection{Truth-reweight closure}
 \label{sec:closure-tr}
@@ -1073,7 +1073,7 @@ $\kappa_{\text{leak}} = \boxed{0.113}$: about $11\%$ of a hidden $\dpT$ bias
 leaks into the measured $(\pT,\pPar)$ marginal. \textbf{Against the $3.0\%$
 acceptance bound, two of the three arms pass and the largest does not:}
 $A=0.30$ gives $3.43\%$, which \emph{exceeds} $3.0\%$, as \S\ref{sec:validation}
-records (App.~\ref{app:history}). What the scan establishes is the linearity and the coefficient: the
+records (Ref.~\cite{NoteRecords2026}, superseded values). What the scan establishes is the linearity and the coefficient: the
 acceptance bound is satisfied for hidden-$\dpT$ deformations up to roughly
 $A\simeq0.26$ and is violated above it. No non-closure uncertainty is assigned
 from this scan either way (\S\ref{sec:validation}); a $\dpT$-shaped mismodeling
