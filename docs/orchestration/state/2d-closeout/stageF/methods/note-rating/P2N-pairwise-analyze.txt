@@ -1,0 +1,29 @@
+piece model      AB(A=bef)   BA(A=aft)  agree  slots  score
+N01   sol2         after/2     after/2  yes    BA     +4
+N02   sol2         after/2     after/2  yes    BA     +4
+N03   sol2         after/2     after/2  yes    BA     +4
+N04   sol2         after/2     after/2  yes    BA     +4
+N05   sol2         after/2     after/2  yes    BA     +4
+N06   sol2         after/2     after/2  yes    BA     +4
+N07   sol2         after/2     after/2  yes    BA     +4
+N08   sol2         after/2     after/2  yes    BA     +4
+N09   sol2         after/1     after/1  yes    BA     +2
+N10   sol2         after/2     after/2  yes    BA     +4
+N11   sol2         after/2     after/2  yes    BA     +4
+N12   sol2         after/2     after/2  yes    BA     +4
+N01   gemini       after/2     after/2  yes    BA     +4
+N02   gemini       after/2     after/2  yes    BA     +4
+N03   gemini       after/3     after/3  yes    BA     +6
+N04   gemini       after/3     after/3  yes    BA     +6
+N05   gemini       after/2     after/2  yes    BA     +4
+N06   gemini       after/2     after/2  yes    BA     +4
+N07   gemini       after/2     after/2  yes    BA     +4
+N08   gemini       after/3     after/3  yes    BA     +6
+N09   gemini       after/2     after/2  yes    BA     +4
+N10   gemini       after/3     after/2  yes    BA     +5
+N11   gemini       after/3     after/3  yes    BA     +6
+N12   gemini       after/2     after/3  yes    BA     +5
+
+sol2 {"runs": 24, "after_wins_runs": 24, "pieces": 12, "agree_pieces": 12, "agree_after": 12, "agree_before": 0, "flip_pieces": 0, "flip_pieces_slotA_both": 0, "flip_pieces_slotB_both": 0, "slot_A_wins_runs": 12, "sign_test_runs_p": 1.1920928955078125e-07, "sign_test_agree_pieces_p": 0.00048828125, "sign_test_position_p": 1.0, "score_pos": 12, "score_neg": 0, "score_tie": 0, "sign_test_score_p": 0.00048828125}
+gemini {"runs": 24, "after_wins_runs": 24, "pieces": 12, "agree_pieces": 12, "agree_after": 12, "agree_before": 0, "flip_pieces": 0, "flip_pieces_slotA_both": 0, "flip_pieces_slotB_both": 0, "slot_A_wins_runs": 12, "sign_test_runs_p": 1.1920928955078125e-07, "sign_test_agree_pieces_p": 0.00048828125, "sign_test_position_p": 1.0, "score_pos": 12, "score_neg": 0, "score_tie": 0, "sign_test_score_p": 0.00048828125}
+both {"runs": 48, "after_wins_runs": 48, "pieces": 24, "agree_pieces": 24, "agree_after": 24, "agree_before": 0, "flip_pieces": 0, "flip_pieces_slotA_both": 0, "flip_pieces_slotB_both": 0, "slot_A_wins_runs": 24, "sign_test_runs_p": 3.481659405224491e-13, "sign_test_agree_pieces_p": 1.1920928955078125e-07, "sign_test_position_p": 1.0, "score_pos": 24, "score_neg": 0, "score_tie": 0, "sign_test_score_p": 1.1920928955078125e-07}
