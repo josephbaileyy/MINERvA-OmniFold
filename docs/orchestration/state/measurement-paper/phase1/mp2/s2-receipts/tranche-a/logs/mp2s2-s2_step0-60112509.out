@@ -1,0 +1,6 @@
+host nid004624 start 2026-10-22T16:08:23Z code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7 steps 4 x 115852M of 487802M (SLURM_MEM_PER_NODE='')
+step 1 begin 16:08:23.546468844
+step 0 begin 16:08:23.570131308
+step 3 begin 16:08:23.574353949
+step 2 begin 16:08:23.576038302
+end 2026-10-22T16:09:23Z

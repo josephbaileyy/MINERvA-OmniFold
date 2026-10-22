@@ -378,3 +378,56 @@ for NuWro. In F_primary, GENIE CV and MEC are close to the GENIE-based Tune. Thi
 
 - **Total:** charged 1.204 plus about 1.26 projected, about 2.47. That is within tranche A's 3.5.
 - **Order:** step 1 runs only after step 0 passes, and step 2 only after the R12 ruling.
+
+### Steps 0 and 1 (director-approved), and code-v7
+
+- **Step 0, attempt 1 (60112440, debug, 4 s):** the test ran code-v6's memory expression and stopped at its own
+  guard. Perlmutter leaves `SLURM_MEM_PER_NODE` unset when sbatch gives no `--mem`. code-v6 therefore could not
+  run any `models` stage. It was never used for production.
+- **code-v7:** the memory reader moves into a sourced file, `mp2_s2_slurm_mem.sh` (8be83253).
+  - It returns `SLURM_MEM_PER_NODE` when that is set, and otherwise the `mem=` of the job's `AllocTRES` from
+    `scontrol show job`, in MiB.
+  - It exits 4 on a value it cannot parse.
+  - Under bash, with a mocked scontrol, it reads 487802M → 487802, 476.36G → 487792 and 1T → 1048576, and returns
+    exit 4 for `bogus` and for an empty value.
+  - `mp2_s2_job.sh` (e84c9da4) sources it. The other 14 files are byte-identical to code-v6, and so to code-v5
+    (`s2-receipts/code-v7.sha256`).
+  - Snapshot: `/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v7`, with the directory at 0555 and the
+    files at 0440.
+- **Step 0, attempt 2 (60112509, debug, 68 s): PASS.**
+  - `mp2_s2_step0_concurrency.sh` (08ce14e2) sources the same reader from `$CODE`.
+  - With `SLURM_MEM_PER_NODE` empty, it read 487802M from AllocTRES.
+  - Its four `srun --exact -c 64 --mem=115852M` steps all started at 09:08:23 by sacct, within 30 ms in the log.
+  - Receipts: `s2-receipts/tranche-a/logs/`.
+- **Step 1 (60112561):** nuwro_ch `modgates`, F_primary, on code-v7, with the single task group `4:1:2`. Regular
+  QOS, limit 40 min, cancelled by the watcher past 26 min.
+  - COMPLETED 0:0 in 475 s (0.13194 CPU node-h), under the stop rule.
+  - The log shows one model step of 463411M (95% of 487802M).
+  - The model, k4h1f2, reached best iteration 2959 in 285 s at 128 threads. The gates then ran on all 50 models
+    (`s2-receipts/tranche-a/`).
+
+### NuWro F_primary: V1 and V4 fail (reported normally, addendum 13)
+
+| gate | result | bar | verdict |
+|---|---|---|---|
+| V1 (R10 sample) | AUC 0.55325, G-vs-G control 0.50244 | AUC ≤ control + 0.005 | **fail** |
+| V4, replicas 0–4 | ESS/N 0.0255–0.0557; max w_G/mean 12,274–25,923; share of rows above 50× the mean 1.21e-4–1.32e-4 | ESS/N ≥ 0.3 and max w_G/mean ≤ 50 | **fail on all five** |
+
+- **V1 detail:** the V1 fit stopped at best iteration 30, and its control was fitted at 30. `at_frozen_capacity` is
+  false.
+- **V1 pooled (descriptive):** AUC 0.56640, against control 0.50040.
+- **c:** 1.1378–1.1418.
+- **R6:** s varies across replicas by ≤ 1.7e-15 relative. The identity's net ratio is 1 + 2.7e-10. g0 is 1.6e-3.
+- **R9:** as for GENIE (18 rows, 6.9e-7). **R13:** 0 NuWro events on tgt 0.
+- **S2 for NuWro on F_primary fails whatever V2/V3 show.** V1 and V4 both fail, and S2 needs every gate. The V2/V3
+  statistics are sealed (`c07d4adf…`) and unread. They are released with the others under addendum 14, by the same
+  script.
+- **Next, under the contract's order (JSON `order`):** "on failure, F_fallback (once, before S3); failure again ->
+  'not established' for that G, A7's hybrid result stands". Addendum 13 releases tranche B (≤ 2.3) "only after a
+  reported F_primary failure for that G". This is that report.
+  - **Not submitted:** NuWro F_fallback `modgates`, the same 50 tasks in 4 concurrent streams on a snapshot carrying
+    code-v7's launcher.
+  - **Projection:** 13 waves × about 150 s, plus about 3 min of load and ≤ 15 min of gates, is about 52 min. That is
+    about 0.87 CPU node-h, with a stop at 65 min.
+- **Context, descriptive only:** S0 had already seen V4 fail by a wide margin for NuWro C12 against Tune with full
+  features (JSON `F_fallback` note). The fallback was declared for that reason, on response grounds.

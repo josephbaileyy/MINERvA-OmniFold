@@ -51,8 +51,10 @@ if [ "$STAGE" = models ] || [ "$STAGE" = gates ] || [ "$STAGE" = modgates ]; the
   C=$((256 / NG)); TH=$((C / 2))
   # Per-step memory from the job's own allocation (MiB), 95% split NG ways. A fixed 480G/NG over-asked the
   # 487802M allocation, so the last step waited for another to finish (code-v5: 60102387, 60107470-2).
-  MSTEP=$(( ${SLURM_MEM_PER_NODE:?no SLURM_MEM_PER_NODE} * 95 / 100 / NG ))
-  echo "model steps $NG x ${MSTEP}M of ${SLURM_MEM_PER_NODE}M"
+  source "$CODE/mp2_s2_slurm_mem.sh"
+  MEMN=$(alloc_mem_mib) || { echo "STOP: no job memory allocation"; exit 4; }
+  MSTEP=$(( MEMN * 95 / 100 / NG ))
+  echo "model steps $NG x ${MSTEP}M of ${MEMN}M"
   pids=()
   for g in "${GROUPS_[@]}"; do
     srun -n 1 -c $C --exact --mem=${MSTEP}M python3 "$CODE/mp2_s2_fit.py" models --gen "$GEN" --fset "$FSET" \
