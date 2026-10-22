@@ -1,0 +1,2 @@
+# stat of the GiBUU F_primary seal before the release; recorded 2026-10-22T19:00:33Z on login40; contents not read
+sealed_v2v3_gibuu_ch_primary.json size=35623 mode=400 atime=2026-10-22 11:05:24.000000000 -0700 mtime=2026-10-22 11:05:24.000000000 -0700 ctime=2026-10-22 11:05:24.000000000 -0700 atime_s=1792692324 inode=882727009283735611

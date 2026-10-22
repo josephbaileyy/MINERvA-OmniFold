@@ -1,0 +1,197 @@
+host nid005588 start 2026-10-22T17:28:48Z stage modgates
+code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/gen5d_flux_supplement.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s1_dump.py
+abc80109503f9f77e6cc49a925089c3b0b25c063f4c253599e0bfe458990bb0c  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_charm.py
+d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_dump.py
+91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_fit.py
+01168131c570d5c00f80d45ae29a0d0dc24060030dfed5b9bc0d0051f62fd65e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_harmonize.py
+6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3b_build.py
+47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_build.py
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_card.py
+41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_probe.py
+371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp5_genie.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/s5p_stage1_inspect.py
+40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/s5p_truths.py
+98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/feature_contract_draft.json
+0ba34f5ce11f66a786f48171c04022a5ac45e71d631706907b2027117e92d841  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_job.sh
+8be8325374f7a4b65664202af815a1fa806a6fabe4f24da6914f120393031231  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_slurm_mem.sh
+harm search order: /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b
+model steps 4 x 115852M of 487802M
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 1, "best_iteration": 2989, "valid_logloss": 0.5444104695711268, "fit_s": 120.78, "predict_s": 22.39, "n_train": [3600247, 1138408], "n_pred": 2992693, "wall_s": 155.87}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 3, "best_iteration": 2998, "valid_logloss": 0.5350067974322329, "fit_s": 122.15, "predict_s": 22.4, "n_train": [3599451, 1138844], "n_pred": 2989630, "wall_s": 157.28}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 2, "best_iteration": 2977, "valid_logloss": 0.5413139158329026, "fit_s": 123.79, "predict_s": 22.02, "n_train": [3599140, 1137214], "n_pred": 2988411, "wall_s": 158.5}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 0, "best_iteration": 2989, "valid_logloss": 0.538485573970637, "fit_s": 123.36, "predict_s": 22.8, "n_train": [3599101, 1136870], "n_pred": 2989831, "wall_s": 158.87}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 1, "f": 0, "best_iteration": 2989, "valid_logloss": 0.5408943615232766, "fit_s": 134.0, "predict_s": 22.61, "n_train": [3600515, 1136876], "n_pred": 2993009, "wall_s": 158.45}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 1, "f": 1, "best_iteration": 3000, "valid_logloss": 0.5399420237741841, "fit_s": 135.81, "predict_s": 21.45, "n_train": [3600135, 1137964], "n_pred": 2991364, "wall_s": 159.08}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 0, "f": 4, "best_iteration": 2999, "valid_logloss": 0.5399400173348426, "fit_s": 134.42, "predict_s": 22.5, "n_train": [3600189, 1137146], "n_pred": 2991432, "wall_s": 158.99}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 1, "f": 2, "best_iteration": 3000, "valid_logloss": 0.5391949628736029, "fit_s": 146.31, "predict_s": 21.54, "n_train": [3600226, 1136454], "n_pred": 2993108, "wall_s": 169.58}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 1, "f": 3, "best_iteration": 3000, "valid_logloss": 0.5446162852186249, "fit_s": 126.22, "predict_s": 22.25, "n_train": [3599199, 1138325], "n_pred": 2990304, "wall_s": 150.24}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 0, "h": 1, "f": 4, "best_iteration": 2993, "valid_logloss": 0.5502570789554523, "fit_s": 134.07, "predict_s": 21.95, "n_train": [3600383, 1137557], "n_pred": 2991125, "wall_s": 157.85}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 0, "f": 0, "best_iteration": 2977, "valid_logloss": 0.5476824377517087, "fit_s": 135.5, "predict_s": 20.69, "n_train": [3600463, 1137782], "n_pred": 2990124, "wall_s": 158.04}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 0, "f": 1, "best_iteration": 2998, "valid_logloss": 0.5457399554712948, "fit_s": 138.17, "predict_s": 21.14, "n_train": [3599480, 1138412], "n_pred": 2990085, "wall_s": 161.14}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 0, "f": 3, "best_iteration": 2991, "valid_logloss": 0.5425239153160175, "fit_s": 121.35, "predict_s": 22.57, "n_train": [3598932, 1137979], "n_pred": 2989409, "wall_s": 145.75}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 0, "f": 2, "best_iteration": 2995, "valid_logloss": 0.5443275401402046, "fit_s": 128.99, "predict_s": 22.39, "n_train": [3598922, 1136955], "n_pred": 2991286, "wall_s": 153.25}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 0, "f": 4, "best_iteration": 3000, "valid_logloss": 0.5388479978815159, "fit_s": 133.44, "predict_s": 20.5, "n_train": [3600882, 1136680], "n_pred": 2991093, "wall_s": 155.75}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 1, "f": 0, "best_iteration": 2988, "valid_logloss": 0.5450874400983888, "fit_s": 136.46, "predict_s": 20.67, "n_train": [3599580, 1138245], "n_pred": 2992314, "wall_s": 158.87}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 1, "f": 2, "best_iteration": 2959, "valid_logloss": 0.5288158842267604, "fit_s": 127.89, "predict_s": 22.65, "n_train": [3600438, 1137495], "n_pred": 2990407, "wall_s": 152.41}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 1, "f": 1, "best_iteration": 2997, "valid_logloss": 0.5477104588469572, "fit_s": 128.55, "predict_s": 22.75, "n_train": [3599697, 1138620], "n_pred": 2992680, "wall_s": 153.11}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 1, "f": 3, "best_iteration": 2989, "valid_logloss": 0.5385112540865921, "fit_s": 137.5, "predict_s": 21.1, "n_train": [3599993, 1137729], "n_pred": 2991873, "wall_s": 160.46}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 1, "h": 1, "f": 4, "best_iteration": 2996, "valid_logloss": 0.5386262175327734, "fit_s": 135.56, "predict_s": 21.73, "n_train": [3599754, 1137741], "n_pred": 2991636, "wall_s": 159.01}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 0, "f": 1, "best_iteration": 2983, "valid_logloss": 0.5368995621006953, "fit_s": 131.89, "predict_s": 24.7, "n_train": [3600166, 1138375], "n_pred": 2992897, "wall_s": 158.42}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 0, "f": 0, "best_iteration": 2996, "valid_logloss": 0.5488649614007982, "fit_s": 131.18, "predict_s": 22.85, "n_train": [3600183, 1138377], "n_pred": 2989794, "wall_s": 155.78}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 0, "f": 2, "best_iteration": 2998, "valid_logloss": 0.5453406287621995, "fit_s": 139.8, "predict_s": 21.67, "n_train": [3600940, 1137089], "n_pred": 2989585, "wall_s": 163.27}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 0, "f": 3, "best_iteration": 3000, "valid_logloss": 0.5458097338197152, "fit_s": 137.33, "predict_s": 21.64, "n_train": [3600888, 1138167], "n_pred": 2989715, "wall_s": 160.72}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 0, "f": 4, "best_iteration": 2933, "valid_logloss": 0.5383408113533049, "fit_s": 128.38, "predict_s": 23.47, "n_train": [3600018, 1136984], "n_pred": 2990006, "wall_s": 153.57}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 1, "f": 0, "best_iteration": 2992, "valid_logloss": 0.5360570637871971, "fit_s": 130.34, "predict_s": 23.48, "n_train": [3599413, 1137863], "n_pred": 2992546, "wall_s": 155.64}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 1, "f": 1, "best_iteration": 2966, "valid_logloss": 0.535447301934719, "fit_s": 132.11, "predict_s": 21.07, "n_train": [3599807, 1137819], "n_pred": 2990133, "wall_s": 154.95}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 1, "f": 2, "best_iteration": 2617, "valid_logloss": 0.5486398730646287, "fit_s": 133.48, "predict_s": 19.62, "n_train": [3599976, 1137390], "n_pred": 2991282, "wall_s": 155.18}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 1, "f": 4, "best_iteration": 3000, "valid_logloss": 0.5319777009521783, "fit_s": 132.91, "predict_s": 23.31, "n_train": [3600238, 1136972], "n_pred": 2992700, "wall_s": 157.93}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 2, "h": 1, "f": 3, "best_iteration": 2991, "valid_logloss": 0.5368373236760173, "fit_s": 133.74, "predict_s": 23.53, "n_train": [3599777, 1137882], "n_pred": 2992249, "wall_s": 158.95}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 0, "f": 0, "best_iteration": 3000, "valid_logloss": 0.5394586619809418, "fit_s": 129.0, "predict_s": 21.02, "n_train": [3599670, 1137854], "n_pred": 2992336, "wall_s": 151.79}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 0, "f": 1, "best_iteration": 2994, "valid_logloss": 0.539640854304992, "fit_s": 136.7, "predict_s": 21.12, "n_train": [3600053, 1138250], "n_pred": 2988804, "wall_s": 159.59}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 0, "f": 2, "best_iteration": 2996, "valid_logloss": 0.5565928025865754, "fit_s": 127.32, "predict_s": 23.48, "n_train": [3599634, 1137290], "n_pred": 2989778, "wall_s": 152.46}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 0, "f": 3, "best_iteration": 2999, "valid_logloss": 0.5537386299655528, "fit_s": 129.99, "predict_s": 24.29, "n_train": [3599747, 1137943], "n_pred": 2991139, "wall_s": 155.99}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 0, "f": 4, "best_iteration": 3000, "valid_logloss": 0.5357645536978807, "fit_s": 135.56, "predict_s": 21.32, "n_train": [3599428, 1136840], "n_pred": 2989940, "wall_s": 158.64}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 1, "f": 0, "best_iteration": 2993, "valid_logloss": 0.5480013191342392, "fit_s": 133.01, "predict_s": 20.98, "n_train": [3600230, 1137756], "n_pred": 2991422, "wall_s": 155.71}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 1, "f": 1, "best_iteration": 2978, "valid_logloss": 0.5486185426210087, "fit_s": 133.94, "predict_s": 22.98, "n_train": [3600374, 1137478], "n_pred": 2993059, "wall_s": 158.66}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 1, "f": 2, "best_iteration": 2929, "valid_logloss": 0.5516513800673067, "fit_s": 135.37, "predict_s": 22.32, "n_train": [3599790, 1137740], "n_pred": 2991385, "wall_s": 159.48}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 1, "f": 3, "best_iteration": 2993, "valid_logloss": 0.5392717873984476, "fit_s": 135.64, "predict_s": 21.59, "n_train": [3600904, 1137370], "n_pred": 2990875, "wall_s": 158.95}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 3, "h": 1, "f": 4, "best_iteration": 2995, "valid_logloss": 0.54854085657115, "fit_s": 134.82, "predict_s": 21.72, "n_train": [3600244, 1136275], "n_pred": 2992169, "wall_s": 158.23}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 0, "f": 1, "best_iteration": 3000, "valid_logloss": 0.5469481318855312, "fit_s": 129.65, "predict_s": 23.94, "n_train": [3600956, 1138144], "n_pred": 2989908, "wall_s": 155.43}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 0, "f": 0, "best_iteration": 2984, "valid_logloss": 0.5370804913945055, "fit_s": 135.24, "predict_s": 23.55, "n_train": [3599481, 1137842], "n_pred": 2990372, "wall_s": 160.56}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 0, "f": 2, "best_iteration": 3000, "valid_logloss": 0.5501476500000526, "fit_s": 135.18, "predict_s": 21.53, "n_train": [3600156, 1137716], "n_pred": 2989199, "wall_s": 158.45}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 0, "f": 3, "best_iteration": 2919, "valid_logloss": 0.542756640469866, "fit_s": 135.45, "predict_s": 21.15, "n_train": [3600270, 1137588], "n_pred": 2992822, "wall_s": 158.29}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 0, "f": 4, "best_iteration": 2993, "valid_logloss": 0.537540837487261, "fit_s": 133.55, "predict_s": 23.63, "n_train": [3600967, 1137478], "n_pred": 2989696, "wall_s": 158.88}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 1, "f": 0, "best_iteration": 2981, "valid_logloss": 0.545772207447168, "fit_s": 136.76, "predict_s": 23.72, "n_train": [3599616, 1137760], "n_pred": 2991120, "wall_s": 162.29}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 1, "f": 1, "best_iteration": 3000, "valid_logloss": 0.5409052909370478, "fit_s": 136.58, "predict_s": 22.58, "n_train": [3600509, 1137656], "n_pred": 2993615, "wall_s": 160.93}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 1, "f": 2, "best_iteration": 2998, "valid_logloss": 0.5351688043926188, "fit_s": 129.15, "predict_s": 22.29, "n_train": [3600077, 1137214], "n_pred": 2992088, "wall_s": 153.15}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 1, "f": 3, "best_iteration": 2987, "valid_logloss": 0.5453115852610634, "fit_s": 130.33, "predict_s": 22.85, "n_train": [3600146, 1137935], "n_pred": 2989187, "wall_s": 154.99}
+MODEL {"gen": "gibuu_ch", "fset": "primary", "k": 4, "h": 1, "f": 4, "best_iteration": 3000, "valid_logloss": 0.54586067654336, "fit_s": 133.98, "predict_s": 24.05, "n_train": [3599973, 1137448], "n_pred": 2992900, "wall_s": 159.87}
+models gibuu_ch primary groups=4 cpus=64 threads=32 rc=0 end 2026-10-22T18:03:11Z
+REPLICA 0 {"c": 1.205612272041038, "V4": {"N_rows": 29910907, "kish_ess": 856612.640243185, "ess_over_N": 0.0286388052439595, "ess_over_ess_wtruth": 0.03345251447673147, "max_wG_over_mean": 17804.361738847805, "share_rows_w_gt_50mean": 0.0002435566397234293, "pass": false}}
+REPLICA 1 {"c": 1.2062758176627761, "V4": {"N_rows": 29910907, "kish_ess": 1351110.167213554, "ess_over_N": 0.04517115335932655, "ess_over_ess_wtruth": 0.05276367672503544, "max_wG_over_mean": 7717.924965849906, "share_rows_w_gt_50mean": 0.000244593050956295, "pass": false}}
+REPLICA 2 {"c": 1.2043473317531659, "V4": {"N_rows": 29910907, "kish_ess": 889337.2888120271, "ess_over_N": 0.029732875997776565, "ess_over_ess_wtruth": 0.0347304804190556, "max_wG_over_mean": 14842.328774148978, "share_rows_w_gt_50mean": 0.00024673273866285635, "pass": false}}
+REPLICA 3 {"c": 1.2044300499962528, "V4": {"N_rows": 29910907, "kish_ess": 1100743.5373878365, "ess_over_N": 0.036800740859775215, "ess_over_ess_wtruth": 0.04298633640192558, "max_wG_over_mean": 15712.795679940546, "share_rows_w_gt_50mean": 0.0002527171777171451, "pass": false}}
+REPLICA 4 {"c": 1.207218537340291, "V4": {"N_rows": 29910907, "kish_ess": 1286481.3516362444, "ess_over_N": 0.04301044270025795, "ess_over_ess_wtruth": 0.050239786360657686, "max_wG_over_mean": 11757.587380540317, "share_rows_w_gt_50mean": 0.00024556259694833056, "pass": false}}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+V1 {"auc": 0.5662990974537561, "auc_control_GvsG": 0.5051614350236419, "margin": 0.005, "n_tune": 4000000, "n_gen": 316580, "n_control_each": 316580, "pass": false, "at_frozen_capacity": false, "sample": "R10: replica 0, Tune fold 0 (both halves) vs G-fold 0; held out on both sides"}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+V1_pooled_descriptive {"auc": 0.600072006507463, "auc_control_GvsG": 0.4973445802351438, "margin": 0.005, "n_tune": 4000000, "n_gen": 1580043, "n_control_each": 790021, "pass": false, "at_frozen_capacity": false, "status": "DESCRIPTIVE (addendum 13 R10): pooled Tune rows vs all G events; G side not held out"}
+VERDICT gibuu_ch primary {"V1": false, "V1_at_frozen_capacity": false, "V4_all_replicas": false, "V2_V3": "held for Joseph", "S2": "not determined until the V2/V3 verdicts are released"}
+gates gibuu_ch primary rc=0 end 2026-10-22T18:05:27Z
