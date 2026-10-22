@@ -1,39 +1,42 @@
 \section{Codebase layout and terminology}
 \label{app:codebase}
 
-The analysis chain has four components, named in italics throughout the note.
+The analysis chain has four components; the note refers to them by the names in italics below.
 
 \begin{itemize}[itemsep=2pt]
   \item \emph{Event loop} (C++): \texttt{runEventLoopOmniFold}, built on the
         MINERvA Analysis Toolkit (MAT) and the MINERvA-101 framework. It
         reads production AnaTuples, applies selection and systematic-universe
         machinery, and writes per-event ROOT trees.
-  \item \emph{Omnifiles}: event-loop outputs with per-event records for
-        data, truth/reco-paired simulated signal, simulated background, and
-        the truth-level efficiency denominator, plus POT bookkeeping. The
-        \texttt{\_universes\_full} variants add per-universe weight and
-        shifted-kinematics branches.
+  \item \emph{Event-loop outputs} (\emph{omnifiles} in the code): per-event
+        records for data, for simulated signal with paired true and
+        reconstructed quantities, for simulated background, and for the
+        truth-level efficiency denominator, together with the exposure in
+        protons on target (POT). The \texttt{\_universes\_full} variants add
+        per-universe weight and shifted-kinematics branches.
   \item \emph{Driver} (Python): per-analysis orchestration in
         \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} and its
         $N$-dimensional generalization
         \texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}. The driver
-        builds training arrays from omnifiles, applies
+        builds training arrays from the event-loop outputs, applies
         purity-weight background subtraction (\S\ref{sec:method-algo}),
         runs the engine, and extracts the cross section.
   \item \emph{Engine} (Python):
-        \texttt{unbinned\_unfolding/python/omnifold.py} implements OmniFold
-        iteration independently of the learner backend (LightGBM central value
-        and uncertainty ensembles, \texttt{exact} cross-check, \texttt{hist}
-        alternate; MLP cross-check).
+        \texttt{unbinned\_unfolding/python/omnifold.py} implements the
+        OmniFold iteration independently of the learner backend: LightGBM for
+        the central value and the uncertainty ensembles, scikit-learn's
+        exact-split gradient boosting (\texttt{exact}) for the cross-check,
+        its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP)
+        for a further cross-check.
 \end{itemize}
 
 Point-cloud (PET) code under \texttt{nd-unfolding/pet/} supports future work
 (App.~\ref{sec:pet}) and produces no result in this note.
 
-Scripts, figure files and stored artifacts call \emph{training-seed variation}
-\texttt{seedscan}, retaining the code name as provenance. Both names denote
-the same variance source. The quoted training-seed block is built by the 2D closeout
-production rollup (Ref.~\cite{NoteRecords2026}, \texttt{variance-sources}), not by \texttt{seedscan}.
+Scripts, figure files and stored outputs call \emph{training-seed variation}
+\texttt{seedscan}; the two names denote the same variance source. The quoted
+training-seed block is assembled by the aggregation step of the 2D
+production (Ref.~\cite{NoteRecords2026}, \texttt{variance-sources}), not by the \texttt{seedscan} scripts.
 % J3/J4 provisional (DECISION-20261018, packet W3: D11 in sec:uq-2d-scope). C08: stageC/production/DESIGN.md §S5.
 
 \paragraph{Code identifiers cited in the note.}
@@ -44,8 +47,8 @@ production rollup (Ref.~\cite{NoteRecords2026}, \texttt{variance-sources}), not 
         \texttt{mc\_signal\_reco}, \texttt{mc\_background} and \texttt{data}; the
         flux histogram is \texttt{pTmu\_reweightedflux\_integrated}.
   \item Cross-section extraction (\S\ref{sec:method-xsec}):
-        \texttt{extract\_cross\_section\_2d} and its N-dimensional generalization
-        \texttt{xsec\_nd.py}.
+        \texttt{extract\_cross\_section\_2d} in the 2D driver, and its
+        N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
   \item Figures of \S\ref{sec:results}: \texttt{2d-unfolding/plot\_2d\_paper\_comparison.py}
         builds the simulated-truth curve of Fig.~\ref{fig:ptslices} from
         \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py}
