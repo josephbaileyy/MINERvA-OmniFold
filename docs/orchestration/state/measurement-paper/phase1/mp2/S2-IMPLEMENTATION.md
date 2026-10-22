@@ -752,3 +752,51 @@ output is in `s2-receipts/power_diag_primary.json`, and it reads only what the S
   stop at 12.5 min.
 
 **Then, for each:** blind-only, then the full verdict.
+
+## GENIE F_fallback and GiBUU F_primary (2026-10-22)
+
+All three jobs ran on regular QOS with four concurrent model steps of 115852M each. Their seals were released only
+through verdict-v2. For each, the order was: seal stat first (atime = mtime in every case), then blind-only, then
+the full run. Receipts:
+- gates files, logs and model metadata: `s2-receipts/tranche-b/` (GENIE) and `s2-receipts/tranche-a/` (GiBUU);
+- verdicts and logs: `s2-receipts/verdicts/`;
+- seal stats: `s2-receipts/sealed-stat-atime-genie-fallback-before-release.txt` and
+  `sealed-stat-atime-gibuu-primary-before-release.txt`.
+
+| job | G, feature set | code | elapsed | CPU node-h | tranche |
+|---|---|---|---:|---:|---|
+| 60115777 | genie_cv, fallback | code-v7 | 299 s | 0.08306 | B |
+| 60115779 | genie_mec, fallback | code-v7 | 293 s | 0.08139 | B |
+| 60115132 | gibuu_ch, primary | code-v8, `HARM_FIRST=harm_c` (R12 decayed) | 2204 s (stop 65 min) | 0.61222 | A |
+
+The table gives min–max over the five replicas.
+
+| G, feature set | V1 AUC (control) | V4 ESS/N; max w/mean | blind ndf_fine | V2-fine χ²/ndf | V2-J max\|pull\| (cell) | V3 min p_d | S2 |
+|---|---|---|---:|---|---|---|---|
+| genie_cv, fallback | 0.49889 (0.50443) pass | 0.933; ≤ 5.35 pass | 3670 | 2.233–2.366 | 6.34–6.86 (17) | ≤ 1.2e-9 | **fail** |
+| genie_mec, fallback | 0.49668 (0.50164) pass | 0.931–0.934; ≤ 4.65 pass | 3729 | 2.597–2.760 | 5.58–5.75 (18, 80) | ≤ 2.5e-7 | **fail** |
+| gibuu_ch, primary | 0.56630 (0.50516) fail | 0.029–0.045; 7,718–17,804 fail | 4404 | 8.05–8.15 | 33.8–34.4 (40) | 0 | **fail** |
+
+- **GENIE F_fallback:**
+  - Best iterations: cv 28 / 37 / 67 and mec 14 / 27 / 53 (min / median / max).
+  - The V1 fits stopped at 4 trees (cv) and 1 tree (mec).
+  - V3's largest failures are protons above 20 MeV (χ²/ndf 51.5–55.6 for cv, 26.6–31.0 for mec) and the neutron KE
+    spectrum (34.4–34.8 and 21.8–24.0).
+  - J pulls correlate across replicas at 0.998.
+- **GiBUU F_primary:**
+  - Best iterations: 2617 / 2994 / 3000, with 49 of 50 at or above 2800. The frozen 3000-tree cap binds, as the
+    probe showed.
+  - The V1 fit stopped at 60 trees.
+  - c is 1.204–1.207, and R6's net identity ratio is 1 + 1.2e-8.
+  - R9 (descriptive): 1,747,492 Tune rows lie outside GiBUU's 0–20 GeV support, 7.16% of w_truth.
+  - V3: neutron multiplicity above 10 MeV has χ²/ndf about 487.
+- **Consequences, under the contract's order** ("on failure, F_fallback (once, before S3); failure again -> 'not
+  established' for that G, A7's hybrid result stands"):
+  - GENIE CV and GENIE MEC are **not established**, as the director recorded. No further GENIE fits.
+  - GiBUU's one F_fallback was released by the director under tranche B: job 60122488, code-v8, `HARM_FIRST=harm_c`,
+    stop at 46 min.
+- **S3 is not reachable for any G that is not established.** S3 (contract §8) unfolds with a G whose S2 passed. So far
+  NuWro, GENIE CV and GENIE MEC are not established, and GiBUU waits on its F_fallback. If GiBUU is not established
+  either, S2 ends with no generator established, and MP-2's next step is Joseph's decision.
+- **Compute:** tranche A 1.989 of 3.5; tranche B 0.611 of 2.3 before GiBUU's F_fallback; phase 1 10.485 of 35
+  (`../LEDGER.tsv`).

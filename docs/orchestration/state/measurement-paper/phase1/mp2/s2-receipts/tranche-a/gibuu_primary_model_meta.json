@@ -1,0 +1,2402 @@
+{
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f0.npz": {
+  "best_iteration": 2989,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f0.npz",
+  "fit_s": 123.36,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 0,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263463,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989831,
+  "n_train": [
+   3599101,
+   1136870
+  ],
+  "n_tune_pool": 11962166,
+  "n_valid": [
+   400899,
+   126593
+  ],
+  "predict_s": 22.8,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.538485573970637,
+  "valid_logloss_at": {
+   "1000": 0.5611493745636263,
+   "2000": 0.5456962115600813,
+   "2500": 0.5419614332220273,
+   "2800": 0.5393571290074193,
+   "3000": 0.5385255971327664,
+   "500": 0.576508390738617
+  },
+  "wall_s": 158.87
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f1.npz": {
+  "best_iteration": 2989,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f1.npz",
+  "fit_s": 120.78,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 0,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264919,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992693,
+  "n_train": [
+   3600247,
+   1138408
+  ],
+  "n_tune_pool": 11959304,
+  "n_valid": [
+   399753,
+   126511
+  ],
+  "predict_s": 22.39,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5444104695711268,
+  "valid_logloss_at": {
+   "1000": 0.5621338761162883,
+   "2000": 0.5497678264723683,
+   "2500": 0.5465913052078526,
+   "2800": 0.5450840591535293,
+   "3000": 0.5445186976707093,
+   "500": 0.5785184474135453
+  },
+  "wall_s": 155.87
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f2.npz": {
+  "best_iteration": 2977,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f2.npz",
+  "fit_s": 123.79,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 0,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263132,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2988411,
+  "n_train": [
+   3599140,
+   1137214
+  ],
+  "n_tune_pool": 11963586,
+  "n_valid": [
+   400860,
+   125918
+  ],
+  "predict_s": 22.02,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5413139158329026,
+  "valid_logloss_at": {
+   "1000": 0.5640582185057403,
+   "2000": 0.5487921127995561,
+   "2500": 0.5445409834539692,
+   "2800": 0.5425321861096849,
+   "3000": 0.5414203017770214,
+   "500": 0.5799356320079303
+  },
+  "wall_s": 158.5
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f3.npz": {
+  "best_iteration": 2998,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f3.npz",
+  "fit_s": 122.15,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 0,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264725,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989630,
+  "n_train": [
+   3599451,
+   1138844
+  ],
+  "n_tune_pool": 11962367,
+  "n_valid": [
+   400549,
+   125881
+  ],
+  "predict_s": 22.4,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5350067974322329,
+  "valid_logloss_at": {
+   "1000": 0.5592093787052961,
+   "2000": 0.5426103017893047,
+   "2500": 0.538427792412456,
+   "2800": 0.5363431229837754,
+   "3000": 0.5350802029564529,
+   "500": 0.5771958863010516
+  },
+  "wall_s": 157.28
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f4.npz": {
+  "best_iteration": 2999,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h0f4.npz",
+  "fit_s": 134.42,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 0,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263933,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991432,
+  "n_train": [
+   3600189,
+   1137146
+  ],
+  "n_tune_pool": 11960565,
+  "n_valid": [
+   399811,
+   126787
+  ],
+  "predict_s": 22.5,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5399400173348426,
+  "valid_logloss_at": {
+   "1000": 0.5623728979378764,
+   "2000": 0.5472280040001204,
+   "2500": 0.5432183691760079,
+   "2800": 0.540870813498571,
+   "3000": 0.5399604651517613,
+   "500": 0.5789971811120385
+  },
+  "wall_s": 158.99
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f0.npz": {
+  "best_iteration": 2989,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f0.npz",
+  "fit_s": 134.0,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 0,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263463,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2993009,
+  "n_train": [
+   3600515,
+   1136876
+  ],
+  "n_tune_pool": 11965901,
+  "n_valid": [
+   399485,
+   126587
+  ],
+  "predict_s": 22.61,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5408943615232766,
+  "valid_logloss_at": {
+   "1000": 0.562346706778187,
+   "2000": 0.5473730578218163,
+   "2500": 0.5436778636549843,
+   "2800": 0.5419288385790937,
+   "3000": 0.5409755749349849,
+   "500": 0.5782920024297247
+  },
+  "wall_s": 158.45
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f1.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f1.npz",
+  "fit_s": 135.81,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 0,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264919,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991364,
+  "n_train": [
+   3600135,
+   1137964
+  ],
+  "n_tune_pool": 11967546,
+  "n_valid": [
+   399865,
+   126955
+  ],
+  "predict_s": 21.45,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5399420237741841,
+  "valid_logloss_at": {
+   "1000": 0.5641378767293892,
+   "2000": 0.5467358887639635,
+   "2500": 0.5429916596537384,
+   "2800": 0.5408559669805048,
+   "3000": 0.5399420237741841,
+   "500": 0.5799092328469536
+  },
+  "wall_s": 159.08
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f2.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f2.npz",
+  "fit_s": 146.31,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 0,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263132,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2993108,
+  "n_train": [
+   3600226,
+   1136454
+  ],
+  "n_tune_pool": 11965802,
+  "n_valid": [
+   399774,
+   126678
+  ],
+  "predict_s": 21.54,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5391949628736029,
+  "valid_logloss_at": {
+   "1000": 0.5623875825849386,
+   "2000": 0.5469549736761674,
+   "2500": 0.5431241912526531,
+   "2800": 0.5402769344608023,
+   "3000": 0.5391949628736029,
+   "500": 0.5791235385775796
+  },
+  "wall_s": 169.58
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f3.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f3.npz",
+  "fit_s": 126.22,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 0,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264725,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990304,
+  "n_train": [
+   3599199,
+   1138325
+  ],
+  "n_tune_pool": 11968606,
+  "n_valid": [
+   400801,
+   126400
+  ],
+  "predict_s": 22.25,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5446162852186249,
+  "valid_logloss_at": {
+   "1000": 0.5622074627373227,
+   "2000": 0.5489902695771245,
+   "2500": 0.5460806209092444,
+   "2800": 0.5454180524421535,
+   "3000": 0.5446162852186249,
+   "500": 0.5789100162657714
+  },
+  "wall_s": 150.24
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f4.npz": {
+  "best_iteration": 2993,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k0h1f4.npz",
+  "fit_s": 134.07,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 0,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263933,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991125,
+  "n_train": [
+   3600383,
+   1137557
+  ],
+  "n_tune_pool": 11967785,
+  "n_valid": [
+   399617,
+   126376
+  ],
+  "predict_s": 21.95,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5502570789554523,
+  "valid_logloss_at": {
+   "1000": 0.5697796222198765,
+   "2000": 0.5566142277405566,
+   "2500": 0.5528080070858469,
+   "2800": 0.5513772073830931,
+   "3000": 0.5502607625414597,
+   "500": 0.5844755257339889
+  },
+  "wall_s": 157.85
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f0.npz": {
+  "best_iteration": 2977,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f0.npz",
+  "fit_s": 135.5,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 1,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264460,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990124,
+  "n_train": [
+   3600463,
+   1137782
+  ],
+  "n_tune_pool": 11961873,
+  "n_valid": [
+   399537,
+   126678
+  ],
+  "predict_s": 20.69,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5476824377517087,
+  "valid_logloss_at": {
+   "1000": 0.5670467778746469,
+   "2000": 0.5541781561295225,
+   "2500": 0.5500603113209636,
+   "2800": 0.5487582732730262,
+   "3000": 0.5478744912137588,
+   "500": 0.5807541311820268
+  },
+  "wall_s": 158.04
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f1.npz": {
+  "best_iteration": 2998,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f1.npz",
+  "fit_s": 138.17,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 1,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264693,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990085,
+  "n_train": [
+   3599480,
+   1138412
+  ],
+  "n_tune_pool": 11961912,
+  "n_valid": [
+   400520,
+   126281
+  ],
+  "predict_s": 21.14,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5457399554712948,
+  "valid_logloss_at": {
+   "1000": 0.5652132842639644,
+   "2000": 0.5522322665794122,
+   "2500": 0.5483117545319944,
+   "2800": 0.5467963113117259,
+   "3000": 0.5457407173141766,
+   "500": 0.5806111363630602
+  },
+  "wall_s": 161.14
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f2.npz": {
+  "best_iteration": 2995,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f2.npz",
+  "fit_s": 128.99,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 1,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263712,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991286,
+  "n_train": [
+   3598922,
+   1136955
+  ],
+  "n_tune_pool": 11960711,
+  "n_valid": [
+   401078,
+   126757
+  ],
+  "predict_s": 22.39,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5443275401402046,
+  "valid_logloss_at": {
+   "1000": 0.5650603125813868,
+   "2000": 0.5515389107480171,
+   "2500": 0.5476769312066063,
+   "2800": 0.5455096385319085,
+   "3000": 0.5444246703682827,
+   "500": 0.5818615570802879
+  },
+  "wall_s": 153.25
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f3.npz": {
+  "best_iteration": 2991,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f3.npz",
+  "fit_s": 121.35,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 1,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263905,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989409,
+  "n_train": [
+   3598932,
+   1137979
+  ],
+  "n_tune_pool": 11962588,
+  "n_valid": [
+   401068,
+   125926
+  ],
+  "predict_s": 22.57,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5425239153160175,
+  "valid_logloss_at": {
+   "1000": 0.5661347449294674,
+   "2000": 0.5499204778638576,
+   "2500": 0.5458169636745811,
+   "2800": 0.5438371774502844,
+   "3000": 0.542553565521983,
+   "500": 0.5812336981583076
+  },
+  "wall_s": 145.75
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f4.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h0f4.npz",
+  "fit_s": 133.44,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 1,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263402,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991093,
+  "n_train": [
+   3600882,
+   1136680
+  ],
+  "n_tune_pool": 11960904,
+  "n_valid": [
+   399118,
+   126722
+  ],
+  "predict_s": 20.5,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5388479978815159,
+  "valid_logloss_at": {
+   "1000": 0.5627091282545997,
+   "2000": 0.5469533444270283,
+   "2500": 0.5417654694713822,
+   "2800": 0.5400314971931012,
+   "3000": 0.5388479978815159,
+   "500": 0.5799038163202987
+  },
+  "wall_s": 155.75
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f0.npz": {
+  "best_iteration": 2988,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f0.npz",
+  "fit_s": 136.46,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 1,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264460,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992314,
+  "n_train": [
+   3599580,
+   1138245
+  ],
+  "n_tune_pool": 11966596,
+  "n_valid": [
+   400420,
+   126215
+  ],
+  "predict_s": 20.67,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5450874400983888,
+  "valid_logloss_at": {
+   "1000": 0.5664581385104384,
+   "2000": 0.551279865062067,
+   "2500": 0.5482524437370486,
+   "2800": 0.5461973311234914,
+   "3000": 0.5451890728656691,
+   "500": 0.5824106652893275
+  },
+  "wall_s": 158.87
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f1.npz": {
+  "best_iteration": 2997,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f1.npz",
+  "fit_s": 128.55,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 1,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264693,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992680,
+  "n_train": [
+   3599697,
+   1138620
+  ],
+  "n_tune_pool": 11966230,
+  "n_valid": [
+   400303,
+   126073
+  ],
+  "predict_s": 22.75,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5477104588469572,
+  "valid_logloss_at": {
+   "1000": 0.5671243127541812,
+   "2000": 0.5545305134417544,
+   "2500": 0.5499714337442957,
+   "2800": 0.5481590019477389,
+   "3000": 0.5477499939030587,
+   "500": 0.5834654988948279
+  },
+  "wall_s": 153.11
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f2.npz": {
+  "best_iteration": 2959,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f2.npz",
+  "fit_s": 127.89,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 1,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263712,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990407,
+  "n_train": [
+   3600438,
+   1137495
+  ],
+  "n_tune_pool": 11968503,
+  "n_valid": [
+   399562,
+   126217
+  ],
+  "predict_s": 22.65,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5288158842267604,
+  "valid_logloss_at": {
+   "1000": 0.5531696425392197,
+   "2000": 0.5362858962539183,
+   "2500": 0.5313941261926488,
+   "2800": 0.52956278688562,
+   "3000": 0.5289764154370643,
+   "500": 0.5723221867452762
+  },
+  "wall_s": 152.41
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f3.npz": {
+  "best_iteration": 2989,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f3.npz",
+  "fit_s": 137.5,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 1,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263905,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991873,
+  "n_train": [
+   3599993,
+   1137729
+  ],
+  "n_tune_pool": 11967037,
+  "n_valid": [
+   400007,
+   126176
+  ],
+  "predict_s": 21.1,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5385112540865921,
+  "valid_logloss_at": {
+   "1000": 0.5602765393629323,
+   "2000": 0.5451176868849404,
+   "2500": 0.5411637676070477,
+   "2800": 0.5392743121165023,
+   "3000": 0.5385975418694514,
+   "500": 0.5760572010365762
+  },
+  "wall_s": 160.46
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f4.npz": {
+  "best_iteration": 2996,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k1h1f4.npz",
+  "fit_s": 135.56,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 1,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263402,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991636,
+  "n_train": [
+   3599754,
+   1137741
+  ],
+  "n_tune_pool": 11967274,
+  "n_valid": [
+   400246,
+   125661
+  ],
+  "predict_s": 21.73,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5386262175327734,
+  "valid_logloss_at": {
+   "1000": 0.5590551144082425,
+   "2000": 0.5452441063821096,
+   "2500": 0.5411629803240076,
+   "2800": 0.5396223465450467,
+   "3000": 0.5386632112604897,
+   "500": 0.5775007610835746
+  },
+  "wall_s": 159.01
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f0.npz": {
+  "best_iteration": 2996,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f0.npz",
+  "fit_s": 131.18,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 2,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264449,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989794,
+  "n_train": [
+   3600183,
+   1138377
+  ],
+  "n_tune_pool": 11962203,
+  "n_valid": [
+   399817,
+   126072
+  ],
+  "predict_s": 22.85,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5488649614007982,
+  "valid_logloss_at": {
+   "1000": 0.5670698105653197,
+   "2000": 0.5548644441205994,
+   "2500": 0.5513216382947749,
+   "2800": 0.5497642239451072,
+   "3000": 0.5488702552104529,
+   "500": 0.5817063357527944
+  },
+  "wall_s": 155.78
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f1.npz": {
+  "best_iteration": 2983,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f1.npz",
+  "fit_s": 131.89,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 2,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264386,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992897,
+  "n_train": [
+   3600166,
+   1138375
+  ],
+  "n_tune_pool": 11959100,
+  "n_valid": [
+   399834,
+   126011
+  ],
+  "predict_s": 24.7,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5368995621006953,
+  "valid_logloss_at": {
+   "1000": 0.5602878112904083,
+   "2000": 0.5441232667133923,
+   "2500": 0.539729787872972,
+   "2800": 0.5382171433708746,
+   "3000": 0.5369776779608839,
+   "500": 0.5764923855417349
+  },
+  "wall_s": 158.42
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f2.npz": {
+  "best_iteration": 2998,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f2.npz",
+  "fit_s": 139.8,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 2,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263821,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989585,
+  "n_train": [
+   3600940,
+   1137089
+  ],
+  "n_tune_pool": 11962412,
+  "n_valid": [
+   399060,
+   126732
+  ],
+  "predict_s": 21.67,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5453406287621995,
+  "valid_logloss_at": {
+   "1000": 0.5667842670636773,
+   "2000": 0.552857764949685,
+   "2500": 0.5483229198066732,
+   "2800": 0.5461779162101801,
+   "3000": 0.5453503819187939,
+   "500": 0.5838285213704333
+  },
+  "wall_s": 163.27
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f3.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f3.npz",
+  "fit_s": 137.33,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 2,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264117,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989715,
+  "n_train": [
+   3600888,
+   1138167
+  ],
+  "n_tune_pool": 11962282,
+  "n_valid": [
+   399112,
+   125950
+  ],
+  "predict_s": 21.64,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5458097338197152,
+  "valid_logloss_at": {
+   "1000": 0.5670569445780832,
+   "2000": 0.5521845324024489,
+   "2500": 0.5484758704689638,
+   "2800": 0.5468069259024052,
+   "3000": 0.5458097338197152,
+   "500": 0.5846991987777699
+  },
+  "wall_s": 160.72
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f4.npz": {
+  "best_iteration": 2933,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h0f4.npz",
+  "fit_s": 128.38,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 2,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263399,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990006,
+  "n_train": [
+   3600018,
+   1136984
+  ],
+  "n_tune_pool": 11961991,
+  "n_valid": [
+   399982,
+   126415
+  ],
+  "predict_s": 23.47,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5383408113533049,
+  "valid_logloss_at": {
+   "1000": 0.5614411752321864,
+   "2000": 0.5446499049688087,
+   "2500": 0.5415079904906521,
+   "2800": 0.5388643348796289,
+   "3000": 0.5385112542963187,
+   "500": 0.5773244727671066
+  },
+  "wall_s": 153.57
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f0.npz": {
+  "best_iteration": 2992,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f0.npz",
+  "fit_s": 130.34,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 2,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264449,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992546,
+  "n_train": [
+   3599413,
+   1137863
+  ],
+  "n_tune_pool": 11966364,
+  "n_valid": [
+   400587,
+   126586
+  ],
+  "predict_s": 23.48,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5360570637871971,
+  "valid_logloss_at": {
+   "1000": 0.559364956782482,
+   "2000": 0.5425581596792572,
+   "2500": 0.5386126992039363,
+   "2800": 0.5369826297563339,
+   "3000": 0.5360848294459248,
+   "500": 0.5764383445786722
+  },
+  "wall_s": 155.64
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f1.npz": {
+  "best_iteration": 2966,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f1.npz",
+  "fit_s": 132.11,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 2,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264386,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990133,
+  "n_train": [
+   3599807,
+   1137819
+  ],
+  "n_tune_pool": 11968777,
+  "n_valid": [
+   400193,
+   126567
+  ],
+  "predict_s": 21.07,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.535447301934719,
+  "valid_logloss_at": {
+   "1000": 0.5570699326749945,
+   "2000": 0.5429866571013965,
+   "2500": 0.5380311188120376,
+   "2800": 0.5362696290797669,
+   "3000": 0.5355429224700383,
+   "500": 0.5742030398147396
+  },
+  "wall_s": 154.95
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f2.npz": {
+  "best_iteration": 2617,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f2.npz",
+  "fit_s": 133.48,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 2,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263821,
+  "n_iterations_recorded": 2817,
+  "n_pred": 2991282,
+  "n_train": [
+   3599976,
+   1137390
+  ],
+  "n_tune_pool": 11967628,
+  "n_valid": [
+   400024,
+   126431
+  ],
+  "predict_s": 19.62,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5486398730646287,
+  "valid_logloss_at": {
+   "1000": 0.5659852849384838,
+   "2000": 0.5540327530144238,
+   "2500": 0.5499957650447876,
+   "2800": 0.5494726755854804,
+   "3000": null,
+   "500": 0.5814837446276042
+  },
+  "wall_s": 155.18
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f3.npz": {
+  "best_iteration": 2991,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f3.npz",
+  "fit_s": 133.74,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 2,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264117,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992249,
+  "n_train": [
+   3599777,
+   1137882
+  ],
+  "n_tune_pool": 11966661,
+  "n_valid": [
+   400223,
+   126235
+  ],
+  "predict_s": 23.53,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5368373236760173,
+  "valid_logloss_at": {
+   "1000": 0.5608011687240487,
+   "2000": 0.5447913798328773,
+   "2500": 0.5400251229703682,
+   "2800": 0.5376378286766529,
+   "3000": 0.5368861352847389,
+   "500": 0.579363348408539
+  },
+  "wall_s": 158.95
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f4.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k2h1f4.npz",
+  "fit_s": 132.91,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 2,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263399,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992700,
+  "n_train": [
+   3600238,
+   1136972
+  ],
+  "n_tune_pool": 11966210,
+  "n_valid": [
+   399762,
+   126427
+  ],
+  "predict_s": 23.31,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5319777009521783,
+  "valid_logloss_at": {
+   "1000": 0.5562464244150525,
+   "2000": 0.5394564147964239,
+   "2500": 0.5349485324973478,
+   "2800": 0.5331059896767152,
+   "3000": 0.5319777009521783,
+   "500": 0.5743567422948194
+  },
+  "wall_s": 157.93
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f0.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f0.npz",
+  "fit_s": 129.0,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 3,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264225,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992336,
+  "n_train": [
+   3599670,
+   1137854
+  ],
+  "n_tune_pool": 11959661,
+  "n_valid": [
+   400330,
+   126371
+  ],
+  "predict_s": 21.02,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5394586619809418,
+  "valid_logloss_at": {
+   "1000": 0.5635452363520232,
+   "2000": 0.5474967568780389,
+   "2500": 0.542981992309178,
+   "2800": 0.5408896657914193,
+   "3000": 0.5394586619809418,
+   "500": 0.5802960036042072
+  },
+  "wall_s": 151.79
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f1.npz": {
+  "best_iteration": 2994,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f1.npz",
+  "fit_s": 136.7,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 3,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264652,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2988804,
+  "n_train": [
+   3600053,
+   1138250
+  ],
+  "n_tune_pool": 11963193,
+  "n_valid": [
+   399947,
+   126402
+  ],
+  "predict_s": 21.12,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.539640854304992,
+  "valid_logloss_at": {
+   "1000": 0.5617046026898267,
+   "2000": 0.5466506757542331,
+   "2500": 0.543195070701175,
+   "2800": 0.5411468456304858,
+   "3000": 0.5396599103802054,
+   "500": 0.5783059324861818
+  },
+  "wall_s": 159.59
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f2.npz": {
+  "best_iteration": 2996,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f2.npz",
+  "fit_s": 127.32,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 3,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264007,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989778,
+  "n_train": [
+   3599634,
+   1137290
+  ],
+  "n_tune_pool": 11962219,
+  "n_valid": [
+   400366,
+   126717
+  ],
+  "predict_s": 23.48,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5565928025865754,
+  "valid_logloss_at": {
+   "1000": 0.5732667149053517,
+   "2000": 0.5612918051614866,
+   "2500": 0.5584512503264087,
+   "2800": 0.5573103424454806,
+   "3000": 0.5566002526892421,
+   "500": 0.5851050835220153
+  },
+  "wall_s": 152.46
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f3.npz": {
+  "best_iteration": 2999,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f3.npz",
+  "fit_s": 129.99,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 3,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264143,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991139,
+  "n_train": [
+   3599747,
+   1137943
+  ],
+  "n_tune_pool": 11960858,
+  "n_valid": [
+   400253,
+   126200
+  ],
+  "predict_s": 24.29,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5537386299655528,
+  "valid_logloss_at": {
+   "1000": 0.5712080162756645,
+   "2000": 0.5590499934740762,
+   "2500": 0.5563048377076671,
+   "2800": 0.5548596168485508,
+   "3000": 0.5537447458860547,
+   "500": 0.5854594384776336
+  },
+  "wall_s": 155.99
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f4.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h0f4.npz",
+  "fit_s": 135.56,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 3,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263145,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989940,
+  "n_train": [
+   3599428,
+   1136840
+  ],
+  "n_tune_pool": 11962057,
+  "n_valid": [
+   400572,
+   126305
+  ],
+  "predict_s": 21.32,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5357645536978807,
+  "valid_logloss_at": {
+   "1000": 0.5563076807299715,
+   "2000": 0.5421658945755388,
+   "2500": 0.5377639389122881,
+   "2800": 0.5365192455311293,
+   "3000": 0.5357645536978807,
+   "500": 0.5721830721539621
+  },
+  "wall_s": 158.64
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f0.npz": {
+  "best_iteration": 2993,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f0.npz",
+  "fit_s": 133.01,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 3,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264225,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991422,
+  "n_train": [
+   3600230,
+   1137756
+  ],
+  "n_tune_pool": 11967488,
+  "n_valid": [
+   399770,
+   126469
+  ],
+  "predict_s": 20.98,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5480013191342392,
+  "valid_logloss_at": {
+   "1000": 0.5677724932792646,
+   "2000": 0.5532553835140919,
+   "2500": 0.5501506247468103,
+   "2800": 0.5487923518945852,
+   "3000": 0.548082388667511,
+   "500": 0.5824760693699386
+  },
+  "wall_s": 155.71
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f1.npz": {
+  "best_iteration": 2978,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f1.npz",
+  "fit_s": 133.94,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 3,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264652,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2993059,
+  "n_train": [
+   3600374,
+   1137478
+  ],
+  "n_tune_pool": 11965851,
+  "n_valid": [
+   399626,
+   127174
+  ],
+  "predict_s": 22.98,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5486185426210087,
+  "valid_logloss_at": {
+   "1000": 0.5675222553020651,
+   "2000": 0.5540351045994095,
+   "2500": 0.5504141581481211,
+   "2800": 0.5491669346746795,
+   "3000": 0.5487000419212976,
+   "500": 0.5800640653805751
+  },
+  "wall_s": 158.66
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f2.npz": {
+  "best_iteration": 2929,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f2.npz",
+  "fit_s": 135.37,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 3,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264007,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991385,
+  "n_train": [
+   3599790,
+   1137740
+  ],
+  "n_tune_pool": 11967525,
+  "n_valid": [
+   400210,
+   126267
+  ],
+  "predict_s": 22.32,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5516513800673067,
+  "valid_logloss_at": {
+   "1000": 0.5702851160655646,
+   "2000": 0.5566668446756274,
+   "2500": 0.5536981680369997,
+   "2800": 0.5521152633596977,
+   "3000": 0.55213341307052,
+   "500": 0.5835884708875578
+  },
+  "wall_s": 159.48
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f3.npz": {
+  "best_iteration": 2993,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f3.npz",
+  "fit_s": 135.64,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 3,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264143,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990875,
+  "n_train": [
+   3600904,
+   1137370
+  ],
+  "n_tune_pool": 11968035,
+  "n_valid": [
+   399096,
+   126773
+  ],
+  "predict_s": 21.59,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5392717873984476,
+  "valid_logloss_at": {
+   "1000": 0.5608398049968885,
+   "2000": 0.5469517420192944,
+   "2500": 0.5420073231085923,
+   "2800": 0.5401025409472215,
+   "3000": 0.5393161982348714,
+   "500": 0.5769447836866289
+  },
+  "wall_s": 158.95
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f4.npz": {
+  "best_iteration": 2995,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k3h1f4.npz",
+  "fit_s": 134.82,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 3,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263145,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992169,
+  "n_train": [
+   3600244,
+   1136275
+  ],
+  "n_tune_pool": 11966741,
+  "n_valid": [
+   399756,
+   126870
+  ],
+  "predict_s": 21.72,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.54854085657115,
+  "valid_logloss_at": {
+   "1000": 0.5672643522649787,
+   "2000": 0.5539949799891511,
+   "2500": 0.5509517255082221,
+   "2800": 0.5495861352911714,
+   "3000": 0.5485416172047474,
+   "500": 0.5813263488977571
+  },
+  "wall_s": 158.23
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f0.npz": {
+  "best_iteration": 2984,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f0.npz",
+  "fit_s": 135.24,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 4,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263901,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2990372,
+  "n_train": [
+   3599481,
+   1137842
+  ],
+  "n_tune_pool": 11961625,
+  "n_valid": [
+   400519,
+   126059
+  ],
+  "predict_s": 23.55,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5370804913945055,
+  "valid_logloss_at": {
+   "1000": 0.5599059082846821,
+   "2000": 0.5451654616197674,
+   "2500": 0.5397873191711235,
+   "2800": 0.5378978670331501,
+   "3000": 0.5371015000590114,
+   "500": 0.57837868981753
+  },
+  "wall_s": 160.56
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f1.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f1.npz",
+  "fit_s": 129.65,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 4,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264626,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989908,
+  "n_train": [
+   3600956,
+   1138144
+  ],
+  "n_tune_pool": 11962089,
+  "n_valid": [
+   399044,
+   126482
+  ],
+  "predict_s": 23.94,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5469481318855312,
+  "valid_logloss_at": {
+   "1000": 0.5680176585318857,
+   "2000": 0.5540998237892324,
+   "2500": 0.5501233733092169,
+   "2800": 0.5476835465883931,
+   "3000": 0.5469481318855312,
+   "500": 0.5850725947131347
+  },
+  "wall_s": 155.43
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f2.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f2.npz",
+  "fit_s": 135.18,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 4,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263999,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989199,
+  "n_train": [
+   3600156,
+   1137716
+  ],
+  "n_tune_pool": 11962798,
+  "n_valid": [
+   399844,
+   126283
+  ],
+  "predict_s": 21.53,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5501476500000526,
+  "valid_logloss_at": {
+   "1000": 0.5693461818189199,
+   "2000": 0.5564602522792503,
+   "2500": 0.5528226515872593,
+   "2800": 0.5512693928989325,
+   "3000": 0.5501476500000526,
+   "500": 0.5839394150556041
+  },
+  "wall_s": 158.45
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f3.npz": {
+  "best_iteration": 2919,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f3.npz",
+  "fit_s": 135.45,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 4,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264042,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992822,
+  "n_train": [
+   3600270,
+   1137588
+  ],
+  "n_tune_pool": 11959175,
+  "n_valid": [
+   399730,
+   126454
+  ],
+  "predict_s": 21.15,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.542756640469866,
+  "valid_logloss_at": {
+   "1000": 0.5657674200318278,
+   "2000": 0.549702349808399,
+   "2500": 0.5456760441602361,
+   "2800": 0.5433708588276437,
+   "3000": 0.5428484933194863,
+   "500": 0.5817720113414522
+  },
+  "wall_s": 158.29
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f4.npz": {
+  "best_iteration": 2993,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h0f4.npz",
+  "fit_s": 133.55,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 0,
+  "k": 4,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263604,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989696,
+  "n_train": [
+   3600967,
+   1137478
+  ],
+  "n_tune_pool": 11962301,
+  "n_valid": [
+   399033,
+   126126
+  ],
+  "predict_s": 23.63,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.537540837487261,
+  "valid_logloss_at": {
+   "1000": 0.5603514221336822,
+   "2000": 0.545275749678163,
+   "2500": 0.5410628947637016,
+   "2800": 0.5389157431364846,
+   "3000": 0.5375985792544595,
+   "500": 0.5775130227678307
+  },
+  "wall_s": 158.88
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f0.npz": {
+  "best_iteration": 2981,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 0,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f0.npz",
+  "fit_s": 136.76,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 4,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263901,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2991120,
+  "n_train": [
+   3599616,
+   1137760
+  ],
+  "n_tune_pool": 11967790,
+  "n_valid": [
+   400384,
+   126141
+  ],
+  "predict_s": 23.72,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.545772207447168,
+  "valid_logloss_at": {
+   "1000": 0.5660259037326688,
+   "2000": 0.5529988140599588,
+   "2500": 0.547808142554959,
+   "2800": 0.5464391679533936,
+   "3000": 0.5458220115737934,
+   "500": 0.5832223999728832
+  },
+  "wall_s": 162.29
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f1.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 1,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f1.npz",
+  "fit_s": 136.58,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 4,
+  "maxrss_kb": 8729644,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264626,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2993615,
+  "n_train": [
+   3600509,
+   1137656
+  ],
+  "n_tune_pool": 11965295,
+  "n_valid": [
+   399491,
+   126970
+  ],
+  "predict_s": 22.58,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5409052909370478,
+  "valid_logloss_at": {
+   "1000": 0.5635414586331375,
+   "2000": 0.5478340929952157,
+   "2500": 0.5437493854120508,
+   "2800": 0.5415743793991991,
+   "3000": 0.5409052909370478,
+   "500": 0.5795453132380554
+  },
+  "wall_s": 160.93
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f2.npz": {
+  "best_iteration": 2998,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 2,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f2.npz",
+  "fit_s": 129.15,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 4,
+  "maxrss_kb": 8729860,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263999,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992088,
+  "n_train": [
+   3600077,
+   1137214
+  ],
+  "n_tune_pool": 11966822,
+  "n_valid": [
+   399923,
+   126785
+  ],
+  "predict_s": 22.29,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5351688043926188,
+  "valid_logloss_at": {
+   "1000": 0.5601075728831251,
+   "2000": 0.5431986540952977,
+   "2500": 0.5382546147365435,
+   "2800": 0.5364916856433792,
+   "3000": 0.5351774848776897,
+   "500": 0.5777319661803353
+  },
+  "wall_s": 153.15
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f3.npz": {
+  "best_iteration": 2987,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 3,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f3.npz",
+  "fit_s": 130.33,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 4,
+  "maxrss_kb": 8729484,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1264042,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2989187,
+  "n_train": [
+   3600146,
+   1137935
+  ],
+  "n_tune_pool": 11969723,
+  "n_valid": [
+   399854,
+   126107
+  ],
+  "predict_s": 22.85,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.5453115852610634,
+  "valid_logloss_at": {
+   "1000": 0.5655205523039116,
+   "2000": 0.5516799833815426,
+   "2500": 0.5480029908805142,
+   "2800": 0.5460973382639566,
+   "3000": 0.5454082846614422,
+   "500": 0.5805026123594969
+  },
+  "wall_s": 154.99
+ },
+ "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f4.npz": {
+  "best_iteration": 3000,
+  "code_sha256": "91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e",
+  "f": 4,
+  "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/model_gibuu_ch_primary_k4h1f4.npz",
+  "fit_s": 133.98,
+  "fset": "primary",
+  "gen": "gibuu_ch",
+  "h": 1,
+  "k": 4,
+  "maxrss_kb": 8729904,
+  "n_estimators_max": 3000,
+  "n_gen_train_pool": 1263604,
+  "n_iterations_recorded": 3000,
+  "n_pred": 2992900,
+  "n_train": [
+   3599973,
+   1137448
+  ],
+  "n_tune_pool": 11966010,
+  "n_valid": [
+   400027,
+   126156
+  ],
+  "predict_s": 24.05,
+  "slurm_job": "60115132",
+  "sources": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz",
+    "sha256": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357"
+   },
+   "tune": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+    "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+   }
+  },
+  "threads": 32,
+  "valid_logloss": 0.54586067654336,
+  "valid_logloss_at": {
+   "1000": 0.568750751119165,
+   "2000": 0.5528381149445744,
+   "2500": 0.5494985980928428,
+   "2800": 0.5468968933510001,
+   "3000": 0.54586067654336,
+   "500": 0.5829381891028271
+  },
+  "wall_s": 159.87
+ }
+}
