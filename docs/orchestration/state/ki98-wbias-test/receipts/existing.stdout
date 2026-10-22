@@ -1,0 +1,13 @@
+EW9                  tilt rho +1.354 (0.043) sd 0.87 e +0.4148% | nominal rho -0.503 (0.043) sd 0.86 e +0.1489%
+EW10                 tilt rho +1.832 (0.040) sd 0.81 e +0.9458% | nominal rho -0.530 (0.041) sd 0.83 e +0.4392%
+EW16                 tilt rho +2.014 (0.044) sd 0.87 e +0.9241% | nominal rho -0.492 (0.045) sd 0.90 e +0.4496%
+EW17                 tilt rho +2.620 (0.053) sd 1.06 e -2.9469% | nominal rho +0.233 (0.053) sd 1.05 e -3.8778%
+J116                 tilt rho +2.050 (0.046) sd 0.93 e +0.4159% | nominal rho -0.329 (0.044) sd 0.87 e -0.0087%
+J224                 tilt rho +2.531 (0.047) sd 0.94 e -0.3573% | nominal rho -0.523 (0.048) sd 0.97 e -1.1250%
+total_integrated     tilt rho -0.375 (0.042) sd 0.85 e +0.2623% | nominal rho -0.618 (0.049) sd 0.98 e +0.2453%
+EW_all_ones          tilt rho -0.056 (0.046) sd 0.91 e +0.0839% | nominal rho -0.350 (0.045) sd 0.90 e +0.0465%
+band_EW_W_lt_1.4     tilt rho -0.055 (0.047) sd 0.94 e +0.0538% | nominal rho -0.342 (0.046) sd 0.93 e +0.0224%
+band_EW_W_1.4_2.2    tilt rho +0.482 (0.046) sd 0.91 e +0.1652% | nominal rho -0.199 (0.049) sd 0.98 e +0.0924%
+band_EW_W_2.2_3      tilt rho +0.895 (0.044) sd 0.88 e +0.7345% | nominal rho -0.600 (0.044) sd 0.88 e +0.4531%
+band_EW_W_ge_3       tilt rho +2.080 (0.055) sd 1.11 e -2.8868% | nominal rho +0.163 (0.055) sd 1.09 e -3.5795%
+band_J_W_ge_2.2      tilt rho -0.421 (0.043) sd 0.87 e +0.6968% | nominal rho -0.672 (0.047) sd 0.95 e +0.6614%

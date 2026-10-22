@@ -1,0 +1,67 @@
+{
+ "verdict": "UNDETERMINED",
+ "control": {
+  "xsec_flat": true,
+  "xtrue_flat": true,
+  "shape": true,
+  "meta_checks": [],
+  "pass": true
+ },
+ "truth_shared": {
+  "b": true,
+  "c": true
+ },
+ "primary": {
+  "functional": "band_EW_W_ge_3",
+  "present_in_a": true,
+  "c_BS_pattern": false,
+  "c_estimator_pattern": false,
+  "b_BS_pattern": false,
+  "b_estimator_pattern": true,
+  "verdict": "UNDETERMINED",
+  "R_a": 2.2871704216915303,
+  "SE_a": 0.7212001870592821,
+  "R_c": 3.3998181764027096,
+  "SE_c": 0.6465119781058868,
+  "R_b": 2.8398841963263455,
+  "SE_b": 0.45893729779917186,
+  "D_c": -1.1126477547111793,
+  "SE_Dc": 0.20614656675742615,
+  "D_b": -0.5527137746348145,
+  "SE_Db": 0.4794535512196266,
+  "beta_se_term": 0.28399945880117006
+ },
+ "secondary": {
+  "functional": "band_EW_W_2.2_3",
+  "present_in_a": false,
+  "c_BS_pattern": false,
+  "c_estimator_pattern": false,
+  "b_BS_pattern": false,
+  "b_estimator_pattern": false,
+  "verdict": "UNDETERMINED (the residual is not resolved in arm (a) on these five seeds)",
+  "R_a": 0.8980539448320529,
+  "SE_a": 0.567720988466965,
+  "R_c": 0.5975390873786108,
+  "SE_c": 0.5866197032196289,
+  "R_b": 1.649763857679229,
+  "SE_b": 0.535494886100222,
+  "D_c": 0.3005148574534421,
+  "SE_Dc": 0.12184032382378886,
+  "D_b": -0.7517099128471758,
+  "SE_Db": 0.14757948614376443,
+  "beta_se_term": 0.28520393781484327
+ }
+}
+EW9                  R_a +1.55(0.74) R_c +1.49(0.71) R_b +1.52(0.77) D_c +0.06(0.06) D_b +0.03(0.34)
+EW10                 R_a +1.88(0.54) R_c +1.67(0.53) R_b +2.19(0.59) D_c +0.22(0.10) D_b -0.30(0.22)
+EW16                 R_a +2.05(0.53) R_c +1.74(0.56) R_b +2.39(0.56) D_c +0.31(0.12) D_b -0.34(0.27)
+EW17                 R_a +2.93(0.66) R_c +4.04(0.61) R_b +3.23(0.53) D_c -1.11(0.19) D_b -0.30(0.53)
+J116                 R_a +2.27(0.82) R_c +2.24(0.89) R_b +2.96(0.84) D_c +0.04(0.11) D_b -0.68(0.34)
+J224                 R_a +2.83(0.50) R_c +3.25(0.47) R_b +3.51(0.54) D_c -0.42(0.08) D_b -0.68(0.48)
+total_integrated     R_a -0.26(0.42) R_c -0.51(0.42) R_b -0.20(0.32) D_c +0.26(0.03) D_b -0.05(0.18)
+EW_all_ones          R_a -0.54(0.38) R_c -0.50(0.37) R_b -0.34(0.57) D_c -0.04(0.03) D_b -0.20(0.39)
+band_EW_W_lt_1.4     R_a -0.26(0.42) R_c -0.25(0.42) R_b -0.30(0.47) D_c -0.01(0.03) D_b +0.03(0.24)
+band_EW_W_1.4_2.2    R_a +0.39(0.46) R_c +0.30(0.42) R_b +0.48(0.35) D_c +0.09(0.08) D_b -0.08(0.39)
+band_EW_W_2.2_3      R_a +0.90(0.57) R_c +0.60(0.59) R_b +1.65(0.54) D_c +0.30(0.12) D_b -0.75(0.15)
+band_EW_W_ge_3       R_a +2.29(0.72) R_c +3.40(0.65) R_b +2.84(0.46) D_c -1.11(0.21) D_b -0.55(0.48)
+band_J_W_ge_2.2      R_a -0.21(0.77) R_c -0.56(0.76) R_b +0.08(0.49) D_c +0.35(0.04) D_b -0.29(0.25)
