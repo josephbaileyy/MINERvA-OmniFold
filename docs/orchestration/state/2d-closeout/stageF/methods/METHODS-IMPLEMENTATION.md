@@ -827,3 +827,28 @@ side-by-side no longer prefers the new version, and here it does not. **The pape
   ancestor and carries every cited tag.
 - **Sync the standalone note repository.**
 - **The register rewrite of the reader parts of Apps. H and I** is a later batch.
+
+## 21. Standalone note repository synced a third time (2026-10-21)
+
+- **Canonical:** `MINERvA-OmniFold` main at `b603f9cf` (PR #217 merge). It includes PRs #208–#217:
+  - register rounds r12 and r13;
+  - the shorter Data availability;
+  - note batch 0 and S11;
+  - the records move and its pin;
+  - the test fix.
+- **Standalone:** `MINERvA-OmniFold-Analysis-Note` main at `767abd55bd5a90daa12251e918ffec39cdf124ee`, checked with
+  `git ls-remote` after the push.
+  - The remote held two commits by Joseph since §14: `4578974` (Updates from Overleaf) and its merge, `7741241`.
+  - Their only change is `test_build_all.py`'s mode, 755 → 644. There was no content change, so the checkout was
+    fast-forwarded before the copy, and the sync restores the canonical 755.
+- **Content.** Six new files:
+  - `main_records.tex`, `app_release_records.tex`, `app_codebase_records.tex`;
+  - `check_note_records.py`, `records-inventory-base.json`, `records-move-ledger.md`.
+
+  All 147 tracked note files are byte-identical to `b603f9cf` (`cmp`, before and after the build).
+- **Standalone build:**
+  - `build_all.sh` rc 0, with five targets;
+  - BODY-POINTERS PASS and RESULT PASS;
+  - containment: records 64/64, posted note and paper 0 of 69;
+  - RECORDS-PIN and the Sec. IV receipts check skip there by design.
+  - Pages: note 119, paper 13, primer 15, PET note 26, records 21.
