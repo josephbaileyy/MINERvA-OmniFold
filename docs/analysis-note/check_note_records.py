@@ -10,6 +10,8 @@ usage:
   check_note_records.py inventory <base-note-dir> <out.json> [--sha SHA]   # freeze the base inventory
   check_note_records.py probe <base-note-dir | inventory.json> <new-note-dir> [--ledger LEDGER.md]
   check_note_records.py --self-test <base-note-dir | inventory.json> <new-note-dir> [--ledger LEDGER.md]
+  check_note_records.py pin [note-dir]          # the NoteRecords2026 pin (build_all.sh runs this)
+  check_note_records.py --self-test-pin         # the pin check fires and skips where it should (build_all.sh)
 
 The base is docs/analysis-note at the commit before the move (or the inventory frozen from it); the new tree is the
 same directory after it. The new tree carries main_records.tex, whose \\input closure is the records document, and
@@ -35,6 +37,20 @@ Inventory (base):                                    Probes (new):
                                                          N:<file>::<text> prints in the posted note's <file>,
                                                          X:<file>::<text> no longer prints there,
                                                          R:<file>::<text> prints in the records closure's <file>
+
+THE PIN (plan commit 3, 2026-10-21). The posted note cites the records as NoteRecords2026 (technote.bib), whose URL
+names one full commit sha. `pin` requires, in the canonical repository:
+  Q1 the entry names a full 40-hex commit sha (never a branch such as tree/main);
+  Q2 that commit exists in this clone and is an ancestor of HEAD, so it cannot be rebased away from under the note;
+  Q3 the records' app_provenance.tex and app_history.tex exist at that commit, and every App. G tag the posted note
+     cites with NoteRecords2026 is a tag of app_provenance.tex there;
+  Q4 every heading the posted note names after the citation (", superseded values: retired material", ", identities
+     already fixed", ...) is, part by part, words of a section, subsection or paragraph heading of the records files
+     at that commit (app_provenance, app_history, app_release_records, app_codebase_records, main_records).
+The canonical repository is a git checkout whose top level holds this directory as docs/analysis-note. Anywhere else
+-- the standalone note repository (this directory is its top level), an export with no git, a scratch copy -- the
+check reports SKIP and exits 0, as check_sec4_receipts.py does; the canonical build enforces it. --self-test-pin
+builds a synthetic repository and requires Q1-Q4 each to fire, a good pin to pass, and both skip layouts to skip.
 
 --self-test first requires the probe to be SILENT on the given (base, new) pair -- the delivered move -- and then
 plants one defect at a time in a copy of the new tree (a dropped strike, a dropped and an edited record paragraph, a
@@ -275,6 +291,239 @@ def probe(base: Path, new: Path, ledger: Path) -> int:
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# The pin of the NoteRecords2026 citation (plan commit 3).
+
+import os
+import subprocess
+
+PIN_URL_RE = re.compile(r"github\.com/josephbaileyy/MINERvA-OmniFold/(?:tree|blob)/([0-9A-Za-z._/-]+?)/docs/analysis-note")
+SHA_RE = re.compile(r"[0-9a-f]{40}")
+RECORD_FILES = ("app_provenance.tex", "app_history.tex", "app_release_records.tex", "app_codebase_records.tex",
+                "main_records.tex")
+REQUIRED_AT_PIN = ("app_provenance.tex", "app_history.tex")
+HEADING_RE = re.compile(r"\\(?:section|subsection|subsubsection|paragraph)\*?\{")
+
+
+def git(cwd: Path, *args: str) -> subprocess.CompletedProcess:
+    """git in `cwd` with every GIT_* variable removed, so an inherited GIT_DIR cannot point the check elsewhere."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    try:
+        return subprocess.run(["git", *args], cwd=str(cwd), env=env, capture_output=True, text=True)
+    except FileNotFoundError:
+        return subprocess.CompletedProcess(["git", *args], 127, "", "git not found")
+
+
+def bib_pin(note: Path) -> tuple[str | None, str]:
+    """(ref named by NoteRecords2026's URL, the entry text) from technote.bib."""
+    bib = (note / "technote.bib").read_text(errors="replace")
+    m = re.search(r"@misc\{NoteRecords2026,(.*?)\n\}", bib, re.S)
+    if not m:
+        return None, ""
+    u = PIN_URL_RE.search(m.group(1))
+    return (u.group(1) if u else None), m.group(1)
+
+
+def mask_math(text: str) -> str:
+    """Each $...$ becomes one opaque word, so commas and backslashes inside math neither end nor alter a phrase."""
+    return re.sub(r"\$([^$]*)\$", lambda m: " m" + hashlib.sha1(re.sub(r"\s+", "", m.group(1)).encode()).hexdigest()[:10] + " ",
+                  text)
+
+
+def plain(text: str) -> str:
+    """Heading or phrase text compared as words: math masked, \\texttt{x} -> x, other commands and braces dropped."""
+    t = mask_math(text)
+    t = re.sub(r"\\texttt\{([^{}]*)\}", r"\1", t)
+    t = re.sub(r"\\[A-Za-z]+\*?", " ", t)
+    t = re.sub(r"[{}~]", " ", t)
+    return re.sub(r"\s+", " ", t).strip().lower()
+
+
+def headings(texts: list[str]) -> list[str]:
+    out = []
+    for text in texts:
+        t = printed(text)
+        for m in HEADING_RE.finditer(t):
+            depth, j = 1, m.end()
+            while j < len(t) and depth:
+                depth += {"{": 1, "}": -1}.get(t[j], 0)
+                j += 1
+            out.append(plain(t[m.end():j - 1]))
+    return out
+
+
+def cited_claims(note: Path) -> list[tuple[str, list[str], list[str]]]:
+    """(file, tags, heading parts) for every NoteRecords2026 citation printed in the posted note's closure."""
+    out = []
+    for f in closure(note / "main_note.tex"):
+        t = norm(printed(f.read_text(errors="replace")))
+        for m in re.finditer(r"\\cite\{NoteRecords2026\}", t):
+            rest = t[m.end():m.end() + 300]
+            win = rest[:min([x for x in (rest.find(")"), rest.find(". ")) if x >= 0] or [len(rest)])]
+            tags = re.findall(r"\\texttt\{([a-z0-9-]+)\}", win)
+            parts: list[str] = []
+            if rest.startswith(", "):
+                phrase = mask_math(rest[2:])
+                phrase = re.split(r"\)|;|,|\. |\\\\|\\texttt", phrase)[0]
+                phrase = re.sub(r"\s+and\s*$", "", phrase).strip()
+                if phrase and phrase[0].islower() and not phrase.startswith("which"):
+                    parts = [plain(x) for x in phrase.split(": ") if plain(x)]
+            out.append((f.name, tags, parts))
+    return out
+
+
+def pin_check(note: Path) -> tuple[str, list[str]]:
+    """("PASS" | "FAIL" | "SKIP", messages)."""
+    note = note.resolve()
+    top = git(note, "rev-parse", "--show-toplevel")
+    if top.returncode != 0:
+        return "SKIP", [f"{note} is not in a git checkout (an export or a scratch copy); enforced by the canonical build"]
+    toplevel = Path(top.stdout.strip()).resolve()
+    if toplevel / "docs" / "analysis-note" != note:
+        return "SKIP", [f"{note} is not <repo>/docs/analysis-note of its checkout {toplevel} (the standalone note "
+                        "repository); enforced by the canonical build"]
+    fails: list[str] = []
+    ref, entry = bib_pin(note)
+    if not entry:
+        return "FAIL", ["Q1 technote.bib has no @misc{NoteRecords2026} entry"]
+    if ref is None or not SHA_RE.fullmatch(ref):
+        return "FAIL", [f"Q1 NoteRecords2026 names {ref!r}, not a full 40-hex commit sha: a branch moves, so the "
+                        "citation would not identify the records the note cites"]
+    if git(note, "cat-file", "-e", ref + "^{commit}").returncode != 0:
+        return "FAIL", [f"Q2 pinned commit {ref} is not in this clone (a shallow or partial clone cannot verify it)"]
+    anc = git(note, "merge-base", "--is-ancestor", ref, "HEAD")
+    if anc.returncode == 1:
+        fails.append(f"Q2 pinned commit {ref} is not an ancestor of HEAD: a rebase or an unmerged branch can lose it")
+    elif anc.returncode != 0:
+        fails.append(f"Q2 cannot decide whether {ref} is an ancestor of HEAD: {anc.stderr.strip()}")
+    at_pin = {}
+    for name in RECORD_FILES:
+        shown = git(note, "show", f"{ref}:docs/analysis-note/{name}")
+        if shown.returncode == 0:
+            at_pin[name] = shown.stdout
+        elif name in REQUIRED_AT_PIN:
+            fails.append(f"Q3 docs/analysis-note/{name} does not exist at {ref}")
+    tags = set(g_tags(at_pin.get("app_provenance.tex", "")))
+    heads = headings(list(at_pin.values()))
+    claims = cited_claims(note)
+    n_tags = n_parts = 0
+    for fname, ctags, parts in claims:
+        for tag in ctags:
+            n_tags += 1
+            if tag not in tags:
+                fails.append(f"Q3 {fname} cites tag {tag} with NoteRecords2026, but app_provenance.tex at {ref[:12]} "
+                             "has no such tag")
+        for part in parts:
+            n_parts += 1
+            if not any(part in h for h in heads):
+                fails.append(f"Q4 {fname} names {part!r} after NoteRecords2026, which is no heading's words in the "
+                             f"records at {ref[:12]}")
+    if not claims:
+        fails.append("Q3 the posted note cites NoteRecords2026 nowhere: there is nothing to pin, or the citation "
+                     "form changed and this check no longer sees it")
+    summary = (f"{len(claims)} citations, {n_tags} tag and {n_parts} heading references, pinned to {ref}, "
+               f"{len(tags)} tags and {len(heads)} headings at the pin")
+    return ("FAIL" if fails else "PASS"), fails + [summary]
+
+
+def pin(note: Path) -> int:
+    status, msgs = pin_check(note)
+    for msg in msgs[:-1] if status != "SKIP" else []:
+        print("  FAIL " + msg)
+    print(f"RECORDS-PIN :: {status} -- {msgs[-1]}")
+    return 1 if status == "FAIL" else 0
+
+
+def pin_self_test() -> int:
+    """A synthetic repository: a good pin passes; Q1-Q4 each fire; the standalone and no-git layouts skip."""
+    failures, fired = [], 0
+    prov = ("\\section{Provenance}\n\\label{app:provenance}\n{\\small\\begin{longtable}{@{}ll@{}}\n"
+            "\\texttt{tag-a} & see below \\\\\n\\end{longtable}}\n"
+            "\\begin{description}\n  \\item[\\texttt{tag-b}.] A record.\n\\end{description}\n")
+    hist = ("\\section{Superseded values and withdrawn results}\n\\label{app:history}\n"
+            "\\subsection{Struck values}\n\\subsubsection{The earlier direct $(\\Eavail,W)$ block sum}\nText.\n")
+    good_body = ("Text (Ref.~\\cite{NoteRecords2026}, \\texttt{tag-a}) and (Ref.~\\cite{NoteRecords2026}, superseded "
+                 "values: struck values) and (Ref.~\\cite{NoteRecords2026}, superseded values: the earlier direct "
+                 "$(\\Eavail, W)$ block sum).\n")
+
+    def bib(ref: str) -> str:
+        return ("@misc{NoteRecords2026,\n  title = {{Records}},\n  howpublished = {\\url{https://github.com/josephbaileyy/"
+                f"MINERvA-OmniFold/tree/{ref}/docs/analysis-note}}}}\n}}\n")
+
+    with tempfile.TemporaryDirectory() as d:
+        repo = Path(d) / "repo"
+        note = repo / "docs" / "analysis-note"
+        note.mkdir(parents=True)
+        g = lambda *a: git(repo, "-c", "user.name=pin-self-test", "-c", "user.email=pin@self.test.invalid", *a)
+        if g("init", "-q").returncode != 0:
+            print("RECORDS-PIN SELF-TEST :: FAIL (git init failed: git is required)")
+            return 1
+        (note / "app_provenance.tex").write_text(prov)
+        (note / "app_history.tex").write_text(hist)
+        (note / "main_note.tex").write_text("\\documentclass{article}\n\\begin{document}\n\\input{sec_a}\n\\end{document}\n")
+        (note / "sec_a.tex").write_text(good_body)
+        (note / "technote.bib").write_text(bib("main"))
+
+        def commit(parent: str | None) -> str:
+            g("add", "-A")
+            tree = g("write-tree").stdout.strip()
+            args = ["commit-tree", tree, "-m", "pin self-test"] + (["-p", parent] if parent else [])
+            return g(*args).stdout.strip()
+        a = commit(None)
+        g("update-ref", "HEAD", a)
+        (note / "technote.bib").write_text(bib(a))
+        b = commit(a)
+        g("update-ref", "HEAD", b)
+        side = commit(None)                     # same tree, no parent: never an ancestor of HEAD
+
+        def case(name: str, want: str, bib_ref: str, body: str = good_body) -> None:
+            nonlocal fired
+            (note / "technote.bib").write_text(bib(bib_ref))
+            (note / "sec_a.tex").write_text(body)
+            status, msgs = pin_check(note)
+            ok = (status == want == "PASS") or (status == want == "SKIP") or (
+                status == "FAIL" and want not in ("PASS", "SKIP") and any(x.startswith(want) for x in msgs))
+            if ok:
+                fired += 1
+                print(f"  {'fired ' if want not in ('PASS', 'SKIP') else 'ok    '} {name:42} -> {status}: {msgs[0][:90]}")
+            else:
+                failures.append(f"{name}: expected {want}, got {status}: {msgs[:2]}")
+
+        case("good pin passes", "PASS", a)
+        case("branch name instead of a sha (tree/main)", "Q1", "main")
+        case("non-ancestor sha", "Q2 pinned commit", side)
+        case("unknown sha", "Q2 pinned commit", "0" * 40)
+        case("pin lacking a cited tag", "Q3 sec_a.tex cites tag tag-c", a,
+             good_body + "Also (Ref.~\\cite{NoteRecords2026}, \\texttt{tag-c}).\n")
+        case("heading the records do not have", "Q4 sec_a.tex names 'retired material'", a,
+             good_body + "Also (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).\n")
+        case("no citation at all", "Q3 the posted note cites", a, "No citation.\n")
+        # The standalone note repository: this directory is the top level of its own checkout.
+        standalone = Path(d) / "standalone"
+        shutil.copytree(note, standalone)
+        git(standalone, "init", "-q")
+        status, msgs = pin_check(standalone)
+        if status == "SKIP":
+            fired += 1
+            print(f"  ok     {'standalone note repository skips':42} -> SKIP: {msgs[0][:90]}")
+        else:
+            failures.append(f"standalone layout: expected SKIP, got {status}: {msgs[:2]}")
+        plain_copy = Path(d) / "export" / "docs" / "analysis-note"
+        shutil.copytree(note, plain_copy)
+        status, msgs = pin_check(plain_copy)
+        if status == "SKIP":
+            fired += 1
+            print(f"  ok     {'copy outside any git checkout skips':42} -> SKIP: {msgs[0][:90]}")
+        else:
+            failures.append(f"no-git layout: expected SKIP, got {status}: {msgs[:2]}")
+    for f in failures:
+        print("  FAIL " + f)
+    print(f"RECORDS-PIN SELF-TEST :: {'PASS' if not failures else 'FAIL'} ({fired} of 9 cases as expected: a good pin "
+          "passes; a branch, a non-ancestor, an unknown sha, a missing tag, a missing heading and no citation fail; "
+          "the standalone and no-git layouts skip)")
+    return 1 if failures else 0
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # Self-test: silent on the delivered move, and each planted defect fires its own probe.
 
 def _drop_paragraph(path: Path, head: str) -> None:
@@ -365,6 +614,10 @@ def main(argv: list[str]) -> int:
         Path(args[2]).write_text(json.dumps(inv, indent=1) + "\n")
         print({k: (len(v) if not isinstance(v, str) else v) for k, v in inv.items()})
         return 0
+    if args and args[0] == "pin" and len(args) <= 2:
+        return pin(Path(args[1]) if len(args) == 2 else Path(__file__).resolve().parent)
+    if args == ["--self-test-pin"]:
+        return pin_self_test()
     if len(args) == 3 and args[0] in ("probe", "--self-test"):
         base, new = Path(args[1]), Path(args[2])
         ledger = ledger or new / LEDGER
