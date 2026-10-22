@@ -955,3 +955,19 @@ The re-rating against the note's baseline is in progress.
 - confirmation of the narrowed verifier sentence;
 - the separate "hybrid null hypotheses" commit;
 - the "since superseded" label.
+
+## 24. Standalone note repository synced a fourth time (2026-10-22)
+
+- **Canonical:** `MINERvA-OmniFold` main at `04211b8b` (PR #244 merge). It includes the note's chapter batches and the
+  records-citation thinning, PRs #219–#244.
+- **Standalone:** `MINERvA-OmniFold-Analysis-Note` main at `19f3b2fa80d137f3df9c35a6b5848e2eb2a1b8e9`, checked with
+  `git ls-remote` after the push. There were no remote commits since §21.
+- **Content:** all 147 tracked note files are byte-identical to `04211b8b` (`cmp`, before and after the build). 23
+  files changed, and none was added or removed.
+- **Standalone build:**
+  - The first run failed with `biber main_note` returning code 2, macOS's stale biber PAR cache (a known failure).
+  - Rerun with a private `PAR_GLOBAL_TMPDIR`: rc 0, five targets, every PDF written by that run, with no unresolved
+    or duplicate references.
+  - Containment: records 64/64, note 0 of 69.
+  - BODY-POINTERS and RESULT PASS. RECORDS-PIN and the Sec. IV receipts check skip there by design.
+  - Pages: note 119, paper 13, primer 15, PET note 26, records 21.
