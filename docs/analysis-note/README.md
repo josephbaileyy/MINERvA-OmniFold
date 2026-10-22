@@ -134,7 +134,7 @@ not imply otherwise.
 | Struck values, withdrawn arguments, superseded constructions (the only file allowed `\dead{}` in each strike-carrying build) | `app_history.tex` (records document, `main_records.tex`; out of the posted note since 2026-10-21), `app_history_pet.tex` (PET note) |
 | Provenance tags of the records the note cites (cited as `Ref.~\cite{NoteRecords2026}, \texttt{tag}`) | `app_provenance.tex` (records document) |
 | Record parts of the release and codebase appendices (identity table, audit record, test-suite discipline) | `app_release_records.tex`, `app_codebase_records.tex` (records document); the reader parts stay in `app_release.tex`, `app_codebase.tex` |
-| Proof that the records move lost nothing | `check_note_records.py` (probe and `--self-test`), `records-move-ledger.md`, base inventory `docs/analysis-note/records-inventory-base.json` |
+| Proof that the records move lost nothing, and the pin of its citation | `check_note_records.py` (probe and `--self-test`; `pin` and `--self-test-pin`, run by `build_all.sh`), `records-move-ledger.md`, base inventory `docs/analysis-note/records-inventory-base.json` |
 | Generated figure inputs | `figures/`, `make_figures.sh` |
 | Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py`, `check_body_pointers.py` |
 

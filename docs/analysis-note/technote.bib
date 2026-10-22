@@ -999,11 +999,13 @@ primaryClass  = {hep-ph},
 % DECISION-20261021-joseph-da-and-note-records.md item 2: the note's records (provenance, fixed identities and audit
 % record, test-suite discipline, superseded values and withdrawn results) left the posted note for the internal records
 % document main_records.tex, built by build_all.sh. The posted note cites it by App. G tag or by heading. The locator is
-% tree/main for now, as AnalysisNote2026 in publication.bib; it is to be pinned to the merge commit after the move
-% reaches origin/main (records-move plan, commit 3). biblatex runs url=false, so the locator is in howpublished.
+% pinned (records-move plan, commit 3) to 7986273b, the merge of PR #216, which moved the records onto origin/main; a
+% branch name would move under the note. check_note_records.py pin (run by build_all.sh) requires that commit to be an
+% ancestor of HEAD and to hold every tag and heading the note cites. biblatex runs url=false, so the locator is in
+% howpublished, in the style of AnalysisNote2026 (publication.bib).
 @misc{NoteRecords2026,
   author       = {Bailey, Joseph and Nachman, Benjamin},
   title        = {{Records of the analysis note: provenance, fixed identities and audit record, test-suite discipline, and superseded values and withdrawn results}},
   year         = {2026},
-  howpublished = {Internal record of the MINERvA-OmniFold repository, not posted; built from \texttt{main\_records.tex} by \texttt{build\_all.sh}, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/tree/main/docs/analysis-note}}
+  howpublished = {Internal record of the MINERvA-OmniFold repository, not posted; built from \texttt{main\_records.tex} by \texttt{build\_all.sh}, \url{https://github.com/josephbaileyy/MINERvA-OmniFold/tree/7986273b169e0c759f3156ddb9f784a51f0d7f72/docs/analysis-note}}
 }

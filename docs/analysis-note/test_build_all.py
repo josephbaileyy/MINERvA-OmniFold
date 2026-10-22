@@ -152,6 +152,16 @@ mode = "self" if "--self-test" in sys.argv[1:] else "check"
 sys.exit(1 if os.environ.get("BUILD_TEST_BODYLINT_FAIL") == mode else 0)
 """
 
+# The records-pin check (check_note_records.py pin, plan commit 3) reads git and the note sources the sandbox does not
+# have; it is stubbed like the others, and its own behaviour is tested in PinCheckTest and its --self-test-pin.
+FAKE_PIN = r"""#!/usr/bin/env python3
+import os, sys
+with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
+    fh.write("pin: reached with args %r\n" % (sys.argv[1:],))
+mode = "self" if "--self-test-pin" in sys.argv[1:] else "check"
+sys.exit(1 if os.environ.get("BUILD_TEST_PIN_FAIL") == mode else 0)
+"""
+
 
 class BuildAllHarness(unittest.TestCase):
     maxDiff = None
@@ -176,6 +186,7 @@ class BuildAllHarness(unittest.TestCase):
         self._install(self.sandbox / "check_dead_containment.py", FAKE_CHECKER)
         self._install(self.sandbox / "check_sec4_receipts.py", FAKE_SEC4)
         self._install(self.sandbox / "check_body_pointers.py", FAKE_BODY_LINT)
+        self._install(self.sandbox / "check_note_records.py", FAKE_PIN)
 
     def _install(self, path, body):
         path.write_text(body)
@@ -194,7 +205,7 @@ class BuildAllHarness(unittest.TestCase):
             lg.write_text("stale clean log\n")
             os.utime(str(lg), (old, old))
 
-    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail="", bodylint_fail=""):
+    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail="", bodylint_fail="", pin_fail=""):
         env = dict(os.environ)
         # NERSC exports `module` as a Bash function and recreates it through
         # BASH_ENV.  If either reaches the fixture shell, build_all.sh loads the
@@ -209,6 +220,7 @@ class BuildAllHarness(unittest.TestCase):
         env["BUILD_TEST_CONTAINMENT_RC"] = containment_rc
         env["BUILD_TEST_SEC4_FAIL"] = sec4_fail   # "check" or "self": that sec4 invocation exits 1
         env["BUILD_TEST_BODYLINT_FAIL"] = bodylint_fail   # likewise for the body-pointer lint
+        env["BUILD_TEST_PIN_FAIL"] = pin_fail             # likewise for the records-pin check
         # A minimal PATH plus the shim dir, so the fake latexmk is the only one reachable.
         base = "/usr/bin:/bin:/usr/sbin:/sbin"
         env["PATH"] = base if drop_latexmk else "%s:%s" % (self.bin, base)
@@ -323,6 +335,22 @@ class TestTheHappyPath(BuildAllHarness):
                 self.assertNotEqual(0, proc.returncode, proc.stdout)
                 self.assertIn("bodylint: reached", self.calls)
                 self.assertNotIn("latexmk: fake invoked", self.calls)
+
+    def test_a_failing_records_pin_fails_the_build_before_any_latexmk(self):
+        """Plan commit 3: a NoteRecords2026 pin that is not a merged ancestor holding every cited tag stops the build."""
+        for which in ("check", "self"):
+            with self.subTest(pin_fails=which):
+                self.log.write_text("")
+                proc = self.run_build("build", pin_fail=which)
+                self.assertNotEqual(0, proc.returncode, proc.stdout)
+                self.assertIn("pin: reached", self.calls)
+                self.assertNotIn("latexmk: fake invoked", self.calls)
+
+    def test_the_records_pin_runs_and_its_self_test_runs_first(self):
+        self.run_build("build")
+        self.assertIn("pin: reached with args ['pin']", self.calls)
+        self.assertLess(self.calls.index("pin: reached with args ['--self-test-pin']"),
+                        self.calls.index("pin: reached with args ['pin']"))
 
     def test_the_body_pointer_self_test_runs_before_its_verdict(self):
         self.run_build("build")
@@ -499,6 +527,8 @@ MUTANTS = [
     ("m9-drop-the-multiply-defined-check", 'if grep -Eq "$multidef_re" "${t}.log"; then', "if false; then"),
     ("m10-build-the-records-before-the-note", "targets=(main_note main_primer main_paper pet_note main_records)",
      "targets=(main_records main_note main_primer main_paper pet_note)"),
+    ("m11-drop-the-records-pin", "python3 check_note_records.py pin\n", "true\n"),
+    ("m12-drop-the-records-pin-self-test", "python3 check_note_records.py --self-test-pin", "true"),
 ]
 
 
@@ -956,6 +986,111 @@ class ExemptionGuardTest(unittest.TestCase):
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
         self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: 1.014 is no longer struck", out)
+
+
+class PinCheckTest(unittest.TestCase):
+    """check_note_records.py pin (plan commit 3) on synthetic git repositories, in both directions."""
+
+    def setUp(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("cnr_pin", str(HERE / "check_note_records.py"))
+        self.mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.mod)
+        self.tmp = Path(tempfile.mkdtemp(prefix="pin-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.repo = self.tmp / "repo"
+        self.note = self.repo / "docs" / "analysis-note"
+        self.note.mkdir(parents=True)
+        self.git("init", "-q")
+        (self.note / "app_provenance.tex").write_text("\\section{Provenance}\n\\texttt{joint-5d} & see below \\\\\n")
+        (self.note / "app_history.tex").write_text("\\section{Superseded values and withdrawn results}\n"
+                                                    "\\subsubsection{The VL175 construction: retired material}\n")
+        (self.note / "main_note.tex").write_text("\\documentclass{article}\n\\input{sec_joint}\n")
+        self.cite(r"\texttt{joint-5d}")
+        self.records = self.commit(None)
+        self.bib(self.records)
+        self.head = self.commit(self.records)
+        self.git("update-ref", "HEAD", self.head)
+
+    def git(self, *args, cwd=None):
+        env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+        return subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t.invalid", *args],
+                              cwd=str(cwd or self.repo), env=env, capture_output=True, text=True)
+
+    def commit(self, parent):
+        self.git("add", "-A")
+        tree = self.git("write-tree").stdout.strip()
+        return self.git("commit-tree", tree, "-m", "t", *(["-p", parent] if parent else [])).stdout.strip()
+
+    def bib(self, ref):
+        (self.note / "technote.bib").write_text(
+            "@misc{NoteRecords2026,\n  howpublished = {\\url{https://github.com/josephbaileyy/MINERvA-OmniFold/tree/"
+            + ref + "/docs/analysis-note}}\n}\n")
+
+    def cite(self, what):
+        (self.note / "sec_joint.tex").write_text("No uncertainty (Ref.~\\cite{NoteRecords2026}, %s).\n" % what)
+
+    def test_a_good_pin_passes(self):
+        status, msgs = self.mod.pin_check(self.note)
+        self.assertEqual(status, "PASS", msgs)
+
+    def test_a_pin_lacking_a_cited_tag_FAILS(self):
+        self.cite(r"\texttt{joint-6d}")
+        status, msgs = self.mod.pin_check(self.note)
+        self.assertEqual(status, "FAIL", msgs)
+        self.assertTrue(any("cites tag joint-6d" in m for m in msgs), msgs)
+
+    def test_a_pin_lacking_a_cited_heading_FAILS(self):
+        self.cite("superseded values: the retired 2D construction")
+        status, msgs = self.mod.pin_check(self.note)
+        self.assertEqual(status, "FAIL", msgs)
+        self.assertTrue(any("'the retired 2d construction'" in m for m in msgs), msgs)
+        self.cite("superseded values: retired material")
+        self.assertEqual(self.mod.pin_check(self.note)[0], "PASS")
+
+    def test_a_non_ancestor_sha_FAILS(self):
+        side = self.commit(None)        # the same tree with no parent: a commit HEAD does not contain
+        self.bib(side)
+        status, msgs = self.mod.pin_check(self.note)
+        self.assertEqual(status, "FAIL", msgs)
+        self.assertTrue(any("is not an ancestor of HEAD" in m for m in msgs), msgs)
+
+    def test_a_branch_name_FAILS(self):
+        self.bib("main")
+        status, msgs = self.mod.pin_check(self.note)
+        self.assertEqual(status, "FAIL", msgs)
+        self.assertIn("not a full 40-hex commit sha", msgs[0])
+
+    def test_the_standalone_layout_skips(self):
+        standalone = self.tmp / "standalone"
+        shutil.copytree(self.note, standalone)
+        self.git("init", "-q", cwd=standalone)
+        self.assertEqual(self.mod.pin_check(standalone)[0], "SKIP")
+
+    def test_a_copy_outside_git_skips(self):
+        copy = self.tmp / "export" / "docs" / "analysis-note"
+        shutil.copytree(self.note, copy)
+        self.assertEqual(self.mod.pin_check(copy)[0], "SKIP")
+
+    def test_an_inherited_GIT_DIR_cannot_redirect_the_check(self):
+        """The check drops every GIT_* variable, so a hook's GIT_DIR cannot make another repository answer."""
+        old = os.environ.get("GIT_DIR")
+        os.environ["GIT_DIR"] = str(self.tmp / "nowhere.git")
+        try:
+            self.assertEqual(self.mod.pin_check(self.note)[0], "PASS")
+        finally:
+            if old is None:
+                os.environ.pop("GIT_DIR", None)
+            else:
+                os.environ["GIT_DIR"] = old
+
+    def test_the_self_test_passes(self):
+        self.assertEqual(self.mod.pin_self_test(), 0)
+
+    def test_the_production_bib_names_a_full_sha(self):
+        ref, entry = self.mod.bib_pin(HERE)
+        self.assertIsNotNone(ref, entry)
+        self.assertRegex(ref, r"^[0-9a-f]{40}$")
 
 
 class ContextExemptLiteralTest(unittest.TestCase):

@@ -30,7 +30,7 @@ check below that names a base was also run against `4ba0dd2f`.
 | `check_note_records.py` | The inventory, the probes P1–P7 and `--self-test` (see "Deviations"). |
 | `records-move-ledger.md` | The move ledger: 28 rows, 106 probes. |
 
-**New, outside the note directory:** `docs/orchestration/state/2d-closeout/stageF/note-records/inventory-base.json` (moved by the director at commit time to `docs/analysis-note/records-inventory-base.json`: the receipt-artifact pre-commit check read it as a receipt naming untracked data files),
+**New, outside the note directory:** `docs/orchestration/state/2d-closeout/stageF/note-records/inventory-base.json`,
 derived from `4ba0dd2f` with `_base_sha` recorded. It holds 27 labels (22 of them record labels), 29 tags, 97 struck
 bodies, 30 paths, 84 record paragraphs, 20 reader paragraphs, and 40 pointer keys that count 44 App. G pointers. It
 differs from the plan's inventory in one key only: a new `app_statmethods.tex|rvp1pi` pointer, added by the glossary
@@ -514,3 +514,69 @@ Two other "earlier version" phrases are not note-version disclosures, so I kept 
 
 There are 81 `\cite{NoteRecords2026}` in the posted sources. That is 82, less the one in the deleted N5 glossary row.
 Against `4ba0dd2f` the diff is 23 tracked files (+507/−272), plus the 5 new note files and the state directory.
+
+---
+
+## Plan commit 3: the pin (uncommitted in `S/wt-rec`, HEAD `e10d5b95`)
+
+**The rebase requirement comes first.** The pin check requires the pinned commit `7986273b` (the PR #216 merge) to be
+an ancestor of HEAD. The worktree's HEAD `e10d5b95` is the merged branch tip, a parent of that merge, so in `wt-rec`
+the check fails Q2, exactly as designed. Commit this on top of `origin/main` (`7986273b`), not on `e10d5b95`.
+
+### What changed
+
+The 5 changed files are `technote.bib`, `check_note_records.py`, `build_all.sh`, `test_build_all.py` and
+`sec_systematics.tex`, plus one row in `README.md`.
+
+- **`technote.bib`.** `NoteRecords2026` now reads
+  `tree/7986273b169e0c759f3156ddb9f784a51f0d7f72/docs/analysis-note`, in the `AnalysisNote2026` howpublished style,
+  and its comment is updated.
+- **`check_note_records.py pin`.** It runs in the canonical layout, meaning a git checkout whose top level holds the
+  directory as `docs/analysis-note`. It checks four things:
+  - **Q1:** the entry names a full 40-hex sha;
+  - **Q2:** that sha is in the clone and is an ancestor of HEAD;
+  - **Q3:** `app_provenance.tex` and `app_history.tex` exist at the sha, and every tag the posted note cites with
+    `NoteRecords2026` is a tag there;
+  - **Q4:** every heading phrase after the citation is, part by part, the words of a heading in the records files at
+    the sha.
+
+  It reports SKIP when the directory is not in a git checkout, or is the top level of one (the standalone note
+  repository). It removes every `GIT_*` variable before running git.
+- **`check_note_records.py --self-test-pin`.** It builds a synthetic repository with git plumbing, so no hooks run,
+  and requires all 9 cases to come out as expected.
+- **`build_all.sh`.** A new item 8 runs the self-test and then the check, after the body lint and before any latexmk.
+- **`test_build_all.py`.**
+  - A stub for the harness, plus 2 harness tests.
+  - `PinCheckTest` (10 tests), covering:
+    - a good pin;
+    - a pin lacking a cited tag or a cited heading;
+    - a non-ancestor sha;
+    - a branch name;
+    - the standalone layout;
+    - a copy with no git;
+    - an inherited `GIT_DIR`;
+    - the self-test;
+    - the production bib.
+  - Mutants m11 (drop the pin) and m12 (drop its self-test).
+- **`sec_systematics.tex:528`.** The first real run of Q4 found one citation whose words were no heading's: "the
+  superseded 5D candidate constructions". The heading is "The superseded 5D candidate unified-throw constructions",
+  so the citation now uses those words.
+
+### The checks
+
+- **`build_copy.sh rec3`:** rc 0. The copy is not a git checkout, so the log shows
+  `RECORDS-PIN SELF-TEST :: PASS (9 of 9 …)` and then `RECORDS-PIN :: SKIP`. The rest of the build passes:
+  - all five targets have 0 unresolved and 0 multiply-defined;
+  - containment RESULT PASS: records 64/64, note, paper and primer 0 of 69;
+  - SEC4 15/15;
+  - pages 119, 15, 13, 26 and 21.
+- **The canonical build.** I made a scratch clone (`git clone --shared --no-checkout` of `wt-rec` into
+  `impl/pinclone`, detached at `7986273b`) and overlaid the worktree's `docs/analysis-note`; every file is `cmp`-equal
+  to the worktree. Nothing in `wt-rec`'s repository was written. Its `build_all.sh` gave rc 0 and
+  `RECORDS-PIN :: PASS -- 81 citations, 35 tag and 62 heading references, pinned to 7986273b…, 29 tags and 55
+  headings at the pin`.
+- **`pin` in `wt-rec`** (HEAD `e10d5b95`) gives `FAIL Q2 pinned commit 7986273b… is not an ancestor of HEAD`.
+- **`test_build_all.py`:** `Ran 81 tests … OK`. `--mutate` gives `12/12 mutants caught`.
+- **The probe**, now against `records-inventory-base.json`, where the merged commit put the inventory: `RECORDS-MOVE
+  :: PASS (… 0 failure(s))`. The self-test fires 12 of 12, and the delivered move is silent.
+- **`swallowed_text.py` against `origin/main`** (`7986273b`): `flagged 0`.

@@ -75,6 +75,10 @@
 #      labels, which the moved text's labels could otherwise collide into silently: a reference would print the wrong
 #      number with no "??" to show it. That FAILS the build; it does not trigger another latexmk run, because a
 #      duplicate label does not converge.
+#   8. Before any build, check_note_records.py pin requires the NoteRecords2026 citation (technote.bib) to name a full
+#      commit sha that is an ancestor of HEAD and holds every App. G tag and records heading the posted note cites with
+#      it. Its self-test runs first, on a synthetic repository. Outside the canonical layout (the standalone note
+#      repository, or any copy that is not <git checkout>/docs/analysis-note) it reports SKIP, as the Sec. IV check does.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -127,6 +131,11 @@ fi
 echo "=== body-pointer lint (internal pointers belong in the records document) ==="
 python3 check_body_pointers.py --self-test   # fires on a planted body pointer, silent on the appendix
 python3 check_body_pointers.py
+
+# (8) The records citation is pinned to a merged commit that holds what the note cites. Source and git only.
+echo "=== records citation pin (NoteRecords2026 names an ancestor commit holding every cited tag and heading) ==="
+python3 check_note_records.py --self-test-pin   # a good pin passes; a branch, a non-ancestor, a missing tag fail
+python3 check_note_records.py pin
 
 # (2) The instant every PDF must postdate. `sleep 1` removes the same-second ambiguity in
 # `test -nt` on filesystems with coarse timestamps: one second, once, against a LaTeX build.
