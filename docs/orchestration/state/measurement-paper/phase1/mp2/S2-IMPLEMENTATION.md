@@ -431,3 +431,125 @@ for NuWro. In F_primary, GENIE CV and MEC are close to the GENIE-based Tune. Thi
     about 0.87 CPU node-h, with a stop at 65 min.
 - **Context, descriptive only:** S0 had already seen V4 fail by a wide margin for NuWro C12 against Tune with full
   features (JSON `F_fallback` note). The fallback was declared for that reason, on response grounds.
+
+## The V2/V3 release (binding addendum 14 §2)
+
+### The verdict script
+
+`measurement-paper/phase1/mp2/mp2_s2_verdict.py`, sha256
+`6e6c1614ca5074a7fefdfc2b35a46306a0e2bff39e2b92dadc09c4bc0b1aad94`, revised after the independent review (below; the
+first version, c088e126, was never run on study data): no refit, 0 node-h, root_6_28. It imports
+`mp2_s2_fit.py` (91c2a64b, unchanged since code-v5) for the frozen bins, the 20-entry minimum and `chi2_shape`, so the
+statistics are those the gates computed. In order:
+
+1. **Blind.** ndf_fine comes from raw counts only: Tune rows in G's support per fine cell, and G's `nevt_flat`. If it
+   is < 200, the script prints STOP and exits 5 before the sealed file is opened.
+2. **The seal.** The sealed file's sha256 must equal the one the gates file recorded, and its `stat` is taken before
+   and after (asserted unchanged). The script never writes the sealed file.
+3. **Proof that the weights are the sealed run's.** From `weights_<G>_<fset>.npz` and the harmonized arrays, the
+   script recomputes V2-fine (χ², s, ndf), the 109 J pulls and the four V3 distributions in their frozen form. Each
+   must equal the sealed value to ≤ 1e-12 relative, or the script stops.
+4. **V3-n.** The neutron KE distribution is recomputed with the event-clustered variance Σ_e (n_e,b w_e)² on both
+   sides. Contents and raw entry counts are unchanged.
+5. **§2's rules, per replica, all five required:**
+   - V2-fine: χ²/ndf ≤ 1.5.
+   - V2-J: max |pull| ≤ 3.4970. Exactly 109 finite pulls are asserted, and the script recomputes the Šidák bar
+     (3.49703) and asserts it equals 3.4970 to 5e-5.
+   - V3: p_d = min(1, 2 min(p_χ, p_z)) with the Šidák p_z over d's used bins. It passes iff min p_d > 0.0125, and
+     ndf < 1 fails closed. Holm-adjusted p's are reported.
+6. **Output.** The script writes `verdict_v2v3_<G>_<fset>.json` at 0444 and never overwrites it. The file carries
+   every bar, the seal's stat before and after, the across-replica correlation of the J pulls (descriptive), V1 and
+   V4 from the gates file, and S2 = V1 ∧ V4 ∧ V2-fine ∧ V2-J ∧ V3.
+
+`--harm` and `--contract` are explicit. They must equal the gates run's argv when that argv records them, as it does
+in production (the gates file stores `sys.argv`). The harmonized inputs' sha256 are checked against the gates file's
+`sources` either way.
+
+### Tests (no study output)
+
+- **`test_mp2_s2_verdict_units.py`** (local), against independent computations:
+  - Holm against its step-down definition, 200 random draws, including "min p > 0.0125 ⇔ Holm rejects none";
+  - the Šidák p against the direct formula;
+  - the clustered variance against a brute-force double loop, and ≥ the per-entry sumw2;
+  - the ndf < 1 fail-closed path.
+- **One rounding note:** at the bar as written, 3.4970, the chance failure is 0.050005, not 0.05.
+- **`test_mp2_s2_verdict_e2e.py`** (a Perlmutter login node, synthetic data in
+  `/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/tmp/vtest`) ran `mp2_s2_fit.py` models and gates at 60
+  trees, and then the verdict script:
+  - **NCELLS = 0, 3 fine cells in each of the 109 J cells:** blind ndf_fine 326. The recomputation equalled the seal,
+    109 pulls, the clustered variance was tagged, and the seal's stat was unchanged.
+  - **Refused, as required:**
+    - a second run (no overwrite);
+    - weights perturbed by 1e-6 relative in one replica: "replica 3 V2-fine chi2: recomputed … differs from sealed …";
+    - a one-byte edit to the seal: "sha256 differs from the gates file's record".
+  - **NCELLS = 100:** blind ndf_fine 99, so STOP with exit 5 before the seal was opened.
+  - The committed e2e file differs from the one that ran only in its docstring's second line. The verdict script is
+    byte-identical to the tested copy.
+- **A finding the tests made:** the gates file's `argv` is the caller's argv when gates run in-process. That is why
+  `--harm` and `--contract` are explicit arguments rather than read from it.
+
+### Revision after the independent review of PR #238
+
+The director had the first version, c088e126, reviewed against addendum 14 §2 before any run. The review's blocking
+finding was real: a NaN could produce a V3 PASS. `min(1, 2·NaN)` is 1, and `abs(a − b) > tol` is False for a NaN, so
+the equality check against the seal accepted NaN. The fixes, in 6e6c1614:
+
+- **Blocking: NaN.** `finite()` STOPs on any non-finite value, so a NaN or inf becomes neither PASS nor FAIL. It is
+  applied to:
+  - the inputs: G's xsec, sumw2 and nevt; Tune's w_truth; G's c; the fine widths; every replica's w_G and c; and the
+    V3 values;
+  - both sides of every recomputed-versus-sealed comparison;
+  - V2-fine's χ²/ndf;
+  - V3's χ², z_max, p_χ, p_z and p_d.
+- **Should-fix.** For every V3 distribution, the frozen-form `max_abs_pull_used` and `n_bins_used` are now compared
+  with the seal, as well as χ² and ndf.
+- **Minor:**
+  - Bin indices outside [0, nb) STOP, both at the upper edge and in `clustered`, so nothing wraps into the next
+    event's bin.
+  - The files actually opened from the `--harm` paths are hashed and must equal their records. The events and Tune
+    files are checked against the gates file's sources, path and sha256, and `harmonized_<G>.npz` against harmonize's
+    own `s2_harmonize.json` outputs. The gen5d modules that give the fine widths are recorded through
+    `gen5d_flux_reweight.code_files_of`.
+  - The seal is read once: those bytes are hashed and parsed.
+  - The overwrite check comes before the seal is opened, and the output is written with `O_EXCL`, then set to 0444.
+  - A distribution with ndf < 1 is reported as "FAIL-CLOSED" (p_d none) and fails V3. It is not reported as p_d = 0.
+  - `N_V3 == len(V3_BINS)` is asserted at import.
+  - atime is recorded beside the seal's stat. It is not compared, because the read itself may move it.
+
+**Tests of 6e6c1614.**
+- **Units** (`test_mp2_s2_verdict_units.py`): all of the above, plus:
+  - NaN and inf in `same` (5 cases) and in `v3_rule` (χ² and z_max), each a STOP;
+  - an empty or NaN vector to `finite`, a STOP;
+  - bin indices out of range in `clustered`, a STOP;
+  - the FAIL-CLOSED label;
+  - a 3-member V3 family, refused at import.
+- **End to end** (`test_mp2_s2_verdict_e2e.py` a703d271, on Perlmutter; output in
+  `s2-receipts/verdict-tests/e2e-6e6c1614.out`):
+  - `--blind-only` exits 0 and writes no verdict.
+  - The full run writes the verdict at 0444, with the seal's stat unchanged and four inputs hashed.
+  - **Refused:**
+    - a second run;
+    - an existing verdict beside an unreadable (mode 000) seal, refused before the seal is opened;
+    - weights perturbed by 1e-6;
+    - a NaN weight;
+    - a one-byte edit to the seal;
+    - a NaN planted through `chi2_shape` into V2-fine's χ², a frozen V3 χ², a frozen V3 z_max, V3-n's χ² and V3-n's
+      z_max, each a STOP.
+  - The blind shortfall stops with exit 5, in both modes.
+  - Both files ran byte-identical to the committed ones.
+
+### The run (after this PR)
+
+The script runs from a read-only snapshot,
+`/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/verdict-v2/`: code-v7 plus 6e6c1614, with its sha list in
+`s2-receipts/verdict-v2.sha256`. (`verdict-v1/`, holding c088e126, is superseded and never ran.) It runs on a login
+node, only after the director merges #233 and #238:
+
+1. `--blind-only` for genie_cv, genie_mec and nuwro_ch. §2's ndf_fine ≥ 200 holds for "any G", so all three are
+   checked before any verdict is read.
+2. The full run for each, on F_primary. NuWro's F_fallback and GiBUU follow when their seals exist.
+
+The seal stats were recorded before the run:
+- `s2-receipts/sealed-stat-before-release.txt` (16:28Z);
+- `s2-receipts/sealed-stat-atime-before-release.txt` (16:47Z), with atime. For all three seals, atime equals mtime
+  equals ctime, so none has been read since it was written.

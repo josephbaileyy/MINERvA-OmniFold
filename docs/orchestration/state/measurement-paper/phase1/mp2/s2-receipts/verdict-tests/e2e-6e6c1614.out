@@ -1,0 +1,26 @@
+6e6c1614ca5074a7
+a703d2716dfe1e67
+=== NCELLS 0
+TEST gates rc 0 {"V1": false, "V1_at_frozen_capacity": true, "V4_all_replicas": false, "V2_V3": "held for Joseph", "S2": "not determined until the V2/V3 verdicts are released"}
+TEST blind-only rc 0 verdict file written: False
+TEST verdict rc 0
+TEST verdict {"V1": false, "V4_all_replicas": false, "V2_fine_all_replicas": false, "V2_J_all_replicas": false, "V3_all_replicas": true, "S2": false} blind {'ndf_fine': 326, 'min': 200} corr {'status'
+TEST r0 V2_J 109 V3 p_d {'v3_n_mult_KE10': 1.0, 'v3_p_mult_KE20': 0.4006, 'v3_pi0_count': 1.0, 'neutron_KE_MeV': 0.4869} fail_closed []
+TEST V3-n variance tag event-clustered sum_e (n_e,b w_e)^2 (V3-n) | seal stat unchanged True | files hashed ['events', 'gen5d_tree', 'harmonized', 'tune']
+TEST output mode 0o444
+TEST second run (overwrite): refused: refusing to overwrite /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/tmp/vtest/w0/fit/verdict_v2v3_gibuu_ch_primary.json
+TEST overwrite checked before the (unreadable) seal: refused: refusing to overwrite /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/tmp/vtest/w0/fit_overwrite_first/verdict_v2v3_gibuu_ch_prima
+TEST weights perturbed 1e-6: refused: STOP: replica 3 V2-fine chi2: recomputed 3773.8067508390295 differs from sealed 3773.8067376808494
+TEST a NaN weight: refused: STOP: replica 1 weights w_G is not finite
+TEST a one-byte edit to the seal: refused: STOP: /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/tmp/vtest/w0/fit_tamper_s/sealed_v2v3_gibuu_ch_primary.json sha256 differs from the gates file'
+TEST NaN in V2-fine chi2: refused: STOP: replica 0 V2-fine chi2/ndf is not finite
+TEST NaN in frozen V3 chi2: refused: STOP: replica 0 V3 v3_n_mult_KE10 chi2 (recomputed) is not finite
+TEST NaN in frozen V3 z_max: refused: STOP: replica 0 V3 v3_p_mult_KE20 max_abs_pull_used (recomputed) is not finite
+TEST NaN in V3-n chi2: refused: STOP: V3 chi2 is not finite
+TEST NaN in V3-n z_max: refused: STOP: V3 z_max is not finite
+=== NCELLS 100
+TEST gates rc 0 {"V1": false, "V1_at_frozen_capacity": false, "V4_all_replicas": false, "V2_V3": "held for Joseph", "S2": "not determined until the V2/V3 verdicts are released"}
+STOP: ndf_fine 99 < 200: the director is told before any verdict is read
+TEST blind-only rc 5 verdict file written: False
+STOP: ndf_fine 99 < 200: the director is told before any verdict is read
+TEST verdict rc 5
