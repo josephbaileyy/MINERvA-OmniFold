@@ -35,59 +35,57 @@ simultaneous probability that every bin is covered.}
 \end{table}
 
 \paragraph{Closure.}
-Three existing closure families used playlist 1A, LightGBM and five iterations
+Three closure families were run on playlist 1A with LightGBM and five iterations
 (thresholds in parentheses).
 % (1A lgbm 5-iter)
 \begin{itemize}
-  \item \textbf{Truth-reweight} (same factor for truth and reco weights):
-        gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
-        \SI{0.013}{\percent} (thr \SI{1.5}{\percent}). Injected truth recovered.
-  \item \textbf{Hidden-variable} (bias on $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$,
-        a resolution variable outside the feature set): leakage linear in amplitude,
-        $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (thr \SI{3.0}{\percent});
-        the first two amplitudes pass; the deliberately large $A=0.30$ arm exceeds
+  \item \textbf{Truth reweighting} (the same factor on truth and reco weights):
+        residuals \SI{0.046}{\percent} for a Gaussian in $\pT$ and
+        \SI{0.013}{\percent} for a tilt in $\pPar$ (threshold \SI{1.5}{\percent}). The injected truth is recovered.
+  \item \textbf{Hidden variable} (a bias in $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$,
+        a resolution variable outside the feature set): the leakage is linear in amplitude,
+        $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (threshold \SI{3.0}{\percent});
+        the first two amplitudes pass, and the deliberately large $A=0.30$ arm exceeds
         the threshold.
-  \item \textbf{Alt-model} (train on CV, pseudo-data from an alternative universe):
-        MaCCQE \SI{0.068}{\percent}, Flux \SI{0.376}{\percent} (thr \SI{2.0}{\percent}).
+  \item \textbf{Alternative model} (training on the CV, pseudo-data from an alternative universe):
+        MaCCQE \SI{0.068}{\percent}, Flux \SI{0.376}{\percent} (threshold \SI{2.0}{\percent}).
 \end{itemize}
 
 \paragraph{Injected-feature recovery.}
-The 2D gaussian-bump truth-reweight closure passes the unbinned-unfolding guide's
-recovery test~\cite{Canelli:2025guide}. In the feature bins, the residual from injected truth is
-\SI{1.69}{\percent} for an injected \SI{17.2}{\percent} feature
-(ratio $0.098$), or $\approx10\times$ smaller. Recovery of the data's deviation
-from the prior must leave a residual far smaller than the feature;
-unfolding cannot manufacture discriminating power (3D: \S\ref{sec:3d-closure}).
+The 2D truth-reweighting closure with a Gaussian bump passes the recovery test of the
+unbinned-unfolding guide~\cite{Canelli:2025guide}. In the feature bins the residual from the
+injected truth is \SI{1.69}{\percent} for an injected \SI{17.2}{\percent} feature
+(ratio $0.098$), about ten times smaller. The test requires the residual left after
+recovering a deviation from the prior to be far smaller than the deviation itself;
+unfolding cannot create discriminating power (3D: \S\ref{sec:3d-closure}).
 
-The naive reco-vs-truth $\chi^2$ data-vs-prior test gives truth$>$reco.
-As expected at high resolution, detector smearing lowers the
-reco baseline and a stat-only diagonal omits unfolding covariance. The proper
-full-covariance goodness-of-fit uses the $\chi^2$-vs-paper of
-\S\ref{sec:results-tension} and the generator comparisons.
+A naive data-versus-prior $\chi^2$ with a statistical-only diagonal is larger at truth level
+than at reco level. This is expected at high resolution: detector smearing lowers the
+reco-level value, and the diagonal omits the unfolding covariance. The full-covariance
+comparisons are the $\chi^2$ against the published result (\S\ref{sec:results-tension}) and
+the generator comparisons.
 
-These closure tests validate the estimator; they are not used to assign a non-closure
-uncertainty. Such an uncertainty would require a predeclared suite
-of injection shapes and amplitudes rather than calibration to a single
-Gaussian bump.
+These closure tests validate the estimator; no non-closure uncertainty is assigned from them.
+Assigning one would require a predeclared suite of injection shapes and amplitudes, not
+calibration to a single Gaussian bump.
 
-They do not test pseudo-data with a detector response that disagrees
-with the unfolding response. Appendix~\ref{app:response-mismatch} defines a complementary response-mismatch closure that rescales only the reconstructed $\Eavail$ of the pseudo-data, and a more complete leading-nucleon follow-up. No result from that test is claimed here.
-\S\ref{sec:val-fiveaxis} validates the five-axis estimator, including background
-subtraction.
+None of these tests uses pseudo-data whose detector response differs from the unfolding
+response. Appendix~\ref{app:response-mismatch} defines such a test, a closure that rescales only the reconstructed $\Eavail$ of the pseudo-data, together with a more complete leading-nucleon follow-up; no result from it is reported here.
+The five-dimensional estimator, including its background subtraction, is validated in
+\S\ref{sec:val-fiveaxis}.
 
 \paragraph{What the remaining validation needs.}
 The follow-up assessment~\cite{TwoDFollowup2026} distinguishes a proposed
-split-sample width check from repeated-sampling coverage. With a fixed MC
-bank, binning maps and purity correction, such a check can support only
-conditional precision at its tested exposure; nonlinear unfolding does not
-guarantee a simple half-to-full-exposure scaling. It cannot supply the
-variation across independent MC populations. The original objective of
-validated total uncertainties for all 205 bins, the integral and the
-projections has no feasible route with the current inputs. It requires
-independent populations or a validated generative law, a continuous
-nuisance generator for total-interval tests, and an untouched generator-truth
-domain for bias checks (\S\ref{sec:uq-2d-scope}). This is a limitation of the available
-evidence, not a general impossibility result for 2D unfolding.
+split-sample width check from repeated-sampling coverage. With the MC sample,
+binning maps and purity correction held fixed, such a check could establish only the
+precision conditional on them, at its tested exposure, and nonlinear unfolding does not
+guarantee a simple scaling from half to full exposure. It cannot supply the
+variation across independent MC populations. Validated total uncertainties for all
+205 bins, the integral and the projections therefore cannot be obtained from the current
+inputs. They would require independent populations or a validated generative law, a
+continuous nuisance generator for tests of total intervals, and an untouched
+generator-truth domain for bias checks (\S\ref{sec:uq-2d-scope}). This is a limit of the
+available inputs, not a general impossibility result for 2D unfolding.
 % J3/J4 provisional (DECISION-20261018, packet C3; review m1): "and the construction repairs in sec:uq-2d-construction"
 % removed; that section now records that the quoted construction carries those fixes.
 
@@ -146,8 +144,7 @@ Injected $W$ bump & $+\SI{30}{\percent}$ Gaussian in truth $W$ at \SI{1.23}{GeV}
   \SIrange{1.1}{1.4}{GeV} bin (ratio 0.180; threshold 0.20, set in advance); pass, by a
   narrow margin. Neighbouring $W$ bins come out \SI{3.1}{\percent} and
   \SI{2.7}{\percent} high, and joint $(\Eavail,W)$ cells in the peak column
-  \SIrange{2.2}{9.4}{\percent} low. Per-5D-bin spread \SI{3.7}{\percent}. Signal only.
-  Replaces an earlier null run (Ref.~\cite{NoteRecords2026}, superseded values: withdrawn arguments) \\
+  \SIrange{2.2}{9.4}{\percent} low. Per-5D-bin spread \SI{3.7}{\percent}. Signal only \\
 \addlinespace
 Background-inclusive & Adds background simulation and rebuilds purity weights; nominal truth & 5D &
   Highest-$W$ column \SIrange{3.5}{4.1}{\percent} low; negative-weight treatment
@@ -195,7 +192,7 @@ not contradict each other.
         $(\Eavail,W)$ cells in the peak column up to \SI{9.4}{\percent} low
         and moves part of the bump into the neighbouring $W$ bins. A single
         smooth bump in a marginal is therefore weaker evidence than the
-        generator-shaped tests, which stay the main five-dimensional recovery
+        generator-shaped tests, which remain the main five-dimensional recovery
         evidence.
 \end{itemize}
 % Sources: 2D rows sec_validation.tex "Closure" and "Injected-feature recovery"; 3D sec_3d.tex
@@ -212,17 +209,17 @@ not contradict each other.
 
 \subsection{Fixed-truth coverage of the 2D statistical band}
 \label{sec:coverage}
-This test asks whether the 2D statistical band quoted when it ran (Ref.~\cite{NoteRecords2026}, superseded values and \texttt{coverage-fixed-truth}) covers a \emph{fixed} truth at its nominal rate. Its design,
-criteria and positive control were fixed in advance, before any toy was generated
-(Ref.~\cite{NoteRecords2026}, \texttt{coverage-fixed-truth}).
-% J3/J4 provisional (DECISION-20261018, packet W3: D2). The quoted statistical block is now S1 (sec:uq-boot), which this
+This test asks whether the 2D statistical band quoted when it ran covers a \emph{fixed} truth
+at its nominal rate. That band is an earlier one (Ref.~\cite{NoteRecords2026}, superseded values and \texttt{coverage-fixed-truth}), not the quoted statistical block. The design, criteria and positive control of the test were specified
+before any toy was generated (Ref.~\cite{NoteRecords2026}, \texttt{coverage-fixed-truth}).
+% J3/J4 provisional (DECISION-20261018, packet W3: D2). The quoted statistical block became S1 (sec:uq-boot), which this
 % test did not score (NR).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
 Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
-reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap, and
-unfolds with the statistical band's estimator (LightGBM, five iterations, fixed training seed), the
-learner of the quoted central value at a different seed (\S\ref{sec:method-config}). The reference
+reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap and
+unfolds with the statistical band's estimator (LightGBM, five iterations, fixed training seed):
+the learner of the quoted central value, at a different seed (\S\ref{sec:method-config}). The reference
 $T$ is the unfluctuated simulated truth, identical in every toy. The no-fluctuation configuration
 reproduces both the production closure output and $T$ exactly.
 
@@ -241,10 +238,9 @@ with 99.5\% intervals, stops the study.
         (Gaussian 0.954).
   \item The pull RMS is $\covTwoDPullRMS$, and the mean pull is consistent with zero.
 \end{itemize}
-By the criteria fixed in advance the band fails by undercoverage, and the study stopped under its
-futility rule. An
-independent recomputation with its own code reproduces the pooled coverages, their intervals, the
-controls and the secondary below.
+Under the predeclared criteria this is a failure by undercoverage, and the study stopped under its
+futility rule. An independent recomputation with its own code reproduces the pooled coverages,
+their intervals, the controls and the secondary analysis below.
 
 The positive control rescales the band on the same toys. At $\times0.7$ and $\times1.3$, $C_2$
 moves to $\covTwoDCTwoLowCtl$ and $\covTwoDCTwoHighCtl$, and the test flags both directions.
@@ -261,39 +257,43 @@ The failure is one of width, not bias. The per-bin pattern below is descriptive 
         \SI{\covTwoDDeficitShare}{\percent} of the $C_2$ deficit.
 \end{itemize}
 
-The band's replicas divide by a bootstrapped completeness that the central value (exactly~1)
-does not carry. A secondary analysis, added by an amendment after the pilot, applies that division
-to the toys.
-Scored against the same band, it overcovers: $C_1=\covTwoDRepCOne$, with its interval above the
-window. By the rule fixed before the full run (its rule for the undercoverage outcome was written after the pilot pulls had been seen), the primary undercoverage is attributed to this term of the band.
-The attribution is partial: in the replica form, the $\pPar$
-\SIrange{40}{60}{GeV/c} column still undercovers.
-That term was removed on 2026-10-06 and the band rebuilt (Ref.~\cite{NoteRecords2026},
-\texttt{coverage-fixed-truth}, lists the labels of both bands). The quoted statistical block is now a
-different ensemble, 300 replicas at the central value's seed (\S\ref{sec:uq-boot}). This
-section's result is for the earlier band and was not re-tested.
+The band's replicas divide by a bootstrapped completeness, whereas the central value's
+completeness is exactly~1. A secondary analysis, added by amendment after the pilot, applies the
+same division to the toys. Scored against the same band, it overcovers: $C_1=\covTwoDRepCOne$,
+with its interval above the window. The attribution rule was fixed before the full run, but its
+clause for the undercoverage outcome was written after the pilot pulls had been seen; under it, the
+primary undercoverage is attributed to this term of the band. The attribution is partial: in the
+replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
+
+The band was then rebuilt without this term (Ref.~\cite{NoteRecords2026},
+\texttt{coverage-fixed-truth}, names both bands). The quoted statistical block is a third, different
+ensemble, 300 replicas at the central value's training seed (\S\ref{sec:uq-boot}). The result
+above is for the earlier band. The rebuilt band was only rescored post hoc (below), and the quoted
+block has not been tested.
 % FACT (2026-10-18): "the rebuilt band is the quoted one" was false of Q (stageC/production/DESIGN.md §3.4, S1).
 % J3/J4 provisional (DECISION-20261018, packet W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass). Printed pointer moved to this comment: the rebuild's
 % (\texttt{KNOWN\_ISSUES.md} 84).
 
-\textbf{The rebuilt band, evaluated post hoc (history).} Evaluating the same 100 toys against the rebuilt band,
-which is post hoc and partly circular (its MC part reuses the toys' resampling mechanism), removes
-the tail undercoverage: $C_2=0.977$ $[0.974,0.980]$ and $C_1=0.781$ $[0.771,0.790]$, both above
-their nominal windows, so the rebuilt band is wider than the toy scatter (pull RMS 0.84, mean pull
-consistent with zero). The residual excess width lies in the data-statistics component: the
-per-bin pull RMS falls as that component's share of the band's variance rises, which corresponds
-to a data-statistics part about $1.6\times$ wider in $\sigma$ than the toys produce. Background
-purity does not explain it, and its cause is not established. A post hoc diagnostic that
-bootstraps a single toy, with a decision rule recorded before it ran, is consistent with the closure toys
-under-scattering, because their pseudo-data sit on the training MC events, rather than with the
-data bootstrap over-scattering; it is neither an independent-population coverage test nor a
-real-data calibration. The re-test on held-out simulation that would separate the two is not part of this
-note and has not been run (Ref.~\cite{NoteRecords2026}, \texttt{statband-retest}). Split-sample width checks that
-condition on the existing MC bank, binning maps and purity cannot establish repeated-sampling
+\textbf{Post hoc rescoring against the rebuilt (since superseded) band.} Scoring the same 100
+toys against the rebuilt band removes the tail undercoverage: $C_2=0.977$ $[0.974,0.980]$ and
+$C_1=0.781$ $[0.771,0.790]$, both above their nominal windows, so the rebuilt band is wider than
+the toy scatter (pull RMS 0.84, mean pull consistent with zero). The rescoring is post hoc and
+partly circular, because the band's MC part reuses the toys' resampling mechanism.
+
+The excess width lies in the data-statistics component. The per-bin pull RMS falls as that
+component's share of the band's variance rises, which corresponds to a data-statistics part about
+$1.6\times$ wider in $\sigma$ than the toys produce. Background purity does not explain it, and its
+cause is not established. A post hoc diagnostic that bootstraps a single toy, under a decision rule
+recorded before it ran, is consistent with the closure toys scattering too little, because their
+pseudo-data are built on the training MC events, rather than with the data bootstrap scattering too
+much. It is neither an independent-population coverage test nor a calibration on real data. A
+re-test on held-out simulation would separate the two explanations; it has not been run
+(Ref.~\cite{NoteRecords2026}, \texttt{statband-retest}). Split-sample width checks that
+condition on the existing MC sample, binning maps and purity cannot establish repeated-sampling
 coverage across independent populations, so validated total intervals over the full reporting
-domain need new inputs (\S\ref{sec:uq-2d-scope}), which also lists what the quoted covariance
-does not include.
+domain need new inputs (\S\ref{sec:uq-2d-scope}, which also lists what the quoted covariance does
+not include).
 % NR: the rescoring is of the superseded VL170 band, named as such; not recomputed for Q.
 % J3/J4 provisional (DECISION-20261018, packet C3: "as well as the construction repairs of sec:uq-2d-construction"
 % replaced by the new inputs and the D1 list of sec:uq-2d-scope; C7: the rescoring kept, labelled historical; W3: D2; J5).
@@ -323,31 +323,30 @@ does not include.
 \label{sec:val-other}
 
 \paragraph{Unbinned diagnostic (C2ST).}
-The classifier two-sample test (C2ST) AUC drops from $\approx0.535$ before
-unfolding to $\approx0.501$ after, indicating removal of the reconstructed
-data\,$\leftrightarrow$\,MC mismatch. A classifier is trained to separate the data from the
-(reweighted) simulation in the full unbinned feature space, and its held-out AUC/accuracy is
-compared to the chance value $0.5$. This binning-free check is strictly
-\emph{descriptive}; we do \emph{not} quote a calibrated $p$-value. The C2ST as run
-trains and evaluates on the same sample without cross-fitting. A valid null
-would require re-running the full cross-fitted OmniFold pipeline per
-pseudoexperiment. Calibrated unbinned goodness-of-fit remains
+In the classifier two-sample test (C2ST), a classifier is trained to separate the data from
+the (reweighted) simulation in the full unbinned feature space, and its held-out AUC or accuracy
+is compared with the chance value $0.5$. The AUC drops from $\approx0.535$ before unfolding to
+$\approx0.501$ after, indicating removal of the reconstructed
+data\,$\leftrightarrow$\,MC mismatch. This binning-free check is descriptive, and no calibrated
+$p$-value is quoted: as run, the C2ST trains and evaluates on the same sample without
+cross-fitting, and a valid null would require re-running the full cross-fitted OmniFold pipeline
+per pseudoexperiment. Calibrated unbinned goodness-of-fit remains
 open~\cite{Canelli:2025guide}.
 
 \paragraph{Same-ensemble pull diagnostic (not a coverage test).}
-An earlier ensemble contains $N_{\text{toy}}=200$ 2D closure unfolds
-(Ref.~\cite{NoteRecords2026}, \texttt{coverage-toys}),
+An earlier ensemble of $N_{\text{toy}}=200$ 2D closure unfolds
+(Ref.~\cite{NoteRecords2026}, \texttt{coverage-toys})
 % (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
 % \texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt})
-with weighted MC reco pseudo-data and truth marginals stored in truth
-histograms. Each uses its own bootstrap seed $k$ and per-event Poisson(1) draws,
-as in production; seeds avoid collisions with production replicas.
+uses weighted MC reco pseudo-data and stores the truth marginals in truth
+histograms. Each toy has its own bootstrap seed $k$ and per-event Poisson(1) draws,
+as in production, with seeds chosen not to collide with the production replicas.
 % CLI: \texttt{-{}-closure} with \texttt{-{}-bootstrap-seed $k$}; truth histogram \texttt{hTruthXSec2D}
 Toy seeds are independent; bins within a toy are correlated. The MC bootstrap
-multiplies the truth weight, fluctuating both the unfolded result and stored truth.
+multiplies the truth weight, so it fluctuates both the unfolded result and the stored truth.
 % truth weight: \texttt{w\_truth}; stored truth: \texttt{hTruthXSec2D}
-Stored truth varies in all 205 reported bins, so its all-toy mean
-$\bar X^{\text{truth}}$ is not an independent fixed truth for a split-sample
+The stored truth varies in all 205 reported bins, and its all-toy mean
+$\bar X^{\text{truth}}$ is therefore not an independent fixed truth for a split-sample
 coverage claim; it only centers a same-ensemble diagnostic.
 
 In reported bin $i$ with $\bar X^{\text{truth}}_{i}>0$, define the across-toy
@@ -363,16 +362,17 @@ $+0.006 \pm 0.082\,\sigma$ (no bias); and \SI{97.6}{\percent} of bins have a
 within-bin fraction above \SI{65}{\percent} (only $5$ of $205$ fall below).
 These show that the standardized toy residuals are approximately normal.
 
-With $\sigma_i$ estimated from the scored toys, these diagnostics are not a
-frequentist coverage measurement and do not certify the bootstrap band. The figures
-serve only as standardized-pull/Gaussianity diagnostics; no coverage number is quoted from
-this ensemble. The fixed-truth test above is the 2D coverage statement (Ref.~\cite{NoteRecords2026}, superseded values).
+Because $\sigma_i$ is estimated from the same toys that are scored, these figures are
+standardized-pull and Gaussianity diagnostics only. They are not a frequentist coverage
+measurement, they do not certify the bootstrap band, and no coverage number is quoted from this
+ensemble. The 2D coverage statement is the fixed-truth test of \S\ref{sec:coverage}.
 
 \paragraph{Stability and efficiency.}
-The 5-iter total $\sigma$ is within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
-\SI{1.54}{\percent}); the histogram-based and exact-split backends agree on total $\sigma$ to
-\SI{0.04}{\percent} (both measured for the exact-split cross-check). Efficiency (Fig.~\ref{fig:eff}) reproduces the published
-Fig.~5.
+With five and with ten iterations the total cross section agrees to within \SI{0.026}{\percent};
+the per-bin shape differs by \SI{1.54}{\percent} RMS. The histogram-based and exact-split backends agree
+on the total cross section to \SI{0.04}{\percent}. Both comparisons were measured for the
+exact-split cross-check. The selection efficiency (Fig.~\ref{fig:eff}) reproduces Fig.~5 of the
+published measurement.
 
 \begin{figure}[H]
   \centering
