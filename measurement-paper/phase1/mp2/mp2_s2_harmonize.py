@@ -50,6 +50,7 @@ import numpy as np  # noqa: E402
 import gen5d_flux_reweight as gfr  # noqa: E402
 import gen5d_flux_supplement as sup  # noqa: E402
 import mp2_s1_dump as s1d  # noqa: E402
+import mp2_s2_charm as chm  # noqa: E402
 import mp3c_build as b3c  # noqa: E402
 import mp5_genie as m5  # noqa: E402
 import s5p_stage1_inspect as s1  # noqa: E402
@@ -186,6 +187,33 @@ def harmonize(name, ent, rng_seed, pools, dV5, res):
     lo, hi = SUPPORT[name]
     supp_ok = (ent["enu"] >= lo) & (ent["enu"] <= hi)
     xh, vh, nh = product([X[a][ps] for a in AX], ent["c"][ps], dV5)
+    r12 = None
+    if "fs0_pdg" in ent:                      # R12 decayed: the same events with the lists as GiBUU wrote them
+        ea0 = s1d.eavail_mat(ent["fs0_pdg"], ent["fs0_E"], ent["fs0_offsets"]) / 1000.0
+        X0 = dict(X, eavail=ea0)
+        fi0 = s1.fine_index(np.column_stack([X0[a] for a in AX]))
+        x0, v0, n0 = product([X0[a][ps] for a in AX], ent["c"][ps], dV5)
+        r0x, r0y, r0z = rotate_particles(ent["fs0_px"], ent["fs0_py"], ent["fs0_pz"], ent["fs0_offsets"], ndir)
+        fe0 = features(ent["fs0_pdg"], ent["fs0_E"], r0x, r0y, r0z, ent["fs0_offsets"])
+        gid0, _ = gibuu_codes(ent["fs0_pdg"])
+        changed = np.bincount(np.repeat(np.arange(n), np.diff(ent["fs0_offsets"])),
+                              np.isin(gid0, list(chm.GIBUU_CHARM_IDS)), n) > 0          # the events that carried charm
+        g0 = ps & (fi0 >= 0) & (ent["c"] > 0)
+        cg = changed & (grid | g0)
+        w_ = ent["c"]
+        r12 = {"product_undecayed": (x0, v0, n0),
+               "report": {"n_events_changed": int(changed.sum()), "n_changed_in_grid_either": int(cg.sum()),
+                          "n_in_grid_decayed_not_undecayed": int(np.sum(changed & grid & ~g0)),
+                          "n_in_grid_undecayed_not_decayed": int(np.sum(changed & g0 & ~grid)),
+                          "in_grid_rate_share_changed_decayed": float(w_[changed & grid].sum() / w_[grid].sum()),
+                          "eavail_shift_GeV_changed_in_grid_either": {
+                              "mean_c_weighted": float(np.sum(w_[cg] * (ea - ea0)[cg]) / w_[cg].sum()) if cg.any() else None,
+                              "quantiles_0.1_0.5_0.9": [float(q) for q in np.quantile((ea - ea0)[cg], [0.1, 0.5, 0.9])] if cg.any() else []},
+                          "species_sum_shift_MeV_mean_c_weighted": {
+                              k: float(np.sum(w_[cg] * (fe[k] - fe0[k])[cg]) / w_[cg].sum()) if cg.any() else None
+                              for k in ("sum_p_KE", "sum_pipm_KE", "sum_em_E", "sum_n_KE", "E_other")},
+                          "in_grid_rate_decayed_over_undecayed": float((xh @ dV5.reshape(-1)) / (x0 @ dV5.reshape(-1)))}}
+    excl = ent.get("charm_excl")
     al = np.arctan2(np.hypot(ndir[:, 0], ndir[:, 1]), ndir[:, 2])
     res["harmonized"][name] = {
         "n_entries": int(n), "n_cc": int(ent["cc"].sum()), "n_in_ps": int(ps.sum()), "n_in_grid": int(grid.sum()),
@@ -198,6 +226,12 @@ def harmonize(name, ent, rng_seed, pools, dV5, res):
                                       / (xh @ dV5.reshape(-1))),
     }
     keep = grid & supp_ok
+    if excl is not None:                      # R12 fallback: out of the training, V1 and V3 samples (as R13)
+        res["harmonized"][name]["R12_excluded"] = {"n_events": int(np.sum(keep & excl)),
+                                                   "in_grid_rate_share": float(ent["c"][keep & excl].sum() / ent["c"][keep].sum())}
+        keep = keep & ~excl
+    if r12 is not None:
+        res["harmonized"][name]["R12"] = r12["report"]
     ev = {k: np.asarray(X[k], float)[keep] for k in X}
     for k in F_PRIMARY[6:] + V3_KEYS:
         ev[k] = np.asarray(fe[k], float)[keep]
@@ -205,7 +239,7 @@ def harmonize(name, ent, rng_seed, pools, dV5, res):
     ev["fine"] = fi[keep]
     nk = np.isin(fe["_neutron_row"], np.nonzero(keep)[0])
     ev["nKE_val"], ev["nKE_ev"] = fe["_neutron_KE"][nk], np.searchsorted(np.nonzero(keep)[0], fe["_neutron_row"][nk])
-    return ev, (xh, vh, nh), xh_h
+    return ev, (xh, vh, nh), xh_h, (r12["product_undecayed"] if r12 is not None else None)
 
 
 # ---------------------------------------------------------------- GENIE
@@ -408,7 +442,61 @@ def gibuu_file(fn):
     return fn, out
 
 
-def gibuu(ROOT, pools, dV5, res, nproc):
+def gibuu_codes(codes):
+    """Back from the unmapped code OTHER_BASE + 10 ID + (charge + 2) to GiBUU (ID, charge); mapped codes -> (-1, 0)."""
+    x = np.asarray(codes, np.int64) - OTHER_BASE
+    um = (x >= 0) & (x < 100_000_000)
+    return np.where(um, x // 10, -1), np.where(um, x % 10 - 2, 0)
+
+
+def tune_species_playlist(arg):
+    """The PDG species in one playlist's Tune C+H in-grid lists (tune_playlist's rows)."""
+    s1dir, p, r0, n = arg
+    z = np.load(OFIN, allow_pickle=True)
+    fi = s1.fine_index(np.asarray(z["MCgen"][r0:r0 + n], float))
+    wt = np.asarray(z["w_truth"][r0:r0 + n], float)
+    s = np.load(f"{s1dir}/s1_{p}.npz")
+    keep = np.isin(np.asarray(s["mc_targetZ"]), [1, 6]) & (fi >= 0) & np.isfinite(wt)
+    off = np.asarray(s["fs_offsets"])
+    row = np.repeat(np.arange(off.size - 1), np.diff(off))
+    return np.unique(np.asarray(s["fs_pdg"])[keep[row]].astype(np.int64))
+
+
+def tune_species(s1dir, nproc):
+    args, r0 = [], 0
+    for p in s1d.PLAYLISTS:
+        s = np.load(f"{s1dir}/s1_{p}.npz")
+        n = int(s["n_rows"])
+        args.append((s1dir, p, r0, n))
+        r0 += n
+    with mp.get_context("fork").Pool(min(nproc, len(args))) as pool:
+        got = pool.map(tune_species_playlist, args)
+    return {int(v) for v in np.unique(np.concatenate(got))}
+
+
+def r12_charm(ent, s1dir, nproc, workdir):
+    """R12 (addendum 14 §4): decay GiBUU's charmed hadrons before any feature. If any fail-closed check fails, the
+    branch is the fallback: the lists stay undecayed and the charm events are marked for exclusion from the training,
+    V1 and V3 samples (as R13). The branch follows from the checks alone."""
+    gid, gq = gibuu_codes(ent["fs_pdg"])
+    ts = tune_species(s1dir, nproc)
+    new, rec = chm.decay_entries(ent, (gid, gq), ts, workdir)
+    rec["tune_species"] = sorted(ts)
+    off = ent["fs_offsets"]
+    row = np.repeat(np.arange(off.size - 1), np.diff(off))
+    is_c = np.isin(gid, list(chm.GIBUU_CHARM_IDS))
+    charm_ev = np.zeros(off.size - 1, bool)
+    charm_ev[row[is_c]] = True
+    if new is not None and rec["pass"]:
+        rec["branch"] = "decayed (PYTHIA6 tables, every check passed)"
+        return new, rec
+    rec["branch"] = "fallback: a check failed; charm events excluded from training, V1 and V3 (as R13)"
+    out = dict(ent)
+    out["charm_excl"] = charm_ev
+    return out, rec
+
+
+def gibuu(ROOT, pools, dV5, res, nproc, s1dir=None, workdir=None):
     c12 = [os.path.join(G, f"work_gibuu_arr/task{i}/FinalEvents.dat") for i in range(1, 81)]
     hf = [f"{P1}/mp3c/prod/task{i}/FinalEvents.dat" for i in range(1001, 1081)]
     jobcard = gfr.DEFAULTS["gibuu_jobcard"]                     # the frozen build's (as mp3c_bcheck.py)
@@ -475,7 +563,11 @@ def gibuu(ROOT, pools, dV5, res, nproc):
     ctrl["pass"] = bool(ctrl["N"]["pass"] and ctrl["Z_h"]["n_above_1MeV"] == 0 and ctrl["Z_h"]["n_energy_balanced"] > 0
                         and all(all(v_ for k_, v_ in ctrl[f"A_{w}"].items() if k_ not in ("n_native_ps", "n_frozen", "zero_flux_bin"))
                                 and not ctrl[f"A_{w}"]["zero_flux_bin"] for w in ("c12", "h")))
-    return ctrl, concat_entries(parts)
+    ent = concat_entries(parts)
+    if s1dir is None:
+        raise SystemExit("STOP: GiBUU needs --s1 for R12's Tune species")
+    ent, ctrl["R12"] = r12_charm(ent, s1dir, nproc, workdir)
+    return ctrl, ent
 
 
 # ---------------------------------------------------------------- Tune v1
@@ -598,13 +690,13 @@ def main(argv=None) -> int:
     a.out.mkdir(parents=True, exist_ok=False)
     ROOT = gfr.import_root()
     G5 = gfr.load_g5(gfr.DEFAULTS["gen5d_tree"])
-    for mm in (gfr, sup, s1d, b3c, m5, s1, st):
+    for mm in (gfr, sup, s1d, chm, b3c, m5, s1, st):
         if Path(mm.__file__).resolve().parent != HERE:
             raise SystemExit(f"{mm.__name__} imported from {mm.__file__}, not {HERE}")
     res = {"schema": "mp2-s2-harmonize/1", "argv": sys.argv, "slurm_job": os.environ.get("SLURM_JOB_ID"),
            "contract_sha256": CONTRACT_SHA, "environment": gfr.environment(), "code": {}, "controls": {},
            "harmonized": {}, "inputs": {}}
-    for mm in [sys.modules[__name__], gfr, sup, s1d, b3c, m5, s1, st, G5, G5.u3d, G5.u3d.u2d]:
+    for mm in [sys.modules[__name__], gfr, sup, s1d, chm, b3c, m5, s1, st, G5, G5.u3d, G5.u3d.u2d]:
         p = Path(mm.__file__).resolve()
         res["code"][mm.__name__] = {"file": str(p), "sha256": sha256(p)}
     res["inputs"]["dump"] = {"s2_dump.json": sha256(a.dump / "s2_dump.json")}
@@ -629,12 +721,16 @@ def main(argv=None) -> int:
         elif gname == "nuwro_ch":
             ctrl, ent = nuwro(ROOT, a.dump, pools, dV5, res)
         else:
-            ctrl, ent = gibuu(ROOT, pools, dV5, res, a.nproc)
+            ctrl, ent = gibuu(ROOT, pools, dV5, res, a.nproc, a.s1, Path(os.environ.get("TMPDIR", str(a.out))))
         res["controls"][gname] = ctrl
         print("CONTROLS", gname, json.dumps({"N": ctrl["N"], "pass": ctrl["pass"]}, default=float), flush=True)
         if not ctrl["pass"]:
             return finish(3, f"STOP: a control failed for {gname}; nothing harmonized")
-        ev, (xh, vh, nh), xhh = harmonize(gname, ent, SEED_G[gname], pools, dV5, res)
+        ev, (xh, vh, nh), xhh, undec = harmonize(gname, ent, SEED_G[gname], pools, dV5, res)
+        if undec is not None:                 # R12: the same harmonization without the charm decays (descriptive)
+            np.savez(a.out / f"harmonized_{gname}_undecayed.npz", xsec_flat=undec[0], sumw2_flat=undec[1], nevt_flat=undec[2],
+                     shape=np.asarray(G5.SHAPE), meta_json=np.asarray(json.dumps({"generator": gname, "quantity":
+                     "as harmonized_<G>.npz, with GiBUU's charmed hadrons left undecayed (R12 descriptive only)"})))
         rj = h0_and_hybrid(gname, xh, nh, res, a.out)
         if rj is None:
             return finish(3, f"STOP: H0 failed for {gname}")

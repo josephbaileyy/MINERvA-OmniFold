@@ -1,0 +1,52 @@
+{
+ "schema": "mp2-s2-r12-genie-charm/1",
+ "rule": "addendum 14 \u00a74: GENIE gst `charm` flag, share of the in-grid harmonized rate (sum c)",
+ "generators": {
+  "genie_cv": {
+   "files": {
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root": {
+     "sha256": "bafb698ceae7dc1a41b7bf1105dce5d2e073373f529573584b01dd7dff081a35",
+     "entries": 2000000
+    },
+    "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root": {
+     "sha256": "f19b6c31137b166cbf89613a07a14f741efabb325956290e93edef8288ca5312",
+     "entries": 100000
+    }
+   },
+   "events_npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a/events_genie_cv.npz",
+    "sha256": "117da3090fb1345d71a825edb8e32d712b6628fa1fab6b1df5c255abd92a5931"
+   },
+   "n_entries": 2100000,
+   "n_charm_entries": 21279,
+   "n_charm_cc": 21279,
+   "n_in_grid": 1006250,
+   "n_in_grid_charm": 12908,
+   "in_grid_rate_share_charm": 0.013337884481933314,
+   "in_grid_rate_share_charm_excl_tgt0": 0.013338025357719226
+  },
+  "genie_mec": {
+   "files": {
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root": {
+     "sha256": "61463c871812c64ea710aa905da506556d1582e673aad7fb9d99e06295df2f74",
+     "entries": 2000000
+    },
+    "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec/genie_supp_mec.gst.root": {
+     "sha256": "9b593e1ea40aef8982969e8023898eac494b11f0210d2a5d1042472f8001a1b5",
+     "entries": 100000
+    }
+   },
+   "events_npz": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a/events_genie_mec.npz",
+    "sha256": "9af13d50945c4cfe8bdcdded4fb47ee102985f16bcf43913c0accea033f6d2db"
+   },
+   "n_entries": 2100000,
+   "n_charm_entries": 20721,
+   "n_charm_cc": 20721,
+   "n_in_grid": 1028171,
+   "n_in_grid_charm": 12456,
+   "in_grid_rate_share_charm": 0.012251278316578983,
+   "in_grid_rate_share_charm_excl_tgt0": 0.012251295043013507
+  }
+ }
+}

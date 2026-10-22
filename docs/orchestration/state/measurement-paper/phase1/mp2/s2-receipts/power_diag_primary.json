@@ -1,0 +1,142 @@
+{
+ "schema": "mp2-s2-power-diag/1",
+ "status": "DESCRIPTIVE: a test of a hypothesis; changes no verdict",
+ "tune": {
+  "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_b/tune_CH.npz",
+  "sha256": "da683b742354966321d5558c8311e62720857b07f708d1b861c469a9d16f0e0c"
+ },
+ "generators": {
+  "genie_cv": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a/events_genie_cv.npz",
+    "sha256": "117da3090fb1345d71a825edb8e32d712b6628fa1fab6b1df5c255abd92a5931"
+   },
+   "n_models": 50,
+   "fset": "primary",
+   "best_iteration_min_median_max": [
+    29,
+    41,
+    64
+   ],
+   "achieved_gain_nats_min_median_max": [
+    0.00685975390938387,
+    0.008163609076468514,
+    0.009429285749836591
+   ],
+   "binned_5D_JSD_nats": {
+    "T_vs_G": 0.007266872001170984,
+    "T_even_vs_odd": 0.0002196925298082459,
+    "G_even_vs_odd": 0.012116145639794528,
+    "T_vs_G_debiased_approx": 0.00418291245877029,
+    "n_cells_T": 10671,
+    "n_cells_G": 7846
+   },
+   "binned_5D_JSD_after_reweighting_debiased_approx_replicas": [
+    0.0013523752336035938,
+    0.0013376002234469588,
+    0.0013443164438425915,
+    0.0013231346003012298,
+    0.001351033530960897
+   ],
+   "weights": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/weights_genie_cv_primary.npz",
+    "sha256": "4400e5da805138de56b41a3bdf25b21ed1716eb82e5130c8cbc557d4448bf74f"
+   },
+   "validation_counts_median": [
+    399935.0,
+    80549.0
+   ],
+   "gain_noise_scale_nats_median": 0.00035324216381199194,
+   "achieved_over_binned_debiased_median": 1.951656688236905,
+   "binned_debiased_over_noise_median": 11.841486909803285
+  },
+  "genie_mec": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a/events_genie_mec.npz",
+    "sha256": "9af13d50945c4cfe8bdcdded4fb47ee102985f16bcf43913c0accea033f6d2db"
+   },
+   "n_models": 50,
+   "fset": "primary",
+   "best_iteration_min_median_max": [
+    14,
+    28,
+    43
+   ],
+   "achieved_gain_nats_min_median_max": [
+    0.0011428092279062163,
+    0.0031921461548938823,
+    0.004659057270773426
+   ],
+   "binned_5D_JSD_nats": {
+    "T_vs_G": 0.00640843488350785,
+    "T_even_vs_odd": 0.0002196925298082459,
+    "G_even_vs_odd": 0.012222039813671506,
+    "T_vs_G_debiased_approx": 0.0032980017976379124,
+    "n_cells_T": 10671,
+    "n_cells_G": 7878
+   },
+   "binned_5D_JSD_after_reweighting_debiased_approx_replicas": [
+    0.0015259534393248062,
+    0.0015801784492514162,
+    0.0015601686444994332,
+    0.001530619702885231,
+    0.0015600962358038087
+   ],
+   "weights": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/weights_genie_mec_primary.npz",
+    "sha256": "bb91b317c1e4ac2408818cdc1be2812b52b5d3114db0917adc15a4a11eb90e07"
+   },
+   "validation_counts_median": [
+    399935.0,
+    82291.0
+   ],
+   "gain_noise_scale_nats_median": 0.00031087233981794593,
+   "achieved_over_binned_debiased_median": 0.9679030973179439,
+   "binned_debiased_over_noise_median": 10.608862144407247
+  },
+  "nuwro_ch": {
+   "events": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_a/events_nuwro_ch.npz",
+    "sha256": "b9995361550c9e2a4ccef3349c6d85b7436d1cbdb209434ff063c6d850492213"
+   },
+   "n_models": 50,
+   "fset": "primary",
+   "best_iteration_min_median_max": [
+    1548,
+    2747,
+    2998
+   ],
+   "achieved_gain_nats_min_median_max": [
+    0.09960403040041288,
+    0.11366071182975385,
+    0.12733245372029
+   ],
+   "binned_5D_JSD_nats": {
+    "T_vs_G": 0.011938933642372427,
+    "T_even_vs_odd": 0.0002196925298082459,
+    "G_even_vs_odd": 0.010848057464326998,
+    "T_vs_G_debiased_approx": 0.009171996143838616,
+    "n_cells_T": 10671,
+    "n_cells_G": 8659
+   },
+   "binned_5D_JSD_after_reweighting_debiased_approx_replicas": [
+    0.007247185765744218,
+    0.007281058646259727,
+    0.007186129498301692,
+    0.007584465702924926,
+    0.007315978399091469
+   ],
+   "weights": {
+    "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/weights_nuwro_ch_primary.npz",
+    "sha256": "5be39eb43f98ec21b3a75c3dd43b063f7b16059d6c8ce77f113a6994fbda705c"
+   },
+   "validation_counts_median": [
+    399935.0,
+    123092.5
+   ],
+   "gain_noise_scale_nats_median": 0.00044142536537248537,
+   "achieved_over_binned_debiased_median": 12.392145618825474,
+   "binned_debiased_over_noise_median": 20.77813570160171
+  }
+ }
+}

@@ -1,0 +1,388 @@
+{
+ "schema": "mp2-s2-harmonize/1",
+ "argv": [
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_harmonize.py",
+  "--dump",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/dump",
+  "--s1",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1",
+  "--pool",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool",
+  "--contract",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/feature_contract_draft.json",
+  "--out",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c",
+  "--nproc",
+  "64",
+  "--only",
+  "gibuu_ch"
+ ],
+ "slurm_job": "60114995",
+ "contract_sha256": "98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd",
+ "environment": {
+  "python": "3.11.14",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "numpy": "1.26.4",
+  "host": "nid004653",
+  "PLOTUTILSROOT": null,
+  "cwd": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/tmp",
+  "ROOT": "6.28/12"
+ },
+ "code": {
+  "__main__": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_harmonize.py",
+   "sha256": "01168131c570d5c00f80d45ae29a0d0dc24060030dfed5b9bc0d0051f62fd65e"
+  },
+  "gen5d_flux_reweight": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/gen5d_flux_reweight.py",
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+  },
+  "gen5d_flux_supplement": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/gen5d_flux_supplement.py",
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+  },
+  "mp2_s1_dump": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s1_dump.py",
+   "sha256": "22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e"
+  },
+  "mp2_s2_charm": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_charm.py",
+   "sha256": "abc80109503f9f77e6cc49a925089c3b0b25c063f4c253599e0bfe458990bb0c"
+  },
+  "mp3c_build": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_build.py",
+   "sha256": "47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414"
+  },
+  "mp5_genie": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp5_genie.py",
+   "sha256": "371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274"
+  },
+  "s5p_stage1_inspect": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/s5p_stage1_inspect.py",
+   "sha256": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+  },
+  "s5p_truths": {
+   "file": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/s5p_truths.py",
+   "sha256": "40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913"
+  },
+  "gen_to_xsec5d": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py",
+   "sha256": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1"
+  },
+  "unfold_3d_omnifold_unbinned": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/unfold_3d_omnifold_unbinned.py",
+   "sha256": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b"
+  },
+  "unfold_2d_omnifold_unbinned": {
+   "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "sha256": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"
+  }
+ },
+ "controls": {
+  "gibuu_ch": {
+   "jobcard": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu/gibuu_mefhc_numu.job",
+   "jobcard_sha256": "d00a622c0f732a6089aae9e4b7c0cceb500a1b3133a53142462f01dc7cefeb63",
+   "A_c12": {
+    "frozen_reader_self_aligned": true,
+    "n_native_ps": 913859,
+    "n_frozen": 913859,
+    "pt_bitwise": true,
+    "pz_bitwise": true,
+    "w_bitwise": true,
+    "enu_bitwise": true,
+    "zero_flux_bin": false
+   },
+   "unmapped_c12": {
+    "53,-1": 159,
+    "53,0": 362,
+    "56,1": 4794,
+    "57,0": 205,
+    "57,1": 295,
+    "57,2": 451,
+    "114,0": 1202,
+    "114,1": 414,
+    "118,1": 124,
+    "59,1": 12,
+    "59,0": 4,
+    "53,1": 1
+   },
+   "A_h": {
+    "frozen_reader_self_aligned": true,
+    "n_native_ps": 670266,
+    "n_frozen": 670266,
+    "pt_bitwise": true,
+    "pz_bitwise": true,
+    "w_bitwise": true,
+    "enu_bitwise": true,
+    "zero_flux_bin": false
+   },
+   "unmapped_h": {
+    "53,0": 420,
+    "56,1": 5796,
+    "57,1": 446,
+    "57,2": 692,
+    "114,0": 659,
+    "114,1": 278,
+    "118,1": 86,
+    "53,-1": 78,
+    "59,1": 18,
+    "57,0": 4
+   },
+   "Z_h": {
+    "rule": "non-DIS H events whose energy balances to 1 MeV balance pT to 1 MeV (S2-IMPLEMENTATION.md, Z)",
+    "n_DIS_energy_balanced": 3074,
+    "n_DIS_energy_balanced_pt_above_1MeV": 3074,
+    "n_energy_balanced": 822359,
+    "pt_balance_max_GeV": 1.2587295184048397e-06,
+    "n_above_1MeV": 0,
+    "n_missing_energy_by_production_ID": {
+     "2": 325,
+     "19": 1,
+     "21": 4,
+     "31": 7,
+     "34": 703753
+    },
+    "missing_energy_GeV_quantiles_0.1_0.5_0.9_nonDIS": [
+     -0.9427175799999994,
+     -0.9414019,
+     -0.9394760400000002
+    ]
+   },
+   "N": {
+    "xsec": {
+     "max_rel": 8.810624387478026e-15,
+     "zero_cells_equal": true,
+     "bitwise": false,
+     "pass": true
+    },
+    "sumw2": {
+     "max_rel": 1.2169960304444675e-14,
+     "zero_cells_equal": true,
+     "bitwise": false,
+     "pass": true
+    },
+    "nevt_equal": true,
+    "frozen": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/out_b/bcheck/mp3c_fine_gibuu_frozen.npz",
+    "pass": true
+   },
+   "pass": true,
+   "R12": {
+    "rng_seed": [
+     2026102134,
+     17224
+    ],
+    "n_parents": 15480,
+    "n_events_with_charm": 15480,
+    "unknown_charm_codes": [],
+    "decayer": {
+     "library": {
+      "path": "/cvmfs/larsoft.opensciencegrid.org/products/pythia/v6_4_28k/Linux64bit+3.10-2.17-gcc640-prof/lib/libPythia6.so",
+      "sha256": "670555a48da4aa7e369bc918a9d5e82565bd409b8f1a5bd49c2a02a887d72cbd"
+     },
+     "libgfortran": {
+      "path": "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v6_4_0/Linux64bit+3.10-2.17/lib64/libgfortran.so.3",
+      "sha256": "969525900f757f7ef602aa067980ea936eae90f8d02d6916400a5b8678201bcf"
+     },
+     "table_dump_sha256": "6e0fbd89ea709d5a2f9cc6fc2d959f28ad188a56f4ff6bb6a4f8cc6283ee2cb4",
+     "table_dump_is_declared": true,
+     "flags": {
+      "MSTJ(22)": 1,
+      "MDCY(pi0,1)": 0,
+      "otherwise": "PYTHIA 6.426 defaults"
+     }
+    },
+    "parent_mix": {
+     "411": 692,
+     "421": 1861,
+     "431": 210,
+     "4112": 209,
+     "4122": 10590,
+     "4132": 4,
+     "4212": 741,
+     "4222": 1143,
+     "4232": 30
+    },
+    "product_species": {
+     "-2112": 1,
+     "-321": 3826,
+     "-211": 11886,
+     "-16": 4,
+     "-13": 863,
+     "-12": 3,
+     "-11": 830,
+     "11": 12,
+     "12": 821,
+     "14": 863,
+     "16": 4,
+     "22": 2015,
+     "111": 17668,
+     "130": 2448,
+     "211": 19132,
+     "321": 797,
+     "2112": 4067,
+     "2212": 8651
+    },
+    "checks": {
+     "known_codes": true,
+     "table_declared": true,
+     "br_sum_per_decayed_species": {
+      "n_species": 36,
+      "max_abs_dev": 6.661338147750939e-16,
+      "tol": 1e-06,
+      "failing_kc": {},
+      "pass": true
+     },
+     "four_momentum": {
+      "max_rel_residual": 8.052204244292199e-16,
+      "tol": 1e-09,
+      "pass": true
+     },
+     "pythia_errors": {
+      "n_parents_with_error": 0,
+      "pass": true
+     },
+     "no_charm": {
+      "n_charm_products": 0,
+      "pass": true
+     },
+     "tune_species": {
+      "not_in_tune": [],
+      "pass": true
+     },
+     "event_four_momentum": {
+      "max_abs_residual_over_max_event_E": 1.9617326358814573e-16,
+      "tol": 1e-09,
+      "pass": true
+     }
+    },
+    "pass": true,
+    "tune_species": [
+     -3122,
+     -2212,
+     -2112,
+     -321,
+     -311,
+     -211,
+     -16,
+     -14,
+     -13,
+     -12,
+     -11,
+     11,
+     12,
+     13,
+     14,
+     16,
+     22,
+     111,
+     130,
+     211,
+     311,
+     321,
+     2112,
+     2212,
+     3122,
+     3212,
+     3222,
+     1000060120,
+     2000000101
+    ],
+    "branch": "decayed (PYTHIA6 tables, every check passed)"
+   }
+  },
+  "H0_gibuu_ch": {
+   "null_json": "/pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/null-gibuu_cv-F.json",
+   "null_json_sha256": "0080495c911143be29bbd780063a85b2890cd30d10c1e5b29f1f5cdb71013a77",
+   "rho_npz_sha256": "d8f52112b010e5adb6a56fa4aa3629b4c98ab62a1cea3b4190af77c3ac33491b",
+   "rho_npz_sha256_matches_json": true,
+   "numerator_sha256_matches_json": true,
+   "denominator_sha256_matches_json": true,
+   "rho_bitwise": true,
+   "pass": true
+  }
+ },
+ "harmonized": {
+  "gibuu_ch": {
+   "n_entries": 3433890,
+   "n_cc": 3423026,
+   "n_in_ps": 1584128,
+   "n_in_grid": 1580043,
+   "n_in_grid_outside_support": 0,
+   "n_W_nan_in_ps": 605,
+   "n_default_mass_cc": 321667,
+   "drawn_alpha_mrad_median": 1.0623350887712313,
+   "in_grid_rate_per_nucleon_cm2": 2.1458091176856096e-38,
+   "in_grid_rate_H_share": 0.04719145940676254,
+   "R12": {
+    "n_events_changed": 15480,
+    "n_changed_in_grid_either": 4471,
+    "n_in_grid_decayed_not_undecayed": 1,
+    "n_in_grid_undecayed_not_decayed": 0,
+    "in_grid_rate_share_changed_decayed": 0.007905466995322864,
+    "eavail_shift_GeV_changed_in_grid_either": {
+     "mean_c_weighted": 3.240890844160059,
+     "quantiles_0.1_0.5_0.9": [
+      1.1272895487631502,
+      3.0214166547534034,
+      5.4845654527082495
+     ]
+    },
+    "species_sum_shift_MeV_mean_c_weighted": {
+     "sum_p_KE": 691.2778868277423,
+     "sum_pipm_KE": 1497.1048043704757,
+     "sum_em_E": 1041.9611289167528,
+     "sum_n_KE": 343.13466912738,
+     "E_other": -4844.671123947139
+    },
+    "in_grid_rate_decayed_over_undecayed": 1.0000033976643186
+   },
+   "wall_s": 41.9,
+   "hybrid_an_stats": {
+    "coarse_cells_carrying": 109,
+    "coarse_cells_reverted_to_coarse": 3,
+    "fine_cells_resolved": 4089,
+    "fine_cells_fallback": 5726,
+    "N_in_carrying_cells": 2.103237664334857e-38,
+    "N_in_resolved_fine_cells": 1.9078919765461895e-38,
+    "max_abs_coarse_integral_error_rel": 4.440892098500626e-16,
+    "fraction_of_N_in_resolved_fine_cells": 0.907121438959945,
+    "n_min": 20,
+    "clip": [
+     0.1,
+     10.0
+    ],
+    "fallback_clip": [
+     0.0,
+     10.0
+    ],
+    "rho_min": 0.014034251913814806,
+    "rho_max": 9.592884627898258
+   }
+  }
+ },
+ "inputs": {
+  "dump": {
+   "s2_dump.json": "1d4b7ff82a5740a884d6a263fe9e82b9c791fe6b6d9c05154a737ed75e77825d"
+  },
+  "pool_sha256": {
+   "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b0.npy": "587358a997860d61533dac0610c2098ad2e999b861858c8756714cdb440518d3",
+   "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b1.npy": "71545c153416b7da9e89b47321a5d04e9e005f0ad43b8eed60f5eeea27916761",
+   "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b2.npy": "98c57cecc1606fdf5246a833792cf9fbc381b9d1fdf808944f1f02a5c1d5b64b",
+   "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b3.npy": "7ac7b6f8af5a65dc4ec46421c0d4c0debd5bd89af8a90f355f1155d7c0dab8fb",
+   "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b4.npy": "f0e1db5e3e4a259c08953c5496c9f599e341fead3d5f2dbe31bf9f8a970e4936",
+   "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b5.npy": "722dbcc61c1905b830588ece61a48169a26cc380d057387b4cade6a91d72783b"
+  }
+ },
+ "verdict": "S2 harmonization done",
+ "exit": 0,
+ "cpu_s": 34.099126,
+ "maxrss_kb": 7555988,
+ "wall_s": 58.35608410835266,
+ "output_sha256": {
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/events_gibuu_ch.npz": "1586967d0ca80e1926bca51d99621a727f10f8b7dd381f5b3c70fd99f3913357",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/harmonized_gibuu_ch.npz": "bf950476c9c30d16d17d4e3fcef821563868f0c3e505178db4d68c50d3a9ad58",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/harmonized_gibuu_ch_undecayed.npz": "ec4687fbb5a1e2f00405fb15461903df02fd80aad19e9195317b363e4da8e887",
+  "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/harm_c/rho_an_gibuu_ch.npz": "833905892d5d07b547bd8c2f8a9a11438ce4a7b8adb8eec04d30877c4a220c58"
+ },
+ "_note": "filtered copy of s2_harmonize.json (sha256 in s2_harmonize.json.sha256): the outputs section is replaced by output_sha256, keyed with a cluster path prefix, because it names cluster-only arrays by bare name; inputs.pool_sha256 is keyed by the pool files' full cluster paths (the original keys are bare names)"
+}
