@@ -75,5 +75,11 @@ These are the diagnosis's own terms, with no other code change.
 
 ## Status
 
-Assigned 2026-10-22. Perlmutter availability is the measurement session's to check before submitting: at 02:01 PDT
-10-22 it reported 546 nodes down and 63 mixed.
+Assigned 2026-10-22. The measurement session took the assignment and is writing the declaration; nothing is submitted
+before the director binds it.
+
+**Correction (2026-10-22).** The first version of this section repeated a Perlmutter reading of 546 nodes down and 63
+mixed, as evidence that the machine was mostly in maintenance. That reading was wrong: the measurement session had
+cut the `sinfo` output at 8 lines, and the alloc and idle rows were lost. Its full `sinfo` at 02:05 PDT showed 4,360
+nodes allocated, 186 idle and 546 down*, plus smaller down and drain counts. Perlmutter is up. Checking availability
+before submitting stays with the measurement session.
