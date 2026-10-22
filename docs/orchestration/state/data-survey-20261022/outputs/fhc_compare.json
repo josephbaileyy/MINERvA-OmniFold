@@ -1,0 +1,214 @@
+{
+ "per_playlist": {
+  "Data/Playlist1A": {
+   "release_n": 253,
+   "release_bytes": 85107535992,
+   "ours_n": 253,
+   "ours_bytes": 80610192765,
+   "same_size": 0,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1B": {
+   "release_n": 47,
+   "release_bytes": 17877688846,
+   "ours_n": 47,
+   "ours_bytes": 17877688846,
+   "same_size": 47,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1C": {
+   "release_n": 102,
+   "release_bytes": 40996080672,
+   "ours_n": 102,
+   "ours_bytes": 40996080672,
+   "same_size": 102,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1D": {
+   "release_n": 283,
+   "release_bytes": 136776190507,
+   "ours_n": 283,
+   "ours_bytes": 136776190507,
+   "same_size": 283,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1E": {
+   "release_n": 219,
+   "release_bytes": 96515334927,
+   "ours_n": 219,
+   "ours_bytes": 96515334927,
+   "same_size": 219,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1F": {
+   "release_n": 260,
+   "release_bytes": 154113332584,
+   "ours_n": 260,
+   "ours_bytes": 154113332584,
+   "same_size": 260,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1G": {
+   "release_n": 233,
+   "release_bytes": 129026091433,
+   "ours_n": 233,
+   "ours_bytes": 129026091433,
+   "same_size": 233,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1L": {
+   "release_n": 15,
+   "release_bytes": 12435111760,
+   "ours_n": 15,
+   "ours_bytes": 12435111760,
+   "same_size": 15,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1M": {
+   "release_n": 202,
+   "release_bytes": 147021260993,
+   "ours_n": 202,
+   "ours_bytes": 147021260993,
+   "same_size": 202,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1N": {
+   "release_n": 138,
+   "release_bytes": 102299601390,
+   "ours_n": 138,
+   "ours_bytes": 102299601390,
+   "same_size": 138,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1O": {
+   "release_n": 26,
+   "release_bytes": 27975517683,
+   "ours_n": 26,
+   "ours_bytes": 27975517683,
+   "same_size": 26,
+   "ours_not_in_release": 0
+  },
+  "Data/Playlist1P": {
+   "release_n": 40,
+   "release_bytes": 43886310170,
+   "ours_n": 40,
+   "ours_bytes": 43886310170,
+   "same_size": 40,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1A": {
+   "release_n": 41,
+   "release_bytes": 879283927358,
+   "ours_n": 41,
+   "ours_bytes": 706929079280,
+   "same_size": 0,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1B": {
+   "release_n": 11,
+   "release_bytes": 237613494509,
+   "ours_n": 11,
+   "ours_bytes": 237613494509,
+   "same_size": 11,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1C": {
+   "release_n": 21,
+   "release_bytes": 454289189347,
+   "ours_n": 21,
+   "ours_bytes": 454289189347,
+   "same_size": 21,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1D": {
+   "release_n": 61,
+   "release_bytes": 1318974483590,
+   "ours_n": 61,
+   "ours_bytes": 1318974483590,
+   "same_size": 61,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1E": {
+   "release_n": 51,
+   "release_bytes": 1102969618770,
+   "ours_n": 51,
+   "ours_bytes": 1102969618770,
+   "same_size": 51,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1F": {
+   "release_n": 71,
+   "release_bytes": 1515300414752,
+   "ours_n": 71,
+   "ours_bytes": 1515300414752,
+   "same_size": 71,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1G": {
+   "release_n": 61,
+   "release_bytes": 1272959298189,
+   "ours_n": 61,
+   "ours_bytes": 1272959298189,
+   "same_size": 61,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1L": {
+   "release_n": 6,
+   "release_bytes": 124881209202,
+   "ours_n": 6,
+   "ours_bytes": 124881209202,
+   "same_size": 6,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1M": {
+   "release_n": 98,
+   "release_bytes": 1927920847743,
+   "ours_n": 98,
+   "ours_bytes": 1927920847743,
+   "same_size": 98,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1N": {
+   "release_n": 31,
+   "release_bytes": 1102724934932,
+   "ours_n": 31,
+   "ours_bytes": 1102724934932,
+   "same_size": 31,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1O": {
+   "release_n": 16,
+   "release_bytes": 331081841798,
+   "ours_n": 16,
+   "ours_bytes": 331081841798,
+   "same_size": 16,
+   "ours_not_in_release": 0
+  },
+  "MC/Playlist1P": {
+   "release_n": 21,
+   "release_bytes": 438315729309,
+   "ours_n": 21,
+   "ours_bytes": 438315729309,
+   "same_size": 21,
+   "ours_not_in_release": 0
+  }
+ },
+ "totals": {
+  "MC": {
+   "release_n": 489,
+   "release_bytes": 10706314989499,
+   "ours_n": 489,
+   "ours_bytes": 10533960141421,
+   "same_size": 448,
+   "ours_not_in_release": 0
+  },
+  "Data": {
+   "release_n": 1818,
+   "release_bytes": 994030056957,
+   "ours_n": 1818,
+   "ours_bytes": 989532713730,
+   "same_size": 1565,
+   "ours_not_in_release": 0
+  }
+ }
+}

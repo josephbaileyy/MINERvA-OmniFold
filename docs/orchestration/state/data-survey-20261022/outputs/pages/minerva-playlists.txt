@@ -1,0 +1,264 @@
+Interact with MINERvA 
+MINERvA Playlists
+In general, we process all the playlists in ME FHC or all the playlists in ME RHC, and never mix the two (where FHC and RHC correspond to forward and reverse horn currents, or neutrino-dominated beam or antineutrino-dominated beam, respectively). Each playlist gets the application a flux weight suitable for the entire run period, not that single playlist. Using just one playlist (ME1A is about 10% of the whole dataset) is good for debugging code. The Low Energy (LE) data can’t be mixed with Medium Energy (ME) data because the flux and other conditions are too different, and since it is smaller, we usually focus on the ME runs.  
+Playlist Wiki (MINERvA collaborators only)
+https://cdcvs.fnal.gov/redmine/projects/minerva-sw/wiki/Inextinguishable_Production/edit
+Deep Dive into MINERvA Run Periods
+Click Here
+Medium Energy Neutrino (FHC) Playlists
+The tables below describe the conditions and data statistics (in units of Protons on Target, or POT) for the different MINERvA playlists.  The comment on beam refers to the beamline conditions, and NTXX refers to “NUMI Target XX” in the low energy beam, since in the Low energy beam there were several targets used over the course of the run.  MINERvA’s medium energy run only lasted for one target so it is not listed, but it was known as “MET01”.  
+Playlist Name
+Comment on Beam
+Water Target 
+ Status
+Helium Target 
+ Status
+Slip 
+  Stacking
+POT 
+ (x10
+20 
+ ) 
+minervame1A
+Empty
+Empty
+6+0
+0.90
+minervame1B
+Empty
+Filling
+6+0
+0.19
+minervame1C
+Empty
+Full
+6+0
+0.43
+minervame1D
+Empty
+Full
+6+0
+1.4
+minervame1E
+Empty
+Full
+6+0
+1.0
+minervame1F
+Empty
+Full
+6+2
+1.7
+minervame1G
+tilted horn
+Empty
+Empty
+6+4
+1.4
+minervame1L
+tilted horn
+Full
+Empty
+6+4
+0.13
+minervame1M
+tilted horn
+Full
+Empty
+6+4
+2.1
+minervame1N
+Full
+Empty
+6+4
+1.1
+minervame1O
+Full
+Filling
+6+4
+0.30
+minervame1P
+Full
+Full
+6+4
+0.47
+Medium Energy Antineutrino (RHC) Playlists
+Playlist Name
+Comment on Beam
+Water Target 
+ Status
+Helium Target 
+ Status
+Slip 
+ Stacking
+POT 
+ (x10
+20 
+ ) 
+minervame5A
+tilted horn
+Full
+Empty
+6+6
+0.55
+minervame6A
+Full
+Full
+6+6
+1.6
+minervame6B
+Full
+Full
+6+6
+1.0
+minervame6C
+Full
+Full
+6+6
+1.1
+minervame6D
+Full
+Full
+6+6
+1.2
+minervame6E
+Full
+Full
+6+6
+0.87
+minervame6F
+Full
+Full
+6+6
+1.4
+minervame6G
+Full
+Emptying
+6+6
+0.74
+minervame6H
+Full
+Empty
+6+6
+1.1
+minervame6I
+Full then Empty
+Empty
+6+6
+0.79
+minervame6J
+Empty
+Empty
+6+6
+0.91
+Low Energy Neutrino (FHC) Playlists
+Playlist Name
+Comment on Beam
+Water Target 
+Status
+Helium Target 
+Status
+Slip 
+Stacking
+POT 
+ (x10
+20 
+ ) 
+minerva1
+NT03
+Empty
+Empty
+6+0
+ 0.96 
+minerva7A
+only 10 days, NT06
+Empty
+Empty
+6+0
+ n/a 
+minerva7
+NT06 
+Empty
+Empty
+6+0
+ 0.03 
+minerva7B
+helium leak, NT06
+Empty
+Empty
+6+0
+ n/a 
+minerva9
+9 days, NT01
+Empty
+Empty
+6+0
+ 0.07 
+minerva13A
+NT07
+Empty
+Full
+6+0
+ 0.14 
+minerva13B
+NT07
+Empty
+Full
+6+0
+ 0.30  
+minerva13C
+NT07
+Full
+Full
+6+0
+  1.25
+minerva13D
+NT07
+Full
+Emptying
+6+0
+  0.07 
+minerva13E
+NT07
+Full
+Empty
+6+0
+ 0.52  
+Low Energy Antineutrino (RHC) Playlists
+Playlist Name
+Comment on Beam
+Water Target 
+Status
+Helium Target 
+Status
+Slip 
+ Stacking
+POT 
+ (x10
+20 
+ ) 
+minerva5
+NT05
+Empty
+Empty
+6+0
+ 1.0 
+minerva5A
+NT05, 2 weeks
+Empty
+Empty
+6+0
+ n/a 
+minerva5B
+NT05  7 days
+Empty
+Empty
+6+0
+ n/a  
+minerva10
+NT02 (out of retirement)
+Empty
+Empty
+6+0
+ n/a 
+Placeholder here for documentation on playlist-specific fluxes available…

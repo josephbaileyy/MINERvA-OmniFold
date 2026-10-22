@@ -1,0 +1,77 @@
+Interact with MINERvA 
+Electron Neutrino Special Sample
+Electron neutrinos are about 1% of the total flux, but our sample is such high statistics we can make good measurements of the cross section. Of course, these measurements are extremely important for oscillation experiments.  Because it’s such a small fraction of the whole, we make a high statistics special sample.  The higher statistics support robust unfolding, migration matrix, and efficiency corrections.
+This Monte Carlo sample is roughly 4 times the predicted data statistics.
+Medium Energy Neutrino (FHC) Playlists:  Electron Neutrino
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame1A
+Empty
+Empty
+MC 1A
+0.9
+minervame1B
+Empty
+Filling
+MC 1B
+0.19
+minervame1C
+Empty
+Full
+MC 1C
+0.43
+minervame1D
+Empty
+Full
+MC 1D
+1.4
+minervame1E
+Empty
+Full
+MC 1E
+1.0
+minervame1F
+Empty
+Full
+N/A
+1.6
+minervame1G
+Empty
+Empty
+MC 1G
+1.4
+minervame1L
+Full
+Empty
+MC 1L
+0.13
+minervame1M
+Full
+Empty
+MC 1M
+2.1
+minervame1N
+Full
+Empty
+MC 1N
+1.1
+minervame1O
+Full
+Filling
+MC 1O
+0.3
+minervame1P
+Full
+Full
+MC 1P
+0.47

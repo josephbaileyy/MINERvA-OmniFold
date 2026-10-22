@@ -1,0 +1,150 @@
+Interact with MINERvA 
+Coherent and Diffractive Pion Production Special Samples
+GENIE v2 has a diffractive model from Rein (like Coherent, but for hydrogen) but it is turned off by default.  It’s the same model as in GENIE v3.  Of course we need this to simulate MINERvA samples in scintillator and water.  The diffractive samples are just the diffractive process for both charge and neutral currents, where the higher statistics support robust unfolding, migration matrix, and efficiency corrections. A similar charged-current coherent sample was produced, and will be available in the future.
+These Monte Carlo samples are roughly 30 times the predicted data statistics.
+Medium Energy Neutrino (FHC) Playlists:  NC Diffractive
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame1A
+Empty
+Empty
+MC 1A
+0.9
+minervame1B
+Empty
+Filling
+MC 1B
+0.19
+minervame1C
+Empty
+Full
+MC 1C
+0.43
+minervame1D
+Empty
+Full
+MC 1D
+1.4
+minervame1E
+Empty
+Full
+MC 1E
+1.0
+minervame1F
+Empty
+Full
+MC 1F
+1.6
+minervame1G
+Empty
+Empty
+MC 1G
+1.4
+minervame1L
+Full
+Empty
+MC 1L
+0.13
+minervame1M
+Full
+Empty
+MC 1M
+2.1
+minervame1N
+Full
+Empty
+MC 1N
+1.1
+minervame1O
+Full
+Filling
+MC 1O
+0.3
+minervame1P
+Full
+Full
+MC 1P
+0.47
+Medium Energy Neutrino (FHC) Playlists:  CC Diffractive
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame1A
+Empty
+Empty
+MC 1A
+0.9
+minervame1B
+Empty
+Filling
+MC 1B
+0.19
+minervame1C
+Empty
+Full
+MC 1C
+0.43
+minervame1D
+Empty
+Full
+MC 1D
+1.4
+minervame1E
+Empty
+Full
+MC 1E
+1.0
+minervame1F
+Empty
+Full
+MC 1F
+1.6
+minervame1G
+Empty
+Empty
+MC 1G
+1.4
+minervame1L
+Full
+Empty
+MC 1L
+0.13
+minervame1M
+Full
+Empty
+MC 1M
+2.1
+minervame1N
+Full
+Empty
+MC 1N
+1.1
+minervame1O
+Full
+Filling
+MC 1O
+0.3
+minervame1P
+Full
+Full
+MC 1P
+0.47

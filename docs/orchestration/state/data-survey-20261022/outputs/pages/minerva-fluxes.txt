@@ -1,0 +1,24 @@
+Interact with MINERvA 
+MINERvA Fluxes
+Medium Energy Beam Fluxes:
+MINERvA ran in a beam whose peak energy was about 6GeV between 2013-2019, and received an equal number of protons on target (12E20) in both neutrino and antineutrino mode.
+The most precise flux prediction from MINERvA comes from a simultaneous fit of three different data sets:  neutrino-electron scattering in both neutrino and antineutrino modes, plus events arising from 
+inverse muon decay
+, and is decribed in the article 
+L. Zazueta et al, Phys.Rev.D 107 (2023) 1, 012001
+.  This is the flux that was used for most Medium Energy antineutrino analyses on MINERvA.
+On Scintillator Target:
+You can get a gzipped file with all four fluxes (muon neutrino, muon antineutrino, electron neutrino, electron antineutrino), their uncertainties and covariance matrices and a readme file by clicking on
+ this link
+.  These are the fluxes that are integrated over the entire scintillator detector.
+Physics analyses that were completed earlier than this fit was completed used slightly different fluxes.  In particular, the MINERvA flux that only has the neutrino-mode neutrino electron scattering constraint can be found from
+ this link Phys. Rev. D 100, 092001 (2019)
+On Nuclear Targets:
+The neutrino flux is mostly symmetric with respect to the neutrino beamline axis, but the detector center itself is displaced by 24cm horizontally to the the beamline axis.  The various nuclear targets are NOT symmetric with respect to the detector axis, which means that each target sees a slightly different flux than the scintillator target sees.  In particular, e
+ach target has its own flux which can differ up to +/-10% in the falling edge of the flux peak when compared to the CH flux.  You can get a gzipped root file of these different fluxes from
+ this link (Phys. Rev. Lett. 130, 161801 )
+.
+Low Energy Beam Fluxes:
+MINERvA ran in a beam whose peak energy was around 3.5GeV between 2009-2012, and received about 4E20 protons on target in neutrino mode but only 1.7E20 protons on target in antineutrino mode. The flux prediction before any constraints from neutrino electron scattering can be found 
+here (Phys. Rev. D  94, 092005 (2016).  
+That flux prediction was also constrained by neutrino-electron scattering events in neutrino mode and the constrained flux can be found here, but there were not enough events in antineutrino mode to provide a constraint.

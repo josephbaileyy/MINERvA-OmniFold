@@ -1,0 +1,77 @@
+Interact with MINERvA 
+Downstream Calorimeters Special Sample
+Events originating in the downstream calorimeter region are simulated with the same configuration and reconstruction tools as the tracker and upstream targets region. In general, you should use this sample OR the regular sample, the overlap of the two samples might double count some planes or undercount some planes toward the end of the tracker region. This holds even if you want to use a tracker analysis to subtract a CH “background”. We have an analysis in the ECAL region (half Pb and half CH) and may post additional, practical advice soon. We have not tried an analysis in the HCAL region which is about 10 parts iron to 1 part scintillator by mass, and care with the energy calibrations would be appropriate.
+This Monte Carlo sample is roughly 4 times the predicted data statistics.
+Medium Energy Neutrino (FHC) Playlists:  Downstream ECAL and HCAL
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame1A
+Empty
+Empty
+MC 1A
+0.9
+minervame1B
+Empty
+Filling
+MC 1B
+0.19
+minervame1C
+Empty
+Full
+MC 1C
+0.43
+minervame1D
+Empty
+Full
+MC 1D
+1.4
+minervame1E
+Empty
+Full
+MC 1E
+1.0
+minervame1F
+Empty
+Full
+MC 1F
+1.6
+minervame1G
+Empty
+Empty
+MC 1G
+1.4
+minervame1L
+Full
+Empty
+MC 1L
+0.13
+minervame1M
+Full
+Empty
+N/A
+2.1
+minervame1N
+Full
+Empty
+MC 1N
+1.1
+minervame1O
+Full
+Filling
+MC 1O
+0.3
+minervame1P
+Full
+Full
+MC 1P
+0.47

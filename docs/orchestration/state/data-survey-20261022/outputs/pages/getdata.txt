@@ -1,0 +1,330 @@
+
+Get MINERvA’s Data Here! | MINERvA
+You are using an 
+outdated
+ browser. Please 
+upgrade your browser
+ or 
+activate Google Chrome Frame
+ to improve your experience.
+                        Search Toggle
+                        Navbar Toggle
+Search
+Home
+About
+Science
+Jobs
+Contact
+Phone Book
+        Newsroom
+Newsroom
+News and features
+Press releases
+Fermilab in the news
+Fact sheets
+Media contacts
+Subscribe to our public newsletter
+Social media
+        DUNE at LBNF
+        Community
+Community
+Hours and public access
+Tours, programs and events
+Calendar of public events
+Education programs
+Lederman Science Center
+Subscribe to our public newsletter
+Link name
+Link name
+Link name
+Link name
+                            -->
+        Resources for
+Resources for
+Employees
+Researchers
+Job seekers
+Public
+Neighbors
+Industry
+Business Visitors
+Students and teachers
+Media
+                         -->
+MINERvA
+         Navbar Toggle
+MINERvA
+Why study neutrinos?
+How it works
+Collaboration
+Publications
+Open Data Product Page
+Cross Section Publication Releases
+Photos and graphics
+MINERvA Code of Conduct
+Neutrinos in the Classroom
+Hands-on interactive experience
+ for high school students using MINERvA data!
+Related Links
+Neutrino Division
+All Things Neutrino
+KEK Theory Group on Neutrino Interactions
+MIPP: Hadron Production at Fermilab
+NuMI Beamline
+SHINE:  Hadron Production at CERN
+Interact with MINERvA 
+Get MINERvA’s Data Here!
+Our current data product includes the forward horn current (neutrino-dominated) playlists in “medium energy” (6 GeV average beam energy) and the reverse horn current (antineutrino-dominated) playlists as of Spring 2026. The “low energy” (3 GeV average beam energy) will also be provided soon. We’ll also provide “special samples” of particular channels.
+We are working on some fixes as well to improve these tuples which we will release later in 2026. Keep an eye out for an announcement. These improvements will address the following:
+Increase in and fixes for flux information saved in the tuples
+Tutorial analysis flux usage does not rely on this.
+This is for future improvements to the input flux to our and the tutorial analyses
+Fix for minor position-dependent bias in EM shower momentum reconstruction in events which enter the electron reconstruction pathway, and for input showers to neutral pions.
+Improving consistency and stability of machine learning (ML) predictions:
+Vertex predictions in CC muon events. The non-ML vertex reconstruction is saved in the tuples as well.
+Selection of EM-like clusters for neutral pion reconstruction in CC muon events.
+We do not have a quantification of the change, but expect it to be small. Just use these with caution as there are some inconsistencies run-to-run as well as erraneously produced predictions for neutral pions in non-CCmuon events which we have not validated.
+The data files are in .root format.   But within that format, the branches are relatively flat and could be exported to a number of other common formats to suit a user’s preference.
+There are three ways to get access to the data, all utilizign xrootd. If there are requests for an additional pathway, please reach out. From offsite, you can use xrootd to stream the file. Also from offsite, you can use xrdcp to copy the file. From inside Fermilab’s computing environment, you can arrange to mount our pnfs persistent directory.
+Here is a list of text files with directory names, one file per playlist. Use them with xrootd streaming from the pnfs mount if you are working within Fermilab’s computing environment. Direct use is not advised as it will overload the cache (Fermilab internal: dCache) system. Combine the individual file names or script through the lists with the appropriate script to get one or all of them to an offsite location.
+Example of what the xrootd and xrdcp command looks like:
+xrdcp root://fndcadoor.fnal.gov:1095/pnfs/fnal.gov/usr/minerva/persistent/OpenData/[path/filename] [destination]
+An example of the [path/filename] for one file would be:
+MediumEnergy_FHC/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root
+This full xrootd path for the available files are listed in the text files for each playlist in the tables below, as well as in the respective tables for the special samples linked at the end of this page.
+Medium Energy Neutrino (FHC) Playlists
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Data
+file list
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame1A
+Empty
+Empty
+Data 1A
+MC 1A
+0.90
+minervame1B
+Empty
+Full*
+Data 1B
+MC 1B
+0.19
+minervame1C
+Empty
+Full
+Data 1C
+MC 1C
+0.43
+minervame1D
+Empty
+Full
+Data 1D
+MC 1D
+1.4
+minervame1E
+Empty
+Full
+Data 1E
+MC 1E
+1.0
+minervame1F
+Empty
+Full
+Data 1F
+MC 1F
+1.7
+minervame1G
+Empty
+Empty
+Data 1G
+MC 1G
+1.4
+minervame1L
+Full
+Empty
+Data 1L
+MC 1L
+0.13
+minervame1M
+Full
+Empty
+Data 1M
+MC 1M
+2.1
+minervame1N
+Full
+Empty
+Data 1N
+MC 1N
+1.1
+minervame1O
+Full
+Empty*
+Data 1O
+MC 1O
+0.30
+minervame1P
+Full
+Full
+Data 1P
+MC 1P
+0.47
+* – “Helium Target Status” in the table above represents how it was simulated in the MC. The status in data was transitioning from the previous state to next (e.g. during 1B the helium target was filling.)
+Medium Energy Antineutrino (RHC) Playlists
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Data
+file list
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame5A
+Full
+Empty
+Data 5A
+MC 5A
+0.55
+minervame6A
+Full
+Full
+Data 6A
+MC 6A
+1.6
+minervame6B
+Full
+Full
+Data 6B
+MC 6B
+1.0
+minervame6C
+Full
+Full
+Data 6C
+MC 6C
+1.1
+minervame6D
+Full
+Full
+Data 6D
+MC 6D
+1.2
+minervame6E
+Full
+Full
+Data 6E
+MC 6E
+0.87
+minervame6F **
+Full
+Full
+Data 6F
+MC 6F
+1.4
+minervame6G
+Full
+Empty*
+Data 6G
+MC 6G
+0.74
+minervame6H
+Full
+Empty
+Data 6H
+MC 6H
+1.1
+minervame6I
+Full then Empty
+Empty
+Data 6I
+MC 6I
+0.79
+minervame6J
+Empty
+Empty
+Data 6J
+MC 6J
+0.91
+* – “Helium Target Status” in the table above represents how it was simulated in the MC. The status in data was transitioning from the previous state to next (e.g. during 6G the helium target was emptying.)
+** – A bug in the Playlist 6F Standard Monte Carlo sample machine learning vertex predictions was found Apr. 2, 2026. Please check back in the next few weeks following its discovery for it to be addressed.
+Medium Energy Neutrino (RHC) Playlist 6I Water Division
+The water target was emptied part way through playlist 6I. For analyses where studying the portions separately is pertinent, we have separated the playlist here. The files below are the same as those above just categorized based on the presence or absence of water in the water target.
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Data
+file list
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame6I: Water Full
+Full
+Empty
+Data 6I Water Full
+MC 6I Water Full
+0.46
+minervame6I: Water Empty
+Empty
+Empty
+Data 6I Water Empty
+MC 6I Water Empty
+0.33
+Information for how to get to special samples:
+ “Extended 2p2h” Sample of Monte Carlo Events 
+ Coherent and Diffractive Pion Production Samples of Monte Carlo Events 
+ Downstream Calorimeters Sample of Monte Carlo Events 
+ Neutrino-Electron Elastic Scattering Sample of Monte Carlo Events 
+ Large Sample of Electron Neutrino Monte Carlo Events 
+Neutrinos in the Classroom
+Hands-on interactive experience
+ for high school students using MINERvA data!
+Related Links
+Neutrino Division
+All Things Neutrino
+KEK Theory Group on Neutrino Interactions
+MIPP: Hadron Production at Fermilab
+NuMI Beamline
+SHINE:  Hadron Production at CERN
+Interact with MINERvA 
+Fermi National Accelerator Laboratory
+Managed by 
+Fermi Forward Discovery Group, LLC
+for the 
+U.S. Department of Energy Office of Science
+Security, Privacy, Legal
+Use of Cookies
+Quick Links
+Home
+Contact
+Inside Fermilab
+For Industry
+Jobs
+Interact
+Facebook
+X (Twitter)
+Instagram
+YouTube
+Threads
+LinkedIn

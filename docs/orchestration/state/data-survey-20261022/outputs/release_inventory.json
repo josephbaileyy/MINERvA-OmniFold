@@ -1,0 +1,1741 @@
+{
+ "MediumEnergy_FHC/Data": {
+  "n": 12,
+  "bytes": 296334,
+  "mtime_min": "2026-03-06 19:44:12",
+  "mtime_max": "2026-03-06 19:46:31",
+  "ext": {
+   ".txt": 12
+  },
+  "min_size": 2445,
+  "max_size": 46129
+ },
+ "MediumEnergy_FHC/Data/Playlist1A": {
+  "n": 253,
+  "bytes": 85107535992,
+  "mtime_min": "2026-01-11 17:06:16",
+  "mtime_max": "2026-01-11 17:32:08",
+  "ext": {
+   ".root": 253
+  },
+  "min_size": 166293,
+  "max_size": 864421694
+ },
+ "MediumEnergy_FHC/Data/Playlist1B": {
+  "n": 47,
+  "bytes": 17877688846,
+  "mtime_min": "2026-01-11 18:02:09",
+  "mtime_max": "2026-01-11 18:12:36",
+  "ext": {
+   ".root": 47
+  },
+  "min_size": 166293,
+  "max_size": 559702581
+ },
+ "MediumEnergy_FHC/Data/Playlist1C": {
+  "n": 102,
+  "bytes": 40996080672,
+  "mtime_min": "2026-01-26 16:49:58",
+  "mtime_max": "2026-01-26 17:02:41",
+  "ext": {
+   ".root": 102
+  },
+  "min_size": 166333,
+  "max_size": 806775138
+ },
+ "MediumEnergy_FHC/Data/Playlist1D": {
+  "n": 283,
+  "bytes": 136776190507,
+  "mtime_min": "2026-01-26 17:06:40",
+  "mtime_max": "2026-01-26 17:32:51",
+  "ext": {
+   ".root": 283
+  },
+  "min_size": 166293,
+  "max_size": 868682460
+ },
+ "MediumEnergy_FHC/Data/Playlist1E": {
+  "n": 219,
+  "bytes": 96515334927,
+  "mtime_min": "2026-01-26 17:29:32",
+  "mtime_max": "2026-01-26 17:51:22",
+  "ext": {
+   ".root": 219
+  },
+  "min_size": 166293,
+  "max_size": 856468443
+ },
+ "MediumEnergy_FHC/Data/Playlist1F": {
+  "n": 260,
+  "bytes": 154113332584,
+  "mtime_min": "2026-01-26 17:52:30",
+  "mtime_max": "2026-01-26 18:20:58",
+  "ext": {
+   ".root": 260
+  },
+  "min_size": 166333,
+  "max_size": 1399323619
+ },
+ "MediumEnergy_FHC/Data/Playlist1G": {
+  "n": 233,
+  "bytes": 129026091433,
+  "mtime_min": "2026-01-26 18:20:19",
+  "mtime_max": "2026-01-26 18:42:45",
+  "ext": {
+   ".root": 233
+  },
+  "min_size": 166345,
+  "max_size": 1313405509
+ },
+ "MediumEnergy_FHC/Data/Playlist1L": {
+  "n": 15,
+  "bytes": 12435111760,
+  "mtime_min": "2026-01-26 18:42:57",
+  "mtime_max": "2026-01-26 18:51:15",
+  "ext": {
+   ".root": 15
+  },
+  "min_size": 166293,
+  "max_size": 1002132371
+ },
+ "MediumEnergy_FHC/Data/Playlist1M": {
+  "n": 202,
+  "bytes": 147021260993,
+  "mtime_min": "2026-01-27 17:31:28",
+  "mtime_max": "2026-01-27 17:50:12",
+  "ext": {
+   ".root": 202
+  },
+  "min_size": 166333,
+  "max_size": 1638847259
+ },
+ "MediumEnergy_FHC/Data/Playlist1N": {
+  "n": 138,
+  "bytes": 102299601390,
+  "mtime_min": "2026-01-27 17:46:18",
+  "mtime_max": "2026-01-27 18:07:20",
+  "ext": {
+   ".root": 138
+  },
+  "min_size": 166321,
+  "max_size": 1207172090
+ },
+ "MediumEnergy_FHC/Data/Playlist1O": {
+  "n": 26,
+  "bytes": 27975517683,
+  "mtime_min": "2026-01-26 18:45:58",
+  "mtime_max": "2026-01-26 18:56:43",
+  "ext": {
+   ".root": 26
+  },
+  "min_size": 89394544,
+  "max_size": 1296161804
+ },
+ "MediumEnergy_FHC/Data/Playlist1P": {
+  "n": 40,
+  "bytes": 43886310170,
+  "mtime_min": "2026-01-28 03:07:44",
+  "mtime_max": "2026-01-28 03:20:08",
+  "ext": {
+   ".root": 40
+  },
+  "min_size": 8940257,
+  "max_size": 1987081808
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion": {
+  "n": 12,
+  "bytes": 2262,
+  "mtime_min": "2025-10-08 09:50:22",
+  "mtime_max": "2025-10-08 09:50:24",
+  "ext": {
+   ".txt": 12
+  },
+  "min_size": 174,
+  "max_size": 348
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1A": {
+  "n": 1,
+  "bytes": 3674735693,
+  "mtime_min": "2024-08-26 15:26:10",
+  "mtime_max": "2024-08-26 15:26:10",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 3674735693,
+  "max_size": 3674735693
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1B": {
+  "n": 1,
+  "bytes": 761634508,
+  "mtime_min": "2024-08-26 15:26:18",
+  "mtime_max": "2024-08-26 15:26:18",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 761634508,
+  "max_size": 761634508
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1C": {
+  "n": 1,
+  "bytes": 1715922210,
+  "mtime_min": "2024-08-26 15:26:53",
+  "mtime_max": "2024-08-26 15:26:53",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 1715922210,
+  "max_size": 1715922210
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1D": {
+  "n": 1,
+  "bytes": 5533627586,
+  "mtime_min": "2024-08-26 15:27:18",
+  "mtime_max": "2024-08-26 15:27:18",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 5533627586,
+  "max_size": 5533627586
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1E": {
+  "n": 1,
+  "bytes": 4088565046,
+  "mtime_min": "2024-08-26 15:27:49",
+  "mtime_max": "2024-08-26 15:27:49",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 4088565046,
+  "max_size": 4088565046
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1F": {
+  "n": 1,
+  "bytes": 6481300141,
+  "mtime_min": "2024-08-26 15:28:35",
+  "mtime_max": "2024-08-26 15:28:35",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 6481300141,
+  "max_size": 6481300141
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1G": {
+  "n": 1,
+  "bytes": 5457188328,
+  "mtime_min": "2024-08-26 15:31:52",
+  "mtime_max": "2024-08-26 15:31:52",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 5457188328,
+  "max_size": 5457188328
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1L": {
+  "n": 1,
+  "bytes": 501828440,
+  "mtime_min": "2024-08-26 15:31:57",
+  "mtime_max": "2024-08-26 15:31:57",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 501828440,
+  "max_size": 501828440
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1M": {
+  "n": 2,
+  "bytes": 6101238812,
+  "mtime_min": "2024-08-26 15:32:01",
+  "mtime_max": "2024-08-26 15:32:30",
+  "ext": {
+   ".root": 2
+  },
+  "min_size": 951131621,
+  "max_size": 5150107191
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1N": {
+  "n": 1,
+  "bytes": 2628561471,
+  "mtime_min": "2024-08-26 15:33:09",
+  "mtime_max": "2024-08-26 15:33:09",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 2628561471,
+  "max_size": 2628561471
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1O": {
+  "n": 1,
+  "bytes": 1267133331,
+  "mtime_min": "2024-08-26 15:33:26",
+  "mtime_max": "2024-08-26 15:33:26",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 1267133331,
+  "max_size": 1267133331
+ },
+ "MediumEnergy_FHC/MC/CCDiffractivePion/Playlist1P": {
+  "n": 1,
+  "bytes": 1906307469,
+  "mtime_min": "2024-08-26 15:33:37",
+  "mtime_max": "2024-08-26 15:33:37",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 1906307469,
+  "max_size": 1906307469
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters": {
+  "n": 11,
+  "bytes": 40356,
+  "mtime_min": "2025-10-08 08:38:53",
+  "mtime_max": "2025-10-10 10:35:28",
+  "ext": {
+   ".txt": 11
+  },
+  "min_size": 684,
+  "max_size": 7011
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1A": {
+  "n": 41,
+  "bytes": 309501993075,
+  "mtime_min": "2025-04-03 19:37:30",
+  "mtime_max": "2025-04-03 20:08:51",
+  "ext": {
+   ".root": 41
+  },
+  "min_size": 6477081874,
+  "max_size": 7775103134
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1B": {
+  "n": 6,
+  "bytes": 92770359845,
+  "mtime_min": "2025-04-03 20:41:03",
+  "mtime_max": "2025-04-03 20:47:37",
+  "ext": {
+   ".root": 6
+  },
+  "min_size": 15334613063,
+  "max_size": 15519900874
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1C": {
+  "n": 12,
+  "bytes": 176915003421,
+  "mtime_min": "2025-04-03 20:48:08",
+  "mtime_max": "2025-04-03 21:00:17",
+  "ext": {
+   ".root": 12
+  },
+  "min_size": 9266204088,
+  "max_size": 15489852388
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1D": {
+  "n": 32,
+  "bytes": 470819993268,
+  "mtime_min": "2025-04-03 21:01:33",
+  "mtime_max": "2025-04-03 21:34:29",
+  "ext": {
+   ".root": 32
+  },
+  "min_size": 9614077832,
+  "max_size": 15490470805
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1E": {
+  "n": 27,
+  "bytes": 377596067601,
+  "mtime_min": "2025-04-03 21:35:06",
+  "mtime_max": "2025-04-03 21:59:56",
+  "ext": {
+   ".root": 27
+  },
+  "min_size": 8149418257,
+  "max_size": 15427739631
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1F": {
+  "n": 37,
+  "bytes": 551438289812,
+  "mtime_min": "2025-04-03 22:00:50",
+  "mtime_max": "2025-04-03 22:40:18",
+  "ext": {
+   ".root": 37
+  },
+  "min_size": 12490740095,
+  "max_size": 15294679063
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1G": {
+  "n": 32,
+  "bytes": 473501184386,
+  "mtime_min": "2025-04-03 22:50:02",
+  "mtime_max": "2025-04-03 23:46:06",
+  "ext": {
+   ".root": 32
+  },
+  "min_size": 10959333559,
+  "max_size": 15313644941
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1L": {
+  "n": 4,
+  "bytes": 57800653654,
+  "mtime_min": "2025-04-03 23:47:25",
+  "mtime_max": "2025-04-03 23:51:22",
+  "ext": {
+   ".root": 4
+  },
+  "min_size": 14160529286,
+  "max_size": 14777647012
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1N": {
+  "n": 24,
+  "bytes": 342601888854,
+  "mtime_min": "2025-04-03 23:52:20",
+  "mtime_max": "2025-04-04 00:28:44",
+  "ext": {
+   ".root": 24
+  },
+  "min_size": 12443135371,
+  "max_size": 15039712832
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1O": {
+  "n": 9,
+  "bytes": 132012623406,
+  "mtime_min": "2025-04-04 00:29:50",
+  "mtime_max": "2025-04-04 00:38:19",
+  "ext": {
+   ".root": 9
+  },
+  "min_size": 14625327255,
+  "max_size": 14698601058
+ },
+ "MediumEnergy_FHC/MC/DSCalorimeters/Playlist1P": {
+  "n": 12,
+  "bytes": 169384828087,
+  "mtime_min": "2025-04-04 00:39:30",
+  "mtime_max": "2025-04-04 00:48:47",
+  "ext": {
+   ".root": 12
+  },
+  "min_size": 12701730100,
+  "max_size": 14640336524
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino": {
+  "n": 11,
+  "bytes": 69200,
+  "mtime_min": "2025-10-08 08:28:00",
+  "mtime_max": "2025-10-08 08:28:15",
+  "ext": {
+   ".txt": 11
+  },
+  "min_size": 1038,
+  "max_size": 15397
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1A": {
+  "n": 41,
+  "bytes": 86617903099,
+  "mtime_min": "2024-08-26 15:50:22",
+  "mtime_max": "2024-08-26 16:06:26",
+  "ext": {
+   ".root": 41
+  },
+  "min_size": 1833968887,
+  "max_size": 2200319307
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1B": {
+  "n": 11,
+  "bytes": 19369384211,
+  "mtime_min": "2024-08-26 16:06:32",
+  "mtime_max": "2024-08-26 16:08:39",
+  "ext": {
+   ".root": 11
+  },
+  "min_size": 801538559,
+  "max_size": 2182051080
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1C": {
+  "n": 14,
+  "bytes": 27347468351,
+  "mtime_min": "2024-08-26 16:09:15",
+  "mtime_max": "2024-08-26 16:13:54",
+  "ext": {
+   ".root": 14
+  },
+  "min_size": 889918217,
+  "max_size": 2176165523
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1D": {
+  "n": 61,
+  "bytes": 132594147054,
+  "mtime_min": "2024-08-26 16:15:30",
+  "mtime_max": "2024-08-26 16:40:31",
+  "ext": {
+   ".root": 61
+  },
+  "min_size": 2090567267,
+  "max_size": 2226524226
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1E": {
+  "n": 50,
+  "bytes": 101956147910,
+  "mtime_min": "2024-08-26 16:41:48",
+  "mtime_max": "2024-08-26 17:02:03",
+  "ext": {
+   ".root": 50
+  },
+  "min_size": 320738868,
+  "max_size": 2214125161
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1G": {
+  "n": 61,
+  "bytes": 129758924540,
+  "mtime_min": "2024-08-26 17:04:07",
+  "mtime_max": "2024-08-26 17:31:07",
+  "ext": {
+   ".root": 61
+  },
+  "min_size": 2040111541,
+  "max_size": 2169889799
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1L": {
+  "n": 6,
+  "bytes": 12841387538,
+  "mtime_min": "2024-08-26 17:31:37",
+  "mtime_max": "2024-08-26 17:33:16",
+  "ext": {
+   ".root": 6
+  },
+  "min_size": 2102735998,
+  "max_size": 2163379693
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1M": {
+  "n": 89,
+  "bytes": 182609423333,
+  "mtime_min": "2024-08-26 17:36:31",
+  "mtime_max": "2024-08-26 18:10:26",
+  "ext": {
+   ".root": 89
+  },
+  "min_size": 763504607,
+  "max_size": 2170627505
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1N": {
+  "n": 30,
+  "bytes": 101413370595,
+  "mtime_min": "2024-08-26 18:11:26",
+  "mtime_max": "2024-08-26 18:32:26",
+  "ext": {
+   ".root": 30
+  },
+  "min_size": 2080071509,
+  "max_size": 3628537902
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1O": {
+  "n": 16,
+  "bytes": 32682136130,
+  "mtime_min": "2024-08-26 18:33:16",
+  "mtime_max": "2024-08-26 18:40:26",
+  "ext": {
+   ".root": 16
+  },
+  "min_size": 1826071866,
+  "max_size": 2081167535
+ },
+ "MediumEnergy_FHC/MC/ElectronNeutrino/Playlist1P": {
+  "n": 21,
+  "bytes": 42945762046,
+  "mtime_min": "2024-08-26 18:41:34",
+  "mtime_max": "2024-08-26 18:51:01",
+  "ext": {
+   ".root": 21
+  },
+  "min_size": 1710086535,
+  "max_size": 2104584685
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h": {
+  "n": 12,
+  "bytes": 7436,
+  "mtime_min": "2025-10-08 06:53:22",
+  "mtime_max": "2025-10-08 06:53:23",
+  "ext": {
+   ".txt": 12
+  },
+  "min_size": 169,
+  "max_size": 1521
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1A": {
+  "n": 4,
+  "bytes": 83215984824,
+  "mtime_min": "2024-08-27 20:55:07",
+  "mtime_max": "2024-08-27 21:03:25",
+  "ext": {
+   ".root": 4
+  },
+  "min_size": 9230788415,
+  "max_size": 25395994669
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1B": {
+  "n": 1,
+  "bytes": 25667130494,
+  "mtime_min": "2024-08-27 21:09:54",
+  "mtime_max": "2024-08-27 21:09:54",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 25667130494,
+  "max_size": 25667130494
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1C": {
+  "n": 2,
+  "bytes": 46324275824,
+  "mtime_min": "2024-08-27 21:14:07",
+  "mtime_max": "2024-08-27 21:19:15",
+  "ext": {
+   ".root": 2
+  },
+  "min_size": 20789564263,
+  "max_size": 25534711561
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1D": {
+  "n": 4,
+  "bytes": 89914420842,
+  "mtime_min": "2024-08-27 21:21:06",
+  "mtime_max": "2024-08-27 21:28:40",
+  "ext": {
+   ".root": 4
+  },
+  "min_size": 12775820721,
+  "max_size": 25774358646
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1E": {
+  "n": 5,
+  "bytes": 124921138476,
+  "mtime_min": "2024-08-27 21:31:49",
+  "mtime_max": "2024-08-27 21:39:05",
+  "ext": {
+   ".root": 5
+  },
+  "min_size": 22163912408,
+  "max_size": 25739928440
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1F": {
+  "n": 6,
+  "bytes": 133335991088,
+  "mtime_min": "2024-08-27 21:41:06",
+  "mtime_max": "2024-08-27 21:56:32",
+  "ext": {
+   ".root": 6
+  },
+  "min_size": 9969352204,
+  "max_size": 25457227324
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1G": {
+  "n": 5,
+  "bytes": 122982033792,
+  "mtime_min": "2024-08-29 18:51:50",
+  "mtime_max": "2024-08-29 19:18:44",
+  "ext": {
+   ".root": 5
+  },
+  "min_size": 24305307421,
+  "max_size": 24752822181
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1L": {
+  "n": 1,
+  "bytes": 24501072637,
+  "mtime_min": "2024-08-29 19:34:32",
+  "mtime_max": "2024-08-29 19:34:32",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 24501072637,
+  "max_size": 24501072637
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1M": {
+  "n": 9,
+  "bytes": 205307082510,
+  "mtime_min": "2024-08-29 19:41:15",
+  "mtime_max": "2024-08-29 20:28:32",
+  "ext": {
+   ".root": 9
+  },
+  "min_size": 21835672570,
+  "max_size": 24553731708
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1N": {
+  "n": 3,
+  "bytes": 75831533989,
+  "mtime_min": "2024-08-29 20:31:02",
+  "mtime_max": "2024-08-29 20:36:04",
+  "ext": {
+   ".root": 3
+  },
+  "min_size": 25219003122,
+  "max_size": 25369190149
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1O": {
+  "n": 2,
+  "bytes": 49290672363,
+  "mtime_min": "2024-08-29 20:50:08",
+  "mtime_max": "2024-08-29 20:54:21",
+  "ext": {
+   ".root": 2
+  },
+  "min_size": 24499063456,
+  "max_size": 24791608907
+ },
+ "MediumEnergy_FHC/MC/Extended2p2h/Playlist1P": {
+  "n": 2,
+  "bytes": 49651266568,
+  "mtime_min": "2024-08-29 20:58:56",
+  "mtime_max": "2024-08-29 21:02:59",
+  "ext": {
+   ".root": 2
+  },
+  "min_size": 24801477048,
+  "max_size": 24849789520
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion": {
+  "n": 12,
+  "bytes": 2262,
+  "mtime_min": "2025-10-08 09:40:57",
+  "mtime_max": "2025-10-08 09:40:59",
+  "ext": {
+   ".txt": 12
+  },
+  "min_size": 174,
+  "max_size": 348
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1A": {
+  "n": 1,
+  "bytes": 534214134,
+  "mtime_min": "2024-08-26 15:18:39",
+  "mtime_max": "2024-08-26 15:18:39",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 534214134,
+  "max_size": 534214134
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1B": {
+  "n": 1,
+  "bytes": 103107265,
+  "mtime_min": "2024-08-26 15:18:40",
+  "mtime_max": "2024-08-26 15:18:40",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 103107265,
+  "max_size": 103107265
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1C": {
+  "n": 1,
+  "bytes": 244419470,
+  "mtime_min": "2024-08-26 15:18:42",
+  "mtime_max": "2024-08-26 15:18:42",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 244419470,
+  "max_size": 244419470
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1D": {
+  "n": 1,
+  "bytes": 805460679,
+  "mtime_min": "2024-08-26 15:18:58",
+  "mtime_max": "2024-08-26 15:18:58",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 805460679,
+  "max_size": 805460679
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1E": {
+  "n": 1,
+  "bytes": 595610633,
+  "mtime_min": "2024-08-26 15:19:06",
+  "mtime_max": "2024-08-26 15:19:06",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 595610633,
+  "max_size": 595610633
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1F": {
+  "n": 1,
+  "bytes": 916107388,
+  "mtime_min": "2024-08-26 15:19:12",
+  "mtime_max": "2024-08-26 15:19:12",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 916107388,
+  "max_size": 916107388
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1G": {
+  "n": 1,
+  "bytes": 760730039,
+  "mtime_min": "2024-08-26 15:19:15",
+  "mtime_max": "2024-08-26 15:19:15",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 760730039,
+  "max_size": 760730039
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1L": {
+  "n": 1,
+  "bytes": 75730952,
+  "mtime_min": "2024-08-26 15:19:16",
+  "mtime_max": "2024-08-26 15:19:16",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 75730952,
+  "max_size": 75730952
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1M": {
+  "n": 2,
+  "bytes": 902718293,
+  "mtime_min": "2024-08-26 15:19:18",
+  "mtime_max": "2024-08-26 15:19:24",
+  "ext": {
+   ".root": 2
+  },
+  "min_size": 133621449,
+  "max_size": 769096844
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1N": {
+  "n": 1,
+  "bytes": 382132710,
+  "mtime_min": "2024-08-26 15:19:27",
+  "mtime_max": "2024-08-26 15:19:27",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 382132710,
+  "max_size": 382132710
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1O": {
+  "n": 1,
+  "bytes": 164074234,
+  "mtime_min": "2024-08-26 15:19:31",
+  "mtime_max": "2024-08-26 15:19:31",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 164074234,
+  "max_size": 164074234
+ },
+ "MediumEnergy_FHC/MC/NCDiffractivePion/Playlist1P": {
+  "n": 1,
+  "bytes": 253258876,
+  "mtime_min": "2024-08-26 15:19:32",
+  "mtime_max": "2024-08-26 15:19:32",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 253258876,
+  "max_size": 253258876
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic": {
+  "n": 12,
+  "bytes": 2340,
+  "mtime_min": "2025-10-08 08:59:31",
+  "mtime_max": "2025-10-08 08:59:33",
+  "ext": {
+   ".txt": 12
+  },
+  "min_size": 180,
+  "max_size": 360
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1A": {
+  "n": 1,
+  "bytes": 1900223535,
+  "mtime_min": "2024-08-26 15:02:13",
+  "mtime_max": "2024-08-26 15:02:13",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 1900223535,
+  "max_size": 1900223535
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1B": {
+  "n": 1,
+  "bytes": 387374871,
+  "mtime_min": "2024-08-26 15:02:39",
+  "mtime_max": "2024-08-26 15:02:39",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 387374871,
+  "max_size": 387374871
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1C": {
+  "n": 1,
+  "bytes": 905280540,
+  "mtime_min": "2024-08-26 15:02:59",
+  "mtime_max": "2024-08-26 15:02:59",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 905280540,
+  "max_size": 905280540
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1D": {
+  "n": 1,
+  "bytes": 2901761986,
+  "mtime_min": "2024-08-26 15:03:45",
+  "mtime_max": "2024-08-26 15:03:45",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 2901761986,
+  "max_size": 2901761986
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1E": {
+  "n": 1,
+  "bytes": 2056510305,
+  "mtime_min": "2024-08-26 15:04:43",
+  "mtime_max": "2024-08-26 15:04:43",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 2056510305,
+  "max_size": 2056510305
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1F": {
+  "n": 1,
+  "bytes": 3279233752,
+  "mtime_min": "2024-08-26 15:05:11",
+  "mtime_max": "2024-08-26 15:05:11",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 3279233752,
+  "max_size": 3279233752
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1G": {
+  "n": 1,
+  "bytes": 2734198786,
+  "mtime_min": "2024-08-26 15:05:45",
+  "mtime_max": "2024-08-26 15:05:45",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 2734198786,
+  "max_size": 2734198786
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1L": {
+  "n": 1,
+  "bytes": 246008435,
+  "mtime_min": "2024-08-26 15:06:05",
+  "mtime_max": "2024-08-26 15:06:05",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 246008435,
+  "max_size": 246008435
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1M": {
+  "n": 2,
+  "bytes": 3162876049,
+  "mtime_min": "2024-08-26 15:06:30",
+  "mtime_max": "2024-08-26 15:08:07",
+  "ext": {
+   ".root": 2
+  },
+  "min_size": 446367195,
+  "max_size": 2716508854
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1N": {
+  "n": 1,
+  "bytes": 1295058631,
+  "mtime_min": "2024-08-26 15:10:03",
+  "mtime_max": "2024-08-26 15:10:03",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 1295058631,
+  "max_size": 1295058631
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1O": {
+  "n": 1,
+  "bytes": 566153064,
+  "mtime_min": "2024-08-26 15:10:26",
+  "mtime_max": "2024-08-26 15:10:26",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 566153064,
+  "max_size": 566153064
+ },
+ "MediumEnergy_FHC/MC/NeutrinoElectronElastic/Playlist1P": {
+  "n": 1,
+  "bytes": 834537357,
+  "mtime_min": "2024-08-26 15:10:46",
+  "mtime_max": "2024-08-26 15:10:46",
+  "ext": {
+   ".root": 1
+  },
+  "min_size": 834537357,
+  "max_size": 834537357
+ },
+ "MediumEnergy_FHC/MC/StandardMC": {
+  "n": 12,
+  "bytes": 83130,
+  "mtime_min": "2026-03-06 19:56:27",
+  "mtime_max": "2026-03-06 19:58:42",
+  "ext": {
+   ".txt": 12
+  },
+  "min_size": 1020,
+  "max_size": 16660
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1A": {
+  "n": 41,
+  "bytes": 879283927358,
+  "mtime_min": "2026-01-06 19:23:29",
+  "mtime_max": "2026-01-06 20:47:53",
+  "ext": {
+   ".root": 41
+  },
+  "min_size": 18815151060,
+  "max_size": 21711461818
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1B": {
+  "n": 11,
+  "bytes": 237613494509,
+  "mtime_min": "2026-01-06 19:12:46",
+  "mtime_max": "2026-01-06 20:00:13",
+  "ext": {
+   ".root": 11
+  },
+  "min_size": 21456672032,
+  "max_size": 21719130441
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1C": {
+  "n": 21,
+  "bytes": 454289189347,
+  "mtime_min": "2026-01-08 19:07:24",
+  "mtime_max": "2026-01-08 20:15:15",
+  "ext": {
+   ".root": 21
+  },
+  "min_size": 21143714195,
+  "max_size": 21819487057
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1D": {
+  "n": 61,
+  "bytes": 1318974483590,
+  "mtime_min": "2026-01-08 21:40:09",
+  "mtime_max": "2026-01-08 22:45:57",
+  "ext": {
+   ".root": 61
+  },
+  "min_size": 21309535419,
+  "max_size": 21837400216
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1E": {
+  "n": 51,
+  "bytes": 1102969618770,
+  "mtime_min": "2026-01-09 02:57:30",
+  "mtime_max": "2026-01-09 03:46:48",
+  "ext": {
+   ".root": 51
+  },
+  "min_size": 21329148940,
+  "max_size": 21798830043
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1F": {
+  "n": 71,
+  "bytes": 1515300414752,
+  "mtime_min": "2026-01-08 16:58:28",
+  "mtime_max": "2026-01-09 03:25:20",
+  "ext": {
+   ".root": 71
+  },
+  "min_size": 21142864331,
+  "max_size": 21493698793
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1G": {
+  "n": 61,
+  "bytes": 1272959298189,
+  "mtime_min": "2026-01-09 03:15:42",
+  "mtime_max": "2026-01-09 04:59:52",
+  "ext": {
+   ".root": 61
+  },
+  "min_size": 20227613213,
+  "max_size": 21198565001
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1L": {
+  "n": 6,
+  "bytes": 124881209202,
+  "mtime_min": "2026-01-09 03:55:25",
+  "mtime_max": "2026-01-09 04:46:59",
+  "ext": {
+   ".root": 6
+  },
+  "min_size": 20379530036,
+  "max_size": 21082235312
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1M": {
+  "n": 98,
+  "bytes": 1927920847743,
+  "mtime_min": "2026-01-09 17:26:00",
+  "mtime_max": "2026-01-09 19:45:13",
+  "ext": {
+   ".root": 98
+  },
+  "min_size": 11782038735,
+  "max_size": 21193852076
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1N": {
+  "n": 32,
+  "bytes": 1102724938162,
+  "mtime_min": "2025-10-09 14:38:57",
+  "mtime_max": "2025-12-18 19:02:27",
+  "ext": {
+   ".root": 31,
+   "": 1
+  },
+  "min_size": 3230,
+  "max_size": 36144143059
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1O": {
+  "n": 16,
+  "bytes": 331081841798,
+  "mtime_min": "2026-01-09 05:22:40",
+  "mtime_max": "2026-01-09 07:20:38",
+  "ext": {
+   ".root": 16
+  },
+  "min_size": 19910250837,
+  "max_size": 20973261814
+ },
+ "MediumEnergy_FHC/MC/StandardMC/Playlist1P": {
+  "n": 21,
+  "bytes": 438315729309,
+  "mtime_min": "2026-01-11 17:50:35",
+  "mtime_max": "2026-01-11 18:51:41",
+  "ext": {
+   ".root": 21
+  },
+  "min_size": 19922251266,
+  "max_size": 21086400179
+ },
+ "MediumEnergy_RHC/Data": {
+  "n": 13,
+  "bytes": 188591,
+  "mtime_min": "2026-03-06 16:30:22",
+  "mtime_max": "2026-03-06 16:39:45",
+  "ext": {
+   ".txt": 13
+  },
+  "min_size": 4075,
+  "max_size": 26080
+ },
+ "MediumEnergy_RHC/Data/Playlist5A": {
+  "n": 79,
+  "bytes": 23585021290,
+  "mtime_min": "2026-01-26 18:49:26",
+  "mtime_max": "2026-01-26 19:01:47",
+  "ext": {
+   ".root": 79
+  },
+  "min_size": 166321,
+  "max_size": 513388477
+ },
+ "MediumEnergy_RHC/Data/Playlist6A": {
+  "n": 160,
+  "bytes": 71089985823,
+  "mtime_min": "2026-01-11 17:35:09",
+  "mtime_max": "2026-01-11 17:51:58",
+  "ext": {
+   ".root": 160
+  },
+  "min_size": 166293,
+  "max_size": 630849907
+ },
+ "MediumEnergy_RHC/Data/Playlist6B": {
+  "n": 102,
+  "bytes": 44921605994,
+  "mtime_min": "2026-01-12 02:46:18",
+  "mtime_max": "2026-01-12 03:03:05",
+  "ext": {
+   ".root": 102
+  },
+  "min_size": 166293,
+  "max_size": 605177178
+ },
+ "MediumEnergy_RHC/Data/Playlist6C": {
+  "n": 126,
+  "bytes": 48738171022,
+  "mtime_min": "2026-01-11 18:08:57",
+  "mtime_max": "2026-01-11 18:25:50",
+  "ext": {
+   ".root": 126
+  },
+  "min_size": 166293,
+  "max_size": 624511512
+ },
+ "MediumEnergy_RHC/Data/Playlist6D": {
+  "n": 95,
+  "bytes": 50916924858,
+  "mtime_min": "2026-01-26 19:03:52",
+  "mtime_max": "2026-01-26 19:31:56",
+  "ext": {
+   ".root": 95
+  },
+  "min_size": 9834514,
+  "max_size": 618732545
+ },
+ "MediumEnergy_RHC/Data/Playlist6E": {
+  "n": 72,
+  "bytes": 38052899211,
+  "mtime_min": "2026-01-26 19:13:26",
+  "mtime_max": "2026-01-26 19:39:48",
+  "ext": {
+   ".root": 72
+  },
+  "min_size": 47841183,
+  "max_size": 648561792
+ },
+ "MediumEnergy_RHC/Data/Playlist6F": {
+  "n": 117,
+  "bytes": 61008334754,
+  "mtime_min": "2026-01-26 19:22:28",
+  "mtime_max": "2026-01-26 19:55:35",
+  "ext": {
+   ".root": 117
+  },
+  "min_size": 166293,
+  "max_size": 632127850
+ },
+ "MediumEnergy_RHC/Data/Playlist6G": {
+  "n": 63,
+  "bytes": 32269013753,
+  "mtime_min": "2026-01-26 21:30:39",
+  "mtime_max": "2026-01-26 21:39:29",
+  "ext": {
+   ".root": 63
+  },
+  "min_size": 113310010,
+  "max_size": 1133024672
+ },
+ "MediumEnergy_RHC/Data/Playlist6H": {
+  "n": 123,
+  "bytes": 47325579874,
+  "mtime_min": "2026-01-26 21:44:33",
+  "mtime_max": "2026-01-26 22:01:17",
+  "ext": {
+   ".root": 123
+  },
+  "min_size": 166333,
+  "max_size": 622196024
+ },
+ "MediumEnergy_RHC/Data/Playlist6I": {
+  "n": 72,
+  "bytes": 33839273922,
+  "mtime_min": "2026-01-26 22:03:50",
+  "mtime_max": "2026-01-26 22:19:27",
+  "ext": {
+   ".root": 72
+  },
+  "min_size": 166293,
+  "max_size": 627572065
+ },
+ "MediumEnergy_RHC/Data/Playlist6J": {
+  "n": 76,
+  "bytes": 38469095782,
+  "mtime_min": "2026-01-26 21:54:54",
+  "mtime_max": "2026-01-26 22:13:38",
+  "ext": {
+   ".root": 76
+  },
+  "min_size": 166321,
+  "max_size": 759006842
+ },
+ "MediumEnergy_RHC/MC/StandardMC": {
+  "n": 13,
+  "bytes": 87380,
+  "mtime_min": "2026-03-06 16:23:08",
+  "mtime_max": "2026-03-06 16:28:55",
+  "ext": {
+   ".txt": 13
+  },
+  "min_size": 2890,
+  "max_size": 10880
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist5A": {
+  "n": 22,
+  "bytes": 190703109251,
+  "mtime_min": "2025-12-31 16:19:02",
+  "mtime_max": "2025-12-31 17:03:03",
+  "ext": {
+   ".root": 22
+  },
+  "min_size": 8366300958,
+  "max_size": 9125022513
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6A": {
+  "n": 64,
+  "bytes": 567371825215,
+  "mtime_min": "2025-12-18 14:54:18",
+  "mtime_max": "2025-12-18 15:56:04",
+  "ext": {
+   ".root": 64
+  },
+  "min_size": 8612888199,
+  "max_size": 8996407204
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6B": {
+  "n": 42,
+  "bytes": 369821295381,
+  "mtime_min": "2026-01-08 18:31:13",
+  "mtime_max": "2026-01-08 19:09:25",
+  "ext": {
+   ".root": 42
+  },
+  "min_size": 8502839334,
+  "max_size": 8948079263
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6C": {
+  "n": 50,
+  "bytes": 440039617404,
+  "mtime_min": "2026-01-08 20:43:22",
+  "mtime_max": "2026-01-08 21:16:26",
+  "ext": {
+   ".root": 50
+  },
+  "min_size": 8709801650,
+  "max_size": 8876590425
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6D": {
+  "n": 46,
+  "bytes": 399455589452,
+  "mtime_min": "2026-01-09 02:18:33",
+  "mtime_max": "2026-01-09 02:54:41",
+  "ext": {
+   ".root": 46
+  },
+  "min_size": 7894752300,
+  "max_size": 8905629364
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6E": {
+  "n": 42,
+  "bytes": 355140668024,
+  "mtime_min": "2026-01-09 02:42:38",
+  "mtime_max": "2026-01-09 03:20:25",
+  "ext": {
+   ".root": 42
+  },
+  "min_size": 6508707645,
+  "max_size": 8824701952
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6F": {
+  "n": 32,
+  "bytes": 546801084396,
+  "mtime_min": "2026-01-08 17:16:56",
+  "mtime_max": "2026-01-09 03:02:25",
+  "ext": {
+   ".root": 32
+  },
+  "min_size": 13057729691,
+  "max_size": 17694047015
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6G": {
+  "n": 42,
+  "bytes": 368525530674,
+  "mtime_min": "2026-01-09 03:15:33",
+  "mtime_max": "2026-01-09 03:49:10",
+  "ext": {
+   ".root": 42
+  },
+  "min_size": 8588444939,
+  "max_size": 8854925414
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6H": {
+  "n": 51,
+  "bytes": 450173671187,
+  "mtime_min": "2026-01-09 03:24:35",
+  "mtime_max": "2026-01-09 04:19:55",
+  "ext": {
+   ".root": 51
+  },
+  "min_size": 8682682292,
+  "max_size": 8901707073
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6I": {
+  "n": 41,
+  "bytes": 348824960548,
+  "mtime_min": "2026-03-05 10:53:42",
+  "mtime_max": "2026-03-05 12:34:34",
+  "ext": {
+   ".root": 41
+  },
+  "min_size": 213510141,
+  "max_size": 8868130195
+ },
+ "MediumEnergy_RHC/MC/StandardMC/Playlist6J": {
+  "n": 41,
+  "bytes": 340265335602,
+  "mtime_min": "2026-03-04 13:05:20",
+  "mtime_max": "2026-03-04 14:46:11",
+  "ext": {
+   ".root": 41
+  },
+  "min_size": 1157936338,
+  "max_size": 8667959930
+ },
+ "_lists": {
+  "MediumEnergy_FHC_Data_Playlist1A.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1A",
+   "n_list": 253,
+   "in_dir": 253,
+   "dir_not_in_list": 0,
+   "bytes": 85107535992
+  },
+  "MediumEnergy_FHC_Data_Playlist1B.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1B",
+   "n_list": 47,
+   "in_dir": 47,
+   "dir_not_in_list": 0,
+   "bytes": 17877688846
+  },
+  "MediumEnergy_FHC_Data_Playlist1C.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1C",
+   "n_list": 102,
+   "in_dir": 102,
+   "dir_not_in_list": 0,
+   "bytes": 40996080672
+  },
+  "MediumEnergy_FHC_Data_Playlist1D.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1D",
+   "n_list": 283,
+   "in_dir": 283,
+   "dir_not_in_list": 0,
+   "bytes": 136776190507
+  },
+  "MediumEnergy_FHC_Data_Playlist1E.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1E",
+   "n_list": 219,
+   "in_dir": 219,
+   "dir_not_in_list": 0,
+   "bytes": 96515334927
+  },
+  "MediumEnergy_FHC_Data_Playlist1F.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1F",
+   "n_list": 260,
+   "in_dir": 260,
+   "dir_not_in_list": 0,
+   "bytes": 154113332584
+  },
+  "MediumEnergy_FHC_Data_Playlist1G.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1G",
+   "n_list": 233,
+   "in_dir": 233,
+   "dir_not_in_list": 0,
+   "bytes": 129026091433
+  },
+  "MediumEnergy_FHC_Data_Playlist1L.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1L",
+   "n_list": 15,
+   "in_dir": 15,
+   "dir_not_in_list": 0,
+   "bytes": 12435111760
+  },
+  "MediumEnergy_FHC_Data_Playlist1M.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1M",
+   "n_list": 202,
+   "in_dir": 202,
+   "dir_not_in_list": 0,
+   "bytes": 147021260993
+  },
+  "MediumEnergy_FHC_Data_Playlist1N.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1N",
+   "n_list": 138,
+   "in_dir": 138,
+   "dir_not_in_list": 0,
+   "bytes": 102299601390
+  },
+  "MediumEnergy_FHC_Data_Playlist1O.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1O",
+   "n_list": 26,
+   "in_dir": 26,
+   "dir_not_in_list": 0,
+   "bytes": 27975517683
+  },
+  "MediumEnergy_FHC_Data_Playlist1P.txt": {
+   "dir": "MediumEnergy_FHC/Data/Playlist1P",
+   "n_list": 40,
+   "in_dir": 40,
+   "dir_not_in_list": 0,
+   "bytes": 43886310170
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1A.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1A",
+   "n_list": 41,
+   "in_dir": 41,
+   "dir_not_in_list": 0,
+   "bytes": 879283927358
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1B.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1B",
+   "n_list": 11,
+   "in_dir": 11,
+   "dir_not_in_list": 0,
+   "bytes": 237613494509
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1C.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1C",
+   "n_list": 21,
+   "in_dir": 21,
+   "dir_not_in_list": 0,
+   "bytes": 454289189347
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1D.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1D",
+   "n_list": 61,
+   "in_dir": 61,
+   "dir_not_in_list": 0,
+   "bytes": 1318974483590
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1E.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1E",
+   "n_list": 51,
+   "in_dir": 51,
+   "dir_not_in_list": 0,
+   "bytes": 1102969618770
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1F.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1F",
+   "n_list": 71,
+   "in_dir": 71,
+   "dir_not_in_list": 0,
+   "bytes": 1515300414752
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1G.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1G",
+   "n_list": 61,
+   "in_dir": 61,
+   "dir_not_in_list": 0,
+   "bytes": 1272959298189
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1L.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1L",
+   "n_list": 6,
+   "in_dir": 6,
+   "dir_not_in_list": 0,
+   "bytes": 124881209202
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1M.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1M",
+   "n_list": 98,
+   "in_dir": 98,
+   "dir_not_in_list": 0,
+   "bytes": 1927920847743
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1N.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1N",
+   "n_list": 31,
+   "in_dir": 31,
+   "dir_not_in_list": 1,
+   "bytes": 1102724934932
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1O.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1O",
+   "n_list": 16,
+   "in_dir": 16,
+   "dir_not_in_list": 0,
+   "bytes": 331081841798
+  },
+  "MediumEnergy_FHC_StandardMC_Playlist1P.txt": {
+   "dir": "MediumEnergy_FHC/MC/StandardMC/Playlist1P",
+   "n_list": 21,
+   "in_dir": 21,
+   "dir_not_in_list": 0,
+   "bytes": 438315729309
+  },
+  "MediumEnergy_RHC_Data_Playlist5A.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist5A",
+   "n_list": 79,
+   "in_dir": 79,
+   "dir_not_in_list": 0,
+   "bytes": 23585021290
+  },
+  "MediumEnergy_RHC_Data_Playlist6A.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6A",
+   "n_list": 160,
+   "in_dir": 160,
+   "dir_not_in_list": 0,
+   "bytes": 71089985823
+  },
+  "MediumEnergy_RHC_Data_Playlist6B.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6B",
+   "n_list": 102,
+   "in_dir": 102,
+   "dir_not_in_list": 0,
+   "bytes": 44921605994
+  },
+  "MediumEnergy_RHC_Data_Playlist6C.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6C",
+   "n_list": 126,
+   "in_dir": 126,
+   "dir_not_in_list": 0,
+   "bytes": 48738171022
+  },
+  "MediumEnergy_RHC_Data_Playlist6D.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6D",
+   "n_list": 95,
+   "in_dir": 95,
+   "dir_not_in_list": 0,
+   "bytes": 50916924858
+  },
+  "MediumEnergy_RHC_Data_Playlist6E.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6E",
+   "n_list": 72,
+   "in_dir": 72,
+   "dir_not_in_list": 0,
+   "bytes": 38052899211
+  },
+  "MediumEnergy_RHC_Data_Playlist6F.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6F",
+   "n_list": 117,
+   "in_dir": 117,
+   "dir_not_in_list": 0,
+   "bytes": 61008334754
+  },
+  "MediumEnergy_RHC_Data_Playlist6G.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6G",
+   "n_list": 63,
+   "in_dir": 63,
+   "dir_not_in_list": 0,
+   "bytes": 32269013753
+  },
+  "MediumEnergy_RHC_Data_Playlist6H.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6H",
+   "n_list": 123,
+   "in_dir": 123,
+   "dir_not_in_list": 0,
+   "bytes": 47325579874
+  },
+  "MediumEnergy_RHC_Data_Playlist6I.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6I",
+   "n_list": 72,
+   "in_dir": 72,
+   "dir_not_in_list": 0,
+   "bytes": 33839273922
+  },
+  "MediumEnergy_RHC_Data_Playlist6I_WaterEmpty.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6I",
+   "n_list": 25,
+   "in_dir": 25,
+   "dir_not_in_list": null,
+   "bytes": 13951907624
+  },
+  "MediumEnergy_RHC_Data_Playlist6I_WaterFull.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6I",
+   "n_list": 47,
+   "in_dir": 47,
+   "dir_not_in_list": null,
+   "bytes": 19887366298
+  },
+  "MediumEnergy_RHC_Data_Playlist6J.txt": {
+   "dir": "MediumEnergy_RHC/Data/Playlist6J",
+   "n_list": 76,
+   "in_dir": 76,
+   "dir_not_in_list": 0,
+   "bytes": 38469095782
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist5A.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist5A",
+   "n_list": 22,
+   "in_dir": 22,
+   "dir_not_in_list": 0,
+   "bytes": 190703109251
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6A.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6A",
+   "n_list": 64,
+   "in_dir": 64,
+   "dir_not_in_list": 0,
+   "bytes": 567371825215
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6B.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6B",
+   "n_list": 42,
+   "in_dir": 42,
+   "dir_not_in_list": 0,
+   "bytes": 369821295381
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6C.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6C",
+   "n_list": 50,
+   "in_dir": 50,
+   "dir_not_in_list": 0,
+   "bytes": 440039617404
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6D.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6D",
+   "n_list": 46,
+   "in_dir": 46,
+   "dir_not_in_list": 0,
+   "bytes": 399455589452
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6E.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6E",
+   "n_list": 42,
+   "in_dir": 42,
+   "dir_not_in_list": 0,
+   "bytes": 355140668024
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6F.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6F",
+   "n_list": 32,
+   "in_dir": 32,
+   "dir_not_in_list": 0,
+   "bytes": 546801084396
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6G.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6G",
+   "n_list": 42,
+   "in_dir": 42,
+   "dir_not_in_list": 0,
+   "bytes": 368525530674
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6H.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6H",
+   "n_list": 51,
+   "in_dir": 51,
+   "dir_not_in_list": 0,
+   "bytes": 450173671187
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6I.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6I",
+   "n_list": 41,
+   "in_dir": 41,
+   "dir_not_in_list": 0,
+   "bytes": 348824960548
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6I_WaterEmpty.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6I",
+   "n_list": 17,
+   "in_dir": 17,
+   "dir_not_in_list": null,
+   "bytes": 145981970581
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6I_WaterFull.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6I",
+   "n_list": 24,
+   "in_dir": 24,
+   "dir_not_in_list": null,
+   "bytes": 202842989967
+  },
+  "MediumEnergy_RHC_StandardMC_Playlist6J.txt": {
+   "dir": "MediumEnergy_RHC/MC/StandardMC/Playlist6J",
+   "n_list": 41,
+   "in_dir": 41,
+   "dir_not_in_list": 0,
+   "bytes": 340265335602
+  }
+ }
+}
