@@ -1,0 +1,96 @@
+% ====================================================================
+% RECORDS DOCUMENT -- internal, never posted. DECISION-20261021-joseph-da-and-note-records.md item 2: "there should
+% be an internal ledger for these records ... but the analysis note that we publish as supplementary material should
+% not be that". The record appendices of the analysis note (main_note.tex) live here since 2026-10-21, moved
+% verbatim: app_provenance.tex and app_history.tex whole, and the record parts of the release and codebase
+% appendices as app_release_records.tex and app_codebase_records.tex. The posted note cites this document as
+% NoteRecords2026 (technote.bib), by App. G tag or by heading.
+% Build: bash build_all.sh, which builds it LAST: its references into the note resolve through main_note.aux (xr), so
+% main_note must be built first. check_dead_containment.py treats it as the note-audience build that alone may strike
+% values (app_history.tex), and check_note_records.py proves that the move lost nothing.
+% Shares preamble.tex, values.tex, values_inference.tex and the two .bib files with the note.
+% ====================================================================
+\documentclass[11pt]{article}
+% xr-hyper must precede hyperref, which preamble.tex loads.
+\usepackage{xr-hyper}
+\input{preamble}
+\NOTEtrue
+\input{values}
+\input{values_inference}
+\addbibresource{publication.bib}
+\externaldocument{main_note}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+% Verbatim from main_note.tex: the provenance appendix prints the deposit snapshot hold.
+\newcommand{\depositsnapshot}{\textbf{[snapshot identifier pending deposit]}}
+
+% This document's own numbers carry an R, so that every bare number in the moved text is the analysis note's.
+\renewcommand{\thesection}{R\arabic{section}}
+\renewcommand{\thetable}{R\arabic{table}}
+\renewcommand{\thefigure}{R\arabic{figure}}
+\renewcommand{\theequation}{R\arabic{equation}}
+% article.cls's \l@section with the number box widened from 1.5em to 2.3em, so "R1" does not run into its title.
+\makeatletter
+\renewcommand*\l@section[2]{%
+  \ifnum \c@tocdepth >\z@
+    \addpenalty\@secpenalty
+    \addvspace{1.0em \@plus\p@}%
+    \setlength\@tempdima{2.3em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil
+      \nobreak\hb@xt@\@pnumwidth{\hss #2%
+                                 \kern-\p@\kern\p@}\par
+    \endgroup
+  \fi}
+\makeatother
+
+\title{\textbf{Internal record, not posted:}\\
+Records of the analysis note on unbinned OmniFold of MINERvA charged-current inclusive data}
+\author{}
+\date{Built with the analysis note from the same sources\\[4pt]\small Code and file references: \repolink}
+
+\begin{document}
+\maketitle
+
+\noindent This document holds the records that the analysis note cites: the provenance of the repository records
+behind its statements, the fixed identities and the construction and audit record of the five-axis covariance, the
+test-suite discipline of the production code, and the note's audit trail of superseded values and withdrawn results.
+It is built from the same sources as the note, at the same commit, and is not posted with it. Its text is the
+note's former appendix text, moved without edits. Section, table, figure and equation numbers that begin with R are
+this document's own; every other number, such as a section, appendix, table, figure or equation number with no R,
+is the analysis note's, in the note built from the same commit.
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\input{app_provenance}
+
+\section{Result package: fixed identities and audit record}
+These are the record parts of the note's appendix on the result package and reproduction limits
+(App.~\ref{app:release}).
+
+\input{app_release_records}
+
+\section{Codebase: test-suite discipline}
+This is the record part of the note's appendix on the codebase layout and terminology
+(App.~\ref{app:codebase}).
+
+\input{app_codebase_records}
+
+\input{app_history}
+
+\printbibliography
+
+\end{document}

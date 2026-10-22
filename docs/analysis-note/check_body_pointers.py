@@ -3,9 +3,10 @@
 
 The note is to be depositable: a reader outside the analysis repository must be able to follow every printed
 statement in the body. Tracker identifiers, repository paths, file names, commit or file digests and
-"tracked in the known-issues log" pointers are therefore routed to the provenance appendix (App. G,
-app_provenance.tex), which keeps them; the body states the substance and cites the appendix tag, in the form
-"(App.~\\ref{app:provenance}, \\texttt{tag})".
+"tracked in the known-issues log" pointers are therefore routed to the provenance part of the internal records
+document (app_provenance.tex, input by main_records.tex since 2026-10-21, DECISION-20261021-joseph-da-and-note-records.md
+item 2), which keeps them; the body states the substance and cites the record by its tag, in the form
+"(Ref.~\\cite{NoteRecords2026}, \\texttt{tag})".
 
   python3 check_body_pointers.py              # exit 0 only if no body file prints an internal pointer
   python3 check_body_pointers.py --self-test  # the patterns fire on planted body pointers and stay silent on
@@ -181,7 +182,8 @@ PLANTS = {
 DIGEST_MACRO_PLANT = r"(\texttt{sha256}~\fakeDigest\ldots)"
 SILENT_IN_BODY = [
     r"% a comment may keep KNOWN_ISSUES row 85, VL170 and docs/orchestration/RECORD-20261005-x.md",
-    r"(App.~\ref{app:provenance}, \texttt{joint-5d}; App.~\ref{app:provenance}, \texttt{z-adoption})",
+    r"(Ref.~\cite{NoteRecords2026}, \texttt{joint-5d}; Ref.~\cite{NoteRecords2026}, \texttt{z-adoption})",
+    r"(Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
     r"\includegraphics[width=\linewidth]{figures/gbdt_recovery.pdf}",
     r"\label{sec:uq-boot} \ref{app:history-vl175} \cite{JointTestRecord2026}",
     r"GENIE~2.12.10, $\lambda=4.36\times10^{-92}$, \num{890500272} bytes, 1.4\% and 0.07 null SD",
@@ -208,7 +210,7 @@ def self_test() -> int:
         root = _tree(Path(d), "", every_plant)
         hits = scan(root)
         if hits:
-            failures.append(f"App. G must stay silent, but fired: {hits}")
+            failures.append(f"the appendix must stay silent, but fired: {hits}")
     for name, plant in PLANTS.items():
         with tempfile.TemporaryDirectory() as d:
             hits = scan(_tree(Path(d), plant, ""))
@@ -233,7 +235,7 @@ def self_test() -> int:
         for f in failures:
             print("  " + f)
         return 1
-    print(f"BODY-POINTERS SELF-TEST :: PASS ({n} cases: App. G silent; {len(PLANTS)} patterns fire in a body file "
+    print(f"BODY-POINTERS SELF-TEST :: PASS ({n} cases: the appendix silent; {len(PLANTS)} patterns fire in a body file "
           f"and in a nested body file; a macro-printed digest fires; {len(SILENT_IN_BODY)} legitimate forms silent)")
     return 0
 
@@ -249,7 +251,7 @@ def main(argv: list[str]) -> int:
     files = len(body_population(root))
     if hits:
         print(f"BODY-POINTERS :: FAIL ({len(hits)} internal pointer(s) printed in the body; route each to "
-              f"App. G and state the substance in the body)")
+              f"the records document (Ref.~\\cite{{NoteRecords2026}}, \\texttt{{tag}}) and state the substance in the body)")
         for h in hits:
             print("  " + h)
         return 1

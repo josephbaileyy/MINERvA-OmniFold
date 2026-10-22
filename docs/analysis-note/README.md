@@ -1,6 +1,6 @@
 # Publication deliverables and completion plan
 
-This directory builds four audience-specific documents from shared sources:
+This directory builds four audience-specific documents, and one internal records document, from shared sources:
 
 | Deliverable | Driver | Purpose |
 |---|---|---|
@@ -8,6 +8,7 @@ This directory builds four audience-specific documents from shared sources:
 | PET note | `pet_note.tex` | Companion note: point-cloud (PET) method development, split from the analysis note on 2026-10-12 |
 | Primer | `main_primer.tex` | Short internal orientation |
 | External paper | `main_paper.tex` | PRL-style scientific argument |
+| Records document (internal, never posted) | `main_records.tex` | The analysis note's records since 2026-10-21: provenance of the records it cites, fixed identities and audit record, test-suite discipline, superseded values and withdrawn results. The note cites it as `NoteRecords2026` (`technote.bib`), by tag or heading |
 
 Build and containment checks run together:
 
@@ -15,8 +16,9 @@ Build and containment checks run together:
 bash build_all.sh
 ```
 
-`build_all.sh` must produce all four PDFs and prove that retracted note-only material does not
-reach the primer or paper. The PDFs are generated outputs; the tracked sources and figures in this
+`build_all.sh` must produce all five PDFs and prove that struck values reach only the records
+document and the PET note: not the posted analysis note, the primer or the paper. The records
+document is built last, because its references into the note resolve through `main_note.aux`. The PDFs are generated outputs; the tracked sources and figures in this
 directory are the publication inputs.
 
 ## Scope of this plan
@@ -128,10 +130,13 @@ not imply otherwise.
 | PET diagnostic studies and the full-event `C_stat` construction (the PET note since 2026-10-12) | `sec_pet.tex`, `sec_pet_campaigns.tex`, `app_cstat.tex`; the PET note's records and audit trail `app_provenance_pet.tex`, `app_history_pet.tex` |
 | The analysis note's pointer to the PET note | `app_pet_pointer.tex` (keeps the `sec:pet` label) |
 | References between the two notes (by section title) | `\notesec`, `\petsec` in `preamble.tex` |
-| Guide to the appendices (methods, diagnostic studies, records) | `app_guide.tex` |
-| Struck values, withdrawn arguments, superseded constructions (notes only; the only file in each note allowed `\dead{}`) | `app_history.tex` (analysis note), `app_history_pet.tex` (PET note) |
+| Guide to the appendices (methods, release and code, and where the records are) | `app_guide.tex` |
+| Struck values, withdrawn arguments, superseded constructions (the only file allowed `\dead{}` in each strike-carrying build) | `app_history.tex` (records document, `main_records.tex`; out of the posted note since 2026-10-21), `app_history_pet.tex` (PET note) |
+| Provenance tags of the records the note cites (cited as `Ref.~\cite{NoteRecords2026}, \texttt{tag}`) | `app_provenance.tex` (records document) |
+| Record parts of the release and codebase appendices (identity table, audit record, test-suite discipline) | `app_release_records.tex`, `app_codebase_records.tex` (records document); the reader parts stay in `app_release.tex`, `app_codebase.tex` |
+| Proof that the records move lost nothing | `check_note_records.py` (probe and `--self-test`), `records-move-ledger.md`, base inventory `docs/analysis-note/records-inventory-base.json` |
 | Generated figure inputs | `figures/`, `make_figures.sh` |
-| Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py` |
+| Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py`, `check_body_pointers.py` |
 
 Before changing a claim or measured value, follow the evidence route in the repository `AGENTS.md`.
 

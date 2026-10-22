@@ -763,3 +763,67 @@ side-by-side no longer prefers the new version, and here it does not. **The pape
   shown") is not on main. Main says the error control holds "under A1 and A2", which is true as read. The note prints
   the gap in §10.3.
 - r14's branch stays available, if Joseph wants either the clause or r14 itself.
+
+## 20. The records leave the posted note (2026-10-21, DECISION-20261021-joseph-da-and-note-records item 2)
+
+**Joseph's question: is the existing archival system good enough?** It was answered from an inventory
+(`note-records/PLAN.md` §0 and §2).
+- **For App. G (provenance) and for the record parts of Apps. H and I: yes.** Every repository path, known-issues row
+  and ledger row they cite exists elsewhere. Only App. G's index of 29 tags, which maps note sentences to records,
+  existed nowhere else.
+- **For App. J (superseded values and withdrawn results): no.**
+  - Its 39-row table of struck values, with replacements and reasons, exists only there.
+  - The repository's retracted-values index holds 23 of its 64 struck numbers.
+  - The verbatim withdrawn passages survive only in git history.
+  - The struck-value containment gate reads App. J.
+
+**What was done** (option C of the plan; records in `note-records/`):
+- **A separately built internal document, `main_records.tex`.**
+  - It holds Apps. G and J whole, and the record parts of Apps. H and I, moved verbatim.
+  - It is built and gated by `build_all.sh`, and is never posted.
+- **The posted note:**
+  - It cites it as `NoteRecords2026`, in 82 citations replacing 87 pointers.
+  - It keeps the deposit snapshot hold visible, byte-identical, in its release appendix.
+  - It prints superseded values and "an earlier version" notices only through those citations.
+- **The containment gate** now treats the posted note as an outward build, with two narrow, self-checking exemptions
+  for live values that coincide with struck ones.
+- **The no-loss proof.** `check_note_records.py` inventories the base (`records-inventory-base.json`, frozen at
+  `4ba0dd2f`) and probes P1–P7. Its self-test fires on all 12 planted defects.
+
+**Director's rulings on the plan's questions:**
+- **Q1.** The PET note is out of scope. Joseph's plan posts the methods paper and the analysis note.
+- **Q2.** The snapshot hold stays visible in the posted note.
+- **Q3.** App. I's code identifiers stay as reader material.
+- **Q4.** Records may print only in the records document, so the App. A parenthesis of superseded values is deleted.
+  - Review F1 narrowed this: the current exact-split pair 0.051/0.405 is restored.
+  - The executive summary's ", which an earlier version omitted" is also removed (ledger L9b).
+- **Q5.** "Where App. J goes" (§9 above) is closed by this decision and this move.
+
+**The review** (`note-records/REVIEW.md`, independent, adversarial, with its own checks).
+- **Confirmed:**
+  - nothing moved was edited;
+  - every base label is defined exactly once across the note and the records;
+  - all 82 citations name existing tags;
+  - the only change to the paper is "App. H" → "App. G", twice.
+- **Verdict: ADOPT-AFTER-FIXES.** All six should-fix findings were applied:
+  - F1, the current pair restored;
+  - F2, the production-number limits printed at the claim;
+  - F3, a check-value sentence identifying the five-axis covariance used in this note;
+  - F5, one name for the retired record;
+  - F6, the hold's sentence subject;
+  - F7 and F8, the containment end-of-sentence boundary and its exemption guard, both moved into the gate.
+
+**Mechanics** (`builds/rec2`, on `e05c78c7`):
+- build_all rc 0; RESULT, BODY-POINTERS and Sec. IV receipts 15/15 all pass;
+- all five targets have no undefined references, no multiply-defined labels and no `??`;
+- containment: the records carry 64/64; the posted note, paper and primer carry 0 of 69;
+- RECORDS-MOVE PASS, and its self-test 12/12;
+- `swallowed_text.py` flags 0;
+- `test_build_all.py` passes 69/69, with `--mutate` 10/10; `test_check_sec4_receipts.py` passes 16/16;
+- pages: note 119 (from 138), records 21, paper 13, primer 15, PET note 26.
+
+**Remaining:**
+- **Pin `NoteRecords2026`** (plan commit 3, after merge): to the merge commit on main, with a check that it is an
+  ancestor and carries every cited tag.
+- **Sync the standalone note repository.**
+- **The register rewrite of the reader parts of Apps. H and I** is a later batch.

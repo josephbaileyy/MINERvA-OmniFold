@@ -41,6 +41,17 @@ invariant above holds per build, and each note runs its own positive control aga
 so neither note's strikes can vouch for the other's. The paper and primer are still checked against
 every struck literal either note was shown to render.
 
+MOVED 2026-10-21 OUT OF THE POSTED NOTE (DECISION-20261021-joseph-da-and-note-records.md item 2: the analysis note
+posted as supplementary material is not a records ledger). app_history.tex is no longer input by main_note.tex; it is
+input, verbatim, by the internal records document main_records.tex, which is never posted. `STRUCK_ALLOWED` therefore
+names main_records, not main_note, and main_note is now checked as OUTWARD-FACING: no `\\dead{}` may reach its
+closure, and its PDF is searched for every struck literal the records PDF (and the PET note's) was shown to render.
+The PET note is unchanged. Making main_note outward exposed five digit coincidences in its PDF, measured on
+2026-10-21 against the 64 literals the records PDF renders and the PET note's, and listed at `UNIT_REQUIRED` and
+`CONTEXT_EXEMPT`; nothing else in it matched.
+test_build_all.py::PostedNoteIsOutwardTest shows that a `\\dead{}` in main_note's closure, and a struck literal in
+main_note.pdf, each now FAIL.
+
 The struck values are DERIVED from the sources, never hardcoded: a hardcoded list silently stops
 covering anything added after it was written. Macro-valued `\\dead{\\petRatio}` bodies are resolved
 through values.tex, and any body this script cannot reduce to a literal is REPORTED rather than
@@ -70,13 +81,14 @@ import sys
 from pathlib import Path
 
 BUILDS = {"main_note": "note", "pet_note": "pet-note", "main_paper": "paper",
-          "main_primer": "primer"}
+          "main_primer": "primer", "main_records": "records"}
 #: The note-audience builds, each with the ONE file in it that may carry \dead{}. pet_note joined on
 #: 2026-10-12, when the PET studies left main_note for a companion note and their struck values moved
 #: with them, verbatim, from app_history.tex into app_history_pet.tex. Each listed build must carry
 #: struck values (its positive control); every build NOT listed here is outward-facing and must
 #: carry none. To make a note build strike-free, delete its entry -- it is then checked as outward.
-STRUCK_ALLOWED = {"main_note": "app_history.tex", "pet_note": "app_history_pet.tex"}
+#: 2026-10-21: main_note's entry was deleted and main_records holds app_history.tex instead (see the module docstring).
+STRUCK_ALLOWED = {"main_records": "app_history.tex", "pet_note": "app_history_pet.tex"}
 
 INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 # `\s*` is load-bearing and BEN-090 is the reason. This read `r"\\dead\{"` from 4f75e50 until
@@ -216,9 +228,15 @@ def sig_digits(v: str) -> int:
     return len(v.replace(".", "").lstrip("0"))
 
 
+# The trailing boundary is `(?!\d|\.\d)`, not `(?![\d.])` (review F7, 2026-10-21): the old form refused a match
+# followed by ANY full stop, so a struck value ending a sentence ("a ratio of 1.014.") was never a hit. A digit, or
+# a point that continues the number ("1.0140", "1.014.5"), still blocks the match.
+TOKEN_END = r"(?!\d|\.\d)"
+
+
 def token_hit(value: str, text: str) -> bool:
     """True only if `value` appears as a complete number token, not inside a longer number."""
-    return re.search(r"(?<![\d.])" + re.escape(value) + r"(?![\d.])", text) is not None
+    return re.search(r"(?<![\d.])" + re.escape(value) + TOKEN_END, text) is not None
 
 
 # NARROWED 2026-10-11, on this check's own instruction, after it FAILED main_paper.pdf on `0.564`,
@@ -231,7 +249,44 @@ def token_hit(value: str, text: str) -> bool:
 # other literal keeps the bare-token test. The note's positive control uses the same rule, so a listed
 # literal counts as rendered in the note only WITH its unit (the live bare 0.564 cannot satisfy it). test_build_all.py::UnitRequiredLiteralTest checks both directions and that every key is
 # struck WITH that unit in app_history.tex, so this cannot become a silent general exemption.
-UNIT_REQUIRED = {"0.564": "%"}
+#
+# EXTENDED 2026-10-21 when main_note became outward-facing (DECISION-20261021-joseph-da-and-note-records.md item 2).
+# Measured on the posted note's PDF text against the 64 literals: three literals app_history.tex strikes WITH a percent
+# sign print bare in the note as different, live quantities, verified at the source --
+#     1.008 -> \medianBinRatio, the live median per-bin ratio ours/paper (values.tex), struck as `1.008\%`
+#              (the superseded Flux-band median);
+#     0.563 -> a live entry of the App. A estimator table (app_statmethods.tex), struck as `0.563\%`;
+#     2.26  -> "0.08--2.26 of the band's sigma" (sec_systematics.tex), struck as `2.26\%`.
+# The keys apply to every outward build, not only main_note, so for the paper and the primer the bare forms of these
+# three literals stopped being hits on 2026-10-21 (review N6). Measured then: neither prints any of them bare.
+UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%"}
+
+# A struck literal whose bare form also prints as a different, live quantity in ONE outward build, in ONE declared
+# context, and cannot be told apart by a unit. Added 2026-10-21 with main_note's move to outward-facing
+# (DECISION-20261021-joseph-da-and-note-records.md item 2), each verified at the source:
+#     1.014 -> app_history.tex strikes the bare 2D combined log-normal chi2/ndf `1.014`; the posted note's closure
+#              table prints the live injected-q3-bump mean weight "(mean weight 1.014)" (sec_validation.tex).
+#     0.912 -> app_history_pet.tex strikes \petRatio, the legacy PET/GBDT total ratio 0.912; the posted note prints
+#              the live fixed-truth coverage fraction "C2 = 0.912" (\covTwoDCTwo, values.tex) four times. The paper
+#              avoids the same collision by printing 91.2 % (values.tex, \covTwoDCTwoPctOne).
+# Each entry is (build, literal): (regex of the declared context in that build's PDF text, source file, the source
+# text that prints it). Only the declared context is removed before the search, and only in the named build; the
+# literal anywhere else in that PDF, or anywhere in another outward PDF, is still a hit.
+# main() itself refuses a stale entry (review F8): the build FAILS if an entry's build is not outward-facing, if its
+# source text no longer occurs in its source file, or if its literal is no longer struck in any strike-carrying build.
+# test_build_all.py::ContextExemptLiteralTest checks both directions of the exemption and that this guard fires.
+CONTEXT_EXEMPT = {
+    ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_validation.tex", "(mean weight 1.014)"),
+    ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
+}
+
+
+def exempt_text(driver: str, text: str) -> str:
+    """`text` with every declared CONTEXT_EXEMPT context of `driver` removed."""
+    for (build, _value), (pattern, _source, _printed) in CONTEXT_EXEMPT.items():
+        if build == driver:
+            text = re.sub(pattern, " ", text)
+    return text
 
 
 def outward_hit(value: str, text: str) -> bool:
@@ -590,6 +645,23 @@ def main() -> int:
         else:
             notes.append(f"{label}: clean, 0 \\dead{{}} in a {len(closure)}-file closure")
 
+    # THE EXEMPTIONS' STALENESS GUARD (review F8). An exemption stays only while its reason does: the context still
+    # prints from its declared source, the literal is still struck somewhere, and the build it narrows is outward.
+    all_struck = set().union(*struck_by_note.values())
+    for (build, value), (_pattern, source, printed) in CONTEXT_EXEMPT.items():
+        where = f"CONTEXT_EXEMPT[({build!r}, {value!r})]"
+        src = note_dir / source
+        if build not in BUILDS or build in STRUCK_ALLOWED:
+            failures.append(f"{where} names {build}, which is not an outward build; the exemption has no object")
+        if not src.is_file() or printed not in src.read_text(encoding="utf-8", errors="replace"):
+            failures.append(f"{where} is STALE: {source} no longer contains {printed!r}, so the context it exempts "
+                            "no longer prints from it. Delete the entry rather than keep a blind spot.")
+        elif value not in all_struck:
+            failures.append(f"{where} is STALE: {value} is no longer struck in any strike-carrying build, so a "
+                            "printed one is no coincidence to exempt. Delete the entry.")
+        else:
+            notes.append(f"{where} holds: {source} prints {printed!r} and {value} is still struck")
+
     # THE CROSS-FILE GATE CHECK. Scoped to the USAGES, not to one file.
     gated_live, gated_struck = gated_macro_usages(note_dir)
     if gated_live:
@@ -687,7 +759,8 @@ def main() -> int:
                              f"NOT PDF-checked, and this is an outward-facing build the "
                              f"whole check exists to protect")
                     continue
-                hits = sorted(v for v in seen_in_note if outward_hit(v, txt))
+                searched = exempt_text(driver, txt)
+                hits = sorted(v for v in seen_in_note if outward_hit(v, searched))
                 if hits:
                     failures.append(
                         f"{driver}.pdf contains struck literal(s) {hits} that a note PDF "

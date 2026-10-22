@@ -1,11 +1,16 @@
-\section{Result package and fixed identities}
+\section{Result package and reproduction limits}
 \label{app:release}
 
-Rebuilding this note's three PDFs assembles documents; it does not reproduce
-scientific results. App.~\ref{app:provenance} lists the supporting internal
-records. This appendix distinguishes the existing local replay package from
-the broader event-level and covariance release, records fixed identities,
+Rebuilding this note's PDFs assembles documents; it does not reproduce
+scientific results. The supporting internal records, including the digests
+of the fixed identities, are kept in Ref.~\cite{NoteRecords2026}. This appendix distinguishes the existing local replay package from
+the broader event-level and covariance release, states which identities are fixed,
 and states the remaining reproduction limits.
+
+% DECISION-20261021-joseph-da-and-note-records item 2, director ruling Q2 and review F6: the deposit snapshot hold;
+% only the subject changed, and the clause from "refer to" on is byte-identical to app_provenance.tex lines 9-10
+The code paths and file names in this appendix and in App.~\ref{app:codebase} refer to the snapshot of the code repository, \repolink,
+identified at deposit: \depositsnapshot.
 
 \paragraph{Release status.} A local release candidate, RC7, exists with a
 README, checksums and a replay verifier~\cite{ReleaseCandidate2026}.
@@ -74,7 +79,7 @@ full event-level analysis reproducible from the small candidate package.
 \label{app:release-schema}
 
 The broader result package must contain every item below. A $\checkmark$ marks identities or
-values already fixed in \S\ref{app:release-identities}; the rest are packaging.
+values already fixed (bin edges: \S\ref{app:release-edges}; digests: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging.
 
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Reporting bin edges and units, per axis}
@@ -104,13 +109,13 @@ values already fixed in \S\ref{app:release-identities}; the rest are packaging.
         configuration, target and flux. GENIE and NuWro require the
         flux-repaired predictions of 2026-09-27 (per-event reweight to the
         analysis PPFX flux plus the 50--\SI{100}{GeV} supplements); GiBUU
-        requires its reweight to the same flux convention (App.~\ref{app:provenance},
+        requires its reweight to the same flux convention (Ref.~\cite{NoteRecords2026},
         \texttt{flux-repair}; \S\ref{sec:3d-models}).
         % KNOWN_ISSUES.md rows 82--83
   \item \textbf{Provenance}: each object's producing revision, job, and
         digest of bytes read back from the closed file. Only the assembling
         revision and job of $C_{Z}$, job of $C_{EW}$ and read-back row-index
-        digest are fixed (\S\ref{app:release-identities}). Other objects lack
+        digest are fixed (Ref.~\cite{NoteRecords2026}, identities already fixed). Other objects lack
         recorded producing revisions and jobs; the assembled package carries
         none.
   \item \textbf{One minimal worked example}: \S\ref{app:release-example}.
@@ -119,59 +124,10 @@ values already fixed in \S\ref{app:release-identities}; the rest are packaging.
         will quote, beyond their inclusion in this note.
 \end{enumerate}
 
-\subsection{Identities already fixed}
-\label{app:release-identities}
+\subsection{Bin edges}
+\label{app:release-edges}
 
-Every row comes from a committed receipt (App.~\ref{app:provenance},
-\texttt{z-projection}). The cited records contain the full digests abbreviated
-here.
-
-\begin{center}
-\small
-\begin{tabular}{@{}llp{0.40\textwidth}@{}}
-\toprule
-Object & Identity & Properties as measured \\
-\midrule
-Adopted five-axis covariance $C_{Z}$ &
-  \texttt{sha256} \zcvDigest\ldots &
-  \texttt{z-cv.npz}, \num{890500272} bytes; declared variant \texttt{cv}, read from the object's
-  own metadata; $\sqrt{\Tr C}=\SI{5.6742e-38}{}$; assembling revision
-  \texttt{fb9ec356}; producing job \texttt{58454524}. Its own metadata still
-  reads \texttt{NON-PASSING} / \texttt{adoptable: false}. \\
-\addlinespace
-Mean-centered sibling &
-  \texttt{z-mean.npz} &
-  \emph{Not interchangeable.} Same seven keys and shapes, byte-identical
-  central values and masks; $\sqrt{\Tr C}$ \SI{7.13}{\percent} lower. \\
-\addlinespace
-$(\Eavail,W)$ projection $C_{EW}$ &
-  \texttt{sha256} \zprojDigest\ldots &
-  \num{17101} bytes; \zprojCells\ cells; no source cell dropped;
-  $\max|C-C^{\top}|=0$; $\lambda_{\min}=+4.359104\times10^{-92}$ on the build host against $\lambda_{\max}=1.488215\times10^{-77}$,
-  condition number $\approx3.4\times10^{14}$; \textbf{no bare rank} --- the
-  retained count runs 26 to 42 over defensible cutoffs;
-  $\sqrt{\Tr C}=\SI{4.4552e-39}{}$; job \texttt{58655509}. \\
-\addlinespace
-Projection matrix $M$ &
-  \texttt{sha256} \texttt{64fec490}\ldots &
-  Shape $\zprojCells\times\latBins$; entries are the dropped axes' bin-width
-  products, so the destination is a density in $(\Eavail,W)$. \\
-\addlinespace
-Destination row index &
-  \texttt{sha256} \texttt{9eb9d216}\ldots &
-  42 labels, digested \emph{after} the file was closed and read back; row $r$
-  is dense $(\Eavail,W)$ index $\texttt{hRowIndex}[r]$ in \textbf{C order}. \\
-\addlinespace
-Central values paired to the figure &
-  \texttt{sha256} \texttt{0f04abce}\ldots &
-  \num{65856} dense cells, \latBins\ reported. The projected source array and
-  the figure's array are \emph{the same bytes}; the pairing is digest
-  identity, not numerical agreement. \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\noindent Bin edges, for completeness, since they are the one thing a reader
+\noindent The bin edges are the one thing a reader
 cannot recover from a digest:
 \begin{itemize}[nosep,leftmargin=2em]
   \item $\pT$, \si{GeV/c}:
@@ -203,6 +159,8 @@ ordering, mask and weights.
         array \latBins.
   \item Load $M$ (shape $\zprojCells\times\latBins$) and $C_{Z}$ (shape
         $\latBins\times\latBins$).
+        The five-axis covariance used in this note is the file \texttt{z-cv.npz}, with \texttt{sha256}
+        \zcvDigest\ldots\ and $\sqrt{\Tr C}=\SI{5.6742e-38}{}$, so a loaded $C_{Z}$ can be checked against both.
   \item Form $\mathbf{y}=M\mathbf{x}_{\text{reported}}$ and reshape to
         $7\times6$ \textbf{in C order}. This must reproduce the
         $(\Eavail,W)$ central-value map of Fig.~\ref{fig:eavailWexcess}. The
@@ -240,48 +198,3 @@ an acceptance correction is owed at the destination binning was undecided
 when the projection was built. The package must retain this field and value
 until a decision is made, because a silent default would let the data format make a
 scientific choice.
-
-\subsection{Construction and audit record of the $(\Eavail,W)$ covariance}
-\label{app:release-audit}
-
-These are the audit details behind \S\ref{sec:eavailw-construction}.
-
-\paragraph{Adoption.} The adoption, recorded on 2026-09-20
-(App.~\ref{app:provenance}, \texttt{z-cv-record}), is a decision to publish under a
-digest-bound exception. The object's own metadata is preserved unedited, and
-\textbf{an adoption does not turn those fields into pass labels.} The
-specification requires the null bound to be fixed before production and
-production had already happened, so the derivation step is unperformable for this
-object by anyone, which is why this is an exception and not a repair. The
-predeclared magnitude criterion for the estimator-seed sensitivity ---
-\emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register --- was
-computed by the 2026-09-20 campaign for two \emph{other} products.
-
-\paragraph{Assembly and centering.} The receipt records the pinned-bin count
-($g=1$ by declaration). The algebra of
-Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation} is implemented in
-\texttt{nd-unfolding/z\_assembly.py} (App.~\ref{app:provenance},
-\texttt{z-assembly}) and asserted independently of the object's producer.
-The mean-centered sibling \texttt{z-mean.npz} shares all seven keys and shapes,
-with byte-identical central values, support mask, pinned mask and row index.
-The projector enforces the variant:
-\texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default,
-and \texttt{-{}-run-class publication} from a mean-centered source is refused.
-
-\paragraph{Projection.} $M$ is built by
-\texttt{project\_cov\_nd.build\_projection}. The C-order of the rows is
-established by the F-order control of \S\ref{app:release-example}, step~3. No
-source cell is dropped ($\texttt{src\_cells\_dropped}=0$). Exact symmetry
-$\max|C-C^{\top}|=0$ follows structurally from $M C M^{\top}$, without a
-tolerance.
-
-\paragraph{Conditioning.} The common label ``most-negative over max'' for
-$\lambda_{\min}/\lambda_{\max}$ is misleading because no eigenvalue is
-negative. A different mask, summation order or precision need not preserve
-$n_{\mathrm{negative}}=0$. The cutoff scan used the diagnostic projection of
-the same source through the same $M$. Its $\lambda_{\min}$,
-$\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ match the publication
-run's recorded values identically. A later independent scan of the publication
-bytes found the publication and diagnostic
-$42\times42$ matrices bitwise identical (App.~\ref{app:provenance},
-\texttt{z-conditioning}).

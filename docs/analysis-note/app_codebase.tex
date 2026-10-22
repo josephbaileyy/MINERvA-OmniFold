@@ -33,7 +33,7 @@ Point-cloud (PET) code under \texttt{nd-unfolding/pet/} supports future work
 Scripts, figure files and stored artifacts call \emph{training-seed variation}
 \texttt{seedscan}, retaining the code name as provenance. Both names denote
 the same variance source. The quoted training-seed block is built by the 2D closeout
-production rollup (App.~\ref{app:provenance}, \texttt{variance-sources}), not by \texttt{seedscan}.
+production rollup (Ref.~\cite{NoteRecords2026}, \texttt{variance-sources}), not by \texttt{seedscan}.
 % J3/J4 provisional (DECISION-20261018, packet W3: D11 in sec:uq-2d-scope). C08: stageC/production/DESIGN.md §S5.
 
 \paragraph{Code identifiers cited in the note.}
@@ -51,22 +51,3 @@ production rollup (App.~\ref{app:provenance}, \texttt{variance-sources}), not by
         \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py}
         draws Fig.~\ref{fig:modelmaps}.
 \end{itemize}
-
-\paragraph{Test-suite discipline: what the pipeline refuses to do.}
-The production scripts are written so that an unverifiable condition stops the run rather than
-being worked around, and the test suite encodes that discipline as five rules rather than as a
-list of cases. \textbf{(i)} A missing, absent or undeclared operand causes refusal, never a skip,
-default, derived substitute or warning. \textbf{(ii)} Guards precede the side
-effects they prevent; tests assert this ordering. The motivating module import
-above the argument parser once killed every subsequent check in that file.
-\textbf{(iii)} Refusal requires an exact exit code \emph{together with} its own
-message or structured receipt field. ``Non-zero'' cannot distinguish a crash
-from a refusal; three segmentation faults were once recorded as three refusals.
-\textbf{(iv)} Every guard has an accept arm that could have failed, distinguishing
-a check that can only refuse from one that always refuses. \textbf{(v)} An
-unevaluable condition has its own outcome and exit code, never pass or fail.
-Over a thousand tests name a refusal and share these five rules.
-
-\noindent These are properties of the implementation \emph{as tested}, not theorems about the
-method. A rule nobody encoded would not appear among them, and a green suite certifies the cases it
-contains rather than the absence of others.

@@ -147,7 +147,7 @@ Injected $W$ bump & $+\SI{30}{\percent}$ Gaussian in truth $W$ at \SI{1.23}{GeV}
   narrow margin. Neighbouring $W$ bins come out \SI{3.1}{\percent} and
   \SI{2.7}{\percent} high, and joint $(\Eavail,W)$ cells in the peak column
   \SIrange{2.2}{9.4}{\percent} low. Per-5D-bin spread \SI{3.7}{\percent}. Signal only.
-  Replaces an earlier null run (App.~\ref{app:history-withdrawn}) \\
+  Replaces an earlier null run (Ref.~\cite{NoteRecords2026}, superseded values: withdrawn arguments) \\
 \addlinespace
 Background-inclusive & Adds background simulation and rebuilds purity weights; nominal truth & 5D &
   Highest-$W$ column \SIrange{3.5}{4.1}{\percent} low; negative-weight treatment
@@ -212,9 +212,9 @@ not contradict each other.
 
 \subsection{Fixed-truth coverage of the 2D statistical band}
 \label{sec:coverage}
-This test asks whether the 2D statistical band quoted when it ran (App.~\ref{app:history}; its repository label is listed in App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}) covers a \emph{fixed} truth at its nominal rate. Its design,
+This test asks whether the 2D statistical band quoted when it ran (Ref.~\cite{NoteRecords2026}, superseded values and \texttt{coverage-fixed-truth}) covers a \emph{fixed} truth at its nominal rate. Its design,
 criteria and positive control were fixed in advance, before any toy was generated
-(App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}).
+(Ref.~\cite{NoteRecords2026}, \texttt{coverage-fixed-truth}).
 % J3/J4 provisional (DECISION-20261018, packet W3: D2). The quoted statistical block is now S1 (sec:uq-boot), which this
 % test did not score (NR).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -268,7 +268,7 @@ Scored against the same band, it overcovers: $C_1=\covTwoDRepCOne$, with its int
 window. By the rule fixed before the full run (its rule for the undercoverage outcome was written after the pilot pulls had been seen), the primary undercoverage is attributed to this term of the band.
 The attribution is partial: in the replica form, the $\pPar$
 \SIrange{40}{60}{GeV/c} column still undercovers.
-That term was removed on 2026-10-06 and the band rebuilt (App.~\ref{app:provenance},
+That term was removed on 2026-10-06 and the band rebuilt (Ref.~\cite{NoteRecords2026},
 \texttt{coverage-fixed-truth}, lists the labels of both bands). The quoted statistical block is now a
 different ensemble, 300 replicas at the central value's seed (\S\ref{sec:uq-boot}). This
 section's result is for the earlier band and was not re-tested.
@@ -289,7 +289,7 @@ bootstraps a single toy, with a decision rule recorded before it ran, is consist
 under-scattering, because their pseudo-data sit on the training MC events, rather than with the
 data bootstrap over-scattering; it is neither an independent-population coverage test nor a
 real-data calibration. The re-test on held-out simulation that would separate the two is not part of this
-note and has not been run (App.~\ref{app:provenance}, \texttt{statband-retest}). Split-sample width checks that
+note and has not been run (Ref.~\cite{NoteRecords2026}, \texttt{statband-retest}). Split-sample width checks that
 condition on the existing MC bank, binning maps and purity cannot establish repeated-sampling
 coverage across independent populations, so validated total intervals over the full reporting
 domain need new inputs (\S\ref{sec:uq-2d-scope}), which also lists what the quoted covariance
@@ -336,7 +336,7 @@ open~\cite{Canelli:2025guide}.
 
 \paragraph{Same-ensemble pull diagnostic (not a coverage test).}
 An earlier ensemble contains $N_{\text{toy}}=200$ 2D closure unfolds
-(App.~\ref{app:provenance}, \texttt{coverage-toys}),
+(Ref.~\cite{NoteRecords2026}, \texttt{coverage-toys}),
 % (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
 % \texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt})
 with weighted MC reco pseudo-data and truth marginals stored in truth
@@ -366,7 +366,7 @@ These show that the standardized toy residuals are approximately normal.
 With $\sigma_i$ estimated from the scored toys, these diagnostics are not a
 frequentist coverage measurement and do not certify the bootstrap band. The figures
 serve only as standardized-pull/Gaussianity diagnostics; no coverage number is quoted from
-this ensemble. The fixed-truth test above is the 2D coverage statement (App.~\ref{app:history}).
+this ensemble. The fixed-truth test above is the 2D coverage statement (Ref.~\cite{NoteRecords2026}, superseded values).
 
 \paragraph{Stability and efficiency.}
 The 5-iter total $\sigma$ is within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
