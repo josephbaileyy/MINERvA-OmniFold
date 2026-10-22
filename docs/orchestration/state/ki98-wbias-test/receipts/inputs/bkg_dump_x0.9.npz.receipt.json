@@ -1,0 +1,11 @@
+{
+ "out": "/pscratch/sd/j/josephrb/measurement-paper/ki98-wbias/inputs/bkg_dump_x0.9.npz",
+ "sha256": "ab204d136335c11524b0938910caeab735f9816a7f5a8ef1d53bda51524c725a",
+ "scale": 0.9,
+ "from_sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+ "bkg_nd_vs_hist_max_abs_diff": 0.0,
+ "bkg_nd_total": 119113.48440844349,
+ "bkg_w_total": 119132.3688136796,
+ "scaled_bkg_w_total": 107219.13193231157,
+ "scaled_bkg_nd_total": 107202.13596759914
+}

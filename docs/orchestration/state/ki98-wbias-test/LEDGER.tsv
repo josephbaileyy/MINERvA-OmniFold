@@ -1,1 +1,3 @@
 jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
+60100087	ki98_n1	m3246	regular_1	COMPLETED	0:0	2026-10-22T03:41:53	2026-10-22T03:47:52	359	256	0.0997	0	KI 98 W-bias	tasks.tsv lines 0-7: control, (c) x5, (b) 204000-204001	receipts/sacct.txt
+60100088	ki98_n2	m3246	regular_1	COMPLETED	0:0	2026-10-22T03:41:53	2026-10-22T03:47:42	349	256	0.0969	0	KI 98 W-bias	tasks.tsv lines 8-15: (b) 204002-204004, (b0) x5	receipts/sacct.txt
