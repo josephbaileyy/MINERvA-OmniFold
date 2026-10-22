@@ -852,3 +852,51 @@ side-by-side no longer prefers the new version, and here it does not. **The pape
   - containment: records 64/64, posted note and paper 0 of 69;
   - RECORDS-PIN and the Sec. IV receipts check skip there by design.
   - Pages: note 119, paper 13, primer 15, PET note 26, records 21.
+
+## 22. The analysis note's chapter batches (2026-10-21/22)
+
+**Scope.** Joseph's DECISION-20261021-joseph-register-loop-2 item 2 puts the note in scope alongside the paper.
+
+**After batch 0** (the glossary, §18) and the records move (§20), seven chapter batches rewrote the posted note. Each
+had:
+- a fresh writer, under `WRITER-BRIEF.md`;
+- an independent two-direction review, under `REVIEWER-BRIEF.md`;
+- fixes, and re-review where needed.
+
+The records for each batch are in `note-<batch>/`: the outline, the fact ledger and its checker, the change list and
+the review.
+
+| batch | chapters | PR | review | what the review caught, among others |
+|---|---|---|---|---|
+| b7 | §10 joint tests | #219 | ADOPT-AFTER-FIXES | a false "records" sentence; two paper pointers that landed on nothing (the tertile rule for the coarse edges; the projected tests outside the Holm family), now printed |
+| bhi | release and code appendices (G, H) | #220 | ADOPT-AFTER-FIXES, twice | an overstated tolerance; the replayed reading (the reviewer's first mapping was wrong, and the writer's evidence corrected it); the verifier sentence from the Data availability decision made accurate (pending Joseph's confirmation); the RC1 replay stated as by a separate AI agent session |
+| b3 | §9, Apps. B–C | #222 | ADOPT-AFTER-FIXES | the §9.4 iteration rule scoped by its measure; "every result uses purity" scoped; the unmet obligation to revisit the background treatment confirmed real (RUNBOOK-20260807 §2, DECISION-20260815) |
+| b6 | §§6–8 | #226 | ADOPT-AFTER-FIXES | §7.1 now prints the 135 MeV numbers the paper cites it for; a caveat re-attached to its region |
+| b4 | §5, App. A, guide | #227 | ADOPT-AFTER-FIXES | the quoted block "not independently tested" corrected to "not tested"; the MAT check placed on the sweep before the flux fix; the ours-only χ² no longer called a goodness of fit |
+| b8 | abstract, executive summary, §§1, 11, 12 | #228 | ADOPT-AFTER-FIXES | summaries that had drifted from the body: seed sensitivity measured on the companion covariances; the low-E_avail generators; no "complete" 2D budget; no independence claim for the unfold; the purity bias kept by the central values, not the uncertainties |
+| b5 | §§2–4 | #235 | ADOPT-AFTER-FIXES | configuration (e) credited with the §9.2 studies, here and in App. C (b3's sentence, corrected in the same PR); Q11 resolved (the split-varied band is the ML term of the covariance used) |
+
+**Invariants checked at every batch, on the delivered build:**
+- the paper's printed text is byte-identical apart from the `\today` line;
+- all 184 note label numbers are unchanged;
+- 0 undefined references, and no `??`;
+- struck-value containment: the posted note carries 0 of 69, and the records carry 64 of 64;
+- RECORDS-MOVE and RECORDS-PIN pass;
+- `swallowed_text.py` flags 0;
+- the batch's own ledger has 0 failures, and its planted bad probes fire.
+
+**After b5 merged,** the b8 ledger was re-run against the final text. Four support probes (E1d, E6, I3 and S1b) were
+re-pointed to b5's wording of the same facts, and it passes with 0 failures.
+
+**Main at `717ecf8b`:**
+- build_all rc 0, with every gate passing;
+- pages: note 120, paper 13, primer 15, PET note 26, records 21;
+- RECORDS-PIN: 71 citations.
+
+**Pending with Joseph:**
+- the background-treatment revisit, now stated plainly in the abstract, the executive summary, §12 and App. C;
+- confirmation of the narrowed verifier sentence;
+- the separate "hybrid null hypotheses" commit;
+- the "since superseded" label in place of "historical".
+
+The re-rating against the note's baseline is in progress.
