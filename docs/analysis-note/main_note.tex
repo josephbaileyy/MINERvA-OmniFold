@@ -51,67 +51,73 @@ Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 
 \begin{abstract}
 
+% Register pass b8 (2026-10-22): one claim per sentence, each with its scope; every number, limitation and
+% disclosure kept (ledger.md, rows AB*). The source comments of the earlier passes below are kept.
 We study multidimensional medium-energy charged-current neutrino--nucleus
 cross sections on MINERvA open data with OmniFold, an unbinned machine-learning
-unfolding method. An independent unfolding method reproduces the integral of the published double-differential cross section in muon transverse and longitudinal
-momentum within about one percent, with a correlated shape difference, and reproduces its uncertainty scale.
+unfolding method. With this method, the double-differential cross section in muon
+transverse and longitudinal momentum reproduces the published integral within about one percent, with a
+correlated shape difference, and its uncertainty is comparable in size to the published one.
 % Methods-paper sync (M8, narrowed: "including its spectrum" contradicted the paper's correlated shape difference;
 % main_paper.tex abstract; values.tex:48, :125).
-That uncertainty is computed with the
-central value's own tree-learning implementation, with its universe and statistical blocks at the
-central value's training seed; whether it describes the central value has not been measured.
+That uncertainty is computed with the central value's own estimator, its universe and statistical blocks at the
+central value's training seed, and it has not been independently validated.
 % FACT (2026-10-18): the "different tree-learning implementation" clause was stale since 2026-10-11 (DECISION-20261011);
 % the universe and statistical blocks of Q are at the central value's seed (stageC/production/DESIGN.md §3.4), the
 % training-seed block spans five seed settings (§3.5). Review M1.
 % J3/J4 provisional (DECISION-20261018, packet C1 and C8: kept; W3: D10 KI-88 in sec:uq-boot).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
+% Register pass b8: the earlier not-measured clause restated as the body's status
+% (sec_systematics.tex "Status of the 2D result": intervals, bias and covariance not independently validated).
 Adding available energy
 ($\Eavail$), three-momentum transfer ($q_{3}$), and hadronic invariant mass ($W$)
-gives simultaneous \emph{unbinned} three-, four-, and five-observable MINERvA unfolds.
-Each passes marginal-normalization checks against the lower-dimensional result to
+gives simultaneous \emph{unbinned} three-, four-, and five-observable MINERvA unfolds,
+each of which passes marginal-normalization checks against the lower-dimensional result to
 % plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
 $\approx$1--2\,\%. Binned MINERvA measurements already reach triple-differential;
 the methodological feature here is simultaneous unbinned unfolding of five
-related, not independent, observables. The tested generators
-under-predict the central values at low $\Eavail$, in the region of the
-established MINERvA low-recoil discrepancy, and the central values show a
-descriptive excess over the MINERvA-tuned simulation at high $\Eavail$ and high
-$W$, where four external
-generators also under-predict the data, each by about its overall shortfall
-after accounting for high-energy neutrinos absent from the GiBUU sample, and
-with an uncorrected carbon-versus-CH target difference for NuWro and GiBUU. A
-fifth of that excess sits in the single widest overflow cell, in ratio it also
-extends to low $W$, and the regularization bias is largest there; these
+related, not independent, observables. In central values, the tested generators
+under-predict the data at low $\Eavail$, in the region of the
+established MINERvA low-recoil discrepancy. Relative to the MINERvA-tuned simulation, the data show a
+descriptive excess at high $\Eavail$ and high $W$: a fifth of the positive difference from that simulation lies in the single
+widest overflow cell, the
+regularization bias is largest in this region, and in ratio the excess also extends to low $W$. Four external
+generators also under-predict the data there, each by about its overall shortfall
+once the high-energy neutrinos absent from the GiBUU sample are accounted for, and the NuWro and GiBUU
+comparisons carry an uncorrected carbon-versus-CH target difference. These
 comparisons locate no interaction mechanism.
 % Fix round (review MINOR 9, 12): the paper's caveats (paper_body.tex sec:central); grammar.
 % Methods-paper sync (M8, removed: the multinucleon attribution of the low-recoil discrepancy; paper_body.tex
 % sec:central).
 Closure tests that include backgrounds show a bias from the purity subtraction,
-which a negative-weight background treatment largely removes; that treatment is
-used only for the generator tests, and the central values keep the purity
-subtraction and its bias of up to 4\% in the highest-$W$ cells.
+which a negative-weight background treatment largely removes. The quoted central values and uncertainties use
+the purity subtraction; the central values keep its bias of up to 4\% in the highest-$W$ cells, which no quoted
+uncertainty includes. No full five-dimensional comparison of the two background treatments has been made, and the
+choice of purity is to be revisited before submission. The negative-weight treatment is used in the generator tests,
+in some five-dimensional validation studies and in two-dimensional equivalence studies.
 % Fix round (review MINOR 13): paper_body.tex sec:conclusions.
+% Register pass b8: the earlier generator-tests-only scope was incomplete: Table tab:estimators-matrix, configurations
+% (d) and (e), give studies of sec:val-negweight--sec:gbdt-model-dependence (sec:coverage-5d uses (c), purity);
+% the open revisit and the missing full 5D comparison: app_negweight.tex sec:negweight-footing and "Limits of the
+% five-dimensional evidence" (review round 1: S1, the bias belongs to the central values only; B2; S3).
 Tests that reweight the
 truth shape by about the size of the differences between generators show a
-residual bias, interpreted as regularization bias, that no quoted uncertainty includes. Coverage and
+residual bias, interpreted as regularization bias, that no quoted uncertainty includes.
 % plain-language pass, review fix N2 (DECISION-20261018-joseph-plain-language-pass)
-estimator-seed studies show further limitations: statistical intervals miscover at the tested truths.
-With an envelope over five tested truth deformations, none of the tested
+Statistical intervals miscover at the tested truths, and
+with an envelope over five tested truth deformations none of the tested
 reporting definitions satisfies the predeclared 10\% criterion. As an application
-illustrating calibrated inference with a biased estimator, calibrated joint
-tests reject the hybrid null hypotheses for all five tested generator
-predictions, in total and in shape, at a 5\% family-wise error rate under the
-stated calibration assumptions; they are not physical exclusions, and NuWro's
-total-test rejection is not robust to a hydrocarbon-target correction. These
-tests are valid only under stated conditions.
+illustrating calibrated inference with a biased estimator, joint tests calibrated in simulation reject the
+hybrid null hypotheses for all five tested generator predictions, in total and in shape, under six stated
+conditions and at a 5\% family-wise error rate under the stated calibration assumptions.
 % Methods-paper sync (M8: residual bias interpreted as regularization bias; miscoverage at the tested truths; the
 % 10% criterion wording; hybrid nulls; familywise statement; DECISION-20261020-joseph-nuwro-ch-claim.md, provisional).
-They recover known
 % plain-language pass, review fix m6 (DECISION-20261018-joseph-plain-language-pass)
-discrepancies, but do not demonstrate discriminating power beyond that of matched
-coarse projections. Their interpretation is limited by the omission of an uncertainty
-on the calorimetric recoil response, and by the fine grid on which the null hypotheses
-are defined, whose convergence has not been shown. A scalar study examines the effect of removing
+The tests recover known discrepancies and are not physical exclusions. They show no evidence of
+discrimination beyond matched coarse projections, omit an uncertainty on the calorimetric recoil response, and
+assume convergence of the fine grid on which the null hypotheses are defined, which has not been shown.
+NuWro's total-test rejection is not robust to a hydrocarbon-target correction.
+A scalar study examines the effect of removing
 the truth-level muon kinematic cuts. Point-cloud (PET) representations of the
 full event are future work, documented separately; this note uses no PET result.
 
