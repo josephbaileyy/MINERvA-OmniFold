@@ -666,3 +666,51 @@ about 140, and sends every fact to note App. H. It is Joseph's decision, because
 - `swallowed_text.py` flags 0;
 - the ledger check: 341 rows, 470 probes, 0 failures;
 - pages: paper 13, note 136.
+
+## 18. Note register pass, batch 0: the glossary (2026-10-21)
+
+**Why first.** The note's baseline (`rater-calibration/NOTE-BASELINE.md`) found two kinds of complaint spread widely:
+project jargon in 12 of 15 pieces, and development history in 10. If each chapter batch renamed terms on its own,
+the note would end up inconsistent. So one vocabulary was fixed first.
+
+**What was done** (records in `note-g0/`). A writer with no history of the text made 192 asserted edits in 19 note
+files, applied by `apply_glossary.py`.
+- **Status terms** were reworded, and each kept as a concept:
+  - "in use" → "used in this note";
+  - "constructed, not adopted" → "computed but not used for any result in this note". In two places the wording is "not
+    used for the quoted central values" instead, because the generator tests do use those products.
+  - "report-only" → "reported but not used for the decisions";
+  - "frozen" → "fixed" or "predeclared". In the lost-draw recovery it becomes "as in the primary evaluation".
+  - "footing" → "background treatment".
+- **Other project terms** and tracker IDs were cleared, about 20 of them.
+- **Labels a reader needs to reproduce the analysis** moved to a "Labels used in the repository" table in `app_guide.tex`.
+- **Code identifiers** are kept only where a reader needs them.
+
+**What was not touched:**
+- Apps. G–J, pending DECISION-20261021-joseph-da-and-note-records item 2;
+- the acknowledgments, the AI-use statement, `\pubhold`, funding, release text and the verbatim specification quote.
+
+**The review** (`REVIEW.md`, independent, two directions, with a re-review).
+- **First verdict: ADOPT-AFTER-FIXES.**
+  - **One blocking finding.** A verbatim label required by binding addendum 7, ruling 3 had been reworded. It is
+    restored and is now a protected span.
+  - **Ten should-fix findings** where a status or scope shifted, all fixed against their sources.
+- **Re-review: ADOPT.** The reproduce steps in `REPORT.md` §7 were corrected by the director.
+
+**S11, a claim correction committed on its own.** The joint-test chapter's opening said the tests evaluate "simple
+hypotheses". They evaluate hybrid nulls, as `M2-AUDIT.md:39-40` records and `M2-ARCHIVE-CHECKS.md` confirms. It now
+uses the executive summary's own words: "hybrid null hypotheses about five predictions". It is a separate commit, so
+Joseph can revert it; `apply_s11.py --revert` also reverses it.
+
+**Open, for the later batches:**
+- Q11: whether the split-varied band is part of the five-axis covariance used in this note.
+- The unscoped iteration-rule sentence in §9.4 (§17 above).
+- "Marginal anchors agree" in the shared result-status table, and a figure label that reads "anchor ratio".
+
+**Mechanics**, after the rebase onto 4a3f3b27:
+- build_all rc 0, RESULT PASS, BODY-POINTERS PASS, Sec. IV receipts 15/15;
+- no undefined references, and no `??`;
+- the paper, primer and PET-note texts are unchanged by the batch, and all 205 label numbers are unchanged;
+- `swallowed_text.py` flags 0;
+- the ledger check: 192 rows, 383 probes, 0 failures, and its self-test passes;
+- pages: note 138.
