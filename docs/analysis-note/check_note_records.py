@@ -542,8 +542,11 @@ PLANTS = [
      "as five rules rather than", "as six rules rather than"),
     ("record paragraph left in the note", "P5 RECORD paragraph still printed", "app_codebase.tex",
      lambda p: p.write_text(p.read_text() + "\n" + (p.parent / "app_codebase_records.tex").read_text()), None),
-    ("edited reader paragraph", "P5 READER paragraph", "app_release.tex",
-     "The pseudo-experiment products are archived", "The pseudo-experiment products are stored"),
+    # The plant must edit a reader paragraph that still prints verbatim from the base. The release appendix's
+    # archive paragraph, the first anchor, was rewritten by the register pass (batch bhi, director F6, 2026-10-21),
+    # so the plant moved to the codebase appendix's PET paragraph, which still prints verbatim.
+    ("edited reader paragraph", "P5 READER paragraph", "app_codebase.tex",
+     "supports future work", "supports later work"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
      lambda p: p.write_text(p.read_text().replace(r"\texttt{joint-5d}", r"\texttt{joint-5e}")), None),
     ("lost repository path", "P4 repository path", "app_provenance.tex", r"\repopath{", r"\texttt{"),
