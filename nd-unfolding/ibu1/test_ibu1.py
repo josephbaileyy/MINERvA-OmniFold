@@ -41,10 +41,11 @@ def synthetic_inputs(n=60_000, seed=0, sentinels=40, edge_rows=10):
     w_truth = 0.05 * (1 + 0.2 * rng.random(n))
     w_reco = w_truth * (1 + 0.01 * rng.standard_normal(n))
     ofin, _ = np.histogramdd(gen.astype(float), bins=EDGES, weights=w_truth)
+    cfac = 1.0 + 2.0 * np.random.default_rng(seed + 7).random(ofin.shape)  # completeness 0.33-1 per fine cell
     meas = reco[pass_reco][:5000]
     return {"MCgen": gen, "MCreco": reco, "pass_reco": pass_reco, "pass_truth": np.ones(n, bool),
             "w_truth": w_truth, "w_reco": w_reco, "measured": meas, "measured_weights": np.full(meas.shape[0], 0.97),
-            "denom_nd": ofin * 1.1, "flux": np.linspace(1.0, 2.0, SHAPE[0]), "data_pot": np.array(1e20),
+            "denom_nd": ofin * cfac, "flux": np.linspace(1.0, 2.0, SHAPE[0]), "data_pot": np.array(1e20),
             "n_nucleons": np.array(1e30), "nedges": np.array(5), "edges": EDGES}
 
 
@@ -153,6 +154,30 @@ class Closure(unittest.TestCase):
         self.assertLess(e20, np.abs(prior[ok] - truth[ok]).sum())
 
 
+class Oracle(unittest.TestCase):
+    def test_floor_is_zero_for_a_J_constant_departure(self):
+        half = ibu1.Half(np.arange(INPUTS["MCgen"].shape[0]), INPUTS["w_truth"], INPUTS["w_reco"])
+        r = 1 + 0.3 * (INPUTS["MCgen"][:, 2] >= 1.5)
+        o, ref = ibu1.oracle_floor(WORLD, half, r)
+        nz = np.abs(ref) > 0
+        np.testing.assert_allclose(o[nz], ref[nz], rtol=1e-10)
+
+    def test_floor_fires_inside_cells_with_varying_completeness(self):
+        """Review finding 3: a departure that varies inside a J cell, with completeness varying across its
+        fine cells, leaves a floor the J estimator cannot remove."""
+        half = ibu1.Half(np.arange(INPUTS["MCgen"].shape[0]), INPUTS["w_truth"], INPUTS["w_reco"])
+        r = 1 + 0.75 * (INPUTS["MCgen"][:, 2] - 1.25) / 1.25
+        o, ref = ibu1.oracle_floor(WORLD, half, r)
+        nz = np.abs(ref) > 0
+        self.assertGreater(np.max(np.abs(o[nz] / ref[nz] - 1)), 1e-3)
+
+    def test_truth_reweight_matches_the_builders(self):
+        u = {"arm": "P", "truth": "eavail_tilt", "amplitude": 0.2}
+        r = ibu1.truth_reweight(WORLD, u, {})
+        np.testing.assert_array_equal(r, PROD.s5c_pseudo.truth_weight("eavail_tilt", INPUTS["MCgen"], EDGES, 0.2,
+                                                                      w_truth=INPUTS["w_truth"]))
+
+
 class Constructions(unittest.TestCase):
     def test_p_variants_are_the_measured_sample(self):
         key = ibu1.split_key_for(200000)
@@ -196,34 +221,43 @@ class Pairing(unittest.TestCase):
         key = ibu1.split_key_for(204000)
         self.exp, self.x_true, self.info, _, _ = ibu1.build_p(WORLD, BKG, "eavail_tilt", 0.2, key, 204000)
         self.key = key
+        self.expect = ibu1.expected_construction(CFG, {"arm": "P"}, "eavail_tilt", 0.2)
 
-    def product(self, xtrue, info, seed=204000, key=None):
+    def product(self, xtrue, info, seed=204000, key=None, **flags):
         p = self.tmp / f"c{np.random.randint(1e9)}.npz"
-        meta = {"pseudo_seed": seed, "split_key": self.key if key is None else key, "experiment": info}
+        meta = {"pseudo_seed": seed, "split_key": self.key if key is None else key, "experiment": info,
+                **self.expect["required"], **flags}
         np.savez(p, xsec_flat=xtrue.ravel(), xtrue_flat=xtrue.ravel(), meta=json.dumps(meta))
         return p
 
     def test_gate_passes_on_the_same_experiment(self):
-        g = ibu1.comparator_gate(self.product(self.x_true, self.info), self.x_true, self.info, 204000, self.key)
+        g = ibu1.comparator_gate(self.product(self.x_true, self.info), self.x_true, self.info, 204000, self.key, self.expect)
         self.assertTrue(g["pass"], g["checks"])
 
     def test_gate_fires_on_one_ulp(self):
         x = self.x_true.copy().ravel()
         i = int(np.flatnonzero(x)[0])
         x[i] = np.nextafter(x[i], np.inf)
-        g = ibu1.comparator_gate(self.product(x.reshape(self.x_true.shape), self.info), self.x_true, self.info, 204000, self.key)
+        g = ibu1.comparator_gate(self.product(x.reshape(self.x_true.shape), self.info), self.x_true, self.info, 204000, self.key, self.expect)
         self.assertFalse(g["pass"])
         self.assertFalse(g["checks"]["xtrue_bitwise"])
 
     def test_gate_fires_on_a_different_draw(self):
         info = dict(self.info, pseudo_signal_events=self.info["pseudo_signal_events"] + 1)
-        g = ibu1.comparator_gate(self.product(self.x_true, info), self.x_true, self.info, 204000, self.key)
+        g = ibu1.comparator_gate(self.product(self.x_true, info), self.x_true, self.info, 204000, self.key, self.expect)
         self.assertFalse(g["checks"]["experiment_record"])
 
+    def test_gate_fires_on_construction_flags(self):
+        for flags in ({"prior_matches_truth": True}, {"no_background": True}, {"iters": 6}, {"truth": "nominal"},
+                      {"bkg_dump_sha256": "0" * 64}):
+            g = ibu1.comparator_gate(self.product(self.x_true, self.info, **flags), self.x_true, self.info, 204000,
+                                     self.key, self.expect)
+            self.assertFalse(g["pass"], flags)
+
     def test_gate_fires_on_seed_or_split(self):
-        g = ibu1.comparator_gate(self.product(self.x_true, self.info, seed=204001), self.x_true, self.info, 204000, self.key)
+        g = ibu1.comparator_gate(self.product(self.x_true, self.info, seed=204001), self.x_true, self.info, 204000, self.key, self.expect)
         self.assertFalse(g["checks"]["pseudo_seed"])
-        g = ibu1.comparator_gate(self.product(self.x_true, self.info, key=self.key + 1), self.x_true, self.info, 204000, self.key)
+        g = ibu1.comparator_gate(self.product(self.x_true, self.info, key=self.key + 1), self.x_true, self.info, 204000, self.key, self.expect)
         self.assertFalse(g["checks"]["split_key"])
 
 
@@ -245,11 +279,13 @@ class Bootstrap(unittest.TestCase):
         with mock.patch.object(ibu1, "p_bootstrap_replica", shifted):
             self.assertFalse(ibu1.replica_capture(PROD, self.exp, 3)["pass"])
 
-    def test_n_replica_is_the_producers(self):
+    def test_n_replica_variants_use_the_replicas_counts_and_template(self):
         exp, *_ = ibu1.build_n(WORLD, BKG, "nominal", 0.0, ibu1.split_key_for(349999), 349999, None)
-        a = PROD.s5n_pseudo.bootstrap_replica(exp, 5)
-        b = PROD.s5n_pseudo.bootstrap_replica(exp, 5)
-        self.assertTrue(np.array_equal(a["obs_counts"], b["obs_counts"]))
+        rep = PROD.s5n_pseudo.bootstrap_replica(exp, 5)
+        v = ibu1.n_variants(WORLD, rep)
+        self.assertAlmostEqual(float(v["fold"][0].sum()), float(rep["obs_counts"].sum()), places=6)
+        self.assertAlmostEqual(float(v["fold"][1].sum()), float(rep["tmpl_w"].sum()), places=6)
+        self.assertNotAlmostEqual(float(v["fold"][1].sum()), float(exp["tmpl_w"].sum()), places=6)
 
 
 class Coverage(unittest.TestCase):
@@ -289,10 +325,11 @@ class Rule(unittest.TestCase):
         c = rd.count_interval(h, n, rows)
         self.assertLessEqual(c["definite"], c["point"])
         self.assertLessEqual(c["point"], c["possible"])
-        cI = {"definite": 0, "possible": 10}
-        cO = {"definite": 6, "possible": 12}
+        cI = {"definite": 0, "possible": 10, "n": 400}
+        cO = {"definite": 6, "possible": 12, "n": 400}
         self.assertFalse(rd.count_reading(cI, cO)["resolved"])
-        self.assertTrue(rd.count_reading({"definite": 0, "possible": 1}, {"definite": 30, "possible": 40})["resolved"])
+        self.assertTrue(rd.count_reading({"definite": 0, "possible": 1, "n": 400},
+                                         {"definite": 30, "possible": 40, "n": 400})["resolved"])
 
     def test_count_interval_at_400_is_the_futility_count(self):
         """At n = 400 ``definite`` is the Tier-S futility count (UCB below a gate at 0.05/459)."""
@@ -316,24 +353,44 @@ class Rule(unittest.TestCase):
         self.assertFalse(noisy["resolved"])
 
     def test_readings_and_verdicts(self):
-        def t(res, cnt, rr=True, cr=True):
-            return rd.truth_reading({"relation": res, "resolved": rr}, {"relation": cnt, "resolved": cr})
+        def t(res, cnt, rposs=None, corners=None, decisive=True):
+            r = {"relation": res, "possible": rposs or [res]}
+            c = {"relation": cnt, "corners": corners or [cnt], "decisive": decisive}
+            return rd.truth_reading(r, c)
 
-        self.assertEqual(t("within", "within"), "consistent")
-        self.assertEqual(t("better", "better"), "IBU better")
-        self.assertEqual(t("better", "within"), "mixed")
-        self.assertTrue(t("within", "within", cr=False).startswith("unresolved"))
-        base = {k: {"reading": "consistent"} for k in ("tilt", "gibuu", "w1", "w2", "w3")}
+        self.assertEqual(t("within", "within")["reading"], "consistent")
+        self.assertEqual(t("better", "better")["reading"], "IBU better")
+        self.assertEqual(t("better", "within")["reading"], "mixed")
+        self.assertTrue(t("within", "within", corners=["within", "worse"])["reading"].startswith("unresolved"))
+        # below n = 400 the count is descriptive: the residual decides
+        self.assertEqual(t("better", "within", corners=["within", "better"], decisive=False)["reading"], "IBU better")
+        base = {k: t("within", "within") for k in ("tilt", "gibuu", "w1", "w2", "w3")}
         self.assertEqual(rd.overall(base), "inverse-problem limited")
-        imp = dict(base, tilt={"reading": "IBU better"}, gibuu={"reading": "IBU better"})
+        imp = dict(base, tilt=t("better", "better"), gibuu=t("better", "x", decisive=False))
         self.assertEqual(rd.overall(imp), "implementation specific")
-        mix = dict(base, w2={"reading": "IBU worse"})
-        self.assertEqual(rd.overall(mix), "mixed")
-        unr = dict(base, w3={"reading": "unresolved (consistent at the point values)"})
+        self.assertEqual(rd.overall(dict(base, w2=t("worse", "worse"))), "mixed")
+        unr = dict(base, w3=t("within", "x", rposs=["within", "worse"], decisive=False))
         self.assertEqual(rd.overall(unr), "unresolved")
-        half = dict(base, tilt={"reading": "IBU better"}, gibuu={"reading": "unresolved (IBU better at the point values)"},
-                    w1={"reading": "IBU worse"})
-        self.assertEqual(rd.overall(half), "unresolved")
+        # review finding 4: tilt resolved worse with an unresolved count rules out both verdicts -> mixed
+        tilt_worse = t("worse", "within", corners=["within", "worse"])
+        self.assertEqual(tilt_worse["possible"], ["IBU worse", "mixed"])
+        self.assertEqual(rd.overall(dict(base, tilt=tilt_worse)), "mixed")
+
+    def test_small_n_count_cannot_resolve_and_is_descriptive(self):
+        """Review finding 2: at n = 60 a functional covered 60/60 still has CP LB < 0.94 at 0.05/459."""
+        rows = np.arange(109)
+        cI = rd.count_interval(np.full((2, 109), 60), 60, rows)
+        cO = rd.count_interval(np.zeros((2, 109), int), 60, rows)
+        self.assertEqual(cI["possible"], 109)
+        c = rd.count_reading(cI, cO)
+        self.assertFalse(c["resolved"])
+        self.assertFalse(c["decisive"])
+        res = {"relation": "better", "possible": ["better"]}
+        self.assertEqual(rd.truth_reading(res, c)["reading"], "IBU better")
+        cI4 = rd.count_interval(np.full((2, 109), 400), 400, rows)
+        cO4 = rd.count_interval(np.zeros((2, 109), int), 400, rows)
+        c4 = rd.count_reading(cI4, cO4)
+        self.assertTrue(c4["resolved"] and c4["decisive"] and c4["relation"] == "better")
 
 
 class Tasks(unittest.TestCase):
@@ -396,8 +453,10 @@ class EndToEnd(unittest.TestCase):
                     _, xt, info, _, _ = ibu1.build_p(WORLD, BKG, u["truth"], u["amplitude"], key, seed)
                 else:
                     _, xt, info, _, _ = ibu1.build_n(WORLD, BKG, u["truth"], u["amplitude"], key, seed, ratios.get(u.get("ratio")))
+                exp_c = ibu1.expected_construction(cfg, u, u["truth"], u["amplitude"])["required"]
                 np.savez(p, xsec_flat=xt.ravel() * 1.03, xtrue_flat=xt.ravel(),
-                         meta=json.dumps({"pseudo_seed": seed, "split_key": key, "experiment": json.loads(json.dumps(info))}))
+                         meta=json.dumps({"pseudo_seed": seed, "split_key": key, "experiment": json.loads(json.dumps(info)),
+                                          **exp_c}))
         for b in ("P_sigma", "N_sigma_s5n", "N_sigma_R"):
             u = units[b]
             builder = ibu1.build_p if u["arm"] == "P" else ibu1.build_n
@@ -405,7 +464,8 @@ class EndToEnd(unittest.TestCase):
             _, _, info, _, _ = builder(*args) if u["arm"] == "P" else builder(*args, None)
             np.savez(u["comparator_base"], xsec_flat=np.zeros(3),
                      meta=json.dumps({"pseudo_seed": u["experiment"]["pseudo_seed"], "split_key": u["experiment"]["split_key"],
-                                      "experiment": json.loads(json.dumps(info))}))
+                                      "experiment": json.loads(json.dumps(info)),
+                                      **ibu1.expected_construction(cfg, u, "nominal", 0.0)["required"]}))
         out = tmp / "out"
         rc = 0
         for name, u in units.items():
@@ -441,6 +501,16 @@ class EndToEnd(unittest.TestCase):
         for v in k5["deformed"].values():
             self.assertEqual(v["gates_passed"], v["gates_total"])
             self.assertAlmostEqual(v["residual"]["median_abs_of"], 0.03, places=9)
+        # review finding 1: a single-K evaluation reads the K = 5 slice, not slot 0
+        tilt = rd.load_unit(out, "N_gibuu", "sub", [301000, 301059])
+        i5 = tilt["ks"].index(5)
+        self.assertFalse(np.allclose(tilt["F"][:, 0, :], tilt["F"][:, i5, :], rtol=1e-6, atol=0))
+        sec = rd.evaluate(out, receipts, names, {"P": "fold", "N": "sub"}, [5])["per_K"]["5"]["deformed"]["gibuu"]
+        rows = np.array([i for i, nm in enumerate(names) if nm.startswith("J")])
+        rows = rows[np.all(tilt["t"][:, rows] != 0, axis=0)]
+        want = float(np.median(np.abs((tilt["F"][:, i5, :] / tilt["t"] - 1)[:, rows].mean(0))))
+        self.assertAlmostEqual(sec["residual"]["median_abs_ibu"], want, places=12)
+        self.assertFalse(any(p.suffix == ".tmp" for p in out.iterdir()))
         d = np.load(out / "D_P.npz", allow_pickle=True)
         self.assertEqual(d["F_pur"].shape, (len(KS), 153))
 

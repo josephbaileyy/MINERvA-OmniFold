@@ -106,6 +106,8 @@ class World:
     """Per-row reco cell, fine truth cell and (reco, fine) pair of the whole MC sample, computed once."""
 
     def __init__(self, prod: Producers, inputs: dict, contract: dict, chunk: int = 2_000_000):
+        if not np.all(inputs["pass_truth"]):
+            raise GateFailure("a reco-passing row without pass_truth would sit in no response or known term")
         self.prod = prod
         self.edges = inputs["edges"]
         self.shape = tuple(len(e) - 1 for e in self.edges)
@@ -133,6 +135,7 @@ class World:
         self.n_coarse = int(np.prod([len(c) - 1 for c in coarse_edges]))
         self.U, self.names = prod.s5c_coverage.reported_functionals(contract)
         self.inputs = inputs
+        self.reweights: dict = {}
 
     def reco_hist(self, coords: np.ndarray, w: np.ndarray) -> np.ndarray:
         flat = self.prod.s5e_trace.flat_index(np.asarray(coords, float), self.edges)
@@ -190,19 +193,47 @@ def unfold_ibu(world: World, half: Half, y: np.ndarray, b_extra: np.ndarray, ks:
     res = did.ibu(R, np.asarray(y, float), b_known + np.asarray(b_extra, float), prior, max(ks),
                   maps=np.eye(grid.n_cells), record=tuple(ks))
     share = did.share_matrix(grid, u_fine)
+    out = np.array([extract(world, share @ t, u_fine) for t in res.trajectory])
+    eff = np.asarray(R.sum(axis=0)).ravel()
+    return {"F": out, "n_cells": grid.n_cells, "acceptance_holes": int(np.sum(eff <= 0)),
+            "negative_y_cells": int(np.sum(y < 0)), "b_known_sum": float(b_known.sum())}
+
+
+def extract(world: World, unf_fine: np.ndarray, u_fine: np.ndarray) -> np.ndarray:
+    """``s5c_unfold.unfold``'s extraction: completeness from the half's unreweighted truth."""
     dn = world.inputs["denom_nd"]
     comp = np.zeros(world.shape)
     nz = dn > 0
     comp[nz] = u_fine.reshape(world.shape)[nz] / dn[nz]
-    out = np.empty((len(ks), world.U.shape[0]))
-    for i, t in enumerate(res.trajectory):
-        unf = np.asarray(share @ t).reshape(world.shape)
-        xs, _ = world.prod.xsec_nd.extract_cross_section_nd(
-            unf, comp, world.inputs["flux"], float(world.inputs["data_pot"]), float(world.inputs["n_nucleons"]), world.edges)
-        out[i] = world.functionals(xs)
-    eff = np.asarray(R.sum(axis=0)).ravel()
-    return {"F": out, "n_cells": grid.n_cells, "acceptance_holes": int(np.sum(eff <= 0)),
-            "negative_y_cells": int(np.sum(y < 0)), "b_known_sum": float(b_known.sum())}
+    xs, _ = world.prod.xsec_nd.extract_cross_section_nd(
+        np.asarray(unf_fine).reshape(world.shape), comp, world.inputs["flux"], float(world.inputs["data_pot"]),
+        float(world.inputs["n_nucleons"]), world.edges)
+    return world.functionals(xs)
+
+
+def oracle_floor(world: World, half: Half, r: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """IA-14: the floor the J-cell estimator cannot remove at any K or n. The EXACT departed J totals of the
+    unfolding half go through the same spreading (by the half's unreweighted truth shape) and extraction as an
+    IBU estimate; the reference is the half's departed truth through ``build_experiment``'s x_true spelling
+    (reweighted counts over unreweighted completeness). Returns (oracle, reference) functionals."""
+    did = world.prod.did
+    ok = world.tflat[half.rows] >= 0
+    t_rows = world.tflat[half.rows][ok]
+    u_fine = np.bincount(t_rows, weights=half.w_truth[ok], minlength=world.n_fine)
+    u_dep = np.bincount(t_rows, weights=half.w_truth[ok] * r[half.rows][ok], minlength=world.n_fine)
+    grid = did.make_grid("J", world.coarse_of, world.n_coarse, u_fine)
+    t_exact = did.coarse_sum(grid, u_dep)
+    oracle = extract(world, did.share_matrix(grid, u_fine) @ t_exact, u_fine)
+    return oracle, extract(world, u_dep, u_fine)
+
+
+def truth_reweight(world: World, unit: dict, ratios: dict) -> np.ndarray:
+    """The unit's declared truth reweight r on every MC row, by the producer that built its pseudo-data."""
+    inp = world.inputs
+    if unit["arm"] == "P":
+        return world.prod.s5c_pseudo.truth_weight(unit["truth"], inp["MCgen"], world.edges, unit["amplitude"],
+                                                  w_truth=inp["w_truth"])
+    return world.prod.s5n_pseudo.truth_weight(unit["truth"], inp, unit["amplitude"], ratios.get(unit.get("ratio")))
 
 
 # -------------------------------------------------------------------------- the two constructions
@@ -281,9 +312,26 @@ def n_variants(world: World, exp: dict) -> dict:
 # ------------------------------------------------------------------------------------- pairing
 
 
-def comparator_gate(path: Path, x_true: np.ndarray | None, info: dict, seed: int | None, split_key: int | None) -> dict:
+def expected_construction(cfg: dict, unit: dict, truth: str, amplitude: float) -> dict:
+    """IA-3: the construction flags a paired product must carry. ``required`` keys must be present and equal;
+    ``if_present`` keys are compared when the product's schema records them (older s5c products do not)."""
+    pins = cfg["inputs"]
+    required = {"truth": truth, "amplitude": amplitude, "input_npz_sha256": pins["of_inputs_5d_sha256"],
+                "bkg_dump_sha256": pins["bkg_dump_sha256"]}
+    if_present = {"no_background": False, "prior_matches_truth": False, "iters": 5, "estimator_seed": 42,
+                  "permute_seed": None, "config": "deterministic"}
+    if unit["arm"] == "N":
+        required["bkg_mode"] = "negweight-refined"
+        ratio = unit.get("ratio")
+        required["eavail_ratio_sha256"] = None if ratio is None else cfg["ratios"][ratio]["expect_sha256"]
+    return {"required": required, "if_present": if_present}
+
+
+def comparator_gate(path: Path, x_true: np.ndarray | None, info: dict, seed: int | None, split_key: int | None,
+                    expect: dict) -> dict:
     """IA-3: the paired OmniFold product must carry this experiment's truth bitwise, its seed and split key,
-    and the same experiment record (counts, sums), which identifies the Poisson draws and the halves."""
+    the same experiment record (counts, sums; it identifies the Poisson draws and the halves) and the declared
+    construction flags."""
     z = np.load(path, allow_pickle=True)
     meta = json.loads(str(z["meta"]))
     checks = {
@@ -291,6 +339,11 @@ def comparator_gate(path: Path, x_true: np.ndarray | None, info: dict, seed: int
         "pseudo_seed": seed is None or meta.get("pseudo_seed") == seed,
         "split_key": split_key is None or meta.get("split_key") == split_key,
     }
+    for k, v in expect["required"].items():
+        checks[f"meta.{k}"] = k in meta and meta[k] == v
+    for k, v in expect["if_present"].items():
+        if k in meta:
+            checks[f"meta.{k}"] = meta[k] == v
     if x_true is not None:
         checks["xtrue_bitwise"] = "xtrue_flat" in z.files and np.array_equal(z["xtrue_flat"], x_true.ravel(order="C"))
     return {"path": str(path), "sha256": sha256(path), "checks": checks, "pass": all(checks.values()),
@@ -317,7 +370,10 @@ def run_experiments(world: World, cfg: dict, bkg: dict, unit: dict, out: Path, r
                                                        ratios.get(unit.get("ratio")))
         half = half_from_experiment(world, exp, is_b)
         t1 = time.time()
-        arrays = {"f_true": world.functionals(x_true), "ks": np.array(ks)}
+        if unit["name"] not in world.reweights:
+            world.reweights = {unit["name"]: truth_reweight(world, unit, ratios)}
+        f_oracle, f_true_a = oracle_floor(world, half, world.reweights[unit["name"]])
+        arrays = {"f_true": world.functionals(x_true), "ks": np.array(ks), "f_oracle": f_oracle, "f_true_A": f_true_a}
         diag = {}
         for name, (y, b_extra) in variants.items():
             r = unfold_ibu(world, half, y, b_extra, ks)
@@ -329,7 +385,8 @@ def run_experiments(world: World, cfg: dict, bkg: dict, unit: dict, out: Path, r
             if not cpath.exists():
                 gate = {"path": str(cpath), "pass": False, "checks": {"exists": False}}
             else:
-                g = comparator_gate(cpath, x_true, info, seed, split_key)
+                g = comparator_gate(cpath, x_true, info, seed, split_key,
+                                    expected_construction(cfg, unit, unit["truth"], unit["amplitude"]))
                 arrays["f_of"] = world.functionals(g.pop("xsec_flat"))
                 gate = g
             rc |= 0 if gate["pass"] else 8
@@ -354,7 +411,8 @@ def run_bootstrap(world: World, cfg: dict, bkg: dict, unit: dict, out: Path) -> 
         exp, x_true, info, is_b, _ = build_p(world, bkg, "nominal", 0.0, split_key, seed)
     else:
         exp, x_true, info, is_b, _ = build_n(world, bkg, "nominal", 0.0, split_key, seed, None)
-    gate = comparator_gate(REPO_PATH(unit["comparator_base"]), None, info, seed, split_key)
+    gate = comparator_gate(REPO_PATH(unit["comparator_base"]), None, info, seed, split_key,
+                           expected_construction(cfg, unit, "nominal", 0.0))
     gate.pop("xsec_flat")
     controls = {}
     if unit["arm"] == "P":
@@ -474,8 +532,9 @@ def comparator_path(unit: dict, seed: int) -> Path | None:
 
 def write(target: Path, arrays: dict, meta: dict) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
-    tmp = target.with_name(target.name + f".partial-{os.getpid()}.npz")
-    np.savez_compressed(tmp, **arrays, meta=json.dumps(meta, default=str))
+    tmp = target.with_name(target.name + f".partial-{os.getpid()}.tmp")  # never matches a reader's *.npz glob
+    with open(tmp, "wb") as fh:
+        np.savez_compressed(fh, **arrays, meta=json.dumps(meta, default=str))
     if target.exists():
         tmp.unlink()
         return

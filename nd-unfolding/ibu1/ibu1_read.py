@@ -27,6 +27,7 @@ Z = (1.0, 1.96)
 FAMILY_ALPHA = 0.05 / 459  # IA-10: the OmniFold Tier-S per-comparison level, so the counts are comparable
 FACTOR = 2.0
 SMALL = 2  # IA-10: counts both <= SMALL are "within a factor 2"
+COUNT_DECISIVE_N = 400  # IA-10 (admission repair): below this n the count is descriptive (see count_interval)
 BOOT = 2000
 BOOT_SEED = 20261022
 
@@ -58,21 +59,23 @@ IBU_OWN = {  # IA-12: IBU's own corrected coverage at 400 seeds, no OmniFold com
 
 
 def load_unit(outdir: Path, name: str, variant: str, seeds: list[int] | None = None) -> dict:
-    files = sorted(outdir.glob(f"{name}_s*.npz"), key=lambda p: int(p.stem.rsplit("_s", 1)[1]))
+    files = sorted(outdir.glob(f"{name}_s[0-9]*.npz"), key=lambda p: int(p.stem.rsplit("_s", 1)[1]))
     rows = []
     for f in files:
         z = np.load(f, allow_pickle=True)
         meta = json.loads(str(z["meta"]))
         if seeds is not None and not (seeds[0] <= meta["pseudo_seed"] <= seeds[1]):
             continue
-        rows.append((meta, z[f"F_{variant}"], z["f_true"], z["f_of"] if "f_of" in z.files else None, z["ks"]))
+        rows.append((meta, z[f"F_{variant}"], z["f_true"], z["f_of"] if "f_of" in z.files else None, z["ks"],
+                     z["f_oracle"], z["f_true_A"]))
     if not rows:
         raise SystemExit(f"no products for unit {name}")
     ks = rows[0][4]
     return {"seeds": [r[0]["pseudo_seed"] for r in rows], "F": np.array([r[1] for r in rows]),
             "t": np.array([r[2] for r in rows]),
             "of": None if rows[0][3] is None else np.array([r[3] for r in rows]),
-            "gates": [r[0]["comparator"] for r in rows], "ks": [int(k) for k in ks]}
+            "gates": [r[0]["comparator"] for r in rows], "ks": [int(k) for k in ks],
+            "oracle": np.array([r[5] for r in rows]), "t_A": np.array([r[6] for r in rows])}
 
 
 def load_boot(outdir: Path, name: str, variant: str) -> dict:
@@ -128,9 +131,14 @@ def count_relation(ci: int, co: int) -> str:
 
 
 def count_reading(cI: dict, cO: dict) -> dict:
+    """IA-10. At n < COUNT_DECISIVE_N the count is DESCRIPTIVE: at n = 20 and 60 the CP lower bound at
+    FAMILY_ALPHA of a functional covered in every experiment (0.634, 0.859) is already below a gate (0.66,
+    0.94), so ``possible`` is every J functional whatever the coverage and the count can never resolve
+    (admission review, finding 2). It is reported with its interval and does not enter the reading."""
     corners = {count_relation(a, b) for a in (cI["definite"], cI["possible"]) for b in (cO["definite"], cO["possible"])}
     rel = count_relation(cI["definite"], cO["definite"])
-    return {"relation": rel, "resolved": corners == {rel}, "corners": sorted(corners)}
+    decisive = min(cI["n"], cO["n"]) >= COUNT_DECISIVE_N
+    return {"relation": rel, "resolved": corners == {rel}, "corners": sorted(corners), "decisive": decisive}
 
 
 def residual_relation(ratio: float) -> str:
@@ -158,37 +166,44 @@ def residual_reading(relI: np.ndarray, relO: np.ndarray, rows: np.ndarray) -> di
         r.append(med(relI, idx) / med(relO, idx))
     lo, hi = (float(x) for x in np.percentile(r, [2.5, 97.5]))
     rel = residual_relation(ratio)
+    spanned = {residual_relation(lo), residual_relation(hi), rel}
+    if lo < 1 / FACTOR and hi > FACTOR:
+        spanned.add("within")
     return {"median_abs_ibu": mI, "median_abs_of": mO, "max_abs_ibu": float(np.max(np.abs(relI[:, rows].mean(0)))),
             "max_abs_of": float(np.max(np.abs(relO[:, rows].mean(0)))), "ratio": ratio, "ratio_ci95": [lo, hi],
-            "relation": rel, "resolved": residual_relation(lo) == rel == residual_relation(hi)}
+            "relation": rel, "possible": sorted(spanned), "resolved": spanned == {rel}}
 
 
-def truth_reading(res: dict, cnt: dict) -> str:
-    """IA-10/11: per truth. A reading needs both metrics resolved at this n; otherwise it is reported as
-    unresolved, with the point reading beside it."""
-    if res["relation"] == cnt["relation"] == "within":
-        word = "consistent"
-    elif res["relation"] == cnt["relation"] == "better":
-        word = "IBU better"
-    elif res["relation"] == cnt["relation"] == "worse":
-        word = "IBU worse"
-    else:
-        word = "mixed"
-    return word if (res["resolved"] and cnt["resolved"]) else f"unresolved ({word} at the point values)"
+WORD = {"within": "consistent", "better": "IBU better", "worse": "IBU worse"}
+
+
+def word_of(res_rel: str, cnt_rel: str | None) -> str:
+    if cnt_rel is None:  # the count is descriptive at this n: the residual decides
+        return WORD[res_rel]
+    return WORD[res_rel] if res_rel == cnt_rel else "mixed"
+
+
+def truth_reading(res: dict, cnt: dict) -> dict:
+    """IA-10: per truth. ``possible`` = every word the metrics' unresolved ranges allow; the reading is the
+    point word when ``possible`` holds only it, else "unresolved (<point word> at the point values)"."""
+    c_point = cnt["relation"] if cnt["decisive"] else None
+    c_set = set(cnt["corners"]) if cnt["decisive"] else {None}
+    point = word_of(res["relation"], c_point)
+    possible = {word_of(r, c) for r in res["possible"] for c in c_set}
+    reading = point if possible == {point} else f"unresolved ({point} at the point values)"
+    return {"reading": reading, "point": point, "possible": sorted(possible)}
 
 
 def overall(per_truth: dict) -> str:
-    """The spec's rule: inverse-problem limited if consistent at every deformed truth; implementation specific
-    if IBU is better at both GiBUU and the rate change; otherwise mixed. An unresolved truth that the verdict
-    depends on makes the verdict unresolved."""
-    words = {k: v["reading"] for k, v in per_truth.items()}
-    if all(w == "consistent" for w in words.values()):
+    """The spec's rule on the per-truth ``possible`` sets: inverse-problem limited if every deformed truth can
+    only be consistent; implementation specific if GiBUU and the rate change can only be "IBU better";
+    unresolved if either is still possible; mixed otherwise (decided even when some truths are unresolved)."""
+    sets = {k: set(v["possible"]) for k, v in per_truth.items()}
+    if all(s == {"consistent"} for s in sets.values()):
         return "inverse-problem limited"
-    if words["gibuu"] == "IBU better" and words["tilt"] == "IBU better":
+    if sets["gibuu"] == {"IBU better"} and sets["tilt"] == {"IBU better"}:
         return "implementation specific"
-    could_ipl = all(w == "consistent" or w.startswith("unresolved") for w in words.values())
-    could_is = all(words[k] == "IBU better" or words[k].startswith("unresolved") for k in ("gibuu", "tilt"))
-    if could_ipl or could_is:
+    if all("consistent" in s for s in sets.values()) or ("IBU better" in sets["gibuu"] and "IBU better" in sets["tilt"]):
         return "unresolved"
     return "mixed"
 
@@ -232,7 +247,7 @@ def evaluate(outdir: Path, receipts: dict, names: list[str], variant: dict, k_li
     bc = receipts["bias_correction"]
     corr_of = (np.asarray(bc["beta"], float), np.asarray(bc["se"], float))
     cache = {}
-    for ki, K in enumerate(k_list):
+    for K in k_list:
         res_K = {"deformed": {}, "reference": {}}
         for group, table in (("deformed", DEFORMED), ("reference", REFERENCE)):
             for truth, spec in table.items():
@@ -241,12 +256,13 @@ def evaluate(outdir: Path, receipts: dict, names: list[str], variant: dict, k_li
                 if key not in cache:
                     cache[key] = load_unit(outdir, spec["unit"], variant[arm], spec.get("paired"))
                 u = cache[key]
-                est, t = u["F"][:, ki, :], u["t"]
-                sig = sigma_of(boots[spec["sigma"]])[ki]
+                iu = u["ks"].index(K)  # index the stored K axis by value (admission review, finding 1)
+                est, t = u["F"][:, iu, :], u["t"]
+                sig = sigma_of(boots[spec["sigma"]])[boots[spec["sigma"]]["ks"].index(K)]
                 corr = None
                 if spec["mode"] == "corrected":
                     b, se = beta_of(d1)
-                    corr = (b[ki], se[ki])
+                    corr = (b[d1["ks"].index(K)], se[d1["ks"].index(K)])
                 n = est.shape[0]
                 hI = hits(est, t, sig, corr)
                 hO = of_hits(spec["of"], receipts, names, n)
@@ -255,22 +271,25 @@ def evaluate(outdir: Path, receipts: dict, names: list[str], variant: dict, k_li
                 relI, relO = est / t - 1.0, u["of"] / t - 1.0
                 res = residual_reading(relI, relO, rows)
                 cnt = count_reading(cI, cO)
+                floor = (u["oracle"] / u["t_A"] - 1.0)[:, rows].mean(0)
                 entry = {"n": n, "J_rows_used": int(rows.size), "residual": res, "count_ibu": cI, "count_of": cO, "count": cnt,
-                         "reading": truth_reading(res, cnt),
+                         **truth_reading(res, cnt),
+                         "oracle_floor": {"median_abs": float(np.median(np.abs(floor))), "max_abs": float(np.max(np.abs(floor)))},
                          "gates_passed": int(sum(bool(g and g["pass"]) for g in u["gates"])),
                          "gates_total": len(u["gates"])}
                 if K == 5:
-                    entry["of_receipt_control"] = of_receipt_controls(spec["of"], receipts, u, ki,
+                    entry["of_receipt_control"] = of_receipt_controls(spec["of"], receipts, u, iu,
                                                                       corr_of if spec["mode"] == "corrected" else None)
                 res_K[group][truth] = entry
         res_K["verdict"] = overall(res_K["deformed"])
         own = {}
-        sN = sigma_of(boots["N_sigma_s5n"])[ki]
+        sN = sigma_of(boots["N_sigma_s5n"])[boots["N_sigma_s5n"]["ks"].index(K)]
         nd = load_unit(outdir, "N_nominal_dev", variant["N"])
         bN, seN = beta_of(nd)
+        ind = nd["ks"].index(K)
         for truth, unit_name in IBU_OWN.items():
             u = cache.setdefault((unit_name, None), load_unit(outdir, unit_name, variant["N"]))
-            h = hits(u["F"][:, ki, :], u["t"], sN, (bN[ki], seN[ki]))
+            h = hits(u["F"][:, u["ks"].index(K), :], u["t"], sN, (bN[ind], seN[ind]))
             own[truth] = {"n": len(u["seeds"]), "count": count_interval(h, len(u["seeds"]), J),
                           "cov68_median_J": float(np.median(h[0, J] / len(u["seeds"]))),
                           "cov95_median_J": float(np.median(h[1, J] / len(u["seeds"])))}
