@@ -62,8 +62,10 @@ recomputed at each K.
 
 ## 4. Code, inputs and units
 
-**Code** (commit `8b21b91b`, branch `validation/ibu1-declaration-20261022`; first written at `56d546ef`, then
-repaired in `2687b388` and `8b21b91b` after admission review, §9), under `nd-unfolding/ibu1/`:
+**Code** (commit `127dc266`, branch `validation/ibu1-declaration-20261022`; first written at `c770cd29`, then
+repaired in `d6cb822c` and `127dc266` after admission review, §9), under `nd-unfolding/ibu1/`. The review saw these
+commits as `56d546ef`, `2687b388` and `8b21b91b`, before a rebase onto main `bb35803b`; the file digests below are
+unchanged by it, and the rebase added only `nd-unfolding/re1/` files.
 
 | file | sha256 (first 16) | role |
 |---|---|---|
