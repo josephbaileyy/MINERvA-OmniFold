@@ -567,8 +567,7 @@ The file and the projection are identified by their SHA-256 checksums
 meet the acceptance criteria of its specification. The
 specification requires the null bound to be fixed before production; the bound
 was not fixed before this covariance was produced, so the requirement cannot be
-met for it, and the file's own metadata records it as not passing and as not to be used
-(Ref.~\cite{NoteRecords2026}, construction and audit record).
+met for it, and the file's own metadata records it as not passing and as not to be used.
 It is used under an exception that covers only this file and its projection, not any
 other covariance built to the same specification, including the two companion
 covariances of the measurements below.
@@ -577,9 +576,6 @@ covariances of the measurements below.
 % (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md sec. 3: 3d7465f6... and nothing else, explicitly
 % including the two companion products 361090f9... and 7e4636a3...) and the two metadata fields
 % (scientific_acceptance, adoptable) are stated as their content.
-% Note register batch b3 (2026-10-21): the next sentence is kept verbatim; records-move-ledger.md row L12 probes it.
-The earlier direct 42-bin $(\Eavail,W)$ block sum
-is superseded and quoted nowhere in this note (Ref.~\cite{NoteRecords2026}, superseded values: the earlier direct $(\Eavail,W)$ block sum).
 
 \paragraph{Construction.} The covariance projects the corrected five-axis
 statistical covariance as $M C_{5D}M^{\top}$, without rebuilding it in the
@@ -610,8 +606,7 @@ Here $v_{\mathrm{blk}}=\diag\big(\sum_{V}C_{b}\big)$ is the vertical block-sum
 diagonal; $v^{\mathrm{cv}}_{\mathrm{uni}}$ is the unified-throw covariance
 diagonal \emph{centered on the central value}. Where the denominator is zero,
 $g=1$ is set by definition, not computed. The band groups $V$ (vertical), $R$
-(residual) and $A$ (re-selected lateral) must be disjoint and exhaust the 45 bands
-(implementation in Ref.~\cite{NoteRecords2026}, construction and audit record).
+(residual) and $A$ (re-selected lateral) must be disjoint and exhaust the 45 bands.
 The same information can be transferred onto a sweep block,
 $\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
 ($\mathbf{G}=\operatorname{diag}g$), only with the low-rank treatment, the mean
@@ -637,7 +632,7 @@ so CV centering retains the mean shift as variance and mean centering removes it
 The covariance used here is the CV-centered variant, which retains the shift
 deliberately; the mean-centered variant (\texttt{mean}) has a $\sqrt{\Tr C}$ lower by
 \SI{7.13}{\percent}. A file's variant is identified by its metadata, not by its
-path (Ref.~\cite{NoteRecords2026}, construction and audit record).
+path.
 
 \paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is
 $C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ of shape $\zprojCells\times\latBins$
@@ -645,7 +640,7 @@ over kept axes $(\Eavail,W)$. Each entry of $M$ is the product of the dropped ax
 giving a differential density in \si{cm^2/GeV^2/nucleon}. Integrating a
 destination cell requires its own $\Delta\Eavail\,\Delta W$. Rows follow the
 $7\times6$ $(\Eavail,W)$ grid in measured C order. No source cell is dropped, and
-the result is exactly symmetric (Ref.~\cite{NoteRecords2026}, construction and audit record). Support and
+the result is exactly symmetric. Support and
 pinned masks and row-index arrays accompany the covariance and are byte-identical
 in the two variants. The covariance is paired with the central values of
 Fig.~\ref{fig:eavailWexcess} \emph{by checksum identity}: the projected source's
@@ -667,7 +662,7 @@ counts are 26 at relative cutoff $10^{-6}$, 36 at the code default $10^{-12}$,
 and 42 without a cutoff. No rank is therefore quoted for this covariance; in
 particular, 36 is the count at one cutoff, not a number of degrees of freedom.
 An inverse requires a declared regularization, and none is applied
-implicitly (Ref.~\cite{NoteRecords2026}, construction and audit record).
+implicitly.
 
 \paragraph{What the covariance supports.}
 

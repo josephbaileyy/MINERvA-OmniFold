@@ -4,8 +4,7 @@
 This appendix describes the local replay package that exists, RC7, and
 specifies the broader event-level and covariance release. It states which
 identities are fixed and what each part does and does not reproduce. Rebuilding this note's PDFs assembles documents; it does not reproduce
-scientific results. The supporting internal records, including the checksums
-of the fixed identities, are kept in Ref.~\cite{NoteRecords2026}.
+scientific results.
 
 % DECISION-20261021-joseph-da-and-note-records item 2, director ruling Q2 and review F6: the deposit snapshot hold;
 % only the subject changed, and the clause from "refer to" on is byte-identical to app_provenance.tex lines 9-10
@@ -156,14 +155,13 @@ scientifically.
         configuration, target and flux. GENIE and NuWro require the
         flux-repaired predictions of 2026-09-27 (per-event reweight to the
         analysis PPFX flux plus the 50--\SI{100}{GeV} supplements); GiBUU
-        requires its reweight to the same flux convention (Ref.~\cite{NoteRecords2026},
-        \texttt{flux-repair}; \S\ref{sec:3d-models}).
+        requires its reweight to the same flux convention (\S\ref{sec:3d-models}).
         % KNOWN_ISSUES.md rows 82--83
   \item \textbf{Provenance}: for each object, the producing code revision,
         the job, and the checksum of the bytes read back from the closed
         file. Of these, only the assembling
         revision and job of $C_{Z}$, job of $C_{EW}$ and read-back row-index
-        checksum are fixed (Ref.~\cite{NoteRecords2026}, identities already fixed). No producing revision
+        checksum are fixed. No producing revision
         or job is recorded for the other objects, and the assembled package
         carries none.
   \item \textbf{One minimal worked example}: \S\ref{app:release-example}.

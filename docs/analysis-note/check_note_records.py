@@ -31,12 +31,34 @@ Inventory (base):                                    Probes (new):
                                                          paragraph in the note, unless the ledger lists its hash
   I6 every printed pointer into App. G (note closure)  P6 every App. G tag pointer survives: in the posted note
                                                          as a \\cite{NoteRecords2026} naming the same tag, or, if
-                                                         its paragraph moved, as the same \\ref in the records;
-                                                         a file with a whole-appendix pointer still cites it
+                                                         its paragraph moved, as the same \\ref in the records,
+                                                         or is a DROP the ledger lists (D: probe, below); a file
+                                                         with a whole-appendix pointer still cites the records or
+                                                         the ledger lists its (whole) drop
                                                      P7 every ledger row carries a probe, and every probe holds:
                                                          N:<file>::<text> prints in the posted note's <file>,
                                                          X:<file>::<text> no longer prints there,
-                                                         R:<file>::<text> prints in the records closure's <file>
+                                                         R:<file>::<text> prints in the records closure's <file>,
+                                                         D:<file>::<key> names a dropped citation whose target
+                                                         still exists in the records (see THE THINNING)
+                                                     P8 (THE THINNING) every NoteRecords2026 citation of the
+                                                         posted note at THIN_BASE is still printed, or is a DROP
+                                                         the ledger lists, and the ledger lists no drop of a
+                                                         citation that is still printed
+
+THE THINNING (DECISION-20261022-joseph-note-records-refs-and-stop.md item 1). The posted note keeps a records
+citation only where a reader needs the record to check a number or claim printed there; every other citation is
+dropped, and each drop is listed in the ledger as a probe D:<file>::<key>, where <key> is the citation's target:
+\\texttt{<tag>} (an App. G tag), the heading words the citation printed ("superseded values: retired material",
+"identities already fixed"; parts separated by ": "), or (whole) for a citation of the whole records document. P7
+requires the target to exist, in the new tree's records sources and, in the canonical checkout, at HEAD: a tag must be
+a tag of app_provenance.tex (where every tag is defined; app_history.tex defines none), and each part of a heading
+key must be words of a section, subsection or paragraph heading of the records files (app_provenance, app_history,
+app_release_records, app_codebase_records, main_records). So no dropped citation leaves a record unreachable. P8
+compares the citations, keyed the same way, with those printed at THIN_BASE (origin/main before the thinning), read
+from git; outside the canonical checkout P8 cannot run, P6 and P7 still hold, and the verdict word is SKIP (exit 0, as
+for RECORDS-PIN), never PASS. Every kept citation has a ledger row whose N: probe pins it to its sentence, so a
+citation moved to another sentence of its file fails P7.
 
 THE PIN (plan commit 3, 2026-10-21). The posted note cites the records as NoteRecords2026 (technote.bib), whose URL
 names one full commit sha. `pin` requires, in the canonical repository:
@@ -56,7 +78,11 @@ builds a synthetic repository and requires Q1-Q4 each to fire, a good pin to pas
 plants one defect at a time in a copy of the new tree (a dropped strike, a dropped and an edited record paragraph, a
 record paragraph left in the note, an edited reader paragraph, a renamed tag, a lost path, a G and a J label left in
 the note, a struck value in the note, a lost tag pointer, a false ledger probe) and requires the named probe to fire
-on each. Exit 0 only if every plant fires and the real pair is silent.
+on each. Since the thinning it also plants an unlisted tag, heading and whole-document drop (P6, P8 must fire), the
+same tag and heading drops listed in the ledger (the probe must stay SILENT), a listed drop of a tag or of a heading
+the records do not have and a listed drop whose tag left the records (P7 must fire), and a listed drop of a citation
+that is still printed (P8 must fire), and a kept citation moved to another sentence of its file (P7 must fire). Exit 0 only if every plant behaves as named and the real pair is silent. The thinning plants
+need THIN_BASE from git, so the self-test runs in the canonical checkout.
 """
 from __future__ import annotations
 
@@ -81,6 +107,8 @@ RECORD_RANGES = {"app_release": [(122, 173, r"\subsection{Identities already fix
 MOVED_TO = {"app_release_records.tex": "app_release.tex", "app_codebase_records.tex": "app_codebase.tex"}
 CITE = "NoteRecords2026"
 LEDGER = "records-move-ledger.md"
+# origin/main immediately before the records-citation thinning (DECISION-20261022-joseph-note-records-refs-and-stop.md).
+THIN_BASE = "563715b839217e0e4e55993f42e1b223fa2432fb"
 
 
 def printed(text: str) -> str:
@@ -197,8 +225,12 @@ def ledger_rows(ledger: Path) -> list[tuple[str, list[str]]]:
     return rows
 
 
-def probe_fails(inv: dict, new: Path, ledger: Path) -> list[str]:
+def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
+                head: dict[str, str] | None = None, info: dict | None = None) -> list[str]:
+    """Every failure of P0-P8. `thin` is the citation inventory at THIN_BASE (None: P8 is skipped); `head` the records
+    files at HEAD (None: D targets are checked in the new tree only). `info`, if given, receives what ran."""
     fails: list[str] = []
+    info = {} if info is None else info
     note = closure(new / "main_note.tex")
     recs = closure(new / "main_records.tex")
     if len(recs) <= 1:
@@ -240,6 +272,15 @@ def probe_fails(inv: dict, new: Path, ledger: Path) -> list[str]:
         h = hashlib.sha256(p.encode()).hexdigest()[:12]
         if p not in nall and h not in rewritten:
             fails.append(f"P5 READER paragraph {h} neither in the note nor in the ledger as REWRITE: {p[:90]!r}")
+    # The ledger's listed drops (D: probes), keyed as citation_keys keys them; validated under P7.
+    rows = ledger_rows(ledger)
+    drops: Counter = Counter()
+    for rid, probes in rows:
+        for pr in probes:
+            m = re.match(r"D:([\w.]+)::(.+)$", pr, re.S)
+            if m:
+                drops[(m.group(1), drop_key(m.group(2)))] += 1
+    info["drops"] = sum(drops.values())
     # P6 pointers
     tags = set(inv["tags"])
     after = pointers(note, tags, r"\\cite\{" + CITE + r"\}") + pointers(recs, tags, r"\\ref\{app:provenance\}")
@@ -248,22 +289,34 @@ def probe_fails(inv: dict, new: Path, ledger: Path) -> list[str]:
         f, t = key.split("|")
         if t == "(whole)":
             whole_files.add(f)
-        elif after[(f, t)] < n:
+        elif after[(f, t)] + drops[(f, "tag:" + t)] < n:
             fails.append(f"P6 {f}: {n} pointer(s) to tag {t} before, {after[(f, t)]} after ({CITE} citation in "
-                         f"the note, or the same reference in the records)")
+                         f"the note, or the same reference in the records) and {drops[(f, 'tag:' + t)]} listed as "
+                         "dropped in the ledger")
     for f in sorted(whole_files):
-        if f in ntext and f"\\cite{{{CITE}}}" not in ntext[f] and not any(k[0] == f for k in after):
-            fails.append(f"P6 {f}: carried a whole-appendix pointer to App. G and cites {CITE} nowhere after")
+        if (f in ntext and f"\\cite{{{CITE}}}" not in ntext[f] and not any(k[0] == f for k in after)
+                and not drops[(f, "(whole)")]):
+            fails.append(f"P6 {f}: carried a whole-appendix pointer to App. G and cites {CITE} nowhere after, and the "
+                         "ledger lists no (whole) drop for it")
     # P7 ledger probes
-    for rid, probes in ledger_rows(ledger):
+    rec_heads = headings([rtext.get(n, "") for n in RECORD_FILES])
+    rec_tags = set(g_tags(rtext.get("app_provenance.tex", "")))
+    head_heads = headings(list(head.values())) if head is not None else None
+    head_tags = set(g_tags(head.get("app_provenance.tex", ""))) if head is not None else None
+    info["head"] = head is not None
+    for rid, probes in rows:
         if not probes:
             fails.append(f"P7 ledger row {rid} carries no probe")
         for pr in probes:
-            m = re.match(r"([NXR]):([\w.]+)::(.+)$", pr, re.S)
+            m = re.match(r"([NXRD]):([\w.]+)::(.+)$", pr, re.S)
             if not m:
                 fails.append(f"P7 ledger row {rid}: malformed probe {pr[:80]!r}")
                 continue
             kind, fname, text = m.groups()
+            if kind == "D":
+                fails += [f"P7 ledger row {rid}: {x}" for x in
+                          drop_target_fails(fname, text, ntext, rec_tags, rec_heads, head_tags, head_heads)]
+                continue
             pool = rtext if kind == "R" else ntext
             body = norm(pool.get(fname, ""))
             if fname not in pool:
@@ -271,22 +324,50 @@ def probe_fails(inv: dict, new: Path, ledger: Path) -> list[str]:
                              "closure")
             elif (kind == "X") == (norm(text) in body):
                 fails.append(f"P7 ledger row {rid}: probe {kind}:{fname}::{text[:60]!r} does not hold")
+    # P8 the thinning: base citations = printed + listed drops, exactly
+    info["thin"] = thin is not None
+    if thin is not None:
+        now = citation_keys(ntext)
+        info["thin_base"], info["thin_now"] = sum(thin.values()), sum(now.values())
+        for k in sorted(set(thin) | set(drops)):
+            f, key = k
+            gone = max(thin[k] - now[k], 0)
+            if gone > drops[k]:
+                fails.append(f"P8 {f}: {thin[k]} citation(s) of {key} at THIN_BASE {THIN_BASE[:8]}, {now[k]} now, "
+                             f"and the ledger lists {drops[k]} drop(s): an unlisted drop")
+            elif drops[k] > gone:
+                fails.append(f"P8 {f}: the ledger lists {drops[k]} drop(s) of {key}, but only {gone} of the "
+                             f"{thin[k]} citation(s) at THIN_BASE {THIN_BASE[:8]} are gone")
     return fails
 
 
-def report(inv: dict, fails: list[str]) -> str:
-    return (f"RECORDS-MOVE :: {'PASS' if not fails else 'FAIL'} ({len(inv['labels'])} labels, {len(inv['tags'])} "
+def verdict(fails: list[str], info: dict) -> str:
+    """FAIL on any failure; SKIP when P0-P7 are clean but P8 could not run (no THIN_BASE in git: an unlisted heading
+    drop would then be guarded by nothing, so the word must not read as PASS); PASS only when every probe ran."""
+    return "FAIL" if fails else ("PASS" if info.get("thin") else "SKIP")
+
+
+def report(inv: dict, fails: list[str], info: dict | None = None) -> str:
+    info = info or {}
+    thin = (f"; thinning: {info.get('thin_base')} citation keys at {THIN_BASE[:8]}, {info.get('thin_now')} now, "
+            f"{info.get('drops', 0)} listed drops, targets checked {'in the tree and at HEAD' if info.get('head') else 'in the tree only (no HEAD)'}"
+            if info.get("thin") else f"; P8 SKIP (THIN_BASE {THIN_BASE[:8]} not readable from git here), "
+            f"{info.get('drops', 0)} listed drops checked in the tree only")
+    return (f"RECORDS-MOVE :: {verdict(fails, info)} ({len(inv['labels'])} labels, {len(inv['tags'])} "
             f"tags, {len(inv['dead'])} struck bodies, {len(inv['repopaths'])} paths, {len(inv['record_paragraphs'])} "
             f"record and {len(inv['reader_paragraphs'])} reader paragraphs, {sum(inv['g_pointers'].values())} App. G "
-            f"pointers; {len(fails)} failure(s))")
+            f"pointers{thin}; {len(fails)} failure(s))")
 
 
 def probe(base: Path, new: Path, ledger: Path) -> int:
     inv = load_base(base)
-    fails = probe_fails(inv, new, ledger)
+    info: dict = {}
+    fails = probe_fails(inv, new, ledger, thin_base_citations(new), records_at_head(new), info)
     for f in fails:
         print("  FAIL " + f)
-    print(report(inv, fails))
+    print(report(inv, fails, info))
+    # SKIP exits 0, as RECORDS-PIN's SKIP does: outside the canonical checkout (a build copy, an export) the probe
+    # cannot read THIN_BASE, and build_all.sh's scratch builds must not fail for that. The verdict word says SKIP.
     return 1 if fails else 0
 
 
@@ -351,24 +432,120 @@ def headings(texts: list[str]) -> list[str]:
     return out
 
 
+def claims_in_text(text: str) -> list[tuple[list[str], list[str]]]:
+    """(tags, heading parts) for every NoteRecords2026 citation printed in `text` (comments already stripped)."""
+    out = []
+    t = norm(text)
+    for m in re.finditer(r"\\cite\{NoteRecords2026\}", t):
+        rest = t[m.end():m.end() + 300]
+        win = rest[:min([x for x in (rest.find(")"), rest.find(". ")) if x >= 0] or [len(rest)])]
+        tags = re.findall(r"\\texttt\{([a-z0-9-]+)\}", win)
+        parts: list[str] = []
+        if rest.startswith(", "):
+            phrase = mask_math(rest[2:])
+            phrase = re.split(r"\)|;|,|\. |\\\\|\\texttt", phrase)[0]
+            phrase = re.sub(r"\s+and\s*$", "", phrase).strip()
+            if phrase and phrase[0].islower() and not phrase.startswith("which"):
+                parts = [plain(x) for x in phrase.split(": ") if plain(x)]
+        out.append((tags, parts))
+    return out
+
+
 def cited_claims(note: Path) -> list[tuple[str, list[str], list[str]]]:
     """(file, tags, heading parts) for every NoteRecords2026 citation printed in the posted note's closure."""
+    return [(f.name, tags, parts) for f in closure(note / "main_note.tex")
+            for tags, parts in claims_in_text(printed(f.read_text(errors="replace")))]
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The thinning (DECISION-20261022-joseph-note-records-refs-and-stop.md item 1): listed drops and the THIN_BASE count.
+
+def citation_keys(texts: dict[str, str]) -> Counter:
+    """(file, key) counts over {file name: printed text}: one key per tag (tag:<t>), one per heading named
+    (head:<parts joined by ': '>), and (whole) for a citation that names neither."""
+    c: Counter = Counter()
+    for name, text in texts.items():
+        for tags, parts in claims_in_text(text):
+            keys = [f"tag:{x}" for x in tags] + ([f"head:{': '.join(parts)}"] if parts else [])
+            for k in keys or ["(whole)"]:
+                c[(name, k)] += 1
+    return c
+
+
+def drop_key(text: str) -> str:
+    """The key of a D: probe's target: \\texttt{tag} -> tag:tag, (whole) -> (whole), else heading words."""
+    text = norm(text)
+    m = re.fullmatch(r"\\texttt\{([a-z0-9-]+)\}", text)
+    if m:
+        return "tag:" + m.group(1)
+    if text == "(whole)":
+        return "(whole)"
+    return "head:" + ": ".join(plain(x) for x in mask_math(text).split(": ") if plain(x))
+
+
+def drop_target_fails(fname: str, text: str, ntext: dict[str, str], rec_tags: set[str], rec_heads: list[str],
+                      head_tags: set[str] | None, head_heads: list[str] | None) -> list[str]:
+    """Why a listed drop D:<fname>::<text> is invalid: its file is not a posted file, or its target is missing from
+    the records sources of the new tree or (when known) of HEAD."""
     out = []
-    for f in closure(note / "main_note.tex"):
-        t = norm(printed(f.read_text(errors="replace")))
-        for m in re.finditer(r"\\cite\{NoteRecords2026\}", t):
-            rest = t[m.end():m.end() + 300]
-            win = rest[:min([x for x in (rest.find(")"), rest.find(". ")) if x >= 0] or [len(rest)])]
-            tags = re.findall(r"\\texttt\{([a-z0-9-]+)\}", win)
-            parts: list[str] = []
-            if rest.startswith(", "):
-                phrase = mask_math(rest[2:])
-                phrase = re.split(r"\)|;|,|\. |\\\\|\\texttt", phrase)[0]
-                phrase = re.sub(r"\s+and\s*$", "", phrase).strip()
-                if phrase and phrase[0].islower() and not phrase.startswith("which"):
-                    parts = [plain(x) for x in phrase.split(": ") if plain(x)]
-            out.append((f.name, tags, parts))
+    if fname not in ntext:
+        out.append(f"D:{fname}: {fname} is not in the posted note's closure")
+    key = drop_key(text)
+    where = [("the new tree", rec_tags, rec_heads)] + ([("HEAD", head_tags, head_heads)] if head_tags is not None else [])
+    for label, tags, heads in where:
+        if key.startswith("tag:"):
+            if key[4:] not in tags:
+                out.append(f"D:{fname}::{text}: tag {key[4:]} is not a tag of app_provenance.tex in {label}, so the "
+                           "dropped citation's record would be unreachable")
+        elif key.startswith("head:"):
+            for part in key[5:].split(": "):
+                if not part or not any(part in h for h in heads):
+                    out.append(f"D:{fname}::{text}: {part!r} is no heading's words in the records files in {label}")
+        elif key != "(whole)":
+            out.append(f"D:{fname}::{text}: unreadable target")
     return out
+
+
+def _repo_note(new: Path) -> Path | None:
+    """The canonical checkout's top level when `new` is its docs/analysis-note, else None."""
+    top = git(new.resolve(), "rev-parse", "--show-toplevel")
+    if top.returncode != 0:
+        return None
+    toplevel = Path(top.stdout.strip()).resolve()
+    return toplevel if toplevel / "docs" / "analysis-note" == new.resolve() else None
+
+
+def records_at_head(new: Path) -> dict[str, str] | None:
+    """The records files at HEAD, or None outside the canonical checkout."""
+    top = _repo_note(new)
+    if top is None:
+        return None
+    out = {}
+    for name in RECORD_FILES:
+        shown = git(top, "show", f"HEAD:docs/analysis-note/{name}")
+        if shown.returncode == 0:
+            out[name] = shown.stdout
+    return out
+
+
+def thin_base_citations(new: Path) -> Counter | None:
+    """citation_keys of the posted note's closure at THIN_BASE, read from git; None where THIN_BASE is not readable."""
+    top = _repo_note(new)
+    if top is None or git(top, "cat-file", "-e", THIN_BASE + "^{commit}").returncode != 0:
+        return None
+    texts: dict[str, str] = {}
+
+    def walk(name: str) -> None:
+        if name in texts:
+            return
+        shown = git(top, "show", f"{THIN_BASE}:docs/analysis-note/{name}")
+        if shown.returncode != 0:
+            return
+        texts[name] = printed(shown.stdout)
+        for inc in re.findall(r"\\(?:input|include)\{([^}]+)\}", texts[name]):
+            walk(inc if inc.endswith(".tex") else inc + ".tex")
+    walk("main_note.tex")
+    return citation_keys(texts) if texts else None
 
 
 def pin_check(note: Path) -> tuple[str, list[str]]:
@@ -534,7 +711,9 @@ def _drop_paragraph(path: Path, head: str) -> None:
 
 
 PLANTS = [
-    # (name, probe that must fire, file, old, new)  -- old=None appends `new`; a callable edits the file
+    # (name, probe that must fire, file, old, new[, ledger row appended[, ledger row ids removed]])  -- old=None appends
+    # `new`; a callable edits
+    # the file; a probe of None means the plant must leave the probe SILENT (no failure at all)
     ("dropped strike", "P3 \\dead multiset", "app_history.tex", r"$\dead{0.406}$", "$0.406$"),
     ("dropped record paragraph", "P5 RECORD paragraph not verbatim", "app_release_records.tex",
      lambda p: _drop_paragraph(p, r"\paragraph{Conditioning.}"), None),
@@ -556,20 +735,72 @@ PLANTS = [
      "\n\\label{app:history-errata}\n"),
     ("struck value in the note", "P3 the posted note's closure still strikes", "sec_intro.tex", None,
      "\nWas $\\dead{9.876}$.\n"),
-    ("lost tag pointer", "P6 sec_joint.tex", "sec_joint.tex", r"\cite{NoteRecords2026}", r"\cite{AnalysisNote2026}"),
+    # The thinning dropped sec_joint.tex's only citation (ledger L-thin-C41), so this plant moved to a kept one.
+    ("lost tag pointer", "P6 app_statmethods_nd.tex", "app_statmethods_nd.tex", r"\cite{NoteRecords2026}",
+     r"\cite{AnalysisNote2026}"),
     ("false ledger probe", "P7 ledger row", LEDGER, None,
      "\n| L99 | planted | - | `N:sec_intro.tex::this sentence is not printed anywhere` | planted |\n"),
+    # The thinning (DECISION-20261022): a drop is accepted only when the ledger lists it and its target exists.
+    ("unlisted tag drop", "P6 sec_systematics.tex: 1 pointer(s) to tag flux-index", "sec_systematics.tex",
+     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", ""),
+    ("unlisted tag drop, P8", "P8 sec_systematics.tex: 1 citation(s) of tag:flux-index", "sec_systematics.tex",
+     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", ""),
+    ("listed tag drop (silent)", None, "sec_systematics.tex",
+     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", "",
+     "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |", ["L-thin-C64"]),
+    ("unlisted heading drop", "P8 app_statmethods.tex: 1 citation(s) of head:superseded values at",
+     "app_statmethods.tex", "\n(Ref.~\\cite{NoteRecords2026}, superseded values).", "."),
+    ("listed heading drop (silent)", None, "app_statmethods.tex",
+     "\n(Ref.~\\cite{NoteRecords2026}, superseded values).", ".",
+     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values` | planted |", ["L-thin-C22"]),
+    ("unlisted whole-document drop", "P6 app_guide.tex: carried a whole-appendix pointer", "app_guide.tex",
+     "document, Ref.~\\cite{NoteRecords2026};", "document;"),
+    ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_validation.tex::\\texttt{coverage-fixed-truths}",
+     "sec_validation.tex", r"(Ref.~\cite{NoteRecords2026}, \texttt{coverage-fixed-truth})", "",
+     "| L98 | planted | DROP | R1 | `D:sec_validation.tex::\\texttt{coverage-fixed-truths}` | planted |"),
+    ("listed drop whose tag left the records", "P7 ledger row L98: D:sec_systematics.tex::\\texttt{flux-index}: tag",
+     "app_provenance.tex", lambda p: (p.write_text(p.read_text().replace(r"\texttt{flux-index}", r"\texttt{flux-idx}")),
+                                      _unlink_cite(p.parent / "sec_systematics.tex", r"\texttt{flux-index}")), None,
+     "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |"),
+    ("listed drop of a heading the records lack", "P7 ledger row L98: D:sec_systematics.tex::superseded values: "
+     "retired materials", "sec_systematics.tex", r" (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
+     "", "| L98 | planted | DROP | R4 | `D:sec_systematics.tex::superseded values: retired materials` | planted |"),
+    ("kept citation moved within its file (C62)", "P7 ledger row L-thin-C62", "sec_systematics.tex",
+     lambda p: p.write_text(_move_cite(p.read_text(), " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material)",
+                                       "The dependence on the learner is in no block")), None),
+    ("listed drop still printed", "P8 sec_systematics.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
+     "\n| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |\n"),
 ]
+
+
+def _move_cite(text: str, cite: str, sentence: str) -> str:
+    """Move the one occurrence of `cite` to the end of `sentence` (a planted change of a kept citation's position)."""
+    if text.count(cite) != 1 or text.count(sentence) != 1:
+        raise SystemExit(f"self-test plant: {cite!r} or {sentence!r} is not unique")
+    return text.replace(cite, "").replace(sentence, sentence + cite)
+
+
+def _unlink_cite(path: Path, tag: str) -> None:
+    """Remove the one citation of `tag` from `path` (a planted drop)."""
+    t = path.read_text()
+    old = f" (Ref.~\\cite{{NoteRecords2026}}, {tag})"
+    if t.count(old) != 1:
+        raise SystemExit(f"self-test plant: {old!r} occurs {t.count(old)} times in {path.name}")
+    path.write_text(t.replace(old, ""))
 
 
 def self_test(base: Path, new: Path, ledger: Path) -> int:
     inv = load_base(base)
-    failures, fired = [], 0
-    real = probe_fails(inv, new, ledger)
+    failures, fired, silent = [], 0, 0
+    thin, head = thin_base_citations(new), records_at_head(new)
+    if thin is None or head is None:
+        failures.append(f"THIN_BASE {THIN_BASE[:8]} or HEAD is not readable from git for {new}: the thinning plants "
+                        "need the canonical checkout (run the self-test there)")
+    real = probe_fails(inv, new, ledger, thin, head)
     if real:
         failures.append(f"the delivered move is not silent ({len(real)} failure(s)): {real[:3]}")
     with tempfile.TemporaryDirectory() as d:
-        for name, want, fname, old, repl in PLANTS:
+        for name, want, fname, old, repl, *extra in PLANTS:
             work = Path(d) / re.sub(r"\W+", "-", name)
             shutil.copytree(new, work, ignore=shutil.ignore_patterns("*.pdf", "*.aux", "*.log", "*.bcf", "*.bbl",
                                                                      "*.fls", "*.fdb_latexmk", "*.out", "*.toc",
@@ -589,16 +820,29 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
                 continue
             else:
                 target.write_text(text.replace(old, repl, 1))
-            got = probe_fails(inv, work, led)
-            if not any(f.startswith(want) for f in got):
+            if extra:
+                # a real listed drop also retires the kept citation's position row (extra[1]), so the plant does too
+                kept = [l for l in led.read_text().splitlines()
+                        if not any(l.startswith(f"| {rid} |") for rid in (extra[1] if len(extra) > 1 else []))]
+                led.write_text("\n".join(kept) + "\n" + extra[0] + "\n")
+            got = probe_fails(inv, work, led, thin, head)
+            if want is None:
+                if got:
+                    failures.append(f"{name}: expected SILENT, got {got[:3]}")
+                else:
+                    silent += 1
+                    print(f"  silent {name:36} -> no failure")
+            elif not any(f.startswith(want) for f in got):
                 failures.append(f"{name}: expected a failure starting {want!r}, got {got[:3]}")
             else:
                 fired += 1
                 print(f"  fired  {name:36} -> {next(f for f in got if f.startswith(want))[:100]}")
     for f in failures:
         print("  FAIL " + f)
+    n_fire = sum(1 for p in PLANTS if p[1] is not None)
     print(f"RECORDS-MOVE SELF-TEST :: {'PASS' if not failures else 'FAIL'} (delivered move silent: {not real}; "
-          f"{fired} of {len(PLANTS)} planted defects fired their probe)")
+          f"{fired} of {n_fire} planted defects fired their probe; {silent} of {len(PLANTS) - n_fire} listed drops "
+          "stayed silent)")
     return 1 if failures else 0
 
 

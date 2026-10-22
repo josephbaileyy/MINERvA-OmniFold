@@ -12,8 +12,7 @@ training-seed block uses five seed settings that include it.
 % J3/J4 provisional (DECISION-20261018, packet W3: D0 in sec:results-uq, D5 in sec:uq-combine, D10 KI-88 in sec:uq-boot;
 % the scope, conventions and limits in sec:uq-2d-scope). Q = S5 total + C_PL (DECISION-20261017). Seeds:
 % stageC/production/DESIGN.md §3.4 (S1: --seed 42) and §3.5 (seed triplets 42, 45, 48, 51, 54).
-A 3D budget built with the analogous 3D grid construction is not quoted
-(Ref.~\cite{NoteRecords2026}, superseded values: the historical 3D uncertainty budget), and no 4D uncertainty magnitude is reported (\S\ref{sec:4d}).
+A 3D budget built with the analogous 3D grid construction is not quoted, and no 4D uncertainty magnitude is reported (\S\ref{sec:4d}).
 App.~\ref{app:statmethods} gives the full mathematics and worked examples using
 the reported numbers (N-D declarations in App.~\ref{app:statmethods-nd}). The resulting budget and its agreement with the published
 total are in \S\ref{sec:results-uq}; what the covariance includes and omits,
@@ -26,8 +25,7 @@ Detector and model systematics use the July universe sweep: MAT-MINERvA's 44 err
 universes, identical to the published analysis's \texttt{GetStandardSystematics}
 set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
 against a reference central-value unfold with the same estimator and seed, which
-is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-construction};
-Ref.~\cite{NoteRecords2026}, \texttt{rvp1pi}), and holds 43 bands plus the flat normalization.
+is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-construction}), and holds 43 bands plus the flat normalization.
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -67,8 +65,7 @@ before dividing by the 1D central value).
 \paragraph{Flux $1/\Phi$ normalization.}
 Varying $\Phi$ per flux universe in the dominant $\sigma\propto1/\Phi$ term
 gives a Flux band of \SI{\fluxBand}{\percent} with the constraint weights,
-and a combined budget, from our covariance alone, of \SI{\uqMedian}{\percent}. The
-earlier budget's values without the constraint weights and with the CV $\Phi$ are in Ref.~\cite{NoteRecords2026}, superseded values: retired material.
+and a combined budget, from our covariance alone, of \SI{\uqMedian}{\percent}.
 % NR (PHASE2 Q12): 4.99 % (unweighted) and ~1 % (CV Phi) are VL-era diagnostics with no S5 counterpart.
 Target-nucleon normalization
 contributes a fully-correlated rank-1 band of \SI{1.4}{\percent}. The two
@@ -119,13 +116,10 @@ demonstrate a causal efficiency advantage (App.~\ref{sec:rank}).
 The statistical block quoted here has had no coverage test. The fixed-truth
 coverage test (\S\ref{sec:coverage}) found that the statistical band quoted when it
 ran undercovered in its tails, unevenly across bins. That band was later rebuilt,
-and neither it nor the rebuilt band is the block quoted here. The split data/MC
-streams of that earlier, rebuilt bootstrap are in
-Ref.~\cite{NoteRecords2026}, superseded values: retired material, and \texttt{coverage-fixed-truth}. The rebuilt band was
+and neither it nor the rebuilt band is the block quoted here. The rebuilt band was
 only re-evaluated post hoc, on the same pseudo-experiments and partly circularly, and
 has not been tested independently. No coverage test on held-out simulation has
-been run, and no design for one has been registered in advance
-(Ref.~\cite{NoteRecords2026}, \texttt{statband-retest}). Because the fixed-truth
+been run, and no design for one has been registered in advance. Because the fixed-truth
 test's truth equals the prior, it also cannot decide whether the smaller statistical
 block reflects an efficiency gain, regularization bias or undercoverage.
 % plain-language pass, review fix m3 (DECISION-20261018-joseph-plain-language-pass)
@@ -233,7 +227,7 @@ The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
 nonresonant-pion tune, counting it twice. The band is small, \SI{0.088}{\percent},
 but this is a real defect in how the covariance was built; no conclusion about the
 published analysis's implementation follows. The quoted universe block drops Rvp1pi and
-counts the shift once (Ref.~\cite{NoteRecords2026}, \texttt{rvp1pi}).
+counts the shift once.
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92; the sentence already states it). Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct.
@@ -568,8 +562,7 @@ The five-axis covariance used in this note is a separate, later build in which t
 unified-throw covariance is centered on the central value (the CV-centered variant,
 \texttt{cv}; \S\ref{sec:eavailw-construction}). An earlier 5D covariance construction
 used both mean-centered and CV-centered unified throws (\S\ref{sec:uq-combine});
-neither is used, and no magnitude from either is quoted
-(Ref.~\cite{NoteRecords2026}, superseded values: the superseded 5D candidate unified-throw constructions).
+neither is used, and no magnitude from either is quoted.
 % Routed record (formerly App. E \texttt{gbdtfive-macros}; row removed 2026-10-04 because the
 % sentence above rests on App. H, whose struck-values table cites it directly):
 % \repopath{docs/orchestration/PROCEDURE-gbdtFive-macro-update.md}.
