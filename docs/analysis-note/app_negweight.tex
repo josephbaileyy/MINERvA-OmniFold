@@ -13,10 +13,14 @@ recommended for nontrivial backgrounds in Ref.~\cite{Canelli:2025guide}, and the
 natural treatment for the larger backgrounds of the extended-fiducial analysis.
 
 \paragraph{Scope of the numbers.}
-No number here is a quoted uncertainty; the analytic derivation,
-estimand identity and displacement argument require none of them. Every result
-in this note uses the binned purity weight of \S\ref{sec:method-algo}.
-Negative-weight injection serves as an equivalence study and the natural
+No number in this appendix is a quoted uncertainty, and the analytic derivation,
+the estimand identity and the displacement argument require none of them. Every
+cross section and uncertainty quoted in this note uses the binned purity weight of
+\S\ref{sec:method-algo}; the joint-test estimator, used for the generator tests
+(\S\ref{sec:joint5d}) and for the development studies of
+\S\S\ref{sec:val-negweight}--\ref{sec:gbdt-model-dependence}, uses refined
+negative-weight subtraction. Here
+negative-weight injection is an equivalence study and the natural
 extended-fiducial treatment; this appendix establishes no supported production
 path and changes no default. The two
 covariance ratios are agreement diagnostics between two realizations of one
@@ -78,11 +82,13 @@ Ref.~\cite{Nachman:2025staypositive}, then explicitly zero-clip the learned
 refinement factor before step-1 training. Agreement between plain injection
 and clipped refinement depends on the classifier.
 
-For the histogrammed gradient-boosted density estimator used in \emph{this
-comparison}, they agree to the reported median $\nwMedianBin$ at this
-measurement's sub-percent genuine-background scale. This histogram backend (\texttt{hist}) differs from both the LightGBM estimator of the quoted 2D central value and its ensembles, and the exact-split cross-check (\S\ref{sec:method}). This validation therefore establishes the equivalence on a
-third backend, and its transfer to the production configuration is an assumption
-rather than a demonstration.
+With the histogram-based gradient-boosted classifier used in \emph{this
+comparison}, they agree to the reported median per-bin ratio $\nwMedianBin$ at this
+measurement's sub-percent genuine-background scale. This histogram backend is
+neither the LightGBM estimator of the quoted 2D central value and its ensembles
+nor the exact-split cross-check (\S\ref{sec:method}), so the equivalence is
+established on a third backend, and its transfer to the production configuration
+is assumed rather than demonstrated.
 Raw signed weights destabilize an exact-split boosted-tree classifier,
 inflating a full low-$p_T$ cross-section row by up to a factor
 ${\sim}\nwSpRawMax$ where local background is large. Clipped Stay-Positive
@@ -147,7 +153,7 @@ The binned $D-B$ update, negative-weight classification of the measured side,
 and binned OmniFold/Richardson--Lucy correspondence already appear together in
 Ref.~\cite{Andreassen:2021zzk}. Equation~\eqref{eq:negweight-rb} states their
 immediate binwise corollary and its precise validity domain for this analysis.
-It is a consistency check, with no separate method claim.
+It is a consistency check, not a separate method.
 
 \subsection{Closed-form toy}
 \label{sec:negweight-toy}
@@ -245,50 +251,79 @@ binning-independence and the continuous floor are essential.
 \subsection{Which background treatment each production chain uses}
 \label{sec:negweight-footing}
 
-Validation against one another does not make the two subtraction choices
-arbitrary. The production chains choose differently.
+Agreement between the two subtractions does not make the choice between them
+arbitrary, and the production chains choose differently.
 
 \paragraph{The standard \(N\)-dimensional chain uses purity.}
 The entire standard five-dimensional chain uses binned purity
 (\S\ref{sec:method-algo}): the central unfold, $169$ vertical-band unfolds,
-$18$ detector unfolds and $10$ endpoint unfolds of the re-selected lateral bands. Its background treatment is positively identified, with different evidence for existing
-unfolds and current production.
+$18$ detector unfolds and $10$ endpoint unfolds of the re-selected lateral bands. Its background treatment is positively identified, by different evidence for the existing
+unfolds and for current production.
 
-Existing endpoint unfolds from 2026-07 are identified by elimination.
-Neither of the two possible job scripts sets the driver's background-mode option (\texttt{-{}-bkg-mode}); the driver defaults to purity and announces its mode only on its negative-weight code paths. The logs of the lateral-band unfolds contain the purity code path's signature line and no mode announcement. The option and announcements predate the files, making that absence informative without a version gap. Current production fixes the background treatment in a configuration object that rejects every other mode
-(Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-pins}). The standard job script passes the option explicitly from that configuration rather than inheriting the default, and the value is written into the record of every endpoint unfold as it is produced. Stating the previous default explicitly changes the provenance without changing the physics. Its effect is that a future component's background treatment is provable from the component instead of from the absence of an option.
+For the existing endpoint unfolds, produced in July 2026, purity is established by
+elimination. Neither of the two job scripts that could have produced them sets the
+driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its
+default, purity; the driver announces its mode only on its negative-weight code
+paths, and the logs of these lateral-band unfolds contain the purity code path's
+signature line and no mode announcement. The option and the announcements already
+existed when the files were produced, so the absence of an announcement is
+evidence of purity. Current production fixes the background treatment in a
+configuration object that rejects every other mode
+(Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-pins}). The standard job script
+passes the option explicitly from that configuration rather than inheriting the
+default, and the value is written into the record of every endpoint unfold as it
+is produced. This changes how the treatment is documented, not the physics: the
+background treatment of a future component can be read from the component itself
+rather than inferred from the absence of an option.
 
-\textbf{This is a recorded choice, not a silent default} (Ref.~\cite{NoteRecords2026}, \texttt{gbdt-closeout} and
-\texttt{oi6-oi8-oi126}). Two grounds carried it. First, mixing background treatments inside one covariance is worse than either consistent choice: inserting a lateral-band block built with negative-weight subtraction into a central and vertical set built with purity subtraction is a mismatch, not an upgrade. Second, switching required rerunning every unfold above and would have invalidated the flux-corrected covariance (corrected for audit finding J28) chosen for use immediately beforehand. That consequence decided the choice; cost did
-not. The
-decision carries an explicit obligation to revisit the background treatment before submission. It is recorded as such, and nothing in this subsection meets that obligation.
+Purity is \textbf{a recorded choice, not a silent default}
+(Ref.~\cite{NoteRecords2026}, \texttt{gbdt-closeout} and \texttt{oi6-oi8-oi126}),
+made on two grounds. First, mixing background treatments inside one covariance is
+worse than either consistent choice: inserting a lateral-band block built with
+negative-weight subtraction into a central and vertical set built with purity
+subtraction is a mismatch, not an upgrade. Second, switching would have required
+rerunning every unfold above and would have invalidated the flux-corrected
+covariance (corrected for audit finding J28), which had just been chosen for use.
+This consequence, not the computing cost, decided the choice. The choice carries
+an obligation to revisit the background treatment before submission, and that
+obligation has not been met.
 
 \paragraph{What the quoted extended-fiducial number used.}
 The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ in \S\ref{sec:fps}
 was not produced with negative-weight injection (Ref.~\cite{NoteRecords2026}, superseded values).
-It comes from the extended-fiducial ME~FHC battery of 2026-06-10, run before the driver supported negative-weight subtraction. Its ten endpoint unfolds used the driver's purity default and are
-recorded as purity controls, not publication inputs (Ref.~\cite{NoteRecords2026},
-\texttt{fps-battery}, \texttt{negweight-audit}). No extended-fiducial production with refined negative-weight subtraction has been run. The central value from that battery, recorded in the validation ledger with its passed published-region check against the control, remains
-\SI{\fpsSigma}{cm^2/nucleon}. Negative-weight injection is the intended
-extended-fiducial baseline; it did not produce the quoted number.
+It comes from the extended-fiducial ME~FHC battery of 2026-06-10, run before the
+driver supported negative-weight subtraction. Its ten endpoint unfolds used the
+driver's purity default and are recorded as purity controls, not publication inputs
+(Ref.~\cite{NoteRecords2026}, \texttt{fps-battery}, \texttt{negweight-audit}). The
+central value of that battery, \SI{\fpsSigma}{cm^2/nucleon}, is recorded in the
+validation ledger with its passed published-region check against the control. No
+extended-fiducial production with refined negative-weight subtraction has been run,
+so negative-weight injection, the intended extended-fiducial baseline, did not
+produce the quoted number.
 
-\paragraph{The extended-fiducial measurement and its control are designated different background treatments.} The extended-fiducial analysis designates negative-weight injection with Stay-Positive refinement as its background treatment for publication. The code fixes it (Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-pins}), and a check stops the run if any endpoint's recorded mode differs or is missing. What the number in
-\S\ref{sec:fps} actually used is the separate matter stated above;
-the standard chain uses purity throughout. We claim an internally consistent background treatment for each side of the measurement and matched-control pair.
-Uniformity across both is not claimed.
+\paragraph{The extended-fiducial measurement and its control are designated different background treatments.}
+For publication, the extended-fiducial analysis designates negative-weight
+injection with Stay-Positive refinement as its background treatment. The code fixes
+it (Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-pins}), and a check stops the run
+if any endpoint's recorded mode differs or is missing; the number quoted in
+\S\ref{sec:fps} was not produced this way, as stated above. The standard chain uses purity
+throughout. Each side of the measurement and matched-control pair therefore has an
+internally consistent background treatment; uniformity across the two sides is not claimed.
 
 \subsection{Measured size of the background-treatment choice and its scope}
 
 \paragraph{Measured size.}
-At full statistics with LightGBM, the estimator of the quoted 2D central value, on 2D ME~FHC, the covariance difference is one to two percent. The $187$-universe systematic
+On the 2D ME~FHC measurement at full statistics with LightGBM, the estimator of
+the quoted 2D central value, the two covariances differ by one to two percent. The $187$-universe systematic
 $\sqrt{\mathrm{Tr}}$ ratio is $\nwSystRatio$, from
 \SI{2.9828e-39}{cm^2/nucleon} negative-weight and
 \SI{3.0242e-39}{cm^2/nucleon} purity. Matched-seed statistical covariance has
 ratio $\nwStatRatio$, from \SI{1.7260e-40}{cm^2/nucleon} and
-\SI{1.7576e-40}{cm^2/nucleon}, respectively. Real-data totals (histogram backend) agree to \SI{\nwPctTot}{\percent}, with per-bin median $\nwMedianBin$ and
-\SI{\nwRmsBin}{\percent} RMS. These repeat the comparisons in
-\S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq} with explicit operands
-for checking the ratios.
+\SI{1.7576e-40}{cm^2/nucleon}, respectively. With the histogram backend, the
+real-data totals agree to \SI{\nwPctTot}{\percent}, with per-bin median $\nwMedianBin$ and
+\SI{\nwRmsBin}{\percent} RMS. These are the comparisons of
+\S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq}, with the operands of
+each ratio given.
 
 \paragraph{Displacement across universes.}
 The displacement argument rests on a \emph{measured} input; it assumes no
@@ -304,23 +339,31 @@ comparison to the $187$-universe covariance; the full $187$-universe rebuild
 in \S\ref{sec:negweight-uq} tests it at 2D and passes.
 
 \paragraph{Scope.}
-Measured agreement concerns these 2D systematic and statistical covariances at
-the stated configurations. It is not a theorem that the two background treatments give the same covariance, because the underlying estimands are not
-pointwise identical (Ref.~\cite{NoteRecords2026}, superseded values).
-Covariance equivalence for the continuous estimator or in five dimensions is not established.
-The five-dimensional evidence is limited to the following two-universe spot check.
+The measured agreement concerns these 2D systematic and statistical covariances at
+the stated configurations. It is not a theorem that the two background treatments
+give the same covariance, because the underlying estimands are not pointwise
+identical (Ref.~\cite{NoteRecords2026}, superseded values), and covariance equivalence for the continuous estimator or in five
+dimensions is not established. The five-dimensional evidence is limited to the
+following two-universe spot check.
 
 \paragraph{Limits of the five-dimensional evidence.}
-There is no full five-dimensional $187$-universe comparison of the two background treatments at the publication configuration ($5$ iterations, LightGBM). The spot check uses one iteration and the histogram backend on the stored five-dimensional universe file. Under both treatments \texttt{2p2h:0} gives $3.014\times10^{-38}$ with
-per-bin median $1.0005$; \texttt{MaCCQE:0} differs by \SI{-0.03}{\percent}
-with median $0.9990$. Together with the displacement argument and full-statistics
-2D result, this supports quoting the standard chain with purity subtraction and stating its background treatment. It does not support calling the background treatment irrelevant in five dimensions;
-that stronger claim requires the full comparison above. Raw negative weights destabilize the exact-split backend (\S\ref{sec:negweight-estimator}), while the standard chain uses LightGBM. Neither treatment risks that pathology here, making
-the choice safe without establishing that it is immaterial.
+There is no full five-dimensional $187$-universe comparison of the two background
+treatments at the publication configuration ($5$ iterations, LightGBM). The spot
+check uses one iteration and the histogram backend on the stored five-dimensional
+universe file: under both treatments \texttt{2p2h:0} gives $3.014\times10^{-38}$ with
+per-bin median $1.0005$, and \texttt{MaCCQE:0} differs by \SI{-0.03}{\percent}
+with median $0.9990$. Together with the displacement argument and the full-statistics
+2D result, this supports quoting the standard chain with purity subtraction, with
+its background treatment stated. It does not show that the background treatment
+is irrelevant in five dimensions, which would require the full comparison. Raw
+negative weights destabilize the exact-split backend
+(\S\ref{sec:negweight-estimator}), but the standard chain uses LightGBM, so
+neither treatment risks that pathology here; the choice is safe, though not
+shown to be immaterial.
 
 \subsection{Five-dimensional pseudo-experiments with both background treatments}
 
-The five-axis validation (\S\ref{sec:val-fiveaxis})
+The five-dimensional validation (\S\S\ref{sec:val-fiveaxis}--\ref{sec:val-departure})
 reports end-to-end tests of both background treatments: purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity, which is not used for the quoted central values.
 
 \paragraph{Purity bias.}
@@ -329,7 +372,10 @@ close. Subtraction is exact per reconstructed bin, but the widest bin
 ($W\ge\SI{3}{GeV}$, background \SI{13}{\percent} of signal) contains background
 shape resolved by the unbinned classifier and missed by bin-uniform purity.
 The within-bin shape term of \S\ref{sec:negweight-estimator} is therefore
-measurable. It is direct evidence for the obligation in \S\ref{sec:negweight-footing} to revisit the background treatment before submission. Comparing five-dimensional purity with refined negative-weight subtraction on data is the cheapest estimate of its size on data.
+measurable, and it is direct evidence for the obligation of \S\ref{sec:negweight-footing}
+to revisit the background treatment before submission. Comparing five-dimensional
+purity with refined negative-weight subtraction on data is the cheapest estimate of
+its size on data.
 % Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
 % Heading date (2026-09-25) and the numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
 % highest-$W$ column \SIrange{3.5}{4.1}{\percent} low, highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high.
@@ -367,5 +413,13 @@ halves is not the cause.
 % Heading date (2026-09-26) removed. Moved to the pointer above: "The higher-capacity refinement
 % is not adopted: the estimator it feeds failed a stability test on the data (\S\ref{sec:validation})."
 
-\paragraph{Background treatment chosen, its obligation not yet met; covariance choice separate.} Nothing here selects any five-dimensional covariance for use. The lateral-band component from re-selected event loops is built, with five bands and ten endpoint unfolds whose distinct checksums are listed in the record of the product used in this note. One five-axis covariance is used in this note under an exception limited to the file with its checksum (\S\ref{sec:eavailw-adopted}). Neither fact follows from or is needed by this appendix. The choice of background treatment and the choice of covariance are independent; the former removes one blocking decision and leaves every other precondition for using a component in place
-(Ref.~\cite{NoteRecords2026}, \texttt{p4-verifier}).
+\paragraph{Background treatment and choice of covariance.}
+The choice of background treatment and the choice of covariance are independent,
+and nothing in this appendix selects a five-dimensional covariance for use. The
+lateral-band component from re-selected event loops is built, with five bands and
+ten endpoint unfolds whose distinct checksums are listed in the record of the
+covariance used in this note, and that five-axis covariance is used under an
+exception limited to the file with its checksum (\S\ref{sec:eavailw-adopted});
+neither fact follows from this appendix, and the appendix needs neither. The choice of background
+treatment removes one blocking decision and leaves every other precondition for
+using a component in place (Ref.~\cite{NoteRecords2026}, \texttt{p4-verifier}).

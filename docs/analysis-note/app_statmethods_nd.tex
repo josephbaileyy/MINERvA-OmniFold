@@ -3,8 +3,8 @@
 \section{Statistical methods for the multidimensional results and inference}
 \label{app:statmethods-nd}
 
-This appendix holds the conventions for covariances and comparisons beyond the 2D result: rank, ndf
-and finite-ensemble declarations for N-D covariances, the scalar-5D diagnostic reductions and
+This appendix gives the conventions for covariances and comparisons beyond the 2D result: rank, ndf
+and finite-ensemble declarations for N-D covariances, the scalar five-dimensional diagnostic reductions and
 interval definitions, the extended-fiducial band and pull fractions, and inference from unfolded
 events and selected projections. The 2D methods and their worked examples are in
 App.~\ref{app:statmethods}.
@@ -13,12 +13,12 @@ App.~\ref{app:statmethods}.
 \label{sec:nd-declarations}
 
 The 2D justification in \S\ref{sec:chisq} does not transfer to N-D.
-An earlier 5D covariance from the standard production chain, built before $C_Z$ was chosen for use and distinct from it, has
+An earlier 5D covariance from the standard production chain, distinct from $C_Z$ and built before $C_Z$ was chosen for use, has
 $10\,694$ reported bins, effective positive rank $\mathbf{263}$ and infinite
 numerical condition number. Its $4825$-bin 5D$\to$4D projection retains rank
 $263$ exactly. About ${\sim}45$ two-endpoint MAT bands plus statistical and ML
-blocks cannot span $10\,694$ directions. The rank limit follows from the
-construction and is no defect. Quoting $\chi^{2}/n_{\text{reported}}$ would
+blocks cannot span $10\,694$ directions, so the rank limit is a consequence of the
+construction, not a defect. Quoting $\chi^{2}/n_{\text{reported}}$ would
 understate tension by roughly $40\times$ in 5D
 or $18\times$ in 4D.
 
@@ -34,9 +34,9 @@ finite-ensemble treatment or explicit absence of one. Measurements,
 derivation and predeclared rank cut are in Ref.~\cite{NoteRecords2026}
 (\texttt{rank-inversion}).
 
-\paragraph{Why declaration (v), and why it does not yet mandate a correction.}
-Requirements (i)--(iv) do not record block ensemble sizes, allowing
-uncorrected finite-ensemble bias to enter silently. The inverse of a noisy sample covariance is biased
+\paragraph{Finite-ensemble bias of the inverse, and why no correction is prescribed.}
+Without declaration (v), the ensemble sizes of the blocks would go unrecorded,
+and an uncorrected finite-ensemble bias could enter unnoticed. The inverse of a noisy sample covariance is biased
 \emph{upward}: for an unbiased $1/(N-1)$ estimator over $N$ independent Gaussian realizations the
 standard debiasing factor is $(N-p-2)/(N-1)$, and for this analysis's biased $1/N$ production
 convention (universe-mean centered, biased $1/N$) it is
@@ -47,19 +47,19 @@ large by $\simeq2.76$. For fixed residuals this inflates $\chi^{2}$ and
 overstates tension; confidence regions from the same over-tight covariance
 become over-optimistic.
 
-No generic correction is mandated. A sum of about 45 deterministic rank-one
+No generic correction is prescribed. A sum of about 45 deterministic rank-one
 MAT outer products plus statistical and ML blocks has no single debiasing
 factor. The standard factor also assumes independent Gaussian realizations
 and a data-independent truncation dimension, neither established for a
-data-dependent cut. The treatment is to be decided for the covariance and
-inverse actually used, once declaration (v) has recorded the quantities the treatment needs.
+data-dependent cut. The treatment must be chosen for the covariance and
+inverse actually used, from the quantities that declaration (v) records.
 % The cheap half is unconditional: record $N$ beside each block in the construction receipts.
 
 \subsection{Scalar-5D diagnostic reductions and interval definitions}
 \label{sec:gbdt-diagnostic-definitions}
 
-The methodological synthesis in \S\ref{sec:gbdt-model-dependence} uses saved
-products, with no new unfolding, training or pseudo-experiments. Fine-grid
+The synthesis in \S\ref{sec:gbdt-model-dependence} reuses saved outputs; it
+involves no new unfolding, training or pseudo-experiments. Fine-grid
 cross-section densities are converted to integrals by multiplying by all five
 bin widths before aggregation. The saved EW trace functionals are differential
 in $(\Eavail,W)$ and are multiplied by their EW areas; saved J and H2
@@ -71,8 +71,8 @@ $q_3=(0,1.2,2,100)$ and $W=(0,1.4,2.2,100)$; H2 uses interior
 boundaries $(0.7,4.5,0.8,2,1.8)$, respectively, with the same outer
 boundaries. Energy units are GeV and momentum units GeV/$c$. A cell is supported
 when both its expected reconstructed signal and selected truth weight at data
-exposure are at least 1000. This gives 109 J, 27 H2 and 39 EW cells; EW11,
-EW36 and EW37 are omitted only from the later supported-cell summaries.
+exposure are at least 1000. This gives 109 J, 27 H2 and 39 EW cells; the unsupported
+EW11, EW36 and EW37 are omitted from the supported-cell summaries only.
 
 For experiment $i$ and cell $f$,
 \begin{equation}
@@ -80,7 +80,7 @@ For experiment $i$ and cell $f$,
  \bar r_f=\frac1n\sum_i r_{if},\qquad
  s_f^2=\frac1{n-1}\sum_i(r_{if}-\bar r_f)^2.
 \end{equation}
-Stored pseudo-data-source truth varies with the MC split. Thus $s_f$ measures
+The truth of the stored pseudo-data source varies with the MC split, so $s_f$ measures
 relative-residual spread, not unconditional fixed-truth cross-section variance.
 The saved table also reports bias-retaining $\sqrt{n^{-1}\sum_i r_{if}^2}$.
 Pointwise 95\% mean intervals use $t_{0.975,n-1}s_f/\sqrt n$;
@@ -90,7 +90,7 @@ condition on finite simulation and make no simultaneous claim across cells.
 A deterministic noise-free trace from one simulation receives no error band;
 its cell-to-cell variation is not sampling uncertainty.
 
-The historical interval diagnostic uses $\sigma_f$, the sample SD of 100
+The interval diagnostic of the development assessment uses $\sigma_f$, the sample SD of 100
 refitted bootstrap replicas of nominal development experiment 700000.
 Assessment results are scored against $[\hat f_i-\sigma_f,\hat f_i+\sigma_f]$
 and $[\hat f_i-1.96\sigma_f,\hat f_i+1.96\sigma_f]$, without bias correction
@@ -98,9 +98,9 @@ or model envelope. The table gives integer hits, both empirical fractions,
 exact pointwise 95\% binomial intervals and fixed half-width relative to mean
 truth. It conditions on estimated bootstrap widths without propagating
 finite-replica uncertainty. Coverage is not pooled to certify cells.
-The selected examples include a populated
-low-energy cell (EW7) and the previously identified failing corner (EW41), not
-freshly selected validation targets.
+The examples shown are a populated
+low-energy cell (EW7) and the corner cell EW41, already known to fail; they are
+not freshly selected validation targets.
 
 The rounding study keeps the fine-grid membership fixed under uniform input
 perturbations within half a float32 unit in the last place. With 20 base jitters,
@@ -123,12 +123,12 @@ physical uncertainty.
 For prior vertex $v$, data sensitivity is
 $d_{vf}=\hat f_{{\rm data},v}/\hat f_{{\rm data},0}-1$, with envelope
 $h_f=\max_v|d_{vf}|$. Its denominator differs from the simulated residual's.
-Neither $h_f$ nor a closure-residual outer product receives a probability model.
-The reduction package preserves per-cell values, input identities, exclusions
-and the distinction between full products and metadata-free checkpoint
-prefixes. Prefixes use only committed ranges that reproduce the originally recorded values;
-later entries are excluded. The analyst numerically cross-checked the new
-reductions; no fresh independent scientific review of the synthesis is claimed.
+Neither $h_f$ nor an outer product of closure residuals is given a probability model.
+The reductions keep the per-cell values, the identity of each input and the
+exclusions, and distinguish complete outputs from checkpoints that carry no
+metadata. From a checkpoint, only the iterations that reproduce the originally
+recorded values are used; later entries are excluded. The analyst cross-checked
+the reductions numerically; no new independent scientific review of the synthesis is claimed.
 % Reproduction: nd-unfolding/gbdt_model_dependence/{reduce.py,analyze.py,README.md}.
 
 \subsection{Extended-fiducial statistical-band and pull fractions}
@@ -152,7 +152,7 @@ uncertainty. Coherent unfolding replicas could propagate it through the fit.
 Resampling unfolded rows independently is not equivalent to resampling inputs
 and repeating the learned estimator. Classifier and permutation
 goodness-of-fit tests also require null calibration for their fitting and data
-reuse. These are inference requirements, with no new validation result here.
+reuse. These are requirements on such inference, with no new validation result here.
 
 The uncertainty target matters: separate bin or projection coverage does not
 imply simultaneous coverage. A fixed linear projection $y=P x$ propagates
@@ -169,7 +169,7 @@ constraints and do not transfer automatically to a learned response with
 finite simulation and detector nuisances. A rank-deficient forward operator
 is also distinct from a rank-deficient sample covariance; neither truncating
 the latter nor validating a few projections certifies the full distribution.
-Any such benchmark would supplement the required scalar-5D uncertainty construction, not replace the decision to use it.
+Such a benchmark would supplement, not replace, the scalar five-dimensional uncertainty construction that a measurement requires.
 
 % Methods rewrite draft 4 (X5 G9): the self-contained familywise-error derivation. Sources:
 % docs/orchestration/state/2d-closeout/stageF/methods/M2-FWER-RECORD.md:39-74 (bound, certified table, assumptions A1/A2,
