@@ -1,0 +1,401 @@
+{
+ "schema": "ibu1-config/1",
+ "spec": "docs/orchestration/state/2d-closeout/stageF/methods/IBU1-SPEC.md",
+ "declaration": "docs/orchestration/state/2d-closeout/stageF/methods/ibu1/DECLARATION.md",
+ "code_sha256": {
+  "nd-unfolding/s5c_pseudo.py": "d81d4f46fb55f25fdf7ce2e4b9a9a63bf876beaf754bdc250eee974579e11f5d",
+  "nd-unfolding/s5n_pseudo.py": "8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c",
+  "nd-unfolding/s5e_deform.py": "6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f",
+  "nd-unfolding/s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968",
+  "nd-unfolding/xsec_nd.py": "454001f3c9ac3aa6485d184aadb8aba65dd71dba124816962b9c3b6344920fa5",
+  "nd-unfolding/s5e_trace.py": "c47e9dd3feef9eab323e40f4e0da770ad67e86431a1ce95f99a10007decc66c1",
+  "nd-unfolding/s5c_coverage.py": "e47f0d8f5677f53fe80f8d9d44b461788e0677992574877922b462d0e25ce37c",
+  "nd-unfolding/project_cov_nd.py": "c70319c06907d2e099cca908b012025b6343b5d52cf380444a2fcacb594ab976",
+  "nd-unfolding/s5c_samplesize.py": "3e0b3975c0893f1e7506359b1ea956d2beadc0025bc494afca4b4ba8d4c0b6df",
+  "nd-unfolding/uq_math.py": "dde84d0a36b9bb7b2b747b27f3d6b3aa86e9bc004003d20a9f3ac0c0d6bb4977",
+  "nd-unfolding/omnifold_nn_core.py": "24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582",
+  "docs/orchestration/state/next-preparation-20261009/d-id/did.py": "d918c816080a292eecaa0cc182a73906b868bb75189056862cf88d7152c4bbbd"
+ },
+ "did_py": "docs/orchestration/state/next-preparation-20261009/d-id/did.py",
+ "contract": {
+  "path": "docs/orchestration/state/s5c/contract.json",
+  "expect_sha256": "d54fd7c9641901736e58430e666db1ee782a54d9c95bf4439541872567c39c93"
+ },
+ "functionals": {
+  "count": 153,
+  "J_count": 109,
+  "names": "s5c_coverage.reported_functionals: EW0-EW41, EW_all_ones, J<c> x 109, total_integrated"
+ },
+ "inputs": {
+  "of_inputs_5d": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "of_inputs_5d_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "bkg_dump": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "bkg_dump_sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+ },
+ "ratios": {
+  "gibuu": {
+   "path": "docs/orchestration/state/s5n/eavail-ratio-gibuu-over-genie.json",
+   "expect_sha256": "45cc3e0abfe0dfae985113137e54b1d3f3961e86f4d29c454e08a0aa9f1f08a2"
+  },
+  "w1": {
+   "path": "docs/orchestration/state/s5n/eavail-ratio-nuwro-over-genie.json",
+   "expect_sha256": "2a208df97fcd63937587d67098feb542c5e7e6759693bcc0609f0eb5fa0ff767"
+  },
+  "w2": {
+   "path": "docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json",
+   "expect_sha256": "80e16f95702266d0e61b7529c8b5d36a5e4b140cfcde04640606b408c2b1e19b"
+  },
+  "w3": {
+   "path": "docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json",
+   "expect_sha256": "3455daf3ab5321a33314ca9ab51644c34134443cc49168c3be5c06a41d0e87bb"
+  }
+ },
+ "iterations": {
+  "primary": 5,
+  "reported": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   10,
+   20
+  ]
+ },
+ "variants": {
+  "P": {
+   "primary": "pur",
+   "secondary": "fold"
+  },
+  "N": {
+   "primary": "fold",
+   "secondary": "sub"
+  }
+ },
+ "units": [
+  {
+   "name": "P_nominal",
+   "kind": "experiments",
+   "arm": "P",
+   "truth": "nominal",
+   "amplitude": 0.0,
+   "seeds": [
+    200000,
+    200399
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5c-20260924/runs/s_valid/nominal_a0_s{seed}.npz",
+    "seeds": [
+     200000,
+     200399
+    ]
+   }
+  },
+  {
+   "name": "P_tilt",
+   "kind": "experiments",
+   "arm": "P",
+   "truth": "eavail_tilt",
+   "amplitude": 0.2,
+   "seeds": [
+    204000,
+    204399
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5c-20260924/runs/s_valid/eavail_tilt_a0.2_s{seed}.npz",
+    "seeds": [
+     204000,
+     204399
+    ]
+   }
+  },
+  {
+   "name": "P_d1",
+   "kind": "experiments",
+   "arm": "P",
+   "truth": "nominal",
+   "amplitude": 0.0,
+   "pairs": [
+    [
+     1,
+     20260924
+    ],
+    [
+     4,
+     1004
+    ],
+    [
+     5,
+     1005
+    ],
+    [
+     6,
+     1006
+    ],
+    [
+     7,
+     1007
+    ],
+    [
+     8,
+     1008
+    ],
+    [
+     9,
+     1009
+    ],
+    [
+     10,
+     1010
+    ],
+    [
+     11,
+     1011
+    ]
+   ],
+   "comparator": {
+    "paths": {
+     "1": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p3/p3_nominal_s1.npz",
+     "4": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s4.npz",
+     "5": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s5.npz",
+     "6": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s6.npz",
+     "7": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s7.npz",
+     "8": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s8.npz",
+     "9": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s9.npz",
+     "10": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s10.npz",
+     "11": "/pscratch/sd/j/josephrb/s5c-20260924/runs/d1/d1_split_s11.npz"
+    }
+   }
+  },
+  {
+   "name": "P_sigma",
+   "kind": "bootstrap",
+   "arm": "P",
+   "experiment": {
+    "pseudo_seed": 1,
+    "split_key": 20260924
+   },
+   "replicas": [
+    1,
+    200
+   ],
+   "comparator_base": "/pscratch/sd/j/josephrb/s5c-20260924/runs/s_sigma/boot_b1.npz"
+  },
+  {
+   "name": "N_nominal_dev",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "nominal",
+   "amplitude": 0.0,
+   "seeds": [
+    300000,
+    300059
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5n-20260925/runs/dev/nominal_a0_s{seed}.npz",
+    "seeds": [
+     300000,
+     300059
+    ]
+   }
+  },
+  {
+   "name": "N_nominal_val",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "nominal",
+   "amplitude": 0.0,
+   "seeds": [
+    300060,
+    300459
+   ]
+  },
+  {
+   "name": "N_gibuu",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "eavail_shape",
+   "amplitude": 1.0,
+   "ratio": "gibuu",
+   "seeds": [
+    301000,
+    301399
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5n-20260925/runs/dev/eavail_shape_a1_s{seed}.npz",
+    "seeds": [
+     301000,
+     301059
+    ]
+   }
+  },
+  {
+   "name": "N_gibuu_R",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "eavail_shape",
+   "amplitude": 1.0,
+   "ratio": "gibuu",
+   "seeds": [
+    801000,
+    801019
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/eavail_gibuu/eavail_shape_a1_s{seed}.npz",
+    "seeds": [
+     801000,
+     801019
+    ]
+   }
+  },
+  {
+   "name": "N_nominal_R",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "nominal",
+   "amplitude": 0.0,
+   "seeds": [
+    800000,
+    800039
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/nominal/nominal_a0_s{seed}.npz",
+    "seeds": [
+     800000,
+     800039
+    ]
+   }
+  },
+  {
+   "name": "N_w1",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "eavail_shape",
+   "amplitude": 1.0,
+   "ratio": "w1",
+   "seeds": [
+    803000,
+    803399
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/W1/eavail_shape_a1_s{seed}.npz",
+    "seeds": [
+     803000,
+     803019
+    ]
+   }
+  },
+  {
+   "name": "N_w2",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "ratio_nd",
+   "amplitude": 1.0,
+   "ratio": "w2",
+   "seeds": [
+    804000,
+    804399
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/W2/ratio_nd_a1_s{seed}.npz",
+    "seeds": [
+     804000,
+     804019
+    ]
+   }
+  },
+  {
+   "name": "N_w3",
+   "kind": "experiments",
+   "arm": "N",
+   "truth": "ratio_nd",
+   "amplitude": 1.0,
+   "ratio": "w3",
+   "seeds": [
+    805000,
+    805399
+   ],
+   "comparator": {
+    "template": "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess/W3/ratio_nd_a1_s{seed}.npz",
+    "seeds": [
+     805000,
+     805019
+    ]
+   }
+  },
+  {
+   "name": "N_sigma_s5n",
+   "kind": "bootstrap",
+   "arm": "N",
+   "experiment": {
+    "pseudo_seed": 349999,
+    "split_key": 929049861937883
+   },
+   "replicas": [
+    1,
+    200
+   ],
+   "comparator_base": "/pscratch/sd/j/josephrb/s5n-20260925/runs/sigma/boot_b1.npz"
+  },
+  {
+   "name": "N_sigma_R",
+   "kind": "bootstrap",
+   "arm": "N",
+   "experiment": {
+    "pseudo_seed": 700000,
+    "split_key": 1858105032723644
+   },
+   "replicas": [
+    1,
+    100
+   ],
+   "comparator_base": "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/dev/sigma/boot_b1.npz"
+  },
+  {
+   "name": "D_P",
+   "kind": "data",
+   "arm": "P"
+  },
+  {
+   "name": "D_N",
+   "kind": "data",
+   "arm": "N"
+  }
+ ],
+ "resources": {
+  "max_threads_per_task": 2,
+  "cap_cpu_node_h": 10.0
+ },
+ "receipts": {
+  "interim": {
+   "path": "docs/orchestration/state/s5c/tier_s/interim_400.json",
+   "expect_sha256": "aa574c17756ac9cea55306a731728104f7e084621372c8941c91bd9d0aab031f"
+  },
+  "bias_correction": {
+   "path": "docs/orchestration/state/s5c/d1/bias_correction.json",
+   "expect_sha256": "6c49c66c2de7da193d9493698a32a113cedb33d8d6cb4c3aa6c3cdef492fdb89"
+  },
+  "s5n": {
+   "path": "docs/orchestration/state/s5n/stage1/dev_receipt.json",
+   "expect_sha256": "1ef4096c39e2cfb2ded7d7e70c649eebcea09fbd0b31dca97e7b9d16c9878526"
+  },
+  "R": {
+   "path": "docs/orchestration/state/s5e/cand/assess_receipt.json",
+   "expect_sha256": "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c"
+  }
+ },
+ "data_comparators": {
+  "a_root": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+   "object": "hXSecND_flat",
+   "expect_sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+   "configuration": "(a) central-value estimator"
+  },
+  "e_npz": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
+   "object": "xsec_flat",
+   "expect_sha256": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c",
+   "configuration": "(e) joint-test estimator"
+  }
+ }
+}
