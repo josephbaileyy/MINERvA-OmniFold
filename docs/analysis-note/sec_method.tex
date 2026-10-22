@@ -105,7 +105,7 @@ uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the
 training-seed block and the run-period unfolds) use LightGBM with $100$ trees,
 $8$ leaves and learning rate $0.1$, the same settings for the step-1
 classifier, the step-2 classifier and the miss regressor. The central value is the
-universe sweep's own matched central value at seed~42 (its file name and checksum are listed in Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
+universe sweep's own matched central value at seed~42 (Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
 (\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
 training-seed block uses five seed settings that include it (\S\ref{sec:uq-boot},
 \S\ref{sec:uq-ml}). The bootstrap replica mean differs from the central value by a
@@ -362,8 +362,7 @@ marginals; truncating the top edge would break the marginalization checks of \S\
 be revisited without re-running the unfold. App.~\ref{app:release}
 (\S\ref{app:release-edges}) gives all five axes' edges.
 \S\ref{sec:205bins} defines the 205 reported cells; the authoritative
-mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}
-(Ref.~\cite{NoteRecords2026}, \texttt{bin-mapping}).
+mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}.
 
 Neither underflow nor overflow appears in the reported product, by
 construction rather than by truncation. Truth-level muon edges coincide with the
