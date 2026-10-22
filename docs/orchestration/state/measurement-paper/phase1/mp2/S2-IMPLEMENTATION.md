@@ -646,3 +646,109 @@ file's sha256 against harmonize's record.
   1. GiBUU re-harmonization on debug: `harm c gibuu_ch` into `harm_c/`, about 0.03 node-h, with controls N, H0, A
      and Z and H_CH,an rebuilt.
   2. GiBUU `modgates` on code-v8 with `HARM_FIRST=$D/harm_c`, about 0.87 node-h, stopping at 65 min.
+
+## S2 results after the V2/V3 release (2026-10-22)
+
+### GiBUU re-harmonized under R12 (60114995, debug, code-v8, 76 s, 0.02111 CPU node-h)
+
+Receipts are in `s2-receipts/harm_c/`: the filtered `s2_harmonize.controls.json`, whose original's sha256 is in
+`s2_harmonize.json.sha256`, and the job log.
+
+- **Controls:** N, H0, A and Z all pass.
+  - N: xsec to 8.8e-15 and sumw2 to 1.2e-14 relative, with nevt exact.
+  - H0: ρ bitwise.
+  - A: both samples, every field.
+  - Z_h: 0 events above 1 MeV.
+  - H_CH,an is rebuilt: 109 carrying cells, 3 reverted to coarse.
+- **R12 took the decayed branch, and every check passed.**
+  - 15,480 parents in 15,480 events: Λc+ 10,590, D0 1,861, Σc++ 1,143, Σc+ 741, D+ 692, Ds+ 210, Σc0 209, Ξc+ 30
+    and Ξc0 4.
+  - BR sums over the 36 species PYTHIA decayed: ≤ 6.7e-16. Four-momentum: ≤ 8.1e-16 per parent and ≤ 2.0e-16 per
+    event.
+  - 0 PYTHIA errors, no charm in any product, and every product among the 29 Tune species. The table dump is the
+    declared one, `6e0fbd89…`.
+  - Products: π± 31,018, π0 17,668, p 8,651, n 4,067, K± 4,623, K0L 2,448, γ 2,015, μ± 863, e± 842, ν 1,695, and
+    one n̄.
+- **Shifts (descriptive):**
+  - The changed events carry 0.791% of the in-grid rate, matching R12's 7.90e-3.
+  - E_avail in the changed in-grid events: +3.24 GeV (c-weighted mean); quantiles 0.1 / 0.5 / 0.9 are +1.13 /
+    +3.02 / +5.48 GeV.
+  - Species sums, c-weighted, in MeV: p KE +691, π± KE +1,497, EM +1,042, n KE +343. E_other is −4,845, where the
+    charm hadron had sat.
+  - In-grid rate, decayed over undecayed: 1.0000034. One event entered the grid.
+- **Outputs:** `harmonized_gibuu_ch_undecayed.npz` is kept beside the harmonized product for the per-J-cell readout
+  beside A7, which has not been made yet.
+
+### The V2/V3 verdicts (verdict-v2: code-v7 + `mp2_s2_verdict.py` 6e6c1614, as on main; login node, 0 node-h)
+
+- **Order, as declared:**
+  1. `--blind-only` for genie_cv, genie_mec and nuwro_ch. ndf_fine came out at 3670, 3729 and 4354, all ≥ 200. No
+     verdict was written, and the seals were untouched (atime = mtime).
+  2. The full runs.
+  3. For NuWro F_fallback, its seal's stat (`s2-receipts/sealed-stat-atime-nuwro-fallback-before-release.txt`), then
+     blind (ndf 4354), then the full run.
+- **Every run exited 0, and every seal's stat was unchanged across the read.**
+- **Receipts:** `s2-receipts/verdicts/`, with the four verdict files and the eight logs.
+
+The table gives min–max over the five replicas. Bars: V2-fine χ²/ndf ≤ 1.5; V2-J max |pull| ≤ 3.4970; V3 min p_d
+> 0.0125. Every gate must pass on all five replicas.
+
+| G, feature set | V1 | V4 | V2-fine χ²/ndf | V2-J max\|pull\| (cell) | V3 min p_d | S2 |
+|---|---|---|---|---|---|---|
+| genie_cv, primary | pass | pass | 2.338–2.386 | 6.29–6.80 (80, 17) | ≤ 2.8e-9 | **fail** |
+| genie_mec, primary | pass | pass | 2.589–2.781 | 5.81–5.93 (18, 44) | ≤ 2.0e-6 | **fail** |
+| nuwro_ch, primary | fail | fail | 7.04–7.27 | 33.4–34.2 (92) | 0 | **fail** |
+| nuwro_ch, fallback | fail | fail | 5.96–6.26 | 28.9–38.1 | 0 | **fail** |
+
+- **GENIE V3, replica 0, as χ²/ndf and z_max.** Every distribution fails at every replica.
+  - genie_cv: protons above 20 MeV 39.1 and 15.0; neutron KE (V3-n) 33.7 and 11.5; neutrons above 10 MeV 9.7 and
+    5.7; π0 count 8.0 and 4.9.
+  - genie_mec: protons above 20 MeV 21.7 and 9.3; neutron KE 20.5 and 6.9; neutrons above 10 MeV 5.6 and 3.4; π0
+    count 6.4 and 3.6.
+- **J pulls across replicas** (descriptive), mean correlation: 0.998 (cv), 0.997 (mec), 0.994 (NuWro primary) and
+  0.985 (NuWro fallback). The failures are shared by the replicas.
+
+### NuWro F_fallback (tranche B, 60113678, code-v7, 1607 s, 0.44639 CPU node-h): NuWro not established
+
+- **The run:** all four model steps ran together at 115852M each, and models finished in 1138–1468 s. Best iterations
+  were 999 / 1916 / 3000 (min / median / max), 5 at or above 2800, with 59–145 s per model.
+- **V1 fails:** AUC 0.54622 against a control of 0.50277. The V1 fit stopped at 21 trees.
+- **V4 fails on all five replicas:** ESS/N 0.0645–0.1036, max w_G/mean 6,756–9,972.
+- **Other gate fields:** c is 1.0987–1.1058. R6's net identity ratio is 1 + 2.7e-10.
+- **V2/V3:** as in the table.
+- **Consequence:** under the contract's order ("failure again → 'not established' for that G, A7's hybrid result
+  stands"), NuWro is not established, as the director recorded. No further NuWro fits.
+- **Receipts:** `s2-receipts/tranche-b/`, with the gates file, the log and every model's metadata. The seal was
+  released only through the verdict script.
+
+### The power-mismatch diagnostic (DESCRIPTIVE; a test of a hypothesis; it changes no verdict)
+
+The session's reading, approved by the director as a 0 node-h diagnostic: the GENIE classifiers stop early because
+the attainable validation-logloss gain is below its own noise. The test is `mp2_s2_power_diag.py` (1b573aa2). Its
+output is in `s2-receipts/power_diag_primary.json`, and it reads only what the S2 jobs wrote.
+
+| G (primary) | best iteration min/med/max | achieved gain, median (nats) | binned 5D JSD, before reweighting (debiased) | the same after reweighting, replicas 0–4 | gain noise scale |
+|---|---|---:|---:|---:|---:|
+| genie_cv | 29 / 41 / 64 | 0.00816 | 0.00418 | 0.00132–0.00135 | 0.00035 |
+| genie_mec | 14 / 28 / 43 | 0.00319 | 0.00330 | 0.00153–0.00158 | 0.00031 |
+| nuwro_ch | 1548 / 2710 / 2998 | 0.114 | 0.00917 | 0.00719–0.00758 | 0.00044 |
+
+**What it shows, read narrowly:**
+- **The hypothesis as stated is not supported.** The GENIE models' achieved gain is about 10–25× the noise scale.
+  For genie_cv it exceeds the binned 5D JSD alone, so the classifiers learn real information well above noise, in a
+  few dozen trees.
+- **The reweighting removed about two thirds of GENIE's binned 5D discrepancy** (cv 0.0042 → 0.0013, mec 0.0033 →
+  0.0015). The remainder is about 4–5× the noise scale, the size V2 detects at about 1M events. NuWro's was reduced
+  by about 20%.
+- **The approximations:** the debiasing is approximate. The half-sample bias is taken as 4× each side's, and the
+  noise scale is an order of magnitude.
+- **What this record does not decide:** why the early stop leaves that residual, and whether S2's failure is power,
+  features or a genuine closure failure. That goes to Joseph with this record, as the director ruled.
+
+### In progress at writing
+
+- **GiBUU `modgates`** (60115132): code-v8, `HARM_FIRST=harm_c`, stop at 65 min.
+- **GENIE CV and MEC F_fallback** (60115777 and 60115779, tranche B): code-v7, whose GENIE path equals code-v8's,
+  stop at 12.5 min.
+
+**Then, for each:** blind-only, then the full verdict.

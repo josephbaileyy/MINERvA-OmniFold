@@ -1,0 +1,71 @@
+host nid004653 start 2026-10-22T17:00:27Z stage harm
+code /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8
+89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/gen5d_flux_reweight.py
+ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/gen5d_flux_supplement.py
+22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s1_dump.py
+abc80109503f9f77e6cc49a925089c3b0b25c063f4c253599e0bfe458990bb0c  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_charm.py
+d487e345ee334bd1fb23ea4e8569df8c53c49e88dd246af99862a852bd58aa00  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_dump.py
+91c2a64b26192222985326ad7405d9f02e810484d851058cfe196b671cb69d8e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_fit.py
+01168131c570d5c00f80d45ae29a0d0dc24060030dfed5b9bc0d0051f62fd65e  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_harmonize.py
+6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3b_build.py
+47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_build.py
+3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_card.py
+41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp3c_probe.py
+371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp5_genie.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/s5p_stage1_inspect.py
+40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/s5p_truths.py
+98141c2f22f4fc3f2a7f5b30a0c509d6a29a37d145a72ea802623a2a2d6630cd  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/feature_contract_draft.json
+0ba34f5ce11f66a786f48171c04022a5ac45e71d631706907b2027117e92d841  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_job.sh
+8be8325374f7a4b65664202af815a1fa806a6fabe4f24da6914f120393031231  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/code-v8/mp2_s2_slurm_mem.sh
+1                                                                              
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ **                                                                          **
+ **              *......*                  Welcome to the Lund Monte Carlo!  **
+ **         *:::!!:::::::::::*                                               **
+ **      *::::::!!::::::::::::::*          PPP  Y   Y TTTTT H   H III   A    **
+ **    *::::::::!!::::::::::::::::*        P  P  Y Y    T   H   H  I   A A   **
+ **   *:::::::::!!:::::::::::::::::*       PPP    Y     T   HHHHH  I  AAAAA  **
+ **   *:::::::::!!:::::::::::::::::*       P      Y     T   H   H  I  A   A  **
+ **    *::::::::!!::::::::::::::::*!       P      Y     T   H   H III A   A  **
+ **      *::::::!!::::::::::::::* !!                                         **
+ **      !! *:::!!:::::::::::*    !!       This is PYTHIA version 6.426      **
+ **      !!     !* -><- *         !!       Last date of change: 16 Nov 2011  **
+ **      !!     !!                !!                                         **
+ **      !!     !!                !!       Now is 22 Oct 2026 at 10:01:08    **
+ **      !!                       !!                                         **
+ **      !!        lh             !!       Disclaimer: this program comes    **
+ **      !!                       !!       without any guarantees. Beware    **
+ **      !!                 hh    !!       of errors and use common sense    **
+ **      !!    ll                 !!       when interpreting results.        **
+ **      !!                       !!                                         **
+ **      !!                                Copyright T. Sjostrand (2011)     **
+ **                                                                          **
+ ** An archive of program versions and documentation is found on the web:    **
+ ** http://www.thep.lu.se/~torbjorn/Pythia.html                              **
+ **                                                                          **
+ ** When you cite this program, the official reference is to the 6.4 manual: **
+ ** T. Sjostrand, S. Mrenna and P. Skands, JHEP05 (2006) 026                 **
+ ** (LU TP 06-13, FERMILAB-PUB-06-052-CD-T) [hep-ph/0603175].                **
+ **                                                                          **
+ ** Also remember that the program, to a large extent, represents original   **
+ ** physics research. Other publications of special relevance to your        **
+ ** studies may therefore deserve separate mention.                          **
+ **                                                                          **
+ ** Main author: Torbjorn Sjostrand; Department of Theoretical Physics,      **
+ **   Lund University, Solvegatan 14A, S-223 62 Lund, Sweden;                **
+ **   phone: + 46 - 46 - 222 48 16; e-mail: torbjorn@thep.lu.se              **
+ ** Author: Stephen Mrenna; Computing Division, GDS Group,                   **
+ **   Fermi National Accelerator Laboratory, MS 234, Batavia, IL 60510, USA; **
+ **   phone: + 1 - 630 - 840 - 2556; e-mail: mrenna@fnal.gov                 **
+ ** Author: Peter Skands; CERN/PH-TH, CH-1211 Geneva, Switzerland            **
+ **   phone: + 41 - 22 - 767 24 47; e-mail: peter.skands@cern.ch             **
+ **                                                                          **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+CONTROLS gibuu_ch {"N": {"xsec": {"max_rel": 8.810624387478026e-15, "zero_cells_equal": true, "bitwise": false, "pass": true}, "sumw2": {"max_rel": 1.2169960304444675e-14, "zero_cells_equal": true, "bitwise": false, "pass": true}, "nevt_equal": true, "frozen": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3c/out_b/bcheck/mp3c_fine_gibuu_frozen.npz", "pass": true}, "pass": true}
+HARMONIZED gibuu_ch {"n_entries": 3433890, "n_cc": 3423026, "n_in_ps": 1584128, "n_in_grid": 1580043, "n_in_grid_outside_support": 0, "n_W_nan_in_ps": 605, "n_default_mass_cc": 321667, "drawn_alpha_mrad_median": 1.0623350887712313, "in_grid_rate_per_nucleon_cm2": 2.1458091176856096e-38, "in_grid_rate_H_share": 0.04719145940676254, "R12": {"n_events_changed": 15480, "n_changed_in_grid_either": 4471, "n_in_grid_decayed_not_undecayed": 1, "n_in_grid_undecayed_not_decayed": 0, "in_grid_rate_share_changed_decayed": 0.007905466995322864, "eavail_shift_GeV_changed_in_grid_either": {"mean_c_weighted": 3.240890844160059, "quantiles_0.1_0.5_0.9": [1.1272895487631502, 3.0214166547534034, 5.4845654527082495]}, "species_sum_shift_MeV_mean_c_weighted": {"sum_p_KE": 691.2778868277423, "sum_pipm_KE": 1497.1048043704757, "sum_em_E": 1041.9611289167528, "sum_n_KE": 343.13466912738, "E_other": -4844.671123947139}, "in_grid_rate_decayed_over_undecayed": 1.0000033976643186}, "wall_s": 41.9, "hybrid_an_stats": {"coarse_cells_carrying": 109, "coarse_cells_reverted_to_coarse": 3, "fine_cells_resolved": 4089, "fine_cells_fallback": 5726, "N_in_carrying_cells": 2.103237664334857e-38, "N_in_resolved_fine_cells": 1.9078919765461895e-38, "max_abs_coarse_integral_error_rel": 4.440892098500626e-16, "fraction_of_N_in_resolved_fine_cells": 0.907121438959945, "n_min": 20, "clip": [0.1, 10.0], "fallback_clip": [0.0, 10.0], "rho_min": 0.014034251913814806, "rho_max": 9.592884627898258}}
+S2 harmonization done
+harm c rc=0 end 2026-10-22T17:01:33Z
