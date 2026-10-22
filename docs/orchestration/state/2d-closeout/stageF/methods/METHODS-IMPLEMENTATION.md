@@ -714,3 +714,52 @@ Joseph can revert it; `apply_s11.py --revert` also reverses it.
 - `swallowed_text.py` flags 0;
 - the ledger check: 192 rows, 383 probes, 0 failures, and its self-test passes;
 - pages: note 138.
+
+## 19. Round r14 not adopted; the paper's register loop stops (2026-10-21)
+
+**Round r14** (branch `stageF/register-r14-20261021` at `ed117866`, pushed and NOT merged; records in `r14/`).
+- **What it did.** Its theme was "scope inside the claim": each flagged caveat was restated with its scope as the
+  claim's subject or opening phrase.
+- **What it moved to the note,** where each item prints:
+  - the lost-pseudo-experiment counts, to §10.6;
+  - the binned diagnostic's exclusions, to §9.3.
+- **The review** (`r14/REVIEW.md`) found it ADOPT-AFTER-FIXES. Its fixes were applied:
+  - "including the recovered outcomes changes no decision";
+  - A2's independence requirement stated as not shown;
+  - five wording NITs.
+
+**What was scored** (`r14/scores/`, sol2 = gpt-6.1-sol through codex-school2). Each was rated against `4ba0dd2f`, which is r13 plus the
+shortened Data availability (PR #212):
+
+| | sol2 | Gemini |
+|---|---|---|
+| P1, main at `4ba0dd2f` | 3, 3, 3 | 2.5, 2.5, 2.5 |
+| P1, r14 | 3, 3, 3 | 2, 2.5, 2.5 |
+| P2, r14 against main, A/B order | main wins (strength 1) | main wins (strength 2) |
+| P2, r14 against main, B/A order | main wins (strength 1) | r14 wins (strength 2) |
+
+- **Gemini picked document B in both orders,** which is position bias.
+- **sol2 prefers the previous version in both orders.** Under the go/no-go rule (rater-calibration REPORT §4: the new
+  version must win at least 3 of 4), r14 wins 1 of 4. **It is not adopted.** Main keeps r13 plus the Data availability
+  change.
+
+**The stopping rule is met.** DECISION-20261021-joseph-register-loop-2 item 5 stops the loop when the blind
+side-by-side no longer prefers the new version, and here it does not. **The paper's register loop stops.**
+- **P1 with sol** has been 3.00 for r11, r12, r13, main at `4ba0dd2f`, and r14. The published anchors score 3.67.
+- **The shortened Data availability did not move P1** (3, 3, 3), but sol no longer quotes it. Before the change, it
+  quoted it in 3 of 3 runs on r13.
+- **What sol quotes now:**
+  - the hydrocarbon sentence "…are descriptive and do not re-grade the decisions of Table IV…", in 6 of 6 runs on main
+    and r14;
+  - the scoped five-iteration rule, in 3 of 6;
+  - the lost-pseudo-experiment sentence, in 3 of 3 runs on main;
+  - the A2 or design sentence.
+- **Most of these are qualifiers the independent reviews required for accuracy** (r12 R1, r12 B2, r13 S1). The
+  register the rater objects to now comes mostly from the guardrail, not from bookkeeping. Removing them would trade
+  accuracy for score.
+
+**Carried forward:**
+- r14's A2 clause ("A2 also requires the pseudo-experiments … lost independently of their outcomes, which has not been
+  shown") is not on main. Main says the error control holds "under A1 and A2", which is true as read. The note prints
+  the gap in §10.3.
+- r14's branch stays available, if Joseph wants either the clause or r14 itself.

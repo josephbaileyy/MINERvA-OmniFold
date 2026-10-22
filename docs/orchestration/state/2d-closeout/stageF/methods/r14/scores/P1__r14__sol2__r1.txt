@@ -1,0 +1,22 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but repeated caveats, densely qualified sentences, and internal validation bookkeeping give several sections the tone of an analysis report requiring a dedicated language pass.
+
+1. QUOTE: "The band
+rebuilt after that test, also distinct from the quoted block,
+reuses in its simulated part the resampling mechanism of
+those pseudo-experiments, so a post hoc rescoring of them
+against it is not an independent coverage test; that rescoring removes the tail undercoverage: 97.7 % fall within two
+standard deviations and 78.1 % within one."
+   REWRITE: A revised band, distinct from the quoted statistical block, contains 97.7 % of standardized residuals within two standard deviations and 78.1 % within one. Because its simulated component uses the pseudo-experiments’ resampling procedure, this retrospective comparison is not an independent coverage test.
+
+2. QUOTE: "On the one seed pair measured, covariances
+from this estimator depend on its random seed: between
+two further covariances built at two seed settings, changing the seed moves the projected uncertainty by about
+6.1 %, against a stability limit of 5 %."
+   REWRITE: For the single pair of training seeds tested, the projected uncertainty differs by about 6.1 %, exceeding the 5 % stability criterion.
+
+3. QUOTE: "These target-corrected evaluations are descriptive and do
+not re-grade the decisions of Table IV, which concern
+each prediction on the target it was generated for and
+stand (Ref. [14], Sec. 10.9)."
+   REWRITE: The target-corrected comparisons are descriptive; the decisions in Table IV apply to each prediction for its original target (Ref. [14], Sec. 10.9).

@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but repeated caveats, dense qualifications, internal terminology, and development and computing records create a report-like register that needs a dedicated language pass.
+1. QUOTE: "Configuration (e) keeps five iterations under a rule fixed before the comparison, because 10, 15, or 20 did not reduce the rule’s measure of model dependence, the largest residual proxy over the development truth changes (Ref. [14], Sec. 9.4)."
+   REWRITE: Configuration (e) uses five iterations, selected by a criterion specified before the comparison: increasing the number to 10, 15, or 20 did not reduce the largest estimated residual across the truth deformations used to develop the estimator (Ref. [14], Sec. 9.4).
+2. QUOTE: "The pseudo-experiments that computing time limits interrupted or prevented (224 for calibration, 53 for power) were rerun; none reaches the observed statistic in any test or shifted null, so no assignment of the lost outcomes changes any decision (Ref. [14], Sec. 10.6)."
+   REWRITE: The decisions are unchanged for any assignment of outcomes to the 224 calibration and 53 power pseudo-experiments affected by computing limits (Ref. [14], Sec. 10.6).
+3. QUOTE: "These target-corrected evaluations are descriptive and do not re-grade the decisions of Table IV, which concern each prediction on the target it was generated for and stand (Ref. [14], Sec. 10.9)."
+   REWRITE: The target-corrected comparisons are descriptive; Table IV reports the decisions for each prediction on its original target (Ref. [14], Sec. 10.9).
