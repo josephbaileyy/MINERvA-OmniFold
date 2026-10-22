@@ -17,8 +17,8 @@ decide.
 
 **NOT CITABLE FOR:**
 - byte identity beyond size: adler32 identity for the 448 1B–1P MC files is from 2026-10-14 (§2);
-- the RHC tuples' branches: no RHC file was opened;
-- anything inside the 2.6 GB flux-and-reweight tarball;
+- RHC branches beyond the two files listed in §7;
+- the tarball's file contents beyond names and sizes (§7): nothing was unpacked;
 - the public files staying as they are;
 - any physics effect or cost not marked as measured.
 
@@ -38,7 +38,8 @@ decide.
    - Switching therefore means re-downloading 0.964 TB and re-making every product, 2D benchmark included, for a
      change confined to 1A.
 3. **RHC is supported by MAT,** but our chain needs:
-   - inputs we do not have: per-playlist RHC flux files, antineutrino RPA tables and RHC kinematic renormalization;
+   - inputs we did not hold: RHC flux files, antineutrino RPA tables and RHC kinematic renormalization. §7 (added
+     later the same day) finds all of them in the release's parameter tarball, now on `$PSCRATCH`;
    - about 80 lines of code changes;
    - new antineutrino generator samples for GENIE, NuWro and GiBUU;
    - and above all a new validation of the method, in a sample with a different hadronic system (neutron-led) and
@@ -194,8 +195,8 @@ Our sites are cited from `origin/main` `40a08681`, and spot-checked at `7ea30e3d
 |---|---|---|---|
 | **Selection: muon charge** | the reco cut `minos_trk_qp < 0` (μ⁻) becomes the μ⁺ sign | `runEventLoopOmniFold.cpp:1715` (`reco::IsNeutrino`); diagnostics `intensity.py:105`, `triage/scripts/pair.py:54`, `probe.py:77` | 1 + 3 lines |
 | **Signal definition** | truth ν̄_μ CC (`mc_incoming` = −14, μ⁺); the analysis PDG drives the flux and RPA weights | `runEventLoopOmniFold.cpp:1700,1717`, `runEventLoop.cpp:350`; `nd-unfolding/bkg_channel_split.py:14,22-26,115-122` | about 10 lines |
-| **Flux** | MAT supports RHC: per-playlist `minervame5A`…`6J` names (`FluxReweighter.cxx:1979-2000`), a ν̄ flux branch, and the FHC+RHC+IMD constraint already on disk (`sorted_NuEConstraint_FHC_RHC_IMD.txt`). **We hold no RHC flux file**: our flux set is `flux-{g4numiv6,gen2thin}-pdg{±12,±14}-minervame{1D,1M,1N}` only | `util/GetFluxIntegral.cpp` (upstream); generator-flux code `gen5d_flux_reweight.py:64,66,234,289-290,302`, `make_flux_for_genie.py:22`, `gen5d_flux_supplement.py:733-734`, `combine_flux_MEFHC.py:28` | per-playlist RHC flux files, `flux-<version>-pdg<pdg>-minervame{5A…6J}[_rearrangedUniverses].root` (`FluxReweighter.cxx:933`), presumably in the tarball; about 10 lines |
-| **Systematics universes** | MAT sets the horn current from the playlist (`MinervaUniverse.cxx:132-184`). The MINOS efficiency and its band take `isFHC()` (`MinosEfficiencySystematics.cxx:48-102`). RPA takes the analysis PDG (`MnvTuneSystematics.cxx:239-244`). Our 44 bands and 187 universes come from `GetStandardSystematics`, with no FHC flag of our own | `runEventLoopOmniFold.cpp:1785,1789` | 0 lines here; **inputs missing**: antineutrino RPA tables (we hold `outNievesRPAratio-nu*` only), RHC `Renorm_Kine_Truth_MinervaME5A…6J` (we hold ME1A–1P), and RHC MINOS-efficiency tables if they are file-based |
+| **Flux** | MAT supports RHC: per-playlist `minervame5A`…`6J` names (`FluxReweighter.cxx:1979-2000`), a ν̄ flux branch, and the FHC+RHC+IMD constraint already on disk (`sorted_NuEConstraint_FHC_RHC_IMD.txt`). **We hold no RHC flux file**: our flux set is `flux-{g4numiv6,gen2thin}-pdg{±12,±14}-minervame{1D,1M,1N}` only | `util/GetFluxIntegral.cpp` (upstream); generator-flux code `gen5d_flux_reweight.py:64,66,234,289-290,302`, `make_flux_for_genie.py:22`, `gen5d_flux_supplement.py:733-734`, `combine_flux_MEFHC.py:28` | per-playlist RHC flux files, `flux-<version>-pdg<pdg>-minervame{5A…6J}[_rearrangedUniverses].root` (`FluxReweighter.cxx:933`). **In the tarball (§7):** 5A and 6A, and MAT maps 6B–6J to 6A. About 10 lines |
+| **Systematics universes** | MAT sets the horn current from the playlist (`MinervaUniverse.cxx:132-184`). The MINOS efficiency and its band take `isFHC()` (`MinosEfficiencySystematics.cxx:48-102`). RPA takes the analysis PDG (`MnvTuneSystematics.cxx:239-244`). Our 44 bands and 187 universes come from `GetStandardSystematics`, with no FHC flag of our own | `runEventLoopOmniFold.cpp:1785,1789` | 0 lines here; **inputs missing**: antineutrino RPA tables (we hold `outNievesRPAratio-nu*` only), RHC `Renorm_Kine_Truth_MinervaME5A…6J` (we hold ME1A–1P), and RHC MINOS-efficiency tables if they are file-based. **§7:** the RPA and renormalization files are in the tarball, and the MINOS ν̄ correction is in MAT's code |
 | **Backgrounds** | larger wrong-sign (ν_μ) and NC shares in RHC. ν̄ on hydrogen (ν̄p → μ⁺n) is part of the CH signal. The final state is neutron-led, so E_avail sees less of the hadronic energy | `bkg_channel_split.py` (wrong-sign = −14 today) | logic, about 8 lines, plus physics review |
 | **Event loop and dumpers** | 52 py/sh files hard-code the 12 FHC playlists; the download path names `MediumEnergy_FHC`; `MEFHC` appears in 984 lines of 374 files (cosmetic) | e.g. `sbatch_evloop_array.sh:27`, `download_playlist.sh:5,25` | about 55 lines |
 | **Generators** | antineutrino samples: GENIE `-p -14`, NuWro `beam_particle = -14`, GiBUU `process_ID = -2`. `gibuu_to_xsec3d.py:9` assumes μ⁻ | `run_gevgen.sh:42`, `run_nuwro.sh:28`, `run_gen5d_supplement.sh:59`, `mp3b_job.sh:54`, `mp3b_jobA.sh:57`, `gibuu_mefhc_numu.job:46` | about 7 lines, plus an RHC flux for each generator and new production runs |
@@ -257,7 +258,8 @@ real purges on 2026-06-08 and 2026-08-03 (`preservation-20261014/REPORT.md:85-90
 | D. RHC as a second measurement | 4.87 TB, staged | about 1.1 TiB peak | event loops about 5 node-h per 11-endpoint set; generator productions not priced | a new validation of the method | after a validated method and after the 6F fix, as the director read it |
 
 **Three read-only steps would remove the main unknowns.** Each is small and outside this brief, so each needs
-approval:
+approval. The director approved steps 1 and 2, which are done (§7), and turned step 3 into a dated follow-up
+(below), rather than a standing job:
 1. **Fetch the 2.6 GB parameter tarball** (not data or MC) and list it, to confirm the RHC flux, RPA and
    renormalization files.
 2. **Open one RHC MC file and one RHC data file over xrootd** and list their trees and branches, against the FHC
@@ -274,6 +276,69 @@ approval:
   vendored here were read upstream, not in the copy we build.
 - **The FHC-switch compute is an order of magnitude from analogous ledgered work,** not a pricing.
 
+## 7. Follow-up results (2026-10-22, the director's approval of steps 1 and 2)
+
+Both steps used 0 node-h and ran on a Perlmutter login node. The outputs are in `/pscratch/sd/j/josephrb/data-survey-20261022/`
+(the director's path), and copies of everything except the tarball are in `outputs/followup/`.
+
+### The flux-and-parameter tarball
+
+- **Fetched** with `xrdcp`: 22:33:01Z to 22:33:18Z, 2,596,125,261 B, equal to the listed size.
+  - adler32 `56612178` locally, equal to the server's `query checksum`.
+  - sha256 `aa75e6296d1baf58d31ee507b54388ada8bf7ba9ea9bf0ee7c1f4225457d77ca` (`tarball.sha256`).
+  - It was **listed with `tar tzvf`, not unpacked** (`tarball_listing.txt`): 1,821 entries, of which 1,665 are regular
+    files, totalling 3,135,450,852 B.
+- **Our 64 non-CVS flux and parameter files** (from the ANATUPLE manifest) are all in it, at the same sizes.
+- **RHC flux:** 40 files, for `minervame5A`, `minervame6A` and `minervame5A6AWeightedAve`.
+  - Each comes in `gen2thin` and `g4numiv6`, for pdg ±12 and ±14.
+  - The ν–e-constrained `_rearrangedUniverses` set that MAT uses (`FluxReweighter.cxx:907`) exists for 5A and 6A:
+    16 files.
+  - MAT's `GetPlaylistEnum` (`FluxReweighter.cxx:2086`; RHC branch `:2136-2157`) maps 5A to 5A and **6B–6J to 6A**,
+    as it maps 1A–1F to 1D. So the RHC flux inputs are complete for all 11 playlists.
+- **Antineutrino RPA:** `outNievesRPAratio-anu{12C,16O,56Fe,208Pb}-20GeV-20170202.root` are present, beside the `nu`
+  set we hold.
+- **RHC kinematic renormalization:** `Renorm_Kine_Truth_MinervaME<PL>_v10_HD_withElastics_RwgtNeutronCV_z5991-8408_a850.root`
+  is present for each of 5A and 6A–6J (11 of 11). It is the same variant our FHC chain uses for 1A–1P. The tarball
+  holds 76 RHC renormalization files in all.
+- **MINOS efficiency:** the antineutrino correction is coded in MAT itself (`MinosMuonEfficiencyCorrection.cxx:62`,
+  `MAT-MINERvA` `5bf46c53`), not read from a file.
+- **So the §3 "inputs missing" rows are resolved.** The release supplies every RHC parameter input that §3 names. What
+  remains is code (about 80 lines), generator productions and validation.
+
+### Branches: RHC against FHC
+
+`scripts/list_branches.py` (sha256 `d51f5324…`) opens one file and lists each TTree's branches (name, leaf type, leaf
+count) and its entry count. It reads no entries. It ran under `root_6_28`, on two RHC files over xrootd and two FHC
+files from our scratch copy (1B, which is size- and adler32-identical to the release):
+
+| file | trees: entries, branches | bytes read |
+|---|---|---:|
+| RHC MC 5A `run00123000` (xrootd) | MasterAnaDev 91,702, 4,190; Truth 230,128, 560; Meta 1, 4 | 5,930,495 |
+| RHC data 5A `run00019500` (xrootd) | MasterAnaDev 9,859, 3,687; Meta 1, 3 | 473,800 |
+| FHC MC 1B `run00111000` (local) | MasterAnaDev 184,276, 4,190; Truth 545,637, 560; Meta 1, 4 | 12,957,894 |
+| FHC data 1B `run00010068` (local) | MasterAnaDev 17,930, 3,687; Meta 1, 3 | 647,026 |
+
+**The diff** (`scripts/diff_branches.py`, `outputs/followup/branch_diff.json`): **none**.
+- In every tree, the RHC and FHC branch lists match: the same names, in the same order, with the same leaf types and
+  leaf counts.
+- No branch is in only one of them.
+- The schema is therefore not an obstacle to RHC. Our chain's branch reads (§3) exist unchanged.
+- The bytes read confirm that this was metadata: about 6 MB, against an 8.7 GB file.
+
+**This is two files.** It does not show every RHC file has this schema. The 6F MC files, about twice the size of the
+others, were not opened.
+
+## Follow-ups
+
+- **Re-list the release on or after 2026-11-22,** one month after this survey.
+  - Run `xrdfs fndcadoor.fnal.gov:1095 ls -l -R` over `/pnfs/fnal.gov/usr/minerva/persistent/OpenData/<area>` for the
+    six areas, then `scripts/release_inventory.py` and `scripts/compare_fhc.py`.
+  - Diff the results against `outputs/release_inventory.json` and `outputs/fhc_compare.json`.
+  - Look for three things: 6F MC replaced (any 6F mtime after 2026-01-09), the announced late-2026 re-release
+    (FHC sizes or mtimes changed), and LE posted.
+  - This is not a standing job, since no session persists that long. **The next session that picks this record up
+    runs it** and adds a dated section here.
+
 ## Evidence (`outputs/`, `scripts/`)
 
 - `outputs/playlist-lists/`: the 50 playlist lists as served, with `_urls.txt`.
@@ -286,3 +351,9 @@ approval:
 - `outputs/fhc_compare.json`, from `scripts/compare_fhc.py`: our manifest against the listing.
 - `outputs/SHA256SUMS`: the checksums of all of the above.
 - **Raw copies on the cluster:** `/pscratch/sd/j/josephrb/measurement-paper/data-survey/`.
+- `outputs/followup/` (§7):
+  - the tarball's listing, sha256, adler32 (local and server) and fetch times;
+  - `branch_targets.txt`, `branches_<rhc|fhc>_<mc|data>_<PL>.json` with logs, and `branch_diff.json`;
+  - checksummed in `outputs/followup/SHA256SUMS`.
+- The tarball itself is at `/pscratch/sd/j/josephrb/data-survey-20261022/` on the cluster. It is subject to the
+  8-week purge rule and can be re-fetched (adler32 above).
