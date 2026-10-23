@@ -33,6 +33,8 @@ SHA=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['vertices'
 case "$mode" in
     prior)   extra=(--prior-ratio "$RF" --expect-prior-ratio-sha256 "$SHA") ;;
     closure) extra=(--closure --closure-ratio "$RF" --expect-closure-ratio-sha256 "$SHA") ;;
+    prior_ref) extra=(--prior-ratio "$RF" --expect-prior-ratio-sha256 "$SHA" \
+                      --bkg-mode negweight-refined --pv2d-refine-400-31) ;;   # the refined arm (binding option a)
     *) echo "[pv2d] bad mode $mode" >&2; exit 2 ;;
 esac
 PROD="$OUT/products/$TASK.root"

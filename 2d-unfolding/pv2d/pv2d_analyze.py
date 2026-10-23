@@ -70,6 +70,11 @@ def main(argv=None):
     ap.add_argument("--vertices", default="genie_mec,nuwro,gibuu",
                     help="comma-separated prior vertices with a data product (the envelope's)")
     ap.add_argument("--nc-only", action="store_true", help="evaluate NC on the pilot product alone")
+    ap.add_argument("--arm", choices=("a", "refined"), default="a",
+                    help="a: E_U's estimator, NC against E_U (1e-5), with PC; refined: RE-2's estimator, products "
+                         "data_ref_*, NC against RE-1's D2 (1e-8), no PC of its own")
+    ap.add_argument("--expect-driver-sha256", default=None,
+                    help="the driver the products were made with (default: this deploy's unfold_2d_pv2d.py)")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     if a.out.exists():
@@ -122,7 +127,7 @@ def main(argv=None):
         ratios[name] = (L.load_ratio(path, sha)[0], sha)
 
     # Every product must come from this deploy's driver and helper, with E_U's estimator settings.
-    expect = {"driverSha256": L.sha256_path(_HERE / "unfold_2d_pv2d.py"),
+    expect = {"driverSha256": a.expect_driver_sha256 or L.sha256_path(_HERE / "unfold_2d_pv2d.py"),
               "omnifoldHelperSha256": L.sha256_path(_ROOT / "unbinned_unfolding" / "python" / "omnifold.py"),
               "omnifoldHelperFile": str(_ROOT / "unbinned_unfolding" / "python" / "omnifold.py")}
     declared = {"iters": 5, "use_weights": True, "bkg_mode": "purity", "seed": 42, "estimator": "lgbm",
@@ -130,6 +135,9 @@ def main(argv=None):
                 "closure_reweight": None, "closure_hidden_dpt": False, "closure_alt_universe": None,
                 "flux_hist": "pTmu_reweightedflux_integrated", "flux_universe_file": None,
                 "omnifile": cfg["inputs"]["omnifile"]["path"], "mcfile": cfg["inputs"]["flux_mc"]["path"]}
+    if a.arm == "refined":
+        declared.update(bkg_mode="negweight-refined", pv2d_refine_400_31=True)
+    pre = "data_ref_" if a.arm == "refined" else "data_"
 
     def open_run(tag, flag, vertex):
         path = a.products / f"{tag}.root"
@@ -148,7 +156,9 @@ def main(argv=None):
                 raise SystemExit(f"[FAIL] {tag}: {k} {got} != {v}")
         rc = json.loads(named(g, "runConfig"))
         want = dict(declared, closure=(flag == "closure"))
-        bad = {k: (rc.get(k), v) for k, v in want.items() if rc.get(k) != v}
+        # pv2d_refine_400_31 exists only from the refined-arm driver on; absent means off
+        bad = {k: (rc.get(k), v) for k, v in want.items()
+               if rc.get(k, False if k == "pv2d_refine_400_31" else None) != v}
         if bad:
             raise SystemExit(f"[FAIL] {tag}: run configuration differs from the declared one: {bad}")
         out = {"x": th2(g, "hXSec2D"), "truth": th2(g, "hTruth2D"), "sha256": L.sha256_path(path),
@@ -181,10 +191,18 @@ def main(argv=None):
                           "completeness": ratio_matches(run["completeness"], nom["completeness"],
                                                         np.ones_like(r), f"{tag} hOFCompleteness2D")}
 
-    nom = open_run("data_tune_v1", "prior", "tune_v1")
+    nom = open_run(f"{pre}tune_v1", "prior", "tune_v1")
     x0 = nom["x"].ravel()[cells]
-    nc = L.nominal_control(x0, x_eu.ravel()[cells])
-    runs = {"data_tune_v1": {k: nom[k] for k in nom if k not in HEAVY}}
+    if a.arm == "refined":
+        x_ref = np.load(checked("D2"))["xsec"]
+        if x_ref.shape != (L.NPT, L.NPZ) or not np.array_equal(x_ref > 0, rep):
+            raise SystemExit("[FAIL] D2's shape or reported cells differ from E_U's")
+        nc = L.nominal_control(x0, x_ref.ravel()[cells], tol=1e-8)
+        nc["reference"] = "RE-1 D2 (refined 2D data unfold)"
+    else:
+        nc = L.nominal_control(x0, x_eu.ravel()[cells])
+        nc["reference"] = "E_U"
+    runs = {f"{pre}tune_v1": {k: nom[k] for k in nom if k not in HEAVY}}
     if a.nc_only:   # the pilot's gate: no vertex job is submitted unless this passes
         a.out.write_text(json.dumps({"schema": "pv2d-nc/1", "NC": nc, "runs": runs, "inputs": inputs,
                                      "code": {"pv2d_analyze.py": L.sha256_path(__file__),
@@ -196,21 +214,24 @@ def main(argv=None):
 
     shifts, per_vertex = {}, {}
     for v in a.vertices.split(","):
-        run = open_run(f"data_{v}", "prior", v)
-        check_prior_run(run, f"data_{v}", ratios[v][0])
+        run = open_run(f"{pre}{v}", "prior", v)
+        check_prior_run(run, f"{pre}{v}", ratios[v][0])
         s = L.rel_shift(run["x"].ravel()[cells], x0)
         shifts[v] = s
         sm = L.summary(s)
         per_vertex[v] = dict(sm, argmax_cell=int(cells[sm["argmax"]]), signed_median=float(np.median(s)),
                              integral_shift=float(_integral(run["x"]) / _integral(nom["x"]) - 1.0),
                              shift=s.tolist())
-        runs[f"data_{v}"] = {k: run[k] for k in run if k not in HEAVY}
+        runs[f"{pre}{v}"] = {k: run[k] for k in run if k not in HEAVY}
 
     h, who = L.envelope(shifts)
     hs = L.summary(h)
     env = dict(hs, argmax_cell=int(cells[hs["argmax"]]), dominant_vertex_counts={v: who.count(v) for v in shifts},
                h=h.tolist(), dominant=who)
 
+    if a.arm == "refined":
+        return finish(a, nc, None, "refined arm: no positive control of its own (the PC ran on configuration (a))",
+                      per_vertex, env, h, sig_q, sig_paper, runs, inputs, cells)
     cn = open_run("closure_tune_v1", "closure", "tune_v1")
     floor = L.rel_shift(cn["x"].ravel()[cells], cn["truth_rew_xsec"].ravel()[cells])
     runs["closure_tune_v1"] = {k: cn[k] for k in cn if k not in HEAVY}
@@ -252,8 +273,14 @@ def main(argv=None):
     label = ("measured with a passed positive control" if passed else
              "measured; positive control NOT passed, so h is not evidence about model dependence")
 
-    out = {"schema": "pv2d-readout/1", "estimator": "E_U, configuration (a): LightGBM 100 trees, 8 leaves, lr 0.1, "
-           "--seed 42, purity subtraction, 5 iterations", "cells": cells.tolist(),
+    return finish(a, nc, pc, label, per_vertex, env, h, sig_q, sig_paper, runs, inputs, cells)
+
+
+def finish(a, nc, pc, label, per_vertex, env, h, sig_q, sig_paper, runs, inputs, cells):
+    est = ("E_U, configuration (a): LightGBM 100 trees, 8 leaves, lr 0.1, --seed 42, purity subtraction, 5 iterations"
+           if a.arm == "a" else "RE-2's refined estimator: configuration (a) with --bkg-mode negweight-refined and the "
+           "Stay-Positive refinement classifier at 400 trees / 31 leaves, random_state 45")
+    out = {"schema": "pv2d-readout/1", "arm": a.arm, "estimator": est, "cells": cells.tolist(),
            "controls": {"NC": nc, "PC": pc}, "h_label": label, "vertices": per_vertex, "envelope": env,
            "sigma_Q": {"median": float(np.median(sig_q)), "cells": sig_q.tolist()},
            "sigma_paper": {"median": float(np.median(sig_paper)), "cells": sig_paper.tolist()},
@@ -265,8 +292,8 @@ def main(argv=None):
            "caveat": "h is evidence about model dependence at these vertices, not a per-cell bias bound "
                      "(s5p contract amendment 6, LOW_items.bound_wording)"}
     a.out.write_text(json.dumps(out, indent=1) + "\n")
-    print(json.dumps({"NC": nc, "PC": {"verdict": pc["verdict"],
-                                       **{k: pc["primary"][k] for k in ("n_cells", "corr", "slope")}},
+    print(json.dumps({"NC": nc, "PC": None if pc is None else {
+                          "verdict": pc["verdict"], **{k: pc["primary"][k] for k in ("n_cells", "corr", "slope")}},
                       "h_label": label,
                       "vertices": {v: {k: per_vertex[v][k] for k in ("median", "p90", "max", "integral_shift")}
                                    for v in per_vertex},
