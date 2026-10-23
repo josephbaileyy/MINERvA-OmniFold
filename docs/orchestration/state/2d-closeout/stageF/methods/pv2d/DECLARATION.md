@@ -22,7 +22,7 @@ background subtraction, five iterations, 128 threads. Its source is
 `docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md:18-22`. E_U itself is
 `2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256 `4f5a1b6d44b9e721…`, re-measured on Perlmutter on
 2026-10-23. Its launcher is `2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_full_CV.sh`. The refined estimator
-(RE-2) is not run here; §8 offers it as an option.
+(RE-2) is not run here; §8 offers it as an option. <!-- absence-ok: scope of this declaration (what PV-2D runs), not a claim about other lanes' work -->
 
 ## 2. The design
 
@@ -306,7 +306,7 @@ left as stated, not changed:
   separated from it. The OmniFold response to high-frequency structure in the prior is largest where resolution is
   poorest, so h may include a noise term of up to about that size in those cells. No noise-only run is declared.
 - **The positive control is at one vertex** (NuWro). The linear-response relation is not tested at GENIE+MEC or
-  GiBUU.
+  GiBUU. <!-- absence-ok: scope of this declaration's positive control -->
 - **No coverage statement.** Only E_U's configuration is tested, at one seed (42).
 - **h is a sensitivity** over three vertices, not a hull bound and not a covariance. The 2D-versus-5D comparison is
   the director's.
