@@ -88,8 +88,8 @@ simulation model.
     \midrule
     \pcell{0.40\textwidth}{2D integral within about 1\%; correlated shape difference} & \pcell{0.05\textwidth}{(a)} & \pcell{0.13\textwidth}{published result} & \pcell{0.33\textwidth}{learner chosen after the comparison} & \pcell{0.04\textwidth}{\ref{sec:repro2d-pub}} \\
     \pcell{0.40\textwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.05\textwidth}{(a)} & \pcell{0.13\textwidth}{an earlier band failed coverage} & \pcell{0.33\textwidth}{not independently validated} & \pcell{0.04\textwidth}{\ref{sec:uq2d}} \\
-    \pcell{0.40\textwidth}{3D--5D normalizations agree at about 1--2\%} & \pcell{0.05\textwidth}{(a)} & \pcell{0.13\textwidth}{lower dimensions} & \pcell{0.33\textwidth}{central values only} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
-    \pcell{0.40\textwidth}{background-subtraction bias up to 4\% at high $W$; negative weights remove most} & \pcell{0.05\textwidth}{(c), (d)} & \pcell{0.13\textwidth}{pseudo-data with backgrounds} & \pcell{0.33\textwidth}{purity method kept in the central values} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
+    \pcell{0.40\textwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (a) result to 0.001\%} & \pcell{0.05\textwidth}{(a), (e)} & \pcell{0.13\textwidth}{lower dimensions} & \pcell{0.33\textwidth}{central values only} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
+    \pcell{0.40\textwidth}{background-subtraction bias up to 4\% at high $W$; negative weights remove most} & \pcell{0.05\textwidth}{(c), (d)} & \pcell{0.13\textwidth}{pseudo-data with backgrounds} & \pcell{0.33\textwidth}{purity method kept in the 2D and 5D central values} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
     \pcell{0.40\textwidth}{generator-sized truth changes only partly recovered} & \pcell{0.05\textwidth}{(d), (e)} & \pcell{0.13\textwidth}{generator ratios} & \pcell{0.33\textwidth}{interpreted as regularization bias; in no quoted uncertainty} & \pcell{0.04\textwidth}{\ref{sec:departure}} \\
     \pcell{0.40\textwidth}{statistical intervals miscover under an about 10\% rate reduction} & \pcell{0.05\textwidth}{(c)} & \pcell{0.13\textwidth}{coverage} & \pcell{0.33\textwidth}{source of the residual bias not established} & \pcell{0.04\textwidth}{\ref{sec:coverage}} \\
     \pcell{0.40\textwidth}{seed-dependent covariance; rounding-level instability} & \pcell{0.05\textwidth}{(a), (e)} & \pcell{0.13\textwidth}{seed pair; rounding} & \pcell{0.33\textwidth}{validation criteria not met; spread over seed pairs not measured} & \pcell{0.04\textwidth}{\ref{sec:cov5d}} \\
@@ -282,9 +282,10 @@ iteration count and classifier capacity regularize the unfolding.  The
 nominal settings are the scikit-learn defaults, with LightGBM matched to their
 capacity, and the refinement capacity of the joint-test estimator was chosen in
 simulation closure studies; no hyperparameter search was performed on data.
-The two- to five-observable central values use configuration~(a), the
+The two- and five-observable central values use configuration~(a), the
 central-value estimator (\nsec{sec:method-config}), with the purity-based
-subtraction, whose bias in simulation is given in Sec.~\ref{sec:closure}.  The
+subtraction, whose bias in simulation is given in Sec.~\ref{sec:closure}; the
+three- and four-observable central values use configuration~(e).  The
 two-dimensional central value is that of its systematic-universe ensemble, so
 its covariance is built with the same estimator.  The joint tests use
 configuration~(e), the joint-test estimator, whose negative-weight treatment
@@ -308,7 +309,7 @@ changes (\nsec{sec:gbdt-model-dependence}).
     % The five-observable covariance is the covariance of the five-dimensional central value (note sec_5d.tex,
     % sec:eavailw-adopted); it supplies the band of Fig. 3(b).
     \pcell{0.24\columnwidth}{(a) central value: LightGBM, seed 42 in 2D} & \pcell{0.30\columnwidth}{purity-based subtraction} &
-    \pcell{0.38\columnwidth}{2D--5D central values; 2D and 5D covariances} \\
+    \pcell{0.38\columnwidth}{2D and 5D central values; 2D and 5D covariances; 3D and 4D closures} \\
     \pcell{0.24\columnwidth}{(b) cross-check: scikit-learn exact splits, unseeded} & \pcell{0.30\columnwidth}{purity-based subtraction} &
     \pcell{0.38\columnwidth}{2D cross-check (Sec.~\ref{sec:repro2d})} \\
     \pcell{0.24\columnwidth}{(c) deterministic variant} & \pcell{0.30\columnwidth}{purity-based subtraction} &
@@ -316,7 +317,7 @@ changes (\nsec{sec:gbdt-model-dependence}).
     \pcell{0.24\columnwidth}{(d) as (c), refined} & \pcell{0.30\columnwidth}{negative weights; refinement 100 trees, 8 leaves} &
     \pcell{0.38\columnwidth}{background bias; generator-sized $\Eavail$ change (Figs.~\ref{fig:bkg-residual}, \ref{fig:deformation}a)} \\
     \pcell{0.24\columnwidth}{(e) joint-test estimator} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} &
-    \pcell{0.38\columnwidth}{held-out shapes (Fig.~\ref{fig:deformation}b); precision study; generator tests} \\
+    \pcell{0.38\columnwidth}{3D and 4D central values; held-out shapes (Fig.~\ref{fig:deformation}b); precision study; generator tests} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -478,13 +479,18 @@ only within its parametrized family (\nsec{sec:uq-2d-scope}).
 % Closures: note sec_validation.tex tab:closure-map (3D residual 1.84% of 18.1% injected, ratio 0.102; 4D within
 % 1.1%). Background bias: OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; VL149, VL151, VL152; KNOWN_ISSUES 75.
 % Negative-weight largest (E_avail, W) residual elsewhere 0.387% (EW36), dev_receipt.json grid.C3_nominal.
-Each higher-dimensional central value is checked against the
-lower-dimensional result it extends: the three-, four-, and five-observable marginal normalizations
-agree at the approximately $1$--$2\%$ level.  In three observables, a closure
+Each higher-dimensional result is checked against the lower-dimensional
+result it extends.  In configuration~(a), the four- and five-observable
+marginal normalizations agree at the approximately $1$--$2\%$ level.  For
+configuration~(e), only the three-observable marginal has been compared: its
+area-weighted total agrees with the configuration-(a) two-dimensional result
+to \SI{0.001}{\percent}, a comparison across configurations.
+% Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
+In three observables, a configuration-(a) closure
 test with an injected bump in truth $\Eavail$ leaves a residual of 0.10 of the
 injected change in the $\Eavail$ marginal; in four observables, an injected
 bump in truth $q_{3}$ closes to within \SI{1.1}{\percent} in the $q_{3}$
-marginal (closure studies: \nsec{sec:closure-map}).  These closure tests reweight the simulated signal only.  End-to-end
+marginal, also in configuration~(a) (closure studies: \nsec{sec:closure-map}).  These closure tests reweight the simulated signal only.  End-to-end
 pseudo-experiments that include the purity-based background subtraction
 reproduce the input at nominal truth except in the highest-$W$ cells, which
 are biased by up to \SI{4}{\percent} in simulation, about one quoted standard
@@ -494,6 +500,15 @@ treatment, configuration~(d), reduces it to below \SI{0.3}{\percent} in those
 cells (at most \SI{0.4}{\percent} elsewhere in the projection), leaving up to
 \SI{1}{\percent} in some joint cells; on data the treatments differ by
 at most \SI{1.4}{\percent}.
+% RE-1 integration (DECISION-20261023 item 1): C2, stageF/methods/re1/RE1-REPORT-2.md sec. 2; detail in the note's
+% sec:negweight-footing. The 2D switch is decided, not done.
+In two observables, a closure test with backgrounds (20 pseudo-experiments at
+nominal truth) puts the purity and refined estimates more than one statistical
+standard deviation apart in 14 of the 205 cells, with the purity estimate up to
+5.9 statistical standard deviations from the truth (more than one total
+standard deviation in one cell) and the refined one within 0.44 in every cell;
+the two-dimensional result is being moved to the refined estimator
+(\napp{sec:negweight-footing}).
 
 \subsection{Generator-sized truth changes}
 \label{sec:departure}
@@ -786,8 +801,9 @@ that of a reconstruction-level test.
 \label{sec:central}
 
 % Source of the kept sentence: VL159 (generator comparison at low E_avail).
-These comparisons are descriptive: they use central values of configuration~(a)
-only, and no significance is assigned to them.  GENIE, the MINERvA Tune~v1,
+These comparisons are descriptive: they use central values only, of
+configuration~(e) in three and four observables and configuration~(a) in five, and no
+significance is assigned to them.  GENIE, the MINERvA Tune~v1,
 NuWro, and GiBUU all underpredict the unfolded central value at low $\Eavail$,
 between the quasielastic and $\Delta$ peaks, the region of the established
 low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}
@@ -1083,9 +1099,17 @@ The study's results are the validation findings summarized in
 Table~\ref{tab:findings}, within the scope stated in Sec.~\ref{sec:intro}.  The
 two-dimensional result depends on the learner at the level of one unit of
 $\chi^{2}/\mathrm{ndf}$, and its quoted statistical block has had no coverage
-test.  The higher-dimensional central values use the
-purity-based subtraction, with its bias of up to \SI{4}{\percent} in the
-highest-$W$ cells, and their intervals are not validated.
+test; a closure test with backgrounds puts its purity and refined estimates
+more than one statistical standard deviation apart in 14 of its 205 cells
+(Sec.~\ref{sec:closure}), and it is being moved to the refined estimator.  The
+five-observable central value uses the purity-based subtraction, with its bias
+of up to \SI{4}{\percent} in the highest-$W$ cells, the three- and
+four-observable central values use configuration~(e), and the intervals of the
+higher-dimensional results are not validated.
+% Absence claims read against the registry (RECORDS-RULES rule 4): (a) has no coverage-family row (its 2D statistical
+% block is untested); (e)'s coverage rows (s5e/cand/assess_receipt.json, verdict A_FAIL) fail, so "not validated".
+% Search: configuration (a); (a) central value: LightGBM, seed 42 in 2D; (a) central-value estimator; configuration 1 (note, before register batch b5); LightGBM seed-42 matched CV (2D); LightGBM, 100 trees, 8 leaves, learning rate 0.1, --seed 42, purity subtraction; production 5D estimator (lgbm, five iterations, seed 42) @ 9cf497137947
+% Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
 Section~\ref{sec:limits} relates three of these results to the unfolded
 result retaining part of its prior.
 
