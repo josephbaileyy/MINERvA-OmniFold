@@ -16,11 +16,11 @@ natural treatment for the larger backgrounds of the extended-fiducial analysis.
 No number in this appendix is a quoted uncertainty, and the analytic derivation,
 the estimand identity and the displacement argument require none of them. Every
 cross section and uncertainty quoted in this note uses the binned purity weight of
-\S\ref{sec:method-algo}. Refined negative-weight subtraction is used by
+\S\ref{sec:method-algo}, except the 3D and 4D central values. Refined negative-weight subtraction is used by
 configurations (d) and (e) (\S\ref{sec:method-config}): (d) in the background-bias and
 generator-sized-change studies of \S\ref{sec:val-negweight}, and (e), the joint-test
-estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence} and the
-generator tests (\S\ref{sec:joint5d}).
+estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the
+generator tests (\S\ref{sec:joint5d}) and the 3D and 4D central values (\S\ref{sec:3d}).
 % Note register batch b5, review B1 (director-authorized edit of this sentence only): the uses follow
 % Table tab:estimators-matrix (sec_method.tex) and Table tab:validation-design-5d (sec_5d.tex); the earlier wording gave
 % (e) the development studies of sec:val-negweight, which used (c) and (d).
@@ -288,8 +288,38 @@ subtraction is a mismatch, not an upgrade. Second, switching would have required
 rerunning every unfold above and would have invalidated the flux-corrected
 covariance (corrected for audit finding J28), which had just been chosen for use.
 This consequence, not the computing cost, decided the choice. The choice carries
-an obligation to revisit the background treatment before submission, and that
-obligation has not been met.
+an obligation to revisit the background treatment before submission. That
+revisit is in progress, and the two-dimensional closure test below is its first
+result.
+
+% RE-1 integration (DECISION-20261023 items 1-2): C2 of stageF/methods/re1/RE1-REPORT-2.md sec. 2 (readout_2d_full.json,
+% c2_supplement.json, c2_cells.json), recomputed by the director (RE1-REPORT-2-RULINGS.md); D2 from sec. 3. OI-6: in
+% progress, with C2 as its first result. The 2D switch is decided, not done: the note still prints the purity result.
+\paragraph{A two-dimensional closure test with backgrounds.}
+Twenty pseudo-experiments at nominal truth (the truth model equals the prior),
+with background included and drawn as in the five-dimensional
+pseudo-experiments, were unfolded in two dimensions with the purity subtraction
+and with refined negative-weight subtraction (a 400-tree, 31-leaf refinement),
+both on the same pseudo-data. The yardsticks are the statistical and total
+standard deviations, $\sigma_{\mathrm{stat}}$ and $\sigma_{\mathrm{total}}$, of
+the quoted 2D covariance on its 205 reported cells. The mean difference between
+the two treatments exceeds $1\,\sigma_{\mathrm{stat}}$ in 14 of the 205 cells,
+at most $5.45\,\sigma_{\mathrm{stat}}$, in the cell
+$0.70\le\pT<\SI{0.85}{GeV/c}$, $1.5\le\pPar<\SI{2.0}{GeV/c}$. These cells are
+the whole lowest-$\pPar$ row ($1.5$--\SI{2.0}{GeV/c}) and five cells along the
+high-$\pT$, low-$\pPar$ boundary. In them, the purity estimate's mean residual
+against the truth is $+0.78$ to $+5.89\,\sigma_{\mathrm{stat}}$, above
+$1\,\sigma_{\mathrm{total}}$ in one cell ($1.22$); the refined estimate's mean
+residual is within $\pm0.44\,\sigma_{\mathrm{stat}}$ in every cell. The
+integrated difference between the treatments is \SI{-0.198}{\percent}. In the
+median cell, the pseudo-experiments' own spread is $0.46\,\sigma_{\mathrm{stat}}$
+(purity) and $0.58\,\sigma_{\mathrm{stat}}$ (refined). The test is a closure with 20 pseudo-experiments, not
+a coverage test. On the data, the refined treatment moves the 2D result by at
+most $0.497\,\sigma_{\mathrm{total}}$ per cell (median $0.060$) and its integral
+by \SI{-0.139}{\percent}. The 2D result quoted in this note still uses the purity
+subtraction; it is being moved to the refined estimator, with its covariance and
+its comparison with the published result rebuilt.
+
 
 \paragraph{What the quoted extended-fiducial number used.}
 The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ in \S\ref{sec:fps}
@@ -367,7 +397,7 @@ shown to be immaterial.
 \subsection{Five-dimensional pseudo-experiments with both background treatments}
 
 The five-dimensional validation (\S\S\ref{sec:val-fiveaxis}--\ref{sec:val-departure})
-reports end-to-end tests of both background treatments: purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity, which is not used for the quoted central values.
+reports end-to-end tests of both background treatments: purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity, configuration (e), which gives the 3D and 4D central values but not the quoted 2D and 5D central values.
 
 \paragraph{Purity bias.}
 Purity bias is 8--12 statistical standard deviations; signal-only experiments

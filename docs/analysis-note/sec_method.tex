@@ -70,13 +70,13 @@ reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total
 2D cross section and its systematic and statistical covariances to within
 \SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning
 dependence and suits the extended-fiducial analysis, where backgrounds are
-larger. The quoted central values and uncertainties, including the
-extended-fiducial value, do not use it. Its refined form is the background
+larger. The quoted 2D and 5D central values, all quoted uncertainties and the
+extended-fiducial value do not use it. Its refined form is the background
 treatment of configurations (d) and (e) (\S\ref{sec:method-config}): (d) in the
 background-bias and generator-sized-change studies of \S\ref{sec:val-negweight},
 and (e), the joint-test estimator, in
-\S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence} and the generator
-tests (App.~\ref{app:negweight}).
+\S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the generator
+tests and the 3D and 4D central values (App.~\ref{app:negweight}, \S\ref{sec:3d}).
 % Note register batch b5, review B1: the uses follow Table tab:estimators-matrix and Table tab:validation-design-5d
 % (sec_5d.tex): background closure (c), (d); generator-sized change (d); held-out shapes (e, sec:val-departure);
 % precision study (e, sec:gbdt-model-dependence); test calibration and generator tests (e, sec:joint5d).
@@ -194,8 +194,8 @@ not combined. Three are described in this section:
 \begin{itemize}[itemsep=1pt, topsep=2pt]
   \item (a), the nominal LightGBM configuration above, with
         purity-based background subtraction (\S\ref{sec:method-algo}): the 2D
-        central value (seed~42) and its uncertainty ensembles, and the three- to
-        five-dimensional central values (\S\S\ref{sec:3d}--\ref{sec:eavailw});
+        central value (seed~42) and its uncertainty ensembles, and the
+        five-dimensional central value (\S\ref{sec:eavailw});
   \item (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned
         negative-weight background treatment (App.~\ref{app:negweight}), whose
         refinement classifier has 400 trees and 31 leaves. The negative-weight
@@ -203,7 +203,8 @@ not combined. Three are described in this section:
         column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to
         \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
         removes most of the background-related bias that remains
-        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It is used for the
+        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It gives the 3D
+        and 4D central values (\S\ref{sec:3d}), and it is used for the
         generator tests (\S\ref{sec:joint5d}), the study of generator shapes held
         out of its development (\S\ref{sec:val-departure}) and the precision study
         (\S\ref{sec:gbdt-model-dependence}), and it was selected before the
@@ -213,9 +214,11 @@ not combined. Three are described in this section:
 Configuration (c), the deterministic variant with purity-based subtraction, and
 (d), the same variant with negative weights and a nominal-capacity refinement, are
 used in the background-bias, generator-sized-change and coverage studies listed in
-the table. The central values and their covariance use purity-based
-subtraction: they were produced before the purity bias was found and the
-refinement was developed, and they have not been regenerated with it.
+the table. In two and five dimensions, the central values and their covariances use
+purity-based subtraction: they were produced before the purity bias was found and the
+refinement was developed, and they have not been regenerated with it. The 3D
+and 4D central values have been regenerated with configuration~(e); no 3D or
+4D covariance is quoted.
 
 \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
 \begin{table}[htbp]
@@ -229,7 +232,7 @@ refinement was developed, and they have not been regenerated with it.
     \midrule
     \pcell{0.20\textwidth}{(a) central-value estimator} & \pcell{0.20\textwidth}{LightGBM; seed 42 in two dimensions} &
     \pcell{0.22\textwidth}{purity-based subtraction} &
-    \pcell{0.30\textwidth}{two- to five-observable central values; two- and five-observable covariances (\S\ref{sec:results}, \S\ref{sec:eavailw-adopted})} \\
+    \pcell{0.30\textwidth}{two- and five-observable central values; two- and five-observable covariances (\S\ref{sec:results}, \S\ref{sec:eavailw-adopted})} \\
     \pcell{0.20\textwidth}{(b) exact-split cross-check} & \pcell{0.20\textwidth}{scikit-learn exact splits; seed not fixed} &
     \pcell{0.22\textwidth}{purity-based subtraction} &
     \pcell{0.30\textwidth}{two-observable cross-check (above)} \\
@@ -241,7 +244,7 @@ refinement was developed, and they have not been regenerated with it.
     \pcell{0.30\textwidth}{background bias; generator-sized $\Eavail$ change (\S\ref{sec:val-negweight})} \\
     \pcell{0.20\textwidth}{(e) joint-test estimator} & \pcell{0.20\textwidth}{as (c)} &
     \pcell{0.22\textwidth}{negative weights; refinement classifier 400 trees, 31 leaves} &
-    \pcell{0.30\textwidth}{generator shapes held out of development; precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d})} \\
+    \pcell{0.30\textwidth}{three- and four-observable central values (\S\ref{sec:3d}); generator shapes held out of development; precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d})} \\
     \bottomrule
   \end{tabular}
 \end{table}
