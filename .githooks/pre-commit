@@ -306,8 +306,9 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 #     without a cited WAIVERS.tsv row. Fix: `results_index.py --write` and `git add` its four outputs. Its
 #     --self-test plants a result receipt (must fail), a non-result JSON (must pass) and a rule-7 violation (must
 #     fail) in a throwaway repository with real staging.
-#   - absence claims: an absence claim touching a line ADDED or CHANGED against HEAD (git diff --cached), judged
-#     on its paragraph's joined text, needs `Search: <terms> @ <sha>` in that paragraph. Diff-scoped on purpose:
+#   - absence claims: an absence claim touching a line ADDED or CHANGED against HEAD (git diff --cached; in a merge,
+#     new against EVERY parent), judged on its paragraph's joined text, needs `Search: <terms> @ <sha>` in that
+#     paragraph, or, for a scoping statement, an `absence-ok: <reason>` waiver (counted). Diff-scoped on purpose:
 #     `absence_claims.py --count-existing a84697f3` measures 1594 distinct claim spans in 424 of 831 in-scope
 #     files (joined-paragraph judging, code spans and TeX comments removed), none beside a search line; they are
 #     not re-judged. (The 1569 first recorded here was measured line by line, before code spans were removed.)

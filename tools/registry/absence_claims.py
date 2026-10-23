@@ -24,6 +24,7 @@ against HEAD): lines already in HEAD are not re-judged.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -40,6 +41,8 @@ CODE_SPAN = re.compile(r"`[^`]*`")
 TEX_COMMENT = re.compile(r"(?<!\\)%.*")
 W = r"[\w$\\{}().,'`-]+"  # one word of prose, TeX or markdown
 RESULT = r"(?:results?|measurements?|coverage|closures?|tests?|runs?|stud(?:y|ies)|estimates?|receipts?|evidence|data)"
+# "has had no X" needs a test or measurement noun: "we have no further run planned" is a schedule, not a claim.
+TEST_NOUN = r"(?:tests?|measurements?|coverage|closures?|validations?)"
 # The explicit pattern list. Each entry: (name, regex, one sentence it must fire on). The self-test runs every
 # example, so a pattern cannot be added without a demonstration that it fires.
 ABSENCE_PATTERNS = (
@@ -53,8 +56,8 @@ ABSENCE_PATTERNS = (
      "Coverage under configuration (e) is untested."),
     ("no-coverage", r"\bno\s+(?:{W}\s+)?(?:coverage|closure)\s+(?:test|study|result|measurement|run|check)s?\b".replace("{W}", W),
      "There is no coverage test of these intervals."),
-    ("had-no-test", rf"\b(?:has|have|had)\s+(?:had\s+)?no\s+(?:{W}\s+)?{RESULT}\b"
-                    rf"|\bneither\b[^.;]{{0,80}}?\b(?:has|have)\s+had\s+an?\s+(?:{W}\s+)?{RESULT}\b",
+    ("had-no-test", rf"\b(?:has|have|had)\s+(?:had\s+)?no\s+(?:{W}\s+)?{TEST_NOUN}\b"
+                    rf"|\bneither\b[^.;]{{0,80}}?\b(?:has|have)\s+had\s+an?\s+(?:{W}\s+)?{TEST_NOUN}\b",
      "Neither block has had a coverage test."),
     ("does-not-exist", r"\b(?:does|do|did)\s+not\s+exist\b|\bnon-?existent\b",
      "A development-scale interval for R does not exist."),
@@ -63,8 +66,14 @@ ABSENCE_PATTERNS = (
 )
 _PATS = [(n, re.compile(rx, re.I), ex) for n, rx, ex in ABSENCE_PATTERNS]
 SEARCH_LINE = re.compile(r"\bSearch:\s*\S.*?@\s*([0-9a-f]{7,40})\b")
+# The in-paragraph waiver for a SCOPING statement (about a projection or a method parameter) that is not a claim that
+# a result does not exist: `<!-- absence-ok: <reason> -->` in .md, `% absence-ok: <reason>` in .tex. The reason is
+# required; an empty one is rejected. Waivers are counted in the summary line.
+WAIVER_MD = re.compile(r"<!--\s*absence-ok:(.*?)-->")
+WAIVER_TEX = re.compile(r"(?<!\\)%\s*absence-ok:(.*)$")
+HTML_COMMENT = re.compile(r"<!--.*?-->")
 # Sentences the patterns must NOT fire on (the self-test runs them).
-UNRELATED = ("No change was needed in the driver.", "There is no reason to rerun it.",
+UNRELATED = ("We have no further run planned this week.", "No change was needed in the driver.", "There is no reason to rerun it.",
              "The estimator has no free parameters.", "No, the review found nothing to fix.",
              "It does not change the result.", "The ten hypotheses are not rejected by the test.")
 
@@ -76,7 +85,7 @@ def in_scope(path: str) -> bool:
 def printed(path: str, line: str) -> str:
     """The text judged as a claim: a .tex line without its comment; a .md line without its `code spans` (a quoted
     pattern or command is not a claim)."""
-    return TEX_COMMENT.sub("", line) if path.endswith(".tex") else CODE_SPAN.sub("", line)
+    return TEX_COMMENT.sub("", line) if path.endswith(".tex") else CODE_SPAN.sub("", HTML_COMMENT.sub("", line))
 
 
 def matches(text: str) -> list[str]:
@@ -103,6 +112,32 @@ def added_lines(repo: Path) -> dict[str, list[int]]:
             start, count = int(m.group(1)), int(m.group(2) or "1")
             out.setdefault(path, []).extend(range(start, start + count))
     return {p: v for p, v in out.items() if in_scope(p)}
+
+
+def merge_parents(repo: Path) -> list[str]:
+    """During a merge (MERGE_HEAD present), every parent of the commit being made: HEAD and each MERGE_HEAD line.
+    Otherwise []: the staged diff against HEAD already names exactly the new lines."""
+    path = reglib.git(repo, "rev-parse", "--git-path", "MERGE_HEAD").decode().strip()
+    p = Path(path) if os.path.isabs(path) else repo / path
+    if not p.exists():
+        return []
+    heads = [l.strip() for l in p.read_text().splitlines() if l.strip()]
+    return ["HEAD"] + heads
+
+
+def new_against_parents(repo: Path, path: str, text: str, linenos: list[int], parents: list[str]) -> list[int]:
+    """In a merge, keep only the lines whose text is in NO parent's version of the file: a line that either side
+    already had is not new in this commit and is not judged."""
+    if not parents:
+        return linenos
+    seen: set[str] = set()
+    for rev in parents:
+        try:
+            seen |= set(reglib.git(repo, "show", f"{rev}:{path}").decode("utf-8", errors="replace").split("\n"))
+        except RuntimeError:
+            pass  # the file is new on that side
+    lines = text.split("\n")
+    return [n for n in linenos if 1 <= n <= len(lines) and lines[n - 1] not in seen]
 
 
 def claims(path: str, lines: list[str], lo: int, hi: int):
@@ -135,7 +170,16 @@ def paragraph_bounds(lines: list[str], i: int) -> tuple[int, int]:
     return lo, hi
 
 
-def judge(repo: Path, path: str, text: str, linenos: list[int]) -> list[str]:
+def waiver(path: str, para: list[str]) -> tuple[bool, bool]:
+    """(an absence-ok waiver is present, it gives a non-empty reason) for one paragraph."""
+    rx = WAIVER_TEX if path.endswith(".tex") else WAIVER_MD
+    # A waiver quoted in a `code span` (documentation of the syntax) is not a waiver.
+    reasons = [m.group(1).strip() for l in para for m in [rx.search(l if path.endswith(".tex") else CODE_SPAN.sub("", l))]
+               if m]
+    return bool(reasons), any(reasons)
+
+
+def judge(repo: Path, path: str, text: str, linenos: list[int], stats: dict | None = None) -> list[str]:
     """Bare absence claims touching an added/changed line. Each paragraph holding an added line is judged once,
     on its joined text; a match counts if any line it spans was added or changed."""
     lines = text.split("\n")
@@ -155,8 +199,14 @@ def judge(repo: Path, path: str, text: str, linenos: list[int]) -> list[str]:
         shas = [m.group(1) for l in para for m in [SEARCH_LINE.search(l)] if m]
         if any(commit_exists(repo, sh) for sh in shas):
             continue
+        has_waiver, has_reason = waiver(path, para)
+        if has_reason:
+            if stats is not None:
+                stats["waived"] = stats.get("waived", 0) + len(found)
+            continue
         why = ("its paragraph's search line names no commit of this repository (" + ", ".join(shas) + ")" if shas
-               else "its paragraph carries no 'Search: <terms> @ <sha>' line")
+               else "its absence-ok waiver gives no reason" if has_waiver
+               else "its paragraph carries no 'Search: <terms> @ <sha>' line and no absence-ok waiver")
         by_line: dict[tuple[int, int], list[str]] = {}
         for a, b, name, txt in found:
             by_line.setdefault((a, b), []).append(name)
@@ -169,22 +219,27 @@ def judge(repo: Path, path: str, text: str, linenos: list[int]) -> list[str]:
 
 def check_staged(repo: Path) -> int:
     index = reglib.Index(repo)
-    fails, nfiles, nlines = [], 0, 0
+    fails, nfiles, nlines, stats = [], 0, 0, {"waived": 0}
+    parents = merge_parents(repo)
     for path, linenos in sorted(added_lines(repo).items()):
         text = index.text(path)
         if text is None:
             continue
+        linenos = new_against_parents(repo, path, text, linenos, parents)
         nfiles += 1
         nlines += len(linenos)
-        fails += judge(repo, path, text, linenos)
+        fails += judge(repo, path, text, linenos, stats)
     for f in fails:
         print("  FAIL " + f)
     if fails:
         print("  fix: run `python3 tools/registry/whatis.py \"<estimator or term>\"`, read what it finds, and put its "
-              "last line ('Search: ... @ <sha>') in the same paragraph (in a .tex source, as a % comment) -- or "
-              "drop the claim.")
+              "last line ('Search: ... @ <sha>') in the same paragraph (in a .tex source, as a % comment). If the "
+              "sentence is a scoping statement about a projection or a method parameter, not a claim that a result "
+              "does not exist, mark the paragraph `<!-- absence-ok: <reason> -->` (.md) or `% absence-ok: <reason>` "
+              "(.tex). Keep the sentence: an honest qualifier is what this check protects.")
+    merge = f"; merge: lines already in any of {len(parents)} parents not judged" if parents else ""
     print(f"ABSENCE-CLAIMS :: {nlines} added/changed lines in {nfiles} staged in-scope files checked against "
-          f"{len(_PATS)} patterns; {len(fails)} bare absence claim(s)")
+          f"{len(_PATS)} patterns; {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok){merge}")
     return 1 if fails else 0
 
 
@@ -295,6 +350,45 @@ def self_test() -> int:
         g("add", "-A")
         fails = [x for p, ln in added_lines(t).items() for x in judge(t, p, reglib.Index(t).text(p), ln)]
         expect("out-of-scope path (docs/other/)", bool(fails), False)
+        out.unlink()
+        g("rm", "-q", "--cached", "docs/other/NOTE.md")
+        # The absence-ok waiver, both ways.
+        stats = {"waived": 0}
+        f = staged(md=base + "\nThe projection is unmeasured beyond k = 20.\n<!-- absence-ok: scoping of the "
+                   "projection's range, not a missing result -->\n")
+        expect("absence-ok waiver with a reason", bool(f), False)
+        rec.write_text(base + "\nThe projection is unmeasured beyond k = 20.\n<!-- absence-ok: scoping -->\n")
+        g("add", "-A")
+        judge(t, "docs/orchestration/RECORD-x.md", reglib.Index(t).text("docs/orchestration/RECORD-x.md"),
+              added_lines(t).get("docs/orchestration/RECORD-x.md", []), stats)
+        g("reset", "-q", "--hard", "HEAD")
+        expect("... and the waiver is counted", stats["waived"] == 0, False, f"waived={stats['waived']}")
+        f = staged(md=base + "\nThe projection is unmeasured beyond k = 20.\n<!-- absence-ok: -->\n")
+        expect("absence-ok waiver with an EMPTY reason", bool(f), True, f[0][-90:] if f else "")
+        f = staged(md=base + "\nThe projection is unmeasured beyond k = 20; mark it with `<!-- absence-ok: x -->`.\n")
+        expect("a waiver quoted in a `code span` does not waive", bool(f), True)
+        f = staged(tx="Old prose.\nThe projection is unmeasured beyond k = 20.\n% absence-ok: scoping, not a result\n")
+        expect("absence-ok waiver with a reason in a .tex % comment", bool(f), False)
+        # A REAL merge: a claim that only the other parent had is silent; a claim new in the resolution fires.
+        g("checkout", "-q", "-b", "side")
+        rec.write_text(base + "\nOn the side branch, the coverage study has not been run.\n")
+        g("commit", "-qam", "side adds a claim")
+        g("checkout", "-q", "-")
+        tex.write_text("Old prose.\nMain moves on.\n")
+        g("commit", "-qam", "main moves on")
+        g("merge", "-q", "--no-commit", "--no-ff", "side")
+        parents = merge_parents(t)
+        idx = reglib.Index(t)
+        fm = [x for p, ln in added_lines(t).items()
+              for x in judge(t, p, idx.text(p), new_against_parents(t, p, idx.text(p), ln, parents))]
+        expect("merge: a claim only from the other parent", bool(fm), False, f"parents={len(parents)}")
+        rec.write_text(rec.read_text() + "\nThe resolution adds: this closure was never measured.\n")
+        g("add", "-A")
+        idx = reglib.Index(t)
+        fm = [x for p, ln in added_lines(t).items()
+              for x in judge(t, p, idx.text(p), new_against_parents(t, p, idx.text(p), ln, parents))]
+        expect("merge: a claim new in the merge resolution", bool(fm), True, fm[0][:80] if fm else "")
+        g("merge", "--abort")
     print("ABSENCE-CLAIMS self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 

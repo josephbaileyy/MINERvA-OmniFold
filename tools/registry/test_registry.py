@@ -69,6 +69,9 @@ class Fixture:
         return out.stdout
 
     def write(self) -> None:
+        # Stage the registry tables FIRST: the generator reads the index, so a table changed in the working tree
+        # (by --repoint, say) must be staged before the renderings are generated from it.
+        self.git("add", "docs/orchestration/registry")
         out = run(RI + ["--write", "--repo", str(self.root)])
         assert out.returncode == 0, out.stdout + out.stderr
         self.git("add", "docs/orchestration/registry", "docs/analysis-note/records_results_index.tex",
