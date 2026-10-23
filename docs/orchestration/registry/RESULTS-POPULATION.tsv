@@ -13,6 +13,7 @@ docs/orchestration/state/2d-closeout/stageB/evidence/b-flux/ki91_identity_1N.jso
 docs/orchestration/state/2d-closeout/stageC/production/evidence/production/results/s3.json	included	10	
 docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s3.json	included	2	
 docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/triage/outputs/yields.json	included	1	
+docs/orchestration/state/2d-closeout/stageF/methods/ibu1/receipts/ibu1_read.json	included	80	
 docs/orchestration/state/2d-closeout/stageF/methods/m2-archive/m2_archive_results.json	included	50	
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_gen.json	included	8	
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_mad.json	included	23	
