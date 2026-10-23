@@ -1,0 +1,131 @@
+diff --git a/2d-unfolding/driver_p1.py b/2d-unfolding/re2/re2_driver.py
+index 18d08daa..4c7e9d75 100644
+--- a/2d-unfolding/driver_p1.py
++++ b/2d-unfolding/re2/re2_driver.py
+@@ -11,6 +11,18 @@ runs 2D OmniFold via the RooUnfoldOmnifold C++ wrapper, and extracts the
+ double-differential cross section.
+ 
+ Created: 2026-04-17
++
++RE-2 copy (2d-unfolding/re2/re2_driver.py), made from 2d-unfolding/driver_p1.py (3056e625...) under
++docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-DECLARATION.md. It differs from driver_p1.py
++only in the blocks marked "RE-2"; the committed diff (re2/run/driver.diff) is the record. With none of the
++RE-2 options and --bkg-mode purity it runs driver_p1.py's code path unchanged. The RE-2 additions:
++  * --refine-n-estimators / --refine-num-leaves: the Stay-Positive refinement classifier's size (the
++    driver passes random_state alone, so its refinement is always 100 trees / 8 leaves);
++  * the P1 three-stream / bkg-only bootstrap also on --bkg-mode negweight-refined: the background stream's
++    Poisson(1) factor of each mc_background entry multiplies that entry's injected -w row, the data rows
++    keep +1 x b_data, the signal MC rides b_truth, and the refinement is refitted on the resampled sample;
++  * the OmniFold helper is imported from this checkout (unbinned_unfolding/python), not a fixed path;
++  * the refinement's settings and evidence are written to the output (re2Refinement).
+ """
+ 
+ import argparse
+@@ -372,6 +384,14 @@ def p1_draw_bkg_factors(bootstrap_seed, n_entries):
+     return rng.poisson(1.0, size=int(n_entries)).astype(float)
+ 
+ 
++def re2_injected_entries(rows, pt_lo, pt_hi, pz_lo, pz_hi):  # RE-2
++    """RE-2: the mc_background entry of each row fill_bkg_reco_2d RETURNS, i.e. its fill rows restricted
++    by the same fiducial tests (pt < pt_lo, pt > pt_hi, pz < pz_lo, pz > pz_hi drop the row), in order."""
++    pt, pz = rows["pt"], rows["pz"]  # RE-2
++    keep = ~((pt < pt_lo) | (pt > pt_hi) | (pz < pz_lo) | (pz > pz_hi))  # RE-2
++    return rows["entry"][keep]  # RE-2
++
++
+ def p1_refill_bkg_2d(name, title, rows, b_bkg, pt_edges, pz_edges):
+     """B*: refill the background TH2D as sum b_bkg[entry] * w_pot, in the
+     production fill order (overflow rows included). With b_bkg == 1 every
+@@ -1505,6 +1525,12 @@ def main():
+                           "recomputes the purity from the resampled D* and B*; "
+                           "'bkg' does the same with the data and MC factors "
+                           "all 1. Both need --bootstrap-seed and bkg-mode purity.")
++    ap.add_argument("--refine-n-estimators", type=int, default=None,  # RE-2
++                     help="RE-2: n_estimators of the Stay-Positive refinement classifier "
++                          "(--bkg-mode negweight-refined only; default: the driver's 100).")
++    ap.add_argument("--refine-num-leaves", type=int, default=None,  # RE-2
++                     help="RE-2: num_leaves of the Stay-Positive refinement classifier "
++                          "(--bkg-mode negweight-refined only; default: the driver's 8).")
+     ap.add_argument("--unit-factors", action="store_true",
+                      help="P1 diagnostic, test only: with --bootstrap-streams "
+                           "three|bkg, set all three factor vectors to 1 on the "
+@@ -1581,11 +1607,17 @@ def main():
+     if args.unit_factors and not p1_on:
+         raise SystemExit("[FAIL] --unit-factors requires --bootstrap-streams three|bkg")
+     if p1_on and (args.bootstrap_seed is None or args.closure
+-                  or args.bkg_mode != "purity" or args.universe is not None):
++                  or args.bkg_mode not in ("purity", "negweight-refined")  # RE-2
++                  or args.universe is not None):
+         raise SystemExit(
+             "[FAIL] --bootstrap-streams three|bkg (P1 diagnostic) requires "
+-            "--bootstrap-seed and --bkg-mode purity, and refuses --closure and "
+-            "--universe.")
++            "--bootstrap-seed and --bkg-mode purity or negweight-refined (RE-2), and "
++            "refuses --closure and --universe.")
++    re2_size = {k: v for k, v in (("n_estimators", args.refine_n_estimators),  # RE-2
++                                  ("num_leaves", args.refine_num_leaves)) if v is not None}
++    if re2_size and args.bkg_mode != "negweight-refined":  # RE-2
++        raise SystemExit("[FAIL] RE-2: --refine-n-estimators/--refine-num-leaves need "
++                         "--bkg-mode negweight-refined")
+ 
+     # --closure + --bootstrap-seed: Stage-1 coverage-toy mode. The naive
+     # closure invariant (step-1 reweight = 1 per event) is intentionally
+@@ -2074,6 +2106,7 @@ def main():
+                 b_truth = np.ones_like(b_truth)
+             if args.unit_factors:
+                 b_bkg = np.ones_like(b_bkg)
++        if p1_on and args.bkg_mode == "purity":  # RE-2: D*/B*/purity on the purity path only
+             hDataRecoStar2D = make_th2d("hDataRecoStar2D", "Data reco, resampled (P1 D*)",
+                                         pt_edges, pz_edges)
+             for pt, pz, b in zip(meas_pt, meas_pz, b_data):
+@@ -2134,16 +2167,32 @@ def main():
+               f"reweight structurally.")
+     elif args.bkg_mode == "negweight-refined":
+         n_data = meas_pt.shape[0]
++        if p1_on:  # RE-2: the background stream over the injected rows
++            if n_fakes:
++                raise SystemExit(f"[FAIL] RE-2: {n_fakes} signal fakes; the refined background "
++                                 f"stream supports post-Phase-18 inputs (no fakes) only")
++            inj_entries = re2_injected_entries(p1_bkg_rows, pt_lo, pt_hi, pz_lo, pz_hi)
++            if inj_entries.shape[0] != inj_w.shape[0]:
++                raise SystemExit(f"[FAIL] RE-2: {inj_entries.shape[0]} injected entries for "
++                                 f"{inj_w.shape[0]} injected rows")
++            inj_w = inj_w * b_bkg[inj_entries]
+         sgn_pt = np.concatenate([meas_pt, inj_pt])
+         sgn_pz = np.concatenate([meas_pz, inj_pz])
+         sgn_w = np.concatenate([measured_weights, -inj_w])
+         refine_params = ({"random_state": int(args.seed) + 3}
+                          if args.seed is not None else None)
++        if re2_size:  # RE-2
++            refine_params = {**(refine_params or {}), **re2_size}
+         w_ref, _g_ev, frac_clip = refine_stay_positive(
+             np.column_stack([sgn_pt, sgn_pz]), sgn_w,
+             estimator=args.estimator, device=args.device,
+             params=refine_params, verbose=True)
+         meas_pt, meas_pz, measured_weights = sgn_pt, sgn_pz, w_ref
++        re2_refinement = {"params": refine_params, "clipped_fraction": float(frac_clip),  # RE-2
++                          "signed_sum": float(sgn_w.sum()), "refined_sum": float(w_ref.sum()),
++                          "refined_over_signed": float(w_ref.sum() / sgn_w.sum()),
++                          "n_data": int(n_data), "n_injected": int(inj_pt.shape[0]),
++                          "background_stream": bool(p1_on)}
+         print(f"[INFO] bkg-mode=negweight-refined (Stay Positive, "
+               f"arXiv:2505.03724): refined {sgn_w.shape[0]} signed events "
+               f"({n_data} data + {inj_pt.shape[0]} bkg) to NON-NEGATIVE weights; "
+@@ -2159,11 +2208,16 @@ def main():
+     # explicit numpy arrays gives the correct step2 normalization. See
+     # 2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md for the debug narrative.
+     import sys
+-    _OF_PY = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python"
++    import os  # RE-2: this checkout's helper, not a fixed path
++    _OF_PY = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
++                          "unbinned_unfolding", "python")  # RE-2
+     if _OF_PY not in sys.path:
+         sys.path.insert(0, _OF_PY)
+     from omnifold import OmniFold_helper_functions as ohf
+     provenance = run_provenance(args, sys.modules.get("omnifold"), driver_sha256)
++    if args.bkg_mode == "negweight-refined":  # RE-2
++        import json
++        provenance.append(("re2Refinement", json.dumps(re2_refinement, sort_keys=True)))
+     if p1_on:  # P1 diagnostic: factor-stream record (runConfig holds the flags)
+         import json
+         provenance.append(("p1Streams", json.dumps({
