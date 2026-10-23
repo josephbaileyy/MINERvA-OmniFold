@@ -12,6 +12,7 @@ decides nothing.** Any scope, claim, estimator or interval change is Joseph's.
 
 **CITABLE FOR:** what has and has not been measured about statistical-interval coverage at each dimensionality, the
 routes on record with their costs, and a proposed order of cheap decisive tests.
+<!-- absence-ok: CITABLE FOR scopes what this memo covers; the absence claims themselves carry their searches in §1 and §2 -->
 **NOT CITABLE FOR:** any coverage result, any new measured number other than the allocation and node listings in §4,
 or a decision.
 
@@ -23,6 +24,11 @@ or a decision.
    - 5D has failed every route tried.
    - 2D has one failed test: the old band undercovered, from its width.
    - 3D and 4D have never been tested.
+     - The one 3D statistical check on record is ML-seed consistency, not interval coverage: the frozen central value
+       against a 10-seed ensemble, pull 0.63σ median, p90 1.48 (`LITERATURE_NOTES.md:284-290`). 4D pulls are deferred
+       in the note (`O/PACKET-20260910-z-consumer-set-and-endpoint-requirements.md:46`).
+     - Search: configuration (a); configuration (e); 3D; 4D; coverage; pull; calibration @ 315c0459a4a7 (`whatis.py` for
+       (a) and (e), whose indexed coverage rows are all 5D or 2D; `git grep -i` for 3D or 4D near coverage or pull).
 2. **At 5D on the J cells the obstacle is the inverse problem, not the classifier, as far as the evidence reaches.**
    - The boosted-tree residual equals exact binned IBU's at K = 5.
    - The label-stable J functionals are weakly identified, with binned Cramér–Rao widths of median 31% at the coarse
@@ -69,7 +75,7 @@ or a decision.
 | dim | coverage tested | result | what is missing | record |
 |---|---|---|---|---|
 | **2D** `(pT, p∥)` | VL169: the VL162 statistical band, fixed MC truth, 100 toys, 205 bins | 68%: 0.679, inside its window. 95%: **0.912**, below [0.928, 0.972]. **FAIL**, "width, not bias" | The band now quoted (S1, seed 42) is **untested**; so are VL170, systematic and total coverage, and the adopted Q = S5 + C_PL ("NOT CITABLE FOR … a coverage, calibration or validation statement") | `VALIDATION_LEDGER.md:95`; `KNOWN_ISSUES.md` rows 84–85; `O/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md:23,28` |
-| **3D** `+E_avail` | none | — | everything: no coverage test, route or unit cost specific to 3D exists | `3d-unfolding/3D_OMNIFOLD_STATUS.md` (searched); `O/CAMPAIGN-s5c-20260924-index.md:68` |
+| **3D** `+E_avail` | none | — | everything: no coverage test, route or unit cost specific to 3D exists. The one 3D statistical check is ML-seed consistency (frozen against a 10-seed ensemble, pull 0.63σ median), not coverage | `3d-unfolding/3D_OMNIFOLD_STATUS.md` (searched); `O/CAMPAIGN-s5c-20260924-index.md:68`; `LITERATURE_NOTES.md:284-290`. Search: configuration (a); configuration (e); VL169; VL170; S5 + C_PL; 3D; 4D; coverage; pull @ 315c0459a4a7 |
 | **4D** `+q3` | none | — | everything. The 5D estimator carries q3-direction distortions: under the q3 stress, pooled 68% coverage is 0.027 | `nd-unfolding/ND_OMNIFOLD_STATUS.md:167`; `O/OUTCOME-20260925-s5n-stage1-development-fail.md:58,79-80` |
 | **5D** `+W` | s5c Tier S: bias-corrected statistical intervals, 153 functionals, 400 seeds at nominal, rate change and q3 | nominal futile 0/2 (68%/95%); **rate change 51/42**, min coverage 0.060; **FAIL (futility)**, reproduced | the uncorrected intervals ("predicted … to undercover worse"); total coverage; any interval of the adopted trunk | `O/OUTCOME-20260925-s5c-tier-s-futility-fail.md:7-8,30-37` |
 | 5D | s5n stage 1 (negative-weight background), 60 seeds | GiBUU pooled 68% coverage **0.027**; q3 0.027; nominal 0.603 | — | `O/OUTCOME-20260925-s5n-stage1-development-fail.md:56-58` |
@@ -108,7 +114,7 @@ about 182 kB of storage each (`:25`).
 | R7. Unbinned-information study (split-half responses) | 5D | named, "not part of MP4-A"; the loophole is material | **folded into R10**, whose test carries the split-half control | as R10 | as R10 |
 | R8. Prior-free or bias-aware intervals at lower dimension | 2D–4D | strict bounds failed only at 5D J | part of R1 | as R1 | as R3 |
 | **R9. Negative-weight background treatment, configuration (e)** (Joseph's question, 2026-10-22) | 5D | already measured at development scale (s5e): it fixes the nominal background bias. Departure coverage is 0.017–0.157 (§2), and the residual is not the background's. No covariance or coverage is validated for (e) | KI 98's tilt seeds re-unfolded with (e), background included, against (e)'s own nominal β and σ (§4.1) | ≈ 0.3 CPU node-h **(inference, from the measured (e) unit of 0.0115)** | coverage at nominal only: 74–204 CPU node-h per truth point, with assurance 0 at the measured per-functional minimum (`O/state/s5e/cand/next_design.json`) |
-| **R10. More reconstructed information** (Joseph's question whether to reopen PET, 2026-10-22) | 5D | the classifier is not the bottleneck (D-ID); the unbinned-information loophole is material but its size is unmeasured once response-MC noise is counted (MP4-A §6a) | on D-ID's binned setting: the J width floor and departure residual with 2× and 4× finer reco bins, and with one or two added reco variables, under a split-half response (§4.2) | (i) ≈ 2–10 local core-h; (ii) one tuple-extraction pass, ≈ 1–3 CPU node-h, then ≈ 2–10 local core-h **(inference, from D-ID and MP4-A)** | a GBDT development assessment with the added features: ≈ 2.3 CPU node-h, or ≈ 4.5 GPU node-h **(estimate)**; a Tier-S pilot ≈ 17–25 CPU node-h, or ≈ 34–50 GPU node-h **(estimate)**. PET only after that, priced then |
+| **R10. More reconstructed information** (Joseph's question whether to reopen PET, 2026-10-22) | 5D | the classifier is not the bottleneck (D-ID); the unbinned-information loophole is material but its size is unmeasured once response-MC noise is counted (MP4-A §6a). Search: unbinned information; split-half response; response-MC noise @ 315c0459a4a7 | on D-ID's binned setting: the J width floor and departure residual with 2× and 4× finer reco bins, and with one or two added reco variables, under a split-half response (§4.2) | (i) ≈ 2–10 local core-h; (ii) one tuple-extraction pass, ≈ 1–3 CPU node-h, then ≈ 2–10 local core-h **(inference, from D-ID and MP4-A)** | a GBDT development assessment with the added features: ≈ 2.3 CPU node-h, or ≈ 4.5 GPU node-h **(estimate)**; a Tier-S pilot ≈ 17–25 CPU node-h, or ≈ 34–50 GPU node-h **(estimate)**. PET only after that, priced then |
 | Closed on record | 5D | prior dependence as a component; more iterations or a bias correction; a neural or PET classifier on the same inputs (R10 asks about added information, not the classifier); FBU (`PLAN.md:385-390`) | — | — | — |
 
 **Total (statistical plus systematic) coverage.** At 2D the record calls P1 infeasible (0.29–1.21 M node-h) and P2
@@ -139,6 +145,7 @@ production-size MC populations (`O/ASSESSMENT-20261008-2d-total-uncertainty-feas
     This ignores contention, which IBU-1 measured as a 3.8× per-step slowdown at 44-way packing on a CPU node
     ([`../2d-closeout/stageF/methods/ibu1/LEDGER-NOTES.md`](../2d-closeout/stageF/methods/ibu1/LEDGER-NOTES.md) §2).
     A GPU node packs about half as many steps, so the factor may be under 2. It is not measured.
+    <!-- absence-ok: scoping of a cost estimate's parameter (the GPU-node packing factor), not a claim that a result is absent -->
   - At that rate even a full Tier S (≈ 125 CPU node-h) is ≈ 250 GPU node-h, under 1% of the GPU pool left.
   - **Any use of `m3246_g` is Joseph's and Ben's decision.** The pool is the group's. The 10-19 record reads "our
     compute" as Joseph's own share (`DECISION-20261019…:24`).
@@ -157,8 +164,13 @@ comparable with s5c, KI 98, D-ID and IBU-1.
 **What (e) is.** Configuration (e) is deterministic LightGBM OmniFold with 5 iterations, 100 trees and 8 leaves, and
 the unbinned negative-weight (Stay-Positive) refinement at 400 trees and 31 leaves
 (`O/state/2d-closeout/stageF/methods/RE1-SPEC.md:14-15`). This is the s5e candidate R
-(`O/state/2d-closeout/stageF/methods/r12/REVIEW.md:48`). It already gives the 3D–5D central values (RE-1), and no
-covariance or coverage exists for it (`RE1-SPEC.md:10`; `RE1-REPORT.md:11`).
+(`O/state/2d-closeout/stageF/methods/r12/REVIEW.md:48`). It already gives the 3D and 4D central values (RE-1). 5D stays
+configuration (a) until an (e) covariance exists (`O/DECISION-20261023-joseph-5d-a-and-register-round.md:30-31`).
+RE-1 builds no covariance or coverage for (e) (`RE1-SPEC.md:10`; `RE1-REPORT.md:11`). No validated coverage or
+covariance exists for (e); s5e measured its development-scale coverage (§2;
+`O/DECISION-20261022-joseph-open-items-and-rewrite-timing.md:66-71`).
+Search: configuration (e); joint-test estimator; s5e candidate R; --candidate R @ 315c0459a4a7 (`whatis.py e-R-joint-test`:
+its coverage rows are in the s5e development and assessment receipts only).
 
 **What the record already says.**
 
@@ -399,5 +411,7 @@ coverage tests R2/R3 follow at the chosen inputs.
 - No new computation. The only reads are two `iris` and `sinfo` listings (2026-10-23) and the public branch documentation.
 - R1's cells and bar are not frozen: that needs its own declaration.
 - R10's variables, subdetector indices, quantile edges and split key are not frozen: that needs its own declaration.
-- RHC and the newer FHC release are not assessed: RHC follows a validated method (director's reading,
+- RHC and the newer FHC release are not assessed here. The 2026-10-22 data survey covers their inventory and
+  compatibility (`O/state/data-survey-20261022/SURVEY.md`). RHC follows a validated method (director's reading,
   `O/DECISION-20261022-joseph-measurement-scope-and-lanes.md`).
+  <!-- absence-ok: scoping of this memo's own coverage; the assessment that exists is the data survey cited here -->
