@@ -1,0 +1,6 @@
+# Read by the validation lane: ssh saul.nersc.gov '/opt/nersc/pe/bin/iris' (read only, no charge)
+2026-10-23T05:31:10Z
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2097.3            10000.0     17711.5      20000.0
+m3246_g             1295.8            90000.0    137272.6     180000.0
