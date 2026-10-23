@@ -1,0 +1,30 @@
+S01 2110.13372.txt:90  Finally, two more weights are added to correct errors in the MAC FSI elastic scattering and pion absorption models [N].
+S02 2108.12376.txt:139  The experimental uncertainty is comparable to the spread from predictions using different TMD sets, [suggesting|HEDGE] that when a full TMD uncertainty breakdown is available, the data will be able to constrain the models.
+S03 2004.05434.txt:291  More generally, it can also be seen from the plots that, [without|NEG] the most forward angular bin, models that use dramatically different nuclear physics [assumptions|COND] give similar predictions, all of which are generally in agreement with the result.
+S04 2301.03700.txt:177  Figure N shows the double-differential results as a function of MATH in cos MATH bins.
+S05 2004.05434.txt:204  The 2p2h parameters are [partially|HEDGE] (30%) correlated between oxygen and carbon.
+S06 2102.03346.txt:94  All ECals use layers of plastic scintillator bonded to lead sheets, and each alternating scintillator layer is rotated by MATH to give 3D reconstruction.
+S07 2102.03346.txt:168  The CC1 MATH Xp cross sections are measured as a function of a single TKI variable [only|SCOPE], thus the number of reconstructed bins is much more than the number of cross-section bins.
+S08 2004.05434.txt:17  In order to avoid highly model-dependent background subtractions, the experimental neutrino scattering community has developed the practice of publishing measurements of experimentally accessible final state topologies.
+S09 2504.06857.txt:151  Background subtraction and efficiency corrections do [not|NEG] require explicit treatment with the OmniFold method.
+S10 2002.12496.txt:63  Another major modification was to add a meson exchange current based two-particle knockout process (leaving two holes in the nucleus, abbreviated 2p2h) [N].
+S11 2102.03346.txt:179  The contribution from out of fiducial volume (OOFV) events is almost negligible.
+S12 2504.06857.txt:25  Section N briefly introduces machine learning-based unbinned unfolding with OmniFold.
+S13 2110.13372.txt:5  Neutrino oscillation physics is evolving to a precision era.
+S14 2205.05084.txt:235  As shown in N, changes in MATH change the slope of the calibration.
+S15 2310.06082.txt:240  [However|CONCESS], in regions of phase space sensitive to FSI, this model does [not|NEG] perform as well as MATH , and the tuning does [not|NEG] improve the agreement.
+S16 2405.20041.txt:59  Most MATH +jets events that satisfy the selection originate from the Drell--Yan process.
+S17 2205.05084.txt:267  [In simulation|SCOPE]-based calibration, our goal will be to reconstruct the truth-level MATH from the detector-level MATH .
+S18 2002.12496.txt:76  Additionally, three models of true deep inelastic scattering ( MATH , MATH ) are shown as partial model comparisons.
+S19 2301.03700.txt:277  A potential source of this shift is due to the MATH MEC modeling.
+S20 2205.05084.txt:65  It is evaluated over the test sample, [conditioned|COND] on the truth values:
+S21 2004.05434.txt:289  The agreement between the GENIE and NEUT implementations of the model is [not|NEG] surprising since where they differ is predominantly in the extrapolation of the Valencia inclusive model to exclusive predictions, which has a small impact when measuring [only|SCOPE] muon kinematics.
+S22 2110.13372.txt:163  As in MAC , the implied spectator nucleon is [not|NEG] simulated.
+S23 2405.20041.txt:148  The 24 observables treated [in this analysis|SCOPE] are simultaneously unfolded using the machine learning method MAC .
+S24 2301.03700.txt:233  Figures N and N show the single-differential cross sections as a function of MATH using all the events (panel a), as well as the double-differential results in the same kinematic variable in MATH slices (panels b-c).
+S25 2301.03700.txt:132  Note that the individual contributions are higher than the total cross section uncertainty of 6% due to correlations between the signal and background events, since the same interaction processes can contribute both as signal and background.
+S26 2102.03346.txt:38  These observables are designed to characterize the nuclear effects that are most relevant to oscillation experiments: the initial nuclear state, such as the Fermi motion of initial state nucleon and the nucleon removal energy, and the FSI of outgoing hadrons.
+S27 2108.12376.txt:111  In contrast to pQCD calculations, the TMD calculations do [not|NEG] require non-perturbative corrections, because such effects are already included.
+S28 2110.13372.txt:25  This comes with a cost of modest model biases and increased uncertainties after unfolding.
+S29 2310.06082.txt:232  This is in contrast to several recent measurements (e.g., [N]) where MATH and the more modern MATH predictions show similar shapes across many variables that [only|SCOPE] [depend on|COND] either the muon or the proton kinematics, [whereas|CONCESS] these kinematic imbalance variables also [depend on|COND] correlations between the leptonic and hadronic system.
+S30 2102.03346.txt:21  TKI explores the lepton-hadron correlations on the plane that is transverse to the initial neutrino direction and helps precisely identify intranuclear dynamics [N], or the absence thereof [N], in neutrino-nucleus interactions.
