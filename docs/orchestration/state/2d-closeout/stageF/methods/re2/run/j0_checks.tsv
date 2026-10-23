@@ -1,0 +1,31 @@
+id	kind	test	ref	ref_sha256	hist	min_shift
+K1-C1	le	C_cv	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_C0_cv/xsec.root	71249143340b1f7bedfcb50a66734e723a33fd91e2c2e705b9e34d0f629f41d6		
+K1-C2	le	C_cv	/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root	4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c		
+K1-C3	le	C_unit	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_C0_unit/xsec.root	f1699e66f1e07a23b05ed5084cac7692791286e460409bdeef639cae4fd808ca		
+K1-B1	le	B_S1_001	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S1_001/xsec.root	c67bb58768c68104c54b9a4bf134bb3bee9476d9e48aa4395637eee597d988cb		
+K1-B2	le	B_S2_001	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S2_001/xsec.root	501bb02030d2948f45427c97dde0f8b9ec8f5eab1764560a8124e01a68726822		
+K1-U1	le	U_MaCCQE0	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S4U_MaCCQE0_s42/xsec.root	26bde3ba21e2ebd3a4409b60da71e24de835b4a708e63b7779328fa33ba8524c		
+K1-U2	le	U_Flux23	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S4U_Flux23_s42/xsec.root	87e65b2ca28607d228f643eb2114b673bb1dc010812d5f6cd3060dae0bd8b20d		
+K1-U3	le	U_NormDISCC0	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S4U_NormDISCC0_s42/xsec.root	84f822e373d502326adb2f73fc40dd08568a05e48dd7a958490c016ac2eada85		
+K1-U4	le	U_MaCCQE0	/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_MaCCQE_0.root	d17b45c6d2875cb44506169c3a52843fbaaba57ddfa795e9df116c5dcce677ff		
+K1-U5	le	U_Flux23	/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Flux_23.root	eb8414af4d9c06e4be80fc190ddfbd8734e0470b7f6e30c1790cebe6cb171141		
+K1-U6	le	U_NormDISCC0	/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_NormDISCC_0.root	5819b46bf9842de97c4b14418c224e82aa927897883ff4b7428da6cb2cb6cdb0		
+K1-L1	le	L_BAX0	/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S3_BeamAngleX0/xsec.root	5aac876a25ea9c745199385a656d50100793c8ea6fbc62315537cb3e74823e84		
+K1-P1	le	P_ctrl	/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_CTRL_s42/xsec.root	5582d19edb1dda50621c79fcf207c08c749c49180f5847746c3c0d7e46600723		
+K1-P2	le	P_PA	/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_s42/xsec.root	9e59f456ceb0f8eda7b6477829fb114da92c2570fb5cf5fff3f384d4bb48a5c0		
+K1-P3	le	P_PA_b01	/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b01/xsec.root	e20e031a53a52f2d8d73ac151d18e640255bf9644e5bea056fd0c302b4772adc		
+K1-R1	le	R_re2_MaCCQE0	run:R_p1_MaCCQE0			
+K1-R2	le	RP_re2_PA	run:RP_p1_PA			
+K1-D1	le	D_cv	/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/2d/d2_data_refined.npz	71ca3e5fc97cfc0625d84484d9c1f4a59476feacfd3813cdc98d89782329488a		
+CHK-unit	le	D_unit	run:D_cv			
+CHK-det1	le	RB_001_rep	run:RB_001			
+CHK-det2	le	FL_BAX0_rep	run:FL_BAX0			
+CHK-null-r	le	F_NormDISCC0	run:D_cv			
+CHK-null-p	le	U_NormDISCC0	run:C_cv			
+CHK-eff	le	D_cv	run:C_cv		hEff2D	
+STREAM-1	stream	RB_001	run:B_S1_001			
+POW-1	differs	D_cv	run:C_cv			1e-6
+POW-2	differs	RB_001	run:D_cv			1e-6
+POW-3	differs	F_MaCCQE0	run:F_NormDISCC0			1e-6
+POW-4	differs	FL_BAX0	run:F_NormDISCC0			1e-6
+POW-5	differs	RPR_PA_b01	run:RF_PA			1e-6

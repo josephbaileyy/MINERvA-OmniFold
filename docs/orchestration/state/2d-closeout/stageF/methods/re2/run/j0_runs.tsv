@@ -1,0 +1,35 @@
+job	lane	label	cpus	script	args
+J0a	a1	U_MaCCQE0	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe MaCCQE:0 --branch-select derived --bkg-mode purity
+J0a	a1	F_NormDISCC0	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe NormDISCC:0 --branch-select derived --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0a	a1	U_NormDISCC0	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe NormDISCC:0 --branch-select derived --bkg-mode purity
+J0a	a1	U_Flux23	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe Flux:23 --branch-select derived --bkg-mode purity
+J0a	a1	R_p1_MaCCQE0	128	p1ref	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe MaCCQE:0 --branch-select derived --bkg-mode negweight-refined
+J0a	a1	R_re2_MaCCQE0	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe MaCCQE:0 --branch-select derived --bkg-mode negweight-refined
+J0a	a1	F_MaCCQE0	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe MaCCQE:0 --branch-select derived --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0a	a1	F_Flux23	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe Flux:23 --branch-select derived --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0a	a1	F_MaRES0	128	re2	--omnifile $UNI --flux-universe-file $FLUXU --verbose --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --universe MaRES:0 --branch-select derived --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0a	a2	FL_BAX0	128	re2	--omnifile $LATBAX0 --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0a	a2	FL_BAX0_rep	128	re2	--omnifile $LATBAX0 --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0a	a2	L_BAX0	128	re2	--omnifile $LATBAX0 --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode purity
+J0b	b1	RB_001	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 1 --bootstrap-streams three
+J0b	b1	RB_001_rep	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 1 --bootstrap-streams three
+J0b	b1	C_cv	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode purity --branch-select all
+J0b	b1	D_cv	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --branch-select all
+J0b	b1	RB_007	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 7 --bootstrap-streams three
+J0b	b2	RB_002	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 2 --bootstrap-streams three
+J0b	b2	RB_003	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 3 --bootstrap-streams three
+J0b	b2	C_unit	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode purity --bootstrap-seed 1 --bootstrap-streams three --unit-factors
+J0b	b2	D_unit	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 1 --bootstrap-streams three --unit-factors
+J0b	b2	RB_008	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 8 --bootstrap-streams three
+J0b	b3	P_ctrl	64	re2	--omnifile $PUALL --mcfile $PUFALL --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode purity
+J0b	b3	P_PA	64	re2	--omnifile $PUPA --mcfile $PUFPA --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode purity
+J0b	b3	RP_p1_PA	64	p1ref	--omnifile $PUPA --mcfile $PUFPA --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode negweight-refined
+J0b	b3	RP_re2_PA	64	re2	--omnifile $PUPA --mcfile $PUFPA --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode negweight-refined
+J0b	b3	RF_PA	64	re2	--omnifile $PUPA --mcfile $PUFPA --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31
+J0b	b3	B_S2_001	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode purity --bootstrap-seed 1 --bootstrap-streams bkg
+J0b	b4	P_PA_b01	64	re2	--omnifile $PUPA --mcfile $PUFPA --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode purity --bootstrap-seed 1001 --bootstrap-streams both
+J0b	b4	RPR_PA_b01	64	re2	--omnifile $PUPA --mcfile $PUFPA --iters 5 --use-weights --estimator lgbm --seed 42 --branch-select all --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 1001 --bootstrap-streams both
+J0b	b4	B_S1_001	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode purity --bootstrap-seed 1 --bootstrap-streams three
+J0b	b4	RB_004	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 4 --bootstrap-streams three
+J0b	b4	RB_005	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 5 --bootstrap-streams three
+J0b	b4	RB_006	64	re2	--omnifile $CV --mcfile $MC --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode negweight-refined --refine-n-estimators 400 --refine-num-leaves 31 --bootstrap-seed 6 --bootstrap-streams three
