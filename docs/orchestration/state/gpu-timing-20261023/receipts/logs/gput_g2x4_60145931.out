@@ -1,0 +1,12 @@
+[timing] 2026-10-23T09:14:58.472Z job=60145931 host=nid002304 deploy=/pscratch/sd/j/josephrb/gpu-timing-20261023/deploy/18337b8c pin=18337b8c0322fb1a052f82d436439bd942ca7333 lines=9..12 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  128
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               1
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-10-23T09:14:58.610Z launch line 9
+[timing] 2026-10-23T09:14:58.619Z launch line 10
+[timing] 2026-10-23T09:14:58.639Z launch line 11
+[timing] 2026-10-23T09:14:58.644Z launch line 12
+[timing] 2026-10-23T09:23:46.896Z lines 9..12 done rc=0

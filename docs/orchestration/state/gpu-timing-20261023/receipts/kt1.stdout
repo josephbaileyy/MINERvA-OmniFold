@@ -1,0 +1,5 @@
+c0 8 bitwise True seconds_unfold med/min/max [533.0554999999999, 532.086, 533.745]
+c1 1 bitwise True seconds_unfold med/min/max [420.122, 420.122, 420.122]
+g1 1 bitwise True seconds_unfold med/min/max [408.79, 408.79, 408.79]
+g2x2 2 bitwise True seconds_unfold med/min/max [403.7885, 403.344, 404.233]
+g2x4 4 bitwise True seconds_unfold med/min/max [411.25350000000003, 406.354, 425.516]

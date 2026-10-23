@@ -1,0 +1,30 @@
+S01 ours.txt:64  Cross sections are formed by histogramming the reweighted truth events in the reporting binning and dividing by integrated flux, target count, and bin width.
+S02 ours.txt:67  In the purity-based subtraction every data event in reconstructed bin MATH carries the weight MATH , where MATH and MATH are the data and predicted background counts in that bin, so the target density is MATH .
+S03 ours.txt:199  Independently written code reproduces every MATH value and decision.
+S04 ours.txt:51  All are per nucleon of their target.
+S05 ours.txt:136  This rests on one seed pair, and the spread over seed pairs [has not been measured|STATUS]; five bands built at a fixed seed, which carry MAC % of MATH , [cannot|NEG] vary with it, so their seed sensitivity, which [could|HEDGE] move the total in either direction, is also [unmeasured|STATUS].
+S06 ours.txt:90  This learner was chosen after both comparisons were known, so the benchmark is a reproduction rather than an independent validation.
+S07 ours.txt:61  Each OmniFold iteration consists of two classification steps.
+S08 ours.txt:146  It motivates the different route to inference of Sec. N: after a [descriptive|STATUS] comparison of the central values, the generator predictions are tested as hypotheses.
+S09 ours.txt:93  The published covariance sets the scale of the displayed differences; a significance for their difference would also require their cross-covariance.
+S10 ours.txt:5  Multidifferential neutrino cross sections test interaction models across muon and hadronic observables.
+S11 ours.txt:104  Because the block is built from the observed differences among the periods, its size [is not validated|STATUS], and its own consistency check [cannot|NEG] fail (Ref. [N], Sec. N).
+S12 ours.txt:19  The coverage of unfolded intervals is the rate at which they contain the true cross section.
+S13 ours.txt:223  The predictions' own finite samples enter the metric and the simulated residuals.
+S14 ours.txt:102  The cause [is not known|STATUS], and these data [cannot establish|STATUS] which period is correct.
+S15 ours.txt:202  [Within|SCOPE] each fine-grid cell the null truth has the Tune v1 composition of the hypothesis definition.
+S16 2004.05434.txt:308  Whilst the carbon disagreement is usually [within|SCOPE] one standard deviation, this is [not|NEG] true for oxygen.
+S17 2106.16210.txt:81  The modeling of inelastic events below the ‘True DIS’ region can vary widely across generators, in terms of the kinematic coverage of the resonance model and handling of non-resonant contributions in the resonance region [N].
+S18 2106.16210.txt:222  Other methods, either via exclusive, semi-inclusive, or inclusive measurements using other kinematic variables are needed to investigate these complex regions.
+S19 2106.16210.txt:16  The result presented here increases the phase space accepted into the multi-GeV regime and as a result expands the range of transverse momentum from 2.5 to 4.5 GeV and longitudinal momentum from 20 to 60 GeV with a MATH 12 times larger sample size and flux normalization uncertainty of approximately 1/2 the size of the previous result.
+S20 2301.03700.txt:136  The outer error bars on the reported cross sections correspond to statistical and shape uncertainties added in quadrature.
+S21 2102.03346.txt:213  The overall detector uncertainty is parametrized as a covariance matrix that describes the rate uncertainty and correlation between each reconstructed bin.
+S22 2301.03700.txt:85  When nuclear effects are present, QE events can occupy wider angles.
+S23 2108.12376.txt:34  The total integrated luminosity of this data sample corresponds to 136 pb MATH [N].
+S24 1705.03568.txt:177  For Tikhonov regularization, the unfolded results also [depend on|COND] the regularization strength MATH .
+S25 2301.03700.txt:45  Muons tend to have higher LLR PID score values than protons, thus the track with the highest score is tagged as the candidate muon.
+S26 2110.13372.txt:87  the data in MAC 's previous low recoil result, the 2p2h event rate is enhanced in the kinematic region between QE and MATH reactions.
+S27 1705.03568.txt:81  In analogy to Eq. N, Eq. N can be rewritten as EQ with MATH representing the "noise" coming from uncertainties (statistical and systematic uncertainties associated with both MATH and MATH ).
+S28 2004.05434.txt:62  In addition to using the two FGDs together to separate the two target nuclei, the reconstructed start point of the muon track in FGD2 is also employed to identify a sub-sample of events with a higher proportion of oxygen interactions.
+S29 2110.13372.txt:304  The empirical tuned hA FSI model is nearly the same for all three MAC versions [N] [but|CONCESS] different from the Oset model [N] used by NuWro.
+S30 2301.03700.txt:164  Furthermore, the same extended tail can be obtained when pions produced due to multi-nucleon effects (MEC or RES) are either absorbed or below the detection threshold.
