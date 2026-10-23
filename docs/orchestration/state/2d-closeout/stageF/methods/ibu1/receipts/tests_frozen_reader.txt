@@ -1,0 +1,238 @@
+2214d4877d0351fa3a4d3b6fb4c37f191d4b029eda82b4630ba1ab18fbfe6b48  ibu1_read.py
+d06eb6c453bb496a73be2cafaad0fc605c9b81ffc22bae17e648438353b95f9e  test_ibu1.py
+============================= test session starts ==============================
+platform darwin -- Python 3.12.2, pytest-8.3.4, pluggy-1.5.0 -- /Users/josephbailey/miniconda3/bin/python3
+cachedir: .pytest_cache
+rootdir: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1
+plugins: zarr-3.2.1, cov-7.1.0, anyio-4.6.2, typeguard-4.3.0
+collecting ... collected 36 items
+
+test_ibu1.py::Grid::test_functional_rows_are_the_contracts PASSED        [  2%]
+test_ibu1.py::Grid::test_reco_window_excludes_upper_edge PASSED          [  5%]
+test_ibu1.py::Grid::test_split_key_equals_producer PASSED                [  8%]
+test_ibu1.py::Grid::test_truth_cells_equal_histogramdd PASSED            [ 11%]
+test_ibu1.py::Closure::test_a_departure_is_partly_recovered PASSED       [ 13%]
+test_ibu1.py::Closure::test_background_in_the_fold_closes PASSED         [ 16%]
+test_ibu1.py::Closure::test_dropping_the_known_term_breaks_closure PASSED [ 19%]
+test_ibu1.py::Closure::test_noise_free_same_sample_closes_at_every_K PASSED [ 22%]
+test_ibu1.py::Oracle::test_floor_fires_inside_cells_with_varying_completeness PASSED [ 25%]
+test_ibu1.py::Oracle::test_floor_is_zero_for_a_J_constant_departure PASSED [ 27%]
+test_ibu1.py::Oracle::test_truth_reweight_matches_the_builders PASSED    [ 30%]
+test_ibu1.py::Constructions::test_half_mismatch_is_refused PASSED        [ 33%]
+test_ibu1.py::Constructions::test_n_variants PASSED                      [ 36%]
+test_ibu1.py::Constructions::test_p_variants_are_the_measured_sample PASSED [ 38%]
+test_ibu1.py::Constructions::test_ratio_truths_dispatch PASSED           [ 41%]
+test_ibu1.py::Pairing::test_gate_fires_on_a_different_draw PASSED        [ 44%]
+test_ibu1.py::Pairing::test_gate_fires_on_construction_flags PASSED      [ 47%]
+test_ibu1.py::Pairing::test_gate_fires_on_one_ulp PASSED                 [ 50%]
+test_ibu1.py::Pairing::test_gate_fires_on_seed_or_split PASSED           [ 52%]
+test_ibu1.py::Pairing::test_gate_passes_on_the_same_experiment PASSED    [ 55%]
+test_ibu1.py::Bootstrap::test_capture_fires_on_a_different_replica PASSED [ 58%]
+test_ibu1.py::Bootstrap::test_n_replica_variants_use_the_replicas_counts_and_template PASSED [ 61%]
+test_ibu1.py::Bootstrap::test_replica_equals_run_bootstrap PASSED        [ 63%]
+test_ibu1.py::Coverage::test_hits_equal_s5c_coverage PASSED              [ 66%]
+test_ibu1.py::Rule::test_count_box_spanning_better_and_worse_allows_within PASSED [ 69%]
+test_ibu1.py::Rule::test_count_interval_at_400_is_the_futility_count PASSED [ 72%]
+test_ibu1.py::Rule::test_count_interval_spans_the_boundary PASSED        [ 75%]
+test_ibu1.py::Rule::test_count_relation PASSED                           [ 77%]
+test_ibu1.py::Rule::test_readings_and_verdicts PASSED                    [ 80%]
+test_ibu1.py::Rule::test_residual_reading PASSED                         [ 83%]
+test_ibu1.py::Rule::test_small_n_count_cannot_resolve_and_is_descriptive PASSED [ 86%]
+test_ibu1.py::Tasks::test_committed_table_is_the_generators PASSED       [ 88%]
+test_ibu1.py::Tasks::test_seed_subrange_is_refused_outside_the_unit PASSED [ 91%]
+test_ibu1.py::Tasks::test_table_covers_every_declared_seed_once PASSED   [ 94%]
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit FAILED [ 97%]
+test_ibu1.py::EndToEnd::test_units_then_read FAILED                      [100%]
+
+=================================== FAILURES ===================================
+______________ EndToEnd.test_paired_load_missing_f_of_is_explicit ______________
+
+self = <test_ibu1.EndToEnd testMethod=test_paired_load_missing_f_of_is_explicit>
+
+    def test_paired_load_missing_f_of_is_explicit(self):
+        """Reader fix, condition 3: a paired product without its OmniFold estimate fails explicitly, naming the unit."""
+        receipts, names, variant = self.receipts, self.names, self.variant
+        broken = Path(tempfile.mkdtemp()) / "broken"
+        shutil.copytree(self.out, broken)
+        z = np.load(broken / "N_w1_s803018.npz", allow_pickle=True)
+        np.savez_compressed(broken / "N_w1_s803018.npz", **{k: z[k] for k in z.files if k != "f_of"})
+        self.assertIsNone(rd.load_unit(broken, "N_w1", "fold", [803000, 803019])["of"])
+        with self.assertRaisesRegex(AssertionError, "unit N_w1: a paired product has no f_of"):
+>           rd.evaluate(broken, receipts, names, variant, [5])
+
+test_ibu1.py:550: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def evaluate(outdir: Path, receipts: dict, names: list[str], variant: dict, k_list: list[int]) -> dict:
+        J = np.array([i for i, n in enumerate(names) if n.startswith("J")])
+        out = {"per_K": {}}
+        boots = {u: load_boot(outdir, u, variant[u[0]]) for u in ("P_sigma", "N_sigma_s5n", "N_sigma_R")}
+        d1 = load_unit(outdir, "P_d1", variant["P"])
+        bc = receipts["bias_correction"]
+        corr_of = (np.asarray(bc["beta"], float), np.asarray(bc["se"], float))
+        cache = {}
+        for K in k_list:
+            res_K = {"deformed": {}, "reference": {}}
+            for group, table in (("deformed", DEFORMED), ("reference", REFERENCE)):
+                for truth, spec in table.items():
+                    arm = spec["unit"][0]
+                    key = (spec["unit"], tuple(spec.get("paired", [])) or None)
+                    if key not in cache:
+                        cache[key] = load_unit(outdir, spec["unit"], variant[arm], spec.get("paired"))
+                    u = cache[key]
+                    iu = u["ks"].index(K)  # index the stored K axis by value (admission review, finding 1)
+                    est, t = u["F"][:, iu, :], u["t"]
+                    sig = sigma_of(boots[spec["sigma"]])[boots[spec["sigma"]]["ks"].index(K)]
+                    corr = None
+                    if spec["mode"] == "corrected":
+                        b, se = beta_of(d1)
+                        corr = (b[d1["ks"].index(K)], se[d1["ks"].index(K)])
+                    n = est.shape[0]
+                    hI = hits(est, t, sig, corr)
+                    hO = of_hits(spec["of"], receipts, names, n)
+                    rows = J[np.all(t[:, J] != 0, axis=0)]  # IA-4: the 109 supported cells all have truth (checked)
+                    cI, cO = count_interval(hI, n, rows), count_interval(hO, n, rows)
+>                   relI, relO = est / t - 1.0, u["of"] / t - 1.0
+E                   TypeError: unsupported operand type(s) for /: 'NoneType' and 'float'
+
+ibu1_read.py:273: TypeError
+---------------------------- Captured stdout setup -----------------------------
+{"unit": "P_nominal", "seed": 200000, "gate": true, "s_build": 0.02, "s_ibu": 0.123}
+{"unit": "P_nominal", "seed": 200001, "gate": true, "s_build": 0.021, "s_ibu": 0.256}
+{"unit": "P_nominal", "seed": 200002, "gate": true, "s_build": 0.032, "s_ibu": 0.28}
+{"unit": "P_nominal", "seed": 200003, "gate": true, "s_build": 0.019, "s_ibu": 0.241}
+{"unit": "P_nominal", "seed": 200004, "gate": true, "s_build": 0.027, "s_ibu": 0.28}
+{"unit": "P_tilt", "seed": 204000, "gate": true, "s_build": 0.026, "s_ibu": 0.225}
+{"unit": "P_tilt", "seed": 204001, "gate": true, "s_build": 0.038, "s_ibu": 0.272}
+{"unit": "P_tilt", "seed": 204002, "gate": true, "s_build": 0.031, "s_ibu": 0.285}
+{"unit": "P_tilt", "seed": 204003, "gate": true, "s_build": 0.027, "s_ibu": 0.326}
+{"unit": "P_tilt", "seed": 204004, "gate": true, "s_build": 0.019, "s_ibu": 0.338}
+{"unit": "P_d1", "seed": 1, "gate": true, "s_build": 0.023, "s_ibu": 0.204}
+{"unit": "P_d1", "seed": 4, "gate": true, "s_build": 0.043, "s_ibu": 0.356}
+{"unit": "P_d1", "seed": 5, "gate": true, "s_build": 0.023, "s_ibu": 0.296}
+{"unit": "P_sigma", "gate": true, "controls": {"replica_capture": true}}
+{"unit": "N_nominal_dev", "seed": 300000, "gate": true, "s_build": 0.023, "s_ibu": 0.286}
+{"unit": "N_nominal_dev", "seed": 300001, "gate": true, "s_build": 0.028, "s_ibu": 0.348}
+{"unit": "N_nominal_dev", "seed": 300002, "gate": true, "s_build": 0.028, "s_ibu": 0.351}
+{"unit": "N_nominal_dev", "seed": 300003, "gate": true, "s_build": 0.019, "s_ibu": 0.228}
+{"unit": "N_nominal_dev", "seed": 300004, "gate": true, "s_build": 0.028, "s_ibu": 0.281}
+{"unit": "N_nominal_val", "seed": 300060, "gate": null, "s_build": 0.024, "s_ibu": 0.374}
+{"unit": "N_nominal_val", "seed": 300061, "gate": null, "s_build": 0.019, "s_ibu": 0.323}
+{"unit": "N_nominal_val", "seed": 300062, "gate": null, "s_build": 0.034, "s_ibu": 0.334}
+{"unit": "N_nominal_val", "seed": 300063, "gate": null, "s_build": 0.025, "s_ibu": 0.314}
+{"unit": "N_nominal_val", "seed": 300064, "gate": null, "s_build": 0.035, "s_ibu": 0.284}
+{"unit": "N_gibuu", "seed": 301058, "gate": true, "s_build": 0.021, "s_ibu": 0.373}
+{"unit": "N_gibuu", "seed": 301059, "gate": true, "s_build": 0.044, "s_ibu": 0.323}
+{"unit": "N_gibuu", "seed": 301060, "gate": null, "s_build": 0.031, "s_ibu": 0.363}
+{"unit": "N_gibuu", "seed": 301061, "gate": null, "s_build": 0.042, "s_ibu": 0.264}
+{"unit": "N_gibuu", "seed": 301062, "gate": null, "s_build": 0.045, "s_ibu": 0.368}
+{"unit": "N_gibuu_R", "seed": 801000, "gate": true, "s_build": 0.047, "s_ibu": 0.226}
+{"unit": "N_gibuu_R", "seed": 801001, "gate": true, "s_build": 0.031, "s_ibu": 0.27}
+{"unit": "N_gibuu_R", "seed": 801002, "gate": true, "s_build": 0.034, "s_ibu": 0.395}
+{"unit": "N_gibuu_R", "seed": 801003, "gate": true, "s_build": 0.036, "s_ibu": 0.489}
+{"unit": "N_gibuu_R", "seed": 801004, "gate": true, "s_build": 0.027, "s_ibu": 0.291}
+{"unit": "N_nominal_R", "seed": 800000, "gate": true, "s_build": 0.043, "s_ibu": 0.32}
+{"unit": "N_nominal_R", "seed": 800001, "gate": true, "s_build": 0.037, "s_ibu": 0.28}
+{"unit": "N_nominal_R", "seed": 800002, "gate": true, "s_build": 0.026, "s_ibu": 0.322}
+{"unit": "N_nominal_R", "seed": 800003, "gate": true, "s_build": 0.027, "s_ibu": 0.187}
+{"unit": "N_nominal_R", "seed": 800004, "gate": true, "s_build": 0.028, "s_ibu": 0.26}
+{"unit": "N_w1", "seed": 803018, "gate": true, "s_build": 0.027, "s_ibu": 0.402}
+{"unit": "N_w1", "seed": 803019, "gate": true, "s_build": 0.042, "s_ibu": 0.336}
+{"unit": "N_w1", "seed": 803020, "gate": null, "s_build": 0.042, "s_ibu": 0.262}
+{"unit": "N_w1", "seed": 803021, "gate": null, "s_build": 0.032, "s_ibu": 0.329}
+{"unit": "N_w1", "seed": 803022, "gate": null, "s_build": 0.033, "s_ibu": 0.421}
+{"unit": "N_w2", "seed": 804018, "gate": true, "s_build": 0.024, "s_ibu": 0.38}
+{"unit": "N_w2", "seed": 804019, "gate": true, "s_build": 0.024, "s_ibu": 0.307}
+{"unit": "N_w2", "seed": 804020, "gate": null, "s_build": 0.048, "s_ibu": 0.295}
+{"unit": "N_w2", "seed": 804021, "gate": null, "s_build": 0.038, "s_ibu": 0.315}
+{"unit": "N_w2", "seed": 804022, "gate": null, "s_build": 0.031, "s_ibu": 0.338}
+{"unit": "N_w3", "seed": 805018, "gate": true, "s_build": 0.05, "s_ibu": 0.33}
+{"unit": "N_w3", "seed": 805019, "gate": true, "s_build": 0.05, "s_ibu": 0.42}
+{"unit": "N_w3", "seed": 805020, "gate": null, "s_build": 0.041, "s_ibu": 0.236}
+{"unit": "N_w3", "seed": 805021, "gate": null, "s_build": 0.038, "s_ibu": 0.286}
+{"unit": "N_w3", "seed": 805022, "gate": null, "s_build": 0.039, "s_ibu": 0.291}
+{"unit": "N_sigma_s5n", "gate": true, "controls": {}}
+{"unit": "N_sigma_R", "gate": true, "controls": {}}
+________________________ EndToEnd.test_units_then_read _________________________
+
+self = <test_ibu1.EndToEnd testMethod=test_units_then_read>
+
+    def test_units_then_read(self):
+        out, receipts, names, variant = self.out, self.receipts, self.names, self.variant
+        self.assertEqual(self.rc, 0)
+        boot = np.load(out / "P_sigma.npz", allow_pickle=True)
+        self.assertTrue(json.loads(str(boot["meta"]))["controls"]["replica_capture"]["pass"])
+        self.assertEqual(boot["F_pur"].shape, (4, len(KS), 153))
+>       res = rd.evaluate(out, receipts, names, variant, [5])
+
+test_ibu1.py:517: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ibu1_read.py:293: in evaluate
+    u = cache.setdefault((unit_name, None), load_unit(outdir, unit_name, variant["N"]))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+outdir = PosixPath('/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/tmp/tmpbx9j7_oz/out')
+name = 'N_gibuu', variant = 'fold', seeds = None
+
+    def load_unit(outdir: Path, name: str, variant: str, seeds: list[int] | None = None) -> dict:
+        files = sorted(outdir.glob(f"{name}_s[0-9]*.npz"), key=lambda p: int(p.stem.rsplit("_s", 1)[1]))
+        rows = []
+        for f in files:
+            z = np.load(f, allow_pickle=True)
+            meta = json.loads(str(z["meta"]))
+            if seeds is not None and not (seeds[0] <= meta["pseudo_seed"] <= seeds[1]):
+                continue
+            rows.append((meta, z[f"F_{variant}"], z["f_true"], z["f_of"] if "f_of" in z.files else None, z["ks"],
+                         z["f_oracle"], z["f_true_A"]))
+        if not rows:
+            raise SystemExit(f"no products for unit {name}")
+        ks = rows[0][4]
+        return {"seeds": [r[0]["pseudo_seed"] for r in rows], "F": np.array([r[1] for r in rows]),
+                "t": np.array([r[2] for r in rows]),
+>               "of": None if rows[0][3] is None else np.array([r[3] for r in rows]),
+                "gates": [r[0]["comparator"] for r in rows], "ks": [int(k) for k in ks],
+                "oracle": np.array([r[5] for r in rows]), "t_A": np.array([r[6] for r in rows])}
+E       ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (5,) + inhomogeneous part.
+
+ibu1_read.py:76: ValueError
+=============================== warnings summary ===============================
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:93: RuntimeWarning: invalid value encountered in divide
+    rel = unit["F"] / unit["t"][:, None, :] - 1.0
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:104: RuntimeWarning: invalid value encountered in divide
+    fh = e / (1.0 + corr[0])
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:104: RuntimeWarning: divide by zero encountered in divide
+    fh = e / (1.0 + corr[0])
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:105: RuntimeWarning: invalid value encountered in multiply
+    sig = np.sqrt(sigma ** 2 + (corr[1] * fh) ** 2)
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:273: RuntimeWarning: invalid value encountered in divide
+    relI, relO = est / t - 1.0, u["of"] / t - 1.0
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:276: RuntimeWarning: invalid value encountered in divide
+    floor = (u["oracle"] / u["t_A"] - 1.0)[:, rows].mean(0)
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:234: RuntimeWarning: invalid value encountered in divide
+    relO = unit["of"] / unit["t"] - 1.0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit - Ty...
+FAILED test_ibu1.py::EndToEnd::test_units_then_read - ValueError: setting an ...
+================== 2 failed, 34 passed, 14 warnings in 27.97s ==================

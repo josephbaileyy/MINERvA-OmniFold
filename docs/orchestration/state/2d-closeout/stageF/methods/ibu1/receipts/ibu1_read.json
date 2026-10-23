@@ -1,0 +1,4616 @@
+{
+ "schema": "ibu1-read/1",
+ "primary_K": 5,
+ "primary": {
+  "per_K": {
+   "1": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0007805123210103632,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.00803421162464951,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 0.5462574170579977,
+       "ratio_ci95": [
+        0.48847945347181715,
+        0.6657335747483588
+       ],
+       "relation": "within",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 19,
+       "possible": 100,
+       "point": 41,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "IBU better",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.13528436740418287,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.4936252718160511,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 1.4228562684366999,
+       "ratio_ci95": [
+        1.4147443701170614,
+        1.44521324456844
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 108,
+       "possible": 109,
+       "point": 108,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07321677679445873,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.22626788201327916,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 1.2227112331166625,
+       "ratio_ci95": [
+        1.1978482701054833,
+        1.2601565426229941
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 109,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.013240183344355505,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.0839061418586206,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 2.3644138076576984,
+       "ratio_ci95": [
+        2.186470534852051,
+        2.5671812119285153
+       ],
+       "relation": "worse",
+       "possible": [
+        "worse"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 94,
+       "possible": 109,
+       "point": 108,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "IBU worse",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0728574691119325,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.29402797162740446,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 1.350463103357932,
+       "ratio_ci95": [
+        1.3015525753372255,
+        1.3888845727174906
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 104,
+       "possible": 109,
+       "point": 108,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.00015559570528697554,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.0012687372888694401,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 0.29158528430260017,
+       "ratio_ci95": [
+        0.2390954550642673,
+        0.526677256983608
+       ],
+       "relation": "better",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 107,
+       "point": 34,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "IBU better",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.00023491384609661826,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.0017452513816182068,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 0.2509586446148628,
+       "ratio_ci95": [
+        0.2562597067181307,
+        0.5142760080078946
+       ],
+       "relation": "better",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 79,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (IBU better at the point values)",
+      "point": "IBU better",
+      "possible": [
+       "IBU better",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.00033644222589916396,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.004789523818523142,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 1.517939013336502,
+       "ratio_ci95": [
+        1.0399905661924391,
+        2.1305926055863926
+       ],
+       "relation": "within",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 68,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "IBU worse",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.13521456932607928,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.4942790391405203,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 1.4446582812794568,
+       "ratio_ci95": [
+        1.4079847592897181,
+        1.4776377070031543
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "verdict": "mixed",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 7,
+       "possible": 107,
+       "point": 87,
+       "n": 400
+      },
+      "cov68_median_J": 0.6425,
+      "cov95_median_J": 0.9275
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 108,
+       "possible": 109,
+       "point": 108,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 109,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 103,
+       "possible": 109,
+       "point": 106,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.005
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 107,
+       "possible": 109,
+       "point": 108,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     }
+    }
+   },
+   "2": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0007595404398171421,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.005796902626075695,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 0.5315798196094059,
+       "ratio_ci95": [
+        0.49953646918667793,
+        0.7092796052535669
+       ],
+       "relation": "within",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 9,
+       "possible": 93,
+       "point": 22,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "IBU better",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.086177605681077,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.5099766262644686,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.9063748369081358,
+       "ratio_ci95": [
+        0.8847951691936944,
+        0.9266591321330039
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.06228470733811882,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.23589408514664653,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 1.040147007939107,
+       "ratio_ci95": [
+        1.0099551818947332,
+        1.0755161185497657
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 109,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.006981854839899715,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.08211815729943975,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.2468100748437314,
+       "ratio_ci95": [
+        1.1123282690461622,
+        1.3899790912429535
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 60,
+       "possible": 109,
+       "point": 100,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05676178222303572,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.4199510761136776,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 1.0521185200007654,
+       "ratio_ci95": [
+        1.0094053843364361,
+        1.0748603116015327
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.00026437625472743113,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.0023671023835070376,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 0.4954392877064035,
+       "ratio_ci95": [
+        0.411723538373457,
+        0.8223338018351222
+       ],
+       "relation": "better",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 102,
+       "point": 32,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "IBU better",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0003847067421829609,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.0032053270294209514,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 0.4109825120854175,
+       "ratio_ci95": [
+        0.40879669667200597,
+        0.8258664873810665
+       ],
+       "relation": "better",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 78,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (IBU better at the point values)",
+      "point": "IBU better",
+      "possible": [
+       "IBU better",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0005335278924332859,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.00889443695061847,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 2.4071378093616933,
+       "ratio_ci95": [
+        1.5787995337336211,
+        3.491020724145249
+       ],
+       "relation": "worse",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 68,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (IBU worse at the point values)",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.08733628750788089,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.5111336676482299,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.9331175747799292,
+       "ratio_ci95": [
+        0.8994284599103185,
+        0.9548663286812282
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 4,
+       "possible": 106,
+       "point": 83,
+       "n": 400
+      },
+      "cov68_median_J": 0.6425,
+      "cov95_median_J": 0.9325
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 109,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 86,
+       "possible": 108,
+       "point": 104,
+       "n": 400
+      },
+      "cov68_median_J": 0.3,
+      "cov95_median_J": 0.6325
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 107,
+       "possible": 109,
+       "point": 108,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     }
+    }
+   },
+   "3": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.000794967176133366,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.00469861164162655,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 0.5563739413086561,
+       "ratio_ci95": [
+        0.493471124787054,
+        0.7475001731761817
+       ],
+       "relation": "within",
+       "possible": [
+        "better",
+        "within"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 2,
+       "possible": 88,
+       "point": 15,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "IBU better",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07985397464488317,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.4888230365455078,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.8398659103279679,
+       "ratio_ci95": [
+        0.8285094826469164,
+        0.8550032895219832
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 103,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.058087297894972856,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.2308692194368688,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 0.9700507827183193,
+       "ratio_ci95": [
+        0.9539586151921813,
+        1.0354857869695453
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 100,
+       "possible": 109,
+       "point": 108,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0064754503009729954,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.0809959810880995,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.156377045862353,
+       "ratio_ci95": [
+        1.0895274392238607,
+        1.3525756641684739
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 46,
+       "possible": 109,
+       "point": 104,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0554705603821834,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.5153705153084005,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 1.0281848385872372,
+       "ratio_ci95": [
+        0.9615613029135057,
+        1.0556673024376964
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 102,
+       "possible": 109,
+       "point": 108,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.00033558463657791857,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.0033704046792278914,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 0.6288833067961807,
+       "ratio_ci95": [
+        0.5582848336428587,
+        1.0663092333679314
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 97,
+       "point": 34,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0005060283447259895,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.004505647303087566,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 0.5405904745048784,
+       "ratio_ci95": [
+        0.5351949043373251,
+        1.0617390448418982
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 79,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0006448743132146717,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.012393041148832865,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 2.9095036335317674,
+       "ratio_ci95": [
+        1.9405981377325514,
+        4.5744723281259265
+       ],
+       "relation": "worse",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 63,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (IBU worse at the point values)",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07992917943382222,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.4904431184005061,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.8539786175443725,
+       "ratio_ci95": [
+        0.8177386555803202,
+        0.8807057515321359
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 102,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 5,
+       "possible": 105,
+       "point": 79,
+       "n": 400
+      },
+      "cov68_median_J": 0.6475,
+      "cov95_median_J": 0.9325
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 107,
+       "possible": 109,
+       "point": 108,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 76,
+       "possible": 109,
+       "point": 102,
+       "n": 400
+      },
+      "cov68_median_J": 0.4075,
+      "cov95_median_J": 0.78
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     }
+    }
+   },
+   "4": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0009373639164155976,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.006251749092042152,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 0.6560331951732952,
+       "ratio_ci95": [
+        0.5398468931113518,
+        0.8141768287850308
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 80,
+       "point": 12,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07770229471695794,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.46093541852466474,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.817235570016947,
+       "ratio_ci95": [
+        0.7928935485134394,
+        0.8492267335426216
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 101,
+       "possible": 109,
+       "point": 106,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05883529711477233,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.22258043620856935,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 0.9825422783625326,
+       "ratio_ci95": [
+        0.950124494011752,
+        1.0081351058524513
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 88,
+       "possible": 109,
+       "point": 106,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.006898461632835767,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.08069845017119268,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.2319178301429876,
+       "ratio_ci95": [
+        1.1149301000238332,
+        1.4129243047101254
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 41,
+       "possible": 109,
+       "point": 99,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.04580331016887591,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.584219126726458,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 0.848995733020809,
+       "ratio_ci95": [
+        0.8271881490254982,
+        0.9308897278264692
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 94,
+       "possible": 109,
+       "point": 108,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0004296755617166423,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.00432135595645905,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 0.8052090550311223,
+       "ratio_ci95": [
+        0.6807353042511387,
+        1.2713315427623535
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 97,
+       "point": 32,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0006192988565847898,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.005700452010580241,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 0.6615974504803379,
+       "ratio_ci95": [
+        0.6234072379555095,
+        1.2775009852048314
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 74,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0007421867063993115,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.015396245881609493,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 3.3485516088604577,
+       "ratio_ci95": [
+        2.30384340856425,
+        5.476276106143536
+       ],
+       "relation": "worse",
+       "possible": [
+        "worse"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 71,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "IBU worse",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07760937899346967,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.4629838560992484,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.8291934266158041,
+       "ratio_ci95": [
+        0.7937504649541101,
+        0.8813447236585494
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 95,
+       "possible": 109,
+       "point": 108,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 4,
+       "possible": 105,
+       "point": 75,
+       "n": 400
+      },
+      "cov68_median_J": 0.6525,
+      "cov95_median_J": 0.935
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 105,
+       "possible": 109,
+       "point": 107,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 103,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 74,
+       "possible": 109,
+       "point": 98,
+       "n": 400
+      },
+      "cov68_median_J": 0.4875,
+      "cov95_median_J": 0.8425
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 102,
+       "possible": 109,
+       "point": 106,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     }
+    }
+   },
+   "5": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0008161804855238511,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.007404077654752516,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 0.5712205071897664,
+       "ratio_ci95": [
+        0.5339137272685883,
+        0.8102983239081228
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 80,
+       "point": 12,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400,
+      "of_receipt_control": {
+       "hits_equal_receipt": true
+      }
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07299546602246212,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.43357971492749847,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.7677313971333768,
+       "ratio_ci95": [
+        0.7565745604285492,
+        0.8054618724824667
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 98,
+       "possible": 109,
+       "point": 106,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.1102230246251565e-16
+      }
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05560277883924823,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.2139407036364712,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 0.9285596178333224,
+       "ratio_ci95": [
+        0.8753736808846135,
+        0.9591786063380976
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 85,
+       "possible": 109,
+       "point": 107,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 8.326672684688674e-17
+      }
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.007330981781313745,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.08077285490855912,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.3091566858713308,
+       "ratio_ci95": [
+        1.145831797399386,
+        1.4733618118365213
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 30,
+       "possible": 109,
+       "point": 95,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 3.469446951953614e-17
+      }
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05034206436412801,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.6307860265087013,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 0.9331246514503282,
+       "ratio_ci95": [
+        0.8606092247719879,
+        0.9567598982807896
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 91,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.6653345369377348e-16
+      }
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0005012501129620983,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.005240074907548572,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 0.9393392730551045,
+       "ratio_ci95": [
+        0.8016258023525233,
+        1.4743117670522903
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 93,
+       "point": 34,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400,
+      "of_receipt_control": {
+       "hits_equal_receipt": true
+      }
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0007137812934085664,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.006814444321613208,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 0.7625331112734107,
+       "ratio_ci95": [
+        0.7069839428360587,
+        1.4692223049191007
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 76,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.734723475976807e-17
+      }
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0008018565560074436,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.01798989094210467,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 3.6177663080500064,
+       "ratio_ci95": [
+        2.61696930538967,
+        6.266845287094515
+       ],
+       "relation": "worse",
+       "possible": [
+        "worse"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 66,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "IBU worse",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 2.2497195079074217e-17
+      }
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07290073402010191,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.43602777297347267,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.778885364486965,
+       "ratio_ci95": [
+        0.7523766418574723,
+        0.8399971774095202
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 94,
+       "possible": 109,
+       "point": 106,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.3877787807814457e-16
+      }
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 3,
+       "possible": 104,
+       "point": 70,
+       "n": 400
+      },
+      "cov68_median_J": 0.6525,
+      "cov95_median_J": 0.935
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 103,
+       "possible": 109,
+       "point": 104,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 99,
+       "possible": 109,
+       "point": 106,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 65,
+       "possible": 107,
+       "point": 98,
+       "n": 400
+      },
+      "cov68_median_J": 0.505,
+      "cov95_median_J": 0.8475
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 100,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     }
+    }
+   },
+   "10": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0015537058998873932,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.019088310851271776,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 1.0873926636309825,
+       "ratio_ci95": [
+        0.9546370670980315,
+        1.371404303050347
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 3,
+       "possible": 78,
+       "point": 15,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0722964521623751,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.3721093731563883,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.7603795036985835,
+       "ratio_ci95": [
+        0.7349914342134066,
+        0.8060215621343308
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 91,
+       "possible": 109,
+       "point": 105,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05061860027329923,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.19626045306512435,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 0.8453244443217459,
+       "ratio_ci95": [
+        0.7860673332960139,
+        0.9145628487388978
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 77,
+       "possible": 109,
+       "point": 103,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.005990915991891471,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.08247570471530365,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.0698495725728958,
+       "ratio_ci95": [
+        0.970712072163546,
+        1.3504031498848192
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 17,
+       "possible": 109,
+       "point": 85,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.06036562475210081,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.7292869411275362,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 1.1189182102060002,
+       "ratio_ci95": [
+        1.0516967402846011,
+        1.1489325348414647
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 88,
+       "possible": 109,
+       "point": 106,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0008100824858992928,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.009567017569141799,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 1.518089021312304,
+       "ratio_ci95": [
+        1.2775929997069977,
+        2.204542314368466
+       ],
+       "relation": "within",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 95,
+       "point": 30,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "IBU worse",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0009612118909373117,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.01153597591358889,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 1.0268634111848105,
+       "ratio_ci95": [
+        1.051748307155135,
+        2.192284489697736
+       ],
+       "relation": "within",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "IBU worse",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0010965172781307708,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.0267583144105555,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 4.947198143229218,
+       "ratio_ci95": [
+        3.823891451114162,
+        9.556328489841084
+       ],
+       "relation": "worse",
+       "possible": [
+        "worse"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 64,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "IBU worse",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07071668549245787,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.3636004121635999,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.7555505729189929,
+       "ratio_ci95": [
+        0.7265690445899126,
+        0.8279987224501958
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 86,
+       "possible": 109,
+       "point": 104,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 0,
+       "possible": 101,
+       "point": 62,
+       "n": 400
+      },
+      "cov68_median_J": 0.665,
+      "cov95_median_J": 0.94
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 98,
+       "possible": 108,
+       "point": 105,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.01
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 94,
+       "possible": 109,
+       "point": 107,
+       "n": 400
+      },
+      "cov68_median_J": 0.005,
+      "cov95_median_J": 0.0625
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 49,
+       "possible": 106,
+       "point": 89,
+       "n": 400
+      },
+      "cov68_median_J": 0.5925,
+      "cov95_median_J": 0.9075
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 102,
+       "possible": 109,
+       "point": 107,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0075
+     }
+    }
+   },
+   "20": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.002651501209196321,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.040359224984054656,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 1.8557070309752468,
+       "ratio_ci95": [
+        1.7437208929572803,
+        2.4754404063097466
+       ],
+       "relation": "within",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 3,
+       "possible": 75,
+       "point": 11,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "IBU worse",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.055822512880918156,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.3913100825660512,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.5871144899927809,
+       "ratio_ci95": [
+        0.5765809214973799,
+        0.6389235487240607
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 90,
+       "possible": 109,
+       "point": 100,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05583405979947409,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.18652590598455773,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 0.9324219816310083,
+       "ratio_ci95": [
+        0.8911538134194338,
+        1.0547282255944332
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 77,
+       "possible": 109,
+       "point": 101,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.007062552931377553,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.0934567846300772,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.2612210294943835,
+       "ratio_ci95": [
+        1.1379294663012494,
+        1.6249842442576838
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 11,
+       "possible": 109,
+       "point": 75,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07230026512959316,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.8950621583200158,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 1.3401349458146423,
+       "ratio_ci95": [
+        1.1989482188772267,
+        1.370007017356253
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 86,
+       "possible": 109,
+       "point": 104,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0012212360413006807,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.017371516812727215,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 2.2885879635718234,
+       "ratio_ci95": [
+        1.938712873269233,
+        3.375850924853223
+       ],
+       "relation": "worse",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 91,
+       "point": 26,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "IBU worse",
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0013768195166251403,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.018531967456873227,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 1.4708573611681621,
+       "ratio_ci95": [
+        1.5554168125316061,
+        3.326125965649769
+       ],
+       "relation": "within",
+       "possible": [
+        "within",
+        "worse"
+       ],
+       "resolved": false
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 64,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "IBU worse",
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0016572900455640472,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.033717069600049034,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 7.47725767731032,
+       "ratio_ci95": [
+        5.732629681534013,
+        14.408769396350046
+       ],
+       "relation": "worse",
+       "possible": [
+        "worse"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 62,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "IBU worse",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.057014944080144736,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.39324081005700967,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.6091585509800519,
+       "ratio_ci95": [
+        0.5919834551061774,
+        0.7195097824837252
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 82,
+       "possible": 109,
+       "point": 103,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 2,
+       "possible": 100,
+       "point": 56,
+       "n": 400
+      },
+      "cov68_median_J": 0.675,
+      "cov95_median_J": 0.9425
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 94,
+       "possible": 108,
+       "point": 102,
+       "n": 400
+      },
+      "cov68_median_J": 0.0075,
+      "cov95_median_J": 0.0575
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 94,
+       "possible": 109,
+       "point": 103,
+       "n": 400
+      },
+      "cov68_median_J": 0.035,
+      "cov95_median_J": 0.1675
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 38,
+       "possible": 102,
+       "point": 78,
+       "n": 400
+      },
+      "cov68_median_J": 0.6275,
+      "cov95_median_J": 0.92
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 98,
+       "possible": 109,
+       "point": 103,
+       "n": 400
+      },
+      "cov68_median_J": 0.0025,
+      "cov95_median_J": 0.04
+     }
+    }
+   }
+  }
+ },
+ "secondary_variants": {
+  "per_K": {
+   "5": {
+    "deformed": {
+     "tilt": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0008412887673561445,
+       "median_abs_of": 0.0014288361066363223,
+       "max_abs_ibu": 0.007656771734791848,
+       "max_abs_of": 0.026415079667497513,
+       "ratio": 0.5887930487259694,
+       "ratio_ci95": [
+        0.5257593891842978,
+        0.8009759887195717
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 74,
+       "point": 9,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 35,
+       "possible": 90,
+       "point": 52,
+       "n": 400
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (mixed at the point values)",
+      "point": "mixed",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.82327598164034e-08,
+       "max_abs": 7.527210664518003e-07
+      },
+      "gates_passed": 400,
+      "gates_total": 400,
+      "of_receipt_control": {
+       "hits_equal_receipt": true
+      }
+     },
+     "gibuu": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07470428462001966,
+       "median_abs_of": 0.09507943311295987,
+       "max_abs_ibu": 0.41791093753434555,
+       "max_abs_of": 0.5167860720427278,
+       "ratio": 0.7857039337967723,
+       "ratio_ci95": [
+        0.7735860624699268,
+        0.8100981672973709
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 95,
+       "possible": 109,
+       "point": 105,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 107,
+       "possible": 109,
+       "point": 109,
+       "n": 60
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 1.9065739314899632e-05,
+       "max_abs": 0.0002591464443410703
+      },
+      "gates_passed": 60,
+      "gates_total": 60,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.1102230246251565e-16
+      }
+     },
+     "w1": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.054943480340351604,
+       "median_abs_of": 0.059880677310725994,
+       "max_abs_ibu": 0.21094454126357903,
+       "max_abs_of": 0.2370831227702425,
+       "ratio": 0.9175494133983346,
+       "ratio_ci95": [
+        0.8659198119507959,
+        0.9548632620009695
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 84,
+       "possible": 109,
+       "point": 105,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 106,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.1588157125723705e-05,
+       "max_abs": 0.0007655670310862895
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 8.326672684688674e-17
+      }
+     },
+     "w2": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.006605621395284716,
+       "median_abs_of": 0.005599774160290438,
+       "max_abs_ibu": 0.07979624355376988,
+       "max_abs_of": 0.05018125787847226,
+       "ratio": 1.1796228216000249,
+       "ratio_ci95": [
+        1.122562504102713,
+        1.442771404899987
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 30,
+       "possible": 109,
+       "point": 96,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 80,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 4.8930308726991e-06,
+       "max_abs": 0.00014269948586306258
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 3.469446951953614e-17
+      }
+     },
+     "w3": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.05159912264212076,
+       "median_abs_of": 0.053949988660017524,
+       "max_abs_ibu": 0.6225027475530844,
+       "max_abs_of": 0.33574656669681413,
+       "ratio": 0.9564250878213993,
+       "ratio_ci95": [
+        0.8795448959751702,
+        0.9980663724649051
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 91,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 108,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.401552583544356e-05,
+       "max_abs": 0.0013758843156524204
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.6653345369377348e-16
+      }
+     }
+    },
+    "reference": {
+     "nominal": {
+      "n": 400,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0005527794868312954,
+       "median_abs_of": 0.0005336198829756514,
+       "max_abs_ibu": 0.00797712459757237,
+       "max_abs_of": 0.025821650951308537,
+       "ratio": 1.0359049661882975,
+       "ratio_ci95": [
+        0.7826209494111684,
+        1.4377589264239896
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 89,
+       "point": 26,
+       "n": 400
+      },
+      "count_of": {
+       "definite": 1,
+       "possible": 100,
+       "point": 12,
+       "n": 400
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": true
+      },
+      "reading": "unresolved (consistent at the point values)",
+      "point": "consistent",
+      "possible": [
+       "consistent",
+       "mixed"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.498001805406602e-18,
+       "max_abs": 1.1657341758564143e-17
+      },
+      "gates_passed": 400,
+      "gates_total": 400,
+      "of_receipt_control": {
+       "hits_equal_receipt": true
+      }
+     },
+     "nominal_N": {
+      "n": 60,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0007108288905097311,
+       "median_abs_of": 0.0009360659659966371,
+       "max_abs_ibu": 0.005164500887285271,
+       "max_abs_of": 0.010043559604472013,
+       "ratio": 0.7593790569587751,
+       "ratio_ci95": [
+        0.7278968858389672,
+        1.4855400476388598
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 1,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count_of": {
+       "definite": 21,
+       "possible": 109,
+       "point": 72,
+       "n": 60
+      },
+      "count": {
+       "relation": "better",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 3.7007434154171884e-18,
+       "max_abs": 2.590520390792032e-17
+      },
+      "gates_passed": 60,
+      "gates_total": 60,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.734723475976807e-17
+      }
+     },
+     "nominal_R": {
+      "n": 40,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.0008381199935062367,
+       "median_abs_of": 0.00022164409962666942,
+       "max_abs_ibu": 0.01824928242356976,
+       "max_abs_of": 0.000976276395583861,
+       "ratio": 3.7813774195565797,
+       "ratio_ci95": [
+        2.661217265493617,
+        6.502211932742868
+       ],
+       "relation": "worse",
+       "possible": [
+        "worse"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 0,
+       "possible": 109,
+       "point": 71,
+       "n": 40
+      },
+      "count_of": {
+       "definite": 0,
+       "possible": 109,
+       "point": 60,
+       "n": 40
+      },
+      "count": {
+       "relation": "within",
+       "resolved": false,
+       "corners": [
+        "better",
+        "within",
+        "worse"
+       ],
+       "decisive": false
+      },
+      "reading": "IBU worse",
+      "point": "IBU worse",
+      "possible": [
+       "IBU worse"
+      ],
+      "oracle_floor": {
+       "median_abs": 5.551115123125783e-18,
+       "max_abs": 3.8857805861880476e-17
+      },
+      "gates_passed": 40,
+      "gates_total": 40,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 2.2497195079074217e-17
+      }
+     },
+     "gibuu_R": {
+      "n": 20,
+      "J_rows_used": 109,
+      "residual": {
+       "median_abs_ibu": 0.07448389397851261,
+       "median_abs_of": 0.09359623038766438,
+       "max_abs_ibu": 0.4187142665013609,
+       "max_abs_of": 0.5172145482920947,
+       "ratio": 0.7958001478265657,
+       "ratio_ci95": [
+        0.7681540363734753,
+        0.842278244594098
+       ],
+       "relation": "within",
+       "possible": [
+        "within"
+       ],
+       "resolved": true
+      },
+      "count_ibu": {
+       "definite": 90,
+       "possible": 109,
+       "point": 106,
+       "n": 20
+      },
+      "count_of": {
+       "definite": 105,
+       "possible": 109,
+       "point": 109,
+       "n": 20
+      },
+      "count": {
+       "relation": "within",
+       "resolved": true,
+       "corners": [
+        "within"
+       ],
+       "decisive": false
+      },
+      "reading": "consistent",
+      "point": "consistent",
+      "possible": [
+       "consistent"
+      ],
+      "oracle_floor": {
+       "median_abs": 2.5503075517463447e-05,
+       "max_abs": 0.0006015585102414289
+      },
+      "gates_passed": 20,
+      "gates_total": 20,
+      "of_receipt_control": {
+       "mean_rel_max_abs_diff": 1.3877787807814457e-16
+      }
+     }
+    },
+    "verdict": "unresolved",
+    "ibu_own_corrected_400": {
+     "nominal_N": {
+      "n": 400,
+      "count": {
+       "definite": 3,
+       "possible": 104,
+       "point": 68,
+       "n": 400
+      },
+      "cov68_median_J": 0.655,
+      "cov95_median_J": 0.935
+     },
+     "gibuu": {
+      "n": 400,
+      "count": {
+       "definite": 102,
+       "possible": 108,
+       "point": 104,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w1": {
+      "n": 400,
+      "count": {
+       "definite": 99,
+       "possible": 109,
+       "point": 106,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     },
+     "w2": {
+      "n": 400,
+      "count": {
+       "definite": 64,
+       "possible": 107,
+       "point": 99,
+       "n": 400
+      },
+      "cov68_median_J": 0.5225,
+      "cov95_median_J": 0.8625
+     },
+     "w3": {
+      "n": 400,
+      "count": {
+       "definite": 102,
+       "possible": 109,
+       "point": 109,
+       "n": 400
+      },
+      "cov68_median_J": 0.0,
+      "cov95_median_J": 0.0
+     }
+    }
+   }
+  }
+ },
+ "data": {
+  "D_P": {
+   "against": "(a)",
+   "ratio_median": 0.9994278450041454,
+   "ratio_min": 0.801953331461987,
+   "ratio_max": 1.3398510163291366,
+   "abs_dev_median": 0.04578028334301598,
+   "per_J": {
+    "J0": 1.0312957421991162,
+    "J1": 0.9032919592957503,
+    "J4": 1.0006609228310526,
+    "J7": 1.047076802811165,
+    "J8": 0.9976699803864891,
+    "J9": 0.9277474200461571,
+    "J10": 0.9334449907255444,
+    "J13": 1.070812001338324,
+    "J16": 1.0315654356199744,
+    "J17": 1.0636517040019566,
+    "J25": 0.9730630386990429,
+    "J26": 1.034484995511251,
+    "J27": 1.0099478077781205,
+    "J28": 0.8528238142115409,
+    "J31": 0.982297959556931,
+    "J34": 1.0900888514474076,
+    "J35": 1.0928448563284703,
+    "J36": 0.8727450391128576,
+    "J37": 0.868905124994506,
+    "J40": 1.0359932397199074,
+    "J43": 1.061549397646392,
+    "J44": 1.1352074465005533,
+    "J52": 0.9749540905818876,
+    "J53": 1.0887888881124377,
+    "J54": 1.0045647273813991,
+    "J55": 0.803178444277047,
+    "J58": 0.9931051408036676,
+    "J63": 0.801953331461987,
+    "J64": 0.8205393959566465,
+    "J67": 1.0738809848115318,
+    "J70": 1.1755200022793548,
+    "J71": 1.3398510163291366,
+    "J80": 1.2992290451937134,
+    "J81": 1.0367446489359409,
+    "J85": 1.0149898292421373,
+    "J88": 1.003978995481456,
+    "J89": 0.8571781822670114,
+    "J90": 1.0330850794136914,
+    "J91": 1.0650116988215674,
+    "J93": 1.1061280311656014,
+    "J94": 1.0480841904297478,
+    "J97": 0.9957739006560665,
+    "J98": 0.8854652270965235,
+    "J106": 1.0001177257388745,
+    "J107": 0.9149904403922416,
+    "J108": 1.052084764417686,
+    "J109": 1.1357759413752775,
+    "J111": 1.0856644360462535,
+    "J112": 0.9905982092802488,
+    "J115": 0.9718833521288004,
+    "J116": 0.888619880458263,
+    "J117": 1.009488235271099,
+    "J118": 0.9994278450041454,
+    "J120": 1.068107113971401,
+    "J121": 0.9626599565730635,
+    "J124": 0.9321647465400125,
+    "J125": 0.8899767688684731,
+    "J133": 0.9220501211932324,
+    "J134": 0.9344353304076634,
+    "J135": 1.0504176527909344,
+    "J136": 1.1498515061406793,
+    "J139": 1.0005408412398082,
+    "J142": 1.029974710277482,
+    "J143": 0.9967521978404126,
+    "J144": 0.9751990844089768,
+    "J145": 1.0036701629896034,
+    "J147": 0.954219716656984,
+    "J148": 0.9680436726831828,
+    "J151": 0.9854581436237675,
+    "J152": 0.9896520414556599,
+    "J160": 0.9813938186579951,
+    "J161": 1.0414085336198386,
+    "J162": 1.042089063230097,
+    "J165": 0.9782171023185813,
+    "J174": 1.1458283794838116,
+    "J175": 1.1995358466568637,
+    "J178": 1.1403300656575137,
+    "J179": 0.9407183914602609,
+    "J187": 1.156226665662276,
+    "J188": 1.01974181308671,
+    "J189": 0.9764338776116241,
+    "J192": 0.9216293038593604,
+    "J193": 0.9645482473016357,
+    "J195": 0.841525728625714,
+    "J196": 0.9712178136697608,
+    "J197": 0.875288001993538,
+    "J198": 1.0172704349833164,
+    "J201": 1.0266482837599413,
+    "J202": 1.0086108527785487,
+    "J204": 1.0486704922975247,
+    "J205": 0.9923284685330488,
+    "J206": 0.9003312589807538,
+    "J214": 0.9989815415247076,
+    "J215": 1.0197470738130636,
+    "J216": 0.9837846869881581,
+    "J219": 0.9359295195448222,
+    "J220": 1.0134657599496235,
+    "J222": 0.8894664057740467,
+    "J223": 1.0486395389400074,
+    "J224": 0.9088196027390211,
+    "J225": 0.9798684913756508,
+    "J228": 0.9776134540018618,
+    "J229": 1.0360827837517599,
+    "J231": 0.9739363877691843,
+    "J232": 1.0358810777496663,
+    "J233": 0.9075672009606078,
+    "J240": 0.9362261488633802,
+    "J241": 1.0403440650762918,
+    "J242": 0.9867983869522098
+   }
+  },
+  "D_N": {
+   "against": "(e)",
+   "ratio_median": 1.0033779855759761,
+   "ratio_min": 0.8009813431378868,
+   "ratio_max": 1.3678581900425297,
+   "abs_dev_median": 0.047488343628221186,
+   "per_J": {
+    "J0": 1.032637298773956,
+    "J1": 0.9182282482407139,
+    "J4": 1.0185283319493514,
+    "J7": 1.0694727555593697,
+    "J8": 1.0237615995175282,
+    "J9": 0.935060643262688,
+    "J10": 0.9454405799443342,
+    "J13": 1.0833769653690513,
+    "J16": 1.0420585683787211,
+    "J17": 1.0750528486114626,
+    "J25": 0.9823886484106649,
+    "J26": 1.0249571609354273,
+    "J27": 1.01070042397199,
+    "J28": 0.8619469472836283,
+    "J31": 0.9943555394492044,
+    "J34": 1.1063755680032847,
+    "J35": 1.1175511108455234,
+    "J36": 0.8768968701960232,
+    "J37": 0.875535776160771,
+    "J40": 1.0416071481506157,
+    "J43": 1.0636745869848054,
+    "J44": 1.1490967927348439,
+    "J52": 0.9737839260820391,
+    "J53": 1.0872284996349608,
+    "J54": 1.0033779855759761,
+    "J55": 0.8035487180422712,
+    "J58": 1.0042506988325786,
+    "J63": 0.8009813431378868,
+    "J64": 0.8186604558331316,
+    "J67": 1.0800992675588879,
+    "J70": 1.1881244179844617,
+    "J71": 1.3678581900425297,
+    "J80": 1.2980430044891214,
+    "J81": 1.0357397204081762,
+    "J85": 1.020878081988754,
+    "J88": 1.0103738802526772,
+    "J89": 0.8709319599585801,
+    "J90": 1.0311014230546294,
+    "J91": 1.0599361157166105,
+    "J93": 1.1019528595909072,
+    "J94": 1.04905059320603,
+    "J97": 0.9955695575365149,
+    "J98": 0.8945246294429098,
+    "J106": 0.9982985906493733,
+    "J107": 0.9205638415057336,
+    "J108": 1.0522092027239014,
+    "J109": 1.1266708126212093,
+    "J111": 1.0832460082151545,
+    "J112": 0.991052027872373,
+    "J115": 0.9724078358142113,
+    "J116": 0.8955739305722368,
+    "J117": 1.0069462748315052,
+    "J118": 0.9908881959533733,
+    "J120": 1.0615382359193846,
+    "J121": 0.9602876949143875,
+    "J124": 0.9283516712932618,
+    "J125": 0.8939819237687057,
+    "J133": 0.9187814253859778,
+    "J134": 0.9358898410222659,
+    "J135": 1.053367507599883,
+    "J136": 1.140086711672278,
+    "J139": 1.0014262074102398,
+    "J142": 1.0309152529525836,
+    "J143": 1.0149890762887805,
+    "J144": 0.9745827814115634,
+    "J145": 0.9949794234660386,
+    "J147": 0.9514662762254769,
+    "J148": 0.9691304537765661,
+    "J151": 0.9846819957077996,
+    "J152": 1.0095433442765742,
+    "J160": 0.9840488537884321,
+    "J161": 1.0567968705375452,
+    "J162": 1.04756573102695,
+    "J165": 0.9852030052476634,
+    "J174": 1.1414649358423226,
+    "J175": 1.20246789730939,
+    "J178": 1.1410757235305822,
+    "J179": 0.9525116563717788,
+    "J187": 1.1543017890743756,
+    "J188": 1.0184192961672398,
+    "J189": 0.984005521987709,
+    "J192": 0.9268639930344849,
+    "J193": 0.9677270524636491,
+    "J195": 0.8477264103469797,
+    "J196": 0.9754174708712555,
+    "J197": 0.8855868286325922,
+    "J198": 1.0224679785777435,
+    "J201": 1.0258607568704678,
+    "J202": 1.0080613229392335,
+    "J204": 1.045919540443834,
+    "J205": 0.9912672043508616,
+    "J206": 0.9081865933214905,
+    "J214": 1.0002932352908125,
+    "J215": 1.0157671395539893,
+    "J216": 0.9932960272729038,
+    "J219": 0.9388003273243966,
+    "J220": 1.014147947603738,
+    "J222": 0.8909280196780511,
+    "J223": 1.0460828622861056,
+    "J224": 0.9247493331791192,
+    "J225": 0.9875802328480854,
+    "J228": 0.979012958377637,
+    "J229": 1.036601062055764,
+    "J231": 0.9732873346798784,
+    "J232": 1.032123110638065,
+    "J233": 0.9220235495148825,
+    "J240": 0.9372028301803942,
+    "J241": 1.0411625158256725,
+    "J242": 0.9877857504192994
+   }
+  }
+ },
+ "preconditions": {
+  "pairing_gates": true,
+  "bootstrap_gates": {
+   "P_sigma": true,
+   "N_sigma_s5n": true,
+   "N_sigma_R": true
+  },
+  "J_rows_109": true,
+  "omnifold_receipts_reproduced": true,
+  "pass": true
+ },
+ "verdict": "unresolved"
+}

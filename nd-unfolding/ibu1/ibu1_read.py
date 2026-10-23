@@ -71,11 +71,19 @@ def load_unit(outdir: Path, name: str, variant: str, seeds: list[int] | None = N
     if not rows:
         raise SystemExit(f"no products for unit {name}")
     ks = rows[0][4]
-    return {"seeds": [r[0]["pseudo_seed"] for r in rows], "F": np.array([r[1] for r in rows]),
+    return {"unit": name, "seeds": [r[0]["pseudo_seed"] for r in rows], "F": np.array([r[1] for r in rows]),
             "t": np.array([r[2] for r in rows]),
-            "of": None if rows[0][3] is None else np.array([r[3] for r in rows]),
+            "of": None if any(r[3] is None for r in rows) else np.array([r[3] for r in rows]),
             "gates": [r[0]["comparator"] for r in rows], "ks": [int(k) for k in ks],
             "oracle": np.array([r[5] for r in rows]), "t_A": np.array([r[6] for r in rows])}
+
+
+def require_of(unit: dict) -> np.ndarray:
+    """The paired OmniFold estimates; a paired comparison without them fails here, naming the unit (reader fix,
+    BINDING-READER-FIX.md condition 2)."""
+    if unit["of"] is None:
+        raise AssertionError(f"unit {unit['unit']}: a paired product has no f_of (OmniFold comparator estimate)")
+    return unit["of"]
 
 
 def load_boot(outdir: Path, name: str, variant: str) -> dict:
@@ -231,10 +239,10 @@ def of_hits(src: tuple, receipts: dict, names: list[str], n: int) -> np.ndarray:
 def of_receipt_controls(src: tuple, receipts: dict, unit: dict, k5: int, corr_of=None) -> dict:
     """The paired OmniFold estimates in our products reproduce the committed receipt (population check)."""
     kind, key = src
-    relO = unit["of"] / unit["t"] - 1.0
+    relO = require_of(unit) / unit["t"] - 1.0
     if kind == "interim":
         sig = np.asarray(receipts["interim"]["sigma"], float)
-        h = hits(unit["of"], unit["t"], sig, corr_of)
+        h = hits(require_of(unit), unit["t"], sig, corr_of)
         g = next(x for x in receipts["interim"]["grid"] if x["truth"] == key)
         return {"hits_equal_receipt": bool(np.array_equal(h, np.array([g["hits68"], g["hits95"]])))}
     p = (receipts["s5n"]["grid"][key] if kind == "s5n" else receipts["R"]["points"][key])["per_functional"]
@@ -270,7 +278,7 @@ def evaluate(outdir: Path, receipts: dict, names: list[str], variant: dict, k_li
                 hO = of_hits(spec["of"], receipts, names, n)
                 rows = J[np.all(t[:, J] != 0, axis=0)]  # IA-4: the 109 supported cells all have truth (checked)
                 cI, cO = count_interval(hI, n, rows), count_interval(hO, n, rows)
-                relI, relO = est / t - 1.0, u["of"] / t - 1.0
+                relI, relO = est / t - 1.0, require_of(u) / t - 1.0
                 res = residual_reading(relI, relO, rows)
                 cnt = count_reading(cI, cO)
                 floor = (u["oracle"] / u["t_A"] - 1.0)[:, rows].mean(0)

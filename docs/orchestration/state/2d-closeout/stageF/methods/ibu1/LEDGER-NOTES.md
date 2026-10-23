@@ -17,6 +17,10 @@ All times are PDT, from `sacct` and the task logs under `/pscratch/sd/j/josephrb
 - **Steps:**
   - 41 steps completed 0:0.
   - 20 were cancelled at the limit: the three bootstraps, and 17 seed chunks that started late, as memory freed.
+  - **Correction (2026-10-23, from the full-step sacct in [`receipts/sacct.txt`](receipts/sacct.txt), found by the
+    IBU-1 report's review):** 40 numbered steps COMPLETED and 21 CANCELLED. The 21 are the three bootstraps and 18
+    seed chunks. N_sigma_R's step (`.2`) counts as CANCELLED although its product had already been written (18:25:06),
+    as the next section says. The counts above were taken from the guard lines (41), which include that step.
 - **Memory:** peak step RSS 8.78 GB, inside the 11G step.
 
 **Products** (re-read on Perlmutter: every `.npz` loads; every comparator gate present passes):
@@ -40,6 +44,9 @@ All times are PDT, from `sacct` and the task logs under `/pscratch/sd/j/josephrb
   finishes its chunk without recomputing.
 - `N_sigma_R.npz` was written at 18:25:06. Its step was killed at 18:25:35, after the write and before the guard
   finished. Its re-run line skips the product and logs a clean exit.
+  - **Correction (2026-10-23, found by the IBU-1 report's review):** the guard had in fact recorded the child's exit:
+    its inventory record (`receipts/inventory/N_sigma_R.jsonl`) was written at 18:25:06 PDT with outcome
+    `child-systemexit:0`. The step was cancelled at 18:25:35, after both.
 - The two other bootstraps keep no checkpoint, so their 1,142 s of work is lost.
 
 ## 2. Why it overran
