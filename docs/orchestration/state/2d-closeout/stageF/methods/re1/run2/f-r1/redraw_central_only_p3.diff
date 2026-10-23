@@ -1,0 +1,13 @@
+diff --git a/docs/analysis-note/redraw_central_only.py b/nd-unfolding/re1/redraw_central_only_p3.py
+index 19979c46..a21619c1 100644
+--- a/docs/analysis-note/redraw_central_only.py
++++ b/nd-unfolding/re1/redraw_central_only_p3.py
+@@ -67,7 +67,7 @@ ogb.load_cov = cme.load_cov = caf.load_ours = _refuse
+ 
+ # Stage-7 inputs, relative to --genfig (= stage7/genfig/3d-unfolding)
+ GENFIG_SHA256 = {
+-    "xsec_3d_MEFHC_5iter_lgbm.root": "0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59",
++    "xsec_3d_MEFHC_5iter_lgbm.root": "c16b622b4970800121b1d92dad91407878e0f4546375bfe27cdd3257d46d8c63",
+     "genie/genie_cv_xsec3d.root": "8d417234dd33de2b0944d1bb9a75d5f888fa95c5ad0a02d4f71048a5bd410e3c",
+     "genie/model_tunev1_xsec3d.root": "2d3b6bedf496b1c213861affdc36fad8288216ebb7f41f72527d80abf1fb0e09",
+     "genie/nuwro_cv_xsec3d.root": "e728f0893cc6d0bf4e8355279fe46b9c6a458cedbbc79877e42cb49a62d26374",

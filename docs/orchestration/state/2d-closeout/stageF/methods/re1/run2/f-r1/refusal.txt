@@ -1,0 +1,10 @@
+RE-1 F-R1 refusal check, login node, deploy-e4886f90 (clean), 2026-10-22 ~21:40 PDT, before F2.
+Recorded from the session's command output (the check wrote nothing; tmp/refuse/ stayed empty).
+
+$ python nd-unfolding/re1/redraw_central_only_p3.py --genfig $S7G --outdir $B/tmp/refuse --only generators
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root: sha256 0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59 != recorded c16b622b4970800121b1d92dad91407878e0f4546375bfe27cdd3257d46d8c63
+p3 on current: rc=1
+$ python nd-unfolding/re1/redraw_central_only_p4.py --xsec4d $CUR4D --supplemental $SUPP --outdir $B/tmp/refuse --only ascencio
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root: sha256 1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2 != recorded ece4055e29756eeef81932b93199d507ca69296bbe7a90b2776c0c39a330998e
+p4 on current: rc=1
+files in tmp/refuse: 0; deploy porcelain lines: 0

@@ -1,0 +1,30 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[input] ece4055e2975  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_4d_p4.root
+[input] 748afa9235f7  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt
+
+===== ascencio =====
+[asc] parsed 44 cells; cov asymmetry 0.0e+00
+[grid] 2 common super-bins:
+   q3 [0.4,0.6)  Eavail [0.0,0.4)
+   q3 [0.6,1.2)  Eavail [0.0,0.4)
+
+[cmp] q3             Eavail                ours    Ascencio   ratio  ours-Asc
+[cmp] [0.4,0.6) GeV  [0.0,0.4) GeV   2.566e-38   2.349e-38   1.092     +9.2%
+[cmp] [0.6,1.2) GeV  [0.0,0.4) GeV   1.438e-38   1.357e-38   1.060     +6.0%
+[cmp] integrated (common region): ours 5.503e-39 vs Ascencio 5.135e-39  ratio 1.0718
+[cmp] wrote /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/ascencio_fullcov_compare_central.png
+[oi136] inventory: checked=557 repo_origin_count=13 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/inventory/f_redraw4d.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 14   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/methods-paper/re1-20261022/deploy-e4886f90  (14) __main__, compare_ascencio_fullcov, compare_mec_eavail, flux_universe, genie_to_xsec3d, gst_reader, mode_decomp_eavail, overlay_generators_band, technote_style, unfold_2d_omnifold_unbinned, unfold_3d_omnifold_unbinned, unfold_nd_omnifold_unbinned, xsec_3d, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.

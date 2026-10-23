@@ -281,6 +281,55 @@ run "every doc has an overrides row" python3 docs/orchestration/live_doc_indexed
 run "bounded control plane"        python3 docs/orchestration/control_plane_lint.py
 run "control-plane self-test"      python3 docs/orchestration/control_plane_lint.py --self-test
 run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.py --self-test
+# ADDED 2026-10-22 (paper-tighten lane; Joseph: "yes do all three"). Rules and their checks:
+# docs/orchestration/RECORDS-RULES.md. WHY: a session said coverage under configuration (e) was untested; it had
+# been measured in s5e under the contract letter R, and no tool resolved one name to the other. Each check reads
+# the GIT INDEX (staged blobs), so it judges what the commit would contain.
+# WHERE THESE RUN TODAY: only where this file runs. Worktree commits in this clone run the hook at the absolute
+# core.hooksPath (the shared checkout's .githooks, whose local main predates these lines), and no CI exists, so
+# run `bash .githooks/pre-commit` from the branch's worktree before pushing. Commit-time enforcement needs the
+# shared hook updated or a CI check -- both pending Joseph's decision (RECORDS-RULES.md, "Where the checks run").
+# Measured 2026-10-22 on this branch's tree (macOS, python 3.12, a loaded machine): the three plain checks 1.3 s,
+# 5.3 s, 0.1 s (always run); the three self-tests 4.9 s, 5.7 s, 1.7 s (run only when tools/registry/** or
+# docs/orchestration/registry/** is staged). Whole hook: 35.4 s with registry files staged, 22.8 s with none
+# staged (measured with an index equal to HEAD).
+#   - registry: every ESTIMATORS/ALIASES/UNRESOLVED-NAMES/WAIVERS citation resolves by the digest of its whole
+#     cited line (line_sha256; the line number is a hint): exactly one line with that digest, holding the quote.
+#     An edited cited line FAILS (no line has the digest) even if it keeps the quote; a moved one passes, and
+#     `check_registry.py --repoint` refreshes the hint. Every configuration label of LABEL_PATTERNS
+#     printed by paper/note/primer/records names exactly one estimator through identifying aliases; the records
+#     document \inputs the generated index and no posted driver reaches it.
+#   - results index: RESULTS-INDEX.tsv, RESULTS-POPULATION.tsv and the two records_*.tex equal a fresh generation
+#     from the staged receipts, no receipt of the declared population is unindexed, every ATTRIBUTION row's
+#     cited line names its estimator, every estimator a posted document prints has an attributed row or is
+#     listed as NO-RESULTS-INDEXED, and no estimator with attributed rows in HEAD's index loses all of them
+#     without a cited WAIVERS.tsv row. Fix: `results_index.py --write` and `git add` its four outputs. Its
+#     --self-test plants a result receipt (must fail), a non-result JSON (must pass) and a rule-7 violation (must
+#     fail) in a throwaway repository with real staging.
+#   - absence claims: an absence claim touching a line ADDED or CHANGED against HEAD (git diff --cached; in a merge,
+#     new against EVERY parent), judged on its paragraph's joined text, needs `Search: <terms> @ <sha>` in that
+#     paragraph, or, for a scoping statement, an `absence-ok: <reason>` waiver (counted). Diff-scoped on purpose:
+#     `absence_claims.py --count-existing a84697f3` measures 1594 distinct claim spans in 424 of 831 in-scope
+#     files (joined-paragraph judging, code spans and TeX comments removed), none beside a search line; they are
+#     not re-judged. (The 1569 first recorded here was measured line by line, before code spans were removed.)
+#     The --self-test also drops R's real attribution rules (must fail, rule 8) and adds a cited waiver (must pass).
+# DECLINED HERE: tools/registry/test_registry.py (24 tests, 102 s measured, including an end-to-end `git commit`
+# through this hook in a scratch clone's linked worktree, normal and `commit -a`, asserting the worktree index is
+# untouched) -- over this hook's budget; its discovery, rule-7 and rule-8 directions are what
+# results_index.py --self-test runs. The self-tests' throwaway repositories run git with EVERY GIT_* variable
+# removed (reglib.clean_env): the hook's GIT_INDEX_FILE names the committing worktree's index. Run it when changing tools/registry/.
+run "registry citations+labels"    python3 tools/registry/check_registry.py
+run "results index fresh+complete" python3 tools/registry/results_index.py --check
+run "absence claims carry search"  python3 tools/registry/absence_claims.py
+# The three self-tests prove the INSTRUMENTS, so they run only when the instruments or their tables change: when
+# this commit stages anything under tools/registry/ or docs/orchestration/registry/. No pipe into grep (SIGPIPE
+# under pipefail could turn "staged" into "not staged").
+registry_staged="$(git diff --cached --name-only -- tools/registry docs/orchestration/registry 2>/dev/null || true)"
+if [ -n "$registry_staged" ]; then
+  run "registry self-test"           python3 tools/registry/check_registry.py --self-test
+  run "results index self-test"      python3 tools/registry/results_index.py --self-test
+  run "absence-claims self-test"     python3 tools/registry/absence_claims.py --self-test
+fi
 
 # The loop-ledger ADVISORY described in the header. Never touches `fail`. No pipe into `grep -q`:
 # an early-closing reader can SIGPIPE git and, under pipefail, turn "staged" into "not staged".
