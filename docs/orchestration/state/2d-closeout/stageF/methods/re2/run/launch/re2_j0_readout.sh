@@ -10,7 +10,8 @@ set -u
 export TMPDIR=$B/tmp
 for j in "$JA" "$JB"; do
     st=$(sacct -X -n -P -j "$j" -o State | head -1)
-    case "$st" in PENDING*|RUNNING*|REQUEUED*|SUSPENDED*|"") echo "job $j is not finished ($st)"; exit 2 ;; esac
+    case "$st" in COMPLETED|FAILED|TIMEOUT|CANCELLED*|OUT_OF_MEMORY|NODE_FAIL|DEADLINE|PREEMPTED|BOOT_FAIL) ;;
+        *) echo "job $j is not in a terminal state ($st)"; exit 2 ;; esac
 done
 R=$O/readout; mkdir -p "$R"
 for f in k1.json steps.psv j0_ledger.tsv units.json; do [ ! -e "$R/$f" ] || { echo "$R/$f exists"; exit 3; }; done

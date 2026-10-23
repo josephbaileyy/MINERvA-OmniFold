@@ -13,7 +13,8 @@ The rule (RE2-DECLARATION.md §5.3, fixed before J0). J0 is booked inside the sa
 for part B is ``room = 90 - J0's charge`` (the jobs' ``charge_node_h`` from ``re2_ledger.sh``):
 * ``core_worst`` = 1.25 x the projected core (J1, J2, J3, J4, J6, J8).
 * core_worst <= room: part B may be declared within the grant. Then J7 (S4(ii), a genuinely omitted term,
-  RE2-PLAN R10) is added if it still fits, and then J5 (S2, already inside S1) if that fits too.
+  RE2-PLAN R10) is added if it still fits, and then J5 (S2, already inside S1) only if J7 was added and J5
+  fits too.
 * core_worst > room: production does not start; the projection goes back to the director (a fresh binding,
   RE2-PLAN-RULINGS item 2).
 * any J0 step not COMPLETED, or any class unmeasured: INCOMPLETE; production does not start.
@@ -63,7 +64,10 @@ def main(argv=None) -> int:
         steps[f[1]] = {"jobid": f[0], "elapsed_s": int(f[2]), "cpus": int(f[3]), "state": f[4]}
     missing = sorted(set(runs) - set(steps))
     not_completed = sorted(k for k, v in steps.items() if v["state"] != "COMPLETED")
-    j0_charge = sum(float(r["charge_node_h"]) for r in csv.DictReader(open(a.ledger), delimiter="\t"))
+    ledger = list(csv.DictReader(open(a.ledger), delimiter="\t"))
+    if len(ledger) != 2:  # exactly the two J0 jobs; an empty ledger must never read as a charge of 0
+        raise RuntimeError(f"{a.ledger}: {len(ledger)} job rows, expected the two J0 jobs")
+    j0_charge = sum(float(r["charge_node_h"]) for r in ledger)
     per_run = {k: dict(v, node_h=v["elapsed_s"] * v["cpus"] / 256 / 3600) for k, v in steps.items()}
     out = {"schema": "re2-j0-units/2", "runs": per_run, "missing_steps": missing, "not_completed": not_completed,
            "j0_charge_node_h": j0_charge, "room_node_h": GRANT - j0_charge, "classes": {}, "jobs": {}}
@@ -86,10 +90,11 @@ def main(argv=None) -> int:
             out["verdict"] = "RETURN TO DIRECTOR: core worst case exceeds the grant left after J0"
         else:
             total, included = core, []
-            for j in DIAG_ORDER:
-                if FACTOR * (total + out["jobs"][j]) <= room:
-                    total += out["jobs"][j]
-                    included.append(j)
+            for j in DIAG_ORDER:  # J7, then J5 only if J7 is in (R10)
+                if FACTOR * (total + out["jobs"][j]) > room:
+                    break
+                total += out["jobs"][j]
+                included.append(j)
             out.update(included_diagnostics=included, total_projected=total, total_worst=FACTOR * total)
             out["verdict"] = "WITHIN GRANT: core" + "".join(f" + {j}" for j in included)
     a.result.write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")

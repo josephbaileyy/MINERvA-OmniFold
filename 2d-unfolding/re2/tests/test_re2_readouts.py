@@ -213,7 +213,8 @@ class Units(unittest.TestCase):
             f"1.{i}|{l}|{seconds.get(l, 1000)}|64|{(state or {}).get(l, 'COMPLETED')}\n"
             for i, l in enumerate(self.labels)))
         (self.d / "ledger.tsv").write_text("jobid\tname\tqos\tstate\tstart\tend\telapsed_s\tbilling\tcharge_node_h\n"
-                                           f"1\tre2-j0a\tregular\tCOMPLETED\t-\t-\t0\t256\t{j0_charge}\n")
+                                           f"1\tre2-j0a\tregular\tCOMPLETED\t-\t-\t0\t256\t{j0_charge}\n"
+                                           "2\tre2-j0b\tregular\tCOMPLETED\t-\t-\t0\t256\t0\n")
         U.main(["--runs", str(self.d / "runs.tsv"), "--steps", str(self.d / "steps.psv"),
                 "--ledger", str(self.d / "ledger.tsv"), "--result", str(self.d / "u.json")])
         return json.loads((self.d / "u.json").read_text())
@@ -232,6 +233,21 @@ class Units(unittest.TestCase):
         r = self.verdict({l: 1500 for l in self.labels}, j0_charge=15.0)
         self.assertTrue(r["verdict"].startswith("RETURN TO DIRECTOR"))
         self.assertAlmostEqual(r["room_node_h"], 75.0)
+
+    def test_j5_needs_j7_and_the_ledger_needs_both_jobs(self):
+        # replicas 500 s, universes 1500 s: J7 (39 universes, 4.06) does not fit in room 46 but J5 (100
+        # replicas, 3.47) alone would; J5 must still not be added without J7 (R10)
+        uni = set(U.CLASSES["universe"][0])
+        r = self.verdict({l: (1500 if l in uni else 500) for l in self.labels}, j0_charge=44.0)
+        self.assertEqual(r["verdict"], "WITHIN GRANT: core")
+        self.assertEqual(r["included_diagnostics"], [])
+        u_r, u_u = 500 * 64 / 256 / 3600, 1500 * 64 / 256 / 3600
+        self.assertGreater(1.25 * (r["core_projected"] + 39 * u_u), 46.0)
+        self.assertLessEqual(1.25 * (r["core_projected"] + 100 * u_r), 46.0)
+        (self.d / "ledger.tsv").write_text("jobid\tname\tqos\tstate\tstart\tend\telapsed_s\tbilling\tcharge_node_h\n")
+        with self.assertRaisesRegex(RuntimeError, "two J0 jobs"):
+            U.main(["--runs", str(self.d / "runs.tsv"), "--steps", str(self.d / "steps.psv"),
+                    "--ledger", str(self.d / "ledger.tsv"), "--result", str(self.d / "u.json")])
 
     def test_a_step_not_completed_stops(self):
         r = self.verdict({}, state={"F_MaRES0": "TIMEOUT"})
