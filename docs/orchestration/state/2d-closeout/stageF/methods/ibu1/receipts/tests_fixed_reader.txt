@@ -1,0 +1,88 @@
+620cad5c9445d36a5e4d22f0fc635c60603cade13de1f24452fca17e2aceb03a  ibu1_read.py
+d06eb6c453bb496a73be2cafaad0fc605c9b81ffc22bae17e648438353b95f9e  test_ibu1.py
+============================= test session starts ==============================
+platform darwin -- Python 3.12.2, pytest-8.3.4, pluggy-1.5.0 -- /Users/josephbailey/miniconda3/bin/python3
+cachedir: .pytest_cache
+rootdir: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1
+plugins: zarr-3.2.1, cov-7.1.0, anyio-4.6.2, typeguard-4.3.0
+collecting ... collected 36 items
+
+test_ibu1.py::Grid::test_functional_rows_are_the_contracts PASSED        [  2%]
+test_ibu1.py::Grid::test_reco_window_excludes_upper_edge PASSED          [  5%]
+test_ibu1.py::Grid::test_split_key_equals_producer PASSED                [  8%]
+test_ibu1.py::Grid::test_truth_cells_equal_histogramdd PASSED            [ 11%]
+test_ibu1.py::Closure::test_a_departure_is_partly_recovered PASSED       [ 13%]
+test_ibu1.py::Closure::test_background_in_the_fold_closes PASSED         [ 16%]
+test_ibu1.py::Closure::test_dropping_the_known_term_breaks_closure PASSED [ 19%]
+test_ibu1.py::Closure::test_noise_free_same_sample_closes_at_every_K PASSED [ 22%]
+test_ibu1.py::Oracle::test_floor_fires_inside_cells_with_varying_completeness PASSED [ 25%]
+test_ibu1.py::Oracle::test_floor_is_zero_for_a_J_constant_departure PASSED [ 27%]
+test_ibu1.py::Oracle::test_truth_reweight_matches_the_builders PASSED    [ 30%]
+test_ibu1.py::Constructions::test_half_mismatch_is_refused PASSED        [ 33%]
+test_ibu1.py::Constructions::test_n_variants PASSED                      [ 36%]
+test_ibu1.py::Constructions::test_p_variants_are_the_measured_sample PASSED [ 38%]
+test_ibu1.py::Constructions::test_ratio_truths_dispatch PASSED           [ 41%]
+test_ibu1.py::Pairing::test_gate_fires_on_a_different_draw PASSED        [ 44%]
+test_ibu1.py::Pairing::test_gate_fires_on_construction_flags PASSED      [ 47%]
+test_ibu1.py::Pairing::test_gate_fires_on_one_ulp PASSED                 [ 50%]
+test_ibu1.py::Pairing::test_gate_fires_on_seed_or_split PASSED           [ 52%]
+test_ibu1.py::Pairing::test_gate_passes_on_the_same_experiment PASSED    [ 55%]
+test_ibu1.py::Bootstrap::test_capture_fires_on_a_different_replica PASSED [ 58%]
+test_ibu1.py::Bootstrap::test_n_replica_variants_use_the_replicas_counts_and_template PASSED [ 61%]
+test_ibu1.py::Bootstrap::test_replica_equals_run_bootstrap PASSED        [ 63%]
+test_ibu1.py::Coverage::test_hits_equal_s5c_coverage PASSED              [ 66%]
+test_ibu1.py::Rule::test_count_box_spanning_better_and_worse_allows_within PASSED [ 69%]
+test_ibu1.py::Rule::test_count_interval_at_400_is_the_futility_count PASSED [ 72%]
+test_ibu1.py::Rule::test_count_interval_spans_the_boundary PASSED        [ 75%]
+test_ibu1.py::Rule::test_count_relation PASSED                           [ 77%]
+test_ibu1.py::Rule::test_readings_and_verdicts PASSED                    [ 80%]
+test_ibu1.py::Rule::test_residual_reading PASSED                         [ 83%]
+test_ibu1.py::Rule::test_small_n_count_cannot_resolve_and_is_descriptive PASSED [ 86%]
+test_ibu1.py::Tasks::test_committed_table_is_the_generators PASSED       [ 88%]
+test_ibu1.py::Tasks::test_seed_subrange_is_refused_outside_the_unit PASSED [ 91%]
+test_ibu1.py::Tasks::test_table_covers_every_declared_seed_once PASSED   [ 94%]
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit PASSED [ 97%]
+test_ibu1.py::EndToEnd::test_units_then_read PASSED                      [100%]
+
+=============================== warnings summary ===============================
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:101: RuntimeWarning: invalid value encountered in divide
+    rel = unit["F"] / unit["t"][:, None, :] - 1.0
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:112: RuntimeWarning: invalid value encountered in divide
+    fh = e / (1.0 + corr[0])
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:112: RuntimeWarning: divide by zero encountered in divide
+    fh = e / (1.0 + corr[0])
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:113: RuntimeWarning: invalid value encountered in multiply
+    sig = np.sqrt(sigma ** 2 + (corr[1] * fh) ** 2)
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:281: RuntimeWarning: invalid value encountered in divide
+    relI, relO = est / t - 1.0, require_of(u) / t - 1.0
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:284: RuntimeWarning: invalid value encountered in divide
+    floor = (u["oracle"] / u["t_A"] - 1.0)[:, rows].mean(0)
+
+test_ibu1.py::EndToEnd::test_paired_load_missing_f_of_is_explicit
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/ibu1_read.py:242: RuntimeWarning: invalid value encountered in divide
+    relO = require_of(unit) / unit["t"] - 1.0
+
+test_ibu1.py::EndToEnd::test_units_then_read
+  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-report/nd-unfolding/ibu1/test_ibu1.py:535: RuntimeWarning: invalid value encountered in divide
+    want = float(np.median(np.abs((tilt["F"][:, i5, :] / tilt["t"] - 1)[:, rows].mean(0))))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 36 passed, 15 warnings in 25.12s =======================

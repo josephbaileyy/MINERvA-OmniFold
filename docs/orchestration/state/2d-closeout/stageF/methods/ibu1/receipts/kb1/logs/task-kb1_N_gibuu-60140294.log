@@ -1,0 +1,8 @@
+{"unit": "N_gibuu", "seed": 301100, "gate": null, "s_build": 10.263, "s_ibu": 2.997}
+[oi136] inventory: checked=638 repo_origin_count=11 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/ibu1-20261022/kb1/inventory/N_gibuu.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 13   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/ibu1-20261022/deploy/7ea30e3d  (13) __main__, ibu1_did, omnifold_nn_core, project_cov_nd, s5c_coverage, s5c_pseudo, s5c_samplesize, s5c_unfold, s5e_deform, s5e_trace, s5n_pseudo, uq_math, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
