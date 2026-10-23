@@ -1,0 +1,12 @@
+[timing] 2026-10-23T10:09:17.029Z job=60151381 host=nid004144 deploy=/pscratch/sd/j/josephrb/gpu-timing-20261023/deploy/18337b8c pin=18337b8c0322fb1a052f82d436439bd942ca7333 lines=0..0 cpt=32 mem=56G gres=inherit
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-10-23T10:09:17.227Z launch line 0
+[timing] 2026-10-23T10:18:34.208Z lines 0..0 done rc=0
+/var/spool/slurmd/job60151381/slurm_script: line 29: 669649 Terminated              ( while :; do
+    echo "sample $(date -u +%FT%TZ) $(awk '/^cpu MHz/{printf "%.0f ", $4}' /proc/cpuinfo)" >> "${FLOG}"; sleep 30;
+done )
