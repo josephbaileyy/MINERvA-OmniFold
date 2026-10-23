@@ -194,8 +194,10 @@ not combined. Three are described in this section:
 \begin{itemize}[itemsep=1pt, topsep=2pt]
   \item (a), the nominal LightGBM configuration above, with
         purity-based background subtraction (\S\ref{sec:method-algo}): the 2D
-        central value (seed~42) and its uncertainty ensembles, and the
-        five-dimensional central value (\S\ref{sec:eavailw});
+        central value (seed~42) and its uncertainty ensembles, the
+        five-dimensional central value (\S\ref{sec:eavailw}), and the 3D and 4D
+        injected-bump closures and Figs.~\ref{fig:eavail-marg}
+        and~\ref{fig:q3excess} (\S\ref{sec:3d});
   \item (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned
         negative-weight background treatment (App.~\ref{app:negweight}), whose
         refinement classifier has 400 trees and 31 leaves. The negative-weight
@@ -216,9 +218,14 @@ Configuration (c), the deterministic variant with purity-based subtraction, and
 used in the background-bias, generator-sized-change and coverage studies listed in
 the table. In two and five dimensions, the central values and their covariances use
 purity-based subtraction: they were produced before the purity bias was found and the
-refinement was developed, and they have not been regenerated with it. The 3D
-and 4D central values have been regenerated with configuration~(e); no 3D or
+refinement was developed. Refined data unfolds exist in both (the 2D one of
+App.~\ref{sec:negweight-footing} and the five-dimensional one of configuration~(e)), but
+they are not the quoted central values, and no covariance has been built for them.
+The 3D and 4D central values have been regenerated with configuration~(e); no 3D or
 4D covariance is quoted.
+% Sources: RE1-REPORT-2.md sec. 3 (D2, the 2D refined data unfold); ../RE1-REPORT.md sec. 1 (P5, the s5p data unfold, is
+% configuration (e)); NOT CITABLE FOR "a covariance or coverage for configuration (e)" (both reports).
+% Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
 
 \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
 \begin{table}[htbp]
@@ -232,7 +239,7 @@ and 4D central values have been regenerated with configuration~(e); no 3D or
     \midrule
     \pcell{0.20\textwidth}{(a) central-value estimator} & \pcell{0.20\textwidth}{LightGBM; seed 42 in two dimensions} &
     \pcell{0.22\textwidth}{purity-based subtraction} &
-    \pcell{0.30\textwidth}{two- and five-observable central values; two- and five-observable covariances (\S\ref{sec:results}, \S\ref{sec:eavailw-adopted})} \\
+    \pcell{0.30\textwidth}{two- and five-observable central values; two- and five-observable covariances (\S\ref{sec:results}, \S\ref{sec:eavailw-adopted}); three- and four-observable closures and Figs.~\ref{fig:eavail-marg}, \ref{fig:q3excess} (\S\ref{sec:3d})} \\
     \pcell{0.20\textwidth}{(b) exact-split cross-check} & \pcell{0.20\textwidth}{scikit-learn exact splits; seed not fixed} &
     \pcell{0.22\textwidth}{purity-based subtraction} &
     \pcell{0.30\textwidth}{two-observable cross-check (above)} \\

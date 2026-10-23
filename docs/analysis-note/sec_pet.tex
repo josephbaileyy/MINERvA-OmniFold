@@ -151,11 +151,11 @@ convert recoil-only weights to full-event weights.
 
 \subsection{Shape cross-check against the scalar result}
 \label{sec:pet-shape}
-The first use of the recoil representation is a shape comparison against the production
-scalar unfold, which tests the classifier family and the engineered-scalar versus
+The first use of the recoil representation is a shape comparison against the configuration-(a)
+scalar unfold (the analysis note's LightGBM estimator with purity-based subtraction), which tests the classifier family and the engineered-scalar versus
 recoil-cloud input choice together.
 % Here \texttt{cluster\_pos} is the measured coordinate in one X/U/V scintillator view.
-Area-normalized against the frozen 4D GBDT result, the PET unfold
+Area-normalized against the frozen 4D GBDT result (configuration~(a)), the PET unfold
 reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 ($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
 $q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}).
@@ -167,7 +167,7 @@ representation from this shape check to an absolutely-normalized cross section.
   \includegraphics[width=0.85\textwidth]{pet_vs_gbdt}
   \caption{Area-normalized 4D unfolded shapes from the
     recoil-only PET point-cloud transformer (solid)
-    and production scalar GBDT (dashed), projected onto each axis. Median
+    and configuration-(a) scalar GBDT (dashed), projected onto each axis. Median
     per-bin shape differences are \SIrange{2.3}{3.9}{\percent}. The only visible
     deviation, in the wide $q_{3}$ catch bin, is a binning artifact: the bin
     collects a large, structured high-$q_{3}$ tail and does not indicate a

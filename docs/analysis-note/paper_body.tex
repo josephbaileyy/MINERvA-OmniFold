@@ -88,7 +88,7 @@ simulation model.
     \midrule
     \pcell{0.40\textwidth}{2D integral within about 1\%; correlated shape difference} & \pcell{0.05\textwidth}{(a)} & \pcell{0.13\textwidth}{published result} & \pcell{0.33\textwidth}{learner chosen after the comparison} & \pcell{0.04\textwidth}{\ref{sec:repro2d-pub}} \\
     \pcell{0.40\textwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.05\textwidth}{(a)} & \pcell{0.13\textwidth}{an earlier band failed coverage} & \pcell{0.33\textwidth}{not independently validated} & \pcell{0.04\textwidth}{\ref{sec:uq2d}} \\
-    \pcell{0.40\textwidth}{3D--5D normalizations agree at about 1--2\%} & \pcell{0.05\textwidth}{(a), (e)} & \pcell{0.13\textwidth}{lower dimensions} & \pcell{0.33\textwidth}{central values only} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
+    \pcell{0.40\textwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (a) result to 0.001\%} & \pcell{0.05\textwidth}{(a), (e)} & \pcell{0.13\textwidth}{lower dimensions} & \pcell{0.33\textwidth}{central values only} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
     \pcell{0.40\textwidth}{background-subtraction bias up to 4\% at high $W$; negative weights remove most} & \pcell{0.05\textwidth}{(c), (d)} & \pcell{0.13\textwidth}{pseudo-data with backgrounds} & \pcell{0.33\textwidth}{purity method kept in the 2D and 5D central values} & \pcell{0.04\textwidth}{\ref{sec:closure}} \\
     \pcell{0.40\textwidth}{generator-sized truth changes only partly recovered} & \pcell{0.05\textwidth}{(d), (e)} & \pcell{0.13\textwidth}{generator ratios} & \pcell{0.33\textwidth}{interpreted as regularization bias; in no quoted uncertainty} & \pcell{0.04\textwidth}{\ref{sec:departure}} \\
     \pcell{0.40\textwidth}{statistical intervals miscover under an about 10\% rate reduction} & \pcell{0.05\textwidth}{(c)} & \pcell{0.13\textwidth}{coverage} & \pcell{0.33\textwidth}{source of the residual bias not established} & \pcell{0.04\textwidth}{\ref{sec:coverage}} \\
@@ -309,7 +309,7 @@ changes (\nsec{sec:gbdt-model-dependence}).
     % The five-observable covariance is the covariance of the five-dimensional central value (note sec_5d.tex,
     % sec:eavailw-adopted); it supplies the band of Fig. 3(b).
     \pcell{0.24\columnwidth}{(a) central value: LightGBM, seed 42 in 2D} & \pcell{0.30\columnwidth}{purity-based subtraction} &
-    \pcell{0.38\columnwidth}{2D and 5D central values; 2D and 5D covariances} \\
+    \pcell{0.38\columnwidth}{2D and 5D central values; 2D and 5D covariances; 3D and 4D closures} \\
     \pcell{0.24\columnwidth}{(b) cross-check: scikit-learn exact splits, unseeded} & \pcell{0.30\columnwidth}{purity-based subtraction} &
     \pcell{0.38\columnwidth}{2D cross-check (Sec.~\ref{sec:repro2d})} \\
     \pcell{0.24\columnwidth}{(c) deterministic variant} & \pcell{0.30\columnwidth}{purity-based subtraction} &
@@ -479,13 +479,18 @@ only within its parametrized family (\nsec{sec:uq-2d-scope}).
 % Closures: note sec_validation.tex tab:closure-map (3D residual 1.84% of 18.1% injected, ratio 0.102; 4D within
 % 1.1%). Background bias: OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; VL149, VL151, VL152; KNOWN_ISSUES 75.
 % Negative-weight largest (E_avail, W) residual elsewhere 0.387% (EW36), dev_receipt.json grid.C3_nominal.
-Each higher-dimensional central value is checked against the
-lower-dimensional result it extends: the three-, four-, and five-observable marginal normalizations
-agree at the approximately $1$--$2\%$ level.  In three observables, a closure
+Each higher-dimensional result is checked against the lower-dimensional
+result it extends.  In configuration~(a), the four- and five-observable
+marginal normalizations agree at the approximately $1$--$2\%$ level.  For
+configuration~(e), only the three-observable marginal has been compared: its
+area-weighted total agrees with the configuration-(a) two-dimensional result
+to \SI{0.001}{\percent}, a comparison across configurations.
+% Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
+In three observables, a configuration-(a) closure
 test with an injected bump in truth $\Eavail$ leaves a residual of 0.10 of the
 injected change in the $\Eavail$ marginal; in four observables, an injected
 bump in truth $q_{3}$ closes to within \SI{1.1}{\percent} in the $q_{3}$
-marginal (closure studies: \nsec{sec:closure-map}).  These closure tests reweight the simulated signal only.  End-to-end
+marginal, also in configuration~(a) (closure studies: \nsec{sec:closure-map}).  These closure tests reweight the simulated signal only.  End-to-end
 pseudo-experiments that include the purity-based background subtraction
 reproduce the input at nominal truth except in the highest-$W$ cells, which
 are biased by up to \SI{4}{\percent} in simulation, about one quoted standard
@@ -797,7 +802,7 @@ that of a reconstruction-level test.
 
 % Source of the kept sentence: VL159 (generator comparison at low E_avail).
 These comparisons are descriptive: they use central values only, of
-configuration~(e) in three observables and configuration~(a) in five, and no
+configuration~(e) in three and four observables and configuration~(a) in five, and no
 significance is assigned to them.  GENIE, the MINERvA Tune~v1,
 NuWro, and GiBUU all underpredict the unfolded central value at low $\Eavail$,
 between the quasielastic and $\Delta$ peaks, the region of the established
