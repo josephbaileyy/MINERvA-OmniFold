@@ -250,8 +250,17 @@ class EndToEndCommit(unittest.TestCase):
         root = Path(cls.tmp.name)
         cls.clone, cls.wt = root / "clone", root / "wt"
         branch = run(["git", "-C", str(REPO), "rev-parse", "--abbrev-ref", "HEAD"]).stdout.strip()
-        out = run(["git", "clone", "-q", "--depth", "1", "--branch", branch, f"file://{REPO}", str(cls.clone)])
-        assert out.returncode == 0, out.stderr
+        if branch != "HEAD":
+            out = run(["git", "clone", "-q", "--depth", "1", "--branch", branch, f"file://{REPO}", str(cls.clone)])
+            assert out.returncode == 0, out.stderr
+        else:
+            # A detached HEAD (CI checks out a pull request's merge commit) has no branch to clone: fetch the commit.
+            sha = run(["git", "-C", str(REPO), "rev-parse", "HEAD"]).stdout.strip()
+            for cmd in (["git", "init", "-q", str(cls.clone)],
+                        ["git", "-C", str(cls.clone), "fetch", "-q", "--depth", "1", f"file://{REPO}", sha],
+                        ["git", "-C", str(cls.clone), "checkout", "-q", "-b", "e2e-base", "FETCH_HEAD"]):
+                out = run(cmd)
+                assert out.returncode == 0, out.stderr
         cls.g(cls.clone, "config", "user.name", "e2e")
         cls.g(cls.clone, "config", "user.email", "e2e@invalid")
         if os.environ.get("REGISTRY_E2E_OVERLAY", "1") != "0":
