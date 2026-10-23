@@ -847,16 +847,29 @@ def self_test() -> int:
         # cited line does (the same line, attributed to the estimator it names) passes.
         attr = t / reglib.ATTRIBUTION
         clean = attr.read_text()
-        l285 = (t / "docs/analysis-note/paper_body.tex").read_text().split("\n")[284]
-        d285 = reglib.line_digest(l285)
+        # The cited configuration-(a) line is found by the digest its ALIASES row records, not by a line number,
+        # so the paper may be edited above it (register round r15 review, item 5).
+        a_row = reglib.alias_citation((t / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-label")
+        n_a, l_a = reglib.find_cited_line((t / a_row["source"]).read_text(), a_row["quote"], a_row["line_sha256"])
+        d285 = reglib.line_digest(l_a)
+        # The lookup must follow the line when it moves, and must refuse a file in which the line was edited.
+        shifted = "% planted line\n" + (t / a_row["source"]).read_text()
+        moved_ok = reglib.find_cited_line(shifted, a_row["quote"], a_row["line_sha256"])[0] == n_a + 1
+        try:
+            reglib.find_cited_line(shifted.replace(l_a, l_a + " edited"), a_row["quote"], a_row["line_sha256"])
+            edit_refused = False
+        except ValueError:
+            edit_refused = True
+        case("cited line found by digest after a line is added above it", 0 if moved_ok else 1, 0, "")
+        case("an edited cited line is refused by the digest lookup", 1 if edit_refused else 0, 1, "")
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\te-R-joint-test\t"
-                        f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
+                        f"docs/analysis-note/paper_body.tex\t{n_a}\tconfiguration~(a), the\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(check, t)
         case("ATTRIBUTION row citing a line that names (a), attributed to R", rc, 1, out)
         ok &= "rule 7" in out
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\ta-central-lgbm\t"
-                        f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
+                        f"docs/analysis-note/paper_body.tex\t{n_a}\tconfiguration~(a), the\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(write, t)
         g("add", "-A")
@@ -894,7 +907,7 @@ def self_test() -> int:
         g("reset", "-q", "--soft", fixture_base)
         wv = t / reglib.WAIVERS
         wv.write_text("estimator\treason\tsource\tline\tquote\tline_sha256\ne-R-joint-test\tself-test waiver\t"
-                      f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
+                      f"docs/analysis-note/paper_body.tex\t{n_a}\tconfiguration~(a), the\t{d285}\n")
         g("add", reglib.WAIVERS)
         quiet(write, t)
         g("add", "-A")

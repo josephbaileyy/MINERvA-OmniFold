@@ -16,7 +16,16 @@ Also:
      deliverable matches the protected patterns (holds, acknowledgments, funding, AI-use, data availability).
 --self-test plants two bad rows (a wrong new value; an old value still printed in another posted file) and requires
 exactly those two to fail.
-Exit 1 on any failure."""
+Exit 1 on any failure.
+
+SCOPE OF VALIDITY (added 2026-10-23, register round r15). This ledger describes the RE-1 integration tree: branch
+tip eb1942ce, merged to main as afb7e1fa, on base 08fac419 (the merge-base of that merge). --base now defaults to that
+pinned base instead of origin/main, which moves. The ledger is valid for trees up to afb7e1fa; run it there:
+    git worktree add --detach <tmp> afb7e1fa
+    python3 <tmp>/docs/orchestration/state/2d-closeout/stageF/methods/re1-integration/check_ledger.py <tmp>
+On later trees it fails by design for rows E17, E18 and C19 and for the main_paper.tex protection. The register
+round r15 rewrote those paper sentences and the abstract. r15/ledger.md carries their facts (rows I9, C4 and C5,
+and the abstract rows); r15/changes.md records that r15 supersedes these rows. No check here was relaxed."""
 import hashlib
 import re
 import subprocess
@@ -118,7 +127,7 @@ def main():
     args = sys.argv[1:]
     self_test = "--self-test" in args
     args = [a for a in args if a != "--self-test"]
-    base = "origin/main"
+    base = "08fac419046b5ef5b68ee8180ef4f1567e8ce56a"  # the RE-1 integration's base; see SCOPE OF VALIDITY
     ledger = HERE / "ledger.tsv"
     if "--base" in args:
         i = args.index("--base"); base = args[i + 1]; del args[i:i + 2]
