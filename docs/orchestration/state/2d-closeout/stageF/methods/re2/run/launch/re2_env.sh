@@ -1,5 +1,7 @@
 # RE-2 J0: shared settings, sourced by each job with the deploy path in $C and the declared sha in $RE2_SHA.
 # Inputs are the existing ME-FHC files every 2D product was made from (RE2-DECLARATION.md §3).
+# Declared limits (RE2-DECLARATION.md §4): each job checks its own QOS and time limit against these.
+declare -A J0_TIME=([J0a]=05:55:00 [J0b]=04:15:00)
 B=/pscratch/sd/j/josephrb/2d-closeout-re2-20261023
 O=$B/j0
 A=/pscratch/sd/j/josephrb/MINERvA-OmniFold
@@ -25,7 +27,9 @@ re2_preflight() {  # the deploy is a clean checkout at the declared sha
     [ -z "$(git -C "$C" status --porcelain)" ] || { echo "[re2] deploy is not clean"; exit 2; }
     source "$A/setup_salloc_env.sh"   # root_6_28 (set -u would abort its activation)
     set -u
-    export TMPDIR=$B/tmp PYTHONUNBUFFERED=1
+    export TMPDIR=$B/tmp PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+    export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1   # as Stage C (sbatch_prod.sh:66-68)
+    unset LOKY_MAX_CPU_COUNT
     mkdir -p "$TMPDIR" "$O/out" "$O/logs" "$O/inventory"
 }
 

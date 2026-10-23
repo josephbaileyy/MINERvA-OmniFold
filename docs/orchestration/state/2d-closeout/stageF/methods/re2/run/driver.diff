@@ -1,5 +1,7 @@
 diff --git a/2d-unfolding/driver_p1.py b/2d-unfolding/re2/re2_driver.py
-index 18d08daa..4c7e9d75 100644
+old mode 100644
+new mode 100755
+index 18d08daa..4c7e9d75
 --- a/2d-unfolding/driver_p1.py
 +++ b/2d-unfolding/re2/re2_driver.py
 @@ -11,6 +11,18 @@ runs 2D OmniFold via the RooUnfoldOmnifold C++ wrapper, and extracts the
