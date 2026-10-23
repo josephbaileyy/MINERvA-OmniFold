@@ -1,0 +1,168 @@
+# Record checks on every pull request to main (Joseph, 2026-10-23:
+# docs/orchestration/DECISION-20261023-joseph-2d-refined-integrate-ci.md, item 4).
+#
+# WHY CI. A commit made in a linked worktree of the shared checkout runs the hook at the absolute core.hooksPath
+# (the shared checkout's .githooks), whose working tree lags main, so newer checks in .githooks/pre-commit never ran
+# at commit time. This workflow runs them on the code the pull request would land. Which checks run here and which
+# stay local, with reasons: docs/orchestration/RECORDS-RULES.md, "Where the checks run".
+#
+# WHICH COMMIT. On `pull_request`, actions/checkout checks out GitHub's merge commit of the PR into its base
+# (refs/pull/N/merge, `github.sha`), so HEAD is the tree main would have after the merge. Whole-tree checks judge
+# that tree. The two checks that compare a change with its base (absence claims; results-index rule 8) get
+# `--base origin/<base branch>` and compare against `git merge-base <base> HEAD`, which on the merge commit is the
+# base tip it was built on. A PR with merge conflicts has no merge commit and GitHub does not run this workflow.
+# On `workflow_dispatch`, HEAD is the dispatched branch tip and the base is the `base` input (default main).
+#
+# The checks are stdlib Python plus git; no LaTeX build, no network after checkout, no secrets.
+name: record-checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "Base branch to compare against (absence claims, results-index rule 8)"
+        required: false
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: record-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  record-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUTF8: "1"
+    steps:
+      - name: Check out (full history; the checks read HEAD, the base and cited commits)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      # The registry self-tests build throwaway repositories with every GIT_* variable removed
+      # (tools/registry/reglib.py clean_env), so an identity must come from git config, not the environment.
+      - name: Configure a git identity for the self-tests' throwaway repositories
+        run: |
+          git config --global user.name "record-checks CI"
+          git config --global user.email "record-checks-ci@minerva-omnifold.invalid"
+          git config --global init.defaultBranch main
+
+      - name: Resolve the base
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.base_ref }}
+          DISPATCH_BASE: ${{ inputs.base }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then b="$PR_BASE"; else b="${DISPATCH_BASE:-main}"; fi
+          git rev-parse --verify "origin/$b^{commit}" >/dev/null
+          echo "BASE=origin/$b" >> "$GITHUB_ENV"
+          echo "HEAD     $(git rev-parse HEAD)  parents: $(git rev-list --parents -n 1 HEAD | cut -d' ' -f2-)"
+          echo "base     origin/$b = $(git rev-parse "origin/$b")"
+          echo "merge-base        $(git merge-base "origin/$b" HEAD)"
+
+      # --- The records checks (RECORDS-RULES.md) ---------------------------------------------------------------
+      - name: Manifest matches HEAD (generate_manifest.py --check --at-sha HEAD)
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/generate_manifest.py --check --at-sha HEAD
+
+      - name: Receipt and shell hash bindings (verify_hash_bindings.py)
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/verify_hash_bindings.py
+
+      - name: Registry citations and labels (check_registry.py)
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/check_registry.py
+
+      - name: Results index fresh and complete, rule-8 gate against the base (results_index.py --check --base)
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/results_index.py --check --base "${BASE:?the base was not resolved}"
+
+      - name: Absence claims the PR adds carry their search (absence_claims.py --base)
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/absence_claims.py --base "${BASE:?the base was not resolved}"
+
+      - name: Registry self-test
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/check_registry.py --self-test
+
+      - name: Results index self-test
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/results_index.py --self-test
+
+      - name: Absence-claims self-test
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/absence_claims.py --self-test
+
+      # --- The other pre-commit checks (.githooks/pre-commit run lines; all stdlib Python, repository-local) ---
+      - name: "pre-commit: findings long-form pointers"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/findings_row_lint.py --longform
+
+      - name: "pre-commit: ledger VL ids"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/whose_row.py --check-ledger-ids
+
+      - name: "pre-commit: row-owner side table"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/whose_row.py --check-owners
+
+      - name: "pre-commit: whose_row self-test"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/whose_row.py --self-test
+
+      - name: "pre-commit: OPEN_ITEMS OI ids"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/whose_row.py --check-oi-ids
+
+      - name: "pre-commit: receipt artifact tracking"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/verify_receipt_artifacts.py
+
+      - name: "pre-commit: LIVE doc indexed"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/live_doc_indexed.py --check
+
+      - name: "pre-commit: LIVE-index self-test"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/live_doc_indexed.py --self-test
+
+      - name: "pre-commit: every doc has an overrides row"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/live_doc_indexed.py --unrowed
+
+      - name: "pre-commit: bounded control plane"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/control_plane_lint.py
+
+      - name: "pre-commit: control-plane self-test"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/control_plane_lint.py --self-test
+
+      - name: "pre-commit: manifest inventory self-test"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/generate_manifest.py --self-test
+
+      # Over the pre-commit hook's time budget (declined there), not over CI's.
+      - name: Registry fixture tests (test_registry.py)
+        if: ${{ !cancelled() }}
+        run: python3 tools/registry/test_registry.py
+
+      - name: The checks left the checkout clean
+        if: ${{ !cancelled() }}
+        run: |
+          git status --porcelain --untracked-files=all > "$RUNNER_TEMP/status.txt"
+          if [ -s "$RUNNER_TEMP/status.txt" ]; then echo "a check modified the checkout:"; cat "$RUNNER_TEMP/status.txt"; exit 1; fi
+          echo "checkout clean"
