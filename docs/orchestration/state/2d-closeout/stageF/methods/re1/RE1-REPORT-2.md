@@ -21,8 +21,8 @@ The products are on pscratch under `/pscratch/sd/j/josephrb/methods-paper/re1-20
   - Five of the eight figures in the declared research list are regenerated from P3/P4.
   - fig:eavail-marg (K3 failed), fig:q3excess and the PET-vs-GBDT figure are not regenerated.
   - The printed 3D numbers are re-evaluated (§4), and thirteen of them change at their printed precision. One
-    side finding is for the director: the note's "+0.95 % total σ" is computed against the published 2D result's
-    reported bins, not against "the 2D result of §results" that the note names.
+    side finding is for the director: the note's "+0.95 % total σ" reproduces only against the published 2D
+    result's reported bins, not against `E_U`, the adopted 2D result that "the 2D result of §results" names.
 
 **CITABLE FOR:**
 - the C2 readout and its verdict under the declared rule;
@@ -119,7 +119,7 @@ npz's purity weights and measured coordinates exactly.
 | **K2** | reported only: no recorded 2D purity closure with background exists (RE1-REPORT §2) |
 | **K3, figures** | Six figures from four producer runs on the current inputs, compared with `docs/analysis-note/figures/*.pdf` at `b3d89421`. The PDF `/CreationDate` value was normalized, length-preserving; nothing else was. **Five are bitwise equal:** `eavail_spectrum`, `generators_vs_unfolded_band_central`, `mode_decomp_eavail_central`, `compare_mec_eavail_central`, `ascencio_fullcov_compare_central`. **`eavail_marginal_vs_paper_pull_full` fails.** Its text and printed values are identical (pull mean 0.16, rms 0.83, χ²/ndf 4.98), but the panel geometry differs, and the committed PDF dates from 2026-07-03. PNGs were not compared. [`run2/f/k3/k3_compare.jsonl`](run2/f/k3/k3_compare.jsonl) |
 | **K3, numbers** | §4: each printed number is taken under the definition that reproduces it on the current product, or it is not regenerated |
-| **conversion** | P3 → `xsec_3d_p3.root` `c16b622b…`. The 3D driver's writers were used, and the control reproduces the current product's stored `hXSec2D`, `hXSec_pt`, `hXSec_pz` and `hXSec_eavail` bit for bit. P4 → `xsec_4d_p4.root` `ece4055e…` (`write_thnd`; the current product round-trips bit for bit). Both readbacks are bitwise, read back by `re1_to_root.py`'s own reader, not by each producer's loader (Deviation 7). In 3D, only `hXSec3D` is read back; the projections are written from the same array. The producers' own reads are the F2 runs, whose `[input]` lines show the pinned digests. [`run2/f/new/conv3.json`](run2/f/new/conv3.json), [`conv4.json`](run2/f/new/conv4.json) |
+| **conversion** | P3 → `xsec_3d_p3.root` `c16b622b…`. The 3D driver's writers were used, and the control reproduces the current product's stored `hXSec2D`, `hXSec_pt`, `hXSec_pz` and `hXSec_eavail` bit for bit. P4 → `xsec_4d_p4.root` `ece4055e…` (`write_thnd`; the current product round-trips bit for bit). Both readbacks are bitwise, read back by `re1_to_root.py`'s own reader, not by each producer's loader (Deviation 7). In 3D, only `hXSec3D` is read back; the projections are written from the same array. The producers' own reads are the F2 runs; the redraw runs' `[input]` lines show the pinned digests. [`run2/f/new/conv3.json`](run2/f/new/conv3.json), [`conv4.json`](run2/f/new/conv4.json) |
 
 The refinement, as recorded in each product (400 trees, 31 leaves, `random_state` 45):
 
@@ -176,7 +176,9 @@ two differ in construction: σ_stat is the adopted data-statistics covariance, w
 Poisson(2w) from half-samples of the MC. The FLAG rule uses σ_stat as declared.
 
 **Each arm against its own SE** (|mean| / SE over the 20 seeds; [`c2_cells.json`](run2/readouts/c2_cells.json)).
-About 9.3 cells beyond 2 SE are expected by chance if every mean is zero:
+t = mean / SE follows a Student t with 19 degrees of freedom. If every mean is zero, about 12.3 of 205 cells are
+expected beyond 2 SE by chance, and 1.5 beyond 3 SE. (The JSON's `expected_over_2_se_if_null`, 9.3, is the normal
+approximation.)
 
 | | cells > 2 SE | cells > 3 SE | max |t| |
 |---|---|---|---|
@@ -327,7 +329,7 @@ stated).
 | 6.8e-41, catch bin (`:117`) | same | 6.809e-41 | yes | 6.742e-41 | **6.7e-41** |
 | +0.95 % total σ, marginal vs 2D (`:134`) | `compare_to_paper_fullcov.py`'s printout: [ours] content sum over all 224 bins / [paper] content sum over its reported bins (3.7243e-37 / 3.6892e-37). `re1_f_numbers.py`'s three area-weighted definitions do not reproduce it (vs paper −0.70 %, `E_U` +0.19 %, `E_C` +0.18 %) | +0.951 % | yes | 3.7182e-37 / 3.6892e-37 = +0.786 % | **+0.79 %** |
 | 1.0016, median marginal/2D (`:134`) | vs `E_U` on its 205 cells | 1.00162 | yes | 0.99998 | **1.0000** |
-| ~4.4 % per-bin scatter of the marginal (`:138`; also `:156`, `:166`) | † SD of `hXSec2D` / `E_U` on `E_U`'s 205 cells (`re1_report2_extras.py`; the same definition gives the status record's median 1.0016 and mean 1.008) | 4.42 % | yes | 3.52 % | **3.5 %** |
+| ~4.4 % per-bin scatter of the marginal (`:138`; also `:156`, `:166`) | † SD of `hXSec2D` / `E_U` on `E_U`'s 205 cells (`re1_report2_extras.py`; the same definition gives the median 1.0016 and mean 1.008 of [`3D_OMNIFOLD_STATUS.md`](../../../../../../../3d-unfolding/3D_OMNIFOLD_STATUS.md), the source the note's 3D numbers cite) | 4.42 % | yes | 3.52 % | **3.5 %** |
 | marginal scatter "~70× tighter" (`:165`) | † 4.4 % / 0.06 % (the closure's 0.06 % is not an RE-1 product and is unchanged) | 74 | yes | 3.52 / 0.06 = 59 | **~60×** |
 | χ²/ndf 4.98 (`:136`) | `compare_to_paper_fullcov.py`; figure not regenerated (BINDING-F ruling 3) | 4.981 | yes | 4.520 | **4.52** |
 | 7.2 / 9.5 / 12.8 / 22.2 % below data (`:300-301`) | `redraw_central_only --only generators` | 7.2 / 9.5 / 12.8 / 22.2 | yes | 7.2 / 9.5 / 12.8 / 22.3 | **GiBUU 22.3** |
@@ -407,17 +409,19 @@ report merges. Deleting or keeping them is then raised with the director (declar
 4. **The F-R1 redraw copies.** §5.3 says F uses "the existing producers, with only the input product changed".
    `redraw_central_only.py` pins its input digests, so it refuses P3/P4 unchanged. The two copies change that one
    data pin each and nothing else (diffs above).
-   - The director approved them as F-R1, by message, before F.
+   - The director approved them as F-R1, by cross-session message, before F. The message is quoted verbatim in the
+     appendix.
    - BINDING-F ruling 2 records them as bound ("The F-R1 redraw copies are committed with their diffs before F2,
      as bound").
-   - F-R1's conditions, as the lane received them:
-     - the `git diff --no-index` is committed and quoted;
-     - each copy's sha256 is recorded;
-     - K3 runs first, bitwise against the current figure;
-     - nothing is written under a checkout;
-     - the originals are untouched;
-     - each copy still refuses other bytes.
-   All six are met (§Code; [`run2/f-r1/refusal.txt`](run2/f-r1/refusal.txt)).
+   - F-R1's conditions are met:
+     - only the one data-pin entry differs;
+     - the `git diff --no-index` is committed and quoted, and each copy's sha256 is recorded;
+     - K3 ran first, on the current inputs;
+     - nothing was written under a checkout;
+     - the original is untouched;
+     - each copy still refuses other bytes (§Code; [`run2/f-r1/refusal.txt`](run2/f-r1/refusal.txt)).
+   - F-R1 also allowed a `q3_excess_projection.py` copy. None was made, because that producer needs
+     `hUnfoldND_flat`, which P4 does not carry.
 5. **J2 products do not record their affinity themselves.** The s5 path records LightGBM `num_threads` 32, fixed in
    its estimator parameters. Each J2 step's 42-CPU allocation is in `sacct`, and `--cpu-bind=cores` is in the
    sbatch.
@@ -427,7 +431,7 @@ report merges. Deleting or keeping them is then raised with the director (declar
    - the per-cell C2/D2 table (`re1_c2_cells.py`; the table was first written inline and is now regenerated byte for
      byte by committed code);
    - the review-round extras (`re1_report2_extras.py`).
-   The director requested the supplement by message (quoted in the appendix). The extras answer this report's
+   The director requested the supplement by message (quoted verbatim in the appendix). The extras answer this report's
    independent review. They are recorded so the director can rule on them in the PR.
 7. **Conversion readback.** §5.3 asks for the readback "through each producer's own loader". `re1_to_root.py` reads
    back with its own reader, and in 3D it checks only `hXSec3D`. The producers then read the files in F2.
@@ -446,7 +450,7 @@ These results are not a live record until this report and `run2/` are committed 
 
 ## Review record
 
-**Reviewer.** A fresh Claude agent, given the code and the evidence but not the author's conclusions. It read-only
+**Reviewer.** A fresh Claude agent, given the report, the code and the evidence, and none of the author's working. It read-only
 reviewed the branch at `2af68acc`, in two directions:
 - report → evidence: every claim checked against its artifact;
 - declaration/evidence → report: what is required, omitted or worded beyond a rule.
@@ -479,16 +483,52 @@ things:
 | BINDING-F link resolves only after a rebase onto main (NIT) | the branch is rebased before the PR |
 | stale `dev/` checkout on pscratch (NIT) | Deviation 11 |
 
-Two of the reviewer's values were corrected on re-derivation: the refined arm's 2.4 SE at gid 48 is 2.35, and its
-largest t is 3.09 at gid 49, an unflagged cell. The reviewer could not check:
+On re-derivation, two of the reviewer's values were made more precise. The refined arm is 2.35 SE at gid 48, which
+the review rounded to 2.4. Its largest t, 3.09, is at gid 49, an unflagged cell. The reviewer could not check:
 - whether each clone was clean before and during its job (only after);
 - `--cpu-bind=cores` beyond the sbatch;
 - the F-R1 refusal itself (re-running it would write on the cluster);
 - the director's requests made outside the repository.
 
-A second read-only pass by the same reviewer checked the fixes (below).
+**Second pass** (same reviewer, read-only, `2af68acc..ff42647c`). It found the fixes hold. It re-derived:
+- +0.79 %;
+- the 3.52 % scatter and its 74 / 59 ratios;
+- the SE counts;
+- the 5D (c) − (a) trunk row, against its own recomputation from `z-cv.npz`;
+- the 8–36 % range;
+- the count of thirteen changed numbers.
+It also confirmed the provenance of the new code and products, including the byte-for-byte regeneration of
+`c2_d2_cells.tsv`. It found no new text that judges the adopted 2D result or OI-6.
 
-## Appendix: the director's C2-supplement request (cross-session message, 2026-10-22, verbatim)
+| second-pass finding (severity) | disposition |
+|---|---|
+| the chance expectation for the SE counts used the normal tail; with t at 19 dof it is 12.3 (> 2 SE) and 1.5 (> 3 SE) (MINOR) | fixed in §2; the JSON's 9.3 is labelled as the normal approximation |
+| the outcome said "computed against"; only "reproduces against" is established (MINOR) | fixed |
+| the F-R1 approval and its conditions were not quoted (MINOR) | fixed: quoted verbatim in the appendix |
+| review-record wording; the second pass not yet recorded; "F2 `[input]` lines"; status record unlinked (NITs) | fixed |
+| BINDING-F link pending the rebase (NIT) | the branch is rebased before the PR |
+
+## Appendix: the director's messages (cross-session, 2026-10-22, verbatim)
+
+**F-R1** (before F):
+
+> Director here. F-R1 is approved, and no declaration addendum is needed: it implements the bound F ("existing
+> producers, changing only the input product") as closely as the producers allow, and K3 guards it. Conditions:
+> 1. Each copy differs from its original only in the named constant:
+>    - `redraw_central_only.py`: the one data-pin entry;
+>    - `q3_excess_projection.py`: the CV path and the output path.
+>    Commit the diff (`git diff --no-index` against the original), quote it in REPORT-2, and record each copy's sha256.
+> 2. K3 first, on the current input, bitwise against the current figure. For q3_excess, keep the CV path on the
+>    current product and redirect only the output. If K3 fails for a copy, that figure is "not regenerated", and the
+>    report says so.
+> 3. Nothing writes under any checkout: not the cluster main checkout, not `docs/analysis-note/`. Everything goes to
+>    your `out/f/`.
+> 4. The originals stay untouched.
+>
+> The pinned-sha refusal in `redraw_central_only.py` is a good guard. Your copy changes the pin rather than removing
+> it, so the copy still refuses any other bytes. Keep it that way.
+
+**The C2 supplement** (after the C2 result):
 
 > Director: C2 FLAG received; I'll take it to Joseph from the reviewed REPORT-2, not from this message. For REPORT-2,
 > please add (descriptive, no judgement): (1) each arm's mean residual against truth in σ_total (Q) units as well as
