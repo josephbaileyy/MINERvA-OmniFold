@@ -1,0 +1,4 @@
+name	source	line	quote	why
+configuration 2	docs/orchestration/state/2d-closeout/stageF/methods/note-b5/REVIEW.md	21	Configuration 2 named no uses.	the analysis note numbered its configurations before register batch b5; no committed source maps that numbering to (a)-(e) except configuration 1 = (a) (note-g0/REVIEW.md:116); it is NOT s5p configuration 2 (s5p-conf2)
+configuration 3	docs/analysis-note/sec_method.tex	174	% Configuration 3: sec_5d.tex (100 trees, 8 leaves; purity footing) for 5D	the note's pre-b5 numbering (a comment); "100 trees, 8 leaves; purity footing" fits both (a) and (c), so the sources do not decide which; it is NOT s5p configuration 3 (s5p-conf3)
+configurations 3-4	docs/analysis-note/sec_method.tex	176	before, configurations 3-4 were described only in the article and in sec_5d.tex.	the note's pre-b5 numbering (a comment); the sources cited in this registry do not describe a configuration 4

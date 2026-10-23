@@ -1506,6 +1506,7 @@ four describe standing systems or rules rather than events, so they are `LIVE`:
 |---|---|
 | Change code | `KNOWN_ISSUES.md`, relevant status/reference, callers, tests, and hash bindings |
 | Quote a result | `VALIDATION_LEDGER.md`, then the exact product or live receipt |
+| Find every result on one estimator, or check a claim that none exists | `python3 tools/registry/whatis.py "<any name>"`; registry and generated results index in `registry/`; rules and their checks in [`RECORDS-RULES.md`](RECORDS-RULES.md) |
 | Run or monitor compute | fresh `LIVE-STATE.md`, direct scheduler observation, then the exact launcher receipt |
 | Work on 2D/3D/N-D/PET | relevant workstream status; PET also `PET_UQ_REMEDIATION_STATUS.md` |
 | Maintain queue/playbook | [`control-plane/policy.json`](control-plane/policy.json), [`control-plane/source-record-inventory.tsv`](control-plane/source-record-inventory.tsv), then `control_plane_lint.py` |
