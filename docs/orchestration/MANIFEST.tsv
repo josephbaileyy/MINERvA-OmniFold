@@ -147,7 +147,7 @@ docs/orchestration/DECISION-20261018-joseph-2d-j3-j5-provisional.md	tracked	LIVE
 docs/orchestration/DECISION-20261018-joseph-plain-language-pass.md	tracked	LIVE	document		20261018	open		route-only		no	6	45	2631
 docs/orchestration/DECISION-20261018-joseph-plain-language-pass2.md	tracked	LIVE	document		20261018	open		route-only		no	5	58	4901
 docs/orchestration/DECISION-20261019-joseph-methods-first-and-measurement-compute.md	tracked	LIVE	document	20261006-s5p-campaign	20261019	open		route-only		no	9	86	6638
-docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md	tracked	LIVE	document		20261020	open		route-only		no	11	46	2849
+docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md	tracked	LIVE	document		20261020	open		route-only		no	12	46	2849
 docs/orchestration/DECISION-20261020-joseph-refined-estimator-shorten-delta.md	tracked	LIVE	document		20261020	open		route-only	docs/analysis-note/build_all.sh	no	11	46	3079
 docs/orchestration/DECISION-20261021-joseph-ai-ack-and-register-loop.md	tracked	LIVE	document		20261021	open		route-only		no	3	45	2295
 docs/orchestration/DECISION-20261021-joseph-da-and-note-records.md	tracked	LIVE	document		20261021	open		route-only	docs/analysis-note/build_all.sh;docs/analysis-note/check_body_pointers.py;docs/analysis-note/check_dead_containment.py;docs/analysis-note/check_note_records.py;docs/analysis-note/test_build_all.py	no	17	67	4437
@@ -158,7 +158,7 @@ docs/orchestration/DECISION-20261022-joseph-mp2-hold.md	tracked	LIVE	document		2
 docs/orchestration/DECISION-20261022-joseph-note-records-refs-and-stop.md	tracked	LIVE	document		20261022	open		route-only	docs/analysis-note/check_note_records.py	no	9	41	2400
 docs/orchestration/DECISION-20261022-joseph-open-items-and-rewrite-timing.md	tracked	LIVE	document		20261022	open		route-only		no	3	71	5510
 docs/orchestration/DECISION-20261023-joseph-2d-refined-integrate-ci.md	tracked	LIVE	document		20261023	open		route-only		no	2	49	3312
-docs/orchestration/DECISION-20261023-joseph-5d-a-and-register-round.md	tracked	LIVE	document		20261023	open		route-only		no	2	50	3033
+docs/orchestration/DECISION-20261023-joseph-5d-a-and-register-round.md	tracked	LIVE	document		20261023	open		route-only		no	2	50	3137
 docs/orchestration/DECISION-20261023-joseph-gpu-test-and-campaign-criterion.md	tracked	LIVE	document		20261023	open		route-only		no	4	29	1871
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only		no	3	537	36540
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	nd-unfolding/tests/test_run_m1_projection_refusals.py	no	5	1369	92325
