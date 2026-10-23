@@ -97,7 +97,7 @@ behind the change. Sentence-level facts and probes are in `ledger.md` (row ids i
   - The Fig. 3 citation moves into the sentence [V4].
   - The pointer moves to the end of the paragraph [V5].
   - "Not included in the quoted uncertainties" and "(… which omits the regularization bias)" move to Sec. VIII A,
-    item 3 [V6, V8].
+    item 4 [V6, V8].
   - The phrase "within the quoted total uncertainty in about half of those cells" stays, because the receipt check
     binds it [V7].
 - **¶24.** The Fig. 4 citation moves into the outcome sentence (R4) [V9, V10].
@@ -109,7 +109,7 @@ behind the change. Sentence-level facts and probes are in `ledger.md` (row ids i
 - **¶26, after E7.**
   - "For one pair of seed settings … beyond a stability limit of 5%; we therefore quote no covariance-based
     generator significance" [V18].
-  - The seed-pair spread and the fixed-seed bands move to Sec. VIII A, item 4, with the 26.0% kept. The
+  - The seed-pair spread and the fixed-seed bands move to Sec. VIII A, item 5, with the 26.0% kept. The
     either-direction detail moves to the note [V19].
   - The two pointers become one clause [V16].
 - **¶27.** Two sentences are joined by a colon [V20].
@@ -129,23 +129,23 @@ behind the change. Sentence-level facts and probes are in `ledger.md` (row ids i
   - The out-of-scope sentence is unchanged (REPORT §3) [L-5].
   - A source comment records the ruling.
 - **¶31.** The check list names Secs. IV and V in the sentence. "To the extent that …" is dropped here, because
-  Sec. I and Sec. VIII A, item 8, state it [L-6, L-7].
+  Sec. I and Sec. VIII A, item 9, state it [L-6, L-7].
 
 ## VII. Application
 
 - **¶34.** "These comparisons are descriptive:" is dropped, because the subsection title says it [G1].
 - **¶35–36.**
   - The two pointers are merged into one clause at the end of the paragraph [G2, G3].
-  - The mismodelled-detector closure moves to Sec. VIII A, item 5 [G5].
+  - The mismodelled-detector closure moves to Sec. VIII A, item 6 [G5].
   - "It does not locate an interaction mechanism" moves to the note, where it prints twice [G7].
 - **¶40.** The calibration pointer, a repeat of ¶38's, is dropped [G8].
 - **¶42.** The frozen-design and lost-experiment pointers are merged into one clause [G9, G10].
 - **¶44, condition (i).**
   - The measurement and the geometric assumption stay [G11].
-  - The carry-over condition moves to Sec. VIII A, item 6, kept whole [G12].
+  - The carry-over condition moves to Sec. VIII A, item 7, kept whole [G12].
 - **¶45–46, condition (ii).**
   - The either-direction mechanism moves to the note [G13].
-  - "Net effect not measured" and "remain conditional on the hadronic response" move to Sec. VIII A, item 7 [G14,
+  - "Net effect not measured" and "remain conditional on the hadronic response" move to Sec. VIII A, item 8 [G14,
     G17].
   - The post hoc projection result stays at its point [G15].
   - The sensitivity study's untested effects are one sentence with a plain pointer [G16].
@@ -154,7 +154,7 @@ behind the change. Sentence-level facts and probes are in `ledger.md` (row ids i
   section [G18].
 - **¶50, the calibration-validity paragraph, removed.**
   - A1, the shared simulated events, the unvalidated lateral-shift conditioning and the missing null rejection rate
-    move to Sec. VIII A, item 8 [G19, G21, G22, G24].
+    move to Sec. VIII A, item 9 [G19, G21, G22, G24].
   - "Not a test of the data process" and "verifies the calculation, not …" move to the note (E10) [G20, G23].
 - **¶51.**
   - Table IV is cited in the sentence [G25].
@@ -172,6 +172,39 @@ behind the change. Sentence-level facts and probes are in `ledger.md` (row ids i
   - The conclusions no longer re-list the limitations [C2–C5].
   - They keep the findings summary, the pointer to Sec. VI, and "provided the calibration is exact" (E10) [C1, C6,
     C7].
-- **New subsection A, "Limitations" (`\label{sec:limitations}`).** Eight numbered plain declaratives, each stated
+- **New subsection A, "Limitations" (`\label{sec:limitations}`).** Nine numbered plain declaratives (eight in the first commit; item 3 added by review fix 6), each stated
   once [C8 and the MOVE→L rows]. The source comment gives each item's record and carries the `Search:` lines for
   its absence statements.
+
+## Review fixes (after the independent review, ADOPT-AFTER-FIXES, and the 4/4 pairwise result)
+
+1. **Abstract.** "With a model-dependence envelope added linearly to the uncertainty". The no-definition-meets-10%
+   verdict holds only for the linear sum: 9.6% + 1.4% ≥ 11.0% (`sec_5d.tex:339-345`). In quadrature it would be
+   about 9.7%. [A2]
+2. **IV B, the rescoring sentence.** "Against a second, rebuilt earlier band" restores the band's identity, so that
+   the 97.7% cannot be read as the quoted block's coverage. Item 1 of Sec. VIII A says that block has had no coverage
+   test. [B21]
+   <!-- absence-ok: restates the paper's item 1 of Sec. VIII A, whose Search lines are in paper_body.tex; not a new claim -->
+3. **V B pointer.** It now cites both note sections:
+   - `sec:val-negweight`, which holds the 74% cell;
+   - `sec:val-departure`, which holds the thirty-iteration −26% and the 16–31% figures (`sec_5d.tex:143`, `:236`).
+   [V5]
+4. **The RE-1 integration ledger.** `re1-integration/check_ledger.py` fails on this branch, by design, for rows
+   E17, E18 and C19 and for its main_paper.tex protection.
+   - **What supersedes those rows.** r15 rewrote the sentences they probe: Table I's limitation column, the old
+     conclusions, and the abstract. r15 supersedes those rows; r15's ledger carries their facts (rows I9, C4, C5 and
+     the abstract rows).
+   - **What changed in that checker.** Its `--base` default is pinned to the RE-1 integration's base 08fac419,
+     instead of the moving origin/main. Its docstring states that it is valid for trees up to afb7e1fa, and how to
+     run it there.
+   - **Its checks are unchanged.** At afb7e1fa it gives LEDGER PASS (102 rows) and SELF-TEST PASS.
+5. **Tooling.** In a separate commit, `tools/registry/results_index.py` and `test_registry.py` find the
+   `configuration~(a)` line by its digest, not by line 285.
+6. **Small points.**
+   - "The following limitations apply to the study's results."
+   - Item 9 (formerly 8): the lateral-shift clause is now its own sentence (R10). [G22]
+   - New item 3: "The source of the residual bias behind the miscoverage of Sec. V C has not been established."
+     - Sec. VI goes back to afb7e1fa's same-origin wording, so each fact is stated once.
+     - The item fills Table I's former "source of the residual bias not established" cell. [I11, V13, L-2]
+     - Items 3–8 of the first commit are now items 4–9.
+

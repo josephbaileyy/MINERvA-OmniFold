@@ -443,8 +443,8 @@ specified in advance on \covTwoDNtoy{} closure pseudo-experiments at a fixed
 truth.  It undercovered in its tails: pooled over experiments and bins,
 \SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two
 standard deviations, against \SI{95.4}{\percent} nominal.  A post hoc rescoring
-of the same pseudo-experiments against a rebuilt band removes the tail
-undercoverage: \SI{97.7}{\percent} fall within two standard deviations and
+of the same pseudo-experiments against a second, rebuilt earlier band removes
+the tail undercoverage: \SI{97.7}{\percent} fall within two standard deviations and
 \SI{78.1}{\percent} within one.  It is not an independent coverage test,
 because the simulated part of the rebuilt band reuses the resampling mechanism
 of those pseudo-experiments (\nsec{sec:coverage}).  The two-dimensional central
@@ -514,8 +514,10 @@ reconstruction-level fit without reducing it.  For other fixed generator
 shapes, measured with the joint-test estimator, it is
 \SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell and within
 the quoted total uncertainty in about half of those cells, that of the
-covariance of Sec.~\ref{sec:cov5d}.  The deformation studies are described in
-\nsec{sec:val-negweight}.
+covariance of Sec.~\ref{sec:cov5d}.  The deformation studies, the iteration
+and capacity tests, and the joint-test-estimator shapes are described in
+Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:val-negweight}
+and~\ref*{N-sec:val-departure}.
 
 \subsection{Coverage}
 \label{sec:coverage}
@@ -701,7 +703,7 @@ the generator predictions are tested as hypotheses.
 \label{sec:limits}
 
 % The common thread of Secs. V B, V C, V E and VII E in the body's own words; the coverage failure's source is not
-% asserted, and that is stated here once (register round r15).
+% asserted (its unestablished source is item 3 of Sec. VIII A; r15 review fix 6).
 Three results point to the unfolded result retaining part of its prior: the
 residual under a generator-sized change of the truth in
 Sec.~\ref{sec:departure}, which we interpret as regularization bias; the
@@ -710,8 +712,8 @@ alone exceeds the precision target in two of the three tested reporting
 definitions; and the upward displacement of the external nulls by the
 estimator's pull toward its prior, which the calibration of
 Sec.~\ref{sec:joint-results} reproduces.  The miscoverage of Sec.~\ref{sec:coverage}
-is also attributed to a residual bias, but the source of that bias, and so
-whether it has the same origin, is not established.
+is also attributed to a residual bias, but whether that bias has the same
+origin is not established.
 
 % CLAIM-ADDITION D-ID BEGIN
 % Source: docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md (simulation-only; NOT CITABLE FOR a
@@ -1068,17 +1070,18 @@ show to be needed before unfolded intervals are interpreted.
 % The familywise bound conditioned on the calibration's exactness: M2-FWER-RECORD.md:11-14, :58-60.
 The calibrated tests illustrate inference with a biased estimator: the
 decision rule controls the familywise error rate at 5\% provided the
-calibration is exact.  The following limitations apply to these results.
+calibration is exact.  The following limitations apply to the study's results.
 
 \subsection{Limitations}
 \label{sec:limitations}
 
 % Sources, item by item: (1) DECISION-20261014-joseph-2d-endpoint-and-open-items.md sec. 2 ("no coverage claim is
 % made"), note sec_systematics.tex sec:uq-combine and sec:uq-2d-scope; (2) receipts/2d-lgbm42-20261011 and note
-% sec_results.tex sec:results-tension; (3) VL151, VL154 (note sec_5d.tex sec:val-departure); (4) note sec_5d.tex,
-% the list under sec:eavailw-adopted; (5) note app_response_mismatch.tex (protocol not yet run; DECISION-20261014
-% item 2, deferred); (6) amendment 7 claims.rejection, note sec_joint.tex sec:joint5d-conditions; (7)
-% publication/w2/W2B-REPORT-20261006.md, note sec:joint5d-response; (8) M2-AUDIT.md Q3, Q4e, :187-193, note
+% sec_results.tex sec:results-tension; (3) M2-RATEFAIL-DIAGNOSIS.md:7-15, note sec_5d.tex sec:coverage-5d (the
+% source of the W-graded term is not established); (4) VL151, VL154 (note sec_5d.tex sec:val-departure); (5) note
+% sec_5d.tex, the list under sec:eavailw-adopted; (6) note app_response_mismatch.tex (protocol not yet run;
+% DECISION-20261014 item 2, deferred); (7) amendment 7 claims.rejection, note sec_joint.tex sec:joint5d-conditions;
+% (8) publication/w2/W2B-REPORT-20261006.md, note sec:joint5d-response; (9) M2-AUDIT.md Q3, Q4e, :187-193, note
 % sec:joint5d-calibration and sec:joint5d-conditions.
 % Absence claims read against the registry (RECORDS-RULES rule 4): (a) has no coverage-family row (its 2D statistical
 % block is untested); the detector-response-mismatch closure is a protocol not yet run (app:response-mismatch).
@@ -1097,6 +1100,8 @@ its own consistency check cannot fail.
 comparisons with the published result were known, so the benchmark is a
 reproduction rather than an independent validation.  The source of its
 correlated shape difference has not been identified.
+\item The source of the residual bias behind the miscoverage of
+Sec.~\ref{sec:coverage} has not been established.
 \item The residual under the generator-sized truth changes of
 Sec.~\ref{sec:departure}, interpreted as regularization bias, is included in
 no quoted uncertainty; the five-observable covariance omits it.
@@ -1120,6 +1125,6 @@ interpretation would require a response band drawn through the calibration.
 pseudo-experiment chain reproduces the analysis of the data (A1).  No
 rejection rate has been measured for null pseudo-data processed like the data,
 which would require an independent simulation sample: every pseudo-experiment
-resamples the same simulated events, and the conditioning of the null
+resamples the same simulated events.  The conditioning of the null
 distributions on the data-derived lateral shifts has not been validated.
 \end{enumerate}

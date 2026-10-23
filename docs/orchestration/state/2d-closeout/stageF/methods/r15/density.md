@@ -77,3 +77,24 @@ rules act on directly:
 - note pointers: 40 → 25, one plain clause per paragraph;
 - sentences with two or more markers: 28% → 20%;
 - STATUS outside Sec. VIII A: 38 → 17 instances (24 in all, 7 of them in the list).
+
+## After the review fixes (second commit)
+
+The same instrument was re-run after the review fixes, with sha256 of the prose `b52aa139a492…`. The fixes add the
+word "linearly" to the abstract, restore the band's identity, put both note sections in one pointer, add item 3 of
+Sec. VIII A, and split item 9 into two sentences.
+
+| measure | first commit | after review fixes | corpus median [min, max] |
+|---|---|---|---|
+| words / sentences | 6,579 / 256 | 6,603 / 258 | — |
+| mean sentence length | 25.7 | 25.6 | 22.7 [19.1, 28.2] |
+| Q | 29.3 | 29.4 | 14.4 [7.1, 26.9] |
+| Q excl. NEG | 18.1 | 18.2 | 10.3 [5.7, 21.5] |
+| SCOPE | 9.6 | 9.5 | 3.7 [2.1, 6.0] |
+| STATUS | 3.6 | 3.8 | 0.2 [0.0, 0.6] |
+| STATUS markers | 24 in all, 7 in Sec. VIII A | 25 in all, 8 in Sec. VIII A | — |
+| sentences with ≥2 markers | 20% | 19% | 5% [2, 12] |
+| pointer parentheticals | 1.4 | 1.4 | 0.2 [0.0, 1.3] |
+| strict index | 12.3 | 12.4 | 2.6 [1.3, 4.2] |
+| note-pointer clauses | 25 | 25 | — |
+| abstract | 114 words, 5 markers (4 S+C+S) | 115 words, 5 markers (4 S+C+S) | 0–3 (≤1) |
