@@ -121,8 +121,9 @@ A file is a result receipt if it is a tracked JSON file under \texttt{docs/orche
 of the metric families of \texttt{tools/registry/results\_index.py} holds a number, a list of numbers or an object
 of numbers (the exact rule is the script's docstring). Each such value is one row. ``unreviewed'' means that no
 record in the registry withdraws or supersedes the result, not that it is current; ``design-projection'' marks
-design arithmetic, as the receipt's own status, schema or file name declares it. Each receipt's header row gives
-its own status field (or, lacking one, its schema). Values are given to six significant digits; the receipt holds the full value.
+design arithmetic, as the receipt's own status or schema field, or a cited status record, declares it. The summary
+gives each receipt's own status field (or, lacking one, its schema) and its verdict field when it has one. Per-row
+tables are printed for attributed rows only; unattributed rows are listed by receipt. Values are given to six significant digits; the receipt holds the full value.
 
 \input{records_results_index}
 

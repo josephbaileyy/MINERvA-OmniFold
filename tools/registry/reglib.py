@@ -102,12 +102,33 @@ def read_tsv(index: Index, path: str) -> list[dict]:
     return read_tsv_text(text)
 
 
-def locate(index: Index, source: str, line: str, quote: str) -> tuple[int | None, str | None, str | None]:
-    """Where the cited quote is: (line number, error, warning).
+import hashlib  # noqa: E402
 
-    The quote on its cited line: (n, None, None). The quote MOVED to exactly one other line of the same file: (that
-    line, None, a warning naming it) -- the citation still identifies one line, so this passes and
-    `check_registry.py --repoint` updates the number. The quote absent, or on several other lines: (None, error, None).
+
+def line_digest(text: str) -> str:
+    """The first 16 hex digits of the sha256 of one line's exact text (no newline)."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def fields(row: dict) -> tuple[str, str, str, str]:
+    """(source, line, quote, line_sha256) of a cited row of any registry table."""
+    if "defining_source" in row:
+        return (row["defining_source"], row["defining_line"], row["defining_quote"],
+                row.get("defining_line_sha256", ""))
+    return row["source"], row["line"], row["quote"], row.get("line_sha256", "")
+
+
+def locate(index: Index, source: str, line: str, quote: str, sha: str) -> tuple[int | None, str | None, str | None]:
+    """Where the cited line is: (line number, error, None).
+
+    A citation names a line by number AND by the digest of its whole text (`line_sha256`). It holds only if the
+    line at that number has that digest and contains the quote. Anything else FAILS, because a check that passes
+    does not speak (the hook discards a passing check's output):
+      - a line with that digest at exactly one OTHER number: the line moved; the error names the new number and
+        `check_registry.py --repoint` rewrites it (the only change --repoint makes);
+      - no line with that digest: the cited line's text changed -- an edit, a retraction, a rewording, even if it
+        still contains the quote; re-read it and re-cite by hand (`check_registry.py --cite FILE:LINE`);
+      - several lines with that digest: ambiguous; re-cite by hand.
     """
     text = index.text(source)
     if text is None:
@@ -118,27 +139,34 @@ def locate(index: Index, source: str, line: str, quote: str) -> tuple[int | None
         return None, f"line {line!r} is not an integer", None
     if not quote:
         return None, f"{source}:{n}: empty quote", None
+    if not re.fullmatch(r"[0-9a-f]{16}", sha or ""):
+        return None, f"{source}:{n}: no line_sha256 recorded (run `check_registry.py --cite {source}:{n}`)", None
     lines = text.split("\n")
-    if 1 <= n <= len(lines) and quote in lines[n - 1]:
+    if 1 <= n <= len(lines) and line_digest(lines[n - 1]) == sha:
+        if quote not in lines[n - 1]:
+            return None, f"{source}:{n}: the line has its digest but not the quote {quote!r} (row is malformed)", None
         return n, None, None
-    now = [i for i, l in enumerate(lines, start=1) if quote in l]
-    if len(now) == 1:
-        return now[0], None, (f"{source}:{n} no longer holds the quote {quote!r}; it is on line {now[0]} only "
-                              "(passes; run `python3 tools/registry/check_registry.py --repoint`)")
-    if now:
-        return None, (f"{source}:{n} does not hold the quote {quote!r}, which occurs on {len(now)} other lines "
-                      f"({', '.join(map(str, now[:5]))}): re-point the row by hand"), None
-    return None, f"{source}:{n}: the quote {quote!r} is no longer in the file: re-source the row", None
+    same = [i for i, l in enumerate(lines, start=1) if line_digest(l) == sha]
+    if len(same) == 1:
+        return None, (f"{source}:{n}: the cited line MOVED to line {same[0]} (same text, same digest); run "
+                      "`python3 tools/registry/check_registry.py --repoint` and stage the TSVs"), None
+    if same:
+        return None, (f"{source}:{n}: the cited line's text occurs on {len(same)} lines "
+                      f"({', '.join(map(str, same[:5]))}); re-cite by hand"), None
+    now = lines[n - 1] if 1 <= n <= len(lines) else "(past end of file)"
+    return None, (f"{source}:{n}: the cited line's TEXT CHANGED (no line has digest {sha}); it now reads "
+                  f"{now[:120]!r}. Re-read it and re-cite by hand (`check_registry.py --cite {source}:{n}`); "
+                  "--repoint does not accept edits"), None
 
 
-def verify_citation(index: Index, source: str, line: str, quote: str) -> tuple[str | None, str | None]:
-    """(error, warning) for one citation; see locate()."""
-    _, err, warn = locate(index, source, line, quote)
+def verify_citation(index: Index, source: str, line: str, quote: str, sha: str = "") -> tuple[str | None, str | None]:
+    """(error, None) for one citation; see locate()."""
+    _, err, warn = locate(index, source, line, quote, sha)
     return err, warn
 
 
-def cited_text(index: Index, source: str, line: str, quote: str) -> str | None:
-    n, err, _ = locate(index, source, line, quote)
+def cited_text(index: Index, source: str, line: str, quote: str, sha: str = "") -> str | None:
+    n, err, _ = locate(index, source, line, quote, sha)
     if n is None:
         return None
     return (index.text(source) or "").split("\n")[n - 1]
@@ -148,8 +176,9 @@ CITED_TABLES = (ESTIMATORS, ALIASES, UNRESOLVED, ATTRIBUTION, STATUS)
 
 
 def repoint(index: Index, repo: Path) -> list[str]:
-    """Rewrite, in the working-tree TSVs, the line number of every citation whose quote moved to exactly one other
-    line of its (staged) source. Returns what changed and what could not be fixed. Never changes a quote."""
+    """Rewrite, in the working-tree TSVs, the line number of every citation whose WHOLE LINE (same digest) moved to
+    exactly one other line of its staged source. Never changes a quote or a digest, so an edited line is never
+    accepted here."""
     report = []
     for table in CITED_TABLES:
         if not index.has(table):
@@ -157,23 +186,25 @@ def repoint(index: Index, repo: Path) -> list[str]:
         text = (repo / table).read_text()
         lines = text.split("\n")
         header = lines[0].split("\t")
-        src_col = header.index("defining_source") if "defining_source" in header else header.index("source")
-        line_col = header.index("defining_line") if "defining_line" in header else header.index("line")
-        quote_col = header.index("defining_quote") if "defining_quote" in header else header.index("quote")
+        pre = "defining_" if "defining_source" in header else ""
+        src_col, line_col = header.index(pre + "source"), header.index(pre + "line")
+        quote_col, sha_col = header.index(pre + "quote"), header.index(pre + "line_sha256")
         changed = False
         for i in range(1, len(lines)):
             if not lines[i]:
                 continue
             cells = lines[i].split("\t")
-            src, ln, quote = cells[src_col], cells[line_col], cells[quote_col]
-            n, err, warn = locate(index, src, ln, quote)
-            if n is not None and not warn:
-                continue
+            src, ln, quote, sha = cells[src_col], cells[line_col], cells[quote_col], cells[sha_col]
+            n, err, _ = locate(index, src, ln, quote, sha)
             if n is not None:
-                cells[line_col] = str(n)
+                continue
+            body = (index.text(src) or "").split("\n")
+            same = [k for k, l in enumerate(body, start=1) if line_digest(l) == sha and quote in l]
+            if len(same) == 1:
+                cells[line_col] = str(same[0])
                 lines[i] = "\t".join(cells)
                 changed = True
-                report.append(f"REPOINTED {table} row {i + 1}: {src}:{ln} -> {n}")
+                report.append(f"REPOINTED {table} row {i + 1}: {src}:{ln} -> {same[0]}")
             else:
                 report.append(f"CANNOT REPOINT {table} row {i + 1}: {err}")
         if changed:
@@ -195,8 +226,8 @@ def verify_registry(index: Index) -> tuple[list[str], list[str]]:
                 srcs.add(r.get("defining_source") or r.get("source", ""))
     index.read_many(sorted(s for s in srcs if s))  # one `git cat-file --batch` for every cited file
 
-    def cite(label: str, source: str, line: str, quote: str) -> None:
-        err, warn = verify_citation(index, source, line, quote)
+    def cite(label: str, row: dict) -> None:
+        err, warn = verify_citation(index, *fields(row))
         if err:
             errs.append(f"{label}: {err}")
         if warn:
@@ -207,7 +238,7 @@ def verify_registry(index: Index) -> tuple[list[str], list[str]]:
     for i in sorted({i for i in ids if ids.count(i) > 1}):
         errs.append(f"ESTIMATORS: id {i} defined more than once")
     for e in ests:
-        cite(f"ESTIMATORS {e['id']}", e["defining_source"], e["defining_line"], e["defining_quote"])
+        cite(f"ESTIMATORS {e['id']}", e)
     for n, a in enumerate(read_tsv(index, ALIASES), start=2):
         if a["estimator"] not in ids:
             errs.append(f"ALIASES row {n}: estimator {a['estimator']!r} is not an ESTIMATORS id")
@@ -219,10 +250,10 @@ def verify_registry(index: Index) -> tuple[list[str], list[str]]:
             re.compile(a["pattern"])
         except re.error as exc:
             errs.append(f"ALIASES row {n} ({a['alias']}): pattern does not compile: {exc}")
-        cite(f"ALIASES row {n} ({a['estimator']} / {a['alias']})", a["source"], a["line"], a["quote"])
+        cite(f"ALIASES row {n} ({a['estimator']} / {a['alias']})", a)
     if index.has(UNRESOLVED):
         for n, u in enumerate(read_tsv(index, UNRESOLVED), start=2):
-            cite(f"UNRESOLVED-NAMES row {n} ({u['name']})", u["source"], u["line"], u["quote"])
+            cite(f"UNRESOLVED-NAMES row {n} ({u['name']})", u)
     return errs, warns
 
 
@@ -238,6 +269,7 @@ def resolve(name: str, ests: list[dict], als: list[dict]) -> dict[str, list[str]
     n = norm(name)
     word = re.compile(r"(?<![\w-])" + re.escape(name.strip()) + r"(?![\w-])") if name.strip() else None
     hits: dict[str, list[str]] = defaultdict(list)
+    nonid_names = {norm(a["alias"]) for a in als if a.get("identifying", "yes") != "yes"}
     for e in ests:
         if norm(e["id"]) == n:
             hits[e["id"]].append("registry id")
@@ -254,7 +286,11 @@ def resolve(name: str, ests: list[dict], als: list[dict]) -> dict[str, list[str]
         except re.error:
             pass
         if word and word.search(a["alias"]):
-            hits[a["estimator"]].append(f"the name is a word of alias {a['alias']!r} {where}")
+            # A name that IS a non-identifying alias (lgbm) stays non-identifying when it also appears as a word
+            # inside some identifying alias's display text ("production 5D estimator (lgbm, ...)").
+            wtag = tag or (" [non-identifying]" if n in nonid_names else "")
+            hits[a["estimator"]].append(f"the name is a word of alias {a['alias']!r} "
+                                        f"({a['kind']}, {a['source']}:{a['line']}){wtag}")
     return hits
 
 

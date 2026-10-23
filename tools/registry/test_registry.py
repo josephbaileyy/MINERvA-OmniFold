@@ -156,14 +156,18 @@ class ResultsIndexDiscovery(unittest.TestCase):
         line = next(l for l in rows.splitlines() if rel in l)
         self.assertIn("\twithdrawn\tfile name\t", line)
 
-    def test_attribution_quote_moved_one_line_warns_and_passes(self) -> None:
+    def test_attribution_line_moved_fails_until_repointed(self) -> None:
         rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"  # ATTRIBUTION cites its line 3, "candidate": "R"
         p = self.f.root / rel
         p.write_text("\n" + p.read_text())
         self.f.git("add", rel)
         out = self.f.check()
-        self.assertIn("WARN ATTRIBUTION row", out.stdout)
-        self.assertNotIn("FAIL ATTRIBUTION", out.stdout)
+        self.assertEqual(out.returncode, 1, out.stdout)
+        self.assertIn("MOVED to line 4", out.stdout)
+        run([sys.executable, str(HERE / "check_registry.py"), "--repoint", "--repo", str(self.f.root)])
+        self.f.git("add", reglib.ATTRIBUTION)
+        self.f.write()
+        self.assertEqual(self.f.check().returncode, 0)
 
     def test_attribution_quote_removed_fails(self) -> None:
         rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"
@@ -176,8 +180,9 @@ class ResultsIndexDiscovery(unittest.TestCase):
 
     def test_attribution_line_that_does_not_name_the_estimator_fails(self) -> None:
         attr = self.f.root / reglib.ATTRIBUTION
+        d = reglib.line_digest((self.f.root / "docs/analysis-note/paper_body.tex").read_text().split("\n")[284])
         attr.write_text(attr.read_text() + "docs/orchestration/state/x\\.json\t\te-R-joint-test\t"
-                        "docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\n")
+                        f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d}\n")
         self.f.git("add", reglib.ATTRIBUTION)
         out = self.f.check()
         self.assertEqual(out.returncode, 1, out.stdout)
@@ -203,10 +208,11 @@ class ResultsIndexDiscovery(unittest.TestCase):
 
     def test_key_with_slash_is_an_unambiguous_pointer(self) -> None:
         rel = "docs/orchestration/state/new-campaign/table.json"
-        self.f.plant(rel, {"closure": {"pt/pz": 1.01}})
+        self.f.plant(rel, {"pt/pz": {"closure": 1.01}, "closure_table": {"a/b": 1.0}})
         self.f.write()
         rows = (self.f.root / "docs/orchestration/registry/RESULTS-INDEX.tsv").read_text()
-        self.assertIn("\tclosure/pt~1pz\n", rows)  # keypath column: "/" inside a key is written ~1
+        self.assertIn("\tpt~1pz/closure\n", rows)  # keypath column: "/" inside a key is written ~1
+        self.assertNotIn("a~1b", rows)  # a key that is itself a path is never a metric key
 
     def test_deleting_an_indexed_receipt_is_reported_as_stale(self) -> None:
         self.f.git("rm", "-q", SEED_RECEIPTS[1])

@@ -1,1 +1,2 @@
-path_regex	keypath_regex	status	superseding_record	source	line	quote
+path_regex	keypath_regex	status	superseding_record	source	line	quote	line_sha256
+docs/orchestration/state/next-preparation-20261009/two-d-path/design_arith\.json		design-projection	(its producing report: design arithmetic for the route comparison, criteria, assurance and prices)	docs/orchestration/state/next-preparation-20261009/two-d-path/REPORT.md	7	from `design_arith.json`	9d433dce998d9081

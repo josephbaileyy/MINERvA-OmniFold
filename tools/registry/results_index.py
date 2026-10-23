@@ -32,10 +32,12 @@ Each R4 hit is one index row. Columns, each derived mechanically:
   value      the number (6 significant digits; the receipt holds the full value), or a list summary.
   status     `withdrawn`/`superseded` if the receipt's file name says so, or its top-level `status` string
              begins with the word, or a STATUS.tsv row (citing a line carrying its quote) matches; else
-             `design-projection` if its own status/schema or file name declares design arithmetic (DESIGN_*);
+             `design-projection` if its own status/schema declares design arithmetic (DESIGN_STATUS) or a
+             STATUS.tsv row says so;
              else `unreviewed` -- which means no record in the registry withdraws or supersedes it, NOT that it
              is current.
-  self_status  the receipt's own top-level `status` string (else "schema: <schema>"), first 100 characters.
+  self_status  the receipt's own top-level `status` string (else "schema: <schema>"), and its top-level
+             `verdict` string if it has one ("verdict: FUTILITY-FAIL"), first 100 characters.
   source, keypath  where to read the value.
 Nothing is ever deleted: a superseded or withdrawn receipt keeps its rows and gains a status.
 """
@@ -78,9 +80,16 @@ NON_METRIC = {"reweight", "hidden", "amplitude", "alpha", "center", "pt0", "ref"
               # projections and counts declared by the key's own words
               "expected", "design", "failures", "failure", "missing", "predicted", "needed", "identical", "pass",
               # instrument coverage (which launchers a guard covers) is not statistical coverage
-              "guard", "launcher", "mutation"}
-# Keys excluded by name, each with its reason: the weight sums of a closure sample are not a closure metric.
-EXCLUDED_KEYS = re.compile(r"(sum|max)_w_reco_closure")
+              "guard", "launcher", "mutation",
+              # correlations, chi-square statistics, p-values and argmax labels are other quantities
+              "spearman", "pearson", "chi2", "p", "argmax"}
+# Under a key naming another quantity, nothing is indexed: chi2/bias_PB/pt_vs_VL175 is a chi-square, not a bias.
+OTHER_QUANTITY = {"chi2", "spearman", "pearson", "correlation", "corr", "cor", "p"}
+# Token SEQUENCES that mark a non-metric: e_lo/e_hi are bin edges (E_lo_of_max_pull), null_p a null p-value.
+NON_METRIC_PHRASES = ("e_lo", "e_hi", "null_p")
+# Keys excluded by name PREFIX, each with its reason: the weight sums of a closure sample (sum_w_reco_closure,
+# sum_w_reco_closure_data_equiv, max_w_reco_closure) are not a closure metric.
+EXCLUDED_KEYS = re.compile(r"(sum|max)_w_reco_closure(_.*)?")
 # Under a family key whose value is an object, a numeric leaf is indexed only if every key on the way down is a
 # statistic word of CHILD_WORDS (or a number, or a key that is itself in a family): {"max": .., "median": ..,
 # "p90": .., "n": ..} under binning_bias_T2_K200 gives max, median and p90 and skips the count n; a named
@@ -110,9 +119,9 @@ METRIC_FAMILIES = (
     ("closure", "a closure token", r"(.*_)?closure(_.*)?"),
     ("residual_se", "se_rel(_pct); se_a/se_b/se_c, se_db/se_dc ONLY beside the matching r_/d_ key (ki98)",
      r"se_rel(_pct)?|se_[abc]|se_d[bc]"),
-    ("residual", "a token beginning resid; mean_rel, median_abs_rel, max_abs_rel (_pct); r_a/r_b/r_c, d_b/d_c ONLY "
+    ("residual", "a resid/residual/residuals token (not residency); mean_rel, median_abs_rel, max_abs_rel (_pct); r_a/r_b/r_c, d_b/d_c ONLY "
                  "when the same object holds the matching se_ key (ki98 mean residuals and their differences)",
-     r"(.*_)?resid[a-z]*(_.*)?|(mean|median_abs|max_abs)_rel(_pct)?|r_[abc]|d_[bc]"),
+     r"(.*_)?resid(ual|uals)?(_.*)?|(mean|median_abs|max_abs)_rel(_pct)?|r_[abc]|d_[bc]"),
 )
 _FAM = [(name, re.compile(rx)) for name, _, rx in METRIC_FAMILIES]
 N_KEYS = ("n", "n_present", "n_declared", "n_experiments", "n_exp", "n_pseudo", "n_pe", "n_pseudo_experiments", "n_nominal_experiments",
@@ -123,10 +132,11 @@ SCALE_WORDS = (("development", ("dev", "development")), ("assessment", ("assess"
 # by ...", "WITHDRAWN: ..."); "supersedes X" or "not superseded" do not match.
 STATUS_WORDS = (("withdrawn", re.compile(r"(^|[-_.])withdrawn([-_.]|$)", re.I), re.compile(r"^\W*withdrawn\b", re.I)),
                 ("superseded", re.compile(r"(^|[-_.])superseded([-_.]|$)", re.I), re.compile(r"^\W*superseded\b", re.I)))
-# Design arithmetic is not a result: a receipt whose own `status` (or, lacking one, `schema`) says DRAFT, NOT
-# REGISTERED, design or cost, or whose file name carries design/cost as a token, gets status design-projection.
+# Design arithmetic is not a result: a receipt whose OWN `status` (or, lacking one, `schema`) says DRAFT, NOT
+# REGISTERED, design or cost gets status design-projection for every row. A file name is not enough (r2_design.json
+# holds measured values); a file without such a field is marked only by a STATUS.tsv row citing a line that says
+# so. A KEY that names a design quantity is never indexed at all (NON_METRIC "design", "expected", "predicted").
 DESIGN_STATUS = re.compile(r"\bDRAFT\b|NOT REGISTERED|design|\bcosts?\b", re.I)
-DESIGN_NAME = re.compile(r"(^|[-_.])(design|costs?)([-_.]|$)", re.I)
 # Short names the ambiguity table resolves with whatis.py's rule (reglib.resolve). The list only chooses what is
 # printed; each verdict is computed from the registry, never typed.
 PROBE_NAMES = ("R", "B0", "N", "F1", "F2", "configuration 1", "configuration 2", "configuration 3", "400/31",
@@ -142,10 +152,21 @@ def tokens(key: str) -> list[str]:
     return [t for t in re.split(r"[^a-z0-9]+", str(key).lower()) if t]
 
 
-def family(key: str, siblings=()) -> str | None:
+def non_metric(key: str) -> bool:
+    """A count, a parameter, a pointer or another quantity: never a metric key (see the block above)."""
+    if "/" in str(key):  # a path used as a key (guard/inventory-base-*): a pointer, not a quantity
+        return True
     toks = tokens(key)
     if not toks or toks[0] in COUNT_FIRST or "n" in toks or any(t in NON_METRIC for t in toks):
+        return True
+    k = "_".join(toks)
+    return any(re.search(rf"(^|_){ph}(_|$)", k) for ph in NON_METRIC_PHRASES)
+
+
+def family(key: str, siblings=()) -> str | None:
+    if non_metric(key):
         return None
+    toks = tokens(key)
     k = "_".join(toks)
     if EXCLUDED_KEYS.fullmatch(k):
         return None
@@ -165,7 +186,7 @@ def family(key: str, siblings=()) -> str | None:
 
 def child_ok(key: str, fam: str) -> bool:
     toks = tokens(key)
-    if not toks or toks[0] in COUNT_FIRST or "n" in toks or any(t in NON_METRIC for t in toks):
+    if non_metric(key):
         return False
     words = CHILD_WORDS | (CHILD_WORDS_SPREAD if fam in ("residual", "residual_se", "pull", "pull_sd") else set())
     return all(t.isdigit() or t in words for t in toks) or family(key) is not None
@@ -198,8 +219,7 @@ def all_numeric(o) -> bool:
 
 
 def excluded_child(key: str) -> bool:
-    toks = tokens(key)
-    return bool(toks) and (toks[0] in COUNT_FIRST or "n" in toks or any(t in NON_METRIC for t in toks))
+    return non_metric(key)
 
 
 def numeric_table(o, path=()):
@@ -257,7 +277,8 @@ def hits(doc):
                         for sub, val in leaves:
                             out.append((path + (str(k),) + sub, str(k), fam, val, stack))
                         continue
-                walk(v, path + (str(k),), stack)
+                if not (set(tokens(k)) & OTHER_QUANTITY or "null_p" in "_".join(tokens(k))):
+                    walk(v, path + (str(k),), stack)  # nothing under a chi2/correlation/p-value key is a metric
         elif isinstance(o, list):
             for i, v in enumerate(o):
                 walk(v, path + (str(i),), stack)
@@ -273,13 +294,13 @@ def load_rules(index: reglib.Index, path: str, kind: str, warns: list[str] | Non
     attributed estimator's identifying alias patterns, so a row cannot rest on a line that does not name it."""
     rows, errs = [], []
     for n, r in enumerate(reglib.read_tsv(index, path), start=2):
-        err, warn = reglib.verify_citation(index, r["source"], r["line"], r["quote"])
+        err, warn = reglib.verify_citation(index, *reglib.fields(r))
         if err:
             errs.append(f"{kind} row {n}: {err}")
         if warn and warns is not None:
             warns.append(f"{kind} row {n}: {warn}")
         if patterns is not None and not err:
-            text = reglib.cited_text(index, r["source"], r["line"], r["quote"]) or ""
+            text = reglib.cited_text(index, *reglib.fields(r)) or ""
             pats = patterns.get(r["estimator"], [])
             if not any(re.search(p, text) for p in pats):
                 errs.append(f"{kind} row {n}: the cited line {r['source']}:{r['line']} matches none of the "
@@ -311,14 +332,15 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
         if r["estimator"] not in est_ids:
             errs.append(f"ATTRIBUTION: estimator {r['estimator']!r} is not an ESTIMATORS id")
     for r in status_rules:
-        if r["status"] not in ("withdrawn", "superseded"):
-            errs.append(f"STATUS: status {r['status']!r} is not withdrawn/superseded")
+        if r["status"] not in ("withdrawn", "superseded", "design-projection"):
+            errs.append(f"STATUS: status {r['status']!r} is not withdrawn/superseded/design-projection")
 
     all_json = [p for p in index.paths() if p.endswith(".json")]
     in_roots = [p for p in all_json if p.startswith(ROOTS)]
     outside = [p for p in all_json if not p.startswith(ROOTS)]
     blobs = index.read_many(in_roots)
     pop_rows, rows = [], []
+    raw: dict = {}
     for path in in_roots:
         try:
             doc = json.loads(blobs[path].decode("utf-8"))
@@ -336,6 +358,9 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
                 self_status = doc["status"]
             elif isinstance(doc.get("schema"), str):
                 self_status = "schema: " + doc["schema"]
+        declared = self_status
+        if isinstance(doc, dict) and isinstance(doc.get("verdict"), str):
+            self_status = (self_status + "; " if self_status else "") + "verdict: " + doc["verdict"]
         base_status, base_by = "unreviewed", ""
         fname = path.rsplit("/", 1)[-1]
         for word, rx_name, rx_status in STATUS_WORDS:
@@ -345,11 +370,8 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
             if self_status and rx_status.search(self_status):
                 base_status, base_by = word, "receipt's own status field"
                 break
-        if base_status == "unreviewed":
-            if DESIGN_STATUS.search(self_status):
-                base_status, base_by = "design-projection", "receipt's own status/schema"
-            elif DESIGN_NAME.search(fname):
-                base_status, base_by = "design-projection", "file name"
+        if base_status == "unreviewed" and DESIGN_STATUS.search(declared):
+            base_status, base_by = "design-projection", "receipt's own status/schema"
         scale = scale_of(doc, path)
         for kp, key, fam, val, stack in found:
             keypath = pointer(kp)
@@ -362,6 +384,7 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
                     break
             rows.append((est, pointer(kp[:-1]) if len(kp) > 1 else "(top)", scale, find_n(stack), fam, key,
                          fmt(val), st, by, self_status[:100].replace("\t", " ").replace("\n", " "), path, keypath))
+            raw[(path, keypath)] = val
     rows.sort(key=lambda r: (r[0] == "UNATTRIBUTED", r[0], r[10], r[11]))
     counts = {
         "roots": len(in_roots), "outside": len(outside),
@@ -388,8 +411,11 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
     pop_text = ("\n".join(head) + "\npath\tclass\trows\tnote\n"
                 + "".join("\t".join(r) + "\n" for r in pop_rows if r[1] == "included"))
     counts["_pop_rows"] = pop_rows
+    counts["printed"] = printed_estimators(index)
+    attributed = {r[0] for r in rows if r[0] != "UNATTRIBUTED"}
+    counts["no_results"] = sorted(set(counts["printed"]) - attributed)
     files = {INDEX_TSV: idx_text, POP_TSV: pop_text,
-             TEX_INDEX: render_index_tex(rows, counts, index), TEX_REGISTRY: render_registry_tex(index)}
+             TEX_INDEX: render_index_tex(rows, counts, index, raw), TEX_REGISTRY: render_registry_tex(index)}
     counts["_warns"] = warns
     return files, errs, counts
 
@@ -464,22 +490,94 @@ def render_registry_tex(index: reglib.Index) -> str:
     return "\n".join(out)
 
 
-def render_index_tex(rows, counts, index: reglib.Index) -> str:
+POSTED = ("main_note.tex", "main_paper.tex", "main_primer.tex", "pet_note.tex")
+NO_RESULTS_BEGIN = "% NO-RESULTS-INDEXED BEGIN"
+NO_RESULTS_END = "% NO-RESULTS-INDEXED END"
+
+
+def printed_estimators(index: reglib.Index) -> dict[str, list[str]]:
+    """estimator id -> where a POSTED document prints a label naming it (check_registry's LABEL_PATTERNS)."""
+    import check_registry as cr
+    ests = reglib.read_tsv(index, reglib.ESTIMATORS)
+    als = reglib.read_tsv(index, reglib.ALIASES)
+    out: dict[str, list[str]] = {}
+    files = sorted({f for d in POSTED for f in cr.closure(index, cr.NOTE_DIR, d)})
+    for f in files:
+        for ln, _, label in cr.labels_in(index.text(f) or ""):
+            named = reglib.identifying(reglib.resolve(label, ests, als))
+            if len(named) == 1:
+                out.setdefault(named[0], []).append(f"{f.rsplit('/', 1)[-1]}:{ln}")
+    return out
+
+
+def numbers(v) -> list[float]:
+    return [float(x) for x in v] if isinstance(v, list) else [float(v)]
+
+
+def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
+    """The records rendering: a summary per estimator x metric family; the full per-row table for ATTRIBUTED rows
+    only; UNATTRIBUTED results as a list of receipts with row counts; and the NO-RESULTS-INDEXED table. The TSV
+    remains the full record."""
     T, B = reglib.tex_escape, reglib.tex_breakable
+
+    def short(xs, k=3):
+        xs = sorted({x for x in xs if x})
+        return ", ".join(xs[:k]) + (f" (+{len(xs) - k})" if len(xs) > k else "")
+
     out = ["% GENERATED by tools/registry/results_index.py --write from the committed receipts; do not edit.",
-           "% Its source of truth is docs/orchestration/registry/RESULTS-INDEX.tsv, generated in the same run.",
+           "% Its source of truth is docs/orchestration/registry/RESULTS-INDEX.tsv, generated in the same run, which",
+           "% holds every row; this rendering summarizes it.",
            f"{counts['included']} result receipts under "
            + ", ".join(f"\\texttt{{{B(r)}}}" for r in ROOTS)
            + f" give {counts['rows']} index rows, {counts['attributed_rows']} of them attributed to a registered"
            " estimator. Status counts: "
-           + ", ".join(f"{T(k)} {v}" for k, v in sorted(counts["status"].items())) + ".",
-           ""]
+           + ", ".join(f"{T(k)} {v}" for k, v in sorted(counts["status"].items())) + ". The summary table gives,"
+           " for each estimator and metric family, the number of rows and receipts, the scales and $n$ the receipts"
+           " state, the receipts' own status and verdict fields, and the minimum, median and maximum of the values"
+           " (list values contribute every element). Per-row tables follow for attributed rows only; unattributed"
+           " rows are listed by receipt. Every row is in the TSV.", ""]
     groups: dict[str, list] = {}
     for r in rows:
         groups.setdefault(r[0], []).append(r)
-    for est in sorted(groups, key=lambda e: (e == "UNATTRIBUTED", e)):
+    order = sorted(groups, key=lambda e: (e == "UNATTRIBUTED", e))
+    out += [r"\subsubsection*{Summary by estimator and metric family}",
+            r"\begingroup\tiny\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\tabcolsep}{2pt}",
+            r"\begin{longtable}{@{}p{0.13\textwidth}p{0.10\textwidth}p{0.05\textwidth}p{0.05\textwidth}"
+            r"p{0.12\textwidth}p{0.10\textwidth}p{0.22\textwidth}p{0.16\textwidth}@{}}",
+            r"\toprule Estimator & Family & Rows & Rcpts & Scale & $n$ & Receipts' own status / verdict & "
+            r"Min / median / max \\ \midrule\endhead"]
+    for est in order:
+        fams: dict[str, list] = {}
+        for r in groups[est]:
+            fams.setdefault(r[4], []).append(r)
+        for fam in sorted(fams):
+            rs = fams[fam]
+            vals = sorted(x for r in rs for x in numbers(raw[(r[10], r[11])]))
+            med = vals[len(vals) // 2] if len(vals) % 2 else (vals[len(vals) // 2 - 1] + vals[len(vals) // 2]) / 2
+            out.append(f"\\texttt{{{B(est)}}} & {T(fam)} & {len(rs)} & {len({r[10] for r in rs})} & "
+                       f"{T(short([r[2] for r in rs]))} & {T(short([r[3] for r in rs]))} & "
+                       f"{B(short([(r[9] or 'none') for r in rs], 2))} & "
+                       f"{B(f'{vals[0]:.4g} / {med:.4g} / {vals[-1]:.4g}')} \\\\")
+    out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
+    for est in order:
         rs = groups[est]
-        out += [f"\\subsection*{{Results attributed to \\texttt{{{B(est)}}} ({len(rs)} rows)}}",
+        if est == "UNATTRIBUTED":
+            by: dict[str, list] = {}
+            for r in rs:
+                by.setdefault(r[10], []).append(r)
+            out += [f"\\subsubsection*{{Unattributed results: {len(rs)} rows in {len(by)} receipts}}",
+                    "No ATTRIBUTION.tsv row with a cited line that names an estimator covers these rows; they are"
+                    " listed by receipt, and RESULTS-INDEX.tsv holds every value.", "",
+                    r"\begingroup\tiny\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\tabcolsep}{2pt}",
+                    r"\begin{longtable}{@{}p{0.50\textwidth}p{0.05\textwidth}p{0.20\textwidth}p{0.20\textwidth}@{}}",
+                    r"\toprule Receipt & Rows & Families & Own status / verdict \\ \midrule\endhead"]
+            for src in sorted(by):
+                rr = by[src]
+                out.append(f"\\texttt{{{B(src)}}} & {len(rr)} & {T(short([r[4] for r in rr], 4))} & "
+                           f"{B(rr[0][9] or 'none')} \\\\")
+            out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
+            continue
+        out += [f"\\subsubsection*{{Results attributed to \\texttt{{{B(est)}}} ({len(rs)} rows)}}",
                 r"\begingroup\tiny\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\tabcolsep}{2pt}",
                 r"\begin{longtable}{@{}p{0.26\textwidth}p{0.08\textwidth}p{0.10\textwidth}p{0.16\textwidth}"
                 r"p{0.15\textwidth}p{0.18\textwidth}@{}}",
@@ -495,7 +593,38 @@ def render_index_tex(rows, counts, index: reglib.Index) -> str:
             out.append(f"\\texttt{{{B(r[1])}}} & {T(r[2])} & {B(r[3])} & {T(r[4])}: \\texttt{{{B(r[5])}}}"
                        f" & {B(r[6])} & {status} \\\\")
         out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
+    printed = counts["printed"]
+    out += [NO_RESULTS_BEGIN, r"\subsubsection*{NO-RESULTS-INDEXED: printed estimators with no attributed row}",
+            "Each estimator below is named by a label that the posted note, paper, primer or PET note prints, and no"
+            " row of the index is attributed to it. This says only that the index holds no attributed row: its"
+            " results may sit outside the indexed families or roots, or in receipts no cited line attributes"
+            " (search with \\texttt{whatis.py}).", ""]
+    if counts["no_results"]:
+        out += [r"\begingroup\scriptsize", r"\begin{longtable}{@{}p{0.25\textwidth}p{0.70\textwidth}@{}}",
+                r"\toprule Estimator & Printed at (file:line) \\ \midrule\endhead"]
+        for e in counts["no_results"]:
+            out.append(f"\\texttt{{{B(e)}}} & {B(short(printed[e], 4))} \\\\")
+        out += [r"\bottomrule", r"\end{longtable}", r"\endgroup"]
+    else:
+        out.append("None: every printed estimator has at least one attributed row.")
+    out += [NO_RESULTS_END, ""]
     return "\n".join(out)
+
+
+def no_results_listed(index: reglib.Index, counts: dict) -> list[str]:
+    """Never silently zero: every estimator a posted document prints by label has an attributed row in the
+    COMMITTED index, or is listed between the NO-RESULTS-INDEXED markers of the COMMITTED rendering."""
+    committed = reglib.read_tsv_text(index.text(INDEX_TSV) or "") if index.has(INDEX_TSV) else []
+    attributed = {r["estimator"] for r in committed}
+    tex = index.text(TEX_INDEX) or ""
+    block = tex.split(NO_RESULTS_BEGIN, 1)[1].split(NO_RESULTS_END, 1)[0] if NO_RESULTS_BEGIN in tex else ""
+    fails = []
+    for e in sorted(counts["printed"]):
+        if e not in attributed and reglib.tex_breakable(e) not in block:
+            fails.append(f"SILENT ZERO: {e} is printed by a posted document ({', '.join(counts['printed'][e][:3])}) "
+                         f"and has no attributed row in the committed index, and the committed {TEX_INDEX} does "
+                         "not list it under NO-RESULTS-INDEXED")
+    return fails
 
 
 def print_warnings(counts: dict) -> None:
@@ -535,6 +664,7 @@ def check(repo: Path) -> int:
         if cls == "included" and path not in indexed_sources:
             fails.append(f"UNINDEXED receipt {path}: it is in the population ({nrows} metric values) and has "
                          "no row in the committed RESULTS-INDEX.tsv")
+    fails += no_results_listed(index, counts)
     for rel, text in files.items():
         have = index.text(rel)
         if have is None:
@@ -630,19 +760,53 @@ def self_test() -> int:
         # cited line does (the same line, attributed to the estimator it names) passes.
         attr = t / reglib.ATTRIBUTION
         clean = attr.read_text()
+        l285 = (t / "docs/analysis-note/paper_body.tex").read_text().split("\n")[284]
+        d285 = reglib.line_digest(l285)
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\te-R-joint-test\t"
-                        "docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\n")
+                        f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(check, t)
         case("ATTRIBUTION row citing a line that names (a), attributed to R", rc, 1, out)
         ok &= "rule 7" in out
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\ta-central-lgbm\t"
-                        "docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\n")
+                        f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(write, t)
         g("add", "-A")
         rc, out = quiet(check, t)
         case("the same line attributed to (a), the estimator it names", rc, 0, out)
+        # Never silently zero: with a posted driver that prints labels (a)-(e), removing the NO-RESULTS-INDEXED
+        # listing from the committed rendering must fail.
+        (t / "docs/analysis-note/main_paper.tex").write_text("\\input{paper_body}\n")
+        g("add", "-A")
+        quiet(write, t)
+        g("add", "-A")
+        rc, out = quiet(check, t)
+        case("posted driver added; regenerated index lists its zero-row estimators", rc, 0, out)
+        tex = t / TEX_INDEX
+        body = tex.read_text()
+        head_, rest = body.split(NO_RESULTS_BEGIN, 1)
+        tex.write_text(head_ + NO_RESULTS_BEGIN + "\n" + NO_RESULTS_END + rest.split(NO_RESULTS_END, 1)[1])
+        g("add", TEX_INDEX)
+        rc, out = quiet(check, t)
+        case("NO-RESULTS-INDEXED listing emptied in the committed rendering", rc, 1, out)
+        ok &= "SILENT ZERO" in out
+    # One fixture per exclusion class (family() on the key as the walker sees it), and a positive control each.
+    for key, want in (("E_lo_of_max_pull", None), ("residency_ratio", None), ("guard/inventory-base-x.py", None),
+                      ("spearman(r,shift)", None), ("chi2_bias_PB_raw_frozen_pz", None),
+                      ("control_bias_PB_chi2_pz", None), ("null_P(max pull SD over 20 >= observed)", None),
+                      ("sum_w_reco_closure_data_equiv", None), ("M_residual", None), ("argmax_mean_pull", None),
+                      ("pearson_bias", None), ("max_pull_sd", "pull_sd"), ("residual_median", "residual"),
+                      ("bias_norm_W", "bias"), ("coverage68_min", "coverage68"), ("hits95", "coverage95_hits")):
+        got = family(key)
+        good = got == want
+        ok &= good
+        print(f"  self-test {'ok' if good else 'WRONG':<5} family({key!r}) = {got} (want {want})")
+    doc = {"chi2": {"bias_PB": {"pt_vs_VL175": 1.9}}, "pooled_cov68": 0.68}
+    under = [h[0] for h in hits(doc)]
+    good = under == [("pooled_cov68",)]
+    ok &= good
+    print(f"  self-test {'ok' if good else 'WRONG':<5} nothing under a chi2 key is indexed: {under}")
     print("RESULTS-INDEX self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 

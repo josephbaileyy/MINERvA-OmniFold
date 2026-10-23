@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""What is this estimator, and where is every result on it?
+"""What is this estimator, and which indexed results and repository mentions does it have?
 
     whatis.py "<name>" [--repo DIR] [--per-file N] [--no-grep] [--list]
 
@@ -121,7 +121,9 @@ def main(argv: list[str]) -> int:
         for src, rs in sorted(by_src.items()):
             metrics = sorted({r["metric"] for r in rs})
             statuses = sorted({r["status"] for r in rs})
-            print(f"    {src}: {len(rs)} rows; metrics {', '.join(metrics)}; status {', '.join(statuses)}")
+            own = rs[0].get("self_status") or "none"
+            print(f"    {src}: {len(rs)} rows; metrics {', '.join(metrics)}; status {', '.join(statuses)}; "
+                  f"its own status/verdict: {own}")
         if a.no_grep:
             continue
         files: dict[str, list[tuple[int, str, str]]] = defaultdict(list)

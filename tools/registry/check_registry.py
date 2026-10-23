@@ -7,9 +7,9 @@
 
 (1) INTEGRITY. Every ESTIMATORS definition, ALIASES row and UNRESOLVED-NAMES row cites file:line, and the cited
     line (staged bytes) must contain the row's quote verbatim; every alias names a registered id; every pattern
-    compiles. A quote that moved to exactly one other line of its file WARNS and passes (the citation still
-    identifies one line; `check_registry.py --repoint` rewrites the number); a quote absent from the file, or on
-    several other lines, FAILS.
+    compiles. A citation pins its line by number AND by the digest of the whole line (line_sha256): any move FAILS
+    (naming the new number; `--repoint` rewrites it), and any edit of the cited line FAILS even if the quote is
+    still on it (a retraction quoting the alias is an edit); re-read it and re-cite with `--cite FILE:LINE`.
     (ATTRIBUTION and STATUS rows are checked the same way by results_index.py.)
 (2) COMPLETENESS, scoped to an explicit label pattern list (LABEL_PATTERNS). Over the printed text (comments
     removed) of the \\input closures of main_paper.tex, main_note.tex, main_primer.tex and main_records.tex, every
@@ -140,7 +140,7 @@ def run(repo: Path) -> int:
     als = reglib.read_tsv(index, reglib.ALIASES)
     print(f"REGISTRY :: {len(ests)} estimators, {len(als)} aliases, every citation checked; {n} printed labels in "
           f"{nfiles} files of the four builds, each naming exactly one estimator through identifying aliases; "
-          f"records document holds the index and no posted build does; {len(warns)} moved-line warning(s)"
+          f"records document holds the index and no posted build does"
           + (f" -- {len(fails)} failure(s)" if fails else ""))
     return 1 if fails else 0
 
@@ -193,8 +193,9 @@ def self_test() -> int:
         # A registry conflict: "configuration (e)" also registered (with a valid citation) under d-N-B0.
         al = t / reglib.ALIASES
         clean_aliases = al.read_text()
+        l290 = (t / "docs/analysis-note/paper_body.tex").read_text().split("\n")[289]
         al.write_text(clean_aliases + "d-N-B0\tpaper-label\tconfiguration (e)\tzzz-no-match\tyes\tdefault\t"
-                      "docs/analysis-note/paper_body.tex\t290\tconfiguration~(e)\n")
+                      f"docs/analysis-note/paper_body.tex\t290\tconfiguration~(e)\t{reglib.line_digest(l290)}\n")
         case("planted conflict: 'configuration (e)' registered under two estimators", good[1], True)
         al.write_text(clean_aliases)
         (note / "main_records.tex").write_text("\\input{records_estimators}\n\\input{records_results_index}\n")
@@ -218,22 +219,35 @@ def self_test() -> int:
               f"{'FIRES' if r6 else 'silent'} (want FIRES){': ' + r6[0][:100] if r6 else ''}")
         (note / "main_note.tex").write_text("\\input{body}\n")
         subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
-        # Citation power. A quote moved to exactly one other line WARNS and passes; a quote gone from the file, or
-        # present on several other lines, FAILS.
+        # Citation power. The cited line is pinned by number AND digest: a move, an edit and a retraction that
+        # still quotes the alias all FAIL; --repoint repairs a pure move and nothing else.
         cited = reglib.read_tsv(src_index, reglib.ALIASES)[0]
         p = t / cited["source"]
         original = p.read_text()
-        p.write_text("inserted line\n" + original)
-        warns = case(f"cited line of alias {cited['alias']!r} moved down by one (unique)", good[1], False)
-        moved = any("no longer holds the quote" in w for w in warns or [])
-        ok &= moved
-        print(f"  self-test {'ok' if moved else 'WRONG':<5} ... and it printed a moved-line WARN naming the new line")
-        p.write_text(original.replace(cited["quote"], "QUOTE REMOVED"))
-        case(f"quote of alias {cited['alias']!r} removed from its file", good[1], True)
         lines = original.split("\n")
         n = int(cited["line"])
+        p.write_text("inserted line\n" + original)
+        case(f"cited line of alias {cited['alias']!r} moved down by one", good[1], True)
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        rep = reglib.repoint(reglib.Index(t), t)
+        case("... after --repoint rewrote the line numbers", good[1], False)
+        (t / reglib.ALIASES).write_text(clean_aliases)
+        retracted = lines[:]
+        retracted[n - 1] = ("We no longer use the wording \"" + cited["quote"] + "\"; it is withdrawn.")
+        p.write_text("\n".join(retracted))
+        case(f"cited line replaced by a retraction that still quotes {cited['quote']!r}", good[1], True)
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        rep = reglib.repoint(reglib.Index(t), t)
+        refused = any(r.startswith("CANNOT REPOINT") for r in rep) and not any(r.startswith("REPOINTED ALIASES row 2:")
+                                                                              for r in rep)
+        ok &= refused
+        print(f"  self-test {'ok' if refused else 'WRONG':<5} --repoint refuses to accept the retraction "
+              f"({'refused' if refused else 'ACCEPTED'})")
+        (t / reglib.ALIASES).write_text(clean_aliases)
+        p.write_text(original.replace(cited["quote"], "QUOTE REMOVED"))
+        case(f"quote of alias {cited['alias']!r} removed from its file", good[1], True)
         p.write_text("\n".join(lines[:n - 1] + ["x"] + lines[n:] + [lines[n - 1], lines[n - 1]]))
-        case(f"quote of alias {cited['alias']!r} moved to two other lines (ambiguous)", good[1], True)
+        case(f"cited line moved to two other lines (ambiguous)", good[1], True)
         p.write_text(original)
     print("REGISTRY self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
@@ -244,10 +258,19 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--repo", type=Path, default=None)
     ap.add_argument("--self-test", action="store_true")
     ap.add_argument("--repoint", action="store_true",
-                    help="re-point citations whose quote moved to exactly one other line (edits the working-tree TSVs)")
+                    help="re-point citations whose whole line (same digest) moved to exactly one other line (edits "
+                         "the working-tree TSVs; never accepts an edited line)")
+    ap.add_argument("--cite", metavar="FILE:LINE", help="print the line and its line_sha256, for writing a row")
     a = ap.parse_args(argv)
     if a.self_test:
         return self_test()
+    if a.cite:
+        repo = reglib.repo_root(a.repo or Path.cwd())
+        src, _, ln = a.cite.rpartition(":")
+        text = (reglib.Index(repo).text(src) or "").split("\n")
+        line = text[int(ln) - 1]
+        print(f"{src}\t{ln}\t{reglib.line_digest(line)}\t{line}")
+        return 0
     if a.repoint:
         repo = reglib.repo_root(a.repo or Path.cwd())
         rep = reglib.repoint(reglib.Index(repo), repo)

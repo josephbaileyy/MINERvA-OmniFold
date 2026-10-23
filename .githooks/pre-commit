@@ -291,14 +291,15 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 # shared hook updated or a CI check -- both pending Joseph's decision (RECORDS-RULES.md, "Where the checks run").
 # Measured 2026-10-22 on this branch's tree (macOS, python 3.12), in run order: 2.4 s, 3.7 s, 2.8 s, 3.3 s,
 # 0.6 s, 1.9 s.
-#   - registry: every ESTIMATORS/ALIASES/UNRESOLVED-NAMES quote is on its cited line (a quote moved to exactly one
-#     other line warns and passes; absent or on several lines fails); every configuration label of LABEL_PATTERNS
+#   - registry: every ESTIMATORS/ALIASES/UNRESOLVED-NAMES citation holds: the line at its number has its recorded
+#     digest (line_sha256) and quote. Any move or edit of a cited line FAILS -- a passing check is silent here, so
+#     a warning would be invisible; `check_registry.py --repoint` repairs a pure move. Every configuration label of LABEL_PATTERNS
 #     printed by paper/note/primer/records names exactly one estimator through identifying aliases; the records
-#     document \inputs the generated index and no posted driver reaches it. `check_registry.py --repoint` fixes
-#     moved line numbers.
+#     document \inputs the generated index and no posted driver reaches it.
 #   - results index: RESULTS-INDEX.tsv, RESULTS-POPULATION.tsv and the two records_*.tex equal a fresh generation
-#     from the staged receipts, no receipt of the declared population is unindexed, and every ATTRIBUTION row's
-#     cited line names its estimator. Fix: `results_index.py --write` and `git add` its four outputs. Its
+#     from the staged receipts, no receipt of the declared population is unindexed, every ATTRIBUTION row's
+#     cited line names its estimator, and every estimator a posted document prints has an attributed row or is
+#     listed as NO-RESULTS-INDEXED. Fix: `results_index.py --write` and `git add` its four outputs. Its
 #     --self-test plants a result receipt (must fail), a non-result JSON (must pass) and a rule-7 violation (must
 #     fail) in a throwaway repository with real staging.
 #   - absence claims: an absence claim touching a line ADDED or CHANGED against HEAD (git diff --cached), judged
