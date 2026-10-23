@@ -50,7 +50,8 @@ sha256 of the text plus a final newline begins `88e3f90461af4356`.
     `state/ki98-wbias-test/REPORT.md`), so the residual is not shown to come from the background treatment;
   - D-ID: exact binned IBU leaves about the same residual (`state/next-preparation-20261009/d-id/REPORT.md` §11);
   - IBU-1's per-truth reading, when it lands;
-  - RE1-SPEC §1 "NOT CITABLE FOR": no covariance or coverage exists for configuration (e).
+  - RE1-SPEC §1 "NOT CITABLE FOR": RE-1 builds no covariance or coverage for configuration (e). *(Corrected; see
+    below.)*
 - **Joseph's "new FHC inputs and add RHC" in item 1** is answered by items 6 and 7: a preliminary coverage test stays
   on the current inputs, so that it is comparable with s5c, KI 98, D-ID and IBU-1; the inputs change once, for the
   measurement production.
@@ -59,3 +60,12 @@ sha256 of the text plus a final newline begins `88e3f90461af4356`.
 
 - Claims, the printed note and paper text (items 2–4 confirm text already printed), the other lanes' grants, MP-2's
   hold.
+
+## Correction (2026-10-22, same day)
+
+The first version of the routing list said "no covariance or coverage exists for configuration (e)". That was false.
+RE1-SPEC §1 says only that RE-1 does not build one. Configuration (e) is the s5e/s5p contracts' estimator R
+(`methods/r12/REVIEW.md:48`), and its development-scale intervals were measured in s5e
+(`state/s5e/cand/assess_receipt.json`: pooled 68% coverage 0.680 at nominal, 0.017–0.157 at the five departures).
+The validation lane found this (scoping memo draft, R9). No validated coverage exists for (e); development-scale
+coverage does. The director told Joseph the route was untested, and corrected that the same day.
