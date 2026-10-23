@@ -16,8 +16,10 @@ set -o pipefail   # NOT set -u (the environment's activation aborts under it)
 D="${1:?deploy}"; PIN="${2:?pin}"; OUT="${3:?out}"; TASK="${4:?task}"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
 dirty=$(git -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
-if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ]; then
-    echo "[pv2d] refusing: deploy HEAD=$head_sha (pinned $PIN), $dirty modified tracked files" >&2
+# an untracked module in either import directory would shadow a tracked one (both are at sys.path[0])
+stray=$(git -C "$D" status --porcelain --untracked-files=all -- 2d-unfolding/pv2d unbinned_unfolding/python 2>/dev/null | wc -l)
+if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ] || [ "$stray" -ne 0 ]; then
+    echo "[pv2d] refusing: deploy HEAD=$head_sha (pinned $PIN), $dirty modified tracked files, $stray untracked in the import dirs" >&2
     exit 2
 fi
 P="$D/2d-unfolding/pv2d"
@@ -34,7 +36,7 @@ case "$mode" in
     *) echo "[pv2d] bad mode $mode" >&2; exit 2 ;;
 esac
 PROD="$OUT/products/$TASK.root"
-[ -e "$PROD" ] && { echo "[pv2d] refusing to overwrite $PROD" >&2; exit 2; }
+[ -e "$PROD" ] || [ -e "$PROD.part" ] && { echo "[pv2d] refusing: $PROD or its .part exists" >&2; exit 2; }
 source "$D/setup_salloc_env.sh" > "$OUT/logs/env-${SLURM_JOB_ID}.log" 2>&1
 case "$(python3 -V 2>&1)" in
     *3.11*) ;;
@@ -52,6 +54,12 @@ python3 "$D/nd-unfolding/mnv_guarded_run.py" --expect-root "$D" --inventory "$OU
     --iters 5 --use-weights --estimator lgbm --seed 42 \
     "${extra[@]}" --out "$PROD.part"
 rc=$?
-[ "$rc" -eq 0 ] && mv "$PROD.part" "$PROD" && sha256sum "$PROD"
+if [ "$rc" -eq 0 ]; then
+    if [ -e "$PROD" ]; then
+        echo "[pv2d] refusing to replace $PROD; the product stays at $PROD.part" >&2; rc=3
+    else
+        mv -n "$PROD.part" "$PROD" && [ ! -e "$PROD.part" ] && sha256sum "$PROD" || rc=3
+    fi
+fi
 echo "[pv2d] task=$TASK rc=$rc end=$(date -u +%FT%TZ)"
 exit $rc

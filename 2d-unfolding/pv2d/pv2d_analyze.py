@@ -89,6 +89,12 @@ def main(argv=None):
         inputs[key] = {"path": spec["path"], "sha256": got}
         return spec["path"]
 
+    checked("flux_mc")
+    om = cfg["inputs"]["omnifile"]
+    st = Path(om["path"]).stat()
+    if (st.st_size, int(st.st_mtime)) != (om["size_bytes"], om["mtime_epoch"]):
+        raise SystemExit(f"[FAIL] omnifile size/mtime {(st.st_size, int(st.st_mtime))} != declared")
+    inputs["omnifile"] = {"path": om["path"], "size_bytes": st.st_size, "mtime_epoch": int(st.st_mtime)}
     f = ROOT.TFile.Open(checked("E_U"))
     x_eu = th2(f, "hXSec2D")
     f.Close()
@@ -115,6 +121,16 @@ def main(argv=None):
         sha = proj["vertices"][name]["ratio_sha256"]
         ratios[name] = (L.load_ratio(path, sha)[0], sha)
 
+    # Every product must come from this deploy's driver and helper, with E_U's estimator settings.
+    expect = {"driverSha256": L.sha256_path(_HERE / "unfold_2d_pv2d.py"),
+              "omnifoldHelperSha256": L.sha256_path(_ROOT / "unbinned_unfolding" / "python" / "omnifold.py"),
+              "omnifoldHelperFile": str(_ROOT / "unbinned_unfolding" / "python" / "omnifold.py")}
+    declared = {"iters": 5, "use_weights": True, "bkg_mode": "purity", "seed": 42, "estimator": "lgbm",
+                "device": "cpu", "branch_select": "all", "bootstrap_seed": None, "universe": None,
+                "closure_reweight": None, "closure_hidden_dpt": False, "closure_alt_universe": None,
+                "flux_hist": "pTmu_reweightedflux_integrated", "flux_universe_file": None,
+                "omnifile": cfg["inputs"]["omnifile"]["path"], "mcfile": cfg["inputs"]["flux_mc"]["path"]}
+
     def open_run(tag, flag, vertex):
         path = a.products / f"{tag}.root"
         if not path.exists():
@@ -123,9 +139,21 @@ def main(argv=None):
         r, sha = ratios[vertex]
         if named(g, f"pv2d_{flag}RatioSha256") != sha:
             raise SystemExit(f"[FAIL] {tag}: {flag} ratio sha256 {named(g, f'pv2d_{flag}RatioSha256')} != {sha}")
+        for k, v in expect.items():
+            got = named(g, k)
+            if k == "omnifoldHelperFile":
+                got = str(Path(got).resolve()) if got else got
+                v = str(Path(v).resolve())
+            if got != v:
+                raise SystemExit(f"[FAIL] {tag}: {k} {got} != {v}")
+        rc = json.loads(named(g, "runConfig"))
+        want = dict(declared, closure=(flag == "closure"))
+        bad = {k: (rc.get(k), v) for k, v in want.items() if rc.get(k) != v}
+        if bad:
+            raise SystemExit(f"[FAIL] {tag}: run configuration differs from the declared one: {bad}")
         out = {"x": th2(g, "hXSec2D"), "truth": th2(g, "hTruth2D"), "sha256": L.sha256_path(path),
                "driverSha256": named(g, "driverSha256"), "omnifoldHelperSha256": named(g, "omnifoldHelperSha256"),
-               "omnifoldHelperFile": named(g, "omnifoldHelperFile")}
+               "runConfig": rc}
         if flag == "closure":
             out["truth_rew_xsec"] = th2(g, "hTruthRewXSec2D")
             out["truth_rew"] = th2(g, "hTruthRew2D")
@@ -136,60 +164,97 @@ def main(argv=None):
                 if v is None or v > TOL_GUARD:
                     raise SystemExit(f"[FAIL] {tag}: {k} = {v}")
                 out[k] = v
+            # the histograms the w_reco and denominator reweights fill (checked against the nominal run)
+            out["eff_num"] = th2(g, "hEffNum")
+            out["denom"] = th2(g, "hOFTruthDenom2D")
+            out["completeness"] = th2(g, "hOFCompleteness2D")
         g.Close()
         return out
+
+    HEAVY = ("x", "truth", "truth_rew", "truth_rew_xsec", "eff_num", "denom", "completeness")
+
+    def check_prior_run(run, tag, r):
+        """The prior moved as declared in all three weights, against the nominal run."""
+        run["r_check"] = {"w_truth": ratio_matches(run["truth"], nom["truth"], r, f"{tag} hTruth2D"),
+                          "w_reco": ratio_matches(run["eff_num"], nom["eff_num"], r, f"{tag} hEffNum"),
+                          "denominator": ratio_matches(run["denom"], nom["denom"], r, f"{tag} hOFTruthDenom2D"),
+                          "completeness": ratio_matches(run["completeness"], nom["completeness"],
+                                                        np.ones_like(r), f"{tag} hOFCompleteness2D")}
 
     nom = open_run("data_tune_v1", "prior", "tune_v1")
     x0 = nom["x"].ravel()[cells]
     nc = L.nominal_control(x0, x_eu.ravel()[cells])
-    runs = {"data_tune_v1": {k: nom[k] for k in nom if k not in ("x", "truth")}}
+    runs = {"data_tune_v1": {k: nom[k] for k in nom if k not in HEAVY}}
     if a.nc_only:   # the pilot's gate: no vertex job is submitted unless this passes
         a.out.write_text(json.dumps({"schema": "pv2d-nc/1", "NC": nc, "runs": runs, "inputs": inputs,
                                      "code": {"pv2d_analyze.py": L.sha256_path(__file__),
                                               "pv2d_lib.py": L.sha256_path(L.__file__)}}, indent=1) + "\n")
         print(json.dumps({"NC": nc}, indent=1))
         return 0
+    if not nc["pass"]:
+        raise SystemExit(f"[FAIL] NC did not pass ({nc}); by the declaration no vertex result is produced")
 
     shifts, per_vertex = {}, {}
     for v in a.vertices.split(","):
         run = open_run(f"data_{v}", "prior", v)
-        run["r_check"] = ratio_matches(run["truth"], nom["truth"], ratios[v][0], f"data_{v} prior truth")
+        check_prior_run(run, f"data_{v}", ratios[v][0])
         s = L.rel_shift(run["x"].ravel()[cells], x0)
         shifts[v] = s
-        per_vertex[v] = dict(L.summary(s), argmax_cell=int(cells[L.summary(s)["argmax"]]),
-                             signed_median=float(np.median(s)),
+        sm = L.summary(s)
+        per_vertex[v] = dict(sm, argmax_cell=int(cells[sm["argmax"]]), signed_median=float(np.median(s)),
                              integral_shift=float(_integral(run["x"]) / _integral(nom["x"]) - 1.0),
                              shift=s.tolist())
-        runs[f"data_{v}"] = {k: run[k] for k in run if k not in ("x", "truth")}
+        runs[f"data_{v}"] = {k: run[k] for k in run if k not in HEAVY}
 
     h, who = L.envelope(shifts)
-    env = dict(L.summary(h), dominant_vertex_counts={v: who.count(v) for v in shifts}, h=h.tolist(),
-               dominant=who)
+    hs = L.summary(h)
+    env = dict(hs, argmax_cell=int(cells[hs["argmax"]]), dominant_vertex_counts={v: who.count(v) for v in shifts},
+               h=h.tolist(), dominant=who)
 
     cn = open_run("closure_tune_v1", "closure", "tune_v1")
-    cp = open_run(f"closure_{a.pc_vertex}", "closure", a.pc_vertex)
     floor = L.rel_shift(cn["x"].ravel()[cells], cn["truth_rew_xsec"].ravel()[cells])
-    bias = L.rel_shift(cp["x"].ravel()[cells], cp["truth_rew_xsec"].ravel()[cells])
-    if a.pc_vertex in shifts:
-        pc_shift = shifts[a.pc_vertex]
-    else:   # the declared fallback: a data run outside the envelope
-        run = open_run(f"data_{a.pc_vertex}", "prior", a.pc_vertex)
-        run["r_check"] = ratio_matches(run["truth"], nom["truth"], ratios[a.pc_vertex][0],
-                                       f"data_{a.pc_vertex} prior truth")
-        pc_shift = L.rel_shift(run["x"].ravel()[cells], x0)
-        runs[f"data_{a.pc_vertex}"] = {k: run[k] for k in run if k not in ("x", "truth")}
-    pc = L.positive_control(pc_shift, bias)
-    big = np.abs(bias) > 0.01
-    pc.update({"vertex": a.pc_vertex, "closure_floor": L.summary(floor), "bias": L.summary(bias),
-               "bias_cells": bias.tolist(), "shift_cells": pc_shift.tolist(),
-               "shift_ge_bias_frac": float(np.mean(np.abs(pc_shift)[big] >= np.abs(bias)[big]))
-               if big.any() else None})
-    runs["closure_tune_v1"] = {k: cn[k] for k in cn if k not in ("x", "truth", "truth_rew", "truth_rew_xsec")}
-    runs[f"closure_{a.pc_vertex}"] = {k: cp[k] for k in cp if k not in ("x", "truth", "truth_rew", "truth_rew_xsec")}
+    runs["closure_tune_v1"] = {k: cn[k] for k in cn if k not in HEAVY}
+
+    def pc_at(vertex):
+        cp = open_run(f"closure_{vertex}", "closure", vertex)
+        bias = L.rel_shift(cp["x"].ravel()[cells], cp["truth_rew_xsec"].ravel()[cells])
+        runs[f"closure_{vertex}"] = {k: cp[k] for k in cp if k not in HEAVY}
+        if vertex in shifts:
+            shift = shifts[vertex]
+        else:   # the declared fallback: a data run outside the envelope
+            run = open_run(f"data_{vertex}", "prior", vertex)
+            check_prior_run(run, f"data_{vertex}", ratios[vertex][0])
+            shift = L.rel_shift(run["x"].ravel()[cells], x0)
+            runs[f"data_{vertex}"] = {k: run[k] for k in run if k not in HEAVY}
+        pc = L.positive_control(shift, bias)
+        big = np.abs(bias) > 0.01
+        bs = L.summary(bias)
+        pc.update({"vertex": vertex, "bias": dict(bs, argmax_cell=int(cells[bs["argmax"]])),
+                   "bias_cells": bias.tolist(), "shift_cells": shift.tolist(),
+                   "shift_ge_bias_frac": float(np.mean(np.abs(shift)[big] >= np.abs(bias)[big]))
+                   if big.any() else None})
+        return pc
+
+    # PC at the declared vertex; the fallback is read only if the primary is NOT_POWERED, and only then decides.
+    pc = {"primary": pc_at(a.pc_vertex)}
+    fs = L.summary(floor)
+    pc["closure_floor"] = dict(fs, argmax_cell=int(cells[fs["argmax"]]))
+    if pc["primary"]["verdict"] == "NOT_POWERED":
+        fb = f"{a.pc_vertex}_sq"
+        if (a.products / f"closure_{fb}.root").exists():
+            pc["fallback"] = pc_at(fb)
+            pc["verdict"] = pc["fallback"]["verdict"]
+        else:
+            pc["verdict"] = "NOT_POWERED (fallback not run)"
+    else:
+        pc["verdict"] = pc["primary"]["verdict"]
+    passed = pc["verdict"] == "PASS"
+    label = ("measured with a passed positive control" if passed else
+             "measured; positive control NOT passed, so h is not evidence about model dependence")
 
     out = {"schema": "pv2d-readout/1", "estimator": "E_U, configuration (a): LightGBM 100 trees, 8 leaves, lr 0.1, "
            "--seed 42, purity subtraction, 5 iterations", "cells": cells.tolist(),
-           "controls": {"NC": nc, "PC": pc}, "vertices": per_vertex, "envelope": env,
+           "controls": {"NC": nc, "PC": pc}, "h_label": label, "vertices": per_vertex, "envelope": env,
            "sigma_Q": {"median": float(np.median(sig_q)), "cells": sig_q.tolist()},
            "sigma_paper": {"median": float(np.median(sig_paper)), "cells": sig_paper.tolist()},
            "h_vs_sigma_Q": L.compare_to_sigma(h, sig_q), "h_vs_sigma_paper": L.compare_to_sigma(h, sig_paper),
@@ -200,7 +265,9 @@ def main(argv=None):
            "caveat": "h is evidence about model dependence at these vertices, not a per-cell bias bound "
                      "(s5p contract amendment 6, LOW_items.bound_wording)"}
     a.out.write_text(json.dumps(out, indent=1) + "\n")
-    print(json.dumps({"NC": nc, "PC": {k: pc[k] for k in ("verdict", "n_cells", "corr", "slope")},
+    print(json.dumps({"NC": nc, "PC": {"verdict": pc["verdict"],
+                                       **{k: pc["primary"][k] for k in ("n_cells", "corr", "slope")}},
+                      "h_label": label,
                       "vertices": {v: {k: per_vertex[v][k] for k in ("median", "p90", "max", "integral_shift")}
                                    for v in per_vertex},
                       "envelope": {k: env[k] for k in ("median", "p90", "max")},

@@ -2405,7 +2405,7 @@ def main():
             data_pot, n_nucleons, pt_edges, pz_edges)
         hTruthRewXSec2D.SetName("hTruthRewXSec2D")
         hTruthRewXSec2D.SetTitle(
-            f"Closure reference xsec ({args.closure_reweight})")
+            f"Closure reference xsec ({args.closure_reweight or 'PV-2D ratio'})")  # PV-2D
 
     # CV truth cross section: closure reference for the hidden-variable
     # closure (and a convenient sanity-check histogram for any closure run).

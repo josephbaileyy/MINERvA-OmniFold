@@ -84,6 +84,32 @@ class DenominatorGuard(unittest.TestCase):
         L.apply_prior_ratio(sig, den, ratio())
         self.assertTrue(np.array_equal(sig["w_reco"][fake], w0))
 
+    def test_reco_weight_moves_by_r(self):
+        sig, den = toy()
+        r = ratio()
+        m = sig["pass_truth"]
+        w0 = sig["w_reco"].copy()
+        L.apply_prior_ratio(sig, den, r)
+        f = L.cell_ratio_weight(r, sig["truth_pt"], sig["truth_pz"])
+        self.assertTrue(np.allclose(sig["w_reco"][m], w0[m] * f[m], rtol=1e-15, atol=0))
+        self.assertTrue(np.any(f[m] != 1.0))
+
+    def test_denominator_moves_by_r(self):
+        sig, den = toy()
+        r = ratio()
+        h0 = L.hist2d(den["truth_pt"], den["truth_pz"], den["w_truth"])
+        L.apply_prior_ratio(sig, den, r)
+        h1 = L.hist2d(den["truth_pt"], den["truth_pz"], den["w_truth"])
+        ok = h0 > 0
+        self.assertLess(np.max(np.abs(h1[ok] / h0[ok] / r[ok] - 1)), 1e-12)
+
+    def test_guard_refuses_support_change(self):
+        c0 = np.ones((L.NPT, L.NPZ))
+        c1 = c0.copy()
+        c1[2, 3] = 0.0
+        with self.assertRaises(SystemExit):
+            L.completeness_guard(c0, c1)
+
     def test_prior_histogram_moves_by_r(self):
         sig, den = toy()
         r = ratio()
@@ -120,6 +146,27 @@ class LoadRatio(unittest.TestCase):
     def test_refuses_wrong_edges(self):
         d = self.good()
         d["pz_edges"] = d["pz_edges"][:-1] + [61.0]
+        p = self.write(d)
+        with self.assertRaises(SystemExit):
+            L.load_ratio(p, L.sha256_path(p))
+
+    def test_refuses_wrong_schema(self):
+        d = self.good()
+        d["schema"] = "pv2d-ratio/0"
+        p = self.write(d)
+        with self.assertRaises(SystemExit):
+            L.load_ratio(p, L.sha256_path(p))
+
+    def test_refuses_wrong_shape(self):
+        d = self.good()
+        d["r"] = d["r"][:-1]
+        p = self.write(d)
+        with self.assertRaises(SystemExit):
+            L.load_ratio(p, L.sha256_path(p))
+
+    def test_refuses_nan(self):
+        d = self.good()
+        d["r"][0][0] = float("nan")
         p = self.write(d)
         with self.assertRaises(SystemExit):
             L.load_ratio(p, L.sha256_path(p))
@@ -173,6 +220,7 @@ class Readouts(unittest.TestCase):
         self.assertEqual(L.positive_control(rng.normal(0, 0.05, 205), bias)["verdict"], "FAIL")   # uncorrelated
         self.assertEqual(L.positive_control(-0.3 * bias, bias)["verdict"], "FAIL")                # slope too small
         self.assertEqual(L.positive_control(bias, bias)["verdict"], "FAIL")                       # wrong sign
+        self.assertEqual(L.positive_control(-2.0 * bias, bias)["verdict"], "FAIL")                # slope too large
         tiny = rng.normal(0, 0.001, 205)
         self.assertEqual(L.positive_control(-tiny, tiny)["verdict"], "NOT_POWERED")
 

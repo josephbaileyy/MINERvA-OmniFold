@@ -10,10 +10,14 @@
    "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
   },
   "omnifile": {
-   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root"
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "size_bytes": 171117087867,
+   "mtime_epoch": 1783523295,
+   "note": "171 GB: identified by size and mtime (re-measured 2026-10-23), not hashed; NC is its numerical identity check"
   },
   "flux_mc": {
-   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
   },
   "Q": {
    "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageF-rebuild-20261018/outA/cov2d_Q_205.npz",
