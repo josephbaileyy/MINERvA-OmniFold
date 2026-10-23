@@ -29,7 +29,8 @@ sha256 of the text plus a final newline begins `e2274f6334a9f8b1`.
    numbers.
    - **Step 1 is a plan, and runs nothing.** The re-1 lane writes `RE2-PLAN.md`: what depends on the adopted 2D
      result, the measured unit costs, the declared controls, and the charge against the 2D closeout ceiling
-     (`AUTHORIZATION-20261012-2d-closeout-delegation.md` §2, ≤ 700 CPU node-h in all).
+     (`AUTHORIZATION-20261012-2d-closeout-delegation.md` §3 item 2, `:52-58`, ≤ 700 CPU node-h in all; first
+     cited as "§2", corrected 2026-10-23 after the re-1 lane found the mis-citation).
    - Runs follow the usual declaration and binding. A cost beyond the remaining ceiling goes back to Joseph.
    - Until the rebuilt result is adopted, the note and paper print the current 2D result, and say plainly that a
      closure test found a purity bias in 14 cells and that the 2D result is being moved to the refined estimator.
