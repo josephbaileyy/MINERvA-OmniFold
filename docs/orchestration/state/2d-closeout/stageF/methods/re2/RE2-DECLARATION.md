@@ -96,7 +96,7 @@ Every change is in a block marked RE-2. With none of the RE-2 options and `--bkg
    - The refinement is refitted on the resampled signed sample.
    - The completeness keeps the un-resampled truth weights (KNOWN_ISSUES 84, unchanged).
    - The refusal of signal fakes is defensive. On this path the P1 guard already refuses them first
-     (`re2_driver.py:1901-1903`). The injected-row count guard has no test.
+     (`re2_driver.py:1901-1903`). The injected-row count guard has no test. <!-- absence-ok: scoped to the two committed test files under 2d-unfolding/re2/tests/, read in full; neither builds an injected-row count mismatch -->
 3. **The helper import** comes from this checkout, not from the fixed `/pscratch/…/MINERvA-OmniFold/…` path
    (OI-136).
 4. **A `re2Refinement` record** in the output: the classifier parameters, the clipped fraction, the signed and
@@ -201,7 +201,7 @@ cost a control. Any step not COMPLETED makes the unit readout INCOMPLETE either 
 - Outputs go to `/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/j0/` (`out/<label>/xsec.root`, `logs/`,
   `inventory/`, `readout/`). That is about 3 MB of outputs plus logs.
 - Nothing is written under a checkout (`PYTHONDONTWRITEBYTECODE=1`), or to CFS.
-- A run whose output directory exists is not run again.
+- A run whose output directory exists is not run again. <!-- absence-ok: a rule of the launcher (re2_j0.sbatch, lane()), not a claim that a result is missing -->
 
 ## 5. Controls, readouts and rules, fixed now
 
@@ -267,7 +267,7 @@ Each check compares `hXSec2D`, or the named histogram, on `E_U`'s 205 reported c
 - The ledger must hold exactly the two J0 job rows, or the readout stops.
 - **1.25 × core > room:** no production job starts. The projection goes to the director for a fresh binding
   (ruling 2).
-- **Any J0 step not COMPLETED, or any class unmeasured:** INCOMPLETE, and no production job starts.
+- **Any J0 step not COMPLETED, or any class unmeasured:** INCOMPLETE, and no production job starts. <!-- absence-ok: a declared decision rule (re2_units.py), not a claim about existing results -->
 
 **What the plan's figures imply.** At today's packed 1.81×, the plan's production (58.0 − 4.0 = 54.0 node-h,
 which carries the plan's 1.25 planning factor) becomes about 98 node-h for the core, worst case about 122. With the
@@ -380,7 +380,7 @@ The reviewer confirmed:
 | the power checks had no power (MAJOR) | > 1e-6, between runs on the same CPUs |
 | nothing detected a wrong refined background stream on the data (MAJOR) | STREAM-1 |
 | plan items deferred without saying so (MAJOR) | §1 |
-| minor: requeue, pins, readout lock-out, killed steps, `random_state`, unstated deviations, the environment, overclaims, citations, registry wording, J1's step weights, untested guards | fixed, or stated in §1–§2 |
+| minor: requeue, pins, readout lock-out, killed steps, `random_state`, unstated deviations, the environment, overclaims, citations, registry wording, J1's step weights, untested guards | fixed, or stated in §1–§2 <!-- absence-ok: a summary of the review's finding titles; the untested guard is stated and scoped in §2.1 --> |
 
 **Second pass** (`7f36e9a1..e3869b39`). Every first-pass finding holds as fixed or as stated, and there is nothing
 new at MAJOR or above.
