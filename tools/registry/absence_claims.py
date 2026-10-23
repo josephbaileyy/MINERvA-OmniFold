@@ -2,6 +2,7 @@
 """Absence claims must carry their search.
 
     absence_claims.py [--repo DIR]            # check the STAGED diff (pre-commit); exit 1 on a bare absence claim
+    absence_claims.py --base REF [--repo DIR] # check what HEAD adds since REF (CI: a pull request against its base)
     absence_claims.py --count-existing [REV]  # information only: how many lines at REV (default HEAD) would match
     absence_claims.py --self-test             # every pattern fires, the exemption holds, unrelated "no" is silent
 
@@ -20,6 +21,12 @@ whose sha names a commit in this repository. In a .tex source the search line go
 for every alias of the estimator. A paragraph is judged on its JOINED text (a claim wrapped across lines is seen),
 and a match counts only if a line it spans is added or changed in the staged diff (`git diff --cached`, the index
 against HEAD): lines already in HEAD are not re-judged.
+
+--base REF (the CI mode; nothing is staged there). The judged lines are those `git diff <merge-base> HEAD` adds or
+changes, where <merge-base> is `git merge-base REF HEAD`, read from HEAD's files. As in a merge, a line whose text
+is already in REF's or the merge-base's version of the file is not judged: it is not new in this pull request. On
+a pull request's merge commit (what GitHub Actions checks out), REF = the base branch tip = the merge-base, so the
+judged lines are exactly what the merge would add to the base.
 """
 from __future__ import annotations
 
@@ -98,9 +105,11 @@ def commit_exists(repo: Path, sha: str) -> bool:
     return out.returncode == 0
 
 
-def added_lines(repo: Path) -> dict[str, list[int]]:
-    """path -> 1-based line numbers (in the staged file) of lines the staged diff adds or changes."""
-    raw = reglib.git(repo, "diff", "--cached", "-U0", "--no-color", "--diff-filter=AMR", "--no-ext-diff").decode(
+def added_lines(repo: Path, since: str | None = None) -> dict[str, list[int]]:
+    """path -> 1-based line numbers of lines the diff adds or changes: the staged diff (index against HEAD, line
+    numbers in the staged file), or, with `since`, `git diff <since> HEAD` (line numbers in HEAD's file)."""
+    which = ("--cached",) if since is None else (since, "HEAD")
+    raw = reglib.git(repo, "diff", *which, "-U0", "--no-color", "--diff-filter=AMR", "--no-ext-diff").decode(
         "utf-8", errors="replace")
     out: dict[str, list[int]] = {}
     path = None
@@ -240,6 +249,40 @@ def check_staged(repo: Path) -> int:
     merge = f"; merge: lines already in any of {len(parents)} parents not judged" if parents else ""
     print(f"ABSENCE-CLAIMS :: {nlines} added/changed lines in {nfiles} staged in-scope files checked against "
           f"{len(_PATS)} patterns; {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok){merge}")
+    return 1 if fails else 0
+
+
+def base_fails(repo: Path, base: str, stats: dict | None = None) -> tuple[list[str], int, int, str, str]:
+    """(failures, files checked, lines judged, base sha, merge-base sha) for --base: the lines HEAD adds since
+    `git merge-base BASE HEAD`, minus every line whose text BASE's or the merge-base's file already holds."""
+    tip = reglib.git(repo, "rev-parse", "--verify", f"{base}^{{commit}}").decode().strip()
+    mb = reglib.git(repo, "merge-base", tip, "HEAD").decode().strip()
+    parents = [tip] if tip == mb else [tip, mb]
+    fails, nfiles, nlines = [], 0, 0
+    for path, linenos in sorted(added_lines(repo, mb).items()):
+        text = reglib.git(repo, "show", f"HEAD:{path}").decode("utf-8", errors="replace")
+        linenos = new_against_parents(repo, path, text, linenos, parents)
+        nfiles += 1
+        nlines += len(linenos)
+        fails += judge(repo, path, text, linenos, stats)
+    return fails, nfiles, nlines, tip, mb
+
+
+def check_base(repo: Path, base: str) -> int:
+    stats = {"waived": 0}
+    try:
+        fails, nfiles, nlines, tip, mb = base_fails(repo, base, stats)
+    except RuntimeError as exc:
+        print(f"ABSENCE-CLAIMS :: CANNOT CHECK against --base {base}: {exc}".rstrip())
+        return 2
+    for f in fails:
+        print("  FAIL " + f)
+    if fails:
+        print("  fix: as for a staged claim -- put `whatis.py`'s 'Search: ... @ <sha>' line in the paragraph, or, for a "
+              "scoping statement, an absence-ok waiver with a reason. Keep the sentence.")
+    print(f"ABSENCE-CLAIMS :: {nlines} lines HEAD adds or changes since merge-base {mb[:12]} of --base {base} "
+          f"({tip[:12]}), in {nfiles} in-scope files, checked against {len(_PATS)} patterns (lines already in the "
+          f"base not judged); {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok)")
     return 1 if fails else 0
 
 
@@ -389,6 +432,48 @@ def self_test() -> int:
               for x in judge(t, p, idx.text(p), new_against_parents(t, p, idx.text(p), ln, parents))]
         expect("merge: a claim new in the merge resolution", bool(fm), True, fm[0][:80] if fm else "")
         g("merge", "--abort")
+        # --base (CI): what a branch adds since its merge-base with the base, read from HEAD; nothing staged.
+        trunk = g("rev-parse", "--abbrev-ref", "HEAD")
+        g("checkout", "-q", "-b", "pr")
+        rec.write_text(rec.read_text() + "\nNo coverage result for configuration (z) exists.\n")
+        g("commit", "-qam", "pr adds a bare claim")
+        fb = base_fails(t, trunk)[0]
+        expect("--base: a bare claim the branch adds", bool(fb), True, fb[0][:80] if fb else "")
+        fs = [x for p, ln in added_lines(t).items() for x in judge(t, p, reglib.Index(t).text(p), ln)]
+        expect("... which the staged mode cannot see once committed (why CI needs --base)", bool(fs), False)
+        g("checkout", "-q", "--detach", trunk)
+        g("merge", "-q", "--no-ff", "-m", "merge pr", "pr")
+        fb = base_fails(t, "HEAD^1")[0]
+        expect("--base HEAD^1 on the pull request's MERGE commit (the CI checkout)", bool(fb), True,
+               fb[0][:80] if fb else "")
+        g("checkout", "-q", "pr")
+        g("reset", "-q", "--hard", trunk)
+        rec.write_text(rec.read_text() + "\nCopied into a new paragraph:\nAn old line: this was never measured.\n")
+        g("commit", "-qam", "pr copies an existing claim line")
+        raw = [x for p, ln in added_lines(t, g("merge-base", trunk, "HEAD")).items()
+               for x in judge(t, p, g("show", f"HEAD:{p}") + "\n", ln)]
+        expect("... (precondition: unfiltered, the copied base line IS in the diff and fires)", bool(raw), True)
+        fb = base_fails(t, trunk)[0]
+        expect("--base: a claim line already in the base, copied by the branch into a new paragraph", bool(fb), False)
+        g("checkout", "-q", trunk)
+        rec.write_text(rec.read_text() + "\nBoth sides: this closure was never measured.\n")
+        g("commit", "-qam", "base adds a claim after the fork")
+        g("checkout", "-q", "pr")
+        rec.write_text(rec.read_text() + "\nBoth sides: this closure was never measured.\n")
+        g("commit", "-qam", "pr adds the same line")
+        fb = base_fails(t, trunk)[0]
+        expect("--base: a claim line the base tip already holds (added there after the fork)", bool(fb), False)
+        rec.write_text(rec.read_text() + "\nThe projection is unmeasured beyond k = 20.\n<!-- absence-ok: scoping of "
+                       "the projection's range, not a missing result -->\n")
+        g("commit", "-qam", "pr adds a waived scoping statement")
+        st = {"waived": 0}
+        fb = base_fails(t, trunk, st)[0]
+        expect("--base: a waiver with a reason passes, and is counted", bool(fb) or st["waived"] != 1, False,
+               f"waived={st['waived']}")
+        rec.write_text(rec.read_text() + f"\nNo coverage result exists for (y).\nSearch: (y) @ {sha[:12]}\n")
+        g("commit", "-qam", "pr adds a searched claim")
+        fb = base_fails(t, trunk)[0]
+        expect("--base: a claim with a search line at a real commit passes", bool(fb), False)
     print("ABSENCE-CLAIMS self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 
@@ -397,6 +482,8 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--repo", type=Path, default=None)
     ap.add_argument("--count-existing", nargs="?", const="HEAD", default=None, metavar="REV")
+    ap.add_argument("--base", default=None, metavar="REF",
+                    help="judge the lines HEAD adds since `git merge-base REF HEAD` instead of the staged diff (CI)")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args(argv)
     if a.self_test:
@@ -404,6 +491,8 @@ def main(argv: list[str]) -> int:
     repo = reglib.repo_root(a.repo or Path.cwd())
     if a.count_existing:
         return count_existing(repo, a.count_existing)
+    if a.base is not None:  # an empty --base must not fall back to the staged mode
+        return check_base(repo, a.base)
     return check_staged(repo)
 
 
