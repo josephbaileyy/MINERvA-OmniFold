@@ -1,0 +1,56 @@
+{
+ "current": {
+  "eavail_catch": 6.809084148840489e-41,
+  "eavail_first": 2.1852295722792747e-38,
+  "vs_E_C": {
+   "median_ratio": 0.9999901747271331,
+   "n_cells": 205,
+   "total_change_percent": 0.18040898798943328
+  },
+  "vs_E_U": {
+   "median_ratio": 1.0016190356278543,
+   "n_cells": 205,
+   "total_change_percent": 0.18986635092310689
+  },
+  "vs_paper": {
+   "median_ratio": 0.8985983729912964,
+   "n_cells": 177,
+   "total_change_percent": -0.7049653186093408
+  }
+ },
+ "k3_reproduces_printed": {
+  "eavail_catch": true,
+  "eavail_first": true,
+  "vs_E_C.median_ratio": false,
+  "vs_E_C.total_change_percent": false,
+  "vs_E_U.median_ratio": true,
+  "vs_E_U.total_change_percent": false,
+  "vs_paper.median_ratio": false,
+  "vs_paper.total_change_percent": false
+ },
+ "p3": {
+  "eavail_catch": 6.741607497281983e-41,
+  "eavail_first": 2.1810160397705584e-38,
+  "vs_E_C": {
+   "median_ratio": 1.000297603843218,
+   "n_cells": 205,
+   "total_change_percent": -0.008028016277472627
+  },
+  "vs_E_U": {
+   "median_ratio": 0.9999763053693055,
+   "n_cells": 205,
+   "total_change_percent": 0.001411557577912781
+  },
+  "vs_paper": {
+   "median_ratio": 0.9152649810544895,
+   "n_cells": 177,
+   "total_change_percent": -0.884736601171876
+  }
+ },
+ "printed": {
+  "eavail_catch": "6.8e-41",
+  "eavail_first": "2.19e-38",
+  "median_ratio": "1.0016",
+  "total_change_percent": "0.95"
+ }
+}

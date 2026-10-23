@@ -1,0 +1,13 @@
+diff --git a/docs/analysis-note/redraw_central_only.py b/nd-unfolding/re1/redraw_central_only_p4.py
+index 19979c46..a7c4f75c 100644
+--- a/docs/analysis-note/redraw_central_only.py
++++ b/nd-unfolding/re1/redraw_central_only_p4.py
+@@ -77,7 +77,7 @@ GENFIG_SHA256 = {
+ }
+ # the frozen 4D product and the published supplement, as read from the canonical checkout 2026-10-03
+ ASCENCIO_SHA256 = {
+-    "xsec_4d_MEFHC_5iter_lgbm.root": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
++    "xsec_4d_MEFHC_5iter_lgbm.root": "ece4055e29756eeef81932b93199d507ca69296bbe7a90b2776c0c39a330998e",
+     "ascencio_2110.13372_supplemental.txt": "748afa9235f7e06b6415f213109106011ea6afa70ba8738d30e90c78a2fbde5a",
+ }
+ DATA = "xsec_3d_MEFHC_5iter_lgbm.root"

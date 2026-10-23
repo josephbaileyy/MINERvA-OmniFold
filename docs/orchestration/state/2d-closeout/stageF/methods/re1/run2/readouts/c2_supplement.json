@@ -1,0 +1,112 @@
+{
+ "bkg_fraction": {
+  "all": {
+   "max": 0.4642730629773878,
+   "median": 0.025441019815353603,
+   "min": 0.013673339378011351
+  },
+  "flagged": {
+   "max": 0.4642730629773878,
+   "median": 0.10984504662331036,
+   "min": 0.05199749934060899
+  },
+  "flagged_among_top_k": {
+   "k": 14,
+   "n": 7
+  },
+  "flagged_ranks_of_205": [
+   1,
+   2,
+   4,
+   5,
+   6,
+   9,
+   12,
+   16,
+   20,
+   29,
+   30,
+   32,
+   51,
+   55
+  ],
+  "spearman_bkg_fraction_vs_abs_purity_resid_stat": 0.4340418715437868,
+  "spearman_bkg_fraction_vs_abs_refined_resid_stat": 0.042453789472217965,
+  "unflagged": {
+   "max": 0.29479681448762224,
+   "median": 0.024066099731212275
+  }
+ },
+ "code_sha256": "53cf457499648ddaabcd58af31bca4b40601fd9f99c6c59aa35453ce0f9872fd",
+ "declared_verdict": "FLAG",
+ "flagged_globalids": [
+  0,
+  16,
+  32,
+  48,
+  64,
+  80,
+  96,
+  112,
+  128,
+  129,
+  145,
+  146,
+  162,
+  163
+ ],
+ "n_cells": 205,
+ "n_experiments": 20,
+ "purity": {
+  "mean_residual_in_stat_sigma": {
+   "argmax_globalid": 128,
+   "max_abs": 5.892653188768398,
+   "mean_signed": 0.17819818830522643,
+   "median_abs": 0.08831717293513948,
+   "n_over_0p5": 21,
+   "n_over_1": 13,
+   "p84_abs": 0.34958493191308554
+  },
+  "mean_residual_in_total_sigma": {
+   "argmax_globalid": 128,
+   "max_abs": 1.2197648932994543,
+   "mean_signed": 0.02341719951868074,
+   "median_abs": 0.009625523423643171,
+   "n_over_0p5": 2,
+   "n_over_1": 1,
+   "p84_abs": 0.0322856034974345
+  },
+  "sd_over_stat": {
+   "max": 2.3772012561212525,
+   "median": 0.45515970895825436,
+   "min": 0.06437664867256744
+  }
+ },
+ "readout_sha256": "ac759b0347b2bdd741d57bcdd749ac0fc51decc323e702ef239ba34eb3a32084",
+ "refined": {
+  "mean_residual_in_stat_sigma": {
+   "argmax_globalid": 128,
+   "max_abs": 0.43896421425508125,
+   "mean_signed": 0.01181571186624454,
+   "median_abs": 0.08199939780629176,
+   "n_over_0p5": 0,
+   "n_over_1": 0,
+   "p84_abs": 0.1873791242288965
+  },
+  "mean_residual_in_total_sigma": {
+   "argmax_globalid": 128,
+   "max_abs": 0.09086452584443322,
+   "mean_signed": -0.00023368779387951313,
+   "median_abs": 0.009287905360940788,
+   "n_over_0p5": 0,
+   "n_over_1": 0,
+   "p84_abs": 0.020396280545821148
+  },
+  "sd_over_stat": {
+   "max": 1.4616488686748748,
+   "median": 0.5822306929290431,
+   "min": 0.06280293490178421
+  }
+ },
+ "schema": "re1-c2-supplement/1"
+}

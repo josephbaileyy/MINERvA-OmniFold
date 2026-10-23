@@ -19,6 +19,8 @@ docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_mad.json	included
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json	included	28	
 docs/orchestration/state/2d-closeout/stageF/methods/ratefail/diag_out.json	included	612	
 docs/orchestration/state/2d-closeout/stageF/methods/re1/f/fig_numbers_p5.json	included	2	
+docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/readouts/c2_supplement.json	included	20	
+docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/readouts/readout_2d_full.json	included	12	
 docs/orchestration/state/GRADE-20260920-cause3-two-member.json	included	1	
 docs/orchestration/state/RECEIPT-20260823-oi126-r4-preanneal-lr-sensitivity.json	included	6	
 docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble.json	included	2	
