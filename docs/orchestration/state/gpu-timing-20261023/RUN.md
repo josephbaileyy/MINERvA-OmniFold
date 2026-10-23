@@ -144,3 +144,28 @@ sacct -j <ids> -P --format=JobID,JobName,Account,QOS,NodeList,Start,End,ElapsedR
   - The arithmetic is shown in `REPORT.md`.
 - **Products, logs, sacct and `kt1.json`** are copied into `receipts/` with a `SHA256SUMS`. The products are about
   180 kB each.
+
+## 6. C1, approved by the director 2026-10-23 by message (added after the four jobs; before the C1 job)
+
+**A departure from the assignment, approved by the director.** Purpose: to separate packing from node for C0's 533 s
+against the recorded 294 s. The arm is a CPU node, 1 × 32, the same unit, on the debug QOS, inside the remaining CPU
+cap. C0 used 0.1825 node-h, and C1's time limit of 15 min bounds it at 0.25, so the CPU total is at most 0.4325 of 0.5.
+
+| file | sha256 |
+|---|---|
+| `tools/tasks-c1.tsv` (`tasks.tsv` line 0 with only the task name and `--out` changed, to `c1_t0` and `runs/c1/c1_t0`) | `0245328e9ade845079485e1f97d28386e590b58e8cfda2ae20e5871401887627` |
+| `tools/sbatch_c1_freq.sh` (records the cpufreq governor and limits if exposed; samples every CPU's `/proc/cpuinfo` MHz every 30 s; runs `sbatch_timing_packed.sh` unchanged) | `5ea92627d86ebf0028c7c6e8a25fbf8f1ce73efe05aea5be051eaf8d64f90b4d` |
+
+```bash
+sbatch -A m3246 -q debug -C cpu -t 00:15:00 -J gput_c1 -o $B/logs/%x_%j.out $B/tools/sbatch_c1_freq.sh $B/runs/c1/freq.log \
+  $S $D $PIN $B/tools/tasks-c1.tsv $B/runs/c1 32 56G 0 0 inherit
+```
+
+K-T1 and the readout are as in §5. The C1 product joins `kt1.json`.
+
+**Frequency evidence for the jobs already run, from the record, with no extra job:**
+- sacct `AveCPUFreq` per step reads 55K–762K for C0 and a few K to 82K for the recorded 58911473. These are not
+  plausible core frequencies, so they are unusable.
+- lscpu at C0's start (nid004458) printed "CPU(s) scaling MHz: 69%".
+- Node energy, from sacct `ConsumedEnergyRaw`: C0 287,325 J over 657 s, about 437 W; the recorded 58911473 6,210,050 J
+  over 12,185 s, about 510 W.
