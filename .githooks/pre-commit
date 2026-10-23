@@ -285,10 +285,12 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 # docs/orchestration/RECORDS-RULES.md. WHY: a session said coverage under configuration (e) was untested; it had
 # been measured in s5e under the contract letter R, and no tool resolved one name to the other. Each check reads
 # the GIT INDEX (staged blobs), so it judges what the commit would contain.
-# WHERE THESE RUN TODAY: only where this file runs. Worktree commits in this clone run the hook at the absolute
-# core.hooksPath (the shared checkout's .githooks, whose local main predates these lines), and no CI exists, so
-# run `bash .githooks/pre-commit` from the branch's worktree before pushing. Commit-time enforcement needs the
-# shared hook updated or a CI check -- both pending Joseph's decision (RECORDS-RULES.md, "Where the checks run").
+# WHERE THESE RUN: here, and on every pull request to main in .github/workflows/record-checks.yml (Joseph chose a
+# CI check, DECISION-20261023-joseph-2d-refined-integrate-ci.md item 4), which runs every `run` line of this file
+# plus test_registry.py, with `--base origin/<base>` for the two checks that compare a change with its base.
+# Worktree commits in this clone still run the hook at the absolute core.hooksPath (the shared checkout's
+# .githooks, which lags main), so run `bash .githooks/pre-commit` from the branch's worktree before pushing.
+# Local-only checks and the reasons: RECORDS-RULES.md, "Where the checks run".
 # Measured 2026-10-22 on this branch's tree (macOS, python 3.12, a loaded machine): the three plain checks 1.3 s,
 # 5.3 s, 0.1 s (always run); the three self-tests 4.9 s, 5.7 s, 1.7 s (run only when tools/registry/** or
 # docs/orchestration/registry/** is staged). Whole hook: 35.4 s with registry files staged, 22.8 s with none
@@ -313,7 +315,7 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 #     files (joined-paragraph judging, code spans and TeX comments removed), none beside a search line; they are
 #     not re-judged. (The 1569 first recorded here was measured line by line, before code spans were removed.)
 #     The --self-test also drops R's real attribution rules (must fail, rule 8) and adds a cited waiver (must pass).
-# DECLINED HERE: tools/registry/test_registry.py (24 tests, 102 s measured, including an end-to-end `git commit`
+# DECLINED HERE (it runs in the CI workflow instead): tools/registry/test_registry.py (24 tests, 102 s measured, including an end-to-end `git commit`
 # through this hook in a scratch clone's linked worktree, normal and `commit -a`, asserting the worktree index is
 # untouched) -- over this hook's budget; its discovery, rule-7 and rule-8 directions are what
 # results_index.py --self-test runs. The self-tests' throwaway repositories run git with EVERY GIT_* variable
