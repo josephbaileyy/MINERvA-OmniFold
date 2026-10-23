@@ -143,6 +143,54 @@ def build_ratio(g, t, p, region):
     return r, float(k)
 
 
+# s5p's coarse (pT, p_parallel) partition (state/s5p/ratios/nulls*/null-*.json coarse_edges, axes 0 and 1)
+COARSE_PT = (0.0, 0.55, 0.85, 4.5)
+COARSE_PZ = (1.5, 3.5, 6.0, 60.0)
+
+
+def coarse_of_cells():
+    """The coarse-cell id of each fine (pT, p_parallel) cell, by the fine cell's centre."""
+    cpt = 0.5 * (np.asarray(PT_EDGES[:-1]) + np.asarray(PT_EDGES[1:]))
+    cpz = 0.5 * (np.asarray(PZ_EDGES[:-1]) + np.asarray(PZ_EDGES[1:]))
+    i = np.searchsorted(COARSE_PT, cpt, side="right") - 1
+    j = np.searchsorted(COARSE_PZ, cpz, side="right") - 1
+    return i[:, None] * (len(COARSE_PZ) - 1) + j[None, :]
+
+
+def gated_shape_ratio(g, var_g, gref, var_gref, region, stat_max):
+    """rho = (g / gref) per cell where the ratio's relative statistical error is <= stat_max ("fine"); the region's
+    other cells take the pooled ratio of their coarse cell (sums of g and gref over those cells) where the pooled
+    error is <= stat_max ("coarse"); the rest of the region and every cell off it are unassigned (rho = 1).
+    The ratio's error adds the two predictions' relative errors in quadrature (independent samples).
+    Returns rho, the assigned mask and per-cell labels ("fine", "coarse", "noisy", "off")."""
+    g, var_g, gref, var_gref = (np.asarray(a, float) for a in (g, var_g, gref, var_gref))
+    region = np.asarray(region, bool)
+    if np.any(g[region] <= 0) or np.any(gref[region] <= 0):
+        raise ValueError("a region cell has an empty prediction")
+
+    def rel(num, var):
+        return np.sqrt(np.asarray(var, float)) / np.asarray(num, float)
+
+    st = np.full(g.shape, np.inf)
+    st[region] = np.hypot(rel(g[region], var_g[region]), rel(gref[region], var_gref[region]))
+    fine = region & (st <= stat_max)
+    rho = np.ones_like(g)
+    rho[fine] = g[fine] / gref[fine]
+    label = np.where(region, "noisy", "off").astype(object)
+    label[fine] = "fine"
+    coarse = coarse_of_cells()
+    for cid in np.unique(coarse):
+        u = region & ~fine & (coarse == cid)
+        if not u.any():
+            continue
+        sg, sr = g[u].sum(), gref[u].sum()
+        if np.hypot(rel(sg, var_g[u].sum()), rel(sr, var_gref[u].sum())) <= stat_max:
+            rho[u] = sg / sr
+            label[u] = "coarse"
+    assigned = (label == "fine") | (label == "coarse")
+    return rho, assigned, label, st
+
+
 # ------------------------------------------------------------------------------------------- readouts
 
 

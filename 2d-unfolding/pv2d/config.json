@@ -1,6 +1,9 @@
 {
  "schema": "pv2d-config/1",
- "fallback_amplitude": 3.0,
+ "ratio": {
+  "stat_max": 0.05,
+  "what": "a cell keeps its own ratio iff the ratio's relative statistical error is <= stat_max; else its s5p coarse cell's pooled ratio under the same bound; else r = 1"
+ },
  "inputs": {
   "E_U": {
    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
@@ -20,6 +23,11 @@
    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
    "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
   }
+ },
+ "reference": {
+  "label": "untuned GENIE 2.12 CV, flux-repaired 5D, full (E_nu < 100 GeV): the s5p D1-D4 base",
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+  "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
  },
  "vertices": {
   "tune_v1": {
@@ -41,11 +49,6 @@
    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
    "sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
    "pz_max": 10.0
-  },
-  "genie_cv": {
-   "label": "OPTIONAL: untuned GENIE 2.12 CV, flux-repaired 5D, full (run only if the binding admits it)",
-   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
-   "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
   }
  },
  "cross_check": {

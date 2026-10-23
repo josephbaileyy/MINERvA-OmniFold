@@ -188,5 +188,55 @@ class Readouts(unittest.TestCase):
         self.assertAlmostEqual(c["ratio_max"], 2.0)
 
 
+class GatedRatio(unittest.TestCase):
+    def setUp(self):
+        rng = np.random.default_rng(7)
+        self.gref = rng.uniform(1, 10, (L.NPT, L.NPZ))
+        self.g = self.gref * rng.uniform(0.8, 1.2, self.gref.shape)
+        self.region = np.ones(self.gref.shape, bool)
+
+    def test_precise_cells_keep_their_own_ratio(self):
+        v = (0.01 * self.g) ** 2
+        rho, assigned, label, st = L.gated_shape_ratio(self.g, v, self.gref, (0.01 * self.gref) ** 2,
+                                                       self.region, 0.05)
+        self.assertTrue(np.all(label == "fine"))
+        self.assertTrue(np.allclose(rho, self.g / self.gref, rtol=1e-14))
+        self.assertTrue(np.allclose(st, np.sqrt(2) * 0.01))
+
+    def test_noisy_cells_pool_by_coarse_cell(self):
+        v = (0.01 * self.g) ** 2
+        v[13, :] = (0.08 * self.g[13, :]) ** 2         # noisy per cell (8 %), <= 4 % pooled over >= 4 cells
+        rho, assigned, label, _ = L.gated_shape_ratio(self.g, v, self.gref, np.zeros_like(v), self.region, 0.05)
+        self.assertTrue(np.all(label[13, :] == "coarse"))
+        coarse = L.coarse_of_cells()
+        for cid in np.unique(coarse[13, :]):
+            u = coarse[13, :] == cid
+            self.assertTrue(np.allclose(rho[13, u], self.g[13, u].sum() / self.gref[13, u].sum()))
+
+    def test_noisy_pool_is_unassigned(self):
+        v = (0.5 * self.g) ** 2                         # everything noisy; one-row pools stay above 5 %
+        region = np.zeros_like(self.region)
+        region[13, 15] = True
+        rho, assigned, label, _ = L.gated_shape_ratio(self.g, v, self.gref, np.zeros_like(v), region, 0.05)
+        self.assertEqual(label[13, 15], "noisy")
+        self.assertFalse(assigned.any())
+        self.assertTrue(np.all(rho == 1.0))
+
+    def test_off_region_is_one(self):
+        region = self.region.copy()
+        region[:, 12:] = False
+        rho, assigned, label, _ = L.gated_shape_ratio(self.g, np.zeros_like(self.g), self.gref,
+                                                      np.zeros_like(self.g), region, 0.05)
+        self.assertTrue(np.all(rho[:, 12:] == 1.0))
+        self.assertTrue(np.all(label[:, 12:] == "off"))
+
+    def test_coarse_partition(self):
+        c = L.coarse_of_cells()
+        self.assertEqual(c.shape, (L.NPT, L.NPZ))
+        self.assertEqual(len(np.unique(c)), 9)
+        self.assertEqual(c[0, 0], 0)                   # pT < 0.55, p_par < 3.5
+        self.assertEqual(c[13, 15], 8)                 # pT > 0.85, p_par > 6
+
+
 if __name__ == "__main__":
     unittest.main()
