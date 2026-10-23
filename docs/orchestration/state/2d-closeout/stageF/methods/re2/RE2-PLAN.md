@@ -26,9 +26,9 @@ job may run until the director binds a declaration made from it.**
   - every number printed from them.
 - **New code:** a 2D path that can run the refined estimator on universes, laterals, bootstrap replicas, seed panels
   and run periods. No existing path can do that at the 400/31 refinement (§3).
-- **Projected charge:** **68.3 node-h; worst case 85.2 node-h at 1.25× the projection** (57.4 / 71.7 without the
+- **Projected charge:** **68.9 node-h; worst case 85.9 node-h at 1.25× the projection** (58.0 / 72.4 without the
   two optional diagnostics). The proposed grant is ≤ 90. If J0 shows the selective universe read is unusable, the
-  case is 129.1 / 161.4 node-h, with a grant of ≤ 165. The 2D closeout ceiling has **660.53** node-h left (§4). The
+  case is 129.7 / 162.1 node-h, with a grant of ≤ 165. The 2D closeout ceiling has **660.53** node-h left (§4). The
   cost does **not** exceed what remains, so it does not go back to Joseph on cost.
 - **Out of scope until the director rules (R8):** the extended-fiducial central value and any refined 5D covariance
   (§2.7). The storage destination conflicts with a standing decision and needs a ruling (§6).
@@ -78,7 +78,7 @@ and code. The lines quoted here were cross-checked by hand; the search notes the
 | P2 | universe block: the July `purity_newomni` sweep, 187 universes + CV (`S/stageB/evidence/b-genie-truth/sweeps.json` "pn/"). S5 uses 175: the 187 less 10 laterals (replaced by S3) and 2 Rvp1pi (dropped) (`S/stageC/production/DESIGN.md:273`) | `sbatch_unfold_2d_MEFHC_5iter_universes_full_puritynew.sh:67-75`, array 55677843 | S5 | **rebuild**, 175 universe unfolds | each universe is a purity unfold; the decision rebuilds "its covariance" (DECISION item 1) |
 | P3 | laterals, S3: 10 active lateral files | Stage C production, `S/stageC/production/sbatch_prod.sh:83` (hard-coded `--bkg-mode purity`) | S5 | **rebuild**, 10 unfolds | the same reason |
 | P4 | statistical block, S1: 300 three-stream bootstrap replicas (data, signal MC, background rows) | `2d-unfolding/driver_p1.py` (`3056e625…`), which refuses every background mode except purity (`:1582-1587`) | S5 | **rebuild**, 300 replicas; **new code** | the refined estimator must be resampled through its own background treatment |
-| P5 | background-only stream, S2: 100 replicas | the same | reported beside S5, **not added** (`s5_rollup.py:19-20`) | **rebuild as a diagnostic (optional, J5)** | it bounds the omitted background-MC term; for the refined estimator that term is the one the switch changes, so the plan recommends it |
+| P5 | background-only stream, S2: 100 replicas | the same | reported beside S5, **not added** (`s5_rollup.py:19-20`) | **rebuild as a diagnostic (optional, J5)** | it is a separable view of the background share **already inside** the three-stream S1 block (`S/stageC/production/DESIGN.md:283`), not an omitted term. It shows how large the refined background resampling is, which is what the switch changes. It is not needed for `Q_R` |
 | P6 | seed block, C08 / S4: (i) 20 replicas × seeds {45, 48, 51, 54}, with the S1 seed-42 column; (ii) 7 universes × 5 seed sets + CV at 4 seeds | `driver_p1.py`; driver | (i) is C08, **added**; (ii) is X03, reported, **not added** (`s5_rollup.py:16-20`) | **rebuild** (i), 80; **diagnostic (optional, J7)** (ii), 39 | the seed main effect of the refined estimator has never been measured |
 | P7 | S5 rollup `production_cov.npz` `6689d2fc…`, `s5.json` `8c815149…`, `uq_production_covariance.root` `34cf33f9…` (`S/stageC/production/REPORT.md:25`) | `S/stageC/production/s5_rollup.py` (`6c437004…`), login, 0 node-h. It first requires six `analyze_prod.py` (`f9e0d8f2…`) item verdicts to read PASS (`s5_rollup.py:347-354`). Those checks are identities against **purity** references: July products at seed 42, XR-L0, the pilot replicas and the pilot laterals (`analyze_prod.py:111-118,208-224`). The universe block reads the July files by their `sweeps.json` digests (`s5_rollup.py:56-73`) | combination, Stage F | **rebuild** from P2–P6, with **new code under review**: `re2_rollup.py` and `re2_analyze.py`, copies of the two scripts (§3) | on refined products every purity identity fails by construction. Which refined-arm check replaces each identity is fixed in the declaration, before any data (§5.1) |
 | P8 | period unfolds: 37 (control; P_A, P_B, P_C at seeds 42 and 43; 10 bootstrap replicas each) | `S/period-unfold-20261014/scripts/sbatch_period_unfold.sh:76-77` (hard-coded purity); analysed by `scripts/analyze_periods.py` into `outputs/analysis.json` | C_PL; the printed run-period step (+6.94 %, `N/sec_systematics.tex:299-300`; "about 7 %", `N/paper_body.tex:428`) and the pooled-vs-period comparison (`N/sec_systematics.tex:446-454`) | **rebuild**, 37, and **re-evaluate** `analysis.json` | C_PL's double ratios are period/pooled ratios of this estimator; the printed step values come from this analysis, not from `budget_Q` |
@@ -198,8 +198,9 @@ The DECISION says that at adoption "the refined treatment is used in every dimen
   `runEventLoopOmniFold_5D_FPS_MEFHC_universes_full.root`, 179.6 GiB, `AUDIT-FINDINGS-20260820-fps.md:39`), produced
   with purity (`N/sec_fps.tex:110-114`). It is **not priced here.**
 
-**Decision for the director (R8):** whether the extended-fiducial central value, and a refined 5D covariance, enter
-RE-2 or a separate grant. Until then, RE-2's scope is 2D. The extended-fiducial text keeps its "produced with the
+**Decision (R8):** whether the extended-fiducial central value, and a refined 5D covariance, enter RE-2 or a separate
+grant. The director recommends, and Joseph confirms: DECISION item 2 says the director confirms the "every dimension"
+reading with Joseph. Until Joseph answers, this plan prices 2D only and assumes nothing about the other dimensions. The extended-fiducial text keeps its "produced with the
 binned purity correction" statement, and its control sentence is reworded (§2.4).
 
 ## 3. The code RE-2 needs
@@ -270,17 +271,17 @@ A pilot (J0) measures the real units before the production jobs are sized, and i
 
 | job | content | count | unit (purity, node-h) | projected at 1.25 | worst case (1.25×) |
 |---|---|---|---|---|---|
-| J0 pilot and controls | itemised below | — | — | 3.4 | 4.3 |
+| J0 pilot and controls | itemised below | — | — | 4.0 | 5.0 |
 | J1 central and C0 | `E_R` (ROOT, all objects, with step weights for the C2ST); `C0_unit`; `C0_cv` | 3 | 0.0933 | 0.35 | 0.44 |
 | J2 universes | 175 July bands, selective read | 175 | 0.115 | 25.2 | 31.4 |
 | J3 laterals | the 10 active lateral files | 10 | 0.40 | 5.0 | 6.3 |
 | J4 S1 | three-stream replicas | 300 | 0.0446 | 16.7 | 20.9 |
 | J6 S4(i) | 20 replicas × 4 seeds (C08) | 80 | 0.043 | 4.3 | 5.4 |
 | J8 periods | control + 3 × 2 seeds + 30 replicas | 37 | 0.0525 | 2.4 | 3.0 |
-| **core total** | | | | **57.4** | **71.7** |
+| **core total** | | | | **58.0** | **72.4** |
 | J5 S2 (diagnostic, optional) | background-only replicas | 100 | 0.043 | 5.4 | 6.7 |
 | J7 S4(ii) (diagnostic, optional) | 7 universes × 5 seed sets + CV at 4 seeds | 39 | 0.115 / 0.0933 | 5.5 | 6.8 |
-| **total with diagnostics** | | | | **68.3** | **85.2** |
+| **total with diagnostics** | | | | **68.9** | **85.9** |
 | rollup, C_PL, Q, Stage F, receipts, figures | login node | — | 0 | 0 | 0 |
 
 **J0, itemised.**
@@ -288,22 +289,32 @@ A pilot (J0) measures the real units before the production jobs are sized, and i
   - K1-C, 2 CV unfolds: 0.19;
   - K1-U, 3 universes: 0.35;
   - K1-L, 1 lateral: 0.40;
-  - K1-B with `C0_unit`, 4 replicas: 0.18;
+  - K1-B with purity `C0_unit`, 4 replicas: 0.18;
   - K1-P, 2 period unfolds: 0.14;
   - K1-R, a driver and an RE-2 run on 1 universe and 1 period: 0.37.
-- Refined timing runs at 1.25×: 4 universes, 1 lateral, 8 replicas and 1 period (1.61), plus the null-universe
-  identity (0.14).
-- Total: 3.4 projected, 4.3 worst.
+- Refined runs at 1.25×:
+  - timing: 4 universes, 1 lateral, 8 replicas and 1 period: 1.61;
+  - the null-universe identity: 0.14;
+  - the determinism repeats of one replica and one lateral: 0.56;
+  - refined `C0_unit`: 0.06.
+- Total: **4.0 projected, 5.0 worst.**
 
-**Walltime caps.** Each job class's Slurm limit is set from its **observed maximum**, not its mean, times 1.25. For
-the periods that is 1,558 s for replicas and 995 s for the control and centrals. The stop rule (§5.4) applies to the
-cap. Pricing uses the mean.
+**Walltime caps.** Each job class's Slurm limit is set from its **observed maximum**, not its mean, times 1.25. The
+stop rule (§5.4) applies to the cap. Pricing uses the mean.
+- **The period replicas' maximum is a lower bound.** The completed jobs reached 1,558 s. Three replicas were stopped
+  at the 25-minute limit (about 1,520 s) while still in iterations 2–4, so a slow node can exceed 1.25 × 1,558 s.
+  RE-2 therefore sets the period replica cap at 3,600 s and excludes the nodes those three time-outs ran on, as the
+  retries did. The control and centrals cap at 1.25 × 995 s.
+- J0 measures each class's refined maximum, and the declaration sets the caps from it.
 
 - **Proposed grant: ≤ 90 node-h,** regular or shared QOS, each job < 12 h.
 - If the selective universe read cannot be used with the refined path, J2 and J7 use the all-branch unit (0.3468).
-  J2 becomes 75.9 / 94.8 and J7 15.6 / 19.6, for totals of 108.1 / 135.1 (core) and 129.1 / 161.4 (with
+  J2 becomes 75.9 / 94.8 and J7 15.6 / 19.6, for totals of 108.7 / 135.8 (core) and 129.7 / 162.1 (with
   diagnostics). That is still inside the remaining ceiling, but it would need the grant raised to ≤ 165. J0 settles
   this.
+- **Retries.** One resubmission per failed job, for a cause outside the declared code, is allowed (§5.5), and only with
+  the director's approval (§5.4). It is not priced: Stage C production had none in 153 runs
+  (`S/stageC/production/REPORT.md:23`). The ≤ 90 grant leaves 4.1 node-h above the worst case for it.
 
 ### 4.3 The ceiling
 
@@ -329,7 +340,7 @@ cap. Pricing uses the mean.
 - **RE-1's 1.680 node-h** (`re1/ledger.txt:4` + `re1/run2/ledger.tsv`) ran under DECISION-20261020's 30 node-h grant.
   No record puts it under the 700. If the director counts it, 658.85 remains.
 - SF-1, IBU-1 and JIT-1 are outside the 700 by their own records (`DECISION-20261019-joseph-methods-first-and-measurement-compute.md:56-57`).
-- **The RE-2 worst case (85.2, or 161.4 with all-branch reads) fits inside what remains.** The cost does not go back
+- **The RE-2 worst case (85.9, or 162.1 with all-branch reads) fits inside what remains.** The cost does not go back
   to Joseph.
 - **The shared group pool also binds.** The director keeps measurement work "within half the CPU pool remaining at
   each grant" (`DECISION-20261019-joseph-methods-first-and-measurement-compute.md:52-53`). The pool is re-measured at
@@ -423,7 +434,8 @@ Each control below fails closed: a failure stops the jobs that depend on it.
 
 The stage grant drawn from this plan names:
 - the window: from binding to the REPORT, or 2026-11-30;
-- the attempt rule: a failed job is resubmitted at most once, and only for a cause outside the declared code;
+- the attempt rule: a failed job is resubmitted at most once, only for a cause outside the declared code, and only with
+  the director's approval (§5.4);
 - the terminal outcomes: construction complete; stopped at a control; stopped at J0's gate; stopped by charge.
 
 ## 6. Storage and durability
@@ -434,9 +446,10 @@ The stage grant drawn from this plan names:
   (`AUTHORIZATION-20261012-2d-closeout-delegation.md:67-68`). Since 2026-10-22, CFS is closed under the 3 TB rule
   (`DECISION-20261022-joseph-measurement-scope-and-lanes.md:35`). The currently adopted Q products sit on CFS. An
   adopted `Q_R` would therefore exist only on purgeable pscratch.
-- **Decision for the director or Joseph (R9):** the durable copy of the adopted products. At least these need one:
-  `E_R`, `Q_R`, the S5 and C_PL products, and the receipts. The options are a CFS exception for these few files
-  (tens of MB), HPSS, or a committed copy for the small files.
+- **Decision for Joseph (R9):** the durable copy of the adopted products. At least these need one: `E_R`, `Q_R`, the
+  S5 and C_PL products, and the receipts. An exception to the CFS 3 TB rule is Joseph's alone. The options are a
+  CFS exception for these few files (tens of MB), or HPSS. A committed copy would need each `.npz` force-added
+  against `.gitignore`, as RE-1's C2 products were.
 
 ## 7. Not in this plan
 
@@ -478,12 +491,12 @@ say plainly …"):
 | R2 | rebuild scope | all four Q blocks, as the DECISION says "its covariance" |
 | R3 | the refined background stream | Poisson over the −w background rows under `driver_p1.py`'s stream key, then refit the refinement per replica |
 | R4 | the registry | add the 2D estimator (e.g. `a-refined-400-31`) before any job |
-| R5 | the grant | ≤ 90 node-h after J0, raised only if J0 shows all-branch reads are needed (≤ 150) |
+| R5 | the grant | ≤ 90 node-h after J0, raised only if J0 shows all-branch reads are needed (≤ 165) |
 | R6 | whether RE-1's 1.68 node-h counts against the 700 | the director's call; the plan fits either way |
 | R7 | the unattributed "1–2 %" marginal normalizations | find their producer in the declaration; if none is found, they are reported as not re-evaluated |
-| R8 | "every dimension": the extended-fiducial central value and a refined 5D covariance (§2.7) | rule on scope before the declaration; RE-2 stays 2D unless told otherwise |
-| R9 | durable storage of the adopted products (§6) | a CFS exception for the few adopted files, or HPSS |
-| R10 | the two diagnostics J5 (S2) and J7 (S4(ii)) | run them; they bound the omitted terms of the new estimator (+10.9 node-h projected) |
+| R8 | "every dimension": the extended-fiducial central value and a refined 5D covariance (§2.7) | the director's recommendation, confirmed by Joseph (DECISION item 2), before the declaration |
+| R9 | durable storage of the adopted products (§6) | Joseph's: a CFS exception for the few adopted files, or HPSS |
+| R10 | the two diagnostics J5 (S2) and J7 (S4(ii)) | run J7: its X03 is a genuinely omitted term (`s5_rollup.py:19-20`), at +5.5 node-h. J5 is optional: S2 is already inside S1, and it costs +5.4 node-h |
 
 ## Review record
 
@@ -492,10 +505,12 @@ reviewed `84499aa6` read-only, in two directions:
 - plan → evidence: citations, arithmetic, code claims, the ceiling spend re-derived from `sacct`;
 - request and records → plan: missing dependents, wrong actions, controls, cost risks, wording.
 
-It found no blocker, nine major findings and fourteen minor or nit findings. It confirmed:
+It found no blocker, six major findings, ten minor findings and one group of six nits. (The table below groups them
+as the review listed them; the reviewer corrected its own opening count in the second pass.) It confirmed:
 - the Search lines;
-- every code claim;
-- every unit cost and per-job projection;
+- the code claims, with one nit on `D:402-407`;
+- the unit costs, except the period unit, which it flagged;
+- the per-job arithmetic;
 - the ceiling spend (39.471 by its own `sacct` pull);
 - the mis-citation of "§2" in the DECISION;
 - that no rule lets a measurement choose the result.
@@ -520,3 +535,18 @@ It found no blocker, nine major findings and fourteen minor or nit findings. It 
 | preflight hashing and cache design unpriced (MINOR) | §3: one login-node hash, selective reads, no per-universe dumps |
 | nits: `D:402-407` wording, the 175 derivation, the RC7 citation, the s + 3 seeds, the clip metric, the grant fields | fixed; grant fields in §5.5 |
 | the `iris` pool figure could not be checked | removed; the pool is re-measured at the grant |
+
+**Second pass** (same reviewer, read-only, `84499aa6..8fd36de2`). It found the fixes hold, that the new arithmetic
+reproduces, and that every new citation holds. It also confirmed:
+- `\rhoFluxMuon` is derived from the published covariance (`rederive_flux_muonE_cross.py:84-99`);
+- the extended-fiducial value's purity provenance (`AUDIT-FINDINGS-20260731.md:375-382`).
+
+| second-pass finding (severity) | disposition |
+|---|---|
+| S2 is already inside S1 (`DESIGN.md:283`), so "omitted term" was wrong (MINOR) | P5 and R10 reworded; J7 recommended, J5 optional |
+| R5 said ≤ 150, against a 161.4 worst case (MINOR) | ≤ 165 |
+| the period maximum is a lower bound: three replicas timed out mid-iteration (MINOR) | replica cap 3,600 s; slow nodes excluded; refined maxima from J0 |
+| J0 omitted the determinism repeats and the refined `C0_unit` (MINOR) | added: J0 4.0 / 5.0; totals 58.0 / 72.4 and 68.9 / 85.9 |
+| R8 is confirmed by Joseph, and R9 is Joseph's (MINOR) | rerouted |
+| the attempt rules conflicted, and retries were unpriced (NIT) | reconciled (§5.5); the margin is stated |
+| the review counts in this record were wrong (the reviewer's own correction) | fixed above |
