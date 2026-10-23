@@ -38,7 +38,7 @@ INDEX_TSV = f"{reglib.REGISTRY_DIR}/RESULTS-INDEX.tsv"
 
 def grep(repo: Path, pattern: str) -> list[tuple[str, int, str]]:
     out = subprocess.run(["git", "-C", str(repo), "grep", "--cached", "-n", "-I", "-P", "-e", pattern],
-                         capture_output=True, env=reglib.git_env())
+                         capture_output=True, env=reglib.git_env(repo), cwd=str(repo))
     if out.returncode not in (0, 1):
         raise RuntimeError(f"git grep -P {pattern!r} failed: {out.stderr.decode(errors='replace')}")
     res = []

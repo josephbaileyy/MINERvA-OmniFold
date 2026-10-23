@@ -23,7 +23,7 @@ docs/orchestration/state/GRADE-20260920-cause3-two-member.json	included	1
 docs/orchestration/state/RECEIPT-20260823-oi126-r4-preanneal-lr-sensitivity.json	included	6	
 docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble.json	included	2	
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	included	2	
-docs/orchestration/state/coverage-2d-20261005/equivalence.json	included	6	
+docs/orchestration/state/coverage-2d-20261005/equivalence.json	included	5	
 docs/orchestration/state/coverage-2d-20261005/interim_score.json	included	20	
 docs/orchestration/state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json	included	14	
 docs/orchestration/state/ki98-wbias-test/receipts/ki98.json	included	1600	
@@ -69,7 +69,7 @@ docs/orchestration/state/measurement-paper/phase1/mp5/out/eval/mp5_results.json	
 docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json	included	162	
 docs/orchestration/state/next-preparation-20261009/gbdt/results.json	included	104	
 docs/orchestration/state/next-preparation-20261009/pet/results/design_cost.json	included	64	
-docs/orchestration/state/next-preparation-20261009/pet/results/saved_reductions.json	included	313	
+docs/orchestration/state/next-preparation-20261009/pet/results/saved_reductions.json	included	294	
 docs/orchestration/state/next-preparation-20261009/two-d-path/design_arith.json	included	8	
 docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260801b.json	included	3	
 docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260806.json	included	3	

@@ -312,8 +312,11 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 #     files (joined-paragraph judging, code spans and TeX comments removed), none beside a search line; they are
 #     not re-judged. (The 1569 first recorded here was measured line by line, before code spans were removed.)
 #     The --self-test also drops R's real attribution rules (must fail, rule 8) and adds a cited waiver (must pass).
-# DECLINED HERE: tools/registry/test_registry.py (22 fixture tests, 41 s measured) -- over this hook's budget; its
-# discovery, rule-7 and rule-8 directions are what results_index.py --self-test runs. Run it when changing tools/registry/.
+# DECLINED HERE: tools/registry/test_registry.py (24 tests, 102 s measured, including an end-to-end `git commit`
+# through this hook in a scratch clone's linked worktree, normal and `commit -a`, asserting the worktree index is
+# untouched) -- over this hook's budget; its discovery, rule-7 and rule-8 directions are what
+# results_index.py --self-test runs. The self-tests' throwaway repositories run git with EVERY GIT_* variable
+# removed (reglib.clean_env): the hook's GIT_INDEX_FILE names the committing worktree's index. Run it when changing tools/registry/.
 run "registry citations+labels"    python3 tools/registry/check_registry.py
 run "results index fresh+complete" python3 tools/registry/results_index.py --check
 run "absence claims carry search"  python3 tools/registry/absence_claims.py

@@ -85,7 +85,7 @@ def matches(text: str) -> list[str]:
 
 def commit_exists(repo: Path, sha: str) -> bool:
     out = subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{sha}^{{commit}}"], capture_output=True,
-                         env=reglib.git_env())
+                         env=reglib.git_env(repo), cwd=str(repo))
     return out.returncode == 0
 
 
@@ -232,11 +232,11 @@ def self_test() -> int:
         expect(f"unrelated {s!r}", bool(matches(s)), False, ",".join(matches(s)))
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
-        env = reglib.git_env()
+        env = reglib.clean_env()  # a throwaway repository: never the hook's GIT_INDEX_FILE
 
         def g(*a: str) -> str:
             return subprocess.run(["git", "-C", str(t), *a], check=True, capture_output=True, env=env,
-                                  text=True).stdout.strip()
+                                  cwd=str(t), text=True).stdout.strip()
 
         g("init", "-q")
         g("config", "user.name", "self-test")

@@ -11,6 +11,7 @@ end -- `git ls-files`, the staged blob, the population rule -- not by mutating a
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -29,7 +30,7 @@ SEED_RECEIPTS = ("docs/orchestration/state/s5e/cand/assess_receipt.json",
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
-    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, env=reglib.git_env())
+    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, env=reglib.clean_env())
 
 
 def counts(summary: str) -> dict[str, int]:
@@ -229,6 +230,86 @@ class ResultsIndexDiscovery(unittest.TestCase):
         self.f.git("rm", "-q", SEED_RECEIPTS[1])
         out = self.f.check()
         self.assertEqual(out.returncode, 1, out.stdout)
+
+
+class EndToEndCommit(unittest.TestCase):
+    """The hook through a REAL `git commit`, in a scratch clone with a linked worktree whose core.hooksPath is the
+    branch's .githooks: committing a staged registry file (a) normally and (b) with `commit -a` must leave the
+    worktree's index entry count unchanged, commit exactly the expected tree, and leave `git status` working.
+    (Git gives the hook GIT_INDEX_FILE -- the worktree's index, or index.lock under -a; a self-test that inherited it
+    would overwrite that index.) The clone is made under $TMPDIR; it never touches this repository's .git.
+    REGISTRY_E2E_OVERLAY=0 runs the clone's own committed code instead of this checkout's staged code (to show the
+    defect on a commit that has it)."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR"))
+        root = Path(cls.tmp.name)
+        cls.clone, cls.wt = root / "clone", root / "wt"
+        branch = run(["git", "-C", str(REPO), "rev-parse", "--abbrev-ref", "HEAD"]).stdout.strip()
+        out = run(["git", "clone", "-q", "--depth", "1", "--branch", branch, f"file://{REPO}", str(cls.clone)])
+        assert out.returncode == 0, out.stderr
+        cls.g(cls.clone, "config", "user.name", "e2e")
+        cls.g(cls.clone, "config", "user.email", "e2e@invalid")
+        if os.environ.get("REGISTRY_E2E_OVERLAY", "1") != "0":
+            # The code under test is this checkout's STAGED state, laid over the clone's HEAD.
+            names = run(["git", "-C", str(REPO), "diff", "--cached", "--name-only", "HEAD"]).stdout.split()
+            src = reglib.Index(REPO)
+            for rel in names:
+                blob = src.read(rel)
+                if blob is None:
+                    (cls.clone / rel).unlink(missing_ok=True)
+                else:
+                    (cls.clone / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (cls.clone / rel).write_bytes(blob)
+            cls.g(cls.clone, "add", "-A")
+            cls.g(cls.clone, "commit", "-q", "--no-verify", "-m", "e2e: overlay the staged code under test")
+        cls.g(cls.clone, "worktree", "add", "-q", "-b", "e2e-wt", str(cls.wt))
+        cls.g(cls.clone, "config", "core.hooksPath", str(cls.wt / ".githooks"))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.tmp.cleanup()
+
+    @staticmethod
+    def g(where: Path, *a: str, env: dict | None = None) -> str:
+        out = subprocess.run(["git", "-C", str(where), *a], capture_output=True, text=True, cwd=str(where),
+                             env=env or reglib.clean_env())
+        if out.returncode:
+            raise AssertionError(f"git {' '.join(a)} failed ({out.returncode}): {out.stderr}{out.stdout}")
+        return out.stdout
+
+    def commit_and_check(self, label: str, commit_args: list[str], expected_tree: str, n0: int) -> None:
+        out = subprocess.run(["git", "-C", str(self.wt), "commit", "-q", "-m", label, *commit_args],
+                             capture_output=True, text=True, cwd=str(self.wt), env=reglib.clean_env())
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        self.assertIn("checks passed", out.stdout + out.stderr)
+        n1 = len(self.g(self.wt, "ls-files", "-z").split("\0")) - 1
+        self.assertEqual(n1, n0, f"{label}: index entries {n0} -> {n1}")
+        self.assertEqual(self.g(self.wt, "rev-parse", "HEAD^{tree}").strip(), expected_tree)
+        status = subprocess.run(["git", "-C", str(self.wt), "status", "--porcelain"], capture_output=True,
+                                text=True, cwd=str(self.wt), env=reglib.clean_env())
+        self.assertEqual(status.returncode, 0, status.stderr)
+        self.assertEqual(status.stdout, "", f"{label}: git status after the commit: {status.stdout}")
+
+    def test_a_commit_of_a_staged_registry_file(self) -> None:
+        f = self.wt / "tools/registry/whatis.py"
+        f.write_text(f.read_text() + "# e2e (a)\n")
+        self.g(self.wt, "add", "tools/registry/whatis.py")
+        n0 = len(self.g(self.wt, "ls-files", "-z").split("\0")) - 1
+        tree = self.g(self.wt, "write-tree").strip()
+        self.commit_and_check("e2e (a): staged registry file", [], tree, n0)
+
+    def test_b_commit_dash_a_of_a_registry_file(self) -> None:
+        f = self.wt / "tools/registry/whatis.py"
+        f.write_text(f.read_text() + "# e2e (b)\n")
+        n0 = len(self.g(self.wt, "ls-files", "-z").split("\0")) - 1
+        with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as d:
+            env = dict(reglib.clean_env(), GIT_INDEX_FILE=str(Path(d) / "index"))
+            self.g(self.wt, "read-tree", "HEAD", env=env)
+            self.g(self.wt, "add", "-u", env=env)
+            tree = self.g(self.wt, "write-tree", env=env).strip()
+        self.commit_and_check("e2e (b): commit -a", ["-a"], tree, n0)
 
 
 class SelfTests(unittest.TestCase):

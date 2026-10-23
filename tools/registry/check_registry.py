@@ -153,7 +153,7 @@ def self_test() -> int:
     ok = True
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
-        subprocess.run(["git", "init", "-q", str(t)], check=True, env=reglib.git_env())
+        subprocess.run(["git", "init", "-q", str(t)], check=True, env=reglib.clean_env(), cwd=str(t))
         need = {reglib.ESTIMATORS, reglib.ALIASES, reglib.UNRESOLVED}
         for row in reglib.read_tsv(src_index, reglib.ESTIMATORS):
             need.add(row["defining_source"])
@@ -171,7 +171,7 @@ def self_test() -> int:
             for d in DRIVERS:
                 (note / d).write_text(driver_text if d == "main_paper.tex" else "")
             (note / "body.tex").write_text(body_text)
-            subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+            subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
             return reglib.Index(t)
 
         def case(name: str, body: str, want_fail: bool, idx_mut=None) -> None:
@@ -200,26 +200,26 @@ def self_test() -> int:
         case("planted conflict: 'configuration (e)' registered under two estimators", good[1], True)
         al.write_text(clean_aliases)
         (note / "main_records.tex").write_text("\\input{records_estimators}\n\\input{records_results_index}\n")
-        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
         r6 = records_include_index(reglib.Index(t))
         ok &= not r6
         print(f"  self-test {'ok' if not r6 else 'WRONG':<5} records document inputs both renderings: "
               f"{'FIRES' if r6 else 'silent'} (want silent)")
         (note / "main_records.tex").write_text("\\input{records_estimators}\n% \\input{records_results_index}\n")
-        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
         r6 = records_include_index(reglib.Index(t))
         ok &= bool(r6)
         print(f"  self-test {'ok' if r6 else 'WRONG':<5} records document with the index input commented out: "
               f"{'FIRES' if r6 else 'silent'} (want FIRES)")
         (note / "main_records.tex").write_text("\\input{records_estimators}\n\\input{records_results_index}\n")
         (note / "main_note.tex").write_text("\\input{body}\n\\input{records_results_index}\n")
-        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
         r6 = records_include_index(reglib.Index(t))
         ok &= bool(r6)
         print(f"  self-test {'ok' if r6 else 'WRONG':<5} a posted driver (main_note) inputs the generated index: "
               f"{'FIRES' if r6 else 'silent'} (want FIRES){': ' + r6[0][:100] if r6 else ''}")
         (note / "main_note.tex").write_text("\\input{body}\n")
-        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
         # Citation power. The cited line is resolved by its digest (the number is a hint): a move passes and is
         # named; an edit and a retraction that still quotes the alias FAIL; --repoint refreshes hints only.
         cited = reglib.read_tsv(src_index, reglib.ALIASES)[0]
@@ -233,7 +233,7 @@ def self_test() -> int:
         ok &= found
         print(f"  self-test {'ok' if found else 'WRONG':<5} ... and the check names the line it found "
               f"({'yes' if found else 'no'})")
-        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
         rep = reglib.repoint(reglib.Index(t), t)
         notes = case("... after --repoint refreshed the hints", good[1], False)
         ok &= not notes
@@ -243,7 +243,7 @@ def self_test() -> int:
         retracted[n - 1] = ("We no longer use the wording \"" + cited["quote"] + "\"; it is withdrawn.")
         p.write_text("\n".join(retracted))
         case(f"cited line replaced by a retraction that still quotes {cited['quote']!r}", good[1], True)
-        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))
         rep = reglib.repoint(reglib.Index(t), t)
         refused = any(r.startswith("CANNOT REPOINT") for r in rep) and not any(r.startswith("REPOINTED ALIASES row 2:")
                                                                               for r in rep)

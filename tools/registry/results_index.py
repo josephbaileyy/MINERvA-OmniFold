@@ -213,10 +213,13 @@ def metric_leaves(o, fam: str, path=(), key: str = ""):
     out = []
     if isinstance(o, dict):
         table = all_numeric(o) and not (set(tokens(key)) & MIXED_WORDS)
+        spread_ok = fam in ("residual", "residual_se", "pull", "pull_sd")
         for k, v in o.items():
+            if table and not spread_ok and bare_spread(k):
+                continue  # a bare spread (sd, std, rms) beside a bias or coverage value is another quantity
             if (table and not excluded_child(k)) or (not table and child_ok(k, fam)):
                 out += metric_leaves(v, fam, path + (str(k),), key if table else k) if not table else \
-                    [(path + (str(k),) + sub, val) for sub, val in numeric_table(v)]
+                    [(path + (str(k),) + sub, val) for sub, val in numeric_table(v, (), spread_ok)]
     return out
 
 
@@ -230,10 +233,18 @@ def excluded_child(key: str) -> bool:
     return non_metric(key)
 
 
-def numeric_table(o, path=()):
+def bare_spread(key: str) -> bool:
+    t = set(tokens(key))
+    return bool(t) and t <= CHILD_WORDS_SPREAD
+
+
+def numeric_table(o, path=(), spread_ok=True):
+    """Every numeric leaf of an all-numeric object, skipping counts and parameters -- and, unless the family is a
+    spread family, a bare spread key (sd, std, rms): it is a different quantity from the bias beside it."""
     if isnum(o) or isinstance(o, list):
         return [(path, o)]
-    return [x for k, v in o.items() if not excluded_child(k) for x in numeric_table(v, path + (str(k),))]
+    return [x for k, v in o.items() if not excluded_child(k) and (spread_ok or not bare_spread(k))
+            for x in numeric_table(v, path + (str(k),), spread_ok)]
 
 
 def pointer(parts) -> str:
@@ -521,8 +532,19 @@ def printed_estimators(index: reglib.Index) -> dict[str, list[str]]:
     return out
 
 
-def point_group(point: str) -> str:
-    """"nominal" when the point's own path names nominal truth (points/nominal, grid/C3_nominal), else "other"."""
+# Receipts whose nominal points are not called "nominal" in their key paths, each with the line that says so:
+# s5e's development K1 (and its r2 recompute K1_*) is the nominal closure -- state/s5p/contract.json:27,
+# "s5e dev_receipt.json (K1 nominal closure PASS on 20 development experiments)".
+NOMINAL_POINTS = ((re.compile(r"docs/orchestration/state/s5e/cand/dev_receipt\.json"), re.compile(r"K1/")),
+                  (re.compile(r"docs/orchestration/state/s5e/cand/review2/r2_recompute\.json"),
+                   re.compile(r"development/K1_")))
+
+
+def point_group(point: str, source: str = "") -> str:
+    """"nominal" when the point's own path names nominal truth (points/nominal, grid/C3_nominal) or NOMINAL_POINTS
+    declares it, else "other"."""
+    if any(p.fullmatch(source) and k.match(point + "/") for p, k in NOMINAL_POINTS):
+        return "nominal"
     return "nominal" if any("nominal" in t for t in tokens(point)) else "other"
 
 
@@ -567,7 +589,7 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
     for est in order:
         cells: dict = {}
         for r in groups[est]:
-            cells.setdefault((r[4], r[5], point_group(r[1]), r[2], r[7]), []).append(r)
+            cells.setdefault((r[4], r[5], point_group(r[1], r[10]), r[2], r[7]), []).append(r)
         for (fam, key, pg, sc, st) in sorted(cells):
             rs = cells[(fam, key, pg, sc, st)]
             vals = sorted(x for r in rs for x in numbers(raw[(r[10], r[11])]))
@@ -634,7 +656,7 @@ def attribution_drops(repo: Path, index: reglib.Index, rows) -> list[str]:
     regenerated index, unless WAIVERS.tsv holds a row for it whose cited line (digest-checked) gives the reason.
     No HEAD, or no index at HEAD: nothing to compare (the first commit of the index)."""
     out = subprocess.run(["git", "-C", str(repo), "show", f"HEAD:{INDEX_TSV}"], capture_output=True,
-                         env=reglib.git_env())
+                         env=reglib.git_env(repo), cwd=str(repo))
     if out.returncode != 0:
         return []
     before = {r["estimator"] for r in reglib.read_tsv_text(out.stdout.decode("utf-8", errors="replace"))} - {"UNATTRIBUTED"}
@@ -746,11 +768,11 @@ def self_test() -> int:
 
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
-        env = reglib.git_env()
+        env = reglib.clean_env()  # a throwaway repository: never the hook's GIT_INDEX_FILE
 
         def g(*a: str) -> None:
             subprocess.run(["git", "-C", str(t), "-c", "user.name=self-test", "-c", "user.email=self-test@invalid",
-                            *a], check=True, capture_output=True, env=env)
+                            *a], check=True, capture_output=True, env=env, cwd=str(t))
 
         g("init", "-q")
         need = {reglib.ESTIMATORS, reglib.ALIASES, reglib.ATTRIBUTION, reglib.STATUS, reglib.UNRESOLVED,
@@ -863,6 +885,11 @@ def self_test() -> int:
         case("NO-RESULTS-INDEXED listing emptied in the committed rendering", rc, 1, out)
         ok &= "SILENT ZERO" in out
     # One fixture per exclusion class (family() on the key as the walker sees it), and a positive control each.
+    sd_doc = {"library_bias_eavail": {"cases": {"D1_p0.350": {"bias": 0.1, "sd": 0.02}}}}
+    got_sd = sorted("/".join(h[0]) for h in hits(sd_doc))
+    good = got_sd == ["library_bias_eavail/cases/D1_p0.350/bias"]
+    ok &= good
+    print(f"  self-test {'ok' if good else 'WRONG':<5} a bare sd beside a bias in a numeric table is not a bias: {got_sd}")
     for key, want in (("E_lo_of_max_pull", None), ("residency_ratio", None), ("guard/inventory-base-x.py", None),
                       ("spearman(r,shift)", None), ("chi2_bias_PB_raw_frozen_pz", None),
                       ("control_bias_PB_chi2_pz", None), ("null_P(max pull SD over 20 >= observed)", None),

@@ -23,19 +23,46 @@ UNRESOLVED = f"{REGISTRY_DIR}/UNRESOLVED-NAMES.tsv"
 WAIVERS = f"{REGISTRY_DIR}/WAIVERS.tsv"
 
 
-def git_env() -> dict:
-    """The environment with every GIT_* variable removed except the index file a hook may set."""
-    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
-    if "GIT_INDEX_FILE" in os.environ:
-        # A hook run by `git commit -a`/`--only` uses a temporary index; honour it so the check judges the
-        # index the commit is being built from.
-        env["GIT_INDEX_FILE"] = os.environ["GIT_INDEX_FILE"]
+def clean_env() -> dict:
+    """The environment with EVERY GIT_* variable removed (GIT_INDEX_FILE, GIT_DIR, GIT_WORK_TREE,
+    GIT_OBJECT_DIRECTORY, GIT_ALTERNATE_OBJECT_DIRECTORIES, GIT_COMMON_DIR, GIT_PREFIX, ...). Every git call on a
+    THROWAWAY repository (self-tests, fixtures) uses this, with an explicit cwd: a hook's GIT_INDEX_FILE names the
+    committing worktree's index, and a fixture that inherited it would overwrite that index."""
+    return {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+
+
+_HOOK_TOP: list = []
+
+
+def _hook_toplevel() -> Path | None:
+    """The top level of the repository whose hook is running (resolved with the FULL inherited environment from
+    the current directory), or None when no GIT_INDEX_FILE is set. Computed once."""
+    if not _HOOK_TOP:
+        top = None
+        if "GIT_INDEX_FILE" in os.environ:
+            out = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, cwd=os.getcwd())
+            if out.returncode == 0:
+                top = Path(out.stdout.decode().strip()).resolve()
+        _HOOK_TOP.append(top)
+    return _HOOK_TOP[0]
+
+
+def git_env(repo: Path | str | None = None) -> dict:
+    """The environment for a git call on `repo`: clean_env(), plus the hook's GIT_INDEX_FILE (made absolute) ONLY
+    when `repo` is the top level of the repository whose hook is running -- a `git commit -a`/`--only` hook judges
+    a temporary index, and --check must read that one. Any other repository gets a clean environment."""
+    env = clean_env()
+    if "GIT_INDEX_FILE" in os.environ and repo is not None:
+        top = _hook_toplevel()
+        if top is not None and Path(repo).resolve() == top:
+            idx = os.environ["GIT_INDEX_FILE"]
+            env["GIT_INDEX_FILE"] = idx if os.path.isabs(idx) else os.path.join(os.getcwd(), idx)
     return env
 
 
 def git(repo: Path, *args: str, input_bytes: bytes | None = None) -> bytes:
     out = subprocess.run(["git", "-C", str(repo), *args], input=input_bytes, capture_output=True,
-                         env=git_env())
+                         env=git_env(repo), cwd=str(repo))
     if out.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} failed ({out.returncode}): {out.stderr.decode(errors='replace')}")
     return out.stdout
