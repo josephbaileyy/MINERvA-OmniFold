@@ -99,22 +99,31 @@ materiality is not established.
 \input{scalar_kinematics}
 
 \paragraph{Unfolding and binning.}
-Both definitions are evaluated for all twelve ME~FHC playlists, and the 2D
-unfolding code is run with three classifier inputs, $(\pT,\pPar,\Eavail)$.
+Both definitions are evaluated for all twelve ME~FHC playlists, and, for
+configuration~(a), the 2D unfolding code is run with three classifier inputs,
+$(\pT,\pPar,\Eavail)$.
+% RE-1 integration (DECISION-20261023 item 3; DECISION-20261020 item 1): P3/P4 are configuration (e),
+% stageF/methods/re1/RE1-REPORT-2.md sec. 4; fig:eavail-marg and fig:q3excess are not regenerated (same section).
+Except where stated, the 3D and 4D central values in this section are those of
+configuration~(e) (\S\ref{sec:method-config}), with refined negative-weight
+background subtraction (a 400-tree, 31-leaf refinement);
+Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess}, and the numbers read from
+them, are from configuration~(a), with purity-based subtraction.
 The cross section is extracted with the 3D bin volume
 $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$, and the flux $\Phi$ is still applied
 per $\pT$ bin, with the same value for every $\pPar$ and $\Eavail$ bin. The
 $\Eavail$ binning $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ ends in a wide
 catch bin, so that the $\Eavail$ marginal contains the full CC-inclusive recoil
-tail. Global OmniFold completeness is $c=1.0000$, as in 2D.
+tail. For configuration~(a), global OmniFold completeness is $c=1.0000$, as in 2D.
+% Source: 3d-unfolding/3D_OMNIFOLD_STATUS.md:55, :61 (headline table "MEFHC 5-iter lgbm", configuration (a)).
 
 \subsection{The available-energy spectrum}
 \label{sec:3d-spectrum}
 The unfolded $d\sigma/d\Eavail$, the 1D projection
 of the 3D result
 (Fig.~\ref{fig:eavail}), falls monotonically from
-\SI{2.19e-38}{cm^2/GeV/nucleon} at the low-recoil peak to
-\SI{6.8e-41}{} in the catch bin, the expected CC-inclusive shape with most
+\SI{2.18e-38}{cm^2/GeV/nucleon} at the low-recoil peak to
+\SI{6.7e-41}{} in the catch bin, the expected CC-inclusive shape with most
 of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
 
 \begin{figure}[H]
@@ -127,17 +136,28 @@ of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
 
 \subsection{Validation against the 2D measurement}
 \label{sec:3d-anchor}
-Marginalizing over $\Eavail$ must reproduce the 2D result of
+Marginalizing over $\Eavail$ should reproduce the 2D result of
 \S\ref{sec:results}, our validation reference in the absence of a directly matched
 published CC-inclusive 3D reference for this signal and phase space.
-The \emph{normalization} agrees closely, with total $\sigma$ at
-$+\SI{0.95}{\percent}$ and median per-bin marginal/2D ratio $1.0016$.
-The \emph{shape} agrees less closely. With the published covariance, the
-indicative distance is $\chi^{2}/\mathrm{ndf}=4.98$, above the 2D values
+% RE-1 integration, review fixes 2-3 (director, 2026-10-23): the total and the median ratio are against E_U on its 205
+% cells, area-weighted (stageF/methods/re1/run2/f/numbers.json, p3.vs_E_U: total_change_percent 0.0014, median_ratio
+% 0.99998); the scatter is the SD of hXSec2D / E_U on those cells (RE1-REPORT-2.md sec. 4); the D2 movement is
+% RE1-REPORT-2.md sec. 3 (relative: median 0.44 %, p84 1.13 %). The plain content sum (+0.79 %) is not printed.
+This is a cross-configuration comparison: the 3D marginal is configuration~(e),
+and the 2D result is configuration~(a), with purity-based subtraction. On the 2D
+data, the background treatment alone moves cells by a median of
+\SI{0.44}{\percent} (84th percentile \SI{1.13}{\percent};
+\S\ref{sec:negweight-footing}).
+The \emph{normalization} agrees closely: the marginal's area-weighted total
+over the 205 reported cells agrees with the 2D result's to \SI{0.001}{\percent},
+and the median per-bin ratio is $1.0000$.
+The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the
+2D result scatters by $\sim\SI{3.5}{\percent}$ (standard deviation over the
+205 cells). With the published covariance, the indicative distance of the
+marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values
 ($\chiPaper$ for the quoted LightGBM central value, $\chiPaperExact$ for the
-exact-split cross-check). It is driven by a $\sim\SI{4.4}{\percent}$ per-bin
-scatter that the third axis introduces in the $(\pT,\pPar)$ marginal
-(Fig.~\ref{fig:eavail-marg}). Because the two results share data and their
+exact-split cross-check); Fig.~\ref{fig:eavail-marg}, which shows
+configuration~(a), gives $4.98$. Because the two results share data and their
 cross-covariance is unavailable, this number is not a calibrated
 goodness-of-fit statistic.
 
@@ -147,14 +167,16 @@ goodness-of-fit statistic.
   \caption{Standardized per-bin differences of the $\Eavail$-marginal, scaled by
   published uncertainties, on the $14\times16$ grid and in distribution.
   Shared data and unavailable cross-covariance make these descriptive;
-  they are not formal independent-result pulls.}
+  they are not formal independent-result pulls. Configuration~(a), with
+  purity-based subtraction; the figure is not redrawn for the configuration-(e)
+  central value of the text.}
   \label{fig:eavail-marg}
 \end{figure}
 
 \subsection{Closure: the one injected $\Eavail$ deformation is recovered}
 \label{sec:3d-closure}
-A reweighting closure tests whether the $\SI{4.4}{\percent}$ scatter reflects
-method bias or real information. The 3D unfolding recovers a known
+A reweighting closure tests the 3D unfolding on one injected deformation. It
+tests configuration~(a) only. The configuration-(a) unfolding recovers a known
 $+\SI{30}{\percent}$ Gaussian bump injected into pseudo-data in \emph{truth}
 $\Eavail$ (center \SI{0.3}{GeV}, width \SI{0.15}{GeV}).
 The recovered step-2 mean weight is $1.048$ against the injected $1.0485$.
@@ -162,17 +184,19 @@ Residuals against reweighted truth on the $\Eavail$-marginal have median
 $0.9999$ and standard deviation \textbf{\num{0.0006}}
 (\SI{0.06}{\percent}); the per-3D-bin residual standard deviation is
 \SI{3.2}{\percent} from MC statistics in sparse high-recoil corners.
-Marginal scatter is $\sim70\times$ tighter than the
-$\SI{4.4}{\percent}$ data-versus-2D scatter; total normalization matches
-to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation}
+The closure's marginal scatter is far below the $\SI{3.5}{\percent}$
+data-versus-2D scatter, but the two belong to different configurations (the
+closure to (a), the data comparison to (e) against (a)), so their ratio is not
+quoted. Total normalization matches to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation}
 ($\Eavail$ projection) the residual is \SI{1.84}{\percent} vs \SI{18.1}{\percent}
 injected (ratio $0.102$). No acceptance threshold fixed before the test is on
 record, so this residual is not graded.
 
 The test covers one shape, this Gaussian, injected into the pseudo-data and
 unfolded \emph{with the same detector response that the unfolding uses}. On
-this injection the method neither manufactures nor destroys the feature, which
-is what allows the data-versus-2D scatter to be read as
+this injection the configuration-(a) estimator neither manufactures nor destroys
+the feature. That does not extend to configuration~(e), and the data-versus-2D
+scatter compares (e) with (a), so the scatter is not read here as
 data\,$\leftrightarrow$\,MC structure resolved by the available-energy axis.
 The test does \emph{not} exclude estimator bias for other deformations and
 does not test response mismatch, and the hidden-variable closure exceeds its
@@ -183,6 +207,9 @@ App.~\ref{app:response-mismatch}).
 \label{sec:3d-classifier}
 Our gradient-boosted decision trees differ from the neural-network classifiers
 used in published OmniFold analyses~\cite{Andreassen:2019cjw,Canelli:2025guide}.
+This cross-check uses the configuration-(a) GBDT unfold, with purity-based
+subtraction.
+% Source: make_figures.sh (nn_vs_gbdt_full from res_lgbm_3d.npz, the configuration-(a) 3D GBDT run).
 The weight $w=p/(1-p)$ holds only if the GBDT output is a calibrated
 posterior.
 The step-1 reco classifier (data vs.\ MC reco) has a near-diagonal reliability
@@ -191,15 +218,16 @@ Data and reco MC are nearly indistinguishable, so the reweight is a modest corre
 A full scalar cross-check with a Keras multilayer perceptron (MLP), the same
 weighted 3D inputs and the same five-iteration OmniFold loop gives total ratio $1.0078$ versus GBDT and median projection
 differences of \SIrange{0.7}{1.4}{\percent} (Fig.~\ref{fig:calibration}).
-Agreement in the populated bulk establishes that the scalar result is not
-specific to the production classifier family.
+Agreement in the populated bulk establishes that the configuration-(a) scalar
+result is not specific to its classifier family.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{nn_vs_gbdt_full}
   \caption{Five-iteration scalar OmniFold cross-check with identical weighted
   3D inputs and extraction, changing only the classifier family. Top:
-  absolutely normalized GBDT and Keras-MLP projections; bottom: binwise ratio.
+  absolutely normalized GBDT (configuration~(a)) and Keras-MLP projections;
+  bottom: binwise ratio.
   The MLP/GBDT total-cross-section ratio is $1.0078$; median
   absolute projection differences are \SI{1.20}{\percent} in $\pT$,
   \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$.
@@ -271,7 +299,7 @@ Figure~\ref{fig:3dmodels} compares central values only. Totals over the full
 measurement phase space follow
 GiBUU ($\SI{2.22e-38}{}$) $<$ NuWro ($\SI{2.66e-38}{}$) $<$ Tune v1
 ($\SI{2.71e-38}{}$) $<$ GENIE CV ($\SI{2.76e-38}{}$) $<$ data
-($\SI{3.08e-38}{cm^2/nucleon}$). All four under-predict the rate by
+($\SI{3.07e-38}{cm^2/nucleon}$). All four under-predict the rate by
 \SIrange{10}{28}{\percent} of the data. Integrating the reported $\Eavail$ range
 with the catch bin dropped gives the same order. All closely track the
 $(\pT,\pPar)$ shape. The $\Eavail$ axis discriminates among them;
@@ -298,7 +326,7 @@ The $\Eavail$ axis exposes this excess, invisible in 2D.
 For the integrated $\Eavail$ rate without the catch bin, GENIE CV, Tune~v1,
 NuWro and GiBUU central values lie respectively
 $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and
-$\SI{22.2}{\percent}$ below the data.
+$\SI{22.3}{\percent}$ below the data.
 % (flux-repaired predictions; ledger row \texttt{VL159})
 No 3D covariance, generator $\chi^{2}$, $p$-value or significance is quoted.
 The 3D covariance that would be quoted is the exact projection of the
@@ -355,7 +383,7 @@ count-fractions $\times$ bin value), overlaid with data, locates the largest
 positive gaps in the quasielastic--$\Delta$ dip,
 $[0.10,0.20)$ and $[0.20,0.40)$, while central values are much closer in the
 QE-dominated $[0,0.10)$ and $[0.40,1.50)$ regions.
-At central value, \SI{70}{\percent} of the positive deficit lies at
+At central value, \SI{69}{\percent} of the positive deficit lies at
 $\Eavail\le\SI{0.4}{GeV}$, where 2p2h events populate. Closing the integrated deficit
 requires 2p2h at $\approx\SI{45}{\percent}$ of the QE rate
 (\SIrange{68}{71}{\percent} in the two dip bins), the standard
@@ -372,18 +400,18 @@ with $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$.
 2p2h falls in the dip and brings all three low-$\Eavail$ bins toward data
 (Fig.~\ref{fig:mec}), closing, in central values without uncertainties,
 \SI{52}{\percent} of the data$-$CV gap at $\Eavail\le\SI{0.4}{GeV}$ and \SI{63}{\percent} of the
-integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{2.6}{\percent}$). The prediction
+integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{2.7}{\percent}$). The prediction
 % ledger row \texttt{VL160}
 still falls short in the dip, especially $[0.10,0.20)$, but its integral over
 the reported $\Eavail$ range is closer to data than
-Tune~v1 ($-\SI{2.6}{\percent}$ against $-\SI{9.5}{\percent}$). Tune v1
+Tune~v1 ($-\SI{2.7}{\percent}$ against $-\SI{9.5}{\percent}$). Tune v1
 layers MINERvA's empirical low-recoil 2p2h \emph{enhancement} and RPA on top of
 the stock Valencia MEC. The central values are consistent with the known need
 for that enhancement, and with NuWro and GiBUU (native, un-enhanced 2p2h)
 sitting low in the dip as well, but they do not establish it.
 
 2p2h leaves the high-$\Eavail$ $[1.50,3.00)$ bin unchanged. There, data
-exceed the GENIE CV by about \SI{9}{\percent} (data/CV $1.09$) and exceed Tune~v1 as well; the high-$\Eavail$
+exceed the GENIE CV by about \SI{10}{\percent} (data/CV $1.10$) and exceed Tune~v1 as well; the high-$\Eavail$
 excess over Tune~v1 is localized on the $(\Eavail,W)$ plane in
 \S\ref{sec:eavailw}.
 
@@ -447,7 +475,7 @@ $q_{3}$ binning $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$
 (seven bins including a final catch bin), giving
 $14\times16\times7\times7=10\,976$ four-dimensional bins (4830 populated).
 
-\paragraph{Marginalization check (4D$\to$3D).} The $q_{3}$ marginalization reproduces
+\paragraph{Marginalization check (4D$\to$3D).} In configuration~(a), the $q_{3}$ marginalization reproduces
 the 3D $\Eavail$ spectrum and low-recoil excess (Fig.~\ref{fig:q3excess}, right).
 The $\Eavail$-marginal data/Tune~v1 ratio is
 $1.21$ in the lowest bin, dips to $1.01$ across the quasielastic--$\Delta$
@@ -490,7 +518,7 @@ $(\pT,\pPar)$ marginalization to $\pPar<\SI{20}{GeV/c}$ to mirror the Ascencio
 muon selection ($\theta_\mu<20^{\circ}$, $1.5<p_\mu<\SI{20}{GeV}$) gives two super-cells,
 $\Eavail<\SI{0.4}{GeV}$ in $q_{3}\in[0.4,0.6)$ and $[0.6,1.2)\,\si{GeV}$: the
 low-recoil 2p2h region. Our central result lies
-\SI{9.2}{\percent} and \SI{6.3}{\percent} above Ascencio. No pulls or
+\SI{9.2}{\percent} and \SI{6.0}{\percent} above Ascencio. No pulls or
 full-covariance $\chi^{2}$ are reported (no corrected 4D covariance, above;
 Fig.~\ref{fig:ascencio}). Both share MINERvA flux/detector systematics,
 treated here as independent. The $p_\mu$ and $\pPar$ cuts differ by
@@ -529,7 +557,8 @@ method, \emph{and} a systematic sweep on that binning.
   $q_{3}$ (center) and $\Eavail$ (right) marginals. The $\Eavail$ marginal
   reproduces the 3D low-recoil excess. The joint plane shows genuine $q_{3}$
   structure in the data\,$-$\,MC discrepancy (ratio rising with $q_{3}$
-  across the quasielastic--$\Delta$ dip).}
+  across the quasielastic--$\Delta$ dip). Configuration~(a), with purity-based
+  subtraction; not redrawn for configuration~(e).}
   % Comparator: the MINERvA Tune~v1 prior (\texttt{w\_truth}).
   \label{fig:q3excess}
 \end{figure}

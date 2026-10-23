@@ -63,9 +63,13 @@ echo "== 3D generators =="
 # figures/<name>.pdf for App. H (reproduction/s5p/scope.py pins three of them) and are no longer
 # regenerated; their producer lines are kept, commented out. Their default inputs are pre-repair.
 S7G="/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding"
-run figures/generators_vs_unfolded_band_central.png docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only generators
-run figures/mode_decomp_eavail_central.png          docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only modedecomp
-run figures/compare_mec_eavail_central.png          docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only mec
+# RE-1 integration (DECISION-20261023 item 3; DECISION-20261020 item 1): the 3D/4D central values are configuration
+# (e). This figure is drawn from P3/P4 by docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/launch/re1_f2.sbatch
+# (the regeneration recipe) and installed below, after the sync loop, by a digest-checked copy from re1/run2/f/new/.
+# The configuration-(a) run that stood here is kept, commented out; rerunning it would overwrite the (e) figure.
+# run figures/generators_vs_unfolded_band_central.png docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only generators
+# run figures/mode_decomp_eavail_central.png          docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only modedecomp
+# run figures/compare_mec_eavail_central.png          docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only mec
 # run generators_vs_unfolded_band.png  3d-unfolding/genie  python overlay_generators_band.py --unfolded ../xsec_3d_MEFHC_5iter_lgbm.root --cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_combined3d_total --syst-cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_universe3d_total --band uq_3d/stat_band_3d.root --generator GENIE-CV:genie_cv_xsec3d.root --generator Tune-v1:model_tunev1_xsec3d.root --generator NuWro:nuwro_cv_xsec3d.root --generator GiBUU:gibuu_cv_xsec3d.root --out generators_vs_unfolded_band
 run compare_3d_fullcov.png           3d-unfolding/genie  python compare_3d_fullcov.py --data ../xsec_3d_MEFHC_5iter_lgbm.root --cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_combined3d_total --generator GENIE-CV:genie_cv_xsec3d.root --generator Tune-v1:model_tunev1_xsec3d.root --generator NuWro:nuwro_cv_xsec3d.root --generator GiBUU:gibuu_cv_xsec3d.root --out compare_3d_fullcov
 # run compare_mec_eavail.png           3d-unfolding/genie  python compare_mec_eavail.py --plot compare_mec_eavail.png
@@ -111,7 +115,12 @@ run products/5d/fps_acceptance_MEFHC.png     nd-unfolding  python fps_acceptance
 run products/5d/fps_prior_envelope_MEFHC.png nd-unfolding  python fps_prior_envelope.py
 
 echo "== 3D sec figures (from saved products; raw banks were cleaned up) =="
-run eavail_spectrum.png  3d-unfolding  python plot_eavail_spectrum.py --infile xsec_3d_MEFHC_5iter_lgbm.root --out eavail_spectrum.png
+# RE-1 integration (DECISION-20261023 item 3; DECISION-20261020 item 1): the 3D/4D central values are configuration
+# (e). This figure is drawn from P3/P4 by docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/launch/re1_f2.sbatch
+# (the regeneration recipe) and installed below, after the sync loop, by a digest-checked copy from re1/run2/f/new/.
+# The configuration-(a) run that stood here is kept, commented out; rerunning it would overwrite the (e) figure.
+# (This (a) run also wrote 3d-unfolding/eavail_spectrum.pdf, which the sync loop below would copy over the (e) figure.)
+# run eavail_spectrum.png  3d-unfolding  python plot_eavail_spectrum.py --infile xsec_3d_MEFHC_5iter_lgbm.root --out eavail_spectrum.png
 run ../3d-unfolding/eavail_marginal_vs_paper_pull_full.png  2d-unfolding  python compare_to_paper_fullcov.py --ours ../3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root --out-prefix "$REPO/3d-unfolding/eavail_marginal_vs_paper"
 run universe_stage2_3d/uq_universe_3d_band_eavail.png  3d-unfolding/uq_3d  python plot_universe_3d_bands.py --cv ../xsec_3d_MEFHC_5iter_lgbm.root --cov universe_stage2_3d/uq_universe_3d_covariance.root --outdir universe_stage2_3d
 
@@ -120,7 +129,11 @@ run products/5d/control_plots.png        nd-unfolding  python make_control_plots
 run products/5d/control_corner.png       nd-unfolding  python plot_control_corner.py
 # 2026-10-03: central values only, as for the 3D generators above (our bars and the chi^2 came from
 # the superseded unified-throw 4D covariance; the published points keep the published covariance).
-run figures/ascencio_fullcov_compare_central.png docs/analysis-note  python redraw_central_only.py --xsec4d "$REPO/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root" --supplemental "$REPO/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt" --outdir figures --only ascencio
+# RE-1 integration (DECISION-20261023 item 3; DECISION-20261020 item 1): the 3D/4D central values are configuration
+# (e). This figure is drawn from P3/P4 by docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/launch/re1_f2.sbatch
+# (the regeneration recipe) and installed below, after the sync loop, by a digest-checked copy from re1/run2/f/new/.
+# The configuration-(a) run that stood here is kept, commented out; rerunning it would overwrite the (e) figure.
+# run figures/ascencio_fullcov_compare_central.png docs/analysis-note  python redraw_central_only.py --xsec4d "$REPO/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root" --supplemental "$REPO/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt" --outdir figures --only ascencio
 # run products/4d/ascencio_fullcov_compare.png nd-unfolding  python compare_ascencio_fullcov.py
 run minerva_unfolding_landscape.png      3d-unfolding  python plot_minerva_landscape.py
 
@@ -168,6 +181,29 @@ install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pz.pdf MEFHC_fig6_7_uncertain
 install_receipt_fig stat/uq_spread_2d.pdf               uq_spread_2d.pdf                79d6b35fe81fe71c71738996090b27c2fded2d990bb9bbae670927fbf253a7cb
 install_receipt_fig stat/uq_corr_2d.pdf                 uq_corr_2d.pdf                  42ea035f77b767b3d2d0dc3d2cbd57c9537f957e2ae39aef936a9eb373fc0d97
 install_receipt_fig fig1/fig1_validation.pdf            paper_fig1_validation.pdf       82665808e99056b1f79754647d7640078dffe94fc667691a979a22769022a0fb
+
+echo
+echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="
+# Also after the sync loop, so that an older (a) product under $REPO/3d-unfolding (eavail_spectrum.pdf) cannot
+# overwrite them. Sources: the committed F2 outputs; digests: re1/run2/f/SHA256SUMS.f2 and RE1-REPORT-2.md sec. 4.
+# Recipe: re1/run2/launch/re1_f2.sbatch. The F2 PDFs are installed as they are; F2 wrote no .png beside them here.
+RE1F="${RE1F:-$REPO/docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/f/new}"
+install_re1_fig() {  # install_re1_fig <basename under $RE1F and in $FIGDIR> <sha256>
+  local src="$RE1F/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_re1_fig eavail_spectrum.pdf                     d2ae66c4149c8f33a7cc5e3635cc86e4e839e20045c3752c8bf87ff4e3aadf49
+install_re1_fig generators_vs_unfolded_band_central.pdf 48210da26e8e84bd8cae0d83df1de85a5996c005d78f2a959225efd24e44e3b1
+install_re1_fig mode_decomp_eavail_central.pdf          009a26be4dc3b1a8ec7bfc51ee1e038c74b6a62e6490e027ece08b63f4febc12
+install_re1_fig compare_mec_eavail_central.pdf          09e2b824cfa10671f3bbab33764778424493011081e40ea507073e3307fd63f4
+install_re1_fig ascencio_fullcov_compare_central.pdf    9bd4316e8bd94ecd6b0681ef955579fbf0e867847a6f43274fda64349584d2a5
 
 echo
 echo "== paper-only vector crops =="
