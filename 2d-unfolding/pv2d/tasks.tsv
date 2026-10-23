@@ -1,0 +1,10 @@
+# task	mode	ratio	role (DECLARATION.md §5)
+data_tune_v1	prior	tune_v1	NC nominal control and pilot; the zero of every shift
+data_genie_mec	prior	genie_mec	vertex
+data_nuwro	prior	nuwro	vertex
+data_gibuu	prior	gibuu	vertex
+closure_tune_v1	closure	tune_v1	PC closure floor (pseudo-data = MC, r = 1)
+closure_gibuu	closure	gibuu	PC closure bias at the control vertex
+data_genie_cv	prior	genie_cv	OPTIONAL vertex (only if the binding admits it)
+data_gibuu_a3	prior	gibuu_a3	PC fallback, only if PC is NOT_POWERED
+closure_gibuu_a3	closure	gibuu_a3	PC fallback, only if PC is NOT_POWERED
