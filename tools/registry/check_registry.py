@@ -7,9 +7,10 @@
 
 (1) INTEGRITY. Every ESTIMATORS definition, ALIASES row and UNRESOLVED-NAMES row cites file:line, and the cited
     line (staged bytes) must contain the row's quote verbatim; every alias names a registered id; every pattern
-    compiles. A citation pins its line by number AND by the digest of the whole line (line_sha256): any move FAILS
-    (naming the new number; `--repoint` rewrites it), and any edit of the cited line FAILS even if the quote is
-    still on it (a retraction quoting the alias is an edit); re-read it and re-cite with `--cite FILE:LINE`.
+    compiles. A citation is resolved by the digest of the whole cited line (line_sha256); its line number is a
+    hint. A moved line passes and the check names where it found it (`--repoint` refreshes the hint); any edit of
+    the cited line FAILS even if the quote is still on it (a retraction quoting the alias is an edit), as does a
+    line text that occurs more than once; re-read and re-cite with `--cite FILE:LINE`.
     (ATTRIBUTION and STATUS rows are checked the same way by results_index.py.)
 (2) COMPLETENESS, scoped to an explicit label pattern list (LABEL_PATTERNS). Over the printed text (comments
     removed) of the \\input closures of main_paper.tex, main_note.tex, main_primer.tex and main_records.tex, every
@@ -133,7 +134,7 @@ def run(repo: Path) -> int:
     cfails, n, nfiles = completeness(index)
     fails += cfails
     for w in warns:
-        print("  WARN " + w)
+        print("  NOTE " + w)
     for f in fails:
         print("  FAIL " + f)
     ests = reglib.read_tsv(index, reglib.ESTIMATORS)
@@ -219,18 +220,24 @@ def self_test() -> int:
               f"{'FIRES' if r6 else 'silent'} (want FIRES){': ' + r6[0][:100] if r6 else ''}")
         (note / "main_note.tex").write_text("\\input{body}\n")
         subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
-        # Citation power. The cited line is pinned by number AND digest: a move, an edit and a retraction that
-        # still quotes the alias all FAIL; --repoint repairs a pure move and nothing else.
+        # Citation power. The cited line is resolved by its digest (the number is a hint): a move passes and is
+        # named; an edit and a retraction that still quotes the alias FAIL; --repoint refreshes hints only.
         cited = reglib.read_tsv(src_index, reglib.ALIASES)[0]
         p = t / cited["source"]
         original = p.read_text()
         lines = original.split("\n")
         n = int(cited["line"])
         p.write_text("inserted line\n" + original)
-        case(f"cited line of alias {cited['alias']!r} moved down by one", good[1], True)
+        notes = case(f"cited line of alias {cited['alias']!r} moved down by one (resolved by digest)", good[1], False)
+        found = any("found at" in x for x in notes or [])
+        ok &= found
+        print(f"  self-test {'ok' if found else 'WRONG':<5} ... and the check names the line it found "
+              f"({'yes' if found else 'no'})")
         subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
         rep = reglib.repoint(reglib.Index(t), t)
-        case("... after --repoint rewrote the line numbers", good[1], False)
+        notes = case("... after --repoint refreshed the hints", good[1], False)
+        ok &= not notes
+        print(f"  self-test {'ok' if not notes else 'WRONG':<5} ... and no found-at note remains")
         (t / reglib.ALIASES).write_text(clean_aliases)
         retracted = lines[:]
         retracted[n - 1] = ("We no longer use the wording \"" + cited["quote"] + "\"; it is withdrawn.")

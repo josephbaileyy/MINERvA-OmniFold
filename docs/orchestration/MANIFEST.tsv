@@ -267,7 +267,7 @@ docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	d
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	72	70	8866
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	6	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	82	767	63355
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;nd-unfolding/tests/test_object_identity_checks.py	no	135	4371	1422704
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py;nd-unfolding/tests/test_object_identity_checks.py	no	135	4372	1422869
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	9	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	18	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	7	239	14244
@@ -399,7 +399,7 @@ docs/orchestration/RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md	tracked	L
 docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md	tracked	LIVE	document		20261005	open		route-only	reproduction/s5p/scope.py	no	35	144	10764
 docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md	tracked	LIVE	document		20261005	open		route-only		no	7	149	8688
 docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	tracked	LIVE	document		20261006	open		route-only		no	24	163	9898
-docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	tools/registry/absence_claims.py;tools/registry/check_registry.py;tools/registry/results_index.py;tools/registry/whatis.py	no	10	88	12778
+docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	tools/registry/absence_claims.py;tools/registry/check_registry.py;tools/registry/results_index.py;tools/registry/whatis.py	no	10	92	14052
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only		no	7	180	13118
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	tracked	LIVE	document		20261006	open		route-only		no	5	114	8919
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	5	201	13579
@@ -609,12 +609,13 @@ docs/orchestration/receipts/xr-x1-chi2-20261012/SHA256SUMS	tracked	ARCHIVAL	arti
 docs/orchestration/receipts/xr-x1-chi2-20261012/chi2_x0_paperonly_control.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only		yes	1	32	2324
 docs/orchestration/receipts/xr-x1-chi2-20261012/chi2_x1_paperonly.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only		yes	1	32	2324
 docs/orchestration/registry/ALIASES.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/check_registry.py;tools/registry/reglib.py;tools/registry/results_index.py;tools/registry/whatis.py	no	6	63	12465
-docs/orchestration/registry/ATTRIBUTION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	4	16	3087
+docs/orchestration/registry/ATTRIBUTION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	4	19	4030
 docs/orchestration/registry/ESTIMATORS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py;tools/registry/whatis.py	no	5	11	4042
-docs/orchestration/registry/RESULTS-INDEX.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py;tools/registry/test_registry.py;tools/registry/whatis.py	no	7	4902	1152831
+docs/orchestration/registry/RESULTS-INDEX.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py;tools/registry/test_registry.py;tools/registry/whatis.py	no	7	4979	1175800
 docs/orchestration/registry/RESULTS-POPULATION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py	no	3	117	10480
 docs/orchestration/registry/STATUS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	3	2	396
 docs/orchestration/registry/UNRESOLVED-NAMES.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py	no	2	7	1996
+docs/orchestration/registry/WAIVERS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	4	1	47
 docs/orchestration/run_gate2_r4_detached.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	nd-unfolding/pet/sbatch_gate2_target_validator.sh	no	7	31	1403
 docs/orchestration/runbooks/RUNBOOK-20260908-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260908	terminal		exact-path-only		yes	3	140	7634
 docs/orchestration/runbooks/RUNBOOK-20260909b-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260909	terminal		exact-path-only		yes	2	176	9826

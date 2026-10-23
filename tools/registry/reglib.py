@@ -20,6 +20,7 @@ ALIASES = f"{REGISTRY_DIR}/ALIASES.tsv"
 ATTRIBUTION = f"{REGISTRY_DIR}/ATTRIBUTION.tsv"
 STATUS = f"{REGISTRY_DIR}/STATUS.tsv"
 UNRESOLVED = f"{REGISTRY_DIR}/UNRESOLVED-NAMES.tsv"
+WAIVERS = f"{REGISTRY_DIR}/WAIVERS.tsv"
 
 
 def git_env() -> dict:
@@ -119,16 +120,14 @@ def fields(row: dict) -> tuple[str, str, str, str]:
 
 
 def locate(index: Index, source: str, line: str, quote: str, sha: str) -> tuple[int | None, str | None, str | None]:
-    """Where the cited line is: (line number, error, None).
+    """Where the cited line is: (line number, error, note).
 
-    A citation names a line by number AND by the digest of its whole text (`line_sha256`). It holds only if the
-    line at that number has that digest and contains the quote. Anything else FAILS, because a check that passes
-    does not speak (the hook discards a passing check's output):
-      - a line with that digest at exactly one OTHER number: the line moved; the error names the new number and
-        `check_registry.py --repoint` rewrites it (the only change --repoint makes);
-      - no line with that digest: the cited line's text changed -- an edit, a retraction, a rewording, even if it
-        still contains the quote; re-read it and re-cite by hand (`check_registry.py --cite FILE:LINE`);
-      - several lines with that digest: ambiguous; re-cite by hand.
+    A citation is resolved by the DIGEST of the whole cited line (`line_sha256`); the TSV line number is a hint.
+    It holds if exactly one line of the file has that digest and that line contains the quote; the note then
+    names the line found when it differs from the hint (`check_registry.py --repoint` refreshes hints). It FAILS
+    if no line has the digest -- the cited line's text changed: an edit, a retraction, a rewording, even if the
+    quote survives; re-read it and re-cite by hand (`check_registry.py --cite FILE:LINE`) -- or if several lines
+    have it (ambiguous).
     """
     text = index.text(source)
     if text is None:
@@ -143,24 +142,28 @@ def locate(index: Index, source: str, line: str, quote: str, sha: str) -> tuple[
         return None, f"{source}:{n}: no line_sha256 recorded (run `check_registry.py --cite {source}:{n}`)", None
     lines = text.split("\n")
     if 1 <= n <= len(lines) and line_digest(lines[n - 1]) == sha:
-        if quote not in lines[n - 1]:
-            return None, f"{source}:{n}: the line has its digest but not the quote {quote!r} (row is malformed)", None
-        return n, None, None
-    same = [i for i, l in enumerate(lines, start=1) if line_digest(l) == sha]
+        same = [n]
+    else:
+        same = [i for i, l in enumerate(lines, start=1) if line_digest(l) == sha]
     if len(same) == 1:
-        return None, (f"{source}:{n}: the cited line MOVED to line {same[0]} (same text, same digest); run "
-                      "`python3 tools/registry/check_registry.py --repoint` and stage the TSVs"), None
+        k = same[0]
+        if quote not in lines[k - 1]:
+            return None, f"{source}:{k}: the line has its digest but not the quote {quote!r} (row is malformed)", None
+        if k != n:
+            return k, None, f"{source}: cited line found at {k} (TSV hint {n}; `check_registry.py --repoint` refreshes it)"
+        return k, None, None
     if same:
         return None, (f"{source}:{n}: the cited line's text occurs on {len(same)} lines "
                       f"({', '.join(map(str, same[:5]))}); re-cite by hand"), None
     now = lines[n - 1] if 1 <= n <= len(lines) else "(past end of file)"
-    return None, (f"{source}:{n}: the cited line's TEXT CHANGED (no line has digest {sha}); it now reads "
+    return None, (f"{source}:{n}: the cited line's TEXT CHANGED (no line has digest {sha}); line {n} now reads "
                   f"{now[:120]!r}. Re-read it and re-cite by hand (`check_registry.py --cite {source}:{n}`); "
                   "--repoint does not accept edits"), None
 
 
 def verify_citation(index: Index, source: str, line: str, quote: str, sha: str = "") -> tuple[str | None, str | None]:
-    """(error, None) for one citation; see locate()."""
+    """(error, note) for one citation; see locate(). A note (the line was found at another number) is not a
+    failure."""
     _, err, warn = locate(index, source, line, quote, sha)
     return err, warn
 
@@ -172,13 +175,12 @@ def cited_text(index: Index, source: str, line: str, quote: str, sha: str = "") 
     return (index.text(source) or "").split("\n")[n - 1]
 
 
-CITED_TABLES = (ESTIMATORS, ALIASES, UNRESOLVED, ATTRIBUTION, STATUS)
+CITED_TABLES = (ESTIMATORS, ALIASES, UNRESOLVED, ATTRIBUTION, STATUS, WAIVERS)
 
 
 def repoint(index: Index, repo: Path) -> list[str]:
-    """Rewrite, in the working-tree TSVs, the line number of every citation whose WHOLE LINE (same digest) moved to
-    exactly one other line of its staged source. Never changes a quote or a digest, so an edited line is never
-    accepted here."""
+    """Refresh, in the working-tree TSVs, the line-number HINT of every citation whose whole line (same digest) now
+    sits at another number. Never changes a quote or a digest, so an edited line is never accepted here."""
     report = []
     for table in CITED_TABLES:
         if not index.has(table):
@@ -195,16 +197,14 @@ def repoint(index: Index, repo: Path) -> list[str]:
                 continue
             cells = lines[i].split("\t")
             src, ln, quote, sha = cells[src_col], cells[line_col], cells[quote_col], cells[sha_col]
-            n, err, _ = locate(index, src, ln, quote, sha)
-            if n is not None:
+            n, err, note = locate(index, src, ln, quote, sha)
+            if n is not None and str(n) == ln:
                 continue
-            body = (index.text(src) or "").split("\n")
-            same = [k for k, l in enumerate(body, start=1) if line_digest(l) == sha and quote in l]
-            if len(same) == 1:
-                cells[line_col] = str(same[0])
+            if n is not None:
+                cells[line_col] = str(n)
                 lines[i] = "\t".join(cells)
                 changed = True
-                report.append(f"REPOINTED {table} row {i + 1}: {src}:{ln} -> {same[0]}")
+                report.append(f"REPOINTED {table} row {i + 1}: {src}:{ln} -> {n} (hint refreshed)")
             else:
                 report.append(f"CANNOT REPOINT {table} row {i + 1}: {err}")
         if changed:

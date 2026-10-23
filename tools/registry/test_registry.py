@@ -156,18 +156,29 @@ class ResultsIndexDiscovery(unittest.TestCase):
         line = next(l for l in rows.splitlines() if rel in l)
         self.assertIn("\twithdrawn\tfile name\t", line)
 
-    def test_attribution_line_moved_fails_until_repointed(self) -> None:
+    def test_attribution_line_moved_passes_and_is_named(self) -> None:
         rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"  # ATTRIBUTION cites its line 3, "candidate": "R"
         p = self.f.root / rel
         p.write_text("\n" + p.read_text())
         self.f.git("add", rel)
         out = self.f.check()
-        self.assertEqual(out.returncode, 1, out.stdout)
-        self.assertIn("MOVED to line 4", out.stdout)
+        self.assertEqual(out.returncode, 0, out.stdout)
+        self.assertIn("cited line found at 4 (TSV hint 3", out.stdout)
         run([sys.executable, str(HERE / "check_registry.py"), "--repoint", "--repo", str(self.f.root)])
         self.f.git("add", reglib.ATTRIBUTION)
         self.f.write()
-        self.assertEqual(self.f.check().returncode, 0)
+        out = self.f.check()
+        self.assertEqual(out.returncode, 0, out.stdout)
+        self.assertNotIn("found at", out.stdout)
+
+    def test_attribution_line_edited_fails(self) -> None:
+        rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"
+        p = self.f.root / rel
+        p.write_text(p.read_text().replace(' "candidate": "R",', ' "candidate": "R", "note": "withdrawn",', 1))
+        self.f.git("add", rel)
+        out = self.f.check()
+        self.assertEqual(out.returncode, 1, out.stdout)
+        self.assertIn("TEXT CHANGED", out.stdout)
 
     def test_attribution_quote_removed_fails(self) -> None:
         rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"

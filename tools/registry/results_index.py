@@ -47,6 +47,7 @@ import argparse
 import json
 import re
 import statistics
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -81,12 +82,17 @@ NON_METRIC = {"reweight", "hidden", "amplitude", "alpha", "center", "pt0", "ref"
               "expected", "design", "failures", "failure", "missing", "predicted", "needed", "identical", "pass",
               # instrument coverage (which launchers a guard covers) is not statistical coverage
               "guard", "launcher", "mutation",
-              # correlations, chi-square statistics, p-values and argmax labels are other quantities
-              "spearman", "pearson", "chi2", "p", "argmax"}
-# Under a key naming another quantity, nothing is indexed: chi2/bias_PB/pt_vs_VL175 is a chi-square, not a bias.
-OTHER_QUANTITY = {"chi2", "spearman", "pearson", "correlation", "corr", "cor", "p"}
+              # correlations and chi-square statistics are other quantities (p-values: P_VALUE_KEY below)
+              "spearman", "pearson", "chi2"}
+# Under a correlation key nothing is indexed. Under a chi2 key only pulls and residuals are (Q4/chi2/<variant>/pulls
+# are pulls); chi2/bias_PB/pt_vs_VL175 is a chi-square, not a bias, and the chi2 value itself is never a metric.
+OTHER_QUANTITY = {"spearman", "pearson", "correlation", "corr", "cor"}
+CHI2_ALLOWED = {"pull", "pull_sd", "pull_mean", "max_abs_pull", "residual", "residual_se"}
+# A key is a p-value only when the WHOLE key is one ("p", "p_value", "pvalue", "null_p..."): v3_p_mult_KE20 and
+# D1_p0.350XD4c_p_up are labels that contain a p token, and results under them are indexed.
+P_VALUE_KEY = re.compile(r"p|p_?values?|null_p(_.*)?")
 # Token SEQUENCES that mark a non-metric: e_lo/e_hi are bin edges (E_lo_of_max_pull), null_p a null p-value.
-NON_METRIC_PHRASES = ("e_lo", "e_hi", "null_p")
+NON_METRIC_PHRASES = ("e_lo", "e_hi")
 # Keys excluded by name PREFIX, each with its reason: the weight sums of a closure sample (sum_w_reco_closure,
 # sum_w_reco_closure_data_equiv, max_w_reco_closure) are not a closure metric.
 EXCLUDED_KEYS = re.compile(r"(sum|max)_w_reco_closure(_.*)?")
@@ -155,6 +161,8 @@ def tokens(key: str) -> list[str]:
 def non_metric(key: str) -> bool:
     """A count, a parameter, a pointer or another quantity: never a metric key (see the block above)."""
     if "/" in str(key):  # a path used as a key (guard/inventory-base-*): a pointer, not a quantity
+        return True
+    if P_VALUE_KEY.fullmatch("_".join(tokens(key))):
         return True
     toks = tokens(key)
     if not toks or toks[0] in COUNT_FIRST or "n" in toks or any(t in NON_METRIC for t in toks):
@@ -266,22 +274,24 @@ def hits(doc):
     """(keypath tuple, metric key, family, value, enclosing-object stack) for every R4 hit."""
     out = []
 
-    def walk(o, path, stack):
+    def walk(o, path, stack, allowed=None):
         if isinstance(o, dict):
             stack = stack + [o]
             for k, v in o.items():
                 fam = family(k, o.keys())
-                if fam:
+                if fam and (allowed is None or fam in allowed):
                     leaves = metric_leaves(v, fam, (), str(k))
                     if leaves:
                         for sub, val in leaves:
                             out.append((path + (str(k),) + sub, str(k), fam, val, stack))
                         continue
-                if not (set(tokens(k)) & OTHER_QUANTITY or "null_p" in "_".join(tokens(k))):
-                    walk(v, path + (str(k),), stack)  # nothing under a chi2/correlation/p-value key is a metric
+                toks = set(tokens(k))
+                if toks & OTHER_QUANTITY or P_VALUE_KEY.fullmatch("_".join(tokens(k))):
+                    continue  # nothing under a correlation or p-value key is a metric
+                walk(v, path + (str(k),), stack, CHI2_ALLOWED if "chi2" in toks else allowed)
         elif isinstance(o, list):
             for i, v in enumerate(o):
-                walk(v, path + (str(i),), stack)
+                walk(v, path + (str(i),), stack, allowed)
 
     walk(doc, (), [])
     return out
@@ -411,6 +421,7 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
     pop_text = ("\n".join(head) + "\npath\tclass\trows\tnote\n"
                 + "".join("\t".join(r) + "\n" for r in pop_rows if r[1] == "included"))
     counts["_pop_rows"] = pop_rows
+    counts["_rows"] = rows
     counts["printed"] = printed_estimators(index)
     attributed = {r[0] for r in rows if r[0] != "UNATTRIBUTED"}
     counts["no_results"] = sorted(set(counts["printed"]) - attributed)
@@ -510,6 +521,11 @@ def printed_estimators(index: reglib.Index) -> dict[str, list[str]]:
     return out
 
 
+def point_group(point: str) -> str:
+    """"nominal" when the point's own path names nominal truth (points/nominal, grid/C3_nominal), else "other"."""
+    return "nominal" if any("nominal" in t for t in tokens(point)) else "other"
+
+
 def numbers(v) -> list[float]:
     return [float(x) for x in v] if isinstance(v, list) else [float(v)]
 
@@ -540,22 +556,24 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
     for r in rows:
         groups.setdefault(r[0], []).append(r)
     order = sorted(groups, key=lambda e: (e == "UNATTRIBUTED", e))
-    out += [r"\subsubsection*{Summary by estimator and metric family}",
+    out += [r"\subsubsection*{Summary by estimator, metric family, key, point group and status}",
+            "A cell never pools unlike quantities: it holds one metric key, one point group (nominal truth when the"
+            " point names it, other points otherwise), one scale (the receipt's stage) and one status.", "",
             r"\begingroup\tiny\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\tabcolsep}{2pt}",
-            r"\begin{longtable}{@{}p{0.13\textwidth}p{0.10\textwidth}p{0.05\textwidth}p{0.05\textwidth}"
-            r"p{0.12\textwidth}p{0.10\textwidth}p{0.22\textwidth}p{0.16\textwidth}@{}}",
-            r"\toprule Estimator & Family & Rows & Rcpts & Scale & $n$ & Receipts' own status / verdict & "
+            r"\begin{longtable}{@{}p{0.11\textwidth}p{0.08\textwidth}p{0.15\textwidth}p{0.07\textwidth}"
+            r"p{0.08\textwidth}p{0.03\textwidth}p{0.03\textwidth}p{0.08\textwidth}p{0.13\textwidth}p{0.14\textwidth}@{}}",
+            r"\toprule Estimator & Family & Key & Points, scale & Status & Rows & Rcpts & $n$ & Own status / verdict & "
             r"Min / median / max \\ \midrule\endhead"]
     for est in order:
-        fams: dict[str, list] = {}
+        cells: dict = {}
         for r in groups[est]:
-            fams.setdefault(r[4], []).append(r)
-        for fam in sorted(fams):
-            rs = fams[fam]
+            cells.setdefault((r[4], r[5], point_group(r[1]), r[2], r[7]), []).append(r)
+        for (fam, key, pg, sc, st) in sorted(cells):
+            rs = cells[(fam, key, pg, sc, st)]
             vals = sorted(x for r in rs for x in numbers(raw[(r[10], r[11])]))
             med = vals[len(vals) // 2] if len(vals) % 2 else (vals[len(vals) // 2 - 1] + vals[len(vals) // 2]) / 2
-            out.append(f"\\texttt{{{B(est)}}} & {T(fam)} & {len(rs)} & {len({r[10] for r in rs})} & "
-                       f"{T(short([r[2] for r in rs]))} & {T(short([r[3] for r in rs]))} & "
+            out.append(f"\\texttt{{{B(est)}}} & {T(fam)} & \\texttt{{{B(key)}}} & {T(pg)}, {T(sc)} & {T(st)} & {len(rs)} & "
+                       f"{len({r[10] for r in rs})} & {B(short([r[3] for r in rs], 2))} & "
                        f"{B(short([(r[9] or 'none') for r in rs], 2))} & "
                        f"{B(f'{vals[0]:.4g} / {med:.4g} / {vals[-1]:.4g}')} \\\\")
     out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
@@ -611,6 +629,30 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
     return "\n".join(out)
 
 
+def attribution_drops(repo: Path, index: reglib.Index, rows) -> list[str]:
+    """Rule 8, the gate: an estimator with >= 1 attributed row in HEAD's committed index must keep >= 1 in the
+    regenerated index, unless WAIVERS.tsv holds a row for it whose cited line (digest-checked) gives the reason.
+    No HEAD, or no index at HEAD: nothing to compare (the first commit of the index)."""
+    out = subprocess.run(["git", "-C", str(repo), "show", f"HEAD:{INDEX_TSV}"], capture_output=True,
+                         env=reglib.git_env())
+    if out.returncode != 0:
+        return []
+    before = {r["estimator"] for r in reglib.read_tsv_text(out.stdout.decode("utf-8", errors="replace"))} - {"UNATTRIBUTED"}
+    now = {r[0] for r in rows} - {"UNATTRIBUTED"}
+    waived, fails = set(), []
+    if index.has(reglib.WAIVERS):
+        for n, w in enumerate(reglib.read_tsv(index, reglib.WAIVERS), start=2):
+            err, _ = reglib.verify_citation(index, *reglib.fields(w))
+            if err:
+                fails.append(f"WAIVERS row {n}: {err}")
+            else:
+                waived.add(w["estimator"])
+    for e in sorted(before - now - waived):
+        fails.append(f"ATTRIBUTION LOST: {e} has attributed rows in HEAD's {INDEX_TSV} and none in the regenerated "
+                     "index. Restore the attribution, or add a WAIVERS.tsv row citing the line that says why")
+    return fails
+
+
 def no_results_listed(index: reglib.Index, counts: dict) -> list[str]:
     """Never silently zero: every estimator a posted document prints by label has an attributed row in the
     COMMITTED index, or is listed between the NO-RESULTS-INDEXED markers of the COMMITTED rendering."""
@@ -629,7 +671,7 @@ def no_results_listed(index: reglib.Index, counts: dict) -> list[str]:
 
 def print_warnings(counts: dict) -> None:
     for w in counts.get("_warns", []):
-        print("  WARN " + w)
+        print("  NOTE " + w)
 
 
 def write(repo: Path) -> int:
@@ -665,6 +707,7 @@ def check(repo: Path) -> int:
             fails.append(f"UNINDEXED receipt {path}: it is in the population ({nrows} metric values) and has "
                          "no row in the committed RESULTS-INDEX.tsv")
     fails += no_results_listed(index, counts)
+    fails += attribution_drops(repo, index, counts["_rows"])
     for rel, text in files.items():
         have = index.text(rel)
         if have is None:
@@ -706,7 +749,8 @@ def self_test() -> int:
         env = reglib.git_env()
 
         def g(*a: str) -> None:
-            subprocess.run(["git", "-C", str(t), *a], check=True, capture_output=True, env=env)
+            subprocess.run(["git", "-C", str(t), "-c", "user.name=self-test", "-c", "user.email=self-test@invalid",
+                            *a], check=True, capture_output=True, env=env)
 
         g("init", "-q")
         need = {reglib.ESTIMATORS, reglib.ALIASES, reglib.ATTRIBUTION, reglib.STATUS, reglib.UNRESOLVED,
@@ -775,6 +819,33 @@ def self_test() -> int:
         g("add", "-A")
         rc, out = quiet(check, t)
         case("the same line attributed to (a), the estimator it names", rc, 0, out)
+        # Rule 8, the gate: commit a fresh index, then DROP R's real attribution rules and regenerate.
+        attr.write_text(clean)
+        g("add", "-A")
+        quiet(write, t)
+        g("add", "-A")
+        g("commit", "-q", "-m", "fixture base")
+        lines = clean.split("\n")
+        attr.write_text("\n".join(l for l in lines if l.split("\t")[2:3] != ["e-R-joint-test"]))
+        g("add", reglib.ATTRIBUTION)
+        quiet(write, t)
+        g("add", "-A")
+        rc, out = quiet(check, t)
+        case("R's attribution rules dropped and the index regenerated", rc, 1, out)
+        ok &= "ATTRIBUTION LOST: e-R-joint-test" in out
+        wv = t / reglib.WAIVERS
+        wv.write_text("estimator\treason\tsource\tline\tquote\tline_sha256\ne-R-joint-test\tself-test waiver\t"
+                      f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
+        g("add", reglib.WAIVERS)
+        quiet(write, t)
+        g("add", "-A")
+        rc, out = quiet(check, t)
+        case("... with a cited WAIVERS.tsv row for it", rc, 0, out)
+        wv.write_text("estimator\treason\tsource\tline\tquote\tline_sha256\n")
+        attr.write_text(clean)
+        g("add", "-A")
+        quiet(write, t)
+        g("add", "-A")
         # Never silently zero: with a posted driver that prints labels (a)-(e), removing the NO-RESULTS-INDEXED
         # listing from the committed rendering must fail.
         (t / "docs/analysis-note/main_paper.tex").write_text("\\input{paper_body}\n")
@@ -795,7 +866,8 @@ def self_test() -> int:
     for key, want in (("E_lo_of_max_pull", None), ("residency_ratio", None), ("guard/inventory-base-x.py", None),
                       ("spearman(r,shift)", None), ("chi2_bias_PB_raw_frozen_pz", None),
                       ("control_bias_PB_chi2_pz", None), ("null_P(max pull SD over 20 >= observed)", None),
-                      ("sum_w_reco_closure_data_equiv", None), ("M_residual", None), ("argmax_mean_pull", None),
+                      ("sum_w_reco_closure_data_equiv", None), ("M_residual", None), ("argmax_mean_pull", "pull_mean"),
+                      ("p", None), ("p_value", None), ("v3_p_mult_KE20", None),
                       ("pearson_bias", None), ("max_pull_sd", "pull_sd"), ("residual_median", "residual"),
                       ("bias_norm_W", "bias"), ("coverage68_min", "coverage68"), ("hits95", "coverage95_hits")):
         got = family(key)
@@ -806,7 +878,17 @@ def self_test() -> int:
     under = [h[0] for h in hits(doc)]
     good = under == [("pooled_cov68",)]
     ok &= good
-    print(f"  self-test {'ok' if good else 'WRONG':<5} nothing under a chi2 key is indexed: {under}")
+    print(f"  self-test {'ok' if good else 'WRONG':<5} a bias under a chi2 key is not indexed: {under}")
+    doc = {"V3_statistics": {"v3_p_mult_KE20": {"max_abs_pull_used": 2.0}},
+           "cases": {"D1_p0.350XD4c_p_up": {"library_bias_eavail": 0.1}}, "p": 0.01, "p_value": {"bias": 1.0},
+           "Q4": {"chi2": {"variant_i": {"pulls": [1.0, -1.0], "chi2": 3.0}}}}
+    got = sorted("/".join(h[0]) for h in hits(doc))
+    want = ["Q4/chi2/variant_i/pulls", "V3_statistics/v3_p_mult_KE20/max_abs_pull_used",
+            "cases/D1_p0.350XD4c_p_up/library_bias_eavail"]
+    good = got == want
+    ok &= good
+    print(f"  self-test {'ok' if good else 'WRONG':<5} labels with a p token are descended, a whole p/p_value key "
+          f"is not, and pulls under chi2 are indexed while the chi2 value is not: {got}")
     print("RESULTS-INDEX self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 
