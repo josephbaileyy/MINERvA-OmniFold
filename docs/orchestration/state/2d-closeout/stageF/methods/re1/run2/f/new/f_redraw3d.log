@@ -1,0 +1,72 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[input] c16b622b4970  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root
+[input] 8d417234dd33  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/genie/genie_cv_xsec3d.root
+[input] 2d3b6bedf496  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/genie/model_tunev1_xsec3d.root
+[input] e728f0893cc6  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/genie/nuwro_cv_xsec3d.root
+[input] a54035aa96b5  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/genie/gibuu_cv_xsec3d.root
+[input] 16962b6d0b7c  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/genie/genie_cv_xsec3d_modes.root
+[input] 38552e52ee70  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root
+
+===== generators =====
+[check] projected CV vs stored 1D marginal (max rel diff):
+    pt      2.88e-16
+    pz      2.52e-16
+    eavail  9.57e-16
+
+  integrated sigma (eavail axis, catch bin dropped):
+    data   = 2.419e-38 cm^2/nucleon
+    GENIE-CV   = 2.245e-38   ( -7.2% vs data)
+    Tune-v1    = 2.189e-38   ( -9.5% vs data)
+    NuWro      = 2.109e-38   (-12.8% vs data)
+    GiBUU      = 1.880e-38   (-22.3% vs data)
+
+[overlay] wrote /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/generators_vs_unfolded_band_central.png
+
+===== modedecomp =====
+bin  Eavail[GeV]      data        CV     d-CV   | QE      RES     DIS     COH   | 2p2h/QE to close
+--------------------------------------------------------------------------------------------------
+  0  [0.00,0.10)  2.181e-38 2.020e-38 +1.61e-39   | 1.41e-38 1.76e-39 4.26e-39 5.1e-41 |  +0.11
+  1  [0.10,0.20)  2.041e-38 1.506e-38 +5.35e-39   | 7.55e-39 4.44e-39 2.69e-39 3.8e-40 |  +0.71
+  2  [0.20,0.40)  1.841e-38 1.563e-38 +2.78e-39   | 4.06e-39 7.91e-39 3.38e-39 2.7e-40 |  +0.68
+  3  [0.40,0.80)  1.205e-38 1.208e-38 -3.37e-41   | 1.36e-39 6.72e-39 3.86e-39 1.4e-40 |  -0.02
+  4  [0.80,1.50)  7.438e-39 7.499e-39 -6.14e-41   | 2.90e-40 2.74e-39 4.36e-39 1.1e-40 |  -0.21
+  5  [1.50,3.00)  4.173e-39 3.807e-39 +3.66e-40   | 8.94e-41 2.40e-40 3.43e-39 4.6e-41 |  +4.10
+  6  [3.00,100.00)  6.742e-41 5.359e-41 +1.38e-41   | 1.61e-43 1.31e-43 5.29e-41 3.5e-43 | +85.74  <-- catch bin
+
+[integrated, catch bin dropped]
+  data   = 2.419e-38   CV = 2.245e-38   deficit = +1.74e-39 (-7.2% of data)
+  CV QE component = 3.863e-39  -> a 2p2h equal to 45% of the QE rate would close the integrated deficit
+  fraction of the positive deficit in E_avail<=0.4 GeV (the QE-Delta dip, where 2p2h lives) = 69%
+[mode-decomp] wrote /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/mode_decomp_eavail_central.png
+
+===== mec =====
+bin  Eavail[GeV]    data       CV    CV+MEC   MEC   | dip closed%
+-----------------------------------------------------------------
+  0 [0.00, 0.10) 2.18e-38 2.02e-38 2.20e-38 1.7e-39 |  109.3
+  1 [0.10, 0.20) 2.04e-38 1.51e-38 1.68e-38 1.7e-39 |   31.8
+  2 [0.20, 0.40) 1.84e-38 1.56e-38 1.73e-38 1.6e-39 |   59.4
+  3 [0.40, 0.80) 1.21e-38 1.21e-38 1.29e-38 9.5e-40 |    nan
+  4 [0.80, 1.50) 7.44e-39 7.50e-39 7.60e-39 7.8e-41 |    nan
+  5 [1.50, 3.00) 4.17e-39 3.81e-39 3.83e-39 0.0e+00 |    5.3
+  6 [3.00,100.00) 6.74e-41 5.36e-41 5.37e-41 0.0e+00 |    0.8 catch
+
+[integrated, catch bin dropped]
+  data=2.419e-38  CV=2.245e-38 (-7.2%)  CV+MEC=2.355e-38 (-2.7%)
+  MEC added +1.10e-39 = 63% of the integrated deficit
+  in the dip (Eavail<=0.4): MEC fills 52% of the data-CV gap
+[compare-mec] wrote /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/compare_mec_eavail_central.png
+[oi136] inventory: checked=554 repo_origin_count=10 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/inventory/f_redraw3d.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 11   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/methods-paper/re1-20261022/deploy-e4886f90  (11) __main__, compare_ascencio_fullcov, compare_mec_eavail, genie_to_xsec3d, gst_reader, mode_decomp_eavail, overlay_generators_band, technote_style, unfold_2d_omnifold_unbinned, unfold_3d_omnifold_unbinned, xsec_3d
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.

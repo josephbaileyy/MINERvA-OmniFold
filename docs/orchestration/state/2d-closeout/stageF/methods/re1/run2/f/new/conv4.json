@@ -1,0 +1,13 @@
+{
+ "code_sha256": "f3bc6cf968191212b343a5cddd85d3fa9ca9971845232d5cf7ac19877bbbae84",
+ "control": {
+  "hXSecND_flat": true
+ },
+ "current": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root",
+ "current_sha256": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
+ "dim": 4,
+ "out_sha256": "ece4055e29756eeef81932b93199d507ca69296bbe7a90b2776c0c39a330998e",
+ "product": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/p4.npz",
+ "product_sha256": "2a18599f952eb497acddaad596668a04b32b1bf7f6ac3842a4475e8dbdfb2bdf",
+ "readback_bitwise": true
+}

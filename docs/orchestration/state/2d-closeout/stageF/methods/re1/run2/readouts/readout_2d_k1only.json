@@ -1,0 +1,19 @@
+{
+ "code_sha256": "8bd9676019c3ec0a72d20897332d498d622fbf547e3f479e9b8f95d3a58aa555",
+ "inputs_sha256": {
+  "cov": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
+  "eu": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+  "q": "8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e"
+ },
+ "k1": {
+  "bitwise_all_224": false,
+  "max_rel": 2.284838984678572e-13,
+  "median_rel": 2.375877272697835e-14,
+  "product_sha256": "b80a24b049a7ca966e82e35b0ca017638481a0f99bc5b5edc56d40b5abb44cf1",
+  "same_cell_set": true,
+  "tolerance": 1e-08,
+  "verdict": "PASS"
+ },
+ "n_cells": 205,
+ "schema": "re1-2d-readout/1"
+}
