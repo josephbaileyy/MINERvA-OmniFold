@@ -138,6 +138,25 @@ def line_digest(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
+def find_cited_line(file_text: str, quote: str, sha: str) -> tuple[int, str]:
+    """(1-based line number, text) of the one line of `file_text` whose digest is `sha` and which holds `quote`.
+
+    Self-tests use it to find a registry-cited line without assuming its line number, so a document may be edited
+    above the cited line. Raises ValueError if no line, or more than one line, matches."""
+    hits = [(n, l) for n, l in enumerate(file_text.split("\n"), start=1) if line_digest(l) == sha and quote in l]
+    if len(hits) != 1:
+        raise ValueError(f"{len(hits)} lines have digest {sha} and hold {quote!r} (want exactly 1)")
+    return hits[0]
+
+
+def alias_citation(aliases_text: str, estimator: str, kind: str) -> dict:
+    """The one ALIASES row of `estimator` and `kind` (its source, line hint, quote and line_sha256)."""
+    rows = [r for r in read_tsv_text(aliases_text) if r["estimator"] == estimator and r["kind"] == kind]
+    if len(rows) != 1:
+        raise ValueError(f"{len(rows)} ALIASES rows for {estimator}/{kind} (want exactly 1)")
+    return rows[0]
+
+
 def fields(row: dict) -> tuple[str, str, str, str]:
     """(source, line, quote, line_sha256) of a cited row of any registry table."""
     if "defining_source" in row:

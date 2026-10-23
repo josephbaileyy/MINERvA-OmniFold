@@ -90,6 +90,32 @@ class Fixture:
         self.tmp.cleanup()
 
 
+class CitedLineLookup(unittest.TestCase):
+    """reglib.find_cited_line: fixtures find a cited line by its digest, never by a fixed line number."""
+
+    def setUp(self) -> None:
+        self.row = reglib.alias_citation((REPO / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-label")
+        self.text = (REPO / self.row["source"]).read_text()
+        self.n, self.line = reglib.find_cited_line(self.text, self.row["quote"], self.row["line_sha256"])
+
+    def test_found_line_is_the_cited_one(self) -> None:
+        self.assertIn(self.row["quote"], self.line)
+        self.assertEqual(reglib.line_digest(self.line), self.row["line_sha256"])
+
+    def test_line_added_above_moves_the_hit(self) -> None:
+        n, _ = reglib.find_cited_line("% planted\n" + self.text, self.row["quote"], self.row["line_sha256"])
+        self.assertEqual(n, self.n + 1)
+
+    def test_edited_line_is_refused(self) -> None:
+        with self.assertRaises(ValueError):
+            reglib.find_cited_line(self.text.replace(self.line, self.line + " x"), self.row["quote"],
+                                   self.row["line_sha256"])
+
+    def test_duplicated_line_is_refused(self) -> None:
+        with self.assertRaises(ValueError):
+            reglib.find_cited_line(self.text + "\n" + self.line, self.row["quote"], self.row["line_sha256"])
+
+
 class ResultsIndexDiscovery(unittest.TestCase):
     def setUp(self) -> None:
         self.f = Fixture()
@@ -195,9 +221,11 @@ class ResultsIndexDiscovery(unittest.TestCase):
 
     def test_attribution_line_that_does_not_name_the_estimator_fails(self) -> None:
         attr = self.f.root / reglib.ATTRIBUTION
-        d = reglib.line_digest((self.f.root / "docs/analysis-note/paper_body.tex").read_text().split("\n")[284])
+        row = reglib.alias_citation((self.f.root / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-label")
+        n, line = reglib.find_cited_line((self.f.root / row["source"]).read_text(), row["quote"], row["line_sha256"])
+        d = reglib.line_digest(line)
         attr.write_text(attr.read_text() + "docs/orchestration/state/x\\.json\t\te-R-joint-test\t"
-                        f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d}\n")
+                        f"docs/analysis-note/paper_body.tex\t{n}\tconfiguration~(a), the\t{d}\n")
         self.f.git("add", reglib.ATTRIBUTION)
         out = self.f.check()
         self.assertEqual(out.returncode, 1, out.stdout)
