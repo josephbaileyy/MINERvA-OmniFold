@@ -1,0 +1,4 @@
+jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
+60130813	ibu1_A	m3246	debug	COMPLETED	0:0	2026-10-22T15:20:57	2026-10-22T15:25:05	248	256	0.0689	0	IBU-1 job A	smoke: task lines 0-2 (P_d1, D_P, D_N); measures build/IBU seconds and peak RSS	/pscratch/sd/j/josephrb/ibu1-20261022/run/logs/ibu1_A_60130813.out
+60130899	ibu1_B1	m3246	regular_1	TIMEOUT	0:0	2026-10-22T18:06:20	2026-10-22T18:25:35	1155	256	0.3208	0	IBU-1 job B1	production: task lines 3-63; stopped by its 0:19 limit (see LEDGER-NOTES.md)	/pscratch/sd/j/josephrb/ibu1-20261022/run/logs/ibu1_B1_60130899.out
+60130900	ibu1_B2	m3246	regular_1	CANCELLED by 112498	0:0	None	2026-10-22T18:50:32	0	0	0.0000	0	IBU-1 job B2	production: task lines 64-123; cancelled while PENDING, never started (see LEDGER-NOTES.md)	

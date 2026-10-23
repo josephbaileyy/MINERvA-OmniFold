@@ -1,0 +1,1 @@
+-r-- 2026-10-07 19:20:14   506528985 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/Genie2Minerva/genie2minerva-AL9-20261001.tar.gz

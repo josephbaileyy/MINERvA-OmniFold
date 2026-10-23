@@ -1,0 +1,77 @@
+Interact with MINERvA 
+“Extended 2p2h” Special Sample
+We modified the Valencia 2p2h model to produce cross section and events up to q3 = 2 GeV. This is beyond the region of validity for the Valencia model, but it allows us to reweight (without approximation) for the entire upper range of the SuSA v2 2p2h model. The Valencia predictions can be used, but the unphysical region (due to using non relativistic ingredients) is along Q2 = 0 at high energy transfer and high q3, and should be weighted down to zero. To use the sample, configure your code to weight the other 2p2h sample to zero, and to weight this sample by the ratio of generated POT.
+This Monte Carlo sample is roughly 16 times the predicted data statistics.
+Medium Energy Neutrino (FHC) Playlists:  Extended 2p2h
+Playlist
+Name
+Water Target
+status
+Helium Target
+status
+Monte Carlo
+file list
+Data POT
+(x10 
+ 20 
+)
+minervame1A
+Empty
+Empty
+MC 1A
+0.9
+minervame1B
+Empty
+Filling
+MC 1B
+0.19
+minervame1C
+Empty
+Full
+MC 1C
+0.43
+minervame1D
+Empty
+Full
+MC 1D
+1.4
+minervame1E
+Empty
+Full
+MC 1E
+1.0
+minervame1F
+Empty
+Full
+MC 1F
+1.6
+minervame1G
+Empty
+Empty
+MC 1G
+1.4
+minervame1L
+Full
+Empty
+MC 1L
+0.13
+minervame1M
+Full
+Empty
+MC 1M
+2.1
+minervame1N
+Full
+Empty
+MC 1N
+1.1
+minervame1O
+Full
+Filling
+MC 1O
+0.3
+minervame1P
+Full
+Full
+MC 1P
+0.47

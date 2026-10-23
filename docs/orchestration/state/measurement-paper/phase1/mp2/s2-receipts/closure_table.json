@@ -1,0 +1,1026 @@
+{
+ "schema": "mp2-s2-closure-table/1",
+ "source_dir": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit",
+ "rows": {
+  "genie_cv/primary": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_genie_cv_primary.json": "303d462185b0ecbd2e84b3fcbe257260c2ae7c65befafdbfe64b4f4855ba8ff8",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_genie_cv_primary.json": "002d819ee4a2d77e16070c1ed8a5292e89fbcf8be65322e5116aaf63c8a62e6f"
+   },
+   "V1": {
+    "auc": 0.4972272583038976,
+    "auc_control": 0.504436398297488,
+    "bar": 0.509436398297488,
+    "pass": true,
+    "fit_best_iteration": 3
+   },
+   "V4": {
+    "ess_over_N": [
+     0.9341347607173229,
+     0.9344953549999976
+    ],
+    "max_w_over_mean": [
+     3.0636155363329927,
+     3.679940775538219
+    ],
+    "pass_per_replica": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     2.3383329693876043,
+     2.3859619230837112
+    ],
+    "ndf": [
+     3670
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     6.288394039808941,
+     6.8046118304218055
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     8.112498681752744e-66,
+     3.646393076764525e-61
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 2.3617833180672677e-08,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      9.699965330196852,
+      9.99742106410437
+     ],
+     "v3_p_mult_KE20": [
+      38.29495637511627,
+      41.02458304406687
+     ],
+     "v3_pi0_count": [
+      8.000222482650182,
+      8.797832641911759
+     ],
+     "neutron_KE_MeV": [
+      32.765151930746946,
+      33.73124504853088
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    17,
+    80
+   ],
+   "c": [
+    1.0326871287562747,
+    1.033569292528701
+   ],
+   "verdict": {
+    "V1": true,
+    "V4_all_replicas": true,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     29,
+     41,
+     64
+    ],
+    "n_ge_2800": 0
+   },
+   "R9": {
+    "n_rows_out_of_support": 18,
+    "w_truth_share_out_of_support": 6.863723247736228e-07
+   }
+  },
+  "genie_cv/fallback": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_genie_cv_fallback.json": "ee150a3f88db824940787510d93577def3d4e88118eb560622fe41b7240577e7",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_genie_cv_fallback.json": "3fe7c86fa68141795d14a20a09c98f6108b691135e07e1a139e8ae72e3bcf91e"
+   },
+   "V1": {
+    "auc": 0.4988894737670716,
+    "auc_control": 0.504428198691584,
+    "bar": 0.509428198691584,
+    "pass": true,
+    "fit_best_iteration": 4
+   },
+   "V4": {
+    "ess_over_N": [
+     0.9332255225274196,
+     0.9334377956814119
+    ],
+    "max_w_over_mean": [
+     2.9663917667818582,
+     5.352428802679311
+    ],
+    "pass_per_replica": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     2.2329675149542982,
+     2.365791950154511
+    ],
+    "ndf": [
+     3670
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     6.344909867192359,
+     6.858400578518423
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     1.0881919242964213e-90,
+     9.970783696670128e-84
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 1.100003821502638e-09,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      12.596290260899607,
+      12.897238162008248
+     ],
+     "v3_p_mult_KE20": [
+      51.50433861098125,
+      55.56869969661891
+     ],
+     "v3_pi0_count": [
+      9.105352211041032,
+      9.972180721130783
+     ],
+     "neutron_KE_MeV": [
+      34.37793422680514,
+      34.79084862544794
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    17
+   ],
+   "c": [
+    1.0302595895614788,
+    1.0312888109492018
+   ],
+   "verdict": {
+    "V1": true,
+    "V4_all_replicas": true,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     28,
+     37,
+     67
+    ],
+    "n_ge_2800": 0
+   },
+   "R9": {
+    "n_rows_out_of_support": 18,
+    "w_truth_share_out_of_support": 6.863723247736228e-07
+   }
+  },
+  "genie_mec/primary": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_genie_mec_primary.json": "1d093beeaadf5c834a19907eabd5442325a9652f8962da611ac4f56929b77c88",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_genie_mec_primary.json": "1b0b41f3e7d2b9a92ce2b93be815b67371d19027c147aa5feb27922249084507"
+   },
+   "V1": {
+    "auc": 0.49350928976540775,
+    "auc_control": 0.5013305974679354,
+    "bar": 0.5063305974679354,
+    "pass": true,
+    "fit_best_iteration": 1
+   },
+   "V4": {
+    "ess_over_N": [
+     0.9321138069275953,
+     0.9351814170454584
+    ],
+    "max_w_over_mean": [
+     2.5543775665929593,
+     3.5725798150134187
+    ],
+    "pass_per_replica": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     2.589467571910385,
+     2.780690509924572
+    ],
+    "ndf": [
+     3729
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     5.805752955755759,
+     5.929768499075936
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     2.0814734950458093e-39,
+     1.3117504227185825e-32
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 1.9503010097505325e-06,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      5.589384159609924,
+      6.10619226057343
+     ],
+     "v3_p_mult_KE20": [
+      21.425132581824467,
+      25.467452036507442
+     ],
+     "v3_pi0_count": [
+      6.385699319230711,
+      8.382830948790483
+     ],
+     "neutron_KE_MeV": [
+      19.762911143140585,
+      21.789491399996603
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    18,
+    44
+   ],
+   "c": [
+    1.070046477362542,
+    1.0710852362101062
+   ],
+   "verdict": {
+    "V1": true,
+    "V4_all_replicas": true,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     14,
+     28,
+     43
+    ],
+    "n_ge_2800": 0
+   },
+   "R9": {
+    "n_rows_out_of_support": 18,
+    "w_truth_share_out_of_support": 6.863723247736228e-07
+   }
+  },
+  "genie_mec/fallback": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_genie_mec_fallback.json": "29b8d26675efae89607198781fffce012f87a8047d492bc8886b0abaac8fe122",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_genie_mec_fallback.json": "b7a9aa82814989cbd48e3fe690648377315f876cc1f6dff4216c597d79003118"
+   },
+   "V1": {
+    "auc": 0.49667696214021084,
+    "auc_control": 0.5016404901785259,
+    "bar": 0.5066404901785259,
+    "pass": true,
+    "fit_best_iteration": 1
+   },
+   "V4": {
+    "ess_over_N": [
+     0.9305175475911291,
+     0.9338301010775466
+    ],
+    "max_w_over_mean": [
+     2.831987633577962,
+     4.6520293290595305
+    ],
+    "pass_per_replica": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     2.596893358573616,
+     2.760235814572685
+    ],
+    "ndf": [
+     3729
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     5.5847887966342,
+     5.745756106897991
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     1.0583519336144616e-48,
+     2.5354564275746425e-41
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 2.459112932704459e-07,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      8.496150904487642,
+      8.732183449558674
+     ],
+     "v3_p_mult_KE20": [
+      26.60178614769894,
+      30.962574739990984
+     ],
+     "v3_pi0_count": [
+      7.147387092204416,
+      9.38246416919025
+     ],
+     "neutron_KE_MeV": [
+      21.838248648751655,
+      23.984005808733453
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    18,
+    80
+   ],
+   "c": [
+    1.068864149114389,
+    1.069838033913382
+   ],
+   "verdict": {
+    "V1": true,
+    "V4_all_replicas": true,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     14,
+     27,
+     53
+    ],
+    "n_ge_2800": 0
+   },
+   "R9": {
+    "n_rows_out_of_support": 18,
+    "w_truth_share_out_of_support": 6.863723247736228e-07
+   }
+  },
+  "nuwro_ch/primary": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_nuwro_ch_primary.json": "d36aff4738b32274b83ba5bd01d6abc375c78d29224ac9f5c6659ab0a65ac46e",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_nuwro_ch_primary.json": "f64d70c6b46392e73ff2e23d3a662c227c2d8ad459bce19887f50a42f9da88b0"
+   },
+   "V1": {
+    "auc": 0.5532534834049563,
+    "auc_control": 0.502438907620607,
+    "bar": 0.507438907620607,
+    "pass": false,
+    "fit_best_iteration": 30
+   },
+   "V4": {
+    "ess_over_N": [
+     0.025456766714464348,
+     0.055656222325813125
+    ],
+    "max_w_over_mean": [
+     12274.119424466557,
+     25922.658572666
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     7.0350553347663505,
+     7.27052821547789
+    ],
+    "ndf": [
+     4354
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     33.37807570306512,
+     34.21966899145743
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     0.0,
+     0.0
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 3.05196497119285e-197,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      1361.0564646883106,
+      1440.2460462353765
+     ],
+     "v3_p_mult_KE20": [
+      1794.7919073825633,
+      1833.5498557177204
+     ],
+     "v3_pi0_count": [
+      154.92697101764222,
+      158.8954336609004
+     ],
+     "neutron_KE_MeV": [
+      1978.283880923792,
+      2152.6329112765293
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    92
+   ],
+   "c": [
+    1.1378008099302888,
+    1.1417791885161899
+   ],
+   "verdict": {
+    "V1": false,
+    "V4_all_replicas": false,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     1548,
+     2747,
+     2998
+    ],
+    "n_ge_2800": 24
+   },
+   "R9": {
+    "n_rows_out_of_support": 18,
+    "w_truth_share_out_of_support": 6.863723247736228e-07
+   }
+  },
+  "nuwro_ch/fallback": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_nuwro_ch_fallback.json": "500c7a2b6d2f8f9baed8b8f70a26c7d8fa0a6aab9490cef1df666b9abb012ebb",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_nuwro_ch_fallback.json": "1241ae4b40537af2c3b8af8213af7a35180d3f30ee68f1e478dab4c604f5c51b"
+   },
+   "V1": {
+    "auc": 0.5462201709504274,
+    "auc_control": 0.5027659972378737,
+    "bar": 0.5077659972378737,
+    "pass": false,
+    "fit_best_iteration": 21
+   },
+   "V4": {
+    "ess_over_N": [
+     0.06454674448858687,
+     0.1036310558822261
+    ],
+    "max_w_over_mean": [
+     6756.070535659355,
+     9971.657383660173
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     5.9613403650108605,
+     6.259317337562171
+    ],
+    "ndf": [
+     4354
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     28.903997742163618,
+     38.12472321352149
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     0.0,
+     0.0
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 6.222956949318971e-256,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      2710.7340144198147,
+      2775.7658003379624
+     ],
+     "v3_p_mult_KE20": [
+      6834.962356173357,
+      7247.656727058504
+     ],
+     "v3_pi0_count": [
+      200.14405630058934,
+      207.4080683307885
+     ],
+     "neutron_KE_MeV": [
+      1686.6022392279226,
+      1759.887689530586
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    45,
+    92
+   ],
+   "c": [
+    1.0986820427484543,
+    1.1058467974876074
+   ],
+   "verdict": {
+    "V1": false,
+    "V4_all_replicas": false,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     999,
+     1903,
+     3000
+    ],
+    "n_ge_2800": 5
+   },
+   "R9": {
+    "n_rows_out_of_support": 18,
+    "w_truth_share_out_of_support": 6.863723247736228e-07
+   }
+  },
+  "gibuu_ch/primary": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_gibuu_ch_primary.json": "1c236972fa92832e76481f462b6dad8254c0de5309e1ae4ce3ed21e1996e4c98",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_gibuu_ch_primary.json": "29deb0fa36f9e5545dab047005a77fc85f0f647c64eb664fbcce3d5e7d2a7177"
+   },
+   "V1": {
+    "auc": 0.5662990974537561,
+    "auc_control": 0.5051614350236419,
+    "bar": 0.5101614350236419,
+    "pass": false,
+    "fit_best_iteration": 60
+   },
+   "V4": {
+    "ess_over_N": [
+     0.0286388052439595,
+     0.04517115335932655
+    ],
+    "max_w_over_mean": [
+     7717.924965849906,
+     17804.361738847805
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     8.050825224626154,
+     8.147407642043259
+    ],
+    "ndf": [
+     4404
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     33.81486627385685,
+     34.41049018995764
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     0.0,
+     0.0
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 2.1084843588484182e-126,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      482.95571972700395,
+      489.1520554116526
+     ],
+     "v3_p_mult_KE20": [
+      188.82065886600776,
+      198.06017025678963
+     ],
+     "v3_pi0_count": [
+      100.26642923081381,
+      102.91079637603265
+     ],
+     "neutron_KE_MeV": [
+      100.000766604432,
+      161.1059214936416
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    40
+   ],
+   "c": [
+    1.2043473317531659,
+    1.207218537340291
+   ],
+   "verdict": {
+    "V1": false,
+    "V4_all_replicas": false,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     2617,
+     2993,
+     3000
+    ],
+    "n_ge_2800": 49
+   },
+   "R9": {
+    "n_rows_out_of_support": 1747492,
+    "w_truth_share_out_of_support": 0.07156008762469031
+   }
+  },
+  "gibuu_ch/fallback": {
+   "files": {
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/gates_gibuu_ch_fallback.json": "e965e832cc4545ec6ffec1be14b4039e728ef3ded709a76094c48b848453e330",
+    "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s2/fit/verdict_v2v3_gibuu_ch_fallback.json": "f68b115baeaeb23321a113239dc11602f9ef289866f7a0d302ccfb94599424b2"
+   },
+   "V1": {
+    "auc": 0.552399426216719,
+    "auc_control": 0.49866230498064573,
+    "bar": 0.5036623049806457,
+    "pass": false,
+    "fit_best_iteration": 21
+   },
+   "V4": {
+    "ess_over_N": [
+     0.034711927801043534,
+     0.050961151973870474
+    ],
+    "max_w_over_mean": [
+     12936.252856170935,
+     20220.49700935204
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_fine": {
+    "chi2_ndf": [
+     6.125713820035458,
+     6.280645161790584
+    ],
+    "ndf": [
+     4404
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J": {
+    "max_abs_pull": [
+     31.77377029021219,
+     32.51179796040117
+    ],
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V3": {
+    "min_p_d": [
+     0.0,
+     0.0
+    ],
+    "fail_closed": [],
+    "largest_p_d_any_distribution": 1.0252738887173984e-134,
+    "n_distributions_failing_per_replica": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "chi2_ndf_per_distribution": {
+     "v3_n_mult_KE10": [
+      567.790109121506,
+      573.7330480097163
+     ],
+     "v3_p_mult_KE20": [
+      357.57721062415726,
+      365.2807770991746
+     ],
+     "v3_pi0_count": [
+      106.68824597797361,
+      110.69434690321667
+     ],
+     "neutron_KE_MeV": [
+      115.99430732026407,
+      158.30335052596448
+     ]
+    },
+    "pass_per_replica": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "V2_J_argmax_cells": [
+    54
+   ],
+   "c": [
+    1.1226948367901783,
+    1.1315759916507884
+   ],
+   "verdict": {
+    "V1": false,
+    "V4_all_replicas": false,
+    "V2_fine_all_replicas": false,
+    "V2_J_all_replicas": false,
+    "V3_all_replicas": false,
+    "S2": false
+   },
+   "best_iteration": {
+    "n_models": 50,
+    "min_median_max": [
+     1597,
+     2892,
+     3000
+    ],
+    "n_ge_2800": 30
+   },
+   "R9": {
+    "n_rows_out_of_support": 1747492,
+    "w_truth_share_out_of_support": 0.07156008762469031
+   }
+  }
+ }
+}
