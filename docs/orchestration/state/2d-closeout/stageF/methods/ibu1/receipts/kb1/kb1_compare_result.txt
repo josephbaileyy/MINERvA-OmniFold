@@ -1,0 +1,8 @@
+b82b947d754145fe
+2394799b93599c8d
+35da46fa73c249a3
+{"kept": "run/products/N_nominal_val_s300285.npz", "new": "kb1/products/N_nominal_val_s300285.npz", "pass": true, "same_array_names": true, "arrays_identical": {"F_fold": true, "F_sub": true, "f_oracle": true, "f_true": true, "f_true_A": true, "ks": true}, "same_meta_keys": true, "differing_meta": [], "timings_kept_new": {"seconds_build": [24.561, 8.574], "seconds_ibu": [8.411, 1.612]}}
+{"kept": "run/products/N_gibuu_s301100.npz", "new": "kb1/products/N_gibuu_s301100.npz", "pass": true, "same_array_names": true, "arrays_identical": {"F_fold": true, "F_sub": true, "f_oracle": true, "f_true": true, "f_true_A": true, "ks": true}, "same_meta_keys": true, "differing_meta": [], "timings_kept_new": {"seconds_build": [30.964, 10.263], "seconds_ibu": [14.929, 2.997]}}
+exit=0
+863a1e43ddb672d08a53de260b7e7dc5b549fc805e9400de2b6ce3781c111912  kb1/products/N_gibuu_s301100.npz
+671176e47d220af1e139973459fc3c6b7cf6390dcc7b2057789750919a6c3be2  kb1/products/N_nominal_val_s300285.npz
