@@ -1,0 +1,29 @@
+{
+ "code_sha256": "fd303cc44a7deef9f95abe88ea2c3eaa528d0202bfb9466d428c3fa14f9042c9",
+ "readout_sha256": "ac759b0347b2bdd741d57bcdd749ac0fc51decc323e702ef239ba34eb3a32084",
+ "schema": "re1-c2-cells/1",
+ "se_counts": {
+  "arm_difference": {
+   "expected_over_2_se_if_null": 9.3275,
+   "max_abs_t": 29.026445122504672,
+   "n_cells": 205,
+   "n_over_2_se": 114,
+   "n_over_3_se": 74
+  },
+  "purity": {
+   "expected_over_2_se_if_null": 9.3275,
+   "max_abs_t": 14.699167845544979,
+   "n_cells": 205,
+   "n_over_2_se": 57,
+   "n_over_3_se": 29
+  },
+  "refined": {
+   "expected_over_2_se_if_null": 9.3275,
+   "max_abs_t": 3.09232140386556,
+   "n_cells": 205,
+   "n_over_2_se": 11,
+   "n_over_3_se": 1
+  }
+ },
+ "tsv_sha256": "70ee3649172f66bb0109a31c8d5ba492c310643b9a245090f6606395966ab710"
+}
