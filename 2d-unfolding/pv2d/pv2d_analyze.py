@@ -66,8 +66,10 @@ def main(argv=None):
     ap.add_argument("--config", type=Path, default=_HERE / "config.json")
     ap.add_argument("--ratios", type=Path, default=_HERE / "ratios")
     ap.add_argument("--products", type=Path, required=True)
-    ap.add_argument("--pc-vertex", required=True)
-    ap.add_argument("--vertices", required=True, help="comma-separated prior vertices with a data product")
+    ap.add_argument("--pc-vertex", default="nuwro")
+    ap.add_argument("--vertices", default="genie_mec,nuwro,gibuu",
+                    help="comma-separated prior vertices with a data product (the envelope's)")
+    ap.add_argument("--nc-only", action="store_true", help="evaluate NC on the pilot product alone")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     if a.out.exists():
@@ -141,6 +143,12 @@ def main(argv=None):
     x0 = nom["x"].ravel()[cells]
     nc = L.nominal_control(x0, x_eu.ravel()[cells])
     runs = {"data_tune_v1": {k: nom[k] for k in nom if k not in ("x", "truth")}}
+    if a.nc_only:   # the pilot's gate: no vertex job is submitted unless this passes
+        a.out.write_text(json.dumps({"schema": "pv2d-nc/1", "NC": nc, "runs": runs, "inputs": inputs,
+                                     "code": {"pv2d_analyze.py": L.sha256_path(__file__),
+                                              "pv2d_lib.py": L.sha256_path(L.__file__)}}, indent=1) + "\n")
+        print(json.dumps({"NC": nc}, indent=1))
+        return 0
 
     shifts, per_vertex = {}, {}
     for v in a.vertices.split(","):
