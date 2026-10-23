@@ -49,7 +49,7 @@
 
 ## 2. Code
 
-The code is committed at **`12c8ec10b1c2f1a946d1f4ce729d1c219709cf9c`** on `re2/declaration-20261023`. J0 runs from a
+The code is committed at **`668e9b44e41e6eae7b2d0727b0a924bc311d063d`** on `re2/declaration-20261023`. J0 runs from a
 fresh clone detached at it.
 - The operator passes the sha. `re2_submit_j0.sh` and the job refuse a deploy that is not a clean checkout at the sha
   passed, and the submission is recorded in `submissions.log`. The BINDING record names the sha; that it was the one
@@ -64,15 +64,15 @@ fresh clone detached at it.
 | `run/driver.diff` (`git diff --no-index 2d-unfolding/driver_p1.py 2d-unfolding/re2/re2_driver.py`, with its mode header) | `5cf933d3936ca1b1bebcffafbc4047325d2aef4888cf940c845d2e6cbeabe4cd` | the record of the copy: 58 insertions, 4 deletions |
 | `2d-unfolding/re2/re2_with_helper.py` | `059b67a366fb0748911eb4d03df97fbb6041f6b422371a933a2c832e15080b81` | runs a frozen driver with this checkout's helper (the K1-R reference runs) |
 | `2d-unfolding/re2/re2_k1.py` | `33ffee109f38983e9972dc502a3a47b43b34593aab42f216a5bb3e4832043902` | J0 control readout |
-| `2d-unfolding/re2/re2_units.py` | `1c570b61cb33ea387b157d35f42bd80c961183b024b52affcfed58ee8cc48b91` | J0 unit readout and the production rule |
+| `2d-unfolding/re2/re2_units.py` | `8cd7aa34a449b0ef2b20da0122d1077c8a526073406524fc85199e93a4a69bbf` | J0 unit readout and the production rule |
 | `2d-unfolding/re2/tests/test_re2_driver.py` | `db235796f49884ab5200f643d0e03201f22ebe0d435ad319c950e1f50045a982` | 9 tests |
-| `2d-unfolding/re2/tests/test_re2_readouts.py` | `75b978bb94e004999dfc310949ca52c69ed2c8179e937a4104aed0e791f6947d` | 9 tests |
+| `2d-unfolding/re2/tests/test_re2_readouts.py` | `c7fa5dad33c608df10b2d2c25b483bd380902477a08c18357882136c85341614` | 10 tests |
 | `run/j0_runs.tsv` | `9ce5571add054ccf7c5fd41b4f374ee8bc3633ca651b20e9dda7705910547b00` | the 34 runs |
 | `run/j0_checks.tsv` | `f3be0863652bb2c48f747ec496e02497734e7711040f7ec1be0ef7941291bfa8` | the 30 checks |
 | `run/launch/re2_env.sh` | `cb6c23b2b490e57788ec9e2e8f7fcf942d359c49e27028343905b1d939352a2c` | inputs, declared limits, preflight |
 | `run/launch/re2_j0.sbatch` | `8b8243711624a1c63f930de0277d384ff8316b0edc9577b2de3a00c7a439aa18` | the job |
-| `run/launch/re2_submit_j0.sh` | `981cb852fc8187ba60dad128754dfc4cfcb698cda7d05dfe9ee8f4e11d534097` | submit, once |
-| `run/launch/re2_j0_readout.sh` | `f0369b0833f58178c66019d9ee28bee9cdc3be3f0ef0f4bc94004cb26b3a8066` | the login-node readout |
+| `run/launch/re2_submit_j0.sh` | `23cedef7e3fe39f66e9c7c03db30b72ba4b1f2a11301bf6a63a6058ce2f017e5` | submit, once (J0a logged before J0b is submitted) |
+| `run/launch/re2_j0_readout.sh` | `f10644e9a7a7101e2f369509c97caaa857765b5cb278bdcb2e919dda8205fafa` | the login-node readout (only after both jobs are in a terminal state) |
 | `run/launch/re2_ledger.sh` | `4018b8f1bbd0daa82ced4a4b30623d09b3219da458e4a344c98f5a5942e8f9b9` | `sacct` ledger (a copy of `re1_ledger.sh`) |
 | `run/launch/test_lane_stdin.sh` | `1aae12eb70dcd306d9f1f3a11406eb4b5b3803504b301ccdb6d1b244c7c47846` | the launcher test (§2.2) |
 
@@ -120,19 +120,20 @@ Every change is in a block marked RE-2. With none of the RE-2 options and `--bkg
     3 failures. Size ignored: 1 failure.
   - **Not tested:** lateral and period inputs (J0's K1-L, K1-P1–P3 and K1-R2 cover them), and the refined
     `--bootstrap-streams both` path (J0's `RPR_PA_b01` exercises it).
-- **`test_re2_readouts.py`, 9/9 passed locally** (python3.13, PyROOT). It includes **`re2_k1.py` over the declared
+- **`test_re2_readouts.py`, 10/10 passed locally** (python3.13, PyROOT). It includes **`re2_k1.py` over the declared
   `j0_runs.tsv` and `j0_checks.tsv`**, with synthetic outputs for all 34 runs:
   - the verdict can be PASS, and the two `p1ref` rows are not health rows;
   - a wrong stream sum fails STREAM-1 alone;
   - a tampered output fails the `SHA256SUMS` check;
   - K1 passes and fails in both directions, and fails on a wrong digest;
   - health fails on clipping, a wrong size or a wrong `random_state`;
-  - every branch of the production rule, J0's charge taken from the grant, and a step not COMPLETED.
+  - every branch of the production rule, J0's charge taken from the grant, J5 refused without J7, a ledger
+    without both J0 jobs refused, and a step not COMPLETED.
 - **`run/launch/test_lane_stdin.sh` passed on Perlmutter.** It runs the job's `lane()` with a stub `srun` that reads
   all of its stdin, as the real one forwards it (srun(1), IO Redirection). It gives **34 of 34 runs**. With the
   table read from stdin and no `/dev/null` (the earlier draft), it gives 6 of 34.
 - **Smoke run from a clean clone at `6970abd9`.** `re2_driver.py` and `re2_with_helper.py` there are byte-identical
-  to `12c8ec10`. Both ran through the OI-136 guard on the fixture with rc 0 and `outside_expect_root=0`, used the
+  to `668e9b44`. Both ran through the OI-136 guard on the fixture with rc 0 and `outside_expect_root=0`, used the
   clone's helper, and gave bit-identical `hXSec2D`.
 
 ## 3. Inputs
@@ -175,8 +176,9 @@ Stage C set (`OMP_NUM_THREADS=64`, MKL/OpenBLAS/NumExpr at 1, `LOKY_MAX_CPU_COUN
 | **J0** | | | **34** | | **8.1 node-h** | | **10.2 node-h** |
 
 **Lane order.** The lanes are balanced on these bases: J0a's lanes take 15,417 s and 16,083 s, J0b's
-11,923 / 11,923 / 10,730 / 11,665 s. The null and determinism runs come early in their lanes, so a time limit
-would take the timing runs first.
+11,923 / 11,923 / 10,730 / 11,665 s. The null and determinism runs come early in their lanes. The last run of
+some lanes is still a control (`L_BAX0`, `B_S2_001`, and `B_S1_001`, the STREAM-1 reference), so a time limit can
+cost a control. Any step not COMPLETED makes the unit readout INCOMPLETE either way.
 
 **What runs:**
 - **J0a, 128 CPUs.**
@@ -261,14 +263,16 @@ Each check compares `hXSec2D`, or the named histogram, on `E_U`'s 205 reported c
 
 **The rule.** `room` = 90 − J0's charge (the jobs' `charge_node_h` from `re2_ledger.sh`).
 - **1.25 × core (J1, J2, J3, J4, J6, J8) ≤ room:** part B is declared within the grant. J7 is added if it still
-  fits, and then J5.
+  fits, and then J5, but only if J7 was added.
+- The ledger must hold exactly the two J0 job rows, or the readout stops.
 - **1.25 × core > room:** no production job starts. The projection goes to the director for a fresh binding
   (ruling 2).
 - **Any J0 step not COMPLETED, or any class unmeasured:** INCOMPLETE, and no production job starts.
 
-**What the plan's figures imply.** At today's packed 1.81×, the plan's production (58.0 − 4.0 = 54.0 node-h at the
-1.25 planning factor) becomes about 98 node-h for the core, worst case about 122. With the diagnostics it is
-about 117, worst case about 147. Both exceed `room` (≤ 90). Unless J0 measures the refined 2D unit well below
+**What the plan's figures imply.** At today's packed 1.81×, the plan's production (58.0 − 4.0 = 54.0 node-h,
+which carries the plan's 1.25 planning factor) becomes about 98 node-h for the core, worst case about 122. With the
+diagnostics it is about 117, worst case about 147. On J0's own basis (× 1.06 for the refinement in place of the
+planning factor) the core is about 83, worst case about 104. Both exceed `room` (≤ 90). Unless J0 measures the refined 2D unit well below
 today's 5D figure, the second branch applies. The ≤ 165 of ruling 2 would then be the relevant binding, and with
 the diagnostics even that is close.
 
@@ -331,8 +335,8 @@ checkout's HEAD.
 - The intermediates stay on pscratch until integration.
 
 **Pscratch purge risk.** Pscratch is at 85% and purges idle files. The rebuild's pscratch-only inputs are the
-universe omnifile (171 GB, mtime July), the July sweep and the period inputs. J0 reads all of them, but part B
-should follow J0 promptly. A purged input stops the rebuild (RE2-PLAN §5.4) and cannot be recreated without
+universe omnifile (171 GB, mtime July), the July sweep and the period inputs. J0 reads the universe omnifile, the
+period inputs and 3 of the July sweep's files, not the whole sweep, so part B should follow J0 promptly. A purged input stops the rebuild (RE2-PLAN §5.4) and cannot be recreated without
 re-running the event loop.
 
 ## 9. Grant fields (delegation §3.1)
@@ -356,5 +360,41 @@ re-running the event loop.
 
 ## Review record
 
-To be completed by the independent review before the PR (the first review's findings are being addressed in this
-version).
+**Reviewer.** A fresh Claude agent, given the declaration, the code, the plan and the rulings, and none of the
+author's working. It made two read-only passes. It worked on the cluster only under its own review directory, and
+ran no jobs.
+
+**First pass** (`7f36e9a1`, code `4af4928e`): two blockers, five majors, fourteen minor findings and a list of nits.
+The reviewer confirmed:
+- every digest;
+- the argv and CPUs of every J0 run against its reference;
+- the driver diff, read line by line (purity path unchanged; the entry mapping right; the completeness untouched);
+- the unit tests, 9/9 on Perlmutter, which caught all three of its mutants.
+
+| finding (severity) | disposition |
+|---|---|
+| `re2_k1.py` checked health on the `p1ref` rows, so J0 could never PASS (BLOCKER) | fixed; a test over the declared tables |
+| srun inherited the table on stdin, so each lane would run only its first row (BLOCKER) | fixed (fd 3, `< /dev/null`); `test_lane_stdin.sh`: 34/34, and 6/34 on the old pattern |
+| J0's share of the 90 was spent twice (MAJOR) | `room` = 90 − J0's charge |
+| the limits were mean-based, and 1.4× is not the packed factor (MAJOR) | class maxima × 1.81 × 1.06 × 1.25; lanes rebalanced; null and determinism runs early |
+| the power checks had no power (MAJOR) | > 1e-6, between runs on the same CPUs |
+| nothing detected a wrong refined background stream on the data (MAJOR) | STREAM-1 |
+| plan items deferred without saying so (MAJOR) | §1 |
+| minor: requeue, pins, readout lock-out, killed steps, `random_state`, unstated deviations, the environment, overclaims, citations, registry wording, J1's step weights, untested guards | fixed, or stated in §1–§2 |
+
+**Second pass** (`7f36e9a1..e3869b39`). Every first-pass finding holds as fixed or as stated, and there is nothing
+new at MAJOR or above.
+- **STREAM-1** was checked on the real CV omnifile against Stage C S1_001. The injected rows' b·w sum equals
+  `hBkgRecoStar2D.Integral()` to 2.2e-16. With the stream off, the sum moves by 3.3e-5. A row exactly on the upper
+  edge would fail the check, not pass it, and the file has none.
+- **`test_lane_stdin.sh`** gives 34/34, and 6/34 on the `7f36e9a1` sbatch.
+- **The arithmetic and the 1.81× basis** reproduce.
+- **Its six nits:**
+  - the lane-order claim: corrected in §4;
+  - J5 could be added without J7: fixed in code and test;
+  - an empty ledger read as a charge of 0: now refused;
+  - the readout accepted any non-listed state, and the submit wrapper could double-submit J0a: terminal-state list,
+    J0a logged first;
+  - the orientation figures: J0's own basis added to §5.3;
+  - "J0 reads all of them": corrected in §8.
+  These are fixed at `668e9b44`.
