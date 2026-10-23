@@ -390,8 +390,24 @@ particles, checked bitwise against `MCgen`, closes it.
 | (f) Bayesian unfolding (FBU) | never tried | its posterior is prior-dominated in exactly these directions, with no coverage guarantee. **Not a route** |
 | (g) **one-at-a-time strict bounds (OSB) and prior-optimized (PO) intervals** (Stanley, Patil and Kuusela, arXiv:2111.01091), mapped at `state/next-preparation-20261009/gbdt/REPORT.md:385-404` | **never run**: no solver was available, and the strict-bounds study was named in the 2026-10-10 pause, now lifted for this work (DECISION-20261019 §1a) | **the one open premise**. These intervals give coverage without a prior, and PO uses the prior only to shorten them. They attack D-ID's constraint loophole (positivity). They are "a different interval algorithm", "not a validated rescue of the GBDT", with empirical-only coverage in the rank-deficient regime and no published treatment of response-MC noise or background (`gbdt/REPORT.md:395-404`, `:438-439`) |
 
-**The GBDT validation route is also financially closed.** Validating a GBDT bootstrap-plus-universe interval costs 8,710
-to 80,916 admitted node-h (`gbdt/REPORT.md:419-436`), against 2,327.8 left in the group pool (HANDOFF §4).
+**The GBDT validation route is also financially closed for the CPU pool.** Validating a GBDT bootstrap-plus-universe
+interval costs 8,710 to 80,916 admitted CPU node-h (`gbdt/REPORT.md:419-436`), against 2,327.8 left in the group CPU
+pool (HANDOFF §4).
+
+> **Correction, 2026-10-22 (approved by Joseph; recorded by the measurement session).** As first written, this
+> paragraph said the route was "financially closed", comparing its cost only with the CPU pool. DECISION-20261019 §1b
+> also records the `m3246_g` GPU pool at 46,226.0 node-h left on 2026-10-19, used at about 860 node-h a day. So:
+> - the CPU pool cannot fund the route;
+> - the GPU pool could in principle fund the statistical-only recipe (central + 30 bootstrap unfolds, 8,710 admitted
+>   CPU node-h) if LightGBM runs on the GPU nodes' CPUs. That cost is **an unmeasured estimate**: a GPU node has 64
+>   cores against a CPU node's 128, so roughly 2× the node-h, about 17,400. Whether the shared pool is spent this way
+>   is Joseph's and Ben's decision;
+> - the route remains **not recommended on the evidence**:
+>   - development-scale departure coverage of 0.027, pooled 68%, for both the E_avail-shape and q3 departures
+>     (`OUTCOME-20260925-s5n-stage1-development-fail.md:57-58`; s5e diagnosed this failure);
+>   - KI 98 arm (b): the residual persists with no background at all, R_b = +2.84 (`state/ki98-wbias-test/REPORT.md:58-63`);
+>   - D-ID: exact binned IBU leaves about the same residual (`d-id/REPORT.md` §11);
+>   - MP4-A: FAIL (`phase1/mp4a/REPORT.md`).
 
 ### 5.2 Routes, ranked
 
