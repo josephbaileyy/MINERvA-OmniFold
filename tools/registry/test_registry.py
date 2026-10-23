@@ -263,7 +263,8 @@ class EndToEndCommit(unittest.TestCase):
                     (cls.clone / rel).parent.mkdir(parents=True, exist_ok=True)
                     (cls.clone / rel).write_bytes(blob)
             cls.g(cls.clone, "add", "-A")
-            cls.g(cls.clone, "commit", "-q", "--no-verify", "-m", "e2e: overlay the staged code under test")
+            if cls.g(cls.clone, "status", "--porcelain").strip():  # nothing staged here: the clone IS the code
+                cls.g(cls.clone, "commit", "-q", "--no-verify", "-m", "e2e: overlay the staged code under test")
         cls.g(cls.clone, "worktree", "add", "-q", "-b", "e2e-wt", str(cls.wt))
         cls.g(cls.clone, "config", "core.hooksPath", str(cls.wt / ".githooks"))
 
