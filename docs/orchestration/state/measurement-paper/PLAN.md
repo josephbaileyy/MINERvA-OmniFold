@@ -403,8 +403,10 @@ pool (HANDOFF §4).
 >   cores against a CPU node's 128, so roughly 2× the node-h, about 17,400. Whether the shared pool is spent this way
 >   is Joseph's and Ben's decision;
 > - the route remains **not recommended on the evidence**:
->   - development-scale departure coverage of 0.027, pooled 68%, for both the E_avail-shape and q3 departures
->     (`OUTCOME-20260925-s5n-stage1-development-fail.md:57-58`; s5e diagnosed this failure);
+>   - s5e's development-scale assessment of candidate R, configuration (e)
+>     (`state/2d-closeout/stageF/methods/r12/REVIEW.md:48`, `state/s5p/contract.json:25-26`): pooled 68% coverage 0.680 at nominal (n = 40), but 0.017–0.157 under the
+>     departures (n = 20 each: E_avail GiBUU 0.0235, q3 0.0186, W1 0.0252, W2 0.157, W3 0.0173;
+>     `state/s5e/cand/assess_receipt.json`, `points/*/pooled_cov68`);
 >   - KI 98 arm (b): the residual persists with no background at all, R_b = +2.84 (`state/ki98-wbias-test/REPORT.md:58-63`);
 >   - D-ID: exact binned IBU leaves about the same residual (`d-id/REPORT.md` §11);
 >   - MP4-A: FAIL (`phase1/mp4a/REPORT.md`).
