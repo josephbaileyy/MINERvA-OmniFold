@@ -40,7 +40,8 @@ sha256 of the text plus a final newline begins `421d61d06b4c37c4`.
      pairwise comparison against the current version.
    - This replaces, for the paper, the sentence-level guardrail of `register-method/HANDOFF.md` §3. The note keeps
      the sentence-level standard.
-3. **(a)** The NuWro clause leaves the abstract. It stays in Sec. VIII F, which `DECISION-20261020-joseph-nuwro-ch-claim.md` also names (the
+3. **(a)** The NuWro clause leaves the abstract. It stays in the results section (Sec. VII E of the built paper; first written here as "Sec. VIII F", which
+   the r15 review found is not the built numbering), which `DECISION-20261020-joseph-nuwro-ch-claim.md` also names (the
    paper's source comment, `main_paper.tex:86`). This changes that decision's abstract placement. **(b)** The out-of-scope sentence in the CLAIM-ADDITION block stays only if the record that
    created the block requires it. The writer checks that record and cites it either way.
 
