@@ -216,6 +216,36 @@ class TwoD(unittest.TestCase):
         out = json.loads((self.d / "r.json").read_text())["c2"]
         self.assertIn("0.5 %", " ".join(f["rule"] for f in out["flags"]))
 
+    def test_supplement_units_spread_and_background_rank(self):
+        import re1_c2_supplement as S
+        p = self.write_seeds(shift_cell=int(self.cells[7]), shift=0.011)
+        A.main(self.base() + ["--pseudo-dir", str(p), "--seeds", "1:20"])
+        d = np.full((16, 18), 100.0)
+        b = np.full((16, 18), 2.0)
+        ix, iy = divmod(int(self.cells[7]), 16)
+        b[ix + 1, iy + 1] = 30.0                                            # the flagged cell's reco bin: B/D 0.3
+        cache = self.d / "cache.npz"
+        np.savez(cache, h_data_driver=d, h_bkg_driver=b)
+        s = A.sha256_path
+        argv = self.base()[:-2] + ["--cache", str(cache), "--expect-cache-sha256", s(cache), "--pseudo-dir", str(p),
+                                   "--seeds", "1:20", "--readout", str(self.d / "r.json"),
+                                   "--out", str(self.d / "s.json"), "--tsv", str(self.d / "s.tsv")]
+        self.assertEqual(S.main(argv), 0)
+        out = json.loads((self.d / "s.json").read_text())
+        self.assertEqual(out["flagged_globalids"], [int(self.cells[7])])
+        self.assertEqual(out["bkg_fraction"]["flagged_ranks_of_205"], [1])
+        self.assertAlmostEqual(out["bkg_fraction"]["flagged"]["max"], 0.3, places=12)
+        self.assertAlmostEqual(out["bkg_fraction"]["unflagged"]["median"], 0.02, places=12)
+        # the pseudo-data scatter is N(0, 0.01) per cell and sigma_stat is 0.01, so SD/sigma_stat is about 1
+        self.assertLess(abs(out["purity"]["sd_over_stat"]["median"] - 1.0), 0.25)
+        # residuals in total sigma are the stat-sigma residuals scaled by 0.01 / 0.05
+        rows = (self.d / "s.tsv").read_text().splitlines()
+        head = rows[0].split("\t")
+        r = dict(zip(head, rows[8].split("\t")))
+        self.assertAlmostEqual(float(r["refined_resid_total"]), float(r["refined_resid_stat"]) * 0.2, places=4)
+        np.savez(cache, h_data_driver=d, h_bkg_driver=b * 1.01)
+        self.assertEqual(S.main(argv), 4)
+
     def test_refuses_cells_that_do_not_match_the_covariance(self):
         np.savez(self.q, cells_x_EU=self.eu.ravel()[self.cells] * 1.0000001, area=np.ones(self.cells.size),
                  total_plus_C_PL=np.diag(self.sig_tot ** 2))
