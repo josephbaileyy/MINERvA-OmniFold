@@ -4,6 +4,8 @@
     results_index.py --write [--repo DIR]   # regenerate the index, the population table and the two .tex renderings
     results_index.py --check [--repo DIR]   # exit 1 if any committed generated file differs from a fresh generation
                                             # or a population receipt has no index row (pre-commit)
+    results_index.py --check --base REF     # the same, but the rule-8 gate compares against the committed index of
+                                            # `git merge-base REF HEAD`, not HEAD's (CI: a pull request's base)
     results_index.py --summary [--repo DIR] # print the population counts
     results_index.py --population           # print every in-root JSON with its class
     results_index.py --self-test            # discovery in both directions on a throwaway repository (pre-commit)
@@ -651,11 +653,23 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
     return "\n".join(out)
 
 
-def attribution_drops(repo: Path, index: reglib.Index, rows) -> list[str]:
-    """Rule 8, the gate: an estimator with >= 1 attributed row in HEAD's committed index must keep >= 1 in the
-    regenerated index, unless WAIVERS.tsv holds a row for it whose cited line (digest-checked) gives the reason.
-    No HEAD, or no index at HEAD: nothing to compare (the first commit of the index)."""
-    out = subprocess.run(["git", "-C", str(repo), "show", f"HEAD:{INDEX_TSV}"], capture_output=True,
+def gate_rev(repo: Path, base: str | None) -> str:
+    """The commit whose committed index the rule-8 gate compares against: HEAD (pre-commit: the staged index is
+    the proposed change), or with `base` the merge-base of BASE and HEAD (CI: HEAD already contains the change, so
+    comparing against HEAD would compare the change with itself; on a pull request's merge commit the merge-base
+    is the base branch tip). Raises RuntimeError if BASE does not resolve."""
+    if base is None:
+        return "HEAD"
+    tip = reglib.git(repo, "rev-parse", "--verify", f"{base}^{{commit}}").decode().strip()
+    return reglib.git(repo, "merge-base", tip, "HEAD").decode().strip()
+
+
+def attribution_drops(repo: Path, index: reglib.Index, rows, rev: str = "HEAD") -> list[str]:
+    """Rule 8, the gate: an estimator with >= 1 attributed row in REV's committed index (default HEAD; see
+    gate_rev) must keep >= 1 in the regenerated index, unless WAIVERS.tsv holds a row for it whose cited line
+    (digest-checked) gives the reason. No REV, or no index at REV: nothing to compare (the first commit of the
+    index)."""
+    out = subprocess.run(["git", "-C", str(repo), "show", f"{rev}:{INDEX_TSV}"], capture_output=True,
                          env=reglib.git_env(repo), cwd=str(repo))
     if out.returncode != 0:
         return []
@@ -670,7 +684,8 @@ def attribution_drops(repo: Path, index: reglib.Index, rows) -> list[str]:
             else:
                 waived.add(w["estimator"])
     for e in sorted(before - now - waived):
-        fails.append(f"ATTRIBUTION LOST: {e} has attributed rows in HEAD's {INDEX_TSV} and none in the regenerated "
+        where = "HEAD" if rev == "HEAD" else rev[:12]
+        fails.append(f"ATTRIBUTION LOST: {e} has attributed rows in {where}'s {INDEX_TSV} and none in the regenerated "
                      "index. Restore the attribution, or add a WAIVERS.tsv row citing the line that says why")
     return fails
 
@@ -717,7 +732,12 @@ def summary_line(c: dict) -> str:
             f"({out}; named *receipt*.json: {rec})")
 
 
-def check(repo: Path) -> int:
+def check(repo: Path, base: str | None = None) -> int:
+    try:
+        rev = gate_rev(repo, base)
+    except RuntimeError as exc:
+        print(f"RESULTS-INDEX :: CANNOT CHECK: --base {base} does not resolve: {exc}".rstrip())
+        return 2
     files, errs, counts = generate(repo)
     print_warnings(counts)
     index = reglib.Index(repo)
@@ -729,7 +749,7 @@ def check(repo: Path) -> int:
             fails.append(f"UNINDEXED receipt {path}: it is in the population ({nrows} metric values) and has "
                          "no row in the committed RESULTS-INDEX.tsv")
     fails += no_results_listed(index, counts)
-    fails += attribution_drops(repo, index, counts["_rows"])
+    fails += attribution_drops(repo, index, counts["_rows"], rev)
     for rel, text in files.items():
         have = index.text(rel)
         if have is None:
@@ -740,7 +760,8 @@ def check(repo: Path) -> int:
         print("  FAIL " + f)
     if fails:
         print("  fix: python3 tools/registry/results_index.py --write && git add " + " ".join(GENERATED))
-    print(summary_line(counts) + (f"; {len(fails)} failure(s)" if fails else "; index fresh and complete"))
+    gate = "" if base is None else f"; rule-8 gate against merge-base {rev[:12]} of --base {base}"
+    print(summary_line(counts) + (f"; {len(fails)} failure(s)" if fails else "; index fresh and complete") + gate)
     return 1 if fails else 0
 
 
@@ -855,6 +876,22 @@ def self_test() -> int:
         rc, out = quiet(check, t)
         case("R's attribution rules dropped and the index regenerated", rc, 1, out)
         ok &= "ATTRIBUTION LOST: e-R-joint-test" in out
+        # --base (CI): the same drop once COMMITTED. Against HEAD the gate compares the change with itself and is
+        # silent -- the reason CI passes --base; against the fixture base it fires; against a base that already
+        # lacked R it is silent.
+        fixture_base = subprocess.run(["git", "-C", str(t), "rev-parse", "HEAD"], check=True, capture_output=True,
+                                      env=env, cwd=str(t), text=True).stdout.strip()
+        g("commit", "-q", "-m", "drop R's attribution")
+        rc, out = quiet(check, t)
+        case("R's drop COMMITTED, gate against HEAD (vacuous: why CI needs --base)", rc, 0, out)
+        rc, out = quiet(check, t, fixture_base)
+        case("R's drop COMMITTED, --base the fixture base", rc, 1, out)
+        ok &= "ATTRIBUTION LOST: e-R-joint-test" in out and fixture_base[:12] in out
+        rc, out = quiet(check, t, "HEAD")
+        case("R's drop COMMITTED, --base a commit that already lacks R", rc, 0, out)
+        rc, out = quiet(check, t, "no-such-ref")
+        case("--base that does not resolve (cannot check)", rc, 2, out)
+        g("reset", "-q", "--soft", fixture_base)
         wv = t / reglib.WAIVERS
         wv.write_text("estimator\treason\tsource\tline\tquote\tline_sha256\ne-R-joint-test\tself-test waiver\t"
                       f"docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\t{d285}\n")
@@ -929,14 +966,18 @@ def main(argv: list[str]) -> int:
     g.add_argument("--population", action="store_true", help="print every in-root JSON with its class")
     g.add_argument("--self-test", action="store_true")
     ap.add_argument("--repo", type=Path, default=None)
+    ap.add_argument("--base", default=None, metavar="REF",
+                    help="with --check: the rule-8 gate compares against `git merge-base REF HEAD` (CI)")
     a = ap.parse_args(argv)
+    if a.base is not None and not a.check:
+        ap.error("--base is valid only with --check")
     if a.self_test:
         return self_test()
     repo = reglib.repo_root(a.repo) if a.repo else reglib.repo_root(Path.cwd())
     if a.write:
         return write(repo)
     if a.check:
-        return check(repo)
+        return check(repo, a.base)
     files, errs, counts = generate(repo)
     print_warnings(counts)
     for e in errs:
