@@ -284,19 +284,30 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 # ADDED 2026-10-22 (paper-tighten lane; Joseph: "yes do all three"). Rules and their checks:
 # docs/orchestration/RECORDS-RULES.md. WHY: a session said coverage under configuration (e) was untested; it had
 # been measured in s5e under the contract letter R, and no tool resolved one name to the other. Each check reads
-# the GIT INDEX (staged blobs), so it judges what this commit contains. Measured on a clean tree at a84697f3 +
-# this change (macOS, python 3.12): 1.1 s, 2.0 s, 1.6 s, 2.4 s, 0.2 s, 1.4 s in run order.
-#   - registry: every ESTIMATORS/ALIASES/UNRESOLVED-NAMES row's quote is on its cited line; every configuration
-#     label of LABEL_PATTERNS printed by paper/note/primer/records resolves to exactly one estimator; the records
-#     document \inputs the generated index. A moved line is fixed by `check_registry.py --repoint`.
+# the GIT INDEX (staged blobs), so it judges what the commit would contain.
+# WHERE THESE RUN TODAY: only where this file runs. Worktree commits in this clone run the hook at the absolute
+# core.hooksPath (the shared checkout's .githooks, whose local main predates these lines), and no CI exists, so
+# run `bash .githooks/pre-commit` from the branch's worktree before pushing. Commit-time enforcement needs the
+# shared hook updated or a CI check -- both pending Joseph's decision (RECORDS-RULES.md, "Where the checks run").
+# Measured 2026-10-22 on this branch's tree (macOS, python 3.12), in run order: 2.4 s, 3.7 s, 2.8 s, 3.3 s,
+# 0.6 s, 1.9 s.
+#   - registry: every ESTIMATORS/ALIASES/UNRESOLVED-NAMES quote is on its cited line (a quote moved to exactly one
+#     other line warns and passes; absent or on several lines fails); every configuration label of LABEL_PATTERNS
+#     printed by paper/note/primer/records names exactly one estimator through identifying aliases; the records
+#     document \inputs the generated index and no posted driver reaches it. `check_registry.py --repoint` fixes
+#     moved line numbers.
 #   - results index: RESULTS-INDEX.tsv, RESULTS-POPULATION.tsv and the two records_*.tex equal a fresh generation
-#     from the staged receipts, and no receipt of the declared population is unindexed. Fix: `results_index.py
-#     --write` and `git add` its four outputs. Its --self-test plants a result receipt (must fail) and a non-result
-#     JSON (must pass) in a throwaway repository with real staging.
-#   - absence claims: an ADDED line asserting a result does not exist needs `Search: <terms> @ <sha>` in its
-#     paragraph. Diff-scoped on purpose: 1569 lines on main at a84697f3 already match and are not re-judged.
-# DECLINED HERE: tools/registry/test_registry.py (15 fixture tests, 40 s measured) -- over this hook's budget; its
-# two discovery directions are what results_index.py --self-test runs. Run it when changing tools/registry/.
+#     from the staged receipts, no receipt of the declared population is unindexed, and every ATTRIBUTION row's
+#     cited line names its estimator. Fix: `results_index.py --write` and `git add` its four outputs. Its
+#     --self-test plants a result receipt (must fail), a non-result JSON (must pass) and a rule-7 violation (must
+#     fail) in a throwaway repository with real staging.
+#   - absence claims: an absence claim touching a line ADDED or CHANGED against HEAD (git diff --cached), judged
+#     on its paragraph's joined text, needs `Search: <terms> @ <sha>` in that paragraph. Diff-scoped on purpose:
+#     `absence_claims.py --count-existing a84697f3` measures 1594 distinct claim spans in 424 of 831 in-scope
+#     files (joined-paragraph judging, code spans and TeX comments removed), none beside a search line; they are
+#     not re-judged. (The 1569 first recorded here was measured line by line, before code spans were removed.)
+# DECLINED HERE: tools/registry/test_registry.py (21 fixture tests, 30 s measured) -- over this hook's budget; its
+# discovery and rule-7 directions are what results_index.py --self-test runs. Run it when changing tools/registry/.
 run "registry citations+labels"    python3 tools/registry/check_registry.py
 run "registry self-test"           python3 tools/registry/check_registry.py --self-test
 run "results index fresh+complete" python3 tools/registry/results_index.py --check

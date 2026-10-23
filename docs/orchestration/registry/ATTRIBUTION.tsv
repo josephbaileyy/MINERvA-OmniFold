@@ -1,11 +1,12 @@
 path_regex	keypath_regex	estimator	source	line	quote
-docs/orchestration/state/s5e/cand/(assess|dev)_receipt\.json	B0_reference_s5n/	d-N-B0	docs/orchestration/state/s5e/cand/assess_receipt.json	316	"B0_reference_s5n": {
+docs/orchestration/state/s5e/cand/(assess|dev)_receipt\.json	B0_reference_s5n/	d-N-B0	docs/orchestration/state/s5e/contract.json	22	"definition": "exactly the s5n family N
 docs/orchestration/state/s5e/cand/dev_receipt\.json	K1/B0_same_seeds	d-N-B0	docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json	39	"also": "B0 on the same seeds (paired reference)"
 docs/orchestration/state/s5e/cand/(assess|dev)_receipt\.json		e-R-joint-test	docs/orchestration/state/s5e/cand/dev_receipt.json	3	"candidate": "R",
-docs/orchestration/state/s5e/cand/review2/r2_recompute\.json		e-R-joint-test	docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	52	**One candidate: `R`**
-docs/orchestration/state/s5n/stage1/.*\.json		d-N-B0	docs/orchestration/state/s5n/contract.json	21	"only_family": true
-docs/orchestration/state/s5c/d1/bias_vs_adopted\.json		c-F2-deterministic	docs/orchestration/state/s5c/d1/bias_vs_adopted.json	6	"group": "split_F2"
-docs/orchestration/state/s5p/stage2/stage2_receipt\.json	study_C/	e-R-joint-test	docs/orchestration/state/s5p/stage2/stage2_receipt.json	1	cand/dev/k1_R/nominal
-docs/orchestration/state/s5p/recovery/.*\.json	(tests|power)/	e-R-joint-test	docs/orchestration/state/s5p/contract.json	25	"name": "R"
-docs/orchestration/state/wclosure-5d-20261012/closure_5d_w_bottom_line\.json		a-central-lgbm	docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md	10	The production 5D estimator (lgbm, five iterations, seed 42
-docs/orchestration/receipts/2d-lgbm42-20261011/.*\.json		a-central-lgbm	docs/analysis-note/sec_method.tex	137	docs/orchestration/receipts/2d-lgbm42-20261011/
+docs/orchestration/state/s5e/cand/review2/r2_recompute\.json		e-R-joint-test	docs/orchestration/state/s5e/cand/review-round-2.md	1	# s5e candidate R
+docs/orchestration/state/s5n/stage1/.*\.json		d-N-B0	docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md	25	The estimator is family `N`
+docs/orchestration/state/s5c/d1/bias_vs_adopted\.json		c-F2-deterministic	docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	25	| D1 split, candidate F2 |
+docs/orchestration/state/s5c/d1/d1_summary\.json	groups/(split|nosplit)_F2/	c-F2-deterministic	docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	25	| D1 split, candidate F2 |
+docs/orchestration/state/s5c/d1/d1_summary\.json	groups/split_production/	F1-production	docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	27	| D1 split, production estimator |
+docs/orchestration/state/s5c/d2/d2_summary\.json	groups/d2_nosplit_F2_no_background/	c-F2-deterministic	docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	28	D2 no-split, F2, signal-only
+docs/orchestration/state/s5c/tier_s/interim_400\.json		c-F2-deterministic	docs/orchestration/state/2d-closeout/stageF/methods/ibu1/DECLARATION.md	30	s5c Tier S, configuration (c), purity background (`state/s5c/tier_s/interim_400.json`
+docs/orchestration/state/s5p/(recovery|stage7/joint|recompute)/.*\.json		e-R-joint-test	docs/analysis-note/paper_body.tex	290	configuration~(e), the joint-test estimator

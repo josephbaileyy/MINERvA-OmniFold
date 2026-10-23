@@ -17,7 +17,9 @@ the staged file) carries a search line of the form
 
 whose sha names a commit in this repository. In a .tex source the search line goes in a comment
 (`% Search: ... @ <sha>`), so it never prints. `tools/registry/whatis.py "<estimator>"` prints exactly such a line
-for every alias of the estimator. Lines already on HEAD are not re-judged: only the diff is checked.
+for every alias of the estimator. A paragraph is judged on its JOINED text (a claim wrapped across lines is seen),
+and a match counts only if a line it spans is added or changed in the staged diff (`git diff --cached`, the index
+against HEAD): lines already in HEAD are not re-judged.
 """
 from __future__ import annotations
 
@@ -81,16 +83,6 @@ def matches(text: str) -> list[str]:
     return [n for n, rx, _ in _PATS if rx.search(text)]
 
 
-def paragraph(lines: list[str], i: int) -> list[str]:
-    lo = i
-    while lo > 0 and lines[lo - 1].strip():
-        lo -= 1
-    hi = i
-    while hi + 1 < len(lines) and lines[hi + 1].strip():
-        hi += 1
-    return lines[lo:hi + 1]
-
-
 def commit_exists(repo: Path, sha: str) -> bool:
     out = subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{sha}^{{commit}}"], capture_output=True,
                          env=reglib.git_env())
@@ -113,23 +105,65 @@ def added_lines(repo: Path) -> dict[str, list[int]]:
     return {p: v for p, v in out.items() if in_scope(p)}
 
 
+def claims(path: str, lines: list[str], lo: int, hi: int):
+    """(first line, last line, pattern names, matched text) of every absence-pattern match in the paragraph
+    lines[lo:hi+1], judged on its JOINED printed text, so a claim wrapped across lines ("has not / been run") is
+    seen. Line numbers are 1-based."""
+    parts, spans, pos = [], [], 0
+    for i in range(lo, hi + 1):
+        t = printed(path, lines[i])
+        parts.append(t)
+        spans.append((pos, pos + len(t), i + 1))
+        pos += len(t) + 1
+    joined = " ".join(parts)
+    out = []
+    for name, rx, _ in _PATS:
+        for m in rx.finditer(joined):
+            on = [ln for a, b, ln in spans if a <= m.end() - 1 and m.start() <= b]
+            if on:
+                out.append((on[0], on[-1], name, m.group(0)))
+    return out
+
+
+def paragraph_bounds(lines: list[str], i: int) -> tuple[int, int]:
+    lo = i
+    while lo > 0 and lines[lo - 1].strip():
+        lo -= 1
+    hi = i
+    while hi + 1 < len(lines) and lines[hi + 1].strip():
+        hi += 1
+    return lo, hi
+
+
 def judge(repo: Path, path: str, text: str, linenos: list[int]) -> list[str]:
+    """Bare absence claims touching an added/changed line. Each paragraph holding an added line is judged once,
+    on its joined text; a match counts if any line it spans was added or changed."""
     lines = text.split("\n")
-    fails = []
-    for n in linenos:
-        if not 1 <= n <= len(lines):
+    added = {n for n in linenos if 1 <= n <= len(lines)}
+    fails, seen = [], set()
+    for n in sorted(added):
+        if not lines[n - 1].strip():
             continue
-        names = matches(printed(path, lines[n - 1]))
-        if not names:
+        lo, hi = paragraph_bounds(lines, n - 1)
+        if (lo, hi) in seen:
             continue
-        para = paragraph(lines, n - 1)
+        seen.add((lo, hi))
+        found = [c for c in claims(path, lines, lo, hi) if any(a in added for a in range(c[0], c[1] + 1))]
+        if not found:
+            continue
+        para = lines[lo:hi + 1]
         shas = [m.group(1) for l in para for m in [SEARCH_LINE.search(l)] if m]
-        good = [s for s in shas if commit_exists(repo, s)]
-        if good:
+        if any(commit_exists(repo, sh) for sh in shas):
             continue
         why = ("its paragraph's search line names no commit of this repository (" + ", ".join(shas) + ")" if shas
                else "its paragraph carries no 'Search: <terms> @ <sha>' line")
-        fails.append(f"{path}:{n}: absence claim [{', '.join(names)}] -- {why}: {lines[n - 1].strip()[:140]!r}")
+        by_line: dict[tuple[int, int], list[str]] = {}
+        for a, b, name, txt in found:
+            by_line.setdefault((a, b), []).append(name)
+        for (a, b), names in sorted(by_line.items()):
+            where = f"{a}" if a == b else f"{a}-{b}"
+            fails.append(f"{path}:{where}: absence claim [{', '.join(sorted(set(names)))}] -- {why}: "
+                         f"{' '.join(l.strip() for l in lines[a - 1:b])[:140]!r}")
     return fails
 
 
@@ -155,24 +189,30 @@ def check_staged(repo: Path) -> int:
 
 
 def count_existing(repo: Path, rev: str) -> int:
+    """Information only: how many absence-pattern matches the files at REV hold, judged as the check judges an
+    added paragraph (joined text, comments and code spans removed), and how many sit beside a search line."""
     paths = [p for p in reglib.git(repo, "ls-tree", "-r", "--name-only", rev).decode().splitlines() if in_scope(p)]
     total, exempt, files = 0, 0, set()
     per = {n: 0 for n, _, _ in _PATS}
     for p in paths:
-        text = reglib.git(repo, "show", f"{rev}:{p}").decode("utf-8", errors="replace")
-        lines = text.split("\n")
-        for i, l in enumerate(lines):
-            names = matches(printed(p, l))
-            if not names:
+        lines = reglib.git(repo, "show", f"{rev}:{p}").decode("utf-8", errors="replace").split("\n")
+        i = 0
+        while i < len(lines):
+            if not lines[i].strip():
+                i += 1
                 continue
-            total += 1
-            files.add(p)
-            for n in names:
-                per[n] += 1
-            if any(SEARCH_LINE.search(x) for x in paragraph(lines, i)):
-                exempt += 1
-    print(f"ABSENCE-CLAIMS (information) :: at {rev}: {total} lines in {len(files)} of {len(paths)} in-scope files "
-          f"match; {exempt} of them already sit in a paragraph with a search line. Per pattern: "
+            lo, hi = paragraph_bounds(lines, i)
+            found = {(a, b) for a, b, name, _ in claims(p, lines, lo, hi)}
+            for a, b, name, _ in claims(p, lines, lo, hi):
+                per[name] += 1
+            if found:
+                files.add(p)
+                total += len(found)
+                if any(SEARCH_LINE.search(x) for x in lines[lo:hi + 1]):
+                    exempt += len(found)
+            i = hi + 1
+    print(f"ABSENCE-CLAIMS (information) :: at {rev}: {total} distinct claim spans in {len(files)} of {len(paths)} "
+          f"in-scope files match; {exempt} of them sit in a paragraph with a search line. Pattern matches: "
           + ", ".join(f"{n} {c}" for n, c in per.items()))
     return 0
 
@@ -233,6 +273,10 @@ def self_test() -> int:
         expect("same claim, search line names a commit that does not exist", bool(f), True)
         f = staged(md=base + "\nNo coverage result exists.\n\nSearch: R @ " + sha[:12] + "\n")
         expect("search line in a DIFFERENT paragraph does not exempt", bool(f), True)
+        f = staged(md=base + "\nThe coverage study has not\nbeen run on the fresh seeds.\n")
+        expect("staged claim wrapped across two lines ('has not' / 'been run')", bool(f), True, f[0][:90] if f else "")
+        f = staged(md=base.replace("An old line: this was never measured.", "An old line: this was never\nmeasured."))
+        expect("a re-wrap that moves an old claim onto a changed line is judged (it is a changed line)", bool(f), True)
         f = staged(md=base + "\nNo change was needed; there is no reason to rerun it.\n")
         expect("staged unrelated 'no'", bool(f), False)
         f = staged(md=base.replace("# Record", "# Record, retitled"))

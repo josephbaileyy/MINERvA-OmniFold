@@ -7,16 +7,18 @@
 
 (1) INTEGRITY. Every ESTIMATORS definition, ALIASES row and UNRESOLVED-NAMES row cites file:line, and the cited
     line (staged bytes) must contain the row's quote verbatim; every alias names a registered id; every pattern
-    compiles. A row whose line moved fails here, and the fix is to re-point it, never to drop it:
-    `check_registry.py --repoint` rewrites the line number when the quote now sits on exactly one line.
+    compiles. A quote that moved to exactly one other line of its file WARNS and passes (the citation still
+    identifies one line; `check_registry.py --repoint` rewrites the number); a quote absent from the file, or on
+    several other lines, FAILS.
     (ATTRIBUTION and STATUS rows are checked the same way by results_index.py.)
 (2) COMPLETENESS, scoped to an explicit label pattern list (LABEL_PATTERNS). Over the printed text (comments
     removed) of the \\input closures of main_paper.tex, main_note.tex, main_primer.tex and main_records.tex, every
-    estimator label matched by LABEL_PATTERNS must resolve (reglib.resolve, the rule whatis.py uses) to exactly
-    one registered estimator. Unresolved or ambiguous: failure, with file:line. Labels outside the pattern list
+    estimator label matched by LABEL_PATTERNS must name (reglib.resolve, the rule whatis.py uses, counting only
+    aliases marked identifying=yes) exactly one registered estimator. Unresolved or ambiguous: failure, with file:line. Labels outside the pattern list
     are NOT checked -- this is the scope, stated, not a claim that every name is covered.
 (3) The records document main_records.tex \\inputs both generated renderings, records_estimators and
-    records_results_index (RECORDS-RULES.md rule 6).
+    records_results_index, and no posted driver (main_note, main_paper, main_primer, pet_note) reaches either
+    through its \\input closure (RECORDS-RULES.md rule 6).
 """
 from __future__ import annotations
 
@@ -90,10 +92,11 @@ def completeness(index: reglib.Index, note_dir: str = NOTE_DIR) -> tuple[list[st
     for f in files:
         for ln, pat, label in labels_in(index.text(f) or ""):
             n += 1
-            hits = reglib.resolve(label, ests, als)
-            if len(hits) != 1:
-                fails.append(f"{f}:{ln}: {pat} label {label!r} resolves to {len(hits)} registered estimators "
-                             f"({', '.join(sorted(hits)) or 'none'}); register it in ALIASES.tsv with its source line")
+            named = reglib.identifying(reglib.resolve(label, ests, als))
+            if len(named) != 1:
+                fails.append(f"{f}:{ln}: {pat} label {label!r} names {len(named)} registered estimators through "
+                             f"identifying aliases ({', '.join(named) or 'none'}); register it in ALIASES.tsv "
+                             "with its source line")
     return fails, n, len(files)
 
 
@@ -101,25 +104,43 @@ RECORDS_DRIVER = f"{NOTE_DIR}/main_records.tex"
 RECORDS_INPUTS = ("records_estimators", "records_results_index")
 
 
-def records_include_index(index: reglib.Index) -> list[str]:
-    """Rule 6: the records document \\inputs both generated renderings (outside comments)."""
+POSTED_DRIVERS = ("main_note.tex", "main_paper.tex", "main_primer.tex", "pet_note.tex")
+
+
+def records_include_index(index: reglib.Index, note_dir: str = NOTE_DIR) -> list[str]:
+    """Rule 6, both directions: the records document \\inputs both generated renderings (outside comments), and
+    no posted driver's \\input closure reaches either of them."""
     text = COMMENT.sub("", index.text(RECORDS_DRIVER) or "")
     got = set(re.findall(r"\\input\{([^}]+)\}", text))
-    return [f"{RECORDS_DRIVER} does not \\input{{{name}}} (RECORDS-RULES.md rule 6)" for name in RECORDS_INPUTS
-            if name not in got and name + ".tex" not in got]
+    fails = [f"{RECORDS_DRIVER} does not \\input{{{name}}} (RECORDS-RULES.md rule 6)" for name in RECORDS_INPUTS
+             if name not in got and name + ".tex" not in got]
+    for d in POSTED_DRIVERS:
+        named = set()
+        for f in closure(index, note_dir, d):  # the \\input names each file of the closure asks for
+            named |= {x[:-4] if x.endswith(".tex") else x
+                      for x in re.findall(r"\\(?:input|include)\{([^}]+)\}", COMMENT.sub("", index.text(f) or ""))}
+        for name in RECORDS_INPUTS:
+            if name in named:
+                fails.append(f"{note_dir}/{d} reaches {name}.tex through its \\input closure: the generated index "
+                             "belongs to the internal records document only (RECORDS-RULES.md rule 6)")
+    return fails
 
 
 def run(repo: Path) -> int:
     index = reglib.Index(repo)
-    fails = reglib.verify_registry(index) + records_include_index(index)
+    fails, warns = reglib.verify_registry(index)
+    fails += records_include_index(index)
     cfails, n, nfiles = completeness(index)
     fails += cfails
+    for w in warns:
+        print("  WARN " + w)
     for f in fails:
         print("  FAIL " + f)
     ests = reglib.read_tsv(index, reglib.ESTIMATORS)
     als = reglib.read_tsv(index, reglib.ALIASES)
     print(f"REGISTRY :: {len(ests)} estimators, {len(als)} aliases, every citation checked; {n} printed labels in "
-          f"{nfiles} files of the four builds, each resolved to exactly one estimator"
+          f"{nfiles} files of the four builds, each naming exactly one estimator through identifying aliases; "
+          f"records document holds the index and no posted build does; {len(warns)} moved-line warning(s)"
           + (f" -- {len(fails)} failure(s)" if fails else ""))
     return 1 if fails else 0
 
@@ -155,12 +176,14 @@ def self_test() -> int:
         def case(name: str, body: str, want_fail: bool, idx_mut=None) -> None:
             nonlocal ok
             idx = stage(good[0], body)
-            fails = reglib.verify_registry(idx) + completeness(idx)[0]
+            errs, warns = reglib.verify_registry(idx)
+            fails = errs + completeness(idx)[0]
             fired = bool(fails)
             verdict = "ok" if fired == want_fail else "WRONG"
             ok &= fired == want_fail
             print(f"  self-test {verdict:<5} {name}: {'FIRES' if fired else 'silent'} (want "
                   f"{'FIRES' if want_fail else 'silent'}){': ' + fails[0][:110] if fails else ''}")
+            return warns
 
         case("registered labels (e), (c)--(d), candidate R", good[1], False)
         case("unregistered configuration (f) is outside the a-e pattern: not checked", "configuration (f)\n", False)
@@ -170,7 +193,7 @@ def self_test() -> int:
         # A registry conflict: "configuration (e)" also registered (with a valid citation) under d-N-B0.
         al = t / reglib.ALIASES
         clean_aliases = al.read_text()
-        al.write_text(clean_aliases + "d-N-B0\tpaper-label\tconfiguration (e)\tzzz-no-match\t"
+        al.write_text(clean_aliases + "d-N-B0\tpaper-label\tconfiguration (e)\tzzz-no-match\tyes\tdefault\t"
                       "docs/analysis-note/paper_body.tex\t290\tconfiguration~(e)\n")
         case("planted conflict: 'configuration (e)' registered under two estimators", good[1], True)
         al.write_text(clean_aliases)
@@ -186,11 +209,32 @@ def self_test() -> int:
         ok &= bool(r6)
         print(f"  self-test {'ok' if r6 else 'WRONG':<5} records document with the index input commented out: "
               f"{'FIRES' if r6 else 'silent'} (want FIRES)")
-        # Citation power: move a cited line in the copy and require the integrity check to fire.
+        (note / "main_records.tex").write_text("\\input{records_estimators}\n\\input{records_results_index}\n")
+        (note / "main_note.tex").write_text("\\input{body}\n\\input{records_results_index}\n")
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        r6 = records_include_index(reglib.Index(t))
+        ok &= bool(r6)
+        print(f"  self-test {'ok' if r6 else 'WRONG':<5} a posted driver (main_note) inputs the generated index: "
+              f"{'FIRES' if r6 else 'silent'} (want FIRES){': ' + r6[0][:100] if r6 else ''}")
+        (note / "main_note.tex").write_text("\\input{body}\n")
+        subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.git_env())
+        # Citation power. A quote moved to exactly one other line WARNS and passes; a quote gone from the file, or
+        # present on several other lines, FAILS.
         cited = reglib.read_tsv(src_index, reglib.ALIASES)[0]
         p = t / cited["source"]
-        p.write_text("inserted line\n" + p.read_text())
-        case(f"cited line of alias {cited['alias']!r} moved down by one", good[1], True)
+        original = p.read_text()
+        p.write_text("inserted line\n" + original)
+        warns = case(f"cited line of alias {cited['alias']!r} moved down by one (unique)", good[1], False)
+        moved = any("no longer holds the quote" in w for w in warns or [])
+        ok &= moved
+        print(f"  self-test {'ok' if moved else 'WRONG':<5} ... and it printed a moved-line WARN naming the new line")
+        p.write_text(original.replace(cited["quote"], "QUOTE REMOVED"))
+        case(f"quote of alias {cited['alias']!r} removed from its file", good[1], True)
+        lines = original.split("\n")
+        n = int(cited["line"])
+        p.write_text("\n".join(lines[:n - 1] + ["x"] + lines[n:] + [lines[n - 1], lines[n - 1]]))
+        case(f"quote of alias {cited['alias']!r} moved to two other lines (ambiguous)", good[1], True)
+        p.write_text(original)
     print("REGISTRY self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 

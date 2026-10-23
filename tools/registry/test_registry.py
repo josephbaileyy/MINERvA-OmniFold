@@ -156,14 +156,57 @@ class ResultsIndexDiscovery(unittest.TestCase):
         line = next(l for l in rows.splitlines() if rel in l)
         self.assertIn("\twithdrawn\tfile name\t", line)
 
-    def test_attribution_with_a_moved_quote_fails(self) -> None:
-        rel = SEED_RECEIPTS[1]  # ATTRIBUTION cites its line 6 ("group": "split_F2")
+    def test_attribution_quote_moved_one_line_warns_and_passes(self) -> None:
+        rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"  # ATTRIBUTION cites its line 3, "candidate": "R"
         p = self.f.root / rel
         p.write_text("\n" + p.read_text())
         self.f.git("add", rel)
         out = self.f.check()
+        self.assertIn("WARN ATTRIBUTION row", out.stdout)
+        self.assertNotIn("FAIL ATTRIBUTION", out.stdout)
+
+    def test_attribution_quote_removed_fails(self) -> None:
+        rel = "docs/orchestration/state/s5e/cand/dev_receipt.json"
+        p = self.f.root / rel
+        p.write_text(p.read_text().replace('"candidate": "R",', '"candidate": "Q",'))
+        self.f.git("add", rel)
+        out = self.f.check()
         self.assertEqual(out.returncode, 1, out.stdout)
-        self.assertIn("ATTRIBUTION row", out.stdout)
+        self.assertIn("FAIL ATTRIBUTION row", out.stdout)
+
+    def test_attribution_line_that_does_not_name_the_estimator_fails(self) -> None:
+        attr = self.f.root / reglib.ATTRIBUTION
+        attr.write_text(attr.read_text() + "docs/orchestration/state/x\\.json\t\te-R-joint-test\t"
+                        "docs/analysis-note/paper_body.tex\t285\tconfiguration~(a), the\n")
+        self.f.git("add", reglib.ATTRIBUTION)
+        out = self.f.check()
+        self.assertEqual(out.returncode, 1, out.stdout)
+        self.assertIn("rule 7", out.stdout)
+
+    def test_design_arithmetic_is_labelled_design_projection(self) -> None:
+        rel = "docs/orchestration/state/new-campaign/assurance.json"
+        self.f.plant(rel, {"status": "DRAFT -- NOT REGISTERED; design arithmetic", "coverage68": 0.7})
+        self.f.write()
+        rows = (self.f.root / "docs/orchestration/registry/RESULTS-INDEX.tsv").read_text()
+        line = next(l for l in rows.splitlines() if rel in l)
+        self.assertIn("\tdesign-projection\t", line)
+
+    def test_count_and_parameter_keys_are_not_indexed(self) -> None:
+        rel = "docs/orchestration/state/new-campaign/receipt.json"
+        self.f.plant(rel, {"M_residual": 35, "closure_reweight_sigma": 0.2, "step2_pull_weights": [1.0, 2.0],
+                           "hits68": [30, 31], "pooled_cov68": 0.68})
+        self.f.write()
+        rows = [l for l in (self.f.root / "docs/orchestration/registry/RESULTS-INDEX.tsv").read_text().splitlines()
+                if rel in l]
+        keys = sorted(l.split("\t")[5] for l in rows)
+        self.assertEqual(keys, ["hits68", "pooled_cov68"])
+
+    def test_key_with_slash_is_an_unambiguous_pointer(self) -> None:
+        rel = "docs/orchestration/state/new-campaign/table.json"
+        self.f.plant(rel, {"closure": {"pt/pz": 1.01}})
+        self.f.write()
+        rows = (self.f.root / "docs/orchestration/registry/RESULTS-INDEX.tsv").read_text()
+        self.assertIn("\tclosure/pt~1pz\n", rows)  # keypath column: "/" inside a key is written ~1
 
     def test_deleting_an_indexed_receipt_is_reported_as_stale(self) -> None:
         self.f.git("rm", "-q", SEED_RECEIPTS[1])
@@ -197,6 +240,11 @@ class Resolution(unittest.TestCase):
     def test_shared_names_are_ambiguous(self) -> None:
         self.assertGreater(len(reglib.resolve("negweight-refined", self.ests, self.als)), 1)
         self.assertGreater(len(reglib.resolve("400/31", self.ests, self.als)), 1)
+
+    def test_learner_name_is_non_identifying(self) -> None:
+        hits = reglib.resolve("lgbm", self.ests, self.als)
+        self.assertTrue(hits)
+        self.assertEqual(reglib.identifying(hits), [])
 
     def test_unknown_name_does_not_resolve(self) -> None:
         self.assertEqual(reglib.resolve("configuration (q)", self.ests, self.als), {})

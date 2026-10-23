@@ -102,27 +102,46 @@ def read_tsv(index: Index, path: str) -> list[dict]:
     return read_tsv_text(text)
 
 
-def verify_citation(index: Index, source: str, line: str, quote: str) -> str | None:
-    """None if `quote` is verbatim on line `line` of the staged `source`; else the reason it is not."""
+def locate(index: Index, source: str, line: str, quote: str) -> tuple[int | None, str | None, str | None]:
+    """Where the cited quote is: (line number, error, warning).
+
+    The quote on its cited line: (n, None, None). The quote MOVED to exactly one other line of the same file: (that
+    line, None, a warning naming it) -- the citation still identifies one line, so this passes and
+    `check_registry.py --repoint` updates the number. The quote absent, or on several other lines: (None, error, None).
+    """
     text = index.text(source)
     if text is None:
-        return f"{source} is not tracked (not in the git index)"
+        return None, f"{source} is not tracked (not in the git index)", None
     try:
         n = int(line)
     except ValueError:
-        return f"line {line!r} is not an integer"
-    lines = text.split("\n")
-    if not 1 <= n <= len(lines):
-        return f"{source}:{n} is past the end of the file ({len(lines)} lines)"
+        return None, f"line {line!r} is not an integer", None
     if not quote:
-        return f"{source}:{n}: empty quote"
-    if quote not in lines[n - 1]:
-        now = [i for i, l in enumerate(lines, start=1) if quote in l]
-        where = (f"; the quote is now on line {now[0]} only -- run `python3 tools/registry/check_registry.py "
-                 "--repoint`" if len(now) == 1 else f"; the quote occurs on {len(now)} lines, so the row must be "
-                 "re-pointed by hand" if now else "; the quote is no longer in the file: the alias must be re-sourced")
-        return f"{source}:{n} does not contain the quote {quote!r}{where}"
-    return None
+        return None, f"{source}:{n}: empty quote", None
+    lines = text.split("\n")
+    if 1 <= n <= len(lines) and quote in lines[n - 1]:
+        return n, None, None
+    now = [i for i, l in enumerate(lines, start=1) if quote in l]
+    if len(now) == 1:
+        return now[0], None, (f"{source}:{n} no longer holds the quote {quote!r}; it is on line {now[0]} only "
+                              "(passes; run `python3 tools/registry/check_registry.py --repoint`)")
+    if now:
+        return None, (f"{source}:{n} does not hold the quote {quote!r}, which occurs on {len(now)} other lines "
+                      f"({', '.join(map(str, now[:5]))}): re-point the row by hand"), None
+    return None, f"{source}:{n}: the quote {quote!r} is no longer in the file: re-source the row", None
+
+
+def verify_citation(index: Index, source: str, line: str, quote: str) -> tuple[str | None, str | None]:
+    """(error, warning) for one citation; see locate()."""
+    _, err, warn = locate(index, source, line, quote)
+    return err, warn
+
+
+def cited_text(index: Index, source: str, line: str, quote: str) -> str | None:
+    n, err, _ = locate(index, source, line, quote)
+    if n is None:
+        return None
+    return (index.text(source) or "").split("\n")[n - 1]
 
 
 CITED_TABLES = (ESTIMATORS, ALIASES, UNRESOLVED, ATTRIBUTION, STATUS)
@@ -147,26 +166,27 @@ def repoint(index: Index, repo: Path) -> list[str]:
                 continue
             cells = lines[i].split("\t")
             src, ln, quote = cells[src_col], cells[line_col], cells[quote_col]
-            if verify_citation(index, src, ln, quote) is None:
+            n, err, warn = locate(index, src, ln, quote)
+            if n is not None and not warn:
                 continue
-            body = (index.text(src) or "").split("\n")
-            now = [k for k, l in enumerate(body, start=1) if quote and quote in l]
-            if len(now) == 1:
-                cells[line_col] = str(now[0])
+            if n is not None:
+                cells[line_col] = str(n)
                 lines[i] = "\t".join(cells)
                 changed = True
-                report.append(f"REPOINTED {table} row {i + 1}: {src}:{ln} -> {now[0]}")
+                report.append(f"REPOINTED {table} row {i + 1}: {src}:{ln} -> {n}")
             else:
-                report.append(f"CANNOT REPOINT {table} row {i + 1}: {src}: quote on {len(now)} lines {quote!r}")
+                report.append(f"CANNOT REPOINT {table} row {i + 1}: {err}")
         if changed:
             (repo / table).write_text("\n".join(lines))
     return report
 
 
-def verify_registry(index: Index) -> list[str]:
-    """Every ESTIMATORS definition and every ALIASES row cites a line that carries its quote; ids resolve;
-    every alias pattern compiles."""
+def verify_registry(index: Index) -> tuple[list[str], list[str]]:
+    """(errors, warnings). Every ESTIMATORS definition, ALIASES row and UNRESOLVED-NAMES row cites a line that holds
+    its quote (a quote moved to exactly one other line warns and passes); ids resolve; every alias pattern compiles;
+    `identifying` is yes/no and `grep` is default/opt-in."""
     errs: list[str] = []
+    warns: list[str] = []
     index.read_many([t for t in CITED_TABLES if index.has(t)])
     srcs = set()
     for t in CITED_TABLES:
@@ -174,30 +194,36 @@ def verify_registry(index: Index) -> list[str]:
             for r in read_tsv(index, t):
                 srcs.add(r.get("defining_source") or r.get("source", ""))
     index.read_many(sorted(s for s in srcs if s))  # one `git cat-file --batch` for every cited file
+
+    def cite(label: str, source: str, line: str, quote: str) -> None:
+        err, warn = verify_citation(index, source, line, quote)
+        if err:
+            errs.append(f"{label}: {err}")
+        if warn:
+            warns.append(f"{label}: {warn}")
+
     ests = read_tsv(index, ESTIMATORS)
     ids = [e["id"] for e in ests]
     for i in sorted({i for i in ids if ids.count(i) > 1}):
         errs.append(f"ESTIMATORS: id {i} defined more than once")
     for e in ests:
-        why = verify_citation(index, e["defining_source"], e["defining_line"], e["defining_quote"])
-        if why:
-            errs.append(f"ESTIMATORS {e['id']}: {why}")
+        cite(f"ESTIMATORS {e['id']}", e["defining_source"], e["defining_line"], e["defining_quote"])
     for n, a in enumerate(read_tsv(index, ALIASES), start=2):
         if a["estimator"] not in ids:
             errs.append(f"ALIASES row {n}: estimator {a['estimator']!r} is not an ESTIMATORS id")
+        if a.get("identifying") not in ("yes", "no"):
+            errs.append(f"ALIASES row {n} ({a['alias']}): identifying must be yes or no")
+        if a.get("grep") not in ("default", "opt-in"):
+            errs.append(f"ALIASES row {n} ({a['alias']}): grep must be default or opt-in")
         try:
             re.compile(a["pattern"])
         except re.error as exc:
             errs.append(f"ALIASES row {n} ({a['alias']}): pattern does not compile: {exc}")
-        why = verify_citation(index, a["source"], a["line"], a["quote"])
-        if why:
-            errs.append(f"ALIASES row {n} ({a['estimator']} / {a['alias']}): {why}")
+        cite(f"ALIASES row {n} ({a['estimator']} / {a['alias']})", a["source"], a["line"], a["quote"])
     if index.has(UNRESOLVED):
         for n, u in enumerate(read_tsv(index, UNRESOLVED), start=2):
-            why = verify_citation(index, u["source"], u["line"], u["quote"])
-            if why:
-                errs.append(f"UNRESOLVED-NAMES row {n} ({u['name']}): {why}")
-    return errs
+            cite(f"UNRESOLVED-NAMES row {n} ({u['name']})", u["source"], u["line"], u["quote"])
+    return errs, warns
 
 
 def norm(s: str) -> str:
@@ -207,7 +233,8 @@ def norm(s: str) -> str:
 def resolve(name: str, ests: list[dict], als: list[dict]) -> dict[str, list[str]]:
     """estimator id -> the reasons `name` names it: the union of an exact id or alias match, an alias pattern that
     matches the name, and the name occurring as a whole word inside an alias (so "R" finds "configuration 1 = R"
-    and "400/31" finds both "refinement 400/31" and "capacity 400/31")."""
+    and "400/31" finds both "refinement 400/31" and "capacity 400/31"). A reason through an alias marked
+    identifying=no ends in "[non-identifying]"."""
     n = norm(name)
     word = re.compile(r"(?<![\w-])" + re.escape(name.strip()) + r"(?![\w-])") if name.strip() else None
     hits: dict[str, list[str]] = defaultdict(list)
@@ -215,7 +242,8 @@ def resolve(name: str, ests: list[dict], als: list[dict]) -> dict[str, list[str]
         if norm(e["id"]) == n:
             hits[e["id"]].append("registry id")
     for a in als:
-        where = f"({a['kind']}, {a['source']}:{a['line']})"
+        tag = "" if a.get("identifying", "yes") == "yes" else " [non-identifying]"
+        where = f"({a['kind']}, {a['source']}:{a['line']}){tag}"
         if norm(a["alias"]) == n:
             hits[a["estimator"]].append(f"alias {a['alias']!r} {where}")
             continue
@@ -228,6 +256,11 @@ def resolve(name: str, ests: list[dict], als: list[dict]) -> dict[str, list[str]
         if word and word.search(a["alias"]):
             hits[a["estimator"]].append(f"the name is a word of alias {a['alias']!r} {where}")
     return hits
+
+
+def identifying(hits: dict[str, list[str]]) -> list[str]:
+    """The estimators a resolution names through at least one IDENTIFYING alias (or the registry id)."""
+    return sorted(e for e, why in hits.items() if any(not w.endswith("[non-identifying]") for w in why))
 
 
 def unresolved(name: str, rows: list[dict]) -> list[dict]:
