@@ -5,6 +5,7 @@ rows; the events are synthetic, so nothing here reads an analysis input."""
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -429,7 +430,8 @@ class Tasks(unittest.TestCase):
 class EndToEnd(unittest.TestCase):
     """The driver's units on the synthetic world, then the reader over them (fake OmniFold side)."""
 
-    def test_units_then_read(self):
+    @classmethod
+    def setUpClass(cls):
         tmp = Path(tempfile.mkdtemp())
         cfg = json.loads(json.dumps(CFG))
         comp = tmp / "comp"
@@ -439,11 +441,15 @@ class EndToEnd(unittest.TestCase):
                  "N_nominal_val": [300060, 300064], "N_gibuu": [301000, 301004], "N_gibuu_R": [801000, 801004],
                  "N_nominal_R": [800000, 800004], "N_w1": [803000, 803004], "N_w2": [804000, 804004],
                  "N_w3": [805000, 805004]}
+        # As in config.json, GiBUU and W1-W3 have more seeds than comparators: the unit straddles the end of the
+        # paired range, so the reader's IBU-own load (IA-12) sees products with and without f_of in one unit.
+        straddle = {"N_gibuu": ([301058, 301062], [301058, 301059]), "N_w1": ([803018, 803022], [803018, 803019]),
+                    "N_w2": ([804018, 804022], [804018, 804019]), "N_w3": ([805018, 805022], [805018, 805019])}
         for name, seeds in small.items():
             u = units[name]
-            u["seeds"] = seeds
+            u["seeds"], cseeds = straddle.get(name, (seeds, seeds))
             if "comparator" in u:
-                u["comparator"] = {"template": str(comp / (name + "_s{seed}.npz")), "seeds": seeds}
+                u["comparator"] = {"template": str(comp / (name + "_s{seed}.npz")), "seeds": cseeds}
         units["P_d1"]["pairs"] = units["P_d1"]["pairs"][:3]
         units["P_d1"]["comparator"] = {"paths": {str(s): str(comp / f"P_d1_s{s}.npz") for s, _ in units["P_d1"]["pairs"]}}
         for b in ("P_sigma", "N_sigma_s5n", "N_sigma_R"):
@@ -484,10 +490,6 @@ class EndToEnd(unittest.TestCase):
                 rc |= ibu1.run_bootstrap(WORLD, cfg, BKG, u, out)
             else:
                 rc |= ibu1.run_data(WORLD, cfg, BKG, u, out)
-        self.assertEqual(rc, 0)
-        boot = np.load(out / "P_sigma.npz", allow_pickle=True)
-        self.assertTrue(json.loads(str(boot["meta"]))["controls"]["replica_capture"]["pass"])
-        self.assertEqual(boot["F_pur"].shape, (4, len(KS), 153))
         # a fake OmniFold receipt set with the shapes the reader expects
         names = WORLD.names
         nF = len(names)
@@ -500,17 +502,30 @@ class EndToEnd(unittest.TestCase):
             {"truth": "eavail_tilt", "n_present": 5, "hits68": [1] * nF, "hits95": [2] * nF}]},
             "bias_correction": {"beta": [0.0] * nF, "se": [0.0] * nF},
             "s5n": {"grid": {"C3_nominal": {"n_experiments": 5, "per_functional": per(5)},
-                             "C4_eavail_shape": {"n_experiments": 5, "per_functional": per(5)}}},
-            "R": {"points": {k: {"n": 5, "per_functional": per(5)} for k in ("nominal", "eavail_gibuu", "W1", "W2", "W3")}}}
+                             "C4_eavail_shape": {"n_experiments": 2, "per_functional": per(2)}}},
+            "R": {"points": {k: {"n": 5 if k in ("nominal", "eavail_gibuu") else 2, "per_functional": per(5)}
+                             for k in ("nominal", "eavail_gibuu", "W1", "W2", "W3")}}}
         variant = {"P": "pur", "N": "fold"}
+        cls.tmp, cls.out, cls.rc, cls.receipts, cls.names, cls.variant = tmp, out, rc, receipts, names, variant
+
+    def test_units_then_read(self):
+        out, receipts, names, variant = self.out, self.receipts, self.names, self.variant
+        self.assertEqual(self.rc, 0)
+        boot = np.load(out / "P_sigma.npz", allow_pickle=True)
+        self.assertTrue(json.loads(str(boot["meta"]))["controls"]["replica_capture"]["pass"])
+        self.assertEqual(boot["F_pur"].shape, (4, len(KS), 153))
         res = rd.evaluate(out, receipts, names, variant, [5])
         k5 = res["per_K"]["5"]
         self.assertIn(k5["verdict"], ("inverse-problem limited", "implementation specific", "mixed", "unresolved"))
         self.assertEqual(set(k5["deformed"]), {"tilt", "gibuu", "w1", "w2", "w3"})
+        for truth in ("gibuu", "w1", "w2", "w3"):
+            self.assertEqual(k5["deformed"][truth]["n"], 2)  # the paired seeds only
+            self.assertEqual(k5["ibu_own_corrected_400"][truth]["n"], 5)  # every seed of the unit
         for v in k5["deformed"].values():
             self.assertEqual(v["gates_passed"], v["gates_total"])
             self.assertAlmostEqual(v["residual"]["median_abs_of"], 0.03, places=9)
         # review finding 1: a single-K evaluation reads the K = 5 slice, not slot 0
+        self.assertIsNone(rd.load_unit(out, "N_gibuu", "fold")["of"])  # mixed f_of: no OmniFold array
         tilt = rd.load_unit(out, "N_gibuu", "sub", [301000, 301059])
         i5 = tilt["ks"].index(5)
         self.assertFalse(np.allclose(tilt["F"][:, 0, :], tilt["F"][:, i5, :], rtol=1e-6, atol=0))
@@ -522,6 +537,20 @@ class EndToEnd(unittest.TestCase):
         self.assertFalse(any(p.suffix == ".tmp" for p in out.iterdir()))
         d = np.load(out / "D_P.npz", allow_pickle=True)
         self.assertEqual(d["F_pur"].shape, (len(KS), 153))
+
+    def test_paired_load_missing_f_of_is_explicit(self):
+        """Reader fix, condition 3: a paired product without its OmniFold estimate fails explicitly, naming the unit."""
+        receipts, names, variant = self.receipts, self.names, self.variant
+        broken = Path(tempfile.mkdtemp()) / "broken"
+        shutil.copytree(self.out, broken)
+        z = np.load(broken / "N_w1_s803018.npz", allow_pickle=True)
+        np.savez_compressed(broken / "N_w1_s803018.npz", **{k: z[k] for k in z.files if k != "f_of"})
+        self.assertIsNone(rd.load_unit(broken, "N_w1", "fold", [803000, 803019])["of"])
+        with self.assertRaisesRegex(AssertionError, "unit N_w1: a paired product has no f_of"):
+            rd.evaluate(broken, receipts, names, variant, [5])
+        u = rd.load_unit(broken, "N_w1", "fold", [803000, 803019])
+        with self.assertRaisesRegex(AssertionError, "unit N_w1"):
+            rd.of_receipt_controls(("R", "W1"), receipts, u, u["ks"].index(5))
 
 
 if __name__ == "__main__":

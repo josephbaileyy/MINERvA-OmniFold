@@ -1,0 +1,7 @@
+# ibu1_metacheck.py 7dba18120ea9b14ad37b3c8ca4d4b6c6f17fa8aab869949b0b0dddb352c7c247: mutation tests, 2026-10-23T15:04:46Z
+baseline (expect pass): rc=0 pass=True failing=[] refusals={'A': 0, 'B1': 0, 'C': 0} guard_nonzero={'A': 0, 'B1': 0, 'C': 0}
+wrong truth (expect fail): rc=1 pass=False failing=['N_gibuu_s301000.npz'] refusals={'A': 0, 'B1': 0, 'C': 0} guard_nonzero={'A': 0, 'B1': 0, 'C': 0}
+unattributed product (expect fail): rc=1 pass=False failing=['N_gibuu_s301050.npz'] refusals={'A': 0, 'B1': 0, 'C': 0} guard_nonzero={'A': 0, 'B1': 0, 'C': 0}
+refusal line (expect fail): rc=1 pass=False failing=[] refusals={'A': 0, 'B1': 1, 'C': 0} guard_nonzero={'A': 0, 'B1': 0, 'C': 0}
+guard outside root (expect fail): rc=1 pass=False failing=[] refusals={'A': 0, 'B1': 0, 'C': 0} guard_nonzero={'A': 1, 'B1': 0, 'C': 0}
+two writers (expect fail): rc=1 pass=False failing=['N_gibuu_s301000.npz'] refusals={'A': 0, 'B1': 0, 'C': 0} guard_nonzero={'A': 0, 'B1': 0, 'C': 0}

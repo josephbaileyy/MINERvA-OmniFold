@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-read/nd-unfolding/ibu1/ibu1_read.py", line 383, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-read/nd-unfolding/ibu1/ibu1_read.py", line 369, in main
+    "primary": evaluate(a.products, receipts, names, variant, k_list),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-read/nd-unfolding/ibu1/ibu1_read.py", line 293, in evaluate
+    u = cache.setdefault((unit_name, None), load_unit(outdir, unit_name, variant["N"]))
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/wt-read/nd-unfolding/ibu1/ibu1_read.py", line 76, in load_unit
+    "of": None if rows[0][3] is None else np.array([r[3] for r in rows]),
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (400,) + inhomogeneous part.
+        6.23 real         5.89 user         2.90 sys
+           272580608  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               26163  page reclaims
+                2062  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                7684  voluntary context switches
+               10042  involuntary context switches
+         56293550946  instructions retired
+         26422717211  cycles elapsed
+           236258240  peak memory footprint
