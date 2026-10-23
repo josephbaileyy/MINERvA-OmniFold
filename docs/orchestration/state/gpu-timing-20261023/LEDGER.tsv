@@ -1,0 +1,6 @@
+jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
+60145929	gput_c0	m3246	debug	COMPLETED	0:0	2026-10-22T23:06:59	2026-10-22T23:17:56	657	256	0.18250	0	GPU timing	C0: CPU node, 8 x 32 concurrent, tasks.tsv lines 0-7; K-T1 bitwise 8/8	receipts/sacct.txt
+60145930	gput_g1	m3246_g	gpu_debug	COMPLETED	0:0	2026-10-23T01:34:49	2026-10-23T01:45:12	623	128	0	0.17306	GPU timing	G1: GPU node CPUs, 1 x 32, line 8, after the G3 probe steps (cuda: not built; gpu: segfault); K-T1 bitwise 1/1	receipts/sacct.txt
+60145931	gput_g2x4	m3246_g	gpu_debug	COMPLETED	0:0	2026-10-23T02:14:51	2026-10-23T02:23:46	535	128	0	0.14861	GPU timing	G2: GPU node CPUs, 4 x 32 concurrent, lines 9-12; bitwise 4/4	receipts/sacct.txt
+60145932	gput_g2x2	m3246_g	gpu_debug	COMPLETED	0:0	2026-10-23T02:15:02	2026-10-23T02:23:36	514	128	0	0.14278	GPU timing	G2: GPU node CPUs, 2 x 32 concurrent, lines 13-14; bitwise 2/2	receipts/sacct.txt
+60151381	gput_c1	m3246	debug	COMPLETED	0:0	2026-10-23T03:09:10	2026-10-23T03:18:35	565	256	0.15694	0	GPU timing	C1 (approved by the director 2026-10-23 by message): CPU node, 1 x 32, tasks-c1.tsv line 0, with the cpufreq sampler; bitwise 1/1	receipts/sacct.txt

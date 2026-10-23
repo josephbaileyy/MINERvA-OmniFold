@@ -1,0 +1,7 @@
+lightgbm 4.6.0 device_type cuda
+[LightGBM] [Fatal] CUDA Tree Learner was not enabled in this build.
+Please recompile with CMake option -DUSE_CUDA=1
+[LightGBM] [Warning] Using sparse features with CUDA is currently not supported.
+[LightGBM] [Info] Number of positive: 94, number of negative: 106
+cuda ERROR LightGBMError CUDA Tree Learner was not enabled in this build.
+Please recompile with CMake option -DUSE_CUDA=1
