@@ -1,0 +1,15 @@
+2026-10-24T03:39:39Z
+put  'stage0-0c-products-20261024.tar' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-0c-products-20261024.tar' ( 4403200 bytes, 336792.6 KBS (cos=4))
+69996ff251c10eb4c8e787b47eea495e (md5) /home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-0c-products-20261024.tar
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-0c-products-20261024.tar: (md5) OK
+put  'stage0-0c-products-20261024.tar.sha256' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-0c-products-20261024.tar.sha256' ( 98 bytes, 36.0 KBS (cos=4))
+get  'retrieveA/stage0-0c-products-20261024.tar' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-0c-products-20261024.tar' (2026/10/23 20:39:39 4403200 bytes, 156652.2 KBS )
+ee819f4e96ebf589c5a94619d9d60be15ae71eb65f276d85525c121724dbbbc2  retrieveA/stage0-0c-products-20261024.tar
+2026-10-24T03:39:42Z
+
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023:
+-rw-r-----    1 josephrb  josephrb       61796 Oct 23 14:33 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb     4403200 Oct 23 20:39 stage0-0c-products-20261024.tar
+-rw-r-----    1 josephrb  josephrb          98 Oct 23 20:39 stage0-0c-products-20261024.tar.sha256
+-rw-r-----    1 josephrb  josephrb  3303587840 Oct 23 14:33 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         127 Oct 23 14:33 stage0-inputs.tar.sha256

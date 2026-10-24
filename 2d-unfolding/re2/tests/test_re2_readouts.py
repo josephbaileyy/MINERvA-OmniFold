@@ -64,7 +64,7 @@ class K1(unittest.TestCase):
         (d / "runs.tsv").write_text("job\tlane\tlabel\tcpus\tscript\targs\n"
                                     "J0b\tb1\tA\t64\tre2\t--bkg-mode purity\n"
                                     "J0b\tb1\tB\t64\tre2\t--bkg-mode purity\n"
-                                    "J0b\tb1\tR\t64\tre2\t--bkg-mode negweight-refined --refine-n-estimators 400\n")
+                                    "J0b\tb1\tR\t64\tre2\t--seed 42 --bkg-mode negweight-refined --refine-n-estimators 400\n")
 
     def tearDown(self):
         self.td.cleanup()
@@ -96,6 +96,19 @@ class K1(unittest.TestCase):
                   dict(self.good, params={"random_state": 42, "n_estimators": 400, "num_leaves": 31}))
         r = self.run_checks(f"c1\tle\tA\trun:A\t\n")
         self.assertEqual(r["health"][0]["verdict"], "FAIL")
+
+    def test_health_random_state_is_seed_plus_3(self):
+        runs = (self.d / "runs.tsv").read_text()
+        (self.d / "runs.tsv").write_text(runs.replace("--seed 42 ", "--seed 48 "))
+        r = self.run_checks(f"c1\tle\tA\trun:A\t\n")
+        self.assertEqual(r["health"][0]["verdict"], "FAIL")          # 45 recorded, seed 48 wants 51
+        root_xsec(self.d / "out" / "R" / "xsec.root", self.eu,
+                  dict(self.good, params={"random_state": 51, "n_estimators": 400, "num_leaves": 31}))
+        r = self.run_checks(f"c1\tle\tA\trun:A\t\n")
+        self.assertEqual(r["health"][0]["verdict"], "PASS")
+        (self.d / "runs.tsv").write_text(runs.replace("--seed 42 ", ""))
+        r = self.run_checks(f"c1\tle\tA\trun:A\t\n")
+        self.assertEqual(r["health"][0]["verdict"], "FAIL")          # no --seed: no rule to pass
 
     def test_health_fails_on_clipping_or_size(self):
         root_xsec(self.d / "out" / "R" / "xsec.root", self.eu, dict(self.good, clipped_fraction=0.02))

@@ -1,0 +1,2 @@
+jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt
+60182677	s0c	m3246	regular_1	COMPLETED	0:0	2026-10-23T20:10:45	2026-10-23T20:37:54	1629	256	0.45250	0	5D Stage 0c	0c unfolds: one CPU node, 8 x 32 concurrent, tasks-0c.tsv lines 0-7; C0c bitwise 3/3; cap 1.0, projected 0.65	receipts-A/sacct.txt
