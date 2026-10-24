@@ -7,3 +7,7 @@ closure_tune_v1	closure	tune_v1	PC closure floor (pseudo-data = MC, r = 1)
 closure_nuwro	closure	nuwro	PC closure bias at the control vertex
 data_nuwro_sq	prior	nuwro_sq	PC fallback, only if PC is NOT_POWERED
 closure_nuwro_sq	closure	nuwro_sq	PC fallback, only if PC is NOT_POWERED
+data_ref_tune_v1	prior_ref	tune_v1	refined arm NC_R (against RE-1 D2) and its pilot; zero of the refined shifts
+data_ref_genie_mec	prior_ref	genie_mec	refined arm vertex
+data_ref_nuwro	prior_ref	nuwro	refined arm vertex
+data_ref_gibuu	prior_ref	gibuu	refined arm vertex

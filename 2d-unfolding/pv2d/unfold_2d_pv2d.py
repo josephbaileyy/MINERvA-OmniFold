@@ -1546,6 +1546,10 @@ def main():
                     help="PV-2D: a pv2d-ratio/1 JSON; with --closure, reweight the pseudo-data and the "
                          "truth reference by r(truth cell) (needs --expect-closure-ratio-sha256)")
     ap.add_argument("--expect-closure-ratio-sha256", default=None)
+    ap.add_argument("--pv2d-refine-400-31", action="store_true",
+                    help="PV-2D refined arm (RE-2's estimator): with --bkg-mode negweight-refined, the "
+                         "Stay-Positive refinement classifier at n_estimators 400, num_leaves 31 "
+                         "(2d-unfolding/re1/re1_2d.py REFINE_OVERRIDE); random_state stays seed + 3")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -1562,6 +1566,8 @@ def main():
         prior_r, _ = pv2d_lib.load_ratio(args.prior_ratio, args.expect_prior_ratio_sha256)
         print(f"[INFO] PV-2D prior ratio {args.prior_ratio}: r in "
               f"[{prior_r.min():.6g}, {prior_r.max():.6g}]")
+    if args.pv2d_refine_400_31 and args.bkg_mode != "negweight-refined":
+        raise SystemExit("[FAIL] --pv2d-refine-400-31 needs --bkg-mode negweight-refined")
     if args.closure_ratio is not None:
         if args.expect_closure_ratio_sha256 is None:
             raise SystemExit("[FAIL] --closure-ratio needs --expect-closure-ratio-sha256")
@@ -2119,6 +2125,9 @@ def main():
         sgn_w = np.concatenate([measured_weights, -inj_w])
         refine_params = ({"random_state": int(args.seed) + 3}
                          if args.seed is not None else None)
+        if args.pv2d_refine_400_31:   # PV-2D: RE-2's refinement capacity
+            refine_params = dict(refine_params or {}, n_estimators=400, num_leaves=31)
+            print(f"[INFO] PV-2D refinement classifier params: {refine_params}")
         w_ref, _g_ev, frac_clip = refine_stay_positive(
             np.column_stack([sgn_pt, sgn_pz]), sgn_w,
             estimator=args.estimator, device=args.device,

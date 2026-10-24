@@ -286,5 +286,121 @@ class GatedRatio(unittest.TestCase):
         self.assertEqual(c[13, 15], 8)                 # pT > 0.85, p_par > 6
 
 
+class ReportTables(unittest.TestCase):
+    def test_largest_step_both_directions(self):
+        import report_tables as T
+        r = np.ones((L.NPT, L.NPZ))
+        self.assertEqual(T.largest_step(r, 5 * L.NPZ + 5), (0.0, (5, 5)))      # flat: no step, no neighbour
+        r[5, 6] = 1.3
+        step, nb = T.largest_step(r, 5 * L.NPZ + 5)
+        self.assertAlmostEqual(step, 0.3)
+        self.assertEqual(nb, (5, 6))
+        self.assertEqual(T.largest_step(r, 0)[0], 0.0)                         # corner cell, far from the step
+        r[0, 1] = 0.8
+        self.assertAlmostEqual(T.largest_step(r, 0)[0], 0.2)                   # a corner sees its in-grid neighbour
+
+    def test_classify_cell_both_directions(self):
+        import report_tables as T
+        r = np.ones((L.NPT, L.NPZ))
+        lab = np.full((L.NPT, L.NPZ), "fine", dtype=object)
+        g = 5 * L.NPZ + 5
+        self.assertEqual(T.classify_cell(r, lab, g), "none")
+        r[5, 6] = 1.3
+        self.assertEqual(T.classify_cell(r, lab, g), "generator")           # fine|fine: the generator's step
+        self.assertFalse(T.beside_construction_step(r, lab, g))
+        for other, kind in (("coarse", "gate"), ("noisy", "gate"), ("off", "cut")):
+            lab[5, 6] = other
+            self.assertEqual(T.classify_cell(r, lab, g), kind)
+            self.assertTrue(T.beside_construction_step(r, lab, g))
+        lab[5, 5], lab[5, 6] = "coarse", "coarse"
+        self.assertEqual(T.classify_cell(r, lab, g), "gate")                # coarse|coarse: a pooled-cell edge
+        r[5, 6] = 1.05
+        self.assertEqual(T.classify_cell(r, lab, g), "none")                # below the threshold
+        self.assertEqual(T.classify_cell(r, lab, 9 * L.NPZ + 9), "none")    # far from any step
+        r[5, 6], lab[5, 6] = 1.3, "off"                                     # a gate pair outranks a cut pair
+        r[4, 5], lab[4, 5] = 1.3, "fine"
+        self.assertEqual(T.classify_cell(r, lab, g), "gate")
+        lab[5, 5] = "fine"                                                  # a cut pair outranks a generator pair
+        self.assertEqual(T.classify_cell(r, lab, g), "cut")
+
+    def test_tiers_cover_every_label_once(self):
+        import report_tables as T
+        labs = [x for _, t in T.TIERS for x in t]
+        self.assertEqual(sorted(labs), sorted(["fine", "coarse", "noisy", "off"]))
+        self.assertEqual(dict(T.TIERS)["r = 1"], ("noisy", "off"))
+
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+@unittest.skipUnless(os.path.exists(os.path.join(_HERE, "readouts", "readout_ref.json")), "committed readouts absent")
+class ReportTablesOnCommittedReadouts(unittest.TestCase):
+    """Pinned regression: the post-hoc counts REPORT.md quotes, from the committed files."""
+
+    @classmethod
+    def setUpClass(cls):
+        import report_tables as T
+        cls.T = T
+        cls.I = T.Inputs(os.path.join(_HERE, "ratios", "projections.json"), os.path.join(_HERE, "ratios"))
+        cls.A = T.load(os.path.join(_HERE, "readouts", "readout_a.json"))
+        cls.R = T.load(os.path.join(_HERE, "readouts", "readout_ref.json"))
+        cls.I.check(cls.A, "a")
+        cls.I.check(cls.R, "refined")
+
+    def test_union_rule_for_h(self):
+        n = {v: int(self.I.near[v].sum()) for v in ("genie_mec", "nuwro", "gibuu", "h")}
+        self.assertEqual(n, {"genie_mec": 2, "nuwro": 34, "gibuu": 19, "h": 52})
+        self.assertTrue(np.array_equal(self.I.near["h"], self.I.near["genie_mec"] | self.I.near["nuwro"]
+                                       | self.I.near["gibuu"]))
+
+    def test_h_over_sigma_both_ways(self):
+        keep = ~self.I.near["h"]
+        for X, full, rest in ((self.A, 30, 9), (self.R, 26, 6)):
+            h, sq = np.asarray(X["envelope"]["h"]), np.asarray(X["sigma_Q"]["cells"])
+            self.assertEqual(int((h > sq).sum()), full)
+            self.assertEqual(int((h[keep] > sq[keep]).sum()), rest)
+
+    def test_step_classes_of_the_h_over_sigma_cells(self):
+        h, sq = np.asarray(self.A["envelope"]["h"]), np.asarray(self.A["sigma_Q"]["cells"])
+        dom = self.A["envelope"]["dominant"]
+        got = [self.I.cls[dom[k]][k] for k in np.flatnonzero(h > sq)]
+        self.assertEqual({k: got.count(k) for k in ("gate", "cut", "generator", "none")},
+                         {"gate": 21, "cut": 0, "generator": 4, "none": 5})
+
+    def test_cut_only_and_pc_subsets(self):
+        T = self.T
+        self.assertEqual(int((self.I.cls["nuwro"] == "cut").sum()), 1)
+        self.assertEqual(int(self.I.cells[self.I.cls["nuwro"] == "cut"][0]), 145)
+        pc = self.A["controls"]["PC"]["primary"]
+        b, s = np.asarray(pc["bias_cells"]), np.asarray(pc["shift_cells"])
+        for m, n, corr in ((self.I.near["h"], 45, 0.946), (~self.I.near["h"], 82, 0.652),
+                           (self.I.near["nuwro"], 32, 0.951), (~self.I.near["nuwro"], 95, 0.698)):
+            lr = L.linear_response(s[m], b[m], pc["min_abs_bias"])
+            self.assertEqual(lr["n_cells"], n)
+            self.assertAlmostEqual(lr["corr"], corr, places=3)
+
+    def test_refuses_a_wrong_arm(self):
+        with self.assertRaises(SystemExit):
+            self.I.check(self.A, "refined")
+
+    def test_refuses_a_changed_ratio_or_projection(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            for f in os.listdir(os.path.join(_HERE, "ratios")):
+                shutil.copy(os.path.join(_HERE, "ratios", f), d)
+            with open(os.path.join(d, "nuwro.json"), "a") as f:
+                f.write(" ")
+            with self.assertRaises(SystemExit):
+                self.T.Inputs(os.path.join(d, "projections.json"), d)
+        with tempfile.TemporaryDirectory() as d:
+            for f in os.listdir(os.path.join(_HERE, "ratios")):
+                shutil.copy(os.path.join(_HERE, "ratios", f), d)
+            with open(os.path.join(d, "projections.json"), "a") as f:
+                f.write(" ")
+            I = self.T.Inputs(os.path.join(d, "projections.json"), d)      # ratios still match their entries
+            with self.assertRaises(SystemExit):
+                I.check(self.A, "a")                                        # but the readout names other projections
+
+
 if __name__ == "__main__":
     unittest.main()
