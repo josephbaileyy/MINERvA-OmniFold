@@ -1,0 +1,1 @@
+jobid	job_name	account	qos	state	exit_code	start_local_PDT	end_local_PDT	elapsed_raw_s	billing	charged_cpu_node_h	charged_gpu_node_h	item	purpose	receipt

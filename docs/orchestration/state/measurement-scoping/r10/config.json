@@ -1,0 +1,131 @@
+{
+ "schema": "r10-config/1",
+ "declaration": "docs/orchestration/state/measurement-scoping/r10/DECLARATION.md",
+ "did": {
+  "driver": {
+   "path": "docs/orchestration/state/next-preparation-20261009/d-id/did.py",
+   "sha256": "d918c816080a292eecaa0cc182a73906b868bb75189056862cf88d7152c4bbbd"
+  },
+  "config": {
+   "path": "docs/orchestration/state/next-preparation-20261009/d-id/config.json",
+   "sha256": "aebd8c8e378de8354e05fa905c5671506acf1428928da512e9b3d4ea1ef955ab"
+  },
+  "tables": {
+   "path": "docs/orchestration/state/next-preparation-20261009/d-id/outputs/tables.npz",
+   "sha256": "2aab22703747bfbc33247fe015213c5d9d0a65dcfc0074f0e3c53a1de29327a4"
+  },
+  "results": {
+   "path": "docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json",
+   "sha256": "2234c0c0c2a639aada2763d760404ac2cf35dda34f7a4a7956256a766bde445b"
+  }
+ },
+ "weight_sets": [
+  "nominal",
+  "gibuu",
+  "w1",
+  "w2",
+  "w3",
+  "q3"
+ ],
+ "iterations": {
+  "record": [
+   1,
+   2,
+   3,
+   5,
+   10,
+   20,
+   200
+  ]
+ },
+ "null_seed": 20261024,
+ "enu_cut_MeV": 20000.0,
+ "order": [
+  "f1",
+  "null3@f1",
+  "f2",
+  "f2~null",
+  "C1@f1",
+  "C1@f1~null",
+  "C1@f2",
+  "C1@f2~null",
+  "C2@f1",
+  "C2@f1~null",
+  "C2@f2",
+  "C2@f2~null",
+  "C3@f1",
+  "C3@f1~null",
+  "C3@f2",
+  "C3@f2~null",
+  "C4@f1",
+  "C4@f1~null",
+  "C4@f2",
+  "C4@f2~null",
+  "C2xC3@f1",
+  "C2xC3@f1~null",
+  "f4",
+  "f4~null"
+ ],
+ "rule": {
+  "width_median_max": 0.1,
+  "width_p90_max": 0.25,
+  "width_halving": 0.5,
+  "cut_keep_fraction": 0.6666666666666666,
+  "min_departures": 3,
+  "null_band_k": 2.0,
+  "null_band_rel": 0.01
+ },
+ "limits": {
+  "threads": 2,
+  "cpu_core_hours": 16.0,
+  "ram_bytes": 15032385536
+ },
+ "extract": {
+  "playlists": [
+   "1A",
+   "1B",
+   "1C",
+   "1D",
+   "1E",
+   "1F",
+   "1G",
+   "1L",
+   "1M",
+   "1N",
+   "1O",
+   "1P"
+  ],
+  "of_inputs_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "inputs": {
+   "of_inputs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+   "s1_dir": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1",
+   "s1_sha256_list": "docs/orchestration/state/measurement-paper/phase1/mp2/s1_npz_sha256.txt",
+   "g2_dir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final",
+   "manifests": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/playlist_manifests",
+   "s1_receipt": "docs/orchestration/state/measurement-paper/phase1/mp2/s1_receipt.json"
+  },
+  "code": {
+   "event_identity": {
+    "path": "nd-unfolding/pet/event_identity.py",
+    "sha256": "b921abf0f2a940e70d2ea27968701b83908af03fc889d550b1c741c88f9d8c31"
+   },
+   "mp2_s1_dump": {
+    "path": "measurement-paper/phase1/mp2/mp2_s1_dump.py",
+    "sha256": "22129d9aebaa023a856bdb4eac268c240f23c3d3f72761b513b9178eabead28e"
+   }
+  },
+  "branches": [
+   "part_response_recoil_allNonMuonClusters_tracker_nClus",
+   "part_response_recoil_allNonMuonClusters_ecal_nClus",
+   "part_response_recoil_allNonMuonClusters_hcal_nClus",
+   "part_response_total_recoil_passive_allNonMuonClusters_tracker",
+   "part_response_total_recoil_passive_allNonMuonClusters_ecal",
+   "part_response_total_recoil_passive_allNonMuonClusters_hcal",
+   "part_response_container_total_recoil_passive_primaryHadrons_id_sz",
+   "MasterAnaDev_BlobNClusters_sz"
+  ],
+  "controls": {
+   "vertex_tol_mm": 1e-06
+  }
+ }
+}
