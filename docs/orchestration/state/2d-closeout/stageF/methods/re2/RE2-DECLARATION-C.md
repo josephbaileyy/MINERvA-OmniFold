@@ -189,7 +189,7 @@ denominator (gap 1, S5-08). So it is the same control.
 PASS.
 
 **S5-22: there is no S2.** The bkg-only separable term is not computed, and the npz has no `bkg_separable` key. The
-npz carries `arm` = refined (CB-G).
+npz carries `arm` = refined (CB-G). <!-- absence-ok: J5 was not bound (RE2-BINDING-B, R10); the refined rollup's code skips the S2 block by design, which re2c_rollup.py's refined branch implements -->
 
 ### 3.3 C3, `re2c_export_cov.py` (EX rows)
 
@@ -241,7 +241,7 @@ The construction is unchanged, with x = `E_R`.
 `Q_R` = S5_R total + C_PL_R, with every check of the original.
 - The three input digests come from the previous steps (CB-02/03/04).
 - Check 5's control values are read from the refined `playlist_term.json`, which is pinned and must carry
-  `arm` = refined (CB-18). The purity literals cannot be declared for a product that does not exist yet.
+  `arm` = refined (CB-18). The purity literals cannot be declared for a product that does not exist yet. <!-- absence-ok: a rule about the refined product, which part C has not made: CB-18's literals are read at run time from it -->
 - Both npz must carry `arm` = refined (CB-G).
 
 ### 3.7 C7, `re2c_build_q.py` (BQ rows)
