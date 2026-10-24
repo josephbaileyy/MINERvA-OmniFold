@@ -207,4 +207,11 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
 
 - [x] Prep, job 60201984: COMPLETED, self-check passed, 0.0883 node-h. Cells and `prep-SHA256SUMS` committed with
   the pin (below).
-- [ ] J1 submitted alone; NCs read.
+- [x] **J1, first submission, job 60202408: FAILED after 21 s, before any step started** (0.0058 node-h). The
+  launcher read `SLURM_MEM_PER_NODE`, which Slurm leaves unset in an exclusive job submitted without `--mem`. No
+  unfold ran and no product was written.
+  - **Fix:** the launcher now reads the job's memory from `scontrol show job`'s AllocTRES when the variable is unset
+    (the parse was tested on the failed job's own `mem=487802M`). It falls back to `nproc` for the CPU count.
+  - **The new run pin** is the next commit. Only `sbatch_pvl.sh` changes (`3b160c7bc1779e21`); every other file is as at
+    `54340b61`.
+- [ ] J1 resubmitted alone; NCs read.
