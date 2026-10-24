@@ -250,3 +250,11 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
   - Charged so far: 0.8183 node-h. With J4 and J5 the projected total is 1.48 node-h, against the cap of 4.0.
 - [x] **Gates written for J4** (L-EW (e) and (c)) **and J5** (L-5D-PV), whose NCs all passed in J1. Both are
   submitted together.
+- [x] **J4, job 60206334: COMPLETED** in 783 s, 0.2175 node-h, 0.65×. **J5, job 60206336: COMPLETED** in 811 s,
+  0.2253 node-h, 0.68×. **Every PC passes**, so F was not needed and the 4.5 node-h fallback cap was not used.
+  **The ladder's total is 1.2611 CPU node-h.**
+- [x] **Readouts:** `pvl_analyze.py` at the pin, committed in `nd-unfolding/pv-ladder/readouts/`. The tables come
+  from `pvl_report.py` (`c6007dea`, written before any vertex readout was read).
+- [x] **Post hoc, at the director's request:** `pvl_departure.py` ran on a login node (2:32, 6.4 GB, no charge);
+  its output is `readouts/departure.json`. `pvl_response_2d.py` gives the same response for PV-2D's committed files.
+  Results are in REPORT.md §4.
