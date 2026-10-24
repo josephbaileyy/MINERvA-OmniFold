@@ -1,0 +1,33 @@
+{
+ "arm": "purity",
+ "inputs": {
+  "central": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "ec": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root",
+   "sha256": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5"
+  },
+  "eu": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "p3": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_3d_p3.root",
+   "sha256": "c16b622b4970800121b1d92dad91407878e0f4546375bfe27cdd3257d46d8c63"
+  }
+ },
+ "learner_vs_E_C_pct": {
+  "max_abs": 12.183693685645691,
+  "median_abs": 0.9830594710522944
+ },
+ "schema": "re2c-numbers/1",
+ "threeD_p3_vs_central": {
+  "mean_ratio": 1.0041718062109168,
+  "median_ratio": 0.9999763053693055,
+  "n_cells": 205,
+  "sd_ratio": 0.0351596043997259,
+  "total_change_percent": 0.001411557577912781
+ }
+}

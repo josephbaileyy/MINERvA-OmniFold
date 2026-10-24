@@ -1,0 +1,2 @@
+arm=purity deploy=/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/review/partc-dryrun/deploy-8c2b626d head=8c2b626d5714bfc277f566a5bba0b2917d927b7f host=login12 start=2026-10-24T14:07:31Z
+end=2026-10-24T14:10:40Z
