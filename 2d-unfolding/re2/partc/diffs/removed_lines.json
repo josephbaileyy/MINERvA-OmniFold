@@ -45,6 +45,7 @@
  ],
  "re2c_fig1.py": [
   "\"\"\"Regenerate the article's Fig. 1 with the adopted covariance Q = S5 total + C_PL (decision 2026-10-17).",
+  "\"make_figs\": \"9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c\",",
   "new = np.zeros_like(z[\"ours_v\"]); new[gids] = rr[\"central\"][\"CV42_universe_file\"]",
   "sys.exit(\"[FAIL] cov2d_Q_205.npz x differs from the drawn central value (remote_reduce CV42 = E_U)\")"
  ],

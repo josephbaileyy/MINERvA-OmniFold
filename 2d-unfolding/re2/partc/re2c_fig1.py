@@ -46,7 +46,7 @@ import numpy as np
 PINS = {
     "npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
     "reduce": "2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce",
-    "make_figs": "9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c",
+    "make_figs": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
     "s5_npz": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
     "playlist_npz": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
     "combination": "050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d",

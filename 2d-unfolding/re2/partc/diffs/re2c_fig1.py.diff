@@ -23,6 +23,15 @@
  Derived from receipts/2d-c04-adopt-20261012/make_fig1_vl175.py (rebuild SPEC §6). The central-value swap and its
  E_C control are unchanged. The covariance is `Q` from cov2d_Q_205.npz (step A), and its checks no longer use the
  VL175 --sigma file. They are, each a refusal:
+@@ -31,7 +46,7 @@
+ PINS = {
+     "npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
+     "reduce": "2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce",
+-    "make_figs": "9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c",
++    "make_figs": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
+     "s5_npz": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
+     "playlist_npz": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
+     "combination": "050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d",
 @@ -41,7 +56,18 @@
  for k in ("npz", "reduce", "make_figs", "values", "tmp", "outdir", "cov", "s5_npz", "playlist_npz", "combination",
            "budget", "step_a_sums"):
