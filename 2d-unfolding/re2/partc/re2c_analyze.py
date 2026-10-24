@@ -97,6 +97,7 @@ K1_R = {"core": (RE2RUN / "partb_readout" / "k1_core.json",
 STAGED_R = (RE2RUN / "partb_readout" / "preflight" / "inputs.stat",
             "89595b3e6c4ee3dddc77841ef53ef78b7f71aa488bdf8dfb2ca02254173da0fc")
 CFS_SHA = {"CV": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"}   # = PIN cv_omnifile_cfs
+CFS_LAT_SUMS = (f"{ACT}/SHA256SUMS", "73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6")  # re2b_env.sh
 NO_REF = {"verdict": "NO REFINED REFERENCE", "why": "no refined product reproduces this purity reference "
                                                     "(RE2-DECLARATION-B.md §5.1); not part of the item verdict"}
 
@@ -151,18 +152,26 @@ def k1_rows(which, ids):
 
 
 def staged_ok():
-    """Each staged path is tied to its CFS original by the pinned DTN record: its sha256 must be the CFS digest
-    (the CV's is pinned here; each lateral's is the CFS SHA256SUMS row the DTN preflight checked)."""
+    """Each staged path is tied to its CFS original by the pinned DTN record, not by re-reading the deleted copy: its
+    recorded sha256 must be the CFS file's (the CV's is pinned here; each lateral's must equal its row of the CFS
+    SHA256SUMS, whose own digest is pinned, as the DTN preflight checked)."""
     p, want = STAGED_R
     if not p.is_file() or sha(p) != want:
         return False, "preflight/inputs.stat digest mismatch"
     rows = {ln.split()[4]: ln.split()[0] for ln in p.read_text().splitlines()}
     if rows.get(CVOMNI_R) != CFS_SHA["CV"]:
         return False, "staged CV digest is not the CFS CV's"
-    lat = [k for k in rows if k.startswith(ACT_R + "/")]
+    lat = sorted(k for k in rows if k.startswith(ACT_R + "/"))
     if len(lat) != 10:
         return False, f"{len(lat)} staged laterals recorded, 10 expected"
-    return True, {"cv": rows[CVOMNI_R], "laterals": {k: rows[k] for k in sorted(lat)}}
+    q, qwant = CFS_LAT_SUMS
+    if not Path(q).is_file() or sha(q) != qwant:
+        return False, "CFS lateral SHA256SUMS digest mismatch"
+    cfs = {ln.split()[1]: ln.split()[0] for ln in Path(q).read_text().splitlines() if ln.strip()}
+    bad = [k for k in lat if cfs.get(Path(k).name) != rows[k]]
+    if bad:
+        return False, f"staged lateral digests differ from the CFS SHA256SUMS rows: {bad}"
+    return True, {"cv": rows[CVOMNI_R], "laterals": {k: rows[k] for k in lat}}
 
 
 def prov(p, driver_sha, want, p1=None):
@@ -275,6 +284,10 @@ def s3():
     rep = {"item": "S3", "pins_failed": AP.pins(), "laterals": {}}
     compare, cells = AP.xr()
     vs = []
+    if ARM == "refined":   # the laterals' staged copies, tied to the CFS digests (gap 2)
+        st = staged_ok()
+        rep["staged_inputs"] = {"ok": st[0], "record": st[1]}
+        vs.append("PASS" if st[0] else "INCONCLUSIVE")
     for u in LATERALS:
         name = f"2dc_P_S3_{u.replace('_', '')}"
         p = out_of(name)

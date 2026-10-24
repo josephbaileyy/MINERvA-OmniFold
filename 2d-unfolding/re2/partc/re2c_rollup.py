@@ -127,12 +127,17 @@ def partb_sums():
 
 
 def mode_of(path):
-    """The runConfig keys of the mode guard, and whether re2Refinement is present."""
+    """The runConfig keys of the mode guard, and whether re2Refinement records the 400/31 refinement at the run's
+    seed + 3 (B10). Part B's readout checked the same per run (k1_core health rows, pinned); this re-reads it here."""
     f = ROOT.TFile.Open(str(path))
     rc = f.Get("runConfig")
     rf = f.Get("re2Refinement")
-    out = {k: (json.loads(rc.GetTitle()).get(k) if rc else None) for k in MODE_R}
-    out["re2Refinement"] = bool(rf)
+    cfg = json.loads(rc.GetTitle()) if rc else {}
+    out = {k: cfg.get(k) for k in MODE_R}
+    par = json.loads(rf.GetTitle()).get("params", {}) if rf else {}
+    seed = cfg.get("seed")
+    out["re2Refinement"] = bool(rf) and par.get("n_estimators") == 400 and par.get("num_leaves") == 31 \
+        and seed is not None and par.get("random_state") == seed + 3
     f.Close()
     return out
 

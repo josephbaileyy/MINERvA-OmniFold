@@ -107,7 +107,7 @@ def main(argv=None):
     C_abs = BC.absolute(C, xr)
     total = QR + C_abs
     sq = rel_sigma(QR, xr)
-    out = {"schema": "re2c-cmodel/1", "label": LABEL,
+    out = {"schema": "re2c-cmodel/1", "label": LABEL, "caveat": cm["caveat"], "tail_caveat_post_hoc": cm["post_hoc"],
            "decision": "docs/orchestration/DECISION-20261024-joseph-2d-model-dependence-component.md",
            "headline": "Q_R; this file's total is the secondary users' total Q_R + C_model, reported beside it",
            "form": "C_model = sum_k s_k s_k^T (M2), kappa = 1, fractional; C_abs = diag(x_R) C_model diag(x_R), "

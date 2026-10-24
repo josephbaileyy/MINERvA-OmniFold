@@ -134,6 +134,47 @@ class ValuesEngine(unittest.TestCase):
         self.assertNotIn("refined_rendered", r["m"])
 
 
+class ValuesSpecRefinedLayout(unittest.TestCase):
+    """Every row of the committed spec resolves in the refined layout (the review's B1): a stand-in refined tree is
+    built from the purity sources at their refined paths, plus synthetic records for the two refined-only sources
+    (re2c_numbers.py's and re2c_cmodel.py's), and the engine must regenerate every row that passes its control."""
+
+    def test_every_row_has_a_refined_source(self):
+        import csv
+        import gzip
+        import shutil
+        V = load("re2c_values")
+        rows = list(csv.DictReader(open(HERE / "re2c_values_spec.tsv"), delimiter="\t"))
+        d = Path(tempfile.mkdtemp())
+        for key, (pur, ref) in V.SOURCES.items():
+            if pur and ref:
+                dst = d / ref
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                if pur.endswith(".gz") and not ref.endswith(".gz"):
+                    dst.write_bytes(gzip.open(REPO / pur).read())
+                else:
+                    shutil.copy(REPO / pur, dst)
+        synth = {}
+        for r in rows:
+            src, path = V.arm_of(r["source"], "refined"), V.arm_of(r["path"], "refined")
+            self.assertIsNotNone(V.SOURCES[src][1], f"{r['id']}: source {src} has no refined file")
+            if V.SOURCES[src][0] is None:
+                cur = synth.setdefault(src, {})
+                parts = path.split(".")
+                for q in parts[:-1]:
+                    cur = cur.setdefault(q, {})
+                cur[parts[-1]] = 1.0
+        for src, doc in synth.items():
+            f = d / V.SOURCES[src][1]
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(json.dumps(doc))
+        rc = V.main(["--repo", str(REPO), "--spec", str(HERE / "re2c_values_spec.tsv"), "--refined-dir", str(d),
+                     "--out-tsv", str(d / "t.tsv"), "--out-json", str(d / "t.json")])
+        out = json.loads((d / "t.json").read_text())["rows"]
+        self.assertEqual([r["id"] for r in out if r.get("refined_error")], [])
+        self.assertEqual(rc, 0)
+
+
 class PeriodModeGuard(unittest.TestCase):
     def setUp(self):
         self.PD = load("re2c_periods")

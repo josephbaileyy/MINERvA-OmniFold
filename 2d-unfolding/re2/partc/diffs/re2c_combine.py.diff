@@ -34,7 +34,7 @@
 -    f"{SCRIPTS}/analyze_periods.py": "912af1ddfbae2e28a2cba6e6843b0985e2442adb4b1e775a22d4c547b8d8ebc5",
 -    f"{SCRIPTS}/periods.py": "d37c1a8fbda7119988643100039e28e335e4fc79eb30a10f0f5a3df984fa8514",
 +    f"{SCRIPTS}/re2c_analyze_periods.py": "708cfc2fec29b80019bebbf84cc3a354aff02031f1669904fae680ede21c8a59",
-+    f"{SCRIPTS}/re2c_periods.py": "82f61fa31c6fe88a0cd31a4cacea77b4e3188ae1f61fdc73d08b61aa1a0a1ef6",
++    f"{SCRIPTS}/re2c_periods.py": "19f2c3934f93a34cc7d20202f83152421bdb0db044380bd8601216bcdb95dd9f",
      COMMON: "dcb78c52f8a11c581942bb1887da29e435c10dfa288125df700789bd331c56a1",
  }
  ANALYSIS_SHA = "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"

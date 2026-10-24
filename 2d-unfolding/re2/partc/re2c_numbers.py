@@ -15,7 +15,10 @@ source, and E_R in the refined arm. The definitions are imported, not re-impleme
              |x / E_C - 1| (%), lgbm_central_metrics.out's "0.983 %, 12.18 %". Printed: sec_systematics.tex:180, 377.
   refined arm only (RE2-PLAN §5.3, descriptive; nothing printed yet):
              E_R - E_U in Q_R's sigma per cell (|d| / sigma, median, p84, max), and E_R against E_U (integral change,
-             median and max of |E_R / E_U - 1|).
+             median and max of |E_R / E_U - 1|);
+             per block (Q, S5 total, universe, stat, C08, C_PL), the per-cell ratio of the refined block's relative
+             sigma to the purity block's (sigma_R / E_R over sigma_U / E_U), with percentiles (--q-purity, the purity
+             cov2d_Q_205.npz 771e49a5...).
 MEASURES: descriptive numbers. Login node, root_6_28.
 """
 import argparse
@@ -58,6 +61,7 @@ def main(argv=None):
         ap.add_argument("--" + k, required=True)
     ap.add_argument("--q-npz")
     ap.add_argument("--q-sha")
+    ap.add_argument("--q-purity")
     a = ap.parse_args(argv)
     want = dict(PINS, central=PINS["eu"] if a.arm == "purity" else E_R_SHA)
     inputs = {}
@@ -95,6 +99,19 @@ def main(argv=None):
                                                                  (eu.ravel()[gid] * a_).sum() - 1)),
                              "median_abs_pct": float(np.median(rr)), "max_abs_pct": float(rr.max())}
         inputs["q_npz"] = {"path": a.q_npz, "sha256": a.q_sha}
+        QP_SHA = "771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced"
+        if not a.q_purity or sha256(a.q_purity) != QP_SHA:
+            raise SystemExit("[FAIL] the refined arm needs --q-purity, the purity cov2d_Q_205.npz 771e49a5...")
+        zp = np.load(a.q_purity, allow_pickle=False)
+        if not np.array_equal(zp["cells"], z["cells"]):
+            raise SystemExit("[FAIL] the purity and refined cov2d cells differ")
+        ratios = {}
+        for k in ("Q", "s5_total", "universe", "stat", "c08", "C_PL"):
+            r = (np.sqrt(np.diag(z[k])) / z["x"]) / (np.sqrt(np.diag(zp[k])) / zp["x"])
+            ratios[k] = {"p16": float(np.percentile(r, 16)), "median": float(np.median(r)),
+                         "p84": float(np.percentile(r, 84)), "min": float(r.min()), "max": float(r.max())}
+        out["block_rel_sigma_ratio_refined_over_purity"] = ratios
+        inputs["q_purity"] = {"path": a.q_purity, "sha256": QP_SHA}
     with open(a.out, "w") as f:
         json.dump(out, f, indent=1, sort_keys=True)
         f.write("\n")

@@ -1,6 +1,10 @@
 #!/bin/bash
-# RE-2: durable HPSS copy of J0's and part B's products and records, by RE2-DECLARATION-B.md §8 (R9 (a)).
-#     bash re2_hpss.sh            (on a Perlmutter login node; hsi authenticates there)
+# RE-2: a durable HPSS copy, by RE2-DECLARATION-B.md §8 (R9 (a)).
+#     bash re2_hpss.sh <name> <source root> <n xsec.root> <member path>...   (a Perlmutter login node; hsi works there)
+# The J0 + part B copy (RE2-HPSS-RECEIPT.md) ran the version at 1442f1d2 (40d5ae10...), whose name, root and members
+# were fixed in the script: re2-2d-rebuild-20261024, $B, 678, submissions.log j0 partb. Since then: those are
+# arguments (part C's bundle, RE2-DECLARATION-C.md §9), and verify_tree writes per-call set files, so the negative
+# controls can no longer overwrite the real recovery's (the receipt's second caveat).
 # Steps, each logged to $W/logs/<n>-<step>.log with its exit status captured unpiped in $W/logs/rc.tsv:
 #   1 bundle: one tar of the member list, a manifest of each member's sha256, and the bundle's sha256
 #   2 put -c on (bundle, manifest, bundle digest)   3 migrate -R   4 ls -V: every object's bytes at the tape level
@@ -13,9 +17,10 @@
 set -eo pipefail
 B=/pscratch/sd/j/josephrb/2d-closeout-re2-20261023
 A=/pscratch/sd/j/josephrb/MINERvA-OmniFold
-NAME=re2-2d-rebuild-20261024
+NAME=${1:?name}; SRC=$(cd "${2:?source root}" && pwd); NXS=${3:?number of xsec.root members}; shift 3
+[ $# -gt 0 ] || { echo "name at least one member path under $SRC"; exit 2; }
 H=/home/j/josephrb/mnv-$NAME
-W=$B/hpss
+W=$B/hpss/$NAME
 [ ! -e "$W" ] || { echo "$W exists"; exit 2; }
 if hsi -q "ls -d $H" > /dev/null 2>&1; then echo "$H exists on HPSS"; exit 2; fi
 mkdir -p "$W/logs"; cd "$W"
@@ -26,11 +31,11 @@ log "start host=$(hostname) script_sha256=$(sha256sum "$0" | cut -d' ' -f1)"
 hpssquota > logs/0-quota-before.log 2>&1 && rc 0-quota-before 0 || rc 0-quota-before $?
 
 # 1. The bundle. Members are paths relative to $B: J0's and part B's outputs and every record beside them.
-(cd "$B" && find submissions.log j0 partb -type f | LC_ALL=C sort) > members.list
-n=$(wc -l < members.list); log "1 members=$n"
-[ "$(grep -c '/xsec.root$' members.list)" = 678 ] || { log "1 expected 678 xsec.root (34 J0 + 644 part B)"; exit 11; }
-(cd "$B" && xargs -d '\n' sha256sum -- < "$W/members.list") > members.sha256
-tar -C "$B" -cf "$TAR" --no-recursion -T members.list
+(cd "$SRC" && find "$@" -type f | LC_ALL=C sort) > members.list
+n=$(wc -l < members.list); log "1 members=$n src=$SRC paths=$*"
+[ "$(grep -c '/xsec.root$' members.list)" = "$NXS" ] || { log "1 expected $NXS xsec.root"; exit 11; }
+(cd "$SRC" && xargs -d '\n' sha256sum -- < "$W/members.list") > members.sha256
+tar -C "$SRC" -cf "$TAR" --no-recursion -T members.list
 tar -tf "$TAR" | LC_ALL=C sort | diff - members.list > logs/1-bundle.log 2>&1 && rc 1-bundle-list 0 || rc 1-bundle-list $?
 sha256sum "$TAR" > "$TAR.sha256"
 log "1 bundle $(stat -c %s "$TAR") B sha256=$(cut -d' ' -f1 "$TAR.sha256") manifest=$(sha256sum members.sha256 | cut -d' ' -f1)"
@@ -65,14 +70,15 @@ awk '$2 == "md5" {n = split($3, p, "/"); print p[n]}' logs/5-hashlist.log | sort
     && rc 5-coverage 0 || rc 5-coverage 1
 
 # 6. Recovery into fresh directories.
-verify_tree() {  # verify_tree <dir> <manifest>: every manifest member re-hashes, and the path sets agree both ways
-    local d=$1 m=$2
+verify_tree() {  # verify_tree <dir> <manifest> <tag>: every member re-hashes, and the path sets agree both ways;
+                 # the sets are written per call (6-got.<tag>.set, 6-want.<tag>.set)
+    local d=$1 m=$2 t=$3
     [ -s "$m" ] || { echo "empty manifest"; return 3; }
     (cd "$d" && sha256sum --quiet -c "$m") || { echo "a member's sha256 differs"; return 4; }
-    (cd "$d" && find . -type f | sed 's#^\./##' | LC_ALL=C sort) > "$W/logs/6-got.set"
-    sed 's/^[0-9a-f]\{64\}  //' "$m" | LC_ALL=C sort > "$W/logs/6-want.set"
-    [ -s "$W/logs/6-got.set" ] && [ -s "$W/logs/6-want.set" ] || { echo "an empty path set"; return 5; }
-    diff "$W/logs/6-want.set" "$W/logs/6-got.set" || { echo "path sets differ"; return 6; }
+    (cd "$d" && find . -type f | sed 's#^\./##' | LC_ALL=C sort) > "$W/logs/6-got.$t.set"
+    sed 's/^[0-9a-f]\{64\}  //' "$m" | LC_ALL=C sort > "$W/logs/6-want.$t.set"
+    [ -s "$W/logs/6-got.$t.set" ] && [ -s "$W/logs/6-want.$t.set" ] || { echo "an empty path set"; return 5; }
+    diff "$W/logs/6-want.$t.set" "$W/logs/6-got.$t.set" || { echo "path sets differ"; return 6; }
 }
 G=$W/recover-get; X=$W/recover-tree; mkdir "$G" "$X"
 [ -z "$(ls -A "$G")" ] && [ -z "$(ls -A "$X")" ] || { log "6 recovery directories not empty"; exit 12; }
@@ -80,17 +86,17 @@ hsi -q "cd $H; lcd $G; get $TAR; get members.sha256; get $TAR.sha256" > logs/6-g
 (cd "$G" && sha256sum -c "$TAR.sha256") > logs/6-bundle-sha.log 2>&1 && rc 6-bundle-sha 0 || rc 6-bundle-sha $?
 cmp "$G/members.sha256" members.sha256 && rc 6-manifest-same 0 || rc 6-manifest-same 1
 tar -C "$X" -xf "$G/$TAR"
-verify_tree "$X" "$G/members.sha256" > logs/6-verify.log 2>&1 && rc 6-verify 0 || rc 6-verify $?
+verify_tree "$X" "$G/members.sha256" recovery > logs/6-verify.log 2>&1 && rc 6-verify 0 || rc 6-verify $?
 # The check fails in each direction it acts on (on a scratch copy of the recovered tree).
 T=$W/control; neg() {  # neg <name> <expected rc> <setup command>
     rm -rf "$T"; cp -a "$X" "$T"; cp "$G/members.sha256" "$W/control.sha256"; eval "$3"
-    set +e; verify_tree "$T" "$W/control.sha256" >> logs/6-controls.log 2>&1; local r=$?; set -e
+    set +e; verify_tree "$T" "$W/control.sha256" "control-$1" >> logs/6-controls.log 2>&1; local r=$?; set -e
     echo "control $1 rc=$r (want $2)" >> logs/6-controls.log; [ "$r" = "$2" ] && rc "6-control-$1" 0 || rc "6-control-$1" 1
 }
 first=$(head -1 members.list)
 neg tampered 4 "chmod u+w \"\$T/$first\"; printf x >> \"\$T/$first\""
 neg missing 4 "rm -f \"\$T/$first\""
-neg extra 6 "touch \"\$T/partb/extra-file\""
+neg extra 6 "touch \"\$T/extra-file\""
 neg empty-manifest 3 ": > \"\$W/control.sha256\""
 rm -rf "$T" "$W/control.sha256"
 # Open every ROOT file and read its keys.

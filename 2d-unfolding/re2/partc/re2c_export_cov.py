@@ -137,6 +137,9 @@ med = 100 * float(np.median(np.sqrt(np.diag(bs)) / xrep))
 ctrl["control_block_sum_median_pct"] = {"measured": med, "VL175": 6.0898, "ok": bool(abs(med - 6.0898) < 5e-4)}
 if ARM == "refined" and not ctrl["control_block_sum_median_pct"]["ok"]:
     sys.exit(f"[FAIL] control: {ctrl['control_block_sum_median_pct']}")
+if ARM == "refined":   # EX-04's second half: the same block sum relative to E_R, reported, no threshold
+    xr_ = EU.ravel(order="C")[cells]
+    ctrl["E_R_relative_block_sum_median_pct"] = 100 * float(np.median(np.sqrt(np.diag(bs)) / xr_))
 
 # per-universe unfolded outputs
 RX = re.compile(r"2d_xsec_MEFHC_5iter_lgbm_uni_full_(?P<b>.+)_(?P<i>\d+)\.root$")

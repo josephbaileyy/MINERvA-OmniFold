@@ -149,6 +149,13 @@ def main(argv=None):
     d += diff(am["headline_totals_oi130"]["values"], ar["headline_totals_oi130"]["values"])
     rec("agreement_receipt", "json", not d, d, ["everything but results, denominator, headline_totals_oi130.values"])
 
+    # ---- check_rebuild's steps C and D (CR-02, CR-03), against the committed checks.json's same entries
+    cm = load(dry / "checks.json")
+    cr = load(repo / S / "stageF/rebuild/outputs/checks.json")
+    keys = sorted(k for k in cm if k.startswith(("C_chi2_", "D_fig67_Q_", "D_fig67_projections")))
+    d = diff({k: cm[k] for k in keys}, {k: cr.get(k) for k in keys})
+    rec("check_rebuild_CR02_CR03", "json", len(keys) == 5 and not d and all(cm[k]["ok"] for k in keys), d or keys)
+
     # ---- printouts
     for name, mine, ref in (
             ("chi2_Q_std", "chi2/chi2_Q_std.txt", f"{S}/stageF/rebuild/outputs/chi2/chi2_Q_std.txt"),

@@ -47,7 +47,7 @@ COMMON = ("/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/repo/
           "playlist-spread-20261014/coverage/scripts/common.py")
 PINS = {
     f"{SCRIPTS}/re2c_analyze_periods.py": "708cfc2fec29b80019bebbf84cc3a354aff02031f1669904fae680ede21c8a59",
-    f"{SCRIPTS}/re2c_periods.py": "82f61fa31c6fe88a0cd31a4cacea77b4e3188ae1f61fdc73d08b61aa1a0a1ef6",
+    f"{SCRIPTS}/re2c_periods.py": "19f2c3934f93a34cc7d20202f83152421bdb0db044380bd8601216bcdb95dd9f",
     COMMON: "dcb78c52f8a11c581942bb1887da29e435c10dfa288125df700789bd331c56a1",
 }
 ANALYSIS_SHA = "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"

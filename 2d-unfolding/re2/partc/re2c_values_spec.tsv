@@ -48,7 +48,7 @@ tabuq-cpl-trace	N/sec_results.tex:198	8.34e-40	budget_Q	C_PL.sqrt_trace	v	.2e	Q_
 tabuq-cpl-median	N/sec_results.tex:198	2.137	budget_Q	C_PL.median_pct	v	.3f	Q_blocks_table		
 tabuq-q-trace	N/sec_results.tex:199	2.87e-39	budget_Q	Q.sqrt_trace	v	.2e	Q_blocks_table	typeset \num{2.87e-39}	
 tabuq-q-median	N/sec_results.tex:199	6.448	budget_Q	Q.median_pct	v	.3f	Q_blocks_table		
-tabuq-paper-trace	N/sec_results.tex:200	2.68e-39	budget_Q	paper_ratios.paper_sqrt_trace_TotalCovariance_205	v	.2e	other	published-side, unchanged; sqrt trace of the published TotalCovariance on the 205 cells; typeset \num{2.68e-39}	
+tabuq-paper-trace	N/sec_results.tex:200	2.68e-39	budget_Q	paper_ratios.paper_sqrt_trace_TotalCovariance_205	v	.2e	published_side	published-side, unchanged; sqrt trace of the published TotalCovariance on the 205 cells; typeset \num{2.68e-39}	
 tabuq-caption-q-median	N/sec_results.tex:212	6.448	budget_Q	Q.median_pct	v	.3f	Q_blocks_table	tab:uq caption	
 tens-diag-only	N/sec_results.tex:220	0.32	tension_report	diagonal-only chi2/ndf =\s+(\S+)	v	.2f	tension	diagonal-only chi2/ndf vs the published covariance (E_U)	
 tens-chi2-norm	N/sec_results.tex:223	0.06	tension_report	chi2_norm\s+=\s+(\S+)	v	.2f	tension		
@@ -57,15 +57,15 @@ tens-ten-smallest	N/sec_results.tex:227	9.5	tension_report	chi2 share from the 1
 tens-73-modes	N/sec_results.tex:228	73	tension_report	^\s+1e-04\s+\S+\s+(\d+)$	v	d	tension	modes kept by pinv at rcond 1e-4	
 tens-73-chi2	N/sec_results.tex:229	0.81	tension_report	^\s+1e-04\s+(\S+)\s+\d+$	v	.2f	tension	chi2/ndf keeping the 73 best-measured directions (rcond 1e-4, 0.806)	
 tens-max-band-share	N/sec_results.tex:234	15	tension_report	max30(^\s+\d+\s+\d+\s+[0-9.]+\s+([0-9.]+)$)	100*v	.0f	tension	bound 'no band carries more than 15%': the regex selects today's argmax row (pT bin 12, frac 0.147) of the 30 marginal-band fractions; reduced over every entry by the engine (not a pinned index)	
-model-tune-ratio	N/sec_results.tex:275	0.91	model_comp_report	model MINERvA_Tune_v1: sigma_tot/data = (\S+)	v	.2f	other	published-side, unchanged; sigma_tune/sigma_data (no E_U or Q)	
-model-tune-deficit	N/sec_results.tex:275	9	model_comp_report	model MINERvA_Tune_v1: sigma_tot/data = (\S+)	100*(1-v)	.0f	other	published-side, unchanged; tune under-prediction ~9 %; typeset $\sim\SI{9}{\percent}$	
-model-data-vs-tune	N/sec_results.tex:279	33.0	model_comp_report	data vs MINERvA_Tune_v1\s+chi2 =\s+\S+\s+ndf = 205\s+chi2/ndf =\s+(\S+)	v	.1f	other	published-side, unchanged; data vs Tune v1 chi2/ndf (33.039)	
+model-tune-ratio	N/sec_results.tex:275	0.91	model_comp_report	model MINERvA_Tune_v1: sigma_tot/data = (\S+)	v	.2f	published_side	published-side, unchanged; sigma_tune/sigma_data (no E_U or Q)	
+model-tune-deficit	N/sec_results.tex:275	9	model_comp_report	model MINERvA_Tune_v1: sigma_tot/data = (\S+)	100*(1-v)	.0f	published_side	published-side, unchanged; tune under-prediction ~9 %; typeset $\sim\SI{9}{\percent}$	
+model-data-vs-tune	N/sec_results.tex:279	33.0	model_comp_report	data vs MINERvA_Tune_v1\s+chi2 =\s+\S+\s+ndf = 205\s+chi2/ndf =\s+(\S+)	v	.1f	published_side	published-side, unchanged; data vs Tune v1 chi2/ndf (33.039)	
 model-ours-vs-tune	N/sec_results.tex:279	29.8	model_comp_report	ours vs MINERvA_Tune_v1\s+chi2 =\s+\S+\s+ndf = 205\s+chi2/ndf =\s+(\S+)	v	.1f	published_comparison	E_U vs Tune v1 in the paper TotalCov (29.755)	
 tabvs-c08-median	N/app_statmethods.tex:86	0.057	budget_Q	c08.median_pct	v	.3f	Q_blocks_table	tab:variance-sources	
 tabvs-stat-median	N/app_statmethods.tex:90	0.684	budget_Q	stat.median_pct	v	.3f	Q_blocks_table	tab:variance-sources	
 tabvs-univ-median	N/app_statmethods.tex:94	5.969	budget_Q	universe.median_pct	v	.3f	Q_blocks_table	tab:variance-sources	
 tabvs-cpl-median	N/app_statmethods.tex:98	2.137	budget_Q	C_PL.median_pct	v	.3f	Q_blocks_table	tab:variance-sources	
-tabvs-mat-check	N/app_statmethods.tex:102	3.4	budget_Q	s5_copied.mat_agreement.value.value	v/1e-16	.1f	other	MAT element-by-element check of Q's universe block (max|A-B|/max|B| = 3.43e-16); typeset $3.4\times10^{-16}$	
+tabvs-mat-check	N/app_statmethods.tex:102	3.4	budget_Q	s5_copied.mat_agreement.value.value	v/1e-16	.1f	published_side	MAT element-by-element check of Q's universe block (max|A-B|/max|B| = 3.43e-16); typeset $3.4\times10^{-16}$	
 tabvs-q-median	N/app_statmethods.tex:106	6.448	budget_Q	Q.median_pct	v	.3f	Q_blocks_table	tab:variance-sources	
 c08-rank	N/app_statmethods.tex:130	4	budget_Q	s5_copied.ensemble.c08_rank.value	v	d	ranks_conditioning	rank of C08; printed 'rank $4$'	
 c08-integral	N/app_statmethods.tex:132	0.0025	budget_Q	c08.integral_sigma_pct	v	.4f	S5_prose	C08 total-sigma relative spread; typeset \boxed{0.0025\%}	
@@ -102,7 +102,7 @@ tabcomb-cpl-trace	N/app_statmethods.tex:458	8.344	budget_Q	C_PL.sqrt_trace	v/1e-
 tabcomb-cpl-median	N/app_statmethods.tex:458	2.137	budget_Q	C_PL.median_pct	v	.3f	Q_blocks_table		
 tabcomb-q-trace	N/app_statmethods.tex:460	2.866	budget_Q	Q.sqrt_trace	v/1e-39	.3f	Q_blocks_table	typeset $2.866\times10^{-39}$	
 tabcomb-q-median	N/app_statmethods.tex:460	6.448	budget_Q	Q.median_pct	v	.3f	Q_blocks_table	typeset \boxed{6.448\%}	
-tabcomb-paper-trace	N/app_statmethods.tex:463	2.676	budget_Q	paper_ratios.paper_sqrt_trace_TotalCovariance_205	v/1e-39	.3f	other	published-side, unchanged; typeset $2.676\times10^{-39}$	
+tabcomb-paper-trace	N/app_statmethods.tex:463	2.676	budget_Q	paper_ratios.paper_sqrt_trace_TotalCovariance_205	v/1e-39	.3f	published_side	published-side, unchanged; typeset $2.676\times10^{-39}$	
 comb-q-median-prose	N/app_statmethods.tex:472	6.448	budget_Q	Q.median_pct	v	.3f	Q_budget		
 comb-q-vs-ec	N/app_statmethods.tex:477	6.410	budget_Q	Q_vs_EC.median_pct	v	.3f	Q_budget	Q median relative to E_C; typeset \SI{6.410}{\percent}	
 comb-univ-plus-stat	N/app_statmethods.tex:480	6.040	budget_Q	universe_plus_stat.median_pct	v	.3f	Q_budget		
@@ -119,20 +119,20 @@ cond-univ-1e12	N/app_statmethods.tex:745	4.93	budget_Q	ranks.universe.cond_1e-12
 rank-univ-1e10	N/app_statmethods.tex:749	123	budget_Q	ranks.universe.rank_1e-10	v	d	ranks_conditioning		
 cond-univ-1e10	N/app_statmethods.tex:749	9.93	budget_Q	ranks.universe.cond_1e-10	v/1e9	.2f	ranks_conditioning	typeset $9.93\times10^{9}$	
 rank-univ-1e12-b	N/app_statmethods.tex:760	137	budget_Q	ranks.universe.rank_1e-12	v	d	ranks_conditioning	'below our 137'	
-cond-paperV	N/app_statmethods.tex:765	1.5	tension_report	cond\(V\) = (\S+)	v/1e12	.1f	other	published-side, unchanged; cond of the published V (1.47e12); typeset $1.5\times10^{12}$	
-rank-paperV	N/app_statmethods.tex:765	204	tension_report	^\s+1e-12\s+\S+\s+(\d+)$	v	d	other	published-side, unchanged; 'rank=204' of the published V matches pinv modes kept at rcond 1e-12 in tension_report; whether that is the convention behind the printed rank is UNCERTAIN	
+cond-paperV	N/app_statmethods.tex:765	1.5	tension_report	cond\(V\) = (\S+)	v/1e12	.1f	published_side	published-side, unchanged; cond of the published V (1.47e12); typeset $1.5\times10^{12}$	
+rank-paperV	N/app_statmethods.tex:765	204	tension_report	^\s+1e-12\s+\S+\s+(\d+)$	v	d	published_side	published-side, unchanged; 'rank=204' of the published V matches pinv modes kept at rcond 1e-12 in tension_report; whether that is the convention behind the printed rank is UNCERTAIN	
 rank-univstat-1e12	N/app_statmethods.tex:767	205	budget_Q	ranks.universe_plus_stat.rank_1e-12	v	d	ranks_conditioning		
 cond-univstat-1e12	N/app_statmethods.tex:768	8.17	budget_Q	ranks.universe_plus_stat.cond_1e-12	v/1e11	.2f	ranks_conditioning	typeset $8.17\times10^{11}$	
 stat-vs-statonly-a	N/app_statmethods.tex:776	0.428	budget_Q	paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly	v	.3f	ranks_conditioning		
 stat-trace-a	N/app_statmethods.tex:777	1.984	budget_Q	stat.sqrt_trace	v/1e-40	.3f	ranks_conditioning	typeset $1.984\times10^{-40}$	
-statonly-trace-a	N/app_statmethods.tex:778	4.639	budget_Q	paper_ratios.paper_sqrt_trace_StatOnly_205	v/1e-40	.3f	other	published-side, unchanged; typeset $4.639\times10^{-40}$	
+statonly-trace-a	N/app_statmethods.tex:778	4.639	budget_Q	paper_ratios.paper_sqrt_trace_StatOnly_205	v/1e-40	.3f	published_side	published-side, unchanged; typeset $4.639\times10^{-40}$	
 oo-univstat	N/app_statmethods.tex:781	23.57	ours_only_universe_plus_stat	direct inverse: .*chi\^2/ndf = (\S+)$	v	.2f	ranks_conditioning	ours-only direct-inverse chi2/ndf, universe + stat (23.566)	
 oo-q	N/app_statmethods.tex:782	23.23	ours_only_Q	direct inverse: .*chi\^2/ndf = (\S+)$	v	.2f	ranks_conditioning	ours-only direct-inverse chi2/ndf, all four blocks (23.233)	
 stat-vs-statonly-b	N/app_statmethods.tex:805	0.428	budget_Q	paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly	v	.3f	ranks_conditioning		
 stat-vs-statonly-median	N/app_statmethods.tex:806	0.435	budget_Q	paper_ratios.median_sigma_stat_over_sigma_StatOnly	v	.3f	ranks_conditioning		
 stat-trace-b	N/app_statmethods.tex:856	1.984	budget_Q	stat.sqrt_trace	v/1e-40	.3f	ranks_conditioning	typeset $1.984\times10^{-40}$	
 stat-vs-statonly-c	N/app_statmethods.tex:857	0.428	budget_Q	paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly	v	.3f	ranks_conditioning		
-statonly-trace-b	N/app_statmethods.tex:858	4.639	budget_Q	paper_ratios.paper_sqrt_trace_StatOnly_205	v/1e-40	.3f	other	published-side, unchanged; typeset $4.639\times10^{-40}$	
+statonly-trace-b	N/app_statmethods.tex:858	4.639	budget_Q	paper_ratios.paper_sqrt_trace_StatOnly_205	v/1e-40	.3f	published_side	published-side, unchanged; typeset $4.639\times10^{-40}$	
 rank-q-1e10	N/app_statmethods.tex:888	197	budget_Q	ranks.Q.rank_1e-10	v	d	ranks_conditioning		
 tens-app-inflation	N/app_statmethods.tex:903	8	tension_report	=> (\S+)x inflation	v	.0f	tension	off-diagonal inflation 8.2x; typeset $8\times$	
 tens-app-ten-smallest	N/app_statmethods.tex:904	9.5	tension_report	chi2 share from the 10 smallest-lambda modes:\s+(\S+)	100*v	.1f	tension	typeset \SI{9.5}{\percent}	
@@ -147,7 +147,7 @@ sys-band-minos-e	N/sec_systematics.tex:42	2.39	budget_Q	bands.Muon_Energy_MINOS.
 sys-band-minoseff	N/sec_systematics.tex:42	1.58	budget_Q	bands.MinosEfficiency.median_pct	v	.2f	Q_budget		
 sys-band-minerva-e	N/sec_systematics.tex:43	1.38	budget_Q	bands.Muon_Energy_MINERvA.median_pct	v	.2f	Q_budget		
 sys-minos-integral	N/sec_systematics.tex:74	0.31	budget_Q	bands.Muon_Energy_MINOS.integral_sigma_pct	v	.2f	Q_budget	Muon_Energy_MINOS band integral sigma (0.306)	
-sys-rho-flux-muon	N/sec_systematics.tex:84	0.90	budget_Q	flux.rhoFluxMuon.value	v	.2f	other	published-side, unchanged; upper end of 'rho=0.87--0.90' (paper ancillary only; Q does not enter); the 0.87 has no listed source	
+sys-rho-flux-muon	N/sec_systematics.tex:84	0.90	budget_Q	flux.rhoFluxMuon.value	v	.2f	published_side	published-side, unchanged; upper end of 'rho=0.87--0.90' (paper ancillary only; Q does not enter); the 0.87 has no listed source	
 s2-bkg-share	N/sec_systematics.tex:101	0.26	s5_json	numbers.bkg_separable.sigma_bkg_over_sigma_stat_median	v	.2f	S5_prose	S2 separable background term, median sigma_bkg/sigma_stat (0.263)	
 s1-relse-b	N/sec_systematics.tex:106	4.1	s5_json	numbers.stat.ensemble_rel_se_of_sigma	100*v	.1f	S5_prose	formula value 1/sqrt(2*299); typeset \SI{4.1}{\percent}	
 s1-nested	N/sec_systematics.tex:107	1.001	s5_json	numbers.stat.nested_150_vs_300_sigma_ratio_median	v	.3f	S5_prose	nested 150 vs 300 replica sigma ratio, median	
@@ -201,16 +201,16 @@ x03-2p2h-sd	N/sec_systematics.tex:488	0.235	s5_json	numbers.x03.2p2h:0.seed_sd_o
 x03-maccqe-shift	N/sec_systematics.tex:488	0.266	s5_json	numbers.x03.MaCCQE:0.shift_median_rel_pct	v	.3f	S5_prose		
 x03-maccqe-sd	N/sec_systematics.tex:489	0.220	s5_json	numbers.x03.MaCCQE:0.seed_sd_of_shift_median_rel_pct	v	.3f	S5_prose		
 pap-findings-integral	N/paper_body.tex:93	1	agreement	headline_totals_oi130.values.ratio_integrals_reported	100*(v-1)	.0f	published_comparison	'within about 1%' (1.12 %); a single-character printed string, weak substring test	
-pap-findings-3d	N/paper_body.tex:95	0.001	re1_numbers	p3.vs_E_U.total_change_percent	v	.3f	threeD_vs_2D	3D (e) marginal total vs E_U, area-weighted, 205 cells (RE-1 P3)	
-pap-rank-paperV	N/paper_body.tex:364	205	tension_report	rank\(lam>0\) = (\d+)/	v	d	other	published-side, unchanged; 'rank 205' of the published covariance (rank(lam>0))	
-pap-cond-paperV	N/paper_body.tex:364	1.5	tension_report	cond\(V\) = (\S+)	v/1e12	.1f	other	published-side, unchanged; typeset $1.5\times10^{12}$	
+pap-findings-3d	N/paper_body.tex:95	0.001	re1_numbers || partc_numbers	p3.vs_E_U.total_change_percent || threeD_p3_vs_central.total_change_percent	v	.3f	threeD_vs_2D	3D (e) marginal total vs E_U, area-weighted, 205 cells (RE-1 P3)	
+pap-rank-paperV	N/paper_body.tex:364	205	tension_report	rank\(lam>0\) = (\d+)/	v	d	published_side	published-side, unchanged; 'rank 205' of the published covariance (rank(lam>0))	
+pap-cond-paperV	N/paper_body.tex:364	1.5	tension_report	cond\(V\) = (\S+)	v/1e12	.1f	published_side	published-side, unchanged; typeset $1.5\times10^{12}$	
 pap-max-band-share	N/paper_body.tex:367	15	tension_report	max30(^\s+\d+\s+\d+\s+[0-9.]+\s+([0-9.]+)$)	100*v	.0f	tension	bound; reduced over every entry by the engine (not a pinned index)	
 pap-pl-step	N/paper_body.tex:430	7	analysis_json	comparisons.dr_PB/PA.step.value	100*v	.0f	periods	'a step of about 7%'	
 pap-cpl-integral	N/paper_body.tex:435	2.0	playlist_term_json	report.C_PL.integral_rel_sigma_pct	v	.1f	C_PL_prose	C_PL on the integrated cross section (1.968)	
 pap-s1-median	N/paper_body.tex:445	0.684	budget_Q	stat.median_pct	v	.3f	S5_prose		
-pap-closure-3d	N/paper_body.tex:475	0.001	re1_numbers	p3.vs_E_U.total_change_percent	v	.3f	threeD_vs_2D		
+pap-closure-3d	N/paper_body.tex:475	0.001	re1_numbers || partc_numbers	p3.vs_E_U.total_change_percent || threeD_p3_vs_central.total_change_percent	v	.3f	threeD_vs_2D		
 pri-max-band-share	N/primer_body.tex:252	15	tension_report	max30(^\s+\d+\s+\d+\s+[0-9.]+\s+([0-9.]+)$)	100*v	.0f	tension	bound; reduced over every entry by the engine (not a pinned index)	
-exec-3d	N/sec_execsummary.tex:44	0.001	re1_numbers	p3.vs_E_U.total_change_percent	v	.3f	threeD_vs_2D		
+exec-3d	N/sec_execsummary.tex:44	0.001	re1_numbers || partc_numbers	p3.vs_E_U.total_change_percent || threeD_p3_vs_central.total_change_percent	v	.3f	threeD_vs_2D		
 hist-q-median	N/app_history.tex:68	6.448	budget_Q	Q.median_pct	v	.3f	Q_budget	replacement column (current value)	
 hist-q-median-2	N/app_history.tex:68	6.45	budget_Q	Q.median_pct	v	.2f	Q_budget		
 hist-flux	N/app_history.tex:69	3.747	budget_Q	bands.Flux.median_pct	v	.3f	Q_budget		
@@ -239,7 +239,7 @@ hist-stat-median	N/app_history.tex:76	0.684	budget_Q	stat.median_pct	v	.3f	Q_blo
 hist-stat-trace	N/app_history.tex:76	1.984	budget_Q	stat.sqrt_trace	v/1e-40	.3f	Q_blocks_table	typeset $1.984\times10^{-40}$	
 hist-q-median-b	N/app_history.tex:202	6.448	budget_Q	Q.median_pct	v	.3f	Q_budget		
 meth-s1-centring	N/sec_method.tex:112	4.43	s5_json	numbers.centring.stat.median_abs_offset_over_sigma_mean	v	.2f	S5_prose	replica mean vs E_U in standard errors of the mean	
-mat-check-b	N/app_statmethods.tex:389	3.4	budget_Q	s5_copied.mat_agreement.value.value	v/1e-16	.1f	other	MAT GetTotalErrorMatrix check of Q's universe block; typeset $3.4\times10^{-16}$	
+mat-check-b	N/app_statmethods.tex:389	3.4	budget_Q	s5_copied.mat_agreement.value.value	v/1e-16	.1f	published_side	MAT GetTotalErrorMatrix check of Q's universe block; typeset $3.4\times10^{-16}$	
 floor-stat-vs-statonly	N/app_statmethods.tex:625	0.428	budget_Q	paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly	v	.3f	ranks_conditioning		
 floor-rank-univ	N/app_statmethods.tex:637	137	budget_Q	ranks.universe.rank_1e-12	v	d	ranks_conditioning	printed 'rank $137\to205$'	
 floor-rank-filled	N/app_statmethods.tex:637	205	budget_Q	ranks.universe_plus_stat.rank_1e-12	v	d	ranks_conditioning	the 205 after filling; universe+stat chosen to match the 23.57 on the next line (Q's rank_1e-12 is also 205). UNCERTAIN which block set the text means	
@@ -247,6 +247,6 @@ floor-oo-univstat	N/app_statmethods.tex:638	23.57	ours_only_universe_plus_stat	d
 hist-pull-mean-b	N/app_history.tex:171	0.042	chi2_Q_std	pull mean / rms\s*:\s*(\S+) /	v	.3f	published_comparison	'[Superseded 2026-10-18: the quoted pair is 0.042/0.398'	
 hist-pull-rms-b	N/app_history.tex:171	0.398	chi2_Q_std	pull mean / rms\s*:\s*\S+ / (\S+)	v	.3f	published_comparison		
 mainpap-integral	N/main_paper.tex:76	1	agreement	headline_totals_oi130.values.ratio_integrals_reported	100*(v-1)	.0f	published_comparison	abstract 'integral within about 1\%'; single-character printed string, weak substring test	
-summ-3d	N/sec_summary.tex:34	0.001	re1_numbers	p3.vs_E_U.total_change_percent	v	.3f	threeD_vs_2D		
+summ-3d	N/sec_summary.tex:34	0.001	re1_numbers || partc_numbers	p3.vs_E_U.total_change_percent || threeD_p3_vs_central.total_change_percent	v	.3f	threeD_vs_2D		
 lit-learner-median-pb373	N/paper_body.tex:373	0.98	lgbm_metrics || partc_numbers	^CV42_universe_file(?:\s+\S+){9}\s+([0-9.]+)\s+[0-9.]+\s*$ || learner_vs_E_C_pct.median_abs	v	.2f	learner_EC		
 lit-learner-max-pb374	N/paper_body.tex:374	12.2	lgbm_metrics || partc_numbers	^CV42_universe_file(?:\s+\S+){10}\s+([0-9.]+)\s*$ || learner_vs_E_C_pct.max_abs	v	.1f	learner_EC		

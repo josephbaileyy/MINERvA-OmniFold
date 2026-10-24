@@ -8,7 +8,8 @@
     - --reduce is re2c_reduce.py's output (its digest in FILE), and the drawn central value is its field "E_R",
       named explicitly (P13), not "CV42_universe_file";
     - the s5_npz, playlist_npz and combination digests are the ones the previous steps recorded (FILE);
-    - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and each npz to carry arm = refined;
+    - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and production_cov.npz and playlist_term.npz to carry
+      arm = refined (cov2d_Q_205.npz is build_q's own output and has no arm key);
     - the inset's \\uqMedian is Q_R's (budget_Q.json), as before.
 
 The original docstring follows.

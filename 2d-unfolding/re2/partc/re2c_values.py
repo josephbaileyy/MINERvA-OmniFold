@@ -54,8 +54,8 @@ SOURCES = {
     "model_comp_report": (f"{R42}/model_comp_report.txt", "receipts/figs/model_comp_report.txt"),
     "tune_log": (f"{R42}/tune.log", "receipts/tune.log"),
     "lgbm_metrics": (f"{R42}/lgbm_central_metrics.out", None),
-    "re1_numbers": (f"{S}/stageF/methods/re1/run2/f/numbers.json", "threeD/numbers.json"),
-    "re1_extras": (f"{S}/stageF/methods/re1/run2/readouts/report2_extras.json", "threeD/report2_extras.json"),
+    "re1_numbers": (f"{S}/stageF/methods/re1/run2/f/numbers.json", None),   # purity only: the refined value is re2c_numbers.py's
+    "re1_extras": (f"{S}/stageF/methods/re1/run2/readouts/report2_extras.json", None),   # purity only
     "cmodel": (None, "cmodel/cmodel_R.json"),
     "partc_numbers": (None, "partc_numbers.json"),
 }

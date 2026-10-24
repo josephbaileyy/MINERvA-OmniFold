@@ -4,13 +4,13 @@ condition (b)).
 
     python3 -I re2c_audit.py --strace S.log --dry DIR --refined ROOT[,ROOT...] --out audit.json
 
-Reads `strace -f -e trace=open,openat,creat,rename*,unlink*,mkdir*` output. Every successful call (no "= -1") is
-classed by its path:
+Reads `strace -f -y -e trace=%file` output: every call that names a file (open, stat, access, readlink, mkdir,
+rename, unlink, ...), with -y printing each descriptor's path, so a path given relative to a directory descriptor is
+resolved against it. Every successful call (no "= -1") is classed by its path:
   refined   under a refined product root (part B's out/ and J0's out/): must be zero calls of any kind;
   write     opened for writing (O_WRONLY, O_RDWR, O_CREAT, O_TRUNC, creat) or a rename, unlink or mkdir;
             each written path is listed, grouped by whether it is inside the dry-run directory.
-A relative path (strace prints the name a call was given: `mkdir -p` components, matplotlib's font cache opened
-relative to MPLCONFIGDIR) cannot be placed by this record; those are listed separately for review.
+A relative path that no descriptor resolves (a record made without -y) is listed separately for review.
 Exit 0 only if no refined path was touched and no absolute write fell outside the dry-run directory other than the
 environment's own caches (the conda env's fontconfig cache and Python bytecode, listed separately and counted).
 """
@@ -21,6 +21,7 @@ import sys
 from collections import Counter
 
 CALL = re.compile(r'^(?:\d+\s+)?(\w+)\((.*)\)\s+=\s+(-?\d+)')
+DIRFD = re.compile(r'^(?:AT_FDCWD|\d+)<([^>]*)>,\s*"([^"]*)"')
 PATH = re.compile(r'"([^"]*)"')
 WRITE_FLAGS = ("O_WRONLY", "O_RDWR", "O_CREAT", "O_TRUNC")
 CACHE = (re.compile(r"/var/cache/fontconfig/"), re.compile(r"/__pycache__/.*\.pyc"))
@@ -46,6 +47,9 @@ def main(argv=None):
         paths = PATH.findall(args)
         if not paths:
             continue
+        dm = DIRFD.match(args)
+        if dm and not dm.group(2).startswith("/"):   # a path relative to a descriptor: resolve it (strace -y)
+            paths[0] = dm.group(1).rstrip("/") + "/" + dm.group(2)
         for p in paths:
             if any(p.startswith(r) for r in roots):
                 refined[f"{call} {p}"] += 1

@@ -8,6 +8,9 @@
 # exist. The purity arm reads no refined product (RE2-DECLARATION-C.md §4.1: the opened-file list is recorded with
 # strace by the caller). No `set -u`: it aborts the root_6_28 activation.
 set -o pipefail
+if [ -z "$RE2C_TIMED" ]; then   # the director's compute ruling: stop past 15 minutes
+    RE2C_TIMED=1 exec timeout 900 bash "$0" "$@"
+fi
 ARM=$1; D=$(cd "$2" && pwd); O=$3
 case "$ARM" in purity|refined) ;; *) echo "arm: purity or refined"; exit 2;; esac
 [ ! -e "$O" ] || { echo "$O exists"; exit 2; }
@@ -146,6 +149,7 @@ step fig67 "$R2D" "$L/fig67_Q.log" "$D/2d-unfolding/uq/plot_uncertainty_fig6_7_s
     --paper-root "$ANC" --out-prefix "$O/fig67/MEFHC_fig6_7_uncertainty" --projections-json "$O/fig67/fig67_projections.json"
 step stat_figs "$R2D" "$L/stat_figs.log" "$D/2d-unfolding/uq/plot_bootstrap_figs.py" --cov "$QDIR/block_stat.root" \
     --outdir "$O/stat"
+step check_rebuild "$O" "$L/check_rebuild.log" "$P/re2c_check_rebuild.py" "$O"
 
 # ---- the published comparison and the figures that read the central value (P12; make_figures.sh:35-42)
 R=$O/receipts
@@ -177,7 +181,7 @@ else
     step reduce "$O" "$L/reduce.log" "$P/re2c_reduce.py" --ec "$EC" --eu "$EU" --er "$ER" \
         --remote-reduce "$ST/../next-preparation-20261009/two-d-path/operands/remote_reduce.json" --out "$O/reduce.json"
     step numbers "$O" "$L/numbers.log" "$P/re2c_numbers.py" --arm refined --central "$ER" --eu "$EU" --ec "$EC" \
-        --p3 "$P3" --q-npz "$Q2" --q-sha "$Q2_SHA" --out "$O/partc_numbers.json"
+        --p3 "$P3" --q-npz "$Q2" --q-sha "$Q2_SHA" --q-purity "$RB/outA/cov2d_Q_205.npz" --out "$O/partc_numbers.json"
     mkdir -p "$O/cmodel"
     step cmodel "$O" "$L/cmodel.log" "$P/re2c_cmodel.py" --cmodel-json "$D/2d-unfolding/pv2d/cmodel/cmodel_2d.json" \
         --q-purity "$RB/outA/cov2d_Q_205.npz" --q-refined "$Q2" --q-refined-sha "$Q2_SHA" \
@@ -187,7 +191,9 @@ else
         --refined-dir "$O" --out-tsv "$O/values_table.tsv" --out-json "$O/values_table.json"
     python3 -c "import json, sys; json.dump(dict(zip(sys.argv[2::2], sys.argv[3::2])), open(sys.argv[1], 'w'), indent=1)" \
         "$O/chain.json" work_cov "$WC_SHA" analysis_json "$AN_SHA" playlist_npz "$PL_SHA" playlist_json "$PLJ_SHA" \
-        production_cov "$S5_SHA" cov2d_Q_205 "$Q2_SHA" s5_plus_playlist "$(sha "$O/combination/s5_plus_playlist.npz")"
+        production_cov "$S5_SHA" cov2d_Q_205 "$Q2_SHA" s5_plus_playlist "$(sha "$O/combination/s5_plus_playlist.npz")" \
+        combination_json "$(sha "$O/combination/combination.json")" reduce "$(sha "$O/reduce.json")" \
+        budget_Q "$(sha "$O/outA/budget_Q.json")"
 fi
 echo "end=$(date -u +%FT%TZ)" >> "$O/logs/run.txt"
 (cd "$O" && find . -type f ! -path './tmp/*' ! -path './mpl/*' ! -name SHA256SUMS -print0 | LC_ALL=C sort -z \

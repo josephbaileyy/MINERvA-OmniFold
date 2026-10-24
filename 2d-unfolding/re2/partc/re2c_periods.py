@@ -117,10 +117,28 @@ def set_arm(arm, work_cov=None, ns=None):
         PINS["work_cov"] = tuple(work_cov)
 
 
+_SUMS = {}
+
+
+def partb_digest(path):
+    """A part-B output's committed digest (run/partb_readout/sums/), by its out/<label>/xsec.root path."""
+    if not _SUMS:
+        import pathlib
+        d = pathlib.Path(__file__).resolve().parents[3] / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run"
+        for f in sorted((d / "partb_readout" / "sums").glob("SHA256SUMS.J*")):
+            for ln in f.read_text().splitlines():
+                h, rel = ln.split()
+                _SUMS[f"{B_R}/partb/out/{rel}"] = h
+    return _SUMS.get(path)
+
+
 def check_mode(run):
-    """PA-02 / PT-G: a period run's driver and background mode must be its arm's. Raises SystemExit."""
+    """PA-02 / PT-G: a period run's driver and background mode must be its arm's; in the refined arm its sha256 must
+    also be the committed part-B digest. Raises SystemExit."""
     want = RUN_MODE[ARM]
     bad = {}
+    if ARM == "refined" and run.get("sha256") != partb_digest(run.get("path")):
+        bad["sha256"] = {"got": run.get("sha256"), "committed": partb_digest(run.get("path"))}
     if run.get("driverSha256") != want["driverSha256"]:
         bad["driverSha256"] = run.get("driverSha256")
     if run.get("bkg_mode") not in want["bkg_mode"]:

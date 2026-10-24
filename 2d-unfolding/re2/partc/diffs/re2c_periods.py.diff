@@ -20,7 +20,7 @@
  Periods follow the flux-file grouping of FluxAndCVReweighter.h:27-33 / MAT FluxReweighter.cxx:1936-1976
  (playlist-spread REPORT section 3.1): 1A-1F use the 1D flux, 1G/1L/1M the 1M flux, 1N-1P the 1N flux.
  Playlist order inside every merged file is the production order (sbatch_hadd_MEFHC.sh:30-43), so the
-@@ -73,3 +86,47 @@
+@@ -73,3 +86,65 @@
      if got != want:
          raise SystemExit(f"[FAIL] pin {name}: {path} sha256 {got} != {want}")
      return {"path": path, "sha256": got}
@@ -55,10 +55,28 @@
 +        PINS["work_cov"] = tuple(work_cov)
 +
 +
++_SUMS = {}
++
++
++def partb_digest(path):
++    """A part-B output's committed digest (run/partb_readout/sums/), by its out/<label>/xsec.root path."""
++    if not _SUMS:
++        import pathlib
++        d = pathlib.Path(__file__).resolve().parents[3] / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run"
++        for f in sorted((d / "partb_readout" / "sums").glob("SHA256SUMS.J*")):
++            for ln in f.read_text().splitlines():
++                h, rel = ln.split()
++                _SUMS[f"{B_R}/partb/out/{rel}"] = h
++    return _SUMS.get(path)
++
++
 +def check_mode(run):
-+    """PA-02 / PT-G: a period run's driver and background mode must be its arm's. Raises SystemExit."""
++    """PA-02 / PT-G: a period run's driver and background mode must be its arm's; in the refined arm its sha256 must
++    also be the committed part-B digest. Raises SystemExit."""
 +    want = RUN_MODE[ARM]
 +    bad = {}
++    if ARM == "refined" and run.get("sha256") != partb_digest(run.get("path")):
++        bad["sha256"] = {"got": run.get("sha256"), "committed": partb_digest(run.get("path"))}
 +    if run.get("driverSha256") != want["driverSha256"]:
 +        bad["driverSha256"] = run.get("driverSha256")
 +    if run.get("bkg_mode") not in want["bkg_mode"]:

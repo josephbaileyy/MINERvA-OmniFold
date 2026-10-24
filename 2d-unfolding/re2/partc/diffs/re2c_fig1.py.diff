@@ -1,6 +1,6 @@
 --- docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/make_fig1_q.py
 +++ 2d-unfolding/re2/partc/re2c_fig1.py
-@@ -1,6 +1,20 @@
+@@ -1,6 +1,21 @@
  #!/usr/bin/env python3
 -"""Regenerate the article's Fig. 1 with the adopted covariance Q = S5 total + C_PL (decision 2026-10-17).
 +"""RE-2 part C copy of stageF/rebuild/scripts/make_fig1_q.py (7710d601...), RE2-DECLARATION-C.md §3.8.
@@ -12,7 +12,8 @@
 +    - --reduce is re2c_reduce.py's output (its digest in FILE), and the drawn central value is its field "E_R",
 +      named explicitly (P13), not "CV42_universe_file";
 +    - the s5_npz, playlist_npz and combination digests are the ones the previous steps recorded (FILE);
-+    - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and each npz to carry arm = refined;
++    - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and production_cov.npz and playlist_term.npz to carry
++      arm = refined (cov2d_Q_205.npz is build_q's own output and has no arm key);
 +    - the inset's \\uqMedian is Q_R's (budget_Q.json), as before.
 +
 +The original docstring follows.
@@ -22,7 +23,7 @@
  Derived from receipts/2d-c04-adopt-20261012/make_fig1_vl175.py (rebuild SPEC §6). The central-value swap and its
  E_C control are unchanged. The covariance is `Q` from cov2d_Q_205.npz (step A), and its checks no longer use the
  VL175 --sigma file. They are, each a refusal:
-@@ -41,7 +55,18 @@
+@@ -41,7 +56,18 @@
  for k in ("npz", "reduce", "make_figs", "values", "tmp", "outdir", "cov", "s5_npz", "playlist_npz", "combination",
            "budget", "step_a_sums"):
      ap.add_argument("--" + k.replace("_", "-"), required=True, type=Path)
@@ -41,7 +42,7 @@
  
  
  def sha(p):
-@@ -80,18 +105,23 @@
+@@ -80,18 +106,23 @@
  ctl = np.zeros(224); ctl[gids] = rr["central"]["E_C"]
  if not np.array_equal(ctl[mask], z["ours_v"][mask]):
      sys.exit("[FAIL] E_C in remote_reduce must equal the released ours_v")
