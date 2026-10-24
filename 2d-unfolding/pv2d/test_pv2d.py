@@ -286,5 +286,31 @@ class GatedRatio(unittest.TestCase):
         self.assertEqual(c[13, 15], 8)                 # pT > 0.85, p_par > 6
 
 
+class ReportTables(unittest.TestCase):
+    def test_largest_step_both_directions(self):
+        import report_tables as T
+        r = np.ones((L.NPT, L.NPZ))
+        self.assertEqual(T.largest_step(r, 5 * L.NPZ + 5), (0.0, (5, 5)))      # flat: no step, no neighbour
+        r[5, 6] = 1.3
+        step, nb = T.largest_step(r, 5 * L.NPZ + 5)
+        self.assertAlmostEqual(step, 0.3)
+        self.assertEqual(nb, (5, 6))
+        self.assertEqual(T.largest_step(r, 0)[0], 0.0)                         # corner cell, far from the step
+        r[0, 1] = 0.8
+        self.assertAlmostEqual(T.largest_step(r, 0)[0], 0.2)                   # a corner sees its in-grid neighbour
+
+    def test_beside_gate_step_both_directions(self):
+        import report_tables as T
+        r = np.ones((L.NPT, L.NPZ))
+        lab = np.full((L.NPT, L.NPZ), "fine", dtype=object)
+        r[5, 6] = 1.3
+        self.assertFalse(T.beside_gate_step(r, lab, 5 * L.NPZ + 5))            # fine|fine: the generator's step
+        lab[5, 6] = "coarse"
+        self.assertTrue(T.beside_gate_step(r, lab, 5 * L.NPZ + 5))             # fine|coarse: the gate's step
+        r[5, 6] = 1.05
+        self.assertFalse(T.beside_gate_step(r, lab, 5 * L.NPZ + 5))            # below the threshold
+        self.assertFalse(T.beside_gate_step(r, lab, 9 * L.NPZ + 9))            # far from the step
+
+
 if __name__ == "__main__":
     unittest.main()
