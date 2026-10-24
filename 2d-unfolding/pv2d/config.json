@@ -26,6 +26,11 @@
   "paper": {
    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
    "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+  },
+  "D2": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/2d/d2_data_refined.npz",
+   "sha256": "71ca3e5fc97cfc0625d84484d9c1f4a59476feacfd3813cdc98d89782329488a",
+   "note": "RE-1's refined 2D data unfold (re1/RE1-REPORT-2.md, receipts); the refined arm's nominal control reference, <= 1e-8 (PV-2D BINDING, option a)"
   }
  },
  "reference": {

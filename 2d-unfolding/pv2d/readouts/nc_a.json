@@ -1,0 +1,84 @@
+{
+ "schema": "pv2d-nc/1",
+ "NC": {
+  "max_rel_diff": 1.375788372115494e-11,
+  "tol": 1e-05,
+  "bitwise": false,
+  "pass": true,
+  "reference": "E_U"
+ },
+ "runs": {
+  "data_tune_v1": {
+   "sha256": "75b6d8e09e18619ea9fce2d500d9688a053eea5dbbb7ccb9aa9f33db8dfb67fa",
+   "driverSha256": "9759def97c70b7ae7c5f4dcce12af2cad4a91a52cc041ea815b1a729586a5b86",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "runConfig": {
+    "bkg_mode": "purity",
+    "bootstrap_seed": null,
+    "bootstrap_streams": "both",
+    "branch_select": "all",
+    "closure": false,
+    "closure_alt_universe": null,
+    "closure_hidden_dpt": false,
+    "closure_hidden_dpt_amplitude": 0.3,
+    "closure_hidden_dpt_center": 0.1,
+    "closure_hidden_dpt_sigma": 0.05,
+    "closure_ratio": null,
+    "closure_reweight": null,
+    "closure_reweight_alpha": 0.1,
+    "closure_reweight_amplitude": 0.2,
+    "closure_reweight_pt0": 0.4,
+    "closure_reweight_pz_ref": 5.0,
+    "closure_reweight_sigma": 0.1,
+    "device": "cpu",
+    "estimator": "lgbm",
+    "expect_closure_ratio_sha256": null,
+    "expect_prior_ratio_sha256": "906a60aa37e91ae625b9e0beb29594a007e0b47c5ec5dc89584e56ed184bbab3",
+    "flux_hist": "pTmu_reweightedflux_integrated",
+    "flux_universe_file": "baseline_flux/flux_integral_universes_MEFHC.root",
+    "iters": 5,
+    "mcfile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+    "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+    "out": "/pscratch/sd/j/josephrb/pv2d-20261023/run/products/data_tune_v1.root.part",
+    "prior_ratio": "/pscratch/sd/j/josephrb/pv2d-20261023/deploy/repo/2d-unfolding/pv2d/ratios/tune_v1.json",
+    "seed": 42,
+    "universe": null,
+    "use_weights": true,
+    "verbose": false
+   },
+   "completeness_guard_numpy": 0.0,
+   "completeness_guard_product": 0.0
+  }
+ },
+ "inputs": {
+  "flux_mc": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  },
+  "omnifile": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "size_bytes": 171117087867,
+   "mtime_epoch": 1783523295
+  },
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "Q": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageF-rebuild-20261018/outA/cov2d_Q_205.npz",
+   "sha256": "771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced"
+  },
+  "paper": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+   "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+  },
+  "products_deploy": {
+   "path": "/pscratch/sd/j/josephrb/pv2d-20261023/deploy/repo",
+   "head": "3631ea3f057a7376aec46b6755413d6fc9dbb703"
+  }
+ },
+ "code": {
+  "pv2d_analyze.py": "7e15ad4acc27441b5542f77c1cdec23574d128320a0cfd5dbfe557303a201848",
+  "pv2d_lib.py": "03aedc97c0941bccc5e58a0b4c344ca309a6623b858b0f5be90974e6a5c19abb"
+ }
+}
