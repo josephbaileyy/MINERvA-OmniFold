@@ -1,0 +1,4 @@
+mkdir: /home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024
+put  're2-2d-rebuild-partc-20261024.tar' : '/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024/re2-2d-rebuild-partc-20261024.tar' ( 73994240 bytes, 511589.7 KBS (cos=4))
+put  'members.sha256' : '/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024/members.sha256' ( 15476 bytes, 6411.0 KBS (cos=4))
+put  're2-2d-rebuild-partc-20261024.tar.sha256' : '/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024/re2-2d-rebuild-partc-20261024.tar.sha256' ( 100 bytes, 19.4 KBS (cos=4))

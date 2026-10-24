@@ -1,0 +1,75 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[PASS] pin_E_U  4f5a1b6d44b9e721
+[PASS] pin_sweeps_json  15b57de9124f204b
+[PASS] pin_vl175_rollup  da92c5d2567647e8
+[PASS] pin_vl175_build_json  dcc1331e8e510cc2
+[PASS] pin_vl175_minos_npz  8912376ef2a6cfce
+[PASS] pin_vl175_budget  aab8a24ebd61df54
+[PASS] pin_ml  3b6b48ec89207ae2
+[PASS] pin_constraint  e38ad7d28354d071
+[PASS] pin_flux_mefhc  d40aea69235cdc98
+[PASS] pin_E_R  a5c13fc38d64242b
+[PASS] pin_k1_core  7c407e958e5247f7
+[PASS] pin_k1_j7  faa4656d9fb4b38b
+[PASS] reported_cells_205
+[PASS] refined_reported_cells_eq_E_U_cells  205
+[PASS] refined_area_eq_E_U_area
+[PASS] weights_identical_across_playlists
+[PASS] weights_equal_constraint_file
+[PASS] weights_equal_vl175_build_json  {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}
+[PASS] may_sweep_files_match_sweeps_json  []
+[PASS] may_44_bands_187_universes
+[PASS] may_minos_outputs_divided_by_phi_cv  0.0
+[PASS] may_x01_scale_equals_vl175  0.0
+[PASS] control_vl175_all_45_blocks_found  []
+[PASS] control_vl175_every_block_at_total_scale_le_1e-12  2.6413017182865303e-17
+[PASS] control_vl175_nonnull_blocks_own_scale_le_1e-12  {'max': 2.112568288378435e-16, 'null_bands': ['EtaNCEL', 'MaNCEL', 'NormNCRES']}
+[PASS] control_vl175_total_le_1e-12  1.3206508591432652e-17
+[PASS] analysis_C0_PASS  PASS
+[PASS] analysis_C0_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+[PASS] analysis_C0_arm_refined  refined
+[PASS] analysis_S3_PASS  PASS
+[PASS] analysis_S3_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+[PASS] analysis_S3_arm_refined  refined
+[PASS] analysis_S4ii_PASS  PASS
+[PASS] analysis_S4ii_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+[PASS] analysis_S4ii_arm_refined  refined
+[PASS] analysis_S1_PASS  PASS
+[PASS] analysis_S1_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+[PASS] analysis_S1_arm_refined  refined
+[PASS] analysis_S4i_PASS  PASS
+[PASS] analysis_S4i_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+[PASS] analysis_S4i_arm_refined  refined
+[PASS] partb_readout_k1_core_PASS
+[PASS] partb_readout_k1_j7_PASS
+[PASS] flux_pot_24_files_match_vl175_build_json  []
+[PASS] refined_j2_38_bands_175_universes  [38, 175]
+[PASS] refined_j2_band_set_eq_july_less_laterals_and_rvp1pi  []
+[PASS] s3_minos_outputs_divided_by_phi_cv  0.0
+[PASS] s3_x01_scale_equals_vl175  0.0
+[PASS] universe_bands_43_plus_norm  ['2p2h', 'AGKYxF1pi', 'AhtBY']
+[PASS] mat_universe_block_le_1e-12  1.3380872718308243e-16
+[PASS] integral_from_vectors_flux_weighted  1.919124133740091e-15
+[PASS] integral_from_vectors_minos_x01  1.1430179730659333e-13
+[PASS] integral_from_vectors_stat_ddof1  3.7148713302887546e-14
+[PASS] functionals_from_vectors_blocks_at_total_scale_le_1e-10  2.824992027892025e-15
+[PASS] functionals_from_vectors_blocks_nonnull_own_scale_le_1e-10  {'max': 2.411039058429374e-12, 'null': ['NormDISCC'], 'worst': [('c08', 2.411039058429374e-12), ('FrCEx_pi', 1.673856088390292e-12), ('FrPiProd_N', 1.4111427358747871e-12)]}
+[PASS] functionals_normalization_rank1_le_1e-10  8.055548473215174e-16
+[PASS] symmetric_universe
+[PASS] psd_universe  -5.935996834613356e-17
+[PASS] symmetric_stat
+[PASS] psd_stat  7.839575793288395e-10
+[PASS] symmetric_c08
+[PASS] psd_c08  -2.8989681701672874e-16
+[PASS] symmetric_total
+[PASS] psd_total  1.2678531654198015e-12
+[PASS] refined_mode_guard_every_input  {'n': 605, 'bad': {}}
+S5 PASS

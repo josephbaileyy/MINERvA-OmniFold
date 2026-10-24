@@ -1,0 +1,305 @@
+{
+  "receipt": "2D (pT, p_par) chi^2/ndf vs GENIE 2.12.6 MINERvA Tune v1",
+  "purpose": "Re-derive the unsourced 26.5 in docs/analysis-note/sec_results.tex:167, with 33.0 as the control.",
+  "generated_utc": "2026-10-24T16:19:00Z",
+  "generated_by": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/receipt_model_chi2_2d.py",
+  "unfold_rerun": false,
+  "host": "login12",
+  "repo_commit": "32e403b84e9e8f9d9bc435028749f896653c7a43",
+  "python": "3.11.14",
+  "numpy": "1.26.4",
+  "root": "6.28/12",
+  "ingredients": {
+    "inputs": {
+      "paper_covariance_and_data_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+      "paper_data_csv_crosscheck": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt",
+      "tune_v1_prediction_csv": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt",
+      "our_unfolded_2d_result_root": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root"
+    },
+    "sha256": {
+      "paper_covariance_and_data_root": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+      "paper_data_csv_crosscheck": "02153e7af054a98254ddfc42cce65fc7520f95032c544dbc33555ac60376c2f3",
+      "tune_v1_prediction_csv": "222317522662b7001e8d4fcc155c1ec0b28b85f2cd868ab10206a7e7f6bf8240",
+      "our_unfolded_2d_result_root": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
+    },
+    "our_unfolded_product": {
+      "file": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+      "hist": "hXSec2D",
+      "identity": "Phase-18.2 frozen production MEFHC 5-iteration OmniFold, d2sigma/(dpT dp_par); the finalised 2D reproduction and the DEFAULT_OURS of compare_to_paper_fullcov.py"
+    },
+    "tune_prediction": {
+      "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt",
+      "identity": "GENIE 2.12.6 MINERvA Tune v1 d2sigma/(dpT dp_par) as SHIPPED in the arXiv:2106.16210 ancillary (paper Figs. 15-18). Not re-derived: unlike 3D, the 2D tune is published directly, so 3d-unfolding/genie/model_tune_xsec3d.py has no 2D analogue to write -- the ancillary file IS the reference that the 3D script was validated against to 0.01%."
+    },
+    "covariance": {
+      "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+      "object": "TotalCovariance (TMatrixT<double>, 224x224)",
+      "identity": "published MINERvA total (stat+syst) covariance",
+      "mask_object": "StatOnlyCovariance (positive diagonal defines the reported bins)"
+    },
+    "masking": {
+      "rule": "keep bins with positive diagonal in StatOnlyCovariance",
+      "n_total_cells": 224,
+      "n_reported": 205,
+      "n_dropped": 19,
+      "mask_matches_xs_gt_0_in_data_csv": true,
+      "bin_mapping_control_max_reldev_csv_vs_th2d": 0.003496968028010139,
+      "bin_mapping_control_note": "data CSV re-mapped through gid=(Ptbin-1)*16+(P||bin-1) vs the ROOT TH2D; agreement to CSV print precision (~1e-3 rel, 3 significant figures) confirms the tune CSV lands on the same bins."
+    },
+    "inverse": {
+      "method": "numpy.linalg.pinv on the 205x205 reduced block",
+      "why": "published TotalCov is near-singular; pinv is the documented convention at the point of use in 2d-unfolding/compare_to_paper_fullcov.py:chi2_with_cov",
+      "default_rcond": 4.551914400963142e-14,
+      "condition_number": 1467894182230.6272,
+      "n_singular_values_kept_by_pinv": 205,
+      "n_singular_values_dropped_by_pinv": 0,
+      "regularisation": "none beyond pinv's default rcond cut"
+    },
+    "ndf": {
+      "value": 205,
+      "rule": "ndf = n_reported = 205",
+      "why": "no parameters are fitted in either comparison (both the tune and our unfolded result are fixed predictions), so ndf is the bin count.",
+      "dimension_conditional_caveat": "In this repo ndf = n_reported is justified in 2D and explicitly NOT where effective rank is far below n_reported. CHECKED, not assumed: see ndf_justification below and 2D_OMNIFOLD_RUN_LOG.md:37."
+    }
+  },
+  "ndf_justification": {
+    "test": "rank-truncation scan of chi^2/205 vs number of retained eigen-directions of the published TotalCov; a cliff near r = n_reported would mean the number is carried by null/near-null directions and ndf = n_reported would be wrong.",
+    "reference_scan_2D_OMNIFOLD_RUN_LOG_line37_ours_vs_data": {
+      "50": 0.69,
+      "100": 2.35,
+      "180": 3.3,
+      "205": 3.66
+    },
+    "per_comparison": {
+      "ours_vs_data": {
+        "scan_points": [
+          10,
+          25,
+          50,
+          73,
+          100,
+          139,
+          150,
+          180,
+          200,
+          204,
+          205
+        ],
+        "chi2_per_ndf_at_points": [
+          0.0059162709741917546,
+          0.14084622071665917,
+          0.38557068980742054,
+          0.6618539469211174,
+          1.0420876821131306,
+          1.391392643512103,
+          1.4912084085649038,
+          1.7623478750004025,
+          2.162425356611021,
+          2.270094263833654,
+          2.2703183772374214
+        ],
+        "monotonic_nondecreasing": true,
+        "largest_step_fraction_of_final": 0.1762208708795471,
+        "note_on_largest_step": "scan points are unevenly spaced, so this reflects point spacing, not a cliff; use the tail fractions below.",
+        "frac_chi2_in_smallest_1_modes": 9.871452656791143e-05,
+        "frac_chi2_in_smallest_5_modes": 0.04752329968701908,
+        "frac_chi2_in_smallest_10_modes": 0.09633692681535376,
+        "frac_chi2_in_smallest_25_modes": 0.22374417056656618,
+        "n_modes_to_reach_90pct_chi2_by_eigenvalue_rank": 195,
+        "n_modes_to_reach_90pct_chi2_by_contribution": 88
+      },
+      "data_vs_tune": {
+        "scan_points": [
+          10,
+          25,
+          50,
+          73,
+          100,
+          139,
+          150,
+          180,
+          200,
+          204,
+          205
+        ],
+        "chi2_per_ndf_at_points": [
+          0.08020312021862332,
+          0.339830611558398,
+          1.8485811666532688,
+          9.850279607182829,
+          17.521279743974514,
+          25.967595147621903,
+          28.041570595027135,
+          31.044878725824816,
+          32.47885141080228,
+          33.03923009958727,
+          33.0392796304541
+        ],
+        "monotonic_nondecreasing": true,
+        "largest_step_fraction_of_final": 0.2556446598751494,
+        "note_on_largest_step": "scan points are unevenly spaced, so this reflects point spacing, not a cliff; use the tail fractions below.",
+        "frac_chi2_in_smallest_1_modes": 1.4991509311479292e-06,
+        "frac_chi2_in_smallest_5_modes": 0.01696248301779696,
+        "frac_chi2_in_smallest_10_modes": 0.025916232777125483,
+        "frac_chi2_in_smallest_25_modes": 0.060364539630910576,
+        "n_modes_to_reach_90pct_chi2_by_eigenvalue_rank": 172,
+        "n_modes_to_reach_90pct_chi2_by_contribution": 72
+      },
+      "ours_vs_tune": {
+        "scan_points": [
+          10,
+          25,
+          50,
+          73,
+          100,
+          139,
+          150,
+          180,
+          200,
+          204,
+          205
+        ],
+        "chi2_per_ndf_at_points": [
+          0.08586515878727098,
+          0.32864291789572614,
+          1.70249528473343,
+          8.226930050115378,
+          15.54557287492213,
+          25.45058171518521,
+          27.36175028105609,
+          30.017338471596773,
+          30.772119020281856,
+          31.3404184932614,
+          31.34048141941549
+        ],
+        "monotonic_nondecreasing": true,
+        "largest_step_fraction_of_final": 0.31604520389169605,
+        "note_on_largest_step": "scan points are unevenly spaced, so this reflects point spacing, not a cliff; use the tail fractions below.",
+        "frac_chi2_in_smallest_1_modes": 2.0078234679813984e-06,
+        "frac_chi2_in_smallest_5_modes": 0.01813508833918329,
+        "frac_chi2_in_smallest_10_modes": 0.02163809130585127,
+        "frac_chi2_in_smallest_25_modes": 0.042218335133774376,
+        "n_modes_to_reach_90pct_chi2_by_eigenvalue_rank": 163,
+        "n_modes_to_reach_90pct_chi2_by_contribution": 71
+      }
+    }
+  },
+  "results": {
+    "ours_vs_data": {
+      "description": "ours - published data (control; run log 3.661)",
+      "chi2": 465.41527219152636,
+      "ndf": 205,
+      "chi2_per_ndf": 2.2703184009342747,
+      "sum_A_reported": 3.7177266357834945e-37,
+      "sum_B_reported": 3.6891976275220914e-37,
+      "ratio_A_over_B": 1.0077331200824189,
+      "pull_mean": 0.06040567261523469,
+      "pull_rms": 0.5352702686629317,
+      "pull_max_abs": 2.572255336801277,
+      "chi2_diagonal_only": 59.48343668871016,
+      "chi2_per_ndf_diagonal_only": 0.2901631057985861,
+      "offdiag_inflation_factor": 7.824283499743741,
+      "rank_truncation_chi2_per_ndf": {
+        "10": 0.0059162709741917546,
+        "25": 0.14084622071665917,
+        "50": 0.38557068980742054,
+        "73": 0.6618539469211174,
+        "100": 1.0420876821131306,
+        "139": 1.391392643512103,
+        "150": 1.4912084085649038,
+        "180": 1.7623478750004025,
+        "200": 2.162425356611021,
+        "204": 2.270094263833654,
+        "205": 2.2703183772374214
+      },
+      "chi2_full_spectral": 465.41526733367135,
+      "spectral_vs_pinv_reldiff": 1.0437678550422843e-08
+    },
+    "data_vs_tune": {
+      "description": "published data - MINERvA Tune v1 (CONTROL; 3D_OMNIFOLD_RUN_LOG.md:112 -> 33.0)",
+      "chi2": 6773.0523319534805,
+      "ndf": 205,
+      "chi2_per_ndf": 33.03927966806576,
+      "sum_A_reported": 3.6891976275220914e-37,
+      "sum_B_reported": 3.3661868620000004e-37,
+      "ratio_A_over_B": 1.0959574672364374,
+      "pull_mean": 1.2881616387289965,
+      "pull_rms": 1.7738526135954822,
+      "pull_max_abs": 5.977366229294776,
+      "chi2_diagonal_only": 985.2122679617617,
+      "chi2_per_ndf_diagonal_only": 4.805913502252496,
+      "offdiag_inflation_factor": 6.87471375682906,
+      "rank_truncation_chi2_per_ndf": {
+        "10": 0.08020312021862332,
+        "25": 0.339830611558398,
+        "50": 1.8485811666532688,
+        "73": 9.850279607182829,
+        "100": 17.521279743974514,
+        "139": 25.967595147621903,
+        "150": 28.041570595027135,
+        "180": 31.044878725824816,
+        "200": 32.47885141080228,
+        "204": 33.03923009958727,
+        "205": 33.0392796304541
+      },
+      "chi2_full_spectral": 6773.05232424309,
+      "spectral_vs_pinv_reldiff": 1.138392280690863e-09
+    },
+    "ours_vs_tune": {
+      "description": "ours - MINERvA Tune v1 (TARGET; sec_results.tex:167 -> 26.5)",
+      "chi2": 6424.798715074023,
+      "ndf": 205,
+      "chi2_per_ndf": 31.340481536946452,
+      "sum_A_reported": 3.7177266357834945e-37,
+      "sum_B_reported": 3.3661868620000004e-37,
+      "ratio_A_over_B": 1.1044326379358005,
+      "pull_mean": 1.3485673113442311,
+      "pull_rms": 1.8175780617553488,
+      "pull_max_abs": 6.555017986879966,
+      "chi2_diagonal_only": 1050.0558797791105,
+      "chi2_per_ndf_diagonal_only": 5.122223803800539,
+      "offdiag_inflation_factor": 6.118530298049988,
+      "rank_truncation_chi2_per_ndf": {
+        "10": 0.08586515878727098,
+        "25": 0.32864291789572614,
+        "50": 1.70249528473343,
+        "73": 8.226930050115378,
+        "100": 15.54557287492213,
+        "139": 25.45058171518521,
+        "150": 27.36175028105609,
+        "180": 30.017338471596773,
+        "200": 30.772119020281856,
+        "204": 31.3404184932614,
+        "205": 31.34048141941549
+      },
+      "chi2_full_spectral": 6424.798690980176,
+      "spectral_vs_pinv_reldiff": 3.750132592196762e-09
+    }
+  },
+  "targets": {
+    "data_vs_tune": {
+      "quoted": 33.0,
+      "source": "3d-unfolding/3D_OMNIFOLD_RUN_LOG.md:112",
+      "recomputed": 33.03927966806576,
+      "abs_diff": 0.039279668065759665,
+      "quoted_precision_half_ulp": 0.05,
+      "reproduces": true
+    },
+    "ours_vs_tune": {
+      "quoted": 26.5,
+      "source": "docs/analysis-note/sec_results.tex:167 (no other occurrence in the repo)",
+      "recomputed": 31.340481536946452,
+      "abs_diff": 4.840481536946452,
+      "quoted_precision_half_ulp": 0.05,
+      "reproduces": false
+    },
+    "ours_vs_data": {
+      "quoted": 3.661,
+      "source": "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md headline table",
+      "recomputed": 2.2703184009342747,
+      "abs_diff": 1.3906815990657253,
+      "quoted_precision_half_ulp": 0.0005,
+      "reproduces": false
+    }
+  }
+}
