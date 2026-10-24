@@ -190,6 +190,7 @@ left alone or merged at low purity: purity 0.27–0.39, and 0.31 for R13. GiBUU'
 - **component:** "generator-shape model dependence; not a calibrated bound (M2, kappa = 1, unscaled)"
 - **coverage:** "coverage at held-out truths was not validated (DECISION-20261024-joseph-5d-community-standard-route.md
   item 3); the paper states this as a limitation"
+  <!-- absence-ok: a verbatim label quoting DECISION-20261024-joseph-5d-community-standard-route.md item 3, not a claim about the record -->
 - **gibuu:** "GiBUU's shape is applied on p_parallel < 10 GeV/c; above it the prior is unchanged. At 6 <= p_parallel <
   10 GeV/c GiBUU's sample lacks the E_nu > 20 GeV part, 4.9-5.3 % of the cross section there. The paper's joint tests
   use the narrower p_parallel < 6 GeV/c (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md)"
