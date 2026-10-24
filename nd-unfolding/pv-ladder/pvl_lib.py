@@ -327,3 +327,37 @@ def readout_space(xint, names, space):
         c = coarse_of_cells(names)
         return np.bincount(c, weights=x.ravel(), minlength=int(np.prod([len(J_EDGES[a]) - 1 for a in names])))
     raise ValueError(space)
+
+
+STEP = 0.1  # PV-2D REPORT §5's step threshold in r
+CLASS_ORDER = ("gate", "cut", "generator", "none")
+
+
+def classify_cells(r, label, shape, step=STEP):
+    """report_tables.classify_cell on an N-dimensional grid, for every cell at once: over the cell's axis neighbours
+    with |r - r_nb| > step, "gate" if any such pair has a coarse-pooled or noisy (r = 1) side, else "cut" if any has
+    an "off" side, else "generator" if any is fine|fine, else "none"."""
+    r = np.asarray(r, float).reshape(shape)
+    lab = np.asarray(label, dtype=object).reshape(shape)
+    gatey = np.isin(lab, ("coarse", "noisy"))
+    fine = lab == "fine"
+    has = {k: np.zeros(shape, bool) for k in ("gate", "cut", "generator")}
+    for ax in range(len(shape)):
+        n = shape[ax]
+        if n < 2:
+            continue
+        lo = [slice(None)] * len(shape)
+        hi = [slice(None)] * len(shape)
+        lo[ax], hi[ax] = slice(0, n - 1), slice(1, n)
+        lo, hi = tuple(lo), tuple(hi)
+        big = np.abs(r[lo] - r[hi]) > step
+        g = big & (gatey[lo] | gatey[hi])
+        gen = big & fine[lo] & fine[hi]
+        c = big & ~g & ~gen
+        for kind, m in (("gate", g), ("cut", c), ("generator", gen)):
+            has[kind][lo] |= m
+            has[kind][hi] |= m
+    out = np.full(shape, "none", dtype=object)
+    for kind in ("generator", "cut", "gate"):  # later assignments take precedence
+        out[has[kind]] = kind
+    return out.ravel()

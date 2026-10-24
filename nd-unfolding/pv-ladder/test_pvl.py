@@ -80,6 +80,32 @@ class Cells(unittest.TestCase):
         np.testing.assert_allclose(L.integrated(x, ("eavail", "W")), v)
 
 
+class StepClasses(unittest.TestCase):
+    def test_is_report_tables_on_pt_pz(self):
+        import report_tables as RT
+
+        rng = np.random.default_rng(8)
+        for trial in range(5):
+            r = 1.0 + rng.normal(0, 0.08, (14, 16))
+            lab = rng.choice(np.array(["fine", "coarse", "noisy", "off"], dtype=object), (14, 16), p=[.5, .3, .1, .1])
+            mine = L.classify_cells(r.ravel(), lab.ravel(), (14, 16))
+            theirs = [RT.classify_cell(r, lab, g) for g in range(224)]
+            self.assertEqual(list(mine), theirs)
+
+    def test_three_dimensions(self):
+        r = np.ones((3, 3, 3))
+        lab = np.full((3, 3, 3), "fine", dtype=object)
+        r[1, 1, 2] = 1.5                       # a fine|fine step along the last axis
+        c = L.classify_cells(r.ravel(), lab.ravel(), (3, 3, 3)).reshape(3, 3, 3)
+        self.assertEqual(c[1, 1, 2], "generator")
+        self.assertEqual(c[1, 1, 1], "generator")
+        self.assertEqual(c[0, 0, 0], "none")
+        lab[1, 2, 2] = "coarse"
+        c = L.classify_cells(r.ravel(), lab.ravel(), (3, 3, 3)).reshape(3, 3, 3)
+        self.assertEqual(c[1, 1, 2], "gate")    # gate outranks generator
+        self.assertEqual(c[1, 2, 2], "gate")
+
+
 class Reweight(unittest.TestCase):
     def ratio(self, axes, r, cut=None):
         rec = {"schema": L.RATIO_SCHEMA, "axes": list(axes), "r": list(np.asarray(r, float).ravel())}
