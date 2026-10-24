@@ -1,0 +1,39 @@
+# task	rung	arm	features	vertex	mode	job	role (DECLARATION.md)
+L-3D_e_tune_v1	L-3D	e	all	tune_v1	data	J1	NC against P3; the zero of L-3D's shifts
+L-4D_e_tune_v1	L-4D	e	all	tune_v1	data	J1	NC against P4; the zero of L-4D's shifts
+L-EW_e_all_tune_v1	L-EW	e	all	tune_v1	data	J1	NC: the L-EW code path, all features, against P5
+L-EW_c_all_tune_v1	L-EW	c	all	tune_v1	data	J1	NC: the L-EW code path, all features, against P5c
+L-EW_e_tune_v1	L-EW	e	eavail,W	tune_v1	data	J1	E_EW (e): L-EW's central value, the zero of its shifts
+L-EW_c_tune_v1	L-EW	c	eavail,W	tune_v1	data	J1	E_EW (c)
+L-3D_e_genie_mec	L-3D	e	all	genie_mec	data	J2	vertex
+L-3D_e_nuwro	L-3D	e	all	nuwro	data	J2	vertex
+L-3D_e_gibuu	L-3D	e	all	gibuu	data	J2	vertex
+L-3D_e_closure_tune_v1	L-3D	e	all	tune_v1	closure	J2	PC closure floor
+L-3D_e_closure_nuwro	L-3D	e	all	nuwro	closure	J2	PC closure bias
+L-4D_e_nuwro	L-4D	e	all	nuwro	data	J2	vertex; PC data shift
+L-4D_e_genie_mec	L-4D	e	all	genie_mec	data	J3	vertex
+L-4D_e_gibuu	L-4D	e	all	gibuu	data	J3	vertex
+L-4D_e_closure_tune_v1	L-4D	e	all	tune_v1	closure	J3	PC closure floor
+L-4D_e_closure_nuwro	L-4D	e	all	nuwro	closure	J3	PC closure bias
+L-EW_e_nuwro	L-EW	e	eavail,W	nuwro	data	J3	vertex
+L-EW_e_gibuu	L-EW	e	eavail,W	gibuu	data	J3	vertex
+L-EW_e_genie_mec	L-EW	e	eavail,W	genie_mec	data	J4	vertex
+L-EW_e_closure_tune_v1	L-EW	e	eavail,W	tune_v1	closure	J4	PC closure floor
+L-EW_e_closure_nuwro	L-EW	e	eavail,W	nuwro	closure	J4	PC closure bias
+L-EW_c_genie_mec	L-EW	c	eavail,W	genie_mec	data	J4	vertex (no PC of its own)
+L-EW_c_nuwro	L-EW	c	eavail,W	nuwro	data	J4	vertex (no PC of its own)
+L-EW_c_gibuu	L-EW	c	eavail,W	gibuu	data	J4	vertex (no PC of its own)
+L-5D-PV_e_tune_v1	L-5D-PV	e	all	tune_v1	data	J1	NC against P5 (D3, admitted); the zero of L-5D-PV's shifts
+L-5D-PV_e_genie_mec	L-5D-PV	e	all	genie_mec	data	J5	vertex (D3, admitted)
+L-5D-PV_e_nuwro	L-5D-PV	e	all	nuwro	data	J5	vertex (D3, admitted)
+L-5D-PV_e_gibuu	L-5D-PV	e	all	gibuu	data	J5	vertex (D3, admitted)
+L-5D-PV_e_closure_tune_v1	L-5D-PV	e	all	tune_v1	closure	J5	PC closure floor
+L-5D-PV_e_closure_nuwro	L-5D-PV	e	all	nuwro	closure	J5	PC closure bias
+L-3D_e_nuwro_sq	L-3D	e	all	nuwro_sq	data	F	PC fallback, only if that rung's PC is NOT_POWERED
+L-3D_e_closure_nuwro_sq	L-3D	e	all	nuwro_sq	closure	F	PC fallback, only if NOT_POWERED
+L-4D_e_nuwro_sq	L-4D	e	all	nuwro_sq	data	F	PC fallback, only if that rung's PC is NOT_POWERED
+L-4D_e_closure_nuwro_sq	L-4D	e	all	nuwro_sq	closure	F	PC fallback, only if NOT_POWERED
+L-EW_e_nuwro_sq	L-EW	e	eavail,W	nuwro_sq	data	F	PC fallback, only if that rung's PC is NOT_POWERED
+L-EW_e_closure_nuwro_sq	L-EW	e	eavail,W	nuwro_sq	closure	F	PC fallback, only if NOT_POWERED
+L-5D-PV_e_nuwro_sq	L-5D-PV	e	all	nuwro_sq	data	F	PC fallback, only if that rung's PC is NOT_POWERED
+L-5D-PV_e_closure_nuwro_sq	L-5D-PV	e	all	nuwro_sq	closure	F	PC fallback, only if NOT_POWERED
