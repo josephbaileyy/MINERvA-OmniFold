@@ -18,6 +18,7 @@ RB = f'{S}/re2/RE2-PARTB-REPORT.md'
 A3 = f'{S}/re2/RE2-PARTC-A3-REPORT.md'
 TR = f'{S}/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt'
 TRP = 'docs/orchestration/receipts/2d-lgbm42-20261011/tension_report.txt'
+TRR = 'docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt'
 DM = 'docs/orchestration/DECISION-20261024-joseph-2d-model-dependence-component.md'
 DA = 'docs/orchestration/DECISION-20261024-joseph-adopt-re2-2d-refined.md'
 DS = 'docs/orchestration/DECISION-20261023-joseph-2d-refined-integrate-ci.md'
@@ -134,6 +135,10 @@ F = [
  ('W7-t1', 'result_status_rows.tex', r"2D: LightGBM, five iterations, seed 42, refined negative-weight subtraction (configuration (f); exact-split cross-check)", r"\rsA{2D: LightGBM, five iterations, seed 42 (exact-split cross-check)}", DA, "The adopted 2D result is `E_R`, with `Q_R` as its headline uncertainty."),
  # W8: the shift-versus-bias count, labelled descriptive, with the quoted result's operand
  ('W8', 'sec_systematics.tex', r"the NuWro shift of the quoted result reaches the bias in 67, and the quadrature sum of the other two generators' shifts reaches it in 72; these counts are descriptive.", '-', CM, "the refined arm's NuWro |shift| reaches |bias| in 67"),
+ # Open site 1 (found when the refined mode-map figure was installed): the refined tension report's six leading modes
+ ('W2-t1', 'sec_results.tex', r"Of the six leading modes, the three in the highest-$\pPar$ bins are all poorly determined directions", r"The four leading modes in the highest-$\pPar$ bins", TRR, "6.590e-11"),
+ ('W2-t2', 'sec_results.tex', r"moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and $6\times10^{-5}$)", '-', TRR, "4.460e-06"),
+ ('W2-t3', 'sec_results.tex', r"Three of the six, all smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins", r"Four of the six, all smallest-$\lambda$ directions", TRR, "6.048e-05"),
  # W9
  ('W9', 'app_statmethods.tex', r"$V$ full-rank ($\mathrm{rank}=205$, with 204 eigenvalues above $10^{-12}\lambda_{\max}$;", r"full-rank ($\mathrm{rank}=204$", TRP, "rank(lam>0) = 205/205"),
  ('W9b', 'app_statmethods.tex', r"with 204 eigenvalues above $10^{-12}\lambda_{\max}$", '-', TRP, "1e-12        2.653     204"),

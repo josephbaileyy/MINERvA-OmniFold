@@ -39,3 +39,16 @@ merge:
 5. **`app_history.tex`**'s rows describe Q in their other columns.
 6. **`VALIDATION_LEDGER.md:1614`** is not edited.
 7. **The standalone note repository** is not synchronized, as the decision requires.
+
+## Update: the refined figures and the tension-mode correction (2026-10-24)
+
+- **Figures.** The writer installed the 16 refined 2D figures. Each was fetched read-only from `partc-r2` and checked
+  against its committed `SHA256SUMS` line. Each has a `make_figures.sh` digest pin and a G row in the ledger. This
+  resolves open site 2.
+- **The tension modes** (open site 1, and an error the new figure exposed): the text and caption now say three of the
+  six leading modes lie in the highest-p_∥ bins, at λ/λ_max ≲ 4×10⁻⁹. The other three are moderate-λ modes. Ledger rows
+  W2-t1, W2-t2 and W2-t3 cite the refined `tension_report.txt`.
+  - Value row `tens-73-chi2` keeps its value, 0.66. Its new-context anchor changed from "… The four leading mode" to
+    "… Of the six leading mode", because that sentence changed.
+- **The ledger:** PASS, with V 240, M 5, F 94 and G 16. The self-test also passes.
+- **The second agy round:** AGREE 5 of 5 (see `agy-review/README.md`).

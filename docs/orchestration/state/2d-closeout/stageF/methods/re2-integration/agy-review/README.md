@@ -43,3 +43,20 @@ paragraphs, which must agree before Joseph sees it (DECISION-20261024-joseph-ado
   which `check_ledger.py` ties to `values_table.tsv`.
 
 After these two changes, every draft has agy's agreement. The drafts then go to Joseph.
+
+## Second round: the drafts that changed after the first review
+
+After the first review, two changes reached five drafts:
+- the refined 2D figures were installed, and the writer reworded the bootstrap-figure caption;
+- the director corrected the tension mode-map sentence and its caption.
+
+On the second change: the refined `tension_mode_maps.pdf` shows **three** of the six leading modes in the
+highest-p_∥ bins, not four. In the refined `tension_report.txt`, those three are the smallest-λ modes
+(λ/λ_max 3.5e-9, 4.3e-10 and 6.6e-11). The other three are moderate-λ modes, at 4.5e-6, 5.6e-5 and 6.0e-5. The panels
+follow `diagnose_tension.py`'s contribution order (`order[j]`).
+
+`make_drafts.py`, compared with the first review's DRAFTS.md (at `085a8226`), names the changed drafts: D33, D34, D35,
+D36 and D40. They went to agy, without tools, with the same prompt and style guide.
+**Result: AGREE 5, REVISE 0** (`review-delta-20261024.txt`).
+
+Every one of the 48 current drafts therefore has agy's agreement.

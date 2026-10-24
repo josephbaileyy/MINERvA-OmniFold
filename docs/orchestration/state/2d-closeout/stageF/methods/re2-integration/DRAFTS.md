@@ -46,20 +46,21 @@ regenerated number (36 of them) are the V rows of the ledger and are not repeate
 | D31 | W7 (the adopted refined 2D result and the configuration labels) | `sec_method.tex:208` | W7-n1, W7-n2 |
 | D32 | W7 (the adopted refined 2D result and the configuration labels) | `sec_method.tex:258` | W7-n7 |
 | D33 | W2 (the comparison with MINERvA's published result), W6 (hand sites of re2c_values_unmatched.tsv) | `sec_results.tex:146` | W2-n1, W6-17 |
-| D34 | W6 (hand sites of re2c_values_unmatched.tsv) | `sec_results.tex:194` | W6-01, W6-02a, W6-02b, W6-02c, W6-03 |
-| D35 | W2 (the comparison with MINERvA's published result) | `sec_results.tex:244` | W2-n2 |
-| D36 | W2 (the comparison with MINERvA's published result), W7 (the adopted refined 2D result and the configuration labels) | `sec_summary.tex:4` | W2-s1, W7-s1 |
-| D37 | W5 (\fpsAbove) | `sec_summary.tex:114` | W5-2 |
-| D38 | W4 (the S2 diagnostic (sec_systematics.tex:101)) | `sec_systematics.tex:93` | W4 |
-| D39 | FIG (the refined 2D figures (installed from RE-2 part C)) | `sec_systematics.tex:154` | FIG-cap |
-| D40 | W7 (the adopted refined 2D result and the configuration labels) | `sec_systematics.tex:184` | W7-y1 |
-| D41 | W6 (hand sites of re2c_values_unmatched.tsv), X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:311` | W6-05, W6-06, X2 |
-| D42 | W1 (C_model beside Q_R) | `sec_systematics.tex:363` | W1-n1 |
-| D43 | W1 (C_model beside Q_R) | `sec_systematics.tex:418` | W1-n2, W1-n3, W1-n4 |
-| D44 | W1 (C_model beside Q_R), W8 (the shift-versus-bias count) | `sec_systematics.tex:438` | W1-n5, W1-n6, W8 |
-| D45 | W6 (hand sites of re2c_values_unmatched.tsv) | `sec_systematics.tex:462` | W6-07 |
-| D46 | X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:479` | X1 |
-| D47 | W3 (RO-FPS: the control no longer reproduces the 2D total) | `values.tex:163` | W3-2 |
+| D34 | W2 (the comparison with MINERvA's published result), W6 (hand sites of re2c_values_unmatched.tsv) | `sec_results.tex:194` | W2-t1, W2-t2, W6-01, W6-02a, W6-02b, W6-02c, W6-03 |
+| D35 | W2 (the comparison with MINERvA's published result) | `sec_results.tex:245` | W2-n2 |
+| D36 | W2 (the comparison with MINERvA's published result) | `sec_results.tex:273` | W2-t3 |
+| D37 | W2 (the comparison with MINERvA's published result), W7 (the adopted refined 2D result and the configuration labels) | `sec_summary.tex:4` | W2-s1, W7-s1 |
+| D38 | W5 (\fpsAbove) | `sec_summary.tex:114` | W5-2 |
+| D39 | W4 (the S2 diagnostic (sec_systematics.tex:101)) | `sec_systematics.tex:93` | W4 |
+| D40 | FIG (the refined 2D figures (installed from RE-2 part C)) | `sec_systematics.tex:154` | FIG-cap |
+| D41 | W7 (the adopted refined 2D result and the configuration labels) | `sec_systematics.tex:184` | W7-y1 |
+| D42 | W6 (hand sites of re2c_values_unmatched.tsv), X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:311` | W6-05, W6-06, X2 |
+| D43 | W1 (C_model beside Q_R) | `sec_systematics.tex:363` | W1-n1 |
+| D44 | W1 (C_model beside Q_R) | `sec_systematics.tex:418` | W1-n2, W1-n3, W1-n4 |
+| D45 | W1 (C_model beside Q_R), W8 (the shift-versus-bias count) | `sec_systematics.tex:438` | W1-n5, W1-n6, W8 |
+| D46 | W6 (hand sites of re2c_values_unmatched.tsv) | `sec_systematics.tex:462` | W6-07 |
+| D47 | X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:479` | X1 |
+| D48 | W3 (RO-FPS: the control no longer reproduces the 2D total) | `values.tex:163` | W3-2 |
 
 ## D01: `app_negweight.tex:15`
 
@@ -3492,10 +3493,11 @@ paper-covariance-standardized component of magnitude $4.8$, and the next nine
 $3.4$--$3.8$. The 10
 smallest-$\lambda$ modes carry \SI{9.6}{\percent}, two of the five largest
 contributors lie in the smallest-$\lambda$ tenth, and keeping the 73
-best-measured directions gives $0.66$. The four leading modes in the
+best-measured directions gives $0.66$. Of the six leading modes, the three in the
 highest-$\pPar$ bins are all poorly determined directions
-($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the two leading
-moderate-$\lambda$ modes lie at low-to-moderate $\pT$, below the highest $\pPar$
+($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the other three are
+moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and
+$6\times10^{-5}$) and lie below the highest $\pPar$ bins
 (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$
 band carries more than \SI{15}{\percent} of the total.
 ```
@@ -3509,7 +3511,7 @@ band carries more than \SI{15}{\percent} of the total.
 
 ## D34: `sec_results.tex:194`
 
-**Ledger F rows:** W6-01, W6-02a, W6-02b, W6-02c, W6-03.
+**Ledger F rows:** W2-t1, W2-t2, W6-01, W6-02a, W6-02b, W6-02c, W6-03.
 
 **Old:**
 
@@ -3601,10 +3603,11 @@ paper-covariance-standardized component of magnitude $4.8$, and the next nine
 $3.4$--$3.8$. The 10
 smallest-$\lambda$ modes carry \SI{9.6}{\percent}, two of the five largest
 contributors lie in the smallest-$\lambda$ tenth, and keeping the 73
-best-measured directions gives $0.66$. The four leading modes in the
+best-measured directions gives $0.66$. Of the six leading modes, the three in the
 highest-$\pPar$ bins are all poorly determined directions
-($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the two leading
-moderate-$\lambda$ modes lie at low-to-moderate $\pT$, below the highest $\pPar$
+($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the other three are
+moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and
+$6\times10^{-5}$) and lie below the highest $\pPar$ bins
 (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$
 band carries more than \SI{15}{\percent} of the total.
 ```
@@ -3674,8 +3677,10 @@ Figs.~\ref{fig:tension}--\ref{fig:tensionmodes} for eigenmode-localization maps.
 - W6-02b: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt`: "1   4.314e-10       9/205          -3.78"
 - W6-02c: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt`: "9   6.708e-09      27/205          +3.36"
 - W6-03: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt`: "fraction of top-5 contributors in the smallest-10%% lambda band: 0.40"
+- W2-t1: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt`: "6.590e-11"
+- W2-t2: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt`: "4.460e-06"
 
-## D35: `sec_results.tex:244`
+## D35: `sec_results.tex:245`
 
 **Ledger F rows:** W2-n2.
 
@@ -3758,10 +3763,11 @@ paper-covariance-standardized component of magnitude $4.8$, and the next nine
 $3.4$--$3.8$. The 10
 smallest-$\lambda$ modes carry \SI{9.6}{\percent}, two of the five largest
 contributors lie in the smallest-$\lambda$ tenth, and keeping the 73
-best-measured directions gives $0.66$. The four leading modes in the
+best-measured directions gives $0.66$. Of the six leading modes, the three in the
 highest-$\pPar$ bins are all poorly determined directions
-($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the two leading
-moderate-$\lambda$ modes lie at low-to-moderate $\pT$, below the highest $\pPar$
+($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the other three are
+moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and
+$6\times10^{-5}$) and lie below the highest $\pPar$ bins
 (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$
 band carries more than \SI{15}{\percent} of the total.
 ```
@@ -3785,7 +3791,82 @@ band carries more than \SI{15}{\percent} of the total.
 
 - W2-n2: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv`: "m-chiPaper N/values.tex:\chiPaper 2.65 2.27"
 
-## D36: `sec_summary.tex:4`
+## D36: `sec_results.tex:273`
+
+**Ledger F rows:** W2-t3.
+
+**Old:**
+
+```latex
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{tension_mode_maps}
+  \caption{Leading tension-carrying eigenmodes of the published covariance
+  in bin space, for the LightGBM central value. Four of the six, all
+  smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; two
+  moderate-$\lambda$ modes lie at low-to-moderate $\pT$.}
+  \label{fig:tensionmodes}
+\end{figure}
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**New:**
+
+```latex
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{tension_mode_maps}
+  \caption{Leading tension-carrying eigenmodes of the published covariance
+  in bin space, for the LightGBM central value. Three of the six, all
+  smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; the
+  other three, moderate-$\lambda$ modes, lie below them.}
+  \label{fig:tensionmodes}
+\end{figure}
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**Context, the paragraph before (as it reads now):**
+
+```latex
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.49\textwidth]{tension_spectrum}
+  \includegraphics[width=0.49\textwidth]{tension_chi2_map}
+  \caption{Tension anatomy: eigenvalue spectrum with cumulative $\chi^{2}$ (left)
+  and the per-bin $\chi^{2}$-contribution map (right).}
+  \label{fig:tension}
+\end{figure}
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**Context, the paragraph after (as it reads now):**
+
+```latex
+\subsection{Comparison to GENIE MINERvA Tune v1}
+\label{sec:results-model}
+GENIE 2.12.6~\cite{Andreopoulos:2009rq} MINERvA Tune v1 under-predicts the total
+by $\sim\SI{9}{\percent}$ ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$),
+concentrated in the low-$\pT$ peak. Figure~\ref{fig:model} compares the
+prediction from the published ancillary files with both the published data and
+our result. The data covariance strongly disfavors the tune
+($\chi^{2}/\mathrm{ndf}$: data vs tune $33.0$, ours vs tune $31.3$; $26.5$ for
+the exact-split cross-check), and our result tracks the data far more closely
+than the model does (Fig.~\ref{fig:modelmaps}).
+The published analysis~\cite{MINERvA:2021owq} also compares with
+NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and NEUT~\cite{Hayato:2009zz}.
+OmniFold's per-event reweighted truth ensemble can be compared with any
+such prediction in \emph{any} projection of the classifier features without
+re-unfolding. An observable outside that space requires a new unfolding, not a
+projection: the 3D extension (\S\ref{sec:3d}) adds $\Eavail$ as a classifier
+feature and is unfolded again.
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**Sources of the facts in it:**
+
+- W2-t3: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt`: "6.048e-05"
+
+## D37: `sec_summary.tex:4`
 
 **Ledger F rows:** W2-s1, W7-s1.
 
@@ -3998,7 +4079,7 @@ within this analysis.
 - W7-s1: `docs/orchestration/DECISION-20261023-joseph-2d-refined-integrate-ci.md`: "The adopted 2D result moves to the refined estimator,"
 - M-qrCmodelMedian (macro `\qrCmodelMedian`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json` `cell_rel_sigma.Q_R_plus_C_model.median` x 100, format `.2f`
 
-## D37: `sec_summary.tex:114`
+## D38: `sec_summary.tex:114`
 
 **Ledger F rows:** W5-2.
 
@@ -4164,7 +4245,7 @@ public example have no bearing on the choice of covariance (\S\ref{sec:eavailw-a
 - W5-2: `VALIDATION_LEDGER.md`: "**FPS total cross section 4.502e-38 cm²/nucleon**"
 - M-sigTwoDPurity (macro `\sigTwoDPurity`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv` `m-sigTwoD.purity_value` x 1, format `.3e`
 
-## D38: `sec_systematics.tex:93`
+## D39: `sec_systematics.tex:93`
 
 **Ledger F rows:** W4.
 
@@ -4272,7 +4353,7 @@ block reflects an efficiency gain, regularization bias or undercoverage.
 
 - W4: `docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md`: "S1 resamples the background in both arms"
 
-## D39: `sec_systematics.tex:154`
+## D40: `sec_systematics.tex:154`
 
 **Ledger F rows:** FIG-cap.
 
@@ -4347,7 +4428,7 @@ statistical variance) and the universe\,$\times$\,retraining term
 
 - FIG-cap: `docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md`: "`block_stat.root`'s `hRel2D` is √diag(stat)/x of the same arrays."
 
-## D40: `sec_systematics.tex:184`
+## D41: `sec_systematics.tex:184`
 
 **Ledger F rows:** W7-y1.
 
@@ -4428,7 +4509,7 @@ inference, because the same code produced them.
 
 - W7-y1: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv`: "lit-learner-median-180 N/sec_systematics.tex:180 0.98 1.03"
 
-## D41: `sec_systematics.tex:311`
+## D42: `sec_systematics.tex:311`
 
 **Ledger F rows:** W6-05, W6-06, X2.
 
@@ -4512,7 +4593,7 @@ reading only.
 - W6-06: `2d-unfolding/re2/partc/re2c_values_unmatched.tsv`: "'at the order of 100%' (size of C_PL poorly determined): heuristic from the dof statement; no source field"
 - X2: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/combination/combination.json`: ""functional_sigma_increase_pct_max": 20.65589185827996,"
 
-## D42: `sec_systematics.tex:363`
+## D43: `sec_systematics.tex:363`
 
 **Ledger F rows:** W1-n1.
 
@@ -4617,7 +4698,7 @@ dependence either.
 
 - W1-n1: `docs/orchestration/DECISION-20261024-joseph-2d-model-dependence-component.md`: "C_model,2D is built and reported as a separate named covariance."
 
-## D43: `sec_systematics.tex:418`
+## D44: `sec_systematics.tex:418`
 
 **Ledger F rows:** W1-n2, W1-n3, W1-n4.
 
@@ -4711,7 +4792,7 @@ shifts.
 - M-qrCmodelMedian (macro `\qrCmodelMedian`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json` `cell_rel_sigma.Q_R_plus_C_model.median` x 100, format `.2f`
 - M-cmodelIntegral (macro `\cmodelIntegral`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json` `integral_rel_sigma.C_model` x 100, format `.2f`
 
-## D44: `sec_systematics.tex:438`
+## D45: `sec_systematics.tex:438`
 
 **Ledger F rows:** W1-n5, W1-n6, W8.
 
@@ -4783,7 +4864,7 @@ block is the covariance about the replica mean (\S\ref{sec:uq-boot}). A
 - W1-n6: `docs/orchestration/state/2d-closeout/stageF/methods/pv2d/REPORT.md`: "One rule throughout** (`report_tables.classify_cell`, threshold 0.1)"
 - W8: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json`: "the refined arm's NuWro |shift| reaches |bias| in 67"
 
-## D45: `sec_systematics.tex:462`
+## D46: `sec_systematics.tex:462`
 
 **Ledger F rows:** W6-07.
 
@@ -4864,7 +4945,7 @@ pooled result by \SIrange{-1.83}{3.78}{\percent}, each with $|z|$ at most 0.31.
 
 - W6-07: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz`: ""sigma_c08_over_sigma_ml_median": 0.26946226226768916,"
 
-## D46: `sec_systematics.tex:479`
+## D47: `sec_systematics.tex:479`
 
 **Ledger F rows:** X1.
 
@@ -4952,7 +5033,7 @@ duplicated pion band, the lateral bands and the flux-universe index identity
 
 - X1: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json`: "-0.3948"
 
-## D47: `values.tex:163`
+## D48: `values.tex:163`
 
 **Ledger F rows:** W3-2.
 
