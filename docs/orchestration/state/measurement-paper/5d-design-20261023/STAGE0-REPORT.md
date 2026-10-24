@@ -163,5 +163,19 @@ C_stat(e) + C_model + the z-cv total.
   departure. So did an independent read-only review, in both directions. Had a defect turned up, it would have gone
   to the director before any re-read.
 - **One stale comment.** `stage0_analysis.py:252` labels C_stat(e) "(sensitivity variant only)", but the code grades it,
-  as declared. The computation is unaffected, and the bound file is left unchanged.
+  as declared. The computation is unaffected. The comment was later corrected at the director's request; see the
+  addendum.
 - MP-2 stays held. No claim, target or endpoint changes.
+
+## Addendum: the comment fix (2026-10-24, after the merge of PR #296)
+
+At the director's request, `stage0_analysis.py:252` now reads "(graded: part of the 0b covariance, DECLARATION
+section 6)". That one comment line is the whole diff; no code changed.
+
+- **The run used the earlier file.** Its sha256 is `b25ff23560a80f1f665d3f728c7400602ea8075e8b6652ad581a80a8f766323d`,
+  as recorded in `STAGE0-PARTA-DECLARATION.md`, in this report and in `receipts-A/stage0-binding.json` `code_sha256`.
+  That version is the file at `dc1db99b`, the clone the binding run read.
+- **The current file's sha256** is `f9248e20f924b91ab5e920137e8efecd357331ad34e708aaf43498292aa9f78e`. A check of the
+  file on main against `code_sha256` will therefore differ. Check against `git show dc1db99b:<path>` instead.
+- No Stage 0 run follows; the director has held Stage 0.
+

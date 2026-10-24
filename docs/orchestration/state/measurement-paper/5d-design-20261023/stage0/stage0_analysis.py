@@ -249,7 +249,7 @@ def main(argv=None) -> int:
         Zrel[P] = (M @ Cz @ M.T) * np.outer(inv_ja, inv_ja)
     res["controls"]["C4_zcv_indexing"] = {"pass": True, **c4}
 
-    # C_stat(e) from the 50 jittered data bootstrap replicas (sensitivity variant only)
+    # C_stat(e) from the 50 jittered data bootstrap replicas (graded: part of the 0b covariance, DECLARATION section 6)
     boot = [take(a.data_dir / f"data_b{i}_j{100 + i}.npz") for i in range(1, 51)]
     bad = [str(p) for p in boot if inv.get(str(p)) != sha256(p)]
     if bad:
