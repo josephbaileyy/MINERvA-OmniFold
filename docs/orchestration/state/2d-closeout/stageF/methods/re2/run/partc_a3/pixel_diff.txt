@@ -1,0 +1,8 @@
+old cabbbbc3db31810a0c000f10cf346a7b5f01e1035f7860bd34d54a8fb0b537ca  (amendment 2's Fig. 1, now partc-r2/fig1-a2-cabbbbc3/)
+new 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427  (amendment 3's bound redraw, partc-r2/fig1/, commit 1f3b4669)
+
+Method B (the bound check): matplotlib Agg at 300 dpi, make_figs.py 9c4dbf24 vs 4e18c266 on this run's arrays (fig_arrays_q.npz), legend box from the same canvas (run/partc_a3_check/legend_png.py):
+   legend bbox px (x0, y0, x1, y1): 391.6, 43.5, 972.1, 288.6 (identical in both versions); image 2100x1860
+   changed pixels: 4415; their bounding box 225x120+491+55 -> x 491..715, y 55..174: inside the legend box
+Method A (for the record): the two PDFs rasterised by pdftoppm at 300 dpi:
+   changed pixels: 12346; their bounding box 556x216+401+55 -> x 401..956, y 55..270: inside the legend box
