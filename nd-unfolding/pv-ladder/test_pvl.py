@@ -339,11 +339,47 @@ class Departure(unittest.TestCase):
         self.assertAlmostEqual(d["nuwro"][0], 0.2)
         np.testing.assert_allclose(d["nuwro"][1:][np.isfinite(d["nuwro"][1:])], 0.0, atol=1e-12)
 
+    def test_truth_cut_and_sentinels(self):
+        import pvl_departure as Dp
+        from pathlib import Path
+
+        # four rows in EW0: two below the GiBUU p_parallel cut, one above it, one a q3 sentinel (outside the grid)
+        gen = np.array([[0.1, 2.0, 0.05, 0.1, 0.5], [0.1, 3.0, 0.05, 0.1, 0.5], [0.1, 12.0, 0.05, 0.1, 0.5],
+                        [0.1, 2.0, 0.05, -9999.0, 0.5]])
+        z = {"MCgen": gen, "pass_truth": np.ones(4, bool), "w_truth": np.ones(4)}
+        r = np.ones(42)
+        r[0] = 2.0
+        with tempfile.TemporaryDirectory() as t:
+            os.makedirs(os.path.join(t, "R"))
+            for v in Dp.VERTICES:
+                rec = {"schema": L.RATIO_SCHEMA, "axes": ["eavail", "W"], "r": r.tolist()}
+                if v == "gibuu":
+                    rec["truth_cut"] = {"axis": "pz", "below": 10.0}
+                with open(os.path.join(t, "R", f"{v}.json"), "w") as f:
+                    json.dump(rec, f)
+            d = Dp.departures(z, L.AXES5, Path(t), "R")
+        self.assertAlmostEqual(d["nuwro"][0], 1.0)            # the sentinel row is outside the grid: 3 rows, all x2
+        self.assertAlmostEqual(d["gibuu"][0], (2 + 2 + 1) / 3 - 1)
+        self.assertTrue(np.all(np.isnan(d["nuwro"][1:])))     # empty cells are NaN, not 0
+
+    def test_measures_sign_and_vertex(self):
+        import pvl_departure as Dp
+
+        d = {"genie_mec": np.array([0.10, -0.20]), "nuwro": np.array([0.05, 0.02]), "gibuu": np.array([0.0, 0.0])}
+        s = {"genie_mec": np.array([0.05, 0.10]), "nuwro": np.array([0.08, 0.01]), "gibuu": np.array([0.0, 0.0])}
+        h = np.max(np.abs(np.vstack(list(s.values()))), axis=0)
+        rec, D = Dp.measures(s, h, d)
+        np.testing.assert_allclose(D, [0.10, 0.20])
+        self.assertEqual(rec["vertices"]["genie_mec"]["same_sign"], 1)          # +/+ and +/- (s 0.10 vs d -0.20)
+        self.assertEqual(rec["h_vertex_is_D_vertex"], 1)                        # cell 0: h from NuWro, D from GENIE+MEC
+        self.assertAlmostEqual(rec["same_vertex_signed_response"]["median"], np.median([0.5, -0.5]))
+
 
 class Tasks(unittest.TestCase):
     def test_declared_jobs(self):
         here = os.path.dirname(os.path.abspath(__file__))
-        rows = [ln.split("\t") for ln in open(os.path.join(here, "tasks.tsv")) if not ln.startswith("#")]
+        with open(os.path.join(here, "tasks.tsv")) as f:
+            rows = [ln.split("\t") for ln in f if not ln.startswith("#")]
         jobs = {}
         for r in rows:
             jobs.setdefault(r[6], []).append(r[0])
@@ -352,7 +388,8 @@ class Tasks(unittest.TestCase):
             self.assertIn(r[1], L.RUNGS)
             if r[5] == "closure":
                 self.assertEqual(r[2], "e")
-        cfg = json.load(open(os.path.join(here, "config.json")))
+        with open(os.path.join(here, "config.json")) as f:
+            cfg = json.load(f)
         self.assertEqual(set(cfg["rungs"]), set(L.RUNGS))
 
 

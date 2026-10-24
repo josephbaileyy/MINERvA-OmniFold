@@ -8,7 +8,8 @@ Prints markdown:
      director's interpretation point, 2026-10-24): the share of the prior's truth weight on pooled J-coarse ratios
      (a coarser effective reweight can damp the shifts), and the share in cells beside a step in r > 0.1 drawn by
      the gate or a cut (PV-2D REPORT §5 found the large-shift tail there); L-2D's rows from PV-2D, L-5D's from s5p;
-  2. the controlled comparison for Ben's question: L-EW against L-5D-PV on the 39 RD3 cells (features alone differ);
+  2. Ben's comparison: L-EW against L-5D-PV on the 39 RD3 cells. They differ in the classifier's features AND in the
+     reweight's strength (each rung's reweight is built on its own cells; REPORT.md §4);
   3. the (p_T, p_parallel) projection of L-3D, L-4D and L-5D-PV against L-2D on its 205 cells;
   4. the J-coarse readouts;
   5. for the rungs whose headline cells are their reweight cells (L-EW, L-3D, L-4D; L-2D from PV-2D), h with and
@@ -127,7 +128,7 @@ def main(argv=None):
           "Step-adjacent share: the prior's truth weight in reweight cells beside a step in r > 0.1 drawn by the gate "
           "or a cut, union over the vertices.")
 
-    print("\n### 2. Ben's question: L-EW against L-5D-PV on the 39 RD3 cells (the features alone differ)\n")
+    print("\n### 2. Ben's question: L-EW against L-5D-PV on the 39 RD3 cells (features and reweight strength differ)\n")
     ew, f5 = X[("L-EW", "e")]["spaces"]["EW"], X[("L-5D-PV", "e")]["spaces"]["EW"]
     print("| | L-EW (e), direct (E_avail, W) | L-5D-PV (e), 5D projected | s5p RD3 (D1–D5) |")
     print("|---|---|---|---|")
