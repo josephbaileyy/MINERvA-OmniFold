@@ -1,0 +1,42 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "arm": "refined",
+ "mode_guard_E_R": {
+  "value": {
+   "bkg_mode": "negweight-refined",
+   "refine_n_estimators": 400,
+   "refine_num_leaves": 31
+  },
+  "re2Refinement": true,
+  "ok": true
+ },
+ "control_block_sum_median_pct": {
+  "measured": 6.089795123254515,
+  "VL175": 6.0898,
+  "ok": true
+ },
+ "E_R_relative_block_sum_median_pct": 6.057057771683794,
+ "flux_weights": {
+  "n": 100,
+  "sum": 211.01200325082078,
+  "n_eff": 19.060534772246488
+ },
+ "control_flux_block_rel_maxdiff": 0.0,
+ "control_minos_block_rel_maxdiff": 3.238354685573027e-17,
+ "n_universe_bands": 44,
+ "n_universe_outputs": 187,
+ "n_cov_blocks": 48,
+ "n_reported": 205,
+ "npz": {
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/work_cov/work_cov.npz",
+  "sha256": "00a05fefa67f787786fa2f2bf0de54fec9d1d149af8c099c3bbaef8c7efc9f34"
+ }
+}

@@ -148,7 +148,6 @@ sys-band-minoseff	N/sec_systematics.tex:42	1.58	budget_Q	bands.MinosEfficiency.m
 sys-band-minerva-e	N/sec_systematics.tex:43	1.38	budget_Q	bands.Muon_Energy_MINERvA.median_pct	v	.2f	Q_budget		
 sys-minos-integral	N/sec_systematics.tex:74	0.31	budget_Q	bands.Muon_Energy_MINOS.integral_sigma_pct	v	.2f	Q_budget	Muon_Energy_MINOS band integral sigma (0.306)	
 sys-rho-flux-muon	N/sec_systematics.tex:84	0.90	budget_Q	flux.rhoFluxMuon.value	v	.2f	published_side	published-side, unchanged; upper end of 'rho=0.87--0.90' (paper ancillary only; Q does not enter); the 0.87 has no listed source	
-s2-bkg-share	N/sec_systematics.tex:101	0.26	s5_json	numbers.bkg_separable.sigma_bkg_over_sigma_stat_median	v	.2f	S5_prose	S2 separable background term, median sigma_bkg/sigma_stat (0.263)	
 s1-relse-b	N/sec_systematics.tex:106	4.1	s5_json	numbers.stat.ensemble_rel_se_of_sigma	100*v	.1f	S5_prose	formula value 1/sqrt(2*299); typeset \SI{4.1}{\percent}	
 s1-nested	N/sec_systematics.tex:107	1.001	s5_json	numbers.stat.nested_150_vs_300_sigma_ratio_median	v	.3f	S5_prose	nested 150 vs 300 replica sigma ratio, median	
 s1-centring-sem	N/sec_systematics.tex:109	4.43	s5_json	numbers.centring.stat.median_abs_offset_over_sigma_mean	v	.2f	S5_prose	replica-mean offset from E_U in standard errors of the mean	
