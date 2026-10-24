@@ -89,32 +89,47 @@ def join_rows(n: int, rows: np.ndarray, key: np.ndarray, fidx: np.ndarray, vtx_g
               branches: list, tol_mm: float) -> tuple[dict, dict]:
     """Join each row in ``rows`` to the reco-tree entry with its identity ``key`` in its own file ``fidx``.
 
-    Returns the branch values (NaN where not joined) and the join controls: every row joined, no identity repeated
-    within a file, and the joined entry's vertex equal to the G2 reco vertex within ``tol_mm``."""
+    An identity that occurs once in the file joins to that entry. An identity that occurs more than once (MP-2 S1 found
+    such repeats in 1E; a reco tree has them too) is resolved by the reco vertex: the row joins to the one entry whose
+    ``vtx[0:3]`` equals the row's G2 reco vertex within ``tol_mm``, and is UNRESOLVED if none or several do (join fix,
+    ruled by the director before any R10 output). Returns the branch values (NaN where not joined) and the controls:
+    every row joined, no row unresolved, and every joined entry's vertex within ``tol_mm`` of G2's."""
     out = {b: np.full(n, np.nan) for b in branches}
     found = np.zeros(n, bool)
-    dup_all, dup_needed, worst = 0, 0, 0.0
+    dup_all, dup_rows, unresolved, worst = 0, 0, 0, 0.0
     for i, tr in trees.items():
         order = np.argsort(tr["key"], kind="stable")
         ks = tr["key"][order]
-        dup = ks[1:][ks[1:] == ks[:-1]]
-        dup_all += int(dup.size)
+        dup_all += int(np.sum(ks[1:] == ks[:-1]))
         sel = rows[fidx[rows] == i]
         if ks.size == 0 or sel.size == 0:
             continue
-        dup_needed += int(np.isin(key[sel], dup).sum())
-        pos = np.clip(np.searchsorted(ks, key[sel]), 0, ks.size - 1)
-        hit = ks[pos] == key[sel]
-        ent, r = order[pos[hit]], sel[hit]
+        lo = np.searchsorted(ks, key[sel], side="left")
+        hi = np.searchsorted(ks, key[sel], side="right")
+        cnt = hi - lo
+        ent = np.full(sel.size, -1, np.int64)
+        one = cnt == 1
+        ent[one] = order[lo[one]]
+        for j in np.flatnonzero(cnt > 1):  # few: resolve by the reco vertex
+            dup_rows += 1
+            cand = order[lo[j]:hi[j]]
+            d = np.max(np.abs(tr["vtx"][cand] - vtx_g2[sel[j]]), axis=1)
+            ok = cand[d <= tol_mm]
+            if ok.size == 1:
+                ent[j] = ok[0]
+            else:
+                unresolved += 1
+        hit = ent >= 0
+        e, r = ent[hit], sel[hit]
         found[r] = True
         if r.size:
-            worst = max(worst, float(np.max(np.abs(tr["vtx"][ent] - vtx_g2[r]))))
+            worst = max(worst, float(np.max(np.abs(tr["vtx"][e] - vtx_g2[r]))))
         for b in branches:
-            out[b][r] = tr[b][ent]
+            out[b][r] = tr[b][e]
     ctl = {"rows_to_join": int(rows.size), "rows_joined": int(found[rows].sum()),
-           "duplicate_keys_within_file_all": dup_all, "joined_rows_with_a_duplicated_key": dup_needed,
-           "max_abs_vertex_diff_mm": worst}
-    ctl["pass"] = ctl["rows_joined"] == ctl["rows_to_join"] and dup_needed == 0 and worst <= tol_mm
+           "duplicate_keys_within_file_all": dup_all, "joined_rows_with_a_duplicated_key": dup_rows,
+           "duplicated_rows_unresolved_by_vertex": unresolved, "max_abs_vertex_diff_mm": worst}
+    ctl["pass"] = ctl["rows_joined"] == ctl["rows_to_join"] and unresolved == 0 and worst <= tol_mm
     return out, ctl
 
 
