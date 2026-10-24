@@ -3,8 +3,8 @@
 #     bash re2b_submit.sh <deploy> <declared sha> <job> [<job> ...]        (jobs as named in partb_jobs.tsv)
 # Each job passes the charge gate (re2b_gate.py) first: the charge of every ended attempt, plus every unfinished
 # attempt's cap, plus its own cap, must be at most the grant's room. Attempts are read from sacct by job name
-# (re2b-<job>, since 2026-10-24) and from the log, so an unlogged or duplicate submission still counts and still
-# blocks a second one. The gate runs under the login node's system python3.
+# (re2b-<job>, since 2026-10-23 local time) and from the log, so an unlogged or duplicate submission still counts
+# and still blocks a second one. The gate runs under the login node's system python3.
 set -eo pipefail
 C=$(cd "$1" && pwd); RE2_SHA=$2; shift 2
 [ $# -gt 0 ] || { echo "name at least one job"; exit 2; }
@@ -17,7 +17,8 @@ mkdir -p "$O/logs"
 names=$(awk -F'\t' 'NR > 1 {printf "%sre2b-%s", (n++ ? "," : ""), $1}' "$JOBS")
 for job in "$@"; do
     psv=$O/logs/gate-$job-$(date -u +%Y%m%dT%H%M%SZ).psv
-    sacct -X -n -P -S 2026-10-24 --name="$names" -o JobID,JobName,State,ElapsedRaw,AllocTRES > "$psv"
+    # -S is local time (PDT); the re2b-* names exist only for part B, so starting on J0's day misses none
+    sacct -X -n -P -S 2026-10-23 --name="$names" -o JobID,JobName,State,ElapsedRaw,AllocTRES > "$psv"
     ids=$( { grep -o ' id=[0-9]*' "$LOG" 2>/dev/null || true; } | cut -d= -f2 | paste -sd, -)
     if [ -n "$ids" ]; then sacct -X -n -P -j "$ids" -o JobID,JobName,State,ElapsedRaw,AllocTRES >> "$psv"; fi
     /usr/bin/python3 "$C/2d-unfolding/re2/re2b_gate.py" --jobs "$JOBS" \
