@@ -73,8 +73,9 @@ def main(argv=None):
     ap.add_argument("--arm", choices=("a", "refined"), default="a",
                     help="a: E_U's estimator, NC against E_U (1e-5), with PC; refined: RE-2's estimator, products "
                          "data_ref_*, NC against RE-1's D2 (1e-8), no PC of its own")
-    ap.add_argument("--expect-driver-sha256", default=None,
-                    help="the driver the products were made with (default: this deploy's unfold_2d_pv2d.py)")
+    ap.add_argument("--products-deploy", type=Path, default=_ROOT,
+                    help="the clean pinned deploy the products were made from (default: this one); the products' "
+                         "driver and helper must be that deploy's files")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     if a.out.exists():
@@ -127,9 +128,17 @@ def main(argv=None):
         ratios[name] = (L.load_ratio(path, sha)[0], sha)
 
     # Every product must come from this deploy's driver and helper, with E_U's estimator settings.
-    expect = {"driverSha256": a.expect_driver_sha256 or L.sha256_path(_HERE / "unfold_2d_pv2d.py"),
-              "omnifoldHelperSha256": L.sha256_path(_ROOT / "unbinned_unfolding" / "python" / "omnifold.py"),
-              "omnifoldHelperFile": str(_ROOT / "unbinned_unfolding" / "python" / "omnifold.py")}
+    import subprocess
+    pd = a.products_deploy.resolve()
+    head = subprocess.run(["git", "-C", str(pd), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    dirty = subprocess.run(["git", "-C", str(pd), "status", "--porcelain", "--untracked-files=no"],
+                           capture_output=True, text=True).stdout.strip()
+    if not head or dirty:
+        raise SystemExit(f"[FAIL] products deploy {pd}: HEAD {head!r}, modified tracked files {dirty!r}")
+    inputs["products_deploy"] = {"path": str(pd), "head": head}
+    expect = {"driverSha256": L.sha256_path(pd / "2d-unfolding" / "pv2d" / "unfold_2d_pv2d.py"),
+              "omnifoldHelperSha256": L.sha256_path(pd / "unbinned_unfolding" / "python" / "omnifold.py"),
+              "omnifoldHelperFile": str(pd / "unbinned_unfolding" / "python" / "omnifold.py")}
     declared = {"iters": 5, "use_weights": True, "bkg_mode": "purity", "seed": 42, "estimator": "lgbm",
                 "device": "cpu", "branch_select": "all", "bootstrap_seed": None, "universe": None,
                 "closure_reweight": None, "closure_hidden_dpt": False, "closure_alt_universe": None,
