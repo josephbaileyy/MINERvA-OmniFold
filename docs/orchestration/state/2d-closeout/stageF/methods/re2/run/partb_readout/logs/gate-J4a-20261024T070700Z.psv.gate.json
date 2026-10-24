@@ -1,0 +1,57 @@
+{
+ "room": 84.5245,
+ "used_before": 39.05,
+ "attempts": {
+  "J1": [
+   {
+    "id": "60195820",
+    "state": "PENDING",
+    "reserved": 0.4167
+   }
+  ],
+  "J2a": [
+   {
+    "id": "60195821",
+    "state": "PENDING",
+    "reserved": 8.9
+   }
+  ],
+  "J2b": [
+   {
+    "id": "60195822",
+    "state": "PENDING",
+    "reserved": 8.9
+   }
+  ],
+  "J2c": [
+   {
+    "id": "60195835",
+    "state": "PENDING",
+    "reserved": 8.9
+   }
+  ],
+  "J2d": [
+   {
+    "id": "60195837",
+    "state": "UNKNOWN",
+    "reserved": 8.9
+   }
+  ],
+  "J3": [
+   {
+    "id": "60195838",
+    "state": "UNKNOWN",
+    "reserved": 3.0333
+   }
+  ]
+ },
+ "wanted": [
+  {
+   "job": "J4a",
+   "cap": 8.1,
+   "verdict": "PASS",
+   "used_after": 47.15
+  }
+ ],
+ "verdict": "PASS"
+}

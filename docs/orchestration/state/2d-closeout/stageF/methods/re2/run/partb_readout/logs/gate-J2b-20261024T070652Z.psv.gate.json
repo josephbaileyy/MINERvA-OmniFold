@@ -1,0 +1,29 @@
+{
+ "room": 84.5245,
+ "used_before": 9.3167,
+ "attempts": {
+  "J1": [
+   {
+    "id": "60195820",
+    "state": "PENDING",
+    "reserved": 0.4167
+   }
+  ],
+  "J2a": [
+   {
+    "id": "60195821",
+    "state": "UNKNOWN",
+    "reserved": 8.9
+   }
+  ]
+ },
+ "wanted": [
+  {
+   "job": "J2b",
+   "cap": 8.9,
+   "verdict": "PASS",
+   "used_after": 18.2167
+  }
+ ],
+ "verdict": "PASS"
+}
