@@ -95,15 +95,38 @@ fixed, not the spec.
 run, byte for byte. Before comparing, it maps the rerun's own namespace and deploy path in its bytes to the stopped
 run's.
 - It excludes, each named in its output:
-  - `logs/`, `tmp/` and `mpl/`;
-  - ROOT files, which carry the TFile time and are compared through their npz twins and build_q's read-back stop;
-  - PDFs, which carry a creation date and are compared through their PNG twins;
-  - the values table, whose spec is what changed.
+  - `logs/`, `mpl/`, and any path with a `tmp` component. The period selftest writes into a `mkdtemp` directory with
+    a random name (`periods_ns/tmp/tmp8lbdy9iq/` in the stopped run), and its verdict is in `periods/selftest.json`,
+    which is compared. (The director found this one at `d57da592`.)
+  - ROOT files, which carry the TFile time. Each is compared through the npz written from the same arrays:
+    - `s5/uq_production_covariance.root` through `s5/production_cov.npz`. build_q's A2 checks
+      (`re2c_build_q.py:387-393`) stop unless its total, universe and every band equal the npz's to 1e-12 of the
+      matrix maximum. This is not exact equality.
+    - `outA/uq_adopted_covariance.root` through `outA/cov2d_Q_205.npz`'s `Q`.
+    - `outA/block_stat.root`, `block_c08.root` and `block_playlist.root` through `cov2d_Q_205.npz`'s `stat`, `c08`
+      and `C_PL`. They are written from those arrays at `re2c_build_q.py:704-706`, and the npz at `:713-715`.
+      build_q's read-back (A4, `:678-692`, `:710`) stops unless each ROOT matrix equals its array exactly.
+      `block_stat.root`'s `hRel2D` is √diag(stat)/x of the same arrays.
+  - PDFs, which carry a creation date, are compared through their PNG twins. All 22 have one.
+  - The values table, whose spec is what changed.
+  - Four named JSON fields that record when, where and from which commit a receipt ran:
+    - `receipt_model_chi2.json`'s `generated_utc` and `host`;
+    - `RECEIPT-agreement-windows.json`'s `hostname` and `git_head_at_run`.
+
+    The rest of each of those two files is compared exactly, as parsed JSON.
+- **The sweep for other run-specific names** in the stopped tree covered hostnames, ISO times, `nid` names, pids,
+  the mkdtemp name and the deploy commit, in every file outside logs, ROOT and PDF.
+  - It found only those four fields and the `mkdtemp` directory.
+  - The deploy path (`deploy-e079ff05`, in 7 records) and the output namespace are handled by the path pairs.
 - Only `chain.json` and `SHA256SUMS` may be present in the rerun alone.
 - Any other difference stops the run before C10.
 
-**Tests:** `python3 -m unittest test_re2c` passes 19 of 19. The new ones are the schema stand-in, the mutation, the
-moved row's listing, and two determinism cases.
+**Tests:** `python3 -m unittest test_re2c` passes 20 of 20. The new ones are the schema stand-in, the mutation, the
+moved row's listing, and three determinism cases:
+- runs that differ only in their `mkdtemp` name and run-context fields PASS, and a changed value beside those fields
+  FAILs;
+- a changed byte FAILs;
+- a one-sided product FAILs.
 
 ## 4. Digests
 
@@ -114,9 +137,9 @@ moved row's listing, and two determinism cases.
 |---|---|---|
 | `2d-unfolding/re2/partc/re2c_values_spec.tsv` | changed | `51319f678ca409c874519d6c677bc5b15cf3cc06d6d957075153b88998aa742b` |
 | `2d-unfolding/re2/partc/re2c_values_unmatched.tsv` | changed | `afb20e38190275b4c0c3c92035b9a36d772906edf1e10dc7b929b51f812c8149` |
-| `2d-unfolding/re2/partc/test_re2c.py` | changed | `b73a67234a160f987f98bced13095607d06765da51fe1295b0964e8fe791cf14` |
+| `2d-unfolding/re2/partc/test_re2c.py` | changed | `20ef0ba7223bc68127e724ed30abd1ab8a1a59a136699e4fbd27c76fe4c3b599` |
 | `2d-unfolding/re2/partc/re2c_refined_schema.py` | new | `f37b87bb0c95f129aab89cfa06c517075ba2c39f0a892ed4e37160971ea12da9` |
-| `2d-unfolding/re2/partc/re2c_determinism.py` | new | `f4d7f8670872e2d16ab3a753f0fb3b13437d365eec8e3cf27f0fbf5e31b3b956` |
+| `2d-unfolding/re2/partc/re2c_determinism.py` | new | `fe950d2bd9240f404a76222aabfb0463f68a7e8406d41587a27688cac816d729` |
 | `2d-unfolding/re2/partc/re2c_tracked.py` | new | `571fc4e0f0d3160953ba2b705c316a56743aa5304b31eca28f1702905a3eee66` |
 | `2d-unfolding/re2/partc/fixtures/refined_schema.json` | new | `d47d65dd278253ab4b354b786a4572f7fadedca33d10c7f7b0380169146873c1` |
 

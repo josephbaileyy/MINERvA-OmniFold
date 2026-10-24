@@ -217,6 +217,22 @@ class DeterminismStop(unittest.TestCase):
         rc, res = self.run_det(self.make(t / "s", "partc"), self.make(t / "r", "partc-r2", {"chain.json": "{}"}))
         self.assertEqual((rc, res["compared"], res["equal"]), (0, 1, 1))
 
+    def test_runs_differing_only_in_their_mkdtemp_name_and_run_context_pass(self):
+        t = Path(tempfile.mkdtemp())
+        s = self.make(t / "s", "partc")
+        r = self.make(t / "r", "partc-r2")
+        for root, tmpname, host in ((s, "tmpAAAA1111", "login12"), (r, "tmpBBBB2222", "login05")):
+            (root / "periods_ns" / "tmp" / tmpname).mkdir(parents=True)
+            (root / "periods_ns" / "tmp" / tmpname / "id.json").write_text(json.dumps({"n": str(root)}))
+            (root / "receipts").mkdir()
+            (root / "receipts" / "receipt_model_chi2.json").write_text(json.dumps(
+                {"generated_utc": str(os.urandom(4)), "host": host, "chi2": 2.5}))
+        rc, res = self.run_det(s, r)
+        self.assertEqual((rc, res["only_stopped"], res["only_rerun"]), (0, [], []))
+        (r / "receipts" / "receipt_model_chi2.json").write_text(json.dumps(
+            {"generated_utc": "x", "host": "y", "chi2": 2.6}))
+        self.assertEqual(self.run_det(s, r)[0], 1, "a changed value beside the excluded fields must still fail")
+
     def test_a_changed_byte_or_a_one_sided_product_fails(self):
         t = Path(tempfile.mkdtemp())
         s = self.make(t / "s", "partc")
