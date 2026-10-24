@@ -310,13 +310,17 @@ class EndToEnd(unittest.TestCase):
         np.savez(t / "cmodel.npz", C_model=cls.C_model, C_abs=cls.C_model * np.outer(f, f))
         data = [t / "data" / "data_b-_j-.npz"] + [t / "data" / f"data_b{b}_j{100 + b}.npz" for b in range(1, 51)]
         (t / "inventory.sha256").write_text("".join(f"{digest(q)}  {q}\n" for q in data))
+        cls.data = data
         lats = sorted((t / "lat").glob("*.npz"))
         bank = [(weight_sha(f"{b}_{i}", k), f"{BANK}/{b}_{i}_{k}.npy") for b, n in sa.EXPECT.items()
                 if b not in sa.DETECTOR_BANDS for i in range(n) for k in ("wt", "wr", "tdw", "bkgw")]
-        (t / "manifest.txt").write_text("".join(f"{digest(q)}  {q}\n" for q in lats) + "".join(f"{s}  {q}\n" for s, q in bank))
         (t / "receipt.json").write_text(json.dumps({"files_sha256": {
             f"{b}_{i}_{k}.npy": weight_sha(f"{b}_{i}", k) for b in sa.DETECTOR_BANDS for i in range(2)
             for k in ("wt", "wr", "denom_nd", "bkgw")}}))
+        cls.man_lines = {"lat": [f"{digest(q)}  {q}\n" for q in lats], "bank": [f"{s}  {q}\n" for s, q in bank],
+                         "receipt": [f"{digest(t / 'receipt.json')}  {t / 'receipt.json'}\n"]}
+        cls.inv_lines = {str(q): f"{digest(q)}  {q}\n" for q in data}
+        (t / "manifest.txt").write_text("".join(sum(cls.man_lines.values(), [])))
         cls.patch_c = mock.patch.object(sa, "CENTRAL_SHA256", digest(t / "data" / "data_b-_j-.npz"))
         cls.patch_c.start()
         argv = ["--definition", str(DEFINITION), "--inputs-npz", str(t / "inputs.npz"),
@@ -395,11 +399,48 @@ class EndToEnd(unittest.TestCase):
             self.rerun()
         self.assertIn("overwrite", str(e.exception))
 
+    def refused(self, why, **swap):
+        with self.assertRaises(SystemExit, msg=str(swap)) as e:
+            self.rerun(**swap, **{"--out": str(self.tmp / "other.npz")})
+        self.assertIn(why, str(e.exception))
+
+    def test_each_listed_input_is_checked_separately(self):
+        t = self.tmp
+        for drop, why in ((str(self.data[0]), "central"), (str(self.data[7]), "bootstrap replica")):
+            inv = t / f"inv-{why.replace(' ', '_')}.txt"
+            inv.write_text("".join(v for k, v in self.inv_lines.items() if k != drop))
+            self.refused(why, **{"--inventory": str(inv)})
+        for keep, why in ((("bank", "receipt"), "lateral"), (("lat", "bank"), "detector-dump receipt")):
+            man = t / f"man-{why.split()[0]}.txt"
+            man.write_text("".join(sum((self.man_lines[k] for k in keep), [])))
+            self.refused(why, **{"--manifest": str(man)})
+
+    def test_filename_must_match_the_metadata(self):
+        t = self.tmp
+        d = t / "data-swapped"
+        shutil.copytree(t / "data", d)
+        p = d / "data_b7_j107.npz"
+        z = np.load(p, allow_pickle=False)
+        m = json.loads(str(z["meta"]))
+        save(p, z["xsec_flat"], {**m, "jitter_seed": 108})
+        inv = t / "inv-swapped.txt"
+        inv.write_text("".join(f"{digest(q)}  {q}\n" for q in sorted(d.glob("data_b*.npz"))))
+        self.refused("jitter_seed", **{"--data-dir": str(d), "--central": str(d / "data_b-_j-.npz"), "--inventory": str(inv)})
+        s = t / "seed-swapped"
+        shutil.copytree(t / "seed", s)
+        q = s / "S1seed48_b3_j103.npz"
+        z = np.load(q, allow_pickle=False)
+        save(q, z["xsec_flat"], {**json.loads(str(z["meta"])), "bootstrap_seed": 4})
+        self.refused("bootstrap_seed", **{"--seed-dir": str(s)})
+        with mock.patch("sys.stdout"), mock.patch.object(sa, "INPUT_NPZ_SHA256", digest(t / "inputs.npz")):
+            self.assertEqual(sc.main(["seeds", "--dir", str(s), "--tag", "S1seed", "--seed", "48"]), 1)
+            self.assertEqual(sc.main(["seeds", "--dir", str(t / "seed"), "--tag", "S1seed", "--seed", "48"]), 0)
+
     def test_refuses_unlisted_inputs_and_swapped_model_keys(self):
         empty = self.tmp / "empty.txt"
         empty.write_text("")
         for swap, why in (({"--inventory": str(empty)}, "is not in its manifest"),
-                          ({"--manifest": str(empty)}, "is not the recorded"),
+                          ({"--manifest": str(empty)}, "is not in its manifest"),
                           ({"--cmodel-abs-key": "C_model"}, "absolute matrix")):
             with self.assertRaises(SystemExit, msg=str(swap)) as e:
                 self.rerun(**swap, **{"--out": str(self.tmp / "other.npz")})

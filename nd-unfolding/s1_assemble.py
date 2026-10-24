@@ -301,6 +301,7 @@ def main(argv=None) -> int:
         raise SystemExit("of_inputs_5d.npz digest differs")
     flux = np.asarray(np.load(a.inputs_npz, allow_pickle=False)["flux"], float)
     inv, man = load_manifest(a.inventory), load_manifest(a.manifest)
+    require_listed(a.detector_receipt, man, "detector-dump receipt")
     det = json.loads(a.detector_receipt.read_text())["files_sha256"]
     require_sha(a.central, CENTRAL_SHA256, "central")
     require_listed(a.central, inv, "central")

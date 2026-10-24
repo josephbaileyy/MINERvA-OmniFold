@@ -37,7 +37,7 @@
   11.2–12.3.** No GPU, under 0.1 GB on pscratch, nothing on CFS.
   - That is 4.5 node-h above the S1 plan's 11.0, entirely the seed block. The plan priced it as option O2: 3 more
     seeds, 60 unfolds, cap 3.6. Here it is enlarged to 2D's five seeds: 4 more, 80 unfolds, cap 4.5 (§2, choice 9).
-- **Code.** One new assembler and one gate script, with 16 tests: `nd-unfolding/s1_assemble.py`,
+- **Code.** One new assembler and one gate script, with 18 tests: `nd-unfolding/s1_assemble.py`,
   `nd-unfolding/s1_controls.py` and `nd-unfolding/tests/test_s1_assemble.py`. The director asked for two small code
   changes; §5 says why there are six items, all in these two files.
 
@@ -66,7 +66,7 @@ quantity is computed from an (e) data product in this pipeline. No choice below 
 | 6 | **C_stat set** | s5p study N **set A**: `data_b{1..50}_j{101..150}.npz`, 50 refit-per-replica data bootstrap replicas with jitter; ddof 1 | its streams are data Poisson, MC Poisson(1) and template Poisson(1), with the refinement refit (`nd-unfolding/s5p_assemble.py:9-10`). That matches 2D's three-stream S1 (`s5_rollup.py:15`). The numerical component is ABSORBED in exactly this set (`state/s5p/contract-amendment-4-stage2-decisions.json:12`). Set B (100, no jitter) would need a separate C_num |
 | 7 | **GEANT source** | the detector dump `s5p-20260926/bank_detector`, for all four weight-only detector bands | MinosEfficiency exists only there. The dump is the R-path rebuild, whose receipt reproduces 10 CV arrays (`detector-dump.json`). `s5p_nullexp.py:25-28` prefers it, and s5p's null experiments drew the detector bands from it (amendment 7). The bank's GEANT copies differ from it in `wr` (S1-PLAN §1 row 6), so one source is used for all four bands. Gate §4 G1 checks the bank path against it |
 | 8 | **C_model combination** | C_model_abs = diag(f) · C_model,5D · diag(f), with f = (e)'s central value on R00–R15. C_total = C_e + C_model_abs. Both are written, and C_model is not mixed into any block | DECISION-20261024 item 3: unscaled, one fully correlated component per vertex, "reported beside the statistical and systematic covariance, and in the total". The H2 declaration's C_abs (§3.1) uses x = X_0 = P5, and gate G2 proves P5 = this f bitwise |
-| 9 | **estimator-seed block (added)** | C_seed = the sample covariance (ddof 1), over estimator seeds 42, 45, 48, 51 and 54, of the per-seed mean of bootstrap replicas b = 1–20 (jitter 100 + b). Seed 42 is set A's b1–b20 | the 2D recipe adds the seed main effect (R7, C08: `s5_rollup.py:16-18`). For the refined estimator, "the seed main effect … has never been measured" (`RE2-PLAN.md`, P6). For (e) in 5D it is unmeasured: s5e's seed runs were B0 (`state/s5e/contract-amendment-1-diagnosis-execution.json:16`). RE-2's seeds were the same 45, 48, 51 and 54 (`RE2-DECLARATION-B.md:180`) | <!-- absence-ok: git grep of 'seed (block|main effect)|estimator[- ]seed' over docs/orchestration/state/s5e, state/s5p and RECORD-20260927-s5p-stage2-exit.md at 2c8c1e4f found only s5e's B0 seed runs (amendment-1:16) and amendment 3's seed-43 item; the RE-2 phrase quoted is RE2-PLAN.md P6 -->
+| 9 | **estimator-seed block (added)** | C_seed = the sample covariance (ddof 1), over estimator seeds 42, 45, 48, 51 and 54, of the per-seed mean of bootstrap replicas b = 1–20 (jitter 100 + b). Seed 42 is set A's b1–b20 | the 2D recipe adds the seed main effect (R7, C08: `s5_rollup.py:16-18`). For the refined estimator, "the seed main effect … has never been measured" (`RE2-PLAN.md`, P6). For (e) in 5D, no seed main-effect covariance on the data exists. s5e's data seed runs were B0 (`state/s5e/contract-amendment-1-diagnosis-execution.json:16`). Its R runs at estimator seed 43 are single-seed probes on pseudo experiments, not on data: K4 (`state/s5e/contract.json:73`, `cand-dev-tasks.tsv:25`) and A3 (`cand-assess-tasks.tsv:35`). RE-2's seeds were the same 45, 48, 51 and 54 (`RE2-DECLARATION-B.md:180`) <!-- absence-ok: git grep of 'seed (block|main effect)|estimator[- ]seed' over docs/orchestration/state/s5e, state/s5p and RECORD-20260927-s5p-stage2-exit.md at 2c8c1e4f; its hits are s5e's B0 data seed runs (amendment-1:16), amendment 3's seed-43 item, and the R seed-43 pseudo probes K4 and A3 named in this row; the RE-2 phrase quoted is RE2-PLAN.md P6 --> |
 | 10 | **Flux weights (added)** | the first 100 `Flux` entries of `sorted_NuEConstraint_FHC_RHC_IMD.txt` (`e38ad7d2…`), with the block centred on the weighted mean | C04 (KI 95), adopted for 2D (`docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md`): MAT `CalcCovMx` with `GetUnivWgts`, which equal this file's first 100 entries exactly (`c04-repair/REPORT.md:53-59`). The weights are per PPFX universe, so they carry to 5D unchanged. This lane re-measured Σw = 211.012 and n_eff = 19.06, the recorded values |
 | 11 | **MINOS lateral rescale (added)** | each `lat_Muon_Energy_MINOS_<i>` product × Φ_CV(pT) / Φ_MINOS,i(pT) per fine pT bin, using the recorded factors `minos_rescaled.npz` (`8912376e…`; 0.9995816 and 1.00466854, flat in pT) | X01 (KI 96), adopted for 2D. The 5D lateral dump asserts its flux equals the CV npz's (`nd-unfolding/s5p_input_dumps.py:166`), so the defect is present in 5D. The 5D flux equals the factors' Φ_CV **bitwise** on the same 14 pT bins (measured 2026-10-24), and the flux is a pure per-pT divisor (`nd-unfolding/xsec_nd.py:54-80`). So the 2D factors are exact here. Endpoint i ↔ MINOS universe i. The 2D recipe pairs the same active files that way (`s5_rollup.py:372-375`); for 5D the pairing rests on the endpoint files' names, `…_active_Muon_Energy_MINOS_<i>.root` (`state/s5p/s3-latdump-tasks.tsv:9-10`) **(inference)**. The 5D lateral dumps were deleted after use |
 
@@ -149,14 +149,14 @@ $PY $D/nd-unfolding/s1_assemble.py --definition $D/nd-unfolding/pv-ladder/readou
     - each set-A replica, against the Stage 0 inventory;
     - each lateral, against the sf1 manifest;
     - every weight file a universe records: bank files against the sf1 manifest, detector files against the dump's
-      receipt;
+      receipt. The receipt is itself checked against the sf1 manifest (`c52dca58…`);
     - the X01 factors, the constraint file and C_model.
     The seed-block products are new, so their digests are recorded, not checked;
   - **filenames against metadata:** `bootstrap_seed`, `jitter_seed` and `coords` must match each replica's and seed
     product's filename;
   - the exact universe set (§4 G3), and each product's estimator and source;
   - **C_model:** it is 16 × 16 and symmetric, and diag(f) C_model diag(f) reproduces the builder's own absolute
-    matrix to 10⁻¹² relative. That proves f = X_0 and that the keys are not swapped;
+    matrix to 10⁻¹² relative. That shows f = X_0 to 10⁻¹² relative wherever C_model is non-zero, and that the keys are not swapped;
   - C_e and C_total are PSD to −10⁻¹² of the largest diagonal;
   - it will not overwrite.
 - **Not in the readout:** 2D also reported X02 and a clipped random-effects seed variance beside C08. This readout
@@ -174,7 +174,7 @@ prints its deviations. Every gate exits 1 on any FAIL, and that is a STOP.
 | **G1** bank-path denominator | `denominator --inputs-npz $P/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bank $P/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --dump $P/s5p-20260926/bank_detector` | for each of the 6 GEANT universes, `s5p_universe.denominator(bank cv.npz, GEANT_*_tdw)` meets three conditions against both the dump's and the npz's CV `denom_nd`: the same support; the total within 10⁻⁹ relative; every cell within 10⁻³ relative. The bank's GEANT `tdw` are CV-equal, so this tests the denominator path 169 universes use. **The per-cell bound is measured, not exact** (below the table) |
 | **G2** central = data_R = P5 | `central --central $P/s5p-20260926/runs/s2/num/data/data_b-_j-.npz --data-r $P/s5e-20260925/runs/cand/assess/data/data_R.npz --p5 $P/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz` | the digests are `fb5cc679…`, `361030f3…` and `e36f3b25…`, and the three `xsec_flat` are bitwise equal |
 | **G3** universe products | `products --dir $B/runs/uni --tag S1 --universes <the line's list> --manifest $D/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt --detector-receipt $P/s5p-20260926/bank_detector/detector-dump.json`; after production, the full list of 175 | each product exists. It carries schema `s5p-universe/1`; config R; capacity None; 5 iterations; estimator seed 42; three B0 estimators at 100/8/42; refinement 400/31/45; the input and background digests; 2,801 sentinel rows; tdw weights (bank) or denom_nd (dump), each with its manifest's or receipt's digest; and, for Flux, its own flux file. `xsec_flat` has 65,856 entries, all finite and ≥ 0 |
-| **G4** matched-CV control | `cv --cv $B/runs/uni/S1_CV.npz --central …/data_b-_j-.npz` | `xsec_flat` equal bitwise. The same path reproduced it at Stage 0 (`prior_R5fix_CV` = N1 base, C2) |
+| **G4** matched-CV control | `cv --cv $B/runs/uni/S1_CV.npz --central $P/s5p-20260926/runs/s2/num/data/data_b-_j-.npz` | `xsec_flat` equal bitwise. The same path reproduced it at Stage 0 (`prior_R5fix_CV` = N1 base, C2) |
 | **G5** seed products | `seeds --dir $B/runs/seed --tag S1seed --seed <s>` for s = 45, 48, 51, 54 | 20 products per seed. They carry schema `s5p-numerics/1`, B0 at s, refinement random_state s + 3, the input digests, and `bootstrap_seed`, `jitter_seed` and `coords` matching the filename (float64). They are finite and ≥ 0 |
 
 **G1's per-cell bound, measured (simulation only, the review of 2026-10-24, login12).**
@@ -184,7 +184,8 @@ prints its deviations. Every gate exits 1 on any FAIL, and that is a STOP.
   4.098 × 10⁻⁴ relative, with 5,066 cells above 10⁻⁹, split 50.4 % low and 49.5 % high.
 - **Reading:** events move between cells at bin edges. The bank's truth coordinates carry 2,801 NaN rows, which
   are dropped. No events are missing **(inference from the totals and the sign split)**.
-- **Consequence:** every bank-path universe carries the same small per-cell offset in its completeness denominator.
+- **Consequence:** the offset was measured with the CV-equal GEANT weights only. For another universe it scales with
+  that universe's weights on the events that cross bin edges, so within a band it is nearly common **(inference)**.
   Mean-centring (choices 2 and 10) removes a common offset to first order; CV centring would not.
 - **The bound:** 10⁻³ is set at 2.4× the measured maximum. It is not exact.
 
@@ -203,7 +204,7 @@ depend on, is left unchanged:
 | (v) the seed block | `seed_block`, `main` | choice 9 |
 | (vi) the exact universe set, estimator and source checks, input digests, and the gates | `universe_bands`, `check_meta`, `check_universe`, `load_manifest`, `require_listed`; `s1_controls.py` | Rvp1pi, GEANT source, §3.1, §4 |
 
-**Tests** (`nd-unfolding/tests/test_s1_assemble.py`; 16 tests, all passing locally in 1.9 s; no real data):
+**Tests** (`nd-unfolding/tests/test_s1_assemble.py`; 18 tests, all passing locally in 2.5 s; no real data):
 - the fine map reproduces `930326a3…`, and a changed definition is refused, even with its file digest patched in;
 - mean-centring cancels a common offset, while CV centring would not;
 - the weighted block is MAT's formula, and uniform weights give the unweighted one;
@@ -221,18 +222,22 @@ depend on, is left unchanged:
 - **end to end:** a synthetic assembly of 50 replicas, 175 universes, 10 laterals, 80 seed products and a C_model.
   - Every block is recomputed by hand, including X01 with a pT-varying scale and an independent pT index.
   - The totals add, and the readout's σ and trace shares are checked.
-  - It refuses an unlisted central or replica, an empty manifest, swapped C_model keys, and an overwrite.
+  - Each listed input is refused separately when it alone is missing from its manifest: the central value, one
+    replica, the laterals, and the detector receipt.
+  - A replica or seed product whose filename disagrees with its metadata is refused, by the assembler and by gate G5.
+  - It refuses an empty manifest, swapped C_model keys, and an overwrite.
 - **Mutations caught** (the review's and this lane's): CV-centring a band, the Flux block or the laterals; dropping, swapping or inverting the X01
-  scale; removing the Flux weights; a wrong pT axis.
+  scale; removing the Flux weights; a wrong pT axis; dropping any one of the inventory, manifest, receipt or
+  filename-vs-metadata refusals.
 - The existing `test_s5p_assemble.py` still passes.
 
 ## 6. Pinned bytes
 
 | item | sha256 |
 |---|---|
-| `nd-unfolding/s1_assemble.py` | `de36744e9a1874bbf45b09e81020d62d8a3aef635808c981c3fe2f2786712031` |
-| `nd-unfolding/s1_controls.py` | `6543cc21ddf0245ec70af42a4588bf9cab267f638eabfc6fa37efd7a859636e0` |
-| `nd-unfolding/tests/test_s1_assemble.py` | `7c77ddcb500c0d994a3a065294daefc1dc7e48c082d08ceb044d7e96cb5d81b8` |
+| `nd-unfolding/s1_assemble.py` | `5ebe1a8ad68ca9de3343062e1835c899ba25c0f1c7e2d22156284567c00cb247` |
+| `nd-unfolding/s1_controls.py` | `bfc8986e264eb5d0274c2d988862cd2544aec4e6f85d045336e1f381b1495f4f` |
+| `nd-unfolding/tests/test_s1_assemble.py` | `a4bb69826f597d0e0a2cef88933fff1d908acca32932979c4df2d506c413a9b7` |
 | `s1/tasks-pilot.tsv` | `6db31a3411771c00a67dcf3ccb56c20a9622209791449e76a0be22fbfff3ee0d` |
 | `s1/tasks-prod.tsv` | `bb32d9180cdf64cef22ffa378591d86af7a65abaab263a3c9ab4840acee75896` |
 | `s1/tasks-seed.tsv` | `4425a91e17b5480658691705e4e1a2194c69049fc48868da7ed035d8a09c2a4c` |

@@ -58,6 +58,12 @@ def gate_finite(path: Path) -> tuple[bool, str]:
 
 
 def products(a) -> bool:
+    man = sa.load_manifest(a.manifest)
+    try:
+        sa.require_listed(a.detector_receipt, man, "detector-dump receipt")
+    except SystemExit as e:
+        return report("detector_receipt_sha256", False, str(e))
+    det = json.loads(a.detector_receipt.read_text())["files_sha256"]
     ok = True
     for item in a.universes.split(","):
         band, _, idx = item.partition(":")
@@ -66,7 +72,7 @@ def products(a) -> bool:
             ok &= report(p.name, False, "missing")
             continue
         try:
-            sa.check_universe(p, band, sa.load_manifest(a.manifest), json.loads(a.detector_receipt.read_text())["files_sha256"])
+            sa.check_universe(p, band, man, det)
         except SystemExit as e:
             ok &= report(p.name, False, str(e))
             continue
