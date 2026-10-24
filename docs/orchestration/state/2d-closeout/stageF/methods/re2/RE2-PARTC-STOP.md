@@ -51,7 +51,7 @@ digests in [`run/partc_stopped/partc_preflight/partc_stopped.SHA256SUMS`](run/pa
 **Which row.** Row `s2-bkg-share` regenerates `sec_systematics.tex:101`'s "0.26", S2's σ_bkg/σ_stat median, from
 `s5.json`'s `numbers.bkg_separable`.
 - S2 (J5) is not bound.
-- So the refined rollup records `bkg_separable` as "not computed: S2 (J5) was not run in the refined arm (S5-22)".
+- So the refined rollup records `bkg_separable` as "not computed: S2 (J5) was not run in the refined arm (S5-22)". <!-- absence-ok: quotes the refined s5.json's own field, and J5's status is RE2-BINDING-B's (not bound) -->
 - The row has no refined value. The engine counts that as an error.
 
 **Why the declaration's test missed it.** Its stand-in refined tree copied the purity `s5.json`, which has the key.
@@ -133,5 +133,14 @@ moved row's listing, and two determinism cases.
 `python3 -I 2d-unfolding/re2/partc/re2c_tracked.py RE2-PARTC-STOP.md` (output at commit):
 
 ```
-@TRACKED_OUTPUT@
+docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-STOP.md: 8 run/ paths
+  tracked  run/
+  tracked  run/partc_stopped/partc/logs/
+  tracked  run/partc_stopped/partc/logs/steps.tsv
+  tracked  run/partc_stopped/partc/logs/values.log
+  tracked  run/partc_stopped/partc/values_table.tsv
+  tracked  run/partc_stopped/partc_preflight/
+  tracked  run/partc_stopped/partc_preflight/partc_stopped.SHA256SUMS
+  tracked  run/partc_stopped/partc_preflight/preflight.log
+all tracked
 ```
