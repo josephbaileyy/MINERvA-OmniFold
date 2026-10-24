@@ -5,6 +5,7 @@
 import csv
 import hashlib
 import json
+import os
 import re
 import shlex
 import shutil
@@ -188,23 +189,34 @@ class DeclaredTables(unittest.TestCase):
                 return f
         raise KeyError(label)
 
-    def build(self, bad_seed=None, dead=None, bad_stream=None):
+    def build(self, bad_seed=None, dead=None, bad_stream=None, swap=None, drop_sums=None, classes=None):
+        """Synthetic outputs for the 644 runs, with each run's recorded runConfig taken from its declared argv
+        (as the driver records vars(args)), and the per-lane SHA256SUMS the job writes. Returns re2_k1's result."""
         d = self.d
         shutil.rmtree(d / "partb", ignore_errors=True)
         out = d / "partb" / "out"
+        for k, v in {"CV": "/s/cv.root", "MC": "/s/mc.root", "UNI": "/s/uni.root", "FLUXU": "/s/fu.root",
+                     "ACT": "/s/act", "P": "/s/p"}.items():
+            os.environ[k] = v
         for r in self.runs:
             lab = r["label"]
             ref = {"params": {"random_state": seed_of(r["args"]) + 3 - (3 if lab == bad_seed else 0),
                               "n_estimators": 400, "num_leaves": 31},
                    "clipped_fraction": 0.0, "refined_over_signed": 1.0, "background_stream": True,
                    "signed_sum": 89.0 if lab == bad_stream else 90.0}
+            rc = {k: (int(v) if isinstance(v, str) and v.isdigit() else v)
+                  for k, v in K.declared_options(r["args"]).items()}
+            rc.update(out=str(out / lab / "xsec.root"), iters=5)
+            if lab == swap:
+                rc["universe"] = rc["universe"][:-1] + ("0" if rc["universe"].endswith("1") else "1")
             x = self.eu * (1.0 if lab == dead else self.factor(lab))
             root_xsec(out / lab / "xsec.root", x, ref, {"hEff2D": self.eu * 0.5},
-                      {"p1Streams": {"sum": {"data": 100.0}}})
-        for job in sorted({r["job"] for r in self.runs}):
-            lines = [f"{hashlib.sha256((out / r['label'] / 'xsec.root').read_bytes()).hexdigest()}  "
-                     f"{r['label']}/xsec.root" for r in self.runs if r["job"] == job]
-            (d / "partb" / f"SHA256SUMS.{job}").write_text("\n".join(lines) + "\n")
+                      {"p1Streams": {"sum": {"data": 100.0}}, "runConfig": rc})
+        for r in self.runs:
+            if r["job"] != drop_sums:
+                with open(d / "partb" / f"SHA256SUMS.{r['job']}.{r['lane'].split('.')[-1]}", "a") as f:
+                    f.write(f"{hashlib.sha256((out / r['label'] / 'xsec.root').read_bytes()).hexdigest()}  "
+                            f"{r['label']}/xsec.root\n")
         rows, n = ["id\tkind\ttest\tref\tref_sha256\thist\tmin_shift"], 0
         for c in self.checks:
             ref, sha = c["ref"], c["ref_sha256"]
@@ -219,26 +231,49 @@ class DeclaredTables(unittest.TestCase):
                 ref, sha = str(p), K.sha256_path(p)
             rows.append("\t".join([c["id"], c["kind"], c["test"], ref, sha, c["hist"], c["min_shift"]]))
         (d / "checks.tsv").write_text("\n".join(rows) + "\n")
-        K.main(["--runs", str(RE2 / "partb_runs.tsv"), "--checks", str(d / "checks.tsv"), "--out-dir", str(out),
+        argv = ["--runs", str(RE2 / "partb_runs.tsv"), "--checks", str(d / "checks.tsv"), "--out-dir", str(out),
                 "--eu", str(d / "eu.root"), "--expect-eu-sha256", K.sha256_path(d / "eu.root"),
-                "--result", str(d / "k1.json"), "--sums-glob", "SHA256SUMS.J[1-8]*"])
+                "--result", str(d / "k1.json"), "--sums-glob", "SHA256SUMS.J[1-8]*", "--sums-cover-runs",
+                "--check-argv"]
+        K.main(argv + (["--classes", classes] if classes else []))
         return json.loads((d / "k1.json").read_text())
 
     def failed(self, r):
         return ([x["id"] for x in r["checks"] if x["verdict"] != "PASS"],
-                [x["label"] for x in r["health"] if x["verdict"] != "PASS"])
+                [x["label"] for x in r["health"] if x["verdict"] != "PASS"],
+                [x["label"] for x in r.get("argv", []) if x["verdict"] != "PASS"])
 
     def test_declared_tables_can_pass(self):
         r = self.build()
-        self.assertEqual(self.failed(r), ([], []))
-        self.assertEqual(len(r["health"]), 644)
-        self.assertEqual(r["sums"]["n_listed"], 644)
+        self.assertEqual(self.failed(r), ([], [], []))
+        self.assertEqual((len(r["health"]), len(r["argv"]), r["sums"]["n_listed"], r["sums"]["unlisted"]),
+                         (644, 644, 644, []))
         self.assertEqual(r["verdict"], "PASS")
 
     def test_each_defect_fails_its_own_row(self):
-        r = self.build(bad_seed="S4B_s48_07", dead="U_MaCCQE_1", bad_stream="S1_150")
-        self.assertEqual(self.failed(r), (["PB-stream-S1_150", "PB-pow-U_MaCCQE_1"], ["S4B_s48_07"]))
+        r = self.build(bad_seed="S4B_s48_07", dead="U_MaCCQE_1", bad_stream="S1_150", swap="U_GEANT_Pion_0")
+        self.assertEqual(self.failed(r), (["PB-stream-S1_150", "PB-pow-U_MaCCQE_1"], ["S4B_s48_07"],
+                                          ["U_GEANT_Pion_0"]))
         self.assertEqual(r["verdict"], "FAIL")
+
+    def test_a_job_without_sums_fails(self):
+        r = self.build(drop_sums="J2a")
+        self.assertEqual(len(r["sums"]["unlisted"]), 44)
+        self.assertEqual(r["verdict"], "FAIL")
+
+    def test_core_and_j7_have_their_own_verdicts(self):
+        r = self.build(bad_seed="S4CV_s45", classes="J1,J2,J3,J4,J6,J8")
+        self.assertEqual(r["verdict"], "PASS")
+        self.assertEqual((len(r["health"]), r["sums"]["unlisted"]), (605, []))
+        self.assertNotIn("PB-panel-NormDISCC_0", [c["id"] for c in r["checks"]])
+        r = self.build(bad_seed="S4CV_s45", classes="J7")
+        self.assertEqual((r["verdict"], len(r["health"])), ("FAIL", 39))
+        self.assertEqual(self.failed(r)[1], ["S4CV_s45"])
+        self.assertIn("PB-panel-NormDISCC_0", [c["id"] for c in r["checks"]])
+
+
+def sacct_row(name, state, elapsed, tres="billing=256,cpu=256,node=1"):
+    return {"JobName": f"re2b-{name}", "State": state, "ElapsedRaw": str(elapsed), "AllocTRES": tres}
 
 
 class Gate(unittest.TestCase):
@@ -246,37 +281,46 @@ class Gate(unittest.TestCase):
             "J4a": {"cap": 8.1, "projected": 6.5, "gated": False},
             "J7": {"cap": 7.8, "projected": 6.2, "gated": True}}
 
-    def row(self, state, elapsed, billing=256):
-        return {"State": state, "ElapsedRaw": str(elapsed), "AllocTRES": f"billing={billing},cpu=256,node=1"}
-
     def test_pass_when_caps_fit(self):
-        out = gate.decide(self.JOBS, 5.4755, {}, {}, ["J2a", "J4a", "J7"])
+        out = gate.decide(self.JOBS, 5.4755, [], {}, ["J2a", "J4a", "J7"])
         self.assertEqual(out["verdict"], "PASS")
         self.assertAlmostEqual(out["wanted"][-1]["used_after"], 8.9 + 8.1 + 7.8)
 
     def test_refuse_when_a_cap_would_cross_room(self):
-        out = gate.decide(self.JOBS, 75.0, {}, {}, ["J2a", "J4a"])  # room 15: 8.9 fits, 8.9 + 8.1 does not
+        out = gate.decide(self.JOBS, 75.0, [], {}, ["J2a", "J4a"])  # room 15: 8.9 fits, 8.9 + 8.1 does not
         self.assertEqual([w["verdict"] for w in out["wanted"]], ["PASS", "REFUSE"])
         self.assertEqual(out["verdict"], "REFUSE")
 
     def test_running_job_reserves_its_cap_and_ended_job_its_charge(self):
-        sub = {"J2a": "1", "J4a": "2"}
-        sacct = {"1": self.row("RUNNING", 100), "2": self.row("COMPLETED", 3600 * 6)}
-        out = gate.decide(self.JOBS, 5.4755, sub, sacct, ["J7"])
+        sacct = {"1": sacct_row("J2a", "RUNNING", 100), "2": sacct_row("J4a", "COMPLETED", 3600 * 6)}
+        out = gate.decide(self.JOBS, 5.4755, [], sacct, ["J7"])
         self.assertAlmostEqual(out["used_before"], 8.9 + 6.0)
-        self.assertEqual(out["wanted"][0]["director_form"], {"ledgered": 6.0, "projected": 6.2, "ok": True})
+        self.assertEqual(out["wanted"][0]["j7_form"], {"ledgered": 6.0, "projected": 6.2, "ok": True})
 
-    def test_missing_from_sacct_counts_its_cap(self):
-        out = gate.decide(self.JOBS, 5.4755, {"J2a": "9"}, {}, ["J7"])
+    def test_every_attempt_counts(self):
+        # a timed-out first attempt and a running second one, the second found only in the log
+        sacct = {"1": sacct_row("J2a", "TIMEOUT", 32040)}
+        out = gate.decide(self.JOBS, 5.4755, [("J2a", "1"), ("J2a", "5")], sacct, ["J7"])
+        self.assertAlmostEqual(out["used_before"], 8.9 + 8.9)
+        self.assertEqual(len(out["attempts"]["J2a"]), 2)
+
+    def test_unlogged_job_is_found_by_name_and_blocks_a_duplicate(self):
+        out = gate.decide(self.JOBS, 5.4755, [], {"7": sacct_row("J2a", "PENDING", 0, "")}, ["J2a"])
+        self.assertEqual(out["wanted"][0]["verdict"], "REFUSE")
         self.assertAlmostEqual(out["used_before"], 8.9)
 
-    def test_cancelled_counts_its_charge(self):
-        out = gate.decide(self.JOBS, 5.4755, {"J2a": "1"}, {"1": self.row("CANCELLED by 1", 1800)}, ["J7"])
+    def test_logged_but_not_yet_in_sacct_counts_its_cap(self):
+        out = gate.decide(self.JOBS, 5.4755, [("J2a", "9")], {}, ["J7"])
+        self.assertAlmostEqual(out["used_before"], 8.9)
+
+    def test_cancelled_counts_its_charge_and_never_started_counts_0(self):
+        sacct = {"1": sacct_row("J2a", "CANCELLED by 1", 1800), "2": sacct_row("J4a", "CANCELLED by 1", 0, "")}
+        out = gate.decide(self.JOBS, 5.4755, [], sacct, ["J7"])
         self.assertAlmostEqual(out["used_before"], 0.5)
 
     def test_already_submitted_is_refused(self):
-        out = gate.decide(self.JOBS, 5.4755, {"J7": "3"}, {"3": self.row("COMPLETED", 60)}, ["J7"])
-        self.assertEqual(out["wanted"][0]["reason"], "already submitted")
+        out = gate.decide(self.JOBS, 5.4755, [], {"3": sacct_row("J7", "COMPLETED", 60)}, ["J7"])
+        self.assertTrue(out["wanted"][0]["reason"].startswith("already submitted"))
 
     def test_main_reads_files_and_refuses_a_bad_ledger(self):
         with tempfile.TemporaryDirectory() as d:
@@ -284,10 +328,12 @@ class Gate(unittest.TestCase):
             (d / "jobs.tsv").write_text("job\tgated\tprojected_node_h\tcap_node_h\nJ7\tyes\t6.2\t7.8\n")
             (d / "led.tsv").write_text("jobid\tcharge_node_h\n1\t4.0386\n2\t1.4369\n")
             (d / "sub.log").write_text("")
-            (d / "s.psv").write_text("")
+            (d / "s.psv").write_text("123|re2b-J9|COMPLETED|10|billing=256\n")   # not a part-B row: ignored
             argv = ["--jobs", str(d / "jobs.tsv"), "--j0-ledger", str(d / "led.tsv"), "--submissions",
                     str(d / "sub.log"), "--sacct", str(d / "s.psv"), "--want", "J7"]
             self.assertEqual(gate.main(argv), 0)
+            (d / "s.psv").write_text("124|re2b-J7|RUNNING|10|billing=256\n")
+            self.assertEqual(gate.main(argv), 1)
             (d / "led.tsv").write_text("jobid\tcharge_node_h\n1\t4.0386\n")
             with self.assertRaises(SystemExit):
                 gate.main(argv)

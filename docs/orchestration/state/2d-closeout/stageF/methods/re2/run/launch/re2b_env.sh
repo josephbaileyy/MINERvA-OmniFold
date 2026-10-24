@@ -1,11 +1,16 @@
 # RE-2 part B: shared settings, sourced by each job with the deploy in $C and the declared sha in $RE2_SHA.
 # It sources part A's re2_env.sh (inputs, digests, re2_preflight, re2_check) unchanged, then sets part B's own
-# namespace, tables and checks (RE2-DECLARATION-B.md §4).
+# namespace, tables and checks (RE2-DECLARATION-B.md §4). The CV omnifile and the 10 laterals are read from the
+# copies the DTN preflight staged on pscratch ($O/inputs), whose digests are the declared CFS files' own; a compute
+# node reads CFS through DVS at ~10 MB/s (RE2-J0-REPORT.md D1).
 source "$C/docs/orchestration/state/2d-closeout/stageF/methods/re2/run/launch/re2_env.sh"
 O=$B/partb
 RUNS=$C/docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv
 JOBS=$C/docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_jobs.tsv
-export ACT=/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged
+CFS_CV=$CV
+CFS_ACT=/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged
+export CV=$O/inputs/runEventLoopOmniFold_MEFHC.root      # staged copy of $CFS_CV (same sha256, CV_SHA)
+export ACT=$O/inputs/laterals                            # staged copies of the 10 active laterals
 export P
 STATS=$O/preflight/inputs.stat     # "sha256 size mtime inode path", written on a DTN by re2b_dtn_hash.sh
 ROOM=84.5245                       # 90 - J0's 5.4755 (RE2-J0-REPORT.md §1)
@@ -35,8 +40,11 @@ re2b_stat_check() {  # re2b_stat_check <path> <declared sha256>
     fi
 }
 
-re2b_lateral_sha() {  # re2b_lateral_sha <file name>: its row of $ACT/SHA256SUMS (that file's own digest is pinned)
-    awk -v f="$1" '$2 == f {print $1}' "$ACT/SHA256SUMS"
+LAT_SUMS_SHA=73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6   # $CFS_ACT/SHA256SUMS
+LATERALS="BeamAngleX_0 BeamAngleX_1 BeamAngleY_0 BeamAngleY_1 MuonResolution_0 MuonResolution_1
+          Muon_Energy_MINERvA_0 Muon_Energy_MINERvA_1 Muon_Energy_MINOS_0 Muon_Energy_MINOS_1"
+re2b_lateral_sha() {  # re2b_lateral_sha <file name>: its row of the CFS SHA256SUMS (whose own digest is pinned)
+    awk -v f="$1" '$2 == f {print $1}' "$CFS_ACT/SHA256SUMS"
 }
 
 re2b_check_inputs() {  # re2b_check_inputs <job class>: what that job's runs read
@@ -46,10 +54,9 @@ re2b_check_inputs() {  # re2b_check_inputs <job class>: what that job's runs rea
         J2) re2b_stat_check "$UNI" "${UNI_SHA_OF[uni]}"; re2_check "$FLUXU" "$FLUXU_SHA" ;;
         J7) re2b_stat_check "$UNI" "${UNI_SHA_OF[uni]}"; re2_check "$FLUXU" "$FLUXU_SHA"
             re2b_stat_check "$CV" "$CV_SHA" ;;
-        J3) re2_check "$ACT/SHA256SUMS" 73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6
+        J3) re2_check "$CFS_ACT/SHA256SUMS" "$LAT_SUMS_SHA"
             local lat f
-            for lat in BeamAngleX_0 BeamAngleX_1 BeamAngleY_0 BeamAngleY_1 MuonResolution_0 MuonResolution_1 \
-                       Muon_Energy_MINERvA_0 Muon_Energy_MINERvA_1 Muon_Energy_MINOS_0 Muon_Energy_MINOS_1; do
+            for lat in $LATERALS; do
                 f=runEventLoopOmniFold_5D_MEFHC_active_$lat.root
                 re2b_stat_check "$ACT/$f" "$(re2b_lateral_sha "$f")"
             done ;;

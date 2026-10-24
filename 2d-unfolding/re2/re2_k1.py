@@ -27,6 +27,14 @@ Every ``re2_driver.py`` output that ran ``--bkg-mode negweight-refined`` has its
 The outputs are first checked against the jobs' own ``SHA256SUMS`` files beside ``--out-dir`` (``--sums-glob``:
 ``SHA256SUMS.J0*`` for J0, ``SHA256SUMS.J[1-8]*`` for part B).
 
+Part B's readout adds three options (RE2-DECLARATION-B.md §5); without them the readout is J0's:
+* ``--classes J1,J2,...``: only the runs of those job classes (a run's ``job`` without its letter) are read: their
+  health, and the checks whose test is one of them. The verdict is that set's alone.
+* ``--sums-cover-runs``: every selected run's output must be listed in a ``SHA256SUMS`` file, so a job whose sums
+  are missing fails rather than going unchecked.
+* ``--check-argv``: every selected run's recorded ``runConfig`` must hold each option of its declared argv, with
+  ``$VAR`` expanded from the environment (the readout sources ``re2b_env.sh``).
+
 MEASURES: the declared controls. CANNOT AUTHORIZE: a production job (the director binds J1-J8 after J0).
 """
 from __future__ import annotations
@@ -35,6 +43,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -106,7 +115,39 @@ def outputs_match_sums(out_dir: Path, pattern: str = "SHA256SUMS.J0*") -> dict:
             digest, name = line.split(None, 1)
             want[name.strip()] = digest
     got = {n: sha256_path(out_dir / n) for n in want if (out_dir / n).is_file()}
-    return {"n_listed": len(want), "mismatched": sorted(n for n in want if got.get(n) != want[n])}
+    return {"n_listed": len(want), "mismatched": sorted(n for n in want if got.get(n) != want[n]),
+            "listed": sorted(want)}
+
+
+def declared_options(args: str) -> dict:
+    """A declared argv as {runConfig key: value}; a flag maps to True, a value has $VAR expanded."""
+    toks, out, i = args.split(), {}, 0
+    while i < len(toks):
+        key = toks[i][2:].replace("-", "_")
+        if i + 1 < len(toks) and not toks[i + 1].startswith("--"):
+            out[key] = os.path.expandvars(toks[i + 1])
+            i += 2
+        else:
+            out[key] = True
+            i += 1
+    return out
+
+
+def argv_row(label: str, path: Path, args: str) -> dict:
+    row = {"label": label}
+    try:
+        rc = named_json(path, "runConfig") if path.is_file() else None
+    except Exception:
+        rc = None
+    if rc is None:
+        return dict(row, verdict="FAIL", reason="no runConfig")
+    bad = {}
+    for k, want in declared_options(args).items():
+        got = rc.get(k)
+        same = got is True if want is True else (isinstance(want, str) and "$" not in want and str(got) == want)
+        if not same:
+            bad[k] = {"declared": want, "recorded": got}
+    return dict(row, verdict="PASS" if not bad else "FAIL", **({"mismatch": bad} if bad else {}))
 
 
 def compare(a: np.ndarray, b: np.ndarray, cells: np.ndarray) -> dict:
@@ -127,6 +168,9 @@ def main(argv=None) -> int:
     ap.add_argument("--expect-eu-sha256", required=True)
     ap.add_argument("--result", type=Path, required=True)
     ap.add_argument("--sums-glob", default="SHA256SUMS.J0*", help="the jobs' SHA256SUMS files, beside --out-dir")
+    ap.add_argument("--classes", default=None, help="comma-separated job classes to read (part B)")
+    ap.add_argument("--sums-cover-runs", action="store_true", help="every selected run must be in a SHA256SUMS")
+    ap.add_argument("--check-argv", action="store_true", help="compare each output's runConfig with its argv")
     a = ap.parse_args(argv)
     if sha256_path(a.eu) != a.expect_eu_sha256:
         print("E_U digest differs", file=sys.stderr)
@@ -136,10 +180,24 @@ def main(argv=None) -> int:
     if cells.size != 205:
         raise RuntimeError(f"E_U reports {cells.size} cells, not 205")
     runs = {r["label"]: r for r in csv.DictReader(open(a.runs), delimiter="\t")}
+    classes = set(a.classes.split(",")) if a.classes else None
+    selected = lambda label: classes is None or runs[label]["job"][:2] in classes  # noqa: E731
     out_of = lambda label: a.out_dir / label / "xsec.root"  # noqa: E731
     result = {"schema": "re2-j0-k1/2", "eu_sha256": a.expect_eu_sha256, "code_sha256": sha256_path(Path(__file__)),
               "tolerance": TOL, "checks": [], "health": [], "sums": outputs_match_sums(a.out_dir, a.sums_glob)}
+    if classes is not None:
+        result["classes"] = sorted(classes)
+    if a.sums_cover_runs:
+        listed = set(result["sums"].pop("listed"))
+        result["sums"]["unlisted"] = sorted(f"{x}/xsec.root" for x in runs if selected(x)
+                                            and f"{x}/xsec.root" not in listed)
+    else:
+        result["sums"].pop("listed")
     for c in csv.DictReader(open(a.checks), delimiter="\t"):
+        if c["test"] not in runs or not selected(c["test"]):
+            if c["test"] not in runs:
+                result["checks"].append({"id": c["id"], "verdict": "FAIL", "reason": "test is not a declared run"})
+            continue
         test = out_of(c["test"])
         ref = out_of(c["ref"][4:]) if c["ref"].startswith("run:") else Path(c["ref"])
         row = {"id": c["id"], "kind": c["kind"], "test": c["test"], "ref": c["ref"]}
@@ -152,7 +210,7 @@ def main(argv=None) -> int:
             row.update(verdict="FAIL", reason=f"{type(exc).__name__}: {exc}")
         result["checks"].append(row)
     for label, r in runs.items():
-        if r["script"] != "re2" or "negweight-refined" not in r["args"]:
+        if r["script"] != "re2" or "negweight-refined" not in r["args"] or not selected(label):
             continue
         p = out_of(label)
         try:
@@ -160,14 +218,18 @@ def main(argv=None) -> int:
         except Exception:
             ev = None
         result["health"].append({"label": label, "refinement": ev, "verdict": health(ev, r["args"])})
-    verdicts = [x["verdict"] for x in result["checks"] + result["health"]]
-    sums_ok = result["sums"]["n_listed"] > 0 and not result["sums"]["mismatched"]
+    if a.check_argv:
+        result["argv"] = [argv_row(x, out_of(x), r["args"]) for x, r in runs.items() if selected(x)]
+    verdicts = [x["verdict"] for x in result["checks"] + result["health"] + result.get("argv", [])]
+    sums_ok = result["sums"]["n_listed"] > 0 and not result["sums"]["mismatched"] and \
+        not result["sums"].get("unlisted")
     result["verdict"] = "PASS" if verdicts and all(v == "PASS" for v in verdicts) and sums_ok else "FAIL"
     a.result.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
     print(json.dumps({"verdict": result["verdict"], "n_checks": len(result["checks"]),
                       "n_health": len(result["health"]),
                       "failed": [x.get("id", x.get("label")) for x in result["checks"] + result["health"]
-                                 if x["verdict"] != "PASS"]}))
+                                 + result.get("argv", []) if x["verdict"] != "PASS"],
+                      "unlisted": len(result["sums"].get("unlisted", []))}))
     return 0 if result["verdict"] == "PASS" else 1
 
 
