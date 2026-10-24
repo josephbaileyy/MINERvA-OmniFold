@@ -1,0 +1,23 @@
+# R10: receipt-binding inventory delta and power test (2026-10-24, validation lane)
+# delta: receipt_inventory() via verify_hash_bindings' own collect(), with and without docs/orchestration/state/measurement-scoping/r10/config.json
+with 157 9abec558ae75063890fe50ed98c44787c597761719d8d09e87802c64cfe98d9d
+without 151 914c11e8b88c358bdc9416b5348a6b090da6ee9a448e27a2b7437ea0315e55c0
+expected 157 9abec558ae75063890fe50ed98c44787c597761719d8d09e87802c64cfe98d9d
+ADDED   docs/orchestration/state/next-preparation-20261009/d-id/config.json aebd8c8e
+ADDED   docs/orchestration/state/next-preparation-20261009/d-id/did.py d918c816
+ADDED   docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json 2234c0c0
+ADDED   docs/orchestration/state/next-preparation-20261009/d-id/outputs/tables.npz 2aab2270
+ADDED   measurement-paper/phase1/mp2/mp2_s1_dump.py 22129d9a
+ADDED   nd-unfolding/pet/event_identity.py b921abf0
+pairs from docs/orchestration/state/measurement-scoping/r10/config.json : 6
+    docs/orchestration/state/next-preparation-20261009/d-id/did.py d918c816 OK
+    docs/orchestration/state/next-preparation-20261009/d-id/config.json aebd8c8e OK
+    docs/orchestration/state/next-preparation-20261009/d-id/outputs/tables.npz 2aab2270 OK
+    docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json 2234c0c0 OK
+    nd-unfolding/pet/event_identity.py b921abf0 OK
+    measurement-paper/phase1/mp2/mp2_s1_dump.py 22129d9a OK
+# power test: one hex digit of config.json's did.py sha256 flipped (d918c816 -> e918c816):
+flipped rc=1 (verifier exit)
+MISMATCH docs/orchestration/state/next-preparation-20261009/d-id/did.py
+# restored config.json sha256: 2366c41d38bd5689b178bfbb00e13eb5cbe9d681ea44d073368459f3cd28b6cb; verifier on the restored tree:
+ALL BINDINGS INTACT
