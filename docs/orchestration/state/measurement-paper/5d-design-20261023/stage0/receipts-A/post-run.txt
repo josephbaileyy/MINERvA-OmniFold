@@ -1,0 +1,41 @@
+# captured 2026-10-24T03:49:30Z on login12
+## sacct submit/start (times US Pacific)
+JobID|Submit|Eligible|Start|End|State
+60182677|2026-10-23T18:23:33|2026-10-23T18:23:33|2026-10-23T20:10:45|2026-10-23T20:37:54|COMPLETED
+## tar members (non-directory)
+59
+## retrieved copy
+ls: cannot access 'retrieveA': No such file or directory
+## mtimes UTC
+2026-10-24 01:22:51.000000000 +0000 stage0-provisional.json
+2026-10-24 01:23:14.000000000 +0000 ratio/eavail-ratio-gibuu-over-genie-fluxfix.json
+2026-10-24 01:23:25.000000000 +0000 ratio/sensitivity-A.json
+2026-10-24 01:23:25.000000000 +0000 ratio/sensitivity-B.json
+2026-10-24 03:38:51.000000000 +0000 stage0-binding.json
+2026-10-24 03:38:51.000000000 +0000 logs/binding.out
+2026-10-24 01:22:51.000000000 +0000 logs/provisional.out
+2026-10-24 01:23:25.000000000 +0000 logs/ratio-A.out
+2026-10-24 01:23:25.000000000 +0000 logs/ratio-B.out
+2026-10-24 01:23:14.000000000 +0000 logs/ratio-primary.out
+2026-10-24 03:37:54.000000000 +0000 logs/s0c_60182677.out
+## runs/ files
+47
+23
+
+## transcribed from the measurement session's watcher output (not captured on the cluster)
+queue monitor (squeue every 60 s), first and last PENDING and last RUNNING lines:
+01:23:44 PENDING 0:00 (Priority) rc=0 
+03:10:32 PENDING 0:00 (Priority) rc=0 
+03:37:16 RUNNING 26:31 nid006064 rc=0 
+over-time guard 1 (cancel at RUNNING >= 49 min): exhausted its 120 x 30 s loop while the job was PENDING; printed nothing; cancelled nothing
+over-time guard 2 (same rule, 2000 x 30 s):
+03:38:11 left queue
+guard loop ended 03:38:11
+
+[exited with code 0]
+binding run (login12): started 2026-10-24T03:38:41Z, ended 2026-10-24T03:38:51Z, rc=0 (date -u before and after)
+
+## retrieved-copy check, absolute paths (captured 2026-10-24T03:59:23Z on login12)
+ls: cannot access '/pscratch/sd/j/josephrb/5d-stage0-20261023/retrieveA': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/5d-stage0-20261023/retrieveA/stage0-0c-products-20261024.tar': No such file or directory
+over-time guard 2 launch: before 02:27:16 UTC (the next command, squeue --start, printed that time); the job started 03:10:45 UTC
