@@ -320,6 +320,8 @@ class ReportTables(unittest.TestCase):
         r[5, 6], lab[5, 6] = 1.3, "off"                                     # a gate pair outranks a cut pair
         r[4, 5], lab[4, 5] = 1.3, "fine"
         self.assertEqual(T.classify_cell(r, lab, g), "gate")
+        lab[5, 5] = "fine"                                                  # a cut pair outranks a generator pair
+        self.assertEqual(T.classify_cell(r, lab, g), "cut")
 
     def test_tiers_cover_every_label_once(self):
         import report_tables as T
@@ -365,9 +367,40 @@ class ReportTablesOnCommittedReadouts(unittest.TestCase):
         self.assertEqual({k: got.count(k) for k in ("gate", "cut", "generator", "none")},
                          {"gate": 21, "cut": 0, "generator": 4, "none": 5})
 
+    def test_cut_only_and_pc_subsets(self):
+        T = self.T
+        self.assertEqual(int((self.I.cls["nuwro"] == "cut").sum()), 1)
+        self.assertEqual(int(self.I.cells[self.I.cls["nuwro"] == "cut"][0]), 145)
+        pc = self.A["controls"]["PC"]["primary"]
+        b, s = np.asarray(pc["bias_cells"]), np.asarray(pc["shift_cells"])
+        for m, n, corr in ((self.I.near["h"], 45, 0.946), (~self.I.near["h"], 82, 0.652),
+                           (self.I.near["nuwro"], 32, 0.951), (~self.I.near["nuwro"], 95, 0.698)):
+            lr = L.linear_response(s[m], b[m], pc["min_abs_bias"])
+            self.assertEqual(lr["n_cells"], n)
+            self.assertAlmostEqual(lr["corr"], corr, places=3)
+
     def test_refuses_a_wrong_arm(self):
         with self.assertRaises(SystemExit):
             self.I.check(self.A, "refined")
+
+    def test_refuses_a_changed_ratio_or_projection(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            for f in os.listdir(os.path.join(_HERE, "ratios")):
+                shutil.copy(os.path.join(_HERE, "ratios", f), d)
+            with open(os.path.join(d, "nuwro.json"), "a") as f:
+                f.write(" ")
+            with self.assertRaises(SystemExit):
+                self.T.Inputs(os.path.join(d, "projections.json"), d)
+        with tempfile.TemporaryDirectory() as d:
+            for f in os.listdir(os.path.join(_HERE, "ratios")):
+                shutil.copy(os.path.join(_HERE, "ratios", f), d)
+            with open(os.path.join(d, "projections.json"), "a") as f:
+                f.write(" ")
+            I = self.T.Inputs(os.path.join(d, "projections.json"), d)      # ratios still match their entries
+            with self.assertRaises(SystemExit):
+                I.check(self.A, "a")                                        # but the readout names other projections
+
 
 if __name__ == "__main__":
     unittest.main()

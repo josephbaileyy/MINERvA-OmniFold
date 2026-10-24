@@ -234,16 +234,16 @@ per-cell bias bound** (`state/s5p/contract-amendment-6-review1-repairs.json`, `L
 
 ## 5. Post hoc: the tail of h sits beside steps in r
 
-This section was not declared, and it decides nothing. The director asked for it, to be quantified descriptively from
-the existing products with no new runs. The declared numbers in §0 and §4 stay the headline.
+This section was not declared, and it decides nothing. This lane raised the pattern in its interim message, and the
+director asked for it to be quantified descriptively from the existing products, with no new runs. The declared numbers in §0 and §4 stay the headline.
 
 **One rule throughout** (`report_tables.classify_cell`, threshold 0.1). A cell is classified, in one vertex's r, by its
 four grid neighbours whose r differs from its own by more than 0.1:
 - **gate**: such a neighbour pair has a coarse-pooled or noisy (r = 1) cell on one side. The bound noise gate drew
   that boundary.
-- **cut**: the only such pairs have an "off" cell on the other side. That is an unreported cell, or GiBUU at
-  p_∥ ≥ 10 GeV/c (KNOWN_ISSUES 82).
-- **generator**: the only such pairs are two own-ratio cells. The generator's shape drew the step.
+- **cut**: there is no gate pair, but some such pair has an "off" cell on the other side. That is an unreported
+  cell, or GiBUU at p_∥ ≥ 10 GeV/c (KNOWN_ISSUES 82). A cut pair outranks a generator pair.
+- **generator**: all such pairs are two own-ratio cells. The generator's shape drew the step.
 - **none**: no neighbour differs by more than 0.1.
 
 "Construction-drawn" means gate or cut.
@@ -308,7 +308,8 @@ h > σ_Q: 26 of 205 on all cells; post hoc, 6 of 153 on the cells not beside a c
 
 **What this shows, and what it does not:**
 - The tail of h (p90 and max) co-locates with the boundaries of the bound gate's piecewise-constant reweight. Without
-  those cells, p90 falls from 8.30% to 6.29%, and the count of h > σ_Q from 30 to 9. The median moves less, from
+  those cells, p90 falls from 8.30% to 6.29%, and the share of cells with h > σ_Q from 14.6% (30 of 205) to 5.9%
+  (9 of 153). The median moves less, from
   3.00% to 2.59%.
 - The shifts at those boundaries are this estimator's response to this declared prior, and the PC tracks them closely
   (corr 0.95 on the 45 PC cells beside a construction step).
@@ -362,7 +363,7 @@ which reproduces D2 to 1.6e-12 (§3). Its σ comparisons use the same adopted σ
   - The refined arm's response to the prior is the same in pattern and close in size to configuration (a)'s.
   - h peaks at cell 3 in both arms (21.0% against 21.4%).
   - Excluding the same 52 construction-step cells (post hoc) reduces the tail in both: h > σ_Q falls from 26 to 6
-    here, and from 30 to 9 in (a) (§5).
+    here (12.7% → 3.9%), and from 30 to 9 in (a) (14.6% → 5.9%) (§5).
   - Its own PC was not run, as declared. The (a) positive control shows that this design sees a bias. That the
     refined estimator responds the same way is an inference from these per-cell agreements, not a separate
     control. <!-- absence-ok: scope of this lane's positive control, per DECLARATION §5 and BINDING -->
@@ -380,12 +381,15 @@ which reproduces D2 to 1.6e-12 (§3). Its σ comparisons use the same adopted σ
   - The arm (a) vertex runs were projected at the pilot's 44.3 min (limit 0:56) and ran 45.9–47.7 min.
   - The closures were projected at 1.6 × 44.3 = 70.9 min (limit 1:29) and ran 31.8 and 39.2 min.
   - The refined pilot was submitted with a 1:03 limit. Its projection was not written into a record before
-    submission. The ledger's 50.4 min is reconstructed as limit/1.25 and is marked so. It ran 48.4 min.
+    submission. By this session's account, the limit was set as 1.25 × about 50 min: the arm (a) pilot plus an
+    allowance for the 400-tree refinement classifier. The ledger's 50.4 min is reconstructed as limit/1.25 and is
+    marked so. It ran 48.4 min.
   - The refined vertices were projected at the refined pilot's 48.4 min (limit 1:01). They ran 45.1–47.7 min.
 - **Total.** The charged total is 7.41 of the 17 cap. Charge is elapsed × billing/256; every job billed 256, one
   exclusive CPU node. Every job was submitted with `--qos=regular` on m3246; sacct records it as `regular_1`.
 - **Storage.** All products, logs and inventories are under `/pscratch/sd/j/josephrb/pv2d-20261023/`. Every job's
-  output paths (`--out`, logs, `TMPDIR`) point there, so nothing was written to CFS by these jobs.
+  output paths (`--out`, logs, `TMPDIR`) point there. That nothing was written to CFS is inferred from those
+  paths, not measured.
 - **Records.** Per-job rows are in [`LEDGER.tsv`](LEDGER.tsv). Product paths and sha256 are in
   [`receipts/products.tsv`](receipts/products.tsv).
 
@@ -416,7 +420,7 @@ python3 $D/nd-unfolding/mnv_guarded_run.py --expect-root $D [--allow $B/deploy/r
 - the tier tables (§2, §4);
 - the amendment-6 measures (§4);
 - the 30-cell table (§4);
-- all of §5;
+- all of §5's tables and counts (the r values in its "pattern" bullets were read from the ratio files directly);
 - the arm comparison (§6).
 
 The command is `python3 2d-unfolding/pv2d/report_tables.py --projections 2d-unfolding/pv2d/ratios/projections.json
@@ -425,7 +429,11 @@ The command is `python3 2d-unfolding/pv2d/report_tables.py --projections 2d-unfo
 - It refuses unless every ratio file's sha256 equals `projections.json`'s, `projections.json` equals the readouts'
   `ratios_projection_sha256`, and the arms are "a" and "refined".
 - The per-vertex shift tables and the h-against-σ tables in §4 and §6 are the readouts' own summary fields.
-- `test_pv2d.ReportTablesOnCommittedReadouts` pins §5's counts against the committed files.
+- `test_pv2d.ReportTablesOnCommittedReadouts` pins, against the committed files:
+  - the exclusion counts (2 / 34 / 19 / 52) and the cut-only 1;
+  - h > σ_Q both ways (30 / 9, 26 / 6);
+  - the 21 / 0 / 4 / 5 classes;
+  - the PC subset n and correlations.
 
 ## 9. Deviations, not done and limitations
 
@@ -451,7 +459,7 @@ The command is `python3 2d-unfolding/pv2d/report_tables.py --projections 2d-unfo
 
    The refined driver's sha256 is `be016f87546a11be…`.
 4. **The refined pilot's projection** was not recorded before submission (§7). The job ran inside it.
-5. **`report_tables.py` and §5 are post hoc.** §5 was requested by the director after the interim results. Nothing
+5. **`report_tables.py` and §5 are post hoc.** This lane raised §5's pattern in its interim message, and the director asked for it to be quantified. Nothing
    in it changes a declared readout or verdict.
 
 **Deviations from the assignment, accepted by the binding** (`BINDING.md` §1–2):
@@ -481,15 +489,18 @@ The command is `python3 2d-unfolding/pv2d/report_tables.py --projections 2d-unfo
 - KNOWN_ISSUES 82: GiBUU has no E_ν > 20 GeV, so GiBUU is used only on p_∥ < 10 GeV/c.
 - KNOWN_ISSUES 83: the flux repairs are reweights, not regenerations, with no E_ν > 100 GeV.
   - For GENIE+MEC and NuWro, the GENIE-CV reference cancels the defect to first order.
-  - For GiBUU it does not. GiBUU reads its own flux, so its ratio carries any residual defect of the repaired GENIE CV
-    reference (KNOWN_ISSUES 83 calls the GiBUU/GENIE departure contaminated). Only the p_∥ < 10 GeV/c restriction
-    mitigates it.
+  - For GiBUU it does not cancel, because GiBUU reads its own flux. The GiBUU ratio therefore carries whatever
+    remains in the repaired GENIE CV reference: the absent E_ν > 100 GeV, and the reweight-not-regeneration caveat.
+    The flux repair is the main mitigation, and the p_∥ < 10 GeV/c restriction limits the region further.
+    (KNOWN_ISSUES 83's "contaminated" refers to the earlier GiBUU/GENIE departure built on the unrepaired GENIE.)
 - The tail of h co-locates with the gate's boundaries, and the PC is weaker away from them (§5).
 
 ## 10. Review
 
-An independent read-only reviewer (a fresh subagent, given the records, code and committed readouts, not this
-report's conclusions) reviewed `b6f63dc7` in both directions.
+An independent read-only reviewer (a fresh subagent) was given this report as its subject, plus the records, code
+and committed readouts. It reviewed `b6f63dc7` in both directions and recomputed independently. A confirmation pass
+on `4785902f` found every fix adequate. It raised 3 new minor items and 7 nits (wording, attribution, test gaps),
+which are addressed in the following commit.
 - It recomputed every number it could from the committed JSON with its own code. Everything matched: digests,
   controls, tiers, both arms' shift and σ tables, the 30-cell table, the §5 diagnostics, the director's exclusion
   counts, the arm comparison and the ledger arithmetic.
@@ -512,7 +523,7 @@ report's conclusions) reviewed `b6f63dc7` in both directions.
     - The ledger marks the refined pilot's projection as reconstructed.
     - Deviation 2 names which HEAD each readout records.
     - The tests now cover the union rule, the tier mapping and every pair class, plus a pinned regression on the
-      committed readouts (37 tests).
+      committed readouts (39 tests after the confirmation pass).
   - **Nits.**
     - The subtotal rounding is fixed.
     - The integrated-shift maximum is now 0.022%.
@@ -520,6 +531,13 @@ report's conclusions) reviewed `b6f63dc7` in both directions.
     - Two unmeasured mechanisms are marked as conjecture.
     - "The same unfolds" is scoped to the four data unfolds.
     - `report_tables.py` now checks its inputs.
-- **Unverifiable from the repository**, as it noted: the launcher's clean-clone checks, the module inventories
-  (re-measured from the pscratch logs for this revision, §1), the order of submission (consistent with the ledger's
-  start times) and that no NC value was read before deviation 1's correction.
+- **Unverifiable from the repository**, as it noted:
+  - the launcher's clean-clone checks;
+  - the module inventories (re-measured from the pscratch logs for this revision, §1);
+  - the order of submission (consistent with the ledger's start times);
+  - that no NC value was read before deviation 1's correction;
+  - that the committed `nc_a.json` is the artifact that gated the vertex jobs. It has no timestamp, and it was
+    written by the readout code at `7e15ad4a`;
+  - the refined deploy's state at the moment of submission (the readout records it at readout time; the products'
+    driver `be016f87` is unchanged between `870b2813` and `d67a5514`);
+  - that nothing went to CFS (inferred from the output paths, §7).
