@@ -362,6 +362,32 @@ class Departure(unittest.TestCase):
         self.assertAlmostEqual(d["gibuu"][0], (2 + 2 + 1) / 3 - 1)
         self.assertTrue(np.all(np.isnan(d["nuwro"][1:])))     # empty cells are NaN, not 0
 
+    def test_departure_from_weights_and_thresholds(self):
+        import pvl_departure as Dp
+        from pathlib import Path
+
+        axes = ("pt", "pz", "eavail")
+        n = int(np.prod([len(L.FINE[x]) - 1 for x in axes]))
+        p = np.random.default_rng(10).uniform(1, 2, n)
+        r = np.ones(n)
+        r[:16 * 7] = 1.5                      # every cell with pT in its first bin, all p_parallel and E_avail
+        with tempfile.TemporaryDirectory() as t:
+            os.makedirs(os.path.join(t, "R"))
+            with open(os.path.join(t, "R", "ratios.json"), "w") as f:
+                json.dump({"axes": list(axes), "prior_truth_weight": p.tolist()}, f)
+            for v in Dp.VERTICES:
+                with open(os.path.join(t, "R", f"{v}.json"), "w") as f:
+                    json.dump({"r": r.tolist()}, f)
+            d = Dp.departures_from_weights(Path(t), "R", "PTPZ")
+        np.testing.assert_allclose(d["nuwro"][:16], 0.5)          # pT bin 0: every p_parallel cell x1.5
+        np.testing.assert_allclose(d["nuwro"][16:], 0.0, atol=1e-12)
+        h = np.array([0.02, 0.2])
+        rec, _ = Dp.measures({v: np.array([0.01, 0.1]) for v in Dp.VERTICES}, h,
+                             {v: np.array([0.02, 0.2]) for v in Dp.VERTICES})
+        self.assertEqual(rec["h_over_D"]["D>0.01"]["n"], 2)
+        self.assertEqual(rec["h_over_D"]["D>0.1"]["n"], 1)
+        self.assertAlmostEqual(rec["h_over_D"]["D>0.01"]["median"], 1.0)
+
     def test_measures_sign_and_vertex(self):
         import pvl_departure as Dp
 

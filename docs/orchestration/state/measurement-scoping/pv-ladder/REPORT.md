@@ -34,19 +34,23 @@ amended by PR #313 and bound in [`BINDING.md`](BINDING.md). The run record is [`
   - **Declared:** the muon-kinematic (p_T, p_∥) observable's raw h stays at the 2D level when E_avail, q₃ and W are
     added to the unfolding, at 3.0–3.7 %. The finer joint cells carry the larger model dependence: 10–14 % medians
     in 3D to 5D.
-  - **Post hoc:** normalized by the prior departure, the (p_T, p_∥) response is about 0.43 in 3D to 5D, against
-    0.29 in 2D, with signs near chance.
+  - **Post hoc:** normalized by the prior departure, the (p_T, p_∥) response is higher above 2D: h/D 0.42–0.45
+    against 0.29. The sign agreement is about 44–63 % for GENIE+MEC and NuWro and about 65–70 % for GiBUU.
 - **"E_avail and W, or the 5D correlations?"**
   - **Declared:** the direct (E_avail, W) unfolding's envelope is the larger: median per-cell ratio 1.63 against
     L-5D-PV on the same 39 cells.
   - **Post hoc:** L-EW's reweight is also the stronger truth-level departure, 1.67× at the median. Normalized by that
     departure, the median ratio is 1.02. So at the median the two envelopes are similar for the departure applied,
     but per cell the agreement is loose (§4).
-  - **Post hoc, sign-aware and same-vertex:** the 5D projection follows the prior's departure less, with a median
-    response of 0.52 against 0.87. That is the strongest single indication here that conditioning on the other axes
-    helps.
-  - **Post hoc, on both measures:** a large part of the prior's departure reaches the result on the EW cells (h/D
-    0.92 and 0.97), against about 0.43 on the (p_T, p_∥) cells.
+  - **Post hoc, whether conditioning on the muon kinematics also helps cannot be told from these runs.**
+    - The sign-aware same-vertex response is 0.52 for the 5D projection against 0.87 direct.
+    - That drop is GiBUU's alone: 0.92 → 0.25 in the cells it leads, while NuWro goes the other way, 0.54 → 0.75.
+    - GiBUU's reweight is built most differently between the two rungs.
+    - With these runs, the features cannot be separated from the reweight's structure (Limit 2, §4).
+  - **Post hoc:** a large share of the prior's departure reaches the result on the EW cells, against a smaller share
+    on (p_T, p_∥):
+    - h/D 0.92 and 0.97 on EW, against 0.42–0.45 on (p_T, p_∥) above 2D (0.29 in 2D);
+    - same-vertex responses 0.87 and 0.52 on EW, against 0.17–0.23 on (p_T, p_∥).
 
 ## 1. What ran
 
@@ -104,7 +108,7 @@ The rule: on the headline cells with |bias| > 1 %, at least 20 cells, correlatio
 | L-5D-PV (e) | 35 | 0.982 | 1.206 | PASS | 71.4 % | 9.2 / 19.2 / 26.5 % | 1.0e-5 / 1.3e-4 |
 
 - **No fallback was needed.**
-- **The closure floors are 1e-5 level, not PV-2D's 1e-15.** These closures run the LightGBM path on 20.4 M
+- **The closure floors are 1e-6 to 1e-5 at the median, not PV-2D's 1e-15.** These closures run the LightGBM path on 20.4 M
   pseudo-data rows, and the floors sit far below the biases they are compared with.
 - **Ungraded secondary PCs** (corr, slope):
   - L-3D: J 0.917, 1.219; (p_T, p_∥) 0.787, 0.864.
@@ -172,10 +176,13 @@ axes.
   - L-5D-PV applies the gated 5D shape, with 57–60 % of the prior weight on pooled ratios and, for GiBUU, 20.6 % at
     r = 1.
 - **The error started in this lane's declaration.** DECLARATION.md:110 says L-EW "must differ from L-5D-PV only in
-  the classifier's features", and :213-214 says the comparison "differs in the features alone".
+  the classifier's features", :213-214 says the comparison "differs in the features alone", and :254 says "L-EW
+  differs from the 5D in features only". The declaration is bound by its sha256, so it is not edited; this report
+  is the correction.
 - **The binding repeated it** ("differs in the features alone", BINDING.md:16), and so did `pvl_report.py`'s heading
   until this report's review.
-- The director asked that the binding's wording be recorded as an error (message of 2026-10-24).
+- The director asked that the binding's wording be recorded as an error (message of 2026-10-24). The CATALOG row of
+  the binding carries a pointer to this section.
 
 **The declared comparison.**
 
@@ -232,11 +239,25 @@ Per vertex, on cells with |d| > 1 %:
   - h and D come from the same vertex in only 16 of 39 L-5D-PV cells;
   - the per-vertex response ratios L-EW/L-5D-PV are 2.4, 0.63 and 1.5 for GENIE+MEC, NuWro and GiBUU;
   - GENIE+MEC's shifts follow its departure's sign at chance in 5D (18 of 35).
-- **On the sign-aware same-vertex measure,** the 5D projection follows the prior's departure about 0.6× as much as
-  the direct unfolding (0.52 against 0.87). That is the strongest single indication that conditioning on the other
-  axes helps.
-- **On both measures,** a large part of the departure reaches the EW cells' result: h/D 0.92 and 0.97, and signed
-  responses of 0.5–0.9 at the leading vertex.
+- **The sign-aware same-vertex measure** is lower for the 5D projection: 0.52 against 0.87. But split by the cell's
+  leading vertex k*, it is not one effect:
+
+  | k* | cells (L-EW / L-5D-PV) | L-EW | L-5D-PV |
+  |---|---|---|---|
+  | GiBUU | 23 / 21 | 0.92 | 0.25 |
+  | NuWro | 13 / 15 | 0.54 | 0.75 |
+  | GENIE+MEC | 1 / 1 | 0.38 | 0.26 |
+
+  - The whole drop is GiBUU's, the vertex whose reweight is built most differently between the two rungs. L-EW
+    applies it as a truth cut, and its tail sits on the pooled 3.05 ratio. L-5D-PV applies it as a cell cut, with
+    20.6 % of the weight at r = 1 and r varying inside each EW cell.
+  - NuWro goes the other way.
+  - **So this measure cannot show that conditioning on the other axes helps.** With these runs the features cannot
+    be separated from the reweight's structure (Limit 2).
+  - An earlier draft of this report read 0.52 against 0.87 as "the strongest single indication that conditioning
+    helps". The confirmation review found it GiBUU-driven, and the reading is withdrawn.
+- **A large share of the departure reaches the EW cells' result** on both measures: h/D 0.92 and 0.97, and
+  same-vertex responses 0.87 and 0.52.
 
 **Caveats.**
 - All of this is post hoc.
@@ -265,8 +286,8 @@ to one space only.
 
 | rung | D median | h / D median (cells D > 1 %) | … at D > 10 % | same-vertex signed response median (IQR) | signed s/d median, GENIE+MEC / NuWro / GiBUU | same sign (of cells \|d\| > 1 %) |
 |---|---|---|---|---|---|---|
-| L-2D (a) | 8.63 % | 0.29 (184) | 0.17 (91) | 0.12 | 0.08 / 0.03 / 0.19 | 84/150, 86/163, 74/113 |
-| L-2D refined | 8.63 % | 0.29 (184) | 0.16 (91) | 0.10 | 0.09 / 0.03 / 0.18 | 85/150, 88/163, 76/113 |
+| L-2D (a) | 8.63 % | 0.29 (184) | 0.17 (91) | 0.12 (−0.07–0.36) | 0.08 / 0.03 / 0.19 | 84/150, 86/163, 74/113 |
+| L-2D refined | 8.63 % | 0.29 (184) | 0.16 (91) | 0.10 (−0.07–0.35) | 0.09 / 0.03 / 0.18 | 85/150, 88/163, 76/113 |
 | L-3D (e) | 8.05 % | 0.42 (204) | 0.28 (81) | 0.17 (0.01–0.41) | 0.08 / 0.07 / 0.23 | 115/182, 101/164, 97/138 |
 | L-4D (e) | 8.19 % | 0.45 (205) | 0.27 (74) | 0.23 (−0.05–0.43) | −0.07 / 0.05 / 0.25 | 79/179, 96/182, 97/138 |
 | L-5D-PV (e) | 7.60 % | 0.43 (199) | 0.30 (64) | 0.20 (−0.03–0.41) | 0.01 / 0.04 / 0.21 | 88/168, 94/171, 92/138 |
@@ -277,9 +298,10 @@ to one space only.
   hadronic variables are added to the unfolding.
 - **Normalized by the departure, the response is higher above 2D:** h/D about 0.43 against 0.29. The same-vertex
   signed response is 0.17–0.23 against 0.10–0.12.
-- **The signs are near chance** for GENIE+MEC and NuWro in every rung, so these responses are mostly magnitude, not a
-  systematic pull toward the prior.
-- So the (p_T, p_∥) stability holds for raw h. A modest rise in the normalized response above 2D is not excluded.
+- **The sign agreement is loose:** about 44–63 % for GENIE+MEC and NuWro, and about 65–70 % for GiBUU, whose signed
+  medians are 0.18–0.25. So these responses are partly magnitude and partly a pull toward the prior, mostly GiBUU's.
+- So the (p_T, p_∥) stability holds for raw h. The normalized response is higher above 2D: 0.29 → 0.42–0.45, and
+  0.16–0.17 → 0.27–0.30 at D > 10 %.
 - **Against the EW cells,** the contrast survives in weaker form: normalized about 0.43 here against 0.92–0.97 on
   EW, and raw about 3 % here against 12–19 % on EW.
 - **The finer joint cells carry the larger model dependence:**
@@ -374,14 +396,14 @@ python nd-unfolding/pv-ladder/pvl_report.py --readouts nd-unfolding/pv-ladder/re
 python nd-unfolding/pv-ladder/pvl_departure.py --npz <of_inputs_5d.npz> --expect-npz-sha256 07fccc1a… \
     --ratios $OUT/prep/ratios --out <file>
 python3 nd-unfolding/pv-ladder/pvl_response_2d.py --out <file>
-cd nd-unfolding/pv-ladder && python3 -m unittest test_pvl -v     # 25 tests
+cd nd-unfolding/pv-ladder && python3 -m unittest test_pvl -v     # 26 tests
 ```
 
 ## 11. Review
 
 **The first independent review** was read-only and used its own code. It recomputed every declared number
 (NC, PC, h, σ, shares, step split, compute) and the post-hoc departures, and all matched.
-- It found four major problems in an earlier draft's reading of the post-hoc normalization. All are fixed above:
+- It found four major problems in an earlier draft's reading of the post-hoc normalization. Each was addressed:
   - the normalization mixed vertices and ignored sign;
   - it was applied to the EW cells only;
   - some post-hoc numbers were unlabelled;
@@ -389,4 +411,21 @@ cd nd-unfolding/pv-ladder && python3 -m unittest test_pvl -v     # 25 tests
 - Its minors and nits are fixed too: signed medians, the PC and vertex-set columns, deviations 3 and 8, RUN.md's stale
   lines, recorded inputs and outputs for the post-hoc scripts, the reproduce block, and the L-5D-PV h/σ consistency.
 
-§12 is added after the confirmation review.
+## 12. Confirmation review
+
+A second independent read-only review recomputed every §4 and §5 statistic, the headline and the CATALOG row with
+its own code, and all matched.
+- It recomputed the EW departures from the 5D npz rows, and the (p_T, p_∥) departures from the 3D, 4D and 5D npz
+  rows, independently of the reweight-cell weights. The largest differences were 0 and 1.1e-13.
+- It confirmed M2 and M3 repaired, and M1 and M4 partly.
+- It found one new major problem: reading the same-vertex 0.52 against 0.87 as "conditioning helps" repeated Limit 2.
+  I re-measured the split myself (0.92 → 0.25 for GiBUU, 0.54 → 0.75 for NuWro), and that reading is withdrawn in
+  §4 and the headline.
+- Its minors are fixed:
+  - the vertex-named sign agreement;
+  - the (p_T, p_∥) rise stated as measured;
+  - DECLARATION.md:254 cited, and the binding's CATALOG row given a pointer;
+  - `response_2d.json` regenerated, since its recorded code digest was stale and its content was unchanged;
+  - the J2 ledger note;
+  - a test of the (p_T, p_∥) departure path and the h/D thresholds;
+  - the nits.

@@ -247,7 +247,7 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
     ratio of 0.75–1.39 (step order as `tasks.tsv`). The 4D closures took 12:10 and 12:48 against 4D data steps of 11:43–12:16, about 1.0.
     The assumed 1.7 was conservative.
 - [x] **J4 and J5 projected from that measurement.** The 5D-sized data steps took at most 13:45 in J1. Taking
-  closures at 1.33×, each job is projected at **20 min, 0.33 node-h**, with `--time` 0:25.
+  closures at 1.33× (the basis used then; the measured maximum is 1.39×), each job is projected at **20 min, 0.33 node-h**, with `--time` 0:25.
   - Charged so far: 0.8183 node-h. With J4 and J5 the projected total is 1.48 node-h, against the cap of 4.0.
 - [x] **Gates written for J4** (L-EW (e) and (c)) **and J5** (L-5D-PV), whose NCs all passed in J1. Both are
   submitted together.
