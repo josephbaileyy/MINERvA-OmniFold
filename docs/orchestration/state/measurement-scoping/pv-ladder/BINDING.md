@@ -38,3 +38,17 @@ It runs under [`ASSIGNMENT.md`](ASSIGNMENT.md) (PR #306).
 - `$PSCRATCH` only, and every job is ledgered.
 - **The report:** a defect found after output comes to the director before any re-read. The report sets h across the
   rungs, against PV-2D and the 5D record, and states the comparability limits.
+
+## Amendment (2026-10-24): the declaration as amended by PR #313
+
+This binding now covers `DECLARATION.md` **as amended by PR #313** (`4e3ecca4`; the file's sha256 now begins
+`baaf5fa3b8a62cf2`). The amendment was made before any job, while the tests were being written.
+
+**Why it was needed.** The declared completeness guard is vacuous in the s5 stack. The truth denominator is binned and
+rescaled per cell, so the guard holds by construction for any r, and a test that varied r inside a cell did not trip
+it.
+
+**The added condition makes the rescaling exact:** r must be constant on each fine cell's truth-passing rows, to 1e-9.
+Every declared reweight meets it. The completeness guard stays, described as a code guard.
+
+**Accepted.** The pilot still waits for `RUN.md`.
