@@ -22,7 +22,8 @@
 - **The director's proposal:**
   - keep Q as the headline 2D uncertainty, so the comparison with MINERvA stays like for like;
   - report the model-dependence term as a separate, named covariance beside Q, in the M2 form;
-  - state the total for users, Q + C_model, which has a median of 7.69 % in quadrature;
+  - state the total for users, Q + C_model. The director first gave its median as 7.69 % in quadrature; that figure
+    is the envelope total, and the M2 total is 7.95 % (see the correction below);
   - put the exact paper wording to Joseph before it prints.
 
 Joseph's answer, verbatim:
@@ -57,3 +58,19 @@ sha256 of the text plus a final newline begins `a68c05141f8b46d1`.
 ## Not changed
 
 - Claims beyond these items. The PV-2D numbers. No submission, deposit or tag.
+
+## Correction (2026-10-24, same day)
+
+The proposal quoted the users' total Q + C_model as a median of **7.69 %** in quadrature. That figure is
+√(σ_Q² + h²), with h = max_k |s_k|, the envelope. For the M2 form decided in item 2, diag(C_model) = Σ_k s_k²,
+which is at least h². The 2d test lane re-measured it from `readout_ref.json` and `cov2d_Q_205.npz` (sha256
+`771e49a5…`), with σ_Q reproducing the readout exactly:
+
+| | median | p84 |
+|---|---|---|
+| C_model's sqrt-diagonal | 3.71 % | (p90 8.50 %, max 21.1 %) |
+| √(σ_Q² + diag C_model), the M2 total | **7.95 %** | 13.0 % |
+
+- C_model has rank 3; the singular values of S are 0.614, 0.433 and 0.283.
+- The decision itself, the M2 form beside Q, is unchanged. Only the quoted total changes, from 7.69 % to 7.95 %.
+- The error was the director's: it computed the envelope, not the decided form.
