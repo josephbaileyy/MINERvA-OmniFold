@@ -135,7 +135,7 @@ Every product passed.
 
 **NC (configuration (a)).** `data_tune_v1` against E_U on the 205 cells: max |x/x_EU − 1| = **1.376e-11**, below
 the 1e-5 rule. **PASS.** The match is not bitwise. Thread-order summation in LightGBM is a likely cause, but it was
-not tested.
+not tested. <!-- absence-ok: marks a mechanism as conjecture within this lane's own work, not a claim about others' results -->
 
 **NC_R (refined arm).** `data_ref_tune_v1` against RE-1's D2 (`d2_data_refined.npz`, `71ca3e5f…`): max relative
 difference **1.624e-12**, against the 1e-8 rule. **PASS.** The refined vertices were submitted only after this,
@@ -169,7 +169,7 @@ the NuWro closure.
 - h is set by NuWro in 88 cells, by GiBUU in 87 and by GENIE+MEC in 30.
 
 **Median |shift| by tier.** The cells at r = 1 still move. Coupling between cells through the detector response is
-the likely reason; it was not tested separately.
+the likely reason; it was not tested separately. <!-- absence-ok: marks a mechanism as conjecture within this lane's own work, not a claim about others' results -->
 
 | vertex | own ratio | coarse-cell ratio | r = 1 |
 |---|---:|---:|---:|
@@ -528,7 +528,7 @@ which are addressed in the following commit.
     - The subtotal rounding is fixed.
     - The integrated-shift maximum is now 0.022%.
     - The QOS name is given as recorded (`regular_1`).
-    - Two unmeasured mechanisms are marked as conjecture.
+    - Two unmeasured mechanisms are marked as conjecture. <!-- absence-ok: marks a mechanism as conjecture within this lane's own work, not a claim about others' results -->
     - "The same unfolds" is scoped to the four data unfolds.
     - `report_tables.py` now checks its inputs.
 - **Unverifiable from the repository**, as it noted:
