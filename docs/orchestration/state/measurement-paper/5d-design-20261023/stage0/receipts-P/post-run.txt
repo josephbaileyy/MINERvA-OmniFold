@@ -1,0 +1,9 @@
+# Transcribed from the measurement session's terminal output of `ssh saul.nersc.gov` at 2026-10-23T21:35:09Z
+# (commands: ls -l retrieve; rm -f stage0-inputs.tar; hpssquota; hsi -q "ls -l /home/j/josephrb/mnv-5d-stage0-inputs-20261023")
+retrieve/: total 0
+deleted-temp-tar (pscratch stage0-inputs.tar removed; count of remaining stage0-inputs.tar: 0)
+hpssquota: home 24.64GiB/40.00GiB; pscratch 16.97TiB/20.00TiB (84.8%); josephrb usage on HPSS charged to m3246 350.90GiB/512.00GiB (68.5%)
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023:
+-rw-r-----    1 josephrb  josephrb       61796 Oct 23 14:33 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb  3303587840 Oct 23 14:33 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         127 Oct 23 14:33 stage0-inputs.tar.sha256
