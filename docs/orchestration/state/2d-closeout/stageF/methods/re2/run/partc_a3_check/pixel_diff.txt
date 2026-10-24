@@ -1,0 +1,10 @@
+old cabbbbc3db31810a0c000f10cf346a7b5f01e1035f7860bd34d54a8fb0b537ca  (bound, partc-r2/fig1, make_figs 9c4dbf24)
+new 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427  (scratch, PR head 0b13b747, make_figs 4e18c266)
+
+A. PDF rasterised at 300 dpi by pdftoppm (2100x1860):
+   changed pixels (magick compare -metric AE): 12346
+   bounding box of changed pixels: 556x216+401+55  -> x 401..956, y 55..270
+B. matplotlib Agg at 300 dpi, legend box read from the same canvas (legend_png.py):
+   legend bbox px (x0, y0, x1, y1): 391.6, 43.5, 972.1, 288.6 (identical in both versions)
+   changed pixels: 4415; bounding box 225x120+491+55 -> x 491..715, y 55..174
+Both changed regions lie inside the legend bbox.

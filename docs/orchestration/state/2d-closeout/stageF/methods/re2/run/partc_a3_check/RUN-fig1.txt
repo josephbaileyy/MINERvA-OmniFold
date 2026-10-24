@@ -1,0 +1,23 @@
+# Fig. 1, re2c_fig1_local.sh refined, 2026-10-24T17:04:20Z, host DNa1d666d.SUNet
+env: python 3.12.2 matplotlib 3.11.2 numpy 2.5.4 (/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/fig1k1/env/bin/python)
+commit: 0b13b7471109949e9659de07a0051e777d02abbe clean=yes
+script: 2aadeac833b164caf48e6382c40bd568d43ea8865af8bc65397e6bd5812f6af4  2d-unfolding/re2/partc/re2c_fig1.py
+argv: python -I re2c_fig1.py --npz in/fig_arrays.npz --reduce /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/fig1_a3/in/reduce.json --make-figs /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/wt/publication/release/figs/make_figs.py --values in/uqmedian.tex --tmp tmp --outdir out --cov in/cov2d_Q_205.npz --s5-npz in/production_cov.npz --playlist-npz in/playlist_term.npz --combination in/combination.json --budget in/budget_Q.json --step-a-sums in/SHA256SUMS --arm refined --pins-json in/pins.json
+inputs:
+bbe13622656e9f43978d9cb022ac74ca4ba059b1cf56fed9e082bfb3b1be03aa  in/budget_Q.json
+81dcf2d0367d931eaee272bf3be9392a9e355c48f477eaf41dab56ba64ed3231  in/chain.json
+c663eadb168835bdf965644f1e65531b3dc5eaea9b8d08fc72fa161b6a3009ea  in/combination.json
+7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2  in/cov2d_Q_205.npz
+72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  in/fig_arrays.npz
+e5c596630a9f8397d1368e61ca77f0a2d5514700ec6eaeac82732d132cf65af0  in/pins.json
+dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e  in/playlist_term.npz
+631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1  in/production_cov.npz
+823f16b1b694477b053e71cc8a1fdc13cebf9ee51a99df3f88752c1447f4184e  in/reduce.json
+dda60969d1ed2a273e42795fedbd3140c87abe241adeac8f270d32f335a17158  in/SHA256SUMS
+46c9a1000015aea0523247fcbdd197e8ba6b61440a180951d6b3cf76ed1d89c8  in/uqmedian.tex
+823f16b1b694477b053e71cc8a1fdc13cebf9ee51a99df3f88752c1447f4184e  reduce: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/fig1_a3/in/reduce.json
+4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67  publication/release/figs/make_figs.py
+outputs:
+71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427  out/fig1_validation.pdf
+57f3cc601281950cf9251b04a627efa3e0d803eca6620178839c48f9d4b0782a  out/fig2_joint_localization.pdf
+e9d1bb01fc79e061b95b6e058a2aa2a03275429db5c4531b5e3d9ec63d65fa93  out/fig3_generator_context.pdf
