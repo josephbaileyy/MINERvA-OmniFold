@@ -214,4 +214,29 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
     (the parse was tested on the failed job's own `mem=487802M`). It falls back to `nproc` for the CPU count.
   - **The new run pin** is the next commit. Only `sbatch_pvl.sh` changes (`3b160c7bc1779e21`); every other file is as at
     `54340b61`.
-- [ ] J1 resubmitted alone; NCs read.
+- [x] **J1, job 60202786: COMPLETED** in 861 s, 0.2392 node-h, 0.60× its projection. All seven steps started
+  at 02:29:15, so the memory split worked. The longest step took 13:45 and MaxRSS was at most 16.5 GB a step.
+
+  **Every nominal control passes, bitwise** (`pvl_analyze.py`, readouts under `$OUT/readouts/nc/`):
+
+  | rung, arm | NC run | target | cells | max rel. diff | bitwise (full grid) |
+  |---|---|---|---|---|---|
+  | L-3D (e) | `L-3D_e_tune_v1` | P3 `8bc7e2d3…` | 690 fine | 0 | yes |
+  | L-4D (e) | `L-4D_e_tune_v1` | P4 `2a18599f…` | 761 fine | 0 | yes |
+  | L-EW (e) | `L-EW_e_all_tune_v1` | P5 (`k1_p5_rerun` `e36f3b25…`) | 39 EW, 109 J | 0, 0 | yes |
+  | L-EW (c) | `L-EW_c_all_tune_v1` | P5c `1fa60dfc…` | 39 EW, 109 J | 0, 0 | yes |
+  | L-5D-PV (e) | `L-5D-PV_e_tune_v1` | P5 | 39 EW, 109 J | 0, 0 | yes |
+
+  - L-EW (e)'s all-features run and L-5D-PV's NC both equal P5 bit for bit, so they are equal to each other.
+  - **E_EW**, L-EW's central value with features restricted to (E_avail, W), was recorded: arm (e)
+    `a1b99897…`, arm (c) `ad045bcd…`. Its guards are 0 and 0. Its refinement clipped a fraction 4.2e-7, with
+    refined/signed 0.9999997.
+
+- [x] **Projections revised from J1.**
+  - A data step takes at most 13:45, and a closure is taken at 1.7×, 23.4 min.
+  - So J2 and J3, each holding closures, are projected at **24 min, 0.40 node-h**, with `--time` 0:30.
+  - Charged so far: 0.3333 node-h. With J2 to J5 at 0.40 each, the total is 1.93 node-h.
+- [x] **Gates.** I wrote J2's (L-3D, L-4D) and J3's (L-4D, L-EW), whose rungs' NCs all pass. J2 and J3 are
+  submitted together.
+  - J4 and J5 hold the 5D-sized closures. Their gates and projections wait for J2's and J3's measured closure/data
+    time ratio, so that the 1.7× assumption is replaced by a measurement before the largest closures run.
