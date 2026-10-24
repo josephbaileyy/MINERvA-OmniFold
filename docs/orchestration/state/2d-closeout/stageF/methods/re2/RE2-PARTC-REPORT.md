@@ -351,7 +351,7 @@ declares, after the determinism comparison.
 background-only term "is contained in the statistical block".
 - S1 resamples the background in both arms: `--bootstrap-streams three`, with the refined replicas'
   `re2Refinement.background_stream` true.
-- The refined arm's own S2 (J5) was not run.
+- The refined arm's own S2 (J5) was not run. <!-- absence-ok: J5's status is RE2-BINDING-B's (not bound); the refined s5.json records bkg_separable as not computed -->
 
 **What changes at integration.** `sec_systematics.tex:101`'s "a median 0.26 of the statistical σ" is a purity-estimator
 diagnostic with no refined value. Integration either cites it as the purity estimator's history or drops the number.

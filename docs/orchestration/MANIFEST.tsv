@@ -1896,7 +1896,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-DECLARATION.md	track
 docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-HPSS-RECEIPT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	docs/orchestration/state/2d-closeout/stageF/methods/re2/run/launch/re2_hpss.sh	no	4	89	5271
 docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-J0-REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	2d-unfolding/re2/re2_partb_layout.py;docs/orchestration/state/2d-closeout/stageF/methods/re2/run/launch/re2b_dtn_hash.sh;docs/orchestration/state/2d-closeout/stageF/methods/re2/run/launch/re2b_env.sh	no	6	243	14582
 docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTB-REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	3	254	16151
-docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	4	661	46629
+docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	4	661	46752
 docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-STOP.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	247	15126
 docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PLAN-RULINGS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only		no	5	25	2106
 docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PLAN.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	2d-unfolding/re2/re2_inventory.py	no	7	552	50250
