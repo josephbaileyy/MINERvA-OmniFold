@@ -1,0 +1,35 @@
+host DNa1d666d.SUNet 2026-10-24T17:29:45Z
+HEAD 1f3b46699efc19c29f67dd5ba98c27091b70845a
+clean: 0 changes
+table sha256 b648d19eb7c9874d062d0eb047c66d4f1bd7450e731d352c3b18eab686a28344
+2d-unfolding/re2/partc/fixtures/refined_schema.json: OK
+2d-unfolding/re2/partc/make_diffs.sh: OK
+2d-unfolding/re2/partc/pin_siblings.py: OK
+2d-unfolding/re2/partc/re2c_analyze_periods.py: OK
+2d-unfolding/re2/partc/re2c_analyze.py: OK
+2d-unfolding/re2/partc/re2c_audit.py: OK
+2d-unfolding/re2/partc/re2c_build_q.py: OK
+2d-unfolding/re2/partc/re2c_check_rebuild.py: OK
+2d-unfolding/re2/partc/re2c_cmodel.py: OK
+2d-unfolding/re2/partc/re2c_combine.py: OK
+2d-unfolding/re2/partc/re2c_determinism.py: OK
+2d-unfolding/re2/partc/re2c_dryrun.sh: OK
+2d-unfolding/re2/partc/re2c_export_cov.py: OK
+2d-unfolding/re2/partc/re2c_fig1_local.sh: OK
+2d-unfolding/re2/partc/re2c_fig1.py: OK
+2d-unfolding/re2/partc/re2c_k1roll.py: OK
+2d-unfolding/re2/partc/re2c_numbers.py: OK
+2d-unfolding/re2/partc/re2c_periods.py: OK
+2d-unfolding/re2/partc/re2c_playlist_term.py: OK
+2d-unfolding/re2/partc/re2c_reduce.py: OK
+2d-unfolding/re2/partc/re2c_refined_schema.py: OK
+2d-unfolding/re2/partc/re2c_rollup.py: OK
+2d-unfolding/re2/partc/re2c_run.sh: OK
+2d-unfolding/re2/partc/re2c_tracked.py: OK
+2d-unfolding/re2/partc/re2c_values_spec.tsv: OK
+2d-unfolding/re2/partc/re2c_values_unmatched.tsv: OK
+2d-unfolding/re2/partc/re2c_values.py: OK
+2d-unfolding/re2/partc/test_re2c.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/re2/run/launch/re2_hpss.sh: OK
+publication/release/figs/make_figs.py: OK
+shasum -c rc=0
