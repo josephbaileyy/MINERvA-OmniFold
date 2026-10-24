@@ -1,0 +1,19 @@
+{
+ "schema": "re2c-audit/1",
+ "calls_successful": 307468,
+ "refined_roots": [
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/j0/",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/hpss/"
+ ],
+ "dry": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/review/partc-dryrun/",
+ "refined_touched": {},
+ "writes_inside_dry": 153,
+ "writes_environment_caches": {
+  "n": 0,
+  "paths": []
+ },
+ "writes_outside": {},
+ "writes_relative_for_review": {},
+ "verdict": "PASS"
+}

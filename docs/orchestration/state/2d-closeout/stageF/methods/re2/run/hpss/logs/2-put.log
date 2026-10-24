@@ -1,0 +1,4 @@
+mkdir: /home/j/josephrb/mnv-re2-2d-rebuild-20261024
+put  're2-2d-rebuild-20261024.tar' : '/home/j/josephrb/mnv-re2-2d-rebuild-20261024/re2-2d-rebuild-20261024.tar' ( 59473920 bytes, 507084.7 KBS (cos=4))
+put  'members.sha256' : '/home/j/josephrb/mnv-re2-2d-rebuild-20261024/members.sha256' ( 201745 bytes, 10647.8 KBS (cos=4))
+put  're2-2d-rebuild-20261024.tar.sha256' : '/home/j/josephrb/mnv-re2-2d-rebuild-20261024/re2-2d-rebuild-20261024.tar.sha256' ( 94 bytes, 34.1 KBS (cos=4))

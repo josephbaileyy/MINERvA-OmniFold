@@ -1,0 +1,358 @@
+{
+ "schema": "re2c-k1roll/1",
+ "n": 36,
+ "n_fail": 0,
+ "verdict": "PASS",
+ "results": {
+  "analyze_c0": {
+   "kind": "json",
+   "pass": true,
+   "detail": "PASS",
+   "excluded": [
+    "analyze_prod_sha256",
+    "arm"
+   ]
+  },
+  "analyze_s3": {
+   "kind": "json",
+   "pass": true,
+   "detail": "PASS",
+   "excluded": [
+    "analyze_prod_sha256",
+    "arm"
+   ]
+  },
+  "analyze_s4ii": {
+   "kind": "json",
+   "pass": true,
+   "detail": "PASS",
+   "excluded": [
+    "analyze_prod_sha256",
+    "arm"
+   ]
+  },
+  "analyze_s1": {
+   "kind": "json",
+   "pass": true,
+   "detail": "PASS",
+   "excluded": [
+    "analyze_prod_sha256",
+    "arm"
+   ]
+  },
+  "analyze_s2": {
+   "kind": "json",
+   "pass": true,
+   "detail": "PASS",
+   "excluded": [
+    "analyze_prod_sha256",
+    "arm"
+   ]
+  },
+  "analyze_s4i": {
+   "kind": "json",
+   "pass": true,
+   "detail": "PASS",
+   "excluded": [
+    "analyze_prod_sha256",
+    "arm"
+   ]
+  },
+  "rollup_production_cov": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
+    "want": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc"
+   }
+  },
+  "export_cov_work_cov": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "70c4daf2048875538eb74ee507b1d8741ca4ff80a8a351f0500450151a19ed1d",
+    "want": "70c4daf2048875538eb74ee507b1d8741ca4ff80a8a351f0500450151a19ed1d"
+   }
+  },
+  "periods_analysis": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b",
+    "want": "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"
+   }
+  },
+  "playlist_npz": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
+    "want": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476"
+   }
+  },
+  "combine_npz": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e",
+    "want": "8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e"
+   }
+  },
+  "build_q_cov2d": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced",
+    "want": "771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced"
+   }
+  },
+  "periods_control": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "e539444835cbd02b1b0bf843ef526ee2717939456d93c43373e71563065b2413",
+    "want": "e539444835cbd02b1b0bf843ef526ee2717939456d93c43373e71563065b2413"
+   }
+  },
+  "periods_roles": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "304e683302254f0a733fe4dc4bc5717e02b49faa228505405444a0d0b31b6c28",
+    "want": "304e683302254f0a733fe4dc4bc5717e02b49faa228505405444a0d0b31b6c28"
+   }
+  },
+  "periods_selftest": {
+   "kind": "bytes",
+   "pass": true,
+   "detail": {
+    "got": "8217de35258d280be6eaeadfecca964992ebcbb7e8d1433a2f1e5c2b643a127c",
+    "want": "8217de35258d280be6eaeadfecca964992ebcbb7e8d1433a2f1e5c2b643a127c"
+   }
+  },
+  "rollup_s5_json": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "s5_rollup_sha256",
+    "inputs (the item records' digests)"
+   ]
+  },
+  "export_cov_controls": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "arm"
+   ]
+  },
+  "playlist_json": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "inputs (script paths of the copies)",
+    "npz.path"
+   ]
+  },
+  "combination_json": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "inputs (script paths of the copies)",
+    "npz.path"
+   ]
+  },
+  "build_q_budget": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "provenance",
+    "s5_copied.source.path",
+    "checks.A0_module_reported_cells_under_repo.value",
+    "checks.A0_module_plot_uncertainty_fig6_7_style_under_repo.value",
+    "checks.A0_module_rederive_flux_muonE_cross_under_repo.value",
+    "checks.A0_module_analyze_universes_under_repo.value"
+   ]
+  },
+  "fig67_projections": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "string fields holding paths"
+   ]
+  },
+  "agreement_receipt": {
+   "kind": "json",
+   "pass": true,
+   "detail": [],
+   "excluded": [
+    "everything but results, denominator, headline_totals_oi130.values"
+   ]
+  },
+  "check_rebuild_CR02_CR03": {
+   "kind": "json",
+   "pass": true,
+   "detail": [
+    "C_chi2_Q_lognormal_cell_identity_pass_line",
+    "C_chi2_Q_std_cell_identity_pass_line",
+    "C_chi2_Q_substat_cell_identity_pass_line",
+    "D_fig67_Q_cell_identity_four_pass_lines",
+    "D_fig67_projections_eq_budget_Q_le_1e-12"
+   ]
+  },
+  "chi2_Q_std": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     19,
+     19
+    ],
+    "first_diffs": []
+   }
+  },
+  "chi2_Q_lognormal": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     23,
+     23
+    ],
+    "first_diffs": []
+   }
+  },
+  "chi2_Q_substat": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     19,
+     19
+    ],
+    "first_diffs": []
+   }
+  },
+  "ours_only_Q": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     6,
+     6
+    ],
+    "first_diffs": []
+   }
+  },
+  "ours_only_universe": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     6,
+     6
+    ],
+    "first_diffs": []
+   }
+  },
+  "ours_only_universe_plus_stat": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     7,
+     7
+    ],
+    "first_diffs": []
+   }
+  },
+  "chi2_paperonly": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     16,
+     16
+    ],
+    "first_diffs": []
+   }
+  },
+  "tune": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     21,
+     21
+    ],
+    "first_diffs": []
+   }
+  },
+  "model_comp_report": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     10,
+     10
+    ],
+    "first_diffs": []
+   }
+  },
+  "tension_report": {
+   "kind": "text",
+   "pass": true,
+   "detail": {
+    "lines": [
+     105,
+     105
+    ],
+    "first_diffs": []
+   }
+  },
+  "numbers_threeD_vs_re1": {
+   "kind": "value",
+   "pass": true,
+   "detail": {
+    "total_change_percent": [
+     0.001411557577912781,
+     0.001411557577912781
+    ],
+    "median_ratio": [
+     0.9999763053693055,
+     0.9999763053693055
+    ],
+    "sd_ratio": [
+     0.0351596043997259,
+     0.0351596043997259
+    ]
+   }
+  },
+  "numbers_learner_vs_lgbm_metrics": {
+   "kind": "value",
+   "pass": true,
+   "detail": {
+    "max_abs": 12.183693685645691,
+    "median_abs": 0.9830594710522944
+   }
+  },
+  "values_controls": {
+   "kind": "value",
+   "pass": true,
+   "detail": {
+    "rows": 251,
+    "unexpected": 0,
+    "control_pass": 242,
+    "new_products": 8,
+    "changes": null,
+    "refined": false,
+    "declared_fails": 1
+   }
+  }
+ }
+}

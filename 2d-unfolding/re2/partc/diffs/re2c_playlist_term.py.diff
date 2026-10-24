@@ -1,0 +1,107 @@
+--- docs/orchestration/state/2d-closeout/playlist-term/scripts/playlist_term.py
++++ 2d-unfolding/re2/partc/re2c_playlist_term.py
+@@ -1,6 +1,23 @@
+ #!/usr/bin/env python3
+-"""The 2D playlist-consistency block (DESIGN.md in the parent directory; frozen before any number was computed).
++"""RE-2 part C copy of playlist-term/scripts/playlist_term.py (b21d03ce...), RE2-DECLARATION-C.md §3.5.
+ 
++    python3 -I re2c_playlist_term.py ANALYSIS_JSON OUTDIR                                   (purity: the original)
++    python3 -I re2c_playlist_term.py ANALYSIS_JSON OUTDIR --arm refined --analysis-sha SHA256 \
++        --work-cov PATH SHA256 --ns DIR
++
++  --arm purity (default)  the original construction and pins: it must reproduce playlist_term.npz c1723cb5...
++  --arm refined           the same construction with x = E_R. The analysis.json and work_cov digests are the ones the
++                          previous steps recorded (chain of custody, PT-02/PT-04); every period run's driver and mode is
++                          checked (PT-G); the npz and json carry arm = refined (CB-G)
++
++The period-unfold code is imported from this directory's copies (re2c_analyze_periods.py, re2c_periods.py), each
++pinned by sha256 below (PT-01); common.py is the original's pinned cluster copy (PT-03). The metric stays VL175 + ML
++(the director's ruling Q2), so the reported chi2 rows keep their meaning.
++
++The original docstring follows.
++
++The 2D playlist-consistency block (DESIGN.md in the parent directory; frozen before any number was computed).
++
+     python3 -I playlist_term.py ANALYSIS_JSON OUTDIR
+ 
+ Cluster only (root_6_28; login node, 0 node-h). ANALYSIS_JSON is the period-unfold test's committed analysis.json
+@@ -25,12 +42,12 @@
+ 
+ import numpy as np
+ 
+-SCRIPTS = "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/record/scripts"
++SCRIPTS = os.path.dirname(os.path.abspath(__file__))     # the RE-2 copies
+ COMMON = ("/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/repo/docs/orchestration/state/2d-closeout/"
+           "playlist-spread-20261014/coverage/scripts/common.py")
+ PINS = {
+-    f"{SCRIPTS}/analyze_periods.py": "912af1ddfbae2e28a2cba6e6843b0985e2442adb4b1e775a22d4c547b8d8ebc5",
+-    f"{SCRIPTS}/periods.py": "d37c1a8fbda7119988643100039e28e335e4fc79eb30a10f0f5a3df984fa8514",
++    f"{SCRIPTS}/re2c_analyze_periods.py": "708cfc2fec29b80019bebbf84cc3a354aff02031f1669904fae680ede21c8a59",
++    f"{SCRIPTS}/re2c_periods.py": "19f2c3934f93a34cc7d20202f83152421bdb0db044380bd8601216bcdb95dd9f",
+     COMMON: "dcb78c52f8a11c581942bb1887da29e435c10dfa288125df700789bd331c56a1",
+ }
+ ANALYSIS_SHA = "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"
+@@ -52,20 +69,21 @@
+     raise SystemExit(f"[STOP] {msg}")
+ 
+ 
+-def main(analysis_json, outdir):
++def main(analysis_json, outdir, arm="purity", analysis_sha=ANALYSIS_SHA, work_cov=None, ns=None):
+     # ---- pins ---------------------------------------------------------------------------------------------------
+     for p, want in PINS.items():
+         if sha256(p) != want:
+             stop(f"pin {p}")
+-    if sha256(analysis_json) != ANALYSIS_SHA:
++    if sha256(analysis_json) != analysis_sha:
+         stop(f"pin {analysis_json}")
+     sys.path.insert(0, SCRIPTS)
+-    import analyze_periods as AP   # noqa: E402  (inserts the common.py directory itself)
++    import re2c_analyze_periods as AP   # noqa: E402  (inserts the common.py directory itself)
+     PD, C = AP.PD, AP.C
++    PD.set_arm(arm, work_cov=work_cov, ns=ns)
+     if os.path.realpath(C.__file__) != os.path.realpath(COMMON):
+         stop(f"common.py imported from {C.__file__}, not the pinned {COMMON}")
+     inputs = {"E_U": PD.check_pin("E_U"), "work_cov": PD.check_pin("work_cov"),
+-              "analysis_json": {"path": os.path.abspath(analysis_json), "sha256": ANALYSIS_SHA},
++              "analysis_json": {"path": os.path.abspath(analysis_json), "sha256": analysis_sha},
+               "scripts": {p: s for p, s in PINS.items()}}
+     A = json.load(open(analysis_json))
+     roles, runs_rec = A["_roles"], A["_runs"]
+@@ -76,6 +94,7 @@
+         r = AP.load(path, cells_all)
+         if path not in runs_rec or r["sha256"] != runs_rec[path]["sha256"]:
+             stop(f"sha256 of {path} differs from analysis.json _runs")
++        PD.check_mode(r)
+         return r
+ 
+     R = {"POOL": load(roles["POOL"])}
+@@ -276,11 +295,13 @@
+ 
+     os.makedirs(outdir, exist_ok=True)
+     npz = os.path.join(outdir, "playlist_term.npz")
++    armkey = {"arm": np.array("refined")} if arm == "refined" else {}
+     np.savez(npz, C_PL=C_PL, S_ref=S_ref, S_raw=S_raw, S_ref_raw=S_ref_raw, cells=met.cells, x=x, F=F,
+-             **{f"g_{X}": g[X] for X in PER}, **{f"e_{X}": e[X] for X in PER}, **{f"r_{X}": rX[X] for X in PER})
++             **{f"g_{X}": g[X] for X in PER}, **{f"e_{X}": e[X] for X in PER}, **{f"r_{X}": rX[X] for X in PER},
++             **armkey)
+     out = {"design": "docs/orchestration/state/2d-closeout/playlist-term/DESIGN.md", "inputs": inputs,
+            "runs": {r["path"]: r["sha256"] for r in runs}, "checks": checks, "checks_passed": True,
+-           "report": rep, "npz": {"path": npz, "sha256": sha256(npz)}}
++           "report": rep, "npz": {"path": npz, "sha256": sha256(npz)}, **({"arm": "refined"} if armkey else {})}
+     js = os.path.join(outdir, "playlist_term.json")
+     json.dump(out, open(js, "w"), indent=1, default=float)
+     print(json.dumps({"checks": checks, "C_PL": rep["C_PL"], "reference_scenario": cov, "noise_share": rep["noise_share"]},
+@@ -288,6 +309,11 @@
+ 
+ 
+ if __name__ == "__main__":
+-    if len(sys.argv) != 3:
++    a = sys.argv[1:]
++    if len(a) == 2:
++        main(a[0], a[1])
++    elif len(a) == 11 and a[2:4] == ["--arm", "refined"] and a[4] == "--analysis-sha" and a[6] == "--work-cov" \
++            and a[9] == "--ns":
++        main(a[0], a[1], arm="refined", analysis_sha=a[5], work_cov=(a[7], a[8]), ns=a[10])
++    else:
+         raise SystemExit(__doc__)
+-    main(sys.argv[1], sys.argv[2])

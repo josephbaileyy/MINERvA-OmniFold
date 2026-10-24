@@ -1,0 +1,273 @@
+--- docs/orchestration/state/2d-closeout/stageC/production/s5_rollup.py
++++ 2d-unfolding/re2/partc/re2c_rollup.py
+@@ -1,5 +1,24 @@
+ #!/usr/bin/env python3
+-"""Stage C production S5: the matrices of the recipe (Stage B REPORT §4 R1-R9), from the production unfolds and the
++"""RE-2 part C copy of stageC/production/s5_rollup.py (6c437004...), RE2-DECLARATION-C.md §3.2.
++
++  --arm purity (default)  the original, unchanged: it must reproduce production_cov.npz 6689d2fc... (K1-roll)
++  --arm refined           the same construction on part B's refined unfolds
++
++What the refined arm changes, and nothing else:
++  - the reported cells and every x-scaled quantity (the R6 normalization, the centring offsets, the functionals'
++    grid) come from E_R (part B's ER, a5c13fc3...), whose reported set must equal E_U's;
++  - the May control still runs on the purity May sweep, against VL175, with E_U as its own denominator (S5-08:
++    a separately pinned E_U, so the control is unchanged);
++  - the universe block reads part B's J2 universes (38 bands, 175 universes), not the July purity sweep (S5-09/10);
++    the band set must equal the July set less the laterals and Rvp1pi;
++  - every part-B input must equal its committed SHA256SUMS digest and record bkg_mode negweight-refined with the
++    400/31 refinement (the mode guard, S5-G);
++  - the analysis gate reads re2c_analyze.py's refined item verdicts and part B's pinned readouts, PASS (S5-22: no
++    S2, so the bkg-only separable term is not computed and the npz has no bkg_separable key).
++
++The original docstring follows.
++
++Stage C production S5: the matrices of the recipe (Stage B REPORT §4 R1-R9), from the production unfolds and the
+ July sweep, with the C04 / X01 / KI-92 repairs. Login node, no Slurm. Frozen in DESIGN.md §8 before any job.
+ 
+   python s5_rollup.py --out <dir>                      production rollup (after every unfold it reads is terminal)
+@@ -40,7 +59,8 @@
+ import numpy as np
+ 
+ HERE = Path(__file__).resolve().parent
+-ST = HERE.parents[1]                       # docs/orchestration/state/2d-closeout
++ST = HERE.parents[2] / "docs" / "orchestration" / "state" / "2d-closeout"
++RE2RUN = ST / "stageF" / "methods" / "re2" / "run"
+ 
+ 
+ def _load(name, path):
+@@ -82,8 +102,46 @@
+ PANEL_U = ["NormDISCC:0", "Flux:23", "MaRES:0", "MaCCQE:0", "2p2h:0", "MinosEfficiency:0", "Muon_Energy_MINOS:0"]
+ REL_TOL, X01_TOL, SYM_TOL, PSD_TOL, VEC_TOL = 1e-12, 1e-15, 1e-12, 1e-10, 1e-10
+ CHECKS = OrderedDict()
++
++# ---- the refined arm (RE2-DECLARATION-C.md §3.2)
++ARM = "purity"
++NS_R = "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb"
++PIN_R = {
++    "E_R": (f"{NS_R}/out/ER/xsec.root", "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"),
++    "k1_core": (RE2RUN / "partb_readout" / "k1_core.json",
++                "7c407e958e5247f76f4eebdf7caa0dbeff504e13d22da6ed92b41ae1e669d86a"),
++    "k1_j7": (RE2RUN / "partb_readout" / "k1_j7.json",
++              "faa4656d9fb4b38bbc5734bd5fa613ddd09ac6e56b266fd0d40a732d64a1c3b8"),
++}
++SUMS_R = RE2RUN / "partb_readout" / "sums"
++MODE_R = {"bkg_mode": "negweight-refined", "refine_n_estimators": 400, "refine_num_leaves": 31}
++
++
++def partb_sums():
++    out = {}
++    for f in sorted(SUMS_R.glob("SHA256SUMS.J*")):
++        for ln in f.read_text().splitlines():
++            d, rel_ = ln.split()
++            out[rel_] = d
++    return out
+ 
+ 
++def mode_of(path):
++    """The runConfig keys of the mode guard, and whether re2Refinement records the 400/31 refinement at the run's
++    seed + 3 (B10). Part B's readout checked the same per run (k1_core health rows, pinned); this re-reads it here."""
++    f = ROOT.TFile.Open(str(path))
++    rc = f.Get("runConfig")
++    rf = f.Get("re2Refinement")
++    cfg = json.loads(rc.GetTitle()) if rc else {}
++    out = {k: cfg.get(k) for k in MODE_R}
++    par = json.loads(rf.GetTitle()).get("params", {}) if rf else {}
++    seed = cfg.get("seed")
++    out["re2Refinement"] = bool(rf) and par.get("n_estimators") == 400 and par.get("num_leaves") == 31 \
++        and seed is not None and par.get("random_state") == seed + 3
++    f.Close()
++    return out
++
++
+ def sha(p):
+     h = hashlib.sha256()
+     with open(os.path.realpath(p), "rb") as f:
+@@ -103,9 +161,10 @@
+ 
+ 
+ class Cells:
+-    """The 205 reported cells from E_U, read once."""
+-    def __init__(self):
+-        cv, self.area2 = BR.th2(PIN["E_U"][0])
++    """The 205 reported cells from E_U (or, refined arm, E_R), read once."""
++    def __init__(self, path=None):
++        self.path = str(path or PIN["E_U"][0])
++        cv, self.area2 = BR.th2(self.path)
+         self.NX, self.NY = cv.shape
+         self.rep = (cv > 0).ravel(order="C")
+         self.x = cv.ravel(order="C")[self.rep]
+@@ -260,19 +319,35 @@
+     ap.add_argument("--out-root", default=f"{NS}/out")
+     ap.add_argument("--results", default=f"{NS}/results")
+     ap.add_argument("--control-only", action="store_true")
++    ap.add_argument("--arm", choices=("purity", "refined"), default="purity")
+     a = ap.parse_args()
++    global ARM
++    ARM = a.arm
++    if ARM == "refined" and a.out_root != f"{NS}/out":
++        raise SystemExit("--out-root is purity-only; the refined arm reads part B's out/ by its committed digests")
+     Path(a.out).mkdir(parents=True, exist_ok=True)
+     rep = {"s5_rollup_sha256": sha(__file__), "build_repair_sha256": sha(BR.__file__), "out_root": a.out_root,
+            "inputs": {}, "checks": CHECKS, "numbers": {}}
+-    for k, (p, want) in PIN.items():
++    if ARM == "refined":
++        rep["arm"] = "refined"
++        rep["out_root"] = f"{NS_R}/out"
++    for k, (p, want) in list(PIN.items()) + (list(PIN_R.items()) if ARM == "refined" else []):
+         got = sha(p)
+         rep["inputs"][k] = {"path": str(p), "sha256": got}
+         check(f"pin_{k}", got == want, got[:16])
+     cells = Cells()
+     cells_area = cells.area
+     check("reported_cells_205", int(cells.rep.sum()) == 205)
++    cells_control = cells
++    if ARM == "refined":   # E_R is the central value; E_U stays the May control's denominator (S5-08)
++        cells = Cells(PIN_R["E_R"][0])
++        cells_area = cells.area
++        check("refined_reported_cells_eq_E_U_cells", np.array_equal(cells.rep, cells_control.rep),
++              int(cells.rep.sum()))
++        check("refined_area_eq_E_U_area", np.array_equal(cells.area, cells_control.area))
+     w, phi_minos = flux_weights()
+-    rep["numbers"]["control_worst_block_rel"] = may_control(cells, w, phi_minos)
++    rep["numbers"]["control_worst_block_rel"] = may_control(cells_control, w, phi_minos)
++    cells_area = cells.area
+     if a.control_only:
+         rep["S5"] = "CONTROL ONLY: " + ("PASS" if all(c["ok"] for c in CHECKS.values()) else "FAIL")
+         Path(a.out, "s5_control.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
+@@ -296,7 +371,7 @@
+     """F (31 x 205): the area-weighted integral, the 14 pT projections (sum over p_par of x * dp_par) and the 16 p_par
+     projections (sum over pT of x * dpT), each over the reported cells (plan Stage C: 236 functionals = 205 + 1 + 30)."""
+     ix, iy = np.divmod(np.flatnonzero(cells.rep), cells.NY)
+-    f = ROOT.TFile.Open(PIN["E_U"][0])
++    f = ROOT.TFile.Open(cells.path)
+     h = f.Get("hXSec2D")
+     wpt = np.array([h.GetXaxis().GetBinWidth(i) for i in range(1, cells.NX + 1)])
+     wpz = np.array([h.GetYaxis().GetBinWidth(j) for j in range(1, cells.NY + 1)])
+@@ -345,30 +420,68 @@
+ 
+ 
+ def production(a, rep, cells, w, phi_minos):
++    refined = ARM == "refined"
++    out_root = f"{NS_R}/out" if refined else a.out_root
+     # ---- every unfold S5 reads passed its frozen analysis (DESIGN §7), on these outputs
+-    for f, key in (("c0.json", "C0"), ("s3.json", "S3"), ("s4ii.json", "S4ii"), ("s1.json", "S1"),
+-                   ("s2.json", "S2"), ("s4i.json", "S4i")):
++    items = (("c0.json", "C0"), ("s3.json", "S3"), ("s4ii.json", "S4ii"), ("s1.json", "S1"),
++             ("s2.json", "S2"), ("s4i.json", "S4i"))
++    if refined:   # S5-22: no S2 in the refined arm
++        items = tuple(i for i in items if i[1] != "S2")
++    for f, key in items:
+         p = Path(a.results, f)
+         r = json.loads(p.read_text()) if p.is_file() else {}
+         check(f"analysis_{key}_PASS", r.get(key) == "PASS", r.get(key))
+-        check(f"analysis_{key}_out_root_matches", r.get("out_root") == a.out_root, r.get("out_root"))
++        check(f"analysis_{key}_out_root_matches", r.get("out_root") == out_root, r.get("out_root"))
++        if refined:
++            check(f"analysis_{key}_arm_refined", r.get("arm") == "refined", r.get("arm"))
+         rep["inputs"][f] = {"path": str(p), "sha256": sha(p) if p.is_file() else None}
++    if refined:
++        for k in ("k1_core", "k1_j7"):
++            check(f"partb_readout_{k}_PASS", json.loads(Path(PIN_R[k][0]).read_text()).get("verdict") == "PASS")
+     # ---- the per-playlist flux and POT files, against VL175's recorded digests (build.json, pinned)
+     bi = json.loads(Path(PIN["vl175_build_json"][0]).read_text())["inputs"]
+     badf = [k for k in bi if k.startswith(("flux_MC_", "flux_Data_")) and sha(bi[k]["path"]) != bi[k]["sha256"]]
+     check("flux_pot_24_files_match_vl175_build_json",
+           not badf and sum(k.startswith(("flux_MC_", "flux_Data_")) for k in bi) == 24, badf)
+     produced = {}
++    sums = partb_sums() if refined else {}
++    bad_mode = {}
+ 
+     def O(n):
+-        p = Path(a.out_root, n, "xsec.root")
+-        produced[n] = sha(p)
++        if not refined:
++            p = Path(a.out_root, n, "xsec.root")
++            produced[n] = sha(p)
++            return p
++        label = n[len("2dc_P_"):] if n.startswith("2dc_P_") else n
++        p = Path(out_root, label, "xsec.root")
++        if n not in produced:
++            produced[n] = sha(p)
++            if produced[n] != sums.get(f"{label}/xsec.root"):
++                raise RuntimeError(f"{label}: sha256 is not the committed part-B digest")
++            m = mode_of(p)
++            if any(m[k] != v for k, v in MODE_R.items()) or not m["re2Refinement"]:
++                bad_mode[label] = m
+         return p
+ 
+     # ---- universe block (R1-R4, R6)
+-    pn = sweep(cells, "pn")
+-    check("july_44_bands_187_universes", len(pn) == 44 and sum(len(v) for v in pn.values()) == 187)
+-    bands = {b: np.stack([pn[b][i]["x"] for i in sorted(pn[b])]) for b in pn if b not in LATERAL_BANDS + [DROP]}
++    if refined:   # S5-09/10: part B's J2 universes, U_<band>_<idx>, in place of the July sweep
++        july = {k[len("pn/"):].rsplit("_", 1)[0] for k in json.loads(Path(PIN["sweeps_json"][0]).read_text())
++                if k.startswith("pn/") and not k.endswith("/CV")}
++        uni = {}
++        for rel_ in sums:
++            lab = rel_[:-len("/xsec.root")]
++            if lab.startswith("U_"):
++                b, i = lab[2:].rsplit("_", 1)
++                uni.setdefault(b, []).append(int(i))
++        check("refined_j2_38_bands_175_universes", len(uni) == 38 and sum(len(v) for v in uni.values()) == 175,
++              [len(uni), sum(len(v) for v in uni.values())])
++        check("refined_j2_band_set_eq_july_less_laterals_and_rvp1pi",
++              set(uni) == july - set(LATERAL_BANDS) - {DROP}, sorted(set(uni) ^ (july - set(LATERAL_BANDS) - {DROP})))
++        bands = {b: np.stack([cells.vec(O(f"U_{b}_{i}")) for i in sorted(uni[b])]) for b in uni}
++    else:
++        pn = sweep(cells, "pn")
++        check("july_44_bands_187_universes", len(pn) == 44 and sum(len(v) for v in pn.values()) == 187)
++        bands = {b: np.stack([pn[b][i]["x"] for i in sorted(pn[b])]) for b in pn if b not in LATERAL_BANDS + [DROP]}
+     lat = {L: O(f"2dc_P_S3_{L.replace('_', '')}") for L in LATERALS}
+     for b in LATERAL_BANDS:
+         bands[b] = np.stack([cells.vec(lat[f"{b}_{i}"]) for i in (0, 1)])
+@@ -383,17 +496,19 @@
+ 
+     # ---- stat (R5), bkg-only separable term (reported)
+     X1 = np.stack([cells.vec(O(f"2dc_P_S1_{n:03d}")) for n in range(1, 301)])
+-    X2 = np.stack([cells.vec(O(f"2dc_P_S2_{n:03d}")) for n in range(1, 101)])
+     C_stat = np.cov(X1, rowvar=False)
+-    C_bkg = np.cov(X2, rowvar=False)
++    if not refined:
++        X2 = np.stack([cells.vec(O(f"2dc_P_S2_{n:03d}")) for n in range(1, 101)])
++        C_bkg = np.cov(X2, rowvar=False)
+     vec_identity("stat_ddof1", X1, C_stat * (299 / 300))
+     s1 = np.sqrt(np.diag(C_stat))
+     rep["numbers"]["stat"] = {"median_rel_pct": float(100 * np.median(s1 / cells.x)),
+                               "ensemble_rel_se_of_sigma": float(1 / np.sqrt(2 * 299)),
+                               "nested_150_vs_300_sigma_ratio_median":
+                                   float(np.median(np.sqrt(np.diag(np.cov(X1[:150], rowvar=False))) / s1))}
+-    rep["numbers"]["bkg_separable"] = {"sigma_bkg_over_sigma_stat_median":
+-                                       float(np.median(np.sqrt(np.diag(C_bkg)) / s1))}
++    rep["numbers"]["bkg_separable"] = ({"sigma_bkg_over_sigma_stat_median":
++                                        float(np.median(np.sqrt(np.diag(C_bkg)) / s1))} if not refined
++                                       else "not computed: S2 (J5) was not run in the refined arm (S5-22)")
+ 
+     # ---- C08 and X02 from the S4(i) panel (R7)
+     Y = np.stack([np.stack([cells.vec(O(f"2dc_P_S1_{n:03d}") if s == 42 else O(f"2dc_P_S4B_s{s}_{n:02d}"))
+@@ -491,16 +606,22 @@
+     vl = json.loads(Path(PIN["vl175_budget"][0]).read_text())
+     rep["numbers"]["vl175_block_sum"] = vl.get("repaired", {}).get("block_sum")
+     rep["inputs"]["production_outputs"] = produced
++    if refined:
++        check("refined_mode_guard_every_input", not bad_mode and len(produced) > 0,
++              {"n": len(produced), "bad": dict(list(bad_mode.items())[:5])})
+     ok = all(c["ok"] for c in CHECKS.values())
+     if ok:
++        extra = {"arm": np.array("refined")} if refined else {"bkg_separable": C_bkg}   # CB-G: the arm record
++        # the key keeps its name (consumers read cells_x_EU); in the refined arm it holds E_R on the cells
+         np.savez(Path(a.out, "production_cov.npz"), cells_x_EU=cells.x, area=cells.area, functionals=F, universe=C_univ,
+-                 stat=C_stat, c08=C08, total=C_tot, bkg_separable=C_bkg, x02_interaction=C_int,
++                 stat=C_stat, c08=C08, total=C_tot, **extra, x02_interaction=C_int,
+                  **{f"band_{b}": m for b, m in ublocks.items()})
+-        f = ROOT.TFile.Open(PIN["E_U"][0])
++        f = ROOT.TFile.Open(cells.path)
+         h = f.Get("hXSec2D")
+         pt = np.array([h.GetXaxis().GetBinLowEdge(i) for i in range(1, cells.NX + 2)])
+         pz = np.array([h.GetYaxis().GetBinLowEdge(i) for i in range(1, cells.NY + 2)])
+-        cells_hist = ROOT.TH2D("hReportedCells", "reported cells (E_U hXSec2D > 0)", cells.NX, pt, cells.NY, pz)
++        cells_hist = ROOT.TH2D("hReportedCells", "reported cells (E_U hXSec2D > 0)" if not refined else
++                               "reported cells (E_R hXSec2D > 0)", cells.NX, pt, cells.NY, pz)
+         cells_hist.SetDirectory(0)
+         for ix in range(cells.NX):
+             for iy in range(cells.NY):

@@ -1,0 +1,20 @@
+# Fig. 1, re2c_fig1_local.sh purity, 2026-10-24T14:14:57Z, host DNa1d666d.SUNet
+env: python 3.12.2 matplotlib 3.11.2 numpy 2.5.4 (/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/fig1k1/env/bin/python)
+commit: 744a1477e205d6fab30f20d12cd5e2b09a1567c9 clean=yes
+script: 9d7eb17700d33fd77696c3d7af49e22dd943d4bb8495eda974d7bba119873b99  2d-unfolding/re2/partc/re2c_fig1.py
+argv: python -I re2c_fig1.py --npz in/fig_arrays.npz --reduce /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/wt/docs/orchestration/state/2d-closeout/../next-preparation-20261009/two-d-path/operands/remote_reduce.json --make-figs /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/wt/publication/release/figs/make_figs.py --values in/uqmedian.tex --tmp tmp --outdir out --cov in/cov2d_Q_205.npz --s5-npz in/production_cov.npz --playlist-npz in/playlist_term.npz --combination in/combination.json --budget in/budget_Q.json --step-a-sums in/SHA256SUMS
+inputs:
+e7e3f24cc0ca3f2788925c5d1add94a4ee5f7bc19d1959933c120d700303b5fb  in/budget_Q.json
+050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d  in/combination.json
+771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced  in/cov2d_Q_205.npz
+72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  in/fig_arrays.npz
+c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476  in/playlist_term.npz
+6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc  in/production_cov.npz
+5a20265aa9d813e8169e6897a106b8f909423d1ff12f3b905baab5f352bd2d76  in/SHA256SUMS
+a5d37f06261ddbd8db7b5e3f8a7bc15938765475f664f5261a4a27fc4ba0e92a  in/uqmedian.tex
+2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce  reduce: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7bd401a3-dff4-4cda-b09e-230d0f52a5c4/scratchpad/wt/docs/orchestration/state/2d-closeout/../next-preparation-20261009/two-d-path/operands/remote_reduce.json
+9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c  publication/release/figs/make_figs.py
+outputs:
+82665808e99056b1f79754647d7640078dffe94fc667691a979a22769022a0fb  out/fig1_validation.pdf
+57f3cc601281950cf9251b04a627efa3e0d803eca6620178839c48f9d4b0782a  out/fig2_joint_localization.pdf
+e9d1bb01fc79e061b95b6e058a2aa2a03275429db5c4531b5e3d9ec63d65fa93  out/fig3_generator_context.pdf

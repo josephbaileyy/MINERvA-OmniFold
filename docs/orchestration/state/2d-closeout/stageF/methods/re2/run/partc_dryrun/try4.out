@@ -1,0 +1,12 @@
+RUN COMPLETE (purity)
+run rc=0
+{
+ "verdict": "PASS",
+ "calls_successful": 307468,
+ "writes_inside_dry": 153,
+ "refined_touched": 0,
+ "cache_writes": 0,
+ "writes_outside": {},
+ "writes_relative": {}
+}
+audit rc=0

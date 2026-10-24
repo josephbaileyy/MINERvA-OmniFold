@@ -1,0 +1,121 @@
+--- docs/orchestration/state/2d-closeout/playlist-term/scripts/combine_s5.py
++++ 2d-unfolding/re2/partc/re2c_combine.py
+@@ -1,5 +1,20 @@
+-"""Stage F checklist F9: the S5 production total plus the playlist-consistency block C_PL (COMBINATION.md).
++"""RE-2 part C copy of playlist-term/scripts/combine_s5.py (0c6ac3a0...), RE2-DECLARATION-C.md §3.6.
+ 
++usage: python3 -I re2c_combine.py <analysis.json> <playlist_term.npz> <production_cov.npz> <outdir>      (purity)
++       python3 -I re2c_combine.py <analysis.json> <playlist_term.npz> <production_cov.npz> <outdir> --arm refined \
++           --pins ANALYSIS_SHA PLAYLIST_NPZ_SHA S5_NPZ_SHA --playlist-json PATH SHA256 --work-cov PATH SHA256 --ns DIR
++
++  --arm purity (default)  the original: it must reproduce s5_plus_playlist.npz 8ccb4d72... (K1-roll)
++  --arm refined           Q_R = S5_R total + C_PL_R, with the same checks. The three input digests are the ones the
++                          previous steps recorded (CB-02/03/04, chain of custody); check 5's control values are read
++                          from the refined playlist_term.json, pinned (CB-18), not the purity literals; both npz must
++                          carry arm = refined and every period run's driver and mode is checked (CB-G); the npz and
++                          json carry arm = refined
++
++The original docstring follows.
++
++Stage F checklist F9: the S5 production total plus the playlist-consistency block C_PL (COMBINATION.md).
++
+ usage: python3 -I combine_s5.py <analysis.json> <playlist_term.npz> <production_cov.npz> <outdir>
+ 
+ Reads the S5 product and C_PL as bytes pinned by sha256, checks that they live on the same 205 cells with the same
+@@ -15,12 +30,12 @@
+ 
+ import numpy as np
+ 
+-SCRIPTS = "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/record/scripts"
++SCRIPTS = os.path.dirname(os.path.abspath(__file__))     # the RE-2 copies
+ COMMON = ("/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/repo/docs/orchestration/state/2d-closeout/"
+           "playlist-spread-20261014/coverage/scripts/common.py")
+ PINS = {
+-    f"{SCRIPTS}/analyze_periods.py": "912af1ddfbae2e28a2cba6e6843b0985e2442adb4b1e775a22d4c547b8d8ebc5",
+-    f"{SCRIPTS}/periods.py": "d37c1a8fbda7119988643100039e28e335e4fc79eb30a10f0f5a3df984fa8514",
++    f"{SCRIPTS}/re2c_analyze_periods.py": "708cfc2fec29b80019bebbf84cc3a354aff02031f1669904fae680ede21c8a59",
++    f"{SCRIPTS}/re2c_periods.py": "19f2c3934f93a34cc7d20202f83152421bdb0db044380bd8601216bcdb95dd9f",
+     COMMON: "dcb78c52f8a11c581942bb1887da29e435c10dfa288125df700789bd331c56a1",
+ }
+ ANALYSIS_SHA = "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"
+@@ -53,7 +68,18 @@
+     return float(np.max(np.abs(a - b)) / np.max(np.abs(b)))
+ 
+ 
+-def main(analysis_json, pl_npz, s5_npz, outdir):
++def main(analysis_json, pl_npz, s5_npz, outdir, arm="purity", pins=None, playlist_json=None, work_cov=None, ns=None):
++    global ANALYSIS_SHA, PLAYLIST_NPZ_SHA, S5_NPZ_SHA, CONTROL
++    if arm == "refined":   # CB-02/03/04: the digests the previous steps recorded; CB-18: the refined control values
++        ANALYSIS_SHA, PLAYLIST_NPZ_SHA, S5_NPZ_SHA = pins
++        if sha256(playlist_json[0]) != playlist_json[1]:
++            stop(f"pin {playlist_json[0]}")
++        pj = json.load(open(playlist_json[0]))
++        if pj.get("arm") != "refined" or pj["npz"]["sha256"] != PLAYLIST_NPZ_SHA:
++            stop(f"{playlist_json[0]} is not the refined record of {pl_npz}")
++        ref = pj["report"]["reference_scenario_algebraic"]
++        CONTROL = {nm: {k: ref[nm][k] for k in ("pz_vs_VL175", "pz_vs_VL175_plus_C_PL")}
++                   for nm in ("b_PB_dr", "bias_PB_raw_frozen")}
+     # ---- pins -----------------------------------------------------------------------------------------------------
+     for p, want in PINS.items():
+         if sha256(p) != want:
+@@ -65,8 +91,9 @@
+     if sha256(s5_npz) != S5_NPZ_SHA:
+         stop(f"pin {s5_npz}")
+     sys.path.insert(0, SCRIPTS)
+-    import analyze_periods as AP   # noqa: E402
++    import re2c_analyze_periods as AP   # noqa: E402
+     PD, C = AP.PD, AP.C
++    PD.set_arm(arm, work_cov=work_cov, ns=ns)
+     if os.path.realpath(C.__file__) != os.path.realpath(COMMON):
+         stop(f"common.py imported from {C.__file__}, not the pinned {COMMON}")
+     inputs = {"work_cov": PD.check_pin("work_cov"),
+@@ -87,6 +114,7 @@
+         r = AP.load(path, cells_all)
+         if path not in runs_rec or r["sha256"] != runs_rec[path]["sha256"]:
+             stop(f"sha256 of {path} differs from analysis.json _runs")
++        PD.check_mode(r)
+         return r
+ 
+     s42 = {X: load(roles[X]["s42"]) for X in PER}
+@@ -96,6 +124,12 @@
+ 
+     P = dict(np.load(pl_npz))
+     S = dict(np.load(s5_npz))
++    if arm == "refined":   # CB-G: both inputs were written by the refined arm
++        for nm, D in (("playlist_term.npz", P), ("production_cov.npz", S)):
++            if str(D.get("arm", "")) != "refined":
++                stop(f"{nm} carries no arm = refined")
++        P.pop("arm")
++        S.pop("arm")
+     x = P["x"]
+     C_PL = P["C_PL"]
+     e = {X: P[f"e_{X}"] for X in PER}
+@@ -215,10 +249,11 @@
+ 
+     os.makedirs(outdir, exist_ok=True)
+     npz = os.path.join(outdir, "s5_plus_playlist.npz")
+-    np.savez(npz, total_plus_C_PL=Q, s5_total=T, C_PL=C_PL, cells_x_EU=x, functionals=F, area=S["area"])
++    armkey = {"arm": np.array("refined")} if arm == "refined" else {}
++    np.savez(npz, total_plus_C_PL=Q, s5_total=T, C_PL=C_PL, cells_x_EU=x, functionals=F, area=S["area"], **armkey)
+     out = {"record": "docs/orchestration/state/2d-closeout/playlist-term/COMBINATION.md", "inputs": inputs,
+            "checks": checks, "checks_passed": True, "report": rep, "adopted": False,
+-           "npz": {"path": npz, "sha256": sha256(npz)}}
++           "npz": {"path": npz, "sha256": sha256(npz)}, **({"arm": "refined"} if armkey else {})}
+     js = os.path.join(outdir, "combination.json")
+     json.dump(out, open(js, "w"), indent=1, default=float)
+     print(json.dumps({"checks": checks, "budget_cells": {k: v["cell_rel_sigma_pct"] for k, v in budget.items()},
+@@ -233,6 +268,12 @@
+ 
+ 
+ if __name__ == "__main__":
+-    if len(sys.argv) != 5:
++    a = sys.argv[1:]
++    if len(a) == 4:
++        main(*a)
++    elif len(a) == 18 and a[4:6] == ["--arm", "refined"] and a[6] == "--pins" and a[10] == "--playlist-json" \
++            and a[13] == "--work-cov" and a[16] == "--ns":
++        main(*a[:4], arm="refined", pins=tuple(a[7:10]), playlist_json=(a[11], a[12]), work_cov=(a[14], a[15]),
++             ns=a[17])
++    else:
+         raise SystemExit(__doc__)
+-    main(*sys.argv[1:])

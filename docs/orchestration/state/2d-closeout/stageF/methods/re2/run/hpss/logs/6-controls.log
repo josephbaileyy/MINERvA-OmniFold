@@ -1,0 +1,15 @@
+j0/SHA256SUMS.J0a: FAILED
+sha256sum: WARNING: 1 computed checksum did NOT match
+a member's sha256 differs
+control tampered rc=4 (want 4)
+sha256sum: j0/SHA256SUMS.J0a: No such file or directory
+j0/SHA256SUMS.J0a: FAILED open or read
+sha256sum: WARNING: 1 listed file could not be read
+a member's sha256 differs
+control missing rc=4 (want 4)
+150a151
+> partb/extra-file
+path sets differ
+control extra rc=6 (want 6)
+empty manifest
+control empty-manifest rc=3 (want 3)
