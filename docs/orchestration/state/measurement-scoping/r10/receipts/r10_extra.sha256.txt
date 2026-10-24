@@ -1,0 +1,3 @@
+file location bytes sha256
+r10_extra.npz cluster:/pscratch/sd/j/josephrb/r10-20261024/run2/extract/r10_extra.npz 2365138466 923e958a3def73bb44048052cac5ec933ae524b4fb66da052e22aa1fda63ae3d
+r10_extra.npz local-copy-read-by-Y:/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/e8bbfb4e-18b4-4622-93d3-a470a0b3d048/scratchpad/r10-x2/r10_extra.npz 2365138466 923e958a3def73bb44048052cac5ec933ae524b4fb66da052e22aa1fda63ae3d

@@ -1,0 +1,42 @@
+f1 {"n_reco_cells": 10499, "seconds": 34.0, "peak_rss_GB": 4.92}
+null3@f1 {"n_reco_cells": 29934, "seconds": 41.1, "peak_rss_GB": 4.92}
+f2 {"n_reco_cells": 113062, "seconds": 42.7, "peak_rss_GB": 4.92}
+f2~null {"n_reco_cells": 113062, "seconds": 45.2, "peak_rss_GB": 4.92}
+C1@f1 {"n_reco_cells": 22613, "seconds": 31.8, "peak_rss_GB": 4.92}
+C1@f1~null {"n_reco_cells": 22613, "seconds": 35.5, "peak_rss_GB": 4.92}
+C1@f2 {"n_reco_cells": 206626, "seconds": 56.5, "peak_rss_GB": 4.92}
+C1@f2~null {"n_reco_cells": 206626, "seconds": 56.6, "peak_rss_GB": 4.92}
+C2@f1 {"n_reco_cells": 29629, "seconds": 35.3, "peak_rss_GB": 4.92}
+C2@f1~null {"n_reco_cells": 29629, "seconds": 35.6, "peak_rss_GB": 4.92}
+C2@f2 {"n_reco_cells": 285505, "seconds": 59.8, "peak_rss_GB": 4.92}
+C2@f2~null {"n_reco_cells": 285505, "seconds": 63.4, "peak_rss_GB": 4.92}
+C3@f1 {"n_reco_cells": 17271, "seconds": 33.5, "peak_rss_GB": 4.92}
+C3@f1~null {"n_reco_cells": 17271, "seconds": 34.3, "peak_rss_GB": 4.92}
+C3@f2 {"n_reco_cells": 167126, "seconds": 52.0, "peak_rss_GB": 4.92}
+C3@f2~null {"n_reco_cells": 167126, "seconds": 51.9, "peak_rss_GB": 4.92}
+C4@f1 {"n_reco_cells": 26000, "seconds": 33.7, "peak_rss_GB": 4.92}
+C4@f1~null {"n_reco_cells": 26000, "seconds": 33.5, "peak_rss_GB": 4.92}
+C4@f2 {"n_reco_cells": 235019, "seconds": 54.2, "peak_rss_GB": 4.92}
+C4@f2~null {"n_reco_cells": 235019, "seconds": 56.9, "peak_rss_GB": 4.92}
+C2xC3@f1 {"n_reco_cells": 46977, "seconds": 39.3, "peak_rss_GB": 4.92}
+C2xC3@f1~null {"n_reco_cells": 46977, "seconds": 39.6, "peak_rss_GB": 4.92}
+f4 {"n_reco_cells": 990594, "seconds": 101.5, "peak_rss_GB": 4.92}
+f4~null {"n_reco_cells": 990594, "seconds": 106.5, "peak_rss_GB": 4.92}
+     1955.69 real      1934.02 user       203.72 sys
+          4922245120  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+            52884225  page reclaims
+                2485  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+               17868  voluntary context switches
+             1692114  involuntary context switches
+       8701599659494  instructions retired
+       6713195072528  cycles elapsed
+          9259425880  peak memory footprint

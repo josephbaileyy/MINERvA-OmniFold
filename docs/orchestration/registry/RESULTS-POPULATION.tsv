@@ -69,6 +69,7 @@ docs/orchestration/state/measurement-paper/phase1/mp3c/out_b/eval_frozen/mp3b_re
 docs/orchestration/state/measurement-paper/phase1/mp4a/gate-v1.json	included	1	
 docs/orchestration/state/measurement-paper/phase1/mp4a/gate.json	included	1	
 docs/orchestration/state/measurement-paper/phase1/mp5/out/eval/mp5_results.json	included	21	
+docs/orchestration/state/measurement-scoping/r10/outputs/r10_results.json	included	18999	
 docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json	included	162	
 docs/orchestration/state/next-preparation-20261009/gbdt/results.json	included	104	
 docs/orchestration/state/next-preparation-20261009/pet/results/design_cost.json	included	64	
