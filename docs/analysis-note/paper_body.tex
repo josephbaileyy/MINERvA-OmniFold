@@ -16,6 +16,8 @@
 % limitation prints at the note section the paragraph cites.
 % 2026-10-23 (register round r15, DECISION-20261023-joseph-5d-a-and-register-round.md item 2): register-prd-study rules
 % R1-R10; scope once (Sec. I), limitations once (Sec. VIII A); moved facts print in the note; records: methods/r15/.
+% 2026-10-23 (register round r16, DECISION-20261023-joseph-5d-targets-and-paper-round-2.md): the five passages the r15
+% P1 raters still flagged, rewritten as disclosures in physics language; records: methods/r16/.
 % ====================================================================
 
 % Table cells: l columns with fixed-width \parbox cells, not p{} columns (RevTeX 4.2f replaces the array
@@ -290,10 +292,13 @@ two-dimensional central value is that of its systematic-universe ensemble, so
 its covariance is built with the same estimator.  The joint tests use
 configuration~(e), the joint-test estimator, whose negative-weight treatment
 and higher-capacity refinement remove most of the bias of the purity method at
-nominal truth in the highest-$W$ cells (Sec.~\ref{sec:validation}).  Configuration~(e) keeps five iterations under a
-rule fixed before the comparison, because 10, 15, or 20 did not reduce the rule's measure
-of model dependence, the largest residual proxy over the development truth
-changes (\nsec{sec:gbdt-model-dependence}).
+nominal truth in the highest-$W$ cells (Sec.~\ref{sec:validation}).
+% Register round r16 (P1 target "the five-iteration rule"): the criterion stated in physics terms; the rule and its
+% values (0.314 at five iterations, at least 0.384 at 10, 15 or 20, on H2) print in the note, sec:gbdt-model-dependence.
+Configuration~(e) keeps five iterations by a criterion fixed in advance:
+10, 15, or 20 iterations did not reduce its model dependence, measured as the
+largest residual proxy over the truth changes used in its development
+(\nsec{sec:gbdt-model-dependence}).
 \begin{table}[tb]
   \caption{Estimator configurations.  All use five OmniFold iterations and
   gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both
@@ -447,9 +452,11 @@ of the same pseudo-experiments against a second, rebuilt earlier band removes
 the tail undercoverage: \SI{97.7}{\percent} fall within two standard deviations and
 \SI{78.1}{\percent} within one.  It is not an independent coverage test,
 because the simulated part of the rebuilt band reuses the resampling mechanism
-of those pseudo-experiments (\nsec{sec:coverage}).  The two-dimensional central
-value is therefore reproducible, and its covariance is built with the same
-estimator.
+of those pseudo-experiments (\nsec{sec:coverage}).
+% Register round r16: "therefore" dropped; this summary sentence does not follow from the band history above it (it
+% was "In summary, ..." before register round r12, closing the subsection).
+The two-dimensional central value is reproducible, and its covariance is built
+with the same estimator.
 
 \section{Five observables: bias, coverage, and precision}
 \label{sec:validation}
@@ -489,8 +496,9 @@ In two observables, a closure test with backgrounds (20 pseudo-experiments at
 nominal truth) puts the purity and refined estimates more than one statistical
 standard deviation apart in 14 of the 205 cells, with the purity estimate up to
 5.9 statistical standard deviations from the truth (more than one total
-standard deviation in one cell) and the refined one within 0.44 in every cell;
-the two-dimensional result is being moved to the refined estimator
+standard deviation in one cell) and the refined one within 0.44 in every cell.
+% Register round r16 (R10): split; the wording is DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1's.
+The two-dimensional result is being moved to the refined estimator
 (\napp{sec:negweight-footing}).
 
 \subsection{Generator-sized truth changes}
@@ -580,13 +588,16 @@ diagnosis are described in \nsec{sec:coverage-5d}.
   the grey band is $\pm$ the quoted total uncertainty of the $(\Eavail,W)$
   projection.  At nominal truth (40 pseudo-experiments) its largest residual is
   \SI{0.09}{\percent}.  Panel (a) uses the random seeds of the estimator's
-  development studies; panel (b) uses separate assessment seeds, which also
-  entered its later development.  $W$ bin 6 is
+  development studies, and panel (b) separate seeds that were later also used
+  in its development.  $W$ bin 6 is
   $W\ge\SI{3}{GeV}$.  Error bars are the standard error of the mean.}
   % Source: methods-m3 REPORT, Figure 2 (dev_receipt.json C3_nominal, C4_eavail_shape; truth_check.json M1_ratio;
   % assess_receipt.json points.nominal, W1, W2, W3; band A4.adopted_total_sigma_pct). Reproduced: 74.07% (EW29),
   % EW7 -6.66%, W2 16.38% (EW37), W1 31.32% (EW29), W3 23.67% (EW29), 20 of 42 cells within the band.
   % Nominal maxima 0.39% (EW36, family N, C3_nominal) and 0.09% (EW41, R nominal), fig_m3_deformation.py numbers file.
+  % Seed disclosure (kept, register round r16: it qualifies "not used while it was chosen"): panel (b)'s 40 nominal and
+  % 20-per-shape samples were later used in development (note sec_5d.tex sec:gbdt-model-dependence, "Because these
+  % samples were used during development"); first printed in commit a6b9c705, replacing a "seeds not used before" label.
   \label{fig:deformation}
 \end{figure*}
 
@@ -897,22 +908,30 @@ threshold, whatever rule determines when sampling stops, so the decision rule
 controls the familywise error rate of the ten decisions at 5\%
 (\napp{sec:joint5d-fwer}).  The calibrated size is averaged over the nuisance
 priors: at a fixed true value of the nuisance parameters it can exceed
-$\alpha$.  The point estimates $(k+1)/(B+1)$ carry no separate validity claim.
+$\alpha$.  The error control applies to the decisions, not separately to the
+point estimates $(k+1)/(B+1)$.
 
 % Design and its data-informed elements: amendment 7 data_informed_disclosure; DECISION-20261004-s5p-production-budget-
 % extension.md; note sec_joint.tex sec:joint5d-frozen. Lost pseudo-experiments: RECORD-20261005-s5p-joint-5d-inference-
 % result.md sec. 5; RECORD-20261006-s5p-lost-seed-recovery-resolution.md (b354cdf7); note sec_joint.tex sec:joint5d-lost.
 % Recomputation: REPORT-20261005-s5p-recompute-final-verification.md sec. 8.
-The test design was fixed before any observed statistic was computed,
-although its reviewers had already seen descriptive per-cell residuals of the
-data.  The calibration's computing budget was later extended by a bounded
-amount with observed $p$ values visible; the error control above is unaffected by
-this, because it holds for any stopping rule.  The
-pseudo-experiments that computing time limits interrupted or prevented
-(\jtLostCal{} for calibration, \jtLostPow{} for power) were rerun; none reaches
-the observed statistic in any test or shifted null, so no assignment of the
-lost outcomes changes any decision.  Independently written code reproduces
-every $p$ value and decision.  The design record and the rerun are given in
+% Register round r16 (P1 targets "the budget extension" and "the rerun"): the two data-informed elements are kept as
+% disclosures (DECISION-20261004-s5p-production-budget-extension.md sec. 3: decided during production with the looks
+% visible; it changes no statistic, criterion or decision rule). The lost draws: the decisions use the completed ones
+% (note sec:joint5d-lost); the last clause rewords Joseph's selected disposition
+% (DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md sec. 5: with every submitted draw observed and
+% none reaching T_obs, no missing-draw assignment changes any decision), which the note prints in sec:joint5d-lost.
+The test design was fixed before any observed statistic was computed;
+its reviewers had already seen descriptive per-cell residuals of the data.
+The computing time available to the calibration was later increased by a
+bounded amount after the observed $p$ values had become visible.  The error control
+above does not depend on this, because it holds for any rule that decides when
+sampling stops.  Computing time limits interrupted or prevented \jtLostCal{}
+calibration and \jtLostPow{} power pseudo-experiments, and the decisions use
+the completed ones.  When rerun, none of the lost calibration
+pseudo-experiments reaches the observed statistic in any test or shifted null,
+so their outcomes change no decision.  Independently written code reproduces every $p$ value and
+decision.  The predeclared design and the rerun are described in
 Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:joint5d-frozen}
 and~\ref*{N-sec:joint5d-lost}.
 
@@ -988,6 +1007,8 @@ simulated residuals.
 % DECISION-20261020-joseph-nuwro-ch-claim.md (provisional) :29-30; BINDING-PHASE1-ADDENDUM-9.md:28-32.
 % Kappa scan: publication/kappa/RECORD-20261008-kappa-breakdown.md sec. 2 (last rejected sample 5.2546875; union
 % 5.16875); "about 5.2" covers both readings, which the note prints.
+% Register round r16: the CH sentence keeps DECISION-20261020's content (the ten recorded decisions stand; the CH
+% evaluations are descriptive); the note's own wording, that they do not re-grade the decisions, is in sec:joint5d-ch.
 Table~\ref{tab:joint} shows that every test is rejected at familywise
 $\alpha=\jtAlpha$.
 NuWro and GiBUU were generated on carbon.  Correcting both predictions to the
@@ -995,12 +1016,13 @@ hydrocarbon target moves both toward the data, and NuWro's total-test
 rejection does not survive that correction robustly; GiBUU's deep-inelastic
 events on hydrogen do not conserve energy, which affects its correction and
 possibly its carbon prediction.  These target-corrected evaluations are
-descriptive and do not re-grade the decisions of Table~\ref{tab:joint}, which
-concern each prediction on the target it was generated for and stand.  As a
-sensitivity check outside the decision rule, a scan of the multiplier of the
-shift along $\delta_{\mathrm{fine}}$ finds all ten rejections determined up to
-a multiplier of about 5.2; the scan tests that one direction and bounds neither
-the actual residual nor the convergence.  The calibrated null distributions
+descriptive.  The decisions of Table~\ref{tab:joint} concern each prediction on
+the target it was generated for, and they stand.
+% Register round r16: the scan's limits (no bound on the below-grid residual, no convergence) are stated once, in
+% condition (i) and item 7 of Sec. VIII A; the note prints the scan's own statement, sec_joint.tex sec:joint5d-kappa.
+As a sensitivity check outside the decision rule, a scan of the multiplier of
+the shift along $\delta_{\mathrm{fine}}$ finds all ten rejections determined up
+to a multiplier of about 5.2; it probes that one direction.  The calibrated null distributions
 differ in location: the Tune~v1 null is centred at small values, whereas the
 external nulls are displaced far upward by the estimator's pull toward its
 prior, which the calibration reproduces.  The target-corrected evaluations,
