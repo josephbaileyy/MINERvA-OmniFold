@@ -82,7 +82,7 @@ record named.
 
 **Counts.** The bank holds 175 universes: 100 flux, 69 interaction-model universes in 34 bands, and 6 GEANT. The dump
 holds 8. All were counted on login12 by listing `*_wt.npy`.
-- Under (e): 169 bank universes (dropping the 6 duplicate GEANT) + 8 detector universes = **177 unfolds**.
+- Under (e): 169 bank universes (setting aside the 6 bank GEANT copies; their source is declared in §3.3) + 8 detector universes = **177 unfolds**.
 - Add the 10 existing laterals and the set equals (a)'s 187 universe unfolds (169 + 18).
   - The 18 are the 10 single-pass laterals plus the 8 weight-only detector universes
     (`nd-unfolding/uq_5d/detector_universes.txt:1-18`).
@@ -117,10 +117,10 @@ denominator and background weights swapped in. The background template and the r
 | data / pseudo ratio | 2.1427 (median), 2.3569 (max) | (arithmetic) |
 | today's pseudo unfold, CPU node, 8 × 32 (C0) | 533.06 s | `state/gpu-timing-20261023/REPORT.md` table, C0 |
 | today's (e) universe unfold, 8 × 32, unfold only | 1,142 – 1,256 s | 533.06 × 2.1427 to × 2.3569 |
-| per-task overhead outside the unfold | about 114 s | C0's step wall 647–648 s against 533 s unfolding (`gpu-timing REPORT.md:67`) |
+| per-task overhead outside the unfold | about 114 s | C0's step wall 647–648 s against 533 s unfolding (`gpu-timing REPORT.md:67`). It was measured on an `s5p_numerics` step; carrying it to `s5p_universe`, which also loads `cv.npz` and checks alignment, is an **(inference)** the pilot tests |
 | **today's step wall per universe** | **1,256 – 1,370 s** | the sum |
 | **CPU node-h per universe unfold** | **0.0436 – 0.0476** | step wall ÷ 3600 ÷ 8 |
-| float64 data unfold (bootstrap replicas), for the options | 1,018 – 1,175 s; 0.0354 – 0.0408 node-h | DESIGN.md's basis: 533.06 × 648.0435 / 339.244 to / 293.973 |
+| float64 data unfold (bootstrap replicas), for the options | 1,018 – 1,175 s unfold; 1,132 – 1,289 s step wall; 0.0393 – 0.0448 node-h | DESIGN.md's basis: 533.06 × 648.0435 / 339.244 to / 293.973, plus the 114 s overhead |
 
 - **Assumption, untested:** the 1.4–1.8× slowdown measured on pseudo unfolds carries to data unfolds
   (`gpu-timing REPORT.md` §1). The pilot measures this directly. <!-- absence-ok: an assumption this plan makes and states as such; the pilot is its test -->
@@ -155,6 +155,8 @@ limit.
 - Flux_0 and Flux_99;
 - 2p2h_0, MaCCQE_1 and FrAbs_pi_0;
 - MinosEfficiency_0 and GEANT_Neutron_1, from the detector dump.
+- The pilot assumes the dump as the GEANT source. If the declaration chooses the bank copies, one lane runs a bank
+  GEANT universe instead.
 
 **Wall:** 1,256–1,370 s expected by step wall, so 0.35–0.38 node-h. Limit 0:30 (1,800 s ≥ 1.25 × 1,370), giving
 0.5 node-h.
@@ -200,7 +202,8 @@ take 16,500 s, 13 % under the 5:15 limit.
 - It gives C_stat (ddof 1), the per-band C_b including the lateral bands, and C_norm = (0.014 f)(0.014 f)ᵀ.
 - It fails closed on `--expect-universes`.
 - C_model, the unscaled M2 of the decision, is S2's question and sits beside these blocks.
-- **The tool does not compute the decided total.** `--priors` and `--envelope-scale` are required, and it builds the
+- **The tool does not compute the decided total.** `--envelope-scale` is required (`s5p_assemble.py:104`; `--priors` defaults
+  to none, `:103`), and it builds the
   bounded envelope h (`s5p_assemble.py:18-23, :138-142`), not M2's Σ s sᵀ.
   - So the readout needs either a run with no priors at scale 0 plus a separate combination with C_model, or a code
     change. Either is login-node work, but it is code to write and review.
@@ -235,9 +238,9 @@ Search: inflat in docs/analysis-note/sec_systematics.tex (hits :287-288, :292, :
 
 | option | what | unfolds | expected, CPU node-h | cap | recommendation |
 |---|---|---:|---:|---:|---|
-| O1 | 50 more set-A replicas, b51–100 (float64) | 50 | 1.77–2.04 | 2.9 (1 node, 7 waves, 2:52) | not needed. The H2 bootstrap σ median is 0.29 %, against a total σ ≥ 6 % (`RECORD-20260927-s5p-stage2-exit.md:39-40, :52-53`) **(inference)** |
-| O2 | an estimator-seed block, as RE-2's P6(i): 20 replicas × 3 more seeds | 60 | 2.1–2.5 | 3.3 (1 node, 8 waves, 3:16) | first read s5e's data runs at estimator seeds 42/43/44 (`state/s5e/contract-amendment-1-diagnosis-execution.json:16`) and amendment 3's seed-43 item (`:58, :127`), at 0 node-h. I have not read their results |
-| O3 | an (e) unified-throw ensemble, to reproduce (a)'s D | 162 (160 throws + 2 null) | 6.4–7.1, plus throw tooling for R | unpriced (tooling) | not recommended. z-cv's D is an (a) construction, and the community-standard route does not require it **(inference)** |
+| O1 | 50 more set-A replicas, b51–100 (float64) | 50 | 1.97–2.24 | 3.2 (1 node, 7 waves, 3:10) | not needed. The H2 bootstrap σ median is 0.29 %, against a total σ ≥ 6 % (`RECORD-20260927-s5p-stage2-exit.md:39-40, :52-53`) **(inference)** |
+| O2 | an estimator-seed block, as RE-2's P6(i): 20 replicas × 3 more seeds | 60 | 2.36–2.69 | 3.6 (1 node, 8 waves, 3:35) | first read s5e's B0 (not (e)) data runs at estimator seeds 42/43/44 (`state/s5e/contract-amendment-1-diagnosis-execution.json:16`) and amendment 3's seed-43 item (`:58, :127`), at 0 node-h. I have not read their results |
+| O3 | an (e) unified-throw ensemble, to reproduce (a)'s D | 162 (160 throws + 2 null) | 7.06–7.71, plus throw tooling for R | unpriced (tooling) | not recommended. z-cv's D is an (a) construction, and the community-standard route does not require it **(inference)** |
 | O4 | HPSS copy of the bank and detector dump | 0 | 0 | — | recommended if production cannot start before about 2026-12-14 |
 
 ## 4. What carries over from (a)'s 5D covariance (`sec_5d.tex:561-680`)
@@ -313,7 +316,7 @@ under (e).
 - **Why this is smaller:** 111 of those 288 already exist under R: the central value, a bootstrap set and the 10
   laterals. No new event loop is needed **(arithmetic, from §1)**.
   - The 111 count holds with set B, the 100 bootstrap-only replicas. With set A's 50 it is 61.
-- **The options add** up to 6.3 node-h of caps (O1 + O2). O3 is not recommended.
+- **The options add** up to 6.8 node-h of caps (O1 + O2). O3 is not recommended.
 
 ## 7. Unchanged
 
