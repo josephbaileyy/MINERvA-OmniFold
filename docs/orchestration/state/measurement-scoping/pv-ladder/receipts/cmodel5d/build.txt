@@ -1,0 +1,5 @@
+[c5d] NC {'a_full_grid_bitwise': True, 'b_cells_bitwise': True, 'b_cells': {'max_rel_diff': 0.0, 'tol': 1e-05, 'bitwise': True, 'pass': True}, 'c_integration_routes_bitwise': True}
+[c5d] PC (27 base cells) PASS: n 21, corr 0.7898584115803846, slope 0.6834848810630483; 16-cell readout n 9 (not powered: the 16 reporting cells cannot carry the declared rule (ungraded))
+[c5d] rank 3; sqrt diag median 3.34 %, max 11.36 %; h median 2.79 %
+[c5d] coverage {'own_vertex_shift': 8, 'leave_own_vertex_out': 17, 'sqrt_diag_in_sample': 17} of 21
+[c5d] sha256 C_model 8ab57a5c51a78934eb078e75658a5849fbd474ef864c9b541f3aa0afaf2605b3  C_abs 3f489428245c91287d2822183655c37f8ae80149e0c8da41c6a8a3f20ce77f69

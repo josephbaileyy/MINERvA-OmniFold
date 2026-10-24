@@ -21,8 +21,9 @@ covariance is at its declaration stage.
   script on failure.
 - **The logs:** in `receipts/cmodel5d/`, with their sha256s in `receipts/cmodel5d/SHA256SUMS`. The originals are under
   `/pscratch/sd/j/josephrb/cmodel5d-20261024/logs/`.
-- **One log was filtered for git:** the committed `deploy.log` drops git's carriage-return progress lines. The original
-  on pscratch has sha256 `d924940e…94db5d2`.
+- **The committed copies are `.txt` files,** because the repo ignores `*.log`; the originals on pscratch are named `.log`.
+- **One log was filtered for git:** the committed `deploy.txt` drops git's carriage-return progress lines. The
+  original `deploy.log` on pscratch has sha256 `d924940e…94db5d2`.
 
 **The deploy log:**
 
