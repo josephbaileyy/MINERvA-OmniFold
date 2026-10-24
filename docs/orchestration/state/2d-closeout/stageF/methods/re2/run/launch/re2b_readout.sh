@@ -16,7 +16,8 @@ export TMPDIR=$B/tmp
 R=$O/readout; mkdir -p "$R"
 for f in steps.psv ledger.tsv k1_core.json k1_j7.json; do [ ! -e "$R/$f" ] || { echo "$R/$f exists"; exit 3; }; done
 names=$(awk -F'\t' 'NR > 1 {printf "%sre2b-%s", (n++ ? "," : ""), $1}' "$JOBS")
-rows=$(sacct -X -n -P -S 2026-10-24 --name="$names" -o JobID,JobName,State)
+# -S is local time (PDT), as in re2b_submit.sh
+rows=$(sacct -X -n -P -S 2026-10-23 --name="$names" -o JobID,JobName,State)
 [ -n "$rows" ] || { echo "no part-B job in sacct"; exit 2; }
 while IFS='|' read -r id name st; do
     case "${st%% *}" in COMPLETED|FAILED|TIMEOUT|CANCELLED|OUT_OF_MEMORY|NODE_FAIL|DEADLINE|PREEMPTED|BOOT_FAIL) ;;
