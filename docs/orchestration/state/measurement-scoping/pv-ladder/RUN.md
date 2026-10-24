@@ -263,3 +263,21 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
 - [x] **After the report's first review:** the post-hoc departure measures were extended to sign-aware, per-vertex and
   same-vertex forms and to the (p_T, p_∥) cells (`595930c1`), at the director's request. Both were rerun on a login
   node, with no charge. Their outputs are `readouts/departure.json` (`5bd1303b…`) and `readouts/response_2d.json`.
+
+## 6. Retention (after PR #316 merged, main `a84dde94`)
+
+- **Kept on pscratch,** under `/pscratch/sd/j/josephrb/pv-ladder-20261024/`:
+  - the 30 products (`products/`, sha256s in `receipts/SHA256SUMS`);
+  - the 22 MB of frozen reweights (`prep/`, `prep-SHA256SUMS`);
+  - the readouts, logs, gates and the run deploy.
+
+  They stay until Joseph decides the measurement's scope. **I re-raise retention with the director before
+  2026-11-20** (the director's instruction of 2026-10-24).
+- **Deleted 2026-10-24T12:29:10Z, with the director's authorization:** this lane's analysis checkout
+  `analysis/`, 853 MB. It held a clone at `595930c1` and the post-hoc outputs.
+  - Every output is in git:
+    - `departure2.json` and `tables3.md` are the committed `readouts/departure.json` and `readouts/tables.md`;
+    - `departure.json` (`09626bcd…`) and `tables2.md` (`669f4a8c…`) are in `89be95be`.
+  - The first `tables.md` (`179efffd…`) was never committed. It differs from `tables2.md` only in the pooled-share
+    rounding, and `pvl_report.py` at `c6007dea` regenerates it from the retained readouts.
+  - After the deletion the directory holds 876 MB.
