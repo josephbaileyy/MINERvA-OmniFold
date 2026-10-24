@@ -9,8 +9,14 @@ by PR #313. **No job has been submitted.** This record is updated at each step, 
   `06436fb3`, the reviewed code, plus `a307faca`, which moves L-5D-PV's NC into the pilot (§4). It adds
   `nd-unfolding/pv-ladder/`, and no existing producer is edited. It passes 20 local tests:
   `cd nd-unfolding/pv-ladder && python3 -m unittest test_pvl -v`.
-- **The run pin** is a later commit. It adds the prep job's ratio and cell files (§3) and nothing else, and is
-  recorded in §3 before J1.
+- **The run pin is `54340b61cca49eb20d153207604ad6ef16f9e873`.** It is `a307faca` plus the prep's committed
+  outputs and the run-input freeze (§3):
+  - `cells/*.json` and `prep-SHA256SUMS` (`29ac6b7ca0ffda2f`);
+  - `sbatch_pvl.sh` (`530a0c065e91ed5e`), which reads the frozen reweights against those sums;
+  - `pvl_analyze.py` (`cca3a82f450e190a`), which refuses any ratio or cells file that differs from them.
+
+  The other scripts are unchanged from the table below. The deploy is a clean checkout at the pin, with 0 changed
+  or untracked files.
 - **The sha256 of every script, at `a307faca`:**
 
 | file | sha256 (first 16) |
