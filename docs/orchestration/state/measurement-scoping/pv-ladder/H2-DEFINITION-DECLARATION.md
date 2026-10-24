@@ -207,6 +207,7 @@ p_∥ < 10 GeV/c; above it the prior is unchanged". The p_∥ = 10 split is not 
   - the GiBUU label of §2;
   - the step-adjacent caveat (§3.4);
   - the decision's stated limitation that coverage was not validated.
+    <!-- absence-ok: a label the paper must carry, quoting DECISION-20261024-joseph-5d-community-standard-route.md item 3, not a claim about the record -->
 - **The reweights are not re-applied.** The products carry L-5D-PV's frozen r_k from run pin `ee299e10`. The builder
   reads only `xsec_flat`, plus `xtrue_flat` for the closures.
 - **No new noise gate.** The 5 % gate was applied once, on the fine grid (S2 §2.4).
