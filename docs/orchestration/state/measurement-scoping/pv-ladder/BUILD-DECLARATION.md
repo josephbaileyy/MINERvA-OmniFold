@@ -2,6 +2,7 @@
 
 **Status: for the director's binding.** The builder has not been run on any unfold product. Once the director binds
 this, it runs once, exactly as §2 gives it, on a Perlmutter login node at 0 node-h.
+<!-- absence-ok: checked 2026-10-24: the run directory /pscratch/sd/j/josephrb/cmodel5d-20261024 does not exist, and this session ran the builder only inside test_cmodel5d's synthetic tree -->
 
 **What it builds.** C_model,5D on the 16 H2 reporting cells:
 - the construction is `H2-DEFINITION-DECLARATION.md` §3, approved in
