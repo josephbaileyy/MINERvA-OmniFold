@@ -89,7 +89,7 @@ def main(argv=None):
 
     def prange(pooled):
         v = list(pooled.values())
-        return f"{pct(min(v), 0)}–{pct(max(v), 0)}"
+        return f"{pct(min(v), 1)}–{pct(max(v), 1)}"
 
     print("### 1. The ladder (headline cells)\n")
     print("| rung | arm | cells | h median / p90 / max | dominant (GENIE+MEC / NuWro / GiBUU) | PC | |shift| ≥ |bias| | "

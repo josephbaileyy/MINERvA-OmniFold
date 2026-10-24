@@ -318,6 +318,28 @@ class AnalyzeRefusals(unittest.TestCase):
                 self.A.check_meta("p.npz", m, self.task, self.ratios, self.cfg, dict(self.meta))
 
 
+class Departure(unittest.TestCase):
+    def test_ew_marginal_departure(self):
+        import pvl_departure as Dp
+
+        rng = np.random.default_rng(9)
+        n = 5000
+        gen = np.column_stack([rng.uniform(0, 4.4, n), rng.uniform(1.6, 59, n), rng.uniform(0, 2.9, n),
+                               rng.uniform(0, 1.9, n), rng.uniform(0, 2.9, n)])
+        z = {"MCgen": gen, "pass_truth": np.ones(n, bool), "w_truth": np.ones(n)}
+        with tempfile.TemporaryDirectory() as t:
+            os.makedirs(os.path.join(t, "R"))
+            r = np.full(42, 1.0)
+            r[0] = 1.2
+            for v in Dp.VERTICES:
+                with open(os.path.join(t, "R", f"{v}.json"), "w") as f:
+                    json.dump({"schema": L.RATIO_SCHEMA, "axes": ["eavail", "W"], "r": r.tolist()}, f)
+            from pathlib import Path
+            d = Dp.departures(z, L.AXES5, Path(t), "R")
+        self.assertAlmostEqual(d["nuwro"][0], 0.2)
+        np.testing.assert_allclose(d["nuwro"][1:][np.isfinite(d["nuwro"][1:])], 0.0, atol=1e-12)
+
+
 class Tasks(unittest.TestCase):
     def test_declared_jobs(self):
         here = os.path.dirname(os.path.abspath(__file__))
