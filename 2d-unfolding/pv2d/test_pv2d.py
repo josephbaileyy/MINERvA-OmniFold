@@ -299,18 +299,75 @@ class ReportTables(unittest.TestCase):
         r[0, 1] = 0.8
         self.assertAlmostEqual(T.largest_step(r, 0)[0], 0.2)                   # a corner sees its in-grid neighbour
 
-    def test_beside_gate_step_both_directions(self):
+    def test_classify_cell_both_directions(self):
         import report_tables as T
         r = np.ones((L.NPT, L.NPZ))
         lab = np.full((L.NPT, L.NPZ), "fine", dtype=object)
+        g = 5 * L.NPZ + 5
+        self.assertEqual(T.classify_cell(r, lab, g), "none")
         r[5, 6] = 1.3
-        self.assertFalse(T.beside_gate_step(r, lab, 5 * L.NPZ + 5))            # fine|fine: the generator's step
-        lab[5, 6] = "coarse"
-        self.assertTrue(T.beside_gate_step(r, lab, 5 * L.NPZ + 5))             # fine|coarse: the gate's step
+        self.assertEqual(T.classify_cell(r, lab, g), "generator")           # fine|fine: the generator's step
+        self.assertFalse(T.beside_construction_step(r, lab, g))
+        for other, kind in (("coarse", "gate"), ("noisy", "gate"), ("off", "cut")):
+            lab[5, 6] = other
+            self.assertEqual(T.classify_cell(r, lab, g), kind)
+            self.assertTrue(T.beside_construction_step(r, lab, g))
+        lab[5, 5], lab[5, 6] = "coarse", "coarse"
+        self.assertEqual(T.classify_cell(r, lab, g), "gate")                # coarse|coarse: a pooled-cell edge
         r[5, 6] = 1.05
-        self.assertFalse(T.beside_gate_step(r, lab, 5 * L.NPZ + 5))            # below the threshold
-        self.assertFalse(T.beside_gate_step(r, lab, 9 * L.NPZ + 9))            # far from the step
+        self.assertEqual(T.classify_cell(r, lab, g), "none")                # below the threshold
+        self.assertEqual(T.classify_cell(r, lab, 9 * L.NPZ + 9), "none")    # far from any step
+        r[5, 6], lab[5, 6] = 1.3, "off"                                     # a gate pair outranks a cut pair
+        r[4, 5], lab[4, 5] = 1.3, "fine"
+        self.assertEqual(T.classify_cell(r, lab, g), "gate")
 
+    def test_tiers_cover_every_label_once(self):
+        import report_tables as T
+        labs = [x for _, t in T.TIERS for x in t]
+        self.assertEqual(sorted(labs), sorted(["fine", "coarse", "noisy", "off"]))
+        self.assertEqual(dict(T.TIERS)["r = 1"], ("noisy", "off"))
+
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+@unittest.skipUnless(os.path.exists(os.path.join(_HERE, "readouts", "readout_ref.json")), "committed readouts absent")
+class ReportTablesOnCommittedReadouts(unittest.TestCase):
+    """Pinned regression: the post-hoc counts REPORT.md quotes, from the committed files."""
+
+    @classmethod
+    def setUpClass(cls):
+        import report_tables as T
+        cls.T = T
+        cls.I = T.Inputs(os.path.join(_HERE, "ratios", "projections.json"), os.path.join(_HERE, "ratios"))
+        cls.A = T.load(os.path.join(_HERE, "readouts", "readout_a.json"))
+        cls.R = T.load(os.path.join(_HERE, "readouts", "readout_ref.json"))
+        cls.I.check(cls.A, "a")
+        cls.I.check(cls.R, "refined")
+
+    def test_union_rule_for_h(self):
+        n = {v: int(self.I.near[v].sum()) for v in ("genie_mec", "nuwro", "gibuu", "h")}
+        self.assertEqual(n, {"genie_mec": 2, "nuwro": 34, "gibuu": 19, "h": 52})
+        self.assertTrue(np.array_equal(self.I.near["h"], self.I.near["genie_mec"] | self.I.near["nuwro"]
+                                       | self.I.near["gibuu"]))
+
+    def test_h_over_sigma_both_ways(self):
+        keep = ~self.I.near["h"]
+        for X, full, rest in ((self.A, 30, 9), (self.R, 26, 6)):
+            h, sq = np.asarray(X["envelope"]["h"]), np.asarray(X["sigma_Q"]["cells"])
+            self.assertEqual(int((h > sq).sum()), full)
+            self.assertEqual(int((h[keep] > sq[keep]).sum()), rest)
+
+    def test_step_classes_of_the_h_over_sigma_cells(self):
+        h, sq = np.asarray(self.A["envelope"]["h"]), np.asarray(self.A["sigma_Q"]["cells"])
+        dom = self.A["envelope"]["dominant"]
+        got = [self.I.cls[dom[k]][k] for k in np.flatnonzero(h > sq)]
+        self.assertEqual({k: got.count(k) for k in ("gate", "cut", "generator", "none")},
+                         {"gate": 21, "cut": 0, "generator": 4, "none": 5})
+
+    def test_refuses_a_wrong_arm(self):
+        with self.assertRaises(SystemExit):
+            self.I.check(self.A, "refined")
 
 if __name__ == "__main__":
     unittest.main()
