@@ -1,0 +1,13 @@
+Y's worktree: scratchpad/wt-r10run2, detached at the bound commit.
+
+1. Before Y (02:06, 2026-10-24 PDT): the lane ran `git rev-parse HEAD` and `git status --porcelain` there. Output:
+   289a1ff755fe8c21aeef4f19aebe559cf7849bc1 and no status lines. That output is in the session transcript only; this
+   file is not a record made then.
+2. After Y (02:41): the first version of this file recorded `git status --porcelain | wc -l` and `git rev-parse HEAD`:
+   0
+   289a1ff755fe8c21aeef4f19aebe559cf7849bc1
+3. Re-measured at 04:04, after the review asked for the detached state:
+   HEAD 289a1ff755fe8c21aeef4f19aebe559cf7849bc1
+   branch HEAD (HEAD = detached)
+   modified tracked files 0
+   untracked files 0

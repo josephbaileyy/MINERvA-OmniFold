@@ -1,0 +1,100 @@
+{
+ "schema": "r10-results/1",
+ "status": "controls-only: pass",
+ "code_sha256": {
+  "r10.py": "e2fedfcfe9a16e7e3f185766a0573f435e90d386dddfe9478834a866a87db478",
+  "config.json": "2366c41d38bd5689b178bfbb00e13eb5cbe9d681ea44d073368459f3cd28b6cb"
+ },
+ "controls": {
+  "K0_rows": {
+   "f1_equals_did": true,
+   "same_rows_on_grid_f2": true,
+   "same_rows_on_grid_f4": true,
+   "pass": true
+  },
+  "K1_did_reproduced": {
+   "widths_T1": true,
+   "widths_T2": true,
+   "r_K5_all_functionals_nominal": true,
+   "J_median_K5_nominal": {
+    "got": 8.881784197001252e-16,
+    "want": 8.881784197001252e-16,
+    "equal": true
+   },
+   "r_K5_all_functionals_gibuu": true,
+   "J_median_K5_gibuu": {
+    "got": 0.0829955267101401,
+    "want": 0.0829955267101401,
+    "equal": true
+   },
+   "r_K5_all_functionals_w1": true,
+   "J_median_K5_w1": {
+    "got": 0.054241968746709945,
+    "want": 0.054241968746709945,
+    "equal": true
+   },
+   "r_K5_all_functionals_w2": true,
+   "J_median_K5_w2": {
+    "got": 0.005953163486725144,
+    "want": 0.005953163486725144,
+    "equal": true
+   },
+   "r_K5_all_functionals_w3": true,
+   "J_median_K5_w3": {
+    "got": 0.04860200543821924,
+    "want": 0.04860200543821924,
+    "equal": true
+   },
+   "r_K5_all_functionals_q3": true,
+   "J_median_K5_q3": {
+    "got": 0.0530515574631677,
+    "want": 0.0530515574631677,
+    "equal": true
+   },
+   "pass": true
+  },
+  "K2_generic_equals_did_at_f1": {
+   "r5_same_nominal": true,
+   "r5_split_nominal": true,
+   "r5_same_gibuu": true,
+   "r5_split_gibuu": true,
+   "r5_same_w1": true,
+   "r5_split_w1": true,
+   "r5_same_w2": true,
+   "r5_split_w2": true,
+   "r5_same_w3": true,
+   "r5_split_w3": true,
+   "r5_same_q3": true,
+   "r5_split_q3": true,
+   "width_same_T1": true,
+   "width_split_T1": true,
+   "width_same_T2": true,
+   "width_split_T2": true,
+   "pass": true
+  }
+ },
+ "admission": {
+  "A2_records": true,
+  "A1_event_digest": true,
+  "A10_keys_read": true,
+  "A9_edges": true,
+  "A4_functional_rows": true,
+  "A3_ratio_gibuu": true,
+  "A3_ratio_w1": true,
+  "A3_ratio_w3": true,
+  "A3_ratio_w2": true,
+  "A8_rows": true,
+  "A11_reweight_is_one_outside_grid_nominal": true,
+  "A11_reweight_is_one_outside_grid_gibuu": true,
+  "A11_reweight_is_one_outside_grid_w1": true,
+  "A11_reweight_is_one_outside_grid_w3": true,
+  "A11_reweight_is_one_outside_grid_q3": true,
+  "A11_reweight_is_one_outside_grid_w2": true,
+  "A7_reco_cells": true
+ },
+ "timing": {
+  "wall_s": 126.16627407073975,
+  "cpu_s": 129.606474,
+  "peak_rss_bytes": 4482498560
+ }
+}
