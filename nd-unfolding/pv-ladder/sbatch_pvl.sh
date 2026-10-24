@@ -10,6 +10,8 @@
 # environment ($A/setup_salloc_env.sh, `python`). Every task is validated before any step starts. A job other than
 # J1 runs only if <OUT>/gates/<job>.ok exists and names this pin: the director's rule that a rung runs only after
 # its nominal control passes, written after pvl_analyze.py reads J1 (and, for F, after a NOT_POWERED verdict).
+# The reweights are the prep job's files under <OUT>/prep/ratios (read-only), each checked against the committed
+# prep-SHA256SUMS before any step starts; that sha256 is the one the unfold is told to expect.
 #   sbatch --qos=regular --time=<limit> --job-name=pvl_<job> --output=<OUT>/logs/%x_%j.out \
 #          sbatch_pvl.sh <deploy> <pin> <OUT> <job>
 set -o pipefail   # NOT set -u (the environment's activation aborts under it)
@@ -23,6 +25,10 @@ if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ] || [ "$stray" -ne 0 ]; then
 fi
 A=/pscratch/sd/j/josephrb/MINERvA-OmniFold
 V="$D/nd-unfolding/pv-ladder"
+RD="$OUT/prep/ratios"
+want_sha() {  # want_sha <path relative to prep/>: the committed sha256, or nothing
+    awk -v f="./$1" '$2 == f {print $1}' "$V/prep-SHA256SUMS"
+}
 if [ "$JOB" != J1 ]; then
     G="$OUT/gates/$JOB.ok"
     [ -f "$G" ] && grep -qx "pin=$PIN" "$G" || { echo "[pvl] refusing: $G is missing or does not name pin $PIN" >&2; exit 2; }
@@ -44,7 +50,9 @@ cfg() {  # cfg <rung> <key: npz|bkg> <field: path|sha256>
 # validate every task first, so a refusal never leaves steps running
 for line in "${LINES[@]}"; do
     IFS=$'\t' read -r task rung _ _ vertex _ _ _ <<< "$line"
-    [ -f "$V/ratios/$rung/$vertex.json" ] || { echo "[pvl] refusing: no ratio $rung/$vertex" >&2; exit 2; }
+    w=$(want_sha "ratios/$rung/$vertex.json")
+    [ -n "$w" ] && [ "$(sha256sum "$RD/$rung/$vertex.json" | cut -d' ' -f1)" = "$w" ] \
+        || { echo "[pvl] refusing: $RD/$rung/$vertex.json is missing or differs from prep-SHA256SUMS" >&2; exit 2; }
     [ ! -e "$OUT/products/$task.npz" ] || { echo "[pvl] refusing: $OUT/products/$task.npz exists" >&2; exit 2; }
 done
 # each step gets an equal share of 95 % of the job's memory, so all of them start at once (steps whose --mem
@@ -58,9 +66,8 @@ echo "[pvl] job=$JOB slurm=$SLURM_JOB_ID node=$(hostname) tasks=${#LINES[@]} mem
 pids=(); names=()
 for line in "${LINES[@]}"; do
     IFS=$'\t' read -r task rung arm features vertex mode _ _ <<< "$line"
-    RF="$V/ratios/$rung/$vertex.json"
-    SHA=$(python -c "import json,sys; print(json.load(open(sys.argv[1]))['vertices'][sys.argv[2]]['ratio_sha256'])" \
-          "$V/ratios/$rung/ratios.json" "$vertex") || exit 2
+    RF="$RD/$rung/$vertex.json"
+    SHA=$(want_sha "ratios/$rung/$vertex.json")
     PROD="$OUT/products/$task.npz"
     extra=(); [ "$mode" = closure ] && extra=(--closure)
     srun -n1 -c "$CPS" --mem="${MEM}M" --exact --cpu-bind=cores \

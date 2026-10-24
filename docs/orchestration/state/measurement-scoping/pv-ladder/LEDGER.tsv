@@ -1,0 +1,2 @@
+jobid	name	account	qos	state	exitcode	start_pdt	end_pdt	elapsed_s	timelimit	billing	charged_node_h	job	projection_min	elapsed_over_projection	log	note
+60201984	pvl_prep	m3246	debug	COMPLETED	0:0	2026-10-24T01:50:18	2026-10-24T01:55:36	318	00:20:00	256	0.0883	prep	16.0	0.33	/pscratch/sd/j/josephrb/pv-ladder-20261024/logs/pvl_prep_60201984.out	cells and reweights, no unfolding; self-check 39 EW / 109 J passed (RUN.md section 3)

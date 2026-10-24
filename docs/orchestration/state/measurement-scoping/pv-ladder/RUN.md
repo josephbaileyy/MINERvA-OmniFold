@@ -94,9 +94,50 @@ sbatch --qos=debug --time=0:20:00 --job-name=pvl_prep --output=$OUT/logs/%x_%j.o
 - **It writes** `$OUT/prep/cells/<rung>.json` and `$OUT/prep/ratios/<rung>/`, with every sha256 printed.
 - **The pvl_cells self-check must pass,** reproducing s5p's 39 EW and s5c's 109 J cells on the 5D npz. A failure
   stops the ladder and is reported.
-- **The files are copied** to `nd-unfolding/pv-ladder/{cells,ratios}/` and committed as the run pin. This step is
-  the only one that turns prep output into run input. Its sha256s are checked against the job's printout, and the pin
-  is recorded here.
+- **The run inputs are frozen,** amended before J1. The ratio files total 22 MB, 13.8 MB of it L-5D-PV's
+  diagnostic `ratios.json`, so they are not committed.
+  - They stay at `$OUT/prep/ratios/`, made read-only (`chmod -R a-w`).
+  - The committed `nd-unfolding/pv-ladder/prep-SHA256SUMS` lists all 36 prep files. It was checked line for line
+    against the job's printout.
+  - The launcher refuses any task whose ratio file differs from that list, and passes the listed sha256 to the
+    unfold as the one to expect.
+  - `pvl_analyze.py` refuses a `ratios.json` or cells file that differs, and a `ratios.json` whose recorded
+    per-vertex sha256 differs. All 28 recorded sha256s were checked and match.
+  - The four cell files (40 KB) are committed in `nd-unfolding/pv-ladder/cells/`.
+
+**The prep, job 60201984:** COMPLETED in 318 s, charged 0.0883 node-h, 0.33× its projection.
+- **The self-check passed:** on the 5D npz, the support rule reproduces s5p's 39 EW cells and s5c's 109 J cells,
+  as exact lists.
+- **Cells per readout space** (cells of the space / with CV > 0):
+
+| rung | headline | secondary |
+|---|---|---|
+| L-EW | EW 39 (of 42 / 42) | (J 109 of 243 / 134, NC only) |
+| L-3D | fine 690 (of 1,568 / 1,431) | J 27 (of 27 / 27); PTPZ 205 |
+| L-4D | fine 761 (of 10,976 / 4,830) | J 62 (of 81 / 72); PTPZ 205 |
+| L-5D-PV | EW 39 | J 109; PTPZ 205 |
+
+- **Gate tiers** (cells on the CV > 0 cells, with their share of the prior's truth weight):
+
+| rung | vertex | own ratio | coarse cell | r = 1 | r range on CV > 0 cells |
+|---|---|---|---|---|---|
+| L-EW | GENIE+MEC | 31 (98.6 %) | 0 | 11 (1.4 %) | 0.875–1.119 |
+| | NuWro | 32 (98.7 %) | 0 | 10 (1.3 %) | 0.722–1.725 |
+| | GiBUU (p_∥ < 10) | 28 (92.8 %) | 6 (0.5 %) | 8 (6.7 %) | 0.634–3.046 |
+| L-3D | GENIE+MEC | 326 (67.9 %) | 944 (31.4 %) | 161 (0.6 %) | 0.883–1.208 |
+| | NuWro | 361 (71.0 %) | 918 (28.3 %) | 152 (0.6 %) | 0.723–1.762 |
+| | GiBUU | 133 (38.9 %) | 790 (49.1 %) | 508 (12.0 %) | 0.548–1.407 |
+| L-4D | GENIE+MEC | 277 (51.1 %) | 2,931 (45.8 %) | 1,622 (3.0 %) | 0.859–1.267 |
+| | NuWro | 303 (53.5 %) | 2,995 (44.0 %) | 1,532 (2.5 %) | 0.542–1.811 |
+| | GiBUU | 108 (29.5 %) | 2,323 (51.6 %) | 2,399 (18.9 %) | 0.465–1.480 |
+| L-5D-PV | GENIE+MEC | 259 (36.9 %) | 5,337 (58.7 %) | 5,098 (4.4 %) | 0.867–1.257 |
+| | NuWro | 292 (39.2 %) | 5,504 (56.6 %) | 4,898 (4.2 %) | 0.507–1.907 |
+| | GiBUU | 93 (19.1 %) | 4,196 (60.3 %) | 6,405 (20.6 %) | 0.440–1.981 |
+
+- **The gate moves weight to the coarse cells as dimension rises.** The prior's weight on pooled J-coarse ratios
+  is 28–49 % in 3D, 44–52 % in 4D and 57–60 % in 5D. There the reweight is the vertex's shape at J resolution.
+- **L-EW's GiBUU ratio reaches 3.05.** It is defined on p_∥ < 10 GeV/c only.
+- These are facts about the inputs, recorded before J1; their reading belongs to the report.
 
 ## 4. The jobs
 
@@ -158,5 +199,6 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
 
 ## 5. Status
 
-- [ ] Prep submitted; cells and ratios committed as the pin.
+- [x] Prep, job 60201984: COMPLETED, self-check passed, 0.0883 node-h. Cells and `prep-SHA256SUMS` committed with
+  the pin (below).
 - [ ] J1 submitted alone; NCs read.

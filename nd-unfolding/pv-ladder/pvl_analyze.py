@@ -102,14 +102,23 @@ def main(argv=None):
     ap.add_argument("--ratios", type=Path, required=True, help="ratios/<rung>/ratios.json")
     ap.add_argument("--cells", type=Path, required=True, help="cells/<rung>.json")
     ap.add_argument("--cov-ew", type=Path, default=None, help="L-EW only: covariance_eavailW.npz")
+    ap.add_argument("--prep-sums", type=Path, default=_HERE / "prep-SHA256SUMS",
+                    help="the committed sha256s of the prep job's files")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     if a.out.exists():
         raise SystemExit(f"[FAIL] refusing to overwrite {a.out}")
     cfg = json.loads(a.config.read_text())["rungs"][a.rung]
     T = {k: v for k, v in tasks(a.tasks).items() if v["rung"] == a.rung and v["arm"] == a.arm}
+    sums = dict(ln.split()[::-1] for ln in a.prep_sums.read_text().splitlines() if ln.strip())
+    for path, rel in ((a.ratios, f"./ratios/{a.rung}/ratios.json"), (a.cells, f"./cells/{a.rung}.json")):
+        if sums.get(rel) != L.sha256_path(path):
+            raise SystemExit(f"[FAIL] {path}: sha256 differs from prep-SHA256SUMS's {rel}")
     R = L.load_json(a.ratios)
     C = L.load_json(a.cells)
+    for v, rec in R["vertices"].items():
+        if sums.get(f"./ratios/{a.rung}/{rec['ratio_file']}") != rec["ratio_sha256"]:
+            raise SystemExit(f"[FAIL] ratios.json's {v} sha256 differs from prep-SHA256SUMS")
     if R["rung"] != a.rung or C["rung"] != a.rung:
         raise SystemExit("[FAIL] ratios or cells are for another rung")
     if R["inputs"]["npz"]["sha256"] != cfg["npz"]["sha256"] or C["inputs"]["npz"]["sha256"] != cfg["npz"]["sha256"]:
