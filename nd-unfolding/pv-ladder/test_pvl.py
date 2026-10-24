@@ -401,6 +401,31 @@ class Departure(unittest.TestCase):
         self.assertAlmostEqual(rec["same_vertex_signed_response"]["median"], np.median([0.5, -0.5]))
 
 
+class H2Scope(unittest.TestCase):
+    def test_h2_aggregates_the_fine_grid_exactly(self):
+        """Every H2 edge is a fine edge, so each fine cell lies in one H2 cell: a cell-integrated toy summed onto H2
+        keeps its total, and matches each H2 cell's volume integral of a density known in closed form."""
+        import s2_h2_scope as S
+
+        cell, n = S.h2_of_fine()
+        self.assertEqual(n, 32)
+        sh = shape(L.AXES5)
+        self.assertEqual(cell.size, int(np.prod(sh)))
+        rng = np.random.default_rng(7)
+        x = rng.uniform(0.0, 1.0, cell.size)
+        xi = L.integrated(x, L.AXES5)
+        agg = np.bincount(cell, weights=xi, minlength=n)
+        self.assertAlmostEqual(agg.sum() / xi.sum(), 1.0, places=12)
+        ones = np.bincount(cell, weights=L.integrated(np.ones(cell.size), L.AXES5), minlength=n)
+        e = S.s1.H2_EDGES
+        vol = np.ones((2,) * 5)
+        for ax, a in enumerate(L.AXES5):
+            s = [1] * 5
+            s[ax] = -1
+            vol = vol * np.diff(e[a]).reshape(s)
+        np.testing.assert_allclose(ones, vol.ravel(), rtol=1e-12)
+
+
 class Tasks(unittest.TestCase):
     def test_declared_jobs(self):
         here = os.path.dirname(os.path.abspath(__file__))
