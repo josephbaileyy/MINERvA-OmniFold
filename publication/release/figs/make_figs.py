@@ -95,12 +95,12 @@ def fig1(z, out: Path, uq_median: str | None = None):
         pub = jac @ z["paper_v"]; sig = np.sqrt(np.diag(jac @ cov @ jac.T))
         ours = jac @ z["ours_v"]; tune = jac @ z["tune_v1_v"]
         top.stairs((pub + sig) / unit, edges, baseline=(pub - sig) / unit, fill=True, color="0.82", lw=0,
-                   label=r"published $\pm1\sigma$")
+                   label=r"Published $\pm1\sigma$")
         top.stairs(pub / unit, edges, color="k", lw=1.4, label=PUBLISHED)
         if cov_o is not None:
             sig_o = np.sqrt(np.diag(jac @ cov_o @ jac.T))
             top.stairs((ours + sig_o) / unit, edges, baseline=(ours - sig_o) / unit, fill=True,
-                       color="#c0392b", alpha=0.22, lw=0, label=r"this work $\pm1\sigma$")
+                       color="#c0392b", alpha=0.22, lw=0, label=r"This work $\pm1\sigma$")
         top.stairs(ours / unit, edges, color="#c0392b", lw=1.2, ls="--", label="This work (OmniFold)")
         top.stairs(tune / unit, edges, color="#2a78d6", lw=1.0, label="MINERvA Tune v1")
         top.set_ylabel(ylab, fontsize=7.5); top.set_ylim(bottom=0); top.tick_params(labelbottom=False)
