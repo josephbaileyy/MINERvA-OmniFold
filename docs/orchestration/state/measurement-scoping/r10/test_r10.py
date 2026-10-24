@@ -244,12 +244,25 @@ class Join(unittest.TestCase):
         _, ctl = rx.join_rows(5, np.arange(5), self.key, self.fidx, v, self.tree, ["B"], 1e-6)
         self.assertFalse(ctl["pass"])
 
-    def test_duplicate_key_in_a_file_fails(self):
+    def test_duplicate_key_resolved_by_the_vertex(self):
+        """The 1E case: two entries share an identity but are different events; the G2 vertex picks one."""
         t = dict(self.tree)
-        t[0] = {"key": np.array([11, 10, 10], np.uint64), "vtx": self.vtx[[1, 0, 0]], "B": np.array([1.0, 0.0, 9.0]), "n": 3}
-        _, ctl = rx.join_rows(5, np.arange(5), self.key, self.fidx, self.vtx, t, ["B"], 1e-6)
-        self.assertEqual(ctl["joined_rows_with_a_duplicated_key"], 1)
-        self.assertFalse(ctl["pass"])
+        far = self.vtx[0] + 1665.0
+        t[0] = {"key": np.array([11, 10, 10], np.uint64), "vtx": np.vstack([self.vtx[1], far, self.vtx[0]]),
+                "B": np.array([1.0, 9.0, 0.0]), "n": 3}
+        out, ctl = rx.join_rows(5, np.arange(5), self.key, self.fidx, self.vtx, t, ["B"], 1e-6)
+        self.assertEqual((ctl["joined_rows_with_a_duplicated_key"], ctl["duplicated_rows_unresolved_by_vertex"]), (1, 0))
+        self.assertTrue(ctl["pass"])
+        self.assertEqual(out["B"][0], 0.0)  # the entry with the row's vertex, not the first in tree order
+
+    def test_duplicate_key_with_no_or_two_vertex_matches_fails(self):
+        for vt in (np.vstack([self.vtx[1], self.vtx[0] + 5, self.vtx[0] + 9]),   # none matches
+                   np.vstack([self.vtx[1], self.vtx[0], self.vtx[0]])):           # both match
+            t = dict(self.tree)
+            t[0] = {"key": np.array([11, 10, 10], np.uint64), "vtx": vt, "B": np.array([1.0, 0.0, 9.0]), "n": 3}
+            _, ctl = rx.join_rows(5, np.arange(5), self.key, self.fidx, self.vtx, t, ["B"], 1e-6)
+            self.assertEqual(ctl["duplicated_rows_unresolved_by_vertex"], 1)
+            self.assertFalse(ctl["pass"])
 
     def test_a_duplicate_key_no_row_needs_does_not_fail(self):
         t = dict(self.tree)
