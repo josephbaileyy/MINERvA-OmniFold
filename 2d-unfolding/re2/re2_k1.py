@@ -21,9 +21,11 @@ Each check compares the hXSec2D of a J0 output with a reference, on E_U's 205 re
 
 Every ``re2_driver.py`` output that ran ``--bkg-mode negweight-refined`` has its refinement health read from
 ``re2Refinement``. It PASSES when the clipped fraction is at most 0.01, refined/signed lies in [0.99, 1.01], and
-``random_state`` is 45; a run that declares a size must also record 400 trees and 31 leaves.
+``random_state`` is the run's ``--seed`` + 3 (the driver's rule, ``re2_driver.py:2182``; 45 at seed 42); a run with no
+``--seed`` fails. A run that declares a size must also record 400 trees and 31 leaves.
 
-The J0 outputs are first checked against the jobs' own ``SHA256SUMS.J0a`` / ``SHA256SUMS.J0b``.
+The outputs are first checked against the jobs' own ``SHA256SUMS`` files beside ``--out-dir`` (``--sums-glob``:
+``SHA256SUMS.J0*`` for J0, ``SHA256SUMS.J[1-8]*`` for part B).
 
 MEASURES: the declared controls. CANNOT AUTHORIZE: a production job (the director binds J1-J8 after J0).
 """
@@ -33,6 +35,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -95,10 +98,10 @@ def in_range_integral(path: Path, name: str) -> float:
     return v
 
 
-def outputs_match_sums(out_dir: Path) -> dict:
-    """Every J0 output against the jobs' SHA256SUMS files (written by re2_j0.sbatch from out/)."""
+def outputs_match_sums(out_dir: Path, pattern: str = "SHA256SUMS.J0*") -> dict:
+    """Every output against the jobs' SHA256SUMS files (written by the job scripts from out/)."""
     want = {}
-    for p in sorted(out_dir.parent.glob("SHA256SUMS.J0*")):
+    for p in sorted(out_dir.parent.glob(pattern)):
         for line in p.read_text().splitlines():
             digest, name = line.split(None, 1)
             want[name.strip()] = digest
@@ -123,6 +126,7 @@ def main(argv=None) -> int:
     ap.add_argument("--eu", type=Path, required=True)
     ap.add_argument("--expect-eu-sha256", required=True)
     ap.add_argument("--result", type=Path, required=True)
+    ap.add_argument("--sums-glob", default="SHA256SUMS.J0*", help="the jobs' SHA256SUMS files, beside --out-dir")
     a = ap.parse_args(argv)
     if sha256_path(a.eu) != a.expect_eu_sha256:
         print("E_U digest differs", file=sys.stderr)
@@ -134,7 +138,7 @@ def main(argv=None) -> int:
     runs = {r["label"]: r for r in csv.DictReader(open(a.runs), delimiter="\t")}
     out_of = lambda label: a.out_dir / label / "xsec.root"  # noqa: E731
     result = {"schema": "re2-j0-k1/2", "eu_sha256": a.expect_eu_sha256, "code_sha256": sha256_path(Path(__file__)),
-              "tolerance": TOL, "checks": [], "health": [], "sums": outputs_match_sums(a.out_dir)}
+              "tolerance": TOL, "checks": [], "health": [], "sums": outputs_match_sums(a.out_dir, a.sums_glob)}
     for c in csv.DictReader(open(a.checks), delimiter="\t"):
         test = out_of(c["test"])
         ref = out_of(c["ref"][4:]) if c["ref"].startswith("run:") else Path(c["ref"])
@@ -171,7 +175,8 @@ def health(ev: dict | None, args: str) -> str:
     ok = ev is not None and ev["clipped_fraction"] <= CLIP_MAX and \
         RATIO_BAND[0] <= ev["refined_over_signed"] <= RATIO_BAND[1]
     if ok:
-        ok = ev["params"].get("random_state") == 45
+        seed = re.search(r"--seed\s+(\d+)", args)
+        ok = seed is not None and ev["params"].get("random_state") == int(seed.group(1)) + 3
     if ok and "--refine-n-estimators" in args:
         ok = ev["params"].get("n_estimators") == 400 and ev["params"].get("num_leaves") == 31
     return "PASS" if ok else "FAIL"
