@@ -1,0 +1,102 @@
+## 4. Patterns to replicate: a style guide derived from the corpus
+
+Each rule names the corpus examples it is drawn from (§2.2 numbers in brackets). "Ours" names the current practice it
+replaces.
+
+**R1. State the scope once, as a definition, with its reason, in Sec. I and the abstract. Then results sentences carry
+no scope** [2.2-2].
+- Use a naming convention so later sentences stay short: "In what follows, 'the five-observable result' means the
+  central value of configuration (a) under the observable definitions of Sec. II" (after 2504.06857 main.tex:119;
+  "throughout" after 2205.05084 main.tex:237).
+- *Ours:* the Sec. I scope paragraph (paper_body.tex:104-121) is written as five sentences of negatives, and its
+  content is then repeated per sentence ("at the tested truths", "in simulation", "under the specified …",
+  "configuration (a) only").
+- **Rewrite the scope paragraph in positive form:** what the paper measures, with which estimators, under which
+  simulation. Keep the negatives that change meaning, such as "not a validated five-observable measurement" and
+  "hybrid nulls".
+
+**R2. Collect the limitations in one place, and say each once** [2.2-7: the corpus has no limitations section, but
+1705.03568's pros-and-cons list and 2504.06857's conclusion paragraphs are the model].
+- Because our paper is a validation study, one short "Limitations" subsection (proposed: the end of Sec. VI, or Sec.
+  VIII) is the faithful equivalent. Write it as a numbered list of plain declaratives, each with its consequence.
+- Table I's "Principal limitation" column then becomes redundant. Either drop it or keep it and drop the
+  per-sentence versions. **Do not print the same limitation in three places** (Table I, the result sentence, the
+  conclusions), as now.
+
+**R3. Turn a bias into a number, a component or an object, not a caveat** [2.2-3a/b].
+- **Where an analysis change is in scope** (Joseph decides): carry the purity-subtraction bias, or the
+  generator-shape residual, as a named uncertainty component, as in H1 (Rapgap–Djangoh), MINERvA "Signal model" and
+  ATLAS "unfolding prior".
+- **Where it is not:** state the bias once with its size, and say once that it is not in the quoted uncertainty
+  (E6).
+- **The envelope** already follows this pattern. Present it as a defined component (E8), not as "under the specified
+  envelope prescription".
+
+**R4. Report each validation as a test: tested what, against what, criterion, outcome** [2.2-4].
+- Failures are outcomes and need no apology.
+- Write "51 of the 153 cell and projection integrals have a 68% coverage whose upper confidence bound lies below the
+  0.66 threshold, with coverage as low as 0.06". The bound must stay: dropping it would change the test.
+- Do not write "miscover at the tested truths, most strongly when …" followed by a sentence on what was not
+  established.
+- Give the diagnosis in one sentence. The "inferred from a Gaussian fit … rather than measured directly" detail goes
+  to the note.
+
+**R5. Name each assumption once, next to the check that addresses it, or say it is untested, once** [2.2-4, the <!-- absence-ok: quotes or discusses absence wording in the corpus or our paper; not a claim that a result does not exist -->
+2004.05434:979 pattern].
+- Our A1 and A2 fit this exactly (paper_body.tex:895-898).
+- Delete the later restatements: :993-1002 and the conclusion. The one exception is the theorem's hypothesis, which
+  stays (E10).
+
+**R6. Disclosures of what was not done: one sentence each, in the Limitations list or at the point of the choice**
+[2.2-5].
+- About 1-3 per paper in the corpus. We have about 38 STATUS markers in the body.
+- Keep the ones a reader needs to use or interpret a released object correctly:
+  - the 2D coverage not tested;
+  - the omitted covariance terms;
+  - the post-selection of the learner;
+  - no recoil-response band;
+  - fine-grid convergence not shown.
+- Move the rest (the earlier bands, the out-of-scope lists, "the recomputation verifies the calculation, not …") to
+  the note.
+
+**R7. Point to the companion note about once per subsection, at the end of a paragraph, as a plain clause** [2.2-6].
+- For example: "Construction details, the earlier bands and the seed studies are in Ref. [note], Secs. X-Y"
+  (2310.06082:705; 2004.05434:1042).
+- *Ours:* 39 pointers in the body prose, most of them mid-sentence parentheticals.
+- Put minor true caveats in the note or in footnotes, as "Note that …" sentences (H1 supplement; 2205.05084
+  footnotes).
+
+**R8. Keep the abstract to findings, plus at most one framing clause** [2.2-1].
+- State the negative findings as findings, in active verbs (2205.05084; 2504.06857).
+- The abstract keeps only the qualifiers whose absence would make it false (E1: "hybrid null", "no evidence of").
+
+**R9. Definition before claim, instead of a condition clause after it.**
+- "We define the envelope …; with it, none of the three reporting schemes reaches 10%" (E8), after 1705.03568's
+  per-toy set-up sentence (xs.tex:55).
+- The conditionality is carried by order, not by "under the …".
+
+**R10. Prefer two sentences to one sentence with a semicolon and a caveat clause.**
+- Our mean sentence length (27.5) and our share of sentences with two or more qualifiers (28%) go together.
+- The corpus splits a result and its exception into a result sentence and an exception sentence (2405.20041:475;
+  2102.03346:950).
+
+**What the corpus does not do that we do:**
+1. A **limitations column** in a findings table, alongside a scope paragraph and per-sentence caveats, so the same
+   limitation is stated three times.
+2. **Claim-status disclaimers** ("has not been independently validated", "is not established", "unmeasured", "a <!-- absence-ok: quotes or discusses absence wording in the corpus or our paper; not a claim that a result does not exist -->
+   post hoc observation"): 5.7 per 1,000 words against 0.2.
+3. **Out-of-scope lists** ("What unbinned information could recover, the coverage failure, and the validity of any
+   interval lie outside its scope").
+4. **Histories of superseded constructions** in the paper body: the earlier statistical bands.
+5. **Mid-sentence pointers** to a companion, about 40 times the corpus rate.
+6. **Pre-emptive denials of over-readings** ("The independent recomputation verifies the calculation, not whether …";
+   "the scan … bounds neither the actual residual nor the convergence"). The corpus trusts the reader's conventions.
+7. **Repetition of a condition** in the abstract, the scope paragraph, the result sentence and the conclusion (for
+   example the recoil-response omission and fine-grid convergence).
+
+**What we do that the corpus also does, and should keep:**
+- disclosing a post hoc choice next to the choice (2504.06857:250);
+- naming an untested assumption once (2205.05084:237); <!-- absence-ok: quotes or discusses absence wording in the corpus or our paper; not a claim that a result does not exist -->
+- stating a negative result plainly (2205.05084; 2504.06857).
+
+---

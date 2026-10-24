@@ -1,0 +1,22 @@
+### D16: AGREE
+- Register: The new text reads as plain, declarative PRD prose without audit or workflow jargon. The qualifying phrase `, used with different ways of removing background,` changes the physical meaning by clarifying that the comparison between the two software implementations conflates differences in learner architecture with differences in background treatment, consistent with how multi-configuration checks are reported in ML unfolding literature (e.g., OmniFold on T2K data, arXiv:2504.06857, Sec. IV).
+- Fit: It fits smoothly with the preceding paragraph (which discusses the comparison with MINERvA's published 2D result) and the succeeding paragraph (which lists the difference between the two implementations of the tree learner as an omitted effect from the covariance). There are no dangling references or broken transitions.
+- Accuracy: Fully supported by source W6-21 (`values_table.tsv`, row `lit-learner-median-180`), which records a median relative difference of 1.03% (updated from 0.98% when moving to the refined estimator $E_R$). Describing 1.03% as "about one percent" is accurate. Because $E_R$ uses the refined background subtraction while the exact-split cross-check $E_C$ used purity-based subtraction, explicitly noting that they were used with different ways of removing background correctly characterizes the comparison.
+
+---
+
+### D17: AGREE
+- Register: Reads as standard PRD prose. In line with published neutrino cross-section and unfolding papers, model dependence is introduced as an operational procedure and reported as a separate systematic object rather than an unquantified caveat (cf. MINERvA, arXiv:2110.13372, Sec. VI; H1, arXiv:2108.12376, Sec. Systematic Uncertainties; MicroBooNE, arXiv:2301.03700, Sec. VI).
+- Fit: The paragraph fits cleanly between the discussion of learner implementations and the subsequent discussion of coverage validation. Removing model dependence from the list of omitted effects directly motivates its introduction as a separately reported covariance component $C_{\mathrm{model}}$. Flow and narrative consistency are preserved.
+- Accuracy: Fully supported by the cited sources. W1-r1 (`DECISION-20261024-joseph-adopt-re2-2d-refined.md`) confirms that $C_{\mathrm{model}}$ is reported beside $Q_R$; W1-r2 (`pv2d/REPORT.md`) verifies that the three generator variations are pure shape departures preserving the total rate; and the values for typical cell size and combination in quadrature are supported by `\cmodelMedian`, `\uqMedian`, and `\qrCmodelMedian`.
+
+---
+
+### D18: AGREE
+- Register: Reads as plain PRD prose. Replacing the workflow status clause (`; that result is being moved to the improved removal`) with a declarative statement (`, and that result now uses the improved removal`) removes progress-tracking jargon in favor of a definitive statement of the analysis configuration.
+- Fit: The sentence fits the surrounding narrative naturally, complementing the preceding sentences that detail which background removal configurations are applied to the 5D, 4D, and 3D results. There are no repetitions, broken flow, or contradictions with neighboring paragraphs.
+- Accuracy: Fully supported by source W7-r1 (`DECISION-20261024-joseph-adopt-re2-2d-refined.md`), which confirms the adoption of $E_R$ (the refined 2D estimator constructed with the improved background removal) as the central result. All specific numbers (14 of 205 cells; half a statistical standard deviation) remain unchanged from the verified text.
+
+---
+
+AGREE 3, REVISE 0

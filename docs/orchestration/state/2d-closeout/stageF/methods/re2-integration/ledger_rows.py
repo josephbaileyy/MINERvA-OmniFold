@@ -138,7 +138,9 @@ F = [
  ('W9', 'app_statmethods.tex', r"$V$ full-rank ($\mathrm{rank}=205$, with 204 eigenvalues above $10^{-12}\lambda_{\max}$;", r"full-rank ($\mathrm{rank}=204$", TRP, "rank(lam>0) = 205/205"),
  ('W9b', 'app_statmethods.tex', r"with 204 eigenvalues above $10^{-12}\lambda_{\max}$", '-', TRP, "1e-12        2.653     204"),
  # W10
- ('W10', 'app_release.tex', r"with RC7's plotting code extended to draw this analysis's band and its legend set in sentence case.", r"from the committed LightGBM values and covariance, with RC7's plotting code extended to draw this analysis's band.", A3, "the legend is in sentence case, as Joseph asked."),
+ ('W10', 'app_release.tex', r"of the refined LightGBM result, with RC7's plotting code extended to draw this analysis's band.", r"from the committed LightGBM values and covariance, with RC7's plotting code extended to draw this analysis's band.", A3, "4e18c266"),
+ # D30 (outside review, agy): the sentence a draft comment had swallowed prints again
+ ('X4b', 'sec_method.tex', r"It has no matched covariance: no exact-split bootstrap, universe sweep or seed scan exists.", '-', f'{S}/re2/RE2-PARTC-REPORT.md', "RE2-BINDING-C"),
 ]
 lines = ['# M rows: new values.tex macros, computed by the checker from their product.']
 lines += ['\t'.join(('M',) + r) for r in M]

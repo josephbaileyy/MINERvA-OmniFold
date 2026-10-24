@@ -1,0 +1,162 @@
+### D20: AGREE
+- Register: Yes; it uses plain declarative sentences appropriate for the analysis note, presenting the cross-configuration comparison without bookkeeping jargon.
+- Fit: Yes; it flows directly from the 1D $E_{\mathrm{avail}}$ spectrum in Fig.~\ref{fig:eavail} and matches the caption of Fig.~\ref{fig:eavail-marg} below it.
+- Accuracy: Yes; the updated parameters for configuration~(f) (400 trees, 31 leaves), normalization agreement (\SI{0.141}{\percent}, median ratio 1.0010), and scatter ($\sim\SI{3.7}{\percent}$) are fully supported by W6-14 and the updated estimator definition.
+
+### D21: AGREE
+- Register: Yes; it maintains standard scientific prose with plain declaratives.
+- Fit: Yes; it consistently updates the data-versus-2D scatter reference from \SI{3.5}{\percent} to \SI{3.7}{\percent} and the comparison target from (a) to (f), matching D20 and the following paragraph.
+- Accuracy: Yes; the scatter figure matches D20 and the configuration update matches W7-n8.
+
+### D22: AGREE
+- Register: Yes; concise and declarative physics prose.
+- Fit: Yes; updating the comparison from (e) with (a) to (e) with (f) maintains consistency with the preceding closure discussion in D21 and the configurations defined in D20.
+- Accuracy: Yes; accurately reflects that the adopted 2D result is now configuration~(f) per W7-n9.
+
+### D23: AGREE
+- Register: Yes; standard compact tabular format.
+- Fit: Yes; consistently includes configuration~(f) alongside (a) and (b) in Table~\ref{tab:validation-design-5d}, matching Table~\ref{tab:estimators-matrix}.
+- Accuracy: Yes; supported by W7-n10.
+
+### D24: AGREE
+- Register: Yes; reads as concise PRD executive-summary prose, stating the model-dependence component and estimator refinement as plain physical facts.
+- Fit: Yes; integrates smoothly into the reproduction bullet without breaking the narrative flow or duplicating adjacent statements.
+- Accuracy: Yes; the addition of $C_{\mathrm{model}}$, the macro `\qrCmodelMedian`, and the refined negative-weight background subtraction are supported by W2-e1, W6-20, and M-qrCmodelMedian.
+
+### D25: AGREE
+- Register: Yes; concise summary bullet.
+- Fit: Yes; matches the values and configuration labels in D20 and D24.
+- Accuracy: Yes; supported by W7-e3 and D20 (\SI{0.141}{\percent} total agreement with configuration~(f)).
+
+### D26: AGREE
+- Register: Yes; declarative phrasing in past tense ("was moved"), eliminating lingering in-progress audit phrasing.
+- Fit: Yes; fits the "What is not claimed" list and aligns with the completed adoption of configuration~(f).
+- Accuracy: Yes; claims are accurate and supported by W7-e1 and W7-e2.
+
+### D27: AGREE
+- Register: Yes; plain declaratives clearly distinguishing the control unfold from the quoted refined result.
+- Fit: Yes; fits seamlessly into the validation battery of Sec.~\ref{sec:fps}.
+- Accuracy: Yes; supported by W3-1, W3-3, and macro `\sigTwoDPurity`.
+
+### D28: AGREE
+- Register: Yes; direct and clear physical reporting.
+- Fit: Yes; replaces the unregenerated `\fpsAbove` relative comparison with a direct comparison to the control unfold in restricted phase space $\SI{\sigTwoDPurity}{cm^2/nucleon}$, matching D27.
+- Accuracy: Yes; supported by W5-1 and macro `\sigTwoDPurity`.
+
+### D29: AGREE
+- Register: Yes; appropriate companion-note prose with full qualification of configurations and seeds.
+- Fit: Yes; connects with the codebase description and prepares the exact-split discussion that follows.
+- Accuracy: Yes; all numerical comparisons (4.37 standard errors, \SI{1.4}{\percent} seed-45 difference, reproducibility thresholds $9\times 10^{-12}$ and $7\times 10^{-12}$) are supported by W6-08, W6-12, W7-n3, W7-n4, W7-n5, and W7-n6.
+
+### D30: REVISE
+- Register: Flawed; contains a broken, ungrammatical sentence fragment ("exact-split bootstrap, universe sweep or seed scan exists.").
+- Fit: Broken flow; the clause "It has no matched covariance: no" was inadvertently dropped, leaving the remaining words as a dangling, grammatically incorrect fragment.
+- Accuracy: Inaccurate as written; the dangling fragment falsely asserts that an exact-split bootstrap, universe sweep or seed scan *exists*, contradicting the surrounding text and the reality that no matched covariance exists.
+- If REVISE:
+```latex
+\paragraph{The exact-split cross-check.}
+The exact-split configuration (\texttt{exact}) uses scikit-learn
+\texttt{GradientBoosting} with single-threaded exact-split CART. It gave the
+quoted 2D central value until 2026-10-11, and studies in this note labeled
+\emph{exact-split} use that central value; they have not been recomputed. Its seed
+was not fixed: its production job script passed no seed, and the driver version it
+ran had no seed option, so scikit-learn's \texttt{random\_state} was \texttt{None};
+the run's own log was not found. Two driver revisions regenerate it to
+$7\times10^{-15}$, but it is not invariant to the estimator seed: one reseeded run
+(\texttt{random\_state} 1/2/3) moves every bin, by a median of \SI{0.18}{\percent}
+(maximum \SI{1.6}{\percent}; the agreement with the LightGBM seed-1 to seed-42
+median above is a coincidence), and gives
+$\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$; the spread over seeds is unmeasured.
+The exact-split central value differs from the purity-subtracted LightGBM seed-42
+central value by a per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}),
+1.32 statistical standard deviations, and from the quoted central value, which also
+differs from it in background treatment, by \SI{1.03}{\percent} (maximum
+\SI{17.6}{\percent}). It gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded,
+reproducible) against the published covariance, against $\chiPaperPurity$ for the
+purity-subtracted LightGBM central value and $\chiPaper$ for the quoted one
+(\S\ref{sec:results-tension}). It has no matched covariance: no
+exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for
+the central value after both comparisons with the publication were known, so that
+the central value and its covariance share an estimator. A third learner, the
+scikit-learn histogram backend (\texttt{hist}, \texttt{HistGradientBoosting}, matched 8-leaf
+configuration), is retained for method-dependence studies
+(\S\ref{sec:results-tension}).
+```
+*Reason:* Restores the missing words "It has no matched covariance: no", fixing the sentence syntax and accurately stating that no exact-split covariance exists.
+
+### D31: AGREE
+- Register: Yes; clear, systematic description of estimator configurations.
+- Fit: Yes; updates the configuration count from five to six, defining configuration~(f) alongside (a)--(e) consistently with Table~\ref{tab:estimators-matrix}.
+- Accuracy: Yes; configuration details match W7-n1 and W7-n2.
+
+### D32: AGREE
+- Register: Yes; clean PRD tabular layout.
+- Fit: Yes; adds configuration~(f) to Table~\ref{tab:estimators-matrix}, matching D31.
+- Accuracy: Yes; supported by W7-n7.
+
+### D33: AGREE
+- Register: Yes; clear physical explanation of why $C_{\mathrm{model}}$ is reported alongside the headline covariance and left out when comparing like-for-like with the published uncertainty.
+- Fit: Yes; leads naturally into Table~\ref{tab:uq} and the tension discussion.
+- Accuracy: Yes; supported by W2-n1, W6-17, and M-qrCmodelMedian.
+
+### D34: AGREE
+- Register: Yes; concise, quantitative PRD presentation.
+- Fit: Yes; table entries and text are fully aligned with the eigenmode decomposition of the refined estimator.
+- Accuracy: Yes; numbers ($4.8$, next nine $3.4$--$3.8$, $0.66$, etc.) are fully supported by W6-01, W6-02a--c, and W6-03.
+
+### D35: AGREE
+- Register: Yes; plain declarative sentences describing methodological spreads.
+- Fit: Yes; fits the narrative flow of Sec.~\ref{sec:results-tension}.
+- Accuracy: Yes; supported by W2-n2 (`\chiPaperPurity` to `\chiPaper`).
+
+### D36: AGREE
+- Register: Yes; crisp summary prose adhering to PRD style.
+- Fit: Yes; matches all updates across the executive summary, results, and methods sections.
+- Accuracy: Yes; supported by W2-s1, W7-s1, and M-qrCmodelMedian.
+
+### D37: AGREE
+- Register: Yes; forward-looking outlook text in declarative register.
+- Fit: Yes; matches the reference control value in D27 and D28.
+- Accuracy: Yes; supported by W5-2 and macro `\sigTwoDPurity`.
+
+### D38: AGREE
+- Register: Yes; plain, transparent description of the bootstrap procedure.
+- Fit: Yes; fits smoothly within Sec.~\ref{sec:uq-boot}.
+- Accuracy: Yes; updates (4.37 standard errors, 0.25 of statistical $\sigma$, trace ratio 0.407) are supported by W4 and the updated statistical block.
+
+### D39: AGREE
+- Register: Yes; concise declarative statement.
+- Fit: Yes; consistent with the learner comparisons in Sec.~\ref{sec:method-config} and D30.
+- Accuracy: Yes; the \SI{1.03}{\percent} median and \SI{17.6}{\percent} maximum are supported by W7-y1 and X4.
+
+### D40: AGREE
+- Register: Yes; replaces informal heuristic wording ("at the order of \SI{100}{\percent}") with a precise rank statement.
+- Fit: Yes; fits naturally into the playlist uncertainty subsection.
+- Accuracy: Yes; values (rank 2, median \SI{2.09}{\percent}, max \SI{6.48}{\percent}, etc.) are supported by W6-05, W6-06, and X2.
+
+### D41: AGREE
+- Register: Yes; clear declarative bullet list specifying the scope of the covariance.
+- Fit: Yes; updates bullet 2 and adds the bullet for $C_{\mathrm{model}}$, leading directly into the dedicated paragraph below.
+- Accuracy: Yes; supported by W1-n1, W7-y1, and X4.
+
+### D42: AGREE
+- Register: Yes; well-structured PRD paragraph defining the mathematical object $C_{\mathrm{model}}$ and its numerical properties.
+- Fit: Yes; immediately follows the scope list of D41 and precedes the diagnostic discussion in D43.
+- Accuracy: Yes; supported by W1-n2, W1-n3, W1-n4, and associated macros.
+
+### D43: AGREE
+- Register: Yes; plain physical declaratives describing diagnostic checks.
+- Fit: Yes; naturally follows the introduction of $C_{\mathrm{model}}$ in D42.
+- Accuracy: Yes; cell counts (67, 72, 52) and the trace fraction (\SI{59.4}{\percent}) are supported by W1-n5, W1-n6, and W8.
+
+### D44: AGREE
+- Register: Yes; plain declaratives detailing approximation checks.
+- Fit: Yes; fits within the discussion of omitted terms.
+- Accuracy: Yes; the factor of 3.7 and the retraining range 1.13--1.23 are supported by W6-07.
+
+### D45: AGREE
+- Register: Yes; concise, quantitative reporting.
+- Fit: Yes; integrates smoothly into the playlist pooling paragraph.
+- Accuracy: Yes; numerical values (\SI{0.076}{\percent}, \SI{0.39}{\percent}, \SI{0.33}{\percent}, \SIrange{-1.83}{3.78}{\percent}, $|z| \le 0.31$) are supported by X1.
+
+AGREE 25, REVISE 1

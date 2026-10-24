@@ -1,0 +1,15 @@
+You are reviewing proposed wording changes to a physics paper intended for Physical Review D, and to its companion analysis note and primer. The work is an OmniFold (machine-learning) unfolding of MINERvA neutrino data; the authors have just replaced their adopted 2D (p_T, p_parallel) result with a refined estimator, and added a separately reported model-dependence covariance C_model beside the headline uncertainty.
+
+Each draft below (D01, D02, ...) gives the OLD text, the NEW text, the paragraph before and after it as it now reads, and the sources of its facts. A style guide derived from published PRD papers in this genre follows the drafts; the paper must follow it (the methods paper most strictly; the note is the fully qualified companion and may carry more qualification).
+
+For EACH draft, answer in this exact form:
+
+### Dxx: AGREE | REVISE
+- Register: does the new text read as PRD prose (plain declaratives, no audit or bookkeeping jargon, qualifiers only where they change meaning)?
+- Fit: is it consistent with the paragraphs around it (no repetition, contradiction, broken flow, or dangling reference)?
+- Accuracy: does the new text claim more or less than the old text plus its cited sources support? Flag any strengthened claim, lost scope, or number not supported by the listed sources.
+- If REVISE: give the exact replacement LaTeX for the new text, minimal changes only, and say why.
+
+Rules for you: do not invent numbers or citations; if a fact looks wrong but you cannot tell from the sources given, say "cannot verify" rather than changing it. Keep macros (\SI{\uqMedian}..., \cite{...}, \ref{...}) as they are. Use AGREE when the draft is acceptable as written even if you would phrase it differently; use REVISE only for a real problem. End with a one-line tally: "AGREE n, REVISE m".
+
+IMPORTANT: Do not run any commands, open any files or use any tools. Everything you need is in this message; answer directly from it.
