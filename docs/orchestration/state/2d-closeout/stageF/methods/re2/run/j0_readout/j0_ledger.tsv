@@ -1,0 +1,3 @@
+jobid	name	qos	state	start	end	elapsed_s	billing	charge_node_h
+60173037	re2-j0a	regular_1	COMPLETED	2026-10-23T16:43:21	2026-10-23T20:45:40	14539	256	4.0386
+60173038	re2-j0b	regular_1	COMPLETED	2026-10-23T16:43:21	2026-10-23T18:09:34	5173	256	1.4369

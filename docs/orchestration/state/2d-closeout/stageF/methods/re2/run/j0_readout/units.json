@@ -1,0 +1,323 @@
+{
+ "classes": {
+  "bkg_only": {
+   "count": 100,
+   "job": "J5",
+   "n_measured": 8,
+   "projected_node_h": 6.388888888888888,
+   "unit_node_h": 0.06388888888888888
+  },
+  "central": {
+   "count": 3,
+   "job": "J1",
+   "n_measured": 1,
+   "projected_node_h": 0.18041666666666667,
+   "unit_node_h": 0.06013888888888889
+  },
+  "lateral": {
+   "count": 10,
+   "job": "J3",
+   "n_measured": 2,
+   "projected_node_h": 2.3305555555555553,
+   "unit_node_h": 0.23305555555555554
+  },
+  "period": {
+   "count": 37,
+   "job": "J8",
+   "n_measured": 2,
+   "projected_node_h": 1.5108333333333333,
+   "unit_node_h": 0.04083333333333333
+  },
+  "replica": {
+   "count": 300,
+   "job": "J4",
+   "n_measured": 10,
+   "projected_node_h": 19.166666666666664,
+   "unit_node_h": 0.06388888888888888
+  },
+  "replica_seed": {
+   "count": 80,
+   "job": "J6",
+   "n_measured": 8,
+   "projected_node_h": 5.111111111111111,
+   "unit_node_h": 0.06388888888888888
+  },
+  "seed_panel": {
+   "count": 39,
+   "job": "J7",
+   "n_measured": 4,
+   "projected_node_h": 6.229166666666666,
+   "unit_node_h": 0.1597222222222222
+  },
+  "universe": {
+   "count": 175,
+   "job": "J2",
+   "n_measured": 4,
+   "projected_node_h": 27.951388888888886,
+   "unit_node_h": 0.1597222222222222
+  }
+ },
+ "core_projected": 56.25097222222221,
+ "core_worst": 70.31371527777776,
+ "included_diagnostics": [
+  "J7"
+ ],
+ "j0_charge_node_h": 5.4755,
+ "jobs": {
+  "J1": 0.18041666666666667,
+  "J2": 27.951388888888886,
+  "J3": 2.3305555555555553,
+  "J4": 19.166666666666664,
+  "J5": 6.388888888888888,
+  "J6": 5.111111111111111,
+  "J7": 6.229166666666666,
+  "J8": 1.5108333333333333
+ },
+ "missing_steps": [],
+ "not_completed": [],
+ "room_node_h": 84.5245,
+ "runs": {
+  "B_S1_001": {
+   "cpus": 64,
+   "elapsed_s": 848,
+   "jobid": "60173038.8",
+   "node_h": 0.058888888888888886,
+   "state": "COMPLETED"
+  },
+  "B_S2_001": {
+   "cpus": 64,
+   "elapsed_s": 881,
+   "jobid": "60173038.18",
+   "node_h": 0.06118055555555556,
+   "state": "COMPLETED"
+  },
+  "C_cv": {
+   "cpus": 64,
+   "elapsed_s": 802,
+   "jobid": "60173038.11",
+   "node_h": 0.05569444444444444,
+   "state": "COMPLETED"
+  },
+  "C_unit": {
+   "cpus": 64,
+   "elapsed_s": 830,
+   "jobid": "60173038.10",
+   "node_h": 0.05763888888888889,
+   "state": "COMPLETED"
+  },
+  "D_cv": {
+   "cpus": 64,
+   "elapsed_s": 866,
+   "jobid": "60173038.14",
+   "node_h": 0.06013888888888889,
+   "state": "COMPLETED"
+  },
+  "D_unit": {
+   "cpus": 64,
+   "elapsed_s": 855,
+   "jobid": "60173038.15",
+   "node_h": 0.059375,
+   "state": "COMPLETED"
+  },
+  "FL_BAX0": {
+   "cpus": 128,
+   "elapsed_s": 1625,
+   "jobid": "60173037.3",
+   "node_h": 0.22569444444444445,
+   "state": "COMPLETED"
+  },
+  "FL_BAX0_rep": {
+   "cpus": 128,
+   "elapsed_s": 1678,
+   "jobid": "60173037.6",
+   "node_h": 0.23305555555555554,
+   "state": "COMPLETED"
+  },
+  "F_Flux23": {
+   "cpus": 128,
+   "elapsed_s": 1015,
+   "jobid": "60173037.13",
+   "node_h": 0.14097222222222222,
+   "state": "COMPLETED"
+  },
+  "F_MaCCQE0": {
+   "cpus": 128,
+   "elapsed_s": 1060,
+   "jobid": "60173037.12",
+   "node_h": 0.14722222222222223,
+   "state": "COMPLETED"
+  },
+  "F_MaRES0": {
+   "cpus": 128,
+   "elapsed_s": 1043,
+   "jobid": "60173037.14",
+   "node_h": 0.1448611111111111,
+   "state": "COMPLETED"
+  },
+  "F_NormDISCC0": {
+   "cpus": 128,
+   "elapsed_s": 1150,
+   "jobid": "60173037.5",
+   "node_h": 0.1597222222222222,
+   "state": "COMPLETED"
+  },
+  "L_BAX0": {
+   "cpus": 128,
+   "elapsed_s": 1695,
+   "jobid": "60173037.9",
+   "node_h": 0.23541666666666666,
+   "state": "COMPLETED"
+  },
+  "P_PA": {
+   "cpus": 64,
+   "elapsed_s": 529,
+   "jobid": "60173038.5",
+   "node_h": 0.03673611111111111,
+   "state": "COMPLETED"
+  },
+  "P_PA_b01": {
+   "cpus": 64,
+   "elapsed_s": 562,
+   "jobid": "60173038.0",
+   "node_h": 0.03902777777777778,
+   "state": "COMPLETED"
+  },
+  "P_ctrl": {
+   "cpus": 64,
+   "elapsed_s": 801,
+   "jobid": "60173038.1",
+   "node_h": 0.055625,
+   "state": "COMPLETED"
+  },
+  "RB_001": {
+   "cpus": 64,
+   "elapsed_s": 846,
+   "jobid": "60173038.3",
+   "node_h": 0.05875,
+   "state": "COMPLETED"
+  },
+  "RB_001_rep": {
+   "cpus": 64,
+   "elapsed_s": 811,
+   "jobid": "60173038.6",
+   "node_h": 0.05631944444444444,
+   "state": "COMPLETED"
+  },
+  "RB_002": {
+   "cpus": 64,
+   "elapsed_s": 846,
+   "jobid": "60173038.2",
+   "node_h": 0.05875,
+   "state": "COMPLETED"
+  },
+  "RB_003": {
+   "cpus": 64,
+   "elapsed_s": 796,
+   "jobid": "60173038.7",
+   "node_h": 0.05527777777777778,
+   "state": "COMPLETED"
+  },
+  "RB_004": {
+   "cpus": 64,
+   "elapsed_s": 895,
+   "jobid": "60173038.13",
+   "node_h": 0.06215277777777778,
+   "state": "COMPLETED"
+  },
+  "RB_005": {
+   "cpus": 64,
+   "elapsed_s": 902,
+   "jobid": "60173038.17",
+   "node_h": 0.06263888888888888,
+   "state": "COMPLETED"
+  },
+  "RB_006": {
+   "cpus": 64,
+   "elapsed_s": 920,
+   "jobid": "60173038.21",
+   "node_h": 0.06388888888888888,
+   "state": "COMPLETED"
+  },
+  "RB_007": {
+   "cpus": 64,
+   "elapsed_s": 906,
+   "jobid": "60173038.19",
+   "node_h": 0.06291666666666666,
+   "state": "COMPLETED"
+  },
+  "RB_008": {
+   "cpus": 64,
+   "elapsed_s": 902,
+   "jobid": "60173038.20",
+   "node_h": 0.06263888888888888,
+   "state": "COMPLETED"
+  },
+  "RF_PA": {
+   "cpus": 64,
+   "elapsed_s": 588,
+   "jobid": "60173038.16",
+   "node_h": 0.04083333333333333,
+   "state": "COMPLETED"
+  },
+  "RPR_PA_b01": {
+   "cpus": 64,
+   "elapsed_s": 536,
+   "jobid": "60173038.4",
+   "node_h": 0.03722222222222222,
+   "state": "COMPLETED"
+  },
+  "RP_p1_PA": {
+   "cpus": 64,
+   "elapsed_s": 577,
+   "jobid": "60173038.9",
+   "node_h": 0.04006944444444444,
+   "state": "COMPLETED"
+  },
+  "RP_re2_PA": {
+   "cpus": 64,
+   "elapsed_s": 572,
+   "jobid": "60173038.12",
+   "node_h": 0.03972222222222222,
+   "state": "COMPLETED"
+  },
+  "R_p1_MaCCQE0": {
+   "cpus": 128,
+   "elapsed_s": 1041,
+   "jobid": "60173037.10",
+   "node_h": 0.14458333333333334,
+   "state": "COMPLETED"
+  },
+  "R_re2_MaCCQE0": {
+   "cpus": 128,
+   "elapsed_s": 1012,
+   "jobid": "60173037.11",
+   "node_h": 0.14055555555555554,
+   "state": "COMPLETED"
+  },
+  "U_Flux23": {
+   "cpus": 128,
+   "elapsed_s": 1023,
+   "jobid": "60173037.8",
+   "node_h": 0.14208333333333334,
+   "state": "COMPLETED"
+  },
+  "U_MaCCQE0": {
+   "cpus": 128,
+   "elapsed_s": 1116,
+   "jobid": "60173037.4",
+   "node_h": 0.155,
+   "state": "COMPLETED"
+  },
+  "U_NormDISCC0": {
+   "cpus": 128,
+   "elapsed_s": 1016,
+   "jobid": "60173037.7",
+   "node_h": 0.1411111111111111,
+   "state": "COMPLETED"
+  }
+ },
+ "schema": "re2-j0-units/2",
+ "total_projected": 62.480138888888874,
+ "total_worst": 78.10017361111109,
+ "verdict": "WITHIN GRANT: core + J7"
+}
