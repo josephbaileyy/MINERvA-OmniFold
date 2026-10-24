@@ -1,0 +1,4 @@
+J 0a {'NuWro': (0.709, 0.57), 'GENIE_MEC': (0.466, 1.0), 'GiBUU': (0.485, 0.541)} pooled 0.645 | 0b kappa* 0.411 median u % 7.83 pairs >= 9: 4
+H2 0a {'NuWro': (0.822, 0.747), 'GENIE_MEC': (0.584, 1.0), 'GiBUU': (0.496, 0.259)} pooled 0.697 | 0b kappa* 0.483 median u % 7.45 pairs >= 9: 4
+EW 0a {'NuWro': (0.724, 0.643), 'GENIE_MEC': (0.544, 1.0), 'GiBUU': (0.549, 0.41)} pooled 0.664 | 0b kappa* 0.482 median u % 9.03 pairs >= 9: 4
+VERDICT STOP
