@@ -81,6 +81,7 @@ the fine-grid cross section aggregates onto H2 exactly.
     equals P5 bitwise.
 - **What waits on S1:** C_model,5D and C_abs can be built now. The sum with (e)'s statistical and systematic covariance
   waits for that covariance (S1), because a 5D (e) covariance does not exist yet.
+  <!-- absence-ok: restates the recorded absence at DECISION-20261024-joseph-5d-community-standard-route.md item 5, which S1 re-checks -->
 - **What is committed:** S, the per-cell √diag, the rank and singular values, and the coverage counts of §2.5 go in a
   JSON, as `cmodel_2d.json` does. The npz stays on pscratch, because `*.npz` is ignored in git.
 
@@ -146,6 +147,7 @@ GiBUU's mode on H2 is therefore mostly its J-coarse shape. The J edges do not ne
   - The margin is thin: 5 of the 21 have |bias| between 1.04 % and 1.21 % (cells 4, 7, 16, 23, 24).
   - The bias is fixed, so the count cannot change at the build, and the ρ² fallback (tasks `F`, never run) is not
     needed.
+    <!-- absence-ok: checked 2026-10-24: receipts/SHA256SUMS lists no *_sq product, and the 30 files in the run's products/ on pscratch include none; tasks.tsv puts the fallbacks in job F, which never ran -->
 - **Closure bias on the reported cells:** median 2.0 %, maximum 8.3 %.
 - **Closure floor** (`_closure_tune_v1`): at most 3.2e-5, so the floor is negligible.
 - **If the PC fails,** the build still writes C_model,5D, labelled "positive control failed on H2: not evidence". It
@@ -186,6 +188,7 @@ PV-2D REPORT §5 found the large-shift tail in cells beside a step in r greater 
 - **Per-event weights:** not retained, and not needed.
 - **The ρ² PC fallback for L-5D-PV:** never run. It would take two new unfolds of about the J5 size (J5 was 0.23
   node-h for 5 steps, so this is an *estimate* of ≈ 0.1 node-h). It is not needed, because the PC is powered.
+  <!-- absence-ok: checked 2026-10-24: receipts/SHA256SUMS lists no *_sq product, and the 30 files in the run's products/ on pscratch include none; tasks.tsv puts the fallbacks in job F, which never ran -->
 - **GiBUU above 10 GeV/c:** GiBUU's prediction is defined only below 10 GeV/c (its ratio file's label). No product
   can supply it.
 - **Other cells:** any cells drawn on fine edges can be built from the same products at 0 node-h, provided they are
