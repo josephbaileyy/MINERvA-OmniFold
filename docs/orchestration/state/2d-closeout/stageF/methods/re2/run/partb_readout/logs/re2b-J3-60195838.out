@@ -1,0 +1,12 @@
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root: stat matches the DTN record; no re-hash
+[re2b] /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root: stat matches the DTN record; no re-hash
+[re2b] start 2026-10-24T07:15:21Z job=60195838 JOB=J3 node=nid007007
+[re2b] end 2026-10-24T08:57:32Z rc=0
