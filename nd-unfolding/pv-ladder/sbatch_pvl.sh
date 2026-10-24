@@ -50,7 +50,11 @@ done
 # each step gets an equal share of 95 % of the job's memory, so all of them start at once (steps whose --mem
 # sum exceeds the allocation serialize silently); sacct's step Start times are the check
 MEM=$(( ${SLURM_MEM_PER_NODE:?} * 95 / 100 / ${#LINES[@]} ))
-echo "[pvl] job=$JOB slurm=$SLURM_JOB_ID node=$(hostname) tasks=${#LINES[@]} mem_per_step=${MEM}M start=$(date -u +%FT%TZ)"
+# 42 CPUs per step as RE-1's re1-nd, fewer when more than six steps share the node (LightGBM's num_threads is fixed
+# at 32 by the s5 estimator configuration either way)
+CPS=$(( ${SLURM_CPUS_ON_NODE:?} / ${#LINES[@]} )); [ "$CPS" -gt 42 ] && CPS=42
+[ "$CPS" -ge 32 ] || { echo "[pvl] refusing: $CPS CPUs per step is below LightGBM's 32 threads" >&2; exit 2; }
+echo "[pvl] job=$JOB slurm=$SLURM_JOB_ID node=$(hostname) tasks=${#LINES[@]} mem_per_step=${MEM}M cpus_per_step=$CPS start=$(date -u +%FT%TZ)"
 pids=(); names=()
 for line in "${LINES[@]}"; do
     IFS=$'\t' read -r task rung arm features vertex mode _ _ <<< "$line"
@@ -59,7 +63,7 @@ for line in "${LINES[@]}"; do
           "$V/ratios/$rung/ratios.json" "$vertex") || exit 2
     PROD="$OUT/products/$task.npz"
     extra=(); [ "$mode" = closure ] && extra=(--closure)
-    srun -n1 -c 42 --mem="${MEM}M" --exact --cpu-bind=cores \
+    srun -n1 -c "$CPS" --mem="${MEM}M" --exact --cpu-bind=cores \
         python "$D/nd-unfolding/mnv_guarded_run.py" --expect-root "$D" --inventory "$OUT/inventory/$task.jsonl" \
         --label "pvl:$task" -- "$V/pvl_unfold.py" --rung "$rung" --arm "$arm" --features "$features" \
         --ratio "$RF" --expect-ratio-sha256 "$SHA" "${extra[@]}" \

@@ -299,7 +299,7 @@ class Tasks(unittest.TestCase):
         jobs = {}
         for r in rows:
             jobs.setdefault(r[6], []).append(r[0])
-        self.assertEqual({k: len(v) for k, v in jobs.items()}, {"J1": 6, "J2": 6, "J3": 6, "J4": 6, "J5": 6, "F": 8})
+        self.assertEqual({k: len(v) for k, v in jobs.items()}, {"J1": 7, "J2": 6, "J3": 6, "J4": 6, "J5": 5, "F": 8})
         for r in rows:
             self.assertIn(r[1], L.RUNGS)
             if r[5] == "closure":

@@ -23,12 +23,12 @@ L-EW_e_closure_nuwro	L-EW	e	eavail,W	nuwro	closure	J4	PC closure bias
 L-EW_c_genie_mec	L-EW	c	eavail,W	genie_mec	data	J4	vertex (no PC of its own)
 L-EW_c_nuwro	L-EW	c	eavail,W	nuwro	data	J4	vertex (no PC of its own)
 L-EW_c_gibuu	L-EW	c	eavail,W	gibuu	data	J4	vertex (no PC of its own)
-L-5D-PV_e_tune_v1	L-5D-PV	e	all	tune_v1	data	J5	NC against P5; only if D3 is bound
-L-5D-PV_e_genie_mec	L-5D-PV	e	all	genie_mec	data	J5	vertex; only if D3 is bound
-L-5D-PV_e_nuwro	L-5D-PV	e	all	nuwro	data	J5	vertex; only if D3 is bound
-L-5D-PV_e_gibuu	L-5D-PV	e	all	gibuu	data	J5	vertex; only if D3 is bound
-L-5D-PV_e_closure_tune_v1	L-5D-PV	e	all	tune_v1	closure	J5	PC closure floor; only if D3 is bound
-L-5D-PV_e_closure_nuwro	L-5D-PV	e	all	nuwro	closure	J5	PC closure bias; only if D3 is bound
+L-5D-PV_e_tune_v1	L-5D-PV	e	all	tune_v1	data	J1	NC against P5 (D3, admitted); the zero of L-5D-PV's shifts
+L-5D-PV_e_genie_mec	L-5D-PV	e	all	genie_mec	data	J5	vertex (D3, admitted)
+L-5D-PV_e_nuwro	L-5D-PV	e	all	nuwro	data	J5	vertex (D3, admitted)
+L-5D-PV_e_gibuu	L-5D-PV	e	all	gibuu	data	J5	vertex (D3, admitted)
+L-5D-PV_e_closure_tune_v1	L-5D-PV	e	all	tune_v1	closure	J5	PC closure floor
+L-5D-PV_e_closure_nuwro	L-5D-PV	e	all	nuwro	closure	J5	PC closure bias
 L-3D_e_nuwro_sq	L-3D	e	all	nuwro_sq	data	F	PC fallback, only if that rung's PC is NOT_POWERED
 L-3D_e_closure_nuwro_sq	L-3D	e	all	nuwro_sq	closure	F	PC fallback, only if NOT_POWERED
 L-4D_e_nuwro_sq	L-4D	e	all	nuwro_sq	data	F	PC fallback, only if that rung's PC is NOT_POWERED
