@@ -1,0 +1,18 @@
+[P] 2026-10-23T21:32:34Z start host=login12
+[P] 2026-10-23T21:32:53Z inventory verified: 425 files
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[P] 2026-10-23T21:33:22Z tar 5bd51c146f59356335b5213818ace82dc6d393b4e07a24ced10369a5e5d85f26  /pscratch/sd/j/josephrb/5d-stage0-20261023/stage0-inputs.tar bytes=3303587840
+mkdir: /home/j/josephrb/mnv-5d-stage0-inputs-20261023
+put  '/pscratch/sd/j/josephrb/5d-stage0-20261023/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-inputs.tar' ( 3303587840 bytes, 2035745.6 KBS (cos=5))
+cb72a4b1fb32d75895bc26e0b07b7322 (md5) /home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-inputs.tar
+put  '/pscratch/sd/j/josephrb/5d-stage0-20261023/stage0-inputs.tar.sha256' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-inputs.tar.sha256' ( 127 bytes, 57.9 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/5d-stage0-20261023/tools/INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/INVENTORY.sha256' ( 61796 bytes, 20758.5 KBS (cos=4))
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-inputs.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023:
+-rw-r-----    1 josephrb  josephrb       61796 Oct 23 14:33 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb  3303587840 Oct 23 14:33 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         127 Oct 23 14:33 stage0-inputs.tar.sha256
+get  '/pscratch/sd/j/josephrb/5d-stage0-20261023/retrieve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-inputs.tar' (2026/10/23 14:33:24 3303587840 bytes, 811459.9 KBS )
+[P] 2026-10-23T21:33:57Z PASS: HPSS copy verified by hashverify and by retrieval (5bd51c146f59356335b5213818ace82dc6d393b4e07a24ced10369a5e5d85f26)
