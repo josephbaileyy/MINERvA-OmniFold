@@ -94,8 +94,14 @@ These are the PV-2D construction (`2d-unfolding/pv2d/make_ratios.py`), on each r
   - The binned truth denominator is rescaled cell by cell by the ratio of truth-passing weights, so completeness
     stays the nominal value. This is s5p's `prior_inputs`, `s5p_universe.py:131-147`, after the 2026-09-26 repair.
   - The background, the flux and the data are unchanged.
-  - **A completeness guard** requires the reweighted completeness to equal the nominal one on every cell to 1e-9,
-    as in PV-2D, and the run refuses otherwise.
+  - **Two guards** refuse the run (amended 2026-10-24, before binding):
+    - **r must be constant on each fine cell's truth-passing rows,** to a relative spread of 1e-9. Rescaling a
+      binned denominator by the ratio of truth-passing weights is exact only then. Every declared reweight meets
+      it, since each is constant on the rung's cells, and those cells, and the GiBUU cut at 10 GeV/c, are unions of
+      fine cells.
+    - **The reweighted completeness must equal the nominal one** on every cell to 1e-9, as in PV-2D. With a binned
+      denominator this holds by construction, so here it guards the code, not the physics. In PV-2D's event-level
+      denominator it was a physics check.
 - **Gate tiers** (cells and share of prior weight in own-ratio, coarse and r = 1) are written by the ratio builder
   for every vertex and rung, as the PV-2D binding requires.
 
@@ -123,13 +129,14 @@ L-EW must differ from L-5D-PV only in the classifier's features.
   - `xsec_nd`.
 - **What it adds:**
   - a dimension-generic cell reweight, replacing `s5n_pseudo.truth_weight`, whose maps assume 5D axis positions;
-  - the copied `prior_inputs` with the completeness guard;
+  - the copied `prior_inputs` with the two guards;
   - `--features` (all, or a named subset) for §2.3;
   - a noise-free closure mode (§3.2).
 - **What it drops:** `s5p_universe.check_alignment`, which checks a 5D bank. The input sha256s replace it.
 - **Tests:** numpy-only, run locally, written before the pilot. They cover the reweight on toy cells (edges,
-  outside cells, the GiBUU p_∥ cut, k normalization), the completeness guard firing and staying silent, and the
-  feature restriction leaving the histogramming columns untouched.
+  outside cells, the GiBUU p_∥ cut, k normalization), the r-constancy guard firing and staying silent, the gate
+  reproducing PV-2D's on the (p_T, p_∥) grid, and the feature restriction leaving the histogramming columns
+  untouched.
 
 ## 3. Controls (numeric rules)
 
@@ -174,7 +181,7 @@ L-EW must differ from L-5D-PV only in the classifier's features.
 
 Each product records:
 - its input sha256s, the ratio file's sha256, the code sha256s, the estimator parameters as built (the s5 factory
-  checks), the refinement evidence, and the completeness guard's value;
+  checks), the refinement evidence, and both guards' values;
 - the job id;
 - the features used.
 
