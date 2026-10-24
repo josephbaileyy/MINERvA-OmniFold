@@ -134,45 +134,114 @@ class ValuesEngine(unittest.TestCase):
         self.assertNotIn("refined_rendered", r["m"])
 
 
-class ValuesSpecRefinedLayout(unittest.TestCase):
-    """Every row of the committed spec resolves in the refined layout (the review's B1): a stand-in refined tree is
-    built from the purity sources at their refined paths, plus synthetic records for the two refined-only sources
-    (re2c_numbers.py's and re2c_cmodel.py's), and the engine must regenerate every row that passes its control."""
+S2_ROW = 's2-bkg-share\tN/sec_systematics.tex:101\t0.26\ts5_json\tnumbers.bkg_separable.sigma_bkg_over_sigma_stat_median\tv\t.2f\tS5_prose\tS2 separable background term, median sigma_bkg/sigma_stat (0.263)\t\n'   # the row that stopped the bound run (RE2-BINDING-C amendment 1)
 
-    def test_every_row_has_a_refined_source(self):
-        import csv
-        import gzip
-        import shutil
-        V = load("re2c_values")
-        rows = list(csv.DictReader(open(HERE / "re2c_values_spec.tsv"), delimiter="\t"))
-        d = Path(tempfile.mkdtemp())
-        for key, (pur, ref) in V.SOURCES.items():
-            if pur and ref:
-                dst = d / ref
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                if pur.endswith(".gz") and not ref.endswith(".gz"):
-                    dst.write_bytes(gzip.open(REPO / pur).read())
-                else:
-                    shutil.copy(REPO / pur, dst)
-        synth = {}
-        for r in rows:
-            src, path = V.arm_of(r["source"], "refined"), V.arm_of(r["path"], "refined")
-            self.assertIsNotNone(V.SOURCES[src][1], f"{r['id']}: source {src} has no refined file")
-            if V.SOURCES[src][0] is None:
-                cur = synth.setdefault(src, {})
-                parts = path.split(".")
-                for q in parts[:-1]:
-                    cur = cur.setdefault(q, {})
-                cur[parts[-1]] = 1.0
-        for src, doc in synth.items():
-            f = d / V.SOURCES[src][1]
-            f.parent.mkdir(parents=True, exist_ok=True)
+
+def synth(sk):
+    """A JSON value with the skeleton sk (re2c_refined_schema.schema): numbers 1.0, the recorded strings verbatim."""
+    if isinstance(sk, dict):
+        if set(sk) == {"__list__"}:
+            return [synth(x) for x in sk["__list__"]]
+        return {k: synth(x) for k, x in sk.items()}
+    return {"number": 1.0, "bool": True, "null": None, "string": "s"}.get(sk, sk[len("string:"):] if
+                                                                         str(sk).startswith("string:") else sk)
+
+
+def unresolved(spec):
+    """Rows of `spec` that do not regenerate in a stand-in refined tree built from the committed key-schema fixture
+    of a real refined run (fixtures/refined_schema.json). The tree's schema must equal the fixture's."""
+    import gzip
+    import shutil
+    S = load("re2c_refined_schema")
+    V = load("re2c_values")
+    fx = json.loads((HERE / "fixtures" / "refined_schema.json").read_text())["sources"]
+    d = Path(tempfile.mkdtemp())
+    for key, rec in fx.items():
+        f = d / rec["file"]
+        f.parent.mkdir(parents=True, exist_ok=True)
+        if rec["kind"] == "json":
+            doc = synth(rec["schema"])
+            assert S.schema(doc) == rec["schema"], f"{key}: the stand-in's schema differs from the fixture's"
             f.write_text(json.dumps(doc))
-        rc = V.main(["--repo", str(REPO), "--spec", str(HERE / "re2c_values_spec.tsv"), "--refined-dir", str(d),
-                     "--out-tsv", str(d / "t.tsv"), "--out-json", str(d / "t.json")])
-        out = json.loads((d / "t.json").read_text())["rows"]
-        self.assertEqual([r["id"] for r in out if r.get("refined_error")], [])
-        self.assertEqual(rc, 0)
+        else:
+            assert S.mask(rec["template"]) == rec["template"], f"{key}: the template still holds values"
+            f.write_text(rec["template"])
+    assert {k for k, (_, ref) in V.SOURCES.items() if ref} == set(fx), "a refined source has no schema fixture"
+    rc = V.main(["--repo", str(REPO), "--spec", str(spec), "--refined-dir", str(d),
+                 "--out-tsv", str(d / "t.tsv"), "--out-json", str(d / "t.json")])
+    rows = json.loads((d / "t.json").read_text())["rows"]
+    shutil.rmtree(d)
+    return rc, sorted(r["id"] for r in rows if r.get("refined_error"))
+
+
+class ValuesSpecRefinedSchema(unittest.TestCase):
+    """Every spec row resolves against the refined records' real key schema (amendment 1, condition 1), and the
+    row that stopped the bound run is caught (the mutation)."""
+
+    def test_every_row_resolves_against_the_real_refined_schema(self):
+        self.assertEqual(unresolved(HERE / "re2c_values_spec.tsv"), (0, []))
+
+    def test_mutation_restoring_the_s2_row_fails(self):
+        spec = Path(tempfile.mkdtemp()) / "spec.tsv"
+        spec.write_text((HERE / "re2c_values_spec.tsv").read_text() + S2_ROW)
+        rc, bad = unresolved(spec)
+        self.assertEqual((rc, bad), (3, ["s2-bkg-share"]))
+
+    def test_the_moved_row_is_listed_for_integration(self):
+        self.assertIn("N/sec_systematics.tex:101\t0.26\t", (HERE / "re2c_values_unmatched.tsv").read_text())
+
+
+class DeterminismStop(unittest.TestCase):
+    """re2c_determinism.py (amendment 1, condition 2): it passes on runs that differ only in their recorded paths,
+    and fails on a changed byte or a one-sided product."""
+
+    def make(self, root, ns, extra=None):
+        root = Path(root)
+        (root / "s5").mkdir(parents=True)
+        (root / "logs").mkdir()
+        (root / "s5" / "s5.json").write_text(json.dumps({"out": f"/b/{ns}/s5", "x": 1.5}))
+        (root / "s5" / "a.root").write_bytes(os.urandom(8))
+        (root / "logs" / "steps.tsv").write_text(str(os.urandom(4)))
+        for k, v in (extra or {}).items():
+            (root / k).write_text(v)
+        return root
+
+    def run_det(self, s, r):
+        D = load("re2c_determinism")
+        out = Path(tempfile.mkdtemp()) / "d.json"
+        rc = D.main(["--stopped", str(s), "--rerun", str(r), "--path-pair", "/b/partc-r2/=/b/partc/", "--out", str(out)])
+        return rc, json.loads(out.read_text())
+
+    def test_equal_up_to_paths_passes(self):
+        t = Path(tempfile.mkdtemp())
+        rc, res = self.run_det(self.make(t / "s", "partc"), self.make(t / "r", "partc-r2", {"chain.json": "{}"}))
+        self.assertEqual((rc, res["compared"], res["equal"]), (0, 1, 1))
+
+    def test_runs_differing_only_in_their_mkdtemp_name_and_run_context_pass(self):
+        t = Path(tempfile.mkdtemp())
+        s = self.make(t / "s", "partc")
+        r = self.make(t / "r", "partc-r2")
+        for root, tmpname, host in ((s, "tmpAAAA1111", "login12"), (r, "tmpBBBB2222", "login05")):
+            (root / "periods_ns" / "tmp" / tmpname).mkdir(parents=True)
+            (root / "periods_ns" / "tmp" / tmpname / "id.json").write_text(json.dumps({"n": str(root)}))
+            (root / "receipts").mkdir()
+            (root / "receipts" / "receipt_model_chi2.json").write_text(json.dumps(
+                {"generated_utc": str(os.urandom(4)), "host": host, "chi2": 2.5}))
+        rc, res = self.run_det(s, r)
+        self.assertEqual((rc, res["only_stopped"], res["only_rerun"]), (0, [], []))
+        (r / "receipts" / "receipt_model_chi2.json").write_text(json.dumps(
+            {"generated_utc": "x", "host": "y", "chi2": 2.6}))
+        self.assertEqual(self.run_det(s, r)[0], 1, "a changed value beside the excluded fields must still fail")
+
+    def test_a_changed_byte_or_a_one_sided_product_fails(self):
+        t = Path(tempfile.mkdtemp())
+        s = self.make(t / "s", "partc")
+        r = self.make(t / "r", "partc-r2")
+        (r / "s5" / "s5.json").write_text(json.dumps({"out": "/b/partc-r2/s5", "x": 1.6}))
+        self.assertEqual(self.run_det(s, r)[0], 1)
+        t2 = Path(tempfile.mkdtemp())
+        rc, res = self.run_det(self.make(t2 / "s", "partc"), self.make(t2 / "r", "partc-r2", {"new.npz": "x"}))
+        self.assertEqual((rc, res["only_rerun"]), (1, ["new.npz"]))
 
 
 class PeriodModeGuard(unittest.TestCase):

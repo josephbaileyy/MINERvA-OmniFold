@@ -1,0 +1,2 @@
+{"rows": 251, "unexpected": 1, "control_pass": 242, "new_products": 8, "changes": 199, "refined": true, "declared_fails": 1}
+UNEXPECTED s2-bkg-share N/sec_systematics.tex:101 control PASS 0.26  "no key 'sigma_bkg_over_sigma_stat_median' in path 'numbers.bkg_separable.sigma_bkg_over_sigma_stat_median'"

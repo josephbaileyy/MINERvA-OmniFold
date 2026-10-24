@@ -1,0 +1,159 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "checks": {
+  "s5_total_equals_universe_stat_c08": 0.0,
+  "s5_total_symmetry_rel": 6.603699288752401e-17,
+  "s5_total_min_eig_over_max": 1.2678531654198015e-12,
+  "cells_npz_equal_work_cov": true,
+  "cells_work_cov_equal_E_U_nonzero": true,
+  "cells_x_s5_vs_playlist_rel": 0.0,
+  "cells_x_playlist_vs_work_cov_rel": 0.0,
+  "functionals_s5_vs_playlist_rel": 0.0,
+  "area_s5_vs_playlist_rel": 0.0,
+  "r_npz_vs_reloaded_rel": 0.0,
+  "C_PL_rebuilt_rel": 0.0,
+  "combined_symmetry_rel": 6.443576809518642e-17,
+  "combined_min_eig_over_max": 1.1870898408180931e-12,
+  "control_chi2": {
+   "b_PB_dr": {
+    "pz_vs_VL175": {
+     "value": 33.455822744161836,
+     "committed": 33.455822744161836,
+     "rel": 0.0
+    },
+    "pz_vs_VL175_plus_C_PL": {
+     "value": 0.6764585844972026,
+     "committed": 0.6764585844972026,
+     "rel": 0.0
+    }
+   },
+   "bias_PB_raw_frozen": {
+    "pz_vs_VL175": {
+     "value": 34.42079993125393,
+     "committed": 34.42079993125393,
+     "rel": 0.0
+    },
+    "pz_vs_VL175_plus_C_PL": {
+     "value": 1.9946164336258378,
+     "committed": 1.9946164336258378,
+     "rel": 0.0
+    }
+   }
+  }
+ },
+ "budget_cells": {
+  "VL175": {
+   "median": 6.057057771683794,
+   "p84": 9.102800417365943,
+   "max": 23.423805914412746
+  },
+  "S5_universe": {
+   "median": 5.934565727823822,
+   "p84": 8.215602989539498,
+   "max": 22.54199043694011
+  },
+  "S5_stat": {
+   "median": 0.6763759339885327,
+   "p84": 1.6024180809372548,
+   "max": 18.049629370777417
+  },
+  "S5_c08": {
+   "median": 0.04761688936182081,
+   "p84": 0.11320178756581122,
+   "max": 0.6131190361120964
+  },
+  "S5_total": {
+   "median": 5.982621827700267,
+   "p84": 8.672788519055736,
+   "max": 23.309004041001973
+  },
+  "C_PL": {
+   "median": 2.086517580693274,
+   "p84": 3.3389563202938413,
+   "max": 6.475972067566826
+  },
+  "S5_total_plus_C_PL": {
+   "median": 6.413665927768751,
+   "p84": 8.970898124576193,
+   "max": 23.631041684707828
+  }
+ },
+ "integral": {
+  "VL175": 4.236250590124154,
+  "S5_universe": 4.331998707434343,
+  "S5_stat": 0.06062769652712205,
+  "S5_c08": 0.0010418210288532755,
+  "S5_total": 4.332423063851228,
+  "C_PL": 1.96973095562161,
+  "S5_total_plus_C_PL": 4.759173209888885
+ },
+ "effect": {
+  "cell_sigma_increase_pct": {
+   "median": 5.7904174227831895,
+   "max": 39.10694954555589
+  },
+  "integral_sigma_increase_pct": 9.850149437121347,
+  "functional_sigma_increase_pct_max": 20.65589185827996,
+  "block_share_of_cell_variance_median": 0.10647370315633531,
+  "block_share_of_integral_variance": 0.1712974105609978
+ },
+ "chi2": {
+  "b_PB_dr": {
+   "pz_vs_VL175": 33.455822744161836,
+   "pz_vs_VL175_plus_C_PL": 0.6764585844972026,
+   "pz_vs_S5": 32.164806527374914,
+   "pz_vs_S5_plus_C_PL": 0.6803054852617358,
+   "pt_vs_VL175": 2.8208069533506297,
+   "pt_vs_VL175_plus_C_PL": 0.5598142668728205,
+   "pt_vs_S5": 2.4568606998928906,
+   "pt_vs_S5_plus_C_PL": 0.5399686599173922,
+   "first_order_in_span_bound": 0.6833378267038563
+  },
+  "b_PC_dr": {
+   "pz_vs_VL175": 2.861190791848504,
+   "pz_vs_VL175_plus_C_PL": 0.30582575757993774,
+   "pz_vs_S5": 3.8701269671397687,
+   "pz_vs_S5_plus_C_PL": 0.31561582679066524,
+   "pt_vs_VL175": 0.877448077513812,
+   "pt_vs_VL175_plus_C_PL": 0.25123891450858354,
+   "pt_vs_S5": 0.8981436000643211,
+   "pt_vs_S5_plus_C_PL": 0.2538008518335958,
+   "first_order_in_span_bound": 0.3401730842186354
+  },
+  "bias_PB_raw_frozen": {
+   "pz_vs_VL175": 34.42079993125393,
+   "pz_vs_VL175_plus_C_PL": 1.9946164336258378,
+   "pz_vs_S5": 34.77811249680186,
+   "pz_vs_S5_plus_C_PL": 2.592399460174356,
+   "pt_vs_VL175": 1.724663656133951,
+   "pt_vs_VL175_plus_C_PL": 0.49660486557302624,
+   "pt_vs_S5": 1.982841177048113,
+   "pt_vs_S5_plus_C_PL": 0.5643816087331868,
+   "first_order_in_span_bound": null
+  },
+  "bias_PC_raw_frozen": {
+   "pz_vs_VL175": 2.490423599918435,
+   "pz_vs_VL175_plus_C_PL": 0.38963451717194486,
+   "pz_vs_S5": 3.4978257566859927,
+   "pz_vs_S5_plus_C_PL": 0.4452664117006209,
+   "pt_vs_VL175": 0.6584134584220058,
+   "pt_vs_VL175_plus_C_PL": 0.2134908738428637,
+   "pt_vs_S5": 0.6324220930018254,
+   "pt_vs_S5_plus_C_PL": 0.20947597571278398,
+   "first_order_in_span_bound": null
+  },
+  "note": "no pass/fail and no coverage reading for any row (DESIGN section 4): the dr vectors lie in C_PL's span to first order, so their chi2 against any total that includes C_PL is bounded by an e-only constant whatever the data. The raw rows are mostly out of span: informative as a sensitivity only, and they include the MC-predicted flux difference DESIGN section 2 calls legitimate. The 'vs S5' and 'vs VL175' columns differ by the whole recipe change, not only by C_PL."
+ },
+ "npz": {
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc/combination/s5_plus_playlist.npz",
+  "sha256": "b57d6c96fb143952f82f6466c36f017ad17327983618f837eff97364c8c33440"
+ }
+}
