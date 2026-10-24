@@ -1,0 +1,79 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "schema": "re2c-numbers/1",
+ "arm": "refined",
+ "threeD_p3_vs_central": {
+  "total_change_percent": 0.14104386693529758,
+  "median_ratio": 1.0009952150401977,
+  "n_cells": 205,
+  "sd_ratio": 0.03718581582845556,
+  "mean_ratio": 1.0063373411545278
+ },
+ "learner_vs_E_C_pct": {
+  "median_abs": 1.0349577246809738,
+  "max_abs": 17.582925810341564
+ },
+ "E_R_minus_E_U_in_Q_R_sigma": {
+  "abs_median": 0.06048044023812139,
+  "abs_p84": 0.14063365927588653,
+  "abs_max": 0.47849410419492655,
+  "mean_signed": -0.008283419313666529
+ },
+ "E_R_vs_E_U": {
+  "integral_change_pct": -0.13943564393331664,
+  "median_abs_pct": 0.44020924376078074,
+  "max_abs_pct": 10.12838266634456
+ },
+ "block_rel_sigma_ratio_refined_over_purity": {
+  "Q": {
+   "p16": 0.9482200028718657,
+   "median": 0.9924511309687268,
+   "p84": 1.0211034376475252,
+   "min": 0.7276791599070899,
+   "max": 1.1589322890528888
+  },
+  "s5_total": {
+   "p16": 0.9475394617300434,
+   "median": 0.9905852002369397,
+   "p84": 1.0247073472759487,
+   "min": 0.7294271644576666,
+   "max": 1.1567136301476089
+  },
+  "universe": {
+   "p16": 0.9468975541467602,
+   "median": 0.9901302466896013,
+   "p84": 1.0242627441913368,
+   "min": 0.6813593425202024,
+   "max": 1.1615188851786522
+  },
+  "stat": {
+   "p16": 0.9559868256990949,
+   "median": 1.0007563418503085,
+   "p84": 1.0437648951731309,
+   "min": 0.6757353751073498,
+   "max": 1.1538249395015712
+  },
+  "c08": {
+   "p16": 0.4848642146925773,
+   "median": 0.865174114992751,
+   "p84": 1.8035488908006883,
+   "min": 0.11970011126318998,
+   "max": 5.52918326829354
+  },
+  "C_PL": {
+   "p16": 0.8722023853767008,
+   "median": 0.9975769006279179,
+   "p84": 1.090090544215955,
+   "min": 0.4917241650947391,
+   "max": 2.5052275486787083
+  }
+ }
+}

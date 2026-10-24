@@ -1,0 +1,406 @@
+{
+ "design": "docs/orchestration/state/2d-closeout/playlist-term/DESIGN.md",
+ "inputs": {
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+   "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
+  },
+  "work_cov": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/work_cov/work_cov.npz",
+   "sha256": "00a05fefa67f787786fa2f2bf0de54fec9d1d149af8c099c3bbaef8c7efc9f34"
+  },
+  "analysis_json": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/periods/analysis.json",
+   "sha256": "2ce5d5dab3e566590504ba0f186a90b0334e7e691dbda011403fc99a8c8d92cd"
+  },
+  "scripts": {
+   "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/re2/partc/re2c_analyze_periods.py": "708cfc2fec29b80019bebbf84cc3a354aff02031f1669904fae680ede21c8a59",
+   "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/re2/partc/re2c_periods.py": "19f2c3934f93a34cc7d20202f83152421bdb0db044380bd8601216bcdb95dd9f",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/repo/docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/scripts/common.py": "dcb78c52f8a11c581942bb1887da29e435c10dfa288125df700789bd331c56a1"
+  }
+ },
+ "runs": {
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_CTRL_s42/xsec.root": "a6d3a69119aba5636401371d9f119b30a8be9da154f85ac90b25d0bc41507a8a",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_s42/xsec.root": "c2fb12944635294777030c98fd97503b8016be8c89b16ec70b5cadd0cec84131",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_s43/xsec.root": "4515dd3bc1ac8b3b37821bc7a69f823428c8202b3d5b946d97345b5818a5e3a5",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b01/xsec.root": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b02/xsec.root": "c555a4a22c62966dcf6de2f3dff497e9033e13b97cdc3d7d7907006ea7ddb5c6",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b03/xsec.root": "f927a3e66aa13394fe802faf3c73fccbda7c88830d3dd420e3f9822d9e960d95",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b04/xsec.root": "ae68f5c44f072724f61f3aed47a43a21ad636f263c4f564917288db06478ebda",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b05/xsec.root": "107de3388d522f462d28d7e722acd8ff1691a225c207200ac6f332dcf57d4718",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b06/xsec.root": "24f00a80343adfe58d1c1a2fd35749e48cdb5893fe2c0fdf0542a10817dcee80",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b07/xsec.root": "5c9c9adebe1205f0268569d76f881ad3e31155048daebd3c1f0f58b4592b1ce8",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b08/xsec.root": "7f442829abff9922e6cc08f0572c7bd742be2f0d272cfe641a3f7edcb8b71564",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b09/xsec.root": "575ace0ad5e441bffeaa2f881a09dc3e3867de4178e5005fe6a3f64ad874ca3a",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b10/xsec.root": "029ebe4ab60908bc7898d70511fd643c85e19103d4d242838e903d993fc10a82",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_s42/xsec.root": "356b1293a227b318f552faf725e25796ef77fdc4fed301684f2844dfb74d24dc",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_s43/xsec.root": "2f1b82322818d589579addcc50367e4bcf3ba9b370f6caef49339379bad9ecf1",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b01/xsec.root": "34fe5c49f28a9a7e907c363a7995f7fb4c3a13707ce568409a1f02a1ea5b1ac8",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b02/xsec.root": "35c3753b0d66b8e86e3cbdf226fb205af56ae0d5f3156a9f2dac64ba5b7f9d04",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b03/xsec.root": "7a43976fc2bd25f32744ba81d0d843b335eed76d8d71cee83d4dd26ccd9b5aac",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b04/xsec.root": "ca1fa2db02eaad43cfd1cc5b97011a9b0a34e7db0ff5e991c0311e636ce724cd",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b05/xsec.root": "bc975f6efe9f0dc1f6e0a85e4b202d491241ea188177b0249e87739e35044cf7",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b06/xsec.root": "18c53b300133322cb4897267f39bf5ae158aeef4e30c1c45b500f03086acc23d",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b07/xsec.root": "338af18f283a42267c65862d2c9e0d9d9ab5b430dcad42cb31ece182eb409bbf",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b08/xsec.root": "ff5e678a848e40bc2a146ec905f76e1e7ab7c1e8f6c859991caf93b008b88b42",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b09/xsec.root": "98986966d2056047b9d1a9687e941a5e679003a23b8ee30874071fe64f4247f9",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b10/xsec.root": "914b755cafa9a4afa9fdbf6abdeb199b64841ffcbf84e304a1bf927459ee75c0",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_s42/xsec.root": "ea4a4d16cfc66170b37933a883cef3c905f685f5234c11d9ef0854a8439c7cbc",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_s43/xsec.root": "0ca364aa2a1789b85fcce7bc09873558671491428f61d3c5b98177300df09896",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b01/xsec.root": "c3eb171cc83aca648dbc569e6a4eaeddec4d1f50fc61b628f137b9bafbcde522",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b02/xsec.root": "28f52d118f61717e57c5ee57d9ecda719139c2017ce8d72d880b9a5f0ba90d78",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b03/xsec.root": "32c3186f9da97eff9686fd7ced01350ab27a3e6c6f57acb3738d42ec66903ed5",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b04/xsec.root": "b079a3316c6e56b031110dbb82a2cbf30322d67fbb6f4e819ee1cacf3c0991d5",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b05/xsec.root": "290c6a2bc7f58705f5d45b7ff6cf94ad43e5dfee61c7bdc0381439c280d6a737",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b06/xsec.root": "2e47fef20e0e7c770c952a00ab8966e07191b000b93250885e82cdaeca39468e",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b07/xsec.root": "dbcf7781cab3ce41565b2c0accfbc955bf9dc1025c85a44541e3f22a3ef1f8e8",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b08/xsec.root": "cb0dddcc40d8fe12cdae1d95353a1d3a6db6556f42ae9e38b3c09a91a9b5346f",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b09/xsec.root": "284109be1f37542ffec5d3418b24917e7f7b1c62087ee59a69213c61c3fca989",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b10/xsec.root": "fe61b6f9194acf6ce000f1931e10749d2d7eef064b8d72bac7cabd830e52e8f2"
+ },
+ "checks": {
+  "grid_equals_E_U_axes": true,
+  "x_vs_E_U_rel": 0.0,
+  "control_dr_step": {
+   "value": 0.06888084964241115,
+   "frozen": 0.06888084964241115,
+   "rel": 0.0
+  },
+  "control_bias_PB_chi2_pz": {
+   "value": 34.42079993125393,
+   "frozen": 34.42079993125393,
+   "rel": 0.0
+  },
+  "identity_sum_e_g": 2.992397996059992e-16,
+  "symmetry_rel": 0.0,
+  "min_eig_over_max": -4.951492677900627e-16,
+  "rank": 2,
+  "functionals_from_vectors_rel": 4.454936432475757e-16,
+  "functionals_projected_estimator_rel": 5.568670540594696e-16
+ },
+ "checks_passed": true,
+ "report": {
+  "C_PL": {
+   "cell_rel_sigma_pct": {
+    "median": 2.086517580693274,
+    "p84": 3.3389563202938413,
+    "max": 6.475972067566826
+   },
+   "integral_rel_sigma_pct": 1.96973095562161,
+   "pt_rel_sigma_pct": [
+    2.214,
+    1.1756,
+    1.5847,
+    1.5157,
+    1.7746,
+    2.1765,
+    2.0021,
+    2.0126,
+    1.8479,
+    2.0043,
+    2.2087,
+    2.434,
+    1.9288,
+    2.5918
+   ],
+   "pz_rel_sigma_pct": [
+    1.7582,
+    1.3397,
+    1.6836,
+    1.6795,
+    1.8362,
+    1.9637,
+    1.9843,
+    2.7425,
+    3.362,
+    3.253,
+    2.3431,
+    2.6657,
+    1.8341,
+    1.7244,
+    1.7234,
+    1.1748
+   ],
+   "median_sigma_ratio_to_VL175": 0.34545861985800885
+  },
+  "S_ref": {
+   "cell_rel_sigma_pct": {
+    "median": 1.379518108216798,
+    "p84": 2.164491178239105,
+    "max": 5.966411680564628
+   },
+   "integral_rel_sigma_pct": 1.0937702453806164,
+   "pt_rel_sigma_pct": [
+    1.317,
+    0.6496,
+    0.8729,
+    0.8471,
+    0.9606,
+    1.2009,
+    1.1622,
+    1.1464,
+    1.0178,
+    1.1243,
+    1.2521,
+    1.3262,
+    1.0417,
+    1.6696
+   ],
+   "pz_rel_sigma_pct": [
+    1.3297,
+    0.7232,
+    0.9321,
+    0.9564,
+    1.0963,
+    1.2791,
+    1.23,
+    1.5893,
+    1.9572,
+    1.7987,
+    1.5267,
+    2.2671,
+    1.4642,
+    1.1231,
+    1.0272,
+    0.8449
+   ],
+   "median_sigma_ratio_to_VL175": 0.21054667974613886
+  },
+  "S_raw": {
+   "cell_rel_sigma_pct": {
+    "median": 2.462812289057589,
+    "p84": 3.9473542897739784,
+    "max": 12.007991888141783
+   },
+   "integral_rel_sigma_pct": 1.9909930111773457,
+   "pt_rel_sigma_pct": [
+    2.5233,
+    1.4837,
+    1.8919,
+    1.7591,
+    2.0339,
+    2.3392,
+    2.0846,
+    2.0342,
+    1.9601,
+    1.9152,
+    1.9606,
+    2.3431,
+    2.2073,
+    3.1427
+   ],
+   "pz_rel_sigma_pct": [
+    2.1477,
+    1.7935,
+    2.0093,
+    1.9891,
+    2.0867,
+    2.0304,
+    1.9526,
+    2.4865,
+    2.7057,
+    2.9403,
+    4.0007,
+    4.438,
+    2.4342,
+    2.0583,
+    2.3183,
+    2.0228
+   ],
+   "median_sigma_ratio_to_VL175": 0.39577078320387904
+  },
+  "S_ref_raw": {
+   "cell_rel_sigma_pct": {
+    "median": 1.5375262581537927,
+    "p84": 2.896304246604687,
+    "max": 9.831478512286289
+   },
+   "integral_rel_sigma_pct": 1.0825127168289426,
+   "pt_rel_sigma_pct": [
+    1.4052,
+    0.8365,
+    1.0285,
+    0.9524,
+    1.0995,
+    1.2813,
+    1.1494,
+    1.1053,
+    1.0699,
+    1.0484,
+    1.1026,
+    1.4511,
+    1.4126,
+    2.2439
+   ],
+   "pz_rel_sigma_pct": [
+    1.5511,
+    0.9772,
+    1.0936,
+    1.1223,
+    1.2105,
+    1.2421,
+    1.1183,
+    1.3507,
+    1.4778,
+    1.9472,
+    3.4535,
+    3.9755,
+    2.0038,
+    1.4493,
+    1.7202,
+    1.6308
+   ],
+   "median_sigma_ratio_to_VL175": 0.26148413732948206
+  },
+  "k_factor": 0.6690575980384477,
+  "exposure_share": {
+   "PA": 0.5333794294273275,
+   "PB": 0.2945414379385886,
+   "PC": 0.172079132634084
+  },
+  "exposure_share_constant_over_cells": true,
+  "noise_share": {
+   "boot": {
+    "median_cell_variance_share": 0.0856987631735397,
+    "median_pz_marginal_variance_share": 0.020293169744163692
+   },
+   "seed": {
+    "median_cell_variance_share": 0.0022562697691977996,
+    "median_pz_marginal_variance_share": 0.0002755175618781962
+   },
+   "total": {
+    "median_cell_variance_share": 0.08776587685267272,
+    "median_pz_marginal_variance_share": 0.02056868730604189
+   },
+   "n_boot": 10
+  },
+  "reference_scenario_algebraic": {
+   "b_PB_dr": {
+    "pz_vs_VL175": 33.455822744161836,
+    "pz_vs_VL175_plus_C_PL": 0.6764585844972026,
+    "pt_vs_VL175": 2.8208069533506297,
+    "pt_vs_VL175_plus_C_PL": 0.5598142668728205,
+    "out_of_span": {
+     "euclid": 0.007119311944394434,
+     "pz_vl175_chi2_fraction": 0.000631178482070614
+    },
+    "first_order_in_span_bound": 0.6833378267038563
+   },
+   "b_PC_dr": {
+    "pz_vs_VL175": 2.861190791848504,
+    "pz_vs_VL175_plus_C_PL": 0.30582575757993774,
+    "pt_vs_VL175": 0.877448077513812,
+    "pt_vs_VL175_plus_C_PL": 0.25123891450858354,
+    "out_of_span": {
+     "euclid": 0.005228696936333445,
+     "pz_vl175_chi2_fraction": 0.0006359828885466118
+    },
+    "first_order_in_span_bound": 0.3401730842186354
+   },
+   "bias_PB_raw_frozen": {
+    "pz_vs_VL175": 34.42079993125393,
+    "pz_vs_VL175_plus_C_PL": 1.9946164336258378,
+    "pt_vs_VL175": 1.724663656133951,
+    "pt_vs_VL175_plus_C_PL": 0.49660486557302624,
+    "out_of_span": {
+     "euclid": 0.4625072222242799,
+     "pz_vl175_chi2_fraction": 0.057311511798645846
+    },
+    "first_order_in_span_bound": null
+   },
+   "bias_PC_raw_frozen": {
+    "pz_vs_VL175": 2.490423599918435,
+    "pz_vs_VL175_plus_C_PL": 0.38963451717194486,
+    "pt_vs_VL175": 0.6584134584220058,
+    "pt_vs_VL175_plus_C_PL": 0.2134908738428637,
+    "out_of_span": {
+     "euclid": 0.1325628928208048,
+     "pz_vl175_chi2_fraction": 0.476884484794289
+    },
+    "first_order_in_span_bound": null
+   },
+   "note": "no pass/fail: the dr vectors lie in C_PL's span to first order, so their chi2 against VL175 + C_PL is bounded by an e-only constant whatever the data (DESIGN \u00a74, \u00a76 item 1)"
+  },
+  "eigenmodes": [
+   {
+    "eigenvalue": 6.187403804555616e-79,
+    "pz_marginal_rel_pct": [
+     1.4312,
+     1.2636,
+     1.4677,
+     1.6768,
+     1.8323,
+     1.9005,
+     1.9637,
+     2.7424,
+     3.362,
+     3.2105,
+     1.4866,
+     0.0898,
+     0.3947,
+     1.0792,
+     1.3097,
+     0.5426
+    ],
+    "pt_marginal_rel_pct": [
+     1.705,
+     1.0234,
+     1.5628,
+     1.507,
+     1.7127,
+     2.1481,
+     2.0021,
+     2.0098,
+     1.8235,
+     1.9964,
+     2.2046,
+     2.3762,
+     1.8116,
+     1.6915
+    ]
+   },
+   {
+    "eigenvalue": 7.241944253709442e-80,
+    "pz_marginal_rel_pct": [
+     -1.0212,
+     0.4453,
+     0.8248,
+     0.094,
+     -0.1194,
+     -0.4941,
+     -0.2857,
+     0.0304,
+     -0.0068,
+     0.5237,
+     1.8112,
+     2.6641,
+     1.7911,
+     1.345,
+     1.1201,
+     1.042
+    ],
+    "pt_marginal_rel_pct": [
+     1.4123,
+     0.5785,
+     0.2625,
+     0.1628,
+     0.4645,
+     0.3509,
+     0.006,
+     0.1051,
+     0.2994,
+     0.1778,
+     0.1349,
+     0.5274,
+     0.6622,
+     1.9637
+    ]
+   }
+  ]
+ },
+ "npz": {
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/playlist/playlist_term.npz",
+  "sha256": "dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e"
+ },
+ "arm": "refined"
+}

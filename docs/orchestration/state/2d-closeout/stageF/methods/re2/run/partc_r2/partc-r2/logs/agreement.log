@@ -1,0 +1,21 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[mask] reported bins = 205 / 224  (positive StatOnlyCovariance diagonal)
+[ratio] denominator: 205 of 205 reported bins (0 excluded for non-positive paper value)
+[ratio] median per-bin ratio (ours/paper) = 1.0054
+[ratio] within  5 % : 178/205 = 86.8 %
+[ratio] within 10 % : 195/205 = 95.1 %
+[ratio] within 20 % : 203/205 = 99.0 %
+[bare  ] ours=3.7177e-37  paper=3.6892e-37  (NOT cross sections)
+[integ ] ours  all=3.0687e-38  reported=3.0687e-38
+[integ ] paper all=3.0390e-38  reported=3.0390e-38
+[integ ] ratio (reported) = 1.0098   bare-sum ratio = 1.0077
+[receipt] wrote /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/receipts/RECEIPT-agreement-windows.json

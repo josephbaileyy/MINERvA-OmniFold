@@ -1,0 +1,96 @@
+{
+ "E_R_minus_E_U_in_Q_R_sigma": {
+  "abs_max": 0.47849410419492655,
+  "abs_median": 0.06048044023812139,
+  "abs_p84": 0.14063365927588653,
+  "mean_signed": -0.008283419313666529
+ },
+ "E_R_vs_E_U": {
+  "integral_change_pct": -0.13943564393331664,
+  "max_abs_pct": 10.12838266634456,
+  "median_abs_pct": 0.44020924376078074
+ },
+ "arm": "refined",
+ "block_rel_sigma_ratio_refined_over_purity": {
+  "C_PL": {
+   "max": 2.5052275486787083,
+   "median": 0.9975769006279179,
+   "min": 0.4917241650947391,
+   "p16": 0.8722023853767008,
+   "p84": 1.090090544215955
+  },
+  "Q": {
+   "max": 1.1589322890528888,
+   "median": 0.9924511309687268,
+   "min": 0.7276791599070899,
+   "p16": 0.9482200028718657,
+   "p84": 1.0211034376475252
+  },
+  "c08": {
+   "max": 5.52918326829354,
+   "median": 0.865174114992751,
+   "min": 0.11970011126318998,
+   "p16": 0.4848642146925773,
+   "p84": 1.8035488908006883
+  },
+  "s5_total": {
+   "max": 1.1567136301476089,
+   "median": 0.9905852002369397,
+   "min": 0.7294271644576666,
+   "p16": 0.9475394617300434,
+   "p84": 1.0247073472759487
+  },
+  "stat": {
+   "max": 1.1538249395015712,
+   "median": 1.0007563418503085,
+   "min": 0.6757353751073498,
+   "p16": 0.9559868256990949,
+   "p84": 1.0437648951731309
+  },
+  "universe": {
+   "max": 1.1615188851786522,
+   "median": 0.9901302466896013,
+   "min": 0.6813593425202024,
+   "p16": 0.9468975541467602,
+   "p84": 1.0242627441913368
+  }
+ },
+ "inputs": {
+  "central": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+   "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
+  },
+  "ec": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root",
+   "sha256": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5"
+  },
+  "eu": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "p3": {
+   "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_3d_p3.root",
+   "sha256": "c16b622b4970800121b1d92dad91407878e0f4546375bfe27cdd3257d46d8c63"
+  },
+  "q_npz": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/cov2d_Q_205.npz",
+   "sha256": "7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2"
+  },
+  "q_purity": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageF-rebuild-20261018/outA/cov2d_Q_205.npz",
+   "sha256": "771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced"
+  }
+ },
+ "learner_vs_E_C_pct": {
+  "max_abs": 17.582925810341564,
+  "median_abs": 1.0349577246809738
+ },
+ "schema": "re2c-numbers/1",
+ "threeD_p3_vs_central": {
+  "mean_ratio": 1.0063373411545278,
+  "median_ratio": 1.0009952150401977,
+  "n_cells": 205,
+  "sd_ratio": 0.03718581582845556,
+  "total_change_percent": 0.14104386693529758
+ }
+}

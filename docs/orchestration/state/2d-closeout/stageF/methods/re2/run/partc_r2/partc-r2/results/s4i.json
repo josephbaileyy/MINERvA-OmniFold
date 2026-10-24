@@ -1,0 +1,17 @@
+{
+ "S4i": "PASS",
+ "analyze_prod_sha256": "4789b36d9c6d1d9979e272544f0a6d4bd46e675779b699983f59d1ba88c587f0",
+ "arm": "refined",
+ "item": "S4i",
+ "missing": [],
+ "n_expected": 80,
+ "n_ok": 80,
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+ "pins_failed": {},
+ "provenance": {},
+ "readout_rows": {
+  "n": 80,
+  "n_pass": 80,
+  "not_pass": {}
+ }
+}

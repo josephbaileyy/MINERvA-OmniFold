@@ -1,0 +1,2 @@
+arm=refined deploy=/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b head=903fb78b941a2f889bfcc5092e41ce27f5add898 host=login12 start=2026-10-24T16:17:41Z
+end=2026-10-24T16:19:35Z

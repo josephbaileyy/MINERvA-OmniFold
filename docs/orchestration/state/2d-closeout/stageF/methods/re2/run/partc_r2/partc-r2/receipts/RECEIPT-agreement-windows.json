@@ -1,0 +1,61 @@
+{
+  "authorization": "Joseph's 6b ruling, 2026-08-21; OI-130",
+  "caveat": "These are a NEW measurement under a STATED mask and denominator. They are not a reproduction of the suppressed \\medianBinRatio / \\binsFive / \\binsTen / \\binsTwenty, which have no recoverable provenance. A difference is a finding, not an error.",
+  "denominator": {
+    "n_excluded_nonpositive_paper": 0,
+    "n_ratio_used": 205,
+    "rule": "reported bins with a positive paper central value"
+  },
+  "git_head_at_run": "903fb78b941a2f889bfcc5092e41ce27f5add898",
+  "headline_totals_oi130": {
+    "convention_note": "A BARE SUM OF BIN CONTENTS IS NOT A CROSS SECTION. These histograms hold d2sigma/(dpT dp_par), so the total needs the bin-area Jacobian. The bare sums are RETAINED as the negative result: they came out 12.14x the quoted \\sigTwoD and 12.14x the quoted \\sigTwoDpaper, THE SAME FACTOR ON TWO INDEPENDENT FILES to 3.3e-3. The RATIO was unaffected because the Jacobian cancels -- which is precisely why a ratio reproducing is NOT evidence that its operands do. All-bins and reported-bins sums were also measured IDENTICAL for both files, so the reported/all convention question is moot here: unreported bins contribute zero.",
+    "values": {
+      "bare_content_sum_ours": 3.717726635783495e-37,
+      "bare_content_sum_paper": 3.6891976275220914e-37,
+      "integral_ours_all_bins": 3.0687381668997114e-38,
+      "integral_ours_reported": 3.0687381668997114e-38,
+      "integral_paper_all_bins": 3.03901139455691e-38,
+      "integral_paper_reported": 3.03901139455691e-38,
+      "ratio_bare_sums": 1.0077331200824189,
+      "ratio_integrals_reported": 1.00978172454241
+    },
+    "why": "\\sigTwoD, \\sigTwoDpaper and \\ratioTot cite no backing artifact anywhere in values.tex, which is OI-130's hard core: nothing can bind them. They derive from the two artifacts pinned under `sources` above, so this receipt attests them."
+  },
+  "hostname": "login12",
+  "mask": {
+    "n_global": 224,
+    "n_reported": 205,
+    "n_reported_asserted": 205,
+    "rule": "positive diagonal of StatOnlyCovariance on the paper's 224-bin global grid"
+  },
+  "produced_by": "2d-unfolding/agreement_windows_receipt.py",
+  "results": {
+    "median_bin_ratio": 1.0054,
+    "within_10_percent": {
+      "count": 195,
+      "percent": 95.1
+    },
+    "within_20_percent": {
+      "count": 203,
+      "percent": 99.0
+    },
+    "within_5_percent": {
+      "count": 178,
+      "percent": 86.8
+    }
+  },
+  "root_version": "6.28/12",
+  "sources": {
+    "ours": {
+      "central_value_object": "hXSec2D",
+      "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+      "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
+    },
+    "paper": {
+      "central_value_object": "pt_pl_cross_section",
+      "mask_object": "StatOnlyCovariance",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+      "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+    }
+  }
+}

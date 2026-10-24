@@ -1,0 +1,71 @@
+{
+ "inputs": {
+  "rollup_vl175": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/uq_universe_covariance_c04x01.root",
+   "sha256": "da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948",
+   "expected": "da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948",
+   "ok": true
+  },
+  "ml": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+   "expected": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+   "ok": true
+  },
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+   "expected": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+   "ok": true
+  },
+  "minos_rescaled": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/minos_rescaled.npz",
+   "sha256": "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d",
+   "expected": "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d",
+   "ok": true
+  },
+  "constraint": {
+   "path": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+   "sha256": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+   "expected": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+   "ok": true
+  },
+  "E_R": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+   "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+   "expected": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+   "ok": true
+  }
+ },
+ "arm": "refined",
+ "mode_guard_E_R": {
+  "value": {
+   "bkg_mode": "negweight-refined",
+   "refine_n_estimators": 400,
+   "refine_num_leaves": 31
+  },
+  "re2Refinement": true,
+  "ok": true
+ },
+ "control_block_sum_median_pct": {
+  "measured": 6.089795123254515,
+  "VL175": 6.0898,
+  "ok": true
+ },
+ "E_R_relative_block_sum_median_pct": 6.057057771683794,
+ "flux_weights": {
+  "n": 100,
+  "sum": 211.01200325082078,
+  "n_eff": 19.060534772246488
+ },
+ "control_flux_block_rel_maxdiff": 0.0,
+ "control_minos_block_rel_maxdiff": 3.238354685573027e-17,
+ "n_universe_bands": 44,
+ "n_universe_outputs": 187,
+ "n_cov_blocks": 48,
+ "n_reported": 205,
+ "npz": {
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/work_cov/work_cov.npz",
+  "sha256": "00a05fefa67f787786fa2f2bf0de54fec9d1d149af8c099c3bbaef8c7efc9f34"
+ }
+}

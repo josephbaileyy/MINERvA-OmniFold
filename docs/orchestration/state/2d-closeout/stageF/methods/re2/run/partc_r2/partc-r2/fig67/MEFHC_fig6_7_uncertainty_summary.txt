@@ -1,0 +1,32 @@
+Fig.-6/7-style fractional uncertainty projections
+xsec_root: /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root
+universe_root: /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/uq_adopted_covariance.root
+bootstrap_root: /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_stat.root
+ml_root: /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_c08.root
+extra_block: /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_playlist.root:hCov2D_reported:Run period
+n_reported: 205
+
+pz projection:
+  Total                  median=  5.450% max= 13.801%
+  Published total        median=  5.474% max= 10.761%
+  Flux                   median=  3.675% max=  4.984%
+  Models                 median=  0.395% max=  1.225%
+  Normalization          median=  1.400% max=  1.400%
+  Statistical            median=  0.260% max=  0.736%
+  Hadronic response      median=  0.302% max=  1.671%
+  Muon reconstruction    median=  2.821% max= 12.981%
+  Training seed          median=  0.013% max=  0.451%
+  Run period             median=  1.835% max=  3.362%
+
+pt projection:
+  Total                  median=  5.644% max=  7.585%
+  Published total        median=  5.308% max=  7.682%
+  Flux                   median=  3.648% max=  4.111%
+  Models                 median=  0.440% max=  0.643%
+  Normalization          median=  1.400% max=  1.400%
+  Statistical            median=  0.253% max=  1.068%
+  Hadronic response      median=  0.214% max=  3.046%
+  Muon reconstruction    median=  3.645% max=  5.012%
+  Training seed          median=  0.015% max=  0.080%
+  Run period             median=  2.003% max=  2.592%
+

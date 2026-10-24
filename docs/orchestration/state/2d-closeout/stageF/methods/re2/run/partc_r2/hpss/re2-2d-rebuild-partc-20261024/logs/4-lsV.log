@@ -1,0 +1,27 @@
+/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK      73994240 Oct 24 09:37 re2-2d-rebuild-partc-20261024.tar
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  73994240
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01ef3fa90797c7a6-04da
+  Pos:    154+0   PV List: AB040200   
+
+/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK         15476 Oct 24 09:37 members.sha256
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  15476
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01ef3fa90797c7a6-04da
+  Pos:    155+0   PV List: AB040200   
+
+/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK           100 Oct 24 09:37 re2-2d-rebuild-partc-20261024.tar.sha256
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  100
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01ef3fa90797c7a6-04da
+  Pos:    153+0   PV List: AB040200   
+

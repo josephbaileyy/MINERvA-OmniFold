@@ -1,0 +1,67 @@
+{
+ "C0": "PASS",
+ "analyze_prod_sha256": "4789b36d9c6d1d9979e272544f0a6d4bd46e675779b699983f59d1ba88c587f0",
+ "arm": "refined",
+ "cv_readout": {
+  "provenance_bad": {
+   "C0_cv": {},
+   "ER": {}
+  },
+  "provenance_ok": true,
+  "rows": {
+   "PB-ER-D2": {
+    "source": "k1_core.json 7c407e95",
+    "verdict": "PASS"
+   },
+   "PB-ER-J0": {
+    "source": "k1_core.json 7c407e95",
+    "verdict": "PASS"
+   },
+   "PB-ER-eff": {
+    "source": "k1_core.json 7c407e95",
+    "verdict": "PASS"
+   },
+   "PB-ER-rep": {
+    "source": "k1_core.json 7c407e95",
+    "verdict": "PASS"
+   }
+  },
+  "verdict": "PASS"
+ },
+ "item": "C0",
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+ "pins_failed": {},
+ "staged_inputs": {
+  "ok": true,
+  "record": {
+   "cv": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "laterals": {
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root": "38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root": "0e0491a624c2d64c6fa3fde271940f0cfa9acb2d08b72cdf1e21e1c15903c3f2",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root": "058746fdb29aa2cc0e3db82e7be42648cd7ce43b8603e96e444111546949ecf6",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root": "3bca6a458336c7b4b2250ccbcdc8ca0ac26d416ac4604114f5dfffe0fece2b0e",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root": "839ab9c51bdc69b13e340d5fdc8fd21968bfcc7a62deeb3db529d5f2fc4a6d5d",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root": "3330800629d536a94d37d91941089620ca90af228c64f43b4ed633a97550644f",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root": "533037d27e0b5e38d778c935b7a44f5e30e0a1afb81870c8b063303859986bfe",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root": "90a1d7b78d6deed51499e11ae735f09438dbf3d85c4a463c18fae441b6668ab2",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root": "f105f68193cc80d125fe272588d3223e9df57cd2e9f720e0853dbd712f52a87a",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/laterals/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root": "f2e67fd6c986f0a7d45eb894c1640c7d8fb48af83dbce37122d6946ae4aedfa0"
+   }
+  }
+ },
+ "unit_readout": {
+  "provenance_bad": {},
+  "provenance_ok": true,
+  "rows": {
+   "PB-unit": {
+    "source": "k1_core.json 7c407e95",
+    "verdict": "PASS"
+   },
+   "PB-unit-J0": {
+    "source": "k1_core.json 7c407e95",
+    "verdict": "PASS"
+   }
+  },
+  "verdict": "PASS"
+ }
+}

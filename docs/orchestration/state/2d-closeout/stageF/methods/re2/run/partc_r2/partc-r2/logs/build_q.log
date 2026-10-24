@@ -1,0 +1,99 @@
+[PASS] A0_pin_s5_npz  631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1
+[PASS] A0_pin_s5_root  1f5a8e39db7650e58e0a41aa3d78d33e7aa86d9d8761e021d409a24bd8074008
+[PASS] A0_pin_s5_json  ec4a407b33200cb2c9792e943c924b1e2043974f12b81eacdc605bccc52b90c2
+[PASS] A0_pin_playlist_npz  dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e
+[PASS] A0_pin_q_npz  b57d6c96fb143952f82f6466c36f017ad17327983618f837eff97364c8c33440
+[PASS] A0_pin_combination_json  c663eadb168835bdf965644f1e65531b3dc5eaea9b8d08fc72fa161b6a3009ea
+[PASS] A0_pin_eu  a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef
+[PASS] A0_pin_ec  142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5
+[PASS] A0_pin_paper_anc  6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
+[PASS] A0_pin_vl175_rollup  da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948
+[PASS] A0_pin_vl175_boot  71a75821ceeb658710adca30243e39e7184e33f868f58ea56cffe63ba8db0115
+[PASS] A0_pin_vl175_ml  3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9
+[PASS] A0_pin_vl175_blocks  c2606f9095c61e3b0d56bbb72d4c6948b5662461da51563858ce3c8ae18824f8
+[PASS] A0_pin_vl175_budget  aab8a24ebd61df54e7277999d49300c3bdaa045710835bfa05adf3bfc71dd8fa
+[PASS] A0_pin_vl175_group_medians  7927c51ef7549601020517aee397748e10fc7603da7a847f9f833f789200900f
+[PASS] A0_pin_eu_control  4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[PASS] A0_module_reported_cells_under_repo  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/uq/reported_cells.py
+[PASS] A0_module_plot_uncertainty_fig6_7_style_under_repo  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/uq/plot_uncertainty_fig6_7_style.py
+[PASS] A0_module_rederive_flux_muonE_cross_under_repo  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/uq/rederive_flux_muonE_cross.py
+[PASS] A0_module_analyze_universes_under_repo  /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/uq/analyze_universes.py
+[PASS] s5_json_S5_PASS  PASS
+[PASS] combination_json_checks_passed  True
+[PASS] arm_refined_on_every_input  {'s5_npz': 'refined', 'playlist_npz': 'refined', 'q_npz': 'refined', 's5_json': 'refined', 'combination_json': 'refined'}
+[PASS] A1_E_U_nonzero_205  205
+[PASS] A1_S5_ROOT_hReportedCells_eq_E_U_nonzero
+[PASS] A1_playlist_cells_eq_E_U_nonzero
+[PASS] A1_paper_StatOnly_positive_diag_eq_E_U_nonzero
+[PASS] A1_E_R_cells_eq_E_U_cells
+[PASS] A1p_playlist_cells_strictly_ascending
+[PASS] A1p_s5_npz_cells_x_EU_eq_E_U_cells_exact
+[PASS] A1p_q_npz_cells_x_EU_eq_E_U_cells_exact
+[PASS] A1p_playlist_x_eq_E_U_playlist_cells_exact
+[PASS] A1p_s5_area_eq_E_U_bin_area_exact
+[PASS] A1p_s5_F0_eq_area_exact
+[PASS] A1p_q_npz_functionals_area_eq_s5_exact
+[PASS] A1p_playlist_F_eq_s5_functionals_exact
+[PASS] A2_band_sets_equal_44  [44, 44]
+[PASS] A2_root_hCov_combined_eq_npz_total  0.0
+[PASS] A2_root_hCov_universe_total_eq_npz_universe  0.0
+[PASS] A2_root_each_band_eq_npz_band_worst  0.0
+[PASS] A2_band_sum_eq_universe  0.0
+[PASS] A2_s5_total_eq_universe_stat_c08  0.0
+[PASS] A3_s5_total_plus_C_PL_eq_Q  0.0
+[PASS] A3_q_npz_C_PL_eq_playlist_C_PL_exact
+[PASS] A3_q_npz_s5_total_eq_s5_npz_total_exact
+[PASS] A5_symmetric_Q  6.443576809518642e-17
+[PASS] A5_psd_Q  1.1870898408180931e-12
+[PASS] A5_symmetric_S5_total  6.603699288752401e-17
+[PASS] A5_psd_S5_total  1.2678531654198015e-12
+[PASS] A5_symmetric_universe  6.623724230496203e-17
+[PASS] A5_psd_universe  -5.935996834613356e-17
+[PASS] A5_symmetric_stat  0.0
+[PASS] A5_psd_stat  7.839575793288395e-10
+[PASS] A5_symmetric_c08  0.0
+[PASS] A5_psd_c08  -2.8989681701672874e-16
+[PASS] A5_symmetric_C_PL  0.0
+[PASS] A5_psd_C_PL  -4.951492677900627e-16
+[PASS] A5_symmetric_universe_plus_stat  6.60376188885534e-17
+[PASS] A5_psd_universe_plus_stat  1.2638980104304664e-12
+[PASS] control_vl175_blocks_npz_eq_rollup_and_ml_exact
+[PASS] control_budget_json_row_set  [45, 45]
+[PASS] control_vl175_budget_json_all_rows_le_1e-12  {'worst_rel': 1.6682402042870882e-13, 'at': 'per_band/full_FrElas_N.integral_sigma_pct'}
+[PASS] control_group_medians_n_bands  [45, 45]
+[PASS] control_group_medians_category_set  ['Flux', 'Hadronic response', 'Models', 'Muon reconstruction', 'Normalization', 'Statistical']
+[PASS] control_group_medians_json_le_1e-12  {'worst_rel': 0.0, 'at': 'grouped_current/Flux'}
+[PASS] control_combination_row_set  ['C_PL', 'S5_c08', 'S5_stat', 'S5_total', 'S5_total_plus_C_PL', 'S5_universe', 'VL175']
+[PASS] control_combination_json_full_precision_le_1e-12  {'worst_rel': 3.0785984152933922e-15, 'at': 'effect_of_C_PL_on_S5.share_integral'}
+[PASS] control_combination_json_projections_equal_at_4_decimals  []
+[PASS] control_combination_json_ranks_1e-10  {'S5_total': 197, 'combined': 197}
+[PASS] control_s5_json_block_summaries_le_1e-12  {'worst_rel': 6.24407921778395e-16, 'at': 'c08.integral_sigma_pct'}
+[PASS] control_s5_json_block_ranks_1e-10  {}
+[PASS] control_rhoFluxMuon_reproduces_vl175_0.900  0.900424278082897
+[PASS] E_C_positive_on_the_205_cells  0
+[PASS] groups_sum_eq_Q  2.577430723807457e-16
+[PASS] A4_readback_uq_adopted_covariance.root  {'objects': 52}
+[PASS] A4_readback_block_stat.root  {'objects': 3}
+[PASS] A4_readback_block_c08.root  {'objects': 2}
+[PASS] A4_readback_block_playlist.root  {'objects': 2}
+[PASS] A4_readback_cov2d_Q_205.npz
+[wrote] block_c08.root
+[wrote] block_playlist.root
+[wrote] block_stat.root
+[wrote] budget_Q.json
+[wrote] cov2d_Q_205.json
+[wrote] cov2d_Q_205.npz
+[wrote] uq_adopted_covariance.root
+[summary] Q median 6.413666 %  integral 4.759173 %  S5 total median 5.982622 %  integral 4.332423 %
+[summary] ranks 1e-10/1e-12: universe 124/138, universe_plus_stat 197/205, S5_total 197/205, Q 197/205
+[summary] Flux band median 3.712450 %  rhoFluxMuon 0.900424  leading-mode share NOT COMPUTED (no producer)
+build_q_products: ALL 79 STOPS AND CONTROLS PASSED; outdir /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA

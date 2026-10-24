@@ -1,0 +1,12 @@
+{
+ "work_cov": "00a05fefa67f787786fa2f2bf0de54fec9d1d149af8c099c3bbaef8c7efc9f34",
+ "analysis_json": "2ce5d5dab3e566590504ba0f186a90b0334e7e691dbda011403fc99a8c8d92cd",
+ "playlist_npz": "dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e",
+ "playlist_json": "a952adda441e1fa7d29eb44e064b11991a09ded3682c2530193222e45164ed26",
+ "production_cov": "631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1",
+ "cov2d_Q_205": "7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2",
+ "s5_plus_playlist": "b57d6c96fb143952f82f6466c36f017ad17327983618f837eff97364c8c33440",
+ "combination_json": "c663eadb168835bdf965644f1e65531b3dc5eaea9b8d08fc72fa161b6a3009ea",
+ "reduce": "823f16b1b694477b053e71cc8a1fdc13cebf9ee51a99df3f88752c1447f4184e",
+ "budget_Q": "bbe13622656e9f43978d9cb022ac74ca4ba059b1cf56fed9e082bfb3b1be03aa"
+}
