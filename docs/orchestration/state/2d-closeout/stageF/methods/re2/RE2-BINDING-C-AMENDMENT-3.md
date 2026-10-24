@@ -1,0 +1,110 @@
+# RE-2 part C binding, amendment 3: Fig. 1's legend in sentence case (2026-10-24)
+
+**By** the paper-tighten lane, as director, under `DECISION-20261024-joseph-adopt-re2-2d-refined.md` item 2.
+**Amends** [`RE2-BINDING-C.md`](RE2-BINDING-C.md) and its amendments
+[1](RE2-BINDING-C-AMENDMENT-1.md) and [2](RE2-BINDING-C-AMENDMENT-2.md).
+
+**What Joseph asked.** He approved the refined Fig. 1 (`cabbbbc3…`) and asked for the capitalization in its legend to
+be standardized.
+
+**The change**, PR #328: head `7ea7f55af0a11cbff9c7ac8e7b98ab33a7503b60`, merged with `origin/main` as `b8566e42`, and
+merged at `1f3b4669`.
+- `publication/release/figs/make_figs.py:98`: "published ±1σ" becomes "Published ±1σ".
+- `make_figs.py:103`: "this work ±1σ" becomes "This work ±1σ".
+- `re2c_fig1.py:49` re-pins `make_figs.py`, from `9c4dbf24…` to `4e18c266…`. Its copy diff and the reviewed
+  removed-line set record the replaced pin.
+- The other three legend entries are unchanged, because they are already in sentence case. The lane reported the
+  figure's other text without changing it: the ratio-axis label "ratio to / published", the colorbar label, and
+  Fig. 3's "data (unfolded)" and "data / prediction". The legend was what Joseph asked for.
+
+**The director's checks:**
+- The diff of the two files is exactly the two label strings and the pin.
+- At the merge commit, the 28 unchanged files of amendment 2's table and the two changed ones match the table below:
+  30 of 30 OK.
+- 25 of 25 tests pass. Manifest `--check`: OK. Hash bindings: intact. CI: success.
+- **The pre-binding check** (`run/partc_a3_check/`) redrew Fig. 1 on the laptop from the PR head, into scratch
+  (`71a2ea48…`). Its copy step refused, as declared, so `partc-r2/fig1` still holds `cabbbbc3…`.
+  - `pdftotext` differs from `cabbbbc3…` in exactly the two strings.
+  - At 300 dpi, the changed pixels lie inside the legend's bounding box: 12,346 pixels in the PDF raster, where the
+    whole legend re-flows by about 1 px, and 4,415 pixels on matplotlib's own canvas, against a legend box that is
+    identical in both versions.
+- **Sites that still cite `9c4dbf24…` stay as they are,** because each records what ran:
+  - `app_release.tex:46`, for the release candidate as built;
+  - the release candidate's `build_rc.py` and `verify_rc.py`;
+  - `FIG1-CHECK.md`;
+  - the Stage F rebuild records;
+  - the c04 adoption `RUN.txt`;
+  - part C's dry-run and `partc_r2` `RUN-fig1.txt` records;
+  - `partb_identities.tsv:158`.
+
+  The integration step flags `app_release.tex:46`, because the paper's Fig. 1 will no longer be drawn by the release
+  candidate's copy of the script.
+
+## Amendment
+
+**The bound files** are the 30 below: amendment 2's 29, with `re2c_fig1.py` replaced, plus `make_figs.py`, which is
+now bound directly. The bound commit is `1f3b4669` (main), which holds PR #328's code unchanged.
+
+**The order:**
+1. **Keep the approved figure.** On the cluster, rename `$B/partc-r2/fig1/` to `$B/partc-r2/fig1-a2-cabbbbc3/`.
+   - Record `sha256sum` of every file in it before and after; the two lists must be equal.
+   - Nothing else in `$B/partc-r2` changes. The HPSS bundle already holds that directory as `fig1/`.
+2. **Redraw.** Make a clean checkout of `1f3b4669` on the laptop and run `sha256sum -c` over the 30 rows below,
+   logging the output and `git rev-parse HEAD`. Then run
+   `bash re2c_fig1_local.sh refined <workdir> <venv python> $B/partc-r2`, in the recorded environment.
+   - Its inputs come from `chain.json` by digest, as before.
+   - Its outputs go into the new, empty `$B/partc-r2/fig1/`.
+3. **Check.** Compare the new PDF with `cabbbbc3…`:
+   - `pdftotext` must differ in exactly the two strings;
+   - the changed pixels must lie inside the legend box, by the pre-binding check's method B.
+
+   If either check fails, stop and report it.
+4. **Report.** Write `RE2-PARTC-A3-REPORT.md`, with:
+   - the rename's two digest lists;
+   - the preflight;
+   - `RUN-fig1.txt`;
+   - the new PDF's sha256;
+   - both checks;
+   - the tracked-path check.
+
+   **No HPSS step:** the new Fig. 1 is committed with the integration batch, and its `RUN-fig1.txt` with this report.
+
+**Everything else stands:** the strict stop rule, login nodes and the laptop only, 0 node-h, and no CFS writes.
+Joseph has already reviewed Fig. 1. The director shows him the redrawn legend in the integration batch.
+
+## The bound files (30)
+
+| file | sha256 |
+|---|---|
+| `2d-unfolding/re2/partc/fixtures/refined_schema.json` | `d47d65dd278253ab4b354b786a4572f7fadedca33d10c7f7b0380169146873c1` |
+| `2d-unfolding/re2/partc/make_diffs.sh` | `9a3cb6839111b9988042a357b52dda6c64f273b0915682c02950515655f65a6b` |
+| `2d-unfolding/re2/partc/pin_siblings.py` | `9679d4db21365b63210a27f95022be5031a6efa3ef83b6a6ca05c3bcf3f7f68b` |
+| `2d-unfolding/re2/partc/re2c_analyze_periods.py` | `708cfc2fec29b80019bebbf84cc3a354aff02031f1669904fae680ede21c8a59` |
+| `2d-unfolding/re2/partc/re2c_analyze.py` | `4789b36d9c6d1d9979e272544f0a6d4bd46e675779b699983f59d1ba88c587f0` |
+| `2d-unfolding/re2/partc/re2c_audit.py` | `280ee00742e7b89912e6cb2b1e01558f94ffe675762081c3abe37bdbdddc5605` |
+| `2d-unfolding/re2/partc/re2c_build_q.py` | `45fafddb6e44e88386d6b10b605b635315ef09e3d31ef1da5e8a71a913d1fe97` |
+| `2d-unfolding/re2/partc/re2c_check_rebuild.py` | `f7feca72a17ce43ba740162e380320a6e62eae57926116e85e1476eb4b1c9246` |
+| `2d-unfolding/re2/partc/re2c_cmodel.py` | `cd8fbf09635c2854d2e68f6f1274add500d722aa21552e9fd665403f836b3072` |
+| `2d-unfolding/re2/partc/re2c_combine.py` | `2f5d2ea3161d7f5c3a389fb697e5aa5a745b6565334e2bba1a10d0f5ceb15301` |
+| `2d-unfolding/re2/partc/re2c_determinism.py` | `84951a8f75a650104bbfa1ff6a23e0739559b974305b16412144b5f28ff01739` |
+| `2d-unfolding/re2/partc/re2c_dryrun.sh` | `3c6084c5c64d7f9fd79b780da059dcfa2602506753e8157e21e37ec078a917e0` |
+| `2d-unfolding/re2/partc/re2c_export_cov.py` | `524ef62e79947dbc16c5a59e860e166a05a03f27cc60ad80ac07709e1d947a3f` |
+| `2d-unfolding/re2/partc/re2c_fig1_local.sh` | `02c3090f22790ca50f9d762b2d766bd07918dd2e7cdec12cc33099b9adc20e9a` |
+| `2d-unfolding/re2/partc/re2c_fig1.py` | `2aadeac833b164caf48e6382c40bd568d43ea8865af8bc65397e6bd5812f6af4` |
+| `2d-unfolding/re2/partc/re2c_k1roll.py` | `166d5c09da3c95e8e949dacb5a3f78832c5366ed2ad18e99048e25eb6c2d186c` |
+| `2d-unfolding/re2/partc/re2c_numbers.py` | `8d5f06a86ee25e087ffa46745cf2c24d568c9cb43a937c2f23cc14b058123787` |
+| `2d-unfolding/re2/partc/re2c_periods.py` | `19f2c3934f93a34cc7d20202f83152421bdb0db044380bd8601216bcdb95dd9f` |
+| `2d-unfolding/re2/partc/re2c_playlist_term.py` | `24ac48d86a76cc00c9dbf175f460baa1239947941fffdf57cad8c98b804383e8` |
+| `2d-unfolding/re2/partc/re2c_reduce.py` | `e03df3f88a7e609d8787bd0ee8e22fbe319d2afa7dcaf97f67b006073c05e381` |
+| `2d-unfolding/re2/partc/re2c_refined_schema.py` | `f37b87bb0c95f129aab89cfa06c517075ba2c39f0a892ed4e37160971ea12da9` |
+| `2d-unfolding/re2/partc/re2c_rollup.py` | `53840b0bc687511995466b74bef185412f0b4db3244f170e6204629b516b74d8` |
+| `2d-unfolding/re2/partc/re2c_run.sh` | `ff66c7a9faa3529f1a84582fc3df2cfaea43a20016c01523077bbb7880fcf589` |
+| `2d-unfolding/re2/partc/re2c_tracked.py` | `571fc4e0f0d3160953ba2b705c316a56743aa5304b31eca28f1702905a3eee66` |
+| `2d-unfolding/re2/partc/re2c_values_spec.tsv` | `51319f678ca409c874519d6c677bc5b15cf3cc06d6d957075153b88998aa742b` |
+| `2d-unfolding/re2/partc/re2c_values_unmatched.tsv` | `afb20e38190275b4c0c3c92035b9a36d772906edf1e10dc7b929b51f812c8149` |
+| `2d-unfolding/re2/partc/re2c_values.py` | `b5d645021e3d876c852794a5d1a14d12aed1375f75c08ad0be0c80350a8c0e3e` |
+| `2d-unfolding/re2/partc/test_re2c.py` | `87ac367fcb64af49ff6d88db72a223e27d8df9a967a15ba99330ae467c781507` |
+| `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/launch/re2_hpss.sh` | `3db768d559958ef02984fdd1096fee3270705f70be912f91cde2c4be9404b0ce` |
+| `publication/release/figs/make_figs.py` | `4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67` |
+
+The redraw may run once this record is on `main`.
