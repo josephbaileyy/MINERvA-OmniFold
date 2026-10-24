@@ -1,7 +1,8 @@
 # PV ladder: the run record (2026-10-24, session "2d test")
 
 **Under** [`BINDING.md`](BINDING.md) ("Before any job", items 1–3), for [`DECLARATION.md`](DECLARATION.md) as amended
-by PR #313. **No job has been submitted.** This record is updated at each step, and the ledger is in `LEDGER.tsv`.
+by PR #313. **The ladder ran on 2026-10-24 and is complete** (§5). This record was written before the first job
+and updated at each step. The ledger is in `LEDGER.tsv`.
 
 ## 1. Code
 
@@ -243,7 +244,7 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
 - [x] **J2, job 60203686: COMPLETED** in 951 s, 0.2642 node-h, 0.66× its projection. **J3, job 60203687:
   COMPLETED** in 795 s, 0.2208 node-h, 0.55×. In each job all six steps started together.
   - **Measured closure/data time:** the 3D closures took 9:46 and 15:35 against 3D data steps of 11:11–12:56, a
-    ratio of at most 1.33. The 4D closures took 12:10 and 12:48 against 4D data steps of 11:43–12:16, about 1.0.
+    ratio of 0.75–1.39 (step order as `tasks.tsv`). The 4D closures took 12:10 and 12:48 against 4D data steps of 11:43–12:16, about 1.0.
     The assumed 1.7 was conservative.
 - [x] **J4 and J5 projected from that measurement.** The 5D-sized data steps took at most 13:45 in J1. Taking
   closures at 1.33×, each job is projected at **20 min, 0.33 node-h**, with `--time` 0:25.
@@ -251,10 +252,14 @@ job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 2
 - [x] **Gates written for J4** (L-EW (e) and (c)) **and J5** (L-5D-PV), whose NCs all passed in J1. Both are
   submitted together.
 - [x] **J4, job 60206334: COMPLETED** in 783 s, 0.2175 node-h, 0.65×. **J5, job 60206336: COMPLETED** in 811 s,
-  0.2253 node-h, 0.68×. **Every PC passes**, so F was not needed and the 4.5 node-h fallback cap was not used.
+  0.2253 node-h, 0.68×. **Every PC passes**, so F was not needed. The director's pre-authorized 4.5 node-h cap for F alone (message of 2026-10-24)
+  was not used.
   **The ladder's total is 1.2611 CPU node-h.**
 - [x] **Readouts:** `pvl_analyze.py` at the pin, committed in `nd-unfolding/pv-ladder/readouts/`. The tables come
   from `pvl_report.py` (`c6007dea`, written before any vertex readout was read).
 - [x] **Post hoc, at the director's request:** `pvl_departure.py` ran on a login node (2:32, 6.4 GB, no charge);
   its output is `readouts/departure.json`. `pvl_response_2d.py` gives the same response for PV-2D's committed files.
   Results are in REPORT.md §4.
+- [x] **After the report's first review:** the post-hoc departure measures were extended to sign-aware, per-vertex and
+  same-vertex forms and to the (p_T, p_∥) cells (`595930c1`), at the director's request. Both were rerun on a login
+  node, with no charge. Their outputs are `readouts/departure.json` (`5bd1303b…`) and `readouts/response_2d.json`.

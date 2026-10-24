@@ -15,7 +15,7 @@
 
 Pooled share: the prior's truth weight on pooled J-coarse ratios, range over the three vertices. Step-adjacent share: the prior's truth weight in reweight cells beside a step in r > 0.1 drawn by the gate or a cut, union over the vertices.
 
-### 2. Ben's question: L-EW against L-5D-PV on the 39 RD3 cells (the features alone differ)
+### 2. Ben's question: L-EW against L-5D-PV on the 39 RD3 cells (features and reweight strength differ)
 
 | | L-EW (e), direct (E_avail, W) | L-5D-PV (e), 5D projected | s5p RD3 (D1–D5) |
 |---|---|---|---|
