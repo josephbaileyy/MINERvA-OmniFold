@@ -1,0 +1,14 @@
+{
+ "room": 84.5245,
+ "used_before": 0.0,
+ "attempts": {},
+ "wanted": [
+  {
+   "job": "J1",
+   "cap": 0.4167,
+   "verdict": "PASS",
+   "used_after": 0.4167
+  }
+ ],
+ "verdict": "PASS"
+}

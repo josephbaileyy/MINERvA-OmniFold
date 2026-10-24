@@ -1,0 +1,1 @@
+showquota 2026-10-24T06:29:40Z (login): pscratch 16.97TiB of 20.00TiB, 84.8%; staging ~0.49TiB -> ~87.3% <= 90% (RE2-BINDING-B B9)
