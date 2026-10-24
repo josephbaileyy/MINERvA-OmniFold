@@ -133,7 +133,9 @@ def main(argv=None):
     declared = {"iters": 5, "use_weights": True, "bkg_mode": "purity", "seed": 42, "estimator": "lgbm",
                 "device": "cpu", "branch_select": "all", "bootstrap_seed": None, "universe": None,
                 "closure_reweight": None, "closure_hidden_dpt": False, "closure_alt_universe": None,
-                "flux_hist": "pTmu_reweightedflux_integrated", "flux_universe_file": None,
+                "flux_hist": "pTmu_reweightedflux_integrated",
+                # the producer's default; read only with --universe Flux:IDX, which is refused above
+                "flux_universe_file": "baseline_flux/flux_integral_universes_MEFHC.root",
                 "omnifile": cfg["inputs"]["omnifile"]["path"], "mcfile": cfg["inputs"]["flux_mc"]["path"]}
     if a.arm == "refined":
         declared.update(bkg_mode="negweight-refined", pv2d_refine_400_31=True)
