@@ -465,8 +465,20 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   unbinned_unfolding/python/omnifold.py                                               e9623412
 #: Power-tested before the bump: one flipped hex digit in that manifest's helper sha256 gives MISMATCH, rc 1.
 #: Delta and controls: docs/orchestration/state/2d-closeout/stageC/pilot/evidence/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 151
-RECEIPT_BINDING_SHA256 = "914c11e8b88c358bdc9416b5348a6b090da6ee9a448e27a2b7437ea0315e55c0"
+#: 151 -> 157, digest 914c11e8 -> 9abec558 (2026-10-24, the R10 declaration). Its config
+#: (state/measurement-scoping/r10/config.json) pins the D-ID driver, config, tables and results, and the two modules
+#: the extraction imports. Enumerated before the constant moved (receipt_inventory() rows with and without that config
+#: on the branch): six ADDED, nothing removed or repointed, all OK:
+#:   ADDED   docs/orchestration/state/next-preparation-20261009/d-id/config.json                aebd8c8e
+#:   ADDED   docs/orchestration/state/next-preparation-20261009/d-id/did.py                     d918c816
+#:   ADDED   docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json       2234c0c0
+#:   ADDED   docs/orchestration/state/next-preparation-20261009/d-id/outputs/tables.npz         2aab2270
+#:   ADDED   measurement-paper/phase1/mp2/mp2_s1_dump.py                                         22129d9a
+#:   ADDED   nd-unfolding/pet/event_identity.py                                                  b921abf0
+#: Power-tested before the bump: one flipped hex digit in that config's did.py sha256 gives MISMATCH, rc 1.
+#: Delta and controls: docs/orchestration/state/measurement-scoping/r10/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 157
+RECEIPT_BINDING_SHA256 = "9abec558ae75063890fe50ed98c44787c597761719d8d09e87802c64cfe98d9d"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
