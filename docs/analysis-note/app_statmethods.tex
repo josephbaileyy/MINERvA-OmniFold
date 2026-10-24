@@ -404,7 +404,7 @@ element-wise, assuming band independence. Cross-band correlations exist only if
 encoded in a combined band, such as the Bashyal joint fit handled outside this
 loop. MAT applies no ridge, shrinkage, SVD truncation or rank-deficiency
 handling to the published total covariance. The statistical block makes $V$
-full-rank; its systematic-only rank is $120$, below the $137$ of our universe block
+full-rank; its systematic-only rank is $120$, below the $138$ of our universe block
 (eigenvalues above $10^{-12}\lambda_{\max}$; \S\ref{sec:rank}).
 
 \paragraph{Upstream references that set each band's $\pm1\sigma$ amplitude.}
@@ -762,7 +762,10 @@ not a missing-bands problem.} The paper's systematic-only covariance
 We use the same \texttt{GetStandardSystematics} and propagate at least as many
 independent systematic directions. The statistical block
 ($\texttt{StatOnlyCov}$, rank $205$, near-diagonal) alone makes the paper's
-$V$ full-rank ($\mathrm{rank}=204$, $\mathrm{cond}=1.5\times10^{12}$).
+$V$ full-rank ($\mathrm{rank}=205$, with 204 eigenvalues above $10^{-12}\lambda_{\max}$;
+$\mathrm{cond}=1.5\times10^{12}$).
+% RE-2 integration W9 (DRAFT): receipts/2d-lgbm42-20261011/tension_report.txt:13 ("rank(lam>0) = 205/205") and :52 (rcond
+% 1e-12 keeps 204; diagnose_tension.py:140, keep = lam > rcond * lam_max); the same at partc-r2/receipts/figs/tension_report.txt:13, :52.
 Our $300$-replica bootstrap similarly gives
 $\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=205$ (eigenvalues above
 $10^{-12}\lambda_{\max}$; $\mathrm{cond}=7.91\times10^{11}$ by the definition above).
@@ -997,12 +1000,16 @@ OmniFold configuration & paper-cov $\chi^{2}/\mathrm{ndf}$ & pull RMS \\
 \midrule
 exact-split, 5 iter (cross-check; earlier central value) & $3.66$ & $0.598$ \\
 HistGBT, 5 iter (10-seed mean) & $2.70\pm0.04$ & $0.56$ \\
-LightGBM, 5 iter, seed 42 (quoted) & $2.270$ & $0.535$ \\
+LightGBM, 5 iter, seed 42, refined subtraction (quoted) & $2.270$ & $0.535$ \\
+LightGBM, 5 iter, seed 42 & $2.654$ & $0.564$ \\
 LightGBM, 5 iter, seed 1 & $2.65$ & $0.563$ \\
 LightGBM, 10 iter, seed 1 & $2.66$ & $0.565$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+All rows except the quoted one use the purity-based subtraction.
+% RE-2 integration W2 (DRAFT): the seed-42 purity row is E_U (values_table.tsv cfg-lgbm42-chi2 / cfg-lgbm42-pullrms
+% purity_value 2.654, 0.564); the quoted row is E_R (refined 2.270, 0.535).
 (i) \textbf{Iteration count is negligible}: LightGBM $5\to10$ iters moves the
 $\chi^{2}$ by $+0.01$ ($2.645\to2.657$), so OmniFold is well-converged at $5$
 iters and the tension is \emph{not} an under-iteration artifact. (ii)

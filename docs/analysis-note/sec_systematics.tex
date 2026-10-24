@@ -97,9 +97,10 @@ replica mean (Fig.~\ref{fig:bootstrap}). The central value and its statistical b
 are therefore matched in estimator and seed. Each replica draws its weights in three
 independent streams: data, signal simulation and background simulation. Statistical
 fluctuations of the background simulation are thus drawn independently of those of the
-signal simulation; possible shared events between the two were not assessed. A
-separable background-only term (a median 0.26 of the statistical $\sigma$) is
-contained in the statistical block and reported separately. MC reco and
+signal simulation; possible shared events between the two were not assessed. Because
+the background simulation is resampled in every replica, the separable background-only
+term is contained in the statistical block. MC reco and
+% absence-ok: "not assessed" is the block's own construction scope, unchanged by RE-2; the sentence edited here is W4
 truth weights share a \emph{single} event
 draw, which preserves within-event migration correlations, and pinning the GBDT seed per replica
 separates bootstrap and training-seed variances. With 300 replicas the Gaussian formula
@@ -176,9 +177,10 @@ share, a median 0.763 of its diagonal. The interaction itself (a median 0.072 of
 statistical variance) and the universe\,$\times$\,retraining term
 (\S\ref{sec:uq-2d-scope}) are reported and not added.
 
-The dependence on the learner is in no block. The LightGBM central value and the
-exact-split cross-check differ by a per-bin median of \SI{1.03}{\percent} (maximum
-\SI{17.6}{\percent}; \S\ref{sec:method-config}), and the mean of the earlier ten-seed
+The dependence on the learner is in no block. The central value and the
+exact-split cross-check, which differ in learner and in background treatment, differ by a
+per-bin median of \SI{1.03}{\percent} (maximum \SI{17.6}{\percent};
+\S\ref{sec:method-config}), and the mean of the earlier ten-seed
 LightGBM scan (Ref.~\cite{NoteRecords2026}, superseded values: retired material)
 differs from the cross-check by a median of \SI{0.99}{\percent} per bin. One reseeded
 exact-split run differs from the unseeded one by a per-bin median of
@@ -307,14 +309,13 @@ groups 1A--1F, 1G--1M and 1N--1P, each unfolded through its own simulated detect
 response. The block uses each period's unfolded result over that period's own
 simulated truth. Each period is compared with the exposure-weighted mean of the
 three, so the block needs no reference period, and the spread, applied to the
-central value, gives the block. It is added after the other blocks. It has rank at
-most two and about 1.8 effective degrees of freedom: with few period groups, its own
-size is poorly determined, at the order of \SI{100}{\percent}. Per bin its median is
+central value, gives the block. It is added after the other blocks. It has rank two:
+with three period groups, its own size is poorly determined. Per bin its median is
 \SI{2.09}{\percent} (84th percentile \SI{3.34}{\percent}, maximum \SI{6.48}{\percent}), and
 it is \SIrange{1.17}{3.36}{\percent} on the $\pPar$ projections and \SI{1.97}{\percent} on the
 integrated cross section. Added to the other blocks, it raises the per-bin $\sigma$ by a
 median of \SI{5.8}{\percent} (at most \SI{39.1}{\percent}), the integral by \SI{9.9}{\percent}
-and the $\pPar$ projections by at most \SI{21}{\percent} (at 6--\SI{7}{GeV/c}); it carries a
+and the $\pPar$ projections by at most \SI{21}{\percent}; it carries a
 median \SI{10.6}{\percent} of the per-bin variance and \SI{17.1}{\percent} of the integral's.
 Taking 1A--1F as the reference would give a smaller block (median \SI{1.38}{\percent}, integral
 \SI{1.09}{\percent}).
@@ -374,12 +375,14 @@ covariance are indicative only. The following are not included in the covariance
         fail reconstruction (below); beyond the weak test described below, its effect
         has not been measured;
   \item the dependence on the machine-learning estimator: a per-bin median of
-        \SI{1.03}{\percent} (maximum \SI{17.6}{\percent}) between the LightGBM
-        central value and the exact-split cross-check (\S\ref{sec:uq-ml});
-  \item the dependence on the unfolding model and its regularization, whose
-        estimate requires independent-generator samples, and departures of the
-        detector response from its parametrized family, which we assume absent;
-        we assign no uncertainty for either.
+        \SI{1.03}{\percent} (maximum \SI{17.6}{\percent}) between the central value
+        and the exact-split cross-check, which also differ in background treatment
+        (\S\ref{sec:uq-ml});
+  \item the dependence on the regularization, and departures of the detector
+        response from its parametrized family, which we assume absent; we assign no
+        uncertainty for either;
+  \item the dependence on the generator shape of the prior, which is reported
+        beside the covariance as $C_{\mathrm{model}}$ (below).
 \end{itemize}
 % J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145),
 % then the director's list of what lies outside every block; the note carries D1's full content, including the reason
@@ -401,6 +404,44 @@ covariance are indicative only. The following are not included in the covariance
 % samples" and "simultaneously over all reported bins and projections" (PLAN-20261011 §1: 205 cells, their integral and
 % 30 projections, 236 functionals).
 
+% RE-2 integration W1 and W8 (DRAFT). DECISION-20261024-joseph-2d-model-dependence-component.md items 1-3 (M2 form,
+% kappa = 1, beside the headline covariance, the label, the users' total, the tail caveat); values:
+% stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json (RE2-PARTC-REPORT.md sec. 7: cell_rel_sigma, integral_rel_sigma,
+% caveat, tail_caveat_post_hoc); rank 3: the decision's correction; the construction: pv2d/REPORT.md (vertices, sec. 4
+% "pure shape departures (kappa preserves the prior's truth weight)", sec. 5 the step rule, threshold 0.1, post hoc).
+% W8: the decision's "61 %" is configuration (a)'s NuWro shift on the 127 PC cells (pv2d/REPORT.md sec. 4, 61.4 %); the
+% shift of the quoted (refined) result reaches the bias in 67 of 127 (cmodel_R.json caveat), which is what prints here.
+\paragraph{Generator-shape model dependence.}
+The dependence of the result on the generator shape of the prior is reported beside
+the covariance, as a separate covariance $C_{\mathrm{model}}=\sum_k s_k s_k^{\mathsf{T}}$.
+For each of three generators $k$ (GENIE with meson-exchange currents, NuWro and GiBUU),
+the prior's truth distribution is reweighted by the ratio of that generator's
+$(\pT,\pPar)$ shape to GENIE's, with its normalization kept, and the data are unfolded
+again with the central value's estimator; $s_k$ is the per-cell relative change of the
+result. Each generator enters as one fully correlated component, unscaled, so
+$C_{\mathrm{model}}$ has rank three. Its per-cell median is \SI{\cmodelMedian}{\percent}
+(84th percentile \SI{7.10}{\percent}, maximum \SI{21.10}{\percent}). The sum of the
+combined covariance and $C_{\mathrm{model}}$, the total for users who include this
+dependence, has a per-cell median of \SI{\qrCmodelMedian}{\percent} (84th percentile
+\SI{12.32}{\percent}, maximum \SI{24.49}{\percent}). On the integrated cross section
+$C_{\mathrm{model}}$ is \SI{\cmodelIntegral}{\percent}, and the total stays at
+\SI{\uqIntegral}{\percent}: the reweightings change only the prior's shape, so
+$C_{\mathrm{model}}$ does not test the model dependence of the normalization. The
+comparison with the published uncertainty (\S\ref{sec:results-uq}) uses the combined
+covariance alone, because the published uncertainty has no component for this
+dependence either.
+
+$C_{\mathrm{model}}$ measures generator-shape model dependence; it is not a calibrated
+bound on the bias in each cell. On the 127 cells where a closure test with
+NuWro-shaped pseudo-data and the configuration-(a) estimator has a bias above
+\SI{1}{\percent}, the NuWro shift of the quoted result reaches the bias in 67, and the
+quadrature sum of the other two generators' shifts reaches it in 72; these counts are
+descriptive. The cells beside a step of more than 0.1 in a generator's reweighting
+ratio drawn by its construction, where a pooled, noise-gated or unreported cell meets
+another cell, enter as measured. Identified after the measurement, these 52 cells hold
+\SI{59.4}{\percent} of the trace of $C_{\mathrm{model}}$ and carry most of its large
+shifts.
+
 \paragraph{Conventions.}
 Each systematic band's covariance is computed about the mean of its universes
 (constraint-weighted for the flux), with $1/N$ normalization, not about the
@@ -421,8 +462,8 @@ completeness; the approximation is not corrected. It was tested in two of the
 187 universes, \texttt{MaRES\_0} and \texttt{Flux:23} (the flux universe with
 the largest median completeness change), each at seeds 42 and 43. In neither was
 an effect resolved above the training-seed noise. The tests compared the
-difference with the $\sigma$ of the earlier ten-seed block, which is about three
-times the training-seed block used here, and they exclude only a median effect above
+difference with the $\sigma$ of the earlier ten-seed block, which is about 3.7
+times that of the training-seed block used here, and they exclude only a median effect above
 twice that $\sigma$; the test is not tight, and an effect below the training noise is
 not excluded. Separately, retraining moves these two universes' shifts by a median
 1.13--1.23 of that $\sigma$.
@@ -449,7 +490,7 @@ level the pooled result is high, by \SI{0.18}{\percent} in total and by at most
 \SI{0.32}{\percent} in a marginal bin. After unfolding, the pooled result is \SI{0.076}{\percent} above
 the exposure-weighted combination of the period results on the integral (the
 same sign as at reconstruction level), and differs from it by at most
-\SI{0.39}{\percent} in a marginal bin (the lowest $\pPar$ bin; at most
+\SI{0.39}{\percent} in a marginal bin (the highest $\pPar$ bin; at most
 \SI{0.33}{\percent} in $\pT$); in single cells the combination differs from the
 pooled result by \SIrange{-1.83}{3.78}{\percent}, each with $|z|$ at most 0.31.
 % J3/J4 provisional (DECISION-20261018, packet W3: D9). KNOWN_ISSUES.md J36 (reco level: +0.18 % total, at most +0.32 % in a

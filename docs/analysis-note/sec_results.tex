@@ -152,7 +152,12 @@ median, \SI{\uqMedian}{\percent}, is smaller than the published
 \SI{\uqPaper}{\percent}, and its value on the integrated cross section,
 \SI{\uqIntegral}{\percent}, is larger than the published
 \SI{\uqPaperIntegral}{\percent} (the width-weighted total $\sigma$ of
-App.~\ref{sec:chisq}). The systematic-universe block carries a median 0.87 of
+App.~\ref{sec:chisq}). The comparison leaves out the generator-shape component
+$C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}), because the published uncertainty has no
+such component either; with it, the per-bin median is \SI{\qrCmodelMedian}{\percent}.
+% RE-2 integration W2 (DRAFT): DECISION-20261024-joseph-2d-model-dependence-component.md item 1 (like-for-like with Q
+% alone) and item 3; \qrCmodelMedian from cmodel_R.json (values.tex).
+The systematic-universe block carries a median 0.87 of
 each bin's variance and 0.83 of the integral's, and the run-period block
 (\S\ref{sec:uq-combine}) raises the per-bin median from
 \SI{\uqSFiveMedian}{\percent} to \SI{\uqMedian}{\percent}.
@@ -222,8 +227,9 @@ $\chiPaper$ per bin. The eightfold increase lies entirely in the off-diagonal
 structure of the published covariance, and it is a difference in
 \emph{shape}, not normalization ($\chi^{2}_{\mathrm{norm}}=0.04$ against
 $\chi^{2}_{\mathrm{shape}}=465$). The eigenmode decomposition
-(Fig.~\ref{fig:tension}) spreads it over many modes, the largest with
-paper-covariance-standardized components of magnitude about $4$--$5$. The 10
+(Fig.~\ref{fig:tension}) spreads it over many modes: the largest has a
+paper-covariance-standardized component of magnitude $4.8$, and the next nine
+$3.4$--$3.8$. The 10
 smallest-$\lambda$ modes carry \SI{9.6}{\percent}, two of the five largest
 contributors lie in the smallest-$\lambda$ tenth, and keeping the 73
 best-measured directions gives $0.66$. The four leading modes in the
@@ -233,10 +239,14 @@ moderate-$\lambda$ modes lie at low-to-moderate $\pT$, below the highest $\pPar$
 (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$
 band carries more than \SI{15}{\percent} of the total.
 
-The choice of GBDT estimator spreads the distance over about one unit, a
-methodological band: the
+% RE-2 integration W2 (DRAFT): the purity-subtracted values are unchanged (RE2-PARTC-REPORT.md sec. 5, "Unchanged");
+% 2.654 -> 2.27: values_table.tsv m-chiPaper (\chiPaperPurity, \chiPaper).
+With the purity-based subtraction, the choice of GBDT estimator spreads the
+distance over about one unit, a methodological band: the
 exact-split cross-check gives $\chiPaperExact$, HistGBT $2.70\pm0.04$, and
-LightGBM with seeds 1--10 gives 2.64--2.75. For the exact-split cross-check the
+LightGBM with seeds 1--10 gives 2.64--2.75. At the central value's seed, the
+refined negative-weight subtraction of the quoted result lowers the LightGBM
+distance from $\chiPaperPurity$ to $\chiPaper$. For the exact-split cross-check the
 distance is larger and distributed differently, with magnitude-$5$--$6$ components in
 moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak;
 the 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of it, and the 73

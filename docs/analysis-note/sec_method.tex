@@ -104,28 +104,43 @@ code paths in App.~\ref{app:codebase}). The quoted 2D central value and all of i
 uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the
 training-seed block and the run-period unfolds) use LightGBM with $100$ trees,
 $8$ leaves and learning rate $0.1$, the same settings for the step-1
-classifier, the step-2 classifier and the miss regressor. The central value is the
-universe sweep's own matched central value at seed~42 (Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}), so the systematic block shares its estimator and seed
+classifier, the step-2 classifier and the miss regressor, with refined
+negative-weight background subtraction (App.~\ref{app:negweight}), whose
+refinement classifier has 400 trees and 31 leaves and takes the estimator seed
+plus three as its seed. This is configuration~(f) below. The central value is the
+universe sweep's own central value at seed~42, so the systematic block shares its estimator and seed
 (\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
 training-seed block uses five seed settings that include it (\S\ref{sec:uq-boot},
 \S\ref{sec:uq-ml}). The bootstrap replica mean differs from the central value by a
-per-bin median of 4.37 standard errors of the mean. The seed-42 central value
+per-bin median of 4.37 standard errors of the mean. A central unfold at seed~45
+differs from the seed-42 one by at most \SI{1.4}{\percent} in a cell. With the
+purity-based subtraction (configuration~(a)), the seed-42 central value
 differs from the seed-1 one by a per-bin median of \SI{0.18}{\percent} (maximum
 \SI{1.79}{\percent}), or 0.30 (maximum 1.28) of the per-bin standard deviation of
-the earlier statistical band, which was built at seed~1. Both central values are
+the earlier statistical band, which was built at seed~1. Both of those central values are
 regenerated to $\lesssim2\times10^{-11}$ with one driver and one input, the runs
 differing only in the seed, so the difference is attributable to the seed
 (inferred from the two regenerations).
+% RE-2 integration W6 and W7 (DRAFT): refined estimator: registry a-refined-400-31 (ESTIMATORS.tsv:12) and
+% re2/RE2-PARTB-REPORT.md sec. 4.3 (every run negweight-refined, 400 trees, 31 leaves, random_state = seed + 3); seed 45
+% vs seed 42: RE2-PARTB-REPORT.md:193 (PB-pow-S4CV, max rel. diff. 0.0142). The seed-1 comparison (0.18, 1.79, 0.30,
+% 1.28) is E_U's, kept as configuration (a)'s (re2c_values_unmatched.tsv: no refined field).
 % FACT (2026-10-18, Q): S1 at --seed 42 (stageC/production/DESIGN.md §3.4); C08 seeds §3.5; July sweep for the
 % universe block (§S5), so the May-sweep truth-input clause no longer applies (it stays in sec:uq-2d-construction
 % as the earlier budget's). Offset: rebuild/outputs/outA/budget_Q.json.gz s5_copied.stat_centring_offset (4.428).
 % The 0.18 % / 0.30 comparison is the earlier (VL170) seed-1 band's.
 % J3/J4 provisional (DECISION-20261018, packet W3: D2, D10 KI-88, KI-93; the note sentences are in sec:uq-boot and sec:uq-2d-construction).
-There is no execution log or recorded run configuration for the seed-42 central
-value itself. An independent rerun with a different driver and thread count reproduces it
-to $1.4\times10^{-11}$, and so does a regeneration with the current driver whose run
-configuration is recorded. Against the ten LightGBM central values at seeds 1--10
-it is mildly over-dispersed (RMS standardized difference 1.28, maximum 4.25).
+The quoted central value records its run configuration; it repeats to
+$9\times10^{-12}$ and equals the refined 2D data unfold of
+App.~\ref{sec:negweight-footing} to $7\times10^{-12}$. The purity-subtracted seed-42
+central value (Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}) has no
+execution log or recorded run configuration. An independent rerun with a different
+driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a
+regeneration with the current driver whose run configuration is recorded. Against
+the ten purity-subtracted LightGBM central values at seeds 1--10 it is mildly
+over-dispersed (RMS standardized difference 1.28, maximum 4.25).
+% RE-2 integration W6 and W7 (DRAFT): RE2-PARTB-REPORT.md:149-150 (PB-ER-rep 9.17e-12, PB-ER-D2 7.45e-12), sec. 4.3 (the
+% argv check: each run's recorded runConfig). 1.28 and 4.25 are E_U's (re2c_values_unmatched.tsv).
 Seed~42 was chosen on cost: of the two ways of matching the central value and the
 statistical band in seed that the analysis design costed, a matched seed-42
 statistical band was the cheaper. The quoted statistical block is a seed-42 band
@@ -156,11 +171,16 @@ $7\times10^{-15}$, but it is not invariant to the estimator seed: one reseeded r
 (maximum \SI{1.6}{\percent}; the agreement with the LightGBM seed-1 to seed-42
 median above is a coincidence), and gives
 $\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$; the spread over seeds is unmeasured.
-The exact-split central value differs from the LightGBM seed-42 central value by a
-per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}), 1.32
-statistical standard deviations, and gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$
-(unseeded, reproducible) against the published covariance, against $\chiPaper$
-for LightGBM (\S\ref{sec:results-tension}). It has no matched covariance: no
+The exact-split central value differs from the purity-subtracted LightGBM seed-42
+central value by a per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}),
+1.32 statistical standard deviations, and from the quoted central value, which also
+differs from it in background treatment, by \SI{1.03}{\percent} (maximum
+\SI{17.6}{\percent}). It gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded,
+reproducible) against the published covariance, against $\chiPaperPurity$ for the
+purity-subtracted LightGBM central value and $\chiPaper$ for the quoted one
+(\S\ref{sec:results-tension}).
+% RE-2 integration W7 (DRAFT): 0.98/12.2/1.32 are E_U vs E_C (unchanged); 1.03/17.6 = values_table.tsv lit-learner-*
+% (E_R vs E_C); \chiPaperPurity 2.654 (m-chiPaper purity_value). It has no matched covariance: no
 exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for
 the central value after both comparisons with the publication were known, so that
 the central value and its covariance share an estimator. A third learner, the
@@ -185,19 +205,23 @@ configuration), is retained for method-dependence studies
 % Note register batch b5 (2026-10-22): the note's three-item list and the article's (a)-(e) paragraph are merged; the
 % uses of (c), (d) and (e) follow the table below and Table tab:validation-design-5d (sec_5d.tex) (review B1).
 \paragraph{The estimator configurations.}
-Five estimator configurations, labeled (a)--(e) as in the article
+Six estimator configurations, labeled (a)--(f) as in the article
 (Table~\ref{tab:estimators-matrix}), are used, and each result names the one it
 uses. All use five OmniFold iterations and gradient-boosted trees of nominal
 capacity (100 trees, 8 leaves) in both OmniFold steps; ``deterministic'' means
 fixed seeds and reproducible training. Results from different configurations are
-not combined. Three are described in this section:
+not combined. Four are described in this section:
 \begin{itemize}[itemsep=1pt, topsep=2pt]
-  \item (a), the nominal LightGBM configuration above, with
-        purity-based background subtraction (\S\ref{sec:method-algo}): the 2D
-        central value (seed~42) and its uncertainty ensembles, the
-        five-dimensional central value (\S\ref{sec:eavailw}), and the 3D and 4D
-        injected-bump closures and Figs.~\ref{fig:eavail-marg}
-        and~\ref{fig:q3excess} (\S\ref{sec:3d});
+  \item (f), the nominal LightGBM configuration above with refined
+        negative-weight subtraction and the refinement classifier of (e), seeded at
+        the estimator seed plus three: the 2D central value (seed~42) and its
+        uncertainty ensembles (\S\ref{sec:results});
+  \item (a), the same learner with purity-based background subtraction
+        (\S\ref{sec:method-algo}): the five-dimensional central value
+        (\S\ref{sec:eavailw}), the 3D and 4D injected-bump closures and
+        Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} (\S\ref{sec:3d}), and the
+        purity-subtracted 2D comparisons of this section and
+        \S\ref{sec:results-tension};
   \item (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned
         negative-weight background treatment (App.~\ref{app:negweight}), whose
         refinement classifier has 400 trees and 31 leaves. The negative-weight
@@ -216,13 +240,16 @@ not combined. Three are described in this section:
 Configuration (c), the deterministic variant with purity-based subtraction, and
 (d), the same variant with negative weights and a nominal-capacity refinement, are
 used in the background-bias, generator-sized-change and coverage studies listed in
-the table. In two and five dimensions, the central values and their covariances use
-purity-based subtraction: they were produced before the purity bias was found and the
-refinement was developed. Refined data unfolds exist in both (the 2D one of
-App.~\ref{sec:negweight-footing} and the five-dimensional one of configuration~(e)), but
-they are not the quoted central values, and no covariance has been built for them.
-The 3D and 4D central values have been regenerated with configuration~(e); no 3D or
-4D covariance is quoted.
+the table. In five dimensions, the central value and its covariance use purity-based
+subtraction: they were produced before the purity bias was found and the refinement
+was developed. A refined five-dimensional data unfold exists (configuration~(e)), but
+it is not the quoted central value, and no covariance has been built for it. The 2D
+central value and its covariance were rebuilt with configuration~(f) after a
+two-dimensional closure test with backgrounds found the purity bias
+(App.~\ref{sec:negweight-footing}). The 3D and 4D central values have been
+regenerated with configuration~(e); no 3D or 4D covariance is quoted.
+% RE-2 integration W7 (DRAFT): DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1 (the move, after RE-1 C2);
+% DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R and Q_R adopted).
 % Sources: RE1-REPORT-2.md sec. 3 (D2, the 2D refined data unfold); ../RE1-REPORT.md sec. 1 (P5, the s5p data unfold, is
 % configuration (e)); NOT CITABLE FOR "a covariance or coverage for configuration (e)" (both reports).
 % Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
@@ -239,7 +266,7 @@ The 3D and 4D central values have been regenerated with configuration~(e); no 3D
     \midrule
     \pcell{0.20\textwidth}{(a) central-value estimator} & \pcell{0.20\textwidth}{LightGBM; seed 42 in two dimensions} &
     \pcell{0.22\textwidth}{purity-based subtraction} &
-    \pcell{0.30\textwidth}{two- and five-observable central values; two- and five-observable covariances (\S\ref{sec:results}, \S\ref{sec:eavailw-adopted}); three- and four-observable closures and Figs.~\ref{fig:eavail-marg}, \ref{fig:q3excess} (\S\ref{sec:3d})} \\
+    \pcell{0.30\textwidth}{five-observable central value and covariance (\S\ref{sec:eavailw-adopted}); three- and four-observable closures and Figs.~\ref{fig:eavail-marg}, \ref{fig:q3excess} (\S\ref{sec:3d}); two-observable purity-subtracted comparisons (\S\ref{sec:results-tension})} \\
     \pcell{0.20\textwidth}{(b) exact-split cross-check} & \pcell{0.20\textwidth}{scikit-learn exact splits; seed not fixed} &
     \pcell{0.22\textwidth}{purity-based subtraction} &
     \pcell{0.30\textwidth}{two-observable cross-check (above)} \\
@@ -252,6 +279,9 @@ The 3D and 4D central values have been regenerated with configuration~(e); no 3D
     \pcell{0.20\textwidth}{(e) joint-test estimator} & \pcell{0.20\textwidth}{as (c)} &
     \pcell{0.22\textwidth}{negative weights; refinement classifier 400 trees, 31 leaves} &
     \pcell{0.30\textwidth}{three- and four-observable central values (\S\ref{sec:3d}); generator shapes held out of development; precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d})} \\
+    \pcell{0.20\textwidth}{(f) refined central-value estimator} & \pcell{0.20\textwidth}{as (a); refinement seeded at the estimator seed plus three} &
+    \pcell{0.22\textwidth}{negative weights; refinement classifier 400 trees, 31 leaves} &
+    \pcell{0.30\textwidth}{two-observable central value and covariance (\S\ref{sec:results})} \\
     \bottomrule
   \end{tabular}
 \end{table}

@@ -156,6 +156,21 @@
                                       % rebuild/outputs/outA/budget_Q.json.gz bands.Flux.median_pct; was 3.6549 (VL175, KI 95), 4.993 unweighted (VL172)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
+% --- RE-2 integration (2026-10-24, DRAFT wording pending approval): C_model beside Q_R, the RO-FPS readout ---
+% C_model: DECISION-20261024-joseph-2d-model-dependence-component.md (M2 form, kappa = 1, reported beside Q_R, users'
+% total Q_R + C_model); values: state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json
+% (RE2-PARTC-REPORT.md sec. 7). Ledger: stageF/methods/re2-integration/ledger.tsv.
+\newcommand{\cmodelMedian}{3.71}      % cmodel_R.json cell_rel_sigma.C_model.median = 0.03707002200124932
+\newcommand{\qrCmodelMedian}{7.90}    % cmodel_R.json cell_rel_sigma.Q_R_plus_C_model.median = 0.07901482465729487
+\newcommand{\cmodelIntegral}{0.03}    % cmodel_R.json integral_rel_sigma.C_model = 0.00029047694947485715
+% The purity-subtracted 2D total (E_U) and the extended-fiducial control: values_table.tsv row m-sigTwoD purity_value
+% 3.073023056386603e-38; the control unfold's total 3.073e-38 (VALIDATION_LEDGER.md:1616); RE2-PARTC-REPORT.md sec. 8
+% (E_R 3.069e-38 against 3.073e-38, -0.14 %).
+\newcommand{\sigTwoDPurity}{3.073e-38}
+\newcommand{\roFpsDiff}{0.14}         % RE2-PARTC-REPORT.md sec. 8: "The two values differ by -0.14 %"
+\newcommand{\chiPaperPurity}{2.65}    % E_U (LightGBM seed 42, purity-based subtraction): values_table.tsv row m-chiPaper
+                                      % purity_value 2.654 (chi2_lgbm42_paperonly.txt)
+
 % --- 3D / 4D higher-dimensional ---
 \newcommand{\sigData}{3.07e-38}       % unfolded data total in the >=3D campaigns
 \newcommand{\eavailMargin}{0.11}      % W-marginal recovers frozen 4D to this (%)
@@ -271,7 +286,8 @@
 
 % --- extended fiducial phase space (historical fps* macro names retained for compatibility) ---
 \newcommand{\fpsSigma}{4.502e-38}     % extended-fiducial total, cm^2/nucleon
-\newcommand{\fpsAbove}{46}            % percent above restricted phase space
+\newcommand{\fpsAbove}{46}            % percent above restricted phase space. RE-2 integration (DRAFT): no longer printed; its
+                                      % definition is not established (RE2-PARTC-REPORT.md sec. 4: 4.502/3.0730 - 1 = 46.50 %)
 \newcommand{\fpsAnchor}{0.57}         % median anchor deviation in published cells (%)
 
 % --- unbinned negative-weight background subtraction (App.~negweight) ---

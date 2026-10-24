@@ -16,8 +16,10 @@ illustrates calibrated inference with a biased estimator.
         within about one percent and its uncertainty scale
         (\S\ref{sec:results}), with a correlated shape
         difference ($\chi^{2}/\mathrm{ndf}=\chiPaper$, \S\ref{sec:results-tension})
-        whose size depends on the learner (exact-split cross-check
-        $\chiPaperExact$). The central value and its uncertainty share the
+        whose size depends on the estimator (exact-split cross-check
+        $\chiPaperExact$). A generator-shape model-dependence component, reported beside the
+        uncertainty, raises its per-bin median to \SI{\qrCmodelMedian}{\percent}
+        (\S\ref{sec:uq-2d-scope}). The central value and its uncertainty share the
         LightGBM estimator, which was chosen after both comparisons were known
         % plain-language pass, director ruling on base defect note F2 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7)
         (\S\ref{sec:method-config}). In the fixed-truth coverage test, the statistical band then quoted
@@ -31,7 +33,7 @@ illustrates calibrated inference with a biased estimator.
         ($+\Eavail$, $+q_{3}$, $+W$) pass marginal-normalization checks against
         % plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
         the lower-dimensional results to $\approx$1--2\,\% in configuration (a) (4D and 5D), and the
-        configuration-(e) 3D marginal agrees with the configuration-(a) 2D result to \SI{0.141}{\percent} in
+        configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to \SI{0.141}{\percent} in
         total, across configurations; the 3D and 4D
         injected-bump closures, of configuration (a), leave 0.10 of the injected $\Eavail$ change and
         close $q_{3}$ to \SI{1.1}{\percent}, with no acceptance threshold
@@ -62,12 +64,11 @@ illustrates calibrated inference with a biased estimator.
         quoted uncertainty includes. The refined negative-weight subtraction that largely removes it is the
         background treatment of estimator configurations (d) and (e) of Table~\ref{tab:estimators-matrix}, which give
         validation studies of \S\S\ref{sec:val-negweight}--\ref{sec:gbdt-model-dependence} and the
-        generator tests; configuration (e) also gives the three- and four-dimensional central values. In a two-dimensional closure test with backgrounds, the purity and refined estimates differ by
+        generator tests; configuration (e) also gives the three- and four-dimensional central values, and the two-dimensional result uses the same treatment, in configuration (f). In a two-dimensional closure test with backgrounds, the purity and refined estimates differ by
         more than one statistical standard deviation in 14 of the 205 cells, where the purity estimate lies up to
-        $5.9\,\sigma_{\mathrm{stat}}$ from the truth and the refined one within $0.44\,\sigma_{\mathrm{stat}}$; the
-        two-dimensional result is being moved to the refined estimator. No full five-dimensional comparison of the two
-        background treatments has been made; the revisit of the choice of purity is in progress, with this
-        two-dimensional test as its first result (App.~\ref{app:negweight}).
+        $5.9\,\sigma_{\mathrm{stat}}$ from the truth and the refined one within $0.44\,\sigma_{\mathrm{stat}}$, and on
+        this basis the two-dimensional result was moved to the refined estimator. No full five-dimensional comparison
+        of the two background treatments has been made (App.~\ref{app:negweight}).
         The five-dimensional estimator recovers only part
         of truth changes of about the size of generator differences; this
         residual bias is interpreted as regularization bias. Under the specified envelope
@@ -112,8 +113,9 @@ illustrates calibrated inference with a biased estimator.
 
 \paragraph{Outlook.}
 The scalar extended-fiducial study (\S\ref{sec:fps}) yields a preliminary
-central value $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$
-(\SI{\fpsAbove}{\percent} above the restricted phase space).
+central value $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, against
+\SI{\sigTwoDPurity}{cm^2/nucleon} for its control unfold in the restricted phase space.
+% RE-2 integration W5 (DRAFT): \fpsAbove's definition is not established (RE2-PARTC-REPORT.md sec. 4); sec_fps.tex.
 % Cut (lane 3 §11 #8; stated at the head of sec_fps.tex): with an anchor,
 % closure tests and a three-prior envelope but without a corrected covariance
 New acceptance-supported cells contribute about \SI{6}{\percent} of the rate;

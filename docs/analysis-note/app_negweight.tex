@@ -16,11 +16,12 @@ natural treatment for the larger backgrounds of the extended-fiducial analysis.
 No number in this appendix is a quoted uncertainty, and the analytic derivation,
 the estimand identity and the displacement argument require none of them. Every
 cross section and uncertainty quoted in this note uses the binned purity weight of
-\S\ref{sec:method-algo}, except the 3D and 4D central values. Refined negative-weight subtraction is used by
-configurations (d) and (e) (\S\ref{sec:method-config}): (d) in the background-bias and
-generator-sized-change studies of \S\ref{sec:val-negweight}, and (e), the joint-test
+\S\ref{sec:method-algo}, except the 2D result and its covariance and the 3D and 4D central values. Refined
+negative-weight subtraction is used by configurations (d), (e) and (f) (\S\ref{sec:method-config}): (d) in the
+background-bias and generator-sized-change studies of \S\ref{sec:val-negweight}, (e), the joint-test
 estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the
-generator tests (\S\ref{sec:joint5d}) and the 3D and 4D central values (\S\ref{sec:3d}).
+generator tests (\S\ref{sec:joint5d}) and the 3D and 4D central values (\S\ref{sec:3d}), and (f) for the 2D
+result and its covariance (\S\ref{sec:results}).
 % Note register batch b5, review B1 (director-authorized edit of this sentence only): the uses follow
 % Table tab:estimators-matrix (sec_method.tex) and Table tab:validation-design-5d (sec_5d.tex); the earlier wording gave
 % (e) the development studies of sec:val-negweight, which used (c) and (d).
@@ -288,9 +289,13 @@ subtraction is a mismatch, not an upgrade. Second, switching would have required
 rerunning every unfold above and would have invalidated the flux-corrected
 covariance (corrected for audit finding J28), which had just been chosen for use.
 This consequence, not the computing cost, decided the choice. The choice carries
-an obligation to revisit the background treatment before submission. That
-revisit is in progress, and the two-dimensional closure test below is its first
-result.
+an obligation to revisit the background treatment before submission. In two
+dimensions, the closure test below is the revisit's result, and the 2D result and
+its covariance now use the refined estimator; the five-dimensional central value
+still uses purity.
+% RE-2 integration W7 (DRAFT): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1; DECISION-20261023 (second) item 2
+% (record the revisit as carried out once the rebuilt 2D result is adopted; its "in every dimension" reading awaits the
+% director's confirmation with Joseph, so this draft states the 2D and 5D facts only).
 
 % RE-1 integration (DECISION-20261023 items 1-2): C2 of stageF/methods/re1/RE1-REPORT-2.md sec. 2 (readout_2d_full.json,
 % c2_supplement.json, c2_cells.json), recomputed by the director (RE1-REPORT-2-RULINGS.md); D2 from sec. 3. OI-6: in
@@ -302,7 +307,7 @@ pseudo-experiments, were unfolded in two dimensions with the purity subtraction
 and with refined negative-weight subtraction (a 400-tree, 31-leaf refinement),
 both on the same pseudo-data. The yardsticks are the statistical and total
 standard deviations, $\sigma_{\mathrm{stat}}$ and $\sigma_{\mathrm{total}}$, of
-the quoted 2D covariance on its 205 reported cells. The mean difference between
+the purity-based 2D covariance on its 205 reported cells (the quoted covariance when the test ran). The mean difference between
 the two treatments exceeds $1\,\sigma_{\mathrm{stat}}$ in 14 of the 205 cells,
 at most $5.45\,\sigma_{\mathrm{stat}}$, in the cell
 $0.70\le\pT<\SI{0.85}{GeV/c}$, $1.5\le\pPar<\SI{2.0}{GeV/c}$. These cells are
@@ -319,9 +324,11 @@ most $0.497\,\sigma_{\mathrm{total}}$ per cell (median $0.060$), by more than
 $1\,\sigma_{\mathrm{stat}}$ in 43 of the 205 cells (at most
 $4.26\,\sigma_{\mathrm{stat}}$), and by a median of \SI{0.44}{\percent} per cell
 (84th percentile \SI{1.13}{\percent}, at most \SI{10.1}{\percent}); its
-integral moves by \SI{-0.139}{\percent}. The 2D result quoted in this note still uses the purity
-subtraction; it is being moved to the refined estimator, with its covariance and
-its comparison with the published result rebuilt.
+integral moves by \SI{-0.139}{\percent}. The 2D result quoted in this note uses the refined
+treatment, configuration~(f), with its covariance and its comparison with the published result
+rebuilt for it (\S\ref{sec:results}).
+% RE-2 integration W7 (DRAFT): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1; the -0.139 % and 0.44 % movements
+% equal RE2-PARTC-REPORT.md sec. 6 (E_R against E_U: -0.139 %, median 0.440 %, maximum 10.13 %).
 
 
 \paragraph{What the quoted extended-fiducial number used.}
@@ -400,7 +407,7 @@ shown to be immaterial.
 \subsection{Five-dimensional pseudo-experiments with both background treatments}
 
 The five-dimensional validation (\S\S\ref{sec:val-fiveaxis}--\ref{sec:val-departure})
-reports end-to-end tests of both background treatments: purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity, configuration (e), which gives the 3D and 4D central values but not the quoted 2D and 5D central values.
+reports end-to-end tests of both background treatments: purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity, configuration (e), which gives the 3D and 4D central values but not the quoted 5D central value; the quoted 2D central value uses the same refinement capacity, in configuration (f).
 
 \paragraph{Purity bias.}
 Purity bias is 8--12 statistical standard deviations; signal-only experiments
