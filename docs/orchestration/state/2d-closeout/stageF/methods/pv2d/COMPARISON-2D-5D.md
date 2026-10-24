@@ -63,8 +63,13 @@ h is the envelope of the per-cell |shift| when the prior is varied, relative to 
 |---|---|---|
 | σ_Q alone | 6.45 % | 9.20 % |
 | √(σ_Q² + h²), refined h | **7.69 %** | 12.40 % |
+| √(σ_Q² + Σ_k s_k²), the M2 form decided on 2026-10-24 | **7.95 %** | 13.0 % |
 | σ_Q + h, linear | 9.95 % | |
 
 - In quadrature the per-cell median increase is 0.59 percentage points.
 - An earlier estimate the director gave Joseph from the two medians alone (about 7.1 %) was low. The per-cell figure
   above replaces it.
+
+**Added 2026-10-24.** The M2 row was re-measured by the 2d test lane while building C_model,2D. The decided form,
+M2, sums the three vertices' shifts in quadrature, so its total is larger than the envelope total. 7.95 % is the users'
+total under the decision; 7.69 % is the envelope total only.
