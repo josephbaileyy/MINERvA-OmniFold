@@ -1,0 +1,37 @@
+id	where	printed	source	path	transform	fmt	group	note	expect
+m-sigTwoD	N/values.tex:\sigTwoD	3.073e-38	agreement	headline_totals_oi130.values.integral_ours_reported	v	.3e	published_comparison	area-weighted total on the 205 reported cells	
+m-ratioTot	N/values.tex:\ratioTot	1.011	agreement	headline_totals_oi130.values.ratio_integrals_reported	v	.3f	published_comparison	the '~1 %' claim: ours/published total	
+lit-ratioTot-pct	N/sec_results.tex:57	1.1	agreement	headline_totals_oi130.values.ratio_integrals_reported	100*(v-1)	.1f	published_comparison	'to 1.1 %' (\SI{1.1}{\percent})	
+m-medianBinRatio	N/values.tex:\medianBinRatio	1.008	agreement	results.median_bin_ratio	v	.3f	published_comparison	receipt stores 4 decimals	
+m-binsFive	N/values.tex:\binsFive	82.9	agreement	results.within_5_percent.percent	v	.1f	published_comparison		
+m-binsTen	N/values.tex:\binsTen	95.6	agreement	results.within_10_percent.percent	v	.1f	published_comparison		
+m-binsTwenty	N/values.tex:\binsTwenty	99.0	agreement	results.within_20_percent.percent	v	.1f	published_comparison		
+m-pullMean	N/values.tex:\pullMean	0.074	chi2_paper	pull mean / rms\s*:\s*([-0-9.]+)\s*/	v	.3f	published_comparison	paper-only run of compare_to_paper_fullcov.py	
+m-pullRMS	N/values.tex:\pullRMS	0.564	chi2_paper	pull mean / rms\s*:\s*[-0-9.]+\s*/\s*([0-9.]+)	v	.3f	published_comparison		
+m-pullRMSr	N/values.tex:\pullRMSr	0.56	chi2_paper	pull mean / rms\s*:\s*[-0-9.]+\s*/\s*([0-9.]+)	v	.2f	published_comparison	rounded for prose	
+m-chiPaper	N/values.tex:\chiPaper	2.65	chi2_paper	chi\^2/ndf\s+PAPER \(full cov\)\s*:\s*([0-9.]+)	v	.2f	published_comparison	chi2/ndf against the published covariance	
+m-chiCombined	N/values.tex:\chiCombined	0.964	chi2_Q_std	COMBINED \(paper \+ hCov_Q\)\s+chi2 =\s*[0-9.]+\s+ndf = 205\s+chi2/ndf =\s*([0-9.]+)	v	.3f	published_comparison	paper TotalCov + Q_R	
+m-chiCombinedLog	N/values.tex:\chiCombinedLog	0.987	chi2_Q_lognormal	COMBINED \(paper \+ omnifold\)\s+chi2_log =\s*[0-9.]+\s+ndf = 205\s+chi2/ndf =\s*([0-9.]+)	v	.3f	published_comparison	log-normal form	
+m-chiCombinedSubStat	N/values.tex:\chiCombinedSubStat	6.01	chi2_Q_substat	COMBINED \(paper\(syst-only\) \+ hCov_Q\)\s+chi2 =\s*[0-9.]+\s+ndf = 205\s+chi2/ndf =\s*([0-9.]+)	v	.2f	published_comparison		
+m-uqMedian	N/values.tex:\uqMedian	6.45	budget_Q	Q.median_pct	v	.2f	Q_budget	bound by check_sec4_receipts.py:120	
+m-uqIntegral	N/values.tex:\uqIntegral	4.75	budget_Q	Q.integral_sigma_pct	v	.2f	Q_budget	bound by check_sec4_receipts.py:121	
+m-uqSFiveMedian	N/values.tex:\uqSFiveMedian	6.04	budget_Q	S5_total.median_pct	v	.2f	Q_budget		
+m-fluxBand	N/values.tex:\fluxBand	3.75	budget_Q	bands.Flux.median_pct	v	.2f	Q_budget		
+m-fpsAbove	N/values.tex:\fpsAbove	46	agreement	headline_totals_oi130.values.integral_ours_reported	100*(4.502e-38/v-1)	d	published_comparison	no producer found (RE2-PLAN §2.2); 4.502/3.0730 - 1 = 46.50 %, which rounds to 47, not the printed 46: the definition is not established, so it is not regenerated	fails
+ro-fps	VALIDATION_LEDGER.md:1614	3.073e-38	agreement	headline_totals_oi130.values.integral_ours_reported	v	.4g	ro_fps	RO-FPS (RE2-DECLARATION-B §7.4): E_R's Integral(width) at 4 s.f. against the FPS control's 3.073e-38; source printed as 'VALIDATION_LEDGER.md:1614-1615, no committed digest'	
+new-QR-plus-Cmodel-median			cmodel	cell_rel_sigma.Q_R_plus_C_model.median	100*v	.2f	new_C_model	users' total Q_R + C_model, per-cell median (%); secondary, beside Q_R	
+new-QR-plus-Cmodel-p84			cmodel	cell_rel_sigma.Q_R_plus_C_model.p84	100*v	.2f	new_C_model		
+new-QR-plus-Cmodel-integral			cmodel	integral_rel_sigma.Q_R_plus_C_model	100*v	.2f	new_C_model	integral sigma of Q_R + C_model (%), beside \uqIntegral	
+new-Cmodel-median			cmodel	cell_rel_sigma.C_model.median	100*v	.2f	new_C_model	C_model's own sqrt-diagonal median (%)	
+new-QR-median-check			cmodel	cell_rel_sigma.Q_R.median	100*v	.2f	new_C_model	must equal the regenerated \uqMedian	
+new-ER-minus-EU-in-QR-sigma-median			partc_numbers	E_R_minus_E_U_in_Q_R_sigma.abs_median	v	.3f	new_readout	RE2-PLAN §5.3 readout: |E_R - E_U| / sigma_Q_R per cell	
+new-ER-minus-EU-in-QR-sigma-max			partc_numbers	E_R_minus_E_U_in_Q_R_sigma.abs_max	v	.3f	new_readout		
+new-ER-integral-change-pct			partc_numbers	E_R_vs_E_U.integral_change_pct	v	.3f	new_readout		
+lit-3d-total-change	N/sec_3d.tex:152	0.001	re1_numbers || partc_numbers	p3.vs_E_U.total_change_percent || threeD_p3_vs_central.total_change_percent	v	.3f	threeD_vs_2D	P3 marginal vs the 2D central value, area-weighted total change (%)	
+lit-3d-median-ratio	N/sec_3d.tex:153	1.0000	re1_numbers || partc_numbers	p3.vs_E_U.median_ratio || threeD_p3_vs_central.median_ratio	v	.4f	threeD_vs_2D		
+lit-3d-scatter	N/sec_3d.tex:155	3.5	re1_extras || partc_numbers	marginal_vs_EU_scatter.p3.sd_ratio || threeD_p3_vs_central.sd_ratio	100*v	.1f	threeD_vs_2D	SD of the per-cell ratio (ddof 0)	
+lit-3d-scatter-187	N/sec_3d.tex:187	3.5	re1_extras || partc_numbers	marginal_vs_EU_scatter.p3.sd_ratio || threeD_p3_vs_central.sd_ratio	100*v	.1f	threeD_vs_2D		
+lit-learner-median-180	N/sec_systematics.tex:180	0.98	lgbm_metrics || partc_numbers	^CV42_universe_file(?:\s+\S+){9}\s+([0-9.]+)\s+[0-9.]+\s*$ || learner_vs_E_C_pct.median_abs	v	.2f	learner_EC	median |x/E_C - 1| (%)	
+lit-learner-max-181	N/sec_systematics.tex:181	12.2	lgbm_metrics || partc_numbers	^CV42_universe_file(?:\s+\S+){10}\s+([0-9.]+)\s*$ || learner_vs_E_C_pct.max_abs	v	.1f	learner_EC	max |x/E_C - 1| (%)	
+lit-learner-median-377	N/sec_systematics.tex:377	0.98	lgbm_metrics || partc_numbers	^CV42_universe_file(?:\s+\S+){9}\s+([0-9.]+)\s+[0-9.]+\s*$ || learner_vs_E_C_pct.median_abs	v	.2f	learner_EC		
+lit-learner-max-377	N/sec_systematics.tex:377	12.2	lgbm_metrics || partc_numbers	^CV42_universe_file(?:\s+\S+){10}\s+([0-9.]+)\s*$ || learner_vs_E_C_pct.max_abs	v	.1f	learner_EC		
