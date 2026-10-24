@@ -88,7 +88,7 @@ each unfold's per-cell change against the Tune v1 nominal, and h is the largest 
 - **Guard.** Every unfold ran through `nd-unfolding/mnv_guarded_run.py --expect-root <deploy>` (OI-136). Every
   inventory shows the modules `omnifold` and `pv2d_lib` loaded from the deploy itself.
 - **Not run.** `data_nuwro_sq` and `closure_nuwro_sq` were not run: the primary positive control was powered, so
-  the declared fallback rule did not trigger.
+  the declared fallback rule did not trigger. <!-- absence-ok: scope of this lane's own runs; LEDGER.tsv lists every PV-2D job -->
 
 ## 2. The vertex reweights and the gate tiers
 
@@ -272,7 +272,7 @@ the gate drew its boundaries, not only by the generators' shapes. The median is 
 the own-ratio cells' median |shift| is 1.25–2.32%.
 
 **A follow-up** that would separate the two is a smoothed reweight, for example ρ interpolated across the coarse
-boundaries. It would need a new declaration and binding, and it is not run here.
+boundaries. It would need a new declaration and binding, and it is not run here. <!-- absence-ok: scope of this lane's own runs -->
 
 ## 6. The refined arm (binding option (a))
 
@@ -316,7 +316,7 @@ which reproduces D2 to 1.6e-12 (§3). Its σ comparisons use the same adopted σ
     kind of tail in both: h > σ_Q falls from 26 to 6 here, and from 30 to 9 in (a) (§5).
   - Its own PC was not run, as declared. The (a) positive control shows that this design sees a bias. That the
     refined estimator responds the same way is an inference from these per-cell agreements, not a separate
-    control.
+    control. <!-- absence-ok: scope of this lane's positive control, per DECLARATION §5 and BINDING -->
 
 ## 7. Compute
 
