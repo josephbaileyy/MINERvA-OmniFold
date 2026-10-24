@@ -426,6 +426,46 @@ class H2Scope(unittest.TestCase):
         np.testing.assert_allclose(ones, vol.ravel(), rtol=1e-12)
 
 
+class H2Definition(unittest.TestCase):
+    def toy(self, diag, leak):
+        """A 32-cell toy: each cell keeps `diag` of its reco weight, and cells in `leak` lose most of it to their
+        W neighbour (cell ^ 1)."""
+        import h2_definition as H
+
+        M = np.zeros((32, 32))
+        for c in range(32):
+            M[c, c] = diag
+            M[c ^ 1, c] = 0.05 if c in leak else 0.0
+        reco_all = M.sum(axis=0) + np.where(np.isin(np.arange(32), list(leak)), 12.0, 0.0)
+        ones = np.full(32, 5000.0)
+        return H, H.Stats(M * 1e4, reco_all * 1e4, M.sum(axis=1) * 1e4, ones, ones)
+
+    def test_merge_joins_a_low_purity_cell_into_a_box(self):
+        H, st = self.toy(1.0, {3})
+        boxes, steps, flagged = H.merge(st)
+        self.assertEqual(len(steps), 1)
+        self.assertEqual(steps[0]["box"], [3])
+        self.assertEqual(steps[0]["partner"], [2])  # the W neighbour it leaks to gives the purest union
+        self.assertEqual(len(boxes), 31)
+        self.assertTrue(all(H.box_of(b) is not None for b in boxes))
+        self.assertEqual(flagged, [])
+        self.assertGreaterEqual(st.of(steps[0]["union"])["purity"], st.of([3])["purity"])
+
+    def test_no_low_purity_cell_leaves_h2_unchanged(self):
+        H, st = self.toy(1.0, set())
+        boxes, steps, _ = H.merge(st)
+        self.assertEqual(boxes, [[c] for c in range(32)])
+        self.assertEqual(steps, [])
+
+    def test_boxes_and_joins(self):
+        import h2_definition as H
+
+        self.assertIsNone(H.box_of([0, 3]))  # differ on two axes: not a box
+        self.assertEqual(H.box_of([0, 1]), ((0,), (0,), (0,), (0,), (0, 1)))
+        self.assertEqual(H.joinable(H.box_of([0]), H.box_of([16])), 0)
+        self.assertIsNone(H.joinable(H.box_of([0]), H.box_of([3])))
+
+
 class Tasks(unittest.TestCase):
     def test_declared_jobs(self):
         here = os.path.dirname(os.path.abspath(__file__))
