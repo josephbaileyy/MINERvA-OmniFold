@@ -1,0 +1,251 @@
+--- docs/orchestration/state/2d-closeout/stageC/production/analyze_prod.py
++++ 2d-unfolding/re2/partc/re2c_analyze.py
+@@ -1,5 +1,23 @@
+ #!/usr/bin/env python3
+-"""Stage C production checks (DESIGN §7): the controls, the identities, the closure and every product's provenance.
++"""RE-2 part C copy of stageC/production/analyze_prod.py (f9e0d8f2...), RE2-DECLARATION-C.md §3.1.
++
++  --arm purity (default)  the original, unchanged: it must reproduce Stage C's six item verdicts (K1-roll)
++  --arm refined           part B's outputs: pins, a mode guard, and the identities partb_identities.tsv marks X
++                          replaced by part B's readout verdicts (k1_core.json, k1_j7.json, pinned)
++
++What the refined arm changes, and nothing else:
++  - outputs are read from part B's out/ under their part-B labels (the name map drops "2dc_P_"), and each must match
++    its committed SHA256SUMS digest (run/partb_readout/sums/) or it is treated as missing;
++  - provenance expects re2_driver.py 38ff3705... (both the unfolds and the replicas), bkg_mode negweight-refined with
++    the 400/31 refinement, and the staged input paths the runs recorded. The staged CV and laterals were deleted under
++    B9, so they are not re-read: preflight/inputs.stat (pinned) ties each staged path to the CFS original's digest;
++  - the identities against XR-L0, the pilot and the July products (AP-09/10/13/15/18) are read from part B's
++    readout; Muon_Energy_MINOS:0 and the S3 MINOS0 pilot check have no refined reference and are recorded as such;
++  - s2 does not run (J5 was not bound).
++
++The original docstring follows.
++
++Stage C production checks (DESIGN §7): the controls, the identities, the closure and every product's provenance.
+ Every check and threshold is frozen in DESIGN.md before any job.
+ 
+   python analyze_prod.py c0   <result.json>   controls (G0): b==1 and the production CV, each vs XR-L0 at 1e-8
+@@ -28,7 +46,10 @@
+ import numpy as np
+ 
+ HERE = Path(__file__).resolve().parent
+-PILOT = HERE.parent / "pilot"
++REPO = HERE.parents[2]
++PROD = REPO / "docs" / "orchestration" / "state" / "2d-closeout" / "stageC" / "production"
++PILOT = PROD.parent / "pilot"
++RE2RUN = REPO / "docs" / "orchestration" / "state" / "2d-closeout" / "stageF" / "methods" / "re2" / "run"
+ 
+ 
+ def _load(name, path):
+@@ -55,12 +76,31 @@
+ PANEL_U = ["NormDISCC:0", "Flux:23", "MaRES:0", "MaCCQE:0", "2p2h:0", "MinosEfficiency:0", "Muon_Energy_MINOS:0"]
+ LATERALS = ["BeamAngleX_0", "BeamAngleX_1", "BeamAngleY_0", "BeamAngleY_1", "MuonResolution_0", "MuonResolution_1",
+             "Muon_Energy_MINERvA_0", "Muon_Energy_MINERvA_1", "Muon_Energy_MINOS_0", "Muon_Energy_MINOS_1"]
+-SWEEPS_JSON = HERE.parents[1] / "stageB" / "evidence" / "b-genie-truth" / "sweeps.json"
++SWEEPS_JSON = PROD.parents[1] / "stageB" / "evidence" / "b-genie-truth" / "sweeps.json"
+ SWEEPS_JSON_SHA = "15b57de9124f204bf3cdf8cd0660c467783bf633bf0d45bfbd4e2506b19be2e4"
+ PN = f"{AP.D2}/uq/purity_newomni"
+ BASE = {"iters": 5, "use_weights": True, "estimator": "lgbm", "bkg_mode": "purity"}
+ 
++# ---- the refined arm (RE2-DECLARATION-C.md §3.1)
++ARM = "purity"
++NS_R = "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb"
++DRV_R_SHA = "38ff37055af026bd11b1c12a431b31eed522d5038c1bcf020cd47c374d2ddf7c"   # re2_driver.py at dbdad2f9
++BASE_R = {"iters": 5, "use_weights": True, "estimator": "lgbm", "bkg_mode": "negweight-refined",
++          "refine_n_estimators": 400, "refine_num_leaves": 31}
++CVOMNI_R = f"{NS_R}/inputs/runEventLoopOmniFold_MEFHC.root"
++ACT_R = f"{NS_R}/inputs/laterals"
++SUMS_R = RE2RUN / "partb_readout" / "sums"
++K1_R = {"core": (RE2RUN / "partb_readout" / "k1_core.json",
++                 "7c407e958e5247f76f4eebdf7caa0dbeff504e13d22da6ed92b41ae1e669d86a"),
++        "j7": (RE2RUN / "partb_readout" / "k1_j7.json",
++               "faa4656d9fb4b38bbc5734bd5fa613ddd09ac6e56b266fd0d40a732d64a1c3b8")}
++STAGED_R = (RE2RUN / "partb_readout" / "preflight" / "inputs.stat",
++            "89595b3e6c4ee3dddc77841ef53ef78b7f71aa488bdf8dfb2ca02254173da0fc")
++CFS_SHA = {"CV": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"}   # = PIN cv_omnifile_cfs
++NO_REF = {"verdict": "NO REFINED REFERENCE", "why": "no refined product reproduces this purity reference "
++                                                    "(RE2-DECLARATION-B.md §5.1); not part of the item verdict"}
+ 
++
+ def sha(p):
+     h = hashlib.sha256()
+     with open(p, "rb") as f:
+@@ -70,12 +110,70 @@
+ 
+ 
+ def out_of(name):
++    if ARM == "refined":
++        return out_of_refined(name)
+     p = Path(OUT, name, "xsec.root")
+     return p if p.is_file() else None
++
++
++_SUMS = {}
++
++
++def out_of_refined(name):
++    """A part-B output by its Stage C name, only if its sha256 equals the committed part-B digest."""
++    if not _SUMS:
++        for f in sorted(SUMS_R.glob("SHA256SUMS.J*")):
++            for ln in f.read_text().splitlines():
++                d, rel = ln.split()
++                _SUMS[rel] = d
++    label = name[len("2dc_P_"):] if name.startswith("2dc_P_") else name
++    p = Path(NS_R, "out", label, "xsec.root")
++    want = _SUMS.get(f"{label}/xsec.root")
++    return p if want and p.is_file() and sha(p) == want else None
++
++
++def k1(which):
++    """{check id: verdict} from part B's pinned readout; {} if its digest or set verdict is wrong."""
++    p, want = K1_R[which]
++    if not p.is_file() or sha(p) != want:
++        return {}
++    d = json.loads(p.read_text())
++    if d.get("verdict") != "PASS":
++        return {}
++    return {c["id"]: c["verdict"] for c in d["checks"]}
++
++
++def k1_rows(which, ids):
++    """The readout rows `ids` as identity-like records; a missing row is INCONCLUSIVE."""
++    v = k1(which)
++    return {i: {"verdict": v.get(i, "INCONCLUSIVE"), "source": f"{K1_R[which][0].name} {K1_R[which][1][:8]}"}
++            for i in ids}
++
++
++def staged_ok():
++    """Each staged path is tied to its CFS original by the pinned DTN record: its sha256 must be the CFS digest
++    (the CV's is pinned here; each lateral's is the CFS SHA256SUMS row the DTN preflight checked)."""
++    p, want = STAGED_R
++    if not p.is_file() or sha(p) != want:
++        return False, "preflight/inputs.stat digest mismatch"
++    rows = {ln.split()[4]: ln.split()[0] for ln in p.read_text().splitlines()}
++    if rows.get(CVOMNI_R) != CFS_SHA["CV"]:
++        return False, "staged CV digest is not the CFS CV's"
++    lat = [k for k in rows if k.startswith(ACT_R + "/")]
++    if len(lat) != 10:
++        return False, f"{len(lat)} staged laterals recorded, 10 expected"
++    return True, {"cv": rows[CVOMNI_R], "laterals": {k: rows[k] for k in sorted(lat)}}
+ 
+ 
+ def prov(p, driver_sha, want, p1=None):
+     """Provenance: driver and helper digests, runConfig keys, and (driver_p1 runs) the p1Streams record."""
++    if ARM == "refined":   # one driver makes every part-B output; the mode guard is the refined BASE
++        driver_sha = DRV_R_SHA
++        want = {**want, **{k: v for k, v in BASE_R.items()}}
++        if want.get("omnifile") == CVOMNI:
++            want["omnifile"] = CVOMNI_R
++        elif str(want.get("omnifile", "")).startswith(ACT + "/"):
++            want["omnifile"] = ACT_R + want["omnifile"][len(ACT):]
+     n = AP.named(p)
+     rc = n["runConfig"] or {}
+     bad = {k: rc.get(k) for k, v in want.items() if rc.get(k) != v}
+@@ -143,10 +241,28 @@
+                                  "bootstrap_streams": "three"}, p1=(1, "three", True)) if u else (False, "missing")
+     pc = prov(c, PROD_SHA, BASE | {"omnifile": CVOMNI, "seed": 42, "bootstrap_seed": None, "universe": None,
+                                    "branch_select": "all"}) if c else (False, "missing")
+-    rep["unit_vs_L0"] = identity(compare, cells, u, l0) | {"provenance_ok": pu[0], "provenance_bad": pu[1]}
+-    rep["cv_vs_L0"] = identity(compare, cells, c, l0) | {"provenance_ok": pc[0], "provenance_bad": pc[1]}
++    if ARM == "refined":   # AP-09/10 (X): PB-unit, PB-unit-J0; PB-ER-rep, PB-ER-D2, PB-ER-J0, PB-ER-eff
++        e = out_of("ER")
++        pe = prov(e, PROD_SHA, BASE | {"omnifile": CVOMNI, "seed": 42, "bootstrap_seed": None, "universe": None,
++                                       "branch_select": "all"}) if e else (False, "missing")
++        rows = k1_rows("core", ["PB-unit", "PB-unit-J0", "PB-ER-rep", "PB-ER-D2", "PB-ER-J0", "PB-ER-eff"])
++        st = staged_ok()
++        rep["staged_inputs"] = {"ok": st[0], "record": st[1]}
++        rep["unit_readout"] = {"verdict": verdict(rows[i]["verdict"] for i in ("PB-unit", "PB-unit-J0")),
++                               "rows": {i: rows[i] for i in ("PB-unit", "PB-unit-J0")},
++                               "provenance_ok": pu[0] and st[0], "provenance_bad": pu[1]}
++        rep["cv_readout"] = {"verdict": verdict(rows[i]["verdict"] for i in ("PB-ER-rep", "PB-ER-D2", "PB-ER-J0",
++                                                                          "PB-ER-eff")),
++                             "rows": {i: rows[i] for i in ("PB-ER-rep", "PB-ER-D2", "PB-ER-J0", "PB-ER-eff")},
++                             "provenance_ok": pc[0] and pe[0] and st[0],
++                             "provenance_bad": {"C0_cv": pc[1], "ER": pe[1]}}
++        keys = ("unit_readout", "cv_readout")
++    else:
++        rep["unit_vs_L0"] = identity(compare, cells, u, l0) | {"provenance_ok": pu[0], "provenance_bad": pu[1]}
++        rep["cv_vs_L0"] = identity(compare, cells, c, l0) | {"provenance_ok": pc[0], "provenance_bad": pc[1]}
++        keys = ("unit_vs_L0", "cv_vs_L0")
+     vs = []
+-    for k in ("unit_vs_L0", "cv_vs_L0"):
++    for k in keys:
+         r = rep[k]
+         vs.append("INCONCLUSIVE" if (rep["pins_failed"] or not r["provenance_ok"]) and r["verdict"] != "FAIL"
+                   else r["verdict"])
+@@ -193,7 +309,12 @@
+                       "closure": ("PASS" if dev <= CLOSURE_TOL else "FAIL") if real else "INCONCLUSIVE",
+                       "sha256": sha(p)})
+             r["verdict"] = ("INCONCLUSIVE" if not ok and r["closure"] != "FAIL" else r["closure"])
+-        if u in ("BeamAngleX_0", "Muon_Energy_MINOS_0"):
++        if ARM == "refined" and u == "BeamAngleX_0":   # AP-13 (X): PB-J0-S3_BeamAngleX0
++            r["reproduces_j0"] = k1_rows("core", ["PB-J0-S3_BeamAngleX0"])["PB-J0-S3_BeamAngleX0"]
++            r["verdict"] = verdict([r["verdict"], r["reproduces_j0"]["verdict"]])
++        elif ARM == "refined" and u == "Muon_Energy_MINOS_0":
++            r["reproduces_pilot_2dc_C_P3_MINOS0"] = NO_REF
++        elif u in ("BeamAngleX_0", "Muon_Energy_MINOS_0"):
+             pn = "2dc_C_P3_BeamAngleX0" if u == "BeamAngleX_0" else "2dc_C_P3_MINOS0"
+             ref, why = pilot_ref(pn)
+             r["reproduces_pilot_" + pn] = identity(compare, cells, p, ref, why)
+@@ -219,6 +340,15 @@
+                        if p else (False, "missing"))
+             rep["provenance"][name] = {"ok": ok, "bad": bad}
+             vs.append("PASS" if ok else "INCONCLUSIVE")
++        if ARM == "refined":   # AP-15 (X): PB-panel-<u> against J2's universe; none for Muon_Energy_MINOS:0
++            if u == "Muon_Energy_MINOS:0":
++                rep["july_identity_seed42"][u] = NO_REF
++                continue
++            i = "PB-panel-" + u.replace(":", "_")
++            r = k1_rows("j7", [i])[i]
++            rep["july_identity_seed42"][u] = r
++            vs.append(r["verdict"])
++            continue
+         ref, why = july(u.replace(":", "_"))
+         r = identity(compare, cells, out_of(f"2dc_P_S4U_{tag}_s42"), ref, why)
+         rep["july_identity_seed42"][u] = r
+@@ -262,7 +392,14 @@
+         vs.append("PASS" if ok else "INCONCLUSIVE")
+     rep["n_ok"] = vs.count("PASS")
+     rep["n_expected"] = len(spec)
+-    if item in ("S1", "S2"):
++    if ARM == "refined":   # AP-18 (X): PB-J0-S1_001-008, and PB-stream-* for every refined replica
++        ids = ([f"PB-J0-S1_{n:03d}" for n in range(1, 9)] + [f"PB-stream-S1_{n:03d}" for n in range(1, 301)]
++               if item == "S1" else [f"PB-stream-S4B_s{s}_{n:02d}" for s in SEEDS[1:] for n in range(1, 21)])
++        rows = k1_rows("core", ids)
++        rep["readout_rows"] = {"n": len(ids), "n_pass": sum(r["verdict"] == "PASS" for r in rows.values()),
++                               "not_pass": {i: r for i, r in rows.items() if r["verdict"] != "PASS"}}
++        vs += [r["verdict"] for r in rows.values()]
++    elif item in ("S1", "S2"):
+         compare, cells = AP.xr()
+         arm = "joint" if item == "S1" else "bkg"
+         rep["reproduces_pilot"] = {}
+@@ -277,8 +414,18 @@
+ 
+ 
+ def main():
+-    global OUT
++    global OUT, ARM
+     args = sys.argv[1:]
++    if "--arm" in args:
++        i = args.index("--arm")
++        ARM = args[i + 1]
++        del args[i:i + 2]
++        if ARM not in ("purity", "refined"):
++            raise SystemExit(f"--arm {ARM}: purity or refined")
++    if ARM == "refined" and "--out-root" in args:
++        raise SystemExit("--out-root is purity-only; the refined arm reads part B's out/ by its committed digests")
++    if ARM == "refined" and args[:1] == ["s2"]:
++        raise SystemExit("s2 is not run in the refined arm: J5 was not bound (RE2-BINDING-B)")
+     if "--out-root" in args:
+         i = args.index("--out-root")
+         OUT = args[i + 1]
+@@ -288,7 +435,8 @@
+           "s4i": lambda: replicas("S4i")}[what]
+     rep = fn()
+     rep["analyze_prod_sha256"] = sha(__file__)
+-    rep["out_root"] = OUT
++    rep["arm"] = ARM
++    rep["out_root"] = OUT if ARM == "purity" else f"{NS_R}/out"
+     Path(outp).parent.mkdir(parents=True, exist_ok=True)
+     Path(outp).write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
+     key = {"c0": "C0", "s3": "S3", "s4ii": "S4ii", "s1": "S1", "s2": "S2", "s4i": "S4i"}[what]

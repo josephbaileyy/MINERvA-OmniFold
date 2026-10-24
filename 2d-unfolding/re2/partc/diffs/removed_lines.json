@@ -1,0 +1,85 @@
+{
+ "re2c_analyze.py": [
+  "\"\"\"Stage C production checks (DESIGN \u00a77): the controls, the identities, the closure and every product's provenance.",
+  "PILOT = HERE.parent / \"pilot\"",
+  "SWEEPS_JSON = HERE.parents[1] / \"stageB\" / \"evidence\" / \"b-genie-truth\" / \"sweeps.json\"",
+  "for k in (\"unit_vs_L0\", \"cv_vs_L0\"):"
+ ],
+ "re2c_analyze_periods.py": [
+  "\"\"\"Phase-2 analysis of the period-unfold test (cluster, root_6_28; reads small ROOT products only).",
+  "import periods as PD  # noqa: E402",
+  "\"n_reported_own\": int((x > 0).sum())}",
+  "def analyze(roles, W, out_json, out_txt):",
+  "o1 = analyze(ro, W, f\"{tmp}/id.json\", f\"{tmp}/id.txt\")",
+  "o2 = analyze(ro2, W, f\"{tmp}/inj.json\", f\"{tmp}/inj.txt\")"
+ ],
+ "re2c_build_q.py": [
+  "\"\"\"Stage F rebuild, step A and section 3 (SPEC.md in the parent directory): the adopted-Q products and budget_Q.json.",
+  "return ap.parse_args(argv)",
+  "gmine = {f\"grouped_current/{c}\": median_pct(C, x) for c, C in g.items()}",
+  "gmine.update({\"statistical_vl170_boot300\": median_pct(v_boot, x),",
+  "\"statistical_rollup_bootstrap\": median_pct(stat_roll, x),",
+  "\"universe_total\": median_pct(v_tot, x), \"combined\": median_pct(v_comb, x),",
+  "gmine.update({f\"bands/{b}\": median_pct(vb[\"full_\" + b], x) for b in gm[\"bands\"]})",
+  "\"universes\": copied([\"checks\", \"july_44_bands_187_universes\"]),",
+  "h_rel = ROOT.TH2D(\"hRel2D\", \"sqrt(diag stat) / E_U on the pT x p_par grid (fraction; 0 off the reported cells)\",",
+  "\"x\": \"E_U hXSec2D on cells\","
+ ],
+ "re2c_combine.py": [
+  "\"\"\"Stage F checklist F9: the S5 production total plus the playlist-consistency block C_PL (COMBINATION.md).",
+  "SCRIPTS = \"/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/record/scripts\"",
+  "f\"{SCRIPTS}/analyze_periods.py\": \"912af1ddfbae2e28a2cba6e6843b0985e2442adb4b1e775a22d4c547b8d8ebc5\",",
+  "f\"{SCRIPTS}/periods.py\": \"d37c1a8fbda7119988643100039e28e335e4fc79eb30a10f0f5a3df984fa8514\",",
+  "def main(analysis_json, pl_npz, s5_npz, outdir):",
+  "import analyze_periods as AP   # noqa: E402",
+  "np.savez(npz, total_plus_C_PL=Q, s5_total=T, C_PL=C_PL, cells_x_EU=x, functionals=F, area=S[\"area\"])",
+  "\"npz\": {\"path\": npz, \"sha256\": sha256(npz)}}",
+  "if len(sys.argv) != 5:",
+  "main(*sys.argv[1:])"
+ ],
+ "re2c_export_cov.py": [
+  "\"\"\"Export the quoted 2D covariance (VL175) and the per-universe unfolded outputs to one scratch .npz.",
+  "out_npz, out_json = sys.argv[1], sys.argv[2]",
+  "ctrl = {\"inputs\": {}}",
+  "xrep = EU.ravel(order=\"C\")[cells]"
+ ],
+ "re2c_fig1.py": [
+  "\"\"\"Regenerate the article's Fig. 1 with the adopted covariance Q = S5 total + C_PL (decision 2026-10-17).",
+  "new = np.zeros_like(z[\"ours_v\"]); new[gids] = rr[\"central\"][\"CV42_universe_file\"]",
+  "sys.exit(\"[FAIL] cov2d_Q_205.npz x differs from the drawn central value (remote_reduce CV42 = E_U)\")"
+ ],
+ "re2c_periods.py": [
+  "\"\"\"Shared definitions for the 2026-10-14 period-unfold test: run periods, paths and pins."
+ ],
+ "re2c_playlist_term.py": [
+  "\"\"\"The 2D playlist-consistency block (DESIGN.md in the parent directory; frozen before any number was computed).",
+  "SCRIPTS = \"/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/record/scripts\"",
+  "f\"{SCRIPTS}/analyze_periods.py\": \"912af1ddfbae2e28a2cba6e6843b0985e2442adb4b1e775a22d4c547b8d8ebc5\",",
+  "f\"{SCRIPTS}/periods.py\": \"d37c1a8fbda7119988643100039e28e335e4fc79eb30a10f0f5a3df984fa8514\",",
+  "def main(analysis_json, outdir):",
+  "if sha256(analysis_json) != ANALYSIS_SHA:",
+  "import analyze_periods as AP   # noqa: E402  (inserts the common.py directory itself)",
+  "\"analysis_json\": {\"path\": os.path.abspath(analysis_json), \"sha256\": ANALYSIS_SHA},",
+  "**{f\"g_{X}\": g[X] for X in PER}, **{f\"e_{X}\": e[X] for X in PER}, **{f\"r_{X}\": rX[X] for X in PER})",
+  "\"report\": rep, \"npz\": {\"path\": npz, \"sha256\": sha256(npz)}}",
+  "if len(sys.argv) != 3:",
+  "main(sys.argv[1], sys.argv[2])"
+ ],
+ "re2c_rollup.py": [
+  "\"\"\"Stage C production S5: the matrices of the recipe (Stage B REPORT \u00a74 R1-R9), from the production unfolds and the",
+  "ST = HERE.parents[1]                       # docs/orchestration/state/2d-closeout",
+  "\"\"\"The 205 reported cells from E_U, read once.\"\"\"",
+  "def __init__(self):",
+  "cv, self.area2 = BR.th2(PIN[\"E_U\"][0])",
+  "for k, (p, want) in PIN.items():",
+  "rep[\"numbers\"][\"control_worst_block_rel\"] = may_control(cells, w, phi_minos)",
+  "f = ROOT.TFile.Open(PIN[\"E_U\"][0])",
+  "for f, key in ((\"c0.json\", \"C0\"), (\"s3.json\", \"S3\"), (\"s4ii.json\", \"S4ii\"), (\"s1.json\", \"S1\"),",
+  "(\"s2.json\", \"S2\"), (\"s4i.json\", \"S4i\")):",
+  "check(f\"analysis_{key}_out_root_matches\", r.get(\"out_root\") == a.out_root, r.get(\"out_root\"))",
+  "rep[\"numbers\"][\"bkg_separable\"] = {\"sigma_bkg_over_sigma_stat_median\":",
+  "stat=C_stat, c08=C08, total=C_tot, bkg_separable=C_bkg, x02_interaction=C_int,",
+  "f = ROOT.TFile.Open(PIN[\"E_U\"][0])",
+  "cells_hist = ROOT.TH2D(\"hReportedCells\", \"reported cells (E_U hXSec2D > 0)\", cells.NX, pt, cells.NY, pz)"
+ ]
+}

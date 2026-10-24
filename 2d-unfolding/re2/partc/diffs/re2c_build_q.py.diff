@@ -1,0 +1,179 @@
+--- docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/build_q_products.py
++++ 2d-unfolding/re2/partc/re2c_build_q.py
+@@ -1,6 +1,22 @@
+ #!/usr/bin/env python3
+-"""Stage F rebuild, step A and section 3 (SPEC.md in the parent directory): the adopted-Q products and budget_Q.json.
++"""RE-2 part C copy of stageF/rebuild/scripts/build_q_products.py (050c5b0d...), RE2-DECLARATION-C.md §3.7.
+ 
++  --arm purity (default)  the original, unchanged: it must reproduce cov2d_Q_205.npz 771e49a5... and budget_Q.json's
++                          numbers (K1-roll)
++  --arm refined --pins-json FILE --eu-control E_U.root
++                          Q_R's products and budget. What changes, and nothing else:
++    - the six upstream digests (s5_npz, s5_root, s5_json, playlist_npz, q_npz, combination_json) are read from FILE,
++      written by the run script from the previous steps' records (chain of custody; they cannot be declared first);
++    - --eu is E_R (part B's ER, a5c13fc3...), the central value: x, the cells, the relative sigmas and hRel2D;
++    - the two VL175 controls (budget.json and group_medians.json, BQ-22/BQ-24) are computed with the separately
++      pinned E_U (--eu-control, 4f5a1b6d...) as their denominator only, so they are the same controls;
++    - every input npz and json must carry arm = refined (CB-G), and s5.json's universe count field is the refined
++      rollup's (38 bands, 175 universes).
++
++The original docstring follows.
++
++Stage F rebuild, step A and section 3 (SPEC.md in the parent directory): the adopted-Q products and budget_Q.json.
++
+ Q = S5 total + C_PL (DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md). Every input is read as bytes pinned
+ by sha256 (SPEC section 1); every check below is a STOP: a raised exception, a [STOP] line and exit code 2.
+ 
+@@ -76,6 +92,10 @@
+     "vl175_budget": "VL175 budget.json (c04-repair/products/)",
+     "vl175_group_medians": "group_medians.json (stageB/diagnostics/c04-grouped/)",
+ }
++
++CHAIN = ("s5_npz", "s5_root", "s5_json", "playlist_npz", "q_npz", "combination_json")
++E_R_SHA = "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
++E_U_SHA = PINS["eu"]
+ 
+ N_CELLS_REPORTED = 205
+ TOL_ID = 1e-12          # A2, A3, A5 symmetry; relative to the matrix max
+@@ -224,7 +244,13 @@
+     for k in PINS:
+         ap.add_argument("--" + k.replace("_", "-"), dest=k, required=True, help=INPUT_HELP[k])
+     ap.add_argument("--outdir", required=True, help="output directory; must not exist (its parent must)")
+-    return ap.parse_args(argv)
++    ap.add_argument("--arm", choices=("purity", "refined"), default="purity")
++    ap.add_argument("--pins-json", help="refined arm: the recorded digests of the six upstream products")
++    ap.add_argument("--eu-control", help="refined arm: E_U, the VL175 controls' denominator only")
++    a = ap.parse_args(argv)
++    if a.arm == "refined" and not (a.pins_json and a.eu_control):
++        ap.error("--arm refined needs --pins-json and --eu-control")
++    return a
+ 
+ 
+ def run(a):
+@@ -235,6 +261,13 @@
+     if not os.path.isdir(os.path.dirname(outdir)):
+         raise Stop(f"parent of --outdir {outdir} does not exist")
+ 
++    refined = a.arm == "refined"
++    if refined:   # chain of custody: the previous steps' recorded digests; E_R is the central value
++        chain = json.load(open(a.pins_json))
++        if set(chain) != set(CHAIN):
++            raise Stop(f"--pins-json keys {sorted(chain)} != {sorted(CHAIN)}")
++        PINS.update(chain)
++        PINS["eu"] = E_R_SHA
+     # ---- A0: every input digest equals its pin (before anything is written)
+     inputs = {}
+     for k, want in PINS.items():
+@@ -244,6 +277,11 @@
+         got = sha256(p)
+         inputs[k] = {"path": os.path.abspath(p), "realpath": os.path.realpath(p), "sha256": got}
+         check(f"A0_pin_{k}", got == want, got)
++    if refined:
++        got = sha256(a.eu_control)
++        inputs["eu_control"] = {"path": os.path.abspath(a.eu_control), "realpath": os.path.realpath(a.eu_control),
++                                "sha256": got}
++        check("A0_pin_eu_control", got == E_U_SHA, got)
+ 
+     os.mkdir(outdir)
+     CREATED.append(outdir)
+@@ -272,10 +310,14 @@
+     comb = json.load(open(a.combination_json))
+     check("s5_json_S5_PASS", s5j.get("S5") == "PASS", s5j.get("S5"))
+     check("combination_json_checks_passed", comb.get("checks_passed") is True, comb.get("checks_passed"))
++    if refined:   # CB-G: every input was written by the refined arm
++        arms = {"s5_npz": str(S.pop("arm", "")), "playlist_npz": str(P.pop("arm", "")), "q_npz": str(QZ.pop("arm", "")),
++                "s5_json": s5j.get("arm"), "combination_json": comb.get("arm")}
++        check("arm_refined_on_every_input", all(v == "refined" for v in arms.values()), arms)
+ 
+     fe = open_root(ROOT, a.eu)
+     heu = get(fe, "hXSec2D")
+-    EU2 = RC.grid_hist_to_array(heu)
++    EU2 = RC.grid_hist_to_array(heu)       # the refined arm: E_R
+     area2 = np.array([[heu.GetXaxis().GetBinWidth(ix + 1) * heu.GetYaxis().GetBinWidth(iy + 1)
+                        for iy in range(RC.GRID_SHAPE[1])] for ix in range(RC.GRID_SHAPE[0])])
+     fe.Close()
+@@ -317,6 +359,14 @@
+     # ---- A1': value-anchored order
+     eu_flat = EU2.ravel(order="C")
+     x = eu_flat[cells]
++    x_ctrl = x                             # the VL175 controls' denominator: E_U in both arms (BQ-22/BQ-24)
++    if refined:
++        fu = open_root(ROOT, a.eu_control)
++        EUc = RC.grid_hist_to_array(get(fu, "hXSec2D"))
++        fu.Close()
++        RC.require_same_cells(RC.reported_indices(EUc > 0), cells, "E_U > 0", "E_R > 0")
++        check("A1_E_R_cells_eq_E_U_cells", True)
++        x_ctrl = EUc.ravel(order="C")[cells]
+     check("A1p_playlist_cells_strictly_ascending", bool(np.all(np.diff(np.asarray(P["cells"], dtype=np.int64)) > 0)))
+     check("A1p_s5_npz_cells_x_EU_eq_E_U_cells_exact", np.array_equal(S["cells_x_EU"], x))
+     check("A1p_q_npz_cells_x_EU_eq_E_U_cells_exact", np.array_equal(QZ["cells_x_EU"], x))
+@@ -395,7 +445,7 @@
+     fields = ("median_pct", "p84_pct", "min_pct", "max_pct", "integral_sigma_pct", "sqrt_trace")
+     worst, worst_at = 0.0, None
+     for row, C in vl_rows.items():
+-        mine = metrics(C, x, F)
++        mine = metrics(C, x_ctrl, F)
+         ref = bud["per_band"][row.split("/", 1)[1]] if row.startswith("per_band/") else bud[row]
+         for fld in fields:
+             r = rel(mine[fld], ref[fld])
+@@ -412,14 +462,14 @@
+     for b, C in vb.items():
+         g[category_for_band(b)] += C
+     g["Statistical"] = g["Statistical"] + stat_roll
+-    gmine = {f"grouped_current/{c}": median_pct(C, x) for c, C in g.items()}
+-    gmine.update({"statistical_vl170_boot300": median_pct(v_boot, x),
+-                  "statistical_rollup_bootstrap": median_pct(stat_roll, x),
++    gmine = {f"grouped_current/{c}": median_pct(C, x_ctrl) for c, C in g.items()}
++    gmine.update({"statistical_vl170_boot300": median_pct(v_boot, x_ctrl),
++                  "statistical_rollup_bootstrap": median_pct(stat_roll, x_ctrl),
+                   "statistical_rollup_eq_vl170_max_abs_rel":
+                       float(np.max(np.abs(stat_roll - v_boot)) / np.max(np.abs(v_boot))),
+-                  "universe_total": median_pct(v_tot, x), "combined": median_pct(v_comb, x),
++                  "universe_total": median_pct(v_tot, x_ctrl), "combined": median_pct(v_comb, x_ctrl),
+                   "band_sum_eq_total_max_abs_rel": float(np.max(np.abs(sum(vb.values()) - v_tot)) / np.max(np.abs(v_tot)))})
+-    gmine.update({f"bands/{b}": median_pct(vb["full_" + b], x) for b in gm["bands"]})
++    gmine.update({f"bands/{b}": median_pct(vb["full_" + b], x_ctrl) for b in gm["bands"]})
+     check("control_group_medians_n_bands", gm["n_bands"] == len(vb), [gm["n_bands"], len(vb)])
+     check("control_group_medians_category_set", set(gm["grouped_current"]) == set(CATEGORY_ORDER),
+           sorted(gm["grouped_current"]))
+@@ -588,7 +638,8 @@
+         "mat_agreement": copied(["checks", "mat_universe_block_le_1e-12"]),
+         "ensemble": {
+             "bands": copied(["checks", "universe_bands_43_plus_norm"]),
+-            "universes": copied(["checks", "july_44_bands_187_universes"]),
++            "universes": copied(["checks", "refined_j2_38_bands_175_universes" if refined
++                                 else "july_44_bands_187_universes"]),
+             "stat_rel_se_of_sigma": copied(["numbers", "stat", "ensemble_rel_se_of_sigma"]),
+             "c08_dof": copied(["numbers", "c08", "dof"]),
+             "c08_rank": copied(["numbers", "c08", "rank"]),
+@@ -643,7 +694,8 @@
+     rel_flat = np.zeros(RC.N_CELLS)
+     rel_flat[cells] = np.sqrt(np.maximum(np.diag(ST), 0)) / x
+     rel2d = rel_flat.reshape(RC.GRID_SHAPE, order="C")
+-    h_rel = ROOT.TH2D("hRel2D", "sqrt(diag stat) / E_U on the pT x p_par grid (fraction; 0 off the reported cells)",
++    h_rel = ROOT.TH2D("hRel2D", f"sqrt(diag stat) / {'E_R' if refined else 'E_U'} on the pT x p_par grid (fraction; "
++                      "0 off the reported cells)",
+                       RC.GRID_SHAPE[0], RC.PT_EDGES, RC.GRID_SHAPE[1], RC.PZ_EDGES)
+     h_rel.SetDirectory(0)
+     for ix in range(RC.GRID_SHAPE[0]):
+@@ -666,7 +718,7 @@
+           and all(np.array_equal(back[k], v) for k, v in arrays.items()))
+     json.dump({"what": "the adopted Q and its blocks on the 205 reported cells (SPEC §2 item 3)",
+                "cells": "flatnonzero(E_U hXSec2D > 0) in C order over (pT, p_par): global id = pt*16 + pz",
+-               "x": "E_U hXSec2D on cells",
++               "x": "E_R hXSec2D on cells" if refined else "E_U hXSec2D on cells",
+                "arrays": {k: {"shape": list(v.shape), "dtype": str(v.dtype),
+                               **({"sqrt_trace": float(np.sqrt(np.trace(v)))} if v.ndim == 2 else {})}
+                           for k, v in arrays.items()},
+@@ -683,6 +735,11 @@
+                             "argv": sys.argv, "sys_path": list(sys.path), "python": sys.version,
+                             "numpy": np.__version__, "root": ROOT.gROOT.GetVersion(), "modules": modules,
+                             "inputs": inputs}
++    if refined:
++        budget["arm"] = "refined"
++        budget["x"] = "E_R hXSec2D on cells = flatnonzero(E_R > 0), equal to E_U's (global id pt*16 + pz)"
++        budget["what"] = budget["what"].replace("sigma / E_U", "sigma / E_R").replace("|F0 . E_U|", "|F0 . E_R|")
++        budget["controls_denominator"] = "the VL175 budget.json and group_medians.json controls use E_U (--eu-control)"
+     budget["ALL_STOPS_AND_CONTROLS_PASSED"] = True
+     json.dump(budget, open(os.path.join(outdir, "budget_Q.json"), "w"), indent=1)
+ 

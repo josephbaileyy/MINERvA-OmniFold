@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parents[1] / "nd-unfolding" / "re1"))
+sys.path.insert(0, str(HERE.parents[2] / "nd-unfolding" / "re1"))
 import re1_f_numbers as RF  # noqa: E402
 import re1_report2_extras as RX  # noqa: E402
 

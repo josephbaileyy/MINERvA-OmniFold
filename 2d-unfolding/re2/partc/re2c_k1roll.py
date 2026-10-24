@@ -8,7 +8,8 @@ Each comparison is one of:
          the same objects), against the digest the records pin;
   json   the same JSON fields, with only the copy's own script digest, its arm record and input paths excluded
          (each exclusion named in the result);
-  text   a producer's printout with the lines that carry a path or a write message removed, line for line;
+  text   a producer's printout, line for line, without the lines that carry a path or a write message and without
+         ROOT's rootmap warnings (stderr, which the run's log captures and the committed stdout did not);
   value  a number against the committed number it must equal exactly.
 A ROOT file is never compared by bytes (TFile records its creation time); its content enters through the npz and
 the readbacks. Exit 0 only if every comparison passes.
@@ -23,7 +24,8 @@ from pathlib import Path
 
 S = "docs/orchestration/state/2d-closeout"
 R42 = "docs/orchestration/receipts/2d-lgbm42-20261011"
-PATHLINE = re.compile(r"/pscratch/|/global/|\bwrote\b|opening:|\bsaved\b", re.I)
+PATHLINE = re.compile(r"/pscratch/|/global/|\bwrote\b|opening:|\bsaved\b|^Warning in <TInterpreter::ReadRootmapFile>",
+                      re.I)
 
 
 def sha256(p):
@@ -133,7 +135,8 @@ def main(argv=None):
         rec(name, "json", not d, d, ["inputs (script paths of the copies)", "npz.path"])
     bm = load(dry / "outA/budget_Q.json")
     br = load(repo / S / "stageF/rebuild/outputs/outA/budget_Q.json.gz")
-    ex = ["provenance", "s5_copied.source.path"]
+    ex = ["provenance", "s5_copied.source.path"] + [f"checks.{k}.value" for k in bm.get("checks", {})
+                                                    if k.startswith("A0_module_")]
     d = diff(drop(bm, ex), drop(br, ex))
     rec("build_q_budget", "json", not d, d, ex)
     fm, fr = load(dry / "fig67/fig67_projections.json"), load(repo / S / "stageF/rebuild/outputs/fig67/fig67_projections.json")

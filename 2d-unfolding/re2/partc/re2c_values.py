@@ -71,8 +71,24 @@ def load(path):
     return p.read_text()
 
 
+REDUCE = re.compile(r"^(min|max|maxabs)(\d*)\((.*)\)$", re.S)
+
+
 def extract(doc, path):
-    """A dotted path into JSON (integer parts index lists), or a one-group regex on text."""
+    """A dotted path into JSON (integer parts index lists), or a one-group regex on text.
+
+    `min(P)`, `max(P)`, `maxabs(P)` reduce over every match: P is a JSON path whose `*` part ranges over a list's
+    items or a dict's values (`*-a,b` leaves out the keys a and b; None values are skipped), or a regex found on
+    every text line. A count after the name (`max30(...)`) requires exactly that many matches, so a changed
+    layout cannot be reduced silently over the wrong set."""
+    m = REDUCE.match(path.strip())
+    if m:
+        fn, n, inner = m.group(1), m.group(2), m.group(3)
+        vals = [float(v) for v in (re.findall(inner, doc, re.MULTILINE) if isinstance(doc, str)
+                                   else _walk(doc, inner.split("."))) if v is not None]
+        if not vals or (n and len(vals) != int(n)):
+            raise KeyError(f"{path!r}: {len(vals)} matches" + (f", {n} required" if n else ""))
+        return {"min": min, "max": max, "maxabs": lambda xs: max(abs(x) for x in xs)}[fn](vals)
     if isinstance(doc, str):
         m = re.search(path, doc, re.MULTILINE)
         if not m:
@@ -87,6 +103,21 @@ def extract(doc, path):
         else:
             raise KeyError(f"no key {part!r} in path {path!r}")
     return float(v)
+
+
+def _walk(v, parts):
+    if not parts:
+        return [v]
+    head, rest = parts[0], parts[1:]
+    if head.startswith("*"):
+        skip = set(head[2:].split(",")) if head.startswith("*-") else set()
+        items = v if isinstance(v, list) else [x for k, x in v.items() if k not in skip]
+        return [y for x in items for y in _walk(x, rest)]
+    if isinstance(v, list):
+        return _walk(v[int(head)], rest)
+    if head not in v:
+        raise KeyError(f"no key {head!r}")
+    return _walk(v[head], rest)
 
 
 def render(v, transform, fmt):

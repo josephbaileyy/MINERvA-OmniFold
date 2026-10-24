@@ -1,0 +1,100 @@
+--- docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/scripts/export_cov.py
++++ 2d-unfolding/re2/partc/re2c_export_cov.py
+@@ -1,5 +1,22 @@
+-"""Export the quoted 2D covariance (VL175) and the per-universe unfolded outputs to one scratch .npz.
++"""RE-2 part C copy of playlist-spread-20261014/coverage/scripts/export_cov.py (d3b9c5cb...), RE2-DECLARATION-C.md §3.3.
+ 
++Usage: python -I re2c_export_cov.py <out.npz> <out_controls.json> [--arm purity|refined]
++
++  --arm purity (default)  the original, unchanged: it must reproduce work_cov.npz 70c4daf2... (K1-roll)
++  --arm refined           the npz's central value `EU` is E_R (part B's ER, a5c13fc3...); everything else is the same
++
++What the refined arm changes, and nothing else (EX-01a, EX-04, EX-07, EX-G):
++  - E_R is read as the central value, after its sha256 and a mode guard (runConfig bkg_mode negweight-refined with the
++    400/31 refinement);
++  - the control (VL175's block-sum median, 6.0898 %) is computed with the separately pinned E_U as its denominator,
++    so it is the same control; and here it stops: a failed control writes nothing and exits nonzero;
++  - the VL175 and ML blocks and the May universes are the purity metric, unchanged (the director's ruling Q2: the
++    period chain's chi2 diagnostics keep VL175 + ML, with only x moving to E_R).
++
++The original docstring follows.
++
++Export the quoted 2D covariance (VL175) and the per-universe unfolded outputs to one scratch .npz.
++
+ Usage: python -I export_cov.py <out.npz> <out_controls.json>
+ 
+ Reads (paths fixed below, sha256 re-measured and recorded):
+@@ -21,7 +38,15 @@
+ import numpy as np
+ import ROOT
+ 
+-out_npz, out_json = sys.argv[1], sys.argv[2]
++args = sys.argv[1:]
++ARM = "purity"
++if "--arm" in args:
++    i = args.index("--arm")
++    ARM = args[i + 1]
++    del args[i:i + 2]
++if ARM not in ("purity", "refined"):
++    sys.exit(f"--arm {ARM}: purity or refined")
++out_npz, out_json = args[0], args[1]
+ REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding"
+ NS = "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012"
+ P = {
+@@ -59,7 +84,10 @@
+     return np.array([ax.GetBinLowEdge(i) for i in range(1, ax.GetNbins() + 2)])
+ 
+ 
+-ctrl = {"inputs": {}}
++if ARM == "refined":
++    P["E_R"] = "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root"
++    EXPECT["E_R"] = "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
++ctrl = {"inputs": {}, "arm": ARM}
+ for k, p in P.items():
+     s = sha(p)
+     ctrl["inputs"][k] = {"path": os.path.realpath(p), "sha256": s, "expected": EXPECT[k], "ok": s == EXPECT[k]}
+@@ -71,6 +99,22 @@
+ assert np.allclose(edges(h.GetXaxis()), PT_EDGES) and np.allclose(edges(h.GetYaxis()), PZ_EDGES)
+ EU = th2(h)
+ f.Close()
++EU_control = EU
++if ARM == "refined":
++    f = ROOT.TFile.Open(P["E_R"])
++    h = f.Get("hXSec2D")
++    assert np.allclose(edges(h.GetXaxis()), PT_EDGES) and np.allclose(edges(h.GetYaxis()), PZ_EDGES)
++    EU = th2(h)                                       # the central value of the refined arm, under the key "EU"
++    rc = json.loads(f.Get("runConfig").GetTitle())
++    mode = {k: rc.get(k) for k in ("bkg_mode", "refine_n_estimators", "refine_num_leaves")}
++    ctrl["mode_guard_E_R"] = {"value": mode, "re2Refinement": bool(f.Get("re2Refinement")),
++                              "ok": mode == {"bkg_mode": "negweight-refined", "refine_n_estimators": 400,
++                                             "refine_num_leaves": 31} and bool(f.Get("re2Refinement"))}
++    f.Close()
++    if not ctrl["mode_guard_E_R"]["ok"]:
++        sys.exit(f"[FAIL] mode guard on E_R: {ctrl['mode_guard_E_R']}")
++    if not np.array_equal(EU > 0, EU_control > 0):
++        sys.exit("[FAIL] E_R's reported set differs from E_U's")
+ 
+ f = ROOT.TFile.Open(P["rollup_vl175"])
+ cells_h = f.Get("hReportedCells")
+@@ -87,10 +131,12 @@
+ blocks["ML"] = th2(f.Get("hCov2D_reported"))
+ f.Close()
+ 
+-xrep = EU.ravel(order="C")[cells]
++xrep = EU_control.ravel(order="C")[cells]          # E_U in both arms: the control's own denominator (EX-04)
+ bs = blocks["hCov_combined"] + blocks["ML"]
+ med = 100 * float(np.median(np.sqrt(np.diag(bs)) / xrep))
+ ctrl["control_block_sum_median_pct"] = {"measured": med, "VL175": 6.0898, "ok": bool(abs(med - 6.0898) < 5e-4)}
++if ARM == "refined" and not ctrl["control_block_sum_median_pct"]["ok"]:
++    sys.exit(f"[FAIL] control: {ctrl['control_block_sum_median_pct']}")
+ 
+ # per-universe unfolded outputs
+ RX = re.compile(r"2d_xsec_MEFHC_5iter_lgbm_uni_full_(?P<b>.+)_(?P<i>\d+)\.root$")
+@@ -139,5 +185,7 @@
+ for b, d in uni.items():
+     save["uni__" + b] = np.stack([d[i] for i in sorted(d)])
+ np.savez(out_npz, **save)
++if ARM == "refined":
++    ctrl["npz"] = {"path": os.path.abspath(out_npz), "sha256": sha(out_npz)}
+ json.dump(ctrl, open(out_json, "w"), indent=1)
+ print(json.dumps({k: v for k, v in ctrl.items() if k != "inputs"}, indent=1))

@@ -1,0 +1,69 @@
+--- docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/make_fig1_q.py
++++ 2d-unfolding/re2/partc/re2c_fig1.py
+@@ -1,6 +1,20 @@
+ #!/usr/bin/env python3
+-"""Regenerate the article's Fig. 1 with the adopted covariance Q = S5 total + C_PL (decision 2026-10-17).
++"""RE-2 part C copy of stageF/rebuild/scripts/make_fig1_q.py (7710d601...), RE2-DECLARATION-C.md §3.8.
+ 
++  (no --arm)      the original: with the purity inputs it must reproduce fig1_validation.pdf 82665808... (K1-roll),
++                  in the recorded environment (python 3.12.2, matplotlib 3.11.2, numpy 2.5.4; RUN-fig1.txt)
++  --arm refined --pins-json FILE
++                  Fig. 1 from E_R and Q_R. What changes, and nothing else:
++    - --reduce is re2c_reduce.py's output (its digest in FILE), and the drawn central value is its field "E_R",
++      named explicitly (P13), not "CV42_universe_file";
++    - the s5_npz, playlist_npz and combination digests are the ones the previous steps recorded (FILE);
++    - check 1 requires cov2d_Q_205.npz's x to equal that E_R, and each npz to carry arm = refined;
++    - the inset's \\uqMedian is Q_R's (budget_Q.json), as before.
++
++The original docstring follows.
++
++Regenerate the article's Fig. 1 with the adopted covariance Q = S5 total + C_PL (decision 2026-10-17).
++
+ Derived from receipts/2d-c04-adopt-20261012/make_fig1_vl175.py (rebuild SPEC §6). The central-value swap and its
+ E_C control are unchanged. The covariance is `Q` from cov2d_Q_205.npz (step A), and its checks no longer use the
+ VL175 --sigma file. They are, each a refusal:
+@@ -41,7 +55,18 @@
+ for k in ("npz", "reduce", "make_figs", "values", "tmp", "outdir", "cov", "s5_npz", "playlist_npz", "combination",
+           "budget", "step_a_sums"):
+     ap.add_argument("--" + k.replace("_", "-"), required=True, type=Path)
++ap.add_argument("--arm", choices=("purity", "refined"), default="purity")
++ap.add_argument("--pins-json", type=Path)
+ a = ap.parse_args()
++REFINED = a.arm == "refined"
++CENTRAL = "E_R" if REFINED else "CV42_universe_file"
++if REFINED:   # chain of custody: re2c_reduce.json and the refined s5, playlist and combination products
++    if not a.pins_json:
++        sys.exit("[FAIL] --arm refined needs --pins-json")
++    chain = json.loads(a.pins_json.read_text())
++    if set(chain) != {"reduce", "s5_npz", "playlist_npz", "combination"}:
++        sys.exit(f"[FAIL] --pins-json keys {sorted(chain)}")
++    PINS.update(chain)
+ 
+ 
+ def sha(p):
+@@ -80,18 +105,23 @@
+ ctl = np.zeros(224); ctl[gids] = rr["central"]["E_C"]
+ if not np.array_equal(ctl[mask], z["ours_v"][mask]):
+     sys.exit("[FAIL] E_C in remote_reduce must equal the released ours_v")
+-new = np.zeros_like(z["ours_v"]); new[gids] = rr["central"]["CV42_universe_file"]
++new = np.zeros_like(z["ours_v"]); new[gids] = rr["central"][CENTRAL]
+ z["ours_v"] = new
+ 
+ cz = np.load(a.cov, allow_pickle=False)
+ Q = cz["Q"]
++if REFINED:
++    for nm, path in (("s5_npz", a.s5_npz), ("playlist_npz", a.playlist_npz)):
++        zz = np.load(path, allow_pickle=False)
++        if "arm" not in zz.files or str(zz["arm"]) != "refined":
++            sys.exit(f"[FAIL] {nm} carries no arm = refined")
+ if Q.shape != (205, 205):
+     sys.exit(f"[FAIL] Q shape {Q.shape}")
+ # check 1: cell identity
+ if not np.array_equal(np.asarray(cz["cells"], dtype=np.int64), gids):
+     sys.exit("[FAIL] cov2d_Q_205.npz cells differ from remote_reduce cells")
+ if not np.array_equal(cz["x"], new[gids]):
+-    sys.exit("[FAIL] cov2d_Q_205.npz x differs from the drawn central value (remote_reduce CV42 = E_U)")
++    sys.exit(f"[FAIL] cov2d_Q_205.npz x differs from the drawn central value ({CENTRAL})")
+ # check 2: diagonal from the independent CFS products
+ s5 = np.load(a.s5_npz, allow_pickle=False)["total"]
+ cpl = np.load(a.playlist_npz, allow_pickle=False)["C_PL"]

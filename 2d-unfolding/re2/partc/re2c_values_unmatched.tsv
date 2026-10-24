@@ -1,0 +1,22 @@
+where	printed	why
+N/sec_results.tex:221	eightfold	printed as a word; tension_report.txt '8.2x inflation' (tune.log 8.19x) is the operand; a format spec cannot produce the word
+N/sec_results.tex:226	4	approximate range 'about $4$--$5$' over the leading modes' |eigen-pull| (tension_report mode table 4.94, 4.24, 4.19, ...); no single field
+N/sec_results.tex:227	two	printed as a word; tension_report 'fraction of top-5 contributors in the smallest-10% lambda band: 0.40' times 5
+N/sec_results.tex:231	4\times10^{-9}	rounded-up bound on lam/lam_max of the four leading highest-pPar modes (largest 3.549e-09 in the tension_report mode table); no field and no format reproduces a bound
+N/sec_systematics.tex:311	1.8	C_PL 'about 1.8 effective degrees of freedom': no source field found (the participation ratio of playlist_term.json report.eigenmodes eigenvalues gives 1.24, not 1.8)
+N/sec_systematics.tex:312	100	'at the order of 100%' (size of C_PL poorly determined): heuristic from the dof statement; no source field
+N/sec_systematics.tex:424	three	'about three times the training-seed block' printed as a word; operand is 1/s5.json numbers.c08.sigma_c08_over_sigma_ml_median = 3.29
+N/sec_method.tex:113	0.18	E_U (seed 42) vs the seed-1 central value, per-bin median; no field in the allowed sources
+N/sec_method.tex:114	1.79	E_U vs seed-1 maximum; no field in the allowed sources
+N/sec_method.tex:114	0.30	E_U vs seed-1 in units of the earlier statistical band's sigma; no field in the allowed sources
+N/sec_method.tex:114	1.28	E_U vs seed-1 maximum in sigma units; no field in the allowed sources
+N/sec_method.tex:128	1.28	E_U vs the ten LightGBM seeds 1-10, RMS standardized difference; no field in the allowed sources
+N/sec_method.tex:128	4.25	E_U vs the ten seeds, maximum standardized difference; no field in the allowed sources
+N/sec_3d.tex:149	0.44	background-treatment (D2) movement vs E_U, median (RE1-REPORT-2 sec. 3); not a field of re1_numbers or re1_extras; E_U dependence of the operand not verified
+N/sec_3d.tex:149	1.13	same, 84th percentile; no field in re1_numbers or re1_extras
+N/sec_systematics.tex:84	0.87	published-side (second rho estimator from the paper ancillary); no listed source; not E_U/Q
+N/sec_results.tex:161	4.01	published-side (median of the published flux block); no listed source; not E_U/Q
+N/paper_body.tex:414	4.01	published-side (published flux median); no listed source; not E_U/Q
+N/app_statmethods.tex:560	4.61	published-side (paper width-weighted total sigma, = \uqPaperIntegral); no field among the listed sources; not E_U/Q
+N/sec_execsummary.tex:32	one percent	'within about one percent' printed as words; operand agreement headline_totals_oi130.values.ratio_integrals_reported (1.12 %)
+N/primer_body.tex:276	one percent	learner difference 'about one percent in a typical cell' printed as words; operand is the 0.983 % of R42/lgbm_central_metrics.out (CV42 row: 0.983, 12.18), not an allowed source

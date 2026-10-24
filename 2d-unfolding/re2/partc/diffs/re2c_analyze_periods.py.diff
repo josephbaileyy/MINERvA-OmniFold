@@ -1,0 +1,123 @@
+--- docs/orchestration/state/2d-closeout/period-unfold-20261014/scripts/analyze_periods.py
++++ 2d-unfolding/re2/partc/re2c_analyze_periods.py
+@@ -1,6 +1,21 @@
+ #!/usr/bin/env python3
+-"""Phase-2 analysis of the period-unfold test (cluster, root_6_28; reads small ROOT products only).
++"""RE-2 part C copy of period-unfold-20261014/scripts/analyze_periods.py (912af1dd...), RE2-DECLARATION-C.md §3.4.
++
++    python3 -I re2c_analyze_periods.py [--arm refined --work-cov PATH SHA256 --ns DIR] <mode> ...   (modes below)
++
++  --arm purity (default)  the original, unchanged: it must reproduce analysis.json 05edff61... (K1-roll)
++  --arm refined           pins from re2c_periods.set_arm("refined"); every run's driver and background mode is
++                          checked (PA-02, PT-G); the control compares pu_CTRL_s42 with E_R and J0's refined D_cv and,
++                          unlike the original (PA-05c), exits nonzero unless it passes
++
++The metric stays VL175 + ML of work_cov with only x moving to E_R (the director's ruling Q2). The noise reference
++resamples data and MC, not the background stream, in both arms: J8's period replicas ran --bootstrap-streams both,
++as the purity chain's did (a disclosure, RE2-DECLARATION-C.md §3.4).
++
++The original docstring follows.
+ 
++Phase-2 analysis of the period-unfold test (cluster, root_6_28; reads small ROOT products only).
++
+     python3 -I analyze_periods.py control  OUTDIR RESULT.json        # pu_CTRL_s42 vs XR-L0 and E_U (frozen 1e-8)
+     python3 -I analyze_periods.py roles    OUTDIR ROLES.json         # role map from the job outputs
+     python3 -I analyze_periods.py analyze  ROLES.json RESULT.json RESULT.txt
+@@ -45,7 +60,7 @@
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ sys.path.insert(0, HERE)
+-import periods as PD  # noqa: E402
++import re2c_periods as PD  # noqa: E402
+ 
+ sys.path.insert(0, PD.COVERAGE_SCRIPTS)
+ import common as C  # noqa: E402  (pinned copy, main c67dbdda)
+@@ -89,7 +104,8 @@
+             "phi": phi, "pot": pot, "seed": run.get("seed"), "bootstrap_seed": run.get("bootstrap_seed"),
+             "omnifile": run.get("omnifile"), "mcfile": run.get("mcfile"),
+             "driverSha256": dsha.GetTitle() if dsha else None,
+-            "n_reported_own": int((x > 0).sum())}
++            "n_reported_own": int((x > 0).sum()),
++            **{k: run.get(k) for k in ("bkg_mode", "refine_n_estimators", "refine_num_leaves")}}
+ 
+ 
+ # ------------------------------------------------------------------------------------------------ metric
+@@ -170,13 +186,16 @@
+ 
+ 
+ # ------------------------------------------------------------------------------------------------ analysis
+-def analyze(roles, W, out_json, out_txt):
++def analyze(roles, W, out_json, out_txt, guard=True):
+     cells_all = W["cells"]
+     R = {"POOL": load(roles["POOL"], cells_all)}
+     for X in PER:
+         R[X] = {"s42": load(roles[X]["s42"], cells_all), "s43": load(roles[X]["s43"], cells_all) if roles[X].get("s43") else None,
+                 "boot": [load(p, cells_all) for p in roles[X].get("boot", [])]}
+     runs = [R["POOL"]] + [r for X in PER for r in [R[X]["s42"], R[X]["s43"]] + R[X]["boot"] if r is not None]
++    if guard:   # PA-02 / PT-G: the period runs' driver and mode; the selftest's synthetic roles are E_U copies
++        for r in runs:
++            PD.check_mode(r)
+     keep = np.ones(cells_all.size, bool)
+     for r in runs:
+         keep &= (r["x"] > 0) & (r["t"] > 0)
+@@ -334,9 +353,13 @@
+         c["ref"] = ref
+         res["comparisons"][f"CTRL_vs_{nm}"] = c
+     res["verdict"] = "PASS" if all(c["verdict"] == "PASS" for c in res["comparisons"].values()) else "NOT PASS"
++    if PD.ARM == "refined":
++        res["arm"] = "refined"
+     json.dump(res, open(out_json, "w"), indent=1)
+     print(json.dumps({kk: {k2: v.get(k2) for k2 in ("verdict", "max_rel_diff_cells", "integral_rel_diff")}
+                       for kk, v in res["comparisons"].items()}, indent=1), res["verdict"])
++    if PD.ARM == "refined" and res["verdict"] != "PASS":   # PA-05c: the refined control stops
++        sys.exit(2)
+ 
+ 
+ def selftest(out_json):
+@@ -351,7 +374,7 @@
+     for X in PER:
+         ro[X] = {"s42": EU, "s43": EU, "boot": [EU, EU]}
+     tmp = tempfile.mkdtemp(dir=f"{PD.NS}/tmp")
+-    o1 = analyze(ro, W, f"{tmp}/id.json", f"{tmp}/id.txt")
++    o1 = analyze(ro, W, f"{tmp}/id.json", f"{tmp}/id.txt", guard=False)
+     vals = []
+     for nm, o in o1["comparisons"].items():
+         vals += [o["chi2_205_pinv"], o["chi2_pz_marginal"], o["chi2_pt_marginal"], o["integral_shift_pct"]]
+@@ -386,7 +409,7 @@
+     f.Close()
+     ro2 = {"POOL": EU, "PA": {"s42": EU, "s43": EU, "boot": [EU]}, "PB": {"s42": inj, "s43": inj, "boot": [inj]},
+            "PC": {"s42": EU, "s43": EU, "boot": [EU]}}
+-    o2 = analyze(ro2, W, f"{tmp}/inj.json", f"{tmp}/inj.txt")
++    o2 = analyze(ro2, W, f"{tmp}/inj.json", f"{tmp}/inj.txt", guard=False)
+     c = o2["comparisons"]["raw_PB/PA"]
+     want_step = 1.04 / 0.98 - 1
+     cells = W["cells"]
+@@ -414,7 +437,28 @@
+     return tests
+ 
+ 
++def parse_arm(argv):
++    """Strip [--arm refined --work-cov PATH SHA256] [--ns DIR] from argv and set the pins; returns the rest."""
++    argv = list(argv)
++    arm, wc, ns = "purity", None, None
++    if "--arm" in argv:
++        i = argv.index("--arm")
++        arm = argv[i + 1]
++        del argv[i:i + 2]
++    if "--work-cov" in argv:
++        i = argv.index("--work-cov")
++        wc = (argv[i + 1], argv[i + 2])
++        del argv[i:i + 3]
++    if "--ns" in argv:
++        i = argv.index("--ns")
++        ns = argv[i + 1]
++        del argv[i:i + 2]
++    PD.set_arm(arm, work_cov=wc, ns=ns)
++    return argv
++
++
+ if __name__ == "__main__":
++    sys.argv[1:] = parse_arm(sys.argv[1:])
+     mode = sys.argv[1]
+     if mode == "control":
+         control(sys.argv[2], sys.argv[3])
