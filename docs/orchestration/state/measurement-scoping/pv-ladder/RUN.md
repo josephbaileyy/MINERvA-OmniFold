@@ -87,7 +87,10 @@ sbatch --qos=debug --time=0:20:00 --job-name=pvl_prep --output=$OUT/logs/%x_%j.o
 ```
 
 - **The job** reads each rung's npz once for the cells and once for the ratios, plus the four gen5d files. It is
-  projected at 0.05 node-h (one shared debug allocation, 16 CPUs, under 20 min).
+  projected at **16 min, 0.27 node-h**, with `--time` 0:20, which is 1.25×.
+  - Revised before submission: the first figure, 0.05 node-h, assumed a shared allocation, but debug QOS charges the
+    whole node.
+  - Eight reads of 1.1–1.5 GB npz files, each followed by histogramming 33 M rows, are budgeted at about 2 min apiece.
 - **It writes** `$OUT/prep/cells/<rung>.json` and `$OUT/prep/ratios/<rung>/`, with every sha256 printed.
 - **The pvl_cells self-check must pass,** reproducing s5p's 39 EW and s5c's 109 J cells on the 5D npz. A failure
   stops the ladder and is reported.
@@ -135,6 +138,23 @@ tighter than the declaration's limits, which were longer than 1.25×.
 - I write F's gate only on a NOT_POWERED verdict.
 
 **The cap is 4.0 CPU node-h.** I stop and report past 1.25× any projection, and ask before exceeding the cap.
+
+**The projected total,** recomputed with closures at 1.7× a data run (the director's check, before J1). Every
+job's longest step is taken as J1's 24 min, and a job with a closure as 1.7 × 24 min:
+
+| | node-h |
+|---|---|
+| prep | 0.27 |
+| J1 | 0.40 |
+| J2, J3, J4, J5, each with closures, 0.68 each | 2.72 |
+| **total without the fallback** | **3.39** |
+| F, if every rung's PC is NOT_POWERED (eight steps, closures 1.7×) | +0.68 → **4.07** |
+
+- **Without the fallback the total is within the cap.** With F at its worst, every rung NOT_POWERED, it is 4.07,
+  0.07 over.
+- NOT_POWERED needs fewer than 20 headline cells with |bias| > 1 %. PV-2D had 127 such cells on 205.
+- **The director was told before J1.** If F is needed, I ask before submitting it rather than trimming a rung.
+- These figures are replaced by J1's measured times before J2 is submitted.
 
 ## 5. Status
 
