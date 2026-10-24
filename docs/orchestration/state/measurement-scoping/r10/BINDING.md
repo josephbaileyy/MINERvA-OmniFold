@@ -16,11 +16,11 @@ The declaration's commit is `b4b1136c1bde6ad29281151156237ca3f3042118`.
 2. **C4 is the count only (`BlobNClusters_sz`); `BlobTotalE` is excluded: accepted explicitly.** Summing BlobTotalE over
    candidates would be a further derived variable chosen for this test, and it is not declared. It stays out of R10.
 3. **A fourth, missing bin on the sixth axis: accepted.**
-4. **OSB is not computed: accepted.** It becomes a follow-up after a pass.
+4. **OSB is not computed: accepted.** It becomes a follow-up after a pass. <!-- absence-ok: a scope ruling on what R10's declared design runs, not a claim that a result does not exist -->
 5. **The null as permutation twins plus the global null (null3 at f = 1): accepted.** Each twin permutes its
    configuration's own cell labels within the f = 1 cells, so the occupancy is the same. The per-configuration and R10
    states are bound as declared.
-6. **P1r–P3r are not run: accepted.**
+6. **P1r–P3r are not run: accepted.** <!-- absence-ok: a scope ruling on what R10's declared design runs, not a claim that a result does not exist -->
 7. **X0 on debug QOS** as a 20-minute smoke test: **accepted.** X runs on regular QOS.
 
 ## The director's condition (from 2026-10-23)
