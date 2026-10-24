@@ -24,6 +24,10 @@ final products get their own bundle after part C, by the same procedure.
 | script | [`run/launch/re2_hpss.sh`](run/launch/re2_hpss.sh), sha256 `40d5ae10d338310b7b098c9f42246246f69bd4aa61c8b91fb2bb6067c689acb8`; run on login12, 12:54:16–12:57:10Z |
 | records | [`run/hpss/`](run/hpss/): `members.list`, `members.sha256`, the bundle digest, and `logs/` with every step's output and `rc.tsv` |
 
+**Note (director, 2026-10-24, RE2-BINDING-C.md).** PR #320 later parameterized `run/launch/re2_hpss.sh` in place for
+part C's bundle, so the link above now opens a later version. The version this receipt ran is at commit `1442f1d2`,
+whose sha256 is `40d5ae10…`, equal to the pin above.
+
 **What the bundle holds:**
 - 678 `xsec.root` files: J0's 34 and part B's 644. All 678 manifest digests equal the job-time digests committed
   in `run/j0_readout/SHA256SUMS.J0a`/`.J0b` and `run/partb_readout/sums/` (a sorted diff of the two lists is
