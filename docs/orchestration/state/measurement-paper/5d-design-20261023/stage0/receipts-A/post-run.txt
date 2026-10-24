@@ -34,3 +34,8 @@ guard loop ended 03:38:11
 
 [exited with code 0]
 binding run (login12): started 2026-10-24T03:38:41Z, ended 2026-10-24T03:38:51Z, rc=0 (date -u before and after)
+
+## retrieved-copy check, absolute paths (captured 2026-10-24T03:59:23Z on login12)
+ls: cannot access '/pscratch/sd/j/josephrb/5d-stage0-20261023/retrieveA': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/5d-stage0-20261023/retrieveA/stage0-0c-products-20261024.tar': No such file or directory
+over-time guard 2 launch: before 02:27:16 UTC (the next command, squeue --start, printed that time); the job started 03:10:45 UTC

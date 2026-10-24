@@ -11,7 +11,7 @@
 - `receipts-A/post-run.txt` holds the submit time, file mtimes, the tar's member count and the retrieval cleanup,
   captured on login12. It also transcribes the watchers' output and the binding run's start and end times from the
   session's terminal; those lines are not a cluster capture.
-- The 20 new GiBUU pseudo-experiment products (`eavail_shape_a1_s801000…801019.npz`, 3.5 MB in all) are tracked in
+- The 20 new GiBUU pseudo-experiment products (`eavail_shape_a1_s801000…801019.npz`, 3.5 MiB in all) are tracked in
   `receipts-A/`, because the binding JSON names them. Their sha256 equal the JSON's.
 - `B=/pscratch/sd/j/josephrb/5d-stage0-20261023`.
 
@@ -70,8 +70,9 @@
 - Submitted 01:23:33 UTC, started 2026-10-24 03:10:45 UTC: 1 h 47 min pending. The queue monitor showed the reason
   "Priority". COMPLETED, exit 0:0.
 - **Elapsed 1,629 s (27 min 9 s).** That is 0.45 of the 1.0 node-h cap and 0.70 of the 39-min projection. The
-  1.25× guard (cancel at 49 min of RUNNING) was active throughout the run and did not fire. A first guard ran out of
-  iterations while the job was still pending and was replaced before the job started (`post-run.txt`).
+  1.25× guard (cancel at 49 min of RUNNING) did not fire. A first guard ran out of iterations while the job was still
+  pending. The second was launched before 02:27:16 UTC and ended when the job left the queue (03:38:11 UTC), so it
+  covered the whole run from 03:10:45 (`post-run.txt`, transcribed from the session's terminal).
 - **Charged: 0.45250 CPU node-h** (billing 256, a full node), 0 GPU node-h.
 - **Lines:**
   - lines 3–7, 4 pseudo-experiments each: 1,608–1,617 s, MaxRSS 10.40–10.82 GiB;
@@ -148,7 +149,8 @@ C_stat(e) + C_model + the z-cv total.
   files of `receipts-A/products.sha256` plus that list. They are `runs/` (47 files: the 23 npz products and their
   inventory and log files), `ratio/`, `logs/` and both JSONs.
   - The tar's sha256 is `ee819f4e…`. `hsi hashcreate` gave md5 `69996ff2…`, and `hsi hashverify` gave "(md5) OK".
-  - The copy was retrieved, its sha256 equals the tar's, and the retrieved copy was deleted.
+  - The copy was retrieved, and its sha256 equals the tar's. The retrieved copy was then deleted: `$B/retrieveA` is
+    absent, by absolute path (`post-run.txt`).
 - **pscratch.** The products remain under `$B`. Nothing was written to CFS.
 - **Compute.** 0.45250 CPU node-h, all of it Stage 0's (ledger). The provisional run, ratio and binding run used 0
   node-h on login nodes.
