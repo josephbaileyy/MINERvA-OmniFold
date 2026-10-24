@@ -128,7 +128,8 @@ $PY $D/nd-unfolding/s1_assemble.py --definition $D/nd-unfolding/pv-ladder/readou
   --seed-dir $B/runs/seed --seed-tag S1seed --universe-dir $B/runs/uni --universe-tag S1 \
   --lateral-dir $P/s5p-20260926/runs/s3/latunf --x01 $P/2d-closeout-c04repair-20261012/build/minos_rescaled.npz \
   --flux-constraint $P/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt \
-  --cmodel <C_model,5D npz> --cmodel-sha256 <its committed digest> --cmodel-key <fractional key> --cmodel-abs-key <absolute key> \
+  --cmodel /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz --cmodel-sha256 <its recorded file digest> \
+  --cmodel-key C_model --cmodel-abs-key C_abs \
   --inventory $D/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256 \
   --manifest $D/docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt \
   --detector-receipt $P/s5p-20260926/bank_detector/detector-dump.json --out $B/s1_assembly.npz
@@ -161,8 +162,13 @@ $PY $D/nd-unfolding/s1_assemble.py --definition $D/nd-unfolding/pv-ladder/readou
   - it will not overwrite.
 - **Not in the readout:** 2D also reported X02 and a clipped random-effects seed variance beside C08. This readout
   does not.
-- **The four `<…>` fields** come from the C_model,5D builder's committed JSON (H2 declaration §3.1), which the 2d
-  test lane owns. The binding fills them in. The assembly does not run before they exist.
+- **The C_model input** is the builder's npz, as declared in `state/measurement-scoping/pv-ladder/BUILD-DECLARATION.md`
+  §2 (PR #337).
+  - Its keys are `C_model` (fractional) and `C_abs` = diag(x) C_model diag(x), with x = P5's integrals
+    (`nd-unfolding/pv-ladder/build_cmodel5d.py:223, :254`).
+  - The one `<…>` field is the npz's file sha256, which the builder's report records. The binding fills it in.
+  - The assembly does not run before that build has run and been reported.
+  - The builder integrates by its own route, so the C_abs cross-check is to 10⁻¹² relative, not bitwise.
 
 ## 4. Controls (gates)
 
