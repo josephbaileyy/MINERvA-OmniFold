@@ -167,3 +167,81 @@ docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-STOP.md: 8 run
   tracked  run/partc_stopped/partc_preflight/preflight.log
 all tracked
 ```
+
+## 6. The rerun's determinism stop, and the fix for amendment 2 (2026-10-24)
+
+**The rerun, under amendment 1.**
+- **Preflight:** on login12 at 16:17:32Z, the deploy was `903fb78b941a2f889bfcc5092e41ce27f5add898`, clean.
+  `sha256sum -c` over the amendment's 29 rows gave **29 of 29 OK**
+  ([`run/partc_r2/partc-r2_preflight/preflight.log`](run/partc_r2/partc-r2_preflight/preflight.log)).
+- **The chain:** `re2c_run.sh refined` into `$B/partc-r2` ran **36 steps at rc 0**.
+  - C13 read 250 rows: 241 controls PASS, 8 new products, 1 declared failure and 0 unexpected.
+  - It wrote `chain.json` and `SHA256SUMS`.
+  - `$B/partc` is untouched ([`run.out`](run/partc_r2/partc-r2_preflight/run.out)).
+
+**The determinism stop: FAIL, rc 1** ([`determinism.json`](run/partc_r2/partc-r2_preflight/determinism.json), sha256
+`b7085a8b…`; argv in [`determinism.argv`](run/partc_r2/partc-r2_preflight/determinism.argv)).
+- It compared 66 files: 60 equal, 6 differ, 0 one-sided.
+- The run stopped before C10 and was reported to the director, with nothing repaired.
+
+**The 6 differences.** A field-by-field diff shows that every differing value is a recorded sha256 of another file:
+
+| file | the differing fields |
+|---|---|
+| `s5/s5.json` | the S5 ROOT's own digest |
+| `pins_q.json` | the s5_root, s5_json and combination_json digests |
+| `outA/budget_Q.json` | 7 input-pin and provenance digests of the same three |
+| `playlist/playlist_term.json` | `inputs.analysis_json.sha256` |
+| `combination/combination.json` | `inputs.analysis_json.sha256` |
+| `outA/SHA256SUMS` | the 4 outA ROOT files, `budget_Q.json` and `cov2d_Q_205.json` |
+
+**Why.** Each digested file is one of two kinds:
+- a ROOT file, which carries the TFile time;
+- a record that is equal after the path pairs, but whose raw bytes name the run's namespace.
+
+The path pairs cannot reach the digest of a path-bearing file. No measured value differed, and every npz is
+byte-equal. The director's review had not caught this cascade either.
+
+**The fix (amendment 2, the director's conditions 1–5).** Only `re2c_determinism.py` changes, plus its tests in
+`test_re2c.py`.
+1. **Learned digest pairs.** A pair (rerun digest → stopped digest) is learned only from a file proven equal: by
+   exact bytes after the path pairs and the pairs already learned, or by the declared JSON-field rule.
+   - It is applied only to a whole 64-hex token.
+   - Learning iterates to a fixpoint. Any digest still differing there leaves its file differing, which is a FAIL.
+2. **ROOT pairs come only from the fixed `ROOT_TWINS` table:**
+   - `s5/uq_production_covariance.root` → `s5/production_cov.npz`;
+   - `outA/uq_adopted_covariance.root`, `block_stat.root`, `block_c08.root` and `block_playlist.root` →
+     `outA/cov2d_Q_205.npz`.
+
+   A ROOT pair is learned only when its twin is byte-equal. A ROOT file missing from the table fails the run.
+3. **The record.** Every pair is listed in `determinism.json` with the file it was learned from and its reason
+   (`equal`, `json-rule` or `root-twin <twin>`), and the fixpoint iteration count is given.
+4. **Tests,** each in the direction it acts. `python3 -m unittest test_re2c` passes 25 of 25:
+   - (a) a path-bearing record whose digest a second record holds PASSES;
+   - (b) a ROOT digest FAILS when its twin differs by one byte;
+   - (c) a changed value in a record that also holds learned digests FAILS;
+   - (d) a 64-hex digest that matches nothing learned FAILS;
+   - (e) a ROOT file not in the table FAILS.
+
+**A pre-binding dry check, disclosed.** The new comparator was run once over the two existing trees. It read
+`$B/partc` and `$B/partc-r2` and wrote only `$B/review/det-dry/determinism.json`
+([`run/partc_r2/determinism_dry_amend2.json`](run/partc_r2/determinism_dry_amend2.json)).
+- It gave **PASS**: 66 of 66 equal, 27 learned pairs in 4 fixpoint iterations, none untabled.
+- The pairs: 5 `root-twin`, 2 `json-rule` (the two receipts), and 20 `equal`.
+- It is not the bound verdict. The bound one comes from a clean deploy of the amendment-2 commit, after
+  `sha256sum -c` of `$B/partc-r2`'s own `SHA256SUMS` (the director's condition 6).
+
+**Scope and digests (condition 5).** Of the 29 files bound by amendment 1, only these two change. The other 27 are
+byte-identical.
+
+| file | sha256 |
+|---|---|
+| `2d-unfolding/re2/partc/re2c_determinism.py` | `84951a8f75a650104bbfa1ff6a23e0739559b974305b16412144b5f28ff01739` |
+| `2d-unfolding/re2/partc/test_re2c.py` | `87ac367fcb64af49ff6d88db72a223e27d8df9a967a15ba99330ae467c781507` |
+
+**The proposed determinism rerun, for the amendment:**
+1. `sha256sum -c` of `$B/partc-r2/SHA256SUMS`, logged and required all OK.
+2. A clean deploy of the amendment-2 commit, in a separate directory.
+3. `re2c_determinism.py` with the same two path pairs, writing `$B/partc-r2_preflight/determinism-amend2.json` beside
+   the first verdict, which is kept. Nothing is written into `$B/partc-r2`.
+4. On PASS, C10, C14 and the report.

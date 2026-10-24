@@ -25,12 +25,20 @@ output namespace and its deploy, which records name). Excluded, each named in th
   named JSON fields       the receipts record when, where and from which commit they ran:
                           receipt_model_chi2.json's generated_utc and host, RECEIPT-agreement-windows.json's
                           hostname and git_head_at_run; the rest of each file is compared exactly, as parsed JSON.
+Learned digest pairs (RE2-BINDING-C amendment 2): records hold other files' sha256s (input pins, SHA256SUMS), and a
+record that names a path has a different raw digest in each run even when it is equal after the path pairs. A pair
+(rerun digest -> stopped digest) is learned only from a file proven equal, by exact bytes after the path pairs and
+the pairs already learned, or by the declared JSON-field rule; ROOT pairs only from the fixed ROOT_TWINS table, and
+only when the twin npz is byte-equal. A pair is applied only to a whole 64-hex token. Learning iterates to a
+fixpoint; any digest still differing there leaves its file differing, which is a FAIL. Every pair is listed in the
+result with the file it came from and its reason (equal, json-rule, root-twin), and the iteration count is given.
 Files that only one run has: the rerun may add chain.json and SHA256SUMS, which the stopped run never reached; any
-other one-sided file is a difference. Exit 0 only if no shared file differs and no other file is one-sided.
+other one-sided file is a difference, and so is a ROOT file the table does not name. Exit 0 only if none of these.
 """
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -66,6 +74,32 @@ def skipped(rel):
     return None
 
 
+HEX64 = re.compile(rb"(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])")
+# Amendment 2, condition 2: each ROOT product and the npz written from the same arrays (see the docstring). A ROOT
+# digest pair is learned only when the twin is byte-equal between the runs; a ROOT file not listed here fails the run.
+ROOT_TWINS = {"s5/uq_production_covariance.root": "s5/production_cov.npz",
+              "outA/uq_adopted_covariance.root": "outA/cov2d_Q_205.npz",
+              "outA/block_stat.root": "outA/cov2d_Q_205.npz",
+              "outA/block_c08.root": "outA/cov2d_Q_205.npz",
+              "outA/block_playlist.root": "outA/cov2d_Q_205.npz"}
+
+
+def sha(b):
+    return hashlib.sha256(b).hexdigest()
+
+
+def compare(rel, a_, b):
+    """'equal' by exact bytes, or 'json-rule' for the FIELD_SKIP files (parsed JSON without their named fields);
+    None if they differ."""
+    if rel in FIELD_SKIP:
+        ja, jb = json.loads(a_), json.loads(b)
+        for k in FIELD_SKIP[rel]:
+            ja.pop(k, None)
+            jb.pop(k, None)
+        return "json-rule" if ja == jb else None
+    return "equal" if b == a_ else None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--stopped", required=True)
@@ -76,45 +110,69 @@ def main(argv=None):
     pairs = [tuple(x.encode() for x in pp.split("=", 1)) for pp in a.path_pair]
     s, r = files(a.stopped), files(a.rerun)
     res = {"compared": 0, "equal": 0, "differ": [], "skipped": {}, "only_stopped": [], "only_rerun": [],
-           "path_pairs": a.path_pair}
+           "path_pairs": a.path_pair, "root_untabled": [], "digest_pairs": {}, "fixpoint_iterations": 0}
+    shared, roots = [], []
     for rel in sorted(set(s) | set(r)):
         why = skipped(rel)
         if why:
             res["skipped"].setdefault(why, 0)
             res["skipped"][why] += 1
+            if rel.endswith(".root") and why.startswith("ROOT"):
+                roots.append(rel)
             continue
         if rel not in r:
             res["only_stopped"].append(rel)
-            continue
-        if rel not in s:
+        elif rel not in s:
             if rel.split("/")[-1] not in RERUN_ONLY_OK:
                 res["only_rerun"].append(rel)
+        else:
+            shared.append(rel)
+    dig = {}   # rerun digest (bytes) -> (stopped digest (bytes), learned from, reason)
+    for rel in roots:   # condition 2: ROOT pairs only from the fixed table, only with a byte-equal twin
+        twin = ROOT_TWINS.get(rel)
+        if twin is None:
+            res["root_untabled"].append(rel)
             continue
-        b = r[rel].read_bytes()
+        if rel in s and rel in r and twin in s and twin in r and s[twin].read_bytes() == r[twin].read_bytes():
+            dig[sha(r[rel].read_bytes()).encode()] = (sha(s[rel].read_bytes()).encode(), rel, f"root-twin {twin}")
+
+    def norm(b):
         for new, old in pairs:
             b = b.replace(new, old)
-        res["compared"] += 1
+        return HEX64.sub(lambda m: dig[m.group(0)][0] if m.group(0) in dig else m.group(0), b)
+
+    while True:   # condition 1: learn only from a file proven equal; whole 64-hex tokens; to a fixpoint
+        res["fixpoint_iterations"] += 1
+        before = len(dig)
+        for rel in shared:
+            ra, sb = r[rel].read_bytes(), s[rel].read_bytes()
+            key = sha(ra).encode()
+            if key in dig or sha(ra) == sha(sb):
+                continue
+            how = compare(rel, sb, norm(ra))
+            if how:
+                dig[key] = (sha(sb).encode(), rel, how)
+        if len(dig) == before:
+            break
+    res["digest_pairs"] = {k.decode(): {"stopped": v[0].decode(), "learned_from": v[1], "reason": v[2]}
+                           for k, v in sorted(dig.items(), key=lambda kv: kv[1][1])}
+    for rel in shared:
+        b = norm(r[rel].read_bytes())
         a_ = s[rel].read_bytes()
-        if rel in FIELD_SKIP:   # compared as parsed JSON without the named run-context fields
-            ja, jb = json.loads(a_), json.loads(b)
-            for k in FIELD_SKIP[rel]:
-                ja.pop(k, None)
-                jb.pop(k, None)
+        res["compared"] += 1
+        if rel in FIELD_SKIP:
             res.setdefault("fields_excluded", {})[rel] = list(FIELD_SKIP[rel])
-            same = ja == jb
-        else:
-            same = b == a_
-        if same:
+        if compare(rel, a_, b):
             res["equal"] += 1
         else:
-            res["differ"].append({"file": rel, "stopped": hashlib.sha256(s[rel].read_bytes()).hexdigest(),
-                                  "rerun_normalized": hashlib.sha256(b).hexdigest()})
-    res["verdict"] = "PASS" if res["compared"] and not (res["differ"] or res["only_stopped"] or res["only_rerun"]) \
-        else "FAIL"
+            res["differ"].append({"file": rel, "stopped": sha(a_), "rerun_normalized": sha(b)})
+    res["verdict"] = "PASS" if res["compared"] and not (res["differ"] or res["only_stopped"] or res["only_rerun"]
+                                                        or res["root_untabled"]) else "FAIL"
     Path(a.out).write_text(json.dumps(res, indent=1) + "\n")
-    print(json.dumps({k: res[k] for k in ("verdict", "compared", "equal", "skipped")} |
-                     {"differ": [d["file"] for d in res["differ"]], "only_stopped": res["only_stopped"],
-                      "only_rerun": res["only_rerun"]}, indent=1))
+    print(json.dumps({k: res[k] for k in ("verdict", "compared", "equal", "skipped", "fixpoint_iterations")} |
+                     {"digest_pairs": len(res["digest_pairs"]), "differ": [d["file"] for d in res["differ"]],
+                      "only_stopped": res["only_stopped"], "only_rerun": res["only_rerun"],
+                      "root_untabled": res["root_untabled"]}, indent=1))
     return 0 if res["verdict"] == "PASS" else 1
 
 
