@@ -200,7 +200,8 @@ class DeterminismStop(unittest.TestCase):
         (root / "s5").mkdir(parents=True)
         (root / "logs").mkdir()
         (root / "s5" / "s5.json").write_text(json.dumps({"out": f"/b/{ns}/s5", "x": 1.5}))
-        (root / "s5" / "a.root").write_bytes(os.urandom(8))
+        (root / "s5" / "uq_production_covariance.root").write_bytes(os.urandom(8))   # TFile time differs
+        (root / "s5" / "production_cov.npz").write_bytes(b"twin")                       # its byte-equal twin
         (root / "logs" / "steps.tsv").write_text(str(os.urandom(4)))
         for k, v in (extra or {}).items():
             (root / k).write_text(v)
@@ -215,7 +216,7 @@ class DeterminismStop(unittest.TestCase):
     def test_equal_up_to_paths_passes(self):
         t = Path(tempfile.mkdtemp())
         rc, res = self.run_det(self.make(t / "s", "partc"), self.make(t / "r", "partc-r2", {"chain.json": "{}"}))
-        self.assertEqual((rc, res["compared"], res["equal"]), (0, 1, 1))
+        self.assertEqual((rc, res["compared"], res["equal"]), (0, 2, 2))   # s5.json and the ROOT's npz twin
 
     def test_runs_differing_only_in_their_mkdtemp_name_and_run_context_pass(self):
         t = Path(tempfile.mkdtemp())
@@ -232,6 +233,63 @@ class DeterminismStop(unittest.TestCase):
         (r / "receipts" / "receipt_model_chi2.json").write_text(json.dumps(
             {"generated_utc": "x", "host": "y", "chi2": 2.6}))
         self.assertEqual(self.run_det(s, r)[0], 1, "a changed value beside the excluded fields must still fail")
+
+    def two(self, mutate=None):
+        """A stopped and a rerun tree in which rec.json names its run's path, pins.json holds rec.json's sha256 and
+        the S5 ROOT's, and SUMS lists outA's ROOT. `mutate(rerun_root)` changes the rerun before digests are taken."""
+        import hashlib as H
+        t = Path(tempfile.mkdtemp())
+        out = []
+        for nm, ns in (("s", "partc"), ("r", "partc-r2")):
+            root = self.make(t / nm, ns)
+            (root / "outA").mkdir()
+            (root / "outA" / "block_c08.root").write_bytes(os.urandom(8))
+            (root / "outA" / "cov2d_Q_205.npz").write_bytes(b"cov")
+            (root / "rec.json").write_text(json.dumps({"out": f"/b/{ns}/rec", "x": 1.5}))
+            if nm == "r" and mutate:
+                mutate(root)
+            d = lambda f: H.sha256((root / f).read_bytes()).hexdigest()  # noqa: E731
+            (root / "pins.json").write_text(json.dumps({"rec": d("rec.json"),
+                                                        "s5_root": d("s5/uq_production_covariance.root")}))
+            (root / "outA" / "SUMS.txt").write_text(f"{d('outA/block_c08.root')}  block_c08.root\n")
+            out.append(root)
+        return self.run_det(*out)
+
+    def test_a_path_bearing_record_whose_digest_is_recorded_passes(self):          # (a)
+        rc, res = self.two()
+        self.assertEqual((rc, res["differ"]), (0, []))
+        how = sorted((v["learned_from"], v["reason"]) for v in res["digest_pairs"].values())
+        # the two ROOT twins and rec.json, then the files that become equal through them (whose digests are
+        # learnable in turn): every pair is from a file proven equal, or a tabled ROOT with an equal twin
+        self.assertEqual(how, [("outA/SUMS.txt", "equal"),
+                               ("outA/block_c08.root", "root-twin outA/cov2d_Q_205.npz"), ("pins.json", "equal"),
+                               ("rec.json", "equal"), ("s5/s5.json", "equal"),
+                               ("s5/uq_production_covariance.root", "root-twin s5/production_cov.npz")])
+
+    def test_a_root_digest_fails_when_its_twin_differs_by_one_byte(self):            # (b)
+        rc, res = self.two(lambda r: (r / "outA" / "cov2d_Q_205.npz").write_bytes(b"coW"))
+        self.assertEqual(rc, 1)
+        self.assertIn("outA/SUMS.txt", [d["file"] for d in res["differ"]])
+        self.assertIn("outA/cov2d_Q_205.npz", [d["file"] for d in res["differ"]])
+
+    def test_a_changed_value_in_a_record_holding_learned_digests_fails(self):        # (c)
+        rc, res = self.two(lambda r: (r / "rec.json").write_text(json.dumps({"out": "/b/partc-r2/rec", "x": 1.6})))
+        self.assertEqual((rc, sorted(d["file"] for d in res["differ"])), (1, ["pins.json", "rec.json"]))
+
+    def test_a_digest_matching_nothing_learned_fails(self):                          # (d)
+        t = Path(tempfile.mkdtemp())
+        s = self.make(t / "s", "partc", {"p.json": json.dumps({"d": "a" * 64})})
+        r = self.make(t / "r", "partc-r2", {"p.json": json.dumps({"d": "b" * 64})})
+        rc, res = self.run_det(s, r)
+        self.assertEqual((rc, [d["file"] for d in res["differ"]]), (1, ["p.json"]))
+
+    def test_a_root_file_not_in_the_table_fails(self):                               # (e)
+        t = Path(tempfile.mkdtemp())
+        s, r = self.make(t / "s", "partc"), self.make(t / "r", "partc-r2")
+        for root in (s, r):
+            (root / "s5" / "extra.root").write_bytes(b"x")
+        rc, res = self.run_det(s, r)
+        self.assertEqual((rc, res["root_untabled"]), (1, ["s5/extra.root"]))
 
     def test_a_changed_byte_or_a_one_sided_product_fails(self):
         t = Path(tempfile.mkdtemp())

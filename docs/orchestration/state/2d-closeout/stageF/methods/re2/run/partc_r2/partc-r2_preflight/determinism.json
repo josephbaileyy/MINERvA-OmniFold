@@ -1,0 +1,60 @@
+{
+ "compared": 66,
+ "equal": 60,
+ "differ": [
+  {
+   "file": "combination/combination.json",
+   "stopped": "b88d416f6a00cae6046e25b9a04c43b8ef0006375edd72a06df4cd5912a6ef3e",
+   "rerun_normalized": "7795a3d75cec7dcb4a8f0d2e0abbb8c282a6618bcc18449264a7f3cf1cd0bedd"
+  },
+  {
+   "file": "outA/SHA256SUMS",
+   "stopped": "b7ad862e1e4245fea9d85c36059364401defd1866da91bfb34d45112e6deab11",
+   "rerun_normalized": "dda60969d1ed2a273e42795fedbd3140c87abe241adeac8f270d32f335a17158"
+  },
+  {
+   "file": "outA/budget_Q.json",
+   "stopped": "ba2e8b10dd769945e458d76e79d19a733b7709d42c7115bb935fbf1926a0f1c0",
+   "rerun_normalized": "88a253d41f0e8ced55d2ec7c510e87bc3184d4f97e448861b88b565aa2e73778"
+  },
+  {
+   "file": "pins_q.json",
+   "stopped": "1856ee6e3cd8ec6f670d49c8d288e1f22776b1a746623eee0d5512f6dd8240ba",
+   "rerun_normalized": "69a36e479b0acb33ee1e363b9a90d4c0e315c804a144b4d72dade805aaf164ff"
+  },
+  {
+   "file": "playlist/playlist_term.json",
+   "stopped": "467a7ef7f2da4ade5dd7e8a28527d6541284e7e9e84a09c0cf3398f99a2ea33b",
+   "rerun_normalized": "d5d2a03b41a33e03b3d8f668afb1250211506266d5f65606fece090a6d054f05"
+  },
+  {
+   "file": "s5/s5.json",
+   "stopped": "716a519b9bca04a961f396f2e9673767285cd383c5de56f8973d35c79acb1c64",
+   "rerun_normalized": "8f6f071369fd0abbc8b1e05ce49c8a4280a0e2c5aaa9c9a9dcef2c45edd1d0a9"
+  }
+ ],
+ "skipped": {
+  "PDF: creation date; compared through its PNG twin": 22,
+  "run logs or caches": 29,
+  "ROOT: TFile creation time; compared through its npz twin": 5,
+  "scratch (a tmp component; the period selftest's mkdtemp directory has a random name)": 10,
+  "the values table: its spec is what the amendment changed": 2
+ },
+ "only_stopped": [],
+ "only_rerun": [],
+ "path_pairs": [
+  "/2d-closeout-re2-20261023/partc-r2=/2d-closeout-re2-20261023/partc",
+  "/deploy-903fb78b=/deploy-e079ff05"
+ ],
+ "fields_excluded": {
+  "receipts/RECEIPT-agreement-windows.json": [
+   "hostname",
+   "git_head_at_run"
+  ],
+  "receipts/receipt_model_chi2.json": [
+   "generated_utc",
+   "host"
+  ]
+ },
+ "verdict": "FAIL"
+}

@@ -1,0 +1,2 @@
+argv: python3 -I /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/deploy-903fb78b/2d-unfolding/re2/partc/re2c_determinism.py --stopped /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc --rerun /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2 --path-pair /2d-closeout-re2-20261023/partc-r2=/2d-closeout-re2-20261023/partc --path-pair /deploy-903fb78b=/deploy-e079ff05 --out /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2_preflight/determinism.json
+determinism rc=1
