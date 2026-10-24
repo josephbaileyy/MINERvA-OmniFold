@@ -58,7 +58,9 @@ before dividing by the 1D central value).
   Ref.~\cite{MINERvA:2021owq} by flux, interaction models, normalization,
   hadronic response, muon reconstruction, the statistical band, the training-seed
   block and the run-period block, with the total and the published total.}
-  % Q (rebuild/outputs/fig67/, legend "Training seed" = C08, "Run period" = C_PL; labels kept, J3/J4 provisional (DECISION-20261018, packet W10)).
+  % Q_R (RE-2 integration: re2-integration/figs/MEFHC_fig6_7_uncertainty_{pt,pz}.pdf, RE-2 part C step fig67 on E_R and
+  % outA/uq_adopted_covariance.root). Was Q (rebuild/outputs/fig67/, legend "Training seed" = C08, "Run period" = C_PL;
+  % labels kept, J3/J4 provisional (DECISION-20261018, packet W10)).
   \label{fig:uqbands}
 \end{figure}
 
@@ -153,10 +155,12 @@ block reflects an efficiency gain, regularization bias or undercoverage.
   \centering
   \includegraphics[width=0.49\textwidth]{uq_spread_2d}
   \includegraphics[width=0.49\textwidth]{uq_corr_2d}
-  \caption{300-replica Poisson bootstrap of the statistical block: per-bin relative
-  spread $\sigma/E_U$ of the unfolded 2D cross section, labeled std/mean on the color
-  bar (left), and correlation matrix for the 205 reported bins (right).}
-  % rebuild/outputs/stat/uq_{spread,corr}_2d.pdf, plot_bootstrap_figs.py on block_stat.root (hRel2D = sqrt(diag stat)/E_U).
+  \caption{300-replica Poisson bootstrap of the statistical block: per-bin spread
+  $\sigma$ relative to the central value of the unfolded 2D cross section, labeled
+  std/mean on the color bar (left), and correlation matrix for the 205 reported bins (right).}
+  % RE-2 integration (DRAFT caption): re2-integration/figs/uq_{spread,corr}_2d.pdf, RE-2 part C stat_figs
+  % (plot_bootstrap_figs.py on partc-r2 outA/block_stat.root, hRel2D = sqrt(diag stat)/x with x = E_R; RE2-PARTC-REPORT.md
+  % sec. 12). Was rebuild/outputs/stat/uq_{spread,corr}_2d.pdf (hRel2D = sqrt(diag stat)/E_U).
   \label{fig:bootstrap}
 \end{figure}
 

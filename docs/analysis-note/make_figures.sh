@@ -32,6 +32,8 @@ echo "== 2D reproduction =="
 # figures below that show the central value read CV42 explicitly (the producers' defaults still name the
 # exact-split file). The efficiency figure does not depend on the central value.
 CV42=uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+# RE-2 integration: CV42 is E_U, no longer the quoted central value. The installed figures of these lines are E_R's,
+# from RE-2 part C ("2D figures from RE-2 part C", below); these lines would draw the purity versions.
 run MEFHC_5iter_fig13.png            2d-unfolding  python plot_2d_threeway_fig13.py --infile "$CV42"
 run MEFHC_5iter_eff_fig5.png         2d-unfolding  python plot_efficiency_fig5_style.py
 run MEFHC_5iter_xsec_paper_pt_slices.png 2d-unfolding python plot_2d_paper_comparison.py --infile "$CV42"
@@ -176,10 +178,12 @@ install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basena
   fi
   echo "  installed $2 ($want)"
 }
-install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pt.pdf MEFHC_fig6_7_uncertainty_pt.pdf c12f37d5d8a39dfc16f38897ce708ff24f4428257a1fbdb644791a7020222d46
-install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pz.pdf MEFHC_fig6_7_uncertainty_pz.pdf e3bfb7273609d0c9399c28591da0fc01e706ce3769b11ea722fceb2541d5f323
-install_receipt_fig stat/uq_spread_2d.pdf               uq_spread_2d.pdf                79d6b35fe81fe71c71738996090b27c2fded2d990bb9bbae670927fbf253a7cb
-install_receipt_fig stat/uq_corr_2d.pdf                 uq_corr_2d.pdf                  42ea035f77b767b3d2d0dc3d2cbd57c9537f957e2ae39aef936a9eb373fc0d97
+# RE-2 integration: the four Q figures that stood here (Figs. 6/7 and the statistical-block figures, drawn from E_U and
+# Q) are no longer installed; their E_R and Q_R versions are installed below from RE-2 part C. The superseded lines:
+# install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pt.pdf MEFHC_fig6_7_uncertainty_pt.pdf c12f37d5d8a39dfc16f38897ce708ff24f4428257a1fbdb644791a7020222d46
+# install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pz.pdf MEFHC_fig6_7_uncertainty_pz.pdf e3bfb7273609d0c9399c28591da0fc01e706ce3769b11ea722fceb2541d5f323
+# install_receipt_fig stat/uq_spread_2d.pdf               uq_spread_2d.pdf                79d6b35fe81fe71c71738996090b27c2fded2d990bb9bbae670927fbf253a7cb
+# install_receipt_fig stat/uq_corr_2d.pdf                 uq_corr_2d.pdf                  42ea035f77b767b3d2d0dc3d2cbd57c9537f957e2ae39aef936a9eb373fc0d97
 # Fig. 1 is no longer installed from the rebuild (82665808..., drawn from E_U and Q): RE-2 integration installs the
 # refined redraw below.
 
@@ -195,6 +199,44 @@ if [[ "$(sha256_of "$FIGDIR/paper_fig1_validation.pdf")" != "$want" ]]; then
   echo "REFUSE install: $FIGDIR/paper_fig1_validation.pdf differs from $src after the copy" >&2; exit 1
 fi
 echo "  installed paper_fig1_validation.pdf ($want)"
+
+echo
+echo "== 2D figures from RE-2 part C (E_R and Q_R; digest-checked copy) =="
+# Every 2D figure the note, paper or primer includes whose producer reads the central value or its covariance
+# (RE2-DECLARATION-C.md sec. 7). Drawn on Perlmutter by 2d-unfolding/re2/partc/re2c_run.sh with --ours E_R and Q_R
+# (re2/run/partc_r2/partc-r2/logs/steps.tsv: fig67, stat_figs, fig13, paper_slices, xsec_proj, pull_full, models,
+# tension), fetched read-only from /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2 and committed beside the records; each digest is that file's line in
+# re2/run/partc_r2/partc-r2/SHA256SUMS. The efficiency heat map is xsec_proj's, drawn from E_R (hEff2D equals E_U's:
+# RE2-PARTB-REPORT.md PB-ER-eff). These installs run after the sync loop and after the E_U run lines above, which they
+# override; rerunning those lines does not reproduce these files.
+RE2G="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/figs"
+install_re2_fig() {  # install_re2_fig <basename under $RE2G and in $FIGDIR> <sha256>
+  local src="$RE2G/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec54cde0be7bc28272cbe584bafb5aab9751b97cd3
+install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62
+install_re2_fig uq_spread_2d.pdf                       a51bc4ee186a2c3bba942f6de6cd4bed74b8de7508e763e0b0bc698a0a78e9de
+install_re2_fig uq_corr_2d.pdf                         fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1
+install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
+install_re2_fig MEFHC_5iter_pull_full.pdf              3d108335117afd57b14f4bf1661ac8e06ffdbfdfb1ceb17903fa00724b40396f
+install_re2_fig MEFHC_5iter_xsec_eff_heatmap.pdf       1008a7e9e0832c1607bfce9bd38ee52b5af86baed4fb868171fdc56ab5df24ab
+install_re2_fig MEFHC_5iter_xsec_paper_pt_slices.pdf   8836d7b56b75131c6affa81a2a752655208c40e01ff53270ebd7acfd306f04a8
+install_re2_fig MEFHC_5iter_xsec_paper_pz_slices.pdf   6f7a11aff1da1c84c8c7cd211dc8e5714fa15334eafbd83ae0ef4c45f0a84d8f
+install_re2_fig MEFHC_5iter_xsec_proj_pt.pdf           ea2c1dce31ba543d059dab3c5a844990928a45c03bd3675d3b094ae441626249
+install_re2_fig MEFHC_5iter_xsec_proj_pz.pdf           e728d02ecb66077dc0b7de68c9d8bf32b87c7e844bf5d6d8e1ccfe70bdf61db8
+install_re2_fig model_comp_projections.pdf             2c39fe21ed16fc31d5c08d7012cf6248a3aae575f5dc162081b1e79929ebf8d8
+install_re2_fig model_comp_ratio_maps.pdf              266c856435e8944cf5cbf654e9dfe455d6318c6a6000acc89e25c3bd6fafc343
+install_re2_fig tension_chi2_map.pdf                   30a3598db8b99ebacc41dd8d2b48ec6861e5d80524ab48ad551b4e56e869155a
+install_re2_fig tension_mode_maps.pdf                  adf5bf3feb8732553c64dfc9aa795eeee91f07dbe2d096fc725b9f9a8492667d
+install_re2_fig tension_spectrum.pdf                   295b17cd6c26cb741e23baec3cfd8d5a930b76246cec200e69fb60fc53e3c5d3
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="

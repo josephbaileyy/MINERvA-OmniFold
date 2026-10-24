@@ -22,6 +22,11 @@ and whitespace collapsed. Row kinds:
        F <id> <file> <new: must print> <old: must not print, or -> <source> <source literal>
      <new> must print in docs/analysis-note/<file>; <old> must print in no posted file; <source literal> must occur
      (whitespace collapsed) in <source> (.gz read as text).
+  G  a figure installed from RE-2 part C's refined products:
+       G <id> <basename> <sha256> <SHA256SUMS file> <its entry>
+     docs/analysis-note/figures/<basename> and the committed copy re2-integration/figs/<basename> must both have
+     <sha256>; <SHA256SUMS file> must list exactly <sha256> for <entry>; and make_figures.sh must install the file with
+     that pin ("install_re2_fig <basename> <sha256>").
 
 Also:
   - Fig. 1: docs/analysis-note/figures/paper_fig1_validation.pdf and the committed copy fig1/fig1_validation.pdf both
@@ -30,7 +35,8 @@ Also:
   - protected text is untouched: main_paper.tex has no diff against BASE, and no added or removed line of any changed
     .tex deliverable matches the protected patterns (holds, acknowledgments, funding, AI-use, data availability).
 --self-test plants one bad row of each kind (a V row whose new value is not the table's, an M row whose macro value is
-wrong, an F row whose old text still prints in another posted file) and requires exactly those three to fail.
+wrong, an F row whose old text still prints in another posted file, a G row whose pin is not the file's digest) and
+requires exactly those four to fail.
 Exit 1 on any failure.
 """
 import csv
@@ -100,7 +106,8 @@ def check_rows(wt, ledger):
     cache = {f: printed(note / f) for f in posted}
     macros = re.findall(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}", cache.get("values.tex", printed(note / "values.tex")))
     tables = {}
-    fails, failed, counts = 0, set(), {"V": 0, "M": 0, "F": 0}
+    fails, failed, counts = 0, set(), {"V": 0, "M": 0, "F": 0, "G": 0}
+    mkfig = (note / "make_figures.sh").read_text()
 
     def fail(rid, msg):
         nonlocal fails
@@ -137,6 +144,19 @@ def check_rows(wt, ledger):
                 fail(rid, f"NEW NOT PRINTED in {f}: {nctx!r}")
             if octx != "-":
                 stale(rid, octx)
+        elif kind == "G":
+            if len(c) != 6:
+                fail(c[1] if len(c) > 1 else "?", "MALFORMED G row"); continue
+            _, rid, base, sha, sums, entry = c
+            for path in (note / "figures" / base, HERE / "figs" / base):
+                h = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else "missing"
+                if h != sha:
+                    fail(rid, f"FIGURE {path.name} at {path.parent.name}/ has sha256 {h}, pinned {sha}")
+            listed = [l.split()[0] for l in (wt / sums).read_text().splitlines() if l.split()[1:] == [entry]]
+            if listed != [sha]:
+                fail(rid, f"SHA256SUMS {sums} lists {listed} for {entry}, not {sha}")
+            if not re.search(r"^install_re2_fig\s+" + re.escape(base) + r"\s+" + sha + r"\s*$", mkfig, re.M):
+                fail(rid, f"make_figures.sh does not install {base} with pin {sha}")
         elif kind == "M":
             if len(c) != 7:
                 fail(c[1] if len(c) > 1 else "?", "MALFORMED M row"); continue
@@ -161,7 +181,7 @@ def check_rows(wt, ledger):
             sp = wt / src
             if not sp.is_file() or norm(lit) not in norm(read_text(sp)):
                 fail(rid, f"SOURCE LITERAL NOT FOUND in {src}: {lit!r}")
-    print(f"  rows: V {counts['V']}, M {counts['M']}, F {counts['F']}; old-text sweep over {len(posted)} posted files")
+    print(f"  rows: V {counts['V']}, M {counts['M']}, F {counts['F']}, G {counts['G']}; old-text sweep over {len(posted)} posted files")
     return counts, fails, failed
 
 
@@ -217,22 +237,26 @@ def main():
                "partc-r2/cmodel/cmodel_R.json\tcell_rel_sigma.C_model.median\t100\t.2f\n"
                # an old text absent from sec_3d.tex but printed in another posted file (sec_systematics.tex)
                "F\tSELFTEST-F\tsec_3d.tex\tcross-configuration comparison\tGenerator-shape model dependence\t"
-               "docs/orchestration/DECISION-20261024-joseph-2d-model-dependence-component.md\tC_model has rank 3\n")
+               "docs/orchestration/DECISION-20261024-joseph-2d-model-dependence-component.md\tC_model has rank 3\n"
+               # a figure pinned with a digest that is not the installed file's
+               "G\tSELFTEST-G\tuq_corr_2d.pdf\t" + "0" * 64 + "\tdocs/orchestration/state/2d-closeout/stageF/methods/re2/"
+               "run/partc_r2/partc-r2/SHA256SUMS\t./stat/uq_corr_2d.pdf\n")
         with tempfile.NamedTemporaryFile("w", suffix=".tsv", delete=False) as t:
             t.write(ledger.read_text() + bad)
         _, _, failed = check_rows(wt, Path(t.name))
         print(f"SELF-TEST: failed ids {sorted(failed)}")
-        want = {"SELFTEST-V", "SELFTEST-M", "SELFTEST-F"}
+        want = {"SELFTEST-V", "SELFTEST-M", "SELFTEST-F", "SELFTEST-G"}
         if failed != want:
-            print("SELF-TEST :: FAIL (want exactly the three planted rows to fail)"); sys.exit(1)
-        print("SELF-TEST :: PASS (the three planted rows fail: a new value that is not the table's, a macro that is "
+            print("SELF-TEST :: FAIL (want exactly the four planted rows to fail)"); sys.exit(1)
+        print("SELF-TEST :: PASS (the four planted rows fail: a figure pin that is not the file's digest, a new value "
+              "that is not the table's, a macro that is "
               "not its product's value, and an old text still printed in another posted file)")
         sys.exit(0)
     counts, fails, _ = check_rows(wt, ledger)
     fails += check_fig(wt)
     fails += check_sec4(wt)
     fails += check_protected(wt, base)
-    print(f"LEDGER :: {'PASS' if not fails else 'FAIL'} (V {counts['V']}, M {counts['M']}, F {counts['F']} rows; "
+    print(f"LEDGER :: {'PASS' if not fails else 'FAIL'} (V {counts['V']}, M {counts['M']}, F {counts['F']}, G {counts['G']} rows; "
           f"{fails} failures)")
     sys.exit(1 if fails else 0)
 

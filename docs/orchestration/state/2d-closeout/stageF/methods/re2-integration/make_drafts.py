@@ -31,6 +31,7 @@ ITEMS = {  # draft item -> what it is (the work order's W1-W10; X = found in the
     "W9": "the rank of the published covariance",
     "W10": "the Fig. 1 plotting code",
     "X": "sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)",
+    "FIG": "the refined 2D figures (installed from RE-2 part C)",
 }
 
 
@@ -42,12 +43,11 @@ OPEN = [
     "\"its leading poorly determined modes in the highest-pPar bins\"). The refined `tension_report.txt` does not say "
     "which modes lie in the highest-pPar bins, and its leading modes include 3.5e-9 and 9.4e-9, so the bound cannot be "
     "checked. Hand site 4 of the 22; left as printed.",
-    "**Figures not redrawn from E_R and Q_R** (RE2-DECLARATION-C sec. 7): `MEFHC_fig6_7_uncertainty_pt/_pz`, "
-    "`uq_spread_2d`, `uq_corr_2d`, `MEFHC_5iter_pull_full`, `MEFHC_5iter_fig13` (note and primer), "
-    "`MEFHC_5iter_xsec_proj_pt/_pz`, `MEFHC_5iter_xsec_paper_pt/_pz_slices`, `model_comp_*`, `tension_*`, "
-    "`MEFHC_5iter_xsec_eff_heatmap`. Part C drew them on pscratch (on HPSS), but they are not committed; the work order "
-    "covered Fig. 1 only. Until they are installed, captions such as fig:tensionmodes and the bootstrap figure's "
-    "sigma/E_U describe the purity products.",
+    "**The refined 2D figures are installed** (open site 2 of the first batch, now resolved): the 16 PDFs of RE-2 part C "
+    "that the note, paper and primer include (RE2-DECLARATION-C sec. 7), each checked against partc-r2/SHA256SUMS, "
+    "committed under re2-integration/figs/ and pinned in make_figures.sh (ledger G rows). Not regenerated: "
+    "`paper_validation_residual.pdf`, a crop of `MEFHC_5iter_pull_full.pdf` that make_figures.sh writes but no "
+    "deliverable includes; it still holds the purity crop.",
     "**The label (f) is not in the registry**: `check_registry.py` LABEL_PATTERNS match (a)-(e) only, so \"(f)\" prints "
     "unchecked; `ALIASES.tsv` needs \"(f)\" and \"configuration (f)\" for `a-refined-400-31`, and the summaries of "
     "`a-refined-400-31` (\"adopted only when RE-2's rebuilt result is\") and `a-central-lgbm` need the registry "
@@ -189,7 +189,7 @@ def main():
         "|---|---|---|---|",
     ]
     for k, e in enumerate(entries, 1):
-        items = sorted({re.match(r"(W\d+|X)", i).group(1) for i in e["ids"]}) or ["(none)"]
+        items = sorted({re.match(r"(W\d+|X|FIG)", i).group(1) for i in e["ids"]}) or ["(none)"]
         lines.append(f"| D{k:02d} | {', '.join(f'{i} ({ITEMS.get(i, i)})' for i in items)} | `{e['file']}:{e['line']}` | "
                      f"{', '.join(e['ids']) or 'none: see the note under the entry'} |")
     for k, e in enumerate(entries, 1):

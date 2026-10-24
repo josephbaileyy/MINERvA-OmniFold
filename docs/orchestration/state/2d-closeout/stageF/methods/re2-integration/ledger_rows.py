@@ -139,15 +139,30 @@ F = [
  ('W9b', 'app_statmethods.tex', r"with 204 eigenvalues above $10^{-12}\lambda_{\max}$", '-', TRP, "1e-12        2.653     204"),
  # W10
  ('W10', 'app_release.tex', r"of the refined LightGBM result, with RC7's plotting code extended to draw this analysis's band.", r"from the committed LightGBM values and covariance, with RC7's plotting code extended to draw this analysis's band.", A3, "4e18c266"),
+ # Figures (RE-2 integration, figure install): the bootstrap caption names the central value, not E_U
+ ('FIG-cap', 'sec_systematics.tex', r"per-bin spread $\sigma$ relative to the central value of the unfolded 2D cross section", r"spread $\sigma/E_U$ of the unfolded 2D cross section", f'{S}/re2/RE2-PARTC-REPORT.md', "`block_stat.root`'s `hRel2D` is √diag(stat)/x of the same arrays."),
  # D30 (outside review, agy): the sentence a draft comment had swallowed prints again
  ('X4b', 'sec_method.tex', r"It has no matched covariance: no exact-split bootstrap, universe sweep or seed scan exists.", '-', f'{S}/re2/RE2-PARTC-REPORT.md', "RE2-BINDING-C"),
 ]
+# G rows: the 2D figures installed from RE-2 part C's refined products; each pin is read from the committed SHA256SUMS.
+SUMS = f'{S}/re2/run/partc_r2/partc-r2/SHA256SUMS'
+G_ENTRIES = ['./fig67/MEFHC_fig6_7_uncertainty_pt.pdf', './fig67/MEFHC_fig6_7_uncertainty_pz.pdf', './stat/uq_spread_2d.pdf',
+             './stat/uq_corr_2d.pdf', './figs/MEFHC_5iter_fig13.pdf', './figs/MEFHC_5iter_pull_full.pdf',
+             './figs/MEFHC_5iter_xsec_eff_heatmap.pdf', './figs/MEFHC_5iter_xsec_paper_pt_slices.pdf',
+             './figs/MEFHC_5iter_xsec_paper_pz_slices.pdf', './figs/MEFHC_5iter_xsec_proj_pt.pdf',
+             './figs/MEFHC_5iter_xsec_proj_pz.pdf', './receipts/figs/model_comp_projections.pdf',
+             './receipts/figs/model_comp_ratio_maps.pdf', './receipts/figs/tension_chi2_map.pdf',
+             './receipts/figs/tension_mode_maps.pdf', './receipts/figs/tension_spectrum.pdf']
+_sums = {l.split()[1]: l.split()[0] for l in Path(SUMS).read_text().splitlines() if len(l.split()) == 2}
+G = [(f'FIG-{e.rsplit("/", 1)[1][:-4]}', e.rsplit('/', 1)[1], _sums[e], SUMS, e) for e in G_ENTRIES]
 lines = ['# M rows: new values.tex macros, computed by the checker from their product.']
 lines += ['\t'.join(('M',) + r) for r in M]
 lines += ['# F rows: the facts of each wording draft (DRAFTS.md ids). Every new text must print; every old text must not.']
 lines += ['\t'.join(('F',) + r[:-1] + (r[-1].replace('\t', ' '),)) for r in F]
+lines += ['# G rows: figures installed from RE-2 part C (pin = the committed SHA256SUMS line).']
+lines += ['\t'.join(('G',) + r) for r in G]
 t = (D / 'ledger.tsv').read_text()
 cut = t.find('# M rows:')
 t = t if cut < 0 else t[:cut]
 (D / 'ledger.tsv').write_text(t + '\n'.join(lines) + '\n')
-print(len(M), 'M rows;', len(F), 'F rows')
+print(len(M), 'M rows;', len(F), 'F rows;', len(G), 'G rows')

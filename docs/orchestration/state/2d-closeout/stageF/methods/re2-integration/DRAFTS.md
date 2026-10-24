@@ -50,15 +50,16 @@ regenerated number (36 of them) are the V rows of the ledger and are not repeate
 | D35 | W2 (the comparison with MINERvA's published result) | `sec_results.tex:244` | W2-n2 |
 | D36 | W2 (the comparison with MINERvA's published result), W7 (the adopted refined 2D result and the configuration labels) | `sec_summary.tex:4` | W2-s1, W7-s1 |
 | D37 | W5 (\fpsAbove) | `sec_summary.tex:114` | W5-2 |
-| D38 | W4 (the S2 diagnostic (sec_systematics.tex:101)) | `sec_systematics.tex:91` | W4 |
-| D39 | W7 (the adopted refined 2D result and the configuration labels) | `sec_systematics.tex:180` | W7-y1 |
-| D40 | W6 (hand sites of re2c_values_unmatched.tsv), X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:307` | W6-05, W6-06, X2 |
-| D41 | W1 (C_model beside Q_R) | `sec_systematics.tex:359` | W1-n1 |
-| D42 | W1 (C_model beside Q_R) | `sec_systematics.tex:414` | W1-n2, W1-n3, W1-n4 |
-| D43 | W1 (C_model beside Q_R), W8 (the shift-versus-bias count) | `sec_systematics.tex:434` | W1-n5, W1-n6, W8 |
-| D44 | W6 (hand sites of re2c_values_unmatched.tsv) | `sec_systematics.tex:458` | W6-07 |
-| D45 | X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:475` | X1 |
-| D46 | W3 (RO-FPS: the control no longer reproduces the 2D total) | `values.tex:163` | W3-2 |
+| D38 | W4 (the S2 diagnostic (sec_systematics.tex:101)) | `sec_systematics.tex:93` | W4 |
+| D39 | FIG (the refined 2D figures (installed from RE-2 part C)) | `sec_systematics.tex:154` | FIG-cap |
+| D40 | W7 (the adopted refined 2D result and the configuration labels) | `sec_systematics.tex:184` | W7-y1 |
+| D41 | W6 (hand sites of re2c_values_unmatched.tsv), X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:311` | W6-05, W6-06, X2 |
+| D42 | W1 (C_model beside Q_R) | `sec_systematics.tex:363` | W1-n1 |
+| D43 | W1 (C_model beside Q_R) | `sec_systematics.tex:418` | W1-n2, W1-n3, W1-n4 |
+| D44 | W1 (C_model beside Q_R), W8 (the shift-versus-bias count) | `sec_systematics.tex:438` | W1-n5, W1-n6, W8 |
+| D45 | W6 (hand sites of re2c_values_unmatched.tsv) | `sec_systematics.tex:462` | W6-07 |
+| D46 | X (sites found in the stale-value sweep (outside re2c_values_unmatched.tsv)) | `sec_systematics.tex:479` | X1 |
+| D47 | W3 (RO-FPS: the control no longer reproduces the 2D total) | `values.tex:163` | W3-2 |
 
 ## D01: `app_negweight.tex:15`
 
@@ -4163,7 +4164,7 @@ public example have no bearing on the choice of covariance (\S\ref{sec:eavailw-a
 - W5-2: `VALIDATION_LEDGER.md`: "**FPS total cross section 4.502e-38 cm²/nucleon**"
 - M-sigTwoDPurity (macro `\sigTwoDPurity`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv` `m-sigTwoD.purity_value` x 1, format `.3e`
 
-## D38: `sec_systematics.tex:91`
+## D38: `sec_systematics.tex:93`
 
 **Ledger F rows:** W4.
 
@@ -4271,7 +4272,82 @@ block reflects an efficiency gain, regularization bias or undercoverage.
 
 - W4: `docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md`: "S1 resamples the background in both arms"
 
-## D39: `sec_systematics.tex:180`
+## D39: `sec_systematics.tex:154`
+
+**Ledger F rows:** FIG-cap.
+
+**Old:**
+
+```latex
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.49\textwidth]{uq_spread_2d}
+  \includegraphics[width=0.49\textwidth]{uq_corr_2d}
+  \caption{300-replica Poisson bootstrap of the statistical block: per-bin relative
+  spread $\sigma/E_U$ of the unfolded 2D cross section, labeled std/mean on the color
+  bar (left), and correlation matrix for the 205 reported bins (right).}
+  \label{fig:bootstrap}
+\end{figure}
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**New:**
+
+```latex
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.49\textwidth]{uq_spread_2d}
+  \includegraphics[width=0.49\textwidth]{uq_corr_2d}
+  \caption{300-replica Poisson bootstrap of the statistical block: per-bin spread
+  $\sigma$ relative to the central value of the unfolded 2D cross section, labeled
+  std/mean on the color bar (left), and correlation matrix for the 205 reported bins (right).}
+  \label{fig:bootstrap}
+\end{figure}
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**Context, the paragraph before (as it reads now):**
+
+```latex
+The statistical block quoted here has had no coverage test. The fixed-truth
+coverage test (\S\ref{sec:coverage}) found that the statistical band quoted when it
+ran undercovered in its tails, unevenly across bins. That band was later rebuilt,
+and neither it nor the rebuilt band is the block quoted here. The rebuilt band was
+only re-evaluated post hoc, on the same pseudo-experiments and partly circularly, and
+has not been tested independently. No coverage test on held-out simulation has
+been run, and no design for one has been registered in advance. Because the fixed-truth
+test's truth equals the prior, it also cannot decide whether the smaller statistical
+block reflects an efficiency gain, regularization bias or undercoverage.
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**Context, the paragraph after (as it reads now):**
+
+```latex
+\subsection{ML/optimization uncertainty: training-seed variation}
+\label{sec:uq-ml}
+The ML block is the sample covariance, over five training-seed settings, of the mean
+of 20 bootstrap replicas at each setting; each setting is a triplet $(s,s{+}1,s{+}2)$ of
+seeds for the step-1 classifier, step-2 classifier and miss regressor, with
+$s\in\{42,45,48,51,54\}$, and the block has rank~4 (\S\ref{sec:seedscan}). It is
+the smallest block, with median \SI{0.048}{\percent} per bin.
+The block measures LightGBM seed variation, with the bootstrap\,$\times$\,seed
+interaction at its $1/20$ share. With four degrees of freedom, its variance has a
+Gaussian relative standard error of about \SI{71}{\percent}. Its per-bin $\sigma$ is a
+median 0.27 of that of the earlier ten-seed block, because the
+bootstrap\,$\times$\,seed interaction, which dominated the earlier scan, is already
+inside the fixed-seed statistical block; this block carries it only at its $1/20$
+share, a median 0.763 of its diagonal. The interaction itself (a median 0.072 of the
+statistical variance) and the universe\,$\times$\,retraining term
+(\S\ref{sec:uq-2d-scope}) are reported and not added.
+```
+<!-- absence-ok: quoted deliverable text, copied verbatim for review; this record makes no absence claim of its own -->
+
+**Sources of the facts in it:**
+
+- FIG-cap: `docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md`: "`block_stat.root`'s `hRel2D` is √diag(stat)/x of the same arrays."
+
+## D40: `sec_systematics.tex:184`
 
 **Ledger F rows:** W7-y1.
 
@@ -4352,7 +4428,7 @@ inference, because the same code produced them.
 
 - W7-y1: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv`: "lit-learner-median-180 N/sec_systematics.tex:180 0.98 1.03"
 
-## D40: `sec_systematics.tex:307`
+## D41: `sec_systematics.tex:311`
 
 **Ledger F rows:** W6-05, W6-06, X2.
 
@@ -4436,7 +4512,7 @@ reading only.
 - W6-06: `2d-unfolding/re2/partc/re2c_values_unmatched.tsv`: "'at the order of 100%' (size of C_PL poorly determined): heuristic from the dof statement; no source field"
 - X2: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/combination/combination.json`: ""functional_sigma_increase_pct_max": 20.65589185827996,"
 
-## D41: `sec_systematics.tex:359`
+## D42: `sec_systematics.tex:363`
 
 **Ledger F rows:** W1-n1.
 
@@ -4541,7 +4617,7 @@ dependence either.
 
 - W1-n1: `docs/orchestration/DECISION-20261024-joseph-2d-model-dependence-component.md`: "C_model,2D is built and reported as a separate named covariance."
 
-## D42: `sec_systematics.tex:414`
+## D43: `sec_systematics.tex:418`
 
 **Ledger F rows:** W1-n2, W1-n3, W1-n4.
 
@@ -4635,7 +4711,7 @@ shifts.
 - M-qrCmodelMedian (macro `\qrCmodelMedian`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json` `cell_rel_sigma.Q_R_plus_C_model.median` x 100, format `.2f`
 - M-cmodelIntegral (macro `\cmodelIntegral`): `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json` `integral_rel_sigma.C_model` x 100, format `.2f`
 
-## D43: `sec_systematics.tex:434`
+## D44: `sec_systematics.tex:438`
 
 **Ledger F rows:** W1-n5, W1-n6, W8.
 
@@ -4707,7 +4783,7 @@ block is the covariance about the replica mean (\S\ref{sec:uq-boot}). A
 - W1-n6: `docs/orchestration/state/2d-closeout/stageF/methods/pv2d/REPORT.md`: "One rule throughout** (`report_tables.classify_cell`, threshold 0.1)"
 - W8: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json`: "the refined arm's NuWro |shift| reaches |bias| in 67"
 
-## D44: `sec_systematics.tex:458`
+## D45: `sec_systematics.tex:462`
 
 **Ledger F rows:** W6-07.
 
@@ -4788,7 +4864,7 @@ pooled result by \SIrange{-1.83}{3.78}{\percent}, each with $|z|$ at most 0.31.
 
 - W6-07: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz`: ""sigma_c08_over_sigma_ml_median": 0.26946226226768916,"
 
-## D45: `sec_systematics.tex:475`
+## D46: `sec_systematics.tex:479`
 
 **Ledger F rows:** X1.
 
@@ -4876,7 +4952,7 @@ duplicated pion band, the lateral bands and the flux-universe index identity
 
 - X1: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/periods/analysis.json`: "-0.3948"
 
-## D46: `values.tex:163`
+## D47: `values.tex:163`
 
 **Ledger F rows:** W3-2.
 
@@ -4934,7 +5010,7 @@ duplicated pion band, the lateral bands and the flux-universe index identity
 Sites this batch does not resolve. Each needs a source, a product, or a decision that is not this lane's.
 
 1. **The tension-mode localization** (`sec_results.tex`, "The four leading modes in the highest-pPar bins are all poorly determined directions (lambda/lambda_max <~ 4e-9)" and the next clause; `app_statmethods.tex` sec:tension, "its leading poorly determined modes in the highest-pPar bins"). The refined `tension_report.txt` does not say which modes lie in the highest-pPar bins, and its leading modes include 3.5e-9 and 9.4e-9, so the bound cannot be checked. Hand site 4 of the 22; left as printed.
-2. **Figures not redrawn from E_R and Q_R** (RE2-DECLARATION-C sec. 7): `MEFHC_fig6_7_uncertainty_pt/_pz`, `uq_spread_2d`, `uq_corr_2d`, `MEFHC_5iter_pull_full`, `MEFHC_5iter_fig13` (note and primer), `MEFHC_5iter_xsec_proj_pt/_pz`, `MEFHC_5iter_xsec_paper_pt/_pz_slices`, `model_comp_*`, `tension_*`, `MEFHC_5iter_xsec_eff_heatmap`. Part C drew them on pscratch (on HPSS), but they are not committed; the work order covered Fig. 1 only. Until they are installed, captions such as fig:tensionmodes and the bootstrap figure's sigma/E_U describe the purity products.
+2. **The refined 2D figures are installed** (open site 2 of the first batch, now resolved): the 16 PDFs of RE-2 part C that the note, paper and primer include (RE2-DECLARATION-C sec. 7), each checked against partc-r2/SHA256SUMS, committed under re2-integration/figs/ and pinned in make_figures.sh (ledger G rows). Not regenerated: `paper_validation_residual.pdf`, a crop of `MEFHC_5iter_pull_full.pdf` that make_figures.sh writes but no deliverable includes; it still holds the purity crop.
 3. **The label (f) is not in the registry**: `check_registry.py` LABEL_PATTERNS match (a)-(e) only, so "(f)" prints unchecked; `ALIASES.tsv` needs "(f)" and "configuration (f)" for `a-refined-400-31`, and the summaries of `a-refined-400-31` ("adopted only when RE-2's rebuilt result is") and `a-central-lgbm` need the registry owner's update. Whether to print a new letter at all is a wording decision.
 4. **The background-treatment revisit**: DECISION-20261023 (second) item 2 records the revisit "as carried out" with the refined treatment "used in every dimension"; the 5D result still uses purity, and that item leaves the reading to the director's confirmation with Joseph. The drafts drop "the revisit ... is in progress" and state the 2D and 5D facts only.
 5. **`app_history.tex` (records document, not posted)**: 29 values were applied to its current-value column, but those rows' superseded-by and source columns still describe Q (2026-10-17) and stageF/rebuild; striking the Q values (\dead) and naming Q_R changes the containment check's literal set and is not done here.
