@@ -34,7 +34,7 @@ def test_self_test_rejects_every_perturbation():
 
 
 @pytest.mark.parametrize("old,new", [
-    (r"\SI{0.684}{\percent}", r"\SI{0.694}{\percent}"),
+    (r"\SI{0.676}{\percent}", r"\SI{0.686}{\percent}"),
     (r"\SI{97.7}{\percent}", r"\SI{96.7}{\percent}"),
     (r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.2}{\percent}"),
     (r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}"),
@@ -116,15 +116,17 @@ def test_a_gzip_receipt_reads_by_suffix(tmp_path, monkeypatch):
 
 @needs_receipts
 def test_the_q_bindings_read_the_committed_budget():
-    assert chk.BUDGET_Q.endswith(".json.gz")
-    assert abs(chk.total_median() - 6.4479) < 1e-4 and abs(chk.stat_median() - 0.6843) < 1e-4
-    assert abs(chk.total_integral() - 4.7550) < 1e-4
+    # Q_R (RE-2 part C, partc-r2/outA/budget_Q.json, bbe13622...): Q.median_pct 6.41367, stat.median_pct 0.676376,
+    # Q.integral_sigma_pct 4.75917 (Q, before: 6.4479, 0.6843, 4.7550)
+    assert chk.BUDGET_Q.endswith("partc-r2/outA/budget_Q.json.gz")
+    assert abs(chk.total_median() - 6.4137) < 1e-4 and abs(chk.stat_median() - 0.6764) < 1e-4
+    assert abs(chk.total_integral() - 4.7592) < 1e-4
 
 
 @needs_receipts
 def test_a_wrong_integral_macro_fails():
     src = chk.load()
-    assert src["values.tex"].count(r"\newcommand{\uqIntegral}{4.75}") == 1
-    src["values.tex"] = src["values.tex"].replace(r"\newcommand{\uqIntegral}{4.75}", r"\newcommand{\uqIntegral}{4.76}")
+    assert src["values.tex"].count(r"\newcommand{\uqIntegral}{4.76}") == 1
+    src["values.tex"] = src["values.tex"].replace(r"\newcommand{\uqIntegral}{4.76}", r"\newcommand{\uqIntegral}{4.75}")
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
-    assert rows["total integral uncertainty (Q)"] is False
+    assert rows["total integral uncertainty (Q_R)"] is False

@@ -180,7 +180,21 @@ install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pt.pdf MEFHC_fig6_7_uncertain
 install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pz.pdf MEFHC_fig6_7_uncertainty_pz.pdf e3bfb7273609d0c9399c28591da0fc01e706ce3769b11ea722fceb2541d5f323
 install_receipt_fig stat/uq_spread_2d.pdf               uq_spread_2d.pdf                79d6b35fe81fe71c71738996090b27c2fded2d990bb9bbae670927fbf253a7cb
 install_receipt_fig stat/uq_corr_2d.pdf                 uq_corr_2d.pdf                  42ea035f77b767b3d2d0dc3d2cbd57c9537f957e2ae39aef936a9eb373fc0d97
-install_receipt_fig fig1/fig1_validation.pdf            paper_fig1_validation.pdf       82665808e99056b1f79754647d7640078dffe94fc667691a979a22769022a0fb
+# Fig. 1 is no longer installed from the rebuild (82665808..., drawn from E_U and Q): RE-2 integration installs the
+# refined redraw below.
+
+echo
+echo "== Fig. 1 from RE-2 part C amendment 3 (E_R and Q_R; digest-checked copy) =="
+# Source: the committed copy of the amendment-3 redraw (RE2-PARTC-A3-REPORT.md sec. 3; run/partc_a3/RUN-fig1.txt,
+# out/fig1_validation.pdf 71a2ea48...), drawn by re2c_fig1.py 2aadeac8... with make_figs.py 4e18c266....
+RE2F="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/fig1"
+src="$RE2F/fig1_validation.pdf"; want=71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427
+if [[ "$(sha256_of "$src")" != "$want" ]]; then echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1; fi
+cp "$src" "$FIGDIR/paper_fig1_validation.pdf"
+if [[ "$(sha256_of "$FIGDIR/paper_fig1_validation.pdf")" != "$want" ]]; then
+  echo "REFUSE install: $FIGDIR/paper_fig1_validation.pdf differs from $src after the copy" >&2; exit 1
+fi
+echo "  installed paper_fig1_validation.pdf ($want)"
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="

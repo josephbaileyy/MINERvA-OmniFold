@@ -92,7 +92,7 @@ disfavours~\cite{MINERvA:2021owq}.
     \midrule
     \pcell{0.50\columnwidth}{2D integral within about 1\%; correlated shape difference} & \pcell{0.12\columnwidth}{(a)} & \pcell{0.22\columnwidth}{published result} & \pcell{0.07\columnwidth}{\ref{sec:repro2d-pub}} \\
     \pcell{0.50\columnwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.12\columnwidth}{(a)} & \pcell{0.22\columnwidth}{an earlier band failed coverage} & \pcell{0.07\columnwidth}{\ref{sec:uq2d}} \\
-    \pcell{0.50\columnwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (a) result to 0.001\%} & \pcell{0.12\columnwidth}{(a), (e)} & \pcell{0.22\columnwidth}{lower dimensions} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
+    \pcell{0.50\columnwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (a) result to 0.141\%} & \pcell{0.12\columnwidth}{(a), (e)} & \pcell{0.22\columnwidth}{lower dimensions} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
     \pcell{0.50\columnwidth}{background-subtraction bias up to 4\% at high $W$; negative weights remove most} & \pcell{0.12\columnwidth}{(c), (d)} & \pcell{0.22\columnwidth}{pseudo-data with backgrounds} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
     \pcell{0.50\columnwidth}{generator-sized truth changes only partly recovered} & \pcell{0.12\columnwidth}{(d), (e)} & \pcell{0.22\columnwidth}{generator ratios} & \pcell{0.07\columnwidth}{\ref{sec:departure}} \\
     \pcell{0.50\columnwidth}{statistical intervals miscover under an about 10\% rate reduction} & \pcell{0.12\columnwidth}{(c)} & \pcell{0.22\columnwidth}{coverage} & \pcell{0.07\columnwidth}{\ref{sec:coverage}} \\
@@ -370,8 +370,8 @@ exact-split estimator gives $\chiPaperExact$ unseeded and
 $\chiPaperExactSeeded$ in one run with a fixed seed.  We quote the LightGBM
 result as the central value because its covariance uses the same estimator;
 this learner was chosen after both comparisons were known.  The two learners
-differ by a per-bin median of \SI{0.98}{\percent} (maximum
-\SI{12.2}{\percent}); \nsec{sec:method-config} describes both.
+differ by a per-bin median of \SI{1.03}{\percent} (maximum
+\SI{17.6}{\percent}); \nsec{sec:method-config} describes both.
 Figure~\ref{fig:validation} shows the principal one-dimensional projections.
 
 \begin{figure*}[t]
@@ -442,7 +442,7 @@ the combined result, \SI{2.0}{\percent} on the integrated cross section.
 % Status of the block and of the covariance (DECISION-20261014 sec. 2; DECISION-20261017 sec. 2): Sec. VIII A.
 The statistical block is a bootstrap of 300 replicas drawn at the central
 value's training seed, with the background templates also resampled, with a
-median statistical uncertainty of \SI{0.684}{\percent}.  An earlier version of
+median statistical uncertainty of \SI{0.676}{\percent}.  An earlier version of
 the statistical band, distinct from the quoted block, was scored in a test
 specified in advance on \covTwoDNtoy{} closure pseudo-experiments at a fixed
 truth.  It undercovered in its tails: pooled over experiments and bins,
@@ -472,7 +472,7 @@ result it extends.  In configuration~(a), the four- and five-observable
 marginal normalizations agree at the approximately $1$--$2\%$ level.  For
 configuration~(e), only the three-observable marginal has been compared: its
 area-weighted total agrees with the configuration-(a) two-dimensional result
-to \SI{0.001}{\percent}, a comparison across configurations.
+to \SI{0.141}{\percent}, a comparison across configurations.
 % Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
 In three observables, a configuration-(a) closure
 test with an injected bump in truth $\Eavail$ leaves a residual of 0.10 of the

@@ -43,9 +43,9 @@
 % STILL NOT ESTABLISHED: that this producer is the method that ORIGINALLY produced these three, and
 % both artifacts live on PURGEABLE SCRATCH and are untracked, so this closes the CITATION gap and
 % not the DURABILITY one (OI-130's class, and OI-75 for the same shape elsewhere).
-\newcommand{\sigTwoD}{3.073e-38}      % our 2D total; integral 3.0730e-38 (LightGBM seed 42; exact-split was 3.0733e-38), RECEIPT-2d-agreement-windows-lgbm42-20261011.json
+\newcommand{\sigTwoD}{3.069e-38}      % RE-2 E_R/Q_R 3.06874e-38 (re2-integration/ledger.tsv row m-sigTwoD); was 3.073e-38: our 2D total; integral 3.0730e-38 (LightGBM seed 42; exact-split was 3.0733e-38), RECEIPT-2d-agreement-windows-lgbm42-20261011.json
 \newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total; integral 3.0390e-38, receipt above
-\newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper; integral ratio 1.0112 (exact-split was 1.0113), lgbm42 receipt
+\newcommand{\ratioTot}{1.010}         % RE-2 E_R/Q_R 1.00978 (re2-integration/ledger.tsv row m-ratioTot); was 1.011: sigma_tot ours/paper; integral ratio 1.0112 (exact-split was 1.0113), lgbm42 receipt
 % PROVENANCE FOR THE NEXT FOUR MACROS -- RESOLVED 2026-08-21, AND THE HISTORY MATTERS.
 % \medianBinRatio, \binsFive, \binsTen and \binsTwenty had NO committed producing script
 % (OI-130). They were suppressed from all three deliverables on 2026-08-21 and are RESTORED
@@ -80,13 +80,13 @@
 % (the audit's re-run reports 185/179/171/162/152/141). `git log --follow` puts that interior
 % mask in the initial commit (d3239355), so no committed version of IT ever produced these.
 % Any future change to these four goes through the producer and a fresh receipt.
-\newcommand{\medianBinRatio}{1.008}   % median per-bin ratio ours/paper; lgbm42 receipt measures 1.0081 (exact-split 1.0064)
-\newcommand{\binsFive}{82.9}          % percent of bins within 5%; 170/205, lgbm42 receipt (exact-split 77.6)
-\newcommand{\binsTen}{95.6}           % within 10%; 196/205, lgbm42 receipt (exact-split 94.1)
+\newcommand{\medianBinRatio}{1.005}   % RE-2 E_R/Q_R 1.0054 (re2-integration/ledger.tsv row m-medianBinRatio); was 1.008: median per-bin ratio ours/paper; lgbm42 receipt measures 1.0081 (exact-split 1.0064)
+\newcommand{\binsFive}{86.8}          % RE-2 E_R/Q_R 86.8 (re2-integration/ledger.tsv row m-binsFive); was 82.9: percent of bins within 5%; 170/205, lgbm42 receipt (exact-split 77.6)
+\newcommand{\binsTen}{95.1}           % RE-2 E_R/Q_R 95.1 (re2-integration/ledger.tsv row m-binsTen); was 95.6: within 10%; 196/205, lgbm42 receipt (exact-split 94.1)
 \newcommand{\binsTwenty}{99.0}        % within 20%; 203/205, lgbm42 receipt (exact-split 98.5)
-\newcommand{\pullMean}{0.074}         % chi2_lgbm42_paperonly.txt (exact-split 0.089)
-\newcommand{\pullRMS}{0.564}          % chi2_lgbm42_paperonly.txt (exact-split 0.598)
-\newcommand{\pullRMSr}{0.56}          % rounded, for prose
+\newcommand{\pullMean}{0.060}         % RE-2 E_R/Q_R 0.06 (re2-integration/ledger.tsv row m-pullMean); was 0.074: chi2_lgbm42_paperonly.txt (exact-split 0.089)
+\newcommand{\pullRMS}{0.535}          % RE-2 E_R/Q_R 0.535 (re2-integration/ledger.tsv row m-pullRMS); was 0.564: chi2_lgbm42_paperonly.txt (exact-split 0.598)
+\newcommand{\pullRMSr}{0.54}          % RE-2 E_R/Q_R 0.535 (re2-integration/ledger.tsv row m-pullRMSr); was 0.56: rounded, for prose
 % FPS containment (Agent C WS1 statistical-validation repair, 2026-07-16):
 % split-sample +/-1sigma truth-containment against an independent fixed NPZ truth.
 % The estimator seed is fixed, so this diagnoses the statistical closure-toy
@@ -122,37 +122,37 @@
 % J3/J4 provisional (DECISION-20261018, packet W3: D2): \pullFrac, \pullMeanAbs, \pullGauss (same-ensemble toy diagnostic) are not recomputed for Q (PHASE2 §2 NR).
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
-\newcommand{\chiPaper}{2.65}          % chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
+\newcommand{\chiPaper}{2.27}          % RE-2 E_R/Q_R 2.27 (re2-integration/ledger.tsv row m-chiPaper); was 2.65: chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
 \newcommand{\chiPaperExact}{3.66}     % the exact-split cross-check's chi2/ndf vs paper covariance (VL172; control reproduces 3.661)
 \newcommand{\chiPaperExactSeeded}{3.57} % the same estimator with random_state 1/2/3 (XR run X1): 3.565, VL174,
                                        % docs/orchestration/receipts/xr-x1-chi2-20261012/; one seed setting, not a spread
-\newcommand{\chiCombined}{0.964}      % chi2/ndf vs combined (paper+ours) cov, Q = S5 total + C_PL (adopted 2026-10-17), 197.59/205,
+\newcommand{\chiCombined}{0.929}      % RE-2 E_R/Q_R 0.929 (re2-integration/ledger.tsv row m-chiCombined); was 0.964: chi2/ndf vs combined (paper+ours) cov, Q = S5 total + C_PL (adopted 2026-10-17), 197.59/205,
                                       % state/2d-closeout/stageF/rebuild/outputs/chi2/chi2_Q_std.txt "COMBINED (paper + hCov_Q)";
                                       % was 0.994 (VL175) / 0.914 (VL173) / exact-split 1.472 (VL172)
-\newcommand{\chiCombinedLog}{0.987}   % log-normal, Q, 202.33/205, rebuild/outputs/chi2/chi2_Q_lognormal.txt "COMBINED (paper + omnifold) chi2_log";
+\newcommand{\chiCombinedLog}{0.945}   % RE-2 E_R/Q_R 0.945 (re2-integration/ledger.tsv row m-chiCombinedLog); was 0.987: log-normal, Q, 202.33/205, rebuild/outputs/chi2/chi2_Q_lognormal.txt "COMBINED (paper + omnifold) chi2_log";
                                       % definition (rebuild REPORT §5): delta = ln E_U - ln p, C_ln = (TotalCov + Q)/(p_i p_j); was 1.014 (VL175) / 0.932 (VL173)
-\newcommand{\chiCombinedSubStat}{6.01} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 6.012 (1232.38/205), Q,
+\newcommand{\chiCombinedSubStat}{6.72} % RE-2 E_R/Q_R 6.721 (re2-integration/ledger.tsv row m-chiCombinedSubStat); was 6.01: chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 6.012 (1232.38/205), Q,
                                        % rebuild/outputs/chi2/chi2_Q_substat.txt; was 5.80 (VL175) / 4.128 (VL173)
 % All three recomputed 2026-10-18 (stageF rebuild phase 1, compare_to_paper_fullcov.py --omnifold-cov
 % uq_adopted_covariance.root:hCov_Q). Supersede the pre-flux-fix appendix 1.699/1.688/23.96 and the 2026-07-16 values.
 
 % --- uncertainty budget ---
-\newcommand{\uqMedian}{6.45}          % our standalone combined median per-bin (%); 6.4479, Q = S5 total + C_PL (adopted 2026-10-17,
+\newcommand{\uqMedian}{6.41}          % RE-2 E_R/Q_R 6.41367 (re2-integration/ledger.tsv row m-uqMedian); was 6.45: our standalone combined median per-bin (%); 6.4479, Q = S5 total + C_PL (adopted 2026-10-17,
                                       % docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md; receipt
                                       % state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz Q.median_pct).
                                       % Was 6.0898 (VL175), 6.8707 (VL172), 6.8646 (VL162)
 \newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
 % the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
-\newcommand{\uqIntegral}{4.75}        % our width-weighted total sigma on the integrated cross section (%), sqrt(w^T C w)/(w^T x):
+\newcommand{\uqIntegral}{4.76}        % RE-2 E_R/Q_R 4.75917 (re2-integration/ledger.tsv row m-uqIntegral); was 4.75: our width-weighted total sigma on the integrated cross section (%), sqrt(w^T C w)/(w^T x):
                                       % 4.755, Q = S5 total + C_PL; state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz
                                       % Q.integral_sigma_pct (rebuild REPORT §3); bound by check_sec4_receipts.py. Was 4.23 (VL175).
 \newcommand{\uqPaperIntegral}{4.61}   % the published TotalCovariance's width-weighted total sigma (%), same definition: the value
                                       % already in the note's worked example (app_statmethods.tex sec:chisq) and in
                                       % docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md l.60-61 ("the code that gives
                                       % 4.61 % for the paper"). No machine-readable receipt of it is committed; not gate-bound.
-\newcommand{\uqSFiveMedian}{6.04}     % S5 total (Q without the run-period block) per-bin median (%): 6.041, budget_Q.json.gz
+\newcommand{\uqSFiveMedian}{5.98}     % RE-2 E_R/Q_R 5.98262 (re2-integration/ledger.tsv row m-uqSFiveMedian); was 6.04: S5 total (Q without the run-period block) per-bin median (%): 6.041, budget_Q.json.gz
                                       % S5_total.median_pct (rebuild REPORT §3; COMBINATION-REPORT §2). DRAFT-disclosures D0.
-\newcommand{\fluxBand}{3.75}          % leading flux band (%); 3.7467 with MAT's nu-e+IMD constraint weights, Q's universe block,
+\newcommand{\fluxBand}{3.71}          % RE-2 E_R/Q_R 3.71245 (re2-integration/ledger.tsv row m-fluxBand); was 3.75: leading flux band (%); 3.7467 with MAT's nu-e+IMD constraint weights, Q's universe block,
                                       % rebuild/outputs/outA/budget_Q.json.gz bands.Flux.median_pct; was 3.6549 (VL175, KI 95), 4.993 unweighted (VL172)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
