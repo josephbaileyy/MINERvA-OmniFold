@@ -918,12 +918,13 @@ point estimates $(k+1)/(B+1)$.
 % Register round r16 (P1 targets "the budget extension" and "the rerun"): the two data-informed elements are kept as
 % disclosures (DECISION-20261004-s5p-production-budget-extension.md sec. 3: decided during production with the looks
 % visible; it changes no statistic, criterion or decision rule). The lost draws: the decisions use the completed ones
-% (note sec:joint5d-lost); the rerun's observed outcomes, not every hypothetical assignment, leave the decisions
-% unchanged (the pre-recovery sensitivity analysis found realizable assignments that would change them).
+% (note sec:joint5d-lost); the last clause rewords Joseph's selected disposition
+% (DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md sec. 5: with every submitted draw observed and
+% none reaching T_obs, no missing-draw assignment changes any decision), which the note prints in sec:joint5d-lost.
 The test design was fixed before any observed statistic was computed;
 its reviewers had already seen descriptive per-cell residuals of the data.
 The computing time available to the calibration was later increased by a
-bounded amount after the observed $p$ values had been seen.  The error control
+bounded amount after the observed $p$ values had become visible.  The error control
 above does not depend on this, because it holds for any rule that decides when
 sampling stops.  Computing time limits interrupted or prevented \jtLostCal{}
 calibration and \jtLostPow{} power pseudo-experiments, and the decisions use
@@ -1015,7 +1016,7 @@ hydrocarbon target moves both toward the data, and NuWro's total-test
 rejection does not survive that correction robustly; GiBUU's deep-inelastic
 events on hydrogen do not conserve energy, which affects its correction and
 possibly its carbon prediction.  These target-corrected evaluations are
-descriptive: the decisions of Table~\ref{tab:joint} concern each prediction on
+descriptive.  The decisions of Table~\ref{tab:joint} concern each prediction on
 the target it was generated for, and they stand.
 % Register round r16: the scan's limits (no bound on the below-grid residual, no convergence) are stated once, in
 % condition (i) and item 7 of Sec. VIII A; the note prints the scan's own statement, sec_joint.tex sec:joint5d-kappa.

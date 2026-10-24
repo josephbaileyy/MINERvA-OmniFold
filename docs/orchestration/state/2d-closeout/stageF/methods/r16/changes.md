@@ -15,20 +15,23 @@ the note, the primer and the PET note are unchanged. Row ids in brackets are `le
   statistic in any test or shifted null, so their outcomes change no decision."
 - **Decision: KEEP in the paper.** Table IV's B column counts completed draws only, so a reader needs to know what
   happened to the others.
-- **Two truth fixes:**
-  - "no assignment of the lost outcomes changes any decision", read literally, is false: the pre-recovery sensitivity
-    analysis found that some assignments would change every decision (note `sec:joint5d-lost`). What the rerun shows
-    is that the observed outcomes change none.
-  - "none" now names the calibration draws. The record tests only those against the observed statistic
-    (`RECORD-20261006-s5p-lost-seed-recovery-resolution.md` §2, "k_rec = 0 for all ten tests").
+- **A rewording of the §5 disposition, and one narrowing** (corrected by review fix 1):
+  - "no assignment of the lost outcomes changes any decision" is Joseph's selected disposition
+    (`DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md` §5: "no missing-draw assignment changes
+    any decision"), and the note prints the same sentence in `sec:joint5d-lost`. After the recovery every submitted
+    draw was observed, so the old clause was true. "So their outcomes change no decision" restates it in terms of
+    the observed outcomes.
+  - "none" now names the calibration draws, the population whose statistics the record compares with the observed
+    statistic (`RECORD-20261006-s5p-lost-seed-recovery-resolution.md` §2, "k_rec = 0 for all ten tests").
 - **Made explicit:** the decisions use the completed draws. The note states it, and Table IV's caption implies it.
 
 ### 2. "Descriptive ... do not re-grade" (Sec. VII E) [K1]
 
 - **Before:** "These target-corrected evaluations are descriptive and do not re-grade the decisions of Table IV, which
   concern each prediction on the target it was generated for and stand."
-- **After:** "These target-corrected evaluations are descriptive: the decisions of Table IV concern each prediction on
-  the target it was generated for, and they stand."
+- **After:** "These target-corrected evaluations are descriptive. The decisions of Table IV concern each prediction on
+  the target it was generated for, and they stand." (Review fix 3: a full stop, not a colon, so that "they stand"
+  does not read as the reason.)
 - **Decision: KEEP the content.** It is decision-fixed: `DECISION-20261020-joseph-nuwro-ch-claim.md` says to keep the
   ten recorded decisions, and "descriptive" is KEEP-list E3's adjective. The record verb "re-grade" is replaced by its
   content, that the decisions stand. The note keeps "do not re-grade" (`sec:joint5d-ch`).
@@ -65,8 +68,10 @@ the note, the primer and the PET note are unchanged. Row ids in brackets are `le
 - **Before:** "The calibration's computing budget was later extended by a bounded amount with observed p values
   visible; the error control above is unaffected by this, because it holds for any stopping rule."
 - **After:** "The computing time available to the calibration was later increased by a bounded amount after the
-  observed p values had been seen. The error control above does not depend on this, because it holds for any rule
+  observed p values had become visible. The error control above does not depend on this, because it holds for any rule
   that decides when sampling stops."
+- **Review fix 2:** "had been seen" became "had become visible", the record's word; nobody is recorded as having
+  viewed them.
 - **Decision: KEEP as a disclosure.** It is a choice made with the outcomes visible: KEEP list §4, "disclosing a post
   hoc choice next to the choice"; corpus 2504.06857:250.
 - **Record:** `DECISION-20261004-s5p-production-budget-extension.md` §3. The extension was made during production,
@@ -110,3 +115,18 @@ the note, the primer and the PET note are unchanged. Row ids in brackets are `le
 - **"A post hoc observation" (condition (ii)) and "In an exploratory sensitivity study"** are KEEP-list disclosures.
 - **The scope paragraph, the Limitations list, the abstract, Table I and the CLAIM-ADDITION block** were not touched.
   The r15 gains are kept, and no per-sentence scope was reintroduced.
+
+## Superseded r15 ledger rows
+
+r16 supersedes these rows of `r15/ledger.md`, whose probes or coverage no longer hold on this branch. Their facts are
+carried by the r16 rows named. `r15/check_ledger.py` run on this branch reports exactly these 11 failures:
+- `G9` ("because it holds for any stopping rule.") → F9;
+- `G10` ("so no assignment of the lost outcomes changes any decision.") → F13;
+- `G26` (the CH "descriptive and do not re-grade" sentence) → K1;
+- `G27` (the scan, "the scan tests that one direction ...") → K2, K3;
+- `C4` ("the two-dimensional result is being moved to the refined estimator", now a sentence of its own) → F4;
+- the coverage of the r15-base sentences `P73` → F1, `P114` → F2, `P124` → F3, F4, `P149` → F5, `P223` → F6 and
+  `P224` → F7.
+
+The r15 ledger keeps its validity at its own branch tip. r16's ledger is the one to check against this branch.
+

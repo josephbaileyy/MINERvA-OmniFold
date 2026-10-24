@@ -50,7 +50,7 @@ The r15 P1 runs on the r15 paper (three sol2 runs, all 3.0) quoted these passage
   visible, error control unaffected; lost draws "were rerun ... so no assignment of the lost outcomes changes any
   decision"; recomputation; pointer to "the design record and the rerun".
 - After: the two data-informed elements stated as disclosures in plain terms (fixed design and what its reviewers saw;
-  computing time increased after the p values were seen, and why the error control does not depend on it); the lost
+  computing time increased after the p values had become visible, and why the error control does not depend on it); the lost
   draws stated as counts, then what the decisions use, then what the rerun found and what it implies; recomputation;
   pointer.
 
