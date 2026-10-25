@@ -31,6 +31,7 @@ sha256 of the text plus a final newline begins `980d267e9b77292a`.
      block is "a third ensemble" that "has not been tested" (`sec_execsummary.tex:119`; `sec_validation.tex:270-280`).
      The paper already states that fact as limitation 1 of Sec. VIII A. The history adds nothing true about the quoted
      result.
+     <!-- absence-ok: quotes the note's own statement (sec_execsummary.tex:119) and paper Sec. VIII A limitation 1; no new absence claim -->
    - **Where it stays.** The history remains printed in the note, at `sec:coverage`. The full trail is in the internal
      records.
    - **What r18 may change:**
