@@ -48,3 +48,14 @@ bank's `cv.npz` (2.16 GB, `072643e1…`). It is named in the Part A declaration.
 **Hard links.** tar's "Removing leading `/` from hard link targets" means at least one member is stored as a hard
 link. The inventory has 3 groups of files with identical sha256. Restoring such a member alone also needs its link
 target, so restore the whole tar or the named pair.
+
+**Correction (director, 2026-10-25): there is no evidence of a hard link.**
+- The paragraph above reads too much into tar's message. GNU tar prints "Removing leading `/` from hard link targets"
+  even when no member is a hard link. This was reproduced during the review of `S1-PRESERVE-REPORT.md` (PR #344),
+  §"What the receipts do and do not show".
+- The director's read-only check on login12, 2026-10-25:
+  - all 425 paths in `stage0/INVENTORY.sha256` exist;
+  - each has link count 1, 424 regular files and one empty one;
+  - no inode repeats.
+- The 3 groups of identical sha256 are equal content, not links. Any member can be restored alone.
+- The check was made after the copy. It is not a listing of the archive's member types.
