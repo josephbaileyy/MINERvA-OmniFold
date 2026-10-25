@@ -239,6 +239,10 @@ depend on, is left unchanged:
 
 ## 6. Pinned bytes
 
+**Superseded for the assembly** by [`S1-BINDING-AMENDMENT-1.md`](S1-BINDING-AMENDMENT-1.md) (2026-10-25). There,
+`s1_assemble.py` is `b157250a…` at `3f545564`, after the import fix, and a subprocess test is added (24 tests in all). The
+table below is the declared original.
+
 | item | sha256 |
 |---|---|
 | `nd-unfolding/s1_assemble.py` | `5ebe1a8ad68ca9de3343062e1835c899ba25c0f1c7e2d22156284567c00cb247` |
