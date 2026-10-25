@@ -627,8 +627,8 @@ docs/orchestration/receipts/xr-x1-chi2-20261012/chi2_x1_paperonly.txt	tracked	AR
 docs/orchestration/registry/ALIASES.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/make_drafts.py;tools/registry/check_registry.py;tools/registry/reglib.py;tools/registry/results_index.py;tools/registry/whatis.py	no	11	67	13320
 docs/orchestration/registry/ATTRIBUTION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	4	21	4641
 docs/orchestration/registry/ESTIMATORS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/ledger_rows.py;tools/registry/reglib.py;tools/registry/results_index.py;tools/registry/whatis.py	no	13	12	5314
-docs/orchestration/registry/RESULTS-INDEX.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py;tools/registry/test_registry.py;tools/registry/whatis.py	no	8	24089	5666639
-docs/orchestration/registry/RESULTS-POPULATION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py	no	4	123	11100
+docs/orchestration/registry/RESULTS-INDEX.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py;tools/registry/test_registry.py;tools/registry/whatis.py	no	8	24114	5673332
+docs/orchestration/registry/RESULTS-POPULATION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py	no	4	124	11208
 docs/orchestration/registry/STATUS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	3	2	396
 docs/orchestration/registry/UNRESOLVED-NAMES.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py	no	2	7	2180
 docs/orchestration/registry/WAIVERS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	4	1	47
@@ -2928,7 +2928,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/S1-PRESERVE-REP
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	13	558	39752
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/F4-PRESERVE-INVENTORY.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	nd-unfolding/tests/test_fd_f0_regrade.py	yes	7	80	12640
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/LEDGER.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py;nd-unfolding/pet/improvement_campaign/aggregate_resources.py	yes	50	3	435
-docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only		yes	4	3878	84840
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only		yes	6	3878	84840
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/deploy-tests.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only		yes	6	262	17109
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/deploy.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	docs/orchestration/state/measurement-scoping/pv-ladder/receipts/cmodel5d/run_cmodel5d.sh	yes	8	14	1129
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/f0-start.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only		yes	1	2	66
