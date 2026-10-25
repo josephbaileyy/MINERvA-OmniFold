@@ -62,7 +62,8 @@
 ## 1. Inputs
 
 `P=/pscratch/sd/j/josephrb`. Every input below is checked against the sha256 shown, or against the record named,
-before it is used. The checks are controls 0 and 1.
+before it is used. The checks are controls 0 and 1. The H2 definition's two digests are checked when control 4
+builds the cell map.
 
 | input | where | checked against |
 |---|---|---|
@@ -91,6 +92,7 @@ before it is used. The checks are controls 0 and 1.
 
 **Definitions:**
 - `B=$P/fd-f0-20261025`. It does not exist yet (checked on login37, 2026-10-25).
+  <!-- absence-ok: an `ls -d` of $P/fd-f0-20261025 on login37 (2026-10-25) returned 'No such file or directory'; the scratch clones for the cluster test runs are under $P/fd-f0-testcheck-20261025 instead -->
 - `D=$B/deploy/<pin8>`: a clean clone of the binding commit, which the binding names.
 - `T=$D/docs/orchestration/state/measurement-paper/5d-community-20261024`.
 - `PY="env -u PYTHONPATH $HOME/.conda/envs/root_6_28/bin/python3 -I -B"`. That interpreter is Python 3.11.14 with numpy
@@ -161,7 +163,7 @@ cd $B && setsid nohup bash -c "timeout 1500 bash $D/docs/orchestration/state/mea
 ### 2.3 The re-grade (login node, after §2.2 exits 0)
 
 ```bash
-cd $B && TMPDIR=$B/tmp timeout 1140 $PY $D/nd-unfolding/fd_f0_regrade.py \
+cd $B && TMPDIR=$B/tmp timeout 1125 $PY $D/nd-unfolding/fd_f0_regrade.py \
   --definition $D/nd-unfolding/pv-ladder/readouts/h2_definition.json \
   --s1-npz $P/s1-20261024/s1_assembly.npz --s1-json $T/s1/readout/s1_assembly.json \
   --cmodel-npz $P/cmodel5d-20261024/out/cmodel_5d.npz --cmodel-json $D/nd-unfolding/pv-ladder/readouts/cmodel_5d.json \
@@ -177,11 +179,12 @@ cd $B && TMPDIR=$B/tmp timeout 1140 $PY $D/nd-unfolding/fd_f0_regrade.py \
 ```
 
 - **Projected wall:** 15 minutes. That rests on A7's evaluation of the row 5 products on a login node in about 2
-  minutes (`state/s5p/campaign-state.json:527`), plus about 1.6 GB hashed twice over. The timeout is 1,140 s, which
+  minutes (`state/s5p/campaign-state.json:527`), plus about 1.6 GB hashed twice over. The timeout is 1,125 s, which
   is 1.25 × that, so exit 124 is a STOP.
 - **Exit codes:**
   - 0: every control passed, or control 7 failed as declared, and the readout was written;
-  - 1: a control refused, or an unexpected error occurred. Its message has all digits redacted. Nothing is written;
+  - 1: a control refused, or an unexpected error occurred. A refusal names files, digests and counts only. An
+    unexpected error prints its type, the line, and its message with every number redacted. Nothing is written;
   - 2: an argparse error;
   - 3: the leak guard refused. Nothing more is written (§5.3).
 - **What is committed** (the report's PR):
@@ -191,16 +194,17 @@ cd $B && TMPDIR=$B/tmp timeout 1140 $PY $D/nd-unfolding/fd_f0_regrade.py \
 
 ## 3. Controls, in order
 
-Controls 0–6 and 8 refuse: exit 1, nothing written. Control 7 gates row 6 only, as FD-PLAN §3.1 declares. **No cell
-value is read before control 4 passes, and nothing is written before control 8 passes.**
+Controls 0–6 and 8 refuse: exit 1, nothing written. Control 7 gates row 6 only, as FD-PLAN §3.1 declares. **No product's
+cell values are read before control 4 passes, and nothing is written before control 8 passes.** Control 4 itself reads f
+and the covariances, and checks the H2 definition's digest.
 
 | # | what it checks | refuses when | test |
 |---|---|---|---|
 | **0** | each D16 record against its pinned sha256; its 16 `a` paths in `<truth>_half/`; each product against `a_sha256`; the directory holds exactly those 16 | any mismatch. It runs **before any other input is opened**: the test points `--s1-npz` at a missing file and still gets control 0's refusal | `test_control_0_*` (3) |
 | **1** | the seven committed or pscratch records above; then every other product against its manifest; the closure and floor against `cmodel_5d.json`'s digests; the constraint file | any mismatch, **or a product file in a set directory that the manifest does not list, or a listed one that is missing** | `test_control_1_*` (3) |
-| **2** | each product's meta and `.npy` headers, read without loading the arrays (detail below) | any field off | `test_control_2_*` (2 tests, 14 cases) |
+| **2** | each product's meta and `.npy` headers, read without loading the arrays (detail below) | any field off | `test_control_2_*` (2 tests, 18 cases) |
 | **3** | counts: row 1 at 40/20/20/20/20 within the declared seed ranges; row 2 at 20; row 4 at 16 per truth; row 5 at 1,365/1,366/1,343/1,751/1,351; row 6 at 193/195/195/199/193/172; seeds unique | any count off | `test_control_3_counts` |
-| **4** | matrices: see below | any check off | `test_control_4_matrices` (3 cases) |
+| **4** | matrices: see below | any check off | `test_control_4_matrices` (7 cases) |
 | **5** | the closure's 16-cell bias, recomputed, equals `cmodel_5d.json` `positive_control.reporting16.bias_cells` to 10⁻¹² | a difference | `test_control_5_closure_bias` |
 | **6** | the closure floor's max \|bias\| on the 16 cells, recomputed, equals the recorded `closure_floor_max_abs` 3.2179640496732276e-05 to 10⁻¹² (§7 item 1). It is printed first and not graded | a difference | `test_control_6_floor` |
 | **7** | the offset control of FD-PLAN §3.1: Δ = O_MnvTune − O_GENIE CV; χ²_Δ = Δᵀ(N_O,MnvTune + N_O,GENIE CV)⁻¹Δ, ndf 16; pass if P(χ²_16 > χ²_Δ) ≥ 0.01 | **it does not refuse.** On FAIL, row 6 is printed as "descriptive and ungraded", leaves the trigger counts and denominators, and the failure is reported | `test_a_failed_offset_control_leaves_row_6_ungraded` |
@@ -228,9 +232,16 @@ value is read before control 4 passes, and nothing is written before control 8 p
     seed 970000–970015;
   - **rows 5–6:** `789271bb…`, Poisson mode, and a flux universe in 0–99;
   - **row 6:** its alternative's `truth`, amplitude 1.0 and digest.
-- **A full meta census before this declaration** (login37, 2026-10-25, the `meta` member only): rows 5–6 are uniform
-  in every one of these fields, with flux universes 0–99 and filenames equal to seeds. Row 4 is 4 × `ac929ea7` + 12 ×
-  `4cfed582` per truth, except NuWro, which is 16 × `4cfed582`.
+- **Control 2 was run against the real products before this declaration** (login37, 2026-10-25). The probe
+  called the tool's own `meta_problems`, reading only `meta` and the `.npy` headers, over all 8,545 products, with a
+  scratch clone at `06a0da53`.
+  - **The result:** 0 problems, `refinement.ran` true everywhere except the closure and its floor, and no stray,
+    partial or non-`.npz` entry in any set directory.
+  - **The same probe on the first draft** (`7d7dac1d`) refused all 8,403 products in rows 4–6 with `seed/iters
+    (None, 5)`. `s5p_nullexp.py` never writes a top-level `estimator_seed` (`s5p_nullexp.py:343-351`), and that
+    draft's fixture gave one to every product. Review A found the defect (§11).
+  - Rows 4–6 now take the seed from `estimator_params[].random_state` and must not carry the key. Rows 1–3 must
+    carry it. Tests cover both directions.
 
 **Control 4 in detail.** In S1's npz:
 - U equals the definition's functional matrix in float32;
@@ -297,6 +308,7 @@ As FD-PLAN §3.1–3.3, with no change of estimator.
 schema, labels{what, not, thresholds, gaussian_reference}, cells[R00..R15]
 controls{passed[0..6,8], closure_floor_max_abs,
          offset_control_7{pass, pair, rule, chi2, p, p_below_floor, B_eff_calibration{truth: B_eff},
+                          row4_noise_trace_share{truth: tr N_row4 / tr N_O},
                           pairs_descriptive[9 x {a, b, chi2, ndf, p, p_below_floor}]}}
 relative_sigma{C_e, C_total, minus_genie_mec, minus_nuwro, minus_gibuu: [16]}
 relative_sigma_summary_percent{same keys: [median, min, max]}
@@ -327,7 +339,9 @@ inputs_sha256{...}, code_sha256{fd_f0_regrade.py, s1_assemble.py, s5p_stage1_ins
 **`LeakGuard` is built once the integrals exist,** from:
 - f;
 - every product's two integral vectors X (8,545 × 2);
-- f − X, X − f, f/X, X/f, f/X − 1 and X/f − 1.
+- f − X, f/X, X/f, f/X − 1 and X/f − 1;
+- all of these in absolute value, so the sign-flipped forms are caught too. For example, 1 − X/f = (f − g)/f.
+  Review B found that the first draft missed them.
 
 **What it refuses:**
 - any output number within 10⁻¹³ relative of one of those values. A 16-vector is matched cell by cell, and any other
@@ -338,18 +352,22 @@ inputs_sha256{...}, code_sha256{fd_f0_regrade.py, s1_assemble.py, s5p_stage1_ins
 
 **What it scans:**
 - every control line printed after the integrals;
-- the readout before it is written, and again with `table_sha256` added;
-- the table before it is written;
-- the summary lines before anything is written.
+- the readout, as an object, so that its 16-vectors are matched cell by cell. It is scanned before anything is
+  written, and again with `table_sha256` added;
+- the table, before it is written;
+- the summary lines before anything is written, and the final `wrote` line before it is printed.
 
-On a hit it exits 3. Nothing more is written.
+On a hit it exits 3. Both files go to temporary names first and are renamed into place only after the last check, so
+a refusal leaves neither.
 
 **Why per cell and at 10⁻¹³:**
-- **The problem:** a run holds about 137,000 legitimate residuals among about 3 × 10⁶ forbidden ratios.
-- **A global 10⁻⁹ match** would refuse a correct run with near certainty: about 30 expected hits.
-- **Matching per cell at a few ulps** gives an expected false refusal of order 10⁻⁴ **(arithmetic, §7 item 7)**.
-- **What it still catches:** a leak computed by another arithmetic path differs by about 10⁻¹⁵ relative, so the
-  10⁻¹³ match still catches it. The test plants each form computed independently.
+- **The problem:** a run holds about 137,000 legitimate residuals. The guard holds (1 + 6 × 17,090) × 16 ≈ 1.6 × 10⁶
+  forbidden values, about 1.1 × 10⁶ of them ratios.
+- **A global 10⁻⁹ match** would refuse a correct run with near certainty: tens of expected hits.
+- **Matching per cell at 10⁻¹³** gives an expected false refusal of order 10⁻⁴ **(arithmetic, §7 item 7)**.
+- **What it still catches:** the test plants each form computed independently, and the guard catches it.
+- **What it can miss:** a leak computed by another arithmetic path can differ by about eps/|t| relative. For a ratio
+  form near |t| ~ 10⁻³ that approaches the 10⁻¹³ width. The floor still catches every absolute form.
 
 **What it cannot catch:** a dimensionless quantity derived from f by some other formula, such as an average of f/X.
 F0 forms no such quantity. f enters only as the divisor of C_e, C_stat and the σ ratios.
@@ -366,14 +384,21 @@ F0 forms no such quantity. f enters only as the divisor of C_e, C_stat and the �
 | class | what it shows |
 |---|---|
 | `Statistics` (4) | the χ² survival function equals scipy's for ndf 2, 8 and 16; the unweighted and weighted means and noises are the declared formulas; leave-out and grade, including the eight-cell subset and the p floor, are recomputed by hand |
-| `Guard` (4) | each of f, X, f − g, g − f, f/g, g/f, f/g − 1 and g/f − 1 is refused as a 16-vector, a scalar, inside a printed line and as a table row; absolute magnitudes are refused even when not listed; relative outputs pass; `check` exits 3 |
-| `EndToEnd` (7) | **the module run as invoked** (`-I -B`, cwd outside nd-unfolding, the wrapper sets only the synthetic pins): <ul><li>stdout, stderr, the readout and every float array of the table carry no f, absolute value or f − g, by **this test's own scan**, built from the fixture's construction and not from the guard;</li><li>the same in O(1) units, where the 10⁻³⁰ floor cannot help;</li><li>six planted leaks exit 3 with nothing written;</li><li>**negative control:** with the guard disabled, a planted f/g − 1 reaches the readout and the scan finds it;</li><li>grades, the model-only χ² and the offset control recomputed by hand;</li><li>a failed offset control leaves row 6 ungraded, with denominators 12 and 192;</li><li>no overwrite</li></ul> |
+| `Guard` (4) | each of f, X, f − g, g − f, f/g, g/f, f/g − 1, g/f − 1, 1 − g/f, 1 − f/g and −f/g is refused as a 16-vector, a scalar, inside a printed line and as a table row; absolute magnitudes are refused even when not listed; relative outputs pass; `check` exits 3 |
+| `EndToEnd` (7) | **the module run as invoked** (`-I -B`, cwd outside nd-unfolding; the wrapper sets the synthetic pins, truths, counts and constraint digest; the
+  real script's own import path is `Invocation`'s): <ul><li>stdout, stderr, the readout and every float array of the table carry no f, absolute value or f − g, by **this test's own scan**, built from the fixture's construction and not from the guard;</li><li>the same in O(1) units, where the 10⁻³⁰ floor cannot help. The scan matches both signs;</li><li>seven planted leaks, (f − g)/f among them, exit 3 with nothing written;</li><li>**negative control:** with the guard disabled, a planted f/g − 1 reaches the readout and the scan finds it;</li><li>grades, the model-only χ² and the offset control recomputed by hand;</li><li>a failed offset control leaves row 6 ungraded, with denominators 12 and 192;</li><li>no overwrite</li></ul> |
 | `Controls` (13) | each of controls 0–6 and 8 refuses a one-entry defect, and nothing is written |
 | `Invocation` (3) | **the real script as declared:** `--help`; an argparse error exits 2; on the synthetic tree it reaches control 0 and refuses there (the real pins), with no traceback and nothing written |
 | `CommittedPins` (7) | every identity digest is the committed file's; the record pins are the committed files'; the declared counts are the manifests' (8,545 in all); the committed `f4` inventory equals the D16 records; FD-PLAN §2.1 reproduces from the committed JSONs; the groups are §2.1's table; the eight GiBUU cells are the p_∥ < 4.5 boxes |
 
 **Locally** (2026-10-25: Python 3.12.2, numpy 1.26.4, scipy 1.15.2), `python3 -B -m unittest test_fd_f0_regrade
-test_s1_assemble test_s1_scripts_isolated` ran 60 tests, all OK. The F0 suite alone is 38 tests in about 90 s.
+test_s1_assemble test_s1_scripts_isolated` ran 60 tests, all OK. The F0 suite alone is 38 tests in about 100 s.
+
+**On the cluster interpreter** (login37, `root_6_28`: Python 3.11.14, numpy 1.26.4, scipy 1.16.3):
+- **Where it ran:** a scratch clone of each pushed commit under `$P/fd-f0-testcheck-20261025/`. This is not a deploy.
+- **The command:** §2.1's, with `TMPDIR` in that directory.
+- **The result at `7d7dac1d`:** 60 tests, OK, none skipped, and 0 porcelain lines before and after.
+- **The final commit** is rerun the same way and reported in the PR.
 
 ## 7. Departures from the plan's letter, for the director
 
@@ -402,9 +427,14 @@ test_s1_assemble test_s1_scripts_isolated` ran 60 tests, all OK. The F0 suite al
    If the director wants the 288/18 line dropped, it is one key.
 7. **The leak guard** is new mechanism for ruling 6 (§5.3). Its numbers are a floor of 10⁻³⁰ and a per-cell match at
    10⁻¹³.
-   - **The false-refusal estimate,** per cell: about 8,544 residuals of size about 0.03. The density of the f/X − 1 and
-     X/f − 1 forms near them is about 8.5 × 10⁴ per unit, and the match width is 2 × 10⁻¹³ × 0.03. That gives about
-     4 × 10⁻⁶ per cell, so about 7 × 10⁻⁵ over 16 cells. The JSON vectors add much less **(arithmetic)**.
+   - **The false-refusal estimate:**
+     - **Per cell:** about 8,544 residuals of size about 0.03. The density of the f/X − 1 and X/f − 1 forms near them
+       is about 8.5 × 10⁴ per unit, and the match width is 2 × 10⁻¹³ × 0.03. That gives about 4 × 10⁻⁶ per cell, so
+       about 7 × 10⁻⁵ over 16 cells.
+     - **Review B's probe** of the same table gave 5.4 × 10⁻⁵.
+     - **The readout,** scanned per cell as an object, adds about 4 × 10⁻⁶.
+     - **Matching in absolute value** folds both signs together, which roughly doubles these.
+     - **Total:** about 1–2 × 10⁻⁴ **(arithmetic)**.
    - A false refusal would be exit 3, reported unrepaired.
 8. **The p floor.** A p below 10⁻³⁰ is written as 0.0 with `p_below_floor` true, because the guard refuses numbers
    below 10⁻³⁰.
@@ -418,9 +448,13 @@ test_s1_assemble test_s1_scripts_isolated` ran 60 tests, all OK. The F0 suite al
     - The tool runs it against the D16 records themselves, before anything else.
 11. **A statistical note on control 7.**
     - The offset χ² uses noise covariances estimated from the same draws. B_eff is 256–334 per calibration truth
-      (FD-PLAN §3.1), plus row 4's 16 split seeds.
+      (FD-PLAN §3.1), plus row 4's noise from 16 split seeds.
     - For a 16-dimensional estimated covariance, the inverse is biased upward by about n/(n − 17). At n ≈ 300 that is
-      about 6 %, so χ²_Δ reads slightly high, and the control leans toward failing **(inference)**.
+      about 6 %.
+    - Row 4's part is estimated from 16 seeds, so it has rank 15. Where it is not small beside the calibration part,
+      the bias is larger (review A). So χ²_Δ reads high, and the control leans toward failing by more than 6 %
+      **(inference)**.
+    - The run prints the trace of each part beside the result, so the size of the lean can be read.
     - It is not corrected, because the rule is FD-PLAN's. It is reported beside the result.
 
 ## 8. Pinned bytes
@@ -429,8 +463,8 @@ Their sha256 at this declaration's commit:
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_f0_regrade.py` | `38ef7dfb993f5d580ffa145ed5fc49f38089a854361690228f57a928773ceb3d` |
-| `nd-unfolding/tests/test_fd_f0_regrade.py` | see the PR; it changes with the review |
+| `nd-unfolding/fd_f0_regrade.py` | `2db90300185a1c5d29f56dd09ac4e9999b90485291d8f3e446041f4e574726f6` |
+| `nd-unfolding/tests/test_fd_f0_regrade.py` | `71a109118a6b2483a2f9456eec6aa9a972a925cfa02489863096e5b6750131c4` |
 | `nd-unfolding/s1_assemble.py` | `b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7` (unchanged since S1's assembly) |
 | `nd-unfolding/s5p_stage1_inspect.py` | `26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71` |
 | `nd-unfolding/pv-ladder/readouts/h2_definition.json` | `b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89` |
@@ -455,3 +489,57 @@ Their sha256 at this declaration's commit:
 - **Not approved:** Stage G, F1, F1-W and any merge.
 - **Rules:** no GPU and no premium QOS.
 - **Joseph's:** claims, KI-85, printed wording and publication.
+
+## 11. Review dispositions
+
+Two independent read-only reviews ran on `7d7dac1d`, one in each direction:
+- **A** checked the plan and rulings against the build;
+- **B** started from the code and attacked it, the leak guard above all.
+
+Both ran the suite (38 OK). Every finding is accepted, and the fixes are in `06a0da53` and after.
+
+**MATERIAL:**
+
+| # | finding | what changed |
+|---|---|---|
+| A-M1 | Control 2 would refuse all 8,403 A7 products, because `s5p_nullexp.py` writes no top-level `estimator_seed`, and the fixture agreed with the tool rather than with the producer | Rows 4–6 now take the seed from `random_state` and must not carry the key; rows 1–3 must. The fixture follows each producer. Control 2's check was then run over all 8,545 real products (meta and headers only): 0 problems. The first draft refuses rows 4–6 on the same probe (§3) |
+| B-M1 | The guard and the test's own scan matched signed values, so 1 − X/f = (f − g)/f, 1 − f/X and −f/X passed | Both now match absolute values. The guard tests plant three sign-flipped forms, and the end-to-end test plants (f − g)/f |
+
+**MINOR:**
+1. **A: the timeout was 1.267 × the projection.** It is now 1,125 s.
+2. **A and B: the readout was scanned as pooled text.** It is now scanned as an object, cell by cell. The
+   false-refusal estimate is restated with B's probe (§7 item 7).
+3. **A: the forbidden-set size was wrong.** It is now about 1.6 × 10⁶ values, of which about 1.1 × 10⁶ are ratios.
+4. **A: the final `wrote` line was unchecked.** It is now checked.
+5. **A: wording.**
+   - Control 4 reads f and the covariances, and checks the definition.
+   - The redaction applies to unexpected errors only.
+6. **A: the control 7 lean** includes row 4's rank-15 noise. The readout now prints row 4's share of the noise trace.
+7. **A: smaller points.**
+   - The test scan now includes X − f.
+   - The wrapper's scope is stated.
+   - §8 pins the test file.
+   - Leftover partial files: none, by the probe.
+8. **B: the npz could survive a refusal at the second check.** Both files are now written under temporary names and
+   renamed only after the last check.
+9. **B: the stdout scan shares the tool's regex.** This is stated. The JSON and table scans are structural.
+10. **B: a cell-indexed vector is assumed to have its cells on the last axis.** Only the `r_*` tables reach that path.
+    This is stated, not changed.
+11. **B: another arithmetic path can drift up to about eps/|t|.** It is stated in §5.3.
+12. **B: control 4's test covered 3 of its checks.** It now covers 7: the block sum, S, table 2.1, C_model_abs, f,
+    the JSON σ and U.
+13. **B: a zero truth integral could first print a FAIL under control 5 or 7.** §7 item 9 already says so. The exit
+    is still 1 with nothing written.
+14. **B: f4 `refinement.ran`.** The probe found it true on all 80.
+
+**Confirmed by the reviews:**
+- **Digests:** every digest, count and pin, including 8,545 = 7,176 + 1,147 + 80 + 120 + 20 + 2.
+- **Records:** the FD-PLAN §2.1 table; the recorded floor value against BUILD-REPORT's rounding; the argv against
+  argparse and FD-PLAN §1; the preserve interface and its exit codes.
+- **The rulings:** the truth table and groups; ruling 2's triggers, denominators and references (13.104, 0.18); every
+  estimator, noise and matrix of FD-PLAN §3.1–3.3; that Stage G, F1, F1-W and any merge are excluded.
+- **The reproductions:**
+  - U @ x against the builder's bincount route agrees to 2.2 × 10⁻¹⁴ on the real fine map, 50 × inside 10⁻¹²;
+  - the 46-block sum agrees to 5 × 10⁻¹⁵ of scale;
+  - the table 2.1 rounding is 8.3 × 10⁻⁴ points from a boundary.
+- **Systematic collisions:** none. No legitimate output collides with a forbidden value by construction.

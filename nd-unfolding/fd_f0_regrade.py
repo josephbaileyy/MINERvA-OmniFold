@@ -654,7 +654,8 @@ def run(a, pins=None) -> int:
             w = w_all[[m["nuisance_draw"]["flux"] for m in metas["cal:" + t["name"]]]]
             bw, Nw, Beff = weighted(rel("cal:" + t["name"]), w)
             b4, N4, _ = est[t["name"]][:3]
-            offsets[t["name"]] = {"O": bw - b4, "N_O": Nw + N4, "B_eff": Beff, "N_cal": Nw}
+            offsets[t["name"]] = {"O": bw - b4, "N_O": Nw + N4, "B_eff": Beff, "N_cal": Nw,
+                                  "row4_trace_share": float(np.trace(N4) / np.trace(Nw + N4))}
     pairs = []
     names4 = [t["name"] for t in TRUTHS if t["row"] == 4]
     for i, x in enumerate(names4):
@@ -738,7 +739,8 @@ def run(a, pins=None) -> int:
         "controls": {"passed": [0, 1, 2, 3, 4, 5, 6, 8], "offset_control_7": {"pass": offset_pass, "pair": list(OFFSET_PAIR),
                      "rule": "P(chi2_16 > chi2) >= 0.01", "chi2": gate["chi2"], "p": gate["p"],
                      "p_below_floor": gate["p_below_floor"], "pairs_descriptive": [p for p in pairs if not p["gating"]],
-                     "B_eff_calibration": {k: v["B_eff"] for k, v in offsets.items()}},
+                     "B_eff_calibration": {k: v["B_eff"] for k, v in offsets.items()},
+                     "row4_noise_trace_share": {k: v["row4_trace_share"] for k, v in offsets.items()}},
                      "closure_floor_max_abs": floor},
         "relative_sigma": {k: v.tolist() for k, v in sig.items()},
         "relative_sigma_summary_percent": {k: list(sigma_summary(v)) for k, v in sig.items()},
