@@ -1,0 +1,57 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	abstract	pos	no	no	mock data study on simulation only	neutrino cross-section measurement for the first time using a public T2K near detector simulated
+2	d	intro	pos	no	no	mock data study on simulation only	OmniFold unfolding method [21, 22] to a publicly available simulated dataset from the T2K experiment
+3	c	inline	neg	no	no	backgrounds omitted from data release	Due to limitations of the data release, this is not the full list of backgrounds typically included in a T2K analysis.
+4	c	inline	neg	no	no	backgrounds omitted from data release	In particular, it omits contributions from neutral current interactions, νe interactions with erroneous particle identification, wrong-sign
+5	c	inline	neg	no	no	no proton reconstruction detector systematics	However, the detector systematic uncertainties do not include dedicated proton reconstruction effects, since the proton kinematics were not part of the original analysis associated with this data release.
+6	d	inline	pos	no	no	mock data study on simulation only	the rest of this article we will refer to the fake data simply as “data”, as during unfolding it is treated the same
+7	d	inline	neg	no	no	STVs undefined without leading proton	The STVs are not calculated for events where there is no leading proton, which can happen either because the proton was not reconstructed or because no proton was kicked out at truth level.
+8	d	inline	pos	no	no	binned evaluation of unbinned method	While OmniFold is an unbinned procedure, we must choose some binning of the variables for final evaluation and comparison against classical binned techniques.
+9	c	inline	pos	no	no	OmniFold struggles to learn derived STVs	The STVs can be derived from these inputs, but we can expect they would be more difficult to learn compared
+10	d	caption	pos	no	no	dataset lacks full particle information	are the most general inputs given what is provided in the available dataset, but a more detailed dataset would allow the use of an even wider phase space
+11	c	inline	pos	no	no	no weight capping applied	This reweighting factor can be capped to some maximum value for events where q is close to 1, but we did not find this to be necessary in our results.
+12	c	inline	pos	no	no	only coarse hyperparameter scan	We performed a coarse scan of the training parameters and did not find significant improvement from other values.
+13	b	inline	pos	no	no	network size tuned on fake-data performance	The final choice of 4 hidden layers with 100 nodes each was chosen as a point beyond which expanding the network size further had no obvious benefit.
+14	c	inline	pos	no	no	IBU-UniFold equivalence assumes perfect training	with a binned version of the OmniFold method, which with perfect training is mathematically equivalent to IBU
+15	d	inline	pos	no	no	benchmark differs from standard IBU	This is in contrast with the background subtraction techniques typically used for IBU, which are different enough that the results and uncertainties are complicated to compare
+16	c	inline	pos	no	no	imperfect neural network training	However, providing bin centers results in the classifier needing to smoothly interpolate between adjacent bins in the phase space, which can make training more difficult
+17	d	inline	pos	yes	no	STV phase space proton threshold	we impose an additional requirement that the proton have a minimum momentum of 450 MeV at truth level
+18	b	inline	pos	no	no	iteration cutoff chosen using truth	we choose an iteration number at which the χ2 curve has flattened out to be considered the converged result
+19	b	inline	pos	yes	no	iteration cutoff chosen using truth	We choose a cutoff of 20 iterations for IBU-UniFold and 45 iterations for the OmniFold methods.
+20	d	inline	neg	no	no	iteration cutoff chosen using truth	However, this is not a feasible approach for a real data analysis, since it relies on knowing the truth-level target distribution.
+21	c	inline	pos	no	no	convergence criterion requires a binning	Furthermore, it relies on having a particular binning in mind already, which is potentially at odds with the general promise of the OmniFold method
+22	c	inline	neg	no	no	no quantitative unbinned convergence metric	While here we have not imposed a quantitative metric for convergence from these distributions
+23	c	inline	pos	no	no	no quantitative unbinned convergence metric	Future work could explore this further as an avenue towards a principled way to choose the degree of regularization in an unbinned manner.
+24	d	caption	pos	no	no	convergence criterion requires a binning	The point at which the χ2 appears to converge depends on the observable and binning under inspection.
+25	d	inline	pos	no	no	low efficiencies in analysis	We expect little difference in results between the two approaches when efficiencies are generally high for all bins, but this is not the case for efficiencies in our analysis.
+26	b	inline	pos	no	no	efficiency treatment chosen from convergence results	Correspondingly, the rest of the results in this paper are all obtained using the approach of an efficiency correction after unfolding.
+27	c	inline	neg	no	no	chi2 metric conflates bias and uncertainty	Since the χ2 metric does not clearly distinguish between results with large bias and large uncertainty and results with small bias and small
+28	c	inline	pos	no	no	imperfect neural network training	The discrepancy in performance between these methods is attributed to difficulties in training the neural networks
+29	c	inline	pos	yes	no	low statistics of neutrino dataset	These training difficulties are likely exacerbated by the generally low statistics in a neutrino dataset compared to previous applications of OmniFold, with only around 20000 events
+30	c	inline	pos	no	no	imperfect neural network training	The observation that MultiFold performs better than OmniFold across all metrics also serves as another indication that the classifier training is imperfect.
+31	c	inline	pos	no	no	OmniFold struggles to learn derived STVs	it is a nontrivial function to derive the STVs from the muon and proton kinematics.
+32	c	inline	pos	no	no	low statistics of neutrino dataset	With the limited statistics in our dataset, it is unsurprising that the OmniFold networks appear to be unable to perform as well as the MultiFold networks
+33	d	inline	pos	no	no	OmniFold struggles to learn derived STVs	but this calls for caution when attempting to unfold arbitrarily complicated derived quantities from simple inputs.
+34	c	inline	pos	no	yes	NN training randomness uncertainty	which reduces the standard error to a level that is negligible relative to the systematic and statistical uncertainties involved with the data.
+35	d	inline	pos	no	no	NN training randomness uncertainty	However, we note that the effect of ensembling will vary with the specific unfolding problem and classifier choice.
+36	d	concl	pos	no	no	result requires optimized inputs	finding that with optimized inputs it was able to achieve similar χ2 goodness of fit with less bias and smaller uncertainties
+37	d	concl	neg	no	no	no strict chi2 improvement over IBU	Our results did not show strict improvement in terms of χ2 from using OmniFold-based approaches compared to a conventional unfolding method.
+38	c	concl	pos	no	no	imperfect neural network training	formation yielded generally worse results, which seems to stem from imperfect neural network training.
+39	d	concl	pos	no	no	dense network used for low-dim UniFold	while we used a dense neural network for all setups in this study for better comparability, in practice a simpler classifier architecture
+40	d	concl	pos	no	no	result requires optimized inputs	we thus emphasize the importance of using fake data studies to optimize the classifier architecture, training settings, and inputs.
+41	c	concl	pos	no	no	low statistics of neutrino dataset	Some of the issues we observed are partially caused by the generally low statistics associated with a neutrino dataset, which will continue to be a problem for real neutrino data.
+42	c	concl	pos	no	no	low statistics of neutrino dataset	Since OmniFold requires training with the actual data, improving the statistics is not a trivial matter of running more simulations
+43	c	concl	pos	no	no	low statistics of neutrino dataset	Other methods for data augmentation in unfolding, including pre-training [69, 70], would be useful to explore in future work.
+44	d	concl	pos	no	no	dataset lacks full particle information	the performance of the OmniFold method was likely also limited by the nature of the public dataset that we used.
+45	d	concl	pos	no	no	dataset lacks full particle information	For instance, the dataset only contained information about the primary muon and leading proton in each event
+46	d	concl	pos	no	no	dataset lacks full particle information	The public dataset that we used lacked the full stack of potentially useful information because it was not used in the conventional analysis
+47	d	concl	pos	no	no	simple network architecture choice	Our choice of a relatively simple neural network was also informed by the limited available information.
+48	c	concl	pos	no	no	simple network architecture choice	More sophisticated classifier architectures could be used for datasets dealing with larger and variable-length particle stacks [71], although the available statistics will have to be considered
+49	d	concl	pos	no	no	dataset lacks full particle information	Even with a limited dataset, it is able to deliver on its theoretical advantages
+50	c	concl	pos	no	no	generalization to other detectors untested	While we used a T2K ND280 dataset, the advantages should be similar for any detector.
+51	c	concl	pos	no	no	unresolved difficulties need further study	We have identified the difficulties encountered during this work, some of which may be particular to neutrino datasets and will require further study
+52	c	appendix	pos	no	no	flux normalization excluded from correlations	calculated using the unfolded results from 500 throws of the simulation that account for systematic and statistical uncertainties, but without accounting for flux normalization.
+53	c	appendix	pos	no	no	flux normalization excluded from correlations	Flux uncertainties would otherwise add a notable positive correlation to all bins in the result.
+54	d	caption	pos	yes	no	plot truncation of highest momentum bin	mean from those 500 unfolded throws. Note that the highest momentum bin in each case extends up to 30 GeV
+55	d	caption	pos	yes	no	plot truncation of highest momentum bin	mean of those 500 unfolded throws. Note that the highest momentum bin in each case extends up to 30 GeV
+56	d	caption	pos	yes	no	STV phase space proton threshold	Only events with a true proton momentum > 450 MeV are included for these comparisons.

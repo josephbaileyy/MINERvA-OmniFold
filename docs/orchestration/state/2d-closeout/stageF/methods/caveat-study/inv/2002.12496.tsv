@@ -1,0 +1,20 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	intro	pos	no	no	model dependence of unfolded result	which makes interpretation in the true parameter space less sensitive to model assumptions
+2	d	inline	neg	no	no	nuclear target region not used	with a region of nuclear targets (not used in this analysis), as well as an active tracking region
+3	c	inline	pos	no	no	dipole axial form factor assumed	The axial form factor is assumed to have a dipole form and an axial vector mass of
+4	a	inline	neg	no	no	2p2h tune development history	These modifications did not provide sufficient strength to reproduce prior MINERvA measurements of inclusive CC
+5	a	inline	pos	no	no	2p2h tune development history	The 2p2h model was enhanced using an empirical fit to the observed hadronic energy spectrum achieving a good description of [38] by construction
+6	c	inline	pos	no	no	tune agreement with low-recoil data by construction	The 2p2h model was enhanced using an empirical fit to the observed hadronic energy spectrum achieving a good description of [38] by construction
+7	d	inline	pos	yes	no	true DIS models reweight only partial component	three models of true deep inelastic scattering (W > 2.0 GeV, Q2 > 1.0 GeV2 ) are shown as partial model comparisons
+8	d	inline	pos	no	no	true DIS models reweight only partial component	These true DIS models are implemented by reweighting GENIE DIS events which have W and Q2 values within the range
+9	c	inline	neg	no	no	DIS models lack QED radiative corrections	The AMU and GENIE DIS models do not incorporate QED radiative corrections
+10	d	inline	pos	yes	no	muon angle below 20 degrees	event must have one negatively-charged muon with an angle of less than 20 degrees with respect to the beamline
+11	d	inline	pos	no	no	muon angle below 20 degrees	An angular cut is needed because the acceptance of the MINOS near detector (which is required to reconstruct muon charge and momentum) decreases rapidly
+12	c	inline	pos	no	partly	background predicted by simulation only	The small background contribution allows for an absolutely predicted background subtraction without introducing substantial model dependence.
+13	d	inline	pos	yes	no	muon angle below 20 degrees	there are 12×13 bins minus 12 bins excluded due to the 20 degree angle requirement
+14	d	inline	pos	yes	no	muon angle below 20 degrees	The empty region in the top left of the plot is due to the requirement that the muon must be within a 20 degree angle of the beamline
+15	c	syst	pos	no	no	unfolding-induced fluctuation in lowest p|| bin	effect in the lowest p|| bin in which the muon energy uncertainty fluctuates between high and low points
+16	c	syst	pos	no	no	unfolding-induced fluctuation in lowest p|| bin	This effect appears as a result of unfolding, with higher numbers of iterations producing highly anti-correlated bins.
+17	c	inline	pos	yes	partly	chi2 only partly captures normalization	The 7% flux uncertainty is largely uniform, so the χ2 calculated using the covaraince matrix partially accounts for such overall normalization effects.
+18	d	inline	pos	yes	no	true DIS models reweight only partial component	These comparisons use MnvGENIE v1 with weights derived from the DIS models applied to only the true DIS (W > 2.0 GeV, Q2 > 1.0 GeV) component
+19	d	concl	pos	no	no	true DIS models reweight only partial component	the suite of true DIS models used as partial model comparisons in this analysis were developed

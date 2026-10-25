@@ -1,0 +1,54 @@
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2504.06857.html
+  title  : [2504.06857] Machine Learning-Assisted Unfolding for Neutrino Cross-section Measurements with the OmniFold Technique
+  version: [Submitted on 9 Apr 2025 (v1), last revised 30 Jun 2025 (this version, v2)]
+  journal-ref row: Phys. Rev. D 112, 012008 (2025)
+  related-DOI row: https://doi.org/10.1103/sp1f-n9k2 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Comments', 'Journal reference', 'Related DOI', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2002.12496.html
+  title  : [2002.12496] Double-Differential Inclusive Charged-Current $ν_μ$ Cross Sections on Hydrocarbon in MINERvA at $\langle E_ν \rangle \sim$ 3.5 GeV
+  version: [Submitted on 28 Feb 2020 (v1), last revised 23 Jun 2020 (this version, v2)]
+  journal-ref row: Phys. Rev. D 101, 112007 (2020)
+  related-DOI row: https://doi.org/10.1103/PhysRevD.101.112007 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Comments', 'Journal reference', 'Related DOI', 'Report number', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2205.05084.html
+  title  : [2205.05084] Bias and Priors in Machine Learning Calibrations for High Energy Physics
+  version: [Submitted on 10 May 2022 (v1), last revised 31 Aug 2022 (this version, v2)]
+  journal-ref row: Phys. Rev. D 106, 036011 (2022)
+  related-DOI row: https://doi.org/10.1103/PhysRevD.106.036011 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Comments', 'Journal reference', 'Related DOI', 'Report number', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2301.03700.html
+  title  : [2301.03700] Multi-Differential Cross Section Measurements of Muon-Neutrino-Argon Quasielastic-like Reactions with the MicroBooNE Detector
+  version: [Submitted on 9 Jan 2023 (v1), last revised 7 Jul 2023 (this version, v4)]
+  journal-ref row: ABSENT
+  related-DOI row: https://doi.org/10.1103/PhysRevD.108.053002 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Related DOI', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2110.13372.html
+  title  : [2110.13372] Measurement of inclusive charged-current $ν_{\numu}$ scattering on hydrocarbon at {<Enu>} 6 GeV with low three-momentum transfer
+  version: [Submitted on 26 Oct 2021 (v1), last revised 25 Jul 2022 (this version, v2)]
+  journal-ref row: ABSENT
+  related-DOI row: https://doi.org/10.1103/PhysRevD.106.032001 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Related DOI', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2102.03346.html
+  title  : [2102.03346] First T2K measurement of transverse kinematic imbalance in the muon-neutrino charged-current single-$π^+$ production channel containing at least one proton
+  version: [Submitted on 5 Feb 2021]
+  journal-ref row: Phys. Rev. D 103, 112009 (2021)
+  related-DOI row: https://doi.org/10.1103/PhysRevD.103.112009 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Journal reference', 'Related DOI', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2101.03779.html
+  title  : [2101.03779] Improved constraints on neutrino mixing from the T2K experiment with $\mathbf{3.13\times10^{21}}$ protons on target
+  version: [Submitted on 11 Jan 2021 (v1), last revised 23 Feb 2021 (this version, v3)]
+  journal-ref row: Phys. Rev. D 103, 112008 (2021)
+  related-DOI row: https://doi.org/10.1103/PhysRevD.103.112008 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Comments', 'Journal reference', 'Related DOI', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/1612.05824.html
+  title  : [1612.05824] Design and Construction of the MicroBooNE Detector
+  version: [Submitted on 17 Dec 2016 (v1), last revised 17 Jan 2017 (this version, v2)]
+  journal-ref row: ABSENT
+  related-DOI row: https://doi.org/10.1088/1748-0221/12/02/P02017 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Related DOI', 'Subjects']
+FILE /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/caveat/abs/2007.06722.html
+  title  : [2007.06722] First results on ProtoDUNE-SP liquid argon time projection chamber performance from a beam test at the CERN Neutrino Platform
+  version: [Submitted on 13 Jul 2020 (v1), last revised 3 Jun 2021 (this version, v4)]
+  journal-ref row: JINST 15 (2020) P12004
+  related-DOI row: https://doi.org/10.1088/1748-0221/15/12/P12004 Focus to learn more DOI(s) linking to related resources
+  labels seen    : ['', 'Cite as', 'Comments', 'Journal reference', 'Related DOI', 'Report number', 'Subjects']

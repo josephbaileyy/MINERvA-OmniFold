@@ -1,0 +1,148 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	a	abstract	pos	no	no	analysis updates since previous result	Significant improvements have been made to the neutrino interaction model and far detector reconstruction.
+2	d	abstract	pos	no	no	reactor theta13 constraint and mass ordering conditions	including a constraint on sin2 θ13 from reactor data and assuming normal mass ordering
+3	c	abstract	pos	no	no	prior dependence of Bayesian results	with a uniform prior probability assumed in both cases
+4	c	inline	pos	no	no	three-flavor oscillation framework assumed	Following [21], and assuming three neutrinos masses
+5	a	intro	pos	yes	no	analysis updates since previous result	Compared to the previous update [25] this is a nominal increase of 1% in FHC mode
+6	a	intro	pos	no	no	analysis updates since previous result	our event selection has been refined since it was last described in detail [26].
+7	a	intro	pos	no	no	analysis updates since previous result	Event reconstruction is now based on an algorithm that matches the pattern of light observed in SK directly [27].
+8	a	intro	pos	yes	no	analysis updates since previous result	As a result, the fiducial volume can also be expanded, roughly equivalent to a 20% increase in statistics for the νe samples
+9	a	intro	pos	no	no	analysis updates since previous result	Since reported in [26], the dominant charged-current quasi-elastic (CCQE) models have been updated in various respects
+10	a	intro	pos	no	no	analysis updates since previous result	Modeling of (and uncertainties assigned to) subdominant processes have also been improved
+11	a	intro	pos	no	no	flux prediction updated hadron production data	Previous T2K flux estimates [30] used thin target hadron production data collected in the NA61/SHINE experiment in 2007
+12	a	intro	pos	no	no	flux prediction updated hadron production data	The work presented here uses an updated flux prediction based on higher statistics thin target hadron production data
+13	c	intro	pos	no	no	replica-target hadron production data not used	Future analyses will include NA61/SHINE hadron production measurements on a replica of the T2K neutrino production target.
+14	a	caption	pos	no	no	flux prediction updated hadron production data	the dashed black line in the top panel shows the fractional uncertainty from an earlier flux prediction
+15	c	intro	neg	no	partly	interaction model dependence of oscillation results	There are a number of models that agree with existing data equally well, and it is not always possible to parameterize the differences between these models.
+16	c	intro	pos	no	no	external solar parameter constraints	and ∆m221 ) [42] that T2K has little sensitivity to.
+17	d	intro	pos	no	no	reactor theta13 constraint and mass ordering conditions	are performed both with and without an external constraint on θ13 [43].
+18	d	inline	pos	no	no	ERecQE biased for non-CCQE events	a smeared but minimally-biased estimate of the neutrino energy for quasi-elastic neutrino scattering off bound nucleons (CCQE).
+19	c	inline	pos	no	partly	reliance on simulated interaction model	The procedure of inferring oscillation parameter values from observable quantities implicitly relies on an accurate understanding of the rate of background processes
+20	c	inline	pos	no	partly	interaction uncertainty model incompleteness	specific studies used to test resilience to known weaknesses of the model.
+21	a	inline	pos	no	no	analysis updates since previous result	Most updates to the interaction model since the previous analysis [26], are in the treatment of systematic uncertainties
+22	c	inline	pos	no	partly	Fermi gas nuclear model approximation	This rudimentary nuclear model is a simple approximation for the correct modeling of the initial nucleon momentum distribution and nucleon removal energy
+23	c	inline	pos	no	partly	resonant/non-resonant interference neglected	any interference between the resonant and non-resonant contributions is ignored.
+24	c	inline	pos	no	no	transition region modeling unsolved	The modeling of the so-called ’transition region’ between single pion production off a nucleon and shallow- and deep-inelastic scattering is an unsolved theoretical problem [54].
+25	c	inline	pos	no	no	no 2p2h for neutral current	With the exception of 2p2h interactions, these channels and effects are also implemented for neutral current
+26	a	syst	pos	no	no	RPA uncertainty parameterization revised	the previous implementation proved problematic because variations of different free parameters effected a similar response
+27	c	syst	pos	yes	no	BeRPA cutoff U fixed	The fifth, U , is kept fixed at 1.2 GeV2 .
+28	c	syst	pos	no	yes	2p2h model poorly constrained	experimental sensitivity to this exclusive channel is weak.
+29	c	syst	neg	no	partly	interaction uncertainty model incompleteness	It is strongly suspected that the described uncertainty model may not cover all differences between nature and the interaction model described above.
+30	c	syst	pos	no	partly	interaction uncertainty model incompleteness	test the robustness of the model and associated uncertainties to known missing features.
+31	c	syst	pos	no	partly	interaction uncertainty model incompleteness	In some cases the results of these studies are used to motivate additional uncertainties.
+32	c	syst	pos	no	partly	Fermi gas nuclear model approximation	used to model the nuclear initial state is a simple model that contains no correlations between initial momentum and Nucleon Removal Energy (nre).
+33	c	syst	neg	no	no	BSF simulated data lacks RPA	that the BSF model contains no ‘RPA’-like, low fourmomentum-transfer suppression effect.
+34	d	syst	pos	no	no	simulated data modifies only 1p1h	In constructing the simulated data, only the 1p1h cross section is modified.
+35	a	syst	pos	no	no	nre implementation revised	The implementation of the nre parameter was revised for this analysis.
+36	a	syst	pos	no	no	nre implementation revised	previous implementation relied on calculating the change in the predicted differential cross-section
+37	c	syst	pos	no	no	nre implemented as lepton momentum shift	in the neut implementation, variations of the binding energy effect only small changes in the final-state lepton angular distribution.
+38	c	syst	neg	no	partly	nucleon removal energy not covered by model	The uncertain nre parameter was not included as a free parameter in the near detector fit for this analysis.
+39	c	caption	neg	no	partly	interaction model dependence of oscillation results	If such variations are not accounted for in the uncertainty model, extracted oscillation parameters may be biased.
+40	c	syst	pos	no	yes	2p2h model poorly constrained	As previously mentioned, the modeling of 2p2h interactions is highly uncertain.
+41	c	syst	pos	no	partly	resonant/non-resonant interference neglected	interference between resonance and non-resonance channels is neglected.
+42	c	syst	pos	yes	partly	CC0pi data-MC discrepancy	The untuned ND280 CC 0π sample prediction underestimates the data by approximately 5%.
+43	c	caption	pos	no	partly	nucleon removal energy not covered by model	The shift towards lower momentum may be confused for a shift in
+44	c	syst	neg	yes	partly	Coulomb correction omitted from base model	The effect of the Coulomb potential was not included in the base model
+45	d	inline	pos	no	no	ND280 uses runs 2-6 only	Only ND280 data from runs 2–6 are used in this analysis, a smaller sample than for SK.
+46	a	inline	pos	no	no	ND280 selection unchanged from previous analysis	The event selection for FHC is unchanged since the analysis described in Ref. [26].
+47	a	inline	pos	no	no	ND280 selection unchanged from previous analysis	RHC beam mode is unchanged since the previous analysis [26].
+48	d	inline	neg	no	no	RHC samples not split by pion multiplicity	The events are not divided according to the number of observed pions, unlike the FHC selections
+49	a	inline	pos	no	no	SK reconstruction and selection updated	algorithm was initially used exclusively for NCπ 0 background suppression in the νe appearance channel
+50	a	inline	pos	no	no	SK reconstruction and selection updated	Updating the reconstruction tools prompted a re-optimization of the event selection criteria, including an expansion of the fiducial volume (FV).
+51	a	inline	pos	no	no	SK reconstruction and selection updated	reducing the wall threshold compared to previous T2K neutrino oscillation analyses
+52	d	caption	pos	no	no	reference oscillation parameters for studies	all the other values are set to the most probable value found in a previous T2K measurements [29].
+53	a	inline	pos	no	no	SK reconstruction and selection updated	This selection criterion is only available in the FiTQun reconstruction algorithm and is deployed for the first time in the current analysis.
+54	a	inline	pos	no	no	SK reconstruction and selection updated	is unchanged from previous analyses, where it was the only use of FiTQun reconstruction.
+55	d	inline	pos	yes	no	e-like samples restricted below 1250 MeV	e-like samples are required to have a reconstructed neutrino energy (Erec ) lower than 1250 MeV,
+56	c	inline	neg	no	no	simplified framework for cut optimization	SK samples do not constrain the nuisance parameters, and no correlations between these and the neutrino mixing parameters are taken into account.
+57	a	inline	pos	no	no	SK reconstruction and selection updated	This cut, which was not available with the reconstruction techniques used in previous T2K neutrino oscillation analyses
+58	a	inline	pos	no	no	SK reconstruction and selection updated	As the optimal cut line is very close to the one used in previous T2K neutrino oscillation analyses, this criterion is not updated
+59	a	inline	pos	yes	no	SK reconstruction and selection updated	compared to previous analyses, where the reduction is of a factor of 6.
+60	c	inline	pos	no	no	cut optimization assumes prior oscillation parameters	While this optimization is performed assuming the neutrino mixing parameters preferred by previous T2K results
+61	c	inline	neg	no	no	cut optimization assumes prior oscillation parameters	does not depend strongly on the exact value of the cut points and the experimental sensitivity is not expected
+62	a	inline	pos	yes	no	SK reconstruction and selection updated	In previous T2K neutrino oscillation analyses, events at SK were required to have wall ≥ 200 cm
+63	c	inline	pos	no	no	SK detector geometry simulation shortcomings	mitigation of the impact of known shortcomings of the simulated detector geometry are achieved with a wall threshold
+64	d	syst	pos	no	no	atmospheric control data period	data used in this analysis were collected between October 2010 and May 2015.
+65	c	syst	pos	no	no	simplified atmospheric fit model	this procedure are simpler than those used in oscillation analyses
+66	c	syst	pos	no	no	simplified atmospheric fit model	reduces the sensitivity of this fit to the neutrino oscillation parameters, which are fixed at the reference values given in Tab. III.
+67	d	inline	pos	yes	no	FV minimum from reconstruction performance	A minimum requirement of at least 50 cm in wall and 150 cm in towall is chosen based on MC studies
+68	a	inline	pos	yes	no	SK reconstruction and selection updated	The signal acceptance in the 1Re sample increases by 20%, with the same purity as in previous analyses
+69	c	inline	pos	no	yes	ND280 run subset extrapolated to SK runs	An additional uncertainty is included in the flux covariance to account for the fact that the near detector fit results for Runs 2–6 are extrapolated to the far detector
+70	c	inline	pos	no	yes	nue/numu cross-section differences	These account for effects which may potentially affect νe
+71	a	inline	pos	no	no	ND280 fit unchanged from previous analysis	The ND280 likelihood and fitting methods are unchanged since the analysis described in Ref. [26].
+72	a	inline	pos	no	no	ND280 fit unchanged from previous analysis	The only change to the fitting frameworks since the last analysis was the treatment of the Fermi surface momentum systematics
+73	a	inline	neg	no	no	ND280 fit unchanged from previous analysis	Previously, the covariance could not be calculated when the parameter was at its limit, causing the fit to not converge.
+74	c	inline	pos	no	no	pF likelihood mirrored beyond physical boundary	This meant the parameters were allowed to pass beyond their physical boundaries.
+75	c	inline	neg	no	no	parameters unconstrained by ND280	Those that are not constrained by the near detector fit are uncertainties that only apply to interactions with low statistics in the near detector.
+76	a	inline	pos	no	no	previous ND280 flux pull no longer present	In the last analysis, Ref. [26], the neutrino flux increased for all samples and species, but this effect is no longer present.
+77	c	inline	pos	no	no	ND280 data-MC discrepancy absorbed by parameters	The difference between the nominal simulation and data is now being absorbed by the movement of other parameters, in particular the BeRPA model.
+78	c	inline	pos	no	no	external solar parameter constraints	are either kept fixed to their nominal values or have a Gaussian constraint applied, depending on the analysis considered.
+79	d	inline	pos	no	no	reactor theta13 constraint and mass ordering conditions	To obtain increased sensitivity to the other oscillation parameters, the reactor average
+80	c	inline	pos	no	no	Gaussian approximation of ND280 constraint	The two methods are expected to lead to different results for the far detector fit if the constraint on the systematic parameters
+81	c	syst	neg	no	partly	interaction model dependence of oscillation results	There is no set of models that describe the world’s neutrino data
+82	c	syst	pos	no	partly	interaction model dependence of oscillation results	The choice of interaction model therefore affects the neutrino energy distribution that experiments infer from their observed neutrino events.
+83	d	syst	pos	no	no	simulated data studies at limited true parameter points	were also studied, but showed no significant difference to the results presented here.
+84	c	syst	pos	yes	partly	simulated data bias threshold for added uncertainty	If a simulated data bias is greater than 50% of the systematic uncertainty on a parameter then an additional uncertainty is added
+85	c	syst	pos	no	yes	nucleon removal energy not covered by model	can be measured by electron scattering experiments, but is not known perfectly.
+86	c	syst	pos	no	partly	Fermi gas nuclear model approximation	In addition, the RFG is a very simple model of the nuclear structure.
+87	c	syst	neg	no	yes	nucleon removal energy not covered by model	The T2K oscillation analysis does not have a parameter to account for the NRE uncertainty directly in the fit.
+88	c	syst	neg	no	yes	nucleon removal energy not covered by model	There are no parameters in the T2K cross-section model that change the lepton
+89	c	syst	pos	no	yes	nucleon removal energy not covered by model	The near detector prediction is closer to the simulated SK data than the nominal MC simulation, but does not match well below the oscillation dip.
+90	c	syst	neg	no	yes	nucleon removal energy not covered by model	the T2K cross-section model parameterization cannot account for changes to the NRE.
+91	c	syst	pos	no	yes	nucleon removal energy not covered by model	The near detector fit mis-attributes the NRE change to the flux and 2p2h model parameters.
+92	d	syst	neg	no	yes	effective NRE parameter not physical	that it does not provide a measurement of the true NRE, but an ‘effective NRE’ taking into account both of these effects.
+93	c	syst	pos	no	yes	residual dm232 bias from simulated data	There is some residual difference between the contours, particularly in the
+94	c	syst	pos	no	yes	Gaussian dm2 likelihood assumed for smearing	function of ∆m232 has a Gaussian distribution.
+95	c	syst	pos	no	no	simulated data bias threshold for added uncertainty	was insignificant compared to existing systematic uncertainty on the parameter and so no additional uncertainty was introduced.
+96	c	syst	pos	yes	yes	residual dm232 bias from simulated data	The quadrature sum of the observed
+97	d	caption	neg	no	no	event-rate uncertainty table excludes oscillation parameters	The final row, ‘All Systematics’, does not include the effects of any oscillation parameters.
+98	c	inline	pos	no	no	frequentist properties of Bayesian methods partly tested	test the frequentist properties of our Bayesian methods when possible.
+99	c	inline	pos	no	no	approximate coverage of constant dchi2 intervals	confidence intervals (with approximate coverage based on the constant ∆χ2 method in most cases
+100	d	inline	pos	no	no	results shown from one analysis framework	only the results obtained with analysis A are shown in this section, unless otherwise indicated.
+101	c	inline	pos	no	no	differences between analysis frameworks	The largest differences are observed for analysis C, in particular for the atmospheric
+102	c	inline	pos	no	no	approximate coverage of constant dchi2 intervals	holds [94], but can result in poor coverage when this is not the case.
+103	c	inline	neg	no	no	approximate coverage of constant dchi2 intervals	In particular, it is not expected to give proper coverage for δCP
+104	d	inline	pos	no	no	Feldman-Cousins only for 1D deltaCP	This method is very CPU-intensive, so it is only used for the one-dimensional δCP interval.
+105	c	inline	pos	no	no	approximate coverage of constant dchi2 intervals	from the values expected for a parabolic log likelihood
+106	c	inline	pos	no	partly	FC critical value MC statistics	The finite number of pseudo-experiments used to compute the critical values introduces a Monte Carlo
+107	c	inline	neg	no	partly	FC critical value MC statistics	this level would be computationally intractable, so additional care is taken to ensure the validity of the 3σ
+108	c	inline	pos	no	no	FC critical value interpolation	A second source of error comes from the interpolation of the critical ∆χ2 between the points where it was computed.
+109	c	inline	pos	no	no	3sigma deltaCP=0 exclusion not robust to model	the boundary of the 3σ interval is so close to δCP = 0 that this point can move in and out of the 3σ interval due to changes in the model.
+110	c	inline	pos	no	no	prior dependence of Bayesian results	this choice affects the size of the intervals obtained, but does not change the main conclusions of the analysis.
+111	d	inline	pos	no	no	prior dependence of Bayesian results	Most of the results in this section use a prior probability uniform in δCP
+112	d	inline	pos	no	no	marginal vs profile likelihood	is expected to have some differences with the profile likelihood commonly used in the neutrino community.
+113	c	limits	pos	no	no	deltaCP constraint stronger than expected	The observed constraint on δCP is considerably stronger than that expected from sensitivity studies
+114	d	limits	pos	no	no	pseudo-experiment probabilities within model	was evaluated assuming normal ordering and a true value of δCP of −π/2.
+115	b	limits	pos	no	no	pseudo-experiment truth point chosen from data agreement	This case was chosen as it gave the best agreement between data and predictions in Tab. XI.
+116	d	limits	neg	no	no	pseudo-experiment probabilities within model	Overall, a 2σ exclusion of CP conservation is not unlikely according to the model used in this analysis.
+117	d	caption	pos	no	no	pseudo-experiment probabilities within model	Pseudo data sets were generated assuming true normal ordering and a value of
+118	c	limits	pos	no	no	deltaCP result driven by FHC nue CC1pi excess	meaning that the conservation of CP symmetry is no longer excluded with 2σ significance in
+119	c	limits	pos	no	no	trial factor for sample excess	analysis, a trial factor should be taken into account.
+120	c	limits	pos	no	no	simulated data studies insensitive to CC1pi sample	sensitivity compared to the single ring e-like samples, and therefore do not have a significant effect on the simulated data studies.
+121	b	limits	pos	no	no	post hoc CC1pi model checks	given the large excess of data events in this sample, and
+122	d	limits	pos	no	no	post hoc CC1pi model checks	The additional studies were done in the context of the data fit and not the MC based sensitivity studies.
+123	c	limits	neg	no	partly	ND280 pion momentum data-MC discrepancy	the predicted pion momentum spectrum did not reproduce the data for the near detector FHC CC
+124	c	limits	pos	yes	partly	ND280 pion momentum data-MC discrepancy	Studies showed that a discrepancy of the size observed at the near detector could lead to a 10% increase
+125	c	limits	pos	no	partly	DIS hadron multiplicity uncertainty	The uncertainties on the number of hadrons produced in those interactions produce an uncertainty on the fraction that will enter
+126	c	limits	pos	no	no	3sigma deltaCP=0 exclusion not robust to model	It is large enough however to change whether δCP = 0 is excluded at the 3σ confidence level or not in the results of analyses A and C.
+127	d	inline	pos	no	no	reactor theta13 constraint and mass ordering conditions	Results shown in this section use the constraint from reactor experiments on sin2 2θ13 unless otherwise stated.
+128	c	inline	pos	no	no	differences between analysis frameworks	As before, the largest difference is seen between Analysis C on one side and A and B on the other
+129	c	inline	pos	no	no	prior dependence of Bayesian results	The posterior probabilities above assumed equal prior probabilities for the different hypothesis.
+130	c	inline	pos	no	no	prior dependence of Bayesian results	the choice of the prior probability has a significant effect on the obtained posterior probabilities.
+131	c	inline	pos	no	no	prior dependence of Bayesian results	is the prior probability, taken to be equal for all the hypotheses.
+132	d	inline	pos	no	no	MO frequentist properties depend on true deltaCP	It was found that this fraction depended strongly on the true value of δCP assumed.
+133	d	inline	pos	no	no	MO frequentist properties depend on true deltaCP	nevertheless has reasonable frequentist properties in this case.
+134	d	inline	pos	no	no	MO frequentist properties depend on true deltaCP	One can therefore only hope to exclude with non-negligible statistical significance the inverted (normal) ordering in this case.
+135	d	inline	neg	no	no	no claim of inverted ordering exclusion	it would be misleading to claim exclusion of the inverted ordering based solely on the low p-value obtained for this hypothesis.
+136	d	caption	pos	no	no	prior dependence of Bayesian results	corresponds to the equal prior probability case used for the main result.
+137	d	caption	pos	no	no	reference oscillation parameters for studies	The uncertainty regions are created assuming that
+138	c	inline	pos	no	no	differences between analysis frameworks	minor differences between them were determined to result from the difference in kinematic variables used to bin the
+139	d	inline	pos	no	no	limited alternative models in robustness check	Three simulated data sets are studied: the Kabirnezhad single pion production model, the Nieves LFG model
+140	a	concl	pos	no	no	analysis updates since previous result	The neutrino interaction model used for this work is improved relative to Ref. [26]
+141	c	concl	pos	no	yes	nucleon removal energy not covered by model	the nucleon removal energy uncertainty can have a significant effect on the allowed regions for
+142	c	concl	pos	no	yes	residual dm232 bias from simulated data	This led to the addition of new systematic uncertainties to the SK samples and oscillation contours to account for these effects.
+143	c	concl	pos	no	partly	interaction model dependence of oscillation results	changes of a few percent in the reconstructed neutrino energy can have significant effects on the oscillation parameters
+144	c	concl	pos	no	no	statistically limited measurement	The T2K oscillation parameter measurements are, however, limited by statistics.
+145	c	concl	pos	no	no	complex event topologies not included	More complex event topologies will be included in the analyses at both ND280 and Super-Kamiokande
+146	c	concl	pos	no	no	parameter degeneracies in single experiment	will lift the degeneracies between oscillation parameters present in a single experiment.
+147	a	concl	pos	yes	no	SK reconstruction and selection updated	This analysis uses a new event selection at SK to increase the effective fiducial volume of the detector, resulting in a 20%
