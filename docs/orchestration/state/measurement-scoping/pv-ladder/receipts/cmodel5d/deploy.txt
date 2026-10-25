@@ -1,0 +1,6 @@
+2026-10-24T21:44:19Z deploy start on login12
+Cloning into '/pscratch/sd/j/josephrb/cmodel5d-20261024/repo'...
+HEAD is now at dfcbb2c6 [pv-ladder] Add the C_model,5D builder and its tests (not run)
+HEAD dfcbb2c6c1dcb3211b7c6c8c364a6c1f9f171a47
+status porcelain lines: 0
+aaa81575b211f50e007fa75d318fd8d4f48bfb98ac5ae62b398dbf33db37d4ca  /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/nd-unfolding/pv-ladder/build_cmodel5d.py

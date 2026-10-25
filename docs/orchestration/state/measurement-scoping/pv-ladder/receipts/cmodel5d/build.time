@@ -1,0 +1,23 @@
+	Command being timed: "python build_cmodel5d.py --products /pscratch/sd/j/josephrb/pv-ladder-20261024/products --p5 /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz --out-json /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.json --out-npz /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz"
+	User time (seconds): 6.97
+	System time (seconds): 0.11
+	Percent of CPU this job got: 1660%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.42
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 40960
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 11875
+	Voluntary context switches: 517
+	Involuntary context switches: 895
+	Swaps: 0
+	File system inputs: 1544
+	File system outputs: 56
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

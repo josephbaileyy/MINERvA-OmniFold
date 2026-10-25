@@ -1,0 +1,7 @@
+build_cmodel5d: /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/nd-unfolding/pv-ladder/build_cmodel5d.py (inside deploy)
+build_cmodel: /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/2d-unfolding/pv2d/cmodel/build_cmodel.py (inside deploy)
+pv2d_lib: /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/2d-unfolding/pv2d/pv2d_lib.py (inside deploy)
+pvl_analyze: /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/nd-unfolding/pv-ladder/pvl_analyze.py (inside deploy)
+pvl_lib: /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/nd-unfolding/pv-ladder/pvl_lib.py (inside deploy)
+s5p_stage1_inspect: /pscratch/sd/j/josephrb/cmodel5d-20261024/repo/nd-unfolding/s5p_stage1_inspect.py (inside deploy)
+MODULES OK
