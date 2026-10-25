@@ -137,3 +137,7 @@ in with PR #341 (`c0889e53`), after the deploy pin `d5617470`, so it is not in t
   It makes no claim and draws no conclusion about publishability. Open a PR to the director.
 
 The jobs and the copy may start once this record is on `main`.
+
+**Amended** by [`S1-BINDING-AMENDMENT-1.md`](S1-BINDING-AMENDMENT-1.md) (2026-10-25). After the assembly's import STOP, the
+assembly runs at the new pin `3f545564`, where `s1_assemble.py` has sha256 `b157250a…`. §1's pin and digest stay as the record of
+what was first bound.
