@@ -1,0 +1,19 @@
+[P] 2026-10-25T21:59:24Z start host=login37
+[P] 2026-10-25T21:59:25Z inventory verified: 80 files
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[P] 2026-10-25T21:59:25Z tar 14e2957facea180051cd086b11ad8a7075a50385e3909ede95ac56db3aeb0ead  /pscratch/sd/j/josephrb/fd-f0-20261025/preserve/stage0-inputs.tar bytes=14888960
+mkdir: /home/j/josephrb/mnv-5d-fd-f4-20261025
+put  '/pscratch/sd/j/josephrb/fd-f0-20261025/preserve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-fd-f4-20261025/stage0-inputs.tar' ( 14888960 bytes, 613729.6 KBS (cos=4))
+224c030da40d64e95d4307bdea3bf22f (md5) /home/j/josephrb/mnv-5d-fd-f4-20261025/stage0-inputs.tar
+put  '/pscratch/sd/j/josephrb/fd-f0-20261025/preserve/stage0-inputs.tar.sha256' : '/home/j/josephrb/mnv-5d-fd-f4-20261025/stage0-inputs.tar.sha256' ( 132 bytes, 33.9 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/fd-f0-20261025/deploy/7fad6e83/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/F4-PRESERVE-INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-fd-f4-20261025/INVENTORY.sha256' ( 12640 bytes, 3594.1 KBS (cos=4))
+/home/j/josephrb/mnv-5d-fd-f4-20261025/stage0-inputs.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-fd-f4-20261025:
+-rw-r-----    1 josephrb  josephrb       12640 Oct 25 14:59 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb    14888960 Oct 25 14:59 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 25 14:59 stage0-inputs.tar.sha256
+get  '/pscratch/sd/j/josephrb/fd-f0-20261025/preserve/retrieve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-fd-f4-20261025/stage0-inputs.tar' (2026/10/25 14:59:26 14888960 bytes, 317171.4 KBS )
+[P] 2026-10-25T21:59:29Z PASS: HPSS copy verified by hashverify and by retrieval (14e2957facea180051cd086b11ad8a7075a50385e3909ede95ac56db3aeb0ead)
+rc=0

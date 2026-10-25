@@ -1,0 +1,3 @@
+step	host	start_utc	end_utc	rc	wall_s	slurm_job	node_h	note
+S2.2 HPSS copy (stage0_preserve.sh)	login37	2026-10-25T21:59:24Z	2026-10-25T21:59:29Z	0	5	none	0	PASS: hashverify and retrieval, tar 14e2957f..., 14,888,960 B, /home/j/josephrb/mnv-5d-fd-f4-20261025
+S2.3 re-grade (fd_f0_regrade.py)	login37	2026-10-25T21:59:49Z	2026-10-25T22:00:33Z	0	44	none	0	controls 0-6 and 8 PASS; control 7 FAIL (row 6 descriptive); readout 6e7d718b...
