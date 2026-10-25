@@ -419,7 +419,8 @@ run outputs, **[C]** read from code, **[I]** inference.
 | step-2 classifier | 65,698,206 | 65,698,206 |
 
 **What distinguishes 2D's nonzero C08 from 5D's zero.** On the 5D side this is recorded. For 2D the causal step is
-[I], because no 2D full-binning run exists.
+[I], because no 2D full-binning run is recorded.
+Search: `git grep -E 'bin_construct_sample_cnt|subsample_for_bin|full_binning|full-binning'` over `2d-unfolding/`, `unbinned_unfolding/` and `docs/orchestration/state/2d-closeout/` @ dcac48e3. It gives 3 hits, none a 2D run: `RE1-REPORT.md:28` is the 5D P5 product, `JIT1-SPEC.md:27` is a declared jitter arm, and `M-TRAINING-DETAILS.md:29` is the 5D deterministic variant. Cluster runs that were not recorded are not covered.
 - **2D:** the 200,000-row sample that sets each fit's histogram bin edges is drawn with a seed-dependent
   `random_state` in all four fits. That is 0.3–4.2 % of the rows. With bagging, feature subsampling and `extra_trees`
   off, this sample is the seed's only consumer **[I, consistent with D2 and the s5c P1 record below]**. RE-2 measured
@@ -478,7 +479,8 @@ in two files.
   - So this estimator's seed main effect is zero **by construction, not by chance**. The evidence is recorded: the
     settings are in every product, s5c P1 isolated full binning on 5D, and D2 reproduces it.
   - 2D's `a-refined-400-31` samples its bin rows by seed. That this is **why** its C08 is nonzero is [I]: it is
-    consistent with D2 and the s5c P1 record, but no 2D full-binning run exists.
+    consistent with D2 and the s5c P1 record, but no 2D full-binning run is recorded (search in D3).
+    Search: `git grep -E 'bin_construct_sample_cnt|subsample_for_bin|full_binning|full-binning'` over `2d-unfolding/`, `unbinned_unfolding/` and `docs/orchestration/state/2d-closeout/` @ dcac48e3. It gives 3 hits, none a 2D run: `RE1-REPORT.md:28` is the 5D P5 product, `JIT1-SPEC.md:27` is a declared jitter arm, and `M-TRAINING-DETAILS.md:29` is the 5D deterministic variant. Cluster runs that were not recorded are not covered.
   - D1 shows the seed reaches LightGBM, and D2 shows the fit is invariant to it at these settings.
   - The director accepted this explanation by correspondence, pending its read of this report.
 - **What this means is not decided here.** That covers choice 9 of the declaration, the readout's C_e and C_total, and
