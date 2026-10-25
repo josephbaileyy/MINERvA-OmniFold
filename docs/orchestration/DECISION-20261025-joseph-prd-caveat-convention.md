@@ -54,7 +54,6 @@ sha256 of the text plus a final newline begins `5f940c532b84fb7e`.
    | (c) an untested property or an effect that is not included | stated once, as a plain declarative, quantified where a number exists | stated where the method is described, and in the note's limitations |
    | (d) scope | stated once, in the abstract and Sec. I (R1) | stated once, in the introduction |
    | (e) process vocabulary | removed | removed |
-
    <!-- absence-ok: names categories of caveat; not a claim that any result is absent from the repository -->
 4. **The guardrails are unchanged.**
    - A qualifier stays where leaving it out would make a printed sentence false as read.
