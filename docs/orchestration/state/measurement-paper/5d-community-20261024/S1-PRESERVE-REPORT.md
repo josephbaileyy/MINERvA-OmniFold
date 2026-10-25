@@ -33,7 +33,7 @@ approval in `DECISION-20261024-joseph-approve-integration-wording-s1-compute-pre
     still read the inventory from `$D`.
   - The measurement session started the copy first and flagged the path to the director in its first status
     message, after the launch. The director accepted the repair afterwards and wrote the erratum. No prior
-    acceptance was given.
+    acceptance was given. This sequence comes from the cross-session correspondence and is not receipted here.
   - The bytes the script read are the bound inventory: sha256 `cde96ca7…` is the binding's own prefix.
 - **Arguments:** work dir `$B/preserve`; HPSS dir `/home/j/josephrb/mnv-5d-s1-inputs-20261024`.
 - **How it was started:** detached on login12, pid 2207025.
@@ -50,7 +50,7 @@ approval in `DECISION-20261024-joseph-approve-integration-wording-s1-compute-pre
 **Overlap with S1 (§3 condition 3).**
 - The copy ran beside the S1 pilot, job 60232432, which ran 00:47:54–00:59:56 UTC.
 - S1's production and seed jobs were submitted at 01:01:57 UTC and were still PENDING at 01:18 UTC (`checks.txt`,
-  sacct in PDT).
+  sacct in PDT). The sacct rows carry no header; their columns are JobID, JobName, State, Submit, Start and End.
 - **No inventoried file was written during the copy.** At 01:18:36 UTC the newest mtime and the newest ctime over all
   734 paths were both 2026-09-27T15:27:48Z (`checks.txt`). That is before the copy began. This also covers the
   interval between the hash re-verify (00:41:56) and the tar, which the script does not re-check.
