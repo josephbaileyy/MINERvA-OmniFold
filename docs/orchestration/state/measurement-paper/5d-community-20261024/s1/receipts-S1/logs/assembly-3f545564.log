@@ -1,0 +1,7 @@
+2026-10-25T05:45:39Z
+login12
+D=/pscratch/sd/j/josephrb/s1-20261024/deploy/3f545564 HEAD=3f5455648ff9b2c8ce85315f8f95458d87ea5673
+ls: cannot access '/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.*': No such file or directory
+{"wrote": ["/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz", "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.json"], "sha256": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4", "blocks": 46}
+assembly rc=0
+2026-10-25T05:45:43Z

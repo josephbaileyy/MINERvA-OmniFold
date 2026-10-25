@@ -1,0 +1,17 @@
+deploy 2026-10-25T00:34:02Z host=login12
+HEAD d5617470a7d08215e1da5622722d348da6a148d1
+porcelain_lines 0
+5ebe1a8ad68ca9de3343062e1835c899ba25c0f1c7e2d22156284567c00cb247  nd-unfolding/s1_assemble.py
+bfc8986e264eb5d0274c2d988862cd2544aec4e6f85d045336e1f381b1495f4f  nd-unfolding/s1_controls.py
+a4bb69826f597d0e0a2cef88933fff1d908acca32932979c4df2d506c413a9b7  nd-unfolding/tests/test_s1_assemble.py
+6db31a3411771c00a67dcf3ccb56c20a9622209791449e76a0be22fbfff3ee0d  /pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/tasks-pilot.tsv
+bb32d9180cdf64cef22ffa378591d86af7a65abaab263a3c9ab4840acee75896  /pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/tasks-prod.tsv
+4425a91e17b5480658691705e4e1a2194c69049fc48868da7ed035d8a09c2a4c  /pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/tasks-seed.tsv
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3  docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh
+27ccc04a8c14d640efe1657b3d04b657f61a682db381c105daee82f901ea5d68  docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/stage0_preserve.sh
+f1c7288c7f2740432a88397c39f6bd1f78cdc69f5b2c4ae8e34845978c6fa821  docs/orchestration/state/measurement-paper/5d-community-20261024/S1-DECLARATION.md
+-rwxrwx--- 1 josephrb josephrb 3236 Oct 24 17:33 nd-unfolding/s5c_array.sh
+tests rc=0
+removed /pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/nd-unfolding/__pycache__ (13 pyc written by G2/G1 at 00:34:27-32Z without -B) 2026-10-25T01:01:56Z
+deploy recheck clean 2026-10-25T01:01:56Z

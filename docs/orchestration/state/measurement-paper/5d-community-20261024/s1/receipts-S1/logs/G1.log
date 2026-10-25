@@ -1,0 +1,17 @@
+login12
+2026-10-25T00:34:32Z
+PASS denominator_GEANT_Neutron_0_vs_dump
+PASS denominator_GEANT_Neutron_0_vs_npz_cv
+PASS denominator_GEANT_Neutron_1_vs_dump
+PASS denominator_GEANT_Neutron_1_vs_npz_cv
+PASS denominator_GEANT_Pion_0_vs_dump
+PASS denominator_GEANT_Pion_0_vs_npz_cv
+PASS denominator_GEANT_Pion_1_vs_dump
+PASS denominator_GEANT_Pion_1_vs_npz_cv
+PASS denominator_GEANT_Proton_0_vs_dump
+PASS denominator_GEANT_Proton_0_vs_npz_cv
+PASS denominator_GEANT_Proton_1_vs_dump
+PASS denominator_GEANT_Proton_1_vs_npz_cv
+{"GEANT_Neutron_0_vs_dump": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Neutron_0_vs_npz_cv": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Neutron_1_vs_dump": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Neutron_1_vs_npz_cv": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Pion_0_vs_dump": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Pion_0_vs_npz_cv": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Pion_1_vs_dump": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Pion_1_vs_npz_cv": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Proton_0_vs_dump": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Proton_0_vs_npz_cv": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Proton_1_vs_dump": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}, "GEANT_Proton_1_vs_npz_cv": {"same_support": true, "total_rel_dev": 3.546274385257675e-12, "max_cell_rel_dev": 0.0004097796601552073, "cells_above_1e-9": 5066}}
+ALL PASS denominator
+G1 rc=0

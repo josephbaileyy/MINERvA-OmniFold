@@ -1,0 +1,48 @@
+2026-10-25T05:50:11Z
+login12
+24284078b1eb89216faf083d74ec9a4c361021a4c0876f967ce4120727d1d1ae  /pscratch/sd/j/josephrb/s1-20261024/diag/diag_seed.py
+deploy HEAD d5617470a7d08215e1da5622722d348da6a148d1
+Python 3.11.14
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+module files: {'omnifold_nn_core': '/pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/nd-unfolding/omnifold_nn_core.py', 's5c_unfold': '/pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/nd-unfolding/s5c_unfold.py', 's5n_pseudo': '/pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470/nd-unfolding/s5n_pseudo.py'}
+lightgbm 4.6.0
+D1 config_params('deterministic') = {'bin_construct_sample_cnt': 2147483647, 'deterministic': True, 'force_row_wise': True, 'num_threads': 8}
+D1 B0 clf1 seed 42: get_params {'random_state': 42, 'subsample': 1.0, 'subsample_freq': 0, 'colsample_bytree': 1.0, 'deterministic': True, 'bin_construct_sample_cnt': 2147483647, 'force_row_wise': True, 'num_threads': 8}
+D1 B0 clf1 seed 42: effective {'num_iterations': '100', 'num_leaves': '8', 'num_threads': '8', 'seed': '42', 'deterministic': '1', 'force_row_wise': '1', 'bagging_fraction': '1', 'pos_bagging_fraction': '1', 'neg_bagging_fraction': '1', 'bagging_freq': '0', 'bagging_seed': '400', 'feature_fraction': '1', 'feature_fraction_bynode': '1', 'feature_fraction_seed': '30056', 'extra_trees': '0', 'extra_seed': '12879', 'drop_seed': '17869', 'bin_construct_sample_cnt': '2147483647', 'data_random_seed': '175', 'objective_seed': '16083'}
+D1 refinement seed 42: params {'random_state': 45, 'deterministic': True, 'bin_construct_sample_cnt': 2147483647, 'force_row_wise': True, 'num_threads': 8}
+D1 refinement seed 42: effective {'num_iterations': '100', 'num_leaves': '8', 'num_threads': '8', 'seed': '45', 'deterministic': '1', 'force_row_wise': '1', 'bagging_fraction': '1', 'pos_bagging_fraction': '1', 'neg_bagging_fraction': '1', 'bagging_freq': '0', 'bagging_seed': '32645', 'feature_fraction': '1', 'feature_fraction_bynode': '1', 'feature_fraction_seed': '3942', 'extra_trees': '0', 'extra_seed': '24660', 'drop_seed': '5926', 'bin_construct_sample_cnt': '2147483647', 'data_random_seed': '185', 'objective_seed': '14259'}
+D1 B0 clf1 seed 45: get_params {'random_state': 45, 'subsample': 1.0, 'subsample_freq': 0, 'colsample_bytree': 1.0, 'deterministic': True, 'bin_construct_sample_cnt': 2147483647, 'force_row_wise': True, 'num_threads': 8}
+D1 B0 clf1 seed 45: effective {'num_iterations': '100', 'num_leaves': '8', 'num_threads': '8', 'seed': '45', 'deterministic': '1', 'force_row_wise': '1', 'bagging_fraction': '1', 'pos_bagging_fraction': '1', 'neg_bagging_fraction': '1', 'bagging_freq': '0', 'bagging_seed': '32645', 'feature_fraction': '1', 'feature_fraction_bynode': '1', 'feature_fraction_seed': '3942', 'extra_trees': '0', 'extra_seed': '24660', 'drop_seed': '5926', 'bin_construct_sample_cnt': '2147483647', 'data_random_seed': '185', 'objective_seed': '14259'}
+D1 refinement seed 45: params {'random_state': 48, 'deterministic': True, 'bin_construct_sample_cnt': 2147483647, 'force_row_wise': True, 'num_threads': 8}
+D1 refinement seed 45: effective {'num_iterations': '100', 'num_leaves': '8', 'num_threads': '8', 'seed': '48', 'deterministic': '1', 'force_row_wise': '1', 'bagging_fraction': '1', 'pos_bagging_fraction': '1', 'neg_bagging_fraction': '1', 'bagging_freq': '0', 'bagging_seed': '32123', 'feature_fraction': '1', 'feature_fraction_bynode': '1', 'feature_fraction_seed': '10596', 'extra_trees': '0', 'extra_seed': '3672', 'drop_seed': '26750', 'bin_construct_sample_cnt': '2147483647', 'data_random_seed': '195', 'objective_seed': '12434'}
+{"D2": "B0 production deterministic (as S1)", "seeds": [42, 45], "bitwise_equal": true, "max_abs_diff_synthetic_prob": 0.0}
+{"D2": "B0 deterministic + subsample 0.8, subsample_freq 1", "seeds": [42, 45], "bitwise_equal": false, "max_abs_diff_synthetic_prob": 0.10997603830126912}
+{"D2": "B0 deterministic but bin_construct_sample_cnt default 200000 (400000 rows)", "seeds": [42, 45], "bitwise_equal": false, "max_abs_diff_synthetic_prob": 0.11046770589622879}
+{"D2": "refinement production (as S1)", "seeds": [42, 45], "bitwise_equal": true, "max_abs_diff_synthetic_prob": 0.0}
+{"D2": "refinement + subsample 0.8, subsample_freq 1", "seeds": [42, 45], "bitwise_equal": false, "max_abs_diff_synthetic_prob": 0.09817284341583254}
+{"D2": "refinement with bin_construct_sample_cnt 200000 (400000 rows)", "seeds": [42, 45], "bitwise_equal": false, "max_abs_diff_synthetic_prob": 0.09726038127142922}
+rc=0
+2026-10-25T05:50:34Z

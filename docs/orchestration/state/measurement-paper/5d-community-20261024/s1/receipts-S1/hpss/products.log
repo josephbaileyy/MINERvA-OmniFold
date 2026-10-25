@@ -1,0 +1,20 @@
+[H] 2026-10-25T05:18:29Z start host=login12
+[H] 2026-10-25T05:18:29Z inventory: 376 files, 25812762 bytes
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[H] tar members: 376
+[H] 2026-10-25T05:18:29Z tar 9618100757472daee5ecc0f5ffd6374d17c1922a22493127d3b4ccccecb6cc61  /pscratch/sd/j/josephrb/s1-20261024/products-hpss/s1-products.tar bytes=26470400
+mkdir: /home/j/josephrb/mnv-5d-s1-products-20261024
+put  '/pscratch/sd/j/josephrb/s1-20261024/products-hpss/s1-products.tar' : '/home/j/josephrb/mnv-5d-s1-products-20261024/s1-products.tar' ( 26470400 bytes, 630773.1 KBS (cos=4))
+d444883e1e35f9cf39ebc7748d7b4ed4 (md5) /home/j/josephrb/mnv-5d-s1-products-20261024/s1-products.tar
+put  '/pscratch/sd/j/josephrb/s1-20261024/products-hpss/s1-products.tar.sha256' : '/home/j/josephrb/mnv-5d-s1-products-20261024/s1-products.tar.sha256' ( 132 bytes, 52.6 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/s1-20261024/products-hpss/PRODUCTS-INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-s1-products-20261024/PRODUCTS-INVENTORY.sha256' ( 48477 bytes, 19723.3 KBS (cos=4))
+/home/j/josephrb/mnv-5d-s1-products-20261024/s1-products.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-s1-products-20261024:
+-rw-r-----    1 josephrb  josephrb       48477 Oct 24 22:18 PRODUCTS-INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb    26470400 Oct 24 22:18 s1-products.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 24 22:18 s1-products.tar.sha256
+get  '/pscratch/sd/j/josephrb/s1-20261024/products-hpss/retrieve/s1-products.tar' : '/home/j/josephrb/mnv-5d-s1-products-20261024/s1-products.tar' (2026/10/24 22:18:30 26470400 bytes, 611141.8 KBS )
+[H] retrieved sha256 9618100757472daee5ecc0f5ffd6374d17c1922a22493127d3b4ccccecb6cc61
+[H] 2026-10-25T05:18:33Z PASS: HPSS copy verified by hashverify and by retrieval (9618100757472daee5ecc0f5ffd6374d17c1922a22493127d3b4ccccecb6cc61)

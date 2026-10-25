@@ -1,0 +1,14 @@
+deploy 2026-10-25T05:44:56Z host=login12
+HEAD 3f5455648ff9b2c8ce85315f8f95458d87ea5673
+porcelain_ignored_lines 0
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+bfc8986e264eb5d0274c2d988862cd2544aec4e6f85d045336e1f381b1495f4f  nd-unfolding/s1_controls.py
+a4bb69826f597d0e0a2cef88933fff1d908acca32932979c4df2d506c413a9b7  nd-unfolding/tests/test_s1_assemble.py
+d65eabc9fc32462a7476f863dd12d1746b1331bce62f2f016c19e4d0a5eb1864  nd-unfolding/tests/test_s1_scripts_isolated.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd-unfolding/s5p_stage1_inspect.py
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+sha256sum: docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING-AMENDMENT-1.md: No such file or directory
+tests rc=0
+Ran 24 tests in 7.378s
+OK
+porcelain_ignored_lines_after_tests 0

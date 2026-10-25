@@ -1,0 +1,14 @@
+total 360
+-rw-rw---- 1 josephrb josephrb 17759 2026-10-24 17:34:32.000000000 -0700 omnifold_nn_core.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 42499 2026-10-24 17:34:27.000000000 -0700 s1_assemble.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 29068 2026-10-24 17:34:32.000000000 -0700 s5c_pseudo.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 15576 2026-10-24 17:34:32.000000000 -0700 s5c_unfold.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb  4372 2026-10-24 17:34:32.000000000 -0700 s5e_candidate.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 15985 2026-10-24 17:34:32.000000000 -0700 s5e_deform.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 48803 2026-10-24 17:34:32.000000000 -0700 s5e_trace.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 40276 2026-10-24 17:34:32.000000000 -0700 s5n_pseudo.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 19092 2026-10-24 17:34:32.000000000 -0700 s5p_numerics.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 29734 2026-10-24 17:34:27.000000000 -0700 s5p_stage1_inspect.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 40540 2026-10-24 17:34:32.000000000 -0700 s5p_truths.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 25143 2026-10-24 17:34:32.000000000 -0700 s5p_universe.cpython-311.pyc
+-rw-rw---- 1 josephrb josephrb 14919 2026-10-24 17:34:32.000000000 -0700 xsec_nd.cpython-311.pyc
