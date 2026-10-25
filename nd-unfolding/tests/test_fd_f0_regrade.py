@@ -51,8 +51,9 @@ REF = {"ran": True, "classifier_params": {"n_estimators": 400, "num_leaves": 31,
 CODE = {"candidate": "R", "candidate_refine_override": {"n_estimators": 400, "num_leaves": 31}}
 
 
-def base_meta():
-    return {"estimator_seed": 42, "iters": 5, "estimator_params": copy.deepcopy(EST), "refinement": copy.deepcopy(REF),
+def base_meta(top_seed=True):
+    """As the producers write it: s5n_pseudo and pvl_unfold record estimator_seed; s5p_nullexp (rows 4-6) does not."""
+    return {**({"estimator_seed": 42} if top_seed else {}), "iters": 5, "estimator_params": copy.deepcopy(EST), "refinement": copy.deepcopy(REF),
             "code_sha256": dict(CODE), "input_npz_sha256": F.INPUT_NPZ_SHA256, "bkg_dump_sha256": F.BKG_SHA256}
 
 
@@ -153,7 +154,7 @@ class Tree:
                     self.add(name, self.pvl / f"{prod}.npz", m, self.T0 * (1 + self.rng.normal(0, 0.05, F.N_CELLS)), r)
             elif t["row"] == 4:
                 def nm(s, t=t, kind="f4"):
-                    m = {**base_meta(), "schema": "s5p-null-experiment/1", "config": "R", "capacity": None,
+                    m = {**base_meta(top_seed=False), "schema": "s5p-null-experiment/1", "config": "R", "capacity": None,
                          "hypothesis": {"sha256": F.HYP[t["d16"]]}, "alternative": None, "pseudo_seed": s}
                     m["code_sha256"]["s5p_nullexp.py"] = F.NULLEXP_F4[s % 2] if kind == "f4" else F.NULLEXP_PROD[0]
                     m["development"] = {"expectation": kind == "f4", "mc_fraction": "half"}
@@ -176,7 +177,7 @@ class Tree:
                 tt, sha = F.ALT[t["alt"]]
 
                 def pm(s, ref=ref, tt=tt, sha=sha):
-                    m = {**base_meta(), "schema": "s5p-null-experiment/1", "config": "R", "capacity": None,
+                    m = {**base_meta(top_seed=False), "schema": "s5p-null-experiment/1", "config": "R", "capacity": None,
                          "hypothesis": {"sha256": F.HYP[ref["d16"]]}, "pseudo_seed": s,
                          "alternative": {"truth": tt, "amplitude": 1.0, "sha256": sha},
                          "development": {"expectation": False, "mc_fraction": "half"}}
@@ -416,7 +417,8 @@ class Guard(unittest.TestCase):
     def test_refuses_every_form_of_f_and_of_an_absolute_value(self):
         f, X = self.f, self.Xt[4]
         for what, v in (("f", f), ("an absolute integral", X), ("f - g", f - X), ("g - f", X - f),
-                        ("f/g", f / X), ("g/f", X / f), ("f/g - 1", f / X - 1), ("g/f - 1", X / f - 1)):
+                        ("f/g", f / X), ("g/f", X / f), ("f/g - 1", f / X - 1), ("g/f - 1", X / f - 1),
+                        ("(f - g)/f = 1 - g/f", 1 - X / f), ("1 - f/g", 1 - f / X), ("-f/g", -f / X)):
             self.assertEqual(self.g.count({"v": v.tolist()}), 16, what)          # a cell-indexed vector
             self.assertEqual(self.g.count({"v": float(v[5])}), 1, what)          # a scalar
             self.assertGreater(self.g.count(f"note {float(v[5])!r}"), 0, what)  # inside a printed line
@@ -442,12 +444,13 @@ class EndToEnd(Base):
     def forbidden(self, tree):
         f, X = tree.f, tree.integrals()
         with np.errstate(divide="ignore"):
-            V = np.concatenate([f, X.ravel(), (f - X).ravel(), (f / X).ravel(), (X / f).ravel(), (f / X - 1).ravel(),
+            V = np.concatenate([f, X.ravel(), (f - X).ravel(), (X - f).ravel(), (f / X).ravel(), (X / f).ravel(), (f / X - 1).ravel(),
                                 (X / f - 1).ravel()])
+        V = np.abs(V)        # either sign: 1 - X/f is (f - g)/f
         return np.sort(V[V != 0])
 
     def leaks(self, values, forbidden):
-        a = np.asarray([v for v in values if v != 0], float)
+        a = np.abs(np.asarray([v for v in values if v != 0], float))
         if not a.size:
             return []
         i = np.clip(np.searchsorted(forbidden, a), 1, forbidden.size - 1)
@@ -515,6 +518,7 @@ class EndToEnd(Base):
         X = tree.U @ tree.arrays(Xt, tree.products["W1"][1][3])[1]
         for what, v in (("f", tree.f.tolist()), ("one cell of f", float(tree.f[7])), ("an absolute value", X.tolist()),
                         ("f - g", (tree.f - X).tolist()), ("f/g - 1", (tree.f / X - 1).tolist()),
+                        ("(f - g)/f", (1 - X / tree.f).tolist()),
                         ("f/g - 1 in one cell", float(tree.f[2] / X[2] - 1))):
             r = self.run_module(tree, leak=v)
             self.assertEqual(r.returncode, 3, (what, r.stderr[-2000:]))
@@ -657,10 +661,17 @@ class Controls(Base):
                ("P3g", {"alternative": {"truth": "ratio_nd", "amplitude": 1.0, "sha256": F.ALT["P1"][1]}}),
                ("P1r", {"code_sha256": dict(CODE, **{"s5p_nullexp.py": F.NULLEXP_F4[0]})}),
                ("closure_nuwro", {"refinement": REF}),
-               ("W1", {"pseudo_seed": 803001})]
+               ("W1", {"pseudo_seed": 803001}),
+               ("cal:A7_mnvtune", {"estimator_seed": 42}),
+               ("A7_nuwro", {"estimator_seed": 45})]
         for name, change in bad:
             tree = Tree(self.tmp / f"t-{name.replace(':', '_')}")
             self.resave(tree, name, 0, **change)
+            tree.write()
+            self.assertStops(tree, 2)
+        for name in ("W2", "closure_nuwro"):     # producers that do record estimator_seed must carry it
+            tree = Tree(self.tmp / f"t-noseed-{name}")
+            tree.products[name][0][1].pop("estimator_seed")
             tree.write()
             self.assertStops(tree, 2)
 
@@ -682,11 +693,32 @@ class Controls(Base):
         self.assertIn("FAIL control 3:", str(cm.exception.code))
 
     def test_control_4_matrices(self):
-        for mutate in ("block", "S", "table"):
+        for mutate in ("block", "S", "table", "C_model_abs", "f", "sigma_json", "U"):
             tree = Tree(self.tmp / f"t4-{mutate}")
             if mutate == "block":
                 tree.blocks["seed"] = tree.blocks["seed"] * 1.5
+            if mutate == "C_model_abs":
+                tree.Cma = tree.Cma * (1 + 1e-9)
             tree.write()
+            if mutate in ("f", "U", "sigma_json"):
+                s1n = Path(tree.argv[tree.argv.index("--s1-npz") + 1])
+                s1j = Path(tree.argv[tree.argv.index("--s1-json") + 1])
+                with np.load(s1n) as z:
+                    d = {k: z[k] for k in z.files}
+                if mutate == "f":
+                    d["f"] = d["f"].copy()
+                    d["f"][3] = -d["f"][3]
+                if mutate == "U":
+                    d["U"] = d["U"].copy()
+                    d["U"][2, np.flatnonzero(d["U"][2])[0]] *= 2
+                if mutate != "sigma_json":
+                    np.savez_compressed(s1n, **d)
+                j = json.loads(s1j.read_text())
+                j["assembly_sha256"] = digest(s1n)
+                if mutate == "sigma_json":
+                    j["relative_sigma"]["C_total"][7] *= 1 + 1e-9
+                s1j.write_text(json.dumps(j))
+                tree.pins["s1_npz"], tree.pins["s1_json"] = digest(s1n), digest(s1j)
             if mutate == "S":
                 cj = Path(tree.argv[tree.argv.index("--cmodel-json") + 1])
                 d = json.loads(cj.read_text())

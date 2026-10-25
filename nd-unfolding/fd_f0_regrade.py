@@ -21,8 +21,8 @@ by truth group with their denominators and the Gaussian reference beside them.
 f enters only as the divisor that makes C_e fractional. NOTHING THIS TOOL WRITES OR PRINTS CARRIES f, AN ABSOLUTE CELL
 VALUE OR f - g (ruling 6): every output passes ``LeakGuard`` first, which refuses (exit 3, nothing written) on any
 finite non-zero number below 1e-30 in magnitude, or any number within 1e-13 relative of f, of an absolute cell
-integral of any product, of f - X or of f/X, X/f, f/X - 1 or X/f - 1 for any such integral X (cell by cell for a
-cell-indexed vector).
+integral of any product, of f - X or of f/X, X/f, f/X - 1 or X/f - 1 for any such integral X, with either sign
+(cell by cell for a cell-indexed vector).
 
 Controls 0-8 run in the declared order; 0-6 and 8 refuse (exit 1, nothing written). Control 7 gates row 6 only.
 
@@ -231,18 +231,19 @@ def sigma_summary(sig: np.ndarray) -> tuple[float, float, float]:
 
 
 class LeakGuard:
-    """Refuses an output that carries f, an absolute cell integral of any product X, f - X, X - f, or f/X, X/f,
-    f/X - 1, X/f - 1 for any such X (each within LEAK_REL relative), or any finite non-zero number below LEAK_FLOOR
-    in magnitude (every absolute cross section here is of order 1e-39). A vector of 16 numbers (a list, or the last
-    axis of an array) is cell-indexed and is matched cell by cell; any other number against every cell's values. The
-    exact matches are kept per cell and at a few ulps so that 1e5 legitimate residuals among ~3e6 forbidden ratios
-    give an expected false refusal of order 1e-4 (FD-F0-DECLARATION.md section 5)."""
+    """Refuses an output that carries f, an absolute cell integral of any product X, f - X, or f/X, X/f, f/X - 1,
+    X/f - 1 for any such X, with either sign (|value| is matched against |forbidden|, so 1 - X/f = (f - g)/f is
+    caught), each within LEAK_REL relative; or any finite non-zero number below LEAK_FLOOR in magnitude (every
+    absolute cross section here is of order 1e-39). A vector of 16 numbers (a list, or the last axis of an array) is
+    cell-indexed and is matched cell by cell; any other number against every cell's values. Per cell and at 1e-13,
+    ~1.4e5 legitimate residuals among ~1.9e6 forbidden values give an expected false refusal of order 1e-4
+    (FD-F0-DECLARATION.md section 5.3)."""
 
     def __init__(self, f: np.ndarray, integrals: list[np.ndarray]):
         f = np.asarray(f, float)
         X = np.vstack([np.atleast_2d(np.asarray(a, float)) for a in integrals]) if integrals else np.empty((0, f.size))
         with np.errstate(divide="ignore", invalid="ignore"):
-            V = np.vstack([f[None, :], X, f - X, X - f, f / X, X / f, f / X - 1, X / f - 1])
+            V = np.abs(np.vstack([f[None, :], X, f - X, f / X, X / f, f / X - 1, X / f - 1]))
         self.cell = [self._clean(V[:, c]) for c in range(V.shape[1])]
         self.all = self._clean(V.ravel())
 
@@ -263,7 +264,7 @@ class LeakGuard:
         return hit
 
     def offending(self, values, cell: int | None = None) -> int:
-        a = np.asarray(values, float).ravel()
+        a = np.abs(np.asarray(values, float).ravel())
         a = a[np.isfinite(a) & (a != 0)]
         return int(np.sum((np.abs(a) < LEAK_FLOOR) | self._hits(a, self.all if cell is None else self.cell[cell])))
 
@@ -314,11 +315,14 @@ def read_meta(path: Path) -> dict:
         return json.loads(str(z["meta"]))
 
 
-def estimator_problems(m: dict, refined: bool) -> list[str]:
-    """(e): OmniFold LightGBM 100/8 at seed 42, 5 iterations, all-row binning, deterministic; refinement 400/31 at 45."""
+def estimator_problems(m: dict, refined: bool, top_seed: bool = True) -> list[str]:
+    """(e): OmniFold LightGBM 100/8 at seed 42, 5 iterations, all-row binning, deterministic; refinement 400/31 at 45.
+    s5n_pseudo and pvl_unfold record a top-level ``estimator_seed``; s5p_nullexp (rows 4-6) never writes one
+    (s5p_nullexp.py:343-351), so there the seed is read from ``estimator_params[].random_state`` alone."""
     bad = []
-    if (m.get("estimator_seed"), m.get("iters")) != (42, 5):
-        bad.append(f"seed/iters {(m.get('estimator_seed'), m.get('iters'))}")
+    seed = m.get("estimator_seed") if top_seed else ("absent" if "estimator_seed" not in m else m["estimator_seed"])
+    if (seed, m.get("iters")) != (42 if top_seed else "absent", 5):
+        bad.append(f"seed/iters {(seed, m.get('iters'))}")
     ep = m.get("estimator_params") or []
     want = {"n_estimators": 100, "num_leaves": 8, "random_state": 42, "bin_construct_sample_cnt": ALL_ROWS,
             "deterministic": True, "force_row_wise": True, "subsample": 1.0, "colsample_bytree": 1.0}
@@ -342,7 +346,7 @@ def estimator_problems(m: dict, refined: bool) -> list[str]:
 
 
 def meta_problems(path: Path, m: dict, kind: str, spec: dict) -> list[str]:
-    bad = estimator_problems(m, refined=kind != "closure")
+    bad = estimator_problems(m, refined=kind != "closure", top_seed=kind in ("s5e", "closure"))
     seed = m.get("pseudo_seed")
     if kind in ("s5e", "f4", "cal", "pow") and not path.stem.endswith(f"_s{seed}"):
         bad.append(f"pseudo_seed {seed} is not the filename's")
@@ -767,22 +771,26 @@ def run(a, pins=None) -> int:
     lines.append(f"[F0] denominators: {tot['cells_abs_z_gt_2']} of {tot['cells']} cells, {tot['truths_p_lt_0.01']} of "
                  f"{tot['truths']} truths (references {tot['gaussian_reference_cells']:.2f}, "
                  f"{tot['gaussian_reference_truths']:.2f}); read by group")
-    text = json.dumps(readout, indent=1) + "\n"
-    guard.check("the readout JSON", text)
+    guard.check("the readout JSON", readout)
     guard.check("the per-experiment table", table)
     guard.check("stdout", "\n".join(lines))
     tmp_npz = a.out_npz.with_name(a.out_npz.name + ".partial.npz")
-    np.savez_compressed(tmp_npz, **table)
-    os.replace(tmp_npz, a.out_npz)
-    readout["table_sha256"] = sa.sha256(a.out_npz)
-    text = json.dumps(readout, indent=1) + "\n"
-    guard.check("the readout JSON", text)
     tmp_json = a.out_json.with_name(a.out_json.name + ".partial")
-    tmp_json.write_text(text)
+    try:   # both files are renamed into place only after the last check; a refusal leaves neither
+        np.savez_compressed(tmp_npz, **table)
+        readout["table_sha256"] = sa.sha256(tmp_npz)
+        guard.check("the readout JSON", readout)
+        tmp_json.write_text(json.dumps(readout, indent=1) + "\n")
+    except BaseException:
+        tmp_npz.unlink(missing_ok=True)
+        tmp_json.unlink(missing_ok=True)
+        raise
+    os.replace(tmp_npz, a.out_npz)
     os.replace(tmp_json, a.out_json)
 
     lines.append(json.dumps({"wrote": [str(a.out_json), str(a.out_npz)], "readout_sha256": sa.sha256(a.out_json),
                              "table_sha256": readout["table_sha256"]}))
+    guard.check("stdout", lines[-1])
     print("\n".join(lines), flush=True)
     return 0
 
