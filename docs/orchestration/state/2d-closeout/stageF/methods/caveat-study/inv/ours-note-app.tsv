@@ -1,0 +1,248 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	appendix	pos	no	no	detector-response mismatch bias untested	the detector-response-mismatch closure, a protocol implemented but not yet run
+2	a	appendix	pos	no	no	superseded values kept in records	and superseded values and withdrawn results are kept in the analysis repository’s records document
+3	a	appendix	pos	no	no	J28 flux-universe division bug	the audit finding that the N -dimensional code divided every flux universe by the central-value flux
+4	e	appendix	pos	no	no	J28 flux-universe division bug	the audit finding that the N -dimensional code divided every flux universe by the central-value flux
+5	a	appendix	pos	no	no	May vs July universe sweep	the two productions of 2D systematic-universe re-unfolds; the quoted universe block uses the July sweep
+6	c	appendix	pos	no	no	systematic block rank deficiency	The rank of the systematic block is limited at any universe count
+7	c	appendix	pos	yes	no	training-seed block low rank	a sample covariance of rank 4 that includes the bootstrap × seed interaction at its 1/20 share
+8	d	appendix	pos	no	no	bootstrap block excludes seed variation	The quoted N = 300 block varies only the bootstrap seed and carries no training-seed variation.
+9	c	appendix	pos	yes	no	finite-replica error on bootstrap sigma	replicas the per-bin σ has a relative standard error of about 4.1% by the Gaussian
+10	c	appendix	pos	yes	no	Poisson bootstrap multinomial approximation	constraint induces O(1/N ) correlations that vanish at large N
+11	c	appendix	pos	yes	no	Rvp1pi band dropped	the quoted band sum drops Rvp1pi and holds 43 bands plus the normalization
+12	c	appendix	pos	no	no	band independence assumption	Bands are assumed independent, with different physics sources and RNGs
+13	c	appendix	pos	no	no	band independence assumption	Independence is a modeling assumption with one known correlated exception, the Bashyal
+14	c	appendix	pos	no	partly	nonlinear cross term omitted from band sum	Equation (13) omits a larger correction. The band sum is linear, but OmniFold responds
+15	c	caption	pos	no	no	Rvp1pi band dropped	bands from re-unfolds of re-selected universes and Rvp1pi dropped)
+16	d	appendix	pos	no	no	mean-centering scope	Mean-centering applies to the ±1σ band estimator only.
+17	a	appendix	pos	no	no	earlier MAT check missed flux constraint weights	An earlier check compared MnvH1D::GetTotalErrorMatrix with our band sum without the normalization band
+18	a	appendix	pos	no	no	earlier MAT check missed flux constraint weights	ran on an older sweep from before the flux fix, not on a quoted product, so it could not detect that the Flux band omitted those constraint
+19	d	appendix	pos	yes	no	205-bin reported-cell scope	The paper suppresses the remaining 19 through an efficiency cut; every χ2 and pull excludes them on both sides
+20	d	appendix	pos	no	no	ndf convention 2D-only	This evidence is specific to 2D and does not transfer to N-D covariances
+21	d	appendix	pos	yes	no	log-normal chi2 definition dependence	This is the definition used for the quoted value: of five definitions recomputed, only this one reproduces 0.945.
+22	d	appendix	pos	no	no	no calibrated goodness-of-fit for combined chi2	This is a descriptive distance, not a validation result, and three limits apply to every use of it.
+23	c	appendix	pos	no	no	missing cross-covariance with paper	(i) Missing cross-covariance prevents calibration. For estimates x and y from the same data,
+24	c	appendix	pos	no	no	missing cross-covariance with paper	Without Cxy , the summed Cx + Cy double-counts shared systematics and omits their correlation.
+25	c	appendix	pos	no	no	missing cross-covariance with paper	Its net error has unknown size and sign.
+26	d	appendix	neg	no	no	no calibrated goodness-of-fit for combined chi2	No value of the statistic, including 1.5 or 1, can be converted to a goodness-of-fit probability or a p-value.
+27	c	appendix	neg	no	no	uncertainty calibration not validated	One realization near 1, such as the quoted 0.929, is not evidence of correct uncertainties.
+28	a	appendix	pos	no	no	exact-split cross-check on pre-repair covariance	computed with an earlier covariance built before the flux-band repair, evidence against them on its own
+29	c	appendix	neg	no	no	2D coverage of quoted uncertainties untested	(iii) It does not address coverage. The only 2D coverage test, the fixed-truth test of §5.2, scored
+30	a	appendix	pos	no	no	coverage test used earlier stat band	an earlier statistical band alone and found it undercovering in its tails
+31	c	appendix	neg	no	no	2D coverage of quoted uncertainties untested	Nothing here validates the intervals this covariance implies.
+32	c	appendix	pos	no	no	covariance shares estimator with central value	The covariance and the central value share the LightGBM estimator and, in the universe and statistical blocks, its training seed
+33	d	appendix	pos	no	no	no calibrated goodness-of-fit for combined chi2	this scalar is only a distance and ratio to the paper.
+34	d	appendix	pos	no	no	log-normal chi2 definition dependence	The log-normal value 0.945 depends on the definition given with the worked example.
+35	d	appendix	pos	no	no	combined chi2 relies on paper stat floor	The quoted 0.929 inverts the sum of the paper’s covariance and ours, not our blocks alone.
+36	d	appendix	pos	no	no	combined chi2 relies on paper stat floor	Protection depends on the source of the smallest retained eigenvalues.
+37	c	appendix	pos	no	no	missing cross-covariance with paper	The separate shared-systematics problem above still prevents calibrated goodness-of-fit for 0.929.
+38	c	appendix	pos	no	no	cross-check not recomputed for quoted central value	using only the paper covariance, with no OmniFold addition, for the exact-split cross-check (not recomputed for the LightGBM central value)
+39	d	appendix	pos	no	no	edge-bin scan robustness only	This is a robustness check, not a separate method.
+40	a	appendix	pos	no	no	exact-split cross-check on pre-repair covariance	For the exact-split cross-check, on the earlier covariance built before the flux-band repair, they are 0.051 and 0.405.
+41	c	appendix	pos	no	no	missing cross-covariance with paper	RMS < 1 is descriptive and does not establish conservatism: the summed covariance is wrong by an unknown amount
+42	c	appendix	pos	no	no	cross-check not recomputed for quoted central value	the exact-split cross-check (not recomputed for the LightGBM central value), with the paper’s TotalCovariance
+43	c	appendix	pos	yes	no	systematic block rank deficiency	Band count, not universe count, limits the rank: Eq. (11) gives each ±1σ pair rank 1 and the 100-universe PPFX band rank ≤ 99.
+44	c	appendix	neg	yes	no	systematic block rank deficiency	The 43 bands cannot span 205 bins.
+45	c	appendix	neg	no	no	no defensible ours-only chi2	Even at full rank (205) a defensible single ours-only χ2 is out of reach, for a statistical-precision
+46	d	appendix	pos	no	no	stat floor not uniform per mode	because the covariance structures differ, this should not be read as a uniform per-mode effect
+47	c	appendix	pos	no	no	small bootstrap stat block unexplained	The remaining candidates are a genuine difference in statistical efficiency between the unbinned reweighting and the
+48	c	appendix	pos	no	no	split bootstrap only on earlier bootstrap	separated the first two from an MC-statistics omission but not from the third, and it has not been repeated for the quoted statistical block
+49	a	appendix	pos	no	no	split bootstrap only on earlier bootstrap	A split bootstrap of the earlier rebuilt bootstrap (Ref. [41], superseded values: retired material)
+50	a	appendix	pos	no	no	split bootstrap only on earlier bootstrap	split bootstrap was run on the earlier rebuilt bootstrap.
+51	c	appendix	pos	no	no	fixed-truth test blind to prior bias	its truth equals the prior, so it cannot see regularization bias toward the prior, and it does not decide between the explanations above
+52	a	appendix	pos	no	no	coverage test used earlier stat band	The fixed-truth test of §5.2 measured an earlier band against the estimator’s
+53	c	appendix	pos	no	no	small bootstrap stat block unexplained	“higher statistical efficiency” is one of at least three explanations of it and is not established here
+54	c	appendix	pos	no	no	no defensible ours-only chi2	Its inverse remains regularizer-dependent, so pulls and the scan lead the reporting.
+55	c	appendix	pos	no	no	regularization scan on earlier covariance	Regularization scans (earlier covariance; all cutoff-dependent). For the exact-split crosscheck
+56	c	appendix	neg	no	no	no defensible ours-only chi2	value and covariance, no regularizer gives a stable single number
+57	c	appendix	pos	yes	no	no defensible ours-only chi2	Each method spans roughly two decades of χ2 /205 across a two-decade scan of its knob, with no defensible single cutoff.
+58	c	appendix	pos	no	no	bootstrap double-counts paper stat	The combined distance (§A.3.2) adds Cboot to TotalCov, double-counting the paper’s included statistical block.
+59	c	appendix	pos	no	no	bootstrap double-counts paper stat	We retain double-counted 0.929 as the well-defined “what does OmniFold UQ add on top of the published V ” distance
+60	c	appendix	pos	no	no	band independence assumption	The quoted 2D covariance therefore remains the block sum, with the cross term as a diagnostic.
+61	c	appendix	pos	no	no	Bashyal rho not paper-independent	A fitted (Φnorm , Φshape , MuonEscale ) posterior from MAT-MINERvA could supply a paper-independent ρ.
+62	e	appendix	pos	no	no	truncated-spectral pinv convention unpublished	The collaboration has confirmed in private communication that it uses the same truncated-spectral pseudo-inverse
+63	c	appendix	neg	no	no	truncated-spectral pinv convention unpublished	no published reference for it has been identified.
+64	d	appendix	pos	no	no	no calibrated goodness-of-fit for combined chi2	The combined χ2 /ndf = 0.929 is a descriptive distance, not a quoted result or validation statistic
+65	d	appendix	pos	no	no	earlier MAT check missed flux constraint weights	the earlier machine-precision check of §A.2.6 covers the unweighted bands
+66	c	appendix	pos	no	no	regularization scan on earlier covariance	the regularization scan shown above is of an earlier Cours
+67	d	appendix	neg	no	no	no calibrated goodness-of-fit for combined chi2	published-σ standardized differences; no covariance-based goodness-of-fit is claimed.
+68	a	appendix	pos	no	no	tension anatomy uses earlier central value	Its numbers are for the exact-split cross-check, which was the quoted 2D central value when it was made
+69	d	appendix	pos	no	no	eigen-pulls lack calibrated significance	are descriptive coordinates in the published basis, without calibrated significance for independent results
+70	c	appendix	pos	no	no	norm-shape split not orthogonal	for scale, χ2shape = 750.1 for shape, and cross term 0.28; the split is not C+ -orthogonal.
+71	a	appendix	pos	no	no	tension anatomy uses earlier central value	(numbers for the exact-split cross-check; Figs. 11 and 12 show the LightGBM central
+72	c	appendix	pos	yes	no	GBDT backend dependence	Changing the GBDT backend on the same data and normalization (Σσ within 0.1%) shifts paper-cov χ2 by ∼ 1 unit.
+73	d	appendix	neg	yes	no	GBDT backend dependence	The integrated agreement does not mean the bins agree: the LightGBM seed-1 and exact-split central values differ by a median of 0.97 % per bin
+74	d	appendix	pos	no	no	estimator table mixes subtraction	All rows except the quoted one use the purity-based subtraction.
+75	c	appendix	pos	yes	no	GBDT backend dependence	The GBDT estimator carries a ∼ 1-unit band: the exact-split cross-check (3.66) is the outlier
+76	c	appendix	pos	yes	no	GBDT backend dependence	This is direct evidence that ∼ 1 χ2 -unit of the tension is OmniFold’s implicit regularization rather than a physical data–MC disagreement.
+77	c	appendix	pos	no	no	GBDT backend dependence	estimator/iteration regularization band adds a methodological component.
+78	c	caption	pos	yes	no	global POT ratio across playlists	The pipeline uses one global POTdata /POT MC ratio; per-playlist ratios span 0.1707–0.2371.
+79	a	appendix	pos	yes	no	closure thresholds from earlier ML floor	The thresholds lie comfortably above the 0.166% ML floor of the earlier ten-seed scan, which was in force when the tests were graded
+80	d	appendix	pos	no	no	closure tests on playlist 1A only	All use playlist-1A LightGBM 5-iteration unfolds.
+81	c	appendix	pos	no	no	variance methods blind to bias	bias, a consistent offset from a known injected truth, which the variance methods cannot show
+82	c	appendix	pos	yes	no	hidden-variable leakage	The 3.0% acceptance bound is looser than the truth-reweight bound because the weak ∆pT –pT correlation prevents complete removal of the leakage.
+83	c	appendix	pos	yes	no	hidden-variable leakage	about 11% of a hidden ∆pT bias leaks into the measured (pT , p∥ ) marginal
+84	c	appendix	pos	yes	no	hidden-variable closure fails at large amplitude	two of the three arms pass and the largest does not: A = 0.30 gives 3.43%,
+85	d	appendix	pos	yes	no	hidden-variable closure fails at large amplitude	the acceptance bound is satisfied for hidden-∆pT deformations up to roughly A ≃ 0.26 and is violated above it
+86	c	appendix	neg	no	no	hidden-variable closure fails at large amplitude	No non-closure uncertainty is assigned from this scan either way
+87	c	appendix	pos	yes	no	hidden-variable closure fails at large amplitude	A ∆pT -shaped mismodeling at the 30% level would leak more than the analysis declared tolerable; this is an open sensitivity, not a passing test.
+88	d	appendix	pos	yes	no	alternative-model closure scope	establishing robustness to model variations of order ±1σ GENIE and full PPFX flux universes
+89	c	appendix	pos	no	no	missing cross-covariance with paper	Shared data and unavailable cross-covariance make this an indicative distance, without calibrated goodness-of-fit.
+90	a	appendix	pos	no	no	coverage test used earlier stat band	Earlier statistical band vs. fixed truth, Ntoy = 100: fails
+91	c	appendix	pos	yes	no	Gaussian bin approximation	Pulls and χ2 approximate bins as Gaussian: weighted sums of O(104 ) MC events justify the
+92	c	appendix	pos	no	no	independence of variance blocks	Eq. (16) requires no cross-correlations between ML, statistical, systematic and run-period blocks.
+93	c	appendix	pos	no	no	independence of variance blocks	Among the first three, cross-terms are higher-order.
+94	c	appendix	pos	no	no	run-period block noise not subtracted	The run-period block is built from separate unfolds of the same data, and its noise share is not subtracted
+95	c	appendix	pos	yes	no	2D coverage of quoted uncertainties untested	Same-ensemble 68.71% (§5.3) checks Gaussianity; it does not certify Cstat at the half-percent level.
+96	a	appendix	pos	yes	no	coverage test used earlier stat band	The fixed-truth test (§5.2) found the diagonal of the first-built Cstat undercovering in its tails (C2 = 0.912, unevenly across bins)
+97	b	appendix	pos	no	no	stat band rebuilt after failed coverage	the band was rebuilt in response, and the rebuilt band has not been independently re-tested
+98	c	appendix	pos	no	no	2D coverage of quoted uncertainties untested	the band was rebuilt in response, and the rebuilt band has not been independently re-tested
+99	c	appendix	pos	no	no	2D coverage of quoted uncertainties untested	The statistical block quoted here is a different ensemble and has not been tested either.
+100	c	appendix	pos	no	no	band independence assumption	Different physics sources are taken as uncorrelated; the one known exception, the Bashyal flux ↔ muon-E joint block
+101	c	appendix	pos	no	no	missing cross-covariance with paper	The combined distance shares systematics with the paper’s V and describes “what OmniFold UQ adds on top of V ”; it is no independent ours-only test
+102	d	appendix	pos	no	no	closure scope to tested perturbations	Closure passes apply to tested perturbations; unphysical deformations far outside training have no guarantee of passing.
+103	d	appendix	neg	no	no	ndf convention 2D-only	The 2D justification in §A.3.2 does not transfer to N-D.
+104	a	appendix	pos	no	no	earlier 5D covariance rank study	An earlier 5D covariance from the standard production chain, distinct from CZ and built before CZ was chosen for use
+105	c	appendix	pos	yes	no	N-D covariance rank deficiency	bins, effective positive rank 263 and infinite numerical condition number.
+106	c	appendix	pos	no	no	N-D covariance rank deficiency	so the rank limit is a consequence of the construction, not a defect
+107	d	appendix	pos	yes	no	ndf convention 2D-only	Quoting χ2 /nreported would understate tension by roughly 40× in 5D or 18× in 4D.
+108	d	appendix	neg	no	no	ndf convention 2D-only	N-D covariances must not use ndf = nreported
+109	e	appendix	pos	no	no	predeclared rank cut in records	Measurements, derivation and predeclared rank cut are in Ref. [41] (rank-inversion).
+110	c	appendix	neg	no	no	finite-ensemble inverse bias uncorrected	Finite-ensemble bias of the inverse, and why no correction is prescribed.
+111	c	appendix	pos	no	no	finite-ensemble inverse bias uncorrected	the ensemble sizes of the blocks would go unrecorded, and an uncorrected finiteensemble bias could enter unnoticed
+112	a	appendix	pos	yes	no	finite-ensemble inverse bias uncorrected	The superseded unified-throw 5D covariance has N = 160, truncated p = 100, giving 58/160 ≃ 0.363: uncorrected precision is too large by ≃ 2.76.
+113	c	appendix	pos	yes	no	finite-ensemble inverse bias uncorrected	The superseded unified-throw 5D covariance has N = 160, truncated p = 100, giving 58/160 ≃ 0.363: uncorrected precision is too large by ≃ 2.76.
+114	c	appendix	neg	no	no	finite-ensemble inverse bias uncorrected	No generic correction is prescribed. A sum of about 45 deterministic rank-one MAT outer
+115	c	appendix	pos	no	no	finite-ensemble inverse bias uncorrected	The standard factor also assumes independent Gaussian realizations and a data-independent truncation dimension, neither established for a data-dependent cut.
+116	d	appendix	pos	no	no	scalar-5D synthesis reuses saved outputs	The synthesis in §9.4 reuses saved outputs; it involves no new unfolding, training or pseudoexperiments.
+117	d	appendix	pos	yes	no	supported-cell restriction	the unsupported EW11, EW36 and EW37 are omitted from the supported-cell summaries only.
+118	d	appendix	pos	no	no	sf is relative-residual spread	The truth of the stored pseudo-data source varies with the MC split, so sf measures
+119	d	appendix	pos	no	no	pointwise intervals no simultaneous claim	These normal-model approximations condition on finite simulation and make no simultaneous claim across cells.
+120	c	appendix	neg	no	no	EW trace has no error band	A deterministic noise-free trace from one simulation receives no error band; its cell-to-cell variation is not sampling uncertainty.
+121	c	appendix	pos	no	no	assessment intervals uncorrected	without bias correction or model envelope. The
+122	c	appendix	pos	no	no	finite-replica uncertainty not propagated	It conditions on estimated bootstrap widths without propagating finite-replica uncertainty.
+123	d	appendix	neg	no	no	coverage not pooled to certify cells	Coverage is not pooled to certify cells.
+124	d	appendix	pos	no	no	assessment examples not fresh validation	the corner cell EW41, already known to fail; they are not freshly selected validation targets
+125	e	appendix	pos	no	no	predeclared rounding-study design	The predeclared design defines containment by median ratio in [0.7, 1.4]
+126	c	appendix	pos	no	no	rounding study does not prove coverage	This finite-sample diagnostic supports the construction without proving coverage or independence from every physical uncertainty.
+127	c	appendix	pos	no	no	prior-sensitivity envelope no probability model	Its denominator differs from the simulated residual’s.
+128	c	appendix	neg	no	no	prior-sensitivity envelope no probability model	Neither hf nor an outer product of closure residuals is given a probability model.
+129	d	appendix	pos	no	no	checkpoint iterations excluded	From a checkpoint, only the iterations that reproduce the originally recorded values are used; later
+130	e	appendix	pos	no	no	no independent review of synthesis	The analyst cross-checked the reductions numerically; no new independent scientific review of the synthesis is claimed.
+131	d	appendix	pos	no	no	extended-fiducial fractions descriptive only	both are descriptive, with neither used for covariance certification.
+132	c	appendix	pos	no	no	unfolded-event inference requirements	Treating them as independent in a downstream likelihood can underestimate parameter uncertainties [64]; nominal weights do not specify uncertainty.
+133	c	appendix	neg	no	no	unfolded-event inference requirements	Resampling unfolded rows independently is not equivalent to resampling inputs and repeating the learned estimator.
+134	c	appendix	pos	no	no	unfolded-event inference requirements	These are requirements on such inference, with no new validation result here.
+135	d	appendix	pos	no	no	no simultaneous coverage	The uncertainty target matters: separate bin or projection coverage does not imply simultaneous coverage
+136	c	appendix	neg	no	no	projection covariance not calibrated	The identity neither calibrates that covariance nor accounts for regions chosen after inspecting data.
+137	c	appendix	pos	no	no	projections do not certify full distribution	neither truncating the latter nor validating a few projections certifies the full distribution
+138	c	appendix	pos	no	no	FWER assumption A2	this requires the lost pseudo-experiments to be lost independently of their outcomes
+139	c	appendix	pos	no	no	FWER assumption A1 calibration fidelity	Assumption A1 is that, for a true null, p is super-uniform over repetitions of the experiment
+140	d	appendix	pos	no	no	FWER averaged over nuisance priors	the size statement is therefore averaged over the nuisance priors.
+141	b	appendix	pos	no	no	data-dependent stopping of pseudo-experiments	Whatever rule chose that stopping point, including stops decided with results visible,
+142	c	appendix	pos	no	no	FWER assumption A1 calibration fidelity	The bound rests on A1, the calibration’s fidelity, which §10.4 discusses, and on A2.
+143	d	appendix	neg	no	no	negweight study not production	Scope of the numbers. No number in this appendix is a quoted uncertainty
+144	d	appendix	pos	no	no	background treatment differs by result	Every cross section and uncertainty quoted in this note uses the binned purity weight of §3.1, except the 2D result and its covariance and the 3D and 4D central values.
+145	d	appendix	pos	no	no	negweight study not production	this appendix establishes no supported production path and changes no default.
+146	d	appendix	pos	no	no	negweight study not production	The two covariance ratios are agreement diagnostics between two realizations of one subtraction, not quoted uncertainties.
+147	e	appendix	pos	no	no	negweight production provenance gaps	the driver was uncommitted when they were written, so its executing revision is corroborated by a version-specific log line rather than pinned by a digest
+148	c	appendix	neg	no	no	negweight production provenance gaps	and no output records the job that produced it
+149	d	appendix	pos	no	no	negweight vs purity estimand differ	they do not share the continuous estimand
+150	d	appendix	pos	no	no	negweight equivalence classifier-dependent	Agreement between plain injection and clipped refinement depends on the classifier.
+151	c	appendix	neg	no	no	negweight equivalence on third backend	so the equivalence is established on a third backend, and its transfer to the production configuration is assumed rather than demonstrated
+152	d	appendix	neg	no	no	negweight equivalence on third backend	This histogram backend is neither the LightGBM estimator of the quoted 2D central value and its
+153	c	appendix	pos	yes	no	raw negative weights destabilize exact-split	Raw signed weights destabilize an exact-split boosted-tree classifier, inflating a full low-pT cross-section row by
+154	d	appendix	pos	no	no	binned reduction fails where D<B	The reduction fails where D(b) < B(b).
+155	c	appendix	pos	no	no	zero floor is a prescription	The max(0, ·) floor is a prescription, not a minimizer’s value.
+156	c	appendix	pos	no	no	zero floor is a prescription	The zero clip used here is therefore an additional analysis prescription chosen to match the physical purity floor.
+157	d	appendix	pos	no	no	binned limit consistency check only	It is a consistency check, not a separate method.
+158	d	caption	pos	no	no	negweight agreement fails at floor-governed bins	Only the low-pT , high-background edge bin departs by more than a few percent.
+159	d	appendix	pos	yes	no	negweight agreement fails at floor-governed bins	Only one low-pT , high-background edge bin differs by more than a few percent (−12.6 %)
+160	d	appendix	pos	no	no	negweight agreement fails at floor-governed bins	Unbinned subtraction reproduces the binned correction used for the results wherever it is well determined.
+161	c	appendix	pos	no	no	negweight covariance equivalence only in trace	The covariance comparison gives two trace ratios; per-bin, correlation and eigenmode equivalence are not established.
+162	d	appendix	pos	no	no	negweight validated at 2D scale only	support negative-weight injection as an unbinned alternative at the 2D scale.
+163	c	appendix	pos	no	no	endpoint unfolds purity inferred by elimination	For the existing endpoint unfolds, produced in July 2026, purity is established by elimination.
+164	e	appendix	pos	no	no	purity choice decision record	Purity is a recorded choice, not a silent default (Ref. [41], oi6-oi8-oi126), made on two
+165	e	appendix	pos	no	no	purity choice decision record	and would have invalidated the flux-corrected covariance (corrected for audit finding J28), which had just been chosen for use
+166	e	appendix	pos	no	no	purity choice decision record	This consequence, not the computing cost, decided the choice.
+167	e	appendix	pos	no	no	obligation to revisit background treatment	The choice carries an obligation to revisit the background treatment before submission.
+168	b	appendix	pos	no	no	2D background switch to refined	the 2D result and its covariance now use the refined estimator; the five-dimensional central value
+169	d	appendix	pos	no	no	background treatment differs by result	the five-dimensional central value still uses purity.
+170	a	appendix	pos	no	no	2D background switch to refined	purity-based 2D covariance on its 205 reported cells (the quoted covariance when the test ran)
+171	c	appendix	pos	yes	no	purity subtraction bias	In them, the purity estimate’s mean residual against the truth is +0.78 to +5.89 σstat , above 1 σtotal in one cell (1.22)
+172	d	appendix	pos	yes	no	background closure not coverage test	The test is a closure with 20 pseudo-experiments, not a coverage test.
+173	b	appendix	pos	yes	no	2D background switch to refined	On the data, the refined treatment moves the 2D result by at most 0.497 σtotal per cell
+174	a	appendix	pos	no	no	2D background switch to refined	The 2D result quoted in this note uses the refined treatment, configuration (f), with its covariance and its comparison with the published result rebuilt for it
+175	b	appendix	neg	no	no	extended-fiducial number not from designated treatment	§11 was not produced with negative-weight injection.
+176	a	appendix	pos	no	no	extended-fiducial number not from designated treatment	It comes from the extended-fiducial ME FHC battery of 2026-06-10, run before the driver supported negative-weight subtraction.
+177	e	appendix	pos	no	no	extended-fiducial number not from designated treatment	Its ten endpoint unfolds used the driver’s purity default and are recorded as purity controls, not publication inputs
+178	c	appendix	neg	no	no	extended-fiducial number not from designated treatment	No extended-fiducial production with refined negative-weight subtraction has been run, so negative-weight injection, the intended extended-fiducial baseline, did not produce the quoted number.
+179	b	appendix	pos	no	no	extended-fiducial number not from designated treatment	the number quoted in §11 was not produced this way, as stated above.
+180	d	appendix	pos	no	no	ext-fiducial measurement and control treatments differ	uniformity across the two sides is not claimed.
+181	d	appendix	pos	no	no	negweight validated at 2D scale only	The measured agreement concerns these 2D systematic and statistical covariances at the stated configurations.
+182	c	appendix	neg	no	no	background-treatment equivalence untested in 5D	covariance equivalence for the continuous estimator or in five dimensions is not established.
+183	d	appendix	pos	no	no	background-treatment equivalence untested in 5D	The five-dimensional evidence is limited to the following two-universe spot check.
+184	c	appendix	neg	no	no	background-treatment equivalence untested in 5D	There is no full five-dimensional 187-universe comparison of the two background treatments at the publication configuration
+185	d	appendix	pos	no	no	background-treatment equivalence untested in 5D	The spot check uses one iteration and the histogram backend on the stored five-dimensional universe file
+186	c	appendix	neg	no	no	background-treatment equivalence untested in 5D	It does not show that the background treatment is irrelevant in five dimensions, which would require the full comparison.
+187	c	appendix	pos	no	no	background-treatment equivalence untested in 5D	the choice is safe, though not shown to be immaterial.
+188	d	appendix	pos	no	no	background treatment differs by result	which gives the 3D and 4D central values but not the quoted 5D central value
+189	c	appendix	pos	yes	no	purity subtraction bias	Purity bias is 8–12 statistical standard deviations; signal-only experiments close.
+190	e	appendix	pos	no	no	obligation to revisit background treatment	it is direct evidence for the obligation of §C.6 to revisit the background treatment before submission
+191	c	appendix	pos	yes	no	refined subtraction fails nominal closure	Corner bias falls from 1.66 % to 0.24 %, but residuals in some joint cells fail the predeclared nominal closure criterion.
+192	e	appendix	pos	yes	no	refined subtraction fails nominal closure	Corner bias falls from 1.66 % to 0.24 %, but residuals in some joint cells fail the predeclared nominal closure criterion.
+193	d	appendix	pos	no	no	data difference is method sensitivity	the difference is method sensitivity, not a measured bias.
+194	c	appendix	neg	no	no	estimator misses generator-sized Eavail changes	With either treatment, the estimator does not follow generator-sized Eavail shape changes.
+195	c	appendix	neg	no	no	background-treatment coverage untested	Eavail shape changes. No coverage test was run.
+196	e	appendix	pos	no	no	obligation to revisit background treatment	The obligation to revisit the background treatment therefore remains open
+197	c	appendix	pos	no	no	purity subtraction bias	reducing one bias does not itself qualify an uncertainty.
+198	c	appendix	pos	yes	no	Stay-Positive underfitting at unfold setting	the positive-weight probability is underfit, leaving up to 4 % reco-level subtraction error per (Eavail , W ) reco cell.
+199	d	appendix	pos	no	no	appendix does not select 5D covariance	nothing in this appendix selects a five-dimensional covariance for use
+200	e	appendix	pos	no	no	five-axis covariance used under exception	that five-axis covariance is used under an exception limited to the file with its checksum
+201	e	appendix	pos	no	no	component-use preconditions	removes one blocking decision and leaves every other precondition for using a component in place
+202	c	appendix	pos	no	no	detector-response mismatch bias untested	Detector-response-mismatch closure (protocol implemented; not yet run)
+203	c	appendix	neg	no	no	detector-response mismatch bias untested	They do not directly test truth-distribution bias from a mismatch between the pseudodata detector response and OmniFold’s nominal response.
+204	e	appendix	pos	no	no	mismatch amplitude predeclaration	Both signs of ϵ must run at an amplitude fixed before inspecting results.
+205	c	appendix	neg	no	no	mismatch amplitude not justified	The inherited factor in reconstructed Eavail alone does not.
+206	d	appendix	pos	no	no	mismatch outputs diagnostic only	labels every output as a diagnostic that must not be quoted
+207	d	appendix	pos	no	no	mismatch test not a detector model	The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model.
+208	c	appendix	pos	no	no	physically correlated follow-up deferred	Current scalar event-loop outputs lack enough information for that recomputation.
+209	c	appendix	pos	no	no	physically correlated follow-up deferred	This arm requires dedicated diagnostic event-loop output and is deferred unless the reconstruction-only test shows material bias
+210	e	appendix	pos	no	no	physically correlated follow-up deferred	shows material bias or the collaboration requests the stronger model.
+211	d	appendix	pos	no	no	detector-response mismatch bias untested	This appendix records a validation protocol, not a result or an uncertainty component.
+212	c	appendix	neg	no	no	detector-response mismatch bias untested	No response-mismatch output has been produced and no pass threshold has been set.
+213	d	appendix	pos	no	no	mismatch test scope envelope	A small observed bias would support stability of the (Eavail , W ) interpretation only within the tested response envelope.
+214	e	appendix	pos	no	no	mismatch decision rule	A large bias would trigger a model/uncertainty decision and would not be silently absorbed as a non-closure error.
+215	d	appendix	pos	no	no	dimensionality survey not exhaustive	Recent additions follow; the inventory is not exhaustive through 2026.
+216	d	caption	pos	no	no	dimensionality survey classification	classified from each analysis’s headline differential result
+217	d	appendix	neg	no	no	dimensionality survey not exhaustive	These channel-specific additions are not plotted in Fig. 15.
+218	d	appendix	pos	no	no	PET work not used	That work is in progress and is documented separately
+219	d	appendix	neg	no	no	PET work not used	No central value, uncertainty or comparison from it is used or claimed in this note.
+220	d	appendix	pos	no	no	reproduction limits	Rebuilding this note’s PDFs assembles documents; it does not reproduce scientific results.
+221	e	appendix	pos	no	no	release not deposited	identified at deposit: [snapshot identifier pending deposit]
+222	e	appendix	neg	no	no	release not deposited	RC7, a local release candidate with a README, checksums and a replay verifier [97], has not been deposited or released under a publication tag
+223	c	appendix	neg	no	no	reproduction limits	It does not recompute the recorded stability of the observed p values under the data’s rounding noise.
+224	a	appendix	pos	no	no	RC7 uses earlier 2D central value	RC7’s two-dimensional curve is the exact-split one, which was the two-dimensional central value when the package was assembled.
+225	a	appendix	pos	no	no	RC7 uses earlier 2D central value	The article’s two-dimensional validation figure and its numbers were instead regenerated separately
+226	c	appendix	pos	no	no	reproduction limits	package carries the 20 rounding jitters from which the stability of the observed p values (§10.4) can be recomputed, but no packaged script does so.
+227	c	appendix	neg	no	no	reproduction limits	They do not reproduce this analysis’s unfolded 2D uncertainty construction.
+228	d	appendix	pos	no	no	reproduction limits	RC7 supports replay of the higher-dimensional inference from sufficient inputs, but not extraction from the archived pseudo-experiment products, event-level unfolding
+229	c	appendix	neg	no	no	reproduction limits	Nor does it reproduce the 2D uncertainty and coverage figures, the low-recoil comparisons
+230	c	appendix	pos	no	no	reproduction limits	but it is not part of RC7’s own verification.
+231	a	appendix	pos	no	no	RC1 earlier replay	An earlier version of the package, RC1, was replayed from an empty directory by a separate AI agent session
+232	c	appendix	pos	no	no	input preservation gaps	RC7’s own inventory lists their names, sizes and modification times, without checksums.
+233	c	appendix	pos	yes	no	input preservation gaps	it identifies the 489 simulation AnaTuples by checksum but holds no preservation copy of
+234	c	appendix	neg	no	no	input preservation gaps	Neither the checksums nor the preservation copies are a public deposit, and they do not make the full event-level analysis reproducible from the small candidate package.
+235	c	appendix	pos	no	no	reproduction limits	The broader result package must contain every item below; RC7 does not contain all of them.
+236	d	appendix	pos	no	no	fixed identity not scientific qualification	A fixed identity says which object is meant; it does not qualify the object scientifically.
+237	c	appendix	pos	no	no	pinned inflation factor bins	the pinned mask (bins where the inflation denominator vanished and g was declared 1)
+238	a	appendix	pos	no	no	flux-repaired generator predictions	GENIE and NuWro require the flux-repaired predictions of 2026-09-27
+239	d	appendix	pos	no	no	provenance not recorded for package objects	Of these, only the assembling revision and job of CZ , job
+240	c	appendix	neg	no	no	provenance not recorded for package objects	No producing revision or job is recorded for the other objects, and the assembled package carries none.
+241	c	appendix	pos	no	no	projected covariance ill-conditioned	and treat the matrix as ill-conditioned, without a definite rank
+242	c	appendix	pos	yes	no	projected covariance ill-conditioned	a second host reproduces λmin to only five significant digits.
+243	c	appendix	pos	no	no	projected covariance ill-conditioned	the inverse is set by the regularizer rather than by the data
+244	d	appendix	pos	no	no	no significance from projected covariance	first measurement is the reason no significance is computed from it at all
+245	c	appendix	pos	no	no	acceptance correction undecided	it had not been decided whether an acceptance correction is needed at the destination binning
+246	e	appendix	pos	no	no	acceptance correction undecided	The record of the projection carries acceptance_question: UNDECLARED:
+247	d	appendix	pos	no	no	PET work not used	supports future work (App. F) and produces no result in this note.

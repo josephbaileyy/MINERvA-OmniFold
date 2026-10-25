@@ -1,0 +1,114 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	abstract	pos	no	no	initial results; detailed studies deferred	It presents the first results on ProtoDUNE-SP’s performance, including noise and gain measurements
+2	d	intro	pos	no	no	positive-polarity beam only	The beam was set to deliver only positively-charged particles for the data samples used in this paper
+3	d	intro	pos	no	no	space charge corrections applied selectively	corrections for the effects of space charge are applied where appropriate in order for the results of these studies to be generally applicable
+4	d	intro	pos	no	no	initial results; detailed studies deferred	This paper summarizes the initial results from analyzing the ProtoDUNE-SP data. More in-depth studies will be reported in future publications.
+5	b	inline	neg	no	no	unconnected G plane on one APA	side of the detector was unintentionally not connected to its voltage supply.
+6	b	inline	pos	yes	no	unconnected G plane on one APA	we observed the transparency of the G plane on this APA to be as low as 10% immediately after the drift field had been switched on
+7	b	inline	pos	no	no	unpowered electron diverters	The electron diverters were therefore left unpowered. A resistive path to ground on each one ensured that the actual voltage on the outer electrode was close to zero, which was not the intended voltage.
+8	a	inline	pos	no	no	mid-run ASIC baseline change	On October 11, 2018, the internal ASIC baseline was changed to 900 mV for both induction and collection channels in order to mitigate ASIC saturation with large input charge.
+9	b	inline	neg	yes	no	unresponsive TPC channels	Twenty-nine channels never showed any sensitivity to signals, from September 2018 to January 2020. An additional seven became solidly unresponsive during the run, making the total unresponsive channel count 36 in January 2020.
+10	b	inline	pos	yes	no	unresponsive TPC channels	Approximately 30 additional channels were found to be intermittently unresponsive during the run.
+11	b	inline	pos	no	no	wrong secondary target at 2 GeV/c	However, the copper target was unintentionally used for the 2 GeV/𝑐 run instead of the tungsten target.
+12	c	inline	pos	no	no	assumed cause of pedestal variation	the pedestal is observed to have significant variation from one trigger record to another, presumably due to low-frequency (compared to the 3 ms readout window) noise pickup before the amplifier
+13	c	inline	pos	no	no	sticky-code bias of pedestal	these ADC count distributions are sometimes observed to have spikes at the offending sticky codes which can bias the pedestal estimate
+14	b	inline	pos	no	no	ADC sticky codes	A few percent of ADC ASIC channels suffer from an issue known as “sticky code,” in which certain ADC values would be preferentially produced
+15	b	inline	pos	yes	no	ADC sticky codes	Approximately 70 channels are flagged as bad due to very high fractions of sticky codes
+16	c	inline	neg	no	no	unflagged sticky codes near pedestal	Sticky codes very close to the pedestal are not flagged.
+17	b	inline	neg	no	no	FEMB 302 timing fault	One of the 120 FEMBs (FEMB 302) does not receive the master timing signal used to clock the ADCs.
+18	c	inline	pos	no	no	induction-plane tails neglected	The tails are much smaller and are neglected in induction-plane channels, where the signals are bipolar and thus integrate to zero.
+19	c	inline	neg	no	no	unrecorded pre-readout tail	The latter is unknown because the data preceding the start of the triggered readout have not been recorded.
+20	c	inline	pos	no	no	residual correlated noise	Some sources of correlated noise remain in some portions of the detector, specifically those for which the spatial correlation does not coincide with FEMB boundaries.
+21	d	inline	pos	yes	no	pulser calibration saturation range	Typical track charge deposits are one to four times the step charge and this saturation is only an issue for very heavily ionizing tracks.
+22	c	inline	pos	no	no	DAC non-linearity at high settings	The systematic shift for higher values is also typical and presumably reflects non-linearity in the DAC.
+23	d	inline	pos	no	no	noise claim restricted to good channels	this is found to be the case for nearly all of the channels in the detector
+24	d	inline	pos	no	no	integrated-noise window assumes yz tracks	Tracks with other angles with respect to the electric field will leave longer pulses on the sense wires.
+25	d	inline	pos	yes	no	bad or noisy channels excluded	The number of such channels is 90, i.e. 0.6% of the channels in the detector. These are excluded from the noise summary plots below.
+26	d	inline	pos	no	no	single-run noise measurement	Figure 19 shows the distributions of sample and integrated noise levels before and after correlated noise removal for trigger records 1-1000 of run 5240
+27	c	inline	pos	no	no	ENC assumes fast signals	The ProtoDUNE-SP signals are slower than this but the ENC is a standard metric and is presented here to allow comparison with results from other detectors.
+28	c	inline	pos	yes	no	common shaping time assumed for ENC	The actual shaping time varies from channel to channel but has central value around 2.2 𝜇s which gives a ratio of ENC to sample noise of 5.58.
+29	c	inline	pos	no	no	2D field response approximation	the field response is calculated with Garfield [41], a TPC drift simulation code, in a 2D scheme
+30	c	inline	pos	no	no	2D field response approximation	in which the fine-grained position-dependent field response function is averaged within one wire pitch.
+31	c	inline	pos	no	no	non-Gaussian hit shapes	Situations can occur in which charge deposits do not form a simple Gaussian shape, for example when a particle trajectory is close to being in the plane
+32	d	inline	pos	yes	no	disambiguation validated only in simulation	Simulation studies show that this technique assigns more than 99% of hits to their correct wire segments.
+33	c	inline	pos	no	no	residual cosmic contamination of slices	These 3D slices could contain beam particles or cosmic rays that were not clear enough to be removed in the first-pass cosmic-ray removal process.
+34	d	inline	pos	no	no	S/N from single run, selected angles	The measurement of the signal-to-noise ratio (S/N) for the ProtoDUNE-SP detector is carried out using a selected cosmic-ray muon sample in Run 5432
+35	d	inline	pos	no	no	S/N from single run, selected angles	To minimize the influence of angular dependence of S/N, we select muon tracks that have minimum component in both drift and wire direction.
+36	c	inline	neg	no	no	S/N not lifetime-corrected	No electron drift lifetime corrections are applied to the angle-corrected S/N calculations.
+37	c	caption	neg	no	no	S/N not lifetime-corrected	No electron drift lifetime corrections are applied. The most-probable value (MPV) and the average value for each plane are listed.
+38	b	inline	pos	yes	no	anomalous photon detector channels	Fifteen channels out of a total of 256 show anomalous readings.
+39	c	inline	neg	no	no	anomalous photon detector channels	These anomalous channels (all of the 3-S-SiPM type) have not been investigated further.
+40	c	inline	pos	no	no	unverified cause of peak asymmetry	The asymmetric distributions around the peaks in the signal amplitude spectra (top right panel) may be due to secondary avalanches from afterpulses and crosstalk
+41	c	inline	pos	yes	partly	assumed scintillation photon yield	a photon yield of 2.4 × 104 photons/MeV for minimum ionizing particles is assumed in simulations, 60% of the maximum yield measured at zero field
+42	c	inline	neg	no	no	LET dependence of light yield omitted	The photon yield dependence on increasing linear energy transfer, the rate of energy deposited by ionizing particles, is not included in the current simulation.
+43	c	inline	pos	no	partly	fixed optical simulation parameters	the Rayleigh scattering length, the reflectivities of materials for VUV photons, and the absorption length as a function of the impurity concentration are parameters that are fixed at their best estimates from existing data
+44	c	inline	pos	yes	yes	assumed Rayleigh scattering length	the Rayleigh scattering length for VUV photons in liquid argon is assumed to be 90 cm, according to the most recent experimental determination
+45	c	inline	pos	yes	no	impurity absorption neglected	Due to the high level of purity during the beam run (Oxygen equivalent impurity concentration < 100 ppt), absorption by impurities is assumed to be negligible.
+46	c	inline	pos	no	no	field-cage reflections neglected	profiles of the field cage surrounding the LAr drift volume is unknown and therefore it is set to zero in the current simulations.
+47	c	inline	pos	no	no	field-cage reflections neglected	Neglecting reflections at the LAr volume boundaries is expected to be a subdominant effect.
+48	c	inline	neg	no	no	photon library parameterization bias	The uncertainty on the possible bias due to the photon library parameterization is not included in the total uncertainty.
+49	c	inline	pos	no	yes	wire-plane transmission outside simulation	A correction is applied to account for the light transmission through this series of parallel planes, which is not included in the detector simulation in LArSoft.
+50	c	caption	pos	no	yes	simplified transmission model (no reflection)	A simplified geometrical model is used in which VUV photons intercepting a wire of the mesh are absorbed (no reflection).
+51	c	inline	pos	yes	yes	simplified transmission model (no reflection)	The relative uncertainty on the transmission coefficients is evaluated to be 7% (one-sided) to account for the simplified assumptions in the model (no reflection).
+52	d	inline	pos	no	no	efficiency sample restricted (beam side, 2-7 GeV/c)	Runs with beam momentum settings from 2 to 7 GeV/𝑐 are considered for the efficiency study.
+53	c	inline	pos	no	no	systematics omitted from efficiency figures	Statistical errors are small (few per-mille relative to the mean values, not visible inside the symbols), systematic uncertainties not shown in the figure
+54	d	caption	pos	no	no	electron efficiency restricted to near modules	modules 𝑗 = 1, .., 10 in APA3, and 2 at the shorter distance from the shower and higher photon counting are displayed
+55	d	caption	pos	no	no	electron efficiency restricted to near modules	modules 𝑗 = 1, .., 9 in APA3, and 2 at the shorter distance from the shower and higher photon counting are displayed
+56	d	inline	pos	no	no	electron efficiency restricted to near modules	excluding electron data at 2 GeV/𝑐 with the modules in APA1 at the farthest distance from the shower and low photon counting
+57	c	inline	pos	no	yes	electron-muon efficiency discrepancy	The systematic difference may be due to bias in the MC simulation at the photon emission stage (e.g., an unaccounted deviation in scintillation yield for GeV-scale electrons and muons with respect to minimum-ionizing particles)
+58	d	caption	pos	no	no	efficiency sample restricted (beam side, 2-7 GeV/c)	The number of detectors of different types examined correspond to the fraction of PDS elements in the beam side upstream APAs (# 3 and 2)
+59	b	inline	pos	no	no	simulation normalized to cosmic data	Before either analysis, the sum of photons per event collected at the detector surface in the simulation were scaled by a fixed amount in order to eliminate a systematic normalization difference with data.
+60	c	inline	pos	yes	no	space charge simulation fails to reproduce data	as a factor of two at some locations in the detector;
+61	c	inline	pos	no	no	space charge simulation fails to reproduce data	The first point above may be explained by a combination of potentially using an incorrect value for the argon ion drift velocity, which is not well known in liquid argon
+62	c	inline	pos	no	no	liquid argon flow omitted from SCE simulation	the possibility of liquid argon flow (not included in simulation) moving the argon ions around in the TPC
+63	c	inline	pos	no	no	space charge simulation fails to reproduce data	These explanations are at present speculative; more detailed study is ongoing and will be reported in a future work.
+64	c	inline	pos	no	no	space charge simulation fails to reproduce data	as well as the inability for the dedicated space charge simulation to reproduce the observations seen in data, a data-driven simulation of space charge effects was produced
+65	a	inline	pos	no	no	original SCE simulation superseded by data-driven map	as well as the inability for the dedicated space charge simulation to reproduce the observations seen in data, a data-driven simulation of space charge effects was produced
+66	a	caption	pos	no	no	original SCE simulation superseded by data-driven map	downstream detector face (lower right) in the original ProtoDUNE-SP Monte Carlo simulation
+67	c	inline	pos	yes	yes	SCE map extrapolation into detector interior	approximate estimate of the systematic uncertainty on this number is 5% with respect to the nominal drift electric field magnitude
+68	a	caption	pos	no	no	original SCE simulation superseded by data-driven map	both ProtoDUNE-SP data (top row) and the original ProtoDUNE-SP Monte Carlo simulation
+69	d	inline	pos	no	no	preliminary space charge calibration	The performance of this first attempt at a calibration of space charge effects at ProtoDUNE-SP is demonstrated
+70	c	inline	pos	yes	no	SCE time dependence not corrected	The time dependence of space charge effects has been observed to be relatively small during the period of time that ProtoDUNE-SP was taking beam data, on the order of 5% of the total spatial distortion magnitude.
+71	c	inline	pos	no	no	SCE time dependence not corrected	A detailed study of the time dependence of space charge effects at ProtoDUNE-SP will be presented in a future work.
+72	d	inline	pos	no	no	purity monitor lifetime differs from TPC	Purity monitors located inside the cryostat, but outside the field cage, measure the drift electron lifetimes for the argon inside their drift volumes, and thus are not expected to measure exactly the drift electron lifetime in the TPC.
+73	b	inline	neg	no	no	recirculation pump outage	During the end of October 2018, the pumps that circulate and purify the liquid argon were not operating due to an external electrical issue.
+74	c	caption	pos	no	no	statistical-only uncertainties shown	2018 during a period of higher purity (bottom). Only statistical errors are included.
+75	c	syst	pos	no	yes	diffusion uncertainty from single MC lifetime	This value of the fractional uncertainty in the lifetime is assumed for all dates investigated.
+76	c	caption	neg	no	no	missing Nov 6 lifetime point	Due to the run plan on November 6th, 2018, there was not enough data to make a precision measurement
+77	c	inline	pos	no	no	oxygen-equivalent impurity assumption	being the concentration equivalent if all impurities were from oxygen
+78	d	inline	pos	no	no	calibration shown for one example run	The two steps are described in the following sections, using the results for Run 5770 that was taken on Nov. 3, 2018 as an example.
+79	c	inline	pos	no	no	CRT lifetime unavailable for early runs	Using the CRT allowed a much more precise calibration, but that system was not operable until late in the run and therefore those more precise lifetime measurements were not available for runs taken before then.
+80	c	inline	neg	no	no	diffusion effect not measured	The effect of diffusion has not been measured yet.
+81	d	inline	pos	no	no	angular exclusion of tracks	The reconstruction capability of LArTPCs is limited for tracks that are parallel to the APA wires or contained in a plane containing a wire and the electric field
+82	b	inline	pos	no	no	unpowered electron diverters	show places where charge has been collected or distorted by the grounded electron diverters
+83	b	inline	pos	no	no	unconnected G plane on one APA	because of the partiallycharged disconnected G plane
+84	c	inline	pos	yes	no	wire-comb dQ/dx distortion uncorrected	but only by around 5%, and only in very localized positions that are narrower than the bin
+85	d	inline	pos	yes	no	stopping-muon purity from MC only	a purity of 99.74% is achieved based on Monte Carlo study
+86	c	inline	pos	no	no	residual effects absorbed in energy scale	effectively a scaling factor that accounts for the electronics gain, ADC conversion and other residual effects that are not explicitly calibrated out
+87	c	inline	pos	no	no	external recombination parameters assumed	are the Modified Box model parameters which were measured by the ArgoNeuT experiment at an electric field strength of 0.481 kV/cm
+88	c	inline	pos	no	no	statistical-only uncertainties shown	are shown in table 6. The uncertainties are statistical only.
+89	d	inline	pos	no	no	beam dE/dx from single 1 GeV/c runs	This section describes the results obtained from ProtoDUNE-SP Run 5387 taken on Oct. 18, 2018 corresponding to approximately 12 hours of exposure
+90	d	inline	pos	no	no	pion sample includes muons at 1 GeV/c	the measured TOF of pions and muons is indistinguishable so the PID will select both pions and muons
+91	d	inline	pos	no	no	data quality exclusions	Events are first removed for periods of unstable HV or one or more inactive TPC readout boards.
+92	c	inline	pos	no	no	MC replica selection uses truth	In MC the truth information of the beam particle is used in place of the beam line information.
+93	c	inline	pos	no	no	CSDA range under particle hypothesis	The measured beam momentum is used to approximate the stopping range of each particle under the assumption it is a muon using the continuous-slowing-down-approximation (CSDA) range
+94	d	inline	pos	no	no	beam dE/dx from single 1 GeV/c runs	This section describes the results obtained from ProtoDUNE-SP Run 5387.
+95	c	inline	pos	no	no	CSDA range under particle hypothesis	The measured beam momentum is used to approximate the stopping range under the assumption it is a proton using the CSDA range.
+96	d	inline	pos	no	no	beam dE/dx from single 1 GeV/c runs	Electrons are selected in Run 5809 taken on Nov. 8, 2018 using the same beam-TPC matching criteria
+97	c	inline	pos	no	no	MC overestimates dE/dx resolution	This could be due to the imperfect modeling of physics processes and/or detector effects.
+98	d	inline	pos	no	no	collection-plane-only PID	of hits. Only the collection plane information is used.
+99	c	inline	pos	no	no	pion PID inferred from muons	The PID performance for pions is expected to be similar to that of muons.
+100	d	inline	pos	no	no	limited PDS coverage and uniformity	are expected to limit the light yield and the uniformity of the calorimetric response along the drift direction.
+101	d	inline	pos	no	no	light calorimetry from single ARAPUCA module	from the single beam side ARAPUCA module is used for this calorimetric response study.
+102	c	inline	pos	no	no	residual light-response nonlinearity	To a first approximation, the average light response is a linear function of the energy over the entire range of tested beam energies
+103	d	inline	pos	yes	no	light yield at ~3 m only	to a diffuse light source (EM shower) at a distance of about 3 m
+104	c	inline	pos	no	no	residual light-response nonlinearity	Most of the nonlinearity was then removed.
+105	c	inline	pos	yes	no	upstream energy-loss fluctuation from simulation	this energy degradation and its fluctuation do not appear in the incident beam energy spectra and it is evaluated by simulations (∼ 2%)
+106	c	inline	pos	no	no	all-ARAPUCA light yield extrapolated	An extrapolation of the performance to a PDS system consisting entirely of ARAPUCA modules, obtained by scaling the detected photon response of the light guide bars with the ratio of the ARAPUCA-to-light guide efficiencies
+107	c	inline	pos	yes	no	photon library parameterization bias	A systematic deviation, between 5 and ≤ 10%, is found for electrons with energies between 0.3 GeV and 1 GeV.
+108	c	inline	pos	no	no	photon library parameterization bias	This deviation is attributed to the statistical limitations on the visibility values of the photon library used in the Monte Carlo
+109	d	concl	pos	no	no	initial results; detailed studies deferred	This paper summarizes the first results on the performance of the ProtoDUNE-SP LArTPC using large samples of data from a test-beam run
+110	b	concl	pos	yes	no	unresponsive TPC channels	The number of solidly unresponsive TPC channels was initially 29 out of 15360 and rose to 36 over the course of a year and five months of operations.
+111	d	concl	pos	yes	no	bad or noisy channels excluded	Approximately 105 additional channels are noisy or have other issues with the electronics so that they were not included in the analyses presented in this report.
+112	c	concl	pos	yes	no	all-ARAPUCA light yield extrapolated	A PDS system consisting entirely of ARAPUCA modules, with an expected light yield of 1.9 photons/MeV, will exceeds the specifications of the DUNE Far Detector.
+113	d	concl	pos	no	no	initial results; detailed studies deferred	The data collected by ProtoDUNE-SP during beam runs and cosmic-ray runs will allow detailed studies of detector characteristics such as fluid flow

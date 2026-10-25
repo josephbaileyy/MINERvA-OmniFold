@@ -1,0 +1,45 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	abstract	pos	no	no	Gaussian Ansatz avoids only some pitfalls	we argue that our recently proposed Gaussian Ansatz approach can avoid some of the pitfalls of prior dependence
+2	d	abstract	pos	no	no	no prior-independent data-based method offered	whereas prior-independent data-based calibration remains an open problem.
+3	d	intro	neg	no	no	no prior-independent data-based method offered	For data-based calibrations, we are unaware of any prior-independent methods in the literature.
+4	d	caption	pos	no	no	closure studied for mean only	In this paper, we will focus on the mean, as it is the usual target in machine learning and HEP
+5	c	caption	neg	no	no	prior independence does not guarantee closure	However, even with prior independence, closure is not guaranteed.
+6	c	inline	pos	no	no	asymptotic training limit assumed	with enough training data, a flexible enough functional parametrization, and a sufficiently exhaustive training procedure, the asymptotic solution to Eq. (2) is:
+7	c	inline	pos	no	no	detector response universal train/test assumed	In some cases, the detector response might depend on more features than zT , and if these hidden features are mismodeled, then Eq. (4) may not hold.
+8	c	inline	pos	no	no	detector response universal train/test assumed	For our analysis of simulation-based calibration, we assume Eq. (4) throughout.
+9	d	inline	pos	no	no	MLC unbiased only for certain noise models	maximum likelihood calibrations are universal,4 and in certain configurations, are provably unbiased.
+10	d	caption	pos	no	no	universality only over priors with shared support	pendence over the space of priors that share the same support as the training set.
+11	d	caption	neg	no	no	universality only over priors with shared support	One cannot get away with training a model on a single zT instance and expecting it to work everywhere!
+12	d	caption	neg	no	no	MLC unbiased only for certain noise models	It is not always true that a maximum likelihood calibration is un-
+13	d	inline	pos	no	no	study limited to one-dimensional examples	For simplicity, consider the special case of one dimension.
+14	d	inline	pos	no	no	study limited to one-dimensional examples	At least in the special case of one-dimensional OT-based calibration, however, we have shown above that the corrected response function is not universal.
+15	d	inline	neg	no	no	no prior-independent data-based method offered	To our knowledge, no one has proposed a data-based calibration method that is prior independent, whether using machine learning or not.
+16	d	inline	neg	no	no	MLC resolution defined only for Gaussian noise	for frequentist approaches where the posterior is not well defined, such as the maximum likelihood calibration, the resolution cannot be defined this way and care must be taken.
+17	d	inline	pos	no	no	MLC resolution defined only for Gaussian noise	For Gaussian noise models p(xD |zT ), the likelihood is symmetric under interchanging the arguments xD and zT , so one can take the resolution to be
+18	c	inline	pos	no	no	detector model uncertainty not addressed	For simulation-based calibrations, even if they are prior independent, there can be uncertainties in the detector models themselves.
+19	d	inline	pos	no	no	Gaussian toy model assumptions	We assume that the truth information (the “prior”) is distributed according to a Gaussian
+20	d	inline	pos	no	no	Gaussian toy model assumptions	The detector response is assumed to induce Gaussian smearing centered on the truth input
+21	c	inline	pos	no	no	perfect knowledge of detector response assumed	the goal is to learn ZT given XD , assuming perfect knowledge of the detector response.
+22	c	inline	pos	no	no	same truth spectra in data and simulation	In this latter study, we assume that data and simulation have the same true probability density and differ only in their detector response
+23	c	inline	pos	no	no	asymptotic training limit assumed	it is possible to solve Eq. (5) analytically, in the asymptotic limit:
+24	d	inline	pos	no	no	MLC unbiased only for certain noise models	For Gaussian noise models, this maximum likelihood estimate is unbiased, as confirmed by the numerical results in Fig. 1b.
+25	c	caption	neg	no	no	GA zT-binned results not shown	Though not shown, we verified that the Gaussian Ansatz gives results consistent with the unbiased calibration in dashed red.
+26	c	inline	pos	no	no	same truth spectra in data and simulation	For simplicity, we assume that the true spectra (determined by (µ, σ)) are the same in data and in simulation,
+27	c	inline	pos	no	no	detector response universal train/test assumed	Again for simplicity, we assume that detector effects (determined by
+28	c	inline	pos	no	no	QCD closure holds by construction	we see the calibration derived in the training sample, where by construction, the calibrated simulation matches the data.
+29	d	inline	pos	no	no	simplified dijet mass calibration	a simplified version of simulation-based and data-based jet energy calibrations.
+30	d	inline	pos	no	no	extreme prior shift test case	we use a realistic and also extreme example where calibrations are derived in a sample of generic quark and gluon jets
+31	d	inline	pos	no	no	simplified dijet mass calibration	To further simplify the problem, we consider a calibration of the invariant mass mjj of the leading two jets.
+32	d	inline	pos	no	no	simplified dijet mass calibration	tice, jet energy calibrations are derived for individual jets, but this requires at least including calibrating the jet rapidity in addition to the jet energy.
+33	d	inline	pos	no	no	study limited to one-dimensional examples	We keep the problem one-dimensional in order to ensure the problem is easy to visualize and to mitigate the dependence on features that are not explicitly modeled.
+34	d	inline	pos	no	no	study limited to one-dimensional examples	For a high-dimensional study of jet energy calibrations in a prior-independent way, see Ref. [43].
+35	d	inline	pos	no	no	data emulated by full simulation	In data-based calibration, our goal will be to match this fast simulation to “data”, which will be represented by the full simulation.
+36	d	inline	pos	yes	no	high pT selection avoids trigger	To avoid any issues related to the trigger, we focus on events where p̂T > 1 TeV.
+37	d	inline	pos	no	no	BSM emulated by reweighting QCD	To emulate two different physics processes while controlling for all hidden variables, we consider dijet events with two different sets of event weights.
+38	d	inline	pos	no	no	BSM emulated by reweighting QCD	To emulate a narrow dijet resonance, we consider a second set of weights given by
+39	d	inline	pos	no	no	BSM emulated by reweighting QCD	Note that the weighting is applied using the true mjj .
+40	d	inline	pos	no	no	data emulated by full simulation	to the observed data distribution pdata (mreco jj ), given by the full simulation (Geant4).
+41	c	inline	pos	no	no	QCD closure holds by construction	On the QCD sample, this calibration closes by construction.
+42	d	concl	pos	no	no	study limited to one-dimensional examples	While we focused on one-dimensional examples, the prior dependence is a generic feature of these approaches.
+43	c	concl	pos	no	no	study limited to one-dimensional examples	Going to higher dimensions may even exacerbate the issue since it is harder to visualize and control prior differences in many dimensions.
+44	d	concl	neg	no	no	no prior-independent data-based method offered	To our knowledge, there are currently no prior-independent data-based calibration approaches.

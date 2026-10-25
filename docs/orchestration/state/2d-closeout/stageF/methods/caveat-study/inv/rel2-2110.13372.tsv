@@ -1,0 +1,61 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	a	intro	pos	no	no	changes relative to LE measurement	incorporates both empirical and theoretical improvements to modeling since the original publication
+2	b	intro	pos	no	no	central value model chosen from reco data	This analysis also informs choices for a better central value and uncertainties to use
+3	c	intro	pos	no	partly	model dependence of unfolding	This comes with a cost of modest model biases and increased uncertainties after unfolding.
+4	d	intro	pos	no	no	Eavail excludes neutron and missing energy	The process of unfolding from measured hadronic energy in the detector to true energy available to make a signal excludes neutron and other missing energy
+5	d	inline	pos	yes	no	muon kinematic acceptance cuts	The event selection requires θµ < 20◦ and 1.5 < pµ < 20.0 GeV to ensure good muon acceptance
+6	d	inline	pos	yes	no	q3 measurement region limited	The measurement region is limited to q3 < 1.2 GeV, which is a 0.4 GeV expansion from the LE measurement.
+7	d	inline	neg	no	no	Eavail excludes neutron and missing energy	It does not account for neutron kinetic energy or missing energy from unbinding nucleons.
+8	d	caption	pos	no	no	resolution estimated in simulation only	for Monte Carlo simulated events passing the event selection with reconstructed q3 < 1.2 GeV
+9	a	inline	neg	no	no	MnvTune-v1.2 superseded by MnvTune-v3	The tuned (MnvTune-v1.2) simulation does not describe the data well, and it contains a 2p2h model that was empirically tuned to prior MINERνA data
+10	a	inline	pos	no	no	MnvTune-v1.2 superseded by MnvTune-v3	By incorporating the latest theoretical work into the analysis of Fig. 2 it is clear why a new tuning is needed.
+11	c	inline	neg	no	partly	central-value model choice not unique	These are not the only options and the rest of the section describes the effort in detail.
+12	c	inline	pos	no	partly	residual mismodeling by MnvTune-v3	The MnvTune-v3 model shows a better agreement for most but not all
+13	c	inline	pos	no	partly	unexplained absolute data-model discrepancy	The absolute discrepancy and the uncertain underlying physics mechanism would remain concerns.
+14	a	inline	pos	no	no	MnvTune-v1.2 superseded by MnvTune-v3	yet the tune described in the previous paragraph only modifies the 2p2h component
+15	a	inline	pos	no	no	QE-only Gaussian enhancement abandoned	A third alternate 2D Gaussian fit that enhances only the QE process does a poor job of describing the
+16	a	inline	pos	no	no	QE-only Gaussian enhancement abandoned	This led to a different strategy to probe the QE content in the dip region
+17	c	inline	pos	yes	no	SuSA 2p2h reweight approximation	produces only a small shift of about 10 MeV in the hadronic energy
+18	c	inline	pos	no	no	Valencia unphysical region set to zero	When not weighting to SuSA, an additional weight reduces the prediction to zero in that region
+19	c	inline	pos	no	no	SuSA QE model not applied	in the context of this work, we can only use it to reweight muon kinematics, hence we do not apply it here
+20	b	inline	neg	no	no	tune choices made after seeing reco data	Because the event rate in Fig. 2 is underpredicted, we do not weight down the rest of the QE population to compensate
+21	c	inline	neg	no	no	spectator nucleon not simulated	As in GENIE, the implied spectator nucleon is not simulated.
+22	c	inline	pos	no	partly	residual mismodeling by MnvTune-v3	better describes the data for some but not all kinematics
+23	c	inline	neg	no	partly	residual mismodeling by MnvTune-v3	The descriptions of 2p2h and QE are still not as accurate as desired.
+24	b	inline	pos	yes	no	tune choices made after seeing reco data	of 5 MeV, and 25 MeV provided the best description of this low-Q2 region
+25	c	inline	pos	no	no	removal-energy shift ignores lepton kinematics	At face value, this shift accounts only for an oversimulation of the hadronic energy.
+26	c	inline	pos	no	no	removal-energy shift ignores lepton kinematics	Because modifications to the lepton kinematics may be negligible at MINERνA energies
+27	c	inline	pos	no	no	physical mechanism of removal-energy shift	Reality may be a mix of these effects.
+28	c	inline	pos	yes	no	unfolding iteration choice	the χ2 reached a minimum at two iterations or at ten iterations for some pseudodata variations
+29	c	syst	pos	yes	yes	reduced MAQE uncertainty replaces GENIE default	The MAQE uncertainty is smaller than and replaces the official GENIE uncertainty (-15%, +25%)
+30	c	syst	pos	no	yes	model dependence of unfolding	This captures the most significant signal model uncertainty implied by the different 2p2h models and the lowest-Q2 resonance model variations.
+31	b	inline	pos	no	no	central value model chosen from reco data	Because the MnvTune-v3 had model elements chosen to describe the reconstructed data better, the overall agreement with the extracted cross section is also good.
+32	c	inline	neg	no	no	full-covariance chi2 interpretation	The full χ2 with covariance does not have a simple interpretation when comparing the two MnvTunes
+33	c	inline	pos	yes	no	FSI hA vs hN model choice	A study of the hA vs. hN models in GENIE 3 (not shown) suggests 10% differences in these bins from this choice alone.
+34	c	inline	pos	yes	partly	lowest-Eavail bin model spread under-covered	Its magnitude in the reconstructed distribution is about half the size of differences described in this subsection.
+35	c	inline	pos	no	no	physical mechanism of removal-energy shift	but a suppression effect may also be needed to describe these data
+36	d	inline	pos	no	no	NuWro higher-resonance comparison inconclusive	The higher resonances are treated very differently in NuWro, preventing firm conclusions.
+37	a	inline	neg	no	no	changes relative to LE measurement	analysis used neither a low-Q2 resonance suppression nor a ∆ hadronic energy shift
+38	c	inline	pos	no	partly	model dependence of unfolding	A third effect comes from the unfolding technique, which introduces shifts in the data/MC ratio in Fig. 5
+39	c	inline	pos	no	partly	model dependence of unfolding	When the input model is far from the data, iterations can lessen the gap, removing some of the bias from an imperfect starting model.
+40	c	inline	pos	yes	partly	model dependence of unfolding	The discrepancy started at 25% and was reduced to 17% for MnvTune-v1.2
+41	a	inline	pos	no	no	changes relative to LE measurement	In the QE region of the previous measurement, the reconstructed distribution was already well described, so iterations had negligible effect.
+42	a	inline	neg	no	no	supersedes LE low-recoil result	combining the published unfolded LE result with the new ME result is not a viable analysis, and we consider the previous results superseded by the new results
+43	d	inline	neg	no	no	LE and ME results not combinable	combining the published unfolded LE result with the new ME result is not a viable analysis, and we consider the previous results superseded by the new results
+44	d	inline	pos	no	no	conclusions from ME data set alone	may shed more light on the neutrino energy dependence of the conclusions reached by this data set alone
+45	a	inline	pos	no	no	changes relative to LE measurement	These changes cause the reconstructed distributions to differ even with a consistent MC configuration like MnvTune-v1.2.
+46	a	inline	pos	yes	no	changes relative to LE measurement	The magnitude of these effects is 10% to 20% in some regions of the sample.
+47	a	inline	neg	yes	no	changes relative to LE measurement	In contrast, the 8% LE adjustment [100] was not yet available for the first analysis.
+48	a	inline	pos	yes	no	changes relative to LE measurement	The +3.6% muon energy scale correction that is applied to the ME data [38] has complex effects on this sample and is also significant.
+49	a	inline	pos	yes	no	changes relative to LE measurement	There are numerous improvements of 2% or less including the detector mass model and efficiency corrections.
+50	a	inline	pos	no	no	changes relative to LE measurement	The unfolded distributions use different central value MC.
+51	a	inline	pos	no	no	changes relative to LE measurement	The most prominent change is that the original analysis did not have any addition to the 2p2h or QE rate in the dip region
+52	b	concl	pos	no	no	central value model chosen from reco data	An analysis of reconstructed data distributions with several model elements is used to produce a new central value (MnvTune-v3) for unfolding
+53	a	concl	pos	no	no	MnvTune-v1.2 superseded by MnvTune-v3	removal energy from the resonance final state replace empirical tunes to MINERνA data
+54	c	caption	pos	no	no	model-study figures statistical errors only	MINERνA reconstructed distributions (Points with Statistical Uncertainties only are shown in data)
+55	c	caption	pos	no	no	model-study figures statistical errors only	Points with Statistical Uncertainties only are shown in data. See text for descriptions of each configuration.
+56	c	appendix	pos	yes	no	full-covariance chi2 interpretation	With the diagonal elements only MnvTune-V3 is lower, 79 vs. 140 for 44 degrees of freedom.
+57	c	appendix	pos	yes	no	full-covariance chi2 interpretation	The single-bin contributions vary by hundreds of χ2 units and don’t obviously correspond to particular components of the physics model or systematic uncertainties.
+58	c	appendix	pos	no	no	full-covariance chi2 interpretation	the full covariance χ2 would naturally discount that particular discrepancy, and a visibly worse model might end with the better χ2
+59	c	appendix	pos	no	no	full-covariance chi2 interpretation	The changing contribution to the χ2 (not shown) is localized to the low-Q2 ∆ production region
+60	c	appendix	pos	no	no	full-covariance chi2 interpretation	the systematic associated with the removal energy shift minimizes the effect of that region’s discrepancy

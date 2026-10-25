@@ -1,0 +1,67 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	abstract	pos	no	no	paper covers design and construction only	In this document details of design specifications, assembly procedures, and acceptance tests are reported.
+2	d	intro	pos	no	no	proton decay sensitivity not competitive	though its target mass is insufficiently large to enable a competitive sensitivity, the analysis will provide an important proof-of-principle
+3	d	intro	pos	no	no	paper covers design and construction only	This document describes the design, construction, and technical details of the MicroBooNE detector.
+4	d	intro	pos	no	no	cosmic ray tagger not described here	A cosmic ray tagger system, under construction at the time of the writing of this paper, will surround the detector
+5	d	intro	pos	no	no	cosmic ray tagger not described here	This system will be described in a subsequent publication.
+6	d	inline	pos	no	no	active volume bounds physics analyses	This is the maximum volume that can be used for physics analyses.
+7	c	inline	pos	no	no	O2-equivalent purity assumes oxygen attachment rate	where the choice of O2 equivalent units implies other polar molecules besides oxygen may be present, but the attachment rate constant for oxygen is used in calculations
+8	d	inline	neg	no	no	filters do not remove nitrogen	It should be noted that the filters do not remove N2 and so the ultimate N2 contamination is set by the quality of the delivered argon.
+9	d	inline	pos	yes	no	purity monitor measurable range	Liquid argon contaminations ranging between 300 and 50 ppt O2 equivalent can be measured
+10	d	inline	pos	no	no	resistor overvoltage risk during discharge	there is a slight possibility that the voltage drop and power could temporarily exceed the rating of the resistors in the case of discharge
+11	d	inline	pos	yes	no	resistor overvoltage risk during discharge	simulations show that voltages of up to 80 kV peak, with a discharge time constant of a few seconds, can develop across the resistors.
+12	d	inline	pos	no	no	large parts cleaned by simpler procedure	Stainless steel parts that were too large to fit in the ultrasonic bath were prepared by a simpler prescription out of necessity.
+13	c	inline	pos	yes	no	wire-plane transparency assumes full VUV absorption	This transparency value assumes 100% of VUV photons impinging on the wires are absorbed.
+14	c	inline	neg	yes	no	PMT QE spec excludes platinum layer	The manufacturer’s specifications do not include the effects of the platinum photocathode coating, but a wavelength dependent quantum efficiency was provided by Hamamatsu for 4 of the 32 installed PMTs.
+15	c	caption	pos	no	no	PMT QE spec excludes platinum layer	The specification for the non-platinum undercoated PMT from [60].
+16	c	caption	pos	yes	no	PMT QE spec excludes platinum layer	The blue band shows the mean and standard deviation of the four quantum efficiency curves provided by Hamamatsu for the installed PMTs.
+17	c	inline	pos	yes	no	PMT linearity tested only to 100 PE	The PMT response showed good linearity up to 100 photo-electrons (PE), which was the maximum attainable by the PMT test stand LED.
+18	c	inline	neg	no	no	unexplained higher cryogenic dark current	Although the cause is unknown, this phenomenon has previously been observed [62].
+19	c	inline	pos	no	no	rate-dependent PMT gain shift in detector	Therefore a similar effect is expected in the MicroBooNE detector.
+20	c	inline	pos	no	no	rate-dependent PMT gain shift in detector	Preliminary results from measurements of the PMTs installed in the LAr-filled MicroBooNE cryostat shows the expected effect.
+21	c	inline	pos	no	no	spectrum artifact region omitted	This region is omitted from the reported spectrum of figure 30.
+22	c	inline	pos	no	no	mu-metal test resolution limited by systematics	Results showed that A4K and Cryoperm function essentially identically, to within the measurement error, and so MicroBooNE chose A4K, based on significant cost savings.
+23	c	inline	pos	yes	no	mu-metal test resolution limited by systematics	Given the 5% systematic error, the two shield positions are indistinguishable.
+24	b	inline	pos	no	no	light system installed before TPC, UV exposure	However, in the end, scheduling permitted installation of the system before the LArTPC installation.
+25	b	inline	pos	no	no	light system installed before TPC, UV exposure	This had the advantage of making installation and surveying easier, but the drawback that the system would be exposed to UV light for a longer period.
+26	b	caption	pos	no	no	light system installed before TPC, UV exposure	The clear plates were replaced with TPB-coated plates immediately before LArTPC installation, as discussed in the text
+27	c	inline	pos	no	no	SHV connector impedance neglected	The SHV connector impedance has a negligible effect on the 20-30 ns PMT signals.
+28	d	inline	neg	yes	no	PMT pulse nonlinearity above 300 PE	Thus, it was concluded that for pulses of more than 300 PE, pulse shape cannot be described by a linear superposition of single photo-electron pulses.
+29	d	caption	pos	yes	no	PMT pulse nonlinearity above 300 PE	linearity of cosmic-ray induced PMT pulses is maintained up to amplitudes of around -1.7 V (300 PE)
+30	a	inline	pos	no	no	lightguide is an early alternative design	This design was an early alternative to a perfectly flat design that guides the light to SiPMs.
+31	c	inline	pos	no	no	lightguide performance studied on similar guides	The performance and attenuation behavior of similar light guides to those installed in MicroBooNE were studied experimentally in [48].
+32	c	inline	pos	no	no	lightguide spectrum assumed unchanged at 87 K	Based on reference [68] it is expected that the emission spectrum for the light guide coating, with TPB embedded in the substrate, will not change significantly as it cools to 87 K.
+33	c	caption	pos	no	no	lightguide PMT QE shown for other model	Only the quantum efficiency of the non-undercoated PMT model is shown, from [75].
+34	c	inline	pos	yes	no	PMT-wire crosstalk accepted as small	The signal induced on the collection plane was estimated to be no more than ∼10 ADC counts for a typical cosmic ray under normal operating conditions.
+35	c	inline	pos	no	no	PMT-wire crosstalk accepted as small	This was deemed an acceptably small amount that further shielding was not required.
+36	c	inline	pos	no	no	PMT-wire crosstalk mechanism not established	This suggests that the effect is electrostatic in nature, and probably due to capacitive coupling between the PMT and wire-plane.
+37	c	caption	pos	no	no	crosstalk test baseline fluctuation	The plots are pinned together at wire 300, as the distribution baseline fluctuated over the course of the experiment due to intermittent noise.
+38	b	inline	pos	no	no	ASIC cold screening stopped early	Based on this high yield, it was decided not to continue the cold screening test on the rest of the production chips
+39	c	inline	pos	yes	no	cold cables sample-tested only	In addition, 10% of the cold cables were tested in the test stand at BNL to confirm the quality of the cable assembly.
+40	c	inline	pos	no	no	ASIC designed with 300 K models	The development of the analog front end ASICs was initiated using 180 nm CMOS technology and 300 K models, though the performance parameters are extracted at 77 K.
+41	c	inline	pos	no	no	electronics tested in LN2 as LAr proxy	these tests were done in liquid nitrogen rather than at room temperature, since noise levels and characteristics of the ASIC performance in liquid nitrogen are similar to the performance in liquid argon.
+42	c	inline	pos	no	no	SN stream lossy compression	The second stream is a continuous LArTPC data stream which is compressed with some data loss.
+43	d	inline	pos	yes	no	Huffman compression factor depends on settings	a lossless Huffman coding scheme implemented in the FEM FPGA compresses the data by approximately a factor of 4.5 (dependent on ASIC gain and shaping settings).
+44	d	inline	pos	no	no	Huffman compression factor depends on settings	In practice, the data reduction is sensitive to noise levels and LArTPC activity, and is also dependent on the gain and shaping time setting.
+45	c	inline	pos	no	no	SN stream lossy compression	However, for the continuous SN stream, further compression becomes necessary, resulting in unavoidable data loss.
+46	c	inline	pos	no	no	SN stream not yet commissioned	At the time of this writing, the MicroBooNE SN stream compression scheme is being finalized and the SN readout stream is being commissioned.
+47	c	inline	pos	no	no	SN stream lossy compression	The SN stream circular buffers, which are aggressively (non-losslessly) compressed beyond what the NU stream experiences
+48	d	inline	pos	no	no	software trigger only mimics FPGA trigger	Currently, these algorithms mimic the PMT readout electronics’ FPGA-based beam gate trigger algorithms, described in section 6.5.
+49	d	caption	neg	no	no	not all crates fully instrumented	Not all crates are fully populated with electronics.
+50	d	inline	pos	no	no	copper clock/trigger links make ground loops	These signals are transmitted via copper connections, and represent the only source of ground loops on detector ground.
+51	c	inline	pos	yes	no	space charge estimate assumptions	The rate of cosmic muons in the LArTPC volume is calculated to be 11,000 muons/s within the active volume (assuming no overburden,
+52	c	inline	pos	yes	no	space charge estimate assumptions	Assuming that cosmic muons are minimum-ionizing (2.1 MeV/cm) and produce 23.6 eV per ion pair, positive ion charge is produced
+53	d	inline	pos	no	no	cosmic-muon field calibration impractical	In practice, the rate of such events from cosmic muons is too low to acquire sufficient statistics in reasonable time.
+54	d	inline	pos	no	no	initial laser map is coarse	This map provides a rough picture of the space charge distribution.
+55	c	inline	pos	no	no	laser calibration procedure not yet optimized	Repetitive study of small volumes may reveal dynamics in the space charge distribution due to turbulent circulation, and should further inform an optimized scenario for a standard UV laser calibration procedure.
+56	d	inline	pos	yes	no	laser correction shown only in 2-D simulation	An example of simulated reconstruction in 2-D space is depicted in figure 73, showing that the magnitude of the field distortions can potentially be reduced from 10 cm down to several millimeters in 99% of the detector volume.
+57	a	inline	pos	no	no	earlier fixed-path laser feedthrough	Earlier, an evacuated quartz-glass [104] was utilized to introduce a laser beam into liquid argon, however this beam had a fixed path through the detector.
+58	d	inline	pos	yes	no	laser system validated on small test LArTPC	The test system consists of a LArTPC equipped with 64 readout channels and an active area of about 400 cm2 , with a drift distance of 40 cm
+59	c	inline	pos	no	no	vertical steering backlash	This construction introduces uncertainties to the measurement position and backlash.
+60	d	inline	pos	no	no	laser steering coverage limits	Horizontal movement limitations arise from the construction of the feedthrough system, namely the warm mirror support structure.
+61	d	inline	pos	no	no	laser steering coverage limits	However slight misalignment will affect this, since the beam will not be in the optimal spot anymore.
+62	d	inline	pos	yes	no	laser steering coverage limits	In warm tests a maximal downward angle of the beam of 52.5◦ with respect to the horizon was achieved.
+63	c	inline	pos	no	no	steering vibrations at high speed	The vibrations are expected to be dampened with a more stable installation on the detector, and with the immersion of the setup in liquid argon.
+64	d	inline	pos	no	no	mirror reflectivity angle-sensitive in LAr	the reflectivity of the selected dielectric mirrors, which were optimized for 45◦ in air, are very sensitive to the angle of incidence in liquid argon
+65	d	inline	pos	no	no	laser beam diameter exceeds wire spacing	A beam with this diameter will produce an ionization signal larger than the wire spacing, which will limit the capabilities of the full system.
+66	d	concl	pos	no	no	paper covers design and construction only	Future publications will be dedicated to describing the performance of the detector systems introduced in this paper.

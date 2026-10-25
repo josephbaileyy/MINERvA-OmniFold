@@ -1,0 +1,32 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	inline	pos	yes	no	restricted CC1p0pi signal phase space	The QE-like signal definition used in this analysis includes all νµ -Ar scattering events with a final-state muon with momentum 0.1 < pµ < 1.2 GeV/c, and exactly one proton with 0.3 < pp < 1 GeV/c.
+2	d	inline	pos	no	no	restricted CC1p0pi signal phase space	The aforementioned momentum ranges are driven by considering resolution effects, as well as regions of the phase space with non-zero efficiencies and systematic uncertainties that are well understood.
+3	c	inline	pos	no	no	background composition taken from simulation	Based on simulation predictions, we find that the dominant background contribution originates from events with two protons in the momentum range of interest
+4	c	inline	pos	no	yes	PID score data-MC discrepancy	The uncertainty bands account for potential data-MC discrepancies observed for both particle scores.
+5	c	inline	pos	no	no	T2K carbon tune transfer to argon	The different target nuclei across T2K and MicroBooNE might result in particle reinteraction differences that can affect the reconstructed final state topologies, such as different absorption effects.
+6	c	inline	pos	no	no	RES and other channels untuned	Predictions for more complex interactions, such as RES, remain unaltered and no additional MC constraints are applied.
+7	c	caption	pos	no	no	detector-level plots statistical errors only	a peak close to one. Only statistical uncertainties are shown on the data.
+8	c	caption	pos	no	no	detector-level plots statistical errors only	function of the transverse missing momentum δpT . Only statistical uncertainties are shown on the data.
+9	d	caption	pos	no	no	interaction breakdown from simulation only	The interaction contributions are obtained from simulation and their separation in signal (S) and background (B) events is presented.
+10	c	caption	pos	no	no	detector-level plots statistical errors only	function of the transverse missing momentum direction δαT . Only statistical uncertainties are shown on the data.
+11	d	caption	pos	no	no	interaction breakdown from simulation only	The interaction contributions are obtained from simulation and their separation in signal (S) and background (B) events is presented.
+12	c	caption	pos	no	no	detector-level plots statistical errors only	function of the muon-proton transverse opening angle δϕT . Only statistical uncertainties are shown on the data.
+13	d	caption	pos	no	no	interaction breakdown from simulation only	The interaction contributions are obtained from simulation and their separation in signal (S) and background (B) events is presented.
+14	c	caption	pos	no	no	detector-level plots statistical errors only	momentum δpT,y . Only statistical uncertainties are shown on the data.
+15	d	caption	pos	no	no	interaction breakdown from simulation only	The interaction contributions are obtained from simulation and their separation in signal (S) and background (B) events is presented.
+16	c	caption	pos	no	no	detector-level plots statistical errors only	missing momentum δpT,x . Only statistical uncertainties are shown on the data.
+17	d	caption	pos	no	no	interaction breakdown from simulation only	The interaction contributions are obtained from simulation and their separation in signal (S) and background (B) events is presented.
+18	c	caption	pos	no	no	detector-level plots statistical errors only	function of the calorimetric energy reconstruction E Cal . Only statistical uncertainties are shown on the data.
+19	d	caption	pos	no	no	interaction breakdown from simulation only	The interaction contributions are obtained from simulation and their separation in signal (S) and background (B) events is presented.
+20	c	inline	pos	no	no	unfolded result regularization bias (AC)	The latter contains information about the regularization and bias of the measurement.
+21	d	inline	pos	no	no	unfolded result regularization bias (AC)	The corresponding AC matrices have been applied to all the cross section predictions included in this work when a comparison to the unfolded data is performed.
+22	d	inline	pos	no	no	unfolded result regularization bias (AC)	The AC matrix should be applied to any independent theoretical prediction when a comparison is performed to the data reported in this paper.
+23	c	syst	pos	no	yes	unfolding model dependence	In order to account for potential biases due to the nominal MC modeling prediction used in the unfolding procedure
+24	c	syst	pos	yes	yes	unfolding model dependence	the corresponding covariance matrices are constructed using Eq. 8 and a single universe (n = 1).
+25	d	syst	pos	no	no	overflow included in edge bins	Overflow (underflow) values are included in the last (first) bin.
+26	d	syst	pos	no	no	unfolded result regularization bias (AC)	The relevant AC matrices have been applied to the theoretical predictions to account for regularization effects.
+27	c	inline	neg	no	no	model theory uncertainties excluded from chi2	Theoretical uncertainties on the models themselves are not included.
+28	a	inline	pos	no	no	earlier MicroBooNE analyses with older GENIE	Previous MicroBooNE measurements using different signal definitions [19, 71, 72] showed discrepancies in that quantity, primarily in the forward direction.
+29	a	inline	pos	no	no	earlier MicroBooNE analyses with older GENIE	These analyses used an older simulation prediction, namely GENIE v2.12.2, to account for the efficiency corrections and beam-induced backgrounds.
+30	c	inline	pos	no	no	FSI vs multinucleon not disentangled	Future multi-differential results can help further disentangle the contributions from these effects.
+31	a	concl	pos	yes	no	MicroBooNE tune motivated by untuned deficit	shows a systematic deficit of ∼ 20% which necessitated the development of the aforementioned tune.

@@ -1,0 +1,208 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	abstract	pos	yes	no	unexplained 2D shape difference	OmniFold reproduces the published muon-kinematic cross section’s integral within about 1%, with a correlated shape difference.
+2	d	abstract	pos	no	no	5D result not a validated measurement	it yields central values only, whose normalizations agree with lower-dimensional results
+3	c	abstract	pos	no	no	purity background-subtraction bias	Pseudo-experiments reveal background-subtraction bias, incomplete recovery of generator-sized truth changes, and statistical undercoverage at the tested truths.
+4	c	abstract	pos	no	no	regularization bias, generator-sized truth changes	Pseudo-experiments reveal background-subtraction bias, incomplete recovery of generator-sized truth changes, and statistical undercoverage at the tested truths.
+5	c	abstract	pos	no	no	statistical undercoverage under truth changes	Pseudo-experiments reveal background-subtraction bias, incomplete recovery of generator-sized truth changes, and statistical undercoverage at the tested truths.
+6	d	abstract	neg	yes	partly	precision target not met with envelope	With a model-dependence envelope added linearly to the uncertainty, no tested reporting definition meets our 10% precision criterion.
+7	d	abstract	pos	no	no	tests concern simulated hybrid nulls	simulation-calibrated tests of hybrid null hypotheses for five generator predictions all reject at the 5% familywise level
+8	d	abstract	pos	no	no	no gain over coarse projections	all reject at the 5% familywise level, with no evidence of gain over matched coarse projections.
+9	d	intro	pos	no	no	five observables not independent	the five observables are simultaneous but not independent.
+10	c	caption	pos	no	no	unexplained 2D shape difference	2D integral within about 1%; correlated shape difference
+11	c	caption	pos	yes	no	purity background-subtraction bias	background-subtraction bias up to 4% at high W ; negative weights remove most
+12	c	caption	pos	no	no	regularization bias, generator-sized truth changes	generator-sized truth changes only partly recovered
+13	c	caption	pos	yes	no	statistical undercoverage under truth changes	statistical intervals miscover under an about 10% rate reduction
+14	c	caption	pos	no	no	five-observable covariance seed dependence	seed-dependent covariance; rounding-level instability no tested reporting
+15	c	caption	pos	no	no	rounding-level estimator instability	seed-dependent covariance; rounding-level instability no tested reporting
+16	d	caption	neg	yes	partly	precision target not met with envelope	no tested reporting definition meets the 10% target
+17	a	caption	pos	no	no	earlier statistical band failed coverage	published result an earlier band failed coverage
+18	c	intro	pos	no	no	calibration fidelity of simulated chain	A calibration obtained in this way is valid to the extent that the simulated chain reproduces the analysis of the data.
+19	d	intro	pos	no	no	one implementation, one data set	The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested,
+20	d	intro	pos	no	no	5D result not a validated measurement	a threeto five-observable result is a central value without intervals of validated coverage
+21	d	intro	neg	no	no	5D result not a validated measurement	The paper does not deliver a validated five-observable cross-section measurement.
+22	d	intro	pos	no	no	tests concern simulated hybrid nulls	The generator tests are conditional tests of simulated hybrid null hypotheses,
+23	d	intro	pos	no	no	tests concern simulated hybrid nulls	They are calibrated within the implemented simulation model, whose detector model has no calorimetric recoil-response uncertainty.
+24	c	intro	pos	no	no	no calorimetric hadronic-response band	They are calibrated within the implemented simulation model, whose detector model has no calorimetric recoil-response uncertainty.
+25	c	intro	pos	no	no	error control rests on A1/A2	Under the assumptions of Sec. VII C, their decision rule controls the familywise error rate of the ten decisions at 5%, on average over the nuisance priors.
+26	d	intro	pos	no	no	size averaged over nuisance priors	Under the assumptions of Sec. VII C, their decision rule controls the familywise error rate of the ten decisions at 5%, on average over the nuisance priors.
+27	d	intro	neg	no	no	rejections not physical exclusions	The rejections are not physical exclusions of the generators and provide no measurement uncertainty.
+28	d	intro	pos	no	no	generator disagreements already established	Sec. VII tests generator predictions that the published muon-kinematic measurement already disfavours
+29	d	inline	neg	no	no	fixed selection across dimensions	Adding features does not add selected events or relax the signal definition.
+30	d	inline	pos	no	no	135 MeV constant in Eavail definition	The 135 MeV constant is inherited from the analysis framework’s definition.
+31	d	inline	neg	yes	no	135 MeV constant in Eavail definition	Replacing it by the charged-pion mass would change no true-Eavail bin by more than 1.05 %.
+32	d	inline	pos	no	no	five observables not independent	so the five reconstructed inputs share information and do not provide five independent
+33	d	inline	pos	yes	no	five observables not independent	exact apart from the clamp at W 2 = 0, which applies to
+34	d	inline	pos	no	no	truth angle from fixed beam axis	from a fixed beam axis rather than from the true neutrino direction.
+35	d	inline	pos	yes	no	truth angle from fixed beam axis	The resulting residual in truth W is within ±2 MeV for 68% of events.
+36	d	inline	pos	yes	no	GiBUU lacks high-energy neutrinos	The GiBUU sample stops at Eν ≈ 20 GeV.
+37	c	inline	pos	yes	no	prediction vs analysis definition mismatch	it changes their coarse-cell predictions by at most about one Monte Carlo standard error.
+38	c	inline	neg	no	no	prediction vs analysis definition mismatch	Its effect cannot be evaluated for GiBUU.
+39	c	inline	pos	yes	no	prediction vs analysis definition mismatch	The predictions also measure pT about their own neutrino axis, which differs from the analysis truth pT by ±4 MeV for 68% of events.
+40	c	inline	neg	no	no	carbon vs CH target difference	so normalizing per nucleon does not remove the difference between the targets.
+41	c	inline	pos	yes	no	carbon vs CH target difference	the carbon-only cross section per nucleon exceeds that of CH by 8.3 % for W < 1.1 GeV.
+42	c	inline	pos	no	no	carbon vs CH target difference	The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of Sec. VII do not correct.
+43	d	inline	pos	yes	no	reported-cell domain threshold	The others, which hold 0.47 % of the expected signal, stay in the total only.
+44	d	inline	pos	yes	no	GiBUU lacks high-energy neutrinos	For GiBUU, whose sample lacks high-energy neutrinos, the domain is the 72 supported cells with p∥ < 6 GeV/c.
+45	c	inline	pos	no	no	no held-out split in training	Each classifier is trained on the full sample whose weights it then sets, without a held-out or cross-fitted split,
+46	d	caption	neg	no	no	configurations differ across results	Results from different configurations are not combined.
+47	c	inline	pos	no	no	purity background-subtraction bias	The five-observable central value uses configuration (a), with the purity-based subtraction, whose bias is given in Sec. V A.
+48	d	inline	pos	no	no	purity background-subtraction bias	higher-capacity refinement remove most of the bias of the purity method at nominal truth
+49	e	inline	pos	no	no	predeclared design	Configuration (e) keeps five iterations by a criterion fixed in advance.
+50	c	inline	pos	no	no	estimator developed on test truth changes	is measured as the largest residual proxy over the truth changes used in its development,
+51	d	inline	pos	no	no	pointwise not simultaneous coverage	the coverage tested here is pointwise, for each reported quantity separately, not the stronger simultaneous coverage of all of them.
+52	c	inline	pos	no	no	detector response fixed in validation	keeps the detector response at fixed truth; the prior used to unfold them stays at Tune v1.
+53	c	inline	pos	no	no	detector response fixed in validation	Every study uses the analysis simulation’s detector response, except the calibration of the tests, which also draws the detector bands.
+54	d	inline	pos	no	no	chi2 descriptive only	the descriptive covariance-weighted distance is χ2 /ndf = 2.27.
+55	c	inline	pos	no	no	unexplained 2D shape difference	It indicates a correlated shape difference, not a normalization difference,
+56	c	inline	pos	no	no	learner dependence of 2D result	The distance depends on the estimator. With the
+57	b	inline	pos	no	no	2D learner chosen after comparison	This learner was chosen after both comparisons were known.
+58	c	inline	pos	yes	no	learner dependence of 2D result	Their per-bin difference has a median of 1.03 % (maximum 17.6 %).
+59	c	inline	pos	no	partly	seed block size poorly determined	seed (five seed settings, so that its own size is poorly determined), and run period
+60	c	inline	pos	yes	no	flux uncertainty differs from published	The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine.
+61	c	inline	pos	no	no	reconstruction-failure approximation omitted	covariance omits the approximation in the systematicuniverse unfoldings for events that fail reconstruction,
+62	c	inline	pos	no	no	learner dependence of 2D result	the learner dependence of Sec. IV A, and the dependence on the regularization;
+63	c	inline	pos	no	no	regularization dependence omitted from covariance	the learner dependence of Sec. IV A, and the dependence on the regularization;
+64	c	inline	pos	no	partly	prior shape dependence reported separately	the dependence on the prior’s generator shape is reported beside it (below).
+65	a	inline	pos	no	no	earlier statistical band failed coverage	A coverage test specified in advance scored an earlier version of the statistical band,
+66	e	inline	pos	no	no	predeclared design	A coverage test specified in advance scored an earlier version of the statistical band,
+67	a	inline	pos	yes	no	earlier statistical band failed coverage	The band failed the test by undercovering in its tails: pooled over experiments and bins, 91.2 % of standardized residuals fell within two standard deviations, against 95.4 % nominal.
+68	b	inline	pos	yes	no	post hoc rescoring of statistical band	A post hoc rescoring of the same pseudo-experiments against a second, rebuilt earlier band removes the tail undercoverage:
+69	a	inline	pos	yes	no	earlier statistical band failed coverage	A post hoc rescoring of the same pseudo-experiments against a second, rebuilt earlier band removes the tail undercoverage:
+70	c	inline	neg	no	no	statistical band coverage not independently tested	the rescoring is not an independent coverage test.
+71	c	inline	neg	no	yes	run-period inconsistency unexplained	Data from different run periods are not mutually consistent within the other uncertainties.
+72	c	inline	pos	yes	yes	run-period inconsistency unexplained	differs from that of the earliest periods by a step of about 7 % near 8 GeV/c.
+73	c	inline	neg	no	no	run-period inconsistency unexplained	The cause is not known, and these data cannot establish which period is correct.
+74	c	inline	pos	yes	yes	run-period inconsistency unexplained	includes this inconsistency in the combined result, 2.0 % on the integrated cross section.
+75	d	inline	pos	no	partly	model-dependence measure not a bias bound	It is a measure of generatorshape model dependence, not a calibrated bound on the unfolding bias.
+76	c	caption	pos	no	no	learner dependence of 2D result	it omits the learner dependence and Cmodel , and the two bands are correlated, so
+77	c	caption	pos	no	partly	prior shape dependence reported separately	it omits the learner dependence and Cmodel , and the two bands are correlated, so
+78	d	caption	neg	no	no	band overlap not compatibility test	the two bands are correlated, so their overlap is not a compatibility test
+79	c	inline	pos	no	no	normalization model dependence untested	and it does not test the model dependence of the normalization.
+80	c	inline	pos	no	partly	prior shape dependence reported separately	uses the covariance without Cmodel , because neither has a component for the residual dependence on the prior’s
+81	d	inline	neg	no	no	no statement on published residual	so we make no statement about the size of the published analysis’s residual.
+82	c	inline	pos	no	no	config (e) marginals compared only in 3D	For configuration (e), only the three-observable marginal has been compared:
+83	d	inline	pos	yes	no	configurations differ across results	agrees with the configuration-(f) two-dimensional result to 0.141 %, a comparison across configurations.
+84	d	inline	pos	no	no	closure tests signal-only	These closure tests reweight the simulated signal only.
+85	c	inline	pos	yes	no	purity background-subtraction bias	These cells are biased by up to 4 % in simulation, about one quoted standard deviation in one (Eavail , W ) cell.
+86	c	inline	neg	no	no	purity background-subtraction bias	This bias is not included in the quoted uncertainties.
+87	c	inline	pos	yes	no	purity background-subtraction bias	reduces it to below 0.3 % in those cells (at most 0.4 % elsewhere in the projection), leaving up to 1 %
+88	c	inline	pos	yes	no	purity background-subtraction bias	The purity estimate lies up to 5.9 statistical standard deviations from the truth (more than one total standard deviation in one cell),
+89	c	inline	pos	no	no	regularization bias, generator-sized truth changes	Figure 3 shows that the unfolding recovers only part of a change of the Eavail shape as large as the difference between generators.
+90	c	inline	pos	yes	no	regularization bias, generator-sized truth changes	deviate from it by several percent in the largest cells and by up to 74 % at high W ,
+91	c	inline	pos	yes	no	regularization bias, generator-sized truth changes	We interpret it as regularization bias, because it persists over the tested ranges of iteration number and classifier capacity:
+92	c	inline	pos	yes	no	regularization bias, generator-sized truth changes	it is 16 % to 31 % in the most affected (Eavail , W ) cell and within the quoted total uncertainty in about half of those cells.
+93	c	inline	pos	yes	no	statistical undercoverage under truth changes	miscover at the tested truths, most strongly when the true signal rate is lowered by about 10 %.
+94	c	inline	pos	yes	no	statistical undercoverage under truth changes	51 of the 153 reported cell and projection integrals have a 68% coverage whose upper confidence bound lies below the acceptance threshold of 0.66, with coverage as low as 0.06.
+95	c	inline	pos	no	no	residual bias behind miscoverage	attributes the miscoverage to a residual bias that grows with W and survives the nominal-truth bias correction.
+96	d	inline	pos	no	no	normalization agreement not validation	Agreement in the marginal normalizations thus coexists with substantial residual bias under the tested deformations.
+97	c	inline	neg	no	no	5D covariance fails validation	does not meet the validation criteria of its specification.
+98	c	inline	pos	yes	no	five-observable covariance seed dependence	changing the estimator’s random seed moves the projected uncertainty of two further covariances by about 6.1 %, beyond a stability limit of 5 %.
+99	d	inline	neg	no	no	no covariance-based generator significance	We therefore quote no covariance-based generator significance.
+100	c	inline	pos	no	no	rounding-level estimator instability	The estimators are also unstable at the level of rounding.
+101	c	inline	pos	yes	no	rounding-level estimator instability	Rounding-level input changes move the results of the higher-capacity refinement by up to 2.6 statistical standard deviations,
+102	c	inline	pos	yes	no	rounding-level estimator instability	The refinement therefore fails a datastability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.
+103	c	inline	pos	no	no	rounding-level estimator instability	but it limits how exactly the central values can be reproduced.
+104	d	inline	pos	no	no	envelope is diagnostic, not interval	The envelope is a sensitivity diagnostic that tracks the regularization bias, not an interval.
+105	d	inline	neg	no	partly	precision target not met with envelope	With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target.
+106	d	inline	pos	no	partly	precision target not met with envelope	With the joint-test estimator, the envelope alone exceeds it for the 109 coarse joint cells and for the fallback definition,
+107	d	inline	pos	yes	partly	precision target not met with envelope	the same estimator’s envelope alone does not exceed it, but the 1.4 % normalization contained in every
+108	d	inline	pos	yes	partly	precision target not met with envelope	Over these definitions, the envelope has a median of about 10–13% per cell, comparable to the generator differences that such a measurement would need to resolve.
+109	c	caption	neg	no	no	exact long runs not converged	The long exact runs do not converge; their entries are last iterates.
+110	c	limits	pos	no	no	result retains part of prior	Three results point to the unfolded result retaining part of its prior.
+111	c	limits	pos	no	no	regularization bias, generator-sized truth changes	The first is the residual under a generatorsized change of the truth in Sec. V B, which we interpret as regularization bias.
+112	c	limits	pos	no	no	residual bias behind miscoverage	but whether that bias has the same origin is not established.
+113	c	limits	neg	no	no	exact long runs not converged	The long runs do not converge, so this rests on their last iterates.
+114	d	limits	pos	no	no	diagnostic scope limited	The diagnostic is binned, signal-only and noise-free,
+115	d	limits	pos	yes	no	diagnostic scope limited	covers only the residuals whose diagnosis is stable under the truth resolution (38 % of the joint-cell residuals above
+116	d	limits	pos	no	no	diagnostic scope limited	What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its
+117	d	limits	pos	no	no	diagnostic scope limited	Within that scope, the residual is consistent with
+118	d	inline	pos	no	no	5D result not a validated measurement	result reusable and the higher-dimensional central values usable for qualitative comparison.
+119	c	inline	neg	no	no	power vs reco-level test not compared	We have not compared their power with that of a reconstruction-level test.
+120	d	inline	pos	no	no	5D result not a validated measurement	These comparisons use central values only, of configuration (e) in three and four observables and configuration (a) in five, and assign them no significance.
+121	d	inline	pos	yes	no	GiBUU lacks high-energy neutrinos	GiBUU, the most deficient, stops at Eν ≈ 20 GeV, and the NuWro and GiBUU ratios contain the target
+122	c	inline	pos	no	no	carbon vs CH target difference	GiBUU, the most deficient, stops at Eν ≈ 20 GeV, and the NuWro and GiBUU ratios contain the target
+123	c	inline	pos	no	no	regularization bias, generator-sized truth changes	The high-Eavail , high-W region is where the regularization bias of Sec. V is largest.
+124	d	inline	pos	no	no	map is descriptive only	The map therefore describes where the central value differs from the Tune v1.
+125	d	inline	pos	no	no	tests concern simulated hybrid nulls	We call this hypothesis the hybrid null: it is the hypothesis the calibration simulates.
+126	c	inline	pos	no	no	convergence below fine grid unshown	Whether it represents the physical generator prediction depends on the composition below the fine grid and on convergence of that grid
+127	d	inline	pos	no	no	null conditional on data-derived lateral shifts	Because the ∆b come from the observed data, the null distributions are conditional on these data-derived inputs
+128	c	inline	pos	no	no	error control rests on A1/A2	This rule rests on two assumptions: each true null’s calibrated tail probability
+129	d	inline	pos	no	no	size averaged over nuisance priors	The calibrated size is averaged over the nuisance priors: at a fixed true value of the nuisance parameters it can exceed α.
+130	d	inline	pos	no	no	error control applies to decisions only	The error control applies to the decisions, not separately to the point estimates (k + 1)/(B + 1).
+131	e	inline	pos	no	no	predeclared design	The test design was fixed before any observed statistic was computed.
+132	b	inline	pos	no	no	reviewers saw data residuals	Its reviewers had already seen descriptive per-cell residuals of the data.
+133	e	inline	pos	no	no	reviewers saw data residuals	Its reviewers had already seen descriptive per-cell residuals of the data.
+134	b	inline	pos	no	no	calibration extended after p values seen	After the observed p values had become visible, the computing time available to the calibration was increased by a bounded amount.
+135	b	inline	pos	no	no	calibration extended after p values seen	Under A1 and A2, the error control holds for any rule that decides when sampling stops, so it does not depend on this extension.
+136	c	inline	pos	yes	no	lost pseudo-experiments	Computing time limits interrupted or prevented 224 calibration and 53 power pseudo-experiments, and the decisions use the completed ones.
+137	c	inline	neg	no	no	lost pseudo-experiments	none of the lost calibration pseudo-experiments reaches the observed statistic in any test or shifted null,
+138	c	inline	pos	no	no	lost pseudo-experiments	A2 also requires that the pseudo-experiments were lost independently of their outcomes, which has not been shown.
+139	e	inline	pos	no	no	predeclared design	The predeclared design and the rerun are described in Ref. [14],
+140	d	inline	pos	no	no	tests concern simulated hybrid nulls	The decisions concern the hybrid nulls and rest on six conditions on the nuisance model,
+141	c	inline	pos	no	no	decisions rest on nuisance-model conditions	The decisions concern the hybrid nulls and rest on six conditions on the nuisance model,
+142	c	inline	pos	yes	no	convergence below fine grid unshown	the last refinement step is 0.50–0.86 of the whole change from the coarse test grid.
+143	c	inline	neg	no	no	convergence below fine grid unshown	Convergence of the fine grid has therefore not been shown, and the residual below it is unmeasured and potentially material.
+144	c	inline	pos	no	partly	convergence below fine grid unshown	The shifts ±2 δfine were set by assuming that the refinement steps shrink geometrically.
+145	c	inline	pos	no	no	convergence below fine grid unshown	The measured L2 ratios also allow slower convergence.
+146	c	inline	pos	no	no	no calorimetric hadronic-response band	The detector model is the simulation’s, varied only by the drawn detector bands and a linear surrogate for the lateral bands.
+147	c	inline	neg	no	no	no calorimetric hadronic-response band	It has no band for the calorimetric hadronic-energy response.
+148	c	inline	pos	yes	no	no calorimetric hadronic-response band	and rises to 10 % at the highest three-momentum transfers of the low-recoil measurement
+149	c	inline	pos	no	no	no calorimetric hadronic-response band	The omission matters for the rejections.
+150	b	inline	pos	no	no	post hoc projection observation	In a post hoc observation, the calibrated tests restricted to the matched (pT , p∥ ) projection
+151	c	inline	pos	no	no	no calorimetric hadronic-response band	so the information that rejects it involves the hadronic axes, on which a response band would act.
+152	c	inline	pos	yes	no	no calorimetric hadronic-response band	the simulation’s reconstructed recoil energy is scaled by ±4 %,
+153	c	inline	pos	yes	no	no calorimetric hadronic-response band	every rejection stays in place against the original null distributions, and the observed statistics move by up to about 11 %.
+154	c	inline	neg	no	no	no calorimetric hadronic-response band	The study regenerates no null distribution and tests no other form or size of response change.
+155	c	inline	pos	no	no	no calorimetric hadronic-response band	Neutrons and higher-momentum hadrons, which matter at high W , lie outside the testbeam sample.
+156	c	inline	pos	no	no	no calorimetric hadronic-response band	The effects the study does not test are listed in Ref. [14], Sec. 10.8.
+157	c	inline	pos	yes	no	interaction-model prior clipping	The prior is the analysis’s 34-band set, with negative weights of two bands clipped.
+158	c	inline	pos	no	no	half-simulation calibration size	The pseudo-experiments use half of the simulation and the data all of it.
+159	c	inline	pos	yes	yes	half-simulation calibration size	It is at most about 0.07 null standard deviations, measured for the mean only, without noise or nuisance draws.
+160	c	inline	neg	no	no	half-simulation calibration size	Repeating part of the calibration with a quarter of the simulation resolved no change of the null distributions.
+161	c	inline	pos	no	no	half-simulation calibration size	Under an extrapolation to the full simulation that is conservative by design, all ten decisions remain rejected.
+162	c	inline	pos	yes	no	half-simulation calibration size	The two decisions closest to their boundary exceed the value at which they would change by 1.11 and 1.30 null standard deviations.
+163	c	inline	pos	no	no	GiBUU lacks high-energy neutrinos	GiBUU lacks Eν > 20 GeV, and its out-of-domain truth enters the migrations into its domain.
+164	c	inline	pos	no	yes	prediction finite-sample size	The predictions’ own finite samples enter the metric and the simulated residuals.
+165	c	inline	pos	no	no	carbon vs CH target difference	Correcting both predictions to the hydrocarbon target moves both toward the data, and NuWro’s total-test rejection does not survive that correction robustly.
+166	c	inline	pos	no	no	GiBUU hydrogen energy non-conservation	GiBUU’s deep-inelastic events on hydrogen do not conserve energy, which affects its correction and possibly its carbon prediction.
+167	d	inline	pos	no	no	carbon vs CH target difference	carbon prediction. These target-corrected evaluations are descriptive.
+168	d	inline	pos	no	no	carbon vs CH target difference	The decisions of Table IV concern each prediction on the target it was generated for, and they stand.
+169	d	inline	pos	yes	no	convergence below fine grid unshown	As a sensitivity check outside the decision rule, a scan of the multiplier of the shift along δfine finds all ten rejections determined up to a multiplier of about 5.2.
+170	d	inline	pos	no	no	convergence below fine grid unshown	The scan probes that one direction.
+171	c	inline	pos	no	no	result retains part of prior	whereas the external nulls are displaced far upward by the estimator’s pull toward its prior,
+172	d	inline	pos	no	no	generator disagreements already established	The disagreements they recover were already established by the published two-dimensional measurement on the same data [13].
+173	c	inline	pos	no	no	projection tests uncorrected for multiplicity	the same calibrated tests give p < 0.05, without a multiplicity correction, for every test in at least one of the two projections.
+174	d	inline	neg	no	no	no gain over coarse projections	This study therefore provides no evidence of additional discrimination from the joint five-observable information.
+175	d	inline	pos	no	no	rejections global, not localized	The rejections are global assessments of the hybrid nulls: assigning a discrepancy to a kinematic region or nuclear mechanism would require separate tests.
+176	d	inline	pos	no	no	power only for chosen alternatives	Power studies characterize the response to chosen alternatives:
+177	c	inline	pos	yes	no	low power for some alternatives	the GENIE 2.12.10 null the shape powers are 0.74, 0.02,
+178	c	concl	pos	no	no	calibration fidelity of simulated chain	the decision rule controls the familywise error rate at 5% provided the calibration is exact.
+179	c	limits	neg	no	no	2D covariance not validated	The two-dimensional covariance has not been independently validated.
+180	c	limits	neg	no	no	statistical band coverage not independently tested	The coverage of its statistical block and of the total has not been tested.
+181	d	limits	neg	no	no	pointwise not simultaneous coverage	We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
+182	d	limits	neg	no	no	no independent simulation sample	We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
+183	d	limits	neg	no	no	no covariance-based generator significance	The covariance provides no calibrated significance for generator comparisons.
+184	c	limits	pos	no	partly	run-period block size not validated	Its run-period block is built from the observed differences among the periods, so its size is not validated and its own consistency check cannot fail.
+185	b	limits	pos	no	no	2D learner chosen after comparison	The learner of the two-dimensional result was selected after both comparisons with the published result were known.
+186	d	limits	pos	no	no	2D benchmark is reproduction, not validation	The benchmark is therefore a reproduction rather than an independent validation.
+187	c	limits	neg	no	no	unexplained 2D shape difference	The source of the correlated shape difference from the published result has not been identified.
+188	c	limits	neg	no	no	residual bias behind miscoverage	The source of the residual bias behind the miscoverage of Sec. V C has not been established.
+189	c	limits	pos	no	no	regularization bias, generator-sized truth changes	The residual under the generator-sized truth changes of Sec. V B is interpreted as regularization bias.
+190	c	limits	neg	no	no	regularization bias, generator-sized truth changes	No quoted uncertainty includes it, and the fiveobservable covariance omits it.
+191	c	limits	neg	no	no	five-observable covariance seed dependence	The seed dependence of the five-observable covariance rests on one seed pair, and the spread over seed pairs has not been measured.
+192	c	limits	neg	yes	no	five-observable covariance seed dependence	built at a fixed seed carry 26.0 % of Tr C, and their seed sensitivity has not been measured.
+193	c	limits	neg	no	no	detector response fixed in validation	No closure test with a mismodelled detector response has been run for the (Eavail , W ) map of
+194	d	limits	pos	no	no	tests concern simulated hybrid nulls	The rejections carry over from the simulated hybrid nulls to the generator predictions themselves only if
+195	c	limits	pos	no	no	convergence below fine grid unshown	The rejections carry over from the simulated hybrid nulls to the generator predictions themselves only if
+196	c	limits	pos	no	no	convergence below fine grid unshown	this would require a demonstrated bound on the residual below the fine grid.
+197	c	limits	neg	no	no	no calorimetric hadronic-response band	The detector model has no calorimetric hadronicresponse band (condition (ii)), and the net effect of the missing band on each p value has not been measured.
+198	d	limits	pos	no	no	no calorimetric hadronic-response band	The rejections remain conditional on the simulation’s hadronic response.
+199	d	limits	pos	no	no	rejections not physical exclusions	Their physical interpretation would require a response band drawn through the calibration.
+200	c	limits	pos	no	no	calibration fidelity of simulated chain	The calibration is valid for the simulated null to the extent that the pseudo-experiment chain reproduces the analysis of the data (A1).
+201	c	limits	pos	no	no	no independent simulation sample	so measuring a rejection rate for null pseudo-data processed like the data would require an independent simulation sample.
+202	c	limits	neg	no	no	no independent simulation sample	an independent simulation sample. No such rate has been measured.
+203	c	limits	neg	no	no	null conditional on data-derived lateral shifts	The conditioning of the null distributions on the data-derived lateral shifts has not been validated.
+204	c	caption	pos	no	no	estimator developed on test truth changes	Panel (a) uses the random seeds of the estimator’s development studies.
+205	b	caption	pos	no	no	estimator developed on test truth changes	Panel (b) uses separate seeds, which were later also used in the estimator’s development.
+206	c	caption	neg	no	no	closure pseudo-experiments not paired	configuration (d) (60 pseudo-experiments). The pseudo-experiments are not paired.
+207	c	caption	pos	no	no	q3 coverage truth omitted	is omitted because its reweighting does not implement the intended change; the test’s verdict

@@ -1,0 +1,58 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	abstract	pos	no	no	CC1pi+Xp signal topology definition	We measure the differential cross sections in the muon-neutrino charged-current interaction on hydrocarbon with a single π + and at least one proton in the final state,
+2	d	intro	pos	no	no	CC1pi+Xp signal topology definition	νµ cross section on hydrocarbon as a function of TKI variables in CC production of exactly one π + and no other mesons, and at least one proton.
+3	d	inline	pos	no	no	additional protons ignored in TKI	If there is more than one proton observed in the final state, only the highest momentum one is considered.
+4	c	inline	pos	no	no	pN assumes nucleus at rest, no FSI	Assuming the target nucleus is at rest and there are no FSI, pN can be computed following the steps in Ref. [33].
+5	c	inline	neg	no	no	additional protons ignored in TKI	In the case where there are multiple nucleons emitted, these nucleons are not included in the above calculation and very likely result in a large imbalance in all the TKI variables.
+6	d	inline	pos	no	no	FGD1 carbon-only analysis scope	This study focuses on carbon interactions and only events occurring in FGD1 are analyzed.
+7	a	inline	pos	yes	no	flux uncertainty improved over previous T2K	This results in a significant improvement with respect to previous T2K cross-section analyses [60, 61] where the uncertainty was around 8.5% [62].
+8	a	inline	pos	no	no	flux uncertainty improved over previous T2K	A comparison of the flux uncertainty used in this analysis and the flux uncertainty used in
+9	a	caption	pos	no	no	flux uncertainty improved over previous T2K	as a function of energy used in this analysis (solid) and previous T2K analyses (dashed).
+10	d	inline	neg	no	no	carbon and hydrogen not separable	Since the CC1π + production on carbon and on hydrogen cannot be clearly separated, the combined cross section on CH is measured
+11	c	inline	pos	no	no	hydrogen dalphaT flat-distribution convention	A flat distribution across 0–180o is assigned because it resembles the real δαT distribution due to the small but non-vanishing isotropic Fermi motion of a free proton.
+12	d	inline	pos	no	no	CC1pi+Xp signal topology definition	the signal is defined as any event with one µ− , one π + and no other mesons, and at least one proton in the final state,
+13	d	inline	pos	no	no	signal phase-space restrictions	phase-space restrictions are applied in the signal definition to restrict the measurement to the regions of kinematic phase space ND280 is sensitive to.
+14	c	inline	pos	no	yes	non-flat efficiency model dependence	high dimensional kinematic phase space over which the efficiency cannot be kept entirely flat with simple phasespace constraints.
+15	c	inline	pos	no	yes	non-flat efficiency model dependence	This leads to a potential source of bias from the input neutrino interaction model predictions.
+16	c	inline	pos	no	yes	non-flat efficiency model dependence	additional model uncertainties are added (discussed in Section VI B) to allow a variation of the input simulation in regions of the underlying particle kinematics where the efficiency is not flat.
+17	c	inline	pos	yes	yes	non-flat efficiency model dependence	size of this uncertainty roughly double the largest variation in the efficiency seen from a wide variety of different generator predictions
+18	d	caption	pos	no	no	additional protons ignored in TKI	For events with multiple protons, only the highest momentum proton is considered, and other protons are ignored.
+19	d	caption	pos	no	no	additional protons ignored in TKI	For events with multiple reconstructed protons, only the highest momentum proton is considered, and other protons are ignored.
+20	c	inline	pos	yes	no	proton detection threshold affects efficiency	In addition, the TPC proton detection threshold is around 400 MeV, which might significantly affect the efficiency.
+21	d	inline	pos	no	no	single-variable fits, no inter-variable correlations	The CC1π + Xp cross sections are measured as a function of a single TKI variable only
+22	a	inline	pos	no	no	analysis framework improved over previous T2K	Compared to previous cross-section analyses, significant improvements have been achieved in the analysis framework, including the use of principle component analysis to reduce the dimensionality of the fit, and the proper treatment of MC statistical uncertainties.
+23	d	inline	pos	no	no	single-variable fits, no inter-variable correlations	The numbers of signal events (and thus cross sections) as a function of the three TKI variables are fitted independently in this study.
+24	c	syst	neg	no	yes	detector response mismodelling	The detector response (efficiency and resolution) is not perfectly modelled in the simulation.
+25	a	syst	pos	yes	no	pion secondary interaction uncertainty reduced	The uncertainty related to the modelling of the pion secondary interactions, one of the largest detector systematics in previous T2K analyses, has been reduced by around 40%
+26	c	syst	pos	no	yes	non-flat efficiency model dependence	The ad hoc variations are chosen to cover the efficiency’s dependency on the initial state nuclear medium effects, which is not otherwise parametrized.
+27	c	syst	pos	yes	yes	NC and nue backgrounds unconstrained by controls	The neutral current and electron (anti)neutrino interactions, which are not constrained by the control samples, are given a normalization uncertainty of 30% and 3%
+28	c	syst	pos	yes	yes	proton FSI single-parameter treatment	there is a single parameter scaling the overall interaction probability inside the cascade with a 50% uncertainty, without tuning specific processes.
+29	d	inline	pos	no	no	signal phase-space restrictions	for all CC1π + Xp events on hydrocarbon satisfying the kinematic phase restrictions in Table I.
+30	c	inline	pos	no	no	non-hydrocarbon background MC subtraction	Since the fraction of non-hydrocarbon events is small, the potential bias due to cross-section or detector mismodelling is insignificant.
+31	c	inline	pos	no	no	Gaussian toy error propagation assumption	assuming the uncertainties of the fit parameters and cross sections are part of a Gaussian distribution.
+32	a	inline	pos	no	no	error propagation method changed from previous	This method is different from the one used in previous analyses [60, 61], where the uncertainty was estimated by repeating the fit many times with toys of input MC.
+33	d	inline	pos	no	no	mock-data validation without statistical fluctuations	All the mock data studies performed (without applying statistical fluctuations) have a p-value around 90%
+34	c	inline	pos	no	no	insufficient signal kinematic shape freedom	In the signal sample, there are few bins of reconstructed pp where the post-fit χ2stat is worse than the pre-fit one.
+35	c	inline	neg	no	no	insufficient signal kinematic shape freedom	This indicates there might not be enough freedom in the shape of the signal particle kinematics.
+36	c	inline	pos	no	no	insufficient signal kinematic shape freedom	from the mock data studies, it is concluded that the potential bias is much smaller than the statistical uncertainty and has little impact on this analysis.
+37	c	inline	pos	no	no	Peelle's puzzle in chi2 tot	the overall normalization uncertainty, which is fully correlated between bins, may constitute a relatively large fraction of the uncertainty.
+38	c	inline	pos	no	no	Peelle's puzzle in chi2 tot	the χ2tot statistics may suffer from “Peelle’s pertinent puzzle” [90, 91], in which the assumption in Eq. (17) that the variance is distributed as a multivariate Gaussian may not be valid for highly correlated results.
+39	d	inline	pos	no	no	model separation driven by normalization	It is observed that χ2shape is usually much smaller than χ2tot , implying a large part of the model separation power in this analysis comes from normalization differences.
+40	d	inline	pos	no	no	limited FSI sensitivity	In the tail all models have similar predictions, meaning that we are not sensitive to the FSI differences there.
+41	d	inline	pos	yes	no	limited FSI sensitivity	with the present signal phase space restrictions, in particular the high proton momentum threshold of 450 MeV/c, many of the CC1π + Xp events that undergo FSI are lost, making the measurement less effective.
+42	d	inline	pos	no	no	limited FSI sensitivity	With improved detector acceptance in the coming ND280 upgrade [111], δαT will be an extremely useful and independent probe of FSI.
+43	d	inline	pos	no	no	model separation driven by normalization	Thus one should be careful in interpreting the model agreement when the difference between χ2shape and χ2tot is large.
+44	d	inline	neg	no	no	hydrogen contribution complicates comparisons	It is not straight-forward to compare this study to the T2K CC0π [26] and MINERνA [27, 29] TKI results, because of the different signal definition and, more importantly, a significant contribution from free nucleon
+45	c	inline	pos	no	no	carbon and hydrogen not separable	However the ratio between the hydrogen and carbon components is highly dependent on the modelling of the nuclear medium effects.
+46	c	inline	neg	no	no	statistically limited precision	However, there are not sufficient statistics to measure the peak of pN more precisely.
+47	d	inline	pos	no	no	limited FSI sensitivity	The tight phase space restrictions used in this study reduces our sensitivity to FSI modelling.
+48	d	inline	pos	no	no	signal phase-space restrictions	The rather flat distribution of δαT compared to MINERνA results can be attributed to the difference in phase space restrictions,
+49	d	concl	pos	no	no	single-variable fits, no inter-variable correlations	the three TKI variables, δpT T , pN and δαT , have been measured independently in the ND280 tracker.
+50	a	concl	pos	no	no	systematics reduced vs previous T2K	The reduced flux uncertainty and better detector modelling allow to have a reduced systematic uncertainty with respect to previous T2K cross section analyses.
+51	c	concl	pos	no	no	statistically limited precision	Our results are statistically limited and a large part of the model separation power comes from normalization differences.
+52	d	concl	pos	no	no	model separation driven by normalization	Our results are statistically limited and a large part of the model separation power comes from normalization differences.
+53	d	concl	pos	no	no	limited FSI sensitivity	While the tight phase space restrictions limit our sensitivity to FSI modelling, the relatively flat δαT in T2K results is in strong contrast to MINERνA results,
+54	d	concl	pos	no	no	single-variable fits, no inter-variable correlations	Future analyses will aim to unfold cross sections in multiple TKI variables simultaneously and obtain their correlations
+55	d	concl	pos	no	no	signal phase-space restrictions	The upcoming ND280 upgrade is going to expand the measurable phase space, especially in the low energy and high angle regions.
+56	d	concl	pos	no	no	carbon and hydrogen not separable	Another possible extension is to isolate hydrogen interactions from carbon ones by selecting events with small
+57	d	appendix	pos	no	no	limited FSI sensitivity	the change in χ2tot is small, indicating that there is limited sensitivity to FSI under current statistics and signal phase space restrictions.
