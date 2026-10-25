@@ -267,6 +267,8 @@ Every per-cell value (b, σ_N and z for each variant) is in the committed readou
 - `f0-start.txt`, `f0.out`, `f0.err`;
 - `post-run.txt`: the `$B` listing, the table's size, the link counts of the 80 files, and the quota at 22:16:40Z.
 
+**[`fd/receipts-prebinding/`](fd/receipts-prebinding/)** holds the pre-binding evidence: the control-2 meta probe (`metaprobe.py`, `metaprobe-40427c14.log`) and the cluster test runs at `7d7dac1d`, `dae47273` and `40427c14`, with a `SHA256SUMS` matching the pscratch originals. The `[F0]` count lines in the test logs come from the synthetic fixture, not from the real run.
+
 `deploy-tests.log` holds the synthetic tests' own output lines, which carry fixture values only.
 
 **[`fd/LEDGER.tsv`](fd/LEDGER.tsv)** has two rows:

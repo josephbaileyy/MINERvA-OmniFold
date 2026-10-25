@@ -1,0 +1,262 @@
+..........PASS control 0 f4 products match their D16 sha256
+.PASS control 0 f4 products match their D16 sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 0 f4 products match their D16 sha256
+.PASS control 0 f4 products match their D16 sha256
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+FAIL control 4 C_e is the sum of S1's blocks: differs
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+FAIL control 4 S (npz) is C_model,5D's committed S: differs
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+FAIL control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces: differs
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+FAIL control 4 C_total = C_e + C_model_abs: differs
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+FAIL control 4 f is positive on every cell: differs
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+FAIL control 4 C_total's relative sigma is the committed one: differs
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+FAIL control 4 U is S1's float32 functional matrix: differs
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_stat,rel is full rank
+FAIL control 5 closure bias equals cmodel_5d.json reporting16.bias_cells: differs
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_stat,rel is full rank
+PASS control 5 closure bias equals cmodel_5d.json reporting16.bias_cells
+FAIL control 6 closure floor max |bias| 2.841158e-05 reproduces the recorded value: differs
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_stat,rel is full rank
+PASS control 5 closure bias equals cmodel_5d.json reporting16.bias_cells
+PASS control 6 closure floor max |bias| 2.841158e-05 reproduces the recorded value
+PASS control 7 offset control: chi2_16 25.118, p 0.06777
+.PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_stat,rel is full rank
+PASS control 5 closure bias equals cmodel_5d.json reporting16.bias_cells
+PASS control 6 closure floor max |bias| 2.841158e-05 reproduces the recorded value
+FAIL control 7 offset control: chi2_16 2000.817, p 0 -> row 6 is descriptive and ungraded
+PASS control 8 every truth integral is positive on all 16 cells
+[F0] non-vertex: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
+[F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
+[F0] vertex-family: 0 of 128 cells |z| > 2 (Gaussian reference 5.82); 7 of 8 truths p < 0.01 (reference 0.08)
+[F0] denominators: 0 of 192 cells, 11 of 12 truths (references 8.74, 0.12); read by group
+{"wrote": ["/pscratch/sd/j/josephrb/fd-f0-testcheck-20261025/tmp/fd-f0-08anxyeb/tree/out/readout.json", "/pscratch/sd/j/josephrb/fd-f0-testcheck-20261025/tmp/fd-f0-08anxyeb/tree/out/table.npz"], "readout_sha256": "0f320e8939d9eb0374a8cc55c7216588e62a545d8234c5485c71fdb5eb816e1f", "table_sha256": "e6cb21ef7b4c38e594face2beb7883890dc88db7b0ceb342ff4f6fd94caf0d94"}
+..PASS control 0 f4 products match their D16 sha256
+PASS control 1 353 products and 8 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (352 products: 52 graded, 300 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_stat,rel is full rank
+PASS control 5 closure bias equals cmodel_5d.json reporting16.bias_cells
+PASS control 6 closure floor max |bias| 2.137794e-05 reproduces the recorded value
+PASS control 7 offset control: chi2_16 13.642, p 0.6254
+PASS control 8 every truth integral is positive on all 16 cells
+[F0] non-vertex: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
+[F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
+[F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
+[F0] denominators: 0 of 288 cells, 18 of 18 truths (references 13.10, 0.18); read by group
+{"wrote": ["/pscratch/sd/j/josephrb/fd-f0-testcheck-20261025/tmp/fd-f0-zcgn5rbf/tree/out/readout.json", "/pscratch/sd/j/josephrb/fd-f0-testcheck-20261025/tmp/fd-f0-zcgn5rbf/tree/out/table.npz"], "readout_sha256": "bcb29eec235e9d00d50c484094581ba520a41e806e9ed52bb326fc36b5a7c223", "table_sha256": "129e9c2954d5872eccee8a0c36082e0d4cb4a66408d5c8d725c5b61d56f5de1e"}
+......REFUSED leak guard: x carries 16 number(s) equal to f, an absolute cell value or f - g (ruling 6); nothing more was written
+................................
+----------------------------------------------------------------------
+Ran 60 tests in 284.014s
+
+OK
+{"wrote": ["/pscratch/sd/j/josephrb/fd-f0-testcheck-20261025/tmp/s1-e2e-iz4tbfr7/s1.npz", "/pscratch/sd/j/josephrb/fd-f0-testcheck-20261025/tmp/s1-e2e-iz4tbfr7/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}
