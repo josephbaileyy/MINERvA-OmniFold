@@ -411,7 +411,7 @@ run outputs, **[C]** read from code, **[I]** inference.
 
 **Training rows,** each far above 200,000:
 
-| fit | 2D: `/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/logs/S4B_s45_01.log` [R] | 5D, b1: product metadata `n_observed_rows`/`n_template_rows`; `of_inputs_5d.npz` MCgen 32,849,103 rows, `pass_reco` 20,404,292 [R; the sums are arithmetic] |
+| fit | 2D: `/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/logs/S4B_s45_01.log` [R; the step-1 and step-2 sums are arithmetic] | 5D, b1: product metadata `n_observed_rows`/`n_template_rows`; `of_inputs_5d.npz` MCgen 32,849,103 rows, `pass_reco` 20,404,292 [R; the sums are arithmetic] |
 |---|---|---|
 | refinement | 4,713,254 | 2,979,708 (2,586,886 observed + 392,822 template) |
 | step-1 classifier | 25,117,546 | 23,384,000 |
@@ -420,7 +420,9 @@ run outputs, **[C]** read from code, **[I]** inference.
 
 **What distinguishes 2D's nonzero C08 from 5D's zero.** On the 5D side this is recorded. For 2D the causal step is
 [I], because no 2D full-binning run is recorded.
-Search: `git grep -E 'bin_construct_sample_cnt|subsample_for_bin|full_binning|full-binning'` over `2d-unfolding/`, `unbinned_unfolding/` and `docs/orchestration/state/2d-closeout/` @ dcac48e3. It gives 3 hits, none a 2D run: `RE1-REPORT.md:28` is the 5D P5 product, `JIT1-SPEC.md:27` is a declared jitter arm, and `M-TRAINING-DETAILS.md:29` is the 5D deterministic variant. Cluster runs that were not recorded are not covered.
+Search: `git grep -l -E 'bin_construct_sample_cnt|subsample_for_bin|full_binning|full-binning|all-row binning|allrow_binning|all_row|bins from all rows'` over the whole repository @ dcac48e3. It hits 1,753 files. The 12 in the 2D tree (`2d-unfolding/`, `docs/orchestration/state/2d-closeout/`, `state/next-preparation-20261009/two-d-path/`) are: `RE1-REPORT.md:28` (the 5D P5 product); `JIT1-SPEC.md:27` (a declared jitter arm); `M-TRAINING-DETAILS.md:29` (the 5D deterministic variant); six files matching `control_vl175_budget_json_all_rows_le_1e-12` (a budget control, not binning); and two-d-path's `REPORT.md`, `seed_mechanism_check.py` and `operands/seed_mechanism_check.json` (a synthetic control, below). None is a 2D run with full binning. Cluster runs that were not recorded are not covered.
+
+**Synthetic support for the [I].** `state/next-preparation-20261009/two-d-path/REPORT.md:133-141` (`operands/seed_mechanism_check.json`; LightGBM 4.6.0 run locally): at LightGBM's production defaults on 400,000 synthetic rows, seeds 1 and 2 change predictions by up to 0.151, and with all-row binning they change nothing. That record calls itself "evidence about mechanism, not proof on production inputs". It is synthetic, not a 2D run.
 - **2D:** the 200,000-row sample that sets each fit's histogram bin edges is drawn with a seed-dependent
   `random_state` in all four fits. That is 0.3–4.2 % of the rows. With bagging, feature subsampling and `extra_trees`
   off, this sample is the seed's only consumer **[I, consistent with D2 and the s5c P1 record below]**. RE-2 measured
@@ -479,8 +481,8 @@ in two files.
   - So this estimator's seed main effect is zero **by construction, not by chance**. The evidence is recorded: the
     settings are in every product, s5c P1 isolated full binning on 5D, and D2 reproduces it.
   - 2D's `a-refined-400-31` samples its bin rows by seed. That this is **why** its C08 is nonzero is [I]: it is
-    consistent with D2 and the s5c P1 record, but no 2D full-binning run is recorded (search in D3).
-    Search: `git grep -E 'bin_construct_sample_cnt|subsample_for_bin|full_binning|full-binning'` over `2d-unfolding/`, `unbinned_unfolding/` and `docs/orchestration/state/2d-closeout/` @ dcac48e3. It gives 3 hits, none a 2D run: `RE1-REPORT.md:28` is the 5D P5 product, `JIT1-SPEC.md:27` is a declared jitter arm, and `M-TRAINING-DETAILS.md:29` is the 5D deterministic variant. Cluster runs that were not recorded are not covered.
+    consistent with D2, the s5c P1 record and two-d-path's synthetic control, but no 2D full-binning run is recorded.
+    <!-- absence-ok: restates D3's claim; its Search line is in D3, 'What distinguishes 2D's nonzero C08 from 5D's zero' -->
   - D1 shows the seed reaches LightGBM, and D2 shows the fit is invariant to it at these settings.
   - The director accepted this explanation by correspondence, pending its read of this report.
 - **What this means is not decided here.** That covers choice 9 of the declaration, the readout's C_e and C_total, and
