@@ -1,0 +1,25 @@
+nominal: 40 products, refinement.ran {True: 40}, other entries [] (0), problems none
+W1: 20 products, refinement.ran {True: 20}, other entries [] (0), problems none
+W2: 20 products, refinement.ran {True: 20}, other entries [] (0), problems none
+W3: 20 products, refinement.ran {True: 20}, other entries [] (0), problems none
+q3: 20 products, refinement.ran {True: 20}, other entries [] (0), problems none
+new_gibuu: 20 products, refinement.ran {True: 20}, other entries [] (0), problems none
+L-5D-PV_e_closure_nuwro.npz: 1 products, refinement.ran {False: 1}, other entries [] (0), problems none
+mnvtune_half: 16 products, refinement.ran {True: 16}, other entries [] (0), problems none
+MnvTune_v1: 1365 products, refinement.ran {True: 1365}, other entries [] (0), problems none
+genie_cv_half: 16 products, refinement.ran {True: 16}, other entries [] (0), problems none
+GENIE_2_12_10_CV: 1366 products, refinement.ran {True: 1366}, other entries [] (0), problems none
+genie_mec_half: 16 products, refinement.ran {True: 16}, other entries [] (0), problems none
+GENIE_2_12_10_MEC: 1343 products, refinement.ran {True: 1343}, other entries [] (0), problems none
+nuwro_cv_half: 16 products, refinement.ran {True: 16}, other entries [] (0), problems none
+NuWro_21_09: 1751 products, refinement.ran {True: 1751}, other entries [] (0), problems none
+gibuu_cv_half: 16 products, refinement.ran {True: 16}, other entries [] (0), problems none
+GiBUU_2019: 1351 products, refinement.ran {True: 1351}, other entries [] (0), problems none
+P1_a1.0: 193 products, refinement.ran {True: 193}, other entries [] (0), problems none
+P2_a1.0: 195 products, refinement.ran {True: 195}, other entries [] (0), problems none
+P3_a1.0: 195 products, refinement.ran {True: 195}, other entries [] (0), problems none
+P1g_a1.0: 199 products, refinement.ran {True: 199}, other entries [] (0), problems none
+P2g_a1.0: 193 products, refinement.ran {True: 193}, other entries [] (0), problems none
+P3g_a1.0: 172 products, refinement.ran {True: 172}, other entries [] (0), problems none
+L-5D-PV_e_closure_tune_v1.npz: 1 products, refinement.ran {False: 1}, other entries [] (0), problems none
+total 8545
