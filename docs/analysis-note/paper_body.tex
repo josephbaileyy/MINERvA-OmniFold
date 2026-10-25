@@ -284,9 +284,9 @@ iteration count and classifier capacity regularize the unfolding.  The
 nominal settings are the scikit-learn defaults, with LightGBM matched to their
 capacity, and the refinement capacity of the joint-test estimator was chosen in
 simulation closure studies; no hyperparameter search was performed on data.
-% RE-2 integration W7 (DRAFT): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R, Q_R adopted); registry
-% a-refined-400-31 (ESTIMATORS.tsv:12; refinement random_state = estimator seed + 3). The label (f) is new and is not
-% yet a registry alias (re2-integration/DRAFTS.md, "Open sites").
+% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R, Q_R adopted); registry
+% a-refined-400-31 (ESTIMATORS.tsv:12; refinement random_state = estimator seed + 3). The label (f) is registered as
+% the alias "configuration (f)" of a-refined-400-31 (ALIASES.tsv).
 The two-observable central value uses configuration~(f): the learner and seed
 of configuration~(a) with negative-weight background subtraction and the
 refinement capacity of configuration~(e).  The five-observable central value
@@ -372,7 +372,7 @@ with the pseudo-inverse over the 205 bins, which keeps all 205 eigenmodes
 (rank 205, condition number $1.5\times10^{12}$), so that ndf is that rank.  It
 indicates a correlated shape difference, not a normalization difference,
 spread over many eigenmodes of the published covariance, with no single $\pT$
-or $\pPar$ band carrying more than \SI{15}{\percent} of it.  % RE-2 integration W2 (DRAFT): purity values 2.64--2.75, \chiPaperExact, \chiPaperExactSeeded unchanged (RE2-PARTC-REPORT
+or $\pPar$ band carrying more than \SI{15}{\percent} of it.  % RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): purity values 2.64--2.75, \chiPaperExact, \chiPaperExactSeeded unchanged (RE2-PARTC-REPORT
 % sec. 5 "Unchanged"); 2.654 -> 2.27 at seed 42: values_table.tsv m-chiPaper; 1.03/17.6: lit-learner-median/max-pb373/374.
 The distance
 depends on the estimator.  With the purity-based subtraction, ten LightGBM
@@ -436,7 +436,7 @@ Ref.~\cite{AnalysisNote2026},
 Secs.~\ref*{N-sec:results-uq}, \ref*{N-sec:uq-combine},
 and~\ref*{N-sec:uq-2d-scope}.
 
-% RE-2 integration W1 and W2 (DRAFT): C_model, DECISION-20261024-joseph-2d-model-dependence-component.md items 1-3
+% RE-2 integration W1 and W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): C_model, DECISION-20261024-joseph-2d-model-dependence-component.md items 1-3
 % (M2 form, kappa = 1, label "generator-shape model dependence; not a calibrated bound", users' total, like-for-like
 % comparison, the published analysis's iteration choice: arXiv:2106.16210 main.tex:343-344, :376 as quoted there);
 % values: re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json (RE2-PARTC-REPORT.md sec. 7); shape-only reweighting: PV-2D
@@ -538,7 +538,7 @@ standard deviation apart in 14 of the 205 cells, with the purity estimate up to
 5.9 statistical standard deviations from the truth (more than one total
 standard deviation in one cell) and the refined one within 0.44 in every cell.
 % Register round r16 (R10): split; the wording is DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1's.
-% RE-2 integration W7 (DRAFT): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1.
+% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1.
 The two-dimensional result therefore uses the refined estimator,
 configuration~(f) (\napp{sec:negweight-footing}).
 

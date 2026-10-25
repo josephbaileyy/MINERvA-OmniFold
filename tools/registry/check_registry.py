@@ -39,11 +39,11 @@ COMMENT = re.compile(r"(?<!\\)%[^\n]*")
 # (name, regex over printed text, how a match becomes the label(s) resolved)
 LABEL_PATTERNS = (
     # "configuration (e)", "configuration~(a)", "configurations (d) and (e)", "configurations (c)--(e)", "(c), (d)"
-    ("configuration-letter", re.compile(r"[Cc]onfigurations?[~\s]*((?:\([a-e]\)(?:\s*(?:,|and|--|-|or|to)\s*)?)+)")),
+    ("configuration-letter", re.compile(r"[Cc]onfigurations?[~\s]*((?:\([a-f]\)(?:\s*(?:,|and|--|-|or|to)\s*)?)+)")),
     # the Conf. column of the paper's findings table: \pcell{0.05\textwidth}{(c), (d)}
-    ("findings-conf-cell", re.compile(r"\\pcell\{0\.05\\textwidth\}\{((?:\([a-e]\)(?:,\s*)?)+)\}")),
+    ("findings-conf-cell", re.compile(r"\\pcell\{0\.05\\textwidth\}\{((?:\([a-f]\)(?:,\s*)?)+)\}")),
     # the first cell of an estimator-table row: \pcell{0.2x\...width}{(e) joint-test estimator}
-    ("estimator-table-row", re.compile(r"\\pcell\{0\.2[04]\\(?:column|text)width\}\{(\([a-e]\))")),
+    ("estimator-table-row", re.compile(r"\\pcell\{0\.2[04]\\(?:column|text)width\}\{(\([a-f]\))")),
     # contract names printed as "candidate R", "family N", "family F2", "baseline B0"
     ("contract-name", re.compile(r"\b(?:candidate|family|baseline)\s+(?:estimator\s+)?\\?(?:texttt\{)?([A-Z][A-Z0-9]?)(?![\w-])")),
 )
@@ -75,9 +75,9 @@ def labels_in(text: str) -> list[tuple[int, str, str]]:
                 if name == "contract-name":
                     found.append((ln, name, m.group(1)))
                     continue
-                letters = re.findall(r"\(([a-e])\)", m.group(1))
+                letters = re.findall(r"\(([a-f])\)", m.group(1))
                 if name == "configuration-letter":
-                    span = re.search(r"\(([a-e])\)\s*--\s*\(([a-e])\)", m.group(1))
+                    span = re.search(r"\(([a-f])\)\s*--\s*\(([a-f])\)", m.group(1))
                     if span:
                         letters += [chr(c) for c in range(ord(span.group(1)), ord(span.group(2)) + 1)]
                 for x in sorted(set(letters)):
@@ -187,7 +187,8 @@ def self_test() -> int:
             return warns
 
         case("registered labels (e), (c)--(d), candidate R", good[1], False)
-        case("unregistered configuration (f) is outside the a-e pattern: not checked", "configuration (f)\n", False)
+        case("registered label configuration (f)", "Configuration~(f) and configurations (e) and (f).\n", False)
+        case("unregistered configuration (g) is outside the a-f pattern: not checked", "configuration (g)\n", False)
         case("planted unregistered contract name 'candidate Q'", good[1] + "Then candidate Q was run.\n", True)
         case("estimator-table row (e) of a registered configuration",
              "\\pcell{0.24\\columnwidth}{(e) joint-test estimator}\n", False)
@@ -198,6 +199,10 @@ def self_test() -> int:
         al.write_text(clean_aliases + "d-N-B0\tpaper-label\tconfiguration (e)\tzzz-no-match\tyes\tdefault\t"
                       f"docs/analysis-note/paper_body.tex\t290\tconfiguration~(e)\t{reglib.line_digest(l290)}\n")
         case("planted conflict: 'configuration (e)' registered under two estimators", good[1], True)
+        al.write_text(clean_aliases)
+        # The (f) alias removed: a printed "configuration (f)" is then an unregistered label inside the a-f pattern.
+        al.write_text("\n".join(l for l in clean_aliases.split("\n") if "\tconfiguration (f)\t" not in l))
+        case("planted: configuration (f) printed with its alias removed", "configuration~(f)\n", True)
         al.write_text(clean_aliases)
         (note / "main_records.tex").write_text("\\input{records_estimators}\n\\input{records_results_index}\n")
         subprocess.run(["git", "-C", str(t), "add", "-A"], check=True, env=reglib.clean_env(), cwd=str(t))

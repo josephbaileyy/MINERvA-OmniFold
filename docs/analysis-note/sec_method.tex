@@ -121,7 +121,7 @@ the earlier statistical band, which was built at seed~1. Both of those central v
 regenerated to $\lesssim2\times10^{-11}$ with one driver and one input, the runs
 differing only in the seed, so the difference is attributable to the seed
 (inferred from the two regenerations).
-% RE-2 integration W6 and W7 (DRAFT): refined estimator: registry a-refined-400-31 (ESTIMATORS.tsv:12) and
+% RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): refined estimator: registry a-refined-400-31 (ESTIMATORS.tsv:12) and
 % re2/RE2-PARTB-REPORT.md sec. 4.3 (every run negweight-refined, 400 trees, 31 leaves, random_state = seed + 3); seed 45
 % vs seed 42: RE2-PARTB-REPORT.md:193 (PB-pow-S4CV, max rel. diff. 0.0142). The seed-1 comparison (0.18, 1.79, 0.30,
 % 1.28) is E_U's, kept as configuration (a)'s (re2c_values_unmatched.tsv: no refined field).
@@ -139,7 +139,7 @@ driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a
 regeneration with the current driver whose run configuration is recorded. Against
 the ten purity-subtracted LightGBM central values at seeds 1--10 it is mildly
 over-dispersed (RMS standardized difference 1.28, maximum 4.25).
-% RE-2 integration W6 and W7 (DRAFT): RE2-PARTB-REPORT.md:149-150 (PB-ER-rep 9.17e-12, PB-ER-D2 7.45e-12), sec. 4.3 (the
+% RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): RE2-PARTB-REPORT.md:149-150 (PB-ER-rep 9.17e-12, PB-ER-D2 7.45e-12), sec. 4.3 (the
 % argv check: each run's recorded runConfig). 1.28 and 4.25 are E_U's (re2c_values_unmatched.tsv).
 Seed~42 was chosen on cost: of the two ways of matching the central value and the
 statistical band in seed that the analysis design costed, a matched seed-42
@@ -179,7 +179,7 @@ differs from it in background treatment, by \SI{1.03}{\percent} (maximum
 reproducible) against the published covariance, against $\chiPaperPurity$ for the
 purity-subtracted LightGBM central value and $\chiPaper$ for the quoted one
 (\S\ref{sec:results-tension}).
-% RE-2 integration W7 (DRAFT): 0.98/12.2/1.32 are E_U vs E_C (unchanged); 1.03/17.6 = values_table.tsv lit-learner-*
+% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): 0.98/12.2/1.32 are E_U vs E_C (unchanged); 1.03/17.6 = values_table.tsv lit-learner-*
 % (E_R vs E_C); \chiPaperPurity 2.654 (m-chiPaper purity_value).
 It has no matched covariance: no
 exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for
@@ -249,7 +249,7 @@ central value and its covariance were rebuilt with configuration~(f) after a
 two-dimensional closure test with backgrounds found the purity bias
 (App.~\ref{sec:negweight-footing}). The 3D and 4D central values have been
 regenerated with configuration~(e); no 3D or 4D covariance is quoted.
-% RE-2 integration W7 (DRAFT): DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1 (the move, after RE-1 C2);
+% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1 (the move, after RE-1 C2);
 % DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R and Q_R adopted).
 % Sources: RE1-REPORT-2.md sec. 3 (D2, the 2D refined data unfold); ../RE1-REPORT.md sec. 1 (P5, the s5p data unfold, is
 % configuration (e)); NOT CITABLE FOR "a covariance or coverage for configuration (e)" (both reports).

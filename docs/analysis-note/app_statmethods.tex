@@ -764,7 +764,7 @@ independent systematic directions. The statistical block
 ($\texttt{StatOnlyCov}$, rank $205$, near-diagonal) alone makes the paper's
 $V$ full-rank ($\mathrm{rank}=205$, with 204 eigenvalues above $10^{-12}\lambda_{\max}$;
 $\mathrm{cond}=1.5\times10^{12}$).
-% RE-2 integration W9 (DRAFT): receipts/2d-lgbm42-20261011/tension_report.txt:13 ("rank(lam>0) = 205/205") and :52 (rcond
+% RE-2 integration W9 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): receipts/2d-lgbm42-20261011/tension_report.txt:13 ("rank(lam>0) = 205/205") and :52 (rcond
 % 1e-12 keeps 204; diagnose_tension.py:140, keep = lam > rcond * lam_max); the same at partc-r2/receipts/figs/tension_report.txt:13, :52.
 Our $300$-replica bootstrap similarly gives
 $\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=205$ (eigenvalues above
@@ -1008,7 +1008,7 @@ LightGBM, 10 iter, seed 1 & $2.66$ & $0.565$ \\
 \end{tabular}
 \end{center}
 All rows except the quoted one use the purity-based subtraction.
-% RE-2 integration W2 (DRAFT): the seed-42 purity row is E_U (values_table.tsv cfg-lgbm42-chi2 / cfg-lgbm42-pullrms
+% RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): the seed-42 purity row is E_U (values_table.tsv cfg-lgbm42-chi2 / cfg-lgbm42-pullrms
 % purity_value 2.654, 0.564); the quoted row is E_R (refined 2.270, 0.535).
 (i) \textbf{Iteration count is negligible}: LightGBM $5\to10$ iters moves the
 $\chi^{2}$ by $+0.01$ ($2.645\to2.657$), so OmniFold is well-converged at $5$
