@@ -43,15 +43,16 @@
   | group | truths | cells \|z\| > 2 | Gaussian ref. | truths p < 0.01 | Gaussian ref. |
   |---|---:|---:|---:|---:|---:|
   | vertex-family | 8 | 4 of 128 | 5.82 | 3 of 8 | 0.08 |
-  | — NuWro | 4 | 0 of 64 | | 1 of 4 | |
-  | — GENIE MEC | 2 | 0 of 32 | | 0 of 2 | |
-  | — GiBUU | 2 | 4 of 32 | | 2 of 2 | |
+  | — NuWro | 4 | 0 of 64 | 2.91 | 1 of 4 | 0.04 |
+  | — GENIE MEC | 2 | 0 of 32 | 1.46 | 0 of 2 | 0.02 |
+  | — GiBUU | 2 | 4 of 32 | 1.46 | 2 of 2 | 0.02 |
   | non-vertex | 2 | 0 of 32 | 1.46 | 1 of 2 | 0.02 |
   | prior | 2 | 0 of 32 | 1.46 | 0 of 2 | 0.02 |
-  | all graded: ruling 2's denominator line, "read by group, never pooled" | 12 | 4 of 192 | 8.74 | 4 of 12 | 0.12 |
+  | all graded: ruling 2's denominator line, "read by group, never pooled". It reads 192 and 12, not 288 and 18, because control 7 failed (declaration §7 item 5) | 12 | 4 of 192 | 8.74 | 4 of 12 | 0.12 |
 
   - The Gaussian references are context only, because b is a deterministic bias.
-  - The per-family references are not in the readout. They are 16 × truths × 0.0455 and truths × 0.01.
+  - The per-family references are computed here, not read from the readout: 16 × truths × 0.0455, and truths ×
+    0.01.
 - **The truths listed by the triggers:**
   - W3, by p;
   - q3, by p;
@@ -72,7 +73,7 @@
 - `test_fd_f0_regrade`, `test_s1_assemble` and `test_s1_scripts_isolated`, run with `-B` and `TMPDIR=$B/tmp` on
   `root_6_28`, gave `tests rc=0` and "Ran 60 tests … OK".
 - `$B` did not exist before this step.
-  <!-- absence-ok: the deploy step's first command was `ls -d $B` on login37 at 2026-10-25T21:53Z, which printed nothing, and the step would have stopped had it existed (the same check as declaration §2) -->
+  <!-- absence-ok: the session's deploy script ran `ls -d $B` on login37 at 2026-10-25T21:53Z before mkdir, and it would have stopped had $B existed. That line is not in deploy.log, so the claim rests on the session record and on the declaration-time `ls -d` (2026-10-25), not on a committed receipt -->
 
 ## 2. The HPSS copy of the `f4` products (declaration §2.2, binding §4 item 2)
 
@@ -86,8 +87,9 @@ detached under `timeout 1500` on login37, from 21:59:24Z to 21:59:29Z. The recei
 **The steps:**
 - **Control 0, shell form:** "inventory verified: 80 files".
 - **The tar:** sha256 `14e2957facea180051cd086b11ad8a7075a50385e3909ede95ac56db3aeb0ead`, 14,888,960 B.
-  - tar printed "Removing leading `/' from hard link targets". That is tar's wording for stripping the leading `/` from
-    member names. It does not mean a hard link was archived.
+  - tar printed "Removing leading `/' from hard link targets". GNU tar prints this when it strips the leading `/` from
+    names given with absolute paths. Each of the 80 inventoried files has link count 1 (`receipts/post-run.txt`), so
+    no hard link was archived.
 - **`hsi put`, `hashcreate`, and the two side files put.**
 - **hashverify:** "(md5) OK".
 - **The retrieval:** `hsi get`, compared by sha256 and equal. The last lines are "PASS: HPSS copy verified by
@@ -104,10 +106,14 @@ detached under `timeout 1500` on login37, from 21:59:24Z to 21:59:29Z. The recei
 **After:**
 - **Names, as the declaration stated:** the tar is called `stage0-inputs.tar` and the inventory copy
   `INVENTORY.sha256`. The HPSS directory name identifies this copy.
-- **Cleanup:** as declared, `$B/preserve/stage0-inputs.tar` was deleted after PASS, and the retrieve directory is empty.
-  The 80 products are untouched.
-- **Quota:** `hpssquota` after the copy still reads 422.78 GiB, which is below its display resolution
-  (`receipts/hpssquota-after.txt`).
+- **Cleanup:** as declared, `$B/preserve/stage0-inputs.tar` was deleted after PASS, and the retrieve directory is empty
+  (`receipts/post-run.txt`, 22:16:40Z).
+- **The 80 products are untouched:** the re-grade's control 0 ran after the copy and passed.
+- **Quota:** `hpssquota` still reads 422.78 GiB, both right after the copy and 17 minutes later
+  (`receipts/hpssquota-after.txt`, `post-run.txt`).
+  - The three files total 14,901,732 B, about 0.014 GiB, so the display, with its 0.01 GiB step, should have moved.
+  - The likelier reason is that HPSS quota accounting lags **(inference)**.
+  - The copy itself is shown by hashverify, the retrieval check and `hsi ls -l`.
 - **The FD-PLAN §6 purge row for `f4`** ("HPSS copy: **no**") is now discharged.
 
 ## 3. The re-grade (declaration §2.3, binding §4 item 3)
@@ -118,7 +124,8 @@ against the 15-minute projection.
 - It wrote `$B/fd_f0_readout.json` (sha256 `6e7d718bd393dd0600e974d0ce9b5c389486890cb7112550b22289008d6d312b`,
   84,840 B), committed as [`fd/readout/fd_f0_readout.json`](fd/readout/fd_f0_readout.json) and re-measured equal.
 - It wrote `$B/fd_f0_experiments.npz` (sha256 `7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9`,
-  1,068,642 B). That equals the readout's `table_sha256`. It stays on pscratch (§6).
+  1,068,642 B, by `stat` in `receipts/post-run.txt`). That equals the readout's `table_sha256`. It stays on pscratch
+  (§6).
 
 ### 3.1 Controls
 
@@ -140,7 +147,8 @@ against the 15-minute projection.
 - **`row4_noise_trace_share`** (row 4's share of each offset's noise trace): MnvTune 0.006, GENIE CV 0.007, GENIE MEC
   0.011, NuWro 0.026, GiBUU 0.034.
   - The rank-15 row-4 part that declaration §7 item 11 flagged is 0.6–3.4 % of each offset's noise trace.
-  - The upward lean of about n/(n − 17) from the calibration part is about 6–7 % at these B_eff **(arithmetic)**.
+  - The upward lean from the calibration part, about n/(n − 17) at these B_eff, is 5.6–7.5 %. For the gating pair it
+    is 6.6 % (MnvTune) and 7.5 % (GENIE CV) **(arithmetic)**.
 - **The nine descriptive pairs:**
 
   | pair | χ²_16 | p |
@@ -209,7 +217,7 @@ Per-cell relative σ, as the readout prints it (median / min / max, %). Each row
 | A7 GENIE MEC | | | R12 |
 | A7 NuWro | | | R06, R07, R12 |
 
-Every truth not listed above, and every blank cell, has none.
+Every graded truth not listed above, and every blank cell, has none.
 
 ### 5.2 Row 6: descriptive and ungraded (control 7 failed)
 
@@ -227,6 +235,19 @@ Every truth not listed above, and every blank cell, has none.
 | P2g | NuWro | 193 | 39.1 | 39.38 (9.6e-04) | R07 | 32.74 (0.0080) | 5,171.70 (< 1e-30) | 0.1710 | 0.0177 |
 | P3g | GENIE MEC | 172 | 33.1 | 24.83 (0.0728) | — | 22.63 (0.124) | 1,174.19 (< 1e-30) | 0.0425 | 0.0206 |
 
+**Cells with |z| > 2 under row 6's other variants:**
+- in-sample: P2g has R07;
+- model-only:
+  - P1r: R10;
+  - P2r: R01, R07, R08, R12;
+  - P1g: R01, R06, R10, R12;
+  - P2g: R01, R07, R12;
+  - P3r and P3g: none.
+
+**A naming note on the readout.** For these ungraded truths the readout still fills the verdict-shaped fields inside
+`grade`: `p_lt_0.01` is true for P1r, P2r, P1g and P2g, and `cells_abs_z_gt_2` holds R07 for P2g. Each is labelled
+"descriptive and ungraded", has `listed` false, and appears in no `triggers` count. Read them with that label.
+
 Every per-cell value (b, σ_N and z for each variant) is in the committed readout.
 
 ## 6. The per-experiment table
@@ -243,7 +264,8 @@ Every per-cell value (b, σ_N and z for each variant) is in the committed readou
 - `deploy.log`, `deploy-tests.log`;
 - `hpssquota-before.txt`, `hpssquota-after.txt`;
 - `preserve-start.txt`, `preserve.out`, `preserve.log`, `paths.list`, `stage0-inputs.tar.sha256`, `hsi_ls_l.txt`;
-- `f0-start.txt`, `f0.out`, `f0.err`.
+- `f0-start.txt`, `f0.out`, `f0.err`;
+- `post-run.txt`: the `$B` listing, the table's size, the link counts of the 80 files, and the quota at 22:16:40Z.
 
 `deploy-tests.log` holds the synthetic tests' own output lines, which carry fixture values only.
 
@@ -255,7 +277,8 @@ Every per-cell value (b, σ_N and z for each variant) is in the committed readou
 | the re-grade | login37 | 44 s | 0 | 0 |
 
 **State on pscratch:**
-- `$B` holds the deploy, the logs, the readout and the table;
+- `$B` holds the deploy, the logs, the readout, the table, an empty `tmp/`, and `preserve/` (`paths.list`,
+  `preserve.log`, the tar's `.sha256` and an empty `retrieve/`);
 - the scratch test clones are in `$P/fd-f0-testcheck-20261025/`;
 - nothing else was written.
 
@@ -278,8 +301,14 @@ Their exit codes are in the PR.
 - **What that change contains:** in a scratch worktree at this commit, it adds 25 index rows and one population row.
   In the `.tex` file it changes the receipt and row counts and adds summary lines for the readout's unattributed
   `bias`, `bias_uncorrected` and `closure_floor_max_abs` keys. These are relative fake-data quantities only.
+- **One thing to know before regenerating:** the regenerated `.tex` adds one `bias` summary row that pools all 18
+  truths' biases, row 6 included, into a single min / median / max (−0.171 / 0.000177 / 0.3604). Ruling 2 says
+  "never pooled", and row 6 is descriptive. That rendering is the generator's, not F0's.
 - **Why I have not committed it:** `docs/analysis-note/**` is outside this session's edit scope. Regenerating it, or
   ruling otherwise, is for the director.
+- **Why both commits printed "13 checks passed":** this worktree's `core.hooksPath` points at the shared checkout's
+  `.githooks`. That `pre-commit` (`7b40aeaa…`) is older than this tree's (`1d03595e…`) and has no results-index check.
+  The gate fails when the tree's own hook is run.
 
 ## 9. Not changed
 
@@ -288,3 +317,24 @@ Their exit codes are in the PR.
 - **Rules:** no GPU and no premium QOS.
 - **Not proposed here:** a limitation, a paper statement or a publishability conclusion. Those are for the director to
   propose to Joseph.
+
+## 10. Review disposition
+
+An independent read-only review of this report (`de6c1f10`) worked in both directions. It recomputed every number
+from the readout and receipts and found all of them equal. It checked that no number is of cross-section magnitude:
+the smallest non-zero in the readout is a p of 5.3e-30. It also checked that every element binding §4 item 6 requires
+is present. It found nothing MATERIAL.
+
+Its nine MINOR points are all accepted:
+1. **The quota explanation.** It is now the inference of accounting lag.
+2. **The lean range.** It is now 5.6–7.5 %.
+3. **The "every truth" sentence.** It is now scoped to graded truths, and row 6's variant cells are listed.
+4. **The denominator line.** It is now labelled 192 and 12, and the label says why.
+5. **Claims without a receipt.** `receipts/post-run.txt` now records the tar deletion, the empty retrieve directory,
+   the table size and the link counts of the 80 files (all 1). The `$B` absence waiver now says where its evidence
+   is.
+6. **The per-family Gaussian references.** They are now added.
+7. **§8.** It now gives the hooksPath reason why the commits passed, and the pooled `bias` row in the regenerated
+   `.tex`.
+8. **The verdict-shaped fields on row 6.** They are now noted in §5.2.
+9. **The pscratch listing.** It is now complete.
