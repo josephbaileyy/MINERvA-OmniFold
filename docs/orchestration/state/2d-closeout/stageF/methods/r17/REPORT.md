@@ -48,7 +48,7 @@ byte-identical.
 
 | check | result |
 |---|---|
-| `check_ledger.py --old-dir <f0b26234> --ledger ledger.md` | 317 rows, 368 probes, 95 changed sentences, **0 failures** |
+| `check_ledger.py --old-dir <f0b26234> --ledger ledger.md` | 317 rows, 368 probes, 95 changed sentences, **0 failures** on the scored text (`63f1d61b`). At the branch head, row b3-42 ("drawn from it") is superseded by `accuracy-ledger.md` row A3, which corrects that sentence. |
 | `check_ledger.py --self-test` | PASS (planted defects caught, including a MOVE→note row whose note text is absent) |
 | `check_sec4_receipts.py` / `--self-test` | PASS (15/15) / PASS (18 perturbations rejected) |
 | `tools/registry/absence_claims.py` (staged) | 0 bare absence claims in 318 added or changed lines |
@@ -176,3 +176,32 @@ the text. On the baseline text its output is byte-identical to before.
 The director approved three fixes to pre-existing accuracy issues that the review found. They are committed after
 this round's scored text, in their own commit, and r17's scores do not cover them. They are listed in the PR for
 Joseph, and r18's baseline includes them.
+
+| fix | finding | new text | source |
+|---|---|---|---|
+| 1, IV B | b2-R1: "failed the test" printed without the criterion | "The band counts as nominal if its ratio to the true scatter lies in $[0.9,1.1]$." ("against \SI{95.4}{\percent} nominal" byte-identical) | `PREREG-20261005-2d-fixed-truth-coverage.md:119-121`; note sec:coverage |
+| 2, VII B | b3-R1: "Poisson pseudo-data and background are drawn from it" (the source half) is wrong for the background | "Poisson pseudo-data are drawn from the source half, and the background pseudo-data are a Poisson draw from one half of a separate background sample. The joint-test estimator unfolds the pseudo-data with the other half of the simulation." | note sec:joint5d-calibration; `M2-AUDIT.md:15`; `s5n_pseudo.py:130`, `:135` (audited code) |
+| 3, VII C | b3-R2: the A2 condition on the lost pseudo-experiments was not printed | "A2 also requires that the pseudo-experiments were lost independently of their outcomes, which has not been shown." With its `% Search:` line. | note sec:joint5d-frozen; `RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md` §5; the primer |
+
+**Checks on the fixed text:**
+- `accuracy-ledger.md`: 5 rows, 8 probes, 0 failures, against `63f1d61b`;
+- full build: exit 0, 13 pages, 0 undefined references, no `??`;
+- SEC4 15/15 and its self-test PASS;
+- absence claims 0;
+- swallowed 0;
+- the three sentences print in the PDF.
+
+**agy agreement:**
+- Fix 3 AGREE on the first pass.
+- Fixes 1 and 2 AGREE after two corrections agy asked for, each checked against its source:
+  - fix 1 now uses the note's own words ("of the pseudo-experiments" dropped; the closed interval kept);
+  - fix 2 now names "one half of a separate background sample" (`s5n_pseudo.py:130`) and "the other half of the
+    simulation", to remove an ambiguous antecedent.
+
+**For Joseph:** fix 3 leaves out the note's clause "although none of them reaches the observed statistic when rerun".
+The sentence before it already makes that claim for the calibration pseudo-experiments, and "none of them" would
+extend it to the power pseudo-experiments, which are never compared with the observed statistic. The director
+accepted this.
+
+`fix_da_order.py` gains case 2b in this commit: the new layout also emits the ACKNOWLEDGMENTS heading inside the
+reference list. On the baseline and the r17 copies its output is byte-identical to case 2's.

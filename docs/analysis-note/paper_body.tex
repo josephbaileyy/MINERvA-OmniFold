@@ -475,12 +475,15 @@ and~\ref*{N-sec:uq-2d-scope}.
 % "Failed": the note's sec:coverage ("The band fails: it undercovers in its tails"), the test of Table I's 2D row.
 % Register round r17 (S5, R4): this paragraph follows the block list and is written as a test report; the
 % reproducibility summary that closed the subsection moved to Sec. III, beside configuration (f)'s seeding.
+% Criterion (r17 accuracy fix, review b2-R1): PREREG-20261005-2d-fixed-truth-coverage.md:119-121; note sec_validation.tex
+% sec:coverage ("The band counts as nominal if its ratio to the true scatter lies in [0.9,1.1]").
 The statistical block, with a median statistical uncertainty of
 \SI{0.676}{\percent}, is a bootstrap of 300 replicas drawn at the central
 value's training seed, in which the background templates are also resampled.
 A coverage test specified in advance scored an earlier version of the
 statistical band, distinct from the quoted block, on \covTwoDNtoy{} closure
-pseudo-experiments at a fixed truth.  The band failed the test by
+pseudo-experiments at a fixed truth.  The band counts as nominal if its ratio
+to the true scatter lies in $[0.9,1.1]$.  The band failed the test by
 undercovering in its tails: pooled over experiments and bins,
 \SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two
 standard deviations, against \SI{95.4}{\percent} nominal.  A post hoc rescoring
@@ -940,6 +943,10 @@ reproduces the analysis of the data (conditions~(ii)--(iv)).
 % Generative model: M2-AUDIT.md:10-33 (Q1); code at 19b46af9, byte-identical to 4f5a613f (M2-ARCHIVE-CHECKS.md:26).
 % Data-derived lateral shifts: M2-AUDIT.md:182-184 (Q4d); s5p_joint.py:108, :118. Element-by-element list and
 % flowchart: note sec_joint.tex sec:joint5d-calibration (tab:joint5d-genmodel).
+% Background (r17 accuracy fix, review b3-R1): note sec_joint.tex sec:joint5d-calibration ("draws Poisson pseudo-data
+% from one half of the simulation together with an independent background source"); Poisson background: M2-AUDIT.md:15
+% ("The source C is Poisson at 2*bkg_w*f_b", s5n_pseudo.py:135 at the audited code); one half of the background
+% sample: s5n_pseudo.py:130 (is_c = half_mask(nb, bkg_split_key(split_key))); the template D is the other half.
 Each calibration pseudo-experiment splits the simulation at random into two
 halves.  The source half is reweighted per fine cell to $G$ and carries the
 flux, interaction-model, and detector nuisance draws.  The interaction-model
@@ -947,8 +954,10 @@ bands are renormalized within each fine truth cell on the signal, so that
 they move only the composition within the cell, and with it the efficiency
 and the migrations.  The lateral detector bands enter as
 $\sum_{b}z_{b}\Delta_{b}$, with $\Delta_{b}$ from endpoint unfoldings of the
-data.  Poisson pseudo-data and background are drawn from it, and
-the joint-test estimator unfolds the pseudo-data with the other half.  A
+data.  Poisson pseudo-data are drawn from the source half, and the background
+pseudo-data are a Poisson draw from one half of a separate background sample.
+The joint-test estimator unfolds the pseudo-data with the other half of the
+simulation.  A
 \SI{1.4}{\percent} normalization, the data's rounding noise, and the
 prediction's finite-sample residual are then added.  The data are unfolded
 once, with the full simulation.  Because the $\Delta_{b}$ come from the
@@ -1013,6 +1022,11 @@ point estimates $(k+1)/(B+1)$.
 % Register round r17 (S10, R9, R10): the design sentence is split in two; the extension's timing comes first; the
 % error-control sentence names its condition (A1 and A2, the assumptions of the bound in the paragraph above and in
 % sec:joint5d-frozen) before its reason. No fact is added or removed.
+% A2 and the losses (r17 accuracy fix, review b3-R2): note sec_joint.tex sec:joint5d-frozen ("A2 requires the lost
+% pseudo-experiments to have been lost independently of their outcomes, which has not been shown"); the primer's
+% paragraph on the lost pseudo-experiments; RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md sec. 5 (interrupted seeds may be
+% outcome-selected; never-started seeds are independent only under stated assumptions).
+% Search: lost independently of their outcomes; independent of their outcomes; outcome-independent; lost-seed runtime diagnostic @ f0b26234
 The test design was fixed before any observed statistic was computed.  Its
 reviewers had already seen descriptive per-cell residuals of the data.  After the observed $p$ values had become visible, the computing time
 available to the calibration was increased by a bounded amount.  Under A1 and
@@ -1021,7 +1035,9 @@ it does not depend on this extension.  Computing time limits interrupted or prev
 calibration and \jtLostPow{} power pseudo-experiments, and the decisions use
 the completed ones.  When rerun, none of the lost calibration
 pseudo-experiments reaches the observed statistic in any test or shifted null,
-so their outcomes change no decision.  Independently written code reproduces every $p$ value and
+so their outcomes change no decision.  A2 also requires that the
+pseudo-experiments were lost independently of their outcomes, which has not
+been shown.  Independently written code reproduces every $p$ value and
 decision.  The predeclared design and the rerun are described in
 Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:joint5d-frozen}
 and~\ref*{N-sec:joint5d-lost}.
