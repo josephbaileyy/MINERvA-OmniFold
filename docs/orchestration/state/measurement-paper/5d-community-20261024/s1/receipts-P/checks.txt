@@ -1,0 +1,22 @@
+checks 2026-10-25T01:18:36Z host=login12
+--- stat over the 734 inventoried paths (%F %h %i)
+734 regular file 1
+inodes appearing more than once: 0
+--- newest mtime and ctime over the 734 paths (UTC)
+mtime_max 2026-09-27T15:27:48Z ctime_max 2026-09-27T15:27:48Z
+--- distinct paths / lines
+734
+734
+--- paths.list
+0dc13d9a11ac0ce32acd76ce9bd9c8880002bcb00d7a7e4d26c9765639a7b633  /pscratch/sd/j/josephrb/s1-20261024/preserve/paths.list
+68347 B
+--- nohup.out vs preserve.log
+b09b9cde47076d9d57f9385ac04f74df6c6ce3a454f97a89e258ed1d11d1fa47  /pscratch/sd/j/josephrb/s1-20261024/preserve/nohup.out
+b09b9cde47076d9d57f9385ac04f74df6c6ce3a454f97a89e258ed1d11d1fa47  /pscratch/sd/j/josephrb/s1-20261024/preserve/preserve.log
+--- sacct (local PDT times)
+60232432|s1pilot|COMPLETED|2026-10-24T17:36:04|2026-10-24T17:47:54|2026-10-24T17:59:56
+60233152|s1prodA|PENDING|2026-10-24T18:01:57|Unknown|Unknown
+60233153|s1prodB|PENDING|2026-10-24T18:01:57|Unknown|Unknown
+60233154|s1seed|PENDING|2026-10-24T18:01:57|Unknown|Unknown
+--- tar version
+tar (GNU tar) 1.34
