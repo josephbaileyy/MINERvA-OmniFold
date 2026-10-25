@@ -108,6 +108,13 @@ bash $D/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/sta
 4. **Names.** The script names its tar `stage0-inputs.tar`. The HPSS directory name identifies this copy. The report
    states the name mismatch.
 5. **Stops.** Any exit from 3 to 8 is a STOP, reported unrepaired.
+
+**Erratum (2026-10-25).** The command above reads the inventory from `$D`, but `s1/PRESERVE-INVENTORY.sha256` came
+in with PR #341 (`c0889e53`), after the deploy pin `d5617470`, so it is not in the deploy. This is the director's error.
+- **The repair, accepted by the director:** the measurement session wrote the file from the clone's own objects with
+  `git show c0889e53:<path>` to `$B/preserve-inv/PRESERVE-INVENTORY.sha256`.
+- That copy's sha256 begins `cde96ca78f732c0a`, as bound above, and it has 734 lines.
+- The script runs over that path. The deploy tree is untouched, and nothing else changes.
 6. **Cleanup after PASS.** Delete `$B/preserve/stage0-inputs.tar`. Keep its `.sha256`, `paths.list` and
    `preserve.log`. The inventoried files are not touched.
 
