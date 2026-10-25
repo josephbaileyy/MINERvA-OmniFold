@@ -1,0 +1,35 @@
+post-run 2026-10-25T22:16:40Z login37
+/pscratch/sd/j/josephrb/fd-f0-20261025:
+total 1220
+drwxrwx---   6 josephrb josephrb    4096 Oct 25 15:00 .
+drwx------ 300 josephrb josephrb   69632 Oct 25 14:53 ..
+drwxrwx---   3 josephrb josephrb    4096 Oct 25 14:53 deploy
+-rw-rw----   1 josephrb josephrb 1068642 Oct 25 15:00 fd_f0_experiments.npz
+-rw-rw----   1 josephrb josephrb   84840 Oct 25 15:00 fd_f0_readout.json
+drwxrwx---   2 josephrb josephrb    4096 Oct 25 14:59 logs
+drwxrwx---   3 josephrb josephrb    4096 Oct 25 14:59 preserve
+drwxrwx---   2 josephrb josephrb    4096 Oct 25 14:59 tmp
+
+/pscratch/sd/j/josephrb/fd-f0-20261025/preserve:
+total 28
+drwxrwx--- 3 josephrb josephrb 4096 Oct 25 14:59 .
+drwxrwx--- 6 josephrb josephrb 4096 Oct 25 15:00 ..
+-rw-rw---- 1 josephrb josephrb 7360 Oct 25 14:59 paths.list
+-rw-rw---- 1 josephrb josephrb 1807 Oct 25 14:59 preserve.log
+drwxrwx--- 2 josephrb josephrb 4096 Oct 25 14:59 retrieve
+-rw-rw---- 1 josephrb josephrb  132 Oct 25 14:59 stage0-inputs.tar.sha256
+
+/pscratch/sd/j/josephrb/fd-f0-20261025/preserve/retrieve:
+total 8
+drwxrwx--- 2 josephrb josephrb 4096 Oct 25 14:59 .
+drwxrwx--- 3 josephrb josephrb 4096 Oct 25 14:59 ..
+
+/pscratch/sd/j/josephrb/fd-f0-20261025/tmp:
+total 8
+drwxrwx--- 2 josephrb josephrb 4096 Oct 25 14:59 .
+drwxrwx--- 6 josephrb josephrb 4096 Oct 25 15:00 ..
+1068642 /pscratch/sd/j/josephrb/fd-f0-20261025/fd_f0_experiments.npz
+84840 /pscratch/sd/j/josephrb/fd-f0-20261025/fd_f0_readout.json
+| josephrb usage on HPSS charged to m3246 |  422.78GiB |   512.00GiB |          82.6% |          - |           - |              - |
+link counts of the 80 inventoried files, from paths.list (count, nlink):
+     80 1

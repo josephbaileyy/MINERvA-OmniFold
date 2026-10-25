@@ -70,13 +70,19 @@ reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total
 2D cross section and its systematic and statistical covariances to within
 \SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning
 dependence and suits the extended-fiducial analysis, where backgrounds are
-larger. The quoted 2D and 5D central values, all quoted uncertainties and the
-extended-fiducial value do not use it. Its refined form is the background
-treatment of configurations (d) and (e) (\S\ref{sec:method-config}): (d) in the
-background-bias and generator-sized-change studies of \S\ref{sec:val-negweight},
-and (e), the joint-test estimator, in
-\S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the generator
-tests and the 3D and 4D central values (App.~\ref{app:negweight}, \S\ref{sec:3d}).
+larger. The quoted 2D result and its covariance and the 3D and 4D central
+values use its refined form; every other quoted cross section and uncertainty,
+including the 5D central value and the extended-fiducial value, uses the binned
+correction. The refined form is the background treatment of configurations (d),
+(e) and (f) (\S\ref{sec:method-config}): (d) in the background-bias and
+generator-sized-change studies of \S\ref{sec:val-negweight}; (e), the joint-test
+estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the
+generator tests and the 3D and 4D central values; and (f) for the 2D result and
+its covariance (App.~\ref{app:negweight}, \S\ref{sec:3d}, \S\ref{sec:results}).
+% Stale-text fix (2026-10-25, director ruling): since 2026-10-24 the 2D result is configuration (f), refined
+% negative-weight subtraction (app_history.tex:89-92; this file, sec:method-config; paper_body.tex sec:method).
+% The uses follow app_negweight.tex "Scope of the numbers"; the 5D central value is configuration (a) for now
+% (DECISION-20261023-joseph-5d-a-and-register-round.md item 1); the extended-fiducial value uses the binned correction (sec_fps.tex sec:fps).
 % Note register batch b5, review B1: the uses follow Table tab:estimators-matrix and Table tab:validation-design-5d
 % (sec_5d.tex): background closure (c), (d); generator-sized change (d); held-out shapes (e, sec:val-departure);
 % precision study (e, sec:gbdt-model-dependence); test calibration and generator tests (e, sec:joint5d).
