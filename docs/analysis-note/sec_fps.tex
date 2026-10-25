@@ -44,10 +44,14 @@ Four tests characterize the extension (Fig.~\ref{fig:fpscmp}):
         (standard 2D input, paper grid, identical settings) with
         integral ratio $0.9994$, median cell ratio $1.0013$, and median
         deviation \SI{\fpsAnchor}{\percent} across all 185 reported cells:
-        in the published region the extended unfold agrees with the control at this level. The control
-        reproduces the 2D total at the printed precision
-        ($\SI{\sigTwoD}{cm^2/nucleon}$, the same for the exact-split and LightGBM
-        central values).
+        in the published region the extended unfold agrees with the control at this level. The control's
+        total, $\SI{\sigTwoDPurity}{cm^2/nucleon}$, equals at the printed precision that of the
+        purity-subtracted 2D central values (exact-split and LightGBM). The quoted 2D result, with refined
+        negative-weight subtraction, is $\SI{\sigTwoD}{cm^2/nucleon}$, \SI{\roFpsDiff}{\percent} lower, so the
+        control no longer reproduces it.
+% RE-2 integration W3 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): RE2-PARTC-REPORT.md sec. 8 (RO-FPS: E_R 3.069e-38 against the control's 3.073e-38, -0.14 %,
+% "It does not reproduce"); the control: VALIDATION_LEDGER.md:1624-1625 (no committed digest; VL177 records the -0.14 %); the exact-split total
+% 3.0733e-38 (values.tex \sigTwoD comment).
   \item \textbf{Closure.} Extended-grid self-closure using simulated reconstruction as
         pseudo-data returns recovered/truth $=1.0000$ in every cell,
         including the extension, with no event-accounting or normalization bias
@@ -109,8 +113,11 @@ fiducial volume is
   \sigma_{\mathrm{ext}} = \SI{\fpsSigma}{cm^2/nucleon}
   \quad\text{(central value)},
 \end{equation*}
-\SI{\fpsAbove}{\percent} above the restricted-phase-space
-$\SI{\sigTwoD}{cm^2/nucleon}$. It was produced with the binned purity correction, not with the
+% RE-2 integration W5 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): \fpsAbove (46) is not printed; its definition is not established (RE2-PARTC-REPORT.md
+% sec. 4: 4.502/3.0730 - 1 = 46.50 %; VALIDATION_LEDGER.md:1626 "+46% vs restricted" names no operand). The two totals:
+% VALIDATION_LEDGER.md:1624-1625 (control 3.073e-38; FPS total 4.502e-38).
+compared with $\SI{\sigTwoDPurity}{cm^2/nucleon}$ for the control unfold in the restricted phase
+space. The extended-fiducial value was produced with the binned purity correction, not with the
 negative-weight treatment designated for the extended-fiducial analysis; no extended-fiducial production
 with refined negative-weight subtraction has been run (App.~\ref{app:negweight}).
 We adopt \textbf{two-tier reporting}.

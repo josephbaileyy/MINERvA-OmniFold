@@ -1,0 +1,26 @@
+### D33: AGREE
+- Register: The new text reads as standard PRD prose, using plain declaratives without audit jargon. The explanation of the like-for-like comparison establishes scope directly and cleanly.
+- Fit: It fits smoothly into the paragraph discussing the comparison between our budget and the published measurement, immediately contextualizing the comparison before detailing the individual components.
+- Accuracy: Supported by the cited sources (W2-n1 for the like-for-like comparison omitting $C_{\mathrm{model}}$, and M-qrCmodelMedian for `\qrCmodelMedian`). The updated exact-split median value (\SI{6.462}{\percent}) aligns with the refined estimator.
+
+### D34: AGREE
+- Register: The text reads as concise, quantitative PRD prose, describing the uncertainty budget and the eigenmode tension decomposition plainly without bookkeeping jargon.
+- Fit: It integrates consistently with the preceding paragraph, Table~\ref{tab:uq}, and the subsequent mode discussion and figures (e.g., Fig.~\ref{fig:tensionmodes}).
+- Accuracy: All figures and statements are supported by the sources: Table~\ref{tab:uq} values match the refined estimator budget; W6-01 supports the eightfold inflation from off-diagonal elements; W6-02a/b/c support the leading mode magnitude ($4.8$) and the next nine ($3.4$--$3.8$); W6-03 supports two of the five largest contributors lying in the smallest-$\lambda$ tenth; W2-t1 and W2-t2 support the eigenvalue ranges for the poorly determined ($\lesssim 4\times 10^{-9}$) and moderate-$\lambda$ ($4\times 10^{-6}$ to $6\times 10^{-5}$) modes.
+
+### D35: AGREE
+- Register: Plain declaratives appropriate for PRD; conditions and estimator choices are stated clearly without unnecessary caveats.
+- Fit: Flows naturally from the overall tension discussion in D34 into the estimator variation, cleanly contrasting the purity-based spread with the quoted result's refined subtraction.
+- Accuracy: Directly supported by W2-n2, which confirms the shift from $\chiPaperPurity$ ($2.65$) to $\chiPaper$ ($2.27$) when adopting the refined negative-weight subtraction at the central value's seed.
+
+### D36: AGREE
+- Register: Standard, succinct PRD figure caption.
+- Fit: Completely consistent with the updated text in `sec_results.tex` (D34), which specifies three modes concentrating in highest-$\pPar$ and three moderate-$\lambda$ modes lying below them.
+- Accuracy: Accurately reflects the updated tension decomposition for the refined estimator, supported by W2-t3 and the tension report.
+
+### D40: AGREE
+- Register: Clear PRD caption prose that accurately explains the plotted quantity without ambiguity.
+- Fit: Consistent with the definition given in Section~\ref{sec:results-uq}, where relative uncertainties are evaluated with respect to the central value.
+- Accuracy: Directly supported by the FIG-cap source (`block_stat.root`'s `hRel2D` is $\sqrt{\mathrm{diag}(\mathrm{stat})}/x$). Replacing the erroneous $\sigma/E_U$ with spread $\sigma$ relative to the central value corrects the mathematical definition while maintaining fidelity to the literal "std/mean" label on the figure's color bar.
+
+AGREE 5, REVISE 0

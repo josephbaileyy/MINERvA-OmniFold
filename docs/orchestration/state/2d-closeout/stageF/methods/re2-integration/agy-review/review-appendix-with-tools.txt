@@ -1,0 +1,84 @@
+### D01: AGREE
+- Register: Reads as standard PRD companion prose (plain declaratives establishing the scope of definitions in an appendix, without unnecessary bookkeeping jargon).
+- Fit: Consistent with the preceding discussion of unbinned background subtraction and the subsequent subsection on estimator formulation (\S\ref{sec:negweight-estimator}).
+- Accuracy: Accurately reflects the adoption of configuration (f) for the 2D result and its covariance (supported by W7-g3, `DECISION-20261024-joseph-adopt-re2-2d-refined.md`), while preserving the stated scope of configurations (d) and (e).
+- If REVISE: None.
+
+---
+
+### D02: AGREE
+- Register: Reads as clear declarative prose suitable for the analysis note companion.
+- Fit: Fits naturally between the preceding explanation of the production default and the subsequent paragraph introducing the 2D closure test with backgrounds.
+- Accuracy: Accurately reports the outcome of the 2D background-treatment revisit as completed and adopted for the 2D result and covariance, while explicitly noting that the 5D central value retains purity (supported by W7-g2, `DECISION-20261023-joseph-2d-refined-integrate-ci.md`).
+- If REVISE: None.
+
+---
+
+### D03: AGREE
+- Register: Standard PRD experimental physics register for reporting closure tests and residuals (comparable to MINERvA cross-section validation presentations in arXiv:2106.16210, Sec. VI).
+- Fit: Flows seamlessly from the revisit context in D02 and into the extended-fiducial discussion in the following paragraph.
+- Accuracy: Accurately distinguishes the purity-based yardstick covariance (the baseline quoted when the RE-1 closure test was performed, per X5 in `RE1-REPORT-2.md`) from the adopted refined result and covariance (configuration (f), supported by W7-g1 in `DECISION-20261024-joseph-adopt-re2-2d-refined.md`).
+- If REVISE: None.
+
+---
+
+### D04: AGREE
+- Register: Plain declaratives with appropriate precision.
+- Fit: Fits cleanly below the subsection header and transitions directly into the discussion of purity bias.
+- Accuracy: Correctly updates the scope of the 2D central value to configuration (f) and accurately reflects that configuration (f) shares the same 400-tree, 31-leaf refinement capacity as configuration (e) (supported by W7-g4, `ESTIMATORS.tsv`).
+- If REVISE: None.
+
+---
+
+### D05: AGREE
+- Register: Clean technical prose appropriate for an archival release appendix.
+- Fit: Fits the verification and figure regeneration narrative of `app_release.tex:14`.
+- Accuracy: Accurately reports that the validation figure and numbers were regenerated from the refined LightGBM result and that the legend was updated to sentence case (supported by W10, `RE2-PARTC-A3-REPORT.md`).
+- If REVISE: None.
+
+---
+
+### D06: AGREE
+- Register: Mathematically precise PRD register describing matrix conditioning and eigenvalue spectrum cutoffs (comparable to covariance treatment in arXiv:2106.16210, Sec. VII and arXiv:1910.08658, Sec. VI).
+- Fit: Resolves an internal contradiction in the old text (which claimed the matrix was "full-rank" while quoting "$\mathrm{rank}=204$" out of 205 bins) by clarifying that the matrix has full algebraic rank 205 with 204 eigenvalues above the $10^{-12}\lambda_{\max}$ numerical threshold.
+- Accuracy: Fully supported by `tension_report.txt` (W9, W9b: $\mathrm{rank}(\lambda>0)=205/205$, 204 modes kept at $1e-12$) and the refined budget covariance metrics.
+- If REVISE: None.
+
+---
+
+### D07: AGREE
+- Register: Concise PRD tabular presentation and plain declaratives evaluating estimator and regularization differences (consistent with unfolding estimator comparisons in arXiv:1911.09107, Sec. IV and arXiv:2310.06082, Sec. 5).
+- Fit: Integrates smoothly into the discussion of methodological components contributing to the data-to-model $\chi^2$.
+- Accuracy: The values for the quoted refined LightGBM configuration ($\chi^2/\mathrm{ndf} = 2.270$, pull RMS $= 0.535$) and the qualification that the other rows use purity-based subtraction are verified by `values_table.tsv` (W2-a1) and `ESTIMATORS.tsv` (W2-a2).
+- If REVISE: None.
+
+---
+
+### D08: AGREE
+- Register: Standard PRD abstract register (Rule R8: findings stated directly with only qualifiers essential to accuracy).
+- Fit: Fits within the abstract environment of `main_note.tex`.
+- Accuracy: Accurately updates the abstract to reflect the adopted refined 2D estimator and covariance, removes the outdated "revisit in progress" phrasing, and maintains accurate qualifications on the 5D result (supported by W7-m1 and W7-m2 in `DECISION-20261024-joseph-adopt-re2-2d-refined.md`).
+- If REVISE: None.
+
+---
+
+### D19: AGREE
+- Register: Clear, compact tabular format. Reporting a model-dependence covariance beside the headline experimental uncertainty follows standard PRD practice for unbinned and regularized unfolding (e.g., arXiv:2108.12376, Sec. 4 and arXiv:2310.06082, Sec. 5).
+- Fit: Self-contained macro for table rows, maintaining consistent structure across columns.
+- Accuracy: Accurately incorporates configuration (f) for the 2D result and records $C_{\mathrm{model}}$ reported beside the headline uncertainty (supported by W7-t1 in `DECISION-20261024-joseph-adopt-re2-2d-refined.md`).
+- If REVISE: None.
+
+---
+
+### D46: AGREE
+- Register: Clean LaTeX macro definitions in `values.tex`.
+- Fit: Integrates directly into the numerical macro table of the note.
+- Accuracy: Every numerical value matches its primary source exactly:
+  - `\cmodelMedian` (3.71), `\qrCmodelMedian` (7.90), and `\cmodelIntegral` (0.03) match `cmodel_R.json` (`cell_rel_sigma.C_model.median`, `cell_rel_sigma.Q_R_plus_C_model.median`, and `integral_rel_sigma.C_model`);
+  - `\sigTwoDPurity` (`3.073e-38`) and `\chiPaperPurity` (2.65) preserve the purity values from `values_table.tsv`;
+  - `\roFpsDiff` (0.14) matches W3-2 in `RE2-PARTC-REPORT.md`.
+- If REVISE: None.
+
+---
+
+AGREE 10, REVISE 0

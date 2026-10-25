@@ -255,7 +255,8 @@ it; its source has not been identified.
  Just as important, our \emph{uncertainties} --- worked out
 independently of the published analysis --- come out close in size to the published ones
 (\SI{\uqMedian}{\percent} versus \SI{\uqPaper}{\percent} typical). Ours are a little smaller in the typical cell,
-% \uqMedian = 6.45, rebuild/outputs/outA/budget_Q.json.gz Q.median_pct (Q = S5 total + C_PL); still below \uqPaper.
+% \uqMedian = 6.41 (RE-2 integration: Q_R, re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz Q.median_pct); still below \uqPaper.
+% Was 6.45 (Q, rebuild/outputs/outA/budget_Q.json.gz).
 % J3/J4 provisional (DECISION-20261018, packet W3: D5 is in the paper and note; the primer names no run-period block).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 partly because our uncertainty on the beam's neutrino flux comes out below the
@@ -272,8 +273,9 @@ published.
 The new method reproduces the old answer's overall rate, and its error bars are
 close in size to the published ones.
 
-One qualification: two software implementations of the tree learner give
-answers that differ by about one percent in a typical cell, and the size of the
+One qualification: two software implementations of the tree learner, used with
+different ways of removing background, give answers that differ by about one
+percent in a typical cell, and the size of the
 remaining shape difference depends on which one is used. We quote the faster
 one, because every ingredient of the error bars was computed with it; we had
 originally quoted the slower one. We made this choice after both comparisons with the
@@ -290,10 +292,20 @@ learner chosen after the result was seen, not an independent validation.
 The error budget also has known limits. An assessment of the saved analysis
 outputs found errors in how an earlier version of the two-variable error budget
 was put together~\cite{TwoDFollowup2026}. The quoted budget was rebuilt without
-them; the analysis note lists the repairs. Some effects are not
+them; the analysis note lists the repairs. Two effects are not
 included in any part of the budget: an approximation in how events that fail
-reconstruction are weighted, the difference between the two implementations of
-the tree learner, and the dependence on the unfolding model.
+reconstruction are weighted, and the difference between the two implementations
+of the tree learner. The dependence on the simulation that the unfolding starts
+from is given separately: we change that simulation's shape to that of each of
+three other generators, unfold again, and combine the three changes of the
+result in quadrature. That combination is \SI{\cmodelMedian}{\percent} in a typical
+cell, and added to the error bars it raises their typical size from
+\SI{\uqMedian}{\percent} to \SI{\qrCmodelMedian}{\percent}. It does not change the
+uncertainty on the overall rate, because the three changes alter only the shape,
+not the total. We compare with the published error bars without it, because they
+do not include such a term either.
+% RE-2 integration W1 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-2d-model-dependence-component.md items 1-3; cmodel_R.json
+% (C_model median 3.71 %, Q_R + C_model 7.90 %, integral 0.029 % against Q_R's 4.759 %); pv2d/REPORT.md sec. 4 (shape-only).
 
 To test whether error bars have the right size, one reruns the analysis on many
 simulated experiments and counts how often the bars contain the known answer
@@ -597,8 +609,8 @@ Neither effect is in the quoted uncertainty yet.
 The same kind of test for the two-variable result puts the original and the
 improved removal more than one statistical standard deviation apart in 14 of
 its 205 cells, with the improved removal within half a statistical standard
-deviation of the truth in every cell; that result is being moved to the
-improved removal.
+deviation of the truth in every cell, and that result now uses the improved
+removal.
 % Primer sync to the methods paper (paper_body.tex sec:conclusions, "The central values nevertheless keep the
 % purity-based subtraction and its bias of up to 4% in the highest-W cells; the refinement is used only for the
 % generator tests"; the larger refinement passes the nominal background-inclusive closure: note sec_5d.tex
@@ -927,7 +939,7 @@ uncertainty is used for any result.
 \end{figure}
 
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2)
-% Theme A (primer F7): \fpsSigma = 4.502e-38 (values.tex:273; VALIDATION_LEDGER.md:1615; three-prior values
+% Theme A (primer F7): \fpsSigma = 4.502e-38 (values.tex:273; VALIDATION_LEDGER.md:1625; three-prior values
 % 4.502/4.475/4.367e-38 at :1625), printed to two significant figures by siunitx (prints 4.5 x 10^-38).
 Separately, the published signal definition excludes about a third of the
 simulated interaction rate because of its muon kinematic cuts. This fraction

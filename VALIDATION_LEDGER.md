@@ -1,5 +1,15 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-24 2D result on the refined estimator (RE-2): the FPS anchor control no longer reproduces it
+
+Decision: [`DECISION-20261024-joseph-adopt-re2-2d-refined.md`](docs/orchestration/DECISION-20261024-joseph-adopt-re2-2d-refined.md)
+(the 2D central value `E_R`, configuration (f), and covariance `Q_R` adopted). Record:
+[`RE2-PARTC-REPORT.md`](docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md) §8 (row `ro-fps`).
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL177 | RO-FPS: the quoted 2D total, `hXSec2D.Integral("width")` at 4 significant figures, against the FPS battery's control unfold total (the 2026-06-10 FPS MEFHC entry below, job 54244120, no committed digest) | `E_R` 3.069e-38 against 3.073e-38, −0.14 %: **does not reproduce**. The positive control, the purity-subtracted `E_U`, gives 3.073e-38 and reproduces | That entry's "Control unfold total 3.073e-38 = the frozen production 2D number exactly" holds for `E_U`, not for the adopted `E_R`. The FPS total 4.502e-38 and its "+46% vs restricted" are unchanged and were not re-derived on the refined estimator |
+
 ## 2026-10-13 5D injected-W-shape closure, corrected (signal only)
 
 Plan [`PREREG-20261012-5d-injected-w-closure.md`](docs/orchestration/PREREG-20261012-5d-injected-w-closure.md) (`b11ff40d`, pushed before submission);

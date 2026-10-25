@@ -144,15 +144,18 @@ published CC-inclusive 3D reference for this signal and phase space.
 % 0.99998); the scatter is the SD of hXSec2D / E_U on those cells (RE1-REPORT-2.md sec. 4); the D2 movement is
 % RE1-REPORT-2.md sec. 3 (relative: median 0.44 %, p84 1.13 %). The plain content sum (+0.79 %) is not printed.
 This is a cross-configuration comparison: the 3D marginal is configuration~(e),
-and the 2D result is configuration~(a), with purity-based subtraction. On the 2D
-data, the background treatment alone moves cells by a median of
-\SI{0.44}{\percent} (84th percentile \SI{1.13}{\percent};
-\S\ref{sec:negweight-footing}).
+and the 2D result is configuration~(f). Both use refined negative-weight
+subtraction with a 400-tree, 31-leaf refinement; (e) uses the deterministic learner
+of (c), and (f) the seed-42 LightGBM learner of (a) (\S\ref{sec:method-config}).
+% RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): the 2D result is E_R (DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1),
+% configuration (f) = registry a-refined-400-31. The D2-vs-E_U movement (0.44 %, 84th percentile 1.13 %) described the
+% purity 2D result's difference from (e)'s background treatment; it no longer applies and is dropped here (it stays
+% printed in App. negweight, sec:negweight-footing).
 The \emph{normalization} agrees closely: the marginal's area-weighted total
-over the 205 reported cells agrees with the 2D result's to \SI{0.001}{\percent},
-and the median per-bin ratio is $1.0000$.
+over the 205 reported cells agrees with the 2D result's to \SI{0.141}{\percent},
+and the median per-bin ratio is $1.0010$.
 The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the
-2D result scatters by $\sim\SI{3.5}{\percent}$ (standard deviation over the
+2D result scatters by $\sim\SI{3.7}{\percent}$ (standard deviation over the
 205 cells). With the published covariance, the indicative distance of the
 marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values
 ($\chiPaper$ for the quoted LightGBM central value, $\chiPaperExact$ for the
@@ -184,9 +187,9 @@ Residuals against reweighted truth on the $\Eavail$-marginal have median
 $0.9999$ and standard deviation \textbf{\num{0.0006}}
 (\SI{0.06}{\percent}); the per-3D-bin residual standard deviation is
 \SI{3.2}{\percent} from MC statistics in sparse high-recoil corners.
-The closure's marginal scatter is far below the $\SI{3.5}{\percent}$
+The closure's marginal scatter is far below the $\SI{3.7}{\percent}$
 data-versus-2D scatter, but the two belong to different configurations (the
-closure to (a), the data comparison to (e) against (a)), so their ratio is not
+closure to (a), the data comparison to (e) against (f)), so their ratio is not
 quoted. Total normalization matches to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation}
 ($\Eavail$ projection) the residual is \SI{1.84}{\percent} vs \SI{18.1}{\percent}
 injected (ratio $0.102$). No acceptance threshold fixed before the test is on
@@ -196,7 +199,7 @@ The test covers one shape, this Gaussian, injected into the pseudo-data and
 unfolded \emph{with the same detector response that the unfolding uses}. On
 this injection the configuration-(a) estimator neither manufactures nor destroys
 the feature. That does not extend to configuration~(e), and the data-versus-2D
-scatter compares (e) with (a), so the scatter is not read here as
+scatter compares (e) with (f), so the scatter is not read here as
 data\,$\leftrightarrow$\,MC structure resolved by the available-energy axis.
 The test does \emph{not} exclude estimator bias for other deformations and
 does not test response mismatch, and the hidden-variable closure exceeds its

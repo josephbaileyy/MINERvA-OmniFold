@@ -1,0 +1,16 @@
+### D16: AGREE
+- Register: Yes; it uses plain declaratives, maintains an accessible primer register without audit jargon, and keeps disclosures direct.
+- Fit: Yes; it fits smoothly between the preceding paragraph (which introduces the shape difference against the published result) and the following paragraph (which details unincluded effects in the error budget).
+- Accuracy: The ~1% typical cell difference between the implementations is supported by W6-21 (ratio 0.98 to 1.03). The added detail that they were "used with different ways of removing background" cannot verify from source W6-21 alone, which gives only the values table row; per instructions, this is flagged as unverified from the cited sources rather than changed.
+
+### D17: AGREE
+- Register: Yes; it presents the model-dependence component cleanly as a separately reported quantity using direct declaratives, avoiding hedging or bookkeeping jargon.
+- Fit: Yes; it cleanly links the discussion of learner differences in D16 to the unincluded effects in the error budget, and transitions smoothly into the coverage-testing discussion in the subsequent paragraph.
+- Accuracy: Fully supported. The separation of model dependence and combination in quadrature is supported by W1-r1 ($Q_R + C_\text{model}$). The fact that the three variations alter only shape and not the total interaction rate is supported by W1-r2 (the variations are pure shape departures preserving the prior's truth weight). The macros `\cmodelMedian` and `\qrCmodelMedian` correspond to M-cmodelMedian and M-qrCmodelMedian.
+
+### D18: AGREE
+- Register: Yes; it converts an in-progress status into a clean, factual declarative statement.
+- Fit: Yes; it integrates seamlessly into the discussion of background removal tests in the surrounding text.
+- Accuracy: Supported by W7-r1, which confirms that the refined 2D estimator $E_R$ (which uses the improved removal) is adopted as the final 2D result.
+
+AGREE 3, REVISE 0

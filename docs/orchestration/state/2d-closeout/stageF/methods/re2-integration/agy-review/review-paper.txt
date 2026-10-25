@@ -1,0 +1,50 @@
+### D09: AGREE
+- Register: The table presents findings, estimator configurations, test descriptions, and section pointers in concise, declarative PRD style without bookkeeping jargon.
+- Fit: Consistent with the adoption of configuration (f) for the 2D result described in Sec. II and Table II, and with the updated 3D-to-2D marginal closure number in Sec. IV-A (D15).
+- Accuracy: Updating the configuration identifiers from (a) to (f) and adding (f) to the marginal normalizations row is supported by W7-p0 and W7-p0b. The value 0.141% cannot be verified from W7-p0/W7-p0b alone, but it matches the updated value in D15.
+
+---
+
+### D10: AGREE
+- Register: Plain declaratives that clearly define the configuration matrix, hyperparameters, and seeding for reproducible ML training, adhering to PRD methods reporting.
+- Fit: Fits smoothly into Sec. II; the text and Table II define configuration (f) and delineate its role alongside configurations (a) and (e) without contradiction or broken flow.
+- Accuracy: Supported by W7-p1 (adoption of refined estimator $E_R$), W7-p2, and W7-p4 (refinement classifier seeded at estimator seed + 3).
+
+---
+
+### D11: AGREE
+- Register: Reads as standard PRD experimental prose, stating the goodness-of-fit distances, estimator dependence, and learner comparison plainly.
+- Fit: Flow is preserved between the subsection header and Fig. 1; it accurately clarifies that the comparison between the central value and the exact-split cross-check now spans both learner and background treatment differences.
+- Accuracy: Supported by W2-p1 (lowering $\chi^2/\mathrm{ndf}$ from $\chiPaperPurity$ to $\chiPaper$) and W2-p5 (median bin difference of \SI{1.03}{\percent}). The maximum difference of \SI{17.6}{\percent} cannot be verified from the listed source excerpt, but no claims are exaggerated or out of scope.
+
+---
+
+### D12: AGREE
+- Register: Standard PRD figure caption prose, clearly delineating what the uncertainty bands include and omit.
+- Fit: Consistent with Sec. III-B and Sec. III-C, reflecting that the headline covariance band plotted does not fold in the separately reported $C_{\mathrm{model}}$.
+- Accuracy: Supported by W1-p6 and the decision to report $C_{\mathrm{model}}$ beside rather than inside the headline covariance band.
+
+---
+
+### D13: AGREE
+- Register: Clear declarative prose; distinguishing omitted regularization dependence from the prior generator-shape dependence reported in the next paragraph is appropriate.
+- Fit: Integrates seamlessly with the newly added paragraph D14 immediately following it.
+- Accuracy: Supported by W1-p1 (headline uncertainty remains the four-block covariance, with model dependence reported beside it) and W6-18.
+
+---
+
+### D14: AGREE
+- Register: Direct, plain declaratives that define the object $C_{\mathrm{model}}$, quantify its median and integral impact, and explain its status as a shape component without audit caveats.
+- Fit: Natural progression from D13; transitions smoothly into the subsequent paragraph discussing run-period variations.
+- Accuracy: Fully supported by W1-p2 ($C_{\mathrm{model}} = \sum_k s_k s_k^{\mathsf{T}}$), W1-p3 (measure of generator-shape model dependence, not a calibrated bound), W1-p4 (pure shape departures), W1-p5, W2-p2, W2-p3, and W2-p4 (no claim made on the published analysis residual due to different iteration counts). The macros match the corresponding values in `cmodel_R.json`.
+
+---
+
+### D15: AGREE
+- Register: Replaces in-progress audit phrasing ("is being moved") with a definitive declarative statement ("therefore uses"), following PRD style.
+- Fit: Fully consistent with D09 (Table I) and D10 (Table II).
+- Accuracy: Supported by W7-p3 regarding the adoption of configuration (f). The updated closure agreement value of \SI{0.141}{\percent} cannot be verified from the excerpt of W7-p5 alone (which lists the superseded 0.001), but it matches D09.
+
+---
+
+AGREE 7, REVISE 0

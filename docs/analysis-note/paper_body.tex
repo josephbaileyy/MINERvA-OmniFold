@@ -90,9 +90,9 @@ disfavours~\cite{MINERvA:2021owq}.
     \toprule
     \pcell{0.50\columnwidth}{Finding} & \pcell{0.12\columnwidth}{Conf.} & \pcell{0.22\columnwidth}{Test} & \pcell{0.07\columnwidth}{Sec.} \\
     \midrule
-    \pcell{0.50\columnwidth}{2D integral within about 1\%; correlated shape difference} & \pcell{0.12\columnwidth}{(a)} & \pcell{0.22\columnwidth}{published result} & \pcell{0.07\columnwidth}{\ref{sec:repro2d-pub}} \\
-    \pcell{0.50\columnwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.12\columnwidth}{(a)} & \pcell{0.22\columnwidth}{an earlier band failed coverage} & \pcell{0.07\columnwidth}{\ref{sec:uq2d}} \\
-    \pcell{0.50\columnwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (a) result to 0.001\%} & \pcell{0.12\columnwidth}{(a), (e)} & \pcell{0.22\columnwidth}{lower dimensions} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
+    \pcell{0.50\columnwidth}{2D integral within about 1\%; correlated shape difference} & \pcell{0.12\columnwidth}{(f)} & \pcell{0.22\columnwidth}{published result} & \pcell{0.07\columnwidth}{\ref{sec:repro2d-pub}} \\
+    \pcell{0.50\columnwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.12\columnwidth}{(f)} & \pcell{0.22\columnwidth}{an earlier band failed coverage} & \pcell{0.07\columnwidth}{\ref{sec:uq2d}} \\
+    \pcell{0.50\columnwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (f) result to 0.141\%} & \pcell{0.12\columnwidth}{(a), (e), (f)} & \pcell{0.22\columnwidth}{lower dimensions} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
     \pcell{0.50\columnwidth}{background-subtraction bias up to 4\% at high $W$; negative weights remove most} & \pcell{0.12\columnwidth}{(c), (d)} & \pcell{0.22\columnwidth}{pseudo-data with backgrounds} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
     \pcell{0.50\columnwidth}{generator-sized truth changes only partly recovered} & \pcell{0.12\columnwidth}{(d), (e)} & \pcell{0.22\columnwidth}{generator ratios} & \pcell{0.07\columnwidth}{\ref{sec:departure}} \\
     \pcell{0.50\columnwidth}{statistical intervals miscover under an about 10\% rate reduction} & \pcell{0.12\columnwidth}{(c)} & \pcell{0.22\columnwidth}{coverage} & \pcell{0.07\columnwidth}{\ref{sec:coverage}} \\
@@ -284,12 +284,17 @@ iteration count and classifier capacity regularize the unfolding.  The
 nominal settings are the scikit-learn defaults, with LightGBM matched to their
 capacity, and the refinement capacity of the joint-test estimator was chosen in
 simulation closure studies; no hyperparameter search was performed on data.
-The two- and five-observable central values use configuration~(a), the
-central-value estimator, with the purity-based
-subtraction, whose bias is given in Sec.~\ref{sec:closure}; the
-three- and four-observable central values use configuration~(e).  The
-two-dimensional central value is that of its systematic-universe ensemble, so
-its covariance is built with the same estimator.  The joint tests use
+% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R, Q_R adopted); registry
+% a-refined-400-31 (ESTIMATORS.tsv:12; refinement random_state = estimator seed + 3). The label (f) is registered as
+% the alias "configuration (f)" of a-refined-400-31 (ALIASES.tsv).
+The two-observable central value uses configuration~(f): the learner and seed
+of configuration~(a) with negative-weight background subtraction and the
+refinement capacity of configuration~(e).  The five-observable central value
+uses configuration~(a), with the purity-based subtraction, whose bias is
+given in Sec.~\ref{sec:closure}, and the three- and four-observable central
+values use configuration~(e).  The two-dimensional central value is that of
+its systematic-universe ensemble, so its covariance is built with the same
+estimator.  The joint tests use
 configuration~(e), the joint-test estimator, whose negative-weight treatment
 and higher-capacity refinement remove most of the bias of the purity method at
 nominal truth in the highest-$W$ cells (Sec.~\ref{sec:validation}).
@@ -303,7 +308,8 @@ largest residual proxy over the truth changes used in its development
   \caption{Estimator configurations.  All use five OmniFold iterations and
   gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both
   OmniFold steps; (c)--(e) are deterministic LightGBM (fixed seeds,
-  reproducible training).  Results from different configurations are not
+  reproducible training), and (f) is (a) with the refinement of (e), its
+  refinement classifier seeded at the estimator seed plus three.  Results from different configurations are not
   combined.  \nsec{sec:method-config} gives the full matrix.}
   \label{tab:estimators}
   \centering\scriptsize
@@ -314,7 +320,7 @@ largest residual proxy over the truth changes used in its development
     % The five-observable covariance is the covariance of the five-dimensional central value (note sec_5d.tex,
     % sec:eavailw-adopted); it supplies the band of Fig. 3(b).
     \pcell{0.24\columnwidth}{(a) central value: LightGBM, seed 42 in 2D} & \pcell{0.30\columnwidth}{purity-based subtraction} &
-    \pcell{0.38\columnwidth}{2D and 5D central values; 2D and 5D covariances; 3D and 4D closures} \\
+    \pcell{0.38\columnwidth}{5D central value and covariance; 3D and 4D closures; 2D learner comparisons (Sec.~\ref{sec:repro2d})} \\
     \pcell{0.24\columnwidth}{(b) cross-check: scikit-learn exact splits, unseeded} & \pcell{0.30\columnwidth}{purity-based subtraction} &
     \pcell{0.38\columnwidth}{2D cross-check (Sec.~\ref{sec:repro2d})} \\
     \pcell{0.24\columnwidth}{(c) deterministic variant} & \pcell{0.30\columnwidth}{purity-based subtraction} &
@@ -323,6 +329,8 @@ largest residual proxy over the truth changes used in its development
     \pcell{0.38\columnwidth}{background bias; generator-sized $\Eavail$ change (Figs.~\ref{fig:bkg-residual}, \ref{fig:deformation}a)} \\
     \pcell{0.24\columnwidth}{(e) joint-test estimator} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} &
     \pcell{0.38\columnwidth}{3D and 4D central values; held-out shapes (Fig.~\ref{fig:deformation}b); precision study; generator tests} \\
+    \pcell{0.24\columnwidth}{(f) as (a), refined} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} &
+    \pcell{0.38\columnwidth}{2D central value and covariance (Sec.~\ref{sec:repro2d})} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -364,14 +372,19 @@ with the pseudo-inverse over the 205 bins, which keeps all 205 eigenmodes
 (rank 205, condition number $1.5\times10^{12}$), so that ndf is that rank.  It
 indicates a correlated shape difference, not a normalization difference,
 spread over many eigenmodes of the published covariance, with no single $\pT$
-or $\pPar$ band carrying more than \SI{15}{\percent} of it.  The distance
-depends on the learner: ten LightGBM training seeds give 2.64--2.75, and the
-exact-split estimator gives $\chiPaperExact$ unseeded and
-$\chiPaperExactSeeded$ in one run with a fixed seed.  We quote the LightGBM
-result as the central value because its covariance uses the same estimator;
-this learner was chosen after both comparisons were known.  The two learners
-differ by a per-bin median of \SI{0.98}{\percent} (maximum
-\SI{12.2}{\percent}); \nsec{sec:method-config} describes both.
+or $\pPar$ band carrying more than \SI{15}{\percent} of it.  % RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): purity values 2.64--2.75, \chiPaperExact, \chiPaperExactSeeded unchanged (RE2-PARTC-REPORT
+% sec. 5 "Unchanged"); 2.654 -> 2.27 at seed 42: values_table.tsv m-chiPaper; 1.03/17.6: lit-learner-median/max-pb373/374.
+The distance
+depends on the estimator.  With the purity-based subtraction, ten LightGBM
+training seeds give 2.64--2.75, and the exact-split estimator gives
+$\chiPaperExact$ unseeded and $\chiPaperExactSeeded$ in one run with a fixed
+seed; at the central value's seed, the refined negative-weight subtraction
+lowers the LightGBM distance from $\chiPaperPurity$ to $\chiPaper$.  We quote
+the LightGBM result as the central value because its covariance uses the same
+estimator; this learner was chosen after both comparisons were known.  The
+central value and the exact-split cross-check, which differ in learner and in
+background treatment, differ by a per-bin median of \SI{1.03}{\percent}
+(maximum \SI{17.6}{\percent}); \nsec{sec:method-config} describes both.
 Figure~\ref{fig:validation} shows the principal one-dimensional projections.
 
 \begin{figure*}[t]
@@ -382,14 +395,15 @@ Figure~\ref{fig:validation} shows the principal one-dimensional projections.
   each with its total $\pm1\sigma$ band (this analysis: statistical,
   systematic-universe (including the normalization), training-seed and
   run-period blocks of the covariance,
-  Sec.~\ref{sec:uq2d}; it omits the learner dependence, and the two bands are
+  Sec.~\ref{sec:uq2d}; it omits the learner dependence and $C_{\mathrm{model}}$, and the two bands are
   correlated, so their overlap is not a compatibility test), and the MINERvA
   Tune~v1, with ratios to the published result below.  Bottom left:
   $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ per
   reported bin, with cells drawn at equal size (grey: not reported).  Bottom
   right: median relative uncertainties and residual summary.}
-  % Figure: stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...), drawn from Q = S5 total + C_PL
-  % (rebuild/scripts/make_fig1_q.py; RUN-fig1.txt); inset 6.45 % against the published 6.85 %.
+  % Figure (RE-2 integration): stageF/methods/re2-integration/fig1/fig1_validation.pdf (71a2ea48...), the RE-2 part C
+  % amendment-3 redraw from E_R and Q_R (re2/RE2-PARTC-A3-REPORT.md sec. 3; re2/run/partc_a3/RUN-fig1.txt); inset 6.41 %.
+  % Was stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...), drawn from E_U and Q.
   \label{fig:validation}
 \end{figure*}
 
@@ -415,11 +429,37 @@ raises the per-bin median from \SI{\uqSFiveMedian}{\percent} to
 reason the released inputs do not let us determine.  The covariance omits the
 approximation in the systematic-universe unfoldings for events that fail
 reconstruction, the learner dependence of Sec.~\ref{sec:repro2d-pub}, and the
-dependence on the unfolding model and its regularization.  The block sizes, the
+dependence on the regularization; the dependence on the prior's generator shape
+is reported beside it (below).  The block sizes, the
 assumptions of the block sum, and the tests of the approximation are given in
 Ref.~\cite{AnalysisNote2026},
 Secs.~\ref*{N-sec:results-uq}, \ref*{N-sec:uq-combine},
 and~\ref*{N-sec:uq-2d-scope}.
+
+% RE-2 integration W1 and W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): C_model, DECISION-20261024-joseph-2d-model-dependence-component.md items 1-3
+% (M2 form, kappa = 1, label "generator-shape model dependence; not a calibrated bound", users' total, like-for-like
+% comparison, the published analysis's iteration choice: arXiv:2106.16210 main.tex:343-344, :376 as quoted there);
+% values: re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json (RE2-PARTC-REPORT.md sec. 7); shape-only reweighting: PV-2D
+% REPORT.md sec. 4 ("The vertices are pure shape departures (kappa preserves the prior's truth weight)").
+We report the dependence on the prior's generator shape as a separate
+covariance beside the one above, $C_{\mathrm{model}}=\sum_k s_k s_k^{\mathsf{T}}$.
+Here $s_k$ is the per-bin relative change of the result when the prior's
+truth distribution is reweighted by the ratio of the $(\pT,\pPar)$ shape of
+generator~$k$ (GENIE with meson-exchange currents, NuWro, or GiBUU) to that of
+GENIE, with its normalization kept.  Its median is \SI{\cmodelMedian}{\percent} per bin.  It
+is a measure of generator-shape model dependence, not a calibrated bound on the
+unfolding bias.  Added to the covariance above, it gives a total with a median
+of \SI{\qrCmodelMedian}{\percent} per bin.  Because the reweighting keeps the
+prior's normalization, $C_{\mathrm{model}}$ is a shape component.  It is
+\SI{\cmodelIntegral}{\percent} on the integrated cross section, which leaves the
+integrated uncertainty at \SI{\uqIntegral}{\percent}, and it does not test the
+model dependence of the normalization.  The comparison with the published
+uncertainty uses the covariance without $C_{\mathrm{model}}$, because neither
+has a component for the residual dependence on the prior's generator shape:
+the published analysis chose its ten iterations in a fake-data study and
+assigns no uncertainty to the remaining dependence~\cite{MINERvA:2021owq}.
+The iteration counts differ (ten there, five here), so we make no statement
+about the size of the published analysis's residual.
 
 % Step: state/2d-closeout/period-unfold-20261014/REPORT.md (double ratio, +6.94% +- 0.41). Block:
 % state/2d-closeout/playlist-term/REPORT.md sec. 2 (C_PL integral 1.97%). Unknown cause:
@@ -442,7 +482,7 @@ the combined result, \SI{2.0}{\percent} on the integrated cross section.
 % Status of the block and of the covariance (DECISION-20261014 sec. 2; DECISION-20261017 sec. 2): Sec. VIII A.
 The statistical block is a bootstrap of 300 replicas drawn at the central
 value's training seed, with the background templates also resampled, with a
-median statistical uncertainty of \SI{0.684}{\percent}.  An earlier version of
+median statistical uncertainty of \SI{0.676}{\percent}.  An earlier version of
 the statistical band, distinct from the quoted block, was scored in a test
 specified in advance on \covTwoDNtoy{} closure pseudo-experiments at a fixed
 truth.  It undercovered in its tails: pooled over experiments and bins,
@@ -471,8 +511,8 @@ Each higher-dimensional result is checked against the lower-dimensional
 result it extends.  In configuration~(a), the four- and five-observable
 marginal normalizations agree at the approximately $1$--$2\%$ level.  For
 configuration~(e), only the three-observable marginal has been compared: its
-area-weighted total agrees with the configuration-(a) two-dimensional result
-to \SI{0.001}{\percent}, a comparison across configurations.
+area-weighted total agrees with the configuration-(f) two-dimensional result
+to \SI{0.141}{\percent}, a comparison across configurations.
 % Search: configuration (e); (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ 9cf497137947
 In three observables, a configuration-(a) closure
 test with an injected bump in truth $\Eavail$ leaves a residual of 0.10 of the
@@ -498,8 +538,9 @@ standard deviation apart in 14 of the 205 cells, with the purity estimate up to
 5.9 statistical standard deviations from the truth (more than one total
 standard deviation in one cell) and the refined one within 0.44 in every cell.
 % Register round r16 (R10): split; the wording is DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1's.
-The two-dimensional result is being moved to the refined estimator
-(\napp{sec:negweight-footing}).
+% RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1.
+The two-dimensional result therefore uses the refined estimator,
+configuration~(f) (\napp{sec:negweight-footing}).
 
 \subsection{Generator-sized truth changes}
 \label{sec:departure}

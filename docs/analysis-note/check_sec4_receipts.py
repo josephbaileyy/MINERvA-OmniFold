@@ -41,7 +41,11 @@ def receipt(rel: str) -> dict:
     return json.loads(path.read_text())
 
 
-BUDGET_Q = "2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz"
+# Q_R, the refined 2D covariance adopted with E_R (DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1): RE-2 part C's
+# budget, committed gzipped (RE2-PARTC-REPORT.md sec. 3; gunzip -c gives bbe13622..., as partc-r2/SHA256SUMS lists).
+# Repointed at integration as RE2-DECLARATION-C sec. 6.4 says; before, the Stage F rebuild's Q budget
+# (2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz).
+BUDGET_Q = "2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz"
 
 
 def ev(name: str) -> bool:
@@ -53,17 +57,17 @@ def highest_w(name: str) -> bool:  # the W catch column of the 7 x 6 (E_avail, W
 
 
 def stat_median():
-    # Q's statistical block (S1, 300 replicas at seed 42), Stage F rebuild phase 1
+    # Q_R's statistical block (S1, 300 replicas at seed 42, refined arm), RE-2 part C
     return receipt(BUDGET_Q)["stat"]["median_pct"]
 
 
 def total_median():
-    # Q = S5 total + C_PL (adopted 2026-10-17, DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)
+    # Q_R = S5_R total + C_PL_R (adopted 2026-10-24, DECISION-20261024-joseph-adopt-re2-2d-refined.md)
     return receipt(BUDGET_Q)["Q"]["median_pct"]
 
 
 def total_integral():
-    # Q's width-weighted total sigma on the integrated cross section (J3 C2, DECISION-20261018)
+    # Q_R's width-weighted total sigma on the integrated cross section (same definition as Q's, J3 C2, DECISION-20261018)
     return receipt(BUDGET_Q)["Q"]["integral_sigma_pct"]
 
 
@@ -117,8 +121,8 @@ def half_of_cells():  # VL154 A4: cells whose model dependence is within the ado
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
-    ("total median uncertainty (Q)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
-    ("total integral uncertainty (Q)", "values.tex", r"\\newcommand\{\\uqIntegral\}\{([0-9.]+)\}", total_integral, "round"),
+    ("total median uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
+    ("total integral uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqIntegral\}\{([0-9.]+)\}", total_integral, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
     ("first-built band, within 2 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCTwoPctOne\}\{([0-9.]+)\}",
      lambda: 100.0 * interim("C2"), "round"),
@@ -126,7 +130,7 @@ CHECKS = [
      lambda: interim("C1"), "round"),
     ("two-sigma nominal", "paper_body.tex", r"against \\SI\{([0-9.]+)\}\{\\percent\} nominal",
      lambda: 100.0 * math.erf(2.0 / math.sqrt(2.0)), "round"),
-    ("statistical block median (Q, S1)", "paper_body.tex",
+    ("statistical block median (Q_R, S1)", "paper_body.tex",
      r"with a median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
     ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma", "paper_body.tex",
      r"removes the tail undercoverage: \\SI\{([0-9.]+)\}\{\\percent\} fall within two standard deviations and "

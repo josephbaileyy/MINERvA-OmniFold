@@ -1,0 +1,50 @@
+### D09: AGREE
+- Register: The new text reads as standard Physical Review D tabular summary prose. It uses concise, objective descriptors for the findings, configurations, and test types without bookkeeping jargon.
+- Fit: It fits smoothly with the preceding and following text and aligns with the rest of the manuscript, specifically reflecting the adoption of configuration (f) for the 2D measurement in Table~\ref{tab:estimators} (Sec.~\ref{sec:method}), the updated comparison with the published result in Sec.~\ref{sec:repro2d-pub}, and the cross-configuration closure numbers in Sec.~\ref{sec:closure}.
+- Accuracy: The changes accurately reflect the cited sources (W7-p0, W7-p0b, W7-p5). Configuration (f) correctly replaces (a) for the 2D integral and covariance, configuration (f) is appropriately added alongside (a) and (e) for the multi-configuration dimensional consistency comparisons, and the 3D-to-2D marginal agreement is updated from 0.001% to 0.141% as established in `values_table.tsv` (`lit-3d-total-change`).
+
+---
+
+### D10: AGREE
+- Register: The revised text and table caption maintain an appropriate PRD register. The technical description of the estimators—including tree/leaf capacity and explicit specification of the deterministic random seed offset for the refinement stage (`seeded at the estimator seed plus three`)—follows established reproducibility standards for machine-learning applications in high-energy physics (cf. arXiv:2504.06857 §II).
+- Fit: The text fits seamlessly between the preceding paragraph (covering classifier training without early stopping or split subsets) and the subsequent discussion of simulation closure and coverage tests. The update to Table~\ref{tab:estimators} explicitly defines configuration (f) and clearly updates the scope of configuration (a).
+- Accuracy: All claims and specifications are supported by the cited sources (W7-p1, W7-p2, W7-p4). Configuration (f) is correctly characterized as inheriting the LightGBM learner and seed of (a) while incorporating the negative-weight background subtraction and higher refinement capacity (400 trees, 31 leaves) of (e) with `random_state` = seed + 3 = 45.
+
+---
+
+### D11: AGREE
+- Register: The prose conforms to PRD style. It uses clear, active declaratives to report goodness-of-fit metrics and distances against the published measurement covariance. Disclosing the post hoc selection of the primary learner alongside the result adheres directly to Style Guide R6 and published precedents (e.g., arXiv:2504.06857 §III).
+- Fit: The paragraph fits consistently within the subsection comparing the unfolding against the published MINERvA measurement (arXiv:2106.16210 / Phys. Rev. D 104, 092007 (2021)), introducing the metrics and projections visualized in Fig.~\ref{fig:validation}.
+- Accuracy: The claims match the data sources (W2-p1, W2-p5). The refined negative-weight estimator lowers the covariance-weighted distance from $\chiPaperPurity$ (2.65) to $\chiPaper$ (2.27), and the differences between the adopted central value and the exact-split cross-check are accurately updated to a median of \SI{1.03}{\percent} and maximum of \SI{17.6}{\percent} (`values_table.tsv`).
+
+---
+
+### D12: AGREE
+- Register: The caption modification is concise, declarative, and typical of PRD figure captions documenting experimental uncertainties.
+- Fit: It integrates seamlessly into the caption of Fig.~\ref{fig:validation}, matching the definitions in Sec.~\ref{sec:uq2d} where the headline covariance $Q_R$ is plotted without $C_{\mathrm{model}}$, and $C_{\mathrm{model}}$ is reported alongside it.
+- Accuracy: The addition of $C_{\mathrm{model}}$ to the list of omitted components is factually exact (W1-p6). The plotted band represents the four-block headline covariance $Q_R$, which does not incorporate $C_{\mathrm{model}}$, making this explicit disclosure necessary to prevent misinterpretation of the band.
+
+---
+
+### D13: AGREE
+- Register: The prose uses plain declaratives to state what is contained in the headline covariance and what is omitted. Shifting from treating the prior dependence as an unquantified omitted effect to noting that it is quantified and reported beside the covariance follows Style Guide R3 ("Turn a bias into a number, a component or an object, not a caveat").
+- Fit: It provides a natural, direct forward reference to the immediately following paragraph (D14), which defines and reports $C_{\mathrm{model}}$.
+- Accuracy: Fully supported by W1-p1 and W6-18. The four-block covariance $Q_R$ retains its definition and scope, omitting regularization dependence, while the dependence on the prior's generator shape is reported as a separate matrix.
+
+---
+
+### D14: AGREE
+- Register: The new text reads as standard Physical Review D physics reporting. It introduces $C_{\mathrm{model}}$ as a concrete covariance matrix, defines its construction and constituent generator variations, quotes its magnitude and combination with the headline covariance, and transparently characterizes it as a measure of model dependence rather than a calibrated coverage bound. The explanation of why the published comparison omits $C_{\mathrm{model}}$ is objective and factual, avoiding speculation about the published analysis's residual bias.
+- Fit: It fits directly after D13, immediately fulfilling the forward pointer (`reported beside it (below)`), and precedes the detailed examinations of individual covariance blocks without breaking narrative flow.
+- Accuracy: Every statement and numerical value is strictly supported by the sources (W1-p2 through W1-p5, W2-p2 through W2-p4, and `cmodel_R.json`). The quadratic generator-variation form $C_{\mathrm{model}}=\sum_k s_k s_k^{\mathsf{T}}$, the median value \SI{\cmodelMedian}{\percent} (3.71%), the combined median \SI{\qrCmodelMedian}{\percent} (7.90%), the integrated impact \SI{\cmodelIntegral}{\percent} (0.03%), and the invariant integrated uncertainty \SI{\uqIntegral}{\percent} (4.76%) match the validated calculation products exactly.
+
+---
+
+### D15: AGREE
+- Register: The change replaces editorial/audit tracking language ("is being moved to the refined estimator") with definitive, declarative scientific prose ("therefore uses the refined estimator, configuration~(f)"), which is appropriate for a finalized PRD paper.
+- Fit: The text maintains strong logical cohesion: the conclusion that the 2D result uses configuration (f) directly follows the closure test findings demonstrating that configuration (f) eliminates the up to 5.9-sigma bias observed with the purity method.
+- Accuracy: Fully supported by W7-p3 and W7-p5. The 3D-to-2D area-weighted total comparison is accurately updated to \SI{0.141}{\percent} (`values_table.tsv`), correctly identifying configuration (f) as the reference 2D result.
+
+---
+
+AGREE 7, REVISE 0

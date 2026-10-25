@@ -1,0 +1,100 @@
+### D01: AGREE
+- Register: The new text reads as appropriate prose for an analysis note companion appendix, defining scope with plain declaratives and avoiding audit jargon.
+- Fit: It fits smoothly with the preceding paragraph (which introduces background subtraction and negative-weight injection) and updates the inventory of results that use refined negative-weight subtraction without contradiction or dangling references.
+- Accuracy: Accurately reflects the adoption of the refined estimator and its covariance for the 2D result (configuration (f)) as supported by W7-g3.
+
+---
+
+### D02: AGREE
+- Register: Appropriate narrative register for an analysis note appendix, stating choices and their status plainly.
+- Fit: Integrates seamlessly into the paragraph and transitions directly to the 2D closure test described in the succeeding paragraph.
+- Accuracy: Supported by W7-g2, accurately reporting that the revisit for two dimensions has concluded with the adoption of the refined estimator for the 2D result and covariance, while the 5D result retains purity subtraction.
+
+---
+
+### D03: AGREE
+- Register: Clear technical prose in plain declaratives.
+- Fit: Maintains good continuity with the preceding text and clarifies which covariance was evaluated during the test without disrupting narrative flow.
+- Accuracy: Supported by X5 and W7-g1. Clarifying that the yardstick was the purity-based covariance (quoted when the test was executed) prevents ambiguity now that configuration (f) is adopted, and the closing sentence correctly reflects the adopted status.
+
+---
+
+### D04: AGREE
+- Register: Plain declarative PRD/note prose without unnecessary qualification.
+- Fit: Fits consistently into the subsection introduction, bridging the description of configuration (e) with configuration (f).
+- Accuracy: Supported by W7-g4; accurately states that configuration (f) uses the same refinement capacity (400 trees, 31 leaves) as configuration (e), while the 5D result retains purity subtraction.
+
+---
+
+### D05: REVISE
+- Register: Does not read as PRD or release prose. The phrase "and its legend set in sentence case" introduces internal editorial/review bookkeeping chatter ("as Joseph asked" in source W10) into a release status description.
+- Fit: Awkwardly attaches a minor cosmetic typesetting detail to a sentence discussing the regeneration of physical validation arrays and uncertainty bands.
+- Accuracy: While source W10 notes that the legend was set in sentence case, elevating this internal editorial remark into the text violates the register requirements.
+- If REVISE:
+```latex
+\paragraph{Release status.} RC7, a local release candidate with a README,
+checksums and a replay verifier~\cite{ReleaseCandidate2026}, has not been
+deposited or released under a publication tag.
+RC7's own verifier, run on the packaged files in an empty directory,
+reproduces the recorded observed statistics of the joint tests, the $p$
+value and count of every test and variant and the decision of every test, the robustness results
+and the power figures, and every figure number that it checks. It does not
+recompute the recorded stability of the observed $p$ values under the data's
+rounding noise.
+The package, about \SI{16}{MB} of sufficient inputs, reproduces the joint-test
+$p$ values, decisions, robustness labels and power results; the same results
+in the reading with the recovered pseudo-experiments added to the
+calibration and the variant shifts recomputed on all draws
+(\S\ref{sec:joint5d-lost}); the matched coarse-projection comparison
+(\S\ref{sec:joint5d-projections}); and the fine-grid $L_2$ ratios of
+condition~(i) (\S\ref{sec:joint5d-conditions}). It also regenerates, from
+packaged arrays, figures that the article cites from this note: the
+$(\Eavail,W)$ excess map (Fig.~\ref{fig:eavailWexcess}), the null
+distributions of the joint tests (Fig.~\ref{fig:joint5d-nulls}), and the
+one-dimensional generator projections.
+RC7's two-dimensional curve is the exact-split one, which was the
+two-dimensional central value when the package was assembled. The article's
+two-dimensional validation figure and its numbers were instead regenerated
+separately, from the committed values and covariance of the refined LightGBM
+result, with RC7's plotting code extended to draw this analysis's band.
+```
+*Reason*: Removes the internal bookkeeping/typesetting remark ("and its legend set in sentence case") to preserve clean release prose.
+
+---
+
+### D06: AGREE
+- Register: Appropriate mathematical and statistical prose for an appendix discussion of matrix conditioning and rank.
+- Fit: Resolves a contradiction in the old text (which labeled $V$ full-rank while stating $\mathrm{rank}=204$ on 205 bins) and flows naturally into the discussion of statistical precision in the next paragraph.
+- Accuracy: The statement that the paper's $V$ is full rank ($\mathrm{rank}=205$) with 204 eigenvalues above $10^{-12}\lambda_{\max}$ is directly supported by W9 and W9b. The updated condition numbers and sample rank of $\mathbf{C}^{\syst}_{\text{sample}}$ cannot verify from the provided snippet alone, but they resolve the internal inconsistency and do not look wrong.
+
+---
+
+### D07: AGREE
+- Register: Clean technical presentation with clear declaratives accompanying the summary table.
+- Fit: Maintains consistency with the surrounding discussion; the added footnote/note clarifies that the backend comparisons remain on a uniform purity-subtraction footing while displaying the adopted refined result.
+- Accuracy: Supported by W2-a1 and W2-a2. The pull RMS of 0.535 cannot verify from the snippet alone, but the table correctly reports the new quoted $\chi^2/\mathrm{ndf} = 2.270$ alongside the previous purity results.
+
+---
+
+### D08: AGREE
+- Register: Concise abstract prose adhering to PRD conventions and Style Guide R8 by stating findings directly without clutter.
+- Fit: Fits smoothly into the abstract structure, correctly updating the scope of results using refined negative-weight subtraction versus purity.
+- Accuracy: Supported by W7-m1 and W7-m2. Accurately reports that the 2D result and headline covariance use the refined estimator, while 5D retains purity. Omitting the auxiliary $C_{\mathrm{model}}$ covariance from the high-level abstract conforms to R8 and does not overstate or lose scope.
+
+---
+
+### D19: AGREE
+- Register: Concise, well-structured table entries appropriate for Table I.
+- Fit: Seamlessly integrates configuration (f) and the companion model-dependence covariance into the existing table formatting.
+- Accuracy: Fully supported by W7-t1, accurately distinguishing the refined central estimator and headline covariance from the separately reported model-dependence component.
+
+---
+
+### D46: AGREE
+- Register: Standard LaTeX macro definitions.
+- Fit: Fits into the macro list in `values.tex` without conflict.
+- Accuracy: All values and formats accurately match their respective sources (W3-2 and macros M-cmodelMedian, M-qrCmodelMedian, M-cmodelIntegral, M-sigTwoDPurity, M-chiPaperPurity).
+
+---
+
+AGREE 9, REVISE 1
