@@ -1,0 +1,8 @@
+S1_2p2h_0.npz {'seconds_load': 12.934, 'seconds_unfold': 686.37} load+unfold=699.3
+S1_CV.npz {'seconds_load': 12.935, 'seconds_unfold': 688.092} load+unfold=701.0
+S1_Flux_0.npz {'seconds_load': 12.907, 'seconds_unfold': 681.856} load+unfold=694.8
+S1_Flux_99.npz {'seconds_load': 12.937, 'seconds_unfold': 686.48} load+unfold=699.4
+S1_FrAbs_pi_0.npz {'seconds_load': 12.847, 'seconds_unfold': 687.312} load+unfold=700.2
+S1_GEANT_Neutron_1.npz {'seconds_load': 12.931, 'seconds_unfold': 687.485} load+unfold=700.4
+S1_MaCCQE_1.npz {'seconds_load': 12.846, 'seconds_unfold': 681.483} load+unfold=694.3
+S1_MinosEfficiency_0.npz {'seconds_load': 12.936, 'seconds_unfold': 686.009} load+unfold=698.9

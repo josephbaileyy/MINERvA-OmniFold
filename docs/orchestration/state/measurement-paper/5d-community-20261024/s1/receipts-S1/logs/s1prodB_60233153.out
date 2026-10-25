@@ -1,0 +1,16 @@
+[timing] 2026-10-25T02:26:02.189Z job=60233153 host=nid004236 deploy=/pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470 pin=d5617470a7d08215e1da5622722d348da6a148d1 lines=8..15 cpt=32 mem=56G gres=inherit
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-10-25T02:26:02.334Z launch line 8
+[timing] 2026-10-25T02:26:02.340Z launch line 9
+[timing] 2026-10-25T02:26:02.347Z launch line 10
+[timing] 2026-10-25T02:26:02.353Z launch line 11
+[timing] 2026-10-25T02:26:02.359Z launch line 12
+[timing] 2026-10-25T02:26:02.366Z launch line 13
+[timing] 2026-10-25T02:26:02.372Z launch line 14
+[timing] 2026-10-25T02:26:02.377Z launch line 15
+[timing] 2026-10-25T04:26:18.891Z lines 8..15 done rc=0

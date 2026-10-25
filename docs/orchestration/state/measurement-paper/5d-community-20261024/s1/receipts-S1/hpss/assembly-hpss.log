@@ -1,0 +1,23 @@
+[H] 2026-10-25T05:47:44Z start host=login12
+[H] 2026-10-25T05:47:44Z inventory: 36 files, 262006 bytes
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[H] tar members: 36
+[H] 2026-10-25T05:47:44Z tar a4912d2fcc263df6d2e3ea224b659b6d5d102cf2e02433cf8818190bcfd7309b  /pscratch/sd/j/josephrb/s1-20261024/assembly-hpss/s1-assembly.tar bytes=337920
+mkdir: /home/j/josephrb/mnv-5d-s1-products-20261024
+put  '/pscratch/sd/j/josephrb/s1-20261024/assembly-hpss/s1-assembly.tar' : '/home/j/josephrb/mnv-5d-s1-products-20261024/s1-assembly.tar' ( 337920 bytes, 20341.9 KBS (cos=4))
+8d9f8fda4f5fd158a937dd8c4250ac24 (md5) /home/j/josephrb/mnv-5d-s1-products-20261024/s1-assembly.tar
+put  '/pscratch/sd/j/josephrb/s1-20261024/assembly-hpss/s1-assembly.tar.sha256' : '/home/j/josephrb/mnv-5d-s1-products-20261024/s1-assembly.tar.sha256' ( 132 bytes, 56.6 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/s1-20261024/assembly-hpss/ASSEMBLY-INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-s1-products-20261024/ASSEMBLY-INVENTORY.sha256' ( 4429 bytes, 1511.5 KBS (cos=4))
+/home/j/josephrb/mnv-5d-s1-products-20261024/s1-assembly.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-s1-products-20261024:
+-rw-r-----    1 josephrb  josephrb        4429 Oct 24 22:47 ASSEMBLY-INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb       48477 Oct 24 22:18 PRODUCTS-INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb      337920 Oct 24 22:47 s1-assembly.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 24 22:47 s1-assembly.tar.sha256
+-rw-r-----    1 josephrb  josephrb    26470400 Oct 24 22:18 s1-products.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 24 22:18 s1-products.tar.sha256
+get  '/pscratch/sd/j/josephrb/s1-20261024/assembly-hpss/retrieve/s1-assembly.tar' : '/home/j/josephrb/mnv-5d-s1-products-20261024/s1-assembly.tar' (2026/10/24 22:47:44 337920 bytes, 372591.8 KBS )
+[H] retrieved sha256 a4912d2fcc263df6d2e3ea224b659b6d5d102cf2e02433cf8818190bcfd7309b
+[H] 2026-10-25T05:47:48Z PASS: HPSS copy verified by hashverify and by retrieval (a4912d2fcc263df6d2e3ea224b659b6d5d102cf2e02433cf8818190bcfd7309b)

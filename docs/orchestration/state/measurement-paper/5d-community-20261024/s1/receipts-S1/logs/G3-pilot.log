@@ -1,0 +1,9 @@
+PASS S1_Flux_0.npz
+PASS S1_Flux_99.npz
+PASS S1_2p2h_0.npz
+PASS S1_MaCCQE_1.npz
+PASS S1_FrAbs_pi_0.npz
+PASS S1_MinosEfficiency_0.npz
+PASS S1_GEANT_Neutron_1.npz
+ALL PASS products
+G3-pilot rc=0

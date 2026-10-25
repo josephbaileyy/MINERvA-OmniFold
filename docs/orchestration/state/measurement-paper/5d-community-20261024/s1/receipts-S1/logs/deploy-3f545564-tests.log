@@ -1,0 +1,7 @@
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 7.378s
+
+OK
+{"wrote": ["/pscratch/sd/j/josephrb/s1-20261024/tmp/s1-e2e-9jz5uq01/s1.npz", "/pscratch/sd/j/josephrb/s1-20261024/tmp/s1-e2e-9jz5uq01/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}
+{"median_sigma_prob_rel": 0.039223611139635454, "median_h_rel": 0.07500000000000005, "median_halfwidth68_rel": 0.11422361113963606, "p90_halfwidth68_rel": 0.11426546724422315}

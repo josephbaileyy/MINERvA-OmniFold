@@ -1,0 +1,9 @@
+cwd /pscratch/sd/j/josephrb/s1-20261024/tmp
+python 3.11.14 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+flags isolated 1 safe_path True dont_write_bytecode True
+sys.path ['/pscratch/sd/j/josephrb/s1-20261024/deploy/3f545564/nd-unfolding', '/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python311.zip', '/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11', '/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload', '/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages']
+LOCAL UNDER_DEPLOY s1_assemble /pscratch/sd/j/josephrb/s1-20261024/deploy/3f545564/nd-unfolding/s1_assemble.py
+LOCAL UNDER_DEPLOY s5p_stage1_inspect /pscratch/sd/j/josephrb/s1-20261024/deploy/3f545564/nd-unfolding/s5p_stage1_inspect.py
+THIRD_PARTY_SITE_PACKAGES ['numpy'] from ['/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages']
+RESULT PASS local_modules 2 outside 0
+modres rc=0

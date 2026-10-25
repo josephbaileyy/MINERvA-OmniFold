@@ -1,0 +1,7 @@
+PASS central_sha256
+PASS data_R_sha256
+PASS p5_sha256
+PASS central_equals_data_R_bitwise
+PASS central_equals_p5_bitwise
+ALL PASS central
+G2 rc=0

@@ -1,0 +1,3 @@
+PASS cv_control_equals_central_bitwise
+ALL PASS cv
+G4 rc=0

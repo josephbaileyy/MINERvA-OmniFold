@@ -1,0 +1,8 @@
+[watch] 2026-10-25T00:36:04Z job=60232432 limit=1712s host=login12
+[watch] 2026-10-25T01:00:19Z job=60232432 left queue: COMPLETED|00:12:02|0:0
+[watch] 2026-10-25T01:01:57Z job=60233152 limit=18837s host=login12
+[watch] 2026-10-25T01:01:57Z job=60233154 limit=16112s host=login12
+[watch] 2026-10-25T01:01:57Z job=60233153 limit=18837s host=login12
+[watch] 2026-10-25T04:26:43Z job=60233153 left queue: COMPLETED|02:00:26|0:0
+[watch] 2026-10-25T04:26:43Z job=60233152 left queue: COMPLETED|02:00:32|0:0
+[watch] 2026-10-25T05:16:27Z job=60233154 left queue: COMPLETED|01:49:30|0:0

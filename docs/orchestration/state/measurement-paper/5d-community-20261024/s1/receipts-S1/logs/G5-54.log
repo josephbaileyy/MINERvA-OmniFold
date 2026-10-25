@@ -1,0 +1,22 @@
+PASS S1seed54_b1_j101.npz
+PASS S1seed54_b2_j102.npz
+PASS S1seed54_b3_j103.npz
+PASS S1seed54_b4_j104.npz
+PASS S1seed54_b5_j105.npz
+PASS S1seed54_b6_j106.npz
+PASS S1seed54_b7_j107.npz
+PASS S1seed54_b8_j108.npz
+PASS S1seed54_b9_j109.npz
+PASS S1seed54_b10_j110.npz
+PASS S1seed54_b11_j111.npz
+PASS S1seed54_b12_j112.npz
+PASS S1seed54_b13_j113.npz
+PASS S1seed54_b14_j114.npz
+PASS S1seed54_b15_j115.npz
+PASS S1seed54_b16_j116.npz
+PASS S1seed54_b17_j117.npz
+PASS S1seed54_b18_j118.npz
+PASS S1seed54_b19_j119.npz
+PASS S1seed54_b20_j120.npz
+ALL PASS seeds
+G5-54 rc=0
