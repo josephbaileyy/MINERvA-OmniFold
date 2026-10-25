@@ -1,0 +1,17 @@
+2026-10-25T00:36:14Z
+login12
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                             File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                                    home |   24.64GiB |    40.00GiB |          61.6% |    272.65K |       1.00M |          27.3% |
+|                                pscratch |   16.99TiB |    20.00TiB |          84.9% |      1.85M |      10.00M |          18.5% |
+| josephrb usage on HPSS charged to m3246 |  353.98GiB |   512.00GiB |          69.1% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+---
+FILESYSTEM  SPACE_USED  SPACE_QUOTA  SPACE_PCT  INODE_USED  INODE_QUOTA  INODE_PCT
+      home    24.64GiB     40.00GiB      61.6%     272.65K        1.00M      27.3%
+  pscratch    16.99TiB     20.00TiB      84.9%       1.85M       10.00M      18.5%
+---
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch   44P   30P   14P  68% /pscratch
+*** ls: No such file or directory [-2: HPSS_ENOENT] 
+    /home/j/josephrb/mnv-5d-s1-inputs-20261024
