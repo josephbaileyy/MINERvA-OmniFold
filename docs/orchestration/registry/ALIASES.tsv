@@ -45,7 +45,7 @@ e-R-joint-test	crosswalk	s5e candidate R = the joint-test estimator	candidate R 
 e-R-joint-test	code-candidate	--candidate R	--candidate R\b	yes	default	nd-unfolding/s5e_candidate.py	33	"R": {"n_estimators": 400, "num_leaves": 31}	5fb6446f6670ab43
 e-R-joint-test	code-candidate	--candidate R (contract implementation)	s5e_candidate\.py --candidate R	yes	default	docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json	28	nd-unfolding/s5e_candidate.py --candidate R	ad2b6025511a8a5a
 e-R-joint-test	capacity	refinement 400 trees, 31 leaves	refinement (classifier )?(at )?400 trees,? (and )?31 leaves	yes	default	docs/analysis-note/paper_body.tex	330	negative weights; refinement 400 trees, 31 leaves	0a1d9939b9008ae7
-e-R-joint-test	capacity	refinement 400/31	refinement 400/31	no	default	docs/orchestration/CATALOG.md	511	candidate R (refinement 400/31)	748006ad978b8747
+e-R-joint-test	capacity	refinement 400/31	refinement 400/31	no	default	docs/orchestration/CATALOG.md	513	candidate R (refinement 400/31)	748006ad978b8747
 e-R-joint-test	description	400-tree, 31-leaf Stay-Positive refinement	400-tree, 31-leaf Stay-Positive refinement	no	default	docs/orchestration/state/2d-closeout/stageF/methods/r12/REVIEW.md	48	the 400-tree, 31-leaf Stay-Positive refinement on 100/8 OmniFold classifiers	1782d0596ef4b22f
 e-R-joint-test	background-mode	--bkg-mode negweight-refined (shared with d-N-B0)	negweight-refined	no	opt-in	nd-unfolding/unfold_nd_omnifold_unbinned.py	620	"negweight-refined"]	092c1cb60a731257
 e-R-joint-test	iterations	5 iterations (s5p configuration 1)	\"iters\": 5	no	opt-in	docs/orchestration/state/s5p/contract-amendment-2-stage2-studies.json	7	"iters": 5	3082bac1a87a5c9d
