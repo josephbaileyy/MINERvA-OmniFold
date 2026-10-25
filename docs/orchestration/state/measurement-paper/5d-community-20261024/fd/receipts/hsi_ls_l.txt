@@ -1,0 +1,5 @@
+
+/home/j/josephrb/mnv-5d-fd-f4-20261025:
+-rw-r-----    1 josephrb  josephrb       12640 Oct 25 14:59 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb    14888960 Oct 25 14:59 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 25 14:59 stage0-inputs.tar.sha256
