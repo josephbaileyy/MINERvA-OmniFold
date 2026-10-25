@@ -2911,7 +2911,7 @@ docs/orchestration/state/laned-cstat-crosscheck/LANED_CSTAT_CROSSCHECK.npz	track
 docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/test_generate_live_state_carry_forward.py	no	10	136	7365
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py	no	35	90	2496
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only		no	3	78	2321
-docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	3	604	51284
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	3	652	55110
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING-AMENDMENT-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	7	96	5193
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	7	143	7663
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	docs/orchestration/state/measurement-paper/5d-community-20261024/s1/receipts-S1/tools/assembly_hpss.sh;docs/orchestration/state/measurement-paper/5d-community-20261024/s1/receipts-S1/tools/products_hpss.sh;docs/orchestration/state/measurement-paper/5d-community-20261024/s1/receipts-S1/tools/watch.sh;nd-unfolding/s1_assemble.py;nd-unfolding/s1_controls.py;nd-unfolding/tests/test_s1_assemble.py;nd-unfolding/tests/test_s1_scripts_isolated.py	no	18	274	27138
@@ -5214,11 +5214,11 @@ docs/orchestration/state/s5p/s3-latunfold-tasks.tsv	tracked	MACHINE	state-artifa
 docs/orchestration/state/s5p/s3-pilot-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	5	36	27268
 docs/orchestration/state/s5p/s3r-f2-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	9	4947
 docs/orchestration/state/s5p/s3r-f4-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	3	3	1832
-docs/orchestration/state/s5p/s3r-f4b-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	9	6505
+docs/orchestration/state/s5p/s3r-f4b-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	9	6505
 docs/orchestration/state/s5p/s3r-pilot-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	3	36	27575
 docs/orchestration/state/s5p/s3r2-pilot-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	36	27283
 docs/orchestration/state/s5p/s3v-asimov-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	6	3180
-docs/orchestration/state/s5p/s3v-f4-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	3	11	7375
+docs/orchestration/state/s5p/s3v-f4-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	4	11	7375
 docs/orchestration/state/s5p/s3v-pilot-tasks.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	5	62	47542
 docs/orchestration/state/s5p/stage1/stage1_inspect.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	docs/orchestration/state/2d-closeout/stageF/methods/sf1/scripts/input_manifest.sh;docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/stage0_analysis.py;docs/orchestration/verify_hash_bindings.py;nd-unfolding/gbdt_model_dependence/reduce.py;nd-unfolding/pv-ladder/build_cmodel5d.py;nd-unfolding/pv-ladder/h2_definition.py;nd-unfolding/pv-ladder/s2_h2_scope.py;nd-unfolding/pv-ladder/test_cmodel5d.py;nd-unfolding/tests/test_s5p_assemble.py;nd-unfolding/tests/test_s5p_joint_e2e.py;nd-unfolding/tests/test_s5p_prefreeze.py;nd-unfolding/tests/test_s5p_robust_labels.py;reproduction/s5p/repro_s5p.py;reproduction/s5p/scope.py	yes	56	1	173159
 docs/orchestration/state/s5p/stage2/forecast-inputs.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	92	2030

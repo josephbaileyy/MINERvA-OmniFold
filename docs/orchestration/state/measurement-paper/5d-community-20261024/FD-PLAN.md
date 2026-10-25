@@ -41,14 +41,15 @@ The sets are:
 - the A7 calibration ensembles: 7,176, with nuisances drawn per experiment;
 - the A7 power ensembles: 1,147 at six alternatives.
 
-None was graded on the 16 cells, or against S1's C_e or C_total. Stage 0 graded on J and the 27 base H2 cells, using
-C_stat(e) and (a)'s z-cv; A7 graded on J; the closure was graded on the 27 base cells.
+None was graded against S1's C_e or C_total. Stage 0 graded on J and the 27 base H2 cells, using C_stat(e) and (a)'s
+z-cv; A7 graded on J; the closure was graded on the 27 base cells. On the 16 cells, only the closure's bias exists,
+as a readout labelled NOT_POWERED.
 
 **The A7 nuisance draws shift the ensemble means.**
 - A7 draws flux universes uniformly and model-band endpoints with probability ½. S1 instead weights flux by the NuE
   constraint and centres every band on its mean.
-- The uniform flux mean is about 5 % off the CV, against about 0.3 % with the weights (§3.1, from S1's own flux
-  products).
+- Over S1's own flux products, the mean reco-flux ratio is about 5 % off the CV with uniform draws, against 0.03 % with
+  the weights (`flux_ratio_mean` 1.0489 against 0.9997; §3.1).
 - So an unweighted A7 mean is not the estimator's bias. The bias at the five A7 truths is taken from the
   nuisance-free `f4` products.
 - The power alternatives have no nuisance-free counterpart. They are graded after an offset correction that the
@@ -57,7 +58,8 @@ C_stat(e) and (a)'s z-cv; A7 graded on J; the closure was graded on the 27 base 
 **Circularity (§2).** Every existing generator-family truth shares its generator with a C_model,5D vertex.
 - A7's GENIE MEC, NuWro and GiBUU truths read **the same prediction files** as the vertices (`c179855d…`,
   `475a2871…`, `48917692…`).
-- The Stage 0 truths share the family only. They are built from the older 3D samples, which predate the flux fix.
+- The Stage 0 truths share the family only. W1–W3 come from the older 3D-study samples, which predate the flux fix.
+  Stage 0c's GiBUU uses the unrebuilt 5D GiBUU (`b183fcca…`), and q3 is synthetic.
 - The leave-own-vertex-out C_total, C_e + Σ_{j≠k} diag(f) s_j s_jᵀ diag(f), can be built at 0 node-h from S1's npz and
   C_model,5D's S.
 - **Its median relative σ per cell** is 6.46 % without GiBUU, against 6.74 % with all three vertices. Without NuWro
@@ -66,8 +68,8 @@ C_stat(e) and (a)'s z-cv; A7 graded on J; the closure was graded on the 27 base 
 
 **Truths outside the vertex set.**
 - **On disk:**
-  - A7's **GENIE 2.12.10 CV** truth: 16 nuisance-free experiments and 1,366 calibration experiments. Its prediction
-    is the vertices' reference, not a vertex.
+  - A7's **GENIE 2.12.10 CV** truth: 16 nuisance-free experiments, which are graded, and 1,366 calibration
+    experiments, used for the offset control only. Its prediction is the vertices' reference, not a vertex.
   - s5e's synthetic **q3 | (E_avail, W) tilt**: 20 experiments.
 - **Not on disk:**
   - any GENIE v3 tune. Splines exist on CVMFS for G18_10a_02_11b and AR23_20i; throughput is unmeasured;
@@ -81,8 +83,9 @@ C_stat(e) and (a)'s z-cv; A7 graded on J; the closure was graded on the 27 base 
 **Tests (§3), declared before anything is read:**
 - **Grade:** per-cell pulls of the bias and χ² of the bias against C_total, 16 × 16, ndf 16. For a vertex-family
   truth the matrix leaves the vertex out.
-- **Beside it, descriptive:** the same against C_model plus C_stat only. The flux, lateral and normalization parts of
-  C_total can hide a bias that C_model misses, and this variant shows it.
+- **Beside it, descriptive:** the same against C_model plus C_stat only. It drops all five systematic blocks of C_e
+  (interaction, flux, detector, lateral, normalization). Those can hide a bias that C_model misses, and this variant
+  shows how much of the reach is C_model's.
 - **The spread of the nuisance-drawn A7 experiments against C_e is not proposed.** A7's band draws keep the truth fixed
   and move only the response, while S1's band unfolds also move the prior. So the expected value cannot be fixed
   without a derivation (§3.4).
@@ -118,8 +121,8 @@ C_stat(e) and (a)'s z-cv; A7 graded on J; the closure was graded on the 27 base 
 
 - Every job runs on regular QOS, under 12 h, with no GPU and no premium QOS.
 - **Storage:**
-  - F0 and G write under 10 MB.
-  - F0 first pins and copies the unarchived `f4` products to HPSS: 14.7 MB, 0 node-h.
+  - F0 and G write under 10 MB of new files.
+  - F0 first checks the `f4` products against their recorded sha256 and copies them to HPSS: 14.7 MB, 0 node-h.
   - F1 writes about 1.1 GB on pscratch, plus an HPSS copy. About 89 GiB of HPSS is free.
   - Nothing goes to CFS.
 
@@ -139,7 +142,7 @@ C_stat(e) and (a)'s z-cv; A7 graded on J; the closure was graded on the 27 base 
 | 1 | **Stage 0 / s5e assessment** (`state/s5e/contract-amendment-3-candidate-R-and-assessment.json`, `assessment`) | <ul><li>nominal (40, seeds 800000–800039);</li><li>W1, NuWro/GENIE E_avail (20, 803000–);</li><li>W2, GENIE MEC/CV (E_avail, W) (20, 804000–);</li><li>W3, NuWro/GENIE (p_T, p_∥, E_avail), with 300 empty cells at ratio 1 and 36 clipped (20, 805000–);</li><li>**q3**, `q3_given_eavail_w` at a = 0.3: a synthetic within-(E_avail, W) tilt that keeps that marginal (`nd-unfolding/s5c_pseudo.py:55-63`) (20, 802000–).</li></ul> The W ratios come from the 3D-study samples (`3d-unfolding/genie/*_xsec3d.root`, `*_eavailW.root`; `state/s5e/w2-…json`, `w3-…json`, `state/s5n/eavail-ratio-nuwro-over-genie.json`), which predate the flux fix (`KNOWN_ISSUES` 83) | Tune v1 (MC CV) | J and **H2's 27 base cells** (Stage 0 0a and 0b; EW reported) | R, half A; Poisson pseudo-data with background and refinement; no nuisance draws (meta: `no_background` False, refinement ran) | `$P/s5e-20260925/runs/cand/assess/{nominal,W1,W2,W3,q3}/`, 120 files, 22,072,674 B; each in `5d-design-20261023/stage0/INVENTORY.sha256` (checked at Stage 0 C1). W1 s803000 `03fc8dc9…` and q3 s802000 `9ad0cdc0…` re-measured equal | **graded** |
 | 2 | **Stage 0c GiBUU** | GiBUU/GENIE E_avail shape at a = 1, ratio `c001dce8…`: GiBUU `gen5d/gibuu_cv_xsec5d.npz` `b183fcca…`, which was not rebuilt, over the repaired GENIE `cfa42210…` (`STAGE0-PARTA-DECLARATION.md` §3). Seeds 801000–801019 | Tune v1 | J and the 27 base H2 cells; c_F GiBUU **0.259** on H2 (`STAGE0-REPORT.md` §2) | as row 1 | `$P/5d-stage0-20261023/runs/new_gibuu/`, 20 files, 3,677,768 B, in `stage0/receipts-A/products.sha256`; also tracked in `receipts-A/`. s801000 `dd5805f5…` re-measured equal | **graded.** s5e's 801000–801019 under the superseded ratio (`assess/eavail_gibuu/`, contaminated per `KNOWN_ISSUES` 83) are not used |
 | 3 | **L-5D-PV closure at NuWro** | `w_truth` × r_NuWro: the full-5D NuWro/GENIE-CV shape, gated and k-normalized. It is **the same r as the NuWro vertex** (`pv-ladder/DECLARATION.md` §2.2, §3.2) | Tune v1 | the PC on the **27 base cells**: PASS, n 21, corr 0.790, slope 0.683, with thin margins. The **16-cell readout is NOT_POWERED** (n 9). The leave-own-vertex-out C_model reach is 17 of 21 PC cells (`BUILD-REPORT.md` §3) | (e) with **all** of the MC; noise-free and signal-only. The pseudo-data are the MC's own signal reco rows: no Poisson, no background, and **the refinement does not run** (meta: "no negative weights (signal-only reference)") | `$P/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz` `fff9030e…`; floor `…closure_tune_v1.npz` `eb3e2188…` (both re-measured) | **graded.** Its 16-cell bias is already printed (`cmodel_5d.json`, `positive_control.reporting16.bias_cells`); no grade against C_total exists. The floor is a control |
-| 4 | **A7 truths, expectation mode** (`state/s5p/s3r-f4-tasks.tsv`; the D pairs of A7 condition 4) | the five A7 truths of row 5, with the same hypothesis files (meta `hypothesis.sha256` `ceea00e7`, `8c37f545`, `9033c952`, `9297a698`, `0080495c`) | Tune v1 | used for the MC-size shift D, never graded as bias | R, half A; **expectation**, so no Poisson and no nuisance draws (meta `development` {expectation: true, mc_fraction: half}). 16 split seeds 970000–970015 per truth | `$P/s5p-20260926/runs/s3r/f4/<truth>_half/`, 80 files, 14,738,583 B. **No per-file sha256 is recorded, and the files are not on HPSS**: F0 step 0 pins and archives them | **graded: the bias at the five A7 truths.** The `_quarter` set (80) measures MC size and is not used |
+| 4 | **A7 truths, expectation mode** (`state/s5p/s3r-f4-tasks.tsv`, `s3r-f4b-tasks.tsv`, `s3v-f4-tasks.tsv`; the D pairs of A7 condition 4, summarized in `state/s5p/stage3/f4/D16-<truth>.json`) | the five A7 truths of row 5, with the same hypothesis files (meta `hypothesis.sha256` `ceea00e7`, `8c37f545`, `9033c952`, `9297a698`, `0080495c`) | Tune v1 | used for the MC-size shift D, never graded as bias | R, half A; **expectation**, so no Poisson and no nuisance draws (meta `development` {expectation: true, mc_fraction: half}). 16 split seeds 970000–970015 per truth | `$P/s5p-20260926/runs/s3r/f4/<truth>_half/`, 80 files, 14,738,583 B. Each file's sha256 is recorded in `state/s5p/stage3/f4/D16-<truth>.json` (`inputs[].a_sha256`); all 80 were re-measured equal (review, 2026-10-25). **They are not on HPSS**: F0 control 0 checks and archives them | **graded: the bias at the five A7 truths.** The `_quarter` set (80) measures MC size and is not used |
 | 5 | **A7 calibration truths** (`state/s5p/contract-amendment-7-production-admission.json`; `RECORD-20261005-s5p-joint-5d-inference-result.md`) | MnvTune v1 (1,365, ρ = 1); **GENIE 2.12.10 CV** (1,366); GENIE MEC (1,343); NuWro 21.09 (1,751); GiBUU 2019 (1,351). Each is a hybrid: G's fine-grid shape and rate on all 109 supported J cells, p_∥ ≥ 6 included, and MnvTune v1 elsewhere (`state/s5p/ratios/nullsF/null-*-F.json`, numerators `cfa42210…`, `c179855d…`, `475a2871…`, `48917692…`, over `bf7bd278…`) | Tune v1 | J only, through the joint test's T statistic; GiBUU on the 72 J cells with p_∥ < 6. **Never on H2** | R, half A; Poisson with background and refinement, plus **nuisance draws** on the pseudo-data source: one flux universe of 100, uniform; every model band at one universe, **Rvp1pi included**, with the truth kept fixed in every fine cell; 4 detector bands at ±1. Lateral and normalization z are recorded but not applied to `xsec_flat` (`s5p_nullexp.py:13-30`) | `$P/s5p-20260926/runs/prod/cal/<truth>/`; every file in `state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt` (7,176 entries). Two re-measured equal: `4e766288…` (MnvTune s1200000) and `152616be…` (GENIE CV s1220000). HPSS `s5p-archive-20261006.tar`, 2,324,167,680 B (`state/2d-closeout/preservation-20261014/outputs/hsi_ls_lR.txt:204`) | **the offset control only** (§3.1). Not graded as bias |
 | 6 | **A7 power alternatives** (amendment 7, `power`) | P1r = W3 (the NuWro 3D shape), P2r = D5 (NuWro q3 \| (E_avail, W)), P3r = W2 (the GENIE MEC (E_avail, W) shape), each at a = 1 and rebuilt from the repaired predictions. They sit on the MnvTune truth (193 / 195 / 195) and on the GENIE CV truth (P1g 199, P2g 193, P3g 172) (`state/s5p/ratios/altR/`) | Tune v1 | J only (power, context) | as row 5 | `$P/s5p-20260926/runs/prod/pow/`; 1,147 entries in the same SHA256SUMS | **graded after the offset correction** (§3.1), or descriptive if its control fails |
 | 7 | other (A7 subsets listed by the review, then re-counted) | <ul><li>A7 lost-seed reruns, `recovery/recovery/{cal,pow}` (224, 53), plus `recovery/determinism`;</li><li>Stage 2 numerics `runs/s2/num/{c1,c2,c3,c4,nom,gibuu}` (160, 100, 40, 41, 101, 101);</li><li>the `s3v`/`s3r` pilots;</li><li>s5e `assess/a3` (4) and `dev/{k1_R,k1_B0,k2,k3,k4,sigma}`;</li><li>the Stage 0 vertex products `prior_R5fix_*`, which are real-data unfolds;</li><li>the L-EW / L-3D / L-4D closures;</li><li>the MP-2 full-event reweights (`phase1/mp2/S2-CLOSURE-SUMMARY.md`: no generator was established).</li></ul> | — | — | — | — | **not used.** <ul><li>The recovery set is report-only (`RECORD-20261006-s5p-lost-seed-recovery-resolution.md`), and rows 5–6 use the recorded B.</li><li>c1–c4, nom and gibuu are numerics studies: replicas of one draw, or nominal ensembles that rows 1 and 4 already cover.</li><li>Pilots and development runs repeat the same truths.</li><li>k1_B0 is not (e).</li><li>`prior_R5fix_*` are data, not fake data.</li><li>The other rungs are not (e) on 5D, and MP-2 is not established.</li></ul> |
@@ -205,7 +208,7 @@ whole family.
 
 | candidate | exists? | path / record | cost to produce |
 |---|---|---|---|
-| **GENIE 2.12.10 CV**, untuned, no MEC | **yes**: 16 expectation-mode and 1,366 calibration experiments; prediction on the fine grid | rows 4–5; `$P/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz` `cfa42210…` (re-measured) | 0 |
+| **GENIE 2.12.10 CV**, untuned, no MEC | **yes**: 16 expectation-mode and 1,366 calibration experiments; prediction on the fine grid | rows 4–5 (row 5 for the offset control only); `$P/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz` `cfa42210…` (re-measured) | 0 |
 | **q3 \| (E_avail, W) tilt**, synthetic | **yes**: 20 experiments | row 1 | 0 |
 | **GENIE knob variations not used as vertices** (beyond ±1σ, or combinations) | **no**. The ±1σ universes are in the bank, and they make up C_e's interaction block | bank `$P/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/{tag}_wt.npy` | a truth reweight from bank weights is login-node work. **Not recommended:** it sits inside C_e |
 | **Pre-registered truth warps of the current bank** | **no**. They were proposed and left UNPRICED in the 2D Stage D inputs | `state/2d-closeout/stageD-inputs/REPORT.md:289` ("≈ 1 unfold per case at the measured unit; the design is not frozen") | as F1-W (§5) per warp, plus a frozen design. Same generator family, so partial evidence (the same record) |
@@ -228,15 +231,22 @@ Search: warp in *.py, *.json, docs/orchestration/*.md, docs/orchestration/state/
 - **Bias b_T:**
   - **rows 1, 2 and 4:** b_T = mean_i r_i, unweighted. These have no nuisance draws;
   - **row 3:** the noise-free x_closure / x_true − 1, with N = 0;
-  - **row 6:** first-order offset-corrected, b_T = b̃_T − O_null (below).
-- **Noise:** N_T = Cov_i(r) / B_T, with the effective size B_eff = (Σw)² / Σw² wherever weights enter.
+  - **row 6:** first-order offset-corrected, b_T = b̃_T − O_ref(T), where ref(T) is the truth the alternative sits on,
+    MnvTune or GENIE CV (below).
+- **Noise:**
+  - for an unweighted mean, N_T = Cov_i(r) / B_T;
+  - for a weighted mean b̃ = Σ w_i r_i / Σ w_i, N = Σ w_i² (r_i − b̃)(r_i − b̃)ᵀ / (Σ w_i)². That is the ratio-estimator
+    variance, since r depends strongly on the drawn flux universe;
+  - for row 6, N_T is the sum of the noises of b̃_T, b̃_ref and row 4's b_ref, because O_ref = b̃_ref − b_ref.
+  - The effective size is B_eff = (Σw)² / Σw².
 
 **Why the A7 calibration means are not used as bias.**
 - A7 draws one flux universe of 100, uniformly, and scales only the pseudo-data source's reco weights; the truth stays
   fixed (`s5p_nullexp.py:13-14`).
 - S1 weights its flux block by the NuE constraint (choice 10). Over S1's own 100 flux unfolds, the recorded
   `flux_ratio_mean` averages 1.0489 uniformly and 0.9997 with the weights. `denom_over_cv_total` averages 1.0514 and
-  0.9974 (product meta; review measurement, 2026-10-25).
+  0.9974 (product meta; review measurement, 2026-10-25). The reco-weight scaling A7 applies corresponds to
+  `flux_ratio_mean`.
 - Each model band is drawn at either endpoint with probability ½, so its mean is the endpoints' midpoint. S1
   mean-centres the bands, so those offsets are not in C_e either.
 - **So an unweighted A7 mean carries an offset of order several percent that is not estimator bias (inference).**
@@ -244,11 +254,17 @@ Search: warp in *.py, *.json, docs/orchestration/*.md, docs/orchestration/state/
 **The offset correction for row 6, and its control.**
 - **The offset:** for each A7 truth G, O_G = b̃_G − b_G. Here b̃_G is the NuE-weighted mean of row 5 at G, and b_G is
   the nuisance-free bias from row 4.
-- **The control:** the offset should not depend on the truth, to first order **(inference)**. Each pair O_G, O_G′
-  must agree within 3 σ per cell, with σ from both ensembles' B_eff. If they do, row 6 uses
-  b_T = b̃_T − O_MnvTune for P1r, P2r and P3r, and b̃_T − O_GENIE CV for P1g, P2g and P3g.
-- **If the control fails,** row 6 is reported descriptive and ungraded, and the failure is reported.
-- **Expected size:** B_eff is about 37 for a power set of 195 and about 260 for a calibration truth. That follows
+- **The control:** the offset should not depend on the truth, to first order **(inference)**. Only O_MnvTune and
+  O_GENIE CV are used, so the control is one statistic, which avoids 160 per-cell tests:
+  - Δ = O_MnvTune − O_GENIE CV;
+  - χ²_Δ = Δᵀ (N_O,MnvTune + N_O,GENIE CV)⁻¹ Δ, ndf 16, where each N_O includes row 4's noise;
+  - **pass if P(χ²_16 > χ²_Δ) ≥ 0.01.**
+  - The other eight pairs, which involve MEC, NuWro and GiBUU, are reported descriptively and do not gate. GiBUU's hybrid
+    truth may differ for real reasons.
+- **If it passes,** row 6 uses b_T = b̃_T − O_MnvTune for P1r, P2r and P3r, and b̃_T − O_GENIE CV for P1g, P2g and P3g.
+- **If it fails,** row 6 is reported descriptive and ungraded, and the failure is reported.
+- **Expected size:** B_eff is 32.8–37.9 across the six power sets, and 256–334 across the five calibration truths
+  (review measurement). That follows
   from the flux weights' n_eff of 19.06 out of 100 (`s1_assembly.json` `meta.flux_weights`) **(arithmetic, if
   uniform draws)**.
 
@@ -262,15 +278,17 @@ Search: warp in *.py, *.json, docs/orchestration/*.md, docs/orchestration/state/
   in-sample variant is reported beside it.
 - **Descriptive variant, the "model-only reach":** z^m_T,c = b_T,c / √(C^m(T)_cc + N_T,cc), with
   C^m(T) = C_stat,rel + Σ_{j ≠ own(T)} s_j s_jᵀ. The sum runs over all three vertices for a non-vertex truth.
-  - **Why:** C_e's median 6.45 % is mostly flux (3.55 %), lateral (2.38 %) and normalization (1.4 %)
-    (`s1_assembly.json`). Those parts can hide a bias that C_model misses.
+  - **What it drops:** all five systematic blocks of C_e. Their per-cell medians are interaction 2.19 %, flux 3.55 %,
+    detector 1.89 %, lateral 2.38 % and normalization 1.40 %, against stat 0.24 % (`s1_assembly.json`).
+  - **Why:** those blocks can hide a bias that C_model misses. The interaction block is itself GENIE-knob model
+    uncertainty, so this variant is a lower bound on the model-related reach, not the model reach **(inference)**.
   - **The precedent:** BUILD-REPORT's leave-out reach of 17 of 21 on the 27 base cells is the same idea, in cell
     counts.
 
 ### 3.3 S-2, χ² of the bias with the full matrix
 
 - **Form:** χ²_T = b_Tᵀ (C^(T) + N_T)⁻¹ b_T, with **ndf = 16**. The model-only variant χ²^m_T uses C^m(T), which
-  is full rank because C_stat is (inference, checked in control 3).
+  is full rank because C_stat is (inference, checked in control 4).
 - **Reference p-value:** P(χ²_16 > χ²_T), reported but **descriptive**. b is a deterministic bias of the estimator
   at T, not a Gaussian draw from C^(T), so the χ²_16 reference describes its size against the reported uncertainty.
   It is not a probability **(inference)**.
@@ -300,14 +318,18 @@ Search: warp in *.py, *.json, docs/orchestration/*.md, docs/orchestration/state/
 
 ### 3.5 Controls (each fails closed, before any statistic is written)
 
-0. **Pin row 4.** F0 hashes the 80 `f4` half files into a committed list and copies them to HPSS before reading any
-   cell value.
+0. **Check and archive row 4.** Before reading any cell value, F0 re-hashes the 80 `f4` half files against the sha256
+   recorded in `state/s5p/stage3/f4/D16-<truth>.json` (`inputs[].a_sha256`). The review re-measured all 80 equal on
+   2026-10-25. F0 then copies the files to HPSS.
 1. Every other product and matrix re-hashes to its recorded sha256 (§1).
 2. **Meta:**
    - every product carries `xsec_flat` and `xtrue_flat` of length 65,856;
    - its estimator and refinement parameters equal S1's (100/8, 400/31, all-row binning, deterministic, seed 42);
    - its truth's hypothesis or ratio sha256 is the one §1 lists;
-   - rows 4–6 record `config` "R", and rows 1–2 record "deterministic" with candidate "R".
+   - rows 4–6 record `config` "R", and rows 1–2 record "deterministic" with candidate "R";
+   - the `s5p_nullexp.py` code sha256 is one of the three versions on record: `ac929ea7` and `4cfed582` (row 4) and
+     `789271bb` (rows 5–6). Per the review, the differences are in nuisance and detector-band handling and in a
+     zero-weight repair (amendment 8; `state/s5p/s3v-f4-tasks.tsv:1`).
 3. **Counts:**
    - row 5: 1,365 / 1,366 / 1,343 / 1,751 / 1,351;
    - row 6: §1's counts;
@@ -328,7 +350,8 @@ Search: warp in *.py, *.json, docs/orchestration/*.md, docs/orchestration/state/
 **Not a coverage gate.**
 - **The decision:** DECISION-20261024 item 3 makes validated coverage at held-out truths "not a requirement for
   publishing this measurement".
-- **No held-out truth exists here:** rows 1, 2, 4, 5 and 6 were inspected for Stage 0 or A7.
+- **No held-out truth exists here:** rows 1, 2, 4, 5 and 6 were inspected for Stage 0 or A7, and row 3 for the
+  pv-ladder.
 <!-- absence-ok: restates the route decision's item 3 and §1's "graded before on" column -->
 
 | test | what it is for | the outcome that would change something (thresholds proposed for binding, §7 item 2) |
@@ -359,7 +382,7 @@ Search: `[0-9]e-(3[6-9]|4[0-2])` (cross-section magnitudes) in docs/orchestratio
 - **285 (e) data unfolds on the fine grid.** They have been on main since PR #348 (`4c7d705a`), in
   `s1/readout/s1_assembly/`: the `S1_*` universe unfolds, `data_b1…b20_j…`, `S1seed*` and `lat_*`. Each has a
   65,856-cell `xsec_flat` of the real data. The bootstrap means alone give f to about σ_stat/√20 **(inference)**.
-- **The central value itself** is s5e's `assess/data/data_R.npz` from September, the same bytes. Its values on other
+- **The central value itself** is s5e's `assess/data/data_R.npz` from September: different file digests (`fb5cc679…`, `361030f3…`, `e36f3b25…`) with bitwise-equal `xsec_flat`. Its values on other
   cell sets were read in s5e and s5p.
 - **Who has looked:** no record says anyone read the 16 values. This session did not print them **(observation of this
   session's own reads)**.
@@ -505,11 +528,11 @@ Search: `chi2|χ²|chisq` in nd-unfolding/pv-ladder/, state/measurement-scoping/
   - Every truth here is a truth-level reweight of the same MC under the nominal response.
   - An independent generator with MINERvA's response is UNAVAILABLE (`stageD-inputs/REPORT.md:68`).
   - So F0, F1 and F1-W cannot test the route decision's first recorded risk, "the detector response may depend on the
-    model in ways the five scalars do not capture" (`DECISION-20261024-joseph-5d-community-standard-route.md:76-77`).
+    model in ways the five scalars do not capture" (`DECISION-20261024-joseph-5d-community-standard-route.md:77-78`).
     A pass says nothing about it.
 - **An in-sample pass is not evidence,** because the truth's own vertex is in the matrix. Most of the 18 truths are
   vertex-family truths.
-- **These are not held-out truths.** Every row was inspected for Stage 0 or A7, so a pass is reported information,
+- **These are not held-out truths.** Every row was inspected, for Stage 0, A7 or the pv-ladder, so a pass is reported information,
   not a validation.
 - **The constructions differ from the data result:**
   - rows 1, 2, 4, 5 and 6 unfold with half the MC;
@@ -531,7 +554,8 @@ Search: `chi2|χ²|chisq` in nd-unfolding/pv-ladder/, state/measurement-scoping/
   |---|---|---|---|
   | A7 rows 5–6 | 2026-10-21 | about 2026-12-16 | yes, `s5p-archive-20261006.tar` |
   | proposed s5e products | 2026-10-24 | about 2026-12-19 | yes, Stage 0's Part P tar |
-  | row 4 (`f4`) | 2026-10-08 | about 2026-12-03 | **no**, hence control 0 |
+  | row 2 (Stage 0c) | 2026-10-24 | about 2026-12-19 | yes, `stage0-0c-products-20261024.tar` (`STAGE0-REPORT.md` §4) |
+  | row 4 (`f4`) | 2026-10-08 | about 2026-12-03 | **no**, hence control 0 (sha256 recorded in the D16 files) |
   | L-5D-PV products and `cmodel_5d.npz` | — | — | **no**; they are in the retention item due before 2026-11-20 (`BUILD-REPORT.md` §6) |
 
   Reads refresh access times, this plan's included.
@@ -552,7 +576,8 @@ Search: `chi2|χ²|chisq` in nd-unfolding/pv-ladder/, state/measurement-scoping/
 2. **Thresholds** for proposing a limitation: |z| > 2 or p < 0.01, against the leave-own-out C_total.
    - Bind them, or replace them.
    - Or rule that the readout is descriptive with no threshold.
-   - Also say whether the model-only variant should carry the threshold instead.
+   - Also say whether the model-only variant should carry the threshold instead, given that it also drops the
+     interaction block (§3.2).
 3. **S-3**, the spread test, is not proposed (§3.4). Keep it out, or ask for a derivation of its expected value
    first?
 4. **New truths outside the vertex set.**
@@ -602,3 +627,26 @@ not listed below was confirmed.
 10. `xtrue_flat` is labelled an inference, with a control, and "never graded against an (e) covariance" is narrowed.
 11. GiBUU-family fake-data truths are graded on all 16 cells, with the eight-cell variant beside.
 12. Wording: "a limitation proposed to Joseph", and C_e′ removed with S-3.
+
+**A second independent read-only review, of the revision** (2026-10-25), found 3 MATERIAL and 12 MINOR issues. All
+are accepted:
+
+| # | the finding | what changed |
+|---|---|---|
+| M-a | the `f4` sha256s are recorded, in the D16 files | control 0 now checks against them; row 4 and the purge table cite D16 |
+| M-b | a 160-test per-cell offset control would fail by chance about 20–35 % of the time | one ndf-16 χ² of O_MnvTune − O_GENIE CV; the other pairs are descriptive (§3.1) |
+| M-c | the model-only variant drops the interaction and detector blocks too | its rationale names all five blocks and calls it a lower bound; §7 item 2 |
+
+**MINOR:**
+1. Ratio-estimator noise for weighted means, including O's noise in row 6.
+2. Row 4's three task files and three `s5p_nullexp.py` versions, now in control 2.
+3. The B_eff ranges.
+4. 0.03 % (`flux_ratio_mean`), not 0.3 %.
+5. The route-decision cite is :77-78.
+6. "control 4".
+7. data_R is bitwise-equal in `xsec_flat`, not the same bytes.
+8. The Stage 0 truths' sources.
+9. O_ref is defined.
+10. The 16-cell closure readout and row 3's pv-ladder inspection.
+11. "Under 10 MB of new files".
+12. GENIE CV's calibration set is for the offset control only, and row 2 is in the purge table.
