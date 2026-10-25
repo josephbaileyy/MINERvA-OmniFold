@@ -58,6 +58,7 @@ J, and the closure on the 27 base cells.
   - any GENIE v3 tune. Splines exist on CVMFS for G18_10a_02_11b and AR23_20i; throughput is unmeasured;
   - any reco-level data-driven ("warped") truth, or any pre-registered truth warp;
   - NEUT, which is not openly available.
+<!-- absence-ok: 'unmeasured' restates the record's status for GENIE v3 throughput and builds on Perlmutter (state/2d-closeout/stageD-inputs/REPORT.md:287, :377-378; state/inelastic-high-region-20261011/REPORT.md:754); no measurement was found or made by this scoping -->
 
 **Tests (§3), declared before anything is read:**
 - per-cell pulls of the bias, and χ² of the bias with the full 16 × 16 matrix, ndf 16. For a vertex-family truth the
@@ -88,6 +89,7 @@ J, and the closure on the 27 base cells.
 | **G** | the comparisons | 0 | 0 |
 | **F1**, optional | two new GENIE v3 truths: pilot, generation, closures and 2 × 20 pseudo-experiments | **2.1** | 0.80–1.15, plus unmeasured generation overheads |
 | **F1-W**, optional | one data-driven truth | 0.75 | about 0.36–0.6 |
+<!-- absence-ok: 'unmeasured' restates the record's status for GENIE v3 throughput and builds on Perlmutter (state/2d-closeout/stageD-inputs/REPORT.md:287, :377-378; state/inelastic-high-region-20261011/REPORT.md:754); no measurement was found or made by this scoping -->
 
 - Every job is regular QOS, under 12 h, with no GPU and no premium QOS.
 - **Storage:** F0 and G write under 10 MB. F1 writes about 1.1 GB on pscratch, plus an HPSS copy; about 89 GiB of
@@ -181,8 +183,7 @@ whole family.
 | **NEUT** | **no**: "not openly available" | `3d-unfolding/genie/README.md:234` | — |
 | **Other NuWro or GiBUU configurations** | **no**. The existing samples are C12 defaults (`stageD-inputs/REPORT.md:268-269`) | — | generation is documented at 2 min per 100k events for NuWro on a login node (`stageD-inputs/REPORT.md:101`, not a receipt), then as F1. Same family as a vertex, so leave-own-out applies |
 | **MP-2 full-event reweights** | built, **not established** for any generator | `phase1/mp2/S2-CLOSURE-SUMMARY.md` | not usable |
-
-<!-- absence-ok: "no" rows rest on Search lines below and on the cluster listing of $P/s5p-20260926/gen5d{,_fluxfix} (login37, 2026-10-25T16:0xZ: genie_cv, genie_mec, nuwro_cv, gibuu_cv, mnvtune_v1 only) -->
+<!-- absence-ok: "no" rows rest on the Search line below and on the cluster listing of $P/s5p-20260926/gen5d{,_fluxfix} (login37, 2026-10-25T16:0xZ: genie_cv, genie_mec, nuwro_cv, gibuu_cv, mnvtune_v1 only); 'unmeasured' and 'unverified' restate state/2d-closeout/stageD-inputs/REPORT.md:287, :377-378 -->
 Search: warp in *.py, *.json, docs/orchestration/*.md, docs/orchestration/state/**/*.md (excluding the PRD-study literature notes); NEUT|GENIE v3|G18|AR23 in docs/orchestration/*.md and docs/analysis-note/*.tex @ 771dfb39
 
 ## 3. Test statistics, declared before anything is read
@@ -356,6 +357,7 @@ Search: `chi2|χ²|chisq` in nd-unfolding/pv-ladder/, state/measurement-scoping/
 | noise-free closure, one per lane | `closure_nuwro` `seconds_unfold` 732.6 s at 32 threads. J5 ran 5 such steps together in 811 s, so **≤ 0.045 node-h each** packed 5 per node **(arithmetic)** | product meta; `pv-ladder/LEDGER.tsv` (60206336, 0.2253) |
 | (e) data-size unfold, 32 CPUs, 8 lanes | 7,129–7,227 s per 11 universes, about 650 s each, so **0.0226 node-h** **(arithmetic)** | `S1-REPORT.md` §3; `s1/LEDGER.tsv` (6.04167 in all) |
 | GENIE v3 generation | **unmeasured.** Assumed 5–50 ms/event, 1.5–15 core-h per 1.1M-event configuration | `stageD-inputs/REPORT.md:287` |
+<!-- absence-ok: 'unmeasured' restates the record's status for GENIE v3 throughput and builds on Perlmutter (state/2d-closeout/stageD-inputs/REPORT.md:287, :377-378; state/inelastic-high-region-20261011/REPORT.md:754); no measurement was found or made by this scoping -->
 
 ### 5.2 Stages and caps (proposed; nothing is authorized)
 
@@ -372,6 +374,7 @@ reservation, nodes × limit.
 | **F1 total** | | **0.80–1.15** plus unmeasured overheads | **2.1** | |
 | **F1-W** data-driven truth (optional, alternative or addition) | build the reweight; 1 closure and 20 pseudo-experiments | 0.36–0.6 | 0.75 (0.25 build + 0.5 unfolds) | units of §5.1; the build is unmeasured |
 | **G** comparisons | 5 predictions × 16 cells (GiBUU on 8) | 0 | **0** | login node |
+<!-- absence-ok: 'unmeasured' restates the record's status for GENIE v3 throughput and builds on Perlmutter (state/2d-closeout/stageD-inputs/REPORT.md:287, :377-378; state/inelastic-high-region-20261011/REPORT.md:754); the F1-W build is this plan's own unpriced step, stated as such -->
 
 **Totals:**
 - F0 and G: **0**.
@@ -431,6 +434,7 @@ reservation, nodes × limit.
   - the configuration is a custodian's choice (`stageD-inputs/REPORT.md:287`, "configuration chosen by the custodian
     (§7)");
   - NuWro and GiBUU are on C12, so a CH comparison carries that difference.
+<!-- absence-ok: 'unmeasured' restates the record's status for GENIE v3 throughput and builds on Perlmutter (state/2d-closeout/stageD-inputs/REPORT.md:287, :377-378; state/inelastic-high-region-20261011/REPORT.md:754); no measurement was found or made by this scoping -->
 
 ## 7. For the director
 
