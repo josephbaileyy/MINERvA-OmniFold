@@ -30,11 +30,15 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 
-import s5p_stage1_inspect as s1
+_ND = Path(__file__).resolve().parent
+if str(_ND) not in sys.path:
+    sys.path.insert(0, str(_ND))
+import s5p_stage1_inspect as s1  # noqa: E402
 
 DEFINITION_SHA256 = "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
 FINE_MAP_SHA256 = "930326a3a7c0852d4047b5468d8ea3b63d046b896e4a4de1557e29f95102e18c"
