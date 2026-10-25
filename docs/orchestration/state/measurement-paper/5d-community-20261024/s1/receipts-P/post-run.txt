@@ -1,0 +1,23 @@
+post-run 2026-10-25T01:09:09Z host=login12
+tar members: 734 (inventory lines: 734)
+tar sha256 file: cc8353f7008e7ea77810942ee2e86c2116f22cc0c6c422abca353085ebd435a6  /pscratch/sd/j/josephrb/s1-20261024/preserve/stage0-inputs.tar
+--- hsi ls -l
+
+/home/j/josephrb/mnv-5d-s1-inputs-20261024:
+-rw-r-----    1 josephrb  josephrb      116791 Oct 24 17:56 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb 73709649920 Oct 24 17:54 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         129 Oct 24 17:56 stage0-inputs.tar.sha256
+--- hsi hashlist
+5540cc327482bdfa7d10ffefd02170ce md5 /home/j/josephrb/mnv-5d-s1-inputs-20261024/stage0-inputs.tar [hsi]
+--- hpssquota
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                             File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                                    home |   24.64GiB |    40.00GiB |          61.6% |    272.65K |       1.00M |          27.3% |
+|                                pscratch |   17.05TiB |    20.00TiB |          85.3% |      1.85M |      10.00M |          18.5% |
+| josephrb usage on HPSS charged to m3246 |  353.98GiB |   512.00GiB |          69.1% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+--- df
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch   44P   30P   14P  69% /pscratch
+deleted /pscratch/sd/j/josephrb/s1-20261024/preserve/stage0-inputs.tar 2026-10-25T01:09:18Z
+removed empty retrieve/
