@@ -2915,7 +2915,7 @@ docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact	
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py	no	35	90	2496
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only		no	3	78	2321
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-DIRECTOR-RULINGS.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	nd-unfolding/fd_f0_regrade.py	no	5	103	5341
-docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	nd-unfolding/fd_f0_regrade.py;nd-unfolding/tests/test_fd_f0_regrade.py	no	4	545	37710
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	nd-unfolding/fd_f0_regrade.py;nd-unfolding/tests/test_fd_f0_regrade.py	no	4	558	38710
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	nd-unfolding/fd_f0_regrade.py	no	7	652	55110
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING-AMENDMENT-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	7	96	5193
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	8	143	7663

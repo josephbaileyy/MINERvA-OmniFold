@@ -588,9 +588,10 @@ class EndToEnd(Base):
         oc = readout["controls"]["offset_control_7"]
         self.assertAlmostEqual(oc["chi2"], float(D @ np.linalg.solve(NO["A7_mnvtune"] + NO["A7_genie_cv"], D)), delta=1e-7 * oc["chi2"])
         self.assertEqual(len(oc["pairs_descriptive"]), 9)
-        for g in F.OFFSET_PAIR:
+        for g in [t["name"] for t in tree.truths if t["row"] == 4]:
+            bc, Nc = wmean(R["cal:" + g], flux["cal:" + g])
             N4 = np.cov(R[g], rowvar=False) / SMALL
-            self.assertAlmostEqual(oc["row4_noise_trace_share"][g], float(np.trace(N4) / np.trace(NO[g])), places=10)
+            self.assertAlmostEqual(oc["row4_noise_trace_share"][g], float(np.trace(N4) / np.trace(Nc + N4)), places=10)
 
     def test_a_failed_offset_control_leaves_row_6_ungraded(self):
         tree = self.tree(offset_shift=0.05)

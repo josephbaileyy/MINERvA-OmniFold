@@ -355,7 +355,7 @@ inputs_sha256{...}, code_sha256{fd_f0_regrade.py, s1_assemble.py, s5p_stage1_ins
 - the readout, as an object, so that its 16-vectors are matched cell by cell. It is scanned before anything is
   written, and again with `table_sha256` added;
 - the table, before it is written;
-- the summary lines before anything is written, and the final `wrote` line before it is printed.
+- the summary lines before anything is written, and the final `wrote` line before the files are renamed into place.
 
 On a hit it exits 3. Both files go to temporary names first and are renamed into place only after the last check, so
 a refusal leaves neither.
@@ -367,7 +367,7 @@ a refusal leaves neither.
 - **Matching per cell at 10⁻¹³** gives an expected false refusal of order 10⁻⁴ **(arithmetic, §7 item 7)**.
 - **What it still catches:** the test plants each form computed independently, and the guard catches it.
 - **What it can miss:** a leak computed by another arithmetic path can differ by about eps/|t| relative. For a ratio
-  form near |t| ~ 10⁻³ that approaches the 10⁻¹³ width. The floor still catches every absolute form.
+  form with |t| below about 2 × 10⁻³ that exceeds the 10⁻¹³ width. The floor still catches every absolute form.
 
 **What it cannot catch:** a dimensionless quantity derived from f by some other formula, such as an average of f/X.
 F0 forms no such quantity. f enters only as the divisor of C_e, C_stat and the σ ratios.
@@ -454,7 +454,8 @@ test_s1_assemble test_s1_scripts_isolated` ran 60 tests, all OK. The F0 suite al
     - Row 4's part is estimated from 16 seeds, so it has rank 15. Where it is not small beside the calibration part,
       the bias is larger (review A). So χ²_Δ reads high, and the control leans toward failing by more than 6 %
       **(inference)**.
-    - The run prints the trace of each part beside the result, so the size of the lean can be read.
+    - The readout records, per A7 truth, row 4's share of the offset noise trace (`row4_noise_trace_share`), so the
+      size of the lean can be read.
     - It is not corrected, because the rule is FD-PLAN's. It is reported beside the result.
 
 ## 8. Pinned bytes
@@ -463,8 +464,8 @@ Their sha256 at this declaration's commit:
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_f0_regrade.py` | `2db90300185a1c5d29f56dd09ac4e9999b90485291d8f3e446041f4e574726f6` |
-| `nd-unfolding/tests/test_fd_f0_regrade.py` | `71a109118a6b2483a2f9456eec6aa9a972a925cfa02489863096e5b6750131c4` |
+| `nd-unfolding/fd_f0_regrade.py` | `05f9161cb21410d07da5fab54daab5dc5dcdc83ceca2facd94b63fe8a158649c` |
+| `nd-unfolding/tests/test_fd_f0_regrade.py` | `ef2cacd75c8ea6eb23d44d4fc83fc71506b921a54acf784ddb5c3b323470fb0d` |
 | `nd-unfolding/s1_assemble.py` | `b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7` (unchanged since S1's assembly) |
 | `nd-unfolding/s5p_stage1_inspect.py` | `26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71` |
 | `nd-unfolding/pv-ladder/readouts/h2_definition.json` | `b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89` |
@@ -543,3 +544,15 @@ Both ran the suite (38 OK). Every finding is accepted, and the fixes are in `06a
   - the 46-block sum agrees to 5 × 10⁻¹⁵ of scale;
   - the table 2.1 rounding is 8.3 × 10⁻⁴ points from a boundary.
 - **Systematic collisions:** none. No legitimate output collides with a forbidden value by construction.
+
+**A third, confirming read-only review** of the fixes (`dae47273`) confirmed A-M1 against all three producers and
+B-M1 for every sign variant, and re-measured the §8 digests. It found no MATERIAL issue. Its five MINOR points:
+1. **The `wrote` line was checked after the rename.** It is now checked before, inside the same guarded block.
+2. **§7 item 11 said "prints".** The trace share is in the readout, and the wording now says so.
+3. **The docstring count was stale.** It now reads 1.6 × 10⁶.
+4. **"approaches" was too soft.** §5.3 now says "exceeds" below |t| ≈ 2 × 10⁻³.
+5. **Test gaps:**
+   - the trace share is now tested for all five A7 truths;
+   - the sentinel string for an absent seed is replaced by an explicit presence test;
+   - the rest are noted, not changed: control-2 cases assert the control and not the reason, and no test plants a
+     leak only the second readout check would see.

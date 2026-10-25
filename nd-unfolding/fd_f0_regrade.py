@@ -236,7 +236,7 @@ class LeakGuard:
     caught), each within LEAK_REL relative; or any finite non-zero number below LEAK_FLOOR in magnitude (every
     absolute cross section here is of order 1e-39). A vector of 16 numbers (a list, or the last axis of an array) is
     cell-indexed and is matched cell by cell; any other number against every cell's values. Per cell and at 1e-13,
-    ~1.4e5 legitimate residuals among ~1.9e6 forbidden values give an expected false refusal of order 1e-4
+    ~1.4e5 legitimate residuals among ~1.6e6 forbidden values give an expected false refusal of order 1e-4
     (FD-F0-DECLARATION.md section 5.3)."""
 
     def __init__(self, f: np.ndarray, integrals: list[np.ndarray]):
@@ -320,9 +320,10 @@ def estimator_problems(m: dict, refined: bool, top_seed: bool = True) -> list[st
     s5n_pseudo and pvl_unfold record a top-level ``estimator_seed``; s5p_nullexp (rows 4-6) never writes one
     (s5p_nullexp.py:343-351), so there the seed is read from ``estimator_params[].random_state`` alone."""
     bad = []
-    seed = m.get("estimator_seed") if top_seed else ("absent" if "estimator_seed" not in m else m["estimator_seed"])
-    if (seed, m.get("iters")) != (42 if top_seed else "absent", 5):
-        bad.append(f"seed/iters {(seed, m.get('iters'))}")
+    if top_seed and (m.get("estimator_seed"), m.get("iters")) != (42, 5):
+        bad.append(f"seed/iters {(m.get('estimator_seed'), m.get('iters'))}")
+    if not top_seed and ("estimator_seed" in m or m.get("iters") != 5):
+        bad.append(f"estimator_seed present {'estimator_seed' in m} / iters {m.get('iters')}")
     ep = m.get("estimator_params") or []
     want = {"n_estimators": 100, "num_leaves": 8, "random_state": 42, "bin_construct_sample_cnt": ALL_ROWS,
             "deterministic": True, "force_row_wise": True, "subsample": 1.0, "colsample_bytree": 1.0}
@@ -783,6 +784,9 @@ def run(a, pins=None) -> int:
         readout["table_sha256"] = sa.sha256(tmp_npz)
         guard.check("the readout JSON", readout)
         tmp_json.write_text(json.dumps(readout, indent=1) + "\n")
+        lines.append(json.dumps({"wrote": [str(a.out_json), str(a.out_npz)], "readout_sha256": sa.sha256(tmp_json),
+                                 "table_sha256": readout["table_sha256"]}))
+        guard.check("stdout", lines[-1])
     except BaseException:
         tmp_npz.unlink(missing_ok=True)
         tmp_json.unlink(missing_ok=True)
@@ -790,9 +794,6 @@ def run(a, pins=None) -> int:
     os.replace(tmp_npz, a.out_npz)
     os.replace(tmp_json, a.out_json)
 
-    lines.append(json.dumps({"wrote": [str(a.out_json), str(a.out_npz)], "readout_sha256": sa.sha256(a.out_json),
-                             "table_sha256": readout["table_sha256"]}))
-    guard.check("stdout", lines[-1])
     print("\n".join(lines), flush=True)
     return 0
 
