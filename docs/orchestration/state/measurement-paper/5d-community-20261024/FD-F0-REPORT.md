@@ -72,6 +72,7 @@
 - `test_fd_f0_regrade`, `test_s1_assemble` and `test_s1_scripts_isolated`, run with `-B` and `TMPDIR=$B/tmp` on
   `root_6_28`, gave `tests rc=0` and "Ran 60 tests … OK".
 - `$B` did not exist before this step.
+  <!-- absence-ok: the deploy step's first command was `ls -d $B` on login37 at 2026-10-25T21:53Z, which printed nothing, and the step would have stopped had it existed (the same check as declaration §2) -->
 
 ## 2. The HPSS copy of the `f4` products (declaration §2.2, binding §4 item 2)
 
@@ -268,6 +269,17 @@ Run after the commit:
 - `verify_receipt_artifacts.py`.
 
 Their exit codes are in the PR.
+
+**One gate needs the director: the results index.**
+- **The problem:** `.githooks/pre-commit`, run standalone at this commit, fails "results index fresh+complete". The
+  committed readout is a result receipt (25 metric values), and `RESULTS-INDEX.tsv` has no row for it.
+- **The fix it names:** `tools/registry/results_index.py --write`. That regenerates `RESULTS-INDEX.tsv` and
+  `RESULTS-POPULATION.tsv`, and also `docs/analysis-note/records_results_index.tex`.
+- **What that change contains:** in a scratch worktree at this commit, it adds 25 index rows and one population row.
+  In the `.tex` file it changes the receipt and row counts and adds summary lines for the readout's unattributed
+  `bias`, `bias_uncorrected` and `closure_floor_max_abs` keys. These are relative fake-data quantities only.
+- **Why I have not committed it:** `docs/analysis-note/**` is outside this session's edit scope. Regenerating it, or
+  ruling otherwise, is for the director.
 
 ## 9. Not changed
 
