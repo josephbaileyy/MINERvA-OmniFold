@@ -221,11 +221,13 @@ class ResultsIndexDiscovery(unittest.TestCase):
 
     def test_attribution_line_that_does_not_name_the_estimator_fails(self) -> None:
         attr = self.f.root / reglib.ATTRIBUTION
-        row = reglib.alias_citation((self.f.root / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-label")
+        # The paper-TABLE line names configuration (a) alone. Since the TeX reflow (one source line per paragraph,
+        # tex-reflow-20261026/REPORT.md section 3) the paper-label line is a paragraph that also names configuration (e).
+        row = reglib.alias_citation((self.f.root / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-table")
         n, line = reglib.find_cited_line((self.f.root / row["source"]).read_text(), row["quote"], row["line_sha256"])
         d = reglib.line_digest(line)
         attr.write_text(attr.read_text() + "docs/orchestration/state/x\\.json\t\te-R-joint-test\t"
-                        f"docs/analysis-note/paper_body.tex\t{n}\tconfiguration~(a), the\t{d}\n")
+                        f"docs/analysis-note/paper_body.tex\t{n}\t{row['quote']}\t{d}\n")
         self.f.git("add", reglib.ATTRIBUTION)
         out = self.f.check()
         self.assertEqual(out.returncode, 1, out.stdout)

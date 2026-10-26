@@ -1,94 +1,37 @@
-% Moved verbatim from app_statmethods.tex (its last subsection) on 2026-10-11, so that
-% the PET statistical method has its own appendix; labels unchanged.
-% Moved with sec_pet.tex to the companion PET note (pet_note.tex) on 2026-10-12.
+% Moved verbatim from app_statmethods.tex (its last subsection) on 2026-10-11, so that the PET statistical method has its own appendix; labels unchanged. Moved with sec_pet.tex to the companion PET note (pet_note.tex) on 2026-10-12.
 \section{The full-event $C_{\rm stat}$ construction: what it is, and what it is not}
 \label{app:cstatlimit}
 
-The published uncertainty is constructed in \notesec{Uncertainty quantification: constructing the covariance blocks}, with
-adopted five-axis covariance identified in \notesec{The adopted five-axis covariance and its $(\Eavail,W)$ projection}.
-The full-event artifact describes another estimator and enters no published number.
+The published uncertainty is constructed in \notesec{Uncertainty quantification: constructing the covariance blocks}, with adopted five-axis covariance identified in \notesec{The adopted five-axis covariance and its $(\Eavail,W)$ projection}. The full-event artifact describes another estimator and enters no published number.
 
-It has one builder, is not independently verified or adopted, and is not
-paired with the full-event nominal. Pairing was declined on 2026-08-20
-(App.~\ref{app:provenance}, \texttt{pet-pairing}). No PET total covariance is
-adopted for publication; PET remains diagnostic and method development,
-reconsiderable only with estimator-equivalence \emph{and} coverage evidence.
-The construction and family dispersion below supply neither coverage nor an
-adopted statistical uncertainty.
+It has one builder, is not independently verified or adopted, and is not paired with the full-event nominal. Pairing was declined on 2026-08-20 (App.~\ref{app:provenance}, \texttt{pet-pairing}). No PET total covariance is adopted for publication; PET remains diagnostic and method development, reconsiderable only with estimator-equivalence \emph{and} coverage evidence. The construction and family dispersion below supply neither coverage nor an adopted statistical uncertainty.
 
-\noindent\textbf{Why it is documented as a method appendix rather than with
-the point-cloud results.}  It is the statistical method for the full-event
-estimator, which is expected to return to the measurement once the defects
-behind its declined pairing are understood; filing the method with the
-diagnostic results would record a current status as a permanent one.  \emph{The
-current status is the operative fact}: today the full-event track is diagnostic
-and method development, it carries no adopted uncertainty, and nothing here
-anticipates a result.
+\noindent\textbf{Why it is documented as a method appendix rather than with the point-cloud results.}  It is the statistical method for the full-event estimator, which is expected to return to the measurement once the defects behind its declined pairing are understood; filing the method with the diagnostic results would record a current status as a permanent one.  \emph{The current status is the operative fact}: today the full-event track is diagnostic and method development, it carries no adopted uncertainty, and nothing here anticipates a result.
 
 \subsection{Construction, stated as a method choice}
 
-Each of $50$ replicas repeats target background subtraction, estimator
-training and cross-section extraction under an independent coherent
-$\mathrm{Poisson}(1)$ bootstrap of all three inventories. Distinct reproducible
-streams draw one global factor per data, signal-MC and background-MC event
-before training subsets are taken, reusing it everywhere that event appears
-(\notesec{Multinomial $\to$ independent Poisson bootstrap limit}).
+Each of $50$ replicas repeats target background subtraction, estimator training and cross-section extraction under an independent coherent $\mathrm{Poisson}(1)$ bootstrap of all three inventories. Distinct reproducible streams draw one global factor per data, signal-MC and background-MC event before training subsets are taken, reusing it everywhere that event appears (\notesec{Multinomial $\to$ independent Poisson bootstrap limit}).
 
-Offsets from replica seed $s$ are $s$, $s+10^{7}$ and
-$s+2{\times}10^{7}$. The signal primitive matches recoil-only replicas,
-making both contracts bit-consistent with shared first two offsets.
+Offsets from replica seed $s$ are $s$, $s+10^{7}$ and $s+2{\times}10^{7}$. The signal primitive matches recoil-only replicas, making both contracts bit-consistent with shared first two offsets. Data and background factors rebuild background-subtracted targets through Stay-Positive refinement; they do not rescale the nominal target. Signal factors follow every use of signal MC. The third, background stream extends the data/MC streams the scalar bootstrap had at the time (\notesec{Poisson bootstrap}; the quoted 2D statistical block now draws a background stream as well) because background enters as a separate weighted inventory with its own counting noise. Resampling data and MC together is the intended scope, without adopted statistical-uncertainty status. The covariance is the sample covariance of the $50$ cross sections about their own mean, normalised $1/(N-1)$, on the density scale.
 % Checks against the code should
 % identify the streams \emph{by offset}: the full-event loader draws the background factor a second
 % time as a verification, so a count of draws in that file is right for the wrong reason, and the
 % signal draw is not in that file at all.
-Data and background factors rebuild background-subtracted targets through
-Stay-Positive refinement; they do not rescale the nominal target. Signal factors
-follow every use of signal MC. The third, background stream extends the data/MC streams
-the scalar bootstrap had at the time (\notesec{Poisson bootstrap}; the quoted 2D statistical
-block now draws a background stream as well) because background enters
-as a separate weighted inventory with its own counting noise.
 % FACT (2026-10-18): the 2D statistical block of Q (S1) has three streams (stageC/production/DESIGN.md §3.4,
 % --bootstrap-streams three). The \notesec titles "Poisson bootstrap" and "Multinomial $\to$ independent Poisson
 % bootstrap limit" are unchanged in app_statmethods.tex.
 % J3/J4 provisional (DECISION-20261018, packet W3: D8 in sec:uq-boot).
-Resampling data
-and MC together is the intended scope, without adopted statistical-uncertainty
-status. The
-covariance is the sample covariance of the $50$ cross sections about their own mean, normalised
-$1/(N-1)$, on the density scale.
 
 \medskip\noindent
-\textbf{This is not a data-statistical error and must not be compared with one.} Published
-statistical uncertainties are data-statistics; this object is not, and the difference is not small.
-It resamples three inventories --- $4{,}116{,}128$ data, $49{,}152{,}885$ signal-MC and $564{,}591$
-background-MC rows --- with raw counting fractions $1/\sqrt{N}$ of $0.0493\%$, $0.0143\%$ and
-$0.1331\%$: the smallest inventory, the background MC, carries by far the largest counting floor,
-and the quadrature combination, $0.1426\%$, is $2.89\times$ the data stream's $0.0493\%$ alone.
-\textbf{These are row-count fractions on inventories, not variance shares of the cross section}
-(App.~\ref{app:history}).
+\textbf{This is not a data-statistical error and must not be compared with one.} Published statistical uncertainties are data-statistics; this object is not, and the difference is not small. It resamples three inventories --- $4{,}116{,}128$ data, $49{,}152{,}885$ signal-MC and $564{,}591$ background-MC rows --- with raw counting fractions $1/\sqrt{N}$ of $0.0493\%$, $0.0143\%$ and $0.1331\%$: the smallest inventory, the background MC, carries by far the largest counting floor, and the quadrature combination, $0.1426\%$, is $2.89\times$ the data stream's $0.0493\%$ alone. \textbf{These are row-count fractions on inventories, not variance shares of the cross section} (App.~\ref{app:history}).
 
-Background enters as a negative Stay-Positive injection, signal through the
-trained map, and data through target and fit. Their different weights require
-propagation weights for a variance decomposition, which has not been computed.
-The stream set is known; its decomposition is unavailable. The fractions
-support only a qualitative reading: simulated inventories are resampled with
-data, one is small, and the total is not data-statistical. Measured family
-spread far exceeds every floor; the floors describe resampling inputs without
-dividing the observed band or making it field-comparable.
+Background enters as a negative Stay-Positive injection, signal through the trained map, and data through target and fit. Their different weights require propagation weights for a variance decomposition, which has not been computed. The stream set is known; its decomposition is unavailable. The fractions support only a qualitative reading: simulated inventories are resampled with data, one is small, and the total is not data-statistical. Measured family spread far exceeds every floor; the floors describe resampling inputs without dividing the observed band or making it field-comparable.
 
-A coherent $\mathrm{Poisson}(1)$ bootstrap, the standard non-parametric proxy
-for statistical uncertainty, does not automatically retain linear-case
-properties for a learned nonlinear estimator. Construction checks find its
-$\mathrm{Poisson}(1)$ multiplicity mass function for $k=0\ldots5$ accurate
-to better than $0.5\%$, zero-weight fraction $e^{-1}$ to
-$2.4\times10^{-4}$ pooled and within $1.9\sigma$ of $e^{-1}$ in all $18$ populated
-longitudinal-momentum columns, and refined targets matching nominal to
-$0.068\%$ on jointly retained rows.
+A coherent $\mathrm{Poisson}(1)$ bootstrap, the standard non-parametric proxy for statistical uncertainty, does not automatically retain linear-case properties for a learned nonlinear estimator. Construction checks find its $\mathrm{Poisson}(1)$ multiplicity mass function for $k=0\ldots5$ accurate to better than $0.5\%$, zero-weight fraction $e^{-1}$ to $2.4\times10^{-4}$ pooled and within $1.9\sigma$ of $e^{-1}$ in all $18$ populated longitudinal-momentum columns, and refined targets matching nominal to $0.068\%$ on jointly retained rows.
 
 \subsection{The measured spread}
 
-The family is tight and contains the central value across most of the plane.
-Neither holds for $6 < p_{\parallel} < \SI{20}{GeV/c}$.
+The family is tight and contains the central value across most of the plane. Neither holds for $6 < p_{\parallel} < \SI{20}{GeV/c}$.
 
 \begin{center}
 \begin{tabular}{lr}
@@ -103,19 +46,11 @@ median per-cell nominal-to-family-mean ratio, whole reported plane & $1.000323$ 
 \end{tabular}
 \end{center}
 
-These band results must retain their whole-plane context: central value and
-replica mean agree to $0.03\%$ per cell overall, concentrating the discrepancy
-locally. The affected band carries $15.5\%$ of the reported cross-section
-integral; its family-typical ratio is $3.5969$ with the spread above
-(App.~\ref{app:history}).
+These band results must retain their whole-plane context: central value and replica mean agree to $0.03\%$ per cell overall, concentrating the discrepancy locally. The affected band carries $15.5\%$ of the reported cross-section integral; its family-typical ratio is $3.5969$ with the spread above (App.~\ref{app:history}).
 
 \subsection{What is established}
 
-The discrepancy is localized to the estimator's training; extraction is faithful.
-Nominal-to-member ratios of pre-extraction per-cell yield and extracted cross
-section agree to median $0.139\%$ for $p_{\parallel} < \SI{6}{GeV/c}$.
-In the affected band their ratio is $1.0000$. The deficit is separable in
-longitudinal momentum for both quantities, using four distinct fits,
+The discrepancy is localized to the estimator's training; extraction is faithful. Nominal-to-member ratios of pre-extraction per-cell yield and extracted cross section agree to median $0.139\%$ for $p_{\parallel} < \SI{6}{GeV/c}$. In the affected band their ratio is $1.0000$. The deficit is separable in longitudinal momentum for both quantities, using four distinct fits,
 
 \begin{center}
 \begin{tabular}{lcc}
@@ -128,81 +63,24 @@ pushed (pre-extraction) yield ratio & $0.839$ & $0.030$ \\
 \end{tabular}
 \end{center}
 
-Faithful extraction explains the close rows. Measurements exclude the
-replica targets and, through the extraction comparison, the signal factor on
-truth counts as candidate mechanisms.
+Faithful extraction explains the close rows. Measurements exclude the replica targets and, through the extraction comparison, the signal factor on truth counts as candidate mechanisms.
 
-Affected cells form a contiguous band across nearly the full transverse-momentum
-range. Median reconstruction acceptance $0.859$ is the grid's highest; the
-band carries $26.5\%$ of reconstructed-and-accepted signal. No cell falls
-below the low-acceptance threshold for model-dependent reporting. The region
-is neither sparse nor peripheral. Whatever the
-explanation, the measurement is not starved there. For context, MINERvA's published inclusive
-double-differential measurement reports all $84$ bins in this longitudinal
-range at median statistical uncertainty $1.55\%$; its worst bin anywhere is
-$13.1\%$. That data-statistical result uses a standard selection, while this
-bootstrap refits a learned estimator on extended phase space. We do not treat the comparison as decisive.
+Affected cells form a contiguous band across nearly the full transverse-momentum range. Median reconstruction acceptance $0.859$ is the grid's highest; the band carries $26.5\%$ of reconstructed-and-accepted signal. No cell falls below the low-acceptance threshold for model-dependent reporting. The region is neither sparse nor peripheral. Whatever the explanation, the measurement is not starved there. For context, MINERvA's published inclusive double-differential measurement reports all $84$ bins in this longitudinal range at median statistical uncertainty $1.55\%$; its worst bin anywhere is $13.1\%$. That data-statistical result uses a standard selection, while this bootstrap refits a learned estimator on extended phase space. We do not treat the comparison as decisive.
 
 \subsection{Reading the band}
 
-The family differs coherently from the central value by order three in the
-best-accepted region. Its covariance measures dispersion around a center,
-without establishing finite-family containment of a separately trained nominal
-(App.~\ref{app:history}). It cannot decide whether the spread is real or
-$\mathrm{Poisson}(1)$ is an invalid proxy.
+The family differs coherently from the central value by order three in the best-accepted region. Its covariance measures dispersion around a center, without establishing finite-family containment of a separately trained nominal (App.~\ref{app:history}). It cannot decide whether the spread is real or $\mathrm{Poisson}(1)$ is an invalid proxy.
 
-A resampling argument for the $\mathrm{Poisson}(1)$ scheme reaches counts but not the sampling
-distribution of the learned estimator, nor coverage (App.~\ref{app:history}). What
-survives is narrower: the zero atom is what counting noise does to a
-row observed once, so its presence is not by itself evidence that the proxy is invalid.
+A resampling argument for the $\mathrm{Poisson}(1)$ scheme reaches counts but not the sampling distribution of the learned estimator, nor coverage (App.~\ref{app:history}). What survives is narrower: the zero atom is what counting noise does to a row observed once, so its presence is not by itself evidence that the proxy is invalid.
 
-A discriminating contrast was designed --- $\mathrm{Exponential}(1)$ shares mean and variance
-with $\mathrm{Poisson}(1)$ and differs only in $P(X{=}0)$, so substituting it would hold the
-perturbation's variance fixed while removing its zero-support --- and it will not be run, because
-neither outcome would change what is published. \textbf{The reason is the ruling, not a publication
-argument}: the ruling recorded in the Status boundary above closes both branches. No ``publish it as it stands''
-branch exists for either outcome to select (App.~\ref{app:history}). What stands on its own: replacing $\mathrm{Poisson}(1)$
-with a zero-free scheme because it yields a smaller uncertainty would be choosing a noise model by
-its answer, not a defensible basis for tightening an error bar. Nor would the contrast be coverage
-evidence, which is the gate the ruling actually sets.
+A discriminating contrast was designed --- $\mathrm{Exponential}(1)$ shares mean and variance with $\mathrm{Poisson}(1)$ and differs only in $P(X{=}0)$, so substituting it would hold the perturbation's variance fixed while removing its zero-support --- and it will not be run, because neither outcome would change what is published. \textbf{The reason is the ruling, not a publication argument}: the ruling recorded in the Status boundary above closes both branches. No ``publish it as it stands'' branch exists for either outcome to select (App.~\ref{app:history}). What stands on its own: replacing $\mathrm{Poisson}(1)$ with a zero-free scheme because it yields a smaller uncertainty would be choosing a noise model by its answer, not a defensible basis for tightening an error bar. Nor would the contrast be coverage evidence, which is the gate the ruling actually sets.
 
-The $67\%$ band is total-statistics refit dispersion: every replica refits this
-learned iterative reweighter after jointly resampling data, signal MC and
-background MC. It is not a published-style data-statistical error. Every
-quotation must carry two consequences. It includes this estimator's sensitivity
-to event presence, so cannot be attributed to data alone. It characterizes this
-estimator-plus-perturbation pair and gives no bound on what the data support.
-An information bound requires conditions on estimator bias and sampling-proxy
-validity; neither is established (App.~\ref{app:history}). The measured
-dispersion concerns only statistics and says nothing about systematics.
-Nothing licenses promoting the central value, calling the covariance verified
-or treating the region as settled (App.~\ref{app:provenance}, \texttt{pet-pairing}).
+The $67\%$ band is total-statistics refit dispersion: every replica refits this learned iterative reweighter after jointly resampling data, signal MC and background MC. It is not a published-style data-statistical error. Every quotation must carry two consequences. It includes this estimator's sensitivity to event presence, so cannot be attributed to data alone. It characterizes this estimator-plus-perturbation pair and gives no bound on what the data support. An information bound requires conditions on estimator bias and sampling-proxy validity; neither is established (App.~\ref{app:history}). The measured dispersion concerns only statistics and says nothing about systematics. Nothing licenses promoting the central value, calling the covariance verified or treating the region as settled (App.~\ref{app:provenance}, \texttt{pet-pairing}).
 
 \subsection{Limitations of the covariance object itself}
 
-One implementation built the covariance, so it is not independently verified.
-Specification clauses are abort-on-failure self-checks in that builder;
-regression against the in-tree recipe tests arithmetic and ordering only,
-without domain or centring validation. No independent construction or
-verification is claimed or implied by the clause count.
+One implementation built the covariance, so it is not independently verified. Specification clauses are abort-on-failure self-checks in that builder; regression against the in-tree recipe tests arithmetic and ordering only, without domain or centring validation. No independent construction or verification is claimed or implied by the clause count.
 
-Family size alone gives each standard deviation $10.1\%$ fractional
-uncertainty, $1/\sqrt{2(N-1)}=1/\sqrt{98}$, versus $7.11\%$ for $N=100$.
-The design calls for $N=100$ and labels this family insufficient
-(App.~\ref{app:provenance}, \texttt{cstat-family}).
+Family size alone gives each standard deviation $10.1\%$ fractional uncertainty, $1/\sqrt{2(N-1)}=1/\sqrt{98}$, versus $7.11\%$ for $N=100$. The design calls for $N=100$ and labels this family insufficient (App.~\ref{app:provenance}, \texttt{cstat-family}).
 
-The reporting domain and the \emph{stably} reported domain differ, and quoting one for the other is an
-error. The measurement is reported on $262$ cells (non-zero reconstruction acceptance) and the
-covariance on the same domain, but only $257$ of those cells are reported by \emph{every} member:
-five enter the reported set in some members and not others, so their apparent variance is partly the
-reporting mask switching rather than the cross section moving, and one of the five is reported in
-only $24$ of the $50$ members. Those five are published and flagged and are used in no inversion or
-goodness-of-fit. \textbf{The $257$ are the quotable all-member domain, and they are not an
-``invertible sub-block''}
-(App.~\ref{app:history}). The covariance's rank is $49=N-1$, so no sub-block larger than $49$ cells is
-ordinarily invertible, $257$ and $262$ alike; any use requiring an inverse requires a declared
-regularisation which this analysis does not silently supply (\notesec{Ill-conditioning and rank deficiency}). Finally, the
-covariance is on the density scale and centred on the replica mean rather than on the published
-central value: integrating it requires bin areas, and the centring means it does not by itself
-express the offset tabulated above. The per-cell arrays behind every aggregate in this subsection
-are published with them (App.~\ref{app:provenance}, \texttt{cstat-recompute}).
+The reporting domain and the \emph{stably} reported domain differ, and quoting one for the other is an error. The measurement is reported on $262$ cells (non-zero reconstruction acceptance) and the covariance on the same domain, but only $257$ of those cells are reported by \emph{every} member: five enter the reported set in some members and not others, so their apparent variance is partly the reporting mask switching rather than the cross section moving, and one of the five is reported in only $24$ of the $50$ members. Those five are published and flagged and are used in no inversion or goodness-of-fit. \textbf{The $257$ are the quotable all-member domain, and they are not an ``invertible sub-block''} (App.~\ref{app:history}). The covariance's rank is $49=N-1$, so no sub-block larger than $49$ cells is ordinarily invertible, $257$ and $262$ alike; any use requiring an inverse requires a declared regularisation which this analysis does not silently supply (\notesec{Ill-conditioning and rank deficiency}). Finally, the covariance is on the density scale and centred on the replica mean rather than on the published central value: integrating it requires bin areas, and the centring means it does not by itself express the offset tabulated above. The per-cell arrays behind every aggregate in this subsection are published with them (App.~\ref{app:provenance}, \texttt{cstat-recompute}).

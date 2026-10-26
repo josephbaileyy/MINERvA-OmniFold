@@ -1,14 +1,7 @@
 % ====================================================================
-% Specialist-journal article (PRD working target; Joseph 2026-10-06,
-% docs/publication/DECISION-20261006-joseph-publication-approvals.md).
-% Build: latexmk -pdf main_paper.tex
-% The companion analysis note contains the complete validation record,
-% technical details, extended-fiducial study, and the PET (diagnostic) record.
+% Specialist-journal article (PRD working target; Joseph 2026-10-06, docs/publication/DECISION-20261006-joseph-publication-approvals.md). Build: latexmk -pdf main_paper.tex The companion analysis note contains the complete validation record, technical details, extended-fiducial study, and the PET (diagnostic) record.
 %
-% DRAFT STATE: \pubhold{...} marks the pending deposit identifier and access
-% route recorded in docs/publication/submission/PACKAGE-MANIFEST-20261006.md,
-% and (2026-10-11) the funding acknowledgments still to be supplied by the authors.
-% Do not submit a build that renders any \pubhold.
+% DRAFT STATE: \pubhold{...} marks the pending deposit identifier and access route recorded in docs/publication/submission/PACKAGE-MANIFEST-20261006.md, and (2026-10-11) the funding acknowledgments still to be supplied by the authors. Do not submit a build that renders any \pubhold.
 % ====================================================================
 \documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix,longbibliography]{revtex4-2}
 
@@ -19,10 +12,7 @@
 \usepackage{siunitx}
 \usepackage{xcolor}
 \usepackage{booktabs}
-% Numbered pointers into the companion analysis note (paper_body.tex \nsec, \napp): xr-hyper reads the note's
-% labels from main_note.aux with the prefix N-. build_all.sh builds main_note before main_paper; a paper built
-% without main_note.aux has undefined references, which build_all.sh treats as a failure. An arXiv source of the
-% paper must ship main_note.aux (or the numbers written in) for these to resolve.
+% Numbered pointers into the companion analysis note (paper_body.tex \nsec, \napp): xr-hyper reads the note's labels from main_note.aux with the prefix N-. build_all.sh builds main_note before main_paper; a paper built without main_note.aux has undefined references, which build_all.sh treats as a failure. An arXiv source of the paper must ship main_note.aux (or the numbers written in) for these to resolve.
 \usepackage{xr-hyper}
 \usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
 \externaldocument[N-]{main_note}
@@ -42,46 +32,17 @@
 \raggedbottom % reprint-mode layout: avoid stretched inter-paragraph gaps (cosmetic; the journal re-typesets)
 
 % Methods rewrite (OUTLINE-DECISION sec. 2; GPT-6.1-sol framing Part 2, title 1): provisional until the Ben review.
-\title{Performance and limitations of multidimensional OmniFold unfolding with
-MINERvA open data}
+\title{Performance and limitations of multidimensional OmniFold unfolding with MINERvA open data}
 
-\author{Joseph Bailey}
-\email{josephrb@stanford.edu}
-\affiliation{Department of Physics, Stanford University, Stanford, California 94305, USA}
-\author{Benjamin Nachman}
-\email{nachman@stanford.edu}
-\affiliation{Department of Particle Physics and Astrophysics, Stanford University, Stanford, California 94305, USA}
-\affiliation{SLAC National Accelerator Laboratory, Menlo Park, California 94025, USA}
+\author{Joseph Bailey} \email{josephrb@stanford.edu} \affiliation{Department of Physics, Stanford University, Stanford, California 94305, USA} \author{Benjamin Nachman} \email{nachman@stanford.edu} \affiliation{Department of Particle Physics and Astrophysics, Stanford University, Stanford, California 94305, USA} \affiliation{SLAC National Accelerator Laboratory, Menlo Park, California 94025, USA}
 
 \date{\today}
 
 \begin{abstract}
-% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): abstract cut to about 150 words; headline
-% results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15).
-% Methods rewrite (OUTLINE-DECISION sec. 2-3; GPT-6.1-sol framing Part 4): recast as a methods abstract; provisional.
-% Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json);
-% \binsTen (values.tex:85); "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions
-% for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144.
-% Moved to the body only (Sec. I scope, Sec. VIII): the nuisance-averaged size and the 0.9 alpha bound.
-% Fix round 1 (REVIEW-1 finding 1, 6 and the proposed abstract): "central values only" restored; "preserves the marginal
-% normalizations" weakened to "normalizations agree with lower-dimensional results"; "95.6% of the bins within 10%"
-% moved to the body only (Sec. IV, Table I); "a median of" kept before "about 10--13% per cell" (RECORD-20260927 :129-131,
-% a median over cells).
-% Register round 1 (2026-10-21; GPT-6.1-sol and Gemini register checks, xmodel/r8): abstract simplified along the
-% sol rewrite, 147 words; every claim and limitation kept. The per-cell envelope size left the abstract (it stays in
-% Sec. VI C and Sec. VIII); the coverage failure is now worded as undercoverage at the tested truths; the comparison
-% with the coarse projections now uses the body's no-evidence wording (Sec. VII E). Earlier comments are kept above.
-Applied to MINERvA open data for medium-energy $\nu_{\mu}$ charged-current
-inclusive interactions, OmniFold reproduces the published muon-kinematic cross
-section's integral within about 1\%, with a correlated shape difference.
+% plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): abstract cut to about 150 words; headline results and only the limitations needed not to misread them; theme A (F4, F5) and theme C (F15). Methods rewrite (OUTLINE-DECISION sec. 2-3; GPT-6.1-sol framing Part 4): recast as a methods abstract; provisional. Sources: "about one percent" is \ratioTot (values.tex:48; receipt RECEIPT-2d-agreement-windows-lgbm42-20261011.json);
+% \binsTen (values.tex:85); "about 10--13% per cell" and the 10% target: note sec_5d.tex "Reporting definitions for a five-dimensional measurement"; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144. Moved to the body only (Sec. I scope, Sec. VIII): the nuisance-averaged size and the 0.9 alpha bound. Fix round 1 (REVIEW-1 finding 1, 6 and the proposed abstract): "central values only" restored; "preserves the marginal normalizations" weakened to "normalizations agree with lower-dimensional results"; "95.6% of the bins within 10%" moved to the body only (Sec. IV, Table I); "a median of" kept before "about 10--13% per cell" (RECORD-20260927 :129-131, a median over cells). Register round 1 (2026-10-21; GPT-6.1-sol and Gemini register checks, xmodel/r8): abstract simplified along the sol rewrite, 147 words; every claim and limitation kept. The per-cell envelope size left the abstract (it stays in Sec. VI C and Sec. VIII); the coverage failure is now worded as undercoverage at the tested truths; the comparison with the coarse projections now uses the body's no-evidence wording (Sec. VII E). Earlier comments are kept above.
+Applied to MINERvA open data for medium-energy $\nu_{\mu}$ charged-current inclusive interactions, OmniFold reproduces the published muon-kinematic cross section's integral within about 1\%, with a correlated shape difference. With five simultaneous observables (adding available energy, three-momentum transfer, and hadronic invariant mass), it yields central values only, whose normalizations agree with lower-dimensional results.  Pseudo-experiments measure a background-subtraction bias, a partial recovery of generator-sized truth changes, and statistical undercoverage at the tested truths.  With a model-dependence envelope added linearly to the uncertainty, no tested reporting definition meets our 10\% precision criterion. As an illustration, simulation-calibrated tests of hybrid null hypotheses for five generator predictions all reject at the 5\% familywise level, with no evidence of gain over matched coarse projections.
 % X5 G2 (M8): "reproduces the published ... double-differential cross section" narrowed to the integral.
-With five simultaneous observables (adding available energy, three-momentum
-transfer, and hadronic invariant mass), it yields central values only, whose
-normalizations agree with lower-dimensional results.  Pseudo-experiments
-measure a background-subtraction bias, a partial recovery of generator-sized
-truth changes, and statistical undercoverage at the tested truths.  With a
-model-dependence envelope added linearly to the uncertainty, no tested
-reporting definition meets our 10\% precision criterion.
 % Pseudo-experiment sentence in measured-result form, approved by Joseph (DECISION-20261026-joseph-abstract-and-cresp-build.md item 1); no clause removed.
 % SF-1 resolved (docs/orchestration/state/2d-closeout/stageF/methods/SF1-REPORT.md:5, PASS: the three smallest-margin shape decisions stay rejected; wording unchanged).
 % NuWro-CH resolved (docs/orchestration/DECISION-20261020-joseph-nuwro-ch-claim.md, provisional: the ten recorded decisions stand; the CH replays are stated once, at a high level, in the generator-test results, Sec. VII E, with the detail in the note, sec_joint.tex sec:joint5d-ch). The NuWro clause left the abstract by DECISION-20261023-joseph-5d-a-and-register-round.md item 3a, which changes that decision's abstract placement.
@@ -99,9 +60,6 @@ reporting definition meets our 10\% precision criterion.
 % no-evidence wording, the envelope carried by the order of the sentence). That the rejections are not physical
 % exclusions, and that the detector model has no recoil-response band, are stated in Sec. I's scope paragraph; the
 % convergence assumption is condition (i) of Sec. VII D; their consequences are listed in Sec. VIII A.
-As an illustration, simulation-calibrated tests of hybrid null hypotheses
-for five generator predictions all reject at the 5\% familywise level, with
-no evidence of gain over matched coarse projections.
 \end{abstract}
 
 \maketitle
@@ -109,27 +67,9 @@ no evidence of gain over matched coarse projections.
 \input{paper_body}
 
 \begin{acknowledgments}
-The authors thank the MINERvA Collaboration for making their data, simulated
-data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz},
-and the authors of the MINERvA Analysis Toolkit and the MINERvA-101
-cross-section framework on which this analysis builds.  We thank Callum
-Wilkinson for connecting us with this dataset and for many helpful discussions,
-and Kevin McFarland for suggesting a detector-response-mismatch closure
-targeting correlations among the reconstructed hadronic observables.  This
-research used resources of the National Energy Research Scientific Computing
-Center (NERSC), a U.S.\ Department of Energy Office of Science User Facility,
-under project m3246.  \pubhold{funding and grant acknowledgments}
+The authors thank the MINERvA Collaboration for making their data, simulated data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz}, and the authors of the MINERvA Analysis Toolkit and the MINERvA-101 cross-section framework on which this analysis builds.  We thank Callum Wilkinson for connecting us with this dataset and for many helpful discussions, and Kevin McFarland for suggesting a detector-response-mismatch closure targeting correlations among the reconstructed hadronic observables.  This research used resources of the National Energy Research Scientific Computing Center (NERSC), a U.S.\ Department of Energy Office of Science User Facility, under project m3246.  \pubhold{funding and grant acknowledgments} AI language-model tools (Anthropic Claude and OpenAI GPT models, used through the Claude Code and OpenAI Codex agents) gave substantial assistance with the analysis code, statistical procedures, computing campaigns, independent recomputations and reviews, figures, and manuscript drafts.  The authors directed the work and verified the results; the analysis note~\cite{AnalysisNote2026} gives the full statement, including the tool versions.  The figures were drawn by plotting code from the analysis outputs; no figure was generated or edited by a generative-AI image tool.  AI tools are not authors, and the authors take responsibility for the content.
 % TODO(Joseph/Ben): grant numbers and funding sources; the note's acknowledgments (main_note.tex) list none.
 % NERSC, MAT/MINERvA-101, Wilkinson and McFarland: copied from the note's acknowledgments, 2026-10-11.
-AI language-model tools (Anthropic Claude and OpenAI GPT models, used through
-the Claude Code and OpenAI Codex agents) gave substantial assistance with the
-analysis code, statistical procedures, computing campaigns, independent
-recomputations and reviews, figures, and manuscript drafts.  The
-authors directed the work and verified the results; the analysis
-note~\cite{AnalysisNote2026} gives the full statement, including the tool
-versions.  The figures were drawn by plotting code from the analysis outputs;
-no figure was generated or edited by a generative-AI image tool.  AI tools are
-not authors, and the authors take responsibility for the content.
 % AI-use disclosure: text and placement approved by Joseph Bailey, 2026-10-06
 % (docs/publication/DECISION-20261006-joseph-publication-approvals.md, last addendum;
 % proposed text docs/publication/submission/AI-DISCLOSURE-PROPOSED.md, transcribed verbatim).
@@ -146,30 +86,11 @@ not authors, and the authors take responsibility for the content.
 % note's full statement (main_note.tex, Acknowledgments), checked to carry every element of the earlier text.
 \end{acknowledgments}
 
-% Data Availability Statement: APS places it after the Acknowledgments and before the references
-% (APS Journals Style Guide for Authors, Feb. 2026; required for PRD since 2024-09-04).
+% Data Availability Statement: APS places it after the Acknowledgments and before the references (APS Journals Style Guide for Authors, Feb. 2026; required for PRD since 2024-09-04).
 \section*{Data availability}
 \label{sec:data-availability}
-% Shortened 2026-10-21 (DECISION-20261021-joseph-da-and-note-records, item 1: Joseph adopted the r13 draft,
-% docs/orchestration/state/2d-closeout/stageF/methods/r13/DA-proposal.md, with review fixes D-1 and D-2). This reverses
-% the plain-language pass 2 ruling P6 (the package's Fig. 1 limitation now prints in the note, app_release.tex
-% app:release, "RC7 was assembled before ..."). Every fact of the earlier text prints here or in app:release (the
-% proposal's section 3 maps all 23). Sources as before: RC7-README.md, RC6-README.md, RC1-REPLAY-RECEIPT-20261006.md.
-The input data and simulation are the MINERvA open-data AnaTuples, released under
-CC0~\cite{MINERvA:OpenData}.  This analysis used an earlier production of that
-release; its 2,374 input files are identified by SHA256 checksum in the records
-cited in \napp{app:release}.  A candidate release package of about \SI{16}{MB},
-not yet deposited, requires only numpy, scipy, and matplotlib.  It recomputes
-every $p$ value, decision, robustness result, and power figure of the joint
-tests and the numbers quoted in Sec.~\ref{sec:central}, and it regenerates the
-analysis note's figures of the joint-test null distributions and the
-$(\Eavail,W)$ map.  The other quoted numbers, except the multiplier scan, and
-the event-level processing require the archived analysis products, the
-open-data AnaTuples, and the generator samples produced for this analysis;
-\napp{app:release} states what each part of the release does and does not
-reproduce.
-\pubhold{deposit identifier and access route, after the separately authorized
-release decision.}
+% Shortened 2026-10-21 (DECISION-20261021-joseph-da-and-note-records, item 1: Joseph adopted the r13 draft, docs/orchestration/state/2d-closeout/stageF/methods/r13/DA-proposal.md, with review fixes D-1 and D-2). This reverses the plain-language pass 2 ruling P6 (the package's Fig. 1 limitation now prints in the note, app_release.tex app:release, "RC7 was assembled before ..."). Every fact of the earlier text prints here or in app:release (the proposal's section 3 maps all 23). Sources as before: RC7-README.md, RC6-README.md, RC1-REPLAY-RECEIPT-20261006.md.
+The input data and simulation are the MINERvA open-data AnaTuples, released under CC0~\cite{MINERvA:OpenData}.  This analysis used an earlier production of that release; its 2,374 input files are identified by SHA256 checksum in the records cited in \napp{app:release}.  A candidate release package of about \SI{16}{MB}, not yet deposited, requires only numpy, scipy, and matplotlib.  It recomputes every $p$ value, decision, robustness result, and power figure of the joint tests and the numbers quoted in Sec.~\ref{sec:central}, and it regenerates the analysis note's figures of the joint-test null distributions and the $(\Eavail,W)$ map.  The other quoted numbers, except the multiplier scan, and the event-level processing require the archived analysis products, the open-data AnaTuples, and the generator samples produced for this analysis; \napp{app:release} states what each part of the release does and does not reproduce. \pubhold{deposit identifier and access route, after the separately authorized release decision.}
 % 2026-10-11: shortened; the multiplier-scan scope, the 2.3 GB product archive, the earlier independent replay, the
 % preservation-copy scope and the list of non-recomputable numbers moved to the note, app_release.tex (app:release-scope).
 % Source: docs/publication/release/RC7-README.md (RC7: the figure code that draws Figs. 1-3 as printed; data as RC6),
@@ -178,8 +99,7 @@ release decision.}
 % RC4 46f801bf... preserved unchanged at /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/; product archive
 % /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).
 
-% Style: revtex4-2 with aps,prd selects apsrev4-2 itself; an explicit \bibliographystyle would bypass
-% the class's control entry, which longbibliography needs to print article titles.
+% Style: revtex4-2 with aps,prd selects apsrev4-2 itself; an explicit \bibliographystyle would bypass the class's control entry, which longbibliography needs to print article titles.
 \bibliography{technote,publication}
 
 \end{document}

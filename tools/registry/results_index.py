@@ -849,7 +849,10 @@ def self_test() -> int:
         clean = attr.read_text()
         # The cited configuration-(a) line is found by the digest its ALIASES row records, not by a line number,
         # so the paper may be edited above it (register round r15 review, item 5).
-        a_row = reglib.alias_citation((t / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-label")
+        # The paper-TABLE line: a table row names configuration (a) alone. Since the TeX reflow (one source line per
+        # paragraph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md section 3) the paper-label
+        # line is a whole paragraph that also names configuration (e), so it could not show rule 7 failing.
+        a_row = reglib.alias_citation((t / reglib.ALIASES).read_text(), "a-central-lgbm", "paper-table")
         n_a, l_a = reglib.find_cited_line((t / a_row["source"]).read_text(), a_row["quote"], a_row["line_sha256"])
         d285 = reglib.line_digest(l_a)
         # The lookup must follow the line when it moves, and must refuse a file in which the line was edited.
@@ -863,13 +866,13 @@ def self_test() -> int:
         case("cited line found by digest after a line is added above it", 0 if moved_ok else 1, 0, "")
         case("an edited cited line is refused by the digest lookup", 1 if edit_refused else 0, 1, "")
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\te-R-joint-test\t"
-                        f"docs/analysis-note/paper_body.tex\t{n_a}\tconfiguration~(a), the\t{d285}\n")
+                        f"docs/analysis-note/paper_body.tex\t{n_a}\t{a_row['quote']}\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(check, t)
         case("ATTRIBUTION row citing a line that names (a), attributed to R", rc, 1, out)
         ok &= "rule 7" in out
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\ta-central-lgbm\t"
-                        f"docs/analysis-note/paper_body.tex\t{n_a}\tconfiguration~(a), the\t{d285}\n")
+                        f"docs/analysis-note/paper_body.tex\t{n_a}\t{a_row['quote']}\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(write, t)
         g("add", "-A")
@@ -907,7 +910,7 @@ def self_test() -> int:
         g("reset", "-q", "--soft", fixture_base)
         wv = t / reglib.WAIVERS
         wv.write_text("estimator\treason\tsource\tline\tquote\tline_sha256\ne-R-joint-test\tself-test waiver\t"
-                      f"docs/analysis-note/paper_body.tex\t{n_a}\tconfiguration~(a), the\t{d285}\n")
+                      f"docs/analysis-note/paper_body.tex\t{n_a}\t{a_row['quote']}\t{d285}\n")
         g("add", reglib.WAIVERS)
         quiet(write, t)
         g("add", "-A")
