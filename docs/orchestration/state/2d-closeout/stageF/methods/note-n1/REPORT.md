@@ -25,7 +25,7 @@ corrections of stale text, ruled by the director. See the last section.
 | file | records |
 |---|---|
 | `outline.md` | the approved outline (R-N1, R-N2, R-N5, R-N6 moves by chapter; the "not touched" list) |
-| `ledger.md` | the fact ledger: 190 rows, 487 probes, 149 changed base sentences named, 0 failures; App. A's rows under "Not adopted" |
+| `ledger.md` | the fact ledger: 199 rows (190 register, ACC1–ACC9 accuracy), 510 probes, 157 changed base sentences named, 0 failures; App. A's rows under "Not adopted" |
 | `changes.md` | every change paragraph by paragraph, the review fixes, n1-F, and what was not adopted |
 | `check_ledger.py` | the ledger checker (probes; coverage of every changed base sentence; labels; protected files; SEC4 sites) |
 | `REPORT.md` | this file |
@@ -129,14 +129,67 @@ new body, and each lands on text that supports it:
 - §4.5 `sec:uq-combine`, whose printed text is identical to the base;
 - §5.2 and §5.3.
 
-**P1N** is the per-piece rubric. On the final pieces, with 2 sol2 runs and 1 gemini run each:
-(pending: added in the round's last commit, once every run is complete)
+**P1N** is the per-piece rubric, scored on the final register text (before the accuracy commit, which is unscored).
+- The rubric is `rater-calibration/prompts/P1N.prompt.txt`.
+- Each piece gets 2 sol2 runs (codex-school2) and 1 gemini run (agy). The baseline is n1v2base, the same pieces at
+  the base.
+- sol2 hit its usage limit after 33 of the 45 runs. The remaining 12 sol2 runs (N10a–N14) were re-run after the reset
+  on the same account and script. No account was switched.
 
-**Stop rule:** P2N no longer prefers NEW, or P1N ≥ 3.5, or 4 rounds. (pending, with P1N)
+**The adoption test** (director, 2026-10-26).
+- It is sol2's: for each adopted piece, sol2's mean of 2 runs on the final text must not fall below its n1v2base
+  mean. Any piece that falls reverts to base.
+- Gemini is reported beside it and is not used to adopt.
+
+| piece | sol2 base | sol2 final | Δ sol2 (mean) | gemini base | gemini final | adoption test |
+|---|---|---|---:|---:|---:|---|
+| N01 | 3, 3 | 3, 3 | +0.00 | 2.5 | 2.5 | holds |
+| N02 | 3, 3 | 3, 3 | +0.00 | 3 | 2.5 | holds |
+| N03 | 3, 3 | 3, 3 | +0.00 | 2.5 | 2 | holds |
+| N04 | 3, 3 | 3, 3.5 | +0.25 | 2.5 | 2.5 | holds |
+| N05 | 3.5, 3 | 3.5, 3.5 | +0.25 | 3 | 3 | not applicable (byte-identical to base) |
+| N06 | 3, 3 | 3, 3 | +0.00 | 2.5 | 2 | holds |
+| N07 | 3.5, 3.5 | 3.5, 3.5 | +0.00 | 3 | 3 | holds |
+| N08 | 3, 3 | 3, 3 | +0.00 | 2 | 2 | holds |
+| N09 | 3, 3 | 3, 3 | +0.00 | 2 | 2.5 | holds |
+| N10a | 3, 3.5 | 3.5, 3.5 | +0.25 | 3 | 2.5 | not applicable (layout only) |
+| N10b | 3, 3 | 3, 3 | +0.00 | 2 | 2 | holds |
+| N11 | 3, 3 | 3, 3 | +0.00 | 2 | 2 | not applicable (not adopted (= base)) |
+| N12 | 3, 3 | 3, 3 | +0.00 | 2.5 | 2 | holds |
+| N13 | 3, 3 | 3, 3 | +0.00 | 2.5 | 2 | holds |
+| N14 | 3, 3.5 | 3, 3 | -0.25 | 2 | 2 | not applicable (layout only) |
+
+**Result:** no adopted piece falls below base on sol2, so no piece reverts. The table is the output of `p1n_adopt.py <base p1n dir> <final p1n dir>`, run on the
+rater outputs.
+
+**Means over the 15 pieces:**
+- sol2: base 3.083, final 3.117;
+- gemini: base 2.467, final 2.300.
+
+The only negative sol2 change is N14 (−0.25), which is layout-only and not a scored change.
+
+**Gemini's six drops.** Gemini fell on N02, N03, N06, N10a, N12 and N13. Its stated reasons on the final text:
+- **N02**: "Although the physics and technical methods are described with competence and rigor throughout most of the text, multiple sections—most acutely Sec. 3.2—lapse into an internal laboratory-notebook register characterized by software-debugging narratives, lost-log postmortems, calendar dates, and raw code expressions."
+- **N03**: "The text frequently abandons publication register for that of an internal laboratory note or software audit, with multiple paragraphs dominated by record-keeping details—such as uncommitted code versions, checksum validations, runtime script assertions, and historical defect tracking—alongside pervasive defensive caveats."
+- **N06**: "Although the underlying physics and mathematical foundations are competent, the text departs frequently into an internal-note and logbook register across nearly every subsection, characterized by raw codebase identifiers, workflow record-keeping, defensive hedging, and retrospective development narratives that require substantial rewriting for PRD."
+- **N10a**: "While the underlying technical exposition is mathematically coherent and detailed, the text frequently slips into the register of an internal collaboration memo, characterized by development-history bookkeeping, defensive hedging, and unrefined jargon."
+- **N12**: "While the core mathematical and statistical derivations are sound, substantial portions of the text frequently lapse into the register of an internal technical report or software audit log, dominated by defensive record-keeping, command-line flags, code-provenance tracking, and batch-run chronologies."
+- **N13**: "While the literature survey and basic mathematical definitions are clear, the text frequently lapses into an internal analysis-notebook register characterized by software-implementation guardrails, project-management bookkeeping, informal jargon, and raw repository file paths."
+
+Each reason names register: notebook or audit register, provenance bookkeeping, hedging, code identifiers. None
+names a fact or an accuracy problem, so none goes to the director before adoption (director's rule).
+
+**Calibration.** N10a's text equals the base apart from line breaks, and gemini still moved it from 3 to 2.5. Its
+other drops are of the same size, so a 0.5 step from gemini is within its run-to-run noise on this rubric.
+
+**Stop rule:** P2N no longer prefers NEW, or P1N ≥ 3.5, or 4 rounds. **Not met; the loop continues to n2.**
+- P2N still prefers NEW on 11 of the 12 changed pieces.
+- The sol2 P1N mean is 3.117. No adopted piece reaches 3.5 on both runs except N07, which was already at 3.5 in the base.
+- This is round 1 of 4.
 
 ## Checks on the delivered tree
 
-- **Ledger:** `check_ledger.py` gives 190 rows, 487 probes, 149 changed base sentences, 0 failures. Its self-test passes:
+- **Ledger:** `check_ledger.py` gives 199 rows, 510 probes, 157 changed base sentences, 0 failures (the register round alone: 190, 487, 149). Its self-test passes:
   a missing probe, a dropped sentence and a removed label are each caught.
 - **Protected files** are byte-identical to the base: values.tex, values_inference.tex, app_history.tex,
   app_release.tex, main_note.tex, main_paper.tex, paper_body.tex and main_records.tex. Every `\label` is kept.
