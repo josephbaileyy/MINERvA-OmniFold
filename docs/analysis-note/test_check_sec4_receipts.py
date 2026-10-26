@@ -33,20 +33,30 @@ def test_self_test_rejects_every_perturbation():
     assert chk.self_test() == 0
 
 
-@pytest.mark.parametrize("old,new", [
-    (r"\SI{0.676}{\percent}", r"\SI{0.686}{\percent}"),
-    (r"\SI{97.7}{\percent}", r"\SI{96.7}{\percent}"),
-    (r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.2}{\percent}"),
-    (r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}"),
-    (r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.9}{\percent}"),  # true but loose
+@pytest.mark.parametrize("name,old,new,label", [
+    ("paper_body.tex", r"\SI{0.676}{\percent}", r"\SI{0.686}{\percent}", "statistical block median (Q_R, S1)"),
+    # The rebuilt-band 2-sigma rescore (97.7%) binds in the note since r18 moved it there: $C_2=0.977$.
+    ("sec_validation.tex", r"$C_2=0.977$", r"$C_2=0.967$",
+     "rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)"),
+    ("paper_body.tex", r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.2}{\percent}",
+     "negative-weight residual, highest-W cells (VL151)"),
+    ("paper_body.tex", r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}",
+     "other fixed shapes, most affected cell (VL154)"),
+    ("paper_body.tex", r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.9}{\percent}",  # true but loose
+     "negative-weight residual, highest-W cells (VL151)"),
 ])
 @needs_receipts
-def test_a_wrong_printed_value_fails(old, new):
+def test_a_wrong_printed_value_fails(name, old, new, label):
     src = chk.load()
-    src["paper_body.tex"] = re.sub(r"\s+", " ", src["paper_body.tex"])  # the checker matches whitespace-normalized text
-    assert src["paper_body.tex"].count(old) == 1
-    src["paper_body.tex"] = src["paper_body.tex"].replace(old, new)
-    assert not all(good for _, good, _ in chk.evaluate(src))
+    # The checker's own reading: comments stripped, then whitespace collapsed. Collapsing first would let the first
+    # % comment swallow the rest of the file, and every case would fail for that reason alone.
+    src[name] = chk.text(name, src)
+    assert all(good for _, good, _ in chk.evaluate(src)), "control: the unperturbed sources must pass"
+    assert src[name].count(old) == 1
+    src[name] = src[name].replace(old, new)
+    rows = dict((lab, good) for lab, good, _ in chk.evaluate(src))
+    assert rows[label] is False
+    assert sum(not good for good in rows.values()) == 1, "only the perturbed value's check fails"
 
 
 PHRASE = r"differ\s+by\s+at\s+most"  # the printed phrase, across any line wrap

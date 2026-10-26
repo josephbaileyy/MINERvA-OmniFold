@@ -44,6 +44,9 @@ the merge. Each check is its own named step, and every step runs even when an ea
   ledger VL ids, row-owner side table, `whose_row` self-test, OPEN_ITEMS OI ids, receipt artifact tracking, LIVE doc
   indexed and its self-test, every doc has an overrides row, bounded control plane and its self-test, manifest
   inventory self-test;
+- the note checkers' tests: `pytest` on `docs/analysis-note/test_check_sec4_receipts.py` (one pinned package,
+  `pytest==8.3.4`, is installed for it), and `check_note_records.py --self-test` (on `records-inventory-base.json`)
+  and `--self-test-pin`. `build_all.sh` runs the checkers themselves locally, not these tests;
 - a last step that fails if any check modified the checkout.
 
 **Why `--base`.** In CI nothing is staged and HEAD already contains the change, so the two checks that compare a
