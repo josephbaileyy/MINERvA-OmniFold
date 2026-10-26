@@ -14,7 +14,8 @@ With M = sum_i lambda_i v_i v_i^T (lambda descending, each v_i signed so its lar
 3. for the TOP modes with the largest c_i: the loadings, sqrt(lambda), and each block's share v_i^T B v_i / lambda_i,
    where the blocks partition M exactly (control D6): S1's seven C_e groups (s1_assemble.group_of), the three
    C_model,5D vertices s_j s_j^T, C_x where the comparison carries it, and V_g;
-4. the chi2 with each block removed in turn, with the condition number of what is left (descriptive);
+4. the chi2 with each block removed in turn, with its ndf and the condition number of what is left (descriptive; no
+   p-value, by the director's ruling, amendment 1);
 5. stability: the chi2 by Cholesky, by the mode sum and by least squares in float64, and against a ridge
    M + RIDGE * mean(diag M) * I. `ridge_sensitive` if the ridge moves chi2 by more than UNSTABLE relative;
    `methods_disagree` if the three float64 methods differ by more than METHODS; `unstable` if either holds or
@@ -163,6 +164,15 @@ def residual(f: np.ndarray, g: np.ndarray, i: np.ndarray, scale: np.ndarray) -> 
     return ((f - g) / f * scale)[i]
 
 
+def removal_record(name: str, x2: float | None, cond: float, n: int) -> dict:
+    """Item 4's record: chi2, ndf and the condition number of M - B. No p (the director's ruling, amendment 1): a
+    p-value on a matrix that is not a reported uncertainty would be read as a verdict."""
+    return {"removed": name, "positive_definite": x2 is not None, "chi2": x2, "ndf": n, "condition": cond,
+            "ill_conditioned": bool(not cond < ILL),
+            "label": "descriptive breakdown, not an alternative result" if x2 is not None else
+                     "descriptive; M without this block is not positive definite"}
+
+
 def breakdown(d: np.ndarray, blocks: dict[str, np.ndarray], cells: list[str]) -> dict:
     """Items 1-5 for one comparison in one unit system."""
     M = sum(blocks.values())
@@ -186,13 +196,7 @@ def breakdown(d: np.ndarray, blocks: dict[str, np.ndarray], cells: list[str]) ->
                     "dominant": max(shares, key=lambda b: shares[b])})
     removed = []
     for name, B in blocks.items():
-        x2 = removed_chi2(M, B, d)
-        cond = condition(M - B)
-        removed.append({"removed": name, "positive_definite": x2 is not None, "chi2": x2, "ndf": n,
-                        "p": None if x2 is None else G.chi2_sf(x2, n), "condition": cond,
-                        "ill_conditioned": bool(not cond < ILL),
-                        "label": "descriptive breakdown, not an alternative result" if x2 is not None else
-                                 "descriptive; M without this block is not positive definite"})
+        removed.append(removal_record(name, removed_chi2(M, B, d), condition(M - B), n))
     stab = chi2_ways(M, d, lam, V)
     return {"chi2": stab["chi2_cholesky"], "chi2_mode_sum": total, "ndf": n,
             "eigen": {"lambda": lam.tolist(), "sigma": np.sqrt(np.clip(lam, 0, None)).tolist(),

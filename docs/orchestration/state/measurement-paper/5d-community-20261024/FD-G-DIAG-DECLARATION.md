@@ -2,6 +2,9 @@
 
 **By** the measurement session, for the director to bind.
 
+**Amended 2026-10-26 (amendment 1, §12),** at the director's ruling on §7: the block-removed records no longer carry a
+p-value. §§0, 2.1, 4, 5, 6, 7 and 8 are changed in place, each change marked "(amendment 1)".
+
 **Under:** the director's request of 2026-10-26, after Stage G's report ([`FD-G-REPORT.md`](FD-G-REPORT.md), PR #378,
 main `b6bca37f`).
 - Every prediction's χ² is large under the reported covariance, while its diagonal pulls are modest.
@@ -52,7 +55,8 @@ main `b6bca37f`).
      - V_g.
 
      They partition M exactly (control D6), so the shares sum to 1. The largest is named `dominant`.
-  4. The χ² with each block removed in turn, with its ndf, p and the condition number of what is left, labelled
+  4. The χ² with each block removed in turn, with its ndf and the condition number of what is left, and no p-value
+     (amendment 1), labelled
      "descriptive breakdown, not an alternative result".
      - If M − B is not positive definite, the record says so and carries no χ².
      - If its condition number exceeds 10¹², it is marked `ill_conditioned`.
@@ -112,7 +116,7 @@ echo "porcelain_ignored_lines_after_tests $(git -C $D status --porcelain --ignor
 - HEAD equal to the pin;
 - 0 porcelain lines before and after;
 - the §8 digests;
-- `tests rc=0` with "Ran 89 tests … OK" (40 G-DIAG + 27 Stage G + 22 S1, locally on 2026-10-26).
+- `tests rc=0` with "Ran 90 tests … OK" (41 G-DIAG + 27 Stage G + 22 S1, locally on 2026-10-26; amendment 1, was 89).
 
 Anything else is a STOP.
 
@@ -177,7 +181,7 @@ named check, so a different check firing does not pass it.
 - **The top three modes** are those with the largest c_i. Shares are v_iᵀBv_i/λ_i, and `dominant` is the largest.
 - **Block removal:**
   - Cholesky of M − B. If it fails, the record has `positive_definite: false` and no χ².
-  - p is P(χ²_n > χ²), from `fd_g_compare.chi2_sf`.
+  - No p-value is computed or written (amendment 1).
   - `condition` is the eigenvalue ratio of M − B, and `ill_conditioned` is set above 10¹².
 - **Stability:**
   - Cholesky, mode sum, `lstsq` and the ridge, each with its relative difference from the Cholesky value.
@@ -199,7 +203,7 @@ predictions[5 x {name, label, cells[n],
       modes_by_chi2[n x {mode, lambda, sigma, projection, chi2, fraction, cumulative}],
       modes_needed{50%, 90%, 99%},
       top_modes[3 x {mode, sigma, chi2, fraction, loadings{cell: v}, block_shares{block: share}, share_sum, dominant}],
-      removed[blocks x {removed, positive_definite, chi2, ndf, p, condition, ill_conditioned, label}],
+      removed[blocks x {removed, positive_definite, chi2, ndf, condition, ill_conditioned, label}],   (no p; amendment 1)
       stability{chi2_cholesky, chi2_mode_sum, chi2_lstsq, chi2_ridge, ridge, rel_*, ridge_sensitive,
                 methods_disagree, unstable}}}]}],
 non_finite_written_as_null, inputs_sha256, code_sha256{fd_g_diag.py, fd_g_compare.py, s1_assemble.py}, argv
@@ -234,15 +238,15 @@ non_finite_written_as_null, inputs_sha256, code_sha256{fd_g_diag.py, fd_g_compar
 
 | class | what it shows |
 |---|---|
-| `Analytic` (9) | **The director's well-conditioned case:** M = Q diag(λ) Qᵀ from a known orthonormal Q, split 0.25/0.75 into two blocks, and d = Q a. The tool returns exactly: <ul><li>λ (descending), √λ and the condition number;</li><li>c_i = a_i²/λ_i in order, with the projections, fractions and cumulative fractions;</li><li>the modes for 50/90/99 % by hand;</li><li>the top-three choice, and each top mode's loadings equal to its known basis vector under the sign rule;</li><li>shares of 0.25/0.75;</li><li>χ² with each block removed equal to χ²/0.75 and χ²/0.25, with the ndf, p and condition number of what is left;</li><li>no flags.</li></ul> **Disjoint blocks:** each top mode's block owns it, with share 1. **The director's near-singular case:** λ_min = 10⁻¹⁹ with a 10⁻⁸ component of d along it. <ul><li>float64 Cholesky misses the analytic χ² by over 10 %;</li><li>the three methods disagree;</li><li>the ridge moves χ² by over 90 %;</li><li>the χ² sits in the near-null mode.</li></ul> So item 5 exposes the artefact, not only ridge sensitivity. **The thresholds:** a diagonal M whose ridge response is known in closed form pins RIDGE (times the *mean* diagonal), UNSTABLE (2×10⁻³ flags, 5×10⁻⁴ does not) and the change's denominator. **Also:** an ill-conditioned removal is flagged; an indefinite M carries no χ²; the stdout line carries the flags and the dominant block; non-finite numbers become null and are counted; `modes_needed` by hand |
-| `PlantedDefects` (7) | One or more per item. The defect is patched into the tool's own function, and that item's validator is silent on the correct output and reports the defect: <ol><li>the spectrum ascending;</li><li>the per-mode χ² over √λ, and the mode count off by one;</li><li>shares not divided by λ;</li><li>the block added instead of removed;</li><li>no ridge, and the method comparison switched off, each leaving the near-singular artefact unflagged</li></ol> |
-| `EndToEnd` (3) | **As invoked** (`-I -B`, cwd outside nd-unfolding), after running Stage G itself on the tree. D0–D7 PASS, and `constants` are the declared values. For every prediction, both comparisons and **both units**: <ul><li>χ² equals Stage G's readout to 10⁻¹⁰, and the mode sum equals χ²;</li><li>λ equals the eigenvalues of M built by hand, and the condition number their ratio;</li><li>the cumulative fraction ends at 1;</li><li>3 top modes, each with the right block set (C_resp only where carried), shares summing to 1, loadings on the prediction's cells (GiBUU's 8) under the sign rule, and vᵀMv = σ²;</li><li>V_g removed is recomputed by hand, with its ndf and p, and the removal χ² agree between units;</li><li>each stdout line equals `summary_line`.</li></ul> **The sensitivity role** swaps which comparison is reported. No overwrite |
+| `Analytic` (9) | **The director's well-conditioned case:** M = Q diag(λ) Qᵀ from a known orthonormal Q, split 0.25/0.75 into two blocks, and d = Q a. The tool returns exactly: <ul><li>λ (descending), √λ and the condition number;</li><li>c_i = a_i²/λ_i in order, with the projections, fractions and cumulative fractions;</li><li>the modes for 50/90/99 % by hand;</li><li>the top-three choice, and each top mode's loadings equal to its known basis vector under the sign rule;</li><li>shares of 0.25/0.75;</li><li>χ² with each block removed equal to χ²/0.75 and χ²/0.25, with the ndf and condition number of what is left;</li><li>no flags.</li></ul> **Disjoint blocks:** each top mode's block owns it, with share 1. **The director's near-singular case:** λ_min = 10⁻¹⁹ with a 10⁻⁸ component of d along it. <ul><li>float64 Cholesky misses the analytic χ² by over 10 %;</li><li>the three methods disagree;</li><li>the ridge moves χ² by over 90 %;</li><li>the χ² sits in the near-null mode.</li></ul> So item 5 exposes the artefact, not only ridge sensitivity. **The thresholds:** a diagonal M whose ridge response is known in closed form pins RIDGE (times the *mean* diagonal), UNSTABLE (2×10⁻³ flags, 5×10⁻⁴ does not) and the change's denominator. **Also:** an ill-conditioned removal is flagged; an indefinite M carries no χ²; the stdout line carries the flags and the dominant block; non-finite numbers become null and are counted; `modes_needed` by hand |
+| `PlantedDefects` (8) | One or more per item. The defect is patched into the tool's own function, and that item's validator is silent on the correct output and reports the defect: <ol><li>the spectrum ascending;</li><li>the per-mode χ² over √λ, and the mode count off by one;</li><li>shares not divided by λ;</li><li>the block added instead of removed; and a p-value planted back into the removal record (amendment 1), which `check_no_p` reports;</li><li>no ridge, and the method comparison switched off, each leaving the near-singular artefact unflagged</li></ol> |
+| `EndToEnd` (3) | **As invoked** (`-I -B`, cwd outside nd-unfolding), after running Stage G itself on the tree. D0–D7 PASS, and `constants` are the declared values. For every prediction, both comparisons and **both units**: <ul><li>χ² equals Stage G's readout to 10⁻¹⁰, and the mode sum equals χ²;</li><li>λ equals the eigenvalues of M built by hand, and the condition number their ratio;</li><li>the cumulative fraction ends at 1;</li><li>3 top modes, each with the right block set (C_resp only where carried), shares summing to 1, loadings on the prediction's cells (GiBUU's 8) under the sign rule, and vᵀMv = σ²;</li><li>V_g removed is recomputed by hand, with its ndf, and no removal record carries a p (amendment 1), and the removal χ² agree between units;</li><li>each stdout line equals `summary_line`.</li></ul> **The sensitivity role** swaps which comparison is reported. No overwrite |
 | `Controls` (17) | D0 (2), D1 (1), D2 (7), D3 (1), D4 (1), D5 (3), D6 (1) and D7 (1). Each refuses with the named check, and nothing is written |
 | `Invocation` (2) | **The real script:** `--help`; a missing `--extra-block-role` exits 2; on the synthetic tree it reaches D0 and refuses there (the real pins), with no traceback and nothing written |
 | `CommittedPins` (2) | The Stage G readout pin is the committed file's, and its argv carries C_resp's digest, key, name and role `adopted`. Stage G's pins are carried unchanged. All 46 committed S1 blocks map onto exactly the seven groups, which are S1's committed `relative_sigma` groups. `cmodel_5d.json`'s vertices are the tool's |
 
 **Locally** (2026-10-26: Python 3.12.2, numpy 1.26.4, scipy 1.15.2), `python3 -B -m unittest test_fd_g_diag
-test_fd_g_compare test_s1_assemble test_s1_scripts_isolated` ran 89 tests, OK. The cluster run is reported in the PR.
+test_fd_g_compare test_s1_assemble test_s1_scripts_isolated` ran 90 tests, OK (amendment 1, was 89). The cluster run is reported in the PR.
 
 ## 7. For the director
 
@@ -264,8 +268,8 @@ test_fd_g_compare test_s1_assemble test_s1_scripts_isolated` ran 89 tests, OK. T
    into species is possible but undeclared here.
 5. **The removal χ² are not alternative results.** Removing a block changes the covariance, not the estimate. The
    label says so on every record.
-   - The p-values go beyond the request, which asked for "the χ² with each block removed". They are there because a
-     χ² without its ndf and p is easy to misread. Dropping them is a one-line change if the director prefers.
+   - *Amendment 1:* the p-values are dropped, by the director's ruling 5 below. χ², ndf and the condition number
+     remain.
 6. **The ridge's size is a choice.** The request says "a 10⁻¹⁰ ridge". It is applied as 10⁻¹⁰ times the mean diagonal
    of M, in each breakdown's units. A literal 10⁻¹⁰·I in relative units would be about 10³ times larger, and in
    absolute units negligible.
@@ -275,14 +279,32 @@ test_fd_g_compare test_s1_assemble test_s1_scripts_isolated` ran 89 tests, OK. T
    float64 methods differ by more than 10⁻⁸) is the direct artefact signal. Both are reported.
 8. **Item 1's "C"** is read as Stage G's comparison matrix M = C + V_g, the matrix whose inverse enters the χ².
 
+**The director's rulings on this section** (relayed 2026-10-26):
+1. **Units:** relative to f is the reading, and absolute is reported in full, as disclosed. The cells' rates differ
+   by large factors, so absolute modes are dominated by the highest-rate cells. The uncertainty model is built in
+   relative terms. A mode's relative σ is comparable with the per-cell σ of about 7 %. The report leads with relative
+   units and labels absolute as "the same χ² decomposed in absolute units (different modes)".
+2. **Shape-only is not decomposed,** accepted. The report states total − shape-only per prediction, as the
+   normalization's share.
+3. **S1's seven groups,** accepted, with their member blocks listed. Splitting a dominant group is a follow-up for
+   the director to decide, not part of this run.
+4. **C_resp as one block,** accepted, as adopted.
+5. **The removal p-values are dropped** (amendment 1). χ², ndf and the condition number are kept. A p on a matrix that
+   is not a reported uncertainty would be the first number a reader quotes, and the label beside it would not survive
+   that.
+6. **The ridge,** 10⁻¹⁰ × mean diag in each unit, accepted.
+7. **The flags,** accepted as defined. The report presents `methods_disagree` as the numerical-artefact signal and
+   `ridge_sensitive` as conditioning sensitivity, and does not call a ridge-sensitive χ² an artefact.
+8. **M = C + V_g,** accepted.
+
 ## 8. Pinned bytes
 
-Their sha256 at this declaration's commit:
+Their sha256 at this declaration's commit (re-pinned by amendment 1):
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_g_diag.py` | `85738098fde3ae26f4d7c5b46f35549957669b32f042c98d0e54db2624a266ef` |
-| `nd-unfolding/tests/test_fd_g_diag.py` | `010a4c0810bac6b1cac6fbfa6d954d0c7f1cae645898b40adefc70b7b29143a4` |
+| `nd-unfolding/fd_g_diag.py` | `7c1612806efd7ab5c3ae65be1f36944683e6f2cafdb42ba6b46c41825051fec3` (amendment 1; was `85738098…`) |
+| `nd-unfolding/tests/test_fd_g_diag.py` | `870564f5bf85c17b6e68212ab95663f6fd201969abc6d9f9d1b08261f368d525` (amendment 1; was `010a4c08…`) |
 | `nd-unfolding/fd_g_compare.py` | `0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f` (unchanged, Stage G's) |
 | `nd-unfolding/tests/test_fd_g_compare.py` | `b4d0ff2611bcc6226e215e57023002025682aebea49ec1f2c06f3c61a9d7d9a8` (unchanged) |
 | `nd-unfolding/s1_assemble.py` | `b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7` (unchanged) |
@@ -323,11 +345,30 @@ Two independent read-only reviews ran on the first draft:
 | A-m3 | D3 and D4 were copied code without tests | Tests added (B-M6) |
 | A-m4 | The absolute eigenvalues were missing | The absolute breakdown carries them |
 | A-m5, B-m | An indefinite M wrote NaN and Infinity | Written as null, counted, and `allow_nan=False` |
-| A-m6 | The removal p-values went beyond the request | §7 item 5 |
-| B-m | The sign rule, `share_sum`, the removal ndf and p, the stdout content, the group summation, and a missing `meta.blocks` (a traceback) | Each is tested; the group sum through a second interaction block in the fixture; a missing `meta.blocks` is now a D2 refusal |
+| A-m6 | The removal p-values went beyond the request | §7 item 5; dropped by amendment 1 |
+| B-m | The sign rule, `share_sum`, the removal ndf and p (p since dropped, amendment 1), the stdout content, the group summation, and a missing `meta.blocks` (a traceback) | Each is tested; the group sum through a second interaction block in the fixture; a missing `meta.blocks` is now a D2 refusal |
 | B-m | A removal that leaves a near-singular M − B was unflagged | `condition` and `ill_conditioned` per removal, tested |
 <!-- absence-ok: these rows restate the two reviews' findings on the uncommitted first draft of 2026-10-26 (each named mutation passed every test there); they describe that draft's coverage, now closed, not the absence of a result -->
 
 **After the fixes, 34 mutations covering B's survivors were run** in a mirror against a clean baseline. 33 are
 caught, each by the test written for it. The 34th sets `share_sum` to the constant 1. It is equivalent whenever the blocks partition M,
 and D6 refuses whenever they do not.
+
+## 12. Amendment 1 (2026-10-26): no p-value on a block-removed χ²
+
+**Why:** the director's ruling 5 on §7, quoted above.
+
+**What changed:**
+- **The tool:** `fd_g_diag.removal_record` builds each removal record with χ², ndf, the condition number,
+  `ill_conditioned` and the label, and no `p`.
+- **The tests:** `PlantedDefects.test_item_4_no_p_value_on_a_removal` checks:
+  - the removal record's exact key set;
+  - that `check_no_p` is silent on the tool's output;
+  - that `check_no_p` reports a p-value patched back into `removal_record`.
+
+  The validators that previously checked p now check the ndf and assert that there is no p.
+- **The counts:** G-DIAG has 41 tests, and the deploy expects "Ran 90 tests".
+- **§8** is re-pinned.
+
+**What did not change:** controls D0–D7, the statistics of items 1–3 and 5, the two units, the argv and the readout
+apart from the removed key.

@@ -114,12 +114,16 @@ def check_removed(out, chi2, split, cond):
     bad = [f"{r['removed']}: {r['chi2']} != {want[r['removed']]}" for r in out["removed"]
            if r["chi2"] is None or not np.isclose(r["chi2"], want[r["removed"]], rtol=1e-8)]
     for r in out["removed"]:
-        if r["chi2"] is not None and (r["ndf"] != 16 or not np.isclose(r["p"], G.chi2_sf(want[r["removed"]], 16),
-                                                                       rtol=1e-7)):
-            bad.append(f"{r['removed']}: ndf/p")
+        if r["chi2"] is not None and r["ndf"] != 16:
+            bad.append(f"{r['removed']}: ndf")
         if not np.isclose(r["condition"], cond, rtol=1e-6) or r["ill_conditioned"]:
             bad.append(f"{r['removed']}: condition {r['condition']}")
     return bad
+
+
+def check_no_p(out):
+    """Amendment 1: a block-removed record carries chi2, ndf and the condition number, and no p-value."""
+    return [f"{r['removed']}: carries p" for r in out["removed"] if "p" in r]
 
 
 def check_unstable(out, expect):
@@ -300,6 +304,18 @@ class PlantedDefects(unittest.TestCase):
         with mock.patch.object(D, "removed_chi2", lambda M, B, d: D.chol_chi2(M + B, d)):
             self.assertNotEqual(check_removed(run_breakdown(blocks, d), chi2, (0.25, 0.75), cond), [])
 
+    def test_item_4_no_p_value_on_a_removal(self):
+        """Amendment 1: a p-value planted back into the removal record is caught."""
+        Q, lam, a, M, blocks, d = analytic()
+        out = run_breakdown(blocks, d)
+        self.assertEqual(check_no_p(out), [])
+        self.assertEqual({k for r in out["removed"] for k in r},
+                         {"removed", "positive_definite", "chi2", "ndf", "condition", "ill_conditioned", "label"})
+        orig = D.removal_record
+        with mock.patch.object(D, "removal_record",
+                               lambda name, x2, cond, n: dict(orig(name, x2, cond, n), p=G.chi2_sf(x2, n))):
+            self.assertNotEqual(check_no_p(run_breakdown(blocks, d)), [])
+
     def test_item_5_no_ridge_hides_the_artefact(self):
         Q, lam, a, M, blocks, d = near_singular()
 
@@ -475,7 +491,8 @@ class EndToEnd(Base):
                     rv = next(x for x in b["removed"] if x["removed"] == "V_g")
                     Mv = M - np.diag(Vg * (sc / fi) ** 2)
                     self.assertAlmostEqual(rv["chi2"], float(dd @ np.linalg.solve(Mv, dd)), delta=1e-8 * rv["chi2"])
-                    self.assertEqual((rv["ndf"], rv["p"]), (n, G.chi2_sf(rv["chi2"], n)))
+                    self.assertEqual(rv["ndf"], n)
+                    self.assertEqual(check_no_p(b), [])
                 # the removal chi2 is unit-free; the two units agree on it
                 for x, y in zip(c["relative_to_f"]["removed"], c["absolute"]["removed"]):
                     self.assertAlmostEqual(x["chi2"], y["chi2"], delta=1e-8 * x["chi2"])
