@@ -1,0 +1,17 @@
+2026-10-26T23:11:36Z
+login09
+0f6568aba032e5d9a85f945048494d8fccde3525bb45a1762d6f5d5aaf15b77f  fd_g_sens2_readout.json
+3722a2085932ab4e748a57ce30fdc24d0a8ab02fe7589646f359e2aa7d8f8aa9  logs/deploy.log
+a2a76fe13a3720b8d0cdb305733c6df919820072428e486bddafb4a2d3da29ce  logs/deploy-tests.log
+76e8c67b48ca4c44793bce565765a227e73e373681ce0d077d5225499d3a9e20  logs/sens2-start.txt
+f4bdc688d8876ab862ea9d25e9db9bf45dfada635ced48f78f8e6ae364ad4d9b  logs/sens2.out
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  logs/sens2.err
+post-run 2026-10-26T23:11:36Z
+total 89
+drwxrwx---   5 josephrb josephrb   4096 Oct 26 16:11 .
+drwx------ 310 josephrb josephrb  69632 Oct 26 16:09 ..
+drwxrwx---   3 josephrb josephrb   4096 Oct 26 16:09 deploy
+-rw-rw----   1 josephrb josephrb 176661 Oct 26 16:11 fd_g_sens2_readout.json
+drwxrwx---   2 josephrb josephrb   4096 Oct 26 16:11 logs
+drwxrwx---   2 josephrb josephrb   4096 Oct 26 16:10 tmp
+571M	.
