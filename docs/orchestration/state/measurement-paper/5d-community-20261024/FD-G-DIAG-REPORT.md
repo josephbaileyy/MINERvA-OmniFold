@@ -9,7 +9,7 @@
 **MEASURES:** for each of Stage G's five comparisons, under the reported matrix C_total + C_resp + V_g and the variant
 C_total + V_g:
 - the eigenmode breakdown of Stage G's total χ²;
-- the block shares of its three largest modes;
+- the block shares of the three modes carrying the most χ²;
 - the χ² with each block removed in turn;
 - float64 stability.
 
@@ -30,7 +30,7 @@ C_total + V_g:
   - **The deploy:** "Ran 90 tests … OK".
   - **The breakdown:** it took about 1 s, and controls D0–D7 passed (22 lines).
 - **Stage G was reproduced.** D5 matched it exactly, with the worst relative difference 0.0. D7 found every
-  breakdown's own χ² equal to Stage G's committed total, to 1.3 × 10⁻¹⁴ at worst.
+  stable breakdown's own χ² (all of them, since none is unstable) equal to Stage G's committed total, to 1.3 × 10⁻¹⁴ at worst.
 - **The blocks rebuild M** to 3.7 × 10⁻¹⁶ (D6).
 - **No comparison, in either unit, is flagged.**
   - `methods_disagree`, the numerical-artefact signal: largest spread 4.2 × 10⁻¹⁴, against a threshold of 10⁻⁸.
@@ -51,7 +51,8 @@ All on 2026-10-26.
 
 - **The start time:** the deploy start, 12:29:20, is the local stamp when the script was sent (`d1-launch.txt`).
   `deploy.log`'s first stamp, 12:29:54, follows the clone.
-- **The scripts:** `d1.sh` is §2.1 verbatim, with a guard that refuses if `$B` exists. `d2.sh` is §2.2 verbatim, with
+- **The scripts:** `d1.sh` is §2.1 verbatim, with `set -u`, the variable definitions, a guard that refuses if `$B`
+  exists, an end stamp appended to `deploy.log`, and a closing `cat`/`grep`. `d2.sh` is §2.2 verbatim, with
   guards that refuse unless the deploy shows `tests rc=0` and if the readout exists, plus start and end stamps.
   Neither names a CFS path.
 - **`$B` after the run:** the deploy clone, `logs/`, `tmp/` and the readout, 569 MB in all (`post-run.txt`).
@@ -456,6 +457,11 @@ Each cell is relative to f / absolute.
 
 **The same χ² decomposed in absolute units (different modes):** chi2 360.79; modes 50/90/99 % 2/6/12; cond 1.51e+04; top modes: mode 12 33.4 % dominant interaction (0.56); mode 9 21.3 % dominant C_model:genie_mec (0.37); mode 8 15.2 % dominant interaction (0.54)
 
+**The absolute units in full.** Each comparison's complete absolute-unit breakdown is in the readout under
+`absolute`: the spectrum, every mode's χ², the top three modes' loadings and shares, the removals and the stability.
+The one-line summaries above are drawn from it. The removal χ² are unit-free and agree between the two units, to a
+largest relative difference of 3.0 × 10⁻¹⁴ over 115 pairs.
+
 ## 5. What is committed
 
 - **The readout:** [`fd/readout/fd_g_diag_readout.json`](fd/readout/fd_g_diag_readout.json), sha256 `680dc5ef…`.
@@ -472,8 +478,8 @@ Each cell is relative to f / absolute.
 - **Pre-binding receipts** (binding §3 item 6), in `fd/receipts-prebinding/` with its `SHA256SUMS`: the login37 test
   logs at `bbce3d77` (89 tests) and `91001a35` (90 tests). They are receipts of the tests only. The scratch clones
   behind them are removed after this report merges.
-- **The results index:** this branch's first commit adds the readout and the regenerated index, under the director's
-  standing ruling (a) of 2026-10-26. The PR body gives the scope.
+- **The results index:** unchanged. The readout is classed `excluded-no-metric` by `results_index.py --population`,
+  and `results_index.py --check` reports the index fresh and complete, so nothing is regenerated.
 
 ## Not changed
 
