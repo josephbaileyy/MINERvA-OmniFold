@@ -1,0 +1,8 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are a referee for the records document of a particle-physics analysis note. Each passage below gives a SOURCE (text from the analysis note, or a table row's record cells, LaTeX source, comments removed) and the new records ENTRY that copies it. The rule: the ENTRY must be a copy, not a paraphrase. It must carry every fact of the SOURCE, add no fact, condition or claim, and change no number, scope or status. Allowed differences: whitespace, a final period, the joining of two table cells with a colon, and the removal of a citation of the entry's own tag.
+
+For EACH passage answer in exactly this format:
+PASSAGE: <id>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact ENTRY words and what is wrong>

@@ -47,6 +47,12 @@ Inventory (base):                                    Probes (new):
                                                          posted note at THIN_BASE is still printed, or is a DROP
                                                          the ledger lists, and the ledger lists no drop of a
                                                          citation that is still printed
+                                                     P9 every App. G table row parses into cells; every tag
+                                                         the posted note cites has a full-width entry
+                                                         (\\item[\\texttt{<tag>}.], which the records number);
+                                                         and an entry whose tag's row has a record other than
+                                                         "see below" contains that row's record cell(s),
+                                                         normalized, so a repeated record cannot drift
 
 THE THINNING (DECISION-20261022-joseph-note-records-refs-and-stop.md item 1). The posted note keeps a records
 citation only where a reader needs the record to check a number or claim printed there; every other citation is
@@ -105,7 +111,7 @@ word change and a recorded number change (each must fire as more than pointer to
 and a recorded pointer insertion (each must fire as deleting or adding pointer tokens), a deleted paragraph with a
 row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). It also requires a row
 whose new digest is wrong only in its last hex digit to fail with both digests printed in full and different
-(R-EDIT messages print full digests). Exit 0 only if every plant
+(R-EDIT messages print full digests). For P9 it drifts a repeated record from its table row (P9 must fire). Exit 0 only if every plant
 behaves as named and the real pair is silent. The thinning plants
 need THIN_BASE from git, so the self-test runs in the canonical checkout.
 """
@@ -327,6 +333,68 @@ def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fa
     return accepted
 
 
+def _split_top(text: str, sep: str) -> list[str]:
+    """Split at `sep` outside braces, never at an escaped one (\\& or a \\\\ inside \\shortstack{...} stays)."""
+    out, depth, cur, k = [], 0, [], 0
+    while k < len(text):
+        ch = text[k]
+        if ch == "\\" and text.startswith(sep, k) and depth == 0 and sep == "\\\\":
+            out.append("".join(cur)); cur = []; k += 2; continue
+        if ch == "\\":  # an escaped character or a control sequence: copy it whole
+            cur.append(text[k:k + 2]); k += 2; continue
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+        elif ch == sep and depth == 0:
+            out.append("".join(cur)); cur = []; k += 1; continue
+        cur.append(ch); k += 1
+    out.append("".join(cur))
+    return out
+
+
+TABLE_ROW = re.compile(r"^\s*\\texttt\{([a-z0-9-]+)\}\s*&", re.M)
+ENTRY_LABEL = re.compile(r"\\item\[\\texttt\{([a-z0-9-]+)\}\.?\]")
+
+
+def table_records(prov: str) -> dict[str, list[str]]:
+    """tag -> the record cell(s) of its App. G table row (every cell after "Cited at"), normalized, printed text."""
+    out = {}
+    for table in re.findall(r"\\begin\{longtable\}(.*?)\\end\{longtable\}", printed(prov), re.S):
+        for row in _split_top(table.split("\\endlastfoot", 1)[-1], "\\\\"):
+            cells = [norm(c) for c in _split_top(row, "&")]
+            m = re.fullmatch(r"\\texttt\{([a-z0-9-]+)\}", cells[0]) if cells else None
+            if m and len(cells) >= 3:
+                out[m.group(1)] = [c for c in cells[2:] if c]
+    return out
+
+
+def full_width_entries(prov: str) -> dict[str, str]:
+    """tag -> the normalized printed text of its full-width entry (\\item[\\texttt{<tag>}.] to the next item)."""
+    parts = ENTRY_LABEL.split(norm(printed(prov)))
+    return {parts[i]: re.split(r"\\end\{description\}", parts[i + 1])[0] for i in range(1, len(parts) - 1, 2)}
+
+
+def repeat_fails(prov: str, cited: set[str]) -> tuple[list[str], int]:
+    """P9. (i) Every table row line parses; (ii) every tag the posted note cites has a full-width entry; (iii) an entry
+    whose row's record is not "see below" contains that record. Returns the failures and how many records (iii)
+    checked."""
+    rows, entries = table_records(prov), full_width_entries(prov)
+    fails = [f"P9 the App. G table row of {t} did not parse into cells" for t in TABLE_ROW.findall(printed(prov))
+             if t not in rows]
+    fails += [f"P9 the posted note cites tag {t}, which has no full-width App. G entry to number"
+              for t in sorted(cited - set(entries))]
+    checked = 0
+    for tag in sorted(set(rows) & set(entries)):
+        if any(c.lower() == "see below" for c in rows[tag]):
+            continue
+        checked += 1
+        for c in rows[tag]:
+            if c not in entries[tag]:
+                fails.append(f"P9 App. G entry {tag} does not contain its table row's record cell: {c[:80]!r}")
+    return fails, checked
+
+
 def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
                 head: dict[str, str] | None = None, info: dict | None = None) -> list[str]:
     """Every failure of P0-P8. `thin` is the citation inventory at THIN_BASE (None: P8 is skipped); `head` the records
@@ -441,6 +509,11 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
             elif drops[k] > gone:
                 fails.append(f"P8 {f}: the ledger lists {drops[k]} drop(s) of {key}, but only {gone} of the "
                              f"{thin[k]} citation(s) at THIN_BASE {THIN_BASE[:8]} are gone")
+    # P9 the App. G rows parse, every cited tag has a numbered entry, and a repeated record stays its row's
+    cited = {k[4:] for (_, k) in citation_keys(ntext) if k.startswith("tag:")}
+    p9, info["repeats"] = repeat_fails(rtext.get("app_provenance.tex", ""), cited)
+    info["cited_tags"] = len(cited)
+    fails += p9
     return fails
 
 
@@ -459,7 +532,8 @@ def report(inv: dict, fails: list[str], info: dict | None = None) -> str:
     return (f"RECORDS-MOVE :: {verdict(fails, info)} ({len(inv['labels'])} labels, {len(inv['tags'])} "
             f"tags, {len(inv['dead'])} struck bodies, {len(inv['repopaths'])} paths, {len(inv['record_paragraphs'])} "
             f"record and {len(inv['reader_paragraphs'])} reader paragraphs, {sum(inv['g_pointers'].values())} App. G "
-            f"pointers{thin}; {len(fails)} failure(s))")
+            f"pointers{thin}; P9: {info.get('cited_tags', 0)} cited tags with entries, {info.get('repeats', 0)} repeated "
+            f"records checked; {len(fails)} failure(s))")
 
 
 def probe(base: Path, new: Path, ledger: Path) -> int:
@@ -845,7 +919,10 @@ PLANTS = [
      "supports future work", "supports later work"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
      lambda p: p.write_text(p.read_text().replace(r"\texttt{joint-5d}", r"\texttt{joint-5e}")), None),
-    ("lost repository path", "P4 repository path", "app_provenance.tex", r"\repopath{", r"\texttt{"),
+    # Every copy of one path is lost: since n2 two paths print twice in App. G (a table row and the full-width entry
+    # that repeats it, P9), so losing only the first copy would leave the path in the records.
+    ("lost repository path", "P4 repository path", "app_provenance.tex", lambda p: p.write_text(
+        p.read_text().replace(_first_repopath(p), _first_repopath(p).replace("\\repopath{", "\\texttt{"))), None),
     ("G label left in the note", "P1 record label tab:prov-paths", "app_guide.tex", None,
      "\n\\label{tab:prov-paths}\n"),
     ("J label left in the note", "P1 record label app:history-errata", "app_guide.tex", None,
@@ -885,6 +962,19 @@ PLANTS = [
     ("kept citation moved within its file (C62)", "P7 ledger row L-thin-C62", "sec_systematics.tex",
      lambda p: p.write_text(_move_cite(p.read_text(), " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material)",
                                        "The dependence on the learner is in no block")), None),
+    # P9 (n2): a repeated record drifts from its table row
+    ("repeated record drifts from its row", "P9 App. G entry flux-index does not contain", "app_provenance.tex",
+     r"\texttt{KNOWN\_ISSUES.md} row 91: the flux-universe", r"\texttt{KNOWN\_ISSUES.md} row 92: the flux-universe"),
+    ("cited tag's entry deleted", "P9 the posted note cites tag flux-index, which has no full-width", "app_provenance.tex",
+     lambda p: p.write_text(re.sub(r"\n  \\item\[\\texttt\{flux-index\}\.\].*?(?=\n  \\item)", "", p.read_text(),
+                                   count=1, flags=re.S)), None),
+    # a row whose cell holds a line break (\shortstack{...\\...}) is still parsed and compared
+    ("record put into a row with a broken cell", "P9 App. G entry flux-repair does not contain", "app_provenance.tex",
+     "App.~\\ref{app:release-schema}, App.~\\ref{app:history}} &\n  see below \\\\",
+     "App.~\\ref{app:release-schema}, App.~\\ref{app:history}} &\n  a planted record \\\\"),
+    ("table row that no longer parses", "P9 the App. G table row of flux-index did not parse", "app_provenance.tex",
+     "the quoted universe block counts it once \\\\\n\\texttt{flux-index} &",
+     "the quoted universe block counts it once\n\\texttt{flux-index} &"),
     ("listed drop still printed", "P8 sec_systematics.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
      "\n| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |\n"),
     # R-EDIT (director ruling 2026-10-26), all on one record paragraph of app_history.tex. A callable ledger row is
@@ -914,6 +1004,11 @@ PLANTS = [
     ("R-EDIT row, paragraph unchanged", "P5 R-EDIT row R-EDIT-90: stale", LEDGER, None, "",
      lambda inv: _redit_row(inv, _R_POINTER)),
 ]
+
+
+def _first_repopath(path: Path) -> str:
+    """The first \\repopath{...} of `path`, in full (a plant removes every copy of it)."""
+    return re.search(r"\\repopath\{[^}]*\}", path.read_text()).group(0)
 
 
 def _move_cite(text: str, cite: str, sentence: str) -> str:
