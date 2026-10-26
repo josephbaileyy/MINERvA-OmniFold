@@ -335,6 +335,17 @@ Each option changes numbers or claims, so it needs its own decision. Some also n
 | Seed dependence resting on one seed pair (paper item 5) | P1: training randomness assigned through ensembles until "negligible relative to the systematic and statistical uncertainties" | a seed ensemble: compute |
 | Statistical undercoverage at the tested truths (4 / 12) | N1: simulated-data studies turned into an added smearing of the result | a decision on whether and how to scale the band; any choice needs its own coverage test |
 
+**Correction (2026-10-25), row 2's "comparator practice" cell.** The cell reads "non-closure assigned as an
+uncertainty (P4, P6 pattern)", and that is not supported.
+- U-PLAN searched the comparator texts (`state/measurement-scoping/assigned-uncertainties/U-PLAN.md`, PR #367, table
+  T1, with its Search line). No comparator assigns a background-subtraction non-closure as an uncertainty.
+  - P2 calls the background small.
+  - P6 says its existing parameters cover the bias in background subtraction.
+  - P1, P4, P5 and N1 assign none.
+- What P4 and P6 assign is a model-dependence term, which is row 1's pattern.
+- **No rule in §5 rests on this cell.** R-P1 to R-P9 and R-N1 to R-N7 are drawn from §3 and §4.
+- The cell is left as published, with this note. Row 2 stays an option for Joseph, but without a comparator pattern.
+
 ## 7. A defect found by the coding
 
 - **Where:** the note, `sec_method.tex:73-74` (built text §3.1).
