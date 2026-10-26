@@ -62,7 +62,7 @@ The paper rewrite lane listed them, reading the code (2026-10-26).
    - `results_index.py --write` ran twice, with staging between.
    - **Rule 7's citation granularity for prose is now a paragraph.** Its self-test planted a wrong-estimator case on
      the paper-label line, which is now a paragraph that also names configuration (e), so the case could not fail. The
-     fixture now uses the paper-table line, which names configuration (a) alone, and fails as before.
+     fixture now uses the paper-table line, which names configuration (a) alone, and fails as before. The same case in CI's registry fixture suite (`tools/registry/test_registry.py`, which is over the hook's time budget) was moved the same way. CI caught it on the first push, and the suite gives 28 tests OK.
 2. **`check_note_records.py`.** Two self-test plants anchored on a newline, `"\n(Ref.~\cite{NoteRecords2026}, superseded
    values)."`. Both now anchor on its space form. probe PASS, `--self-test` 35 of 35 and 3 of 3, pin PASS,
    `--self-test-pin` 11 of 11, and `entry-numbers --check` PASS.
