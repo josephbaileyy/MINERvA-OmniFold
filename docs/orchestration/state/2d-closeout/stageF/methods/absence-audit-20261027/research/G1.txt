@@ -1,0 +1,116 @@
+# G1: grandfathered absence claims, audit (read-only)
+
+Tree: `WT` = `scratchpad/wt-gac` at `0d919b1a` (clean before and after; `git status --short` empty).
+All `file:line` below are at `0d919b1a` unless another sha is given.
+`whatis.py` was tried on `139.57`, `S1`, `Q_R`, `full-event`, `VL170` and `unified-throw`. All are UNRESOLVED,
+because the registry indexes only the GBDT estimator configurations (a)-(e). It does not apply to these
+objects, so the searches below were done by hand.
+
+Verdict summary: **one FALSE** (app_history.tex:252, the PSD sentence) and **one UNCERTAIN** (the same
+paragraph, "no substitution is available"). Every other assertion is TRUE as scoped, or SCOPING.
+
+---
+
+## 1. `docs/analysis-note/app_cstat.tex:28` (the PET full-event C_stat, 50 replicas, three streams)
+
+Assertions:
+- A1 "Their different weights require propagation weights for a variance decomposition, **which has not been computed**." ABSENCE.
+- A2 "The stream set is known; **its decomposition is unavailable**." ABSENCE (the same object as A1).
+- A3 "the total is not data-statistical". SCOPING: it says what the object is (DETERMINATION-20260817 rules it is total statistics by specification).
+- A4 "the floors describe resampling inputs without dividing the observed band or making it field-comparable". SCOPING: it limits what the 1/sqrt(N) fractions mean.
+
+Verdict A1/A2: **TRUE.**
+- `docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md:101-102`: "The correction to the denominator's SET is certain; its VALUE requires the propagation weights and this is not that calculation."
+- `docs/OPEN_ITEMS.md:201` (OI-94, OPEN) carries the same limit. Its only measured decomposition is family spread into a GPU non-determinism floor (VL130) plus a residual. That is not a split by stream.
+- The only route to a per-stream piece is the data-only family C_stat^data (`nd-unfolding/pet/sbatch_gate5_data_only_train_array.sh`, job name `g5dotrain`). It never produced a product. `docs/orchestration/RUNS.tsv:324,338-340` lists jobs 57194055, 57253127, 57256638 and 57266000, all with FAILED states. The committed sacct snapshots (`state/preflight-20260906-r5/*.psv`, window 2026-07-01 to 2026-09-06) hold 86 `g5dotrain` rows, all FAILED, and none COMPLETED. `KNOWN_ISSUES.md:46` (KI 55, 2026-09-23) also cites "3 real data-only failures".
+- In the note: the data-stream-alone split at `app_history.tex:202` belongs to the **2D GBDT VL170** band, a different estimator. The `app_cstat.tex` text and the PET files (`app_history_pet.tex`, `sec_pet*.tex`, `pet_note.tex`) contain no stream decomposition.
+- Searched for: "propagation weight", "variance decomposition", "stream decomposition", "per-stream variance", "stream share", "variance share"; data-only/C_stat^data/g5dotrain/cstat_data_only_n50; OI-94; `git log --all --since=2026-08-21 --grep 'data-only|cstat|g5do'`; `git log -S` on the sentence (it first appears in 76e8d90e, 2026-10-04).
+- Limit: the cluster-side record after 2026-09-06 is not in the repository. Nothing committed after that date mentions a data-only rerun.
+
+Proposed line:
+`% Search: PET full-event C_stat stream variance decomposition; propagation weights; per-stream variance share; C_stat^data data-only family (g5dotrain); OI-94; DETERMINATION-20260817 (none computed: DETERMINATION-20260817:101-102 and OI-94 say its value needs propagation weights; every recorded g5dotrain task FAILED; app_history.tex:202's data-stream split is the 2D VL170 band) @ 0d919b1a`
+
+---
+
+## 2. `docs/analysis-note/app_history.tex:172` ("Superseded 2026-10-05 by the fixed-truth test (VL169)")
+
+Assertions, all quoted in reported speech as wording the note carried before 2026-10-05:
+- "no 2D coverage number is quoted"; "remains open and requires an independently stored unfluctuated truth reference or a redesigned ensemble"; "No 2D coverage number is quoted"; "the existing 2D toys provide no independent-truth coverage test"; "The 2D toy ensemble provides no independent-truth coverage test"; "this analysis does not have"; "its coverage is untested"; "has not yet been tested".
+
+Class: **SCOPING** (a historical record of superseded wording). The paragraph asserts no current absence. Its live statement is a positive one ("the statistical band undercovers in its tails").
+
+The attribution was still checked, and it is **TRUE**. Every quote is present in the parent of the superseding commit `31e92299` (2026-10-05, "[docs] 2D coverage: the statistical band undercovers a fixed truth"):
+- `31e92299^:sec_execsummary.tex:78` "No 2D coverage number is quoted"
+- `31e92299^:sec_validation.tex:94-95` "Coverage testing remains open and requires an independently stored unfluctuated truth reference or a redesigned ensemble."
+- `31e92299^:sec_summary.tex:11` "the existing 2D toys provide no independent-truth" (wrapped)
+- `31e92299^:app_statmethods.tex:535-536` "The 2D toy ensemble provides no independent-truth coverage test"; `:719` "this analysis does not have"
+- `31e92299^:paper_body.tex:61` "its coverage is untested"
+- `31e92299^:primer_body.tex:151-152` "whether they contain the truth as often as stated has not yet been tested"
+
+None of these strings survives in the current printed `.tex` (`git grep` for independent-truth / "No 2D coverage" / "has not yet been tested" / "redesigned ensemble" hits only this paragraph, plus `sec_5d.tex:214`, which is about a different, 5D test). The VL id is right: that commit message says "VL164", but `VALIDATION_LEDGER.md:100-101` records the renumbering ("earlier commits called this row VL164, then VL168"), and VL169 is at `:105`.
+
+Proposed line:
+`% absence-ok: historical record of superseded pre-2026-10-05 wording; each quote verified in 31e92299^ (sec_execsummary.tex:78, sec_validation.tex:94-95, sec_summary.tex:11, app_statmethods.tex:535-536,719, paper_body.tex:61, primer_body.tex:152); it asserts no current absence`
+
+---
+
+## 3. `docs/analysis-note/app_history.tex:252` (the superseded 5D candidate unified-throw constructions)
+
+The objects are the pre-J28, background-aware, mean-centered and CV-centered adopted unified-throw covariances (sqrt-trace 5.8077e-38 and 6.2367e-38, formerly `\gbdtFiveAdoptTrace` and `\gbdtFiveCVTrace`). They were built by job `55912230` (`fin5dBKG`, `sbatch_finalize_5d_bkgaware_gpu.sh`, 2026-07-14) from the pre-J28 `unified_throw_cov_5d.root` (`VALIDATION_LEDGER.md:1240`; `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:712`).
+
+Assertions:
+- B1 "**No magnitude from either construction is quoted here.**" SCOPING (an editorial statement about this text). It is consistent: the struck-values table prints the magnitudes only as `\dead{}` strikeouts with "Not quoted" (`app_history.tex:63-66`).
+- B2 "the corrected J28 products are footed on the non-background-aware configuration --- **so no substitution is available**". ABSENCE. Verdict: **UNCERTAIN, and its stated premise is contradicted.**
+  - The premise was true of the J28 adoption `56429334` (2026-08-07: 5.2600e-38 / 5.6609e-38, non-bkgaware footing; `VALIDATION_LEDGER.md:1226-1240`).
+  - It stopped being the whole truth on 2026-08-11. Job `56693207` produced **J28-throw, background-aware-footed** mean-centered and CV-centered arms: `VALIDATION_LEDGER.md:478` "| VL16 | **A1** bkgaware, mean-centered | bkgaware | ... | **5.2696e-38**" and `:479` "| VL17 | **A2** bkgaware, CV-centered | ... | **5.6743e-38**". `:500` "| VL21 | **J28 throws** | 5.259971e-38 | **5.2696e-38**" confirms they use J28 throws. The ledger calls this "the footing-matched *candidate*" (`:465-466`).
+  - The same paragraph names VL16/VL17 as "the successor background-aware products". The paragraph was written 2026-08-23 (`95d03169`), after VL16/VL17.
+  - If "substitution" means an **authorized or quotable** replacement, the clause is TRUE. Nothing was adopted: `VALIDATION_LEDGER.md:464` "NOTHING IS ADOPTED"; `AGENTS.md:33` "none of them is a publication uncertainty product". If it means **a footing-matched J28 number exists**, it is FALSE (VL16/VL17).
+  - The paragraph's author or the director would settle this by saying which reading is meant. Joseph decides any rewording.
+- B3 "**Neither is adopted for publication**". ABSENCE of adoption. **TRUE.** `AGENTS.md:33` (QUARANTINED, "none of them is a publication uncertainty product"). The adopted scalar-5D covariance is a different object: `VALIDATION_LEDGER.md:273` VL142 `z-cv.npz`, and VL143 is its (E_avail,W) projection at `:274`.
+- B4 "**No positive-semidefiniteness measurement exists for either**: VL16 and VL17 record that property for the successor background-aware products only". ABSENCE [no-X-exists]. Verdict: **FALSE.**
+  - `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:731` (job 55912230, 2026-07-14 14:02 PDT): "MEAN adopt DONE: bkgaware adopted mean sqrt-tr= 5.8077e-38 ... PSD OK (min eig -5.8e-91, machine noise)".
+  - Same file, `:735` "finalize 55912230 COMPLETED, all 3 outputs, BOTH PSD OK", and `:740-741`: "Adopted MEAN 5.80e-38 -> 5.8077e-38 (x1.333, ~0%) PSD OK (min eig/max -2.4e-16)" / "Adopted CV(F7) 6.23e-38 -> 6.2367e-38 (x1.431, ~0%) PSD OK (min eig/max -4.1e-16)". These lines were added in `07c18aee` (2026-07-14).
+  - The producer ran the check fail-closed: `nd-unfolding/adopt_unified_5d.py:150` `ev = np.linalg.eigvalsh(C_new)`, `:162-165` print the min eigenvalue and raise "[FAIL] adopted covariance is not PSD" if it fails. The check is also present at `07c18aee^` and `07c18aee`.
+  - Corroboration: `VALIDATION_LEDGER.md:1401` "The candidate mean-centered covariance is PSD with sqrt-trace **5.8077e-38**" and `:1405` "CV-centered PSD variant, sqrt-trace **6.2367e-38**".
+  - Likely origin of the error: `docs/orchestration/PROCEDURE-gbdtFive-macro-update.md:87` says PSD "must be re-established from the **new** products; it does not survive by inheritance". The note sentence seems to have turned that around, so that the old products have no measurement.
+  - Caveat: the record is a transcribed run log. The raw stream `fin5dBKG_55912230.out` is on the cluster only (it is cited at `DESIGN-20260911-endpoint-B-generator-comparison-test.md:277`), so this is not receipt-grade evidence. Even so, a measurement exists and is recorded.
+- Searched for: `git grep` PSD/semidefinit/eig in VALIDATION_LEDGER; 5.8077/6.2367/5.81e-38/6.24e-38 combined with PSD/eig; `55912230`; `adopt_unified_5d.py` eigvalsh; VL16-VL22 table; `git log --all -S "transfer by inheritance"` / `"semidefiniteness measurement exists"` (both first appear in 95d03169, 2026-08-23); `PROCEDURE-gbdtFive-macro-update.md`.
+
+Proposed line. It records the finding and **should not be committed while B4 stands as printed**; the claim goes to the director and Joseph:
+`% Search: pre-J28 bkgaware unified-throw adopt mean/CV PSD; fin5dBKG 55912230; adopt_unified_5d.py eigvalsh; VL16; VL17; VL21; footing re-adoption 56693207; gbdtFiveAdoptTrace; gbdtFiveCVTrace (PSD MEASURED for both, CORRECTED_UQ_PRODUCTION_STATUS.md:731,740-741, min eig/max -2.4e-16 and -4.1e-16, so "No positive-semidefiniteness measurement exists" is FALSE; VL16/VL17 are J28 bkgaware-footed candidates, not adopted, AGENTS.md:33) @ 0d919b1a`
+
+---
+
+## 4. `docs/analysis-note/app_statmethods.tex:634` (standing assumption on the 2D C^stat)
+
+Assertions:
+- C1 "it **does not certify** C^stat at the half-percent level". SCOPING: it says what a test certifies.
+- C2 "the rebuilt band **has not been independently re-tested**". ABSENCE. **TRUE as scoped** ("independently" carries the meaning).
+  - The rebuilt band (VL170) was only **rescored post hoc on the same 100 VL169 toys**. The note says so itself: `sec_validation.tex:162` "The rebuilt band was only rescored post hoc (below)" and `:171` "The rescoring is post hoc and partly circular".
+  - `KNOWN_ISSUES.md:74` (KI 84): "the VL169 coverage result is for the superseded band and has not been re-tested; a re-test needs its own pre-registration with non-circular MC".
+  - The 2026-10-07 bootstrap-on-one-toy diagnostic (KI 85) is "neither an independent-population coverage test nor a calibration" (`sec_validation.tex:173`).
+- C3 "The statistical block quoted here is a different ensemble and **has not been tested either**". ABSENCE. **TRUE.**
+  - `KNOWN_ISSUES.md:75` (KI 85, re-scoped 2026-10-18): "S1 has not been coverage-tested ... The held-out re-test remains deferred until after the publication package and is not pre-registered."
+  - `docs/orchestration/state/measurement-scoping/SCOPING.md:77` (merged with d8678304, 2026-10-23): "The band now quoted (S1, seed 42) is **untested**; so are VL170, systematic and total coverage".
+  - The N2 harness is unlaunched: `2d-unfolding/uq/coverage_fixed_truth/n2/README.md:1-4` "Nothing here has run an experiment ... N2 is **not admitted**".
+  - `sec_validation.tex` already carries a Search line for the same claim: "% Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10".
+- Searched for: `git log --all --since=2026-10-06 --grep 'coverage|held-out|fixed-truth|KI 85|re-test'` (nothing after 10-06 tests VL170 or S1; `b192f267` ratefail and `ki98-wbias-test` concern 5D statistical intervals, KI 98); `git log d8678304..0d919b1a` (the "S1" hits there are the 5d-community stage S1, an unrelated name); stageC production REPORT (its "coverage" hits are a scheduler-ledger guard).
+
+Proposed line:
+`% Search: fixed-truth coverage; VL169; VL170 re-test; S1 coverage; KNOWN_ISSUES 84; KNOWN_ISSUES 85; held-out-MC re-test; N2 harness (only VL169 on the VL162 band and the post hoc, partly circular VL170 rescoring, sec_validation.tex:162,171; KI 85 "S1 has not been coverage-tested"; N2 unlaunched; SCOPING.md:77; "does not certify" is scope) @ 0d919b1a`
+
+---
+
+## 5. `docs/analysis-note/sec_3d.tex:42` (the charged-pion 135 MeV constant)
+
+Assertions:
+- D1 "This effect **has not been assessed** against the projection of the five-dimensional covariance used in this note". ABSENCE. **TRUE.**
+  - `docs/EAVAIL_DEFINITION.md:117-118`: "The single step that would close it is projecting the adopted covariance onto the E_avail marginal **retaining off-diagonals**, and comparing +1.049% against that. It has not been done."
+  - The only comparison is the diagonal median-per-bin bracket `[7.7%, 297%]` against 13.69% (`EAVAIL_DEFINITION.md:103-115`, "consistent with immaterial; not proven immaterial"). It is not a projection.
+  - `docs/orchestration/USER-DECISIONS.md:24` UD-002 is NEEDS JOSEPH: "Finish the covariance-projected materiality comparison, then choose". `docs/OPEN_ITEMS.md:159` OI-30 is OPEN.
+  - The paragraph's existing comment already cites `EAVAIL_DEFINITION.md:118`.
+- D2 "so its materiality **is not established**". This follows from D1 and is TRUE for the same reason.
+- Searched for: `git grep` 139.57 / mass_pion / "pion mass" / 135 MeV / materiality+pion; 1.049 / 4.827 / 439/65,911 (hits are only the definition records and the note, plus unrelated numeric files); `git log --all -G '139\.57'` and `--grep 'pion mass|135 MeV|OI-30|UD-002|mass_pion'` (no commit computes a covariance-projected comparison); the VL143 publication projection (`VALIDATION_LEDGER.md:274`) has no pion-constant comparison.
+
+Proposed line:
+`% Search: 135 MeV; 139.57; mass_pion; pion mass; OI-30; UD-002; materiality; covariance projection vs +1.049% (not done: EAVAIL_DEFINITION.md:117-118 "It has not been done"; only the diagonal bracket [7.7%,297%] at :103-115; UD-002 NEEDS JOSEPH) @ 0d919b1a`

@@ -1,0 +1,7 @@
+=== PASSAGE A-3 (primer_body.tex) ===
+BEFORE:
+The main cause of the shortfall was found and removed, and the statistical bars now quoted were built again, at the same learner settings as the central value.
+
+AFTER:
+Part of the shortfall was traced to one ingredient of those bars, and they were rebuilt without it. The statistical bars now quoted are a separate set, built at the same learner settings as the central value. 
+

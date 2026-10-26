@@ -1,0 +1,105 @@
+# G4: grandfathered absence claims (sec_pet_campaigns.tex x4, sec_systematics.tex x1)
+
+All paths are relative to `WT` = `S/wt-gac`, at main `0d919b1a`. I ran only read-only commands: `sed`, `grep`, `git grep`, `git log --all`, `ls`.
+`tools/registry/whatis.py` has no PET aliases. `whatis.py "improvement coverage"` returns UNRESOLVED, and `--list` shows only s5p/2D aliases. So all searches were manual.
+
+---
+
+## 1. docs/analysis-note/sec_pet_campaigns.tex:31 [has-not-been-run]
+
+Context: the predecessor PET improvement study, cited as `PETImprovement2026` = `nd-unfolding/pet/improvement_campaign/confirm/CONFIRM_RESULTS.md`.
+
+| # | assertion (quoted) | class | verdict | evidence |
+|---|---|---|---|---|
+| a | "Coverage was not run" | ABSENCE | **TRUE** | `improvement_campaign/confirm/CONFIRM_RESULTS.md:23` "Coverage: **not run — no candidate qualifies**". `:97` "No frozen candidate at K* qualifies; coverage is not run." `HANDOFF-pet-improvement-campaign.md:35-37` (campaign complete 2026-09-25, "coverage **not run**"; "Nothing further runs without a new decision by Joseph"). `README.md:20`. No coverage results dir exists: `confirm/results/` has only audit_locks, confirm_results.json, final, pilot, rescore-final, stress, cpucheck, v1-infra. `git log --all -- nd-unfolding/pet/improvement_campaign`: the last science commit is `9368ec9e` (2026-09-25, handoff). The later commits `f39e699f` and `db85953f` are final-design code and integration ("no science changed"). The later final-design coverage (s5c_a5_H2S1T24) belongs to a different design (H2S1T24), so it does not contradict this. |
+| b | "no frozen candidate at $K^*=10$ met both adequacy and the stress requirement" | ABSENCE (a recorded negative outcome) | **TRUE** | `CONFIRM_RESULTS.md:91-95`: A fails clause 1; B and C fail clause 2 (D4d; D4c+D4d). |
+| c | "It was not retrospectively promoted" (C at k=3) | ABSENCE (of an amendment or decision) | **TRUE** | `CONFIRM_RESULTS.md:103-105` "it does not qualify retroactively and would need a new predeclared amendment". `HANDOFF-pet-improvement-campaign.md:42` lists coverage for C at k=3 as "Open, prospective only". There is no later amendment: `git log --all -G'C@3\|C at k ?= ?3' -- nd-unfolding/pet` shows only 2026-09-24/25 improvement commits and final-design protocol/dev commits, and none of them promotes C@3. |
+| d | "The combined detector-scale-plus-tilt case had no matching identifiability test or unscaled control on the same draws" | ABSENCE (x2) | **TRUE** | Identifiability: `CONFIRM_RESULTS.md:81-83` (R1 x1.05 + D1 +0.35 "was **not measured** by E1 … identifiability unmeasured"). Unscaled control: `confirm/runs/stress.tsv` column 5 has exactly six cases, `D1_m0.350, D2_bump_c0.3, D4c_p_up, D4d_n_up, D5_nuwro, R1_x1.05+D1_p0.350`, 6 rows each. There is no D1 +0.35 alone. `REVIEW_DISPOSITION-ROUND2-20260925.md:56,58` (reviewer findings 6 and 8, confirmed: "no combined entry"; "no D1 +0.35 alone"). `HANDOFF…:43-44` lists both as prospective items. |
+| e | "The review left the PET failure mechanism unestablished" | SCOPING (states what the study established) | TRUE | `CONFIRM_RESULTS.md:99-100` "the mechanism on the PET path is **not established** for C or for B". |
+
+Proposed comment:
+
+`% Search: improvement-campaign coverage runs/results; confirm/results; C@3 amendment or promotion; R1+D1 E1 identifiability; D1 +0.35 alone in confirm/runs/stress.tsv; git log --all -- nd-unfolding/pet/improvement_campaign (none found: CONFIRM_RESULTS.md:23,81-83,97,103-105; stress.tsv has no D1_p0.350-only case; REVIEW_DISPOSITION-ROUND2-20260925.md:56,58; HANDOFF:42-44 lists all as prospective) @ 0d919b1a`
+
+---
+
+## 2. docs/analysis-note/sec_pet_campaigns.tex:60 [never-measured]
+
+Context: the final-design coverage stage, cited as `PETFinalDesign2026` = `nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md`.
+
+| # | assertion (quoted) | class | verdict | evidence |
+|---|---|---|---|---|
+| a | "it is not uniform conservatism" | SCOPING (characterizes a measured result) | TRUE | `DECISION_RECORD…:47` "By region the procedure is not uniformly conservative … low-acceptance region **under-covers** (… against the population target 0.250 / 0.787)". The FB population target gives "the same" over-coverage. |
+| b | "The proton-topology coverage stage C5 was skipped after the decisive failure" | ABSENCE | **TRUE** (as scoped) | `DECISION_RECORD…:48` "**C5 skipped** after the decisive C1–C4 FAIL; the D4c-up coverage members (24 started, none complete, none scored) were stopped". Note: 24 members were *started*, but none completed or was scored. So "skipped" holds for the measurement. Only `runs/s5d_a5_H2S1T24.tsv` (blinded, unscored) exists. `gbdt_comparison/REPORT-20261005.md:83` "D4c coverage members `s5d` … not read". |
+| c | "L128S1T24 coverage was never measured" | ABSENCE | **TRUE** | `DECISION_RECORD…:48` "L128S1T24 K4's coverage is **not assessed**". `ls final_design/runs` has only `s5c_a5_H2S1T24.tsv` and `s5d_a5_H2S1T24.tsv` (no L128 coverage run list). `results/final/coverage_dev/` has only `coverage_H2S1T24K5.json` plus spec/decision/evidence. `git log --all -G'coverage.*L128\|L128.*coverage'` gives only note/doc and pet-gbdt commits. The note's own table (`sec_pet_campaigns.tex:76` "coverage unmeasured") agrees. |
+| d | "Neither failure proves that the point estimator is unusable." | SCOPING | n/a | Mirrors the record's NOT CITABLE FOR (`DECISION_RECORD…:49`). |
+| e | "No repair or reserve-bank revalidation forms part of these completed results." | ABSENCE (scoped to "these completed results") | **TRUE** | `DECISION_RECORD…:50` "**Not run (owner decision):** the §11 failed-final repair (… re-validate on RB) … Not started". `git grep -i "reserve.bank\|unseal\|RB coverage"` finds only refusal guards (`analysis/score_design.py:168`, `runner/design_inputs.py:101,147`, `gbdt_comparison/pgc_run_fb.py:83`) and "RB sealed" (`next-preparation-20261009/pet/REPORT.md:221`). `git log --all --since=2026-10-08` on PET finds only the saved-output diagnosis (2026-10-09) and the note split (2026-10-12), with no repair. |
+
+Proposed comment:
+
+`% Search: C5 / s5d D4c-up coverage; L128S1T24 coverage runs (final_design/runs, results/final/coverage_dev); §11 repair; reserve bank RB revalidation/unseal; git log --all PET since 2026-10-05 (C5 stopped with 24 started, none complete or scored, and no L128 coverage: DECISION_RECORD-pet-final-design.md:48; repair/RB not run: :50; only RB refusal guards exist) @ 0d919b1a`
+
+---
+
+## 3. docs/analysis-note/sec_pet_campaigns.tex:64 [untested]
+
+Context: the saved-output interval diagnosis, cited as `PETIntervalDiagnosis2026` = `docs/orchestration/state/next-preparation-20261009/pet/REPORT.md`.
+
+| # | assertion (quoted) | class | verdict | evidence |
+|---|---|---|---|---|
+| a | "not a validated replacement interval" | SCOPING | n/a | This is what the diagnostic is. |
+| b | "The Poisson--training interaction and training variance in the Poisson-weighted regime are unidentified" | ABSENCE (not identified by the saved design) | **TRUE** | `next-preparation-20261009/pet/REPORT.md:214-215` (σ_T² "two values about 2× apart; INCONCLUSIVE"; "σ_P² and the P × T interaction … INCONCLUSIVE: no seed × weight crossing"). `:32` the pilot's seed-repeat arm "would identify the Poisson-regime σ_T² and the P×T term, which the saved design cannot". `:530` "P × T is unidentified". The pilot and E1 were not launched: `:281` "(not launched)". There are no PET commits after `d9a460c6` (2026-10-09) other than the note split (`git log --all --since=2026-10-08 -- nd-unfolding/pet docs/orchestration/state/next-preparation-20261009/pet`). |
+| c | "member-mean coverage on generator cases and at data scale is unmeasured" | ABSENCE | **TRUE** | `REPORT.md:205` "The member-mean bias on these cases is not measured". `:217` bias in other cases: "member-mean bias and intervals **INCONCLUSIVE**". `:218` "Coverage outside the development tilt | D4c stopped incomplete | **not measured**". `:219` "Anything at data scale | — | **not measured**". |
+| d | "neither establishes a universal failure mechanism nor changes the terminal verdict" | SCOPING | n/a | |
+
+(The quoted 55.4/89.6 and 8.2/31.2 values match `REPORT.md:23,165,496`. These are not absence claims; I checked them in passing.)
+
+Proposed comment:
+
+`% Search: σ_T² and P×T in the Poisson-weighted regime; seed-repeat pilot / E1 launch; member-mean coverage or bias on generator cases (D5) and at data scale; PET commits after 2026-10-09 (unidentified/not measured: next-preparation-20261009/pet/REPORT.md:205,214-219,281,530; no later PET run) @ 0d919b1a`
+
+---
+
+## 4. docs/analysis-note/sec_pet_campaigns.tex:112 [untested]  <- needs attention
+
+Context: the generator diagnosis, cited as `PETGeneratorDiagnosis2026` = `nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md`.
+
+| # | assertion (quoted) | class | verdict | evidence |
+|---|---|---|---|---|
+| a | "omitting the reconstructed muon is therefore not the explanation" | SCOPING (an exclusion argued from the input inventory) | TRUE | `generator_diagnosis/REPORT-20261006.md:61-64`. |
+| b | "The effect of omitting scalar true $\Eavail$ and $q_3$ from PET's truth inputs remains untested." | ABSENCE | **FALSE as printed (unscoped); TRUE only as scoped to this diagnosis (the finalists on the generator-model cases)** | The source scopes it: `REPORT-20261006.md:65-67` "Their effect on the extrapolation is untested **here**". `REVIEW_DISPOSITION-20261006.md:15` (finding 1) is where the scoping came from. The printed sentence drops "here", and earlier PET studies **did** test adding true E_avail and q3 to the truth step. (1) `nd-unfolding/pet/improvement_campaign/REPORT-20260922.md:181`: "\| C3 + true `E_avail`, `q3` at step 2 \| 0.384 \| 0.544 \| +0.015 \| +0.019 \|" (full unfoldings, dev tilt, carry-misses; also `phase_b/pet/PET_DIAGNOSTICS-20260922.md:245,252,261` "Truth globals at step 2 add ~0.02"). (2) `nd-unfolding/pet/final_design/DIAGNOSTICS-20260925.md:105`: "\| one-hot + true `E_avail`, `q3` \| D4c \| 0.87 / 0.89 \| 0.88 \| 0.88 / 0.86 \| 0.87 \| 0.78 \|". This test includes the missed-event extrapolation (job 58880466, `:92-96`). `:118-120`: "Explicit truncated-cloud counts or true `E_avail`/`q3` add nothing resolvable over the one-hot encoding at this effort." (3) Also `improvement_campaign/REPORT-20260922.md:132-133`: the truth PET learns the tilt to "0.973 with true `E_avail`/`q3` as globals". What remains untested is their effect on the generator-model cases (NuWro, NuWro′, GiBUU) for the finalists. No PET training was authorized there (`REPORT-20261006.md:83-85`), and there is no PET training commit after 2026-10-06. The note never mentions the earlier tests (`grep -n "true" sec_pet_campaigns.tex`). This is the same shape as the sec_fps defect: a claim whose source carried a scope word ("here") that the print dropped. |
+| c | "the tested larger network does not support a capacity-only explanation" | SCOPING (an interpretation of a measured contrast) | TRUE | `REPORT-20261006.md:78-80`. |
+| d | "This fixed-response, bank-conditional diagnosis adds no interval validation or adoption." | SCOPING | n/a | |
+
+I do not propose rewording (see the brief). The lane, the director and Joseph decide whether to scope the sentence to the generator cases.
+
+Proposed comment (it records the finding honestly, so a reader of the source sees the conflict):
+
+`% Search: true E_avail q3 as PET truth/step-2 inputs; truth_eavail feature arm (improvement_campaign/feature_arms.py:45); "one-hot + true E_avail, q3"; generator_diagnosis item 5; PET training after 2026-10-06 (untested ONLY on the generator cases: generator_diagnosis/REPORT-20261006.md:65-67 "untested here"; TESTED elsewhere: improvement_campaign/REPORT-20260922.md:181 arm C3 +0.015/+0.019, final_design/DIAGNOSTICS-20260925.md:105,118-120 D4c incl. missed events; printed sentence is unscoped) @ 0d919b1a`
+
+---
+
+## 5. docs/analysis-note/sec_systematics.tex:198 [has-not-been-run]
+
+Context: an item in the list "The following are not included in the covariance:" (lead-in at `:195`). G2 is the miss-row weighting approximation in the universe unfolds. The "weak test described below" is `:216`.
+
+| # | assertion (quoted) | class | verdict | evidence |
+|---|---|---|---|---|
+| a | (lead-in) not included in the covariance | SCOPING (it defines the covariance's content) | n/a | |
+| b | "beyond the weak test described below, its effect has not been measured" | ABSENCE | **TRUE** | `docs/orchestration/DECISION-20261015-joseph-g2-carry.md:27-36` (and `:21`): two universes were measured (`MaRES_0` P5 and `Flux:23` P2-G2, seeds 42/43), both "NOT RESOLVED ABOVE TRAINER NOISE". NOT CITABLE FOR "a claim that the G2 effect is zero. It is not measured to be zero". `:47` "**No G2 repair** is planned". The note's own `sec_systematics.tex:216` is consistent. `git grep -l -E "miss-weight-override\|miss_weight_override"`: only `stageB/diagnostics/p5/*` (P5). Searching `stageC/pilot` for `G2` shows only P2-G2 (K2). In `stageF/**`, G2 appears only in disclosure, agenda and verification records: `AGENDA-ben-review.md:28` "2 of 187 universes tested"; `DRAFT-disclosures.md:77` "G2 (unmeasured, D4)". `git log --all --since=2026-10-15` has no G2, miss-row or completeness measurement commits. The `f6-driver-p1` "G2 rows" are a scheduler batch label (packed G2 batch), not the G2 approximation. The `playlist-spread-20261014/outputs/eff_decomp.*` `n_miss_rows` counts are an efficiency decomposition, not a G2 effect measurement. |
+
+Proposed comment:
+
+`% Search: G2; miss-row weighting; miss-weight-override; universe completeness off/on; G2 repair; stageB/diagnostics P5, stageC/pilot P2-G2, stageC/production, stageF/**; git log --all since 2026-10-15 (only P5 MaRES_0 and P2-G2 Flux:23 at seeds 42/43, both NOT RESOLVED ABOVE TRAINER NOISE: DECISION-20261015-joseph-g2-carry.md:21,27-36; no repair :47) @ 0d919b1a`
+
+---
+
+## Summary table
+
+| location | assertion (short) | class | verdict | proposed comment line |
+|---|---|---|---|---|
+| sec_pet_campaigns.tex:31 | coverage not run; no K*=10 candidate qualified; C@3 not promoted; R1+D1 no identifiability test / unscaled control; mechanism unestablished | ABSENCE x4 + SCOPING x1 | TRUE (all) | `% Search: improvement-campaign coverage runs/results; confirm/results; C@3 amendment or promotion; R1+D1 E1 identifiability; D1 +0.35 alone in confirm/runs/stress.tsv; git log --all -- nd-unfolding/pet/improvement_campaign (none found: CONFIRM_RESULTS.md:23,81-83,97,103-105; stress.tsv has no D1_p0.350-only case; REVIEW_DISPOSITION-ROUND2-20260925.md:56,58; HANDOFF:42-44 lists all as prospective) @ 0d919b1a` |
+| sec_pet_campaigns.tex:60 | C5 skipped; L128 coverage never measured; no repair / RB revalidation; not uniform conservatism | ABSENCE x3 + SCOPING x2 | TRUE (C5: 24 members started, none completed or scored) | `% Search: C5 / s5d D4c-up coverage; L128S1T24 coverage runs (final_design/runs, results/final/coverage_dev); §11 repair; reserve bank RB revalidation/unseal; git log --all PET since 2026-10-05 (C5 stopped with 24 started, none complete or scored, and no L128 coverage: DECISION_RECORD-pet-final-design.md:48; repair/RB not run: :50; only RB refusal guards exist) @ 0d919b1a` |
+| sec_pet_campaigns.tex:64 | P×T and Poisson-regime σ_T unidentified; member-mean coverage on generator cases / data scale unmeasured | ABSENCE x2 + SCOPING x2 | TRUE | `% Search: σ_T² and P×T in the Poisson-weighted regime; seed-repeat pilot / E1 launch; member-mean coverage or bias on generator cases (D5) and at data scale; PET commits after 2026-10-09 (unidentified/not measured: next-preparation-20261009/pet/REPORT.md:205,214-219,281,530; no later PET run) @ 0d919b1a` |
+| sec_pet_campaigns.tex:112 | **effect of omitting true E_avail, q3 from PET truth inputs "remains untested"** | ABSENCE (+ SCOPING x3) | **FALSE as printed (unscoped): tested in improvement_campaign/REPORT-20260922.md:181 (C3) and final_design/DIAGNOSTICS-20260925.md:105,118-120; TRUE only for the generator cases ("untested here", generator_diagnosis/REPORT-20261006.md:65-67)** | `% Search: true E_avail q3 as PET truth/step-2 inputs; truth_eavail feature arm (improvement_campaign/feature_arms.py:45); "one-hot + true E_avail, q3"; generator_diagnosis item 5; PET training after 2026-10-06 (untested ONLY on the generator cases: generator_diagnosis/REPORT-20261006.md:65-67 "untested here"; TESTED elsewhere: improvement_campaign/REPORT-20260922.md:181 arm C3 +0.015/+0.019, final_design/DIAGNOSTICS-20260925.md:105,118-120 D4c incl. missed events; printed sentence is unscoped) @ 0d919b1a` |
+| sec_systematics.tex:198 | G2 effect not measured beyond the weak test | ABSENCE + SCOPING (lead-in) | TRUE | `% Search: G2; miss-row weighting; miss-weight-override; universe completeness off/on; G2 repair; stageB/diagnostics P5, stageC/pilot P2-G2, stageC/production, stageF/**; git log --all since 2026-10-15 (only P5 MaRES_0 and P2-G2 Flux:23 at seeds 42/43, both NOT RESOLVED ABOVE TRAINER NOISE: DECISION-20261015-joseph-g2-carry.md:21,27-36; no repair :47) @ 0d919b1a` |
