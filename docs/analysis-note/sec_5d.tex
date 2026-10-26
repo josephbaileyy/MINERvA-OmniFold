@@ -261,7 +261,12 @@ use estimator $R$ with five iterations, baseline OmniFold estimators and a separ
 400-tree, 31-leaf background-refinement classifier. With seed 42, its 40 nominal
 experiments and 20 at each of five departures include Poisson pseudo-data, changing
 MC splits and background refinement. Because these samples were used during
-development, they provide no independent validation here.
+development, they provide no independent validation here. These samples use
+separate assessment seeds, which also entered the estimator's later development.
+% Register round r18 (S3, director ruling 2026-10-25): moved from the methods paper's Fig. 3 caption ("Panel (b) uses
+% separate seeds, which were later also used in the estimator's development"; before r16, "separate assessment seeds,
+% which also entered its later development", commit a6b9c705's "assessment seeds, since used in development";
+% figures/methods_m3/fig_m3_deformation.py:9, "fresh assessment seeds").
 
 Saved fine-grid outputs are integrated into 109 supported joint cells (J), 27
 supported coarser joint cells (H2) and 39 supported $(\Eavail,W)$ cells (EW).
