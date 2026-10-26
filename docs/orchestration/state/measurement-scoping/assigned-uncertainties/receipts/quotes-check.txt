@@ -1,0 +1,28 @@
+OK   P5 | The covariance matrices for all sources of systematic uncertainty are summed
+OK   P2 | A breakdown of systematic uncertainties on the singledifferential cross sections is shown 
+OK   P4 | The resulting covariance matrices are summed together to estimate the relevant uncertainty
+OK   P6 | Contributions from each source of systematic uncertainties are shown one by one
+OK   2004.05434 | showing an approximate breakdown by error source.
+OK   P2 | The small background contribution allows for an absolutely predicted background subtractio
+OK   P6 | parameters, the fit can cover the bias in signal efficiency and background subtraction und
+OK   2004.05434 | validation of the background subtraction and of the extracted result through an analysis o
+OK   P4 | In order to account for potential biases due to the nominal MC modeling prediction used in
+OK   P4 | matrices are constructed using Eq. 8 and a single universe (n = 1).
+OK   P5 | MnvTune-v3 (Signal model, gray solid line in Fig. 6).
+OK   P6 | size of this uncertainty roughly double the largest variation in the efficiency seen from 
+OK   N1 | If a simulated data bias is greater than 50% of the systematic uncertainty on a parameter 
+OK   N1 | The quadrature sum of the observed biases, 4.1 × 10−5 eV2 c−4 , was added as an additional
+OK   2310.06082 | The combination of these uncertainties covers the differences between the unfolded fake da
+OK   2004.05434 | therefore taken as a conservative additional uncertainty.
+OK   P2 | In these studies, the χ2 reached a minimum at 10 iterations.
+OK   P6 | bias is much smaller than the statistical uncertainty and
+OK   P5 | The uncertainty in the detector energy response is divided into two uncertainties, hadroni
+OK   P5 | uncertainty is determined from hadron calorimetry data
+OK   P2 | a charged-particle beam, was used to determine the absolute hadron energy scale and its un
+OK   P6 | The detector response (efficiency and resolution) is not perfectly modelled in the simulat
+OK   P1 | The uncertainty budget shown in Fig. 8 also includes the contribution to the uncertainty f
+OK   P1 | The unfolded results we have presented are the result of ensembling 5 trials of neural net
+OK   2004.05434 | both regularised and unregularised results are reported.
+25 quotes, 0 missing
+rc=0
+inline N1: 1 match of "with exact coverage using the Feldman" in 2101.03779.txt
