@@ -1,0 +1,9 @@
+post-run 2026-10-26T12:30:54Z login37
+total 89
+drwxrwx---   5 josephrb josephrb   4096 Oct 26 05:30 .
+drwx------ 308 josephrb josephrb  69632 Oct 26 05:29 ..
+drwxrwx---   3 josephrb josephrb   4096 Oct 26 05:29 deploy
+-rw-rw----   1 josephrb josephrb 269309 Oct 26 05:30 fd_g_diag_readout.json
+drwxrwx---   2 josephrb josephrb   4096 Oct 26 05:30 logs
+drwxrwx---   2 josephrb josephrb   4096 Oct 26 05:30 tmp
+569M	/pscratch/sd/j/josephrb/fd-g-diag-20261026
