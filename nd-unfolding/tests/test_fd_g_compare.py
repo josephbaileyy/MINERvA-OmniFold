@@ -214,7 +214,8 @@ class EndToEnd(Base):
         for c in ("G0", "G1", "G2", "G3", "G4"):
             self.assertIn(f"PASS control {c} ", r.stdout)
         out = json.loads((tree.out / "readout.json").read_text())
-        self.assertEqual(out["schema"], "fd-g-readout/1")
+        self.assertEqual(out["schema"], "fd-g-readout/2")
+        self.assertIsNone(out["extra_block"])
         self.assertEqual([p["name"] for p in out["predictions"]], [p["name"] for p in G.PREDICTIONS])
         for p in out["predictions"]:
             d = tree.preds[p["name"]]
@@ -234,6 +235,8 @@ class EndToEnd(Base):
             n = len(cells)
             self.assertEqual((p["total"]["ndf"], p["shape_only"]["ndf"]), (n, n - 1))
             self.assertEqual(p["total"]["matrix"], "C_total + V_g")
+            self.assertEqual(p["reported_covariance"], "C_total")
+            self.assertNotIn("variant", p)                                # no extra block, no variant
             self.assertIn("100 f f^T", p["shape_only"]["matrix"])
             self.assertEqual((p["total"]["matrix_size"], p["total"]["matrix_rank"]), ([n, n], n))
             self.assertEqual((p["shape_only"]["matrix_size"], p["shape_only"]["matrix_rank"]), ([n, n], n))
@@ -258,22 +261,35 @@ class EndToEnd(Base):
         self.assertEqual(sorted(p.name for p in tree.out.iterdir()), ["readout.json"])
 
     def test_no_gibuu_value_above_p_parallel_4p5_is_shown(self):
+        self.gibuu_scan(None)
+
+    def test_no_gibuu_value_above_p_parallel_4p5_is_shown_with_an_adopted_block(self):
+        self.gibuu_scan("adopted")
+
+    def gibuu_scan(self, role):
         tree = Tree(self.tmp / "t", seed=2, scale=1.0).write()
+        mats = [tree.Ct]
+        if role is not None:
+            Cx = ExtraBlock.resp(tree)
+            _, extra = ExtraBlock.block(tree, Cx, role=role)
+            tree.argv[-2:-2] = extra
+            mats.append(tree.Ct + Cx)
         r = self.run_module(tree)
         self.assertEqual(r.returncode, 0, r.stderr[-3000:])
         gib = tree.preds["gibuu"]
         f = tree.f
         forbidden = []
-        for c in HIGH:            # the test's own construction of every GiBUU quantity on the high-p_parallel cells
-            g = gib["g"][c]
-            Vg = gib["relvar"][c] * g ** 2
-            forbidden += [g, f[c] - g, g / f[c] - 1, np.sqrt(Vg) / f[c], (f[c] - g) / np.sqrt(tree.Ct[c, c] + Vg)]
-        g16 = gib["g"]                         # and the 16-cell GiBUU chi2s and p, which must not exist
-        M16 = tree.Ct + np.diag(gib["relvar"] * g16 ** 2)
-        d16 = f - g16
-        for M in (M16, M16 + 100 * np.outer(f, f)):
-            x2 = float(d16 @ np.linalg.solve(M, d16))
-            forbidden += [x2, G.chi2_sf(x2, 16), G.chi2_sf(x2, 15)]
+        for C in mats:
+            for c in HIGH:        # the test's own construction of every GiBUU quantity on the high-p_parallel cells
+                g = gib["g"][c]
+                Vg = gib["relvar"][c] * g ** 2
+                forbidden += [g, f[c] - g, g / f[c] - 1, np.sqrt(Vg) / f[c], (f[c] - g) / np.sqrt(C[c, c] + Vg)]
+            g16 = gib["g"]                     # and the 16-cell GiBUU chi2s and p, which must not exist
+            M16 = C + np.diag(gib["relvar"] * g16 ** 2)
+            d16 = f - g16
+            for M in (M16, M16 + 100 * np.outer(f, f)):
+                x2 = float(d16 @ np.linalg.solve(M, d16))
+                forbidden += [x2, G.chi2_sf(x2, 16), G.chi2_sf(x2, 15)]
         forbidden = np.abs(np.array([v for v in forbidden if v != 0]))
         text = (tree.out / "readout.json").read_text() + r.stdout + r.stderr
         import re
@@ -292,12 +308,13 @@ class EndToEnd(Base):
                 return ([o["ndf"]] if "ndf" in o else []) + [x for v in o.values() for x in ndfs(v)]
             return [x for v in o for x in ndfs(v)] if isinstance(o, list) else []
         self.assertEqual(sorted(set(ndfs(rec))), [7, 8])                      # no 16-cell GiBUU statistic of any kind
+        self.assertEqual("variant" in rec, role is not None)
         # stdout: every number is one the readout carries, as printed, or a fixed constant of the control lines
         allowed = {"4.5", "1e-12", "100"}
         for p in out["predictions"]:
             allowed |= {str(p["n_cells"])}
-            for k in ("total", "shape_only"):
-                s = p[k]
+            for k, s in [(k, p[k]) for k in ("total", "shape_only")] + [
+                    (k, p["variant"][k]) for k in ("total", "shape_only") if "variant" in p]:
                 allowed |= {f"{s['chi2']:.2f}", str(s["ndf"]), f"{s['p']:.3g}", str(s["matrix_rank"]),
                             *(str(n) for n in s["matrix_size"])}
         allowed |= {str(n) for n in range(0, 17)}
@@ -318,51 +335,128 @@ class EndToEnd(Base):
 
 
 class ExtraBlock(Base):
-    """The declared sensitivity variant: a second covariance, pinned by digest, reported beside the primary one."""
+    """A declared extra block, pinned by digest, in each of its two roles (amendment 1): adopted, where the reported
+    comparison includes it and the one without it is the variant; sensitivity, the other way round."""
 
-    def block(self, tree, C, key="C_resp", name="c_resp"):
+    @staticmethod
+    def block(tree, C, key="C_resp", name="c_resp", role="adopted"):
         p = tree.root / f"{name}.npz"
         np.savez(p, **{key: C})
         return p, ["--extra-block", str(p), "--extra-block-sha256", digest(p), "--extra-block-key", key,
-                   "--extra-block-name", "C_resp"]
+                   "--extra-block-name", "C_resp", "--extra-block-role", role]
 
-    def resp(self, tree, seed=9):
+    @staticmethod
+    def resp(tree, seed=9):
         v = np.random.default_rng(seed).normal(0, 0.03, (5, 16)) * tree.f
         return v.T @ v
 
-    def test_variant_recomputed_by_hand_beside_the_primary(self):
-        tree = Tree(self.tmp / "t").write()
+    def by_hand(self, tree, name, C):
+        """Both chi2, the pulls and sigma/f of one prediction against C + V_g, recomputed here."""
+        d = tree.preds[name]
+        i = np.asarray(list(G.GIBUU_CELLS) if name == "gibuu" else list(range(16)))
+        g = d["g"][i]
+        M = C[np.ix_(i, i)] + np.diag(d["relvar"][i] * g ** 2)
+        dd = tree.f[i] - g
+        Ms = M + 100 * np.outer(tree.f[i], tree.f[i])
+        return (float(dd @ np.linalg.solve(M, dd)), float(dd @ np.linalg.solve(Ms, dd)), dd / np.sqrt(np.diag(M)),
+                np.sqrt(np.diag(C)[i]) / tree.f[i], len(i))
+
+    def assertPrinted(self, line, rec):
+        """A stdout line carries this record's own values, as formatted."""
+        t, s = rec["total"], rec["shape_only"]
+        self.assertIn(f"total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} ", line)
+        self.assertIn(f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} ", line)
+
+    def assertComparison(self, rec, want, matrix):
+        x2, x2s, z, sig, n = want
+        self.assertAlmostEqual(rec["total"]["chi2"], x2, delta=1e-8 * x2)
+        self.assertAlmostEqual(rec["shape_only"]["chi2"], x2s, delta=1e-8 * x2s)
+        self.assertEqual(rec["total"]["matrix"], f"{matrix} + V_g")
+        self.assertTrue(rec["shape_only"]["matrix"].startswith(f"{matrix} + V_g + 100 f f^T"))
+        self.assertEqual((rec["total"]["ndf"], rec["shape_only"]["ndf"], rec["total"]["matrix_rank"]), (n, n - 1, n))
+        for k in ("total", "shape_only"):
+            self.assertEqual(rec[k]["p"], G.chi2_sf(rec[k]["chi2"], rec[k]["ndf"]))
+        np.testing.assert_allclose(rec["pulls"], z, rtol=1e-9)
+        np.testing.assert_allclose(rec["sigma_total_over_f"], sig, rtol=1e-12)
+
+    def run_role(self, role, sub):
+        tree = Tree(self.tmp / sub).write()
         Cx = self.resp(tree)
-        _, extra = self.block(tree, Cx)
+        _, extra = self.block(tree, Cx, role=role)
         tree.argv[-2:-2] = extra
         r = self.run_module(tree)
         self.assertEqual(r.returncode, 0, r.stderr[-3000:])
-        out = json.loads((tree.out / "readout.json").read_text())
-        self.assertEqual(out["extra_block"]["name"], "C_resp")
+        return tree, Cx, r, json.loads((tree.out / "readout.json").read_text())
+
+    def test_adopted_reports_the_block_and_labels_the_other_without_it(self):
+        tree, Cx, r, out = self.run_role("adopted", "a")
+        self.assertEqual((out["extra_block"]["name"], out["extra_block"]["role"]), ("C_resp", "adopted"))
+        self.assertTrue(out["extra_block"]["label"].startswith("adopted into the reported comparison"))
         np.testing.assert_allclose(out["extra_block"]["relative_sigma"], np.sqrt(np.diag(Cx)) / tree.f, rtol=1e-12)
+        self.assertEqual(out["labels"]["reported"], "each prediction's top-level comparison is against C_total + C_resp + "
+                         "V_g; its variant record is against C_total + V_g, without C_resp: the variant without the "
+                         "declared block")
+        self.assertTrue(out["labels"]["covariance"].startswith(G.COVARIANCE_LABEL))
+        self.assertTrue(out["labels"]["covariance"].endswith(
+            "; C_resp is added to C_total in the reported comparison (labels.reported)"))
         for p in out["predictions"]:
-            d = tree.preds[p["name"]]
-            cells = list(G.GIBUU_CELLS) if p["name"] == "gibuu" else list(range(16))
-            i = np.asarray(cells)
-            g = d["g"][i]
-            M = (tree.Ct + Cx)[np.ix_(i, i)] + np.diag(d["relvar"][i] * g ** 2)
-            dd = tree.f[i] - g
-            v = p["sensitivity"]
-            self.assertAlmostEqual(v["total"]["chi2"], float(dd @ np.linalg.solve(M, dd)), delta=1e-8 * v["total"]["chi2"])
-            self.assertEqual(v["total"]["matrix"], "C_total + C_resp + V_g")
-            self.assertEqual((v["total"]["ndf"], v["shape_only"]["ndf"], v["total"]["matrix_rank"]),
-                             (len(i), len(i) - 1, len(i)))
-            self.assertEqual(len(v["pulls"]), len(i))
-            self.assertLessEqual(v["total"]["chi2"], p["total"]["chi2"] + 1e-9)   # a PSD addition cannot raise chi2
-            self.assertEqual(p["total"]["matrix"], "C_total + V_g")               # the primary is unchanged
-        self.assertIn("with C_resp: total chi2", r.stdout)
+            self.assertEqual(p["reported_covariance"], "C_total + C_resp")
+            self.assertComparison(p, self.by_hand(tree, p["name"], tree.Ct + Cx), "C_total + C_resp")
+            v = p["variant"]
+            self.assertEqual(v["covariance"], "C_total")
+            self.assertTrue(v["label"].startswith("without C_resp"))
+            self.assertComparison(v, self.by_hand(tree, p["name"], tree.Ct), "C_total")
+            self.assertLessEqual(p["total"]["chi2"], v["total"]["chi2"] + 1e-9)   # a PSD addition cannot raise chi2
+        lines = [ln for ln in r.stdout.splitlines() if ln.startswith("[G]")]
+        self.assertEqual(len(lines), 10)
+        for p, rep_line, var_line in zip(out["predictions"], lines[::2], lines[1::2]):
+            self.assertPrinted(rep_line, p)
+            self.assertPrinted(var_line, p["variant"])
+            self.assertIn(", reported: total chi2", rep_line)
+            self.assertIn("[C_total + C_resp + V_g, ", rep_line)
+            self.assertTrue(var_line.startswith("[G]   variant without C_resp: total chi2"), var_line)
+            self.assertIn("[C_total + V_g, ", var_line)
+
+    def test_sensitivity_reports_c_total_and_labels_the_block_a_variant(self):
+        tree, Cx, r, out = self.run_role("sensitivity", "s")
+        self.assertEqual(out["extra_block"]["role"], "sensitivity")
+        self.assertTrue(out["extra_block"]["label"].startswith("a declared sensitivity variant"))
+        self.assertEqual(out["labels"]["reported"], "each prediction's top-level comparison is against C_total + V_g; "
+                         "its variant record is against C_total + C_resp + V_g, with C_resp: a declared sensitivity "
+                         "variant")
+        self.assertTrue(out["labels"]["covariance"].endswith("; C_resp is added to C_total in the variant (labels.reported)"))
+        for p in out["predictions"]:
+            self.assertEqual(p["reported_covariance"], "C_total")
+            self.assertComparison(p, self.by_hand(tree, p["name"], tree.Ct), "C_total")
+            self.assertEqual(p["variant"]["covariance"], "C_total + C_resp")
+            self.assertTrue(p["variant"]["label"].startswith("with C_resp: a declared sensitivity variant"))
+            self.assertComparison(p["variant"], self.by_hand(tree, p["name"], tree.Ct + Cx), "C_total + C_resp")
+        lines = [ln for ln in r.stdout.splitlines() if ln.startswith("[G]")]
+        self.assertEqual(len(lines), 10)
+        for p, rep_line, var_line in zip(out["predictions"], lines[::2], lines[1::2]):
+            self.assertPrinted(rep_line, p)
+            self.assertPrinted(var_line, p["variant"])
+        self.assertTrue(all("[C_total + V_g, " in ln for ln in lines[::2]))
+        self.assertTrue(all(ln.startswith("[G]   variant with C_resp: total chi2") for ln in lines[1::2]))
+
+    def test_the_two_roles_swap_the_same_two_comparisons(self):
+        _, _, _, a = self.run_role("adopted", "a")
+        _, _, _, s = self.run_role("sensitivity", "s")
+        keys = ("total", "shape_only", "pulls", "sigma_total_over_f")
+        for pa, ps in zip(a["predictions"], s["predictions"]):
+            self.assertEqual({k: pa[k] for k in keys}, {k: ps["variant"][k] for k in keys}, pa["name"])
+            self.assertEqual({k: ps[k] for k in keys}, {k: pa["variant"][k] for k in keys}, pa["name"])
+            for k in ("f", "g", "f_minus_g", "g_over_f_minus_1", "sigma_Vg_over_f", "n_mc_events_in_cells"):
+                self.assertEqual(pa[k], ps[k])
 
     def test_without_the_option_there_is_no_variant(self):
         tree = Tree(self.tmp / "t").write()
         self.assertEqual(G.run(G.build_args(tree.argv), tree.pins, tree.predictions), 0)
         out = json.loads((tree.out / "readout.json").read_text())
         self.assertIsNone(out["extra_block"])
-        self.assertTrue(all("sensitivity" not in p for p in out["predictions"]))
+        self.assertTrue(all("variant" not in p and p["reported_covariance"] == "C_total" for p in out["predictions"]))
+        self.assertEqual(out["labels"]["reported"], "each prediction's top-level comparison is against C_total + V_g")
+        self.assertEqual(out["labels"]["covariance"], G.COVARIANCE_LABEL)
 
     def test_refusals(self):
         tree = Tree(self.tmp / "t").write()
@@ -370,29 +464,42 @@ class ExtraBlock(Base):
         _, extra = self.block(tree, Cx)
         bad_sha = list(extra)
         bad_sha[3] = "a" * 64
-        cases = {"G0": bad_sha}
+        cases = {"G0": (bad_sha, "extra block")}
         notpsd = Cx.copy()
         notpsd[0, 0] = -abs(Cx[0, 0])
-        for k, (what, C) in enumerate((("asymmetric", Cx + np.triu(np.full((16, 16), 1e-3 * Cx.max()), 1)),
-                                       ("not PSD", notpsd), ("shape", Cx[:15, :15]))):
-            _, e = self.block(tree, C, name=f"case{k}")
-            cases[f"G2 {what}"] = e
+        anti = np.triu(np.full((16, 16), 1e-3 * Cx.max()), 1)
+        asym_psd = Cx + anti - anti.T                          # asymmetric, and PSD once symmetrized: only the
+        self.assertGreaterEqual(np.linalg.eigvalsh((asym_psd + asym_psd.T) / 2 / np.outer(tree.f, tree.f)).min(),
+                                -1e-12)                        # symmetry check can refuse it
+        for k, (what, C, check) in enumerate((("asymmetric", asym_psd, "is symmetric"),
+                                              ("not PSD", notpsd, "is positive semidefinite"),
+                                              ("shape", Cx[:15, :15], "is a finite 16 x 16 matrix"))):
+            for role in G.ROLES:
+                _, e = self.block(tree, C, name=f"case{k}-{role}", role=role)
+                cases[f"G2 {what} {role}"] = (e, f"C_resp {check}")
         _, e = self.block(tree, Cx, key="other", name="case-key")
         e[e.index("--extra-block-key") + 1] = "C_resp"
-        cases["G2 key"] = e
-        for what, e in cases.items():
+        cases["G2 key"] = (e, "no key 'C_resp'")
+        for what, (e, check) in cases.items():
             argv = tree.argv[:-2] + e + tree.argv[-2:]
             with self.assertRaises(SystemExit, msg=what) as cm:
                 G.run(G.build_args(argv), tree.pins, tree.predictions)
             self.assertIn(f"FAIL control {what.split()[0]}:", str(cm.exception.code), what)
+            self.assertIn(check, str(cm.exception.code), what)                 # the check that refused, by name
             self.assertEqual(list(tree.out.iterdir()), [], what)
 
-    def test_the_four_options_go_together(self):
+    def test_the_five_options_go_together_and_the_role_is_one_of_two(self):
         tree = Tree(self.tmp / "t").write()
         _, extra = self.block(tree, self.resp(tree))
-        with self.assertRaises(SystemExit) as cm:
-            G.build_args(tree.argv + extra[:4])
-        self.assertEqual(cm.exception.code, 2)
+        partial = {f"all but {extra[i]}": extra[:i] + extra[i + 2:] for i in range(0, 10, 2)}   # each one left out
+        partial.update({"role alone": extra[8:], "block alone": extra[:2], "an unknown role": extra[:9] + ["primary"]})
+        self.assertEqual(len(partial), 8)
+        for what, e in partial.items():
+            with self.assertRaises(SystemExit, msg=what) as cm, mock.patch("sys.stderr"):
+                G.build_args(tree.argv + e)
+            self.assertEqual(cm.exception.code, 2, what)
+        for role in G.ROLES:
+            self.assertEqual(G.build_args(tree.argv + extra[:9] + [role]).extra_block_role, role)
 
 
 class Controls(Base):

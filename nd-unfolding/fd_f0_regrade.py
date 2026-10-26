@@ -26,6 +26,13 @@ integral of any product, of f - X or of f/X, X/f, f/X - 1 or X/f - 1 for any suc
 
 Controls 0-8 run in the declared order; 0-6 and 8 refuse (exit 1, nothing written). Control 7 gates row 6 only.
 
+F0b (FD-F0b-DECLARATION.md; DECISION-20261026-joseph-adopt-cresp.md item 3): with ``--extra-block``, a declared
+16 x 16 covariance C_x in absolute units, pinned by its file sha256, is added to every matrix that carries C_e: the
+grade matrix becomes C^(T) + C_x/(f f^T), and so do the in-sample, sensitivity and eight-cell matrices. The leave-out
+still acts on C_model only. The model-only matrix, which carries no C_e, is unchanged, and so is everything else:
+the estimators, the noise, controls 0-8 (control 7 grades against the noise alone), the triggers and the guard.
+Without the option the tool is F0's.
+
 MEASURES: arithmetic on the declared products. CANNOT AUTHORIZE: a claim, a cell merge, a change to C_e, C_model or
 kappa, or any reading of the data against a generator (Stage G).
 """
@@ -454,9 +461,17 @@ def build_args(argv):
     ap.add_argument("--pvl-products", type=Path, required=True, help="pv-ladder-20261024/products")
     ap.add_argument("--s5p-sums", type=Path, required=True, help="state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt")
     ap.add_argument("--s5p-root", type=Path, required=True, help="s5p-20260926")
+    ap.add_argument("--extra-block", type=Path, help="F0b: npz holding the declared covariance (absolute units)")
+    ap.add_argument("--extra-block-sha256", help="its file sha256, as the binding records it")
+    ap.add_argument("--extra-block-key", help="the 16 x 16 matrix's key in that npz")
+    ap.add_argument("--extra-block-name", help="its name in the readout, e.g. C_resp")
     ap.add_argument("--out-json", type=Path, required=True)
     ap.add_argument("--out-npz", type=Path, required=True)
-    return ap.parse_args(argv)
+    a = ap.parse_args(argv)
+    extra = (a.extra_block, a.extra_block_sha256, a.extra_block_key, a.extra_block_name)
+    if any(v is not None for v in extra) and not all(v is not None for v in extra):
+        ap.error("--extra-block, --extra-block-sha256, --extra-block-key and --extra-block-name go together")
+    return a
 
 
 def require(control, path: Path, want: str, what: str):
@@ -520,8 +535,11 @@ def run(a, pins=None) -> int:
             else:
                 require(1, p, want_sha[str(p)], name)
     require(1, floor_path, pins["floor"], "closure floor")
+    xb = a.extra_block is not None
+    if xb:
+        require(1, a.extra_block, a.extra_block_sha256, "extra block")
     w_all = sa_call(1, sa.flux_weights, a.flux_constraint)
-    report(1, f"{sum(map(len, sets.values())) + 1} products and 8 records match their recorded sha256", True)
+    report(1, f"{sum(map(len, sets.values())) + 1} products and {8 + xb} records match their recorded sha256", True)
 
     # 2. meta and array headers of every product
     spec_of = {}
@@ -612,8 +630,24 @@ def run(a, pins=None) -> int:
         checks[f"{k}: FD-PLAN section 2.1 row reproduces"] = sigma_summary(sig[k]) == pins["table_2_1"][k]
     ev = np.linalg.eigvalsh(Cstat_rel)
     checks["C_stat,rel is full rank"] = bool(ev.min() > 0 and int(np.sum(ev > TOL * ev.max())) == N_CELLS)
+    Cx_rel = np.zeros((N_CELLS, N_CELLS))
+    if xb:
+        xn = a.extra_block_name
+        with np.load(a.extra_block, allow_pickle=False) as z:
+            if a.extra_block_key not in z.files:
+                raise Stop(4, f"the extra block has no key {a.extra_block_key!r}")
+            Cx = np.asarray(z[a.extra_block_key], float)
+        ok_shape = Cx.shape == (N_CELLS, N_CELLS) and bool(np.all(np.isfinite(Cx)))
+        checks[f"{xn} is a finite 16 x 16 matrix"] = ok_shape
+        if ok_shape:
+            Cx_rel = Cx / ff
+            checks[f"{xn} is symmetric"] = np.allclose(Cx, Cx.T, rtol=TOL, atol=TOL * np.abs(Cx).max())
+            checks[f"{xn} is positive semidefinite"] = bool(
+                np.linalg.eigvalsh((Cx_rel + Cx_rel.T) / 2).min() >= -TOL * max(np.abs(Cx_rel).max(), 1e-300))
+            checks[f"C_total + {xn} is positive definite"] = bool(np.linalg.eigvalsh(mats["C_total"] + Cx_rel).min() > 0)
     for name, ok in checks.items():
         report(4, name, bool(ok), "differs")
+    plus = f" + {a.extra_block_name}" if xb else ""
 
     # integrals of every product (cell values are read from here on; nothing is written before every control passes)
     def integrate(paths):
@@ -691,11 +725,11 @@ def run(a, pins=None) -> int:
     for t in TRUTHS:
         b, N, B, how = est[t["name"]][:4]
         graded = t["row"] != 6 or offset_pass
-        C = mats["C_total"] if t["own"] is None else mats[f"minus_{t['own']}"]
+        C = (mats["C_total"] if t["own"] is None else mats[f"minus_{t['own']}"]) + Cx_rel
         Cm = leave_out(Cstat_rel, S, t["own"])
         rec = {"name": t["name"], "row": t["row"], "group": t["group"], "own_vertex": t["own"],
                "n_experiments": len(sets[t["name"]]), "B_eff": B, "estimator": how, "graded": graded,
-               "grade_matrix": "C_total" if t["own"] is None else f"C_total minus {t['own']}",
+               "grade_matrix": ("C_total" if t["own"] is None else f"C_total minus {t['own']}") + plus,
                "bias": b.tolist(), "noise_sigma": np.sqrt(np.diag(N)).tolist(), "grade": grade(b, N, C),
                "model_only": dict(grade(b, N, Cm), label=MODEL_ONLY_LABEL)}
         if not graded:
@@ -704,9 +738,10 @@ def run(a, pins=None) -> int:
             rec["bias_uncorrected"] = est[t["name"]][4].tolist()
             rec["offset_from"] = t["ref"]
         if t["own"] is not None:
-            rec["in_sample"] = dict(grade(b, N, mats["C_total"]), label=IN_SAMPLE_LABEL)
+            rec["in_sample"] = dict(grade(b, N, mats["C_total"] + Cx_rel), label=IN_SAMPLE_LABEL)
         if t.get("sens"):
-            rec["sensitivity"] = dict(grade(b, N, mats[f"minus_{t['sens']}"]), matrix=f"C_total minus {t['sens']}",
+            rec["sensitivity"] = dict(grade(b, N, mats[f"minus_{t['sens']}"] + Cx_rel),
+                                      matrix=f"C_total minus {t['sens']}{plus}",
                                       label="declared sensitivity matrix: descriptive")
         if t["own"] == "gibuu":
             rec["p_parallel_lt_4p5"] = dict(grade(b, N, C, GIBUU_CELLS), label="the eight p_parallel < 4.5 cells: descriptive")
@@ -730,7 +765,7 @@ def run(a, pins=None) -> int:
                label="the denominators of ruling 2; the counts are read by group, never pooled")
 
     readout = {
-        "schema": "fd-f0-readout/1",
+        "schema": "fd-f0b-readout/1" if xb else "fd-f0-readout/1",
         "labels": {"what": "the (e) estimator's bias at 18 fake-data truths on R00-R15, graded against S1's C_total",
                    "not": "not a coverage gate (DECISION-20261024 route item 3); not held-out truths; the detector "
                           "response is not probed; prints no f, no absolute cell value and no f - g (ruling 6)",
@@ -758,6 +793,18 @@ def run(a, pins=None) -> int:
                         "s5p_stage1_inspect.py": sa.sha256(Path(sa.s1.__file__).resolve())},
         "argv": [str(x) for x in sys.argv],
     }
+    if xb:
+        sig_x = {k: np.sqrt(np.diag(M + Cx_rel)) for k, M in mats.items()}
+        readout["labels"]["what"] += f" plus {a.extra_block_name} (F0b)"
+        readout["labels"]["grade_matrix"] = (f"F0b: C^(T) + {a.extra_block_name}, with the leave-out on C_model only; "
+                                             f"the in-sample, sensitivity and eight-cell matrices also carry "
+                                             f"{a.extra_block_name}; the model-only matrix, with no C_e, is F0's")
+        readout["extra_block"] = {"name": a.extra_block_name, "file": str(a.extra_block), "sha256": a.extra_block_sha256,
+                                  "key": a.extra_block_key, "relative_sigma": np.sqrt(np.diag(Cx_rel)).tolist(),
+                                  "label": "declared before this run: its construction and digest were fixed"}
+        readout[f"relative_sigma_plus_{a.extra_block_name}"] = {k: v.tolist() for k, v in sig_x.items()}
+        readout[f"relative_sigma_plus_{a.extra_block_name}_summary_percent"] = {
+            k: list(sigma_summary(v)) for k, v in sig_x.items()}
     table = {"names": np.array([t["name"] for t in TRUTHS])}
     for name in sets:
         key = name.replace(":", "_")
@@ -766,7 +813,7 @@ def run(a, pins=None) -> int:
         if any("nuisance_draw" in m and m["nuisance_draw"] for m in metas[name]):
             table[f"flux_{key}"] = np.array([m["nuisance_draw"]["flux"] for m in metas[name]], np.int64)
 
-    lines = []
+    lines = [f"[F0] F0b: every grade matrix carries {a.extra_block_name}; the model-only matrix is F0's"] if xb else []
     for gname, g in sorted(by.items()):
         lines.append(f"[F0] {gname}: {g['cells_abs_z_gt_2']} of {g['cells']} cells |z| > 2 (Gaussian reference "
                      f"{g['gaussian_reference_cells']:.2f}); {g['truths_p_lt_0.01']} of {g['truths']} truths p < 0.01 "
