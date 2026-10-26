@@ -1,0 +1,8 @@
+HEAD 973142a7fc150f2ceb9fd3530297ec1ddcbd0dc3
+login37
+2026-10-26T02:20:19Z
+Ran 40 tests in 16.147s
+
+OK
+{"wrote": ["/pscratch/sd/j/josephrb/cresp-testcheck-20261025/tmp/s1-e2e-fd4zxprt/s1.npz", "/pscratch/sd/j/josephrb/cresp-testcheck-20261025/tmp/s1-e2e-fd4zxprt/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}
+porcelain lines: 0
