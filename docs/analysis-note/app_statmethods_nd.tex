@@ -30,9 +30,11 @@ scan, expected to lack the smoothness supporting the 2D choice in
 \S\ref{sec:chisq}; (iv) covariance identity, since that earlier 5D covariance, its 4D projection and the published 2D block differ in rank; and (v) for every sample
 block in the sum, ensemble size $N$, biased $1/N$ or unbiased $1/(N-1)$
 normalization, effective inverted dimension $p$ after truncation, and the
-finite-ensemble treatment or explicit absence of one. Measurements,
-derivation and predeclared rank cut are in Ref.~\cite{NoteRecords2026}
-(\texttt{rank-inversion}).
+finite-ensemble treatment or explicit absence of one. The measurements, the
+derivation and the requirement that N-D difference statistics use a rank cut fixed
+in advance are in Ref.~\cite{NoteRecords2026} (\texttt{rank-inversion}).
+% The records state the cut as a requirement and give no value (docs/orchestration/RANK-AND-INVERSION-20260810.md sec. 5, "owner
+% boundary"; docs/STATVAL_REPAIR.md, "PREDECLARED rank/pseudoinverse cut"), so it is stated as that requirement.
 
 \paragraph{Finite-ensemble bias of the inverse, and why no correction is prescribed.}
 Without declaration (v), the ensemble sizes of the blocks would go unrecorded,
@@ -113,9 +115,11 @@ reported quantities are
 \end{equation}
 The consistency ratio is $s_{\rm pair}/s_{\rm base}$; the estimated numerical
 share is $s_{\rm pair}^2/s_{\rm boot}^2$. The paired-model $\sqrt2$ factor
-introduces no physical noise source. The predeclared design defines containment
-by median ratio in $[0.7,1.4]$ and
+introduces no physical noise source. Containment, as defined before the study ran,
+requires a median consistency ratio in $[0.7,1.4]$ and
 $s_{\rm boot}^2\geq s_{\rm pair}^2$ in at least 95\% of supported cells.
+% Note register round n1, batch n1-F: the criterion's timing in plain words (state/s5p/contract-amendment-2-stage2-studies.json,
+% study_N decision_rule, FROZEN before any Stage-2 compute).
 All supported cells meet the inequality. This finite-sample diagnostic
 supports the construction without proving coverage or independence from every
 physical uncertainty.
@@ -128,7 +132,7 @@ The reductions keep the per-cell values, the identity of each input and the
 exclusions, and distinguish complete outputs from checkpoints that carry no
 metadata. From a checkpoint, only the iterations that reproduce the originally
 recorded values are used; later entries are excluded. The analyst cross-checked
-the reductions numerically; no new independent scientific review of the synthesis is claimed.
+the reductions numerically.
 % Reproduction: nd-unfolding/gbdt_model_dependence/{reduce.py,analyze.py,README.md}.
 
 \subsection{Extended-fiducial statistical-band and pull fractions}

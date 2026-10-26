@@ -3,16 +3,16 @@
 
 % Campaign: s5p (terminal 2026-10-06).
 This section describes the joint five-dimensional tests of generator
-predictions. Their design was fixed before any production pseudo-experiment or
-observed statistic was computed, with two data-informed elements
-(\S\ref{sec:joint5d-frozen}). The tests evaluate
+predictions. The tests evaluate
 hybrid null hypotheses about five predictions (\S\ref{sec:joint5d-design}). They are not a measured cross
 section, add no reportable uncertainty, and do not validate the five-axis covariance used elsewhere in this note (\S\ref{sec:eavailw-adopted}), which they do not use. The section
-gives the pre-registered specification, with its six conditions in its own
-words (\S\ref{sec:joint5d-conditions}), the decisions, the recovery of the lost
-pseudo-experiments and the later sensitivity studies with their numbers. The
-specification and the decisions are documented in Ref.~\cite{JointTestRecord2026};
-each later study cites its own record.
+gives the design, the six conditions of the declared model in the words of the
+test specification (\S\ref{sec:joint5d-conditions}), the decisions, the recovery of the lost
+pseudo-experiments and the later sensitivity studies with their numbers.
+Reference~\cite{JointTestRecord2026} gives the specification and the decisions,
+and each later study has its own reference, cited where it is described.
+% Register round n1 (2026-10-25): the timing of the design (fixed before any production pseudo-experiment or
+% observed statistic, with two data-informed elements) is stated once, in sec:joint5d-frozen.
 % Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: the note made self-contained;
 % old text in git history): the six conditions verbatim (RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3), the recovery disposition (DECISION-20261005 sec. 5),
 % the projected p values (W1-RECORD-20261006.md sec. 1) and the recoil statistics (W2B-REPORT-20261006.md sec. 5)
@@ -103,7 +103,7 @@ The null distribution of each statistic is obtained from pseudo-experiments
 that run the full analysis chain at the null truth, using the joint-test
 estimator (\S\ref{sec:val-departure}: deterministic LightGBM OmniFold, five
 iterations, negative-weight background treatment with a 400-tree, 31-leaf
-refinement classifier, chosen before the design was fixed). Each
+refinement classifier). Each
 pseudo-experiment
 \begin{itemize}[itemsep=1pt, topsep=2pt]
   \item draws Poisson pseudo-data from one half of the simulation together
@@ -188,7 +188,7 @@ in a repeated experiment; that conditioning has not been validated.
       \put(140,61){\vector(0,-1){7}}
       \put(10,30){\framebox(158,24){\parbox{154pt}{\centering\scriptsize $k$ of $B$ with $T_{\mathrm{null}}\ge T_{\mathrm{obs}}$; largest $p$ over the shifted nulls}}}
       \put(89,30){\vector(0,-1){7}}
-      \put(10,0){\framebox(158,23){\parbox{154pt}{\centering\scriptsize Holm steps with the 95\% Clopper--Pearson gate; batches of \jtBatch{}, $B\le\jtBcap$}}}
+      \put(10,0){\framebox(158,23){\parbox{154pt}{\centering\scriptsize Holm steps with the 95\% Clopper--Pearson interval; batches of \jtBatch{}, $B\le\jtBcap$}}}
       \put(10,42){\line(-1,0){8}}
       \put(2,42){\line(0,1){96}}
       \put(2,138){\vector(1,0){8}}
@@ -213,12 +213,11 @@ in a repeated experiment; that conditioning has not been validated.
   \end{minipage}
 \end{table}
 
-\subsection{Multiplicity, stopping rule and the predeclared design}
+\subsection{Multiplicity, stopping rule and design}
 \label{sec:joint5d-frozen}
 
-The ten tests are controlled at familywise level $\alpha=\jtAlpha$ by the Holm
-procedure~\cite{Holm:1979}: under the testing assumptions, the probability of
-falsely rejecting at least one true hypothesis among the ten is at most 5\%. A
+The ten tests are carried out with the Holm procedure~\cite{Holm:1979} at
+familywise level $\alpha=\jtAlpha$. A
 determinacy requirement also applies: a step rejects only when the 95\%
 Clopper--Pearson interval~\cite{Clopper:1934} of $k/B$ lies entirely below its
 Holm threshold. Calibration proceeded in batches of \jtBatch{}
@@ -232,29 +231,32 @@ that stopped a null once both of its decisions were determined.
 % M2-AUDIT.md:143 (Q3).
 A null stopped when a 99.5\% Clopper--Pearson interval of $k/B$ lay entirely
 on one side of each of its thresholds and met a fixed precision requirement.
-The decision gate is the upper end of the two-sided 95\% interval, a
+The decision rule uses the upper end of the two-sided 95\% interval, a
 one-sided 97.5\% upper bound. If each true null's calibrated tail probability
 is uniformly distributed or conservative (A1), and the pseudo-experiments'
-exceedances are independent given the data (A2), the probability of passing
-this gate at any number of pseudo-experiments up to \jtBcap{} is below the
+exceedances are independent given the data (A2), the probability that this upper end falls below
+the threshold at any number of pseudo-experiments up to \jtBcap{} is below the
 threshold, whatever rule determines when sampling stops, including the budget
 extensions; the decision rule therefore controls the familywise error rate of
-the ten decisions at 5\% under these assumptions, with the bound
+the ten decisions, the probability of falsely rejecting at least one true
+hypothesis among them, at 5\% under these assumptions, with the bound
 $\mathrm{FWER}\le0.8902\,\alpha<0.9\,\alpha$ derived in
 \S\ref{sec:joint5d-fwer}. A2 requires the lost pseudo-experiments to have been
 lost independently of their outcomes, which has not been shown, although none
 of them reaches the observed statistic when rerun (\S\ref{sec:joint5d-lost}).
 The calibrated size is averaged over the nuisance priors: at a fixed true value
 of the nuisance parameters it can exceed $\alpha$.
+% Search: lost independently of their outcomes; outcome-independent; independent of their outcomes @ ddf16f10
 
-The hypotheses, statistics, variants, multiplicity rule, stopping rule and
+The joint-test estimator (\S\ref{sec:joint5d-calibration}) was chosen before the design was
+fixed. The hypotheses, statistics, variants, multiplicity rule, stopping rule and
 every input were fixed before any production pseudo-experiment or observed
 statistic, with two data-informed elements. The design's reviewers had seen
 descriptive per-cell residuals of the data before it was fixed. During
 production, the calibration's monitoring output showed observed claim $p$
 values, and a bounded extension of the production budget was decided while
-they were visible, so that the sequential rule could reach the stop set by its
-predeclared rule rather than a budget stop. No statistic, variant, threshold or
+they were visible, so that the sequential rule, rather than the budget, could
+set the stop. No statistic, variant, threshold or
 stopping rule was changed, and the familywise bound above holds whatever rule
 determined when sampling stopped.
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's M8 replacement of "the Monte Carlo
@@ -262,6 +264,13 @@ determined when sampling stopped.
 An independent recomputation of every $p$ value and decision from the stored products, with separately written code, agrees
 with the production evaluation on all \jtRecompRows{} compared rows; it
 verifies the calculation, not the adequacy of the calibration.
+% Register round n1 (2026-10-25): the calibration's validity statement and the unmeasured rejection rate moved here
+% from the calibration-validity paragraph of sec:joint5d-conditions (M8; M2-AUDIT.md Q3, Q4e, :187-193).
+The calibration is valid for the simulated null to the extent that the
+pseudo-experiment chain reproduces the analysis applied to the data; no
+rejection rate has been measured for null pseudo-data processed like the data,
+which would require an independent simulation sample.
+% Search: rejection rate; processed like the data; independent simulation sample @ ddf16f10
 
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's post hoc paragraph (its Sec. VIII C).
 Three studies followed the decisions and are for reporting only (outside the
@@ -275,15 +284,16 @@ five-dimensional outcomes were known.
 \label{sec:joint5d-conditions}
 
 Each decision holds under six conditions of the declared model. They are
-quoted below from the pre-registered specification, changed only in
+quoted below from the test specification, changed only in
 typesetting. Text in square brackets is ours: it replaces references to
 internal files by their content and annotates the two statements that the
 implementation or a later measurement supersedes.
 % Deposit pass: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 3 (amendment 7
 % claims.conditions_stated_with_every_claim, verbatim). Substitutions: (i) "M1" -> the fine-grid convergence check; the
 % null truth's below-grid description superseded by the M8 correction (M2-AUDIT.md Q1; sec:joint5d-design); (ii)
-% "(app_statmethods.tex)" -> App. A; (iii) "EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md" -> a recorded
-% ruling on the pilot; (iv) "~0.05 null SD" superseded by the frozen-V prefreeze measurement, max 0.068 (CLAIM-TABLE
+% "(app_statmethods.tex)" -> App. A; (iii) "EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md" -> its
+% content, the clipping's effect measured on the pilot (that file's "Quantified effect": 0.35% of the band's shift in
+% whitened norm at fine reco resolution; register round n1, 2026-10-25); (iv) "~0.05 null SD" superseded by the frozen-V prefreeze measurement, max 0.068 (CLAIM-TABLE
 % row J12; this section's 0.07); (v) "KNOWN_ISSUES 82" -> the GiBUU sample's energy limit, sec:eavailw-band.
 \begin{quote}\small
 \begin{enumerate}[label=(\roman*), itemsep=1pt, topsep=2pt]
@@ -301,7 +311,7 @@ implementation or a later measurement supersedes.
         established''
   \item ``the interaction-model prior is the analysis's vertical band set (34 bands, every
         band drawn per experiment); negative weights of LowQ2\_1/HighQ2\_1 are clipped per
-        universe ([a recorded ruling on the pilot]: $\le0.35\%$ of a band's shift in whitened
+        universe ([the effect of clipping rather than keeping them, measured on the pilot]: $\le0.35\%$ of a band's shift in whitened
         norm)''
   \item ``the pseudo-experiment process unfolds with half the MC, the data with all of it;
         the MC-size shift $D$ (16 pairs) is at noise level per cell (median $|D|/f$
@@ -329,9 +339,9 @@ per-cell relative changes, the last refinement, from a twofold-merged grid to
 the fine grid, is \jtMoneMin--\jtMoneMax{} of the whole change from the coarse
 test grid to the fine grid, so in that norm the steps are not shown to shrink
 and the residual below the fine grid is unmeasured and potentially material.
-The predeclared design takes the step, in a proxy of the test metric, to
+The design takes the step, in a proxy of the test metric, to
 shrink by a factor of \jtMoneWnormMin--\jtMoneWnormMax{} per halving; this
-value comes from the design review, and its derivation is not given. If it kept shrinking geometrically at that rate,
+factor comes from the review of the design, and its derivation is not given. If it kept shrinking geometrically at that rate,
 the residual would be about one to three times the last step,
 $\delta_{\mathrm{fine}}$ (the change of the noise-free unfolded result when the
 null truth is refined from the twofold-merged grid to the fine grid). This sets
@@ -349,15 +359,14 @@ noise-free unfolded result by no more than $\pm\jtMoneKappa\,\delta_{\mathrm{fin
 along $\delta_{\mathrm{fine}}$. (vi) The predictions' own finite samples enter
 the metric as $\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ and the simulated
 residuals as a drawn term.
+% Search: below the fine grid; fine-grid convergence; delta_fine; per halving @ ddf16f10
 
 \paragraph{Calibration validity.}
 % Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): "The Monte Carlo p values are exact for the
-% simulated null" restated as the calibration's validity, as in the article (M8; M2-AUDIT.md Q3, Q4e, :187-193).
-The calibration is valid for the simulated null to the extent that the
-pseudo-experiment chain reproduces the analysis applied to the data; the
-independent recomputation verifies the calculation, not whether the chain does
-so, and no rejection rate has been measured for null pseudo-data processed like
-the data, which would require an independent simulation sample. Two known
+% simulated null" restated as the calibration's validity, as in the article (M8; M2-AUDIT.md Q3, Q4e, :187-193);
+% register round n1 (2026-10-25): that statement now prints once, in sec:joint5d-frozen.
+The calibration's validity, and what the independent recomputation verifies,
+are stated in \S\ref{sec:joint5d-frozen}. Two known
 departures are bounded. (iv) The pseudo-experiments unfold with half of
 the simulation and the data with all of it; the resulting shift, at most about
 0.07 null standard deviations but not always consistent with zero, enters as
@@ -392,6 +401,7 @@ variants). Crossing that value would make a test undetermined, its
 Clopper--Pearson interval straddling the threshold, rather than not rejected. The data unfold's rounding-level
 nondeterminism, measured over the 20 re-unfolds, leaves every observed $p$ value
 unchanged except NuWro's shape test (2/1752 to 3/1752).
+% Search: test of the data process; quarter simulation; rejection rate; processed like the data @ ddf16f10
 % 0.07: the frozen-V prefreeze measurement (max 0.068, GENIE+MEC), which supersedes amendment 7 condition 4's
 % reviewer-proxy "~0.05" (docs/publication/audit-20261008/CLAIM-TABLE-20261008.tsv row J12;
 % REVIEW-20261007-paper-completion.md E6). This section printed 0.05 until 2026-10-11.
@@ -402,8 +412,8 @@ bands and the linear surrogate for the lateral bands; the surrogate has been
 checked only for the symmetry of its endpoints.
 % M2-AUDIT.md Q4d, :183-184.
 The analysis has no band
-for the calorimetric recoil-energy response, so completeness of the
-hadronic-response model is not established (\S\ref{sec:joint5d-response}).
+for the calorimetric recoil-energy response; \S\ref{sec:joint5d-response}
+gives the consequences.
 (iii) The interaction-model prior is the analysis's \jtModelBands-band set,
 every band drawn in every pseudo-experiment; negative weights in two of them
 (\texttt{LowQ2\_1}, \texttt{HighQ2\_1}) are clipped per universe, at most
@@ -412,6 +422,7 @@ out-of-domain truth enters the migrations into its domain; for all
 predictions $E_{\nu}>\SI{100}{GeV}$ is absent, which is negligible. The use of
 the Tune~v1 composition below the fine grid in (i) is also a modelling choice of
 this kind.
+% Search: recoil-energy-scale band; calorimetric response band; linear surrogate; endpoint symmetry @ ddf16f10
 
 \subsection{Decisions}
 \label{sec:joint5d-results}
@@ -446,7 +457,7 @@ by the estimator's pull toward its prior.
   \end{tabular}
   \caption{Joint five-dimensional generator tests, in Holm order; every test is
   rejected. $B$ is the number of completed calibration pseudo-experiments at
-  the stop set by the predeclared rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$
+  the stop set by the sequential rule (1400 submitted per null, NuWro 1800; the rest were lost to time limits and later recovered for reporting only, \S\ref{sec:joint5d-lost}), and $k$
   the number at least as extreme as the data; claim $p=(k+1)/(B+1)$ is never
   zero.}
   \label{tab:joint5d}
@@ -480,7 +491,7 @@ by the estimator's pull toward its prior.
 
 The multiplier $\kappa$ scales the last measured refinement change
 $\delta_{\mathrm{fine}}$: $\kappa=1$ means one such change, not one standard
-deviation or a confidence level. A scan along the predeclared direction $\delta_{\mathrm{fine}}$~\cite{JointTestKappa2026}, for reporting only, found all ten decisions to remain determinate rejections at every sampled multiplier up to 5.25 in the calibration ensembles used for the decisions. Determinate rejection is first lost between the sampled
+deviation or a confidence level. A scan along the direction $\delta_{\mathrm{fine}}$ of the claim variants~\cite{JointTestKappa2026}, for reporting only, found all ten decisions to remain determinate rejections at every sampled multiplier up to 5.25 in the calibration ensembles used for the decisions. Determinate rejection is first lost between the sampled
 multipliers 5.2547 and 5.2563 (between 5.1688 and 5.1703 with the recovered
 draws included), by the GENIE~2.12.10 + MEC shape test, whose interval then
 contains its Holm threshold, and, through the Holm step-down, by the
@@ -488,6 +499,7 @@ GENIE~2.12.10 shape test; neither is then a determinate failure to reject. The
 scan probes one prescribed direction; it establishes neither convergence nor a
 bound on the actual below-grid residual, which remains unmeasured and
 potentially material.
+% Search: below the fine grid; sub-fine-grid; fine-grid convergence; delta_fine; kappa breakdown @ ddf16f10
 
 \paragraph{Power.}
 \label{sec:joint5d-power}
@@ -522,8 +534,8 @@ interrupted draw exceeded the observed statistic, no test would have been reject
 Among completed draws, runtime is not associated with the statistic
 ($|\rho|\le\jtRuntimeRho$), which supports but does not certify the decisions.
 
-The lost seeds were rerun, for reporting only, under a procedure fixed and
-independently reviewed beforehand~\cite{JointTestRecovery2026}. A determinism
+The lost seeds were rerun, for reporting only, under a procedure that was
+fixed, and reviewed independently, before the rerun~\cite{JointTestRecovery2026}. A determinism
 check fixed in advance (16 of 16 completed seeds rerun bitwise identically)
 shows that each recovered draw is the lost draw, so every submitted draw has
 been observed. No recovered draw reaches the observed statistic in any
@@ -638,7 +650,7 @@ prediction involves the hadronic axes, on which a response band would act.
 
 In an exploratory sensitivity study of the response~\cite{JointTestRecoil2026},
 the data are re-unfolded with the simulation's reconstructed recoil energy
-scaled by $\pm\SI{4}{\percent}$, and the predeclared tests are re-evaluated
+scaled by $\pm\SI{4}{\percent}$, and the ten tests are re-evaluated
 against the null distributions used for the decisions. The size is the level
 of data--simulation agreement reported for test-beam protons, pions and
 electrons of 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}; neutrons and
@@ -651,6 +663,7 @@ from their recorded values, nine tests keep $k=0$, and NuWro's shape test, the
 closest to its null, changes from $k=1$ to $k=3$ of 1751 at $+4\%$
 ($p=0.0023$, against a Holm threshold of 0.05). The evaluation was reproduced
 independently. Table~\ref{tab:joint5d-recoil} gives the observed statistics.
+% Search: validated uncertainty prescription; calorimetric response band; recoil-energy-scale band @ ddf16f10
 
 % Deposit pass: W2B-REPORT-20261006.md sec. 5, "Observed statistics" (descriptive) and the k/B table; values copied
 % as recorded. Null medians are the frozen unshifted (c = 0) null medians.
@@ -677,11 +690,10 @@ independently. Table~\ref{tab:joint5d-recoil} gives the observed statistics.
   \label{tab:joint5d-recoil}
 \end{table}
 
-The calibration distributions stay fixed in this study, which measures the
+The study measures the
 sensitivity of the observed statistics and decisions to one coherent scale of
 reconstructed available energy and recoil energy, applied after the energy
-calibration at a single magnitude. A response-uncertainty construction would
-also need to vary the null distributions. The study leaves untested (a) the
+calibration at a single magnitude. It leaves untested (a) the
 response of the null distributions, which were not regenerated with the
 variation although they are simulated through the same detector model, so the
 size of this omission is unmeasured for these strongly non-central nulls;
@@ -689,8 +701,12 @@ size of this omission is unmeasured for these strongly non-central nulls;
 difference applied before calibration; and (c) larger variations. The
 rejections are therefore conditional on the simulation's hadronic response,
 and the response model is not shown to be complete.
+% Register round n1 (2026-10-25): this subsection is the one home of the recoil-response omission; the condition
+% (ii) gloss in sec:joint5d-conditions points here. The fixed null distributions print in the paragraph above and
+% in (a); the need to vary them in a response-uncertainty construction, in the first paragraph.
+% Search: regenerated with the; response-uncertainty; calorimetric response band; net effect on each p value @ ddf16f10
 
-\subsection{Hydrocarbon target correction for NuWro and GiBUU (beside the recorded tests)}
+\subsection{Hydrocarbon target correction for NuWro and GiBUU}
 \label{sec:joint5d-ch}
 
 % Methods-paper rewrite draft 5 (DECISION-20261020-joseph-nuwro-ch-claim.md, provisional "for now"). Sources:
@@ -700,8 +716,10 @@ and the response model is not shown to be complete.
 NuWro~21.09 and GiBUU~2019 were generated on carbon, while the data and the
 other predictions are per nucleon of CH.
 This study corrects the two predictions to CH and re-evaluates their tests
-against the null distributions used for the decisions. The re-evaluations are descriptive: they do not
-re-grade the decisions of Table~\ref{tab:joint5d}, which stand.
+against the null distributions used for the decisions. These target-corrected
+evaluations are descriptive; the decisions of Table~\ref{tab:joint5d} are unchanged.
+% Descriptive, decisions unchanged: DECISION-20261020-joseph-nuwro-ch-claim.md:37 ("the replays are descriptive and
+% do not re-grade A7"), reworded on the director's ruling of 2026-10-25 (register round n1).
 
 \paragraph{Construction.}
 % B:29-34 (combination, sumw2, the frozen chain, the supplement); C:46-51 (GiBUU, frozen r(E), 72 cells).
@@ -725,7 +743,7 @@ the data.
 % [0.0183, 0.0336], rejected; shape to threshold 0.025, 0.74 SD above its frozen T_crit; kappa = 3: total p 0.0748,
 % k = 130, not rejected; shape rejected). C:21, :72-79 (GiBUU: T_total -4.67, T_shape -1.33 null SD; margins 7.86 ->
 % 3.18 and 3.58 -> 2.24; frozen positions, no re-sort; kappa = 3 also rejected). M:65-78 (frozen margins).
-Under the predeclared metric, NuWro's total statistic falls by 3.83 null standard
+With the metric used for the decisions, NuWro's total statistic falls by 3.83 null standard
 deviations and its shape statistic by 0.37.  At its original Holm position (threshold 0.005) the total test would then lie 1.11 null standard deviations
 below its boundary, and so be undetermined.  It remains rejected only because
 its larger $p$ value moves it to the last Holm position (threshold 0.05), and in
@@ -770,6 +788,7 @@ $6.2\times10^{-5}$ including the first attempt; these estimates rest on four to
 six events.  The supplement's 95\% upper bound
 of $1.8\times10^{-4}$ exceeds the $10^{-4}$ level set for it, so the supplement
 is flagged rather than assumed negligible.
+% Search: do not conserve energy; energy non-conservation; production_ID 34 (cause not identified) @ ddf16f10
 
 \subsection{What the tests establish}
 \label{sec:joint5d-reading}

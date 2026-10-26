@@ -1,0 +1,19 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced referee for a long technical analysis note in experimental particle physics (unbinned OmniFold unfolding of MINERvA neutrino data). Below are numbered passages, each the LaTeX source of a changed paragraph BEFORE and AFTER a FACTUAL CORRECTION (comments removed; \S\ref{...} prints a section number). The corrections fix stale text about which results use the binned purity weight and which use refined negative-weight subtraction. The CONTEXT block gives the note's own authoritative scope statements and the production code's behaviour; it is not under revision.
+
+The rules for each correction:
+(a) the AFTER text must agree with the CONTEXT about which results use which background treatment, and must not assign the purity weight to the 2D result, its covariance, or the 3D and 4D central values;
+(b) apart from that correction, no fact, number, condition, scope or status may be lost or added, and no claim may become stronger or weaker; a qualifier stays wherever leaving it out would make a printed sentence false as read;
+(c) the AFTER text reads in the register of a well-edited long technical document.
+
+For EACH passage, decide whether the AFTER text satisfies (a), (b) and (c). Also say whether the BEFORE text was in fact inconsistent with the CONTEXT (STALE: YES or NO).
+
+Answer for every passage, in exactly this format, one block per passage, in order:
+PASSAGE: <id>
+STALE: <YES or NO>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
+FIX: <"none", or exact replacement AFTER text for the words named, which changes nothing else>
+
+Use REVISE only for a concrete problem you can name in the AFTER text. Do not propose new facts.

@@ -1,0 +1,13 @@
+# mutation: the newline fix disabled (the script's behaviour before the guard), --check against the pre-correction sources
+PRINTED-DRIFT sec_method.tex:
+  - Genuine backgrounds \emph{and} out-of-phase-space signal fakes are removed from the data side
+  + out-of-phase-space signal fakes are removed from the data side
+PRINTED-DRIFT app_negweight.tex:
+  - Each data event in reconstructed bin $b$ receives the purity weight $w_{\mathrm{pur}}(b)=\max(0,\,N_{\mathrm{data}}(b)-N_{\mathrm{bkg}}(b))/ N_{\mathrm{data}}(b)$
+  + bin $b$ receives the purity weight $w_{\mathrm{pur}}(b)=\max(0,\,N_{\mathrm{data}}(b)-N_{\mathrm{bkg}}(b))/ N_{\mathrm{data}}(b)$
+ACC :: FAIL (8 edits)
+exit=1
+
+# the fixed script, same sources
+ACC :: OK (8 edits)
+exit=0

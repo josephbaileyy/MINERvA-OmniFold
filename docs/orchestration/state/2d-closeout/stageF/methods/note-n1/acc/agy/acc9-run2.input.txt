@@ -1,0 +1,76 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced referee for a long technical analysis note in experimental particle physics (unbinned OmniFold unfolding of MINERvA neutrino data). Below are numbered passages, each the LaTeX source of a changed paragraph BEFORE and AFTER a FACTUAL CORRECTION (comments removed; \S\ref{...} prints a section number). The corrections fix stale text about which results use the binned purity weight and which use refined negative-weight subtraction. The CONTEXT block gives the note's own authoritative scope statements and the production code's behaviour; it is not under revision.
+
+The rules for each correction:
+(a) the AFTER text must agree with the CONTEXT about which results use which background treatment, and must not assign the purity weight to the 2D result, its covariance, or the 3D and 4D central values;
+(b) apart from that correction, no fact, number, condition, scope or status may be lost or added, and no claim may become stronger or weaker; a qualifier stays wherever leaving it out would make a printed sentence false as read;
+(c) the AFTER text reads in the register of a well-edited long technical document.
+
+For EACH passage, decide whether the AFTER text satisfies (a), (b) and (c). Also say whether the BEFORE text was in fact inconsistent with the CONTEXT (STALE: YES or NO).
+
+Answer for every passage, in exactly this format, one block per passage, in order:
+PASSAGE: <id>
+STALE: <YES or NO>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
+FIX: <"none", or exact replacement AFTER text for the words named, which changes nothing else>
+
+Use REVISE only for a concrete problem you can name in the AFTER text. Do not propose new facts.
+
+
+===== BEGIN FILE context-acc9b.txt =====
+CONTEXT (authoritative; not under revision)
+
+1. The note's own statement of which results use which background treatment (sec_method.tex, sec:method-algo, printed):
+"correction, an ${\sim}\SI{3}{\percent}$ effect overall, largest where backgrounds concentrate (\S\ref{sec:selection}). This correction is, by design, the one place the analysis binning enters before the final histogramming; other experiments' treatments are summarized in \S\ref{sec:intro}. At the sub-percent genuine-background scale, a per-reco-bin weight is a conservative middle ground. A fully unbinned alternative injects negatively weighted background simulation on the measured side, targeting the identical background-subtracted density $(D-B)/S$. It reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross section and its systematic and statistical covariances to within \SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning dependence and suits the extended-fiducial analysis, where backgrounds are larger. The quoted 2D result and its covariance and the 3D and 4D central values use its refined form; every other quoted cross section and uncertainty, including the 5D central value and the extended-fiducial value, uses the binned correction. The refined form is the background treatment of configurations (d), (e) and (f) (\S\ref{sec:method-config}): (d) in the background-bias and generator-sized-change studies of \S\ref{sec:val-negweight}; (e), the joint-test estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the"
+
+2. The same scope in App. C, "Scope of the numbers" (app_negweight.tex, printed):
+"natural treatment for the larger backgrounds of the extended-fiducial analysis. \paragraph{Scope of the numbers.} No number in this appendix is a quoted uncertainty, and the analytic derivation, the estimand identity and the displacement argument require none of them. Every cross section and uncertainty quoted in this note uses the binned purity weight of \S\ref{sec:method-algo}, except the 2D result and its covariance and the 3D and 4D central values. Refined negative-weight subtraction is used by configurations (d), (e) and (f) (\S\ref{sec:method-config}): (d) in the background-bias and generator-sized-change studies of \S\ref{sec:val-negweight}, (e), the joint-test estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the"
+
+3. The production code (driver option at commit ddf16f10, unchanged on main): both unfolding drivers take
+--bkg-mode {purity, negweight, negweight-refined}, default purity. In purity mode the data are down-weighted per
+reconstructed bin by the purity (D-B)/D before step 1. In the two negative-weight modes the data carry weight +1 and
+the background simulation and the signal fakes are injected on the measured side at negative weight; in
+negweight-refined these are refined to non-negative weights (Stay-Positive) before training. The negative-weight modes
+use no reco-bin weight. Configuration (f), the 2D result, and configuration (e), the 3D and 4D central values, run
+negweight-refined; configuration (a), the 5D central value, and the extended-fiducial battery ran with the purity
+default.
+
+4. Two further printed facts the corrections rely on:
+- A five-dimensional covariance exists and is used: "The one five-dimensional covariance used in this note, with its
+  $(\Eavail,W)$ projection, does not meet its specification" (sec_execsummary.tex); its construction is in the
+  paper's sec:cov5d. It is built with the binned purity weight, like the 5D central value ("every other quoted cross
+  section and uncertainty, including the 5D central value ..., uses the binned correction", item 1).
+- No 3D or 4D uncertainty exists: "In three and four observables they use central values without uncertainties: no
+  3D or 4D covariance is quoted" (sec_3d.tex); "No 4D uncertainty is reported." (sec_3d.tex).
+
+5. The equivalence study's own claim, verbatim (app_negweight.tex:255-257, printed, unchanged): "The 2D central-value,
+closed-form recovery and full covariance comparisons, together with Stay-Positive robustness on larger
+extended-fiducial backgrounds, support negative-weight injection as an unbinned alternative at the 2D scale."
+App. C also prints (app_negweight.tex:31-34): "Here negative-weight injection is an equivalence study and the natural
+extended-fiducial treatment; this appendix establishes no supported production path and changes no default."
+
+6. Configuration roles, from Table tab:estimators-matrix (sec_method.tex:281-305, printed): (a) central-value estimator,
+purity-based subtraction; (b) exact-split cross-check, purity-based subtraction; (c) deterministic variant,
+purity-based subtraction; (d) deterministic variant with refinement, negative weights; (e) joint-test estimator,
+negative weights; (f) refined central-value estimator, negative weights, two-observable central value and covariance.
+No configuration with negative weights carries a cross-check role.
+
+7. The extended-fiducial designation, verbatim (sec_fps.tex:120-122, printed, unchanged): "The extended-fiducial value
+was produced with the binned purity correction, not with the negative-weight treatment designated for the
+extended-fiducial analysis; no extended-fiducial production with refined negative-weight subtraction has been run
+(App.~\ref{app:negweight})."
+
+===== END FILE context-acc9b.txt =====
+
+
+===== BEGIN FILE passages-acc9.txt =====
+=== PASSAGE ACC-9 (app_negweight.tex) ===
+BEFORE:
+The 2D central-value, closed-form recovery and full covariance comparisons, together with Stay-Positive robustness on larger extended-fiducial backgrounds, support negative-weight injection as an unbinned alternative at the 2D scale. Binned purity remains the default for this note's reproduction measurement. Negative-weight injection is the validated unbinned cross-check and \emph{designated} extended-fiducial baseline (\S\ref{sec:fps}), where binning-independence and the continuous floor are essential.
+
+AFTER:
+The 2D central-value, closed-form recovery and full covariance comparisons, together with Stay-Positive robustness on larger extended-fiducial backgrounds, support negative-weight injection as an unbinned alternative at the 2D scale. The 2D result and its covariance and the 3D and 4D central values use its refined form (\S\ref{sec:method-algo}); binned purity remains the treatment of the five-dimensional central value and its covariance and of the extended-fiducial value. Negative-weight injection is the \emph{designated} extended-fiducial baseline (\S\ref{sec:fps}), where binning-independence and the continuous floor are essential.
+
+===== END FILE passages-acc9.txt =====

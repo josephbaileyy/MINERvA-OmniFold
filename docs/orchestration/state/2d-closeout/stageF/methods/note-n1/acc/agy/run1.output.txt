@@ -1,0 +1,47 @@
+PASSAGE: ACC-1
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-2
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-3
+STALE: YES
+VERDICT: REVISE
+ISSUE: "out-of-phase-space signal fakes are removed from the data side." begins with an uncapitalized word and incorrectly asserts that signal fakes are removed from the data side, whereas under negative-weight modes both background simulation and signal fakes are injected on the measured side, while removal applies only to the binned purity mode alongside genuine backgrounds.
+FIX: Replace "with background simulation injected at negative weight (refined to non-negative weights in the refined configurations). out-of-phase-space signal fakes are removed from the data side." with "with background simulation and signal fakes injected at negative weight (refined to non-negative weights in the refined configurations); in the binned purity mode, genuine backgrounds and out-of-phase-space signal fakes are removed from the data side."
+
+PASSAGE: ACC-4
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-5
+STALE: YES
+VERDICT: REVISE
+ISSUE: "bin $b$ receives the purity weight" drops the leading words "Each data event in reconstructed ", leaving the sentence opening with an uncapitalized word ("bin") and erroneously stating that the bin itself receives the weight rather than the events within it.
+FIX: Replace "bin $b$ receives the purity weight" with "Each data event in reconstructed bin $b$ receives the purity weight".
+
+PASSAGE: ACC-6
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-7
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-8
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none

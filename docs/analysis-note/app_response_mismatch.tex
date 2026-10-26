@@ -19,8 +19,8 @@ training, it changes only the reconstructed pseudo-data record
 The nominal reconstructed simulation, all truth coordinates, event weights,
 and event membership stay fixed. The pseudo-data therefore have a deliberately
 incompatible conditional response; OmniFold still uses the nominal response.
-Both signs of $\epsilon$ must run at an amplitude fixed before inspecting
-results. A documented hadronic-response variation or quantified assumption
+Both signs of $\epsilon$ must run, at an amplitude fixed before the results
+are examined. A documented hadronic-response variation or quantified assumption
 should justify that amplitude. The inherited factor in reconstructed
 $\Eavail$ alone does not.
 
@@ -38,12 +38,13 @@ $\Eavail$, $q_{3}$, $W$, and any affected selection from the altered low-level
 record. Current scalar event-loop outputs lack enough information for that
 recomputation. This arm requires dedicated diagnostic event-loop output and
 is deferred unless the reconstruction-only test shows material bias or the
-collaboration requests the stronger model.
+collaboration asks for the stronger response model.
 
 \paragraph{Status and interpretation.}
 This appendix records a validation protocol, not a result or an uncertainty
 component. No
 response-mismatch output has been produced and no pass threshold has been set. The test leaves the quoted central value and the current covariance construction unchanged. A small observed bias would support stability of the
 $(\Eavail,W)$ interpretation only within the tested response envelope. A large
-bias would trigger a model/uncertainty decision and would not be silently
-absorbed as a non-closure error.
+bias would require a decision on the response model or an uncertainty
+component, and would not be absorbed silently into a non-closure error.
+% Search: response-mismatch; response mismatch; mismatch closure; RESPONSE_MISMATCH_CLOSURE; NO RESULT EXISTS (HANDOFF-20260922-gbdt-cold-start.md:316); not yet run (EVIDENCE-MAP-20261019.md:80) @ ddf16f1087d7

@@ -89,3 +89,24 @@ print.
 - **Build gates:** BODY-POINTERS PASS; SEC4-RECEIPTS PASS (15/15) and its self-test; RESULT PASS.
 - **agy agreement** (gemini, BEFORE and AFTER paragraph with the four sources above): **AGREE**, with no issue.
 - **Pre-commit gates** run on the staged change (absence claims, registry, swallowed text, manifest).
+
+## Erratum (2026-10-26)
+
+"The defect sentence is the only stale statement" was wrong. This sweep required a 2D or quoted-result term together
+with a negation or restriction, so it missed sentences that made the purity weight the general method.
+
+The director ruled a re-sweep by claim and by vocabulary, of the note, the paper and the primer (2026-10-26).
+- **Patterns:** `purit`, `(D-B)/D`, "fixed before training", `default`, "binned correction/subtraction/weight",
+  "reproduction measurement", "negative-weight", "refined", "background subtraction/treatment/removal",
+  "do(es) not use it/the/this", "improved removal".
+- **Hits:** 220 sentences. The note has 188, the paper 23 and the primer 9.
+- **Per-file counts:** in `../note-n1/REPORT.md`, "Accuracy fixes".
+- **Stale:** 9 more note sites, corrected in note register round n1's second commit as ACC1–ACC9.
+  - §1 "Why unbinned"; the §3.1 heading and first sentence; the §3 driver conventions; §5.2's split-sample
+    condition;
+  - App. C's opening, §C.3 and §C.5 (two sentences);
+  - App. H's driver description.
+- **Paper and primer: 0 stale.**
+
+Record: `../note-n1/REPORT.md`, "Accuracy fixes (unscored; second commit)"; ledger rows ACC1–ACC9 in
+`../note-n1/ledger.md`.
