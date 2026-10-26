@@ -22,10 +22,9 @@ iteration count approximate the inverse and can leave residuals in either case. 
 contain their specified target at the stated rate, and correcting a nominal
 closure bias does not establish coverage under other truths. These mechanisms
 are separate: an incorrect generator prediction alone does not diagnose an
-interval failure. Each test below isolates one intervention. Improved background
-refinement repairs the nominal recovery, while the failure of signal-only
-experiments to follow a truth departure shows that background subtraction does
-not explain all the residuals.
+interval failure. Each test below isolates one intervention.
+% Register round n1 (R-N1): the two findings summarized here print at their homes: the refined subtraction's nominal
+% recovery in sec:val-negweight and sec:val-departure, and the signal-only result in sec:val-negweight.
 
 
 All 2D closures in \S\ref{sec:validation} unfold reweighted simulated signal
@@ -60,11 +59,11 @@ refer to Table~\ref{tab:estimators-matrix}.
     \pcell{0.17\textwidth}{Background closure (c), (d)} & \pcell{0.22\textwidth}{none (nominal truth)} &
     \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{42 $(\Eavail,W)$ and \jtNcells{} joint cells} & \pcell{0.23\textwidth}{none; studies during estimator development} \\
     \pcell{0.17\textwidth}{Generator-sized change (d)} & \pcell{0.22\textwidth}{GiBUU/GENIE $\Eavail$ shape ratio} &
-    \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{42 $(\Eavail,W)$ cells} & \pcell{0.23\textwidth}{recovery requirement set before the test; not met} \\
+    \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{42 $(\Eavail,W)$ cells} & \pcell{0.23\textwidth}{recovery requirement; not met} \\
     \pcell{0.17\textwidth}{Shapes held out of development (e)} & \pcell{0.22\textwidth}{NuWro and GENIE + MEC shapes, not used while (e) was chosen} &
     \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{42 $(\Eavail,W)$ cells} & \pcell{0.23\textwidth}{compared with the quoted total $\sigma$} \\
     \pcell{0.17\textwidth}{Coverage (c)} & \pcell{0.22\textwidth}{nominal; signal rate lowered by about 10\% with a weak $\Eavail$ slope (weight 0.900--0.906 below \SI{3}{GeV})} &
-    \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{153 cell and projection integrals} & \pcell{0.23\textwidth}{upper bound on coverage at least 0.66 (0.94), fixed in advance} \\
+    \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{153 cell and projection integrals} & \pcell{0.23\textwidth}{upper bound on coverage at least 0.66 (0.94)} \\
     \pcell{0.17\textwidth}{Test calibration (e)} & \pcell{0.22\textwidth}{each null hypothesis} &
     \pcell{0.10\textwidth}{included} & \pcell{0.16\textwidth}{\jtNcells{} (GiBUU \jtNcellsGiBUU) joint cells} & \pcell{0.23\textwidth}{size set by the calibration (\S\ref{sec:joint5d-frozen})} \\
     \bottomrule
@@ -120,7 +119,10 @@ $W\ge\SI{3}{GeV}$, whose share of the cross section the deformation study did
 not record. A $q_3$ deformation preserving the $(\Eavail,W)$ truth shifts these cells by
 up to \SI{37}{\percent}. Signal-only experiments with the same seeds reproduce both results,
 so they are a property of the estimator (five iterations, the GBDT configuration of
-\S\ref{sec:method}), not of the background treatment. This regularization (unfolding-model) bias enters no quoted uncertainty.
+\S\ref{sec:method}), not of the background treatment. Their status in the quoted uncertainties is stated in
+\S\ref{sec:val-departure}.
+% Register round n1 (R-N1): the status of this bias (it enters no quoted uncertainty) is stated once, at its home in
+% sec:val-departure.
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
 % KNOWN_ISSUES 75, 77; independently reproduced (state/s5n/stage1/review-round-1.md).
 
@@ -144,8 +146,13 @@ Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}; it
 continues falling slowly, while the $q_3$ residual grows with iterations.
 A larger classifier improves the
 reco-level fit without improving the $\Eavail$ truth residual, and removing the regression
-for events that fail reconstruction does not help it. No single cause is established, and no estimator change that the
-study's rules allow meets the recovery requirement of the GiBUU-to-GENIE departure screen, which was set before the test.
+for events that fail reconstruction does not help it. No single cause is established, and no estimator change within
+the scope of the study meets the recovery requirement, set before the test, for the GiBUU-to-GENIE departure.
+The $\Eavail$ and $q_3$ residuals, a regularization (unfolding-model) bias of the estimator, enter no
+quoted uncertainty.
+% Register round n1 (R-N1, R-N6): the home of the residual-bias statement (moved from sec:val-negweight); "that the
+% study's rules allow" stated as its scope (OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md:43, "no authorized
+% estimator change passes its predeclared screen").
 
 % CLAIM-ADDITION D-ID BEGIN
 % Register round 2 (methods paper, 2026-10-21), claim addition for Joseph, to be committed separately. Source:
@@ -215,7 +222,7 @@ The refinement classifier underfits, which causes the residual background bias
 nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation
 2.7 standard errors) and a pooled calibration test of its statistical intervals (pull width 1.02),
 which does not establish calibration for every functional.
-The candidate fails the predeclared data-stability test: input perturbations within
+The candidate fails the data-stability test, whose criterion was set before it was run: input perturbations within
 floating-point rounding move functionals by a median of 0.8 and at most 2.6
 statistical standard deviations. The baseline estimator's shifts, 0.8 and 2.5, place this
 instability in the estimator family, and it explains the difference on data
@@ -344,9 +351,11 @@ Its bounded unfolding-model component, the largest shift over five generator-siz
 truth departures at the smallest envelope the vertices allow, has median
 \SI{12.0}{\percent}, \SI{9.6}{\percent} and \SI{13.4}{\percent} respectively
 (90th percentile 38.6, 22.5 and \SI{39.2}{\percent}), with GiBUU the dominant
-vertex in most cells. The study adds the model component linearly to the probabilistic
-half-width, cell by cell, so the total-width target fixed before the study (median 68\% half-width at most
-\SI{10}{\percent}) cannot be met in RD1 and RD3 from the model component
+vertex in most cells. The study set its total-width target, a median 68\% half-width of at most
+\SI{10}{\percent}, and its selection procedure before it was run.
+% Register round n1 (R-N6): "fixed before the study" (twice) stated once, as the targets' and the procedure's timing.
+It adds the model component linearly to the probabilistic
+half-width, cell by cell, so the total-width target cannot be met in RD1 and RD3 from the model component
 alone, nor in RD2 once the flat \SI{1.4}{\percent} normalization is added (median at
 least \SI{11.0}{\percent}).
 % Methods-paper rewrite draft 6 (REVIEW-2 finding 9): RECORD-20260927-s5p-stage2-exit.md:133-135 (half-width = sigma_prob + h).
@@ -358,10 +367,10 @@ least \SI{11.0}{\percent}).
 The model-component and recovery targets (median at most
 \SI{5}{\percent}; recovery of at least 75\% of a generator-sized departure, that is,
 a residual proxy of Fig.~\ref{fig:gbdt-recovery} of at most 0.25, against
-0.31--0.63 measured) fail in every definition. The selection procedure, also fixed
-before the study, then takes RD3 as the fallback, and RD3 fails the total-width target.
+0.31--0.63 measured) fail in every definition. The selection procedure then takes RD3
+as the fallback, and RD3 fails the total-width target.
 No reporting definition can meet these precision targets with any estimator
-configuration that the study's selection rules allow within its computing budget. The
+configuration the study's selection procedure permits within its computing budget. The
 limitation is the measured prior dependence, about 10--13\% per coarse
 joint cell, which is comparable to the generator differences a user would need to
 resolve. It motivates the calibrated joint tests of \S\ref{sec:joint5d}, a
@@ -422,7 +431,9 @@ of 40 68\% intervals (37.5\%, pointwise exact 95\% interval
 A 160-experiment check with the width averaged over six bootstrap estimates
 changes the pull scales but does not validate the real-data procedure, which
 uses the data's own width; finite replica noise explains much of the apparent
-variation among the six estimates. Neither check establishes total coverage.
+variation among the six estimates.
+% Register round n1 (R-N1): "Neither check establishes total coverage" is covered by the one statement in
+% sec:coverage-5d that no frequentist coverage is claimed for any five-dimensional interval.
 
 \begin{figure}[tbp]
 \centering
@@ -446,8 +457,9 @@ J-cell median SD of \SI{0.228}{\percent}, against a bootstrap SD of
 \SI{0.368}{\percent}. Fifty bootstrap replicas with jittered partners give a
 median consistency ratio of 1.02 and an estimated numerical share of 0.37 of the
 bootstrap variance; in this design, adding the share again would count it twice.
-The study leaves the stability failure in place, establishes no interval coverage,
-and does not transfer to the five-axis covariance used in this note.
+The study leaves the stability failure in place and does not transfer to the
+five-axis covariance used in this note (for interval coverage, see
+\S\ref{sec:coverage-5d}).
 
 \paragraph{Prior sensitivity is not a measured real-data bias.}
 
@@ -488,10 +500,12 @@ objective is not met.
 
 An end-to-end independent-truth test assessed statistical intervals of a
 deterministic five-dimensional estimator variant with nominal-truth bias
-correction (1,200 pseudo-experiments over three truths). It failed its predeclared
-futility criterion at the nominal truth and under a 10\% reduction of the signal rate with a weak
-$\Eavail$ slope (below), so no frequentist coverage is
-claimed for any five-dimensional interval.
+correction (1,200 pseudo-experiments over three truths). It failed its futility
+criterion, set before the test was run, at the nominal truth and under a 10\% reduction
+of the signal rate with a weak $\Eavail$ slope (below). No frequentist coverage is
+therefore claimed for any five-dimensional interval.
+% Register round n1 (R-N1, R-N6): the one statement of the five-dimensional interval status, for all of sec:5d;
+% "predeclared" (here) and "fixed in advance" (Table tab:validation-design-5d) stated once, as the criterion's timing.
 % plain-language pass 2 (DECISION-20261018-joseph-plain-language-pass2): theme A, note home for the paper's
 % Sec. IV C numbers. Source: OUTCOME-20260925-s5c-tier-s-futility-fail.md:30-36 (table: nominal 0 / 2 futile,
 % min 0.570 / 0.850; E_avail tilt a=0.2 51 / 42 futile, min 0.060 / 0.288; UCB < 0.66 / < 0.94; per-comparison
@@ -573,13 +587,15 @@ The five-axis covariance used in this note is the variant centered on the
 central value (\texttt{cv}); its $(\Eavail,W)$ projection has \zprojCells\ cells.
 The file and the projection are identified by their SHA-256 checksums
 (Ref.~\cite{NoteRecords2026}, identities already fixed). The covariance does not
-meet the acceptance criteria of its specification. The
-specification requires the null bound to be fixed before production; the bound
-was not fixed before this covariance was produced, so the requirement cannot be
-met for it, and the file's own metadata records it as not passing and as not to be used.
-It is used under an exception that covers only this file and its projection, not any
-other covariance built to the same specification, including the two companion
+meet the acceptance criteria of its specification, and its metadata mark it as not
+passing and as not to be used. The specification requires the null bound to be
+fixed before production; the bound was not fixed before this covariance was
+produced, so this covariance cannot meet that requirement. This note nevertheless
+uses this file and its projection; the use covers only them, not any other
+covariance built to the same specification, including the two companion
 covariances of the measurements below.
+% Register round n1 (R-N6): the status stated plainly, once, without "exception" or "the file's own metadata
+% records"; the use's scope (this file and projection only) and the two metadata fields are unchanged.
 % Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2; old text in git history): the file
 % name, size and digests move to App. H's identities table; the exception's scope
 % (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md sec. 3: 3d7465f6... and nothing else, explicitly

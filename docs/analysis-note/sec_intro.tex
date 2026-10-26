@@ -105,8 +105,23 @@ result, closure, coverage and classifier-family comparisons. The validation and 
 five-dimensional estimator (\S\ref{sec:5d}) and the calibrated generator tests built on it
 (\S\ref{sec:joint5d}) follow these central values. A scalar study
 with relaxed truth-muon cuts (\S\ref{sec:fps}) probes an alternative signal
-definition. Point-cloud (PET) representations are future work
-(App.~\ref{sec:pet}).
+definition.
+
+\paragraph{Scope.}
+% Register round n1 (R-N5): the note's scope, stated once; the executive summary restates it once, and the
+% summaries point here. The PET sentence gathers the former Analysis-strategy sentence and the executive summary's
+% PET items ("under development and documented separately"; "no result in this note depends on it").
+The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the
+configurations, observables and deformations tested. The two-dimensional result has an uncertainty budget
+whose coverage has not been tested (\S\ref{sec:uq-boot}, \S\ref{sec:uq-2d-scope}, \S\ref{sec:coverage}); above two dimensions the results are central values
+without intervals of validated coverage (\S\S\ref{sec:3d}--\ref{sec:5d}). The generator tests of
+\S\ref{sec:joint5d} evaluate hybrid null hypotheses and add no reportable uncertainty. Point-cloud (PET) unfolding of
+the full event is future work, under development and documented separately (App.~\ref{sec:pet}); no result in
+this note depends on it.
+% Homes of the absence claims above: coverage test of the quoted 2D block (sec_systematics.tex sec:uq-boot: "has had no coverage test"; sec_validation.tex
+% sec:coverage: "the quoted block has not been tested"); validated coverage above 2D (sec:coverage-5d: "No frequentist
+% coverage is therefore claimed"; sec_3d.tex lead: no 3D or 4D covariance).
+% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
 
 \paragraph{Roadmap.}
 Each topic is treated in full in the section listed below; other sections summarize it and refer there. The
@@ -114,6 +129,8 @@ companion journal article is a shortened account, and these sections give the de
 % Register pass b8 (2026-10-22): the D and E rows added so that the table covers every appendix of the posted
 % note; the release and code rows are as set by the records move (records-move-ledger.md L11); the records row and
 % the audit-record pointer were dropped by the records-citation thinning (DECISION-20261022, rows L-thin-C55/C56).
+% Register round n1: the 2D-covariance row also points to sec:uq-2d-scope, where the earlier-budget defects are now stated
+% ("Changes from the earlier 2D budget").
 \begin{center}
 \small
 \begin{tabular}{@{}p{0.47\textwidth}p{0.47\textwidth}@{}}
@@ -122,7 +139,7 @@ Topic & Section \\
 \midrule
 Data, selection, simulation & \S\ref{sec:experiment} \\
 Algorithm, estimators, binning & \S\ref{sec:method}; estimator pairing \S\ref{sec:method-config} \\
-2D covariance blocks and the limitations of their construction & \S\ref{sec:systematics}; \S\ref{sec:uq-2d-construction} \\
+2D covariance blocks and the limitations of their construction & \S\ref{sec:systematics}; limitations \S\ref{sec:uq-2d-construction}, \S\ref{sec:uq-2d-scope} \\
 2D closure, injected features & \S\ref{sec:validation}; procedures App.~\ref{sec:closure} \\
 2D fixed-truth coverage (first-built and rebuilt band) & \S\ref{sec:coverage} \\
 2D result, budget, comparison to the publication & \S\ref{sec:results}; $\chi^{2}$ conventions App.~\ref{sec:chisq}; pulls App.~\ref{sec:pull}; tension App.~\ref{sec:tension}; audit trail of the numbers App.~\ref{sec:assemble} \\

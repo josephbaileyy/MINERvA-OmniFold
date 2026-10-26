@@ -21,6 +21,17 @@ What distinguishes this analysis is the unbinned, simultaneous CC-inclusive
 scalar formulation extended to three, four and five recorded observables, not
 the number of dimensions by itself.
 
+% Register round n1 (R-N1): the one statement, for this section and sec:eavailw, of three caveats that were restated
+% per subsection: descriptive central values (paper_body.tex sec:central), no mechanism (reasons in sec:3d-2p2h), and no
+% 3D or 4D covariance (sec_method.tex sec:method-config, "no 3D or 4D covariance is quoted"; sec:3d-models; sec:4d).
+% Search: 3D covariance; 4D covariance; 4D uncertainty; chi^2, p-value or significance in three or four observables (note sources: only sec_3d.tex, sec_method.tex:257 and sec_systematics.tex:15 print one, each saying none is quoted; app_history.tex's are superseded and outside the note) @ ddf16f10
+The comparisons with generator predictions in this section and in
+Sec.~\ref{sec:eavailw} are descriptive comparisons of central values, and they
+do not identify a nuclear or interaction mechanism (\S\ref{sec:3d-2p2h}). In
+three and four observables they use central values without uncertainties: no
+3D or 4D covariance is quoted, and no generator $\chi^{2}$, $p$-value or
+significance (\S\S\ref{sec:3d-models} and~\ref{sec:4d}).
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.97\textwidth]{minerva_unfolding_landscape}
@@ -275,12 +286,7 @@ per nucleon.
 
 \paragraph{Flux repair of the GENIE and NuWro predictions.}
 % (2026-09-27)
-The GENIE (CV and $+$Valencia~2p2h) and NuWro samples were generated from a
-flux without PPFX weights, capped at \SI{50}{GeV}, whose variable-width bins
-stored flux \emph{densities} but were sampled and normalized as
-\emph{contents}. This under-weighted every wide high-energy bin and suppressed
-the high-$\pPar$ predictions and the integrated rates
-(Ref.~\cite{NoteRecords2026}, \texttt{flux-repair}).
+% Register round n1 (R-N2): the defect history in one sentence, framed as what the repair corrects; every fact kept.
 % KNOWN_ISSUES.md row 83
 Apart from three studies that keep the unrepaired samples, as stated where
 they appear (the FSI-dial studies, the departure ratio of
@@ -288,6 +294,12 @@ they appear (the FSI-dial studies, the departure ratio of
 GENIE and NuWro predictions in \S\S\ref{sec:3d}--\ref{sec:eavailw} are
 repaired by exact per-event reweighting to the analysis PPFX central-value flux
 on 0--\SI{100}{GeV}, with correctly sampled 50--\SI{100}{GeV} supplements.
+The repair corrects the flux from which the GENIE (CV and $+$Valencia~2p2h) and
+NuWro samples were generated: it had no PPFX weights, was capped at
+\SI{50}{GeV}, and stored flux \emph{densities} in variable-width bins that were
+sampled and normalized as \emph{contents}, which under-weighted every wide
+high-energy bin and suppressed the high-$\pPar$ predictions and the integrated rates
+(Ref.~\cite{NoteRecords2026}, \texttt{flux-repair}).
 GiBUU reads its own flux and receives an energy-dependent per-event reweight
 to the same convention, which changes its integrated cross section by a factor
 $0.9966$. Its sample stops at $E_\nu\approx\SI{20}{GeV}$, so it is empty
@@ -322,7 +334,7 @@ The $\Eavail$ axis exposes this excess, invisible in 2D.
   on $\Eavail$; all under-predict the quasielastic--$\Delta$
   dip ($0.1\le\Eavail<\SI{0.4}{GeV}$). The wide
   $\Eavail$ catch bin is omitted from the axis.
-  Data have no error bars because the 3D covariance that would be quoted is not used for any result in this note.}
+  Data have no error bars because no 3D covariance is quoted (\S\ref{sec:3d}).}
   \label{fig:3dmodels}
 \end{figure}
 
@@ -331,18 +343,19 @@ NuWro and GiBUU central values lie respectively
 $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and
 $\SI{22.3}{\percent}$ below the data.
 % (flux-repaired predictions; ledger row \texttt{VL159})
-No 3D covariance, generator $\chi^{2}$, $p$-value or significance is quoted.
-The 3D covariance that would be quoted is the exact projection of the
+% Register round n1 (R-N1): "no 3D covariance, generator chi^2, p-value or significance is quoted" is stated once,
+% at the sec:3d lead; the next sentence restates its first clause, with a pointer, as the antecedent of
+% "the one that would be quoted" (review fix).
+No 3D covariance is quoted (\S\ref{sec:3d}); the one that would be quoted is the exact projection of the
 five-dimensional covariance used in this note; that projection has been
 computed but is not used for any result in this note.
 
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism).
+% Register round n1 (R-N1): both are stated once, at the sec:3d lead; the reasons stay below.
 \subsection{The low-available-energy excess and the known low-recoil deficit}
 \label{sec:3d-2p2h}
 We compare the low-$\Eavail$ excess with candidate model changes, both by
-reweighting and by generating the relevant physics. The comparisons use
-central values without uncertainties and do not identify a nuclear
-mechanism. MINERvA first isolated the rate enhancement between quasielastic
+reweighting and by generating the relevant physics. MINERvA first isolated the rate enhancement between quasielastic
 and $\Delta$ peaks, with multi-nucleon final states, in a
 low-three-momentum-transfer subsample~\cite{MINERvA:2016lowrecoil}.
 The empirical tune was built to absorb it; our muon-kinematics
@@ -360,9 +373,13 @@ cancels to first order, and neither was recomputed. The integrated rate
 % flux repair: KNOWN_ISSUES.md row 83
 moves only $\pm\SI{0.02}{}$--$\SI{0.03}{\percent}$ at $\pm1\sigma$.
 \footnote{\texttt{FrInel\_pi} is disabled in the standard MAT-MINERvA set of
-systematics. In 2026 the collaboration confirmed that this is current practice
-and that the reason is a degeneracy (of overlapping pion-FSI dials, one must be
-dropped), not a defect of that dial.}
+systematics. This is MINERvA's current practice (private communication from the
+collaboration, 2026), and the reason is a degeneracy (of overlapping pion-FSI
+dials, one must be dropped), not a defect of that dial.}
+% Source of the practice: docs/COLLABORATOR_QUESTIONS.md, answers received 2026-08-02, item 1 (verbal).
+% Register round n1 (R-N6): "the collaboration confirmed" stated as the practice and its source; the paragraph's
+% absence claim ("neither was recomputed") is unchanged.
+% Search: FrInel; FrAbs; grwght1p; FSI in the flux-repair products (state/s5p/gen5d: gen5d-fluxfix*.json, README-gen5d-fluxfix.md carry none; 3d-unfolding/genie/genie_fsi_*_xsec3d_summary.txt are the unrepaired-sample ratios) @ ddf16f10
 A dial that moves the spectrum by less than \SI{1}{\percent} cannot account for
 an excess of \SIrange{8}{36}{\percent} per bin over the GENIE central value
 below $\Eavail=\SI{0.4}{GeV}$, so the tested variations do not account for
@@ -401,7 +418,7 @@ GENIE's \texttt{gspl2root}, so we normalize by the non-MEC CC count: QE$+$RES$+$
 is fixed to the known total, and MEC is added through $1/(1-f_{\mathrm{MEC}})$
 with $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$.
 2p2h falls in the dip and brings all three low-$\Eavail$ bins toward data
-(Fig.~\ref{fig:mec}), closing, in central values without uncertainties,
+(Fig.~\ref{fig:mec}), closing, in central values,
 \SI{52}{\percent} of the data$-$CV gap at $\Eavail\le\SI{0.4}{GeV}$ and \SI{63}{\percent} of the
 integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{2.7}{\percent}$). The prediction
 % ledger row \texttt{VL160}
@@ -423,8 +440,7 @@ current: recent NEUT studies, for example, include two-body currents that
 contribute to one-particle--one-hole final states and examine their interplay
 with axial form factors~\cite{FrancoMunoz:2026currents}. Visible-energy
 comparisons can, moreover, depend on both the primary interaction and the
-subsequent hadronic transport, so these comparisons do not identify a nuclear
-mechanism.
+subsequent hadronic transport.
 
 Ascencio \emph{et al.}~\cite{MINERvA:2022incl} report the same deficit in
 MINERvA's dedicated low-recoil inclusive $d^{2}\sigma/(dq_{3}\,d\Eavail)$
@@ -434,8 +450,7 @@ their low-$\Eavail$ data without enhanced 2p2h. Our muon-kinematics extension
 integrates over all $q_3$ instead of restricting $q_3$, which limits the
 comparison to the \emph{shape} and direction in $\Eavail$, without absolute
 normalization. In those terms our central values are consistent with that
-established low-recoil deficit; the comparison is descriptive and does not
-measure its cause. A bin-identical comparison of central values is in
+established low-recoil deficit. A bin-identical comparison of central values is in
 \S\ref{sec:4d}.
 
 \begin{figure}[H]
@@ -446,7 +461,7 @@ measure its cause. A bin-identical comparison of central values is in
     \caption{Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid
     with unfolded data. The excess lies in the quasielastic--$\Delta$ dip
     ($\Eavail\le\SI{0.4}{GeV}$), where a missing 2p2h component would
-    populate. Data carry no error bars because the 3D covariance that would be quoted is not used for any result in this note.}
+    populate. Data carry no error bars because no 3D covariance is quoted (\S\ref{sec:3d}).}
     \label{fig:modedecomp}
   \end{minipage}\hfill
   \begin{minipage}{0.49\textwidth}
@@ -456,7 +471,7 @@ measure its cause. A bin-identical comparison of central values is in
     no-2p2h CV; both flux-repaired) closes about half the low-$\Eavail$
     data$-$CV gap in central values (\SI{52}{\percent}). The remainder occupies the region the
     MINERvA tune's empirical enhancement is built to absorb. Data carry no
-    error bars because the 3D covariance that would be quoted is not used for any result in this note.}
+    error bars because no 3D covariance is quoted (\S\ref{sec:3d}).}
     \label{fig:mec}
   \end{minipage}
 \end{figure}
@@ -497,9 +512,10 @@ The central value over-predicts low-$q_{3}$, moderate-$\Eavail$ cells
 (ratio down to $0.66$); data excess concentrates at low $\Eavail$ (all $q_{3}$)
 and toward high $q_{3}$. The muon-only or fixed-$q_{3}$ projections considered
 here do not resolve this correlation, which is a natural input to the
-bin-compatible comparison with Ascencio \emph{et al.} The map uses central values and the MINERvA Tune~v1
-prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}. No per-cell significances
-are reported without a corrected 4D covariance (below).
+bin-compatible comparison with Ascencio \emph{et al.} The map's comparator is the MINERvA Tune~v1
+prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}.
+% Register round n1 (R-N1): "no per-cell significances without a corrected 4D covariance" is covered by the sec:3d
+% lead (no 4D covariance, no significance) and the paragraph below.
 % comparator weights: \texttt{w\_truth}; script \texttt{nd-unfolding/q3\_excess\_projection.py}
 
 \paragraph{No 4D uncertainty is reported.} No 4D uncertainty magnitude, and no
@@ -546,9 +562,8 @@ method, \emph{and} a systematic sweep on that binning.
   \caption{Bin-identical comparison to Ascencio
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
   $(\Eavail,q_{3})$ grid, used only for central-value comparison. Our points
-  have no uncertainty or $\chi^{2}$ drawn because the
-  4D covariance that would be quoted is not used for any result in this note; the
-  published points carry the published covariance.}
+  have no uncertainty or $\chi^{2}$ drawn because no 4D covariance is quoted
+  (\S\ref{sec:3d}); the published points carry the published covariance.}
   \label{fig:ascencio}
 \end{figure}
 

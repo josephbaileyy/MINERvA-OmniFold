@@ -25,7 +25,9 @@ Detector and model systematics use the July universe sweep: MAT-MINERvA's 44 err
 universes, identical to the published analysis's \texttt{GetStandardSystematics}
 set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
 against a reference central-value unfold with the same estimator and seed, which
-is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-construction}), and holds 43 bands plus the flat normalization.
+is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-scope}), and holds 43 bands plus the flat normalization.
+% Note register round n1, batch n1-B (2026-10-25): the pointer follows the Rvn1pi/Rvp1pi account, which moved from
+% sec:uq-2d-construction to the "Changes from the earlier 2D budget" paragraph of sec:uq-2d-scope (director ruling).
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
 % plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
@@ -116,15 +118,18 @@ genuinely smaller than the published statistical block (square-root-trace ratio
 0.407). This \emph{observed} covariance difference does not
 demonstrate a causal efficiency advantage (App.~\ref{sec:rank}).
 
-The statistical block quoted here has had no coverage test. The fixed-truth
-coverage test (\S\ref{sec:coverage}) found that the statistical band quoted when it
-ran undercovered in its tails, unevenly across bins. That band was later rebuilt,
-and neither it nor the rebuilt band is the block quoted here. The rebuilt band was
-only re-evaluated post hoc, on the same pseudo-experiments and partly circularly, and
-has not been tested independently. No coverage test on held-out simulation has
-been run, and no design for one has been registered in advance. Because the fixed-truth
+The statistical block quoted here has had no coverage test: the fixed-truth coverage
+studies of \S\ref{sec:coverage} scored two earlier statistical bands, not this block.
+No coverage test on held-out simulation has been run, and no design for one has been
+registered in advance. Because the fixed-truth
 test's truth equals the prior, it also cannot decide whether the smaller statistical
 block reflects an efficiency gain, regularization bias or undercoverage.
+% Note register round n1, batch n1-B (2026-10-25; R-N2, R-N6): the history of the two earlier bands (the first band's
+% tail undercoverage, uneven across bins; its rebuild; the rebuilt band's post hoc, partly circular rescoring; no
+% independent test of it) is stated once, in sec:coverage, and is not repeated here. The held-out sentence keeps
+% the pre-registration wording (review fix: a held-out design exists as an unregistered draft, so "not specified" is false (R-N6; KNOWN_ISSUES 85: the held-out re-test
+% is deferred and not pre-registered).
+% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R @ ddf16f10
 % plain-language pass, review fix m3 (DECISION-20261018-joseph-plain-language-pass)
 % plain-language pass, director ruling on base defect F-r2-1 (DECISION-20261018-joseph-plain-language-pass; PLAIN-LANGUAGE.md C7; DRAFT-disclosures D2: the quoted block has had no coverage test)
 % plain-language pass, verification fix V3 (DECISION-20261018-joseph-plain-language-pass)
@@ -206,20 +211,17 @@ estimator over seeds is unmeasured (\S\ref{sec:method-config}).
 
 \subsection{Further checks of the 2D covariance}
 \label{sec:uq-2d-construction}
-A review of the saved products and code~\cite{TwoDFollowup2026} found further
-defects in the construction of the earlier 2D budget. The May systematic sweep that
-it used has a different simulated truth input from its seed-42 reference:
-even a no-op EtaNCEL universe differs in all 205 truth-input cells, while
-its saved reconstructed inputs agree. A common displacement cancels to
-first order in the MAT mean-centered covariance. The mismatch does not
-invalidate the entire covariance, and it supplies no correction to subtract.
-Because the May input and code revision are not available, the mismatch cannot
-be attributed more specifically. The July sweep, which the quoted universe block
-uses, does not have this mismatch. Its products do not record a checksum of the
-driver code that produced them, and that driver version was not committed. Seven
-of its universes, four of them also checked in an earlier pilot, are reproduced to
-$\le1.4\times10^{-11}$ by the committed driver; the others are accepted by
+The products of the July sweep, which the quoted universe block uses, do not record a
+checksum of the driver code that produced them, and that driver version was not
+committed. Seven of its universes, four of them also checked in an earlier pilot, are
+reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by
 inference, because the same code produced them.
+% Note register round n1, batch n1-B (2026-10-25; director ruling on the earlier-budget defects): the defects of the
+% earlier 2D budget (the May sweep's truth-input mismatch, the Rvn1pi/Rvp1pi double count, the unpropagated
+% background-template statistics) moved to one paragraph, "Changes from the earlier 2D budget", in sec:uq-2d-scope.
+% This subsection keeps the checks of the quoted construction. The July sweep's provenance sentences are unchanged in
+% content; the first names the July sweep's products, because the May-sweep sentences that preceded it moved.
+% Search: July sweep; driver checksum; driver version committed; 7/7 PASS; S4(ii) @ ddf16f10
 % Printed identifier removed by the plain-language pass: the earlier 2D budget is VL175.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July
 % sweep); stageC/pilot/REPORT.md l.70-80, K1: five comparisons over four universes (NormDISCC:0, MaRES:0, Flux:23,
@@ -229,35 +231,20 @@ inference, because the same code produced them.
 % (inherited from DRAFT-disclosures D10, corrected in revision 4) was the wrong count.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
-The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
-nonresonant-pion tune, counting it twice. The band is small, \SI{0.088}{\percent},
-but this is a real defect in how the covariance was built; no conclusion about the
-published analysis's implementation follows. The quoted universe block drops Rvp1pi and
-counts the shift once.
-% Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
-% plain-language pass, review fix N1 (DECISION-20261018-joseph-plain-language-pass): the route is restored in words (row 92).
-% J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92; the sentence already states it). Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct.
-% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 The two examined small-input responses,
 EtaNCEL and NormNCRES, are consistent with trainer instability contributing
 at the ML-noise scale. They do not establish a mechanism for every small
 band or justify subtracting an overlap from the budget.
 
-The earlier budget did not propagate background-template statistics. In the
-saved reconstructed histograms their error exceeds one tenth of the data's Poisson
-error in 60 of 205 bins, so neglecting them everywhere is unsupported; this is a
-reconstructed-space diagnostic, not a measured unfolded uncertainty. The quoted
-statistical block draws the background simulation as its own bootstrap stream
-(\S\ref{sec:uq-boot}), and the quoted universe block takes its lateral bands from
-re-unfolds of re-selected universes (\S\ref{sec:uq-universes}). Each lateral band
-uses a single unfold at the central training seed, so it includes that seed's
-training noise. The flux-universe index identity behind the $1/\Phi_{u}$ rescale is
+Each lateral band of the quoted universe block uses a single unfold at the central
+training seed, so it includes that seed's training noise. The flux-universe index identity behind the $1/\Phi_{u}$ rescale is
 established by the code chain and by an exact test: 900 events $\times$ 100
 universes match to $5.5\times10^{-14}$, and a control shifted by one universe fails
 at $\ge0.245$ (Ref.~\cite{NoteRecords2026}, \texttt{flux-index}).
 % plain-language pass, verification fix V5 (DECISION-20261018-joseph-plain-language-pass)
 The production flux weights equal the constraint file and the earlier budget's in
-all 12 playlists. These findings left the earlier printed budget unchanged.
+all 12 playlists. The corrections the quoted budget makes to the earlier 2D budget are
+stated in \S\ref{sec:uq-2d-scope}.
 % J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
 % stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row, §12 (laterals: one active-file unfold each at seed
 % 42); stageC/production/REPORT.md §12. KI-91: stageB/REPORT.md (Stage B §2.1: max residual 5.5e-14; shifted-by-one control
@@ -510,8 +497,10 @@ passes in every run of both on the quoted covariance. Limitations specific to on
 block are stated with it: the matching of estimator and seed, the background stream and the
 statistical ensemble's precision (\S\ref{sec:uq-boot}); the training-seed block's
 size and precision (\S\ref{sec:uq-ml}); the universe sweep's provenance, the
-duplicated pion band, the lateral bands and the flux-universe index identity
-(\S\ref{sec:uq-2d-construction}); and the flux block (\S\ref{sec:results-uq}).
+lateral bands and the flux-universe index identity
+(\S\ref{sec:uq-2d-construction}); the duplicated pion band (below); and the flux block (\S\ref{sec:results-uq}).
+% Note register round n1, batch n1-B (2026-10-25): the duplicated pion band is now stated in "Changes from the earlier
+% 2D budget" below, not in sec:uq-2d-construction.
 % J3/J4 provisional (DECISION-20261018, packet W8: the KI-90 sentence; W3: D10). state/2d-closeout/stageF/rebuild/REPORT.md
 % §2 (every Q run shows the identity check passing on hReportedCells: the three chi2 forms and fig. 6/7; KI-90's
 % "verify they ran"). Not a remedy of KI-90's producers or of any other consumer (rebuild REPORT §2).
@@ -543,6 +532,46 @@ products, and the verification compared only the checksums of their inputs.
 % NPZ); stageC/production/DESIGN.md §8, §12 (rulings R5, R7: reported, not added); DECISION-20261017 §2.
 % Review m9: the inference labels follow DRAFT-disclosures D11; F4-VERIFICATION.md compares only the input digests.
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
+
+\paragraph{Changes from the earlier 2D budget.}
+The saved products and code of the earlier 2D budget~\cite{TwoDFollowup2026} show
+the following defects in its construction, each of which the quoted budget corrects. First, the May
+systematic sweep that the earlier budget used has a different simulated truth input
+from its seed-42 reference: even a no-op EtaNCEL universe differs in all 205
+truth-input cells, while its saved reconstructed inputs agree. A common displacement
+cancels to first order in the MAT mean-centered covariance. The mismatch does not
+invalidate the entire covariance, and it supplies no correction to subtract. Because
+the May input and code revision are not available, the mismatch cannot be attributed
+more specifically. The July sweep, which the quoted universe block uses, does not have
+this mismatch. Second, the Rvn1pi and Rvp1pi bands
+encode the same shift under the configured nonresonant-pion tune, and the earlier
+budget counted it twice. The band is small, \SI{0.088}{\percent}, but this is a real
+defect in how the covariance was built; no conclusion about the published analysis's
+implementation follows. The quoted universe block drops Rvp1pi and counts the shift
+once (\S\ref{sec:uq-universes}). Third, the earlier budget did not propagate
+background-template statistics. In the saved reconstructed histograms their error
+exceeds one tenth of the data's Poisson error in 60 of 205 bins, so neglecting them
+everywhere is unsupported; this is a reconstructed-space diagnostic, not a measured
+unfolded uncertainty. The quoted statistical block draws the background simulation as
+its own bootstrap stream (\S\ref{sec:uq-boot}), and the quoted universe block takes its
+lateral bands from re-unfolds of re-selected universes (\S\ref{sec:uq-universes}). These
+findings left the earlier printed budget unchanged.
+% Note register round n1, batch n1-B (2026-10-25), director ruling on the earlier-budget defects: the seven statements
+% that sec:uq-2d-construction printed about the earlier 2D budget (the review's finding; the May sweep's truth-input
+% mismatch; its consequence; the Rvn1pi/Rvp1pi double count; its size; the unpropagated background-template statistics;
+% the earlier printed budget left unchanged) are gathered here, each fact kept, framed as what the quoted budget
+% corrects (ledger-nB.md rows SY-D1 to SY-D7). The opening states what the saved products and code show, not who
+% reviewed them (R-N6). No count is printed: the review (TwoDFollowup2026,
+% REPORT.md sec. A4) also lists items this paragraph does not, and "the following" scopes the correction claim to the
+% three named here.
+% Sources, moved with the text: the review is Ref. TwoDFollowup2026; the earlier 2D budget is VL175 (printed identifier
+% removed by the plain-language pass). Rvn1pi/Rvp1pi: KNOWN_ISSUES.md 92 (printed pointer moved to a comment by the
+% plain-language pass; J3/J4 provisional, DECISION-20261018, packet W3: D10 KI-92); Rvn1pi median 0.0883 %:
+% rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct. Background stream and laterals: J3/J4 provisional
+% (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91); stageC/production/DESIGN.md §3.4 (three
+% streams), §S5 universe row, §12 (laterals); stageC/production/REPORT.md §12. July sweep: stageC/production/DESIGN.md
+% §S5 universe row (D10 KI-93).
+% Search: May sweep; May input; truth-input mismatch; background-template statistics; Rvp1pi @ ddf16f10
 
 \subsection{What changes for the higher-dimensional products}
 \label{sec:uq-higherdim}

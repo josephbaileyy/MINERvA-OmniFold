@@ -7,9 +7,10 @@ We apply \emph{unbinned machine-learning unfolding}
 medium-energy neutrino data.
 % Methods-paper sync (METHODS-IMPLEMENTATION.md sec. 4, framing; paper_body.tex sec:intro): validation study first,
 % the generator tests as an application.
-The main results are the validation findings, which hold for this implementation and for the
-configurations, observables and deformations tested; the generator tests are an application that
-illustrates calibrated inference with a biased estimator.
+The main results are the validation findings; they hold for this implementation, one data set, and the
+configurations, observables and deformations tested (\S\ref{sec:intro}). The generator
+tests are an application that illustrates calibrated inference with a biased estimator.
+% Register round n1 (R-N5): the scope is stated once in sec_intro.tex (paragraph "Scope"); this is its one restatement.
 % Register pass b8 (2026-10-22): each item states its result once, with its scope; ledger.md rows E*.
 % Cut (lane 1 skeleton; the migration-matrix/morphing mechanism): sec_method.tex:7-32, sec_3d.tex:4-11.
 % Cut (one-page summary): "Reporting binning is imposed only at the end, so a recorded observable
@@ -53,15 +54,18 @@ illustrates calibrated inference with a biased estimator.
   % Methods-paper sync (M8, removed: the low-recoil mechanism attribution and the 2p2h gap fraction as a measurement;
   % paper_body.tex sec:central keeps a descriptive statement that points to these sections).
   \item \textbf{Low-$\Eavail$ central values (descriptive).}
-  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}; GENIE and NuWro flux-repaired, \S\ref{sec:3d-models}) under-predict the unfolded central value in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$), the region of the established MINERvA low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}. Comparisons with the tested pion-FSI dials and with Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} use central values without uncertainties and do not identify a nuclear mechanism (\S\ref{sec:3d-2p2h}, Fig.~\ref{fig:3dmodels}).
+  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}; GENIE and NuWro flux-repaired, \S\ref{sec:3d-models}) under-predict the unfolded central value in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$), the region of the established MINERvA low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}. The comparisons with the tested pion-FSI dials and with Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} are in \S\ref{sec:3d-2p2h} (Fig.~\ref{fig:3dmodels}).
+  % Register round n1 (R-N1): "central values without uncertainties" and "no nuclear mechanism" are stated once at the
+  % sec_3d.tex lead and restated once under "Principal limitations" below.
   % Cut (lane 1 R6, lane 5 R1a): "63 % of the integrated deficit": sec_3d.tex:376-378;
   % flux-repair scope and its ledger row: sec_3d.tex:245-270.
 
   \item \textbf{High-$\Eavail$, high-$W$ excess (descriptive).}
-  In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$. A fifth of the positive difference sits in the single widest overflow cell, this region carries the largest regularization bias, and in ratio the excess also extends to low $W$. The map shows where the central value differs from Tune~v1; it does not locate an interaction mechanism. The four external generators also fall below the data in this corner, each by about its overall shortfall once GiBUU's $E_\nu\approx\SI{20}{GeV}$ sample limit is allowed for, and the NuWro and GiBUU ratios contain an uncorrected carbon-versus-CH target difference (\S\ref{sec:eavailw-generators}).
+  In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$. A fifth of the positive difference sits in the single widest overflow cell, this region carries the largest regularization bias, and in ratio the excess also extends to low $W$. The four external generators also fall below the data in this corner, each by about its overall shortfall once GiBUU's $E_\nu\approx\SI{20}{GeV}$ sample limit is allowed for, and the NuWro and GiBUU ratios contain an uncorrected carbon-versus-CH target difference (\S\ref{sec:eavailw-generators}).
   % Methods-paper sync (M8, corrections: the target per-nucleon effect, KNOWN_ISSUES 97; paper_body.tex sec:data, sec:central).
-  The comparison uses central values only: the projection's covariance is used in this note although it has not passed its specification's acceptance criteria, and the estimator-seed sensitivity, measured on two companion covariances built at different seeds, exceeds the limit set before production (\S\ref{sec:eavailw-adopted}).
-  % Deposit pass: the exception restated as its content (sec:eavailw-adopted); old text in git history.
+  % Register round n1 (R-N1): the descriptive reading and the status of the projection's covariance are restated once
+  % under "Principal limitations" below (homes: sec_3d.tex lead; sec:eavailw-adopted). Deposit pass: the exception
+  % restated as its content (sec:eavailw-adopted); old text in git history.
   % plain-language pass, review fix m4 (DECISION-20261018-joseph-plain-language-pass)
   % Pointers \S\ref{sec:eavailw} and Fig.~\ref{fig:eavailWband} dropped (one-page summary): the
   % section is the item's subject and is reached from \S\ref{sec:eavailw-adopted}; the figure is
@@ -81,9 +85,14 @@ illustrates calibrated inference with a biased estimator.
   % coarse projections, the missing calorimetric response (paper_body.tex sec:intro scope, sec:calibration,
   % sec:conditions, sec:joint-results, sec:response). "Simple hypotheses" was wrong: the nulls are hybrid.
   \item \textbf{Application: joint five-dimensional generator tests.}
-  Calibrated tests of hybrid null hypotheses for five predictions (Tune~v1, GENIE with and without MEC, NuWro, GiBUU; each prediction on the fine grid, with the Tune~v1 composition below it), in total (rate and shape) and in shape, reject all ten under six stated conditions, with the family-wise error rate controlled at 5\% under the stated calibration assumptions and the size averaged over the nuisance priors (\S\ref{sec:joint5d-fwer}). The closest decisions, the NuWro and GENIE~CV shape tests, lie 1.11 and 1.30 null standard deviations beyond their boundary (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions, matched coarse projections reject as well (\S\ref{sec:joint5d-projections}), and the nuisance model has no calorimetric recoil-response band (\S\ref{sec:joint5d-response}). Each rejection also holds in a robustness variant, not used for the decisions, that assumes a larger residual below the finest tested grid; that residual is unmeasured. The pseudo-experiments lost to time limits were rerun afterwards, for reporting only, so every submitted draw has been observed, and no recovered draw changes a decision (\S\ref{sec:joint5d-lost}). Correcting the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data; in this descriptive re-evaluation, which leaves the recorded decisions standing, NuWro's total-test rejection is not robust to the correction (\S\ref{sec:joint5d-ch}). These are hypothesis tests, not a measured uncertainty (\S\ref{sec:joint5d}).
+  Calibrated tests of hybrid null hypotheses for five predictions (Tune~v1, GENIE with and without MEC, NuWro, GiBUU; each prediction on the fine grid, with the Tune~v1 composition below it), in total (rate and shape) and in shape, reject all ten under six stated conditions, with the family-wise error rate controlled at 5\% under the stated calibration assumptions and the size averaged over the nuisance priors (\S\ref{sec:joint5d-fwer}). The closest decisions, the NuWro and GENIE~CV shape tests, lie 1.11 and 1.30 null standard deviations beyond their boundary (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions, and matched coarse projections reject as well (\S\ref{sec:joint5d-projections}). Each rejection also holds in a robustness variant, not used for the decisions, that assumes a larger residual below the finest tested grid; that residual is unmeasured. The pseudo-experiments lost to time limits were rerun afterwards, for reporting only, so every submitted draw has been observed, and no recovered draw changes a decision (\S\ref{sec:joint5d-lost}). Correcting the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data; in this descriptive re-evaluation, NuWro's total-test rejection is not robust to the correction, and the ten decisions are unchanged (\S\ref{sec:joint5d-ch}).
+  % Search: below the fine grid; fine-grid convergence; delta_fine; per halving (the search of its home in sec_joint.tex) @ ddf16f10
   % Methods-paper rewrite draft 6 (REVIEW-2 finding 19): the CH caveat (DECISION-20261020-joseph-nuwro-ch-claim.md).
   % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
+  % Register round n1 (R-N6): "the ten decisions are unchanged" keeps both elements of DECISION-20261020 line 37
+  % (descriptive; the decisions stand), as in sec_joint.tex sec:joint5d-ch. The recoil band moved to "Principal
+  % limitations"; "hypothesis tests, not a measured uncertainty" is stated in sec_intro.tex "Scope" and the
+  % sec_joint.tex lead ("add no reportable uncertainty").
 
   \item \textbf{A methodological finding.}
   The standard covariance sums single-source systematic matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms; a corrected unified-throw test perturbs all reweightable sources together and stores the joint mean shift separately (\S\ref{sec:uq-combine}).
@@ -95,8 +104,8 @@ illustrates calibrated inference with a biased estimator.
   % Shortened (one-page summary): "truth-muon kinematic cuts", "MINOS-based reconstructed
   % selection", "tracker fiducial volume": sec_fps.tex:9-11; "a newly acceptance-supported extension": sec_fps.tex:116-119.
 
-  \item \textbf{Future work: point-cloud representations.}
-  Point-cloud (PET) unfolding of the full event is under development and documented separately (App.~\ref{sec:pet}); no result in this note depends on it.
+  % Register round n1 (R-N5): the former item "Future work: point-cloud representations" is stated once in
+  % sec_intro.tex "Scope" and restated in one clause under "Principal limitations".
 \end{itemize}
 
 \input{result_status_rows}
@@ -113,65 +122,42 @@ Point-cloud (PET) studies are future work and contribute no result here.}
 \label{tab:result-status}
 \end{table}
 
-\paragraph{What is not claimed:}
-\begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
-  \item \emph{Coverage.}
-  In a fixed-truth coverage test, an earlier 2D statistical band undercovers in its tails (the fraction within $2\sigma$, $C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:coverage}). A rebuilt band was rescored only post hoc, on the same pseudo-experiments, and the quoted statistical block, a third ensemble, has not been tested.
-% J3/J4 provisional (DECISION-20261018, packet C4, W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5). The quoted block is S1
-% (stageC/production/DESIGN.md §3.4).
-% plain-language pass (DECISION-20261018-joseph-plain-language-pass)
-% plain-language pass, review fix N4 (DECISION-20261018-joseph-plain-language-pass)
-No frequentist coverage is claimed for any five-dimensional interval. The one test, of bias-corrected statistical intervals of a deterministic estimator variant, miscovers at the tested truths. Under a truth change that is in effect a \SI{10}{\percent} signal-rate reduction (the ``$\Eavail$ tilt''), the rate itself is recovered; the miscoverage comes from a residual bias that grows with $W$ and that the nominal-truth correction does not remove. That bias is inferred from fits to the coverage, and its source is not established (\S\ref{sec:coverage-5d}).
-% Methods-paper sync (M8, corrections: KNOWN_ISSUES 98; M2-RATEFAIL-DIAGNOSIS.md, CITABLE FOR the decomposition with
-% its inferred status, NOT CITABLE FOR the source of the W-graded term; paper_body.tex sec:validation).
-% Source (2D): docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; VALIDATION_LEDGER VL169.
-% Source (5D): docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
-% Shortened (one-page summary): "pre-registered", the interval [0.907, 0.918], where the deficit sits,
-% the attribution to the bootstrapped completeness, "quoted uncertainties are unchanged" and
-% "statistical band only; no systematic, total or 5D coverage" survive in the cited section
-% (sec:coverage); "The sole 5D independent-truth test used bias-corrected
-% statistical intervals of a deterministic estimator variant and failed its predeclared futility
-% criterion" survives in the cited section, sec_eavailw.tex:590-594.
-  \item \emph{Regularization bias.}
-  The estimator recovers only part of a generator-sized $\Eavail$ shape change (a fixed-size known-truth deformation, not a measured generator difference), with residuals of up to \SI{74}{\percent} in the highest-$W$ column, with or without background. This residual bias under the tested deformations is interpreted as regularization bias, because it persists over the tested iteration numbers and classifier capacities; no tested remedy removes it, and no quoted uncertainty includes it. Negative-weight background treatment removes most of the purity method's high-$W$ bias, leaving up to about \SI{1}{\percent} in some joint cells. It is the background treatment of estimator configurations (d) and (e) of Table~\ref{tab:estimators-matrix}, which give validation studies of \S\S\ref{sec:val-negweight}--\ref{sec:gbdt-model-dependence} and the generator tests; App.~\ref{app:negweight} also compares it with the purity subtraction on the 2D measurement. The 3D and 4D central values use configuration (e), and the 2D central value and its covariance use the same treatment, in configuration (f). The 5D central value and its covariance use the purity subtraction, and the 5D central value keeps its bias of up to \SI{4}{\percent} in the highest-$W$ cells, which no quoted uncertainty includes (\S\ref{sec:val-negweight}, \S\ref{sec:val-departure}). In a 2D closure test with backgrounds (20 pseudo-experiments at nominal truth), the purity and refined estimates differ by more than one statistical standard deviation in 14 of the 205 cells; there the purity estimate lies up to $5.9\,\sigma_{\mathrm{stat}}$ from the truth (more than one total standard deviation in one cell), while the refined estimate stays within $0.44\,\sigma_{\mathrm{stat}}$ in every cell. On this basis the 2D result was moved to the refined estimator (\S\ref{sec:negweight-footing}). No full five-dimensional comparison of the two background treatments has been made (App.~\ref{app:negweight}).
-% Register pass b8: the earlier generator-tests-only scope was incomplete as read. Scope from Table
-% tab:estimators-matrix (configurations (d), (e)), not from App. C's sentence on the joint-test estimator (director
-% correction 2026-10-22); the open obligation: app_negweight.tex sec:negweight-footing.
-% Methods-paper sync (M8, narrowed: residual bias as the observation, interpreted as regularization bias;
-% paper_body.tex sec:validation and sec:conclusions).
-% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151-VL152;
-% KNOWN_ISSUES 75, 77.
-% Cut (lane 1 #7, lane 5 R1d): "its GENIE input was later found flux-defective": sec_eavailw.tex:353-357.
-% Shortened (one-page summary): "Unbinned negative-weight background treatment": sec_eavailw.tex:336-339.
-% Wording "so it is the regularization bias above": RULINGS-F1 L5 C4.
-% Named once (RULINGS-F1 L5 C4; the body's name, sec_eavailw.tex:363): the former separate item
-% "Unfolding-model dependence" said the GiBUU-to-GENIE departure "is a deformation of fixed size,
-% not a measured generator difference; no tested remedy removes the shortfall, so it is the
-% regularization bias above, in no quoted covariance". That statement is merged into this item;
-% body: sec_eavailw.tex:352-363, 387-388.
-  \item \emph{Estimator stability.}
-  The one tested candidate estimator, with raised background-refinement capacity, fails the predeclared data-stability test: floating-point-level input changes move its results on real data by up to 2.6 statistical standard deviations, and those of the baseline estimator by up to 2.5, so the instability belongs to the estimator family. The candidate's refit-per-replica data bootstrap already contains this rounding spread (about \SI{37}{\percent} of its variance), and central values are reproducible only to that size (\S\ref{sec:val-departure}).
-% Shortened (one-page summary): "A later measurement places this rounding spread within ...,
-% accounting for it without an extra unquantified uncertainty": sec_eavailw.tex:401-406.
-% Source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
-% Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md;
-% docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md; VL153-VL154; KNOWN_ISSUES 75, 77, 79, 80.
-  \item \emph{Mechanism.} The low-$\Eavail$ and $(\Eavail,W)$ comparisons are descriptive central-value statements; they do not identify a nuclear mechanism, and the tested pion-FSI dials do not exclude other transport effects.
-  % Methods-paper sync (M8, removed: the low-recoil mechanism; paper_body.tex sec:central).
-  \item \emph{Five-dimensional measurement.}
-  No five-dimensional measurement with total uncertainties was constructed. Under the specified envelope prescription, none of the tested reporting definitions meets the predeclared \SI{10}{\percent} total-width criterion within the study's rules and computing budget (\S\ref{sec:gbdt-model-dependence}). The envelope over the five tested truth deformations, with a median of about 10--13\% per cell, is a sensitivity diagnostic, not an interval.
-  % Methods-paper sync (M8, narrowed: the 10% criterion wording and the five-deformation envelope; paper_body.tex
-  % sec:uncertainty-status; RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155) :129-136, :144).
-  \item \emph{Five-dimensional covariance.}
-  Four measured limitations apply to every result built from the five-dimensional covariance used in this note, the first an estimator-seed sensitivity above the limit set before production, measured on companion covariances (\S\ref{sec:eavailw-adopted}). No other corrected five-dimensional covariance is used in its place.
-% plain-language pass, review fix m5 (DECISION-20261018-joseph-plain-language-pass)
-  \item \emph{Extended fiducial domain.}
-  Tier~2 is prior-dominated extrapolation, reported separately. No corrected extended-fiducial covariance exists (\S\ref{sec:fps}).
-  \item \emph{PET.}
-  No point-cloud (PET) result or uncertainty is claimed; that work is ongoing and documented separately (App.~\ref{sec:pet}).
-% Shortened: "with estimator-equivalence and coverage evidence the conditions for
-% reconsideration" survives in the cited section, sec_pet.tex:8-11.
-% Shortened (one-page summary): "A full-event estimator trained jointly on muon and recoil",
-% "Their central/statistical pairing was declined rather than resolved" survive in the cited
-% section, sec_pet.tex:6-9 ("declined on 2026-08-20 and remains unresolved"), 382-385, 393-394.
-\end{itemize}
+\paragraph{Principal limitations:}
+% Register round n1 (S1; caveat-study R-N1; the model is paper_body.tex sec:limitations): the former "What is not
+% claimed" list. Each fact of each former item prints at its home in the body; ledger-nA.md rows A* map each one.
+% Sources of the former items: 2D coverage, OUTCOME-20261005-2d-fixed-truth-coverage-fail.md (VL169) and
+% KNOWN_ISSUES 85 (the quoted block is S1, stageC/production/DESIGN.md sec. 3.4); 5D coverage,
+% OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150), KNOWN_ISSUES 98, M2-RATEFAIL-DIAGNOSIS.md (CITABLE FOR the
+% decomposition with its inferred status, NOT CITABLE FOR the source of the W-graded term); regularization bias,
+% OUTCOME-20260925-s5n-stage1-development-fail.md (VL151-VL152), KNOWN_ISSUES 75, 77; estimator stability,
+% KNOWN_ISSUES 80, RECORD-20260927-s5p-stage2-exit.md sec. 2 (VL155), OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md,
+% DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153-VL154); five-dimensional measurement, RECORD-20260927-s5p-stage2-exit.md
+% sec. 4; background treatment, Table tab:estimators-matrix and app_negweight.tex sec:negweight-footing.
+% Each absence claim below is restated from its home: "has had no coverage test" (sec_systematics.tex sec:uq-boot);
+% "no 3D or 4D covariance is quoted" (sec_3d.tex lead); "enter no quoted uncertainty" (sec_5d.tex sec:val-departure);
+% "enters no quoted covariance" (sec_5d.tex sec:val-negweight); "no five-dimensional measurement with total
+% uncertainties was constructed" (sec:gbdt-model-dependence); "No frequentist coverage is therefore claimed"
+% (sec:coverage-5d); "no calorimetric response band" (sec:joint5d-response).
+% Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
+The body states each limitation with the result it qualifies; the principal ones are these.
+The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier
+statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$;
+\S\ref{sec:uq-boot}, \S\ref{sec:coverage}).
+% Review fix (outline: the \covTwoDCTwo uses are not touched; check_dead_containment.py counts four prints).
+The generator comparisons of \S\S\ref{sec:3d}--\ref{sec:eavailw} are descriptive comparisons of central values that
+identify no nuclear or interaction mechanism, and no 3D or 4D covariance is quoted (\S\ref{sec:3d}).
+No quoted uncertainty includes the residual regularization bias of the five-dimensional estimator, which recovers only
+part of a generator-sized truth change, with residuals of up to \SI{74}{\percent} in the highest-$W$ column
+(\S\ref{sec:val-departure}), or the purity-subtraction bias found in closure tests with backgrounds, up to \SI{4}{\percent} in the
+highest-$W$ cells, which the five-dimensional central value keeps (\S\ref{sec:val-negweight}).
+Above two dimensions the results are central values without intervals of validated coverage: no five-dimensional
+measurement with total uncertainties was constructed (\S\ref{sec:gbdt-model-dependence}), and no frequentist coverage
+is claimed for any five-dimensional interval, the one coverage test, of bias-corrected statistical intervals of a deterministic
+estimator variant, having miscovered at the tested truths (\S\ref{sec:coverage-5d}).
+The one five-dimensional covariance used in this note, with its $(\Eavail,W)$ projection, does not meet its specification's acceptance criteria, and four
+measurements limit what it supports (\S\ref{sec:eavailw-adopted}).
+The calibration of the generator tests is valid for the simulated null to the extent that the pseudo-experiment chain
+reproduces the analysis applied to the data (\S\ref{sec:joint5d-frozen}), and their nuisance model has no calorimetric
+recoil-response band (\S\ref{sec:joint5d-response}).
+Tier~2 of the extended-fiducial study is prior-dominated extrapolation (\S\ref{sec:fps}).
+Point-cloud (PET) unfolding is future work (\S\ref{sec:intro}).

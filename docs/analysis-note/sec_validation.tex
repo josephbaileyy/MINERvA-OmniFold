@@ -87,7 +87,8 @@ continuous nuisance generator for tests of total intervals, and an untouched
 generator-truth domain for bias checks (\S\ref{sec:uq-2d-scope}). This is a limit of the
 available inputs, not a general impossibility result for 2D unfolding.
 % J3/J4 provisional (DECISION-20261018, packet C3; review m1): "and the construction repairs in sec:uq-2d-construction"
-% removed; that section now records that the quoted construction carries those fixes.
+% removed; that section recorded that the quoted construction carries those fixes. Since note register round n1
+% (batch n1-B), the fixes are stated in sec:uq-2d-scope, paragraph "Changes from the earlier 2D budget".
 
 \subsection{Closure tests across dimensions: what each test changes}
 \label{sec:closure-map}
@@ -238,8 +239,8 @@ with 99.5\% intervals, stops the study.
         (Gaussian 0.954).
   \item The pull RMS is $\covTwoDPullRMS$, and the mean pull is consistent with zero.
 \end{itemize}
-Under the predeclared criteria this is a failure by undercoverage, and the study stopped under its
-futility rule. An independent recomputation with its own code reproduces the pooled coverages,
+By the criteria above this is a failure by undercoverage, and the study stopped at the interim
+analysis. An independent recomputation with its own code reproduces the pooled coverages,
 their intervals, the controls and the secondary analysis below.
 
 The positive control rescales the band on the same toys. At $\times0.7$ and $\times1.3$, $C_2$
@@ -266,13 +267,15 @@ primary undercoverage is attributed to this term of the band. The attribution is
 replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
 
 The band was then rebuilt without this term. The quoted statistical block is a third, different
-ensemble, 300 replicas at the central value's training seed (\S\ref{sec:uq-boot}). The result
-above is for the earlier band. The rebuilt band was only rescored post hoc (below), and the quoted
-block has not been tested.
+ensemble, 300 replicas at the central value's training seed (\S\ref{sec:uq-boot}). The rebuilt
+band was only rescored post hoc (below), and the quoted block has not been tested.
 % FACT (2026-10-18): "the rebuilt band is the quoted one" was false of Q (stageC/production/DESIGN.md §3.4, S1).
 % J3/J4 provisional (DECISION-20261018, packet W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass). Printed pointer moved to this comment: the rebuild's
 % (\texttt{KNOWN\_ISSUES.md} 84).
+% Note register round n1, batch n1-B (2026-10-25; R-N1): a sentence restating that the result is the earlier band's
+% was dropped; the section's opening states it ("That band is an earlier one, not the quoted statistical block").
+% Search: S1 has not been coverage-tested; coverage statement about Q_R; held-out-MC re-test @ ddf16f10
 
 \textbf{Post hoc rescoring against the rebuilt (since superseded) band.} Scoring the same 100
 toys against the rebuilt band removes the tail undercoverage: $C_2=0.977$ $[0.974,0.980]$ and
@@ -287,11 +290,11 @@ cause is not established. A post hoc diagnostic that bootstraps a single toy, un
 recorded before it ran, is consistent with the closure toys scattering too little, because their
 pseudo-data are built on the training MC events, rather than with the data bootstrap scattering too
 much. It is neither an independent-population coverage test nor a calibration on real data. A
-re-test on held-out simulation would separate the two explanations; it has not been run. Split-sample width checks that
-condition on the existing MC sample, binning maps and purity cannot establish repeated-sampling
-coverage across independent populations, so validated total intervals over the full reporting
-domain need new inputs (\S\ref{sec:uq-2d-scope}, which also lists what the quoted covariance does
-not include).
+re-test on held-out simulation would separate the two explanations; it has not been run.
+% Note register round n1, batch n1-B (2026-10-25; R-N1): the split-sample sentence that ended this paragraph restated
+% the paragraph "What the remaining validation needs" (sec:validation), which states the split-sample limit and the
+% new inputs and points to sec:uq-2d-scope; it is not repeated here.
+% Search: held-out simulation; held-out-MC re-test; bootstrap-on-one-toy diagnostic outcome @ ddf16f10
 % NR: the rescoring is of the superseded VL170 band, named as such; not recomputed for Q.
 % J3/J4 provisional (DECISION-20261018, packet C3: "as well as the construction repairs of sec:uq-2d-construction"
 % replaced by the new inputs and the D1 list of sec:uq-2d-scope; C7: the rescoring kept, labelled historical; W3: D2; J5).
@@ -361,9 +364,12 @@ within-bin fraction above \SI{65}{\percent} (only $5$ of $205$ fall below).
 These show that the standardized toy residuals are approximately normal.
 
 Because $\sigma_i$ is estimated from the same toys that are scored, these figures are
-standardized-pull and Gaussianity diagnostics only. They are not a frequentist coverage
-measurement, they do not certify the bootstrap band, and no coverage number is quoted from this
-ensemble. The 2D coverage statement is the fixed-truth test of \S\ref{sec:coverage}.
+standardized-pull and Gaussianity diagnostics only: they do not certify the bootstrap band, and no
+coverage number is quoted from this ensemble. The 2D coverage statement is the fixed-truth test of
+\S\ref{sec:coverage}.
+% Note register round n1, batch n1-B (2026-10-25; R-N1): the separate sentence denying a coverage measurement was
+% dropped; the paragraph heading ("not a coverage test") and "diagnostics only" state it.
+% Search: coverage-toys; coverage_summary; same-ensemble pull @ ddf16f10
 
 \paragraph{Stability and efficiency.}
 With five and with ten iterations the total cross section agrees to within \SI{0.026}{\percent};
