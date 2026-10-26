@@ -7,6 +7,9 @@ the acknowledgments column. Move the tail and the heading to just before the sec
 is ACKNOWLEDGMENTS, acknowledgment text, its tail, DATA AVAILABILITY, data-availability text.
 Case 2b (r17 accuracy fixes): as case 2, and the ACKNOWLEDGMENTS heading itself was emitted inside the reference list.
 Move it to just before the acknowledgments' first sentence.
+Case 3 (r18): the headings are in reading order, but the data-availability text after its first line was emitted
+between the acknowledgments' end and the DATA AVAILABILITY heading, and the heading and first sentence come last,
+just before the reference list. Move the continuation to just after the first sentence's block.
 Fail if the section's first sentence is not found once, or if case 2's tail is not the acknowledgments' end."""
 import sys
 p = sys.argv[1]; L = open(p, encoding="utf-8").read().split("\n")
@@ -46,6 +49,28 @@ if len(a) == 1 and h[0] < a[0]:
     print("moved the acknowledgments' tail (%d lines) and the DATA AVAILABILITY heading back into reading order"
           % len(tail))
     sys.exit(0)
+if len(a) == 1 and a[0] < h[0]:  # case 3: the DA text's continuation precedes its heading
+    e = [i for i in range(a[0], h[0]) if L[i].rstrip().endswith("responsibility for the content.")]
+    if len(e) == 1:
+        cont = L[e[0] + 1:h[0]]
+        body = [l for l in cont if l.strip()]
+        if body and body[-1].rstrip().endswith("does not reproduce."):
+            b = [i for i, l in enumerate(L) if l.startswith(first)]
+            if len(b) != 1 or b[0] < h[0]:
+                sys.exit("FAIL: case 3 layout but the data-availability section's first sentence not found once after its heading")
+            j = b[0]
+            while j + 1 < len(L) and L[j + 1].strip():
+                j += 1
+            head = L[h[0]:j + 1]
+            del L[e[0] + 1:j + 1]
+            L[e[0] + 1:e[0] + 1] = [""] + head + [l for l in cont if l.strip()] + [""]
+            h2 = [i for i, l in enumerate(L) if l.strip() == "DATA AVAILABILITY"][0]
+            b2 = [i for i, l in enumerate(L) if l.startswith(first)][0]
+            c2 = [i for i, l in enumerate(L) if l.rstrip().endswith("does not reproduce.")][0]
+            assert e[0] < h2 < b2 < c2, (e[0], h2, b2, c2)
+            open(p, "w", encoding="utf-8").write("\n".join(L))
+            print("moved the data-availability text's continuation (%d lines) after its first sentence" % len(body))
+            sys.exit(0)
 if not r or h[0] < r[0]: print("data-availability heading in reading order"); sys.exit(0)
 b = [i for i, l in enumerate(L) if l.startswith(first)]
 if len(b) != 1: sys.exit("FAIL: heading out of order and the section's first sentence not found once")

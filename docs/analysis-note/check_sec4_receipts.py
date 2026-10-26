@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""Tie the paper's Sec. IV printed values to their committed receipts (PRD release audit ea939701, G11).
+"""Tie the paper's Sec. IV printed values, and three note values, to their committed receipts (PRD release audit
+ea939701, G11).
 
-Each check finds one printed value in paper_body.tex (or values.tex), recomputes it from the committed receipt that
-backs it, and compares at the printed precision: |computed - printed| <= half a unit in the printed last digit
-("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight to one unit). LaTeX
-comments are removed first, so a sentence kept only in a comment is not found. A value that cannot be located, or a
-receipt key that is missing, is a failure. Release-reproducible values are checked by publication/release/figs/fig_numbers.py
-instead; this covers the Sec. IV values the release cannot recompute.
+Each check finds one printed value in paper_body.tex (or values.tex, or the note's sec_validation.tex), recomputes it
+from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
+the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
+to one unit). LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
+be located, or a receipt key that is missing, is a failure. Release-reproducible values are checked by
+publication/release/figs/fig_numbers.py instead; this covers the Sec. IV values the release cannot recompute.
+
+Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) moved the history of the two superseded
+2D statistical bands out of the paper. Its bound values are now found where they print, in the note: the two-sigma
+nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
+the rebuilt band in sec_validation.tex (the same receipt, rescore_vl169_toys_vl170.json, as fractions); and the earlier
+band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
 
   python3 check_sec4_receipts.py              # exit 0 only if every check passes
   python3 check_sec4_receipts.py --self-test  # each printed value perturbed by one unit must be rejected
@@ -124,17 +131,17 @@ CHECKS = [
     ("total median uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
     ("total integral uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqIntegral\}\{([0-9.]+)\}", total_integral, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
-    ("first-built band, within 2 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCTwoPctOne\}\{([0-9.]+)\}",
-     lambda: 100.0 * interim("C2"), "round"),
+    ("first-built band, within 2 sigma (VL169; the note's \\covTwoDCTwo)", "values.tex",
+     r"\\newcommand\{\\covTwoDCTwo\}\{([0-9.]+)\}", lambda: interim("C2"), "round"),
     ("first-built band, within 1 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCOne\}\{([0-9.]+)\}",
      lambda: interim("C1"), "round"),
-    ("two-sigma nominal", "paper_body.tex", r"against \\SI\{([0-9.]+)\}\{\\percent\} nominal",
-     lambda: 100.0 * math.erf(2.0 / math.sqrt(2.0)), "round"),
+    ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
+     r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
     ("statistical block median (Q_R, S1)", "paper_body.tex",
      r"with a median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
-    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma", "paper_body.tex",
-     r"removes the tail undercoverage: \\SI\{([0-9.]+)\}\{\\percent\} fall within two standard deviations and "
-     r"\\SI\{([0-9.]+)\}\{\\percent\} within one", lambda: (rescore("C2"), rescore("C1")), "round"),
+    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)", "sec_validation.tex",
+     r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
+     lambda: (rescore("C2") / 100.0, rescore("C1") / 100.0), "round"),
     ("purity bias, highest-W cells (VL149)", "paper_body.tex", r"biased by up to \\SI\{([0-9.]+)\}\{\\percent\} in simulation",
      purity_bias_max, "round"),
     ("negative-weight residual, highest-W cells (VL151)", "paper_body.tex", r"reduces it to below \\SI\{([0-9.]+)\}\{\\percent\}",
@@ -183,7 +190,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex")}
+    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex")}
 
 
 def gzip_self_test() -> bool:
