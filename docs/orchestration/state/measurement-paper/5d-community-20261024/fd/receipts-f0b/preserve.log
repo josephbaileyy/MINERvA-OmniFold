@@ -1,0 +1,18 @@
+[P] 2026-10-26T09:50:01Z start host=login37
+[P] 2026-10-26T09:50:01Z inventory verified: 1 files
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[P] 2026-10-26T09:50:01Z tar 8d791bede67effb1f0c4b43ee4e7962f0073c07773fb80341b148d2f56955333  /pscratch/sd/j/josephrb/fd-f0b-20261026/preserve/stage0-inputs.tar bytes=20480
+mkdir: /home/j/josephrb/mnv-5d-cresp-20261026
+put  '/pscratch/sd/j/josephrb/fd-f0b-20261026/preserve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-cresp-20261026/stage0-inputs.tar' ( 20480 bytes, 6111.7 KBS (cos=4))
+011f18508e87c8f8676765025ebd7e8d (md5) /home/j/josephrb/mnv-5d-cresp-20261026/stage0-inputs.tar
+put  '/pscratch/sd/j/josephrb/fd-f0b-20261026/preserve/stage0-inputs.tar.sha256' : '/home/j/josephrb/mnv-5d-cresp-20261026/stage0-inputs.tar.sha256' ( 133 bytes, 27.7 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/fd-f0b-20261026/deploy/c4396756/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/CRESP-PRESERVE-INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-cresp-20261026/INVENTORY.sha256' ( 119 bytes, 25.0 KBS (cos=4))
+/home/j/josephrb/mnv-5d-cresp-20261026/stage0-inputs.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-cresp-20261026:
+-rw-r-----    1 josephrb  josephrb         119 Oct 26 02:50 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb       20480 Oct 26 02:50 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         133 Oct 26 02:50 stage0-inputs.tar.sha256
+get  '/pscratch/sd/j/josephrb/fd-f0b-20261026/preserve/retrieve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-cresp-20261026/stage0-inputs.tar' (2026/10/26 02:50:01 20480 bytes, 19921.0 KBS )
+[P] 2026-10-26T09:50:05Z PASS: HPSS copy verified by hashverify and by retrieval (8d791bede67effb1f0c4b43ee4e7962f0073c07773fb80341b148d2f56955333)

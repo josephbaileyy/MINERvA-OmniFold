@@ -1,3 +1,6 @@
 step	host	start_utc	end_utc	rc	wall_s	slurm_job	node_h	note
 S2.2 HPSS copy (stage0_preserve.sh)	login37	2026-10-25T21:59:24Z	2026-10-25T21:59:29Z	0	5	none	0	PASS: hashverify and retrieval, tar 14e2957f..., 14,888,960 B, /home/j/josephrb/mnv-5d-fd-f4-20261025
 S2.3 re-grade (fd_f0_regrade.py)	login37	2026-10-25T21:59:49Z	2026-10-25T22:00:33Z	0	44	none	0	controls 0-6 and 8 PASS; control 7 FAIL (row 6 descriptive); readout 6e7d718b...
+F0b S2.1 deploy and tests	login37	2026-10-26T09:43:21Z	2026-10-26T09:49:42Z	0	381	none	0	F0b deploy c4396756 (launched 09:43:21, clone done 09:43:53), porcelain 0/0, section 8 digests, Ran 69 tests OK
+F0b S2.2 HPSS copy of cresp.npz (stage0_preserve.sh)	login37	2026-10-26T09:50:01Z	2026-10-26T09:50:05Z	0	4	none	0	PASS: hashverify and retrieval, tar 8d791bed..., 20,480 B, /home/j/josephrb/mnv-5d-cresp-20261026
+F0b S2.3 re-grade with C_resp (fd_f0_regrade.py --extra-block)	login37	2026-10-26T09:50:28Z	2026-10-26T09:51:38Z	0	70	none	0	controls 0-6 and 8 PASS; control 7 FAIL as in F0 (row 6 descriptive); readout b9db935a...
