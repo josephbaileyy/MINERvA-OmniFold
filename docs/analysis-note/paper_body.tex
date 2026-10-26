@@ -75,10 +75,14 @@ way is valid to the extent that the simulated chain reproduces the analysis of
 the data.
 % Register round r17 (S1): the roadmap (main results, Table I, the secondary application) follows the scope below.
 
-% Each cell is copied from the body section in its last column; the former limitation column is Sec. VIII A (r15).
+% Register round r18: the caption's limitation clause changed with the director's approval (2026-10-25), because S7
+% made "the limitations in Sec. VIII A" false; no check binds the caption text.
+% Each cell is copied from the body section in its last column; the former limitation column (r15) is now stated with
+% each result (r18, S7), and Sec. VIII A summarizes the principal limitations.
 \begin{table}[tb]
-  \caption{Findings as tested; numbers are in the section given, and the
-  limitations in Sec.~\ref{sec:limitations}.  Conf.: configuration
+  \caption{Findings as tested; numbers and limitations are in the section
+  given, and Sec.~\ref{sec:limitations} summarizes the principal limitations.
+  Conf.: configuration
   (Table~\ref{tab:estimators}).}
   \label{tab:findings}
   \centering\scriptsize\setlength{\tabcolsep}{3pt}
@@ -87,7 +91,7 @@ the data.
     \pcell{0.50\columnwidth}{Finding} & \pcell{0.12\columnwidth}{Conf.} & \pcell{0.22\columnwidth}{Test} & \pcell{0.07\columnwidth}{Sec.} \\
     \midrule
     \pcell{0.50\columnwidth}{2D integral within about 1\%; correlated shape difference} & \pcell{0.12\columnwidth}{(f)} & \pcell{0.22\columnwidth}{published result} & \pcell{0.07\columnwidth}{\ref{sec:repro2d-pub}} \\
-    \pcell{0.50\columnwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.12\columnwidth}{(f)} & \pcell{0.22\columnwidth}{an earlier band failed coverage} & \pcell{0.07\columnwidth}{\ref{sec:uq2d}} \\
+    \pcell{0.50\columnwidth}{2D covariance, median \SI{\uqMedian}{\percent} per bin} & \pcell{0.12\columnwidth}{(f)} & \pcell{0.22\columnwidth}{coverage not tested} & \pcell{0.07\columnwidth}{\ref{sec:uq2d}} \\
     \pcell{0.50\columnwidth}{4D and 5D marginal normalizations agree at about 1--2\%; the 3D (e) marginal with the 2D (f) result to 0.141\%} & \pcell{0.12\columnwidth}{(a), (e), (f)} & \pcell{0.22\columnwidth}{lower dimensions} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
     \pcell{0.50\columnwidth}{background-subtraction bias up to 4\% at high $W$; negative weights remove most} & \pcell{0.12\columnwidth}{(c), (d)} & \pcell{0.22\columnwidth}{pseudo-data with backgrounds} & \pcell{0.07\columnwidth}{\ref{sec:closure}} \\
     \pcell{0.50\columnwidth}{generator-sized truth changes only partly recovered} & \pcell{0.12\columnwidth}{(d), (e)} & \pcell{0.22\columnwidth}{generator ratios} & \pcell{0.07\columnwidth}{\ref{sec:departure}} \\
@@ -101,7 +105,8 @@ the data.
 
 % Scope, one paragraph. Null below the fine grid: stageF/methods/M2-AUDIT.md:39, :46 and M2-ARCHIVE-CHECKS.md:8.
 % Nuisance-averaged size: M2-AUDIT.md:143, :152 (Q3). Assumptions: M2-FWER-RECORD.md:56-66.
-% Register round r15 (R1): the scope is stated here once, with a naming convention; limitations: Sec. VIII A.
+% Register round r15 (R1): the scope is stated here once, with a naming convention; limitations: Sec. VIII A (r18: each
+% is stated with its result, and Sec. VIII A summarizes the principal ones).
 % Register round r17 (S2): stated positively, as definitions; the generality of the findings is carried by the first
 % sentence's restriction to one implementation, one data set, and the cases tested. The roadmap follows (S1).
 \emph{Scope.} The findings are those of one OmniFold implementation on one data
@@ -130,7 +135,7 @@ and test.
 As a secondary application, Sec.~\ref{sec:joint} tests generator
 predictions that the published muon-kinematic measurement already
 disfavours~\cite{MINERvA:2021owq}.
-Section~\ref{sec:limitations} lists the limitations of these results.  The
+Section~\ref{sec:limitations} summarizes the principal limitations.  The
 companion analysis note~\cite{AnalysisNote2026} gives the full validation
 record, the construction of the uncertainties, and the joint tests, and is
 cited below by section.
@@ -306,16 +311,16 @@ simulation closure studies.  No hyperparameter search was performed on data.
 % (paper_body.tex:498), is stated here, beside the definition of configuration (f); the lines that the registry cites
 % for "configuration~(f)" and "configuration~(e), the joint-test estimator" are kept byte-identical. Reproducible:
 % re2/RE2-PARTB-REPORT.md:173 (the adopted central unfold, ER, repeats itself to 9.2e-12).
-Each result below states which configuration of Table~\ref{tab:estimators} it
-uses.
+% Register round r18 (S6, R-P1): the paragraph defers to Table II for each result's configuration; it keeps only what
+% the table does not state. The two lines the registry cites by digest are byte-identical.
+Table~\ref{tab:estimators} lists the configurations and the results each is used for.
 The two-observable central value uses configuration~(f): the learner and seed
 of configuration~(a) with negative-weight background subtraction and the
-refinement capacity of configuration~(e).  The two-dimensional central value is
-reproducible.  It is that of its systematic-universe ensemble, so its covariance
-is built with the same estimator.  The five-observable central value uses
+refinement capacity of configuration~(e).  This reproducible central value is
+that of its own systematic-universe ensemble, so its covariance is built with
+the same estimator.  The five-observable central value uses
 configuration~(a), with the purity-based subtraction, whose bias is given in
-Sec.~\ref{sec:closure}.  The three- and four-observable central values use
-configuration~(e).  The joint tests use
+Sec.~\ref{sec:closure}.  The joint tests use
 configuration~(e), the joint-test estimator, whose negative-weight treatment
 and higher-capacity refinement remove most of the bias of the purity method at
 nominal truth in the highest-$W$ cells (Sec.~\ref{sec:validation}).
@@ -324,11 +329,13 @@ nominal truth in the highest-$W$ cells (Sec.~\ref{sec:validation}).
 % model-dependence metric).
 % Register round r16 (P1 target "the five-iteration rule"): the criterion stated in physics terms; the rule and its
 % values (0.314 at five iterations, at least 0.384 at 10, 15 or 20, on H2) print in the note, sec:gbdt-model-dependence.
-Configuration~(e) keeps five iterations by a criterion fixed in advance.  The
-model dependence of configuration~(e) is measured as the largest residual proxy over the truth
-changes used in its development, and 10, 15, or 20 iterations did not reduce
-it.  The criterion and its values are given in
-\nsec{sec:gbdt-model-dependence}.
+% Register round r18 (S8, R-P4/R-P7): the choice stated with its basis; that the rule was fixed before the comparison
+% prints in the note, sec:gbdt-model-dependence ("a rule fixed before the comparison would have replaced its five
+% iterations by 10, 15 or 20 only if one of them lowered the rule's measure of model dependence").
+Configuration~(e) keeps five iterations because 10, 15, or 20 iterations did
+not reduce its model dependence, measured as the largest residual proxy over
+the truth changes used in its development.  The comparison and its values are
+given in \nsec{sec:gbdt-model-dependence}.
 \begin{table}[tb]
   \caption{Estimator configurations.  All use five OmniFold iterations and
   gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both
@@ -397,7 +404,8 @@ computed with the pseudo-inverse over the 205 bins, which keeps all 205
 eigenmodes (rank 205, condition number $1.5\times10^{12}$), so that ndf is that
 rank.  It indicates a correlated shape difference, not a normalization
 difference, spread over many eigenmodes of the published covariance.  No single
-$\pT$ or $\pPar$ band carries more than \SI{15}{\percent} of it.
+$\pT$ or $\pPar$ band carries more than \SI{15}{\percent} of it.  The source of
+the shape difference has not been identified.
 Figure~\ref{fig:validation} shows the principal one-dimensional projections.
 
 % Register round r17 (S4, R10): the estimator dependence and the post-selection disclosure (KEEP, E3) form their own
@@ -412,7 +420,8 @@ seed.  At the central value's seed, the refined negative-weight subtraction
 lowers the LightGBM distance from $\chiPaperPurity$ to $\chiPaper$.  We quote
 the LightGBM result as the central value because its covariance uses the same
 estimator.  This learner was chosen after both comparisons were known.  The
-central value and the exact-split cross-check differ in learner and in
+benchmark is therefore a reproduction rather than an independent validation.
+The central value and the exact-split cross-check differ in learner and in
 background treatment.  Their per-bin difference has a median of
 \SI{1.03}{\percent} (maximum \SI{17.6}{\percent}).  Both estimators are
 described in \nsec{sec:method-config}.
@@ -460,38 +469,30 @@ reason the released inputs do not let us determine.  The covariance omits the
 approximation in the systematic-universe unfoldings for events that fail
 reconstruction, the learner dependence of Sec.~\ref{sec:repro2d-pub}, and the
 dependence on the regularization; the dependence on the prior's generator shape
-is reported beside it (below).  The block sizes, the
+is reported beside it (below).  The covariance has not been independently
+validated.  It provides no calibrated significance for generator comparisons.
+The block sizes, the
 assumptions of the block sum, and the tests of the approximation are given in
 Ref.~\cite{AnalysisNote2026},
 Secs.~\ref*{N-sec:results-uq}, \ref*{N-sec:uq-combine},
 and~\ref*{N-sec:uq-2d-scope}.
 
 % Statistical block: budget_Q.json.gz stat.median_pct (0.6843), bound by check_sec4_receipts.py; the replica-mean
-% offset (rebuild REPORT sec. 3) prints in the note, sec:uq-boot. Earlier band: OUTCOME-20261005-2d-fixed-truth-
-% coverage-fail.md, VL169; rebuilt band VL170, rescoring state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json
-% (descriptive, post hoc); KNOWN_ISSUES 84, 85. The rescoring stays printed here because check_sec4_receipts.py binds
-% its two values to this file (register round r15 kept it; moving it to the note alone would need that check repointed).
-% Status of the block and of the covariance (DECISION-20261014 sec. 2; DECISION-20261017 sec. 2): Sec. VIII A.
-% "Failed": the note's sec:coverage ("The band fails: it undercovers in its tails"), the test of Table I's 2D row.
-% Register round r17 (S5, R4): this paragraph follows the block list and is written as a test report; the
-% reproducibility summary that closed the subsection moved to Sec. III, beside configuration (f)'s seeding.
-% Criterion (r17 accuracy fix, review b2-R1): PREREG-20261005-2d-fixed-truth-coverage.md:119-121; note sec_validation.tex
-% sec:coverage ("The band counts as nominal if its ratio to the true scatter lies in [0.9,1.1]").
+% offset (rebuild REPORT sec. 3) prints in the note, sec:uq-boot. Status of the block and of the covariance
+% (DECISION-20261014 sec. 2; DECISION-20261017 sec. 2): its coverage is untested (note sec_validation.tex sec:coverage,
+% "the quoted block has not been tested").
+% Register round r18 (S1, DECISION-20261025-joseph-r18-history-to-note.md item 1; S7, the former limitation 1): the
+% history of the two superseded bands (the earlier band's predeclared fixed-truth test, its criterion and its failure;
+% the rebuilt band's post hoc rescoring, 0.977 and 0.781) prints in the note, sec:coverage, and check_sec4_receipts.py
+% now binds those values there. The quoted block is the third ensemble (note: "a third, different ensemble").
+% Search: REFINE_OVERRIDE (re1_2d.py); --refine-n-estimators 400 --refine-num-leaves 31 (re2_driver.py argv); a-refined-400-31 (director ruling R4); configuration (f) @ e270db89f84e
 The statistical block, with a median statistical uncertainty of
 \SI{0.676}{\percent}, is a bootstrap of 300 replicas drawn at the central
 value's training seed, in which the background templates are also resampled.
-A coverage test specified in advance scored an earlier version of the
-statistical band, distinct from the quoted block, on \covTwoDNtoy{} closure
-pseudo-experiments at a fixed truth.  The band counts as nominal if its ratio
-to the true scatter lies in $[0.9,1.1]$.  The band failed the test by
-undercovering in its tails: pooled over experiments and bins,
-\SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two
-standard deviations, against \SI{95.4}{\percent} nominal.  A post hoc rescoring
-of the same pseudo-experiments against a second, rebuilt earlier band removes
-the tail undercoverage: \SI{97.7}{\percent} fall within two standard deviations and
-\SI{78.1}{\percent} within one.  Because the simulated part of the rebuilt band
-reuses the resampling mechanism of those pseudo-experiments, the rescoring is
-not an independent coverage test.  The test and the rescoring are described in
+The coverage of this block and of the total covariance has not been tested.  We
+make no coverage claim on independent simulated samples or simultaneously over
+all reported bins and projections.  The block supersedes two earlier
+statistical bands, whose coverage studies are described in
 \nsec{sec:coverage}.
 
 % Step: state/2d-closeout/period-unfold-20261014/REPORT.md (double ratio, +6.94% +- 0.41). Block:
@@ -506,6 +507,9 @@ period is correct.  The run-period block, built from double ratios among the
 three period groups (each group's unfolded result over its own simulated truth,
 with no group chosen as the reference), includes this inconsistency in
 the combined result, \SI{2.0}{\percent} on the integrated cross section.
+Because the block is built from the observed differences among the periods,
+its size is not validated and its own consistency check cannot fail.
+% Search: run-period block; playlist term; C_PL; own check cannot fail; size not validated @ e270db89f84e
 
 % RE-2 integration W1 and W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): C_model, DECISION-20261024-joseph-2d-model-dependence-component.md items 1-3
 % (M2 form, kappa = 1, label "generator-shape model dependence; not a calibrated bound", users' total, like-for-like
@@ -605,7 +609,9 @@ the reconstruction-level fit without reducing it.  For other fixed generator
 shapes, measured with the joint-test estimator, it is
 \SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell and within
 the quoted total uncertainty in about half of those cells.  This total
-uncertainty is that of the covariance of Sec.~\ref{sec:cov5d}.  The deformation studies, the iteration
+uncertainty is that of the covariance of Sec.~\ref{sec:cov5d}.  No quoted
+uncertainty includes the regularization bias, and the five-observable
+covariance omits it.  The deformation studies, the iteration
 and capacity tests, and the joint-test-estimator shapes are described in
 Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:val-negweight}
 and~\ref*{N-sec:val-departure}.
@@ -628,7 +634,8 @@ of 0.66, with coverage as low as 0.06.
 
 A diagnosis that fits a Gaussian bias and spread to each quantity's 68\% and
 95\% coverage attributes the miscoverage to a residual bias that grows with
-$W$ and survives the nominal-truth bias correction.  The rate change itself is
+$W$ and survives the nominal-truth bias correction.  The source of this residual bias
+has not been established.  The rate change itself is
 recovered, and, apart from a minor effect, the intervals are not too narrow.
 Agreement in the marginal normalizations thus coexists with substantial
 residual bias under the tested deformations.  The interval construction and the
@@ -670,18 +677,21 @@ diagnosis are described in \nsec{sec:coverage-5d}.
   $(\Eavail,W)$; NuWro in $(\pT,\pPar,\Eavail)$), 20 pseudo-experiments each;
   the grey band is $\pm$ the quoted total uncertainty of the $(\Eavail,W)$
   projection.  At nominal truth (40 pseudo-experiments) its largest residual is
-  \SI{0.09}{\percent}.  Panel (a) uses the random seeds of the estimator's
-  development studies.  Panel (b) uses separate seeds, which were later also
-  used in the estimator's development.  $W$ bin 6 is
+  \SI{0.09}{\percent}.  Neither seed set was held out from the estimator's
+  development.  $W$ bin 6 is
   $W\ge\SI{3}{GeV}$.  Error bars are the standard error of the mean.}
   % Source: methods-m3 REPORT, Figure 2 (dev_receipt.json C3_nominal, C4_eavail_shape; truth_check.json M1_ratio;
   % assess_receipt.json points.nominal, W1, W2, W3; band A4.adopted_total_sigma_pct). Reproduced: 74.07% (EW29),
   % EW7 -6.66%, W2 16.38% (EW37), W1 31.32% (EW29), W3 23.67% (EW29), 20 of 42 cells within the band.
   % Nominal maxima 0.39% (EW36, family N, C3_nominal) and 0.09% (EW41, R nominal), fig_m3_deformation.py numbers file.
-  % Seed disclosure (kept, register round r16: it qualifies "not used while it was chosen"): panel (b)'s 40 nominal and
+  % Seed disclosure (register round r16; r18 S3 moved its detail to the note and keeps "Neither seed set was held out"):
+  % panel (b)'s 40 nominal and
   % 20-per-shape samples were later used in development (note sec_5d.tex sec:gbdt-model-dependence, "Because these
   % samples were used during development"); first printed in commit a6b9c705, replacing a "seeds not used before" label.
   % Register round r17 (S14): the seed sentence split in two, in plainer words; both facts unchanged.
+  % Register round r18 (S3, DECISION-20261025-joseph-r18-history-to-note.md item 3): one plain sentence; that panel
+  % (b)'s seeds were separate assessment seeds when the estimator was chosen prints in the note, sec_5d.tex
+  % sec:gbdt-model-dependence.
   \label{fig:deformation}
 \end{figure*}
 
@@ -727,9 +737,13 @@ covariance.  The calibration of the joint tests in Sec.~\ref{sec:joint} does
 not use it.  For one pair of seed settings, changing the estimator's random seed
 moves the projected uncertainty of two further covariances by about
 \SI{6.1}{\percent}, beyond a stability limit of \SI{\sprojBound}{\percent}.
-We therefore quote no covariance-based generator significance.  The
-specification and the seed studies are given in
-\nsec{sec:eavailw-construction}.
+We therefore quote no covariance-based generator significance.  The seed
+dependence of the five-observable covariance rests on one seed pair, and the
+spread over seed pairs has not been measured.  The five bands built at a fixed
+seed carry \SI{\pinnedBandsSqrtTr}{\percent} of $\sqrt{\mathrm{Tr}\,C}$,
+and their seed sensitivity has not been measured.  The specification and the
+seed studies are given in \nsec{sec:eavailw-construction}.
+% Search: response-mismatch; response mismatch; mismatch closure; seed pairs; seed pair; fixed-seed bands; pinnedBandsSqrtTr; rejection rate; null pseudo-data processed like the data; net effect on each p value; calorimetric response band @ afb7e1faddfb
 
 % OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md:81, :90-93 (bounds 0.3/1.0; baseline 0.80 median, 2.48 max;
 % the failure belongs to the estimator family); note sec_5d.tex sec:val-departure.
@@ -801,7 +815,7 @@ the generator predictions are tested as hypotheses.
 \label{sec:limits}
 
 % The common thread of Secs. V B, V C, V E and VII E in the body's own words; the coverage failure's source is not
-% asserted (its unestablished source is item 3 of Sec. VIII A; r15 review fix 6). Register round r17 (R10): the
+% asserted (its unestablished source is stated in Sec. V C, the former item 3 of Sec. VIII A, r18; r15 review fix 6). Register round r17 (R10): the
 % three results are one sentence each; their content is unchanged.
 Three results point to the unfolded result retaining part of its prior.  The
 first is the residual under a generator-sized change of the truth in
@@ -854,7 +868,7 @@ prior, rather than with the tree approximation of the classifiers
 % CLAIM-ADDITION D-ID END
 
 % Each check is one of this paper's studies (Secs. IV-V); the calibration sentence is Sec. I's, whose condition is
-% stated there and in Sec. VIII A (register round r15).
+% stated there and in Sec. VII C (register round r15; r18 moved it from Sec. VIII A).
 The studies of Secs.~\ref{sec:repro2d} and~\ref{sec:validation} show what must be checked before unfolded intervals are
 interpreted: closure with the backgrounds included; truth changes of generator
 size, not only nominal closure; coverage under changes of the truth, not only
@@ -887,8 +901,8 @@ that of a reconstruction-level test.
 
 % Source of the kept sentence: VL159 (generator comparison at low E_avail).
 These comparisons use central values only, of
-configuration~(e) in three and four observables and configuration~(a) in five, and
-assign them no significance.  GENIE, the MINERvA Tune~v1,
+configuration~(e) in three and four observables and configuration~(a) in five.
+GENIE, the MINERvA Tune~v1,
 NuWro, and GiBUU all underpredict the unfolded central value at low $\Eavail$,
 between the quasielastic and $\Delta$ peaks, the region of the established
 low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}.
@@ -915,9 +929,11 @@ deficient, stops at $E_\nu\approx\SI{20}{GeV}$, and the NuWro and GiBUU ratios
 contain the target difference of Sec.~\ref{sec:data}.  The high-$\Eavail$,
 high-$W$ region is where the regularization bias of Sec.~\ref{sec:validation}
 is largest.  The map therefore describes where the central value differs from
-the Tune~v1.  The map and these comparisons are given in
+the Tune~v1.  No closure test with a mismodelled detector response has been
+run for this map.  The map and these comparisons are given in
 Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:eavailw-map}
 and~\ref*{N-sec:eavailw-band}.
+% Search: response-mismatch; response mismatch; mismatch closure; seed pairs; seed pair; fixed-seed bands; pinnedBandsSqrtTr; rejection rate; null pseudo-data processed like the data; net effect on each p value; calorimetric response band @ afb7e1faddfb
 
 \subsection{Hypotheses and calibration}
 \label{sec:hypotheses}
@@ -962,7 +978,9 @@ simulation.  A
 prediction's finite-sample residual are then added.  The data are unfolded
 once, with the full simulation.  Because the $\Delta_{b}$ come from the
 observed data, the null distributions are conditional on these data-derived
-inputs (\nsec{sec:joint5d-calibration}).
+inputs, and this conditioning has not been validated
+(\nsec{sec:joint5d-calibration}).
+% Search: response-mismatch; response mismatch; mismatch closure; seed pairs; seed pair; fixed-seed bands; pinnedBandsSqrtTr; rejection rate; null pseudo-data processed like the data; net effect on each p value; calorimetric response band @ afb7e1faddfb
 
 % Statistics: nd-unfolding/s5p_inference.py:35-49; s5p_joint.py:147-162 (W = V + diag Var(mu)), :61-80 (diagonal).
 % 82 of 109 eigenvalues below lambda (M2-AUDIT.md Q4a, :159-161, as corrected by M2-ARCHIVE-CHECKS.md:7, :92-97).
@@ -1007,7 +1025,12 @@ controls the familywise error rate of the ten decisions at 5\%
 (\napp{sec:joint5d-fwer}).  The calibrated size is averaged over the nuisance
 priors: at a fixed true value of the nuisance parameters it can exceed
 $\alpha$.  The error control applies to the decisions, not separately to the
-point estimates $(k+1)/(B+1)$.
+point estimates $(k+1)/(B+1)$.  The calibration is valid for the simulated null to
+the extent that the pseudo-experiment chain reproduces the analysis of the data
+(A1).  Every pseudo-experiment resamples the same simulated events, so
+measuring a rejection rate for null pseudo-data processed like the data would
+require an independent simulation sample.  No such rate has been measured.
+% Search: response-mismatch; response mismatch; mismatch closure; seed pairs; seed pair; fixed-seed bands; pinnedBandsSqrtTr; rejection rate; null pseudo-data processed like the data; net effect on each p value; calorimetric response band @ afb7e1faddfb
 
 % Design and its data-informed elements: amendment 7 data_informed_disclosure; DECISION-20261004-s5p-production-budget-
 % extension.md; note sec_joint.tex sec:joint5d-frozen. Lost pseudo-experiments: RECORD-20261005-s5p-joint-5d-inference-
@@ -1027,25 +1050,29 @@ point estimates $(k+1)/(B+1)$.
 % paragraph on the lost pseudo-experiments; RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md sec. 5 (interrupted seeds may be
 % outcome-selected; never-started seeds are independent only under stated assumptions).
 % Search: lost independently of their outcomes; independent of their outcomes; outcome-independent; lost-seed runtime diagnostic @ f0b26234
-The test design was fixed before any observed statistic was computed.  Its
-reviewers had already seen descriptive per-cell residuals of the data.  After the observed $p$ values had become visible, the computing time
-available to the calibration was increased by a bounded amount.  Under A1 and
-A2, the error control holds for any rule that decides when sampling stops, so
-it does not depend on this extension.  Computing time limits interrupted or prevented \jtLostCal{}
-calibration and \jtLostPow{} power pseudo-experiments, and the decisions use
-the completed ones.  When rerun, none of the lost calibration
+% Register round r18 (S2, DECISION-20261025-joseph-r18-history-to-note.md item 2; director rulings Q1, Q2): one short
+% statement each. Who examined the residuals (the design's reviewers), the extension's purpose, and the split of the
+% lost draws into interrupted and never started print in the note, sec:joint5d-frozen and sec:joint5d-lost.
+The test design was fixed before any observed statistic was computed, after
+descriptive per-cell residuals of the data had been seen.  The computing budget
+of the calibration was extended by a bounded amount after the observed $p$
+values were visible.  Under A1 and A2, the error control holds for any rule that decides
+when sampling stops, so the extension does not affect it.  Of the submitted
+pseudo-experiments, \jtLostCal{} for calibration and \jtLostPow{} for power did
+not complete within the computing time limits, and the decisions use the
+completed ones.  When rerun, none of the lost calibration
 pseudo-experiments reaches the observed statistic in any test or shifted null,
 so their outcomes change no decision.  A2 also requires that the
 pseudo-experiments were lost independently of their outcomes, which has not
 been shown.  Independently written code reproduces every $p$ value and
-decision.  The predeclared design and the rerun are described in
+decision.  The design and the rerun are described in
 Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:joint5d-frozen}
 and~\ref*{N-sec:joint5d-lost}.
 
 \subsection{Conditions}
 \label{sec:conditions}
 
-The decisions concern the hybrid nulls and rest on six conditions on the
+The decisions rest on six conditions on the
 nuisance model, numbered as in \nsec{sec:joint5d-conditions}.
 
 % (i): \jtMoneMin--\jtMoneMax (values_inference.tex); amendment 7 claims.rejection; note sec_joint.tex
@@ -1058,7 +1085,12 @@ Convergence of the fine grid has therefore not been shown, and the residual
 below it is unmeasured and potentially material.  The shifts
 $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ were set by assuming that the
 refinement steps shrink geometrically.  The measured $L_{2}$ ratios also allow
-slower convergence.
+slower convergence.  The rejections carry over from the simulated hybrid nulls
+to the generator predictions themselves only if replacing the Tune~v1's shape
+below the fine grid by $G$'s moves the noise-free unfolded result by no more
+than $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ along $\delta_{\mathrm{fine}}$.
+Showing this would require a demonstrated bound on the residual below the fine
+grid.
 % Search: below the fine grid; sub-fine-grid; fine-grid convergence; delta_fine; jtMoneMin; kappa breakdown @ afb7e1faddfb
 
 % (ii): the 10% response uncertainty, MINERvA:2022incl (note sec_joint.tex sec:joint5d-response).
@@ -1069,11 +1101,16 @@ hadronic-energy response.  In MINERvA's recoil-energy analyses, the uncertainty
 of that response is derived from test-beam calorimetry~\cite{MINERvA:2015testbeam}
 and rises to \SI{10}{\percent} at the highest three-momentum transfers of the
 low-recoil measurement~\cite{MINERvA:2022incl}.  The omission matters for the
-rejections.  In a post hoc observation, the calibrated tests restricted to the
+rejections.  A check made after the decisions shows that the calibrated tests
+restricted to the
 matched $(\pT,\pPar)$ projection of Sec.~\ref{sec:joint-results} do not reject
 GENIE~2.12.10 CV ($p=\woneGcvPtTot$ in total and $\woneGcvPtShape$ in shape),
 so the information that rejects it involves the hadronic axes, on which a
-response band would act.
+response band would act.  The net effect of the missing band on each $p$ value
+has not been measured.  The rejections remain conditional on the simulation's
+hadronic response, and their physical interpretation would require a response
+band drawn through the calibration.
+% Search: response-mismatch; response mismatch; mismatch closure; seed pairs; seed pair; fixed-seed bands; pinnedBandsSqrtTr; rejection rate; null pseudo-data processed like the data; net effect on each p value; calorimetric response band @ afb7e1faddfb
 
 % Register round r17 (S11, R10): the exploratory study is its own paragraph, and its limits are one sentence each;
 % the limits are unchanged.
@@ -1125,11 +1162,11 @@ NuWro and GiBUU were generated on carbon.  Correcting both predictions to the
 hydrocarbon target moves both toward the data, and NuWro's total-test
 rejection does not survive that correction robustly.  GiBUU's deep-inelastic
 events on hydrogen do not conserve energy, which affects its correction and
-possibly its carbon prediction.  These target-corrected evaluations are
-descriptive.  The decisions of Table~\ref{tab:joint} concern each prediction on
-the target it was generated for, and they stand.
+possibly its carbon prediction.  The decisions of Table~\ref{tab:joint} concern
+each prediction on the target it was generated for.  The target-corrected
+evaluations are descriptive and leave them unchanged.
 % Register round r16: the scan's limits (no bound on the below-grid residual, no convergence) are stated once, in
-% condition (i) and item 7 of Sec. VIII A; the note prints the scan's own statement, sec_joint.tex sec:joint5d-kappa.
+% condition (i), which carries the former item 7 of Sec. VIII A (r18); the note prints the scan's own statement, sec_joint.tex sec:joint5d-kappa.
 As a sensitivity check outside the decision rule, a scan of the multiplier of
 the shift along $\delta_{\mathrm{fine}}$ finds all ten rejections determined up
 to a multiplier of about 5.2.  The scan probes that one direction.  The calibrated null distributions
@@ -1182,7 +1219,7 @@ $(\pT,\pPar)$ and onto $(\Eavail,W)$, the same calibrated tests give $p<0.05$,
 without a multiplicity correction, for every test in at least one of the two
 projections.  This study therefore provides no evidence of additional
 discrimination from the joint five-observable information.
-The rejections are global assessments of the hybrid nulls: assigning a
+Each rejection is a global assessment of a hybrid null.  Assigning a
 discrepancy to a kinematic region or nuclear mechanism would require separate
 tests.  Power studies characterize the response to chosen alternatives: at the
 Tune~v1 null, two of three specified alternatives are detected in shape with
@@ -1195,8 +1232,8 @@ and~\ref*{N-sec:joint5d-power}.
 \section{Discussion and conclusions}
 \label{sec:conclusions}
 
-% Register round r15 (R2, R5, R6): the conclusions no longer restate the limitations; each is stated once, in the
-% numbered list below, which replaces Table I's former limitation column and the per-sentence repetitions.
+% Register round r15 (R2, R5, R6): the conclusions no longer restate the limitations. Register round r18 (S7): each
+% limitation is stated once, with its result; the subsection below summarizes the principal ones.
 The study's results are the validation findings summarized in
 Table~\ref{tab:findings}.  Section~\ref{sec:limits} relates three of them to
 the unfolded result retaining part of its prior, and lists the checks they
@@ -1204,65 +1241,26 @@ show to be needed before unfolded intervals are interpreted.
 % The familywise bound conditioned on the calibration's exactness: M2-FWER-RECORD.md:11-14, :58-60.
 The calibrated tests illustrate inference with a biased estimator: the
 decision rule controls the familywise error rate at 5\% provided the
-calibration is exact.  The following limitations apply to the study's results.
+calibration is exact.
 
 \subsection{Limitations}
 \label{sec:limitations}
 
-% Register round r17 (S13; R2, R6, R10): each item split into short declaratives, with fewer negations per sentence; the
-% nine items, their order, their facts and their conditions are unchanged, so the sources below still hold by number.
-% Sources, item by item: (1) DECISION-20261014-joseph-2d-endpoint-and-open-items.md sec. 2 ("no coverage claim is
-% made"), note sec_systematics.tex sec:uq-combine and sec:uq-2d-scope; (2) receipts/2d-lgbm42-20261011 and note
-% sec_results.tex sec:results-tension; (3) M2-RATEFAIL-DIAGNOSIS.md:7-15, note sec_5d.tex sec:coverage-5d (the
-% source of the W-graded term is not established); (4) VL151, VL154 (note sec_5d.tex sec:val-departure); (5) note
-% sec_5d.tex, the list under sec:eavailw-adopted; (6) note app_response_mismatch.tex (protocol not yet run;
-% DECISION-20261014 item 2, deferred); (7) amendment 7 claims.rejection, note sec_joint.tex sec:joint5d-conditions;
-% (8) publication/w2/W2B-REPORT-20261006.md, note sec:joint5d-response; (9) M2-AUDIT.md Q3, Q4e, :187-193, note
-% sec:joint5d-calibration and sec:joint5d-conditions.
-% Absence claims read against the registry (RECORDS-RULES rule 4): (a) has no coverage-family row (its 2D statistical
-% block is untested); the detector-response-mismatch closure is a protocol not yet run (app:response-mismatch).
-% Search: configuration (a); (a) central value: LightGBM, seed 42 in 2D; (a) central-value estimator; configuration 1 (note, before register batch b5); LightGBM seed-42 matched CV (2D); LightGBM, 100 trees, 8 leaves, learning rate 0.1, --seed 42, purity subtraction; production 5D estimator (lgbm, five iterations, seed 42) @ afb7e1faddfb
-% Search: configuration (e); (e) joint-test estimator; (e) joint-test estimator; joint-test estimator; R (s5e candidate); R (s5p baseline_estimator); configuration 1 = R; R = paper configuration (e); s5e candidate R = the joint-test estimator; --candidate R; --candidate R (contract implementation); refinement 400 trees, 31 leaves; refinement 400/31; 400-tree, 31-leaf Stay-Positive refinement; s5p data unfold @ afb7e1faddfb
-% Search: response-mismatch; response mismatch; mismatch closure; seed pairs; seed pair; fixed-seed bands; pinnedBandsSqrtTr; rejection rate; null pseudo-data processed like the data; net effect on each p value; calorimetric response band @ afb7e1faddfb
-\begin{enumerate}
-\item The two-dimensional covariance has not been independently validated.
-The coverage of its statistical block and of the total has not been tested.
-We make no coverage claim on independent simulated samples or simultaneously over
-all reported bins and projections.  The covariance provides no calibrated
-significance for generator comparisons.  Its run-period block is built from
-the observed differences among the periods, so its size is not validated and
-its own consistency check cannot fail.
-\item The learner of the two-dimensional result was selected after both
-comparisons with the published result were known.  The benchmark is therefore
-a reproduction rather than an independent validation.  The source of the
-correlated shape difference from the published result has not been identified.
-\item The source of the residual bias behind the miscoverage of
-Sec.~\ref{sec:coverage} has not been established.
-\item The residual under the generator-sized truth changes of
-Sec.~\ref{sec:departure} is interpreted as regularization bias.  No quoted
-uncertainty includes it, and the five-observable covariance omits it.
-\item The seed dependence of the five-observable covariance rests on one seed
-pair, and the spread over seed pairs has not been measured.  The five bands
-built at a fixed seed carry \SI{\pinnedBandsSqrtTr}{\percent} of
-$\sqrt{\mathrm{Tr}\,C}$, and their seed sensitivity has not been measured.
-\item No closure test with a mismodelled detector response has been run for
-the $(\Eavail,W)$ map of Sec.~\ref{sec:central}.
-\item The rejections carry over from the simulated hybrid nulls to the
-generator predictions themselves only if replacing the Tune~v1's shape below
-the fine grid by $G$'s moves the noise-free unfolded result by no more than
-$\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ along $\delta_{\mathrm{fine}}$
-(condition~(i)).  Showing this would require a demonstrated bound on the
-residual below the fine grid.
-\item The detector model has no calorimetric hadronic-response band
-(condition~(ii)), and the net effect of the missing band on each $p$ value
-has not been measured.  The rejections remain conditional on the simulation's
-hadronic response.  Their physical interpretation would require a response
-band drawn through the calibration.
-\item The calibration is valid for the simulated null to the extent that the
-pseudo-experiment chain reproduces the analysis of the data (A1).  Every
-pseudo-experiment resamples the same simulated events, so measuring a
-rejection rate for null pseudo-data processed like the data would require an
-independent simulation sample.  No such rate has been measured.  The
-conditioning of the null distributions on the data-derived lateral shifts has
-not been validated.
-\end{enumerate}
+% Register round r18 (S7, caveat-study rule R-P2; director ruling 2026-10-25): the nine-item list is folded into the
+% text. Each item now prints with the result it qualifies, every condition attached (ledger.md maps each clause):
+% (1) Sec. IV B; (2) Sec. IV A; (3) Sec. V C; (4) Sec. V B; (5) Sec. V D; (6) Sec. VII A; (7) Sec. VII D (i);
+% (8) Sec. VII D (ii); (9) Secs. VII B and VII C. This paragraph restates the four principal ones and adds nothing.
+% The former sources of each item now sit at its destination paragraph; the Search lines moved with their claims.
+% Search: REFINE_OVERRIDE (re1_2d.py); --refine-n-estimators 400 --refine-num-leaves 31 (re2_driver.py argv); a-refined-400-31 (director ruling R4); configuration (f) @ e270db89f84e
+The limitations of these results are stated with the results they qualify, in
+Secs.~\ref{sec:repro2d}--\ref{sec:joint}.  The principal ones are these.  The
+two-dimensional covariance has not been independently validated, and its
+coverage has not been tested (Sec.~\ref{sec:uq2d}).  The higher-dimensional
+results are central values without intervals of validated coverage, and no
+quoted uncertainty includes their regularization bias
+(Sec.~\ref{sec:departure}).  The generator tests reject hybrid nulls,
+conditionally on the simulation's hadronic response.  The rejections carry over
+to the generator predictions themselves only under a bound on the residual
+below the fine grid, which has not been shown (Sec.~\ref{sec:conditions}).  Their
+calibration is valid to the extent that the simulated chain reproduces the
+analysis of the data (Sec.~\ref{sec:calibration}).
