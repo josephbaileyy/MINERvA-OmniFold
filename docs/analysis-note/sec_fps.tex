@@ -1,11 +1,11 @@
 \section{Extended fiducial phase-space study}
 \label{sec:fps}
 
-This section gives a preliminary scalar central value for an extended fiducial domain. It comes with a
-three-prior dependence envelope, a hidden-variable closure and a 200-toy containment diagnostic for the
-extension. The signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume. The truth-muon
-kinematic cuts are removed, but the reconstructed MINOS-based selection is unchanged.
-The domain is therefore an extended \emph{fiducial} one, not unrestricted neutrino phase space. No covariance is
+This section gives a preliminary scalar central value for an extended fiducial domain, with a three-prior
+dependence envelope, a hidden-variable closure and a 200-toy containment diagnostic for the extension. The
+signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume. The truth-muon
+kinematic cuts are removed, but the reconstructed MINOS-based selection is unchanged,
+so the domain is an extended \emph{fiducial} one, not unrestricted neutrino phase space. No covariance is
 quoted for it, so the result consists of central values and these validation tests.
 % Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): "No corrected covariance exists for it" was
 % false as read: an extended-fiducial covariance with re-selected lateral bands exists (job 56431823, 2026-08-07;
@@ -23,9 +23,9 @@ inside the cuts, \SI{22.3}{\percent} at $\pPar<\SI{1.5}{GeV/c}$,
 \SI{11.3}{\percent} at $\theta_\mu>20^{\circ}$, and the high-$\pT$/$\pPar$
 tails are negligible (Fig.~\ref{fig:fpsacc}). OmniFold's treatment of events that fail reconstruction
 already corrects for acceptance, so removing the truth-level kinematic cuts is a change of configuration
-only. The truth denominator grows from 32.8 million to 49 million events, and the reconstruction
+only: the truth denominator grows from 32.8 million to 49 million events, and the reconstruction
 selection, including the MINOS match, is unchanged. In regions without acceptance the unfold extrapolates
-through the step-1 regressor for missed events. The validation tests below quantify the resulting
+through the step-1 regressor for missed events; the validation tests below quantify the resulting
 prior dependence.
 
 \begin{figure}[H]
@@ -47,27 +47,27 @@ prior dependence.
 Four tests characterize the extension (Fig.~\ref{fig:fpscmp}):
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Published-region check.} In the published sub-block, the extended unfold reproduces the control
-        with integral ratio $0.9994$, median cell ratio $1.0013$, and median
-        deviation \SI{\fpsAnchor}{\percent} across all 185 reported cells.
-        In the published region the extended unfold agrees with the control at this level.
-        The control is the standard 2D input on the paper grid, with identical settings. Its
-        total is $\SI{\sigTwoDPurity}{cm^2/nucleon}$. At the printed precision, it equals the total of the
-        purity-subtracted 2D central values, both exact-split and LightGBM. The quoted 2D result, with refined
-        negative-weight subtraction, is $\SI{\sigTwoD}{cm^2/nucleon}$, \SI{\roFpsDiff}{\percent} lower. The
-        control therefore does not reproduce it.
+        (standard 2D input, paper grid, identical settings) with
+        integral ratio $0.9994$, median cell ratio $1.0013$, and median
+        deviation \SI{\fpsAnchor}{\percent} across all 185 reported cells:
+        in the published region the extended unfold agrees with the control at this level. The control's
+        total, $\SI{\sigTwoDPurity}{cm^2/nucleon}$, equals at the printed precision that of the
+        purity-subtracted 2D central values (exact-split and LightGBM). The quoted 2D result, with refined
+        negative-weight subtraction, is $\SI{\sigTwoD}{cm^2/nucleon}$, \SI{\roFpsDiff}{\percent} lower, so the
+        control no longer reproduces it.
 % RE-2 integration W3 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): RE2-PARTC-REPORT.md sec. 8 (RO-FPS: E_R 3.069e-38 against the control's 3.073e-38, -0.14 %,
 % "It does not reproduce"); the control: VALIDATION_LEDGER.md:1624-1625 (no committed digest; VL177 records the -0.14 %); the exact-split total
 % 3.0733e-38 (values.tex \sigTwoD comment).
   \item \textbf{Closure.} Extended-grid self-closure using simulated reconstruction as
         pseudo-data returns recovered/truth $=1.0000$ in every cell,
-        including the extension. It shows no event-accounting or normalization bias
+        including the extension, with no event-accounting or normalization bias
         from the enlarged denominator. In \emph{hidden-variable} closure,
         a Gaussian truth bump is injected in true $E_{\mathrm{avail}}$,
         unseen by the $(\pT,\pPar)$ unfold. The recovered cross section
         reproduces the bump-reweighted $(\pT,\pPar)$ truth to
         median \SI{0.17}{\percent} (90th percentile \SI{0.65}{\percent}) in
         the published cells and median \SI{0.77}{\percent} (max
-        \SI{4.05}{\percent}) in the extension. Both are well inside the prior envelope.
+        \SI{4.05}{\percent}) in the extension, both well inside the prior envelope.
   \item \textbf{Three-prior envelope.} Repeating the unfold with three priors
         (MINERvA Tune~v1, bare GENIE, and NuWro-shaped) spans the
         total cross section by only $\pm\SI{1.5}{\percent}$. The NuWro-shaped
@@ -75,10 +75,8 @@ Four tests characterize the extension (Fig.~\ref{fig:fpscmp}):
         NuWro events without phase-space cuts. The sample's mis-sampled flux
         (\S\ref{sec:3d-models})
         % \texttt{KNOWN\_ISSUES.md} row 83; flux repair of 2026-09-27
-        suppresses its high-$\pPar$ shape. This prior has not been rebuilt with
-        the repaired flux.
-        % Search: NuWro-shaped prior; rebuilt after the flux repair; rebuilt with the repaired flux @ 1a015eef
-        Per-cell half-spread/mean has median
+        suppresses its high-$\pPar$ shape, and this prior was not rebuilt after
+        the flux repair. Per-cell half-spread/mean has median
         \SI{2.9}{\percent} in the published region and \SI{7.9}{\percent}
         (90th percentile \SI{62}{\percent}) in the extension, concentrated
         in zero-acceptance cells (Fig.~\ref{fig:fpsenv}).
@@ -87,9 +85,9 @@ Four tests characterize the extension (Fig.~\ref{fig:fpscmp}):
         fixed truth in \SI{\covFPS}{\percent} of evaluation bin--toy cells,
         compared with the \SI{\covNominal}{\percent} Gaussian nominal.
         Bin correlations and estimated widths preclude a global binomial error
-        or a calibrated test. The diagnostic probes the statistical closure toys, not a full uncertainty band.
-        The statistical-band, pull and regional fractions are in App.~\ref{sec:fps-fractions}.
-        None of them is used as a test that certifies a covariance.
+        or a calibrated test. The diagnostic probes the statistical closure-toy stream, not a full uncertainty band.
+        The statistical-band, pull and regional fractions are in App.~\ref{sec:fps-fractions};
+        none is used as a covariance-certification test.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -125,19 +123,21 @@ fiducial volume is
 % sec. 4: 4.502/3.0730 - 1 = 46.50 %; VALIDATION_LEDGER.md:1626 "+46% vs restricted" names no operand). The two totals:
 % VALIDATION_LEDGER.md:1624-1625 (control 3.073e-38; FPS total 4.502e-38).
 compared with $\SI{\sigTwoDPurity}{cm^2/nucleon}$ for the control unfold in the restricted phase
-space. The extended-fiducial value was produced with the binned purity correction, not with the
-negative-weight treatment designated for the extended-fiducial analysis. Its central value comes from the battery of
-2026-06-10, not from refined negative-weight subtraction (App.~\ref{app:negweight}).
+space. The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-06-10), not
+with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App.~\ref{app:negweight}).
 % Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): "No extended-fiducial production with
 % refined negative-weight subtraction has been run" was false as read: ten negweight-refined extended-fiducial endpoint
 % unfolds were run later (job 56430128; nd-unfolding/sbatch_unfold_active_fps.sh:18,34-35,60). The sentence now says
-% only what the quoted central value used.
+% only what the quoted central value used, in the words of Joseph's selected option, and keeps the base sentence's fact that a
+% negative-weight treatment is designated for this analysis. That treatment is refined negative-weight subtraction: App. C
+% sec:negweight-footing designates negative-weight injection with Stay-Positive refinement (app_negweight.tex:370-371), the
+% refined form of negative-weight injection (:257-258) whose refinement is the Stay-Positive classifier (:476) (director, 2026-10-26).
 % Search: extended-fiducial central value; fps battery; 54244120; negweight-refined FPS central value (app_provenance.tex
 % fps-battery; no refined extended-fiducial central value is recorded; sbatch_unfold_active_fps.sh:67 takes the existing
 % central value as input) @ 7ad668f4
 We adopt \textbf{two-tier reporting}.
 \emph{Tier~1} comprises the acceptance-supported cells ($\epsilon\gtrsim2\%$): the published region and the
-measurable part of the extension. That part of the extension carries $\sim\SI{6}{\percent}$
+measurable part of the extension, which carries $\sim\SI{6}{\percent}$
 of the rate, chiefly in the $\theta>20^{\circ}$ wedge and the
 $\pPar\in[0.75,1.5]\,\si{GeV/c}$ edge. \emph{Tier~2}, prior-extrapolated,
 comprises the dead cells ($\sim\SI{28}{\percent}$ of the rate) and is flagged separately with
@@ -145,5 +145,6 @@ an explicit additional three-prior envelope band. Both tiers enter the
 sum; only tier~1 is interpreted as an acceptance-supported measurement.
 No uncertainty magnitude is assigned beyond the three-prior envelope, because no extended-domain
 covariance has been constructed with re-selected lateral bands under the procedure of \S\ref{sec:uq-combine}.
+% Search: extended-domain covariance with re-selected lateral bands; activelat; 56431823; sec:uq-combine procedure (true as scoped, Joseph's ruling DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md item 1.3: the activelat FPS covariance of job 56431823, AUDIT-FINDINGS-20260820-fps.md:217-221, was built on 2026-08-07, before the sec:uq-combine procedure with C_PL was adopted on 2026-10-17, DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md, and is unquotable, AGENTS.md:36, AUDIT-FINDINGS-20260820-fps.md:389-390) @ 0d9c64fd
 % The former subsection "Recoil-PET feasibility study on the extended population"
 % (label sec:fps-pet) moved to sec_pet.tex, sec:pet-full-event-status (lane 3 §10.1).
