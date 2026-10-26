@@ -43,8 +43,11 @@ classifier separating positive from negative weights, trained with $|w|$, gives
 each event the weight $|w|\max(0,2g-1)$. No effective sample size of the
 unfolded ensemble is computed.
 
-\paragraph{Background subtraction (the one binned step).}
-All selected data events enter step 1; none is discarded and no
+\paragraph{Background subtraction.}
+% Accuracy fix (unscored; director ruling 2026-10-26): the heading and the first sentence describe the binned purity
+% subtraction, which is not the treatment of every quoted result (scope at the end of this paragraph). Mechanism: the
+% drivers' --bkg-mode purity path (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10).
+In the binned purity subtraction, all selected data events enter step 1; none is discarded and no
 negative-weight events are injected. Each receives a reco-bin \emph{purity}
 weight. The POT-scaled background prediction includes genuine backgrounds
 and out-of-phase-space signal (\S\ref{sec:selection}) and is binned on the
@@ -349,8 +352,14 @@ Every production, universe-sweep, and closure run follows these conventions:
         training are exactly those passing the reconstructed-level
         selection; nothing outside the reconstructed phase space reaches the
         classifier.
-  \item \textbf{Fake-free step-1 training.} Step 1 targets the purity-weighted background-subtracted data of
-        \S\ref{sec:method-algo}. Genuine backgrounds \emph{and}
+  \item \textbf{Fake-free step-1 training.} Step 1 targets the background-subtracted data of
+        \S\ref{sec:method-algo}, purity-weighted or with background simulation injected at negative weight
+        (refined to non-negative weights in the refined configurations).
+        % Accuracy fix (unscored; director ruling 2026-10-26): the list covers every production run, and the 2D result
+        % and the 3D and 4D central values use refined negative-weight subtraction (sec:method-algo). Mechanism:
+        % 2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10.
+        % In the negative-weight modes the signal fakes are injected with the background (2d-unfolding/unfold_2d_omnifold_unbinned.py:1846-1858 @ ddf16f10).
+ Genuine backgrounds \emph{and}
         out-of-phase-space signal fakes are removed from the data side.
         The simulated reco sample is fake-free by construction, so neither side of the step-1
         training contains events whose truth lies outside the

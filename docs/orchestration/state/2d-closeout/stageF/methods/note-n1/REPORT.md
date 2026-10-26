@@ -175,4 +175,146 @@ new body, and each lands on text that supports it:
 
 ## Accuracy fixes (unscored; second commit)
 
-(pending: the second commit)
+**What these are.** Factual corrections of stale text, not register changes, ruled by the director on 2026-10-26.
+They are flagged for Joseph. They are not scored. Ledger rows ACC1–ACC9 are at the end of `ledger.md`.
+
+**The facts they restore.** The note's own scope statements (`sec_method.tex` sec:method-algo; `app_negweight.tex`
+"Scope of the numbers") and the drivers agree:
+- The 2D result and its covariance, and the 3D and 4D central values, use refined negative-weight subtraction. These
+  are configurations (f) and (e).
+- The 5D central value and its covariance, and the extended-fiducial value, use the binned purity weight.
+
+**Mechanism, from the driver code at `ddf16f10`** (unchanged at `5bb5e179`):
+- Both drivers take `--bkg-mode {purity, negweight, negweight-refined}`, default `purity`
+  (`2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377`; `nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630`).
+- `purity` down-weights the data per reconstructed bin.
+- The negative-weight modes set the data to +1 and inject the background and the signal fakes at negative weight. In
+  `negweight-refined` these are then refined to non-negative weights by Stay-Positive (`unfold_2d_omnifold_unbinned.py:1825-1870`,
+  fakes at `:1846-1858`; `unfold_nd_omnifold_unbinned.py:900-1030`).
+- The 2D driver's own help string still calls purity "default, headline". That is code, not printed text, so it is not
+  changed here.
+
+### The sweep
+
+**Method.** `acc/sweep.py` reads every printed sentence in the `\input` closures of `main_note`, `main_paper` and
+`main_primer`, with comments stripped. It keeps each sentence that matches any of these patterns:
+- `purit`;
+- `(D-B)/D`;
+- "fixed before training";
+- `default`;
+- "binned correction/subtraction/weight";
+- "reproduction measurement";
+- "negative-weight";
+- "refined";
+- "background subtraction/treatment/removal";
+- "do(es) not use it/the/this";
+- "improved removal" (the primer).
+
+Each hit was then classified by claim, not by wording. The question for each: does the sentence, as read, assign the
+purity weight to the 2D result, its covariance or the 3D/4D central values, or misstate what treatment they use?
+
+**Hits before the corrections** (`acc/sweep-before.tsv`): 220 sentences.
+- **Note, 188:**
+  - app_negweight 84, sec_method 31, sec_5d 10, sec_3d 9;
+  - sec_validation 6, sec_joint 6, app_release 6, main_note 5;
+  - sec_fps 4, sec_summary 4, app_statmethods 4;
+  - sec_execsummary 3, sec_intro 3, sec_systematics 3, sec_results 3;
+  - result_status_rows 2, app_guide 2;
+  - values 1, selection_features 1, app_codebase 1.
+- **Paper, 23:** paper_body 22, main_paper 1.
+- **Primer, 9:** primer_body 9.
+
+After the corrections there are 221 hits, because the §1 sentence became two (`acc/sweep-after.tsv`).
+
+**Stale:** 9 note sites.
+- 8 were found by the sweep: ACC1–ACC8.
+- 1 (ACC9) was found by agy's review of ACC7, below.
+- **Paper and primer: 0 stale.**
+- A second screen ran after ACC9, for sentences that present the 2D treatment as a cross-check or alternative, or purity as
+  the default or the headline. It found no further site.
+- The nearest, `app_negweight.tex:31`, is kept. It reads "Here negative-weight injection is an equivalence study … this
+  appendix establishes no supported production path and changes no default". It is scoped to the appendix, and the
+  driver default is purity.
+
+| id | where (after) | before → after |
+|---|---|---|
+| ACC1 | `sec_intro.tex:86` | "Background subtraction is the exception: a per-reco-bin $(D-B)/D$ purity weight is fixed before training" → two sentences: unbinned for the 2D result and its covariance and the 3D/4D central values (refined); purity for the 5D central value and covariance and the extended-fiducial value |
+| ACC2 | `sec_method.tex:47-50` | heading "(the one binned step)" dropped; "In the binned purity subtraction, all selected data events enter step 1" |
+| ACC3 | `sec_method.tex:355-357` | "Step 1 targets the purity-weighted background-subtracted data" → "the background-subtracted data …, purity-weighted or with background simulation injected at negative weight (refined to non-negative weights in the refined configurations)" |
+| ACC4 | `sec_validation.tex:83` | "binning maps and purity correction held fixed" → "binning maps and background subtraction held fixed" |
+| ACC5 | `app_negweight.tex:4` | "Background subtraction in §3.1 is the only step that uses analysis binning" → "Binned purity subtraction (§3.1) is the only step …" |
+| ACC6 | `app_negweight.tex:192` | "reproduces the binned correction used for the results" → "reproduces the binned correction" |
+| ACC7 | `app_negweight.tex:258-260` | "Binned purity remains the default for this note's reproduction measurement" → the scope sentence |
+| ACC8 | `app_codebase.tex:21-23` | "applies purity-weight background subtraction" → "applies the background subtraction its background-mode option selects (by default the purity weight; §3.1)" |
+| ACC9 | `app_negweight.tex:268-270` | "Negative-weight injection is the validated unbinned cross-check and designated extended-fiducial baseline …" → "Negative-weight injection is the designated extended-fiducial baseline …" |
+
+**ACC9.**
+- **The defect.** Beside ACC7's new sentence, "the validated unbinned cross-check" read as if the 2D result's treatment
+  were only a cross-check. At base the sentence followed the stale "default" sentence, so the two formed one stale pair.
+- **Why not option (b).** Option (b) would have kept the label as "unrefined injection is the validated cross-check".
+  Table tab:estimators-matrix (`sec_method.tex:281-305`) rules it out:
+  - (a), (b) and (c) are purity-based, and (b), the exact-split estimator, is the table's only cross-check;
+  - (d), (e) and (f) use negative weights with refinement;
+  - no negative-weight configuration has a cross-check role;
+  - neither driver's `--bkg-mode` designates one;
+  - the note never prints "unrefined".
+- **The fix.** So the label is dropped rather than replaced by an invented role. The extended-fiducial clause and its
+  binning-independence reason stay. The paragraph's first sentence carries the 2D support, unchanged: "support
+  negative-weight injection as an unbinned alternative at the 2D scale" (`app_negweight.tex:255-257`).
+
+### Two defects in my edit script, caught by agy
+
+- In the first application, two replacements ended in a `%` comment line while the original sentence continued on the
+  same source line. Its remainder became comment:
+  - "Genuine backgrounds \emph{and}" in §3;
+  - "Each data event in reconstructed" in App. C.
+- `acc/apply_acc.py` now ends each such line. It also asserts that the printed text after the edits equals the printed
+  text before them with exactly the edits' printed text swapped.
+- `acc/guard-mutation.txt` shows the old behaviour, run in `--check` mode against the pre-correction sources, failing on
+  both sites. The fixed script passes.
+
+### agy agreement
+
+All runs used gemini via `run_x.sh`, with the scope-correction prompt `acc/agy/ACC.prompt.txt`. The prompt asks, for
+each passage, whether the BEFORE text was stale and whether the AFTER text satisfies:
+- (a) agreement with the scope;
+- (b) nothing else lost or added;
+- (c) register.
+
+Each run's full input and output is in `acc/agy/`.
+
+| run | passages | context | verdicts |
+|---|---|---|---|
+| 1 | ACC1–8, first application | the two scope homes, quoted from the note; the driver mechanism | STALE: YES ×8. AGREE ×6. REVISE on ACC3 and ACC5: the two swallowed fragments (real; fixed) |
+| 2 | ACC1–8, fixed application | as run 1 | STALE: YES ×8. AGREE ×6. REVISE on ACC1 and ACC7, on two false premises (below) |
+| 3 | as run 2 | run 2 + two printed facts, quoted with file:line | STALE: YES ×8. AGREE ×7. REVISE on ACC7: the cross-check sentence, which became ACC9 |
+| ACC9-1 | the ACC7/ACC9 paragraph | run 3 + the equivalence study's sentence (`app_negweight.tex:255-257`) and App. C's "equivalence study" sentence, verbatim; the table's configuration roles | REVISE: "designated extended-fiducial baseline" read as contradicting the purity-produced extended-fiducial value |
+| ACC9-2 | as ACC9-1 | ACC9-1 + `sec_fps.tex:120-122` verbatim; one line address in the context corrected (`app_negweight.tex:31-34`, not 28-30) | STALE: YES. AGREE |
+
+**Run 2's false premises, and the note's text that refutes them:**
+- *"a nonexistent covariance for the 5D measurement"*. The note prints "The one five-dimensional covariance used in this
+  note, with its $(\Eavail,W)$ projection, does not meet its specification" (`sec_execsummary.tex:157`). The covariance
+  is built in the paper's sec:cov5d.
+- *"the 3D and 4D uncertainties"*. The note prints "In three and four observables they use central values without
+  uncertainties: no 3D or 4D covariance is quoted" (`sec_3d.tex:31-32`) and "No 4D uncertainty is reported."
+  (`sec_3d.tex:521`).
+<!-- absence-ok: quotes a rater's false premise in order to refute it with the note's printed text; the REPORT claims the opposite -->
+
+**ACC9-1's premise.** It read "designated" as contradicting the extended-fiducial value's purity production. The note
+prints both facts in one sentence: "The extended-fiducial value was produced with the binned purity correction, not with
+the negative-weight treatment designated for the extended-fiducial analysis" (`sec_fps.tex:120-121`).
+
+**How the context grew.** Each fact added was quoted verbatim from the note, with its file and line. No verdict or
+instruction was added. The text changed only for run 1's two real defects and for ACC9.
+
+### Erratum to the 2026-10-25 fix
+
+`note-fixes/FIX-20261025-negweight-scope.md` said its sweep found the defect sentence as the only stale statement. That
+sweep required a 2D or quoted-result term together with a negation, so it missed statements that made purity the
+general method. An erratum line there points here.
+
+### Checks
+
+- **Ledger:** `check_ledger.py . --base 5bb5e179` gives 199 rows, 510 probes, 157 changed base sentences, 0 failures.
+  VA-3's probe now reads "background subtraction held fixed".
+- `apply_acc.py --check` gives OK on the pre-correction sources. The printed-text guard holds.

@@ -19,7 +19,11 @@ The analysis chain has four components; the note refers to them by the names in 
         $N$-dimensional generalization
         \texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}. The driver
         builds training arrays from the event-loop outputs, applies
-        purity-weight background subtraction (\S\ref{sec:method-algo}),
+        the background subtraction its background-mode option selects (by default the
+        purity weight; \S\ref{sec:method-algo}),
+        % Accuracy fix (unscored; director ruling 2026-10-26): the option is --bkg-mode {purity, negweight,
+        % negweight-refined}, default purity (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10);
+        % the 2D result uses the refined negative-weight mode (sec:negweight-footing).
         runs the engine, and extracts the cross section.
   \item \emph{Engine} (Python):
         \texttt{unbinned\_unfolding/python/omnifold.py} implements the

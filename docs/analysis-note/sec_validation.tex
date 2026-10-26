@@ -76,8 +76,11 @@ The five-dimensional estimator, including its background subtraction, is validat
 
 \paragraph{What the remaining validation needs.}
 The follow-up assessment~\cite{TwoDFollowup2026} distinguishes a proposed
-split-sample width check from repeated-sampling coverage. With the MC sample,
-binning maps and purity correction held fixed, such a check could establish only the
+split-sample width check from repeated-sampling coverage.
+% Accuracy fix (unscored; director ruling 2026-10-26): the 2D result now uses refined negative-weight subtraction
+% (sec:method-algo), so the condition names the background subtraction, not the purity correction.
+With the MC sample,
+binning maps and background subtraction held fixed, such a check could establish only the
 precision conditional on them, at its tested exposure, and nonlinear unfolding does not
 guarantee a simple scaling from half to full exposure. It cannot supply the
 variation across independent MC populations. Validated total uncertainties for all

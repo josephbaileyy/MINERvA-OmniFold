@@ -1,0 +1,47 @@
+PASSAGE: ACC-1
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-2
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-3
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-4
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-5
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-6
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-7
+STALE: YES
+VERDICT: REVISE
+ISSUE: The words "Negative-weight injection is the validated unbinned cross-check and the \emph{designated}" contradict both the preceding sentence and the CONTEXT; because the quoted 2D result and its covariance use refined negative-weight subtraction, negative-weight injection is the primary measurement rather than a cross-check, while binned purity serves as the validated cross-check.
+FIX: Binned purity is the validated cross-check and negative-weight injection the \emph{designated}
+
+PASSAGE: ACC-8
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none

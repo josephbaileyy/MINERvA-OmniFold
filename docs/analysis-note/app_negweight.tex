@@ -1,8 +1,11 @@
 \section{Unbinned background subtraction by negative-weight injection}
 \label{app:negweight}
 
-Background subtraction in \S\ref{sec:method-algo} is the only step that uses
-analysis binning before final histogramming. Each data event in reconstructed
+Binned purity subtraction (\S\ref{sec:method-algo}) is the only step that uses
+analysis binning before final histogramming.
+% Accuracy fix (unscored; director ruling 2026-10-26): scoped to the purity method, which not every quoted result uses;
+% the negative-weight modes restrict the data to the analysis window but use no reco-bin weight (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10).
+ Each data event in reconstructed
 bin $b$ receives the purity weight
 $w_{\mathrm{pur}}(b)=\max(0,\,N_{\mathrm{data}}(b)-N_{\mathrm{bkg}}(b))/
 N_{\mathrm{data}}(b)$. Injecting background simulation on the measured side
@@ -186,7 +189,11 @@ inside the ${\sim}\SI{3}{\percent}$ purity correction. The per-bin ratio has
 median $\nwMedianBin$ and \SI{\nwRmsBin}{\percent} RMS scatter across the plane
 (Fig.~\ref{fig:negweight-ratio}). Only one low-$p_T$, high-background edge bin
 differs by more than a few percent (\SI{\nwWorstBin}{\percent}); background
-concentrates there and subtraction is largest. Unbinned subtraction reproduces the binned correction used for the results wherever it is well determined. Departures occur
+concentrates there and subtraction is largest. Unbinned subtraction reproduces the binned correction wherever it is well determined.
+% Accuracy fix (unscored; director ruling 2026-10-26): "used for the results" dropped; the 2D result now uses the
+% refined form (sec:negweight-footing).
+
+ Departures occur
 only where the binned $\max(0,\cdot)$ and structural floor of
 \S\ref{sec:negweight-estimator} govern the result.
 
@@ -248,8 +255,17 @@ equivalence are not established.
 The 2D central-value, closed-form recovery and full covariance comparisons,
 together with Stay-Positive robustness on larger extended-fiducial backgrounds,
 support negative-weight injection as an unbinned alternative at the 2D scale.
-Binned purity remains the default for this note's reproduction measurement.
-Negative-weight injection is the validated unbinned cross-check and
+The 2D result and its covariance and the 3D and 4D central values use its refined form
+(\S\ref{sec:method-algo}); binned purity remains the treatment of the five-dimensional central
+value and its covariance and of the extended-fiducial value.
+% Accuracy fix (unscored; director ruling 2026-10-26): "Binned purity remains the default for this note's reproduction
+% measurement" was stale; scope as in sec:method-algo and "Scope of the numbers" above.
+% Accuracy fix ACC9 (unscored; director ruling 2026-10-26): "the validated unbinned cross-check" dropped. Beside the
+% scope above it read as if the 2D result's treatment were only a cross-check. Table tab:estimators-matrix (sec_method.tex)
+% gives no negative-weight configuration a cross-check role (its one cross-check, (b), is purity-based), and the drivers' --bkg-mode
+% {purity, negweight, negweight-refined} designates none (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 @ ddf16f10;
+% nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 @ ddf16f10). The 2D validation stays in this paragraph's first sentence.
+Negative-weight injection is the
 \emph{designated} extended-fiducial baseline (\S\ref{sec:fps}), where
 binning-independence and the continuous floor are essential.
 

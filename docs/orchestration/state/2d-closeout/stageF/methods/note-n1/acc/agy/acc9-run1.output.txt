@@ -1,0 +1,5 @@
+PASSAGE: ACC-9
+STALE: YES
+VERDICT: REVISE
+ISSUE: The words "the \emph{designated} extended-fiducial baseline" contradict CONTEXT items 1, 3, and 5 (and the preceding sentence), which establish that the extended-fiducial value uses the binned purity correction and that negative-weight injection establishes no supported production path or default. Under App. C (CONTEXT 2 and 5), negative-weight injection is an equivalence study and the "natural extended-fiducial treatment", not the designated baseline.
+FIX: the natural extended-fiducial treatment

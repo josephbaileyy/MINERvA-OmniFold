@@ -83,9 +83,14 @@ the method directly against a published binned measurement of the same data
 \begin{itemize}
   \item OmniFold learns event weights in the full observable space and
         histograms only the final result, so reported bins can be chosen
-        or refined after unfolding without rerunning it. Background subtraction is the
-        exception: a per-reco-bin $(D-B)/D$ purity weight is fixed
-        \emph{before} training (\S\ref{sec:method-algo}).
+        or refined after unfolding without rerunning it. Background subtraction is
+        unbinned too in the 2D result and its covariance and in the 3D and 4D central
+        values, which use refined negative-weight subtraction (\S\ref{sec:method-algo}).
+        The five-dimensional central value and its covariance, and the extended-fiducial
+        value, use the binned purity weight, a per-reco-bin $(D-B)/D$ weight fixed
+        \emph{before} training.
+        % Accuracy fix (unscored; director ruling 2026-10-26): scope of the purity weight as in sec_method.tex
+        % sec:method-algo and app_negweight.tex "Scope of the numbers"; the earlier text made purity the general exception.
   \item Additional observables enter as input features, without multiplying
         response-matrix bins. The available-energy extension
         (\S\ref{sec:3d}) is built this way; a binned method such as IBU would need a

@@ -1,0 +1,47 @@
+PASSAGE: ACC-1
+STALE: YES
+VERDICT: REVISE
+ISSUE: The words "The five-dimensional central value and its covariance, and the extended-fiducial value, use" add a nonexistent covariance for the 5D measurement and omit the note's other quoted cross sections and uncertainties (notably the 3D and 4D uncertainties) that use the binned purity weight.
+FIX: Every other quoted cross section and uncertainty, including the five-dimensional central value and the extended-fiducial value, uses
+
+PASSAGE: ACC-2
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-3
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-4
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-5
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-6
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ACC-7
+STALE: YES
+VERDICT: REVISE
+ISSUE: The words "the five-dimensional central value and its covariance and of the extended-fiducial value" introduce a nonexistent 5D covariance and fail to state that binned purity is used for every other quoted cross section and uncertainty, such as the 3D and 4D uncertainties.
+FIX: every other quoted cross section and uncertainty, including the five-dimensional central value and the extended-fiducial value
+
+PASSAGE: ACC-8
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+FIX: none
