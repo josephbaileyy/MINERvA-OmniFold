@@ -4,13 +4,16 @@
 `DECISION-20261025-joseph-f0-limitation-stage-g-and-paper-scope.md`, which takes its options from the caveat study
 (`state/2d-closeout/stageF/methods/caveat-study/REPORT.md` §6).
 - **Scoping only: 0 node-h.** No job was submitted.
-- **Repo reads:** origin/main at `a2dae50e`, plus the branches named where they are cited.
+- **Repo reads:** origin/main at `a2dae50e`, then `6c89d07d` (C-RESP-SPEC merged, PR #365), plus the branches named
+  where they are cited.
 - **Cluster reads:** login37, 2026-10-25 23:14 to 2026-10-26 02:21 UTC. They were only:
   - `ls`, `sha256sum`;
   - one meta-only probe of 11 npz (`C-RESP-SPEC.md` §1.2);
   - a synthetic test run in a scratch clone.
 - **Comparator texts:** the caveat study's blinded texts. Their sha256 match its committed `INPUTS.sha256`.
-  - Six more texts that the study measured and did not use were added, for the experiments' norms.
+  - Two more texts from the study's working directory were added for the experiments' norms: 2004.05434, which the
+    study measured and did not use, and 2310.06082, which it could not measure (caveat study §1). Their sha256 are in
+    `receipts/texts.sha256`. The texts themselves are not committed, as in the study.
   - Every quote below was checked mechanically as a substring of its text, after whitespace is collapsed
     (`receipts/quotes-check.txt`).
 
@@ -31,8 +34,8 @@ CFS.
 
 **Joseph's question: "if we report them on their own versus adding them into the other uncertainties, what is
 typical?" Both.**
-- In every comparator that assigns one, an assigned uncertainty is a named component in the uncertainty breakdown,
-  and it is also included in the total covariance that the χ² comparisons use (§1).
+- Where a comparator assigns one, it is named in the uncertainty breakdown (P1, P2, P5, P6, 2004.05434). It is also
+  in the total covariance that the comparisons use: P4, P5, P6 and 2004.05434 state the sum (§1, T0).
 - **Fake-data studies are the exception.** The comparators use them as validation. A fake-data bias becomes an added
   uncertainty only when it is not negligible against the existing uncertainty: T2K's oscillation analysis (N1) has
   an explicit rule for this.
@@ -46,9 +49,9 @@ supersedes (a). That is expected, not decided: integration is its own step, and 
 | option | 5D (e), R00–R15 | (E_avail, W) map and other (a) products | 2D (f) | cost |
 |---|---|---|---|---|
 | 1 purity non-closure | **discharged by measurement**: F0's nominal max \|b\| is 0.07 % | **a decision only**: the bias is measured (EW29 −4.11 ± 0.10 %), with a rank-1 block on the 42 cells recommended if the map keeps its band | refined closure within 0.44 stat σ: nothing to assign | 0 |
-| 2 regularization bias | already carried by C_model,5D (M2, κ = 1), as P4/P5 do. A fake-data term in N1's form is possible at 0 node-h. **Recommended: no new term now** (§3.2) | no (a) fake-data set exists. A (c) proxy costs ≤ 2.25 node-h. Not recommended | C_model,2D is reported beside the covariance already. A 3-truth (f) check costs ≤ 1 node-h. Optional | 0 to 2.25 |
-| 3 hadronic response | **C_resp, at 0 node-h, from 11 existing unfolds.** The spec is in PR; it enters Stage G as a declared variant | not covered. It needs (a) re-unfolds on GPU-only tooling | zero by construction (inference from code) | 0; jitter add-on ≤ 1.25; joint tests ≈ 230–320 |
-| 4 seed ensemble | **discharged by measurement**: the seed main effect is zero by construction (S1-DIRECTOR-RULINGS §2) | z-cv's seed pair. Each extra member is ≥ 304 declared GPU task-hours, and its tooling is GPU-only. **Not runnable under the rules** | C08 is 0.048 % median: nothing to gain | — |
+| 2 regularization bias | already carried by C_model,5D (M2, κ = 1), as P4/P5 do. A fake-data term in N1's form is possible at 0 node-h. **Recommended: no new term now** (§3.2) | no (a) fake-data set at generator truths in the records read (§3.3). A (c) proxy costs ≤ 1.5 node-h. Not recommended | C_model,2D is reported beside the covariance already. A 3-truth (f) check costs ≤ 1 node-h. Optional | 0 to 1.5 |
+| 3 hadronic response | **C_resp, at 0 node-h, from 11 existing unfolds.** The spec is merged (PR #365); its binding waits for Joseph's choice on Stage G's variant | not covered. It needs (a) re-unfolds on GPU-only tooling | zero by construction (inference from code) | 0; jitter add-on ≤ 1.25; joint tests ≈ 230–320 |
+| 4 seed ensemble | **discharged by measurement**: the seed main effect is zero by construction (S1-DIRECTOR-RULINGS §2) | z-cv's seed pair. Each extra member is up to 304 task-hours of declared walls (upper bounds, not measurements), on GPU-only tooling. **Not runnable under the rules** | C08 is 0.048 % median: nothing to gain | — |
 | 5 stat-band scaling | not applicable: stat is 0.24 % of a 6.74 % median total | **not recommended**: the miscoverage is residual bias, and the intervals are not too narrow (M2-RATEFAIL) | the quoted block is untested, but scaling is not the remedy | 0 |
 <!-- absence-ok: 'the quoted block is untested' restates the paper's limitation item 1 (paper_body.tex:1228-1230: "The coverage of its statistical block and of the total has not been tested.") -->
 
@@ -121,6 +124,9 @@ Search: closure; non-closure; background subtraction; subtract; background in bl
 | P1 OmniFold on T2K simulation (2504.06857) | a named part of the budget, made negligible by ensembling | "The uncertainty budget shown in Fig. 8 also includes the contribution to the uncertainty from neural network training randomness" |
 | P1 | how | "The unfolded results we have presented are the result of ensembling 5 trials of neural networks, which reduces the standard error to a level that is negligible relative to the systematic and statistical uncertainties involved with the data." |
 | P2–P6, N1 | no estimator randomness | — |
+
+<!-- absence-ok: scoped to the texts searched; N1's three hits are ensembles of fit universes and pseudo-experiments, not estimator training -->
+Search: seed; seeds; ensembl; training random; initialisation; initialization in blind/{2002.12496,2205.05084,2301.03700,2110.13372,2102.03346,2101.03779}.txt @ a2dae50e
 
 ### T5. Scaling a band after a coverage study
 
@@ -228,10 +234,11 @@ truths or at the q3 tilt. Joseph accepted that as a stated limitation on 2026-10
 
 **The grounds for (a):**
 - **C_model,5D is already the term that comparable papers carry,** as P4's alternative universe and P5's "Signal
-  model". Its PC tracks the bias it measures (BUILD-REPORT; PC PASS at NuWro).
+  model". Its positive control at NuWro passed on the 27 base cells, with thin margins (n 21, corr 0.790, slope
+  0.683). The 16-cell readout is not powered (BUILD-REPORT).
 - **C_FD built from F0's truths makes F0 uninformative.** A grade of a truth against a matrix containing that truth's
   own bias passes by construction. The independent test, F1, is skipped (decision item 3).
-- **Adding it reopens a limitation Joseph accepted a day ago,** and it is dominated by GiBUU, whose 6–10 GeV/c sample
+- **Adding it reopens a limitation Joseph accepted on 2026-10-25,** and it is dominated by GiBUU, whose 6–10 GeV/c sample
   lacks E_ν > 20 GeV (the C_model,5D GiBUU label).
 
 **Cost:** 0 node-h for (b): a login-node builder on the committed readout, plus a declaration and a binding.
@@ -242,7 +249,7 @@ truths or at the q3 tilt. Joseph accepted that as a stated limitation on 2026-10
 - **κ is untouched.**
 
 **Value and risks.**
-- High on paper, because it closes the most-restated note caveat (20).
+- High on paper: it would put the most-restated note caveat (20) into a quoted uncertainty.
 - Real risks: circularity, double counting with C_model, and a large GiBUU-driven inflation, with A7 GiBUU's max |b| at 36 %
   and its |z| > 2 cells R02, R06 and R07 (FD-F0-REPORT §5.1).
 
@@ -255,8 +262,10 @@ Search: GiBUU; truth change; departure; pseudo-experiment; configuration (a) in 
 **Building one:**
 - **On (a) itself:** needs its GPU launchers, so not under these rules (§5).
 - **A (c) proxy:**
-  - 4 truths × 20 pseudo-experiments on CPU, at ≤ 0.0225 node-h each (the (e) unit; (c) has no refinement). That is
-    about 1.8 node-h: 1 node, 8 lanes, 10 waves, limit 2:15, **cap 2.25**.
+  - 4 truths × 20 pseudo-experiments on CPU. The unit is at most (e)'s measured pseudo-experiment, 0.0141 CPU node-h
+    at 8 lanes of 32 CPUs, about 404 s each (FD-PLAN §5.1, Stage 0 job 60182677). (c) has no refinement, so it is
+    cheaper **(inference)**.
+  - That is about 1.1 node-h: 1 node, 8 lanes, 10 waves of about 404 s, limit 1:30, **cap 1.5**.
   - It carries the same (c) → (a) transfer as option 1.
 
 **Not recommended.** The map's model dependence is the reason R-P9 lists it as a candidate to move to the note.
@@ -277,7 +286,7 @@ from test-beam calorimetry; in P2 it is "Hadrons". It is standard for MINERvA re
 - each with the full 65,856-cell `xsec_flat`;
 - proton, meson, EM, other and cross-talk at ±1σ of D1's sizes, plus a k = 0 unfold.
 
-They are hashed and probed in [`C-RESP-SPEC.md`](C-RESP-SPEC.md) §1, which is in PR to the director.
+They are hashed and probed in [`C-RESP-SPEC.md`](C-RESP-SPEC.md) §1, merged as PR #365. Its binding is held until Joseph chooses whether Stage G carries the variant.
 
 **The spec, in short:**
 - per species, S1's lateral half-span (`s1_assemble.py:341`);
@@ -290,7 +299,7 @@ They are hashed and probed in [`C-RESP-SPEC.md`](C-RESP-SPEC.md) §1, which is i
 
 | choice | options | recommendation and basis |
 |---|---|---|
-| adopt into the reported total | (a) a Stage G sensitivity variant only; (b) a named component in C_total | **(b) after Stage G's variant is read and reviewed.** That is P5's form. The variant is declared before Stage G, so the order is clean |
+| adopt into the reported total | (a) a Stage G sensitivity variant only; (b) a named component in C_total | **(b), decided from C_resp's own readout (its σ per cell and trace share) before Stage G runs.** That is P5's form. Deciding after Stage G's χ² are seen would make the choice of matrix depend on the comparison. Stage G reports both matrices either way |
 | species | four primary; or plus cross-talk | **four.** That is MP-1's frozen primary design, and MAT marks cross-talk "DO NOT USE" (`S0-PREP.md:239`) |
 | sizes | D1: proton 3.5, meson 5, EM 3, other 20 % | **D1**, MP-1's documented source (`PLAN.md:505`). P5 derives its hadronic-energy term from test-beam calorimetry too |
 | discreteness | single endpoints; or jitter-averaged endpoints | **single,** unless the descriptive curvature ratio on R00–R15 exceeds 0.2, MP-1's G3 tolerance, for a primary species. That rule is declared here, before the readout. Then the add-on of §4.2 is priced |
@@ -306,7 +315,7 @@ They are hashed and probed in [`C-RESP-SPEC.md`](C-RESP-SPEC.md) §1, which is i
 - Paper: a "hadronic response" line in the 5D uncertainty table. Item 8 (:1256) narrows to the joint tests.
 - Note: `sec_systematics` and `sec_5d`. `sec_joint`'s response condition (:617-690) is unchanged.
 
-**Value:** the highest of the five per node-hour. **Risk:**
+**Value:** the highest of the five, at 0 node-h. **Risk:**
 - MP-1 read the em and other curvature on the J cells as estimator discreteness, so each half-span carries
   rounding-scale noise;
 - on R00–R15 the curvature ratio shows how much.
@@ -323,7 +332,7 @@ They are hashed and probed in [`C-RESP-SPEC.md`](C-RESP-SPEC.md) §1, which is i
 
 - **Cost:** about 230–320 CPU node-h, already priced (`phase1/mp1/S1-REPORT.md`, "MP1-A-full, priced"). Production
   alone is about 104 h wall at a 2-node cap, so many jobs, each under 12 h.
-- **Not recommended now.** It exceeds every cap in this plan by 100×. Its input-jitter finding means it would carry
+- **Not recommended now.** It is more than 50× the sum of this plan's caps (4.25 node-h). Its input-jitter finding means it would carry
   estimator structure into each null. The paper already states the rejections as conditional on the response.
 
 ### 4.4 Configuration (a)'s products and 2D
@@ -348,7 +357,7 @@ relative to the systematic and statistical uncertainties". Nobody else has estim
 - **2D (f): nothing to gain.** C08 is 0.048 % median over five seed settings (note `sec_results.tex:200`, `sec_systematics.tex:171-173`).
   P1's criterion is met.
 - **(E_avail, W) map and z-cv: not runnable under the rules.**
-  - **Unit:** each extra seed member is ≥ 304 task-hours of declared walls on 1-GPU + 32-CPU tasks
+  - **Unit:** each extra seed member is 304 task-hours of declared walls on 1-GPU + 32-CPU tasks
     (`COSTMODEL-20260911-z-pilot-and-scan.md:38`). These are declared upper bounds, not measurements. Measured
     `ElapsedRaw` would need a `sacct` read, which was not made here.
   - **GPU:** the launchers are GPU launchers (`:24-31`), and this plan carries no GPU.
@@ -401,18 +410,18 @@ from a bias, which is option 2's form.
 |---:|---|---|---|---|
 | 1 | **C_resp on R00–R15** (option 3, §4.1) | 0 / 0 | high: the paper's most-restated caveat; MINERvA norm | **now**: bind and build before Stage G's binding (minutes on a login node) |
 | 2 | **discharges:** options 1 and 4 for 5D (e), option 1 for 2D, option 5 not scaled | 0 / 0 | high for the text: three caveats become measured statements | in the S1 integration step, not r18 (it is the S1 result's wording) |
-| 3 | **option 2, the decision on 5D (e)** (§3.2) | 0 / 0 | Joseph's | with Stage G's result, before the review |
+| 3 | **option 2, the decision on 5D (e)** (§3.2) | 0 / 0 | Joseph's | before Stage G runs, with C_resp's adoption: either changes the matrix Stage G uses |
 | 4 | **option 1 for the (a) map** (§2) | 0 / 0 | low-to-moderate; void if the map moves to the note | after Joseph's R-P9 decision (item 5) |
 | 5 | C_resp jitter add-on (§4.2) | ≈ 0.8 / 1.25 | conditional | only if the declared curvature rule fires |
 | 6 | 2D (f) fake-data check of C_model,2D (§3.1) | 0.37 / 1 | low-to-moderate | after the review, if wanted |
 | 7 | option-5 confirming test (§6) | 0.1–0.2 / 0.5 | names a source; no component | after the review, if wanted |
-| 8 | (c) proxy for option 2 on the map (§3.3) | ≈ 1.8 / 2.25 | low; transfer caveat | not recommended |
-| 9 | z-cv seed ensemble (§5) | GPU, ≥ 304 task-h per member | low | not runnable under the rules |
+| 8 | (c) proxy for option 2 on the map (§3.3) | ≈ 1.1 / 1.5 | low; transfer caveat | not recommended |
+| 9 | z-cv seed ensemble (§5) | GPU; up to 304 declared task-h per member | low | not runnable under the rules |
 | 10 | MP1-A-full (§4.3) | ≈ 230–320 | moderate, for the joint tests only | not recommended now |
 
 **Totals:**
 - Ranks 1–4: 0 node-h.
-- With every optional CPU item (5–8): **caps 5.0 CPU node-h** (1.25 + 1 + 0.5 + 2.25). Every job is 1 node and
+- With every optional CPU item (5–8): **caps 4.25 CPU node-h** (1.25 + 1 + 0.5 + 1.5). Every job is 1 node and
   under 3 h, regular QOS, with no GPU and nothing on CFS.
 
 **Against the queue:**
