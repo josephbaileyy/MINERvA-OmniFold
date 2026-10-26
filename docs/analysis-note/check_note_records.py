@@ -199,7 +199,8 @@ def pointers(files: list[Path], tags: set[str], target: str) -> Counter:
         for m in re.finditer(target, t):
             win = t[m.end():m.end() + 260]
             stop = min([x for x in (win.find(")"), win.find(". ")) if x >= 0] or [len(win)])
-            named = [x for x in re.findall(r"\\texttt\{([a-z0-9-]+)\}", win[:stop]) if x in tags] or ["(whole)"]
+            # a citation names its tag as \texttt{<tag>} or, since N2-1, as \recentry{<tag>} (printed as its number)
+            named = [x for x in re.findall(r"\\(?:texttt|recentry)\{([a-z0-9-]+)\}", win[:stop]) if x in tags] or ["(whole)"]
             for x in named:
                 c[(MOVED_TO.get(f.name, f.name), x)] += 1
     return c
@@ -1111,11 +1112,11 @@ PLANTS = [
      "\n| L99 | planted | - | `N:sec_intro.tex::this sentence is not printed anywhere` | planted |\n"),
     # The thinning (DECISION-20261022): a drop is accepted only when the ledger lists it and its target exists.
     ("unlisted tag drop", "P6 sec_systematics.tex: 1 pointer(s) to tag flux-index", "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", ""),
+     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
     ("unlisted tag drop, P8", "P8 sec_systematics.tex: 1 citation(s) of tag:flux-index", "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", ""),
+     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
     ("listed tag drop (silent)", None, "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", "",
+     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", "",
      "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |", ["L-thin-C64"]),
     ("unlisted heading drop", "P8 app_statmethods.tex: 1 citation(s) of head:superseded values at",
      "app_statmethods.tex", "\n(Ref.~\\cite{NoteRecords2026}, superseded values).", "."),
@@ -1125,18 +1126,18 @@ PLANTS = [
     ("unlisted whole-document drop", "P6 app_guide.tex: carried a whole-appendix pointer", "app_guide.tex",
      "document, Ref.~\\cite{NoteRecords2026};", "document;"),
     ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_validation.tex::\\texttt{coverage-fixed-truths}",
-     "sec_validation.tex", r"(Ref.~\cite{NoteRecords2026}, \texttt{coverage-fixed-truth})", "",
+     "sec_validation.tex", r"(Ref.~\cite{NoteRecords2026}, \recentry{coverage-fixed-truth})", "",
      "| L98 | planted | DROP | R1 | `D:sec_validation.tex::\\texttt{coverage-fixed-truths}` | planted |"),
     ("listed drop whose tag left the records", "P7 ledger row L98: D:sec_systematics.tex::\\texttt{flux-index}: tag",
      "app_provenance.tex", lambda p: (p.write_text(p.read_text().replace(r"\texttt{flux-index}", r"\texttt{flux-idx}")),
-                                      _unlink_cite(p.parent / "sec_systematics.tex", r"\texttt{flux-index}")), None,
+                                      _unlink_cite(p.parent / "sec_systematics.tex", r"\recentry{flux-index}")), None,
      "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |"),
     ("listed drop of a heading the records lack", "P7 ledger row L98: D:sec_systematics.tex::superseded values: "
      "retired materials", "sec_systematics.tex", r" (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
      "", "| L98 | planted | DROP | R4 | `D:sec_systematics.tex::superseded values: retired materials` | planted |"),
     ("kept citation moved within its file (C62)", "P7 ledger row L-thin-C62", "sec_systematics.tex",
      lambda p: p.write_text(_move_cite(p.read_text(), " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material)",
-                                       "The dependence on the learner is in no block")), None),
+                                       "No block contains the dependence on the learner")), None),
     # P9 (n2): a repeated record drifts from its table row
     ("repeated record drifts from its row", "P9 App. G entry flux-index does not contain", "app_provenance.tex",
      r"\texttt{KNOWN\_ISSUES.md} row 91: the flux-universe", r"\texttt{KNOWN\_ISSUES.md} row 92: the flux-universe"),
@@ -1196,7 +1197,7 @@ def _move_cite(text: str, cite: str, sentence: str) -> str:
 
 
 def _unlink_cite(path: Path, tag: str) -> None:
-    """Remove the one citation of `tag` from `path` (a planted drop)."""
+    """Remove the one citation of `tag` (as printed: \\recentry{<tag>} since N2-1) from `path` (a planted drop)."""
     t = path.read_text()
     old = f" (Ref.~\\cite{{NoteRecords2026}}, {tag})"
     if t.count(old) != 1:
