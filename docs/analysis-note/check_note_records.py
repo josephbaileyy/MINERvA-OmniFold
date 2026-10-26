@@ -12,6 +12,7 @@ usage:
   check_note_records.py --self-test <base-note-dir | inventory.json> <new-note-dir> [--ledger LEDGER.md]
   check_note_records.py pin [note-dir]          # the NoteRecords2026 pin (build_all.sh runs this)
   check_note_records.py --self-test-pin         # the pin check fires and skips where it should (build_all.sh)
+  check_note_records.py redit-digest <file.tex>  # each printed paragraph's sha256, for an R-EDIT row
 
 The base is docs/analysis-note at the commit before the move (or the inventory frozen from it); the new tree is the
 same directory after it. The new tree carries main_records.tex, whose \\input closure is the records document, and
@@ -27,7 +28,8 @@ Inventory (base):                                    Probes (new):
                                                          in the posted note's closure
   I4 every \\repopath in App. G                         P4 every one still in the records closure
   I5 every printed paragraph of G, J and the record    P5 each RECORD paragraph verbatim (normalized) in the
-     ranges of H and I (comment-stripped, collapsed)     records closure and NOT in the posted note; each READER
+     ranges of H and I (comment-stripped, collapsed)     records closure, or edited under an R-EDIT row (below),
+                                                         and NOT in the posted note; each READER
                                                          paragraph in the note, unless the ledger lists its hash
   I6 every printed pointer into App. G (note closure)  P6 every App. G tag pointer survives: in the posted note
                                                          as a \\cite{NoteRecords2026} naming the same tag, or, if
@@ -60,6 +62,21 @@ from git; outside the canonical checkout P8 cannot run, P6 and P7 still hold, an
 for RECORDS-PIN), never PASS. Every kept citation has a ledger row whose N: probe pins it to its sentence, so a
 citation moved to another sentence of its file fails P7.
 
+R-EDIT (director ruling 2026-10-26). A RECORD paragraph may change only in its pointer tokens, and only under a
+ledger row
+  | R-EDIT-<n> | <old sha256> | <new sha256> | <reason> | <authority> |
+where each sha256 is the digest of the paragraph as P5 reads it (printed text, comments removed, whitespace collapsed:
+`redit-digest <file>` prints them). P5 then accepts the base paragraph whose digest is <old> if:
+  - <old> is the digest of a base RECORD paragraph of the inventory;
+  - that paragraph no longer prints verbatim in the records (otherwise the row is stale);
+  - a records paragraph has the digest <new> (otherwise the edit is lost, or its text is not the row's);
+  - with every pointer token masked, the old and new paragraphs are identical. The pointer tokens are \\S, \\S\\S
+    (never the start of \\SI or \\SIrange), \\ref{..}, \\ref*{..}, \\nsec{..}, \\napp{..}, and a section number
+    written after a section sign. A bare number is not a pointer token: a value is never an R-EDIT;
+  - the two paragraphs have the same number of pointer tokens in each class (section signs; \\ref, \\ref*,
+    \\nsec, \\napp; section numbers): an edit retargets a pointer and never deletes or adds one.
+Reason and authority are required. Each failure names its row.
+
 THE PIN (plan commit 3, 2026-10-21). The posted note cites the records as NoteRecords2026 (technote.bib), whose URL
 names one full commit sha. `pin` requires, in the canonical repository:
   Q1 the entry names a full 40-hex commit sha (never a branch such as tree/main);
@@ -81,7 +98,13 @@ the note, a struck value in the note, a lost tag pointer, a false ledger probe) 
 on each. Since the thinning it also plants an unlisted tag, heading and whole-document drop (P6, P8 must fire), the
 same tag and heading drops listed in the ledger (the probe must stay SILENT), a listed drop of a tag or of a heading
 the records do not have and a listed drop whose tag left the records (P7 must fire), and a listed drop of a citation
-that is still printed (P8 must fire), and a kept citation moved to another sentence of its file (P7 must fire). Exit 0 only if every plant behaves as named and the real pair is silent. The thinning plants
+that is still printed (P8 must fire), and a kept citation moved to another sentence of its file (P7 must fire).
+For R-EDIT it plants, on one record paragraph: an unrecorded pointer edit (P5 must fire), a recorded pointer edit
+(SILENT, the control), a row with a wrong old digest, a row whose new digest is not the edited text's, a recorded
+word change and a recorded number change (each must fire as more than pointer tokens), a recorded pointer deletion
+and a recorded pointer insertion (each must fire as deleting or adding pointer tokens), a deleted paragraph with a
+row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). Exit 0 only if every plant
+behaves as named and the real pair is silent. The thinning plants
 need THIN_BASE from git, so the self-test runs in the canonical checkout.
 """
 from __future__ import annotations
@@ -225,6 +248,83 @@ def ledger_rows(ledger: Path) -> list[tuple[str, list[str]]]:
     return rows
 
 
+# R-EDIT: the pointer tokens a RECORD paragraph may change (docstring, "R-EDIT"). A section number counts only after
+# a section sign, so a value can never pass as a pointer.
+POINTER_TOKEN = re.compile(r"\\S\\S(?![A-Za-z])|\\S(?![A-Za-z])|\\(?:ref\*?|nsec|napp)\{[^}]*\}"
+                           r"|\u00a7\u00a7?\s*[A-Z]?\d+(?:\.\d+)*")  # \S, never the start of \SI or \SIrange
+REDIT_ROW = re.compile(r"\|\s*(R-EDIT-\d+)\s*\|")
+
+
+def digest(paragraph: str) -> str:
+    return hashlib.sha256(paragraph.encode()).hexdigest()
+
+
+def unpointed(paragraph: str) -> str:
+    return norm(POINTER_TOKEN.sub(" ", paragraph))
+
+
+def redit_rows(ledger: Path) -> list[tuple[str, list[str]]]:
+    """(row id, cells) for every ledger table row whose first cell is R-EDIT-<n>."""
+    if not ledger.exists():
+        return []
+    return [(m.group(1), [c.strip() for c in line.strip()[1:-1].split("|")])
+            for line in ledger.read_text().splitlines() if (m := REDIT_ROW.match(line))]
+
+
+def pointer_counts(paragraph: str) -> Counter:
+    """Pointer tokens per class. Masking alone would let an edit delete or add a pointer: a loss of record content."""
+    return Counter("section sign" if t.startswith("\\S") else "reference" if t.startswith("\\") else "section number"
+                   for t in POINTER_TOKEN.findall(paragraph))
+
+
+def _first_difference(old: str, new: str) -> str:
+    a, b = unpointed(old).split(), unpointed(new).split()
+    i = next((k for k in range(min(len(a), len(b))) if a[k] != b[k]), min(len(a), len(b)))
+    return f"{' '.join(a[i:i + 6])!r} -> {' '.join(b[i:i + 6])!r}"
+
+
+def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fails: list[str]) -> set[str]:
+    """The base RECORD paragraphs an R-EDIT row accounts for; each row that does not hold appends its failure."""
+    base = {digest(p): p for p in inv["record_paragraphs"]}
+    now = {digest(p): p for t in rtext.values() for p in paragraphs(t)}
+    accepted = set()
+    for rid, cells in redit_rows(ledger):
+        if (len(cells) != 5 or not all(re.fullmatch(r"[0-9a-f]{64}", c) for c in cells[1:3])
+                or not cells[3] or not cells[4]):
+            fails.append(f"P5 R-EDIT row {rid}: malformed (want | id | old sha256 | new sha256 | reason | authority |)")
+            continue
+        old_d, new_d = cells[1], cells[2]
+        old = base.get(old_d)
+        if old is None:
+            fails.append(f"P5 R-EDIT row {rid}: old digest {old_d[:12]} is the digest of no base RECORD paragraph")
+            continue
+        if old in rall:
+            fails.append(f"P5 R-EDIT row {rid}: stale: base paragraph {old_d[:12]} still prints verbatim in the "
+                         f"records: {old[:60]!r}")
+            continue
+        new_p = now.get(new_d)
+        if new_p is None:
+            near = [p for p in now.values() if unpointed(p) == unpointed(old)]
+            if near:
+                fails.append(f"P5 R-EDIT row {rid}: the edited paragraph is not the row's new text: its digest is "
+                             f"{digest(near[0])[:12]}, the row's {new_d[:12]}: {near[0][:60]!r}")
+            else:
+                fails.append(f"P5 R-EDIT row {rid}: base paragraph {old_d[:12]} is lost: no records paragraph has "
+                             f"the row's new digest {new_d[:12]} or the base paragraph's words: {old[:60]!r}")
+            continue
+        if unpointed(new_p) != unpointed(old):
+            fails.append(f"P5 R-EDIT row {rid}: the edit changes more than pointer tokens: "
+                         f"{_first_difference(old, new_p)}")
+            continue
+        if pointer_counts(new_p) != pointer_counts(old):
+            a, b = pointer_counts(old), pointer_counts(new_p)
+            fails.append(f"P5 R-EDIT row {rid}: the edit deletes or adds pointer tokens: " + ", ".join(
+                f"{k} {a[k]} -> {b[k]}" for k in sorted(set(a) | set(b)) if a[k] != b[k]))
+            continue
+        accepted.add(old)
+    return accepted
+
+
 def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
                 head: dict[str, str] | None = None, info: dict | None = None) -> list[str]:
     """Every failure of P0-P8. `thin` is the citation inventory at THIN_BASE (None: P8 is skipped); `head` the records
@@ -262,8 +362,9 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     if leaked:
         fails.append(f"P3 the posted note's closure still strikes values: {leaked}")
     # P5 paragraphs
+    edited = redit_accepted(inv, rtext, rall, ledger, fails)
     for p in inv["record_paragraphs"]:
-        if p not in rall:
+        if p not in rall and p not in edited:
             fails.append(f"P5 RECORD paragraph not verbatim in the records closure: {p[:90]!r}")
         if p in nall:
             fails.append(f"P5 RECORD paragraph still printed in the posted note: {p[:90]!r}")
@@ -710,6 +811,20 @@ def _drop_paragraph(path: Path, head: str) -> None:
     path.write_text(t[:i] + t[j if j >= 0 else len(t):])
 
 
+_R_ANCHOR = r"\paragraph{From \S\ref{sec:invert}, rank deficiency"  # app_history.tex: a record paragraph
+_R_POINTER = _R_ANCHOR.replace("sec:invert", "sec:chisq")
+
+
+def _redit_row(inv: dict, new: str, anchor: str = _R_ANCHOR, old_digest: str | None = None) -> str:
+    """A planted R-EDIT row for the base record paragraph holding `anchor`, edited to hold `new` instead."""
+    hits = [p for p in inv["record_paragraphs"] if anchor in p]
+    if len(hits) != 1:
+        raise SystemExit(f"self-test plant: {anchor!r} is in {len(hits)} base RECORD paragraphs, not 1")
+    old = hits[0]
+    return (f"| R-EDIT-90 | {old_digest or digest(old)} | {digest(old.replace(anchor, new))} | planted | "
+            "self-test |")
+
+
 PLANTS = [
     # (name, probe that must fire, file, old, new[, ledger row appended[, ledger row ids removed]])  -- old=None appends
     # `new`; a callable edits
@@ -770,6 +885,32 @@ PLANTS = [
                                        "The dependence on the learner is in no block")), None),
     ("listed drop still printed", "P8 sec_systematics.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
      "\n| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |\n"),
+    # R-EDIT (director ruling 2026-10-26), all on one record paragraph of app_history.tex. A callable ledger row is
+    # built from the inventory, so its digests are those of the real base paragraph.
+    ("unrecorded pointer edit", "P5 RECORD paragraph not verbatim", "app_history.tex", _R_ANCHOR, _R_POINTER),
+    ("recorded pointer edit (control)", None, "app_history.tex", _R_ANCHOR, _R_POINTER,
+     lambda inv: _redit_row(inv, _R_POINTER)),
+    ("R-EDIT row with a wrong old digest", "P5 R-EDIT row R-EDIT-90: old digest", "app_history.tex", _R_ANCHOR,
+     _R_POINTER, lambda inv: _redit_row(inv, _R_POINTER, old_digest="0" * 64)),
+    ("R-EDIT new text not the row's", "P5 R-EDIT row R-EDIT-90: the edited paragraph is not the row's new text",
+     "app_history.tex", _R_ANCHOR, _R_POINTER,
+     lambda inv: _redit_row(inv, _R_ANCHOR.replace("sec:invert", "sec:pull"))),
+    ("recorded word change", "P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens", "app_history.tex",
+     _R_ANCHOR, _R_ANCHOR.replace("rank deficiency", "rank loss"),
+     lambda inv: _redit_row(inv, _R_ANCHOR.replace("rank deficiency", "rank loss"))),
+    ("recorded number change", "P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens",
+     "app_history.tex", "($N=50$ replicas", "($N=60$ replicas",
+     lambda inv: _redit_row(inv, "($N=60$ replicas", anchor="($N=50$ replicas")),
+    ("recorded pointer deletion", "P5 R-EDIT row R-EDIT-90: the edit deletes or adds pointer tokens",
+     "app_history.tex", _R_ANCHOR, _R_ANCHOR.replace(r"\S\ref{sec:invert}", ""),
+     lambda inv: _redit_row(inv, _R_ANCHOR.replace(r"\S\ref{sec:invert}", ""))),
+    ("recorded pointer insertion", "P5 R-EDIT row R-EDIT-90: the edit deletes or adds pointer tokens",
+     "app_history.tex", _R_ANCHOR, _R_ANCHOR.replace(r"\S\ref{sec:invert}", r"\S\ref{sec:invert} \S\ref{sec:chisq}"),
+     lambda inv: _redit_row(inv, _R_ANCHOR.replace(r"\S\ref{sec:invert}", r"\S\ref{sec:invert} \S\ref{sec:chisq}"))),
+    ("deleted paragraph with a row", "P5 R-EDIT row R-EDIT-90: base paragraph", "app_history.tex",
+     lambda p: _drop_paragraph(p, _R_ANCHOR), None, lambda inv: _redit_row(inv, _R_POINTER)),
+    ("R-EDIT row, paragraph unchanged", "P5 R-EDIT row R-EDIT-90: stale", LEDGER, None, "",
+     lambda inv: _redit_row(inv, _R_POINTER)),
 ]
 
 
@@ -824,7 +965,8 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
                 # a real listed drop also retires the kept citation's position row (extra[1]), so the plant does too
                 kept = [l for l in led.read_text().splitlines()
                         if not any(l.startswith(f"| {rid} |") for rid in (extra[1] if len(extra) > 1 else []))]
-                led.write_text("\n".join(kept) + "\n" + extra[0] + "\n")
+                row = extra[0](inv) if callable(extra[0]) else extra[0]
+                led.write_text("\n".join(kept) + "\n" + row + "\n")
             got = probe_fails(inv, work, led, thin, head)
             if want is None:
                 if got:
@@ -842,7 +984,7 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
     n_fire = sum(1 for p in PLANTS if p[1] is not None)
     print(f"RECORDS-MOVE SELF-TEST :: {'PASS' if not failures else 'FAIL'} (delivered move silent: {not real}; "
           f"{fired} of {n_fire} planted defects fired their probe; {silent} of {len(PLANTS) - n_fire} listed drops "
-          "stayed silent)")
+          "and recorded pointer edits stayed silent)")
     return 1 if failures else 0
 
 
@@ -865,6 +1007,10 @@ def main(argv: list[str]) -> int:
         return pin(Path(args[1]) if len(args) == 2 else Path(__file__).resolve().parent)
     if args == ["--self-test-pin"]:
         return pin_self_test()
+    if len(args) == 2 and args[0] == "redit-digest":
+        for para in paragraphs(Path(args[1]).read_text(errors="replace")):
+            print(digest(para), para[:80])
+        return 0
     if len(args) == 3 and args[0] in ("probe", "--self-test"):
         base, new = Path(args[1]), Path(args[2])
         ledger = ledger or new / LEDGER
