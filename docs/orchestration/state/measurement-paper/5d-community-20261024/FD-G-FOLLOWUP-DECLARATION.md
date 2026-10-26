@@ -2,6 +2,12 @@
 
 **By** the measurement session, for the director to bind.
 
+**Amended 2026-10-26 (amendment 1, §12),** at the director's rulings on §7, recorded there:
+- the cells gain R07 and R09 (ruling 1);
+- normalization leaves the second G-SENS family (ruling 14).
+
+§§0, 2.1, 3, 5, 6.2, 7 and 8 are changed in place, each change marked "(amendment 1)".
+
 **Under:**
 - Joseph's approval, `DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md` §2 (PR #387, main
   `c6f96f97`): "yes lets look at R04 and do the sensitivty check". It approves (a) a per-cell look at R04 and (b) a
@@ -42,10 +48,11 @@ writes a readout of 131 kB.
 
 ### G-R04: numbers only, for R04 and the cells that load with it
 
-The cells are R04, R08, R01, R14, R10 and R00 (the director's list; §7 item 1).
+The cells are R04, R00, R01, R07, R08, R09, R10 and R14: R04, and the cells that load with it in G-DIAG's committed
+top modes, chosen before the run (§7 ruling 1; amendment 1 adds R07 and R09 to the director's first five).
 
 0. **Provenance** (added; §7 item 2). From G-DIAG's committed readout, each 16-cell prediction's three top modes
-   under the reported matrix, relative to f: the mode, its σ and χ² fraction, R04's rank by |loading|, and the six
+   under the reported matrix, relative to f: the mode, its σ and χ² fraction, R04's rank by |loading|, and the eight
    cells' loadings.
 1. **The definition.** Each cell's:
    - box edges in (p_T, p_∥, E_avail, q₃, W);
@@ -58,8 +65,8 @@ The cells are R04, R08, R01, R14, R10 and R00 (the director's list; §7 item 1).
    - C_resp;
    - the totals C_e, C_model, C_total and C_total + C_resp.
 
-   Each is given for the six cells, beside its median over all 16 cells.
-3. **R04's correlation with each of the other five cells,** B_ij/√(B_ii B_jj), under:
+   Each is given for the eight cells, beside its median over all 16 cells.
+3. **R04's correlation with each of the other seven cells,** B_ij/√(B_ii B_jj), under:
    - C_total + C_resp, the reported covariance of f;
    - each 16-cell prediction's reported matrix C_total + C_resp + V_g;
    - each block of item 2 alone, and each total.
@@ -67,9 +74,10 @@ The cells are R04, R08, R01, R14, R10 and R00 (the director's list; §7 item 1).
    Each matrix's rank is written beside it. A vertex alone, and normalization, are rank one, so their correlations
    are ±1 by construction. S1's seed group is exactly zero (its committed relative σ is 0 on every cell), so its
    correlations are null.
-4. **For each prediction,** read from the Stage G readout's reported comparison at each of the six cells: g/f − 1,
-   the pull, σ_total/f, σ_Vg/f and the MC event count. GiBUU is compared on its eight p_∥ < 4.5 cells only. Its R04
-   and R14 entries say "not compared" and carry no number, so no GiBUU value is formed on them.
+4. **For each prediction,** read from the Stage G readout's reported comparison at each of the eight cells: g/f − 1,
+   the pull, σ_total/f, σ_Vg/f and the MC event count. GiBUU is compared on its eight p_∥ < 4.5 cells only. Its R04,
+   R07 and R14 entries say "not compared" and carry no number, so no GiBUU value is formed on them (amendment 1:
+   R07 is above p_∥ 4.5).
 5. **The search for a data or reco event count or an efficiency.**
    - **What is searched:** the last key of every key path of every pinned product, case-insensitive. A key matches if
      one of the words data, reco, eff, efficiency, count(s), nevt, n_ev, event(s), purity, stability, truth, signal
@@ -84,7 +92,7 @@ The cells are R04, R08, R01, R14, R10 and R00 (the director's list; §7 item 1).
      will include file names under S1's `meta.inputs_sha256`, such as `data_b0_j100.npz`, which are digests, not
      counts.
    - **What is reported:** every match, the number of keys searched in each product, and the definition's per-cell
-     value of every matching field for the six cells, with its median over 16. Nothing else is opened.
+     value of every matching field for the eight cells, with its median over 16. Nothing else is opened.
    - **What the committed records hold** (§6.3): the definition is `simulation_only: true`. Its matching per-cell
      fields are purity, stability, expected_reco_signal, truth_selected and mc_neff_truth. Stage G's readout carries
      the MC `n_mc_events_in_cells`.
@@ -100,8 +108,10 @@ The cells are R04, R08, R01, R14, R10 and R00 (the director's list; §7 item 1).
 - **The α values:** 0 (the reference and control S0), 0.1, 0.25, 0.5 and 1.
 - **Two families:**
   - `interaction`, the primary;
-  - `c_e_systematic`: interaction, flux, detector, lateral and normalization, shrunk jointly.
-- **Unchanged in both:** stat, seed (§7 item 3), the three C_model vertices, C_resp and V_g.
+  - `c_e_systematic`: interaction, flux, detector and lateral, shrunk jointly (amendment 1: normalization is not in
+    it, ruling 14).
+- **Unchanged in both:** stat, seed (§7 item 3), normalization (amendment 1), the three C_model vertices, C_resp
+  and V_g.
 - **For each family, α and prediction:**
   - the total χ², the ndf and the condition number of M;
   - λ_min;
@@ -170,7 +180,8 @@ echo "porcelain_ignored_lines_after_tests $(git -C $D status --porcelain --ignor
 - HEAD equal to the pin;
 - 0 porcelain lines before and after;
 - the §8 digests;
-- `tests rc=0` with "Ran 146 tests … OK" (56 G-FOLLOWUP + 41 G-DIAG + 27 Stage G + 22 S1, locally on 2026-10-26).
+- `tests rc=0` with "Ran 148 tests … OK" (58 G-FOLLOWUP + 41 G-DIAG + 27 Stage G + 22 S1, locally on 2026-10-26;
+  amendment 1, was 146).
 
 Anything else is a STOP.
 
@@ -216,13 +227,13 @@ check, so a different check firing does not pass it.
 |---|---|---|
 | **D0–D5** | G-DIAG's, unchanged, through `fd_g_diag.load` (FD-G-DIAG-DECLARATION.md §3): the digests (with C_resp's on the command line); each prediction's structure; S1, its 46 blocks and seven groups, C_model = SᵀS and the extra block; GiBUU's cells; positive integrals; and Stage G reproduced from its committed readout to 10⁻¹⁰ | G-DIAG's 17 control tests; `test_d0_runs_first` here |
 | **F0** | the G-DIAG readout's digest is the pinned one; its schema is `fd-g-diag-readout/1`; it ran on this Stage G readout and extra block; it has the same predictions; its first comparison is the reported matrix | `test_f0_the_g_diag_readout_pin`, `test_f0_each_sub_check` (5 sub-checks, each alone) |
-| **R1** | **The definition.** The six cells are reported cells. Every cell's box is the bounding box of its H2 boxes, which fill it and map to it. The fine-bin counts of R00–R15 are U's nonzero entries, and with the unreported fine bins they cover the fine grid | `test_r1_a_cell_not_reported`, `test_item_1_the_h2_bit_order_reversed`, `test_r1_u_disagrees_with_the_fine_map`, `test_r1_a_fine_bin_mapped_outside_the_cells` |
+| **R1** | **The definition.** The listed cells are reported cells. Every cell's box is the bounding box of its H2 boxes, which fill it and map to it. The fine-bin counts of R00–R15 are U's nonzero entries, and with the unreported fine bins they cover the fine grid | `test_r1_a_cell_not_reported`, `test_item_1_the_h2_bit_order_reversed`, `test_r1_u_disagrees_with_the_fine_map`, `test_r1_a_fine_bin_mapped_outside_the_cells` |
 | **R2** | **Item 2's σ.** S1's committed readout carries every group's and total's σ and median. Every one, and item 2's own median of it, equals the tool's to 10⁻¹². Entries are compared as \|a − b\|/max(\|a\|, \|b\|), with equal entries counting 0, so S1's all-zero seed group passes and a NaN refuses. The three vertices' variances sum to S1's C_model variance. σ(C_total + C_resp) equals Stage G's reported `sigma_total_over_f` | `test_r2_a_group_off_by_1e_9_or_a_median_missing` (10⁻¹³ passes), `test_r2_a_median_or_stage_gs_sigma_total_off_by_1e_9`, `test_r2_item_2s_median_is_a_mean`, `test_r2_vertices_do_not_sum_to_c_model`, `test_r2_not_stage_gs_sigma_total`, `test_item_2_variance_not_sigma`, `test_item_2_not_divided_by_f` |
 | **R3** | **Item 3's correlations.** Every one is within [−1, 1]. The blocks rebuild the correlations of C_total + C_resp, to 10⁻¹² | `test_item_3_*` |
 | **R4** | **Item 4's source.** In the Stage G readout, every reported pull is −(g/f − 1)/√(σ_total² + σ_Vg²), to 10⁻¹⁰. This ties the values read per cell to one another; D5 does not read σ_total/f or σ_Vg/f | `test_item_4_a_readout_whose_pulls_do_not_follow_from_its_sigmas`, `test_r4_and_s0_tolerances` (σ_Vg × (1 + 10⁻⁷)) |
 | **S0** | **α = 0 reproduces Stage G.** For every family and prediction, the χ² of the summed, unshrunk blocks equals the committed reported χ² to 10⁻¹⁰ relative | `test_sens_c_resp_dropped`, `test_r4_and_s0_tolerances` (× (1 + 10⁻⁸) refuses, × (1 + 10⁻¹²) passes) |
-| **S1** | every shrunk M is positive definite: Cholesky succeeds and λ_min > 0. A shrunk group alone is only positive semidefinite (normalization is rank one), so its smallest eigenvalue is reported, not tested (§7 item 12) | `test_sens_an_indefinite_shrunk_matrix` |
-| **S2** | **The shrinkage is the declared one.** Every shrunk group's diagonal, and every shrunk M's, is the unshrunk one bit for bit. Every shrunk group's off-diagonal is (1 − α) times the unshrunk one (10⁻¹⁵ of its largest entry). Every block outside the family is unchanged bit for bit | `test_sens_the_diagonal_scaled_too`, `test_sens_the_wrong_group_shrunk`, `test_sens_a_group_outside_the_family_shrunk_too` |
+| **S1** | every shrunk M is positive definite: Cholesky succeeds and λ_min > 0. A shrunk group alone may be only positive semidefinite, so its smallest eigenvalue is reported, not tested (§7 item 12) | `test_sens_an_indefinite_shrunk_matrix` |
+| **S2** | **The shrinkage is the declared one.** Every block outside the family, normalization included in both families (amendment 1), is unchanged bit for bit, as checked below. Every shrunk group's diagonal, and every shrunk M's, is the unshrunk one bit for bit. Every shrunk group's off-diagonal is (1 − α) times the unshrunk one (10⁻¹⁵ of its largest entry). Every block outside the family is unchanged bit for bit | `test_sens_the_diagonal_scaled_too`, `test_sens_the_wrong_group_shrunk`, `test_sens_a_group_outside_the_family_shrunk_too` |
 
 ## 4. Statistics, as built
 
@@ -258,7 +269,7 @@ r04{
   item5_search{pattern, flags, matched_on, keys_searched{product: n}, matches{product: [key path]},
                string_members_not_json, note, s5p_manifest_paths_matching{note, paths},
                definition_values{simulation_only, fields, cells, median_over_16}}},
-sens{reported_matrix, label, mode_index, unchanged[7], records[2 families x 5 alphas x 5 predictions x
+sens{reported_matrix, label, mode_index, unchanged[8] (amendment 1, was 7), records[2 families x 5 alphas x 5 predictions x
   {family, family_role, alpha, prediction, cells, chi2_stage_g, chi2_at_alpha_0, chi2, ndf, condition, lambda_min,
    modes_needed{50%, 90%, 99%}, top_mode{mode, sigma, chi2, fraction, leading_cells[3 x {cell, loading}], loadings},
    stability{chi2_mode_sum, chi2_lstsq, rel_*, ridge_sensitive, methods_disagree, unstable},
@@ -301,7 +312,7 @@ Stage G readout's relative values. No absolute cell value is copied.
   own deploy at `d02ce2f2`, from which G-DIAG reproduces. Its readout and report are unchanged. `fd_g_diag.py` on
   main becomes `241bfd02…` (§7 item 11).
 
-### 6.2 Tests (`test_fd_g_followup.py`, 56)
+### 6.2 Tests (`test_fd_g_followup.py`, 58; amendment 1, was 56)
 
 **Test inputs:**
 - G-DIAG's synthetic Stage G tree, with the seed block exactly zero, as in the committed S1, and with S1's readout
@@ -314,15 +325,16 @@ No real prediction, covariance or data value is read.
 |---|---|
 | `Shrink` (10) | **The diagonal is kept bit for bit** for every α, at scales 1, 10⁻⁸⁰ and 3.7 × 10⁻⁴¹ (the director's diagonal control). **Also:** the off-diagonal is exactly (1 − α) times; the literal D^½[(1 − α)ρ + αI]D^½ agrees to 10⁻¹⁴; α = 0 is the identity and α = 1 the diagonal; positive semidefiniteness is kept at ranks 1, 3 and 16; only the family is shrunk, and the other blocks are the same objects; the declared constants. **The helpers:** the search matches whole words only, and each of its 16 words alone; key paths through lists, dedup, the leaf rule, and an npz's JSON and bytes members, with a non-JSON string member listed; the comparison counts equal zeros as agreement and NaN as failure |
 | `Definition` (4) | R04's neighbours by hand: R00 (p_∥), R12 (p_T), R06 and R07 (E_avail), R05 and the unreported H2 box 10 (q₃). Every listed cell's reporting neighbours agree with the boxes' geometry. The H2 boxes rebuild every cell's box. The definition's search fields |
-| `PlantedDefects` (21) | **One or more per item.** The defect is patched into the tool's own function, and a control at run time, or the item's validator, reports it. The validators are silent on the correct output (EndToEnd). <ul><li>**Caught by a run-time control:** the H2 bit order reversed (R1); the variance for σ, or σ not divided by f (R2); the correlation without its square root, or the reported covariance without C_resp (R3); a readout whose pulls do not follow from its σ (R4); the diagonal scaled too, the wrong group shrunk, or a group outside the family shrunk too (S2); C_resp dropped (S0); an indefinite shrunk M (S1).</li><li>**Caught by a validator** (the item has no run-time check of that kind): the variant's modes read as the reported comparison's (item 0); neighbours across two axes, and fine bins counted over the whole grid (item 1); the median over the six cells (item 2); the variant's pulls, and a GiBUU value formed on R04 (item 4); a case-sensitive search, and a dotted key name split as a path (item 5); the modes in absolute units, and a p-value in a record (G-SENS).</li></ul> |
-| `EndToEnd` (4) | **As invoked** (`-I -B`, cwd outside nd-unfolding). D0–D5, F0, R1–R4 and S0–S2 PASS. Every number is recomputed by hand: <ul><li>items 0–2: provenance and rank, boxes, H2 boxes, sorted neighbours and their H2 pairs, σ and medians, with seed exactly 0;</li><li>item 3's correlations and ranks under every matrix, with null under seed;</li><li>item 4 by cell name;</li><li>GiBUU not compared on exactly R04 and R14;</li><li>item 5's matches;</li><li>every G-SENS record's χ², ndf, condition number, λ_min, top-mode index, σ, χ², fraction, loadings, leading cells and mode counts, each group's λ_min, and the family's role, against M built by hand from the tree with the family shrunk;</li><li>α = 0 equal to Stage G to 10⁻¹⁰, and α = 1 moving the χ²;</li><li>the labels, `controls_passed`, the `inputs_sha256` keys, and no p.</li></ul> **Stdout:** each line is read against its record, not against `summary_line`. **Also:** the sensitivity role reports the matrix without C_resp; a non-finite number is written as null and counted; no overwrite |
+| `PlantedDefects` (23; amendment 1, was 21) | **One or more per item.** The defect is patched into the tool's own function, and a control at run time, or the item's validator, reports it. The validators are silent on the correct output (EndToEnd). <ul><li>**Caught by a run-time control:** the H2 bit order reversed (R1); the variance for σ, or σ not divided by f (R2); the correlation without its square root, or the reported covariance without C_resp (R3); a readout whose pulls do not follow from its σ (R4); the diagonal scaled too, the wrong group shrunk, or a group outside the family shrunk too (S2); C_resp dropped (S0); an indefinite shrunk M (S1).</li><li>**Caught by a validator** (the item has no run-time check of that kind): the variant's modes read as the reported comparison's (item 0); neighbours across two axes, and fine bins counted over the whole grid (item 1); the median over the six cells (item 2); the variant's pulls, and a GiBUU value formed on R04 (item 4); a case-sensitive search, and a dotted key name split as a path (item 5); the modes in absolute units, and a p-value in a record (G-SENS).</li><li>**Amendment 1:** the normalization block is bit-identical at every α in every second-family matrix of every prediction, equal to the unshrunk block built by hand and still correlated off the diagonal (`test_sens_normalization_is_bit_identical_in_every_second_family_matrix`); with normalization put back in the family, that check reports it (`test_sens_normalization_put_back_in_the_second_family`).</li></ul> |
+| `EndToEnd` (4) | **As invoked** (`-I -B`, cwd outside nd-unfolding). D0–D5, F0, R1–R4 and S0–S2 PASS. Every number is recomputed by hand: <ul><li>items 0–2: provenance and rank, boxes, H2 boxes, sorted neighbours and their H2 pairs, σ and medians, with seed exactly 0;</li><li>item 3's correlations and ranks under every matrix, with null under seed;</li><li>item 4 by cell name;</li><li>GiBUU not compared on exactly R04, R07 and R14 (amendment 1);</li><li>item 5's matches;</li><li>every G-SENS record's χ², ndf, condition number, λ_min, top-mode index, σ, χ², fraction, loadings, leading cells and mode counts, each group's λ_min, and the family's role, against M built by hand from the tree with the family shrunk;</li><li>α = 0 equal to Stage G to 10⁻¹⁰, and α = 1 moving the χ²;</li><li>the labels, `controls_passed`, the `inputs_sha256` keys, and no p.</li></ul> **Stdout:** each line is read against its record, not against `summary_line`. **Also:** the sensitivity role reports the matrix without C_resp; a non-finite number is written as null and counted; no overwrite |
 | `Controls` (12) | D0 first; F0 (the pin, and each of 5 sub-checks alone); R1 (a cell not reported; U against the fine map; a fine bin outside the cells); R2 (10⁻⁹ refuses and 10⁻¹³ passes, on a group, a median and Stage G's σ_total; a missing median; item 2's median as a mean; the vertices' sum; Stage G's σ_total); R4's and S0's tolerances |
 | `Invocation` (2) | **The real script:** `--help`; a missing `--g-diag-readout` exits 2; on the synthetic tree it reaches D0 and refuses there (the real pins), with no traceback and nothing written |
 | `CommittedPins` (3) | The G-DIAG readout pin is the committed file's, and it ran on Stage G's readout and C_resp. R04 is the largest-\|loading\| cell of a reported top mode of every 16-cell prediction, and each listed cell loads at \|v\| ≥ 0.25 in one of those modes. S1's readout carries what R2 checks |
 
 **Locally** (2026-10-26: Python 3.12.2, numpy 1.26.4, scipy 1.15.2), `python3 -B -m unittest test_fd_g_followup
-test_fd_g_diag test_fd_g_compare test_s1_assemble test_s1_scripts_isolated` ran 146 tests, OK
-([`fd/receipts-g-followup/declaration/tests-local.log`](fd/receipts-g-followup/declaration/tests-local.log)). The
+test_fd_g_diag test_fd_g_compare test_s1_assemble test_s1_scripts_isolated` ran 148 tests, OK
+([`fd/receipts-g-followup/declaration/tests-local-amendment-1.log`](fd/receipts-g-followup/declaration/tests-local-amendment-1.log);
+before amendment 1, 146: [`tests-local.log`](fd/receipts-g-followup/declaration/tests-local.log)). The
 cluster run is reported in the PR.
 
 ### 6.3 What the tests read from committed records
@@ -355,8 +367,9 @@ No test reads a prediction, C_resp or S1's npz.
      | R15 | 1 | 0.33 |
 
    - **R09 and R07 load with R04 as often as R08, R14 and R10, but are not in the list.**
-   - **Recommendation:** add R09 and R07. It is one constant, and item 0 shows the loadings either way.
-2. **Item 0 (provenance)** is added: the six cells' loadings in G-DIAG's top modes, read from its committed readout.
+   - **Recommendation:** add R09 and R07. It is one constant, and item 0 shows the loadings either way. *Accepted
+     (ruling 1, amendment 1).*
+2. **Item 0 (provenance)** is added: the listed cells' loadings in G-DIAG's top modes, read from its committed readout.
    It is not in the request. It shows why each cell is in the list. It can be dropped.
 3. **Seed is unchanged in both families.** It is not in the request's list of five systematic groups, nor in its list
    of unchanged blocks. It is the unfolding-seed variance, closer to statistics than to a systematic. If wanted, it
@@ -387,24 +400,53 @@ No test reads a prediction, C_resp or S1's npz.
     from its own deploy at `d02ce2f2`, and the identity receipt shows the outputs unchanged. The alternative is a
     copy of D0–D5 in the new tool, which would be a second implementation of the same controls.
 12. **"Each shrunk matrix must be positive definite"** is read as each shrunk M, which S1 refuses on. A shrunk group
-    alone is only positive semidefinite: normalization, shrunk in the second family, is rank one at α = 0. So each shrunk
+    alone may be only positive semidefinite (a rank-deficient group stays so at α < 1). So each shrunk
     group's smallest eigenvalue is reported, not tested.
 13. **S0's 10⁻¹⁰ is relative,** as in G-DIAG's D5 and D7.
 14. **The second family diagonalizes normalization at α = 1.** Normalization is a rank-one block, 0.014² f fᵀ, fully
     correlated across cells. At α = 1 it becomes an independent 1.4 % per cell. This is as requested, and the reader
-    should know it.
+    should know it. *Superseded by ruling 14 (amendment 1): normalization is in no family.*
 15. **Seed** (item 3 above) is exactly zero in S1, so including it in or excluding it from the second family changes
     nothing.
 
+**The director's rulings on this section** (relayed 2026-10-26, on PR #388 at `ea737b1e`, after verifying the §8 pins
+and running the 146 tests):
+1. **R09 and R07 are added** (amendment 1). The list is R04, R00, R01, R07, R08, R09, R10 and R14, chosen from
+   G-DIAG's committed modes before the run, with the table in item 1 as the reason.
+2. **Item 0 stays.**
+3. **Seed stays unchanged,** accepted.
+4. **Both readings of "the reported matrix",** accepted.
+5. **Rank-one blocks are kept, with their rank written,** accepted.
+6. **Only the reported comparison is shrunk,** accepted.
+7. **A group as one summed matrix,** accepted.
+8. **The leading cells and the 99 % count,** accepted.
+9. **Flags on every record, not refusing,** accepted.
+10. **Item 5's key-name search,** accepted. The report states its limit: a field whose name does not say what it is
+    would be missed.
+11. **The `fd_g_diag.py` refactor,** accepted. It avoids a second implementation of D0–D5, and the identity receipt on
+    six synthetic trees supports it. G-DIAG stays reproducible from its deploy at `d02ce2f2`, and the report says so.
+12. **PD on each shrunk M, with each group's λ_min reported,** accepted.
+13. **S0 relative,** accepted.
+14. **Normalization leaves the second family** (amendment 1).
+    - Its full correlation is structural: one 1.4 % scale shared by every cell. It is not a modelling assumption about
+      cell-to-cell correlation.
+    - At α = 1 it would become 16 independent 1.4 % terms. That adds variance along exactly the contrast directions
+      that carry the χ², and lowers the χ² for a reason that is not physical.
+    - The request listed normalization, so this is the director's correction, made before the run.
+    - The second family is interaction, flux, detector and lateral, shrunk jointly. Normalization, stat, seed, C_model,
+      C_resp and V_g are unchanged. A test asserts that the normalization block is bit-identical in every
+      second-family matrix.
+15. **Seed,** noted.
+
 ## 8. Pinned bytes
 
-Their sha256 at this declaration's commit:
+Their sha256 at this declaration's commit (re-pinned by amendment 1):
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_g_followup.py` | `f767afa37617b405e2652b44cccf588249ee20f38bbd48d04778b1b5f7eb93f4` |
-| `nd-unfolding/tests/test_fd_g_followup.py` | `3477c274b5fb96bbf0f69db7a2275db1bd1644f4ca97700a85d700b41ef186ed` |
-| `nd-unfolding/fd_g_diag.py` | `241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03` (the §6.1 refactor; was `7c161280…`) |
+| `nd-unfolding/fd_g_followup.py` | `820b67c25b3256aa20c6d377789ba1fd9a3286703dfd03e47e16bc4986b9ff59` (amendment 1; was `f767afa3…`) |
+| `nd-unfolding/tests/test_fd_g_followup.py` | `6697e63dfc0ce385eb4bee0789fba76af5dfb47f576f1ef0fc09157366283796` (amendment 1; was `3477c274…`) |
+| `nd-unfolding/fd_g_diag.py` | `241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03` (the §6.1 refactor; was `7c161280…`; unchanged by amendment 1) |
 | `nd-unfolding/tests/test_fd_g_diag.py` | `870564f5bf85c17b6e68212ab95663f6fd201969abc6d9f9d1b08261f368d525` (unchanged) |
 | `nd-unfolding/fd_g_compare.py` | `0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f` (unchanged) |
 | `nd-unfolding/tests/test_fd_g_compare.py` | `b4d0ff2611bcc6226e215e57023002025682aebea49ec1f2c06f3c61a9d7d9a8` (unchanged) |
@@ -455,3 +497,31 @@ Two independent read-only reviews ran on the first draft:
 | B gap not closed | K11 (a manifest directory name matching) | Left as noted: the manifest list is file names only, and no number reads it |
 | B equivalent | R02, R03, K10, G01, G02, Y06, Y07, Y09, Y14, Y16, O04, T05 | No change; each is equivalent or covered by another check, as review B states |
 <!-- absence-ok: these rows restate the two reviews' findings on the uncommitted first draft of 2026-10-26 (each named gap passed every test there); they describe that draft's coverage, now closed, not the absence of a result -->
+
+## 12. Amendment 1 (2026-10-26): R07 and R09 join the cells; normalization leaves the second family
+
+**Why:** the director's rulings 1 and 14 on §7, quoted above. Both were made before any run.
+
+**What changed:**
+- **The tool:**
+  - `CELLS` is R04, R00, R01, R07, R08, R09, R10 and R14.
+  - `FAMILIES["c_e_systematic"]` is interaction, flux, detector and lateral.
+  - The readout's `sens.unchanged` lists normalization.
+  - R1's first check is worded for the listed cells.
+
+  Nothing else changed: the controls, the statistics, the argv, the inputs and the readout schema apart from
+  `unchanged`'s length.
+- **GiBUU:** R07 is above p_∥ 4.5, so GiBUU is now not compared on R04, R07 and R14. No GiBUU value is formed on
+  them.
+- **The tests:**
+  - The constants test asserts the new list and family, and that stat, seed and normalization are outside it.
+  - Two new tests:
+    - `test_sens_normalization_is_bit_identical_in_every_second_family_matrix` captures every block set the tool sums.
+      For each prediction and α of the second family, it checks that the normalization block is bit-identical, equal
+      to the unshrunk block built by hand, and still correlated off the diagonal.
+    - `test_sens_normalization_put_back_in_the_second_family` shows that the same check reports normalization patched
+      back into the family. S2 cannot see that case, since S2 checks only blocks outside the family.
+  - The end-to-end test expects GiBUU not compared on R04, R07 and R14, and one `[G-R04]` line per listed cell.
+- **The counts:** G-FOLLOWUP has 58 tests, and the deploy expects "Ran 148 tests". The local run is
+  `tests-local-amendment-1.log`.
+- **§8** is re-pinned. `fd_g_diag.py` is unchanged, so the refactor's identity receipt stands.

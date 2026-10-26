@@ -47,10 +47,13 @@ import s1_assemble as sa  # noqa: E402  (sha256, s1.H2_EDGES, s1.AXES)
 
 N_CELLS, TOL, REPRO = D.N_CELLS, D.TOL, D.REPRO
 FOCUS = "R04"
-CELLS = ("R04", "R08", "R01", "R14", "R10", "R00")       # the director's list: R04, then those loading with it
+# R04, then the cells loading with it in G-DIAG's committed top modes (amendment 1 adds R07 and R09)
+CELLS = ("R04", "R00", "R01", "R07", "R08", "R09", "R10", "R14")
 ALPHAS = (0.0, 0.1, 0.25, 0.5, 1.0)                      # 0 is the reference and control S0
 FAMILIES = {"interaction": ("interaction",),
-            "c_e_systematic": ("interaction", "flux", "detector", "lateral", "normalization")}
+            "c_e_systematic": ("interaction", "flux", "detector", "lateral")}
+# normalization's full correlation is structural (one 1.4 % scale for every cell), so it is shrunk in no family
+# (the director's ruling 14, amendment 1); it is unchanged, with stat, seed, the vertices, C_resp and V_g
 FAMILY_ROLE = {"interaction": "primary", "c_e_systematic": "second"}
 LEAD = 3                                                 # leading cells of a top mode: the LEAD largest |loading|
 # a key matches if one of these words stands in it with no letter on either side ("data_b0", "expected_reco_signal")
@@ -327,7 +330,7 @@ def run(a, pins=None, predictions=None) -> int:
         ok_box.append(bounding_box(hb) == rc[c]["box"] and fills and
                       all(defn["h2_to_reporting_cell"][b] == c for b in rc[c]["h2_cells"]))
     counts = np.bincount(fm[fm >= 0], minlength=N_CELLS)[:N_CELLS]
-    checks = {"the six cells are reporting cells R00-R15, reported": all(rc[i]["id"] == i and rc[i]["reported"]
+    checks = {"the listed cells are reporting cells R00-R15, reported": all(rc[i]["id"] == i and rc[i]["reported"]
                                                                          for i in ids),
               "each cell's box is the bounding box of its H2 boxes, which fill it": all(ok_box),
               "the fine-bin counts are U's nonzero entries": bool(np.array_equal(counts, np.count_nonzero(U, axis=1))),
@@ -464,7 +467,8 @@ def run(a, pins=None, predictions=None) -> int:
                         "mode_index": "a top mode's index is its place in that matrix's own eigen-order (lambda "
                                       "descending); it does not name the same mode across alpha",
                         "unchanged": [
-                   "stat", "seed", *(f"C_model:{v}" for v in D.VERTICES), *([xn] if reported_carries else []), "V_g"], "records": sens},
+                   "stat", "seed", "normalization", *(f"C_model:{v}" for v in D.VERTICES),
+                   *([xn] if reported_carries else []), "V_g"], "records": sens},
                "inputs_sha256": {**pins, "definition": sa.DEFINITION_SHA256, "extra_block": a.extra_block_sha256,
                                  **{p["name"]: p["sha256"] for p in predictions}},
                "code_sha256": {"fd_g_followup.py": sa.sha256(Path(__file__).resolve()),

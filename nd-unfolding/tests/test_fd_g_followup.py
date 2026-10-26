@@ -234,11 +234,11 @@ class Shrink(unittest.TestCase):
         self.assertTrue(np.array_equal(out["interaction"], F.shrink(B["interaction"], 0.5)))
 
     def test_the_declared_constants(self):
-        self.assertEqual(F.CELLS, ("R04", "R08", "R01", "R14", "R10", "R00"))
+        self.assertEqual(F.CELLS, ("R04", "R00", "R01", "R07", "R08", "R09", "R10", "R14"))
         self.assertEqual(F.ALPHAS, (0.0, 0.1, 0.25, 0.5, 1.0))
         self.assertEqual(F.FAMILIES, {"interaction": ("interaction",), "c_e_systematic": (
-            "interaction", "flux", "detector", "lateral", "normalization")})
-        self.assertEqual(set(D.GROUPS) - set(F.FAMILIES["c_e_systematic"]), {"stat", "seed"})
+            "interaction", "flux", "detector", "lateral")})
+        self.assertEqual(set(D.GROUPS) - set(F.FAMILIES["c_e_systematic"]), {"stat", "seed", "normalization"})
         self.assertEqual(F.LEAD, 3)
         self.assertEqual(F.SENS_LABEL, "descriptive sensitivity of the reported χ², not an alternative result")
         self.assertEqual(F.FAMILY_ROLE, {"interaction": "primary", "c_e_systematic": "second"})
@@ -380,9 +380,9 @@ class PlantedDefects(Base):
         with mock.patch.object(F, "relative_sigma", undivided):
             self.assertStops(tree, "R2", "S1's committed one")
 
-    def test_item_2_median_over_the_six_cells(self):
+    def test_item_2_median_over_the_listed_cells(self):
         rel = {"x": np.random.default_rng(1).uniform(0.01, 0.1, 16)}
-        item2 = {"median_over_16": {"x": float(np.median(rel["x"][[4, 8, 1, 14, 10, 0]]))}}
+        item2 = {"median_over_16": {"x": float(np.median(rel["x"][[int(c[1:]) for c in F.CELLS]]))}}
         self.assertTrue(check_medians(item2, rel))
         self.assertEqual(check_medians({"median_over_16": {"x": float(np.median(rel["x"]))}}, rel), [])
 
@@ -504,6 +504,43 @@ class PlantedDefects(Base):
             out = self.run_inproc(tree)
         self.assertTrue(find_p(out["sens"]))
 
+    def normalization_seen(self, tree):
+        """Run the tool, capturing every block set it sums; return the second family's normalization blocks, per
+        prediction and alpha, beside that prediction's unshrunk one built by hand."""
+        calls, real = [], F.sens_record
+
+        def spy(d, B, cells):
+            calls.append((cells, B))
+            return real(d, B, cells)
+        with mock.patch.object(F, "sens_record", spy):
+            self.run_inproc(tree)
+        (tree.out / "followup.json").unlink()
+        n = len(F.ALPHAS)
+        fam2 = calls[len(tree.predictions) * n:]                  # FAMILIES order: interaction, then c_e_systematic
+        out = []
+        for k, spec in enumerate(tree.predictions):
+            _, _, ref = self.by_hand(tree, spec["name"], "interaction", 0.0)
+            out.append((spec["name"], ref["normalization"], [B["normalization"] for _, B in fam2[k * n:(k + 1) * n]]))
+        return out
+
+    def test_sens_normalization_is_bit_identical_in_every_second_family_matrix(self):
+        tree = FollowupTree(self.tmp / "t").write()
+        seen = self.normalization_seen(tree)
+        self.assertEqual(len(seen), 5)
+        for name, ref, blocks in seen:
+            self.assertEqual(len(blocks), len(F.ALPHAS))
+            for a, B in zip(F.ALPHAS, blocks):
+                self.assertTrue(np.array_equal(B, blocks[0]), (name, a))
+                np.testing.assert_allclose(B, ref, rtol=1e-12, atol=0)
+                self.assertGreater(np.abs(B - np.diag(np.diag(B))).max(), 0)  # still fully correlated off-diagonal
+
+    def test_sens_normalization_put_back_in_the_second_family(self):
+        tree = FollowupTree(self.tmp / "t").write()
+        fam = {**F.FAMILIES, "c_e_systematic": (*F.FAMILIES["c_e_systematic"], "normalization")}
+        with mock.patch.object(F, "FAMILIES", fam):
+            seen = self.normalization_seen(tree)
+        self.assertTrue(any(not np.array_equal(B, blocks[0]) for _, _, blocks in seen for B in blocks))
+
     @staticmethod
     def by_hand(tree, name, fam, alpha):
         """The relative-to-f blocks of one prediction's reported M with the family shrunk, built from the tree."""
@@ -618,7 +655,7 @@ class EndToEnd(Base):
         # item 4
         it4 = r04["item4_stage_g"]
         self.assertEqual(check_item4(it4, g), [])
-        self.assertEqual({c for c, v in it4["gibuu"]["cells"].items() if not v["compared"]}, {"R04", "R14"})
+        self.assertEqual({c for c, v in it4["gibuu"]["cells"].items() if not v["compared"]}, {"R04", "R07", "R14"})
         for n in it4:
             self.assertEqual(it4[n]["matrix"], "C_total + C_resp + V_g")
             self.assertEqual(it4[n]["cells"]["R08"]["n_mc_events"], 7.0 * np.sum(fm == 8))
@@ -634,8 +671,8 @@ class EndToEnd(Base):
         # G-SENS, by hand
         recs = out["sens"]["records"]
         self.assertEqual(len(recs), 2 * 5 * 5)
-        self.assertEqual(out["sens"]["unchanged"], ["stat", "seed", "C_model:genie_mec", "C_model:nuwro",
-                                                    "C_model:gibuu", "C_resp", "V_g"])
+        self.assertEqual(out["sens"]["unchanged"], ["stat", "seed", "normalization", "C_model:genie_mec",
+                                                    "C_model:nuwro", "C_model:gibuu", "C_resp", "V_g"])
         for x in recs:
             cells, d, B = PlantedDefects.by_hand(tree, x["prediction"], x["family"], x["alpha"])
             M = sum(B.values())
@@ -681,7 +718,7 @@ class EndToEnd(Base):
                                                      *(p["name"] for p in tree.predictions)})
         lines = r.stdout.splitlines()
         r04l = [ln for ln in lines if ln.startswith("[G-R04]")]
-        self.assertEqual(len(r04l), 6)
+        self.assertEqual(len(r04l), len(F.CELLS))
         for c, ln in zip(F.CELLS, r04l):
             self.assertTrue(ln.startswith(f"[G-R04] {c}: {r04['item1_definition'][c]['n_fine_bins']} fine bins"))
             if c != "R04":
@@ -704,8 +741,8 @@ class EndToEnd(Base):
         out = self.run_inproc(tree)
         g = {p["name"]: p for p in json.loads(tree.g_readout.read_text())["predictions"]}
         self.assertEqual(out["sens"]["reported_matrix"], "C_total + V_g")
-        self.assertEqual(out["sens"]["unchanged"], ["stat", "seed", "C_model:genie_mec", "C_model:nuwro",
-                                                    "C_model:gibuu", "V_g"])
+        self.assertEqual(out["sens"]["unchanged"], ["stat", "seed", "normalization", "C_model:genie_mec",
+                                                    "C_model:nuwro", "C_model:gibuu", "V_g"])
         for x in out["sens"]["records"]:
             if x["alpha"] == 0:
                 self.assertAlmostEqual(x["chi2"], g[x["prediction"]]["total"]["chi2"],
