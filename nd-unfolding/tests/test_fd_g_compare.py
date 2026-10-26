@@ -9,6 +9,7 @@ the committed records. No real prediction, covariance or data value is read.
   output, by this test's own scan of quantities it builds from the fixture.
 * Each of controls G0-G4 refuses on a one-entry defect, with nothing written."""
 import copy
+import re
 import hashlib
 import json
 import os
@@ -164,7 +165,7 @@ class Statistics(unittest.TestCase):
         for ndf in (1, 2, 3, 7, 8, 15, 16):
             for x in (0.0, 0.3, 2.0, 7.0, 14.07, 15.0, 25.0, 30.6, 60.0, 300.0):
                 want = float(_chi2.sf(x, ndf))
-                self.assertAlmostEqual(G.chi2_sf(x, ndf), want, delta=1e-13 + 1e-10 * want, msg=(ndf, x))
+                self.assertAlmostEqual(G.chi2_sf(x, ndf), want, delta=1e-300 + 1e-10 * want, msg=(ndf, x))
         with self.assertRaises(ValueError):
             G.chi2_sf(1.0, 0)
 
@@ -186,6 +187,12 @@ class Statistics(unittest.TestCase):
             self.assertEqual(r["total"]["matrix"], "C + V_g")
             np.testing.assert_allclose(r["pulls"], d / np.sqrt(np.diag(M)), rtol=1e-12)
             self.assertLessEqual(r["shape_only"]["chi2"], r["total"]["chi2"])
+
+    def test_rank_counts_eigenvalues_above_the_relative_threshold(self):
+        rng = np.random.default_rng(5)
+        A = rng.normal(size=(16, 5))
+        self.assertEqual(G.rank(A @ A.T), 5)
+        self.assertEqual(G.rank(A @ A.T + np.eye(16)), 16)
 
     def test_shape_only_removes_a_pure_normalization(self):
         rng = np.random.default_rng(4)
@@ -229,8 +236,19 @@ class EndToEnd(Base):
             self.assertEqual(p["total"]["matrix"], "C_total + V_g")
             self.assertIn("100 f f^T", p["shape_only"]["matrix"])
             self.assertEqual((p["total"]["matrix_size"], p["total"]["matrix_rank"]), ([n, n], n))
+            self.assertEqual((p["shape_only"]["matrix_size"], p["shape_only"]["matrix_rank"]), ([n, n], n))
+            np.testing.assert_allclose(p["pulls"], dd / np.sqrt(np.diag(M)), rtol=1e-9)
+            np.testing.assert_allclose(p["sigma_total_over_f"], np.sqrt(np.diag(tree.Ct)[i]) / tree.f[i], rtol=1e-12)
+            for key in ("total", "shape_only"):
+                want = float(_chi2.sf(p[key]["chi2"], p[key]["ndf"])) if _chi2 is not None else None
+                self.assertEqual(p[key]["p"], G.chi2_sf(p[key]["chi2"], p[key]["ndf"]))
+                if want is not None:
+                    self.assertAlmostEqual(p[key]["p"], want, delta=1e-300 + 1e-9 * want)
+            self.assertNotIn("cells_abs_pull_gt_2", p)                 # no trigger is declared for Stage G
             self.assertEqual(p["n_mc_events_in_cells"], [7.0 * int(np.sum(tree.fm == c)) for c in cells])
             self.assertIn(f"rank {n}]", r.stdout)
+        self.assertEqual(r.stdout.count("(free normalization), 16x16, rank 16]"), 4)
+        self.assertEqual(r.stdout.count("(free normalization), 8x8, rank 8]"), 1)
         self.assertEqual(sorted(p.name for p in tree.out.iterdir()), ["readout.json"])
 
     def test_no_gibuu_value_above_p_parallel_4p5_is_shown(self):
@@ -244,7 +262,13 @@ class EndToEnd(Base):
             g = gib["g"][c]
             Vg = gib["relvar"][c] * g ** 2
             forbidden += [g, f[c] - g, g / f[c] - 1, np.sqrt(Vg) / f[c], (f[c] - g) / np.sqrt(tree.Ct[c, c] + Vg)]
-        forbidden = np.abs(np.array(forbidden))
+        g16 = gib["g"]                         # and the 16-cell GiBUU chi2s and p, which must not exist
+        M16 = tree.Ct + np.diag(gib["relvar"] * g16 ** 2)
+        d16 = f - g16
+        for M in (M16, M16 + 100 * np.outer(f, f)):
+            x2 = float(d16 @ np.linalg.solve(M, d16))
+            forbidden += [x2, G.chi2_sf(x2, 16), G.chi2_sf(x2, 15)]
+        forbidden = np.abs(np.array([v for v in forbidden if v != 0]))
         text = (tree.out / "readout.json").read_text() + r.stdout + r.stderr
         import re
         nums = np.abs(np.array([float(t) for t in re.findall(r"[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][-+]?\d+)?", text)]))
@@ -257,6 +281,25 @@ class EndToEnd(Base):
         for k in ("pulls", "f", "g", "f_minus_g", "g_over_f_minus_1", "sigma_total_over_f", "sigma_Vg_over_f",
                   "n_mc_events_in_cells"):
             self.assertEqual(len(rec[k]), 8, k)
+        def ndfs(o):
+            if isinstance(o, dict):
+                return ([o["ndf"]] if "ndf" in o else []) + [x for v in o.values() for x in ndfs(v)]
+            return [x for v in o for x in ndfs(v)] if isinstance(o, list) else []
+        self.assertEqual(sorted(set(ndfs(rec))), [7, 8])                      # no 16-cell GiBUU statistic of any kind
+        # stdout: every number is one the readout carries, as printed, or a fixed constant of the control lines
+        allowed = {"4.5", "1e-12", "100"}
+        for p in out["predictions"]:
+            allowed |= {str(p["n_cells"])}
+            for k in ("total", "shape_only"):
+                s = p[k]
+                allowed |= {f"{s['chi2']:.2f}", str(s["ndf"]), f"{s['p']:.3g}", str(s["matrix_rank"]),
+                            *(str(n) for n in s["matrix_size"])}
+        allowed |= {str(n) for n in range(0, 17)}
+        for line in r.stdout.splitlines():
+            if line.startswith("{"):
+                continue                                                       # the wrote line: a path and a digest
+            for tok in re.findall(r"(?<![A-Za-z_])[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][-+]?\d+)?", line):
+                self.assertIn(tok.lstrip("+"), allowed, line)
         # negative control: the scan has power - the same quantities on the eight LOW cells are found
         low = [abs(gib["g"][c] / f[c] - 1) for c in G.GIBUU_CELLS]
         self.assertTrue(all(np.any(np.abs(nums - v) <= 1e-10 * v) for v in low))
@@ -266,6 +309,84 @@ class EndToEnd(Base):
         (tree.out / "readout.json").write_text("{}")
         with self.assertRaises(SystemExit):
             G.run(G.build_args(tree.argv), tree.pins, tree.predictions)
+
+
+class ExtraBlock(Base):
+    """The declared sensitivity variant: a second covariance, pinned by digest, reported beside the primary one."""
+
+    def block(self, tree, C, key="C_resp", name="c_resp"):
+        p = tree.root / f"{name}.npz"
+        np.savez(p, **{key: C})
+        return p, ["--extra-block", str(p), "--extra-block-sha256", digest(p), "--extra-block-key", key,
+                   "--extra-block-name", "C_resp"]
+
+    def resp(self, tree, seed=9):
+        v = np.random.default_rng(seed).normal(0, 0.03, (5, 16)) * tree.f
+        return v.T @ v
+
+    def test_variant_recomputed_by_hand_beside_the_primary(self):
+        tree = Tree(self.tmp / "t").write()
+        Cx = self.resp(tree)
+        _, extra = self.block(tree, Cx)
+        tree.argv[-2:-2] = extra
+        r = self.run_module(tree)
+        self.assertEqual(r.returncode, 0, r.stderr[-3000:])
+        out = json.loads((tree.out / "readout.json").read_text())
+        self.assertEqual(out["extra_block"]["name"], "C_resp")
+        np.testing.assert_allclose(out["extra_block"]["relative_sigma"], np.sqrt(np.diag(Cx)) / tree.f, rtol=1e-12)
+        for p in out["predictions"]:
+            d = tree.preds[p["name"]]
+            cells = list(G.GIBUU_CELLS) if p["name"] == "gibuu" else list(range(16))
+            i = np.asarray(cells)
+            g = d["g"][i]
+            M = (tree.Ct + Cx)[np.ix_(i, i)] + np.diag(d["relvar"][i] * g ** 2)
+            dd = tree.f[i] - g
+            v = p["sensitivity"]
+            self.assertAlmostEqual(v["total"]["chi2"], float(dd @ np.linalg.solve(M, dd)), delta=1e-8 * v["total"]["chi2"])
+            self.assertEqual(v["total"]["matrix"], "C_total + C_resp + V_g")
+            self.assertEqual((v["total"]["ndf"], v["shape_only"]["ndf"], v["total"]["matrix_rank"]),
+                             (len(i), len(i) - 1, len(i)))
+            self.assertEqual(len(v["pulls"]), len(i))
+            self.assertLessEqual(v["total"]["chi2"], p["total"]["chi2"] + 1e-9)   # a PSD addition cannot raise chi2
+            self.assertEqual(p["total"]["matrix"], "C_total + V_g")               # the primary is unchanged
+        self.assertIn("with C_resp: total chi2", r.stdout)
+
+    def test_without_the_option_there_is_no_variant(self):
+        tree = Tree(self.tmp / "t").write()
+        self.assertEqual(G.run(G.build_args(tree.argv), tree.pins, tree.predictions), 0)
+        out = json.loads((tree.out / "readout.json").read_text())
+        self.assertIsNone(out["extra_block"])
+        self.assertTrue(all("sensitivity" not in p for p in out["predictions"]))
+
+    def test_refusals(self):
+        tree = Tree(self.tmp / "t").write()
+        Cx = self.resp(tree)
+        _, extra = self.block(tree, Cx)
+        bad_sha = list(extra)
+        bad_sha[3] = "a" * 64
+        cases = {"G0": bad_sha}
+        notpsd = Cx.copy()
+        notpsd[0, 0] = -abs(Cx[0, 0])
+        for k, (what, C) in enumerate((("asymmetric", Cx + np.triu(np.full((16, 16), 1e-3 * Cx.max()), 1)),
+                                       ("not PSD", notpsd), ("shape", Cx[:15, :15]))):
+            _, e = self.block(tree, C, name=f"case{k}")
+            cases[f"G2 {what}"] = e
+        _, e = self.block(tree, Cx, key="other", name="case-key")
+        e[e.index("--extra-block-key") + 1] = "C_resp"
+        cases["G2 key"] = e
+        for what, e in cases.items():
+            argv = tree.argv[:-2] + e + tree.argv[-2:]
+            with self.assertRaises(SystemExit, msg=what) as cm:
+                G.run(G.build_args(argv), tree.pins, tree.predictions)
+            self.assertIn(f"FAIL control {what.split()[0]}:", str(cm.exception.code), what)
+            self.assertEqual(list(tree.out.iterdir()), [], what)
+
+    def test_the_four_options_go_together(self):
+        tree = Tree(self.tmp / "t").write()
+        _, extra = self.block(tree, self.resp(tree))
+        with self.assertRaises(SystemExit) as cm:
+            G.build_args(tree.argv + extra[:4])
+        self.assertEqual(cm.exception.code, 2)
 
 
 class Controls(Base):
@@ -324,6 +445,44 @@ class Controls(Base):
             tree.pins.update(s1_npz=digest(s1n), s1_json=digest(s1j), cmodel_json=digest(cmj))
             self.assertStops(tree, "G2")
 
+    def test_g0_s1_readout_names_the_npz(self):
+        tree = Tree(self.tmp / "t").write()
+        s1j = Path(tree.argv[tree.argv.index("--s1-json") + 1])
+        j = json.loads(s1j.read_text())
+        j["assembly_sha256"] = "c" * 64
+        s1j.write_text(json.dumps(j))
+        tree.pins["s1_json"] = digest(s1j)
+        self.assertStops(tree, "G0")
+
+    def test_g2_one_entry_defects(self):
+        for what in ("C_e entry", "U entry", "not PD"):
+            tree = Tree(self.tmp / f"t-{what.replace(' ', '_')}").write()
+            s1n = Path(tree.argv[tree.argv.index("--s1-npz") + 1])
+            s1j = Path(tree.argv[tree.argv.index("--s1-json") + 1])
+            with np.load(s1n) as z:
+                d = {k: z[k].copy() for k in z.files}
+            if what == "C_e entry":
+                d["C_e"][2, 3] *= 1.01
+                d["C_e"][3, 2] *= 1.01
+            if what == "U entry":
+                j0 = np.flatnonzero(d["U"][5])[0]
+                d["U"][5, j0] *= 2
+            if what == "not PD":
+                Ct = d["C_total"]
+                Ct[0, 1] = Ct[1, 0] = 2 * np.sqrt(Ct[0, 0] * Ct[1, 1])     # |corr| = 2: diagonal and sigma unchanged
+                d["C_model_abs"] = Ct - d["C_e"]
+            np.savez_compressed(s1n, **d)
+            j = json.loads(s1j.read_text())
+            j["assembly_sha256"] = digest(s1n)
+            s1j.write_text(json.dumps(j))
+            tree.pins.update(s1_npz=digest(s1n), s1_json=digest(s1j))
+            self.assertStops(tree, "G2")
+
+    def test_g3_gibuu_cells(self):
+        tree = Tree(self.tmp / "t").write()
+        with mock.patch.object(G, "GIBUU_CELLS", (0, 1, 2, 3, 8, 9, 10, 12)):
+            self.assertStops(tree, "G3")
+
     def test_g4_positive_integrals(self):
         tree = Tree(self.tmp / "t")
         tree.preds["mnvtune_v1"]["g"][6] = -abs(tree.preds["mnvtune_v1"]["g"][6])
@@ -334,7 +493,18 @@ class Controls(Base):
         tree = Tree(self.tmp / "t")
         tree.preds["gibuu"]["g"][13] = -1.0     # a non-positive GiBUU value above p_parallel 4.5 must not matter
         tree.write()
-        self.assertEqual(G.run(G.build_args(tree.argv), tree.pins, tree.predictions), 0)
+        seen = []
+        real = G.compare
+
+        def spy(f, g, Vg, Ct, cells, name):
+            seen.append((list(cells), np.array(g), np.array(Vg)))
+            return real(f, g, Vg, Ct, cells, name)
+        with mock.patch.object(G, "compare", spy):
+            self.assertEqual(G.run(G.build_args(tree.argv), tree.pins, tree.predictions), 0)
+        gib = [s for s in seen if s[0] == list(G.GIBUU_CELLS)]
+        self.assertEqual(len(gib), 1)
+        self.assertTrue(np.all(gib[0][1][HIGH] == 0) and np.all(gib[0][2][HIGH] == 0))   # never formed above 4.5
+        self.assertTrue(all(s[0] == list(range(16)) for s in seen if s is not gib[0]))
 
 
 class Invocation(Base):

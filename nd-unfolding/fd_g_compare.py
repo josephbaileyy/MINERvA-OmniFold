@@ -18,6 +18,10 @@ the eight p_parallel < 4.5 cells only (ndf 8, shape-only 7): its prediction is i
 GiBUU value on R04-R07 or R12-R15 is formed, printed or written, and no 16-cell GiBUU chi2 exists. Every chi2 is
 written beside the name of the matrix it used, its size and its numerical rank.
 
+A declared sensitivity variant (``--extra-block``): a second 16 x 16 covariance C_x in absolute units, its file sha256
+pinned on the command line, is added to C_total, and every comparison is reported again against C_total + C_x beside
+the primary one. Its construction is fixed and its digest declared before the run, so the variant is not post hoc.
+
 Controls G0-G4 run first and each refuses (exit 1, nothing written).
 
 MEASURES: arithmetic on the declared inputs. CANNOT AUTHORIZE: any reading of the comparison, a claim, or paper text.
@@ -72,8 +76,10 @@ PREDICTIONS = (
          label="MINERvA Tune v1, the analysis MC truth: the unfolding prior, not an independent generator"),
 )
 COVARIANCE_LABEL = ("C_total = C_e + C_model_abs from S1, with all three C_model,5D vertices (GENIE+MEC, NuWro, "
-                    "GiBUU) for every comparison; the NuWro, GENIE+MEC and GiBUU vertices are data shifts built from "
-                    "those generators' shapes")
+                    "GiBUU) for every comparison. Each vertex is a data shift unfolded with a prior reweighted by that "
+                    "generator's ratio to GENIE 2.12.10 CV (pv-ladder/config.json), so the GENIE+MEC, NuWro and GiBUU "
+                    "comparisons, and through the ratios' reference the GENIE CV one, each carry a covariance built "
+                    "partly from the compared generator")
 
 
 class Stop(SystemExit):
@@ -148,7 +154,6 @@ def compare(f: np.ndarray, g: np.ndarray, Vg: np.ndarray, Ct: np.ndarray, cells:
                     "matrix_size": [n, n], "matrix_rank": rank(mat)}
     z = d / np.sqrt(np.diag(M))
     out["pulls"] = z.tolist()
-    out["cells_abs_pull_gt_2"] = [f"R{c:02d}" for c, v in zip(idx, z) if abs(v) > 2]
     out["f"] = fs.tolist()
     out["g"] = g[idx].tolist()
     out["f_minus_g"] = d.tolist()
@@ -207,8 +212,16 @@ def build_args(argv):
     ap.add_argument("--cmodel-json", type=Path, required=True, help="nd-unfolding/pv-ladder/readouts/cmodel_5d.json")
     ap.add_argument("--s5p-sums", type=Path, required=True, help="state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt")
     ap.add_argument("--s5p-root", type=Path, required=True, help="s5p-20260926 (the predictions' root)")
+    ap.add_argument("--extra-block", type=Path, help="npz holding a declared sensitivity covariance (absolute units)")
+    ap.add_argument("--extra-block-sha256", help="its file sha256, as the binding records it")
+    ap.add_argument("--extra-block-key", help="the 16 x 16 matrix's key in that npz")
+    ap.add_argument("--extra-block-name", help="the variant's name in the readout, e.g. C_resp")
     ap.add_argument("--out-json", type=Path, required=True)
-    return ap.parse_args(argv)
+    a = ap.parse_args(argv)
+    extra = (a.extra_block, a.extra_block_sha256, a.extra_block_key, a.extra_block_name)
+    if any(v is not None for v in extra) and not all(v is not None for v in extra):
+        ap.error("--extra-block, --extra-block-sha256, --extra-block-key and --extra-block-name go together")
+    return a
 
 
 def run(a, pins=None, predictions=None) -> int:
@@ -228,6 +241,8 @@ def run(a, pins=None, predictions=None) -> int:
     if s1j.get("assembly_sha256") != pins["s1_npz"]:
         raise Stop("G0", "the committed S1 readout names another assembly")
     U = sa.functional_matrix(sa_call("G0", sa.fine_map, a.definition))
+    if a.extra_block is not None and sa.sha256(a.extra_block) != a.extra_block_sha256:
+        raise Stop("G0", f"extra block {a.extra_block}: sha256 {sa.sha256(a.extra_block)} != {a.extra_block_sha256}")
     sums = sa.load_manifest(a.s5p_sums)
     for spec in predictions:
         path = a.s5p_root / spec["path"]
@@ -249,6 +264,9 @@ def run(a, pins=None, predictions=None) -> int:
         f = np.asarray(z["f"], float)
         Ce, Ct, Cma = (np.asarray(z[k], float) for k in ("C_e", "C_total", "C_model_abs"))
         U32 = np.asarray(z["U"])
+    shapes = (f.shape, Ce.shape, Ct.shape, Cma.shape, U32.shape)
+    report("G2", "S1's f, C_e, C_total, C_model_abs and U have the declared shapes",
+           shapes == ((N_CELLS,), (N_CELLS,) * 2, (N_CELLS,) * 2, (N_CELLS,) * 2, (N_CELLS, N_FINE)), f"they are {shapes}")
     scale = np.abs(np.diag(Ct)).max()
     checks = {
         "U is S1's float32 functional matrix": np.array_equal(U32, U.astype(np.float32)),
@@ -260,6 +278,21 @@ def run(a, pins=None, predictions=None) -> int:
         "C_total is positive definite, rank 16": bool(np.linalg.eigvalsh(Ct / np.outer(f, f)).min() > 0
                                                        and rank(Ct / np.outer(f, f)) == N_CELLS),
     }
+    Cx = None
+    if a.extra_block is not None:
+        with np.load(a.extra_block, allow_pickle=False) as z:
+            if a.extra_block_key not in z.files:
+                raise Stop("G2", f"extra block has no key {a.extra_block_key!r}")
+            Cx = np.asarray(z[a.extra_block_key], float)
+        ok_shape = Cx.shape == (N_CELLS, N_CELLS) and bool(np.all(np.isfinite(Cx)))
+        checks[f"{a.extra_block_name} is a finite 16 x 16 matrix"] = ok_shape
+        if ok_shape:
+            rel = Cx / np.outer(f, f)
+            checks[f"{a.extra_block_name} is symmetric"] = np.allclose(Cx, Cx.T, rtol=TOL, atol=TOL * np.abs(Cx).max())
+            checks[f"{a.extra_block_name} is positive semidefinite"] = bool(
+                np.linalg.eigvalsh((rel + rel.T) / 2).min() >= -TOL * max(np.abs(rel).max(), 1e-300))
+            checks[f"C_total + {a.extra_block_name} is positive definite"] = bool(
+                np.linalg.eigvalsh((Ct + Cx) / np.outer(f, f)).min() > 0)
     for name, ok in checks.items():
         report("G2", name, bool(ok))
 
@@ -283,6 +316,11 @@ def run(a, pins=None, predictions=None) -> int:
             raise Stop("G4", f"{spec['name']}: a cell integral is not positive or V_g is negative")
         rec = {"name": spec["name"], "file": spec["path"], "sha256": spec["sha256"], "label": spec["label"],
                "n_mc_events_in_cells": nevt[cells].tolist(), **compare(f, g, Vg, Ct, cells, "C_total")}
+        if Cx is not None:
+            v = compare(f, g, Vg, Ct + Cx, cells, f"C_total + {a.extra_block_name}")
+            rec["sensitivity"] = {"name": a.extra_block_name,
+                                  **{k: v[k] for k in ("total", "shape_only", "pulls",
+                                                       "sigma_total_over_f")}}
         results.append(rec)
     report("G4", "every prediction's integrals are positive on its cells", True)
 
@@ -296,6 +334,10 @@ def run(a, pins=None, predictions=None) -> int:
                    "not": "no reading, claim or paper text (FD-PLAN section 4; DECISION-20261025 item 2)"},
         "cells": [f"R{c:02d}" for c in range(N_CELLS)],
         "controls_passed": ["G0", "G1", "G2", "G3", "G4"],
+        "extra_block": None if Cx is None else {
+            "name": a.extra_block_name, "file": str(a.extra_block), "sha256": a.extra_block_sha256,
+            "key": a.extra_block_key, "relative_sigma": (np.sqrt(np.diag(Cx)) / f).tolist(),
+            "label": "a declared sensitivity variant: its construction and digest were fixed before this run"},
         "predictions": results,
         "inputs_sha256": {**pins, "definition": sa.DEFINITION_SHA256,
                           **{p["name"]: p["sha256"] for p in predictions}},
@@ -311,7 +353,14 @@ def run(a, pins=None, predictions=None) -> int:
         t, s = r["total"], r["shape_only"]
         print(f"[G] {r['name']:10s} {r['n_cells']:2d} cells: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
               f"[{t['matrix']}, {t['matrix_size'][0]}x{t['matrix_size'][1]}, rank {t['matrix_rank']}]; "
-              f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} [rank {s['matrix_rank']}]", flush=True)
+              f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} "
+              f"[{s['matrix']}, {s['matrix_size'][0]}x{s['matrix_size'][1]}, rank {s['matrix_rank']}]", flush=True)
+        if "sensitivity" in r:
+            t, s = r["sensitivity"]["total"], r["sensitivity"]["shape_only"]
+            print(f"[G]   with {r['sensitivity']['name']}: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
+                  f"[{t['matrix']}, {t['matrix_size'][0]}x{t['matrix_size'][1]}, rank {t['matrix_rank']}]; "
+                  f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} "
+                  f"[{s['matrix']}, {s['matrix_size'][0]}x{s['matrix_size'][1]}, rank {s['matrix_rank']}]", flush=True)
     print(json.dumps({"wrote": str(a.out_json), "sha256": sa.sha256(a.out_json)}), flush=True)
     return 0
 
