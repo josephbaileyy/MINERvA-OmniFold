@@ -1,0 +1,12 @@
+2026-10-26T18:05:37Z
+c6f96f97b17757f8336b3245490e4cadc252a140
+main: fd_g_diag_main.py sha256 7c1612806efd7ab5c3ae65be1f36944683e6f2cafdb42ba6b46c41825051fec3
+refactored: fd_g_diag.py sha256 241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03
+seed 0 role adopted: rc 0/0, readouts identical
+seed 0 role sensitivity: rc 0/0, readouts identical
+seed 1 role adopted: rc 0/0, readouts identical
+seed 1 role sensitivity: rc 0/0, readouts identical
+seed 2 role adopted: rc 0/0, readouts identical
+seed 2 role sensitivity: rc 0/0, readouts identical
+identical on all 6
+rc=0

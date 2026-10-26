@@ -34,6 +34,7 @@ import math
 import os
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -251,12 +252,9 @@ def build_args(argv):
     return ap.parse_args(argv)
 
 
-def run(a, pins=None, predictions=None) -> int:
-    pins = PINS if pins is None else pins
-    predictions = G.PREDICTIONS if predictions is None else predictions
-    if a.out_json.exists():
-        raise G.Stop("-", f"refusing to overwrite {a.out_json}")
-
+def load(a, pins, predictions) -> SimpleNamespace:
+    """Controls D0-D5 on Stage G's pinned inputs and its committed readout; returns what they checked (also used by
+    fd_g_followup.py)."""
     # D0. digests: G0's, the extra block's, and the committed Stage G readout's
     for key, path in (("s1_json", a.s1_json), ("cmodel_json", a.cmodel_json), ("s5p_sums", a.s5p_sums),
                       ("s1_npz", a.s1_npz), ("g_readout", a.g_readout)):
@@ -267,7 +265,8 @@ def run(a, pins=None, predictions=None) -> int:
     s1j, cj, gr = (json.loads(p.read_text()) for p in (a.s1_json, a.cmodel_json, a.g_readout))
     if s1j.get("assembly_sha256") != pins["s1_npz"]:
         raise G.Stop("D0", "the committed S1 readout names another assembly")
-    U = sa.functional_matrix(G.sa_call("D0", sa.fine_map, a.definition))
+    fm = G.sa_call("D0", sa.fine_map, a.definition)
+    U = sa.functional_matrix(fm)
     sums = sa.load_manifest(a.s5p_sums)
     for spec in predictions:
         got = sa.sha256(a.s5p_root / spec["path"])
@@ -384,6 +383,20 @@ def run(a, pins=None, predictions=None) -> int:
                                             / np.maximum(np.abs(theirs["pulls"]), 1e-300))))
     report("D5", f"Stage G's total and shape-only chi2 and pulls reproduce to {REPRO:g} relative (worst {worst:.1e})",
            worst <= REPRO, f"worst relative difference {worst:.3e}")
+    return SimpleNamespace(f=f, U=U, fm=fm, Ct=Ct, Cx=Cx, Cx_rel=Cx_rel, S=S, groups=groups, groups_rel=groups_rel,
+                           blocks_abs=blocks_abs, s1j=s1j, cj=cj, gr=gr, grp=grp, defn=defn, integ=integ, comps=comps,
+                           xn=xn)
+
+
+def run(a, pins=None, predictions=None) -> int:
+    pins = PINS if pins is None else pins
+    predictions = G.PREDICTIONS if predictions is None else predictions
+    if a.out_json.exists():
+        raise G.Stop("-", f"refusing to overwrite {a.out_json}")
+
+    x = load(a, pins, predictions)
+    f, Ct, Cx, Cx_rel, S, groups_rel, blocks_abs = x.f, x.Ct, x.Cx, x.Cx_rel, x.S, x.groups_rel, x.blocks_abs
+    grp, integ, comps, xn = x.grp, x.integ, x.comps, x.xn
 
     # the breakdowns; D6: the blocks rebuild each comparison's M; D7: each breakdown's chi2 is Stage G's
     results, worst6, worst7 = [], 0.0, 0.0
