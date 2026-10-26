@@ -1,0 +1,15 @@
+2026-10-26T10:16:16Z
+login37
+c4396756ec843248b00e788a20f2760b43bdc55f
+porcelain_ignored_lines 0
+0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f  nd-unfolding/fd_g_compare.py
+b4d0ff2611bcc6226e215e57023002025682aebea49ec1f2c06f3c61a9d7d9a8  nd-unfolding/tests/test_fd_g_compare.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd-unfolding/s5p_stage1_inspect.py
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+e5445e254e9d18db646bf5a92984e1093fabf84274343da39963dc12c0747f8f  docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-DECLARATION.md
+tests rc=0
+porcelain_ignored_lines_after_tests 0
+2026-10-26T10:16:43Z
+Ran 49 tests in 21.490s
+OK
