@@ -1,0 +1,62 @@
++ hostname
+login37
++ date -u +%FT%TZ
+2026-10-26T07:18:19Z
++ P=/pscratch/sd/j/josephrb
++ R=/pscratch/sd/j/josephrb/cresp-20261026
++ test '!' -e /pscratch/sd/j/josephrb/cresp-20261026
++ git clone --filter=blob:none https://github.com/josephbaileyy/MINERvA-OmniFold /pscratch/sd/j/josephrb/cresp-20261026/repo
+Cloning into '/pscratch/sd/j/josephrb/cresp-20261026/repo'...
++ git -C /pscratch/sd/j/josephrb/cresp-20261026/repo checkout --detach 973142a7fc150f2ceb9fd3530297ec1ddcbd0dc3
+HEAD is now at 973142a7 [assigned-uncertainties] C_resp builder: species-response block on R00-R15, with tests
+++ git -C /pscratch/sd/j/josephrb/cresp-20261026/repo rev-parse HEAD
++ test 973142a7fc150f2ceb9fd3530297ec1ddcbd0dc3 = 973142a7fc150f2ceb9fd3530297ec1ddcbd0dc3
+++ git -C /pscratch/sd/j/josephrb/cresp-20261026/repo status --porcelain --ignored
++ test -z ''
++ mkdir /pscratch/sd/j/josephrb/cresp-20261026/out /pscratch/sd/j/josephrb/cresp-20261026/tmp
++ cd /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/tests
++ TMPDIR=/pscratch/sd/j/josephrb/cresp-20261026/tmp
++ env -u PYTHONPATH /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -B -m unittest test_build_cresp test_s1_assemble
+.......................................{"wrote": ["/pscratch/sd/j/josephrb/cresp-20261026/tmp/s1-e2e-er9vmiis/s1.npz", "/pscratch/sd/j/josephrb/cresp-20261026/tmp/s1-e2e-er9vmiis/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}
+.
+----------------------------------------------------------------------
+Ran 40 tests in 15.838s
+
+OK
++ cd /pscratch/sd/j/josephrb/cresp-20261026/out
++ TMPDIR=/pscratch/sd/j/josephrb/cresp-20261026/tmp
++ env -u PYTHONPATH /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -I -B /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/build_cresp.py --definition /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/pv-ladder/readouts/h2_definition.json --products-dir /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf --s1-assembly /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz --out /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+{"wrote": ["/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz", "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.json"], "sha256": "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a"}
+++ git -C /pscratch/sd/j/josephrb/cresp-20261026/repo status --porcelain --ignored
++ test -z ''
++ sha256sum /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.json /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/build_cresp.py /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/tests/test_build_cresp.py /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/s1_assemble.py /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/s5p_stage1_inspect.py
+4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a  /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+19bb2ee12827207fa346242ac901af48f6c80785eff5a14ff54133dff1ea01f0  /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.json
+fe1aec8b74ab59e5ffa3bc824c4284065c5e8e97b2ce3c2e4bd1a34bec192f22  /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/build_cresp.py
+ea0dd6dbdeb9f12f6434bb17f1596e1fc4b5a6846b4d04908711a7dd6a9000d1  /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/tests/test_build_cresp.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/s1_assemble.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  /pscratch/sd/j/josephrb/cresp-20261026/repo/nd-unfolding/s5p_stage1_inspect.py
++ ls -la /pscratch/sd/j/josephrb/cresp-20261026 /pscratch/sd/j/josephrb/cresp-20261026/out /pscratch/sd/j/josephrb/cresp-20261026/tmp
+/pscratch/sd/j/josephrb/cresp-20261026:
+total 88
+drwxrwx---   5 josephrb josephrb  4096 Oct 26 00:18 .
+drwx------ 303 josephrb josephrb 69632 Oct 26 00:18 ..
+drwxrwx---   2 josephrb josephrb  4096 Oct 26 00:19 out
+drwxrwx---  18 josephrb josephrb  4096 Oct 26 00:18 repo
+drwxrwx---   2 josephrb josephrb  4096 Oct 26 00:19 tmp
+
+/pscratch/sd/j/josephrb/cresp-20261026/out:
+total 9
+drwxrwx--- 2 josephrb josephrb  4096 Oct 26 00:19 .
+drwxrwx--- 5 josephrb josephrb  4096 Oct 26 00:18 ..
+-rw-rw---- 1 josephrb josephrb  7834 Oct 26 00:19 cresp.json
+-rw-rw---- 1 josephrb josephrb 12952 Oct 26 00:19 cresp.npz
+
+/pscratch/sd/j/josephrb/cresp-20261026/tmp:
+total 8
+drwxrwx--- 2 josephrb josephrb 4096 Oct 26 00:19 .
+drwxrwx--- 5 josephrb josephrb 4096 Oct 26 00:18 ..
++ date -u +%FT%TZ
+2026-10-26T07:19:14Z
+RUN-OK
++ echo RUN-OK
