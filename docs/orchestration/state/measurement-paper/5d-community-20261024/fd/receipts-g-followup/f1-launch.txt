@@ -1,0 +1,2 @@
+2026-10-26T18:36:24Z
+ssh saul.nersc.gov bash -s < f1.sh
