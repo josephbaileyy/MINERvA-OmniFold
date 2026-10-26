@@ -2967,7 +2967,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0b-AND-G-BI
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0b-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f0b/step1.sh;nd-unfolding/fd_f0_regrade.py;nd-unfolding/tests/test_fd_f0_regrade.py	no	9	303	21446
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0b-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	3	225	14575
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-g/g1.sh;nd-unfolding/fd_g_compare.py;nd-unfolding/tests/test_fd_g_compare.py	no	10	461	33010
-docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	3	221	13477
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	3	225	13900
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	nd-unfolding/fd_f0_regrade.py	no	9	652	55110
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING-AMENDMENT-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	7	96	5193
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only		no	8	143	7663

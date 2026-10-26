@@ -68,6 +68,8 @@ There is no reading of these numbers.
   mode-direction note beside each one: a mode along g would differ, by 2.4 % on 16 cells and 7 % on 8 cells, in
   review A's synthetic check.
 - **GiBUU** is on the eight p_∥ < 4.5 cells only.
+- **Matrix names are shortened here:** the readout's strings also carry "(free normalization)" on the shape-only
+  matrix and write fᵀ as `f^T`. Prediction names are shown in words (GENIE CV for `genie_cv`, and so on).
 
 | prediction | cells | comparison | statistic | χ² | ndf | p | matrix | size | rank |
 |---|---:|---|---|---:|---:|---:|---|---|---:|
@@ -178,7 +180,8 @@ No threshold is declared for G's pulls (FD-G §7, the director's ruling 4). The 
   (`extra_block.relative_sigma`), to 6 × 10⁻¹⁶ relative.
 - **Across predictions:** the covariance σ is the same for all five on every shared cell.
 
-**MC events in the compared cells** (median; min–max):
+**MC events in the compared cells.** Three medians are half-integers in the readout (GENIE CV 33,887.5, NuWro
+42,520.5, MnvTune v1 1,087,758.5). They are rounded half to even here.
 
 | prediction | median | min | max |
 |---|---:|---:|---:|
@@ -205,7 +208,8 @@ No threshold is declared for G's pulls (FD-G §7, the director's ruling 4). The 
   - `g.out`, `g.err` and the start/end stamps;
   - `post-run.txt`;
   - the two scripts and their stdout;
-  - `summarize_g.py`, which reads only the readout, and its output `summary.txt`. Every table above is from it.
+  - `summarize_g.py`, which reads only the readout, and its output `summary.txt`. The tables in §§2–5 are from it,
+    with the names shortened as §2 says; §1's are from the receipts.
 - **The ledger:** two rows in `fd/LEDGER.tsv`.
 - **The results index:** this branch's first commit adds the readout and the index regenerated from it, under the
   director's standing ruling (a). The PR body gives the scope.
