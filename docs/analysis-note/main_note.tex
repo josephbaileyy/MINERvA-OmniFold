@@ -16,30 +16,19 @@
 }
 
 \usepackage{xcolor}
-% \bpn / \jrb / \gk moved to the shared preamble.tex: they were defined HERE only,
-% used 16 times in the note sections and 0 times in paper_body/primer_body, and
-% neither external wrapper defines them -- so the first time a commented paragraph
-% was distilled into the paper, that build would have died on Undefined control
-% sequence. Behaviour is unchanged for this build.
+% \bpn / \jrb / \gk moved to the shared preamble.tex: they were defined HERE only, used 16 times in the note sections and 0 times in paper_body/primer_body, and neither external wrapper defines them -- so the first time a commented paragraph was distilled into the paper, that build would have died on Undefined control sequence. Behaviour is unchanged for this build.
 
 
-%\title{Unbinned OmniFold measurement of the MINERvA ME FHC\\
-%CC-inclusive double-differential cross section\\
-%$d^{2}\sigma/(d\pT\,d\pPar)$ and its higher-dimensional extensions\\[4pt]
-%\large MINERvA analysis note --- DRAFT}
+% \title{Unbinned OmniFold measurement of the MINERvA ME FHC\\ CC-inclusive double-differential cross section\\ $d^{2}\sigma/(d\pT\,d\pPar)$ and its higher-dimensional extensions\\[4pt]
+% \large MINERvA analysis note --- DRAFT}
 
 \title{\textbf{Analysis Note:}\\
 Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 
-\author[1]{Joseph Bailey\thanks{\url{josephrb@stanford.edu}}}
-\author[2]{Benjamin Nachman\thanks{\url{nachman@stanford.edu}}}
-\affil[1]{Department of Physics, Stanford University}
-\affil[2]{Department of Particle Physics and Astrophysics, Stanford University and SLAC National Laboratory}
+\author[1]{Joseph Bailey\thanks{\url{josephrb@stanford.edu}}} \author[2]{Benjamin Nachman\thanks{\url{nachman@stanford.edu}}} \affil[1]{Department of Physics, Stanford University} \affil[2]{Department of Particle Physics and Astrophysics, Stanford University and SLAC National Laboratory}
 
 
-% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): a fixed version and date
-% instead of \today, set once here; the deposit snapshot identifier and the funding statement are holds that
-% print visibly until they are supplied; depositing the note is Joseph's act.
+% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): a fixed version and date instead of \today, set once here; the deposit snapshot identifier and the funding statement are holds that print visibly until they are supplied; depositing the note is Joseph's act.
 \newcommand{\noteversion}{Version 1.0 (review)}
 \newcommand{\notedate}{20 October 2026}
 \newcommand{\depositsnapshot}{\textbf{[snapshot identifier pending deposit]}}
@@ -59,7 +48,7 @@ unfolding method. With this method, the double-differential cross section in muo
 transverse and longitudinal momentum reproduces the published integral within about one percent, with a
 correlated shape difference, and its uncertainty is comparable in size to the published one.
 % Methods-paper sync (M8, narrowed: "including its spectrum" contradicted the paper's correlated shape difference;
-% main_paper.tex abstract; values.tex:48, :125).
+% main_paper.tex abstract; values.tex:10, :46).
 That uncertainty is computed with the central value's own estimator, its universe and statistical blocks at the
 central value's training seed, and it has not been independently validated.
 % FACT (2026-10-18): the "different tree-learning implementation" clause was stale since 2026-10-11 (DECISION-20261011);

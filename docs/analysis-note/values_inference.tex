@@ -1,13 +1,7 @@
 % ====================================================================
-% values_inference.tex -- numbers for the calibrated joint tests (s5p,
-% OI-193, amendment 7). Owned by the publication lane; read ONLY by the
-% article (main_paper.tex). Every value is transcribed from a committed
-% record, cited per line. Edit the record first, never this file alone.
+% values_inference.tex -- numbers for the calibrated joint tests (s5p, OI-193, amendment 7). Owned by the publication lane; read ONLY by the article (main_paper.tex). Every value is transcribed from a committed record, cited per line. Edit the record first, never this file alone.
 %
-% RECORD = docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md
-%          (origin/main 9b26b8c3), from joint-evaluate.json sha256 b9604502...
-% TERM   = docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md
-% A7     = docs/orchestration/state/s5p/contract-amendment-7-production-admission.json
+% RECORD = docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md (origin/main 9b26b8c3), from joint-evaluate.json sha256 b9604502... TERM   = docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md A7     = docs/orchestration/state/s5p/contract-amendment-7-production-admission.json
 % ====================================================================
 \newcommand{\jtNtests}{10}          % RECORD sec. 1 (A7 claims.family)
 \newcommand{\jtAlpha}{0.05}         % RECORD sec. 1, familywise
@@ -37,9 +31,7 @@
 \newcommand{\jtMoneMax}{0.86}
 \newcommand{\jtMoneWnormMin}{0.45}  % A7 claims.rejection: "the W-norm step between resolutions shrinks by 0.45-0.76
 \newcommand{\jtMoneWnormMax}{0.76}  %   per halving, so the residual below the fine grid is ~1-3 times the last step;
-                                    %   kappa = 2 is its central value". Origin: REVIEW-20260927-s5p-admission-
-                                    %   confirmation.md item 4, computed with a PROXY metric (22 pilot products or
-                                    %   diagonal), not the frozen V; how the ratio was formed is not recorded.
+                                    % kappa = 2 is its central value". Origin: REVIEW-20260927-s5p-admission- confirmation.md item 4, computed with a PROXY metric (22 pilot products or diagonal), not the frozen V; how the ratio was formed is not recorded.
 \newcommand{\jtMoneClaimSdMin}{0.55}% A7 prefreeze_measurements.summary: M1 claim variant in null SD (external nulls)
 \newcommand{\jtMoneClaimSdMax}{2.0}
 \newcommand{\jtMoneRobSdMin}{1.07}  % A7 prefreeze_measurements.summary: M1 robust variant in null SD

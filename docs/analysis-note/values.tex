@@ -1,85 +1,16 @@
 % ====================================================================
-% values.tex --- SINGLE SOURCE OF TRUTH for every headline number that
-% recurs across the build (abstract / executive summary / body section).
-% Edit a result HERE and it updates in all three PDFs.
-% Numbers that appear exactly once (deep in a section, a table,
-% or App. B) are NOT macroized here -- they cannot drift, so they stay inline
-% at their single site.
+% values.tex --- SINGLE SOURCE OF TRUTH for every headline number that recurs across the build (abstract / executive summary / body section). Edit a result HERE and it updates in all three PDFs. Numbers that appear exactly once (deep in a section, a table, or App. B) are NOT macroized here -- they cannot drift, so they stay inline at their single site.
 %
-% Convention: cross sections carry their full value+exponent so \SI expands
-% cleanly (e.g. \SI{\sigTwoD}{cm^2/nucleon}); ratios/percentages/significances
-% are bare numbers (e.g. \SI{\uqMedian}{\percent}, $\ratioTot$).
+% Convention: cross sections carry their full value+exponent so \SI expands cleanly (e.g. \SI{\sigTwoD}{cm^2/nucleon}); ratios/percentages/significances are bare numbers (e.g. \SI{\uqMedian}{\percent}, $\ratioTot$).
 % ====================================================================
 
-% --- 2D reproduction (the demonstrator) ---
-% CENTRAL VALUE SWITCHED 2026-10-11 (Joseph): the quoted 2D central value is now the LightGBM seed-42
-% matched CV of the systematic sweep, uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root, sha256
-% 4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c, no longer the exact-split
-% 2d_crossSection_omnifold_MEFHC_5iter.root (142a45b0...). Decision record:
-% docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md. Every macro below that depends
-% on the central value was re-measured by the SAME committed producers at e1216e9c (saul login05, ROOT
-% 6.28/12); receipts in docs/orchestration/receipts/2d-lgbm42-20261011/ (SHA256SUMS). Control: the same
-% producers on the exact-split file reproduce 3.661 and 0.089/0.598. The provenance blocks below describe
-% the 2026-08-21 receipts for the exact-split values (kept as history); the values printed are the new ones,
-% each with its new receipt in its trailing comment.
-% PROVENANCE, ADDED 2026-08-21 (OI-130). These three were the HARD CORE of the OI-130
-% enumeration: of 71 macros they were the only ones naming NO backing artifact anywhere, even
-% under the generous bound -- which makes them UNBINDABLE BY CONSTRUCTION, since no hash-binding,
-% freeze gate or receipt check can fire on a macro that cites no path. They are the most-quoted
-% numbers in the note, so that was the worst place for the gap to be.
-%   PRODUCER  2d-unfolding/agreement_windows_receipt.py
-%   RECEIPT   docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json
-%   RUN       saul, ROOT 6.28/12, at git 5996eb29
-%   ARTIFACTS ours  hXSec2D             from 2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root
-%                                       sha256 142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5
-%             paper pt_pl_cross_section  from minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
-%                                       sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
-%   MEASURED  integral ours 3.0733e-38; paper 3.0390e-38; ratio 1.0113
-% THE TOTAL IS AN INTEGRAL, NOT A SUM OF BIN CONTENTS, and getting that wrong is easy here: these
-% histograms hold d2sigma/(dpT dp_par), so the bin-area Jacobian is required. Measured without it,
-% the sums came out 12.14x these values -- THE SAME FACTOR ON BOTH FILES -- while the RATIO still
-% reproduced, because the Jacobian cancels. A ratio agreeing is not evidence that its operands do;
-% the receipt keeps both numbers so nobody repeats it.
-% STILL NOT ESTABLISHED: that this producer is the method that ORIGINALLY produced these three, and
-% both artifacts live on PURGEABLE SCRATCH and are untracked, so this closes the CITATION gap and
-% not the DURABILITY one (OI-130's class, and OI-75 for the same shape elsewhere).
+% --- 2D reproduction (the demonstrator) --- CENTRAL VALUE SWITCHED 2026-10-11 (Joseph): the quoted 2D central value is now the LightGBM seed-42 matched CV of the systematic sweep, uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root, sha256 4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c, no longer the exact-split 2d_crossSection_omnifold_MEFHC_5iter.root (142a45b0...). Decision record: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md. Every macro below that depends on the central value was re-measured by the SAME committed producers at e1216e9c (saul login05, ROOT 6.28/12); receipts in docs/orchestration/receipts/2d-lgbm42-20261011/ (SHA256SUMS). Control: the same producers on the exact-split file reproduce 3.661 and 0.089/0.598. The provenance blocks below describe the 2026-08-21 receipts for the exact-split values (kept as history); the values printed are the new ones, each with its new receipt in its trailing comment. PROVENANCE, ADDED 2026-08-21 (OI-130). These three were the HARD CORE of the OI-130 enumeration: of 71 macros they were the only ones naming NO backing artifact anywhere, even under the generous bound -- which makes them UNBINDABLE BY CONSTRUCTION, since no hash-binding, freeze gate or receipt check can fire on a macro that cites no path. They are the most-quoted numbers in the note, so that was the worst place for the gap to be. PRODUCER  2d-unfolding/agreement_windows_receipt.py RECEIPT   docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json RUN       saul, ROOT 6.28/12, at git 5996eb29 ARTIFACTS ours  hXSec2D             from 2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root sha256 142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5 paper pt_pl_cross_section  from minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3 MEASURED  integral ours 3.0733e-38; paper 3.0390e-38; ratio 1.0113 THE TOTAL IS AN INTEGRAL, NOT A SUM OF BIN CONTENTS, and getting that wrong is easy here: these histograms hold d2sigma/(dpT dp_par), so the bin-area Jacobian is required. Measured without it, the sums came out 12.14x these values -- THE SAME FACTOR ON BOTH FILES -- while the RATIO still reproduced, because the Jacobian cancels. A ratio agreeing is not evidence that its operands do; the receipt keeps both numbers so nobody repeats it. STILL NOT ESTABLISHED: that this producer is the method that ORIGINALLY produced these three, and both artifacts live on PURGEABLE SCRATCH and are untracked, so this closes the CITATION gap and not the DURABILITY one (OI-130's class, and OI-75 for the same shape elsewhere).
 \newcommand{\sigTwoD}{3.069e-38}      % RE-2 E_R/Q_R 3.06874e-38 (re2-integration/ledger.tsv row m-sigTwoD); was 3.073e-38: our 2D total; integral 3.0730e-38 (LightGBM seed 42; exact-split was 3.0733e-38), RECEIPT-2d-agreement-windows-lgbm42-20261011.json
 \newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total; integral 3.0390e-38, receipt above
 \newcommand{\ratioTot}{1.010}         % RE-2 E_R/Q_R 1.00978 (re2-integration/ledger.tsv row m-ratioTot); was 1.011: sigma_tot ours/paper; integral ratio 1.0112 (exact-split was 1.0113), lgbm42 receipt
 % PROVENANCE FOR THE NEXT FOUR MACROS -- RESOLVED 2026-08-21, AND THE HISTORY MATTERS.
-% \medianBinRatio, \binsFive, \binsTen and \binsTwenty had NO committed producing script
-% (OI-130). They were suppressed from all three deliverables on 2026-08-21 and are RESTORED
-% here only because an authorized producer now attests them.
-%   PRODUCER  2d-unfolding/agreement_windows_receipt.py
-%   RECEIPT   docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json
-%   RUN       saul login34, ROOT 6.28/12, at git a3a4d3d1
-%   MASK      205 of 224 bins, DERIVED as the positive diagonal of the paper ancillary's
-%             StatOnlyCovariance on its own 224-bin global grid -- the same predicate
-%             compare_to_paper_fullcov.py uses for its chi^2 ndf. The count is ASSERTED to be
-%             205 and the producer exits 3 on any other value.
-%   DENOM     205 of 205; ZERO bins excluded for a non-positive paper value, so the
-%             denominator rule never bit and cannot be the source of the agreement.
-%   INPUTS    ours  hXSec2D             from 2d_crossSection_omnifold_MEFHC_5iter.root
-%                                       sha256 142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5
-%             paper pt_pl_cross_section  from minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
-%                                       sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
-%   MEASURED  median 1.0064; 159/205 = 77.6 %; 193/205 = 94.1 %; 202/205 = 98.5 %
-% ALL FOUR REPRODUCE THE PREVIOUSLY UNATTESTED VALUES EXACTLY. The producer was not aimed at
-% them -- its receipt predeclares, in a field written before the run, that it attempts no
-% reproduction and that a difference would be a finding.
-% \medianBinRatio KEEPS ITS THREE-DECIMAL FORM: the receipt measures 1.0064 and 1.006 is that
-% number at the precision the note has always printed. Changing the displayed precision would
-% be a new editorial claim, not a restoration; the full value lives in the receipt.
-% WHAT IS STILL NOT ESTABLISHED, and do not let the agreement blur it: this is not shown to be
-% the method that ORIGINALLY produced these four. That provenance remains unrecoverable. OI-130's
-% finding -- that no committed script reproduced the trio -- was TRUE OF THE TREE AS IT STOOD and
-% stopped being true only when the producer landed.
-% NOT THE PRODUCER, and the reason is worth keeping: 2d-unfolding/compare_to_paper_interior.py
-% computes 5/10/20 % windows but masks to the STRICT INTERIOR (interior_mask(), pt_hi/pz_lo <=
-% tan(20 deg)) intersected with the reported mask, so its denominators are SMALLER than 205
-% (the audit's re-run reports 185/179/171/162/152/141). `git log --follow` puts that interior
-% mask in the initial commit (d3239355), so no committed version of IT ever produced these.
-% Any future change to these four goes through the producer and a fresh receipt.
+% \medianBinRatio, \binsFive, \binsTen and \binsTwenty had NO committed producing script (OI-130). They were suppressed from all three deliverables on 2026-08-21 and are RESTORED here only because an authorized producer now attests them. PRODUCER  2d-unfolding/agreement_windows_receipt.py RECEIPT   docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json RUN       saul login34, ROOT 6.28/12, at git a3a4d3d1 MASK      205 of 224 bins, DERIVED as the positive diagonal of the paper ancillary's StatOnlyCovariance on its own 224-bin global grid -- the same predicate compare_to_paper_fullcov.py uses for its chi^2 ndf. The count is ASSERTED to be 205 and the producer exits 3 on any other value. DENOM     205 of 205; ZERO bins excluded for a non-positive paper value, so the denominator rule never bit and cannot be the source of the agreement. INPUTS    ours  hXSec2D             from 2d_crossSection_omnifold_MEFHC_5iter.root sha256 142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5 paper pt_pl_cross_section  from minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3 MEASURED  median 1.0064; 159/205 = 77.6 %; 193/205 = 94.1 %; 202/205 = 98.5 % ALL FOUR REPRODUCE THE PREVIOUSLY UNATTESTED VALUES EXACTLY. The producer was not aimed at them -- its receipt predeclares, in a field written before the run, that it attempts no reproduction and that a difference would be a finding.
+% \medianBinRatio KEEPS ITS THREE-DECIMAL FORM: the receipt measures 1.0064 and 1.006 is that number at the precision the note has always printed. Changing the displayed precision would be a new editorial claim, not a restoration; the full value lives in the receipt. WHAT IS STILL NOT ESTABLISHED, and do not let the agreement blur it: this is not shown to be the method that ORIGINALLY produced these four. That provenance remains unrecoverable. OI-130's finding -- that no committed script reproduced the trio -- was TRUE OF THE TREE AS IT STOOD and stopped being true only when the producer landed. NOT THE PRODUCER, and the reason is worth keeping: 2d-unfolding/compare_to_paper_interior.py computes 5/10/20 % windows but masks to the STRICT INTERIOR (interior_mask(), pt_hi/pz_lo <= tan(20 deg)) intersected with the reported mask, so its denominators are SMALLER than 205 (the audit's re-run reports 185/179/171/162/152/141). `git log --follow` puts that interior mask in the initial commit (d3239355), so no committed version of IT ever produced these. Any future change to these four goes through the producer and a fresh receipt.
 \newcommand{\medianBinRatio}{1.005}   % RE-2 E_R/Q_R 1.0054 (re2-integration/ledger.tsv row m-medianBinRatio); was 1.008: median per-bin ratio ours/paper; lgbm42 receipt measures 1.0081 (exact-split 1.0064)
 \newcommand{\binsFive}{86.8}          % RE-2 E_R/Q_R 86.8 (re2-integration/ledger.tsv row m-binsFive); was 82.9: percent of bins within 5%; 170/205, lgbm42 receipt (exact-split 77.6)
 \newcommand{\binsTen}{95.1}           % RE-2 E_R/Q_R 95.1 (re2-integration/ledger.tsv row m-binsTen); was 95.6: within 10%; 196/205, lgbm42 receipt (exact-split 94.1)
@@ -87,25 +18,15 @@
 \newcommand{\pullMean}{0.060}         % RE-2 E_R/Q_R 0.06 (re2-integration/ledger.tsv row m-pullMean); was 0.074: chi2_lgbm42_paperonly.txt (exact-split 0.089)
 \newcommand{\pullRMS}{0.535}          % RE-2 E_R/Q_R 0.535 (re2-integration/ledger.tsv row m-pullRMS); was 0.564: chi2_lgbm42_paperonly.txt (exact-split 0.598)
 \newcommand{\pullRMSr}{0.54}          % RE-2 E_R/Q_R 0.535 (re2-integration/ledger.tsv row m-pullRMSr); was 0.56: rounded, for prose
-% FPS containment (Agent C WS1 statistical-validation repair, 2026-07-16):
-% split-sample +/-1sigma truth-containment against an independent fixed NPZ truth.
-% The estimator seed is fixed, so this diagnoses the statistical closure-toy
-% stream, not the full adopted band. No aggregate binomial error is quoted.
+% FPS containment (Agent C WS1 statistical-validation repair, 2026-07-16): split-sample +/-1sigma truth-containment against an independent fixed NPZ truth. The estimator seed is fixed, so this diagnoses the statistical closure-toy stream, not the full adopted band. No aggregate binomial error is quoted.
 \newcommand{\covFPS}{68.67}
 \newcommand{\covNominal}{68.27}                              % Gaussian nominal
 \newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (scalar uq_cov_stat_fps.root): conservatively over-covers
-% 2D statistical-band coverage, fixed-truth closure toys (2026-10-05; VALIDATION_LEDGER VL169;
-% docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; receipt
-% docs/orchestration/state/coverage-2d-20261005/interim_score.json). Pre-registered interim look,
-% toys 1-100, 205 bins, 99.5% toy-bootstrap intervals; FAIL-undercoverage (futility). Independently
-% recomputed (points identical; C1/C2 endpoints within 5.4e-4, all endpoints within 1.7e-3). Fractions, not percent.
-% J3/J4 provisional (DECISION-20261018, packet W3: D2; J5). These score the superseded VL162 band; Q's statistical block (S1) is a different ensemble,
-% not coverage-tested (KNOWN_ISSUES 85). Not recomputed (PHASE2 §2 NR).
+% 2D statistical-band coverage, fixed-truth closure toys (2026-10-05; VALIDATION_LEDGER VL169; docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; receipt docs/orchestration/state/coverage-2d-20261005/interim_score.json). Pre-registered interim look, toys 1-100, 205 bins, 99.5% toy-bootstrap intervals; FAIL-undercoverage (futility). Independently recomputed (points identical; C1/C2 endpoints within 5.4e-4, all endpoints within 1.7e-3). Fractions, not percent. J3/J4 provisional (DECISION-20261018, packet W3: D2; J5). These score the superseded VL162 band; Q's statistical block (S1) is a different ensemble, not coverage-tested (KNOWN_ISSUES 85). Not recomputed (PHASE2 §2 NR).
 \newcommand{\covTwoDNtoy}{100}
 \newcommand{\covTwoDCTwoPct}{91}  % C2 = 0.912 as a rounded percent (primer)
 \newcommand{\covTwoDCTwoPctOne}{91.2} % C2 in percent, printed by the paper until register round r18 (now unused; the
-                                      % note prints \covTwoDCTwo). It avoided: the literal 0.912 collides with
-                                      % the struck \petRatio in build_all's paper containment check
+                                      % note prints \covTwoDCTwo). It avoided: the literal 0.912 collides with the struck \petRatio in build_all's paper containment check
 \newcommand{\covTwoDCOne}{0.679}\newcommand{\covTwoDCOneLo}{0.669}\newcommand{\covTwoDCOneHi}{0.690}     % 0.6794 [0.6693, 0.6899]
 \newcommand{\covTwoDCTwo}{0.912}\newcommand{\covTwoDCTwoLo}{0.907}\newcommand{\covTwoDCTwoHi}{0.918}     % 0.9121 [0.9065, 0.9179]
 \newcommand{\covTwoDWinOneLo}{0.632}\newcommand{\covTwoDWinOneHi}{0.729}   % erf(0.9/sqrt2), erf(1.1/sqrt2)
@@ -128,45 +49,33 @@
 \newcommand{\chiPaperExactSeeded}{3.57} % the same estimator with random_state 1/2/3 (XR run X1): 3.565, VL174,
                                        % docs/orchestration/receipts/xr-x1-chi2-20261012/; one seed setting, not a spread
 \newcommand{\chiCombined}{0.929}      % RE-2 E_R/Q_R 0.929 (re2-integration/ledger.tsv row m-chiCombined); was 0.964: chi2/ndf vs combined (paper+ours) cov, Q = S5 total + C_PL (adopted 2026-10-17), 197.59/205,
-                                      % state/2d-closeout/stageF/rebuild/outputs/chi2/chi2_Q_std.txt "COMBINED (paper + hCov_Q)";
-                                      % was 0.994 (VL175) / 0.914 (VL173) / exact-split 1.472 (VL172)
+                                      % state/2d-closeout/stageF/rebuild/outputs/chi2/chi2_Q_std.txt "COMBINED (paper + hCov_Q)"; was 0.994 (VL175) / 0.914 (VL173) / exact-split 1.472 (VL172)
 \newcommand{\chiCombinedLog}{0.945}   % RE-2 E_R/Q_R 0.945 (re2-integration/ledger.tsv row m-chiCombinedLog); was 0.987: log-normal, Q, 202.33/205, rebuild/outputs/chi2/chi2_Q_lognormal.txt "COMBINED (paper + omnifold) chi2_log";
                                       % definition (rebuild REPORT §5): delta = ln E_U - ln p, C_ln = (TotalCov + Q)/(p_i p_j); was 1.014 (VL175) / 0.932 (VL173)
 \newcommand{\chiCombinedSubStat}{6.72} % RE-2 E_R/Q_R 6.721 (re2-integration/ledger.tsv row m-chiCombinedSubStat); was 6.01: chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 6.012 (1232.38/205), Q,
                                        % rebuild/outputs/chi2/chi2_Q_substat.txt; was 5.80 (VL175) / 4.128 (VL173)
-% All three recomputed 2026-10-18 (stageF rebuild phase 1, compare_to_paper_fullcov.py --omnifold-cov
-% uq_adopted_covariance.root:hCov_Q). Supersede the pre-flux-fix appendix 1.699/1.688/23.96 and the 2026-07-16 values.
+% All three recomputed 2026-10-18 (stageF rebuild phase 1, compare_to_paper_fullcov.py --omnifold-cov uq_adopted_covariance.root:hCov_Q). Supersede the pre-flux-fix appendix 1.699/1.688/23.96 and the 2026-07-16 values.
 
 % --- uncertainty budget ---
 \newcommand{\uqMedian}{6.41}          % RE-2 E_R/Q_R 6.41367 (re2-integration/ledger.tsv row m-uqMedian); was 6.45: our standalone combined median per-bin (%); 6.4479, Q = S5 total + C_PL (adopted 2026-10-17,
-                                      % docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md; receipt
-                                      % state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz Q.median_pct).
-                                      % Was 6.0898 (VL175), 6.8707 (VL172), 6.8646 (VL162)
+                                      % docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md; receipt state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz Q.median_pct). Was 6.0898 (VL175), 6.8707 (VL172), 6.8646 (VL162)
 \newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
 % the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
 \newcommand{\uqIntegral}{4.76}        % RE-2 E_R/Q_R 4.75917 (re2-integration/ledger.tsv row m-uqIntegral); was 4.75: our width-weighted total sigma on the integrated cross section (%), sqrt(w^T C w)/(w^T x):
-                                      % 4.755, Q = S5 total + C_PL; state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz
-                                      % Q.integral_sigma_pct (rebuild REPORT §3); bound by check_sec4_receipts.py. Was 4.23 (VL175).
+                                      % 4.755, Q = S5 total + C_PL; state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz Q.integral_sigma_pct (rebuild REPORT §3); bound by check_sec4_receipts.py. Was 4.23 (VL175).
 \newcommand{\uqPaperIntegral}{4.61}   % the published TotalCovariance's width-weighted total sigma (%), same definition: the value
-                                      % already in the note's worked example (app_statmethods.tex sec:chisq) and in
-                                      % docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md l.60-61 ("the code that gives
-                                      % 4.61 % for the paper"). No machine-readable receipt of it is committed; not gate-bound.
+                                      % already in the note's worked example (app_statmethods.tex sec:chisq) and in docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md l.60-61 ("the code that gives 4.61 % for the paper"). No machine-readable receipt of it is committed; not gate-bound.
 \newcommand{\uqSFiveMedian}{5.98}     % RE-2 E_R/Q_R 5.98262 (re2-integration/ledger.tsv row m-uqSFiveMedian); was 6.04: S5 total (Q without the run-period block) per-bin median (%): 6.041, budget_Q.json.gz
                                       % S5_total.median_pct (rebuild REPORT §3; COMBINATION-REPORT §2). DRAFT-disclosures D0.
 \newcommand{\fluxBand}{3.71}          % RE-2 E_R/Q_R 3.71245 (re2-integration/ledger.tsv row m-fluxBand); was 3.75: leading flux band (%); 3.7467 with MAT's nu-e+IMD constraint weights, Q's universe block,
                                       % rebuild/outputs/outA/budget_Q.json.gz bands.Flux.median_pct; was 3.6549 (VL175, KI 95), 4.993 unweighted (VL172)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
-% --- RE-2 integration (2026-10-24; wording approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): C_model beside Q_R, the RO-FPS readout ---
-% C_model: DECISION-20261024-joseph-2d-model-dependence-component.md (M2 form, kappa = 1, reported beside Q_R, users'
-% total Q_R + C_model); values: state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json
-% (RE2-PARTC-REPORT.md sec. 7). Ledger: stageF/methods/re2-integration/ledger.tsv.
+% --- RE-2 integration (2026-10-24; wording approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): C_model beside Q_R, the RO-FPS readout --- C_model: DECISION-20261024-joseph-2d-model-dependence-component.md (M2 form, kappa = 1, reported beside Q_R, users' total Q_R + C_model); values: state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json (RE2-PARTC-REPORT.md sec. 7). Ledger: stageF/methods/re2-integration/ledger.tsv.
 \newcommand{\cmodelMedian}{3.71}      % cmodel_R.json cell_rel_sigma.C_model.median = 0.03707002200124932
 \newcommand{\qrCmodelMedian}{7.90}    % cmodel_R.json cell_rel_sigma.Q_R_plus_C_model.median = 0.07901482465729487
 \newcommand{\cmodelIntegral}{0.03}    % cmodel_R.json integral_rel_sigma.C_model = 0.00029047694947485715
-% The purity-subtracted 2D total (E_U) and the extended-fiducial control: values_table.tsv row m-sigTwoD purity_value
-% 3.073023056386603e-38; the control unfold's total 3.073e-38 (VALIDATION_LEDGER.md:1624; VL177); RE2-PARTC-REPORT.md sec. 8
-% (E_R 3.069e-38 against 3.073e-38, -0.14 %).
+% The purity-subtracted 2D total (E_U) and the extended-fiducial control: values_table.tsv row m-sigTwoD purity_value 3.073023056386603e-38; the control unfold's total 3.073e-38 (VALIDATION_LEDGER.md:1624; VL177); RE2-PARTC-REPORT.md sec. 8 (E_R 3.069e-38 against 3.073e-38, -0.14 %).
 \newcommand{\sigTwoDPurity}{3.073e-38}
 \newcommand{\roFpsDiff}{0.14}         % RE2-PARTC-REPORT.md sec. 8: "The two values differ by -0.14 %"
 \newcommand{\chiPaperPurity}{2.65}    % E_U (LightGBM seed 42, purity-based subtraction): values_table.tsv row m-chiPaper
@@ -175,18 +84,11 @@
 % --- 3D / 4D higher-dimensional ---
 \newcommand{\sigData}{3.07e-38}       % unfolded data total in the >=3D campaigns
 \newcommand{\eavailMargin}{0.11}      % W-marginal recovers frozen 4D to this (%)
-% Ascencio covariance metrics removed 2026-07-12: historical 4D covariance
-% quarantined pending corrected production.
+% Ascencio covariance metrics removed 2026-07-12: historical 4D covariance quarantined pending corrected production.
 
-% (Eavail,W) significances removed 2026-07-12: historical covariance quarantined.
-% Reintroduce macros only from a committed corrected-covariance ledger entry.
+% (Eavail,W) significances removed 2026-07-12: historical covariance quarantined. Reintroduce macros only from a committed corrected-covariance ledger entry.
 
-% --- corrected 5D GBDT candidate campaign ---
-% CAUTION: THIS HEADING READ "final active-lateral replacement pending" UNTIL 2026-09-20.
-%   The replacement LANDED and one product is ADOPTED as publication-under-exception
-%   (digest 3d7465f6, see the SCALAR-5D block below). The macros in THIS block still
-%   describe the earlier candidate campaign and are NOT the adopted product's numbers --
-%   do not read gbdtFiveAdoptTrace as the adopted trunk's sqrt-trace.
+% --- corrected 5D GBDT candidate campaign --- CAUTION: THIS HEADING READ "final active-lateral replacement pending" UNTIL 2026-09-20. The replacement LANDED and one product is ADOPTED as publication-under-exception (digest 3d7465f6, see the SCALAR-5D block below). The macros in THIS block still describe the earlier candidate campaign and are NOT the adopted product's numbers -- do not read gbdtFiveAdoptTrace as the adopted trunk's sqrt-trace.
 \newcommand{\gbdtFiveBlockMedian}{13.36}  % syst+stat+ML block sum, median/bin (%)
 \newcommand{\gbdtFiveAdoptTrace}{5.81e-38} % adopted mean-centered sqrt(trace), xsec units
 \newcommand{\gbdtFiveCVTrace}{6.24e-38}    % conservative CV-centered variant
@@ -195,56 +97,16 @@
 \newcommand{\gbdtAiEstTrace}{1.306e-39}    % fixed-data estimator-seed scan sqrt(trace), 12 seeds
 \newcommand{\gbdtAiEstFrac}{87.5}          % estimator-only / split-varied sqrt-trace ratio (%)
 
-% --- PET point-cloud track ---
-% NOT QUOTABLE as current values -- niter=2 legacy. \petRatio is the quotient of two
-% INLINE \SI{} literals in sec_pet.tex (2.796e-38 / 3.066e-38) that are not macros, so
-% marking here cannot reach them; they are struck at the point of use instead. Both are
-% struck wherever printed. Grounds: niter=2 vs the pinned niter=3 (CLM-010/CLM-012),
-% the 2026-08-01 full-event estimator change, and J21 (no background subtraction).
-% See docs/orchestration/INDEX-retracted-and-superseded-values.md.
-% (2026-10-03: those struck sec_pet.tex uses were removed by 95d03169 on 2026-08-23; since
-% 2026-10-03 the two literals and \petRatio are struck in app_history.tex H.1 instead.)
+% --- PET point-cloud track --- NOT QUOTABLE as current values -- niter=2 legacy. \petRatio is the quotient of two INLINE \SI{} literals in sec_pet.tex (2.796e-38 / 3.066e-38) that are not macros, so marking here cannot reach them; they are struck at the point of use instead. Both are struck wherever printed. Grounds: niter=2 vs the pinned niter=3 (CLM-010/CLM-012), the 2026-08-01 full-event estimator change, and J21 (no background subtraction). See docs/orchestration/INDEX-retracted-and-superseded-values.md. (2026-10-03: those struck sec_pet.tex uses were removed by 95d03169 on 2026-08-23; since 2026-10-03 the two literals and \petRatio are struck in app_history.tex H.1 instead.)
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio; niter=2 LEGACY, struck at use
 \newcommand{\petClosure}{1}           % niter=2 LEGACY, struck at use; NOT QUOTABLE as a current value
-% RULED 2026-08-21 BY JOSEPH -- the OPEN QUESTION recorded here on 2026-08-20 is CLOSED.
-% Ruling: \petClosure is LEGACY and must not remain a current quantitative claim. The
-% number and any present-tense "validates" language are removed from every print site.
-% A qualitative statement may remain ONLY where it is explicitly labelled a legacy
-% two-iteration self-consistency diagnostic. Basis:
-% docs/orchestration/DETERMINATION-20260819-lanec-petclosure-is-legacy.md.
+% RULED 2026-08-21 BY JOSEPH -- the OPEN QUESTION recorded here on 2026-08-20 is CLOSED. Ruling: \petClosure is LEGACY and must not remain a current quantitative claim. The number and any present-tense "validates" language are removed from every print site. A qualitative statement may remain ONLY where it is explicitly labelled a legacy two-iteration self-consistency diagnostic. Basis: docs/orchestration/DETERMINATION-20260819-lanec-petclosure-is-legacy.md.
 %
-% Applied, and the treatment DIFFERS BY BUILD ON PURPOSE:
-%   paper_body.tex (external paper, paper build only) -- REMOVED, and said so in the
-%     prose. \dead{} is FORBIDDEN outside the note build and is checker-enforced, so an
-%     outward-facing retraction is remove-and-say-so, never a strike.
-%   sec_pet.tex:112 (note build only) -- STRUCK as $\sim$\,\dead{\SI{\petClosure}{\percent}}
-%     with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a
-%     current validation" label, matching \dead{\petRatio} in that same caption.
-%   (stale before 2026-10-03; was sec_pet.tex:112) There is no current location: commit
-%     95d03169 (2026-08-23) removed the struck \petClosure and \petRatio from sec_pet.tex
-%     rather than moving them, and app_history.tex does not carry them either. Measured
-%     2026-10-03: neither macro is used in any .tex file; only these definitions remain.
-%   CURRENT LOCATION, 2026-10-03 (later the same day): app_history.tex H.1
-%     (\label{app:history-errata}). The struck uses removed by 95d03169 are recovered there,
-%     as errata rows and as verbatim sentences from 95d03169^ in the H.1 context subsection:
-%     $\dead{\petRatio}$ (its row plus both recovered sentences that struck it),
-%     $\sim$\,\dead{\SI{\petClosure}{\percent}}
-%     and $\dead{\sim\SI{\petGbdtGap}{\percent}}$. The dated record above stands: these macros
-%     WERE unused from 2026-08-23 to 2026-10-03.
+% Applied, and the treatment DIFFERS BY BUILD ON PURPOSE: paper_body.tex (external paper, paper build only) -- REMOVED, and said so in the prose. \dead{} is FORBIDDEN outside the note build and is checker-enforced, so an outward-facing retraction is remove-and-say-so, never a strike. sec_pet.tex:112 (note build only) -- STRUCK as $\sim$\,\dead{\SI{\petClosure}{\percent}} with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a current validation" label, matching \dead{\petRatio} in that same caption. (stale before 2026-10-03; was sec_pet.tex:112) There is no current location: commit 95d03169 (2026-08-23) removed the struck \petClosure and \petRatio from sec_pet.tex rather than moving them, and app_history.tex does not carry them either. Measured 2026-10-03: neither macro is used in any .tex file; only these definitions remain. CURRENT LOCATION, 2026-10-03 (later the same day): app_history.tex H.1 (\label{app:history-errata}). The struck uses removed by 95d03169 are recovered there, as errata rows and as verbatim sentences from 95d03169^ in the H.1 context subsection: $\dead{\petRatio}$ (its row plus both recovered sentences that struck it), $\sim$\,\dead{\SI{\petClosure}{\percent}} and $\dead{\sim\SI{\petGbdtGap}{\percent}}$. The dated record above stands: these macros WERE unused from 2026-08-23 to 2026-10-03.
 %
-% THE MACRO IS MARKED, NOT RETIRED, AND THAT IS DELIBERATE: sec_pet.tex still references
-% it inside \dead{}, so deleting the definition would break the note build. [Stale before
-% 2026-10-03, for the same reason: no file references it, so the build no longer needs
-% the definition. It is left in place; retiring it is a separate decision.] [True again
-% from 2026-10-03: app_history.tex H.1 references it inside \dead{}, so the note build
-% needs the definition. Unused 2026-08-23 to 2026-10-03.] Its comment
-% now carries the same "niter=2 LEGACY, struck at use" marking as its two siblings --
-% which is precisely the marking whose ABSENCE made its status undetermined before.
+% THE MACRO IS MARKED, NOT RETIRED, AND THAT IS DELIBERATE: sec_pet.tex still references it inside \dead{}, so deleting the definition would break the note build. [Stale before 2026-10-03, for the same reason: no file references it, so the build no longer needs the definition. It is left in place; retiring it is a separate decision.] [True again from 2026-10-03: app_history.tex H.1 references it inside \dead{}, so the note build needs the definition. Unused 2026-08-23 to 2026-10-03.] Its comment now carries the same "niter=2 LEGACY, struck at use" marking as its two siblings -- which is precisely the marking whose ABSENCE made its status undetermined before.
 %
-% The prior argument is preserved because it was sound and is now superseded rather than
-% wrong: an ordinary-closure self-consistency check IS arguably a different object from an
-% absolute PET-vs-GBDT comparison, so the niter=2 / full-event-estimator / J21 grounds do
-% not obviously bite on it. That was an argument, not a ruling. The ruling supersedes it.
+% The prior argument is preserved because it was sound and is now superseded rather than wrong: an ordinary-closure self-consistency check IS arguably a different object from an absolute PET-vs-GBDT comparison, so the niter=2 / full-event-estimator / J21 grounds do not obviously bite on it. That was an argument, not a ruling. The ruling supersedes it.
 \newcommand{\petGbdtGap}{9}           % PET-vs-GBDT data-side gap (%); niter=2 LEGACY, struck at use
 \newcommand{\petTotalMedian}{15.10}   % historical recoil-PET candidate; QUARANTINED
 \newcommand{\petTotalTrace}{3.878e-38}% historical recoil-PET candidate; QUARANTINED
@@ -256,34 +118,17 @@
 \newcommand{\pcHasCloudBefore}{72.6}     % percent carrying a cloud before the fix (reco-loop-only fill)
 \newcommand{\pcEmptyCloud}{174}          % residual empty clouds out of 32.8M after the fix
 \newcommand{\pcMiss}{37.9}               % percent truth-only misses (acceptance gap, now cloud-filled)
-% Provenance for the whole pc* block, \pcHasCloud through \pcWoffset (added
-% 2026-08-11; corrected 2026-08-20). Every value in this block EXCEPT
-% \pcHasCloudBefore is read from the POST-FIX committed artifact
-%   nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json
-% \pcHasCloudBefore (72.6) is the ONE DOCUMENTED EXCEPTION: it is read from the
-% PRE-FIX artifact nd-unfolding/products/pet/pointcloud_projection_summary.json, as
-%   event_census.has_cloud / (has_cloud + empty_cloud)
-%     = 23849936 / (23849936 + 8999167) = 23849936 / 32849103 = 72.6045% -> 72.6
-% and it CANNOT be derived from the post-fix file: that file's
-% event_census.has_cloud is the repaired population (32848929 / 32849103 =
-% 99.99947% -> \pcHasCloud, with empty_cloud = 174 -> \pcEmptyCloud), and it records
-% no pre-fix has_cloud count anywhere. The earlier blanket wording here ("every
-% value below is read from the POST-FIX artifact") was therefore false for
-% \pcHasCloudBefore. BOTH files are git-tracked (`git ls-files` returns each), so
-% both are citable; the denominator 32849103 = event_census.N is identical in the
-% two, as is truth_only_miss = 12444811 -> \pcMiss (37.885%). The three marked
-% "derived" below had
-% no provenance recorded and were flagged as possibly unsourceable; they are sourced,
-% and the derivations are written out so the flag does not have to be re-raised.
+% Provenance for the whole pc* block, \pcHasCloud through \pcWoffset (added 2026-08-11; corrected 2026-08-20). Every value in this block EXCEPT
+% \pcHasCloudBefore is read from the POST-FIX committed artifact nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json
+% \pcHasCloudBefore (72.6) is the ONE DOCUMENTED EXCEPTION: it is read from the PRE-FIX artifact nd-unfolding/products/pet/pointcloud_projection_summary.json, as event_census.has_cloud / (has_cloud + empty_cloud) = 23849936 / (23849936 + 8999167) = 23849936 / 32849103 = 72.6045% -> 72.6 and it CANNOT be derived from the post-fix file: that file's event_census.has_cloud is the repaired population (32848929 / 32849103 = 99.99947% -> \pcHasCloud, with empty_cloud = 174 -> \pcEmptyCloud), and it records no pre-fix has_cloud count anywhere. The earlier blanket wording here ("every value below is read from the POST-FIX artifact") was therefore false for
+% \pcHasCloudBefore. BOTH files are git-tracked (`git ls-files` returns each), so both are citable; the denominator 32849103 = event_census.N is identical in the two, as is truth_only_miss = 12444811 -> \pcMiss (37.885%). The three marked "derived" below had no provenance recorded and were flagged as possibly unsourceable; they are sourced, and the derivations are written out so the flag does not have to be re-raised.
 \newcommand{\pcCloudFull}{0.5}           % derived: max |pet_cloud_hascloud/pet_stored_full - 1| over the 7 projection_eavail bins = 0.4498% -> "<~0.5% in every bin" (summary regenerated 2026-09-23, job 58796643, after the ISSUE-30 fix; 0.4555% before it)
 \newcommand{\pcEavailWithin}{98.78}      % eavail_validation.frac_within = 0.9878386902659749
 \newcommand{\pcEavailMean}{-6.4}         % derived: eavail_validation.mean = -0.006422885338877497 GeV = -6.423 MeV
 \newcommand{\pcSaturated}{2.31}          % frac_saturated = 0.023074359593276236
 \newcommand{\pcSatDeficit}{-35}          % eavail_bias_vs_nhad["12 (sat)"].median = -0.035492860794067216 GeV
 \newcommand{\pcWoffset}{0.96}            % derived: W_validation.median = 0.9579842725967493 GeV. NB the prose in
-                                         % nd-unfolding/pet/POINTCLOUD_PROJECTION.md quotes the PRE-fix +0.9604 GeV;
-                                         % both round to 0.96 at the printed precision, so the printed value stands,
-                                         % but cite the fullcloud artifact and not that narrative.
+                                         % nd-unfolding/pet/POINTCLOUD_PROJECTION.md quotes the PRE-fix +0.9604 GeV; both round to 0.96 at the printed precision, so the printed value stands, but cite the fullcloud artifact and not that narrative.
 
 % --- extended fiducial phase space (historical fps* macro names retained for compatibility) ---
 \newcommand{\fpsSigma}{4.502e-38}     % extended-fiducial total, cm^2/nucleon
@@ -291,92 +136,23 @@
                                       % definition is not established (RE2-PARTC-REPORT.md sec. 4: 4.502/3.0730 - 1 = 46.50 %)
 \newcommand{\fpsAnchor}{0.57}         % median anchor deviation in published cells (%)
 
-% --- unbinned negative-weight background subtraction (App.~negweight) ---
-% NB: the 2D totals/ratios below are the FAST hist-estimator method comparison.
-% Provenance, re-established 2026-08-20 (all Slurm times PACIFIC -- `sacct` on this
-% cluster prints local time, so reading its stamps as UTC manufactures a 7-hour
-% offset):
-%   * They were produced INTERACTIVELY on 2026-07-07 at 19:33 PDT, inside
-%     allocation 55665504 (`claude-hold`, urgent_milan_ss11, 256 CPUs,
-%     19:15:36-22:15:38 PDT, State=TIMEOUT). Witnesses, both under
-%     2d-unfolding/HANDOFF_bkg_negweight/runs/: ia_purity_seed1.log
-%     ("[CHECK] Total xsec ... 3.073e-38") -> 2d_xsec_purity_seed1_hist5.root, and
-%     ia_negweight_seed1.log ("... 3.069e-38") -> 2d_xsec_negweight_seed1_hist5.root,
-%     both file-stamped 2026-07-07 19:33.
-%   * CORRECTION: an earlier version of this comment credited jobid 55663097. That
-%     job (`bkgnw_negweight_s1`) was CANCELLED before it ever started -- sacct gives
-%     State="CANCELLED by 112498", Start=None, Elapsed=00:00:00 -- and produced
-%     NOTHING. Do not cite it as the source of any number here.
+% --- unbinned negative-weight background subtraction (App.~negweight) --- NB: the 2D totals/ratios below are the FAST hist-estimator method comparison. Provenance, re-established 2026-08-20 (all Slurm times PACIFIC -- `sacct` on this cluster prints local time, so reading its stamps as UTC manufactures a 7-hour offset):
+% * They were produced INTERACTIVELY on 2026-07-07 at 19:33 PDT, inside allocation 55665504 (`claude-hold`, urgent_milan_ss11, 256 CPUs, 19:15:36-22:15:38 PDT, State=TIMEOUT). Witnesses, both under 2d-unfolding/HANDOFF_bkg_negweight/runs/: ia_purity_seed1.log ("[CHECK] Total xsec ... 3.073e-38") -> 2d_xsec_purity_seed1_hist5.root, and ia_negweight_seed1.log ("... 3.069e-38") -> 2d_xsec_negweight_seed1_hist5.root, both file-stamped 2026-07-07 19:33.
+% * CORRECTION: an earlier version of this comment credited jobid 55663097. That job (`bkgnw_negweight_s1`) was CANCELLED before it ever started -- sacct gives State="CANCELLED by 112498", Start=None, Elapsed=00:00:00 -- and produced NOTHING. Do not cite it as the source of any number here.
 %
-% DO NOT PERFORM THE SWAP the earlier version of this comment instructed
-% ("swap to the exact-estimator matched pair ... when those land"). It is stale AND
-% destructive:
-%   * The exact pair DID land, on 2026-07-08: 55667224 `bkgnw_exact_purity_s1`
-%     COMPLETED 21:48:42 PDT -> runs/2d_xsec_purity_seed1_exact5.root, total
-%     3.073e-38; and 55667225 `bkgnw_exact_negweight_s1` COMPLETED 23:41:50 PDT ->
-%     runs/2d_xsec_negweight_seed1_exact5.root, total 4.148e-35 (both read from the
-%     jobs' own .out files in that runs/ directory).
-%   * Performing the swap would therefore replace \nwSigNeg = 3.0687e-38 by
-%     4.148e-35 -- a ~1000x blow-up. That is not a better estimator; it IS the
-%     \nwSpRawMax pathology (raw negative sample weights on the exact backend),
-%     and the swap would seat it next to \sigTwoD as though it were a cross section.
-%   * The usable exact-backend product is instead the Stay-Positive REFINED run,
-%     jobid 55713526 (`bkgnw_exact_refined_s1`, COMPLETED 2026-07-10 04:59:26 PDT),
-%     runs/2d_xsec_refined_seed1_exact5.root, total 3.069e-38 -- the run that
-%     \nwSpMedian / \nwSpWithin / \nwSpRawMax below already summarize, and which
-%     this file otherwise never names. Any future move of \nwSigNeg to the exact
-%     backend goes through that refined run, never through the raw negweight arm.
+% DO NOT PERFORM THE SWAP the earlier version of this comment instructed ("swap to the exact-estimator matched pair ... when those land"). It is stale AND destructive:
+% * The exact pair DID land, on 2026-07-08: 55667224 `bkgnw_exact_purity_s1` COMPLETED 21:48:42 PDT -> runs/2d_xsec_purity_seed1_exact5.root, total 3.073e-38; and 55667225 `bkgnw_exact_negweight_s1` COMPLETED 23:41:50 PDT -> runs/2d_xsec_negweight_seed1_exact5.root, total 4.148e-35 (both read from the jobs' own .out files in that runs/ directory).
+% * Performing the swap would therefore replace \nwSigNeg = 3.0687e-38 by 4.148e-35 -- a ~1000x blow-up. That is not a better estimator; it IS the
+% \nwSpRawMax pathology (raw negative sample weights on the exact backend), and the swap would seat it next to \sigTwoD as though it were a cross section.
+% * The usable exact-backend product is instead the Stay-Positive REFINED run, jobid 55713526 (`bkgnw_exact_refined_s1`, COMPLETED 2026-07-10 04:59:26 PDT), runs/2d_xsec_refined_seed1_exact5.root, total 3.069e-38 -- the run that
+% \nwSpMedian / \nwSpWithin / \nwSpRawMax below already summarize, and which this file otherwise never names. Any future move of \nwSigNeg to the exact backend goes through that refined run, never through the raw negweight arm.
 %
-% UNBACKED STATUS (verified 2026-08-20): none of these artifacts is under version
-% control -- .gitignore:2 is a blanket `*.root`, and `git ls-files` returns ZERO
-% .root files anywhere under 2d-unfolding/, including all eight ROOTs in
-% HANDOFF_bkg_negweight/runs/ and the 51 bootstrap / 187+CV universe replicas under
-% uq/negweight_boot/ and uq/negweight_uni/ that back \nwSystRatio and \nwStatRatio.
-% No docs/orchestration/RUNS.tsv row and no VALIDATION_LEDGER.md row cites any of
-% the jobids above or any *_hist5.root / *_exact5.root path (the negweight rows in
-% both files belong to the separate N-D `negweight-refined` footing lane). HPSS
-% coverage is NOT CONFIRMED HERE: `hsi` cannot authenticate non-interactively from
-% this node. So the App.~negweight numbers rest on untracked scratch products plus
-% their Slurm/interactive logs, and a durability step is owed before they are quoted
-% as live.
+% UNBACKED STATUS (verified 2026-08-20): none of these artifacts is under version control -- .gitignore:2 is a blanket `*.root`, and `git ls-files` returns ZERO .root files anywhere under 2d-unfolding/, including all eight ROOTs in HANDOFF_bkg_negweight/runs/ and the 51 bootstrap / 187+CV universe replicas under uq/negweight_boot/ and uq/negweight_uni/ that back \nwSystRatio and \nwStatRatio. No docs/orchestration/RUNS.tsv row and no VALIDATION_LEDGER.md row cites any of the jobids above or any *_hist5.root / *_exact5.root path (the negweight rows in both files belong to the separate N-D `negweight-refined` footing lane). HPSS coverage is NOT CONFIRMED HERE: `hsi` cannot authenticate non-interactively from this node. So the App.~negweight numbers rest on untracked scratch products plus their Slurm/interactive logs, and a durability step is owed before they are quoted as live.
 %
-% DURABILITY STEP DONE 2026-08-21, and the paragraph above is kept rather than
-% rewritten because two of its sentences are now FALSE and the falsehood is
-% instructive. Corrections, in order of how badly each misleads:
-%   * "HPSS coverage is NOT CONFIRMED HERE: `hsi` cannot authenticate
-%     non-interactively from this node" is WRONG. `hsi` authenticated from login34
-%     on the first attempt. That sentence is the whole reason this file recorded
-%     coverage as unknown, and it was a claim about an instrument that nobody had
-%     re-run. Coverage is now confirmed: all 247 products are on tape at
-%     mnv-negweight-historical-20260821, server-side digest-verified,
-%     `hashverify -R` rc 0 with 5 of 5 `(md5) OK`, and RESTORED end to end --
-%     247 of 247 recovered, digest-matched and reopened as ROOT files.
-%   * "a durability step is owed before they are quoted as live" is DISCHARGED, on
-%     Joseph's ruling, which also fixed its shape: preserve, do NOT git-track the
-%     ROOT population, do NOT rerun the study. So the FIRST sentence stays true --
-%     nothing here is under version control and .gitignore:2 is untouched, by
-%     instruction. Untracked is no longer the same as unbacked.
-%   * "No RUNS.tsv row ... cites any of the jobids above" was true and is now half
-%     false: a row cites the DURABILITY run. No row yet cites the 2026-07
-%     PRODUCING jobs, which is a smaller residual and is left named rather than
-%     quietly closed.
-% AND A CORRECTION TO THE PROVENANCE COMMENT ABOVE, measured from `sacct` on
-% 2026-08-21: the jobids `bkg_negweight_state.md` credits for the bootstrap and
-% universe replicas produced NOTHING. Arrays 55668087 and 55668380 and job 55668400
-% all FAILED or were CANCELLED. What ran was 50 separate submissions after twelve
-% failures (55702331..55786530), 400 submissions yielding 187 distinct universe
-% outputs (55677842..55792262), and 55677844 for the CV. The two covariance rollups
-% behind \nwSystRatio and \nwStatRatio were not batch products at all -- they were
-% made interactively in hold allocation 55795538, 42 s and 65 s after the batch
-% attempt was cancelled. That job list was a LAUNCH PLAN read as a record; the same
-% trap as the CANCELLED 55663097 already corrected above, one level out.
-% Receipt: docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md
-% Manifest: docs/orchestration/state/negweight-hpss-durability-20260821.json
-% THESE PRODUCTS ARE HISTORICAL DIAGNOSTIC EVIDENCE. Preservation does not make
-% negative-weight injection a supported production path, does not revive the
-% archived pre-freeze arm, and changes no default: the headline 2D path is the
-% binned per-reco-bin purity weight. Do not let a future edit read the archive's
-% existence as authorization to run or adopt that arm.
+% DURABILITY STEP DONE 2026-08-21, and the paragraph above is kept rather than rewritten because two of its sentences are now FALSE and the falsehood is instructive. Corrections, in order of how badly each misleads:
+% * "HPSS coverage is NOT CONFIRMED HERE: `hsi` cannot authenticate non-interactively from this node" is WRONG. `hsi` authenticated from login34 on the first attempt. That sentence is the whole reason this file recorded coverage as unknown, and it was a claim about an instrument that nobody had re-run. Coverage is now confirmed: all 247 products are on tape at mnv-negweight-historical-20260821, server-side digest-verified, `hashverify -R` rc 0 with 5 of 5 `(md5) OK`, and RESTORED end to end -- 247 of 247 recovered, digest-matched and reopened as ROOT files.
+% * "a durability step is owed before they are quoted as live" is DISCHARGED, on Joseph's ruling, which also fixed its shape: preserve, do NOT git-track the ROOT population, do NOT rerun the study. So the FIRST sentence stays true -- nothing here is under version control and .gitignore:2 is untouched, by instruction. Untracked is no longer the same as unbacked.
+% * "No RUNS.tsv row ... cites any of the jobids above" was true and is now half false: a row cites the DURABILITY run. No row yet cites the 2026-07 PRODUCING jobs, which is a smaller residual and is left named rather than quietly closed. AND A CORRECTION TO THE PROVENANCE COMMENT ABOVE, measured from `sacct` on 2026-08-21: the jobids `bkg_negweight_state.md` credits for the bootstrap and universe replicas produced NOTHING. Arrays 55668087 and 55668380 and job 55668400 all FAILED or were CANCELLED. What ran was 50 separate submissions after twelve failures (55702331..55786530), 400 submissions yielding 187 distinct universe outputs (55677842..55792262), and 55677844 for the CV. The two covariance rollups behind \nwSystRatio and \nwStatRatio were not batch products at all -- they were made interactively in hold allocation 55795538, 42 s and 65 s after the batch attempt was cancelled. That job list was a LAUNCH PLAN read as a record; the same trap as the CANCELLED 55663097 already corrected above, one level out. Receipt: docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md Manifest: docs/orchestration/state/negweight-hpss-durability-20260821.json THESE PRODUCTS ARE HISTORICAL DIAGNOSTIC EVIDENCE. Preservation does not make negative-weight injection a supported production path, does not revive the archived pre-freeze arm, and changes no default: the headline 2D path is the binned per-reco-bin purity weight. Do not let a future edit read the archive's existence as authorization to run or adopt that arm.
 \newcommand{\nwSigPur}{3.0727e-38}    % 2D total sigma, binned purity (hist), cm^2/nucleon
 \newcommand{\nwSigNeg}{3.0687e-38}    % 2D total sigma, negative-weight (hist), cm^2/nucleon
 \newcommand{\nwRatioTot}{0.9987}      % negweight/purity total ratio
@@ -389,20 +165,11 @@
 \newcommand{\nwToyPur}{6.7}           % purity  median rel-err vs (D-B)/S (%)
 \newcommand{\nwToyBias}{10.9}         % no-subtraction contamination bias (%)
 \newcommand{\nwToySeed}{0.3}          % negweight seed-to-seed spread (%)
-% covariance propagation (Phase D: lgbm, 187-universe #13-active syst; matched 50-seed bootstrap stat)
-% syst: sqrt-trace neg 2.9828e-39 / pur 3.0242e-39; stat: neg 1.7260e-40 / pur(50) 1.7576e-40
+% covariance propagation (Phase D: lgbm, 187-universe #13-active syst; matched 50-seed bootstrap stat) syst: sqrt-trace neg 2.9828e-39 / pur 3.0242e-39; stat: neg 1.7260e-40 / pur(50) 1.7576e-40
 \newcommand{\nwSystRatio}{0.986}      % negweight/purity systematic-covariance sqrt-trace ratio (187 universes)
 \newcommand{\nwStatRatio}{0.982}      % negweight/purity statistical-covariance sqrt-trace ratio (matched 50-seed bootstrap)
-% DERIVED DESCENDANTS (OI-146, added 2026-08-21). app_negweight.tex used to quote these as the bare
-% literals 1.4 % and 1.8 %. They are 1 - the two ratios above, so a retraction of a PARENT did not
-% reach them: a retraction propagates by string match and `1.4` does not string-match `0.986`. The
-% 6c gate struck all 16 \nw* macros and could not touch these, because the sentence carrying them
-% contains no \nw* macro at all. Defining them from their parents makes that structurally impossible
-% to repeat -- change or strike a parent and the descendant follows.
-% \fpeval is a LaTeX kernel command (2020-10 onward) and siunitx accepts its expansion as a number;
-% both were verified by building, not assumed.
-% NOTE the \nwRmsBin COLLISION that makes this easy to mis-audit: \nwRmsBin is ALSO 1.4, so grepping
-% `1.4` in this appendix finds two different quantities sharing one value.
+% DERIVED DESCENDANTS (OI-146, added 2026-08-21). app_negweight.tex used to quote these as the bare literals 1.4 % and 1.8 %. They are 1 - the two ratios above, so a retraction of a PARENT did not reach them: a retraction propagates by string match and `1.4` does not string-match `0.986`. The 6c gate struck all 16 \nw* macros and could not touch these, because the sentence carrying them contains no \nw* macro at all. Defining them from their parents makes that structurally impossible to repeat -- change or strike a parent and the descendant follows.
+% \fpeval is a LaTeX kernel command (2020-10 onward) and siunitx accepts its expansion as a number; both were verified by building, not assumed. NOTE the \nwRmsBin COLLISION that makes this easy to mis-audit: \nwRmsBin is ALSO 1.4, so grepping `1.4` in this appendix finds two different quantities sharing one value.
 \newcommand{\nwSystResid}{\fpeval{round((1-\nwSystRatio)*100,1)}}   % = 1.4; systematic residual
 \newcommand{\nwStatResid}{\fpeval{round((1-\nwStatRatio)*100,1)}}   % = 1.8; statistical residual
 % Stay-Positive refinement on the exact (gradient-boosted) backend (seed1, 5-iter, vs exact purity)
@@ -411,42 +178,20 @@
 \newcommand{\nwSpRawMax}{5\times10^{4}} % raw-negweight/purity worst-bin blow-up, exact estimator
 
 % =====================================================================================
-% SCALAR-5D COVARIANCE: ADOPTED UNDER THE SPEC 6.4 EXCEPTION, 2026-09-20 (Joseph).
-% Record: docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md
-% These are MEASUREMENTS, not caveats, and Joseph required them to travel with every
-% deliverable built from the adopted digest. Each is quoted from a committed receipt,
-% named beside it, so a reader can re-derive rather than take it on trust.
+% SCALAR-5D COVARIANCE: ADOPTED UNDER THE SPEC 6.4 EXCEPTION, 2026-09-20 (Joseph). Record: docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md These are MEASUREMENTS, not caveats, and Joseph required them to travel with every deliverable built from the adopted digest. Each is quoted from a committed receipt, named beside it, so a reader can re-derive rather than take it on trust.
 \newcommand{\zcvDigest}{3d7465f6}        % first 8 of sha256 3d7465f66fbe66b0dfcf...918c5
 \newcommand{\zprojDigest}{835828bf}      % M1 (Eavail,W) publication product, 42 cells
 \newcommand{\zprojCells}{42}
-% (1) The cause-3 grade. GRADE-20260920-cause3-two-member.json, branch 5 NOT MET - PER-BIN,
-%     on a FULLY VALID two-member campaign (all nine validity fields passed).
+% (1) The cause-3 grade. GRADE-20260920-cause3-two-member.json, branch 5 NOT MET - PER-BIN, on a FULLY VALID two-member campaign (all nine validity fields passed).
 \newcommand{\sprojMeasured}{6.145}       % percent; the correlation-sensitive leg
 \newcommand{\sprojBound}{5}              % percent; cause3_corr, fixed BEFORE production
 \newcommand{\saggMeasured}{0.471}        % percent; within bound
 \newcommand{\smedMeasured}{0.485}        % percent; within bound
-% (2) The floor diagnostic. EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md.
-%     Seed effect measured with THROWS HELD FIXED -- flat in N, so not sampling noise.
-%     CAUTION the +/- is scatter across throw subsets at ONE seed pair (1000 vs 2200);
-%     the width of the seed-pair distribution is UNMEASURED. Do not read it as the
-%     uncertainty on the seed effect, and note s_proj is a MAXIMUM over the offset set.
+% (2) The floor diagnostic. EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md. Seed effect measured with THROWS HELD FIXED -- flat in N, so not sampling noise. CAUTION the +/- is scatter across throw subsets at ONE seed pair (1000 vs 2200); the width of the seed-pair distribution is UNMEASURED. Do not read it as the uncertainty on the seed effect, and note s_proj is a MAXIMUM over the offset set.
 %
-%     CAUTION -- SCOPE, ADDED 2026-09-21 WHEN A MANUSCRIPT REVIEW FOUND THE NOTE, PRIMER AND PAPER
-%     ALL ASSERTING THE INFINITE-ENSEMBLE LIMIT FROM THESE SEVEN POINTS. Read the operand
-%     before quoting any of them:
-%       * the SEVEN s_proj measurements are ONE seed pair (offsets 0 and 1200) and the
-%         40/80-throw points are NESTED SUBSETS of the same 160 throws
-%         (state/SEED-EFFECT-20260920.json, `seed_effect_same_throws`: Q1-Q4 at N=40,
-%         HA/HB at N=80, plus the graded full-N value). So "flat in N" is a WITHIN-ENSEMBLE
-%         statement over a factor of four, not a statement about arbitrary N. The evidence
-%         file's own section 5 ("A LARGER ENSEMBLE WOULD NOT CHANGE THIS", "there is no
-%         ensemble size at which it falls under 5%") states more than the seven points
-%         support; the note/primer/paper now report the narrower conclusion, and repeating
-%         that narrative is not additional evidence for it.
-%       * the FLOOR was measured at N=40 and N=80 ONLY. \floorExponent is therefore a
-%         TWO-POINT exponent, log(20.91/7.57)/log(2) = 1.4657 -> 1.467, and there is NO
-%         floor measurement at N=160. Do not write "over the same range" against a seed
-%         effect quoted at 40/80/160.
+% CAUTION -- SCOPE, ADDED 2026-09-21 WHEN A MANUSCRIPT REVIEW FOUND THE NOTE, PRIMER AND PAPER ALL ASSERTING THE INFINITE-ENSEMBLE LIMIT FROM THESE SEVEN POINTS. Read the operand before quoting any of them:
+% * the SEVEN s_proj measurements are ONE seed pair (offsets 0 and 1200) and the 40/80-throw points are NESTED SUBSETS of the same 160 throws (state/SEED-EFFECT-20260920.json, `seed_effect_same_throws`: Q1-Q4 at N=40, HA/HB at N=80, plus the graded full-N value). So "flat in N" is a WITHIN-ENSEMBLE statement over a factor of four, not a statement about arbitrary N. The evidence file's own section 5 ("A LARGER ENSEMBLE WOULD NOT CHANGE THIS", "there is no ensemble size at which it falls under 5%") states more than the seven points support; the note/primer/paper now report the narrower conclusion, and repeating that narrative is not additional evidence for it.
+% * the FLOOR was measured at N=40 and N=80 ONLY. \floorExponent is therefore a TWO-POINT exponent, log(20.91/7.57)/log(2) = 1.4657 -> 1.467, and there is NO floor measurement at N=160. Do not write "over the same range" against a seed effect quoted at 40/80/160.
 \newcommand{\seedEffect}{6.04}           % percent, mean over all SEVEN points (6 subsets + full N=160)
 \newcommand{\seedEffectNforty}{6.02}     % percent, mean of the FOUR disjoint N=40 subsets:
                                          % (6.64025+5.86403+5.44858+6.14425)/4 = 6.0243
@@ -454,34 +199,19 @@
                                          % (6.28872+5.75774)/2 = 6.0232
 \newcommand{\seedEffectScatter}{0.39}    % percent, subset scatter at ONE seed pair
 \newcommand{\seedEffectExponent}{0.000}  % RETIRED FROM PROSE 2026-10-08 (PRD release audit ea939701, U03/G5): printed as a
-                                         % "fitted exponent" over N = 40, 80, 160, but a least-squares fit of log s on log N
-                                         % to the three means gives p = -0.0144 (-0.0130 on all seven points); 0.000 is the
-                                         % two-point 40->80 value. Calculation: docs/publication/corrections-20261008/
-                                         % seed_effect_exponent.py. Kept defined only so older builds resolve; no tex file uses it.
+                                         % "fitted exponent" over N = 40, 80, 160, but a least-squares fit of log s on log N to the three means gives p = -0.0144 (-0.0130 on all seven points); 0.000 is the two-point 40->80 value. Calculation: docs/publication/corrections-20261008/ seed_effect_exponent.py. Kept defined only so older builds resolve; no tex file uses it.
 \newcommand{\floorExponent}{1.467}       % the resampling floor, N = 40 -> 80 ONLY: two-point
 \newcommand{\floorNforty}{20.91}         % percent, 12 disjoint pairs
 \newcommand{\floorNeighty}{7.57}         % percent, 2 pairs
-% (3) Five of 45 bands are seed-pinned, so the effect above is measured on the
-%     other forty only. NOT a lower bound -- that inference was withdrawn
-%     2026-09-20 on the third-lane verification's P1; s_proj is a MAXIMUM over a
-%     functional set, not a sum of nonnegative component magnitudes.
-%     EVIDENCE-20260919-lateral-bands-are-seed-pinned.md;
-%     CORRECTION-20260920-lower-bound-inference-withdrawn.md.
+% (3) Five of 45 bands are seed-pinned, so the effect above is measured on the other forty only. NOT a lower bound -- that inference was withdrawn 2026-09-20 on the third-lane verification's P1; s_proj is a MAXIMUM over a functional set, not a sum of nonnegative component magnitudes. EVIDENCE-20260919-lateral-bands-are-seed-pinned.md; CORRECTION-20260920-lower-bound-inference-withdrawn.md.
 \newcommand{\pinnedBandsSqrtTr}{26.0}    % percent of sqrt(Tr C_Z)
 \newcommand{\pinnedBandsTrace}{6.75}     % percent of the trace
-% (4) The seed also moves the CENTRAL values -- as a fraction of the QUOTED uncertainty.
-%     state/CENTRAL-VALUE-VS-SIGMA-20260920.json.
+% (4) The seed also moves the CENTRAL values -- as a fraction of the QUOTED uncertainty. state/CENTRAL-VALUE-VS-SIGMA-20260920.json.
 \newcommand{\cvMoveProjMax}{0.761}       % percent, max over the 43 functionals
 \newcommand{\cvMoveOverSigmaMax}{6.02}   % percent of its own sigma -- the deciding ratio
 \newcommand{\cvMoveOverSigmaMed}{1.06}   % percent of sigma, median
 \newcommand{\cvMoveBinOverSigmaMax}{49.8}% percent of sigma, worst SINGLE 5D bin
-% (5) Cause 7's magnitude: Z's OWN lateral counterfactual, sum_A L_active vs sum_A L_support.
-%     VALIDATION_LEDGER.md VL144; reproduced independently by a third lane 2026-09-20.
-%     CAUTION the -0.0288% is a change in the lateral block's SQUARE-ROOT TRACE. It is
-%     NOT a bound on any individual bin and NOT a bound on the complete covariance.
-%     Joseph 2026-09-19 section 3: small aggregate variance share does NOT make a bin
-%     irrelevant to a quoted result -- so the FULL range is the report and the top-1%
-%     range is a subset of it, never a substitute.
+% (5) Cause 7's magnitude: Z's OWN lateral counterfactual, sum_A L_active vs sum_A L_support. VALIDATION_LEDGER.md VL144; reproduced independently by a third lane 2026-09-20. CAUTION the -0.0288% is a change in the lateral block's SQUARE-ROOT TRACE. It is NOT a bound on any individual bin and NOT a bound on the complete covariance. Joseph 2026-09-19 section 3: small aggregate variance share does NOT make a bin irrelevant to a quoted result -- so the FULL range is the report and the top-1% range is a subset of it, never a substitute.
 \newcommand{\latTraceMove}{-0.0288}      % percent, sqrt-trace of the lateral block
 \newcommand{\latBins}{10\,694}           % reported bins carrying the per-bin ratios
 \newcommand{\latRatioMin}{0.177}         % per-bin sqrt(diag_active/diag_support), all bins
@@ -491,13 +221,7 @@
 \newcommand{\latTopVarShare}{74.11}      % percent of total support variance in that top 1%
 
 % =====================================================================================
-% GENERATOR-CONTEXT AND FIG. 2 RATIOS (paper Sec. V), 2026-10-08 (PRD release audit ea939701, G11).
-% These were literals in paper_body.tex that the release check (fig_numbers.py) compared only against its
-% own hard-coded copy. They are macros now, and fig_numbers.py --values reads them from this file, so an
-% edit here is checked against the released figure arrays. Values unchanged; computed values in the release
-% log (fig_numbers.py): integrated data/prediction 1.0676-1.3859; 2.2<=W<3.0 1.1108-1.1299; corner
-% 1.1386-1.1601; max corner/total deviation 6.65%; GiBUU 1.6070 / 1.3859; Fig. 2 ratios 12.35-30.46% and
-% 22.64-30.58%; GENIE at 1.4<=W<1.8 above the data by 9.4% (CV) and 11.8% (+MEC).
+% GENERATOR-CONTEXT AND FIG. 2 RATIOS (paper Sec. V), 2026-10-08 (PRD release audit ea939701, G11). These were literals in paper_body.tex that the release check (fig_numbers.py) compared only against its own hard-coded copy. They are macros now, and fig_numbers.py --values reads them from this file, so an edit here is checked against the released figure arrays. Values unchanged; computed values in the release log (fig_numbers.py): integrated data/prediction 1.0676-1.3859; 2.2<=W<3.0 1.1108-1.1299; corner 1.1386-1.1601; max corner/total deviation 6.65%; GiBUU 1.6070 / 1.3859; Fig. 2 ratios 12.35-30.46% and 22.64-30.58%; GENIE at 1.4<=W<1.8 above the data by 9.4% (CV) and 11.8% (+MEC).
 \newcommand{\genRatioTotLo}{1.07}     % integrated data/prediction, all four generators
 \newcommand{\genRatioTotHi}{1.39}
 \newcommand{\genRatioWhiLo}{1.11}     % 2.2 <= W < 3.0 GeV, GENIE CV, GENIE+MEC, NuWro

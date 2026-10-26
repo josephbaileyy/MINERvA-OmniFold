@@ -4,86 +4,30 @@
 \subsection{Algorithm}
 \label{sec:method-algo}
 
-OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated
-reweighting with machine-learned likelihood ratios, operating on per-event
-observables rather than on a fixed histogram binning. Each iteration has two steps:
+OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated reweighting with machine-learned likelihood ratios, operating on per-event observables rather than on a fixed histogram binning. Each iteration has two steps:
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Step 1 (detector space).} A classifier separates measured
-        data from reconstructed simulation weighted by the current
-        push-weights. Its calibrated output $p$ gives the likelihood-ratio
-        reweight $w = p/(1-p)$ for each reconstructed simulated event.
-        Each simulated event is a (truth, reco) pair, allowing the weight to
-        be \emph{pulled back} directly to its truth record. Truth events
-        without a reconstructed partner (``misses'') receive step-1 weights
-        from a regressor trained on the reconstructed subsample,
-        $w(\mathrm{truth\ features})$. This native OmniFold acceptance
-        treatment requires no separate efficiency correction.
-  \item \textbf{Step 2 (truth space).} A second classifier separates the
-        original truth-level simulation from the same sample carrying the
-        pulled-back step-1 weights. Its smooth truth-space reweight becomes
-        the next iteration's push-weight.
+  \item \textbf{Step 1 (detector space).} A classifier separates measured data from reconstructed simulation weighted by the current push-weights. Its calibrated output $p$ gives the likelihood-ratio reweight $w = p/(1-p)$ for each reconstructed simulated event. Each simulated event is a (truth, reco) pair, allowing the weight to be \emph{pulled back} directly to its truth record. Truth events without a reconstructed partner (``misses'') receive step-1 weights from a regressor trained on the reconstructed subsample, $w(\mathrm{truth\ features})$. This native OmniFold acceptance treatment requires no separate efficiency correction.
+  \item \textbf{Step 2 (truth space).} A second classifier separates the original truth-level simulation from the same sample carrying the pulled-back step-1 weights. Its smooth truth-space reweight becomes the next iteration's push-weight.
 \end{enumerate}
-After $n$ iterations, the push-weights define an efficiency-corrected
-truth-level reweighted simulation ensemble. Histogramming this ensemble in any binning
-chosen afterwards gives the unfolded spectrum. The iteration count and
-learner capacity regularize the unfold.
+After $n$ iterations, the push-weights define an efficiency-corrected truth-level reweighted simulation ensemble. Histogramming this ensemble in any binning chosen afterwards gives the unfolded spectrum. The iteration count and learner capacity regularize the unfold.
 
-% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's training details, moved with their
-% sources: docs/orchestration/state/2d-closeout/stageF/methods/M-TRAINING-DETAILS.md (unbinned_unfolding/python/
-% omnifold.py:203-272; nd-unfolding/omnifold_nn_core.py:145-155, :225, :249-266; 2d-unfolding/unfold_2d_omnifold_unbinned.py:412-462).
-\paragraph{Training details.}
-Each classifier is trained on the full sample whose weights it then sets,
-with no held-out or cross-fitted split and no early stopping. The two classes
-keep their physical weights, with no class balancing and no renormalization
-between iterations, so the learned ratio $p/(1-p)$, with $p$ restricted to
-$[10^{-6},1-10^{-6}]$, carries the normalization. Truth events without a
-reconstructed partner receive the prediction of an unweighted regressor of the
-step-1 weight on the truth observables. In the refined configurations, a
-classifier separating positive from negative weights, trained with $|w|$, gives
-each event the weight $|w|\max(0,2g-1)$. No effective sample size of the
-unfolded ensemble is computed.
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's training details, moved with their sources: docs/orchestration/state/2d-closeout/stageF/methods/M-TRAINING-DETAILS.md (unbinned_unfolding/python/ omnifold.py:203-272; nd-unfolding/omnifold_nn_core.py:145-155, :225, :249-266; 2d-unfolding/unfold_2d_omnifold_unbinned.py:412-462).
+\paragraph{Training details.} Each classifier is trained on the full sample whose weights it then sets, with no held-out or cross-fitted split and no early stopping. The two classes keep their physical weights, with no class balancing and no renormalization between iterations, so the learned ratio $p/(1-p)$, with $p$ restricted to $[10^{-6},1-10^{-6}]$, carries the normalization. Truth events without a reconstructed partner receive the prediction of an unweighted regressor of the step-1 weight on the truth observables. In the refined configurations, a classifier separating positive from negative weights, trained with $|w|$, gives each event the weight $|w|\max(0,2g-1)$. No effective sample size of the unfolded ensemble is computed.
 
-\paragraph{Background subtraction.}
+\paragraph{Background subtraction.} In the binned purity subtraction, all selected data events enter step 1; none is discarded and no negative-weight events are injected. Each receives a reco-bin \emph{purity} weight. The POT-scaled background prediction includes genuine backgrounds and out-of-phase-space signal (\S\ref{sec:selection}) and is binned on the reconstructed analysis grid. A data event in reco bin $b$ receives
 % Accuracy fix (unscored; director ruling 2026-10-26): the heading and the first sentence describe the binned purity
 % subtraction, which is not the treatment of every quoted result (scope at the end of this paragraph). Mechanism: the
 % drivers' --bkg-mode purity path (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10).
-In the binned purity subtraction, all selected data events enter step 1; none is discarded and no
-negative-weight events are injected. Each receives a reco-bin \emph{purity}
-weight. The POT-scaled background prediction includes genuine backgrounds
-and out-of-phase-space signal (\S\ref{sec:selection}) and is binned on the
-reconstructed analysis grid. A data event in reco bin $b$ receives
 \begin{equation*}
   w_{\mathrm{pur}}(b) \;=\;
   \max\!\bigl(0,\; N_{\mathrm{data}}(b) - N_{\mathrm{bkg}}(b)\bigr)
   \big/ N_{\mathrm{data}}(b),
 \end{equation*}
-the predicted signal purity, floored at zero in the rare bins where the
-background prediction exceeds the data. The step-1 classifier retains the
-full unbinned kinematics. Binning enters only through this multiplicative
-correction, an ${\sim}\SI{3}{\percent}$ effect overall, largest where
-backgrounds concentrate (\S\ref{sec:selection}).
+the predicted signal purity, floored at zero in the rare bins where the background prediction exceeds the data. The step-1 classifier retains the full unbinned kinematics. Binning enters only through this multiplicative correction, an ${\sim}\SI{3}{\percent}$ effect overall, largest where backgrounds concentrate (\S\ref{sec:selection}).
 
-This correction is, by design, the one place the analysis binning enters
-before the final histogramming; other experiments' treatments are summarized in
-\S\ref{sec:intro}. At the sub-percent genuine-background scale, a per-reco-bin
-weight is a conservative middle ground. A fully unbinned alternative
-injects negatively weighted background simulation on the measured side,
-targeting the identical background-subtracted density $(D-B)/S$. It
-reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total
-2D cross section and its systematic and statistical covariances to within
-\SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning
-dependence and suits the extended-fiducial analysis, where backgrounds are
-larger. The quoted 2D result and its covariance and the 3D and 4D central
-values use its refined form; every other quoted cross section and uncertainty,
-including the 5D central value and the extended-fiducial value, uses the binned
-correction. The refined form is the background treatment of configurations (d),
-(e) and (f) (\S\ref{sec:method-config}): (d) in the background-bias and
-generator-sized-change studies of \S\ref{sec:val-negweight}; (e), the joint-test
-estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the
-generator tests and the 3D and 4D central values; and (f) for the 2D result and
-its covariance (App.~\ref{app:negweight}, \S\ref{sec:3d}, \S\ref{sec:results}).
+This correction is, by design, the one place the analysis binning enters before the final histogramming; other experiments' treatments are summarized in \S\ref{sec:intro}. At the sub-percent genuine-background scale, a per-reco-bin weight is a conservative middle ground. A fully unbinned alternative injects negatively weighted background simulation on the measured side, targeting the identical background-subtracted density $(D-B)/S$. It reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross section and its systematic and statistical covariances to within \SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning dependence and suits the extended-fiducial analysis, where backgrounds are larger. The quoted 2D result and its covariance and the 3D and 4D central values use its refined form; every other quoted cross section and uncertainty, including the 5D central value and the extended-fiducial value, uses the binned correction. The refined form is the background treatment of configurations (d), (e) and (f) (\S\ref{sec:method-config}): (d) in the background-bias and generator-sized-change studies of \S\ref{sec:val-negweight}; (e), the joint-test estimator, in \S\S\ref{sec:val-departure}--\ref{sec:gbdt-model-dependence}, the generator tests and the 3D and 4D central values; and (f) for the 2D result and its covariance (App.~\ref{app:negweight}, \S\ref{sec:3d}, \S\ref{sec:results}).
 % Stale-text fix (2026-10-25, director ruling): since 2026-10-24 the 2D result is configuration (f), refined
-% negative-weight subtraction (app_history.tex:89-92; this file, sec:method-config; paper_body.tex sec:method).
+% negative-weight subtraction (app_history.tex:71-73; this file, sec:method-config; paper_body.tex sec:method).
 % The uses follow app_negweight.tex "Scope of the numbers"; the 5D central value is configuration (a) for now
 % (DECISION-20261023-joseph-5d-a-and-register-round.md item 1); the extended-fiducial value uses the binned correction (sec_fps.tex sec:fps).
 % Note register batch b5, review B1: the uses follow Table tab:estimators-matrix and Table tab:validation-design-5d
@@ -97,39 +41,9 @@ its covariance (App.~\ref{app:negweight}, \S\ref{sec:3d}, \S\ref{sec:results}).
 \subsection{Estimators and configuration}
 \label{sec:method-config}
 
-Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural
-networks for the scalar unfolds. With at most five high-level features per
-event, tree ensembles typically match or outperform neural
-networks~\cite{Grinsztajn:2022tabular} and train deterministically and far
-faster on CPU. Ref.~\cite{Milton:2025tools} demonstrates their effectiveness
-for unbinned unfolding with few high-level features, complementing deep
-models for low-level event representations. We use GBDTs for all unfolds in this
-note; point-cloud representations are future work (App.~\ref{sec:pet}). Calibration tests and
-MLP/transformer cross-checks test the implementation in
-\S\ref{sec:3d-classifier}.
+Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural networks for the scalar unfolds. With at most five high-level features per event, tree ensembles typically match or outperform neural networks~\cite{Grinsztajn:2022tabular} and train deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations. We use GBDTs for all unfolds in this note; point-cloud representations are future work (App.~\ref{sec:pet}). Calibration tests and MLP/transformer cross-checks test the implementation in \S\ref{sec:3d-classifier}.
 
-The unfolding code supports interchangeable learners (component terminology and
-code paths in App.~\ref{app:codebase}). The quoted 2D central value and all of its
-uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the
-training-seed block and the run-period unfolds) use LightGBM with $100$ trees,
-$8$ leaves and learning rate $0.1$, with the same settings for the step-1
-classifier, the step-2 classifier and the miss regressor. They use refined
-negative-weight background subtraction (App.~\ref{app:negweight}), whose
-refinement classifier has 400 trees and 31 leaves and takes the estimator seed
-plus three as its seed. This is configuration~(f) below. The central value is the
-universe sweep's own central value at seed~42, so the systematic block shares its estimator and seed
-(\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
-training-seed block uses five seed settings that include it (\S\ref{sec:uq-boot},
-\S\ref{sec:uq-ml}). The bootstrap replica mean differs from the central value by a
-per-bin median of 4.37 standard errors of the mean. A central unfold at seed~45
-differs from the seed-42 one by at most \SI{1.4}{\percent} in a cell. With the
-purity-based subtraction (configuration~(a)), the seed-42 central value
-differs from the seed-1 one by a per-bin median of \SI{0.18}{\percent} (maximum
-\SI{1.79}{\percent}). That is 0.30 (maximum 1.28) of the per-bin standard deviation of
-the earlier statistical band, which was built at seed~1. Both of those central values are
-regenerated to $\lesssim2\times10^{-11}$ by runs with one driver and one input that
-differ only in the seed. The difference is therefore attributable to the seed, as
-inferred from the two regenerations.
+The unfolding code supports interchangeable learners (component terminology and code paths in App.~\ref{app:codebase}). The quoted 2D central value and all of its uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the training-seed block and the run-period unfolds) use LightGBM with $100$ trees, $8$ leaves and learning rate $0.1$, with the same settings for the step-1 classifier, the step-2 classifier and the miss regressor. They use refined negative-weight background subtraction (App.~\ref{app:negweight}), whose refinement classifier has 400 trees and 31 leaves and takes the estimator seed plus three as its seed. This is configuration~(f) below. The central value is the universe sweep's own central value at seed~42, so the systematic block shares its estimator and seed (\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the training-seed block uses five seed settings that include it (\S\ref{sec:uq-boot}, \S\ref{sec:uq-ml}). The bootstrap replica mean differs from the central value by a per-bin median of 4.37 standard errors of the mean. A central unfold at seed~45 differs from the seed-42 one by at most \SI{1.4}{\percent} in a cell. With the purity-based subtraction (configuration~(a)), the seed-42 central value differs from the seed-1 one by a per-bin median of \SI{0.18}{\percent} (maximum \SI{1.79}{\percent}). That is 0.30 (maximum 1.28) of the per-bin standard deviation of the earlier statistical band, which was built at seed~1. Both of those central values are regenerated to $\lesssim2\times10^{-11}$ by runs with one driver and one input that differ only in the seed. The difference is therefore attributable to the seed, as inferred from the two regenerations. The quoted central value records its run configuration; it repeats to $9\times10^{-12}$ and equals the refined 2D data unfold of App.~\ref{sec:negweight-footing} to $7\times10^{-12}$. The purity-subtracted seed-42 central value has no recorded run configuration. An independent rerun reproduces it to $1.4\times10^{-11}$, and so does a regeneration whose run configuration is recorded (Ref.~\cite{NoteRecords2026}, \recentry{2d-central-value}). Against the ten purity-subtracted LightGBM central values at seeds 1--10 it is mildly over-dispersed (RMS standardized difference 1.28, maximum 4.25). Seed~42 was chosen on computing cost: of the two costed ways to give the central value and the statistical band a common seed, building the statistical band at seed~42 was the cheaper. The quoted statistical block is a seed-42 band drawn in three independent streams (data, signal and background simulation; \S\ref{sec:uq-boot}).
 % RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): refined estimator: registry a-refined-400-31 (ESTIMATORS.tsv:12) and
 % re2/RE2-PARTB-REPORT.md sec. 4.3 (every run negweight-refined, 400 trees, 31 leaves, random_state = seed + 3); seed 45
 % vs seed 42: RE2-PARTB-REPORT.md:193 (PB-pow-S4CV, max rel. diff. 0.0142). The seed-1 comparison (0.18, 1.79, 0.30,
@@ -139,24 +53,11 @@ inferred from the two regenerations.
 % "Changes from the earlier 2D budget", as the earlier budget's; it was in sec:uq-2d-construction before n1-B). Offset: rebuild/outputs/outA/budget_Q.json.gz s5_copied.stat_centring_offset (4.428).
 % The 0.18 % / 0.30 comparison is the earlier (VL170) seed-1 band's.
 % J3/J4 provisional (DECISION-20261018, packet W3: D2, D10 KI-88, KI-93; the note sentences are in sec:uq-boot, sec:uq-2d-construction and sec:uq-2d-scope).
-The quoted central value records its run configuration; it repeats to
-$9\times10^{-12}$ and equals the refined 2D data unfold of
-App.~\ref{sec:negweight-footing} to $7\times10^{-12}$. The purity-subtracted seed-42
-central value has no recorded run configuration. An independent rerun reproduces it to
-$1.4\times10^{-11}$, and so does a regeneration whose run configuration is recorded
-(Ref.~\cite{NoteRecords2026}, \recentry{2d-central-value}). Against
-the ten purity-subtracted LightGBM central values at seeds 1--10 it is mildly
-over-dispersed (RMS standardized difference 1.28, maximum 4.25).
 % RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): RE2-PARTB-REPORT.md:149-150 (PB-ER-rep 9.17e-12, PB-ER-D2 7.45e-12), sec. 4.3 (the
 % argv check: each run's recorded runConfig). 1.28 and 4.25 are E_U's (re2c_values_unmatched.tsv).
 % Note register round n2, batch n2-B (2026-10-26; R-N2b, provenance case (A)): the rest of this value's provenance
 % prints in the records entry 2d-central-value (app_provenance.tex), which the sentence cites; the note keeps its
 % consequence for the printed number (n2 ledger, rows ME-A1 to ME-A3).
-Seed~42 was chosen on computing cost: of the two costed ways to give the central value
-and the statistical band a common seed, building the statistical band at seed~42 was
-the cheaper. The quoted statistical block is a seed-42 band
-drawn in three independent streams (data, signal and background simulation;
-\S\ref{sec:uq-boot}).
 % Review m5: the costed band was the VL170 law at seed 42 (stageC/pilot/DESIGN.md §8); S1 is the three-stream
 % law (stageC/production/DESIGN.md §3.4). J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-88).
 % Source: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md; receipts
@@ -172,34 +73,9 @@ drawn in three independent streams (data, signal and background simulation;
 % paragraph after the configuration list below. The seed-choice sentence no longer names who costed the two
 % matchings (R-N6, R-P4).
 
-\paragraph{The exact-split cross-check.}
-The exact-split configuration (\texttt{exact}) uses scikit-learn
-\texttt{GradientBoosting} with single-threaded exact-split CART. Its seed
-was not fixed: the driver version it ran had no seed option, and its production job
-script passed no seed. The run's own log was not found. Two driver revisions
-regenerate it to $7\times10^{-15}$. It is not invariant to the estimator seed,
-however: one reseeded run (\texttt{random\_state} 1/2/3) moves every bin, by a median
-of \SI{0.18}{\percent} (maximum \SI{1.6}{\percent}), and gives
-$\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$. The spread over seeds is unmeasured.
-The agreement of that median with the LightGBM seed-1 to seed-42 median above is a
-coincidence.
-The exact-split central value differs from the purity-subtracted LightGBM seed-42
-central value by a per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}),
-1.32 statistical standard deviations. It differs from the quoted central value, which
-also differs from it in background treatment, by a per-bin median of
-\SI{1.03}{\percent} (maximum \SI{17.6}{\percent}). It gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded,
-reproducible) against the published covariance, against $\chiPaperPurity$ for the
-purity-subtracted LightGBM central value and $\chiPaper$ for the quoted one
-(\S\ref{sec:results-tension}).
+\paragraph{The exact-split cross-check.} The exact-split configuration (\texttt{exact}) uses scikit-learn \texttt{GradientBoosting} with single-threaded exact-split CART. Its seed was not fixed: the driver version it ran had no seed option, and its production job script passed no seed. The run's own log was not found. Two driver revisions regenerate it to $7\times10^{-15}$. It is not invariant to the estimator seed, however: one reseeded run (\texttt{random\_state} 1/2/3) moves every bin, by a median of \SI{0.18}{\percent} (maximum \SI{1.6}{\percent}), and gives $\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$. The spread over seeds is unmeasured. The agreement of that median with the LightGBM seed-1 to seed-42 median above is a coincidence. The exact-split central value differs from the purity-subtracted LightGBM seed-42 central value by a per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}), 1.32 statistical standard deviations. It differs from the quoted central value, which also differs from it in background treatment, by a per-bin median of \SI{1.03}{\percent} (maximum \SI{17.6}{\percent}). It gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded, reproducible) against the published covariance, against $\chiPaperPurity$ for the purity-subtracted LightGBM central value and $\chiPaper$ for the quoted one (\S\ref{sec:results-tension}). It has no matched covariance: no exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for the central value after both comparisons with the publication were known, so that the central value and its covariance share an estimator. A third learner, the scikit-learn histogram backend (\texttt{hist}, \texttt{HistGradientBoosting}, matched 8-leaf configuration), is retained for method-dependence studies (\S\ref{sec:results-tension}).
 % RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): 0.98/12.2/1.32 are E_U vs E_C (unchanged); 1.03/17.6 = values_table.tsv lit-learner-*
 % (E_R vs E_C); \chiPaperPurity 2.654 (m-chiPaper purity_value).
-It has no matched covariance: no
-exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for
-the central value after both comparisons with the publication were known, so that
-the central value and its covariance share an estimator. A third learner, the
-scikit-learn histogram backend (\texttt{hist}, \texttt{HistGradientBoosting}, matched 8-leaf
-configuration), is retained for method-dependence studies
-(\S\ref{sec:results-tension}).
 % Provenance: the production launcher passed no \texttt{-{}-estimator} flag; the driver revision it ran
 % (d1bc8813) had no estimator option and always used the exact backend. ASSESSMENT-20261008-2d-estimator-
 % pairing.md sec. 2.1 and P01 (launcher sbatch_unfold_2d_MEHFC.sh, job 53116554); KNOWN_ISSUES 88.
@@ -212,65 +88,15 @@ configuration), is retained for method-dependence studies
 % unset seed parameter is stated as "Its seed was not fixed" (R-N2d).
 % Search: exact-backend seed scan; exact-split seed scan; P09b (pairings.tsv: "no exact-backend seed scan exists") @ 1a015eef
 
-% Configuration 3: sec_5d.tex (100 trees, 8 leaves; purity footing) for 5D; the 3D/4D drivers default to
-% --estimator lgbm and the purity bkg-mode (review 2026-10-11). Added 2026-10-11 so that this subsection is the single home the article cites for all four configurations;
-% before, configurations 3-4 were described only in the article and in sec_5d.tex.
-% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's estimator matrix, moved with its
-% sources: this section (100 trees, 8 leaves, seed 42; exact-split seed not pinned; joint-test refinement 400 trees,
-% 31 leaves); configurations (c)-(d): OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:23-31 (candidate F2) and
-% OUTCOME-20260925-s5n-stage1-development-fail.md:25-28 (family N, refinement with the F2 parameters); methods-m3
-% REPORT (F2: 5 iterations, 100 trees, 8 leaves). REVIEW-1 finding 20: the five-observable covariance is that of the
-% five-dimensional central value (sec_5d.tex sec:eavailw-adopted). X5 G5a: the central values and their covariance were
-% adopted on 2026-09-20 (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md), before the purity bias was
-% found (OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md).
-% Note register batch b5 (2026-10-22): the note's three-item list and the article's (a)-(e) paragraph are merged; the
-% uses of (c), (d) and (e) follow the table below and Table tab:validation-design-5d (sec_5d.tex) (review B1).
-\paragraph{The estimator configurations.}
-Six estimator configurations, labeled (a)--(f) as in the article
-(Table~\ref{tab:estimators-matrix}), are used, and each result names the one it
-uses. All use five OmniFold iterations and gradient-boosted trees of nominal
-capacity (100 trees, 8 leaves) in both OmniFold steps; ``deterministic'' means
-fixed seeds and reproducible training. Results from different configurations are
-not combined. Four are described in this section:
+% Configuration 3: sec_5d.tex (100 trees, 8 leaves; purity footing) for 5D; the 3D/4D drivers default to --estimator lgbm and the purity bkg-mode (review 2026-10-11). Added 2026-10-11 so that this subsection is the single home the article cites for all four configurations; before, configurations 3-4 were described only in the article and in sec_5d.tex. Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's estimator matrix, moved with its sources: this section (100 trees, 8 leaves, seed 42; exact-split seed not pinned; joint-test refinement 400 trees, 31 leaves); configurations (c)-(d): OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:23-31 (candidate F2) and OUTCOME-20260925-s5n-stage1-development-fail.md:25-28 (family N, refinement with the F2 parameters); methods-m3 REPORT (F2: 5 iterations, 100 trees, 8 leaves). REVIEW-1 finding 20: the five-observable covariance is that of the five-dimensional central value (sec_5d.tex sec:eavailw-adopted). X5 G5a: the central values and their covariance were adopted on 2026-09-20 (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md), before the purity bias was found (OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md). Note register batch b5 (2026-10-22): the note's three-item list and the article's (a)-(e) paragraph are merged; the uses of (c), (d) and (e) follow the table below and Table tab:validation-design-5d (sec_5d.tex) (review B1).
+\paragraph{The estimator configurations.} Six estimator configurations, labeled (a)--(f) as in the article (Table~\ref{tab:estimators-matrix}), are used, and each result names the one it uses. All use five OmniFold iterations and gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both OmniFold steps; ``deterministic'' means fixed seeds and reproducible training. Results from different configurations are not combined. Four are described in this section:
 \begin{itemize}[itemsep=1pt, topsep=2pt]
-  \item (f), the nominal LightGBM configuration above with refined
-        negative-weight subtraction and the refinement classifier of (e), seeded at
-        the estimator seed plus three: the 2D central value (seed~42) and its
-        uncertainty ensembles (\S\ref{sec:results});
-  \item (a), the same learner with purity-based background subtraction
-        (\S\ref{sec:method-algo}): the five-dimensional central value
-        (\S\ref{sec:eavailw}), the 3D and 4D injected-bump closures and
-        Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} (\S\ref{sec:3d}), and the
-        purity-subtracted 2D comparisons of this section and
-        \S\ref{sec:results-tension};
-  \item (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned
-        negative-weight background treatment (App.~\ref{app:negweight}), whose
-        refinement classifier has 400 trees and 31 leaves. The negative-weight
-        treatment reduces the purity method's nominal-truth bias in the highest-$W$
-        column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to
-        \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
-        removes most of the background-related bias that remains
-        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It gives the 3D
-        and 4D central values (\S\ref{sec:3d}). It is used for the
-        generator tests (\S\ref{sec:joint5d}), the study of generator shapes held
-        out of its development (\S\ref{sec:val-departure}) and the precision study
-        (\S\ref{sec:gbdt-model-dependence}). It was selected before the
-        joint-test design was fixed (\S\ref{sec:joint5d});
+  \item (f), the nominal LightGBM configuration above with refined negative-weight subtraction and the refinement classifier of (e), seeded at the estimator seed plus three: the 2D central value (seed~42) and its uncertainty ensembles (\S\ref{sec:results});
+  \item (a), the same learner with purity-based background subtraction (\S\ref{sec:method-algo}): the five-dimensional central value (\S\ref{sec:eavailw}), the 3D and 4D injected-bump closures and Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess} (\S\ref{sec:3d}), and the purity-subtracted 2D comparisons of this section and \S\ref{sec:results-tension};
+  \item (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned negative-weight background treatment (App.~\ref{app:negweight}), whose refinement classifier has 400 trees and 31 leaves. The negative-weight treatment reduces the purity method's nominal-truth bias in the highest-$W$ column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier removes most of the background-related bias that remains (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It gives the 3D and 4D central values (\S\ref{sec:3d}). It is used for the generator tests (\S\ref{sec:joint5d}), the study of generator shapes held out of its development (\S\ref{sec:val-departure}) and the precision study (\S\ref{sec:gbdt-model-dependence}). It was selected before the joint-test design was fixed (\S\ref{sec:joint5d});
   \item (b), the exact-split cross-check above.
 \end{itemize}
-Configuration (c), the deterministic variant with purity-based subtraction, and
-(d), the same variant with negative weights and a nominal-capacity refinement, are
-used in the background-bias, generator-sized-change and coverage studies listed in
-the table. In five dimensions, the central value and its covariance use purity-based
-subtraction: they were produced before the purity bias was found and the refinement
-was developed. A refined five-dimensional data unfold exists (configuration~(e)), but
-it is not the quoted central value, and no covariance has been built for it. The 2D
-central value and its covariance were rebuilt with configuration~(f) after a
-two-dimensional closure test with backgrounds found the purity bias
-(App.~\ref{sec:negweight-footing}). Studies in this note labeled \emph{exact-split}
-use the exact-split central value, which was the quoted 2D central value until
-2026-10-11; they have not been recomputed. The 3D and 4D central values have been
-regenerated with configuration~(e); no 3D or 4D covariance is quoted.
+Configuration (c), the deterministic variant with purity-based subtraction, and (d), the same variant with negative weights and a nominal-capacity refinement, are used in the background-bias, generator-sized-change and coverage studies listed in the table. In five dimensions, the central value and its covariance use purity-based subtraction: they were produced before the purity bias was found and the refinement was developed. A refined five-dimensional data unfold exists (configuration~(e)), but it is not the quoted central value, and no covariance has been built for it. The 2D central value and its covariance were rebuilt with configuration~(f) after a two-dimensional closure test with backgrounds found the purity bias (App.~\ref{sec:negweight-footing}). Studies in this note labeled \emph{exact-split} use the exact-split central value, which was the quoted 2D central value until 2026-10-11; they have not been recomputed. The 3D and 4D central values have been regenerated with configuration~(e); no 3D or 4D covariance is quoted.
 % RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1 (the move, after RE-1 C2);
 % DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R and Q_R adopted).
 % Sources: RE1-REPORT-2.md sec. 3 (D2, the 2D refined data unfold); ../RE1-REPORT.md sec. 1 (P5, the s5p data unfold, is
@@ -315,81 +141,31 @@ regenerated with configuration~(e); no 3D or 4D covariance is quoted.
   \end{tabular}
 \end{table}
 
-\paragraph{Hyperparameter choice.}
-The learner settings were fixed \emph{a priori}; no hyperparameter search was
-performed on data, which avoids tuning on the result. They are the scikit-learn
-\texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and
-depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity
-($\texttt{num\_leaves}=8=2^{3}$), giving every learner the same deliberately
-modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
-The configuration is instead validated after the fact by closure and
-classifier-calibration tests (\S\ref{sec:validation},
-\S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count
-(below), backend agreement in method-dependence studies
-(\S\ref{sec:results-tension}), and an explicit training-seed variation band
-for residual ML stochasticity (\S\ref{sec:systematics}).
+\paragraph{Hyperparameter choice.} The learner settings were fixed \emph{a priori}; no hyperparameter search was performed on data, which avoids tuning on the result. They are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving every learner the same deliberately modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}). The configuration is instead validated after the fact by closure and classifier-calibration tests (\S\ref{sec:validation}, \S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count (below), backend agreement in method-dependence studies (\S\ref{sec:results-tension}), and an explicit training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
 
-Production uses $n=5$ iterations. Huang \emph{et
-al.}~\cite{Huang:2025omnifold} select 45 iterations for OmniFold-family
-methods (20 for their binned benchmark) using a binned $\chi^{2}$ against
-known mock-data truth, a criterion they note is infeasible on real data.
-We do not adopt that recommendation. Their mock data injects a large
-prior--data \emph{shape} discrepancy through an RPA-modified quasielastic
-model, requiring many iterations. Our prior already describes the data
-shapes well (\S\ref{sec:controlplots}); the data pull is dominantly a
-normalization. Cross-experiment production also typically uses
-${\sim}5$ iterations~\cite{Canelli:2025guide}. Our $n=5$ is instead justified
-empirically: doubling it to $n=10$ moves the total cross section by
-\SI{0.026}{\percent} (\S\ref{sec:validation}), and the unfold reproduces
-an independently published binned measurement of the same data
-(\S\ref{sec:results}).
+Production uses $n=5$ iterations. Huang \emph{et al.}~\cite{Huang:2025omnifold} select 45 iterations for OmniFold-family methods (20 for their binned benchmark) using a binned $\chi^{2}$ against known mock-data truth, a criterion they note is infeasible on real data. We do not adopt that recommendation. Their mock data injects a large prior--data \emph{shape} discrepancy through an RPA-modified quasielastic model, requiring many iterations. Our prior already describes the data shapes well (\S\ref{sec:controlplots}); the data pull is dominantly a normalization. Cross-experiment production also typically uses ${\sim}5$ iterations~\cite{Canelli:2025guide}. Our $n=5$ is instead justified empirically: doubling it to $n=10$ moves the total cross section by \SI{0.026}{\percent} (\S\ref{sec:validation}), and the unfold reproduces an independently published binned measurement of the same data (\S\ref{sec:results}).
 
 \subsection{MINERvA driver and pipeline conventions}
 \label{sec:method-driver}
 
 
 
-The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the
-2D driver using an axis list and the same 2D helpers. The first two axes
-are always $(\pT,\pPar)$, carrying the fiducial phase-space cut and the per-$\pT$ flux.
-Higher-dimensional runs extend the muon observables $(\pT,\pPar)$ with
-$\Eavail$, $q_{3}$, $W$ in the phase space of \S\ref{sec:selection}.
-Every production, universe-sweep, and closure run follows these conventions:
+The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the 2D driver using an axis list and the same 2D helpers. The first two axes are always $(\pT,\pPar)$, carrying the fiducial phase-space cut and the per-$\pT$ flux. Higher-dimensional runs extend the muon observables $(\pT,\pPar)$ with $\Eavail$, $q_{3}$, $W$ in the phase space of \S\ref{sec:selection}. Every production, universe-sweep, and closure run follows these conventions:
 \begin{itemize}[itemsep=2pt]
-  \item \textbf{Reco-space masking.} The measured events entering step-1
-        training are exactly those passing the reconstructed-level
-        selection; nothing outside the reconstructed phase space reaches the
-        classifier.
-  \item \textbf{Fake-free step-1 training.} Step 1 targets the background-subtracted data of
-        \S\ref{sec:method-algo}, purity-weighted or with background simulation injected at negative weight
-        (refined to non-negative weights in the refined configurations).
+  \item \textbf{Reco-space masking.} The measured events entering step-1 training are exactly those passing the reconstructed-level selection; nothing outside the reconstructed phase space reaches the classifier.
+  \item \textbf{Fake-free step-1 training.} Step 1 targets the background-subtracted data of \S\ref{sec:method-algo}, purity-weighted or with background simulation injected at negative weight (refined to non-negative weights in the refined configurations). Genuine backgrounds \emph{and} out-of-phase-space signal fakes are removed from the data side. The simulated reco sample is fake-free by construction, so neither side of the step-1 training contains events whose truth lies outside the measurement phase space.
         % Accuracy fix (unscored; director ruling 2026-10-26): the list covers every production run, and the 2D result
         % and the 3D and 4D central values use refined negative-weight subtraction (sec:method-algo). Mechanism:
         % 2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10.
         % In the negative-weight modes the signal fakes are injected with the background (2d-unfolding/unfold_2d_omnifold_unbinned.py:1846-1858 @ ddf16f10).
- Genuine backgrounds \emph{and}
-        out-of-phase-space signal fakes are removed from the data side.
-        The simulated reco sample is fake-free by construction, so neither side of the step-1
-        training contains events whose truth lies outside the
-        measurement phase space.
-  \item At histogramming, each simulated truth event carries its final
-        OmniFold push-weight times its central-value simulation weight,
-        including MINERvA Tune~v1 reweighting. No additional efficiency-histogram
-        division is applied. Step-1 miss regression already gives an
-        efficiency-corrected truth spectrum; dividing again would
-        double-correct.
+  \item At histogramming, each simulated truth event carries its final OmniFold push-weight times its central-value simulation weight, including MINERvA Tune~v1 reweighting. No additional efficiency-histogram division is applied. Step-1 miss regression already gives an efficiency-corrected truth spectrum; dividing again would double-correct.
         % Development history: a failure mode that occurred once in
         % development and was caught by the marginal self-validation gate
         % (\S\ref{sec:validation}).
-  \item \textbf{Closure mirrors production.} In closure tests the
-        pseudo-data are simulated events passing both the reconstructed and
-        truth selections, weighted identically to the production data path,
-        so closure exercises the same code path as the measurement rather
-        than an idealized shortcut.
+  \item \textbf{Closure mirrors production.} In closure tests the pseudo-data are simulated events passing both the reconstructed and truth selections, weighted identically to the production data path, so closure exercises the same code path as the measurement rather than an idealized shortcut.
 \end{itemize}
 
-% "What the pipeline refuses to do" (test-suite discipline) moved to
-% app_codebase.tex.
+% "What the pipeline refuses to do" (test-suite discipline) moved to app_codebase.tex.
 
 \subsection{Cross-section extraction}
 \label{sec:method-xsec}
@@ -399,99 +175,30 @@ The differential cross section follows from unfolded truth-level counts:
   = \frac{U}{c\,\Phi\,N\,\mathrm{POT}\,\Delta x_{1}\cdots\Delta x_{n}}
     \times 10^{4},
 \end{equation*}
-where $U$ is the unfolded yield and $c$ the per-bin \emph{completeness}, the
-fraction of truth events visible to the unfolding input. The event loop
-explicitly appends truth-only misses, so every truth event enters and
-$c\equiv1$ bin-by-bin. The factor remains a monitored self-check; dropping
-misses would give $c<1$. $\Phi$ is the per-$\pT$ flux integral, broadcast
-over other axes, $N$ the fiducial nucleon count
-($3.2353\times10^{30}$), and POT the data exposure ($1.057\times10^{21}$).
-The factor $10^{4}$ converts flux tabulated per square meter to the reported
-$\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), giving units of
-$\si{cm^2}$ per axis unit per nucleon. The implementation
-(App.~\ref{app:codebase}) is self-tested to reproduce stored lower-dimensional reference extractions to $<10^{-12}$. Since
-$\sigma\propto1/\Phi$, $\Phi$ varies per flux universe when building the
-systematic covariance. This variation dominates the Flux band
-(\S\ref{sec:systematics}).
+where $U$ is the unfolded yield and $c$ the per-bin \emph{completeness}, the fraction of truth events visible to the unfolding input. The event loop explicitly appends truth-only misses, so every truth event enters and $c\equiv1$ bin-by-bin. The factor remains a monitored self-check; dropping misses would give $c<1$. $\Phi$ is the per-$\pT$ flux integral, broadcast over other axes, $N$ the fiducial nucleon count ($3.2353\times10^{30}$), and POT the data exposure ($1.057\times10^{21}$). The factor $10^{4}$ converts flux tabulated per square meter to the reported $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), giving units of $\si{cm^2}$ per axis unit per nucleon. The implementation (App.~\ref{app:codebase}) is self-tested to reproduce stored lower-dimensional reference extractions to $<10^{-12}$. Since $\sigma\propto1/\Phi$, $\Phi$ varies per flux universe when building the systematic covariance. This variation dominates the Flux band (\S\ref{sec:systematics}).
 
-% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's flux constant, moved with its source:
-% docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:43-49, :74 (Phi = 6.243343e-4 m^-2/POT over 0-100 GeV after
-% the nu-e constraint); N = 3.2352943296224835e30: 2d-unfolding/unfold_2d_omnifold_unbinned.py:41-44; formula
-% nd-unfolding/xsec_nd.py:14, 54-83.
-For the higher-dimensional extractions the integrated flux is
-$\Phi=\SI{6.243e-8}{cm^{-2}}$ per proton on target, from 0 to \SI{100}{GeV}
-after the neutrino--electron-scattering constraint, and the target contains
-$3.235\times10^{30}$ nucleons.
+% Methods-paper shortening pass (2026-10-21, DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2): the article's flux constant, moved with its source: docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:43-49, :74 (Phi = 6.243343e-4 m^-2/POT over 0-100 GeV after the nu-e constraint); N = 3.2352943296224835e30: 2d-unfolding/unfold_2d_omnifold_unbinned.py:41-44; formula nd-unfolding/xsec_nd.py:14, 54-83.
+For the higher-dimensional extractions the integrated flux is $\Phi=\SI{6.243e-8}{cm^{-2}}$ per proton on target, from 0 to \SI{100}{GeV} after the neutrino--electron-scattering constraint, and the target contains $3.235\times10^{30}$ nucleons.
 
 \subsection{Binning}
 \label{sec:method-binning}
 % The reported binning follows \texttt{minerva\_paper\_anc/bin\_mapping.txt} (cited below).
-The 2D grid has 14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224 are
-reported. The 19 unreported diagonal cells have
-$\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. The extension axes use
-$\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$;
-$q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$;
-$W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$.
-Each ends in a wide catch bin to capture the full CC-inclusive tails in
-marginals; truncating the top edge would break the marginalization checks of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to
-be revisited without re-running the unfold. App.~\ref{app:release}
-(\S\ref{app:release-edges}) gives all five axes' edges.
-\S\ref{sec:205bins} defines the 205 reported cells; the authoritative
-mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}.
+The 2D grid has 14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224 are reported. The 19 unreported diagonal cells have $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. The extension axes use $\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$; $q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$; $W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$. Each ends in a wide catch bin to capture the full CC-inclusive tails in marginals; truncating the top edge would break the marginalization checks of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to be revisited without re-running the unfold. App.~\ref{app:release} (\S\ref{app:release-edges}) gives all five axes' edges. \S\ref{sec:205bins} defines the 205 reported cells; the authoritative mapping is the bin-mapping file of the published data release~\cite{MINERvA:2021owq}.
 
-Neither underflow nor overflow appears in the reported product, by
-construction rather than by truncation. Truth-level muon edges coincide with the
-measurement phase space (\S\ref{sec:selection}); no signal is defined
-beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges
-far beyond the kinematic reach at
-$\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the
-grid is treated as unaccepted and excluded from the measured sample by
-\S\ref{sec:method-driver}'s masking convention. Its in-phase-space truth
-content is recovered by the miss treatment, as for any unreconstructed
-event. The unbinned unfold has no response-matrix under/overflow to track;
-reporting bins are applied once to events that all lie inside the grids.
+Neither underflow nor overflow appears in the reported product, by construction rather than by truncation. Truth-level muon edges coincide with the measurement phase space (\S\ref{sec:selection}); no signal is defined beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges far beyond the kinematic reach at $\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the grid is treated as unaccepted and excluded from the measured sample by \S\ref{sec:method-driver}'s masking convention. Its in-phase-space truth content is recovered by the miss treatment, as for any unreconstructed event. The unbinned unfold has no response-matrix under/overflow to track; reporting bins are applied once to events that all lie inside the grids.
 
-Truth$\to$reco migration on the analysis binning (Fig.~\ref{fig:migration})
-summarizes the smearing OmniFold must undo, although it uses no response
-matrix. Median diagonal purity is $\sim0.6$ on every axis. These substantial
-migrations require unfolding; a bin-by-bin correction would be badly biased.
+Truth$\to$reco migration on the analysis binning (Fig.~\ref{fig:migration}) summarizes the smearing OmniFold must undo, although it uses no response matrix. Median diagonal purity is $\sim0.6$ on every axis. These substantial migrations require unfolding; a bin-by-bin correction would be badly biased.
 
-The structure differs qualitatively between the muon and hadron sides.
-The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly tridiagonal, with
-migrations rarely exceeding one bin. Purity dips to
-${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$ where bins
-are finest, recovering in wide edge bins. The calorimetric axes have
-coarser bins but relatively broader, visibly asymmetric migrations.
-$\Eavail$ preferentially migrates \emph{downward} because energy carried
-by neutrons and other unresponsive particles is not collected. Diagonal
-purity falls from $0.61$ in the lowest bins to $0.43$ in the highest.
-$q_{3}$, built from $\Eavail$ and the muon, inherits a milder version of the same pattern.
-$W$ compounds $\Eavail$ and muon smearing and has the broadest migrations;
-two-bin shifts are common in the resonance region. The lowest-$W$
-(quasi-elastic) bin remains purest at $0.71$.
+The structure differs qualitatively between the muon and hadron sides. The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly tridiagonal, with migrations rarely exceeding one bin. Purity dips to ${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$ where bins are finest, recovering in wide edge bins. The calorimetric axes have coarser bins but relatively broader, visibly asymmetric migrations. $\Eavail$ preferentially migrates \emph{downward} because energy carried by neutrons and other unresponsive particles is not collected. Diagonal purity falls from $0.61$ in the lowest bins to $0.43$ in the highest. $q_{3}$, built from $\Eavail$ and the muon, inherits a milder version of the same pattern. $W$ compounds $\Eavail$ and muon smearing and has the broadest migrations; two-bin shifts are common in the resonance region. The lowest-$W$ (quasi-elastic) bin remains purest at $0.71$.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{migration_resolution}
-  \caption{Simulated signal truth$\to$reco migration on the analysis binning
-  for five observables. Top: column-normalized maps; bottom: diagonal purity
-  per truth bin. Median diagonal purity is $0.58$--$0.61$ per axis.
-  The figure is illustrative only; the unfold is unbinned.}
+  \caption{Simulated signal truth$\to$reco migration on the analysis binning for five observables. Top: column-normalized maps; bottom: diagonal purity per truth bin. Median diagonal purity is $0.58$--$0.61$ per axis. The figure is illustrative only; the unfold is unbinned.}
   \label{fig:migration}
 \end{figure}
 
 \subsection{Related developments and estimator scope}
-Profile OmniFold~\cite{Zhu:2025profile} extends classifier-based EM to
-forward-model nuisance parameters. Its distinct algorithmic construction
-complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}.
-Profiling nuisances with observed data would change our inference model,
-which propagates an external nuisance ensemble through a fixed procedure.
-Neither a profiled estimator nor its uncertainty is used here.
+Profile OmniFold~\cite{Zhu:2025profile} extends classifier-based EM to forward-model nuisance parameters. Its distinct algorithmic construction complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}. Profiling nuisances with observed data would change our inference model, which propagates an external nuisance ensemble through a fixed procedure. Neither a profiled estimator nor its uncertainty is used here.
 
-SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces
-OmniFold's second step with a different loss and avoids the outer
-iteration~\cite{Ore:2026aussie}. Both offer possible future cross-checks
-with different algorithmic assumptions. Reduced simulation-prior dependence
-does not establish detector-model independence, adequate phase-space
-support, or coverage for this measurement. Comparisons would require
-matched signal, selection, normalization, and uncertainty definitions.
+SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces OmniFold's second step with a different loss and avoids the outer iteration~\cite{Ore:2026aussie}. Both offer possible future cross-checks with different algorithmic assumptions. Reduced simulation-prior dependence does not establish detector-model independence, adequate phase-space support, or coverage for this measurement. Comparisons would require matched signal, selection, normalization, and uncertainty definitions.

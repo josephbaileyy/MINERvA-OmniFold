@@ -1,14 +1,5 @@
 % ====================================================================
-% RECORDS DOCUMENT -- internal, never posted. DECISION-20261021-joseph-da-and-note-records.md item 2: "there should
-% be an internal ledger for these records ... but the analysis note that we publish as supplementary material should
-% not be that". The record appendices of the analysis note (main_note.tex) live here since 2026-10-21, moved
-% verbatim: app_provenance.tex and app_history.tex whole, and the record parts of the release and codebase
-% appendices as app_release_records.tex and app_codebase_records.tex. The posted note cites this document as
-% NoteRecords2026 (technote.bib), by App. G tag or by heading.
-% Build: bash build_all.sh, which builds it LAST: its references into the note resolve through main_note.aux (xr), so
-% main_note must be built first. check_dead_containment.py treats it as the note-audience build that alone may strike
-% values (app_history.tex), and check_note_records.py proves that the move lost nothing.
-% Shares preamble.tex, values.tex, values_inference.tex and the two .bib files with the note.
+% RECORDS DOCUMENT -- internal, never posted. DECISION-20261021-joseph-da-and-note-records.md item 2: "there should be an internal ledger for these records ... but the analysis note that we publish as supplementary material should not be that". The record appendices of the analysis note (main_note.tex) live here since 2026-10-21, moved verbatim: app_provenance.tex and app_history.tex whole, and the record parts of the release and codebase appendices as app_release_records.tex and app_codebase_records.tex. The posted note cites this document as NoteRecords2026 (technote.bib), by App. G tag or by heading. Build: bash build_all.sh, which builds it LAST: its references into the note resolve through main_note.aux (xr), so main_note must be built first. check_dead_containment.py treats it as the note-audience build that alone may strike values (app_history.tex), and check_note_records.py proves that the move lost nothing. Shares preamble.tex, values.tex, values_inference.tex and the two .bib files with the note.
 % ====================================================================
 \documentclass[11pt]{article}
 % xr-hyper must precede hyperref, which preamble.tex loads.
@@ -57,9 +48,7 @@
 \makeatother
 
 \title{\textbf{Internal record, not posted:}\\
-Records of the analysis note on unbinned OmniFold of MINERvA charged-current inclusive data}
-\author{}
-\date{Built with the analysis note from the same sources\\[4pt]\small Code and file references: \repolink}
+Records of the analysis note on unbinned OmniFold of MINERvA charged-current inclusive data} \author{} \date{Built with the analysis note from the same sources\\[4pt]\small Code and file references: \repolink}
 
 \begin{document}
 \maketitle
