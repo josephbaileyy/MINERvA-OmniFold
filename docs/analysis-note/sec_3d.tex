@@ -117,8 +117,8 @@ $(\pT,\pPar,\Eavail)$.
 % stageF/methods/re1/RE1-REPORT-2.md sec. 4; fig:eavail-marg and fig:q3excess are not regenerated (same section).
 Except where stated, the 3D and 4D central values in this section are those of
 configuration~(e) (\S\ref{sec:method-config}), with refined negative-weight
-background subtraction (a 400-tree, 31-leaf refinement);
-Figs.~\ref{fig:eavail-marg} and~\ref{fig:q3excess}, and the numbers read from
+background subtraction (a 400-tree, 31-leaf refinement).
+Figures~\ref{fig:eavail-marg} and~\ref{fig:q3excess}, and the numbers read from
 them, are from configuration~(a), with purity-based subtraction.
 The cross section is extracted with the 3D bin volume
 $\Delta\pT\,\Delta\pPar\,\Delta\Eavail$, and the flux $\Phi$ is still applied
@@ -168,9 +168,9 @@ and the median per-bin ratio is $1.0010$.
 The \emph{shape} agrees less closely. The per-bin ratio of the marginal to the
 2D result scatters by $\sim\SI{3.7}{\percent}$ (standard deviation over the
 205 cells). With the published covariance, the indicative distance of the
-marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values
-($\chiPaper$ for the quoted LightGBM central value, $\chiPaperExact$ for the
-exact-split cross-check); Fig.~\ref{fig:eavail-marg}, which shows
+marginal from the published result is $\chi^{2}/\mathrm{ndf}=4.52$, above the 2D values:
+$\chiPaper$ for the quoted LightGBM central value and $\chiPaperExact$ for the
+exact-split cross-check. Figure~\ref{fig:eavail-marg}, which shows
 configuration~(a), gives $4.98$. Because the two results share data and their
 cross-covariance is unavailable, this number is not a calibrated
 goodness-of-fit statistic.
@@ -199,21 +199,22 @@ $0.9999$ and standard deviation \textbf{\num{0.0006}}
 (\SI{0.06}{\percent}); the per-3D-bin residual standard deviation is
 \SI{3.2}{\percent} from MC statistics in sparse high-recoil corners.
 The closure's marginal scatter is far below the $\SI{3.7}{\percent}$
-data-versus-2D scatter, but the two belong to different configurations (the
-closure to (a), the data comparison to (e) against (f)), so their ratio is not
-quoted. Total normalization matches to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation}
+data-versus-2D scatter. The two belong to different configurations, however:
+the closure to (a), the data comparison to (e) against (f). Their ratio is
+therefore not quoted. Total normalization matches to better than \SI{1}{\percent}. In the metric of \S\ref{sec:validation}
 ($\Eavail$ projection) the residual is \SI{1.84}{\percent} vs \SI{18.1}{\percent}
-injected (ratio $0.102$). No acceptance threshold fixed before the test is on
-record, so this residual is not graded.
+injected (ratio $0.102$). This residual is not graded, because no acceptance
+threshold fixed before the test is on record.
+% Search: 3D closure threshold; E_avail bump threshold; threshold set in advance for the 3D closure (3d-unfolding/3D_OMNIFOLD_STATUS.md has no threshold; sec_validation.tex tab:closure-map prints "no predeclared threshold" for the 3D bump) @ 1a015eef
 
 The test covers one shape, this Gaussian, injected into the pseudo-data and
 unfolded \emph{with the same detector response that the unfolding uses}. On
 this injection the configuration-(a) estimator neither manufactures nor destroys
-the feature. That does not extend to configuration~(e), and the data-versus-2D
-scatter compares (e) with (f), so the scatter is not read here as
+the feature. That result does not extend to configuration~(e), and the data-versus-2D
+scatter compares (e) with (f). The scatter is therefore not read here as
 data\,$\leftrightarrow$\,MC structure resolved by the available-energy axis.
-The test does \emph{not} exclude estimator bias for other deformations and
-does not test response mismatch, and the hidden-variable closure exceeds its
+The test does \emph{not} exclude estimator bias for other deformations, and it
+does not test response mismatch. The hidden-variable closure exceeds its
 threshold at the largest amplitude (\S\ref{sec:validation},
 App.~\ref{app:response-mismatch}).
 
@@ -286,16 +287,17 @@ per nucleon.
 
 \paragraph{Flux repair of the GENIE and NuWro predictions.}
 % (2026-09-27)
-% Register round n1 (R-N2): the defect history in one sentence, framed as what the repair corrects; every fact kept.
+% Register round n1 (R-N2): the defect history in one passage, framed as what the repair corrects; every fact kept.
 % KNOWN_ISSUES.md row 83
-Apart from three studies that keep the unrepaired samples, as stated where
-they appear (the FSI-dial studies, the departure ratio of
-\S\ref{sec:val-negweight} and the NuWro-shaped prior of \S\ref{sec:fps}), the
+Except in three studies that keep the unrepaired samples, the
 GENIE and NuWro predictions in \S\S\ref{sec:3d}--\ref{sec:eavailw} are
 repaired by exact per-event reweighting to the analysis PPFX central-value flux
 on 0--\SI{100}{GeV}, with correctly sampled 50--\SI{100}{GeV} supplements.
+The three studies, each of which says so where it appears, are the FSI-dial studies, the
+departure ratio of \S\ref{sec:val-negweight} and the NuWro-shaped prior of
+\S\ref{sec:fps}.
 The repair corrects the flux from which the GENIE (CV and $+$Valencia~2p2h) and
-NuWro samples were generated: it had no PPFX weights, was capped at
+NuWro samples were generated. That flux had no PPFX weights, was capped at
 \SI{50}{GeV}, and stored flux \emph{densities} in variable-width bins that were
 sampled and normalized as \emph{contents}, which under-weighted every wide
 high-energy bin and suppressed the high-$\pPar$ predictions and the integrated rates
@@ -346,9 +348,10 @@ $\SI{22.3}{\percent}$ below the data.
 % Register round n1 (R-N1): "no 3D covariance, generator chi^2, p-value or significance is quoted" is stated once,
 % at the sec:3d lead; the next sentence restates its first clause, with a pointer, as the antecedent of
 % "the one that would be quoted" (review fix).
-No 3D covariance is quoted (\S\ref{sec:3d}); the one that would be quoted is the exact projection of the
-five-dimensional covariance used in this note; that projection has been
+No 3D covariance is quoted (\S\ref{sec:3d}). The one that would be quoted is the exact projection of the
+five-dimensional covariance used in this note, and that projection has been
 computed but is not used for any result in this note.
+% Search: 3D covariance (note sources: sec_3d.tex, sec_method.tex:267, sec_systematics.tex:15, sec_execsummary.tex:148 and sec_summary.tex:107, each saying none is quoted; app_history.tex's are superseded and outside the note) @ 1a015eef
 
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism).
 % Register round n1 (R-N1): both are stated once, at the sec:3d lead; the reasons stay below.
@@ -369,7 +372,7 @@ dials.
 $\le\SI{0.74}{\percent}$ (peak in $0.10$--$\SI{0.20}{GeV}$) and \texttt{FrAbs\_pi}
 by $\le\SI{0.82}{\percent}$ (peak in the lowest bin). Both are ratios within
 the unrepaired GENIE sample (\S\ref{sec:3d-models}), in which the flux defect
-cancels to first order, and neither was recomputed. The integrated rate
+cancels to first order. Neither was recomputed. The integrated rate
 % flux repair: KNOWN_ISSUES.md row 83
 moves only $\pm\SI{0.02}{}$--$\SI{0.03}{\percent}$ at $\pm1\sigma$.
 \footnote{\texttt{FrInel\_pi} is disabled in the standard MAT-MINERvA set of
@@ -391,12 +394,12 @@ directly identifying that effect with our inclusive discrepancy.
 
 \paragraph{Comparison with a missing 2p2h component.} The base GENIE central value uses
 the default event-generator list and contains \emph{no}
-meson-exchange-current (2p2h/MEC) events
-(none of the $1.48\times10^{6}$ CC events of the generated sample is a MEC
-event; the sample's unweighted modes, before the flux reweight of
-\S\ref{sec:3d-models}, are QE
-\SI{11}{\percent}, RES \SI{22}{\percent}, DIS \SI{66}{\percent}, COH
-\SI{0.9}{\percent}; the 50--\SI{100}{GeV} supplement is MEC-free as well).
+meson-exchange-current (2p2h/MEC) events.
+None of the $1.48\times10^{6}$ CC events of the generated sample is a MEC
+event, and the 50--\SI{100}{GeV} supplement is MEC-free as well. Before the
+flux reweight of \S\ref{sec:3d-models}, the sample's unweighted modes are QE
+\SI{11}{\percent}, RES \SI{22}{\percent}, DIS \SI{66}{\percent} and COH
+\SI{0.9}{\percent}.
 2p2h must therefore be \emph{added}; reweighting cannot supply it.
 The mode decomposition of central-value $d\sigma/d\Eavail$ (per-bin mode
 count-fractions $\times$ bin value), overlaid with data, locates the largest
@@ -418,7 +421,7 @@ GENIE's \texttt{gspl2root}, so we normalize by the non-MEC CC count: QE$+$RES$+$
 is fixed to the known total, and MEC is added through $1/(1-f_{\mathrm{MEC}})$
 with $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$.
 2p2h falls in the dip and brings all three low-$\Eavail$ bins toward data
-(Fig.~\ref{fig:mec}), closing, in central values,
+(Fig.~\ref{fig:mec}). In central values, it closes
 \SI{52}{\percent} of the data$-$CV gap at $\Eavail\le\SI{0.4}{GeV}$ and \SI{63}{\percent} of the
 integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{2.7}{\percent}$). The prediction
 % ledger row \texttt{VL160}
@@ -520,21 +523,22 @@ prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}.
 
 \paragraph{No 4D uncertainty is reported.} No 4D uncertainty magnitude, and no
 ratio of the unified-throw to the block covariance, is reported. A corrected
-4D covariance would use the actual minus and plus variation endpoints, MAT's
-mean-centered covariance blocks normalized by $1/N$, one fixed estimator seed,
-and mean-centered joint throws with the mean shift reported separately, and
-it would not subtract a scalar jitter floor. Because the single-pass shifted observables
+4D covariance would use the actual minus and plus variation
+endpoints; MAT's mean-centered covariance blocks, normalized by $1/N$; one fixed
+estimator seed; and mean-centered joint throws, with the mean shift reported
+separately. It would not subtract a scalar jitter floor. Because the single-pass shifted observables
 exist only for events selected at the central value, re-selected event loops
 (\S\ref{sec:uq-higherdim}) would be needed to bound migration effects.
+% Search: 4D uncertainty; 4D covariance; unified-throw to the block (note sources: sec_3d.tex, sec_method.tex:267, sec_systematics.tex:15, sec_execsummary.tex and sec_summary.tex, each saying none is quoted; values.tex's is a removed historical metric) @ 1a015eef
 
 \paragraph{Bin-identical comparison to the published low-recoil measurement.}
 Supplemental data from Ref.~\cite{MINERvA:2022incl} (44-cell
 $d^{2}\sigma/(d\Eavail\,dq_{3})$ with its full covariance, distributed inside
 the public arXiv source package) permit a direct quantitative cross-check.
-Merging both measurements onto their maximal common grid --- edges present in
-\emph{both} binnings --- and restricting our
-$(\pT,\pPar)$ marginalization to $\pPar<\SI{20}{GeV/c}$ to mirror the Ascencio
-muon selection ($\theta_\mu<20^{\circ}$, $1.5<p_\mu<\SI{20}{GeV}$) gives two super-cells,
+Both measurements are merged onto their maximal common grid, the edges present in
+\emph{both} binnings. Our
+$(\pT,\pPar)$ marginalization is restricted to $\pPar<\SI{20}{GeV/c}$ to mirror the Ascencio
+muon selection ($\theta_\mu<20^{\circ}$, $1.5<p_\mu<\SI{20}{GeV}$). Together, these give two super-cells,
 $\Eavail<\SI{0.4}{GeV}$ in $q_{3}\in[0.4,0.6)$ and $[0.6,1.2)\,\si{GeV}$: the
 low-recoil 2p2h region. Our central result lies
 \SI{9.2}{\percent} and \SI{6.0}{\percent} above Ascencio. No pulls or
@@ -547,8 +551,10 @@ The two analyses also define true $\Eavail$ differently
 definition moves \SI{11.0}{\percent} of the population of our lowest true-$\Eavail$
 bin ($\Eavail<\SI{0.1}{GeV}$) out of it. That shift has the sign and location of the
 residual. The two common cells, however, span our three lowest bins
-($\Eavail<\SI{0.4}{GeV}$), whose aggregate shift has not been computed, so the
-definition difference remains an alternative explanation that is not excluded.
+($\Eavail<\SI{0.4}{GeV}$), and the aggregate shift over those bins has not been
+computed. The definition difference therefore remains an alternative
+explanation that is not excluded.
+% Search: aggregate; bins 1+2+3; three lowest bins (docs/EAVAIL_DEFINITION.md:161-162, "whose aggregate is measured nowhere"; docs/OPEN_ITEMS.md row OI-59 still OPEN) @ 1a015eef
 At the \SI{10}{\percent} scale of the residual, the comparison neither refutes
 nor validates the result.
 % Source: docs/EAVAIL_DEFINITION.md sec. 2-4 (-10.99% out of truth bin 1, OI-56; caveat OI-59). Added 2026-10-11.

@@ -22,10 +22,11 @@ and the conventions it follows, are in \S\ref{sec:uq-2d-scope}.
 \subsection{Systematic universes}
 \label{sec:uq-universes}
 Detector and model systematics use the July universe sweep: MAT-MINERvA's 44 error bands and 187
-universes, identical to the published analysis's \texttt{GetStandardSystematics}
-set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
+universes, identical to the standard systematics set of the published analysis. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
 against a reference central-value unfold with the same estimator and seed, which
 is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-scope}), and holds 43 bands plus the flat normalization.
+% Note register round n2, batch n2-B (2026-10-26; R-N2d): MAT-MINERvA's function name for the standard systematics
+% set prints in App. A (app_statmethods.tex, sec:rank), not here.
 % Note register round n1, batch n1-B (2026-10-25): the pointer follows the Rvn1pi/Rvp1pi account, which moved from
 % sec:uq-2d-construction to the "Changes from the earlier 2D budget" paragraph of sec:uq-2d-scope (director ruling).
 % Printed pointer moved to this comment by the plain-language pass: (\texttt{KNOWN\_ISSUES.md} 92).
@@ -172,28 +173,28 @@ block reflects an efficiency gain, regularization bias or undercoverage.
 \subsection{ML/optimization uncertainty: training-seed variation}
 \label{sec:uq-ml}
 The ML block is the sample covariance, over five training-seed settings, of the mean
-of 20 bootstrap replicas at each setting; each setting is a triplet $(s,s{+}1,s{+}2)$ of
+of 20 bootstrap replicas at each setting. Each setting is a triplet $(s,s{+}1,s{+}2)$ of
 seeds for the step-1 classifier, step-2 classifier and miss regressor, with
-$s\in\{42,45,48,51,54\}$, and the block has rank~4 (\S\ref{sec:seedscan}). It is
+$s\in\{42,45,48,51,54\}$; the block has rank~4 (\S\ref{sec:seedscan}). It is
 the smallest block, with median \SI{0.048}{\percent} per bin.
 The block measures LightGBM seed variation, with the bootstrap\,$\times$\,seed
 interaction at its $1/20$ share. With four degrees of freedom, its variance has a
 Gaussian relative standard error of about \SI{71}{\percent}. Its per-bin $\sigma$ is a
-median 0.27 of that of the earlier ten-seed block, because the
+median 0.27 of that of the earlier ten-seed block. The reason is that the
 bootstrap\,$\times$\,seed interaction, which dominated the earlier scan, is already
 inside the fixed-seed statistical block; this block carries it only at its $1/20$
 share, a median 0.763 of its diagonal. The interaction itself (a median 0.072 of the
 statistical variance) and the universe\,$\times$\,retraining term
 (\S\ref{sec:uq-2d-scope}) are reported and not added.
 
-The dependence on the learner is in no block. The central value and the
-exact-split cross-check, which differ in learner and in background treatment, differ by a
-per-bin median of \SI{1.03}{\percent} (maximum \SI{17.6}{\percent};
-\S\ref{sec:method-config}), and the mean of the earlier ten-seed
+No block contains the dependence on the learner. The central value and the
+exact-split cross-check differ by a per-bin median of \SI{1.03}{\percent} (maximum
+\SI{17.6}{\percent}; \S\ref{sec:method-config}); they differ in background treatment
+as well as in learner. For comparison, the mean of the earlier ten-seed
 LightGBM scan (Ref.~\cite{NoteRecords2026}, superseded values: retired material)
 differs from the cross-check by a median of \SI{0.99}{\percent} per bin. One reseeded
 exact-split run differs from the unseeded one by a per-bin median of
-\SI{0.18}{\percent} (maximum \SI{1.6}{\percent}); the spread of the exact-split
+\SI{0.18}{\percent} (maximum \SI{1.6}{\percent}). The spread of the exact-split
 estimator over seeds is unmeasured (\S\ref{sec:method-config}).
 % Review m6, m9. J3/J4 provisional (DECISION-20261018, packet W6: D3 with median and maximum; W9: D11 in
 % sec:uq-2d-scope). stageC/production/REPORT.md §3 (C08 4 dof, Gaussian relative SE of variance 71 %; sigma_c08/sigma_ML
@@ -208,20 +209,24 @@ estimator over seeds is unmeasured (\S\ref{sec:method-config}).
 % e/recompute/rc_pairing.json.txt "seedmean vs exact" 0.987 % / 5.147. The 0.28 % figure that stood here was not
 % traced to an operand by the 2026-10-09 correction, and it did not name which central value it compared.
 % Fig. seedscan (seedscan_spread_2d, seedscan_band_pt: the ten-seed scan) removed 2026-10-18 (PHASE2 Q6); no Q version.
+% Note register round n2, batch n2-B (2026-10-26; R-N2a): the learner paragraph is split, one comparison per sentence.
+% Search: exact-backend seed scan; exact-split seed scan; P09b (pairings.tsv: "no exact-backend seed scan exists") @ 1a015eef
 
 \subsection{Further checks of the 2D covariance}
 \label{sec:uq-2d-construction}
-The products of the July sweep, which the quoted universe block uses, do not record a
-checksum of the driver code that produced them, and that driver version was not
-committed. Seven of its universes, four of them also checked in an earlier pilot, are
+The quoted universe block uses the July sweep. Seven of its universes are
 reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by
-inference, because the same code produced them.
+inference, because the same code produced them (Ref.~\cite{NoteRecords2026},
+\texttt{july-sweep}).
 % Note register round n1, batch n1-B (2026-10-25; director ruling on the earlier-budget defects): the defects of the
 % earlier 2D budget (the May sweep's truth-input mismatch, the Rvn1pi/Rvp1pi double count, the unpropagated
 % background-template statistics) moved to one paragraph, "Changes from the earlier 2D budget", in sec:uq-2d-scope.
 % This subsection keeps the checks of the quoted construction. The July sweep's provenance sentences are unchanged in
 % content; the first names the July sweep's products, because the May-sweep sentences that preceded it moved.
 % Search: July sweep; driver checksum; driver version committed; 7/7 PASS; S4(ii) @ ddf16f10
+% Note register round n2, batch n2-B (2026-10-26; R-N2b, provenance case (C)): the sweep's provenance prints in the
+% records entry july-sweep (app_provenance.tex), which the sentence cites; the note keeps its consequence for the
+% printed universe block (n2 ledger, rows SY-C1 to SY-C3). The n1 comment above describes the text before n2.
 % Printed identifier removed by the plain-language pass: the earlier 2D budget is VL175.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July
 % sweep); stageC/pilot/REPORT.md l.70-80, K1: five comparisons over four universes (NormDISCC:0, MaRES:0, Flux:23,
@@ -314,7 +319,7 @@ Taking 1A--1F as the reference would give a smaller block (median \SI{1.38}{\per
 The block does not identify which period is correct. Its interpretation is limited by
 the small number of period groups, by possible shrinkage from the regularization, and
 by the statistical and training noise it retains. Because the block is built from the
-observed differences among the periods, it contains them automatically; this says
+observed differences among the periods, it contains them automatically. That says
 nothing about its coverage, that is, about whether its size is right. For the same
 reason, the block's own double-ratio $\chi^{2}$ against any total that contains it is
 bounded whatever the data, so it is not a test. The raw 1G--1M $\pPar$ $\chi^{2}$,
@@ -479,15 +484,18 @@ The twelve playlists are combined with one global exposure ratio rather than
 per-period ratios, and the resulting bias is not corrected. At reconstruction
 level the pooled result is high, by \SI{0.18}{\percent} in total and by at most
 \SI{0.32}{\percent} in a marginal bin. After unfolding, the pooled result is \SI{0.076}{\percent} above
-the exposure-weighted combination of the period results on the integral (the
-same sign as at reconstruction level), and differs from it by at most
-\SI{0.39}{\percent} in a marginal bin (the highest $\pPar$ bin; at most
-\SI{0.33}{\percent} in $\pT$); in single cells the combination differs from the
+the exposure-weighted combination of the period results on the integral, the
+same sign as at reconstruction level. It differs from that combination by at most
+\SI{0.39}{\percent} in a marginal bin (the highest $\pPar$ bin) and by at most
+\SI{0.33}{\percent} in $\pT$. In single cells the combination differs from the
 pooled result by \SIrange{-1.83}{3.78}{\percent}, each with $|z|$ at most 0.31.
 % J3/J4 provisional (DECISION-20261018, packet W3: D9). KNOWN_ISSUES.md J36 (reco level: +0.18 % total, at most +0.32 % in a
 % marginal bin; playlist-spread-20261014/REPORT.md §1.2); state/2d-closeout/period-unfold-20261014/REPORT.md (J36
-% paragraph) and outputs/analysis.json comparisons.J36 (integral_shift_pct -0.0841; pz_marginal_shift_pct min -0.5725;
-% pt_marginal_shift_pct within +-0.171; cell_shift_pct -1.793 to +3.133; cell_z_max 0.278).
+% paragraph) and outputs/analysis.json comparisons.J36. The after-unfolding values print the refined estimator's, regenerated
+% by RE-2 part C (stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv rows pool-integral -0.0764, pool-pz-max
+% 0.3948, pool-pt-max 0.3332, pool-cell-min -1.834, pool-cell-max 3.780, pool-cell-zmax 0.308; the "highest p_par bin"
+% wording is re2-integration ledger row X1). analysis.json's comparisons.J36 values (-0.0841, -0.5725, +-0.171, -1.793 to
+% +3.133, 0.278) are the purity-subtracted estimator's, before RE-2 (n2 review of batch n2-B; comment corrected).
 
 \paragraph{Other limitations.}
 Both programs that use the covariance for the reported results, the $\chi^{2}$
@@ -585,12 +593,11 @@ Muon\_Energy\_MINERvA/MINOS), the re-selected event loops supply the lateral-ban
 block of the five-axis covariance used in this note; higher-dimensional products
 built from the single-pass shifted observables are not used for any quoted
 uncertainty. Replacing the single-pass lateral-band block by the re-selected one moves that block's square-root trace by
-\SI{\latTraceMove}{\percent}. That is a change in a square-root trace and is
-\emph{not} a bound on any individual bin: across the \latBins\ reported bins
-the per-bin ratio of re-selected to single-pass standard deviation runs \latRatioMin\ to
-\latRatioMax, and within the top \SI{1}{\percent} of bins by single-pass variance
---- which carry \SI{\latTopVarShare}{\percent} of the total --- it runs
-\latRatioTopMin\ to \latRatioTopMax. A small share of the aggregate variance
+\SI{\latTraceMove}{\percent}. That is a change in a square-root trace, \emph{not} a
+bound on any individual bin. Across the \latBins\ reported bins the per-bin ratio of
+re-selected to single-pass standard deviation runs \latRatioMin\ to \latRatioMax;
+within the top \SI{1}{\percent} of bins by single-pass variance, which carry
+\SI{\latTopVarShare}{\percent} of the total, it runs \latRatioTopMin\ to \latRatioTopMax. A small share of the aggregate variance
 does not make a bin irrelevant to a quoted result.
 
 \paragraph{Scope of the re-selected replacement.} The replacement covers

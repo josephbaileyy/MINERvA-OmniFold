@@ -33,10 +33,11 @@ negative-weight injection is an equivalence study and the natural
 extended-fiducial treatment; this appendix establishes no supported production
 path and changes no default. The two
 covariance ratios are agreement diagnostics between two realizations of one
-subtraction, not quoted uncertainties. Two provenance limits travel with the production numbers: the driver
-was uncommitted when they were written, so its executing revision is corroborated by a version-specific log line
-rather than pinned by a digest, and no output records the job that produced it
+subtraction, not quoted uncertainties. Two provenance limits apply to the production numbers: the driver revision that
+produced them is corroborated but not pinned, and no output records the job that produced them
 (Ref.~\cite{NoteRecords2026}, \texttt{negweight-hpss}).
+% Note register round n2 (R-N2b): the forensic detail of both limits is held by the negweight-hpss records entry
+% (app_provenance.tex); the limits stay here as their consequence.
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
@@ -94,7 +95,7 @@ With the histogram-based gradient-boosted classifier used in \emph{this
 comparison}, they agree to the reported median per-bin ratio $\nwMedianBin$ at this
 measurement's sub-percent genuine-background scale. This histogram backend is
 neither the LightGBM estimator of the quoted 2D central value and its ensembles
-nor the exact-split cross-check (\S\ref{sec:method}), so the equivalence is
+nor the exact-split cross-check (\S\ref{sec:method}). The equivalence is therefore
 established on a third backend, and its transfer to the production configuration
 is assumed rather than demonstrated.
 Raw signed weights destabilize an exact-split boosted-tree classifier,
@@ -192,8 +193,7 @@ differs by more than a few percent (\SI{\nwWorstBin}{\percent}); background
 concentrates there and subtraction is largest. Unbinned subtraction reproduces the binned correction wherever it is well determined.
 % Accuracy fix (unscored; director ruling 2026-10-26): "used for the results" dropped; the 2D result now uses the
 % refined form (sec:negweight-footing).
-
- Departures occur
+Departures occur
 only where the binned $\max(0,\cdot)$ and structural floor of
 \S\ref{sec:negweight-estimator} govern the result.
 
@@ -282,16 +282,13 @@ $18$ detector unfolds and $10$ endpoint unfolds of the re-selected lateral bands
 unfolds and for current production.
 
 For the existing endpoint unfolds, produced in July 2026, purity is established by
-elimination. Neither of the two job scripts that could have produced them sets the
-driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its
-default, purity; the driver announces its mode only on its negative-weight code
-paths, and the logs of these lateral-band unfolds contain the purity code path's
-signature line and no mode announcement. The option and the announcements already
-existed when the files were produced, so the absence of an announcement is
-evidence of purity. Current production fixes the background treatment in a
+elimination from the job scripts and logs (Ref.~\cite{NoteRecords2026}, \texttt{bkg-mode-elimination}).
+% Note register round n2 (R-N2b): the elimination is held verbatim by the bkg-mode-elimination records entry
+% (app_provenance.tex).
+Current production fixes the background treatment in a
 configuration object that rejects every other mode. The standard job script
-passes the option explicitly from that configuration rather than inheriting the
-default, and the value is written into the record of every endpoint unfold as it
+passes the driver's background-mode option (\texttt{-{}-bkg-mode}) explicitly from that configuration rather than
+inheriting the driver's default, and the value is written into the record of every endpoint unfold as it
 is produced. This changes how the treatment is documented, not the physics: the
 background treatment of a future component can be read from the component itself
 rather than inferred from the absence of an option.
@@ -299,12 +296,12 @@ rather than inferred from the absence of an option.
 The standard chain uses purity by choice, on two grounds
 (Ref.~\cite{NoteRecords2026}, \texttt{oi6-oi8-oi126}).
 First, mixing background treatments inside one covariance is
-worse than either consistent choice: inserting a lateral-band block built with
-negative-weight subtraction into a central and vertical set built with purity
-subtraction is a mismatch, not an upgrade. Second, switching would have required
+worse than either consistent choice. A lateral-band block built with
+negative-weight subtraction, inserted into a central and vertical set built with purity
+subtraction, is a mismatch, not an upgrade. Second, switching would have meant
 rerunning every unfold above and would have invalidated the flux-corrected
-covariance, which had just been chosen for use.
-This consequence, not the computing cost, decided the choice.
+covariance just chosen for use.
+That consequence, not the computing cost, decided the choice.
 The background treatment has been revisited in two dimensions: the closure test
 below is its result, and the 2D result and its covariance use the refined
 estimator. For the five-dimensional central value, which still uses purity, the
@@ -319,7 +316,7 @@ revisit is open.
 
 % RE-1 integration (DECISION-20261023 items 1-2): C2 of stageF/methods/re1/RE1-REPORT-2.md sec. 2 (readout_2d_full.json,
 % c2_supplement.json, c2_cells.json), recomputed by the director (RE1-REPORT-2-RULINGS.md); D2 from sec. 3. OI-6: in
-% progress, with C2 as its first result. The 2D switch is decided, not done: the note still prints the purity result.
+% progress, with C2 as its first result. The 2D switch has since been made: the 2D result uses configuration (f) (W7 comment below).
 \paragraph{A two-dimensional closure test with backgrounds.}
 Twenty pseudo-experiments at nominal truth (the truth model equals the prior),
 with background included and drawn as in the five-dimensional
@@ -427,7 +424,8 @@ shown to be immaterial.
 \subsection{Five-dimensional pseudo-experiments with both background treatments}
 
 The five-dimensional validation (\S\S\ref{sec:val-fiveaxis}--\ref{sec:val-departure})
-reports end-to-end tests of both background treatments: purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity, configuration (e), which gives the 3D and 4D central values but not the quoted 5D central value; the quoted 2D central value uses the same refinement capacity, in configuration (f).
+reports end-to-end tests of both background treatments. They cover the purity bias in the highest-$W$ column at nominal truth, its reduction with refined negative-weight subtraction, the data difference, and the estimator with higher refinement capacity.
+That estimator is configuration (e), which gives the 3D and 4D central values but not the quoted 5D central value; the quoted 2D central value uses the same refinement capacity, in configuration (f).
 
 \paragraph{Purity bias.}
 Purity bias is 8--12 statistical standard deviations; signal-only experiments
@@ -450,7 +448,7 @@ replicas that individually resampled every pseudo-event and refit refinement.
 It preserves the signed total to $3\times10^{-6}$ and clips
 \SIrange{0.01}{0.05}{\percent} of events. Corner bias falls from
 \SI{1.66}{\percent} to \SI{0.24}{\percent}, but residuals in some joint cells
-fail the nominal closure criterion, which allows none of the 153 reported quantities a mean
+fail the nominal closure criterion. The criterion allows none of the 153 reported quantities a mean
 residual beyond 3.6 standard errors of the mean ($|t|>3.6$, the two-sided 5\% level, Bonferroni-corrected
 over the 153), or beyond half its bootstrap standard deviation with $|t|>3$.
 % Note register round n1, batch n1-F: the criterion stated (state/s5n/contract.json, stage_1_development, controls C3
@@ -488,10 +486,10 @@ The choice of background treatment and the choice of covariance are independent,
 and nothing in this appendix selects a five-dimensional covariance for use. The
 lateral-band component from re-selected event loops is built, with five bands and
 ten endpoint unfolds whose distinct checksums are listed in the record of the
-covariance used in this note. That five-axis covariance is used although it does not
-meet the acceptance criteria of its specification, and the use covers only that file and
-its projection (\S\ref{sec:eavailw-adopted}). Neither fact follows from this appendix, and the appendix
-needs neither. The choice of background treatment settles one of the conditions for using
+covariance used in this note. That five-axis covariance does not meet the acceptance
+criteria of its specification. This note uses that file and its projection nonetheless, and the
+use covers only them (\S\ref{sec:eavailw-adopted}). Neither fact follows from this appendix, and the
+appendix relies on neither. The choice of background treatment settles one of the conditions for using
 a component; every other condition still applies.
 % Plain status of the use of the five-axis covariance as printed at sec:eavailw-adopted (sec_5d.tex): it does not meet
 % its specification's acceptance criteria, and its use covers only this file and its projection.

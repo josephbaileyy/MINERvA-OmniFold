@@ -171,7 +171,7 @@ A diagnostic in simulation compares the boosted-tree residual with that
 of an exact binned iterative unfolding. It uses the 109 J cells, noise-free
 signal-only pseudo-data, and the fixed historical truth deformations D1, W1, W3
 and the $q_3$ stress (labels as in \S\ref{sec:gbdt-model-dependence}), pooled
-with W2; W2's boosted-tree comparator includes background, and the outcome is
+with W2. W2's boosted-tree comparator includes background, and the outcome is
 unchanged without it. The binned unfolding unfolds the same simulated
 events, with their exact efficiency and the response binned in the 10,499
 occupied five-dimensional reconstructed cells, starting from the nominal
@@ -183,13 +183,13 @@ binned unfolding, for D1, W1, W3 and the $q_3$ stress. Of the 144 eligible
 residuals, pooled over the deformations, 15 are dominated by the tree
 approximation, 2 of them in identified quantities, a share of 0.014. Most of
 the 144 (121) lie in quantities that the binned response constrains weakly
-at the analysis exposure: their Cram\'er--Rao widths exceed \SI{10}{\percent}
+at the analysis exposure. Their Cram\'er--Rao widths exceed \SI{10}{\percent}
 at both truth resolutions tested (median \SI{31}{\percent} at the coarser, the
 J cells themselves), so the regularization trades a large variance for the
 bias. Longer noise-free exact iteration removes much of the residual for D1
 (J median \SI{3.3}{\percent} after 200 iterations and \SI{0.8}{\percent} after
-$10^{5}$) and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent}),
-but not for W3 and the $q_3$ stress (\SI{4.4}{\percent} and \SI{6.6}{\percent}
+$10^{5}$) and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent}).
+It does not do so for W3 and the $q_3$ stress (\SI{4.4}{\percent} and \SI{6.6}{\percent}
 after 200 iterations, \SI{8.9}{\percent} and \SI{6.7}{\percent} after $10^{5}$),
 % Register round r12 review (S6): the 200-iteration W3 and q3 medians added from the binned response diagnostic
 % record (d-id REPORT.md, longer exact iteration table: J median of |r_IBU| at K = 200, nominal-weighted T2).
@@ -202,14 +202,14 @@ above \SI{2}{\percent}, 232 changed classification with the truth resolution or
 the response weighting and were excluded, leaving the 144
 (\SI{38}{\percent}). The coarser muon projection retained only three cases and
 is uninformative.
-Within this comparison (binned, signal-only and noise-free, with the detector
-response fixed at the simulation's, on the development truths, and over these 144
-residuals only), the residual is consistent with the
+Within this comparison, the residual is consistent with the
 regularization of the inverse problem at this binning and prior, and the tree
-approximation is not supported as its main cause. What unbinned or biased
+approximation is not supported as its main cause. The comparison is binned,
+signal-only and noise-free; it fixes the detector response at the simulation's,
+uses the development truths, and covers these 144 residuals only. What unbinned or biased
 estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} and
-the validity of any interval lie outside the diagnostic's scope; it establishes
-no impossibility, and the precision thresholds it proposes are not acceptance
+the validity of any interval lie outside the diagnostic's scope. The diagnostic
+establishes no impossibility, and the precision thresholds it proposes are not acceptance
 criteria for any result in this note. The exclusions, definitions
 and numerical verification are in the binned response diagnostic record
 (Ref.~\cite{NoteRecords2026}, \texttt{response-diagnostic}).
@@ -220,8 +220,8 @@ and numerical verification are in the binned response diagnostic record
 The refinement classifier underfits, which causes the residual background bias
 (App.~\ref{app:negweight}). A candidate with raised refinement capacity passes the
 nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation
-2.7 standard errors) and a pooled calibration test of its statistical intervals (pull width 1.02),
-which does not establish calibration for every functional.
+2.7 standard errors) and a pooled calibration test of its statistical intervals (pull width 1.02).
+The pooled test does not establish calibration for every functional.
 The candidate fails the data-stability test, whose criterion was set before it was run: input perturbations within
 floating-point rounding move functionals by a median of 0.8 and at most 2.6
 statistical standard deviations. The baseline estimator's shifts, 0.8 and 2.5, place this
@@ -319,11 +319,11 @@ scan and makes no claim about infinitely many iterations or every possible class
 The $q_3$ stress shows how much the functional matters:
 its EW median residual rises from \SI{4.99}{\percent} at iteration 5 to
 \SI{6.42}{\percent} at 30 even while some joint-cell summaries improve.
-The capacity probe changes recovery, but at five iterations, the most the
-computing budget allowed at that capacity, it lowers the largest residual proxy
-over the development truths (lower row of Fig.~\ref{fig:gbdt-recovery}) by 3\% on J
-and 8\% on H2, against the improvement of
-at least 20\% required before the larger capacity would be used.
+The capacity probe changes recovery. At five iterations,
+the most the computing budget allowed at that capacity, it lowers the largest
+residual proxy over the development truths (lower row of
+Fig.~\ref{fig:gbdt-recovery}) by 3\% on J and 8\% on H2. An improvement of at least 20\% was required
+before the larger capacity would be used.
 % Register round r12 (2026-10-21): the rule moved from the article's Sec. III; source
 % RECORD-20260927-s5p-stage2-exit.md sec. 3 (configuration 2, k in 10, 15, 20 against k = 5).
 % Note register batch b3 (2026-10-21): the rule scoped by its own measure. RECORD-20260927-s5p-stage2-exit.md
@@ -333,13 +333,14 @@ For the joint-test estimator, a rule fixed before the comparison would have
 replaced its five iterations by 10, 15 or 20 only if one of them lowered the
 rule's measure of model dependence, the largest residual proxy over the
 development truth changes, on the J or the H2 cells. None did, so five
-iterations were kept: the measure is a maximum over the truth changes, so the
-slow gains for D1 and W1 do not lower it (on H2, over the noise-free traces of
+iterations were kept. Because the measure is a maximum over the truth changes,
+the slow gains for D1 and W1 do not lower it: on H2, over the noise-free traces of
 Fig.~\ref{fig:gbdt-recovery}, it is 0.314 at five iterations and at least 0.384
-at 10, 15 or 20). With the study's precision
+at 10, 15 or 20. With the study's precision
 targets and computing budget, no reporting definition qualifies
 (next paragraph), and no five-dimensional measurement with total uncertainties was
 constructed.
+% Search: five-dimensional measurement; measurement production; reporting definition (RECORD-20260927-s5p-stage2-exit.md:1, :141, :171, "no measurement production is admitted"; no note source prints a five-dimensional measurement with total uncertainties) @ 1a015eef
 % Deposit pass: the governance wording of these sentences restated as criterion, value and outcome (old text in git
 % history). Criterion and value: RECORD-20260927-s5p-stage2-exit.md sec. 3, configuration 3 (capacity at the
 % affordable k = 5 lowers M by 8% on H2 and 3% on J, against the rule's 20%; K_afford is 5 iterations at 400/31).
@@ -430,7 +431,7 @@ of 40 68\% intervals (37.5\%, pointwise exact 95\% interval
 [22.7\%, 54.2\%]), so a pooled calibration pass cannot qualify this cell.
 A 160-experiment check with the width averaged over six bootstrap estimates
 changes the pull scales but does not validate the real-data procedure, which
-uses the data's own width; finite replica noise explains much of the apparent
+uses the data's own width. Finite replica noise explains much of the apparent
 variation among the six estimates.
 % Register round n1 (R-N1): "Neither check establishes total coverage" is covered by the one statement in
 % sec:coverage-5d that no frequentist coverage is claimed for any five-dimensional interval.
@@ -589,7 +590,7 @@ The file and the projection are identified by their SHA-256 checksums
 (Ref.~\cite{NoteRecords2026}, identities already fixed). The covariance does not
 meet the acceptance criteria of its specification, and its metadata mark it as not
 passing and as not to be used. The specification requires the null bound to be
-fixed before production; the bound was not fixed before this covariance was
+fixed before production. The bound was not fixed before this covariance was
 produced, so this covariance cannot meet that requirement. This note nevertheless
 uses this file and its projection; the use covers only them, not any other
 covariance built to the same specification, including the two companion
@@ -720,14 +721,15 @@ companion covariances built at two estimator-seed settings; only item 3 describe
   $N=80$, with two-point exponent $\floorExponent$; no floor measurement exists
   at $N=160$. Statistical noise must fall with $N$; seed sensitivity did not
   fall between $N=40$ and $N=160$.
-  Three limits rule out a statement about infinite ensembles. The $40$- and $80$-throw points are
-  nested subsets of the same 160 throws, not independent ensembles, so the flatness holds within one ensemble
-  over a factor of four in $N$, and the behaviour at larger $N$ is unmeasured. The quoted
+  Three limits rule out a statement about infinite ensembles. First, the $40$- and $80$-throw points are
+  nested subsets of the same 160 throws, not independent ensembles. The flatness therefore holds within one ensemble,
+  over a factor of four in $N$; the behaviour at larger $N$ is unmeasured. Second, the quoted
   $\pm\seedEffectScatter\,\%$ is subset scatter at a single seed pair
   (offsets $\{0,1200\}$); the width of the distribution over seed pairs is unmeasured.
-  The statistic is a maximum over the declared offset set, so additional pairs
+  Third, the statistic is a maximum over the declared offset set, so additional pairs
   can only raise it. Within these limits, the failure of the $\sprojBound\,\%$ limit
   is not the statistic's own resampling noise: it shows no reduction over $N=40$--$160$.
+  % Search: floor at N=160; larger ensemble; seed-pair width; seed pairs (values.tex:446 "the FLOOR was measured at N=40 and N=80 ONLY"; nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:17-22, the 40- and 80-throw points nested in one 160-throw ensemble at one seed pair; CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md:71-74, the N=160 floor of EVIDENCE-20260920 is an extrapolation; release-package-20260922/README.md:35-39, larger N and the seed-pair width unmeasured) @ 624acea1
 \item Five of the covariance's 45 bands fall outside the seed variation.
   The endpoint convention fixes the estimator seed for the muon-energy,
   muon-resolution and beam-angle blocks, so the offset cannot reach them.

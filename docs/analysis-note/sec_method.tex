@@ -112,8 +112,8 @@ The unfolding code supports interchangeable learners (component terminology and
 code paths in App.~\ref{app:codebase}). The quoted 2D central value and all of its
 uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the
 training-seed block and the run-period unfolds) use LightGBM with $100$ trees,
-$8$ leaves and learning rate $0.1$, the same settings for the step-1
-classifier, the step-2 classifier and the miss regressor, with refined
+$8$ leaves and learning rate $0.1$, with the same settings for the step-1
+classifier, the step-2 classifier and the miss regressor. They use refined
 negative-weight background subtraction (App.~\ref{app:negweight}), whose
 refinement classifier has 400 trees and 31 leaves and takes the estimator seed
 plus three as its seed. This is configuration~(f) below. The central value is the
@@ -125,11 +125,11 @@ per-bin median of 4.37 standard errors of the mean. A central unfold at seed~45
 differs from the seed-42 one by at most \SI{1.4}{\percent} in a cell. With the
 purity-based subtraction (configuration~(a)), the seed-42 central value
 differs from the seed-1 one by a per-bin median of \SI{0.18}{\percent} (maximum
-\SI{1.79}{\percent}), or 0.30 (maximum 1.28) of the per-bin standard deviation of
+\SI{1.79}{\percent}). That is 0.30 (maximum 1.28) of the per-bin standard deviation of
 the earlier statistical band, which was built at seed~1. Both of those central values are
-regenerated to $\lesssim2\times10^{-11}$ with one driver and one input, the runs
-differing only in the seed, so the difference is attributable to the seed
-(inferred from the two regenerations).
+regenerated to $\lesssim2\times10^{-11}$ by runs with one driver and one input that
+differ only in the seed. The difference is therefore attributable to the seed, as
+inferred from the two regenerations.
 % RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): refined estimator: registry a-refined-400-31 (ESTIMATORS.tsv:12) and
 % re2/RE2-PARTB-REPORT.md sec. 4.3 (every run negweight-refined, 400 trees, 31 leaves, random_state = seed + 3); seed 45
 % vs seed 42: RE2-PARTB-REPORT.md:193 (PB-pow-S4CV, max rel. diff. 0.0142). The seed-1 comparison (0.18, 1.79, 0.30,
@@ -142,17 +142,19 @@ differing only in the seed, so the difference is attributable to the seed
 The quoted central value records its run configuration; it repeats to
 $9\times10^{-12}$ and equals the refined 2D data unfold of
 App.~\ref{sec:negweight-footing} to $7\times10^{-12}$. The purity-subtracted seed-42
-central value (Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}) has no
-execution log or recorded run configuration. An independent rerun with a different
-driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a
-regeneration with the current driver whose run configuration is recorded. Against
+central value has no recorded run configuration. An independent rerun reproduces it to
+$1.4\times10^{-11}$, and so does a regeneration whose run configuration is recorded
+(Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}). Against
 the ten purity-subtracted LightGBM central values at seeds 1--10 it is mildly
 over-dispersed (RMS standardized difference 1.28, maximum 4.25).
 % RE-2 integration W6 and W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): RE2-PARTB-REPORT.md:149-150 (PB-ER-rep 9.17e-12, PB-ER-D2 7.45e-12), sec. 4.3 (the
 % argv check: each run's recorded runConfig). 1.28 and 4.25 are E_U's (re2c_values_unmatched.tsv).
-Seed~42 was chosen on computing cost: of the two costed ways of matching the central
-value and the statistical band in seed, a matched seed-42 statistical band was the
-cheaper. The quoted statistical block is a seed-42 band
+% Note register round n2, batch n2-B (2026-10-26; R-N2b, provenance case (A)): the rest of this value's provenance
+% prints in the records entry 2d-central-value (app_provenance.tex), which the sentence cites; the note keeps its
+% consequence for the printed number (n2 ledger, rows ME-A1 to ME-A3).
+Seed~42 was chosen on computing cost: of the two costed ways to give the central value
+and the statistical band a common seed, building the statistical band at seed~42 was
+the cheaper. The quoted statistical block is a seed-42 band
 drawn in three independent streams (data, signal and background simulation;
 \S\ref{sec:uq-boot}).
 % Review m5: the costed band was the VL170 law at seed 42 (stageC/pilot/DESIGN.md §8); S1 is the three-stream
@@ -173,19 +175,19 @@ drawn in three independent streams (data, signal and background simulation;
 \paragraph{The exact-split cross-check.}
 The exact-split configuration (\texttt{exact}) uses scikit-learn
 \texttt{GradientBoosting} with single-threaded exact-split CART. Its seed
-was not fixed: its production job script passed no seed, and the driver version it
-ran had no seed option, so scikit-learn's \texttt{random\_state} was \texttt{None};
-the run's own log was not found. Two driver revisions regenerate it to
-$7\times10^{-15}$, but it is not invariant to the estimator seed: one reseeded run
-(\texttt{random\_state} 1/2/3) moves every bin, by a median of \SI{0.18}{\percent}
-(maximum \SI{1.6}{\percent}; the agreement with the LightGBM seed-1 to seed-42
-median above is a coincidence), and gives
-$\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$; the spread over seeds is unmeasured.
+was not fixed: the driver version it ran had no seed option, and its production job
+script passed no seed. The run's own log was not found. Two driver revisions
+regenerate it to $7\times10^{-15}$. It is not invariant to the estimator seed,
+however: one reseeded run (\texttt{random\_state} 1/2/3) moves every bin, by a median
+of \SI{0.18}{\percent} (maximum \SI{1.6}{\percent}), and gives
+$\chi^{2}/\mathrm{ndf}=\chiPaperExactSeeded$. The spread over seeds is unmeasured.
+The agreement of that median with the LightGBM seed-1 to seed-42 median above is a
+coincidence.
 The exact-split central value differs from the purity-subtracted LightGBM seed-42
 central value by a per-bin median of \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}),
-1.32 statistical standard deviations, and from the quoted central value, which also
-differs from it in background treatment, by \SI{1.03}{\percent} (maximum
-\SI{17.6}{\percent}). It gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded,
+1.32 statistical standard deviations. It differs from the quoted central value, which
+also differs from it in background treatment, by a per-bin median of
+\SI{1.03}{\percent} (maximum \SI{17.6}{\percent}). It gives $\chi^{2}/\mathrm{ndf}=\chiPaperExact$ (unseeded,
 reproducible) against the published covariance, against $\chiPaperPurity$ for the
 purity-subtracted LightGBM central value and $\chiPaper$ for the quoted one
 (\S\ref{sec:results-tension}).
@@ -205,6 +207,10 @@ configuration), is retained for method-dependence studies
 % studies labeled exact-split not recomputed) moved to the paragraph after the configuration list (R-N2); the rest is
 % unchanged. P09b (E_C's seed noise) is UNRESOLVED in ASSESSMENT-20261008-2d-estimator-pairing.md.
 % Search: exact-split seed scan; spread over seeds; matched covariance; exact-split bootstrap; P09b @ ddf16f10
+% Note register round n2, batch n2-B (2026-10-26; provenance case (B), director's ruling: it stays in the note): the
+% seed sentence is split, keeping its reason (no seed option; no seed passed) and the missing log; scikit-learn's
+% unset seed parameter is stated as "Its seed was not fixed" (R-N2d).
+% Search: exact-backend seed scan; exact-split seed scan; P09b (pairings.tsv: "no exact-backend seed scan exists") @ 1a015eef
 
 % Configuration 3: sec_5d.tex (100 trees, 8 leaves; purity footing) for 5D; the 3D/4D drivers default to
 % --estimator lgbm and the purity bkg-mode (review 2026-10-11). Added 2026-10-11 so that this subsection is the single home the article cites for all four configurations;
@@ -245,10 +251,10 @@ not combined. Four are described in this section:
         \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
         removes most of the background-related bias that remains
         (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It gives the 3D
-        and 4D central values (\S\ref{sec:3d}), and it is used for the
+        and 4D central values (\S\ref{sec:3d}). It is used for the
         generator tests (\S\ref{sec:joint5d}), the study of generator shapes held
         out of its development (\S\ref{sec:val-departure}) and the precision study
-        (\S\ref{sec:gbdt-model-dependence}), and it was selected before the
+        (\S\ref{sec:gbdt-model-dependence}). It was selected before the
         joint-test design was fixed (\S\ref{sec:joint5d});
   \item (b), the exact-split cross-check above.
 \end{itemize}
@@ -261,9 +267,9 @@ was developed. A refined five-dimensional data unfold exists (configuration~(e))
 it is not the quoted central value, and no covariance has been built for it. The 2D
 central value and its covariance were rebuilt with configuration~(f) after a
 two-dimensional closure test with backgrounds found the purity bias
-(App.~\ref{sec:negweight-footing}). The exact-split cross-check gave the quoted 2D
-central value until 2026-10-11; studies in this note labeled \emph{exact-split} use
-that central value and have not been recomputed. The 3D and 4D central values have been
+(App.~\ref{sec:negweight-footing}). Studies in this note labeled \emph{exact-split}
+use the exact-split central value, which was the quoted 2D central value until
+2026-10-11; they have not been recomputed. The 3D and 4D central values have been
 regenerated with configuration~(e); no 3D or 4D covariance is quoted.
 % RE-2 integration W7 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261023-joseph-2d-refined-integrate-ci.md item 1 (the move, after RE-1 C2);
 % DECISION-20261024-joseph-adopt-re2-2d-refined.md item 1 (E_R and Q_R adopted).
@@ -274,6 +280,8 @@ regenerated with configuration~(e); no 3D or 4D covariance is quoted.
 % claim are unchanged: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md (the move to LightGBM);
 % the exact-split labels in app_statmethods.tex ("not recomputed for the LightGBM central value").
 % Search: exact-split recomputed; recomputed with LightGBM; not recomputed for the LightGBM central value @ ddf16f10
+% Note register round n2, batch n2-B (2026-10-26; R-N2c): the exact-split sentence now leads with the status of the
+% studies so labeled; the date and "not recomputed" are unchanged.
 
 \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}}
 \begin{table}[htbp]

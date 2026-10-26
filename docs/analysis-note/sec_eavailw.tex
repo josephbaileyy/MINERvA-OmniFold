@@ -4,15 +4,16 @@
 % Methods-paper sync fix round: aligned with paper_body.tex sec:central (descriptive central values; no mechanism).
 % Register round n1 (R-N1): both are stated once, for this section too, at the sec:3d lead.
 In central values, Valencia 2p2h closes about half of the low-recoil gap
-(\S\ref{sec:3d-2p2h}) and leaves a separate excess over the MINERvA Tune~v1
-prior at high $\Eavail$, where 2p2h contributes nothing and the sub-percent
-pion-FSI dials cannot reach it (for the qualifications of the covariance, see
-\S\ref{sec:eavailw-adopted}). The comparison with external generators depends
-on the generator. GiBUU is low throughout the $\Eavail$ tail ($W$-integrated
-five-dimensional data/generator, configuration~(a), $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$;
-\S\ref{sec:eavailw-band} discusses its $E_\nu\approx\SI{20}{GeV}$ limit),
-whereas GENIE CV matches $[0.8,1.5)$ and is low in $[1.5,3.0)$ (three-dimensional
-data/CV, configuration~(e), $1.10$; \S\ref{sec:3d-2p2h}). Adding the hadronic invariant mass $W$ as the
+(\S\ref{sec:3d-2p2h}) but leaves a separate excess over the MINERvA Tune~v1
+prior at high $\Eavail$. There 2p2h contributes nothing, and the sub-percent
+pion-FSI dials cannot reach the excess. The qualifications of the covariance
+are given in \S\ref{sec:eavailw-adopted}. The comparison with external generators depends
+on the generator. GiBUU is low throughout the $\Eavail$ tail: its $W$-integrated
+five-dimensional data/generator ratio, in configuration~(a), is $1.59$ at
+$\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$. Section~\ref{sec:eavailw-band}
+discusses its $E_\nu\approx\SI{20}{GeV}$ limit. GENIE CV instead matches
+$[0.8,1.5)$ and is low in $[1.5,3.0)$, with a three-dimensional data/CV ratio,
+in configuration~(e), of $1.10$ there (\S\ref{sec:3d-2p2h}). Adding the hadronic invariant mass $W$ as the
 fifth OmniFold axis maps where in $W$ the high-$\Eavail$ excess lies. The validation of
 \S\ref{sec:val-fiveaxis} includes a model-dependence study, which establishes
 no bias--variance tradeoff and no new total uncertainty for this projection.
@@ -36,9 +37,10 @@ event and place events with $W^{2}\le0$ in the lowest $W$ bin, whereas the analy
 struck-nucleon mass and excludes such events from its five-observable truth sample. In the GENIE
 and NuWro samples this moves 0.14--0.15\% of the events into another $W$ bin. In GENIE CV and
 NuWro (without their 50--\SI{100}{GeV} samples) it changes the coarse-cell predictions by about
-\SI{0.1}{\percent} at the median and at most \SI{2.2}{\percent}, at most about one Monte Carlo
-standard error of the prediction in any cell; it was not evaluated at cell level for GENIE$+$MEC
-and cannot be evaluated for GiBUU.
+\SI{0.1}{\percent} at the median and at most \SI{2.2}{\percent}. In any cell, that is at most
+about one Monte Carlo standard error of the prediction. The change was not evaluated at cell
+level for GENIE$+$MEC and cannot be evaluated for GiBUU.
+% Search: GENIE+MEC cell level; J-cell shifts (M4-W-RECORD.md:9, "GENIE+MEC was not measured at cell level", and :129-139, GENIE CV and NuWro only; README-gen5d-build.md:60-77 gives GENIE MEC W-bin event counts, not cell shifts) @ 1a015eef
 
 Like $q_{3}$ (\S\ref{sec:4d}), and unlike $\Eavail$, $W$ changes under the
 lateral systematic shifts, so a shifted $W$ is stored for each lateral
@@ -190,7 +192,7 @@ nucleon exceeds that of CH by \SI{8.3}{\percent} for $W<\SI{1.1}{GeV}$ and is
 \SI{2.2}{\percent} below it for $1.1\le W<\SI{1.4}{GeV}$ (\SI{+5.6}{\percent}
 and \SI{-4.6}{\percent} with the overall normalization removed).  The NuWro
 and GiBUU comparisons contain a target difference of this kind, which the
-tests of \S\ref{sec:joint5d}, as run, do not correct; \S\ref{sec:joint5d-ch} re-evaluates them with the correction.
+tests of \S\ref{sec:joint5d}, as run, do not correct. Section~\ref{sec:joint5d-ch} re-evaluates them with the correction.
 
 \subsection{Where the excess lives in the $(\Eavail,W)$ plane}
 \label{sec:eavailw-map}
@@ -216,11 +218,11 @@ These statements hold under the nominal detector response, and the
 regularization bias of Sec.~\ref{sec:5d} is largest at high $\Eavail$ and
 high $W$.
 Estimator-seed shifts are a small fraction of the projected uncertainties
-(\S\ref{sec:eavailw-adopted}, item~4), but the seed sensitivity of the shares,
+(\S\ref{sec:eavailw-adopted}, item~4). The seed sensitivity of the shares,
 which are ratios of central-value differences, has not been measured
 separately. The response-mismatch closure of
 Appendix~\ref{app:response-mismatch} is designed to test whether an incorrect
-hadronic response can move strength into or out of the low-$W$ component; it
+hadronic response can move strength into or out of the low-$W$ component. It
 has not yet produced a result.
 
 \begin{figure}[H]
@@ -260,7 +262,7 @@ GENIE$+$Valencia~2p2h/MEC, NuWro and GiBUU, with the GENIE and NuWro
 predictions flux-repaired as in \S\ref{sec:3d-models}.
 % rebuilt on 2026-09-27; KNOWN_ISSUES.md row 83; ledger rows VL156--VL158 supersede VL35--VL38 (App. H, pre-repair values)
 The 3D and $(\Eavail,W)$ comparisons are made from the same five-dimensional
-histogram of each generator; GENIE~CV totals \SI{2.76e-38}{cm^2/nucleon} in
+histogram of each generator. GENIE~CV totals \SI{2.76e-38}{cm^2/nucleon} in
 the measurement phase space in both; GENIE$+$MEC uses the normalization
 convention of the 3D comparison.
 % KNOWN_ISSUES.md row 81
@@ -280,8 +282,8 @@ to $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:3d-models}). In GENIE and NuWro,
 neutrinos above this energy carry \SIrange{14.3}{14.8}{\percent} of the corner
 cross section and \SIrange{6.8}{7.4}{\percent} overall. Removing them raises
 these generators' corner-to-integrated contrast to \SIrange{9}{16}{\percent},
-bracketing GiBUU's. Supplying GiBUU with their share instead gives about
-$1.37$ in the corner and $1.29$ integrated. With the flux repaired, the corner
+bracketing GiBUU's. If GiBUU is instead supplied with the shares that GENIE and NuWro carry above this energy, data/GiBUU becomes about $1.37$ in the corner
+and $1.29$ integrated. With the flux repaired, the corner
 therefore has no distinct deficit for any of the four generators. GiBUU is lower than the others everywhere, and its
 energy limit accounts for the larger corner shortfall.
 % Source: VALIDATION_LEDGER VL161 (docs/orchestration/state/note-capgap-20261003/); KNOWN_ISSUES 82.
