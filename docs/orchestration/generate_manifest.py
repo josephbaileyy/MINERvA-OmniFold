@@ -20,6 +20,7 @@ import argparse
 import csv
 import importlib.util
 import io
+import os
 import re
 import subprocess
 import sys
@@ -78,8 +79,12 @@ def repo_path(path: Path) -> str:
 class TreeSource:
     """Where the bytes come from: the working tree (``rev=None``) or exactly one commit.
 
-    In commit mode, symlinks and submodules are not read (the working-tree mode's read of the
-    repo's one symlink, a directory link, fails and is skipped the same way).
+    Symlinks and submodules are not inventoried in EITHER mode: commit mode keeps only blobs of
+    mode 100644/100755, and working-tree mode skips any path that is a symlink, to a file or to a
+    directory. A link is a pointer whose target has its own row; reading through it in one mode
+    only made the two modes disagree (2026-10-26: 20 file links in a readout's companion
+    directory gave 5828 rows in working-tree mode and 5808 in `--at-sha`, so `--check` could
+    never pass).
     """
 
     def __init__(self, rev: str | None = None) -> None:
@@ -102,7 +107,10 @@ class TreeSource:
                       if prefix is None or rel.startswith(prefix.rstrip("/") + "/"))
 
     def is_file(self, rel: str) -> bool:
-        return (REPO / rel).is_file() if self.sha is None else rel in self._objects
+        if self.sha is None:
+            path = REPO / rel
+            return path.is_file() and not path.is_symlink()
+        return rel in self._objects
 
     def read(self, rel: str) -> bytes:
         """Bytes of ``rel``; raises FileNotFoundError / IsADirectoryError like Path.read_bytes."""
@@ -566,6 +574,7 @@ def self_test() -> int:
     ignored_dir.mkdir(exist_ok=True)
     intended_path: Path | None = None
     ignored_path: Path | None = None
+    link_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(dir=ORCHESTRATION, prefix="manifest-selftest-",
                                          suffix=".md", delete=False) as handle:
@@ -573,6 +582,10 @@ def self_test() -> int:
         with tempfile.NamedTemporaryFile(dir=ignored_dir, prefix="manifest-selftest-",
                                          suffix=".pyc", delete=False) as handle:
             ignored_path = Path(handle.name)
+        # A file symlink (untracked, so it would be `intended`) must be skipped in working-tree
+        # mode exactly as commit mode skips mode 120000; its target, a real file, must stay.
+        link_path = ORCHESTRATION / f"manifest-selftest-link-{os.getpid()}.md"
+        link_path.symlink_to(intended_path.name)
         paths, states = inventory()
         rels = {repo_path(path) for path in paths}
         # OI-73. The override-survival guard is asserted in the SOURCE as well as in
@@ -608,6 +621,8 @@ def self_test() -> int:
             repo_path(intended_path) in rels,
             states.get(repo_path(intended_path)) == "intended",
             repo_path(ignored_path) not in rels,
+            repo_path(link_path) not in rels,
+            not TreeSource().is_file(repo_path(link_path)),
             set(states.values()) <= {"tracked", "intended"},
             "tracking" in COLUMNS,
             "if is_runs_or_state(rel) and override is None:" in source,
@@ -639,6 +654,8 @@ def self_test() -> int:
             intended_path.unlink(missing_ok=True)
         if ignored_path is not None:
             ignored_path.unlink(missing_ok=True)
+        if link_path is not None:
+            link_path.unlink(missing_ok=True)
         if made_ignored_dir:
             ignored_dir.rmdir()
     print("manifest self-test: PASS")
