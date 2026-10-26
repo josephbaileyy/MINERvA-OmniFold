@@ -1,0 +1,8 @@
+2026-10-26T18:48:29Z
+3df55f5e961c4800fc1d7c930d0f5946bb150b59
+definition (nd-unfolding/pv-ladder/readouts/h2_definition.json): 0 substring-only: []
+s1_json (docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json): 2 substring-only: ['S1_MinosEfficiency_0.npz', 'S1_MinosEfficiency_1.npz']
+cmodel_json (nd-unfolding/pv-ladder/readouts/cmodel_5d.json): 1 substring-only: ['records']
+g_readout (docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json): 0 substring-only: []
+g_diag_readout (docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json): 0 substring-only: []
+rc=0
