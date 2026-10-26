@@ -138,3 +138,13 @@ One row per citation of the posted note at origin/main 563715b8: dropped, shorte
 | L-thin-C69 | sec_validation.tex, fixed-truth coverage, the rebuild | DROP: the citation is removed | R1 \texttt{coverage-fixed-truth} | `D:sec_validation.tex::\texttt{coverage-fixed-truth} && N:sec_validation.tex::The band was then rebuilt without this term. The quoted statistical block is a third, different ensemble && R:app_provenance.tex::The band scored is \texttt{VL162}` | history pointer (the record names both bands); C68 cites the same tag |
 | L-thin-C70 | sec_validation.tex, post hoc rescoring, held-out re-test | DROP: the citation is removed | R1 \texttt{statband-retest} | `D:sec_validation.tex::\texttt{statband-retest} && N:sec_validation.tex::A re-test on held-out simulation would separate the two explanations; it has not been run.` | the limitation stays; the record is the tracker row of the deferral |
 | L-thin-C71 | sec_validation.tex, same-ensemble pull diagnostic | KEEP unchanged: the probe pins the citation to its sentence (review S6) | - | `N:sec_validation.tex::An earlier ensemble of $N_{\text{toy}}=200$ 2D closure unfolds (Ref.~\cite{NoteRecords2026}, \texttt{coverage-toys}) uses weighted MC reco pseudo-data` | the record (coverage_summary.txt) is the only source of the pull numbers printed two sentences later (68.50%, +0.006 +- 0.082 sigma, 97.6%, 5 of 205), as for C64 (review S5) |
+
+## Record-paragraph edits (R-EDIT; director ruling 2026-10-26)
+
+A record paragraph may change only in its pointer tokens, under a row that names both texts by digest
+(`check_note_records.py` P5, "R-EDIT"; `check_note_records.py redit-digest <file>` prints the digests). The ruling
+is quoted in `docs/orchestration/state/2d-closeout/stageF/methods/records-redit-20261026/REPORT.md`.
+
+| id | old sha256 | new sha256 | reason | authority |
+|---|---|---|---|---|
+| R-EDIT-1 | de3e8f2f96e0d5a1a630fca2cd5962eb89060915bf6604bb77538164df87520d | 8c9ed3d73e270f129bed3ba965dc669ccacaa83ccc85407bedce05ddb5770c28 | App. G tracker row `rvp1pi`: the Rvn1pi/Rvp1pi account prints at sec:uq-2d-scope since note register round n1 (#384), no longer at sec:uq-2d-construction; the pointer is retargeted, nothing else changes | director ruling 2026-10-26, quoted in methods/records-redit-20261026/REPORT.md |

@@ -158,3 +158,59 @@ left out here. The mechanism has no ordering hazard and can merge at any time.
 - The edited `app_provenance.tex` is byte-identical to the saved copy.
 - The two digests above are those of the base paragraph and of the edited one. With pointers masked, the two are
   identical, and the only token difference is `\S\ref{sec:uq-2d-construction}` → `\S\ref{sec:uq-2d-scope}`.
+
+## R-EDIT-1: the rvp1pi pointer (applied after #384)
+
+**Base:** origin/main `f2447672`, with note register round n1 (#384) merged.
+
+**The edit.** It changes one line of `docs/analysis-note/app_provenance.tex`, the App. G tracker row `rvp1pi`.
+- **Before:** `\S\ref{sec:uq-universes}, \S\ref{sec:uq-2d-construction}`.
+- **After:** `\S\ref{sec:uq-universes}, \S\ref{sec:uq-2d-scope}`.
+- **In the records PDF:** "§4.1, §4.4" becomes "§4.1, §4.6".
+- The file is byte-identical to the copy saved in n1. Nothing else changes.
+
+**The row** (`records-move-ledger.md`, "Record-paragraph edits"):
+
+```
+| R-EDIT-1 | de3e8f2f…87520d | 8c9ed3d7…770c28 | App. G tracker row `rvp1pi`: … | director ruling 2026-10-26, quoted in methods/records-redit-20261026/REPORT.md |
+```
+
+- The old digest equals the frozen inventory's entry for the tracker table.
+- The new digest is the edited table's, as P5 reads it.
+- With pointers masked, the two paragraphs are identical, and their pointer counts per class are equal.
+
+**Why the pointer was wrong** (`sec_systematics.tex` at `f2447672`, printed text only):
+- "Rvn1pi" and "Rvp1pi" print at line 28 (§4.1, sec:uq-universes) and lines 546 and 550 (§4.6, sec:uq-2d-scope).
+- They no longer print anywhere in §4.4.
+
+**Covering check: was rvp1pi the only row n1 affected?** `tracker_pointer_check.py 5bb5e179 f2447672` (output:
+`tracker_pointer_check.out.txt`).
+- **Method.** For each of the 13 App. G rows with body pointers, it takes up to six content words of the row's last
+  cell. It counts how many print in each pointed section, before n1 and after.
+- **Result:** 1 pointer of 16 is flagged. rvp1pi → sec:uq-2d-construction falls from 6 of 6 to 2 of 6.
+  - Every other pointer keeps its count.
+  - Under the new target, sec:uq-2d-scope, all 6 of rvp1pi's words print.
+- **The earlier q3-excess reading was an artefact.** A first, inline version of this check reported q3-excess →
+  sec:4d as a missing label. That label sits on a line of its own, not directly after its heading.
+  - The script here assigns every label to the span up to the next heading. It reads q3-excess as 4 of 6 before n1
+    and 4 of 6 after.
+  - The by-hand count agreed: identical $q_3$/excess counts in that section at both commits.
+- **It is a heuristic.** A flagged row is checked by hand, and an unflagged row only keeps its words.
+
+**The four modes, with the row:**
+
+| mode | result |
+|---|---|
+| `probe docs/analysis-note/records-inventory-base.json docs/analysis-note` | RECORDS-MOVE :: PASS |
+| `--self-test …` | PASS: 30 of 30 fired, 3 of 3 silent |
+| `pin` | RECORDS-PIN :: PASS |
+| `--self-test-pin` | PASS, 9 of 9 |
+
+**Controls.** Both fire. The same probe:
+- without the R-EDIT-1 row, fails P5: "RECORD paragraph not verbatim";
+- with one digit of the row's new digest changed, fails as "the edited paragraph is not the row's new text".
+
+**agy on the printed cell** (gemini; exact input and output in `agy/redit1.*.txt`).
+- **The context:** the note's printed text at §4.1 (`sec_systematics.tex:26-30`) and §4.6 (`:540-556`), the printed
+  section numbers, and where the account prints.
+- **The verdict:** `BEFORE-POINTERS-VALID: NO, \S\ref{sec:uq-2d-construction} (4.4)`; `VERDICT: AGREE`.

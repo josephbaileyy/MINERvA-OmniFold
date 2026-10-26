@@ -1,0 +1,37 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are a referee for the records document of a particle-physics analysis note. Below is one row of its tracker table, BEFORE and AFTER an edit (LaTeX source; \S\ref{...} prints "§" and a section number of the analysis note). The edit retargets one section pointer and changes nothing else. The CONTEXT gives the note's printed text at the pointed sections and the printed section numbers.
+
+Decide whether the AFTER row's section pointers (1) both land on text of the note that supports the row's last cell ("the Rvn1pi and Rvp1pi bands encode one shift; the quoted universe block counts it once"); (2) lose no pointer that the BEFORE row needed, given where the account now prints; and (3) change nothing else in the row.
+
+Answer in exactly this format:
+PASSAGE: REDIT-1
+BEFORE-POINTERS-VALID: <YES or NO, with the section that fails if NO>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
+FIX: <"none", or exact replacement AFTER text for the words named>
+
+
+===== BEGIN FILE context.txt =====
+CONTEXT (the analysis note as merged, main f2447672; printed text, comments removed; not under revision)
+
+Section numbers printed by the note: \S\ref{sec:uq-universes} = 4.1; \S\ref{sec:uq-2d-construction} = 4.4 ("Further checks of the 2D covariance"); \S\ref{sec:uq-2d-scope} = 4.6 ("Scope, conventions and limitations of the 2D covariance").
+
+1. sec_systematics.tex:26-30 (in 4.1, sec:uq-universes): "set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42), against a reference central-value unfold with the same estimator and seed, which is the quoted 2D central value. The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}) at the same seed. The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (\S\ref{sec:uq-2d-scope}), and holds 43 bands plus the flat normalization."
+
+2. sec_systematics.tex:540-556 (in 4.6, sec:uq-2d-scope): "from its seed-42 reference: even a no-op EtaNCEL universe differs in all 205 truth-input cells, while its saved reconstructed inputs agree. A common displacement cancels to first order in the MAT mean-centered covariance. The mismatch does not invalidate the entire covariance, and it supplies no correction to subtract. Because the May input and code revision are not available, the mismatch cannot be attributed more specifically. The July sweep, which the quoted universe block uses, does not have this mismatch. Second, the Rvn1pi and Rvp1pi bands encode the same shift under the configured nonresonant-pion tune, and the earlier budget counted it twice. The band is small, \SI{0.088}{\percent}, but this is a real defect in how the covariance was built; no conclusion about the published analysis's implementation follows. The quoted universe block drops Rvp1pi and counts the shift once (\S\ref{sec:uq-universes}). Third, the earlier budget did not propagate background-template statistics. In the saved reconstructed histograms their error exceeds one tenth of the data's Poisson error in 60 of 205 bins, so neglecting them everywhere is unsupported; this is a reconstructed-space diagnostic, not a measured unfolded uncertainty. The quoted statistical block draws the background simulation as its own bootstrap stream (\S\ref{sec:uq-boot}), and the quoted universe block takes its"
+
+3. The Rvn1pi/Rvp1pi account no longer prints in 4.4 (sec:uq-2d-construction): in the merged note, sec_systematics.tex prints "Rvn1pi" or "Rvp1pi" only at lines 28 (4.1), 546 and 550 (4.6); every other occurrence is in a source comment.
+
+===== END FILE context.txt =====
+
+
+===== BEGIN FILE passage.txt =====
+=== PASSAGE REDIT-1 (app_provenance.tex, App. G tracker table, row rvp1pi) ===
+BEFORE:
+\texttt{rvp1pi} & \S\ref{sec:uq-universes}, \S\ref{sec:uq-2d-construction} & \texttt{KNOWN\_ISSUES.md} row 92 & the Rvn1pi and Rvp1pi bands encode one shift; the quoted universe block counts it once \\
+
+AFTER:
+\texttt{rvp1pi} & \S\ref{sec:uq-universes}, \S\ref{sec:uq-2d-scope} & \texttt{KNOWN\_ISSUES.md} row 92 & the Rvn1pi and Rvp1pi bands encode one shift; the quoted universe block counts it once \\
+
+===== END FILE passage.txt =====

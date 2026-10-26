@@ -1,0 +1,5 @@
+PASSAGE: REDIT-1
+BEFORE-POINTERS-VALID: NO, \S\ref{sec:uq-2d-construction} (4.4)
+VERDICT: AGREE
+ISSUE: none
+FIX: none
