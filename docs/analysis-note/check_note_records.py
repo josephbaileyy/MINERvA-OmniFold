@@ -70,9 +70,11 @@ where each sha256 is the digest of the paragraph as P5 reads it (printed text, c
   - <old> is the digest of a base RECORD paragraph of the inventory;
   - that paragraph no longer prints verbatim in the records (otherwise the row is stale);
   - a records paragraph has the digest <new> (otherwise the edit is lost, or its text is not the row's);
-  - with every pointer token masked, the old and new paragraphs are identical. The pointer tokens are \\S, \\S\\S,
-    \\ref{..}, \\ref*{..}, \\nsec{..}, \\napp{..}, and a section number written after a section sign. A bare number is
-    not a pointer token: a value is never an R-EDIT.
+  - with every pointer token masked, the old and new paragraphs are identical. The pointer tokens are \\S, \\S\\S
+    (never the start of \\SI or \\SIrange), \\ref{..}, \\ref*{..}, \\nsec{..}, \\napp{..}, and a section number
+    written after a section sign. A bare number is not a pointer token: a value is never an R-EDIT;
+  - the two paragraphs have the same number of pointer tokens in each class (section signs; \\ref, \\ref*,
+    \\nsec, \\napp; section numbers): an edit retargets a pointer and never deletes or adds one.
 Reason and authority are required. Each failure names its row.
 
 THE PIN (plan commit 3, 2026-10-21). The posted note cites the records as NoteRecords2026 (technote.bib), whose URL
@@ -99,7 +101,8 @@ the records do not have and a listed drop whose tag left the records (P7 must fi
 that is still printed (P8 must fire), and a kept citation moved to another sentence of its file (P7 must fire).
 For R-EDIT it plants, on one record paragraph: an unrecorded pointer edit (P5 must fire), a recorded pointer edit
 (SILENT, the control), a row with a wrong old digest, a row whose new digest is not the edited text's, a recorded
-word change and a recorded number change (each must fire as more than pointer tokens), a deleted paragraph with a
+word change and a recorded number change (each must fire as more than pointer tokens), a recorded pointer deletion
+and a recorded pointer insertion (each must fire as deleting or adding pointer tokens), a deleted paragraph with a
 row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). Exit 0 only if every plant
 behaves as named and the real pair is silent. The thinning plants
 need THIN_BASE from git, so the self-test runs in the canonical checkout.
@@ -247,7 +250,8 @@ def ledger_rows(ledger: Path) -> list[tuple[str, list[str]]]:
 
 # R-EDIT: the pointer tokens a RECORD paragraph may change (docstring, "R-EDIT"). A section number counts only after
 # a section sign, so a value can never pass as a pointer.
-POINTER_TOKEN = re.compile(r"\\S\\S|\\S|\\(?:ref\*?|nsec|napp)\{[^}]*\}|\u00a7\u00a7?\s*[A-Z]?\d+(?:\.\d+)*")
+POINTER_TOKEN = re.compile(r"\\S\\S(?![A-Za-z])|\\S(?![A-Za-z])|\\(?:ref\*?|nsec|napp)\{[^}]*\}"
+                           r"|\u00a7\u00a7?\s*[A-Z]?\d+(?:\.\d+)*")  # \S, never the start of \SI or \SIrange
 REDIT_ROW = re.compile(r"\|\s*(R-EDIT-\d+)\s*\|")
 
 
@@ -265,6 +269,12 @@ def redit_rows(ledger: Path) -> list[tuple[str, list[str]]]:
         return []
     return [(m.group(1), [c.strip() for c in line.strip()[1:-1].split("|")])
             for line in ledger.read_text().splitlines() if (m := REDIT_ROW.match(line))]
+
+
+def pointer_counts(paragraph: str) -> Counter:
+    """Pointer tokens per class. Masking alone would let an edit delete or add a pointer: a loss of record content."""
+    return Counter("section sign" if t.startswith("\\S") else "reference" if t.startswith("\\") else "section number"
+                   for t in POINTER_TOKEN.findall(paragraph))
 
 
 def _first_difference(old: str, new: str) -> str:
@@ -305,6 +315,11 @@ def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fa
         if unpointed(new_p) != unpointed(old):
             fails.append(f"P5 R-EDIT row {rid}: the edit changes more than pointer tokens: "
                          f"{_first_difference(old, new_p)}")
+            continue
+        if pointer_counts(new_p) != pointer_counts(old):
+            a, b = pointer_counts(old), pointer_counts(new_p)
+            fails.append(f"P5 R-EDIT row {rid}: the edit deletes or adds pointer tokens: " + ", ".join(
+                f"{k} {a[k]} -> {b[k]}" for k in sorted(set(a) | set(b)) if a[k] != b[k]))
             continue
         accepted.add(old)
     return accepted
@@ -886,6 +901,12 @@ PLANTS = [
     ("recorded number change", "P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens",
      "app_history.tex", "($N=50$ replicas", "($N=60$ replicas",
      lambda inv: _redit_row(inv, "($N=60$ replicas", anchor="($N=50$ replicas")),
+    ("recorded pointer deletion", "P5 R-EDIT row R-EDIT-90: the edit deletes or adds pointer tokens",
+     "app_history.tex", _R_ANCHOR, _R_ANCHOR.replace(r"\S\ref{sec:invert}", ""),
+     lambda inv: _redit_row(inv, _R_ANCHOR.replace(r"\S\ref{sec:invert}", ""))),
+    ("recorded pointer insertion", "P5 R-EDIT row R-EDIT-90: the edit deletes or adds pointer tokens",
+     "app_history.tex", _R_ANCHOR, _R_ANCHOR.replace(r"\S\ref{sec:invert}", r"\S\ref{sec:invert} \S\ref{sec:chisq}"),
+     lambda inv: _redit_row(inv, _R_ANCHOR.replace(r"\S\ref{sec:invert}", r"\S\ref{sec:invert} \S\ref{sec:chisq}"))),
     ("deleted paragraph with a row", "P5 R-EDIT row R-EDIT-90: base paragraph", "app_history.tex",
      lambda p: _drop_paragraph(p, _R_ANCHOR), None, lambda inv: _redit_row(inv, _R_POINTER)),
     ("R-EDIT row, paragraph unchanged", "P5 R-EDIT row R-EDIT-90: stale", LEDGER, None, "",

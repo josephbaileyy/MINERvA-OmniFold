@@ -2,7 +2,7 @@
 
 **Lane:** paper rewrite, for the director.
 
-**Base:** origin/main `b6bca37f`.
+**Base:** origin/main `b6bca37f`; main `703ffcce` (#379, #381, #380) merged in.
 
 **What this is.** A change to `docs/analysis-note/check_note_records.py`, the records-move checker. Its probe P5
 required every base RECORD paragraph to print verbatim in the records closure, with no exception. A record paragraph
@@ -73,16 +73,20 @@ names its row:
    - if no such paragraph exists, it fails as **lost**.
 4. With every pointer token masked, the old and new paragraphs are identical. Otherwise it fails as "the edit changes
    more than pointer tokens", and names the first differing words.
+5. The two paragraphs have the same number of pointer tokens in each class: section signs (`\S`, `\S\S`); references
+   (`\ref`, `\ref*`, `\nsec`, `\napp`); section numbers. Otherwise it fails as "the edit deletes or adds pointer
+   tokens", and names each class's counts. An edit retargets a pointer; it never deletes or adds one. Without this
+   rule, masking alone would let a recorded edit delete a pointer, which is a loss of record content.
 
 Reason and authority must not be empty. A malformed row fails.
 
 **Pointer tokens:**
-- `\S`, `\S\S`;
+- `\S`, `\S\S`, but never the start of `\SI` or `\SIrange` (the pattern requires no letter to follow);
 - `\ref{…}`, `\ref*{…}`, `\nsec{…}`, `\napp{…}`;
 - a section number written after a section sign (`§ 4.4`).
 
 A bare number is deliberately not a pointer token. A pattern matching any dotted number would also mask a value such
-as `4.502`, and would let a recorded change of a printed value pass as a pointer edit. The eighth planted case below
+as `4.502`, and would let a recorded change of a printed value pass as a pointer edit. The "recorded number change" case below
 tests exactly that.
 
 ## Self-test
@@ -90,15 +94,17 @@ tests exactly that.
 `check_note_records.py --self-test docs/analysis-note/records-inventory-base.json docs/analysis-note`, rc 0:
 
 ```
-  fired  unrecorded pointer edit              -> P5 RECORD paragraph not verbatim in the records closure: …
+  fired  unrecorded pointer edit              -> P5 RECORD paragraph not verbatim in the records closure: '\\paragraph{From \\S\\ref{sec:invert}, ran
   silent recorded pointer edit (control)      -> no failure
   fired  R-EDIT row with a wrong old digest   -> P5 R-EDIT row R-EDIT-90: old digest 000000000000 is the digest of no base RECORD paragraph
-  fired  R-EDIT new text not the row's        -> P5 R-EDIT row R-EDIT-90: the edited paragraph is not the row's new text: its digest is b95dbb4f1599, …
-  fired  recorded word change                 -> P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens: 'deficiency at $N\\le n$.} After …
-  fired  recorded number change               -> P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens: '($N=50$ replicas, $n=205$ bins) …
-  fired  deleted paragraph with a row         -> P5 R-EDIT row R-EDIT-90: base paragraph 7447daa4e5ad is lost: …
-  fired  R-EDIT row, paragraph unchanged      -> P5 R-EDIT row R-EDIT-90: stale: base paragraph 7447daa4e5ad still prints verbatim in the records: …
-RECORDS-MOVE SELF-TEST :: PASS (delivered move silent: True; 28 of 28 planted defects fired their probe; 3 of 3 listed drops and recorded pointer edits stayed silent)
+  fired  R-EDIT new text not the row's        -> P5 R-EDIT row R-EDIT-90: the edited paragraph is not the row's new text: its digest is b95dbb4f1599,
+  fired  recorded word change                 -> P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens: 'deficiency at $N\\le n$.} After
+  fired  recorded number change               -> P5 R-EDIT row R-EDIT-90: the edit changes more than pointer tokens: '($N=50$ replicas, $n=205$ bins)
+  fired  recorded pointer deletion            -> P5 R-EDIT row R-EDIT-90: the edit deletes or adds pointer tokens: reference 1 -> 0, section sign 1 -
+  fired  recorded pointer insertion           -> P5 R-EDIT row R-EDIT-90: the edit deletes or adds pointer tokens: reference 1 -> 2, section sign 1 -
+  fired  deleted paragraph with a row         -> P5 R-EDIT row R-EDIT-90: base paragraph 7447daa4e5ad is lost: no records paragraph has the row's new
+  fired  R-EDIT row, paragraph unchanged      -> P5 R-EDIT row R-EDIT-90: stale: base paragraph 7447daa4e5ad still prints verbatim in the records: '\
+RECORDS-MOVE SELF-TEST :: PASS (delivered move silent: True; 30 of 30 planted defects fired their probe; 3 of 3 listed drops and recorded pointer edits stayed silent)
 ```
 
 **What the cases are.**
@@ -107,9 +113,11 @@ RECORDS-MOVE SELF-TEST :: PASS (delivered move silent: True; 28 of 28 planted de
 - Each planted row's digests are computed from the frozen inventory, so they are those of the real base paragraph.
 
 **The counts before and after.** Before this change the self-test had 21 of 21 planted defects and 2 of 2 silent
-cases. It now has 28 of 28 and 3 of 3:
+cases. It now has 30 of 30 and 3 of 3:
 - the director's seven cases;
-- one number-change case, beyond the seven.
+- one number-change case, beyond the seven;
+- a recorded pointer deletion and a recorded pointer insertion, added at the director's review of this PR. Each fires
+  on the count rule (rule 5), not on the masked comparison.
 
 **Why the control matters.** It is the only case that exercises the acceptance path. If `redit_accepted` accepted
 nothing, the control would fire P5 and the self-test would fail.
@@ -119,7 +127,7 @@ nothing, the control would fire P5 and the self-test would fail.
 | mode | result |
 |---|---|
 | `probe docs/analysis-note/records-inventory-base.json docs/analysis-note` | RECORDS-MOVE :: PASS |
-| `--self-test …` | PASS: 28 of 28 fired, 3 of 3 silent |
+| `--self-test …` | PASS: 30 of 30 fired, 3 of 3 silent |
 | `pin` | RECORDS-PIN :: PASS |
 | `--self-test-pin` | PASS, 9 of 9 |
 
