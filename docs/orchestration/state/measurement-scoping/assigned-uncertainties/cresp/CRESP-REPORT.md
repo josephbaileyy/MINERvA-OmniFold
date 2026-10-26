@@ -201,3 +201,6 @@ reconstructed recoil energy, for proton, meson, EM and other at D1's sizes.
 ## Not changed
 
 S1's covariance, R00–R15, κ = 1, F0, the route decision, every claim and all printed wording.
+
+**Status (2026-10-26):** adopted into the 5D reported total by Joseph (`DECISION-20261026-joseph-adopt-cresp.md`). The
+"sensitivity variant, not adopted" labels above, and in `cresp.json`, are as written before that decision.
