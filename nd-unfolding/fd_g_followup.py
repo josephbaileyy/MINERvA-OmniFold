@@ -22,7 +22,13 @@ family, alpha and prediction: the total chi2, ndf, condition number, modes for 5
 sigma and leading cells, relative to f (the G-DIAG ruling). No p-value: a descriptive sensitivity of the reported chi2,
 not an alternative result.
 
-Controls F0, R1-R4 and S0-S2 each refuse (exit 1, nothing written); alpha = 0 reproduces Stage G (S0).
+G-SENS2 (--part sens2, FD-G-SENS2-DECLARATION.md): the same shrinkage and record for flux, detector and lateral each
+shrunk alone (SENS2_FAMILIES), and the flux family's top-mode block shares at alpha 0 and 0.1. Interaction alone and
+the joint family are referenced from G-FOLLOWUP's pinned readout, not recomputed; control H0 recomputes two of their
+chi2 (IDENTITY). Without --part, or with --part followup, the tool is G-FOLLOWUP's, unchanged in its output.
+
+Controls F0, R1-R4 and S0-S2 (followup) and H0, H1, S0-S2 and H2 (sens2) each refuse (exit 1, nothing written); alpha = 0
+reproduces Stage G (S0).
 
 MEASURES: arithmetic on Stage G's declared inputs and its and G-DIAG's committed readouts. CANNOT AUTHORIZE: any
 reading of the comparison, a claim, or paper text.
@@ -55,11 +61,20 @@ FAMILIES = {"interaction": ("interaction",),
 # normalization's full correlation is structural (one 1.4 % scale for every cell), so it is shrunk in no family
 # (the director's ruling 14, amendment 1); it is unchanged, with stat, seed, the vertices, C_resp and V_g
 FAMILY_ROLE = {"interaction": "primary", "c_e_systematic": "second"}
+# G-SENS2 (--part sens2; FD-G-SENS2-DECLARATION.md): each remaining C_e systematic group shrunk alone. Interaction
+# alone and the joint family are G-FOLLOWUP's, referenced from its readout and not recomputed; IDENTITY names the two
+# of its records whose chi2 control H0 recomputes. SHARES: the family and alphas whose top mode's block shares are given.
+SENS2_FAMILIES = {"flux": ("flux",), "detector": ("detector",), "lateral": ("lateral",)}
+SENS2_ROLE = "single group"
+IDENTITY = (("interaction", 1.0, "nuwro"), ("c_e_systematic", 0.25, "gibuu"))
+SHARES = ("flux", (0.0, 0.1))
 LEAD = 3                                                 # leading cells of a top mode: the LEAD largest |loading|
 # a key matches if one of these words stands in it with no letter on either side ("data_b0", "expected_reco_signal")
 SEARCH = re.compile(r"(?<![a-z])(data|reco|eff|efficiency|count|counts|nevt|n_ev|event|events|purity|stability|truth|"
                     r"signal|accept|acceptance)(?![a-z])", re.IGNORECASE)
 PINS = {**D.PINS, "g_diag_readout": "680dc5ef9c40b1ab006657ce020c6acac7e891c68ce36850cf7a7dd2df278d88"}
+# G-SENS2 reads G-FOLLOWUP's committed readout, not G-DIAG's (kept apart so G-FOLLOWUP's readout is unchanged)
+SENS2_PINS = {**D.PINS, "g_followup_readout": "cd82517afdfb1dc8383580c8a4c57e82d9b87864e75d28528cb35c4455f6e379"}
 SENS_LABEL = "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result"
 LABELS = {
     "what": "two descriptive follow-ups to G-DIAG (FD-G-FOLLOWUP-DECLARATION.md); numbers only, no new statistic",
@@ -264,6 +279,59 @@ def summary_line(fam: str, alpha: float, name: str, r: dict, chi2_0: float) -> s
             + (" UNSTABLE" if r["stability"]["unstable"] else ""))
 
 
+def prediction_blocks(x, spec: dict, reported_carries: bool) -> tuple:
+    """One prediction's cell names, residual d and reported-M blocks B0, relative to f, and Stage G's reported chi2."""
+    cells, g, Vg = x.integ[spec["name"]]
+    i = np.asarray(cells)
+    B0 = D.comparison_blocks(x.groups_rel, x.S, x.Cx_rel if reported_carries else None, Vg / x.f ** 2, i, x.xn,
+                             np.ones(N_CELLS))
+    return [f"R{c:02d}" for c in cells], D.residual(x.f, g, i, np.ones(N_CELLS)), B0, x.grp[spec["name"]]["total"]["chi2"]
+
+
+def sens_records(x, families: dict, roles: dict, predictions, reported_carries: bool) -> list[dict]:
+    """G-SENS: for each family, prediction and alpha in ALPHAS, the record of the reported M with the family shrunk;
+    then controls S0 (alpha = 0 is Stage G), S1 (every shrunk M positive definite) and S2 (the shrinkage is the
+    declared one, every other block bit-identical)."""
+    sens, worst0, notpd, diag_bad, off_bad, other_bad = [], 0.0, [], [], 0.0, []
+    for fam, groups in families.items():
+        for spec in predictions:
+            names, d, B0, chi2_g = prediction_blocks(x, spec, reported_carries)
+            n = len(names)
+            M0 = sum(B0.values())
+            chi2_0 = None
+            for alpha in ALPHAS:
+                Ba = shrunk_blocks(B0, groups, alpha)
+                for k in B0:
+                    if k in groups:
+                        if not np.array_equal(np.diag(Ba[k]), np.diag(B0[k])):
+                            diag_bad.append(f"{fam} {alpha} {spec['name']} {k}")
+                        off = ~np.eye(n, dtype=bool)
+                        scale = max(np.abs(B0[k]).max(), 1e-300)
+                        off_bad = max(off_bad, float(np.abs(Ba[k][off] - (1 - alpha) * B0[k][off]).max() / scale))
+                    elif not np.array_equal(Ba[k], B0[k]):
+                        other_bad.append(f"{fam} {alpha} {spec['name']} {k}")
+                if not np.array_equal(np.diag(sum(Ba.values())), np.diag(M0)):
+                    diag_bad.append(f"{fam} {alpha} {spec['name']} M")
+                r = sens_record(d, Ba, names)
+                r["shrunk_group_lambda_min"] = {k: float(np.linalg.eigvalsh(Ba[k]).min()) for k in groups}
+                if r["chi2"] is None or not r["lambda_min"] > 0:
+                    notpd.append(f"{fam} {alpha} {spec['name']}")
+                if alpha == 0.0:
+                    chi2_0 = r["chi2"]
+                    worst0 = max(worst0, abs(r["chi2"] - chi2_g) / abs(chi2_g) if r["chi2"] is not None else np.inf)
+                sens.append({"family": fam, "family_role": roles[fam], "alpha": alpha, "prediction": spec["name"],
+                             "cells": names, "chi2_stage_g": chi2_g, "chi2_at_alpha_0": chi2_0, **r})
+    report("S0", f"alpha = 0 reproduces Stage G's reported chi2 for every family and prediction to {REPRO:g} "
+                 f"(worst {worst0:.1e})", worst0 <= REPRO, f"worst {worst0:.3e}")
+    report("S1", "every shrunk M is positive definite", not notpd, f"not: {notpd}")
+    report("S2", "every shrunk group's diagonal, and every shrunk M's, is the unshrunk one bit for bit", not diag_bad,
+           f"differs: {diag_bad[:5]}")
+    report("S2", f"every shrunk group's off-diagonal is (1 - alpha) times the unshrunk one (worst {off_bad:.1e})",
+           off_bad <= 1e-15, f"worst {off_bad:.3e}")
+    report("S2", "every block outside the family is unchanged bit for bit", not other_bad, f"changed: {other_bad[:5]}")
+    return sens
+
+
 # ---------------------------------------------------------------- main
 
 
@@ -274,19 +342,33 @@ def build_args(argv):
                  ("--cmodel-json", "nd-unfolding/pv-ladder/readouts/cmodel_5d.json"),
                  ("--s5p-sums", "state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt"),
                  ("--s5p-root", "s5p-20260926"), ("--g-readout", "the committed fd/readout/fd_g_readout.json"),
-                 ("--g-diag-readout", "the committed fd/readout/fd_g_diag_readout.json"),
                  ("--extra-block", "Stage G's extra block npz"), ("--out-json", "")):
         ap.add_argument(k, type=Path, required=True, help=h or None)
+    ap.add_argument("--part", choices=("followup", "sens2"), default="followup",
+                    help="followup: G-R04 and G-SENS (FD-G-FOLLOWUP-DECLARATION.md); sens2: G-SENS2 "
+                         "(FD-G-SENS2-DECLARATION.md)")
+    ap.add_argument("--g-diag-readout", type=Path, help="the committed fd/readout/fd_g_diag_readout.json (followup)")
+    ap.add_argument("--g-followup-readout", type=Path,
+                    help="the committed fd/readout/fd_g_followup_readout.json (sens2)")
     ap.add_argument("--extra-block-sha256", required=True)
     ap.add_argument("--extra-block-key", required=True)
     ap.add_argument("--extra-block-name", required=True)
     ap.add_argument("--extra-block-role", choices=G.ROLES, required=True)
-    return ap.parse_args(argv)
+    a = ap.parse_args(argv)
+    need, other = (("--g-diag-readout", "--g-followup-readout") if a.part == "followup" else
+                   ("--g-followup-readout", "--g-diag-readout"))
+    if getattr(a, need[2:].replace("-", "_")) is None:
+        ap.error(f"--part {a.part} requires {need}")
+    if getattr(a, other[2:].replace("-", "_")) is not None:
+        ap.error(f"--part {a.part} does not read {other}")
+    return a
 
 
 def run(a, pins=None, predictions=None) -> int:
-    pins = PINS if pins is None else pins
     predictions = G.PREDICTIONS if predictions is None else predictions
+    if a.part == "sens2":
+        return run_sens2(a, SENS2_PINS if pins is None else pins, predictions)
+    pins = PINS if pins is None else pins
     if a.out_json.exists():
         raise G.Stop("-", f"refusing to overwrite {a.out_json}")
     x = D.load(a, pins, predictions)                     # G-DIAG's D0-D5
@@ -411,48 +493,7 @@ def run(a, pins=None, predictions=None) -> int:
              "definition_values": definition_values(defn)}
 
     # G-SENS: the blocks of each prediction's reported M, relative to f, with one family shrunk
-    ones = np.ones(N_CELLS)
-    sens, worst0, notpd, diag_bad, off_bad, other_bad = [], 0.0, [], [], 0.0, []
-    for fam, groups in FAMILIES.items():
-        for spec in predictions:
-            cells, g, Vg = x.integ[spec["name"]]
-            i = np.asarray(cells)
-            names = [f"R{c:02d}" for c in cells]
-            B0 = D.comparison_blocks(x.groups_rel, S, x.Cx_rel if reported_carries else None, Vg / f ** 2, i, xn, ones)
-            d = D.residual(f, g, i, ones)
-            M0 = sum(B0.values())
-            chi2_g = x.grp[spec["name"]]["total"]["chi2"]
-            chi2_0 = None
-            for alpha in ALPHAS:
-                Ba = shrunk_blocks(B0, groups, alpha)
-                for k in B0:
-                    if k in groups:
-                        if not np.array_equal(np.diag(Ba[k]), np.diag(B0[k])):
-                            diag_bad.append(f"{fam} {alpha} {spec['name']} {k}")
-                        off = ~np.eye(len(i), dtype=bool)
-                        scale = max(np.abs(B0[k]).max(), 1e-300)
-                        off_bad = max(off_bad, float(np.abs(Ba[k][off] - (1 - alpha) * B0[k][off]).max() / scale))
-                    elif not np.array_equal(Ba[k], B0[k]):
-                        other_bad.append(f"{fam} {alpha} {spec['name']} {k}")
-                if not np.array_equal(np.diag(sum(Ba.values())), np.diag(M0)):
-                    diag_bad.append(f"{fam} {alpha} {spec['name']} M")
-                r = sens_record(d, Ba, names)
-                r["shrunk_group_lambda_min"] = {k: float(np.linalg.eigvalsh(Ba[k]).min()) for k in groups}
-                if r["chi2"] is None or not r["lambda_min"] > 0:
-                    notpd.append(f"{fam} {alpha} {spec['name']}")
-                if alpha == 0.0:
-                    chi2_0 = r["chi2"]
-                    worst0 = max(worst0, abs(r["chi2"] - chi2_g) / abs(chi2_g) if r["chi2"] is not None else np.inf)
-                sens.append({"family": fam, "family_role": FAMILY_ROLE[fam], "alpha": alpha, "prediction": spec["name"], "cells": names,
-                             "chi2_stage_g": chi2_g, "chi2_at_alpha_0": chi2_0, **r})
-    report("S0", f"alpha = 0 reproduces Stage G's reported chi2 for every family and prediction to {REPRO:g} "
-                 f"(worst {worst0:.1e})", worst0 <= REPRO, f"worst {worst0:.3e}")
-    report("S1", "every shrunk M is positive definite", not notpd, f"not: {notpd}")
-    report("S2", "every shrunk group's diagonal, and every shrunk M's, is the unshrunk one bit for bit", not diag_bad,
-           f"differs: {diag_bad[:5]}")
-    report("S2", f"every shrunk group's off-diagonal is (1 - alpha) times the unshrunk one (worst {off_bad:.1e})",
-           off_bad <= 1e-15, f"worst {off_bad:.3e}")
-    report("S2", "every block outside the family is unchanged bit for bit", not other_bad, f"changed: {other_bad[:5]}")
+    sens = sens_records(x, FAMILIES, FAMILY_ROLE, predictions, reported_carries)
 
     readout = {"schema": "fd-g-followup-readout/1", "labels": LABELS,
                "controls_passed": ["D0", "D1", "D2", "D3", "D4", "D5", "F0", "R1", "R2", "R3", "R4", "S0", "S1", "S2"],
@@ -485,6 +526,177 @@ def run(a, pins=None, predictions=None) -> int:
                      + ("" if c == FOCUS else f"; rho(R04, {c}) {item3['under'][tot][c]:+.3f}"))
     lines.append(f"[G-SENS] every line below: {SENS_LABEL}")
     lines.extend(summary_line(r["family"], r["alpha"], r["prediction"], r, r["chi2_at_alpha_0"]) for r in sens)
+    counter = [0]
+    readout = D.finite(readout, counter)
+    readout["non_finite_written_as_null"] = counter[0]
+    tmp = a.out_json.with_name(a.out_json.name + ".partial")
+    tmp.write_text(json.dumps(readout, indent=1, allow_nan=False) + "\n")
+    os.replace(tmp, a.out_json)
+    for ln in lines:
+        print(ln, flush=True)
+    print(json.dumps({"wrote": str(a.out_json), "sha256": sa.sha256(a.out_json)}), flush=True)
+    return 0
+
+
+def flux_ratio(v: np.ndarray, F: np.ndarray) -> float | None:
+    """v^T F v / v^T diag(F) v for the unshrunk flux block F: the part of flux's variance along v that its
+    correlations leave (1 for uncorrelated cells). Shrinking by alpha moves the flux term from v^T F v toward
+    v^T diag(F) v."""
+    den = float(v @ (np.diag(F) * v))
+    return float(v @ F @ v) / den if den > 0 else None
+
+
+def top_mode_shares(d: np.ndarray, blocks: dict, cells: list[str], F: np.ndarray) -> tuple[dict, np.ndarray]:
+    """G-SENS2's addition: the top mode (largest chi2 contribution, chosen as sens_record chooses it) of the sum of the
+    blocks, each block's share v^T B v / lambda of it (G-DIAG's block_shares), and its flux_ratio."""
+    M = sum(blocks.values())
+    lam, V = D.eigen(M)
+    _, c = D.mode_chi2(lam, V, d)
+    t = int(np.argsort(c)[::-1][0])
+    v = V[:, t]
+    shares = D.block_shares(v, lam[t], blocks)
+    return {"mode": t, "sigma": float(np.sqrt(max(lam[t], 0.0))), "chi2": float(c[t]),
+            "fraction": float(c[t] / np.sum(c)), "loadings": dict(zip(cells, v.tolist())),
+            "block_shares": shares, "share_sum": float(sum(shares.values())),
+            "dominant": max(shares, key=lambda b: shares[b]), "flux_ratio": flux_ratio(v, F)}, v
+
+
+def followed_mode(v: np.ndarray, d: np.ndarray, blocks: dict, F: np.ndarray) -> dict:
+    """The alpha = 0 top mode's direction v under other blocks: each block's share v^T B v / v^T M v, the chi2 along
+    v alone, (v^T d)^2 / v^T M v (descriptive: v is not an eigenvector of this M), and its flux_ratio."""
+    q = float(v @ sum(blocks.values()) @ v)
+    shares = {k: float(v @ B @ v / q) for k, B in blocks.items()}
+    return {"variance_along": q, "chi2_along": float((v @ d) ** 2 / q), "block_shares": shares,
+            "share_sum": float(sum(shares.values())), "dominant": max(shares, key=lambda b: shares[b]),
+            "flux_ratio": flux_ratio(v, F)}
+
+
+def run_sens2(a, pins, predictions) -> int:
+    """G-SENS2 (FD-G-SENS2-DECLARATION.md): flux, detector and lateral each shrunk alone, as G-SENS."""
+    if a.out_json.exists():
+        raise G.Stop("-", f"refusing to overwrite {a.out_json}")
+    x = D.load(a, pins, predictions)                     # G-DIAG's D0-D5
+    reported_mname, reported_carries = x.comps[0][1]
+    specs = {p["name"]: p for p in predictions}
+
+    # H0. the committed G-FOLLOWUP readout: pinned, its schema and inputs are this run's, and two of its G-SENS
+    # records' chi2 are recomputed here with G-FOLLOWUP's own families
+    if sa.sha256(a.g_followup_readout) != pins["g_followup_readout"]:
+        raise G.Stop("H0", f"g_followup_readout {a.g_followup_readout}: sha256 {sa.sha256(a.g_followup_readout)} != "
+                           f"{pins['g_followup_readout']}")
+    fu = json.loads(a.g_followup_readout.read_text())
+    same = {"schema fd-g-followup-readout/1": fu.get("schema") == "fd-g-followup-readout/1",
+            "Stage G readout": fu.get("inputs_sha256", {}).get("g_readout") == pins["g_readout"],
+            "extra block": fu.get("inputs_sha256", {}).get("extra_block") == a.extra_block_sha256,
+            "its families": fu.get("constants", {}).get("families") == {k: list(v) for k, v in FAMILIES.items()},
+            "its alphas": fu.get("constants", {}).get("alphas") == list(ALPHAS),
+            "its reported matrix": fu.get("sens", {}).get("reported_matrix") == f"{reported_mname} + V_g",
+            "its shared input pins": all(fu.get("inputs_sha256", {}).get(k) == pins[k] for k in D.PINS),
+            "its predictions": all(fu.get("inputs_sha256", {}).get(p["name"]) == p["sha256"] for p in predictions)
+            and sorted({r["prediction"] for r in fu.get("sens", {}).get("records", [])}) ==
+            sorted(p["name"] for p in predictions)}
+    report("H0", "the G-FOLLOWUP readout is pinned and ran on this Stage G readout, extra block, families and matrix",
+           all(same.values()), "differs in " + ", ".join(k for k, v in same.items() if not v))
+    identity, worst_id = [], 0.0
+    for fam, alpha, name in IDENTITY:
+        ref = next((r for r in fu["sens"]["records"] if (r["family"], r["alpha"], r["prediction"]) == (fam, alpha, name)),
+                   None)
+        if ref is None or ref.get("chi2") is None or name not in specs:
+            raise G.Stop("H0", f"the G-FOLLOWUP readout has no record {fam} {alpha} {name} with a chi2")
+        names, d, B0, _ = prediction_blocks(x, specs[name], reported_carries)
+        mine = sens_record(d, shrunk_blocks(B0, FAMILIES[fam], alpha), names)["chi2"]
+        rel = abs(mine - ref["chi2"]) / abs(ref["chi2"]) if mine is not None else float("inf")
+        worst_id = max(worst_id, rel)
+        identity.append({"family": fam, "alpha": alpha, "prediction": name, "chi2_g_followup_readout": ref["chi2"],
+                         "chi2_recomputed": mine, "relative_difference": rel})
+    report("H0", f"two G-FOLLOWUP chi2 values recomputed from the pinned inputs equal its readout's to {REPRO:g} "
+                 f"(worst {worst_id:.1e})", worst_id <= REPRO, f"worst {worst_id:.3e}")
+
+    # H1. each new family is exactly its own S1 group, never stat, seed, normalization or interaction
+    bad = {f: g for f, g in SENS2_FAMILIES.items()
+           if tuple(g) != (f,) or f not in D.GROUPS or f in ("stat", "seed", "normalization", "interaction")}
+    report("H1", "each family shrinks exactly its own group, and none shrinks stat, seed, normalization or interaction",
+           not bad, f"families {bad}")
+
+    # G-SENS2 records, with G-SENS's controls S0-S2
+    sens = sens_records(x, SENS2_FAMILIES, dict.fromkeys(SENS2_FAMILIES, SENS2_ROLE), predictions, reported_carries)
+
+    # the addition: the flux family's top-mode block shares at SHARES' alphas, and the alpha = 0 top mode followed
+    # into the second alpha's blocks; H2: the shares sum to 1, and the two top modes are the ones the records carry
+    fam, alphas = SHARES
+    fu0 = {r["prediction"]: r for r in fu["sens"]["records"] if r["family"] == "interaction" and r["alpha"] == 0.0}
+    mine = {(r["prediction"], r["alpha"]): r for r in sens if r["family"] == fam}
+    shares, worst_sh, mismatch = {}, 0.0, []
+    for spec in predictions:
+        names, d, B0, _ = prediction_blocks(x, spec, reported_carries)
+        F = B0[SENS2_FAMILIES[fam][0]]
+        out, vs = {}, {}
+        for alpha in alphas:
+            t, vs[alpha] = top_mode_shares(d, shrunk_blocks(B0, SENS2_FAMILIES[fam], alpha), names, F)
+            out[f"{alpha:g}"] = t
+            worst_sh = max(worst_sh, abs(t["share_sum"] - 1.0))
+            ref = fu0.get(spec["name"], {}).get("top_mode") if alpha == 0.0 else mine[(spec["name"], alpha)]["top_mode"]
+            if (ref is None or ref["mode"] != t["mode"] or worst_rel(ref["sigma"], t["sigma"]) > REPRO or
+                    max(abs(ref["loadings"][c] - t["loadings"][c]) for c in names) > REPRO):
+                mismatch.append(f"{spec['name']} alpha {alpha:g}")
+        a0, a1 = alphas
+        fol = followed_mode(vs[a0], d, shrunk_blocks(B0, SENS2_FAMILIES[fam], a1), F)
+        worst_sh = max(worst_sh, abs(fol["share_sum"] - 1.0))
+        out[f"alpha_{a0:g}_mode_at_{a1:g}"] = fol
+        out["overlap_abs"] = float(abs(vs[a0] @ vs[a1]))
+        shares[spec["name"]] = out
+    report("H2", f"every {fam} top mode's, and every followed mode's, block shares sum to 1 (worst {worst_sh:.1e})",
+           worst_sh <= 1e-10, f"worst {worst_sh:.3e}")
+    report("H2", f"each {fam} top mode is the one its record carries: alpha 0 G-FOLLOWUP's, alpha {alphas[1]:g} this "
+                 "run's", not mismatch, f"differs: {mismatch}")
+
+    unchanged = {f: [k for k in (*D.GROUPS, *(f"C_model:{v}" for v in D.VERTICES), *([x.xn] if reported_carries else []),
+                                 "V_g") if k not in g] for f, g in SENS2_FAMILIES.items()}
+    readout = {"schema": "fd-g-sens2-readout/1",
+               "labels": {"what": "G-SENS2 (FD-G-SENS2-DECLARATION.md): flux, detector and lateral each shrunk alone, "
+                                  "as G-SENS; numbers only, no new statistic",
+                          "sens": LABELS["sens"], "units": LABELS["units"],
+                          "shares": "block share of a mode = v^T B v / lambda over the shrunk matrix's own blocks "
+                                    "(G-DIAG's: S1's seven groups, the three vertices, C_resp, V_g); the top mode is "
+                                    "that matrix's own. alpha_0_mode_at_0.1: the alpha = 0 top mode's direction v under "
+                                    "the alpha = 0.1 blocks, shares v^T B v / v^T M v and chi2_along = (v^T d)^2 / v^T M "
+                                    "v (descriptive; v is not an eigenvector there); overlap_abs = |v_0 . v_0.1|; "
+                                    "flux_ratio = v^T F v / v^T diag(F) v for the unshrunk flux block F",
+                          "referenced": "interaction alone and the joint family are G-FOLLOWUP's (its readout, "
+                                        "pinned), not recomputed; H0 recomputes two of their chi2 as an identity check",
+                          "not": LABELS["not"]},
+               "controls_passed": ["D0", "D1", "D2", "D3", "D4", "D5", "H0", "H1", "S0", "S1", "S2", "H2"],
+               "constants": {"families": {k: list(v) for k, v in SENS2_FAMILIES.items()}, "role": SENS2_ROLE,
+                             "alphas": list(ALPHAS), "lead": LEAD, "fractions": list(D.FRACTIONS),
+                             "identity": [list(t) for t in IDENTITY], "shares": [SHARES[0], list(SHARES[1])],
+                             "reproduction": REPRO},
+               "referenced": {"g_followup_readout": pins["g_followup_readout"],
+                              "families": {k: list(v) for k, v in FAMILIES.items()}},
+               "identity": identity,
+               "sens": {"reported_matrix": f"{reported_mname} + V_g", "label": SENS_LABEL,
+                        "mode_index": "a top mode's index is its place in that matrix's own eigen-order (lambda "
+                                      "descending); it does not name the same mode across alpha",
+                        "unchanged": unchanged, "records": sens},
+               "flux_top_mode_shares": {"family": fam, "alphas": list(alphas), "label": SENS_LABEL,
+                                        "predictions": shares},
+               "inputs_sha256": {**pins, "definition": sa.DEFINITION_SHA256, "extra_block": a.extra_block_sha256,
+                                 **{p["name"]: p["sha256"] for p in predictions}},
+               "code_sha256": {"fd_g_followup.py": sa.sha256(Path(__file__).resolve()),
+                               "fd_g_diag.py": sa.sha256(Path(D.__file__).resolve()),
+                               "fd_g_compare.py": sa.sha256(Path(G.__file__).resolve()),
+                               "s1_assemble.py": sa.sha256(Path(sa.__file__).resolve())},
+               "argv": [str(v) for v in sys.argv]}
+    lines = [f"[G-SENS2] every line below: {SENS_LABEL}"]
+    lines.extend(summary_line(r["family"], r["alpha"], r["prediction"], r, r["chi2_at_alpha_0"]) for r in sens)
+    for name, by in shares.items():
+        for al in (f"{v:g}" for v in alphas):
+            t = by[al]
+            lines.append(f"[G-SENS2] {fam} alpha {al:<4s} {name:10s}: top mode {t['mode']} sigma {100 * t['sigma']:.2f} % "
+                         f"carries {100 * t['fraction']:.1f} %; flux_ratio {t['flux_ratio']:.3f}; shares "
+                         + ", ".join(f"{k} {v:.3f}" for k, v in sorted(t["block_shares"].items(), key=lambda kv: -kv[1])[:4]))
+        fol = by[f"alpha_{alphas[0]:g}_mode_at_{alphas[1]:g}"]
+        lines.append(f"[G-SENS2] {fam} alpha-{alphas[0]:g} mode at {alphas[1]:g} {name:10s}: chi2_along "
+                     f"{fol['chi2_along']:.2f}; overlap {by['overlap_abs']:.3f}; flux_ratio {fol['flux_ratio']:.3f}")
     counter = [0]
     readout = D.finite(readout, counter)
     readout["non_finite_written_as_null"] = counter[0]

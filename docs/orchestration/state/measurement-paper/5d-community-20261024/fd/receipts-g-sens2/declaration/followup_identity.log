@@ -1,0 +1,13 @@
+2026-10-26T20:43:23Z
+c1987263db646ba2771c311150cca350f06d110c
+main: fd_g_followup.py sha256 820b67c25b3256aa20c6d377789ba1fd9a3286703dfd03e47e16bc4986b9ff59
+this: fd_g_followup.py sha256 ec8cbc6880f7a3f67eea5703ddeff958acb10462053696d2cfdb64de0ee5f60d
+seed 0 role adopted: rc 0/0; readout 150709 B, byte-identical after 1 substitution of the tool's own sha256; stdout 96 lines identical
+seed 0 role sensitivity: rc 0/0; readout 150581 B, byte-identical after 1 substitution of the tool's own sha256; stdout 96 lines identical
+seed 1 role adopted: rc 0/0; readout 150839 B, byte-identical after 1 substitution of the tool's own sha256; stdout 96 lines identical
+seed 1 role sensitivity: rc 0/0; readout 150825 B, byte-identical after 1 substitution of the tool's own sha256; stdout 96 lines identical
+seed 2 role adopted: rc 0/0; readout 150744 B, byte-identical after 1 substitution of the tool's own sha256; stdout 96 lines identical
+seed 2 role sensitivity: rc 0/0; readout 150753 B, byte-identical after 1 substitution of the tool's own sha256; stdout 96 lines identical
+control: one changed label is reported as a difference
+identical on all 6, control fires
+rc=0
