@@ -1,0 +1,24 @@
+PASSAGE: ACC-1
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+
+PASSAGE: ACC-2
+STALE: YES
+VERDICT: REVISE
+ISSUE: The words "no extended-domain covariance has been constructed with re-selected lateral bands under the procedure of \S\ref{sec:uq-combine}" are false because job 56431823 did construct an extended-fiducial covariance whose lateral-band blocks use the re-selected lateral bands (which is unquotable, rather than unconstructed).
+
+PASSAGE: ACC-3
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+
+PASSAGE: ACC-4
+STALE: YES
+VERDICT: AGREE
+ISSUE: none
+
+PASSAGE: ACC-5
+STALE: YES
+VERDICT: REVISE
+ISSUE: The words "only on the five observables" are false because the diagnostic's guard requires exactly three axes (eavail, q3, W), not five observables.

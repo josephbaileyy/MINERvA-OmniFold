@@ -1,0 +1,1 @@
+CONTEXT: In this passage only punctuation changed, by ruling: one semicolon became a full stop, and the next word was capitalized. No word was added, removed or changed. Check that the split changes no meaning: that the condition in the first sentence still governs what the second sentence states, and that no qualifier became detached.

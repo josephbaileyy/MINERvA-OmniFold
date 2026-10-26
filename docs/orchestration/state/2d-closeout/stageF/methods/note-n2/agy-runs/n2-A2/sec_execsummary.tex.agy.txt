@@ -1,0 +1,9 @@
+PASSAGE: ES-1
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: ES-2
+VERDICT: AGREE
+ISSUE: none
+FIX: none

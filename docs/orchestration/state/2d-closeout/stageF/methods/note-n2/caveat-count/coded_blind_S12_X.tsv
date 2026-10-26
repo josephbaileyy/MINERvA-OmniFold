@@ -1,0 +1,45 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	concl	pos	no	no	validation scope limited to tested configurations	The main results are the validation findings, within the scope stated in §1.
+2	d	concl	pos	no	no	generator tests illustrative application only	The generator tests are an application that illustrates calibrated inference with a biased estimator.
+3	d	concl	pos	yes	no	reproduction shape difference with publication	The reproduction has a correlated shape difference (χ2 /ndf = 2.27, §6.4), whose size depends on the estimator (exact-split cross-check 3.66).
+4	c	concl	pos	yes	partly	generator-shape model dependence reported beside	A generator-shape model-dependence component, reported beside the uncertainty, raises its per-bin median to 7.90 % (§4.6).
+5	b	concl	pos	no	no	estimator chosen after comparisons known	The central value and its uncertainty share the LightGBM estimator, which was chosen after both comparisons were known (§3.2).
+6	d	concl	pos	no	no	validation checks split across configurations	In configuration (a), the 4D and 5D unfolds pass marginal-normalization checks against the lower-dimensional results to ≈1–2 %.
+7	d	concl	pos	no	no	validation checks split across configurations	The configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to 0.141 % in total, a comparison across configurations.
+8	d	concl	pos	no	no	validation checks split across configurations	The 3D and 4D injected-bump closures, of configuration (a), leave 0.10 of the injected Eavail change and close q3 to 1.1 %.
+9	b	concl	neg	no	no	closures lack predeclared acceptance threshold	No acceptance threshold fixed before either closure is on record (§7).
+10	d	concl	pos	yes	no	excess concentrated in overflow cell	A fifth of that positive difference sits in the single widest overflow cell.
+11	c	concl	pos	no	no	5D regularization bias not in uncertainty	The regularization bias is largest in the high-Eavail , high-W region (§8.4).
+12	d	concl	pos	yes	no	GiBUU high-energy sample limit	each by about its overall shortfall once the Eν > 20 GeV events missing from GiBUU are accounted for (§8.5).
+13	c	concl	pos	no	no	NuWro GiBUU carbon target uncorrected	The NuWro and GiBUU ratios contain an uncorrected carbon-versus-CH target difference.
+14	c	concl	pos	yes	no	5D purity-subtraction bias unassigned	Pseudo-experiments with backgrounds reveal a purity-subtraction bias of up to 4 % in the highest-W cells.
+15	c	concl	pos	no	no	5D purity-subtraction bias unassigned	The quoted five-dimensional central value keeps this bias, and no quoted uncertainty includes it.
+16	d	concl	pos	yes	no	generator tests under stated conditions	As an application, joint tests calibrated through the full analysis chain reject all ten hybrid generator hypotheses under six stated conditions.
+17	e	concl	pos	no	no	test design fixed in advance	Their design was fixed before any production pseudo-experiment or observed statistic, with two data-informed elements (§10.3).
+18	b	concl	pos	yes	no	data-informed elements in test design	Their design was fixed before any production pseudo-experiment or observed statistic, with two data-informed elements (§10.3).
+19	c	concl	pos	no	no	generator-test calibration assumptions	The familywise error rate is controlled at 5% under the stated calibration assumptions, and the size is averaged over the nuisance priors.
+20	d	concl	pos	no	no	test size averaged over nuisance priors	The familywise error rate is controlled at 5% under the stated calibration assumptions, and the size is averaged over the nuisance priors.
+21	d	concl	neg	no	no	rejections not physical exclusions	The tests are not physical exclusions, recover established discrepancies, and show no evidence of discrimination beyond matched coarse projections.
+22	c	concl	neg	no	no	NuWro GiBUU carbon target uncorrected	In a descriptive re-evaluation, NuWro’s total (rate-and-shape) rejection is not robust to correcting its carbon prediction to CH, and the ten decisions are unchanged (§10, §10.9).
+23	c	concl	neg	no	no	2D statistical block coverage untested	The quoted two-dimensional statistical block has had no coverage test (§4.2, §5.2).
+24	d	concl	pos	no	no	generator comparisons descriptive only	The generator comparisons of §§7–8 are descriptive comparisons of central values that identify no nuclear or interaction mechanism.
+25	c	concl	neg	no	no	no 3D or 4D covariance	No 3D or 4D covariance is quoted (§7).
+26	c	concl	pos	no	no	5D regularization bias not in uncertainty	The five-dimensional estimator recovers only part of truth changes of about the size of generator differences.
+27	c	concl	neg	no	no	5D regularization bias not in uncertainty	No quoted uncertainty includes this residual bias, which is interpreted as regularization bias (§9.3).
+28	d	concl	pos	no	no	no validated coverage above 2D	Above two dimensions the results are central values without intervals of validated coverage.
+29	c	concl	neg	no	no	no 5D measurement with total uncertainties	No five-dimensional measurement with total uncertainties was constructed (§9.4).
+30	c	concl	pos	no	no	5D interval coverage fails	Bias-corrected statistical intervals of a deterministic five-dimensional estimator variant miscover at the tested truths (§9.5).
+31	b	concl	neg	no	no	5D covariance fails predeclared criteria	The one five-dimensional covariance used in this note does not meet its specification’s acceptance criteria.
+32	b	concl	pos	no	no	5D covariance fails predeclared criteria	Two companion covariances, built at different estimator seeds, show a seed sensitivity above the limit set before production, so no covariance-based significance is quoted (§9.6).
+33	d	concl	pos	no	no	no covariance-based significance quoted	Two companion covariances, built at different estimator seeds, show a seed sensitivity above the limit set before production, so no covariance-based significance is quoted (§9.6).
+34	c	concl	pos	no	no	generator-test calibration assumptions	The calibration of the generator tests is valid for the simulated null to the extent that the pseudo-experiment chain reproduces the analysis applied to the data (§10.3).
+35	c	concl	neg	no	no	nuisance model lacks recoil-response band	Their nuisance model has no calorimetric recoil-response band (§10.8).
+36	d	concl	pos	no	no	extended-fiducial study preliminary	The scalar extended-fiducial study (§11) yields a preliminary central value
+37	c	concl	pos	yes	no	extended-fiducial tier 2 prior-dominated	New acceptance-supported cells contribute about 6 % of the rate; separately labeled prior-dominated extrapolation contributes about 28 %.
+38	c	concl	pos	no	no	NEUT and finer comparison pending	Further refinements are a fifth external generator, NEUT, and a finer 44-cell comparison with the Ascencio et al. measurement
+39	c	concl	pos	no	no	flux-muon correlation not derived internally	A flux–muon-energy-scale posterior derived from MAT-MINERvA, independent of the published analysis, would let the correlation ρ between the leading flux mode and the muon-energy-scale band (§4) be derived entirely within this analysis.
+40	c	concl	pos	no	no	public release not yet produced	App. G specifies this release for our analysis, including which of its objects already have fixed identities and which are still to be produced.
+41	e	concl	pos	no	no	public release not yet produced	A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G).
+42	d	concl	pos	no	no	note build reproduces no result	A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G).
+43	d	concl	pos	no	no	downstream projections need own checks	New projections require their own applicability checks; nominal weights alone cannot certify arbitrary downstream inference (App. B.4).
+44	e	concl	neg	no	no	release design independent of covariance choice	The release design and its public example have no bearing on the choice of covariance (§9.6).

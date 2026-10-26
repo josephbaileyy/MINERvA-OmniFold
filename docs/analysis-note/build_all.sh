@@ -137,6 +137,15 @@ echo "=== records citation pin (NoteRecords2026 names an ancestor commit holding
 python3 check_note_records.py --self-test-pin   # a good pin passes; a branch, a non-ancestor, a missing tag fail
 python3 check_note_records.py pin
 
+# (9) N2-1 (note register round n2, director rulings 2026-10-26): the posted note cites records entries by number
+# through \recentry{<tag>}; the numbers are generated from app_provenance.tex into records_entry_numbers.tex, which
+# preamble.tex inputs. A stale file stops the build here, before any PDF or deposit export is made. The self-test
+# shows a stale file and a differing records label each fail, and that the generator and main_records.tex's label
+# hook number a fixture alike (with pdflatex).
+echo "=== records entry numbers (generated file fresh; generator = the records build's label hook) ==="
+python3 check_note_records.py --self-test-entry-numbers
+python3 check_note_records.py entry-numbers --check
+
 # (2) The instant every PDF must postdate. `sleep 1` removes the same-second ambiguity in
 # `test -nt` on filesystems with coarse timestamps: one second, once, against a LaTeX build.
 marker="$(mktemp "${TMPDIR:-/tmp}/build_all_marker.XXXXXX")"
@@ -234,6 +243,12 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 python3 check_dead_containment.py --self-test   # the regex's power test, before trusting its verdict
 python3 check_dead_containment.py
+
+echo
+echo "=== records entry numbers vs the records build (every posted number is the records' own label) ==="
+# (9), the after-build half: main_records.aux now exists, so every number the posted note can print must equal the
+# label the records build gave that entry. Runs only here: CI has no LaTeX, so CI runs the freshness check and Q3.
+python3 check_note_records.py entry-numbers --check-aux
 
 echo
 echo "=== Sec. IV printed values vs committed receipts ==="
