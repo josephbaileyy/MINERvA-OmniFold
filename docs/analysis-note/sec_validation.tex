@@ -13,7 +13,7 @@ Injected closure & Reweighted simulated truth; 1A LightGBM, five iterations & Sa
 \addlinespace
 Miss completeness & Full truth inventory; production event mapping & Same event keys; truth-only entries retained & Membership and completeness conditions; no recovery or coverage claim \\
 \addlinespace
-Iteration stability & Same data; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test \\
+Iteration stability & Same data, exact-split cross-check; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test \\
 \addlinespace
 Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Predeclared coverage windows; earlier band fails. Rebuilt band awaits independent test \\
 \bottomrule
@@ -218,7 +218,8 @@ Because $\sigma_i$ is estimated from the same toys that are scored, these figure
 % dropped; the paragraph heading ("not a coverage test") and "diagnostics only" state it.
 % Search: coverage-toys; coverage_summary; same-ensemble pull @ ddf16f10
 
-\paragraph{Stability and efficiency.} With five and with ten iterations the total cross section agrees to within \SI{0.026}{\percent}; the per-bin shape differs by \SI{1.54}{\percent} RMS. The histogram-based and exact-split backends agree on the total cross section to \SI{0.04}{\percent}. Both comparisons were measured for the exact-split cross-check. The selection efficiency (Fig.~\ref{fig:eff}) reproduces Fig.~5 of the published measurement.
+\paragraph{Stability and efficiency.} For the exact-split cross-check, the total cross section agrees to within \SI{0.026}{\percent} between five and ten iterations, and the per-bin shape differs by \SI{1.54}{\percent} RMS; the histogram-based and exact-split backends agree on the total cross section to \SI{0.04}{\percent}. The selection efficiency (Fig.~\ref{fig:eff}) reproduces Fig.~5 of the published measurement.
+% Note register round n3, batch n3-B (2026-10-27): the two comparisons share one lead clause naming the exact-split cross-check (R-N3c); no value changes.
 
 \begin{figure}[H]
   \centering

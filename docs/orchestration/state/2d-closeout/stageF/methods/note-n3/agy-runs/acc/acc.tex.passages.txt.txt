@@ -1,0 +1,20 @@
+=== PASSAGE ACC-1 (sec_method.tex) ===
+BEFORE:
+Our $n=5$ is instead justified empirically: doubling it to $n=10$ moves the total cross section by \SI{0.026}{\percent} (\S\ref{sec:validation}), and the unfold reproduces an independently published binned measurement of the same data (\S\ref{sec:results}).
+
+AFTER:
+Our $n=5$ is instead justified empirically: for the exact-split cross-check, the total cross section agrees to within \SI{0.026}{\percent} between five and ten iterations (\S\ref{sec:validation}), and the unfold reproduces an independently published binned measurement of the same data (\S\ref{sec:results}).
+
+=== PASSAGE ACC-2 (sec_method.tex) ===
+BEFORE:
+The configuration is instead validated after the fact by closure and classifier-calibration tests (\S\ref{sec:validation}, \S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count (below), backend agreement in method-dependence studies (\S\ref{sec:results-tension}), and an explicit training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
+
+AFTER:
+The configuration is instead validated after the fact by closure and classifier-calibration tests (\S\ref{sec:validation}, \S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count, measured for the exact-split cross-check (below), backend agreement in method-dependence studies (\S\ref{sec:results-tension}), and an explicit training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
+
+=== PASSAGE ACC-3 (sec_validation.tex, table row) ===
+BEFORE:
+Iteration stability & Same data; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test
+
+AFTER:
+Iteration stability & Same data, exact-split cross-check; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test
