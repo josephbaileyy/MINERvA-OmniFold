@@ -103,7 +103,9 @@ For R-EDIT it plants, on one record paragraph: an unrecorded pointer edit (P5 mu
 (SILENT, the control), a row with a wrong old digest, a row whose new digest is not the edited text's, a recorded
 word change and a recorded number change (each must fire as more than pointer tokens), a recorded pointer deletion
 and a recorded pointer insertion (each must fire as deleting or adding pointer tokens), a deleted paragraph with a
-row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). Exit 0 only if every plant
+row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). It also requires a row
+whose new digest is wrong only in its last hex digit to fail with both digests printed in full and different
+(R-EDIT messages print full digests). Exit 0 only if every plant
 behaves as named and the real pair is silent. The thinning plants
 need THIN_BASE from git, so the self-test runs in the canonical checkout.
 """
@@ -296,10 +298,10 @@ def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fa
         old_d, new_d = cells[1], cells[2]
         old = base.get(old_d)
         if old is None:
-            fails.append(f"P5 R-EDIT row {rid}: old digest {old_d[:12]} is the digest of no base RECORD paragraph")
+            fails.append(f"P5 R-EDIT row {rid}: old digest {old_d} is the digest of no base RECORD paragraph")
             continue
         if old in rall:
-            fails.append(f"P5 R-EDIT row {rid}: stale: base paragraph {old_d[:12]} still prints verbatim in the "
+            fails.append(f"P5 R-EDIT row {rid}: stale: base paragraph {old_d} still prints verbatim in the "
                          f"records: {old[:60]!r}")
             continue
         new_p = now.get(new_d)
@@ -307,10 +309,10 @@ def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fa
             near = [p for p in now.values() if unpointed(p) == unpointed(old)]
             if near:
                 fails.append(f"P5 R-EDIT row {rid}: the edited paragraph is not the row's new text: its digest is "
-                             f"{digest(near[0])[:12]}, the row's {new_d[:12]}: {near[0][:60]!r}")
+                             f"{digest(near[0])}, the row's {new_d}: {near[0][:60]!r}")
             else:
-                fails.append(f"P5 R-EDIT row {rid}: base paragraph {old_d[:12]} is lost: no records paragraph has "
-                             f"the row's new digest {new_d[:12]} or the base paragraph's words: {old[:60]!r}")
+                fails.append(f"P5 R-EDIT row {rid}: base paragraph {old_d} is lost: no records paragraph has "
+                             f"the row's new digest {new_d} or the base paragraph's words: {old[:60]!r}")
             continue
         if unpointed(new_p) != unpointed(old):
             fails.append(f"P5 R-EDIT row {rid}: the edit changes more than pointer tokens: "
@@ -930,6 +932,30 @@ def _unlink_cite(path: Path, tag: str) -> None:
     path.write_text(t.replace(old, ""))
 
 
+def _digest_message_check(inv: dict, new: Path, ledger: Path, thin: Counter | None, head: dict[str, str] | None) -> bool:
+    """A recorded pointer edit whose row's new digest is the real one with its last hex digit changed must fail with a
+    message that prints both digests in full, and they must differ (12-character prefixes printed them as equal)."""
+    with tempfile.TemporaryDirectory() as d:
+        work = Path(d) / "digest-message"
+        shutil.copytree(new, work, ignore=shutil.ignore_patterns("*.pdf", "*.aux", "*.log", "*.bcf", "*.bbl", "*.fls",
+                                                                 "*.fdb_latexmk", "*.out", "*.toc", "*.run.xml",
+                                                                 "*.blg", "figures", "archive", "release-package-*",
+                                                                 "__pycache__"))
+        hist = work / "app_history.tex"
+        hist.write_text(hist.read_text().replace(_R_ANCHOR, _R_POINTER, 1))
+        row = _redit_row(inv, _R_POINTER)
+        real = row.split("|")[3].strip()
+        wrong = real[:-1] + ("0" if real[-1] != "0" else "1")
+        led = Path(d) / "digest-message.ledger.md"
+        led.write_text(ledger.read_text() + "\n" + row.replace(real, wrong) + "\n")
+        got = [f for f in probe_fails(inv, work, led, thin, head) if "is not the row's new text" in f]
+        shown = re.findall(r"[0-9a-f]{64}", got[0]) if got else []
+        ok = len(shown) == 2 and shown[0] == real and shown[1] == wrong and shown[0] != shown[1]
+        print(f"  {'fired ' if ok else 'FAILED'} R-EDIT digest message          -> "
+              f"{'two distinct full digests: ' + real[-6:] + ' vs ' + wrong[-6:] if ok else got[:1]}")
+        return ok
+
+
 def self_test(base: Path, new: Path, ledger: Path) -> int:
     inv = load_base(base)
     failures, fired, silent = [], 0, 0
@@ -979,6 +1005,9 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
             else:
                 fired += 1
                 print(f"  fired  {name:36} -> {next(f for f in got if f.startswith(want))[:100]}")
+    if not _digest_message_check(inv, new, ledger, thin, head):
+        failures.append("R-EDIT digest message: a new digest wrong only in its last digit did not print as two distinct "
+                        "full digests")
     for f in failures:
         print("  FAIL " + f)
     n_fire = sum(1 for p in PLANTS if p[1] is not None)
