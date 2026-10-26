@@ -1,12 +1,9 @@
-% Audience flags for the three builds (main_note / main_primer / main_paper).
-% Each driver flips exactly one true after \input{preamble}; no section tests
-% them today, but conditional content can hook on them.
+% Audience flags for the three builds (main_note / main_primer / main_paper). Each driver flips exactly one true after \input{preamble}; no section tests them today, but conditional content can hook on them.
 \newif\ifNOTE
 \newif\ifPRIMER
 \newif\ifPAPER
 
-% The analysis note (main_note) and its companion PET note (pet_note) are separate PDFs, so a
-% reference from one into the other names the section by title: its number moves with every edit.
+% The analysis note (main_note) and its companion PET note (pet_note) are separate PDFs, so a reference from one into the other names the section by title: its number moves with every edit.
 \newcommand{\notesec}[1]{the analysis note, \S``#1''}
 \newcommand{\petsec}[1]{the companion PET note, \S``#1''}
 
@@ -24,19 +21,12 @@
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
-% Retraction marking. Repo convention is to STRIKE THROUGH rather than erase, so a
-% reader who remembers a superseded number finds it struck rather than vanished
-% (docs/orchestration/INDEX-retracted-and-superseded-values.md).
+% Retraction marking. Repo convention is to STRIKE THROUGH rather than erase, so a reader who remembers a superseded number finds it struck rather than vanished (docs/orchestration/INDEX-retracted-and-superseded-values.md).
 \usepackage[normalem]{ulem}
 % Works in BOTH text and math mode: \mbox gives \sout an LR box to strike, and
-% \ensuremath restores math for the (usual) numeric argument. Needed because most
-% call sites are numbers already inside $...$, where \sout alone fails.
+% \ensuremath restores math for the (usual) numeric argument. Needed because most call sites are numbers already inside $...$, where \sout alone fails.
 \newcommand{\dead}[1]{\mbox{\textcolor{gray}{\sout{\ensuremath{#1}}}}}
-% Reviewer-comment macros. Defined HERE rather than in main_note.tex because all
-% three external drivers input this file: they were note-local, and the paper build
-% would have failed with Undefined control sequence the first time a commented
-% paragraph was distilled into paper_body.tex. Definitions are verbatim from
-% main_note.tex; xcolor is loaded above, which is what these need.
+% Reviewer-comment macros. Defined HERE rather than in main_note.tex because all three external drivers input this file: they were note-local, and the paper build would have failed with Undefined control sequence the first time a commented paragraph was distilled into paper_body.tex. Definitions are verbatim from main_note.tex; xcolor is loaded above, which is what these need.
 \newcommand{\bpn}[1]{\textcolor{blue}{\textbf{[BPN: #1]}}}
 \newcommand{\jrb}[1]{\textcolor{violet}{\textbf{[JRB: #1]}}}
 \newcommand{\gk}[1]{\textcolor{orange}{\textbf{[GK: #1]}}}
@@ -45,32 +35,19 @@
             maxbibnames=3, minbibnames=1, doi=true, eprint=true, isbn=false, url=false]{biblatex}
 \addbibresource{technote.bib}
 
-% Public code repository: file paths cited throughout (drivers, event loop,
-% UQ scripts) resolve against this tree.
+% Public code repository: file paths cited throughout (drivers, event loop, UQ scripts) resolve against this tree.
 \newcommand{\repourl}{https://github.com/josephbaileyy/MINERvA-OmniFold}
 \newcommand{\repolink}{\href{\repourl}{\texttt{github.com/josephbaileyy/MINERvA-OmniFold}}}
 
 % Figures live in the analysis directories; identical search path for every build.
 \graphicspath{{figures/}}
-% Vector-only: every figure now ships a .pdf twin, so we restrict the search to
-% .pdf.  A missing vector then fails the build loudly instead of silently
-% pulling in a stale raster .png.
+% Vector-only: every figure now ships a .pdf twin, so we restrict the search to .pdf.  A missing vector then fails the build loudly instead of silently pulling in a stale raster .png.
 \DeclareGraphicsExtensions{.pdf}
 
-% Repository paths: \repopath{docs/orchestration/FOO-20260101-bar.md} sets the path
-% in \texttt with a break opportunity after every "/" and "-", so a long path breaks
-% inside a narrow column instead of running into the margin.
+% Repository paths: \repopath{docs/orchestration/FOO-20260101-bar.md} sets the path in \texttt with a break opportunity after every "/" and "-", so a long path breaks inside a narrow column instead of running into the margin.
 %
-% WHY A MACRO RATHER THAN HAND-INSERTED \allowbreak, and it is not a style preference.
-% The first fix for the margin overflow wrote the breaks into the source
-% (docs/\allowbreak orchestration/\allowbreak AUDIT-...). That types identically and
-% SILENTLY BROKE DISCOVERY: generate_manifest.py counts inbound references by matching
-% the literal path, so seven records each lost a citation -- measured as inbound_count
-% 11->10, 3->2, 26->25, 14->13, 10->9, 17->16 and 5->4. The macro keeps the argument a
-% literal, greppable path and inserts the breaks at typeset time instead.
-% \path{} was also tried: it breaks too reluctantly and still overflowed.
-% NOTE: the argument may not contain "_" (it would need catcode surgery); no path
-% routed here does, and the one that does is written with \texttt{...\_...} directly.
+% WHY A MACRO RATHER THAN HAND-INSERTED \allowbreak, and it is not a style preference. The first fix for the margin overflow wrote the breaks into the source (docs/\allowbreak orchestration/\allowbreak AUDIT-...). That types identically and SILENTLY BROKE DISCOVERY: generate_manifest.py counts inbound references by matching the literal path, so seven records each lost a citation -- measured as inbound_count 11->10, 3->2, 26->25, 14->13, 10->9, 17->16 and 5->4. The macro keeps the argument a literal, greppable path and inserts the breaks at typeset time instead.
+% \path{} was also tried: it breaks too reluctantly and still overflowed. NOTE: the argument may not contain "_" (it would need catcode surgery); no path routed here does, and the one that does is written with \texttt{...\_...} directly.
 \makeatletter
 \newcommand{\mnv@stop}{}
 \newcommand{\repopath}[1]{\texttt{\mnv@brk#1\mnv@stop}}
@@ -103,8 +80,5 @@
 \newcommand{\diag}{\mathrm{diag}}
 \newcommand{\Tr}{\mathrm{Tr}}
 
-% Note register round n2, N2-1 (director rulings 2026-10-26): \recentry{<tag>} prints a records entry's number
-% (R1.<n>), so the posted note cites a records entry by number instead of by its internal tag. The numbers are
-% generated from app_provenance.tex by `check_note_records.py entry-numbers`; build_all.sh fails if the file is stale
-% (before any build or export) or if a number differs from the records build's own label (after it).
+% Note register round n2, N2-1 (director rulings 2026-10-26): \recentry{<tag>} prints a records entry's number (R1.<n>), so the posted note cites a records entry by number instead of by its internal tag. The numbers are generated from app_provenance.tex by `check_note_records.py entry-numbers`; build_all.sh fails if the file is stale (before any build or export) or if a number differs from the records build's own label (after it).
 \input{records_entry_numbers}

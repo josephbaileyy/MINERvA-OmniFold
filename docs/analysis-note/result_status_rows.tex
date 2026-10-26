@@ -1,8 +1,4 @@
-% Each cell is wrapped in \rsA..\rsD (one per column). They default to the identity, for
-% tables with p{} columns. A RevTeX build must redefine them as \parbox cells in l columns,
-% because RevTeX 4.2f replaces the array preamble parser with its own copy, and that build
-% stopped with "Extra \or" on this table's p{} columns under a newer TeX Live (e25abfd5).
-% Only the note uses this table; the article dropped it on 2026-10-11.
+% Each cell is wrapped in \rsA..\rsD (one per column). They default to the identity, for tables with p{} columns. A RevTeX build must redefine them as \parbox cells in l columns, because RevTeX 4.2f replaces the array preamble parser with its own copy, and that build stopped with "Extra \or" on this table's p{} columns under a newer TeX Live (e25abfd5). Only the note uses this table; the article dropped it on 2026-10-11.
 \providecommand{\rsA}[1]{#1}\providecommand{\rsB}[1]{#1}%
 \providecommand{\rsC}[1]{#1}\providecommand{\rsD}[1]{#1}%
 \newcommand{\resultstatusrows}{%

@@ -1,14 +1,9 @@
-% Records document only (main_records.tex); never input by the posted note. DECISION-20261021-joseph-da-and-note-records.md
-% item 2. Moved verbatim from app_release.tex at 4ba0dd2f: lines 122-173 (the identity table) and 244-287 (the
-% construction and audit record). The posted note keeps the release appendix's reader material; check_note_records.py
-% proves the move.
+% Records document only (main_records.tex); never input by the posted note. DECISION-20261021-joseph-da-and-note-records.md item 2. Moved verbatim from app_release.tex at 4ba0dd2f: lines 122-173 (the identity table) and 244-287 (the construction and audit record). The posted note keeps the release appendix's reader material; check_note_records.py proves the move.
 
 \subsection{Identities already fixed}
 \label{app:release-identities}
 
-Every row comes from a committed receipt (App.~\ref{app:provenance},
-\texttt{z-projection}). The cited records contain the full digests abbreviated
-here.
+Every row comes from a committed receipt (App.~\ref{app:provenance}, \texttt{z-projection}). The cited records contain the full digests abbreviated here.
 
 \begin{center}
 \small
@@ -61,42 +56,10 @@ Central values paired to the figure &
 
 These are the audit details behind \S\ref{sec:eavailw-construction}.
 
-\paragraph{Adoption.} The adoption, recorded on 2026-09-20
-(App.~\ref{app:provenance}, \texttt{z-cv-record}), is a decision to publish under a
-digest-bound exception. The object's own metadata is preserved unedited, and
-\textbf{an adoption does not turn those fields into pass labels.} The
-specification requires the null bound to be fixed before production and
-production had already happened, so the derivation step is unperformable for this
-object by anyone, which is why this is an exception and not a repair. The
-predeclared magnitude criterion for the estimator-seed sensitivity ---
-\emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register --- was
-computed by the 2026-09-20 campaign for two \emph{other} products.
+\paragraph{Adoption.} The adoption, recorded on 2026-09-20 (App.~\ref{app:provenance}, \texttt{z-cv-record}), is a decision to publish under a digest-bound exception. The object's own metadata is preserved unedited, and \textbf{an adoption does not turn those fields into pass labels.} The specification requires the null bound to be fixed before production and production had already happened, so the derivation step is unperformable for this object by anyone, which is why this is an exception and not a repair. The predeclared magnitude criterion for the estimator-seed sensitivity --- \emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register --- was computed by the 2026-09-20 campaign for two \emph{other} products.
 
-\paragraph{Assembly and centering.} The receipt records the pinned-bin count
-($g=1$ by declaration). The algebra of
-Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation} is implemented in
-\texttt{nd-unfolding/z\_assembly.py} (App.~\ref{app:provenance},
-\texttt{z-assembly}) and asserted independently of the object's producer.
-The mean-centered sibling \texttt{z-mean.npz} shares all seven keys and shapes,
-with byte-identical central values, support mask, pinned mask and row index.
-The projector enforces the variant:
-\texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default,
-and \texttt{-{}-run-class publication} from a mean-centered source is refused.
+\paragraph{Assembly and centering.} The receipt records the pinned-bin count ($g=1$ by declaration). The algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation} is implemented in \texttt{nd-unfolding/z\_assembly.py} (App.~\ref{app:provenance}, \texttt{z-assembly}) and asserted independently of the object's producer. The mean-centered sibling \texttt{z-mean.npz} shares all seven keys and shapes, with byte-identical central values, support mask, pinned mask and row index. The projector enforces the variant: \texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default, and \texttt{-{}-run-class publication} from a mean-centered source is refused.
 
-\paragraph{Projection.} $M$ is built by
-\texttt{project\_cov\_nd.build\_projection}. The C-order of the rows is
-established by the F-order control of \S\ref{app:release-example}, step~3. No
-source cell is dropped ($\texttt{src\_cells\_dropped}=0$). Exact symmetry
-$\max|C-C^{\top}|=0$ follows structurally from $M C M^{\top}$, without a
-tolerance.
+\paragraph{Projection.} $M$ is built by \texttt{project\_cov\_nd.build\_projection}. The C-order of the rows is established by the F-order control of \S\ref{app:release-example}, step~3. No source cell is dropped ($\texttt{src\_cells\_dropped}=0$). Exact symmetry $\max|C-C^{\top}|=0$ follows structurally from $M C M^{\top}$, without a tolerance.
 
-\paragraph{Conditioning.} The common label ``most-negative over max'' for
-$\lambda_{\min}/\lambda_{\max}$ is misleading because no eigenvalue is
-negative. A different mask, summation order or precision need not preserve
-$n_{\mathrm{negative}}=0$. The cutoff scan used the diagnostic projection of
-the same source through the same $M$. Its $\lambda_{\min}$,
-$\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ match the publication
-run's recorded values identically. A later independent scan of the publication
-bytes found the publication and diagnostic
-$42\times42$ matrices bitwise identical (App.~\ref{app:provenance},
-\texttt{z-conditioning}).
+\paragraph{Conditioning.} The common label ``most-negative over max'' for $\lambda_{\min}/\lambda_{\max}$ is misleading because no eigenvalue is negative. A different mask, summation order or precision need not preserve $n_{\mathrm{negative}}=0$. The cutoff scan used the diagnostic projection of the same source through the same $M$. Its $\lambda_{\min}$, $\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ match the publication run's recorded values identically. A later independent scan of the publication bytes found the publication and diagnostic $42\times42$ matrices bitwise identical (App.~\ref{app:provenance}, \texttt{z-conditioning}).

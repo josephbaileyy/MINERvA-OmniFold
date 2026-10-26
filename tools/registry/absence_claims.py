@@ -179,6 +179,40 @@ def paragraph_bounds(lines: list[str], i: int) -> tuple[int, int]:
     return lo, hi
 
 
+def paragraph_key(path: str, para: list[str]) -> tuple[str, frozenset[str]]:
+    """(the paragraph's printed text with whitespace collapsed, its support: the Search-line shas and waiver
+    reasons it carries)."""
+    text = " ".join(" ".join(printed(path, l) for l in para).split())
+    rx = WAIVER_TEX if path.endswith(".tex") else WAIVER_MD
+    support = {m.group(1) for l in para for m in [SEARCH_LINE.search(l)] if m}
+    support |= {"waiver:" + m.group(1).strip() for l in para for m in [rx.search(l)] if m}
+    return text, frozenset(support)
+
+
+def prior_paragraphs(repo: Path, path: str, revs: list[str]) -> dict[str, list[frozenset[str]]]:
+    """For a .tex source: printed paragraph text -> the supports it had, over every paragraph of `path` at each of
+    `revs`. A TeX reflow (DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md section 3) changes
+    every line of a paragraph but none of its printed text; such a paragraph is not new and is not re-judged, as
+    long as it keeps every Search line and waiver it had. Markdown keeps the stricter rule: a re-wrap is judged."""
+    out: dict[str, list[frozenset[str]]] = {}
+    if not path.endswith(".tex"):
+        return out
+    for rev in revs:
+        try:
+            old = reglib.git(repo, "show", f"{rev}:{path}").decode("utf-8", errors="replace").split("\n")
+        except RuntimeError:
+            continue
+        para: list[str] = []
+        for line in old + [""]:
+            if line.strip():
+                para.append(line)
+            elif para:
+                k, sup = paragraph_key(path, para)
+                out.setdefault(k, []).append(sup)
+                para = []
+    return out
+
+
 def waiver(path: str, para: list[str]) -> tuple[bool, bool]:
     """(an absence-ok waiver is present, it gives a non-empty reason) for one paragraph."""
     rx = WAIVER_TEX if path.endswith(".tex") else WAIVER_MD
@@ -188,9 +222,12 @@ def waiver(path: str, para: list[str]) -> tuple[bool, bool]:
     return bool(reasons), any(reasons)
 
 
-def judge(repo: Path, path: str, text: str, linenos: list[int], stats: dict | None = None) -> list[str]:
+def judge(repo: Path, path: str, text: str, linenos: list[int], stats: dict | None = None,
+          prior: dict[str, list[frozenset[str]]] | None = None) -> list[str]:
     """Bare absence claims touching an added/changed line. Each paragraph holding an added line is judged once,
-    on its joined text; a match counts if any line it spans was added or changed."""
+    on its joined text; a match counts if any line it spans was added or changed. With `prior`
+    (prior_paragraphs), a .tex paragraph whose printed text a parent already printed, with no less support, is
+    skipped: it was reflowed, not written."""
     lines = text.split("\n")
     added = {n for n in linenos if 1 <= n <= len(lines)}
     fails, seen = [], set()
@@ -205,6 +242,12 @@ def judge(repo: Path, path: str, text: str, linenos: list[int], stats: dict | No
         if not found:
             continue
         para = lines[lo:hi + 1]
+        if prior:
+            key, sup = paragraph_key(path, para)
+            if any(old <= sup for old in prior.get(key, [])):
+                if stats is not None:
+                    stats["reflowed"] = stats.get("reflowed", 0) + 1
+                continue
         shas = [m.group(1) for l in para for m in [SEARCH_LINE.search(l)] if m]
         if any(commit_exists(repo, sh) for sh in shas):
             continue
@@ -228,7 +271,7 @@ def judge(repo: Path, path: str, text: str, linenos: list[int], stats: dict | No
 
 def check_staged(repo: Path) -> int:
     index = reglib.Index(repo)
-    fails, nfiles, nlines, stats = [], 0, 0, {"waived": 0}
+    fails, nfiles, nlines, stats = [], 0, 0, {"waived": 0, "reflowed": 0}
     parents = merge_parents(repo)
     for path, linenos in sorted(added_lines(repo).items()):
         text = index.text(path)
@@ -237,7 +280,7 @@ def check_staged(repo: Path) -> int:
         linenos = new_against_parents(repo, path, text, linenos, parents)
         nfiles += 1
         nlines += len(linenos)
-        fails += judge(repo, path, text, linenos, stats)
+        fails += judge(repo, path, text, linenos, stats, prior_paragraphs(repo, path, parents or ["HEAD"]))
     for f in fails:
         print("  FAIL " + f)
     if fails:
@@ -248,7 +291,8 @@ def check_staged(repo: Path) -> int:
               "(.tex). Keep the sentence: an honest qualifier is what this check protects.")
     merge = f"; merge: lines already in any of {len(parents)} parents not judged" if parents else ""
     print(f"ABSENCE-CLAIMS :: {nlines} added/changed lines in {nfiles} staged in-scope files checked against "
-          f"{len(_PATS)} patterns; {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok){merge}")
+          f"{len(_PATS)} patterns; {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok); "
+          f"{stats['reflowed']} reflowed TeX paragraph(s) whose printed text and support a parent already had{merge}")
     return 1 if fails else 0
 
 
@@ -264,12 +308,12 @@ def base_fails(repo: Path, base: str, stats: dict | None = None) -> tuple[list[s
         linenos = new_against_parents(repo, path, text, linenos, parents)
         nfiles += 1
         nlines += len(linenos)
-        fails += judge(repo, path, text, linenos, stats)
+        fails += judge(repo, path, text, linenos, stats, prior_paragraphs(repo, path, parents))
     return fails, nfiles, nlines, tip, mb
 
 
 def check_base(repo: Path, base: str) -> int:
-    stats = {"waived": 0}
+    stats = {"waived": 0, "reflowed": 0}
     try:
         fails, nfiles, nlines, tip, mb = base_fails(repo, base, stats)
     except RuntimeError as exc:
@@ -282,7 +326,8 @@ def check_base(repo: Path, base: str) -> int:
               "scoping statement, an absence-ok waiver with a reason. Keep the sentence.")
     print(f"ABSENCE-CLAIMS :: {nlines} lines HEAD adds or changes since merge-base {mb[:12]} of --base {base} "
           f"({tip[:12]}), in {nfiles} in-scope files, checked against {len(_PATS)} patterns (lines already in the "
-          f"base not judged); {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok)")
+          f"base not judged); {len(fails)} bare absence claim(s); {stats['waived']} waived (absence-ok); "
+          f"{stats['reflowed']} reflowed TeX paragraph(s) whose printed text and support the base already had")
     return 1 if fails else 0
 
 
@@ -474,6 +519,41 @@ def self_test() -> int:
         g("commit", "-qam", "pr adds a searched claim")
         fb = base_fails(t, trunk)[0]
         expect("--base: a claim with a search line at a real commit passes", bool(fb), False)
+        # A TeX reflow (one line per paragraph): unchanged printed text and support is not re-judged; any change is.
+        tpath = "docs/analysis-note/sec_x.tex"
+        tex.write_text("Old prose.\n\nNeither block has had\na coverage test.\n\nThe study has not been\nrun "
+                       f"again.\n% Search: study @ {sha[:12]}\n")
+        g("commit", "-qam", "a wrapped bare TeX claim and a wrapped searched one, grandfathered")
+
+        def reflowed(tx: str) -> list[str]:
+            tex.write_text(tx)
+            g("add", "-A")
+            idx = reglib.Index(t)
+            got = [x for p, ln in added_lines(t).items()
+                   for x in judge(t, p, idx.text(p), ln, None, prior_paragraphs(t, p, ["HEAD"]))]
+            g("reset", "-q", "--hard", "HEAD")
+            return got
+
+        keep = f"\n\nThe study has not been run again.\n% Search: study @ {sha[:12]}\n"
+        f = reflowed("Old prose.\n\nNeither block has had a coverage test." + keep)
+        expect("reflow: a grandfathered bare TeX claim joined onto one line", bool(f), False)
+        f = reflowed("Old prose.\n\nNeither block has had a full coverage test." + keep)
+        expect("reflow that also changes a word in the claim's paragraph", bool(f), True, f[0][:70] if f else "")
+        f = reflowed("Old prose.\n\nNeither block has had a coverage test.\n\nThe study has not been run again.\n")
+        expect("reflow that drops the paragraph's Search line", bool(f), True, f[0][:70] if f else "")
+        tex.write_text("Old prose.\n\nNeither block has had a coverage test." + keep)
+        g("add", "-A")
+        raw = [x for p, ln in added_lines(t).items() for x in judge(t, p, reglib.Index(t).text(p), ln)]
+        g("reset", "-q", "--hard", "HEAD")
+        expect("... (precondition: the same reflow judged without prior FIRES)", bool(raw), True)
+        rec.write_text(rec.read_text().replace("An old line: this was never measured.",
+                                               "An old line: this was never\nmeasured."))
+        g("add", "-A")
+        fmd = [x for p, ln in added_lines(t).items()
+               for x in judge(t, p, reglib.Index(t).text(p), ln, None, prior_paragraphs(t, p, ["HEAD"]))]
+        g("reset", "-q", "--hard", "HEAD")
+        expect("a Markdown re-wrap of a bare claim is still judged with prior (the exemption is TeX-only)",
+               bool(fmd), True)
     print("ABSENCE-CLAIMS self-test :: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 

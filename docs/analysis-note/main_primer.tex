@@ -1,18 +1,13 @@
 % ====================================================================
-% PRIMER -- plain-language standalone story for a reader who does NOT know
-% MINERvA or unfolding (~6-10 pp).  Build: latexmk -pdf main_primer.tex
-% Shares preamble.tex (scaffold), values.tex (numbers) and the figure set
-% with the collaboration note; its prose is its own (primer_body.tex).
+% PRIMER -- plain-language standalone story for a reader who does NOT know MINERvA or unfolding (~6-10 pp).  Build: latexmk -pdf main_primer.tex Shares preamble.tex (scaffold), values.tex (numbers) and the figure set with the collaboration note; its prose is its own (primer_body.tex).
 % ====================================================================
 \documentclass[11pt]{article}
 \input{preamble}
 \PRIMERtrue
 \input{values}
 
-% Primer sync to the methods paper (METHODS-IMPLEMENTATION.md sec. 4, framing): the title follows the paper's
-% "Performance and limitations of multidimensional OmniFold unfolding with MINERvA open data" (main_paper.tex).
-\title{How well does a machine-learning unfolding method work on neutrino
-data?\\[4pt]
+% Primer sync to the methods paper (METHODS-IMPLEMENTATION.md sec. 4, framing): the title follows the paper's "Performance and limitations of multidimensional OmniFold unfolding with MINERvA open data" (main_paper.tex).
+\title{How well does a machine-learning unfolding method work on neutrino data?\\[4pt]
 \large A plain-language guide to a study of multidimensional OmniFold with
 MINERvA open data}
 \author{Joseph Bailey \and Benjamin Nachman}
@@ -31,7 +26,7 @@ MINERvA open data}
 % findings lead; the generator tests are an illustration. The method-advantage clause kept under ruling F2 now lives only in
 % primer_body.tex Sec. 2 ("The decisive advantage"), to hold the abstract near 150 words. Withdrawn here: the low-recoil "recovery" and the located
 % excess (paper sec:central keeps both as descriptive central-value comparisons only). "About one percent" is
-% \ratioTot (values.tex:48); "10%" is the adopted criterion (paper_body.tex sec:uncertainty-status).
+% \ratioTot (values.tex:10); "10%" is the adopted criterion (paper_body.tex sec:uncertainty-status).
 % Fix round (review M2, MINOR 5): the paper's limits on the rejections (not physical exclusions; no evidence of
 % gain over matched coarse projections; NuWro's total test not robust to the CH correction, DECISION-20261020,
 % provisional); the 10% criterion "under the specified envelope prescription". The exploratory-studies sentence

@@ -179,6 +179,10 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 docs/analysis-note/check_note_records.py --self-test-pin
 
+      - name: "note: one source line per paragraph (reflow_tex.py --note --check)"
+        if: ${{ !cancelled() }}
+        run: python3 docs/analysis-note/reflow_tex.py --note --check
+
       # N2-1 (note register round n2): the posted note cites records entries by generated number (\recentry). CI has
       # no LaTeX, so it runs the freshness check, the generator's self-test (its LaTeX agreement case SKIPs here and
       # runs in build_all.sh) and RECORDS-PIN, whose Q3 compares every posted number with the entry's number at the pin.

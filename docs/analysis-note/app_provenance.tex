@@ -1,30 +1,13 @@
 \section{Provenance}
 \label{app:provenance}
 
-Several statements in this note rest on records in the analysis repository rather than on anything
-a reader can recompute from the published inputs. Those records are collected here rather than
-inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so
-in the body it interrupts a physics argument with a string that cannot be followed; and gathering
-them in one table means a path that moves has one place to be corrected instead of five.
-All paths, commits and tracker rows below refer to the snapshot of the code repository, \repolink,
-identified at deposit: \depositsnapshot. Paths are set breakably so they stay inside the text
-block.
+Several statements in this note rest on records in the analysis repository rather than on anything a reader can recompute from the published inputs. Those records are collected here rather than inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so in the body it interrupts a physics argument with a string that cannot be followed; and gathering them in one table means a path that moves has one place to be corrected instead of five. All paths, commits and tracker rows below refer to the snapshot of the code repository, \repolink, identified at deposit: \depositsnapshot. Paths are set breakably so they stay inside the text block.
 
-\textbf{This appendix is not the reproduction path.} What an external reader would need in order to
-recompute the quoted numbers --- the arrays, edges, orderings, masks, units, projection matrices and
-generator predictions, with one worked example --- is specified separately in
-App.~\ref{app:release}, together with a measured statement of which of those objects exist today and
-which do not.
+\textbf{This appendix is not the reproduction path.} What an external reader would need in order to recompute the quoted numbers --- the arrays, edges, orderings, masks, units, projection matrices and generator predictions, with one worked example --- is specified separately in App.~\ref{app:release}, together with a measured statement of which of those objects exist today and which do not.
 
-\textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in
-the body becomes stronger because its record is listed. Where a claim depends on a record whose own
-limitations matter---most importantly the adopted covariance's four measurements
-(\S\ref{sec:eavailw-adopted})---those limitations are stated at the claim, not delegated here.
+\textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in the body becomes stronger because its record is listed. Where a claim depends on a record whose own limitations matter---most importantly the adopted covariance's four measurements (\S\ref{sec:eavailw-adopted})---those limitations are stated at the claim, not delegated here.
 
-The tags are stable. Rows are ordered by the section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path;
-Table~\ref{tab:prov-trackers} lists tracker rows and code identifiers that have no
-document of their own. Records cited only by the point-cloud (PET) studies moved with them to the
-companion PET note on 2026-10-12 (App.~\ref{sec:pet}).
+The tags are stable. Rows are ordered by the section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path; Table~\ref{tab:prov-trackers} lists tracker rows and code identifiers that have no document of their own. Records cited only by the point-cloud (PET) studies moved with them to the companion PET note on 2026-10-12 (App.~\ref{sec:pet}).
 
 {\small
 \begin{longtable}{@{}llp{0.50\textwidth}@{}}
@@ -102,152 +85,34 @@ Tag & Cited at & Record \\
 \end{longtable}
 }
 
-\noindent Tags marked ``see below'' carry records or context too long for the
-column above, so they are given here at full width.
+\noindent Tags marked ``see below'' carry records or context too long for the column above, so they are given here at full width.
 
 \begin{description}[leftmargin=0pt,itemsep=3pt]
-  \item[\texttt{coverage-fixed-truth}.] Pre-registration
-    \repopath{docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md} (amendments 1--2);
-    outcome \repopath{docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md};
-    \texttt{VALIDATION\_LEDGER.md} row \texttt{VL169}; \texttt{KNOWN\_ISSUES.md} row 84. Toy
-    driver, extractor and scorer in \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{coverage\_fixed\_truth/}; receipts,
-    including the independent recomputation and the node-hour ledger
-    ($\approx\covTwoDNodeH$ CPU node-h), in
-    \repopath{docs/orchestration/state/coverage-2d-20261005/}. The band scored is \texttt{VL162}
-    (\texttt{uq/bootstrap\_MEFHC\_300/uq\_covariance\_boot300.root}), since superseded by
-    \texttt{VL170} (\texttt{uq/bootstrap\_MEFHC\_300\_vl170/}; rollup \texttt{VL172},
-    \repopath{docs/orchestration/state/ki84-adopt-20261006/}). The post hoc, descriptive rescoring of
-    these toys against \texttt{VL170} is in \repopath{docs/orchestration/state/ki84-rebuild-20261006/}.
-    The quoted statistical block is now the 300-replica seed-42 ensemble of
-    \S\ref{sec:uq-boot}, which these toys did not score.
+  \item[\texttt{coverage-fixed-truth}.] Pre-registration \repopath{docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md} (amendments 1--2); outcome \repopath{docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md}; \texttt{VALIDATION\_LEDGER.md} row \texttt{VL169}; \texttt{KNOWN\_ISSUES.md} row 84. Toy driver, extractor and scorer in \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{coverage\_fixed\_truth/}; receipts, including the independent recomputation and the node-hour ledger ($\approx\covTwoDNodeH$ CPU node-h), in \repopath{docs/orchestration/state/coverage-2d-20261005/}. The band scored is \texttt{VL162} (\texttt{uq/bootstrap\_MEFHC\_300/uq\_covariance\_boot300.root}), since superseded by \texttt{VL170} (\texttt{uq/bootstrap\_MEFHC\_300\_vl170/}; rollup \texttt{VL172}, \repopath{docs/orchestration/state/ki84-adopt-20261006/}). The post hoc, descriptive rescoring of these toys against \texttt{VL170} is in \repopath{docs/orchestration/state/ki84-rebuild-20261006/}. The quoted statistical block is now the 300-replica seed-42 ensemble of \S\ref{sec:uq-boot}, which these toys did not score.
     % J3/J4 provisional (DECISION-20261018, packet W3: D2).
-  \item[\texttt{coverage-toys}.] Launcher \texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
-    \texttt{uq/coverage\_toys.py}; summary \texttt{uq/coverage/}\allowbreak\texttt{coverage\_summary.txt}.
-    Each toy runs the driver with \texttt{-{}-closure} and \texttt{-{}-bootstrap-seed $k$}; the
-    stored truth histogram is \texttt{hTruthXSec2D}, fluctuated through \texttt{w\_truth}.
-  \item[\texttt{flux-repair}.] \texttt{KNOWN\_ISSUES.md} rows 82 (GiBUU sample stops at
-    $E_\nu\approx\SI{20}{GeV}$) and 83 (GENIE/NuWro flux mis-sampling); repair and rebuild of
-    2026-09-27, \texttt{VALIDATION\_LEDGER.md} rows \texttt{VL156}--\texttt{VL160} (\texttt{VL159}:
-    3D integrated-rate shares; \texttt{VL160}: Valencia-2p2h fill), superseding
-    \texttt{VL35}--\texttt{VL38}; receipt
-    \repopath{docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json}.
-  \item[\texttt{z-cv-record}.] The adoption itself at
-    \repopath{docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md};
-    the seed measurements at
-    \repopath{docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md}
-    and \repopath{docs/orchestration/state/SEED-EFFECT-20260920.json}; and the
-    withdrawal of the lower-bound reading at
-    \repopath{docs/orchestration/CORRECTION-20260920-lower-bound-inference-withdrawn.md}.
-    Adoption recorded 2026-09-20; the predeclared magnitude criterion is \emph{cause~3}'s
-    $M(\mathrm{ii})$ in the internal dependency register, computed by the 2026-09-20 campaign
-    for the two companion products only.
-  \item[\texttt{joint-5d}.] The frozen design is amendment~7 at commit \texttt{4f5a613f}; the
-    result, with its six conditions verbatim, at
-    \repopath{docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md}; the evaluated
-    outputs at \repopath{docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json}
-    (sha256 \texttt{b9604502}) and \texttt{robust-labels.json}; the independent recomputation
-    (verdict AGREE, 1379 of 1379 rows) on branch \texttt{s5p-parallel-recompute-20260928} at
-    \texttt{466b427b} (\texttt{REPORT-20261005-s5p-recompute-final-verification.md} \S8);
-    the lost-draw recovery at
-    \repopath{docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md}, with its
-    independent cross-check (856 of 856 quantities; frozen-shift reading only, on branch
-    \texttt{s5p-parallel-recompute-20260928} at \texttt{00009056}); the owner's disposition at
-    \repopath{docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md}
-    \S5; and the fresh-checkout replay in \texttt{reproduction/s5p/} (tier~D). Open item
-    \texttt{OI-193}.
-  \item[\texttt{variance-sources}.] Code pointers, one per row of
-    Table~\ref{tab:variance-sources}. Training-seed variation and Poisson bootstrap: the
-    three-stream driver copy \texttt{driver\_p1.py} of
-    \repopath{docs/orchestration/state/2d-closeout/stageC/pilot/p1/}
-    (\texttt{-{}-seed}, \texttt{-{}-bootstrap-seed}, \texttt{-{}-bootstrap-streams three}), run and
-    rolled up (\texttt{s5\_rollup.py}) under
-    \repopath{docs/orchestration/state/2d-closeout/stageC/production/}. Universes:
-    \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES});
-    \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX}; the universe block of
-    \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does; its five
-    lateral bands are the S3 re-unfolds of the active-universe files
-    (\texttt{active\_universe\_5d\_standard\_merged}, production \texttt{DESIGN.md} \S3.2). Run
-    period: \texttt{playlist\_term.py} in
-    \repopath{docs/orchestration/state/2d-closeout/playlist-term/}. MAT reference: the
-    \texttt{mat\_universe\_block\_le\_1e-12} check of \texttt{s5\_rollup.py}; the earlier
-    unweighted check is \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum:
-    \texttt{build\_q\_products.py} in
-    \repopath{docs/orchestration/state/2d-closeout/stageF/rebuild/} (the quoted covariance
-    \texttt{uq\_adopted\_covariance.root}, histogram \texttt{hCov\_Q}, with its receipts in
-    \texttt{outputs/}); \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}).
-    The adoption is
-    \repopath{docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md}.
-    % 2026-10-18 (Q): the earlier pointers (seedscan/analyze_seedscan.py, uq/seedscan_lgbm_ml/uq_covariance_ml.root,
-    % uq/bootstrap_MEFHC_300/uq_covariance_boot300.root, uq/analyze_uq.py) are the VL162/VL175-era products.
-  \item[\texttt{negweight-hpss}.]
-    \repopath{docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md}.
-    The real-data products behind the twelve
-    production values are archived and were restored end to end from tape under a tested
-    recovery route; the synthetic-toy values come from a committed, fully deterministic
-    script that reproduces all four on re-run (\texttt{negweight-toy}). Two provenance
-    limits travel with the production numbers: the driver was uncommitted when those
-    outputs were written, so the executing revision is corroborated by a version-distinct
-    log string rather than pinned by a digest, and no output carries a producing job
-    identifier, which no later run can supply.
-  \item[\texttt{oi6-oi8-oi126}.]
-    \repopath{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md}. The purity
-    footing of the standard chain was raised as a question --- whether the locked
-    instruction that $N$-D production runs \texttt{negweight-refined} reaches the
-    standard-phase-space chain, or only its extended-fiducial form --- and answered in
-    favour of purity on 2026-08-07 (\texttt{gbdt-closeout}) and again, after the
-    alternative was costed, on 2026-08-15.
-  \item[\texttt{fps-battery}.] FPS ME~FHC battery of 2026-06-10, scheduler job
-    \texttt{54244120} (\texttt{VALIDATION\_LEDGER.md}, ``FPS MEFHC battery''). The
-    negative-weight driver code did not land until 2026-07-11 (commit \texttt{cf8a4a6})
-    and the \texttt{-{}-bkg-mode negweight-refined} launcher flag not until 2026-07-20.
-    Both FPS unfold launchers omitted \texttt{-{}-bkg-mode} entirely, so the ten endpoint
-    unfolds ran on the driver default \texttt{-{}-bkg-mode=purity}; they are recorded as
-    purity controls at
-    \texttt{nd-unfolding/uq\_fps/corrected/}\allowbreak\texttt{FPS\_UQ\_CORRECTED\_STATE.md}.
-  \item[\texttt{z-projection}.]
-    \repopath{docs/orchestration/state/PROJ-20260920-m1-publication-receipt.json}
-    and \repopath{docs/orchestration/state/PROJ-20260920-binding-check.json}.
-  \item[\texttt{z-conditioning}.] Cutoff scan:
-    \texttt{PLAN-20260918-scalar5d-publication-completion.md} \S16.1a (diagnostic projection, same
-    $M$); independent scan of the publication bytes: \texttt{VALIDATION\_LEDGER.md} row
-    \texttt{VL145} (publication and diagnostic $42\times42$ matrices bitwise identical). Default
-    cutoff $10^{-12}$ is hardcoded in \texttt{project\_cov\_nd.py}.
+  \item[\texttt{coverage-toys}.] Launcher \texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup \texttt{uq/coverage\_toys.py}; summary \texttt{uq/coverage/}\allowbreak\texttt{coverage\_summary.txt}. Each toy runs the driver with \texttt{-{}-closure} and \texttt{-{}-bootstrap-seed $k$}; the stored truth histogram is \texttt{hTruthXSec2D}, fluctuated through \texttt{w\_truth}.
+  \item[\texttt{flux-repair}.] \texttt{KNOWN\_ISSUES.md} rows 82 (GiBUU sample stops at $E_\nu\approx\SI{20}{GeV}$) and 83 (GENIE/NuWro flux mis-sampling); repair and rebuild of 2026-09-27, \texttt{VALIDATION\_LEDGER.md} rows \texttt{VL156}--\texttt{VL160} (\texttt{VL159}: 3D integrated-rate shares; \texttt{VL160}: Valencia-2p2h fill), superseding \texttt{VL35}--\texttt{VL38}; receipt \repopath{docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json}.
+  \item[\texttt{z-cv-record}.] The adoption itself at \repopath{docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md}; the seed measurements at \repopath{docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md} and \repopath{docs/orchestration/state/SEED-EFFECT-20260920.json}; and the withdrawal of the lower-bound reading at \repopath{docs/orchestration/CORRECTION-20260920-lower-bound-inference-withdrawn.md}. Adoption recorded 2026-09-20; the predeclared magnitude criterion is \emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register, computed by the 2026-09-20 campaign for the two companion products only.
+  \item[\texttt{joint-5d}.] The frozen design is amendment~7 at commit \texttt{4f5a613f}; the result, with its six conditions verbatim, at \repopath{docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md}; the evaluated outputs at \repopath{docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json} (sha256 \texttt{b9604502}) and \texttt{robust-labels.json}; the independent recomputation (verdict AGREE, 1379 of 1379 rows) on branch \texttt{s5p-parallel-recompute-20260928} at \texttt{466b427b} (\texttt{REPORT-20261005-s5p-recompute-final-verification.md} \S8); the lost-draw recovery at \repopath{docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md}, with its independent cross-check (856 of 856 quantities; frozen-shift reading only, on branch \texttt{s5p-parallel-recompute-20260928} at \texttt{00009056}); the owner's disposition at \repopath{docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md} \S5; and the fresh-checkout replay in \texttt{reproduction/s5p/} (tier~D). Open item \texttt{OI-193}.
+  \item[\texttt{variance-sources}.] Code pointers, one per row of Table~\ref{tab:variance-sources}. Training-seed variation and Poisson bootstrap: the three-stream driver copy \texttt{driver\_p1.py} of \repopath{docs/orchestration/state/2d-closeout/stageC/pilot/p1/} (\texttt{-{}-seed}, \texttt{-{}-bootstrap-seed}, \texttt{-{}-bootstrap-streams three}), run and rolled up (\texttt{s5\_rollup.py}) under \repopath{docs/orchestration/state/2d-closeout/stageC/production/}. Universes: \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES}); \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX}; the universe block of \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does; its five lateral bands are the S3 re-unfolds of the active-universe files (\texttt{active\_universe\_5d\_standard\_merged}, production \texttt{DESIGN.md} \S3.2). Run period: \texttt{playlist\_term.py} in \repopath{docs/orchestration/state/2d-closeout/playlist-term/}. MAT reference: the \texttt{mat\_universe\_block\_le\_1e-12} check of \texttt{s5\_rollup.py}; the earlier unweighted check is \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum: \texttt{build\_q\_products.py} in \repopath{docs/orchestration/state/2d-closeout/stageF/rebuild/} (the quoted covariance \texttt{uq\_adopted\_covariance.root}, histogram \texttt{hCov\_Q}, with its receipts in \texttt{outputs/}); \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}). The adoption is \repopath{docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md}.
+    % 2026-10-18 (Q): the earlier pointers (seedscan/analyze_seedscan.py, uq/seedscan_lgbm_ml/uq_covariance_ml.root, uq/bootstrap_MEFHC_300/uq_covariance_boot300.root, uq/analyze_uq.py) are the VL162/VL175-era products.
+  \item[\texttt{negweight-hpss}.] \repopath{docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md}. The real-data products behind the twelve production values are archived and were restored end to end from tape under a tested recovery route; the synthetic-toy values come from a committed, fully deterministic script that reproduces all four on re-run (\texttt{negweight-toy}). Two provenance limits travel with the production numbers: the driver was uncommitted when those outputs were written, so the executing revision is corroborated by a version-distinct log string rather than pinned by a digest, and no output carries a producing job identifier, which no later run can supply.
+  \item[\texttt{oi6-oi8-oi126}.] \repopath{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md}. The purity footing of the standard chain was raised as a question --- whether the locked instruction that $N$-D production runs \texttt{negweight-refined} reaches the standard-phase-space chain, or only its extended-fiducial form --- and answered in favour of purity on 2026-08-07 (\texttt{gbdt-closeout}) and again, after the alternative was costed, on 2026-08-15.
+  \item[\texttt{fps-battery}.] FPS ME~FHC battery of 2026-06-10, scheduler job \texttt{54244120} (\texttt{VALIDATION\_LEDGER.md}, ``FPS MEFHC battery''). The negative-weight driver code did not land until 2026-07-11 (commit \texttt{cf8a4a6}) and the \texttt{-{}-bkg-mode negweight-refined} launcher flag not until 2026-07-20. Both FPS unfold launchers omitted \texttt{-{}-bkg-mode} entirely, so the ten endpoint unfolds ran on the driver default \texttt{-{}-bkg-mode=purity}; they are recorded as purity controls at \texttt{nd-unfolding/uq\_fps/corrected/}\allowbreak\texttt{FPS\_UQ\_CORRECTED\_STATE.md}.
+  \item[\texttt{z-projection}.] \repopath{docs/orchestration/state/PROJ-20260920-m1-publication-receipt.json} and \repopath{docs/orchestration/state/PROJ-20260920-binding-check.json}.
+  \item[\texttt{z-conditioning}.] Cutoff scan: \texttt{PLAN-20260918-scalar5d-publication-completion.md} \S16.1a (diagnostic projection, same $M$); independent scan of the publication bytes: \texttt{VALIDATION\_LEDGER.md} row \texttt{VL145} (publication and diagnostic $42\times42$ matrices bitwise identical). Default cutoff $10^{-12}$ is hardcoded in \texttt{project\_cov\_nd.py}.
 \end{description}
 
-% Note register round n2, records additions (director rulings 2026-10-26: N2-1(a), R-N2b). Four full-width entries
-% repeat, verbatim, the record cells of tags that this section's tables list without an entry, so that each can be
-% cited by number (check_note_records.py P9 keeps each entry containing its row's cells). Two entries record
-% production provenance, copied verbatim from the note's body: july-sweep from sec_systematics.tex
-% sec:uq-2d-construction, and bkg-mode-elimination from app_negweight.tex sec:negweight-footing. The 2d-central-value entry adds sec_method.tex sec:method-config's
-% provenance sentences for the purity-subtracted seed-42 central value, without that sentence's own citation of the tag.
-\noindent The entries below repeat the records of four tags that this section's tables list without a full-width
-entry, and record the provenance of two production steps.
+% Note register round n2, records additions (director rulings 2026-10-26: N2-1(a), R-N2b). Four full-width entries repeat, verbatim, the record cells of tags that this section's tables list without an entry, so that each can be cited by number (check_note_records.py P9 keeps each entry containing its row's cells). Two entries record production provenance, copied verbatim from the note's body: july-sweep from sec_systematics.tex sec:uq-2d-construction, and bkg-mode-elimination from app_negweight.tex sec:negweight-footing. The 2d-central-value entry adds sec_method.tex sec:method-config's provenance sentences for the purity-subtracted seed-42 central value, without that sentence's own citation of the tag.
+\noindent The entries below repeat the records of four tags that this section's tables list without a full-width entry, and record the provenance of two production steps.
 
 \begin{description}[leftmargin=0pt,itemsep=3pt]
-  \item[\texttt{2d-central-value}.] \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root},
-    \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c}. The purity-subtracted seed-42
-    central value has no execution log or recorded run configuration. An independent rerun with a different
-    driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a
-    regeneration with the current driver whose run configuration is recorded.
-  \item[\texttt{flux-index}.] \texttt{KNOWN\_ISSUES.md} row 91: the flux-universe index identity behind the
-    $1/\Phi_{u}$ rescale and its exact test.
-  \item[\texttt{response-diagnostic}.] \repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit
-    \texttt{7d173bd0}.
-  \item[\texttt{rank-inversion}.] \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is
-    a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md}.
-  \item[\texttt{july-sweep}.] The products of the July sweep, which the quoted universe block uses, do not record a
-    checksum of the driver code that produced them, and that driver version was not
-    committed. Seven of its universes, four of them also checked in an earlier pilot, are
-    reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by
-    inference, because the same code produced them.
-  \item[\texttt{bkg-mode-elimination}.] For the existing endpoint unfolds, produced in July 2026, purity is established by
-    elimination. Neither of the two job scripts that could have produced them sets the
-    driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its
-    default, purity; the driver announces its mode only on its negative-weight code
-    paths, and the logs of these lateral-band unfolds contain the purity code path's
-    signature line and no mode announcement. The option and the announcements already
-    existed when the files were produced, so the absence of an announcement is
-    evidence of purity.
+  \item[\texttt{2d-central-value}.] \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root}, \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c}. The purity-subtracted seed-42 central value has no execution log or recorded run configuration. An independent rerun with a different driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a regeneration with the current driver whose run configuration is recorded.
+  \item[\texttt{flux-index}.] \texttt{KNOWN\_ISSUES.md} row 91: the flux-universe index identity behind the $1/\Phi_{u}$ rescale and its exact test.
+  \item[\texttt{response-diagnostic}.] \repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit \texttt{7d173bd0}.
+  \item[\texttt{rank-inversion}.] \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md}.
+  \item[\texttt{july-sweep}.] The products of the July sweep, which the quoted universe block uses, do not record a checksum of the driver code that produced them, and that driver version was not committed. Seven of its universes, four of them also checked in an earlier pilot, are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, because the same code produced them.
+  \item[\texttt{bkg-mode-elimination}.] For the existing endpoint unfolds, produced in July 2026, purity is established by elimination. Neither of the two job scripts that could have produced them sets the driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its default, purity; the driver announces its mode only on its negative-weight code paths, and the logs of these lateral-band unfolds contain the purity code path's signature line and no mode announcement. The option and the announcements already existed when the files were produced, so the absence of an announcement is evidence of purity.
 \end{description}
 
 {\small
@@ -286,13 +151,5 @@ Tag & Cited at & Record & Content \\
 \end{longtable}
 }
 
-\paragraph{The identity of the five-axis covariance.} Until the deposit pass the body printed the
-file name and digest of the five-axis covariance in use (\S\ref{sec:eavailw-adopted}); they now
-stand in the identities table of App.~\ref{app:release-identities}, with the digests of its
-projection, projection matrix, row index and paired central values. They remain the identity of the
-object every quoted five-dimensional uncertainty is computed from, checkable by anyone holding the
-file, and the pairing between the covariance and the central values is established \emph{by} those
-digests rather than by numerical agreement (\S\ref{sec:eavailw-construction}).
-% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: no internal-only pointers in
-% printed body text). This paragraph earlier explained why the digest stayed in the body; it now records the move to
-% App. H's identities table, which reverses that earlier choice and is flagged for Joseph (old text in git history).
+\paragraph{The identity of the five-axis covariance.} Until the deposit pass the body printed the file name and digest of the five-axis covariance in use (\S\ref{sec:eavailw-adopted}); they now stand in the identities table of App.~\ref{app:release-identities}, with the digests of its projection, projection matrix, row index and paired central values. They remain the identity of the object every quoted five-dimensional uncertainty is computed from, checkable by anyone holding the file, and the pairing between the covariance and the central values is established \emph{by} those digests rather than by numerical agreement (\S\ref{sec:eavailw-construction}).
+% Deposit pass (DECISION-20261020-joseph-refined-estimator-shorten-delta.md item 2: no internal-only pointers in printed body text). This paragraph earlier explained why the digest stayed in the body; it now records the move to App. H's identities table, which reverses that earlier choice and is flagged for Joseph (old text in git history).

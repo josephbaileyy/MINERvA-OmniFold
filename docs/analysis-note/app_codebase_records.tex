@@ -1,22 +1,5 @@
-% Records document only (main_records.tex); never input by the posted note. DECISION-20261021-joseph-da-and-note-records.md
-% item 2. Moved verbatim from app_codebase.tex at 4ba0dd2f: lines 55-72 (the test-suite discipline). check_note_records.py
-% proves the move.
+% Records document only (main_records.tex); never input by the posted note. DECISION-20261021-joseph-da-and-note-records.md item 2. Moved verbatim from app_codebase.tex at 4ba0dd2f: lines 55-72 (the test-suite discipline). check_note_records.py proves the move.
 
-\paragraph{Test-suite discipline: what the pipeline refuses to do.}
-The production scripts are written so that an unverifiable condition stops the run rather than
-being worked around, and the test suite encodes that discipline as five rules rather than as a
-list of cases. \textbf{(i)} A missing, absent or undeclared operand causes refusal, never a skip,
-default, derived substitute or warning. \textbf{(ii)} Guards precede the side
-effects they prevent; tests assert this ordering. The motivating module import
-above the argument parser once killed every subsequent check in that file.
-\textbf{(iii)} Refusal requires an exact exit code \emph{together with} its own
-message or structured receipt field. ``Non-zero'' cannot distinguish a crash
-from a refusal; three segmentation faults were once recorded as three refusals.
-\textbf{(iv)} Every guard has an accept arm that could have failed, distinguishing
-a check that can only refuse from one that always refuses. \textbf{(v)} An
-unevaluable condition has its own outcome and exit code, never pass or fail.
-Over a thousand tests name a refusal and share these five rules.
+\paragraph{Test-suite discipline: what the pipeline refuses to do.} The production scripts are written so that an unverifiable condition stops the run rather than being worked around, and the test suite encodes that discipline as five rules rather than as a list of cases. \textbf{(i)} A missing, absent or undeclared operand causes refusal, never a skip, default, derived substitute or warning. \textbf{(ii)} Guards precede the side effects they prevent; tests assert this ordering. The motivating module import above the argument parser once killed every subsequent check in that file. \textbf{(iii)} Refusal requires an exact exit code \emph{together with} its own message or structured receipt field. ``Non-zero'' cannot distinguish a crash from a refusal; three segmentation faults were once recorded as three refusals. \textbf{(iv)} Every guard has an accept arm that could have failed, distinguishing a check that can only refuse from one that always refuses. \textbf{(v)} An unevaluable condition has its own outcome and exit code, never pass or fail. Over a thousand tests name a refusal and share these five rules.
 
-\noindent These are properties of the implementation \emph{as tested}, not theorems about the
-method. A rule nobody encoded would not appear among them, and a green suite certifies the cases it
-contains rather than the absence of others.
+\noindent These are properties of the implementation \emph{as tested}, not theorems about the method. A rule nobody encoded would not appear among them, and a green suite certifies the cases it contains rather than the absence of others.

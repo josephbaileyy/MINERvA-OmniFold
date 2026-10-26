@@ -1,25 +1,12 @@
-% The PET rows of the analysis note's provenance appendix (app_provenance.tex), moved verbatim on
-% 2026-10-12 with the PET studies; only the "Cited at" column's prefixes change (these studies are
-% sections here, not appendices), and the introduction is shortened from that appendix's.
+% The PET rows of the analysis note's provenance appendix (app_provenance.tex), moved verbatim on 2026-10-12 with the PET studies; only the "Cited at" column's prefixes change (these studies are sections here, not appendices), and the introduction is shortened from that appendix's.
 \section{Repository records cited in this note}
 \label{app:provenance}
 
-Several statements in this note rest on records in the analysis repository rather than on anything
-a reader can recompute from the published inputs. Those records are collected here rather than
-inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so
-in the body it interrupts a physics argument with a string that cannot be followed; and gathering
-them in one table means a path that moves has one place to be corrected instead of five.
-All paths below are relative to the code repository, \repolink, and are set breakably so they stay
-inside the text block.
+Several statements in this note rest on records in the analysis repository rather than on anything a reader can recompute from the published inputs. Those records are collected here rather than inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so in the body it interrupts a physics argument with a string that cannot be followed; and gathering them in one table means a path that moves has one place to be corrected instead of five. All paths below are relative to the code repository, \repolink, and are set breakably so they stay inside the text block.
 
-\textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in
-the body becomes stronger because its record is listed.
+\textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in the body becomes stronger because its record is listed.
 
-The tags are stable; the paths are current as of 2026-10-06. These rows moved here from the
-analysis note's corresponding appendix on 2026-10-12, with the studies that cite them; the tags are
-unchanged. Table~\ref{tab:prov-pet-paths} lists records with a repository path;
-Table~\ref{tab:prov-pet-trackers} lists tracker rows and code identifiers that have no
-document of their own.
+The tags are stable; the paths are current as of 2026-10-06. These rows moved here from the analysis note's corresponding appendix on 2026-10-12, with the studies that cite them; the tags are unchanged. Table~\ref{tab:prov-pet-paths} lists records with a repository path; Table~\ref{tab:prov-pet-trackers} lists tracker rows and code identifiers that have no document of their own.
 
 {\small
 \begin{longtable}{@{}llp{0.50\textwidth}@{}}
@@ -49,42 +36,12 @@ Tag & Cited at & Record \\
 \end{longtable}
 }
 
-\noindent Tags marked ``see below'' carry records or context too long for the
-column above, so they are given here at full width.
+\noindent Tags marked ``see below'' carry records or context too long for the column above, so they are given here at full width.
 
 \begin{description}[leftmargin=0pt,itemsep=3pt]
-  \item[\texttt{pet-pairing}.] \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
-    The 2026-08-20 ruling: the central/statistical pairing is declined, no PET
-    total covariance is adopted for publication, PET remains a
-    diagnostic and method-development result, and reconsideration requires
-    estimator-equivalence \emph{and} coverage evidence --- coverage being a
-    different object from verifying the construction.
-    Ratification rests with the estimator's owner and the covariance-construction reviewer, and
-    the open item recording the question (\texttt{OI-126}) is not closed by
-    App.~\ref{app:cstatlimit}.
-  \item[\texttt{pet-projection-figure}.] \texttt{ISSUE-59} in
-    \texttt{KNOWN\_ISSUES.md} (fixed 2026-09-23; \texttt{pet\_cloud\_projection\_xsec} regenerated) and the corrected values at
-    \texttt{nd-unfolding/products/pet/fullcloud/pointcloud\_projection\_summary.json},
-    which holds the three $\Eavail$ projections (\texttt{pet\_cloud\_hascloud},
-    \texttt{pet\_stored\_hascloud}, \texttt{pet\_stored\_full}); method and
-    reproduction at \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
-  \item[\texttt{cstat-recompute}.] Every figure in App.~\ref{app:cstatlimit} is derived from
-    committed artifacts, and the per-cell arrays behind the aggregates are published with them:
-    the family spread and its per-replica values in
-    \texttt{state/probe-oi126-band-Rpush-sigma-20260815}; the training-versus-extraction split,
-    its control region, and the thresholds fixed before that comparison ran in
-    \texttt{state/probe-oi126-push-vs-extraction-20260815} and the predeclaration beside it; the
-    $\mathrm{Poisson}(1)$ verification of the targets in
-    \texttt{state/RECEIPT-20260815-oi126-mechanism-narrowing} and
-    \texttt{state/probe-oi126-zero-fraction-per-column-20260815}; the band geometry, acceptance,
-    share of integral and the external comparison in
-    \texttt{state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction}; and the two
-    per-cell relative standard deviations tabulated there as fields of
-    \texttt{state/p5a-nominal-vs-cstat-family-percell-20260815}, recomputable from that receipt's
-    own shipped per-cell array. No share-of-total figure from that receipt is used
-    (App.~\ref{app:history}). The members' input file is measured in
-    \texttt{state/gate5-source-npz-verified-20260813}, which should be cited for that purpose in
-    preference to the members' own recorded input digest.
+  \item[\texttt{pet-pairing}.] \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}. The 2026-08-20 ruling: the central/statistical pairing is declined, no PET total covariance is adopted for publication, PET remains a diagnostic and method-development result, and reconsideration requires estimator-equivalence \emph{and} coverage evidence --- coverage being a different object from verifying the construction. Ratification rests with the estimator's owner and the covariance-construction reviewer, and the open item recording the question (\texttt{OI-126}) is not closed by App.~\ref{app:cstatlimit}.
+  \item[\texttt{pet-projection-figure}.] \texttt{ISSUE-59} in \texttt{KNOWN\_ISSUES.md} (fixed 2026-09-23; \texttt{pet\_cloud\_projection\_xsec} regenerated) and the corrected values at \texttt{nd-unfolding/products/pet/fullcloud/pointcloud\_projection\_summary.json}, which holds the three $\Eavail$ projections (\texttt{pet\_cloud\_hascloud}, \texttt{pet\_stored\_hascloud}, \texttt{pet\_stored\_full}); method and reproduction at \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
+  \item[\texttt{cstat-recompute}.] Every figure in App.~\ref{app:cstatlimit} is derived from committed artifacts, and the per-cell arrays behind the aggregates are published with them: the family spread and its per-replica values in \texttt{state/probe-oi126-band-Rpush-sigma-20260815}; the training-versus-extraction split, its control region, and the thresholds fixed before that comparison ran in \texttt{state/probe-oi126-push-vs-extraction-20260815} and the predeclaration beside it; the $\mathrm{Poisson}(1)$ verification of the targets in \texttt{state/RECEIPT-20260815-oi126-mechanism-narrowing} and \texttt{state/probe-oi126-zero-fraction-per-column-20260815}; the band geometry, acceptance, share of integral and the external comparison in \texttt{state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction}; and the two per-cell relative standard deviations tabulated there as fields of \texttt{state/p5a-nominal-vs-cstat-family-percell-20260815}, recomputable from that receipt's own shipped per-cell array. No share-of-total figure from that receipt is used (App.~\ref{app:history}). The members' input file is measured in \texttt{state/gate5-source-npz-verified-20260813}, which should be cited for that purpose in preference to the members' own recorded input digest.
 \end{description}
 
 {\small
