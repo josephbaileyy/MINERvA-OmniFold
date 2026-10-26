@@ -1,0 +1,152 @@
+.....PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+FAIL control G2 C_total = C_e + C_model_abs: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+FAIL control G2 U is S1's float32 functional matrix: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+FAIL control G2 C_total is positive definite, rank 16: differs
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+FAIL control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12): differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+FAIL control G2 C_total = C_e + C_model_abs: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+FAIL control G2 C_total's relative sigma is the committed one: differs
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+FAIL control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes: they are [0, 1, 2, 3, 8, 9, 10, 11]
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control G4 every prediction's integrals are positive on its cells
+[G] genie_cv   16 cells: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] genie_mec  16 cells: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] nuwro      16 cells: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] gibuu       8 cells: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8]
+[G] mnvtune_v1 16 cells: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/fd-g-lag_fr8v/t/out/readout.json", "sha256": "13f1a9d7a6e87630ea0bf412f9224bfbb9b009abff079245fa1e7f44b41a6aa2"}
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+....PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp is a finite 16 x 16 matrix
+FAIL control G2 C_resp is symmetric: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp is a finite 16 x 16 matrix
+PASS control G2 C_resp is symmetric
+FAIL control G2 C_resp is positive semidefinite: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+FAIL control G2 C_resp is a finite 16 x 16 matrix: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+.usage: python3 -m unittest [-h] --definition DEFINITION --s1-npz S1_NPZ
+                           --s1-json S1_JSON --cmodel-json CMODEL_JSON
+                           --s5p-sums S5P_SUMS --s5p-root S5P_ROOT
+                           [--extra-block EXTRA_BLOCK]
+                           [--extra-block-sha256 EXTRA_BLOCK_SHA256]
+                           [--extra-block-key EXTRA_BLOCK_KEY]
+                           [--extra-block-name EXTRA_BLOCK_NAME] --out-json
+                           OUT_JSON
+python3 -m unittest: error: --extra-block, --extra-block-sha256, --extra-block-key and --extra-block-name go together
+..PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control G4 every prediction's integrals are positive on its cells
+[G] genie_cv   16 cells: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] genie_mec  16 cells: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] nuwro      16 cells: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] gibuu       8 cells: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8]
+[G] mnvtune_v1 16 cells: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/fd-g-k56mgkpb/t/out/readout.json", "sha256": "896b53b86c628842c5b6e24a901f204b1ab2e03bf12179b2cbd73a1b6b519b06"}
+.............................
+----------------------------------------------------------------------
+Ran 46 tests in 18.088s
+
+OK
+{"wrote": ["/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/s1-e2e-2tbmru_5/s1.npz", "/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/s1-e2e-2tbmru_5/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}

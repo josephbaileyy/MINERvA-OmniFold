@@ -1,0 +1,16 @@
+2026-10-26T09:43:53Z
+login37
+c4396756ec843248b00e788a20f2760b43bdc55f
+porcelain_ignored_lines 0
+37427d9d9c544cc79ec1c9071c946126dd267d9f5549a1430cf8a8c77607c21e  nd-unfolding/fd_f0_regrade.py
+2e64e35a1748095fc7a610b67c50f20958490ea49e9ab0d1a66c4ddd9c170705  nd-unfolding/tests/test_fd_f0_regrade.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd-unfolding/s5p_stage1_inspect.py
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+27ccc04a8c14d640efe1657b3d04b657f61a682db381c105daee82f901ea5d68  docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/stage0_preserve.sh
+4d2068b6438e7239befff9f350c3e41e15a8a96e5d3ae6f3e2365a1090128540  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/CRESP-PRESERVE-INVENTORY.sha256
+f2727f38631427fed84e4e5aee7be0ad9bd864329460772330d1de17f022e726  docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F0b-DECLARATION.md
+tests rc=0
+porcelain_ignored_lines_after_tests 0
+2026-10-26T09:49:42Z
+STEP1-DONE

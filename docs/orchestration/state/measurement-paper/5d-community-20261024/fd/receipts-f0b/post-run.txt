@@ -1,0 +1,11 @@
+post-run 2026-10-26T09:51:50Z login37
+total 93
+drwxrwx---   6 josephrb josephrb    4096 Oct 26 02:51 .
+drwx------ 306 josephrb josephrb   69632 Oct 26 02:43 ..
+drwxrwx---   3 josephrb josephrb    4096 Oct 26 02:43 deploy
+-rw-rw----   1 josephrb josephrb 1068642 Oct 26 02:51 fd_f0b_experiments.npz
+-rw-rw----   1 josephrb josephrb   88532 Oct 26 02:51 fd_f0b_readout.json
+drwxrwx---   2 josephrb josephrb    4096 Oct 26 02:51 logs
+drwxrwx---   3 josephrb josephrb    4096 Oct 26 02:50 preserve
+drwxrwx---   2 josephrb josephrb    4096 Oct 26 02:49 tmp
+573M	/pscratch/sd/j/josephrb/fd-f0b-20261026

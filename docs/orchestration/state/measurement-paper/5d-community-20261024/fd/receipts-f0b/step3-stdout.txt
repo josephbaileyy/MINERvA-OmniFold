@@ -1,0 +1,8 @@
+PASS control 8 every truth integral is positive on all 16 cells
+[F0] F0b: every grade matrix carries C_resp; the model-only matrix is F0's
+[F0] non-vertex: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
+[F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 0 of 2 truths p < 0.01 (reference 0.02)
+[F0] vertex-family: 4 of 128 cells |z| > 2 (Gaussian reference 5.82); 1 of 8 truths p < 0.01 (reference 0.08)
+[F0] denominators: 4 of 192 cells, 2 of 12 truths (references 8.74, 0.12); read by group
+{"wrote": ["/pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_readout.json", "/pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz"], "readout_sha256": "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b", "table_sha256": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"}
+rc=0

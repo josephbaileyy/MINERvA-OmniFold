@@ -1,0 +1,55 @@
+....PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+FAIL control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12): differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+FAIL control G2 C_total = C_e + C_model_abs: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+FAIL control G2 C_total's relative sigma is the committed one: differs
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control G4 every prediction's integrals are positive on its cells
+[G] genie_cv   16 cells: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [rank 16]
+[G] genie_mec  16 cells: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [rank 16]
+[G] nuwro      16 cells: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [rank 16]
+[G] gibuu       8 cells: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [rank 8]
+[G] mnvtune_v1 16 cells: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [rank 16]
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/fd-g-iva8txso/t/out/readout.json", "sha256": "9f7e973dfe69c1cdbae2e8524f16b36d3c0d80b58cdff2a850f7f26d13bdcf09"}
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+...............................
+----------------------------------------------------------------------
+Ran 38 tests in 16.038s
+
+OK
+{"wrote": ["/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/s1-e2e-l8tfd5n3/s1.npz", "/pscratch/sd/j/josephrb/fd-g-testcheck-20261025/tmp/s1-e2e-l8tfd5n3/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}

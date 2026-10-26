@@ -1,0 +1,5 @@
+
+/home/j/josephrb/mnv-5d-cresp-20261026:
+-rw-r-----    1 josephrb  josephrb         119 Oct 26 02:50 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb       20480 Oct 26 02:50 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         133 Oct 26 02:50 stage0-inputs.tar.sha256

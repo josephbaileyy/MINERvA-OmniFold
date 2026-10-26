@@ -1,0 +1,68 @@
+## item 3: equality with F0's committed readout, to a relative 1e-12
+control 7 chi2: F0 245.7422835730337  F0b 245.7422835730337  equal True  pass F0 False F0b False  p_below_floor F0 True F0b True
+control 7 record identical: True;  controls identical: True
+model-only grades equal (chi2, z, p) for 18 of 18 truths; unequal: []
+model-only records identical: 18 of 18
+bias identical for all truths: True
+noise_sigma identical for all truths: True
+B_eff identical for all truths: True
+graded identical for all truths: True
+table_sha256: F0 7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9  F0b 7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9
+
+## item 4: trigger counts by group
+| group | F0: cells |z|>2, C^(T) | F0b: cells |z|>2, C^(T) + C_resp | Gaussian ref | F0: truths p<0.01, C^(T) | F0b: truths p<0.01, C^(T) + C_resp | ref |
+|---|---:|---:|---:|---:|---:|---:|
+| non-vertex | 0 of 32 | 0 of 32 | 1.46 | 1 of 2 | 1 of 2 | 0.02 |
+| prior | 0 of 32 | 0 of 32 | 1.46 | 0 of 2 | 0 of 2 | 0.02 |
+| vertex-family | 4 of 128 | 4 of 128 | 5.82 | 3 of 8 | 1 of 8 | 0.08 |
+| all graded (read by group) | 4 of 192 | 4 of 192 | 8.74 | 4 of 12 | 2 of 12 | 0.12 |
+
+by family (vertex-family):
+  nuwro: truths 4; cells |z|>2 F0 0 F0b 0; p<0.01 F0 1 F0b 0
+  genie_mec: truths 2; cells |z|>2 F0 0 F0b 0; p<0.01 F0 0 F0b 0
+  gibuu: truths 2; cells |z|>2 F0 4 F0b 4; p<0.01 F0 2 F0b 1
+
+## listed truths
+| truth | F0 (C^(T)): cells |z|>2; p<0.01 | F0b (C^(T) + C_resp): cells |z|>2; p<0.01 |
+|---|---|---|
+| W3 | none; True | not listed |
+| q3 | none; True | none; True |
+| stage0c_gibuu | R06; True | R06; False |
+| A7_gibuu | R02, R06, R07; True | R02, R06, R07; True |
+listing changed between F0 and F0b: ['W3', 'stage0c_gibuu']
+  of which listed in F0 only: ['W3']; in F0b only: []
+
+## per truth: chi2 / p (ndf 16; eight-cell ndf 8)
+| truth | row | group | graded | grade F0 | grade F0b | in-sample F0 | in-sample F0b | sensitivity F0 | sensitivity F0b | model-only (both) | 8-cell F0 | 8-cell F0b |
+|---|---:|---|---|---|---|---|---|---|---|---|---|---|
+| nominal | 1 | prior | True | 0.00 / 1 | 0.00 / 1 | - | - | - | - | 0.39 / 1 | - | - |
+| W1 | 1 | vertex-family | True | 5.69 / 0.991 | 5.01 / 0.996 | 5.69 / 0.991 | 4.99 / 0.996 | - | - | 1647.66 / <1e-30 | - | - |
+| W2 | 1 | vertex-family | True | 0.77 / 1 | 0.57 / 1 | 0.42 / 1 | 0.35 / 1 | - | - | 117.49 / 1.66e-17 | - | - |
+| W3 | 1 | vertex-family | True | 36.19 / 0.00273 | 30.83 / 0.0141 | 34.82 / 0.00421 | 28.82 / 0.0252 | - | - | 5552.98 / <1e-30 | - | - |
+| q3 | 1 | non-vertex | True | 59.83 / 5.59e-07 | 53.42 / 6.44e-06 | - | - | 61.24 / 3.23e-07 | 54.57 / 4.18e-06 | 11642.59 / <1e-30 | - | - |
+| stage0c_gibuu | 2 | vertex-family | True | 35.75 / 0.00313 | 25.46 / 0.0621 | 29.30 / 0.022 | 23.05 / 0.113 | - | - | 7990.52 / <1e-30 | 20.93 / 0.00734 | 12.42 / 0.133 |
+| closure_nuwro | 3 | vertex-family | True | 13.08 / 0.667 | 11.60 / 0.771 | 13.03 / 0.671 | 11.59 / 0.772 | - | - | 2890.73 / <1e-30 | - | - |
+| A7_mnvtune | 4 | prior | True | 0.01 / 1 | 0.01 / 1 | - | - | - | - | 0.20 / 1 | - | - |
+| A7_genie_cv | 4 | non-vertex | True | 17.37 / 0.362 | 16.14 / 0.443 | - | - | 18.29 / 0.307 | 17.04 / 0.383 | 1794.19 / <1e-30 | - | - |
+| A7_genie_mec | 4 | vertex-family | True | 16.18 / 0.44 | 14.54 / 0.558 | 11.86 / 0.753 | 11.00 / 0.809 | - | - | 1006.75 / <1e-30 | - | - |
+| A7_nuwro | 4 | vertex-family | True | 29.96 / 0.0182 | 24.92 / 0.0713 | 29.23 / 0.0224 | 24.78 / 0.0738 | - | - | 3028.41 / <1e-30 | - | - |
+| A7_gibuu | 4 | vertex-family | True | 246.75 / <1e-30 | 175.13 / 7.96e-29 | 180.99 / 5.32e-30 | 142.62 / 2.21e-22 | - | - | 24824.55 / <1e-30 | 197.77 / <1e-30 | 133.91 / 4.38e-25 |
+| P1r | 6 | vertex-family | False | 50.64 / 1.81e-05 | 44.55 / 0.000163 | 47.43 / 5.84e-05 | 39.68 / 0.000866 | - | - | 1686.44 / <1e-30 | - | - |
+| P2r | 6 | vertex-family | False | 40.73 / 0.000609 | 37.04 / 0.00207 | 31.34 / 0.0122 | 29.55 / 0.0205 | - | - | 4309.11 / <1e-30 | - | - |
+| P3r | 6 | vertex-family | False | 2.96 / 1 | 2.50 / 1 | 2.66 / 1 | 2.15 / 1 | - | - | 69.81 / 1.08e-08 | - | - |
+| P1g | 6 | vertex-family | False | 85.50 / 1.67e-11 | 82.48 / 5.93e-11 | 80.27 / 1.49e-10 | 77.57 / 4.55e-10 | - | - | 2988.64 / <1e-30 | - | - |
+| P2g | 6 | vertex-family | False | 39.38 / 0.000959 | 37.97 / 0.00153 | 32.74 / 0.008 | 31.86 / 0.0104 | - | - | 5171.70 / <1e-30 | - | - |
+| P3g | 6 | vertex-family | False | 24.83 / 0.0728 | 23.25 / 0.107 | 22.63 / 0.124 | 21.31 / 0.167 | - | - | 1174.19 / <1e-30 | - | - |
+
+matrix names (F0b): C_total + C_resp; C_total minus genie_mec + C_resp; C_total minus gibuu + C_resp; C_total minus nuwro + C_resp
+sensitivity matrices (F0b): q3: C_total minus nuwro + C_resp; A7_genie_cv: C_total minus genie_mec + C_resp
+
+## per-cell relative sigma summary, % (median, min, max)
+C_e: F0 [6.45, 4.05, 8.47]  F0b (+ C_resp) [6.84, 4.11, 8.73]
+C_total: F0 [6.74, 4.14, 13.69]  F0b (+ C_resp) [7.29, 4.2, 14.0]
+minus_genie_mec: F0 [6.74, 4.14, 13.69]  F0b (+ C_resp) [7.25, 4.2, 14.0]
+minus_nuwro: F0 [6.74, 4.09, 13.49]  F0b (+ C_resp) [7.2, 4.15, 13.81]
+minus_gibuu: F0 [6.46, 4.11, 8.78]  F0b (+ C_resp) [6.97, 4.17, 9.17]
+C_resp alone: median 2.14 min 0.70 max 3.71
+F0b extra_block: name C_resp key C_resp sha256 4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a
+schema fd-f0b-readout/1; code fd_f0_regrade.py 37427d9d9c544cc79ec1c9071c946126dd267d9f5549a1430cf8a8c77607c21e

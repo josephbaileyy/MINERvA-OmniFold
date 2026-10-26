@@ -1,0 +1,13 @@
+4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a  /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+total 14
+drwxrwx--- 3 josephrb josephrb 4096 Oct 26 02:50 .
+drwxrwx--- 6 josephrb josephrb 4096 Oct 26 02:50 ..
+-rw-rw---- 1 josephrb josephrb   53 Oct 26 02:50 paths.list
+-rw-rw---- 1 josephrb josephrb 1798 Oct 26 02:50 preserve.log
+drwxrwx--- 2 josephrb josephrb 4096 Oct 26 02:50 retrieve
+-rw-rw---- 1 josephrb josephrb  133 Oct 26 02:50 stage0-inputs.tar.sha256
+
+/home/j/josephrb/mnv-5d-cresp-20261026:
+-rw-r-----    1 josephrb  josephrb         119 Oct 26 02:50 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb       20480 Oct 26 02:50 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         133 Oct 26 02:50 stage0-inputs.tar.sha256
