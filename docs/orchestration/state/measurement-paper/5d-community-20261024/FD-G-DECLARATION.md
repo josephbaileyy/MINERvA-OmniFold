@@ -2,12 +2,19 @@
 
 **By** the measurement session, for the director to bind.
 
+**Amended 2026-10-26 (amendment 1, §12):** Joseph adopted C_resp into the 5D reported total. The extra block now has
+a declared role (`--extra-block-role`), and under `adopted` the reported comparison is against C_total + C_resp + V_g,
+with C_total + V_g beside it as the variant without C_resp. Sections 0, 2.1, 2.2, 2.3, 5, 6, 7 and 8 are changed in
+place; each change carries "(amendment 1)".
+
 **Under:**
 - Joseph's approval,
   [`DECISION-20261025-joseph-f0-limitation-stage-g-and-paper-scope.md`](../../../DECISION-20261025-joseph-f0-limitation-stage-g-and-paper-scope.md)
   item 2 (PR #364, main `a2dae50e`);
 - [`FD-PLAN.md`](FD-PLAN.md) §4;
-- [`FD-DIRECTOR-RULINGS.md`](FD-DIRECTOR-RULINGS.md) §5.
+- [`FD-DIRECTOR-RULINGS.md`](FD-DIRECTOR-RULINGS.md) §5;
+- for amendment 1, [`DECISION-20261026-joseph-adopt-cresp.md`](../../../DECISION-20261026-joseph-adopt-cresp.md)
+  item 2 (PR #374, main `c7d00acd`).
 
 **Declares:**
 - the tool `nd-unfolding/fd_g_compare.py` and its tests `nd-unfolding/tests/test_fd_g_compare.py`;
@@ -28,7 +35,8 @@
 ## 0. Summary
 
 - **What it compares:** S1's data result f on R00–R15 against the five 5D predictions of FD-PLAN §4. The covariance is
-  S1's C_total, with all three C_model,5D vertices, plus each prediction's finite-MC V_g.
+  S1's C_total, with all three C_model,5D vertices, plus each prediction's finite-MC V_g. **Under amendment 1** the
+  reported covariance adds C_resp (§2.3).
 - **The statistics,** for each prediction:
   - the total χ², with ndf 16;
   - the shape-only χ², with Stage 0's free-normalization mode of variance 100, with ndf 15;
@@ -36,11 +44,13 @@
 - **GiBUU** is compared on the eight p_∥ < 4.5 cells only, with ndf 8 (7 shape-only). Its prediction is integrated on
   those cells alone, so no GiBUU value above p_∥ 4.5 is formed, printed or written, and no 16-cell GiBUU χ² exists.
 - **Every χ²** is written beside the matrix it used, the matrix's size and its numerical rank.
-- **An optional declared sensitivity variant** (`--extra-block`, §2.3). A second covariance, such as the U-PLAN's
-  species-response band C_resp, can be passed with its file sha256.
-  - Every comparison is then also reported against C_total + C_x, beside the primary one.
-  - Its construction and digest must be fixed in the binding before the run, so the variant is not post hoc.
-  - **Whether to use it is Joseph's choice, relayed by the director.** The PR waits for that answer.
+- **A declared extra block** (`--extra-block`, §2.3), passed with its file sha256 and a declared role (amendment 1).
+  - **`adopted`:** the reported comparison is against C_total + C_x + V_g, and C_total + V_g is beside it, labelled
+    "without C_x". This is the role for C_resp, which Joseph adopted (decision item 2).
+  - **`sensitivity`:** the reported comparison is against C_total + V_g, and C_total + C_x + V_g is the variant.
+  - Its construction and digest must be fixed in the binding before the run, so neither comparison is post hoc.
+- **Order (amendment 1):** Stage G runs only after F0b's report is merged ([`FD-F0b-DECLARATION.md`](FD-F0b-DECLARATION.md)),
+  since the fake-data stage precedes the data read.
 - **What the outputs contain:** this stage reads the data, so f, g and f − g appear in its outputs. F0's leak guard
   does not apply here (the director's instruction).
 - **Cost:** 0 node-h, one login-node step projected at under 5 minutes, no Slurm job. It writes one JSON of about 50 kB, and nothing
@@ -107,7 +117,7 @@ echo "porcelain_ignored_lines_after_tests $(git -C $D status --porcelain --ignor
 - HEAD equal to the pin;
 - 0 porcelain lines before and after the tests;
 - the §8 digests;
-- `tests rc=0` with "Ran 46 tests … OK" (24 Stage G + 22 S1, locally on 2026-10-25).
+- `tests rc=0` with "Ran 49 tests … OK" (27 Stage G + 22 S1, locally on 2026-10-26; amendment 1, was 46).
 
 Anything else is a STOP.
 
@@ -130,32 +140,67 @@ cd $B && TMPDIR=$B/tmp timeout 375 $PY $D/nd-unfolding/fd_g_compare.py \
   - 2: an argparse error;
   - 124: past the timeout.
   Any exit other than 0 is a STOP.
-- **With the variant** (§2.3), the same command, plus four arguments inserted before `--out-json`.
+- **With the extra block** (§2.3), the same command, plus five arguments inserted before `--out-json`
+  (amendment 1: five, with the role).
 - **What is committed** (the report's PR):
   - `$B/fd_g_readout.json`, as `fd/readout/fd_g_readout.json`;
   - the logs, under `fd/receipts-g/`;
   - a ledger row in `fd/LEDGER.tsv`.
 
-### 2.3 The declared sensitivity variant (only if the binding names one)
+### 2.3 The declared extra block and its role (amendment 1)
 
 ```bash
-  --extra-block <npz> --extra-block-sha256 <its file sha256> --extra-block-key <key> --extra-block-name <name, e.g. C_resp>
+  --extra-block <npz> --extra-block-sha256 <its file sha256> --extra-block-key <key> --extra-block-name <name> \
+  --extra-block-role {adopted,sensitivity}
 ```
 
-**The four go together;** any one without the others is an argparse error (exit 2).
+**The five go together;** any one without the others, or a role other than these two, is an argparse error (exit 2).
+
+**For C_resp, as Joseph adopted it** (decision item 2), the arguments would be:
+
+```bash
+  --extra-block $P/cresp-20261026/out/cresp.npz \
+  --extra-block-sha256 4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a \
+  --extra-block-key C_resp --extra-block-name C_resp --extra-block-role adopted
+```
+
+The digest and path are `CRESP-REPORT.md`'s. The key is the summed block that `build_cresp.py` writes, in S1's
+absolute units (`build_cresp.py:187-196`), and its header is 16 × 16 `<f8` (login37, 2026-10-26T08:08Z). The binding
+fixes them.
 
 **What the binding must fix before the run:**
 - the npz's path and sha256;
 - its key;
 - its construction record;
+- its role;
 - that it is a 16 × 16 covariance on R00–R15 in **absolute units**, the same as C_total.
 
-**What the readout then adds:**
-- an `extra_block` record: name, file, sha256, key, per-cell relative σ, and a "declared before this run" label;
-- for every prediction, a `sensitivity` record: total and shape-only χ², ndf, p, matrix name, size and rank, plus pulls,
-  cells with |pull| > 2 and σ/f, all against C_total + C_x + V_g.
+**What the readout carries with an extra block:**
+- an `extra_block` record: name, file, sha256, key, role, per-cell relative σ, and a label: "adopted into the reported
+  comparison" or "a declared sensitivity variant", then "its construction and digest were fixed before this run";
+- `labels.reported`, naming the top-level and the variant covariance, and `labels.covariance` ending "; C_x is added
+  to C_total in the reported comparison" (or "in the variant");
+- for every prediction, the **reported** comparison at the top level, with `reported_covariance` naming its matrix;
+- for every prediction, a `variant` record: `covariance`, `label`, total and shape-only χ², ndf, p, matrix name, size
+  and rank, pulls and σ/f.
+  - Under `adopted`, the top level is against C_total + C_x + V_g, and `variant` is against C_total + V_g with label
+    "without C_x: the variant without the declared block".
+  - Under `sensitivity`, the top level is against C_total + V_g, and `variant` is against C_total + C_x + V_g with
+    label "with C_x: a declared sensitivity variant".
 
-The primary comparison against C_total + V_g is unchanged.
+f, g, f − g, g/f − 1 and σ_V/f do not depend on the role and appear once. `sigma_total_over_f` is √diag of the
+covariance of the record it sits in, before V_g: under `adopted`, the top-level one includes C_x, and the variant's
+is C_total's alone.
+
+**What stdout prints:** each prediction's reported line, "`<name> <n> cells, reported: …`" with its matrix in brackets,
+then one line "`variant without C_resp: …`" (or "`variant with C_resp: …`") with that variant's matrix.
+
+**Without an extra block,** the top level is against C_total + V_g, `reported_covariance` is "C_total", and there is
+no `variant` record.
+
+The amendment replaces the earlier text of this section, under which the block could only be a sensitivity variant.
+It also corrects that text's "cells with |pull| > 2" in the variant record: that list was removed on review A's point
+4 and the tool never wrote it.
 
 ## 3. Controls
 
@@ -194,18 +239,18 @@ All of them run before anything is written, and each refuses: exit 1, nothing wr
 covariance label says that each vertex is a data shift unfolded with a prior reweighted by that generator's ratio to
 GENIE 2.12.10 CV (`pv-ladder/config.json`).
 
-## 5. The readout, `fd-g-readout/1`
+## 5. The readout, `fd-g-readout/2` (amendment 1; was `/1`)
 
 ```text
-schema, labels{what, covariance, shape_only, gibuu, not}, cells[R00..R15], controls_passed[G0..G4]
-predictions[5 x {name, file, sha256, label, n_mc_events_in_cells[n], cells[n], n_cells,
+schema, labels{what, covariance, reported, shape_only, gibuu, not}, cells[R00..R15], controls_passed[G0..G4]
+predictions[5 x {name, file, sha256, label, n_mc_events_in_cells[n], reported_covariance, cells[n], n_cells,
                  total{chi2, ndf, p, matrix, matrix_size, matrix_rank},
-                 shape_only{chi2, ndf, p, matrix, matrix_size, matrix_rank},
+                 shape_only{chi2, ndf, p, matrix, matrix_size, matrix_rank, mode},
                  pulls[n], f[n], g[n], f_minus_g[n], g_over_f_minus_1[n],
                  sigma_total_over_f[n], sigma_Vg_over_f[n]}]
-extra_block: null | {name, file, sha256, key, relative_sigma[16], label}
-predictions[i].sensitivity (only with an extra block): {name, total{...}, shape_only{...}, pulls[n],
-                                                        sigma_total_over_f[n]}
+extra_block: null | {name, file, sha256, key, role, relative_sigma[16], label}
+predictions[i].variant (only with an extra block): {covariance, label, total{...}, shape_only{...}, pulls[n],
+                                                    sigma_total_over_f[n]}
 inputs_sha256{...}, code_sha256{fd_g_compare.py, s1_assemble.py, s5p_stage1_inspect.py}, argv
 ```
 
@@ -223,7 +268,8 @@ f ≠ g; review A's synthetic check measured 2.4 % (16 cells) and 7 % (8 cells).
 
 **What stdout prints:**
 - one PASS line per control check;
-- one line per prediction, carrying both χ², ndf, p, the matrix name, size and rank;
+- one line per prediction, carrying both χ², ndf, p, the matrix name, size and rank of the reported comparison, and,
+  with an extra block, one line for its variant (amendment 1);
 - a `wrote` line with the readout's sha256.
 
 **GiBUU's high-p_∥ cells are absent from every output.** The test `test_no_gibuu_value_above_p_parallel_4p5_is_shown`
@@ -242,15 +288,15 @@ eight low cells.
 | class | what it shows |
 |---|---|
 | `Statistics` (4) | the χ² survival function equals scipy's at every ndf used, to 10⁻¹⁰ relative; total and shape-only χ², pulls, ndf and rank are recomputed by hand on 16 and on 8 cells; the rank of a rank-5 matrix is 5; the shape-only mode removes a pure normalization by the closed form |
-| `EndToEnd` (3) | **the module as invoked** (`-I -B`, cwd outside nd-unfolding; the wrapper sets only the synthetic pins and prediction digests): <ul><li>all five comparisons recomputed by hand: g, V_g, both χ² and both p (against scipy), ndf, matrix name, size and rank, pulls, σ/f, and the event counts;</li><li>**GiBUU above p_∥ 4.5:** none of its eight high cells' g, f − g, g/f − 1, σ_V/f or pull, and no 16-cell GiBUU χ² or p, appears in the readout or on stdout. Every ndf in the GiBUU record is 8 or 7. Every number on stdout is one the readout carries as printed, or a fixed constant of the control lines. A negative control finds the low-cell values;</li><li>no overwrite</li></ul> |
-| `ExtraBlock` (4) | <ul><li>run as invoked with a synthetic C_resp: each prediction's variant χ² (both forms), ndf, rank and pulls recomputed by hand; the primary comparison unchanged; a PSD addition never raises χ²;</li><li>without the option, no variant appears;</li><li>a wrong digest refuses at G0; an asymmetric, a non-PSD, a wrong-shape or a missing-key block refuses at G2;</li><li>the four options go together (exit 2)</li></ul> |
+| `EndToEnd` (4) | **the module as invoked** (`-I -B`, cwd outside nd-unfolding; the wrapper sets only the synthetic pins and prediction digests): <ul><li>all five comparisons recomputed by hand: g, V_g, both χ² and both p (against scipy), ndf, matrix name, size and rank, pulls, σ/f, and the event counts;</li><li>**GiBUU above p_∥ 4.5:** none of its eight high cells' g, f − g, g/f − 1, σ_V/f or pull, and no 16-cell GiBUU χ² or p, appears in the readout or on stdout. Every ndf in the GiBUU record is 8 or 7. Every number on stdout is one the readout carries as printed, or a fixed constant of the control lines. A negative control finds the low-cell values;</li><li>the same scan with an adopted block, which forbids the high-cell values and 16-cell χ² under both matrices and allows the variant's printed numbers (amendment 1);</li><li>no overwrite</li></ul> |
+| `ExtraBlock` (6, amendment 1) | <ul><li>**adopted,** run as invoked with a synthetic C_resp: each prediction's top-level comparison is recomputed by hand against C_total + C_resp + V_g (both χ², p, ndf, matrix name, rank, pulls, σ/f), and its `variant`, labelled "without C_resp", against C_total + V_g; a PSD addition never raises χ²; `labels.reported` and `labels.covariance` in full; stdout's reported line names C_total + C_resp + V_g and carries the top-level χ² and p as formatted, and the next line is "variant without C_resp" with the variant's;</li><li>**sensitivity:** the same, the other way round;</li><li>**the two roles swap the same two comparisons,** value for value, and f, g, V_g and the counts are the same in both;</li><li>without the option, no variant appears, the reported matrix is C_total and `labels.covariance` is the plain label;</li><li>refusals, each asserting the check that refused by name, in both roles: a wrong digest at G0; at G2 an asymmetric block whose symmetrized form is PSD (so only the symmetry check can refuse it), a non-PSD block, a wrong shape and a missing key;</li><li>the five options go together: each one left out alone, the role alone, the block alone and an unknown role all exit 2</li></ul> |
 | `Controls` (8) | G0 (8 cases), G1 (6), G2 (6), G3 (1) and G4 (1) each refuse with nothing written. The last G4 test spies on the comparison: GiBUU's g and V_g are zero above p_∥ 4.5, so they are never formed there |
 | `Invocation` (2) | **the real script as declared:** `--help`; an argparse error exits 2; on the synthetic tree it reaches G0 and refuses there (the real pins), with no traceback and nothing written |
 | `CommittedPins` (3) | the five prediction digests equal the s5p archive manifest's lines and `2d-unfolding/pv2d/config.json`'s; the record pins equal the committed files; the GiBUU cells are the definition's p_∥ < 4.5 boxes |
 
-**Locally** (2026-10-25: Python 3.12.2, numpy 1.26.4, scipy 1.15.2), `python3 -B -m unittest test_fd_g_compare
-test_s1_assemble test_s1_scripts_isolated` ran 46 tests, OK (24 Stage G + 22 S1). The cluster run is reported in
-the PR.
+**Locally** (2026-10-26: Python 3.12.2, numpy 1.26.4, scipy 1.15.2), `python3 -B -m unittest test_fd_g_compare
+test_s1_assemble test_s1_scripts_isolated` ran 49 tests, OK (27 Stage G + 22 S1; amendment 1, was 46). The cluster
+run is reported in the PR.
 
 ## 7. For the director
 
@@ -275,13 +321,14 @@ the PR.
 6. **GiBUU.** As ruled: it is compared on eight cells, no 16-cell χ² exists, and nothing is shown above p_∥ 4.5. There
    is therefore no figure to mark.
 7. **No guard.** f, g and f − g are printed. The report will quote the readout's numbers without any reading.
-8. **The sensitivity variant (§2.3)** is built in, but no block is named.
-   - If Joseph chooses the director's option (ii), the binding names C_resp's file, digest, key and construction record
-     before the run, and G reports both matrices.
-   - Under option (ii), C_resp's construction is the director's: the mean-centred ±1σ half-span per species over the
-     11 MP-1 S1 (e) unfolds, using s1_assemble's lateral convention. It is not built here.
-   - The tool checks only the block's digest, shape, symmetry and positive semidefiniteness. It does not check how the
-     block was made.
+8. **The extra block (§2.3).** *Amendment 1:* Joseph adopted C_resp, so the binding names its file, digest, key,
+   construction record and the role `adopted`, and G reports C_total + C_resp + V_g with C_total + V_g beside it.
+   - C_resp's construction is `C-RESP-SPEC.md`'s, as built and reported in `cresp/CRESP-REPORT.md`. It is not built
+     here.
+   - The tool checks only the block's digest, key, shape, finiteness, symmetry and positive semidefiniteness, and that
+     C_total + C_resp is positive definite. The last is a backstop: given the earlier checks it can fail only inside
+     their 10⁻¹² tolerances, so no test reaches it (review B). It does not check how the block was made, or that it was built on S1's
+     assembly `db000707…`. The report records that it was, and the binding's digest pins that file.
 
 **The director's rulings on this section** (relayed 2026-10-25):
 1. **The shape-only mode along f is accepted,** following Stage 0. The 2.4 % and 7 % mode-direction differences are
@@ -293,12 +340,12 @@ the PR.
 
 ## 8. Pinned bytes
 
-Their sha256 at this declaration's commit:
+Their sha256 at this declaration's commit (re-pinned by amendment 1):
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_g_compare.py` | `fe233935339acd73851ebe129810ee6ad95e1878d18690c35d0bb4132c8fbb2c` |
-| `nd-unfolding/tests/test_fd_g_compare.py` | `4fa952762ac6ef20b4458c0c3f38117bef00291b4e1c669af036a9eceb1195f0` |
+| `nd-unfolding/fd_g_compare.py` | `0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f` (amendment 1; was `fe233935…`) |
+| `nd-unfolding/tests/test_fd_g_compare.py` | `b4d0ff2611bcc6226e215e57023002025682aebea49ec1f2c06f3c61a9d7d9a8` (amendment 1; was `4fa95276…`) |
 | `nd-unfolding/s1_assemble.py` | `b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7` |
 | `nd-unfolding/s5p_stage1_inspect.py` | `26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71` |
 | `nd-unfolding/pv-ladder/readouts/h2_definition.json` | `b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89` |
@@ -362,3 +409,53 @@ Neither found a defect in the code.
 
 **A and B both noted that the worktree changed during their reviews.** The change was the `--extra-block` variant (§2.3), added at the director's request. Its tests are in `ExtraBlock`, and B's mutation run covered the module with it in place.
 
+
+## 12. Amendment 1 (2026-10-26): the extra block's role
+
+**Why:** Joseph adopted C_resp into the 5D reported total (`DECISION-20261026-joseph-adopt-cresp.md` item 1). Item 2
+of that record says Stage G reports C_total_resp + V_g as the adopted comparison, with C_total + V_g beside it as the
+variant without the response block. The director asked for the role to be a declared argument, tested in both
+directions.
+
+**What changed in the tool** (`fd_g_compare.py`):
+- `--extra-block-role {adopted,sensitivity}`, required with the other four extra-block arguments (exit 2 otherwise);
+- the top-level comparison of each prediction is the reported one, named by `reported_covariance`; the other is the
+  `variant` record, with its `covariance` and `label` ("without C_resp: …" under `adopted`);
+- `extra_block.role`, a role-dependent `extra_block.label`, and `labels.reported`;
+- the readout schema is `fd-g-readout/2`; the `sensitivity` record of `/1` is replaced by `variant`;
+- stdout: the reported line says "reported", and the variant line says "variant without C_resp" or "variant with
+  C_resp".
+
+**What did not change:** the controls G0–G4, the statistics, the GiBUU restriction, the labels of the five predictions,
+the shape-only mode and its note, and the comparison without an extra block, apart from the new
+`reported_covariance` field, `labels.reported`, the schema string, and the word "reported" on each stdout line
+("`<name> <n> cells, reported: total chi2 …`").
+
+**Tests:** `ExtraBlock` is rewritten (6 tests) and `EndToEnd` gains the GiBUU scan with an adopted block (§6). Stage G
+is now 27 tests.
+
+**Order:** Stage G runs after F0b's report is merged (`FD-F0b-DECLARATION.md`). The binding covers both declarations
+and the HPSS copy of `cresp.npz`, and the run order is that copy, then F0b, then Stage G.
+
+**Reviews of the amendment.** Two independent read-only reviews ran on the uncommitted change, together with FD-F0b's:
+- **A** checked it against the director's instruction, the decision record and the committed records;
+- **B** attacked the code, with 53 single mutations in a mirror copy.
+
+Neither found wrong behaviour in either tool.
+
+| # | finding | disposition |
+|---|---|---|
+| A-M1 | §8 still carried the pre-amendment pins, while the header said §8 was changed | re-pinned (§8) |
+| B-M1 | leaving out `--extra-block` itself, or `--extra-block-sha256` alone, was never tested (both survived) | each of the five options is now left out alone, plus the role alone, the block alone and an unknown role |
+| B-M2 | each G2 refusal was shown only by some check firing: removing the symmetry or PSD check survived | each refusal asserts the check by name; a new asymmetric block whose symmetrized form is PSD can be refused by the symmetry check alone |
+| B-m3 | the variant's stdout values were never checked | both stdout lines are checked against their own records' χ² and p, as formatted |
+| B-m4, A-m2 | `labels.reported` was checked only in part; `labels.covariance` did not say C_x was added | `labels.covariance` now ends with where C_x is added; both labels are asserted in full in both roles |
+| B-m6 | the C_total + C_x positive-definite check cannot be reached by a test | kept as a backstop and stated in §7.8 |
+| B-m7 | the stdout prefix was cut at the first ":" of the label | the short label is carried separately |
+| B-m8 | under `adopted`, the top-level `sigma_total_over_f` includes C_x | stated in §2.3 |
+| B-m9, A-m1 | §12 did not list the new word "reported" on stdout without a block | listed |
+| A-m3 | the asymmetric fixture was also refused by the PSD check | as B-M2 |
+<!-- absence-ok: these rows restate review B's mutation findings on the uncommitted test suites of 2026-10-26 (each named mutation passed every test there); they describe that suite's coverage, now closed, not the absence of a result -->
+
+**After the fixes,** each of B's 14 surviving mutations, and one more on the covariance label, is caught by the test
+written for it, against a clean baseline in a mirror. The positive-definite check (B-m6) is the exception, as stated.

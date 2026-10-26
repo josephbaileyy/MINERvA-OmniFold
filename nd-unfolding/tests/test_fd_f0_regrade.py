@@ -754,6 +754,233 @@ class Controls(Base):
         self.assertStops(tree, 8)
 
 
+# ------------------------------------------------------------------------------------------------ F0b: the extra block
+
+
+class ExtraBlockF0b(Base):
+    """F0b (FD-F0b-DECLARATION.md): a declared covariance, pinned by digest, added to every matrix that carries C_e.
+    Shown in both directions: with the block, every such grade is recomputed here against C + C_x and everything else
+    equals F0's run on the same tree; without it, the readout is F0's, key for key against the committed F0 readout."""
+    forbidden, leaks, numbers = EndToEnd.forbidden, EndToEnd.leaks, EndToEnd.numbers    # the test's own leak scan
+
+    @staticmethod
+    def resp(tree, seed=9):
+        v = np.random.default_rng(seed).normal(0, 0.03, (4, F.N_CELLS)) * tree.f
+        return v.T @ v
+
+    @staticmethod
+    def block(tree, C, key="C_resp", name="cresp"):
+        p = tree.root / f"{name}.npz"
+        np.savez(p, **{key: C})
+        return ["--extra-block", str(p), "--extra-block-sha256", digest(p), "--extra-block-key", key,
+                "--extra-block-name", "C_resp"]
+
+    @staticmethod
+    def argv_to(tree, extra, sub):
+        """The tree's argv with ``extra`` before the outputs, writing to tree.root/<sub>."""
+        out = tree.root / sub
+        out.mkdir()
+        return tree.argv[:-4] + extra + ["--out-json", str(out / "readout.json"), "--out-npz", str(out / "table.npz")], out
+
+    def run_pair(self, tree, Cx):
+        """F0 and F0b on the same tree; returns both readouts."""
+        got = []
+        for sub, extra in (("f0", []), ("f0b", self.block(tree, Cx))):
+            argv, out = self.argv_to(tree, extra, sub)
+            with tree.patches()[0], tree.patches()[1], tree.patches()[2]:
+                self.assertEqual(F.run(F.build_args(argv), tree.pins), 0)
+            got.append(json.loads((out / "readout.json").read_text()))
+        return got
+
+    def test_grades_recomputed_by_hand_and_everything_else_is_f0s(self):
+        tree = self.tree(seed=11)
+        Cx = self.resp(tree)
+        f0, f0b = self.run_pair(tree, Cx)
+        ff = np.outer(tree.f, tree.f)
+        Ce_rel, S, Cx_rel = tree.Ce / ff, tree.S, Cx / ff
+        keep = lambda own: [j for j, v in enumerate(F.VERTICES) if v != own]  # noqa: E731
+        self.assertEqual((f0["schema"], f0b["schema"]), ("fd-f0-readout/1", "fd-f0b-readout/1"))
+        self.assertEqual(f0b["extra_block"]["name"], "C_resp")
+        np.testing.assert_allclose(f0b["extra_block"]["relative_sigma"], np.sqrt(np.diag(Cx_rel)), rtol=1e-12)
+        self.assertEqual(f0b["labels"]["what"], f0["labels"]["what"] + " plus C_resp (F0b)")
+        self.assertEqual(f0b["labels"]["grade_matrix"],
+                         "F0b: C^(T) + C_resp, with the leave-out on C_model only; the in-sample, sensitivity and "
+                         "eight-cell matrices also carry C_resp; the model-only matrix, with no C_e, is F0's")
+        want = {"C_e": Ce_rel + Cx_rel}
+        want.update({k: Ce_rel + S[keep(own)].T @ S[keep(own)] + Cx_rel
+                     for k, own in (("C_total", None), *((f"minus_{v}", v) for v in F.VERTICES))})
+        self.assertEqual(sorted(f0b["relative_sigma_plus_C_resp"]), sorted(want))
+        for k, M in want.items():
+            sig = np.sqrt(np.diag(M))
+            np.testing.assert_allclose(f0b["relative_sigma_plus_C_resp"][k], sig, rtol=1e-10, err_msg=k)
+            self.assertEqual(f0b["relative_sigma_plus_C_resp_summary_percent"][k],
+                             [round(100 * float(v), 2) for v in (np.median(sig), sig.min(), sig.max())], k)
+        self.assertEqual(f0b["relative_sigma"], f0["relative_sigma"])             # F0's sigma table is unchanged
+        self.assertEqual(f0b["controls"], f0["controls"])                         # control 7 included: noise only
+        A, B = {t["name"]: t for t in f0["truths"]}, {t["name"]: t for t in f0b["truths"]}
+        counts = {}
+        for t in tree.truths:
+            a, b = A[t["name"]], B[t["name"]]
+            for k in ("bias", "noise_sigma", "B_eff", "estimator", "graded", "group", "own_vertex", "model_only"):
+                self.assertEqual(a[k], b[k], (t["name"], k))                      # model-only: no C_e, no C_resp
+            self.assertEqual(b["grade_matrix"], a["grade_matrix"] + " + C_resp")
+            bb = np.asarray(b["bias"])
+            N = np.diag(np.asarray(b["noise_sigma"]) ** 2)                        # only the diagonal is published
+            for key, C in [("grade", Ce_rel + S[keep(t["own"])].T @ S[keep(t["own"])] + Cx_rel)] + \
+                    ([("in_sample", Ce_rel + S.T @ S + Cx_rel)] if t["own"] else []) + \
+                    ([("sensitivity", Ce_rel + S[keep(t["sens"])].T @ S[keep(t["sens"])] + Cx_rel)] if t.get("sens") else []):
+                g = b[key]
+                # z needs only diag(C + N); the chi2, which needs the full noise matrix, is test_chi2_against_the_full_matrix
+                np.testing.assert_allclose(g["z"], bb / np.sqrt(np.diag(C) + np.diag(N)), rtol=1e-8, err_msg=(t["name"], key))
+                self.assertEqual(g["cells_abs_z_gt_2"], [f"R{c:02d}" for c in range(16) if abs(g["z"][c]) > 2])
+                self.assertEqual(g["p_lt_0.01"], g["p"] < 0.01 or g["p_below_floor"])
+            if t.get("sens"):
+                self.assertEqual(b["sensitivity"]["matrix"], f"C_total minus {t['sens']} + C_resp")
+            if t["own"] == "gibuu":
+                Cg = Ce_rel + S[keep("gibuu")].T @ S[keep("gibuu")] + Cx_rel
+                i = list(F.GIBUU_CELLS)
+                np.testing.assert_allclose(b["p_parallel_lt_4p5"]["z"], bb[i] / np.sqrt(np.diag(Cg)[i] + np.diag(N)[i]), rtol=1e-8)
+            if b["graded"]:
+                c = counts.setdefault(t["group"], [0, 0])
+                c[0] += len(b["grade"]["cells_abs_z_gt_2"])
+                c[1] += int(b["grade"]["p_lt_0.01"])
+        by = f0b["triggers"]["by_group"]
+        self.assertEqual({k: [v["cells_abs_z_gt_2"], v["truths_p_lt_0.01"]] for k, v in by.items()}, counts)
+        self.assertEqual({k: (v["truths"], v["cells"]) for k, v in by.items()},
+                         {k: (v["truths"], v["cells"]) for k, v in f0["triggers"]["by_group"].items()})   # denominators
+
+    def test_chi2_against_the_full_matrix(self):
+        """The noise matrix is internal, so the chi2 is recomputed from the products: the same estimator as
+        EndToEnd.test_grades_recomputed_by_hand, with C_resp added."""
+        tree = self.tree(seed=11)
+        Cx = self.resp(tree)
+        _, f0b = self.run_pair(tree, Cx)
+        T = {t["name"]: t for t in f0b["truths"]}
+        ff = np.outer(tree.f, tree.f)
+        Ce_rel, S, Cx_rel = tree.Ce / ff, tree.S, Cx / ff
+        keep = lambda own: [j for j, v in enumerate(F.VERTICES) if v != own]  # noqa: E731
+        R = {k: np.array([tree.rel(i) for i in v]) for k, v in tree.products.items()}
+        for name in ("W1", "q3", "A7_genie_cv", "A7_gibuu", "closure_nuwro", "nominal"):
+            t = next(x for x in tree.truths if x["name"] == name)
+            if t["row"] == 3:
+                b, N = R[name][0], np.zeros((16, 16))
+            else:
+                b, N = R[name].mean(0), np.cov(R[name], rowvar=False) / len(R[name])
+            C = Ce_rel + S[keep(t["own"])].T @ S[keep(t["own"])] + Cx_rel
+            x2 = float(b @ np.linalg.solve(C + N, b))
+            self.assertAlmostEqual(T[name]["grade"]["chi2"], x2, delta=1e-7 * x2, msg=name)
+            sf = F.chi2_sf_even(T[name]["grade"]["chi2"], 16)
+            self.assertEqual(T[name]["grade"]["p"], sf if sf >= F.P_FLOOR else 0.0)
+            Cm = tree.blocks["stat"] / ff + S[keep(t["own"])].T @ S[keep(t["own"])]
+            xm = float(b @ np.linalg.solve(Cm + N, b))
+            self.assertAlmostEqual(T[name]["model_only"]["chi2"], xm, delta=1e-7 * xm, msg=name)
+
+    def test_a_zero_block_reproduces_f0_and_a_psd_block_only_lowers_grades(self):
+        tree = self.tree(seed=3)
+        f0, z0 = self.run_pair(tree, np.zeros((16, 16)))
+        drop = lambda d: None if d is None else {k: v for k, v in d.items() if k != "matrix"}  # noqa: E731  (the name)
+        for a, b in zip(f0["truths"], z0["truths"]):
+            for k in ("grade", "model_only", "in_sample", "sensitivity", "p_parallel_lt_4p5"):
+                self.assertEqual(drop(a.get(k)), drop(b.get(k)), (a["name"], k))
+        self.assertEqual(f0["triggers"]["by_group"], z0["triggers"]["by_group"])
+        tree2 = self.tree(seed=3)
+        f0, f0b = self.run_pair(tree2, self.resp(tree2))
+        for a, b in zip(f0["truths"], f0b["truths"]):
+            self.assertLessEqual(b["grade"]["chi2"], a["grade"]["chi2"] * (1 + 1e-12), a["name"])  # PSD addition
+            self.assertTrue(all(abs(zb) <= abs(za) * (1 + 1e-12) for za, zb in zip(a["grade"]["z"], b["grade"]["z"])))
+            self.assertNotEqual(a["grade"]["chi2"], b["grade"]["chi2"])
+
+    def test_without_the_option_the_readout_is_f0s_key_for_key(self):
+        tree = self.tree(offset_shift=0.05)          # control 7 fails, as it did in the real F0 run
+        f0, _ = self.run_pair(tree, self.resp(tree))
+        real = json.loads((FD / "fd/readout/fd_f0_readout.json").read_text())
+        self.assertEqual(sorted(f0), sorted(real))
+        self.assertEqual(sorted(f0["labels"]), sorted(real["labels"]))
+        self.assertEqual(f0["labels"]["what"], real["labels"]["what"])
+        self.assertEqual(sorted(f0["controls"]), sorted(real["controls"]))
+        RT = {t["name"]: t for t in real["truths"]}
+        for t in f0["truths"]:
+            self.assertEqual(sorted(t), sorted(RT[t["name"]]), t["name"])
+            self.assertEqual(t["grade_matrix"], RT[t["name"]]["grade_matrix"], t["name"])
+            for k in ("sensitivity",):
+                if k in t:
+                    self.assertEqual(t[k]["matrix"], RT[t["name"]][k]["matrix"])
+
+    def test_stdout_with_and_without(self):
+        tree = self.tree()
+        for sub, extra, first in (("a", [], "[F0] non-vertex:"), ("b", self.block(tree, self.resp(tree)),
+                                                                   "[F0] F0b: every grade matrix carries C_resp")):
+            argv, out = self.argv_to(tree, extra, sub)
+            cfg = self.tmp / f"cfg-{sub}.json"
+            c = tree.config()
+            c["argv"] = argv
+            cfg.write_text(json.dumps(c))
+            w = self.tmp / "wrapper.py"
+            w.write_text(WRAPPER)
+            r = run_isolated([str(w), str(cfg)])
+            self.assertEqual(r.returncode, 0, r.stderr[-3000:])
+            lines = [ln for ln in r.stdout.splitlines() if ln.startswith("[F0]")]
+            self.assertTrue(lines[0].startswith(first), lines[0])
+            self.assertEqual(len(lines), 4 + bool(extra))                   # three groups and the denominators
+            self.assertIn(f"products and {8 + bool(extra)} records match", r.stdout)
+            readout = json.loads((out / "readout.json").read_text())
+            fb = self.forbidden(tree)                                           # the guard holds with the block
+            self.assertEqual(self.leaks(self.numbers(readout) + self.numbers(r.stdout), fb), [])
+
+    def test_a_planted_leak_is_refused_with_the_block(self):
+        tree = self.tree()
+        argv, out = self.argv_to(tree, self.block(tree, self.resp(tree)), "b")
+        c = tree.config(leak=tree.f.tolist())
+        c["argv"] = argv
+        cfg = self.tmp / "cfg.json"
+        cfg.write_text(json.dumps(c))
+        (self.tmp / "wrapper.py").write_text(WRAPPER)
+        r = run_isolated([str(self.tmp / "wrapper.py"), str(cfg)])
+        self.assertEqual(r.returncode, 3, r.stderr[-2000:])
+        self.assertEqual(list(out.iterdir()), [])
+
+    def test_refusals(self):
+        tree = self.tree()
+        Cx = self.resp(tree)
+        cases = {}
+        e = self.block(tree, Cx, name="sha")
+        e[3] = "a" * 64
+        cases["1 digest"] = (e, "extra block")
+        notpsd = Cx.copy()
+        notpsd[0, 0] = -abs(Cx[0, 0])
+        anti = np.triu(np.full((16, 16), 1e-3 * Cx.max()), 1)
+        asym_psd = Cx + anti - anti.T                          # asymmetric, and PSD once symmetrized: only the
+        self.assertGreaterEqual(np.linalg.eigvalsh((asym_psd + asym_psd.T) / 2 / np.outer(tree.f, tree.f)).min(),
+                                -1e-12)                        # symmetry check can refuse it
+        for k, (what, C, check) in enumerate((("asymmetric", asym_psd, "is symmetric"),
+                                              ("not PSD", notpsd, "is positive semidefinite"),
+                                              ("shape", Cx[:15, :15], "is a finite 16 x 16 matrix"),
+                                              ("non-finite", np.where(np.eye(16) > 0, np.nan, Cx),
+                                               "is a finite 16 x 16 matrix"))):
+            cases[f"4 {what}"] = (self.block(tree, C, name=f"case{k}"), f"C_resp {check}")
+        e = self.block(tree, Cx, key="other", name="case-key")
+        e[e.index("--extra-block-key") + 1] = "C_resp"
+        cases["4 key"] = (e, "no key 'C_resp'")
+        for what, (e, check) in cases.items():
+            argv, out = self.argv_to(tree, e, what.replace(" ", "-"))
+            with tree.patches()[0], tree.patches()[1], tree.patches()[2], self.assertRaises(SystemExit, msg=what) as cm:
+                F.run(F.build_args(argv), tree.pins)
+            self.assertIn(f"FAIL control {what.split()[0]}:", str(cm.exception.code), what)
+            self.assertIn(check, str(cm.exception.code), what)                 # the check that refused, by name
+            self.assertEqual(list(out.iterdir()), [], what)
+
+    def test_the_four_options_go_together(self):
+        tree = self.tree()
+        e = self.block(tree, self.resp(tree))
+        parts = [(f"all but {e[i]}", e[:i] + e[i + 2:]) for i in range(0, 8, 2)] + [("name only", e[6:])]
+        self.assertEqual(len(parts), 5)
+        for what, part in parts:
+            with self.assertRaises(SystemExit, msg=what) as cm, mock.patch("sys.stderr"):
+                F.build_args(tree.argv + part)
+            self.assertEqual(cm.exception.code, 2, what)
+        self.assertEqual(F.build_args(tree.argv + e).extra_block_name, "C_resp")
+
+
 # ------------------------------------------------------------------------------------------------ as invoked
 
 
@@ -840,6 +1067,16 @@ class CommittedPins(unittest.TestCase):
         inv = FD / "fd/F4-PRESERVE-INVENTORY.sha256"
         self.assertEqual(inv.read_text().splitlines(), F.f4_inventory_lines(STATE / "s5p/stage3/f4"))
         self.assertEqual(len(inv.read_text().splitlines()), 80)
+
+    def test_the_committed_cresp_preserve_inventory_is_the_cresp_report(self):
+        """F0b section 2.2: one line, the npz the C_resp report names, by the digest it records (CRESP-REPORT.md)."""
+        lines = (FD / "fd/CRESP-PRESERVE-INVENTORY.sha256").read_text().splitlines()
+        self.assertEqual(len(lines), 1)
+        sha, path = lines[0].split("  ")
+        rep = (STATE / "measurement-scoping/assigned-uncertainties/cresp/CRESP-REPORT.md").read_text()
+        self.assertIn(f"`{path}`, sha256\n  `{sha}`", rep)
+        self.assertEqual(path, "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz")
+        self.assertRegex(sha, "^4d8b5797[0-9a-f]{56}$")
 
     def test_fd_plan_table_2_1_reproduces_from_the_committed_records(self):
         s1j = json.loads((FD / "s1/readout/s1_assembly.json").read_text())

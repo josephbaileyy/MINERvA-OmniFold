@@ -18,9 +18,13 @@ the eight p_parallel < 4.5 cells only (ndf 8, shape-only 7): its prediction is i
 GiBUU value on R04-R07 or R12-R15 is formed, printed or written, and no 16-cell GiBUU chi2 exists. Every chi2 is
 written beside the name of the matrix it used, its size and its numerical rank.
 
-A declared sensitivity variant (``--extra-block``): a second 16 x 16 covariance C_x in absolute units, its file sha256
-pinned on the command line, is added to C_total, and every comparison is reported again against C_total + C_x beside
-the primary one. Its construction is fixed and its digest declared before the run, so the variant is not post hoc.
+A declared extra block (``--extra-block``): a second 16 x 16 covariance C_x in absolute units, its file sha256 pinned
+on the command line. Its construction is fixed and its digest declared before the run, so neither comparison is post
+hoc. ``--extra-block-role`` says which comparison is the reported one (amendment 1 of the declaration, 2026-10-26):
+* ``adopted``: the reported comparison is against C_total + C_x + V_g, and the one against C_total + V_g is written
+  beside it as the variant "without C_x" (DECISION-20261026-joseph-adopt-cresp.md item 2);
+* ``sensitivity``: the reported comparison is against C_total + V_g, and C_total + C_x + V_g is the variant.
+Without an extra block, the reported comparison is against C_total + V_g and there is no variant.
 
 Controls G0-G4 run first and each refuses (exit 1, nothing written).
 
@@ -50,6 +54,7 @@ SHAPE_MODE_NOTE = ("free normalization along f, Stage 0's precedent (ruled); a m
                    "whenever f != g: review A's synthetic check measured 2.4 % (16 cells) and 7 % (8 cells)")
 C12_LABEL = "C12 target; no correction to CH applied"
 GIBUU_CELLS = (0, 1, 2, 3, 8, 9, 10, 11)   # p_parallel < 4.5; checked against the definition (G3)
+ROLES = ("adopted", "sensitivity")
 PINS = {
     "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
     "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
@@ -220,12 +225,15 @@ def build_args(argv):
     ap.add_argument("--extra-block", type=Path, help="npz holding a declared sensitivity covariance (absolute units)")
     ap.add_argument("--extra-block-sha256", help="its file sha256, as the binding records it")
     ap.add_argument("--extra-block-key", help="the 16 x 16 matrix's key in that npz")
-    ap.add_argument("--extra-block-name", help="the variant's name in the readout, e.g. C_resp")
+    ap.add_argument("--extra-block-name", help="the block's name in the readout, e.g. C_resp")
+    ap.add_argument("--extra-block-role", choices=ROLES,
+                    help="adopted: the reported comparison includes the block; sensitivity: it is the variant")
     ap.add_argument("--out-json", type=Path, required=True)
     a = ap.parse_args(argv)
-    extra = (a.extra_block, a.extra_block_sha256, a.extra_block_key, a.extra_block_name)
+    extra = (a.extra_block, a.extra_block_sha256, a.extra_block_key, a.extra_block_name, a.extra_block_role)
     if any(v is not None for v in extra) and not all(v is not None for v in extra):
-        ap.error("--extra-block, --extra-block-sha256, --extra-block-key and --extra-block-name go together")
+        ap.error("--extra-block, --extra-block-sha256, --extra-block-key, --extra-block-name and --extra-block-role go "
+                 "together")
     return a
 
 
@@ -306,6 +314,17 @@ def run(a, pins=None, predictions=None) -> int:
     lo = sorted(c["id"] for c in defn["reporting_cells"] if c["box"]["pz"][1] <= 4.5)
     report("G3", "GiBUU's eight cells are the p_parallel < 4.5 boxes", lo == list(GIBUU_CELLS), f"they are {lo}")
 
+    # the reported comparison and its variant, by the block's declared role
+    if Cx is None:
+        reported, variant = (Ct, "C_total"), None
+    elif a.extra_block_role == "adopted":
+        reported = (Ct + Cx, f"C_total + {a.extra_block_name}")
+        variant = (Ct, "C_total", f"without {a.extra_block_name}", "the variant without the declared block")
+    else:
+        reported = (Ct, "C_total")
+        variant = (Ct + Cx, f"C_total + {a.extra_block_name}", f"with {a.extra_block_name}",
+                   "a declared sensitivity variant")
+
     # G4. integrate each prediction on its own cells only; positive integrals, non-negative V_g
     results = []
     for spec in predictions:
@@ -320,19 +339,25 @@ def run(a, pins=None, predictions=None) -> int:
         if not (np.all(g[cells] > 0) and np.all(Vg[cells] >= 0)):
             raise Stop("G4", f"{spec['name']}: a cell integral is not positive or V_g is negative")
         rec = {"name": spec["name"], "file": spec["path"], "sha256": spec["sha256"], "label": spec["label"],
-               "n_mc_events_in_cells": nevt[cells].tolist(), **compare(f, g, Vg, Ct, cells, "C_total")}
-        if Cx is not None:
-            v = compare(f, g, Vg, Ct + Cx, cells, f"C_total + {a.extra_block_name}")
-            rec["sensitivity"] = {"name": a.extra_block_name,
-                                  **{k: v[k] for k in ("total", "shape_only", "pulls",
-                                                       "sigma_total_over_f")}}
+               "n_mc_events_in_cells": nevt[cells].tolist(), "reported_covariance": reported[1],
+               **compare(f, g, Vg, reported[0], cells, reported[1])}
+        if variant is not None:
+            v = compare(f, g, Vg, variant[0], cells, variant[1])
+            rec["variant"] = {"covariance": variant[1], "label": f"{variant[2]}: {variant[3]}",
+                              **{k: v[k] for k in ("total", "shape_only", "pulls", "sigma_total_over_f")}}
         results.append(rec)
     report("G4", "every prediction's integrals are positive on its cells", True)
 
     readout = {
-        "schema": "fd-g-readout/1",
+        "schema": "fd-g-readout/2",
         "labels": {"what": "configuration (e)'s data result on R00-R15 against five generator predictions",
-                   "covariance": COVARIANCE_LABEL,
+                   "covariance": COVARIANCE_LABEL + ("" if Cx is None else
+                                                     f"; {a.extra_block_name} is added to C_total in the "
+                                                     f"{'reported comparison' if a.extra_block_role == 'adopted' else 'variant'}"
+                                                     f" (labels.reported)"),
+                   "reported": f"each prediction's top-level comparison is against {reported[1]} + V_g"
+                               + ("" if variant is None else f"; its variant record is against {variant[1]} + V_g, "
+                                                             f"{variant[2]}: {variant[3]}"),
                    "shape_only": "a free normalization of variance 100 relative to f, ndf n - 1; " + SHAPE_MODE_NOTE,
                    "gibuu": "GiBUU on the eight p_parallel < 4.5 cells only; no GiBUU value above p_parallel 4.5 is "
                             "formed or shown, and no 16-cell GiBUU chi2 is computed",
@@ -341,8 +366,9 @@ def run(a, pins=None, predictions=None) -> int:
         "controls_passed": ["G0", "G1", "G2", "G3", "G4"],
         "extra_block": None if Cx is None else {
             "name": a.extra_block_name, "file": str(a.extra_block), "sha256": a.extra_block_sha256,
-            "key": a.extra_block_key, "relative_sigma": (np.sqrt(np.diag(Cx)) / f).tolist(),
-            "label": "a declared sensitivity variant: its construction and digest were fixed before this run"},
+            "key": a.extra_block_key, "role": a.extra_block_role, "relative_sigma": (np.sqrt(np.diag(Cx)) / f).tolist(),
+            "label": ("adopted into the reported comparison" if a.extra_block_role == "adopted" else
+                      "a declared sensitivity variant") + ": its construction and digest were fixed before this run"},
         "predictions": results,
         "inputs_sha256": {**pins, "definition": sa.DEFINITION_SHA256,
                           **{p["name"]: p["sha256"] for p in predictions}},
@@ -356,14 +382,15 @@ def run(a, pins=None, predictions=None) -> int:
     os.replace(tmp, a.out_json)
     for r in results:
         t, s = r["total"], r["shape_only"]
-        print(f"[G] {r['name']:10s} {r['n_cells']:2d} cells: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
+        short = None if variant is None else variant[2]
+        print(f"[G] {r['name']:10s} {r['n_cells']:2d} cells, reported: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
               f"[{t['matrix']}, {t['matrix_size'][0]}x{t['matrix_size'][1]}, rank {t['matrix_rank']}]; "
               f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} "
               f"[{s['matrix']}, {s['matrix_size'][0]}x{s['matrix_size'][1]}, rank {s['matrix_rank']}; mode along f, "
               f"see the readout's shape_only.mode]", flush=True)
-        if "sensitivity" in r:
-            t, s = r["sensitivity"]["total"], r["sensitivity"]["shape_only"]
-            print(f"[G]   with {r['sensitivity']['name']}: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
+        if "variant" in r:
+            t, s = r["variant"]["total"], r["variant"]["shape_only"]
+            print(f"[G]   variant {short}: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
                   f"[{t['matrix']}, {t['matrix_size'][0]}x{t['matrix_size'][1]}, rank {t['matrix_rank']}]; "
                   f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} "
                   f"[{s['matrix']}, {s['matrix_size'][0]}x{s['matrix_size'][1]}, rank {s['matrix_rank']}]", flush=True)
