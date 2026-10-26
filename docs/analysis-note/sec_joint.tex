@@ -742,7 +742,12 @@ Each prediction is rebuilt per fine cell as
 $x_{\mathrm{CH}}=\tfrac{12}{13}\,x_{\mathrm{C}}+\tfrac{1}{13}\,x_{\mathrm{H}}$.
 Here $x_{\mathrm{H}}$ is the generator's own free-proton product, run through the
 unchanged conversion, flux-repair and binning chain. Each prediction's Monte Carlo
-variance is combined with the same weights.  The hydrogen fraction is
+variance is combined with the squares of the same weights.
+% Accuracy fix (unscored; director 2026-10-26): "with the same weights" misstated the method. The code fills each
+% event with weight c = w r / N x (12/13 or 1/13) and sums c^2 for the variance (docs/orchestration/state/
+% measurement-paper/phase1/mp2/s2-receipts/d4/harmonize_9dbcde93.py:71, :104-108, :312, :418, :426 @ 7ad668f4), so
+% sumw2_CH = (12/13)^2 sumw2_C12 + (1/13)^2 sumw2_H (mp3b/REPORT.md:30).
+The hydrogen fraction is
 $f_{\mathrm{H}}=5.08\%$ for NuWro over the grid and 4.77\% for GiBUU over its 72 cells.
 % Draft 6 (REVIEW-2 finding 12): B:97 (grid integral; 0.0506 over the 109 cells, B:105), C:51 (72-cell domain).
 % B:97, :103-105; C:51, :56-58.

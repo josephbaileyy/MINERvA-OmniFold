@@ -5,8 +5,14 @@ This section gives a preliminary scalar central value for an extended fiducial d
 three-prior dependence envelope, a hidden-variable closure and a 200-toy containment diagnostic for the
 extension. The signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume. The truth-muon
 kinematic cuts are removed, but the reconstructed MINOS-based selection is unchanged.
-The domain is therefore an extended \emph{fiducial} one, not unrestricted neutrino phase space. No corrected
-covariance exists for it, so the result consists of central values and these validation tests.
+The domain is therefore an extended \emph{fiducial} one, not unrestricted neutrino phase space. No covariance is
+quoted for it, so the result consists of central values and these validation tests.
+% Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): "No corrected covariance exists for it" was
+% false as read: an extended-fiducial covariance with re-selected lateral bands exists (job 56431823, 2026-08-07;
+% nd-unfolding/uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md:127) but is not quoted (AGENTS.md:36).
+% Search: extended-fiducial covariance quoted; corrected FPS covariance; activelat (note, paper and primer closures: no
+% printed extended-fiducial covariance or uncertainty beyond the three-prior envelope; AGENTS.md:36 "Old unified 4D/FPS
+% covariances ... are unquotable") @ 7ad668f4
 % Register pass b8 (2026-10-22): register only; every number and limitation kept (ledger.md rows F*).
 
 \subsection{Acceptance and the extended domain}
@@ -120,8 +126,15 @@ fiducial volume is
 % VALIDATION_LEDGER.md:1624-1625 (control 3.073e-38; FPS total 4.502e-38).
 compared with $\SI{\sigTwoDPurity}{cm^2/nucleon}$ for the control unfold in the restricted phase
 space. The extended-fiducial value was produced with the binned purity correction, not with the
-negative-weight treatment designated for the extended-fiducial analysis. No extended-fiducial production
-with refined negative-weight subtraction has been run (App.~\ref{app:negweight}).
+negative-weight treatment designated for the extended-fiducial analysis. Its central value comes from the battery of
+2026-06-10, not from refined negative-weight subtraction (App.~\ref{app:negweight}).
+% Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): "No extended-fiducial production with
+% refined negative-weight subtraction has been run" was false as read: ten negweight-refined extended-fiducial endpoint
+% unfolds were run later (job 56430128; nd-unfolding/sbatch_unfold_active_fps.sh:18,34-35,60). The sentence now says
+% only what the quoted central value used.
+% Search: extended-fiducial central value; fps battery; 54244120; negweight-refined FPS central value (app_provenance.tex
+% fps-battery; no refined extended-fiducial central value is recorded; sbatch_unfold_active_fps.sh:67 takes the existing
+% central value as input) @ 7ad668f4
 We adopt \textbf{two-tier reporting}.
 \emph{Tier~1} comprises the acceptance-supported cells ($\epsilon\gtrsim2\%$): the published region and the
 measurable part of the extension. That part of the extension carries $\sim\SI{6}{\percent}$

@@ -351,15 +351,20 @@ rebuilt for it (\S\ref{sec:results}).
 \paragraph{What the quoted extended-fiducial number used.}
 The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ in \S\ref{sec:fps}
 was not produced with negative-weight injection.
-It comes from the extended-fiducial ME~FHC battery of 2026-06-10, run before the
-driver supported negative-weight subtraction. Its ten endpoint unfolds used the
-driver's purity default and are recorded as purity controls, not publication inputs
-(Ref.~\cite{NoteRecords2026}, \texttt{fps-battery}). The
-central value of that battery, \SI{\fpsSigma}{cm^2/nucleon}, is recorded in the
-validation ledger with its passed published-region check against the control. No
-extended-fiducial production with refined negative-weight subtraction has been run,
-so negative-weight injection, the intended extended-fiducial baseline, did not
+It comes from the extended-fiducial ME~FHC battery of 2026-06-10. Its ten endpoint unfolds used the
+purity correction and are recorded as purity controls, not publication inputs
+(Ref.~\cite{NoteRecords2026}, \texttt{fps-battery}).
+% Note register round n2 (R-N2b): when the negative-weight code landed and how the default applied are held by the
+% fps-battery records entry (app_provenance.tex).
+The central value of that battery, \SI{\fpsSigma}{cm^2/nucleon}, is recorded in the
+validation ledger with its passed published-region check against the control. The
+extended-fiducial central value was therefore produced with the binned purity correction, not with refined
+negative-weight subtraction, and negative-weight injection, the intended extended-fiducial baseline, did not
 produce the quoted number.
+% Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): as in sec_fps.tex sec:fps; the earlier
+% "No extended-fiducial production with refined negative-weight subtraction has been run" was false as read (job
+% 56430128 ran ten negweight-refined extended-fiducial endpoint unfolds).
+% Search: extended-fiducial central value; fps battery; 54244120; negweight-refined FPS central value (as in sec_fps.tex) @ 7ad668f4
 
 \paragraph{The extended-fiducial measurement and its control are designated different background treatments.}
 For publication, the extended-fiducial analysis designates negative-weight

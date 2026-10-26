@@ -28,11 +28,13 @@ one-dimensional $\Eavail$ and $W$ projections, and an $(\Eavail,W)$ ratio map.
 The primary observable is signed bias versus $W$, reporting $W<\SI{1.1}{GeV}$
 separately from the high-$W$ tail. The global integral is a control rather than the decision statistic.
 The implementation runs only as a closure on pseudo-data and only on the five observables, and it
-cannot be combined with truth reweighting or bootstrapping. It labels every output as a diagnostic
+cannot be combined with truth-reweight injection or bootstrapping. It labels every output as a diagnostic
 that must not be quoted.
 % Guards: nd-unfolding/unfold_nd_omnifold_unbinned.py:671-672 (--closure: MC reco as pseudo-data) and :692-711
-% (requires --closure and exactly --axes eavail,q3,W; refuses truth reweighting and --bootstrap-seed; output basename
-% NONQUOTABLE-DIAGNOSTIC.) @ 1a015eef.
+% (requires --closure and exactly --axes eavail,q3,W; refuses the truth-reweight injection --closure-reweight-axis, :698-699,
+% and --bootstrap-seed; output basename NONQUOTABLE-DIAGNOSTIC.) @ 1a015eef. Accuracy fix (unscored; director 2026-10-26):
+% "truth reweighting" read as also covering the truth-level --prior-reweight, which the response-mismatch guard does not
+% refuse (:851-853 requires only --use-weights; no check against --closure-response-eavail-frac) @ 7ad668f4.
 
 \paragraph{Physically correlated follow-up.}
 The reconstruction-only arm is intentionally cheap and adversarial; it is not a

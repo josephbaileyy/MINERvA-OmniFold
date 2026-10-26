@@ -1,0 +1,11 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are a referee for a particle-physics analysis note. Each passage gives a paragraph BEFORE and AFTER a FACTUAL CORRECTION (LaTeX source, comments removed). The CONTEXT gives the repository evidence and the ruling; it is not under revision.
+
+For each passage decide: (a) is the AFTER text true as read against the CONTEXT; (b) does it say no more and no less than the ruling or the evidence supports (no new claim, no lost qualifier, no lost fact that is not held by the records entry named in the CONTEXT); (c) is every other sentence of the paragraph unchanged in meaning; (d) does it read in the register of a well-edited technical document. Also say whether the BEFORE text was false as read (STALE: YES or NO).
+
+Answer for every passage, in exactly this format:
+PASSAGE: <id>
+STALE: <YES or NO>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
