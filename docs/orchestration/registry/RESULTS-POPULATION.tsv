@@ -33,6 +33,7 @@ docs/orchestration/state/coverage-2d-20261005/interim_score.json	included	20
 docs/orchestration/state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json	included	14	
 docs/orchestration/state/ki98-wbias-test/receipts/ki98.json	included	1600	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json	included	25	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json	included	25	
 docs/orchestration/state/measurement-paper/phase1/mp1/partial-receipts/control-evaluate.json	included	5	
 docs/orchestration/state/measurement-paper/phase1/mp1/partial-receipts/joint-evaluate.json	included	5	
 docs/orchestration/state/measurement-paper/phase1/mp1/partial-receipts/recompute.json	included	5	
