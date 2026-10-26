@@ -209,13 +209,17 @@ predictions[i].sensitivity (only with an extra block): {name, total{...}, shape_
 inputs_sha256{...}, code_sha256{fd_g_compare.py, s1_assemble.py, s5p_stage1_inspect.py}, argv
 ```
 
-**The prediction labels:**
+**The prediction labels** (as the director ruled on §7):
 - GENIE CV: "CH";
 - GENIE MEC: "CH";
-- NuWro: "C12, not CH";
-- GiBUU: "C12, not CH; no events above E_ν = 20 GeV, so it is compared on the eight p_∥ < 4.5 cells only and not shown
-  above p_∥ 4.5";
-- MnvTune: "the unfolding prior, not an independent generator".
+- NuWro: "C12 target; no correction to CH applied";
+- GiBUU: "C12 target; no correction to CH applied; no events above E_ν = 20 GeV, so it is compared on the eight
+  p_∥ < 4.5 cells only and not shown above p_∥ 4.5";
+- MnvTune: "prior (not an independent prediction)".
+
+**Beside every shape-only χ²** the readout carries `shape_only.mode`, and stdout says "mode along f". The note reads:
+the free normalization is along f, Stage 0's precedent (ruled), and a mode along g gives a different χ² whenever
+f ≠ g; review A's synthetic check measured 2.4 % (16 cells) and 7 % (8 cells).
 
 **What stdout prints:**
 - one PASS line per control check;
@@ -279,14 +283,22 @@ the PR.
    - The tool checks only the block's digest, shape, symmetry and positive semidefiniteness. It does not check how the
      block was made.
 
+**The director's rulings on this section** (relayed 2026-10-25):
+1. **The shape-only mode along f is accepted,** following Stage 0. The 2.4 % and 7 % mode-direction differences are
+   printed beside it. No along-g variant is added, since that would be an undeclared second statistic.
+2. **MnvTune v1** is labelled "prior (not an independent prediction)".
+3. **NuWro and GiBUU** carry "C12 target; no correction to CH applied".
+4. **Review A's two points are accepted:** the GENIE CV covariance note, and the removal of the undeclared |pull| > 2
+   list.
+
 ## 8. Pinned bytes
 
 Their sha256 at this declaration's commit:
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_g_compare.py` | `a9311883b407916665f9f9240915f5c8c39ca44046890ef521faac59e58855a1` |
-| `nd-unfolding/tests/test_fd_g_compare.py` | `8a4d27bc938fe5abb1123b88c51ee5536ac05932ddf6387a123b06659a4f2a3b` |
+| `nd-unfolding/fd_g_compare.py` | `fe233935339acd73851ebe129810ee6ad95e1878d18690c35d0bb4132c8fbb2c` |
+| `nd-unfolding/tests/test_fd_g_compare.py` | `4fa952762ac6ef20b4458c0c3f38117bef00291b4e1c669af036a9eceb1195f0` |
 | `nd-unfolding/s1_assemble.py` | `b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7` |
 | `nd-unfolding/s5p_stage1_inspect.py` | `26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71` |
 | `nd-unfolding/pv-ladder/readouts/h2_definition.json` | `b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89` |

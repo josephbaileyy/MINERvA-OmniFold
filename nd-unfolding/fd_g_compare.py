@@ -46,6 +46,9 @@ import s1_assemble as sa  # noqa: E402  (sha256, fine_map, functional_matrix, lo
 N_FINE, N_CELLS = 65856, 16
 SHAPE_LAMBDA = 1.0e2                       # Stage 0's free-normalization variance, relative units
 TOL = 1e-12
+SHAPE_MODE_NOTE = ("free normalization along f, Stage 0's precedent (ruled); a mode along g gives a different chi2 "
+                   "whenever f != g: review A's synthetic check measured 2.4 % (16 cells) and 7 % (8 cells)")
+C12_LABEL = "C12 target; no correction to CH applied"
 GIBUU_CELLS = (0, 1, 2, 3, 8, 9, 10, 11)   # p_parallel < 4.5; checked against the definition (G3)
 PINS = {
     "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
@@ -64,16 +67,16 @@ PREDICTIONS = (
          meta=("generator", "genie_mec"), cells="all", label="GENIE 2.12.10 + Valencia MEC; CH"),
     dict(name="nuwro", path="gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
          sha256="475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
-         meta=("generator", "nuwro_cv"), cells="all", label="NuWro 21.09; C12, not CH"),
+         meta=("generator", "nuwro_cv"), cells="all", label=f"NuWro 21.09; {C12_LABEL}"),
     dict(name="gibuu", path="gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
          sha256="48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
          meta=("generator", "gibuu_cv"), cells="gibuu",
-         label="GiBUU 2019; C12, not CH; no events above E_nu = 20 GeV (KNOWN_ISSUES 82), so it is compared on the "
+         label=f"GiBUU 2019; {C12_LABEL}; no events above E_nu = 20 GeV (KNOWN_ISSUES 82), so it is compared on the "
                "eight p_parallel < 4.5 cells only and not shown above p_parallel 4.5 (FD-DIRECTOR-RULINGS.md section 5)"),
     dict(name="mnvtune_v1", path="gen5d/mnvtune_v1_xsec5d.npz",
          sha256="bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
          meta=("schema", "s5p-mc-truth-pred/1"), cells="all",
-         label="MINERvA Tune v1, the analysis MC truth: the unfolding prior, not an independent generator"),
+         label="MINERvA Tune v1, the analysis MC truth: prior (not an independent prediction)"),
 )
 COVARIANCE_LABEL = ("C_total = C_e + C_model_abs from S1, with all three C_model,5D vertices (GENIE+MEC, NuWro, "
                     "GiBUU) for every comparison. Each vertex is a data shift unfolded with a prior reweighted by that "
@@ -152,6 +155,8 @@ def compare(f: np.ndarray, g: np.ndarray, Vg: np.ndarray, Ct: np.ndarray, cells:
         chi2 = float(y @ y)
         out[key] = {"chi2": chi2, "ndf": ndf, "p": chi2_sf(chi2, ndf), "matrix": name,
                     "matrix_size": [n, n], "matrix_rank": rank(mat)}
+        if key == "shape_only":
+            out[key]["mode"] = SHAPE_MODE_NOTE
     z = d / np.sqrt(np.diag(M))
     out["pulls"] = z.tolist()
     out["f"] = fs.tolist()
@@ -328,7 +333,7 @@ def run(a, pins=None, predictions=None) -> int:
         "schema": "fd-g-readout/1",
         "labels": {"what": "configuration (e)'s data result on R00-R15 against five generator predictions",
                    "covariance": COVARIANCE_LABEL,
-                   "shape_only": "a free normalization of variance 100 relative to f (Stage 0's mode), ndf n - 1",
+                   "shape_only": "a free normalization of variance 100 relative to f, ndf n - 1; " + SHAPE_MODE_NOTE,
                    "gibuu": "GiBUU on the eight p_parallel < 4.5 cells only; no GiBUU value above p_parallel 4.5 is "
                             "formed or shown, and no 16-cell GiBUU chi2 is computed",
                    "not": "no reading, claim or paper text (FD-PLAN section 4; DECISION-20261025 item 2)"},
@@ -354,7 +359,8 @@ def run(a, pins=None, predictions=None) -> int:
         print(f"[G] {r['name']:10s} {r['n_cells']:2d} cells: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "
               f"[{t['matrix']}, {t['matrix_size'][0]}x{t['matrix_size'][1]}, rank {t['matrix_rank']}]; "
               f"shape-only chi2 {s['chi2']:.2f}/{s['ndf']} p {s['p']:.3g} "
-              f"[{s['matrix']}, {s['matrix_size'][0]}x{s['matrix_size'][1]}, rank {s['matrix_rank']}]", flush=True)
+              f"[{s['matrix']}, {s['matrix_size'][0]}x{s['matrix_size'][1]}, rank {s['matrix_rank']}; mode along f, "
+              f"see the readout's shape_only.mode]", flush=True)
         if "sensitivity" in r:
             t, s = r["sensitivity"]["total"], r["sensitivity"]["shape_only"]
             print(f"[G]   with {r['sensitivity']['name']}: total chi2 {t['chi2']:.2f}/{t['ndf']} p {t['p']:.3g} "

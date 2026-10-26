@@ -245,10 +245,16 @@ class EndToEnd(Base):
                 if want is not None:
                     self.assertAlmostEqual(p[key]["p"], want, delta=1e-300 + 1e-9 * want)
             self.assertNotIn("cells_abs_pull_gt_2", p)                 # no trigger is declared for Stage G
+            self.assertEqual(p["shape_only"]["mode"], G.SHAPE_MODE_NOTE)   # the ruled mode note, beside each shape-only chi2
+            self.assertIn("2.4 % (16 cells) and 7 % (8 cells)", p["shape_only"]["mode"])
+            if p["name"] in ("nuwro", "gibuu"):
+                self.assertIn("C12 target; no correction to CH applied", p["label"])
+            if p["name"] == "mnvtune_v1":
+                self.assertIn("prior (not an independent prediction)", p["label"])
             self.assertEqual(p["n_mc_events_in_cells"], [7.0 * int(np.sum(tree.fm == c)) for c in cells])
             self.assertIn(f"rank {n}]", r.stdout)
-        self.assertEqual(r.stdout.count("(free normalization), 16x16, rank 16]"), 4)
-        self.assertEqual(r.stdout.count("(free normalization), 8x8, rank 8]"), 1)
+        self.assertEqual(r.stdout.count("(free normalization), 16x16, rank 16; mode along f"), 4)
+        self.assertEqual(r.stdout.count("(free normalization), 8x8, rank 8; mode along f"), 1)
         self.assertEqual(sorted(p.name for p in tree.out.iterdir()), ["readout.json"])
 
     def test_no_gibuu_value_above_p_parallel_4p5_is_shown(self):
