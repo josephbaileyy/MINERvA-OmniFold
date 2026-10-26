@@ -1,0 +1,4 @@
+PASSAGE: AD-1
+VERDICT: AGREE
+ISSUE: none
+FIX: none

@@ -1,0 +1,27 @@
+PASSAGE: REC-1
+VERDICT: REVISE
+ISSUE: The ENTRY adds the leading file path and checksum words "\texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root}, \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c}.", which are not in the SOURCE note text.
+
+PASSAGE: REC-2
+VERDICT: REVISE
+ISSUE: The ENTRY adds the words "inference, because the same code produced them.", which are not present in the SOURCE and add a claim/reason not in the original text.
+
+PASSAGE: REC-3
+VERDICT: REVISE
+ISSUE: The ENTRY adds the words "evidence of purity.", which are not present in the SOURCE and add a conclusion not in the provided note text.
+
+PASSAGE: REC-4
+VERDICT: REVISE
+ISSUE: The ENTRY adds the sentences "The purity-subtracted seed-42 central value has no execution log or recorded run configuration. An independent rerun with a different driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a regeneration with the current driver whose run configuration is recorded.", which are not present in the table row SOURCE.
+
+PASSAGE: REC-5
+VERDICT: AGREE
+ISSUE: none
+
+PASSAGE: REC-6
+VERDICT: AGREE
+ISSUE: none
+
+PASSAGE: REC-7
+VERDICT: AGREE
+ISSUE: none

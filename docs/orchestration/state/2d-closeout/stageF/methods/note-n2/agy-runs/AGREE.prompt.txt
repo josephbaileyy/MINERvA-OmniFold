@@ -1,0 +1,18 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for a long technical analysis note in experimental particle physics: the fully qualified companion of a Physical Review D methods paper on unbinned unfolding (OmniFold) of MINERvA neutrino data. Below are numbered passages from ONE file of the note. Each gives the LaTeX source of changed paragraphs BEFORE and AFTER a revision (comments removed; macros such as \SI{...} and value macros print numbers; \S\ref{...} prints a section number). The revision changes presentation only, under these rules:
+(a) a caveat or fact restated in several places is kept once, at its home in the note; a removed restatement is allowed only where the same fact prints at the home, which the CONTEXT block (the round's fact ledger rows for this file) names with the exact home text;
+(a2) a provenance detail (which job script, which log line, which checksum was or was not recorded) may leave the note only where the records document prints it: the CONTEXT row's R:<file>::<text> probe gives the exact records text, which the note then cites as Ref. [records]; a consequence that bears on a printed number must stay in the note;
+(a3) a sentence carrying a result and several qualifiers may be split into a result sentence and a scope sentence, if every qualifier still prints and the first sentence is not false read alone;
+(b) internal process vocabulary (receipt, gate, lane, predeclared, recorded decision, obligation, issue ids) is replaced by plain statements of results and status;
+(c) otherwise no fact, number, condition, scope or status may be lost or added, and no claim may become stronger or weaker; a qualifier stays wherever leaving it out would make a printed sentence false as read.
+
+For EACH passage, decide whether you agree that the AFTER text (1) keeps every fact of BEFORE, either in AFTER or at the home the CONTEXT names; (2) adds no fact, condition, inference or claim that BEFORE (or the CONTEXT) does not support; and (3) reads in the register of a well-edited long technical document.
+
+Answer for every passage, in exactly this format, one block per passage, in order:
+PASSAGE: <id>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
+FIX: <"none", or exact replacement AFTER text for the words named, which changes nothing else>
+
+Use REVISE only for a concrete problem you can name in the AFTER text. Do not propose new facts.

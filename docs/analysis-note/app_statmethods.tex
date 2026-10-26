@@ -371,11 +371,11 @@ $\chi^{2}$ (Eq.~1, ``the measurement covariance matrix''), with $205$
 degrees of freedom (Table I), plus a log-normal $\chi^{2}$ variant
 motivated by the highly-correlated flux normalization (Peelle's
 Pertinent Puzzle).
-\emph{What the paper does not say:} no per-band covariance construction, no
-$\pm1\sigma$ pair formula, no band-independence/block-sum statement; nothing
-about rank, condition number, or regularization of $V$; no bootstrap or
-coverage validation (the paper uses D'Agostini iterative unfolding). All of
-this is delegated to MAT or simply unstated.
+\emph{What the paper does not say.} It gives no per-band covariance construction,
+no $\pm1\sigma$ pair formula and no band-independence or block-sum statement.
+It says nothing about the rank, condition number or regularization of $V$, and it reports
+no bootstrap or coverage validation (it uses D'Agostini iterative unfolding).
+All of this is left to MAT or unstated.
 
 \paragraph{MAT per band and in total.}
 \texttt{MnvVertErrorBand::CalcCovMx} implements Eq.~\eqref{eq:matcov},
@@ -391,10 +391,10 @@ of its largest element; the quoted Flux band carries MAT's $\nu$--$e$ and invers
 constraint weights. An earlier check compared \texttt{MnvH1D::GetTotalErrorMatrix} with our band
 sum without the normalization band (\texttt{-{}-add-norm 0}), over $44$ bands / $187$ universes, and
 gave a maximum difference of $5.5\times10^{-17}$ of the largest element (machine $\varepsilon$) and
-$\sqrt{\Tr\mathbf{C}}$ matching to seven digits. It filled the \texttt{MnvH1D} without MAT's
-per-universe weights (\texttt{SetUnivWgts}), so both sides were unweighted, and it ran on an older
-sweep from before the flux fix,
-not on a quoted product, so it could not detect that the Flux band omitted those constraint
+$\sqrt{\Tr\mathbf{C}}$ matching to seven digits. That check filled the \texttt{MnvH1D} without MAT's
+per-universe weights (\texttt{SetUnivWgts}), so both sides were unweighted.
+It also ran on an older sweep from before the flux fix, not on a quoted product.
+It therefore could not detect that the Flux band omitted those constraint
 weights.
 % rebuild/outputs/outA/budget_Q.json.gz s5_copied.mat_agreement (s5.json mat_universe_block_le_1e-12, 3.43e-16;
 % s5_rollup.py rel = max|A-B|/max|B|, MAT side c04-repair/scripts/build_repair.py mat_cov). J3/J4 provisional (DECISION-20261018, packet W3: D10).
@@ -443,8 +443,10 @@ The comparison adds OmniFold covariances to the paper's
 \texttt{TotalCovariance} by this rule.
 % Hook: \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov ROOT:HIST}, repeatable).
 $\mathbf{C}^{\ML}$ is the smallest block (Table~\ref{tab:combine}); it is included in the quoted total but numerically negligible.
-% J3/J4 provisional (DECISION-20261018, packet W3: D11). "over an order below both other blocks" no longer holds in sqrt(Tr) against the statistical
-% block (1.989e-41 vs 1.984e-40, budget_Q c08/stat.sqrt_trace).
+% J3/J4 provisional (DECISION-20261018, packet W3: D11). "over an order below both other blocks" did not hold in sqrt(Tr) against the statistical
+% block for the purity-subtracted estimator (1.989e-41 vs 1.984e-40, budget_Q c08/stat.sqrt_trace). With the refined estimator now
+% printed (RE-2 part C, stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv rows c08-trace 1.351e-41, stat-trace-a 1.886e-40) the ratio is 0.072;
+% the printed text does not use the phrase either way (n2: comment corrected to the printed values' source).
 
 \begin{table}[!htbp]
 \centering
@@ -621,12 +623,13 @@ The log-normal value $\chiCombinedLog$ depends on the definition given with the 
 The quoted $\chiCombined$ inverts the \emph{sum} of the paper's covariance and ours, not our
 blocks alone. That sum contains the paper's \texttt{StatOnlyCov}, which has rank $205$ and is
 near-diagonal (\S\ref{sec:rank}), so it places a variance floor under \emph{every} eigendirection
-of the combined matrix. It is the larger of the two statistical contributions: our statistical
+of the combined matrix. It is the larger of the two statistical contributions. Our statistical
 block is $0.407$ of it in \emph{square-root} trace, and the square of that factor in \emph{trace}
-(operands in \S\ref{sec:rank}). The power has to be named because the two ratios describe the same
-comparison and differ by more than a factor of two.
-% rebuild/outputs/outA/budget_Q.json.gz paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly (0.4277). The derived
-% inverse and square are not printed.
+(operands in \S\ref{sec:rank}). Each ratio states which power of the trace it uses, because the two
+ratios describe the same comparison and differ by more than a factor of two.
+% Printed 0.407 is the refined estimator's (RE-2 part C, stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv row floor-stat-vs-statonly 0.4067); the
+% purity-era rebuild/outputs/outA/budget_Q.json.gz paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly was 0.4277. The
+% derived inverse and square are not printed. (n2: comment corrected to the printed value's source.)
 An external, published block, rather than any ensemble of ours, therefore sets the small-eigenvalue
 directions on which a finite-$N$ debiasing factor would act. This bounds the quoted number's
 exposure to declaration~(v) of \S\ref{sec:nd-declarations}.
@@ -788,7 +791,9 @@ toward an ours-only $\chi^{2}$ is the \emph{statistical} block, not more
 systematic bands. The gap is \emph{not} a missing MC-statistical term: our
 bootstrap already draws independent Poisson($1$) multipliers on data, signal MC
 and background MC per replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582 \S5.1).
-% rebuild/outputs/outA/budget_Q.json.gz stat.sqrt_trace (1.984e-40), paper_ratios (0.4277, StatOnly 4.639e-40);
+% Printed values are the refined estimator's (RE-2 part C, stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv rows stat-trace-a 1.886e-40,
+% stat-vs-statonly-a 0.4067); the purity-era rebuild/outputs/outA/budget_Q.json.gz had stat.sqrt_trace 1.984e-40 and
+% paper_ratios 0.4277 (StatOnly 4.639e-40, unchanged). (n2: comment corrected to the printed values' source.)
 % rebuild/outputs/chi2/ours_only_universe_plus_stat.txt (23.566), ours_only_Q.txt (23.233). The scripts' own cond is
 % not printed here (review NOTE 1: one cond convention per printed value, budget_Q ranks above). Both are
 % for E_U, so the paper-only comparator is \chiPaper. The earlier bootstrap's pinv 252 and the 2.40 / 5.8 ratios are
@@ -811,7 +816,8 @@ earlier band against the estimator's own scatter; its truth equals the prior, so
 regularization bias toward the prior, and it does not decide between the explanations above.
 The measured statement is the ratio; ``higher statistical efficiency'' is one of at least
 three explanations of it and is not established here.
-% rebuild/outputs/outA/budget_Q.json.gz paper_ratios (0.4277, 0.4349). The VL170 numbers (1.07, 77/23, 0.95,
+% Printed ratios are the refined estimator's (RE-2 part C, stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv rows stat-vs-statonly-b 0.4067,
+% stat-vs-statonly-median 0.4252); the purity-era budget_Q paper_ratios were 0.4277 and 0.4349. The VL170 numbers (1.07, 77/23, 0.95,
 % 0.356, 0.416, 0.108, 0.46, 0.009, 76.7) moved verbatim to App. history-vl175 (PHASE2 Q7). J3/J4 provisional (DECISION-20261018, packet W3: D2).
 
 An ours-only $\chi^{2}$ must use our own $\mathbf{C}^{\ours}$.
@@ -875,11 +881,11 @@ The quoted 2D covariance therefore remains the block sum, with the cross term as
 % Rederived block: \texttt{uq/flux\_muonE\_cross.root}.
 A fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},\text{MuonE}_{\text{scale}})$
 posterior from MAT-MINERvA could supply a paper-independent $\rho$.
-The collaboration has confirmed in private communication
+The collaboration uses the same truncated-spectral pseudo-inverse as the ours-only
+$\chi^{2}$ (private communication),
 % (2026-08-02, verbal)
-that it uses the same truncated-spectral pseudo-inverse as our ours-only
-$\chi^{2}$, so the convention is collaboration practice rather than an invention
-of this analysis; no published reference for it has been identified.
+so the convention is collaboration practice, not an invention of this analysis.
+No published reference for it has been identified.
 
 \paragraph{What is reported.}
 The combined $\chi^{2}/\mathrm{ndf}=\chiCombined$ is a descriptive distance,

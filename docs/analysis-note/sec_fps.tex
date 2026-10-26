@@ -5,8 +5,14 @@ This section gives a preliminary scalar central value for an extended fiducial d
 dependence envelope, a hidden-variable closure and a 200-toy containment diagnostic for the extension. The
 signal remains $\nu_\mu$ CC in the tracker interaction fiducial volume. The truth-muon
 kinematic cuts are removed, but the reconstructed MINOS-based selection is unchanged,
-so the domain is an extended \emph{fiducial} one, not unrestricted neutrino phase space. No corrected
-covariance exists for it, so the result consists of central values and these validation tests.
+so the domain is an extended \emph{fiducial} one, not unrestricted neutrino phase space. No covariance is
+quoted for it, so the result consists of central values and these validation tests.
+% Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): "No corrected covariance exists for it" was
+% false as read: an extended-fiducial covariance with re-selected lateral bands exists (job 56431823, 2026-08-07;
+% nd-unfolding/uq_fps/corrected/FPS_UQ_CORRECTED_STATE.md:127) but is not quoted (AGENTS.md:36).
+% Search: extended-fiducial covariance quoted; corrected FPS covariance; activelat (note, paper and primer closures: no
+% printed extended-fiducial covariance or uncertainty beyond the three-prior envelope; AGENTS.md:36 "Old unified 4D/FPS
+% covariances ... are unquotable") @ 7ad668f4
 % Register pass b8 (2026-10-22): register only; every number and limitation kept (ledger.md rows F*).
 
 \subsection{Acceptance and the extended domain}
@@ -117,9 +123,18 @@ fiducial volume is
 % sec. 4: 4.502/3.0730 - 1 = 46.50 %; VALIDATION_LEDGER.md:1626 "+46% vs restricted" names no operand). The two totals:
 % VALIDATION_LEDGER.md:1624-1625 (control 3.073e-38; FPS total 4.502e-38).
 compared with $\SI{\sigTwoDPurity}{cm^2/nucleon}$ for the control unfold in the restricted phase
-space. The extended-fiducial value was produced with the binned purity correction, not with the
-negative-weight treatment designated for the extended-fiducial analysis; no extended-fiducial production
-with refined negative-weight subtraction has been run (App.~\ref{app:negweight}).
+space. The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-06-10), not
+with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App.~\ref{app:negweight}).
+% Accuracy fix (unscored; Joseph, DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md, via the director 2026-10-26): "No extended-fiducial production with
+% refined negative-weight subtraction has been run" was false as read: ten negweight-refined extended-fiducial endpoint
+% unfolds were run later (job 56430128; nd-unfolding/sbatch_unfold_active_fps.sh:18,34-35,60). The sentence now says
+% only what the quoted central value used, in the words of Joseph's selected option, and keeps the base sentence's fact that a
+% negative-weight treatment is designated for this analysis. That treatment is refined negative-weight subtraction: App. C
+% sec:negweight-footing designates negative-weight injection with Stay-Positive refinement (app_negweight.tex:370-371), the
+% refined form of negative-weight injection (:257-258) whose refinement is the Stay-Positive classifier (:476) (director, 2026-10-26).
+% Search: extended-fiducial central value; fps battery; 54244120; negweight-refined FPS central value (app_provenance.tex
+% fps-battery; no refined extended-fiducial central value is recorded; sbatch_unfold_active_fps.sh:67 takes the existing
+% central value as input) @ 7ad668f4
 We adopt \textbf{two-tier reporting}.
 \emph{Tier~1} comprises the acceptance-supported cells ($\epsilon\gtrsim2\%$): the published region and the
 measurable part of the extension, which carries $\sim\SI{6}{\percent}$
@@ -130,5 +145,6 @@ an explicit additional three-prior envelope band. Both tiers enter the
 sum; only tier~1 is interpreted as an acceptance-supported measurement.
 No uncertainty magnitude is assigned beyond the three-prior envelope, because no extended-domain
 covariance has been constructed with re-selected lateral bands under the procedure of \S\ref{sec:uq-combine}.
+% Search: extended-domain covariance with re-selected lateral bands; activelat; 56431823; sec:uq-combine procedure (true as scoped, Joseph's ruling DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md item 1.3: the activelat FPS covariance of job 56431823, AUDIT-FINDINGS-20260820-fps.md:217-221, was built on 2026-08-07, before the sec:uq-combine procedure with C_PL was adopted on 2026-10-17, DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md, and is unquotable, AGENTS.md:36, AUDIT-FINDINGS-20260820-fps.md:389-390) @ 0d9c64fd
 % The former subsection "Recoil-PET feasibility study on the extended population"
 % (label sec:fps-pet) moved to sec_pet.tex, sec:pet-full-event-status (lane 3 §10.1).

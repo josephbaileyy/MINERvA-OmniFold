@@ -1,0 +1,62 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are a referee for the records document of a particle-physics analysis note. Each passage below gives a SOURCE (text from the analysis note, or a table row's record cells, LaTeX source, comments removed) and the new records ENTRY that copies it. The rule: the ENTRY must be a copy, not a paraphrase. It must carry every fact of the SOURCE, add no fact, condition or claim, and change no number, scope or status. Allowed differences: whitespace, a final period, the joining of two table cells with a colon, and the removal of a citation of the entry's own tag.
+
+For EACH passage answer in exactly this format:
+PASSAGE: <id>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact ENTRY words and what is wrong>
+
+
+===== BEGIN FILE context.txt =====
+CONTEXT: App. G of the records document lists repository records by tag, in tables (tag, where the note cites it, record) and in full-width entries "\item[\texttt{tag}.] text". The new entries either copy provenance sentences out of the analysis note, so that the note can cite them and drop them from its body, or repeat a table row's record so that the tag has a numbered full-width entry. The note keeps, as a compressed consequence, any part that bears on a printed number.
+
+===== END FILE context.txt =====
+
+
+===== BEGIN FILE passages2.txt =====
+=== PASSAGE REC-1 (new App. G entry 2d-central-value: its table row's record, then the note's provenance sentences) ===
+SOURCE 1 (the tag's row in App. G Table tab:prov-paths, record cell):
+\texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root}, \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c}
+SOURCE 2 (sec_method.tex:144-148, the note sentences; their citation of this tag is the note's pointer to the entry):
+The purity-subtracted seed-42 central value (Ref.~\cite{NoteRecords2026}, \texttt{2d-central-value}) has no execution log or recorded run configuration. An independent rerun with a different driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a regeneration with the current driver whose run configuration is recorded.
+
+ENTRY (records, app_provenance.tex):
+ \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root}, \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c}. The purity-subtracted seed-42 central value has no execution log or recorded run configuration. An independent rerun with a different driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a regeneration with the current driver whose run configuration is recorded. 
+
+=== PASSAGE REC-2 (new App. G entry july-sweep) ===
+SOURCE (sec_systematics.tex:214-218):
+The products of the July sweep, which the quoted universe block uses, do not record a checksum of the driver code that produced them, and that driver version was not committed. Seven of its universes, four of them also checked in an earlier pilot, are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, because the same code produced them.
+
+ENTRY (records, app_provenance.tex):
+ The products of the July sweep, which the quoted universe block uses, do not record a checksum of the driver code that produced them, and that driver version was not committed. Seven of its universes, four of them also checked in an earlier pilot, are reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by inference, because the same code produced them. 
+
+=== PASSAGE REC-3 (new App. G entry bkg-mode-elimination) ===
+SOURCE (app_negweight.tex:284-291):
+For the existing endpoint unfolds, produced in July 2026, purity is established by elimination. Neither of the two job scripts that could have produced them sets the driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its default, purity; the driver announces its mode only on its negative-weight code paths, and the logs of these lateral-band unfolds contain the purity code path's signature line and no mode announcement. The option and the announcements already existed when the files were produced, so the absence of an announcement is evidence of purity.
+
+ENTRY (records, app_provenance.tex):
+ For the existing endpoint unfolds, produced in July 2026, purity is established by elimination. Neither of the two job scripts that could have produced them sets the driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its default, purity; the driver announces its mode only on its negative-weight code paths, and the logs of these lateral-band unfolds contain the purity code path's signature line and no mode announcement. The option and the announcements already existed when the files were produced, so the absence of an announcement is evidence of purity. 
+
+=== PASSAGE REC-4 (new App. G entry flux-index, repeating its table row) ===
+SOURCE (the tag's row in an App. G table, record cell(s)):
+\texttt{KNOWN\_ISSUES.md} row 91 | the flux-universe index identity behind the $1/\Phi_{u}$ rescale and its exact test
+
+ENTRY (records, app_provenance.tex):
+ \texttt{KNOWN\_ISSUES.md} row 91: the flux-universe index identity behind the $1/\Phi_{u}$ rescale and its exact test. 
+
+=== PASSAGE REC-5 (new App. G entry response-diagnostic, repeating its table row) ===
+SOURCE (the tag's row in an App. G table, record cell(s)):
+\repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit \texttt{7d173bd0}
+
+ENTRY (records, app_provenance.tex):
+ \repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit \texttt{7d173bd0}. 
+
+=== PASSAGE REC-6 (new App. G entry rank-inversion, repeating its table row) ===
+SOURCE (the tag's row in an App. G table, record cell(s)):
+\repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md}
+
+ENTRY (records, app_provenance.tex):
+ \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md}. 
+
+===== END FILE passages2.txt =====

@@ -1,0 +1,74 @@
+Summary and outlook
+
+Summary. The executive summary (p. 2) lists each result with its scope; this section states the
+conclusions they support. The main results are the validation findings, within the scope stated in §1;
+the generator tests are an application that illustrates calibrated inference with a biased estimator.
+• Unbinned OmniFold with gradient-boosted trees reproduces the integral of the published
+MINERvA ME FHC CC-inclusive d2 σ/(dpT dp∥ ) within about one percent and its uncertainty
+scale (§6), with a correlated shape difference (χ2 /ndf = 2.27, §6.4) whose size depends on
+the estimator (exact-split cross-check 3.66). A generator-shape model-dependence component,
+reported beside the uncertainty, raises its per-bin median to 7.90 % (§4.6). The central value
+and its uncertainty share the LightGBM estimator, which was chosen after both comparisons
+were known (§3.2).
+• Simultaneous unbinned three-, four- and five-observable unfolds (+Eavail , +q3 , +W ) pass
+marginal-normalization checks against the lower-dimensional results to ≈1–2 % in configuration
+(a) (4D and 5D), and the configuration-(e) 3D marginal agrees with the configuration-(f)
+2D result to 0.141 % in total, across configurations; the 3D and 4D injected-bump closures,
+of configuration (a), leave 0.10 of the injected Eavail change and close q3 to 1.1 %, with no
+acceptance threshold recorded in advance (§7). The central values lie above all four truth-level
+generators of §7.6 in the quasielastic–∆ dip, the region of the established low-recoil discrepancy
+(§7.7, §7.8). They lie above the Tune v1 prior mostly at high Eavail and high W . A fifth of
+that positive difference sits in the single widest overflow cell, in ratio the excess also extends
+to low W , and the regularization bias is largest in this region (§8.4). There all four external
+generators also lie below the data, each by about its overall shortfall once the Eν > 20 GeV
+events missing from GiBUU are accounted for (§8.5), and the NuWro and GiBUU ratios contain
+an uncorrected carbon-versus-CH target difference.
+• Pseudo-experiments with backgrounds reveal a purity-subtraction bias of up to 4 % in the
+highest-W cells, which the quoted five-dimensional central value keeps and no quoted uncertainty
+includes; the refined negative-weight subtraction largely removes it. In a two-dimensional
+closure test with backgrounds, the purity and refined estimates differ by more than one
+statistical standard deviation in 14 of the 205 cells, where the purity estimate lies up to 5.9 σstat
+from the truth and the refined one within 0.44 σstat , and on this basis the two-dimensional
+result was moved to the refined estimator (App. C).
+• As an application, joint tests whose design was fixed before any production pseudo-experiment
+or observed statistic, with two data-informed elements (§10.3), calibrated through the full
+
+analysis chain, reject all ten hybrid generator hypotheses under six stated conditions, with
+the family-wise error rate controlled at 5% under the stated calibration assumptions and the
+size averaged over the nuisance priors. They are not physical exclusions, recover established
+discrepancies, and show no evidence of discrimination beyond matched coarse projections. In a
+descriptive re-evaluation, NuWro’s total (rate-and-shape) rejection is not robust to correcting
+its carbon prediction to CH, and the ten decisions are unchanged (§10, §10.9).
+Principal limitations. The principal limitations, each stated in the body with the result it
+qualifies, are these. The quoted two-dimensional statistical block has had no coverage test (§4.2,
+§5.2). The generator comparisons of §§7–8 are descriptive comparisons of central values that
+identify no nuclear or interaction mechanism, and no 3D or 4D covariance is quoted (§7). The fivedimensional estimator recovers only part of truth changes of about the size of generator differences,
+and no quoted uncertainty includes this residual bias, interpreted as regularization bias (§9.3).
+Above two dimensions the results are central values without intervals of validated coverage: no
+five-dimensional measurement with total uncertainties was constructed (§9.4), and bias-corrected
+statistical intervals of a deterministic estimator variant miscover at the tested truths (§9.5). For the
+one five-dimensional covariance used in this note, which does not meet its specification’s acceptance
+criteria, two companion covariances built at different estimator seeds show a seed sensitivity above
+the limit set before production, so no covariance-based significance is quoted (§9.6). The calibration
+of the generator tests is valid for the simulated null to the extent that the pseudo-experiment chain
+reproduces the analysis applied to the data (§10.3), and their nuisance model has no calorimetric
+recoil-response band (§10.8).
+Outlook. The scalar extended-fiducial study (§11) yields a preliminary central value σext =
+4.502 × 10−38 cm2 /nucleon, against 3.073 × 10−38 cm2 /nucleon for its control unfold in the restricted
+phase space. New acceptance-supported cells contribute about 6 % of the rate; separately labeled
+prior-dominated extrapolation contributes about 28 %. Further refinements are a fifth external
+generator, NEUT, and a finer 44-cell comparison with the Ascencio et al. measurement (the
+maximal-common-grid comparison is in §7.8). A flux–muon-energy-scale posterior derived from
+MAT-MINERvA, independent of the published analysis, would let the correlation ρ between the
+leading flux mode and the muon-energy-scale band (§4) be derived entirely within this analysis.
+Reusing the unbinned result. The public ATLAS charged-particle phase-space release [62]
+exemplifies unbinned distribution. The emerging omnifold_publication proposal [63] emphasizes
+weight-family metadata, normalization, row alignment, and checksums. A MINERvA release
+should likewise specify event identity, estimator and uncertainty-family definitions, units, support,
+normalization, and a reproducible projection example. App. G specifies this release for our analysis,
+including which of its objects already have fixed identities and which are still to be produced. A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G). New projections require their own applicability checks;
+nominal weights alone cannot certify arbitrary downstream inference (App. B.4). The release design
+and its public example have no bearing on the choice of covariance (§9.6).

@@ -47,6 +47,11 @@ the merge. Each check is its own named step, and every step runs even when an ea
 - the note checkers' tests: `pytest` on `docs/analysis-note/test_check_sec4_receipts.py` (one pinned package,
   `pytest==8.3.4`, is installed for it), and `check_note_records.py --self-test` (on `records-inventory-base.json`)
   and `--self-test-pin`. `build_all.sh` runs the checkers themselves locally, not these tests;
+- the records entry numbers (note register round n2, N2-1): `check_note_records.py entry-numbers --check` (the
+  generated `records_entry_numbers.tex` is fresh), `--self-test-entry-numbers` (its LaTeX agreement case SKIPs, since
+  CI has no LaTeX), and `check_note_records.py pin` (RECORDS-PIN Q1-Q4; Q3 compares every number the posted note
+  prints through `\recentry` with the entry's number at the pinned commit). The comparison with the records build's
+  own labels, `entry-numbers --check-aux`, needs `main_records.aux` and runs in `build_all.sh` only;
 - a last step that fails if any check modified the checkout.
 
 **Why `--base`.** In CI nothing is staged and HEAD already contains the change, so the two checks that compare a

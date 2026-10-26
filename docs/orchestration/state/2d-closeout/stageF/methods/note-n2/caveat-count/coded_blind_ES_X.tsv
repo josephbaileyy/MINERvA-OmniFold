@@ -1,0 +1,72 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	d	intro	pos	no	no	results framed as validation not measurement	The main results are the validation findings.
+2	d	intro	pos	no	no	validation scope limited to tested configurations	They hold for this implementation, one data set, and the configurations, observables and deformations tested (§1).
+3	d	intro	pos	no	no	generator tests illustrative application only	The generator tests are an application that illustrates calibrated inference with a biased estimator.
+4	d	intro	pos	no	no	reproduction shape difference with publication	reproduces the published integrated cross section [3] within about one percent, with a correlated shape difference.
+5	c	intro	pos	yes	partly	generator-shape model dependence reported beside	A generator-shape model-dependence component, reported beside that uncertainty and absent from the published one, raises the per-bin median to 7.90 % (§4.6).
+6	b	intro	pos	no	no	estimator chosen after comparisons known	LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2).
+7	d	intro	pos	yes	no	reproduction shape difference with publication	Against the full published covariance, χ2 /ndf = 2.27 (exact-split: 3.66) is a descriptive distance.
+8	c	intro	neg	no	no	reproduction shape difference with publication	is a descriptive distance. Its source has not been identified (§6.4).
+9	d	intro	pos	no	no	validation checks split across configurations	In configuration (a), the 4D and 5D marginal-normalization checks against the lower-dimensional result pass to ≈1–2 %.
+10	d	intro	pos	no	no	validation checks split across configurations	The configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to 0.141 % in total, a comparison across configurations (§7).
+11	d	intro	pos	no	no	binned triple-differential already exists	Binned MINERvA measurements already reach triple-differential [4, 5].
+12	d	intro	pos	no	no	validation checks split across configurations	The 3D and 4D injected-bump closures, of configuration (a), leave 0.10 of the injected Eavail change and close q3 to 1.1 %.
+13	b	intro	neg	no	no	closures lack predeclared acceptance threshold	No acceptance threshold fixed before either closure is on record (§7.4, §7.8).
+14	d	intro	pos	no	no	five observables not independent	Reconstructed W is fixed by (pT , p∥ , q3 ), so the five are simultaneous, not independent, observables (§8.2).
+15	c	intro	pos	no	no	inherited charged-pion Eavail constant	Eavail keeps the inherited 135 MeV charged-pion constant (§7.1).
+16	d	intro	pos	no	no	generator comparisons descriptive only	Low-Eavail central values (descriptive). All four truth-level generators, GENIE [6],
+17	d	intro	pos	no	no	generator comparisons descriptive only	High-Eavail , high-W excess (descriptive). In cell-integrated terms, most of the positive
+18	d	intro	pos	yes	no	excess concentrated in overflow cell	A fifth of the positive difference sits in the single widest overflow cell.
+19	c	intro	pos	no	no	5D regularization bias not in uncertainty	The high-Eavail , high-W region carries the largest regularization bias.
+20	d	intro	pos	yes	no	GiBUU high-energy sample limit	each by about its overall shortfall once GiBUU’s Eν ≈ 20 GeV sample limit is allowed for.
+21	c	intro	pos	no	no	NuWro GiBUU carbon target uncorrected	The NuWro and GiBUU ratios contain an uncorrected carbon-versus-CH target difference (§8.3).
+22	d	intro	pos	yes	no	generator tests under stated conditions	Calibrated tests of hybrid null hypotheses for five predictions, in total (rate and shape) and in shape, reject all ten under six stated conditions.
+23	d	intro	pos	no	no	hybrid nulls with Tune v1 below grid	each null uses the prediction on the fine grid, with the Tune v1 composition below it.
+24	c	intro	pos	no	no	generator-test calibration assumptions	The family-wise error rate is controlled at 5% under the stated calibration assumptions, and the size is averaged over the nuisance priors (§B.5).
+25	d	intro	pos	no	no	test size averaged over nuisance priors	The family-wise error rate is controlled at 5% under the stated calibration assumptions, and the size is averaged over the nuisance priors (§B.5).
+26	d	intro	pos	yes	no	closest decisions near boundary	The closest decisions, the NuWro and GENIE CV shape tests, lie 1.11 and 1.30 null standard deviations beyond their boundary, with the Holm order held fixed (§10.4).
+27	d	intro	neg	no	no	rejections not physical exclusions	The rejections are not physical exclusions, and matched coarse projections reject as well (§10.7).
+28	c	intro	neg	no	no	sub-grid residual unmeasured	that assumes a larger residual below the finest tested grid. That residual is unmeasured.
+29	b	intro	pos	no	no	lost pseudo-experiments rerun afterwards	The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed.
+30	b	intro	neg	no	no	lost pseudo-experiments rerun afterwards	No recovered draw changes a decision (§10.6).
+31	c	intro	neg	no	no	NuWro GiBUU carbon target uncorrected	In this descriptive re-evaluation, NuWro’s total-test rejection is not robust to the correction, and the ten decisions are unchanged (§10.9).
+32	c	intro	pos	no	partly	covariance omits cross-source nonlinear terms	The standard covariance sums single-source systematic matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms.
+33	d	intro	pos	no	no	extended-fiducial study preliminary	A preliminary extended-fiducial study. Removing truth-muon cuts, with the fiducial volume and MINOS-based selection kept,
+34	c	intro	pos	yes	no	extended-fiducial tier 2 prior-dominated	It puts about 28 % in low- or zeroefficiency cells, which form tier 2 (§11).
+35	c	caption	pos	no	partly	generator-shape model dependence reported beside	a generator-shape model-dependence component reported beside it
+36	a	caption	pos	no	no	earlier statistical band undercovered	Earlier statistical band failed fixed-truth coverage; rebuilt band and quoted statistical block lack an independent test.
+37	c	caption	pos	no	no	2D statistical block coverage untested	Earlier statistical band failed fixed-truth coverage; rebuilt band and quoted statistical block lack an independent test.
+38	d	caption	pos	no	no	reproduction shape difference with publication	Integral reproduced within about 1%, with a correlated shape difference; learner chosen after the comparisons were known.
+39	b	caption	pos	no	no	estimator chosen after comparisons known	Integral reproduced within about 1%, with a correlated shape difference; learner chosen after the comparisons were known.
+40	c	caption	neg	no	no	2D publication readiness not established	Whether it is ready for publication as a measurement has not been established.
+41	b	caption	pos	no	no	5D covariance fails predeclared criteria	One scalar-5D covariance, used although it has not met the validation criteria set before it was built
+42	b	caption	pos	no	no	closures lack predeclared acceptance threshold	Marginal anchors agree; injected-bump closures have no recorded threshold; background and large-deformation tests expose bias.
+43	c	caption	pos	no	no	5D purity-subtraction bias unassigned	Marginal anchors agree; injected-bump closures have no recorded threshold; background and large-deformation tests expose bias.
+44	c	caption	neg	no	no	no validated coverage above 2D	expose bias. No validated total-interval coverage.
+45	d	caption	pos	no	no	generator comparisons descriptive only	Central-value comparisons; the covariance’s four measured limitations apply.
+46	c	caption	pos	yes	no	5D covariance fails predeclared criteria	Central-value comparisons; the covariance’s four measured limitations apply.
+47	d	caption	neg	no	no	no covariance-based significance quoted	the covariance’s four measured limitations apply. No covariance-based generator significance.
+48	d	caption	pos	no	no	generator tests add no uncertainty	Null-specific full-chain calibration; no new measurement covariance
+49	e	caption	pos	no	no	test design fixed in advance	Design fixed before any production pseudo-experiment or observed statistic, with two datainformed elements; independent recomputation of the arithmetic; calibration adequacy remains conditional.
+50	b	caption	pos	yes	no	data-informed elements in test design	Design fixed before any production pseudo-experiment or observed statistic, with two datainformed elements; independent recomputation of the arithmetic; calibration adequacy remains conditional.
+51	c	caption	pos	no	no	generator-test calibration assumptions	Design fixed before any production pseudo-experiment or observed statistic, with two datainformed elements; independent recomputation of the arithmetic; calibration adequacy remains conditional.
+52	d	caption	pos	yes	no	generator tests under stated conditions	Tests of hybrid generator hypotheses under six stated conditions; no new uncertainty on the cross section.
+53	d	caption	pos	no	no	PET unfolding future work	Point-cloud (PET) studies are future work and contribute no result here.
+54	c	intro	neg	no	no	2D statistical block coverage untested	The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954;
+55	a	intro	neg	yes	no	earlier statistical band undercovered	The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954;
+56	d	intro	pos	no	no	generator comparisons descriptive only	The generator comparisons of §§7–8 are descriptive comparisons of central values that identify no nuclear or interaction mechanism.
+57	c	intro	neg	no	no	no 3D or 4D covariance	No 3D or 4D covariance is quoted (§7).
+58	c	intro	pos	yes	no	5D regularization bias not in uncertainty	The five-dimensional estimator recovers only part of a generator-sized truth change, with residuals of up to 74 % in the highest-W column.
+59	c	intro	neg	no	no	5D regularization bias not in uncertainty	No quoted uncertainty includes this residual regularization bias (§9.3).
+60	c	intro	pos	yes	no	5D purity-subtraction bias unassigned	Closure tests with backgrounds find a purity-subtraction bias of up to 4 % in the highest-W cells.
+61	c	intro	pos	no	no	5D purity-subtraction bias unassigned	The five-dimensional central value keeps that bias, and no quoted uncertainty includes it (§9.2).
+62	d	intro	pos	no	no	no validated coverage above 2D	Above two dimensions the results are central values without intervals of validated coverage.
+63	c	intro	neg	no	no	no 5D measurement with total uncertainties	No five-dimensional measurement with total uncertainties was constructed (§9.4).
+64	c	intro	pos	no	no	5D interval coverage fails	The one fivedimensional coverage test, of bias-corrected statistical intervals of a deterministic estimator variant, miscovered at the tested truths.
+65	d	intro	neg	no	no	5D interval coverage fails	No frequentist coverage is therefore claimed for any five-dimensional interval (§9.5).
+66	b	intro	neg	no	no	5D covariance fails predeclared criteria	The one five-dimensional covariance used in this note, with its (Eavail , W ) projection, does not meet its specification’s acceptance criteria.
+67	d	intro	pos	yes	no	5D covariance fails predeclared criteria	Four measurements limit what it supports (§9.6).
+68	c	intro	pos	no	no	generator-test calibration assumptions	The calibration of the generator tests is valid for the simulated null to the extent that the pseudo-experiment chain reproduces the analysis applied to the data (§10.3).
+69	c	intro	neg	no	no	nuisance model lacks recoil-response band	Their nuisance model has no calorimetric recoil-response band (§10.8).
+70	c	intro	pos	no	no	extended-fiducial tier 2 prior-dominated	Tier 2 of the extended-fiducial study is prior-dominated extrapolation (§11).
+71	d	intro	pos	no	no	PET unfolding future work	Point-cloud (PET) unfolding is future work (§1).

@@ -13,6 +13,9 @@ usage:
   check_note_records.py pin [note-dir]          # the NoteRecords2026 pin (build_all.sh runs this)
   check_note_records.py --self-test-pin         # the pin check fires and skips where it should (build_all.sh)
   check_note_records.py redit-digest <file.tex>  # each printed paragraph's sha256, for an R-EDIT row
+  check_note_records.py entry-numbers [--check | --check-aux] [note-dir]   # N2-1: write / check the generated
+                                                 # records_entry_numbers.tex; --check-aux compares main_records.aux
+  check_note_records.py --self-test-entry-numbers  # stale file and aux mismatch fail; generator = label hook
 
 The base is docs/analysis-note at the commit before the move (or the inventory frozen from it); the new tree is the
 same directory after it. The new tree carries main_records.tex, whose \\input closure is the records document, and
@@ -47,6 +50,12 @@ Inventory (base):                                    Probes (new):
                                                          posted note at THIN_BASE is still printed, or is a DROP
                                                          the ledger lists, and the ledger lists no drop of a
                                                          citation that is still printed
+                                                     P9 every App. G table row parses into cells; every tag
+                                                         the posted note cites has a full-width entry
+                                                         (\\item[\\texttt{<tag>}.], which the records number);
+                                                         and an entry whose tag's row has a record other than
+                                                         "see below" contains that row's record cell(s),
+                                                         normalized, so a repeated record cannot drift
 
 THE THINNING (DECISION-20261022-joseph-note-records-refs-and-stop.md item 1). The posted note keeps a records
 citation only where a reader needs the record to check a number or claim printed there; every other citation is
@@ -105,7 +114,7 @@ word change and a recorded number change (each must fire as more than pointer to
 and a recorded pointer insertion (each must fire as deleting or adding pointer tokens), a deleted paragraph with a
 row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). It also requires a row
 whose new digest is wrong only in its last hex digit to fail with both digests printed in full and different
-(R-EDIT messages print full digests). Exit 0 only if every plant
+(R-EDIT messages print full digests). For P9 it drifts a repeated record from its table row (P9 must fire). Exit 0 only if every plant
 behaves as named and the real pair is silent. The thinning plants
 need THIN_BASE from git, so the self-test runs in the canonical checkout.
 """
@@ -190,7 +199,8 @@ def pointers(files: list[Path], tags: set[str], target: str) -> Counter:
         for m in re.finditer(target, t):
             win = t[m.end():m.end() + 260]
             stop = min([x for x in (win.find(")"), win.find(". ")) if x >= 0] or [len(win)])
-            named = [x for x in re.findall(r"\\texttt\{([a-z0-9-]+)\}", win[:stop]) if x in tags] or ["(whole)"]
+            # a citation names its tag as \texttt{<tag>} or, since N2-1, as \recentry{<tag>} (printed as its number)
+            named = [x for x in re.findall(r"\\(?:texttt|recentry)\{([a-z0-9-]+)\}", win[:stop]) if x in tags] or ["(whole)"]
             for x in named:
                 c[(MOVED_TO.get(f.name, f.name), x)] += 1
     return c
@@ -327,6 +337,68 @@ def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fa
     return accepted
 
 
+def _split_top(text: str, sep: str) -> list[str]:
+    """Split at `sep` outside braces, never at an escaped one (\\& or a \\\\ inside \\shortstack{...} stays)."""
+    out, depth, cur, k = [], 0, [], 0
+    while k < len(text):
+        ch = text[k]
+        if ch == "\\" and text.startswith(sep, k) and depth == 0 and sep == "\\\\":
+            out.append("".join(cur)); cur = []; k += 2; continue
+        if ch == "\\":  # an escaped character or a control sequence: copy it whole
+            cur.append(text[k:k + 2]); k += 2; continue
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+        elif ch == sep and depth == 0:
+            out.append("".join(cur)); cur = []; k += 1; continue
+        cur.append(ch); k += 1
+    out.append("".join(cur))
+    return out
+
+
+TABLE_ROW = re.compile(r"^\s*\\texttt\{([a-z0-9-]+)\}\s*&", re.M)
+ENTRY_LABEL = re.compile(r"\\item\[\\texttt\{([a-z0-9-]+)\}\.?\]")
+
+
+def table_records(prov: str) -> dict[str, list[str]]:
+    """tag -> the record cell(s) of its App. G table row (every cell after "Cited at"), normalized, printed text."""
+    out = {}
+    for table in re.findall(r"\\begin\{longtable\}(.*?)\\end\{longtable\}", printed(prov), re.S):
+        for row in _split_top(table.split("\\endlastfoot", 1)[-1], "\\\\"):
+            cells = [norm(c) for c in _split_top(row, "&")]
+            m = re.fullmatch(r"\\texttt\{([a-z0-9-]+)\}", cells[0]) if cells else None
+            if m and len(cells) >= 3:
+                out[m.group(1)] = [c for c in cells[2:] if c]
+    return out
+
+
+def full_width_entries(prov: str) -> dict[str, str]:
+    """tag -> the normalized printed text of its full-width entry (\\item[\\texttt{<tag>}.] to the next item)."""
+    parts = ENTRY_LABEL.split(norm(printed(prov)))
+    return {parts[i]: re.split(r"\\end\{description\}", parts[i + 1])[0] for i in range(1, len(parts) - 1, 2)}
+
+
+def repeat_fails(prov: str, cited: set[str]) -> tuple[list[str], int]:
+    """P9. (i) Every table row line parses; (ii) every tag the posted note cites has a full-width entry; (iii) an entry
+    whose row's record is not "see below" contains that record. Returns the failures and how many records (iii)
+    checked."""
+    rows, entries = table_records(prov), full_width_entries(prov)
+    fails = [f"P9 the App. G table row of {t} did not parse into cells" for t in TABLE_ROW.findall(printed(prov))
+             if t not in rows]
+    fails += [f"P9 tag {t} is cited by the posted note or recorded as an added entry, but has no full-width App. G "
+              "entry" for t in sorted(cited - set(entries))]
+    checked = 0
+    for tag in sorted(set(rows) & set(entries)):
+        if any(c.lower() == "see below" for c in rows[tag]):
+            continue
+        checked += 1
+        for c in rows[tag]:
+            if c not in entries[tag]:
+                fails.append(f"P9 App. G entry {tag} does not contain its table row's record cell: {c[:80]!r}")
+    return fails, checked
+
+
 def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
                 head: dict[str, str] | None = None, info: dict | None = None) -> list[str]:
     """Every failure of P0-P8. `thin` is the citation inventory at THIN_BASE (None: P8 is skipped); `head` the records
@@ -441,6 +513,13 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
             elif drops[k] > gone:
                 fails.append(f"P8 {f}: the ledger lists {drops[k]} drop(s) of {key}, but only {gone} of the "
                              f"{thin[k]} citation(s) at THIN_BASE {THIN_BASE[:8]} are gone")
+    # P9 the App. G rows parse, every cited tag has a numbered entry, and a repeated record stays its row's
+    cited = {k[4:] for (_, k) in citation_keys(ntext) if k.startswith("tag:")}
+    # an entry the records-move ledger records as added must keep its label, cited or not (director, n2)
+    added = set(re.findall(r"Section R1 entry \\texttt\{([a-z0-9-]+)\}", ledger.read_text() if ledger.exists() else ""))
+    p9, info["repeats"] = repeat_fails(rtext.get("app_provenance.tex", ""), cited | added)
+    info["cited_tags"], info["added_entries"] = len(cited), len(added)
+    fails += p9
     return fails
 
 
@@ -459,7 +538,9 @@ def report(inv: dict, fails: list[str], info: dict | None = None) -> str:
     return (f"RECORDS-MOVE :: {verdict(fails, info)} ({len(inv['labels'])} labels, {len(inv['tags'])} "
             f"tags, {len(inv['dead'])} struck bodies, {len(inv['repopaths'])} paths, {len(inv['record_paragraphs'])} "
             f"record and {len(inv['reader_paragraphs'])} reader paragraphs, {sum(inv['g_pointers'].values())} App. G "
-            f"pointers{thin}; {len(fails)} failure(s))")
+            f"pointers{thin}; P9: entries required for {info.get('cited_tags', 0)} cited tags and "
+            f"{info.get('added_entries', 0)} added entries, {info.get('repeats', 0)} repeated records checked; "
+            f"{len(fails)} failure(s))")
 
 
 def probe(base: Path, new: Path, ledger: Path) -> int:
@@ -542,11 +623,11 @@ def claims_in_text(text: str) -> list[tuple[list[str], list[str]]]:
     for m in re.finditer(r"\\cite\{NoteRecords2026\}", t):
         rest = t[m.end():m.end() + 300]
         win = rest[:min([x for x in (rest.find(")"), rest.find(". ")) if x >= 0] or [len(rest)])]
-        tags = re.findall(r"\\texttt\{([a-z0-9-]+)\}", win)
+        tags = re.findall(r"\\(?:texttt|recentry)\{([a-z0-9-]+)\}", win)
         parts: list[str] = []
         if rest.startswith(", "):
             phrase = mask_math(rest[2:])
-            phrase = re.split(r"\)|;|,|\. |\\\\|\\texttt", phrase)[0]
+            phrase = re.split(r"\)|;|,|\. |\\\\|\\texttt|\\recentry", phrase)[0]
             phrase = re.sub(r"\s+and\s*$", "", phrase).strip()
             if phrase and phrase[0].islower() and not phrase.startswith("which"):
                 parts = [plain(x) for x in phrase.split(": ") if plain(x)]
@@ -651,6 +732,148 @@ def thin_base_citations(new: Path) -> Counter | None:
     return citation_keys(texts) if texts else None
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# N2-1 (director rulings 2026-10-26): the posted note cites a records entry by its number, R1.<n>, through
+# \recentry{<tag>}. The numbers are GENERATED from app_provenance.tex into records_entry_numbers.tex, which preamble.tex
+# inputs, so the posted note never reads the records build. The counting rule is the label hook's in main_records.tex:
+# every full-width item \item[\texttt{<tag>}.] of app_provenance.tex, in file order, numbered within the records
+# section that app_provenance.tex opens.
+
+ENTRY_FILE = "records_entry_numbers.tex"
+ENTRY_DEF = re.compile(r"\\@namedef\{recentry@([a-z0-9-]+)\}\{([^}]*)\}")
+RECLABEL = re.compile(r"\\newlabel\{rec:([a-z0-9-]+)\}\{\{([^}]*)\}")
+
+
+def records_section(main_records: str) -> int:
+    """The number of the records section that app_provenance.tex opens: one more than the \\section commands that
+    main_records.tex prints before it inputs app_provenance (app_provenance.tex begins with its \\section)."""
+    text = printed(main_records)
+    i = text.find("\\input{app_provenance}")
+    return 1 + len(re.findall(r"\\section\{", text[:i if i >= 0 else 0]))
+
+
+def entry_numbers(prov: str, section: int) -> dict[str, str]:
+    """tag -> "R<section>.<n>", in the label hook's order."""
+    out: dict[str, str] = {}
+    for n, tag in enumerate(ENTRY_LABEL.findall(norm(printed(prov))), 1):
+        out.setdefault(tag, f"R{section}.{n}")
+    return out
+
+
+def render_entry_numbers(numbers: dict[str, str]) -> str:
+    lines = ["% GENERATED by `python3 check_note_records.py entry-numbers` from app_provenance.tex; never edit by hand.",
+             "% The number of every full-width records entry, as main_records.tex's label hook numbers it, so the",
+             "% posted note can cite an entry as \\recentry{<tag>} without reading the records build.",
+             "% `entry-numbers --check` fails if this file is stale; `entry-numbers --check-aux` (build_all.sh, after",
+             "% the records build) fails if a number differs from main_records.aux.",
+             "\\makeatletter",
+             "\\providecommand{\\recentry}[1]{\\@ifundefined{recentry@#1}{\\PackageError{records_entry_numbers}{no",
+             "  records entry is numbered for the tag #1}{Regenerate with check_note_records.py entry-numbers.}}%",
+             "  {\\@nameuse{recentry@#1}}}"]
+    lines += [f"\\@namedef{{recentry@{t}}}{{{n}}}" for t, n in numbers.items()]
+    return "\n".join(lines + ["\\makeatother", ""])
+
+
+def generated_entry_numbers(note: Path) -> str:
+    return render_entry_numbers(entry_numbers((note / "app_provenance.tex").read_text(errors="replace"),
+                                              records_section((note / "main_records.tex").read_text(errors="replace"))))
+
+
+def posted_entry_numbers(note: Path) -> dict[str, str]:
+    f = note / ENTRY_FILE
+    return dict(ENTRY_DEF.findall(f.read_text())) if f.exists() else {}
+
+
+def entry_numbers_cmd(note: Path, mode: str) -> int:
+    fresh = generated_entry_numbers(note)
+    target = note / ENTRY_FILE
+    if mode == "write":
+        target.write_text(fresh)
+        print(f"ENTRY-NUMBERS :: wrote {ENTRY_FILE} ({len(ENTRY_DEF.findall(fresh))} entries)")
+        return 0
+    if mode == "check":
+        ok = target.exists() and target.read_text() == fresh
+        print(f"ENTRY-NUMBERS :: {'PASS' if ok else 'FAIL'} ({ENTRY_FILE} "
+              f"{'equals a fresh generation' if ok else 'is missing or stale: run check_note_records.py entry-numbers'}"
+              f"; {len(ENTRY_DEF.findall(fresh))} entries)")
+        return 0 if ok else 1
+    aux = note / "main_records.aux"
+    if not aux.exists():
+        print("ENTRY-NUMBERS-AUX :: FAIL (main_records.aux is missing: run after the records build)")
+        return 1
+    built, posted = dict(RECLABEL.findall(aux.read_text(errors="replace"))), posted_entry_numbers(note)
+    bad = [f"{t}: posted {posted.get(t)!r}, records {built.get(t)!r}" for t in sorted(set(built) | set(posted))
+           if built.get(t) != posted.get(t)]
+    for b in bad:
+        print("  FAIL " + b)
+    print(f"ENTRY-NUMBERS-AUX :: {'PASS' if not bad else 'FAIL'} ({len(posted)} posted numbers, {len(built)} "
+          f"records labels; {len(bad)} mismatch(es))")
+    return 1 if bad else 0
+
+
+def entry_numbers_self_test(note: Path) -> int:
+    """A stale numbers file fails --check; a records label that differs fails --check-aux; and, where pdflatex is
+    installed, the generator and main_records.tex's label hook agree on a fixture with a \\shortstack row and an item
+    whose label has no final period (the two cases the review of the records commit found)."""
+    failures, done, skipped = [], [], []
+    hook = re.search(r"\\newcounter\{recentry\}.*?\\textbf\{\\therecentry\}\\enspace #1\}",
+                     (note / "main_records.tex").read_text(), re.S)
+    fixture_prov = ("\\section{Provenance}\n{\\small\\begin{longtable}{@{}lll@{}}\n"
+                    "\\texttt{tag-a} & \\shortstack[l]{x,\\\\ y} & see below \\\\\n\\end{longtable}}\n"
+                    "\\begin{description}[leftmargin=0pt]\n  \\item[\\texttt{tag-a}.] A.\n"
+                    "  \\item[\\texttt{tag-b}] B, no final period.\n\\end{description}\n"
+                    "\\begin{description}[leftmargin=0pt]\n  \\item[\\texttt{tag-c}.] C.\n\\end{description}\n")
+    fixture_main = ("\\section{Front}\n\\input{app_provenance}\n")
+    with tempfile.TemporaryDirectory() as d:
+        w = Path(d)
+        (w / "app_provenance.tex").write_text(fixture_prov)
+        (w / "main_records.tex").write_text(fixture_main)
+        gen = entry_numbers(fixture_prov, records_section(fixture_main))
+        if gen != {"tag-a": "R2.1", "tag-b": "R2.2", "tag-c": "R2.3"}:
+            failures.append(f"generator on the fixture gave {gen}")
+        else:
+            done.append("generator numbers the fixture R2.1-R2.3")
+        (w / ENTRY_FILE).write_text(generated_entry_numbers(w))
+        import contextlib, io
+        with contextlib.redirect_stdout(io.StringIO()):
+            fresh_ok = entry_numbers_cmd(w, "check") == 0
+            (w / ENTRY_FILE).write_text((w / ENTRY_FILE).read_text().replace("{R2.2}", "{R2.3}"))
+            stale_fails = entry_numbers_cmd(w, "check") == 1
+            (w / ENTRY_FILE).write_text(generated_entry_numbers(w))
+            (w / "main_records.aux").write_text("\\newlabel{rec:tag-a}{{R2.1}{1}}\n\\newlabel{rec:tag-b}{{R2.3}{1}}\n"
+                                                "\\newlabel{rec:tag-c}{{R2.3}{1}}\n")
+            aux_fails = entry_numbers_cmd(w, "check-aux") == 1
+        for ok, what in ((fresh_ok, "a fresh file passes --check"), (stale_fails, "a stale file fails --check"),
+                         (aux_fails, "a records label that differs fails --check-aux")):
+            (done if ok else failures).append(what if ok else f"NOT: {what}")
+        if hook is None:
+            failures.append("main_records.tex has no label hook to test")
+        elif shutil.which("pdflatex") is None:
+            skipped.append("the LaTeX agreement test: pdflatex is not installed (it runs in build_all.sh)")
+        else:
+            (w / "t.tex").write_text("\\documentclass{article}\\usepackage{enumitem}\\usepackage{longtable}\n"
+                                     "\\renewcommand{\\thesection}{R\\arabic{section}}\n" + hook.group(0) +
+                                     "\n\\begin{document}\n\\section{Front}\n\\begingroup\n"
+                                     "\\setlist[description]{format=\\recentrylabel}\n\\input{app_provenance}\n"
+                                     "\\endgroup\n\\end{document}\n")
+            run = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "t.tex"], cwd=w,
+                                 capture_output=True, text=True)
+            built = dict(RECLABEL.findall((w / "t.aux").read_text())) if (w / "t.aux").exists() else {}
+            if run.returncode == 0 and built == gen:
+                done.append("the label hook, built with pdflatex, numbers the fixture as the generator does")
+            else:
+                failures.append(f"label hook and generator disagree: hook {built}, generator {gen} (rc {run.returncode})")
+    for x in done:
+        print("  ok     " + x)
+    for x in skipped:
+        print("  SKIP   " + x)
+    for f in failures:
+        print("  FAIL " + f)
+    print(f"ENTRY-NUMBERS SELF-TEST :: {'PASS' if not failures else 'FAIL'} ({len(done)} checks as expected"
+          f"{f', {len(skipped)} skipped' if skipped else ''})")
+    return 1 if failures else 0
+
+
 def pin_check(note: Path) -> tuple[str, list[str]]:
     """("PASS" | "FAIL" | "SKIP", messages)."""
     note = note.resolve()
@@ -684,6 +907,17 @@ def pin_check(note: Path) -> tuple[str, list[str]]:
             fails.append(f"Q3 docs/analysis-note/{name} does not exist at {ref}")
     tags = set(g_tags(at_pin.get("app_provenance.tex", "")))
     heads = headings(list(at_pin.values()))
+    # N2-1: the number a \recentry{<tag>} prints (records_entry_numbers.tex) must be the tag's number at the pin,
+    # generated from the pinned app_provenance.tex and main_records.tex, not from the working tree.
+    pin_numbers = entry_numbers(at_pin.get("app_provenance.tex", ""), records_section(at_pin.get("main_records.tex", "")))
+    posted = posted_entry_numbers(note)
+    n_numbered = 0
+    for f in closure(note / "main_note.tex"):
+        for tag in re.findall(r"\\recentry\{([a-z0-9-]+)\}", printed(f.read_text(errors="replace"))):
+            n_numbered += 1
+            if posted.get(tag) != pin_numbers.get(tag):
+                fails.append(f"Q3 {f.name} cites {tag} as {posted.get(tag)!r}, but at the pin {ref[:12]} its records "
+                             f"entry is numbered {pin_numbers.get(tag)!r}")
     claims = cited_claims(note)
     n_tags = n_parts = 0
     for fname, ctags, parts in claims:
@@ -700,8 +934,9 @@ def pin_check(note: Path) -> tuple[str, list[str]]:
     if not claims:
         fails.append("Q3 the posted note cites NoteRecords2026 nowhere: there is nothing to pin, or the citation "
                      "form changed and this check no longer sees it")
-    summary = (f"{len(claims)} citations, {n_tags} tag and {n_parts} heading references, pinned to {ref}, "
-               f"{len(tags)} tags and {len(heads)} headings at the pin")
+    summary = (f"{len(claims)} citations, {n_tags} tag ({n_numbered} by number) and {n_parts} heading references, "
+               f"pinned to {ref}, "
+               f"{len(tags)} tags, {len(pin_numbers)} numbered entries and {len(heads)} headings at the pin")
     return ("FAIL" if fails else "PASS"), fails + [summary]
 
 
@@ -777,6 +1012,20 @@ def pin_self_test() -> int:
         case("heading the records do not have", "Q4 sec_a.tex names 'retired material'", a,
              good_body + "Also (Ref.~\\cite{NoteRecords2026}, superseded values: retired material).\n")
         case("no citation at all", "Q3 the posted note cites", a, "No citation.\n")
+        # N2-1: tag-b is entry R1.1 at the pin a. A consistent numbers file passes; an entry inserted before it after
+        # the pin, with the numbers file regenerated from the working tree, makes the posted number differ.
+        (note / "records_entry_numbers.tex").write_text(render_entry_numbers({"tag-b": "R1.1"}))
+        case("number cited as at the pin passes", "PASS", a,
+             good_body + "And (Ref.~\\cite{NoteRecords2026}, \\recentry{tag-b}).\n")
+        (note / "app_provenance.tex").write_text(prov.replace("  \\item[\\texttt{tag-b}.]",
+                                                                "  \\item[\\texttt{tag-z}.] New.\n  \\item[\\texttt{tag-b}.]"))
+        (note / "records_entry_numbers.tex").write_text(generated_entry_numbers(note) if (note / "main_records.tex").exists()
+                                                        else render_entry_numbers(entry_numbers(
+                                                            (note / "app_provenance.tex").read_text(), 1)))
+        case("entry renumbered after the pin", "Q3 sec_a.tex cites tag-b as 'R1.2'", a,
+             good_body + "And (Ref.~\\cite{NoteRecords2026}, \\recentry{tag-b}).\n")
+        (note / "app_provenance.tex").write_text(prov)
+        (note / "records_entry_numbers.tex").unlink()
         # The standalone note repository: this directory is the top level of its own checkout.
         standalone = Path(d) / "standalone"
         shutil.copytree(note, standalone)
@@ -797,8 +1046,9 @@ def pin_self_test() -> int:
             failures.append(f"no-git layout: expected SKIP, got {status}: {msgs[:2]}")
     for f in failures:
         print("  FAIL " + f)
-    print(f"RECORDS-PIN SELF-TEST :: {'PASS' if not failures else 'FAIL'} ({fired} of 9 cases as expected: a good pin "
+    print(f"RECORDS-PIN SELF-TEST :: {'PASS' if not failures else 'FAIL'} ({fired} of 11 cases as expected: a good pin "
           "passes; a branch, a non-ancestor, an unknown sha, a missing tag, a missing heading and no citation fail; "
+          "a number cited as at the pin passes and an entry renumbered after the pin fails; "
           "the standalone and no-git layouts skip)")
     return 1 if failures else 0
 
@@ -845,7 +1095,10 @@ PLANTS = [
      "supports future work", "supports later work"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
      lambda p: p.write_text(p.read_text().replace(r"\texttt{joint-5d}", r"\texttt{joint-5e}")), None),
-    ("lost repository path", "P4 repository path", "app_provenance.tex", r"\repopath{", r"\texttt{"),
+    # Every copy of one path is lost: since n2 two paths print twice in App. G (a table row and the full-width entry
+    # that repeats it, P9), so losing only the first copy would leave the path in the records.
+    ("lost repository path", "P4 repository path", "app_provenance.tex", lambda p: p.write_text(
+        p.read_text().replace(_first_repopath(p), _first_repopath(p).replace("\\repopath{", "\\texttt{"))), None),
     ("G label left in the note", "P1 record label tab:prov-paths", "app_guide.tex", None,
      "\n\\label{tab:prov-paths}\n"),
     ("J label left in the note", "P1 record label app:history-errata", "app_guide.tex", None,
@@ -859,11 +1112,11 @@ PLANTS = [
      "\n| L99 | planted | - | `N:sec_intro.tex::this sentence is not printed anywhere` | planted |\n"),
     # The thinning (DECISION-20261022): a drop is accepted only when the ledger lists it and its target exists.
     ("unlisted tag drop", "P6 sec_systematics.tex: 1 pointer(s) to tag flux-index", "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", ""),
+     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
     ("unlisted tag drop, P8", "P8 sec_systematics.tex: 1 citation(s) of tag:flux-index", "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", ""),
+     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", ""),
     ("listed tag drop (silent)", None, "sec_systematics.tex",
-     r" (Ref.~\cite{NoteRecords2026}, \texttt{flux-index})", "",
+     r" (Ref.~\cite{NoteRecords2026}, \recentry{flux-index})", "",
      "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |", ["L-thin-C64"]),
     ("unlisted heading drop", "P8 app_statmethods.tex: 1 citation(s) of head:superseded values at",
      "app_statmethods.tex", "\n(Ref.~\\cite{NoteRecords2026}, superseded values).", "."),
@@ -873,18 +1126,33 @@ PLANTS = [
     ("unlisted whole-document drop", "P6 app_guide.tex: carried a whole-appendix pointer", "app_guide.tex",
      "document, Ref.~\\cite{NoteRecords2026};", "document;"),
     ("listed drop of a tag the records lack", "P7 ledger row L98: D:sec_validation.tex::\\texttt{coverage-fixed-truths}",
-     "sec_validation.tex", r"(Ref.~\cite{NoteRecords2026}, \texttt{coverage-fixed-truth})", "",
+     "sec_validation.tex", r"(Ref.~\cite{NoteRecords2026}, \recentry{coverage-fixed-truth})", "",
      "| L98 | planted | DROP | R1 | `D:sec_validation.tex::\\texttt{coverage-fixed-truths}` | planted |"),
     ("listed drop whose tag left the records", "P7 ledger row L98: D:sec_systematics.tex::\\texttt{flux-index}: tag",
      "app_provenance.tex", lambda p: (p.write_text(p.read_text().replace(r"\texttt{flux-index}", r"\texttt{flux-idx}")),
-                                      _unlink_cite(p.parent / "sec_systematics.tex", r"\texttt{flux-index}")), None,
+                                      _unlink_cite(p.parent / "sec_systematics.tex", r"\recentry{flux-index}")), None,
      "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |"),
     ("listed drop of a heading the records lack", "P7 ledger row L98: D:sec_systematics.tex::superseded values: "
      "retired materials", "sec_systematics.tex", r" (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
      "", "| L98 | planted | DROP | R4 | `D:sec_systematics.tex::superseded values: retired materials` | planted |"),
     ("kept citation moved within its file (C62)", "P7 ledger row L-thin-C62", "sec_systematics.tex",
      lambda p: p.write_text(_move_cite(p.read_text(), " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material)",
-                                       "The dependence on the learner is in no block")), None),
+                                       "No block contains the dependence on the learner")), None),
+    # P9 (n2): a repeated record drifts from its table row
+    ("repeated record drifts from its row", "P9 App. G entry flux-index does not contain", "app_provenance.tex",
+     r"\texttt{KNOWN\_ISSUES.md} row 91: the flux-universe", r"\texttt{KNOWN\_ISSUES.md} row 92: the flux-universe"),
+    ("cited tag's entry deleted", "P9 tag flux-index is cited by the posted note", "app_provenance.tex",
+     lambda p: p.write_text(re.sub(r"\n  \\item\[\\texttt\{flux-index\}\.\].*?(?=\n  \\item)", "", p.read_text(),
+                                   count=1, flags=re.S)), None),
+    ("added entry's label renamed", "P9 tag july-sweep is cited by the posted note or recorded as an added entry",
+     "app_provenance.tex", "\\item[\\texttt{july-sweep}.]", "\\item[\\texttt{july-sweep-x}.]"),
+    # a row whose cell holds a line break (\shortstack{...\\...}) is still parsed and compared
+    ("record put into a row with a broken cell", "P9 App. G entry flux-repair does not contain", "app_provenance.tex",
+     "App.~\\ref{app:release-schema}, App.~\\ref{app:history}} &\n  see below \\\\",
+     "App.~\\ref{app:release-schema}, App.~\\ref{app:history}} &\n  a planted record \\\\"),
+    ("table row that no longer parses", "P9 the App. G table row of flux-index did not parse", "app_provenance.tex",
+     "the quoted universe block counts it once \\\\\n\\texttt{flux-index} &",
+     "the quoted universe block counts it once\n\\texttt{flux-index} &"),
     ("listed drop still printed", "P8 sec_systematics.tex: the ledger lists 1 drop(s) of tag:flux-index", LEDGER, None,
      "\n| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |\n"),
     # R-EDIT (director ruling 2026-10-26), all on one record paragraph of app_history.tex. A callable ledger row is
@@ -916,6 +1184,11 @@ PLANTS = [
 ]
 
 
+def _first_repopath(path: Path) -> str:
+    """The first \\repopath{...} of `path`, in full (a plant removes every copy of it)."""
+    return re.search(r"\\repopath\{[^}]*\}", path.read_text()).group(0)
+
+
 def _move_cite(text: str, cite: str, sentence: str) -> str:
     """Move the one occurrence of `cite` to the end of `sentence` (a planted change of a kept citation's position)."""
     if text.count(cite) != 1 or text.count(sentence) != 1:
@@ -924,7 +1197,7 @@ def _move_cite(text: str, cite: str, sentence: str) -> str:
 
 
 def _unlink_cite(path: Path, tag: str) -> None:
-    """Remove the one citation of `tag` from `path` (a planted drop)."""
+    """Remove the one citation of `tag` (as printed: \\recentry{<tag>} since N2-1) from `path` (a planted drop)."""
     t = path.read_text()
     old = f" (Ref.~\\cite{{NoteRecords2026}}, {tag})"
     if t.count(old) != 1:
@@ -1036,6 +1309,17 @@ def main(argv: list[str]) -> int:
         return pin(Path(args[1]) if len(args) == 2 else Path(__file__).resolve().parent)
     if args == ["--self-test-pin"]:
         return pin_self_test()
+    if args and args[0] == "entry-numbers":
+        flags = [a for a in args[1:] if a.startswith("--")]
+        rest = [a for a in args[1:] if not a.startswith("--")]
+        note = Path(rest[0]) if rest else Path(__file__).resolve().parent
+        mode = {(): "write", ("--check",): "check", ("--check-aux",): "check-aux"}.get(tuple(flags))
+        if mode is None or len(rest) > 1:
+            print(__doc__)
+            return 2
+        return entry_numbers_cmd(note, mode)
+    if args == ["--self-test-entry-numbers"]:
+        return entry_numbers_self_test(Path(__file__).resolve().parent)
     if len(args) == 2 and args[0] == "redit-digest":
         for para in paragraphs(Path(args[1]).read_text(errors="replace")):
             print(digest(para), para[:80])

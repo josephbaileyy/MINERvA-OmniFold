@@ -68,7 +68,8 @@ Records of the analysis note on unbinned OmniFold of MINERvA charged-current inc
 behind its statements, the fixed identities and the construction and audit record of the five-axis covariance, the
 test-suite discipline of the production code, and the note's audit trail of superseded values and withdrawn results.
 It is built from the same sources as the note, at the same commit, and is not posted with it. Sections R1--R4 are the
-note's former appendix text, moved without edits. Section R5, the estimator registry and the index of every committed
+note's former appendix text, moved without edits; since then Section R1 has had one pointer retargeted and six
+entries added, each recorded in the records-move ledger or the round record that made it. Section R5, the estimator registry and the index of every committed
 result receipt, is not moved text: it is generated from the repository by \texttt{tools/registry/results\_index.py}
 and is regenerated, never edited. Section, table, figure and equation numbers that begin with R are
 this document's own; every other number, such as a section, appendix, table, figure or equation number with no R,
@@ -77,7 +78,27 @@ is the analysis note's, in the note built from the same commit.
 \setcounter{tocdepth}{2}
 \tableofcontents
 
+% Note register round n2, N2-1 (director ruling 2026-10-26): number the full-width entries of Section R1 (the
+% provenance records) R1.1, R1.2, ... and label each rec:<tag>, so the posted note can cite an entry by number
+% (\recentry{<tag>}). This is done from this file only, through the description lists' label format, so no record
+% paragraph of app_provenance.tex changes as check_note_records.py P5 reads it. Each label must hold exactly one
+% \texttt{<tag>}: the tag is reset for every item, and any other label stops the build, so no entry can silently take
+% the previous entry's tag or the wrong one of two.
+\newcounter{recentry}
+\renewcommand{\therecentry}{\thesection.\arabic{recentry}}
+\newcounter{rectags}
+\newcommand{\recentrylabel}[1]{%
+  \gdef\rectag{}\setcounter{rectags}{0}%
+  \begingroup\def\texttt##1{\gdef\rectag{##1}\stepcounter{rectags}}\setbox0\hbox{#1}\endgroup
+  \ifnum\value{rectags}=1 \else
+    \PackageError{main_records}{a Section R1 entry label must hold exactly one typewriter tag, found
+      \arabic{rectags}}{Each full-width entry of app_provenance.tex is labelled with one tag in typewriter type.}%
+  \fi
+  \refstepcounter{recentry}\label{rec:\rectag}\textbf{\therecentry}\enspace #1}
+\begingroup
+\setlist[description]{format=\recentrylabel}
 \input{app_provenance}
+\endgroup
 
 \section{Result package: fixed identities and audit record}
 These are the record parts of the note's appendix on the result package and reproduction limits

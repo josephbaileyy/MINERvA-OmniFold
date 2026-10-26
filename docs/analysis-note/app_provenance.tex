@@ -214,6 +214,42 @@ column above, so they are given here at full width.
     cutoff $10^{-12}$ is hardcoded in \texttt{project\_cov\_nd.py}.
 \end{description}
 
+% Note register round n2, records additions (director rulings 2026-10-26: N2-1(a), R-N2b). Four full-width entries
+% repeat, verbatim, the record cells of tags that this section's tables list without an entry, so that each can be
+% cited by number (check_note_records.py P9 keeps each entry containing its row's cells). Two entries record
+% production provenance, copied verbatim from the note's body: july-sweep from sec_systematics.tex
+% sec:uq-2d-construction, and bkg-mode-elimination from app_negweight.tex sec:negweight-footing. The 2d-central-value entry adds sec_method.tex sec:method-config's
+% provenance sentences for the purity-subtracted seed-42 central value, without that sentence's own citation of the tag.
+\noindent The entries below repeat the records of four tags that this section's tables list without a full-width
+entry, and record the provenance of two production steps.
+
+\begin{description}[leftmargin=0pt,itemsep=3pt]
+  \item[\texttt{2d-central-value}.] \texttt{2d-unfolding/}\allowbreak\texttt{uq/}\allowbreak\texttt{2d\_xsec\_MEFHC\_5iter\_}\allowbreak\texttt{lgbm\_uni\_full\_CV.root},
+    \texttt{sha256} \texttt{4f5a1b6d44b9e721}\allowbreak\texttt{2b233650bb00bfb6}\allowbreak\texttt{26ae65461e3bf803}\allowbreak\texttt{3cd67866dbd7eb2c}. The purity-subtracted seed-42
+    central value has no execution log or recorded run configuration. An independent rerun with a different
+    driver and thread count reproduces it to $1.4\times10^{-11}$, and so does a
+    regeneration with the current driver whose run configuration is recorded.
+  \item[\texttt{flux-index}.] \texttt{KNOWN\_ISSUES.md} row 91: the flux-universe index identity behind the
+    $1/\Phi_{u}$ rescale and its exact test.
+  \item[\texttt{response-diagnostic}.] \repopath{docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md} at commit
+    \texttt{7d173bd0}.
+  \item[\texttt{rank-inversion}.] \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is
+    a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md}.
+  \item[\texttt{july-sweep}.] The products of the July sweep, which the quoted universe block uses, do not record a
+    checksum of the driver code that produced them, and that driver version was not
+    committed. Seven of its universes, four of them also checked in an earlier pilot, are
+    reproduced to $\le1.4\times10^{-11}$ by the committed driver; the others are accepted by
+    inference, because the same code produced them.
+  \item[\texttt{bkg-mode-elimination}.] For the existing endpoint unfolds, produced in July 2026, purity is established by
+    elimination. Neither of the two job scripts that could have produced them sets the
+    driver's background-mode option (\texttt{-{}-bkg-mode}), so the driver ran with its
+    default, purity; the driver announces its mode only on its negative-weight code
+    paths, and the logs of these lateral-band unfolds contain the purity code path's
+    signature line and no mode announcement. The option and the announcements already
+    existed when the files were produced, so the absence of an announcement is
+    evidence of purity.
+\end{description}
+
 {\small
 \begin{longtable}{@{}llp{0.25\textwidth}p{0.30\textwidth}@{}}
 \caption{Tracker rows and code identifiers: \texttt{KNOWN\_ISSUES.md} rows,

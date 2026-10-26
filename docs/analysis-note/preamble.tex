@@ -102,3 +102,9 @@
 \newcommand{\T}{^{\!\top}}
 \newcommand{\diag}{\mathrm{diag}}
 \newcommand{\Tr}{\mathrm{Tr}}
+
+% Note register round n2, N2-1 (director rulings 2026-10-26): \recentry{<tag>} prints a records entry's number
+% (R1.<n>), so the posted note cites a records entry by number instead of by its internal tag. The numbers are
+% generated from app_provenance.tex by `check_note_records.py entry-numbers`; build_all.sh fails if the file is stale
+% (before any build or export) or if a number differs from the records build's own label (after it).
+\input{records_entry_numbers}

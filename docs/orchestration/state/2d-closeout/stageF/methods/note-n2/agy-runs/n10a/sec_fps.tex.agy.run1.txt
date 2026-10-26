@@ -1,0 +1,9 @@
+PASSAGE: FP-1
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: FP-2
+VERDICT: REVISE
+ISSUE: In "The extended-fiducial value was produced with the binned purity correction, not with the negative-weight treatment designated for the extended-fiducial analysis; its central value comes from the battery of 2026-06-10, not from refined negative-weight subtraction (App.~\ref{app:negweight}).", the text retains process vocabulary ("designated for the extended-fiducial analysis") and redundantly repeats central-value provenance across two clauses rather than adopting the ruled verbatim text.
+FIX: The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-06-10), not with refined negative-weight subtraction (App.~\ref{app:negweight}).
