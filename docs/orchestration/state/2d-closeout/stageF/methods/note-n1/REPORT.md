@@ -4,7 +4,8 @@
 
 **Base:** the round was written on origin/main `ddf16f10` and moved to `5bb5e179` before its first commit. The 15
 files it changes are byte-identical at both commits, so the ledger's sentence ids hold. The checker runs with
-`--base 5bb5e179`, because PR #373 changed `main_paper.tex`, a protected file, in between.
+`--base 5bb5e179`, because PR #373 changed `main_paper.tex`, a protected file, in between. Main at `703ffcce` was merged in
+before the PR. It changed no round or protected file.
 
 **Brief:**
 - the caveat study's note rules R-N1 to R-N7 (`caveat-study/REPORT.md` §5.2);
@@ -205,10 +206,12 @@ other drops are of the same size, so a 0.5 step from gemini is within its run-to
   - --self-test-pin: 9 of 9.
 - **Tests outside build_all:**
   - `nd-unfolding/tests/test_hash_bindings.py`, `docs/analysis-note/test_build_all.py` and
-    `docs/analysis-note/test_check_sec4_receipts.py` give 129 passed and 1 failed.
-  - The failure (`test_a_wrong_printed_value_fails[\SI{97.7}{\percent}…]`) is on main and predates this round: r18
-    moved the bound value, and the fixture still looks for it in paper_body.tex.
-  - The director has assigned the fixture fix and a CI step to a separate PR.
+    `docs/analysis-note/test_check_sec4_receipts.py` give 130 passed, on this branch after main (`703ffcce`) was
+    merged in.
+  - On the round's base they gave 129 passed and 1 failed. The failure
+    (`test_a_wrong_printed_value_fails[\SI{97.7}{\percent}…]`) was on main and predated this round: r18 moved the
+    bound value, and the fixture still looked for it in paper_body.tex.
+  - PR #380 fixed the fixture and added the test to CI.
 
 ## Not done in this round
 
