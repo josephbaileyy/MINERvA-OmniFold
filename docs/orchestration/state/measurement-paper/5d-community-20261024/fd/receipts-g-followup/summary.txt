@@ -1,0 +1,271 @@
+## provenance: G-DIAG reported, relative-to-f top modes
+| prediction | mode | sigma % | fraction % | R04 rank | R04 | R00 | R01 | R07 | R08 | R09 | R10 | R14 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| genie_cv | 7 | 3.15 | 40.6 | 16 | -0.02 | -0.04 | +0.17 | -0.10 | +0.10 | +0.11 | -0.27 | -0.19 |
+| genie_cv | 13 | 1.14 | 19.1 | 1 | +0.45 | +0.32 | -0.36 | -0.29 | -0.42 | +0.30 | -0.16 | -0.33 |
+| genie_cv | 12 | 1.21 | 11.5 | 14 | +0.08 | -0.33 | -0.23 | -0.09 | +0.10 | +0.53 | +0.12 | +0.20 |
+| genie_mec | 13 | 1.15 | 45.5 | 1 | +0.45 | +0.30 | -0.37 | -0.30 | -0.42 | +0.33 | -0.15 | -0.32 |
+| genie_mec | 7 | 3.17 | 22.3 | 16 | -0.01 | -0.04 | +0.17 | -0.10 | +0.10 | +0.11 | -0.27 | -0.19 |
+| genie_mec | 15 | 0.67 | 15.6 | 1 | +0.72 | -0.35 | +0.13 | +0.07 | +0.13 | -0.27 | -0.27 | -0.02 |
+| nuwro | 15 | 0.61 | 31.3 | 1 | +0.63 | -0.34 | +0.11 | +0.05 | +0.18 | -0.22 | -0.37 | -0.03 |
+| nuwro | 10 | 1.98 | 11.5 | 11 | +0.12 | +0.22 | -0.33 | -0.28 | +0.15 | -0.14 | +0.04 | +0.57 |
+| nuwro | 5 | 6.60 | 10.7 | 8 | +0.16 | +0.40 | +0.08 | -0.38 | +0.58 | -0.02 | +0.08 | -0.07 |
+| mnvtune_v1 | 13 | 0.97 | 47.9 | 1 | +0.54 | +0.26 | -0.22 | -0.28 | -0.38 | +0.05 | -0.05 | -0.41 |
+| mnvtune_v1 | 7 | 3.01 | 16.4 | 16 | -0.02 | -0.05 | +0.16 | -0.08 | +0.11 | +0.10 | -0.28 | -0.21 |
+| mnvtune_v1 | 14 | 0.63 | 13.6 | 1 | +0.60 | -0.24 | +0.23 | +0.26 | -0.09 | -0.39 | +0.31 | +0.15 |
+
+## item 1: the definition
+| cell | H2 boxes | p_T | p_par | E_avail | q3 | W | fine bins | neighbours (axis) |
+|---|---|---|---|---|---|---|---|---|
+| R04 | 8, 9 | 0–0.7 | 4.5–60 | 0–0.8 | 0–2 | 0–100 | 11520 | R00 (pz), R05 (q3), R06 (eavail), R07 (eavail), R12 (pt), unreported H2 box 10 (q3) |
+| R00 | 0, 1 | 0–0.7 | 1.5–4.5 | 0–0.8 | 0–2 | 0–100 | 6912 | R01 (q3), R02 (eavail), R03 (eavail), R04 (pz), R08 (pt), R09 (pt), unreported H2 box 2 (q3) |
+| R01 | 3, 7 | 0–0.7 | 1.5–4.5 | 0–100 | 2–100 | 1.8–100 | 1008 | R00 (q3), R03 (q3), R05 (pz), R09 (pt), unreported H2 box 2 (W), unreported H2 box 6 (W) |
+| R07 | 13 | 0–0.7 | 4.5–60 | 0.8–100 | 0–2 | 1.8–100 | 4320 | R03 (pz), R04 (eavail), R05 (q3), R06 (W), R15 (pt) |
+| R08 | 16, 18 | 0.7–4.5 | 1.5–4.5 | 0–0.8 | 0–100 | 0–1.8 | 3024 | R00 (pt), R09 (W), R10 (eavail), R11 (eavail), R12 (pz), R13 (pz), unreported H2 box 2 (pt) |
+| R09 | 17, 19, 21, 23 | 0.7–4.5 | 1.5–4.5 | 0–100 | 0–100 | 1.8–100 | 5292 | R00 (pt), R01 (pt), R03 (pt), R08 (W), R10 (W), R11 (W), R12 (pz), R14 (pz), R15 (pz) |
+| R10 | 20 | 0.7–4.5 | 1.5–4.5 | 0.8–100 | 0–2 | 0–1.8 | 1944 | R02 (pt), R08 (eavail), R09 (W), R11 (q3), R15 (pz) |
+| R14 | 27, 31 | 0.7–4.5 | 4.5–60 | 0–100 | 2–100 | 1.8–100 | 1260 | R05 (pt), R09 (pz), R12 (q3), R13 (W), R15 (q3) |
+
+## item 2: relative sigma, %
+| block | R04 | R00 | R01 | R07 | R08 | R09 | R10 | R14 | median of 16 |
+|---|---|---|---|---|---|---|---|---|---|
+| stat | 0.14 | 0.20 | 0.23 | 0.30 | 0.22 | 0.18 | 0.25 | 0.16 | 0.24 |
+| interaction | 0.58 | 0.98 | 1.18 | 5.08 | 1.52 | 1.85 | 5.53 | 1.22 | 2.19 |
+| flux | 3.47 | 3.93 | 3.58 | 3.90 | 3.74 | 3.52 | 3.42 | 3.73 | 3.55 |
+| detector | 1.31 | 1.56 | 2.14 | 1.76 | 2.17 | 2.18 | 2.42 | 2.14 | 1.89 |
+| lateral | 0.57 | 5.01 | 4.85 | 1.75 | 0.77 | 1.08 | 0.43 | 1.34 | 2.38 |
+| normalization | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 |
+| seed | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| C_model:genie_mec | 0.25 | 0.11 | 0.12 | 0.41 | 1.04 | 0.03 | 0.19 | 0.03 | 0.36 |
+| C_model:nuwro | 0.67 | 0.17 | 0.04 | 1.59 | 1.26 | 2.40 | 0.95 | 0.48 | 0.81 |
+| C_model:gibuu | 0.51 | 0.38 | 0.66 | 3.04 | 0.03 | 2.17 | 3.91 | 0.66 | 2.79 |
+| C_resp | 0.70 | 2.07 | 2.35 | 1.55 | 3.58 | 2.26 | 2.69 | 1.82 | 2.14 |
+| C_e | 4.05 | 6.77 | 6.66 | 7.02 | 4.86 | 4.87 | 7.10 | 4.87 | 6.45 |
+| C_model | 0.88 | 0.43 | 0.67 | 3.45 | 1.63 | 3.24 | 4.03 | 0.82 | 3.34 |
+| C_total | 4.14 | 6.79 | 6.69 | 7.82 | 5.13 | 5.84 | 8.16 | 4.94 | 6.74 |
+| C_total + C_resp | 4.20 | 7.10 | 7.10 | 7.98 | 6.25 | 6.26 | 8.59 | 5.27 | 7.29 |
+
+## item 3: correlation with R04
+| matrix | rank | R00 | R01 | R07 | R08 | R09 | R10 | R14 |
+|---|---|---|---|---|---|---|---|---|
+| C_total + C_resp | 16 | +0.546 | +0.443 | +0.470 | +0.811 | +0.724 | +0.402 | +0.709 |
+| stat | 16 | +0.108 | -0.060 | +0.068 | +0.001 | -0.080 | -0.169 | -0.187 |
+| interaction | 16 | +0.623 | -0.332 | +0.147 | +0.245 | +0.220 | -0.253 | +0.098 |
+| flux | 16 | +0.978 | +0.998 | +0.972 | +0.983 | +0.993 | +0.979 | +0.982 |
+| detector | 4 | +0.978 | +0.985 | +0.722 | +0.987 | +0.994 | +0.953 | +0.736 |
+| lateral | 5 | -0.835 | -0.951 | -0.142 | +0.017 | +0.988 | +0.773 | +0.907 |
+| normalization | 1 | +1.000 | +1.000 | +1.000 | +1.000 | +1.000 | +1.000 | +1.000 |
+| seed | 0 | null | null | null | null | null | null | null |
+| C_model:genie_mec | 1 | -1.000 | -1.000 | -1.000 | +1.000 | +1.000 | -1.000 | -1.000 |
+| C_model:nuwro | 1 | -1.000 | +1.000 | +1.000 | +1.000 | +1.000 | -1.000 | -1.000 |
+| C_model:gibuu | 1 | -1.000 | +1.000 | -1.000 | -1.000 | +1.000 | -1.000 | -1.000 |
+| C_resp | 4 | +0.959 | -0.829 | -0.702 | +0.996 | -0.910 | +0.640 | -0.883 |
+| C_e | 16 | +0.555 | +0.528 | +0.601 | +0.902 | +0.901 | +0.557 | +0.886 |
+| C_model | 3 | -0.884 | +0.565 | -0.192 | +0.756 | +0.960 | -0.757 | -0.928 |
+| C_total | 16 | +0.529 | +0.526 | +0.509 | +0.887 | +0.846 | +0.393 | +0.821 |
+| C_total + C_resp + V_g (genie_cv) | — | +0.544 | +0.442 | +0.463 | +0.808 | +0.721 | +0.400 | +0.699 |
+| C_total + C_resp + V_g (genie_mec) | — | +0.544 | +0.442 | +0.464 | +0.808 | +0.721 | +0.400 | +0.699 |
+| C_total + C_resp + V_g (nuwro) | — | +0.545 | +0.442 | +0.464 | +0.809 | +0.722 | +0.401 | +0.702 |
+| C_total + C_resp + V_g (mnvtune_v1) | — | +0.546 | +0.443 | +0.469 | +0.811 | +0.724 | +0.402 | +0.709 |
+
+## item 4: Stage G's reported comparison, per prediction and cell
+
+### genie_cv (C_total + C_resp + V_g)
+| cell | g/f − 1 % | pull | sigma_total/f % | sigma_Vg/f % | MC events |
+|---|---|---|---|---|---|
+| R04 | -8.39 | +1.99 | 4.20 | 0.29 | 164963 |
+| R00 | -10.57 | +1.49 | 7.10 | 0.25 | 123175 |
+| R01 | -11.24 | +1.58 | 7.10 | 0.33 | 123873 |
+| R07 | +2.42 | -0.30 | 7.98 | 1.17 | 11477 |
+| R08 | -17.39 | +2.77 | 6.25 | 0.38 | 47861 |
+| R09 | -6.38 | +1.02 | 6.26 | 0.33 | 135156 |
+| R10 | -7.37 | +0.86 | 8.59 | 0.53 | 30144 |
+| R14 | -16.89 | +3.17 | 5.27 | 0.81 | 121550 |
+
+### genie_mec (C_total + C_resp + V_g)
+| cell | g/f − 1 % | pull | sigma_total/f % | sigma_Vg/f % | MC events |
+|---|---|---|---|---|---|
+| R04 | +2.56 | -0.61 | 4.20 | 0.30 | 181633 |
+| R00 | -0.86 | +0.12 | 7.10 | 0.27 | 133887 |
+| R01 | -11.05 | +1.56 | 7.10 | 0.34 | 121390 |
+| R07 | -0.90 | +0.11 | 7.98 | 1.15 | 10949 |
+| R08 | -13.84 | +2.21 | 6.25 | 0.39 | 48954 |
+| R09 | -6.11 | +0.97 | 6.26 | 0.33 | 132664 |
+| R10 | -6.32 | +0.73 | 8.59 | 0.54 | 29883 |
+| R14 | -15.51 | +2.91 | 5.27 | 0.83 | 120616 |
+
+### nuwro (C_total + C_resp + V_g)
+| cell | g/f − 1 % | pull | sigma_total/f % | sigma_Vg/f % | MC events |
+|---|---|---|---|---|---|
+| R04 | -9.11 | +2.17 | 4.20 | 0.25 | 230973 |
+| R00 | -13.34 | +1.88 | 7.10 | 0.21 | 167786 |
+| R01 | -6.31 | +0.89 | 7.10 | 0.28 | 183102 |
+| R07 | +12.81 | -1.59 | 7.98 | 1.12 | 17550 |
+| R08 | -23.96 | +3.83 | 6.25 | 0.31 | 61990 |
+| R09 | -15.55 | +2.48 | 6.26 | 0.27 | 171478 |
+| R10 | -19.61 | +2.28 | 8.59 | 0.42 | 36764 |
+| R14 | -20.91 | +3.94 | 5.27 | 0.70 | 156894 |
+
+### gibuu (C_total + C_resp + V_g)
+| cell | g/f − 1 % | pull | sigma_total/f % | sigma_Vg/f % | MC events |
+|---|---|---|---|---|---|
+| R04 | not compared | | | | |
+| R00 | -16.34 | +2.26 | 7.10 | 1.32 | 137626 |
+| R01 | -28.83 | +4.06 | 7.10 | 0.29 | 95422 |
+| R07 | not compared | | | | |
+| R08 | -18.59 | +2.80 | 6.25 | 2.23 | 94205 |
+| R09 | -15.72 | +2.51 | 6.26 | 0.38 | 82098 |
+| R10 | -38.13 | +4.40 | 8.59 | 1.15 | 35704 |
+| R14 | not compared | | | | |
+
+### mnvtune_v1 (C_total + C_resp + V_g)
+| cell | g/f − 1 % | pull | sigma_total/f % | sigma_Vg/f % | MC events |
+|---|---|---|---|---|---|
+| R04 | -2.49 | +0.59 | 4.20 | 0.05 | 5772542 |
+| R00 | -6.02 | +0.85 | 7.10 | 0.05 | 4060485 |
+| R01 | -13.09 | +1.85 | 7.10 | 0.04 | 3798081 |
+| R07 | -13.71 | +1.72 | 7.98 | 0.15 | 360147 |
+| R08 | -20.26 | +3.24 | 6.25 | 0.07 | 1483408 |
+| R09 | -11.63 | +1.86 | 6.26 | 0.04 | 4223666 |
+| R10 | -16.70 | +1.94 | 8.59 | 0.09 | 895241 |
+| R14 | -19.37 | +3.68 | 5.27 | 0.04 | 4147782 |
+
+## item 5: the search
+pattern: (?<![a-z])(data|reco|eff|efficiency|count|counts|nevt|n_ev|event|events|purity|stability|truth|signal|accept|acceptance)(?![a-z]) IGNORECASE on the last key of each key path
+string members not JSON: []
+| product | keys searched | matches |
+|---|---|---|
+| definition | 43 | 12 |
+| s1_json | 350 | 21 |
+| cmodel_json | 118 | 0 |
+| g_readout | 85 | 1 |
+| g_diag_readout | 216 | 3 |
+| s1_npz | 359 | 21 |
+| extra_block | 42 | 0 |
+| prediction:genie_cv | 166 | 10 |
+| prediction:genie_mec | 167 | 10 |
+| prediction:nuwro | 173 | 8 |
+| prediction:gibuu | 166 | 9 |
+| prediction:mnvtune_v1 | 16 | 1 |
+- definition: stage1_reproduction_max_rel / purity; stage1_reproduction_max_rel / stability; stage1_reproduction_max_rel / mc_neff_truth; stage1_reproduction_max_rel / expected_reco_signal; stage1_reproduction_max_rel / truth_selected; steps / [] / purity; steps / [] / union_purity; reporting_cells / [] / purity; reporting_cells / [] / stability; reporting_cells / [] / expected_reco_signal; reporting_cells / [] / truth_selected; reporting_cells / [] / mc_neff_truth
+- s1_json: meta / flux_weights / n_eff; meta / inputs_sha256 / data_b10_j110.npz; meta / inputs_sha256 / data_b11_j111.npz; meta / inputs_sha256 / data_b12_j112.npz; meta / inputs_sha256 / data_b13_j113.npz; meta / inputs_sha256 / data_b14_j114.npz; meta / inputs_sha256 / data_b15_j115.npz; meta / inputs_sha256 / data_b16_j116.npz; meta / inputs_sha256 / data_b17_j117.npz; meta / inputs_sha256 / data_b18_j118.npz; meta / inputs_sha256 / data_b19_j119.npz; meta / inputs_sha256 / data_b1_j101.npz; meta / inputs_sha256 / data_b20_j120.npz; meta / inputs_sha256 / data_b2_j102.npz; meta / inputs_sha256 / data_b3_j103.npz; meta / inputs_sha256 / data_b4_j104.npz; meta / inputs_sha256 / data_b5_j105.npz; meta / inputs_sha256 / data_b6_j106.npz; meta / inputs_sha256 / data_b7_j107.npz; meta / inputs_sha256 / data_b8_j108.npz; meta / inputs_sha256 / data_b9_j109.npz
+- g_readout: predictions / [] / n_mc_events_in_cells
+- g_diag_readout: labels / stability; predictions / [] / comparisons / [] / relative_to_f / stability; predictions / [] / comparisons / [] / absolute / stability
+- s1_npz: meta / flux_weights / n_eff; meta / inputs_sha256 / data_b10_j110.npz; meta / inputs_sha256 / data_b11_j111.npz; meta / inputs_sha256 / data_b12_j112.npz; meta / inputs_sha256 / data_b13_j113.npz; meta / inputs_sha256 / data_b14_j114.npz; meta / inputs_sha256 / data_b15_j115.npz; meta / inputs_sha256 / data_b16_j116.npz; meta / inputs_sha256 / data_b17_j117.npz; meta / inputs_sha256 / data_b18_j118.npz; meta / inputs_sha256 / data_b19_j119.npz; meta / inputs_sha256 / data_b1_j101.npz; meta / inputs_sha256 / data_b20_j120.npz; meta / inputs_sha256 / data_b2_j102.npz; meta / inputs_sha256 / data_b3_j103.npz; meta / inputs_sha256 / data_b4_j104.npz; meta / inputs_sha256 / data_b5_j105.npz; meta / inputs_sha256 / data_b6_j106.npz; meta / inputs_sha256 / data_b7_j107.npz; meta / inputs_sha256 / data_b8_j108.npz; meta / inputs_sha256 / data_b9_j109.npz
+- prediction:genie_cv: nevt_flat; n_events; meta_json / supplement / events; meta_json / supplement / normalisation / N_events_in_file; meta_json / supplement / normalisation / per_event_xsec_cm2; meta_json / supplement / sampling_model / [] / n_events; meta_json / main_event_reconstruction_check; meta_json / continuity_across_50_GeV / [] / n_events; meta_json / pz / supplement_raw_events; meta_json / E_gt_20_shares_of_full / event_sum_over_grid_total
+- prediction:genie_mec: nevt_flat; n_events; meta_json / supplement / events; meta_json / supplement / normalisation / N_events_in_file; meta_json / supplement / normalisation / per_event_xsec_cm2; meta_json / supplement / sampling_model / [] / n_events; meta_json / main_event_reconstruction_check; meta_json / continuity_across_50_GeV / [] / n_events; meta_json / pz / supplement_raw_events; meta_json / E_gt_20_shares_of_full / event_sum_over_grid_total
+- prediction:nuwro: nevt_flat; n_events; meta_json / supplement / events; meta_json / supplement / sampling_model / [] / n_events; meta_json / main_event_reconstruction_check; meta_json / continuity_across_50_GeV / [] / n_events; meta_json / pz / supplement_raw_events; meta_json / E_gt_20_shares_of_full / event_sum_over_grid_total
+- prediction:gibuu: nevt_flat; n_events; meta_json / checks / identity_r1 / nevt_flat; meta_json / checks / event_alignment_with_extract_gibuu; meta_json / checks / sampling_model / [] / n_events; meta_json / checks / sampling_diagnostic_low_E / E_below_test_min_within_bin / [] / sub_bin_counts; meta_json / E_gt_cut_absent_share / in_grid_shares_from_E_gt_20_of_other_generators_full_products / genie_cv / event_sum_over_grid_total; meta_json / E_gt_cut_absent_share / in_grid_shares_from_E_gt_20_of_other_generators_full_products / genie_mec / event_sum_over_grid_total; meta_json / E_gt_cut_absent_share / in_grid_shares_from_E_gt_20_of_other_generators_full_products / nuwro_cv / event_sum_over_grid_total
+- prediction:mnvtune_v1: nevt_flat
+- manifest (file names, not opened): ['runs/s2/num/data/data_b-_j-.npz']
+
+definition simulation_only = True
+| field | R04 | R00 | R01 | R07 | R08 | R09 | R10 | R14 | median of 16 |
+|---|---|---|---|---|---|---|---|---|---|
+| purity | 0.846 | 0.714 | 0.715 | 0.306 | 0.510 | 0.719 | 0.383 | 0.779 | 0.465 |
+| stability | 0.814 | 0.800 | 0.775 | 0.283 | 0.610 | 0.675 | 0.217 | 0.787 | 0.541 |
+| expected_reco_signal | 817,895 | 483,627 | 356,726 | 44,059 | 125,051 | 255,508 | 34,118 | 525,459 | 127,898 |
+| truth_selected | 1,020,374 | 654,151 | 681,343 | 59,093 | 235,968 | 747,633 | 139,316 | 854,759 | 190,932 |
+| mc_neff_truth | 3,930,993 | 2,934,519 | 3,739,551 | 331,614 | 1,388,929 | 4,069,981 | 844,187 | 3,953,897 | 1,009,896 |
+
+## G-SENS
+label: descriptive sensitivity of the reported χ², not an alternative result
+unchanged: ['stat', 'seed', 'normalization', 'C_model:genie_mec', 'C_model:nuwro', 'C_model:gibuu', 'C_resp', 'V_g']
+
+### interaction (primary), genie_cv, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 109.35 | 1.18e+03 | 4.37e-05 | 2/7/13 | 3.15 | 40.6 | R06 +0.77, R05 -0.41, R10 -0.27 |
+| 0.1 | 96.25 | 823 | 6.28e-05 | 2/6/12 | 3.23 | 46.8 | R06 +0.76, R05 -0.38, R10 -0.34 |
+| 0.25 | 87.15 | 687 | 7.55e-05 | 3/8/13 | 3.41 | 31.9 | R03 +0.51, R06 -0.50, R02 -0.36 |
+| 0.5 | 78.97 | 580 | 8.99e-05 | 3/7/12 | 3.46 | 26.7 | R06 +0.53, R05 -0.45, R12 -0.36 |
+| 1 | 72.97 | 510 | 0.000103 | 3/8/13 | 3.62 | 35.6 | R06 +0.56, R12 -0.48, R05 -0.43 |
+
+### interaction (primary), genie_mec, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 272.12 | 1.15e+03 | 4.47e-05 | 2/4/10 | 1.15 | 45.5 | R04 +0.45, R08 -0.42, R01 -0.37 |
+| 0.1 | 245.60 | 814 | 6.35e-05 | 2/4/10 | 1.22 | 36.5 | R08 +0.59, R00 -0.49, R04 -0.32 |
+| 0.25 | 222.06 | 680 | 7.62e-05 | 2/4/10 | 1.34 | 36.8 | R08 +0.60, R00 -0.56, R01 +0.28 |
+| 0.5 | 195.79 | 575 | 9.07e-05 | 2/5/11 | 0.95 | 34.2 | R04 +0.92, R00 -0.23, R09 -0.23 |
+| 1 | 171.20 | 506 | 0.000104 | 2/6/12 | 1.02 | 41.9 | R04 +0.94, R09 -0.18, R08 -0.17 |
+
+### interaction (primary), nuwro, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 188.03 | 1.38e+03 | 3.73e-05 | 3/9/13 | 0.61 | 31.3 | R04 +0.63, R10 -0.37, R00 -0.34 |
+| 0.1 | 159.94 | 863 | 5.98e-05 | 2/9/13 | 0.77 | 38.1 | R04 +0.86, R00 -0.32, R09 -0.29 |
+| 0.25 | 141.30 | 713 | 7.26e-05 | 2/5/10 | 0.85 | 37.7 | R04 +0.90, R00 -0.28, R09 -0.26 |
+| 0.5 | 123.29 | 598 | 8.71e-05 | 2/6/11 | 0.93 | 35.5 | R04 +0.92, R00 -0.23, R09 -0.23 |
+| 1 | 107.83 | 524 | 0.000101 | 2/8/13 | 1.00 | 31.8 | R04 +0.94, R09 -0.18, R08 -0.17 |
+
+### interaction (primary), gibuu, ndf 8
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 58.46 | 142 | 0.0003 | 2/5/6 | 13.54 | 26.8 | R11 +0.79, R10 +0.36, R00 +0.30 |
+| 0.1 | 57.59 | 120 | 0.000357 | 2/4/6 | 13.50 | 27.8 | R11 +0.79, R10 +0.35, R00 +0.30 |
+| 0.25 | 56.63 | 108 | 0.000398 | 2/4/6 | 13.46 | 28.9 | R11 +0.78, R10 +0.34, R00 +0.31 |
+| 0.5 | 55.46 | 99.6 | 0.000436 | 2/4/6 | 13.39 | 30.6 | R11 +0.77, R00 +0.32, R10 +0.32 |
+| 1 | 54.34 | 92.3 | 0.000479 | 2/4/7 | 13.31 | 32.6 | R11 +0.75, R00 +0.34, R08 +0.32 |
+
+### interaction (primary), mnvtune_v1, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 329.72 | 2.64e+03 | 1.95e-05 | 2/5/9 | 0.97 | 47.9 | R04 +0.54, R14 -0.41, R08 -0.38 |
+| 0.1 | 299.42 | 980 | 5.27e-05 | 2/4/9 | 1.12 | 45.5 | R08 +0.56, R00 -0.46, R04 -0.33 |
+| 0.25 | 266.01 | 783 | 6.61e-05 | 2/4/10 | 1.27 | 42.0 | R08 +0.59, R00 -0.54, R12 -0.30 |
+| 0.5 | 226.91 | 645 | 8.07e-05 | 2/5/10 | 0.90 | 37.7 | R04 +0.92, R00 -0.23, R09 -0.22 |
+| 1 | 183.85 | 562 | 9.38e-05 | 2/6/9 | 0.97 | 42.7 | R04 +0.94, R09 -0.18, R08 -0.17 |
+
+### c_e_systematic (second), genie_cv, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 109.35 | 1.18e+03 | 4.37e-05 | 2/7/13 | 3.15 | 40.6 | R06 +0.77, R05 -0.41, R10 -0.27 |
+| 0.1 | 70.68 | 230 | 0.000222 | 1/6/12 | 3.50 | 55.5 | R06 +0.70, R10 -0.39, R05 -0.36 |
+| 0.25 | 55.78 | 112 | 0.000451 | 3/7/12 | 3.98 | 25.5 | R05 +0.57, R06 -0.45, R01 -0.43 |
+| 0.5 | 45.84 | 60.3 | 0.000825 | 3/8/13 | 3.74 | 21.4 | R14 +0.77, R09 -0.45, R12 -0.28 |
+| 1 | 45.47 | 31.6 | 0.00155 | 2/6/11 | 4.80 | 29.3 | R14 +0.85, R06 -0.46, R05 -0.17 |
+
+### c_e_systematic (second), genie_mec, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 272.12 | 1.15e+03 | 4.47e-05 | 2/4/10 | 1.15 | 45.5 | R04 +0.45, R08 -0.42, R01 -0.37 |
+| 0.1 | 133.31 | 229 | 0.000223 | 2/4/13 | 3.51 | 39.1 | R06 +0.70, R10 -0.39, R05 -0.38 |
+| 0.25 | 87.57 | 112 | 0.000452 | 3/6/12 | 2.13 | 25.3 | R04 +0.94, R08 -0.23, R09 -0.22 |
+| 0.5 | 61.09 | 60.2 | 0.000825 | 3/8/13 | 4.07 | 23.0 | R06 +0.71, R05 -0.32, R15 -0.31 |
+| 1 | 45.33 | 31.6 | 0.00155 | 2/8/14 | 4.81 | 30.4 | R14 +0.85, R06 -0.46, R05 -0.17 |
+
+### c_e_systematic (second), nuwro, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 188.03 | 1.38e+03 | 3.73e-05 | 3/9/13 | 0.61 | 31.3 | R04 +0.63, R10 -0.37, R00 -0.34 |
+| 0.1 | 90.41 | 233 | 0.000219 | 3/9/12 | 6.73 | 22.1 | R08 +0.57, R00 +0.42, R07 -0.39 |
+| 0.25 | 66.48 | 113 | 0.000448 | 2/7/11 | 6.91 | 29.6 | R08 +0.54, R00 +0.44, R07 -0.39 |
+| 0.5 | 55.61 | 60.5 | 0.000822 | 3/9/14 | 7.18 | 33.8 | R00 +0.49, R08 +0.47, R03 -0.38 |
+| 1 | 69.24 | 31.7 | 0.00155 | 3/8/12 | 7.03 | 25.2 | R07 +0.56, R01 -0.52, R00 -0.44 |
+
+### c_e_systematic (second), gibuu, ndf 8
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 58.46 | 142 | 0.0003 | 2/5/6 | 13.54 | 26.8 | R11 +0.79, R10 +0.36, R00 +0.30 |
+| 0.1 | 50.51 | 62.7 | 0.000671 | 2/4/6 | 13.28 | 34.0 | R11 +0.79, R10 +0.37, R00 +0.30 |
+| 0.25 | 48.89 | 35.1 | 0.00118 | 2/4/7 | 12.86 | 39.8 | R11 +0.79, R10 +0.37, R00 +0.30 |
+| 0.5 | 53.32 | 21 | 0.00194 | 2/4/7 | 12.13 | 42.5 | R11 +0.79, R10 +0.38, R00 +0.29 |
+| 1 | 89.88 | 13.4 | 0.00297 | 3/6/7 | 7.06 | 27.1 | R10 +0.71, R01 +0.65, R09 +0.16 |
+
+### c_e_systematic (second), mnvtune_v1, ndf 16
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells |
+|---|---|---|---|---|---|---|---|
+| 0 | 329.72 | 2.64e+03 | 1.95e-05 | 2/5/9 | 0.97 | 47.9 | R04 +0.54, R14 -0.41, R08 -0.38 |
+| 0.1 | 146.34 | 240 | 0.000212 | 2/4/10 | 1.46 | 35.3 | R04 +0.93, R09 -0.26, R08 -0.19 |
+| 0.25 | 93.46 | 114 | 0.000442 | 3/7/11 | 2.10 | 29.4 | R04 +0.94, R08 -0.23, R09 -0.22 |
+| 0.5 | 66.64 | 60.9 | 0.000815 | 3/7/10 | 3.97 | 24.4 | R06 +0.73, R05 -0.35, R15 -0.33 |
+| 1 | 67.59 | 31.8 | 0.00154 | 4/10/13 | 4.73 | 20.0 | R14 +0.84, R06 -0.50, R05 -0.18 |
+
+unstable records: none
+largest methods spread: 1.7240132140650595e-14
+largest ridge change: 8.972342304083598e-09
+smallest shrunk-group lambda_min: -1.2772504070334871e-18
+smallest lambda_min of M: 1.9511108322168035e-05
+worst |chi2(alpha 0) - Stage G| relative: 1.2951204641607514e-14
+non_finite_written_as_null: 0

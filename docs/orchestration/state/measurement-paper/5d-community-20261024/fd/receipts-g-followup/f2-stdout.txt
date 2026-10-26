@@ -1,0 +1,11 @@
+followup start 2026-10-26T18:38:07Z login33
+followup end 2026-10-26T18:38:08Z
+37
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-followup-20261026/fd_g_followup_readout.json", "sha256": "cd82517afdfb1dc8383580c8a4c57e82d9b87864e75d28528cb35c4455f6e379"}
+rc=0
+total 13
+drwxrwx--- 3 josephrb josephrb   4096 Oct 26 11:36 deploy
+-rw-rw---- 1 josephrb josephrb 155395 Oct 26 11:38 fd_g_followup_readout.json
+drwxrwx--- 2 josephrb josephrb   4096 Oct 26 11:38 logs
+drwxrwx--- 2 josephrb josephrb   4096 Oct 26 11:37 tmp
+rc=0
