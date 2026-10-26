@@ -418,7 +418,7 @@ docs/orchestration/RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md	tracked	L
 docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md	tracked	LIVE	document		20261005	open		route-only	reproduction/s5p/scope.py	no	37	144	10764
 docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md	tracked	LIVE	document		20261005	open		route-only		no	8	149	8688
 docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	tracked	LIVE	document		20261006	open		route-only		no	27	163	9898
-docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	tools/registry/absence_claims.py;tools/registry/check_registry.py;tools/registry/results_index.py;tools/registry/whatis.py	no	11	150	20402
+docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	tools/registry/absence_claims.py;tools/registry/check_registry.py;tools/registry/results_index.py;tools/registry/whatis.py	no	11	153	20723
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only		no	7	180	13118
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	tracked	LIVE	document		20261006	open		route-only		no	5	114	8919
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	5	201	13579
