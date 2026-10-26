@@ -13,7 +13,8 @@
 # base tip it was built on. A PR with merge conflicts has no merge commit and GitHub does not run this workflow.
 # On `workflow_dispatch`, HEAD is the dispatched branch tip and the base is the `base` input (default main).
 #
-# The checks are stdlib Python plus git; no LaTeX build, no network after checkout, no secrets.
+# The checks are stdlib Python plus git, no LaTeX build, no secrets. One step installs one pinned package, pytest, for
+# the note checkers' fixture tests; nothing else uses the network after checkout.
 name: record-checks
 
 on:
@@ -159,6 +160,24 @@ jobs:
       - name: Registry fixture tests (test_registry.py)
         if: ${{ !cancelled() }}
         run: python3 tools/registry/test_registry.py
+
+      # --- The note checkers' own tests (docs/analysis-note; build_all.sh runs the checkers, not these tests) -----
+      # The SEC4 tests that need receipts skip outside the canonical layout; here the receipts are tracked, so they run.
+      - name: Install pytest (pinned) for the note-checker tests
+        if: ${{ !cancelled() }}
+        run: python3 -m pip install --disable-pip-version-check --no-input "pytest==8.3.4"
+
+      - name: "note: SEC4 receipt checker tests (test_check_sec4_receipts.py)"
+        if: ${{ !cancelled() }}
+        run: python3 -m pytest -q -p no:cacheprovider docs/analysis-note/test_check_sec4_receipts.py
+
+      - name: "note: records-move self-test (check_note_records.py --self-test)"
+        if: ${{ !cancelled() }}
+        run: python3 docs/analysis-note/check_note_records.py --self-test docs/analysis-note/records-inventory-base.json docs/analysis-note
+
+      - name: "note: records-pin self-test (check_note_records.py --self-test-pin)"
+        if: ${{ !cancelled() }}
+        run: python3 docs/analysis-note/check_note_records.py --self-test-pin
 
       - name: The checks left the checkout clean
         if: ${{ !cancelled() }}
