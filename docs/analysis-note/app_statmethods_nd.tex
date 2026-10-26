@@ -13,9 +13,9 @@ App.~\ref{app:statmethods}.
 \label{sec:nd-declarations}
 
 The 2D justification in \S\ref{sec:chisq} does not transfer to N-D.
-An earlier 5D covariance from the standard production chain has
+An earlier 5D covariance from the standard production chain, distinct from $C_Z$ and built before $C_Z$ was chosen for use, has
 $10\,694$ reported bins, effective positive rank $\mathbf{263}$ and infinite
-numerical condition number. It is distinct from $C_Z$ and was built before $C_Z$ was chosen for use. Its $4825$-bin 5D$\to$4D projection retains rank
+numerical condition number. Its $4825$-bin 5D$\to$4D projection retains rank
 $263$ exactly. About ${\sim}45$ two-endpoint MAT bands plus statistical and ML
 blocks cannot span $10\,694$ directions, so the rank limit is a consequence of the
 construction, not a defect. Quoting $\chi^{2}/n_{\text{reported}}$ would
@@ -39,9 +39,9 @@ in advance are in Ref.~\cite{NoteRecords2026} (\recentry{rank-inversion}).
 \paragraph{Finite-ensemble bias of the inverse, and why no correction is prescribed.}
 Without declaration (v), the ensemble sizes of the blocks would go unrecorded,
 and an uncorrected finite-ensemble bias could enter unnoticed. The inverse of a noisy sample covariance is biased
-\emph{upward}. For an unbiased $1/(N-1)$ estimator over $N$ independent Gaussian realizations, the
-standard debiasing factor is $(N-p-2)/(N-1)$. For this analysis's production
-convention, universe-mean centered with biased $1/N$ normalization, it is
+\emph{upward}: for an unbiased $1/(N-1)$ estimator over $N$ independent Gaussian realizations the
+standard debiasing factor is $(N-p-2)/(N-1)$, and for this analysis's biased $1/N$ production
+convention (universe-mean centered, biased $1/N$) it is
 % (\texttt{nd-unfolding/uq\_math.py}, ``universe-mean centered, biased 1/N'')
 $(N-p-2)/N$. The superseded unified-throw 5D covariance has $N=160$,
 truncated $p=100$, giving $58/160\simeq0.363$: uncorrected precision is too
