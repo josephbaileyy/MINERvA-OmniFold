@@ -1,0 +1,56 @@
+CONTEXT: the consolidation's fact-ledger rows for these passages. Each N: probe is the exact home text, shown inside its full paragraph of the delivered note.
+
+ROW A3 (passage sec_method:28): fact: refined-form uses add 16-cell; 'every other' names config-(a) 5D
+
+
+ROW B2 (passage sec_method:28): fact: (e)'s uses add the 16-cell result
+
+
+ROW B3 (passage sec_method:97): fact: (e) gives the 16-cell result (B; also resolves site 36's omission)
+
+
+ROW A4 (passage sec_method:100): fact: config-(a) 5D central value named by its section
+
+
+ROW B4 (passage sec_method:100): fact: (e) data unfold gives the 16-cell result; covariance pointer (P5 = (e): build_cmodel5d.py x = P5)
+
+
+ROW A5 (passage sec_method:126): fact: estimator table: (a) row names its 5D product; (e) row adds the 16-cell result (A, B)
+  home sec_method.tex: "sixteen-cell five-observable result (\S\ref{sec:fived16}); generator shapes held out of development"
+    in its paragraph: \pcell{0.30\textwidth}{three- and four-observable central values (\S\ref{sec:3d}); sixteen-cell five-observable result (\S\ref{sec:fived16}); generator shapes held out of development; precision study (\S\ref{sec:gbdt-model-dependence}); generator tests (\S\ref{sec:joint5d})} \\
+
+ROW AMB41 (passage sec_systematics:156): fact: 'The 5D result' named
+
+
+ROW AMB42 (passage sec_systematics:159): fact: definite 'five-axis covariance' named
+
+
+ROW AMB43 (passage sec_systematics:278): fact: 'used in this note' replaced by the product name
+
+
+ROW AMB45 (passage sec_systematics:282): fact: 'used in this note' replaced by the product name
+
+
+ROW AMB46 (passage sec_systematics:297): fact: 'used in this note' replaced by the product name
+
+
+ROW AMB48 (passage sec_systematics:302): fact: 'the covariance used in this note' named
+
+
+ROW AMB49 (passage sec_systematics:302): fact: 'the 5D covariance' named
+
+
+ROW C2 (passage sec_validation:109): fact: table: regularization bias scoped to config (a), 16-cell pointers (C); held-out total named (AMB 52)
+  home sec_validation.tex: "within the configuration-(a) total uncertainty in 20 of 42"
+    in its paragraph: within the configuration-(a) total uncertainty in 20 of 42 $(\Eavail,W)$ cells (\S\ref{sec:val-departure}) \\
+
+ROW AMB53 (passage sec_validation:129): fact: 'main 5D recovery evidence' scoped to sec:5d
+
+
+ROW AMB57 (passage sec_3d:42): fact: 'covariance used in this note' named
+
+
+ROW AMB62 (passage sec_eavailw:18): fact: marginal check scoped to config (a)
+
+
+ROW G3 (passage sec_eavailw:129): fact: Stage G (no compatibility metric) scoped to config-(a) covariance; pointer

@@ -1,0 +1,119 @@
+PASSAGE: app_guide:12
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:106
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:120
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:126
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:163
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:165
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:170
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:187
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_statmethods:159
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_statmethods:223
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:34
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:38
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:46
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:90
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:105
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:113
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:173
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:184
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:207
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:237
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:270
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:326
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:339
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: paper_body:466
+VERDICT: AGREE
+ISSUE: none
+FIX: none

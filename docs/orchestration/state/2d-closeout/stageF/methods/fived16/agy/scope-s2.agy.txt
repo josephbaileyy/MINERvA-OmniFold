@@ -1,0 +1,84 @@
+PASSAGE: sec_method:28
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:97
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:100
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:126
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:138
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:156
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:159
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:278
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:282
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:297
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:302
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_validation:109
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_validation:113
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_validation:129
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_3d:42
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_eavailw:18
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_eavailw:129
+VERDICT: AGREE
+ISSUE: none
+FIX: none

@@ -1,0 +1,88 @@
+PASSAGE: note-10.0
+VERDICT: AGREE
+ISSUES: none
+
+PASSAGE: note-10.1
+VERDICT: AGREE
+ISSUES: none
+
+PASSAGE: note-10.2
+VERDICT: REVISE
+ISSUES:
+1. Printed words: In Table 12, rows R00–R15, the second data column prints "6.77", "6.66", "7.65", "8.27", "4.05", "5.48", "4.61", "7.02", "4.86", "4.87", "7.10", "7.42", "6.23", "8.47", "4.87", "6.13" under header `flux`; the third column prints "3.93", "3.58", etc. under `interaction`; the fourth prints "0.98", "1.18", etc. under `detector`; the fifth prints "1.56", "2.14", etc. under `lateral`; the sixth prints "5.01", "4.85", etc. under `norm.`; the seventh prints "1.40", "1.40", etc. under `Ce`.
+Source value: S1-REPORT.md §6 readout: for R00, stat = 0.20, flux = 3.93, interaction = 0.98, detector = 1.56, lateral = 5.01, normalization = 1.40, Ce = 6.77, C_model = 0.43.
+What is wrong: The column of Ce values was erroneously inserted as the second data column between `stat.` and `flux`, displacing `flux`, `interaction`, `detector`, `lateral`, and `norm.` by one column to the right and putting every group's numerical values under the wrong column headers for all sixteen cells R00–R15.
+2. Printed words: "adding it raises the total’s σ by a factor of 1.011–1.220 (median 1.048)."
+Source wording: CRESP-REPORT.md header and FD-F0b-REPORT.md header: "NOT CITABLE FOR: ... any reading of the difference between the two columns."
+What is wrong: Rule (b) strictly prohibits any reading of the difference between the C_total and C_total + C_resp columns.
+3. Printed words: "Of the trace of (Ctotal + Cresp )/f f T , Ctotal carries 0.9262 and the four response species 0.0168, 0.0436, 0.0071 and 0.0062."
+Source value or wording: S1-REPORT.md §6 prints trace shares of C_total only (`trace_share`: stat 0.0010, interaction 0.1705, flux 0.1881, detector 0.0525, lateral 0.1406, normalization 0.0276, seed 0.0000, C_model 0.4196). No trace shares of (Ctotal + Cresp)/ffT appear in CRESP-REPORT.md or S1-REPORT.md.
+What is wrong: These numbers are uncommitted and not supported by any source readout.
+
+PASSAGE: note-10.3
+VERDICT: REVISE
+ISSUES:
+1. Printed words: "Under the reported covariance, 4 truths are listed: W3, the NuWro (pT, p∥, Eavail) shape, by p; ... At the other 9 truths neither trigger fires."
+Source value or wording: FD-F0b-REPORT.md §5: under C^(T) + C_resp, W3 is "**not listed** (p 0.0141)". Only 3 truths are listed under C^(T) + C_resp: q3, Stage 0c GiBUU, and A7 GiBUU.
+What is wrong: W3 has p = 0.0141 (which is not < 0.01) and no cell with |z| > 2 under the reported covariance, so it does not trigger and is not listed. Falsely listing W3 breaches Rule (c) ("the listed truths must be exactly those the source lists under C_total + C_resp") and creates an arithmetic contradiction (4 listed + 9 unlisted = 13, whereas there are only 12 graded truths).
+2. Printed words: "the vertex-family truths have ... 1 of 8 truths with p < 0.01"
+Source value: FD-F0b-REPORT.md §4: vertex-family truths with p < 0.01 against C^(T) + C_resp is 1 of 8 (A7 GiBUU only).
+What is wrong: This source count directly contradicts the text's preceding claim that W3 (a vertex-family truth) triggered listing by p under the reported covariance.
+3. Printed words: "the GiBUU Eavail shape, by its cell R06 (z = 2.0)"
+Source value: FD-F0b-REPORT.md summary and paper-Vf: z = 2.01 for cell R06.
+What is wrong: The pull value is 2.01, not 2.0.
+
+PASSAGE: note-10.4
+VERDICT: REVISE
+ISSUES:
+1. Printed words: In Table 16, under header `modes for 50/90/99 %`, the printed text gives the isolated numbers:
+"2
+2
+7
+9
+5
+10
+6"
+Source value: FD-G-DIAG-REPORT.md §2, column `modes 50/90/99 %`: GENIE CV is "2/7/13", GENIE+MEC is "2/4/10", NuWro is "3/9/13", GiBUU is "2/5/6", and MINERvA Tune v1 is "2/5/9".
+What is wrong: The slash-separated triplet mode counts are corrupted and broken into disconnected digits that fail to match the source values and misalign the table rows.
+2. Printed words: "The fake-data tests list the GiBUU-like truths under the reported covariance (§10.3), so the GiBUU comparison carries that limitation."
+Source wording: DECISION-20261025 item 1, DECISION-20261026 item 1, and Rule (c): "The 5D measurement states that its reported uncertainty does not cover the fake-data bias at GiBUU-like truths or at the q3 tilt".
+What is wrong: Rule (c) requires the exact limitation statement that the reported uncertainty does not cover the fake-data bias at GiBUU-like truths or at the q3 tilt, which is not properly stated here.
+
+PASSAGE: paper-Vf
+VERDICT: REVISE
+ISSUES:
+1. Printed words: "it is generator-shape model dependence, unscaled, and its coverage at truths held out of its construction has not been validated."
+Source wording: cmodel_5d.json label `component`: "generator-shape model dependence; not a calibrated bound (M2, kappa = 1, unscaled)".
+What is wrong: Rule (e) explicitly requires every qualifier attached by the sources, specifically that C_model is "not a calibrated bound", to be present where its statement is made; that qualifier is omitted.
+2. Printed words: "Table IV gives the results under the reported covariance and under Ctotal alone."
+Source wording: FD-F0b-REPORT.md §6 / paper-Vf text referencing Table IV.
+What is wrong: Table IV itself is entirely missing from the section (an incomplete fragment of it was displaced into Section VII B).
+
+PASSAGE: paper-VIIb
+VERDICT: REVISE
+ISSUES:
+1. Printed words: The uncaptioned table fragment printed between the first paragraph and Table V:
+"Ctotal
+p cells
+Truth
+χ2
+p cells
+—
+0.00
+1.00
+...
+R02, R06, R07 246.75
+< 10−30
+R02, R06, R07
+—
+59.83 5.6 × 10−7
+—"
+Source wording: Belongs to Table IV of Sec. V F (reporting fake-data bias tests against Ctotal + Cresp and Ctotal from FD-F0b-REPORT.md §6).
+What is wrong: This is an orphaned, mangled fragment of Table IV from Sec. V F that does not belong in Sec. VII B (generator comparisons); it lacks table numbering, caption, and the reported Ctotal + Cresp columns.
+2. Printed words: "Because Cmodel is built from shifts toward GENIE + MEC, NuWro and GiBUU, those comparisons use a covariance built in part from the compared generator."
+Source wording: FD-G-REPORT.md §2 label: "so the GENIE+MEC, NuWro and GiBUU comparisons each carry a covariance built partly from the compared generator, and so does the GENIE CV comparison, through the ratios’ reference (FD-G §7.3)."
+What is wrong: Rule (e) requires the qualifier that the covariance is built in part from the compared generator; the text omits that this qualifier also applies to the GENIE CV comparison through the ratios' reference.
+3. Printed words: "where the fake-data tests list the GiBUU-like truths (Sec. V F)."
+Source wording: DECISION-20261025 item 1, DECISION-20261026 item 1, and Rule (c): "the reported uncertainty does not cover the fake-data bias at GiBUU-like truths or at the q3 tilt".
+What is wrong: The text merely points back to where truths are listed instead of stating the permitted limitation sentence that the reported uncertainty does not cover the fake-data bias at GiBUU-like truths.

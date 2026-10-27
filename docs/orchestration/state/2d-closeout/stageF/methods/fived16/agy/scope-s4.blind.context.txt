@@ -1,0 +1,73 @@
+CONTEXT: the consolidation's fact-ledger rows for these passages. Each N: probe is the exact home text, shown inside its full paragraph of the delivered note.
+
+ROW AMB119 (passage app_guide:12): fact: records-document pointer names the covariance
+
+
+ROW A7 (passage app_negweight:106): fact: refined-form uses add 16-cell; purity scoped to config-(a) 5D
+
+
+ROW AMB127 (passage app_negweight:120): fact: 'standard chain' defined as the config-(a) chain
+
+
+ROW A8 (passage app_negweight:126): fact: revisit open for config-(a); 16-cell uses refined
+
+
+ROW A9 (passage app_negweight:163): fact: (e) gives the 16-cell result; not the config-(a) 5D
+
+
+ROW AMB135 (passage app_negweight:165): fact: revisit scoped to the config-(a) treatment
+
+
+ROW AMB136 (passage app_negweight:170): fact: revisit scoped to the config-(a) treatment
+
+
+ROW AMB138 (passage app_negweight:187): fact: 'covariance used in this note' named (antecedent of site 138)
+
+
+ROW AMB121 (passage app_statmethods:159): fact: 'of this note' named
+
+
+ROW AMB122 (passage app_statmethods:223): fact: 'used in this note' named
+
+
+ROW AMB146 (passage paper_body:34): fact: findings table: marginal (a), seed (a), precision study scoped (AMB 146, 149, 150)
+  home paper_body.tex: "seed-dependent (a) covariance; rounding-level instability"
+    in its paragraph: \pcell{0.50\columnwidth}{seed-dependent (a) covariance; rounding-level instability} & \pcell{0.12\columnwidth}{(a), (e)} & \pcell{0.22\columnwidth}{seed pair; rounding} & \pcell{0.07\columnwidth}{\ref{sec:cov5d}} \\
+  home paper_body.tex: "no reporting definition tested in the precision study meets the 10\% target"
+    in its paragraph: \pcell{0.50\columnwidth}{no reporting definition tested in the precision study meets the 10\% target} & \pcell{0.12\columnwidth}{(e)} & \pcell{0.22\columnwidth}{five prior changes} & \pcell{0.07\columnwidth}{\ref{sec:uncertainty-status}} \\
+
+ROW AMB151 (passage paper_body:46): fact: Scope: product scoping only; 16-cell clause inserted (no base sentence changed)
+
+
+ROW A10 (passage paper_body:90): fact: config-(a) 5D product named; 16-cell uses (e)
+
+
+ROW A11 (passage paper_body:105): fact: estimators table: (a) names its 5D product; (e) adds the 16-cell result (A, B)
+  home paper_body.tex: "3D and 4D central values; sixteen-cell 5D result (Sec.~\ref{sec:result16}); held-out shapes"
+    in its paragraph: \pcell{0.38\columnwidth}{3D and 4D central values; sixteen-cell 5D result (Sec.~\ref{sec:result16}); held-out shapes (Fig.~\ref{fig:deformation}b); precision study; generator tests} \\
+
+ROW AMB160 (passage paper_body:173): fact: 'quoted standard deviation' named by section
+
+
+ROW AMB161 (passage paper_body:173): fact: 'the quoted uncertainties' named
+
+
+ROW C4 (passage paper_body:184): fact: regularization bias scoped to config (a); C_model stated; pointer
+
+
+ROW AMB165 (passage paper_body:207): fact: caption band named by section
+
+
+ROW AMB166 (passage paper_body:237): fact: covariance named as config-(a)'s
+
+
+ROW G4 (passage paper_body:237): fact: Stage G scoped to this covariance; pointer to sec:gen16
+
+
+ROW AMB169 (passage paper_body:237): fact: 'the five-observable covariance' -> 'this'
+
+
+ROW L4 (passage paper_body:326): fact: list of uses adds the 16-cell result (pointer)
+
+
+ROW C5 (passage paper_body:466): fact: Limitations: product scoping only (config (a); 16-cell clause, pointer)

@@ -1,0 +1,39 @@
+PASSAGE: sec_summary:19
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_summary:29
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_summary:46
+VERDICT: REVISE
+ISSUE: The words "the model term of its reported covariance includes this regularization bias, as" violate rule (c) and ledger row C1 by asserting that $C_{\mathrm{model}}$ includes regularization bias; additionally, "The one five-dimensional covariance used in this note" violates rule (a) and ledger row F2 by failing to scope the covariance to configuration (a).
+FIX: For "the model term of its reported covariance includes this regularization bias, as", replace with "the model term of its reported covariance is"; for "The one five-dimensional covariance used in this note", replace with "The five-axis covariance of the configuration-(a) central value".
+
+PASSAGE: sec_summary:78
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:28
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:35
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:37
+VERDICT: REVISE
+ISSUE: The words "with validated coverage" violate rule (c) and contradict ledger row AMB30 by claiming validated coverage for the sixteen-cell result.
+FIX: , whose coverage is not validated
+
+PASSAGE: sec_intro:67
+VERDICT: AGREE
+ISSUE: none
+FIX: none

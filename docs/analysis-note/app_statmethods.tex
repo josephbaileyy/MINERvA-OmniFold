@@ -156,7 +156,7 @@ uniformly for all $N_{u}\ge 2$, with no special $\pm1\sigma$ pair formula. At $N
 \end{align}
 Independence is a modeling assumption with one known correlated exception, the Bashyal flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block (\S\ref{sec:rank}).
 
-Equation~\eqref{eq:systblocksum} omits a larger correction. The band sum is linear, but OmniFold responds nonlinearly to input perturbations, so joint re-unfolding produces a cross term beyond any pairwise correlation. A unified throw measures it through $N$ re-unfolds, simultaneously perturbing every reweightable band and the flux multisim per event ($w_{\CV}\prod_B\rho_B^{g_B}$, $g_B\sim\mathcal N(0,1)$), then re-extracting the cross section. The corrected construction is in \S\ref{sec:uq-combine}; its use in the five-axis covariance of this note is in \S\ref{sec:eavailw-adopted} (Eq.~\eqref{eq:zinflation}).
+Equation~\eqref{eq:systblocksum} omits a larger correction. The band sum is linear, but OmniFold responds nonlinearly to input perturbations, so joint re-unfolding produces a cross term beyond any pairwise correlation. A unified throw measures it through $N$ re-unfolds, simultaneously perturbing every reweightable band and the flux multisim per event ($w_{\CV}\prod_B\rho_B^{g_B}$, $g_B\sim\mathcal N(0,1)$), then re-extracting the cross section. The corrected construction is in \S\ref{sec:uq-combine}; its use in the five-axis covariance of the configuration-(a) central value is in \S\ref{sec:eavailw-adopted} (Eq.~\eqref{eq:zinflation}).
 % Organization review 2026-10-04: the remaining clauses moved to S4.4 (sec:uq-combine) and
 % S8.4 (sec:eavailw-construction); see g5 sidecars/handoffs.md. Verbatim, with ruling F2 L4#7:
 % "it does not subtract a scalar run-to-run jitter floor (\texttt{nd-unfolding/unified\_throw\_cov.py}),
@@ -220,7 +220,7 @@ a rank-1 outer product of the half-difference. A common offset from $X_{\CV}$ co
 \end{equation}
 The estimators agree only for CV-symmetric pairs ($\mathbf{m}=0$), both reducing to $\mathbf{a}\mathbf{a}\T$. For asymmetric or one-sided pairs, CV-centering adds the rank-1 $\mathbf{m}\mathbf{m}\T$ common-offset direction. Every per-band block $C_{b}$ here is mean-centered to match MAT (\S\ref{sec:minerva}); this matters for BeamAngle, MuonResolution and the one-sided NC band.
 
-\paragraph{Scope of mean-centering.} Mean-centering applies to the $\pm1\sigma$ band estimator only. The five-axis covariance used in this note deliberately retains the CV-centered term in its inflation operand, the unified-throw covariance diagonal centered on the central value (\S\ref{sec:eavailw-construction}, Eqs.~\eqref{eq:zinflation} and~\eqref{eq:zcentering}).
+\paragraph{Scope of mean-centering.} Mean-centering applies to the $\pm1\sigma$ band estimator only. The five-axis covariance of the configuration-(a) central value deliberately retains the CV-centered term in its inflation operand, the unified-throw covariance diagonal centered on the central value (\S\ref{sec:eavailw-construction}, Eqs.~\eqref{eq:zinflation} and~\eqref{eq:zcentering}).
 
 \subsubsection{How MINERvA builds its published covariance}
 \label{sec:minerva}

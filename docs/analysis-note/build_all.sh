@@ -146,6 +146,13 @@ echo "=== records entry numbers (generated file fresh; generator = the records b
 python3 check_note_records.py --self-test-entry-numbers
 python3 check_note_records.py entry-numbers --check
 
+# (10) The sixteen-cell five-observable result (DECISION-20261027-joseph-5d-integration-then-second-scope-review.md):
+# every number it prints is a key of values_fived16.tex, generated from committed readouts pinned by sha256. A stale
+# file stops the build here. In the standalone note repository (no readouts) the generator reports SKIP.
+echo "=== five-observable values (generated file fresh; readouts pinned) ==="
+python3 make_values_fived16.py --self-test
+python3 make_values_fived16.py --check
+
 # (2) The instant every PDF must postdate. `sleep 1` removes the same-second ambiguity in
 # `test -nt` on filesystems with coarse timestamps: one second, once, against a LaTeX build.
 marker="$(mktemp "${TMPDIR:-/tmp}/build_all_marker.XXXXXX")"
@@ -257,6 +264,30 @@ echo "=== Sec. IV printed values vs committed receipts ==="
 # is rejected. In the standalone note repository (no receipts) the checker reports SKIP; the canonical build enforces it.
 python3 check_sec4_receipts.py --self-test
 python3 check_sec4_receipts.py
+
+echo
+echo "=== no input marked pending prints (\\fvpending) ==="
+# A \fvpending{...} placeholder marks a readout or figure that has not landed (the covariance export, the two 5D
+# figures). It prints "[PENDING: ...]"; a built note or paper that still prints one is refused here, so it never ships.
+pending_txt=$(mktemp)
+for t in main_note main_paper; do
+  # extract to a file first: under pipefail a failed pdftotext piped into grep would read as "no placeholder"
+  if ! pdftotext "$t.pdf" "$pending_txt" || ! test -s "$pending_txt"; then
+    echo "  FAIL could not extract the text of $t.pdf, so the pending check cannot run"
+    exit 1
+  fi
+  if grep -n "PENDING:" "$pending_txt"; then
+    echo "  FAIL $t.pdf prints a pending placeholder (above)"
+    exit 1
+  fi
+  # R06's pull is 2.0096, just over the |z| > 2 trigger: at one decimal it would read as unmet (director, 2026-10-27)
+  if grep -nE "R06[^0-9]{0,40}z *= *2\.0([^0-9]|$)" "$pending_txt"; then
+    echo "  FAIL $t.pdf prints R06's z with one decimal (above); it must print as 2.01"
+    exit 1
+  fi
+done
+rm -f "$pending_txt"
+echo "  ok   no pending placeholder in main_note.pdf or main_paper.pdf"
 
 echo
 echo "=== page counts ==="
