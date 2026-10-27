@@ -1,0 +1,3219 @@
+{
+ "schema": "fd-g-figure-sidecar/1",
+ "labels": {
+  "what": "the 5D integration's figures, drawn from committed readouts (FD-G-FIGURES-DECLARATION.md); no new statistic",
+  "not": "no caption, reading, claim or paper text"
+ },
+ "figure": "ratio",
+ "file": "fd_g_fig_ratio.pdf",
+ "pdf_sha256": "6372244f9e15f065d4f2b99d6c82f6eaf4e7c5dc0fa87cd5ebba545229f81531",
+ "pdf_bytes": 29325,
+ "controls_passed": [
+  "K0",
+  "K1",
+  "K2",
+  "K3",
+  "K4",
+  "K5",
+  "K6",
+  "K7",
+  "K8"
+ ],
+ "inputs_sha256": {
+  "g_readout": "75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee",
+  "g_diag_readout": "680dc5ef9c40b1ab006657ce020c6acac7e891c68ce36850cf7a7dd2df278d88",
+  "g_followup_readout": "cd82517afdfb1dc8383580c8a4c57e82d9b87864e75d28528cb35c4455f6e379",
+  "g_sens2_readout": "0f6568aba032e5d9a85f945048494d8fccde3525bb45a1762d6f5d5aaf15b77f",
+  "f0b_readout": "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "code": {
+  "sha256": {
+   "fd_g_figures.py": "06233dd9ddafe19807e97b42a4f4047b989b8cd8511d47cb8f5ad29f85652b4c",
+   "make_figs.py": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
+   "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+   "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+   "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+  },
+  "commit": "933cfe354ba6a3505c5b232df33d3d905de1de40",
+  "clean": true
+ },
+ "versions": {
+  "python": "3.11.14",
+  "numpy": "1.26.4",
+  "matplotlib": "3.10.8"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/nd-unfolding/fd_g_figures.py",
+  "--g-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+  "--g-diag-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json",
+  "--g-followup-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout.json",
+  "--g-sens2-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_sens2_readout.json",
+  "--f0b-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--figures",
+  "ratio",
+  "modes",
+  "sens",
+  "--ratio-form",
+  "data-over-prediction",
+  "--gibuu-axis",
+  "separate",
+  "--out-dir",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures"
+ ],
+ "options": {
+  "ratio_form": "data-over-prediction",
+  "gibuu_axis": "separate"
+ },
+ "plotted": {
+  "figure": "ratio",
+  "form": "data-over-prediction",
+  "gibuu_axis": "separate",
+  "cells": [
+   "R00",
+   "R01",
+   "R02",
+   "R03",
+   "R04",
+   "R05",
+   "R06",
+   "R07",
+   "R08",
+   "R09",
+   "R10",
+   "R11",
+   "R12",
+   "R13",
+   "R14",
+   "R15"
+  ],
+  "key": [
+   {
+    "cell": "R00",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.0,
+      0.8
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "< 4.5",
+     "eavail": "< 0.8",
+     "q3": "< 2",
+     "W": "all"
+    }
+   },
+   {
+    "cell": "R01",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.0,
+      100.0
+     ],
+     "q3": [
+      2.0,
+      100.0
+     ],
+     "W": [
+      1.8,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "< 4.5",
+     "eavail": "all",
+     "q3": "> 2",
+     "W": "> 1.8"
+    }
+   },
+   {
+    "cell": "R02",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      1.8
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "< 4.5",
+     "eavail": "> 0.8",
+     "q3": "< 2",
+     "W": "< 1.8"
+    }
+   },
+   {
+    "cell": "R03",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      1.8,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "< 4.5",
+     "eavail": "> 0.8",
+     "q3": "< 2",
+     "W": "> 1.8"
+    }
+   },
+   {
+    "cell": "R04",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.0,
+      0.8
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "> 4.5",
+     "eavail": "< 0.8",
+     "q3": "< 2",
+     "W": "all"
+    }
+   },
+   {
+    "cell": "R05",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.0,
+      100.0
+     ],
+     "q3": [
+      2.0,
+      100.0
+     ],
+     "W": [
+      1.8,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "> 4.5",
+     "eavail": "all",
+     "q3": "> 2",
+     "W": "> 1.8"
+    }
+   },
+   {
+    "cell": "R06",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      1.8
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "> 4.5",
+     "eavail": "> 0.8",
+     "q3": "< 2",
+     "W": "< 1.8"
+    }
+   },
+   {
+    "cell": "R07",
+    "box": {
+     "pt": [
+      0.0,
+      0.7
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      1.8,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "< 0.7",
+     "pz": "> 4.5",
+     "eavail": "> 0.8",
+     "q3": "< 2",
+     "W": "> 1.8"
+    }
+   },
+   {
+    "cell": "R08",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.0,
+      0.8
+     ],
+     "q3": [
+      0.0,
+      100.0
+     ],
+     "W": [
+      0.0,
+      1.8
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "< 4.5",
+     "eavail": "< 0.8",
+     "q3": "all",
+     "W": "< 1.8"
+    }
+   },
+   {
+    "cell": "R09",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.0,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      100.0
+     ],
+     "W": [
+      1.8,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "< 4.5",
+     "eavail": "all",
+     "q3": "all",
+     "W": "> 1.8"
+    }
+   },
+   {
+    "cell": "R10",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      1.8
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "< 4.5",
+     "eavail": "> 0.8",
+     "q3": "< 2",
+     "W": "< 1.8"
+    }
+   },
+   {
+    "cell": "R11",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      1.5,
+      4.5
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      2.0,
+      100.0
+     ],
+     "W": [
+      0.0,
+      1.8
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "< 4.5",
+     "eavail": "> 0.8",
+     "q3": "> 2",
+     "W": "< 1.8"
+    }
+   },
+   {
+    "cell": "R12",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.0,
+      0.8
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "> 4.5",
+     "eavail": "< 0.8",
+     "q3": "< 2",
+     "W": "all"
+    }
+   },
+   {
+    "cell": "R13",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.0,
+      100.0
+     ],
+     "q3": [
+      2.0,
+      100.0
+     ],
+     "W": [
+      0.0,
+      1.8
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "> 4.5",
+     "eavail": "all",
+     "q3": "> 2",
+     "W": "< 1.8"
+    }
+   },
+   {
+    "cell": "R14",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.0,
+      100.0
+     ],
+     "q3": [
+      2.0,
+      100.0
+     ],
+     "W": [
+      1.8,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "> 4.5",
+     "eavail": "all",
+     "q3": "> 2",
+     "W": "> 1.8"
+    }
+   },
+   {
+    "cell": "R15",
+    "box": {
+     "pt": [
+      0.7,
+      4.5
+     ],
+     "pz": [
+      4.5,
+      60.0
+     ],
+     "eavail": [
+      0.8,
+      100.0
+     ],
+     "q3": [
+      0.0,
+      2.0
+     ],
+     "W": [
+      0.0,
+      100.0
+     ]
+    },
+    "printed": {
+     "pt": "> 0.7",
+     "pz": "> 4.5",
+     "eavail": "> 0.8",
+     "q3": "< 2",
+     "W": "all"
+    }
+   }
+  ],
+  "figsize": [
+   7.0,
+   5.0
+  ],
+  "axes": [
+   {
+    "rect": [
+     0.11,
+     0.53,
+     0.87,
+     0.3
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     0.7,
+     1.45
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": null,
+    "off": false
+   },
+   {
+    "rect": [
+     0.11,
+     0.3,
+     0.87,
+     0.17
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     0.9,
+     2.5
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": null,
+    "off": false
+   }
+  ],
+  "legends": [
+   {
+    "id": "ratio",
+    "where": null,
+    "loc": "upper center",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "ncol": 2,
+    "size": 6.8,
+    "title": null
+   }
+  ],
+  "items": [
+   {
+    "gid": "ratio:ref:0",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "h",
+    "value": 1.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "ratio:sep:0:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "ratio:sep:0:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "ratio:sep:0:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "ratio:ylabel:0",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 0,
+    "text": "data / prediction"
+   },
+   {
+    "gid": "ratio:ref:1",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "h",
+    "value": 1.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "ratio:sep:1:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "ratio:sep:1:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "ratio:sep:1:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "ratio:ylabel:1",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 1,
+    "text": "data / prediction"
+   },
+   {
+    "gid": "ratio:genie_cv",
+    "kind": "line",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_cv].f",
+     "fd_g_readout.json predictions[name=genie_cv].g"
+    ],
+    "axes": 0,
+    "x": [
+     -0.3,
+     0.7,
+     1.7,
+     2.7,
+     3.7,
+     4.7,
+     5.7,
+     6.7,
+     7.7,
+     8.7,
+     9.7,
+     10.7,
+     11.7,
+     12.7,
+     13.7,
+     14.7
+    ],
+    "y": [
+     1.1182133963269663,
+     1.1265738025079126,
+     0.8915896220914584,
+     0.9998352997943014,
+     1.0915962686720238,
+     1.1722852460840973,
+     0.869455529633386,
+     0.9763767059761469,
+     1.2104502138582973,
+     1.0681831741861743,
+     1.0795881428905099,
+     1.0415679062200813,
+     1.1931036644437187,
+     1.0461706823295436,
+     1.2031978939061267,
+     1.047180696844387
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#2a78d6",
+     "marker": "o",
+     "ls": "None"
+    }
+   },
+   {
+    "gid": "ratio:genie_cv:err",
+    "kind": "yerr",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_cv].f",
+     "fd_g_readout.json predictions[name=genie_cv].g",
+     "fd_g_readout.json predictions[name=genie_cv].sigma_total_over_f"
+    ],
+    "axes": 0,
+    "x": [
+     -0.3,
+     0.7,
+     1.7,
+     2.7,
+     3.7,
+     4.7,
+     5.7,
+     6.7,
+     7.7,
+     8.7,
+     9.7,
+     10.7,
+     11.7,
+     12.7,
+     13.7,
+     14.7
+    ],
+    "lo": [
+     1.038858277528393,
+     1.0466388718098036,
+     0.7667311936313864,
+     0.8734890846582012,
+     1.0457202111708208,
+     1.0846624810501362,
+     0.8182397745342707,
+     0.8984921891149878,
+     1.1347376094196353,
+     1.0012625471090608,
+     0.9868329128396962,
+     0.8990194381944447,
+     1.1139805848810764,
+     0.930352114509433,
+     1.1398465638130995,
+     0.96402321070241
+    ],
+    "hi": [
+     1.1975685151255395,
+     1.2065087332060216,
+     1.0164480505515305,
+     1.1261815149304015,
+     1.1374723261732267,
+     1.2599080111180585,
+     0.9206712847325014,
+     1.054261222837306,
+     1.2861628182969593,
+     1.1351038012632877,
+     1.1723433729413235,
+     1.184116374245718,
+     1.272226744006361,
+     1.1619892501496543,
+     1.266549223999154,
+     1.1303381829863641
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#2a78d6"
+    }
+   },
+   {
+    "gid": "ratio:genie_cv:legend",
+    "kind": "legend",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_cv].label"
+    ],
+    "axes": null,
+    "text": "GENIE 2.12.10 CV, no MEC",
+    "legend": "ratio",
+    "series": "ratio:genie_cv"
+   },
+   {
+    "gid": "ratio:genie_mec",
+    "kind": "line",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_mec].f",
+     "fd_g_readout.json predictions[name=genie_mec].g"
+    ],
+    "axes": 0,
+    "x": [
+     -0.15,
+     0.85,
+     1.85,
+     2.85,
+     3.85,
+     4.85,
+     5.85,
+     6.85,
+     7.85,
+     8.85,
+     9.85,
+     10.85,
+     11.85,
+     12.85,
+     13.85,
+     14.85
+    ],
+    "y": [
+     1.0086765983720773,
+     1.1241849174943375,
+     0.8674791353194068,
+     1.0079044765720133,
+     0.975048210699152,
+     1.206339830976057,
+     0.8424059480611065,
+     1.0090761854575665,
+     1.1606223336700034,
+     1.0650450695412377,
+     1.0675120075416324,
+     1.04056877369313,
+     1.140044944845193,
+     1.0334556906674541,
+     1.1836079356379756,
+     1.0315149820771992
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#eb6834",
+     "marker": "s",
+     "ls": "None"
+    }
+   },
+   {
+    "gid": "ratio:genie_mec:err",
+    "kind": "yerr",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_mec].f",
+     "fd_g_readout.json predictions[name=genie_mec].g",
+     "fd_g_readout.json predictions[name=genie_mec].sigma_total_over_f"
+    ],
+    "axes": 0,
+    "x": [
+     -0.15,
+     0.85,
+     1.85,
+     2.85,
+     3.85,
+     4.85,
+     5.85,
+     6.85,
+     7.85,
+     8.85,
+     9.85,
+     10.85,
+     11.85,
+     12.85,
+     13.85,
+     14.85
+    ],
+    "lo": [
+     0.9370948666953874,
+     1.0444194877712918,
+     0.7459971453161934,
+     0.8805385835496276,
+     0.9340702694362187,
+     1.116171647154062,
+     0.7927835634083481,
+     0.9285832663829651,
+     1.088026419649106,
+     0.9983210416390109,
+     0.9757943256704522,
+     0.8981570464505195,
+     1.0644405614507026,
+     0.9190447632534661,
+     1.12128806505717,
+     0.949601523315198
+    ],
+    "hi": [
+     1.0802583300487674,
+     1.2039503472173831,
+     0.9889611253226201,
+     1.135270369594399,
+     1.0160261519620855,
+     1.2965080147980519,
+     0.8920283327138648,
+     1.089569104532168,
+     1.2332182476909008,
+     1.1317690974434644,
+     1.1592296894128127,
+     1.1829805009357404,
+     1.2156493282396834,
+     1.1478666180814423,
+     1.2459278062187813,
+     1.1134284408392003
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#eb6834"
+    }
+   },
+   {
+    "gid": "ratio:genie_mec:legend",
+    "kind": "legend",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_mec].label"
+    ],
+    "axes": null,
+    "text": "GENIE 2.12.10 + Valencia MEC",
+    "legend": "ratio",
+    "series": "ratio:genie_mec"
+   },
+   {
+    "gid": "ratio:nuwro",
+    "kind": "line",
+    "source": [
+     "fd_g_readout.json predictions[name=nuwro].f",
+     "fd_g_readout.json predictions[name=nuwro].g"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0,
+     10.0,
+     11.0,
+     12.0,
+     13.0,
+     14.0,
+     15.0
+    ],
+    "y": [
+     1.1539819097597508,
+     1.0673731290795634,
+     1.1167005710127178,
+     0.9164177888832945,
+     1.1002906814285482,
+     0.9558222701408063,
+     1.0872595230569047,
+     0.8864218162172721,
+     1.3150587145155597,
+     1.1841192038600075,
+     1.243881948144194,
+     1.119320296157299,
+     1.2502239350610083,
+     1.1065548316223062,
+     1.2643199938046286,
+     1.2141754387409143
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#1baf7a",
+     "marker": "^",
+     "ls": "None"
+    }
+   },
+   {
+    "gid": "ratio:nuwro:err",
+    "kind": "yerr",
+    "source": [
+     "fd_g_readout.json predictions[name=nuwro].f",
+     "fd_g_readout.json predictions[name=nuwro].g",
+     "fd_g_readout.json predictions[name=nuwro].sigma_total_over_f"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0,
+     10.0,
+     11.0,
+     12.0,
+     13.0,
+     14.0,
+     15.0
+    ],
+    "lo": [
+     1.0720884430554642,
+     0.9916387236530717,
+     0.9603175502794297,
+     0.8006127966684579,
+     1.0540492274973605,
+     0.8843790864356973,
+     1.0232139042021446,
+     0.8157129039002263,
+     1.232802939659389,
+     1.1099352983545339,
+     1.1370110483330331,
+     0.9661306745355372,
+     1.1673128093701206,
+     0.9840513071232809,
+     1.1977504347350876,
+     1.1177567618828643
+    ],
+    "hi": [
+     1.2358753764640373,
+     1.143107534506055,
+     1.273083591746006,
+     1.0322227810981313,
+     1.146532135359736,
+     1.0272654538459154,
+     1.1513051419116647,
+     0.9571307285343179,
+     1.3973144893717304,
+     1.258303109365481,
+     1.350752847955355,
+     1.2725099177790606,
+     1.333135060751896,
+     1.2290583561213313,
+     1.3308895528741695,
+     1.3105941155989642
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#1baf7a"
+    }
+   },
+   {
+    "gid": "ratio:nuwro:legend",
+    "kind": "legend",
+    "source": [
+     "fd_g_readout.json predictions[name=nuwro].label"
+    ],
+    "axes": null,
+    "text": "NuWro 21.09: $^{12}$C target; no correction to CH applied",
+    "legend": "ratio",
+    "series": "ratio:nuwro"
+   },
+   {
+    "gid": "ratio:gibuu",
+    "kind": "line",
+    "source": [
+     "fd_g_readout.json predictions[name=gibuu].f",
+     "fd_g_readout.json predictions[name=gibuu].g"
+    ],
+    "axes": 1,
+    "x": [
+     0.15,
+     1.15,
+     2.15,
+     3.15,
+     8.15,
+     9.15,
+     10.15,
+     11.15
+    ],
+    "y": [
+     1.1952438556882043,
+     1.4050811458199217,
+     2.102095041533921,
+     1.8060493072690933,
+     1.2283639804590023,
+     1.186577675492527,
+     1.6161682199785519,
+     1.176482623847932
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "style": {
+     "color": "#4a3aa7",
+     "marker": "D",
+     "ls": "None"
+    }
+   },
+   {
+    "gid": "ratio:gibuu:err",
+    "kind": "yerr",
+    "source": [
+     "fd_g_readout.json predictions[name=gibuu].f",
+     "fd_g_readout.json predictions[name=gibuu].g",
+     "fd_g_readout.json predictions[name=gibuu].sigma_total_over_f"
+    ],
+    "axes": 1,
+    "x": [
+     0.15,
+     1.15,
+     2.15,
+     3.15,
+     8.15,
+     9.15,
+     10.15,
+     11.15
+    ],
+    "lo": [
+     1.1104221942120003,
+     1.3053850018422206,
+     1.8077171384534028,
+     1.5778242242283453,
+     1.1515308855539688,
+     1.1122397491531035,
+     1.4773115124163905,
+     1.0154697943561715
+    ],
+    "hi": [
+     1.2800655171644084,
+     1.5047772897976228,
+     2.3964729446144393,
+     2.0342743903098413,
+     1.3051970753640358,
+     1.2609156018319505,
+     1.7550249275407133,
+     1.3374954533396926
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "style": {
+     "color": "#4a3aa7"
+    }
+   },
+   {
+    "gid": "ratio:gibuu:legend",
+    "kind": "legend",
+    "source": [
+     "fd_g_readout.json predictions[name=gibuu].label"
+    ],
+    "axes": null,
+    "text": "GiBUU 2019: $^{12}$C target; no correction to CH applied; $p_\\parallel$ < 4.5 cells only",
+    "legend": "ratio",
+    "series": "ratio:gibuu"
+   },
+   {
+    "gid": "ratio:mnvtune_v1",
+    "kind": "line",
+    "source": [
+     "fd_g_readout.json predictions[name=mnvtune_v1].f",
+     "fd_g_readout.json predictions[name=mnvtune_v1].g"
+    ],
+    "axes": 0,
+    "x": [
+     0.3,
+     1.3,
+     2.3,
+     3.3,
+     4.3,
+     5.3,
+     6.3,
+     7.3,
+     8.3,
+     9.3,
+     10.3,
+     11.3,
+     12.3,
+     13.3,
+     14.3,
+     15.3
+    ],
+    "y": [
+     1.064030694233604,
+     1.150666098610089,
+     0.9640203243274381,
+     1.1797195524425843,
+     1.02557303144163,
+     1.2259907048741756,
+     0.909303646872161,
+     1.158877308571811,
+     1.2540527324836885,
+     1.1315745786771603,
+     1.2004536971067938,
+     1.2180577511108235,
+     1.1778595076550757,
+     1.2135314607224525,
+     1.2402056762725207,
+     1.1587703437836598
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#6b6b6b",
+     "marker": "v",
+     "ls": "None"
+    }
+   },
+   {
+    "gid": "ratio:mnvtune_v1:err",
+    "kind": "yerr",
+    "source": [
+     "fd_g_readout.json predictions[name=mnvtune_v1].f",
+     "fd_g_readout.json predictions[name=mnvtune_v1].g",
+     "fd_g_readout.json predictions[name=mnvtune_v1].sigma_total_over_f"
+    ],
+    "axes": 0,
+    "x": [
+     0.3,
+     1.3,
+     2.3,
+     3.3,
+     4.3,
+     5.3,
+     6.3,
+     7.3,
+     8.3,
+     9.3,
+     10.3,
+     11.3,
+     12.3,
+     13.3,
+     14.3,
+     15.3
+    ],
+    "lo": [
+     0.9885207044377503,
+     1.0690217228538768,
+     0.8290186826340966,
+     1.0306418989492143,
+     0.9824717047768395,
+     1.134353711381464,
+     0.8557406165598759,
+     1.066434915459576,
+     1.1756128285597458,
+     1.0606825423489437,
+     1.0973140326210724,
+     1.0513549702832892,
+     1.0997473751428857,
+     1.0791848591979718,
+     1.1749057953645539,
+     1.0667514313884068
+    ],
+    "hi": [
+     1.1395406840294577,
+     1.2323104743663011,
+     1.0990219660207796,
+     1.3287972059359543,
+     1.0686743581064204,
+     1.3176276983668873,
+     0.9628666771844462,
+     1.2513197016840458,
+     1.3324926364076313,
+     1.2024666150053769,
+     1.3035933615925153,
+     1.3847605319383578,
+     1.2559716401672658,
+     1.3478780622469333,
+     1.3055055571804874,
+     1.250789256178913
+    ],
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "style": {
+     "color": "#6b6b6b"
+    }
+   },
+   {
+    "gid": "ratio:mnvtune_v1:legend",
+    "kind": "legend",
+    "source": [
+     "fd_g_readout.json predictions[name=mnvtune_v1].label"
+    ],
+    "axes": null,
+    "text": "MINERvA Tune v1: prior (not an independent prediction)",
+    "legend": "ratio",
+    "series": "ratio:mnvtune_v1"
+   },
+   {
+    "gid": "ratio:keylabel:pt",
+    "kind": "text",
+    "source": [],
+    "axes": 1,
+    "text": "$p_T$ (GeV/$c$)",
+    "at": {
+     "x": -0.01,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -21.0,
+     "ha": "right",
+     "va": "center",
+     "size": 6.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R00",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=0].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 0,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R01",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=1].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 1,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R02",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=2].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 2,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R03",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=3].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 3,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R04",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=4].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 4,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R05",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=5].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 5,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R06",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=6].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 6,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R07",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=7].box.pt"
+    ],
+    "axes": 1,
+    "text": "< 0.7",
+    "at": {
+     "x": 7,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R08",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=8].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 8,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R09",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=9].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 9,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R10",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=10].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 10,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R11",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=11].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 11,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R12",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=12].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 12,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R13",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=13].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 13,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R14",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=14].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 14,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pt:R15",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=15].box.pt"
+    ],
+    "axes": 1,
+    "text": "> 0.7",
+    "at": {
+     "x": 15,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -21.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:keylabel:pz",
+    "kind": "text",
+    "source": [],
+    "axes": 1,
+    "text": "$p_\\parallel$ (GeV/$c$)",
+    "at": {
+     "x": -0.01,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -31.5,
+     "ha": "right",
+     "va": "center",
+     "size": 6.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R00",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=0].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 0,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R01",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=1].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 1,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R02",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=2].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 2,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R03",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=3].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 3,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R04",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=4].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 4,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R05",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=5].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 5,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R06",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=6].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 6,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R07",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=7].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 7,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R08",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=8].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 8,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R09",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=9].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 9,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R10",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=10].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 10,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R11",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=11].box.pz"
+    ],
+    "axes": 1,
+    "text": "< 4.5",
+    "at": {
+     "x": 11,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R12",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=12].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 12,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R13",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=13].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 13,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R14",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=14].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 14,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:pz:R15",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=15].box.pz"
+    ],
+    "axes": 1,
+    "text": "> 4.5",
+    "at": {
+     "x": 15,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -31.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:keylabel:eavail",
+    "kind": "text",
+    "source": [],
+    "axes": 1,
+    "text": "$E_{\\mathrm{avail}}$ (GeV)",
+    "at": {
+     "x": -0.01,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -42.0,
+     "ha": "right",
+     "va": "center",
+     "size": 6.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R00",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=0].box.eavail"
+    ],
+    "axes": 1,
+    "text": "< 0.8",
+    "at": {
+     "x": 0,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R01",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=1].box.eavail"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 1,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R02",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=2].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 2,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R03",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=3].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 3,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R04",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=4].box.eavail"
+    ],
+    "axes": 1,
+    "text": "< 0.8",
+    "at": {
+     "x": 4,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R05",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=5].box.eavail"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 5,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R06",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=6].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 6,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R07",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=7].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 7,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R08",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=8].box.eavail"
+    ],
+    "axes": 1,
+    "text": "< 0.8",
+    "at": {
+     "x": 8,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R09",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=9].box.eavail"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 9,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R10",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=10].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 10,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R11",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=11].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 11,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R12",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=12].box.eavail"
+    ],
+    "axes": 1,
+    "text": "< 0.8",
+    "at": {
+     "x": 12,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R13",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=13].box.eavail"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 13,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R14",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=14].box.eavail"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 14,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:eavail:R15",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=15].box.eavail"
+    ],
+    "axes": 1,
+    "text": "> 0.8",
+    "at": {
+     "x": 15,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -42.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:keylabel:q3",
+    "kind": "text",
+    "source": [],
+    "axes": 1,
+    "text": "$q_3$ (GeV/$c$)",
+    "at": {
+     "x": -0.01,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -52.5,
+     "ha": "right",
+     "va": "center",
+     "size": 6.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R00",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=0].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 0,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R01",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=1].box.q3"
+    ],
+    "axes": 1,
+    "text": "> 2",
+    "at": {
+     "x": 1,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R02",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=2].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 2,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R03",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=3].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 3,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R04",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=4].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 4,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R05",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=5].box.q3"
+    ],
+    "axes": 1,
+    "text": "> 2",
+    "at": {
+     "x": 5,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R06",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=6].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 6,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R07",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=7].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 7,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R08",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=8].box.q3"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 8,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R09",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=9].box.q3"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 9,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R10",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=10].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 10,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R11",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=11].box.q3"
+    ],
+    "axes": 1,
+    "text": "> 2",
+    "at": {
+     "x": 11,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R12",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=12].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 12,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R13",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=13].box.q3"
+    ],
+    "axes": 1,
+    "text": "> 2",
+    "at": {
+     "x": 13,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R14",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=14].box.q3"
+    ],
+    "axes": 1,
+    "text": "> 2",
+    "at": {
+     "x": 14,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:q3:R15",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=15].box.q3"
+    ],
+    "axes": 1,
+    "text": "< 2",
+    "at": {
+     "x": 15,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -52.5,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:keylabel:W",
+    "kind": "text",
+    "source": [],
+    "axes": 1,
+    "text": "$W$ (GeV)",
+    "at": {
+     "x": -0.01,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -63.0,
+     "ha": "right",
+     "va": "center",
+     "size": 6.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R00",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=0].box.W"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 0,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R01",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=1].box.W"
+    ],
+    "axes": 1,
+    "text": "> 1.8",
+    "at": {
+     "x": 1,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R02",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=2].box.W"
+    ],
+    "axes": 1,
+    "text": "< 1.8",
+    "at": {
+     "x": 2,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R03",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=3].box.W"
+    ],
+    "axes": 1,
+    "text": "> 1.8",
+    "at": {
+     "x": 3,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R04",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=4].box.W"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 4,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R05",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=5].box.W"
+    ],
+    "axes": 1,
+    "text": "> 1.8",
+    "at": {
+     "x": 5,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R06",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=6].box.W"
+    ],
+    "axes": 1,
+    "text": "< 1.8",
+    "at": {
+     "x": 6,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R07",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=7].box.W"
+    ],
+    "axes": 1,
+    "text": "> 1.8",
+    "at": {
+     "x": 7,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R08",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=8].box.W"
+    ],
+    "axes": 1,
+    "text": "< 1.8",
+    "at": {
+     "x": 8,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R09",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=9].box.W"
+    ],
+    "axes": 1,
+    "text": "> 1.8",
+    "at": {
+     "x": 9,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R10",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=10].box.W"
+    ],
+    "axes": 1,
+    "text": "< 1.8",
+    "at": {
+     "x": 10,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R11",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=11].box.W"
+    ],
+    "axes": 1,
+    "text": "< 1.8",
+    "at": {
+     "x": 11,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R12",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=12].box.W"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 12,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R13",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=13].box.W"
+    ],
+    "axes": 1,
+    "text": "< 1.8",
+    "at": {
+     "x": 13,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R14",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=14].box.W"
+    ],
+    "axes": 1,
+    "text": "> 1.8",
+    "at": {
+     "x": 14,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:key:W:R15",
+    "kind": "text",
+    "source": [
+     "h2_definition.json reporting_cells[id=15].box.W"
+    ],
+    "axes": 1,
+    "text": "all",
+    "at": {
+     "x": 15,
+     "y": 0.0,
+     "coords": "xaxis",
+     "dy": -63.0,
+     "ha": "center",
+     "va": "center",
+     "size": 6.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "ratio:ticks:1",
+    "kind": "ticks",
+    "source": [],
+    "axes": 1,
+    "labels": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "size": 6.5,
+    "rotation": 0
+   }
+  ]
+ }
+}

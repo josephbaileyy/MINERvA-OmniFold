@@ -79,7 +79,34 @@ median & \fvval{sigmed-stat} & \fvval{sigmed-flux} & \fvval{sigmed-interaction} 
 }
 \end{table}
 
-The full covariance and correlation matrices are \fvpending{the declared export of $C_{\mathrm{e}}$, $C_{\mathrm{model}}$, $C_{\mathrm{resp}}$ and $C_{\mathrm{total}}+C_{\mathrm{resp}}$ with the correlation matrix and the cell boxes, from the 5D measurement session}.
+Table~\ref{tab:fived16-corr} gives the correlation matrix of $C_{\mathrm{total}}+C_{\mathrm{resp}}$; with the central values and the relative uncertainties of Table~\ref{tab:fived16-cells}, it gives the reported covariance to the printed precision.
+
+\begin{table}[htbp]
+\centering\scriptsize\setlength{\tabcolsep}{2.5pt}
+\caption{Correlation matrix of the reported covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}$ on the sixteen cells (lower triangle; the diagonal is one).}
+\label{tab:fived16-corr}
+\begin{tabular}{@{}lrrrrrrrrrrrrrrr@{}}
+\toprule
+ & R00 & R01 & R02 & R03 & R04 & R05 & R06 & R07 & R08 & R09 & R10 & R11 & R12 & R13 & R14 \\
+\midrule
+R01 & \fvval{corr-R01-R00} & & & & & & & & & & & & & & \\
+R02 & \fvval{corr-R02-R00} & \fvval{corr-R02-R01} & & & & & & & & & & & & & \\
+R03 & \fvval{corr-R03-R00} & \fvval{corr-R03-R01} & \fvval{corr-R03-R02} & & & & & & & & & & & & \\
+R04 & \fvval{corr-R04-R00} & \fvval{corr-R04-R01} & \fvval{corr-R04-R02} & \fvval{corr-R04-R03} & & & & & & & & & & & \\
+R05 & \fvval{corr-R05-R00} & \fvval{corr-R05-R01} & \fvval{corr-R05-R02} & \fvval{corr-R05-R03} & \fvval{corr-R05-R04} & & & & & & & & & & \\
+R06 & \fvval{corr-R06-R00} & \fvval{corr-R06-R01} & \fvval{corr-R06-R02} & \fvval{corr-R06-R03} & \fvval{corr-R06-R04} & \fvval{corr-R06-R05} & & & & & & & & & \\
+R07 & \fvval{corr-R07-R00} & \fvval{corr-R07-R01} & \fvval{corr-R07-R02} & \fvval{corr-R07-R03} & \fvval{corr-R07-R04} & \fvval{corr-R07-R05} & \fvval{corr-R07-R06} & & & & & & & & \\
+R08 & \fvval{corr-R08-R00} & \fvval{corr-R08-R01} & \fvval{corr-R08-R02} & \fvval{corr-R08-R03} & \fvval{corr-R08-R04} & \fvval{corr-R08-R05} & \fvval{corr-R08-R06} & \fvval{corr-R08-R07} & & & & & & & \\
+R09 & \fvval{corr-R09-R00} & \fvval{corr-R09-R01} & \fvval{corr-R09-R02} & \fvval{corr-R09-R03} & \fvval{corr-R09-R04} & \fvval{corr-R09-R05} & \fvval{corr-R09-R06} & \fvval{corr-R09-R07} & \fvval{corr-R09-R08} & & & & & & \\
+R10 & \fvval{corr-R10-R00} & \fvval{corr-R10-R01} & \fvval{corr-R10-R02} & \fvval{corr-R10-R03} & \fvval{corr-R10-R04} & \fvval{corr-R10-R05} & \fvval{corr-R10-R06} & \fvval{corr-R10-R07} & \fvval{corr-R10-R08} & \fvval{corr-R10-R09} & & & & & \\
+R11 & \fvval{corr-R11-R00} & \fvval{corr-R11-R01} & \fvval{corr-R11-R02} & \fvval{corr-R11-R03} & \fvval{corr-R11-R04} & \fvval{corr-R11-R05} & \fvval{corr-R11-R06} & \fvval{corr-R11-R07} & \fvval{corr-R11-R08} & \fvval{corr-R11-R09} & \fvval{corr-R11-R10} & & & & \\
+R12 & \fvval{corr-R12-R00} & \fvval{corr-R12-R01} & \fvval{corr-R12-R02} & \fvval{corr-R12-R03} & \fvval{corr-R12-R04} & \fvval{corr-R12-R05} & \fvval{corr-R12-R06} & \fvval{corr-R12-R07} & \fvval{corr-R12-R08} & \fvval{corr-R12-R09} & \fvval{corr-R12-R10} & \fvval{corr-R12-R11} & & & \\
+R13 & \fvval{corr-R13-R00} & \fvval{corr-R13-R01} & \fvval{corr-R13-R02} & \fvval{corr-R13-R03} & \fvval{corr-R13-R04} & \fvval{corr-R13-R05} & \fvval{corr-R13-R06} & \fvval{corr-R13-R07} & \fvval{corr-R13-R08} & \fvval{corr-R13-R09} & \fvval{corr-R13-R10} & \fvval{corr-R13-R11} & \fvval{corr-R13-R12} & & \\
+R14 & \fvval{corr-R14-R00} & \fvval{corr-R14-R01} & \fvval{corr-R14-R02} & \fvval{corr-R14-R03} & \fvval{corr-R14-R04} & \fvval{corr-R14-R05} & \fvval{corr-R14-R06} & \fvval{corr-R14-R07} & \fvval{corr-R14-R08} & \fvval{corr-R14-R09} & \fvval{corr-R14-R10} & \fvval{corr-R14-R11} & \fvval{corr-R14-R12} & \fvval{corr-R14-R13} & \\
+R15 & \fvval{corr-R15-R00} & \fvval{corr-R15-R01} & \fvval{corr-R15-R02} & \fvval{corr-R15-R03} & \fvval{corr-R15-R04} & \fvval{corr-R15-R05} & \fvval{corr-R15-R06} & \fvval{corr-R15-R07} & \fvval{corr-R15-R08} & \fvval{corr-R15-R09} & \fvval{corr-R15-R10} & \fvval{corr-R15-R11} & \fvval{corr-R15-R12} & \fvval{corr-R15-R13} & \fvval{corr-R15-R14} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Fake-data tests of the estimator's bias}
 \label{sec:fived16-fd}
@@ -243,7 +270,14 @@ the four together & \fvval{label-gcv} & \fvval{sens-c_e_systematic-gcv-a0} & \fv
 \end{tabular}
 \end{table}
 
-The $\chi^2$ can be decomposed along the eigenmodes of each prediction's matrix (Table~\ref{tab:fived16-diag}). The decomposition is a breakdown, not an alternative result; a mode is that matrix's own, and its dominant block is the covariance group with the largest share of its variance. \fvpending{the figure of the cell-contrast modes that carry the $\chi^2$, with each prediction's distance along them, from the 5D measurement session}
+The $\chi^2$ can be decomposed along the eigenmodes of each prediction's matrix (Table~\ref{tab:fived16-diag}). The decomposition is a breakdown, not an alternative result; a mode is that matrix's own, and its dominant block is the covariance group with the largest share of its variance. Figure~\ref{fig:fived16-modes} shows, for each sixteen-cell prediction, the three modes that carry most of its $\chi^2$ and the prediction's distance along each.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fd_g_fig_modes.pdf}
+\caption{The three eigenmodes that carry the largest shares of each sixteen-cell prediction's $\chi^2$ (columns, by rank), for GENIE CV, GENIE + MEC, NuWro and MINERvA Tune~v1 (rows), from the reported comparison on $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$ relative to $f$. The bars are each mode's unit loadings on R00--R15, signed so that the largest loading is positive. Each panel gives the mode's share of the $\chi^2$, its relative $\sigma$ and the prediction's distance along it, the projection over $\sigma$. The residual is $(f-g)/f$, so a positive distance means that the data lie above the prediction along the mode as signed. GiBUU, compared on 8 cells, has no modes here.}
+\label{fig:fived16-modes}
+\end{figure}
 
 \begin{table}[htbp]
 \centering\footnotesize

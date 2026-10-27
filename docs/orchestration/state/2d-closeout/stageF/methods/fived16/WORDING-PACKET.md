@@ -10,9 +10,12 @@
 - **The tables are in the built PDFs.** Six are in the note (§10) and two in the paper (Tables IV and V).
 - **Every number** comes from a committed readout pinned by sha256, through `make_values_fived16.py`. None is typed by hand; a check fails if one is.
 
-**Two inputs have not landed.** The PDFs print `[PENDING: …]` where they go, and the build refuses to ship while either prints:
-- the covariance export;
-- the two figures from the 5D measurement session (the paper's ratio figure and the note's mode figure).
+**The inputs have landed** (#414, main 0a73bde1), and the four placeholders are swapped:
+- the note prints the correlation matrix of C_total + C_resp (Table 13), generated from the data product (`fd_data_product.json`, pinned `b79556f0`);
+- the paper's covariance sentence now reads "The note gives the cells, the central values, the per-group uncertainties and the correlation matrix of the reported covariance.";
+- the paper prints the ratio figure (Fig. 5) and the note the modes figure (Fig. 30). Each is checked byte-equal to its committed source by `make_values_fived16.py --check`.
+
+The figure captions are drafts, and they are yours (Q10).
 
 **What the wording does and does not say:**
 - It states the fake-data limitation once, in your f0-limitation decision's words: "the reported uncertainty does not cover the fake-data bias at the GiBUU-like truths or at the $q_3$ tilt".
@@ -34,7 +37,7 @@
   - **(b) add a sentence of your own,** e.g. "it is not constructed as a bound on the estimator's regularization bias";
   - **(c) other.**
 
-**Q2. p-values in the χ² table** (your format decision names χ² with ndf and does not mention p).
+**Q2 — answered (DECISION-20261027-joseph-5d-wording-q2-q5 item 1): no p-values; the text was already in that form.** p-values in the χ² table (your format decision names χ² with ndf and does not mention p).
 - **(i) As drafted:**
   - the table prints χ² with ndf and shape-only;
   - the four "no covariance-based significance" sentences are scoped to the configuration-(a) covariance, with a pointer to the sixteen-cell comparison.
@@ -57,7 +60,7 @@
 - **As drafted:** the paper prints integers, as in your example "109/16"; the note prints two decimals (109.35/16).
 - **Alternative:** two decimals in both.
 
-**Q5. The positive half of the limitation.**
+**Q5 — answered (same decision, item 2), and applied in the paper and the note:** "At the other 9 truths the bias stays within the reported uncertainty by both criteria: no cell beyond 2σ and p ≥ 0.01." The positive half of the limitation.
 - **As drafted:** "At the other 9 truths neither criterion is met". This describes the triggers and makes no reading.
 - **Alternative,** positive-first as in the October draft: "At the other 9 truths the reported uncertainty covers the fake-data bias". That is a reading of the triggers as coverage of the bias, which is yours to make or not.
 
@@ -94,3 +97,8 @@ The writer's proposed forms, site by site, are in `writer/abstract-proposals.md`
 > "Its model term differs from the study's envelope: there, the largest shift of a cell over five generator-sized truth changes, added linearly to the half-width; here, a covariance built from three generator shifts."
 
 It sits right after the precision study's "none … meets this target", so that a reader does not compare the 7.29 % median with the 10 % target on different terms. It makes no claim about the target. Keep, reword or drop it.
+
+**Q10. The two figure captions (drafts; yours).**
+- **Paper, Fig. 5:** "Data over prediction, f/g, on the sixteen cells for the five predictions of Table V. Each error bar is (f/g) σ/f, with σ the square root of the diagonal of C_total + C_resp; the predictions' finite-sample uncertainties are not drawn. GiBUU (lower panel) is shown on its 8 cells with p∥ < 4.5 GeV/c only. The key below the axes gives each cell's box. The χ² of Table V uses the full covariance, whose correlations the error bars do not show." The last sentence follows FD-G-FIGURES-REPORT's ruling 10.
+- **Note, Fig. 30:** "The three eigenmodes that carry the largest shares of each sixteen-cell prediction's χ² (columns, by rank), for GENIE CV, GENIE + MEC, NuWro and MINERvA Tune v1 (rows), from the reported comparison on C_total + C_resp + V_g relative to f. The bars are each mode's unit loadings on R00–R15, signed so that the largest loading is positive. Each panel gives the mode's share of the χ², its relative σ and the prediction's distance along it, the projection over σ. The residual is (f − g)/f, so a positive distance means that the data lie above the prediction along the mode as signed. GiBUU, compared on 8 cells, has no modes here."
+- Each clause is taken from FD-G-FIGURES-DECLARATION.md's figure rows and its K2–K4 controls.

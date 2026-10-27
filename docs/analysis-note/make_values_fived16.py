@@ -33,7 +33,11 @@ READOUTS = {
     "diag": (f"{FD}/fd/readout/fd_g_diag_readout.json", "680dc5ef"),
     "fup": (f"{FD}/fd/readout/fd_g_followup_readout.json", "cd82517a"),
     "sens2": (f"{FD}/fd/readout/fd_g_sens2_readout.json", "0f6568ab"),
+    "dp": (f"{FD}/fd/data-product/fd_data_product.json", "b79556f0"),
 }
+# the figures the note and the paper print, copied into figures/: each must equal its committed source and the digest
+# its sidecar records (FD-G-FIGURES-REPORT.md section 1)
+FIGURES = {"fd_g_fig_ratio.pdf": "6372244f", "fd_g_fig_modes.pdf": "5421815f"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -80,6 +84,21 @@ def values(d):
         v[f"f-{c}"] = f"{f[c] / 1e-40:#.3g}".rstrip(".")      # three significant figures, trailing zeros kept
         for ax, (lo, hi) in boxes[c].items():
             v[f"box-{c}-{ax}"] = f"{lo:g}--{hi:g}"
+    # the data product (FD-G-FIGURES-REPORT.md section 2) carries the same cells, boxes, f and reported sigma
+    dp = d["dp"]
+    assert [c["cell"] for c in dp["cells"]] == CELLS and dp["correlation_of"] == "C_total_plus_C_resp"
+    assert all(c["box"] == boxes[c["cell"]] for c in dp["cells"]), "the data product's boxes differ from H2's"
+    assert max(abs(x / f[c] - 1) for c, x in zip(CELLS, dp["f"])) < 1e-12, "the data product's f differs"
+    crt = d["cresp"]["relative_sigma"]["C_total_resp"]
+    crt = [crt[c] for c in CELLS] if isinstance(crt, dict) else crt
+    assert max(abs(a / b - 1) for a, b in zip(dp["relative_sigma"]["C_total_plus_C_resp"], crt)) < 1e-10
+    rho = dp["correlation"]
+    assert all(abs(rho[i][j] - rho[j][i]) < 1e-12 for i in range(16) for j in range(16))
+    assert all(abs(rho[i][i] - 1) < 1e-12 for i in range(16))
+    for i in range(16):                    # the correlation matrix of C_total + C_resp, two decimals
+        for j in range(i):
+            x = f"{rho[i][j]:.2f}"
+            v[f"corr-{CELLS[i]}-{CELLS[j]}"] = ("$-$" + x[1:]) if x.startswith("-") else x
     v["f-unit"] = r"10^{-40}"     # f is printed in units of 10^-40 cm^2/nucleon
     # per-cell relative sigma by group, and the medians
     s1, cr = d["s1"]["relative_sigma"], d["cresp"]["relative_sigma"]
@@ -176,6 +195,16 @@ def values(d):
     v["h2-nsupported"] = str(d["stage1"]["mc"]["H2"]["n_reported"])       # before the merge: the support rule
     # unsupported boxes absorbed into a reporting cell by the merge (box 17 into R09), and the others left unreported
     v["h2-nabsorbed"] = str(int(v["h2-nboxes"]) - int(v["h2-nsupported"]) - int(v["h2-nunreported"]))
+    # the printed H2 counts come from the data product's h2 fields (director, 2026-10-27), and must equal the
+    # definition's and Stage 1's
+    dh = d["dp"]["h2"]
+    from_dp = {"h2-nboxes": len(dh["h2_to_reporting_cell"]), "h2-nunreported": len(dh["unreported_boxes"]),
+               "h2-nabsorbed": len(dh["absorbed"]),
+               "h2-nsupported": len(dh["h2_to_reporting_cell"]) - len(dh["unsupported_stage1"])}
+    for k, n in from_dp.items():
+        assert v[k] == str(n), f"{k}: the data product gives {n}, the definition and Stage 1 {v[k]}"
+        v[k] = str(n)
+    assert sum(len(c["h2_boxes"]) for c in d["dp"]["cells"]) == len(dh["in_cells"])
     for ax in ("pt", "pz", "eavail", "q3", "W"):                             # H2 divides each axis at one interior edge
         edges = sorted({e for c in h2["reporting_cells"] for e in c["box"][ax]})
         assert len(edges) == 3
@@ -265,6 +294,19 @@ def render(v):
     return "\n".join(lines) + "\n"
 
 
+def check_figures():
+    """The figures the note and the paper print equal their committed sources and the sidecars' digests."""
+    bad = []
+    for name, pin in FIGURES.items():
+        got = OUT.parent / "figures" / name
+        src = ROOT / FD / "fd/figures" / name
+        side = json.loads(src.with_suffix(".json").read_text())["pdf_sha256"]
+        h = [hashlib.sha256(x.read_bytes()).hexdigest() if x.exists() else "missing" for x in (got, src)]
+        if not (h[0] == h[1] == side and side.startswith(pin)):
+            bad.append(f"{name}: installed {h[0][:12]}, source {h[1][:12]}, sidecar {side[:12]}, pinned {pin}")
+    return bad
+
+
 def check_file(path, text):
     """--check's comparison: the committed file equals a fresh generation."""
     return path.exists() and path.read_text() == text
@@ -299,6 +341,35 @@ def self_test():
                 print("  FAIL --check failed a fresh file"); ok = False
             else:
                 print("  ok   --check passes a fresh file")
+    d = load()                                               # the data product's H2 counts must agree with H2's
+    d["dp"]["h2"]["unreported_boxes"] = d["dp"]["h2"]["unreported_boxes"][:-1]
+    try:
+        values(d)
+        print("  FAIL a data product with one unreported box fewer was accepted"); ok = False
+    except AssertionError:
+        print("  ok   a data product whose H2 counts differ from the definition's is refused")
+    d = load()
+    d["dp"]["cells"][3]["box"] = dict(d["dp"]["cells"][3]["box"], W=[0.0, 1.8])
+    try:
+        values(d)
+        print("  FAIL a data product with a changed box was accepted"); ok = False
+    except AssertionError:
+        print("  ok   a data product whose boxes differ from H2's is refused")
+    name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
+    with tempfile.TemporaryDirectory() as tmp:
+        fig = OUT.parent / "figures" / name
+        keep = Path(tmp) / name
+        keep.write_bytes(fig.read_bytes())
+        try:
+            fig.write_bytes(keep.read_bytes() + b"%")
+            if check_figures():
+                print("  ok   an installed figure that differs from its committed source fails --check")
+            else:
+                print("  FAIL a changed installed figure passed"); ok = False
+        finally:
+            fig.write_bytes(keep.read_bytes())
+    if check_figures():
+        print("  FAIL the installed figures do not equal their sources"); ok = False
     print("VALUES-FIVED16 SELF-TEST ::", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -313,7 +384,11 @@ def main(argv):
     if argv[:1] == ["--check"]:
         if not check_file(OUT, text):
             sys.exit("VALUES-FIVED16 :: FAIL (values_fived16.tex differs from a fresh generation; regenerate it)")
-        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values, readouts pinned)")
+        bad = check_figures()
+        if bad:
+            sys.exit("VALUES-FIVED16 :: FAIL (a printed figure differs from its committed source)\n  " + "\n  ".join(bad))
+        print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values, "
+              f"readouts pinned, {len(FIGURES)} figures equal their sources)")
         return 0
     OUT.write_text(text)
     print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values")
