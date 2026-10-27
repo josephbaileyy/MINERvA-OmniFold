@@ -149,3 +149,44 @@ They are not applied: the printed wording is Joseph's.
 - `runs/` (28 rater outputs, `status.tsv`, `P2S-analysis.txt` and `PQ-analysis.txt`)
 - `tools/` (the input builder, the job writer, the two analyses and the pool runner)
 - `q5/` (agy's check, with its control and the alternatives)
+
+## Applied to the final draft (director, 2026-10-27, after this read)
+
+**The rule.**
+- Apply every shortening and cut that is unanimous across the four runs and stays true.
+- Where the models split, apply sol2's form if it is true, and keep the base text otherwise.
+- Never apply an agy form that drops a limitation.
+- Q3: keep (i). Q4: keep integers, because the raters split.
+- Plus two accuracy fixes and one truth fix (Q5).
+
+Each applied change has a ledger row, `F-<id>`, whose N: probe holds the new text and whose X: probe holds the old (`../ledger.md`).
+
+| # | raters (sol2 ×2 / agy ×2) | applied | why |
+|---|---|---|---|
+| Q5 | agy: decided form FALSE; alternative 1 TRUE | **"At the other 9 truths the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01."** (paper and note) | **Changed for truth.** Joseph's form, "stays within the reported uncertainty", reads as within 1σ, while the criterion allows 2σ (A7 NuWro reaches 1.34σ). This form states his chosen criteria exactly. |
+| C01 | BRIEFER, BRIEFER / OMIT, BRIEFER | base kept | sol2's fwd form is false (a "different binning"). The director's list keeps the base. |
+| C02 | BRIEFER ×2 / COMPANION ×2 | "…(edges): each supported box with purity below 0.1 is merged into a neighbour, 4 boxes remain unreported, and every reported cell passes the support rule." | **Split, so sol2's form (true).** The 27 supported boxes stay in the note's §10.1. |
+| C03 (Q9) | BRIEFER ×4 | "Unlike the envelope of Sec. V E, its model term is a covariance built from three generator shifts." | Unanimous; the shortest true form. |
+| C04 | COMPANION ×2 / OMIT ×2 | "a training-seed term measured to be zero" cut from the paper | The term is zero, and the note keeps it. |
+| C05 (Q1) | BRIEFER ×4 | "it represents unscaled generator-shape dependence, not a calibrated bound" | **sol2's form.** It keeps "not a calibrated bound"; agy's forms are false as read. |
+| C06 | AS-WRITTEN ×2 / OMIT ×2 | clause kept; **"These are not held-out truths."** added to the paper's fake-data paragraph | **Accuracy fix.** agy read the fake-data study as held-out validation (FD-PLAN §3.6: no held-out truth exists). |
+| C07 | AS-WRITTEN, BRIEFER / COMPANION ×2 | base kept | sol2's two runs disagree. |
+| C08 | BRIEFER ×4 | "and it enters only this result, its fake-data tests and its comparison in Sec. VII B." | **Accuracy fix.** Sec. VII B uses C_resp, so "the generator tests of Sec. VII" was ambiguous. |
+| C09 | AS-WRITTEN ×4 | kept | — |
+| C10 | OMIT ×4 | cut | Redundant with the preceding clause. |
+| C11 | COMPANION, BRIEFER / COMPANION ×2 | "6 further truths are ungraded (given in the note)." | The shortest form that keeps the count of unfolded truths complete. The reason, the failed offset control, is in the note. |
+| C12, C13 | AS-WRITTEN (C13: 3 of 4) | kept | C13 is Joseph's f0-limitation wording. |
+| C14 | OMIT ×4 | "; no diagonal-only χ² is formed" cut | Joseph's presentation decision bars printing a diagonal χ², not saying that none is printed. |
+| C15–C17 | AS-WRITTEN ×4 | kept | — |
+| C18 | BRIEFER ×4 | "The GENIE + MEC, NuWro and GiBUU comparisons use covariance contributions derived from those generators; GENIE CV enters as their common reference." | **sol2's form (true).** agy's covers Tune v1, which the records do not support. |
+| C19 (Q7) | AS-WRITTEN ×2 / BRIEFER ×2 | kept | agy's form is false as read (ruling 3; guard G3). |
+| C20 | AS-WRITTEN ×2 / BRIEFER ×2 | kept | agy's form is false as read. |
+| C21 | BRIEFER ×4 | "The uncertainties of the configuration-(a) central value omit the regularization bias." | sol2's form. |
+| C22 (Q1) | BRIEFER ×4 | "…unscaled and not a calibrated bound; Sec. V F reports the fake-data tests of the estimator's bias." | **sol2's form.** It keeps the qualifier. |
+| C23 | BRIEFER ×2 / COMPANION ×2 | "The seed dependence of this five-observable covariance was studied with only one seed pair." | **Split, so sol2's form (true).** |
+| C24 | BRIEFER ×4 | "The higher-dimensional central values lack intervals of validated coverage, and the uncertainties of the configuration-(a) five-observable central value omit its regularization bias (Sec. V B)." | sol2's form. |
+| C25 | BRIEFER ×4 | "…whose coverage is not validated; Sec. V F reports the fake-data tests of the estimator's bias." | **sol2's form.** The coverage clause stays (G3). |
+| C26 | AS-WRITTEN ×2 / BRIEFER ×2 | kept | agy's "nominal" is false. |
+| Q3 | (i) 24/24 | (i), as drafted | — |
+| Q4 | one decimal ×2 / integer ×2 | integers, as drafted | **Split.** Integers match Joseph's example and the comparators. |
+<!-- absence-ok: quotes or proposes the paper's printed text (scope and coverage statements of the sixteen-cell result and the configuration-(a) product) as this record's inventory or plan; not a new absence claim -->

@@ -39,7 +39,9 @@ The full tables, with the raters' quotes and a truth column for every shortening
   - **gemini drops the limitations** ("not a calibrated bound", "whose coverage is not validated"). Each of those cuts leaves a sentence false as read.
   - **Shortest true forms:** Q1, "it is generator-shape model dependence, not a calibrated bound"; Q9, "Unlike the envelope of Sec. V E, its model term is a covariance built from three generator shifts." Q7 stays as written.
 - **Unanimous and true, not applied:** cut C10 and C14; shorten C03, C18 and C21; and C08, whose drafted form is ambiguous now that Sec. VII B uses C_resp.
-- **Q5:** **agy does not agree with the decided sentence.** It reads "stays within the reported uncertainty" as within 1σ, while the criterion allows 2σ (A7 NuWro reaches 1.34σ). It accepts "the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01" and "the bias is within 2σ in every cell and p ≥ 0.01". The numbers hold under every form. The decided sentence is printed as you chose it until you say otherwise.
+- **Q5:** **agy does not agree with the decided sentence.** It reads "stays within the reported uncertainty" as within 1σ, while the criterion allows 2σ (A7 NuWro reaches 1.34σ). It accepts "the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01" and "the bias is within 2σ in every cell and p ≥ 0.01". The numbers hold under every form. **Applied (director, 2026-10-27) as a truth fix:** "At the other 9 truths the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01." Your sentence's "stays within the reported uncertainty" reads as within 1σ, while the criterion allows 2σ.
+- **Applied to the paper:** the unanimous true shortenings and the two accuracy fixes (C06, C08). Every change, with its rater verdicts, is in the change table of `prd-read/REPORT.md`.
+- **Next:** your decision moves the non-final configurations to the note (`move/MOVE-OUTLINE.md`, `move/config-inventory.md`). The abstracts are re-proposed after the move.
 
 ## Your questions
 
