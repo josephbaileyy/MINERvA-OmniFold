@@ -1,0 +1,48 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for a long technical analysis note in experimental particle physics: the fully qualified companion of a Physical Review D methods paper on unbinned unfolding (OmniFold) of MINERvA neutrino data. Below are numbered passages from ONE file of the note. Each gives the LaTeX source of changed paragraphs BEFORE and AFTER a revision (comments removed; macros such as \SI{...} and value macros print numbers; \S\ref{...} prints a section number). The revision changes presentation only, under these rules:
+(a) a caveat or fact restated in several places is kept once, at its home in the note; a removed restatement is allowed only where the same fact prints at the home, which the CONTEXT block (the round's fact ledger rows for this file) names with the exact home text;
+(a2) a provenance detail (which job script, which log line, which checksum was or was not recorded) may leave the note only where the records document prints it: the CONTEXT row's R:<file>::<text> probe gives the exact records text, which the note then cites as Ref. [records]; a consequence that bears on a printed number must stay in the note;
+(a3) a sentence carrying a result and several qualifiers may be split into a result sentence and a scope sentence, if every qualifier still prints and the first sentence is not false read alone;
+(b) internal process vocabulary (receipt, gate, lane, predeclared, recorded decision, obligation, issue ids) is replaced by plain statements of results and status;
+(c) otherwise no fact, number, condition, scope or status may be lost or added, and no claim may become stronger or weaker; a qualifier stays wherever leaving it out would make a printed sentence false as read.
+
+For EACH passage, decide whether you agree that the AFTER text (1) keeps every fact of BEFORE, either in AFTER or at the home the CONTEXT names; (2) adds no fact, condition, inference or claim that BEFORE (or the CONTEXT) does not support; and (3) reads in the register of a well-edited long technical document.
+
+Answer for every passage, in exactly this format, one block per passage, in order:
+PASSAGE: <id>
+VERDICT: <AGREE or REVISE>
+ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
+FIX: <"none", or exact replacement AFTER text for the words named, which changes nothing else>
+
+Use REVISE only for a concrete problem you can name in the AFTER text. Do not propose new facts.
+
+
+===== BEGIN FILE acc.tex.context.txt =====
+CONTEXT: Accuracy fixes ruled by the project director: each narrows a printed claim to what its home states and adds no new result. The home, sec_validation.tex §5.4 'Stability and efficiency', verbatim: "\paragraph{Stability and efficiency.} With five and with ten iterations the total cross section agrees to within \SI{0.026}{\percent}; the per-bin shape differs by \SI{1.54}{\percent} RMS. The histogram-based and exact-split backends agree on the total cross section to \SI{0.04}{\percent}. Both comparisons were measured for the exact-split cross-check." The quoted 2D central value uses the LightGBM estimator, configuration (f); the exact-split estimator is a cross-check. Check that each AFTER claims exactly what the home supports, no more and no less.
+===== END FILE acc.tex.context.txt =====
+
+
+===== BEGIN FILE acc.tex.passages.txt =====
+=== PASSAGE ACC-1 (sec_method.tex) ===
+BEFORE:
+Our $n=5$ is instead justified empirically: doubling it to $n=10$ moves the total cross section by \SI{0.026}{\percent} (\S\ref{sec:validation}), and the unfold reproduces an independently published binned measurement of the same data (\S\ref{sec:results}).
+
+AFTER:
+Our $n=5$ is instead justified empirically: for the exact-split cross-check, the total cross section agrees to within \SI{0.026}{\percent} between five and ten iterations (\S\ref{sec:validation}), and the unfold reproduces an independently published binned measurement of the same data (\S\ref{sec:results}).
+
+=== PASSAGE ACC-2 (sec_method.tex) ===
+BEFORE:
+The configuration is instead validated after the fact by closure and classifier-calibration tests (\S\ref{sec:validation}, \S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count (below), backend agreement in method-dependence studies (\S\ref{sec:results-tension}), and an explicit training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
+
+AFTER:
+The configuration is instead validated after the fact by closure and classifier-calibration tests (\S\ref{sec:validation}, \S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count, measured for the exact-split cross-check (below), backend agreement in method-dependence studies (\S\ref{sec:results-tension}), and an explicit training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
+
+=== PASSAGE ACC-3 (sec_validation.tex, table row) ===
+BEFORE:
+Iteration stability & Same data; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test
+
+AFTER:
+Iteration stability & Same data, exact-split cross-check; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test
+
+===== END FILE acc.tex.passages.txt =====

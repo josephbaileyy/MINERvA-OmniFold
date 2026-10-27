@@ -1218,12 +1218,16 @@ PLANTS = [
      "app_provenance.tex", lambda p: (p.write_text(p.read_text().replace(r"\texttt{flux-index}", r"\texttt{flux-idx}")),
                                       _unlink_cite(p.parent / "sec_systematics.tex", r"\recentry{flux-index}")), None,
      "| L98 | planted | DROP | R1 | `D:sec_systematics.tex::\\texttt{flux-index}` | planted |"),
-    ("listed drop of a heading the records lack", "P7 ledger row L98: D:sec_systematics.tex::superseded values: "
-     "retired materials", "sec_systematics.tex", r" (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
-     "", "| L98 | planted | DROP | R4 | `D:sec_systematics.tex::superseded values: retired materials` | planted |"),
-    ("kept citation moved within its file (C62)", "P7 ledger row L-thin-C62", "sec_systematics.tex",
-     lambda p: p.write_text(_move_cite(p.read_text(), " (Ref.~\\cite{NoteRecords2026}, superseded values: retired material)",
-                                       "No block contains the dependence on the learner")), None),
+    # n3 (2026-10-27): the sec_systematics ten-seed citation these two plants used left the note (L-thin-C62, director
+    # ruling (e)); they now use citations that still print, in both the base and the delivered App. A and App. B.
+    ("listed drop of a heading the records lack", "P7 ledger row L98: D:app_statmethods.tex::superseded values: "
+     "retired materials", "app_statmethods.tex",
+     r"was in force when the tests were graded (Ref.~\cite{NoteRecords2026}, superseded values: retired material)",
+     "was in force when the tests were graded",
+     "| L98 | planted | DROP | R4 | `D:app_statmethods.tex::superseded values: retired materials` | planted |"),
+    ("kept citation moved within its file (C13)", "P7 ledger row L-thin-C13", "app_statmethods_nd.tex",
+     lambda p: p.write_text(_move_cite(p.read_text(), " (\\recentry{rank-inversion})",
+                                       "The 2D methods and their worked examples are in App.~\\ref{app:statmethods}.")), None),
     # P9 (n2): a repeated record drifts from its table row
     ("repeated record drifts from its row", "P9 App. G entry flux-index does not contain", "app_provenance.tex",
      r"\texttt{KNOWN\_ISSUES.md} row 91: the flux-universe", r"\texttt{KNOWN\_ISSUES.md} row 92: the flux-universe"),
