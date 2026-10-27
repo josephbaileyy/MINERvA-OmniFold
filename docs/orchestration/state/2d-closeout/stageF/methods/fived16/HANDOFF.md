@@ -24,7 +24,7 @@
   - Commit identity: `git -c user.name='paper rewrite lane (Claude)' -c user.email='paper-rewrite@minerva-omnifold.invalid' commit`, with the trailer `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
   - PR bodies end with "🤖 Generated with [Claude Code](https://claude.com/claude-code)".
   - The director merges with merge commits, never squash, because the pinned commits 1a015eef and 3c3a6f74 must stay ancestors.
-  - To update the branch, merge origin/main into it. Do not rebase.
+  - To update the branch, merge origin/main into it. Do not rebase. **Do not merge main yourself:** ask the director, who runs `merge_main.sh` and merges main before the final draft goes to Joseph (director, 2026-10-27).
 - **The tree hook.** `bash .githooks/pre-commit` (19 checks) must pass before every commit. Run it on the staged index.
 - **Every new `.md` under `docs/orchestration`** needs a CATALOG.md row and a MANIFEST-overrides.tsv row. Then, after `git add`, run `generate_manifest.py --committed-only` and `--check`.
 - **Protected files.**
@@ -108,11 +108,13 @@
    - **3D (flux bootstrap):** replace the "weakening only the flux correlations by 10 %" sentences with the measured band. They print in the paper's sec:gen16, Sec. I's limitations paragraph and both abstracts; the note's are in sec_fived16 §10.4.
    - **1A (GENIE v3 held-out bias test):** revise the coverage limitation ("The coverage of its intervals has not been validated"; ledger guard G3, plus the abstracts and Sec. I) to what the readout supports. Name it as a bias test at one held-out truth, and never as validated coverage unless the readout says so.
    - **For both:** pin the new readout in `make_values_fived16.py` (READOUTS, by sha256), add keys, give the changed sentences a small PRD read of their own, add an agy check with a control, and update the ledger.
+   - **Add P02 to that PRD read and agy pass** (director, ruling 3, after 0a87881c). P02 as printed is a composite: sol2 r2's first sentence with NEW's "the simulation mismodels the truth" kept. agy's Q1 read the first-applied form ("the simulated truth differs"), so neither the truth column nor agy has read the pair as it now prints.
 4. **The final draft to Joseph,** after items 1–3: one draft with the change tables.
    - **The title:** options T0–T3 are in `WORDING-PACKET.md` (last section). The raters chose T1 4/4. Not edited.
    - **Q8:** whether the release and the supplemental file carry the sixteen-cell vector and covariance. This is open and Joseph's. The data product is `measurement-paper/5d-community-20261024/fd/data-product/`.
    - **Data availability:** the proposal is in `WORDING-PACKET.md`, and the text is unedited.
-   - **Both abstracts,** named in words, with their word counts (`tools/recount.py`). sol2 still calls the note abstract (348 words) too long; no rater form survived the truth column, so a shorter note abstract is for Joseph to ask for.
+   - **Both abstracts,** named in words, with their word counts (`tools/recount.py`). **The note abstract's length goes to Joseph as one item** (director, ruling 1, after 0a87881c): 348 words, sol2's "too long", and the fact that no rater form passed the truth column. Draft a shorter version only if he asks, because it would be new wording. (c) will change the length anyway.
+   - **Sentence-level pieces of rater forms are declined** (director, ruling 2): a form is applied whole or not at all. A composite is an untested reading. Keep them out of the packet.
    - **Q6:** answered by the framing (the abstracts are drafts).
    - **Q1, Q7, Q9:** settled by round 1 and the move.
 5. **The second scope review** comes after the final draft is approved. The director starts it. The hybrid-null joint-test move is still only "seriously considered"; the review weighs it.

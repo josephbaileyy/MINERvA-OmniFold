@@ -230,7 +230,10 @@ Each applied change has a ledger row, `F-<id>`, whose N: probe holds the new tex
 
 **Not applied, for Joseph or the director:**
 - **The note abstract's length.** sol2 calls it too long in both runs (348 words). Both of sol2's shorter forms fail on the same clause, so no rater form is available. A lane-drafted shortening would be new wording, and the abstracts' final text is Joseph's.
-- **Sentence-level pieces of sol2's abstract forms** that are true on their own (for example, splitting the paper abstract's first sentence after the five observables) were not taken, because the rule applies a rater's form as a whole.
+- **Sentence-level pieces of sol2's abstract forms** that are true on their own (for example, splitting the paper abstract's first sentence after the five observables) were not taken. **Declined by the director** (ruling 2, after 0a87881c): a form is applied whole or not at all, because a composite is an untested reading.
+<!-- absence-ok: records the director's ruling that a composite of rater sentences was not graded; not a claim that a result is absent from the repository -->
+- **P02 as printed is such a composite** (sol2 r2 with NEW's "the simulation mismodels the truth" kept, after agy's Q1). Neither the truth column nor agy has read it as it now prints, so it joins the PRD read and agy pass of the 1A and 3D sentences (director, ruling 3).
+- **The note abstract's length goes to Joseph** in the final draft (director, ruling 1).
 
 ### agy's blind check of the changed passages, with a planted control
 
