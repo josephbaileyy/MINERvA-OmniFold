@@ -1,0 +1,120 @@
+1:\contentsline {section}{Executive summary}{2}{section*.1}%
+2:\contentsline {paragraph}{Results overview:}{2}{section*.2}%
+3:\contentsline {paragraph}{Principal limitations:}{4}{section*.3}%
+section 1 Introduction and motivation
+5:\contentsline {paragraph}{Prior OmniFold applications.}{9}{section*.5}%
+6:\contentsline {paragraph}{Why unbinned:}{9}{section*.6}%
+7:\contentsline {paragraph}{Analysis strategy.}{10}{section*.7}%
+8:\contentsline {paragraph}{Scope.}{10}{section*.8}%
+9:\contentsline {paragraph}{Roadmap.}{10}{section*.9}%
+section 2 The MINERvA experiment, data and simulation samples
+subsection 2.1 Detector and beam
+subsection 2.2 Data and simulation samples
+subsection 2.3 Signal definition and event selection
+subsection 2.4 Per-event analysis trees
+subsection 2.5 Reco-level control distributions
+section 3 The unbinned OmniFold procedure
+subsection 3.1 Algorithm
+18:\contentsline {paragraph}{Training details.}{15}{section*.10}%
+19:\contentsline {paragraph}{Background subtraction.}{15}{section*.11}%
+subsection 3.2 Estimators and configuration
+21:\contentsline {paragraph}{The exact-split cross-check.}{16}{section*.12}%
+22:\contentsline {paragraph}{The estimator configurations.}{17}{section*.13}%
+23:\contentsline {paragraph}{Hyperparameter choice.}{17}{section*.14}%
+subsection 3.3 MINERvA driver and pipeline conventions
+subsection 3.4 Cross-section extraction
+subsection 3.5 Binning
+subsection 3.6 Related developments and estimator scope
+section 4 Uncertainty quantification: constructing the covariance blocks
+subsection 4.1 Systematic universes
+30:\contentsline {paragraph}{Flux $1/\Phi $ normalization.}{21}{section*.15}%
+subsection 4.2 Statistical uncertainty: Poisson bootstrap
+subsection 4.3 ML/optimization uncertainty: training-seed variation
+subsection 4.4 Further checks of the 2D covariance
+subsection 4.5 Combination and the unified-throw test
+subsection 4.6 Scope, conventions and limitations of the 2D covariance
+36:\contentsline {paragraph}{Status of the 2D result.}{25}{section*.16}%
+37:\contentsline {paragraph}{Generator-shape model dependence.}{25}{section*.17}%
+38:\contentsline {paragraph}{Conventions.}{25}{section*.18}%
+39:\contentsline {paragraph}{Approximations and omitted terms.}{26}{section*.19}%
+40:\contentsline {paragraph}{Other limitations.}{26}{section*.20}%
+41:\contentsline {paragraph}{Seed-related terms reported, not added.}{26}{section*.21}%
+42:\contentsline {paragraph}{Changes from the earlier 2D budget.}{27}{section*.22}%
+subsection 4.7 What changes for the higher-dimensional products
+44:\contentsline {paragraph}{Scope of the re-selected replacement.}{27}{section*.23}%
+section 5 Validation of the two-dimensional measurement
+46:\contentsline {paragraph}{Closure.}{28}{section*.24}%
+47:\contentsline {paragraph}{Injected-feature recovery.}{29}{section*.25}%
+48:\contentsline {paragraph}{What the remaining validation needs.}{29}{section*.26}%
+subsection 5.1 Closure tests across dimensions: what each test changes
+50:\contentsline {paragraph}{Why injected bumps close while generator-shaped tests do not.}{31}{section*.27}%
+subsection 5.2 Fixed-truth coverage of the 2D statistical band
+subsection 5.3 Other validation diagnostics
+53:\contentsline {paragraph}{Unbinned diagnostic (C2ST).}{33}{section*.28}%
+54:\contentsline {paragraph}{Same-ensemble pull diagnostic (not a coverage test).}{33}{section*.29}%
+55:\contentsline {paragraph}{Stability and efficiency.}{33}{section*.30}%
+section 6 Results
+subsection 6.1 Double-differential cross section
+subsection 6.2 Comparison to the published measurement
+subsection 6.3 Uncertainty budget
+subsection 6.4 Anatomy of the $\chi ^{2
+subsection 6.5 Comparison to GENIE MINERvA Tune v1
+section 7 Higher-dimensional extensions: available energy and momentum transfer
+subsection 7.1 Operational definition and provenance
+64:\contentsline {paragraph}{Unfolding and binning.}{43}{section*.31}%
+subsection 7.2 The available-energy spectrum
+subsection 7.3 Validation against the 2D measurement
+subsection 7.4 Closure: the one injected $E_{\mathrm {avail
+subsection 7.5 Classifier-family cross-check (GBDT vs.\ NN)
+subsection 7.6 Generator comparison in 3D
+70:\contentsline {paragraph}{Flux repair of the GENIE and NuWro predictions.}{47}{section*.32}%
+subsection 7.7 The low-available-energy excess and the known low-recoil deficit
+72:\contentsline {paragraph}{The tested pion-FSI variations do not account for it.}{48}{section*.33}%
+73:\contentsline {paragraph}{Comparison with a missing 2p2h component.}{48}{section*.34}%
+74:\contentsline {paragraph}{GENIE with Valencia 2p2h enabled.}{48}{section*.35}%
+subsection 7.8 Fourth axis: three-momentum transfer $q_{3
+76:\contentsline {paragraph}{Marginalization check (4D$\to $3D).}{50}{section*.36}%
+77:\contentsline {paragraph}{What $q_{3}$ adds.}{50}{section*.37}%
+78:\contentsline {paragraph}{No 4D uncertainty is reported.}{50}{section*.38}%
+79:\contentsline {paragraph}{Bin-identical comparison to the published low-recoil measurement.}{50}{section*.39}%
+section 8 Fifth axis: $W$ and the $(E_{\mathrm {avail
+subsection 8.1 $W$ as a fifth axis
+subsection 8.2 Implemented definitions of the five observables
+subsection 8.3 Generator predictions and the target difference
+subsection 8.4 Where the excess lives in the $(E_{\mathrm {avail
+subsection 8.5 Generator band: the corner against four external generators
+section 9 Five-dimensional estimator: validation and uncertainty
+subsection 9.1 Which source of error is being tested
+subsection 9.2 Background subtraction and generator-sized truth changes
+89:\contentsline {paragraph}{Background subtraction.}{58}{section*.40}%
+90:\contentsline {paragraph}{Generator-sized truth changes.}{58}{section*.41}%
+subsection 9.3 Why the estimator does not follow a generator-sized change
+92:\contentsline {paragraph}{Comparison with exact binned unfolding.}{58}{section*.42}%
+93:\contentsline {paragraph}{Higher-capacity background refinement and data stability.}{59}{section*.43}%
+94:\contentsline {paragraph}{Unfolding-model dependence.}{59}{section*.44}%
+subsection 9.4 Model dependence, variability and reporting resolution
+96:\contentsline {paragraph}{Recovery changes, but not uniformly.}{60}{section*.45}%
+97:\contentsline {paragraph}{Reporting definitions for a five-dimensional measurement.}{61}{section*.46}%
+98:\contentsline {paragraph}{Variability and interval behavior at five iterations.}{61}{section*.47}%
+99:\contentsline {paragraph}{Prior sensitivity is not a measured real-data bias.}{61}{section*.48}%
+subsection 9.5 Five-dimensional coverage test
+101:\contentsline {paragraph}{Why the intervals miscover under the rate reduction.}{64}{section*.49}%
+subsection 9.6 The five-axis covariance used in this note and its $(E_{\mathrm {avail
+103:\contentsline {paragraph}{Status.}{65}{section*.50}%
+104:\contentsline {paragraph}{Construction.}{65}{section*.51}%
+105:\contentsline {paragraph}{Centering, explicitly.}{66}{section*.52}%
+106:\contentsline {paragraph}{The projection to $(E_{\mathrm {avail}},W)$.}{66}{section*.53}%
+107:\contentsline {paragraph}{Conditioning, and why no rank is quoted.}{66}{section*.54}%
+108:\contentsline {paragraph}{What the covariance supports.}{66}{section*.55}%
+section 10 Calibrated joint tests of generator predictions
+subsection 10.1 Hypotheses, grid and statistics
+subsection 10.2 Calibration within the implemented simulation model
+112:\contentsline {paragraph}{Generative model of one pseudo-experiment.}{69}{section*.56}%
+subsection 10.3 Multiplicity, stopping rule and design
+subsection 10.4 Conditions
+115:\contentsline {paragraph}{Numerical convergence.}{71}{section*.57}%
+116:\contentsline {paragraph}{Calibration validity.}{72}{section*.58}%
+117:\contentsline {paragraph}{Physical-model adequacy.}{72}{section*.59}%
+subsection 10.5 Decisions
+119:\contentsline {paragraph}{Sensitivity to the sub-fine-grid residual.}{73}{section*.60}%
+120:\contentsline {paragraph}{Power.}{73}{section*.61}%
