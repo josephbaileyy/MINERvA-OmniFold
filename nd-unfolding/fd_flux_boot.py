@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """5D 3D, the flux-correlation bootstrap (state/measurement-paper/5d-community-20261024/FD-FLUX-BOOT-DECLARATION.md),
-approved by Joseph in DECISION-20261027-joseph-limitation-plan-f1-bias-test-and-flux-bootstrap.md item 3: a measured
-band on how Stage G's reported chi2 depends on the flux block's estimated correlations, in place of G-SENS's
-alpha = 0.1 weakening.
+approved by Joseph in DECISION-20261027-joseph-limitation-plan-f1-bias-test-and-flux-bootstrap.md item 3: a band on
+the ESTIMATION UNCERTAINTY of Stage G's reported chi2 from estimating the flux block's correlations with about n_eff = 19
+effective universes, conditional on PPFX's model and the chosen nu-e + IMD constraint. It is not a sensitivity: a narrow
+band means the 100 universes pin the correlations well, not that the chi2 is insensitive to them (G-SENS2's alpha
+results stand), and systematic choices such as FHC-only against FHC+RHC+IMD are outside it.
 
 S1 builds the flux block from the 100 PPFX Flux universes as MAT's weighted CalcCovMx, with the nu-e + IMD constraint
 weights w (s1_assemble.mat_cov, flux_weights). A replicate b resamples the 100 universes with replacement, uniformly,
@@ -10,15 +12,19 @@ each drawn universe carrying its own weight, and rebuilds the block with the sam
 
     C*_b = mat_cov(X[i_b], w[i_b]),   i_b = B_REPLICATES x 100 indices from default_rng(SEED)
 
-The weighted estimator's spread under this resampling is governed by sum w^2 / (sum w)^2 = 1 / n_eff (S1's
-n_eff = 19.06), so the band is about as wide as an unweighted bootstrap over n_eff universes (the declaration,
-section 4). Two variants of the swapped block:
+n_eff enters through the resampling: a weighted mean's bootstrap variance is sum w^2 (x - mu)^2 / (sum w)^2, which is
+sigma_w^2 / n_eff only when the residuals do not follow the weights (the declaration, section 4.2). Two variants of the
+swapped block:
 * ``correlation`` (primary): S1's flux variances kept bit for bit, the replicate's correlations,
   D0^1/2 rho*_b D0^1/2, as G-SENS keeps variances when it shrinks correlations;
-* ``block`` (second): the replicate's block C*_b itself, variances included.
+* ``block`` (second): the replicate's block C*_b itself, variances included; its variances are biased low by about
+  (1 - 1/n_eff) under resampling, which pushes its chi2 high.
 Each is swapped for the flux group in Stage G's reported matrix, C_total + C_resp + V_g, with every other block
 unchanged, and each prediction's total and shape-only chi2 is recomputed on its own cells (GiBUU on its eight). The
-statistic is the distribution of each chi2 over the replicates; the band is its declared percentiles. One named
+statistic is the distribution of each chi2 over the replicates; the band is its declared percentiles q, beside the
+basic (reflected) band 2 chi2_hat - q, with chi2_hat Stage G's own chi2 (the identity replicate), and the offset
+median - chi2_hat. In this near-degenerate regime chi2 of an estimated matrix is biased high and the bootstrap follows
+the same bias, so neither band is an interval for chi2 under the true correlations (section 4.3). One named
 alternative, ``uniform``: the block from the 100 universes with equal weights (the flux prior without the constraint),
 a single chi2 per prediction. No p-value anywhere.
 
@@ -67,17 +73,28 @@ LABELS = {
                  "weight; the block rebuilt with S1's rule (MAT CalcCovMx, weighted, centred on the replicate's "
                  "weighted mean)",
     "variants": "correlation (primary): S1's flux variances kept bit for bit, the replicate's correlations; block "
-                "(second): the replicate's block itself, variances included",
+                "(second): the replicate's block itself, variances included, which under resampling are biased low by "
+                "about (1 - 1/n_eff) and push its chi2 high",
     "uniform": "the block from the 100 universes with equal weights: the flux prior without the constraint; a named "
                "alternative, not an alternative result",
-    "n_eff": "the weighted estimator's spread is governed by sum w^2 / (sum w)^2 = 1 / n_eff; n_eff_replicate is each "
-             "replicate's (sum w*)^2 / sum w*^2; delta_method_ratio is, per cell, the bootstrap standard deviation of "
-             "the weighted mean universe integral over its linearized value sqrt(sum w^2 (x - mu)^2) / sum w",
-    "band": f"percentiles {list(PERCENTILES)} of each chi2 over the {B_REPLICATES} replicates (numpy "
-            f"'{PERCENTILE_METHOD}'); halves: the same from replicates 1-{B_REPLICATES // 2} and "
-            f"{B_REPLICATES // 2 + 1}-{B_REPLICATES}, to show the Monte Carlo scatter",
+    "n_eff": "n_eff enters through the resampling: a weighted mean's bootstrap variance is sum w^2 (x - mu)^2 / "
+             "(sum w)^2, which equals sigma_w^2 / n_eff only when the residuals do not follow the weights; the nu-e + "
+             "IMD weights are a likelihood of each universe's own flux, so they may. sd_over_sigma_w_root_n_eff is, per "
+             "cell, the bootstrap sd of the weighted mean universe integral over sigma_w / sqrt(n_eff), sigma_w^2 = "
+             "sum w (x - mu)^2 / sum w (1 if the residuals do not follow the weights); delta_method_ratio is the same sd "
+             "over sqrt(sum w^2 (x - mu)^2) / sum w, about 1 for any weights: a check that the bootstrap carries that "
+             "term, not evidence about n_eff",
+    "band": f"estimation uncertainty, not sensitivity: percentiles {list(PERCENTILES)} of each chi2 over the "
+            f"{B_REPLICATES} replicates (numpy '{PERCENTILE_METHOD}'); basic: the reflected band 2 chi2_hat - q at the "
+            f"mirrored percentile, chi2_hat Stage G's chi2 (the identity replicate); offset: median - chi2_hat, the "
+            "estimator's bias in the same direction as the bias of chi2_hat itself; halves: the percentiles from "
+            f"replicates 1-{B_REPLICATES // 2} and {B_REPLICATES // 2 + 1}-{B_REPLICATES}, the Monte Carlo scatter. "
+            "Neither band is an interval for the chi2 under the true correlations",
     "units": "relative to f, as G-SENS: M = (C + V_g)/(f f^T); chi2 and ndf are unit-free; shape-only adds 100 * 11^T",
     "not": "no p-value, reading, claim or paper text",
+    "not_citable_for": ["that the chi2 is insensitive to the flux correlations",
+                        "that the PPFX or constraint correlations are correct",
+                        "an interval for the chi2 under the true flux correlations"],
 }
 
 
@@ -132,20 +149,30 @@ def correlation(C: np.ndarray, a: int, b: int) -> float:
     return float(C[a, b] / np.sqrt(C[a, a] * C[b, b]))
 
 
-def band(values: np.ndarray) -> dict:
+def band(values: np.ndarray, centre: float | None = None) -> dict:
+    """The percentiles, minimum, maximum and halves of ``values``; with ``centre`` (chi2_hat), also the basic band
+    2 * centre - q at the mirrored percentile (key p holds 2 centre - q_(100 - p)) and the offset median - centre."""
     v = np.asarray(values, float)
     h = len(v) // 2
     pct = lambda x: dict(zip((f"{q:g}" for q in PERCENTILES), np.percentile(x, PERCENTILES, method=PERCENTILE_METHOD).tolist()))
-    return {"percentiles": pct(v), "min": float(v.min()), "max": float(v.max()),
-            "halves": [pct(v[:h]), pct(v[h:])]}
+    out = {"percentiles": pct(v), "min": float(v.min()), "max": float(v.max()), "halves": [pct(v[:h]), pct(v[h:])]}
+    if centre is not None:
+        q = out["percentiles"]
+        out["basic"] = {f"{p:g}": 2 * centre - q[f"{100 - p:g}"] for p in PERCENTILES}
+        out["offset_median_minus_centre"] = q["50"] - centre
+    return out
 
 
-def delta_method_ratio(X: np.ndarray, w: np.ndarray, idx: np.ndarray) -> list[float]:
-    """Per cell: the bootstrap sd of the weighted mean universe integral over sqrt(sum w^2 (x - mu)^2) / sum w."""
+def mean_spread(X: np.ndarray, w: np.ndarray, idx: np.ndarray) -> dict[str, list[float]]:
+    """Per cell, the bootstrap sd of the weighted mean universe integral over (a) sigma_w / sqrt(n_eff), with
+    sigma_w^2 = sum w (x - mu)^2 / sum w, which is 1 when the residuals do not follow the weights, and (b) its
+    linearized value sqrt(sum w^2 (x - mu)^2) / sum w, which is about 1 for any weights."""
     mu = (w[:, None] * X).sum(0) / w.sum()
+    sw = np.sqrt((w[:, None] * (X - mu) ** 2).sum(0) / w.sum())
     lin = np.sqrt((w[:, None] ** 2 * (X - mu) ** 2).sum(0)) / w.sum()
-    boot = np.array([(w[i][:, None] * X[i]).sum(0) / w[i].sum() for i in idx])
-    return (boot.std(axis=0, ddof=1) / lin).tolist()
+    sd = np.array([(w[i][:, None] * X[i]).sum(0) / w[i].sum() for i in idx]).std(axis=0, ddof=1)
+    return {"sd_over_sigma_w_root_n_eff": (sd / (sw / np.sqrt(n_eff(w)))).tolist(),
+            "delta_method_ratio": (sd / lin).tolist()}
 
 
 # ---------------------------------------------------------------- inputs
@@ -260,17 +287,16 @@ def run(a, pins=None, predictions=None) -> int:
     report("B3", f"the {B_REPLICATES} x {N_UNIVERSES} index matrix from seed {SEED} is the declared one",
            idx.shape == (B_REPLICATES, N_UNIVERSES) and dig == INDEX_SHA256, f"sha256 {dig}")
 
-    # the replicates: B4 (every block has positive variances and every swapped M is positive definite) and B5 (the
-    # correlation variant keeps S1's flux variances bit for bit; every other block is the same object every time)
+    # the replicates: B4 (every block has positive variances and every swapped M, the uniform one's included, is
+    # positive definite) and B5 (the correlation variant keeps S1's flux variances bit for bit)
     p4, p5 = [], []
     chi = {v: {spec["name"]: [] for spec, *_ in preds} for v in VARIANTS}
     pair = [int(c[1:]) for c in PAIR]
     corr = {"flux_block": [], **{f"reported_matrix_{v}": [] for v in VARIANTS}}
-    total_rest = None
-    neff = []
+    # C_total + C_resp relative to f without the flux group, for the pair's correlation in the reported matrix
+    total_rest = x.Ct / ff - x.groups_rel[FLUX_GROUP] + (x.Cx_rel if carries else 0)
     for b, ib in enumerate(idx):
         Cs = replicate_block(X, w, ib)
-        neff.append(n_eff(w[ib]))
         if not np.all(np.diag(Cs) > 0):
             p4.append(f"replicate {b}: a flux variance is not positive")
             continue
@@ -280,8 +306,6 @@ def run(a, pins=None, predictions=None) -> int:
             if v == "correlation" and not np.array_equal(np.diag(Cv), np.diag(C0)):
                 p5.append(f"replicate {b}")
             Crel = Cv / ff
-            if total_rest is None:
-                total_rest = x.Ct / ff - x.groups_rel[FLUX_GROUP] + (x.Cx_rel if carries else 0)
             corr[f"reported_matrix_{v}"].append(correlation(total_rest + Crel, *pair))
             for spec, names, d, i, rest in preds:
                 got = chi2s(d, rest + Crel[np.ix_(i, i)])
@@ -289,20 +313,25 @@ def run(a, pins=None, predictions=None) -> int:
                     p4.append(f"replicate {b} {v} {spec['name']}")
                     continue
                 chi[v][spec["name"]].append(got)
-    report("B4", "every replicate's flux variances are positive and every swapped matrix is positive definite", not p4,
-           f"{len(p4)}: {p4[:3]}")
-    report("B5", "the correlation variant keeps S1's flux variances bit for bit in every replicate", not p5,
-           f"{len(p5)}: {p5[:3]}")
-
     Cu = sa.mat_cov(X)
     uniform = {}
     for spec, names, d, i, rest in preds:
-        t, s = chi2s(d, rest + (Cu / ff)[np.ix_(i, i)])
-        uniform[spec["name"]] = {"chi2": t, "shape_only": s}
+        got = chi2s(d, rest + (Cu / ff)[np.ix_(i, i)])
+        if got is None:
+            p4.append(f"uniform {spec['name']}")
+            continue
+        uniform[spec["name"]] = {"chi2": got[0], "shape_only": got[1]}
+    report("B4", "every replicate's flux variances are positive and every swapped matrix, the uniform one's included, "
+                 "is positive definite", not p4, f"{len(p4)}: {p4[:3]}")
+    report("B5", "the correlation variant keeps S1's flux variances bit for bit in every replicate", not p5,
+           f"{len(p5)}: {p5[:3]}")
+
     bands = {v: {spec["name"]: {"cells": names, "ndf": len(names), "chi2_stage_g": identity[spec["name"]]["chi2_stage_g"],
                                 "shape_only_stage_g": identity[spec["name"]]["shape_only_stage_g"],
-                                "total": band([c[0] for c in chi[v][spec["name"]]]),
-                                "shape_only": band([c[1] for c in chi[v][spec["name"]]]), "label": LABEL}
+                                "total": band([c[0] for c in chi[v][spec["name"]]],
+                                              identity[spec["name"]]["chi2_stage_g"]),
+                                "shape_only": band([c[1] for c in chi[v][spec["name"]]],
+                                                   identity[spec["name"]]["shape_only_stage_g"]), "label": LABEL}
                  for spec, names, *_ in preds} for v in VARIANTS}
     readout = {"schema": "fd-flux-boot-readout/1", "labels": LABELS,
                "controls_passed": ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5"],
@@ -314,9 +343,9 @@ def run(a, pins=None, predictions=None) -> int:
                "correlation_band": {k: band(v) for k, v in corr.items()},
                "correlation_s1": {"flux_block": correlation(C0, *pair),
                                   "reported_matrix": correlation(total_rest + C0 / ff, *pair)},
-               "n_eff": {"s1": n_eff(w), "sum_w": float(w.sum()), "n_eff_replicate": band(neff),
-                         "delta_method_ratio": dict(zip((f"R{c:02d}" for c in range(N_CELLS)),
-                                                        delta_method_ratio(X, w, idx)))},
+               "n_eff": {"s1": n_eff(w), "sum_w": float(w.sum()),
+                         **{k: dict(zip((f"R{c:02d}" for c in range(N_CELLS)), v))
+                            for k, v in mean_spread(X, w, idx).items()}},
                "uniform": {"n_eff": float(N_UNIVERSES), "predictions": uniform,
                            "pair_correlation_flux_block": correlation(Cu, *pair), "label": LABELS["uniform"]},
                "inputs_sha256": {**pins, "definition": sa.DEFINITION_SHA256, "extra_block": a.extra_block_sha256,
@@ -338,11 +367,14 @@ def run(a, pins=None, predictions=None) -> int:
     for v in VARIANTS:
         for name, r in bands[v].items():
             q = r["total"]["percentiles"]
+            bq = r["total"]["basic"]
             print(f"[3D] {v:11s} {name:10s}: chi2 {r['chi2_stage_g']:.2f}/{r['ndf']}; replicates 16-84 % "
-                  f"[{q['16']:.2f}, {q['84']:.2f}], 2.5-97.5 % [{q['2.5']:.2f}, {q['97.5']:.2f}]; uniform "
-                  f"{uniform[name]['chi2']:.2f}", flush=True)
-    print(f"[3D] n_eff {n_eff(w):.2f}; replicate n_eff 16-84 % [{readout['n_eff']['n_eff_replicate']['percentiles']['16']:.2f}, "
-          f"{readout['n_eff']['n_eff_replicate']['percentiles']['84']:.2f}]", flush=True)
+                  f"[{q['16']:.2f}, {q['84']:.2f}], 2.5-97.5 % [{q['2.5']:.2f}, {q['97.5']:.2f}], offset of the median "
+                  f"{r['total']['offset_median_minus_centre']:+.2f}; basic 16-84 % [{bq['16']:.2f}, {bq['84']:.2f}]; "
+                  f"uniform {uniform[name]['chi2']:.2f}", flush=True)
+    r = list(readout["n_eff"]["sd_over_sigma_w_root_n_eff"].values())
+    print(f"[3D] n_eff {n_eff(w):.2f}; bootstrap sd of the weighted mean over sigma_w / sqrt(n_eff), median over cells "
+          f"{float(np.median(r)):.3f} (range {min(r):.3f}-{max(r):.3f})", flush=True)
     print(json.dumps({"wrote": str(a.out_json), "sha256": sa.sha256(a.out_json)}), flush=True)
     return 0
 

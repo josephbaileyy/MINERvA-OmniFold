@@ -1,0 +1,6 @@
+--- weights indep: chi2(C_true) = 100.65; over 150 ensembles chi2(C_hat) median 103.58, 16-84 [100.21, 106.29], sd 3.18
+  correlation: P(chi2_true in 16-84 band) 0.37; median(boot median - chi2_hat) +0.56; median boot sd 2.55
+  block      : P(chi2_true in 16-84 band) 0.32; median(boot median - chi2_hat) +1.24; median boot sd 2.90
+--- weights follows-x: chi2(C_true) = 100.65; over 150 ensembles chi2(C_hat) median 117.36, 16-84 [114.93, 119.81], sd 2.66
+  correlation: P(chi2_true in 16-84 band) 0.00; median(boot median - chi2_hat) +0.38; median boot sd 2.42
+  block      : P(chi2_true in 16-84 band) 0.00; median(boot median - chi2_hat) +1.09; median boot sd 2.46

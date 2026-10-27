@@ -38,7 +38,24 @@ MUTANTS = [
      'Cv = Cs'),
     ("reported matrix without C_resp", "    _, carries = x.comps[0][1]", "    _, carries = x.comps[0][1]\n    carries = False"),
     ("n_eff wrong", "return float(w.sum() ** 2 / (w ** 2).sum())", "return float(w.sum() / (w ** 2).sum())"),
-    ("delta method ddof 0", "boot.std(axis=0, ddof=1)", "boot.std(axis=0, ddof=0)"),
+    ("delta method ddof 0", ".std(axis=0, ddof=1)", ".std(axis=0, ddof=0)"),
+    # review round 1 (fd/receipts-flux-boot/declaration/review/my_mutants.log) and the code it added
+    ("B0 count of recorded universes unchecked", "not bad and n_rec == N_UNIVERSES", "not bad"),
+    ("weights not carried", "return sa.mat_cov(X[i], w[i])", "return sa.mat_cov(X[i], w[np.arange(len(i))])"),
+    ("weights reversed (sum, n_eff unchanged)", 'w = G.sa_call("B0", sa.flux_weights, path)',
+     'w = G.sa_call("B0", sa.flux_weights, path)[::-1]'),
+    ("non-PD replicate silently dropped", '                    p4.append(f"replicate {b} {v} {spec[\'name\']}")',
+     "                    pass"),
+    ("correlation band of the reported matrix uses C0",
+     'corr[f"reported_matrix_{v}"].append(correlation(total_rest + Crel, *pair))',
+     'corr[f"reported_matrix_{v}"].append(correlation(total_rest + C0 / ff, *pair))'),
+    ("correlation_s1 reported matrix without flux", '"reported_matrix": correlation(total_rest + C0 / ff, *pair)',
+     '"reported_matrix": correlation(total_rest, *pair)'),
+    ("spread ratio without n_eff", "(sd / (sw / np.sqrt(n_eff(w))))", "(sd / sw)"),
+    ("uniform non-PD unguarded", '            p4.append(f"uniform {spec[\'name\']}")\n            continue',
+     "            pass"),
+    ("basic band not mirrored", 'q[f"{100 - p:g}"]', 'q[f"{p:g}"]'),
+    ("offset sign flipped", 'q["50"] - centre', 'centre - q["50"]'),
 ]
 
 

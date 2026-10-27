@@ -216,6 +216,12 @@ class Pure(unittest.TestCase):
         self.assertEqual((b["min"], b["max"]), (1.0, 2000.0))
         self.assertAlmostEqual(b["halves"][0]["50"], 500.5)
         self.assertAlmostEqual(b["halves"][1]["50"], 1500.5)
+        self.assertNotIn("basic", b)
+        c = FB.band(v, centre=900.0)
+        for q in FB.PERCENTILES:
+            self.assertAlmostEqual(c["basic"][f"{q:g}"], 1800.0 - c["percentiles"][f"{100 - q:g}"])
+        self.assertAlmostEqual(c["basic"]["16"], 1800.0 - (1 + 0.84 * 1999))
+        self.assertAlmostEqual(c["offset_median_minus_centre"], 1000.5 - 900.0)
 
     def test_the_seed_gives_the_declared_index_matrix(self):
         idx = FB.indices()
@@ -233,8 +239,13 @@ class Pure(unittest.TestCase):
         heavy, flat = self.w, np.ones(100)
         self.assertAlmostEqual(FB.n_eff(heavy), 19.0, delta=0.3)
         for w in (heavy, flat):
-            r = np.asarray(FB.delta_method_ratio(X, w, idx))
+            got = FB.mean_spread(X, w, idx)
+            r = np.asarray(got["delta_method_ratio"])
             self.assertTrue(np.all(np.abs(r - 1) < 0.12), r)
+            mu = np.average(X, axis=0, weights=w)
+            sw = np.sqrt(np.average((X - mu) ** 2, axis=0, weights=w))
+            sd = np.std([np.average(X[i], axis=0, weights=w[i]) for i in idx], axis=0, ddof=1)
+            np.testing.assert_allclose(got["sd_over_sigma_w_root_n_eff"], sd / (sw / np.sqrt(FB.n_eff(w))), rtol=1e-10)
         sd = lambda w: np.std([np.average(X[i, 0], weights=w[i]) for i in idx], ddof=1)
         ratio = sd(heavy) / sd(flat)
         self.assertGreater(ratio, 0.7 * np.sqrt(100 / 19))
@@ -277,10 +288,20 @@ def by_hand(tree):
             out[v][name] = (np.array(tot), np.array(sh))
         M = rest[np.ix_(i, i)] + (Cu / ff)[np.ix_(i, i)] + Vg
         uni[name] = (quad(d, M), quad(d, M + 100 * one))
+    rc = lambda C: C[4, 8] / np.sqrt(C[4, 4] * C[8, 8])
+    rep = {v: [] for v in FB.VARIANTS}
     for ib in idx:
         Cs = wcov(tree.X[ib], tree.w[ib])
-        corr.append(Cs[4, 8] / np.sqrt(Cs[4, 4] * Cs[8, 8]))
-    return out, uni, np.array(corr)
+        corr.append(rc(Cs))
+        s0, ss = np.sqrt(np.diag(C0)), np.sqrt(np.diag(Cs))
+        for v, Cv in (("correlation", Cs / np.outer(ss, ss) * np.outer(s0, s0)), ("block", Cs)):
+            rep[v].append(rc(rest + Cv / ff))
+    return out, uni, np.array(corr), {v: np.array(x) for v, x in rep.items()}, rc(rest + C0 / ff)
+
+
+def corr_s1(tree):
+    C0 = tree.blocks["band:Flux"]
+    return C0[4, 8] / np.sqrt(C0[4, 4] * C0[8, 8])
 
 
 class EndToEnd(Base):
@@ -299,7 +320,7 @@ class EndToEnd(Base):
         self.assertEqual(out["constants"]["index_sha256"], FB.INDEX_SHA256)
         self.assertEqual(out["constants"]["reported_matrix"], "C_total + C_resp + V_g")
         g = {p["name"]: p for p in json.loads(tree.g_readout.read_text())["predictions"]}
-        hand, uni, corr = by_hand(tree)
+        hand, uni, corr, rep, rep_s1 = by_hand(tree)
         for name, rec in out["identity"].items():
             self.assertEqual(rec["chi2_stage_g"], g[name]["total"]["chi2"])
             self.assertEqual(rec["shape_only_stage_g"], g[name]["shape_only"]["chi2"])
@@ -315,14 +336,33 @@ class EndToEnd(Base):
                     np.testing.assert_allclose(got, want, rtol=1e-9)
                     np.testing.assert_allclose([rec[key]["min"], rec[key]["max"]], [vals.min(), vals.max()], rtol=1e-9)
                     np.testing.assert_allclose([rec[key]["halves"][1]["50"]], [np.median(vals[1000:])], rtol=1e-9)
+                    centre = rec["chi2_stage_g"] if key == "total" else rec["shape_only_stage_g"]
+                    np.testing.assert_allclose([rec[key]["basic"][f"{q:g}"] for q in FB.PERCENTILES],
+                                               2 * centre - np.percentile(vals, [100 - q for q in FB.PERCENTILES]),
+                                               rtol=1e-9)
+                    self.assertAlmostEqual(rec[key]["offset_median_minus_centre"], np.median(vals) - centre,
+                                           delta=1e-9 * centre)
             self.assertNotEqual(out["bands"][v]["genie_cv"]["total"]["percentiles"]["16"],
                                 out["bands"][v]["genie_cv"]["total"]["percentiles"]["84"])
         for name, (t, s) in uni.items():
             self.assertAlmostEqual(out["uniform"]["predictions"][name]["chi2"], t, delta=1e-9 * t)
             self.assertAlmostEqual(out["uniform"]["predictions"][name]["shape_only"], s, delta=1e-9 * s)
         np.testing.assert_allclose(out["correlation_band"]["flux_block"]["percentiles"]["50"], np.median(corr), rtol=1e-9)
+        for v in FB.VARIANTS:
+            got = out["correlation_band"][f"reported_matrix_{v}"]["percentiles"]
+            np.testing.assert_allclose([got[f"{q:g}"] for q in FB.PERCENTILES], np.percentile(rep[v], FB.PERCENTILES),
+                                       rtol=1e-9)
+        self.assertAlmostEqual(out["correlation_s1"]["reported_matrix"], rep_s1, delta=1e-12)
+        self.assertAlmostEqual(out["correlation_s1"]["flux_block"], corr_s1(tree), delta=1e-12)
         self.assertAlmostEqual(out["n_eff"]["s1"], FB.n_eff(tree.w), places=12)
-        self.assertEqual(len(out["n_eff"]["delta_method_ratio"]), 16)
+        mu = np.average(tree.X, axis=0, weights=tree.w)
+        sw = np.sqrt(np.average((tree.X - mu) ** 2, axis=0, weights=tree.w))
+        sd = np.std([np.average(tree.X[i], axis=0, weights=tree.w[i]) for i in FB.indices()], axis=0, ddof=1)
+        np.testing.assert_allclose(list(out["n_eff"]["sd_over_sigma_w_root_n_eff"].values()),
+                                   sd / (sw / np.sqrt(FB.n_eff(tree.w))), rtol=1e-9)
+        self.assertNotIn("n_eff_replicate", out["n_eff"])
+        self.assertIn("that the chi2 is insensitive to the flux correlations", out["labels"]["not_citable_for"])
+        self.assertTrue(out["labels"]["band"].startswith("estimation uncertainty, not sensitivity"))
         lines = [ln for ln in r.stdout.splitlines() if ln.startswith("[3D]")]
         self.assertEqual(len(lines), 1 + 2 * 5 + 1)
         self.assertIn(FB.LABEL, lines[0])
@@ -370,6 +410,10 @@ class Controls(Base):
     def test_b0_s1_records_another_number_of_universes(self):
         self.assertStops(self.fresh(s1_mutate=lambda j: j["meta"]["inputs_sha256"].pop("S1_Flux_50.npz")), "B0",
                          "S1_Flux_50.npz sha256")
+
+    def test_b0_s1_records_a_101st_universe(self):
+        tree = self.fresh(s1_mutate=lambda j: j["meta"]["inputs_sha256"].update({"S1_Flux_100.npz": "2" * 64}))
+        self.assertStops(tree, "B0", "S1 records 101")
 
     def test_b0_the_constraint_file_is_not_the_pin_or_s1s(self):
         tree = self.fresh()
@@ -430,6 +474,20 @@ class Controls(Base):
             return C
         with mock.patch.object(FB, "replicate_block", bad):
             self.assertStops(tree, "B4", "positive definite")
+
+    def test_b4_an_indefinite_uniform_matrix_refuses(self):
+        tree = self.tree
+        real = sa.mat_cov
+
+        def bad(X, w=None):
+            C = real(X, w)
+            if w is None:
+                s = np.sqrt(np.diag(C))
+                C = np.outer(s, s) * 3.0
+                np.fill_diagonal(C, s ** 2)
+            return C
+        with mock.patch.object(FB.sa, "mat_cov", bad):
+            self.assertStops(tree, "B4", "uniform")
 
     def test_b5_a_swap_that_moves_a_variance_by_one_ulp(self):
         tree = self.tree
