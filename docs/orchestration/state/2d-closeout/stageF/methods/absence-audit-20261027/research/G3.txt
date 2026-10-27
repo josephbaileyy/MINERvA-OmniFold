@@ -1,0 +1,242 @@
+# G3: grandfathered absence claims, audit (read-only)
+
+Tree: `WT` = `scratchpad/wt-gac` at `0d919b1a38a7f11bc343e196dbabd301f9cd22a8` (`git rev-parse HEAD` checked).
+All `file:line` below are at `0d919b1a`. Paths are relative to `WT` unless absolute. Nothing in `WT` was modified.
+
+---
+
+## 1. `docs/analysis-note/primer_body.tex:253` [has-not-been-run]
+
+### Absence assertions
+
+| id | quoted | class | verdict |
+|---|---|---|---|
+| P1 | "An uncertainty that has not been validated." / "it has not met the requirements we set before building it, and we use it nonetheless" | ABSENCE (the validation never succeeded) | **TRUE** |
+| P2 | "That was measured on two test versions of the uncertainty built for exactly this comparison, not on the one we quote." | ABSENCE (the criterion was not computed on the quoted covariance) | **TRUE** |
+| P3 | "We compared only one pair of random seeds" | ABSENCE (no second seed pair) | **TRUE** |
+| P4 | "nested subsets of one set of variations cannot rule out what a much larger set would give" | SCOPING (the limit of an inference from nested subsets) | n/a. Consistent with the record. |
+| P5 | "we have not measured which way those five would move the shift" | ABSENCE | **TRUE as scoped.** There is one caveat, below. |
+| P6 | "The reason we assign no significance ..." / "Reporting a significance ... would claim a precision the input does not have" | SCOPING (a reporting decision) | n/a |
+
+### Evidence
+
+- **P1.**
+  - `docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:31-41`: M(i) is UNRESOLVED 4c, "C3 stays predeclared, not computed", and the null-bound derivation is "unperformable".
+  - The note at `sec_5d.tex:250`: "does not meet the acceptance criteria of its specification".
+  - The paper at `paper_body.tex:237`: "does not meet the validation criteria of its specification".
+- **P2.**
+  - `DECISION-20260920...md:36-38`: "computed `M(ii)` for `361090f9…` and `7e4636a3…`, which are *different products*. For **this** digest, cause 3 remains predeclared and not computed."
+  - `CAMPAIGN-s5c-20260924-paper-wide-table.md:227`: "`C3` 'predeclared, not computed' for this digest".
+  - `EVIDENCE-20260919-cause3-member-eligibility-census.md:17-19`: z-cv's precursor has `est_seed_offset_declared = 0`, which "blocks branch 3 (MET) outright". So the quoted product cannot be graded.
+  - Later s_proj measurements were all on other products:
+    - `VALIDATION_LEDGER.md:219` (VL146, the same two graded members);
+    - `OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md` (product `48713676…`, "NOT CITABLE FOR ... any change to `3d7465f6…`").
+- **P3.**
+  - `DECISION-20260920...md:69-71`: "The width of the seed-pair distribution is UNMEASURED".
+  - Note `sec_5d.tex:309`: "the width of the distribution over seed pairs is unmeasured".
+  - `release-package-20260922/README.md:35-37`.
+  - VL146 and L2 both use offsets {0,1200}.
+  - VL147 (`VALIDATION_LEDGER.md:220`) scans production seeds 42–51 on single unfolds of the central value. It is not a covariance seed pair.
+- **P4.** `CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md:1, :53, :85` withdraws the corollary "a larger ensemble would not change this". Note `sec_5d.tex:309`: "the behaviour at larger N is unmeasured".
+- **P5.**
+  - `DECISION-20260920...md:77-79`: "its effect on the total covariance when they also vary has not been measured". The direction-of-remainder inference was withdrawn in `CORRECTION-20260920-lower-bound-inference-withdrawn.md`.
+  - Note `sec_5d.tex:311`: "neither is measured".
+  - **Caveat.** The L2 probe (`OUTCOME-20260922-L2-...md`, jobs 58735444/58738058) *did* release the five bands at seed 1242. It measured s_proj = 6.189174% against 6.145388%.
+    - Its own record says the deltas "CANNOT be attributed to releasing the five bands" (`:32-36`), because code identity also differs, and "No run isolates the release" (`:48`).
+    - The pair fails `footing_ok` (§3).
+    - So the direction is still unmeasured. The probe exists, though, and no note sentence mentions it. A reader of "we have not measured" could not find out that a confounded attempt was made. This is a disclosure question for the lane, not a falsity.
+
+### Searches run
+
+- `git grep 3d7465f6` (63 files), filtered for s_proj/M(ii).
+- Listed `docs/orchestration/` for cause3/sproj/seed/GRADE/z-cv.
+- Every record dated 2026-09-23 to 2026-10-26 that mentions `s_proj|M(ii)|seed sensitivity|estimator-seed` (21 files): none computes the criterion on `3d7465f6`.
+- `VALIDATION_LEDGER.md` grep `seed|sproj`.
+- The note's own sentences: `grep 1242|L2|released-lateral|6.189` over `docs/analysis-note/*.tex`. This found no mention of L2.
+- `whatis.py --list`: the registry covers estimator configurations, not the z-cv covariance. `whatis.py a-central-lgbm` added nothing.
+
+### Home of the primer claim, and the comparison
+
+- **Home:**
+  - `docs/analysis-note/paper_body.tex:237` (paper §`sec:cov5d`);
+  - its full statement in the note, `docs/analysis-note/sec_5d.tex:250` (Status) and `:302-316` (the four measurements and the not-computed sentence).
+- **Stale pointer.** The primer's own sync comment, `primer_body.tex:254-255`, names "paper_body.tex sec:uncertainty-status". It quotes "It has not met the validation criteria set for an uncertainty before it was built ... We nevertheless use this covariance". Neither the section nor the quoted wording is in `paper_body.tex` at `0d919b1a`: `grep -n "nevertheless use\|validation criteria"` hits only `:237`, in `sec:cov5d`. `sec:uncertainty-status` (`:244`) is the reporting-definitions section.
+- **Absence assertions (P1, P2, P3, P5): the primer claims the same as the note.** It claims slightly *more disclosure* than the paper. The paper has the one-pair and five-band clauses, but it does not say the 6.1% was measured on test covariances and not on the quoted one. It says only "two further covariances", which is equivalent though less explicit.
+- **Elsewhere the primer claims more than the note (not an absence point):**
+  1. "the *uncertainty* we report on the (E_avail,W) projection shifts by about 6%" reads as a shift of the projection's uncertainty as a whole. The note (`sec_5d.tex:306`) says it is the correlation-sensitive *maximum* over 43 functionals. It adds that the diagonal-only measures pass (s_agg 0.471%, s_med 0.485%). The paper (`:237`) shares the primer's framing.
+  2. "The reason we assign no significance ... is something we measured rather than a precaution" gives one ground. The note (`sec_5d.tex:250`) also records a second, non-measured ground: the null bound was not fixed before production, so this covariance "cannot meet that requirement".
+
+### Proposed comment line
+
+```
+% Search: s_proj; M(ii); cause 3; C3 predeclared not computed; z-cv 3d7465f6; seed pair; seed-pair width; seed-pinned bands; pinnedBandsSqrtTr; L2 lateral seed release; larger ensemble (criterion computed only on 361090f9/7e4636a3, DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38; seed-pair width unmeasured :69-71; five-band effect not measured :77-79; L2 released the five bands but its delta is not attributable, OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md:32-36, :48; larger-N corollary withdrawn, CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md:53) @ 0d919b1a
+```
+
+---
+
+## 2. `docs/analysis-note/sec_5d.tex:316` [has-not-been-run]
+
+### Absence assertions
+
+| id | quoted | class | verdict |
+|---|---|---|---|
+| D1 | "The estimator-seed magnitude criterion specified before production *has not been computed* for this covariance. It was computed only for the two companion covariances built for that purpose" | ABSENCE | **TRUE** |
+| D2 | "their outcomes do not transfer to this covariance" | SCOPING (a scope of inference; the adoption's exception attaches to bytes) | n/a |
+
+### Evidence
+
+- `DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38`: quoted under P2 above.
+- `:46-49`: "It attaches to BYTES ... explicitly including `361090f9…` and `7e4636a3…` ... **not** adopted."
+- `EVIDENCE-20260919-cause3-member-eligibility-census.md:17-19`: branch 3 is unreachable for the z-cv precursor, so the criterion cannot be completed for it.
+- `CAMPAIGN-s5c-20260924-paper-wide-table.md:227`: "`C3` 'predeclared, not computed' for this digest".
+- `app_release_records.tex:59` and `app_provenance.tex:95` in the note agree ("computed by the 2026-09-20 campaign for the two companion products only").
+- Nothing later contradicts it:
+  - VL146 (`VALIDATION_LEDGER.md:219`) re-measures the same two members.
+  - L2 (`OUTCOME-20260922-L2-...md:1-5`) is a third product and "NOT CITABLE FOR ... any change to `3d7465f6…`".
+  - s5c/s5e/s5n/s5p change the estimator. `VALIDATION_LEDGER.md:203`: "no row grades or changes `3d7465f6…`".
+
+### Searches run
+
+The same as for §1: the `3d7465f6` population, the 21 post-09-22 records mentioning s_proj or M(ii), the VL rows, and the note's own records appendix.
+
+### Proposed comment line
+
+```
+% Search: s_proj; M(ii); cause 3; C3; estimator-seed magnitude criterion; z-cv 3d7465f6; GRADE-20260920; VL146; L2 (computed only for 361090f9/7e4636a3, DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38; z-cv precursor undeclared so branch 3 unreachable, EVIDENCE-20260919-cause3-member-eligibility-census.md:17-19; later s_proj on other products only, VALIDATION_LEDGER.md:219, OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md:3-5) @ 0d919b1a
+```
+
+---
+
+## 3. `docs/analysis-note/sec_eavailw.tex:57` [has-not-been-run]
+
+### Absence assertions
+
+| id | quoted | class | verdict |
+|---|---|---|---|
+| E1 | "The five reconstructed inputs ... do not, by themselves, provide five independent constraints: the result is five simultaneous observables, not five independent measurements" | SCOPING (definition or physics statement, derived algebraically) | n/a |
+| E2 | "The nearly degenerate correlation directions of the joint-test metric ... are consistent with this redundancy, but that origin has not been shown" | ABSENCE | **TRUE** (nothing found) |
+| E3 | "the information added by W has not been measured" | ABSENCE | **TRUE** (nothing found) |
+| E4 | "their pT differs from the analysis truth pT by ±4 MeV for 68% of events, and the net effect of this difference on the cell contents has not been measured" | ABSENCE | **FALSE** |
+
+### Evidence
+
+- **E2 and E3.** Every hit is a restatement of the caveat, not a measurement:
+  - `M2-ARCHIVE-CHECKS.md:7, :97`: the ~80 near-degenerate directions come from the Ledoit–Wolf floor. No attribution to W.
+  - `r12/ledger.md:103-104` adds these two clauses to the note.
+  - `REVERSE-OUTLINE-R2.md:119` rejects Gemini's unsupported W mechanism.
+  - `caveat-study/inv/ours-note-body.tsv:420`, `note-b6/ledger.md:30`.
+  - `FD-G-DIAG-*` (5d-community-20261024) decomposes the *data* covariance's χ² modes. It is not the joint-test metric, and it makes no W attribution.
+  - No ablation (joint test or unfold without W), no information or Fisher-content measurement, and no eigen-attribution to W.
+- **E4: contradicted.** `docs/orchestration/state/measurement-paper/phase1/mp5/REPORT.md` (MP-5, job 60017887, 2026-10-20, commit `494b3404`, an ancestor of `0d919b1a`):
+  - `:9-11` CITABLE FOR: "the per-J-cell size of the beam-axis vs ν-axis truth convention on the analysis MC (R_c); that shift carried as a proxy to the four generator predictions".
+  - `:66-69`: "**R_c over the 109 cells** is 0.99649 / 1.000008 / 1.00346 (min / median / max) ... **It is at the MC floor.**"
+  - `:99-100`: "**GENIE's own beam-axis shift**, with MC noise included: Δ/σ_c is −0.47 / 0.00 / +0.53, and ΔᵀW⁻¹Δ = 3.89".
+  - `:120`: "(a) is negligible against every frozen scale."
+  - `CATALOG.md:454` indexes it. The note's own generated `records_results_index.tex:1198` lists `mp5/out/eval/mp5_results.json`.
+- **Dating.**
+  - The source of the sentence is `M4-W-RECORD.md:10` (2026-10-19, `410046af`): "The net effect on cell contents is not measured." That was true on 10-19.
+  - MP-5 measured it at 04:29 PDT on 2026-10-20 and was committed at 06:02.
+  - The sentence entered the note at `1486f754` (2026-10-20 21:23, "Methods paper shortened ... detail moved to the note"), 15 h after MP-5 landed. It was **false when written**, transcribed from the superseded M4 record.
+- **Scope of the falsity.**
+  - Measured: the per-cell effect on the analysis MC (R_c) and GENIE CV's own effect, on the 109 J cells.
+  - Not established: the transfer to GENIE+MEC, NuWro and GiBUU. MP-5 labels the proxy "UNRELIABLE" by its 0.2 σ_c rule, noise-limited at p∥ ≥ 6 (`:87-98`).
+  - Not measured: the 42-cell (E_avail,W) projection or 5D-bin contents.
+  - The note names no cell set. As printed ("the cell contents"), the claim is false.
+- **The paper is not affected the same way.** `paper_body.tex:71` states only the ±4 MeV per-event difference and makes no "not measured" claim.
+
+### Searches run
+
+- `git grep -i -E "information added|added by W|origin has not|degenerate direction|degenerate correlation|nearly degenerate|W.redundancy"`.
+- `git grep -E "no_?W|without_w|drop_w|w_free|mutual information|fisher information|eigenvector"` over state/, nd-unfolding/ and measurement-paper/.
+- `git grep -i "neutrino axis|ν axis|nu axis|axis convention|beam axis.*pT"`, which led to MP-5.
+- `git grep mp5|MP-5|60017887` for note citations: none in prose.
+- `git log -S "net effect of this difference on the cell contents"` for dating.
+
+### Proposed comment line
+
+```
+% Search: information added by W; W redundancy; near-degenerate directions; origin; joint-test metric; pT axis; neutrino axis; beam axis; net effect on cell contents; MP-5; R_c (none for W's information or the origin: M2-ARCHIVE-CHECKS.md:7, r12/ledger.md:103-104 restate it; CONTRADICTS the pT-axis clause: state/measurement-paper/phase1/mp5/REPORT.md:66-69, :99-100, R_c and GENIE CV's beam-axis shift on the 109 J cells, job 60017887, 2026-10-20; transfer to other generators UNRELIABLE, :87-98) @ 0d919b1a
+```
+
+(Because E4 is FALSE, this line records the contradiction. The fix of the printed clause goes to the lane, the director and Joseph.)
+
+---
+
+## 4. `docs/analysis-note/sec_pet.tex:118` [has-not-been-run]
+
+### Absence assertions
+
+| id | quoted | class | verdict |
+|---|---|---|---|
+| T1 | "a 100-replica ensemble has not been run" | ABSENCE | **TRUE** |
+| T2 | "It is not an independently verified covariance or the statistical uncertainty of any PET result" | SCOPING (what the block is certified as) | n/a |
+| T3 | "and is not paired with a PET central value" | SCOPING (a method or use statement) | n/a |
+| T4 | "More replicas would sharpen dispersion estimates without supplying coverage evidence" | SCOPING | n/a |
+
+### Evidence
+
+- `nd-unfolding/PET_UQ_PRODUCTION_STATUS.md:15-16`: "The current statistical block uses 20 coherent replicas. A 100-replica statistical ensemble is planned before publication and has **not** been run."
+- `:93-95`: "remains a future run and must not be described as completed".
+- `nd-unfolding/pet/combine_cstat_bkgsub_100rep.py:24-27`: "NOT YET RUN: no 100-replica product exists (`products/pet/bkgsub/` holds the 20-replica `pet_cstat_bkgsub_5d.npz` and an interim 42-replica file) ... the gate battery has never executed on real input."
+- The last change to that file (`735c3f75`, 2026-09-23) only added stamping flags.
+- Not the same object:
+  - The full-event 50-replica `C_stat` (VL132, `VALIDATION_LEDGER.md:313`; `app_cstatlimit`). The note's own next paragraph, `sec_pet.tex:120`, separates the two.
+  - The retired full-event N=100 predeclaration (`PREDECLARATION-20260812-fullevent-cstat-100-replicas.md`, superseded by the n50 one).
+- **Note (not a falsity).** A 42-replica interim file exists for the recoil-only block, per the docstring above. The note states "20 coherent replicas" for what the block *measures*, and that is consistent.
+
+### Searches run
+
+- `git grep -E "100[- ]replica|100 replicas|100 coherent|N ?= ?100"`, filtered for pet/coherent/recoil.
+- `git log` on `PET_UQ_PRODUCTION_STATUS.md` and on the 100rep combiner.
+- `git grep "42-replica|42 replicas|_42rep"`.
+- `git grep 21-100|boot21|rep21`: hits are 2D GBDT only.
+
+### Proposed comment line
+
+```
+% Search: 100-replica; 100 replicas; combine_cstat_bkgsub_100rep; pet_cstat_bkgsub_5d_100rep; recoil-only C_stat; coherent replicas (planned, not run: nd-unfolding/PET_UQ_PRODUCTION_STATUS.md:15-16, :93-95; "NOT YET RUN: no 100-replica product exists", only the 20-replica product and an interim 42-replica file, nd-unfolding/pet/combine_cstat_bkgsub_100rep.py:24-27; the full-event 50-replica VL132 family is a different object); independently verified and pairing clauses are scoping @ 0d919b1a
+```
+
+---
+
+## 5. `docs/analysis-note/sec_systematics.tex:195` [has-not-been-run]
+
+### Absence assertions
+
+| id | quoted | class | verdict |
+|---|---|---|---|
+| Y1 | "The result's intervals, bias and covariance have not been independently validated." | ABSENCE | **TRUE** |
+| Y2 | "the coverage of its intervals has not been validated on independent simulated samples, nor simultaneously over all reported bins and projections" | ABSENCE | **TRUE** |
+| Y3 | "The covariance also gives no calibrated significance for comparisons with generator predictions." | SCOPING (a consequence of Y1 and Y2) | n/a |
+| Y4 | "Such validation would need an independent simulation sample of production size, a validated generator of pseudo-data with continuously varied nuisance parameters, and samples from independent event generators beyond the truth-level ones already examined; none is available." | ABSENCE | **TRUE** |
+| Y5 | "We therefore make no claim about coverage" / "goodness-of-fit values ... are indicative only" | SCOPING | n/a |
+| Y6 | "The following are not included in the covariance:" | SCOPING (it introduces the list; the list items are on later lines, outside this claim) | n/a |
+
+### Evidence
+
+- **Y1 and Y2.**
+  - `KNOWN_ISSUES.md:75` (row 85): the quoted 2D statistical block "is now S1 ... S1 has not been coverage-tested. The VL169/VL170 findings in this row describe the earlier band and do not grade S1. The held-out re-test remains deferred until after the publication package and is not pre-registered."
+  - The only 2D coverage test (VL169, note `sec_validation.tex:135-160`) was a fixed-truth test of an *earlier* band. Its toys draw pseudo-data from the same simulation (`:140`), so it is not an independent sample. It was scored pooled over (toy, bin) pairs, not simultaneously. It FAILED.
+  - The paper agrees, at `paper_body.tex:153`: "The coverage of this block and of the total covariance has not been tested."
+- **Y4.**
+  - `docs/orchestration/state/2d-closeout/stageD-inputs/REPORT.md:59` ("**Overall: UNAVAILABLE.**").
+  - `:66`: input 1, a fresh production-size MC bank, UNAVAILABLE; "489 of 489 MC AnaTuples are in the 2D manifest" (`:216`).
+  - `:67`: input 2, a continuous nuisance generator, UNPRICED, and its physical adequacy UNAVAILABLE: "No code draws a continuous lateral shift".
+  - `:68`: input 3, UNAVAILABLE: "Every independent-generator sample is truth-only".
+  - `:286`: no independent generator with MINERvA response.
+  - `DESIGN-20261008-2d-independent-statistical-validation.md:46`: "Production-equivalent independent populations do not exist", 0 disjoint production-size sets.
+  - The Stage D Q2 measurement (`CATALOG.md:470`; `stageD-inputs/q2-opendata-20261014/`) shows the open-data MC is a reprocessing of the same events, not a new bank.
+  - The wording derives from `PLAN-20261011-2d-closeout.md:212-245` (Stage D items 1-3).
+
+### Searches run
+
+- `git grep "continuously varied|validated generator of pseudo|pseudo-data generator|varied nuisance"`, then the plain-language report to PLAN Stage D, then the stageD-inputs REPORT.
+- Listed `docs/orchestration` for 2026-10-10..26 coverage/validation/held-out/ki85 records: none.
+- Read KNOWN_ISSUES row 85 and note `sec:coverage`.
+- `git log -L195,195:sec_systematics.tex` (wording dates from `386ece45`/`24ec59af`, 2026-10-18).
+
+### Proposed comment line
+
+```
+% Search: independent validation; held-out re-test; KI-85; S1 coverage; simultaneous coverage; fixed-truth test VL169; independent production-size MC bank; continuous nuisance generator; independent-generator reco sample; Stage D inputs (S1 not coverage-tested, re-test deferred, KNOWN_ISSUES.md:75; VL169 is a same-simulation test of an earlier band, sec_validation.tex:135-160; all three inputs UNAVAILABLE or unvalidated, state/2d-closeout/stageD-inputs/REPORT.md:59, :66-68; 0 disjoint production-size sets, DESIGN-20261008-2d-independent-statistical-validation.md:46) @ 0d919b1a
+```
