@@ -1,0 +1,56 @@
+PASS control Q0 no output exists (no overwrite)
+PASS control Q0 s1_npz sha256 is the pin
+PASS control Q0 s1_json sha256 is the pin
+PASS control Q0 cresp_npz sha256 is the pin
+PASS control Q0 cresp_json sha256 is the pin
+PASS control Q0 cresp_report sha256 is the pin
+PASS control Q0 g_readout sha256 is the pin
+PASS control Q0 definition sha256 is the pin
+PASS control Q0 stage1 sha256 is the pin
+PASS control Q0 s1_json schema is s1-readout/1
+PASS control Q0 cresp_json schema is cresp-readout/1
+PASS control Q0 g_readout schema is fd-g-readout/2
+PASS control Q0 definition schema is h2-definition/1
+PASS control Q0 stage1 schema is s5p-stage1-inspect/1
+PASS control Q0 S1's readout names this S1 assembly, of schema s1-assembly/1
+PASS control Q0 C_resp's readout names this C_resp, built on this S1 assembly and definition
+PASS control Q0 the definition was checked against this Stage-1 receipt
+PASS control Q0 Stage G ran on this S1 assembly, definition and C_resp, adopted
+PASS control Q1 f is 16 cells and every matrix 16 x 16, finite
+PASS control Q1 f is positive on every cell
+PASS control Q1 the definition reports R00-R15, in order
+PASS control Q1 the H2 boxes: Stage 1's supported boxes, the definition's cells and its unreported boxes agree
+PASS control Q2 C_total + C_resp is the sum of its parts, C_e + C_model_abs + C_resp
+PASS control Q2 C_total + C_resp is cresp.npz's C_total_resp
+PASS control Q3 C_e's relative sigma is s1_json's C_e
+PASS control Q3 C_model_abs's relative sigma is s1_json's C_model
+PASS control Q3 C_resp's relative sigma is cresp_json's C_resp
+PASS control Q3 C_total_plus_C_resp's relative sigma is cresp_json's C_total_resp
+PASS control Q3 C_total_plus_C_resp's relative sigma is g_readout's sigma_total_over_f
+PASS control Q3 C_total's relative sigma is S1's and C_resp's readouts'
+PASS control Q3 f is Stage G's
+PASS control Q3 C_resp's, C_total's and C_total + C_resp's relative sigma are CRESP-REPORT.md's table, to its 2 dp
+PASS control Q3 the spectra's extremes are S1's and C_resp's committed ones (off the diagonal too), to 1e-9
+PASS control Q4 C_e is symmetric
+PASS control Q4 C_model_abs is symmetric
+PASS control Q4 C_resp is symmetric
+PASS control Q4 C_total_plus_C_resp is symmetric
+PASS control Q4 C_total + C_resp is positive definite
+PASS control Q4 C_e is positive semidefinite
+PASS control Q4 C_model_abs is positive semidefinite
+PASS control Q4 C_resp is positive semidefinite
+PASS control Q5 the correlation is C_total + C_resp's (rho_ij sqrt(M_ii M_jj) = M_ij), symmetric, within [-1, 1], with a unit diagonal
+PASS control Q6 C_e: the CSV and the JSON read back bit for bit
+PASS control Q6 C_model_abs: the CSV and the JSON read back bit for bit
+PASS control Q6 C_resp: the CSV and the JSON read back bit for bit
+PASS control Q6 C_total_plus_C_resp: the CSV and the JSON read back bit for bit
+PASS control Q6 corr_C_total_plus_C_resp: the CSV and the JSON read back bit for bit
+PASS control Q6 the cells CSV reads back f and every relative sigma bit for bit
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_cells.csv", "sha256": "e7582bfec1f572df389fb6a7f9f087511eb87a67db87db625f2035eff28cd0f2"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_e.csv", "sha256": "222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_model_abs.csv", "sha256": "ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_resp.csv", "sha256": "35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_total_plus_C_resp.csv", "sha256": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_corr_C_total_plus_C_resp.csv", "sha256": "838f16617ed88f86329ee4eb9c2955e16ffe99e14791890b786c7548b35cd171"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product.json", "sha256": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072"}
+rc=0

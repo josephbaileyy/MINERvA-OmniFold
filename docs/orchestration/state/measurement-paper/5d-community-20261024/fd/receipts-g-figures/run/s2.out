@@ -1,0 +1,12 @@
+2026-10-27T13:38:20Z
+login24
+2026-10-27T13:38:20Z
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_cells.csv", "sha256": "e7582bfec1f572df389fb6a7f9f087511eb87a67db87db625f2035eff28cd0f2"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_e.csv", "sha256": "222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_model_abs.csv", "sha256": "ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_resp.csv", "sha256": "35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_C_total_plus_C_resp.csv", "sha256": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product_corr_C_total_plus_C_resp.csv", "sha256": "838f16617ed88f86329ee4eb9c2955e16ffe99e14791890b786c7548b35cd171"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/data-product/fd_data_product.json", "sha256": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072"}
+rc=0
+48

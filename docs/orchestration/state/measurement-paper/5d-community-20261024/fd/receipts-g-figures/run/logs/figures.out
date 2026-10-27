@@ -1,0 +1,586 @@
+PASS control K0 no output exists (no overwrite)
+PASS control K0 g_readout sha256 is the pin
+PASS control K0 g_readout schema is fd-g-readout/2
+PASS control K0 g_diag_readout sha256 is the pin
+PASS control K0 g_diag_readout schema is fd-g-diag-readout/1
+PASS control K0 g_followup_readout sha256 is the pin
+PASS control K0 g_followup_readout schema is fd-g-followup-readout/1
+PASS control K0 g_sens2_readout sha256 is the pin
+PASS control K0 g_sens2_readout schema is fd-g-sens2-readout/1
+PASS control K0 f0b_readout sha256 is the pin
+PASS control K0 f0b_readout schema is fd-f0b-readout/1
+PASS control K0 definition sha256 is the pin
+PASS control K0 definition schema is h2-definition/1
+PASS control K1 G-DIAG, G-FOLLOWUP and G-SENS2 ran on this Stage G readout
+PASS control K1 G-FOLLOWUP ran on this G-DIAG readout
+PASS control K1 G-SENS2 ran on, and references, this G-FOLLOWUP readout
+PASS control K1 every readout ran on this definition
+PASS control K1 every readout ran on Stage G's S1 product
+PASS control K1 C_resp is adopted, and every readout ran on the same C_resp
+PASS control K1 Stage G holds the five predictions in order, with their labels
+PASS control K1 every readout ran on the same five predictions
+PASS control K1 G-DIAG holds the five predictions in order
+PASS control K3 the definition reports exactly R00-R15
+PASS control K3 GiBUU's cells are Stage G's p_parallel < 4.5 cells
+PASS control K3 every other prediction is on all sixteen cells
+PASS control K2 genie_cv: f is the same data on its cells
+PASS control K2 genie_cv: sigma_total_over_f is the same on its cells
+PASS control K2 genie_cv: the reported covariance is C_total + C_resp
+PASS control K2 genie_cv: f and g are positive
+PASS control K2 genie_cv: g/f - 1 is g_over_f_minus_1
+PASS control K2 genie_mec: f is the same data on its cells
+PASS control K2 genie_mec: sigma_total_over_f is the same on its cells
+PASS control K2 genie_mec: the reported covariance is C_total + C_resp
+PASS control K2 genie_mec: f and g are positive
+PASS control K2 genie_mec: g/f - 1 is g_over_f_minus_1
+PASS control K2 nuwro: f is the same data on its cells
+PASS control K2 nuwro: sigma_total_over_f is the same on its cells
+PASS control K2 nuwro: the reported covariance is C_total + C_resp
+PASS control K2 nuwro: f and g are positive
+PASS control K2 nuwro: g/f - 1 is g_over_f_minus_1
+PASS control K2 gibuu: f is the same data on its cells
+PASS control K2 gibuu: sigma_total_over_f is the same on its cells
+PASS control K2 gibuu: the reported covariance is C_total + C_resp
+PASS control K2 gibuu: f and g are positive
+PASS control K2 gibuu: g/f - 1 is g_over_f_minus_1
+PASS control K2 mnvtune_v1: f is the same data on its cells
+PASS control K2 mnvtune_v1: sigma_total_over_f is the same on its cells
+PASS control K2 mnvtune_v1: the reported covariance is C_total + C_resp
+PASS control K2 mnvtune_v1: f and g are positive
+PASS control K2 mnvtune_v1: g/f - 1 is g_over_f_minus_1
+PASS control K2 the error bar is C_total + C_resp: sigma^2 = sigma(C_total)^2 + sigma(C_resp)^2
+PASS control K2 F0b's sqrt(diag(C_total + C_resp))/f is the same
+PASS control K3 cells R00-R03 share their p_T and p_parallel box
+PASS control K3 cells R04-R07 share their p_T and p_parallel box
+PASS control K3 cells R08-R11 share their p_T and p_parallel box
+PASS control K3 cells R12-R15 share their p_T and p_parallel box
+PASS control K3 ratio:gibuu is on GiBUU's eight cells only, as points
+PASS control K3 ratio:gibuu:err is on GiBUU's eight cells only, as points
+PASS control K7 the five names differ, and none starts another
+PASS control K7 ratio:genie_cv:legend names genie_cv as Stage G's label does, with its qualifiers
+PASS control K7 ratio:genie_mec:legend names genie_mec as Stage G's label does, with its qualifiers
+PASS control K7 ratio:nuwro:legend names nuwro as Stage G's label does, with its qualifiers
+PASS control K7 ratio:gibuu:legend names gibuu as Stage G's label does, with its qualifiers
+PASS control K7 ratio:mnvtune_v1:legend names mnvtune_v1 as Stage G's label does, with its qualifiers
+PASS control K6 ratio:genie_cv:err sits in its own data's panel
+PASS control K6 ratio:genie_cv:legend names its own series
+PASS control K6 ratio:genie_mec:err sits in its own data's panel
+PASS control K6 ratio:genie_mec:legend names its own series
+PASS control K6 ratio:nuwro:err sits in its own data's panel
+PASS control K6 ratio:nuwro:legend names its own series
+PASS control K6 ratio:gibuu:err sits in its own data's panel
+PASS control K6 ratio:gibuu:legend names its own series
+PASS control K6 ratio:mnvtune_v1:err sits in its own data's panel
+PASS control K6 ratio:mnvtune_v1:legend names its own series
+PASS control K6 ratio: the drawn gids are the model's
+PASS control K6 ratio: every artist with ink is a model item
+PASS control K6 ratio: the axes are the model's
+PASS control K6 ratio:ref:0 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:0:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:0:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:0:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:ref:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:1:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:1:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:1:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_cv is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_cv:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_cv:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_mec is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_mec:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_mec:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:nuwro is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:nuwro:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:nuwro:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:gibuu is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:gibuu:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:gibuu:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:mnvtune_v1 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:mnvtune_v1:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:mnvtune_v1:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:pt is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:pz is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:eavail is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:q3 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:W is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:ylabel:0 is the model's
+PASS control K6 ratio:ylabel:1 is the model's
+PASS control K6 ratio:ticks:1: the tick labels are the model's
+PASS control K6 ratio: only the model's axes show x tick labels
+PASS control K6 legend entry ratio:genie_cv:legend shows its own series' handle
+PASS control K6 legend entry ratio:genie_mec:legend shows its own series' handle
+PASS control K6 legend entry ratio:nuwro:legend shows its own series' handle
+PASS control K6 legend entry ratio:gibuu:legend shows its own series' handle
+PASS control K6 legend entry ratio:mnvtune_v1:legend shows its own series' handle
+PASS control K6 ratio: everything drawn lies inside its axes (nothing clipped)
+PASS control K6 ratio: every text lies on the page
+PASS control K6 ratio: no two texts overlap
+PASS control K6 ratio: no text covers a drawn point, bar end or bar
+PASS control K8 ratio: a PDF with no raster image, its fonts embedded as TrueType
+PASS control K8 ratio: drawing it twice gives the same bytes
+[FIG] ratio: 111 drawn items, 29325 bytes
+PASS control K4 G-DIAG recorded its top 3 modes
+PASS control K4 genie_cv: one reported comparison, on C_total + C_resp + V_g, with Stage G's chi2
+PASS control K4 genie_cv rank 1: top_modes[0] is modes_by_chi2[0], with its sigma, chi2 and fraction
+PASS control K4 genie_cv rank 1: the modes are in descending chi2
+PASS control K4 genie_cv rank 1: unit loadings, signed with the largest |loading| positive
+PASS control K4 genie_cv rank 1: (projection/sigma)^2 is the mode's chi2
+PASS control K4 genie_cv rank 2: top_modes[1] is modes_by_chi2[1], with its sigma, chi2 and fraction
+PASS control K4 genie_cv rank 2: the modes are in descending chi2
+PASS control K4 genie_cv rank 2: unit loadings, signed with the largest |loading| positive
+PASS control K4 genie_cv rank 2: (projection/sigma)^2 is the mode's chi2
+PASS control K4 genie_cv rank 3: top_modes[2] is modes_by_chi2[2], with its sigma, chi2 and fraction
+PASS control K4 genie_cv rank 3: the modes are in descending chi2
+PASS control K4 genie_cv rank 3: unit loadings, signed with the largest |loading| positive
+PASS control K4 genie_cv rank 3: (projection/sigma)^2 is the mode's chi2
+PASS control K4 genie_mec: one reported comparison, on C_total + C_resp + V_g, with Stage G's chi2
+PASS control K4 genie_mec rank 1: top_modes[0] is modes_by_chi2[0], with its sigma, chi2 and fraction
+PASS control K4 genie_mec rank 1: the modes are in descending chi2
+PASS control K4 genie_mec rank 1: unit loadings, signed with the largest |loading| positive
+PASS control K4 genie_mec rank 1: (projection/sigma)^2 is the mode's chi2
+PASS control K4 genie_mec rank 2: top_modes[1] is modes_by_chi2[1], with its sigma, chi2 and fraction
+PASS control K4 genie_mec rank 2: the modes are in descending chi2
+PASS control K4 genie_mec rank 2: unit loadings, signed with the largest |loading| positive
+PASS control K4 genie_mec rank 2: (projection/sigma)^2 is the mode's chi2
+PASS control K4 genie_mec rank 3: top_modes[2] is modes_by_chi2[2], with its sigma, chi2 and fraction
+PASS control K4 genie_mec rank 3: the modes are in descending chi2
+PASS control K4 genie_mec rank 3: unit loadings, signed with the largest |loading| positive
+PASS control K4 genie_mec rank 3: (projection/sigma)^2 is the mode's chi2
+PASS control K4 nuwro: one reported comparison, on C_total + C_resp + V_g, with Stage G's chi2
+PASS control K4 nuwro rank 1: top_modes[0] is modes_by_chi2[0], with its sigma, chi2 and fraction
+PASS control K4 nuwro rank 1: the modes are in descending chi2
+PASS control K4 nuwro rank 1: unit loadings, signed with the largest |loading| positive
+PASS control K4 nuwro rank 1: (projection/sigma)^2 is the mode's chi2
+PASS control K4 nuwro rank 2: top_modes[1] is modes_by_chi2[1], with its sigma, chi2 and fraction
+PASS control K4 nuwro rank 2: the modes are in descending chi2
+PASS control K4 nuwro rank 2: unit loadings, signed with the largest |loading| positive
+PASS control K4 nuwro rank 2: (projection/sigma)^2 is the mode's chi2
+PASS control K4 nuwro rank 3: top_modes[2] is modes_by_chi2[2], with its sigma, chi2 and fraction
+PASS control K4 nuwro rank 3: the modes are in descending chi2
+PASS control K4 nuwro rank 3: unit loadings, signed with the largest |loading| positive
+PASS control K4 nuwro rank 3: (projection/sigma)^2 is the mode's chi2
+PASS control K4 mnvtune_v1: one reported comparison, on C_total + C_resp + V_g, with Stage G's chi2
+PASS control K4 mnvtune_v1 rank 1: top_modes[0] is modes_by_chi2[0], with its sigma, chi2 and fraction
+PASS control K4 mnvtune_v1 rank 1: the modes are in descending chi2
+PASS control K4 mnvtune_v1 rank 1: unit loadings, signed with the largest |loading| positive
+PASS control K4 mnvtune_v1 rank 1: (projection/sigma)^2 is the mode's chi2
+PASS control K4 mnvtune_v1 rank 2: top_modes[1] is modes_by_chi2[1], with its sigma, chi2 and fraction
+PASS control K4 mnvtune_v1 rank 2: the modes are in descending chi2
+PASS control K4 mnvtune_v1 rank 2: unit loadings, signed with the largest |loading| positive
+PASS control K4 mnvtune_v1 rank 2: (projection/sigma)^2 is the mode's chi2
+PASS control K4 mnvtune_v1 rank 3: top_modes[2] is modes_by_chi2[2], with its sigma, chi2 and fraction
+PASS control K4 mnvtune_v1 rank 3: the modes are in descending chi2
+PASS control K4 mnvtune_v1 rank 3: unit loadings, signed with the largest |loading| positive
+PASS control K4 mnvtune_v1 rank 3: (projection/sigma)^2 is the mode's chi2
+PASS control K3 no GiBUU mode is drawn (16-cell predictions only)
+PASS control K7 the five names differ, and none starts another
+PASS control K7 modes:genie_cv:label names genie_cv as Stage G's label does, with its qualifiers
+PASS control K7 modes:genie_mec:label names genie_mec as Stage G's label does, with its qualifiers
+PASS control K7 modes:nuwro:label names nuwro as Stage G's label does, with its qualifiers
+PASS control K7 modes:mnvtune_v1:label names mnvtune_v1 as Stage G's label does, with its qualifiers
+PASS control K6 modes:genie_cv:1 sits in its own data's panel
+PASS control K6 modes:genie_cv:1:text0 sits in its own data's panel
+PASS control K6 modes:genie_cv:1:text1 sits in its own data's panel
+PASS control K6 modes:genie_cv:2 sits in its own data's panel
+PASS control K6 modes:genie_cv:2:text0 sits in its own data's panel
+PASS control K6 modes:genie_cv:2:text1 sits in its own data's panel
+PASS control K6 modes:genie_cv:3 sits in its own data's panel
+PASS control K6 modes:genie_cv:3:text0 sits in its own data's panel
+PASS control K6 modes:genie_cv:3:text1 sits in its own data's panel
+PASS control K6 modes:genie_cv:label sits in its own data's panel
+PASS control K6 modes:genie_mec:1 sits in its own data's panel
+PASS control K6 modes:genie_mec:1:text0 sits in its own data's panel
+PASS control K6 modes:genie_mec:1:text1 sits in its own data's panel
+PASS control K6 modes:genie_mec:2 sits in its own data's panel
+PASS control K6 modes:genie_mec:2:text0 sits in its own data's panel
+PASS control K6 modes:genie_mec:2:text1 sits in its own data's panel
+PASS control K6 modes:genie_mec:3 sits in its own data's panel
+PASS control K6 modes:genie_mec:3:text0 sits in its own data's panel
+PASS control K6 modes:genie_mec:3:text1 sits in its own data's panel
+PASS control K6 modes:genie_mec:label sits in its own data's panel
+PASS control K6 modes:nuwro:1 sits in its own data's panel
+PASS control K6 modes:nuwro:1:text0 sits in its own data's panel
+PASS control K6 modes:nuwro:1:text1 sits in its own data's panel
+PASS control K6 modes:nuwro:2 sits in its own data's panel
+PASS control K6 modes:nuwro:2:text0 sits in its own data's panel
+PASS control K6 modes:nuwro:2:text1 sits in its own data's panel
+PASS control K6 modes:nuwro:3 sits in its own data's panel
+PASS control K6 modes:nuwro:3:text0 sits in its own data's panel
+PASS control K6 modes:nuwro:3:text1 sits in its own data's panel
+PASS control K6 modes:nuwro:label sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:1 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:1:text0 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:1:text1 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:2 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:2:text0 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:2:text1 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:3 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:3:text0 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:3:text1 sits in its own data's panel
+PASS control K6 modes:mnvtune_v1:label sits in its own data's panel
+PASS control K6 modes: the drawn gids are the model's
+PASS control K6 modes: every artist with ink is a model item
+PASS control K6 modes: the axes are the model's
+PASS control K6 modes:genie_cv:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:0:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:0:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:0:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:1:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:1:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:2 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:1:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:1:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:1:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:2:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:2:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:3 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:2 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:2:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:2:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:2:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:3:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:3:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_cv:label is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:3 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:3:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:3:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:3:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:1:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:1:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:2 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:4:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:4:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:4:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:2:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:2:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:3 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:5 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:5:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:5:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:5:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:3:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:3:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:genie_mec:label is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:6 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:6:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:6:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:6:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:1:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:1:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:2 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:7 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:7:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:7:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:7:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:2:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:2:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:3 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:8:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:8:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:8:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:3:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:3:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:nuwro:label is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:9 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:9:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:9:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:9:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:1:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:1:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:2 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:10 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:10:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:10:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:10:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:2:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:2:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:3 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ref:11 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:11:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:11:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:sep:11:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:3:text0 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:3:text1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:mnvtune_v1:label is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:header:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:header:2 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:header:3 is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ylabel is drawn as the model holds it (values, style, axes)
+PASS control K6 modes:ticks:9: the tick labels are the model's
+PASS control K6 modes:ticks:10: the tick labels are the model's
+PASS control K6 modes:ticks:11: the tick labels are the model's
+PASS control K6 modes: only the model's axes show x tick labels
+PASS control K6 modes: everything drawn lies inside its axes (nothing clipped)
+PASS control K6 modes: every text lies on the page
+PASS control K6 modes: no two texts overlap
+PASS control K6 modes: no text covers a drawn point, bar end or bar
+PASS control K8 modes: a PDF with no raster image, its fonts embedded as TrueType
+PASS control K8 modes: drawing it twice gives the same bytes
+[FIG] modes: 95 drawn items, 32043 bytes
+PASS control K5 g_followup_readout: the reported matrix and label are G-SENS's
+PASS control K5 g_sens2_readout: the reported matrix and label are G-SENS's
+PASS control K5 G-SENS2's referenced families are G-FOLLOWUP's
+PASS control K5 genie_cv interaction: one record per alpha
+PASS control K5 genie_cv interaction: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_cv flux: one record per alpha
+PASS control K5 genie_cv flux: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_cv detector: one record per alpha
+PASS control K5 genie_cv detector: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_cv lateral: one record per alpha
+PASS control K5 genie_cv lateral: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_cv c_e_systematic: one record per alpha
+PASS control K5 genie_cv c_e_systematic: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_mec interaction: one record per alpha
+PASS control K5 genie_mec interaction: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_mec flux: one record per alpha
+PASS control K5 genie_mec flux: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_mec detector: one record per alpha
+PASS control K5 genie_mec detector: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_mec lateral: one record per alpha
+PASS control K5 genie_mec lateral: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 genie_mec c_e_systematic: one record per alpha
+PASS control K5 genie_mec c_e_systematic: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 nuwro interaction: one record per alpha
+PASS control K5 nuwro interaction: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 nuwro flux: one record per alpha
+PASS control K5 nuwro flux: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 nuwro detector: one record per alpha
+PASS control K5 nuwro detector: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 nuwro lateral: one record per alpha
+PASS control K5 nuwro lateral: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 nuwro c_e_systematic: one record per alpha
+PASS control K5 nuwro c_e_systematic: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 gibuu interaction: one record per alpha
+PASS control K5 gibuu interaction: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 gibuu flux: one record per alpha
+PASS control K5 gibuu flux: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 gibuu detector: one record per alpha
+PASS control K5 gibuu detector: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 gibuu lateral: one record per alpha
+PASS control K5 gibuu lateral: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 gibuu c_e_systematic: one record per alpha
+PASS control K5 gibuu c_e_systematic: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 mnvtune_v1 interaction: one record per alpha
+PASS control K5 mnvtune_v1 interaction: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 mnvtune_v1 flux: one record per alpha
+PASS control K5 mnvtune_v1 flux: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 mnvtune_v1 detector: one record per alpha
+PASS control K5 mnvtune_v1 detector: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 mnvtune_v1 lateral: one record per alpha
+PASS control K5 mnvtune_v1 lateral: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K5 mnvtune_v1 c_e_systematic: one record per alpha
+PASS control K5 mnvtune_v1 c_e_systematic: alpha = 0 is Stage G's reported chi2, with its ndf and label
+PASS control K7 the five names differ, and none starts another
+PASS control K7 sens:genie_cv:label names genie_cv as Stage G's label does, with its qualifiers
+PASS control K7 sens:genie_mec:label names genie_mec as Stage G's label does, with its qualifiers
+PASS control K7 sens:nuwro:label names nuwro as Stage G's label does, with its qualifiers
+PASS control K7 sens:gibuu:label names gibuu as Stage G's label does, with its qualifiers
+PASS control K7 sens:mnvtune_v1:label names mnvtune_v1 as Stage G's label does, with its qualifiers
+PASS control K7 the sensitivity note is G-SENS's label
+PASS control K6 sens:genie_cv:interaction sits in its own data's panel
+PASS control K6 sens:genie_cv:flux sits in its own data's panel
+PASS control K6 sens:genie_cv:detector sits in its own data's panel
+PASS control K6 sens:genie_cv:lateral sits in its own data's panel
+PASS control K6 sens:genie_cv:c_e_systematic sits in its own data's panel
+PASS control K6 sens:genie_cv:label sits in its own data's panel
+PASS control K6 sens:genie_cv:ndf sits in its own data's panel
+PASS control K6 sens:genie_mec:interaction sits in its own data's panel
+PASS control K6 sens:genie_mec:flux sits in its own data's panel
+PASS control K6 sens:genie_mec:detector sits in its own data's panel
+PASS control K6 sens:genie_mec:lateral sits in its own data's panel
+PASS control K6 sens:genie_mec:c_e_systematic sits in its own data's panel
+PASS control K6 sens:genie_mec:label sits in its own data's panel
+PASS control K6 sens:genie_mec:ndf sits in its own data's panel
+PASS control K6 sens:nuwro:interaction sits in its own data's panel
+PASS control K6 sens:nuwro:flux sits in its own data's panel
+PASS control K6 sens:nuwro:detector sits in its own data's panel
+PASS control K6 sens:nuwro:lateral sits in its own data's panel
+PASS control K6 sens:nuwro:c_e_systematic sits in its own data's panel
+PASS control K6 sens:nuwro:label sits in its own data's panel
+PASS control K6 sens:nuwro:ndf sits in its own data's panel
+PASS control K6 sens:gibuu:interaction sits in its own data's panel
+PASS control K6 sens:gibuu:flux sits in its own data's panel
+PASS control K6 sens:gibuu:detector sits in its own data's panel
+PASS control K6 sens:gibuu:lateral sits in its own data's panel
+PASS control K6 sens:gibuu:c_e_systematic sits in its own data's panel
+PASS control K6 sens:gibuu:label sits in its own data's panel
+PASS control K6 sens:gibuu:ndf sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:interaction sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:flux sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:detector sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:lateral sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:c_e_systematic sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:label sits in its own data's panel
+PASS control K6 sens:mnvtune_v1:ndf sits in its own data's panel
+PASS control K6 sens:legend:interaction names its own series
+PASS control K6 sens:legend:flux names its own series
+PASS control K6 sens:legend:detector names its own series
+PASS control K6 sens:legend:lateral names its own series
+PASS control K6 sens:legend:c_e_systematic names its own series
+PASS control K6 sens: the drawn gids are the model's
+PASS control K6 sens: every artist with ink is a model item
+PASS control K6 sens: the axes are the model's
+PASS control K6 sens:genie_cv:interaction is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_cv:flux is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_cv:detector is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_cv:lateral is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_cv:c_e_systematic is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_cv:label is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_cv:ndf is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:interaction is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:flux is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:detector is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:lateral is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:c_e_systematic is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:label is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:genie_mec:ndf is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:interaction is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:flux is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:detector is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:lateral is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:c_e_systematic is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:label is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:nuwro:ndf is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:interaction is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:flux is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:detector is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:lateral is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:c_e_systematic is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:label is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:gibuu:ndf is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:interaction is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:flux is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:detector is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:lateral is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:c_e_systematic is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:label is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:mnvtune_v1:ndf is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:legend:interaction is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:legend:flux is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:legend:detector is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:legend:lateral is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:legend:c_e_systematic is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:legend:title is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:note is drawn as the model holds it (values, style, axes)
+PASS control K6 sens:ticks:0: the tick labels are the model's
+PASS control K6 sens:xlabel:0 is the model's
+PASS control K6 sens:ylabel:0 is the model's
+PASS control K6 sens:ticks:1: the tick labels are the model's
+PASS control K6 sens:xlabel:1 is the model's
+PASS control K6 sens:ylabel:1 is the model's
+PASS control K6 sens:ticks:2: the tick labels are the model's
+PASS control K6 sens:xlabel:2 is the model's
+PASS control K6 sens:ylabel:2 is the model's
+PASS control K6 sens:ticks:3: the tick labels are the model's
+PASS control K6 sens:xlabel:3 is the model's
+PASS control K6 sens:ylabel:3 is the model's
+PASS control K6 sens:ticks:4: the tick labels are the model's
+PASS control K6 sens:xlabel:4 is the model's
+PASS control K6 sens:ylabel:4 is the model's
+PASS control K6 sens: only the model's axes show x tick labels
+PASS control K6 legend entry sens:legend:interaction shows its own series' handle
+PASS control K6 legend entry sens:legend:flux shows its own series' handle
+PASS control K6 legend entry sens:legend:detector shows its own series' handle
+PASS control K6 legend entry sens:legend:lateral shows its own series' handle
+PASS control K6 legend entry sens:legend:c_e_systematic shows its own series' handle
+PASS control K6 sens: everything drawn lies inside its axes (nothing clipped)
+PASS control K6 sens: every text lies on the page
+PASS control K6 sens: no two texts overlap
+PASS control K6 sens: no text covers a drawn point, bar end or bar
+PASS control K8 sens: a PDF with no raster image, its fonts embedded as TrueType
+PASS control K8 sens: drawing it twice gives the same bytes
+[FIG] sens: 57 drawn items, 35089 bytes
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_ratio.pdf", "sha256": "6372244f9e15f065d4f2b99d6c82f6eaf4e7c5dc0fa87cd5ebba545229f81531"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_ratio.json", "sha256": "d91d2a29e1eb4cb3218b02c49ad9f8bd713072705c39284a8178366e70cc8a5d"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_modes.pdf", "sha256": "5421815f4dfdfb4c972ef7bb9c0f4c4682c16333052ad59ad6215bc43d9a0748"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_modes.json", "sha256": "d567dd6fff01d3554c4c25ef31d1033365fbe227d512999e8d64cd7129630131"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_sens.pdf", "sha256": "96af0ed9dc2be870509f4a3ac5cb4afdfc57a717ffbd9b2556834e9d4cb29e6d"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_sens.json", "sha256": "dc40d8e1a79221c9c047a2225b6db89ab417c9a4f41da39d42df2365ec9859bf"}
+rc=0

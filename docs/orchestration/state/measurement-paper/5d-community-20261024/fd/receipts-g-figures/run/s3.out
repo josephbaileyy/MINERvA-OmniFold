@@ -1,0 +1,15 @@
+2026-10-27T13:38:30Z
+login24
+2026-10-27T13:38:37Z
+[FIG] ratio: 111 drawn items, 29325 bytes
+[FIG] modes: 95 drawn items, 32043 bytes
+[FIG] sens: 57 drawn items, 35089 bytes
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_ratio.pdf", "sha256": "6372244f9e15f065d4f2b99d6c82f6eaf4e7c5dc0fa87cd5ebba545229f81531"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_ratio.json", "sha256": "d91d2a29e1eb4cb3218b02c49ad9f8bd713072705c39284a8178366e70cc8a5d"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_modes.pdf", "sha256": "5421815f4dfdfb4c972ef7bb9c0f4c4682c16333052ad59ad6215bc43d9a0748"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_modes.json", "sha256": "d567dd6fff01d3554c4c25ef31d1033365fbe227d512999e8d64cd7129630131"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_sens.pdf", "sha256": "96af0ed9dc2be870509f4a3ac5cb4afdfc57a717ffbd9b2556834e9d4cb29e6d"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures/fd_g_fig_sens.json", "sha256": "dc40d8e1a79221c9c047a2225b6db89ab417c9a4f41da39d42df2365ec9859bf"}
+rc=0
+576
+24

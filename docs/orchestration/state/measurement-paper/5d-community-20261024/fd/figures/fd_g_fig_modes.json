@@ -1,0 +1,2633 @@
+{
+ "schema": "fd-g-figure-sidecar/1",
+ "labels": {
+  "what": "the 5D integration's figures, drawn from committed readouts (FD-G-FIGURES-DECLARATION.md); no new statistic",
+  "not": "no caption, reading, claim or paper text"
+ },
+ "figure": "modes",
+ "file": "fd_g_fig_modes.pdf",
+ "pdf_sha256": "5421815f4dfdfb4c972ef7bb9c0f4c4682c16333052ad59ad6215bc43d9a0748",
+ "pdf_bytes": 32043,
+ "controls_passed": [
+  "K0",
+  "K1",
+  "K2",
+  "K3",
+  "K4",
+  "K5",
+  "K6",
+  "K7",
+  "K8"
+ ],
+ "inputs_sha256": {
+  "g_readout": "75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee",
+  "g_diag_readout": "680dc5ef9c40b1ab006657ce020c6acac7e891c68ce36850cf7a7dd2df278d88",
+  "g_followup_readout": "cd82517afdfb1dc8383580c8a4c57e82d9b87864e75d28528cb35c4455f6e379",
+  "g_sens2_readout": "0f6568aba032e5d9a85f945048494d8fccde3525bb45a1762d6f5d5aaf15b77f",
+  "f0b_readout": "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "code": {
+  "sha256": {
+   "fd_g_figures.py": "06233dd9ddafe19807e97b42a4f4047b989b8cd8511d47cb8f5ad29f85652b4c",
+   "make_figs.py": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
+   "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+   "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+   "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+  },
+  "commit": "933cfe354ba6a3505c5b232df33d3d905de1de40",
+  "clean": true
+ },
+ "versions": {
+  "python": "3.11.14",
+  "numpy": "1.26.4",
+  "matplotlib": "3.10.8"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/nd-unfolding/fd_g_figures.py",
+  "--g-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+  "--g-diag-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json",
+  "--g-followup-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout.json",
+  "--g-sens2-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_sens2_readout.json",
+  "--f0b-readout",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--figures",
+  "ratio",
+  "modes",
+  "sens",
+  "--ratio-form",
+  "data-over-prediction",
+  "--gibuu-axis",
+  "separate",
+  "--out-dir",
+  "/pscratch/sd/j/josephrb/fd-g-figures-20261027/figures"
+ ],
+ "options": {
+  "ratio_form": "data-over-prediction",
+  "gibuu_axis": "separate"
+ },
+ "plotted": {
+  "figure": "modes",
+  "cells": [
+   "R00",
+   "R01",
+   "R02",
+   "R03",
+   "R04",
+   "R05",
+   "R06",
+   "R07",
+   "R08",
+   "R09",
+   "R10",
+   "R11",
+   "R12",
+   "R13",
+   "R14",
+   "R15"
+  ],
+  "panels": [
+   {
+    "prediction": "genie_cv",
+    "rank": 1,
+    "mode": 7,
+    "sigma": 0.03152671078620711,
+    "projection": -0.21018310305876148,
+    "distance": -6.666826250416084,
+    "chi2": 44.44657225323697,
+    "fraction": 0.4064461016876203
+   },
+   {
+    "prediction": "genie_cv",
+    "rank": 2,
+    "mode": 13,
+    "sigma": 0.011441129372816314,
+    "projection": -0.05222801996637519,
+    "distance": -4.564935703853412,
+    "chi2": 20.83863798031565,
+    "fraction": 0.1905609981197603
+   },
+   {
+    "prediction": "genie_cv",
+    "rank": 3,
+    "mode": 12,
+    "sigma": 0.012073320714932969,
+    "projection": -0.0428370679628005,
+    "distance": -3.5480767035217724,
+    "chi2": 12.58884829407393,
+    "fraction": 0.11511997561275511
+   },
+   {
+    "prediction": "genie_mec",
+    "rank": 1,
+    "mode": 13,
+    "sigma": 0.011481873604183465,
+    "projection": -0.1277689713216421,
+    "distance": -11.127885197681412,
+    "chi2": 123.8298289727771,
+    "fraction": 0.45505465202655354
+   },
+   {
+    "prediction": "genie_mec",
+    "rank": 2,
+    "mode": 7,
+    "sigma": 0.031655511319456556,
+    "projection": -0.24632329590739882,
+    "distance": -7.781371572917862,
+    "chi2": 60.5497435558142,
+    "fraction": 0.22251054299804832
+   },
+   {
+    "prediction": "genie_mec",
+    "rank": 3,
+    "mode": 15,
+    "sigma": 0.006685190310152361,
+    "projection": -0.04361805087855474,
+    "distance": -6.524578786084049,
+    "chi2": 42.570128335818005,
+    "fraction": 0.1564383565517166
+   },
+   {
+    "prediction": "nuwro",
+    "rank": 1,
+    "mode": 15,
+    "sigma": 0.00610917556537955,
+    "projection": -0.04689860346481323,
+    "distance": -7.676748353834469,
+    "chi2": 58.93246528810023,
+    "fraction": 0.31342157497531276
+   },
+   {
+    "prediction": "nuwro",
+    "rank": 2,
+    "mode": 10,
+    "sigma": 0.019844431647252362,
+    "projection": 0.09228587396387362,
+    "distance": 4.650466972514752,
+    "chi2": 21.626843062450522,
+    "fraction": 0.11501842288864592
+   },
+   {
+    "prediction": "nuwro",
+    "rank": 3,
+    "mode": 5,
+    "sigma": 0.0660143608358164,
+    "projection": 0.29624679607765625,
+    "distance": 4.487611367084936,
+    "chi2": 20.13865578198992,
+    "fraction": 0.10710377009039668
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "rank": 1,
+    "mode": 13,
+    "sigma": 0.00971273133286045,
+    "projection": -0.12207435665175938,
+    "distance": -12.568488972690224,
+    "chi2": 157.96691505663577,
+    "fraction": 0.47910040317876995
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "rank": 2,
+    "mode": 7,
+    "sigma": 0.03013675263318231,
+    "projection": -0.2218779391942151,
+    "distance": -7.362370521298789,
+    "chi2": 54.2044996928894,
+    "fraction": 0.16439770092146216
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "rank": 3,
+    "mode": 14,
+    "sigma": 0.00633176525592225,
+    "projection": -0.042470989991130734,
+    "distance": -6.707606532223634,
+    "chi2": 44.99198539112917,
+    "fraction": 0.13645691778544242
+   }
+  ],
+  "figsize": [
+   7.0,
+   7.5
+  ],
+  "axes": [
+   {
+    "rect": [
+     0.07,
+     0.7544897959183674,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": true,
+    "off": false
+   },
+   {
+    "rect": [
+     0.38256410256410256,
+     0.7544897959183674,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.6951282051282051,
+     0.7544897959183674,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.07,
+     0.526326530612245,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": true,
+    "off": false
+   },
+   {
+    "rect": [
+     0.38256410256410256,
+     0.526326530612245,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.6951282051282051,
+     0.526326530612245,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.07,
+     0.2981632653061225,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": true,
+    "off": false
+   },
+   {
+    "rect": [
+     0.38256410256410256,
+     0.2981632653061225,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.6951282051282051,
+     0.2981632653061225,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.07,
+     0.07000000000000009,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": true,
+    "off": false
+   },
+   {
+    "rect": [
+     0.38256410256410256,
+     0.07000000000000009,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   },
+   {
+    "rect": [
+     0.6951282051282051,
+     0.07000000000000009,
+     0.2948717948717948,
+     0.17551020408163265
+    ],
+    "xlim": [
+     -0.6,
+     15.6
+    ],
+    "ylim": [
+     -1.05,
+     1.75
+    ],
+    "xticks": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "yticks": [
+     -1.0,
+     -0.5,
+     0.0,
+     0.5,
+     1.0
+    ],
+    "ylabels": false,
+    "off": false
+   }
+  ],
+  "legends": [],
+  "items": [
+   {
+    "gid": "modes:genie_cv:1",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.top_modes[0].loadings"
+    ],
+    "axes": 0,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.043887031598037786,
+     0.1703468550515483,
+     0.1072335231529572,
+     -0.18199261374898587,
+     -0.015236426502964938,
+     -0.41392853301566634,
+     0.77284826729643,
+     -0.09636039519825443,
+     0.0996305263123364,
+     0.10543248566320251,
+     -0.2682859153216999,
+     0.08030134200782087,
+     -0.06781854755575063,
+     0.052470800190544085,
+     -0.19446303970634074,
+     -0.04062616829023104
+    ],
+    "style": {
+     "color": "#2a78d6"
+    }
+   },
+   {
+    "gid": "modes:ref:0",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:0:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:0:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:0:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 0,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:1:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[0].mode",
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[0].fraction"
+    ],
+    "axes": 0,
+    "text": "mode 7: 40.6% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:1:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[0].sigma",
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[0].projection"
+    ],
+    "axes": 0,
+    "text": "$\\sigma$ = 3.15%, distance -6.67$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:2",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.top_modes[1].loadings"
+    ],
+    "axes": 1,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     0.3225898640502458,
+     -0.35592837847920183,
+     0.01296239367132132,
+     0.18451960617128377,
+     0.4461957063680736,
+     0.13756897749660474,
+     0.07974690086568786,
+     -0.2933708616970022,
+     -0.42075948651221823,
+     0.2974335245836638,
+     -0.15513957420555494,
+     -0.026315404253458415,
+     0.14864608866612403,
+     -0.01701330839091575,
+     -0.33194064420515246,
+     0.041924444148501376
+    ],
+    "style": {
+     "color": "#2a78d6"
+    }
+   },
+   {
+    "gid": "modes:ref:1",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:1:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:1:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:1:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 1,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:2:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[1].mode",
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[1].fraction"
+    ],
+    "axes": 1,
+    "text": "mode 13: 19.1% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:2:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[1].sigma",
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[1].projection"
+    ],
+    "axes": 1,
+    "text": "$\\sigma$ = 1.14%, distance -4.56$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:3",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.top_modes[2].loadings"
+    ],
+    "axes": 2,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.3341654158069382,
+     -0.22531667784812995,
+     0.35062719884463855,
+     0.03348325157827052,
+     0.08416746462664729,
+     -0.12134404677728117,
+     -0.12730051489726818,
+     -0.08669819277558602,
+     0.100966942410735,
+     0.531730227917299,
+     0.12487967283463343,
+     0.009622998705943322,
+     -0.16483051068195115,
+     0.12205674768001842,
+     0.20084872812245308,
+     -0.5262591750422039
+    ],
+    "style": {
+     "color": "#2a78d6"
+    }
+   },
+   {
+    "gid": "modes:ref:2",
+    "kind": "ref",
+    "source": [],
+    "axes": 2,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:2:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 2,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:2:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 2,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:2:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 2,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:3:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[2].mode",
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[2].fraction"
+    ],
+    "axes": 2,
+    "text": "mode 12: 11.5% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:3:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[2].sigma",
+     "fd_g_diag_readout.json predictions[name=genie_cv].comparisons[reported].relative_to_f.modes_by_chi2[2].projection"
+    ],
+    "axes": 2,
+    "text": "$\\sigma$ = 1.21%, distance -3.55$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_cv:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_cv].label"
+    ],
+    "axes": 0,
+    "text": "GENIE 2.12.10 CV, no MEC",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 7.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:1",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.top_modes[0].loadings"
+    ],
+    "axes": 3,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     0.30455061655378246,
+     -0.3679324953603553,
+     0.033796851348285584,
+     0.1849184911632811,
+     0.45310652676170404,
+     0.1266195071587028,
+     0.07147901174286535,
+     -0.29791202228409974,
+     -0.4161388359489103,
+     0.3270685922095258,
+     -0.14874330625649654,
+     -0.02490392340792279,
+     0.13689561987795865,
+     -0.010027192395749958,
+     -0.31536171611016084,
+     0.01243142316992693
+    ],
+    "style": {
+     "color": "#eb6834"
+    }
+   },
+   {
+    "gid": "modes:ref:3",
+    "kind": "ref",
+    "source": [],
+    "axes": 3,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:3:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 3,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:3:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 3,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:3:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 3,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:1:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[0].mode",
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[0].fraction"
+    ],
+    "axes": 3,
+    "text": "mode 13: 45.5% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:1:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[0].sigma",
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[0].projection"
+    ],
+    "axes": 3,
+    "text": "$\\sigma$ = 1.15%, distance -11.13$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:2",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.top_modes[1].loadings"
+    ],
+    "axes": 4,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.04356507612878426,
+     0.17488744396055822,
+     0.10520736030062125,
+     -0.1799749198486955,
+     -0.01480698041325168,
+     -0.4184881956958024,
+     0.7715719702910837,
+     -0.0991470219770949,
+     0.09620830195056056,
+     0.1065911121418702,
+     -0.2663871307804333,
+     0.08108041102532437,
+     -0.06786203605552794,
+     0.05228186962752641,
+     -0.19098013410989706,
+     -0.039824003265431666
+    ],
+    "style": {
+     "color": "#eb6834"
+    }
+   },
+   {
+    "gid": "modes:ref:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 4,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:4:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 4,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:4:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 4,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:4:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 4,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:2:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[1].mode",
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[1].fraction"
+    ],
+    "axes": 4,
+    "text": "mode 7: 22.3% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:2:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[1].sigma",
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[1].projection"
+    ],
+    "axes": 4,
+    "text": "$\\sigma$ = 3.17%, distance -7.78$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:3",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.top_modes[2].loadings"
+    ],
+    "axes": 5,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.35019468529457726,
+     0.13210470132845759,
+     0.1866151418915398,
+     -0.09979742669175545,
+     0.7208834392257597,
+     0.024998353770031765,
+     -0.15701170388945976,
+     0.07341981752807603,
+     0.13238698901975657,
+     -0.27436468225703226,
+     -0.26886113968576536,
+     0.11216387220669374,
+     -0.23349060285662476,
+     -0.09331244814724453,
+     -0.023646364013813627,
+     0.1527505541386109
+    ],
+    "style": {
+     "color": "#eb6834"
+    }
+   },
+   {
+    "gid": "modes:ref:5",
+    "kind": "ref",
+    "source": [],
+    "axes": 5,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:5:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 5,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:5:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 5,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:5:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 5,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:3:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[2].mode",
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[2].fraction"
+    ],
+    "axes": 5,
+    "text": "mode 15: 15.6% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:3:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[2].sigma",
+     "fd_g_diag_readout.json predictions[name=genie_mec].comparisons[reported].relative_to_f.modes_by_chi2[2].projection"
+    ],
+    "axes": 5,
+    "text": "$\\sigma$ = 0.67%, distance -6.52$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:genie_mec:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_mec].label"
+    ],
+    "axes": 3,
+    "text": "GENIE 2.12.10 + Valencia MEC",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 7.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:1",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.top_modes[0].loadings"
+    ],
+    "axes": 6,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.33506722560489566,
+     0.10791896955446165,
+     0.22995650643399881,
+     -0.0934133214389351,
+     0.6304050178757012,
+     0.04574963581502347,
+     -0.2024287398992985,
+     0.05014941520923165,
+     0.17523031895731336,
+     -0.2182581384729717,
+     -0.36598377667918713,
+     0.14108003359348076,
+     -0.26319665855466623,
+     -0.09335857747128508,
+     -0.03416825805430843,
+     0.24522597182212225
+    ],
+    "style": {
+     "color": "#1baf7a"
+    }
+   },
+   {
+    "gid": "modes:ref:6",
+    "kind": "ref",
+    "source": [],
+    "axes": 6,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:6:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 6,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:6:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 6,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:6:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 6,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:1:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[0].mode",
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[0].fraction"
+    ],
+    "axes": 6,
+    "text": "mode 15: 31.3% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:1:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[0].sigma",
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[0].projection"
+    ],
+    "axes": 6,
+    "text": "$\\sigma$ = 0.61%, distance -7.68$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:2",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.top_modes[1].loadings"
+    ],
+    "axes": 7,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     0.21982408827047148,
+     -0.3295593737628161,
+     -0.27208278821378373,
+     0.17206813300256774,
+     0.12071309877207745,
+     -0.030265760740118018,
+     0.23840089810383186,
+     -0.28361267040730365,
+     0.15125293985210023,
+     -0.13819616049716263,
+     0.037327298556165844,
+     0.045512628789384946,
+     -0.4524404528472506,
+     -0.0875891350007568,
+     0.5685462031567463,
+     0.07492221012282485
+    ],
+    "style": {
+     "color": "#1baf7a"
+    }
+   },
+   {
+    "gid": "modes:ref:7",
+    "kind": "ref",
+    "source": [],
+    "axes": 7,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:7:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 7,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:7:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 7,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:7:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 7,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:2:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[1].mode",
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[1].fraction"
+    ],
+    "axes": 7,
+    "text": "mode 10: 11.5% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:2:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[1].sigma",
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[1].projection"
+    ],
+    "axes": 7,
+    "text": "$\\sigma$ = 1.98%, distance +4.65$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:3",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.top_modes[2].loadings"
+    ],
+    "axes": 8,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     0.4038503575148371,
+     0.07520759946265206,
+     0.07170824698626052,
+     -0.24154963887484973,
+     0.16201505953251086,
+     -0.21794350218140063,
+     -0.2354321603001048,
+     -0.38484612550053354,
+     0.5832874241013454,
+     -0.022895671237599686,
+     0.08022271885666427,
+     -0.13919676583637997,
+     0.30228982380924585,
+     -0.1319277247904637,
+     -0.06527720855203162,
+     -0.10427023399514586
+    ],
+    "style": {
+     "color": "#1baf7a"
+    }
+   },
+   {
+    "gid": "modes:ref:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 8,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:8:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 8,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:8:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 8,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:8:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 8,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:3:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[2].mode",
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[2].fraction"
+    ],
+    "axes": 8,
+    "text": "mode 5: 10.7% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:3:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[2].sigma",
+     "fd_g_diag_readout.json predictions[name=nuwro].comparisons[reported].relative_to_f.modes_by_chi2[2].projection"
+    ],
+    "axes": 8,
+    "text": "$\\sigma$ = 6.60%, distance +4.49$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:nuwro:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=nuwro].label"
+    ],
+    "axes": 6,
+    "text": "NuWro 21.09: $^{12}$C target; no correction to CH applied",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 7.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:1",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.top_modes[0].loadings"
+    ],
+    "axes": 9,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     0.2555573693499009,
+     -0.21917666553769832,
+     -0.1588545143434188,
+     0.21968098132167035,
+     0.5399041694910968,
+     0.20489087726966712,
+     0.1838975706420836,
+     -0.27769173575338435,
+     -0.3763674653449578,
+     0.04694760027103077,
+     -0.05359090627613512,
+     -0.0598680303057786,
+     0.1978397037900112,
+     -0.06176908292803109,
+     -0.41408499133911786,
+     0.06336141628476732
+    ],
+    "style": {
+     "color": "#6b6b6b"
+    }
+   },
+   {
+    "gid": "modes:ref:9",
+    "kind": "ref",
+    "source": [],
+    "axes": 9,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:9:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 9,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:9:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 9,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:9:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 9,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:1:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[0].mode",
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[0].fraction"
+    ],
+    "axes": 9,
+    "text": "mode 13: 47.9% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:1:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[0].sigma",
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[0].projection"
+    ],
+    "axes": 9,
+    "text": "$\\sigma$ = 0.97%, distance -12.57$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:2",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.top_modes[1].loadings"
+    ],
+    "axes": 10,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.053662931886886735,
+     0.16331611536834517,
+     0.1237338879789807,
+     -0.19239866338646722,
+     -0.02035714286458618,
+     -0.40055971368521576,
+     0.7671402809737569,
+     -0.08317739383093081,
+     0.11315431121023692,
+     0.10341907135247054,
+     -0.2818570609223353,
+     0.07926882492833348,
+     -0.06492939558284067,
+     0.05593318477690231,
+     -0.20896190909340964,
+     -0.03999811971385459
+    ],
+    "style": {
+     "color": "#6b6b6b"
+    }
+   },
+   {
+    "gid": "modes:ref:10",
+    "kind": "ref",
+    "source": [],
+    "axes": 10,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:10:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 10,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:10:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 10,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:10:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 10,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:2:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[1].mode",
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[1].fraction"
+    ],
+    "axes": 10,
+    "text": "mode 7: 16.4% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:2:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[1].sigma",
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[1].projection"
+    ],
+    "axes": 10,
+    "text": "$\\sigma$ = 3.01%, distance -7.36$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:3",
+    "kind": "bars",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.top_modes[2].loadings"
+    ],
+    "axes": 11,
+    "x": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "heights": [
+     -0.24442653506714115,
+     0.2343643315527205,
+     -0.043024323099420114,
+     -0.18350800850018215,
+     0.6002460597365586,
+     -0.16847650509002876,
+     0.0591112146010716,
+     0.2574163728489794,
+     -0.0857590118050144,
+     -0.394488845347395,
+     0.3063462756879648,
+     -0.04148817281642902,
+     -0.008163682843523408,
+     -0.049502594088199785,
+     0.14995446716793343,
+     -0.3283548335362561
+    ],
+    "style": {
+     "color": "#6b6b6b"
+    }
+   },
+   {
+    "gid": "modes:ref:11",
+    "kind": "ref",
+    "source": [],
+    "axes": 11,
+    "orient": "h",
+    "value": 0.0,
+    "style": {
+     "color": "#808080",
+     "lw": 0.8,
+     "z": 2
+    }
+   },
+   {
+    "gid": "modes:sep:11:4",
+    "kind": "ref",
+    "source": [],
+    "axes": 11,
+    "orient": "v",
+    "value": 3.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:11:8",
+    "kind": "ref",
+    "source": [],
+    "axes": 11,
+    "orient": "v",
+    "value": 7.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:sep:11:12",
+    "kind": "ref",
+    "source": [],
+    "axes": 11,
+    "orient": "v",
+    "value": 11.5,
+    "style": {
+     "color": "#bfbfbf",
+     "lw": 0.6,
+     "z": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:3:text0",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[2].mode",
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[2].fraction"
+    ],
+    "axes": 11,
+    "text": "mode 14: 13.6% of $\\chi^2$",
+    "at": {
+     "x": 0.02,
+     "y": 0.97,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:3:text1",
+    "kind": "text",
+    "source": [
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[2].sigma",
+     "fd_g_diag_readout.json predictions[name=mnvtune_v1].comparisons[reported].relative_to_f.modes_by_chi2[2].projection"
+    ],
+    "axes": 11,
+    "text": "$\\sigma$ = 0.63%, distance -6.71$\\sigma$",
+    "at": {
+     "x": 0.02,
+     "y": 0.85,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "top",
+     "size": 6.3,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:mnvtune_v1:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=mnvtune_v1].label"
+    ],
+    "axes": 9,
+    "text": "MINERvA Tune v1: prior (not an independent prediction)",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 7.0,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:header:1",
+    "kind": "text",
+    "source": [],
+    "axes": 0,
+    "text": "rank 1 by $\\chi^2$",
+    "at": {
+     "x": 0.5,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 14.0,
+     "ha": "center",
+     "va": "bottom",
+     "size": 7.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:header:2",
+    "kind": "text",
+    "source": [],
+    "axes": 1,
+    "text": "rank 2 by $\\chi^2$",
+    "at": {
+     "x": 0.5,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 14.0,
+     "ha": "center",
+     "va": "bottom",
+     "size": 7.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:header:3",
+    "kind": "text",
+    "source": [],
+    "axes": 2,
+    "text": "rank 3 by $\\chi^2$",
+    "at": {
+     "x": 0.5,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 14.0,
+     "ha": "center",
+     "va": "bottom",
+     "size": 7.5,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "modes:ylabel",
+    "kind": "text",
+    "source": [],
+    "axes": null,
+    "text": "loading",
+    "at": {
+     "x": 0.005,
+     "y": 0.5,
+     "coords": "figure",
+     "dy": 0.0,
+     "ha": "left",
+     "va": "center",
+     "size": 7.5,
+     "rotation": 90
+    }
+   },
+   {
+    "gid": "modes:ticks:9",
+    "kind": "ticks",
+    "source": [],
+    "axes": 9,
+    "labels": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "size": 5.8,
+    "rotation": 90
+   },
+   {
+    "gid": "modes:ticks:10",
+    "kind": "ticks",
+    "source": [],
+    "axes": 10,
+    "labels": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "size": 5.8,
+    "rotation": 90
+   },
+   {
+    "gid": "modes:ticks:11",
+    "kind": "ticks",
+    "source": [],
+    "axes": 11,
+    "labels": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "size": 5.8,
+    "rotation": 90
+   }
+  ]
+ }
+}
