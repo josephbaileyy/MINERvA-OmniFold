@@ -15,6 +15,8 @@
 - the paper's covariance sentence now reads "The note gives the cells, the central values, the per-group uncertainties and the correlation matrix of the reported covariance.";
 - the paper prints the ratio figure (Fig. 5) and the note the modes figure (Fig. 30). Each is checked byte-equal to its committed source by `make_values_fived16.py --check`.
 
+**New in the note's GiBUU sentence (§10.4), from the GiBUU aggregate (#416, `fd_gibuu_enu_aggregate.json`, pinned `66dcbd6d`):** "In the GENIE CV and NuWro samples, which stop at E_ν = 50 GeV, at least 11.71% and 12.59% of each generator's cross section in the phase space above p∥ = 4.5 GeV/c comes from E_ν > 20 GeV, against 0.83% and 0.77% between p∥ = 1.5 and 4.5 GeV/c: these are the parts that a sample stopping at E_ν = 20 GeV cannot hold, not GiBUU numbers." The C_model paragraph's band share now reads "at least 4.9–5.3%" for the same reason: both samples stop at 50 GeV, so each share is a lower bound. This is yours to keep or drop.
+
 The figure captions are drafts, and they are yours (Q10).
 
 **What the wording does and does not say:**

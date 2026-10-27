@@ -1,0 +1,20 @@
+2026-10-27T16:45:42Z
+cwd: the worktree root; parent commit 5a299d45; Python 3.12.2
+$ python3 -I -B nd-unfolding/fd_gibuu_enu_aggregate.py
+C0 PASS: readout sha256 is the pin
+C0 PASS: schema gibuu-enu-coverage/1
+C0 PASS: e_cut_gev 20.0
+C0 PASS: generators
+C1 PASS: genie_cv: bands tile 1.5-60.0
+C1 PASS: genie_cv: 4.5 is an edge and 1.5-4.5 is one band
+C2 PASS: genie_cv: share_of_in_ps sums to 1
+C2 PASS: genie_cv: n_events sum to n_in_ps
+C3 PASS: genie_cv: bands recombine to share_E_gt_20_all_in_ps
+C1 PASS: nuwro: bands tile 1.5-60.0
+C1 PASS: nuwro: 4.5 is an edge and 1.5-4.5 is one band
+C2 PASS: nuwro: share_of_in_ps sums to 1
+C2 PASS: nuwro: n_events sum to n_in_ps
+C3 PASS: nuwro: bands recombine to share_E_gt_20_all_in_ps
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/wt-genu/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_gibuu_enu_aggregate.json", "sha256": "66dcbd6d5c996159c16166e2b52c277ff6b2a4246e566fc09dd302c10156bbb2"}
+rc=0
+2026-10-27T16:45:43Z

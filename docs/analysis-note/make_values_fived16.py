@@ -34,6 +34,7 @@ READOUTS = {
     "fup": (f"{FD}/fd/readout/fd_g_followup_readout.json", "cd82517a"),
     "sens2": (f"{FD}/fd/readout/fd_g_sens2_readout.json", "0f6568ab"),
     "dp": (f"{FD}/fd/data-product/fd_data_product.json", "b79556f0"),
+    "gagg": (f"{FD}/fd/readout/fd_gibuu_enu_aggregate.json", "66dcbd6d"),
 }
 # the figures the note and the paper print, copied into figures/: each must equal its committed source and the digest
 # its sidecar records (FD-G-FIGURES-REPORT.md section 1)
@@ -99,6 +100,20 @@ def values(d):
         for j in range(i):
             x = f"{rho[i][j]:.2f}"
             v[f"corr-{CELLS[i]}-{CELLS[j]}"] = ("$-$" + x[1:]) if x.startswith("-") else x
+    # what GiBUU's sample cannot hold: GENIE CV's and NuWro's E_nu > 20 GeV shares, each a lower bound on the
+    # full-flux share because both samples stop at 50 GeV (the readout's range label); never a GiBUU number
+    ga = d["gagg"]
+    assert "lower bound" in ga["labels"]["range"] and "not a GiBUU number" in ga["labels"]["not"]
+    pz_edges = sorted({e for c in dp["cells"] for e in c["box"]["pz"]})
+    for g in ("genie_cv", "nuwro"):
+        gg = ga["generators"][g]
+        assert gg["generation_range_gev"][1] == 50.0
+        assert gg["pz_4.5_60"]["bands"][0][0] == pz_edges[1] and gg["pz_4.5_60"]["bands"][-1][1] == pz_edges[2]
+        v[f"gagg-{g}-hi"] = f"{100 * gg['pz_4.5_60']['share_E_gt_20']:.2f}"
+        v[f"gagg-{g}-lo"] = f"{100 * gg['pz_1.5_4.5']['share_E_gt_20']:.2f}"
+    v["gagg-ecut"] = f"{ga['e_cut_gev']:g}"
+    v["gagg-range-max"] = f"{ga['generators']['genie_cv']['generation_range_gev'][1]:g}"
+    v["gagg-pz-lo"] = f"{pz_edges[0]:g}"
     v["f-unit"] = r"10^{-40}"     # f is printed in units of 10^-40 cm^2/nucleon
     # per-cell relative sigma by group, and the medians
     s1, cr = d["s1"]["relative_sigma"], d["cresp"]["relative_sigma"]
@@ -277,6 +292,7 @@ def values(d):
     v["r04-corrflux-min"], v["r04-corrflux-max"] = f"{min(cf):.3f}", f"{max(cf):.3f}"
     v["r04-sigma-total"] = pct(rs["C_total + C_resp"])
     assert min(range(16), key=lambda i: tr[i]) == CELLS.index("R04"), "R04 is no longer the smallest-sigma cell"
+    assert v["gagg-ecut"] == v["cmodel-gibuu-enu"], "the aggregate's E_nu cut is not GiBUU's sample limit"
     return v
 
 
