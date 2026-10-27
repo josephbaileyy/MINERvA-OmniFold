@@ -1,0 +1,34 @@
+PASSAGE selection_features:20
+VERDICT: REVISE
+ISSUE: The words "PET: App.~\ref{sec:pet}." omit the caveat that PET design-study recovery does not validate real-data background subtraction, but this specific scope and condition does not print at the cited home in App.~\ref{sec:pet} or sec_intro.tex.
+FIX: PET design-study recovery does not validate real-data background subtraction; PET remains diagnostic method development (App.~\ref{sec:pet}).
+
+PASSAGE sec_method:44
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE sec_method:100
+VERDICT: REVISE
+ISSUE: The words "(\S\ref{sec:3d})" point only to Section 3D for a sentence covering both 3D and 4D central values (the 4D result is documented in \S\ref{sec:4d}), and omitting the covariance clause leaves the reader without the covariance status of the 3D and 4D results that the surrounding paragraph systematically establishes for all other configurations.
+FIX: (\S\ref{sec:3d}, \S\ref{sec:4d}); no 3D or 4D covariance is quoted (\S\ref{sec:3d})
+
+PASSAGE sec_systematics:53
+VERDICT: REVISE
+ISSUE: The words "The statistical block quoted here has had no coverage test (\S\ref{sec:coverage})." remove the explanation that the fixed-truth coverage test scored earlier bands rather than this block, leaving "the fixed-truth test" in the third sentence without an antecedent and "also" without a referent, misleadingly implying that the quoted block was tested.
+FIX: The statistical block quoted here has had no coverage test: the fixed-truth coverage studies of \S\ref{sec:coverage} scored two earlier statistical bands, not this block.
+
+PASSAGE sec_systematics:204
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE sec_validation:18
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE sec_validation:61
+VERDICT: AGREE
+ISSUE: none
+FIX: none

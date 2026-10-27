@@ -1,0 +1,61 @@
+row	file	line	disposition	ledger	note
+R01	sec_execsummary.tex	109	applied	R01a	restatement removed; pointer to the home (ledger row)
+R02	sec_5d.tex	61	applied	R02a	restatement removed; pointer to the home (ledger row)
+R03	sec_3d.tex	123	applied	R03a	restatement removed; pointer to the home (ledger row)
+R03	sec_3d.tex	199	applied	R03b	restatement removed; pointer to the home (ledger row)
+R03	sec_eavailw.tex	110	applied	R03c	restatement removed; pointer to the home (ledger row)
+R03	sec_eavailw.tex	128	kept	R03d	KEEP (guardrail); reason in the ledger row
+R04	sec_method.tex	100	kept	R04a	KEEP (guardrail); reason in the ledger row
+R04	sec_systematics.tex	4	kept	R04b	KEEP (guardrail); reason in the ledger row
+R04	sec_systematics.tex	300	kept	R04c	KEEP (guardrail); reason in the ledger row
+R04	sec_3d.tex	192	applied	R04d	restatement removed; pointer to the home (ledger row)
+R05	sec_intro.tex	67	applied	R05b	restatement removed; pointer to the home (ledger row)
+R05	app_negweight.tex	186	applied	R05a	restatement removed; pointer to the home (ledger row)
+R06	sec_5d.tex	4	applied	R06a	restatement removed; pointer to the home (ledger row)
+R06	sec_5d.tex	8	applied	R06b	restatement removed; pointer to the home (ledger row)
+R06	sec_5d.tex	135	applied	R06c	restatement removed; pointer to the home (ledger row)
+R07	sec_joint.tex	16	kept	R07a	KEEP (guardrail); reason in the ledger row
+R07	result_status_rows.tex	32	excluded		Table 1 cell kept by the director's ruling 1 on the outline (2026-10-27)
+R08	sec_joint.tex	168	applied	R08a	restatement removed; pointer to the home (ledger row)
+R08	sec_joint.tex	354	applied	R08b	restatement removed; pointer to the home (ledger row)
+R09	sec_validation.tex	61	applied	R09a	restatement removed; pointer to the home (ledger row)
+R09	sec_5d.tex	131	applied	R09d	restatement removed; pointer to the home (ledger row)
+R09	sec_5d.tex	17	applied	R09c	restatement removed; pointer to the home (ledger row)
+R09	sec_3d.tex	90	applied	R09b	restatement removed; pointer to the home (ledger row)
+R10	sec_execsummary.tex	105	applied	R10c	restatement removed; pointer to the home (ledger row)
+R10	sec_intro.tex	70	applied	R10d	restatement removed; pointer to the home (ledger row)
+R10	sec_method.tex	44	applied	R10a	restatement removed; pointer to the home (ledger row)
+R10	app_guide.tex	9	applied	R10f	restatement removed; pointer to the home (ledger row)
+R10	selection_features.tex	20	kept	R10e	KEEP (guardrail); reason in the ledger row
+R10	app_codebase.tex	16	applied	R10b	restatement removed; pointer to the home (ledger row)
+R11	sec_execsummary.tex	77	applied	R11c	restatement removed; pointer to the home (ledger row)
+R11	sec_joint.tex	16	applied	R11a	restatement removed; pointer to the home (ledger row)
+R11	sec_joint.tex	354	applied	R11b	restatement removed; pointer to the home (ledger row)
+R12	selection_features.tex	20	applied	R12a	restatement removed; pointer to the home (ledger row)
+R13	sec_validation.tex	44	kept	R13a	KEEP (guardrail); reason in the ledger row
+R13	app_statmethods.tex	364	applied	R13b	restatement removed; pointer to the home (ledger row)
+R14	result_status_rows.tex	14	excluded		Table 1 cell kept by the director's ruling 1 on the outline (2026-10-27)
+R14	sec_validation.tex	18	applied	R14b	restatement removed; pointer to the home (ledger row)
+R14	sec_intro.tex	62	applied	R14d	restatement removed; pointer to the home (ledger row)
+R14	sec_method.tex	46	kept	R14c	KEEP (guardrail); reason in the ledger row
+R14	sec_systematics.tex	53	kept	R14a	KEEP (guardrail); reason in the ledger row
+R14	app_statmethods.tex	467	applied	R14e	restatement removed; pointer to the home (ledger row)
+R14	app_statmethods.tex	617	kept	R14f	KEEP (guardrail); reason in the ledger row
+R14	app_statmethods.tex	634	kept	R14g	KEEP (guardrail); reason in the ledger row
+R15	app_negweight.tex	8	applied	R15c	restatement removed; pointer to the home (ledger row)
+R15	sec_3d.tex	81	applied	R15a	restatement removed; pointer to the home (ledger row)
+R15	sec_3d.tex	206	applied	R15b	restatement removed; pointer to the home (ledger row)
+R16	sec_joint.tex	5	applied	R16a	restatement removed; pointer to the home (ledger row)
+R16	sec_joint.tex	196	kept	R16b	KEEP (guardrail); reason in the ledger row
+R17	sec_execsummary.tex	40	applied	R17c	restatement removed; pointer to the home (ledger row)
+R17	sec_summary.tex	19	applied	R17b	restatement removed; pointer to the home (ledger row)
+R17	result_status_rows.tex	25	excluded		Table 1 cell kept by the director's ruling 1 on the outline (2026-10-27)
+R17	sec_5d.tex	31	applied	R17a	restatement removed; pointer to the home (ledger row)
+R18	sec_summary.tex	13	applied	R18b	restatement removed; pointer to the home (ledger row)
+R18	result_status_rows.tex	14	excluded		Table 1 cell kept by the director's ruling 1 on the outline (2026-10-27)
+R18	sec_systematics.tex	202	applied	R18a	restatement removed; pointer to the home (ledger row)
+R21	sec_systematics.tex	219	kept	R21a	KEEP (guardrail); reason in the ledger row
+R26	sec_5d.tex	192	applied	R26a	restatement removed; pointer to the home (ledger row)
+R27	sec_eavailw.tex	5	applied	R27a	restatement removed; pointer to the home (ledger row)
+R27	sec_execsummary.tex	57	applied	R27c	restatement removed; pointer to the home (ledger row)
+R27	sec_summary.tex	19	applied	R27b	restatement removed; pointer to the home (ledger row)
