@@ -1,0 +1,120 @@
+# Review B's 95 mutants of fd_g_figures.py v2 (mutants_v2.py: review B's list, copied unchanged), re-run on this declaration's fd_g_figures.py.
+# Mutated file sha256: 06233dd9ddafe19807e97b42a4f4047b989b8cd8511d47cb8f5ad29f85652b4c (the declared file; see the declaration's section 8).
+# 1. mutants_run.py: every applicable mutant, in 4 parallel mirrors of the worktree without .git, with the declared tests.
+# 2. mutants_rerun.py: its survivors, one at a time in the git worktree itself (restored after each), so that the commit and clean fields can be tested.
+# Paths in the two runners are this session's scratch layout (reviewB/, mut4/, wt-fig/). An earlier round on the previous code (sha cb0d0de5) gave the same totals.
+
+## 1. mutants_run.py
+applicable 93 of 95 skipped ['M04', 'M05']
+V04 KILLED offsets nuwro<->gibuu swapped
+V01 KILLED error bar from variant sigma
+V02 SURVIVED pred-over-data via g/f division
+V03 SURVIVED band rect width 0.8 centred
+V05 KILLED offsets all zero
+V06 KILLED ylabel swapped
+V07 KILLED reference line at 0 in ratio
+V08 KILLED W unit GeV/c
+V10 KILLED key cell text at i+1
+V11 KILLED rank columns reversed
+V09 KILLED key row order changed
+V12 KILLED sigma printed .3f
+V13 KILLED distance without forced sign
+V14 KILLED families flux<->detector order
+V15 KILLED joint family not dashed
+V16 KILLED sens panels reversed
+V17 KILLED sens ylim exact data range
+V18 KILLED mnvtune colour = genie_cv colour
+V19 KILLED SIXTEEN drops mnvtune
+V21 KILLED NuWro short name wrong version
+V20 SURVIVED loadings in dict order
+V22 KILLED C12 not rendered
+O02 KILLED PDF written per figure before later figures' checks
+O03 SURVIVED out_dir created before checks
+O01 KILLED no-overwrite checks only .json
+O04 SURVIVED direct write, no .partial
+C01 KILLED sens2 not checked vs Stage G
+C02 KILLED sens2 inputs g_followup not checked
+C03 KILLED definition clause skips Stage G
+C04 KILLED s1 clause only g and f0b
+C07 KILLED labels vs PREDICTIONS not checked
+C05 KILLED C_resp name not checked
+C06 KILLED diag/followup/sens2 extra_block not checked
+C08 KILLED sha256 vs PREDICTIONS not checked
+C09 KILLED same five predictions skips diag
+E01 KILLED per-prediction sigma equality off
+C10 KILLED G-DIAG order not checked
+E02 KILLED reported covariance off
+E03 KILLED positivity off
+E04 KILLED variant covariance name off
+E05 KILLED F0b C_resp sigma off
+E06 KILLED REPRO 1e-9
+E08 KILLED definition R00-R15 check off
+E07 KILLED all-16 check off
+E09 KILLED group shares box off
+E10 SURVIVED check_gibuu modes clause off
+E11 SURVIVED check_gibuu ignores yerr
+M02 KILLED len(comp)==1 off
+M01 KILLED top constant off
+M03 KILLED chi2_stage_g off
+M06 KILLED unit loadings off
+M07 KILLED sign convention off
+N01 KILLED sens matrix/label/alphas off
+N02 KILLED referenced families off
+N03 KILLED record ndf/label off
+K01 KILLED gid set allows extra
+K02 KILLED line x unchecked
+K03 KILLED yerr x unchecked
+K04 KILLED yerr count unchecked
+K05 KILLED rects unchecked
+K06 KILLED bars x unchecked
+K07 KILLED bars count unchecked
+K08 KILLED text content unchecked
+K09 KILLED ref value unchecked
+K10 KILLED style unchecked
+K11 KILLED axes membership unchecked
+K12 KILLED axes position unchecked
+K14 KILLED x/ylabel unchecked
+K13 KILLED tick labels unchecked
+K15 KILLED unmodelled ink allowed
+K16 KILLED legend handle check off
+K17 KILLED clipping: x unchecked
+K18 KILLED clipping: patches skipped
+K19 KILLED off-page check off
+K20 KILLED text-over-bars ignored
+K21 KILLED rel: shape mismatch passes
+K22 KILLED EXACT 1e-4
+K23 KILLED check_panels not called
+K24 KILLED bare x tick check off
+L01 KILLED qualifier substring-of-label off
+L02 KILLED REQUIRED drops C12
+L03 KILLED names-differ check off
+L04 KILLED sens note check off
+P01 KILLED FontFile2 check off
+P02 KILLED Type3 check off
+S01 KILLED pdf_bytes +1
+S02 KILLED code sha fd_g_compare hashes make_figs
+S03 KILLED code sha s5p hashes s1_assemble
+S04 SURVIVED clean inverted
+S05 SURVIVED commit always None
+S06 KILLED plotted without items
+S07 KILLED file name wrong
+S08 KILLED default gibuu axis shared
+total 93 killed 84 survived ['E10', 'E11', 'O03', 'O04', 'S04', 'S05', 'V02', 'V03', 'V20']
+
+## 2. mutants_rerun.py (its survivors, in the git worktree)
+V02 SURVIVED pred-over-data via g/f division
+V03 SURVIVED band rect width 0.8 centred
+V20 SURVIVED loadings in dict order
+O03 SURVIVED out_dir created before checks
+O04 SURVIVED direct write, no .partial
+E10 SURVIVED check_gibuu modes clause off
+E11 SURVIVED check_gibuu ignores yerr
+S04 KILLED clean inverted
+S05 KILLED commit always None
+rerun 9 killed 2 survived ['E10', 'E11', 'O03', 'O04', 'V02', 'V03', 'V20']
+
+## Final: 93 applicable of 95 (M04 and M05 name code the rewrite removed); 86 killed; 7 survive:
+#  V02, V20: equivalent (g/f equals 1 + g_over_f_minus_1 to ~1e-16; the loadings' dict order is the cell order)
+#  V03: the band's width, cosmetic
+#  O03: the empty output directory is created before the checks; O04: no .partial write
+#  E10, E11: clauses other checks guarantee (SIXTEEN excludes GiBUU; GiBUU's error bars share its points' x, which are checked)

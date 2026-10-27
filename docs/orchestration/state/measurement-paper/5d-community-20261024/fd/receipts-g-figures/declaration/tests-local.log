@@ -1,0 +1,139 @@
+2026-10-27T13:17:37Z
+DNa1d666d.SUNet
+worktree HEAD 56e5cf3f670bee82abc94a525ec92043562c49b6 (the declaration's files uncommitted at this run)
+python 3.12.2 numpy 1.26.4 matplotlib 3.10.1
+06233dd9ddafe19807e97b42a4f4047b989b8cd8511d47cb8f5ad29f85652b4c  ../fd_g_figures.py
+95cf26811993772063a9d64d862fcde041ec3321f1f69874b99034d88c17d341  ../fd_g_figures_check.py
+1a42264faf4d8f3977a1eb5d66fa75604066200ac06e9034188860f9ff6ba8df  ../fd_data_product.py
+fb3dcc86e01eb48aaf7bed36bf5f1f25d624e3a6216ba5fddecc892347172fd9  test_fd_g_figures.py
+1595ff05e66ffb59121e97fd611e77afcfad30e88fc6c0a4e195177c3c71d270  test_fd_data_product.py
+b4d0ff2611bcc6226e215e57023002025682aebea49ec1f2c06f3c61a9d7d9a8  test_fd_g_compare.py
+command: TMPDIR=<scratch> python3 -B -m unittest test_fd_g_figures test_fd_data_product test_fd_g_compare
+PASS/FAIL control lines and fontTools timestamp warnings filtered:
+[FIG] ratio: 111 drawn items, 29339 bytes
+[FIG] modes: 95 drawn items, 32018 bytes
+[FIG] sens: 57 drawn items, 34953 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o0/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o0/fd_g_fig_ratio.json", "sha256": "ee19942cef5541dc678b417315734ac189f873cfbfb062fd58fb6679839e954f"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o0/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o0/fd_g_fig_modes.json", "sha256": "dca3353df0bd2a982b6eb0526faa370e9d558f236534652dbc30ab3d8758dc32"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o0/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o0/fd_g_fig_sens.json", "sha256": "b6bb2be7ae5922dce86e6164684ba8a5731a72926d4d93e4b0c0176a91b87f49"}
+[FIG] ratio: 106 drawn items, 29229 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o1/fd_g_fig_ratio.pdf", "sha256": "e6fb78def349a0e59ae1568e30d0becd075accba819fbf72f7411d7019e2c0e9"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o1/fd_g_fig_ratio.json", "sha256": "8b0e4d6478d37a4317c16df6b2f11b0044d4771f174a12220a0481c62a3eb41f"}
+[FIG] ratio: 108 drawn items, 29023 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o2/fd_g_fig_ratio.pdf", "sha256": "176f1ff70dade1c9ccafd75638f6c5eebfafd47b0078f8a84555e0de985e3747"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o2/fd_g_fig_ratio.json", "sha256": "3453ed503da750f2da7c11eb031eae6c5354537042083c48134b324a2a40a120"}
+[FIG] ratio: 102 drawn items, 28253 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o3/fd_g_fig_ratio.pdf", "sha256": "374bea9851b4852e77f3ae660c5f58102109a2a2787580b7c7170c56f5dabf21"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-7w9q0ir2/o3/fd_g_fig_ratio.json", "sha256": "fd3ff77cc4f82a8bd3cbe6e34f78c6d0b71ec2247cfeeeecd4255148010236e8"}
+.PASS control K0 no output exists (no overwrite)
+[FIG] ratio: 111 drawn items, 29339 bytes
+[FIG] modes: 95 drawn items, 32018 bytes
+[FIG] sens: 57 drawn items, 34953 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-vakoo9ou/clean/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-vakoo9ou/clean/fd_g_fig_ratio.json", "sha256": "ee19942cef5541dc678b417315734ac189f873cfbfb062fd58fb6679839e954f"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-vakoo9ou/clean/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-vakoo9ou/clean/fd_g_fig_modes.json", "sha256": "dca3353df0bd2a982b6eb0526faa370e9d558f236534652dbc30ab3d8758dc32"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-vakoo9ou/clean/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-vakoo9ou/clean/fd_g_fig_sens.json", "sha256": "b6bb2be7ae5922dce86e6164684ba8a5731a72926d4d93e4b0c0176a91b87f49"}
+.PASS control K1 G-DIAG, G-FOLLOWUP and G-SENS2 ran on this Stage G readout
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+.PASS control K8 t: a PDF with no raster image, its fonts embedded as TrueType
+.PASS control K0 no output exists (no overwrite)
+.PASS control K0 no output exists (no overwrite)
+[FIG] ratio: 111 drawn items, 29339 bytes
+.PASS control K3 the definition reports exactly R00-R15
+.PASS control K3 the definition reports exactly R00-R15
+.PASS control K4 G-DIAG recorded its top 3 modes
+.FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-0d7bog1_/out/fd_g_fig_modes.json
+.PASS control K3 the definition reports exactly R00-R15
+.PASS control K3 the definition reports exactly R00-R15
+.PASS control K3 the definition reports exactly R00-R15
+.PASS control K0 no output exists (no overwrite)
+[FIG] ratio: 111 drawn items, 29339 bytes
+[FIG] modes: 95 drawn items, 32018 bytes
+[FIG] sens: 57 drawn items, 34953 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-_c7qwuia/out/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-_c7qwuia/out/fd_g_fig_ratio.json", "sha256": "ee19942cef5541dc678b417315734ac189f873cfbfb062fd58fb6679839e954f"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-_c7qwuia/out/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-_c7qwuia/out/fd_g_fig_modes.json", "sha256": "dca3353df0bd2a982b6eb0526faa370e9d558f236534652dbc30ab3d8758dc32"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-_c7qwuia/out/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-_c7qwuia/out/fd_g_fig_sens.json", "sha256": "b6bb2be7ae5922dce86e6164684ba8a5731a72926d4d93e4b0c0176a91b87f49"}
+..PASS control K5 g_followup_readout: the reported matrix and label are G-SENS's
+.PASS control K0 no output exists (no overwrite)
+[FIG] modes: 95 drawn items, 32018 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-igiu35ix/out/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-igiu35ix/out/fd_g_fig_modes.json", "sha256": "dca3353df0bd2a982b6eb0526faa370e9d558f236534652dbc30ab3d8758dc32"}
+.PASS control K0 no output exists (no overwrite)
+[FIG] ratio: 111 drawn items, 29339 bytes
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-nqca2sxt/out/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-fig-nqca2sxt/out/fd_g_fig_ratio.json", "sha256": "ee19942cef5541dc678b417315734ac189f873cfbfb062fd58fb6679839e954f"}
+....PASS control Q0 no output exists (no overwrite)
+.PASS control Q0 no output exists (no overwrite)
+.PASS control Q0 no output exists (no overwrite)
+.PASS control Q0 no output exists (no overwrite)
+.PASS control Q0 no output exists (no overwrite)
+.PASS control Q0 no output exists (no overwrite)
+.PASS control Q0 no output exists (no overwrite)
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product_cells.csv", "sha256": "839b5b575a19edbfe04a3008dcfb1dcef213787d8888c658f3e21f641a6952f0"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product_C_e.csv", "sha256": "df008a584358623cd342f484052dabb3d701ef1d4ebf0e2295dd129f50a01dd3"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product_C_model_abs.csv", "sha256": "bf3cccb1ddcfe6b2496e99a29c2016f7736ce75089b6832a44fb019ca5a1feac"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product_C_resp.csv", "sha256": "ba1243f5464cee3c239f472e5eeaf7ae01840f10c59e72b5f744e4411094457a"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product_C_total_plus_C_resp.csv", "sha256": "6cd496cfb2c36b96ae9e88c1425c66fb686a7e80794b54c9028b982865d5ce3c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product_corr_C_total_plus_C_resp.csv", "sha256": "8670dc637f0b7816882f9b59aa66a0ae029635cddd48b33649dba7090e00e983"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-dp-hgsup49u/out/fd_data_product.json", "sha256": "5f6f184d5df8a88cc6505749687720a58db866507c59c3060c93cb0be9e7b81a"}
+.FAIL control Q0 no output exists (no overwrite): differs
+........PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+[G] genie_cv   16 cells, reported: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] genie_mec  16 cells, reported: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] nuwro      16 cells, reported: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] gibuu       8 cells, reported: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
+[G] mnvtune_v1 16 cells, reported: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-g-gkcydlgw/t/out/readout.json", "sha256": "232f12653eae022a0ca3f35e691584715d701dccbf2a6c94a7eb8f109314e62b"}
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+......PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+....PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+[G] genie_cv   16 cells, reported: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] genie_mec  16 cells, reported: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] nuwro      16 cells, reported: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] gibuu       8 cells, reported: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
+[G] mnvtune_v1 16 cells, reported: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/d1f3ed7d-dde2-4ad5-a668-62662888e93c/scratchpad/fd-g-p7efhvfk/t/out/readout.json", "sha256": "a480a4a4bfa422d29bac7d186cb22308d8dffe1153607d430cd4a56b3565f996"}
+.......
+----------------------------------------------------------------------
+Ran 85 tests in 40.596s
+
+OK
+rc=0
