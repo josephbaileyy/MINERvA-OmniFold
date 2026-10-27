@@ -1,8 +1,9 @@
 {
  "schema": "fd-gibuu-enu-aggregate/1",
  "labels": {
-  "what": "GENIE CV's and NuWro's share of the in-phase-space cross section from E_nu > 20 GeV, at p_parallel 1.5-4.5 and over 4.5-60 GeV/c, the share GiBUU 2019's sample, which stops at E_nu = 20 GeV (KNOWN_ISSUES 82), cannot hold",
-  "not": "not a GiBUU number: each share is the named generator's, from its own events up to its generation range",
+  "what": "for GENIE CV and NuWro: the in-phase-space cross section's share at p_parallel 4.5-60 GeV/c (pz_4.5_60.share_of_in_ps), and the share from E_nu > 20 GeV within p_parallel 1.5-4.5 and within 4.5-60 (share_E_gt_20, each of its own range), the part GiBUU 2019's sample, which stops at E_nu = 20 GeV (KNOWN_ISSUES 82), cannot hold",
+  "not": "not a GiBUU number: each share is the named generator's, from its own sample over its generation_range_gev",
+  "range": "both samples stop at E_nu = 50 GeV (generation_range_gev; NuWro's starts at 0.5 GeV), so E_nu > 20 GeV here is 20-50 GeV and every share is of the cross section below 50 GeV; the part above 50 GeV, which neither sample holds, would add to an E_nu > 20 GeV share's numerator and denominator alike, so each share_E_gt_20 is a lower bound on the full-flux share (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md section 1: \"two generators that cover E_\u03bd to 50 GeV\")",
   "source": "nd-unfolding/pv-ladder/readouts/gibuu_enu_coverage.json, generators.<g>.by_pz[].share_of_in_ps and share_E_gt_20 (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md section 1)",
   "for": "state/measurement-paper/5d-community-20261024/FD-DIRECTOR-RULINGS.md section 5 (GiBUU on the eight p_parallel < 4.5 cells)",
   "formula": "share_of_in_ps(4.5-60) = sum_b share_of_in_ps[b]; share_E_gt_20(4.5-60) = sum_b share_of_in_ps[b] * share_E_gt_20[b] / share_of_in_ps(4.5-60), over the by_pz bands b with pz[0] >= 4.5",
@@ -13,7 +14,7 @@
   "gibuu_enu_coverage": "9ee26883e32e85cd72e083022ef4c42440370665b17bdec0c272596f9650813c"
  },
  "code_sha256": {
-  "fd_gibuu_enu_aggregate.py": "63150dbbad5f4ef1a5a5a1fd7ea63b422c096c9be107728d073621817ded1257"
+  "fd_gibuu_enu_aggregate.py": "dccabed185405438b7ac148d278f6abda7ffedd0e29f3057a8bf19929a623a16"
  },
  "generators": {
   "genie_cv": {

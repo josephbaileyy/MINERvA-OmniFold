@@ -1,3 +1,4 @@
+$ python3 -I -B nd-unfolding/tests/test_fd_gibuu_enu_aggregate.py -v
 test_fresh_run_is_committed_bytes (__main__.Committed.test_fresh_run_is_committed_bytes) ... ok
 test_labels (__main__.Committed.test_labels) ... ok
 test_pins (__main__.Committed.test_pins) ... ok
@@ -7,7 +8,7 @@ test_each_refuses (__main__.Planted.test_each_refuses) ... ok
 test_unplanted_passes (__main__.Planted.test_unplanted_passes) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.055s
+Ran 7 tests in 0.056s
 
 OK
 rc=0

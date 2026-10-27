@@ -35,10 +35,16 @@ GENERATORS = ("genie_cv", "nuwro")
 LOW, SPLIT, HIGH = 1.5, 4.5, 60.0
 TOL = 1e-12
 LABELS = {
-    "what": "GENIE CV's and NuWro's share of the in-phase-space cross section from E_nu > 20 GeV, at p_parallel "
-            "1.5-4.5 and over 4.5-60 GeV/c, the share GiBUU 2019's sample, which stops at E_nu = 20 GeV "
+    "what": "for GENIE CV and NuWro: the in-phase-space cross section's share at p_parallel 4.5-60 GeV/c "
+            "(pz_4.5_60.share_of_in_ps), and the share from E_nu > 20 GeV within p_parallel 1.5-4.5 and within "
+            "4.5-60 (share_E_gt_20, each of its own range), the part GiBUU 2019's sample, which stops at E_nu = 20 GeV "
             "(KNOWN_ISSUES 82), cannot hold",
-    "not": "not a GiBUU number: each share is the named generator's, from its own events up to its generation range",
+    "not": "not a GiBUU number: each share is the named generator's, from its own sample over its generation_range_gev",
+    "range": "both samples stop at E_nu = 50 GeV (generation_range_gev; NuWro's starts at 0.5 GeV), so E_nu > 20 GeV "
+             "here is 20-50 GeV and every share is of the cross section below 50 GeV; the part above 50 GeV, which "
+             "neither sample holds, would add to an E_nu > 20 GeV share's numerator and denominator alike, so each "
+             "share_E_gt_20 is a lower bound on the full-flux share (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md section 1: "
+             "\"two generators that cover E_ν to 50 GeV\")",
     "source": "nd-unfolding/pv-ladder/readouts/gibuu_enu_coverage.json, generators.<g>.by_pz[].share_of_in_ps and "
               "share_E_gt_20 (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md section 1)",
     "for": "state/measurement-paper/5d-community-20261024/FD-DIRECTOR-RULINGS.md section 5 (GiBUU on the eight "

@@ -82,7 +82,14 @@ class Committed(unittest.TestCase):
         L = self.out["labels"]
         self.assertEqual(self.out["schema"], "fd-gibuu-enu-aggregate/1")
         self.assertTrue(L["not"].startswith("not a GiBUU number"))
-        self.assertIn("GENIE CV's and NuWro's share", L["what"])
+        self.assertTrue(L["what"].startswith("for GENIE CV and NuWro:"))
+        self.assertIn("each of its own range", L["what"])
+        self.assertIn("here is 20-50 GeV", L["range"])
+        self.assertIn("each share_E_gt_20 is a lower bound on the full-flux share", L["range"])
+        self.assertIn("two generators that cover E_ν to 50 GeV", L["range"])
+        self.assertIn("two generators that cover E_ν to 50 GeV",
+                      (REPO / "docs/orchestration/state/measurement-scoping/pv-ladder/"
+                              "H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md").read_text())
         self.assertIn("GiBUU 2019's sample, which stops at E_nu = 20 GeV", L["what"])
         self.assertIn("FD-DIRECTOR-RULINGS.md section 5", L["for"])
 
