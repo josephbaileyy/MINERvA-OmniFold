@@ -1,0 +1,1 @@
+gemini rc=0 out=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad/n3/agy/acc2/acc.tex.agy.md words=      24
