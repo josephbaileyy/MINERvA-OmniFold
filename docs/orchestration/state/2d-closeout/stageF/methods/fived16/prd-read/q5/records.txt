@@ -1,0 +1,71 @@
+RECORD 1 (FD-PLAN.md, section 3.6, the limitation row, and section 7 item 2):
+| S-1 / S-2 at a **vertex-family** truth, leave-own-out | does the uncertainty the paper reports, without the truth's own vertex, reach the estimator's bias at a truth like that generator? | **a limitation proposed to Joseph** naming the truths and cells with \|z\| > 2 or p < 0.01. **The fake-data table** as a paper statement, if Joseph wants it, in Joseph's wording |
+2. **Thresholds** for proposing a limitation: |z| > 2 or p < 0.01, against the leave-own-out C_total.
+
+RECORD 2 (FD-F0b-DECLARATION.md, section 2):
+Pulls z = b/√diag(C + N) and χ² = bᵀ(C + N)⁻¹b, ndf 16 (8 on the eight cells), as in F0. A PSD addition can only
+
+RECORD 3 (FD-F0b-REPORT.md, sections 5 and 6):
+## 5. Listed truths
+
+A truth is listed if it has a cell with |z| > 2 or p < 0.01 against its grade matrix.
+
+| truth | F0, against C^(T): cells \|z\| > 2; p < 0.01 | F0b, against C^(T) + C_resp |
+|---|---|---|
+| W3 | none; yes | **not listed** (p 0.0141) |
+| q3 | none; yes | none; yes |
+| Stage 0c GiBUU | R06; yes | R06; **no** (p 0.0621) |
+| A7 GiBUU | R02, R06, R07; yes | R02, R06, R07; yes |
+
+**Truths whose listing changes between F0 and F0b:**
+- **W3** is listed in F0 and not in F0b.
+- **Stage 0c GiBUU** is listed in both. Its p < 0.01 entry is yes in F0 and no in F0b, and its cell R06 is in both.
+- No truth is listed in F0b only.
+
+## 6. Per truth: χ² / p
+
+ndf is 16, and 8 for the eight-cell variant. "<1e-30" marks `p_below_floor`.
+- **The F0 column's matrices:** the grade is against C^(T); the in-sample matrix is C_total with every vertex; the
+  sensitivity matrix leaves out the declared vertex; the eight-cell matrix is the grade matrix on R00–R03, R08–R11.
+- **The F0b column's matrices** are the same, each + C_resp.
+- **The model-only matrix,** C_stat + C_model with the own vertex left out, is the same in both, and so is its χ².
+- Rows 6 (P1r–P3g) are **ungraded and descriptive** in both, since control 7 failed.
+
+| truth | row | group | grade, F0 | grade, F0b | in-sample, F0 | in-sample, F0b | sensitivity, F0 | sensitivity, F0b | model-only (both) | 8-cell, F0 | 8-cell, F0b |
+|---|---:|---|---|---|---|---|---|---|---|---|---|
+| nominal | 1 | prior | 0.00 / 1 | 0.00 / 1 | – | – | – | – | 0.39 / 1 | – | – |
+| W1 | 1 | vertex-family | 5.69 / 0.991 | 5.01 / 0.996 | 5.69 / 0.991 | 4.99 / 0.996 | – | – | 1647.66 / <1e-30 | – | – |
+| W2 | 1 | vertex-family | 0.77 / 1 | 0.57 / 1 | 0.42 / 1 | 0.35 / 1 | – | – | 117.49 / 1.66e-17 | – | – |
+| W3 | 1 | vertex-family | 36.19 / 0.00273 | 30.83 / 0.0141 | 34.82 / 0.00421 | 28.82 / 0.0252 | – | – | 5552.98 / <1e-30 | – | – |
+| q3 | 1 | non-vertex | 59.83 / 5.59e-07 | 53.42 / 6.44e-06 | – | – | 61.24 / 3.23e-07 | 54.57 / 4.18e-06 | 11642.59 / <1e-30 | – | – |
+| Stage 0c GiBUU | 2 | vertex-family | 35.75 / 0.00313 | 25.46 / 0.0621 | 29.30 / 0.022 | 23.05 / 0.113 | – | – | 7990.52 / <1e-30 | 20.93 / 0.00734 | 12.42 / 0.133 |
+| closure NuWro | 3 | vertex-family | 13.08 / 0.667 | 11.60 / 0.771 | 13.03 / 0.671 | 11.59 / 0.772 | – | – | 2890.73 / <1e-30 | – | – |
+| A7 MnvTune | 4 | prior | 0.01 / 1 | 0.01 / 1 | – | – | – | – | 0.20 / 1 | – | – |
+| A7 GENIE CV | 4 | non-vertex | 17.37 / 0.362 | 16.14 / 0.443 | – | – | 18.29 / 0.307 | 17.04 / 0.383 | 1794.19 / <1e-30 | – | – |
+| A7 GENIE+MEC | 4 | vertex-family | 16.18 / 0.44 | 14.54 / 0.558 | 11.86 / 0.753 | 11.00 / 0.809 | – | – | 1006.75 / <1e-30 | – | – |
+| A7 NuWro | 4 | vertex-family | 29.96 / 0.0182 | 24.92 / 0.0713 | 29.23 / 0.0224 | 24.78 / 0.0738 | – | – | 3028.41 / <1e-30 | – | – |
+| A7 GiBUU | 4 | vertex-family | 246.75 / <1e-30 | 175.13 / 7.96e-29 | 180.99 / 5.32e-30 | 142.62 / 2.21e-22 | – | – | 24824.55 / <1e-30 | 197.77 / <1e-30 | 133.91 / 4.38e-25 |
+| P1r | 6 | vertex-family | 50.64 / 1.81e-05 | 44.55 / 0.000163 | 47.43 / 5.84e-05 | 39.68 / 0.000866 | – | – | 1686.44 / <1e-30 | – | – |
+| P2r | 6 | vertex-family | 40.73 / 0.000609 | 37.04 / 0.00207 | 31.34 / 0.0122 | 29.55 / 0.0205 | – | – | 4309.11 / <1e-30 | – | – |
+| P3r | 6 | vertex-family | 2.96 / 1 | 2.50 / 1 | 2.66 / 1 | 2.15 / 1 | – | – | 69.81 / 1.08e-08 | – | – |
+| P1g | 6 | vertex-family | 85.50 / 1.67e-11 | 82.48 / 5.93e-11 | 80.27 / 1.49e-10 | 77.57 / 4.55e-10 | – | – | 2988.64 / <1e-30 | – | – |
+| P2g | 6 | vertex-family | 39.38 / 0.000959 | 37.97 / 0.00153 | 32.74 / 0.008 | 31.86 / 0.0104 | – | – | 5171.70 / <1e-30 | – | – |
+| P3g | 6 | vertex-family | 24.83 / 0.0728 | 23.25 / 0.107 | 22.63 / 0.124 | 21.31 / 0.167 | – | – | 1174.19 / <1e-30 | – | – |
+
+**The matrix names in the F0b readout** are "C_total + C_resp", or "C_total minus genie_mec / nuwro / gibuu + C_resp".
+The sensitivity matrices are "C_total minus nuwro + C_resp" (q3) and "C_total minus genie_mec + C_resp" (A7 GENIE CV).
+
+
+RECORD 4 (computed from fd_f0b_readout.json for this check: per graded truth, the largest per-cell |z| against the grade matrix, and the largest |b|/sigma with the noise term N removed, sigma = sqrt(diag C)):
+nominal: grade matrix C_total + C_resp; max|z| 0.010; max|b|/sigma without N 0.010; p 1; listed False
+W1: grade matrix C_total minus nuwro + C_resp; max|z| 0.700; max|b|/sigma without N 0.700; p 0.996; listed False
+W2: grade matrix C_total minus genie_mec + C_resp; max|z| 0.122; max|b|/sigma without N 0.122; p 1; listed False
+W3: grade matrix C_total minus nuwro + C_resp; max|z| 1.036; max|b|/sigma without N 1.036; p 0.0141; listed False
+q3: grade matrix C_total + C_resp; max|z| 1.620; max|b|/sigma without N 1.620; p 6.44e-06; listed True
+stage0c_gibuu: grade matrix C_total minus gibuu + C_resp; max|z| 2.010; max|b|/sigma without N 2.010; p 0.0621; listed True
+closure_nuwro: grade matrix C_total minus nuwro + C_resp; max|z| 0.540; max|b|/sigma without N 0.540; p 0.771; listed False
+A7_mnvtune: grade matrix C_total + C_resp; max|z| 0.008; max|b|/sigma without N 0.008; p 1; listed False
+A7_genie_cv: grade matrix C_total + C_resp; max|z| 0.382; max|b|/sigma without N 0.382; p 0.443; listed False
+A7_genie_mec: grade matrix C_total minus genie_mec + C_resp; max|z| 0.322; max|b|/sigma without N 0.322; p 0.558; listed False
+A7_nuwro: grade matrix C_total minus nuwro + C_resp; max|z| 1.343; max|b|/sigma without N 1.343; p 0.0713; listed False
+A7_gibuu: grade matrix C_total minus gibuu + C_resp; max|z| 5.172; max|b|/sigma without N 5.173; p 7.96e-29; listed True

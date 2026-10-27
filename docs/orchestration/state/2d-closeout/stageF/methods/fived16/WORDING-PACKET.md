@@ -27,6 +27,18 @@ The figure captions are drafts, and they are yours (Q10).
   W3 is no longer listed. Each truth is graded without its own generator's vertex, where it has one.
 - It makes no coverage claim, and nowhere says that $C_{\mathrm{model}}$ includes, covers or omits the regularization bias.
 
+## The independent PRD read (decision item 3), in brief
+
+The full tables, with the raters' quotes and a truth column for every shortening, are in `prd-read/REPORT.md`. The raters were sol2 (gpt-6.1-sol) and agy (gemini), blind, through `run_x.sh`.
+- **Q3:** **(i) three sentences > (ii) one short sentence > (iii) one long sentence, in all 24 pairwise runs,** both orders and both models, with no order flips.
+- **Q4:** the raters split. sol2 chose one decimal (2 of 2 runs) and gemini integers (2 of 2).
+- **Q1, Q7, Q9 and the other qualifiers:** all four runs would shorten the Q9 envelope sentence (C03) and the Q1 clause (C05/C22).
+  - **sol2 keeps every limitation** and shortens the wording.
+  - **gemini drops the limitations** ("not a calibrated bound", "whose coverage is not validated"). Each of those cuts leaves a sentence false as read.
+  - **Shortest true forms:** Q1, "it is generator-shape model dependence, not a calibrated bound"; Q9, "Unlike the envelope of Sec. V E, its model term is a covariance built from three generator shifts." Q7 stays as written.
+- **Unanimous and true, not applied:** cut C10 and C14; shorten C03, C18 and C21; and C08, whose drafted form is ambiguous now that Sec. VII B uses C_resp.
+- **Q5:** **agy does not agree with the decided sentence.** It reads "stays within the reported uncertainty" as within 1σ, while the criterion allows 2σ (A7 NuWro reaches 1.34σ). It accepts "the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01" and "the bias is within 2σ in every cell and p ≥ 0.01". The numbers hold under every form. The decided sentence is printed as you chose it until you say otherwise.
+
 ## Your questions
 
 **Q1. $C_{\mathrm{model}}$ and the regularization bias.**
