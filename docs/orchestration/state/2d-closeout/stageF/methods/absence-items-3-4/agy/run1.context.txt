@@ -1,0 +1,18 @@
+CONTEXT: Two corrections ruled by the PI (DECISION-20261027-joseph-absence-audit-items-3-4.md). I3: the sentence said the effect 'has not been measured', but it was measured; the PI selected the option that prints the numbers and says the effect is not reliably determined for GENIE with MEC, NuWro and GiBUU. Source, MP-5's record, verbatim:
+:66: - **R_c over the 109 cells** is 0.99649 / 1.000008 / 1.00346 (min / median / max); median |R_c − 1| = 2.9e-4.
+:68: - **It is at the MC floor.** The MC error of R_c has median 4.7e-4, and |R_c − 1|/sd has median 0.81 (maximum 4.2), so
+:87-90: ### 3.2 The proxy check (GENIE CV): **UNRELIABLE** by the declared 0.2 σ_c rule
+
+- **Result.** The largest |μ_G,beam − μ_G·R_c|/σ_c is **0.56, in J152**; the median is 0.019. Six cells exceed 0.2:
+  J139, J143, J145, J152, J220 and J240. As declared, the proxy is therefore **UNRELIABLE for GENIE MEC, NuWro and
+:100:   - Δ/σ_c is −0.47 / 0.00 / +0.53, and ΔᵀW⁻¹Δ = 3.89, against ≈ 1.9 expected from noise alone on the diagonal.
+The records entry the sentence cites, verbatim: \item[\texttt{mp5-truth-axis}.] MP-5 (job 60017887; recorded at commit \texttt{494b3404}, 2026-10-20) measured the truth muon-angle convention, the beam axis against the neutrino axis about which the generators measure $\pT$ and $\pPar$, over the 109 reported joint-test cells. On the analysis simulation the ratio $R_c$ of the cell contents under the two conventions is 0.99649 / 1.000008 / 1.00346 (minimum / median / maximum), at the simulation's Monte Carlo floor. For GENIE's central prediction, its own beam-axis shift is $-0.47$ / $0.00$ / $+0.53$ of each cell's null spread. The proxy that carries $R_c$ to GENIE with MEC, NuWro and GiBUU is unreliable by its declared $0.2\,\sigma_c$ rule, so the effect is not reliably determined for those three. Record: \repopath{docs/orchestration/state/measurement-paper/phase1/mp5/REPORT.md}, lines 66, 68, 87--90 and 100. 
+I4: a frozen record paragraph corrected in place to the current fact, no correction notice. The PI: both constructions passed the build's positive-semidefiniteness check, with the ratios if the paragraph's register allows; background-aware-footed candidates exist, but none has been adopted. Evidence, verbatim: nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:735: "- 14:15 PDT: *** B5' #13 COMPLETE - finalize 55912230 COMPLETED, all 3 outputs, BOTH PSD OK ***"; :740-741: "Adopted MEAN    5.80e-38  -> 5.8077e-38 (x1.333, ~0%) PSD OK (min eig/max -2.4e-16)
+    Adopted CV(F7)  6.23e-38  -> 6.2367e-38 (x1.431, ~0%) PSD OK (min eig/max -4.1e-16)"; nd-unfolding/adopt_unified_5d.py:161-165: "print(f"[adopt5d] median frac/bin  old={100*np.median(do):.2f}%   new={100*np.median(dn):.2f}%")
+    print(f"[adopt5d] PSD check: min eigenvalue = {ev[0]:.3e}  "
+          f"(neg: {(ev<0).sum()}; most-neg/max = {ev[0]/ev[-1]:.2e})")
+    if ev[0] < -1e-12 * ev[-1]:
+        raise SystemExit("[FAIL] adopted covariance is not PSD")"; VALIDATION_LEDGER.md:464: "**NOTHING IS ADOPTED. The 2026-07-12 quarantine stands at zero of seven for this artifact and
+`values.tex` is untouched.** This produces the footing-matched *candidate*, ready for whenever the gate
+opens."; :478-479: "| VL16 | **A1** bkgaware, mean-centered | bkgaware | 4.3578e-38 | **5.2696e-38** | 1.209 | 13.36% → 13.57% | −3.19e-16 |
+| VL17 | **A2** bkgaware, CV-centered | bkgaware | 4.3578e-38 | **5.6743e-38** | 1.302 | 13.36% → 14.02% | −3.23e-16 |". Check that each AFTER states exactly what its sources support, no more and no less, and that rounding of the numbers is faithful.

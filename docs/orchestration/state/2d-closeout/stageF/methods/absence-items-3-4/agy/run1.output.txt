@@ -1,0 +1,123 @@
+:478-479: "| VL16 | ... | VL17 | ..."`
+    And PI ruling explicitly says:
+    `background-aware-footed candidates exist, but none has been adopted.`
+
+    Wait, is there ANY issue in I4?
+    Wait, look at:
+    "Both passed the positive-semidefiniteness check of their build, with most-negative-to-largest eigenvalue ratios of $-2.4\times10^{-16}$ (mean-centered) and $-4.1\times10^{-16}$ (CV-centered); \texttt{VL16} and \texttt{VL17} record the same property for the background-aware candidates, and it does not transfer by inheritance."
+
+    WAIT! Look at that sentence in I4 again!
+    "Both passed the positive-semidefiniteness check of their build..."
+    Wait, in BEFORE:
+    "No positive-semidefiniteness measurement exists for either: \texttt{VL16} and \texttt{VL17} record that property for the \emph{successor} background-aware products only, and it does not transfer by inheritance."
+    Wait, why does AFTER say:
+    "\texttt{VL16} and \texttt{VL17} record the same property for the background-aware candidates, and it does not transfer by inheritance."?
+    Wait! Does it transfer by inheritance?
+    "and it does not transfer by inheritance."
+    Wait, if "Both passed the positive-semidefiniteness check of their build", then why does it say "and it does not transfer by inheritance"?
+    Wait! In BEFORE:
+    "No positive-semidefiniteness measurement exists for either: VL16 and VL17 record that property for the successor background-aware products only, and it does not transfer by inheritance."
+    In BEFORE, the author was saying: Neither pre-J28 candidate has a PSD measurement; although VL16 and VL17 record PSD for the successor background-aware products, that measurement does not transfer by inheritance to the pre-J28 products.
+    In AFTER:
+    "Both passed the positive-semidefiniteness check of their build, with most-negative-to-largest eigenvalue ratios of $-2.4\times10^{-16}$ (mean-centered) and $-4.1\times10^{-16}$ (CV-centered); \texttt{VL16} and \texttt{VL17} record the same property for the background-aware candidates, and it does not transfer by inheritance."
+    WAIT!
+    Look at AFTER:
+    If "Both passed the positive-semidefiniteness check of their build [with ratios -2.4e-16 and -4.1e-16]", then what is "the same property" that VL16 and VL17 record, and why would anyone say "and it does not transfer by inheritance"?!
+    Wait! If the pre-J28 candidates ALREADY passed their own build's PSD check (with -2.4e-16 and -4.1e-16), why would anyone say that VL16 and VL17's property does not transfer by inheritance to them?
+    WAIT!
+    DID the pre-J28 candidates pass with -2.4e-16 and -4.1e-16?
+    NO!
+    LOOK AT THE CONTEXT AGAIN!
+    READ THIS VERY CAREFULLY:
+    ```
+    nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:735:
+    "- 14:15 PDT: *** B5' #13 COMPLETE - finalize 55912230 COMPLETED, all 3 outputs, BOTH PSD OK ***";
+    :740-741:
+    "Adopted MEAN    5.80e-38  -> 5.8077e-38 (x1.333, ~0%) PSD OK (min eig/max -2.4e-16)
+        Adopted CV(F7)  6.23e-38  -> 6.2367e-38 (x1.431, ~0%) PSD OK (min eig/max -4.1e-16)";
+    nd-unfolding/adopt_unified_5d.py:161-165:
+    "print(f"[adopt5d] median frac/bin  old={100*np.median(do):.2f}%   new={100*np.median(dn):.2f}%")
+        print(f"[adopt5d] PSD check: min eigenvalue = {ev[0]:.3e}  "
+              f"(neg: {(ev<0).sum()}; most-neg/max = {ev[0]/ev[-1]:.2e})")
+        if ev[0] < -1e-12 * ev[-1]:
+            raise SystemExit("[FAIL] adopted covariance is not PSD")";
+    VALIDATION_LEDGER.md:464:
+    "**NOTHING IS ADOPTED. The 2026-07-12 quarantine stands at zero of seven for this artifact and `values.tex` is untouched.** This produces the footing-matched *candidate*, ready for whenever the gate opens.";
+    :478-479:
+    "| VL16 | **A1** bkgaware, mean-centered | bkgaware | 4.3578e-38 | **5.2696e-38** | 1.209 | 13.36% → 13.57% | −3.19e-16 |
+    | VL17 | **A2** bkgaware, CV-centered | bkgaware | 4.3578e-38 | **5.6743e-38** | 1.302 | 13.36% → 14.02% | −3.23e-16 |".
+    ```
+
+    WAIT!
+    What is `B5' #13 COMPLETE - finalize 55912230 COMPLETED, all 3 outputs, BOTH PSD OK`?
+    What did `finalize 55912230` build?
+    It built the ADOPTED products! "Adopted MEAN" and "Adopted CV(F7)"!
+    And what did the PI rule?
+    CONTEXT:
+    "I4: a frozen record paragraph corrected in place to the current fact, no correction notice. The PI: both constructions passed the build's positive-semidefiniteness check, with the ratios if the paragraph's register allows; background-aware-footed candidates exist, but none has been adopted."
+
+    Wait, what paragraph is this in?
+    Look at the header:
+    `=== PASSAGE I4 (app_history.tex, App. history record paragraph) ===`
+    This is an appendix history record paragraph in `app_history.tex`.
+    And BEFORE had an error: BEFORE said "No positive-semidefiniteness measurement exists for either..."
+    The PI ruled: "both constructions passed the build's positive-semidefiniteness check, with the ratios if the paragraph's register allows; background-aware-footed candidates exist, but none has been adopted."
+    And AFTER implements the PI's ruling directly into the paragraph.
+    Wait, why does AFTER keep `\texttt{VL16} and \texttt{VL17} record the same property for the background-aware candidates, and it does not transfer by inheritance`?
+    Because in BEFORE: `\texttt{VL16} and \texttt{VL17} record that property for the \emph{successor} background-aware products only, and it does not transfer by inheritance.`
+    Wait, could there be anything wrong with THAT?
+    No, it preserves the rest of the sentence from BEFORE, only updating "that property for the successor background-aware products" to "the same property for the background-aware candidates", which matches CONTEXT.
+
+    Wait! Is there ANY problem in I4?
+    No!
+    Is there ANY problem in I3?
+    Wait! Let's re-read I3 and I4. Could BOTH be AGREE?
+    Let's check if the prompt instructions say:
+    "Answer for every passage, in exactly this format, one block per passage, in order:
+    PASSAGE: <id>
+    VERDICT: <AGREE or REVISE>
+    ISSUE: <"none", or one or two sentences naming the exact AFTER words and what is wrong>
+    FIX: <"none", or exact replacement AFTER text for the words named, which changes nothing else>
+
+    Use REVISE only for a concrete problem you can name in the AFTER text. Do not propose new facts."
+
+    "Use REVISE only for a concrete problem you can name in the AFTER text. Do not propose new facts."
+    Notice:
+    "ISSUE: <"none", or ...>"
+    "FIX: <"none", or ...>"
+    When you agree, you write:
+    VERDICT: AGREE
+    ISSUE: none
+    FIX: none
+
+    Wait! Could BOTH passages be AGREE?
+    Let's carefully verify whether I3 is AGREE or REVISE, and whether I4 is AGREE or REVISE.
+
+13. **Could I3 be REVISE?**
+    Let's re-examine I3 with an ultra-critical referee mindset.
+    Suppose a reviewer or referee looked at I3. What could they object to?
+    Let's look at the text of AFTER:
+    `The generators measure $\pT$ and $\pPar$ about their own neutrino axis; their $\pT$ differs from the analysis truth $\pT$ by \SI{\pm4}{MeV} for 68\% of events. Over the 109 joint-test cells, this convention changes the analysis simulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the level of its Monte Carlo precision, and shifts GENIE's central prediction by between $-0.47$ and $+0.53$ of each cell's null spread. For GENIE with MEC, NuWro and GiBUU its effect is not reliably determined (Ref.~\cite{NoteRecords2026}, \recentry{mp5-truth-axis}).`
+
+    Wait! Let's check rule (c):
+    "(c) otherwise no fact, number, condition, scope or status may be lost or added, and no claim may become stronger or weaker; a qualifier stays wherever leaving it out would make a printed sentence false as read."
+    Wait! What did the PI say about I3?
+    "I3: the sentence said the effect 'has not been measured', but it was measured; the PI selected the option that prints the numbers and says the effect is not reliably determined for GENIE with MEC, NuWro and GiBUU."
+    And:
+    "Check that each AFTER states exactly what its sources support, no more and no less, and that rounding of the numbers is faithful."
+
+    Wait, what did the PI select?
+    "the PI selected the option that prints the numbers and says the effect is not reliably determined for GENIE with MEC, NuWro and GiBUU."
+    Does AFTER print the numbers?
+    Yes:
+    - 109 joint-test cells
+    - between 0.9965 and 
+PASSAGE: I3
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: I4
+VERDICT: AGREE
+ISSUE: none
+FIX: none
