@@ -635,7 +635,7 @@ docs/orchestration/receipts/xr-x1-chi2-20261012/chi2_x1_paperonly.txt	tracked	AR
 docs/orchestration/registry/ALIASES.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/make_drafts.py;tools/registry/check_registry.py;tools/registry/reglib.py;tools/registry/results_index.py;tools/registry/whatis.py	no	11	67	13313
 docs/orchestration/registry/ATTRIBUTION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	4	21	4640
 docs/orchestration/registry/ESTIMATORS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/ledger_rows.py;tools/registry/reglib.py;tools/registry/results_index.py;tools/registry/whatis.py	no	13	12	5313
-docs/orchestration/registry/RESULTS-INDEX.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py;tools/registry/test_registry.py;tools/registry/whatis.py	no	10	24149	5682613
+docs/orchestration/registry/RESULTS-INDEX.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py;tools/registry/test_registry.py;tools/registry/whatis.py	no	10	24149	5720418
 docs/orchestration/registry/RESULTS-POPULATION.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/results_index.py	no	5	126	11424
 docs/orchestration/registry/STATUS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py;tools/registry/results_index.py	no	3	2	396
 docs/orchestration/registry/UNRESOLVED-NAMES.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	tools/registry/reglib.py	no	2	7	2178

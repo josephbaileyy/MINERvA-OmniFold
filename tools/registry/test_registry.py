@@ -256,7 +256,8 @@ class ResultsIndexDiscovery(unittest.TestCase):
         self.f.plant(rel, {"pt/pz": {"closure": 1.01}, "closure_table": {"a/b": 1.0}})
         self.f.write()
         rows = (self.f.root / "docs/orchestration/registry/RESULTS-INDEX.tsv").read_text()
-        self.assertIn("\tpt~1pz/closure\n", rows)  # keypath column: "/" inside a key is written ~1
+        self.assertIn("\tpt~1pz/closure\t\n", rows)  # keypath column: "/" inside a key is written ~1; then R5's
+        # empty same_as (no other receipt holds this row)
         self.assertNotIn("a~1b", rows)  # a key that is itself a path is never a metric key
 
     def test_deleting_an_indexed_receipt_is_reported_as_stale(self) -> None:

@@ -41,6 +41,15 @@ Each R4 hit is one index row. Columns, each derived mechanically:
   self_status  the receipt's own top-level `status` string (else "schema: <schema>"), and its top-level
              `verdict` string if it has one ("verdict: FUTILITY-FAIL"), first 100 characters.
   source, keypath  where to read the value.
+  same_as    (R5, computed, never declared) the path-sorted first included receipt that holds an IDENTICAL row, when
+             that receipt is another one; empty for that first holder's own row and for a row no other receipt
+             repeats. IDENTICAL means the exact TSV strings of keypath, metric, key, value and n are equal: a
+             formatting difference (another significant digit, another n key) is not identical. It is an
+             annotation only: it drops no row and changes no status. Identical rows are not one kind (a re-grade
+             under another covariance, an evidence copy, a carried-forward re-issue, an identity check that is
+             expected to agree), so R5 counts them once without naming why.
+             `distinct` counts (--summary and the .tex rendering) are the rows with an empty same_as, and the
+             receipts holding at least one such row.
 Nothing is ever deleted: a superseded or withdrawn receipt keeps its rows and gains a status.
 """
 from __future__ import annotations
@@ -150,7 +159,31 @@ DESIGN_STATUS = re.compile(r"\bDRAFT\b|NOT REGISTERED|design|\bcosts?\b", re.I)
 PROBE_NAMES = ("R", "B0", "N", "F1", "F2", "configuration 1", "configuration 2", "configuration 3", "400/31",
                "400 trees, 31 leaves", "negweight-refined", "joint-test estimator", "exact-split", "lgbm")
 INDEX_COLUMNS = ("estimator", "point", "scale", "n", "metric", "key", "value", "status", "superseding",
-                 "self_status", "source", "keypath")
+                 "self_status", "source", "keypath", "same_as")
+SAME_AS_FIELDS = (11, 4, 5, 6, 3)   # R5's identity: keypath, metric, key, value, n (row positions, as TSV strings)
+
+
+def tsv_cell(s) -> str:
+    """A row cell as RESULTS-INDEX.tsv writes it."""
+    return str(s).replace("\t", " ").replace("\n", " ")
+
+
+def same_as(rows) -> list[str]:
+    """R5: for each row, the path-sorted first OTHER receipt holding a row whose SAME_AS_FIELDS are the identical
+    TSV strings, or "" when the row's own receipt is that first holder or no other receipt holds one."""
+    first: dict[tuple, str] = {}
+    for r in rows:
+        k = tuple(tsv_cell(r[i]) for i in SAME_AS_FIELDS)
+        if k not in first or r[10] < first[k]:
+            first[k] = r[10]
+    return [("" if first[k] == r[10] else first[k]) for r, k in
+            ((r, tuple(tsv_cell(r[i]) for i in SAME_AS_FIELDS)) for r in rows)]
+
+
+def distinct(rows) -> tuple[int, int]:
+    """R5's distinct counts of rows carrying a same_as cell: rows with it empty, and receipts holding one such."""
+    keep = [r for r in rows if not r[12]]
+    return len(keep), len({r[10] for r in keep})
 
 
 KI98_PAIRS = re.compile(r"(r|d|se|se_d)_([abc])")
@@ -409,21 +442,21 @@ def generate(repo: Path) -> tuple[dict[str, str], list[str], dict]:
                          fmt(val), st, by, self_status[:100].replace("\t", " ").replace("\n", " "), path, keypath))
             raw[(path, keypath)] = val
     rows.sort(key=lambda r: (r[0] == "UNATTRIBUTED", r[0], r[10], r[11]))
+    rows = [r + (sa,) for r, sa in zip(rows, same_as(rows))]
     counts = {
         "roots": len(in_roots), "outside": len(outside),
         "included": sum(1 for r in pop_rows if r[1] == "included"),
         "excluded-no-metric": sum(1 for r in pop_rows if r[1] == "excluded-no-metric"),
         "excluded-unparseable": sum(1 for r in pop_rows if r[1] == "excluded-unparseable"),
         "rows": len(rows), "attributed_rows": sum(1 for r in rows if r[0] != "UNATTRIBUTED"),
+        "distinct_rows": distinct(rows)[0], "distinct_receipts": distinct(rows)[1],
         "outside_by_top": Counter(p.split("/", 1)[0] if "/" in p else "." for p in outside),
         "outside_receipts_by_top": Counter(p.split("/", 1)[0] if "/" in p else "." for p in outside
                                            if "receipt" in p.rsplit("/", 1)[-1].lower()),
         "status": Counter(r[7] for r in rows),
     }
 
-    def clean(s: str) -> str:
-        return str(s).replace("\t", " ").replace("\n", " ")
-
+    clean = tsv_cell
     idx_text = "\t".join(INDEX_COLUMNS) + "\n" + "".join("\t".join(clean(c) for c in r) + "\n" for r in rows)
     # Only INCLUDED receipts are committed. Excluded files and the out-of-root counts are printed at run time
     # (--summary, --check, --population), never stored: a committed count of non-result JSON would go stale on
@@ -569,12 +602,16 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
            "% holds every row; this rendering summarizes it.",
            f"{counts['included']} result receipts under "
            + ", ".join(f"\\texttt{{{B(r)}}}" for r in ROOTS)
-           + f" give {counts['rows']} index rows, {counts['attributed_rows']} of them attributed to a registered"
-           " estimator. Status counts: "
+           + f" give {counts['rows']} index rows ({counts['distinct_rows']} distinct), {counts['attributed_rows']} of"
+           " them attributed to a registered estimator. A row is distinct unless a path-earlier receipt holds an"
+           " identical one (the same keypath, metric, key, value and $n$, as the TSV writes them; its"
+           " \\texttt{same\\_as} column names that receipt); "
+           f"{counts['distinct_receipts']} receipts hold at least one distinct row. Status counts: "
            + ", ".join(f"{T(k)} {v}" for k, v in sorted(counts["status"].items())) + ". The summary table gives,"
            " for each estimator and metric family, the number of rows and receipts, the scales and $n$ the receipts"
            " state, the receipts' own status and verdict fields, and the minimum, median and maximum of the values"
-           " (list values contribute every element). Per-row tables follow for attributed rows only; unattributed"
+           " (list values contribute every element); the distinct rows and receipts are in parentheses beside the"
+           " counts. Per-row tables follow for attributed rows only; unattributed"
            " rows are listed by receipt. Every row is in the TSV.", ""]
     groups: dict[str, list] = {}
     for r in rows:
@@ -596,8 +633,9 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
             rs = cells[(fam, key, pg, sc, st)]
             vals = sorted(x for r in rs for x in numbers(raw[(r[10], r[11])]))
             med = vals[len(vals) // 2] if len(vals) % 2 else (vals[len(vals) // 2 - 1] + vals[len(vals) // 2]) / 2
-            out.append(f"\\texttt{{{B(est)}}} & {T(fam)} & \\texttt{{{B(key)}}} & {T(pg)}, {T(sc)} & {T(st)} & {len(rs)} & "
-                       f"{len({r[10] for r in rs})} & {B(short([r[3] for r in rs], 2))} & "
+            dr, dc = distinct(rs)
+            out.append(f"\\texttt{{{B(est)}}} & {T(fam)} & \\texttt{{{B(key)}}} & {T(pg)}, {T(sc)} & {T(st)} & {len(rs)} ({dr}) & "
+                       f"{len({r[10] for r in rs})} ({dc}) & {B(short([r[3] for r in rs], 2))} & "
                        f"{B(short([(r[9] or 'none') for r in rs], 2))} & "
                        f"{B(f'{vals[0]:.4g} / {med:.4g} / {vals[-1]:.4g}')} \\\\")
     out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
@@ -612,10 +650,10 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
                     " listed by receipt, and RESULTS-INDEX.tsv holds every value.", "",
                     r"\begingroup\tiny\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\tabcolsep}{2pt}",
                     r"\begin{longtable}{@{}p{0.50\textwidth}p{0.05\textwidth}p{0.20\textwidth}p{0.20\textwidth}@{}}",
-                    r"\toprule Receipt & Rows & Families & Own status / verdict \\ \midrule\endhead"]
+                    r"\toprule Receipt & Rows (distinct) & Families & Own status / verdict \\ \midrule\endhead"]
             for src in sorted(by):
                 rr = by[src]
-                out.append(f"\\texttt{{{B(src)}}} & {len(rr)} & {T(short([r[4] for r in rr], 4))} & "
+                out.append(f"\\texttt{{{B(src)}}} & {len(rr)} ({distinct(rr)[0]}) & {T(short([r[4] for r in rr], 4))} & "
                            f"{B(rr[0][9] or 'none')} \\\\")
             out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
             continue
@@ -631,7 +669,7 @@ def render_index_tex(rows, counts, index: reglib.Index, raw: dict) -> str:
                 out.append(f"\\multicolumn{{6}}{{@{{}}p{{0.98\\textwidth}}@{{}}}}{{\\textbf{{\\texttt{{{B(r[10])}}}}}"
                            f"{own}}} \\\\*")
                 last = r[10]
-            status = T(r[7]) + (f" ({B(r[8])})" if r[8] else "")
+            status = T(r[7]) + (f" ({B(r[8])})" if r[8] else "") + (f"; same as \\texttt{{{B(r[12])}}}" if r[12] else "")
             out.append(f"\\texttt{{{B(r[1])}}} & {T(r[2])} & {B(r[3])} & {T(r[4])}: \\texttt{{{B(r[5])}}}"
                        f" & {B(r[6])} & {status} \\\\")
         out += [r"\bottomrule", r"\end{longtable}", r"\endgroup", ""]
@@ -727,7 +765,8 @@ def summary_line(c: dict) -> str:
     out = ", ".join(f"{k} {v}" for k, v in sorted(c["outside_by_top"].items()))
     rec = ", ".join(f"{k} {v}" for k, v in sorted(c["outside_receipts_by_top"].items())) or "none"
     return (f"RESULTS-INDEX :: {c['roots']} tracked JSON in the roots: {c['included']} included "
-            f"({c['rows']} rows, {c['attributed_rows']} attributed), {c['excluded-no-metric']} excluded-no-metric, "
+            f"({c['rows']} rows ({c['distinct_rows']} distinct, R5), {c['attributed_rows']} attributed; "
+            f"{c['distinct_receipts']} receipts hold a distinct row), {c['excluded-no-metric']} excluded-no-metric, "
             f"{c['excluded-unparseable']} excluded-unparseable; {c['outside']} tracked JSON outside the roots not read "
             f"({out}; named *receipt*.json: {rec})")
 
@@ -937,6 +976,59 @@ def self_test() -> int:
         rc, out = quiet(check, t)
         case("NO-RESULTS-INDEXED listing emptied in the committed rendering", rc, 1, out)
         ok &= "SILENT ZERO" in out
+        # R5 (same_as): (a) two receipts with identical rows are counted once in "distinct"; (b) a third whose value
+        # differs in the sixth significant digit is not identical; (c) the same value at another keypath is not;
+        # (d) the same value under another n key is not (a formatting difference is not identical); (e) same_as
+        # never names the row's own receipt; (f) the power case: on this fixture the distinct count differs from
+        # the row count, so an implementation that annotates nothing fails; and its control: with every same_as
+        # emptied, the distinct count equals the row count.
+        r5 = "docs/orchestration/state/r5/"
+        docs = {f"{r5}a/assess_receipt.json": {"points": {"nominal": {"n": 40, "pooled_cov68": 0.61,
+                                                                          "pooled_cov95": 0.93}}},
+                f"{r5}b/assess_receipt.json": {"points": {"nominal": {"n": 40, "pooled_cov68": 0.61,
+                                                                          "pooled_cov95": 0.93}}},
+                f"{r5}c/assess_receipt.json": {"points": {"nominal": {"n": 40, "pooled_cov68": 0.610001,
+                                                                          "pooled_cov95": 0.93}}},
+                f"{r5}d/assess_receipt.json": {"points": {"other": {"n": 40, "pooled_cov68": 0.61}}},
+                f"{r5}e/assess_receipt.json": {"points": {"nominal": {"n_exp": 40, "pooled_cov68": 0.61}}}}
+        for rel, doc in docs.items():
+            (t / rel).parent.mkdir(parents=True, exist_ok=True)
+            (t / rel).write_text(json.dumps(doc))
+        g("add", "-A")
+        quiet(write, t)
+        g("add", "-A")
+        rc, out = quiet(check, t)
+        case("R5 fixture indexed and fresh", rc, 0, out)
+        got = {(r[10].split("/")[-2], r[11]): r[12] for r in generate(t)[2]["_rows"] if r[10].startswith(r5)}
+        a_ = f"{r5}a/assess_receipt.json"
+        want = {("a", "points/nominal/pooled_cov68"): "", ("a", "points/nominal/pooled_cov95"): "",
+                ("b", "points/nominal/pooled_cov68"): a_, ("b", "points/nominal/pooled_cov95"): a_,
+                ("c", "points/nominal/pooled_cov68"): "", ("c", "points/nominal/pooled_cov95"): a_,
+                ("d", "points/other/pooled_cov68"): "", ("e", "points/nominal/pooled_cov68"): ""}
+        for name, keys in (("(a) an identical receipt is the first holder's copy", [("b", "points/nominal/pooled_cov68"),
+                                                                                     ("b", "points/nominal/pooled_cov95")]),
+                           ("(b) a value off in the sixth digit is not identical", [("c", "points/nominal/pooled_cov68")]),
+                           ("(c) the same value at another keypath is not identical", [("d", "points/other/pooled_cov68")]),
+                           ("(d) the same value under another n key is not identical",
+                            [("e", "points/nominal/pooled_cov68")])):
+            good = all(got.get(k) == want[k] for k in keys)
+            ok &= good
+            print(f"  self-test {'ok' if good else 'WRONG':<5} R5 {name}: {[got.get(k) for k in keys]}")
+        good = got == want
+        ok &= good
+        print(f"  self-test {'ok' if good else 'WRONG':<5} R5 every fixture row's same_as is the declared one")
+        rows5 = [r for r in generate(t)[2]["_rows"] if r[10].startswith(r5)]
+        good = all(r[12] != r[10] for r in generate(t)[2]["_rows"])
+        ok &= good
+        print(f"  self-test {'ok' if good else 'WRONG':<5} R5 (e) same_as never names the row's own receipt")
+        nd, nr = distinct(rows5)
+        good = (len(rows5), nd, nr) == (8, 5, 4)
+        ok &= good
+        print(f"  self-test {'ok' if good else 'WRONG':<5} R5 (f) power: 8 fixture rows count as 5 distinct in 4 receipts "
+              f"(got {len(rows5)} rows, {nd} distinct, {nr} receipts)")
+        good = distinct([r[:12] + ("",) for r in rows5]) == (len(rows5), len({r[10] for r in rows5}))
+        ok &= good
+        print(f"  self-test {'ok' if good else 'WRONG':<5} R5 (f) control: with every same_as emptied, distinct = rows")
     # One fixture per exclusion class (family() on the key as the walker sees it), and a positive control each.
     sd_doc = {"library_bias_eavail": {"cases": {"D1_p0.350": {"bias": 0.1, "sd": 0.02}}}}
     got_sd = sorted("/".join(h[0]) for h in hits(sd_doc))
