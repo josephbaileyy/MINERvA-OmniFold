@@ -161,7 +161,7 @@ cfg = json.load(open(sys.argv[1]))
 sys.path.insert(0, cfg["nd"])
 import fd_g_compare as g
 import fd_g_followup as m
-m.PINS = cfg["pins"]
+m.PINS = m.SENS2_PINS = cfg["pins"]
 g.PREDICTIONS = tuple(dict(p, meta=tuple(p["meta"])) for p in cfg["predictions"])
 sys.argv = ["fd_g_followup.py"] + cfg["argv"]
 raise SystemExit(m.main(cfg["argv"]))
@@ -945,6 +945,490 @@ class CommittedPins(unittest.TestCase):
         for k in (*D.GROUPS, "C_e", "C_model", "C_total"):
             self.assertEqual(len(j["relative_sigma"][k]), 16)
             self.assertIn(k, j["median_relative_sigma"])
+
+
+# ------------------------------------------------------------------------------------------------ G-SENS2
+
+
+class Sens2Tree(FollowupTree):
+    """FollowupTree with G-FOLLOWUP run on it: its readout is the one G-SENS2 pins and references."""
+
+    def write(self, mutate=None, role="adopted", g_mutate=None, s1_mutate=None, fu_mutate=None):
+        super().write(mutate, role=role, g_mutate=g_mutate, s1_mutate=s1_mutate)
+        self.fu_readout = self.root / "fd_g_followup_readout.json"
+        argv = self.fargv[:-1] + [str(self.fu_readout)]
+        with mock.patch("sys.stdout"):
+            F.run(F.build_args(argv), self.fpins, self.predictions)
+        if fu_mutate:
+            r = json.loads(self.fu_readout.read_text())
+            fu_mutate(r)
+            self.fu_readout.write_text(json.dumps(r))
+        self.spins = {**self.fpins, "g_followup_readout": digest(self.fu_readout)}
+        i = self.fargv.index("--g-diag-readout")
+        self.sargv = self.fargv[:i] + self.fargv[i + 2:-2] + [
+            "--part", "sens2", "--g-followup-readout", str(self.fu_readout), "--out-json", str(self.out / "sens2.json")]
+        return self
+
+    def config(self):
+        return {"nd": str(ND), "pins": self.spins, "predictions": self.predictions, "argv": self.sargv}
+
+
+class Sens2Base(Base):
+    def run_s2(self, tree):
+        with mock.patch("sys.stdout"):
+            self.assertEqual(F.run(F.build_args(tree.sargv), tree.spins, tree.predictions), 0)
+        return json.loads((tree.out / "sens2.json").read_text())
+
+    def assertStops2(self, tree, control, why=""):
+        with self.assertRaises(SystemExit) as cm, mock.patch("sys.stdout"):
+            F.run(F.build_args(tree.sargv), tree.spins, tree.predictions)
+        self.assertIn(f"FAIL control {control}:", str(cm.exception.code))
+        self.assertIn(why, str(cm.exception.code))
+        self.assertFalse((tree.out / "sens2.json").exists(), "a refused run wrote its readout")
+
+
+def by_hand2(tree, name, groups, alpha):
+    """As PlantedDefects.by_hand, for any tuple of groups shrunk."""
+    cells = list(G.GIBUU_CELLS) if name == "gibuu" else list(range(16))
+    i = np.asarray(cells)
+    fi = tree.f[i]
+    ff = np.outer(fi, fi)
+    p = tree.preds[name]
+    gc = p["g"][i]
+    grp = {}
+    for k, v in tree.blocks.items():
+        grp[sa.group_of(k)] = grp.get(sa.group_of(k), 0) + v[np.ix_(i, i)] / ff
+    B = {g: ((1 - alpha) * C + alpha * np.diag(np.diag(C)) if g in groups else C) for g, C in grp.items()}
+    for j, v in enumerate(D.VERTICES):
+        B[f"C_model:{v}"] = np.outer(tree.S[j][i], tree.S[j][i])
+    B["C_resp"] = tree.Cx[np.ix_(i, i)] / ff
+    B["V_g"] = np.diag(p["relvar"][i] * gc ** 2 / fi ** 2)
+    return cells, (tree.f[i] - gc) / fi, B
+
+
+def check_shares(out, tree):
+    """The flux family's top-mode shares at alpha 0 and 0.1, the followed alpha-0 mode and the overlap, by hand."""
+    bad = []
+    for name, by in out["flux_top_mode_shares"]["predictions"].items():
+        vs = {}
+        F = None
+        for al in ("0", "0.1"):
+            t = by[al]
+            cells, d, B = by_hand2(tree, name, ("flux",), float(al))
+            F = by_hand2(tree, name, (), 0.0)[2]["flux"]
+            M = sum(B.values())
+            w, V = np.linalg.eigh(M)
+            c = (V.T @ d) ** 2 / w
+            k = int(np.argmax(c))
+            v = V[:, k] * np.sign(V[np.argmax(np.abs(V[:, k])), k])
+            vs[al] = v
+            for b, Bb in B.items():
+                if not np.isclose(t["block_shares"][b], float(v @ Bb @ v / w[k]), rtol=1e-8, atol=1e-12):
+                    bad.append(f"{name} alpha {al} {b}")
+            if t["mode"] != len(cells) - 1 - k or not np.isclose(t["sigma"], np.sqrt(w[k]), rtol=1e-9):
+                bad.append(f"{name} alpha {al}: mode or sigma")
+            if not np.isclose(t["flux_ratio"], float(v @ F @ v / (v @ np.diag(np.diag(F)) @ v)), rtol=1e-9):
+                bad.append(f"{name} alpha {al}: flux_ratio")
+            want = {b: float(v @ Bb @ v / w[k]) for b, Bb in B.items()}
+            if (t["dominant"] != max(want, key=want.get) or not np.isclose(t["chi2"], c[k], rtol=1e-9)
+                    or not np.isclose(t["fraction"], c[k] / c.sum(), rtol=1e-9)
+                    or not np.isclose(t["share_sum"], sum(want.values()), rtol=1e-9)):
+                bad.append(f"{name} alpha {al}: dominant, chi2, fraction or share_sum")
+        cells, d, B = by_hand2(tree, name, ("flux",), 0.1)
+        v = vs["0"]
+        q = float(v @ sum(B.values()) @ v)
+        fol = by["alpha_0_mode_at_0.1"]
+        fw = {b: float(v @ Bb @ v / q) for b, Bb in B.items()}
+        if (not np.isclose(fol["variance_along"], q, rtol=1e-9) or fol["dominant"] != max(fw, key=fw.get)
+                or not np.isclose(fol["flux_ratio"], float(v @ F @ v / (v @ np.diag(np.diag(F)) @ v)), rtol=1e-9)):
+            bad.append(f"{name}: the followed mode's variance, dominant block or flux_ratio")
+        if not np.isclose(fol["chi2_along"], float((v @ d) ** 2 / q), rtol=1e-9) or any(
+                not np.isclose(fol["block_shares"][b], float(v @ Bb @ v / q), rtol=1e-8, atol=1e-12) for b, Bb in B.items()):
+            bad.append(f"{name}: the followed mode")
+        if not np.isclose(by["overlap_abs"], abs(float(vs["0"] @ vs["0.1"])), rtol=1e-9, atol=1e-12):
+            bad.append(f"{name}: overlap")
+    return bad
+
+
+class Sens2(Sens2Base):
+    def test_the_declared_constants(self):
+        self.assertEqual(F.SENS2_FAMILIES, {"flux": ("flux",), "detector": ("detector",), "lateral": ("lateral",)})
+        self.assertEqual(F.SENS2_ROLE, "single group")
+        self.assertEqual(F.IDENTITY, (("interaction", 1.0, "nuwro"), ("c_e_systematic", 0.25, "gibuu")))
+        self.assertEqual(F.SHARES, ("flux", (0.0, 0.1)))
+        self.assertNotIn("g_followup_readout", F.PINS)
+        self.assertEqual({k: v for k, v in F.SENS2_PINS.items() if k != "g_followup_readout"}, D.PINS)
+        self.assertEqual(F.SENS2_PINS["g_followup_readout"],
+                         "cd82517afdfb1dc8383580c8a4c57e82d9b87864e75d28528cb35c4455f6e379")
+        self.assertFalse(set(F.SENS2_FAMILIES) & set(F.FAMILIES))
+
+    def test_run_as_invoked_every_number_by_hand(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        r = self.run_module(tree)
+        self.assertEqual(r.returncode, 0, r.stderr[-3000:])
+        for c in ("D0", "D1", "D2", "D3", "D4", "D5", "H0", "H1", "S0", "S1", "S2", "H2"):
+            self.assertIn(f"PASS control {c} ", r.stdout)
+        for c in ("F0", "R1", "R2", "R3", "R4"):
+            self.assertNotIn(f"control {c} ", r.stdout)
+        out = json.loads((tree.out / "sens2.json").read_text())
+        g = {p["name"]: p for p in json.loads(tree.g_readout.read_text())["predictions"]}
+        fu = json.loads(tree.fu_readout.read_text())
+        self.assertEqual(out["schema"], "fd-g-sens2-readout/1")
+        self.assertEqual(out["controls_passed"], ["D0", "D1", "D2", "D3", "D4", "D5", "H0", "H1", "S0", "S1", "S2", "H2"])
+        self.assertEqual(out["non_finite_written_as_null"], 0)
+        self.assertEqual(find_p(out), [])
+        self.assertEqual(out["referenced"]["g_followup_readout"], digest(tree.fu_readout))
+        # H0's identity: the two records, equal to the G-FOLLOWUP readout's
+        self.assertEqual([(x["family"], x["alpha"], x["prediction"]) for x in out["identity"]], list(F.IDENTITY))
+        for x in out["identity"]:
+            ref = next(r for r in fu["sens"]["records"] if (r["family"], r["alpha"], r["prediction"]) ==
+                       (x["family"], x["alpha"], x["prediction"]))
+            self.assertEqual(x["chi2_g_followup_readout"], ref["chi2"])
+            self.assertLessEqual(x["relative_difference"], 1e-12)
+        # no interaction or joint record is recomputed
+        self.assertEqual({x["family"] for x in out["sens"]["records"]}, {"flux", "detector", "lateral"})
+        recs = out["sens"]["records"]
+        self.assertEqual(len(recs), 3 * 5 * 5)
+        for fam, un in out["sens"]["unchanged"].items():
+            self.assertNotIn(fam, un)
+            self.assertIn("normalization", un)
+            self.assertEqual(len(un), 7 + 3 + 1 + 1 - 1)
+        for x in recs:
+            cells, d, B = by_hand2(tree, x["prediction"], F.SENS2_FAMILIES[x["family"]], x["alpha"])
+            M = sum(B.values())
+            want = float(d @ np.linalg.solve(M, d))
+            self.assertAlmostEqual(x["chi2"], want, delta=1e-9 * want)
+            self.assertEqual(x["ndf"], len(cells))
+            self.assertEqual(x["family_role"], "single group")
+            self.assertEqual(x["label"], F.SENS_LABEL)
+            self.assertEqual(set(x["shrunk_group_lambda_min"]), {x["family"]})
+            if x["alpha"] == 0:
+                self.assertAlmostEqual(x["chi2"], g[x["prediction"]]["total"]["chi2"], delta=1e-10 * x["chi2"])
+            ev = np.sort(np.linalg.eigvalsh(M))[::-1]
+            self.assertAlmostEqual(x["condition"], ev[0] / ev[-1], delta=1e-8 * ev[0] / ev[-1])
+            w, V = np.linalg.eigh(M)
+            c = (V.T @ d) ** 2 / w
+            k = int(np.argmax(c))
+            self.assertEqual(x["top_mode"]["mode"], len(cells) - 1 - k)
+            self.assertAlmostEqual(x["top_mode"]["sigma"], np.sqrt(w[k]), delta=1e-9 * np.sqrt(w[k]))
+            frac = np.cumsum(np.sort(c)[::-1]) / c.sum()
+            self.assertEqual(x["modes_needed"], {f"{int(round(100 * q))}%": int(np.argmax(frac >= q - 1e-12) + 1)
+                                                 for q in D.FRACTIONS})
+            self.assertFalse(x["stability"]["unstable"])
+        for x in recs:
+            a0 = next(y for y in recs if (y["family"], y["prediction"], y["alpha"]) == (x["family"], x["prediction"], 0.0))
+            self.assertEqual(x["chi2_at_alpha_0"], a0["chi2"])
+        self.assertEqual(out["referenced"]["families"], {k: list(v) for k, v in F.FAMILIES.items()})
+        self.assertEqual(out["constants"]["families"], {"flux": ["flux"], "detector": ["detector"], "lateral": ["lateral"]})
+        self.assertEqual(out["constants"]["identity"], [["interaction", 1.0, "nuwro"], ["c_e_systematic", 0.25, "gibuu"]])
+        self.assertEqual(out["sens"]["reported_matrix"], "C_total + C_resp + V_g")
+        self.assertIn("not recomputed", out["labels"]["referenced"])
+        self.assertEqual(out["labels"]["sens"], F.LABELS["sens"])
+        # alpha = 1 on each family moves the chi2
+        for fam in F.SENS2_FAMILIES:
+            a1 = next(x for x in recs if x["family"] == fam and x["alpha"] == 1.0 and x["prediction"] == "genie_cv")
+            self.assertGreater(abs(a1["chi2"] - a1["chi2_at_alpha_0"]), 1e-9 * a1["chi2_at_alpha_0"])
+        # the addition
+        sh = out["flux_top_mode_shares"]
+        self.assertEqual((sh["family"], sh["alphas"]), ("flux", [0.0, 0.1]))
+        self.assertEqual(sorted(sh["predictions"]), sorted(p["name"] for p in tree.predictions))
+        self.assertEqual(check_shares(out, tree), [])
+        lines = r.stdout.splitlines()
+        self.assertIn(f"[G-SENS2] every line below: {F.SENS_LABEL}", lines)
+        for x in recs:
+            ln = next(ln for ln in lines if ln.startswith(f"[G-SENS] {x['family']:14s} alpha {x['alpha']:<4g} "
+                                                          f"{x['prediction']:10s}:"))
+            self.assertIn(f"chi2 {x['chi2']:.2f}/{x['ndf']}", ln)
+        self.assertEqual(len([ln for ln in lines if ln.startswith("[G-SENS2] flux alpha ")]), 10)
+        self.assertEqual(len([ln for ln in lines if ln.startswith("[G-SENS2] flux alpha-0 mode at 0.1")]), 5)
+        for name, by in sh["predictions"].items():
+            self.assertEqual(set(by), {"0", "0.1", "alpha_0_mode_at_0.1", "overlap_abs"})
+            self.assertEqual(by["0"]["mode"], next(r for r in recs if r["family"] == "flux" and r["alpha"] == 0
+                                                   and r["prediction"] == name)["top_mode"]["mode"])
+        self.assertEqual(sorted(p.name for p in tree.out.iterdir()), ["sens2.json"])
+
+    def test_normalization_and_every_other_block_bit_identical(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        calls, real = [], F.sens_record
+
+        def spy(d, B, cells):
+            calls.append(B)
+            return real(d, B, cells)
+        with mock.patch.object(F, "sens_record", spy):
+            self.run_s2(tree)
+        fam_calls = calls[len(F.IDENTITY):]                      # H0's two come first, then the families in order
+        n = len(F.ALPHAS) * len(tree.predictions)
+        self.assertEqual(len(fam_calls), 3 * n)
+        for k, fam in enumerate(F.SENS2_FAMILIES):
+            block = fam_calls[k * n:(k + 1) * n]
+            for p in range(len(tree.predictions)):
+                ref = block[p * len(F.ALPHAS)]                    # alpha = 0
+                for B in block[p * len(F.ALPHAS):(p + 1) * len(F.ALPHAS)]:
+                    for b in B:
+                        if b != fam:
+                            self.assertTrue(np.array_equal(B[b], ref[b]), (fam, b))
+                    self.assertTrue(np.array_equal(np.diag(B[fam]), np.diag(ref[fam])))
+
+    def test_refuses_to_overwrite(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        (tree.out / "sens2.json").write_text("{}")
+        with self.assertRaises(SystemExit), mock.patch("sys.stdout"):
+            F.run(F.build_args(tree.sargv), tree.spins, tree.predictions)
+
+
+def _top_least(d, blocks, cells, Fl):
+    """A defective top_mode_shares: the mode with the LEAST chi2."""
+    M = sum(blocks.values())
+    lam, V = D.eigen(M)
+    _, c = D.mode_chi2(lam, V, d)
+    t = int(np.argmin(c))
+    v = V[:, t]
+    sh = D.block_shares(v, lam[t], blocks)
+    return {"mode": t, "sigma": float(np.sqrt(lam[t])), "chi2": float(c[t]), "fraction": float(c[t] / c.sum()),
+            "loadings": dict(zip(cells, v.tolist())), "block_shares": sh, "share_sum": float(sum(sh.values())),
+            "dominant": max(sh, key=sh.get), "flux_ratio": F.flux_ratio(v, Fl)}, v
+
+
+class Sens2PlantedDefects(Sens2Base):
+    """One per new item; each defect is patched into the tool and its control (or validator) reports it."""
+
+    def test_flux_family_names_detector(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        with mock.patch.object(F, "SENS2_FAMILIES", {**F.SENS2_FAMILIES, "flux": ("detector",)}):
+            self.assertStops2(tree, "H1", "exactly its own group")
+
+    def test_detector_family_scales_the_diagonal(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real = F.shrunk_blocks
+        with mock.patch.object(F, "shrunk_blocks", lambda B, fam, a: {k: ((1 - a) * v if k in fam else v) for k, v in
+                                                                      B.items()} if fam == ("detector",) else
+                               real(B, fam, a)):
+            self.assertStops2(tree, "S2", "diagonal")
+
+    def test_lateral_family_shrinks_normalization_too(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        with mock.patch.object(F, "SENS2_FAMILIES", {**F.SENS2_FAMILIES, "lateral": ("lateral", "normalization")}):
+            self.assertStops2(tree, "H1", "exactly its own group")
+        real = F.shrunk_blocks
+        with mock.patch.object(F, "shrunk_blocks", lambda B, fam, a: real(B, (*fam, "normalization"), a)
+                               if fam == ("lateral",) else real(B, fam, a)):
+            self.assertStops2(tree, "S2", "every block outside the family is unchanged")
+
+    def test_identity_recomputed_with_the_wrong_family(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real, n = F.shrunk_blocks, [0]
+
+        def wrong_in_h0(B, fam, a):
+            n[0] += 1
+            return real(B, ("flux",) if n[0] <= len(F.IDENTITY) else fam, a)
+        with mock.patch.object(F, "shrunk_blocks", wrong_in_h0):
+            self.assertStops2(tree, "H0", "two G-FOLLOWUP chi2 values")
+
+    def test_identity_against_a_tampered_readout(self):
+        def fu_mutate(r):
+            rec = next(x for x in r["sens"]["records"] if (x["family"], x["alpha"], x["prediction"]) == F.IDENTITY[0])
+            rec["chi2"] *= 1 + 1e-8
+        tree = Sens2Tree(self.tmp / "t").write(fu_mutate=fu_mutate)
+        self.assertStops2(tree, "H0", "two G-FOLLOWUP chi2 values")
+
+    def test_shares_not_divided_by_lambda(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        with mock.patch.object(D, "block_shares", lambda v, lam, B: {k: float(v @ b @ v) for k, b in B.items()}):
+            self.assertStops2(tree, "H2", "sum to 1")
+
+    def test_shares_of_the_mode_with_the_least_chi2(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        with mock.patch.object(F, "top_mode_shares", _top_least):
+            self.assertStops2(tree, "H2", "the one its record carries")
+
+    def test_shares_from_the_unshrunk_blocks(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        out = self.run_s2(tree)
+        self.assertEqual(check_shares(out, tree), [])
+        (tree.out / "sens2.json").unlink()
+        real, n = F.shrunk_blocks, [0]
+        before = len(F.IDENTITY) + 3 * len(F.ALPHAS) * len(tree.predictions)
+
+        def unshrunk_in_the_shares(B, fam, a):
+            n[0] += 1
+            return real(B, fam, 0.0 if n[0] > before else a)
+        with mock.patch.object(F, "shrunk_blocks", unshrunk_in_the_shares):
+            self.assertStops2(tree, "H2", "the one its record carries")
+
+
+class Sens2Controls(Sens2Base):
+    def test_h0_the_pin(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        tree.spins["g_followup_readout"] = "0" * 64
+        self.assertStops2(tree, "H0", "g_followup_readout")
+
+    def test_h0_each_sub_check(self):
+        for change, why in ((lambda r: r.update(schema="fd-g-followup-readout/0"), "differs in schema"),
+                            (lambda r: r["inputs_sha256"].update(g_readout="0" * 64), "differs in Stage G readout"),
+                            (lambda r: r["inputs_sha256"].update(extra_block="0" * 64), "differs in extra block"),
+                            (lambda r: r["constants"]["families"].pop("interaction"), "differs in its families"),
+                            (lambda r: r["constants"].update(alphas=[0.0, 1.0]), "differs in its alphas"),
+                            (lambda r: r["sens"].update(reported_matrix="C_total + V_g"),
+                             "differs in its reported matrix"),
+                            (lambda r: r["inputs_sha256"].update(s1_npz="0" * 64), "differs in its shared input pins"),
+                            (lambda r: r["inputs_sha256"].update(nuwro="0" * 64), "differs in its predictions"),
+                            (lambda r: next(x for x in r["sens"]["records"] if (x["family"], x["alpha"],
+                                            x["prediction"]) == F.IDENTITY[1]).update(chi2=None), "with a chi2"),
+                            (lambda r: r["sens"].update(records=[]), "differs in its predictions")):
+            with self.subTest(why=why):
+                tree = Sens2Tree(self.tmp / "t").write(fu_mutate=change)
+                self.assertStops2(tree, "H0", why)
+
+    def test_s0_runs_on_the_new_families(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real, calls = F.sens_record, [0]
+
+        def drop_after_identity(d, B, c):
+            calls[0] += 1
+            return real(d, B if calls[0] <= len(F.IDENTITY) else {k: v for k, v in B.items() if k != "C_resp"}, c)
+        with mock.patch.object(F, "sens_record", drop_after_identity):
+            self.assertStops2(tree, "S0", "alpha = 0 reproduces")
+
+    def test_s1_an_indefinite_shrunk_matrix(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real = F.shrunk_blocks
+        with mock.patch.object(F, "shrunk_blocks", lambda B, fam, a: {k: (-60.0 * v if k in fam else v) for k, v in
+                                                                      B.items()} if fam == ("flux",) and a > 0 else
+                               real(B, fam, a)):
+            self.assertStops2(tree, "S1", "positive definite")
+
+
+class Sens2Coverage(Sens2Base):
+    """Review B's survivors, each killed by the test named for it."""
+
+    def test_the_default_pins_are_sens2s(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        with mock.patch.object(F, "SENS2_PINS", tree.spins), mock.patch("sys.stdout"):
+            self.assertEqual(F.run(F.build_args(tree.sargv), None, tree.predictions), 0)
+
+    def test_identity_fields_below_the_tolerance(self):
+        def fu_mutate(r):
+            rec = next(x for x in r["sens"]["records"] if (x["family"], x["alpha"], x["prediction"]) == F.IDENTITY[0])
+            rec["chi2"] *= 1 + 1e-13
+        tree = Sens2Tree(self.tmp / "t").write(fu_mutate=fu_mutate)
+        out = self.run_s2(tree)
+        fu = json.loads(tree.fu_readout.read_text())
+        ref = next(x for x in fu["sens"]["records"] if (x["family"], x["alpha"], x["prediction"]) == F.IDENTITY[0])
+        i0 = out["identity"][0]
+        self.assertEqual(i0["chi2_g_followup_readout"], ref["chi2"])
+        self.assertNotEqual(i0["chi2_recomputed"], ref["chi2"])
+        self.assertAlmostEqual(i0["relative_difference"], abs(i0["chi2_recomputed"] - ref["chi2"]) / ref["chi2"],
+                               delta=1e-18)
+        self.assertGreater(i0["relative_difference"], 1e-14)
+
+    def test_h0_refuses_a_recomputed_chi2_that_is_none(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real, n = F.sens_record, [0]
+
+        def none_in_h0(d, B, c):
+            n[0] += 1
+            return {**real(d, B, c), "chi2": None} if n[0] <= len(F.IDENTITY) else real(d, B, c)
+        with mock.patch.object(F, "sens_record", none_in_h0):
+            self.assertStops2(tree, "H0", "two G-FOLLOWUP chi2 values")
+
+    def test_s2_one_ulp_on_a_diagonal_an_off_diagonal_and_an_extra_block(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real = F.shrunk_blocks
+
+        def ulp(B, fam, a):
+            out = real(B, fam, a)
+            if fam == ("flux",) and a > 0:
+                C = out["flux"].copy()
+                C[3, 3] = np.nextafter(C[3, 3], np.inf)
+                out["flux"] = C
+            return out
+
+        def off(B, fam, a):
+            out = real(B, fam, a)
+            if fam == ("detector",) and a > 0:
+                C = out["detector"].copy()
+                C[0, 1] *= 1 + 1e-9
+                C[1, 0] *= 1 + 1e-9
+                out["detector"] = C
+            return out
+
+        def extra(B, fam, a):
+            out = real(B, fam, a)
+            if fam == ("lateral",) and a > 0:
+                out = {**out, "extra": 1e-6 * np.eye(len(next(iter(out.values()))))}
+            return out
+        for patch, why in ((ulp, "diagonal"), (off, "(1 - alpha) times"), (extra, "diagonal")):
+            with self.subTest(why=why), mock.patch.object(F, "shrunk_blocks", patch):
+                self.assertStops2(tree, "S2", why)
+
+    def test_h2_tolerance_followed_shares_and_a_flipped_loading(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        real_f, real_t = F.followed_mode, F.top_mode_shares
+
+        def fol_bad(v, d, B, Fl):
+            r = real_f(v, d, B, Fl)
+            return {**r, "share_sum": r["share_sum"] * (1 + 1e-6)}
+
+        def flip(d, B, c, Fl):
+            r, v = real_t(d, B, c, Fl)
+            k = c[0]
+            return {**r, "loadings": {**r["loadings"], k: -r["loadings"][k]}}, v
+
+        def shares_bad(d, B, c, Fl):
+            r, v = real_t(d, B, c, Fl)
+            return {**r, "share_sum": r["share_sum"] * (1 + 1e-6)}, v
+        for name, patch, why in (("followed_mode", fol_bad, "sum to 1"), ("top_mode_shares", flip, "carries"),
+                                 ("top_mode_shares", shares_bad, "sum to 1")):
+            with self.subTest(why=why), mock.patch.object(F, name, patch):
+                self.assertStops2(tree, "H2", why)
+
+    def test_h1_refuses_a_family_named_for_a_forbidden_group(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        for fam in ({"normalization": ("normalization",)}, {"stat": ("stat",)}, {"interaction": ("interaction",)}):
+            with self.subTest(fam=fam), mock.patch.object(F, "SENS2_FAMILIES", {**F.SENS2_FAMILIES, **fam}):
+                self.assertStops2(tree, "H1", "exactly its own group")
+
+    def test_the_sensitivity_role_leaves_c_resp_out_of_unchanged(self):
+        tree = Sens2Tree(self.tmp / "t").write(role="sensitivity")
+        out = self.run_s2(tree)
+        self.assertEqual(out["sens"]["reported_matrix"], "C_total + V_g")
+        for un in out["sens"]["unchanged"].values():
+            self.assertNotIn("C_resp", un)
+            self.assertIn("normalization", un)
+
+
+class Sens2Invocation(Sens2Base):
+    def test_part_sens2_needs_the_followup_readout_and_followup_needs_g_diag(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        i = tree.sargv.index("--g-followup-readout")
+        r = run_isolated([str(ND / "fd_g_followup.py"), *tree.sargv[:i], *tree.sargv[i + 2:]])
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("--part sens2 requires --g-followup-readout", r.stderr)
+        j = tree.fargv.index("--g-diag-readout")
+        r = run_isolated([str(ND / "fd_g_followup.py"), *tree.fargv[:j], *tree.fargv[j + 2:]])
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("--part followup requires --g-diag-readout", r.stderr)
+        r = run_isolated([str(ND / "fd_g_followup.py"), *tree.sargv, "--g-diag-readout", "x.json"])
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("--part sens2 does not read --g-diag-readout", r.stderr)
+
+    def test_the_real_script_reaches_d0_and_refuses_synthetic_records(self):
+        tree = Sens2Tree(self.tmp / "t").write()
+        r = run_isolated([str(ND / "fd_g_followup.py"), *tree.sargv])
+        self.assertEqual(r.returncode, 1, r.stderr[-2000:])
+        self.assertIn("FAIL control D0:", r.stderr)
+        self.assertNotIn("Traceback", r.stderr)
+
+
+class Sens2CommittedPins(unittest.TestCase):
+    def test_the_g_followup_readout_pin_and_the_identity_records(self):
+        p = FD / "fd/readout/fd_g_followup_readout.json"
+        self.assertEqual(digest(p), F.SENS2_PINS["g_followup_readout"])
+        r = json.loads(p.read_text())
+        self.assertEqual(r["constants"]["families"], {k: list(v) for k, v in F.FAMILIES.items()})
+        keys = {(x["family"], x["alpha"], x["prediction"]) for x in r["sens"]["records"]}
+        self.assertTrue(set(F.IDENTITY) <= keys)
+        self.assertEqual({k: r["inputs_sha256"][k] for k in D.PINS}, D.PINS)
 
 
 if __name__ == "__main__":
