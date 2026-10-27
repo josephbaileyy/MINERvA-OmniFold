@@ -1,0 +1,39 @@
+PASSAGE: sec_3d:82
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_3d:91
+VERDICT: REVISE
+ISSUE: The pointer `\S\ref{sec:closure-map}` uses a section symbol and label prefix `sec:` to refer to what the context identifies as a table, `Table~\ref{tab:closure-map}`.
+FIX: Table~\ref{tab:closure-map}
+
+PASSAGE: sec_3d:124
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_3d:193
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_3d:200
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_3d:207
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_eavailw:5
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_eavailw:111
+VERDICT: AGREE
+ISSUE: none
+FIX: none

@@ -1,0 +1,59 @@
+PASSAGE: sec_5d:4
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:8
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:17
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:31
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:61
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:131
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:135
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:192
+VERDICT: REVISE
+ISSUE: The pointer \S\ref{sec:val-departure} is incorrect because that section treats regularization bias from truth departures; the home for the data-stability failure and the candidate-only scope is \S\ref{sec:val-negweight}.
+FIX: \S\ref{sec:val-negweight}
+
+PASSAGE: sec_joint:5
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_joint:16
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_joint:168
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_joint:354
+VERDICT: AGREE
+ISSUE: none
+FIX: none

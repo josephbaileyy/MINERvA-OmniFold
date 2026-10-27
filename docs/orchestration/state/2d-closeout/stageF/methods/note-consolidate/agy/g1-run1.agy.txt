@@ -1,0 +1,44 @@
+PASSAGE: selection_features:20
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:44
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:100
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:4
+VERDICT: REVISE
+ISSUE: The words "For the 3D and 4D uncertainties, see \S\ref{sec:3d}." are misleading and factually incorrect as read because they assert that 3D and 4D uncertainties exist and can be found in \S\ref{sec:3d}, whereas no 3D budget is quoted and no 4D uncertainty magnitude is reported.
+FIX: No 3D budget is quoted, and no 4D uncertainty magnitude is reported (\S\ref{sec:3d}).
+
+PASSAGE: sec_systematics:53
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:204
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_systematics:302
+VERDICT: REVISE
+ISSUE: The words "For the 4D and extended-fiducial covariances, see \S\ref{sec:3d} and \S\ref{sec:fps}." are misleading and factually incorrect as read because they imply that covariances exist for the 4D and extended-fiducial results, whereas neither result has a covariance and the 5D covariance is not transferred to them.
+FIX: The 4D and extended-fiducial results have no covariance (\S\ref{sec:3d}, \S\ref{sec:fps}), and the 5D covariance is not transferred to them.
+
+PASSAGE: sec_validation:18
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_validation:61
+VERDICT: AGREE
+ISSUE: none
+FIX: none

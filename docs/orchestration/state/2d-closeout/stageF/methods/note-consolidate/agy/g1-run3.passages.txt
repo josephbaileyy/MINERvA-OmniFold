@@ -1,0 +1,29 @@
+PASSAGE selection_features:20
+BEFORE:
+\caption{Selection and classifier information are separate choices. Reporting bins are not classifier inputs. Removing truth cuts adds extrapolation without adding selected data. PET design-study recovery does not validate real-data background subtraction; PET remains diagnostic method development.}
+AFTER:
+\caption{Selection and classifier information are separate choices. Reporting bins are not classifier inputs. Extended fiducial domain: \S\ref{sec:fps}. PET design-study recovery does not validate real-data background subtraction; PET remains diagnostic method development.}
+
+PASSAGE sec_method:44
+BEFORE:
+Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural networks for the scalar unfolds. With at most five high-level features per event, tree ensembles typically match or outperform neural networks~\cite{Grinsztajn:2022tabular} and train deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations. We use GBDTs for all unfolds in this note; point-cloud representations are future work (App.~\ref{sec:pet}). Calibration tests and MLP/transformer cross-checks test the implementation in \S\ref{sec:3d-classifier}.
+AFTER:
+Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural networks for the scalar unfolds. With at most five high-level features per event, tree ensembles typically match or outperform neural networks~\cite{Grinsztajn:2022tabular} and train deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools} demonstrates their effectiveness for unbinned unfolding with few high-level features, complementing deep models for low-level event representations. We use GBDTs for all unfolds in this note (point-cloud representations: App.~\ref{sec:pet}). Calibration tests and MLP/transformer cross-checks test the implementation in \S\ref{sec:3d-classifier}.
+
+PASSAGE sec_systematics:204
+BEFORE:
+\item the dependence on the machine-learning estimator: a per-bin median of \SI{1.03}{\percent} (maximum \SI{17.6}{\percent}) between the central value and the exact-split cross-check, which also differ in background treatment (\S\ref{sec:uq-ml});
+AFTER:
+\item the dependence on the machine-learning estimator (\S\ref{sec:uq-ml});
+
+PASSAGE sec_validation:18
+BEFORE:
+Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Predeclared coverage windows; earlier band fails. Rebuilt band awaits independent test \\
+AFTER:
+Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Predeclared coverage windows; earlier band fails (\S\ref{sec:coverage}) \\
+
+PASSAGE sec_validation:61
+BEFORE:
+simulation. All retain the simulated MINERvA detector response. ``Marginal''
+AFTER:
+simulation. ``Marginal''
