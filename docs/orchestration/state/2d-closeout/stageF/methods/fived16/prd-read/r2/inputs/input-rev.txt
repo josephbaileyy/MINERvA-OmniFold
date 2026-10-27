@@ -1,0 +1,92 @@
+CONTEXT 1. The paper's current abstract (117 words):
+
+Applied to MINERvA open data for medium-energy ν_μ charged-current inclusive interactions, OmniFold reproduces the published muon-kinematic cross section’s integral within about 1%, with a correlated shape difference. With five simultaneous observables (adding available energy, three-momentum transfer, and hadronic invariant mass), it yields central values only, whose normalizations agree with lower-dimensional results. Pseudo-experiments measure a background-subtraction bias, a partial recovery of generator-sized truth changes, and statistical undercoverage at the tested truths. With a model-dependence envelope added linearly to the uncertainty, no tested reporting definition meets our 10% precision criterion. As an illustration, simulation-calibrated tests of hybrid null hypotheses for five generator predictions all reject at the 5% familywise level, with no evidence of gain over matched coarse projections.
+
+CONTEXT 2. The companion technical note's current abstract (584 words):
+
+We study multidimensional medium-energy charged-current neutrino–nucleus cross sections on MINERvA open data with OmniFold, an unbinned machine-learning unfolding method. With this method, the double-differential cross section in muon transverse and longitudinal momentum reproduces the published integral within about one percent, with a correlated shape difference, and its uncertainty is comparable in size to the published one. That uncertainty is computed with the central value's own estimator, its universe and statistical blocks at the central value's training seed, and it has not been independently validated. Adding available energy (E_avail), three-momentum transfer (q_3), and hadronic invariant mass (W) gives simultaneous unbinned three-, four-, and five-observable MINERvA unfolds, each of which passes marginal-normalization checks against the lower-dimensional result to ≈1–2 %. Binned MINERvA measurements already reach triple-differential; the methodological feature here is simultaneous unbinned unfolding of five related, not independent, observables. In central values, the tested generators under-predict the data at low E_avail, in the region of the established MINERvA low-recoil discrepancy. Relative to the MINERvA-tuned simulation, the data show a descriptive excess at high E_avail and high W: a fifth of the positive difference from that simulation lies in the single widest overflow cell, the regularization bias is largest in this region, and in ratio the excess also extends to low W. Four external generators also under-predict the data there, each by about its overall shortfall once the high-energy neutrinos absent from the GiBUU sample are accounted for, and the NuWro and GiBUU comparisons carry an uncorrected carbon-versus-CH target difference. These comparisons locate no interaction mechanism. Closure tests that include backgrounds show a bias from the purity subtraction, which a negative-weight background treatment largely removes. The five-dimensional central value and its covariance use the purity subtraction, and the central value keeps its bias of up to 4% in the highest-W cells, which no quoted uncertainty includes. In two dimensions, such a test puts the purity and refined negative-weight estimates more than one statistical standard deviation apart in 14 of 205 cells, while the refined estimate stays within 0.44 statistical standard deviations of the truth in every cell; the two-dimensional result and its covariance use the refined estimator. No full five-dimensional comparison of the two background treatments has been made. The negative-weight treatment is used for the two-, three- and four-dimensional central values, in the generator tests, in some five-dimensional validation studies and in two-dimensional equivalence studies. Tests that reweight the truth shape by about the size of the differences between generators show a residual bias, interpreted as regularization bias, that no quoted uncertainty includes. Statistical intervals miscover at the tested truths, and with an envelope over five tested truth deformations none of the tested reporting definitions satisfies the predeclared 10% criterion. As an application illustrating calibrated inference with a biased estimator, joint tests calibrated in simulation reject the hybrid null hypotheses for all five tested generator predictions, in total and in shape, under six stated conditions and at a 5% family-wise error rate under the stated calibration assumptions. The tests recover known discrepancies and are not physical exclusions. They show no evidence of discrimination beyond matched coarse projections, omit an uncertainty on the calorimetric recoil response, and assume convergence of the fine grid on which the null hypotheses are defined, which has not been shown. NuWro's total-test rejection is not robust to a hydrocarbon-target correction. A scalar study examines the effect of removing the truth-level muon kinematic cuts. Point-cloud (PET) representations of the full event are future work, documented separately; this note uses no PET result.
+
+CONTEXT 3. The paper's Scope paragraph (Sec. I), current:
+
+Scope. The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general. Throughout, a three- to five-observable result is a central value without intervals of validated coverage: the output of the estimators of Sec. III, with the observable definitions, simulated detector response, background treatment, and regularization given there. The sixteen-cell result of Sec. V F also has total uncertainties, whose coverage is not validated. The paper does not deliver a validated five-observable cross-section measurement. The generator tests are conditional tests of simulated hybrid null hypotheses, ... [the paragraph continues unchanged]
+
+CONTEXT 4. The paper's Limitations paragraph (Sec. VIII), current:
+
+The limitations of these results are stated with the results they qualify, in Secs. IV–VII. The principal ones are these. The two-dimensional covariance has not been independently validated, and its coverage has not been tested (Sec. IV D). The higher-dimensional central values lack intervals of validated coverage, and the uncertainties of the configuration-(a) five-observable central value omit its regularization bias (Sec. V B). The sixteen-cell result also has total uncertainties, whose coverage is not validated; Sec. V F reports the fake-data tests of the estimator's bias. The generator tests reject hybrid nulls, ... [the paragraph continues unchanged]
+
+CONTEXT 5. Items of the note's release appendix, current (the note names its estimator configurations (a)-(f) throughout):
+
+(1) RC7 supports replay of the higher-dimensional inference from sufficient inputs, but not extraction from the archived pseudo-experiment products, event-level unfolding, or the quoted closure, bias and covariance-status measurements.
+(2) Covariances: the five-axis covariance used in this note and its (E_avail,W) projection, with the algebra of Eqs. (...), the declared centering variant, and the band partition.
+(3) The four measurements that travel with the five-axis covariance used in this note, carried in the package that readers will quote and not only in this note.
+(4) The five-axis covariance used in this note is the file z-cv.npz, with sha256 ... , so a loaded C_Z can be checked against both.
+
+Background: the paper reports two five-observable products. One is a central value from purity-based background subtraction (called configuration (a) in the body), with a covariance. The other is a sixteen-cell result from a refined negative-weight estimator (configuration (e)), with total uncertainties and a fake-data study of its bias; it is new in this draft.
+
+THE PROPOSED CHANGES (answer in the order listed)
+
+R4. [note, release appendix]
+   OLD: "The five-axis covariance used in this note is the file z-cv.npz,"
+   NEW: "The five-axis covariance of the configuration-(a) central value is the file z-cv.npz,"
+
+R3. [note, release appendix]
+   OLD: "The four measurements that travel with the five-axis covariance used in this note"
+   NEW: "The four measurements that travel with the five-axis covariance of the configuration-(a) central value"
+
+R2. [note, release appendix]
+   OLD: "Covariances: the five-axis covariance used in this note and its (E_avail,W) projection,"
+   NEW: "Covariances: the five-axis covariance of the configuration-(a) central value and its (E_avail,W) projection,"
+
+R1. [note, release appendix]
+   OLD: "or the quoted closure, bias and covariance-status measurements."
+   NEW: "or the quoted closure, bias and covariance-status measurements of the configuration-(a) central value."
+
+W3. [paper, Limitations paragraph]
+   OLD: "Sec. V F reports the fake-data tests of the estimator's bias."
+   NEW: "Sec. V F reports the fake-data tests of the estimator's bias, in which the reported uncertainty does not cover the bias at the GiBUU-like truths or at the q_3 tilt."
+
+W2. [paper, Scope paragraph]
+   OLD: "The sixteen-cell result of Sec. V F also has total uncertainties, whose coverage is not validated."
+   NEW: "The sixteen-cell result of Sec. V F is the exception: it also has total uncertainties, whose coverage is likewise not validated."
+
+W1. [paper, Scope paragraph]
+   OLD: "The paper does not deliver a validated five-observable cross-section measurement."
+   NEW: "The paper does not deliver a five-observable cross-section measurement whose intervals have validated coverage; the sixteen-cell result of Sec. V F is reported with total uncertainties and a fake-data study."
+
+N9. [note abstract]
+   OLD: "none of the tested reporting definitions satisfies the predeclared 10% criterion."
+   NEW: "none of the reporting definitions tested in the precision study satisfies the predeclared 10% criterion."
+
+N8. [note abstract]
+   OLD: "Statistical intervals miscover at the tested truths,"
+   NEW: "Statistical intervals of a deterministic purity-subtracted variant miscover at the tested truths,"
+
+N7. [note abstract]
+   OLD: "interpreted as regularization bias, that no quoted uncertainty includes."
+   NEW: "interpreted as regularization bias, that no uncertainty quoted for the purity-subtracted five-dimensional central value includes."
+
+N6. [note abstract]
+   OLD: "The negative-weight treatment is used for the two-, three- and four-dimensional central values, in the generator tests,"
+   NEW: "The negative-weight treatment is used for the two-, three- and four-dimensional central values and the sixteen-cell five-dimensional result, in the generator tests,"
+
+N3. [note abstract]
+   OLD: "The five-dimensional central value and its covariance use the purity subtraction, and the central value keeps its bias of up to 4% in the highest-W cells, which no quoted uncertainty includes."
+   NEW: "The five-dimensional central value and its five-axis covariance use the purity subtraction, and that central value keeps its bias of up to 4% in the highest-W cells, which no uncertainty quoted for it includes; the sixteen-cell result uses the refined negative-weight treatment."
+
+N2. [note abstract]
+   OLD: "the regularization bias is largest in this region"
+   NEW: "the regularization bias measured in the five-dimensional validation is largest in this region"
+
+N1. [note abstract]
+   OLD: "each of which passes marginal-normalization checks against the lower-dimensional result to ≈1–2 %."
+   NEW: "whose central values pass marginal-normalization checks against the lower-dimensional result to ≈1–2 %; a sixteen-cell five-observable result is also reported with total uncertainties, whose coverage is not validated."
+
+A2. [paper abstract]
+   OLD: "no tested reporting definition meets our 10% precision criterion."
+   NEW: "none of the reporting definitions tested in a precision study meets our 10% precision criterion."
+
+A1. [paper abstract]
+   OLD: "it yields central values only, whose normalizations agree with lower-dimensional results."
+   NEW: "it yields central values whose normalizations agree with lower-dimensional results, and a sixteen-cell cross section with total uncertainties whose coverage is not validated."
+
+LENGTH. With every proposal applied, the paper abstract goes from 117 to 135 words, and the note abstract from 584 to 635 words.

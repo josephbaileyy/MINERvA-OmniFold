@@ -118,3 +118,18 @@ It sits right after the precision study's "none … meets this target", so that 
 - **Paper, Fig. 5:** "Data over prediction, f/g, on the sixteen cells for the five predictions of Table V. Each error bar is (f/g) σ/f, with σ the square root of the diagonal of C_total + C_resp; the predictions' finite-sample uncertainties are not drawn. GiBUU (lower panel) is shown on its 8 cells with p∥ < 4.5 GeV/c only. The key below the axes gives each cell's box. The χ² of Table V uses the full covariance, whose correlations the error bars do not show." The last sentence follows FD-G-FIGURES-REPORT's ruling 10.
 - **Note, Fig. 30:** "The three eigenmodes that carry the largest shares of each sixteen-cell prediction's χ² (columns, by rank), for GENIE CV, GENIE + MEC, NuWro and MINERvA Tune v1 (rows), from the reported comparison on C_total + C_resp + V_g relative to f. The bars are each mode's unit loadings on R00–R15, signed so that the largest loading is positive. Each panel gives the mode's share of the χ², its relative σ and the prediction's distance along it, the projection over σ. The residual is (f − g)/f, so a positive distance means that the data lie above the prediction along the mode as signed. GiBUU, compared on 8 cells, has no modes here."
 - Each clause is taken from FD-G-FIGURES-DECLARATION.md's figure rows and its K2–K4 controls.
+
+## For the final draft: items that are yours, from the move and the framing (2026-10-27)
+
+**Title** (outside the abstract block, so it is not edited; DECISION-20261027-joseph-measurement-framing). The options, with the PRD read's choice (round 3, all four runs chose T1; `prd-read/r3/`):
+- T0 (current): "Performance and limitations of multidimensional OmniFold unfolding with MINERvA open data"
+- **T1:** "Simultaneous measurement of the ν_μ charged-current inclusive cross section on hydrocarbon in five observables from MINERvA open data"
+- T2: "Charged-current inclusive ν_μ cross section on hydrocarbon in muon kinematics, available energy, three-momentum transfer and hadronic invariant mass from MINERvA open data"
+- T3: "Five-dimensional ν_μ charged-current inclusive cross section measured with unbinned unfolding of MINERvA open data"
+
+**The abstracts** are drafted in the tree (paper 204 words, from 117; note 349, from 583), led by the sixteen-cell result, with no configuration label and every number through `\fvval`. Round 3: the paper abstract's length is ACCEPTABLE in 4/4 runs; the note abstract is TOO-LONG in 2/4 (sol2). The limitation clauses change when 1A and 3D report (DECISION-20261027-joseph-limitation-plan-f1-bias-test-and-flux-bootstrap).
+
+**Data availability** (main_paper.tex, yours; not edited). After the move, Sec. VII A no longer quotes the (E_avail, W) map's numbers, so "It recomputes … the numbers quoted in Sec. VII A, and it regenerates the analysis note's figures of the joint-test null distributions and the (E_avail, W) map" points at numbers the paper no longer prints. Proposed: "It recomputes every p value, decision, robustness result, and power figure of the joint tests and the five-observable (E_avail, W) map's numbers quoted in the analysis note, and it regenerates the note's figures of the joint-test null distributions and of that map."
+
+**Release scopings (app_release.tex, yours; not edited).** Round 2 accepted R1–R4 ("…of the configuration-(a) central value") in all four runs (`prd-read/r2/`). Whether the release carries the sixteen-cell vector and its covariance stays Q8.
+<!-- absence-ok: states which printed text is not edited and why (it is Joseph's), and quotes the data-availability sentence; not a claim that a result is absent -->
