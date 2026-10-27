@@ -293,6 +293,11 @@ def values(d):
     v["r04-sigma-total"] = pct(rs["C_total + C_resp"])
     assert min(range(16), key=lambda i: tr[i]) == CELLS.index("R04"), "R04 is no longer the smallest-sigma cell"
     assert v["gagg-ecut"] == v["cmodel-gibuu-enu"], "the aggregate's E_nu cut is not GiBUU's sample limit"
+    # the abstract's range: the four predictions compared on all 16 cells (GiBUU, on 8, is printed on its own)
+    full = [k for k in ("gcv", "gmec", "nuwro", "tune") if v[f"g-{k}-total-ndf"] == "16"]
+    assert len(full) == 4 and v["g-gibuu-total-ndf"] == "8"
+    v["g-chi2int-min16"] = str(min(int(v[f"g-{k}-total-chi2int"]) for k in full))
+    v["g-chi2int-max16"] = str(max(int(v[f"g-{k}-total-chi2int"]) for k in full))
     return v
 
 

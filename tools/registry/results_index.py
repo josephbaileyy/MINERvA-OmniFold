@@ -905,13 +905,13 @@ def self_test() -> int:
         case("cited line found by digest after a line is added above it", 0 if moved_ok else 1, 0, "")
         case("an edited cited line is refused by the digest lookup", 1 if edit_refused else 0, 1, "")
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\te-R-joint-test\t"
-                        f"docs/analysis-note/paper_body.tex\t{n_a}\t{a_row['quote']}\t{d285}\n")
+                        f"{a_row['source']}\t{n_a}\t{a_row['quote']}\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(check, t)
         case("ATTRIBUTION row citing a line that names (a), attributed to R", rc, 1, out)
         ok &= "rule 7" in out
         attr.write_text(clean + "docs/orchestration/state/planted/budget\\.json\t\ta-central-lgbm\t"
-                        f"docs/analysis-note/paper_body.tex\t{n_a}\t{a_row['quote']}\t{d285}\n")
+                        f"{a_row['source']}\t{n_a}\t{a_row['quote']}\t{d285}\n")
         g("add", reglib.ATTRIBUTION)
         rc, out = quiet(write, t)
         g("add", "-A")
@@ -949,7 +949,7 @@ def self_test() -> int:
         g("reset", "-q", "--soft", fixture_base)
         wv = t / reglib.WAIVERS
         wv.write_text("estimator\treason\tsource\tline\tquote\tline_sha256\ne-R-joint-test\tself-test waiver\t"
-                      f"docs/analysis-note/paper_body.tex\t{n_a}\t{a_row['quote']}\t{d285}\n")
+                      f"{a_row['source']}\t{n_a}\t{a_row['quote']}\t{d285}\n")
         g("add", reglib.WAIVERS)
         quiet(write, t)
         g("add", "-A")
@@ -961,8 +961,9 @@ def self_test() -> int:
         quiet(write, t)
         g("add", "-A")
         # Never silently zero: with a posted driver that prints labels (a)-(e), removing the NO-RESULTS-INDEXED
-        # listing from the committed rendering must fail.
-        (t / "docs/analysis-note/main_paper.tex").write_text("\\input{paper_body}\n")
+        # listing from the committed rendering must fail. The note's method section prints all six labels; the paper
+        # body has printed none of (a)-(d) since DECISION-20261027-joseph-move-nonfinal-configurations-to-note.
+        (t / "docs/analysis-note/main_paper.tex").write_text("\\input{sec_method}\n")
         g("add", "-A")
         quiet(write, t)
         g("add", "-A")

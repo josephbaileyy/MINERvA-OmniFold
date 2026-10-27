@@ -22,7 +22,8 @@ Checks:
      numbers the App. G entries there; check_note_records.py P5 guards the record paragraphs);
   5. the check-bound SEC4 phrases still print once in sec_validation.tex;
   6. the structural exception (director, 2026-10-27): main_note.tex and main_paper.tex differ from the protected base
-     by exactly the added lines in STRUCTURAL, and in nothing else (their abstracts are Joseph's);
+     by exactly the added lines in STRUCTURAL, and in nothing else outside their abstract blocks (ABSTRACT_OPEN, director
+     2026-10-27, for the move decision's item 5; the abstract text itself is Joseph's);
   7. no numeral is typed by hand in the new prose (sec_fived16.tex, and paper_body.tex between FIVED16-BEGIN and
      FIVED16-END): every number prints through \fvval{key} from values_fived16.tex, which make_values_fived16.py
      generates from pinned readouts; only the integers in NUMERAL_OK may appear bare.
@@ -46,6 +47,23 @@ RECORDS = {"app_provenance.tex", "app_history.tex", "app_release_records.tex", "
 PROTECTED = ["values.tex", "values_inference.tex", "app_history.tex", "app_release.tex"]
 STRUCTURAL = {"main_note.tex": [r"\input{values_fived16}", r"\input{sec_fived16}"],
               "main_paper.tex": [r"\input{values_fived16}"]}
+# The abstract block of each driver may change (director, 2026-10-27, approving decision
+# DECISION-20261027-joseph-move-nonfinal-configurations-to-note item 5 for the abstract block only): the lines strictly between
+# \begin{abstract} and \end{abstract}. Every other line of the driver must still equal the protected base.
+ABSTRACT_OPEN = {"main_paper.tex", "main_note.tex"}
+
+
+def mask_abstract(text):
+    """The driver with its abstract block's content replaced by one marker line; None if the markers are not each once."""
+    lines = text.splitlines()
+    if lines.count("\\begin{abstract}") != 1 or lines.count("\\end{abstract}") != 1:
+        return None
+    a, b = lines.index("\\begin{abstract}"), lines.index("\\end{abstract}")
+    if b < a:
+        return None
+    return "\n".join(lines[:a + 1] + ["@@ABSTRACT@@"] + lines[b:])
+
+
 NUMERAL_OK = {"16", "8", "5"}   # the cell count, GiBUU's cell count, the number of observables
 SEC4 = [r"lies entirely below its window \(Gaussian 0\.954\)",
         r"removes the tail undercoverage: \$C_2=0\.977\$ \$\[0\.974,0\.980\]\$ and \$C_1=0\.781\$"]
@@ -162,8 +180,13 @@ def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, struct_cur=None)
                 fails.append(f"STRUCTURAL {f}: the line {a!r} must appear exactly once")
             elif a in lines:
                 lines.remove(a)
-        if "\n".join(lines) != "\n".join(prot_old.get(f, "").splitlines()):
-            fails.append(f"STRUCTURAL {f}: changed beyond the approved \\input lines")
+        now, base = "\n".join(lines), "\n".join(prot_old.get(f, "").splitlines())
+        if f in ABSTRACT_OPEN:
+            now, base = mask_abstract(now), mask_abstract(base)
+            if now is None:
+                fails.append(f"STRUCTURAL {f}: the abstract markers must each appear exactly once, in order")
+        if now is not None and now != base:
+            fails.append(f"STRUCTURAL {f}: changed beyond the approved \\input lines and the abstract block")
     fails += numerals(cur)
     if "sec_validation.tex" in cur:
         v = printed(cur["sec_validation.tex"])
@@ -215,8 +238,18 @@ def main():
                    ("a numeral typed by hand in the paper's FIVED16 block",
                     {**cur, "paper_body.tex": cur["paper_body.tex"] + "\n% FIVED16-BEGIN\nIt is 109/16.\n% FIVED16-END\n"}, lt)]
         mn = (D / "main_note.tex").read_text()
-        struct_plants = [("an abstract edit beside the approved input lines", {"main_note.tex": mn.replace("\\begin{abstract}", "\\begin{abstract}\nAn edit.", 1)}),
+        mp = (D / "main_paper.tex").read_text()
+        struct_plants = [("an edit after the note abstract's end", {"main_note.tex": mn.replace("\\end{abstract}", "\\end{abstract}\nAn edit.", 1)}),
+                         ("the note abstract's end marker removed", {"main_note.tex": mn.replace("\\end{abstract}\n", "", 1)}),
+                         ("an edit to the paper's title, outside its abstract", {"main_paper.tex": mp.replace("\\title{", "\\title{An edit ", 1)}),
                          ("an approved input line missing", {"main_note.tex": mn.replace("\\input{sec_fived16}\n", "", 1)})]
+        base_fails, *_ = check(wt, cur, old, files, lt, prot_cur, prot_old)
+        for name, sc in [("an edit inside the paper abstract", {"main_paper.tex": mp.replace("\\begin{abstract}", "\\begin{abstract}\nAn edit.", 1)}),
+                         ("an edit inside the note abstract", {"main_note.tex": mn.replace("\\end{abstract}", "An edit.\n\\end{abstract}", 1)})]:
+            fails, *_ = check(wt, cur, old, files, lt, prot_cur, prot_old, sc)
+            passed = len(fails) == len(base_fails)
+            ok &= passed
+            print(f"  {name}: {'allowed' if passed else 'WRONGLY REFUSED'}")
         for name, sc in struct_plants:
             fails, *_ = check(wt, cur, old, files, lt, prot_cur, prot_old, sc)
             base_fails, *_ = check(wt, cur, old, files, lt, prot_cur, prot_old)

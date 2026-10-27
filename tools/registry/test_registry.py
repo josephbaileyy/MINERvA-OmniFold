@@ -227,7 +227,7 @@ class ResultsIndexDiscovery(unittest.TestCase):
         n, line = reglib.find_cited_line((self.f.root / row["source"]).read_text(), row["quote"], row["line_sha256"])
         d = reglib.line_digest(line)
         attr.write_text(attr.read_text() + "docs/orchestration/state/x\\.json\t\te-R-joint-test\t"
-                        f"docs/analysis-note/paper_body.tex\t{n}\t{row['quote']}\t{d}\n")
+                        f"{row['source']}\t{n}\t{row['quote']}\t{d}\n")
         self.f.git("add", reglib.ATTRIBUTION)
         out = self.f.check()
         self.assertEqual(out.returncode, 1, out.stdout)
