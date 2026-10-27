@@ -1,0 +1,24 @@
+PASSAGE: selection_features:20
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_method:44
+VERDICT: REVISE
+ISSUE: The words "(point-cloud representations: App.~\ref{sec:pet})" remove the necessary qualifier that point-cloud representations are future work, misleadingly implying that point-cloud unfolds are reported in App.~\ref{sec:pet} rather than excluded from this note.
+FIX: ; point-cloud representations are future work (App.~\ref{sec:pet})
+
+PASSAGE: sec_systematics:204
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_validation:18
+VERDICT: REVISE
+ISSUE: The words "earlier band fails (\S\ref{sec:coverage})" drop the status of the rebuilt band, leaving the summary table misleadingly incomplete by omitting the essential qualification that the rebuilt band awaits an independent test.
+FIX: earlier band fails. Rebuilt band awaits independent test (\S\ref{sec:coverage})
+
+PASSAGE: sec_validation:61
+VERDICT: AGREE
+ISSUE: none
+FIX: none

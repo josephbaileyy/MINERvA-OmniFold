@@ -1,0 +1,5 @@
+RECOUNT :: docs/analysis-note
+  inventory rows 967: {'found': 662, 'partial': 227, 'gone': 78}
+  words: TeX 48904, blinded PDF 52558
+  found          statements  662  distinct  373  restatements/caveat 1.775  statements/1000 12.60  distinct/1000 7.10
+  found_partial  statements  889  distinct  430  restatements/caveat 2.067  statements/1000 16.91  distinct/1000 8.18
