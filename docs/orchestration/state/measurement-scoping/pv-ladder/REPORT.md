@@ -429,3 +429,97 @@ its own code, and all matched.
   - the J2 ledger note;
   - a test of the (p_T, p_∥) departure path and the h/D thresholds;
   - the nits.
+
+## Post-hoc addendum (2026-10-27): 1D projections of the ladder's departures
+
+**CITABLE FOR:** the measures below, on the 1D projections and the 39 EW cells of L-5D-PV (e) and L-EW (e), as
+arithmetic on the pinned products, the frozen reweights and the 5D npz.
+
+**NOT CITABLE FOR:** a reporting-definition decision, a gate, an uncertainty, a coverage statement or any claim.
+It is post hoc: asked after the ladder's declared readouts (Ben's question of 2026-10-26, relayed by Joseph), and
+ruled to land as a descriptive addendum by the director (2026-10-27). Joseph's reading of it for Ben is his, not
+this record's.
+
+**Definitions.** For rung X ∈ {L-EW, L-5D-PV}, vertex k and a readout bin b:
+- **d_kb** = Σ w_truth·r_Xk / Σ w_truth − 1 over the truth-passing in-grid rows: §4's departure, on bin b;
+- **s_kb** = x_k / x_0 − 1, from the cell-integrated data unfolds with prior k against the Tune v1 prior;
+- **leak** = Σ_b s·d / Σ_b d², the least-squares slope of s on d: 0 when the data set the result, 1 when it follows
+  the prior;
+- **the NuWro closure:** b = x / x_true − 1 and dc = x_true(nuwro) / x_true(tune_v1) − 1; closure leak
+  = −Σ b·dc / Σ dc².
+
+The readouts:
+- **1D:** each FINE axis (§1's grid; the last E_avail, q₃ and W bin is the catch bin to 100 GeV), the other four
+  summed;
+- **EW:** the 39 RD3 cells, not projected.
+
+**Leak** (rms d in brackets):
+
+| rung | readout | GENIE+MEC | NuWro | GiBUU | NuWro closure |
+|---|---|---|---|---|---|
+| L-5D-PV | p_T | 0.00 (3.8 %) | 0.12 (5.8 %) | 0.10 (5.4 %) | 0.07 (5.8 %) |
+| | p_∥ | 0.12 (1.4 %) | 0.07 (1.8 %) | **0.66 (2.3 %)** | −0.02 (1.8 %) |
+| | E_avail | −0.04 (4.6 %) | 0.26 (8.9 %) | 0.12 (16.0 %) | 0.19 (8.9 %) |
+| | q₃ | 0.06 (7.0 %) | 0.10 (9.0 %) | −0.02 (21.5 %) | 0.15 (9.0 %) |
+| | W | 0.02 (4.5 %) | 0.18 (8.4 %) | 0.01 (12.7 %) | 0.18 (8.4 %) |
+| | 39 EW cells | 0.02 (4.1 %) | 0.83 (16.0 %) | 0.60 (18.2 %) | 0.69 (16.0 %) |
+| L-EW | E_avail | 0.02 (4.6 %) | 0.20 (13.7 %) | 0.16 (17.5 %) | 0.21 (13.7 %) |
+| | W | 0.08 (4.7 %) | 0.25 (12.5 %) | 0.06 (14.1 %) | 0.21 (12.5 %) |
+| | 39 EW cells | 0.25 (4.7 %) | 0.73 (24.9 %) | 0.99 (55.3 %) | 0.53 (24.9 %) |
+
+- L-EW's p_T, p_∥ and q₃ rows, and every rms ratio, are in `readouts/proj1d.json` (`summary`).
+- **The exception** is L-5D-PV's p_∥ for GiBUU: leak 0.66, on an rms d of 2.3 %. GiBUU's reweight is r = 1 above
+  p_∥ = 10 GeV/c (§1), so its p_∥ departure is small and confined to the lower bins.
+
+**Within-W cancellation** on the supported EW cells, per W bin (low to high W): Σ_E |x_k − x_0| / |Σ_E (x_k − x_0)|.
+
+| rung | GENIE+MEC | NuWro | GiBUU |
+|---|---|---|---|
+| L-5D-PV | 1.2, 2.4, 1.2, 11.1, 1.1, 1.5 | 1.8, 1.3, 6.2, 4.4, 3.3, 1.3 | 1.0, 1.7, 6.9, 4.1, 21.3, 6.7 |
+| L-EW | 1.4, 1.2, 1.5, 3.8, 2.3, 11.5 | 1.2, 1.1, 8.1, 2.1, 17.1, 1.0 | 7.1, 4.4, 27.1, 6.3, 7.8, 4.4 |
+
+- A value of 1 means every cell in the W bin shifts the same way; larger values mean opposite-signed cell shifts.
+- GENIE+MEC's shifts are small (its EW leak is 0.02 in L-5D-PV), so its ratios divide small numbers.
+
+**Relation to §4.** h/D there is the envelope over vertices divided by D. The leak is a per-vertex signed slope. On
+the 39 EW cells the two agree in reading: most of the departure reaches the cells, 0.92–0.97 by h/D and 0.60–0.99
+here for NuWro and GiBUU.
+
+**Checks**, required by the script before it writes (`checks` in the readout):
+
+| check | L-EW | L-5D-PV | bound |
+|---|---|---|---|
+| dc against the npz's d_nuwro, every bin | 1.3e-7 | 3.6e-7 | 1e-6 |
+| tune_v1 closure \|b\|, every bin | 3.8e-4 | 1.3e-4 | the readout's `closure_floor.max` |
+| EW s against `<rung>_e.json` | 0 | 0 | 1e-12 |
+| EW d against `departure.json` | 1.1e-13 | 1.2e-13 | 1e-12 |
+
+- **dc and d are two truth bases.** The closure's x_true goes through the nominal completeness and the binned
+  denominator, while d sums the npz's rows. Their agreement is measured, not exact by construction.
+- **The tune_v1 closure does not close to 0.** Its maximum on the EW cells is §2's closure floor, so on those cells
+  this check reproduces a recorded number. On the 1D bins it is a test.
+
+**Figures** (`figures/`, from `readouts/proj1d.json` alone):
+- `proj1d_5d.pdf`: L-5D-PV on each axis;
+- `proj1d_ew_direct.pdf`: L-EW on E_avail and W;
+- `joint_ew_5d.pdf`: L-5D-PV's EW cells, one column per W bin, so that summing a column over E_avail gives one W
+  point of `proj1d_5d.pdf`.
+
+In each figure, the top row shows d (lines) and s (markers), and the bottom row the NuWro closure, dc (line) and
+(1 + b)(1 + dc) − 1 (markers).
+
+**Cost and products:**
+- 0 node-h, on a Perlmutter login node. Nothing was rerun, and nothing was written to the campaign directory.
+- The run's copy is at `/pscratch/sd/j/josephrb/proj1d-20261027/`, on the director's pscratch re-raise list.
+
+**Reproduce:**
+
+```
+# on Perlmutter, in a checkout at this commit; refuses unless every product, ratio, npz and pvl_lib digest is pinned
+O=/pscratch/sd/j/josephrb/pv-ladder-20261024
+python3 nd-unfolding/pv-ladder/pvl_proj1d.py --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz \
+    --expect-npz-sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f \
+    --products $O/products --ratios $O/prep/ratios --out <file>
+python3 nd-unfolding/pv-ladder/plot_proj1d.py --out-dir <dir>
+cd nd-unfolding/pv-ladder && python3 -m unittest test_pvl_proj1d -v     # 15 tests
+```
