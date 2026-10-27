@@ -1,0 +1,270 @@
+# G2: grandfathered absence claims in primer_body.tex (60, 144, 172, 221, 234)
+
+All line numbers and citations are at `WT` = main `0d919b1a` unless another sha is given. Paths are repository-relative.
+Read-only: `git log`, `git show --stat`, `git grep`, `grep`, `sed -n`, `whatis.py --no-grep`, and a `python3 -c` read
+of one JSON. `git status --short` in `WT` was empty afterward.
+
+Common searches used across claims:
+- `whatis.py` for `a-central-lgbm`, `a-refined-400-31`, `c-F2-deterministic`, `e-R-joint-test`. Also a tally of
+  `docs/orchestration/registry/RESULTS-INDEX.tsv` coverage rows by estimator: c-F2-deterministic 18, d-N-B0 64,
+  e-R-joint-test 32, F1-production 2, unattributed 975. **None for `a-central-lgbm` or `a-refined-400-31`.**
+- `git log --all --since=2026-10-06 -i --grep="coverage|held-out|KI.85"` and the file names those commits touched.
+- `KNOWN_ISSUES.md:75` (row 85), `VALIDATION_LEDGER.md` VL150/151/154/169/170.
+- `docs/orchestration/state/measurement-scoping/SCOPING.md:77-82`.
+- `2d-unfolding/uq/coverage_fixed_truth/n2/README.md`.
+- The 5D-community commits of 2026-10-22..26: F0, Stage G, G-DIAG.
+
+---
+
+## primer_body.tex:60 (published-result item) [had-no-test, no-coverage]
+
+**Home.**
+- Note `sec_systematics.tex:53`: "The statistical block quoted here has had no coverage test ... No coverage test on
+  held-out simulation has been run".
+- Note `sec_systematics.tex:195`: "We therefore make no claim about coverage ... The following are not included in the
+  covariance:", followed by a four-item list.
+- Paper `paper_body.tex:153`: "The coverage of this block and of the total covariance has not been tested. We make no
+  coverage claim ...".
+- Note `sec_execsummary.tex:109`: "The quoted 2D statistical block has had no coverage test".
+
+| # | assertion | class | verdict |
+|---|---|---|---|
+| 60a | "Some effects are not included in its error budget" | SCOPING. It states the covariance's construction. | TRUE. `sec_systematics.tex:195` lists four excluded effects, including C_model kept beside the covariance. |
+| 60b | "we make no coverage claim for it" | SCOPING. A claim the authors decline to make. | TRUE. Same as `sec_systematics.tex:195` and `paper_body.tex:153`. |
+| 60c | "The quoted statistical error bars have had no coverage test" | ABSENCE | **TRUE** |
+
+**Evidence for 60c.** The quoted block is the RE-2 block of Q_R. It has a median of 0.676% (`paper_body.tex:153`) and
+superseded S1, 0.684% (`KNOWN_ISSUES.md:75`).
+- The only 2D fixed-truth test, VL169, scored the earlier VL162 band (`sec_validation.tex:135`).
+- The rebuilt VL170 band was only rescored post hoc (`sec_validation.tex:162`).
+- KI 85, at `KNOWN_ISSUES.md:75`, says: "S1 has not been coverage-tested ... The held-out re-test remains deferred ...
+  and is not pre-registered."
+- App. G tag `statband-retest` (`app_provenance.tex:140`) says "deferred, not pre-registered, not run".
+- The N2 harness is "Engineering only. Nothing here has run an experiment ... N2 is not admitted"
+  (`n2/README.md:3-5`).
+- No coverage commit, OUTCOME or PREREG postdates `OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`.
+- `a-refined-400-31` has no coverage rows in the results index.
+
+**Near-misses that are not coverage tests of the quoted block:**
+- the same-ensemble 68.71% check, a Gaussianity check (`app_statmethods.tex:634`);
+- the 2D 20-experiment closure with backgrounds (`app_negweight.tex:133`), a closure test against the purity
+  covariance's σ.
+
+**Primer versus home.**
+- On coverage, the primer claims **less** than the paper. It names only the statistical bars, while
+  `paper_body.tex:153` also says the total covariance's coverage is untested.
+- 60a matches `sec_systematics.tex:195` but does not list the excluded effects.
+
+**Proposed comment line**
+
+`% Search: coverage test of the quoted 2D statistical block (Q_R block, S1); a-refined-400-31; held-out-MC re-test; KNOWN_ISSUES 85; statband-retest; VL169; VL170; coverage_fixed_truth/n2 (none of the quoted block: VL169 scored the earlier VL162 band, VL170 rescored post hoc only, KI 85 re-test deferred and not run, N2 unlaunched; "no coverage claim" and "not included in its error budget" are scope, sec_systematics.tex:195) @ 0d919b1a`
+
+---
+
+## primer_body.tex:144 (the 2D coverage test) [has-not-been-run]
+
+**Home.**
+- Note `sec_validation.tex:162`: "The band was then rebuilt without this term. The quoted statistical block is a third,
+  different ensemble ... The rebuilt band was only rescored post hoc (below), and the quoted block has not been tested."
+- Note `sec_validation.tex:135`, the section opening.
+- Paper `paper_body.tex:153`.
+
+| # | assertion | class | verdict |
+|---|---|---|---|
+| 144a | "They have not been tested." The antecedent is "the statistical bars now quoted". | ABSENCE | **TRUE**, with the same evidence as 60c. |
+
+**Primer versus home.** The absence matches the home. Two restatement points do not affect the verdict but bear on it:
+- The primer says "The main cause of the shortfall was found and removed". That claims **more** than
+  `sec_validation.tex:160`: "Under it, the primary undercoverage is attributed to this term ... The attribution is
+  partial: ... the p∥ 40–60 GeV/c column still undercovers." That attribution rule's undercoverage clause was also
+  written after the pilot.
+- "the statistical bars now quoted were built again" merges the rebuilt VL170 band with the quoted block.
+  - The note keeps them apart. A FACT comment at `sec_validation.tex:163` records that "the rebuilt band is the quoted
+    one" was false of Q.
+  - The note's VL170 band *was* rescored, post hoc. "They have not been tested" is therefore true only of the quoted
+    block, which is how the primer's antecedent reads.
+  - Since 2026-10-24 the quoted block is RE-2's (0.676%), a further ensemble.
+
+**Proposed comment line**
+
+`% Search: coverage test of the quoted 2D statistical block (Q_R block, S1); held-out-MC re-test; KNOWN_ISSUES 85; statband-retest; coverage_fixed_truth/n2; OUTCOME/PREREG after 20261005 (VL169 tested the earlier VL162 band; VL170 rescored post hoc only; KI 85 "S1 has not been coverage-tested", re-test deferred, not run; N2 unlaunched) @ 0d919b1a`
+
+---
+
+## primer_body.tex:172 (five simultaneous quantities; W) [has-not-been-run]
+
+**Home.** Note `sec_eavailw.tex:57`: "The nearly degenerate correlation directions ... are consistent with this
+redundancy, but that origin has not been shown, and the information added by $W$ has not been measured." The primer's
+own source comment, `primer_body.tex:171`, cites this.
+
+| # | assertion | class | verdict |
+|---|---|---|---|
+| 172a | "how much information $W$ adds has not been measured" | ABSENCE | **TRUE** |
+
+**Evidence for 172a.**
+- `git grep -i` found no ablation, receipt, VL row or OUTCOME for any of these: "without W", "drop W", "W ablation",
+  "no_w", "W adds", "information added by W", "4-input", "W redundancy". The hits are only the note sentence and
+  ledgers that track it: `r12/ledger.md:104` D27 and `note-b6/outline-before.md:75`.
+- `state/measurement-paper/EVIDENCE-MAP-20261019.md:250-268` says: "There is no RECORD, DECISION or KI row ... The
+  residual check is not run."
+- `PLAIN-LANGUAGE-PASS2-REPORTS.md:1831` argues analytically that W "adds coordinates but not truth degrees of
+  freedom". That is an argument, not a measurement.
+- Nearest measured neighbour: `paper_body.tex:389`, "no evidence of additional discrimination from the joint
+  five-observable information". That is about the joint tests against coarse projections, not about W's added
+  information.
+
+**Primer versus home.** **Equal** on the absence. The primer omits the home's "origin has not been shown" about the
+degenerate directions, which claims slightly less context but no more. The primer adds "A new coordinate can help the
+learner ... without adding an independently measurable direction". That is an unmeasured possibility and is phrased as
+such.
+
+**Proposed comment line**
+
+`% Search: information added by W; W redundancy; W ablation; without W; drop W; 4-input vs 5-input classifier (sec_eavailw.tex:57 "the information added by $W$ has not been measured"; EVIDENCE-MAP-20261019.md:250-268 "The residual check is not run"; no ablation script, receipt, VL, KI or OUTCOME row) @ 0d919b1a`
+
+---
+
+## primer_body.tex:221 ("Four limits matter most") [untested]
+
+**Homes.**
+- Note `sec_summary.tex:46`: "Above two dimensions the results are central values without intervals of validated
+  coverage ... Bias-corrected statistical intervals of a deterministic five-dimensional estimator variant miscover at
+  the tested truths".
+- Note `sec_execsummary.tex:109`: "**The one five-dimensional coverage test**, of bias-corrected statistical intervals
+  of a deterministic estimator variant, miscovered at the tested truths."
+- Note `sec_5d.tex:214`: "No frequentist coverage is therefore claimed for any five-dimensional interval."
+- Paper `paper_body.tex:405`: "The higher-dimensional results are central values without intervals of validated
+  coverage".
+- Paper `main_paper.tex:44`, the abstract: "statistical undercoverage at the tested truths".
+- Note `main_note.tex:103`.
+
+| # | assertion | class | verdict |
+|---|---|---|---|
+| 221a | "biases that are not in the quoted uncertainty" | SCOPING. It states the uncertainty's construction. | TRUE: `sec_execsummary.tex:109`, "No quoted uncertainty includes this residual regularization bias"; `paper_body.tex:183`. |
+| 221b | "that uncertainty has not met the requirements we set in advance" | not an absence claim. It reports a recorded failed verdict. | TRUE: `sec_5d.tex:250`, "does not meet the acceptance criteria of its specification". |
+| 221c | "whether the five-quantity error bars contain the truth as often as stated is untested" | ABSENCE | **TRUE as scoped to the quoted 5D error bars.** |
+| 221d | "the one direct test of it, made on a variant of the method" | ABSENCE. A uniqueness claim: no other direct test exists. | **FALSE as worded.** |
+| 221e | "This spread is a sensitivity measure, not an error bar"; "we do not assign statistical significance" | SCOPING. A definition and a method choice. | TRUE: `sec_5d.tex:196`, `paper_body.tex:237`. |
+
+**Evidence for 221c.** The quoted 5D result is configuration (a), LightGBM with purity subtraction
+(`result_status_rows.tex:25`, `sec_method.tex:95`), with the Z `cv` covariance (`sec_5d.tex:250`).
+- `a-central-lgbm` has no coverage rows in the results index. Its 8 rows are pulls and a closure residual.
+- `coverage_valid_nd.py`, the only covariance-consuming containment tool, was last touched at `6964af37`. Its only
+  recorded run is the 2026-07-16 FPS run (`VALIDATION_LEDGER.md:1884-1903`), not of Z.
+- `F1-production`'s two "coverage68/95" rows (`state/s5c/d1/d1_summary.json`, `frac_le1` 0.448, n_experiments 2) are
+  the fraction of functionals with |mean residual|/SE ≤ 1. That is a bias-significance diagnostic, not interval coverage.
+- The new 5D configuration (e) route's F0 re-grade is "NOT CITABLE FOR: the coverage of C_total, which is not a gate"
+  (`state/measurement-paper/5d-community-20261024/FD-F0-REPORT.md:21-22`), and it is not the quoted 5D result.
+
+**Evidence against 221d.** The repository and the note itself hold more than one direct check of whether 5D
+statistical intervals contain the truth at the stated rate. All of them are on variants:
+1. **s5c Tier-S, VL150** (`VALIDATION_LEDGER.md:223`; `OUTCOME-20260925-s5c-tier-s-futility-fail.md:30-34`).
+   - Configuration (c), bias-corrected, 1,200 experiments.
+   - FUTILITY-FAIL at all three truths, including q3 at 0.000. This is the test the primer means.
+2. **s5e candidate R assessment, VL154** (`VALIDATION_LEDGER.md:197`; `OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md:80`).
+   - Configuration (e). Criterion A2 was frozen under amendment 3.
+   - Fresh seeds give "pooled coverage 0.680 / 0.942 ... PASS (pooled)" at nominal, with EW41 at 0.375.
+   - Departures give pooled 68% coverage of 0.017–0.157 (`SCOPING.md:82`).
+   - **The note prints this check itself.** `sec_5d.tex:179` reads: "The statistical intervals of the development
+     assessment ... At nominal truth, EW41 contains the truth in 15 of 40 68% intervals". Fig. `fig:gbdt-coverage`
+     (`sec_5d.tex:187`) is captioned "Development assessment of $R$: containment of the truth in $\hat f\pm\sigma$ ...
+     Zero of 20 intervals contain the truth".
+3. **s5n stage 1, VL151** (`VALIDATION_LEDGER.md:208`; `OUTCOME-20260925-s5n-stage1-development-fail.md:56-58`).
+   - Configuration (d)/N.
+   - "Pooled coverage 0.603 / 0.870" at nominal, and 0.027 under the E_avail and q3 departures.
+
+**Readings of 221d.**
+- `RECORDS-RULES.md:8-10` sets the repository's own precedent: "coverage under configuration (e) is untested" was
+  false *because* s5e had measured its development-scale intervals. On that precedent, "the one direct test" is false.
+- The sentence is true only under an unstated narrowing: the one study *designed* as a coverage test of bias-corrected
+  intervals at independent truths.
+- Even then, "failed at the truths it tested" would not fit s5e, which passed pooled at nominal.
+- The primer inherits the uniqueness from its home, `sec_execsummary.tex:109`, "The one five-dimensional coverage
+  test". That home has the same defect and is internally contradicted by `sec_5d.tex:179`.
+- The paper does not make the uniqueness claim. `paper_body.tex:190` says only that "Statistical intervals from
+  configuration (c) ... miscover".
+
+**Primer versus home.**
+- On 221c the primer claims **more** than the note and paper. They say "without intervals of validated coverage" and
+  "no frequentist coverage is claimed", which state scope. The primer says the question is "untested", an absence
+  claim. It is true for the quoted 5D bars but not for 5D statistical intervals in general.
+- On 221d the primer matches `sec_execsummary.tex:109` and claims more than `paper_body.tex:190`.
+- I propose no rewording. The finding goes to the lane and director.
+
+**Proposed comment line.** It records the finding and does not certify 221d.
+
+`% Search: coverage of the quoted 5D intervals; configuration (a); a-central-lgbm; Z cv covariance; coverage_valid_nd.py; F1-production; s5c Tier-S VL150; s5e candidate R VL154; s5n VL151; 5d-community F0 (no coverage row or run for (a) or Z, so "untested" holds for the quoted bars; but "the one direct test" is contradicted: besides VL150 (c), VL154 (e) A2 pooled 0.680/0.942 and departures 0.017-0.157, printed at sec_5d.tex:179, and VL151 (d) pooled 0.603; FALSE as worded) @ 0d919b1a`
+
+---
+
+## primer_body.tex:234 ("Biases in following a changed truth") [has-not-been-run]
+
+**Homes.**
+- Note `sec_5d.tex:168`: "No matching repeat ensembles exist at more iterations or larger OmniFold capacity, so no
+  tradeoff can be inferred."
+- Note `sec_5d.tex:105`: "The studies do not establish a bias--variance tradeoff ... the variance measurement that is
+  missing for this estimator".
+- Note `sec_5d.tex:196`: envelopes "provide no probabilities, covariance components or guaranteed bias bounds".
+- Note `sec_5d.tex:207`: "No new ensemble enters these studies".
+- Paper `paper_body.tex:183`: "No quoted uncertainty includes the regularization bias".
+- Paper `paper_body.tex:173`: "This bias is not included in the quoted uncertainties".
+- Note `main_note.tex:81-87`.
+
+| # | assertion | class | verdict |
+|---|---|---|---|
+| 234a | "This dependence on the truth is not included in the quoted uncertainty." | SCOPING. It states the uncertainty's construction. | TRUE: `paper_body.tex:183`, `sec_execsummary.tex:109`. |
+| 234b | "Neither effect is in the quoted uncertainty yet." | SCOPING, as 234a. | TRUE: `paper_body.tex:173`, `main_note.tex:81-84`. |
+| 234c | "how much they vary from one repeat to the next was not measured at the same settings, so no tradeoff between bias and variability is established" | ABSENCE | **TRUE** |
+| 234d | "changing the starting model gives no guaranteed error bound" | SCOPING. A property of the method. | TRUE: `sec_5d.tex:196`. |
+| 234e | "None of these studies changed the five-quantity central value or its quoted uncertainty." | ABSENCE, of a change. | **TRUE** |
+
+**Evidence for 234c.**
+- `nd-unfolding/gbdt_model_dependence/README.md:70`: "Inventory has no matched repeat ensembles across settings".
+- The matched-repeat study, "160 paired repeats at three truths and three settings (R5, R20, and R5 with larger
+  OmniFold capacity)", is "DEFERRED as of 2026-10-03" (`gbdt_model_dependence/DELIVERY.md:49-51`).
+- The repeat SDs that do exist are all at K=5. They come from candidate R, n=20 (`sec_5d.tex:168`;
+  `state/next-preparation-20261009/gbdt/REPORT.md:84-87`).
+- The longer-run evidence comes from noise-free traces with no repeats: VL163, k=5 against k=200, and "thirty
+  iterations" in `paper_body.tex:183`.
+- No commit since 2026-10-03 matches bias-variance, tradeoff, iteration scan or repeat ensemble beyond the D-ID
+  reductions (`cd41001e`), which are noise-free.
+
+**Evidence for 234e.**
+- The 5D central value is still configuration (a) with purity subtraction (`result_status_rows.tex:25`,
+  `sec_method.tex:95`, `main_note.tex:82`: "The five-dimensional central value and its covariance use the purity
+  subtraction").
+- The covariance is still the Z `cv` file (`sec_5d.tex:250`).
+- `sec_5d.tex:207` reads "No new ensemble enters these studies".
+- The configuration (e) 5D route (DECISION-20261024; F0 and Stage G, 2026-10-25/26) has not entered the note. A grep
+  of `docs/analysis-note/*.tex` for "Stage G", "C_resp" or "cresp" finds only a comment at `main_paper.tex:46`.
+
+**Primer versus home.**
+- 234c is **equal** to `sec_5d.tex:168`. The primer's "at the same settings" means the longer and larger settings; the
+  note's wording is "at more iterations or larger OmniFold capacity", which is clearer.
+- 234e is equal to `sec_5d.tex:207`, and slightly broader because it also names the quoted uncertainty. That is
+  supported by the Z file being unchanged.
+
+**Proposed comment line**
+
+`% Search: repeat ensembles at more iterations or larger capacity; bias-variance tradeoff; gbdt_model_dependence inventory; VL163; D-ID; 5D central value or covariance changed by these studies (sec_5d.tex:168 "No matching repeat ensembles exist"; gbdt_model_dependence/README.md:70 and DELIVERY.md:51 matched-repeat study deferred, not run; 5D central value still (a) purity, result_status_rows.tex:25, covariance Z cv, sec_5d.tex:250; uncertainty-content and "no guaranteed error bound" sentences are scope) @ 0d919b1a`
+
+---
+
+## Summary table
+
+| location | assertion (short) | class | verdict | proposed comment line |
+|---|---|---|---|---|
+| primer_body.tex:60 | not all effects in error budget | SCOPING | TRUE | (one line, below) |
+| primer_body.tex:60 | no coverage claim | SCOPING | TRUE | (same line) |
+| primer_body.tex:60 | quoted stat bars had no coverage test | ABSENCE | TRUE | `% Search: coverage test of the quoted 2D statistical block (Q_R block, S1); a-refined-400-31; held-out-MC re-test; KNOWN_ISSUES 85; statband-retest; VL169; VL170; coverage_fixed_truth/n2 (none of the quoted block: VL169 scored the earlier VL162 band, VL170 rescored post hoc only, KI 85 re-test deferred and not run, N2 unlaunched; "no coverage claim" and "not included in its error budget" are scope, sec_systematics.tex:195) @ 0d919b1a` |
+| primer_body.tex:144 | quoted stat bars "have not been tested" | ABSENCE | TRUE. The primer's "main cause found and removed" claims more than `sec_validation.tex:160`, which calls the attribution partial. | `% Search: coverage test of the quoted 2D statistical block (Q_R block, S1); held-out-MC re-test; KNOWN_ISSUES 85; statband-retest; coverage_fixed_truth/n2; OUTCOME/PREREG after 20261005 (VL169 tested the earlier VL162 band; VL170 rescored post hoc only; KI 85 "S1 has not been coverage-tested", re-test deferred, not run; N2 unlaunched) @ 0d919b1a` |
+| primer_body.tex:172 | information W adds not measured | ABSENCE | TRUE | `% Search: information added by W; W redundancy; W ablation; without W; drop W; 4-input vs 5-input classifier (sec_eavailw.tex:57 "the information added by $W$ has not been measured"; EVIDENCE-MAP-20261019.md:250-268 "The residual check is not run"; no ablation script, receipt, VL, KI or OUTCOME row) @ 0d919b1a` |
+| primer_body.tex:221 | biases not in quoted uncertainty | SCOPING | TRUE | (one line, below) |
+| primer_body.tex:221 | uncertainty failed predeclared requirements | not absence (a verdict) | TRUE | (same line) |
+| primer_body.tex:221 | 5D error-bar coverage untested | ABSENCE | TRUE for the quoted (a)/Z bars. The primer claims more than its homes, which say "not validated" and "not claimed". | (same line) |
+| primer_body.tex:221 | "the one direct test of it" | ABSENCE (uniqueness) | **FALSE as worded**: VL154 (e), printed at `sec_5d.tex:179`, and VL151 (d) also measured 5D interval containment. Inherited from `sec_execsummary.tex:109`. | `% Search: coverage of the quoted 5D intervals; configuration (a); a-central-lgbm; Z cv covariance; coverage_valid_nd.py; F1-production; s5c Tier-S VL150; s5e candidate R VL154; s5n VL151; 5d-community F0 (no coverage row or run for (a) or Z, so "untested" holds for the quoted bars; but "the one direct test" is contradicted: besides VL150 (c), VL154 (e) A2 pooled 0.680/0.942 and departures 0.017-0.157, printed at sec_5d.tex:179, and VL151 (d) pooled 0.603; FALSE as worded) @ 0d919b1a` |
+| primer_body.tex:221 | spread not an error bar; no significance assigned | SCOPING | TRUE | (same line) |
+| primer_body.tex:234 | truth dependence and background bias not in quoted uncertainty | SCOPING | TRUE | (one line, below) |
+| primer_body.tex:234 | repeat variability not measured at longer/larger settings | ABSENCE | TRUE | (same line) |
+| primer_body.tex:234 | no guaranteed error bound | SCOPING | TRUE | (same line) |
+| primer_body.tex:234 | no study changed 5D central value or uncertainty | ABSENCE | TRUE | `% Search: repeat ensembles at more iterations or larger capacity; bias-variance tradeoff; gbdt_model_dependence inventory; VL163; D-ID; 5D central value or covariance changed by these studies (sec_5d.tex:168 "No matching repeat ensembles exist"; gbdt_model_dependence/README.md:70 and DELIVERY.md:51 matched-repeat study deferred, not run; 5D central value still (a) purity, result_status_rows.tex:25, covariance Z cv, sec_5d.tex:250; uncertainty-content and "no guaranteed error bound" sentences are scope) @ 0d919b1a` |
