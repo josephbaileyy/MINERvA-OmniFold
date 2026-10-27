@@ -12,15 +12,17 @@ input docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-p
     chi2 is reproduced to about 0.1 %, and the limits below carry that approximation
   check: C_model_abs / ff' = S'S to 1.73e-18 (max entry 1.29e-02)
   check: sqrt(diag) vs F0b relative_sigma_plus_C_resp.C_total: max diff 0.00e+00
-  A7_gibuu: in-sample/full chi2 142.44 (readout 142.62); grade 174.99 (readout 175.13); kappa -> inf, all three vertices: 116.15; kappa -> inf, own vertex left out: 150.24
-  stage0c_gibuu: in-sample/full chi2 22.96 (readout 23.05); grade 25.40 (readout 25.46); kappa -> inf, all three vertices: 22.81; kappa -> inf, own vertex left out: 25.39
-  q3: in-sample/full chi2 53.19 (readout 53.42); kappa -> inf, all three vertices: 51.31
-  A7_nuwro: in-sample/full chi2 24.77 (readout 24.78); grade 24.90 (readout 24.92); kappa -> inf, all three vertices: 18.38; kappa -> inf, own vertex left out: 18.99
+  A7_gibuu: in-sample/full chi2 142.44 (readout 142.62); grade 174.99 (readout 175.13); kappa -> inf, all three vertices: 116.15 (bracket [112.12, 116.43]); kappa -> inf, own vertex left out: 150.24 (bracket [144.30, 150.90])
+  stage0c_gibuu: in-sample/full chi2 22.96 (readout 23.05); grade 25.40 (readout 25.46); kappa -> inf, all three vertices: 22.81 (bracket [21.77, 22.90]); kappa -> inf, own vertex left out: 25.39 (bracket [24.53, 25.48])
+  q3: in-sample/full chi2 53.19 (readout 53.42); kappa -> inf, all three vertices: 51.31 (bracket [48.21, 51.55])
+  A7_nuwro: in-sample/full chi2 24.77 (readout 24.78); grade 24.90 (readout 24.92); kappa -> inf, all three vertices: 18.38 (bracket [17.60, 18.41]); kappa -> inf, own vertex left out: 18.99 (bracket [18.31, 19.02])
   (p = 0.01 at chi2_16 = 32.00)
 
 1c. expected coverage of the reported (total) intervals at zero bias, if the pseudo-data spread is only part
   spread C_e: 1 sigma mean 0.791 (min 0.701); 2 sigma mean 0.983 (min 0.962); nominal 0.683 / 0.954
+    with the band x 0.7 (positive control): 1 sigma mean 0.627; 2 sigma mean 0.915
   spread C_e + C_resp: 1 sigma mean 0.759 (min 0.684); 2 sigma mean 0.975 (min 0.955); nominal 0.683 / 0.954
+    with the band x 0.7 (positive control): 1 sigma mean 0.594; 2 sigma mean 0.893
 
 2. bias direction against each C_model vertex (unweighted, Euclidean: a heuristic; section 1 is the bound)
   A7_gibuu: |b| 0.5177, max |b_c| 0.3604 (R02)

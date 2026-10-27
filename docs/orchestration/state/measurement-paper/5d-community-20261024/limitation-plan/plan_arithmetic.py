@@ -6,7 +6,8 @@
    chi2(kappa) = chi2_out - kappa u^2 / (1 + kappa q), u = s'M^-1 b, q = s'M^-1 s. From chi2(0) = grade and
    chi2(1) = in-sample, chi2(inf) = chi2_in - (chi2_out - chi2_in) / q, which increases with q; q >= s_c^2 / M_cc for
    every cell c (M positive definite), so the largest s_c^2 / M_cc gives a lower bound on chi2(inf).
-   1b. The rank-3 limit (diagonal noise; the readout records only N_T's diagonal), every C_model vertex scaled by kappa -> inf: min_a (b - S'a)' M0^-1 (b - S'a), with
+   1b. The rank-3 limit (diagonal noise, since the readout records only N_T's diagonal, with a rigorous bracket
+   from 0 <= N_T <= tr(N_T) I), every C_model vertex scaled by kappa -> inf: min_a (b - S'a)' M0^-1 (b - S'a), with
    M0 = C_e + C_resp + noise, from the data product's matrices (each checked against F0b's readout first).
    1c. The coverage of the total intervals at zero bias if the pseudo-data spread reproduces only C_e (or C_e + C_resp).
 2. The direction of the bias against each C_model vertex: unweighted cosine and the residual after a least-squares fit
@@ -91,14 +92,19 @@ def main():
             so = np.array(S[own])
             msg += f"; grade {chi(M_in - np.outer(so, so), b):.2f} (readout {t['grade']['chi2']:.2f})"
         M0 = rel["C_e"] + rel["C_resp"] + N2
+        # rigorous bracket: any PSD N_T with this diagonal has 0 <= N_T <= tr(N_T) I, and the limit falls as M0 grows
+        brk = (rel["C_e"] + rel["C_resp"] + np.trace(N2) * np.eye(16), rel["C_e"] + rel["C_resp"])
         for lab, rows in (("all three vertices", list(c["vertices"])),
                           ("own vertex left out", [v for v in c["vertices"] if v != own]) if own else (None, None)):
             if lab is None:
                 continue
             A = np.array([S[v] for v in rows]).T
-            Wi = np.linalg.solve(M0, A)
-            a = np.linalg.solve(A.T @ Wi, Wi.T @ b)
-            msg += f"; kappa -> inf, {lab}: {chi(M0, b - A @ a):.2f}"
+            lim = []
+            for M in (M0,) + brk:
+                Wi = np.linalg.solve(M, A)
+                a = np.linalg.solve(A.T @ Wi, Wi.T @ b)
+                lim.append(chi(M, b - A @ a))
+            msg += f"; kappa -> inf, {lab}: {lim[0]:.2f} (bracket [{lim[1]:.2f}, {lim[2]:.2f}])"
         print(msg)
     print(f"  (p = 0.01 at chi2_16 = {CHI2_16_P01:.2f})")
 
@@ -110,6 +116,9 @@ def main():
         c2 = np.array([2 * Phi(2 * x) - 1 for x in tot / spr])
         print(f"  spread {lab}: 1 sigma mean {c1.mean():.3f} (min {c1.min():.3f}); 2 sigma mean {c2.mean():.3f} "
               f"(min {c2.min():.3f}); nominal 0.683 / 0.954")
+        k1 = np.array([2 * Phi(0.7 * x) - 1 for x in tot / spr])
+        k2 = np.array([2 * Phi(1.4 * x) - 1 for x in tot / spr])
+        print(f"    with the band x 0.7 (positive control): 1 sigma mean {k1.mean():.3f}; 2 sigma mean {k2.mean():.3f}")
 
     print("\n2. bias direction against each C_model vertex (unweighted, Euclidean: a heuristic; section 1 is the bound)")
     for name in ("A7_gibuu", "stage0c_gibuu", "q3", "A7_nuwro"):
