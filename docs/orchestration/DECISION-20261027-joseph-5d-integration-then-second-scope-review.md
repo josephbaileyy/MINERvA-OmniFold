@@ -10,9 +10,9 @@
 
 Joseph's answer, verbatim:
 
-> 
+> I think that recommendation is one to seriously consider, maybe we try another independent review once the 5d integration is done
 
-sha256 of the text plus a final newline begins ``.
+sha256 of the text plus a final newline begins `77d0cc6e2dc38c8d`.
 
 ## What is decided
 
