@@ -16,7 +16,8 @@ Checks:
   2. every printed base sentence of the batch files that no longer prints verbatim is named in some row's "before"
      column, by its id (file prefix + index, as --list prints);
   3. every \\label of the base batch files still exists in the same file;
-  4. protected files are byte-identical to the base: values.tex, values_inference.tex, app_history.tex,
+  4. protected files are byte-identical to the protected base (--protected-base; default the merge base of HEAD and
+     origin/main, n3 2026-10-27): values.tex, values_inference.tex, app_history.tex,
      app_release.tex, main_note.tex, main_paper.tex, paper_body.tex (main_records.tex has not been protected since n2: N2-1
      numbers the App. G entries there; check_note_records.py P5 guards the record paragraphs);
   5. the check-bound SEC4 phrases still print once in sec_validation.tex.
@@ -128,6 +129,7 @@ def main():
     ap.add_argument("--base", default="0d919b1a")
     ap.add_argument("--ledger", default=str(Path(__file__).with_name("ledger.md")))
     ap.add_argument("--old-dir")
+    ap.add_argument("--protected-base", help="commit the protected files are compared with (default: the merge base of HEAD and origin/main, so a protected-file change that reached main by its own PR, such as the absence audit #400, is not charged to the round; falls back to --base)")
     ap.add_argument("--files", default=",".join(PREFIX))
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--self-test", action="store_true")
@@ -137,7 +139,11 @@ def main():
     cur = {f: (D / f).read_text() for f in files}
     old = {f: base_text(wt, a.base, f, a.old_dir) for f in files}
     prot_cur = {f: (D / f).read_text() for f in PROTECTED}
-    prot_old = {f: base_text(wt, a.base, f, a.old_dir) for f in PROTECTED}
+    pbase = a.protected_base
+    if not pbase and not a.old_dir:
+        mb = subprocess.run(["git", "-C", str(wt), "merge-base", "HEAD", "origin/main"], capture_output=True, text=True)
+        pbase = mb.stdout.strip() if mb.returncode == 0 and mb.stdout.strip() else a.base
+    prot_old = {f: base_text(wt, pbase or a.base, f, a.old_dir) for f in PROTECTED}
     if a.list:
         for sid, f, s in changed(cur, old, files):
             print(f"{sid}\t{f}\t{s}")

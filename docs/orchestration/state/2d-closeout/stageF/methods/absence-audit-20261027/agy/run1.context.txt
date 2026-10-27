@@ -1,0 +1,32 @@
+CONTEXT: Accuracy fixes (not register changes) ruled by the project director: each narrows a printed claim to what its home in the analysis note or the cited source states, and must add no new result. For each passage, check that AFTER claims exactly what the quoted home supports, no more and no less, and that it is true by the home.
+
+--- A-1 homes ---
+The sentence's paragraph (unchanged otherwise), verbatim: "\paragraph{Where generator recovery is lost.} A diagnosis on the same eight draws per generator case separates two shortfalls~\cite{PETGeneratorDiagnosis2026}. Exact distortion weights recover about 0.96 of the injected $\Eavail$ change, showing sufficient sample support for these particular tests. PET's detector step underfits the reweighted pseudo-data. Its truth step transfers the result almost losslessly on reconstructed events, but extrapolates much less successfully to missed events, with recovery deteriorating over the tested iterations. These shortfalls use separately normalized populations and are not additive shares of the final gap. PET already receives the tree method's reconstructed scalar inputs plus the cluster cloud; omitting the reconstructed muon is therefore not the explanation. The effect of omitting scalar true $\Eavail$ and $q_3$ from PET's truth inputs on the generator cases (NuWro, NuWro$'$, GiBUU) remains untested. Optimization and scalar conditioning remain possible causes; the tested larger network does not support a capacity-only explanation. This fixed-response, bank-conditional diagnosis adds no interval validation or adoption."
+Source, nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md:63-67, verbatim:
+     stored-cluster ΣE and count (arm `reco_summaries_pdg_onehot`). This is a superset of the GBDT's reco inputs,
+     plus the cluster cloud.
+   - **Step 2: an input omission is not ruled out.** PET's truth step gets true p_T and p_∥ and the one-hot truth
+     cloud, but not true E_avail or q3, which the GBDT receives. Their effect on the extrapolation is untested
+     here.
+Earlier tests outside the generator cases: nd-unfolding/pet/improvement_campaign/REPORT-20260922.md:181: "| C3 + true `E_avail`, `q3` at step 2 | 0.384 | 0.544 | +0.015 | +0.019 |"; nd-unfolding/pet/final_design/DIAGNOSTICS-20260925.md:118-120: "   missed; D4d proton class 0.31 / 0.08): the categorical encoding is required for a topology-sensitive
+   truth step. Explicit truncated-cloud counts or true `E_avail`/`q3` add nothing resolvable over the
+   one-hot encoding at this effort."
+
+--- A-2 homes ---
+Home, sec_5d.tex (sec:coverage-5d), verbatim: "An end-to-end independent-truth test assessed statistical intervals of a deterministic five-dimensional estimator variant with nominal-truth bias correction (1,200 pseudo-experiments over three truths). It failed its futility criterion, set before the test was run, at the nominal truth and under a 10\% reduction of the signal rate with a weak $\Eavail$ slope (below)."
+The note's other 5D interval check, sec_5d.tex:179, verbatim: "The statistical intervals of the development assessment take their width from 100 bootstrap replicas of one nominal development experiment and do not recompute it for each assessment experiment (Fig.~\ref{fig:gbdt-coverage}). At nominal truth, EW41 contains the truth in 15 of 40 68\% intervals (37.5\%, pointwise exact 95\% interval [22.7\%, 54.2\%]), so a pooled calibration pass cannot qualify this cell."
+
+--- A-3 homes ---
+Home, sec_validation.tex:160 and :162, verbatim: "The band's replicas divide by a bootstrapped completeness, whereas the central value's completeness is exactly~1. A secondary analysis, added by amendment after the pilot, applies the same division to the toys. Scored against the same band, it overcovers: $C_1=\covTwoDRepCOne$, with its interval above the window. The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under it, the primary undercoverage is attributed to this term of the band. The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers. The band was then rebuilt without this term. The quoted statistical block is a third, different ensemble, 300 replicas at the central value's training seed (\S\ref{sec:uq-boot}). The rebuilt band was only rescored post hoc (below), and the quoted block has not been tested."
+
+--- A-4 homes ---
+Homes as for A-2: sec_5d.tex sec:coverage-5d, "An end-to-end independent-truth test assessed statistical intervals of a deterministic five-dimensional estimator variant with nominal-truth bias correction (1,200 pseudo-experiments over three truths)."; and sec_5d.tex:179, the development assessment, "The statistical intervals of the development assessment take their width from 100 bootstrap replicas of one nominal development experiment and do not recompute it for each assessment experiment (Fig.~\ref{fig:gbdt-coverage})."
+
+--- A-5 homes ---
+Home, sec_5d.tex:306, verbatim: "\item Estimator-seed sensitivity exceeds its limit. Companion covariances at seed offsets $\{0,1200\}$ give the correlation-sensitive measure $s_{\mathrm{proj}}=\sprojMeasured\,\%$, against the \sprojBound\,\% movement limit set before production, on 2026-09-18, as a direct movement tolerance at the scale of the ensemble's own precision. A 160-throw ensemble determines a standard deviation only to a relative precision of about $1/\sqrt{2(N-1)}\approx\SI{5.6}{\percent}$ for independent Gaussian throws, so a smaller seed-induced drift could not be resolved against the width it would change. The limit is a declared stability tolerance, not a derived confidence threshold for a maximum over correlated projections. The diagonal-only measures pass ($s_{\mathrm{agg}}=\saggMeasured\,\%$, $s_{\mathrm{med}}=\smedMeasured\,\%$); the failing one probes the off-diagonal structure used by projections." Definition of s_proj, docs/orchestration/AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md:41-43: "**Measures:** `s_proj` = the maximum, over the declared offsets `K` and the declared functionals
+`U`, of the relative change in the **released projected uncertainty** —
+`max_{k,i} |√(u_iᵀC_k u_i) − √(u_iᵀC_0 u_i)| / √(u_iᵀC_0 u_i)` — with `C_stat`, `C_ML` digest-fixed.". Values: \sprojMeasured = 6.145, \saggMeasured = 0.471, \smedMeasured = 0.485, \sprojBound = 5 (percent).
+
+--- A-6 homes ---
+Same home and definition as A-5.
+

@@ -1,0 +1,496 @@
+# REPORT G-SENS2: flux, detector and lateral each shrunk alone (2026-10-26)
+
+**By** the measurement session.
+
+**Under** [`FD-G-SENS2-BINDING.md`](FD-G-SENS2-BINDING.md) (PR #397, main `bfc9b673`).
+- It binds [`FD-G-SENS2-DECLARATION.md`](FD-G-SENS2-DECLARATION.md) at deploy pin `3ed50ed5`.
+- The report follows the binding's §3 item 4, with rulings 1, 6 and 7 applied.
+
+**MEASURES:**
+- Stage G's reported χ² with flux, detector or lateral shrunk alone toward the diagonal, keeping its variances, for
+  each prediction and α;
+- for flux at α = 0 and 0.1, the top mode's block shares, and α = 0's mode followed into α = 0.1.
+
+**CANNOT AUTHORIZE:**
+- an alternative to Stage G's reported χ² or covariance;
+- a p value;
+- any reading of these numbers, a claim or printed wording, which are Joseph's.
+
+**CITABLE FOR:**
+- the numbers below, as `fd/readout/fd_g_sens2_readout.json` holds them;
+- for the interaction and joint families, as G-FOLLOWUP's readout `cd82517a…` holds them.
+
+**NOT CITABLE FOR:**
+- an interpretation;
+- a shrunk χ² as a result. Every record is labelled "descriptive sensitivity of the reported χ², not an alternative
+  result".
+
+**Outcome:**
+- **Both steps exited 0** on login09 at 0 node-h, with no Slurm job.
+  - **The deploy:** "Ran 174 tests … OK".
+  - **The run:** it took about 1 s. D0–D5, H0, H1, S0, S1, S2 and H2 passed (30 lines), and `sens2.err` is empty.
+- **Stage G was reproduced.** D5 matched it exactly. S0 found α = 0 equal to Stage G's reported χ² for every new family
+  and prediction, to 1.3 × 10⁻¹⁴ relative at worst.
+- **The identity (H0).** G-FOLLOWUP's two χ² values recomputed from the pinned inputs equal its readout's exactly: worst
+  relative difference 0.0.
+- **The shrinkage was the declared one** (S2):
+  - every diagonal was bit-identical;
+  - every off-diagonal was exactly (1 − α) times the original;
+  - every block outside the family was bit-identical, normalization included.
+- **The families were the declared ones** (H1).
+- **Every shrunk M is positive definite** (S1). The smallest λ_min of any M is 1.95 × 10⁻⁵, relative to f.
+- **The addition (H2).** Every share set sums to 1, to 3.2 × 10⁻¹⁴. Each flux top mode is the one its record carries:
+  at α = 0, G-FOLLOWUP's α = 0 record; at α = 0.1, this run's flux record.
+- **No record is flagged unstable.** The largest relative difference of the mode-sum or least-squares χ² from Cholesky
+  is 1.9 × 10⁻¹⁴. The largest ridge change is 9.0 × 10⁻⁹.
+- **The readout** is `0f6568aba032e5d9a85f945048494d8fccde3525bb45a1762d6f5d5aaf15b77f`, schema
+  `fd-g-sens2-readout/1`, 176,661 bytes, with no non-finite values and no key `p`.
+
+## 1. The steps
+
+| step | host | start (UTC) | end | rc | wall | result |
+|---|---|---|---|---:|---:|---|
+| §2.1 deploy and tests | login09 | 23:09:01 | 23:10:57 | 0 | 116 s | `$B=/pscratch/sd/j/josephrb/fd-g-sens2-20261026` absent before; HEAD `3ed50ed5…`; porcelain 0 before and after; every §8 digest matches (`fd_g_followup.py` `ec8cbc68…`, tests `f57c58b4…`, `fd_g_diag.py` `241bfd02…`, the Stage G readout `75a9ddee…`, the G-FOLLOWUP readout `cd82517a…`), and the declaration's is `2d064532…`, the binding's; `tests rc=0`, "Ran 174 tests in 84.378s", OK |
+| §2.2 the run | login09 | 23:11:13 | 23:11:14 | 0 | 1 s | D0–D5, H0, H1, S0, S1, S2 and H2 PASS (30 lines); readout written; `sens2.err` empty |
+
+All on 2026-10-26.
+
+- **The start time:** the deploy start is the local stamp when the script was sent (`s1-launch.txt`). `deploy.log`'s
+  first stamp, 23:09:29, follows the clone.
+- **The scripts:**
+  - `s1.sh` is §2.1 verbatim, with `set -u`, the variable definitions, a guard that refuses if `$B` exists, an end
+    stamp appended to `deploy.log`, and a closing `cat`/`grep`.
+  - `s2.sh` is §2.2 verbatim, with guards that refuse unless the deploy shows `tests rc=0` and if the readout exists,
+    start and end stamps, and a closing `cat`/`grep`/`tail`/`ls`.
+  - Both were sent by `ssh saul.nersc.gov bash -s` (`s1-launch.txt`, `s2-launch.txt`), with stdout captured locally to
+    `sN-stdout.txt` and the ssh exit appended as `rc=`. Neither names a CFS path.
+- **The copies:** the readout and the five logs were copied back. Their local digests (`SHA256SUMS`) equal the
+  cluster-side `sha256sum` taken after the run (`cluster-sha256.txt`, which also records `$B`: 571 MiB by `du -sh`).
+
+**The run's control lines** beyond D0–D5 (`sens2.out`):
+
+```text
+PASS control H0 the G-FOLLOWUP readout is pinned and ran on this Stage G readout, extra block, families and matrix
+PASS control H0 two G-FOLLOWUP chi2 values recomputed from the pinned inputs equal its readout's to 1e-10 (worst 0.0e+00)
+PASS control H1 each family shrinks exactly its own group, and none shrinks stat, seed, normalization or interaction
+PASS control S0 alpha = 0 reproduces Stage G's reported chi2 for every family and prediction to 1e-10 (worst 1.3e-14)
+PASS control S1 every shrunk M is positive definite
+PASS control S2 every shrunk group's diagonal, and every shrunk M's, is the unshrunk one bit for bit
+PASS control S2 every shrunk group's off-diagonal is (1 - alpha) times the unshrunk one (worst 0.0e+00)
+PASS control S2 every block outside the family is unchanged bit for bit
+PASS control H2 every flux top mode's, and every followed mode's, block shares sum to 1 (worst 3.2e-14)
+PASS control H2 each flux top mode is the one its record carries: alpha 0 G-FOLLOWUP's, alpha 0.1 this run's
+```
+
+## 2. The identity: two of G-FOLLOWUP's records, recomputed (H0)
+
+| family | α | prediction | χ², G-FOLLOWUP readout | χ², recomputed | relative difference |
+|---|---|---|---|---|---|
+| interaction | 1 | nuwro | 107.834654 | 107.834654 | 0.0e+00 |
+| c_e_systematic | 0.25 | gibuu | 48.886605 | 48.886605 | 0.0e+00 |
+
+## 3. The five families side by side (ruling 6)
+
+These are the reported χ² per prediction, by family and α. The interaction and joint (`c_e_systematic`) columns are
+G-FOLLOWUP's, cited from its readout `cd82517a…` and not recomputed (H0 checked two of them). The flux, detector and
+lateral columns are this run's. Every value is a **descriptive sensitivity of the reported χ², not an alternative
+result.**
+
+| prediction | label (verbatim, from G-FOLLOWUP's readout) |
+|---|---|
+| genie_cv | GENIE 2.12.10 CV, no MEC; CH |
+| genie_mec | GENIE 2.12.10 + Valencia MEC; CH |
+| nuwro | NuWro 21.09; C12 target; no correction to CH applied |
+| gibuu | GiBUU 2019; C12 target; no correction to CH applied; no events above E_nu = 20 GeV (KNOWN_ISSUES 82), so it is compared on the eight p_parallel < 4.5 cells only and not shown above p_parallel 4.5 (FD-DIRECTOR-RULINGS.md section 5) |
+| mnvtune_v1 | MINERvA Tune v1, the analysis MC truth: prior (not an independent prediction) |
+
+#### genie_cv, ndf 16
+
+| α | interaction (G-FOLLOWUP cd82517a) | c_e_systematic (G-FOLLOWUP cd82517a) | flux (G-SENS2) | detector (G-SENS2) | lateral (G-SENS2) |
+|---|---|---|---|---|---|
+| 0 | 109.35 | 109.35 | 109.35 | 109.35 | 109.35 |
+| 0.1 | 96.25 | 70.68 | 83.35 | 98.88 | 92.28 |
+| 0.25 | 87.15 | 55.78 | 67.47 | 89.55 | 82.37 |
+| 0.5 | 78.97 | 45.84 | 54.85 | 80.62 | 74.86 |
+| 1 | 72.97 | 45.47 | 46.91 | 71.55 | 69.24 |
+
+#### genie_mec, ndf 16
+
+| α | interaction (G-FOLLOWUP cd82517a) | c_e_systematic (G-FOLLOWUP cd82517a) | flux (G-SENS2) | detector (G-SENS2) | lateral (G-SENS2) |
+|---|---|---|---|---|---|
+| 0 | 272.12 | 272.12 | 272.12 | 272.12 | 272.12 |
+| 0.1 | 245.60 | 133.31 | 158.95 | 235.23 | 243.06 |
+| 0.25 | 222.06 | 87.57 | 110.78 | 200.36 | 220.25 |
+| 0.5 | 195.79 | 61.09 | 79.17 | 166.28 | 197.09 |
+| 1 | 171.20 | 45.33 | 55.24 | 132.03 | 169.99 |
+
+#### nuwro, ndf 16
+
+| α | interaction (G-FOLLOWUP cd82517a) | c_e_systematic (G-FOLLOWUP cd82517a) | flux (G-SENS2) | detector (G-SENS2) | lateral (G-SENS2) |
+|---|---|---|---|---|---|
+| 0 | 188.03 | 188.03 | 188.03 | 188.03 | 188.03 |
+| 0.1 | 159.94 | 90.41 | 103.72 | 154.38 | 157.72 |
+| 0.25 | 141.30 | 66.48 | 76.77 | 130.75 | 140.34 |
+| 0.5 | 123.29 | 55.61 | 60.69 | 111.28 | 124.54 |
+| 1 | 107.83 | 69.24 | 55.08 | 94.11 | 120.77 |
+
+#### gibuu, ndf 8
+
+| α | interaction (G-FOLLOWUP cd82517a) | c_e_systematic (G-FOLLOWUP cd82517a) | flux (G-SENS2) | detector (G-SENS2) | lateral (G-SENS2) |
+|---|---|---|---|---|---|
+| 0 | 58.46 | 58.46 | 58.46 | 58.46 | 58.46 |
+| 0.1 | 57.59 | 50.51 | 55.00 | 58.01 | 51.44 |
+| 0.25 | 56.63 | 48.89 | 53.47 | 57.75 | 46.36 |
+| 0.5 | 55.46 | 53.32 | 55.24 | 58.06 | 42.43 |
+| 1 | 54.34 | 89.88 | 70.81 | 60.51 | 39.43 |
+
+#### mnvtune_v1, ndf 16
+
+| α | interaction (G-FOLLOWUP cd82517a) | c_e_systematic (G-FOLLOWUP cd82517a) | flux (G-SENS2) | detector (G-SENS2) | lateral (G-SENS2) |
+|---|---|---|---|---|---|
+| 0 | 329.72 | 329.72 | 329.72 | 329.72 | 329.72 |
+| 0.1 | 299.42 | 146.34 | 172.92 | 278.32 | 299.58 |
+| 0.25 | 266.01 | 93.46 | 116.47 | 232.10 | 270.68 |
+| 0.5 | 226.91 | 66.64 | 83.57 | 189.45 | 238.99 |
+| 1 | 183.85 | 67.59 | 67.41 | 149.83 | 203.29 |
+
+## 4. The three new families, record by record
+
+Every record below is a **descriptive sensitivity of the reported χ², not an alternative result,** with role `single
+group`. No p value is computed.
+- **The shrinkage:** each group C_g becomes D^½[(1 − α)ρ + αI]D^½. Everything else is unchanged: the other six S1
+  groups, normalization included, the three vertices, C_resp and V_g.
+- **The columns:**
+  - λ_min and σ are relative to f.
+  - The top mode carries the largest χ² contribution, and its index is in that matrix's own eigen-order.
+  - Leading cells are the three largest |loading|, signed.
+  - "group λ_min" is the shrunk group's own smallest eigenvalue.
+- **Ruling 7.** The group λ_min values that are not positive are all at α = 0, the unshrunk group:
+  - detector, −2.6 × 10⁻¹⁹ (GiBUU's 8 cells: −3.5 × 10⁻¹⁹);
+  - lateral, −1.3 × 10⁻¹⁸ (GiBUU's 8 cells: −7.4 × 10⁻¹⁹).
+
+  These groups are rank-deficient and positive semidefinite: detector is rank 4 and lateral rank 5 over the 16 cells
+  (G-FOLLOWUP's item 3), so their smallest eigenvalue is zero up to float64 round-off, which these values are. Every shrunk M
+  is positive definite (S1).
+
+#### flux (single group), genie_cv, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 109.35 | 1.18e+03 | 4.37e-05 | 2/7/13 | 3.15 | 40.6 | R06 +0.77, R05 -0.41, R10 -0.27 | 2.2e-07 |
+| 0.1 | 83.35 | 305 | 0.000169 | 2/7/13 | 3.34 | 46.6 | R06 +0.76, R05 -0.43, R10 -0.27 | 0.00012 |
+| 0.25 | 67.47 | 145 | 0.000355 | 2/6/12 | 3.61 | 47.6 | R06 +0.74, R05 -0.46, R10 -0.27 | 0.00029 |
+| 0.5 | 54.85 | 77.8 | 0.00066 | 2/6/12 | 4.02 | 42.6 | R06 +0.70, R05 -0.51, R01 +0.28 | 0.00058 |
+| 1 | 46.91 | 41 | 0.00126 | 2/5/10 | 7.44 | 27.7 | R08 +0.62, R00 +0.39, R12 +0.36 | 0.0011 |
+
+#### flux (single group), genie_mec, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 272.12 | 1.15e+03 | 4.47e-05 | 2/4/10 | 1.15 | 45.5 | R04 +0.45, R08 -0.42, R01 -0.37 | 2.2e-07 |
+| 0.1 | 158.95 | 303 | 0.00017 | 2/5/11 | 1.62 | 37.0 | R09 +0.50, R01 -0.42, R04 +0.40 | 0.00012 |
+| 0.25 | 110.78 | 145 | 0.000355 | 2/6/12 | 3.62 | 39.5 | R06 +0.74, R05 -0.46, R10 -0.26 | 0.00029 |
+| 0.5 | 79.17 | 77.7 | 0.000661 | 2/7/12 | 4.03 | 40.4 | R06 +0.70, R05 -0.51, R01 +0.28 | 0.00058 |
+| 1 | 55.24 | 41 | 0.00126 | 2/7/13 | 4.77 | 27.8 | R05 +0.60, R06 -0.54, R01 -0.40 | 0.0011 |
+
+#### flux (single group), nuwro, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 188.03 | 1.38e+03 | 3.73e-05 | 3/9/13 | 0.61 | 31.3 | R04 +0.63, R10 -0.37, R00 -0.34 | 2.2e-07 |
+| 0.1 | 103.72 | 316 | 0.000163 | 4/10/12 | 6.70 | 19.1 | R08 +0.58, R00 +0.40, R07 -0.39 | 0.00012 |
+| 0.25 | 76.77 | 148 | 0.000348 | 4/10/12 | 6.85 | 25.5 | R08 +0.59, R00 +0.41, R07 -0.39 | 0.00029 |
+| 0.5 | 60.69 | 78.6 | 0.000654 | 3/10/13 | 7.09 | 32.1 | R08 +0.59, R00 +0.41, R07 -0.38 | 0.00058 |
+| 1 | 55.08 | 41.2 | 0.00125 | 1/6/14 | 7.44 | 51.4 | R08 +0.62, R00 +0.39, R12 +0.36 | 0.0011 |
+
+#### flux (single group), gibuu, ndf 8
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 58.46 | 142 | 0.0003 | 2/5/6 | 13.54 | 26.8 | R11 +0.79, R10 +0.36, R00 +0.30 | 4.8e-07 |
+| 0.1 | 55.00 | 99.4 | 0.000427 | 2/5/6 | 13.35 | 30.1 | R11 +0.79, R10 +0.38, R00 +0.29 | 0.00012 |
+| 0.25 | 53.47 | 68.4 | 0.000618 | 2/5/7 | 13.08 | 33.1 | R11 +0.80, R10 +0.39, R00 +0.28 | 0.00029 |
+| 0.5 | 55.24 | 45 | 0.000934 | 2/5/7 | 12.65 | 34.1 | R11 +0.80, R10 +0.43, R02 +0.26 | 0.00058 |
+| 1 | 70.81 | 26.9 | 0.00156 | 2/4/7 | 5.65 | 43.0 | R09 +0.75, R00 -0.46, R10 +0.34 | 0.0011 |
+
+#### flux (single group), mnvtune_v1, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 329.72 | 2.64e+03 | 1.95e-05 | 2/5/9 | 0.97 | 47.9 | R04 +0.54, R14 -0.41, R08 -0.38 | 2.2e-07 |
+| 0.1 | 172.92 | 357 | 0.000144 | 2/5/9 | 1.51 | 38.7 | R04 +0.49, R14 -0.39, R08 -0.36 | 0.00012 |
+| 0.25 | 116.47 | 156 | 0.000329 | 2/6/9 | 3.49 | 32.0 | R06 +0.73, R05 -0.45, R10 -0.28 | 0.00029 |
+| 0.5 | 83.57 | 81.1 | 0.000633 | 3/7/10 | 3.91 | 30.6 | R06 +0.68, R05 -0.51, R01 +0.29 | 0.00058 |
+| 1 | 67.41 | 41.9 | 0.00123 | 3/9/12 | 4.53 | 21.1 | R06 +0.58, R03 -0.37, R01 -0.32 | 0.0011 |
+
+#### detector (single group), genie_cv, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 109.35 | 1.18e+03 | 4.37e-05 | 2/7/13 | 3.15 | 40.6 | R06 +0.77, R05 -0.41, R10 -0.27 | -2.6e-19 |
+| 0.1 | 98.88 | 752 | 6.86e-05 | 2/7/12 | 3.19 | 43.5 | R06 +0.76, R05 -0.43, R10 -0.27 | 1.6e-05 |
+| 0.25 | 89.55 | 509 | 0.000101 | 2/7/13 | 3.25 | 45.5 | R06 +0.74, R05 -0.44, R10 -0.28 | 3.9e-05 |
+| 0.5 | 80.62 | 341 | 0.000151 | 2/7/13 | 3.35 | 45.2 | R06 +0.70, R05 -0.47, R10 -0.29 | 7.6e-05 |
+| 1 | 71.55 | 211 | 0.000245 | 2/8/14 | 3.55 | 38.3 | R06 +0.60, R05 -0.52, R01 +0.33 | 0.00015 |
+
+#### detector (single group), genie_mec, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 272.12 | 1.15e+03 | 4.47e-05 | 2/4/10 | 1.15 | 45.5 | R04 +0.45, R08 -0.42, R01 -0.37 | -2.6e-19 |
+| 0.1 | 235.23 | 743 | 6.94e-05 | 2/6/10 | 1.29 | 32.9 | R08 +0.40, R00 -0.39, R14 +0.36 | 1.6e-05 |
+| 0.25 | 200.36 | 505 | 0.000102 | 2/6/11 | 3.26 | 27.5 | R06 +0.74, R05 -0.45, R10 -0.28 | 3.9e-05 |
+| 0.5 | 166.28 | 339 | 0.000152 | 2/6/12 | 3.36 | 29.6 | R06 +0.70, R05 -0.48, R10 -0.28 | 7.6e-05 |
+| 1 | 132.03 | 210 | 0.000246 | 2/6/12 | 3.56 | 28.4 | R06 +0.60, R05 -0.52, R01 +0.34 | 0.00015 |
+
+#### detector (single group), nuwro, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 188.03 | 1.38e+03 | 3.73e-05 | 3/9/13 | 0.61 | 31.3 | R04 +0.63, R10 -0.37, R00 -0.34 | -2.6e-19 |
+| 0.1 | 154.38 | 803 | 6.42e-05 | 3/9/13 | 0.80 | 30.4 | R04 +0.78, R00 -0.34, R09 -0.26 | 1.6e-05 |
+| 0.25 | 130.75 | 527 | 9.79e-05 | 3/9/13 | 0.99 | 27.3 | R04 +0.86, R00 -0.31, R09 -0.25 | 3.9e-05 |
+| 0.5 | 111.28 | 348 | 0.000148 | 3/9/13 | 1.22 | 23.3 | R04 +0.90, R00 -0.28, R09 -0.22 | 7.6e-05 |
+| 1 | 94.11 | 213 | 0.000242 | 3/9/12 | 6.76 | 21.6 | R08 +0.60, R00 +0.40, R07 -0.38 | 0.00015 |
+
+#### detector (single group), gibuu, ndf 8
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 58.46 | 142 | 0.0003 | 2/5/6 | 13.54 | 26.8 | R11 +0.79, R10 +0.36, R00 +0.30 | -3.5e-19 |
+| 0.1 | 58.01 | 124 | 0.000343 | 2/5/6 | 13.47 | 27.5 | R11 +0.79, R10 +0.37, R00 +0.30 | 2.9e-05 |
+| 0.25 | 57.75 | 104 | 0.000408 | 2/5/6 | 13.37 | 28.3 | R11 +0.80, R10 +0.37, R00 +0.30 | 7e-05 |
+| 0.5 | 58.06 | 82.7 | 0.000514 | 2/5/7 | 13.20 | 29.2 | R11 +0.80, R10 +0.38, R00 +0.30 | 0.00014 |
+| 1 | 60.51 | 59.2 | 0.000719 | 2/5/7 | 12.87 | 29.7 | R11 +0.80, R10 +0.39, R00 +0.29 | 0.00024 |
+
+#### detector (single group), mnvtune_v1, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 329.72 | 2.64e+03 | 1.95e-05 | 2/5/9 | 0.97 | 47.9 | R04 +0.54, R14 -0.41, R08 -0.38 | -2.6e-19 |
+| 0.1 | 278.32 | 987 | 5.22e-05 | 2/6/9 | 1.11 | 37.8 | R04 +0.44, R14 -0.43, R08 -0.36 | 1.6e-05 |
+| 0.25 | 232.10 | 579 | 8.9e-05 | 3/6/9 | 1.30 | 24.8 | R14 +0.44, R00 -0.35, R08 +0.32 | 3.9e-05 |
+| 0.5 | 189.45 | 366 | 0.000141 | 3/6/11 | 1.19 | 26.8 | R04 +0.89, R00 -0.28, R09 -0.22 | 7.6e-05 |
+| 1 | 149.83 | 219 | 0.000235 | 2/6/10 | 1.53 | 29.4 | R04 +0.92, R00 -0.23, R09 -0.19 | 0.00015 |
+
+#### lateral (single group), genie_cv, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 109.35 | 1.18e+03 | 4.37e-05 | 2/7/13 | 3.15 | 40.6 | R06 +0.77, R05 -0.41, R10 -0.27 | -1.3e-18 |
+| 0.1 | 92.28 | 702 | 7.27e-05 | 2/6/12 | 3.20 | 46.3 | R06 +0.74, R05 -0.44, R10 -0.27 | 3.3e-06 |
+| 0.25 | 82.37 | 589 | 8.55e-05 | 1/5/10 | 3.29 | 54.4 | R06 +0.64, R03 -0.42, R02 +0.32 | 7.5e-06 |
+| 0.5 | 74.86 | 496 | 9.94e-05 | 2/7/10 | 3.58 | 44.9 | R06 +0.42, R03 -0.42, R05 -0.37 | 1.3e-05 |
+| 1 | 69.24 | 389 | 0.000122 | 3/9/12 | 3.18 | 23.0 | R06 +0.78, R07 -0.40, R05 -0.30 | 1.9e-05 |
+
+#### lateral (single group), genie_mec, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 272.12 | 1.15e+03 | 4.47e-05 | 2/4/10 | 1.15 | 45.5 | R04 +0.45, R08 -0.42, R01 -0.37 | -1.3e-18 |
+| 0.1 | 243.06 | 695 | 7.34e-05 | 2/4/10 | 0.86 | 42.6 | R04 +0.91, R09 -0.32, R08 -0.15 | 3.3e-06 |
+| 0.25 | 220.25 | 584 | 8.62e-05 | 1/4/9 | 0.93 | 51.4 | R04 +0.92, R09 -0.28, R08 -0.22 | 7.5e-06 |
+| 0.5 | 197.09 | 492 | 0.0001 | 1/4/9 | 1.00 | 54.4 | R04 +0.92, R09 -0.26, R08 -0.25 | 1.3e-05 |
+| 1 | 169.99 | 387 | 0.000123 | 1/5/12 | 1.11 | 53.0 | R04 +0.92, R08 -0.28, R09 -0.24 | 1.9e-05 |
+
+#### lateral (single group), nuwro, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 188.03 | 1.38e+03 | 3.73e-05 | 3/9/13 | 0.61 | 31.3 | R04 +0.63, R10 -0.37, R00 -0.34 | -1.3e-18 |
+| 0.1 | 157.72 | 732 | 6.97e-05 | 2/8/12 | 0.83 | 42.9 | R04 +0.90, R09 -0.31, R08 -0.14 | 3.3e-06 |
+| 0.25 | 140.34 | 610 | 8.25e-05 | 2/7/10 | 0.91 | 41.2 | R04 +0.92, R09 -0.28, R08 -0.22 | 7.5e-06 |
+| 0.5 | 124.54 | 511 | 9.65e-05 | 2/8/11 | 0.98 | 38.6 | R04 +0.92, R09 -0.26, R08 -0.25 | 1.3e-05 |
+| 1 | 120.77 | 399 | 0.00012 | 2/7/12 | 1.09 | 28.3 | R04 +0.92, R08 -0.28, R09 -0.24 | 1.9e-05 |
+
+#### lateral (single group), gibuu, ndf 8
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 58.46 | 142 | 0.0003 | 2/5/6 | 13.54 | 26.8 | R11 +0.79, R10 +0.36, R00 +0.30 | -7.4e-19 |
+| 0.1 | 51.44 | 96.8 | 0.000435 | 2/5/6 | 13.57 | 30.5 | R11 +0.79, R10 +0.36, R00 +0.30 | 5.4e-06 |
+| 0.25 | 46.36 | 66.3 | 0.000623 | 2/4/7 | 13.61 | 34.0 | R11 +0.79, R10 +0.36, R00 +0.30 | 9.2e-06 |
+| 0.5 | 42.43 | 44.4 | 0.000905 | 2/4/7 | 13.68 | 37.3 | R11 +0.79, R10 +0.37, R00 +0.30 | 1.3e-05 |
+| 1 | 39.43 | 30.4 | 0.00125 | 2/4/6 | 13.83 | 40.6 | R11 +0.79, R10 +0.37, R00 +0.30 | 1.9e-05 |
+
+#### lateral (single group), mnvtune_v1, ndf 16
+
+Every row: descriptive sensitivity of the reported χ², not an alternative result.
+
+| α | χ² | condition | λ_min | modes 50/90/99 % | top mode σ % | its fraction % | leading cells | group λ_min |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 329.72 | 2.64e+03 | 1.95e-05 | 2/5/9 | 0.97 | 47.9 | R04 +0.54, R14 -0.41, R08 -0.38 | -1.3e-18 |
+| 0.1 | 299.58 | 823 | 6.2e-05 | 2/5/8 | 0.79 | 47.5 | R04 +0.89, R09 -0.31, R10 -0.17 | 3.3e-06 |
+| 0.25 | 270.68 | 667 | 7.54e-05 | 1/3/8 | 0.87 | 60.5 | R04 +0.91, R09 -0.28, R08 -0.22 | 7.5e-06 |
+| 0.5 | 238.99 | 550 | 8.95e-05 | 1/4/8 | 0.95 | 63.1 | R04 +0.92, R09 -0.26, R08 -0.25 | 1.3e-05 |
+| 1 | 203.29 | 423 | 0.000113 | 1/6/12 | 1.06 | 60.1 | R04 +0.92, R08 -0.27, R09 -0.24 | 1.9e-05 |
+
+## 5. The flux addition: the top mode's block shares at α = 0 and α = 0.1 (ruling 1)
+
+Both readings are given, each with `flux_ratio`:
+- **each matrix's own top mode,** at α = 0 and at α = 0.1;
+- **α = 0's top mode followed into the α = 0.1 blocks,** with `overlap_abs` = |v₀ · v₀.₁|.
+
+**Definitions:**
+- **A share** is vᵀBv/λ, or vᵀBv/vᵀMv for the followed mode, over G-DIAG's 12 blocks. The shares sum to 1.
+- **`flux_ratio`** is vᵀFv / vᵀdiag(F)v for the unshrunk flux block F: the ratio of flux's variance along the mode to
+  its value with flux's correlations removed, which is 1 for uncorrelated cells.
+- **"χ² along it"** is (vᵀd)²/vᵀMv. It is descriptive, because the followed v is not an eigenvector of the α = 0.1
+  matrix.
+
+All are **descriptive sensitivity of the reported χ², not an alternative result.**
+
+#### genie_cv
+- α = 0 top mode 7, σ 3.15 %, carries 40.6 % (χ² 44.45), flux_ratio 0.060, dominant interaction
+- α = 0.1 top mode 7, σ 3.34 %, carries 46.6 % (χ² 38.87), flux_ratio 0.061, dominant interaction
+- α = 0 mode followed into α = 0.1: χ² along it 39.54, flux_ratio 0.060, dominant interaction; overlap |v0·v0.1| 0.999
+
+| block | α = 0 own mode | α = 0.1 own mode | α = 0 mode at α = 0.1 |
+|---|---|---|---|
+| stat | 0.014 | 0.012 | 0.012 |
+| interaction | 0.377 | 0.333 | 0.335 |
+| flux | 0.079 | 0.183 | 0.181 |
+| detector | 0.004 | 0.003 | 0.004 |
+| lateral | 0.025 | 0.026 | 0.022 |
+| normalization | 0.001 | 0.001 | 0.001 |
+| seed | 0.000 | 0.000 | 0.000 |
+| C_model:genie_mec | 0.306 | 0.271 | 0.272 |
+| C_model:nuwro | 0.000 | 0.000 | 0.000 |
+| C_model:gibuu | 0.016 | 0.014 | 0.014 |
+| C_resp | 0.090 | 0.078 | 0.080 |
+| V_g | 0.088 | 0.079 | 0.079 |
+
+#### genie_mec
+- α = 0 top mode 13, σ 1.15 %, carries 45.5 % (χ² 123.83), flux_ratio 0.014, dominant interaction
+- α = 0.1 top mode 13, σ 1.62 %, carries 37.0 % (χ² 58.88), flux_ratio 0.015, dominant flux
+- α = 0 mode followed into α = 0.1: χ² along it 61.89, flux_ratio 0.014, dominant flux; overlap |v0·v0.1| 0.942
+
+| block | α = 0 own mode | α = 0.1 own mode | α = 0 mode at α = 0.1 |
+|---|---|---|---|
+| stat | 0.025 | 0.014 | 0.013 |
+| interaction | 0.412 | 0.249 | 0.206 |
+| flux | 0.146 | 0.566 | 0.573 |
+| detector | 0.126 | 0.021 | 0.063 |
+| lateral | 0.018 | 0.019 | 0.009 |
+| normalization | 0.007 | 0.002 | 0.004 |
+| seed | 0.000 | 0.000 | 0.000 |
+| C_model:genie_mec | 0.007 | 0.002 | 0.003 |
+| C_model:nuwro | 0.001 | 0.002 | 0.001 |
+| C_model:gibuu | 0.000 | 0.000 | 0.000 |
+| C_resp | 0.012 | 0.008 | 0.006 |
+| V_g | 0.245 | 0.116 | 0.123 |
+
+#### nuwro
+- α = 0 top mode 15, σ 0.61 %, carries 31.3 % (χ² 58.93), flux_ratio 0.001, dominant V_g
+- α = 0.1 top mode 5, σ 6.70 %, carries 19.1 % (χ² 19.85), flux_ratio 0.029, dominant C_resp
+- α = 0 mode followed into α = 0.1: χ² along it 13.48, flux_ratio 0.001, dominant flux; overlap |v0·v0.1| 0.001
+
+| block | α = 0 own mode | α = 0.1 own mode | α = 0 mode at α = 0.1 |
+|---|---|---|---|
+| stat | 0.032 | 0.002 | 0.007 |
+| interaction | 0.335 | 0.324 | 0.077 |
+| flux | 0.046 | 0.040 | 0.782 |
+| detector | 0.064 | 0.029 | 0.015 |
+| lateral | 0.029 | 0.029 | 0.007 |
+| normalization | 0.002 | 0.001 | 0.000 |
+| seed | 0.000 | 0.000 | 0.000 |
+| C_model:genie_mec | 0.068 | 0.006 | 0.016 |
+| C_model:nuwro | 0.004 | 0.035 | 0.001 |
+| C_model:gibuu | 0.000 | 0.006 | 0.000 |
+| C_resp | 0.018 | 0.518 | 0.004 |
+| V_g | 0.401 | 0.009 | 0.092 |
+
+#### gibuu
+- α = 0 top mode 1, σ 13.54 %, carries 26.8 % (χ² 15.68), flux_ratio 5.099, dominant flux
+- α = 0.1 top mode 1, σ 13.35 %, carries 30.1 % (χ² 16.54), flux_ratio 5.051, dominant flux
+- α = 0 mode followed into α = 0.1: χ² along it 16.12, flux_ratio 5.099, dominant flux; overlap |v0·v0.1| 0.999
+
+| block | α = 0 own mode | α = 0.1 own mode | α = 0 mode at α = 0.1 |
+|---|---|---|---|
+| stat | 0.001 | 0.001 | 0.001 |
+| interaction | 0.171 | 0.186 | 0.176 |
+| flux | 0.334 | 0.313 | 0.316 |
+| detector | 0.131 | 0.133 | 0.134 |
+| lateral | 0.007 | 0.007 | 0.007 |
+| normalization | 0.054 | 0.055 | 0.055 |
+| seed | 0.000 | 0.000 | 0.000 |
+| C_model:genie_mec | 0.002 | 0.002 | 0.002 |
+| C_model:nuwro | 0.075 | 0.082 | 0.077 |
+| C_model:gibuu | 0.120 | 0.106 | 0.123 |
+| C_resp | 0.099 | 0.108 | 0.102 |
+| V_g | 0.007 | 0.007 | 0.007 |
+
+#### mnvtune_v1
+- α = 0 top mode 13, σ 0.97 %, carries 47.9 % (χ² 157.97), flux_ratio 0.015, dominant interaction
+- α = 0.1 top mode 13, σ 1.51 %, carries 38.7 % (χ² 66.95), flux_ratio 0.017, dominant flux
+- α = 0 mode followed into α = 0.1: χ² along it 65.77, flux_ratio 0.015, dominant flux; overlap |v0·v0.1| 0.965
+
+| block | α = 0 own mode | α = 0.1 own mode | α = 0 mode at α = 0.1 |
+|---|---|---|---|
+| stat | 0.034 | 0.013 | 0.014 |
+| interaction | 0.349 | 0.193 | 0.145 |
+| flux | 0.219 | 0.681 | 0.675 |
+| detector | 0.332 | 0.090 | 0.138 |
+| lateral | 0.019 | 0.008 | 0.008 |
+| normalization | 0.017 | 0.006 | 0.007 |
+| seed | 0.000 | 0.000 | 0.000 |
+| C_model:genie_mec | 0.001 | 0.001 | 0.000 |
+| C_model:nuwro | 0.000 | 0.000 | 0.000 |
+| C_model:gibuu | 0.000 | 0.000 | 0.000 |
+| C_resp | 0.023 | 0.005 | 0.010 |
+| V_g | 0.006 | 0.003 | 0.003 |
+
+## 6. Records
+
+- **The readout:** `fd/readout/fd_g_sens2_readout.json`, `0f6568ab…`. It names no file that the receipt gate cannot
+  resolve, so G-FOLLOWUP's symlink-companion ruling is not needed. `verify_receipt_artifacts.py` shows TRACKED 510,
+  MISSING 0, and its UNRESOLVED inventory unchanged at 66.
+- **The receipts,** under `fd/receipts-g-sens2/`:
+  - `s1.sh`, `s1-launch.txt`, `s1-stdout.txt`, `deploy.log`, `deploy-tests.log`;
+  - `s2.sh`, `s2-launch.txt`, `s2-stdout.txt`, `sens2-start.txt`, `sens2.out`, `sens2.err`;
+  - `cluster-sha256.txt`;
+  - `summarize_g_sens2.py` and its output `summary.txt`, from which every table above is copied. It reads this readout
+    and G-FOLLOWUP's, and checks the latter's digest against the readout's `referenced` pin;
+  - `SHA256SUMS`.
+
+  The declaration's own receipts are under `declaration/`.
+- **The ledger:** two rows in `fd/LEDGER.tsv`.
+- **Storage:** `$B` (571 MiB) is kept on pscratch (binding §3 item 5), on the retention list re-raised before
+  2026-11-20. No tracked retention-list file exists, so the retention is recorded here. Nothing went to HPSS or CFS.
+- **The results index:** unchanged. `results_index.py --population` classes the readout `excluded-no-metric`, so
+  nothing is regenerated.
+
+## Not changed
+
+- G-FOLLOWUP's, G-DIAG's and Stage G's readouts and reports, S1's covariance, C_model,5D, C_resp, R00–R15, κ = 1 and the
+  route decision. G-FOLLOWUP was not re-run (ruling 4).
+- No GPU and no premium QOS.
+- The reading of these numbers, claims, printed wording and publication are Joseph's.
