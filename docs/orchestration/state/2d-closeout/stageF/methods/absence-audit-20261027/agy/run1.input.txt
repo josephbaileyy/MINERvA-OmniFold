@@ -1,0 +1,42 @@
+=== PASSAGE A-1 (sec_pet_campaigns.tex) ===
+BEFORE:
+The effect of omitting scalar true $\Eavail$ and $q_3$ from PET's truth inputs remains untested.
+
+AFTER:
+The effect of omitting scalar true $\Eavail$ and $q_3$ from PET's truth inputs on the generator cases (NuWro, NuWro$'$, GiBUU) remains untested.
+
+=== PASSAGE A-2 (sec_execsummary.tex) ===
+BEFORE:
+The one five-dimensional coverage test, of bias-corrected statistical intervals of a deterministic estimator variant, miscovered at the tested truths.
+
+AFTER:
+The one end-to-end independent-truth coverage test, of bias-corrected statistical intervals of a deterministic five-dimensional estimator variant, miscovered at the tested truths.
+
+=== PASSAGE A-3 (primer_body.tex) ===
+BEFORE:
+The main cause of the shortfall was found and removed, and the statistical bars now quoted were built again, at the same learner settings as the central value.
+
+AFTER:
+Most of the shortfall, though not all of it, was traced to one ingredient of those bars, and they were rebuilt without it. The statistical bars now quoted are a separate set, built at the same learner settings as the central value. 
+
+=== PASSAGE A-4 (primer_body.tex) ===
+BEFORE:
+Third, whether the five-quantity error bars contain the truth as often as stated is untested, and the one direct test of it, made on a variant of the method, failed at the truths it tested.
+
+AFTER:
+Third, whether the five-quantity error bars contain the truth as often as stated is untested, and the one end-to-end test of it against independent truths, made on a variant of the method, failed at the truths it tested.
+
+=== PASSAGE A-5 (primer_body.tex) ===
+BEFORE:
+Change that seed, leaving everything else alone, and the \emph{uncertainty} we report on the $(\Eavail,W)$ projection shifts by about \SI[round-mode=places,round-precision=0]{\sprojMeasured}{\percent}, more than the \SI{\sprojBound}{\percent} we had decided in advance we would tolerate.
+
+AFTER:
+Change that seed, leaving everything else alone, and the \emph{uncertainty} we report on the $(\Eavail,W)$ projection shifts by about \SI[round-mode=places,round-precision=0]{\sprojMeasured}{\percent} in the projected quantity it affects most, more than the \SI{\sprojBound}{\percent} we had decided in advance we would tolerate; measures that ignore the correlations between cells stay within it.
+
+=== PASSAGE A-6 (paper_body.tex) ===
+BEFORE:
+For one pair of seed settings, changing the estimator's random seed moves the projected uncertainty of two further covariances by about \SI{6.1}{\percent}, beyond a stability limit of \SI{\sprojBound}{\percent}.
+
+AFTER:
+For one pair of seed settings, changing the estimator's random seed moves the projected uncertainty of two further covariances by about \SI{6.1}{\percent} in the most affected projected quantity, beyond a stability limit of \SI{\sprojBound}{\percent}; measures of the diagonal alone stay within it.
+

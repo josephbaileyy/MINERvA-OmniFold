@@ -1,0 +1,48 @@
+# Brief: audit of grandfathered absence claims (read-only research)
+
+`S` = `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/796e7ecc-51d8-4fd5-a926-09de706955fd/scratchpad`
+`WT` = `S/wt-gac`, a git worktree of the repository at main `0d919b1a`. **It is read-only for you.**
+
+## Background
+
+An absence claim is a printed sentence that says a result, test, run, record or product does not exist, has not been done, was never measured, or is not quoted. The repository's rule (`WT/docs/orchestration/RECORDS-RULES.md`, rule 4; the lint is `WT/tools/registry/absence_claims.py`) requires each such paragraph to carry a `% Search: <terms searched, ";"-separated> (<what was found>) @ <sha>` comment, or a scoping waiver `% absence-ok: <reason>` when the sentence is not a claim that a result is absent (for example a statement of scope, a method parameter, or a description of what a test checks).
+
+The 20 claims in `WT/docs/orchestration/state/2d-closeout/stageF/methods/tex-reflow-20261026/grandfathered-absence-claims.txt` predate the rule. They carry neither. A sentence of exactly this kind was recently found **false**: `sec_fps.tex`'s "no extended-fiducial production with refined negative-weight subtraction has been run" was false, because such runs existed (job 56430128). So each claim needs a **real search by meaning**, not by the sentence's own wording.
+
+The `.tex` sources are now one line per paragraph. The line numbers in the list refer to `WT` at `0d919b1a`.
+
+## Your job, for each claim assigned to you
+
+1. Open the line. Identify **every absence assertion** in the paragraph: each "has not been run", "no X", "untested", "not measured", "never", and so on. One paragraph can hold several. The lint's pattern name is in brackets in the list.
+2. Classify each assertion:
+   - **SCOPING:** it is not a claim that a result is absent. It is scope, a definition, what a test does or does not certify, or a method choice. Give the waiver reason in one line.
+   - **ABSENCE:** it claims something does not exist or has not been done. Search for it.
+3. For each ABSENCE assertion, **search by meaning.**
+   - Name the object in every way the repository might: estimator names, job ids, receipts, VALIDATION_LEDGER (VL) rows, KNOWN_ISSUES rows, OUTCOME-/DECISION- records, `state/**` reports, scripts that would produce it, and git history (`git log --all -S`/`-G`, `git log --all --oneline -- <path>`).
+   - Use `python3 WT/tools/registry/whatis.py "<term>"` where it applies: it prints a Search line.
+   - Check the note's own other sentences, because the claim may be contradicted inside the note.
+   - Remember the dates. A claim can be true at the time it is dated and false now. Note any "Superseded" or dated framing.
+4. Give a verdict per assertion:
+   - **TRUE** (as scoped), with the evidence that covers it. Evidence is `file:line @ <sha>` for what you found, and the terms for what you searched and did not find.
+   - **FALSE**, with the contradicting evidence, quoted, with `file:line @ sha`.
+   - **UNCERTAIN**, with what would settle it.
+5. Propose the exact comment line for the paragraph. It is either
+   `% Search: <terms> (<finding>) @ 0d919b1a`
+   or `% absence-ok: <reason>`. Either way it is **one line**. For a paragraph with both kinds of assertion, the Search line covers the ABSENCE ones and can mention the scoping ones.
+   - **Do not propose rewording of any printed sentence.** If an assertion is FALSE, say so with evidence. The lane and the director handle fixes, and any change of a claim goes to Joseph.
+
+## Output
+
+Write one file: `S/gac/<your group id>.md`. In it, for each claim, give:
+- the location;
+- the paragraph's absence assertions, quoted;
+- the classification and verdict of each, with evidence;
+- the commands or searches you ran, briefly;
+- the proposed comment line.
+
+Then reply with a summary table: location | assertion (short) | class | verdict | proposed comment line.
+
+**Constraints:**
+- Read-only: no edits to `WT` or any repository file, and no git commands that change state (`log`, `show`, `grep`, `ls-files` and `blame` are fine).
+- No web, no other model CLIs (never codex, never agy), no cluster access.
+- Do not contact anyone.

@@ -1,0 +1,29 @@
+PASSAGE: A-1
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: A-2
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: A-3
+VERDICT: REVISE
+ISSUE: The words "Most of the shortfall, though not all of it" claim that the majority of the shortfall was accounted for, whereas the home states only that the attribution of the primary undercoverage to this term is "partial" ("The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers").
+FIX: Part of the shortfall, though not all of it
+
+PASSAGE: A-4
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: A-5
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: A-6
+VERDICT: AGREE
+ISSUE: none
+FIX: none
