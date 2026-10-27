@@ -1,0 +1,11 @@
+sens2 start 2026-10-26T23:11:13Z login09
+sens2 end 2026-10-26T23:11:14Z
+30
+{"wrote": "/pscratch/sd/j/josephrb/fd-g-sens2-20261026/fd_g_sens2_readout.json", "sha256": "0f6568aba032e5d9a85f945048494d8fccde3525bb45a1762d6f5d5aaf15b77f"}
+rc=0
+total 13
+drwxrwx--- 3 josephrb josephrb   4096 Oct 26 16:09 deploy
+-rw-rw---- 1 josephrb josephrb 176661 Oct 26 16:11 fd_g_sens2_readout.json
+drwxrwx--- 2 josephrb josephrb   4096 Oct 26 16:11 logs
+drwxrwx--- 2 josephrb josephrb   4096 Oct 26 16:10 tmp
+rc=0
