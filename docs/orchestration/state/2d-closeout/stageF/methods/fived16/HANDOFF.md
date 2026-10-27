@@ -60,19 +60,25 @@
 5. **The measurement framing drafts** (DECISION-20261027-joseph-measurement-framing-and-limitation-scoping.md item 1):
    - both abstracts (paper 204 words, note 349);
    - Sec. I, led by the result, with the three limitations as separate `\fvval` sentences in the paper's Sec. I;
-   - in the abstracts, the three limitations are still one semicolon sentence (see §4.2);
+   - in the abstracts, the three limitations were one semicolon sentence until round 3 (item 7);
    - the χ² range covers the external predictions only (109–272/16; GiBUU 58/8). Ledger row AB-EXT guards it.
-6. **Gates:** ledger 168 rows / 332 probes / 0 failures; `make_values_fived16 --check` and `--self-test` PASS; registry, results index and their self-tests PASS; build clean (paper 14 pp, note 129 pp).
+6. **Gates** (at 7a6833b1): ledger 168 rows / 332 probes / 0 failures; `make_values_fived16 --check` and `--self-test` PASS; registry, results index and their self-tests PASS; build clean (paper 14 pp, note 129 pp).
+7. **Round 3 applied, with the abstract limitation split** (§4 items 1 and 2; `prd-read/REPORT.md`, "Round 3"; `tools/apply_r3.py`; ledger rows `F-R3-*`):
+   - sol2's true forms of P02, P11, P14, P15, P19 and P25. P14 and P15 keep the phrases that `check_sec4_receipts.py` binds. P02 keeps NEW's "the simulation mismodels the truth", because agy read sol2's wording as ambiguous;
+   - kept as NEW: A and B (every sol2 form fails the truth column) and P05, P20 and P24 (sol2's two runs disagree);
+   - in both abstracts, the limitation sentence is now three sentences, one per limitation, so that 1A and 3D can each replace one. Paper abstract 203 words, note abstract 348;
+   - gates: ledger 175 rows / 352 probes / 0 failures; SEC4 15/15; reflow, swallowed-text, values, registry and results index PASS; build clean (14 pp, 129 pp); the new phrases checked in `main_paper.pdf`;
+   - a blind agy check of the eight changed passages, with a planted control (caught): `prd-read/r3/agy/`. It found no false statement, and its one ambiguity finding (P02) is applied.
 
 **PRD read status.**
 - **Round 2** (abstract proposals, wording W1–W3, release R1–R4): 4/4 runs complete, in `prd-read/r2/`. The move superseded most of it. R1–R4 were accepted 4/4; W2 was denied 3 of 4. The note abstract at 635 words was too long 4/4.
-- **Round 3** (the post-move and post-framing text: both abstracts, title options T0–T3, and 26 body pairs P01–P26): **4/4 runs complete** (sol2 r1 and r2, gemini r1 and r2), in `prd-read/r3/runs/`, tabulated in `PR3-analysis.txt`.
+- **Round 3** (the post-move and post-framing text: both abstracts, title options T0–T3, and 26 body pairs P01–P26): **4/4 runs complete** (sol2 r1 and r2, gemini r1 and r2), in `prd-read/r3/runs/`, tabulated in `prd-read/r3/runs/PR3-analysis.txt`.
   - No DENY anywhere.
   - P01, P03, P04, P06–P10, P12, P13, P16–P18, P21–P23 and P26: ACCEPT 4/4.
   - Splits: A, B, P02, P05, P11, P14, P15, P19, P20, P24 and P25. In each, sol2 says SHORTEN and gemini says ACCEPT.
   - Title: **T1 in 4/4.**
   - Paper abstract length: ACCEPTABLE 4/4. Note abstract: TOO-LONG 2/4 (sol2).
-  - **Not done: the truth column, and applying the shortenings.** That is the next step (§4.1).
+  - **The truth column and the application are done** (Done, item 7).
 
 ## 3. Governing decision records (`docs/orchestration/`)
 
@@ -96,15 +102,8 @@
 
 ## 4. Open items, each with its next step
 
-1. **The round-3 truth column, then apply.**
-   - **Read:** `prd-read/r3/runs/PR3__*.md` for each split item's SHORTER-FORM, and `prd-read/r3/input.txt` for its OLD and NEW text. P-numbers follow the input's order.
-   - **Rule** (director, round 1, same here):
-     - apply what is unanimous and true;
-     - where the models split, apply sol2's form if it is true, otherwise keep the text;
-     - never apply a form that drops a limitation.
-   - **Record** it as a change table appended to `prd-read/REPORT.md`, with each applied change as a ledger row (N: new, X: old; see the `F-*` rows).
-   - **Edit** with a script of exact old→new pairs, whitespace-tolerant and asserting exactly one match (see `tools/apply_move.py`). Then run the gates (§5) and the build.
-2. **Split the abstracts' limitation sentence** into three `\fvval`-keyed sentences in both abstracts (director, after #423), so that 1A and 3D can replace them. Not applied yet. Do it with item 1.
+1. **The round-3 truth column, then apply.** **Done** (§2, Done item 7). The rule, as applied, with the two tie-breaks the lane added, is in `prd-read/REPORT.md`, "Round 3".
+2. **Split the abstracts' limitation sentence** into three sentences in both abstracts (director, after #423). **Done** with item 1. The wording is otherwise unchanged; only the third sentence carries `\fvval` keys, because the other two hold no number.
 3. **1A and 3D.** When the 5D measurement session reports:
    - **3D (flux bootstrap):** replace the "weakening only the flux correlations by 10 %" sentences with the measured band. They print in the paper's sec:gen16, Sec. I's limitations paragraph and both abstracts; the note's are in sec_fived16 §10.4.
    - **1A (GENIE v3 held-out bias test):** revise the coverage limitation ("The coverage of its intervals has not been validated"; ledger guard G3, plus the abstracts and Sec. I) to what the readout supports. Name it as a bias test at one held-out truth, and never as validated coverage unless the readout says so.
@@ -113,15 +112,13 @@
    - **The title:** options T0–T3 are in `WORDING-PACKET.md` (last section). The raters chose T1 4/4. Not edited.
    - **Q8:** whether the release and the supplemental file carry the sixteen-cell vector and covariance. This is open and Joseph's. The data product is `measurement-paper/5d-community-20261024/fd/data-product/`.
    - **Data availability:** the proposal is in `WORDING-PACKET.md`, and the text is unedited.
-   - **Both abstracts,** named in words, with their word counts (`tools/recount.py`).
+   - **Both abstracts,** named in words, with their word counts (`tools/recount.py`). sol2 still calls the note abstract (348 words) too long; no rater form survived the truth column, so a shorter note abstract is for Joseph to ask for.
    - **Q6:** answered by the framing (the abstracts are drafts).
    - **Q1, Q7, Q9:** settled by round 1 and the move.
 5. **The second scope review** comes after the final draft is approved. The director starts it. The hybrid-null joint-test move is still only "seriously considered"; the review weighs it.
 6. **Rulings given but not applied:**
-   - item 2 above;
-   - round 3 (item 1);
    - the release scopings R1–R4, accepted 4/4 in round 2, go to Joseph as proposals only, because `app_release.tex` is protected.
-   - Everything else the director ruled on is applied: Q5, the round-1 rules, the move, the coverage-test option (i), the abstract exception and the external-only χ² range.
+   - Everything else the director ruled on is applied: Q5, the round-1 rules, the move, the coverage-test option (i), the abstract exception, the external-only χ² range, round 3 and the abstract limitation split.
 <!-- absence-ok: states an open item and quotes the printed limitation to be revised; not a new absence claim -->
 
 ## 5. Files and tools
@@ -134,7 +131,7 @@ Paths are relative to the worktree root. `F = docs/orchestration/state/2d-closeo
 | values generator: readouts pinned by sha256, the figure pins | `docs/analysis-note/make_values_fived16.py` | `python3 docs/analysis-note/make_values_fived16.py [--check\|--self-test]` (no flag: write `values_fived16.tex`) |
 | word counts | `F/tools/recount.py` | `python3 F/tools/recount.py . --base 8b0f83fd` |
 | printed wording (resolved) | `F/tools/packet_text.py` → `F/printed-wording.md` | `python3 F/tools/packet_text.py docs/analysis-note <base-copy> F/printed-wording.md`, where `<base-copy>` is `git archive 8b0f83fd docs/analysis-note` extracted to a scratch directory |
-| edit scripts (exact old→new, asserting one match) | `F/tools/apply_final.py`, `apply_move.py`, `apply_framing.py` | records of the applied edits; copy the pattern, do not re-run them |
+| edit scripts (exact old→new, asserting one match) | `F/tools/apply_final.py`, `apply_move.py`, `apply_framing.py`, `apply_r3.py` | records of the applied edits; copy the pattern, do not re-run them (each asserts its old text, so a re-run on the edited tree exits with "0 matches") |
 | chapter and paper-block assembly | `F/tools/build_chapter.py`, `paper_blocks.py` | historical; the `.tex` is the source now |
 | build | `docs/analysis-note/build_all.sh` | `cd docs/analysis-note && PAR_GLOBAL_TMPDIR=<scratch>/partmp bash build_all.sh` (≈5 min; it must end with "no pending placeholder"; build in the worktree, not with build_copy.sh, whose layout lacks the nd-unfolding readouts) |
 | reflow | `docs/analysis-note/reflow_tex.py` | `python3 reflow_tex.py --note --check`; `python3 reflow_tex.py --check paper_body.tex main_paper.tex` |
@@ -165,6 +162,7 @@ Paths are relative to the worktree root. `F = docs/orchestration/state/2d-closeo
 - **sol2's noise:** sol2's two replicates split on single items (round-1 C07; round-3 P05, P20, P24). Always use two runs per model (both orders for pairwise), and read agreement, not a single verdict.
 - **agy hangs:** `run_x.sh` runs agy with `--print-timeout 0`, and agy can stay alive long after writing a complete answer (ending in END). Check the output, then kill only that agy PID. A retry loop treats the kill as a failure and relaunches, so stop the loop first.
 - **Duplicate launches:** a second pool on the same output files races. Check `ps` before launching. Kill the whole process tree with `kill -9`, using bash for word splitting.
+- **macOS has no `timeout`:** run a rater in the background and wait with an `until` loop on its output's END line.
 - **Quoting:** unquoted heredocs substitute backticks and mangle backslashes. Use `<<'EOF'` for any text with LaTeX or backticks. zsh does not word-split `$var`.
 - **Check-bound phrases:** `check_sec4_receipts.py` binds exact paper phrases ("reduces it to below", "within the quoted total uncertainty in about half of those cells") to receipts. Reword around them, not through them.
 - **The registry reads the git index:** stage the TSVs before checking. Alias rows that cite moved paper lines must be re-cited, with `--cite` for the digest. The results-index fixtures follow their alias row's `source`.

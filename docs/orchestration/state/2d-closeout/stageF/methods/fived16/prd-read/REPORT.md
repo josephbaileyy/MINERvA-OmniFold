@@ -190,3 +190,61 @@ Each applied change has a ledger row, `F-<id>`, whose N: probe holds the new tex
 | Q3 | (i) 24/24 | (i), as drafted | — |
 | Q4 | one decimal ×2 / integer ×2 | integers, as drafted | **Split.** Integers match Joseph's example and the comparators. |
 <!-- absence-ok: quotes or proposes the paper's printed text (scope and coverage statements of the sixteen-cell result and the configuration-(a) product) as this record's inventory or plan; not a new absence claim -->
+
+## Round 3: the post-move and post-framing text, its truth column and what was applied (2026-10-27)
+
+**Asked for by** the director (handoff §4 items 1 and 2), under `DECISION-20261027-joseph-prd-review-route-push-and-public-github.md` item 2, after the move (`DECISION-20261027-joseph-move-nonfinal-configurations-to-note.md`) and the framing (`DECISION-20261027-joseph-measurement-framing-and-limitation-scoping.md` item 1).
+
+**Inputs and runs.** `r3/input.txt` (both abstracts, the title options T0–T3, and the 26 changed body passages P01–P26, each OLD → NEW, printed text with values resolved); `r3/prompts/PR3.prompt.txt`; 4 runs (sol2 r1 and r2, gemini r1 and r2) in `r3/runs/`, tabulated in `r3/runs/PR3-analysis.txt`. Same raters and route as round 1.
+
+**The rule** (director, round 1, same here):
+- apply what is unanimous and true;
+- where the models split, apply sol2's form if it is true, and otherwise keep the text;
+- where sol2's two runs disagree, keep the text (round-1 precedent, C07);
+- where sol2's two runs both shorten and both forms are true, apply the shorter;
+- never apply a form that drops a limitation, and never reword through a phrase that a check binds (`check_sec4_receipts.py`).
+
+**Verdicts.** No DENY anywhere. ACCEPT 4/4: P01, P03, P04, P06–P10, P12, P13, P16–P18, P21–P23 and P26; the NEW text stands. Splits: A, B, P02, P05, P11, P14, P15, P19, P20, P24 and P25; in every one, gemini says ACCEPT and sol2 says SHORTEN in one or both runs. Title: T1 in 4/4 (not edited: the title is Joseph's and lies outside the abstract block). Paper abstract length ACCEPTABLE 4/4; note abstract TOO-LONG in sol2's 2 runs, ACCEPTABLE in gemini's 2.
+
+**Truth column legend** as in round 1: "true" means the sentence stays true as read; "false as read" names the reading that fails.
+
+| # | sol2 r1 / r2 | gemini ×2 | truth of sol2's form(s) | applied | ledger |
+|---|---|---|---|---|---|
+| A (paper abstract) | SHORTEN / SHORTEN | ACCEPT | **r1: false as read.** "fake-data studies show biases exceeding the reported uncertainties" replaces Joseph's f0-limitation wording (DECISION-20261025 item 1; round-1 C13) with a stronger and different claim: the listing criterion is \|z\| > 2 or p < 0.01, a passing truth reaches 1.34σ (A7 NuWro), and Stage 0c GiBUU is listed by one cell at z = 2.01. It also drops "at the tested truths" from the undercoverage clause and "As an illustration". **r2: drops limitations.** Its validation sentence keeps only the partial recovery, dropping the background-subtraction bias and the undercoverage at the tested truths. | **NEW kept,** with item 2's split (below) | F-R3-LIM |
+| B (note abstract) | SHORTEN / SHORTEN | ACCEPT | **Both false as read** on the same clause: "fake-data studies show / find biases exceeding the reported uncertainties" (as A r1). r1 also drops "at the tested truths"; r2 also drops the χ² values and replaces the flux sentence with "Generator comparisons are sensitive to flux correlations". | **NEW kept,** with item 2's split | F-R3-LIM |
+| P02 | SHORTEN / SHORTEN | ACCEPT | **r1: ambiguous against guard G3.** "Validation studies assess … interval coverage" reads, in Sec. I just before "The coverage of its intervals has not been validated", as an assessment of the result's coverage; the coverage test is of a deterministic purity-subtracted variant (Sec. V C). **r2: true.** It keeps "a coverage test"; "when the simulated truth differs by generator-sized amounts" says what NEW's "the simulation mismodels the truth" says. | **sol2 r2,** less "the simulated truth differs": agy's blind check (below) reads it as ambiguous, so NEW's "the simulation mismodels the truth" is kept | F-R3-P02 |
+| P05 | SHORTEN / ACCEPT | ACCEPT | sol2's runs disagree. | NEW kept | — |
+| P11 | SHORTEN / SHORTEN | ACCEPT | **Both true.** Each keeps the selection qualifier ("a reproduction rather than an independent validation") and the purity difference of the exact-split learner (Table II before the move, round-3 input P09 OLD: configuration (b), purity-based subtraction). r1 is shorter (58 words to 65). | **sol2 r1** | F-R3-P11 |
+| P14 | SHORTEN / SHORTEN | ACCEPT | **Both true** (the variant is (d), refinement 100 trees and 8 leaves; the cell is 0.8 ≤ E_avail < 1.5 GeV, W ≥ 3 GeV). But both reword through "by up to \SI{74}{\percent} at high $W$", which `check_sec4_receipts.py` binds (VL151; the first application of this round failed it). | **sol2 r1's refinement clause;** the bound phrase "by up to 74% at high W, in the cell …" kept from NEW | F-R3-P14 |
+| P15 | SHORTEN / SHORTEN | ACCEPT | **Both true.** Each keeps "in noise-free studies of that variant", the 16–31% range, "within the quoted total uncertainty in about half of those cells" (SEC4-bound) and the covariance's failed acceptance criteria. r1 is shorter (95 to 96). Both reword "it is \SIrange" (VL154, bound). | **sol2 r1,** with "it is" kept for the bound phrase in place of "the residual is" ("it" is the residual, the subject of the preceding sentence) | F-R3-P15 |
+| P19 | SHORTEN / SHORTEN | ACCEPT | **r1: false as read.** "The tested truth has …" reads as the study's only truth, while the same caption names three (nominal, this one and the omitted q_3 change). **r2: true.** "corrected for nominal-truth bias" after "integrals," describes the same correction as NEW. | **sol2 r2** | F-R3-P19 |
+| P20 | ACCEPT / SHORTEN | ACCEPT | sol2's runs disagree. | NEW kept | — |
+| P24 | ACCEPT / SHORTEN | ACCEPT | sol2's runs disagree. r2's reason, "unresolved reference and section placeholders", is an artifact of the input: the printed paper resolves both note sections through xr (`\ref*{N-sec:eavailw-map}`, `\ref*{N-sec:eavailw-band}`). | NEW kept | — |
+| P25 | SHORTEN / SHORTEN | ACCEPT | **r1: false.** "Table I summarizes the validation findings and limitations": Table I's caption sends limitations to the section given and to Sec. VIII A. **r2: true.** The dropped "show how far it can be trusted" is not a fact; the next sentence's "three of them" still refers to the validation findings. | **sol2 r2** | F-R3-P25 |
+<!-- absence-ok: quotes the paper's printed limitation text (coverage not validated) as this record's truth column; not a new absence claim -->
+
+**Item 2: the abstracts' limitation sentence** (director, after #423). In both abstracts the one semicolon sentence is now three sentences, one per limitation, with the wording otherwise unchanged, so the 1A and 3D readouts can each replace one: "The coverage of the [result's] intervals has not been validated. In a fake-data study, the reported uncertainty does not cover the estimator's bias at GiBUU-like truths or at a synthetic $q_{3}$ tilt. The sixteen-cell $\chi^{2}$ values fall by \fvval{sens-flux-fall-lo}--\fvval{sens-flux-fall-hi}\% when only the flux correlations are weakened by \fvval{sens-alpha-pct}\%." Paper abstract 203 words (was 204), note abstract 348 (was 349; `tools/recount.py`).
+<!-- absence-ok: quotes the paper's printed limitation text (coverage not validated) as this record's truth column; not a new absence claim -->
+
+**How applied.** `../tools/apply_r3.py`, exact old → new pairs, whitespace-tolerant, each asserting one match. Its first form reworded through the two SEC4-bound phrases, and `check_sec4_receipts.py` failed (13/15), so the three `.tex` files were restored from HEAD and the corrected script re-run. Gates after it: ledger 175 rows, 352 probes, 0 failures (self-test PASS); SEC4 15/15 (self-test PASS); reflow PASS; swallowed-text 0; values `--check` and `--self-test` PASS; registry and results index PASS; build clean (paper 14 pp, note 129 pp, no pending placeholder, no undefined reference). Every new phrase prints once in `main_paper.pdf`, and none of the replaced phrases prints.
+
+**Not applied, for Joseph or the director:**
+- **The note abstract's length.** sol2 calls it too long in both runs (348 words). Both of sol2's shorter forms fail on the same clause, so no rater form is available. A lane-drafted shortening would be new wording, and the abstracts' final text is Joseph's.
+- **Sentence-level pieces of sol2's abstract forms** that are true on their own (for example, splitting the paper abstract's first sentence after the five observables) were not taken, because the rule applies a rater's form as a whole.
+
+### agy's blind check of the changed passages, with a planted control
+
+**Inputs** (`r3/agy/`): `prompt.txt`; `pairs.txt`, eight BEFORE → AFTER pairs (P02, P11, P14, P15, P19, P25 and the two abstract splits, as Q1–Q8, plain text, values resolved), as first applied; `pairs-control.txt`, the same with one planted defect: Q2's "selected after" became "selected before". agy (gemini-3.8-flash-high) through `run_x.sh`, after a smoke test. Each run saw one file, named `passages.txt`.
+
+| pair | real run | control run | the lane's reading |
+|---|---|---|---|
+| Q1 (P02) | DIFFERS: drops "show how far the result can be trusted"; "the simulated truth differs" is "ambiguous" | the same | **Acted on.** The second sentence keeps NEW's "the simulation mismodels the truth by generator-sized amounts". The dropped phrase states no fact, and both sol2 runs cut it. |
+| Q2 (P11) | DIFFERS: drops "were known" and the Sec. 3.2 pointer | **DIFFERS: "directly contradicts BEFORE … 'selected before'"** | **Control caught.** In the real run, "selected after the … comparisons" carries "were known", and the pointer is kept as "; see Ref. [14], Sec. 3.2": a misreading. |
+| Q3 (P14) | SAME | SAME | — |
+| Q4 (P15) | DIFFERS: "drops 'central value'"; AFTER says the covariance fails the criteria | the same | **Misreading.** The covariance is what fails its specification's acceptance criteria (ledger F2: "The five-axis covariance of the configuration-(a) central value does not meet its specification's acceptance criteria"), so AFTER is the more exact form. |
+| Q5 (P19) | SAME | SAME | — |
+| Q6 (P25) | DIFFERS: drops "show how far it can be trusted"; "principal" implies secondary results | the same | **True as applied.** The paper also gives the two-observable reproduction, three- and four-observable central values and the joint tests, so "principal" holds; the dropped phrase states no fact. |
+| Q7, Q8 (abstract splits) | SAME | SAME | — |
+
+**Verdict.** agy caught the planted reversal and found no false statement in the applied text. One finding (Q1, ambiguity) changed the text.
+<!-- absence-ok: round 3 quotes the raters' and the paper's limitation text (coverage not validated, the fake-data bias, the flux sensitivity) as this record's truth column; not a new absence claim -->
