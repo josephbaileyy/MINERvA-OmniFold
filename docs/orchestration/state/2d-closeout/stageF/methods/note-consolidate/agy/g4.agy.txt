@@ -1,0 +1,29 @@
+PASSAGE: app_statmethods:364
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_statmethods:468
+VERDICT: REVISE
+ISSUE: The words "(\S\ref{sec:coverage}, \S\ref{sec:uq-boot})" cite \S\ref{sec:uq-boot} for the fixed-truth test, but that test and its limitations are documented only in \S\ref{sec:coverage}, whereas \S\ref{sec:uq-boot} defines the bootstrap uncertainty ensemble.
+FIX: (\S\ref{sec:coverage})
+
+PASSAGE: app_negweight:8
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:187
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_guide:9
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_codebase:16
+VERDICT: AGREE
+ISSUE: none
+FIX: none

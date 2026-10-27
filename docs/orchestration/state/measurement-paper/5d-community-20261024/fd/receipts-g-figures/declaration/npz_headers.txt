@@ -1,0 +1,9 @@
+login24
+2026-10-27T09:59:40Z
+119273 /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz
+db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4  /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz
+12952 /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a  /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz [('f', (16,), 'float64'), ('C_e', (16, 16), 'float64'), ('C_model_abs', (16, 16), 'float64'), ('C_total', (16, 16), 'float64')] 53 keys
+/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz [('C_resp', (16, 16), 'float64'), ('C_total_resp', (16, 16), 'float64')] 8 keys
+rc=0

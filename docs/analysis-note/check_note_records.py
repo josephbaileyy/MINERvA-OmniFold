@@ -1176,9 +1176,12 @@ PLANTS = [
      lambda p: p.write_text(p.read_text() + "\n" + (p.parent / "app_codebase_records.tex").read_text()), None),
     # The plant must edit a reader paragraph that still prints verbatim from the base. The release appendix's
     # archive paragraph, the first anchor, was rewritten by the register pass (batch bhi, director F6, 2026-10-21),
-    # so the plant moved to the codebase appendix's PET paragraph, which still prints verbatim.
-    ("edited reader paragraph", "P5 READER paragraph", "app_codebase.tex",
-     "supports future work", "supports later work"),
+    # so the plant moved to the codebase appendix's PET paragraph. The note consolidation (DECISION-20261027 item 1,
+    # cost-list R10; records-move-ledger.md L-con-R10) rewrote that one too, so the plant moved to the release
+    # appendix's scope heading: of the 20 base reader paragraphs it is the one still verbatim, and app_release.tex is
+    # a protected file.
+    ("edited reader paragraph", "P5 READER paragraph", "app_release.tex",
+     "can and cannot recompute}", "can and cannot rerun}"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
      lambda p: p.write_text(p.read_text().replace(r"\texttt{joint-5d}", r"\texttt{joint-5e}")), None),
     # Every copy of one path is lost: since n2 two paths print twice in App. G (a table row and the full-width entry

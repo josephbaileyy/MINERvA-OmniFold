@@ -1,0 +1,24 @@
+{
+ "inventory_rows": 967,
+ "tex_words": 48384,
+ "blinded_words": 52045,
+ "found": {
+  "statements": 637,
+  "distinct": 372,
+  "restatements_per_caveat": 1.712,
+  "statements_per_1000": 12.24,
+  "distinct_per_1000": 7.15
+ },
+ "found_partial": {
+  "statements": 872,
+  "distinct": 430,
+  "restatements_per_caveat": 2.028,
+  "statements_per_1000": 16.75,
+  "distinct_per_1000": 8.26
+ },
+ "status_counts": {
+  "found": 637,
+  "partial": 235,
+  "gone": 95
+ }
+}

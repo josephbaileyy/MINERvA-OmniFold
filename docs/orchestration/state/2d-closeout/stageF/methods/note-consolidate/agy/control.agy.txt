@@ -1,0 +1,54 @@
+PASSAGE: sec_joint:5
+VERDICT: REVISE
+ISSUE: The words "the decisions (\S\ref{sec:joint5d-results}, \S\ref{sec:joint5d-lost})" attach the pointer \S\ref{sec:joint5d-lost} to "the decisions", but \S\ref{sec:joint5d-lost} reports the recovery of the lost pseudo-experiments (which was for reporting only), not the primary decisions (\S\ref{sec:joint5d-results}). This mislabels the content of \S\ref{sec:joint5d-lost} and omits the recovery of the lost pseudo-experiments from the list of topics the section gives.
+FIX: the decisions (\S\ref{sec:joint5d-results}), the recovery of the lost pseudo-experiments (\S\ref{sec:joint5d-lost})
+
+PASSAGE: sec_joint:16
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_joint:168
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_joint:354
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:8
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: app_negweight:187
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:40
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:57
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:77
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:105
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:109
+VERDICT: AGREE
+ISSUE: none
+FIX: none
