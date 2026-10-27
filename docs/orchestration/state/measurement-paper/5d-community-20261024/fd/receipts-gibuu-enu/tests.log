@@ -1,0 +1,13 @@
+test_fresh_run_is_committed_bytes (__main__.Committed.test_fresh_run_is_committed_bytes) ... ok
+test_labels (__main__.Committed.test_labels) ... ok
+test_pins (__main__.Committed.test_pins) ... ok
+test_shares_from_keys (__main__.Committed.test_shares_from_keys) ... ok
+test_as_written (__main__.Invocation.test_as_written) ... ok
+test_each_refuses (__main__.Planted.test_each_refuses) ... ok
+test_unplanted_passes (__main__.Planted.test_unplanted_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.055s
+
+OK
+rc=0

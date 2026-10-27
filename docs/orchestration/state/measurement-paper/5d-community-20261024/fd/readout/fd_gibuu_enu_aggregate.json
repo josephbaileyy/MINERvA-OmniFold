@@ -1,0 +1,112 @@
+{
+ "schema": "fd-gibuu-enu-aggregate/1",
+ "labels": {
+  "what": "GENIE CV's and NuWro's share of the in-phase-space cross section from E_nu > 20 GeV, at p_parallel 1.5-4.5 and over 4.5-60 GeV/c, the share GiBUU 2019's sample, which stops at E_nu = 20 GeV (KNOWN_ISSUES 82), cannot hold",
+  "not": "not a GiBUU number: each share is the named generator's, from its own events up to its generation range",
+  "source": "nd-unfolding/pv-ladder/readouts/gibuu_enu_coverage.json, generators.<g>.by_pz[].share_of_in_ps and share_E_gt_20 (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md section 1)",
+  "for": "state/measurement-paper/5d-community-20261024/FD-DIRECTOR-RULINGS.md section 5 (GiBUU on the eight p_parallel < 4.5 cells)",
+  "formula": "share_of_in_ps(4.5-60) = sum_b share_of_in_ps[b]; share_E_gt_20(4.5-60) = sum_b share_of_in_ps[b] * share_E_gt_20[b] / share_of_in_ps(4.5-60), over the by_pz bands b with pz[0] >= 4.5",
+  "cannot_authorize": "a reading, a claim, a caption or any printed wording; these are Joseph's"
+ },
+ "e_cut_gev": 20.0,
+ "inputs_sha256": {
+  "gibuu_enu_coverage": "9ee26883e32e85cd72e083022ef4c42440370665b17bdec0c272596f9650813c"
+ },
+ "code_sha256": {
+  "fd_gibuu_enu_aggregate.py": "63150dbbad5f4ef1a5a5a1fd7ea63b422c096c9be107728d073621817ded1257"
+ },
+ "generators": {
+  "genie_cv": {
+   "generation_range_gev": [
+    0.0,
+    50.0
+   ],
+   "pz_1.5_4.5": {
+    "share_of_in_ps": 0.4885026860550075,
+    "share_E_gt_20": 0.008342491229325144,
+    "keys": [
+     "generators.genie_cv.by_pz[0].share_of_in_ps",
+     "generators.genie_cv.by_pz[0].share_E_gt_20"
+    ]
+   },
+   "pz_4.5_60": {
+    "share_of_in_ps": 0.5114973139449922,
+    "share_E_gt_20": 0.11708959820975791,
+    "bands": [
+     [
+      4.5,
+      6.0
+     ],
+     [
+      6.0,
+      10.0
+     ],
+     [
+      10.0,
+      20.0
+     ],
+     [
+      20.0,
+      60.0
+     ]
+    ],
+    "keys": [
+     "generators.genie_cv.by_pz[1].share_of_in_ps",
+     "generators.genie_cv.by_pz[1].share_E_gt_20",
+     "generators.genie_cv.by_pz[2].share_of_in_ps",
+     "generators.genie_cv.by_pz[2].share_E_gt_20",
+     "generators.genie_cv.by_pz[3].share_of_in_ps",
+     "generators.genie_cv.by_pz[3].share_E_gt_20",
+     "generators.genie_cv.by_pz[4].share_of_in_ps",
+     "generators.genie_cv.by_pz[4].share_E_gt_20"
+    ]
+   }
+  },
+  "nuwro": {
+   "generation_range_gev": [
+    0.5,
+    50.0
+   ],
+   "pz_1.5_4.5": {
+    "share_of_in_ps": 0.48449534209721745,
+    "share_E_gt_20": 0.007724637231126029,
+    "keys": [
+     "generators.nuwro.by_pz[0].share_of_in_ps",
+     "generators.nuwro.by_pz[0].share_E_gt_20"
+    ]
+   },
+   "pz_4.5_60": {
+    "share_of_in_ps": 0.515504657902782,
+    "share_E_gt_20": 0.12587922442413577,
+    "bands": [
+     [
+      4.5,
+      6.0
+     ],
+     [
+      6.0,
+      10.0
+     ],
+     [
+      10.0,
+      20.0
+     ],
+     [
+      20.0,
+      60.0
+     ]
+    ],
+    "keys": [
+     "generators.nuwro.by_pz[1].share_of_in_ps",
+     "generators.nuwro.by_pz[1].share_E_gt_20",
+     "generators.nuwro.by_pz[2].share_of_in_ps",
+     "generators.nuwro.by_pz[2].share_E_gt_20",
+     "generators.nuwro.by_pz[3].share_of_in_ps",
+     "generators.nuwro.by_pz[3].share_E_gt_20",
+     "generators.nuwro.by_pz[4].share_of_in_ps",
+     "generators.nuwro.by_pz[4].share_E_gt_20"
+    ]
+   }
+  }
+ }
+}
