@@ -1,0 +1,9 @@
+2026-10-27T19:32:57Z
+289f4457b7eb83f4526d5c8c5346d2f0dfb9631e
+bed614c1c6dc75f0644996da580d60871053aa411c3204fdd516f9284d334315  ../fd_flux_boot.py
+89157b7ff5d9c62b36a8ecdef344128e35b62066c7461b15e5feb2d2186e245f  test_fd_flux_boot.py
+$ python3 -B -m unittest test_fd_flux_boot test_fd_g_followup test_fd_g_diag test_fd_g_compare test_s1_assemble test_s1_scripts_isolated
+Ran 201 tests in 77.839s
+OK
+rc=0
+2026-10-27T19:34:16Z
