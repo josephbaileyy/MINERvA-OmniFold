@@ -82,3 +82,18 @@ How each paper bears on the recommendation is the consult's reading, and it was 
 
 This is advice for Joseph, to be read with `../CANDIDATES.md` at the 5D integration, as his decision says. Nothing
 moves until he decides.
+
+## Correction to an input (2026-10-27)
+
+`inputs/5d-addition.md:19-21` is what the consult saw, and stays as it was given. Two of its statements are inexact:
+- **"Weakening the flux correlations by 10 percent roughly halves it"** holds for the joint interaction, flux,
+  detector and lateral family, where the 16-cell χ² falls by 35–56 %. For the flux family alone it falls by 24–48 %,
+  and by 6 % for GiBUU (`fd/readout/fd_g_sens2_readout.json`, `fd/readout/fd_g_followup_readout.json`).
+- **"with the systematic correlations removed every generator still gives chi2/ndf of about 3 or more"** overstates
+  the scope. Only those four groups' correlations were removed. GENIE CV and GENIE+MEC then give about 2.8 per ndf.
+
+The director wrote the input from an uncorrected reading. The measurement session and the paper rewrite lane found both
+errors. The consult's recommendation rests on the size of the correlation sensitivity, not on these two figures, so
+its advice stands. A second consult, after the 5D integration
+(`DECISION-20261027-joseph-5d-integration-then-second-scope-review.md`), takes its inputs from the corrected printed
+text.
