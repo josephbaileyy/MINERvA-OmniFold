@@ -86,6 +86,17 @@ where each sha256 is the digest of the paragraph as P5 reads it (printed text, c
     \\nsec, \\napp; section numbers): an edit retargets a pointer and never deletes or adds one.
 Reason and authority are required. Each failure names its row.
 
+R-FIX (Joseph, DECISION-20261027-joseph-absence-audit-items-3-4.md item 2). A RECORD paragraph that is false as read is
+corrected in place to the current fact; its history goes to the internal ledger, never into the note. Such an edit,
+beyond pointer tokens, is accepted only under a ledger row
+  | R-FIX-<n> | <old sha256> | <new sha256> | <reason> | <authority> |
+with the digests as for R-EDIT. P5 then accepts the base paragraph whose digest is <old> if:
+  - <old> is the digest of a base RECORD paragraph of the inventory;
+  - that paragraph no longer prints verbatim in the records (otherwise the row is stale);
+  - a records paragraph has the digest <new> (otherwise the edit is lost, or its text is not the row's);
+  - <authority> names an existing decision record, a file DECISION-<...>.md under docs/ of this repository.
+An R-FIX has no pointer-only constraint; an R-EDIT keeps its. Each failure names its row.
+
 THE PIN (plan commit 3, 2026-10-21). The posted note cites the records as NoteRecords2026 (technote.bib), whose URL
 names one full commit sha. `pin` requires, in the canonical repository:
   Q1 the entry names a full 40-hex commit sha (never a branch such as tree/main);
@@ -114,7 +125,9 @@ word change and a recorded number change (each must fire as more than pointer to
 and a recorded pointer insertion (each must fire as deleting or adding pointer tokens), a deleted paragraph with a
 row (must fire as lost), and a row whose paragraph is unchanged (must fire as stale). It also requires a row
 whose new digest is wrong only in its last hex digit to fail with both digests printed in full and different
-(R-EDIT messages print full digests). For P9 it drifts a repeated record from its table row (P9 must fire). Exit 0 only if every plant
+(R-EDIT messages print full digests). For R-FIX it plants, on the same paragraph, a word change: recorded (SILENT, the
+control), and with a row that has no authority, a row whose authority names a decision record that does not exist, a
+wrong old digest, new text that is not the row's, a deleted paragraph and an unchanged paragraph (each must fire). For P9 it drifts a repeated record from its table row (P9 must fire). Exit 0 only if every plant
 behaves as named and the real pair is silent. The thinning plants
 need THIN_BASE from git, so the self-test runs in the canonical checkout.
 """
@@ -337,6 +350,64 @@ def redit_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fa
     return accepted
 
 
+RFIX_ROW = re.compile(r"\|\s*(R-FIX-\d+)\s*\|")
+DECISION_NAME = re.compile(r"DECISION-[A-Za-z0-9._-]+?\.md")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def rfix_rows(ledger: Path) -> list[tuple[str, list[str]]]:
+    """(row id, cells) for every ledger table row whose first cell is R-FIX-<n>."""
+    if not ledger.exists():
+        return []
+    return [(m.group(1), [c.strip() for c in line.strip()[1:-1].split("|")])
+            for line in ledger.read_text().splitlines() if (m := RFIX_ROW.match(line))]
+
+
+def decision_exists(name: str) -> bool:
+    return any(REPO_ROOT.glob(f"docs/**/{name}"))
+
+
+def rfix_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fails: list[str]) -> set[str]:
+    """The base RECORD paragraphs an R-FIX row accounts for (docstring, "R-FIX"); each row that does not hold appends
+    its failure."""
+    base = {digest(p): p for p in inv["record_paragraphs"]}
+    now = {digest(p): p for t in rtext.values() for p in paragraphs(t)}
+    accepted = set()
+    for rid, cells in rfix_rows(ledger):
+        if len(cells) != 5 or not all(re.fullmatch(r"[0-9a-f]{64}", c) for c in cells[1:3]) or not cells[3]:
+            fails.append(f"P5 R-FIX row {rid}: malformed (want | id | old sha256 | new sha256 | reason | authority |)")
+            continue
+        if not cells[4]:
+            fails.append(f"P5 R-FIX row {rid}: no authority: an R-FIX must name the decision record that rules it")
+            continue
+        names = DECISION_NAME.findall(cells[4])
+        if not names or not all(decision_exists(n) for n in names):
+            fails.append(f"P5 R-FIX row {rid}: its authority names no existing decision record: {cells[4]!r}")
+            continue
+        old_d, new_d = cells[1], cells[2]
+        old = base.get(old_d)
+        if old is None:
+            fails.append(f"P5 R-FIX row {rid}: old digest {old_d} is the digest of no base RECORD paragraph")
+            continue
+        if old in rall:
+            fails.append(f"P5 R-FIX row {rid}: stale: base paragraph {old_d} still prints verbatim in the "
+                         f"records: {old[:60]!r}")
+            continue
+        if now.get(new_d) is None:
+            words = set(unpointed(old).split())
+            near = [p for d, p in now.items() if d not in base
+                    and len(words & set(unpointed(p).split())) >= 0.5 * max(len(words), 1)]
+            if near:
+                fails.append(f"P5 R-FIX row {rid}: the edited paragraph is not the row's new text: its digest is "
+                             f"{digest(near[0])}, the row's {new_d}: {near[0][:60]!r}")
+            else:
+                fails.append(f"P5 R-FIX row {rid}: base paragraph {old_d} is lost: no records paragraph has "
+                             f"the row's new digest {new_d}, or resembles the base paragraph: {old[:60]!r}")
+            continue
+        accepted.add(old)
+    return accepted
+
+
 def _split_top(text: str, sep: str) -> list[str]:
     """Split at `sep` outside braces, never at an escaped one (\\& or a \\\\ inside \\shortstack{...} stays)."""
     out, depth, cur, k = [], 0, [], 0
@@ -436,7 +507,7 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     if leaked:
         fails.append(f"P3 the posted note's closure still strikes values: {leaked}")
     # P5 paragraphs
-    edited = redit_accepted(inv, rtext, rall, ledger, fails)
+    edited = redit_accepted(inv, rtext, rall, ledger, fails) | rfix_accepted(inv, rtext, rall, ledger, fails)
     for p in inv["record_paragraphs"]:
         if p not in rall and p not in edited:
             fails.append(f"P5 RECORD paragraph not verbatim in the records closure: {p[:90]!r}")
@@ -1067,6 +1138,21 @@ _R_ANCHOR = r"\paragraph{From \S\ref{sec:invert}, rank deficiency"  # app_histor
 _R_POINTER = _R_ANCHOR.replace("sec:invert", "sec:chisq")
 
 
+_RF_AUTH = "DECISION-20261027-joseph-absence-audit-items-3-4.md"
+_RF_NEW = _R_ANCHOR.replace("rank deficiency", "rank loss")
+
+
+def _rfix_row(inv: dict, new: str, anchor: str = _R_ANCHOR, old_digest: str | None = None,
+              authority: str = _RF_AUTH) -> str:
+    """A planted R-FIX row for the base record paragraph holding `anchor`, corrected to hold `new` instead."""
+    hits = [p for p in inv["record_paragraphs"] if anchor in p]
+    if len(hits) != 1:
+        raise SystemExit(f"self-test plant: {anchor!r} is in {len(hits)} base RECORD paragraphs, not 1")
+    old = hits[0]
+    return (f"| R-FIX-90 | {old_digest or digest(old)} | {digest(old.replace(anchor, new))} | planted | "
+            f"{authority} |")
+
+
 def _redit_row(inv: dict, new: str, anchor: str = _R_ANCHOR, old_digest: str | None = None) -> str:
     """A planted R-EDIT row for the base record paragraph holding `anchor`, edited to hold `new` instead."""
     hits = [p for p in inv["record_paragraphs"] if anchor in p]
@@ -1181,6 +1267,22 @@ PLANTS = [
      lambda p: _drop_paragraph(p, _R_ANCHOR), None, lambda inv: _redit_row(inv, _R_POINTER)),
     ("R-EDIT row, paragraph unchanged", "P5 R-EDIT row R-EDIT-90: stale", LEDGER, None, "",
      lambda inv: _redit_row(inv, _R_POINTER)),
+    # R-FIX (Joseph, DECISION-20261027 item 2): a word change of the same record paragraph, under an R-FIX row.
+    ("recorded fix (control)", None, "app_history.tex", _R_ANCHOR, _RF_NEW, lambda inv: _rfix_row(inv, _RF_NEW)),
+    ("R-FIX row with no authority", "P5 R-FIX row R-FIX-90: no authority", "app_history.tex", _R_ANCHOR, _RF_NEW,
+     lambda inv: _rfix_row(inv, _RF_NEW, authority="")),
+    ("R-FIX naming a missing decision record", "P5 R-FIX row R-FIX-90: its authority names no existing decision",
+     "app_history.tex", _R_ANCHOR, _RF_NEW,
+     lambda inv: _rfix_row(inv, _RF_NEW, authority="DECISION-20991231-nobody-no-such-record.md")),
+    ("R-FIX row with a wrong old digest", "P5 R-FIX row R-FIX-90: old digest", "app_history.tex", _R_ANCHOR, _RF_NEW,
+     lambda inv: _rfix_row(inv, _RF_NEW, old_digest="0" * 64)),
+    ("R-FIX new text not the row's", "P5 R-FIX row R-FIX-90: the edited paragraph is not the row's new text",
+     "app_history.tex", _R_ANCHOR, _RF_NEW,
+     lambda inv: _rfix_row(inv, _R_ANCHOR.replace("rank deficiency", "rank shortfall"))),
+    ("deleted paragraph with an R-FIX row", "P5 R-FIX row R-FIX-90: base paragraph", "app_history.tex",
+     lambda p: _drop_paragraph(p, _R_ANCHOR), None, lambda inv: _rfix_row(inv, _RF_NEW)),
+    ("R-FIX row, paragraph unchanged", "P5 R-FIX row R-FIX-90: stale", LEDGER, None, "",
+     lambda inv: _rfix_row(inv, _RF_NEW)),
 ]
 
 
@@ -1286,7 +1388,7 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
     n_fire = sum(1 for p in PLANTS if p[1] is not None)
     print(f"RECORDS-MOVE SELF-TEST :: {'PASS' if not failures else 'FAIL'} (delivered move silent: {not real}; "
           f"{fired} of {n_fire} planted defects fired their probe; {silent} of {len(PLANTS) - n_fire} listed drops "
-          "and recorded pointer edits stayed silent)")
+          "and recorded pointer edits or fixes stayed silent)")
     return 1 if failures else 0
 
 
