@@ -1,0 +1,13 @@
+# 2026-10-28T03:02:51Z Python 3.12.2 numpy 1.26.4 at e915b999 plus the amendment's files
+$ python3 -I -B nd-unfolding/tests/test_fd_f1_amend.py
+Ran 12 tests in 0.230s
+OK
+rc=0
+$ python3 -I -B nd-unfolding/tests/test_fd_f1.py
+Ran 31 tests in 79.612s
+OK
+rc=0
+$ python3 -I -B nd-unfolding/tests/test_fd_f0_regrade.py
+Ran 47 tests in 421.143s
+OK
+rc=0

@@ -1,0 +1,54 @@
+  }
+
+  // this should never happen - print an error mesg just in case...
+  if(xsec<0) {
+    LOG("Kinematics", pERROR)
+     << "Negative cross section for current kinematics!! \n" << *interaction;
+  }
+}
+//___________________________________________________________________________
+F=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/Multinucleon/EventGen/MECGenerator.cxx
+258:  double xsec_max =  0;
+266:      xsec_max = TMath::Max(xsec, xsec_max);
+269:  LOG("MEC", pNOTICE) << "xsec_max (E = " << Ev << " GeV) = " << xsec_max;
+274:  bool accept = false;
+289:     double gQ2 = Q2min + (Q2max-Q2min) * rnd->RndKine().Rndm();
+290:     double gW  = Wmin  + (Wmax -Wmin ) * rnd->RndKine().Rndm();
+297:     // Decide whether to accept the current kinematics
+298:     double t = xsec_max * rnd->RndKine().Rndm();
+300:     accept = (t < J*xsec);
+302:     // If the generated kinematics are accepted, finish-up module's job
+303:     if(accept) {
+322:     }//accepted?
+364:  double phi  = 2*kPi * rnd->RndLep().Rndm();
+507:  bool accept_decay=false;
+509:  while(!accept_decay)
+535:     double gw = wmax * rnd->RndDec().Rndm();
+536:     accept_decay = (gw<=w);
+540:        << " - accepted: " << accept_decay;
+542:  } //!accept_decay
+626:  // Set lepton KE TMax for for throwing rndm in the accept/reject loop.
+631:  // Set Tmin for throwing rndm in the accept/reject loop
+634:  // make the accept/reject loop more efficient by using Min values.
+651:  bool accept = false;
+655:  while (!accept) {
+670:      T = TMin + (TMax-TMin)*rnd->RndKine().Rndm();
+671:      Costh = CosthMin + (CosthMax-CosthMin)*rnd->RndKine().Rndm();
+685:      // decide whether to accept or reject these kinematics
+718:	accept = XSec > XSecMax*rnd->RndKine().Rndm();
+720:			  << XSecMax << ", " << accept;
+722:	if(accept){
+733:	  double myrand = rnd->RndKine().Rndm();
+747:	    if (rnd->RndKine().Rndm() <= XSecDeltaPN / XSecPN) {
+765:	    if (rnd->RndKine().Rndm() <=
+779:	  } // end if accept
+792:  // If the code got here, then we accepted some kinematics
+802:  double phi= 2 * kPi * rnd->RndLep().Rndm();
+886:  // Set lepton KE TMax for for throwing rndm in the accept/reject loop.
+893:  // Set Tmin for throwing rndm in the accept/reject loop
+896:  // make the accept/reject loop more efficient by using Min values.
+908:  bool accept = false;
+== records just before the AR23 messages: the interaction's hit-nucleon cluster
+      8 |           n+n |     2000000200
+     34 |           n+p |     2000000201
+     13 |           p+p |     2000000202
