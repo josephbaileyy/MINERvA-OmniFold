@@ -31,7 +31,7 @@ from test_fd_g_followup import find_p  # noqa: E402
 
 REPO = ND.parent
 FD = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024"
-CONTROLS = ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5"]
+CONTROLS = ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5", "B6"]
 
 
 def heavy_weights(n=100, seed=3, target=19.0):
@@ -62,16 +62,23 @@ class BootTree(DiagTree):
 
     def __init__(self, root, seed=0, scale=1e-39):
         super().__init__(root, seed=seed, scale=scale)
+        # amendment 1: the real flux block's regime (correlations 0.913-0.998, lambda_min 2.19e-7 and lambda_max
+        # 2.08e-2 relative to f, n_eff 19.06; FD-FLUX-BOOT-DECLARATION-AMENDMENT-1.md section 2); Regime pins it
         rng = np.random.default_rng(seed + 200)
-        common = rng.normal(0, 0.035, 100)
-        tilt = rng.normal(0, 0.01, 100)
+        common = rng.normal(0, 0.0325, 100)
+        tilt = rng.normal(0, 0.0092, 100)
         x16 = np.linspace(-1, 1, 16)
-        rel = common[:, None] + tilt[:, None] * x16[None, :] + rng.normal(0, 0.004, (100, 16))
+        rel = common[:, None] + tilt[:, None] * x16[None, :] + rng.normal(0, 0.00093, (100, 16))
         self.Xint = self.f * (1 + rel)                      # each universe's cell integrals
         self.w = heavy_weights()
         self.universe_fine = [self.fine_of(x) for x in self.Xint]
         self.X = np.array([self.U @ v for v in self.universe_fine])
-        self.blocks["band:Flux"] = sa.mat_cov(self.X, self.w)
+        # amendment 1 (review): S1's block differs from its rebuild in the last bits, as the real one does (up to 27
+        # ulp, 1.75e-15 of its largest entry), so B2 and B6 carry a non-zero difference through the swap
+        self.rebuild = sa.mat_cov(self.X, self.w)
+        k = np.random.default_rng(seed + 300).integers(-27, 28, (16, 16))
+        k = np.triu(k) + np.triu(k, 1).T
+        self.blocks["band:Flux"] = self.rebuild + k * np.spacing(np.abs(self.rebuild))
         self.Ce = sum(self.blocks[k] for k in sorted(self.blocks))
         self.Ct = self.Ce + self.Cma
 
@@ -197,15 +204,22 @@ class Pure(unittest.TestCase):
         np.testing.assert_allclose(r(out), r(Cs), rtol=1e-12)
         np.testing.assert_allclose(out, out.T, rtol=0, atol=0)
 
-    def test_chi2s_by_hand_and_none_when_not_positive_definite(self):
+    def test_chi2s_is_stage_gs_compare_in_absolute_units_and_none_when_not_positive_definite(self):
         rng = np.random.default_rng(2)
-        A = rng.normal(size=(30, 8))
-        M = A.T @ A / 30 + 0.1 * np.eye(8)
-        d = rng.normal(size=8)
-        t, s = FB.chi2s(d, M)
-        self.assertAlmostEqual(t, quad(d, M), delta=1e-10 * t)
-        self.assertAlmostEqual(s, quad(d, M + 100 * np.ones((8, 8))), delta=1e-10 * s)
-        self.assertIsNone(FB.chi2s(d, M - 5 * np.eye(8)))
+        f = rng.uniform(1, 3, 16) * 1e-39
+        g = f * (1 + rng.normal(0, 0.05, 16))
+        Vg = (0.01 * g) ** 2
+        A = rng.normal(size=(30, 16))
+        C = (A.T @ A / 30 * 1e-3 + 1e-4 * np.eye(16)) * np.outer(f, f)
+        cells = [0, 1, 2, 3, 8, 9, 10, 11]
+        t, s = FB.chi2s(f, g, Vg, C, cells)
+        ref = G.compare(f, g, Vg, C, cells, "x")
+        self.assertEqual((t, s), (ref["total"]["chi2"], ref["shape_only"]["chi2"]))
+        i = np.asarray(cells)
+        M = C[np.ix_(i, i)] + np.diag(Vg[i])
+        self.assertAlmostEqual(t, quad((f - g)[i], M), delta=1e-9 * t)
+        self.assertAlmostEqual(s, quad((f - g)[i], M + 100 * np.outer(f[i], f[i])), delta=1e-8 * s)
+        self.assertIsNone(FB.chi2s(f, g, Vg, C - 5 * np.diag(np.diag(C)), cells))
 
     def test_band_percentiles_and_halves(self):
         v = np.arange(1, 2001, dtype=float)
@@ -304,6 +318,27 @@ def corr_s1(tree):
     return C0[4, 8] / np.sqrt(C0[4, 4] * C0[8, 8])
 
 
+class Regime(Base):
+    def test_the_fixtures_flux_block_is_in_the_real_blocks_regime(self):
+        """Amendment 1: correlations about 0.913-0.998 with top ones at or above 0.97, lambda_min about 2e-7 relative
+        to f, n_eff about 19, as the real block measured (the amendment's section 2)."""
+        tree = self.tree
+        C = tree.blocks["band:Flux"] / np.outer(tree.f, tree.f)
+        r = C / np.sqrt(np.outer(np.diag(C), np.diag(C)))
+        off = r[~np.eye(16, dtype=bool)]
+        e = np.linalg.eigvalsh(C)
+        self.assertGreaterEqual(off.max(), 0.997)
+        self.assertTrue(0.90 <= off.min() <= 0.93, off.min())
+        self.assertTrue(1e-7 <= e[0] <= 5e-7, e[0])
+        self.assertTrue(1.5e-2 <= e[-1] <= 3e-2, e[-1])
+        self.assertAlmostEqual(FB.n_eff(tree.w), 19.0, delta=0.3)
+        C0, C1 = tree.blocks["band:Flux"], tree.rebuild
+        ulp = np.abs(C1 - C0) / np.spacing(np.abs(C0))
+        self.assertFalse(np.array_equal(C1, C0))
+        self.assertLessEqual(ulp.max(), 28)
+        self.assertGreaterEqual(ulp.max(), 20)
+
+
 class EndToEnd(Base):
     def test_run_as_invoked_and_recomputed_by_hand(self):
         tree = self.tree
@@ -324,7 +359,8 @@ class EndToEnd(Base):
         for name, rec in out["identity"].items():
             self.assertEqual(rec["chi2_stage_g"], g[name]["total"]["chi2"])
             self.assertEqual(rec["shape_only_stage_g"], g[name]["shape_only"]["chi2"])
-            self.assertLessEqual(rec["relative_difference"], 1e-10)
+            # amendment 1: at least 100 x inside B2's 1e-10, on this platform's BLAS (run on a login node too)
+            self.assertLessEqual(rec["relative_difference"], 1e-12, name)
         for v in FB.VARIANTS:
             for name, rec in out["bands"][v].items():
                 cells = list(G.GIBUU_CELLS) if name == "gibuu" else list(range(16))
@@ -366,6 +402,22 @@ class EndToEnd(Base):
         lines = [ln for ln in r.stdout.splitlines() if ln.startswith("[3D]")]
         self.assertEqual(len(lines), 1 + 2 * 5 + 1)
         self.assertIn(FB.LABEL, lines[0])
+
+    def test_the_identity_is_stage_gs_compare_on_the_declared_swap_bit_for_bit(self):
+        """Amendment 1 (review): the identity record is compare() on C_total + C_resp + (C1 - C0), exactly, with C1 the
+        rebuild and C0 S1's block, which differ in the last bits here as on real inputs."""
+        tree = self.tree
+        self.assertEqual(self.run_inproc(tree), 0)
+        out = json.loads((tree.out / "boot.json").read_text())
+        with mock.patch("sys.stdout"):
+            x = FB.D.load(FB.build_args(tree.bargv), tree.bpins, tree.predictions)
+        M = (tree.Ct + tree.Cx) + (sa.mat_cov(tree.X, tree.w) - tree.blocks["band:Flux"])
+        for spec in tree.predictions:
+            cells, g, Vg = x.integ[spec["name"]]
+            ref = G.compare(x.f, g, Vg, M, list(cells), "hand")
+            rec = out["identity"][spec["name"]]
+            self.assertEqual(rec["chi2_rebuilt"], ref["total"]["chi2"], spec["name"])
+            self.assertEqual(rec["shape_only_rebuilt"], ref["shape_only"]["chi2"], spec["name"])
 
     def test_the_two_variants_differ_and_the_correlation_one_keeps_variances(self):
         tree = self.tree
@@ -440,7 +492,7 @@ class Controls(Base):
     def test_b2_a_shape_only_chi2_that_is_not_stage_gs(self):
         tree = self.tree
         real = FB.chi2s
-        with mock.patch.object(FB, "chi2s", lambda d, M: (real(d, M)[0], real(d, M)[0])):
+        with mock.patch.object(FB, "chi2s", lambda *a: (real(*a)[0], real(*a)[0])):
             self.assertStops(tree, "B2", "reproduces Stage G")
 
     def test_b3_another_index_matrix(self):
@@ -488,6 +540,20 @@ class Controls(Base):
             return C
         with mock.patch.object(FB.sa, "mat_cov", bad):
             self.assertStops(tree, "B4", "uniform")
+
+    def test_b6_a_swap_that_scales_the_difference_by_one_plus_1e_6(self):
+        """A swap error too small for B2 (the identity's difference is a few ulp) or B4 (every matrix stays positive
+        definite): only the matrix-level check sees it, on the replicates."""
+        tree = self.tree
+        with mock.patch.object(FB, "swapped", lambda Cg, C, C0: Cg + (1 + 1e-6) * (C - C0)):
+            self.assertStops(tree, "B6", "C_resp + its flux block")
+
+    def test_gross_swap_errors_refuse_before_b6(self):
+        tree = self.tree
+        with mock.patch.object(FB, "swapped", lambda Cg, C, C0: Cg + 2 * (C - C0)):
+            self.assertStops(tree, "B4", "positive definite")
+        with mock.patch.object(FB, "swapped", lambda Cg, C, C0: Cg - tree.Cx + (C - C0)):
+            self.assertStops(tree, "B2", "reproduces Stage G")
 
     def test_b5_a_swap_that_moves_a_variance_by_one_ulp(self):
         tree = self.tree
