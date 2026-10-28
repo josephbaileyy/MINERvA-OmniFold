@@ -125,7 +125,9 @@
      - **Q4** (director): whether the final uncertainty accounts for the rounding instability. This is an open item, and r19 prints nothing new.
      - **The flux band (3D):** replace the α = 0.1 sentence, or keep both, as now. Also the abstracts' and Sec. I's flux sentence, which (c) left unchanged (prd-read/REPORT.md "Round 4").
      - **The deposit** (DECISION-20261028 result-table decision item 3): the paper's citation of the prepared package and the data-availability wording, as proposals. Nothing is deposited and no DOI or URL is cited.
-     - **The P1 baseline** and r19's measured result, once scored.
+     - **The register result, as measured:** P1 sol2 3, 3, 3 for the kept text (r19's), against the published anchors' 3.67. r19 won the pairwise 4 of 4; r20 was not adopted (2 of 4) and is reverted (`r20/REPORT.md`). The paper's register rounds are closed.
+     - **Reading notes from gemini (r20's pairwise), for Joseph to judge by reading, not edits:** mixing spelled-out words and numerals ("Ten, 15 or 20"); the serial comma; "so it keeps five" as colloquial; "far upward" as an intensifier; a parenthetical nested in a semicolon (the Limitations lead). These are about r20's wording, which is not kept; the kept text's P1 quotes are in `r19/REPORT.md`.
+     - **Data Availability's release-package sentence** (quoted by 2 of 3 P1 runs after r19), with both raters' readings: "not yet deposited" placed last, and the sentence split. It is protected text.
      - **Protected pointers:** the protected Sec. I limitations paragraph still says "(Sec.~\ref{sec:result16})" for the fake-data study, which is now IV H (sec:fd16) (b3 review S2). It is step (c)'s paragraph, so the fix goes with the 1A sentence, or to Joseph.
    - **Q1, Q7, Q9:** settled by round 1 and the move.
 5. **The second scope review, then register round r19** (#431; director, 2026-10-27). The order is: the director runs the scope review (gpt-6-astra high, read-only) on #413 now; when it reports, this lane writes the r19 outline and **holds it for the director's approval before any writing**; then r19; item 3 runs in parallel; then item 4.
