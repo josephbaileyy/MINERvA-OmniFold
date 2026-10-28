@@ -1,0 +1,4 @@
+32 SURVIVED nd-unfolding/sbatch_fd_f1b3.sh 'grep -q \'"decision": "GO"\' "$B3" 2>/dev/null ||'
+33 SURVIVED nd-unfolding/sbatch_fd_f1b3.sh '[ -n "$TO" ] && [ "$TO" -gt 0 ] ||'
+34 SURVIVED nd-unfolding/sbatch_fd_f1b3.sh 'if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ]; then'
+total 3 killed 0 survived [32, 33, 34]

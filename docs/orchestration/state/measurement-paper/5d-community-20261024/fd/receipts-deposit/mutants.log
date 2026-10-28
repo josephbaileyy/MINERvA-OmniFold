@@ -1,0 +1,33 @@
+KILLED  P5 tolerance ignored
+KILLED  P2 covariance compare dropped
+KILLED  P2 f compare dropped
+KILLED  P2 correlation compare dropped
+KILLED  P1 union check dropped
+KILLED  P1 order check dropped
+KILLED  P4 subset check dropped
+KILLED  GiBUU edge 4.5 -> 60
+KILLED  P3 symmetry tolerance 1e-12 -> 1
+KILLED  P3 sigma check dropped
+KILLED  P0 file digest check dropped
+KILLED  P0 pin check dropped
+KILLED  V_g dropped from chi2
+KILLED  P6 g compare dropped
+KILLED  P6 V_g compare dropped
+KILLED  P6 source compare dropped
+KILLED  P6 order compare dropped
+KILLED  P6 label compare dropped
+KILLED  P6 chi2 compare dropped
+KILLED  P0 file-exists check dropped
+KILLED  reference V_g written as sigma
+KILLED  build writes sigma squared
+KILLED  P1 coverage (bounding box) dropped
+KILLED  P7 dropped
+KILLED  P7 measurement-only dropped
+KILLED  P7 CSV byte compare dropped
+KILLED  P7 JSON compare dropped
+KILLED  bytes read as newline-translated text
+KILLED  P4 Stage G compare dropped
+KILLED  measurement-only reads the readout anyway
+KILLED  P7 compares values, not JSON types
+KILLED  no-overwrite dropped
+32/32 killed

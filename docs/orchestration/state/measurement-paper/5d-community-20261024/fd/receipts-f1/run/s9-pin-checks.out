@@ -1,0 +1,80 @@
+# The F1c pin 741ad029e63732cfe6b7db07568bb2af86e47ebd, for the director's conditions on the first receipt commit (2026-10-28).
+## 1. git diff --stat 5f5e392c4be9c6f8bb035a72d4a60f7dd8be8803 741ad029e63732cfe6b7db07568bb2af86e47ebd
+ .../receipts-f1/run/cluster/f1b3/f1b3-SHA256SUMS   |  30 +
+ .../cluster/f1b3/logs/convert_AR23_20i_00_000.log  |   1 +
+ .../cluster/f1b3/logs/convert_G18_10a_02_11b.log   |   1 +
+ .../cluster/f1b3/logs/env-c_AR23_20i_00_000.log    |   2 +
+ .../run/cluster/f1b3/logs/env-c_G18_10a_02_11b.log |   2 +
+ .../receipts-f1/run/cluster/f1b3/logs/env-fc.log   |   2 +
+ .../fd/receipts-f1/run/cluster/f1b3/logs/env-p.log |   2 +
+ .../run/cluster/f1b3/logs/flux_check.log           |   1 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61001.log       |   6 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61002.log       |   6 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61003.log       |   6 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61004.log       |   6 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61005.log       |   6 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61006.log       |   6 +
+ .../f1b3/logs/gen_AR23_20i_00_000_s61007.log       |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60001.log        |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60002.log        |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60003.log        |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60004.log        |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60005.log        |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60006.log        |   6 +
+ .../f1b3/logs/gen_G18_10a_02_11b_s60007.log        |   6 +
+ .../run/cluster/f1b3/logs/hadd_AR23_20i_00_000.log |  10 +
+ .../run/cluster/f1b3/logs/hadd_G18_10a_02_11b.log  |  10 +
+ .../fd/receipts-f1/run/cluster/f1b3/logs/prep.log  |  11 +
+ .../run/cluster/f1b3/prep/f1-prep-SHA256SUMS       |   9 +
+ .../fd/receipts-f1/run/cluster/f1b3/queue.txt      |  14 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61001.time     |  23 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61002.time     |  23 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61003.time     |  23 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61004.time     |  23 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61005.time     |  23 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61006.time     |  23 +
+ .../f1b3/runs/AR23_20i_00_000/task_s61007.time     |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60001.time      |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60002.time      |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60003.time      |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60004.time      |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60005.time      |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60006.time      |  23 +
+ .../f1b3/runs/G18_10a_02_11b/task_s60007.time      |  23 +
+ .../fd/receipts-f1/run/cluster/gate3/budget3.json  |  51 ++
+ .../fd/receipts-f1/run/cluster/gate3/budget3.log   |   1 +
+ .../cluster/logs/deploy3-test_fd_f0_regrade.log    | 710 +++++++++++++++++++++
+ .../run/cluster/logs/deploy3-test_fd_f1.log        |   5 +
+ .../run/cluster/logs/deploy3-test_fd_f1_amend.log  |   5 +
+ .../run/cluster/logs/deploy3-test_fd_f1_amend2.log |   5 +
+ .../fd/receipts-f1/run/cluster/logs/deploy3.log    |  77 +++
+ .../run/cluster/logs/expected-sha256-3.txt         |  13 +
+ .../run/cluster/logs/fd_f1b3_60436278.out          |   3 +
+ .../run/cluster/logs/repilot-time-3.sha256         |  20 +
+ .../fd/receipts-f1/run/f1c/f1c-steps.tsv           |  11 +
+ .../fd/receipts-f1/run/f1c/tables.log              |   1 +
+ .../fd/receipts-f1/run/f1c/tasks-f1c.tsv           |   9 +
+ .../fd/receipts-f1/run/s7-launch.out               |   7 +
+ .../fd/receipts-f1/run/s7-launch.sh                |   8 +
+ .../fd/receipts-f1/run/s7.out                      |  85 +++
+ .../5d-community-20261024/fd/receipts-f1/run/s7.sh |  32 +
+ .../fd/receipts-f1/run/s8.out                      |   5 +
+ .../5d-community-20261024/fd/receipts-f1/run/s8.sh |   9 +
+ .../fd/receipts-f1/run/s9-look.out                 |  52 ++
+ .../fd/receipts-f1/run/s9-look.sh                  |   9 +
+ .../5d-community-20261024/fd/receipts-f1/run/s9.sh |  15 +
+ 63 files changed, 1634 insertions(+)
+files outside fd/receipts-f1/: 0
+## 2. the three held-back files, as the pin's f1b3-SHA256SUMS identifies them
+d7d136e5cd2708617fb7fa5c0fe7333f39a1d9e3f21cff60e7f1df2578fd9579  gen5d/genie_v3_ar23_xsec5d.meta.json
+4fe333b8a2a220e37925a2989dfe38a95700197b98e6d8ecd130d7bc7d7d1963  gen5d/genie_v3_g18_xsec5d.meta.json
+b0c7a0d9b072a0c20b79eb01a2e8923c38693ec4c61b8d2fce4824544397206a  prep/config-f1.json
+## 3. the pre-commit hook on exactly the pin's diff, staged on a detached worktree at 5f5e392c4be9c6f8bb035a72d4a60f7dd8be8803
+staged:       63
+pre-commit: 16 checks passed
+pre-commit rc=0
+## 4. generate_manifest.py --check at the pin (expected to fail: the 63 receipts are manifest rows and MANIFEST.tsv is not regenerated there)
+object: head=741ad029e63732cfe6b7db07568bb2af86e47ebd tree=at-sha(working tree not read) scope=.
+OUT OF DATE: docs/orchestration/MANIFEST.tsv; rows=6560 ARCHIVAL=160 DEAD=1 LIVE=755 MACHINE=5644 overrides=983 defaults=5577 tracking=tracked:6560 mode=at-sha:741ad029e63732cfe6b7db07568bb2af86e47ebd
+MANIFEST-CHECK :: OUT OF DATE exit=1 :: head=741ad029e63732cfe6b7db07568bb2af86e47ebd tree=at-sha(working tree not read) scope=.
+generate_manifest --check --at-sha 741ad029e63732cfe6b7db07568bb2af86e47ebd rc=1

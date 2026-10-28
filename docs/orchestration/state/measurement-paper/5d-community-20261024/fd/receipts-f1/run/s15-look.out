@@ -1,0 +1,19 @@
+2026-10-28T14:12:59Z
+login36
+| josephrb usage on HPSS charged to m3246 |  422.79GiB |   512.00GiB |          82.6% |          - |           - |              - |
+60439400|fd_f1c|
+60439400.batch|batch|118368K
+60439400.extern|extern|
+60439400.0|line2|11008712K
+60439400.1|line4|11010660K
+60439400.2|line5|10933428K
+60439400.3|line0|17119.50M
+60439400.4|line7|10962516K
+60439400.5|line1|17380328K
+60439400.6|line6|10992396K
+60439400.7|line3|10959572K
+
+/home/j/josephrb/mnv-5d-f1-20261028:
+-rw-r-----    1 josephrb  josephrb        8843 Oct 28 05:25 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb  1229916160 Oct 28 05:25 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 28 05:25 stage0-inputs.tar.sha256

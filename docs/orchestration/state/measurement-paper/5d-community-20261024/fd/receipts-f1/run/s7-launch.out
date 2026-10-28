@@ -1,0 +1,7 @@
+# 2026-10-28T10:32:28Z, login36: a first launch attempt piped the launcher to ssh with its stdin from /dev/null, so
+# s7-body.sh was created EMPTY and an empty script was run under nohup (pid 950827). It ran nothing: no deploy, no
+# tests, no f1b3, gate3 or tmp3. The two 0-byte files were kept, renamed *.aborted-empty-20261028T103228Z.
+-rw-rw---- 1 josephrb josephrb 0 Oct 28 03:32 s7-body.sh.aborted-empty-20261028T103228Z
+-rw-rw---- 1 josephrb josephrb 0 Oct 28 03:32 s7-nohup.out.aborted-empty-20261028T103228Z
+uploaded: 0123d9da32b7ac8b48c0528575fd7f981f1a6a24af47c82a2f13676ceb9252dd  /pscratch/sd/j/josephrb/fd-f1-20261027/logs/s7-body.sh
+launched pid 954158 on login36 at 2026-10-28T10:32:56Z

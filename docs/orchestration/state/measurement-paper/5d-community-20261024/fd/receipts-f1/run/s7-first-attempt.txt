@@ -1,0 +1,18 @@
+# The first launch attempt of step 7 (2026-10-28T10:32:28Z, login36), recorded after the independent review of the F1
+# report: the command that ran and the launcher text it sent. The committed s7-launch.sh is the second, hash-checked
+# launcher; this first one had no hash check.
+#
+# Command (local shell):
+#   ssh -o BatchMode=yes saul.nersc.gov "bash -c 'cat > /tmp/.s7l.\$\$; bash /tmp/.s7l.\$\$ < /dev/null; rm -f /tmp/.s7l.\$\$'" < s7-launch.sh
+#
+# Launcher text sent on stdin (the first s7-launch.sh):
+#   # Launch s7 detached on the login node and print where it logs.
+#   OUT=/pscratch/sd/j/josephrb/fd-f1-20261027
+#   [ -e $OUT/logs/s7-body.sh ] && { echo "STOP: s7-body.sh exists"; exit 3; }
+#   cat > $OUT/logs/s7-body.sh
+#   nohup bash $OUT/logs/s7-body.sh > $OUT/logs/s7-nohup.out 2>&1 < /dev/null &
+#   echo "launched pid $! on $(hostname) at $(date -u +%FT%TZ)"
+#
+# The launcher was saved to /tmp/.s7l.<pid> on the login node and run with stdin from /dev/null, so its
+# "cat > $OUT/logs/s7-body.sh" wrote 0 bytes and the empty body ran under nohup (pid 950827). It printed
+# "launched pid 950827 on login36 at 2026-10-28T10:32:28Z". Nothing else was created (s7-launch.out).

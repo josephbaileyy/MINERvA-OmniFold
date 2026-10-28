@@ -1,0 +1,20 @@
+{
+ "tune": "AR23_20i_00_000",
+ "source": {
+  "path": "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml",
+  "sha256": "185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb"
+ },
+ "reduced": {
+  "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/AR23_20i_00_000_CH.xml.gz",
+  "sha256": "f3a763e5e22e7f0246a838d6d2e8b94287f6f7137f71882dad5582cbab5439ba"
+ },
+ "header": {
+  "tune": "AR23_20i_00_000",
+  "format": "3.00",
+  "n_splines": 937
+ },
+ "n_ch_splines_source": 937,
+ "readme_version_line": "version v3_04_00 qualifier AR2320i00000:k250:e1000",
+ "note": "the spline XML names its tune and format only, not a GENIE version; the README line is the product's own statement of the version that made the splines",
+ "refused": []
+}

@@ -1,0 +1,74 @@
+{"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
+{"control": "P0", "check": "cells.csv exists", "ok": true}
+{"control": "P0", "check": "covariance.csv exists", "ok": true}
+{"control": "P0", "check": "correlation.csv exists", "ok": true}
+{"control": "P0", "check": "deposit.json exists", "ok": true}
+{"control": "P0", "check": "cells.csv's sha256 is deposit.json's", "ok": true}
+{"control": "P0", "check": "covariance.csv's sha256 is deposit.json's", "ok": true}
+{"control": "P0", "check": "correlation.csv's sha256 is deposit.json's", "ok": true}
+{"control": "P0", "check": "deposit.json names the pinned data product", "ok": true}
+{"control": "P1", "check": "cells.csv and deposit.json list R00-R15 in order", "ok": true}
+{"control": "P1", "check": "R00's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R00's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R01's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R01's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R02's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R02's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R03's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R03's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R04's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R04's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R05's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R05's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R06's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R06's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R07's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R07's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R08's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R08's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R09's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R09's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R10's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R10's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R11's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R11's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R12's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R12's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R13's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R13's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R14's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R14's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R15's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R15's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "no two cells share an H2 box", "ok": true}
+{"control": "P1", "check": "the unreported boxes are exactly the H2 boxes in no cell, with their bounds", "ok": true}
+{"control": "P1", "check": "the H2 edges are s5p_stage1_inspect's", "ok": true}
+{"control": "P2", "check": "f from cells.csv and deposit.json is the data product's, bit for bit", "ok": true}
+{"control": "P2", "check": "the covariance from covariance.csv and deposit.json is the data product's C_total_plus_C_resp, bit for bit", "ok": true}
+{"control": "P2", "check": "the correlation from correlation.csv and deposit.json is the data product's, bit for bit", "ok": true}
+{"control": "P3", "check": "the covariance is symmetric to 1e-12 of its largest entry (the data product's Q4 rule)", "ok": true}
+{"control": "P3", "check": "the covariance is positive definite", "ok": true}
+{"control": "P3", "check": "sigma in cells.csv and deposit.json is sqrt(diag), bit for bit", "ok": true}
+{"control": "P3", "check": "the correlation is the covariance's, to 1e-15", "ok": true}
+{"control": "P4", "check": "GiBUU's subset is the eight cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P7", "check": "cells.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "covariance.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "correlation.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "every field of deposit.json (but code_sha256) is what build writes", "ok": true}
+{
+ "controls_passed": [
+  "P0",
+  "P1",
+  "P2",
+  "P3",
+  "P4",
+  "P7"
+ ],
+ "correlation_worst_abs_diff": 0.0,
+ "covariance_asymmetry_over_max": 2.1936904858711652e-16,
+ "covariance_eigen_min_max": [
+  1.4415871887505872e-83,
+  1.9476690716833715e-79
+ ],
+ "mode": "measurement only: predictions-reference.json and Stage G's readout not read"
+}

@@ -1,0 +1,103 @@
+{
+ "schema": "pvl-config/1",
+ "declaration": "docs/orchestration/state/measurement-scoping/pv-ladder/DECLARATION.md",
+ "ratio": {
+  "stat_max": 0.05,
+  "what": "PV-2D's gate: a cell keeps its own ratio iff the ratio's relative statistical error is <= stat_max; else its J-coarse cell's pooled ratio under the same bound; else r = 1"
+ },
+ "rungs": {
+  "L-EW": {
+   "npz": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+    "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+   },
+   "bkg": {
+    "path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+    "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+   },
+   "nc": {
+    "e": {
+     "label": "P5 (read as RE-1's k1_p5_rerun.npz, = P5 bitwise in xsec_flat)",
+     "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz",
+     "sha256": "e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2"
+    },
+    "c": {
+     "label": "P5c",
+     "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/p5c.npz",
+     "sha256": "1fa60dfcb929fc4fe9b88cc64aa9c87f1ee971af751bde08ec69a7d6837462c7"
+    }
+   }
+  },
+  "L-3D": {
+   "npz": {
+    "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/of_inputs_3d.npz",
+    "sha256": "ecbff9f888ab19b5b9f7575ab41a27f83ab094f80efd4463790978c0145c318d"
+   },
+   "bkg": {
+    "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/bkg_3d.npz",
+    "sha256": "b99a19ef65f904fe9b57e43fa4a57d3d259d92eea9c2b31c25df491c4c8ef826"
+   },
+   "nc": {
+    "e": {
+     "label": "P3",
+     "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/3d/p3.npz",
+     "sha256": "8bc7e2d3bae0f14b2f4d87f326e262993d8c14281d37f88c391306fda3d268cb"
+    }
+   }
+  },
+  "L-4D": {
+   "npz": {
+    "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/of_inputs_4d.npz",
+    "sha256": "a15cc6905f1273365f0116a973b0cbb28034b49a4d455da338ff9e5d8462b166"
+   },
+   "bkg": {
+    "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/bkg_4d.npz",
+    "sha256": "2c3cc1a870302240b90b5f9e96e3a2ad5dc2765cfcd733b4fc8a2a0214d3ab8d"
+   },
+   "nc": {
+    "e": {
+     "label": "P4",
+     "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/4d/p4.npz",
+     "sha256": "2a18599f952eb497acddaad596668a04b32b1bf7f6ac3842a4475e8dbdfb2bdf"
+    }
+   }
+  },
+  "L-5D-PV": {
+   "optional": "only if DECLARATION.md D3 is bound",
+   "npz": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+    "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+   },
+   "bkg": {
+    "path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+    "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+   },
+   "nc": {
+    "e": {
+     "label": "P5 (read as RE-1's k1_p5_rerun.npz)",
+     "path": "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz",
+     "sha256": "e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2"
+    }
+   }
+  }
+ },
+ "reference": {
+  "label": "untuned GENIE 2.12 CV, flux-repaired 5D, full (E_nu < 100 GeV): the s5p D1-D4 base (PV-2D's reference)",
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+  "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
+ },
+ "vertices": {
+  "genie_v3_ar23": {
+   "label": "GENIE v3.04.00 AR23_20i_00_000, phi_t-sampled 5D (E_nu < 100 GeV)",
+   "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/gen5d/genie_v3_ar23_xsec5d.npz",
+   "sha256": "8105f5b28073e5b34880d31b0908397a4afd53aa8d8b66821f3419f9096d56fe"
+  },
+  "genie_v3_g18": {
+   "label": "GENIE v3.04.00 G18_10a_02_11b, phi_t-sampled 5D (E_nu < 100 GeV)",
+   "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/gen5d/genie_v3_g18_xsec5d.npz",
+   "sha256": "218832c68faedba958efaa4c50de5754f9d37d5b15e0d028839dc0ad82577a8a"
+  }
+ },
+ "pc_vertex": null,
+ "f1": "FD-F1-DECLARATION.md: the committed pv-ladder config with the vertices replaced by the F1 truths"
+}

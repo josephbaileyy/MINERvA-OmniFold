@@ -1,0 +1,6 @@
+# k1_p5_rerun.npz, committed beside config-f1.json at cluster/f1b3/prep/ (director's ruling (c), 2026-10-28): the file config-f1.json cites
+section 8 pin (cluster/logs/expected-sha256-3.txt): e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
+cluster original: e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz size 95311 mtime 2026-10-22 20:50:24.000000000 -0700 
+committed copy:   e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2  size 95311
+config-f1.json committed copy against the pin's f1b3-SHA256SUMS:
+prep/config-f1.json: OK

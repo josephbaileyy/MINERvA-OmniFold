@@ -1,0 +1,20 @@
+{
+ "tune": "G18_10a_02_11b",
+ "source": {
+  "path": "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml",
+  "sha256": "1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35"
+ },
+ "reduced": {
+  "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/G18_10a_02_11b_CH.xml.gz",
+  "sha256": "dbd305df75dcd731a25dd0b20064ba52c20f095196ea21694997169831788c82"
+ },
+ "header": {
+  "tune": "G18_10a_02_11b",
+  "format": "3.00",
+  "n_splines": 937
+ },
+ "n_ch_splines_source": 937,
+ "readme_version_line": "version v3_02_00 qualifier G1810a0211b:k250:e1000",
+ "note": "the spline XML names its tune and format only, not a GENIE version; the README line is the product's own statement of the version that made the splines",
+ "refused": []
+}
