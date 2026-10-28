@@ -1,0 +1,129 @@
+row	fact	verdict	note_file	probe	remark
+1	a simulation diagnostic compares the boosted-tree residual with exact binned iterative unfolding	PRINTS	sec_5d.tex	A diagnostic in simulation compares the boosted-tree residual with that of an exact binned iterative unfolding.	'bears on the first of these results' is the paper's own cross-link to its list
+2	on the 109 joint cells	PRINTS	sec_5d.tex	It uses the 109 J cells, noise-free signal-only pseudo-data, and the fixed historical truth deformations	\jtNcells=109
+2	fixed truth changes used to develop the estimator	PRINTS	sec_5d.tex	at the simulation's detector response, on the development truths, and for these 144 residuals only	
+2	exact binned iterative unfolding with the same simulation	PRINTS	sec_5d.tex	The binned unfolding unfolds the same simulated events, with their exact efficiency	
+2	five iterations; about the same median residual as the boosted trees	PRINTS	sec_5d.tex	At five iterations the J-cell medians of the absolute residual agree	
+3	144 residuals whose diagnosis is stable under the truth resolution	PRINTS	sec_5d.tex	The 144 eligible residuals are those whose diagnosis is stable under the truth resolution	
+3	population: cell-and-truth-change residuals above 2%	PRINTS	sec_5d.tex	of 376 J-cell and deformation combinations with residuals above \SI{2}{\percent}	
+3	pooled over five truth changes, tree approximation dominates only 15	PRINTS	sec_5d.tex	Of the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation	five = D1, W1, W3, q3 stress 'pooled with W2' (same paragraph)
+4	121 of the 144 in quantities the binned response constrains weakly at the analysis exposure	PRINTS	sec_5d.tex	Most of the 144 (121) lie in quantities that the binned response constrains weakly at the analysis exposure.	
+4	Cramer-Rao widths above 10%	PRINTS	sec_5d.tex	Their Cram\'er--Rao widths exceed \SI{10}{\percent} at both truth resolutions tested	note is stronger (both resolutions); implies the paper's statement
+4	the regularization trades a large variance for the bias	PRINTS	sec_5d.tex	so the regularization trades a large variance for the bias	
+5	longer noise-free exact iteration removes much of the residual for GiBUU-to-GENIE	PRINTS	sec_5d.tex	Longer noise-free exact iteration removes much of the residual for D1	D1 = GiBUU/GENIE Eavail ratio (sec_5d.tex:131)
+5	but not for every change	PRINTS	sec_5d.tex	It does not do so for W3 and the $q_3$ stress	
+6	diagnostic is binned, signal-only, noise-free, at the simulation's detector response	PRINTS	sec_5d.tex	The comparison is binned, signal-only and noise-free, at the simulation's detector response	
+7	covers only the residuals with stable diagnosis	PRINTS	sec_5d.tex	at the simulation's detector response, on the development truths, and for these 144 residuals only	
+7	38% of the joint-cell residuals above 2%	PRINTS	sec_5d.tex	232 changed classification with the truth resolution or the response weighting and were excluded, leaving the 144 (\SI{38}{\percent})	
+8	unbinned recovery, the coverage failure and interval validity outside scope	PRINTS	sec_5d.tex	It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval.	
+9	within scope, residual consistent with regularization at this binning and prior	PRINTS	sec_5d.tex	the residual is consistent with the regularization of the inverse problem at this binning and prior	note opens 'Within this comparison'
+9	rather than the tree approximation of the classifiers	PRINTS	sec_5d.tex	the tree approximation is not supported as its main cause	
+10	median absolute residual (%) over the 109 joint cells	PRINTS	sec_5d.tex	At five iterations the J-cell medians of the absolute residual agree	
+10	trees vs exact binned iterative unfolding of the same simulated events	PRINTS	sec_5d.tex	The binned unfolding unfolds the same simulated events, with their exact efficiency	
+10	noise-free, signal-only pseudo-data	PRINTS	sec_5d.tex	It uses the 109 J cells, noise-free signal-only pseudo-data	
+10	simulated response	PRINTS	sec_5d.tex	The comparison is binned, signal-only and noise-free, at the simulation's detector response	
+11	GiBUU/GENIE, NuWro/GENIE Eavail ratios; NuWro/GENIE (pT,ppar,Eavail) ratio	PRINTS	sec_5d.tex	D1 is a GiBUU/GENIE $\Eavail$ ratio, W1 a NuWro/GENIE $\Eavail$ ratio, W2 a GENIE MEC/CV $(\Eavail,W)$ ratio, and W3 a NuWro/GENIE $(\pT,\pPar,\Eavail)$ ratio	note's D1/W1/W3 labels are used in the diagnostic paragraph
+11	q3 change at fixed (Eavail,W), amplitude 0.3	PRINTS	sec_5d.tex	The $q_3$ stress changes the conditional distribution at fixed $(\Eavail,W)$ with amplitude 0.3.	
+12	long exact runs do not converge; entries are last iterates	PRINTS	sec_5d.tex	The long runs do not converge (only 9--34 of the 109 J quantities converge for each traced deformation), so these values are last iterates.	
+13	counts pool a fifth change, GENIE + MEC/GENIE CV ratio in (Eavail,W)	PRINTS	sec_5d.tex	the fixed historical truth deformations D1, W1, W3 and the $q_3$ stress (labels as in \S\ref{sec:gbdt-model-dependence}), pooled with W2	W2 = GENIE MEC/CV (Eavail,W) ratio (sec_5d.tex:131)
+13	its boosted-tree comparator includes background; counts unchanged without it	PRINTS	sec_5d.tex	W2's boosted-tree comparator includes background, and the outcome is unchanged without it.	both texts share the same antecedent ambiguity for 'it' (W2 or background)
+14	table: trees at 5 iterations 9.5, 5.4, 5.6, 4.3	PRINTS	sec_5d.tex	\SI{9.5}{\percent}, \SI{5.4}{\percent}, \SI{5.6}{\percent} and \SI{4.3}{\percent} for the boosted trees	order D1, W1, W3, q3 stress = table row order
+14	table: exact at 5 iterations 8.3, 5.4, 4.9, 5.3	PRINTS	sec_5d.tex	against \SI{8.3}{\percent}, \SI{5.4}{\percent}, \SI{4.9}{\percent} and \SI{5.3}{\percent} for the exact binned unfolding, for D1, W1, W3 and the $q_3$ stress	
+14	table: GiBUU/GENIE exact 200 = 3.3, 1e5 = 0.8	PRINTS	sec_5d.tex	(J median \SI{3.3}{\percent} after 200 iterations and \SI{0.8}{\percent} after $10^{5}$)	
+14	table: NuWro/GENIE Eavail exact 200 = 3.3, 1e5 = 2.8	PRINTS	sec_5d.tex	and part of it for W1 (\SI{3.3}{\percent} and \SI{2.8}{\percent})	
+14	table: (pT,ppar,Eavail) 4.4 / 8.9 and q3 6.6 / 6.7 (200 / 1e5)	PRINTS	sec_5d.tex	(\SI{4.4}{\percent} and \SI{6.6}{\percent} after 200 iterations, \SI{8.9}{\percent} and \SI{6.7}{\percent} after $10^{5}$)	
+14	caption 'Source: \nsec{sec:val-departure}'	POINTER			
+14	\subsection{Coverage} \label{sec:coverage}	HEADING			
+14	intervals from a deterministic LightGBM estimator with purity-based subtraction	PRINTS	sec_method.tex	(c) deterministic variant} & \pcell{0.20\textwidth}{LightGBM, deterministic} & \pcell{0.22\textwidth}{purity-based subtraction}	Table tab:estimators-matrix row (c), used for the coverage test
+14	corrected for the estimator's closure bias at nominal truth	PRINTS	sec_5d.tex	The intervals divide each estimate by $1+\beta$, where $\beta$ is the relative closure bias at nominal truth	
+14	miscover at the tested truths	PRINTS	main_note.tex	statistical intervals of a deterministic purity-subtracted variant miscover at the tested truths	
+14	most strongly when the signal rate is lowered by about 10%	PRINTS	sec_5d.tex	At nominal truth two fail at 95\%, the lowest at 0.850.	with 51 (68%) / 42 (95%) failing under the rate reduction, same paragraph; 'most strongly' is the comparison of these counts
+15	400 pseudo-experiments per truth	PARTIAL	sec_5d.tex	a deterministic five-dimensional estimator variant with nominal-truth bias correction (1,200 pseudo-experiments over three truths)	note gives 1,200 over three truths and 'over the 400' for the rate-reduction truth only; 400 for each truth is not stated
+16	deviations occur with or without background; background subtraction does not explain them	PRINTS	sec_5d.tex	Signal-only experiments with the same seeds reproduce both results, so they are a property of the estimator	continues 'not of the background treatment'
+17	residual interpreted as regularization bias	PRINTS	sec_5d.tex	The $\Eavail$ and $q_3$ residuals, a regularization (unfolding-model) bias of the estimator	
+17	persists over the tested iteration numbers and classifier capacities	PRINTS	sec_5d.tex	no estimator change within the scope of the study meets the recovery requirement, set before the test, for the GiBUU-to-GENIE departure	
+17	thirty iterations reduce the Eavail residual by 26%	PRINTS	sec_5d.tex	Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}	
+17	a larger classifier improves the reco-level fit without reducing it	PRINTS	sec_5d.tex	A larger classifier improves the reco-level fit without improving the $\Eavail$ truth residual	
+17	qualifier: in noise-free studies of that variant	PARTIAL	sec_5d.tex	With noise-free pseudo-data it recovers more than \SI{99}{\percent} of the departure's reco signal	noise-free is stated for the preceding sentence of sec:val-departure, not attached to the 26% / capacity sentence
+18	Gaussian bias and spread fitted to each quantity's 68% and 95% coverage	PRINTS	sec_5d.tex	each quantity's mean shift and spread come from a Gaussian fit to its 68\% and 95\% coverage	
+18	miscoverage attributed to a residual bias that grows with W	PRINTS	sec_5d.tex	The rate change adds a positive bias that grows with $W$	
+18	the bias survives the nominal-truth bias correction	PRINTS	sec_5d.tex	The miscoverage is a residual bias that the nominal-truth bias correction does not remove.	
+19	source of the residual bias not established	PRINTS	sec_5d.tex	The source of the $W$-graded term is not established	
+20	the rate change itself is recovered	PRINTS	sec_5d.tex	The rate change itself is recovered: in the one locally stored pseudo-experiment the total changes by \SI{-9.58}{\percent}	
+20	apart from a minor effect, intervals not too narrow	PRINTS	sec_5d.tex	Nor are the intervals too narrow: they use one nominal bootstrap $\sigma$ at every truth	minor effect = background not redrawn (spread about 1.15 sigma at W>=3 GeV), same sentence
+21	agreement in marginal normalizations coexists with substantial residual bias under the tested deformations	PARTIAL	sec_5d.tex	over the 400 the total covers at 0.74 (68\%), so this is not a normalization failure	note states it for the total under the rate reduction only; no general statement over 'marginal normalizations' or 'the tested deformations'
+22	pointer to \nsec{sec:coverage-5d}	POINTER			
+23	400 pseudo-experiments per truth	PARTIAL	sec_5d.tex	a deterministic five-dimensional estimator variant with nominal-truth bias correction (1,200 pseudo-experiments over three truths)	same as row 15: 400 for each truth is not stated
+24	reweights the true signal without renormalization, background unchanged	PRINTS	sec_5d.tex	without renormalization, with the background unchanged; below $\Eavail=\SI{3}{GeV}$ the weight is 0.900--0.906	
+24	in effect a 10% signal-rate reduction with a weak Eavail slope	PRINTS	sec_5d.tex	so it is in effect a \SI{10}{\percent} lower signal rate with a weak $\Eavail$ slope	
+25	51 of 153 integrals below threshold at 68%; coverage as low as 0.06	PRINTS	sec_5d.tex	51 of the 153 reported cell and projection integrals have 68\% coverage confidently below nominal, with coverage as low as 0.060	
+25	criterion: upper confidence bound below acceptance threshold 0.66	PRINTS	sec_5d.tex	A quantity fails when the upper confidence bound on its coverage lies below 0.66 for 68\% intervals	
+26	empirical coverage of statistical intervals, corrected for nominal-truth bias	PRINTS	sec_5d.tex	assessed statistical intervals of a deterministic five-dimensional estimator variant with nominal-truth bias correction	
+26	153 reported cell and projection integrals	PRINTS	sec_5d.tex	51 of the 153 reported cell and projection integrals	
+27	deterministic LightGBM with purity-based subtraction	PRINTS	sec_method.tex	(c) deterministic variant} & \pcell{0.20\textwidth}{LightGBM, deterministic} & \pcell{0.22\textwidth}{purity-based subtraction}	
+27	400 pseudo-experiments at the ~10% lower-rate truth	PRINTS	sec_5d.tex	over the 400 the total covers at 0.74 (68\%)	the 400 here are the rate-reduction truth's
+27	truth with ~10% lower signal rate and weak Eavail slope	PRINTS	sec_5d.tex	so it is in effect a \SI{10}{\percent} lower signal rate with a weak $\Eavail$ slope	
+28	at nominal truth none lies below 0.66	PAPER-ONLY			searched 'nominal truth', '0.66', 'none'; note says only that the test failed at nominal truth and two fail at 95%; the 0 at 68% is in a % comment (sec_5d.tex:219)
+28	at nominal truth two lie below 0.94	PRINTS	sec_5d.tex	At nominal truth two fail at 95\%, the lowest at 0.850.	
+29	circles 68%, squares 95% (figure legend)	PAPER-ONLY			figure-presentation fact; the coverage figure is not in the note (searched 'Circles', 'squares', 'fig_coverage')
+30	bars are one-sided Clopper-Pearson lower and upper bounds	PAPER-ONLY			searched 'Clopper' in sec:coverage-5d, '459', 'Bonferroni'; note says only 'upper confidence bound'
+30	each at level 0.05/459, Bonferroni over 153 integrals and three truths	PAPER-ONLY			0.05/459 appears only in a % comment (sec_5d.tex:219-220)
+31	third truth is a change of the q3 dependence at fixed (Eavail,W)	PAPER-ONLY			note says 'three truths' and describes only the second; searched 'third truth', 'intended change', 'does not implement'
+31	omitted because its reweighting does not implement the intended change	PAPER-ONLY			as above
+31	the test's verdict does not depend on it	PAPER-ONLY			as above
+32	acceptance thresholds 0.66 and 0.94	PRINTS	sec_5d.tex	lies below 0.66 for 68\% intervals or below 0.94 for 95\% intervals	
+32	solid/dashed lines, filled markers (figure legend)	PAPER-ONLY			figure-presentation fact; figure not in note
+33	153 integrals = (Eavail,W) projection cells 0-41 and their sum, 109 coarse joint cells (3^5 index), total	PARTIAL	sec_5d.tex	51 of the 153 reported cell and projection integrals	note prints the count 153 only; its composition and ordering appear only in a % comment (sec_5d.tex:220-221)
+33	\subsection{Estimator stability} \label{sec:cov5d}	HEADING			
+33	joint-test estimator unstable at rounding level: up to 2.6 statistical SD	PRINTS	sec_5d.tex	input perturbations within floating-point rounding move functionals by a median of 0.8 and at most 2.6 statistical standard deviations	'the candidate' = configuration (e), the joint-test estimator (sec_5d.tex:95)
+33	lower-capacity development variant moves by 2.5	PRINTS	sec_5d.tex	The baseline estimator's shifts, a median of 0.8 and at most 2.5, place this instability in the estimator family.	
+33	it fails a data-stability requirement	PRINTS	sec_5d.tex	The candidate fails the data-stability test, whose criterion was set before it was run	
+33	requirement values: at most 0.3 (median) and 1.0 (maximum) statistical SD	PAPER-ONLY			searched '0.3 (median', 'at most 0.3', 'stability requirement/criterion', '1.0 (max'; the note never states the criterion's values
+34	the block supersedes two earlier statistical bands	PRINTS	sec_validation.tex	The quoted statistical block is a third, different ensemble, 300 replicas at the central value's training seed	
+34	pointer: their coverage studies in \nsec{sec:coverage}	POINTER			
+35	charged-pion mass instead of 135 MeV changes no true-Eavail bin by more than 1.05%	PRINTS	sec_3d.tex	Relative to the charged-pion mass, it moves \SI{0.67}{\percent} of simulated events into another true-$\Eavail$ bin and changes no true-$\Eavail$ bin by more than \SI{1.05}{\percent}.	
+36	interval coverage and test calibration are two distinct properties	PARTIAL	sec_joint.tex	They do not use, and do not validate, the five-axis covariance of the configuration-(a) central value	no explicit statement of the distinction; the note uses 'calibration' for interval coverage (sec_5d.tex:8 'Calibration asks whether the resulting intervals contain their specified target'; sec_validation.tex 'interval calibration')
+37	coverage = rate at which intervals contain the true cross section	PRINTS	sec_validation.tex	Coverage is the fraction of repeated intervals containing the specified truth	
+38	calibration of a test = rate at which it rejects a true hypothesis	PARTIAL	sec_joint.tex	The null calibration below, not the metric, sets each test's size.	note ties calibration to size and defines FWER as 'the probability of falsely rejecting at least one true hypothesis', but never defines a test's calibration this way; elsewhere 'calibration' names interval coverage (sec_5d.tex:8)
+39	calibration obtainable without validated intervals	PARTIAL	sec_joint.tex	They do not use, and do not validate, the five-axis covariance of the configuration-(a) central value	stated for this analysis only; the general methodological claim is not in the note
+39	by simulating the whole analysis chain at the hypothesis	PRINTS	sec_joint.tex	The null distribution of each statistic is obtained from pseudo-experiments that run the full analysis chain at the null truth	
+39	so the estimator's bias enters the simulated null distribution	PRINTS	sec_joint.tex	which puts the estimator's bias toward its prior and the declared nuisances into each null distribution	
+40	valid to the extent the simulated chain reproduces the analysis of the data	PRINTS	sec_joint.tex	The calibration is valid for the simulated null to the extent that the pseudo-experiment chain reproduces the analysis applied to the data.	
+41	GiBUU, lacking high-energy neutrinos: domain is the 72 supported cells with ppar < 6 GeV/c	PRINTS	sec_joint.tex	For GiBUU, whose sample lacks high-energy neutrinos, the domain is the \jtNcellsGiBUU{} cells with $\pPar<\SI{6}{GeV/c}$.	follows 'restricted to the \jtNcells{} supported cells (J)'
+42	NuWro and GiBUU contain such a target difference, not corrected in the tests	PRINTS	sec_eavailw.tex	The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of \S\ref{sec:joint5d}, as run, do not correct.	
+43	conditional tests	PRINTS	sec_joint.tex	Every pseudo-experiment resamples the same simulated events, so the null distributions are conditional on that simulation.	
+43	of simulated hybrid null hypotheses	PRINTS	sec_joint.tex	This \emph{hybrid null} is the hypothesis the calibration simulates.	
+43	cross section equals a prediction on every cell of a fine five-observable grid	PRINTS	sec_joint.tex	the null $H_{0}(G)$ is that the true cross section equals $G$ on every cell of a fine five-dimensional grid	
+43	with the MINERvA Tune v1 composition below that grid	PRINTS	sec_joint.tex	Below that grid, the null truth has the MINERvA Tune~v1 simulation's event composition	
+44	calibrated within the implemented simulation model	PRINTS	sec_joint.tex	Their methodological contribution is calibration within the implemented simulation model	
+44	detector model has no calorimetric recoil-response uncertainty	PRINTS	sec_joint.tex	The declared nuisance model here includes the reweights but no calorimetric response band.	
+45	under the stated assumptions the rule controls the FWER of the ten decisions at 5%	PRINTS	sec_joint.tex	The decision rule therefore controls the familywise error rate of the ten decisions at 5\% under these assumptions.	
+45	on average over the nuisance priors	PRINTS	sec_joint.tex	The calibrated size is averaged over the nuisance priors: at a fixed true value of the nuisance parameters it can exceed $\alpha$.	
+46	rejections are not physical exclusions of the generators	PRINTS	main_note.tex	they are not physical exclusions, show no evidence of discrimination beyond matched coarse projections	
+46	provide no measurement uncertainty	PRINTS	sec_joint.tex	They are not a measured cross section, and they add no reportable uncertainty.	
+47	3D/4D central values, sixteen-cell result and joint tests use the joint-test estimator	PRINTS	sec_method.tex	It gives the 3D and 4D central values (\S\ref{sec:3d}) and the sixteen-cell five-dimensional result (\S\ref{sec:fived16}). It is used for the generator tests	
+47	a deterministic LightGBM	PRINTS	sec_method.tex	(e), the joint-test estimator: a deterministic LightGBM variant with the unbinned negative-weight background treatment	
+47	same background treatment and refinement capacity (as the 2D estimator)	PRINTS	sec_method.tex	(f), the nominal LightGBM configuration above with refined negative-weight subtraction and the refinement classifier of (e)	
+47	removes most of the purity bias at nominal truth in the highest-W cells	PRINTS	sec_method.tex	The negative-weight treatment reduces the purity method's nominal-truth bias in the highest-$W$ column at least fifteen-fold	
+48	the envelope motivates the different route to inference (the joint tests)	PRINTS	sec_5d.tex	It motivates the calibrated joint tests of \S\ref{sec:joint5d}, a separate inference that reports no measured cross section.	
+48	after a descriptive comparison of the central values	PRINTS	sec_3d.tex	The comparisons with generator predictions in this section and in Sec.~\ref{sec:eavailw} are descriptive comparisons of central values	
+48	generator predictions are tested as hypotheses	PRINTS	sec_joint.tex	The tests evaluate hybrid null hypotheses about five predictions	
+49	truths: simulation's prior; five hybrid truths of the generator tests, each a prediction on the fine grid	PRINTS	sec_fived16.tex	The truths are the simulation's prior; the five hybrid truths of the generator tests (Sec.~\ref{sec:joint5d}), each a prediction on the fine grid	
+49	NuWro shape changes in Eavail and (pT,ppar,Eavail); GENIE + MEC in (Eavail,W); GiBUU-to-GENIE Eavail ratio	PRINTS	sec_fived16.tex	the historical shapes W1, W2 and W3 of \S\ref{sec:gbdt-model-dependence}; a GiBUU-to-GENIE $\Eavail$ shape	W1/W2/W3 defined at sec_5d.tex:131 as NuWro Eavail, GENIE MEC (Eavail,W), NuWro (pT,ppar,Eavail)
+49	a noise-free closure at the NuWro shape; a synthetic q3 tilt at fixed (Eavail,W)	PRINTS	sec_fived16.tex	a noise-free closure at the NuWro shape; and a synthetic tilt of the $q_3$ distribution at fixed $(\Eavail,W)$	
+50	external nulls displaced upward by the estimator's pull toward its prior	PRINTS	sec_joint.tex	the external nulls are displaced far upward by the estimator's pull toward its prior	
+50	which the calibration reproduces	PRINTS	sec_joint.tex	They are non-central because the calibration reproduces the estimator's pull toward its prior	
+50	framing: this is the third of three results pointing to prior retention	PARTIAL	sec_5d.tex	The limitation is the measured prior dependence, about 10--13\% per coarse joint cell	the note does not group the null displacement with the deformation residual and the envelope as one finding
+51	calibrated tests illustrate inference with a biased estimator	PRINTS	sec_joint.tex	which puts the estimator's bias toward its prior and the declared nuisances into each null distribution	
+51	decision rule controls the FWER at 5%	PRINTS	sec_joint.tex	The decision rule therefore controls the familywise error rate of the ten decisions at 5\% under these assumptions.	
+51	provided the calibration is exact	PRINTS	sec_joint.tex	(A1) each true null's calibrated tail probability is uniformly distributed or conservative	together with A2 (independent exceedances), same paragraph
+52	the generator tests reject hybrid nulls	PRINTS	main_note.tex	Joint tests calibrated in simulation reject hybrid null hypotheses for five generator predictions at a 5\% family-wise error rate	
+52	conditionally on the simulation's hadronic response	PRINTS	sec_joint.tex	The rejections are therefore conditional on the simulation's hadronic response	
+53	rejections carry over to the predictions only under a bound on the residual below the fine grid	PRINTS	sec_joint.tex	The variants carry the rejections over to $G$ itself only if replacing the Tune~v1's shape below the fine grid by $G$'s moves	
+53	which has not been shown	PRINTS	sec_joint.tex	the residual below the fine grid is unmeasured and potentially material	
+54	calibration valid to the extent the simulated chain reproduces the analysis of the data	PRINTS	sec_joint.tex	The calibration is valid for the simulated null to the extent that the pseudo-experiment chain reproduces the analysis applied to the data.	
+55	tested generator predictions are already disfavoured by the published muon-kinematic measurement	PRINTS	sec_joint.tex	The published comparison in muon kinematics alone, whose observables do not use the reconstructed recoil energy, also disfavours the same generator families~\cite{MINERvA:2021owq}.	
+56	every study uses the analysis simulation's detector response	PARTIAL	sec_validation.tex	Every closure test here therefore keeps the simulated MINERvA response	note states it per study (closure tests; binned diagnostic 'at the simulation's detector response'; fake-data 'the detector response is not probed'), with no statement covering every study
+56	except the test calibration, which also draws the detector bands	PRINTS	sec_joint.tex	draws the weight-based detector bands (MINOS muon-matching efficiency and the GEANT4 neutron, pion and proton interaction reweights)	
+57	when intervals cannot be validated, tests can still be calibrated	PARTIAL	sec_5d.tex	No frequentist coverage is therefore claimed for any five-dimensional interval.	the note has both halves for this analysis but not the general lesson
+57	by simulating the analysis chain at the hypothesis, as in the joint tests	PRINTS	sec_joint.tex	The null distribution of each statistic is obtained from pseudo-experiments that run the full analysis chain at the null truth	

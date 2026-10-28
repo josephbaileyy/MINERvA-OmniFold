@@ -1,0 +1,167 @@
+row	item	paper_sentence	finder_site	finder_score	finder_missing
+1	O1	A diagnostic in simulation, summarized in Table~\ref{tab:binned}, bears on the first of these results.	sec_validation.tex:4	0.38	
+2	O1	On the same \jtNcells{} joint cells and the fixed truth changes used to develop the estimator, an exact binned iterative unfolding with the same simulation and five iterations leaves about the same median residual as the boosted-tree estimator.	sec_5d.tex:135	0.36	\jtNcells
+3	O1	Of the 144 cell-and-truth-change residuals above \SI{2}{\percent} whose diagnosis is stable under the truth resolution, pooled over five truth changes, the tree approximation dominates only 15.	sec_5d.tex:83	0.55	15
+4	O1	Most of the 144 (121) lie in quantities that the binned response constrains weakly at the analysis exposure, with Cram\'er--Rao widths above \SI{10}{\percent}, so the regularization trades a large variance for the bias.	sec_5d.tex:83	0.50	121 144
+5	O1	Longer noise-free exact iteration removes much of the residual for the GiBUU-to-GENIE change, but not for every change.	sec_5d.tex:83	0.64	
+6	O1	The diagnostic is binned, signal-only and noise-free, with the detector response fixed at the simulation's.	sec_5d.tex:83	0.75	
+7	O1	It covers only the residuals whose diagnosis is stable under the truth resolution (\SI{38}{\percent} of the joint-cell residuals above \SI{2}{\percent}).	sec_5d.tex:83	0.80	
+8	O1	What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope.	sec_5d.tex:83	0.69	
+9	O1	Within that scope, the residual is consistent with the regularization of the inverse problem at this binning and prior, rather than with the tree approximation of the classifiers (\nsec{sec:val-departure}).	sec_5d.tex:83	0.77	
+10	O1-T3	\caption{Median absolute residual (\%) over the \jtNcells{} joint cells, boosted-tree OmniFold (trees) against exact binned iterative unfolding (exact) of the same simulated events, with noise-free, signal-only pseudo-data and the simulated response.	sec_5d.tex:83	0.35	\jtNcells
+11	O1-T3	Truth changes: GiBUU/GENIE and NuWro/GENIE ratios in $\Eavail$; a NuWro/GENIE ratio in $(\pT,\pPar,\Eavail)$; a change of the $q_{3}$ distribution at fixed $(\Eavail,W)$ with amplitude 0.3.	sec_5d.tex:131	0.62	0.3
+12	O1-T3	The long exact runs do not converge; their entries are last iterates.	sec_5d.tex:83	0.67	
+13	O1-T3	The counts in the text also pool a fifth change, a GENIE + MEC/GENIE CV ratio in $(\Eavail,W)$ whose boosted-tree comparator includes background; they are unchanged without it.	sec_5d.tex:83	0.32	
+14	O1-T3	Source: \nsec{sec:val-departure}.} \label{tab:binned} \centering\scriptsize\setlength{\tabcolsep}{4pt} \begin{tabular}{@{}lrr@{\qquad}rr@{}} \toprule & \multicolumn{2}{c}{5 iterations} & \multicolumn{2}{c}{exact, longer} \\ \cmidrule(lr){2-3}\cmidrule(l){4-5} Truth change & trees & exact & 200 & $10^{5}$ \\ \midrule GiBUU/GENIE, $\Eavail$ & 9.5 & 8.3 & 3.3 & 0.8 \\ NuWro/GENIE, $\Eavail$ & 5.4 & 5.4 & 3.3 & 2.8 \\ NuWro/GENIE, $(\pT,\pPar,\Eavail)$ & 5.6 & 4.9 & 4.4 & 8.9 \\ $q_{3}$ at fixed $(\Eavail,W)$ & 4.3 & 5.3 & 6.6 & 6.7 \\ \bottomrule \end{tabular} \end{table} \subsection{Coverage} \label{sec:coverage} Statistical intervals from a deterministic LightGBM estimator with purity-based subtraction, corrected for the estimator's closure bias at nominal truth, miscover at the tested truths, most strongly when the true signal rate is lowered by about \SI{10}{\percent}.	sec_5d.tex:83	0.17	0.8 10 2 2.8 200 3.3 4 4.4 5 6.6 6.7 8.9
+15	O1-T3	The end-to-end test unfolds 400 pseudo-experiments per truth.	app_negweight.tex:136	0.57	
+16	O3	These deviations occur with or without background, so background subtraction alone does not explain the residual.	sec_5d.tex:13	0.36	
+17	O3	We interpret the residual as regularization bias because it persists over the tested iteration numbers and classifier capacities: in noise-free studies of that variant, thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}, while a larger classifier improves the reconstruction-level fit without reducing it.	sec_validation.tex:128	0.30	
+18	O2	A diagnosis that fits a Gaussian bias and spread to each quantity's 68\% and 95\% coverage attributes the miscoverage to a residual bias that grows with $W$ and survives the nominal-truth bias correction.	sec_5d.tex:227	0.41	
+19	O2	The source of this residual bias has not been established.	main_note.tex:72	0.50	
+20	O2	The rate change itself is recovered, and, apart from a minor effect, the intervals are not too narrow.	sec_5d.tex:227	0.40	
+21	O2	Agreement in the marginal normalizations thus coexists with substantial residual bias under the tested deformations.	main_note.tex:72	0.27	
+22	O2	The interval construction and the diagnosis are described in \nsec{sec:coverage-5d}.	sec_execsummary.tex:107	0.50	
+23	O4	The end-to-end test unfolds 400 pseudo-experiments per truth.	app_negweight.tex:136	0.57	
+24	O4	The tested change reweights the true signal, without renormalization and with the background unchanged, and is in effect a \SI{10}{\percent} reduction of the signal rate with a weak $\Eavail$ slope.	sec_5d.tex:214	0.78	
+25	O4	Figure~\ref{fig:coverage} shows that under that change, 51 of the 153 reported cell and projection integrals have a 68\% coverage whose upper confidence bound lies below the acceptance threshold of 0.66, with coverage as low as 0.06.	sec_5d.tex:214	0.54	0.06 0.66
+26	O4-F4	\caption{Empirical coverage of statistical intervals for the 153 reported cell and projection integrals, corrected for nominal-truth bias.	sec_5d.tex:214	0.46	
+27	O4-F4	The study uses a deterministic LightGBM estimator with purity-based subtraction and 400 pseudo-experiments at a truth with an approximately \SI{10}{\percent} lower signal rate and a weak $\Eavail$ slope (Sec.~\ref{sec:coverage}).	sec_5d.tex:214	0.48	400
+28	O4-F4	At nominal truth (not drawn) none lies below the 0.66 threshold, and two lie below the 0.94 threshold.	sec_5d.tex:214	0.36	
+29	O4-F4	Circles: 68\% intervals; squares: 95\% intervals.	sec_5d.tex:179	0.60	
+30	O4-F4	Bars are one-sided Clopper--Pearson lower and upper bounds, each at level $0.05/459$, a Bonferroni correction over the 153 integrals and the three truths of the study.	sec_5d.tex:214	0.22	0.05 153 459
+31	O4-F4	The third truth, a change of the $q_{3}$ dependence at fixed $(\Eavail,W)$, is omitted because its reweighting does not implement the intended change; the test's verdict does not depend on it.	sec_fived16.tex:150	0.31	
+32	O4-F4	Solid lines mark the nominal coverage and dashed lines the acceptance thresholds 0.66 and 0.94; filled markers have an upper bound below the threshold.	sec_5d.tex:214	0.35	
+33	O4-F4	The integrals are ordered as the $(\Eavail,W)$ projection (cells 0--41 and their sum), the \jtNcells{} coarse joint cells (labelled by their index in the $3^{5}$ grid), and the total.} \label{fig:coverage} \end{figure*} \subsection{Estimator stability} \label{sec:cov5d} The joint-test estimator is unstable at the level of rounding: rounding-level input changes move its results by up to 2.6 statistical standard deviations, as they move those of its lower-capacity development variant (2.5), so it fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.	sec_5d.tex:90	0.19	0 0.3 1.0 2.5 3 41 5 \jtNcells
+34	O5	The block supersedes two earlier statistical bands, whose coverage studies are described in \nsec{sec:coverage}.	sec_execsummary.tex:111	0.70	
+35	O6	Replacing it by the charged-pion mass would change no true-$\Eavail$ bin by more than \SI{1.05}{\percent}.	sec_3d.tex:42	0.75	
+36	K1	Two properties must be distinguished.	app_release.tex:29	0.50	
+37	K1	The coverage of unfolded intervals is the rate at which they contain the true cross section.	sec_method.tex:174	0.33	
+38	K1	The calibration of a test is the rate at which it rejects a true hypothesis.	sec_5d.tex:40	0.50	
+39	K1	Calibration can be obtained without validated intervals by simulating the whole analysis chain at the hypothesis, so that the estimator's bias enters the simulated null distribution.	sec_joint.tex:40	0.33	
+40	K1	A calibration obtained in this way is valid to the extent that the simulated chain reproduces the analysis of the data.	sec_joint.tex:115	0.80	
+41	K2	For GiBUU, whose sample lacks high-energy neutrinos, the domain is the \jtNcellsGiBUU{} supported cells with $\pPar<\SI{6}{GeV/c}$.	sec_joint.tex:26	0.93	
+42	K3	The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of Sec.~\ref{sec:joint} do not correct.	sec_eavailw.tex:95	0.91	
+43	K4	The generator tests are conditional tests of simulated hybrid null hypotheses, under which the cross section equals a prediction on every cell of a fine five-observable grid, with the MINERvA Tune~v1 composition below that grid, as defined in Sec.~\ref{sec:hypotheses}.	sec_joint.tex:16	0.46	
+44	K4	They are calibrated within the implemented simulation model, whose detector model has no calorimetric recoil-response uncertainty.	main_note.tex:72	0.42	
+45	K4	Under the assumptions of Sec.~\ref{sec:calibration}, their decision rule controls the familywise error rate of the ten decisions at 5\%, on average over the nuisance priors.	sec_joint.tex:106	0.65	
+46	K4	The rejections are not physical exclusions of the generators and provide no measurement uncertainty.	main_note.tex:72	0.43	
+47	K5	The three- and four-observable central values, the sixteen-cell five-observable result (Sec.~\ref{sec:result16}) and the joint tests use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity, which removes most of the bias of purity-based subtraction at nominal truth in the highest-$W$ cells (Sec.~\ref{sec:validation}).	sec_method.tex:28	0.31	
+48	K6	It motivates the different route to inference of Sec.~\ref{sec:joint}: after a descriptive comparison of the central values, the generator predictions are tested as hypotheses.	sec_3d.tex:10	0.43	
+49	K7	The truths are the simulation's prior; the five hybrid truths of the generator tests of Sec.~\ref{sec:joint}, each a prediction on the fine grid; NuWro shape changes in $\Eavail$ and in $(\pT,\pPar,\Eavail)$; a GENIE + MEC shape change in $(\Eavail,W)$; a GiBUU-to-GENIE $\Eavail$ ratio; a noise-free closure at the NuWro shape; and a synthetic tilt of the $q_3$ distribution at fixed $(\Eavail,W)$.	sec_fived16.tex:113	0.77	
+50	K8	The third is the upward displacement of the external nulls by the estimator's pull toward its prior, which the calibration of Sec.~\ref{sec:joint-results} reproduces.	sec_joint.tex:175	0.58	
+51	K9	The calibrated tests illustrate inference with a biased estimator: the decision rule controls the familywise error rate at 5\% provided the calibration is exact.	sec_joint.tex:106	0.44	
+52	K9	The generator tests reject hybrid nulls, conditionally on the simulation's hadronic response.	main_note.tex:72	0.67	
+53	K9	The rejections carry over to the generator predictions themselves only under a bound on the residual below the fine grid, which has not been shown (Sec.~\ref{sec:conditions}).	sec_joint.tex:148	0.41	
+54	K9	Their calibration is valid to the extent that the simulated chain reproduces the analysis of the data (Sec.~\ref{sec:calibration}).	sec_joint.tex:115	0.80	
+55	K11	As an application, Sec.~\ref{sec:joint} tests generator predictions that the published muon-kinematic measurement already disfavours~\cite{MINERvA:2021owq}.	sec_execsummary.tex:79	0.40	
+56	K12	Every study uses the analysis simulation's detector response, except the calibration of the tests, which also draws the detector bands.	sec_validation.tex:39	0.31	
+57	K13	When intervals cannot be validated, tests can still be calibrated by simulating the analysis chain at the hypothesis, as in Sec.~\ref{sec:joint}.	sec_summary.tex:36	0.31	
+58	VI	\section{Simulation-calibrated tests of generator predictions} \label{sec:joint} Unfolded results can be compared with any prediction at truth level without simulating each generator through the detector, which is what makes the two-dimensional result reusable and the higher-dimensional central values usable for qualitative comparison, and the sixteen-cell result usable for the comparison of Sec.~\ref{sec:gen16}.	sec_execsummary.tex:111	0.18	
+59	VI	For hypothesis tests the advantage is smaller.	main_note.tex:72	0.25	
+60	VI	A test at reconstruction level would avoid the regularization bias, but it would still need the same response model.	app_response_mismatch.tex:20	0.31	
+61	VI	Each external prediction would have to be folded through the analysis simulation's response, which is the hybrid construction of Sec.~\ref{sec:hypotheses}, with the same composition below the fine grid.	sec_fived16.tex:113	0.39	
+62	VI	The tests of this section instead calibrate the unfolded statistic in simulation, so that the bias enters the null distribution rather than the decision.	sec_joint.tex:141	0.29	
+63	VI	We have not compared their power with that of a reconstruction-level test.	sec_intro.tex:18	0.29	
+64	VI	\subsection{Hypotheses and calibration} \label{sec:hypotheses} For each of five predictions $G$ (the MINERvA Tune~v1, GENIE CV, GENIE + MEC, NuWro~21.09, and GiBUU~2019), the null hypothesis $H_{0}(G)$ is that the true cross section equals $G$ on every cell of the fine grid of Sec.~\ref{sec:data}.	sec_joint.tex:16	0.76	
+65	VI	Below that grid, the null truth has the MINERvA Tune~v1 simulation's event composition, varied in each pseudo-experiment by the drawn interaction-model universes with every fine-cell integral held fixed.	sec_joint.tex:16	0.77	
+66	VI	The background is the Tune~v1 simulation's, with its uncertainty bands.	sec_joint.tex:16	1.00	
+67	VI	We call this hypothesis the hybrid null: it is the hypothesis the calibration simulates.	sec_joint.tex:16	0.71	
+68	VI	Each prediction is tested in total and in shape on the supported coarse cells of Sec.~\ref{sec:data}.	sec_joint.tex:16	0.56	
+69	VI	Three properties are distinct.	sec_joint.tex:16	0.67	
+70	VI	The hybrid null is defined exactly on the finite grid and needs no convergence.	sec_joint.tex:16	0.88	
+71	VI	Whether it represents the physical generator prediction depends on the composition below the fine grid and on convergence of that grid (condition~(i) below).	sec_joint.tex:16	0.58	
+72	VI	Calibration fidelity is whether the calibration reproduces the analysis of the data (conditions~(ii)--(iv)).	sec_joint.tex:16	1.00	
+73	VI	Each calibration pseudo-experiment splits the simulation at random into two halves.	sec_joint.tex:50	1.00	
+74	VI	The source half is reweighted per fine cell to $G$ and carries the flux, interaction-model, and detector nuisance draws.	sec_joint.tex:90	0.50	
+75	VI	The interaction-model bands are renormalized within each fine truth cell on the signal, so that they move only the composition within the cell, and with it the efficiency and the migrations.	sec_joint.tex:50	0.81	
+76	VI	The lateral detector bands enter as $\sum_{b}z_{b}\Delta_{b}$, with $\Delta_{b}$ from endpoint unfoldings of the data.	sec_joint.tex:50	0.89	
+77	VI	Poisson pseudo-data are drawn from the source half, and the background pseudo-data are a Poisson draw from one half of a separate background sample.	sec_joint.tex:42	0.60	
+78	VI	The joint-test estimator unfolds the pseudo-data with the other half of the simulation.	sec_joint.tex:42	0.86	
+79	VI	A \SI{1.4}{\percent} normalization, the data's rounding noise, and the prediction's finite-sample residual are then added.	sec_joint.tex:45	0.83	
+80	VI	The data are unfolded once, with the full simulation.	sec_joint.tex:47	1.00	
+81	VI	Because the $\Delta_{b}$ come from the observed data, the null distributions are conditional on these data-derived inputs, and this conditioning has not been validated (\nsec{sec:joint5d-calibration}).	sec_joint.tex:50	0.73	
+82	VI	A total statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$ is formed from the residual $r=F-\mu_{G}$ of the unfolded cell values $F$ and the prediction $\mu_{G}$.	sec_joint.tex:31	0.60	
+83	VI	It tests the rate and the shape together, and we call it the total (rate-and-shape) test.	sec_joint.tex:16	0.56	
+84	VI	A shape statistic $T_{\mathrm{sh}}$ of the same form uses the normalized cell fractions, with one cell dropped.	sec_joint.tex:31	0.92	
+85	VI	The metric $\Sigma=V+\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ adds the prediction's own finite-sample variance to $V$.	sec_joint.tex:31	1.00	
+86	VI	Here $V$ is a Ledoit--Wolf-shrunk covariance~\cite{LedoitWolf:2004} of \jtVn{} pilot pseudo-experiments at the Tune~v1 null, whose shrinkage floors about 80 of the 109 nearly degenerate correlation directions.	sec_joint.tex:31	0.47	109 80
+87	VI	The metric influences each test's power; the null calibration determines its size.	sec_joint.tex:31	0.67	
+88	VI	\subsection{Decision rule and familywise error} \label{sec:calibration} The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments reach the observed statistic; it is never zero.	sec_joint.tex:47	0.52	
+89	VI	Each decision uses the largest $p$ value over a set of shifted nulls, which add a fixed vector to every null draw: zero, half, or all of an upper bound $D$ on the simulation-size difference along the null's bias direction (condition~(iv) below), or $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, where $\delta_{\mathrm{fine}}$ is the change of the noise-free unfolded result in the last step of a refinement of the null truth's grid (condition~(i)).	sec_joint.tex:204	0.35	
+90	VI	The ten tests are controlled at a familywise level $\alpha=\jtAlpha$ by the Holm procedure~\cite{Holm:1979}, with pseudo-experiments drawn sequentially, to at most \jtBcap{} per null.	sec_joint.tex:106	0.50	\jtBcap
+91	VI	A hypothesis is rejected only when the upper end of the two-sided 95\% Clopper--Pearson interval~\cite{Clopper:1934} of its exceedance fraction lies below its Holm threshold.	sec_joint.tex:106	0.56	
+92	VI	This rule rests on two assumptions: each true null's calibrated tail probability is uniformly distributed or conservative (A1), and the pseudo-experiments' exceedances are independent given the data (A2).	sec_joint.tex:106	0.90	
+93	VI	Under them, the probability of meeting the criterion at any number of pseudo-experiments up to \jtBcap{} is below the threshold, whatever rule determines when sampling stops, so the decision rule controls the familywise error rate of the ten decisions at 5\% (\napp{sec:joint5d-fwer}).	sec_joint.tex:106	0.37	\jtBcap
+94	VI	The calibrated size is averaged over the nuisance priors: at a fixed true value of the nuisance parameters it can exceed $\alpha$.	sec_joint.tex:106	1.00	
+95	VI	The error control applies to the decisions, not separately to the point estimates $(k+1)/(B+1)$.	sec_systematics.tex:50	0.25	
+96	VI	The calibration is valid for the simulated null to the extent that the pseudo-experiment chain reproduces the analysis of the data (A1).	sec_joint.tex:115	0.91	1
+97	VI	Every pseudo-experiment resamples the same simulated events, so measuring a rejection rate for null pseudo-data processed like the data would require an independent simulation sample.	sec_joint.tex:115	0.60	
+98	VI	No such rate has been measured.	sec_joint.tex:115	0.80	
+99	VI	The test design was fixed before any observed statistic was computed, after descriptive per-cell residuals of the data had been seen.	sec_joint.tex:115	0.59	
+100	VI	The computing budget of the calibration was extended by a bounded amount after the observed $p$ values were visible.	sec_joint.tex:115	0.50	
+101	VI	Under A1 and A2, the error control holds for any rule that decides when sampling stops, so the extension does not affect it.	sec_joint.tex:106	0.31	1 2
+102	VI	Of the submitted pseudo-experiments, \jtLostCal{} for calibration and \jtLostPow{} for power did not complete within the computing time limits, and the decisions use the completed ones.	sec_joint.tex:227	0.56	
+103	VI	When rerun, none of the lost calibration pseudo-experiments reaches the observed statistic in any test or shifted null, so their outcomes change no decision.	sec_joint.tex:229	0.44	
+104	VI	A2 also requires that the pseudo-experiments were lost independently of their outcomes, which has not been shown.	sec_joint.tex:106	0.83	
+105	VI	Independently written code reproduces every $p$ value and decision.	sec_joint.tex:115	0.71	
+106	VI	The design and the rerun are described in Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:joint5d-frozen} and~\ref*{N-sec:joint5d-lost}.	sec_method.tex:46	0.40	
+107	VI	\subsection{Conditions} \label{sec:conditions} The decisions rest on six conditions on the nuisance model, numbered as in \nsec{sec:joint5d-conditions}.	sec_joint.tex:5	0.40	
+108	VI	\emph{(i) Convergence below the fine grid.} Within each fine-grid cell the null truth has the Tune~v1 composition of the hypothesis definition.	sec_joint.tex:148	0.71	
+109	VI	In the $L_{2}$ norm of the per-cell relative changes, the last refinement step is \jtMoneMin--\jtMoneMax{} of the whole change from the coarse test grid.	sec_joint.tex:148	0.93	
+110	VI	Convergence of the fine grid has therefore not been shown, and the residual below it is unmeasured and potentially material.	sec_joint.tex:148	0.75	
+111	VI	The shifts $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ were set by assuming that the refinement steps shrink geometrically.	sec_joint.tex:47	0.38	
+112	VI	The measured $L_{2}$ ratios also allow slower convergence.	sec_joint.tex:148	0.86	
+113	VI	The rejections carry over from the simulated hybrid nulls to the generator predictions themselves only if replacing the Tune~v1's shape below the fine grid by $G$'s moves the noise-free unfolded result by no more than $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ along $\delta_{\mathrm{fine}}$.	sec_joint.tex:148	0.79	
+114	VI	Showing this would require a demonstrated bound on the residual below the fine grid.	sec_joint.tex:354	0.89	
+115	VI	\emph{(ii) Detector and hadronic response.}\label{sec:response} The detector model is the simulation's, varied only by the drawn detector bands and a linear surrogate for the lateral bands.	sec_joint.tex:168	0.69	
+116	VI	It has no band for the calorimetric hadronic-energy response.	sec_joint.tex:281	0.60	
+117	VI	In MINERvA's recoil-energy analyses, the uncertainty of that response is derived from test-beam calorimetry~\cite{MINERvA:2015testbeam} and rises to \SI{10}{\percent} at the highest three-momentum transfers of the low-recoil measurement~\cite{MINERvA:2022incl}.	sec_joint.tex:281	0.59	
+118	VI	The omission matters for the rejections.	sec_execsummary.tex:79	0.33	
+119	VI	A check made after the decisions shows that the calibrated tests restricted to the matched $(\pT,\pPar)$ projection of Sec.~\ref{sec:joint-results} do not reject GENIE~2.12.10 CV ($p=\woneGcvPtTot$ in total and $\woneGcvPtShape$ in shape), so the information that rejects it involves the hadronic axes, on which a response band would act.	sec_joint.tex:281	0.39	\woneGcvPtShape \woneGcvPtTot
+120	VI	The net effect of the missing band on each $p$ value has not been measured.	sec_systematics.tex:202	0.44	
+121	VI	The rejections remain conditional on the simulation's hadronic response, and their physical interpretation would require a response band drawn through the calibration.	sec_joint.tex:354	0.47	
+122	VI	In an exploratory sensitivity study, the simulation's reconstructed recoil energy is scaled by $\pm\SI{4}{\percent}$, the level of data--simulation agreement reported for test-beam protons, pions, and electrons of 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}, and the data are re-unfolded.	sec_joint.tex:284	0.56	0.35 2.0
+123	VI	In this study, every rejection stays in place against the original null distributions, and the observed statistics move by up to about \SI{11}{\percent}.	sec_joint.tex:284	0.47	
+124	VI	The study regenerates no null distribution and tests no other form or size of response change.	sec_joint.tex:284	0.40	
+125	VI	Neutrons and higher-momentum hadrons, which matter at high $W$, lie outside the test-beam sample.	sec_joint.tex:284	0.89	
+126	VI	The effects the study does not test are listed in \nsec{sec:joint5d-response}.	main_note.tex:72	0.40	
+127	VI	\emph{(iii) Interaction-model prior.} The prior is the analysis's \jtModelBands-band set, with negative weights of two bands clipped.	sec_joint.tex:140	0.69	\jtModelBands
+128	VI	\emph{(iv) Simulation size.} The pseudo-experiments use half of the simulation and the data all of it.	sec_joint.tex:151	0.67	
+129	VI	The resulting shift enters as the upper-bound shift $D$.	sec_joint.tex:141	0.75	
+130	VI	It is at most about 0.07 null standard deviations, measured for the mean only, without noise or nuisance draws.	sec_joint.tex:151	0.54	0.07
+131	VI	Repeating part of the calibration with a quarter of the simulation resolved no change of the null distributions.	sec_joint.tex:151	0.67	
+132	VI	Under an extrapolation to the full simulation that is conservative by design, all ten decisions remain rejected.	sec_joint.tex:151	1.00	
+133	VI	The two decisions closest to their boundary exceed the value at which they would change by 1.11 and 1.30 null standard deviations.	sec_joint.tex:151	0.67	
+134	VI	\emph{(v), (vi) Domain and prediction samples.} GiBUU lacks $E_{\nu}>\SI{20}{GeV}$, and its out-of-domain truth enters the migrations into its domain.	sec_joint.tex:168	0.75	
+135	VI	The predictions' own finite samples enter the metric and the simulated residuals.	sec_joint.tex:148	1.00	
+136	VI	\subsection{Results} \label{sec:joint-results} Table~\ref{tab:joint} shows that every test is rejected at familywise $\alpha=\jtAlpha$.	sec_joint.tex:175	0.46	
+137	VI	NuWro and GiBUU were generated on carbon.	sec_joint.tex:317	1.00	
+138	VI	Correcting both predictions to the hydrocarbon target moves both toward the data, and NuWro's total-test rejection does not survive that correction robustly.	sec_execsummary.tex:79	0.53	
+139	VI	GiBUU's deep-inelastic events on hydrogen do not conserve energy, which affects its correction and possibly its carbon prediction.	sec_joint.tex:339	0.58	
+140	VI	The decisions of Table~\ref{tab:joint} concern each prediction on the target it was generated for.	sec_joint.tex:204	0.50	
+141	VI	The target-corrected evaluations are descriptive and leave them unchanged.	sec_joint.tex:317	0.67	
+142	VI	As a sensitivity check outside the decision rule, a scan of the multiplier of the shift along $\delta_{\mathrm{fine}}$ finds all ten rejections determined up to a multiplier of about 5.2.	sec_joint.tex:148	0.25	5.2
+143	VI	The scan probes that one direction.	sec_joint.tex:214	1.00	
+144	VI	The calibrated null distributions differ in location: the Tune~v1 null is centred at small values, whereas the external nulls are displaced far upward by the estimator's pull toward its prior, which the calibration reproduces.	sec_joint.tex:175	0.73	
+145	VI	The target-corrected evaluations, the scan, and the null distributions with the observed statistics are given in Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:joint5d-ch} and~\ref*{N-sec:joint5d-results}.	sec_joint.tex:204	0.40	
+146	VI	\begin{table}[t] \caption{Joint-test decisions. $B$: null pseudo-experiments completed at the stopping point, of 1400 submitted per null (1800 for NuWro); $p=(k+1)/(B+1)$; Holm thr.: Holm step threshold $\alpha/(11-i)$ at rank $i$; CP: 95\% Clopper--Pearson interval of $k/B$.	sec_joint.tex:196	0.41	11 95
+147	VI	Tune~v1 is the prediction of the analysis simulation, for which no external prediction enters the null.} \label{tab:joint} \centering\scriptsize \begin{tabular}{@{}llrrlll@{}} \toprule $G$ & test & $B$ & $k$ & $p$ & Holm thr. & CP interval \\ \midrule NuWro 21.09 & total & 1751 & 0 & 1/1752 & 0.005 & $[0, 0.00210]$ \\ GENIE CV & total & 1366 & 0 & 1/1367 & 0.00556 & $[0, 0.00270]$ \\ GENIE CV & shape & 1366 & 0 & 1/1367 & 0.00625 & $[0, 0.00270]$ \\ Tune~v1 & total & 1365 & 0 & 1/1366 & 0.00714 & $[0, 0.00270]$ \\ Tune~v1 & shape & 1365 & 0 & 1/1366 & 0.00833 & $[0, 0.00270]$ \\ GiBUU 2019 & total & 1351 & 0 & 1/1352 & 0.01 & $[0, 0.00273]$ \\ GiBUU 2019 & shape & 1351 & 0 & 1/1352 & 0.0125 & $[0, 0.00273]$ \\ GENIE + MEC & total & 1343 & 0 & 1/1344 & 0.0167 & $[0, 0.00274]$ \\ GENIE + MEC & shape & 1343 & 0 & 1/1344 & 0.025 & $[0, 0.00274]$ \\ NuWro 21.09 & shape & 1751 & 1 & 2/1752 & 0.05 & $[0.0000145, 0.00318]$ \\ \bottomrule \end{tabular} \end{table} The methodological contribution of these comparisons is a calibration that puts the estimator's bias toward its prior and the nuisance terms into each null distribution.	sec_joint.tex:354	0.17	0 0.0000145 0.00210 0.00270 0.00273 0.00274 0.00318 0.005 0.00556 0.00625 0.00714 0.00833 0.01 0.0125 0.0167 0.025 0.05 1 1343 1344 1351 1352 1365 1366 1367 1751 1752 2 2019 21.09
+148	VI	The disagreements they recover were already established by the published two-dimensional measurement on the same data~\cite{MINERvA:2021owq}.	sec_joint.tex:354	0.82	
+149	VI	Restricted to matched $3\times3$ coarse projections of the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$, the same calibrated tests give $p<0.05$, without a multiplicity correction, for every test in at least one of the two projections.	sec_joint.tex:249	0.58	0.05
+150	VI	This study therefore provides no evidence of additional discrimination from the joint five-observable information.	sec_joint.tex:249	1.00	
+151	VI	Each rejection is a global assessment of a hybrid null.	main_note.tex:72	0.50	
+152	VI	Assigning a discrepancy to a kinematic region or nuclear mechanism would require separate tests.	sec_joint.tex:354	1.00	
+153	VI	Power studies characterize the response to chosen alternatives: at the Tune~v1 null, two of three specified alternatives are detected in shape with power 1.0 at the 0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23.	sec_joint.tex:220	0.71	0.23
+154	VI	At the GENIE~2.12.10 null the shape powers are 0.74, 0.02, and 0.00.	sec_joint.tex:220	0.89	0.74
+155	VI	The projection tests and the binomial intervals of the powers are given in Ref.~\cite{AnalysisNote2026}, Secs.~\ref*{N-sec:joint5d-projections} and~\ref*{N-sec:joint5d-power}.	sec_execsummary.tex:111	0.25	
+156	VI-T6	G$ & test & $B$ & $k$ & $p$ & Holm thr. & CP interval	sec_joint.tex:182	1.00	
+157	VI-T6	NuWro 21.09 & total & 1751 & 0 & 1/1752 & 0.005 & $[0, 0.00210]$	sec_joint.tex:184	1.00	
+158	VI-T6	GENIE CV & total & 1366 & 0 & 1/1367 & 0.00556 & $[0, 0.00270]$	sec_joint.tex:185	0.89	
+159	VI-T6	GENIE CV & shape & 1366 & 0 & 1/1367 & 0.00625 & $[0, 0.00270]$	sec_joint.tex:186	0.89	
+160	VI-T6	Tune~v1 & total & 1365 & 0 & 1/1366 & 0.00714 & $[0, 0.00270]$	sec_joint.tex:187	1.00	
+161	VI-T6	Tune~v1 & shape & 1365 & 0 & 1/1366 & 0.00833 & $[0, 0.00270]$	sec_joint.tex:188	1.00	
+162	VI-T6	GiBUU 2019 & total & 1351 & 0 & 1/1352 & 0.01 & $[0, 0.00273]$	sec_joint.tex:189	1.00	
+163	VI-T6	GiBUU 2019 & shape & 1351 & 0 & 1/1352 & 0.0125 & $[0, 0.00273]$	sec_joint.tex:190	1.00	
+164	VI-T6	GENIE + MEC & total & 1343 & 0 & 1/1344 & 0.0167 & $[0, 0.00274]$	sec_joint.tex:191	1.00	
+165	VI-T6	GENIE + MEC & shape & 1343 & 0 & 1/1344 & 0.025 & $[0, 0.00274]$	sec_joint.tex:192	1.00	
+166	VI-T6	NuWro 21.09 & shape & 1751 & 1 & 2/1752 & 0.05 & $[0.0000145, 0.00318]$	sec_joint.tex:193	1.00	

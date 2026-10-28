@@ -112,6 +112,10 @@ These are the only edits B makes beyond deleting Sec. VI.
 | K8 | VI ¶1's third result (:304, the null displacement) | moves with VI. The synthesis keeps two results plus the miscoverage sentence. |
 | K9 | the conclusions (:454) and the Limitations ¶ (:464), last three sentences | the hybrid-null limitations go with VI; a one-clause pointer remains |
 | K10 | the Fig. 2(b), Fig. 4 and Table III captions, "coarse joint cells" | unchanged; the grid stays defined in II |
+| K11 | the roadmap (:50 at 9df8f748), "As an application, Sec.~\ref{sec:joint} tests generator predictions that the published muon-kinematic measurement already disfavours" | goes with VI; the roadmap is rewritten in b1 to the new order (added by the ledger pass, accepted by the director) |
+| K12 | the validation-design ¶ (:133), "except the calibration of the tests, which also draws the detector bands" | the clause goes with VI (added by the ledger pass, accepted) |
+| K13 | the checklist (:460), "When intervals cannot be validated, tests can still be calibrated … as in Sec.~\ref{sec:joint}" | the sentence goes with VI (added by the ledger pass, accepted) |
+| K14 | the Limitations ¶ (:469), "in Secs.~\ref{sec:repro2d}--\ref{sec:joint}" | the range ends at the result section (added by the ledger pass, accepted) |
 
 **Facts that leave the paper in B** (about 2,000 source words: VII's lead, C–F and Table VI) must each print in the note.
 - **The check:** before any B writing, a scripted ledger pass gives each moved fact an `N:` probe into `sec_joint*.tex`
@@ -250,3 +254,5 @@ as a flagged item. Both sites are named, so a fix reaches both.
   once `sec:result16` labels that section. It removes nothing.
 - the FIVED16 markers: `fived16/check_ledger.py` rule 7 forbids hand-typed numerals between them, so every piece of a
   FIVED16 block that moves keeps a BEGIN/END pair.
+
+**The B ledger pass** (#433 item 3, before any B writing): [move-pass.md](move-pass.md), with its paper-only list P1–P7 and the proposed note additions N1–N4.
