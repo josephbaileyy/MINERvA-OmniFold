@@ -20,12 +20,20 @@ Every number is copied from the committed data product, `fd/data-product/fd_data
 `fd_deposit_candidate.py check` verifies them against it and against Stage G's readout (`fd/readout/fd_g_readout.json`,
 sha256 `75a9ddee…`).
 
+**Apart from the measurement,** `predictions-reference.json` holds the five predictions' g and V_g that the paper's χ²
+uses, copied from Stage G's readout. It is labelled "reference predictions used for the paper's χ²; not part of the
+measurement". `deposit.json` does not name it, so the measurement stands without it.
+
 | file | contents |
 |---|---|
 | `cells.csv` | One row per cell, R00 to R15 in order. Columns: the cell's H2 boxes; its box (lower and upper edge on each of p_T, p∥, E_avail, q3 and W); `gibuu_subset`; `f_cm2_per_nucleon`; `sigma_cm2_per_nucleon` = sqrt of the covariance's diagonal |
 | `covariance.csv` | The 16 × 16 reported covariance C_total + C_resp, in (cm²/nucleon)², rows and columns R00–R15. It is byte-identical to the data product's `fd_data_product_C_total_plus_C_resp.csv` |
 | `correlation.csv` | Its correlation matrix. It is byte-identical to the data product's `fd_data_product_corr_C_total_plus_C_resp.csv` |
 | `deposit.json` | Everything above in one file, plus the axes and their units, the four unreported H2 boxes with their bounds, the GiBUU subset, the labels below, the sha256 of each CSV, and the source digest |
+| `predictions-reference.json` | **Not part of the measurement.** For each of Stage G's five predictions (GENIE 2.12.10 CV; GENIE 2.12.10 + Valencia MEC; NuWro 21.09; GiBUU 2019; MINERvA Tune v1): its label, its source file and sha256 (as `fd_g_compare.PREDICTIONS` and the readout give them), its cells (GiBUU's eight, all sixteen for the others), g in cm²/nucleon, Stage G's `sigma_Vg_over_f`, V_g = (sigma_Vg_over_f · f)² in (cm²/nucleon)², and Stage G's total and shape-only χ² and ndf |
+
+**A separate item for Joseph at release:** whether `predictions-reference.json` goes into the deposit is his call,
+apart from the measurement.
 
 ## Conventions
 
@@ -67,12 +75,14 @@ For a prediction g on its cells c (all sixteen, or GiBUU's eight), Stage G compu
     total:       χ² = dᵀ M⁻¹ d,                           ndf = n
     shape-only:  χ² = dᵀ (M + 100 f fᵀ)⁻¹ d,  f on c,      ndf = n − 1
 
-Here C is this package's covariance and **V_g is the prediction's own finite-MC variance**. **g and V_g are the
-prediction's, not part of this package.** Stage G's readout carries them for its five predictions: `g`, and
-`sigma_Vg_over_f`, from which V_g = (sigma_Vg_over_f · f)².
+Here C is this package's covariance and **V_g is the prediction's own finite-MC variance**. g and V_g are the
+prediction's, not part of the measurement. For Stage G's five predictions they are in `predictions-reference.json`,
+where V_g = (sigma_Vg_over_f · f)² is recomputed from the `sigma_Vg_over_f` that Stage G's readout prints. With
+it, every χ² below is reproduced.
 
-**What the check reproduced:** every Stage G χ², total and shape-only, for all five predictions, from this package plus
-the readout's g and V_g, by Stage G's own `compare()` (`../receipts-deposit/`):
+**What the check reproduced:** every Stage G χ², total and shape-only, for all five predictions, from the package files
+alone (`cells.csv`'s f, `covariance.csv`, and `predictions-reference.json`'s g and V_g), by Stage G's own `compare()`,
+against `fd_g_readout.json` (`../receipts-deposit/`):
 - **On login36, in Stage G's environment** (Python 3.11.14, numpy 1.26.4): every one of the ten matches **bit for bit**
   (`check-login36.log`).
 - **On a macOS host** (Python 3.12.2, numpy 1.26.4): the totals match to 1.2 × 10⁻¹⁶–2.4 × 10⁻¹⁵ relative, and the
@@ -87,8 +97,8 @@ The CSVs carry every number as Python's shortest round-trip repr, so they read b
 
 - The 5D result's sixteen cells, measured vector and reported covariance, as committed in the data product
   `b79556f0`, in a deposit layout.
-- Reproducing each of Stage G's ten χ² values from them, given the prediction's g and V_g. They reproduce bit for bit
-  in Stage G's environment.
+- Reproducing each of Stage G's ten χ² values from the package files, with `predictions-reference.json`'s g and V_g.
+  They reproduce bit for bit in Stage G's environment.
 
 ## NOT CITABLE FOR
 
@@ -98,7 +108,8 @@ The CSVs carry every number as Python's shortest round-trip repr, so they read b
   - The fake-data study of this estimator, graded against C_total + C_resp, is `FD-F0b-REPORT.md`, and its grades
     travel with this product.
   - The limitation's wording is Joseph's (`state/2d-closeout/stageF/methods/5d-fd-presentation/DRAFT.md`).
-- **Any generator prediction.** No g or V_g is in this package.
+- **Any generator prediction as a measurement.** `predictions-reference.json` is the reference Stage G compared
+  against, copied from its readout; it measures nothing, and whether it is deposited is Joseph's call.
 - **The variant without C_resp.** Its covariance is not here.
 - **Any reading, claim or paper text.**
 
@@ -106,10 +117,12 @@ The CSVs carry every number as Python's shortest round-trip repr, so they read b
 
 From the repository root:
 
-    python3 -I -B nd-unfolding/fd_deposit_candidate.py build --data-product <fd>/data-product/fd_data_product.json --out-dir <new dir>
+    python3 -I -B nd-unfolding/fd_deposit_candidate.py build --data-product <fd>/data-product/fd_data_product.json \
+        --g-readout <fd>/readout/fd_g_readout.json --out-dir <new dir>
     python3 -I -B nd-unfolding/fd_deposit_candidate.py check --package <dir> \
         --data-product <fd>/data-product/fd_data_product.json --g-readout <fd>/readout/fd_g_readout.json
 
-`build` refuses an existing file. `check` refuses (exit 1) unless controls P0–P5 hold (the script's docstring lists
-them). The tests are `nd-unfolding/tests/test_fd_deposit_candidate.py`: 20 tests, one planted defect per control,
-each asserting that control's clause. 15 of 15 source mutants are killed (`../receipts-deposit/mutants.log`).
+`build` (which also takes `--g-readout <fd>/readout/fd_g_readout.json`) refuses an existing file. `check` refuses
+(exit 1) unless controls P0–P6 hold (the script's docstring lists them). The tests are
+`nd-unfolding/tests/test_fd_deposit_candidate.py`: 30 tests, with planted defects that each reach and assert their
+own control's clause. 23 of 23 source mutants are killed (`../receipts-deposit/mutants.log`).

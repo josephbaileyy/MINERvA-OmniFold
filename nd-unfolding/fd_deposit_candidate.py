@@ -2,7 +2,9 @@
 """The 5D result's deposit candidate (state/measurement-paper/5d-community-20261024/fd/deposit-candidate/README.md;
 DECISION-20261028-joseph-result-table-and-deposit-package.md item 2): the sixteen-cell result's cell definitions,
 measured vector, reported covariance C_total + C_resp and its correlation matrix, as CSV and one JSON, written from
-the committed data product (fd/data-product/fd_data_product.json) and nothing else.
+the committed data product (fd/data-product/fd_data_product.json) and nothing else; and, apart from the measurement,
+predictions-reference.json: the five predictions' g and V_g that the paper's chi2 uses, from Stage G's readout
+(fd/readout/fd_g_readout.json). Whether that file goes into a deposit is Joseph's call at release.
 
 ``build`` writes the package; ``check`` re-reads it from disk and refuses (exit 1) unless every control holds:
 * P0  the data product and Stage G's readout are the pinned bytes, and the package's own file digests hold;
@@ -12,8 +14,11 @@ the committed data product (fd/data-product/fd_data_product.json) and nothing el
 * P3  the covariance is symmetric to 1e-12 of its largest entry and positive definite; sigma is sqrt(diag); the correlation is the covariance's;
 * P4  GiBUU's subset is Stage G's eight cells and is exactly the cells with p_parallel's upper edge at 4.5 GeV/c;
 * P5  every Stage G chi2 in fd_g_readout.json (five predictions, total and shape-only) is recomputed by Stage G's own
-      compare() from the package's f and covariance and the readout's g and V_g = (sigma_Vg_over_f f)^2, to 1e-10
-      relative; the readout's f is the package's.
+      compare() from the package files alone (cells.csv's f, covariance.csv, predictions-reference.json's g and V_g),
+      to 1e-10 relative; the readout's f is the package's;
+* P6  predictions-reference.json is Stage G's readout: the same five predictions in order, each with fd_g_compare's
+      source path, sha256 and label, its cells (GiBUU's eight), g and sigma_Vg_over_f bit for bit, V_g =
+      (sigma_Vg_over_f f)^2 bit for bit, and Stage G's chi2 and ndf.
 
 MEASURES: nothing; a copy of the committed data product in a deposit layout, with its checks.
 CANNOT AUTHORIZE: an upload, a deposit, a DOI, a release, supplemental material, a claim or paper text.
@@ -46,7 +51,9 @@ GIBUU_PZ_HI = 4.5
 CHI2_TOL = 1e-10
 PINS = {"data_product": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072",
         "g_readout": "75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee"}
-FILES = ("cells.csv", "covariance.csv", "correlation.csv", "deposit.json")
+FILES = ("cells.csv", "covariance.csv", "correlation.csv", "deposit.json")      # the measurement
+REFERENCE = "predictions-reference.json"                                       # apart from it
+REFERENCE_LABEL = "reference predictions used for the paper's chi2; not part of the measurement"
 STATUS = "candidate, not deposited: nothing is uploaded and no DOI is minted until Joseph releases it"
 LABELS = {
     "what": "the 5D result on its sixteen reporting cells R00-R15: cell definitions, the measured vector f, the "
@@ -62,7 +69,7 @@ LABELS = {
     "covariance": "C_total + C_resp = C_e + C_model_abs + C_resp, the data's reported covariance (the data "
                   "product's C_total_plus_C_resp). The paper's chi2 for a prediction g on its cells c is "
                   "d^T (C + V_g)^-1 d with d = f - g, C this covariance on c, and V_g = diag of g's own "
-                  "finite-MC variance; V_g and g are the prediction's, not in this package",
+                  "finite-MC variance; g and V_g are the prediction's, not part of the measurement",
     "gibuu": "GiBUU is compared on the eight cells with p_parallel < 4.5 GeV/c only (gibuu_subset = 1)",
     "unreported": "the sixteen cells cover 28 of the 32 H2 boxes; the four unreported boxes are listed with their "
                   "bounds and are in no cell",
@@ -150,10 +157,37 @@ def package(dp: dict) -> dict[str, str]:
     return files
 
 
+def reference(gr: dict, f: np.ndarray) -> str:
+    """predictions-reference.json, from Stage G's readout: g, sigma_Vg_over_f and V_g = (sigma_Vg_over_f f)^2 on each
+    prediction's own cells, with its source and Stage G's chi2."""
+    preds = []
+    for p in gr["predictions"]:
+        idx = [CELLS.index(c) for c in p["cells"]]
+        Vg = (np.array(p["sigma_Vg_over_f"], float) * f[idx]) ** 2
+        preds.append({"name": p["name"], "label": p["label"], "source": p["file"], "source_sha256": p["sha256"],
+                      "cells": p["cells"], "domain": "GiBUU's eight cells, p_parallel < 4.5 GeV/c" if p["name"]
+                      == "gibuu" else "all sixteen cells", "g_cm2_per_nucleon": p["g"],
+                      "sigma_Vg_over_f": p["sigma_Vg_over_f"], "V_g_cm4_per_nucleon2": Vg.tolist(),
+                      "stage_g": {k: {"chi2": p[k]["chi2"], "ndf": p[k]["ndf"], "matrix": p[k]["matrix"]}
+                                  for k in ("total", "shape_only")}})
+    js = {"schema": "fd-deposit-candidate-predictions/1", "label": REFERENCE_LABEL, "status": STATUS,
+          "release": "whether this file goes into a deposit is Joseph's call at release, separately from the "
+                     "measurement",
+          "use": "chi2 = d^T (C[c,c] + diag(V_g))^-1 d, d = f - g on the prediction's cells c (fd_g_compare.compare); "
+                 "shape-only adds 100 f f^T on c, ndf n - 1; V_g = (sigma_Vg_over_f f)^2, recomputed from the "
+                 "sigma_Vg_over_f that Stage G's readout prints, with which every Stage G chi2 is reproduced",
+          "predictions": preds,
+          "source": {"g_readout": "fd/readout/fd_g_readout.json", "sha256": PINS["g_readout"]},
+          "code_sha256": {"fd_deposit_candidate.py": sha256(Path(__file__).resolve())}}
+    return json.dumps(js, indent=1, allow_nan=False) + "\n"
+
+
 def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
     dp = load_pinned(dp_path, "data_product")
     gr = load_pinned(g_path, "g_readout")
-    text = {n: (pkg / n).read_text() for n in FILES}
+    for n in (*FILES, REFERENCE):
+        report("P0", f"{n} exists", (pkg / n).is_file())
+    text = {n: (pkg / n).read_text() for n in (*FILES, REFERENCE)}
     js = json.loads(text["deposit.json"])
     for n in FILES[:-1]:
         report("P0", f"{n}'s sha256 is deposit.json's", hashlib.sha256(text[n].encode()).hexdigest()
@@ -212,15 +246,39 @@ def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
                                                                               enumerate(dp["cells"]) if d["box"]["pz"][1] <= 4.5]
            and len(sub) == 8)
 
-    # P5: Stage G's chi2, by Stage G's own compare()
+    # P6: the reference predictions are Stage G's
+    ref = json.loads(text[REFERENCE])
+    rp = ref["predictions"]
+    spec = {s["name"]: s for s in G.PREDICTIONS}
+    report("P6", "predictions-reference.json is labelled apart from the measurement and names the pinned readout",
+           ref["label"] == REFERENCE_LABEL and ref["source"]["sha256"] == PINS["g_readout"])
+    report("P6", "it holds Stage G's five predictions, in order", [p["name"] for p in rp]
+           == [p["name"] for p in gr["predictions"]] == [s["name"] for s in G.PREDICTIONS])
+    for r, p in zip(rp, gr["predictions"]):
+        idx = [CELLS.index(c) for c in p["cells"]]
+        report("P6", f"{r['name']}: source, sha256 and label are fd_g_compare's and the readout's",
+               (r["source"], r["source_sha256"], r["label"]) == (p["file"], p["sha256"], p["label"])
+               == (spec[r["name"]]["path"], spec[r["name"]]["sha256"], p["label"]))
+        report("P6", f"{r['name']}: cells, g and sigma_Vg_over_f are the readout's, bit for bit",
+               r["cells"] == p["cells"] and np.array_equal(np.array(r["g_cm2_per_nucleon"]), np.array(p["g"]))
+               and np.array_equal(np.array(r["sigma_Vg_over_f"]), np.array(p["sigma_Vg_over_f"])))
+        report("P6", f"{r['name']}: V_g is (sigma_Vg_over_f f)^2 with the package's f, bit for bit", np.array_equal(
+            np.array(r["V_g_cm4_per_nucleon2"]), (np.array(p["sigma_Vg_over_f"]) * f_csv[idx]) ** 2))
+        report("P6", f"{r['name']}: Stage G's chi2 and ndf are the readout's", all(
+            r["stage_g"][k]["chi2"] == p[k]["chi2"] and r["stage_g"][k]["ndf"] == p[k]["ndf"]
+            for k in ("total", "shape_only")))
+    report("P6", "GiBUU's domain is the package's GiBUU subset", next(r for r in rp if r["name"] == "gibuu")["cells"]
+           == sub)
+
+    # P5: Stage G's chi2, by Stage G's own compare(), from the package files alone
     report("P5", "Stage G's f is the package's, bit for bit", gr["cells"] == CELLS and all(
         np.array_equal(np.array(p["f"]), f_csv[[CELLS.index(c) for c in p["cells"]]]) for p in gr["predictions"]))
     worst, rec = 0.0, []
-    for p in gr["predictions"]:
-        idx = [CELLS.index(c) for c in p["cells"]]
+    for r, p in zip(rp, gr["predictions"]):
+        idx = [CELLS.index(c) for c in r["cells"]]
         g, Vg = np.zeros(N), np.zeros(N)
-        g[idx] = p["g"]
-        Vg[idx] = (np.array(p["sigma_Vg_over_f"]) * f_csv[idx]) ** 2
+        g[idx] = r["g_cm2_per_nucleon"]
+        Vg[idx] = r["V_g_cm4_per_nucleon2"]
         out = G.compare(f_csv, g, Vg, C, idx, "C_total + C_resp")
         for key in ("total", "shape_only"):
             got, want = out[key]["chi2"], p[key]["chi2"]
@@ -230,7 +288,7 @@ def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
                         "chi2_package": got, "chi2_stage_g": want, "rel_diff": rel})
             report("P5", f"{p['name']} {key} chi2 from the package is Stage G's to {CHI2_TOL} relative",
                    rel <= CHI2_TOL and out[key]["ndf"] == p[key]["ndf"], f"{got} vs {want} ({rel})")
-    return {"controls_passed": ["P0", "P1", "P2", "P3", "P4", "P5"], "chi2": rec, "chi2_worst_rel_diff": worst,
+    return {"controls_passed": ["P0", "P1", "P2", "P3", "P4", "P6", "P5"], "chi2": rec, "chi2_worst_rel_diff": worst,
             "correlation_worst_abs_diff": rho_worst, "covariance_asymmetry_over_max": asym,
             "covariance_eigen_min_max": [float(ev.min()), float(ev.max())]}
 
@@ -240,6 +298,7 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
     b.add_argument("--data-product", type=Path, required=True)
+    b.add_argument("--g-readout", type=Path, required=True)
     b.add_argument("--out-dir", type=Path, required=True)
     c = sub.add_parser("check")
     c.add_argument("--package", type=Path, required=True)
@@ -249,9 +308,13 @@ def main(argv=None) -> int:
     try:
         if a.cmd == "build":
             dp = load_pinned(a.data_product, "data_product")
-            report("P0", "no package file exists (no overwrite)", not any((a.out_dir / n).exists() for n in FILES))
+            gr = load_pinned(a.g_readout, "g_readout")
+            report("P0", "no package file exists (no overwrite)", not any((a.out_dir / n).exists()
+                                                                          for n in (*FILES, REFERENCE)))
             a.out_dir.mkdir(parents=True, exist_ok=True)
-            for n, t in package(dp).items():
+            files = package(dp)
+            files[REFERENCE] = reference(gr, np.array(dp["f"], float))
+            for n, t in files.items():
                 out = a.out_dir / n
                 tmp = out.with_name(out.name + ".partial")
                 tmp.write_text(t)

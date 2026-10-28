@@ -14,9 +14,17 @@ M = [
  ("P3 sigma check dropped", "np.array([float(r[\"sigma_cm2_per_nucleon\"]) for r in rows]), sig) and", "sig, sig) and"),
  ("P0 file digest check dropped", "== js[\"files_sha256\"].get(n))", "== js[\"files_sha256\"].get(n) or True)"),
  ("P0 pin check dropped", "sha256(path) == PINS[key], f", "True, f"),
- ("V_g dropped from chi2", "Vg[idx] = (np.array(p[\"sigma_Vg_over_f\"]) * f_csv[idx]) ** 2", "pass"),
+ ("V_g dropped from chi2", "Vg[idx] = r[\"V_g_cm4_per_nucleon2\"]", "pass"),
+ ("P6 g compare dropped", "np.array_equal(np.array(r[\"g_cm2_per_nucleon\"]), np.array(p[\"g\"]))", "True"),
+ ("P6 V_g compare dropped", "np.array(r[\"V_g_cm4_per_nucleon2\"]), (np.array(p[\"sigma_Vg_over_f\"]) * f_csv[idx]) ** 2))", "1, 1))"),
+ ("P6 source compare dropped", "== (spec[r[\"name\"]][\"path\"], spec[r[\"name\"]][\"sha256\"], p[\"label\"]))", "!= None)"),
+ ("P6 order compare dropped", "[p[\"name\"] for p in rp]\n           == [p[\"name\"] for p in gr[\"predictions\"]]", "True or [0]\n           == [0]"),
+ ("P6 label compare dropped", "ref[\"label\"] == REFERENCE_LABEL and", "True and"),
+ ("P6 chi2 compare dropped", "r[\"stage_g\"][k][\"chi2\"] == p[k][\"chi2\"] and", "True and"),
+ ("P0 file-exists check dropped", "report(\"P0\", f\"{n} exists\", (pkg / n).is_file())", "pass"),
+ ("reference V_g written as sigma", "Vg = (np.array(p[\"sigma_Vg_over_f\"], float) * f[idx]) ** 2", "Vg = np.array(p[\"sigma_Vg_over_f\"], float) * f[idx]"),
  ("build writes sigma squared", "float(f[i]), float(sigma[i])]", "float(f[i]), float(sigma[i] ** 2)]"),
- ("no-overwrite dropped", "not any((a.out_dir / n).exists() for n in FILES))", "True)"),
+ ("no-overwrite dropped", "\"no package file exists (no overwrite)\", not any(", "\"no package file exists (no overwrite)\", True or any("),
 ]
 killed = 0
 try:

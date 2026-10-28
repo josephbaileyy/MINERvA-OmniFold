@@ -1,5 +1,10 @@
 {"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
 {"control": "P0", "check": "g_readout sha256 is the pin", "ok": true}
+{"control": "P0", "check": "cells.csv exists", "ok": true}
+{"control": "P0", "check": "covariance.csv exists", "ok": true}
+{"control": "P0", "check": "correlation.csv exists", "ok": true}
+{"control": "P0", "check": "deposit.json exists", "ok": true}
+{"control": "P0", "check": "predictions-reference.json exists", "ok": true}
 {"control": "P0", "check": "cells.csv's sha256 is deposit.json's", "ok": true}
 {"control": "P0", "check": "covariance.csv's sha256 is deposit.json's", "ok": true}
 {"control": "P0", "check": "correlation.csv's sha256 is deposit.json's", "ok": true}
@@ -48,6 +53,29 @@
 {"control": "P3", "check": "sigma in cells.csv and deposit.json is sqrt(diag), bit for bit", "ok": true}
 {"control": "P3", "check": "the correlation is the covariance's, to 1e-15", "ok": true}
 {"control": "P4", "check": "GiBUU's subset is Stage G's eight cells and the cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P6", "check": "predictions-reference.json is labelled apart from the measurement and names the pinned readout", "ok": true}
+{"control": "P6", "check": "it holds Stage G's five predictions, in order", "ok": true}
+{"control": "P6", "check": "genie_cv: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
+{"control": "P6", "check": "genie_cv: cells, g and sigma_Vg_over_f are the readout's, bit for bit", "ok": true}
+{"control": "P6", "check": "genie_cv: V_g is (sigma_Vg_over_f f)^2 with the package's f, bit for bit", "ok": true}
+{"control": "P6", "check": "genie_cv: Stage G's chi2 and ndf are the readout's", "ok": true}
+{"control": "P6", "check": "genie_mec: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
+{"control": "P6", "check": "genie_mec: cells, g and sigma_Vg_over_f are the readout's, bit for bit", "ok": true}
+{"control": "P6", "check": "genie_mec: V_g is (sigma_Vg_over_f f)^2 with the package's f, bit for bit", "ok": true}
+{"control": "P6", "check": "genie_mec: Stage G's chi2 and ndf are the readout's", "ok": true}
+{"control": "P6", "check": "nuwro: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
+{"control": "P6", "check": "nuwro: cells, g and sigma_Vg_over_f are the readout's, bit for bit", "ok": true}
+{"control": "P6", "check": "nuwro: V_g is (sigma_Vg_over_f f)^2 with the package's f, bit for bit", "ok": true}
+{"control": "P6", "check": "nuwro: Stage G's chi2 and ndf are the readout's", "ok": true}
+{"control": "P6", "check": "gibuu: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
+{"control": "P6", "check": "gibuu: cells, g and sigma_Vg_over_f are the readout's, bit for bit", "ok": true}
+{"control": "P6", "check": "gibuu: V_g is (sigma_Vg_over_f f)^2 with the package's f, bit for bit", "ok": true}
+{"control": "P6", "check": "gibuu: Stage G's chi2 and ndf are the readout's", "ok": true}
+{"control": "P6", "check": "mnvtune_v1: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
+{"control": "P6", "check": "mnvtune_v1: cells, g and sigma_Vg_over_f are the readout's, bit for bit", "ok": true}
+{"control": "P6", "check": "mnvtune_v1: V_g is (sigma_Vg_over_f f)^2 with the package's f, bit for bit", "ok": true}
+{"control": "P6", "check": "mnvtune_v1: Stage G's chi2 and ndf are the readout's", "ok": true}
+{"control": "P6", "check": "GiBUU's domain is the package's GiBUU subset", "ok": true}
 {"control": "P5", "check": "Stage G's f is the package's, bit for bit", "ok": true}
 {"control": "P5", "check": "genie_cv total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
 {"control": "P5", "check": "genie_cv shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
@@ -66,6 +94,7 @@
   "P2",
   "P3",
   "P4",
+  "P6",
   "P5"
  ],
  "chi2": [

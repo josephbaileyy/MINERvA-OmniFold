@@ -1,6 +1,8 @@
 {"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
+{"control": "P0", "check": "g_readout sha256 is the pin", "ok": true}
 {"control": "P0", "check": "no package file exists (no overwrite)", "ok": true}
 {"wrote": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/cells.csv", "sha256": "640a0f931cd3c3681449edbc9ceae2398b2794dfc19bfd9f816db1c7c4a318da"}
 {"wrote": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/covariance.csv", "sha256": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8"}
 {"wrote": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/correlation.csv", "sha256": "838f16617ed88f86329ee4eb9c2955e16ffe99e14791890b786c7548b35cd171"}
-{"wrote": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/deposit.json", "sha256": "2e853242569edcb4b1a2ce92f7ed3c62db8e9f2c662afda01f14ca96dc8706bd"}
+{"wrote": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/deposit.json", "sha256": "224c18cbfe0c6b180681da21702836786aba93f9cd8a98bdab96aa4e6c9a30ca"}
+{"wrote": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/predictions-reference.json", "sha256": "856d13c39c4e4ffdab45bc8a93471652696db0a6213928c541a3d1953bb5027f"}

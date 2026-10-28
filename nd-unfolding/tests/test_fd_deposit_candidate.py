@@ -1,7 +1,7 @@
 """Controls for fd_deposit_candidate (fd/deposit-candidate/README.md), on the committed data product and Stage G
 readout, which are read, never written.
 
-* End to end: build then check passes P0-P5; the covariance and correlation CSVs are the data product's files byte for
+* End to end: build then check passes P0-P6; the covariance and correlation CSVs are the data product's files byte for
   byte; the committed package is what build writes.
 * Planted defects: each is re-stamped in deposit.json's files_sha256 (or re-pinned) so that it reaches the control it
   targets, and each test asserts that control's clause in the STOP.
@@ -42,7 +42,7 @@ class Base(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
         self.pkg = self.tmp / "pkg"
-        rc, _, err = run(["build", "--data-product", str(DP), "--out-dir", str(self.pkg)])
+        rc, _, err = run(["build", "--data-product", str(DP), "--g-readout", str(GR), "--out-dir", str(self.pkg)])
         self.assertEqual(rc, 0, err)
 
     def tearDown(self):
@@ -64,6 +64,12 @@ class Base(unittest.TestCase):
         (self.pkg / name).write_text(buf.getvalue())
         self.restamp(name)
 
+    def edit_reference(self, fn):
+        p = self.pkg / D.REFERENCE
+        js = json.loads(p.read_text())
+        fn(js)
+        p.write_text(json.dumps(js, indent=1) + "\n")
+
     def assertStops(self, clause, **kw):
         rc, _, err = self.check(**kw)
         self.assertEqual(rc, 1)
@@ -75,7 +81,7 @@ class EndToEnd(Base):
         rc, out, err = self.check()
         self.assertEqual(rc, 0, err)
         res = json.loads(out[out.index('{\n "controls'):])
-        self.assertEqual(res["controls_passed"], ["P0", "P1", "P2", "P3", "P4", "P5"])
+        self.assertEqual(res["controls_passed"], ["P0", "P1", "P2", "P3", "P4", "P6", "P5"])
         self.assertEqual(len(res["chi2"]), 10)
         self.assertLessEqual(res["chi2_worst_rel_diff"], D.CHI2_TOL)
 
@@ -85,8 +91,21 @@ class EndToEnd(Base):
             self.assertEqual((self.pkg / mine).read_bytes(), (FD / "data-product" / theirs).read_bytes())
 
     def test_the_committed_package_is_what_build_writes(self):
-        for n in D.FILES:
+        for n in (*D.FILES, D.REFERENCE):
             self.assertEqual((PKG / n).read_bytes(), (self.pkg / n).read_bytes(), n)
+
+    def test_the_measurement_does_not_name_the_reference_file(self):
+        js = json.loads((self.pkg / "deposit.json").read_text())
+        self.assertNotIn(D.REFERENCE, js["files_sha256"])
+        self.assertNotIn(D.REFERENCE, (self.pkg / "deposit.json").read_text())
+
+    def test_the_reference_holds_five_predictions_and_gibuus_eight_cells(self):
+        js = json.loads((self.pkg / D.REFERENCE).read_text())
+        self.assertEqual(js["label"], "reference predictions used for the paper's chi2; not part of the measurement")
+        self.assertEqual([p["name"] for p in js["predictions"]],
+                         ["genie_cv", "genie_mec", "nuwro", "gibuu", "mnvtune_v1"])
+        self.assertEqual({p["name"]: len(p["cells"]) for p in js["predictions"]},
+                         {"genie_cv": 16, "genie_mec": 16, "nuwro": 16, "gibuu": 8, "mnvtune_v1": 16})
 
     def test_the_gibuu_subset_is_r00_r03_and_r08_r11(self):
         js = json.loads((self.pkg / "deposit.json").read_text())
@@ -97,7 +116,7 @@ class EndToEnd(Base):
         self.assertEqual([u["h2_box"] for u in js["unreported_h2_boxes"]], [2, 6, 10, 14])
 
     def test_build_refuses_to_overwrite(self):
-        rc, _, err = run(["build", "--data-product", str(DP), "--out-dir", str(self.pkg)])
+        rc, _, err = run(["build", "--data-product", str(DP), "--g-readout", str(GR), "--out-dir", str(self.pkg)])
         self.assertEqual(rc, 1)
         self.assertIn("no overwrite", err)
 
@@ -147,7 +166,8 @@ class Defects(Base):
         alt.write_text(json.dumps(dp))
         shutil.rmtree(self.pkg)
         with mock.patch.dict(D.PINS, {"data_product": D.sha256(alt)}):
-            self.assertEqual(run(["build", "--data-product", str(alt), "--out-dir", str(self.pkg)])[0], 0)
+            self.assertEqual(run(["build", "--data-product", str(alt), "--g-readout", str(GR), "--out-dir",
+                                  str(self.pkg)])[0], 0)
             self.assertStops("is symmetric to 1e-12 of its largest entry", dp=alt)
 
     def test_p3_the_sigma_column(self):
@@ -163,15 +183,63 @@ class Defects(Base):
         gr["predictions"][2]["shape_only"]["chi2"] *= 1 + 1e-8
         alt = self.tmp / "gr.json"
         alt.write_text(json.dumps(gr))
+        shutil.rmtree(self.pkg)
         with mock.patch.dict(D.PINS, {"g_readout": D.sha256(alt)}):
+            self.assertEqual(run(["build", "--data-product", str(DP), "--g-readout", str(alt), "--out-dir",
+                                  str(self.pkg)])[0], 0)
             self.assertStops("nuwro shape_only chi2 from the package is Stage G's", gr=alt)
+
+    def test_p6_a_reference_chi2_that_is_not_the_readouts(self):
+        self.edit_reference(lambda js: js["predictions"][2]["stage_g"]["total"].update(chi2=1.0))
+        self.assertStops("nuwro: Stage G's chi2 and ndf are the readout's")
+
+    def test_p6_one_ulp_in_a_reference_g(self):
+        def f(js):
+            g = js["predictions"][1]["g_cm2_per_nucleon"]
+            g[6] = float(np.nextafter(g[6], np.inf))
+        self.edit_reference(f)
+        self.assertStops("genie_mec: cells, g and sigma_Vg_over_f are the readout's")
+
+    def test_p6_one_ulp_in_a_reference_v_g(self):
+        def f(js):
+            v = js["predictions"][3]["V_g_cm4_per_nucleon2"]
+            v[2] = float(np.nextafter(v[2], -np.inf))
+        self.edit_reference(f)
+        self.assertStops("gibuu: V_g is (sigma_Vg_over_f f)^2")
+
+    def test_p6_a_source_digest(self):
+        self.edit_reference(lambda js: js["predictions"][0].update(source_sha256="0" * 64))
+        self.assertStops("genie_cv: source, sha256 and label are fd_g_compare's")
+
+    def test_p6_two_predictions_swapped(self):
+        def f(js):
+            p = js["predictions"]
+            p[0], p[1] = p[1], p[0]
+        self.edit_reference(f)
+        self.assertStops("it holds Stage G's five predictions, in order")
+
+    def test_p6_the_label_that_keeps_it_apart(self):
+        self.edit_reference(lambda js: js.update(label="the measurement"))
+        self.assertStops("labelled apart from the measurement")
+
+    def test_p6_gibuu_on_sixteen_cells(self):
+        gr = json.loads(GR.read_text())
+        self.edit_reference(lambda js: js["predictions"][3].update(cells=gr["cells"]))
+        self.assertStops("gibuu: cells, g and sigma_Vg_over_f are the readout's")
+
+    def test_p0_the_reference_file_missing(self):
+        (self.pkg / D.REFERENCE).unlink()
+        self.assertStops("predictions-reference.json exists")
 
     def test_p5_stage_gs_f_differs(self):
         gr = json.loads(GR.read_text())
         gr["predictions"][0]["f"][3] = float(np.nextafter(gr["predictions"][0]["f"][3], np.inf))
         alt = self.tmp / "gr.json"
         alt.write_text(json.dumps(gr))
+        shutil.rmtree(self.pkg)
         with mock.patch.dict(D.PINS, {"g_readout": D.sha256(alt)}):
+            self.assertEqual(run(["build", "--data-product", str(DP), "--g-readout", str(alt), "--out-dir",
+                                  str(self.pkg)])[0], 0)
             self.assertStops("Stage G's f is the package's", gr=alt)
 
 

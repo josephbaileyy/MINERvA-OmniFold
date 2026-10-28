@@ -11,6 +11,14 @@ KILLED  P3 sigma check dropped
 KILLED  P0 file digest check dropped
 KILLED  P0 pin check dropped
 KILLED  V_g dropped from chi2
+KILLED  P6 g compare dropped
+KILLED  P6 V_g compare dropped
+KILLED  P6 source compare dropped
+KILLED  P6 order compare dropped
+KILLED  P6 label compare dropped
+KILLED  P6 chi2 compare dropped
+KILLED  P0 file-exists check dropped
+KILLED  reference V_g written as sigma
 KILLED  build writes sigma squared
 KILLED  no-overwrite dropped
-15/15 killed
+23/23 killed
