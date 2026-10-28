@@ -1,4 +1,6 @@
-# Fact ledger: register round r20
+# Fact ledger: register round r20 (NOT ADOPTED; see REPORT.md)
+
+**This ledger held at `7ec31a5d` (6 rows, 0 failures). The paper's text was reverted to r19's (`5841adce`), so it does not hold at later heads and is kept as the record of the round.**
 
 Base: #413 at `5841adce` (r19 as measured, plus agy-b4's Q2 fix). Checked by
 `../r19/check_ledger.py . --base 5841adce --ledger ../r20/ledger.md`. The r19 ledger, at its own base `9df8f748`,

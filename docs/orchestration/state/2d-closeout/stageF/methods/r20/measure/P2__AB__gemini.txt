@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A adheres to formal scholarly syntax and Physical Review style by recasting sentences cleanly, whereas Document B lapses into casual phrasing and mixes spelled-out and numeral formats in a single series at a sentence opening ("Ten, 15 or 20 iterations... so it keeps five").
+2. Document A maintains an objective, measured scientific register throughout, avoiding colloquial and uncalibrated intensifiers such as Document B's "displaces the null distributions... far upward."
+3. Document A demonstrates superior editorial mechanics conforming to APS conventions, notably retaining the required serial comma and maintaining clean sentence boundaries rather than colliding punctuation marks across parentheticals.

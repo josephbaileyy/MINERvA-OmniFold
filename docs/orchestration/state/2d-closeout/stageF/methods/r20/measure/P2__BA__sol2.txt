@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A presents the binned diagnostic’s finding before its qualifications, making the paragraph easier to follow than B’s heavily front-loaded sentence.
+2. A’s “The bias at a truth is listed” identifies the referent more precisely than B’s “A truth is listed.”
+3. A describes the displaced null distributions more directly, avoiding B’s awkward construction “as the calibration reproduces.”
