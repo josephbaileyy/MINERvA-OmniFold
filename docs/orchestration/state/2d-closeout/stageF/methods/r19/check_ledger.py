@@ -39,6 +39,9 @@ import importlib.util
 _spec = importlib.util.spec_from_file_location("apply_c1a", Path(__file__).resolve().parents[1] / "fived16/c1a/apply_c1a.py")
 C1A = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(C1A)
+_spec2 = importlib.util.spec_from_file_location("apply_d2", Path(__file__).resolve().parents[1] / "fived16/d2/apply_d2.py")
+D2 = importlib.util.module_from_spec(_spec2)
+_spec2.loader.exec_module(D2)
 
 FILES = {"P": "paper_body.tex", "M": "main_paper.tex",
          # the note files r19 adds to (N1-N4): a changed sentence there needs a row too (J, Q, Z ids)
@@ -92,6 +95,9 @@ def rows(ledger_text):
 
 # The allowance's pairs, pinned (review of 589f0780, N5): apply_c1a.py is an editable file, so an edit made both there
 # and in the protected text must still fail. A change to E1 or E2 needs a new pin here, in its own reviewed commit.
+# d2's pairs (DECISION-20261028-joseph-final-draft-d items 1 and 2; ledger row D2-ALLOW): the title T1 and the paper
+# abstract's candidate PB, pinned in the same way.
+D2_PINS = {'T1': '847ba20823b31aab', 'ABS-P': 'c11de3a217a57d89'}
 C1A_PINS = {'E1': 'c6225437b5d563e4', 'E2': 'c04012037a270aa9'}
 
 
@@ -104,7 +110,7 @@ def c1a_expected(text, edits, keys):
     for k, old, new in edits:
         if k not in keys:
             continue
-        if hashlib.sha256((old + "\x00" + new).encode()).hexdigest()[:16] != C1A_PINS[k]:
+        if hashlib.sha256((old + "\x00" + new).encode()).hexdigest()[:16] != {**C1A_PINS, **D2_PINS}[k]:
             return None                     # an unpinned pair allows nothing: the span then differs, PROTECTED
         m = list(C1A.pat(old).finditer(text))
         if len(m) == 1:
@@ -181,6 +187,7 @@ def check(wt, cur, old, ledger_text, note_override=None):
         i, j = t.find("\\title{"), t.find("\\end{abstract}")
         return t[i:j] if i >= 0 and j > i else None
     exp_m = c1a_expected(old["M"], C1A.MAIN_PAPER, {"E2"})
+    exp_m = exp_m and c1a_expected(exp_m, D2.TITLE + [D2.ABS_P], {"T1", "ABS-P"})
     if tspan(cur["M"]) is None or exp_m is None or tspan(cur["M"]) != tspan(exp_m):
         fails.append("PROTECTED: main_paper.tex title..end{abstract} differs from base")
     lim = lambda t: [l for l in t.splitlines() if l.startswith("The result has three limitations")]
@@ -273,8 +280,11 @@ def main():
                          ("an edit to the limitations paragraph", dict(cur, P=cur["P"].replace("The result has three limitations", "The result has two limitations", 1))),
                          ("an undeclared edit to the 1A sentence of the limitations paragraph",
                           dict(cur, P=cur["P"].replace("finds the estimator's bias below", "finds the estimator's bias well below", 1))),
-                         ("an undeclared edit to the 1A sentence of the abstract",
-                          dict(cur, M=cur["M"].replace("finds the estimator's bias below", "finds the estimator's bias well below", 1)))]:
+                         ("an undeclared edit to the abstract (d2: its fake-data sentence)",
+                          dict(cur, M=cur["M"].replace("does not cover the estimator's bias at GiBUU-like truths",
+                                                       "does not cover the estimator's bias at most GiBUU-like truths", 1))),
+                         ("an undeclared edit to the title",
+                          dict(cur, M=cur["M"].replace("in five observables from MINERvA open data}", "in five observables from all MINERvA data}", 1)))]:
             assert cg != cur, f"the plant for {name} did not apply"
             fg, *_ = check(wt, cg, old, ledger_text)
             hit = any(x.startswith("PROTECTED") for x in fg)

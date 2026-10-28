@@ -1,0 +1,51 @@
+B1: CHOICE: Form X
+RANKING: Form X, Form Y, Form Z
+STRENGTH: 2 clear
+REASON: Form X uses concise, standard technical phrasing suitable for both an abstract and an introduction, avoiding unnecessary articles and awkward possessive constructions.
+
+B2: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 2 clear
+REASON: Form X provides the quantitative correlation-weakening checks needed to assess the sensitivity of the χ² comparison, which directly contextualizes the subsequent bootstrap discussion.
+
+B3: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 2 clear
+REASON: Form X presents the authors' interpretation and supporting evidence clearly, whereas the trailing clause in Form Y introduces unnecessary equivocation.
+
+B4: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 2 clear
+REASON: Form X is concise and avoids the vague, informal phrasing "directly or through its pointers."
+
+B5: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 2 clear
+REASON: Because the note reports two distinct five-observable results, Form Y provides the explicit configuration labels necessary to prevent ambiguity in the data release documentation.
+
+B6: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 2 clear
+REASON: Form Y directly informs the reader where to access the machine-readable covariance matrix and bin definitions, fulfilling standard PRD practices for table captions.
+
+B7: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 3 strong
+REASON: Form Y provides a finalized, professional Data Availability statement, whereas Form X includes internal staging details and an unedited editorial placeholder unsuitable for publication.
+
+B8: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 2 clear
+REASON: Form X provides a self-contained and definitive statement of data availability without adding an unnecessary promissory clause about a pending deposit.
+
+B9: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 2 clear
+REASON: The additional sentence in Form Y provides critical technical detail regarding how the model covariance controls bias in specific kinematic cells, logically motivating the subsequent discussion of shared model components.
+
+B0: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 3 strong
+REASON: Form X maintains the standard formal register of a Physical Review D paper, whereas Form Y uses colloquial language inappropriate for scientific publishing.
+
+END

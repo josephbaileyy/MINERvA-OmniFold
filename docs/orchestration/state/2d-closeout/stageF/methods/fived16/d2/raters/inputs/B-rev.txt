@@ -1,0 +1,93 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). For each numbered item below, a manuscript on a neutrino cross-section measurement (or its companion technical note, where the item says so) could print one of the labelled forms. Choose the form a PRD referee and reader would prefer: the register, clarity and conventions of published PRD measurement papers. Do not judge whether a statement is true or whether the analysis is sound, and do not propose new wording.
+
+Answer in exactly this format, one block per item, in the order listed:
+Bn: CHOICE: <the label you choose>
+RANKING: <all labels, best first>
+STRENGTH: <1 slight, 2 clear, 3 strong>
+REASON: <one sentence>
+End with a line: END
+
+
+B1. Which wording of the coverage limitation should the paper use, the same in its introduction and its abstract? Context: The sentence opens the paper's statement of its limitations, in the introduction and in the abstract.
+
+Form X: The coverage of the result's intervals has not been validated.
+
+Form Y: The coverage of the intervals has not been validated.
+
+Form Z: Interval coverage has not been validated.
+
+
+
+B2. Which form of this paragraph should the paper print? Context: Sec. V B of the paper, which compares the result with generator predictions through χ².
+
+Form X: With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps χ²≥45 for 16 degrees of freedom. The flux correlations are estimated from 100 hadron-production (PPFX) flux universes [16], weighted by the neutrino–electron and inverse-muon-decay constraint. Bootstrapping these universes, with the flux variances kept, gives 16th–84th percentile bands for each 16-cell χ², with edges within 6.2% of the reported value and a median at most 1.0% above it. These bands describe the scatter of the χ² from estimating the correlations with these universes, not its sensitivity to incorrect correlations; they are not intervals for the χ² under the true correlations.
+
+Form Y: Weakening only the flux correlations by 10% lowers the χ² of the 16-cell predictions by 24–48%. The same change to the detector or lateral correlations lowers it by at most 18%. With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps χ²≥45 for 16 degrees of freedom. The flux correlations are estimated from 100 hadron-production (PPFX) flux universes [16], weighted by the neutrino–electron and inverse-muon-decay constraint. Bootstrapping these universes, with the flux variances kept, gives 16th–84th percentile bands for each 16-cell χ², with edges within 6.2% of the reported value and a median at most 1.0% above it. These bands describe the scatter of the χ² from estimating the correlations with these universes, not its sensitivity to incorrect correlations, which the weakening probes; they are not intervals for the χ² under the true correlations.
+
+
+
+B3. Which sentence should the paper print? Context: In the validation section, after the residual under a generator-sized truth change is reported.
+
+Form X: We interpret the residual as regularization bias, because it persists over the tested iteration numbers and classifier capacities, although no single cause is established.
+
+Form Y: We interpret the residual as regularization bias, because it persists over the tested iteration numbers and classifier capacities.
+
+
+
+B4. Which sentence should the companion note's release appendix print? Context: The appendix describes a release package of the analysis.
+
+Form X: It also regenerates, from packaged arrays, figures that the article cites from this note, directly or through its pointers: the (E_avail,W) excess map (Fig. 24), the null distributions of the joint tests (Fig. 31), and the one-dimensional generator projections.
+
+Form Y: It also regenerates, from packaged arrays, figures that the article cites from this note: the (E_avail,W) excess map (Fig. 24), the null distributions of the joint tests (Fig. 31), and the one-dimensional generator projections.
+
+
+
+B5. Which set of phrasings should the companion note's release appendix print? Context: Four phrases of the release appendix (shown joined by …). The note reports two five-observable results.
+
+Form X: the quoted closure, bias and covariance-status measurements of the configuration-(a) central value. … the five-axis covariance of the configuration-(a) central value and its … travel with the five-axis covariance of the configuration-(a) central value … The five-axis covariance of the configuration-(a) central value is the file
+
+Form Y: the quoted closure, bias and covariance-status measurements. … the five-axis covariance used in this note and its … travel with the five-axis covariance used in this note … The five-axis covariance used in this note is the file
+
+
+
+B6. Should the result table's caption end with this sentence? Context: The last sentence of the caption of the paper's sixteen-cell result table.
+
+Form X: Quantitative comparisons need the full covariance (Sec. IV A). The cell definitions, measured vector, reported covariance and correlation matrix are given in machine-readable form in Ref. [deposit].
+
+Form Y: Quantitative comparisons need the full covariance (Sec. IV A).
+
+
+
+B7. Which Data Availability statement should the paper print? Context: The paper's Data Availability section.
+
+Form X: The input data and simulation are the MINERvA open-data AnaTuples, released under CC0 [12]. The sixteen-cell cross section, its covariance matrix and the cell definitions are provided as machine-readable files in the Supplemental Material.
+
+Form Y: The input data and simulation are the MINERvA open-data AnaTuples, released under CC0 [12]. This analysis used an earlier production of that release; its 2,374 input files are identified by SHA256 checksum in the records cited in Ref. [14], App. G. A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib. It recomputes every p value, decision, robustness result, and power figure of the joint tests and the numbers quoted in Sec. V C, and it regenerates the analysis note's figures of the joint-test null distributions and the (E_avail,W) map. The other quoted numbers, except the multiplier scan, and the event-level processing require the archived analysis products, the open-data AnaTuples, and the generator samples produced for this analysis; Ref. [14], App. G states what each part of the release does and does not reproduce. [HOLD: deposit identifier and access route, after the separately authorized release decision.]
+
+
+
+B8. Should the Data Availability statement add this sentence? Context: The paper's Data Availability section.
+
+Form X: The input data and simulation are the MINERvA open-data AnaTuples, released under CC0 [12]. The sixteen-cell cross section, its covariance matrix and the cell definitions are provided as machine-readable files in the Supplemental Material. The same quantities are prepared for deposit in a versioned repository, Ref. [deposit].
+
+Form Y: The input data and simulation are the MINERvA open-data AnaTuples, released under CC0 [12]. The sixteen-cell cross section, its covariance matrix and the cell definitions are provided as machine-readable files in the Supplemental Material.
+
+
+
+B9. Should the paragraph add this sentence? Context: A paragraph of the paper's fake-data section; the two forms differ only in a sentence after the |z| clause.
+
+Form X: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each reweights the simulated truth using its shape ratio to GENIE CV, constructed as for the C_model components. The simulated detector response is not probed. For each tune, 20 Poisson pseudo-experiments and a noise-free closure are compared with the truth using the full reported covariance. Both tunes satisfy the bias criteria: the pseudo-experiment means give χ²=11.84 (p=0.76) and 16.86 (p=0.39), respectively, with |z|≤0.65 in every cell of the means and closures. In cell R11 at G18_10a_02_11b, the bias lies below the reported uncertainty only with C_model included. The tunes share a quasielastic cross-section model; G18_10a_02_11b and the GENIE + MEC component of C_model also use Valencia-family MEC models. These tests provide partial evidence and are not independent. Omitting that C_model component gives χ²=15.15 (p=0.51) and 24.60 (p=0.077), respectively, as a descriptive comparison. The tests assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested.
+
+Form Y: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each reweights the simulated truth using its shape ratio to GENIE CV, constructed as for the C_model components. The simulated detector response is not probed. For each tune, 20 Poisson pseudo-experiments and a noise-free closure are compared with the truth using the full reported covariance. Both tunes satisfy the bias criteria: the pseudo-experiment means give χ²=11.84 (p=0.76) and 16.86 (p=0.39), respectively, with |z|≤0.65 in every cell of the means and closures. The tunes share a quasielastic cross-section model; G18_10a_02_11b and the GENIE + MEC component of C_model also use Valencia-family MEC models. These tests provide partial evidence and are not independent. Omitting that C_model component gives χ²=15.15 (p=0.51) and 24.60 (p=0.077), respectively, as a descriptive comparison. The tests assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested.
+
+
+
+B0. Which sentence should the paper print? Context: A sentence of the paper's results section.
+
+Form X: We went ahead and compared the sixteen-cell result with a bunch of generator predictions.
+
+Form Y: The sixteen-cell result is compared with five generator predictions.
+
+

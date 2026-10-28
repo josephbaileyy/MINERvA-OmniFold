@@ -1,0 +1,10 @@
+A1 (paper): CHOICE: Y
+RANKING: Y, X, Z
+REASON: Candidate Y best reflects the content and register of a published PRD measurement paper by balancing model comparisons and fake-data limitations with the essential benchmark reproduction of published cross sections, while omitting internal algorithm-testing minutiae.
+A2 (note): CHOICE: X
+RANKING: X, Y
+REASON: Candidate X preserves the essential documentation of interval coverage validation and held-out truth bias testing required of a comprehensive technical note, avoiding the disjointed thematic sequence in Candidate Y.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: NEW replaces the informal, colloquial phrasing of OLD with an objective, scholarly register appropriate for Physical Review D while preserving the full scope of the validation suite.
+END

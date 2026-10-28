@@ -1,0 +1,10 @@
+A1 (paper): CHOICE: Y
+RANKING: Y, X, Z
+REASON: Y best matches a measurement abstract’s balance of principal result, generator comparisons, limitation and cross-check; X overemphasizes validation distinctions, while Z introduces subsidiary methodological detail.
+A2 (note): CHOICE: X
+RANKING: X, Y
+REASON: X gives the more coherent account of the measurement and its validation scope, appropriate to a technical note, whereas Y foregrounds a narrowly specified correlation stress test.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: NEW replaces the rhetorical claim about trust with a neutral description of the validation studies while preserving their purpose and scope.
+END

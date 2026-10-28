@@ -1,0 +1,10 @@
+A1 (paper): CHOICE: Y
+RANKING: Y, X, Z
+REASON: Candidate Y provides the balanced content and register typical of a PRD measurement paper by pairing the primary results and generator comparisons with both the fake-data bias limitation and the vital benchmark agreement with the published cross section, while avoiding internal algorithm minutiae.
+A2 (note): CHOICE: Y
+RANKING: Y, X
+REASON: Candidate Y explicitly documents the interval coverage limitations and bias test results, providing the statistical rigor and methodological completeness expected of a technical note in this field.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: NEW replaces colloquial, subjective phrasing ("trusted," "ask") with precise, objective scientific language appropriate for publication in PRD.
+END
