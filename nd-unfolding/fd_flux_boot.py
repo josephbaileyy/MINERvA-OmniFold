@@ -67,7 +67,8 @@ VARIANTS = ("correlation", "block")
 PAIR = ("R04", "R08")                   # the pair G-FOLLOWUP reports (+0.983 in the flux block alone)
 FLUX_GROUP = "flux"
 PINS = {**D.PINS, "constraint": sa.CONSTRAINT_SHA256}
-LABEL = "descriptive band on the reported χ²'s flux-correlation dependence, not an alternative result"
+LABEL = ("estimation uncertainty, not sensitivity: the scatter of the reported chi2 when the flux correlations are "
+         "re-estimated from the 100 weighted universes; not an interval for the chi2 under the true correlations")
 LABELS = {
     "what": "3D (FD-FLUX-BOOT-DECLARATION.md): Stage G's reported chi2 with the flux block rebuilt from bootstrap "
             "replicates of the 100 weighted Flux universes; numbers only, no p-value",

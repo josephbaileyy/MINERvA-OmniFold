@@ -180,6 +180,13 @@ class Base(unittest.TestCase):
 
 
 class Pure(unittest.TestCase):
+    def test_the_band_records_label_agrees_with_labels_band(self):
+        # every band record carries LABEL; it must say what labels.band says the band is (FD-FLUX-BOOT-BINDING ruling 2)
+        for phrase in ("estimation uncertainty, not sensitivity", "not an interval for the chi2 under the true correlations"):
+            self.assertIn(phrase, FB.LABEL)
+        self.assertTrue(FB.LABELS["band"].startswith("estimation uncertainty, not sensitivity"))
+        self.assertNotIn("dependence", FB.LABEL)
+
     def setUp(self):
         rng = np.random.default_rng(5)
         self.X = 1 + rng.normal(0, 0.03, (100, 1)) + rng.normal(0, 0.01, (100, 16))
