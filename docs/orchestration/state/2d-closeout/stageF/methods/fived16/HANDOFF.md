@@ -90,6 +90,8 @@
 - #420: `DECISION-20261027-joseph-measurement-framing-and-limitation-scoping.md`.
 - #423: `DECISION-20261027-joseph-limitation-plan-f1-bias-test-and-flux-bootstrap.md`. 1A, a GENIE v3 held-out bias test; 3D, a flux-correlation bootstrap that replaces α = 0.1; the fake-data bias stays a stated limitation.
 - #424: `DECISION-20261027-joseph-f1-genie-v3-both-tunes.md`.
+- #431: `DECISION-20261027-joseph-f1-reprice-and-scope-review-before-r19.md`. F1 re-priced (option A, ceiling 2.5 node-h); the second scope review runs now, on #413; the structural round r19 runs before the final draft.
+- `DECISION-20261025-joseph-register-rounds-paper-rewrite.md`, the rule r19 runs under: an outline the director approves before any writing; adopted at 3/4 pairwise, no sol2 order flip, P1 not falling; at most 4 rounds per document (r19 is the paper's third); no fact leaves both documents.
 
 **Presentation decisions:**
 - `DECISION-20261026-joseph-5d-generator-comparison-presentation.md` (option 1; no diagonal-only χ² printed);
@@ -109,7 +111,7 @@
    - **1A (GENIE v3 held-out bias test):** revise the coverage limitation ("The coverage of its intervals has not been validated"; ledger guard G3, plus the abstracts and Sec. I) to what the readout supports. Name it as a bias test at one held-out truth, and never as validated coverage unless the readout says so.
    - **For both:** pin the new readout in `make_values_fived16.py` (READOUTS, by sha256), add keys, give the changed sentences a small PRD read of their own, add an agy check with a control, and update the ledger.
    - **Add P02 to that PRD read and agy pass** (director, ruling 3, after 0a87881c). P02 as printed is a composite: sol2 r2's first sentence with NEW's "the simulation mismodels the truth" kept. agy's Q1 read the first-applied form ("the simulated truth differs"), so neither the truth column nor agy has read the pair as it now prints.
-4. **The final draft to Joseph,** after items 1–3: one draft with the change tables.
+4. **The final draft to Joseph,** after items 1–3 and 5 (r19): one draft with the change tables.
    - **The title:** options T0–T3 are in `WORDING-PACKET.md` (last section). The raters chose T1 4/4. Not edited.
    - **Q8:** whether the release and the supplemental file carry the sixteen-cell vector and covariance. This is open and Joseph's. The data product is `measurement-paper/5d-community-20261024/fd/data-product/`.
    - **Data availability:** the proposal is in `WORDING-PACKET.md`, and the text is unedited.
@@ -117,7 +119,10 @@
    - **Sentence-level pieces of rater forms are declined** (director, ruling 2): a form is applied whole or not at all. A composite is an untested reading. Keep them out of the packet.
    - **Q6:** answered by the framing (the abstracts are drafts).
    - **Q1, Q7, Q9:** settled by round 1 and the move.
-5. **The second scope review** comes after the final draft is approved. The director starts it. The hybrid-null joint-test move is still only "seriously considered"; the review weighs it.
+5. **The second scope review, then register round r19** (#431; director, 2026-10-27). The order is: the director runs the scope review (gpt-6-astra high, read-only) on #413 now; when it reports, this lane writes the r19 outline and **holds it for the director's approval before any writing**; then r19; item 3 runs in parallel; then item 4.
+   - **r19's aims:** a measurement paper's order (the seven PRD measurement papers of `register-prd-study` run intro, experiment and data, simulation, selection, extraction, systematics, results, comparisons, conclusions, in 5–8 sections), with the sixteen-cell result, now subsection V F, placed where they place a result and the validation studies as its support; Table I (no corpus paper has a table before Sec. 3, or a findings table): fold its content into the text or justify keeping it; and the passages the P1 re-score at a55e2686 quotes (VII C's design, budget and lost-pseudo-experiment sentences; V F's "not held-out truths" sentences; the joint-test estimator's rounding-instability sentence).
+   - **If the scope review moves the joint tests to the note,** VII B–E stop being r19's problem. The move is Joseph's.
+   - **The baseline** is built with `rater-calibration/make_rater_copy.sh`, after its case-4 fix (§6).
 6. **Rulings given but not applied:**
    - the release scopings R1–R4, accepted 4/4 in round 2, go to Joseph as proposals only, because `app_release.tex` is protected.
    - Everything else the director ruled on is applied: Q5, the round-1 rules, the move, the coverage-test option (i), the abstract exception, the external-only χ² range, round 3 and the abstract limitation split.
@@ -164,6 +169,7 @@ Paths are relative to the worktree root. `F = docs/orchestration/state/2d-closeo
 - **sol2's noise:** sol2's two replicates split on single items (round-1 C07; round-3 P05, P20, P24). Always use two runs per model (both orders for pairwise), and read agreement, not a single verdict.
 - **agy hangs:** `run_x.sh` runs agy with `--print-timeout 0`, and agy can stay alive long after writing a complete answer (ending in END). Check the output, then kill only that agy PID. A retry loop treats the kill as a failure and relaunches, so stop the loop first.
 - **Duplicate launches:** a second pool on the same output files races. Check `ps` before launching. Kill the whole process tree with `kill -9`, using bash for word splitting.
+- **Rater copy, reference [1] inside the body (case 4):** on #413 at a55e2686, pdftotext emitted ref [1]'s first two lines inside Sec. VIII's last paragraph, so blinding (which cuts at '[1] ') dropped the end of VIII, the acknowledgments and Data Availability, and `fix_da_order.py`'s old fallback then put the DATA AVAILABILITY heading after its first sentence. Case 4 moves the fragment back to the rest of [1]; the fallback now fails on a layout no case describes; and `make_rater_copy.sh` checks that the section's first sentence survives blinding after its heading. The director's P1 re-score copy at a55e2686 lacks that sentence (16 words).
 - **macOS has no `timeout`:** run a rater in the background and wait with an `until` loop on its output's END line.
 - **Quoting:** unquoted heredocs substitute backticks and mangle backslashes. Use `<<'EOF'` for any text with LaTeX or backticks. zsh does not word-split `$var`.
 - **Check-bound phrases:** `check_sec4_receipts.py` binds exact paper phrases ("reduces it to below", "within the quoted total uncertainty in about half of those cells") to receipts. Reword around them, not through them.
