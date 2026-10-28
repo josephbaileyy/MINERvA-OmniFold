@@ -1,0 +1,3 @@
+chi2(C_true prior) = 100.65; chi2(C_post) median 115.47; chi2_hat median 116.95; median(chi2_hat - chi2(C_post)) +1.49; sd(chi2_hat - target) 2.96
+  correlation: percentile band covers chi2(C_post) 0.47; basic 0.57; median offset +0.43
+  block      : percentile band covers chi2(C_post) 0.45; basic 0.61; median offset +1.11

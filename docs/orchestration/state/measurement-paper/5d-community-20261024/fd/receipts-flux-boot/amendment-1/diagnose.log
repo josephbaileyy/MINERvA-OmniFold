@@ -1,0 +1,22 @@
+2026-10-28T04:26:36Z
+a7b288ea51df2d4be7f1dfe7b0cc2453c070f4a7
+$ python3 -B diagnose.py .
+numpy 1.26.4
+
+== pre-amendment fixture: correlations 0.900-0.9928, lambda_min 4.300e-06, lambda_max 2.483e-02, n_eff 19.00
+genie_cv   pre-amendment vs Stage G: total 1.0e-14, shape-only 3.9e-11 | cond M 3.7e+02, shape-only matrix 9.3e+06 | exact relative vs exact absolute 6.2e-11; Stage G vs its exact 2.3e-12 | M x (1 + 1e-16 E): total 2.5e-15, shape-only 0.0e+00
+genie_mec  pre-amendment vs Stage G: total 6.2e-15, shape-only 1.0e-12 | cond M 4.9e+02, shape-only matrix 1.2e+07 | exact relative vs exact absolute 1.2e-11; Stage G vs its exact 1.1e-11 | M x (1 + 1e-16 E): total 3.7e-15, shape-only 0.0e+00
+nuwro      pre-amendment vs Stage G: total 1.1e-14, shape-only 6.2e-11 | cond M 4.7e+02, shape-only matrix 1.1e+07 | exact relative vs exact absolute 6.9e-11; Stage G vs its exact 1.5e-11 | M x (1 + 1e-16 E): total 1.9e-15, shape-only 0.0e+00
+gibuu      pre-amendment vs Stage G: total 4.4e-16, shape-only 1.9e-11 | cond M 2.2e+01, shape-only matrix 4.8e+05 | exact relative vs exact absolute 1.3e-11; Stage G vs its exact 3.0e-12 | M x (1 + 1e-16 E): total 1.5e-16, shape-only 0.0e+00
+mnvtune_v1 pre-amendment vs Stage G: total 3.1e-15, shape-only 9.4e-11 | cond M 2.8e+02, shape-only matrix 6.9e+06 | exact relative vs exact absolute 8.0e-11; Stage G vs its exact 2.0e-11 | M x (1 + 1e-16 E): total 6.7e-16, shape-only 0.0e+00
+amended tool, B2 relative_difference: {'genie_cv': 0.0, 'genie_mec': 0.0, 'nuwro': 0.0, 'gibuu': 0.0, 'mnvtune_v1': 0.0}
+
+== amended fixture: correlations 0.913-0.9993, lambda_min 2.325e-07, lambda_max 2.122e-02, n_eff 19.00
+genie_cv   pre-amendment vs Stage G: total 3.0e-15, shape-only 1.2e-10 | cond M 3.9e+02, shape-only matrix 9.8e+06 | exact relative vs exact absolute 1.1e-10; Stage G vs its exact 8.9e-12 | M x (1 + 1e-16 E): total 2.0e-15, shape-only 0.0e+00
+genie_mec  pre-amendment vs Stage G: total 3.8e-15, shape-only 1.3e-10 | cond M 5.2e+02, shape-only matrix 1.3e+07 | exact relative vs exact absolute 9.5e-11; Stage G vs its exact 4.3e-11 | M x (1 + 1e-16 E): total 8.1e-15, shape-only 0.0e+00
+nuwro      pre-amendment vs Stage G: total 6.4e-15, shape-only 9.7e-11 | cond M 5.2e+02, shape-only matrix 1.3e+07 | exact relative vs exact absolute 9.0e-11; Stage G vs its exact 1.2e-11 | M x (1 + 1e-16 E): total 2.5e-15, shape-only 0.0e+00
+gibuu      pre-amendment vs Stage G: total 8.6e-16, shape-only 1.0e-11 | cond M 2.3e+01, shape-only matrix 4.8e+05 | exact relative vs exact absolute 7.5e-13; Stage G vs its exact 5.7e-12 | M x (1 + 1e-16 E): total 1.4e-16, shape-only 0.0e+00
+mnvtune_v1 pre-amendment vs Stage G: total 7.4e-15, shape-only 1.0e-10 | cond M 2.9e+02, shape-only matrix 7.2e+06 | exact relative vs exact absolute 8.1e-11; Stage G vs its exact 2.0e-11 | M x (1 + 1e-16 E): total 5.9e-15, shape-only 0.0e+00
+amended tool, B2 relative_difference: {'genie_cv': 4.402529096627984e-15, 'genie_mec': 6.576248491257401e-15, 'nuwro': 3.940934209265931e-14, 'gibuu': 2.0057813452783348e-15, 'mnvtune_v1': 8.487741938261223e-15}
+rc=0
+2026-10-28T04:26:43Z

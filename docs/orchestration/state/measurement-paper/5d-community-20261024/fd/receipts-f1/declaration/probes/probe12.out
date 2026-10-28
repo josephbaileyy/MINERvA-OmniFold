@@ -1,0 +1,40 @@
+Linux64bit+3.10-2.17-c7-debug
+Linux64bit+3.10-2.17-c7-prof
+Linux64bit+3.10-2.17-e20-debug
+Linux64bit+3.10-2.17-e20-prof
+ups
+SRC=
+F=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Apps/gEvGen.cxx
+77:                 by default variable bin histograms are multiplied by bin width
+78:                 if ,NOWIDTH then they are not
+79:                 if ,WIDTH then they are alway multiplied by bin width
+523:      if(hst->GetBinLowEdge(ibin) + hst->GetBinWidth(ibin) > emax ||
+528:    bool force_binwidth = false;
+530:    // GetRandom() sampling on variable bin width histograms does not
+531:    // correctly account for bin widths for all versions of ROOT prior
+535:    if (xaxis->IsVariableBinSize()) force_binwidth = true;
+537:    if ( extra == "WIDTH"   ) force_binwidth = true;
+538:    if ( extra == "NOWIDTH" ) force_binwidth = false;
+539:    if ( force_binwidth ) {
+541:        << "multiplying by bin width for histogram " << fv[1]
+546:        double width = spectrum->GetBinWidth(ibin);
+547:        spectrum->SetBinContent(ibin,data*width);
+C=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i
+CommonParam.xml
+MECInteractionListGenerator.xml
+ModelConfiguration.xml
+NucDeExcitationSim.xml
+README.md
+TuneGeneratorList.xml
+      1 Nieves
+      1 NievesQELCCPXSec
+      1 SuSAv2
+      1 SuSAv2MECPXSec
+      1 ZExp
+C2=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a
+      8 empirical
+      1 EmpiricalMEC
+      3 EmpiricalMECPXSec
+      1 Nieves
+      1 NievesQELCCPXSec
+      1 NievesSimoVacasMECPXSec

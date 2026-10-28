@@ -1,0 +1,6 @@
+independent lognormal: n_eff 19.06
+  boot sd / (sigma_w / sqrt(n_eff)) per column: [0.7   0.749 0.926]
+  3D delta_method_ratio per column:            [1.031 1.039 1.006]
+constraint on col 0 (Gaussian likelihood, offset 0.5): n_eff 19.06
+  boot sd / (sigma_w / sqrt(n_eff)) per column: [0.736 0.831 1.092]
+  3D delta_method_ratio per column:            [1.026 1.04  0.991]

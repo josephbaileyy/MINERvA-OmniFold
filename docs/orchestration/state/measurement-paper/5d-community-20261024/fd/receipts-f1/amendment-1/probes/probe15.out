@@ -1,0 +1,164 @@
+== EventGeneratorListAssembler.cxx 40-100
+{
+
+}
+//___________________________________________________________________________
+EventGeneratorList * EventGeneratorListAssembler::AssembleGeneratorList()
+{
+  SLOG("EvGenListAssembler", pNOTICE) 
+            << utils::print::PrintFramedMesg(
+                           "Loading requested Event Generators", 0, '-');
+
+  if ( RunOpt::Instance() -> EventGeneratorList() == "Default" ) {
+    AddTopRegistry( AlgConfigPool::Instance() -> TuneGeneratorList(), false ) ;
+    
+    SLOG("EvGenListAssembler", pNOTICE) 
+      << "** Using Tune Generator List: " ;
+
+  }
+  
+
+  EventGeneratorList * evgl = new EventGeneratorList;
+  
+//  if (!fConfig) {
+//    SLOG("EvGenListAssembler", pFATAL)
+//      << "Cannot instantiate EventGeneratorList with no config.";
+//    gAbortingInErr = true;
+//    exit(-1);
+//  }
+
+  int nproc = GetConfig().GetInt("NGenerators");
+  assert(nproc > 0);
+
+  //-- Loop over the event generators for all requested processes
+  for(int ip = 0; ip < nproc; ip++) {
+    const EventGeneratorI * evgen = this->LoadGenerator(ip);
+    evgl->push_back(evgen);
+  }
+  return evgl;
+}
+//___________________________________________________________________________
+const EventGeneratorI * EventGeneratorListAssembler::LoadGenerator(int ip)
+{
+
+
+  ostringstream alg_key;
+  alg_key << "Generator-" << ip;
+
+  const EventGeneratorI * evgen =
+      dynamic_cast<const EventGeneratorI *> (this->SubAlg(alg_key.str()));
+  assert(evgen);
+
+  SLOG("EvGenListAssembler", pNOTICE) 
+        << "** Loaded generator: " << evgen->Id().Key();
+
+  return evgen;
+}
+//___________________________________________________________________________
+
+== where TuneGeneratorList is read
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx:108:  if( ! LoadTuneGeneratorList() ) {
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx:237:bool AlgConfigPool::LoadTuneGeneratorList(void)
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx:244:  string generator_list_file = utils::xml::GetXMLFilePath("TuneGeneratorList.xml");
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx:247:  string key_prefix = "TuneGeneratorList";
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx:603:Registry * AlgConfigPool::TuneGeneratorList( void ) const
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx:607:  key << "TuneGeneratorList/Default";
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/EventGen/EventGeneratorListAssembler.cxx:51:    AddTopRegistry( AlgConfigPool::Instance() -> TuneGeneratorList(), false ) ;
+F=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Framework/Algorithm/AlgConfigPool.cxx
+105-  if(!this->LoadMasterConfig()) return false;
+106-
+107-  //-- read Tune Generator List for the tune, if available
+108:  if( ! LoadTuneGeneratorList() ) {
+109-
+110-    SLOG( "AlgConfigPool", pWARN ) << "Tune generator List not available" ;
+111-  }
+112-
+113-  //-- loop over all XML config files and read all named configuration
+114-  //   sets for each algorithm
+115-  map<string, string>::const_iterator conf_file_iter;
+116-
+117-  for(conf_file_iter = fConfigFiles.begin();
+118-                  conf_file_iter != fConfigFiles.end(); ++conf_file_iter) {
+119-
+120-    string alg_name    = conf_file_iter->first;
+--
+234-  return true ;
+235-}
+236-//____________________________________________________________________________
+237:bool AlgConfigPool::LoadTuneGeneratorList(void)
+238-{
+239-// Load the common parameter list
+240-//
+241-  SLOG("AlgConfigPool", pINFO) << "Loading Tune Gerator List";
+242-
+243-  // -- get the user config XML file using GXMLPATH + default locations
+244:  string generator_list_file = utils::xml::GetXMLFilePath("TuneGeneratorList.xml");
+245-
+246-  // fixed key prefix
+247:  string key_prefix = "TuneGeneratorList";
+248-
+249-  // load and report status
+250-  return this->LoadRegistries(key_prefix, generator_list_file, "tune_generator_list");
+251-}
+252-//____________________________________________________________________________
+253-
+254-bool AlgConfigPool::LoadSingleAlgConfig(string alg_name, string file_name)
+255-{
+256-// Loads all configuration sets for the input algorithm that can be found in
+257-// the input XML file
+258-
+259-  // use the algorithm name as the key prefix
+--
+600-  return this->FindRegistry(key.str()) ;
+601-}
+602-//____________________________________________________________________________
+603:Registry * AlgConfigPool::TuneGeneratorList( void ) const
+604-{
+605-
+606-  ostringstream key;
+607:  key << "TuneGeneratorList/Default";
+608-
+609-  return this->FindRegistry(key.str());
+610-}
+611-//____________________________________________________________________________
+612-const vector<string> & AlgConfigPool::ConfigKeyList(void) const
+613-{
+614-  return fConfigKeyList;
+615-}
+== the pilots' gevgen logs: generator list lines
+--- G18_10a_02_11b
+87:1793150180 INFO RunOpt : [n] <RunOpt.cxx::BuildTune (94)> : Building tune G18_10a_02_11b
+neg-xsec: 0
+--- AR23_20i_00_000
+87:1793150183 INFO RunOpt : [n] <RunOpt.cxx::BuildTune (94)> : Building tune AR23_20i_00_000
+neg-xsec: 129
+== G18_10a_02_11b events 10000 CC 7292 NC 2708 missing columns []
+  qel       all    938  CC    663  NC    275
+  mec       all    238  CC    203  NC     35
+  res       all   2254  CC   1592  NC    662
+  dis       all   6495  CC   4785  NC   1710
+  coh       all     60  CC     40  NC     20
+  dfr       all     15  CC      9  NC      6
+  imd       all      0  CC      0  NC      0
+  imdanh    all      0  CC      0  NC      0
+  nuel      all      0  CC      0  NC      0
+  em        all      0  CC      0  NC      0
+  charm     all    103  CC    103  NC      0
+  singlek   all      0  CC      0  NC      0
+  amnugamma all      0  CC      0  NC      0
+  events with no process flag 0 with two or more 103
+== AR23_20i_00_000 events 10000 CC 7400 NC 2600 missing columns []
+  qel       all    902  CC    661  NC    241
+  mec       all    320  CC    283  NC     37
+  res       all   2284  CC   1637  NC    647
+  dis       all   6432  CC   4780  NC   1652
+  coh       all     52  CC     30  NC     22
+  dfr       all     10  CC      9  NC      1
+  imd       all      0  CC      0  NC      0
+  imdanh    all      0  CC      0  NC      0
+  nuel      all      0  CC      0  NC      0
+  em        all      0  CC      0  NC      0
+  charm     all     88  CC     88  NC      0
+  singlek   all      0  CC      0  NC      0
+  amnugamma all      0  CC      0  NC      0
+  events with no process flag 0 with two or more 88

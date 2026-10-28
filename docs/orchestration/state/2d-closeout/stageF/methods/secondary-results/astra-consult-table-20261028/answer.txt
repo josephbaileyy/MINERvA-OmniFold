@@ -1,0 +1,73 @@
+1. **Your recommendation:** Choose **C: print A’s sixteen-row result table in the paper, and deposit the cell definitions, measured vector, reported covariance and correlation matrix together in a versioned, machine-readable repository cited by the article; retain the companion note for detailed documentation.**
+
+2. **The standard case.**
+
+   PRD neutrino measurements commonly present differential cross sections graphically, summarize generator comparisons with χ², and provide numerical results and covariance externally. This serves two purposes: figures communicate the physics, while downloadable data support quantitative reuse. Large printed tables are often an inefficient substitute for either.
+
+   Your survey supports that practice: its reported counts—zero per-bin result tables, five χ² tables, two bin-edge tables and one integrated-result table—favor external numerical releases as an established convention. They do **not** establish a prohibition on result tables. A selected seven-paper corpus cannot determine what is appropriate for every measurement.
+
+   For clarity, the surveyed papers are, using abbreviated titles:
+
+   - MINERvA, *Inclusive charged-current cross sections versus muon kinematics at approximately 6 GeV*, [arXiv:2106.16210](https://arxiv.org/abs/2106.16210).
+   - MINERvA, *Inclusive charged-current scattering with low three-momentum transfer*, [arXiv:2110.13372](https://arxiv.org/abs/2110.13372).
+   - MINERvA, *Double-differential inclusive charged-current cross sections at approximately 3.5 GeV*, [arXiv:2002.12496](https://arxiv.org/abs/2002.12496).
+   - T2K, *Simultaneous oxygen and carbon charged-current measurements without final-state pions*, [arXiv:2004.05434](https://arxiv.org/abs/2004.05434).
+   - T2K, *Transverse kinematic imbalance in single-pion production with at least one proton*, [arXiv:2102.03346](https://arxiv.org/abs/2102.03346).
+   - MicroBooNE, *Multidifferential quasielastic-like neutrino–argon measurements*, [arXiv:2301.03700](https://arxiv.org/abs/2301.03700).
+   - MicroBooNE, *Nuclear effects using generalized kinematic imbalance variables*, [arXiv:2310.06082](https://arxiv.org/abs/2310.06082).
+
+   **The survey’s assertion that these papers all report 44–205 bins needs correction.** T2K’s arXiv:2102.03346 reports three distributions with **5, 4 and 3 cross-section bins**; Table IV gives those χ² degrees of freedom explicitly. It distinguishes reconstructed fit bins from measured cross-section bins and directs readers to a release containing values and covariance. Thus, external numerical reporting has a few-bin precedent within your own corpus. I verified this discrepancy, but have not independently reproduced every caption count. [T2K paper, Sections V, VII and VIII](https://arxiv.org/pdf/2102.03346).
+
+   Conversely, T2K’s *Measurement of the inclusive muon-neutrino charged-current cross section on carbon in the near detector*, **arXiv:1302.4908**, published in **PRD 87, 092003**, prints **20 forward-bin cross sections and uncertainties in Table XV**, followed by a fractional covariance matrix in Table XVI. This is a concrete precedent near your result’s size. Small measurements have been published both ways. [T2K paper](https://arxiv.org/pdf/1302.4908).
+
+   For ML unfolding, ATLAS’s *Simultaneous unbinned measurement of twenty-four Z+jets observables*, **arXiv:2405.20041**, publishes an OmniFold measurement with an external release of weighted events and uncertainty variations. It is a **PRL paper, not a PRD precedent**. Its relevance is that an unbinned result needs an appropriate digital representation; it does not establish that a sixteen-component reported result should be omitted from its paper. [ATLAS paper and release references](https://arxiv.org/html/2405.20041v2).
+
+   APS archives article supplements and expects the article to be understandable without them. That permits numerical supplements when figures adequately communicate the result; it does not require every measured number in print. Separately, current APS data guidance prefers established repositories over supplements for research-data sharing and requires a data availability statement. These are distinct questions: **presentation in the article** and **preservation of reusable data**. [PRD author instructions](https://journals.aps.org/prd/authors), [APS data guidance](https://journals.aps.org/authors/data-availability-statements).
+
+3. **Our case.**
+
+   **The strongest reason for the table is the combination of a small result and its central role.** This is a measurement paper led by sixteen cell integrals. Yet the current presentation gives readers generator ratios and goodness-of-fit summaries without directly presenting the absolute measurement. Those comparisons are valuable, but they leave the result’s numerical scale inaccessible within the article.
+
+   **The incremental space cost is modest and weighs strongly toward printing it.** B already commits to sixteen rows containing labels and five sets of boundaries. A adds only two columns: \(f\) and its relative uncertainty. There is little editorial economy in printing the geometry while withholding the measured contents.
+
+   **The irregular cells strengthen that argument moderately.** Connecting each value directly to its five-dimensional box reduces cross-referencing. Because these are cell integrals, the caption must distinguish them from differential densities. Explain whether each “100” boundary denotes overflow or an actual finite limit; do not silently replace finite boundaries with infinity.
+
+   **The correlations strongly favor a complete digital release, but do not argue against the table.** Marginal uncertainties remain meaningful descriptions of individual cells. They are insufficient for joint inference. The reported χ² sensitivity makes that limitation especially consequential.
+
+   **The public note mitigates availability concerns but does not settle presentation.** The values already exist publicly; they are not hidden. Nevertheless, requiring readers to consult a 130-page note for the sixteen headline values is avoidable.
+
+   **The undecided release is a major weakness of B as presently proposed.** A candidate package that is not deposited and currently emphasizes other analysis products is not yet a release of this measurement. The 8,000-word target supplies no compelling reason, on the facts given, to omit two result columns.
+
+4. **What a reader loses.**
+
+   | Option | What the reader loses | Likely referee request |
+   |---|---|---|
+   | **A** | Quantitative reuse remains cumbersome if covariance is available only through the note, particularly as a rounded table or image. The printed result alone cannot reproduce correlated comparisons. | Supply downloadable values and covariance; identify the covariance behind the uncertainties and χ²; explain cell boundaries and units. |
+   | **B** | The article alone lacks the absolute sixteen-value result. Readers must leave it even to inspect the measured scale in a particular cell. With a complete release, there need be no loss of numerical information overall. | Provide the actual supplemental dataset and an explicit pointer. Given the present ratio-only display, a referee may also request an absolute-result figure or the compact result table. |
+   | **C** | Readers still need external data for correlated calculations; the article gains two table columns and authors must maintain agreement between printed and digital versions. | Demonstrate that the release matches the table and reproduces the reported comparisons. |
+
+   These are editorial judgments about likely requests, not claims that PRD mandates a particular table. B is defensible practice once implemented properly; I find it the weaker choice for this manuscript.
+
+5. **The covariance.**
+
+   Put the full numerical **\(16\times16\) reported covariance** alongside the measured vector and cell definitions in the same persistent release. Include the correlation matrix for convenience. Keep the note’s explanation and matrix presentation, with precise pointers from the paper.
+
+   In the paper, take the uncertainty column from **\(C_{\mathrm{total}}+C_{\mathrm{resp}}\)**, the reported construction identified in `note-table.txt`:
+
+   \[
+   u_i(\%)=100\,\frac{\sqrt{(C_{\mathrm{total}}+C_{\mathrm{resp}})_{ii}}}{f_i}.
+   \]
+
+   Label these as marginal uncertainties and explicitly state that quantitative comparisons require the full covariance. The two alternative uncertainty columns can remain in the note.
+
+   The release should specify cell ordering, units, covariance convention and sufficient precision to reproduce the reported χ² calculations. Identify the eight-cell subset used for the restricted generator comparison. A correlation matrix plus sufficiently precise standard deviations is mathematically sufficient to reconstruct covariance, but readers should not have to reconstruct it from rounded printed entries.
+
+   There is no compelling reason to print all matrix entries in the article. Their principal purpose is computational, whereas the sixteen-row table directly communicates the measurement.
+
+6. **Any condition under which the recommendation would change.**
+
+   A firm commitment to complete supplemental data would make **B substantially more defensible**, but would not by itself make me prefer it: the small incremental cost of the result columns remains.
+
+   I would accept B if a real layout constraint made the combined table unwieldy, the paper displayed the absolute cell measurements clearly in a figure, and a complete, persistent numerical release was available. Small-bin external-release precedents support that choice.
+
+   If supplemental material is declined but the repository release is completed, **C remains my recommendation**. If both routes are declined, **A is preferable to B**, but the unresolved delivery of reusable covariance remains a separate defect. An in-paper table cannot compensate for that omission.
