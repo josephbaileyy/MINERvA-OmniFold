@@ -204,3 +204,49 @@ as a flagged item. Both sites are named, so a fix reaches both.
 5. **Q5:** the result table carries the reported σ only (my recommendation, the review's "compact"), or all three σ
    columns as in the note.
 6. **Q6:** the note inconsistency to n4 (my recommendation), or into r19's scope.
+
+## The director's rulings (2026-10-27, after 12a65d89)
+
+**Approved.** Start with step 0, then b1. Variant A is built first. The director puts B and O1–O6 to Joseph.
+
+1. **Q1, Table I: fold it into the text.**
+   - Each of the nine rows' facts gets a ledger probe where it prints.
+   - The sixteen-cell result's "row" is carried by Sec. I's lead and the limitations paragraph.
+   - `fived16/scope-sites.tsv` rows 147–151 are updated in the same commit.
+2. **Q2, the section and subsection part of register-method HANDOFF step 3 is superseded for r19.**
+   - It is superseded by DECISION-20261025 item 1 and #431 item 3; a decision record outranks a handoff.
+   - The label part stays, narrowed:
+     - A removes no label and adds `sec:cov16` and `tab:result16`;
+     - in B only VI's seven labels go, each in-paper `\ref` becoming an `\nsec` pointer;
+     - in both, no unresolved reference, and every xr pointer into the note resolves.
+   - The note's text and label numbers are unchanged.
+   - **The grep** (all 28 files `main_note.tex` inputs, comments stripped):
+     - `main_note.tex` has no `\externaldocument`, so the note cannot `\ref` a paper label;
+     - no note `\ref` names a label defined only in the paper. Five label names exist in both documents
+       (`sec:closure`, `sec:coverage`, `sec:intro`, `sec:method`, `sec:validation`), and each resolves inside its own
+       document;
+     - every hard-coded "Sec./Table/Fig. N" in the note cites the published measurement (Ref. MINERvA:2021owq),
+       **except one: `app_release.tex:29`, "for the article's Figs.~1--3"** (protected text). In both variants,
+       Figs. 1–3 stay `fig:validation`, `fig:bkg-residual` and `fig:deformation`, in that order, and each step checks
+       the figure order from `main_paper.aux`.
+3. **Q3:** O1–O6 go to Joseph as independent items, each defaulting to "stays, shortened". They are not bundled with B.
+4. **Q4: add nothing new.**
+   - T3's consequence clause prints only where each half is already printed text in the paper or the note,
+     ledger-probed with its site. Otherwise that half is dropped.
+   - Whether the final uncertainty accounts for the rounding instability goes to Joseph in (d) as an open item.
+5. **Q5: one σ column** ($C_{\mathrm{total}}+C_{\mathrm{resp}}$), with a pointer to the note's `tab:fived16-cells` for
+   the split.
+6. **Q6: to n4.** The two sites, `sec_execsummary.tex:6` and `sec_summary.tex:4`, are named, with `main_note.tex:72`
+   beside them, and flagged in (d).
+7. **T2.** A Cov. column added to Table IV would be presentation only if every entry came from `fd_f0b_readout.json`.
+   (Table IV already has a "Cov." column, at `paper_body.tex:279`, so none is added.)
+8. **Step 0's commit message** gives the word-multiset result and the gate outcomes.
+9. **The protected text that B makes stale** goes to Joseph in (d), unedited: the abstract's "all reject", Data
+   Availability's "of the joint tests", and the title.
+
+**Added by the lane in step 0, for the director's information:**
+- one more label, `sec:fd16`, on IV G (the fake-data study). Without it, the refs that point the reader to the
+  fake-data tests (`:23`, `:177`, `:335`, `:464`, today `\ref{sec:result16}`) would land on the result section V,
+  once `sec:result16` labels that section. It removes nothing.
+- the FIVED16 markers: `fived16/check_ledger.py` rule 7 forbids hand-typed numerals between them, so every piece of a
+  FIVED16 block that moves keeps a BEGIN/END pair.
