@@ -37,7 +37,7 @@ from pathlib import Path
 FILES = {"P": "paper_body.tex", "M": "main_paper.tex",
          # the note files r19 adds to (N1-N4): a changed sentence there needs a row too (J, Q, Z ids)
          "J": "sec_joint.tex", "Q": "sec_5d.tex", "Z": "app_codebase.tex"}
-NOTE_ADDABLE = {"fig:coverage-5d-paper"}
+NOTE_ADDABLE = {"fig:coverage-5d-paper", "app:coverage-fig"}  # N3; F3 (director 2026-10-28)
 
 
 def printed(src):

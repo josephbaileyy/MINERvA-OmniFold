@@ -264,3 +264,13 @@ intermediate, and is not merged to main, made into a rater copy or measured for 
   - "its domain" in VI C.
 - **What follows:** r19's baseline stays `00428d10` / `9df8f748`, and the pairwise and P1 measurements run only on
   the finished B.
+
+**Open items for the n4 note round,** recorded here, not fixed in r19:
+1. **The note's inconsistency on its main result:**
+   - `main_note.tex:72` says "Its principal result is a cross section in five observables";
+   - `sec_execsummary.tex:6` says "The main results are the validation findings";
+   - `sec_summary.tex:4` says the same, a second site.
+2. **"Calibration" in the interval sense** (second review F2; director 2026-10-28). N1 defines a test's calibration
+   beside interval coverage. r19 changed `sec_5d.tex:8` to "Coverage asks". These six sites still use the interval
+   sense: `sec_5d.tex:90`, `sec_5d.tex:179`, `sec_validation.tex:4`, `sec_pet_campaigns.tex:61`,
+   `sec_pet_campaigns.tex:119` and `app_statmethods_nd.tex:62`.
