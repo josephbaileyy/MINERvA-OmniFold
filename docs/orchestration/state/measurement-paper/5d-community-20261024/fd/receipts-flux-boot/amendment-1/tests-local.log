@@ -1,10 +1,10 @@
-2026-10-28T01:09:20Z
-d8f706fca741c78e5903abbd4f73d3eabd89eaad
-2be933e14b8ea055fb63750f63d57024849f301a0cec8ad1e43aa02324d46784  ../fd_flux_boot.py
-4648b9d18f43fb0c39f73c1237ba43217fa568a2a3da7e2d5adee9768c5afae1  test_fd_flux_boot.py
+2026-10-28T04:26:43Z
+a7b288ea51df2d4be7f1dfe7b0cc2453c070f4a7
+f82bd4f461ac05eb6080da403a94a06dc7e9ba5c169bf3000b678178befbbbd9  ../fd_flux_boot.py
+00b3ba426b5aefa68a36ed5790d698b2576968430876a3febb339c753d020614  test_fd_flux_boot.py
 numpy 1.26.4 blas openblas64 0.3.23.dev
 $ python3 -B -m unittest test_fd_flux_boot test_fd_g_followup test_fd_g_diag test_fd_g_compare test_s1_assemble test_s1_scripts_isolated
-Ran 204 tests in 71.235s
+Ran 207 tests in 84.396s
 OK
 rc=0
-2026-10-28T01:10:33Z
+2026-10-28T04:28:08Z
