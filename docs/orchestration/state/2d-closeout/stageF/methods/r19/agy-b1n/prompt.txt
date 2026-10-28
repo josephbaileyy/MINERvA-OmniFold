@@ -1,0 +1,17 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking proposed rewordings of a physics paper and of its companion analysis note. Each numbered pair has a BEFORE passage, whose content is accepted as correct, and an AFTER passage, a proposed rewording of it. For each pair, compare AFTER with BEFORE only, and say:
+(a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+(b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+(c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds.
+
+Context:
+- Section, figure and table numbers and cross-reference forms differ between the paper and the note, and between the two versions of the paper. Ignore numbering.
+- Q1: the paper's simulation-calibrated tests of generator predictions moved to the companion note. The detailed statements about them in BEFORE (the hybrid-null definition, the calibration model and the familywise error control) are stated in the note and do not count as dropped. The qualifiers that AFTER keeps must be supported by BEFORE.
+- Q6 to Q9: AFTER is the companion note's text, which receives passages that leave the paper. In Q6, "this section" in AFTER is the note's section on those tests.
+Every other omission counts.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END

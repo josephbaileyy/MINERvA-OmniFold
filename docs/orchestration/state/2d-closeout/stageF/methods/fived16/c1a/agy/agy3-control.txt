@@ -1,0 +1,16 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the test "confirms interval widths", which BEFORE explicitly contradicts ("cannot test the intervals' width") and for which the study is not citable.
+
+Q2: VERDICT: DIFFERS
+DETAIL: By referring to "two held-out truths" without specifying that they are GENIE v3 tunes, AFTER states the scope of the truths more broadly than BEFORE supports and is ambiguous in a way that could mislead a reader about what models were tested.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER accurately summarizes the bias test at the two held-out GENIE v3 truths, correctly reporting that bias is below reported uncertainty across all cells while explicitly disclaiming coverage and width validation.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that "[t]hey are two independent tests", which directly contradicts BEFORE's finding that the two truths are not independent and asserts a claim the study is explicitly not citable for.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER reports "1 of 4 records with p<0.01", presenting a number that contradicts BEFORE's explicit record tally of "0 of 4 records with p < 0.01".
+
+END

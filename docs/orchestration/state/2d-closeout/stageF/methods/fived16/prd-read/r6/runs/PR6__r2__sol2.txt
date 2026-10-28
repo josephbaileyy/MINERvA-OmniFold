@@ -1,0 +1,13 @@
+A1: VERDICT: SHORTEN
+SHORTER-FORM: Interval coverage has not been validated; bias tests with two held-out GENIE v3 tunes find estimator bias below the reported uncertainty in every cell.
+REASON: This retains the abstract’s result and limitation while removing jargon and a redundant qualification.
+A2: VERDICT: SHORTEN
+SHORTER-FORM: Interval coverage has not been validated; bias tests with two held-out GENIE v3 tunes find estimator bias below the reported uncertainty in every cell.
+REASON: The shorter wording gives the note’s abstract the same clear, concise statement of the result and limitation.
+H1: VERDICT: SHORTEN
+SHORTER-FORM: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each reweights the simulated truth using its shape ratio to GENIE CV, constructed as for the C_model components. The simulated detector response is not probed. For each tune, 20 Poisson pseudo-experiments and a noise-free closure are compared with the truth using the full reported covariance. Both tunes satisfy the bias criteria: the pseudo-experiment means give χ²=11.84 (p=0.76) and 16.86 (p=0.39), respectively, with |z|≤0.65 in every cell of the means and closures. The tunes share a quasielastic cross-section model; G18_10a_02_11b and the GENIE + MEC component of C_model also use Valencia-family MEC models. These tests provide partial evidence and are not independent. Omitting that C_model component gives χ²=15.15 (p=0.51) and 24.60 (p=0.077), respectively, as a descriptive comparison. The tests assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested.
+REASON: The technical detail suits a fake-data section, but tighter syntax improves readability and removes repetition.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revision replaces conversational language with restrained, precise prose appropriate to a measurement paper’s introduction.
+END

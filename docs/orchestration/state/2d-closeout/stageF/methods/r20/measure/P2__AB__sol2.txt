@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B improves sentence flow by stating the binned-unfolding comparison before describing its conditions, avoiding A’s heavily front-loaded sentence.
+2. “Additional discrimination beyond matched coarse projections” is more precise and informative than A’s “gain over matched coarse projections.”
+3. B modestly tightens the iteration-choice and fake-data passages, giving otherwise nearly identical prose a slightly more polished editorial finish.

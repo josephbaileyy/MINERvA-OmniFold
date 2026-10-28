@@ -1,0 +1,15 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately reports that the estimator's bias is below the reported uncertainty in every cell at the two held-out truths, and explicitly notes that the test cannot validate the intervals' width or coverage.
+
+Q2: VERDICT: DIFFERS
+DETAIL: By omitting the qualification that Poisson pseudo-experiments cannot test interval width, the passage can be read as validating the intervals' width or coverage via the bias test, which the study is not citable for, quoting "; a bias test at two held-out GENIE v3 truths finds the estimator's bias below the reported uncertainty in every cell".
+
+Q3: VERDICT: DIFFERS
+DETAIL: In addition to omitting the disclaimer that the test cannot validate interval width, the passage misleadingly refers to "the result's intervals" when the study evaluated estimator bias on truth-level reweightings without probing the data result or printing unfolded $f$, quoting "the result's intervals" and "; a bias test at two held-out GENIE v3 truths finds the estimator's bias below the reported uncertainty in every cell".
+
+Q4: VERDICT: SAME
+DETAIL: AFTER accurately reports the implementation, sample sizes, numerical $\chi^2$ and $p$-values, $|z|$ bounds, descriptive leave-out variant, and non-independence of the two truths, while explicitly stating that it tests bias and cannot test interval width.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER provides a complete and faithful accounting of the readout's records, covariance grading, listing criteria tallies, descriptive variants, and Control 9 replication, while correctly stating that the test cannot validate interval width and does not probe detector response.
+END

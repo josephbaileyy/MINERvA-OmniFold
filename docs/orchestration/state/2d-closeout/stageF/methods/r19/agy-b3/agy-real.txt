@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that "a box that reaches it holds every signal event above its lower edge on that axis", which is unsupported by BEFORE and misleadingly overbroad because a 5D cell remains bounded along the other four kinematic axes.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER broadens the singular "the comparison" to plural "the comparisons below", which states the comparison scope more broadly than BEFORE and misleadingly points "below" in the paper rather than to the companion note where the generator tests moved.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER preserves the exact meaning of BEFORE, appropriately clarifying "external null distributions" and attributing the calibrated tests and reference to the companion note.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER retains all findings and essential qualifiers concerning the conditional rejection of hybrid nulls, fine-grid residual bounds, and calibration validity while updating the reference to the companion note.
+
+END

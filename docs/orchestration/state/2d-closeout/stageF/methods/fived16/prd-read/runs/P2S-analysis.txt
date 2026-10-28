@@ -1,0 +1,35 @@
+sol2    ivii   AB r1  winner=(i) slot=A strength=1 | A’s “The same change” makes the comparison more explicit and easier to follow.
+sol2    ivii   AB r2  winner=(i) slot=A strength=1 | A’s separate sentences make the comparison easier to follow without excessive compression.
+sol2    ivii   BA r1  winner=(i) slot=B strength=2 | B separates the numerical comparisons into direct sentences, improving readability.
+sol2    ivii   BA r2  winner=(i) slot=B strength=2 | Separate sentences make the numerical comparison easier to follow and avoid A’s compressed use of “against.”
+sol2    iviii  AB r1  winner=(i) slot=A strength=2 | Three focused sentences give the final paragraph a clearer structure and more controlled pace.
+sol2    iviii  AB r2  winner=(i) slot=A strength=2 | A separates the three findings into concise sentences, making the comparisons easier to follow.
+sol2    iviii  BA r1  winner=(i) slot=B strength=2 | Three focused sentences make the final paragraph easier to follow than A’s single, heavily coordinated sentence.
+sol2    iviii  BA r2  winner=(i) slot=B strength=2 | The final paragraph separates three findings into clear sentences, improving readability and pacing.
+sol2    iiviii AB r1  winner=(ii) slot=A strength=1 | A’s final sentence presents its comparison in a compact, readily parsed form.
+sol2    iiviii AB r2  winner=(ii) slot=A strength=2 | A’s final sentence has a single, clearly defined focus and a length appropriate to concise PRD prose.
+sol2    iiviii BA r1  winner=(ii) slot=B strength=1 | B’s final paragraph presents the numerical comparison in a concise sentence that is easier to parse.
+sol2    iiviii BA r2  winner=(ii) slot=B strength=2 | B’s final paragraph is more concise and easier to read in a single pass.
+gemini  ivii   AB r1  winner=(i) slot=A strength=2 | Document A uses complete, grammatically sound declarative sentences, whereas Document B trails off into an elliptical, dangling comparative fragment.
+gemini  ivii   AB r2  winner=(i) slot=A strength=2 | Document B relies on an unidiomatic, journalistic use of "against" to denote numerical comparison, which also creates an awkward stylistic clash with 
+gemini  ivii   BA r1  winner=(i) slot=B strength=2 | Document A uses an unidiomatic and syntactically awkward comparative construction (", against at most 18 % for..."), whereas Document B replaces it wi
+gemini  ivii   BA r2  winner=(i) slot=B strength=2 | Document B replaces the telegraphic and awkward fragment ", against at most 18 % for..." with a grammatically complete and parallel sentence that clea
+gemini  iviii  AB r1  winner=(i) slot=A strength=2 | Document A divides three distinct quantitative comparisons into clear, standalone sentences rather than combining them into a single, cumbersome run-o
+gemini  iviii  AB r2  winner=(i) slot=A strength=2 | Document A divides the quantitative sensitivity tests into distinct, well-paced sentences rather than compressing disparate numerical comparisons into
+gemini  iviii  BA r1  winner=(i) slot=B strength=2 | Document B divides an unwieldy, compound-complex run-on sentence into three concise, logical statements typical of Physical Review style.
+gemini  iviii  BA r2  winner=(i) slot=B strength=2 | Document B decomposes the cumbersome, 54-word run-on sentence in Document A into three clear, well-paced statements that significantly improve readabi
+gemini  iiviii AB r1  winner=(ii) slot=A strength=2 | Document B turns a self-contained sentence into an overlong, unwieldy run-on by tacking a second, distinct statistical result onto the end with a loos
+gemini  iiviii AB r2  winner=(ii) slot=A strength=2 | Document A avoids the unwieldy, run-on construction of Document B by presenting the sensitivity comparison as a crisp, self-contained sentence.
+gemini  iiviii BA r1  winner=(ii) slot=B strength=2 | Document A creates an unwieldy run-on sentence by awkwardly stitching two distinct sensitivity checks into a single overextended construction.
+gemini  iiviii BA r2  winner=(ii) slot=B strength=2 | Document B avoids the unwieldy, sprawling compound sentence of Document A that awkwardly conjoins two distinct sensitivity analyses into a single run-
+
+gemini  iiviii (ii) 4/4
+gemini  ivii   (i) 4/4
+gemini  iviii  (i) 4/4
+sol2    iiviii (ii) 4/4
+sol2    ivii   (i) 4/4
+sol2    iviii  (i) 4/4
+
+sol2 total wins: {'i': 8, 'ii': 4, 'iii': 0} of 8 appearances each
+gemini total wins: {'i': 8, 'ii': 4, 'iii': 0} of 8 appearances each
+slot wins: {('sol2', 'A'): 6, ('sol2', 'B'): 6, ('gemini', 'A'): 6, ('gemini', 'B'): 6}

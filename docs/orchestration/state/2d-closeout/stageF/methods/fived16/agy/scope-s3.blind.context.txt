@@ -1,0 +1,39 @@
+CONTEXT: the consolidation's fact-ledger rows for these passages. Each N: probe is the exact home text, shown inside its full paragraph of the delivered note.
+
+ROW F3 (passage sec_5d:4): fact: 'the one five-axis covariance' scoped
+
+
+ROW L3 (passage sec_5d:4): fact: chapter roadmap adds the 16-cell chapter
+
+
+ROW AMB71 (passage sec_5d:37): fact: validation table: 'quoted total sigma' named
+
+
+ROW AMB72 (passage sec_5d:51): fact: 'quoted total uncertainty' named (bias_vs_adopted = adopted C_EW)
+
+
+ROW A6 (passage sec_5d:51): fact: negative weights not used for config-(a) 5D; used by the 16-cell result
+
+
+ROW C3 (passage sec_5d:77): fact: regularization bias scoped to config (a); C_model stated; FD pointer
+
+
+ROW AMB80 (passage sec_5d:95): fact: 'quoted total uncertainty' named
+
+
+ROW B5 (passage sec_5d:95): fact: assessment's estimator (e) gives the 16-cell result; its uncertainties used for none
+
+
+ROW E2 (passage sec_5d:135): fact: RD1-RD3 met no target; 16-cell = H2 after purity merge, total uncertainties (pointer)
+
+
+ROW AMB85 (passage sec_5d:146): fact: 'the 5D measurement study' named as the precision study
+
+
+ROW AMB87 (passage sec_5d:146): fact: 'No reporting definition' scoped to the three tested
+
+
+ROW AMB95 (passage sec_5d:244): fact: covariance subsection heading named
+
+
+ROW AMB103 (passage sec_joint:5): fact: 'used elsewhere in this note' named

@@ -1,0 +1,15 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately reflects the study as a bias test at two held-out GENIE v3 truths that does not test interval widths, fully supports the statement that the bias is below the reported uncertainty in every cell, and explicitly states that interval coverage has not been validated. It contains no unsupported claims, cannot be read as an un-citable use, and is not misleadingly ambiguous.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER states only facts supported by BEFORE—that interval coverage has not been validated and that the bias test finds estimator bias below the reported uncertainty in every cell (max |bias|/σ ≤ 0.644 across all records). It explicitly disclaims coverage validation, describes the measurement accurately as a bias test, and does not claim any of the uses the study is not citable for.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER states something BEFORE does not support by attributing the intervals to "the result's intervals", whereas the study was blind to the measurement result and printed no absolute cell values or f under ruling 6. Stating that coverage of "the result's intervals" has not been validated is ambiguous and misleads the reader about what was tested.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that each tune reweights the simulated truth "using the C_model procedure and the simulation's detector response", which BEFORE does not support because the truths are applied as truth-level reweights and the detector response is not used or probed. This wording is ambiguous and can be read as a test of the detector response, a use the study is explicitly not citable for.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER faithfully and comprehensively reports the facts, numerical values, and descriptors of the study from BEFORE, including the exact χ² and |z| statistics, the descriptive tests, and the reference tallies. It fully adheres to all limitations by explicitly noting that the tunes are partial evidence, are not independent tests, cannot test interval widths, and do not probe the detector response.
+END

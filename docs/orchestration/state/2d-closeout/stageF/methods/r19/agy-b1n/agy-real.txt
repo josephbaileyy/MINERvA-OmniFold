@@ -1,0 +1,28 @@
+Q1: VERDICT: SAME
+DETAIL: The qualifiers kept by AFTER ("hybrid null hypotheses", "calibrated within the implemented simulation model", and "not physical exclusions of the generators") are supported by BEFORE, while the detailed statements omitted from the paper are stated in the companion note and do not count as dropped per the scope instructions.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported phrase "target 3 difference" and drops the statement that the generator tests do not correct this difference, substituting "the comparison of Sec. V A".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER states that the passing cells "are the joint cells", a designation not supported by BEFORE, and drops "The generator tests use".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that "Its covariance is given in Sec. IV A", which is not supported by BEFORE, and introduces an ambiguous singular pronoun ("Its") with no clear singular antecedent.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that Table I summarizes the validation findings (omitting "; Table I summarizes the validation findings"), which counts as an omission under the specification that every other omission counts.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops the facts explaining why truth-level comparisons are advantageous, specifically omitting ", which is what makes the two-dimensional result reusable and the higher-dimensional central values usable for qualitative comparison, and the sixteen-cell result usable for the comparison of Sec. V A."
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER introduces an unsupported definition with an undefined antecedent by stating "That rate is the probability of falsely rejecting at least one true hypothesis among them."
+
+Q8: VERDICT: SAME
+DETAIL: The text, thresholds, numbers, and statistical qualifiers are identical; the omission of the figure label "FIG. 4." and the renumbering/relocation of the cross-reference to "(§9.5)" are ignored per instructions.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds unsupported statements about iteration behavior ("it continues falling slowly, while the q3 residual grows with iterations") and drops the interpretation of regularization bias and the finding that "a larger classifier improves the reconstruction-level fit without reducing it."
+
+END

@@ -1,0 +1,22 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below are passages of a manuscript on a neutrino cross-section measurement and of its companion technical note, converted to plain text, followed by numbered proposed changes. Each change replaces an OLD passage with a NEW one. A new result has been added to the paper, and most changes scope existing statements to the product they describe.
+
+For each proposed change, rule from the language, register and what PRD readers expect:
+- ACCEPT: the NEW text should replace the OLD;
+- DENY: keep the OLD text;
+- SHORTEN: accept the change, but in a shorter form (give it).
+Do not judge whether a statement is true or whether the analysis is sound.
+
+Then answer the LENGTH question: is each abstract's length, with the changes applied, acceptable for its document (a PRD article; a long companion technical note)?
+
+Answer in exactly this format, one block per change, in the order listed:
+<id>: VERDICT: <ACCEPT, DENY or SHORTEN>
+SHORTER-FORM: <the shorter form, or ->
+REASON: <one sentence>
+
+Then:
+LENGTH-PAPER: <ACCEPTABLE or TOO-LONG>
+LENGTH-NOTE: <ACCEPTABLE or TOO-LONG>
+REASON: <one sentence>
+END

@@ -1,0 +1,6 @@
+Q1: VERDICT: SAME
+DETAIL: Accounting for the intentional removal of the self-pointer sentence and treating the note's calibrated tests separately, AFTER preserves the meaning, facts, and limitations of BEFORE without introducing unsupported claims or misleading ambiguity.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states "gain over" rather than "discrimination beyond", which makes a broader and unsupported claim that ambiguously suggests a lack of general precision or performance improvements rather than model-discriminating power in hypothesis testing.
+END

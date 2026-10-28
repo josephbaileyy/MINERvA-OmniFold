@@ -1,0 +1,42 @@
+CONTEXT: the consolidation's fact-ledger rows for these passages. Each N: probe is the exact home text, shown inside its full paragraph of the delivered note.
+
+ROW AMB108 (passage sec_summary:19): fact: regularization-bias location scoped to sec:5d
+
+
+ROW D1 (passage sec_summary:29): fact: purity bias kept by the config-(a) central value
+
+
+ROW D2 (passage sec_summary:29): fact: 16-cell result uses the refined subtraction (pointer)
+
+
+ROW C1 (passage sec_summary:46): fact: regularization bias scoped to config-(a); C_model stated; FD pointer
+
+
+ROW AMB113 (passage sec_summary:46): fact: 'central values only' kept; 16-cell clause added
+
+
+ROW E1 (passage sec_summary:46): fact: precision-study RD1-RD3 met no target; 16-cell = H2 after purity merge (pointer)
+
+
+ROW F2 (passage sec_summary:46): fact: 'The one' covariance scoped to config (a)
+
+
+ROW G2 (passage sec_summary:46): fact: Stage G sentence scoped to config-(a) covariance; pointer to sec:fived16-gen
+
+
+ROW AMB118 (passage sec_summary:78): fact: 'the choice of covariance' named
+
+
+ROW B1 (passage sec_intro:28): fact: 16-cell result added to the list of refined-subtraction uses
+
+
+ROW A2 (passage sec_intro:28): fact: purity statement scoped to the config-(a) 5D central value and its five-axis covariance
+
+
+ROW L2 (passage sec_intro:35): fact: strategy list adds the 16-cell chapter
+
+
+ROW AMB30 (passage sec_intro:37): fact: 'central values only' kept; 16-cell result has total uncertainties, coverage not validated
+
+
+ROW F1 (passage sec_intro:67): fact: roadmap: config-(a) covariance named; 16-cell row added

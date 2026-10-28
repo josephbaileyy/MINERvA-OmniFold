@@ -1,0 +1,7 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "that bias has the same origin", whereas BEFORE explicitly qualifies that "whether that bias has the same origin is not established".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states "gain over" rather than the companion note's supported finding of "discrimination beyond", which is broader and ambiguous as "gain" could mislead a reader into inferring improvements in statistical precision or sensitivity rather than model discrimination.
+
+END

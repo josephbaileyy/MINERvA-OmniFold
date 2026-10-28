@@ -1,0 +1,50 @@
+B1: CHOICE: X
+RANKING: X, Y, Z
+STRENGTH: 1
+REASON: “Interval coverage” is concise, conventional statistical terminology suitable for both the introduction and abstract.
+
+B2: CHOICE: X
+RANKING: X, Y
+STRENGTH: 2
+REASON: The explicit correlation-weakening results give the paragraph a concrete comparison and clarify the distinction between the two probes.
+
+B3: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 1
+REASON: The qualification distinguishes the authors’ interpretation from an established causal explanation.
+
+B4: CHOICE: X
+RANKING: X, Y
+STRENGTH: 2
+REASON: The direct description is clearer than the vague qualification “directly or through its pointers.”
+
+B5: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 3
+REASON: Naming configuration (a) unambiguously identifies the relevant result and covariance in a note reporting two results.
+
+B6: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 2
+REASON: The additional sentence gives readers a useful access reference for the numerical information needed to use the table.
+
+B7: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 3
+REASON: It provides a concise, publication-ready availability statement without internal release instructions, provisional status, or extensive implementation detail.
+
+B8: CHOICE: X
+RANKING: X, Y
+STRENGTH: 2
+REASON: The added sentence introduces a provisional repository reference without improving access beyond the stated Supplemental Material.
+
+B9: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 2
+REASON: The added sentence makes a specific dependence on the reported uncertainty explicit alongside the aggregate validation results.
+
+B0: CHOICE: X
+RANKING: X, Y
+STRENGTH: 3
+REASON: It states the comparison precisely in the formal register expected of a PRD results section.
+END

@@ -1,0 +1,59 @@
+PASSAGE: sec_execsummary:58
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:107
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_execsummary:111
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: result_status_rows:25
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:28
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:35
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:37
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_intro:67
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_summary:19
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_summary:29
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_summary:46
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_summary:78
+VERDICT: AGREE
+ISSUE: none
+FIX: none

@@ -1,0 +1,3 @@
+Q1.
+BEFORE: The validation studies show how far the result can be trusted: the two-dimensional reproduction, the background subtraction, the recovery of generator-sized truth changes, a coverage test and a fake-data study of the estimator's bias. They ask whether the unfolding gives reliable multidimensional cross sections when the simulation mismodels the truth by generator-sized amounts.
+AFTER: The validation studies assess the result through the two-dimensional reproduction, background-subtraction tests, recovery of generator-sized truth changes, a coverage test and a fake-data study of estimator bias. They examine whether the unfolding gives reliable multidimensional cross sections when the simulation mismodels the truth by generator-sized amounts.

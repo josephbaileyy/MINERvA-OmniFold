@@ -1,0 +1,19 @@
+L1: VERDICT: SHORTEN
+SHORTER-FORM: The coverage of its intervals has not been validated; a bias test at two held-out GENIE v3 truths finds the estimator's bias below the reported uncertainty in every cell (Sec. IV H). In a fake-data study at 12 truths, the reported uncertainty does not cover the estimator's bias at the GiBUU-like truths or at a synthetic q3 tilt (Sec. IV H).
+REASON: Replacing the colon with a semicolon corrects the syntax, while removing the redundant clause that repeats the lack of coverage validation restores a concise register suitable for an introduction.
+A1: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The new text concisely and appropriately balances the caveat concerning interval coverage with the quantitative finding of the bias test in standard abstract style.
+A2: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revision provides a clear and appropriately qualified statement of interval coverage and bias performance suited to the abstract of the technical note.
+H1: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The added paragraph presents the methodology, quantitative test statistics, model-sharing caveats, and scope limitations with the clarity and level of detail expected in a PRD measurement article.
+H2: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The passage provides the exhaustive implementation details, cell-level records, and reproducibility documentation appropriate for a companion technical note.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revisions replace informal phrasing with precise, formal scientific terminology suited to the publication standards of Physical Review D.
+END

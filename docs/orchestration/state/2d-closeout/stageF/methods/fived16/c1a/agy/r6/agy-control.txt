@@ -1,0 +1,16 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states the scope of the bias test more broadly than BEFORE supports and is ambiguous about what was measured by referring generically to "two held-out truths" rather than specifying that they are GENIE v3 tunes. BEFORE explicitly notes that both are GENIE-family truths sharing a CCQE model and constitute only partial evidence.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER accurately reflects the findings and limitations in BEFORE, correctly stating that interval coverage has not been validated, interval widths are not tested, and the estimator's bias is below the reported uncertainty across all cells for the two held-out GENIE v3 truths.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER claims "They are two independent tests.", which directly contradicts BEFORE's explicit finding that the two truths share their CCQE model and are not independent tests. Furthermore, treating the two truths as independent tests is one of the specific uses the study is explicitly not citable for.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER claims that the bias tests "confirm interval widths", which contradicts BEFORE's explicit statement that Poisson pseudo-data without nuisance draws cannot test interval widths. This also violates the condition that the study is not citable for validating the intervals' coverage or width.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states "These are two independent tests.", which directly contradicts BEFORE's statement that the two truths are not independent tests. This also asserts one of the uses the study is explicitly not citable for.
+
+END

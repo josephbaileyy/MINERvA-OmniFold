@@ -1,0 +1,10 @@
+D1: VERDICT: SHORTEN
+SHORTER-FORM: Weakening only the flux correlations by 10% lowers the χ² of the 16-cell predictions by 24–48%. The same change to the detector or lateral correlations lowers it by at most 18%. With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps χ² ≥ 45 for 16 degrees of freedom. The flux correlations are themselves estimated from the 100 hadron-production (PPFX) flux universes of Ref. [16], weighted by the neutrino–electron and inverse-muon-decay constraint. Rebuilding them from bootstrap replicates of those universes gives 16–84% percentile bands of each 16-cell χ² whose edges lie within 1.5–6.2% of the reported value, with the bootstrap median above it by at most 1.0%. These bands measure how precisely the universes determine the correlations, not sensitivity to incorrect correlations.
+REASON: While the quantitative bootstrap summary is valuable for the paper, the concluding sentence is overly discursive, repetitive, and colloquial in explaining what bootstrap bands do not represent, requiring condensation to match standard PRD register.
+D2: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: For a companion technical note, documenting the full model-by-model numerical breakdown, sample size, section cross-references, and explicit interpretive caveats is entirely appropriate to ensure completeness and reproducibility.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revision replaces informal and anthropomorphic phrasing ("show how far the result can be trusted", "They ask whether") with objective, formal scientific prose expected in PRD.
+END

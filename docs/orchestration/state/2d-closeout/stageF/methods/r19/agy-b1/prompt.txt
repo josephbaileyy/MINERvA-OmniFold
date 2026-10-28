@@ -1,0 +1,18 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking proposed rewordings of a physics paper. Each numbered pair has a BEFORE passage, whose content is accepted as correct, and an AFTER passage, a proposed rewording of it. For each pair, compare AFTER with BEFORE only, and say:
+(a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+(b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+(c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds.
+
+Context, to apply to (b) only:
+- The paper's sections were reordered, so section and table numbers differ between BEFORE and AFTER. Ignore numbering.
+- The simulation-calibrated tests of generator predictions (the "generator tests", "joint tests" or hybrid-null tests) have been moved out of the paper into its companion analysis note, so the paper no longer has a section on them. Facts about those tests that AFTER omits are stated in the note and do not count as dropped.
+- A summary table of findings (Table I in BEFORE) was removed; each of its findings is stated in its own section of the paper.
+- These details were moved to the companion note, where they are stated, and do not count as dropped: in Q3, the 1.05% sensitivity sentence; in Q4, the 1.5% clamp fraction, the "about 1 mrad" angle and the ±2 MeV residual; in Q5, the "at most about one Monte Carlo standard error" and "cannot be evaluated for GiBUU" sentences and the ±4 MeV figure; in Q6, GiBUU's test domain; in Q8, the sentence on the route to inference.
+Every other omission counts.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END

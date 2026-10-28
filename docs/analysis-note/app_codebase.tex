@@ -24,3 +24,16 @@ Scripts, figure files and stored outputs call \emph{training-seed variation} \te
   \item Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
   \item Figures of \S\ref{sec:results}: \texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds the simulated-truth curve of Fig.~\ref{fig:ptslices} from \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py} draws Fig.~\ref{fig:modelmaps}.
 \end{itemize}
+
+\section{Supplementary figure: coverage of a purity-subtracted variant}
+\label{app:coverage-fig}
+
+Figure~\ref{fig:coverage-5d-paper} shows, integral by integral, the coverage test of \S\ref{sec:coverage-5d} under the reduction of the signal rate.
+
+% Register round r19 (variant B, N3; director's ruling 2026-10-28): the methods paper's Fig. 4 and its caption, moved here when the paper's coverage figure left it (r19/move-pass.md, P5). Placed at the end of the last appendix so that no existing figure number of the note changes; pointed to from sec:coverage-5d. Third truth: OUTCOME-20260925-s5c-tier-s-futility-fail.md sec. 3; nd-unfolding/s5c_pseudo.py:56-60. Source: methods-m3 REPORT, Figure 3 (interim_400.json; evaluator nd-unfolding/s5c_coverage.py:147-174; bounds re-derived with scipy.stats.beta to 2e-16). Reproduced: 51, 0.060 (J224), 42; 2 (EW36, J161), 0.850 (EW36).
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{paper_fig_coverage}
+\caption{Empirical coverage of statistical intervals for the 153 reported cell and projection integrals, corrected for nominal-truth bias (\S\ref{sec:coverage-5d}). The study uses a deterministic LightGBM estimator with purity-based subtraction and 400 pseudo-experiments at a truth with an approximately \SI{10}{\percent} lower signal rate and a weak $\Eavail$ slope.  At nominal truth (not drawn) none lies below the 0.66 threshold, and two lie below the 0.94 threshold.  Circles: 68\% intervals; squares: 95\% intervals.  Bars are one-sided Clopper--Pearson lower and upper bounds, each at level $0.05/459$, a Bonferroni correction over the 153 integrals and the three truths of the study.  The third truth, a change of the $q_{3}$ dependence at fixed $(\Eavail,W)$, is omitted because its reweighting does not implement the intended change; the test's verdict does not depend on it. Solid lines mark the nominal coverage and dashed lines the acceptance thresholds 0.66 and 0.94; filled markers have an upper bound below the threshold.  The integrals are ordered as the $(\Eavail,W)$ projection (cells 0--41 and their sum), the \jtNcells{} coarse joint cells (labelled by their index in the $3^{5}$ grid), and the total.}
+\label{fig:coverage-5d-paper}
+\end{figure}

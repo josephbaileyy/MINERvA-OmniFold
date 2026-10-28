@@ -1,0 +1,19 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking one sentence of a physics paper against the analysis records below. The paper's fake-data study unfolds pseudo-data at 12 graded truths and lists a truth "when p<0.01 or when a cell has |z|>2"; three truths are listed (Stage 0c GiBUU, A7 GiBUU, q3). The sentence is about the other nine:
+
+SENTENCE: "At the other 9 truths the bias stays within the reported uncertainty by both criteria: no cell beyond SIGMA and p ≥ 0.01."
+
+Check, from the records only:
+1. Are there exactly 9 graded, unlisted truths?
+2. For each of them, does every cell satisfy the stated cell criterion, and is p ≥ 0.01?
+3. Does each criterion as worded match the records' criteria (the thresholds and what z is)?
+4. Is any part of the sentence false, or stronger than the records support? Quote any record line that contradicts it.
+
+Answer in this format:
+COUNT: <yes or no, with the nine names>
+CELL-CRITERION: <holds or fails, naming any truth that fails>
+P-CRITERION: <holds or fails, naming any truth that fails>
+WORDING: <matches or differs, with one sentence>
+VERDICT: <TRUE or FALSE>
+REASON: <two sentences at most>

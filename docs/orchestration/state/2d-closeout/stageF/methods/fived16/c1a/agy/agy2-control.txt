@@ -1,0 +1,16 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that the bias test "confirms interval widths", which contradicts BEFORE's statement that pseudo-data without nuisance draws cannot test interval widths and violates the restriction that the study is not citable for validating interval coverage or width.
+
+Q2: VERDICT: DIFFERS
+DETAIL: By referring broadly to "two held-out truths" instead of specifying GENIE v3 truths, AFTER states the scope of the test more broadly than BEFORE supports and is ambiguous in a way that could mislead the reader into believing general or independent truths were tested rather than model-dependent GENIE-family variations.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER accurately reports that interval coverage has not been validated and correctly summarizes the findings of the bias test across all cells for the two held-out GENIE v3 truths without exceeding the scope of BEFORE.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states "They are two independent tests", which directly contradicts BEFORE's determination that the two truths are not independent tests and violates the explicit condition that the study is not citable for treating them as independent.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER reports "1 of 4 records with p<0.01", which conflicts with BEFORE's group tally of 0 of 4 records with p < 0.01 (where all four individual p-values are well above 0.01).
+
+END

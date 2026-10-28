@@ -1,0 +1,34 @@
+Q1: VERDICT: SAME
+DETAIL: The omission of the generator test description is permitted under the relocation rules because those tests moved to the companion note, and the retained sentences are identical to BEFORE.
+
+Q2: VERDICT: SAME
+DETAIL: The omissions of Table I and the generator tests are permitted under the relocation rules, and updating the outline to reflect the paper's reordered sections introduces no unsupported physical claims or ambiguities.
+
+Q3: VERDICT: SAME
+DETAIL: The omission of the 1.05% sensitivity sentence is explicitly permitted as moved to the companion note, and the remaining text matches BEFORE verbatim.
+
+Q4: VERDICT: SAME
+DETAIL: The omissions of the 1.5% clamp fraction, the about 1 mrad angle, and the ±2 MeV residual are explicitly permitted under the context rules, with the remaining text preserving the exact meaning of BEFORE.
+
+Q5: VERDICT: SAME
+DETAIL: Dropping the Monte Carlo standard error sentence, the GiBUU evaluation sentence, and the ±4 MeV figure is explicitly permitted, and stating that the target difference is not corrected preserves the limitation without adding unsupported claims.
+
+Q6: VERDICT: SAME
+DETAIL: The omission of GiBUU's test domain is explicitly permitted as moved to the companion note, and phrasing the coarse grid in terms of the joint cells preserves the factual content of BEFORE without ambiguity.
+
+Q7: VERDICT: SAME
+DETAIL: Removing the generator tests from the paper's table and stating in the text that the note's simulation-calibrated tests use the same estimator accurately preserves the facts under the relocation and renumbering rules.
+
+Q8: VERDICT: SAME
+DETAIL: The omission of the sentence on the route to inference is explicitly permitted as moved to the companion note, and the remaining sentence is identical to BEFORE.
+
+Q9: VERDICT: SAME
+DETAIL: The text retains all facts, numbers, qualifiers, and limitations from BEFORE, with only an added subsection heading and a slight sentence reordering that introduces no ambiguity.
+
+Q10: VERDICT: SAME
+DETAIL: Omitting the mention of Table I is explicitly permitted because the summary table was removed from the paper, leaving the description of the principal result identical to BEFORE.
+
+Q11: VERDICT: SAME
+DETAIL: The revision is a stylistic rewording that preserves all listed validation studies, scope, and limitations from BEFORE without altering meaning or introducing ambiguity.
+
+END

@@ -1,0 +1,10 @@
+A1 (paper): CHOICE: Y
+RANKING: Y, X, Z
+REASON: Y best matches a PRD measurement abstract by pairing the principal result and generator comparisons with a concise limitation and a comparison to the published measurement.
+A2 (note): CHOICE: Y
+RANKING: Y, X
+REASON: Y provides a compact quantitative overview suited to a technical note, including covariance sensitivity without the extended explanation of interval validation.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: NEW replaces colloquial language with precise, restrained phrasing while preserving the scope and purpose of the validation studies.
+END

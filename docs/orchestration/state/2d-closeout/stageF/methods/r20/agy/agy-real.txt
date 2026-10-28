@@ -1,0 +1,19 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER preserves the causal reasoning, numbers of iterations (10, 15, 20, and five), definition of model dependence, and attribution to the companion note section without dropping qualifiers or altering meaning.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the statement that all limitations of these results (not just the principal ones) are stated with the results they qualify, and unsupported by BEFORE, asserts that for the calibrated tests each limitation was stated with the result it qualifies ("The principal limitations, each stated with the result it qualifies").
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER states applicability ("apply to") rather than reporting provenance ("are those of"), and drops the explicit limiting qualifier "one ... on one ..." ("the OmniFold implementation, data set... studied here").
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER adds "absolute" ("median absolute residuals"), changing signed residuals to absolute residuals, which BEFORE does not state or support.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states that "[t]he bias at a truth is listed", whereas BEFORE supports only that the truth itself is listed ("A truth is listed").
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER states the pull's effect more strongly than BEFORE by adding "far" ("far upward").
+
+END

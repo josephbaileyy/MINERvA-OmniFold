@@ -195,6 +195,14 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 docs/analysis-note/check_note_records.py --self-test-entry-numbers
 
+      # The sixteen-cell five-observable result (DECISION-20261027-joseph-5d-integration-then-second-scope-review.md):
+      # every number it prints is generated from readouts pinned by sha256; a stale values_fived16.tex fails here.
+      - name: "note: five-observable values fresh (make_values_fived16.py --self-test, --check)"
+        if: ${{ !cancelled() }}
+        run: |
+          python3 docs/analysis-note/make_values_fived16.py --self-test
+          python3 docs/analysis-note/make_values_fived16.py --check
+
       - name: "note: records citation pin, Q1-Q4 (check_note_records.py pin)"
         if: ${{ !cancelled() }}
         run: python3 docs/analysis-note/check_note_records.py pin docs/analysis-note

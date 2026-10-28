@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: What AFTER keeps consists entirely of verbatim sentences from BEFORE that accurately report the measurement, generator comparisons, fake-data bias undercoverage, and 1D cross-section reproduction without stating anything more broadly or misleading the reader.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER replaces the note's description of documenting an unfolding and its validation with "We report a simultaneous measurement", stating the result more strongly and broadly as a primary experimental measurement, while dropping the specific list of covariance components ("statistical, flux, interaction, detector, lateral, normalization, generator-shape and calorimetric-response terms").
+
+Q3: VERDICT: DIFFERS
+DETAIL: While appending "although no single cause is established", AFTER drops the companion note's explicit limitations that "No uncertainty quoted... includes this residual bias" and that persistence holds only over a finite scan, leaving the causal attribution to "regularization bias" ambiguous and incomplete.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported tune designation "G18_10a_02_11b" (where BEFORE states only "G18") and asserts that the bias lies below uncertainty "only with C_model included", dropping the measured numerical values (−8.5% bias, ratios of 0.62, 0.93, and 1.07) and the specific attribution to "C_model's GiBUU vertex".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces the target material "on hydrocarbon", which is not stated or supported anywhere in BEFORE, and drops the beam energy qualification by stating "MINERvA open data" instead of "MINERvA medium-energy open data".
+
+END

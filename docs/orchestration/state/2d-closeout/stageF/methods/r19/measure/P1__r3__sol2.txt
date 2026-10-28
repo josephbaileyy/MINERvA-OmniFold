@@ -1,0 +1,24 @@
+RATING: 3
+JUSTIFICATION: The prose is generally professional and technically precise, but repeated qualifications, development bookkeeping, and densely nested scope statements call for a dedicated language pass.
+
+1. QUOTE: "Scope. The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general."
+   REWRITE: These findings apply to the OmniFold implementation, data set, observables, configurations, and truth deformations studied here.
+
+2. QUOTE: "In a binned, signal-only and noise-free diagnostic on
+the 109 joint cells and the truth changes used to develop
+the estimator, with the detector response fixed at the
+simulation’s, an exact binned iterative unfolding with
+five iterations leaves about the same median residual as
+the boosted-tree estimator. It covers only the residuals
+whose diagnosis is stable under the truth resolution (38 %
+of the joint-cell residuals above 2 %). What unbinned
+information could recover, the coverage failure, and the
+validity of any interval lie outside its scope."
+   REWRITE: A noise-free, signal-only diagnostic compared exact binned iterative unfolding with the boosted-tree estimator on the 109 joint cells, using five iterations, the simulated detector response, and the truth deformations used to develop the estimator. The methods yield similar median residuals. The diagnostic applies only where the diagnosis is stable under changes in truth resolution, accounting for 38% of joint-cell residuals above 2%. It does not assess the information recoverable through unbinned unfolding or the coverage of uncertainty intervals.
+
+3. QUOTE: "A candidate release package
+of about 16 MB, not yet deposited, requires only numpy,
+scipy, and matplotlib. It recomputes every p value, decision, robustness result, and power figure of the joint tests
+and the numbers quoted in Sec. V C, and it regenerates
+the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+   REWRITE: A proposed release package (approximately 16 MB), requiring NumPy, SciPy, and Matplotlib, reproduces the joint-test p values, decisions, robustness results, and power estimates; the numerical results in Sec. V C; and the analysis note’s figures showing the joint-test null distributions and the (Eavail , W ) map. The package has not yet been deposited.

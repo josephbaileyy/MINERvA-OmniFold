@@ -106,11 +106,11 @@ Background-inclusive & Adds background simulation and rebuilds purity weights; n
 \addlinespace
 Generator-shaped & Truth reweighted by GiBUU/GENIE ratio in $\Eavail$ (0.70--1.33 per bin) & 5D &
   Joint $(\Eavail,W)$ residuals median \SI{9.7}{\percent}, up to \SI{74}{\percent} at highest $W$;
-  regularization bias outside every quoted uncertainty \\
+  regularization bias outside every uncertainty quoted for the configuration-(a) central value (sixteen-cell result: \S\S\ref{sec:fived16-cov}, \ref{sec:fived16-fd}) \\
 \addlinespace
 Withheld generator shapes & NuWro/GENIE and GENIE MEC/CV ratios & 5D &
   Median \SIrange{2}{6}{\percent}, at most \SIrange{16}{31}{\percent} per joint cell;
-  within total uncertainty in 20 of 42 $(\Eavail,W)$ cells (\S\ref{sec:val-departure}) \\
+  within the configuration-(a) total uncertainty in 20 of 42 $(\Eavail,W)$ cells (\S\ref{sec:val-departure}) \\
 \addlinespace
 Hidden $q_3$ & $q_3$ at fixed $(\Eavail,W)$ truth, amplitude 0.3 & 5D &
   $(\Eavail,W)$ cells shift by up to \SI{37}{\percent} \\
@@ -126,7 +126,7 @@ Response mismatch & Reconstructed $\Eavail$ of pseudo-data scaled & 5D &
   \item \emph{Deformation.} The closing injections are single smooth bumps in one variable the classifiers see directly. A generator ratio changes correlated structure across $\Eavail$, $W$ and $q_3$, including directions the reconstructed observables constrain weakly (\S\ref{sec:coverage-5d}, response-information diagnostic).
   \item \emph{Metric.} The 3D, 4D and 5D closures are judged on one-dimensional marginals, where per-cell errors average out; the 3D test's per-bin spread is already \SI{3.2}{\percent}, and the 5D test's is \SI{3.7}{\percent}. The generator-shaped failures are measured in joint $(\Eavail,W)$ cells.
   \item \emph{Iterations.} At five iterations the estimator retains part of the prior wherever the data pull weakly. Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent} while the $q_3$ residual grows (\S\ref{sec:val-departure}).
-  \item \emph{The five-dimensional $W$ test passes only in the marginal, and narrowly.} A $W$ bump at the $\Delta$ peak is recovered to a ratio of 0.180 against a threshold of 0.20. The same unfold leaves joint $(\Eavail,W)$ cells in the peak column up to \SI{9.4}{\percent} low and moves part of the bump into the neighbouring $W$ bins. A single smooth bump in a marginal is therefore weaker evidence than the generator-shaped tests, which remain the main five-dimensional recovery evidence.
+  \item \emph{The five-dimensional $W$ test passes only in the marginal, and narrowly.} A $W$ bump at the $\Delta$ peak is recovered to a ratio of 0.180 against a threshold of 0.20. The same unfold leaves joint $(\Eavail,W)$ cells in the peak column up to \SI{9.4}{\percent} low and moves part of the bump into the neighbouring $W$ bins. A single smooth bump in a marginal is therefore weaker evidence than the generator-shaped tests, which remain the main five-dimensional recovery evidence of \S\ref{sec:5d}.
 \end{itemize}
 % Sources: 2D rows sec_validation.tex "Closure" and "Injected-feature recovery"; 3D sec_3d.tex sec:3d-closure; 4D git show 798f0c89 (job 53925395, ratios 1.007/0.989/1.005/1.000..., mean factor 1.0142); 5D W bump (corrected, 2026-10-12) job 59719296 at b11ff40d, PREREG-20261012-5d-injected-w-closure.md, docs/orchestration/state/wclosure-5d-20261012/closure_5d_w_bottom_line.json (VL176): mean factor 1.0529, W-marginal feature bin [1.1,1.4] injected 0.2310 residual 0.0416 ratio 0.1799, W ratios 1.031/0.958/1.027/0.998/1.000/1.000, 5D median 1.0070 std 0.0371 max|dev| 0.1515, joint (Eavail,W) median 1.0093 max|dev| 0.094, peak column 0.906-0.978. Superseded June run: git show aecd0d22 (job 54062313: median 1.0000, std 0.0062, max|dev| 0.227, mean factor 1.0000) with driver defaults A=0.3, c=0.3, s=0.15 at fdefe5f8 nd-unfolding/unfold_nd_omnifold_unbinned.py (launcher sbatch_hadd_unfold_5d.sh:43-48 sets no centre); 0.3*exp(-((0.938-0.3)/0.15)^2) = 4.2e-9. Background, generator and q3 rows: sec_5d.tex sec:val-negweight, sec:val-departure, VL149, VL151, VL154.
 

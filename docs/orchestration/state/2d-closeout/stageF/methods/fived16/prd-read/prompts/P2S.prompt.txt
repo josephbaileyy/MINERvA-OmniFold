@@ -1,0 +1,13 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below are two versions, Document A and Document B, of the same excerpt from a manuscript on a neutrino cross-section measurement, converted from LaTeX to plain text. The two versions are identical except for their final paragraph. Judge ONLY language and register, not the science, the results or completeness.
+
+Question: which document reads more like a well-edited PRD paper?
+
+Answer in exactly this format:
+WINNER: <A or B>
+STRENGTH: <1, 2 or 3>   (1 = slight preference, 2 = clear preference, 3 = strong preference)
+REASONS:
+1. <one sentence>
+2. <one sentence>
+3. <one sentence>

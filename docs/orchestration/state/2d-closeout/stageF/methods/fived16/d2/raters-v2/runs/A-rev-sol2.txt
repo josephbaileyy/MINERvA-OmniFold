@@ -1,0 +1,10 @@
+A1 (paper): CHOICE: Y
+RANKING: Y, X, Z
+REASON: Y best balances the measurement, generator comparisons, a limitation and a benchmark result within a conventional PRD abstract length.
+A2 (note): CHOICE: X
+RANKING: X, Y
+REASON: X provides a broader quantitative overview appropriate to a technical note, whereas Y devotes disproportionate space to interval-validation detail.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: NEW replaces conversational language about trust with a neutral description of the validation studies while preserving their scope.
+END

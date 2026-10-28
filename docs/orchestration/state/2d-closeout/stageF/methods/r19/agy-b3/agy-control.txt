@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states that "quantitative comparisons can use these uncertainties alone", which is unsupported by BEFORE and contradicts both the presence of non-zero correlations and the caption's requirement that comparisons need the full covariance. This drops the critical limitation that marginal uncertainties alone are insufficient when cells are correlated.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER accurately preserves the meaning, scope, and qualifiers of BEFORE, updating the cross-reference to "the comparisons below" without introducing unsupported claims or ambiguity.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER conveys the same meaning as BEFORE, with the clarifying phrase "external null distributions of the note's calibrated tests" and the pointer to the companion note fully consistent with the relocation of the calibrated tests.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states "which has been shown", directly contradicting BEFORE, which specifies that the bound "has not been shown". This improperly drops a vital limitation and asserts an unverified condition as established.
+
+END

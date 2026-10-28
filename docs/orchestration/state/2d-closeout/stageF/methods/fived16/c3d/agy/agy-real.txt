@@ -1,0 +1,7 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that "[t]hese bands measure how precisely the universes determine the correlations" rather than the estimation scatter of the χ², misrepresenting what the study measured, and asserts that the band edges lie within "1.5–6.2%" of the reported value even though NuWro's lower edge is 1.36% (2.56 / 188.03).
+
+Q2: VERDICT: SAME
+DETAIL: AFTER accurately reports the study's χ² values, percentile bands, and positive median offsets consistent with BEFORE's numbers, correctly identifies the bands as estimation scatter of the reported χ² given the universes, and explicitly disclaims the un-citable uses.
+
+END

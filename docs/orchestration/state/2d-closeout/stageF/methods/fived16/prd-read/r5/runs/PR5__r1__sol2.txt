@@ -1,0 +1,24 @@
+L1: VERDICT: SHORTEN
+SHORTER-FORM: Interval coverage has not been validated. A bias test at two held-out GENIE v3 truths finds biases below the reported uncertainties in every cell but does not test interval widths. In the 12-truth fake-data study, biases exceed the reported uncertainties at the GiBUU-like truths and a synthetic q3 tilt (Sec. IV H).
+REASON: This preserves the findings and their qualification while reducing the introduction’s density and avoiding a repeated section reference.
+
+A1: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The sentence concisely reports the additional result while retaining the qualification about interval coverage expected in a measurement abstract.
+
+A2: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The sentence gives an appropriately concise account of the additional result and its scope for the technical note’s abstract.
+
+H1: VERDICT: SHORTEN
+SHORTER-FORM: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each reweights the simulated truth to the tune’s shape using the C_model procedure and the simulation’s detector response. For each tune, 20 Poisson pseudo-experiments and a noise-free closure are compared with the truth using the full reported covariance. Both tunes satisfy both bias criteria: the pseudo-experiment means give χ²=11.84 (p=0.76) and 16.86 (p=0.39), respectively, with |z|≤0.65 in every cell of the means and closures. Both are GENIE tunes and share their quasielastic model; G18_10a_02_11b also uses a Valencia-family MEC model, as does the GENIE + MEC component of C_model. They provide partial evidence and are not independent tests. Omitting that component gives χ²=15.15 (p=0.51) and 24.60 (p=0.077), respectively, as a descriptive comparison. These tests assess bias, not coverage: only event counts fluctuate, without variation of systematic parameters, so interval widths cannot be tested.
+REASON: The paragraph belongs in the fake-data section, but tighter phrasing makes its procedure, results, and qualifications easier to follow.
+
+H2: VERDICT: SHORTEN
+SHORTER-FORM: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each reweights simulated truth using its gated, normalized shape ratio to GENIE CV on the fine grid, constructed as for the C_model vertices, under the simulation’s detector response. Where the tune sample fails the statistical gate, the ratio is pooled over a coarser cell or set to unity. Each tune is tested using 20 Poisson pseudo-experiments on half the simulation and a noise-free closure, evaluated against the full reported covariance. These truths have no vertices and form a separate group, excluded from pooling with the preceding groups. Both bias criteria are satisfied in all four records. The pseudo-experiment means give χ²=11.84 (p=0.76; maximum |z|=0.62 in R11) and 16.86 (p=0.39; maximum |z|=0.64 in R07), respectively. The closures give χ²=11.44 (p=0.78; maximum |z|=0.61 in R11) and 16.05 (p=0.45; maximum |z|=0.60 in R07). None of the 64 cells has |z|>2, and none of the four records has p<0.01. The corresponding reference counts, 2.91 and 0.04, assume independent records and serve only as context because each truth contributes both a pseudo-experiment mean and a closure. Both are GENIE tunes and share their quasielastic model; G18_10a_02_11b also uses a Valencia-family MEC model, as does the GENIE + MEC vertex. They provide partial evidence and are not independent tests. Without that vertex, the pseudo-experiment means give χ²=15.15 (p=0.51) and 24.60 (p=0.077), and the closures give 14.35 (p=0.57) and 22.43 (p=0.13); these are descriptive comparisons. The model-only χ² values, defined in Table 15, range from 817 to 922, with R00 beyond 2σ in both AR23_20i_00_000 records. Rerunning the evaluation with these truths exactly reproduces all preceding fake-data records. These tests assess bias, not coverage: without draws of systematic parameters, the Poisson pseudo-experiments cannot test interval widths, and the detector response is not probed.
+REASON: The technical note warrants this detail, but removing repetition and replacing grading terminology improves its scholarly register and readability.
+
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revision replaces conversational claims about trust with a more measured description of the validation studies.
+END

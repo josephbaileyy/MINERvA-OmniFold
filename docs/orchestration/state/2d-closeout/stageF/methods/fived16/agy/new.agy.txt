@@ -1,0 +1,114 @@
+PASSAGE: note-10.0
+VERDICT: AGREE
+ISSUES: none
+
+PASSAGE: note-10.1
+VERDICT: AGREE
+ISSUES: none
+
+PASSAGE: note-10.2
+VERDICT: REVISE
+ISSUES:
+1. Exact printed words: Table 12 data rows R00–R15, where the second printed number in each row is $C_e$ (e.g. for cell R00, `0.20 6.77 3.93 0.98 1.56 5.01 1.40 0.43...`).
+   Source value or wording: S1-REPORT.md §6 readout table defines columns as `stat | flux | interaction | detector | lateral | normalization | seed | C_e | C_model | C_total`, where for R00 `stat` is 0.20, `flux` is 3.93, `interaction` is 0.98, `detector` is 1.56, `lateral` is 5.01, `normalization` is 1.40, `C_e` is 6.77, and `C_model` is 0.43.
+   What is wrong: In every data row R00–R15, $C_e$ is printed as the second data entry directly under the header column `flux`, which shifts `flux` under `interaction`, `interaction` under `detector`, `detector` under `lateral`, `lateral` under `norm.`, and `norm.` under `Ce`. As a result, every numerical value in columns 2 through 7 of rows R00–R15 is placed under the wrong uncertainty component header.
+2. Exact printed words: "and adding it raises the total’s σ by a factor of 1.011–1.220 (median 1.048)"
+   Source value or wording: CRESP-REPORT.md header ("NOT CITABLE FOR: ... any reading of the difference between the two columns") and Rule (b) ("the readouts are NOT CITABLE FOR an interpretation, for coverage, or for a reading of the difference between the C_total and C_total + C_resp columns").
+   What is wrong: The statement performs an explicit reading and comparative interpretation of the difference between the $C_\text{total}$ and $C_\text{total} + C_\text{resp}$ columns, which Rule (b) and CRESP-REPORT.md strictly forbid. Furthermore, this range of factors does not appear in the sources.
+3. Exact printed words: "Of the trace of (Ctotal + Cresp )/f f T , Ctotal carries 0.9262 and the four response species 0.0168, 0.0436, 0.0071 and 0.0062."
+   Source value or wording: S1-REPORT.md §6 provides trace shares of $C_\text{total}$ only (`stat` 0.0010, `interaction` 0.1705, `flux` 0.1881, `detector` 0.0525, `lateral` 0.1406, `normalization` 0.0276, `seed` 0.0000, `C_model` 0.4196).
+   What is wrong: Trace shares of $(C_\text{total} + C_\text{resp})/ff^T$ do not appear in S1-REPORT.md or CRESP-REPORT.md and are unsupported by the sources.
+4. Exact printed words: "[PENDING: the declared export of Ce , Cmodel , Cresp and Ctotal + Cresp with the correlation matrix and the cell boxes, from the 5D measurement session]"
+   Source value or wording: Committed reports and readouts in sources.txt.
+   What is wrong: Unresolved editorial placeholder text left in the technical note.
+
+PASSAGE: note-10.3
+VERDICT: REVISE
+ISSUES:
+1. Exact printed words: Table 13, rows 1, 2, 5, and 7:
+   - Row 1: `simulation prior (MINERvA Tune v1) full 0.00 1.00 — 0.00 1.00 —`
+   - Row 2: `MINERvA Tune v1, hybrid full 0.01 1.00 — 0.01 1.00 —`
+   - Row 5: `GENIE + MEC, (Eavail , W ) shape (W2) −GENIE + MEC 0.57 1.00 — 0.77 1.00 —`
+   - Row 7: `NuWro, Eavail shape (W1) −NuWro 5.01 1.00 — 5.69 0.99 —`
+   Source value or wording: FD-PLAN.md §1 specifies the number of pseudo-experiments $n$ as 40 for nominal/prior (`seeds 800000–800039`), 16 split seeds for A7 hybrid truths (`seeds 970000–970015`), 20 for W2 (`804000–`), and 20 for W1 (`803000–`).
+   What is wrong: The pseudo-experiment count column $n$ is omitted in these four rows. Consequently, the printed numbers in these rows are shifted left into the wrong columns relative to the header (e.g. in row 1, `0.00` appears under header $n$, `1.00` under $\chi^2$, etc.).
+2. Exact printed words: "the GiBUU Eavail shape, by its cell R06 (z = 2.01)"
+   Source value or wording: FD-F0-REPORT.md §0 ("Stage 0c GiBUU, by p and cell R06") and FD-F0b-REPORT.md §4–§5 (records cell R06 under $|z| > 2$).
+   What is wrong: The source does not report the specific numerical pull value $z = 2.01$, only that cell R06 meets the $|z| > 2$ trigger. Printing an uncommitted numerical pull value breaches Rule (a).
+
+PASSAGE: note-10.4
+VERDICT: REVISE
+ISSUES:
+1. Exact printed words: Table 16, column `modes for 50/90/99 %`:
+   ```
+   prediction modes for 50/90/99 %
+   GENIE 2.12.10 CV
+   GENIE 2.12.10 + Valencia MEC
+   NuWro 21.09
+   GiBUU 2019
+   MINERvA Tune v1
+   2
+   2
+   7
+   9
+   5
+   10
+   6
+   ```
+   Source value or wording: FD-G-DIAG-REPORT.md §2 table gives `modes 50/90/99 %` as `2/7/13` for `genie_cv`, `2/4/10` for `genie_mec`, `3/9/13` for `nuwro`, `2/5/6` for `gibuu`, and `2/5/9` for `mnvtune_v1`.
+   What is wrong: The column is corrupted and misprinted as an isolated, incomplete list of single digits detached from their respective rows instead of the source mode triples.
+2. Exact printed words: "Under the flux block alone its correlation with the 7 cells that load with it in the top modes is 0.972–0.998; under the reported covariance it is 0.40–0.81."
+   Source value or wording: FD-G-FOLLOWUP-REPORT.md §2.0–§2.2 (provides R04's top-mode loadings, box definitions, and relative $\sigma$ breakdown by component).
+   What is wrong: The correlation intervals 0.972–0.998 and 0.40–0.81 do not appear in FD-G-FOLLOWUP-REPORT.md or any other committed source; they are unsupported numbers.
+3. Exact printed words: "[PENDING: the figure of the cell-contrast modes that carry the χ2 , with each prediction’s distance along them, from the 5D measurement session]"
+   Source value or wording: Committed reports and readouts in sources.txt.
+   What is wrong: Unresolved editorial placeholder text left in the technical note.
+
+PASSAGE: paper-Vf
+VERDICT: REVISE
+ISSUES:
+1. Exact printed words: The block beginning `(a) with unbinned background refinement...` through `FIG. 3.` and `FIG. 4.` and their full captions, inserted directly between "...4 boxes remain unreported, and" and "every reported cell passes the study’s support rule."
+   Source value or wording: The text of Sec. V F describes the 16-cell five-observable measurement on H2 after a purity merge.
+   What is wrong: Figures 3 and 4 (along with their captions) describe earlier studies on 2D/3D projections and 109 coarse cells from Sec. V C and V D; they have been erroneously spliced into the middle of the opening sentence of Sec. V F.
+2. Exact printed words: "it is generator-shape model dependence, unscaled, and its coverage at truths held out of its construction has not been validated."
+   Source value or wording: cmodel_5d.json label verbatim: `"component": "generator-shape model dependence; not a calibrated bound (M2, kappa = 1, unscaled)"` and Rule (e) ("every qualifier the sources attach (... C_model unscaled, not a calibrated bound, coverage at held-out truths not validated) must be present where its statement is made").
+   What is wrong: The mandatory source qualifier "not a calibrated bound" is omitted from the sentence defining $C_\text{model}$.
+3. Exact printed words: "the GiBUU Eavail shape (cell R06, z = 2.01)"
+   Source value or wording: FD-F0-REPORT.md §0 and FD-F0b-REPORT.md §4–§5 report only that cell R06 satisfies $|z| > 2$.
+   What is wrong: The specific value $z = 2.01$ is not present in the sources and breaches Rule (a).
+4. Exact printed words: "Table IV gives the results under the reported covariance and under Ctotal alone." followed immediately by section break `VI.`
+   Source value or wording: Table IV as referenced by the text.
+   What is wrong: Table IV itself is completely missing from Sec. V F.
+
+PASSAGE: paper-VIIb
+VERDICT: REVISE
+ISSUES:
+1. Exact printed words: The orphaned table fragment printed directly above Table V:
+   ```
+   Ctotal
+   p cells
+   Truth
+   χ2
+   p cells
+   —
+   0.00
+   1.00
+   —
+   ...
+   59.83 5.6 × 10−7
+   —
+   ```
+   Source value or wording: FD-F0b-REPORT.md §6 (grades of fake-data tests).
+   What is wrong: This is a stray, unlabelled fragment of Table IV (the fake-data tests under $C_\text{total}$ belonging to Sec. V F) that was erroneously placed into Sec. VII B.
+2. Exact printed words: "Because Cmodel is built from shifts toward GENIE + MEC, NuWro and GiBUU, those comparisons use a covariance built in part from the compared generator."
+   Source value or wording: FD-G-REPORT.md §2 ("The covariance label also says: each C_model,5D vertex is a data shift, unfolded with a prior reweighted by that generator's ratio to GENIE 2.12.10 CV. So the GENIE+MEC, NuWro and GiBUU comparisons each carry a covariance built partly from the compared generator, and so does the GENIE CV comparison, through the ratios' reference (FD-G §7.3)") and Rule (e).
+   What is wrong: The text omits the qualifier for GENIE CV, which also uses a covariance built in part from the compared generator through the reference ratio.
+3. Exact printed words: "Weakening only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 24–48 %. The same change to the detector or lateral correlations lowers it by at most 18 %. With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps χ2 ≥ 45 for 16 degrees of freedom."
+   Source value or wording: DECISION-20261026-joseph-5d-generator-comparison-presentation.md item 1: "The paper uses option 1. It prints the χ²/ndf table of each prediction under the reported covariance, C_total + C_resp + V_g, with shape-only beside it and GiBUU on its eight cells. A ratio figure goes with it, and one quantified sentence on the correlation sensitivity. That sentence names the covariance group that carries the sensitivity, once the per-group split has reported."
+   What is wrong: The passage prints three sentences expanding on flux, detector, lateral, and interaction correlations, breaching the decision rule restricting the paper to exactly one quantified sentence naming the group carrying the sensitivity.
+4. Exact printed words: "[PENDING: the ratio figure, prediction over data on the sixteen cells, from the 5D measurement session]"
+   Source value or wording: Committed reports and readouts in sources.txt.
+   What is wrong: Unresolved editorial placeholder text left in the paper manuscript.
+5. Exact printed words: `C.` printed below `MINERvA Tune v1` under the `Prediction` column of Table V.
+   Source value or wording: FD-G-REPORT.md §2 lists only the five predictions (GENIE CV, GENIE+MEC, NuWro, GiBUU, and MINERvA Tune v1).
+   What is wrong: Extraneous subsection header or typographical artifact inserted into the table body.
