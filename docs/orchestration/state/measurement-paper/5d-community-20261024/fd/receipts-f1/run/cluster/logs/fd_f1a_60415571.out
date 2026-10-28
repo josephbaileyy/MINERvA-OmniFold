@@ -1,0 +1,3 @@
+[f1a] job=60415571 host=nid005953 pin=5015535e5567c42827e2b618b9b679d534ec47cf start=2026-10-28T01:12:47Z
+{"f1b_projected_wall_s": 1343.5475000000001, "f1_projected_node_h": 1.224596638888889, "decision": "GO"}
+[f1a] budget rc=0 end=2026-10-28T01:18:57Z

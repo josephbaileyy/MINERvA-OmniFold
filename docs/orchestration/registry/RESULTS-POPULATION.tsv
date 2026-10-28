@@ -35,6 +35,8 @@ docs/orchestration/state/ki98-wbias-test/receipts/ki98.json	included	1600
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json	included	10	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1a/pilot/AR23_20i_00_000/pilot_xsec5d.meta.json	included	3	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1a/pilot/G18_10a_02_11b/pilot_xsec5d.meta.json	included	3	
 docs/orchestration/state/measurement-paper/phase1/mp1/partial-receipts/control-evaluate.json	included	5	
 docs/orchestration/state/measurement-paper/phase1/mp1/partial-receipts/joint-evaluate.json	included	5	
 docs/orchestration/state/measurement-paper/phase1/mp1/partial-receipts/recompute.json	included	5	
