@@ -1,0 +1,79 @@
+JobID|JobName|State|ExitCode|Start|End|Elapsed|MaxRSS|AllocTRES|ReqMem
+60417614|fd_f1b|OUT_OF_MEMORY|0:125|2026-10-27T19:13:16|2026-10-27T19:25:26|00:12:10||billing=256,cpu=256,energy=290722,mem=487802M,node=1|487802M
+60417614.batch|batch|OUT_OF_MEMORY|0:125|2026-10-27T19:13:16|2026-10-27T19:25:26|00:12:10|499490432K|cpu=256,mem=487802M,node=1|
+60417614.extern|extern|COMPLETED|0:0|2026-10-27T19:13:16|2026-10-27T19:25:26|00:12:10||billing=256,cpu=256,mem=487802M,node=1|
+== job log
+[f1b] job=60417614 host=nid006737 pin=5015535e5567c42827e2b618b9b679d534ec47cf start=2026-10-28T02:13:21Z
+[f1b] STOP: generation rc=137
+[2026-10-28T02:25:25.839] error: Detected 103 oom_kill events in StepId=60417614.batch. Some of the step tasks have been OOM Killed.
+== f1b dir
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b:
+gen5d
+gst
+logs
+work
+
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs:
+gen_AR23_20i_00_000_s61001.log
+gen_AR23_20i_00_000_s61002.log
+gen_AR23_20i_00_000_s61003.log
+gen_AR23_20i_00_000_s61004.log
+gen_AR23_20i_00_000_s61005.log
+gen_AR23_20i_00_000_s61006.log
+gen_AR23_20i_00_000_s61007.log
+gen_AR23_20i_00_000_s61008.log
+gen_AR23_20i_00_000_s61009.log
+gen_AR23_20i_00_000_s61010.log
+gen_AR23_20i_00_000_s61011.log
+gen_AR23_20i_00_000_s61012.log
+gen_AR23_20i_00_000_s61013.log
+gen_AR23_20i_00_000_s61014.log
+gen_AR23_20i_00_000_s61015.log
+gen_AR23_20i_00_000_s61016.log
+gen_AR23_20i_00_000_s61017.log
+gen_AR23_20i_00_000_s61018.log
+gen_AR23_20i_00_000_s61019.log
+gen_AR23_20i_00_000_s61020.log
+gen_AR23_20i_00_000_s61021.log
+gen_AR23_20i_00_000_s61022.log
+gen_AR23_20i_00_000_s61023.log
+gen_AR23_20i_00_000_s61024.log
+gen_AR23_20i_00_000_s61025.log
+gen_AR23_20i_00_000_s61026.log
+gen_AR23_20i_00_000_s61027.log
+gen_AR23_20i_00_000_s61028.log
+gen_AR23_20i_00_000_s61029.log
+gen_AR23_20i_00_000_s61030.log
+gen_AR23_20i_00_000_s61031.log
+gen_AR23_20i_00_000_s61032.log
+gen_AR23_20i_00_000_s61033.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/gen5d:
+
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/gst:
+== gst counts
+G18_10a_02_11b 15 gst, 64 dirs
+AR23_20i_00_000 7 gst, 64 dirs
+== flux check
+== hadd/convert G18_10a_02_11b
+== hadd/convert AR23_20i_00_000
+== a gen log
+[setup_genie_v3] gevgen=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+[setup_genie_v3] tune=G18_10a_02_11b xsec=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data splines=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/G18_10a_02_11b_CH.xml.gz
+[v3] genie G18_10a_02_11b N=17500 seed=60001 flux=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/flux_phi_t_0_100.root start 2026-10-28 02:13:34 UTC
+[v3] gevgen rc=0 2026-10-28 02:24:30 UTC
+[v3] gntpc done 2026-10-28 02:25:25 UTC
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61001.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61002.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61003.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61004.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61005.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61006.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61007.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61008.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61009.log
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/logs/gen_AR23_20i_00_000_s61010.log
+261M	/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/work
+4.0K	/pscratch/sd/j/josephrb/fd-f1-20261027/f1b/gst
+total 8
+drwxrwx--- 2 josephrb josephrb 4096 Oct 27 19:13 .
+drwxrwx--- 6 josephrb josephrb 4096 Oct 27 19:13 ..

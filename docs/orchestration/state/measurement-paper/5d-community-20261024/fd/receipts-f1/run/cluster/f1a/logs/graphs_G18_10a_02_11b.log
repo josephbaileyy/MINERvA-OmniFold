@@ -1,0 +1,4 @@
+[setup_genie_v3] GENIE=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator
+[setup_genie_v3] gevgen=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+[setup_genie_v3] tune=G18_10a_02_11b xsec=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data splines=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/G18_10a_02_11b_CH.xml.gz
+[v3] gspl2root rc=0 -> /pscratch/sd/j/josephrb/fd-f1-20261027/f1a/graphs_G18_10a_02_11b.root

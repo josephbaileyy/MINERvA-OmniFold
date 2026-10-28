@@ -1,0 +1,33 @@
+{
+ "created_utc": "2026-10-28T01:13:31.425226+00:00",
+ "file": {
+  "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/flux_phi_t_0_100.root",
+  "role": "F1 flux (content = phi_t x width, 0-100 GeV)",
+  "bytes": 5453,
+  "sha256": "06089d468525f9fe0a65f5d1f96094b3a918f288d8336dd29a40a2e8733fffbf"
+ },
+ "definition": "content_i = phi_t_i * w_i on every phi_t bin",
+ "phi_t_npz": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz",
+  "role": "phi_t",
+  "bytes": 21414,
+  "sha256": "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5"
+ },
+ "control": {
+  "hFluxCV": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root",
+   "role": "the data normalisation's flux integral",
+   "bytes": 6396,
+   "sha256": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb"
+  },
+  "hFluxCV_bin1": 0.0006243343376851217,
+  "sum_contents": 0.000624334337685122,
+  "rel_diff": 5.209719089801114e-16,
+  "tolerance": 1e-12,
+  "phi_t_definition": "phi_t = sum_p POT_p * FluxReweighter(minervame<p>, nu_pdg 14, nuE constraint true, 100 universes).GetFluxReweighted(14) / sum_p POT_p; the 12 ME FHC playlists; POT_p = runEventLoopData_<p>.root:POTUsed. Units m^-2/POT/GeV (density; integral with bin widths). Same edges as flux_numu."
+ },
+ "code": {
+  "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/5015535e/3d-unfolding/genie/gen5d_v3.py",
+  "sha256": "08f672effbac32c27325bb29dc41b3ef13c1a1e91271392ae0d24b092e28f23d"
+ }
+}

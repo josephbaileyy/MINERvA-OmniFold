@@ -1,0 +1,26 @@
+{
+ "pilot_walls_s": {
+  "G18_10a_02_11b": 126.214,
+  "AR23_20i_00_000": 129.032
+ },
+ "per_event_upper_bound_s": {
+  "G18_10a_02_11b": 0.0126214,
+  "AR23_20i_00_000": 0.012903200000000002
+ },
+ "f1b_task_wall_s": {
+  "G18_10a_02_11b": 433.860625,
+  "AR23_20i_00_000": 443.5475
+ },
+ "f1b_projected_wall_s": 1343.5475000000001,
+ "f1b_fits_its_limit": true,
+ "contention": 1.25,
+ "f1b_time_limit": "00:28:00",
+ "f1c_time_limit": "00:54:00",
+ "worst_case_node_h": 1.4680556666666669,
+ "f1a_node_h": 0.101389,
+ "f1c_node_h_priced": 0.75,
+ "f1_projected_node_h": 1.224596638888889,
+ "within_priced": true,
+ "decision": "GO",
+ "rule": "GO iff 1.25 x the projected F1b wall fits 45 min and F1a + F1b + F1c <= 1.25 node-h; F1b is submitted with --time f1b_time_limit"
+}

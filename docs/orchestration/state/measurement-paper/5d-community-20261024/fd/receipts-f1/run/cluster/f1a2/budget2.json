@@ -1,0 +1,44 @@
+{
+ "runs": {
+  "G18_10a_02_11b": {
+   "long_wall_s": 327.72,
+   "short_wall_s": 169.49,
+   "max_rss_kib": 21884408,
+   "long_rss_kib": 21497940,
+   "short_rss_kib": 21884408,
+   "per_event_s_descriptive": 0.00958969696969697,
+   "load_s_descriptive": 159.90030303030304
+  },
+  "AR23_20i_00_000": {
+   "long_wall_s": 219.43,
+   "short_wall_s": 173.17000000000002,
+   "max_rss_kib": 22015472,
+   "long_rss_kib": 21458188,
+   "short_rss_kib": 22015472,
+   "per_event_s_descriptive": 0.002803636363636363,
+   "load_s_descriptive": 170.36636363636364
+  }
+ },
+ "concurrency": 14,
+ "waves": 10,
+ "f1b2_projected_wall_s": 4177.200000000001,
+ "f1b2_fits_its_limit": false,
+ "f1b2_projected_mem_kib": 308216608,
+ "node_mem_kib": 499509248,
+ "mem_fraction_limit": 0.75,
+ "mem_ok": true,
+ "spent_node_h": 0.3075,
+ "repilot_node_h": 0.097778,
+ "f1c_node_h_priced": 0.75,
+ "f1_projected_node_h": 2.3156113333333335,
+ "priced_node_h": 2.0,
+ "within_priced": false,
+ "f1b2_time_limit": "01:28:00",
+ "worst_case_node_h": 2.7719446666666667,
+ "ceiling_node_h": 2.5,
+ "within_ceiling": false,
+ "f1b2_task_timeout_s": 984,
+ "decision": "STOP",
+ "rule": "GO iff 14 x the largest per-process RSS <= 75 % of the node, 1.25 x the F1b' wall <= 57 min, spent + re-pilot + F1b' + 0.75 <= the priced total, and the worst case <= the ceiling",
+ "repilot_job_id": "60425719"
+}
