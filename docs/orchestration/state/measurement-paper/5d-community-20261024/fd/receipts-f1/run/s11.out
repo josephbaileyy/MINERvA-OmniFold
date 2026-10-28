@@ -1,0 +1,49 @@
+2026-10-28T12:19:39Z
+login36
+JobID|JobName|State|ExitCode|Start|End|Elapsed|MaxRSS|AllocTRES|NodeList
+60439400|fd_f1c|COMPLETED|0:0|2026-10-28T04:42:25|2026-10-28T05:18:58|00:36:33||billing=256,cpu=256,energy=1220214,mem=487802M,node=1|nid007141
+60439400.batch|batch|COMPLETED|0:0|2026-10-28T04:42:25|2026-10-28T05:18:58|00:36:33|118368K|cpu=256,mem=487802M,node=1|nid007141
+60439400.extern|extern|COMPLETED|0:0|2026-10-28T04:42:25|2026-10-28T05:18:58|00:36:33||billing=256,cpu=256,mem=487802M,node=1|nid007141
+60439400.0|line2|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:17:30|00:35:01|11008712K|cpu=32,mem=56G,node=1|nid007141
+60439400.1|line4|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:06:22|00:23:53|11010660K|cpu=32,mem=56G,node=1|nid007141
+60439400.2|line5|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:17:21|00:34:52|10933428K|cpu=32,mem=56G,node=1|nid007141
+60439400.3|line0|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:18:55|00:36:26|17119.50M|cpu=32,mem=56G,node=1|nid007141
+60439400.4|line7|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:06:31|00:24:02|10962516K|cpu=32,mem=56G,node=1|nid007141
+60439400.5|line1|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:18:58|00:36:29|17380328K|cpu=32,mem=56G,node=1|nid007141
+60439400.6|line6|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:17:18|00:34:49|10992396K|cpu=32,mem=56G,node=1|nid007141
+60439400.7|line3|COMPLETED|0:0|2026-10-28T04:42:29|2026-10-28T05:17:30|00:35:01|10959572K|cpu=32,mem=56G,node=1|nid007141
+--- check 1: every file under $OUT/f1c, by top-level entry (products must be only under closure/ and pe/<truth>/)
+      2 closure
+      8 inventory
+      1 line0-60439400.log
+      1 line1-60439400.log
+      1 line2-60439400.log
+      1 line3-60439400.log
+      1 line4-60439400.log
+      1 line5-60439400.log
+      1 line6-60439400.log
+      1 line7-60439400.log
+      8 logs
+     20 pe/genie_v3_ar23
+     20 pe/genie_v3_g18
+--- files under $OUT/f1c outside closure/ and pe/ that are .npz, .partial or not a log/inventory record
+./logs/f1c_lane7.env.log
+./logs/f1c_lane3.env.log
+./logs/f1c_lane6.env.log
+./logs/f1c_lane5.env.log
+./logs/f1c_lane0.env.log
+./logs/f1c_lane4.env.log
+./logs/f1c_lane2.env.log
+./logs/f1c_lane1.env.log
+(end; empty means none)
+--- files under closure/ and pe/ that are not .npz
+(end; empty means none)
+--- check 2: the manifest
+{"products": 42}
+manifest rc=0
+42
+fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09  /pscratch/sd/j/josephrb/fd-f1-20261027/manifest/f1-products-SHA256SUMS
+--- the 42 outputs the pin's tables declare (closure --out paths and pe dirs x seeds), against the manifest by name
+declared 42, closures 2, pseudo-experiments 40; manifest 42; equal by name: True
+only declared: [] only in manifest: []
+done 2026-10-28T12:19:40Z
