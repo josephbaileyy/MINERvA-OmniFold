@@ -1,0 +1,14 @@
+numpy 1.26.4
+C == (C_e + C_model_abs) + C_resp bit for bit: True
+genie_cv: other order total 2.22e-15 shape 0.00e+00; 20 one-ulp draws: total max 6.99e-15, shape max 0.00e+00; this host vs Stage G: total 4.44e-16 shape 1.30e-11
+genie_mec: other order total 4.44e-16 shape 0.00e+00; 20 one-ulp draws: total max 7.33e-15, shape max 0.00e+00; this host vs Stage G: total 1.78e-15 shape 3.34e-11
+nuwro: other order total 4.00e-15 shape 0.00e+00; 20 one-ulp draws: total max 1.11e-14, shape max 0.00e+00; this host vs Stage G: total 2.44e-15 shape 5.70e-11
+gibuu: other order total 1.11e-16 shape 0.00e+00; 20 one-ulp draws: total max 1.44e-15, shape max 0.00e+00; this host vs Stage G: total 2.22e-16 shape 1.39e-11
+mnvtune_v1: other order total 4.00e-15 shape 0.00e+00; 20 one-ulp draws: total max 8.88e-15, shape max 0.00e+00; this host vs Stage G: total 2.11e-15 shape 4.41e-11
+cholesky reads the lower triangle: True
+--- (iii)
+genie_cv: entries of the shape-only matrix changed by +1 ulp on every C entry: 0 of 256; 100 f f^T max / M max 3.52e+04; cond 2.65e+08; one ulp of f[R03] moves the shape-only chi2 by 6.30e-12; np.linalg.solve vs Stage G shape-only 3.10e-11, total 2.22e-15
+genie_mec: entries of the shape-only matrix changed by +1 ulp on every C entry: 0 of 256; 100 f f^T max / M max 3.52e+04; cond 2.64e+08; one ulp of f[R03] moves the shape-only chi2 by 9.10e-12; np.linalg.solve vs Stage G shape-only 1.74e-10, total 4.00e-15
+nuwro: entries of the shape-only matrix changed by +1 ulp on every C entry: 0 of 256; 100 f f^T max / M max 3.54e+04; cond 3.05e+08; one ulp of f[R03] moves the shape-only chi2 by 3.93e-11; np.linalg.solve vs Stage G shape-only 2.29e-10, total 2.78e-15
+gibuu: entries of the shape-only matrix changed by +1 ulp on every C entry: 0 of 64; 100 f f^T max / M max 2.31e+04; cond 2.14e+07; one ulp of f[R03] moves the shape-only chi2 by 1.75e-12; np.linalg.solve vs Stage G shape-only 1.28e-11, total 1.11e-16
+mnvtune_v1: entries of the shape-only matrix changed by +1 ulp on every C entry: 0 of 256; 100 f f^T max / M max 3.61e+04; cond 6.43e+08; one ulp of f[R03] moves the shape-only chi2 by 3.41e-11; np.linalg.solve vs Stage G shape-only 2.90e-10, total 4.44e-16
