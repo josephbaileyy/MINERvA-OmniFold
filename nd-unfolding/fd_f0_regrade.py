@@ -33,6 +33,15 @@ still acts on C_model only. The model-only matrix, which carries no C_e, is unch
 the estimators, the noise, controls 0-8 (control 7 grades against the noise alone), the triggers and the guard.
 Without the option the tool is F0's.
 
+F1 (FD-F1-DECLARATION.md; DECISION-20261027-joseph-limitation-plan-f1-bias-test-and-flux-bootstrap.md item 1): with
+``--f1-prep-sums`` and its companions, which require ``--extra-block``, the two GENIE v3 truths are graded beside the 18:
+per truth, 20 pseudo-experiments (row 7, the row 1 estimator) and the noise-free closure (row 8, the row 3 estimator),
+in their own group "held-out", as non-vertex truths against C_total + C_x with the GENIE MEC leave-out as the declared
+sensitivity matrix. Their identities (the ratio and bridged-ratio sha256) come from the committed f1-prep-SHA256SUMS,
+their products from the committed F1 product manifest. Control 9 then requires every one of the 18 truths to grade
+exactly as the committed F0b readout records it, so the F1 run is F0b's plus two truths. Without the options the
+tool is F0b's (or F0's) unchanged.
+
 MEASURES: arithmetic on the declared products. CANNOT AUTHORIZE: a claim, a cell merge, a change to C_e, C_model or
 kappa, or any reading of the data against a generator (Stage G).
 """
@@ -143,6 +152,11 @@ COUNTS = {"cal": {"MnvTune_v1": 1365, "GENIE_2_12_10_CV": 1366, "GENIE_2_12_10_M
           "f4": 16}
 F4_SEEDS = tuple(range(970000, 970016))
 OFFSET_PAIR = ("A7_mnvtune", "A7_genie_cv")
+F1_TRUTHS = {"genie_v3_g18": 806000, "genie_v3_ar23": 807000}   # the first of 20 pseudo-seeds each (fd_f1_tasks.SEEDS)
+F1_N = 20
+F1_LABEL = ("a bias test at two held-out GENIE v3 truths, not a coverage test: Poisson pseudo-data with no nuisance "
+            "draws cannot test the intervals' width (DECISION-20261027-joseph-limitation-plan-f1-bias-test-and-flux-"
+            "bootstrap.md item 1); the detector response is not probed")
 IN_SAMPLE_LABEL = "includes the truth's own vertex: not evidence"
 MODEL_ONLY_LABEL = ("descriptive, no threshold: C_stat + C_model leaving out the own vertex; drops the interaction, "
                     "flux, detector, lateral and normalization blocks, so a lower bound on C_model's reach (ruling 2)")
@@ -465,13 +479,40 @@ def build_args(argv):
     ap.add_argument("--extra-block-sha256", help="its file sha256, as the binding records it")
     ap.add_argument("--extra-block-key", help="the 16 x 16 matrix's key in that npz")
     ap.add_argument("--extra-block-name", help="its name in the readout, e.g. C_resp")
+    ap.add_argument("--f1-prep-sums", type=Path, help="F1: the committed f1-prep-SHA256SUMS")
+    ap.add_argument("--f1-prep-sums-sha256", help="F1: its sha256, as the binding records it")
+    ap.add_argument("--f1-products-sums", type=Path, help="F1: the committed manifest of the F1 products")
+    ap.add_argument("--f1-products-sums-sha256", help="F1: its sha256")
+    ap.add_argument("--f1-root", type=Path, help="F1: the directory the product manifest is relative to")
+    ap.add_argument("--f0b-readout", type=Path, help="F1: the committed fd_f0b_readout.json (control 9)")
+    ap.add_argument("--f0b-readout-sha256", help="F1: its sha256")
     ap.add_argument("--out-json", type=Path, required=True)
     ap.add_argument("--out-npz", type=Path, required=True)
     a = ap.parse_args(argv)
     extra = (a.extra_block, a.extra_block_sha256, a.extra_block_key, a.extra_block_name)
     if any(v is not None for v in extra) and not all(v is not None for v in extra):
         ap.error("--extra-block, --extra-block-sha256, --extra-block-key and --extra-block-name go together")
+    f1 = (a.f1_prep_sums, a.f1_prep_sums_sha256, a.f1_products_sums, a.f1_products_sums_sha256, a.f1_root,
+          a.f0b_readout, a.f0b_readout_sha256)
+    if any(v is not None for v in f1) and not all(v is not None for v in f1):
+        ap.error("the --f1-* options and --f0b-readout(-sha256) go together")
+    if f1[0] is not None and a.extra_block is None:
+        ap.error("F1 grades against C_total + C_resp: it needs --extra-block")
     return a
+
+
+def f1_truths(prep: dict[str, str]) -> tuple:
+    """The F1 rows from the committed prep manifest: per truth the ensemble (row 7) and the closure (row 8)."""
+    out = []
+    for name, s0 in F1_TRUTHS.items():
+        rel, brel = f"./ratios/L-5D-PV/{name}.json", f"./bridged/{name}.json"
+        if rel not in prep or brel not in prep:
+            raise Stop(1, f"the F1 prep manifest lists no {rel} or {brel}")
+        out.append(dict(name=f"F1_{name}", row=7, group="held-out", own=None, sens="genie_mec", set=name,
+                        seeds=(s0, F1_N), ident={"truth": "ratio_nd", "amplitude": 1.0, "eavail_ratio_sha256": prep[brel]}))
+        out.append(dict(name=f"F1_closure_{name}", row=8, group="held-out", own=None, sens="genie_mec",
+                        product=f"f1_closure_{name}", ratio=prep[rel]))
+    return tuple(out)
 
 
 def require(control, path: Path, want: str, what: str):
@@ -508,11 +549,20 @@ def run(a, pins=None) -> int:
                       ("cmodel_json", a.cmodel_json), ("stage0_inventory", a.stage0_inventory),
                       ("stage0c_sums", a.stage0c_sums), ("s5p_sums", a.s5p_sums)):
         require(1, path, pins[key], key)
+    f1 = a.f1_prep_sums is not None
+    TR = TRUTHS
+    f1prod: dict[str, str] = {}
+    if f1:
+        require(1, a.f1_prep_sums, a.f1_prep_sums_sha256, "F1 prep manifest")
+        require(1, a.f1_products_sums, a.f1_products_sums_sha256, "F1 product manifest")
+        require(1, a.f0b_readout, a.f0b_readout_sha256, "F0b readout")
+        TR = TRUTHS + f1_truths(sa.load_manifest(a.f1_prep_sums))
+        f1prod = relative_manifest(a.f1_products_sums, a.f1_root)
     inv = sa.load_manifest(a.stage0_inventory)
     s0c = relative_manifest(a.stage0c_sums, a.stage0c_root)
     s5p = relative_manifest(a.s5p_sums, a.s5p_root)
     sets: dict[str, list[Path]] = {}
-    for t in TRUTHS:
+    for t in TR:
         if t["row"] == 1:
             sets[t["name"]] = listed_set(inv, a.s5e_assess / t["set"])
         elif t["row"] == 2:
@@ -524,8 +574,15 @@ def run(a, pins=None) -> int:
             sets["cal:" + t["name"]] = listed_set(s5p, a.s5p_root / "runs/prod/cal" / t["cal"])
         elif t["row"] == 6:
             sets[t["name"]] = listed_set(s5p, a.s5p_root / "runs/prod/pow" / t["pow"])
+        elif t["row"] == 7:
+            sets[t["name"]] = listed_set(f1prod, a.f1_root / "pe" / t["set"])
+        elif t["row"] == 8:
+            p = a.f1_root / "closure" / f"{t['product']}.npz"
+            if str(p) not in f1prod:
+                raise Stop(1, f"{p} is not in the F1 product manifest")
+            sets[t["name"]] = [p]
     floor_path = a.pvl_products / "L-5D-PV_e_closure_tune_v1.npz"
-    want_sha = {**inv, **s0c, **s5p}
+    want_sha = {**inv, **s0c, **s5p, **f1prod}
     for name, paths in sets.items():
         if name in f4:
             continue
@@ -539,15 +596,17 @@ def run(a, pins=None) -> int:
     if xb:
         require(1, a.extra_block, a.extra_block_sha256, "extra block")
     w_all = sa_call(1, sa.flux_weights, a.flux_constraint)
-    report(1, f"{sum(map(len, sets.values())) + 1} products and {8 + xb} records match their recorded sha256", True)
+    report(1, f"{sum(map(len, sets.values())) + 1} products and {8 + xb + 3 * f1} records match their recorded sha256", True)
 
     # 2. meta and array headers of every product
     spec_of = {}
-    for t in TRUTHS:
-        if t["row"] in (1, 2):
+    for t in TR:
+        if t["row"] in (1, 2, 7):
             spec_of[t["name"]] = ("s5e", t)
         elif t["row"] == 3:
             spec_of[t["name"]] = ("closure", {"ratio": RATIO["closure_nuwro"]})
+        elif t["row"] == 8:
+            spec_of[t["name"]] = ("closure", {"ratio": t["ratio"]})
         elif t["row"] == 4:
             spec_of[t["name"]] = ("f4", {"hyp": HYP[t["d16"]]})
             spec_of["cal:" + t["name"]] = ("cal", {"hyp": HYP[t["d16"]]})
@@ -571,10 +630,10 @@ def run(a, pins=None) -> int:
     report(2, "every product was made by (e) at its declared truth", True)
 
     # 3. counts
-    for t in TRUTHS:
+    for t in TR:
         n = len(sets[t["name"]])
         want = {1: t.get("seeds", (0, 0))[1], 2: t.get("seeds", (0, 0))[1], 3: 1, 4: COUNTS["f4"],
-                6: COUNTS["pow"].get(t.get("pow"))}[t["row"]]
+                6: COUNTS["pow"].get(t.get("pow")), 7: t.get("seeds", (0, 0))[1], 8: 1}[t["row"]]
         if n != want or len({m.get("pseudo_seed") for m in metas[t["name"]]}) != n:
             raise Stop(3, f"{t['name']}: {n} products, {want} declared, or a repeated seed")
         if t["row"] == 4:
@@ -678,11 +737,11 @@ def run(a, pins=None) -> int:
 
     # 7. the offset control (gates row 6 only)
     est, offsets = {}, {}
-    for t in TRUTHS:
+    for t in TR:
         R = rel(t["name"])
-        if t["row"] == 3:
+        if t["row"] in (3, 8):
             est[t["name"]] = (R[0], np.zeros((N_CELLS, N_CELLS)), None, "noise-free closure (N = 0)")
-        elif t["row"] in (1, 2, 4):
+        elif t["row"] in (1, 2, 4, 7):
             b, N, B = unweighted(R)
             est[t["name"]] = (b, N, B, "unweighted mean")
         if t["row"] == 4:
@@ -722,7 +781,7 @@ def run(a, pins=None) -> int:
 
     # the grades
     truths, by = [], {}
-    for t in TRUTHS:
+    for t in TR:
         b, N, B, how = est[t["name"]][:4]
         graded = t["row"] != 6 or offset_pass
         C = (mats["C_total"] if t["own"] is None else mats[f"minus_{t['own']}"]) + Cx_rel
@@ -757,10 +816,17 @@ def run(a, pins=None) -> int:
                 d["cells_abs_z_gt_2"] += nz
                 d["truths_p_lt_0.01"] += pl
             g["cells"] += N_CELLS
+    if f1:   # 9. the 18 truths grade exactly as the committed F0b readout records them
+        old = {r["name"]: r for r in json.loads(a.f0b_readout.read_text())["truths"]}
+        new = {r["name"]: json.loads(json.dumps(r)) for r in truths if r["row"] <= 6}
+        diff = [n for n in old if new.get(n) != old[n]]                 # every field of every record
+        report(9, f"the {len(old)} F0b truths grade exactly as the committed F0b readout records them, field for field",
+               not diff and set(new) == set(old), f"differs for {diff}", guard)
     for g in by.values():
         g["gaussian_reference_cells"] = g["cells"] * GAUSS_CELL
         g["gaussian_reference_truths"] = g["truths"] * P_TRIGGER
-    tot = {k: sum(g[k] for g in by.values()) for k in ("truths", "cells", "cells_abs_z_gt_2", "truths_p_lt_0.01")}
+    pooled = {k: g for k, g in by.items() if k != "held-out"}            # F1's group is never in F0b's denominators
+    tot = {k: sum(g[k] for g in pooled.values()) for k in ("truths", "cells", "cells_abs_z_gt_2", "truths_p_lt_0.01")}
     tot.update(gaussian_reference_cells=tot["cells"] * GAUSS_CELL, gaussian_reference_truths=tot["truths"] * P_TRIGGER,
                label="the denominators of ruling 2; the counts are read by group, never pooled")
 
@@ -772,7 +838,7 @@ def run(a, pins=None) -> int:
                    "thresholds": "reporting triggers for a proposed limitation, not gates (ruling 2)",
                    "gaussian_reference": "context only: b is a deterministic bias, not a Gaussian draw"},
         "cells": [f"R{c:02d}" for c in range(N_CELLS)],
-        "controls": {"passed": [0, 1, 2, 3, 4, 5, 6, 8], "offset_control_7": {"pass": offset_pass, "pair": list(OFFSET_PAIR),
+        "controls": {"passed": [0, 1, 2, 3, 4, 5, 6, 8] + ([9] if f1 else []), "offset_control_7": {"pass": offset_pass, "pair": list(OFFSET_PAIR),
                      "rule": "P(chi2_16 > chi2) >= 0.01", "chi2": gate["chi2"], "p": gate["p"],
                      "p_below_floor": gate["p_below_floor"], "pairs_descriptive": [p for p in pairs if not p["gating"]],
                      "B_eff_calibration": {k: v["B_eff"] for k, v in offsets.items()},
@@ -805,7 +871,17 @@ def run(a, pins=None) -> int:
         readout[f"relative_sigma_plus_{a.extra_block_name}"] = {k: v.tolist() for k, v in sig_x.items()}
         readout[f"relative_sigma_plus_{a.extra_block_name}_summary_percent"] = {
             k: list(sigma_summary(v)) for k, v in sig_x.items()}
-    table = {"names": np.array([t["name"] for t in TRUTHS])}
+    if f1:
+        readout["schema"] = "fd-f1-readout/1"
+        readout["labels"]["what"] = ("the (e) estimator's bias at two held-out GENIE v3 truths on R00-R15, graded against "
+                                     f"S1's C_total plus {a.extra_block_name}, beside F0b's 18 truths re-graded (control 9)")
+        readout["labels"]["f1"] = F1_LABEL
+        readout["labels"]["not"] = readout["labels"]["not"].replace(
+            "not held-out truths", "the 18 F0b truths are not held out; the two F1 truths are, in their own group "
+                                   "held-out, outside all_graded")
+        readout["inputs_sha256"].update(f1_prep_sums=a.f1_prep_sums_sha256, f1_products_sums=a.f1_products_sums_sha256,
+                                        f0b_readout=a.f0b_readout_sha256)
+    table = {"names": np.array([t["name"] for t in TR])}
     for name in sets:
         key = name.replace(":", "_")
         table[f"r_{key}"] = rel(name)
