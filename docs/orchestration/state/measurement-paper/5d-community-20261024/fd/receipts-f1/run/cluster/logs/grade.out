@@ -1,0 +1,39 @@
+PASS control 0 f4 products match their D16 sha256
+PASS control 1 8587 products and 12 records match their recorded sha256
+PASS control 2 every product was made by (e) at its declared truth
+PASS control 3 counts as declared (8586 products: 1410 graded, 7176 for the offset control)
+PASS control 4 U is S1's float32 functional matrix
+PASS control 4 f is positive on every cell
+PASS control 4 C_e is the sum of S1's blocks
+PASS control 4 C_total = C_e + C_model_abs
+PASS control 4 C_model_abs = diag(f) C_model diag(f)
+PASS control 4 S (npz) is C_model,5D's committed S
+PASS control 4 C_model = S^T S
+PASS control 4 C_total's relative sigma is the committed one
+PASS control 4 C_e: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_e: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_total: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 C_total: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_genie_mec: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_genie_mec: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_nuwro: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_nuwro: FD-PLAN section 2.1 row reproduces
+PASS control 4 minus_gibuu: sigma from S1's npz equals sigma from the committed JSONs
+PASS control 4 minus_gibuu: FD-PLAN section 2.1 row reproduces
+PASS control 4 C_stat,rel is full rank
+PASS control 4 C_resp is a finite 16 x 16 matrix
+PASS control 4 C_resp is symmetric
+PASS control 4 C_resp is positive semidefinite
+PASS control 4 C_total + C_resp is positive definite
+PASS control 5 closure bias equals cmodel_5d.json reporting16.bias_cells
+PASS control 6 closure floor max |bias| 3.217964e-05 reproduces the recorded value
+FAIL control 7 offset control: chi2_16 245.742, p 0 -> row 6 is descriptive and ungraded
+PASS control 8 every truth integral is positive on all 16 cells
+PASS control 9 the 18 F0b truths grade exactly as the committed F0b readout records them, field for field
+[F0] F0b: every grade matrix carries C_resp; the model-only matrix is F0's
+[F0] held-out: 0 of 64 cells |z| > 2 (Gaussian reference 2.91); 0 of 4 truths p < 0.01 (reference 0.04)
+[F0] non-vertex: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
+[F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 0 of 2 truths p < 0.01 (reference 0.02)
+[F0] vertex-family: 4 of 128 cells |z| > 2 (Gaussian reference 5.82); 1 of 8 truths p < 0.01 (reference 0.08)
+[F0] denominators: 4 of 192 cells, 2 of 12 truths (references 8.74, 0.12); read by group
+{"wrote": ["/pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_readout.json", "/pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz"], "readout_sha256": "cbe411a926a7392e4aa085c7beba6e1bda45aff55d937998c53e49f27e3516c7", "table_sha256": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"}
