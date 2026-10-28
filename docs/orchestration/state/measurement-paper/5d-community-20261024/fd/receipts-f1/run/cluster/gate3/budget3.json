@@ -1,0 +1,51 @@
+{
+ "runs": {
+  "G18_10a_02_11b": {
+   "long_wall_s": 327.72,
+   "short_wall_s": 169.49,
+   "max_rss_kib": 21884408,
+   "long_rss_kib": 21497940,
+   "short_rss_kib": 21884408,
+   "per_event_s_descriptive": 0.00958969696969697,
+   "load_s_descriptive": 159.90030303030304
+  },
+  "AR23_20i_00_000": {
+   "long_wall_s": 219.43,
+   "short_wall_s": 173.17000000000002,
+   "max_rss_kib": 22015472,
+   "long_rss_kib": 21458188,
+   "short_rss_kib": 22015472,
+   "per_event_s_descriptive": 0.002803636363636363,
+   "load_s_descriptive": 170.36636363636364
+  }
+ },
+ "per_event_s_used": 0.00958969696969697,
+ "load_s_used": 170.36636363636364,
+ "events_per_task": 160000,
+ "events_over_largest_measured_run": 9.142857142857142,
+ "concurrency": 14,
+ "tasks_per_tune": 7,
+ "waves": 1,
+ "f1b3_projected_task_wall_s": 1704.7178787878788,
+ "f1b3_projected_wall_s": 2604.717878787879,
+ "f1b3_fits_its_limit": true,
+ "f1b3_projected_mem_kib": 308216608,
+ "node_mem_kib": 499509248,
+ "mem_fraction_limit": 0.75,
+ "mem_ok": true,
+ "spent_node_h": 0.408333,
+ "f1c_node_h_priced": 0.75,
+ "f1_projected_node_h": 1.8818657441077442,
+ "priced_node_h": 2.0,
+ "within_priced": true,
+ "f1b3_time_limit": "00:55:00",
+ "worst_case_node_h": 2.2249996666666667,
+ "ceiling_node_h": 2.5,
+ "within_ceiling": true,
+ "f1b3_task_timeout_s": 5115,
+ "repilot_job_id": "60425719",
+ "records_sums_sha256": "43b621681762193bca91e42ea78662053428f6097eb941516fbaf1c5de489650",
+ "decision": "GO",
+ "extrapolation": "160,000 events per task is about 9x the re-pilot's 17,500-event runs: the per-event term is extrapolated, and RSS was measured only up to 17,500 events",
+ "rule": "GO iff 14 x the largest per-process RSS <= 75 % of the node, 1.25 x the F1b' wall <= 57 min, spent + F1b' + 0.75 <= the priced total, and the worst case <= the ceiling"
+}

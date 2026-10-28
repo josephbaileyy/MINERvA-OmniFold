@@ -1,0 +1,5 @@
+# The three files held out of the F1c pin, as committed here, against the pin's f1b3-SHA256SUMS (director's condition 3)
+gen5d/genie_v3_ar23_xsec5d.meta.json: OK
+gen5d/genie_v3_g18_xsec5d.meta.json: OK
+prep/config-f1.json: OK
+rc=0

@@ -1,0 +1,9 @@
+# F1c (lanes), from f1-prep-SHA256SUMS sha256 981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480; FD-F1-DECLARATION.md section 4
+f1c_lane0	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	0
+f1c_lane1	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	1
+f1c_lane2	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	2
+f1c_lane3	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	3
+f1c_lane4	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	4
+f1c_lane5	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	5
+f1c_lane6	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	6
+f1c_lane7	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv	--lane	7
