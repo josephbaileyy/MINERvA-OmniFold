@@ -1,0 +1,85 @@
+2026-10-28T10:32:56Z
+login36
+clone rc=0
+HEAD 5f5e392c4be9c6f8bb035a72d4a60f7dd8be8803
+porcelain_ignored_lines 0
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/README: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/README: OK
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz: OK
+/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/5f5e392c/nd-unfolding/pv-ladder/config.json: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz: OK
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz: OK
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz: OK
+/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz: OK
+/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/5f5e392c/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json: OK
+section 8 digests rc=0
+./flux_phi_t_0_100.root: OK
+./graphs_AR23_20i_00_000.root: OK
+./graphs_G18_10a_02_11b.root: OK
+./splines/AR23_20i_00_000_CH.xml.gz: OK
+./splines/G18_10a_02_11b_CH.xml.gz: OK
+F1a reused products rc=0
+re-pilot .time lines 20
+./runs/AR23_20i_00_000/long_s61101.time: OK
+./runs/AR23_20i_00_000/long_s61102.time: OK
+./runs/AR23_20i_00_000/long_s61103.time: OK
+./runs/AR23_20i_00_000/long_s61104.time: OK
+./runs/AR23_20i_00_000/short_s61105.time: OK
+./runs/AR23_20i_00_000/short_s61106.time: OK
+./runs/AR23_20i_00_000/short_s61107.time: OK
+./runs/AR23_20i_00_000/short_s61108.time: OK
+./runs/AR23_20i_00_000/short_s61109.time: OK
+./runs/AR23_20i_00_000/short_s61110.time: OK
+./runs/G18_10a_02_11b/long_s60101.time: OK
+./runs/G18_10a_02_11b/long_s60102.time: OK
+./runs/G18_10a_02_11b/long_s60103.time: OK
+./runs/G18_10a_02_11b/long_s60104.time: OK
+./runs/G18_10a_02_11b/short_s60105.time: OK
+./runs/G18_10a_02_11b/short_s60106.time: OK
+./runs/G18_10a_02_11b/short_s60107.time: OK
+./runs/G18_10a_02_11b/short_s60108.time: OK
+./runs/G18_10a_02_11b/short_s60109.time: OK
+./runs/G18_10a_02_11b/short_s60110.time: OK
+re-pilot .time records, deployed copies rc=0
+./runs/AR23_20i_00_000/long_s61101.time: OK
+./runs/AR23_20i_00_000/long_s61102.time: OK
+./runs/AR23_20i_00_000/long_s61103.time: OK
+./runs/AR23_20i_00_000/long_s61104.time: OK
+./runs/AR23_20i_00_000/short_s61105.time: OK
+./runs/AR23_20i_00_000/short_s61106.time: OK
+./runs/AR23_20i_00_000/short_s61107.time: OK
+./runs/AR23_20i_00_000/short_s61108.time: OK
+./runs/AR23_20i_00_000/short_s61109.time: OK
+./runs/AR23_20i_00_000/short_s61110.time: OK
+./runs/G18_10a_02_11b/long_s60101.time: OK
+./runs/G18_10a_02_11b/long_s60102.time: OK
+./runs/G18_10a_02_11b/long_s60103.time: OK
+./runs/G18_10a_02_11b/long_s60104.time: OK
+./runs/G18_10a_02_11b/short_s60105.time: OK
+./runs/G18_10a_02_11b/short_s60106.time: OK
+./runs/G18_10a_02_11b/short_s60107.time: OK
+./runs/G18_10a_02_11b/short_s60108.time: OK
+./runs/G18_10a_02_11b/short_s60109.time: OK
+./runs/G18_10a_02_11b/short_s60110.time: OK
+re-pilot .time records, cluster originals rc=0
+amendment-2 declaration 931808e5b601e4d69c015f7745b1bdc93618f54b50f80c13929834cfd98febff
+test_fd_f1_amend2 rc=0
+test_fd_f1_amend rc=0
+test_fd_f1 rc=0
+test_fd_f0_regrade rc=0
+porcelain_ignored_lines_after_tests 0
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3 exists=no
+/pscratch/sd/j/josephrb/fd-f1-20261027/gate3 exists=no
+done: 2026-10-28T10:40:55Z
+Ran 15 tests in 3.392s
+OK
+Ran 13 tests in 1.200s
+OK
+Ran 31 tests in 50.308s
+OK
+Ran 47 tests in 358.376s
+OK
