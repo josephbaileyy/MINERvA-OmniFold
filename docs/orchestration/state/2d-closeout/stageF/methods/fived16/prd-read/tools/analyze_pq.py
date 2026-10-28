@@ -5,7 +5,7 @@ CL = [l.rstrip("\n").split("\t") for l in open(f"{X}/inputs/clauses.tsv")]
 RUNS = [f"PQ__{o}__{m}" for m in ("sol2", "gemini") for o in ("fwd", "rev")]
 V = {}
 for r in RUNS:
-    t = open(f"{X}/runs/{r}.md").read()
+    t = open(f"{X}/runs/{r}.txt").read()
     for cid, _ in CL:
         m = re.search(rf"^\**{cid}\**:\s*\**VERDICT:\**\s*\**(AS-WRITTEN|BRIEFER|COMPANION|OMIT)\b(.*?)(?=^\**C\d\d\**:|^\**T\**:)", t, re.M | re.S)
         if not m:

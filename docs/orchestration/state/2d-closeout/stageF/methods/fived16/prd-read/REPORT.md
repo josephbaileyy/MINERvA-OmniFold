@@ -100,6 +100,7 @@ The draft prints integers, and the note prints two decimals.
 | C24 | Limitations: "central values without intervals of validated coverage, and no uncertainty quoted for the configuration-(a) …" | BRIEFER ×2 | BRIEFER ×2 | 4/4 shorten | **sol2's forms are true. gemini's are false:** "presented as central values" denies the sixteen-cell total uncertainties. |
 | C25 | Limitations: "The sixteen-cell result also has total uncertainties, whose coverage is not validated; …" | BRIEFER ×2 (keep coverage) | BRIEFER ×2 (drop coverage) | 4/4 shorten; split on what goes | **sol2's "… whose coverage has not been validated; Sec. V F reports the bias tests." is true.** gemini's "total uncertainties evaluated against mock data" reads as validation, so it is false as read. |
 | C26 | the label "the configuration-(a) central value" | AS-WRITTEN ×2 | BRIEFER ×2 ("the nominal …") | split by model | **"nominal" is false:** configuration (a) is not the nominal estimator, and the sixteen-cell result is configuration (e). A rename would be a naming decision. |
+<!-- absence-ok: the table quotes the drafted limitation clauses the raters judged and their verdicts; not a claim that a result does not exist -->
 
 **Agreement:**
 - **Within each model,** the two list orders agree on 22 of the 26 clauses.
@@ -146,7 +147,7 @@ They are not applied: the printed wording is Joseph's.
 
 - `prompts/`
 - `inputs/` (the excerpt, the clauses, the three Q3 variants and the two PQ inputs)
-- `runs/` (28 rater outputs, `status.tsv`, `P2S-analysis.txt` and `PQ-analysis.txt`)
+- `runs/` (28 rater outputs, `status.tsv`, `P2S-analysis.txt` and `PQ-analysis.txt`). The four PQ outputs are `.txt`, renamed from `.md` with identical bytes on 2026-10-28 so that the records lint does not judge a rater's verbatim text; `tools/jobs.tsv` keeps the `.md` paths the runs wrote to
 - `tools/` (the input builder, the job writer, the two analyses and the pool runner)
 - `q5/` (agy's check, with its control and the alternatives)
 

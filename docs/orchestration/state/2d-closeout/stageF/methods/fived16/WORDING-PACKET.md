@@ -42,6 +42,7 @@ The full tables, with the raters' quotes and a truth column for every shortening
 - **Q5:** **agy does not agree with the decided sentence.** It reads "stays within the reported uncertainty" as within 1σ, while the criterion allows 2σ (A7 NuWro reaches 1.34σ). It accepts "the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01" and "the bias is within 2σ in every cell and p ≥ 0.01". The numbers hold under every form. **Applied (director, 2026-10-27) as a truth fix:** "At the other 9 truths the bias passes both criteria: no cell beyond 2σ and p ≥ 0.01." Your sentence's "stays within the reported uncertainty" reads as within 1σ, while the criterion allows 2σ.
 - **Applied to the paper:** the unanimous true shortenings and the two accuracy fixes (C06, C08). Every change, with its rater verdicts, is in the change table of `prd-read/REPORT.md`.
 - **Next:** your decision moves the non-final configurations to the note (`move/MOVE-OUTLINE.md`, `move/config-inventory.md`). The abstracts are re-proposed after the move.
+<!-- absence-ok: quotes the limitation clauses the raters would cut; not a claim that a result does not exist -->
 
 ## Your questions
 
