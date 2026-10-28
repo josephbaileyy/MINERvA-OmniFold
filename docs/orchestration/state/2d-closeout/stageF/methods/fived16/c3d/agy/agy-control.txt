@@ -1,0 +1,7 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER concludes that the bands "show that the χ² is robust to the flux correlations", which asserts a conclusion the study is explicitly not citable for ("that the chi-squared is insensitive to the flux correlations").
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER incorrectly states that "the bootstrap median lies below the reported value", contradicting BEFORE's specification that the offset is median minus reported value and "[e]very offset is positive".
+
+END

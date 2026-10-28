@@ -35,6 +35,7 @@ READOUTS = {
     "sens2": (f"{FD}/fd/readout/fd_g_sens2_readout.json", "0f6568ab"),
     "dp": (f"{FD}/fd/data-product/fd_data_product.json", "b79556f0"),
     "gagg": (f"{FD}/fd/readout/fd_gibuu_enu_aggregate.json", "66dcbd6d"),
+    "fboot": (f"{FD}/fd/readout/fd_flux_boot_readout.json", "b7b5652c"),   # 3D, FD-FLUX-BOOT-REPORT.md (PR #438)
 }
 # the figures the note and the paper print, copied into figures/: each must equal its committed source and the digest
 # its sidecar records (FD-G-FIGURES-REPORT.md section 1)
@@ -300,6 +301,34 @@ def values(d):
     assert len(ext) == 3 and v["g-gibuu-total-ndf"] == "8" and "tune" not in ext
     v["g-ext-chi2int-min16"] = str(min(int(v[f"g-{k}-total-chi2int"]) for k in ext))
     v["g-ext-chi2int-max16"] = str(max(int(v[f"g-{k}-total-chi2int"]) for k in ext))
+    # 3D, the flux-correlation bootstrap (FD-FLUX-BOOT-REPORT.md; DECISION-20261027 limitation plan item 3). Under
+    # FD-FLUX-BOOT-BINDING ruling 2 only the correlation variant's 16-84% percentile band of the total chi2 may be
+    # described, beside Stage G's chi2 and the offset (median - chi2), as estimation scatter given these universes under
+    # PPFX and the nu-e + IMD constraint: never as an interval for the true chi2, never the basic band. The summary keys
+    # range over the four 16-cell predictions, as sens-flux-fall-lo/hi do; edges are floored/ceiled to bound the values.
+    fb = d["fboot"]
+    assert fb["schema"] == "fd-flux-boot-readout/1"
+    band = fb["bands"]["correlation"]
+    edge, off = [], []
+    for name, k in PRED.items():
+        b = band[name]; t = b["total"]; hat = b["chi2_stage_g"]
+        assert abs(hat - float(v[f"g-{k}-total-chi2"])) < 0.005, f"3D's chi2 for {name} is not Stage G's"
+        lo, hi = t["percentiles"]["16"], t["percentiles"]["84"]
+        assert lo < hat < hi
+        v[f"fb-{k}-lo"], v[f"fb-{k}-hi"] = f"{lo:.0f}", f"{hi:.0f}"
+        v[f"fb-{k}-offset"] = f"{t['offset_median_minus_centre']:.2f}"
+        if b["ndf"] == 16:
+            edge.append(max(hat - lo, hi - hat) / hat)
+            off.append(t["offset_median_minus_centre"] / hat)
+    assert len(edge) == 4 and min(off) > 0, "expected the four 16-cell predictions, each with a positive offset"
+    v["fb-edge-min"] = f"{math.floor(1000 * min(edge)) / 10:.1f}"
+    v["fb-edge-max"] = f"{math.ceil(1000 * max(edge)) / 10:.1f}"
+    v["fb-offset-relmax"] = f"{math.ceil(1000 * max(off)) / 10:.1f}"
+    v["fb-replicates"] = str(fb["constants"]["replicates"])
+    v["fb-universes"] = str(fb["constants"]["universes"])
+    pcts = fb["constants"]["percentiles"]
+    assert 16 in pcts and 84 in pcts, "the 16-84% band is not in the readout's percentiles"
+    v["fb-plo"], v["fb-phi"] = "16", "84"                  # the band ruling 2 allows (FD-FLUX-BOOT-BINDING.md section 2)
     return v
 
 
