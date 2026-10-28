@@ -145,6 +145,21 @@ accepted one pointer for both sentences.
 GiBUU vertex. |b|/σ is 0.62 in full, 0.93 without GiBUU and 1.07 with C_e + C_resp alone. The sentence is right as
 written, because C_model is part of the reported uncertainty, which the paper calls "not a calibrated bound".
 
+## PRD read r6: the composites as printed (director, accepting `1bcccc38`)
+
+The director's message: "the composites A1, A2 and H1 get a read as printed now, not at (d) … If a rater form beats a
+composite and passes the truth column, it goes to Joseph as an alternative. It doesn't replace the composite
+silently." In `../prd-read/REPORT.md`, "Round 6":
+- **P02, the control:** ACCEPT ×3.
+- **A1 and A2:** the composites stand. Two rater forms drop the width limitation. sol2 r1's form is true, but agy reads
+  its plural "bias tests" as independent tests.
+- **H1:** the composite stands, and sol2 r2's form goes to Joseph as an alternative. It is true, and agy reads it
+  SAME.
+- **agy** (`agy/r6/`): the control caught 4 of 4, and the three composites as printed read SAME.
+
+The director also confirmed the allowance's abstract coverage, by E2 only, under condition 2. It is recorded in
+C1A-ALLOW.
+
 ## Checks
 
 | check | result |
@@ -156,6 +171,11 @@ written, because C_model is part of the reported uncertainty, which the paper ca
 | reflow, swallowed-text, registry, results index | PASS |
 
 ## For Joseph, in (d)
+
+- **H1's alternative,** sol2 r2's r6 form, beside the printed IV H paragraph.
+- **Beside Sec. I's "below the reported uncertainty in every cell":** at G18's R11 that holds mainly through C_model's
+  GiBUU vertex. |b|/σ is 0.62 in full, 0.93 without GiBUU and 1.07 with C_e + C_resp alone. "The reported uncertainty"
+  includes C_model, which the paper calls "not a calibrated bound".
 
 - **The abstracts' 1A sentences,** as drafts. The paper abstract goes from 203 to 228 words and the note's from 348 to
   373 (`tools/recount.py`). The note abstract's length is already a (d) item.

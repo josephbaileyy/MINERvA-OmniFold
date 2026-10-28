@@ -1,0 +1,13 @@
+A1: VERDICT: SHORTEN
+SHORTER-FORM: Interval coverage has not been validated; bias tests with two held-out GENIE v3 tunes find bias below the reported uncertainty in every cell but do not assess interval widths.
+REASON: This preserves the finding and its limitations while replacing the compressed jargon “held-out truths” with clearer wording.
+A2: VERDICT: SHORTEN
+SHORTER-FORM: Interval coverage has not been validated; bias tests with two held-out GENIE v3 tunes find bias below the reported uncertainty in every cell but do not assess interval widths.
+REASON: The same concise wording suits the technical-note abstract and avoids the cumbersome possessive “the result’s intervals.”
+H1: VERDICT: SHORTEN
+SHORTER-FORM: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each reweights the simulated truth by its shape ratio to GENIE CV, constructed as for the C_model components; the simulated detector response is not tested. For each tune, 20 Poisson pseudo-experiments and a noise-free closure are compared with the truth using the full reported covariance. Both tunes meet both bias criteria: the pseudo-experiment means yield χ²=11.84 (p=0.76) and 16.86 (p=0.39), respectively, with |z|≤0.65 in every cell of the means and closures. The tunes use the same quasielastic cross-section model; G18_10a_02_11b also uses a Valencia-family MEC model, as does the GENIE + MEC component of C_model. They provide partial evidence and are not independent tests. Omitting that component gives χ²=15.15 (p=0.51) and 24.60 (p=0.077), respectively, as a descriptive comparison. These tests assess bias, not coverage or interval widths: only event counts fluctuate, while systematic parameters remain fixed.
+REASON: The paragraph supplies appropriate methodological detail and qualifications for this section, but tighter phrasing improves readability.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revision replaces the conversational “how far the result can be trusted” with measured language appropriate to a PRD introduction.
+END

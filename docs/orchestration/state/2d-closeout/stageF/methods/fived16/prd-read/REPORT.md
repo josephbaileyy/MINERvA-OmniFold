@@ -370,9 +370,50 @@ DIFFERS only on the register changes that rounds 4 and 5 accepted. Those go to J
 
 Each edit adds or sharpens a qualifier and drops none. No PRD rater read them as printed. Ruling 2 calls a composite
 an untested reading, and round 3 sent its composite (P02) to the next PRD read, so they go to the (d) read, unless the
-director accepts them as printed. agy passes 4 and 5 read them as printed.
+director accepts them as printed. (The director had them read as printed now: Round 6, below.) agy passes 4 and 5 read them as printed.
 <!-- absence-ok: quotes ruling 2's term for a composite rater form; not a claim that a result is absent -->
 
 **For Joseph in (d):** the abstracts' 1A sentences are drafts, and Sec. I's "Interval coverage" (r5's form) differs from
 the abstracts' "The coverage of the intervals" (`../c1a/REPORT.md`).
 <!-- absence-ok: quotes printed and draft limitation wording and the rater forms; not a new absence claim -->
+
+## Round 6: the three composites as they print, with P02 as the control (2026-10-28)
+
+**Why:** the director, accepting `1bcccc38`. A composite is an untested reading (ruling 2), so the draft reaches
+Joseph only after every printed sentence has been read as it prints. If a rater form beats a composite and passes the
+truth column, it goes to Joseph as an alternative and does not replace the composite.
+<!-- absence-ok: quotes ruling 2's term and printed limitation wording; not a claim that a result is absent -->
+
+**Input:** `r6/input.txt`, built by `r6/make_r6.py` from `r5/make_r5.py` on the worktree: OLD from `22314565`, NEW as
+printed. The items are A1, A2, H1, and P02 as the control. **Runs:** `r6/runs/`, with two sol2 runs (both logs
+`model: gpt-6.1-sol`) and one gemini run.
+
+| item | sol2 r1 | sol2 r2 | gemini | outcome |
+|---|---|---|---|---|
+| A1 (paper abstract, 35 words) | SHORTEN (29) | SHORTEN (24) | SHORTEN (29) | the composite stands; no alternative passes |
+| A2 (note abstract, 36 words) | SHORTEN (29) | SHORTEN (24) | ACCEPT | the composite stands; no alternative passes |
+| H1 (IV H, 164 words) | SHORTEN (154) | SHORTEN (154) | ACCEPT | the composite stands; **sol2 r2's form goes to Joseph as an alternative** |
+| P02 (control) | ACCEPT | ACCEPT | ACCEPT | as in rounds 4 and 5 |
+
+**The truth column.**
+- **A1 and A2:**
+  - **gemini's A1 form and sol2 r2's form drop a limitation.** Each removes "but does not test interval widths", the
+    clause agy pass 1 required.
+  - **sol2 r1's form,** "Interval coverage has not been validated; bias tests with two held-out GENIE v3 tunes find
+    bias below the reported uncertainty in every cell but do not assess interval widths.", keeps every fact. But agy
+    reads its plural "bias tests with two held-out GENIE v3 tunes" as two independent tests, which ruling 2 forbids
+    (`../c1a/agy/r6/`, Q4). So it is not offered.
+- **H1:** both sol2 forms are true and tie at 154 words. Each drops the explicit "Both are GENIE tunes", which is left
+  to the first sentence's "Two GENIE v3 tunes", and each keeps "partial evidence" and "not independent".
+  - sol2 r2's form keeps the readout's "not probed" and "so interval widths cannot be tested". r1 says "not tested"
+    and folds the widths into "not coverage or interval widths". So r2's is the one offered.
+  - agy reads it SAME (Q5).
+  - It goes to Joseph in (d) beside the printed composite. It does not replace it.
+<!-- absence-ok: quotes ruling 2's term and printed limitation wording; not a claim that a result is absent -->
+
+**agy** (`../c1a/agy/r6/README.txt`): control 4 of 4 caught. The three composites as printed read SAME, and so does
+the H1 alternative. The A1/A2 alternative reads DIFFERS (above).
+
+**Result:** every printed sentence of step (c)'s 1A half has now been read as it prints, by the PRD raters and by agy.
+<!-- absence-ok: quotes printed, draft and rater wording of limitation sentences; not a new absence claim -->
+

@@ -1,0 +1,24 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below are passages of a manuscript on a neutrino cross-section measurement and of its companion technical note, converted from LaTeX to plain text. Each item gives an OLD and a NEW version; where OLD is (none), the NEW text is an addition.
+
+Rule on each item from the language, register and what PRD readers expect of a measurement paper:
+- ACCEPT: the NEW text should replace the OLD (or, for an addition, be added as written);
+- DENY: keep the OLD text (or, for an addition, do not add it);
+- SHORTEN: accept the change, in a shorter form (give it).
+Do not judge whether a statement is true or whether the analysis is sound, and do not ask for content to be added.
+
+Answer in exactly this format, one block per item, in the order listed:
+A1: VERDICT: <ACCEPT, DENY or SHORTEN>
+SHORTER-FORM: <the shorter form of the NEW text, or ->
+REASON: <one sentence>
+A2: VERDICT: <ACCEPT, DENY or SHORTEN>
+SHORTER-FORM: <the shorter form of the NEW text, or ->
+REASON: <one sentence>
+H1: VERDICT: <ACCEPT, DENY or SHORTEN>
+SHORTER-FORM: <the shorter form of the NEW text, or ->
+REASON: <one sentence>
+P02: VERDICT: <ACCEPT, DENY or SHORTEN>
+SHORTER-FORM: <the shorter form of the NEW text, or ->
+REASON: <one sentence>
+END
