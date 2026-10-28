@@ -1,0 +1,8 @@
+KILLED: weights not carried (unresampled w with X[i]) (FAILED (failures=2))
+SURVIVED: B0 count of recorded universes unchecked (OK)
+KILLED: weights reversed (sum, n_eff unchanged) (FAILED (failures=6, errors=1))
+SURVIVED: n_eff_replicate from unresampled w (OK)
+SURVIVED: correlation_s1 reported matrix without flux (OK)
+KILLED: non-PD replicate silently dropped (FAILED (errors=1))
+SURVIVED: correlation_band reported matrix uses C0 not replicate (OK)
+restored True bed614c1c6dc75f0644996da580d60871053aa411c3204fdd516f9284d334315
