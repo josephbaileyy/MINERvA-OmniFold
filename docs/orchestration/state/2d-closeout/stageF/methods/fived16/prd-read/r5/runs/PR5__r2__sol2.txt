@@ -1,0 +1,24 @@
+L1: VERDICT: SHORTEN
+SHORTER-FORM: Interval coverage has not been validated. At two held-out GENIE v3 truths, a bias test finds the estimator's bias below the reported uncertainty in every cell, but does not test interval widths. In a fake-data study at 12 truths, the reported uncertainty does not cover the estimator's bias at the GiBUU-like truths or at a synthetic q3 tilt (Sec. IV H).
+REASON: Separate sentences clarify the distinction between the coverage limitation and the bias results while reducing the introduction's density.
+
+A1: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The sentence concisely reports the new result while explicitly retaining the qualification about interval coverage.
+
+A2: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The sentence gives an appropriately concise account of the result and its limitation for a technical-note abstract.
+
+H1: VERDICT: SHORTEN
+SHORTER-FORM: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each is introduced by reweighting the simulated truth to the tune's shape, as for the C_model components, using the simulation's detector response. For each tune, the mean of 20 Poisson pseudo-experiments and a noise-free closure are compared with the truth using the full reported covariance. Both tunes satisfy both bias criteria: the pseudo-experiment means give χ²=11.84 (p=0.76) and 16.86 (p=0.39), respectively, with |z|≤0.65 in every cell of the means and closures. The tunes share their quasielastic model, and G18_10a_02_11b uses a Valencia-family MEC model, as does the GENIE + MEC component of C_model. Both are GENIE tunes, so these results provide partial evidence and are not independent tests. Omitting that component gives χ²=15.15 (p=0.51) and 24.60 (p=0.077), reported descriptively. This tests bias, not coverage: only event counts fluctuate, with no variation of systematic parameters, so interval widths cannot be tested.
+REASON: The addition supplies useful methods, results, and qualifications, but tighter phrasing better suits the measurement paper.
+
+H2: VERDICT: SHORTEN
+SHORTER-FORM: Two GENIE v3 tunes, G18_10a_02_11b and AR23_20i_00_000, were generated for this test and held out of the analysis. Each enters as a gated, normalized shape ratio to GENIE CV on the fine grid, constructed as for the C_model vertices and applied to the simulated truth using the simulation's detector response. Where a tune's sample fails the ratio's statistical gate, the ratio is pooled over a coarser cell or set to one. For each tune, the mean of 20 Poisson pseudo-experiments on half the simulation and a noise-free closure are evaluated using the full reported covariance. These truths have no vertex and form a separate group, never pooled with the groups above. All four records satisfy both bias criteria, with |z|<0.65 in every cell. The pseudo-experiment means give χ²=11.84 (p=0.76; largest |z|=0.62, in R11) for G18_10a_02_11b and 16.86 (p=0.39; largest |z|=0.64, in R07) for AR23_20i_00_000. The corresponding closures give 11.44 (p=0.78; largest |z|=0.61, in R11) and 16.05 (p=0.45; largest |z|=0.60, in R07). The group has 0 of 64 cells with |z|>2 and 0 of 4 records with p<0.01. The respective Gaussian reference counts, 2.91 and 0.04, assume four independent records; because each truth contributes a pseudo-experiment mean and a closure, these counts serve only as context. The tunes share their quasielastic model, and G18_10a_02_11b uses a Valencia-family MEC model, as does the GENIE + MEC vertex. Both are GENIE tunes, so these results provide partial evidence and are not independent tests. Descriptively, omitting the GENIE + MEC vertex gives χ²=15.15 (p=0.51) and 24.60 (p=0.077) for the pseudo-experiment means, and 14.35 (p=0.57) and 22.43 (p=0.13) for the closures. The model-only χ² values, defined as in Table 15, range from 817 to 922; R00 exceeds 2σ in both AR23_20i_00_000 records. Repeating the evaluation with these truths reproduces all earlier fake-data records exactly. This tests bias, not coverage: only event counts fluctuate, with no draws of systematic parameters, so interval widths cannot be tested; the detector response is also not probed.
+REASON: The technical detail is appropriate for the note, but repeated bounds, dense clauses, and procedural wording benefit from consolidation.
+
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revision replaces conversational claims about trust with restrained, precise language appropriate to a measurement paper.
+END

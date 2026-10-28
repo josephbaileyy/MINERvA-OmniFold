@@ -36,6 +36,10 @@ READOUTS = {
     "dp": (f"{FD}/fd/data-product/fd_data_product.json", "b79556f0"),
     "gagg": (f"{FD}/fd/readout/fd_gibuu_enu_aggregate.json", "66dcbd6d"),
     "fboot": (f"{FD}/fd/readout/fd_flux_boot_readout.json", "b7b5652c"),   # 3D, FD-FLUX-BOOT-REPORT.md (PR #438)
+    "f1": (f"{FD}/fd/readout/fd_f1_readout.json", "cbe411a9"),              # 1A, FD-F1-REPORT.md (PR #446)
+    # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
+    "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
+    "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
 }
 # the figures the note and the paper print, copied into figures/: each must equal its committed source and the digest
 # its sidecar records (FD-G-FIGURES-REPORT.md section 1)
@@ -329,6 +333,55 @@ def values(d):
     pcts = fb["constants"]["percentiles"]
     assert 16 in pcts and 84 in pcts, "the 16-84% band is not in the readout's percentiles"
     v["fb-plo"], v["fb-phi"] = "16", "84"                  # the band ruling 2 allows (FD-FLUX-BOOT-BINDING.md section 2)
+    # 1A, the GENIE v3 held-out bias test (FD-F1-REPORT.md; DECISION-20261027 limitation plan item 1): "a bias test at
+    # two held-out GENIE v3 truths, not a coverage test" (the readout's labels.f1). Per tune, the ensemble (row 7) and the
+    # noise-free closure (row 8) are graded against the full C_total + C_resp; the leave-out-GENIE+MEC and model-only
+    # grades are descriptive (FD-F1-BINDING.md ruling 2). The held-out group is never pooled with the F0b groups.
+    f1 = d["f1"]
+    assert f1["schema"] == "fd-f1-readout/1" and "not a coverage test" in f1["labels"]["f1"]
+    assert f1["triggers"]["rule"] == d["f0b"]["triggers"]["rule"], "F1's trigger rule is not F0b's"
+    f0b_truths = {t["name"]: t for t in d["f0b"]["truths"]}
+    rest = {t["name"]: t for t in f1["truths"] if t["group"] != "held-out"}
+    assert 9 in f1["controls"]["passed"] and rest == f0b_truths, "control 9: F1 does not re-grade F0b's truths as recorded"
+    held = {t["name"]: t for t in f1["truths"] if t["group"] == "held-out"}
+    sig = f1["relative_sigma_plus_C_resp"]["C_total"]          # the per-cell relative sigma of C_total + C_resp
+    zmax, bsig, mo = [], [], []
+    for tune in ("g18", "ar23"):
+        v[f"f1-tune-{tune}"] = d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_")
+        for rec, k in ((f"F1_genie_v3_{tune}", f"f1-{tune}"), (f"F1_closure_genie_v3_{tune}", f"f1-closure-{tune}")):
+            t = held.pop(rec)
+            assert t["graded"] and t["own_vertex"] is None and t["grade_matrix"] == "C_total + C_resp"
+            gr, se, md = t["grade"], t["sensitivity"], t["model_only"]
+            assert gr["cells"] == CELLS and se["matrix"] == "C_total minus genie_mec + C_resp"
+            assert not t["listed"] and not gr["cells_abs_z_gt_2"] and not gr["p_lt_0.01"], f"{rec} is listed"
+            v[f"{k}-chi2"], v[f"{k}-p"] = f"{gr['chi2']:.2f}", p_tex(gr["p"])
+            i = max(range(16), key=lambda j: abs(gr["z"][j]))
+            v[f"{k}-zmax"], v[f"{k}-zcell"] = f"{abs(gr['z'][i]):.2f}", CELLS[i]
+            v[f"{k}-sens-chi2"], v[f"{k}-sens-p"] = f"{se['chi2']:.2f}", p_tex(se["p"])
+            v[f"{k}-mo-chi2"] = f"{md['chi2']:.2f}"
+            v[f"{k}-mo-cells"] = ", ".join(md["cells_abs_z_gt_2"]) or "---"
+            v[f"{k}-n"] = str(t["n_experiments"])
+            zmax.append(max(abs(z) for z in gr["z"]))
+            bsig.append(max(abs(b) / s for b, s in zip(t["bias"], sig)))
+            assert bsig[-1] < 1, f"{rec}: a cell's bias is not below its reported sigma"
+            v[f"{k}-bsig"] = f"{math.ceil(100 * bsig[-1]) / 100:.2f}"   # per record, ceiled: the ledger probes all four
+            mo.append(md["chi2"])
+    assert not held, f"unexpected held-out records: {sorted(held)}"
+    assert v["f1-g18-n"] == v["f1-ar23-n"] and v["f1-closure-g18-n"] == v["f1-closure-ar23-n"] == "1"
+    v["f1-n"] = v["f1-g18-n"]
+    # "below the reported uncertainty in every cell": |b| / sigma, sigma from C_total + C_resp alone, under one in all
+    # four records; z's denominator also carries the noise of the mean, so |b| / sigma >= |z|. Ceiled to bound them.
+    assert max(bsig) < 1 and max(bsig) >= max(zmax)
+    v["f1-zmax-ceil"] = f"{math.ceil(100 * max(zmax)) / 100:.2f}"
+    v["f1-bsig-ceil"] = f"{math.ceil(100 * max(bsig)) / 100:.2f}"
+    v["f1-mo-chi2-min"], v["f1-mo-chi2-max"] = f"{math.floor(min(mo))}", f"{math.ceil(max(mo))}"
+    gt = f1["triggers"]["by_group"]["held-out"]
+    v["f1-grp-truths"], v["f1-grp-cells"] = str(gt["truths"]), str(gt["cells"])
+    v["f1-grp-zcells"], v["f1-grp-ptruths"] = str(gt["cells_abs_z_gt_2"]), str(gt["truths_p_lt_0.01"])
+    v["f1-grp-refcells"] = f"{gt['gaussian_reference_cells']:.2f}"
+    v["f1-grp-reftruths"] = f"{gt['gaussian_reference_truths']:.2f}"
+    # the held-out group stays out of all_graded, so F0b's pooled denominators are unchanged
+    assert gt["truths"] == 4 and f1["triggers"]["all_graded"] == d["f0b"]["triggers"]["all_graded"]
     return v
 
 
@@ -407,6 +460,21 @@ def self_test():
         print("  FAIL a data product with a changed box was accepted"); ok = False
     except AssertionError:
         print("  ok   a data product whose boxes differ from H2's is refused")
+    # 1A: an F1 readout that re-grades an F0b truth differently (control 9), or lists a held-out record, is refused
+    for what, plant in (("re-grades an F0b truth differently",
+                         lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "A7_gibuu")["grade"].update(chi2=1.0)),
+                        ("lists a held-out record",
+                         lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_genie_v3_ar23").update(listed=True)),
+                        ("has a held-out cell with |b| above its sigma",
+                         lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_closure_genie_v3_g18")["bias"]
+                         .__setitem__(11, 2 * d["f1"]["relative_sigma_plus_C_resp"]["C_total"][11]))):
+        d = load()
+        plant(d)
+        try:
+            values(d)
+            print(f"  FAIL an F1 readout that {what} was accepted"); ok = False
+        except AssertionError:
+            print(f"  ok   an F1 readout that {what} is refused")
     name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
     with tempfile.TemporaryDirectory() as tmp:
         fig = OUT.parent / "figures" / name

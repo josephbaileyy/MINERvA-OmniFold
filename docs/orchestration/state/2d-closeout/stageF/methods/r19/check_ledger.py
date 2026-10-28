@@ -33,10 +33,17 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import importlib.util
+
+_spec = importlib.util.spec_from_file_location("apply_c1a", Path(__file__).resolve().parents[1] / "fived16/c1a/apply_c1a.py")
+C1A = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(C1A)
 
 FILES = {"P": "paper_body.tex", "M": "main_paper.tex",
          # the note files r19 adds to (N1-N4): a changed sentence there needs a row too (J, Q, Z ids)
-         "J": "sec_joint.tex", "Q": "sec_5d.tex", "Z": "app_codebase.tex"}
+         "J": "sec_joint.tex", "Q": "sec_5d.tex", "Z": "app_codebase.tex",
+         # step (c)'s 1A half (fived16/c1a) also edits the note's sixteen-cell chapter and its abstract (F, A ids)
+         "F": "sec_fived16.tex", "A": "main_note.tex"}
 NOTE_ADDABLE = {"fig:coverage-5d-paper", "app:coverage-fig"}  # N3; F3 (director 2026-10-28)
 
 
@@ -82,6 +89,23 @@ def rows(ledger_text):
             yield cells
 
 
+def c1a_expected(text, edits, keys):
+    """The base text with step (c)'s declared 1A edits applied (fived16/c1a/apply_c1a.py, imported, not retyped).
+
+    The director's allowance of 2026-10-28 (ledger row C1A-ALLOW): the 1A sentence may change the protected abstract and
+    the Sec. I limitations paragraph, and only by these pairs, so the byte check compares against the edited base and
+    the new text stays protected. A base that already holds an edit's new text is left as it is."""
+    for k, old, new in edits:
+        if k not in keys:
+            continue
+        m = list(C1A.pat(old).finditer(text))
+        if len(m) == 1:
+            text = text[:m[0].start()] + new + text[m[0].end():]
+        elif new not in text:
+            raise SystemExit(f"check_ledger: the 1A edit {k} matches the base {len(m)} times and is not in it")
+    return text
+
+
 def check(wt, cur, old, ledger_text, note_override=None):
     fails = []
     note_cache = {}
@@ -101,17 +125,23 @@ def check(wt, cur, old, ledger_text, note_override=None):
         fails.append(f"DUPLICATE row id: {d}")
     for rid, fact, before, disp, after, probe in rows(ledger_text):
         n_rows += 1
-        named |= set(re.findall(r"\b[PMJQZ]\d+\b", before))
+        named |= set(re.findall(r"\b[PMJQZFA]\d+\b", before))
         kinds = set()
         for p in probe.split(" && "):
             p = p.strip().strip("`")
-            m = re.match(r"(P|MP|N:[\w.]+)::(.*)$", p)
+            m = re.match(r"(P|MP|N:[\w.]+|R:[\w./-]+)::(.*)$", p)   # R:<repository path>:: a record, not printed text
             if not m:
                 fails.append(f"{rid}: malformed probe {p!r}")
                 continue
             where, lit = m.group(1), re.sub(r"\s+", " ", m.group(2))
             key = "P" if where == "P" else "M" if where == "MP" else where[2:]
-            kinds.add("N" if where.startswith("N:") else "P")
+            kinds.add("N" if where.startswith("N:") else "R" if where.startswith("R:") else "P")
+            if where.startswith("R:"):
+                n_probes += 1
+                src = (wt / key).read_text() if (wt / key).is_file() else ""
+                if lit not in re.sub(r"\s+", " ", src):
+                    fails.append(f"{rid}: NOT FOUND in {key}: {lit[:90]!r}")
+                continue
             n_probes += 1
             if lit not in text(key):
                 fails.append(f"{rid}: NOT FOUND in {FILES.get(key, key)}: {lit[:90]!r}")
@@ -125,7 +155,7 @@ def check(wt, cur, old, ledger_text, note_override=None):
                 fails.append(f"{rid}: GUARD row without a 'plant: OLD => NEW' in its after column")
             elif not any(pm.group(1) in l for l in lits):
                 fails.append(f"{rid}: GUARD plant {pm.group(1)!r} is not in its probe")
-        if not note_row and "P" not in kinds:
+        if not note_row and "P" not in kinds and not (disp.startswith("GUARD") and "N" in kinds):  # a note guard (c 1A)
             fails.append(f"{rid}: in-paper row without a paper probe")
     ch = changed(cur, old)
     for sid, s in ch:
@@ -142,10 +172,10 @@ def check(wt, cur, old, ledger_text, note_override=None):
     def tspan(t):
         i, j = t.find("\\title{"), t.find("\\end{abstract}")
         return t[i:j] if i >= 0 and j > i else None
-    if tspan(cur["M"]) is None or tspan(cur["M"]) != tspan(old["M"]):
+    if tspan(cur["M"]) is None or tspan(cur["M"]) != tspan(c1a_expected(old["M"], C1A.MAIN_PAPER, {"E2"})):
         fails.append("PROTECTED: main_paper.tex title..end{abstract} differs from base")
     lim = lambda t: [l for l in t.splitlines() if l.startswith("The result has three limitations")]
-    if len(lim(old["P"])) != 1 or lim(cur["P"]) != lim(old["P"]):
+    if len(lim(old["P"])) != 1 or lim(cur["P"]) != lim(c1a_expected(old["P"], C1A.PAPER, {"E1"})):
         fails.append("PROTECTED: the limitations paragraph of Sec. I differs from base (it is step (c)'s)")
     for k in FILES:
         h_old = [l for l in old[k].splitlines() if "\\pubhold" in l]
@@ -193,6 +223,12 @@ def main():
         fa, *_ = check(wt, cur, old, bad)
         ok &= any(x.startswith("X1: NOT FOUND") for x in fa)
         print("planted bad paper probe:", "caught" if any(x.startswith("X1: NOT FOUND") for x in fa) else "MISSED")
+        # (a2) a record probe (R:, step (c) 1A) whose text the record does not hold must fail
+        bad = ledger_text + "\n| X3 | planted | — | KEEP | — | `P::Each OmniFold iteration consists of two classification steps.` && `R:docs/orchestration/state/measurement-paper/5d-community-20261024/FD-F1-REPORT.md::the two truths are two independent tests` |\n"
+        fa2, *_ = check(wt, cur, old, bad)
+        hit = any(x.startswith("X3: NOT FOUND") for x in fa2)
+        ok &= hit
+        print("planted bad record probe:", "caught" if hit else "MISSED")
         # (b) a MOVE->note row whose note probe does not print must fail
         bad = ledger_text + "\n| X2 | planted | P0 | MOVE→note | sec_joint.tex | `N:sec_joint.tex::this sentence was never printed in the note` |\n"
         fb, *_ = check(wt, cur, old, bad)
@@ -224,7 +260,12 @@ def main():
         ok &= hit
         print("unapproved new label:", "caught" if hit else "MISSED")
         for name, cg in [("an edit to the abstract", dict(cur, M=cur["M"].replace("\\begin{abstract}", "\\begin{abstract}\nAn edit.", 1))),
-                         ("an edit to the limitations paragraph", dict(cur, P=cur["P"].replace("The result has three limitations", "The result has two limitations", 1)))]:
+                         ("an edit to the limitations paragraph", dict(cur, P=cur["P"].replace("The result has three limitations", "The result has two limitations", 1))),
+                         ("an undeclared edit to the 1A sentence of the limitations paragraph",
+                          dict(cur, P=cur["P"].replace("finds the estimator's bias below", "finds the estimator's bias well below", 1))),
+                         ("an undeclared edit to the 1A sentence of the abstract",
+                          dict(cur, M=cur["M"].replace("finds the estimator's bias below", "finds the estimator's bias well below", 1)))]:
+            assert cg != cur, f"the plant for {name} did not apply"
             fg, *_ = check(wt, cg, old, ledger_text)
             hit = any(x.startswith("PROTECTED") for x in fg)
             ok &= hit
@@ -241,16 +282,20 @@ def main():
                 continue
             pm = re.match(r"plant: (.+?) => (.+)$", after)
             q = probe.split(" && ")[0].strip().strip("`")
-            key = "M" if q.startswith("MP::") else "P"
-            lit = re.sub(r"^(P|MP)::", "", q)
-            src = cur[key]
+            nm = re.match(r"N:([\w.]+)::", q)          # a note guard (step (c) 1A): plant in the note file
+            key = nm.group(1) if nm else "M" if q.startswith("MP::") else "P"
+            lit = re.sub(r"^(P|MP|N:[\w.]+)::", "", q)
+            src = (wt / "docs/analysis-note" / key).read_text() if nm else cur[key]
             # plant in the source: the probe's first word run containing OLD, whitespace-tolerant
             rx = re.compile(r"\s+".join(re.escape(w) for w in lit.split()))
             m = rx.search(src)
             if not pm or not m:
                 ok = False; print(f"guard {rid}: could not plant"); continue
             planted = src[:m.start()] + m.group(0).replace(pm.group(1), pm.group(2), 1) + src[m.end():]
-            fg, *_ = check(wt, dict(cur, **{key: planted}), old, ledger_text)
+            if nm:
+                fg, *_ = check(wt, cur, old, ledger_text, note_override={key: planted})
+            else:
+                fg, *_ = check(wt, dict(cur, **{key: planted}), old, ledger_text)
             hit = any(x.startswith(f"{rid}: NOT FOUND") for x in fg)
             ok &= hit; n_g += 1
             if not hit:
