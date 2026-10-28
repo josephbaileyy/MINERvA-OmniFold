@@ -1,0 +1,41 @@
+host=login08 date=2026-10-28T21:44:23Z
+2026-10-20 00:53:47.000000000 -0700  13967366108  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1A_universes_full_bkgaware.root
+2026-09-14 20:46:58.000000000 -0700  3754803912  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1B_universes_full_bkgaware.root
+2026-09-14 20:57:51.000000000 -0700  7169599337  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1C_universes_full_bkgaware.root
+2026-09-14 21:01:44.000000000 -0700  20851460255  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1D_universes_full_bkgaware.root
+2026-09-14 20:24:44.000000000 -0700  17441205238  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1E_universes_full_bkgaware.root
+2026-09-14 20:32:00.000000000 -0700  24243323810  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1F_universes_full_bkgaware.root
+2026-09-14 18:53:35.000000000 -0700  20516264281  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1G_universes_full_bkgaware.root
+2026-09-14 20:57:36.000000000 -0700  2004993044  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1L_universes_full_bkgaware.root
+2026-09-14 20:59:41.000000000 -0700  30899506609  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1M_universes_full_bkgaware.root
+2026-09-14 18:08:25.000000000 -0700  17753617857  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1N_universes_full_bkgaware.root
+2026-09-14 20:47:34.000000000 -0700  5408395011  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1O_universes_full_bkgaware.root
+2026-09-14 20:45:58.000000000 -0700  7125869263  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1P_universes_full_bkgaware.root
+2026-09-27 08:25:39.000000000 -0700  171117093365  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root
+== CFS copies?
+total 148
+drwxrws---  23 josephrb m3246  4096 2026-10-18 .
+drwxrwsrwx 103 bnachman m3246 16384 2026-10-23 ..
+drwxrws---   8 josephrb m3246  4096 2026-10-12 2d-closeout-c04repair-20261012
+drwxrws---   2 josephrb m3246  4096 2026-10-17 2d-closeout-playlist-combination-20261017
+drwxrws---   2 josephrb m3246  4096 2026-10-16 2d-closeout-playlist-term-20261016
+dr-xr-sr-x   4 josephrb m3246  4096 2026-10-12 2d-closeout-stageC-inputs-20261012
+drwxrws---  10 josephrb m3246  4096 2026-10-15 2d-closeout-stageC-pilot-20261013
+drwxrws---  10 josephrb m3246  4096 2026-10-17 2d-closeout-stageC-production-20261015
+drwxrws---   9 josephrb m3246  4096 2026-10-18 2d-closeout-stageF-rebuild-20261018
+drwxrws---   6 josephrb m3246  4096 2026-08-07 fullevent-nominal-checkpoints-20260807
+drwxrws---   6 josephrb m3246  4096 2026-08-09 fullevent-nominal-checkpoints-20260808
+dr-xr-xr-x   3 josephrb m3246  4096 2026-10-14 mc-1A-preservation-20261014
+drwxrws---   6 josephrb m3246  4096 2026-08-03 minerva-shutdown-stage
+drwxrws---   2 josephrb m3246 32768 2026-08-17 mnv-p3f-pet-fullevent-final
+drwxrws---   4 josephrb m3246  4096 2026-08-18 p3f-move-20260818
+drwxrws---   8 josephrb m3246  4096 2026-09-14 pet-routing-comparison
+drwxrws---   3 josephrb m3246  4096 2026-09-11 pet-source-audits
+drwxrws--- 108 josephrb m3246 16384 2026-10-06 pet-studies-20261006
+drwxr-sr-x   8 josephrb m3246  4096 2026-10-09 prd-release-preservation-20261008
+drwxr-s---   9 josephrb m3246  4096 2026-10-06 s5p-archive-20261006
+drwxrws---   3 josephrb m3246  4096 2026-08-06 slab-protect-20260806
+drwxr-s---   3 josephrb m3246  4096 2026-10-10 two-d-followup-20261010
+drwxrws---   3 josephrb m3246  4096 2026-10-11 xr-linux-20261011
+ls: cannot access '/global/cfs/cdirs/m3246/josephrb/*/runEventLoopOmniFold_5D_*bkgaware*': No such file or directory
+ls: cannot access '/global/cfs/cdirs/m3246/josephrb/*/*/runEventLoopOmniFold_5D_*bkgaware*': No such file or directory

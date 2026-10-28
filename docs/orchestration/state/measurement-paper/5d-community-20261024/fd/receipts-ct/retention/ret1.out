@@ -1,0 +1,304 @@
+host=login08 date=2026-10-28T21:43:24Z
+== /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop
+total 52
+drwxrwx--- 13 josephrb josephrb 4096 2026-10-20 .
+drwxrwx--- 22 josephrb josephrb 4096 2026-10-20 ..
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 em_m1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 em_p1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 meson_m1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 meson_p1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 other_m1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 other_p1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 proton_m1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 proton_p1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 xtalk_m1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 xtalk_p1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-20 zero
+== /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral
+total 16938424
+drwxrwx---  2 josephrb josephrb       4096 2026-10-20 .
+drwxrwx--- 22 josephrb josephrb       4096 2026-10-20 ..
+-rw-rw----  1 josephrb josephrb   28493801 2026-10-20 lat_em_m1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548300819 2026-10-20 lat_em_m1.npz
+-rw-rw----  1 josephrb josephrb   28494833 2026-10-20 lat_em_p1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548323705 2026-10-20 lat_em_p1.npz
+-rw-rw----  1 josephrb josephrb   28493463 2026-10-20 lat_meson_m1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548292377 2026-10-20 lat_meson_m1.npz
+-rw-rw----  1 josephrb josephrb   28495642 2026-10-20 lat_meson_p1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548325534 2026-10-20 lat_meson_p1.npz
+-rw-rw----  1 josephrb josephrb   28494286 2026-10-20 lat_other_m1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548301266 2026-10-20 lat_other_m1.npz
+-rw-rw----  1 josephrb josephrb   28494740 2026-10-20 lat_other_p1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548322802 2026-10-20 lat_other_p1.npz
+-rw-rw----  1 josephrb josephrb   28494066 2026-10-20 lat_proton_m1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548336702 2026-10-20 lat_proton_m1.npz
+-rw-rw----  1 josephrb josephrb   28494540 2026-10-20 lat_proton_p1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548280707 2026-10-20 lat_proton_p1.npz
+-rw-rw----  1 josephrb josephrb   28494437 2026-10-20 lat_xtalk_m1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548319617 2026-10-20 lat_xtalk_m1.npz
+-rw-rw----  1 josephrb josephrb   28494466 2026-10-20 lat_xtalk_p1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548297476 2026-10-20 lat_xtalk_p1.npz
+-rw-rw----  1 josephrb josephrb   28494557 2026-10-20 lat_zero_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548311762 2026-10-20 lat_zero.npz
+== /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf
+total 1064
+drwxrwx---  2 josephrb josephrb  4096 2026-10-20 .
+drwxrwx--- 22 josephrb josephrb  4096 2026-10-20 ..
+-rw-rw----  1 josephrb josephrb 95563 2026-10-20 mp1s1_em_m1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95586 2026-10-20 mp1s1_em_p1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95542 2026-10-20 mp1s1_meson_m1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95607 2026-10-20 mp1s1_meson_p1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95546 2026-10-20 mp1s1_other_m1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95554 2026-10-20 mp1s1_other_p1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95560 2026-10-20 mp1s1_proton_m1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95584 2026-10-20 mp1s1_proton_p1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95562 2026-10-20 mp1s1_xtalk_m1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95536 2026-10-20 mp1s1_xtalk_p1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95567 2026-10-20 mp1s1_zero_b-_j-.npz
+== /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged
+total 52005988
+drwxrwx---  2 josephrb josephrb       4096 2026-10-20 .
+drwxrwx--- 22 josephrb josephrb       4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 4841248446 2026-10-20 runEventLoopOmniFold_5D_MEFHC_em_m1.root
+-rw-r-----  1 josephrb josephrb 4841306646 2026-10-20 runEventLoopOmniFold_5D_MEFHC_em_p1.root
+-rw-r-----  1 josephrb josephrb 4841200503 2026-10-20 runEventLoopOmniFold_5D_MEFHC_meson_m1.root
+-rw-r-----  1 josephrb josephrb 4841357201 2026-10-20 runEventLoopOmniFold_5D_MEFHC_meson_p1.root
+-rw-r-----  1 josephrb josephrb 4841258485 2026-10-20 runEventLoopOmniFold_5D_MEFHC_other_m1.root
+-rw-r-----  1 josephrb josephrb 4841297915 2026-10-20 runEventLoopOmniFold_5D_MEFHC_other_p1.root
+-rw-r-----  1 josephrb josephrb 4841244620 2026-10-20 runEventLoopOmniFold_5D_MEFHC_proton_m1.root
+-rw-r-----  1 josephrb josephrb 4841310559 2026-10-20 runEventLoopOmniFold_5D_MEFHC_proton_p1.root
+-rw-r-----  1 josephrb josephrb 4841265824 2026-10-20 runEventLoopOmniFold_5D_MEFHC_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 4841291202 2026-10-20 runEventLoopOmniFold_5D_MEFHC_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 4841279899 2026-10-20 runEventLoopOmniFold_5D_MEFHC_zero.root
+== /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b
+total 60
+drwxrwx--- 13 josephrb josephrb 4096 2026-10-06 .
+drwxrwx--- 10 josephrb josephrb 4096 2026-10-06 ..
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 design
+drwxrwx---  4 josephrb josephrb 4096 2026-10-06 dump-run
+drwxrwx---  5 josephrb josephrb 4096 2026-10-06 eval
+drwxrwx---  5 josephrb josephrb 4096 2026-10-06 evloop
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 lateral
+-rw-rw----  1 josephrb josephrb 3211 2026-10-06 LEDGER-w2.tsv
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 logs
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 merged
+-rw-rw----  1 josephrb josephrb 1314 2026-10-06 submitted.tsv
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 tables
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 unf
+drwxrwx---  4 josephrb josephrb 4096 2026-10-06 unfold-run
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 work
+== evloop subdirs
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/em_m1/
+total 4728320
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398372159 2026-10-20 runEventLoopOmniFold_5D_1A_em_m1.root
+-rw-r-----  1 josephrb josephrb 106517014 2026-10-20 runEventLoopOmniFold_5D_1B_em_m1.root
+-rw-r-----  1 josephrb josephrb 204229160 2026-10-20 runEventLoopOmniFold_5D_1C_em_m1.root
+-rw-r-----  1 josephrb josephrb 596285729 2026-10-20 runEventLoopOmniFold_5D_1D_em_m1.root
+-rw-r-----  1 josephrb josephrb 495758710 2026-10-20 runEventLoopOmniFold_5D_1E_em_m1.root
+-rw-r-----  1 josephrb josephrb 689046656 2026-10-20 runEventLoopOmniFold_5D_1F_em_m1.root
+-rw-r-----  1 josephrb josephrb 581503186 2026-10-20 runEventLoopOmniFold_5D_1G_em_m1.root
+-rw-r-----  1 josephrb josephrb  56586789 2026-10-20 runEventLoopOmniFold_5D_1L_em_m1.root
+-rw-r-----  1 josephrb josephrb 862892317 2026-10-20 runEventLoopOmniFold_5D_1M_em_m1.root
+-rw-r-----  1 josephrb josephrb 499726261 2026-10-20 runEventLoopOmniFold_5D_1N_em_m1.root
+-rw-r-----  1 josephrb josephrb 150943599 2026-10-20 runEventLoopOmniFold_5D_1O_em_m1.root
+-rw-r-----  1 josephrb josephrb 199853983 2026-10-20 runEventLoopOmniFold_5D_1P_em_m1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/em_p1/
+total 4728384
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398377492 2026-10-20 runEventLoopOmniFold_5D_1A_em_p1.root
+-rw-r-----  1 josephrb josephrb 106517972 2026-10-20 runEventLoopOmniFold_5D_1B_em_p1.root
+-rw-r-----  1 josephrb josephrb 204238022 2026-10-20 runEventLoopOmniFold_5D_1C_em_p1.root
+-rw-r-----  1 josephrb josephrb 596291475 2026-10-20 runEventLoopOmniFold_5D_1D_em_p1.root
+-rw-r-----  1 josephrb josephrb 495770697 2026-10-20 runEventLoopOmniFold_5D_1E_em_p1.root
+-rw-r-----  1 josephrb josephrb 689054470 2026-10-20 runEventLoopOmniFold_5D_1F_em_p1.root
+-rw-r-----  1 josephrb josephrb 581504711 2026-10-20 runEventLoopOmniFold_5D_1G_em_p1.root
+-rw-r-----  1 josephrb josephrb  56587582 2026-10-20 runEventLoopOmniFold_5D_1L_em_p1.root
+-rw-r-----  1 josephrb josephrb 862900547 2026-10-20 runEventLoopOmniFold_5D_1M_em_p1.root
+-rw-r-----  1 josephrb josephrb 499737599 2026-10-20 runEventLoopOmniFold_5D_1N_em_p1.root
+-rw-r-----  1 josephrb josephrb 150951146 2026-10-20 runEventLoopOmniFold_5D_1O_em_p1.root
+-rw-r-----  1 josephrb josephrb 199850091 2026-10-20 runEventLoopOmniFold_5D_1P_em_p1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/meson_m1/
+total 4728260
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398368326 2026-10-20 runEventLoopOmniFold_5D_1A_meson_m1.root
+-rw-r-----  1 josephrb josephrb 106516123 2026-10-20 runEventLoopOmniFold_5D_1B_meson_m1.root
+-rw-r-----  1 josephrb josephrb 204227462 2026-10-20 runEventLoopOmniFold_5D_1C_meson_m1.root
+-rw-r-----  1 josephrb josephrb 596278377 2026-10-20 runEventLoopOmniFold_5D_1D_meson_m1.root
+-rw-r-----  1 josephrb josephrb 495752947 2026-10-20 runEventLoopOmniFold_5D_1E_meson_m1.root
+-rw-r-----  1 josephrb josephrb 689039130 2026-10-20 runEventLoopOmniFold_5D_1F_meson_m1.root
+-rw-r-----  1 josephrb josephrb 581491370 2026-10-20 runEventLoopOmniFold_5D_1G_meson_m1.root
+-rw-r-----  1 josephrb josephrb  56586401 2026-10-20 runEventLoopOmniFold_5D_1L_meson_m1.root
+-rw-r-----  1 josephrb josephrb 862883885 2026-10-20 runEventLoopOmniFold_5D_1M_meson_m1.root
+-rw-r-----  1 josephrb josephrb 499720617 2026-10-20 runEventLoopOmniFold_5D_1N_meson_m1.root
+-rw-r-----  1 josephrb josephrb 150942966 2026-10-20 runEventLoopOmniFold_5D_1O_meson_m1.root
+-rw-r-----  1 josephrb josephrb 199845361 2026-10-20 runEventLoopOmniFold_5D_1P_meson_m1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/meson_p1/
+total 4728424
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398382574 2026-10-20 runEventLoopOmniFold_5D_1A_meson_p1.root
+-rw-r-----  1 josephrb josephrb 106519242 2026-10-20 runEventLoopOmniFold_5D_1B_meson_p1.root
+-rw-r-----  1 josephrb josephrb 204239729 2026-10-20 runEventLoopOmniFold_5D_1C_meson_p1.root
+-rw-r-----  1 josephrb josephrb 596298690 2026-10-20 runEventLoopOmniFold_5D_1D_meson_p1.root
+-rw-r-----  1 josephrb josephrb 495769417 2026-10-20 runEventLoopOmniFold_5D_1E_meson_p1.root
+-rw-r-----  1 josephrb josephrb 689060645 2026-10-20 runEventLoopOmniFold_5D_1F_meson_p1.root
+-rw-r-----  1 josephrb josephrb 581516895 2026-10-20 runEventLoopOmniFold_5D_1G_meson_p1.root
+-rw-r-----  1 josephrb josephrb  56587961 2026-10-20 runEventLoopOmniFold_5D_1L_meson_p1.root
+-rw-r-----  1 josephrb josephrb 862910582 2026-10-20 runEventLoopOmniFold_5D_1M_meson_p1.root
+-rw-r-----  1 josephrb josephrb 499742741 2026-10-20 runEventLoopOmniFold_5D_1N_meson_p1.root
+-rw-r-----  1 josephrb josephrb 150946684 2026-10-20 runEventLoopOmniFold_5D_1O_meson_p1.root
+-rw-r-----  1 josephrb josephrb 199851884 2026-10-20 runEventLoopOmniFold_5D_1P_meson_p1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/other_m1/
+total 4728328
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398373544 2026-10-20 runEventLoopOmniFold_5D_1A_other_m1.root
+-rw-r-----  1 josephrb josephrb 106517286 2026-10-20 runEventLoopOmniFold_5D_1B_other_m1.root
+-rw-r-----  1 josephrb josephrb 204229936 2026-10-20 runEventLoopOmniFold_5D_1C_other_m1.root
+-rw-r-----  1 josephrb josephrb 596284502 2026-10-20 runEventLoopOmniFold_5D_1D_other_m1.root
+-rw-r-----  1 josephrb josephrb 495764061 2026-10-20 runEventLoopOmniFold_5D_1E_other_m1.root
+-rw-r-----  1 josephrb josephrb 689040924 2026-10-20 runEventLoopOmniFold_5D_1F_other_m1.root
+-rw-r-----  1 josephrb josephrb 581498762 2026-10-20 runEventLoopOmniFold_5D_1G_other_m1.root
+-rw-r-----  1 josephrb josephrb  56587011 2026-10-20 runEventLoopOmniFold_5D_1L_other_m1.root
+-rw-r-----  1 josephrb josephrb 862893910 2026-10-20 runEventLoopOmniFold_5D_1M_other_m1.root
+-rw-r-----  1 josephrb josephrb 499732391 2026-10-20 runEventLoopOmniFold_5D_1N_other_m1.root
+-rw-r-----  1 josephrb josephrb 150950028 2026-10-20 runEventLoopOmniFold_5D_1O_other_m1.root
+-rw-r-----  1 josephrb josephrb 199848172 2026-10-20 runEventLoopOmniFold_5D_1P_other_m1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/other_p1/
+total 4728372
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398380569 2026-10-20 runEventLoopOmniFold_5D_1A_other_p1.root
+-rw-r-----  1 josephrb josephrb 106518140 2026-10-20 runEventLoopOmniFold_5D_1B_other_p1.root
+-rw-r-----  1 josephrb josephrb 204231417 2026-10-20 runEventLoopOmniFold_5D_1C_other_p1.root
+-rw-r-----  1 josephrb josephrb 596290549 2026-10-20 runEventLoopOmniFold_5D_1D_other_p1.root
+-rw-r-----  1 josephrb josephrb 495768696 2026-10-20 runEventLoopOmniFold_5D_1E_other_p1.root
+-rw-r-----  1 josephrb josephrb 689052680 2026-10-20 runEventLoopOmniFold_5D_1F_other_p1.root
+-rw-r-----  1 josephrb josephrb 581503865 2026-10-20 runEventLoopOmniFold_5D_1G_other_p1.root
+-rw-r-----  1 josephrb josephrb  56587558 2026-10-20 runEventLoopOmniFold_5D_1L_other_p1.root
+-rw-r-----  1 josephrb josephrb 862903405 2026-10-20 runEventLoopOmniFold_5D_1M_other_p1.root
+-rw-r-----  1 josephrb josephrb 499731454 2026-10-20 runEventLoopOmniFold_5D_1N_other_p1.root
+-rw-r-----  1 josephrb josephrb 150951025 2026-10-20 runEventLoopOmniFold_5D_1O_other_p1.root
+-rw-r-----  1 josephrb josephrb 199855336 2026-10-20 runEventLoopOmniFold_5D_1P_other_p1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/proton_m1/
+total 4728312
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398375866 2026-10-20 runEventLoopOmniFold_5D_1A_proton_m1.root
+-rw-r-----  1 josephrb josephrb 106516320 2026-10-20 runEventLoopOmniFold_5D_1B_proton_m1.root
+-rw-r-----  1 josephrb josephrb 204234443 2026-10-20 runEventLoopOmniFold_5D_1C_proton_m1.root
+-rw-r-----  1 josephrb josephrb 596284622 2026-10-20 runEventLoopOmniFold_5D_1D_proton_m1.root
+-rw-r-----  1 josephrb josephrb 495759238 2026-10-20 runEventLoopOmniFold_5D_1E_proton_m1.root
+-rw-r-----  1 josephrb josephrb 689045703 2026-10-20 runEventLoopOmniFold_5D_1F_proton_m1.root
+-rw-r-----  1 josephrb josephrb 581495096 2026-10-20 runEventLoopOmniFold_5D_1G_proton_m1.root
+-rw-r-----  1 josephrb josephrb  56586910 2026-10-20 runEventLoopOmniFold_5D_1L_proton_m1.root
+-rw-r-----  1 josephrb josephrb 862891468 2026-10-20 runEventLoopOmniFold_5D_1M_proton_m1.root
+-rw-r-----  1 josephrb josephrb 499726492 2026-10-20 runEventLoopOmniFold_5D_1N_proton_m1.root
+-rw-r-----  1 josephrb josephrb 150943262 2026-10-20 runEventLoopOmniFold_5D_1O_proton_m1.root
+-rw-r-----  1 josephrb josephrb 199853965 2026-10-20 runEventLoopOmniFold_5D_1P_proton_m1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/proton_p1/
+total 4728376
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398380869 2026-10-20 runEventLoopOmniFold_5D_1A_proton_p1.root
+-rw-r-----  1 josephrb josephrb 106518190 2026-10-20 runEventLoopOmniFold_5D_1B_proton_p1.root
+-rw-r-----  1 josephrb josephrb 204231967 2026-10-20 runEventLoopOmniFold_5D_1C_proton_p1.root
+-rw-r-----  1 josephrb josephrb 596292811 2026-10-20 runEventLoopOmniFold_5D_1D_proton_p1.root
+-rw-r-----  1 josephrb josephrb 495766090 2026-10-20 runEventLoopOmniFold_5D_1E_proton_p1.root
+-rw-r-----  1 josephrb josephrb 689052523 2026-10-20 runEventLoopOmniFold_5D_1F_proton_p1.root
+-rw-r-----  1 josephrb josephrb 581503624 2026-10-20 runEventLoopOmniFold_5D_1G_proton_p1.root
+-rw-r-----  1 josephrb josephrb  56587460 2026-10-20 runEventLoopOmniFold_5D_1L_proton_p1.root
+-rw-r-----  1 josephrb josephrb 862901775 2026-10-20 runEventLoopOmniFold_5D_1M_proton_p1.root
+-rw-r-----  1 josephrb josephrb 499737905 2026-10-20 runEventLoopOmniFold_5D_1N_proton_p1.root
+-rw-r-----  1 josephrb josephrb 150951296 2026-10-20 runEventLoopOmniFold_5D_1O_proton_p1.root
+-rw-r-----  1 josephrb josephrb 199850333 2026-10-20 runEventLoopOmniFold_5D_1P_proton_p1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/xtalk_m1/
+total 4728348
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398378383 2026-10-20 runEventLoopOmniFold_5D_1A_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 106517637 2026-10-20 runEventLoopOmniFold_5D_1B_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 204236490 2026-10-20 runEventLoopOmniFold_5D_1C_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 596287936 2026-10-20 runEventLoopOmniFold_5D_1D_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 495760178 2026-10-20 runEventLoopOmniFold_5D_1E_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 689047469 2026-10-20 runEventLoopOmniFold_5D_1F_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 581498560 2026-10-20 runEventLoopOmniFold_5D_1G_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb  56587110 2026-10-20 runEventLoopOmniFold_5D_1L_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 862894210 2026-10-20 runEventLoopOmniFold_5D_1M_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 499733087 2026-10-20 runEventLoopOmniFold_5D_1N_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 150943949 2026-10-20 runEventLoopOmniFold_5D_1O_xtalk_m1.root
+-rw-r-----  1 josephrb josephrb 199853842 2026-10-20 runEventLoopOmniFold_5D_1P_xtalk_m1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/xtalk_p1/
+total 4728356
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398375091 2026-10-20 runEventLoopOmniFold_5D_1A_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 106517360 2026-10-20 runEventLoopOmniFold_5D_1B_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 204237325 2026-10-20 runEventLoopOmniFold_5D_1C_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 596289988 2026-10-20 runEventLoopOmniFold_5D_1D_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 495767437 2026-10-20 runEventLoopOmniFold_5D_1E_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 689051808 2026-10-20 runEventLoopOmniFold_5D_1F_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 581501660 2026-10-20 runEventLoopOmniFold_5D_1G_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb  56587736 2026-10-20 runEventLoopOmniFold_5D_1L_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 862903682 2026-10-20 runEventLoopOmniFold_5D_1M_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 499730317 2026-10-20 runEventLoopOmniFold_5D_1N_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 150944968 2026-10-20 runEventLoopOmniFold_5D_1O_xtalk_p1.root
+-rw-r-----  1 josephrb josephrb 199849938 2026-10-20 runEventLoopOmniFold_5D_1P_xtalk_p1.root
+-- /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/
+total 4728336
+drwxrwx---  2 josephrb josephrb      4096 2026-10-20 .
+drwxrwx--- 13 josephrb josephrb      4096 2026-10-20 ..
+-rw-r-----  1 josephrb josephrb 398375296 2026-10-20 runEventLoopOmniFold_5D_1A_zero.root
+-rw-r-----  1 josephrb josephrb 106517598 2026-10-20 runEventLoopOmniFold_5D_1B_zero.root
+-rw-r-----  1 josephrb josephrb 204230889 2026-10-20 runEventLoopOmniFold_5D_1C_zero.root
+-rw-r-----  1 josephrb josephrb 596287802 2026-10-20 runEventLoopOmniFold_5D_1D_zero.root
+-rw-r-----  1 josephrb josephrb 495761736 2026-10-20 runEventLoopOmniFold_5D_1E_zero.root
+-rw-r-----  1 josephrb josephrb 689044069 2026-10-20 runEventLoopOmniFold_5D_1F_zero.root
+-rw-r-----  1 josephrb josephrb 581501093 2026-10-20 runEventLoopOmniFold_5D_1G_zero.root
+-rw-r-----  1 josephrb josephrb  56587445 2026-10-20 runEventLoopOmniFold_5D_1L_zero.root
+-rw-r-----  1 josephrb josephrb 862899975 2026-10-20 runEventLoopOmniFold_5D_1M_zero.root
+-rw-r-----  1 josephrb josephrb 499729347 2026-10-20 runEventLoopOmniFold_5D_1N_zero.root
+-rw-r-----  1 josephrb josephrb 150945068 2026-10-20 runEventLoopOmniFold_5D_1O_zero.root
+-rw-r-----  1 josephrb josephrb 199848958 2026-10-20 runEventLoopOmniFold_5D_1P_zero.root
+== universes_full_bkgaware
+-rw-r----- 1 josephrb josephrb  13967366108 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1A_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb   3754803912 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1B_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb   7169599337 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1C_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb  20851460255 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1D_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb  17441205238 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1E_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb  24243323810 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1F_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb  20516264281 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1G_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb   2004993044 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1L_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb  30899506609 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1M_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb  17753617857 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1N_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb   5408395011 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1O_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb   7125869263 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1P_universes_full_bkgaware.root
+-rw-r----- 1 josephrb josephrb 171117093365 2026-07-13 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root
+== playlist_term
+ls: cannot access '/pscratch/sd/j/josephrb/*/playlist_term.npz': No such file or directory
+-rw-rw---- 1 josephrb josephrb 1417546 2026-10-16 /pscratch/sd/j/josephrb/tmp-playlist-term-20261016/out/playlist_term.npz
+== lfs atime sample (purge uses atime)
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1_bkg.npz atime=2026-10-20 22:28:20.000000000 -0700 mtime=2026-10-20 11:35:05.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_m1.npz atime=2026-10-20 22:28:20.000000000 -0700 mtime=2026-10-20 11:35:03.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1_bkg.npz atime=2026-10-20 22:28:21.000000000 -0700 mtime=2026-10-20 11:35:04.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_em_p1.npz atime=2026-10-20 22:28:21.000000000 -0700 mtime=2026-10-20 11:35:02.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_m1_bkg.npz atime=2026-10-20 22:27:24.000000000 -0700 mtime=2026-10-20 11:31:40.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_m1.npz atime=2026-10-20 22:27:24.000000000 -0700 mtime=2026-10-20 11:31:38.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_p1_bkg.npz atime=2026-10-20 22:27:27.000000000 -0700 mtime=2026-10-20 11:35:01.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_meson_p1.npz atime=2026-10-20 22:27:27.000000000 -0700 mtime=2026-10-20 11:34:59.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1_bkg.npz atime=2026-10-20 22:28:23.000000000 -0700 mtime=2026-10-20 11:35:00.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_m1.npz atime=2026-10-20 22:28:22.000000000 -0700 mtime=2026-10-20 11:34:58.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1_bkg.npz atime=2026-10-20 22:28:24.000000000 -0700 mtime=2026-10-20 11:38:21.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_other_p1.npz atime=2026-10-20 22:28:24.000000000 -0700 mtime=2026-10-20 11:38:19.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1_bkg.npz atime=2026-10-20 22:27:20.000000000 -0700 mtime=2026-10-20 11:31:32.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1.npz atime=2026-10-20 22:27:20.000000000 -0700 mtime=2026-10-20 11:31:30.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_p1_bkg.npz atime=2026-10-20 22:27:22.000000000 -0700 mtime=2026-10-20 11:31:34.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_p1.npz atime=2026-10-20 22:27:22.000000000 -0700 mtime=2026-10-20 11:31:32.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_m1_bkg.npz atime=2026-10-20 22:27:34.000000000 -0700 mtime=2026-10-20 11:38:34.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_m1.npz atime=2026-10-20 22:27:34.000000000 -0700 mtime=2026-10-20 11:38:32.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_p1_bkg.npz atime=2026-10-20 22:27:36.000000000 -0700 mtime=2026-10-20 11:38:25.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_xtalk_p1.npz atime=2026-10-20 22:27:36.000000000 -0700 mtime=2026-10-20 11:38:23.000000000 -0700

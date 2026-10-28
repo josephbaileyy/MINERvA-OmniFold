@@ -1,0 +1,105 @@
+host=login08 date=2026-10-28T21:43:46Z
+== w2b/lateral
+total 4619584
+drwxrwx---  2 josephrb josephrb       4096 2026-10-06 .
+drwxrwx--- 13 josephrb josephrb       4096 2026-10-06 ..
+-rw-rw----  1 josephrb josephrb   28492272 2026-10-06 lat_w2b_rr0_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548308170 2026-10-06 lat_w2b_rr0.npz
+-rw-rw----  1 josephrb josephrb   28496296 2026-10-06 lat_w2b_rr1_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548318853 2026-10-06 lat_w2b_rr1.npz
+-rw-rw----  1 josephrb josephrb   28494567 2026-10-06 lat_w2b_rrzero_bkg.npz
+-rw-rw----  1 josephrb josephrb 1548311762 2026-10-06 lat_w2b_rrzero.npz
+== w2b/unf
+total 296
+drwxrwx---  2 josephrb josephrb  4096 2026-10-06 .
+drwxrwx--- 13 josephrb josephrb  4096 2026-10-06 ..
+-rw-rw----  1 josephrb josephrb 95520 2026-10-06 w2b_rr0_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95654 2026-10-06 w2b_rr1_b-_j-.npz
+-rw-rw----  1 josephrb josephrb 95555 2026-10-06 w2b_rrzero_b-_j-.npz
+== w2b/merged
+total 14183448
+drwxrwx---  2 josephrb josephrb       4096 2026-10-06 .
+drwxrwx--- 13 josephrb josephrb       4096 2026-10-06 ..
+-rw-r-----  1 josephrb josephrb 4841096094 2026-10-06 runEventLoopOmniFold_5D_MEFHC_w2b_rr0.root
+-rw-r-----  1 josephrb josephrb 4841450305 2026-10-06 runEventLoopOmniFold_5D_MEFHC_w2b_rr1.root
+-rw-r-----  1 josephrb josephrb 4841279168 2026-10-06 runEventLoopOmniFold_5D_MEFHC_w2b_rrzero.root
+== w2b/evloop
+total 20
+drwxrwx---  5 josephrb josephrb 4096 2026-10-06 .
+drwxrwx--- 13 josephrb josephrb 4096 2026-10-06 ..
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 rr0
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 rr1
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 rrzero
+== w2b/evloop/*
+/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0:
+total 4728160
+drwxrwx--- 2 josephrb josephrb      4096 2026-10-06 .
+drwxrwx--- 5 josephrb josephrb      4096 2026-10-06 ..
+-rw-r----- 1 josephrb josephrb 398358537 2026-10-06 runEventLoopOmniFold_5D_1A_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 106513742 2026-10-06 runEventLoopOmniFold_5D_1B_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 204222583 2026-10-06 runEventLoopOmniFold_5D_1C_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 596265832 2026-10-06 runEventLoopOmniFold_5D_1D_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 495743354 2026-10-06 runEventLoopOmniFold_5D_1E_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 689024184 2026-10-06 runEventLoopOmniFold_5D_1F_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 581483822 2026-10-06 runEventLoopOmniFold_5D_1G_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb  56585056 2026-10-06 runEventLoopOmniFold_5D_1L_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 862865275 2026-10-06 runEventLoopOmniFold_5D_1M_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 499711053 2026-10-06 runEventLoopOmniFold_5D_1N_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 150939385 2026-10-06 runEventLoopOmniFold_5D_1O_w2b_rr0.root
+-rw-r----- 1 josephrb josephrb 199842239 2026-10-06 runEventLoopOmniFold_5D_1P_w2b_rr0.root
+
+/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr1:
+total 4728512
+drwxrwx--- 2 josephrb josephrb      4096 2026-10-06 .
+drwxrwx--- 5 josephrb josephrb      4096 2026-10-06 ..
+-rw-r----- 1 josephrb josephrb 398389861 2026-10-06 runEventLoopOmniFold_5D_1A_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 106521566 2026-10-06 runEventLoopOmniFold_5D_1B_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 204237238 2026-10-06 runEventLoopOmniFold_5D_1C_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 596310072 2026-10-06 runEventLoopOmniFold_5D_1D_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 495785713 2026-10-06 runEventLoopOmniFold_5D_1E_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 689074157 2026-10-06 runEventLoopOmniFold_5D_1F_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 581527529 2026-10-06 runEventLoopOmniFold_5D_1G_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb  56589317 2026-10-06 runEventLoopOmniFold_5D_1L_w2b_rr1.root
+-rw-r----- 1 josephrb josephrb 862929718 2026-10-06 runEventLoopOmniFold_5D_1M_w2b_rr1.root
+== w2b/dump-run
+total 16
+drwxrwx---  4 josephrb josephrb 4096 2026-10-06 .
+drwxrwx--- 13 josephrb josephrb 4096 2026-10-06 ..
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 inventory
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 logs
+== w2b/unfold-run
+total 16
+drwxrwx---  4 josephrb josephrb 4096 2026-10-06 .
+drwxrwx--- 13 josephrb josephrb 4096 2026-10-06 ..
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 inventory
+drwxrwx---  2 josephrb josephrb 4096 2026-10-06 logs
+== HPSS top
+
+/home/j/josephrb:
+drwxr-s---    3 josephrb  josephrb         512 Feb 20  2026 backups
+drwxr-s---    2 josephrb  josephrb         512 Oct 26 02:50 mnv-5d-cresp-20261026
+drwxr-s---    2 josephrb  josephrb         512 Oct 28 05:25 mnv-5d-f1-20261028
+drwxr-s---    2 josephrb  josephrb         512 Oct 25 14:59 mnv-5d-fd-f4-20261025
+drwxr-s---    2 josephrb  josephrb         512 Oct 24 17:56 mnv-5d-s1-inputs-20261024
+drwxr-s---    2 josephrb  josephrb         512 Oct 24 22:47 mnv-5d-s1-products-20261024
+drwxr-s---    2 josephrb  josephrb         512 Oct 23 20:39 mnv-5d-stage0-inputs-20261023
+drwxr-s---    2 josephrb  josephrb         512 Aug 21 14:43 mnv-negweight-historical-20260821
+drwxr-s---    2 josephrb  josephrb         512 Aug 21 14:54 mnv-negweight-residency-control-20260821
+drwxr-s---    2 josephrb  josephrb         512 Aug 18 06:19 mnv-p3f-pet-fullevent-final
+drwxr-s---    2 josephrb  josephrb         512 Aug 11 15:37 mnv-p3f-smoketest
+drwxr-s---    5 josephrb  josephrb         512 Aug 12 07:22 mnv-quoted-products-20260812
+drwxr-s---    2 josephrb  josephrb         512 Oct 24 05:54 mnv-re2-2d-rebuild-20261024
+drwxr-s---    2 josephrb  josephrb         512 Oct 24 09:37 mnv-re2-2d-rebuild-partc-20261024
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:21 mnv-scalar5d-solecopy-20260925
+drwxr-s---    2 josephrb  josephrb         512 Oct 27 12:53 mnv-uplan-texts-20261026
+drwxr-s---    2 josephrb  josephrb         512 Oct  8 17:18 prd-release-preservation-20261008
+== hpssquota
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                                    home |   24.64GiB |    40.00GiB |          61.6% |    272.65K |       1.00M |          27.3% |
+|                                pscratch |   17.01TiB |    20.00TiB |          85.0% |      2.09M |      10.00M |          20.9% |
+| josephrb usage on HPSS charged to m3246 |  422.79GiB |   512.00GiB |          82.6% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+== pscratch usage
+FILESYSTEM  SPACE_USED  SPACE_QUOTA  SPACE_PCT  INODE_USED  INODE_QUOTA  INODE_PCT
+      home    24.64GiB     40.00GiB      61.6%     272.65K        1.00M      27.3%
+  pscratch    17.01TiB     20.00TiB      85.0%       2.09M       10.00M      20.9%
