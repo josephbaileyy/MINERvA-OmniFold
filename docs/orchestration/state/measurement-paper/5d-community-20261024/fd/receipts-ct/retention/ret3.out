@@ -1,0 +1,83 @@
+host=login08 date=2026-10-28T21:44:10Z
+== atime, oldest per group (purge is by access age)
+13 files | oldest atime: 2026-09-14 18:08:25.000000000 -0700 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1N_universes_full_bkgaware.root
+132 files | oldest atime: 2026-10-20 11:19:42.000000000 -0700 /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/proton_m1/runEventLoopOmniFold_5D_1A_proton_m1.root
+11 files | oldest atime: 2026-10-20 11:29:58.000000000 -0700 /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged/runEventLoopOmniFold_5D_MEFHC_proton_m1.root
+22 files | oldest atime: 2026-10-20 22:27:20.000000000 -0700 /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_proton_m1_bkg.npz
+11 files | oldest atime: 2026-10-26 00:19:13.000000000 -0700 /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf/mp1s1_em_m1_b-_j-.npz
+36 files | oldest atime: 2026-10-08 17:13:25.000000000 -0700 /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1A_w2b_rr0.root
+3 files | oldest atime: 2026-10-08 17:15:19.000000000 -0700 /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/merged/runEventLoopOmniFold_5D_MEFHC_w2b_rr0.root
+6 files | oldest atime: 2026-10-08 17:13:50.000000000 -0700 /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr0_bkg.npz
+3 files | oldest atime: 2026-10-20 17:28:18.000000000 -0700 /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz
+3 files | oldest atime: 2026-10-16 16:24:40.000000000 -0700 /pscratch/sd/j/josephrb/tmp-playlist-term-20261016/out/run.log
+1 files | oldest atime: 2026-10-27 13:49:05.000000000 -0700 /pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal
+== du (apparent) per group
+50G	/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop
+50G	/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/merged
+17G	/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral
+1.1M	/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf
+14G	/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop
+14G	/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/merged
+4.5G	/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral
+285K	/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf
+== HPSS recursive names, filtered
+/home/j/josephrb:
+/home/j/josephrb/backups:
+/home/j/josephrb/backups/scratch_backup:
+/home/j/josephrb/mnv-p3f-pet-fullevent-final:
+/home/j/josephrb/mnv-5d-cresp-20261026:
+/home/j/josephrb/mnv-p3f-smoketest:
+/home/j/josephrb/mnv-5d-f1-20261028:
+/home/j/josephrb/mnv-quoted-products-20260812:
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding:
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq:
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq/bootstrap_MEFHC_300:
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix:
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq/seedscan_lgbm_ml:
+/home/j/josephrb/mnv-quoted-products-20260812/3d-unfolding:
+/home/j/josephrb/mnv-quoted-products-20260812/3d-unfolding/genie:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding:
+runEventLoopOmniFold_5D_MEFHC_universes_full.root   
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/g2_fullevent:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/g2_fullevent/input:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/pet:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/pet/g2_smoke:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products/4d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products/5d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products/pet:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/universe_stage2_4d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d/universe_stage2_4d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/_archive_prehm_20260713:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/readopt_20260811_footing:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/rescaled_20260806_full160:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_fps:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected:
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected/universe_stage2_fps:
+/home/j/josephrb/mnv-5d-fd-f4-20261025:
+/home/j/josephrb/mnv-re2-2d-rebuild-20261024:
+/home/j/josephrb/mnv-5d-s1-inputs-20261024:
+/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024:
+/home/j/josephrb/mnv-5d-s1-products-20261024:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products/member_k000000:
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products/member_k001200:
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023:
+/home/j/josephrb/mnv-uplan-texts-20261026:
+/home/j/josephrb/mnv-negweight-historical-20260821:
+/home/j/josephrb/prd-release-preservation-20261008:
+s5p-archive-20261006.tar       s5p-archive-20261006.tar.idx   z-cv.npz                       

@@ -1,0 +1,66 @@
+host=login08 date=2026-10-28T21:45:59Z
+== mnv-5d-s1-inputs-20261024
+/home/j/josephrb/mnv-5d-s1-inputs-20261024:
+-rw-r-----    1 josephrb  josephrb      116791 Oct 24 17:56 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb 73709649920 Oct 24 17:54 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         129 Oct 24 17:56 stage0-inputs.tar.sha256
+== mnv-5d-s1-products-20261024
+/home/j/josephrb/mnv-5d-s1-products-20261024:
+-rw-r-----    1 josephrb  josephrb        4429 Oct 24 22:47 ASSEMBLY-INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb       48477 Oct 24 22:18 PRODUCTS-INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb      337920 Oct 24 22:47 s1-assembly.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 24 22:47 s1-assembly.tar.sha256
+-rw-r-----    1 josephrb  josephrb    26470400 Oct 24 22:18 s1-products.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 24 22:18 s1-products.tar.sha256
+== mnv-5d-cresp-20261026
+/home/j/josephrb/mnv-5d-cresp-20261026:
+-rw-r-----    1 josephrb  josephrb         119 Oct 26 02:50 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb       20480 Oct 26 02:50 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         133 Oct 26 02:50 stage0-inputs.tar.sha256
+== mnv-5d-stage0-inputs-20261023
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023:
+-rw-r-----    1 josephrb  josephrb       61796 Oct 23 14:33 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb     4403200 Oct 23 20:39 stage0-0c-products-20261024.tar
+-rw-r-----    1 josephrb  josephrb          98 Oct 23 20:39 stage0-0c-products-20261024.tar.sha256
+-rw-r-----    1 josephrb  josephrb  3303587840 Oct 23 14:33 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         127 Oct 23 14:33 stage0-inputs.tar.sha256
+== mnv-5d-fd-f4-20261025
+/home/j/josephrb/mnv-5d-fd-f4-20261025:
+-rw-r-----    1 josephrb  josephrb       12640 Oct 25 14:59 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb    14888960 Oct 25 14:59 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 25 14:59 stage0-inputs.tar.sha256
+== mnv-uplan-texts-20261026
+/home/j/josephrb/mnv-uplan-texts-20261026:
+-rw-r-----    1 josephrb  josephrb     1465344 Oct 27 12:53 mnv-uplan-texts-20261026.tar
+== prd-release-preservation-20261008
+/home/j/josephrb/prd-release-preservation-20261008:
+-rw-r-----    1 josephrb  josephrb  2324167680 Oct  8 17:17 s5p-archive-20261006.tar
+-rw-r-----    1 josephrb  josephrb     5472032 Oct  8 17:17 s5p-archive-20261006.tar.idx
+-rw-------    1 josephrb  josephrb   890500272 Oct  8 17:18 z-cv.npz
+== mnv-re2-2d-rebuild-20261024
+/home/j/josephrb/mnv-re2-2d-rebuild-20261024:
+-rw-r-----    1 josephrb  josephrb      201745 Oct 24 05:54 members.sha256
+-rw-r-----    1 josephrb  josephrb    59473920 Oct 24 05:54 re2-2d-rebuild-20261024.tar
+-rw-r-----    1 josephrb  josephrb          94 Oct 24 05:54 re2-2d-rebuild-20261024.tar.sha256
+== mnv-re2-2d-rebuild-partc-20261024
+/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024:
+-rw-r-----    1 josephrb  josephrb       15476 Oct 24 09:37 members.sha256
+-rw-r-----    1 josephrb  josephrb    73994240 Oct 24 09:37 re2-2d-rebuild-partc-20261024.tar
+-rw-r-----    1 josephrb  josephrb         100 Oct 24 09:37 re2-2d-rebuild-partc-20261024.tar.sha256
+== mnv-5d-f1-20261028
+/home/j/josephrb/mnv-5d-f1-20261028:
+-rw-r-----    1 josephrb  josephrb        8843 Oct 28 05:25 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb  1229916160 Oct 28 05:25 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 28 05:25 stage0-inputs.tar.sha256
+== tar members matching mp1|w2b|lat_|universes|playlist_term (htar -t reads the index only)
+/home/j/josephrb/mnv-5d-s1-inputs-20261024/stage0-inputs.tar matches=0
+/home/j/josephrb/mnv-5d-s1-products-20261024/s1-assembly.tar matches=0
+/home/j/josephrb/mnv-5d-s1-products-20261024/s1-products.tar matches=0
+/home/j/josephrb/mnv-5d-cresp-20261026/stage0-inputs.tar matches=0
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-0c-products-20261024.tar matches=0
+/home/j/josephrb/mnv-5d-stage0-inputs-20261023/stage0-inputs.tar matches=0
+/home/j/josephrb/mnv-5d-fd-f4-20261025/stage0-inputs.tar matches=0
+/home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar matches=0
+/home/j/josephrb/mnv-re2-2d-rebuild-20261024/re2-2d-rebuild-20261024.tar matches=0
+/home/j/josephrb/mnv-re2-2d-rebuild-partc-20261024/re2-2d-rebuild-partc-20261024.tar matches=0
+/home/j/josephrb/mnv-5d-f1-20261028/stage0-inputs.tar matches=0

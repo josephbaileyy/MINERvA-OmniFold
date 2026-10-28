@@ -1,0 +1,24 @@
+host=login08 date=2026-10-28T21:46:20Z
+== htar -t total member lines and rc (0 lines = could not look)
+/home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar rc=0 lines=10688
+HTAR: -rw-------  josephrb/josephrb        256 2026-10-08 17:17  /tmp/HTAR_CF_CHK_1538613_1791505070
+HTAR: HTAR SUCCESSFUL
+/home/j/josephrb/mnv-5d-s1-inputs-20261024/stage0-inputs.tar rc=72 lines=3
+ERROR: Fatal error opening index file: /home/j/josephrb/mnv-5d-s1-inputs-20261024/stage0-inputs.tar.idx
+HTAR: HTAR FAILED
+== inventories read to stdout (hsi get -), members matching mp1|w2b|lat_|universes|playlist_term, and total lines
+-- mnv-5d-s1-inputs-20261024/INVENTORY.sha256 total=734 match=0
+-- mnv-5d-s1-products-20261024/PRODUCTS-INVENTORY.sha256 total=376 match=1
+759deb58c2cd2f33fcfcb4310083fd77e45221877638aa799c9cd68d34436914  /pscratch/sd/j/josephrb/s1-20261024/logs/G3-all.universes
+-- mnv-5d-s1-products-20261024/ASSEMBLY-INVENTORY.sha256 total=36 match=1
+759deb58c2cd2f33fcfcb4310083fd77e45221877638aa799c9cd68d34436914  /pscratch/sd/j/josephrb/s1-20261024/logs/G3-all.universes
+-- mnv-5d-cresp-20261026/INVENTORY.sha256 total=1 match=0
+-- mnv-5d-stage0-inputs-20261023/INVENTORY.sha256 total=425 match=2
+01e89fb215f1641554b750377e33ba01c1f4bc9462ccd45ae969a4499dbd9b81  /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/nuwro_to_flat_5d.C
+01e89fb215f1641554b750377e33ba01c1f4bc9462ccd45ae969a4499dbd9b81  /pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/nuwro_to_flat_5d.C
+-- mnv-5d-fd-f4-20261025/INVENTORY.sha256 total=80 match=0
+-- mnv-re2-2d-rebuild-20261024/members.sha256 total=2134 match=0
+-- mnv-re2-2d-rebuild-partc-20261024/members.sha256 total=153 match=2
+a952adda441e1fa7d29eb44e064b11991a09ded3682c2530193222e45164ed26  partc-r2/playlist/playlist_term.json
+dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e  partc-r2/playlist/playlist_term.npz
+-- mnv-5d-f1-20261028/INVENTORY.sha256 total=60 match=0
