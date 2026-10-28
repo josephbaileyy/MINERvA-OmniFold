@@ -1,0 +1,237 @@
+\contentsline {section}{Executive summary}{2}{section*.1}%
+\contentsline {paragraph}{Results overview:}{2}{section*.2}%
+\contentsline {paragraph}{Principal limitations:}{4}{section*.3}%
+\contentsline {section}{\numberline {1}Introduction and motivation}{7}{section.1}%
+\contentsline {paragraph}{Prior OmniFold applications.}{8}{section*.5}%
+\contentsline {paragraph}{Why unbinned:}{8}{section*.6}%
+\contentsline {paragraph}{Analysis strategy.}{9}{section*.7}%
+\contentsline {paragraph}{Scope.}{9}{section*.8}%
+\contentsline {paragraph}{Roadmap.}{9}{section*.9}%
+\contentsline {section}{\numberline {2}The MINERvA experiment, data and simulation samples}{10}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Detector and beam}{10}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Data and simulation samples}{10}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Signal definition and event selection}{11}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Per-event analysis trees}{12}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Reco-level control distributions}{12}{subsection.2.5}%
+\contentsline {section}{\numberline {3}The unbinned OmniFold procedure}{14}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Algorithm}{14}{subsection.3.1}%
+\contentsline {paragraph}{Training details.}{15}{section*.10}%
+\contentsline {paragraph}{Background subtraction.}{15}{section*.11}%
+\contentsline {subsection}{\numberline {3.2}Estimators and configuration}{16}{subsection.3.2}%
+\contentsline {paragraph}{The exact-split cross-check.}{16}{section*.12}%
+\contentsline {paragraph}{The estimator configurations.}{17}{section*.13}%
+\contentsline {paragraph}{Hyperparameter choice.}{17}{section*.14}%
+\contentsline {subsection}{\numberline {3.3}MINERvA driver and pipeline conventions}{18}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Cross-section extraction}{19}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Binning}{19}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Related developments and estimator scope}{20}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Uncertainty quantification: constructing the covariance blocks}{21}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Systematic universes}{21}{subsection.4.1}%
+\contentsline {paragraph}{Flux $1/\Phi $ normalization.}{22}{section*.15}%
+\contentsline {subsection}{\numberline {4.2}Statistical uncertainty: Poisson bootstrap}{22}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}ML/optimization uncertainty: training-seed variation}{23}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Further checks of the 2D covariance}{23}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Combination and the unified-throw test}{24}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Scope, conventions and limitations of the 2D covariance}{25}{subsection.4.6}%
+\contentsline {paragraph}{Status of the 2D result.}{25}{section*.16}%
+\contentsline {paragraph}{Generator-shape model dependence.}{25}{section*.17}%
+\contentsline {paragraph}{Conventions.}{25}{section*.18}%
+\contentsline {paragraph}{Approximations and omitted terms.}{26}{section*.19}%
+\contentsline {paragraph}{Other limitations.}{26}{section*.20}%
+\contentsline {paragraph}{Seed-related terms reported, not added.}{26}{section*.21}%
+\contentsline {paragraph}{Changes from the earlier 2D budget.}{26}{section*.22}%
+\contentsline {subsection}{\numberline {4.7}What changes for the higher-dimensional products}{27}{subsection.4.7}%
+\contentsline {paragraph}{Scope of the re-selected replacement.}{27}{section*.23}%
+\contentsline {section}{\numberline {5}Validation of the two-dimensional measurement}{28}{section.5}%
+\contentsline {paragraph}{Closure.}{28}{section*.24}%
+\contentsline {paragraph}{Injected-feature recovery.}{29}{section*.25}%
+\contentsline {paragraph}{What the remaining validation needs.}{29}{section*.26}%
+\contentsline {subsection}{\numberline {5.1}Closure tests across dimensions: what each test changes}{29}{subsection.5.1}%
+\contentsline {paragraph}{Why injected bumps close while generator-shaped tests do not.}{31}{section*.27}%
+\contentsline {subsection}{\numberline {5.2}Fixed-truth coverage of the 2D statistical band}{31}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Other validation diagnostics}{33}{subsection.5.3}%
+\contentsline {paragraph}{Unbinned diagnostic (C2ST).}{33}{section*.28}%
+\contentsline {paragraph}{Same-ensemble pull diagnostic (not a coverage test).}{33}{section*.29}%
+\contentsline {paragraph}{Stability and efficiency.}{33}{section*.30}%
+\contentsline {section}{\numberline {6}Results}{34}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Double-differential cross section}{34}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Comparison to the published measurement}{36}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Uncertainty budget}{38}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Anatomy of the $\chi ^{2}=2.27$ tension}{39}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Comparison to GENIE MINERvA Tune v1}{40}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Higher-dimensional extensions: available energy and momentum transfer}{41}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Operational definition and provenance}{43}{subsection.7.1}%
+\contentsline {paragraph}{Unfolding and binning.}{43}{section*.31}%
+\contentsline {subsection}{\numberline {7.2}The available-energy spectrum}{44}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Validation against the 2D measurement}{44}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Closure: the one injected $E_{\mathrm {avail}}$ deformation is recovered}{45}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Classifier-family cross-check (GBDT vs.\ NN)}{45}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Generator comparison in 3D}{46}{subsection.7.6}%
+\contentsline {paragraph}{Flux repair of the GENIE and NuWro predictions.}{47}{section*.32}%
+\contentsline {subsection}{\numberline {7.7}The low-available-energy excess and the known low-recoil deficit}{48}{subsection.7.7}%
+\contentsline {paragraph}{The tested pion-FSI variations do not account for it.}{48}{section*.33}%
+\contentsline {paragraph}{Comparison with a missing 2p2h component.}{48}{section*.34}%
+\contentsline {paragraph}{GENIE with Valencia 2p2h enabled.}{48}{section*.35}%
+\contentsline {subsection}{\numberline {7.8}Fourth axis: three-momentum transfer $q_{3}$}{49}{subsection.7.8}%
+\contentsline {paragraph}{Marginalization check (4D$\to $3D).}{50}{section*.36}%
+\contentsline {paragraph}{What $q_{3}$ adds.}{50}{section*.37}%
+\contentsline {paragraph}{No 4D uncertainty is reported.}{50}{section*.38}%
+\contentsline {paragraph}{Bin-identical comparison to the published low-recoil measurement.}{50}{section*.39}%
+\contentsline {section}{\numberline {8}Fifth axis: $W$ and the $(E_{\mathrm {avail}},W)$ plane}{51}{section.8}%
+\contentsline {subsection}{\numberline {8.1}$W$ as a fifth axis}{52}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Implemented definitions of the five observables}{52}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Generator predictions and the target difference}{53}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Where the excess lives in the $(E_{\mathrm {avail}},W)$ plane}{53}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Generator band: the corner against four external generators}{55}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Five-dimensional estimator: validation and uncertainty}{57}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Which source of error is being tested}{57}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Background subtraction and generator-sized truth changes}{58}{subsection.9.2}%
+\contentsline {paragraph}{Background subtraction.}{58}{section*.40}%
+\contentsline {paragraph}{Generator-sized truth changes.}{58}{section*.41}%
+\contentsline {subsection}{\numberline {9.3}Why the estimator does not follow a generator-sized change}{58}{subsection.9.3}%
+\contentsline {paragraph}{Comparison with exact binned unfolding.}{59}{section*.42}%
+\contentsline {paragraph}{Higher-capacity background refinement and data stability.}{59}{section*.43}%
+\contentsline {paragraph}{Unfolding-model dependence.}{59}{section*.44}%
+\contentsline {subsection}{\numberline {9.4}Model dependence, variability and reporting resolution}{60}{subsection.9.4}%
+\contentsline {paragraph}{Recovery changes, but not uniformly.}{60}{section*.45}%
+\contentsline {paragraph}{Reporting definitions for a five-dimensional measurement.}{61}{section*.46}%
+\contentsline {paragraph}{Variability and interval behavior at five iterations.}{61}{section*.47}%
+\contentsline {paragraph}{Prior sensitivity is not a measured real-data bias.}{64}{section*.48}%
+\contentsline {subsection}{\numberline {9.5}Five-dimensional coverage test}{64}{subsection.9.5}%
+\contentsline {paragraph}{Why the intervals miscover under the rate reduction.}{65}{section*.49}%
+\contentsline {subsection}{\numberline {9.6}The five-axis covariance of the configuration-(a) central value and its $(E_{\mathrm {avail}},W)$ projection}{65}{subsection.9.6}%
+\contentsline {paragraph}{Status.}{65}{section*.50}%
+\contentsline {paragraph}{Construction.}{65}{section*.51}%
+\contentsline {paragraph}{Centering, explicitly.}{66}{section*.52}%
+\contentsline {paragraph}{The projection to $(E_{\mathrm {avail}},W)$.}{66}{section*.53}%
+\contentsline {paragraph}{Conditioning, and why no rank is quoted.}{66}{section*.54}%
+\contentsline {paragraph}{What the covariance supports.}{66}{section*.55}%
+\contentsline {section}{\numberline {10}The sixteen-cell five-observable measurement}{67}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Cells and result}{68}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}The reported covariance}{68}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Fake-data tests of the estimator's bias}{69}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Comparison with generator predictions}{71}{subsection.10.4}%
+\contentsline {section}{\numberline {11}Calibrated joint tests of generator predictions}{75}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Hypotheses, grid and statistics}{75}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Calibration within the implemented simulation model}{76}{subsection.11.2}%
+\contentsline {paragraph}{Generative model of one pseudo-experiment.}{76}{section*.56}%
+\contentsline {subsection}{\numberline {11.3}Multiplicity, stopping rule and design}{76}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Conditions}{78}{subsection.11.4}%
+\contentsline {paragraph}{Numerical convergence.}{79}{section*.57}%
+\contentsline {paragraph}{Calibration validity.}{79}{section*.58}%
+\contentsline {paragraph}{Physical-model adequacy.}{80}{section*.59}%
+\contentsline {subsection}{\numberline {11.5}Decisions}{80}{subsection.11.5}%
+\contentsline {paragraph}{Sensitivity to the sub-fine-grid residual.}{82}{section*.60}%
+\contentsline {paragraph}{Power.}{82}{section*.61}%
+\contentsline {subsection}{\numberline {11.6}Lost pseudo-experiments and their recovery}{82}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Matched coarse projections}{83}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Hadronic-response condition and recoil-energy sensitivity}{83}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Hydrocarbon target correction for NuWro and GiBUU}{85}{subsection.11.9}%
+\contentsline {paragraph}{Construction.}{85}{section*.62}%
+\contentsline {paragraph}{Re-evaluated tests.}{85}{section*.63}%
+\contentsline {paragraph}{Generation checks.}{85}{section*.64}%
+\contentsline {subsection}{\numberline {11.10}What the tests establish}{85}{subsection.11.10}%
+\contentsline {section}{\numberline {12}Extended fiducial phase-space study}{86}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Acceptance and the extended domain}{86}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Validation battery}{86}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Central value and two-tier reporting}{88}{subsection.12.3}%
+\contentsline {section}{\numberline {13}Summary and outlook}{88}{section.13}%
+\contentsline {paragraph}{Summary.}{88}{section*.65}%
+\contentsline {paragraph}{Principal limitations.}{89}{section*.66}%
+\contentsline {paragraph}{Outlook.}{90}{section*.67}%
+\contentsline {paragraph}{Reusing the unbinned result.}{90}{section*.68}%
+\contentsline {section}{Guide to the appendices}{91}{section*.70}%
+\contentsline {paragraph}{Labels used in the repository.}{91}{section*.71}%
+\contentsline {section}{\numberline {A}Statistical methods and the 2D comparison}{92}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}{92}{subsection.A.1}%
+\contentsline {paragraph}{Cholesky and ridge jitter.}{92}{section*.72}%
+\contentsline {paragraph}{Rank deficiency at $N \le n$.}{92}{section*.73}%
+\contentsline {paragraph}{Pseudo-inverse.}{92}{section*.74}%
+\contentsline {subsection}{\numberline {A.2}Variance-source procedures}{92}{subsection.A.2}%
+\contentsline {subsubsection}{\numberline {A.2.1}Training-seed variation}{94}{subsubsection.A.2.1}%
+\contentsline {subsubsection}{\numberline {A.2.2}Poisson bootstrap}{94}{subsubsection.A.2.2}%
+\contentsline {subsubsection}{\numberline {A.2.3}Multinomial $\to $ independent Poisson bootstrap limit}{94}{subsubsection.A.2.3}%
+\contentsline {subsubsection}{\numberline {A.2.4}Universes}{94}{subsubsection.A.2.4}%
+\contentsline {subsubsection}{\numberline {A.2.5}The $\pm 1\sigma $ pair covariance: mean-centered (MAT-conformant)}{95}{subsubsection.A.2.5}%
+\contentsline {paragraph}{Scope of mean-centering.}{96}{section*.75}%
+\contentsline {subsubsection}{\numberline {A.2.6}How MINERvA builds its published covariance}{96}{subsubsection.A.2.6}%
+\contentsline {paragraph}{Ruterbories 2021, Section V.}{96}{section*.76}%
+\contentsline {paragraph}{MAT per band and in total.}{97}{section*.77}%
+\contentsline {paragraph}{Upstream references that set each band's $\pm 1\sigma $ amplitude.}{97}{section*.78}%
+\contentsline {subsubsection}{\numberline {A.2.7}Block-sum combination}{97}{subsubsection.A.2.7}%
+\contentsline {subsection}{\numberline {A.3}Comparing to the paper}{98}{subsection.A.3}%
+\contentsline {subsubsection}{\numberline {A.3.1}The 205-bin selection}{98}{subsubsection.A.3.1}%
+\contentsline {subsubsection}{\numberline {A.3.2}Covariance-aware $\chi ^{2}/\mathrm {ndf}$}{98}{subsubsection.A.3.2}%
+\contentsline {paragraph}{Dimension-conditional ndf.}{98}{section*.79}%
+\contentsline {paragraph}{Worked example: comparison to paper (quoted numbers).}{98}{section*.80}%
+\contentsline {paragraph}{External statistical floor of the \emph {quoted} combined $\chi ^{2}$.}{99}{section*.81}%
+\contentsline {paragraph}{Edge-bin sensitivity ($p_{\parallel }$-min cut).}{100}{section*.82}%
+\contentsline {subsubsection}{\numberline {A.3.3}Pull distribution}{100}{subsubsection.A.3.3}%
+\contentsline {subsubsection}{\numberline {A.3.4}Shape-only $\chi ^{2}$ with Jacobian propagation}{100}{subsubsection.A.3.4}%
+\contentsline {subsection}{\numberline {A.4}Ill-conditioning and rank deficiency}{101}{subsection.A.4}%
+\contentsline {paragraph}{The obstruction.}{101}{section*.83}%
+\contentsline {paragraph}{The real obstruction is statistical, not rank.}{101}{section*.84}%
+\contentsline {paragraph}{Data/MC split bootstrap.}{101}{section*.85}%
+\contentsline {paragraph}{Regularization scans (earlier covariance; all cutoff-dependent).}{101}{section*.86}%
+\contentsline {paragraph}{Bootstrap/paper-stat double-count.}{102}{section*.87}%
+\contentsline {paragraph}{Remaining refinements.}{102}{section*.88}%
+\contentsline {paragraph}{What is reported.}{102}{section*.89}%
+\contentsline {subsection}{\numberline {A.5}Anatomy of the paper-covariance tension}{102}{subsection.A.5}%
+\contentsline {paragraph}{The paradox.}{103}{section*.90}%
+\contentsline {paragraph}{Eigenmode decomposition.}{103}{section*.91}%
+\contentsline {paragraph}{Shape contribution.}{103}{section*.92}%
+\contentsline {paragraph}{Where it lives.}{103}{section*.93}%
+\contentsline {paragraph}{A methodological component (estimator and iteration).}{104}{section*.94}%
+\contentsline {paragraph}{Conclusion.}{104}{section*.95}%
+\contentsline {subsection}{\numberline {A.6}Closure tests: detecting bias}{104}{subsection.A.6}%
+\contentsline {subsubsection}{\numberline {A.6.1}Truth-reweight closure}{104}{subsubsection.A.6.1}%
+\contentsline {subsubsection}{\numberline {A.6.2}Hidden-variable closure}{105}{subsubsection.A.6.2}%
+\contentsline {subsubsection}{\numberline {A.6.3}Alternative-model closure}{105}{subsubsection.A.6.3}%
+\contentsline {subsection}{\numberline {A.7}Audit trail of the 2D comparison numbers}{105}{subsection.A.7}%
+\contentsline {section}{\numberline {B}Statistical methods for the multidimensional results and inference}{106}{appendix.B}%
+\contentsline {subsection}{\numberline {B.1}Rank, ndf and finite-ensemble declarations for N-D covariances}{107}{subsection.B.1}%
+\contentsline {paragraph}{Finite-ensemble bias of the inverse, and why no correction is prescribed.}{107}{section*.98}%
+\contentsline {subsection}{\numberline {B.2}Scalar-5D diagnostic reductions and interval definitions}{107}{subsection.B.2}%
+\contentsline {subsection}{\numberline {B.3}Extended-fiducial statistical-band and pull fractions}{108}{subsection.B.3}%
+\contentsline {subsection}{\numberline {B.4}Inference from unfolded events and selected projections}{108}{subsection.B.4}%
+\contentsline {subsection}{\numberline {B.5}Familywise error of the sequential joint-test decisions}{109}{subsection.B.5}%
+\contentsline {section}{\numberline {C}Unbinned background subtraction by negative-weight injection}{110}{appendix.C}%
+\contentsline {paragraph}{Scope of the numbers.}{110}{section*.99}%
+\contentsline {subsection}{\numberline {C.1}Estimator}{110}{subsection.C.1}%
+\contentsline {paragraph}{The floor.}{111}{section*.100}%
+\contentsline {subsection}{\numberline {C.2}Binned limit: exact reduction to the purity correction}{111}{subsection.C.2}%
+\contentsline {subsection}{\numberline {C.3}Closed-form toy}{112}{subsection.C.3}%
+\contentsline {subsection}{\numberline {C.4}Comparison on the 2D measurement}{112}{subsection.C.4}%
+\contentsline {subsection}{\numberline {C.5}Propagation through systematics and statistics}{112}{subsection.C.5}%
+\contentsline {subsection}{\numberline {C.6}Which background treatment each production chain uses}{114}{subsection.C.6}%
+\contentsline {paragraph}{The standard \(N\)-dimensional chain uses purity.}{114}{section*.101}%
+\contentsline {paragraph}{A two-dimensional closure test with backgrounds.}{114}{section*.102}%
+\contentsline {paragraph}{What the quoted extended-fiducial number used.}{115}{section*.103}%
+\contentsline {paragraph}{The extended-fiducial measurement and its control are designated different background treatments.}{115}{section*.104}%
+\contentsline {subsection}{\numberline {C.7}Measured size of the background-treatment choice and its scope}{115}{subsection.C.7}%
+\contentsline {paragraph}{Measured size.}{115}{section*.105}%
+\contentsline {paragraph}{Displacement across universes.}{115}{section*.106}%
+\contentsline {paragraph}{Scope.}{115}{section*.107}%
+\contentsline {paragraph}{Limits of the five-dimensional evidence.}{115}{section*.108}%
+\contentsline {subsection}{\numberline {C.8}Five-dimensional pseudo-experiments with both background treatments}{116}{subsection.C.8}%
+\contentsline {paragraph}{Purity bias.}{116}{section*.109}%
+\contentsline {paragraph}{Refined negative-weight subtraction.}{116}{section*.110}%
+\contentsline {paragraph}{Refinement capacity.}{116}{section*.111}%
+\contentsline {paragraph}{Background treatment and choice of covariance.}{116}{section*.112}%
+\contentsline {section}{\numberline {D}Detector-response-mismatch closure (protocol implemented; not yet run)}{117}{appendix.D}%
+\contentsline {paragraph}{Reconstruction-only test implemented in the pipeline.}{117}{section*.113}%
+\contentsline {paragraph}{Physically correlated follow-up.}{117}{section*.114}%
+\contentsline {paragraph}{Status and interpretation.}{117}{section*.115}%
+\contentsline {section}{\numberline {E}The MINERvA measurement-dimensionality survey}{118}{appendix.E}%
+\contentsline {paragraph}{Additional recent measurements.}{119}{section*.116}%
+\contentsline {section}{\numberline {F}Future work: point-cloud representations}{119}{appendix.F}%
+\contentsline {section}{\numberline {G}Result package and reproduction limits}{119}{appendix.G}%
+\contentsline {paragraph}{Release status.}{119}{section*.117}%
+\contentsline {paragraph}{Contents and use.}{120}{section*.118}%
+\contentsline {subsection}{\numberline {G.1}What today's reader can and cannot recompute}{120}{subsection.G.1}%
+\contentsline {subsection}{\numberline {G.2}Release schema}{120}{subsection.G.2}%
+\contentsline {subsection}{\numberline {G.3}Bin edges}{121}{subsection.G.3}%
+\contentsline {subsection}{\numberline {G.4}One minimal projection example}{121}{subsection.G.4}%
+\contentsline {paragraph}{Undeclared acceptance field.}{122}{section*.119}%
+\contentsline {section}{\numberline {H}Codebase layout and terminology}{122}{appendix.H}%
+\contentsline {paragraph}{Code identifiers cited in the note.}{123}{section*.120}%

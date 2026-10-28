@@ -1,0 +1,229 @@
+Analysis Note:
+Unbinned OmniFold analysis of MINERvA charged-current
+inclusive data
+Joseph Bailey∗1 and Benjamin Nachman†2
+1
+
+2
+
+Department of Physics, Stanford University
+Department of Particle Physics and Astrophysics, Stanford University and SLAC National
+Laboratory
+Version 1.0 (review), 20 October 2026
+Code and file references: github.com/josephbaileyy/MINERvA-OmniFold
+
+Abstract
+This note documents an unbinned, simultaneous unfolding of MINERvA medium-energy νµ
+charged-current inclusive open data with OmniFold, and its validation. Its principal result is a
+cross section in five observables, muon transverse and longitudinal momentum, available energy
+(Eavail ), three-momentum transfer (q3 ) and hadronic invariant mass (W ), in sixteen cells, with a
+covariance of statistical, flux, interaction, detector, lateral, normalization, generator-shape and
+calorimetric-response terms; its median per-cell uncertainty is 7.29%. Three external generator
+predictions compared on all sixteen cells give χ2 between 109 and 272 for 16 degrees of freedom,
+and GiBUU, on its 8 cells, 58. The coverage of the result’s intervals has not been validated. In
+a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBUU-like
+truths or at a synthetic q3 tilt. The sixteen-cell χ2 values fall by 24–48% when only the flux
+correlations are weakened by 10%. The note also gives the reproduction of the published doubledifferential cross section in muon momentum, whose integral agrees within about one percent,
+with a correlated shape difference and a covariance that has not been independently validated;
+three- and four-observable central values; and an earlier purity-subtracted five-observable central
+value on a finer grid, whose covariance does not meet its specification’s acceptance criteria and
+whose quoted uncertainties omit that estimator’s background bias of up to 4% at high W and
+its regularization bias. The validation studies show that negative-weight background subtraction
+removes most of the purity method’s bias, that generator-sized truth changes are recovered only
+in part, a residual interpreted as regularization bias, that statistical intervals of a deterministic
+purity-subtracted variant miscover at the tested truths, and that no tested reporting definition
+meets a predeclared 10% precision criterion. Joint tests calibrated in simulation reject hybrid
+null hypotheses for five generator predictions at a 5% family-wise error rate; they are not physical
+exclusions, show no evidence of discrimination beyond matched coarse projections, omit an
+uncertainty on the calorimetric recoil response and assume an unshown convergence of the fine
+grid on which the null hypotheses are defined, and NuWro’s total-test rejection is not robust to
+a hydrocarbon-target correction.
+∗
+†
+
+josephrb@stanford.edu
+nachman@stanford.edu
+
+1
+
+Executive summary
+We apply unbinned machine-learning unfolding (OmniFold [1, 2]) to MINERvA’s medium-energy
+neutrino data. The main results are the validation findings. They hold for this implementation, one
+data set, and the configurations, observables and deformations tested (§1). The generator tests are
+an application that illustrates calibrated inference with a biased estimator.
+Results overview:
+• Reproduction. Unbinned d2 σ/(dpT dp∥ ) reproduces the published integrated cross section [3]
+within about one percent, with a correlated shape difference. The total cross-section ratio is
+1.010, and 95.1 % of bins are within 10 %. A separately constructed uncertainty is comparable
+to the published one: its per-bin median is 6.41 % against 6.85 %, and its integral 4.76 %
+against 4.61 %. Its flux band carries MAT’s ν–e and inverse-muon-decay constraint weights
+(§6.3). A generator-shape model-dependence component, reported beside that uncertainty and
+absent from the published one, raises the per-bin median to 7.90 % (§4.6). The central value
+and that uncertainty share the LightGBM estimator, with refined negative-weight background
+subtraction. LightGBM was chosen over the exact-split estimator, which is kept as a cross-check,
+after both comparisons with the publication were known (§3.2). Against the full published
+covariance, χ2 /ndf = 2.27 (exact-split: 3.66) is a descriptive distance. Its source has not been
+identified (§6.4).
+• Unbinned 3D/4D/5D MINERvA unfolds. Adding Eavail , q3 and W gives simultaneous
+unfolds. In configuration (a), the 4D and 5D marginal-normalization checks against the
+lower-dimensional result pass to ≈1–2 %. The configuration-(e) 3D marginal agrees with the
+configuration-(f) 2D result to 0.141 % in total, a comparison across configurations (§7). Binned
+MINERvA measurements already reach triple-differential [4, 5]. The 3D and 4D injected-bump
+closures, of configuration (a), leave 0.10 of the injected Eavail change and close q3 to 1.1 %.
+Neither closure is graded (§7.4, Table 5). Reconstructed W is fixed by (pT , p∥ , q3 ), so the five
+are simultaneous, not independent, observables (§8.2). Eavail keeps the inherited 135 MeV
+charged-pion constant (§7.1).
+• Low-Eavail central values (descriptive). All four truth-level generators, GENIE [6], MINERvA Tune [7], NuWro [8] and GiBUU [9], under-predict the unfolded central value in the
+quasielastic–∆ dip (0.1 ≤ Eavail < 0.4 GeV), the region of the established MINERvA lowrecoil discrepancy [7, 10]. The GENIE and NuWro predictions are flux-repaired (§7.6). The
+comparisons with the tested pion-FSI dials and with Valencia 2p2h [11, 12] are in §7.7 (Fig. 19).
+• High-Eavail , high-W excess (descriptive). In cell-integrated terms, most of the positive
+difference from the Tune v1 prior lies at Eavail ≥ 0.8 GeV, much of it at W ≥ 1.8 GeV. A fifth
+of the positive difference sits in the single widest overflow cell. The high-Eavail , high-W region
+carries the largest regularization bias measured in §9. In ratio, the excess also extends to low
+W . The four external generators also fall below the data in this corner, each by about its
+overall shortfall once GiBUU’s sample limit is allowed for (§8.5). The NuWro and GiBUU
+ratios contain an uncorrected carbon-versus-CH target difference (§8.3).
+• Application: joint five-dimensional generator tests. Calibrated tests of hybrid null
+hypotheses for five predictions, in total (rate and shape) and in shape, reject all ten under six
+stated conditions. The five predictions are Tune v1, GENIE with and without MEC, NuWro
+and GiBUU; each null uses the prediction on the fine grid, with the Tune v1 composition below
+it. The family-wise error rate is controlled at 5% under the stated calibration assumptions,
+and the size is averaged over the nuisance priors (§B.5). The closest decisions, the NuWro and
+2
+
+GENIE CV shape tests, lie 1.11 and 1.30 null standard deviations beyond their boundary, with
+the Holm order held fixed (§11.4). The rejections are not physical exclusions, and matched
+coarse projections reject as well (§11.7). Each rejection also holds in a robustness variant,
+not used for the decisions, that assumes a larger residual below the finest tested grid (§11.4).
+The pseudo-experiments lost to time limits have been rerun, for reporting only, so every
+submitted draw has been observed. No recovered draw changes a decision (§11.6). Correcting
+the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data.
+In this descriptive re-evaluation, NuWro’s total-test rejection is not robust to the correction,
+and the ten decisions are unchanged (§11.9).
+• A methodological finding. The standard covariance sums single-source systematic matrices,
+each with all other sources nominal, and so omits nonlinear cross-source response terms. A
+corrected unified-throw test perturbs all reweightable sources together and stores the joint
+mean shift separately (§4.5).
+• A preliminary extended-fiducial study. Removing truth-muon cuts, with the fiducial
+volume and MINOS-based selection kept, puts about 6 % of the scalar 2D rate in newly
+acceptance-supported cells, which are part of tier 1. It puts about 28 % in low- or zeroefficiency cells, which form tier 2 (§12).
+
+3
+
+Result / central estimator
+
+Uncertainty
+
+Recovery and interval checks
+
+Interpretation
+
+2D: LightGBM, five
+iterations, seed 42,
+refined negative-weight
+subtraction (configuration (f); exact-split
+cross-check)
+
+LightGBM systematic
+and statistical ensembles at the central
+value’s seed, a fivesetting seed ensemble,
+and a run-period block;
+a
+generator-shape
+model-dependence
+component
+reported
+beside it
+
+Published-result reproduction;
+injection tests use LightGBM.
+Earlier statistical band failed
+fixed-truth coverage; rebuilt
+band and quoted statistical
+block lack an independent test.
+
+Integral reproduced within
+about 1%, with a correlated
+shape difference; learner chosen after the comparisons
+were known. Whether it is
+ready for publication as a
+measurement has not been
+established.
+
+3D, 4D: deterministic LightGBM, five
+iterations,
+refined
+negative-weight
+subtraction (configuration
+(e)); 5D: LightGBM,
+five iterations, purity
+subtraction (configuration (a))
+
+The five-axis covariance
+of the configuration-(a)
+5D central value, used
+although it has not met
+the validation criteria
+set before it was built
+
+Marginal
+anchors
+agree;
+injected-bump closures have no
+recorded threshold; background
+and large-deformation tests
+expose bias.
+No validated
+total-interval coverage.
+
+Central-value comparisons;
+the covariance’s four measured limitations apply. No
+generator significance based
+on this covariance (sixteencell comparison: §10.4).
+
+5D, sixteen cells: deterministic LightGBM,
+five iterations, refined
+negative-weight
+subtraction (configuration
+(e)); §10
+
+The reported covariance on the sixteen cells
+(§10.2)
+
+Fake-data study (§10.3).
+
+Comparison with generator
+predictions on the sixteen
+cells (§10.4).
+
+Joint tests: deterministic LightGBM with enlarged background refinement
+
+Null-specific full-chain
+calibration; no new
+measurement
+covariance
+
+Design fixed before any production pseudo-experiment or observed statistic, with two datainformed elements; independent
+recomputation of the arithmetic;
+calibration adequacy remains
+conditional.
+
+Tests of hybrid generator hypotheses under six stated
+conditions; no new uncertainty on the cross section.
+
+Table 1: Scalar results: for each, the central estimator, the construction of its uncertainty, the
+recovery and interval checks applied, and the interpretation it supports. Details: §3.2, §5.2, §9.1,
+§9.6, §10 and §11.
+Principal limitations: The body states each limitation with the result it qualifies; the principal
+ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage
+studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912,
+vs. 0.954; §4.2, §5.2). The others are stated with their results: the generator comparisons (§§7–8);
+the absence of a 3D or 4D covariance (§7); the five-dimensional estimator’s regularization bias (§9.3)
+and the purity-subtraction bias of configurations (a) and (c) (§9.2); five-dimensional intervals and
+their coverage (§9.4, §9.5); the five-axis covariance of the configuration-(a) central value (§9.6); the
+calibration and nuisance model of the generator tests (§11.3, §11.8); tier 2 of the extended-fiducial
+study (§12); the fake-data limitation of the sixteen-cell result (§10.3); and point-cloud work (App. F).
+
+4
+
+

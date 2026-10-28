@@ -1,0 +1,48 @@
+F=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/Common/KineGeneratorWithCache.cxx
+242:void KineGeneratorWithCache::AssertXSecLimits(
+243-         const Interaction * interaction, double xsec, double xsec_max) const
+244-{
+245-  // check the computed cross section for the current kinematics against the
+246-  // maximum cross section used in the rejection MC method for the current
+247-  // interaction at the current energy.
+248-  if(xsec>xsec_max) {
+249-    double f = 200*(xsec-xsec_max)/(xsec_max+xsec);
+250-    if(f>fMaxXSecDiffTolerance) {
+251-       LOG("Kinematics", pFATAL)
+252-    	  << "xsec: (curr) = " << xsec
+253-      	         << " > (max) = " << xsec_max << "\n for " << *interaction;
+254-       LOG("Kinematics", pFATAL)
+255- 	  << "*** Exceeding estimated maximum differential cross section";
+256-       std::terminate();
+257-    } else {
+258-       LOG("Kinematics", pWARN)
+259-    	  << "xsec: (curr) = " << xsec
+260-      	         << " > (max) = " << xsec_max << "\n for " << *interaction;
+261-       LOG("Kinematics", pWARN)
+262-  	    << "*** The fractional deviation of " << f << " % was allowed";
+263-    }
+264-  }
+265-
+266-  // this should never happen - print an error mesg just in case...
+267-  if(xsec<0) {
+== who calls AssertXSecLimits
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/BoostedDarkMatter/EventGen/DMEKinematicsGenerator.cxx:116:        this->AssertXSecLimits(interaction, xsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/BoostedDarkMatter/EventGen/DMELKinematicsGenerator.cxx:158:        this->AssertXSecLimits(interaction, xsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/BoostedDarkMatter/EventGen/DMELKinematicsGenerator.cxx:381:        this->AssertXSecLimits(interaction, xsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/BoostedDarkMatter/EventGen/DMDISKinematicsGenerator.cxx:147:        this->AssertXSecLimits(interaction, xsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/BoostedDarkMatter/EventGen/DMELEventGenerator.cxx:195:        this->AssertXSecLimits(interaction, xsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/Coherent/EventGen/CEvNSEventGenerator.cxx:172:       //this->AssertXSecLimits(interaction, gxsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/Coherent/EventGen/COHKinematicsGenerator.cxx:365:      this->AssertXSecLimits(interaction, xsec, max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/Coherent/EventGen/COHKinematicsGenerator.cxx:518:      this->AssertXSecLimits(interaction, xsec, xsec_max);
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/Common/KineGeneratorWithCache.cxx:242:void KineGeneratorWithCache::AssertXSecLimits(
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Physics/DarkNeutrino/EventGen/COHDNuEventGenerator.cxx:143:      //this->AssertXSecLimits(interaction, gxsec, xsec_max);
+== AR23 messages: which generator logged them
+      1 <EventGenerator.cxx::ProcessEventRecord (142)>
+    129 <KineGeneratorWithCache.cxx::AssertXSecLimits (268)>
+      1 <PDGLibrary.cxx::Find (93)>
+2995- |           mu- |             13 |      1 |   0 |  -1 |  -1 |  -1 | -0.180 | -0.114 |  3.742 |  3.749 |  0.106 |  
+2996: |           p+p |     2000000202 |      3 |   2 |  -1 |  -1 |  -1 |  0.124 |  0.257 |  0.132 |  2.036 |  1.877 | 1793150198 ERROR Kinematics : [n] <KineGeneratorWithCache.cxx::AssertXSecLimits (268)> : Negative cross section for current kinematics!! 
+--
+3023-
+3024:1793150198 ERROR Kinematics : [n] <KineGeneratorWithCache.cxx::AssertXSecLimits (268)> : Negative cross section for current kinematics!! 
+--
