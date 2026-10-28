@@ -33,6 +33,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import hashlib
 import importlib.util
 
 _spec = importlib.util.spec_from_file_location("apply_c1a", Path(__file__).resolve().parents[1] / "fived16/c1a/apply_c1a.py")
@@ -89,6 +90,11 @@ def rows(ledger_text):
             yield cells
 
 
+# The allowance's pairs, pinned (review of 589f0780, N5): apply_c1a.py is an editable file, so an edit made both there
+# and in the protected text must still fail. A change to E1 or E2 needs a new pin here, in its own reviewed commit.
+C1A_PINS = {'E1': 'c6225437b5d563e4', 'E2': 'c04012037a270aa9'}
+
+
 def c1a_expected(text, edits, keys):
     """The base text with step (c)'s declared 1A edits applied (fived16/c1a/apply_c1a.py, imported, not retyped).
 
@@ -98,6 +104,8 @@ def c1a_expected(text, edits, keys):
     for k, old, new in edits:
         if k not in keys:
             continue
+        if hashlib.sha256((old + "\x00" + new).encode()).hexdigest()[:16] != C1A_PINS[k]:
+            return None                     # an unpinned pair allows nothing: the span then differs, PROTECTED
         m = list(C1A.pat(old).finditer(text))
         if len(m) == 1:
             text = text[:m[0].start()] + new + text[m[0].end():]
@@ -172,10 +180,12 @@ def check(wt, cur, old, ledger_text, note_override=None):
     def tspan(t):
         i, j = t.find("\\title{"), t.find("\\end{abstract}")
         return t[i:j] if i >= 0 and j > i else None
-    if tspan(cur["M"]) is None or tspan(cur["M"]) != tspan(c1a_expected(old["M"], C1A.MAIN_PAPER, {"E2"})):
+    exp_m = c1a_expected(old["M"], C1A.MAIN_PAPER, {"E2"})
+    if tspan(cur["M"]) is None or exp_m is None or tspan(cur["M"]) != tspan(exp_m):
         fails.append("PROTECTED: main_paper.tex title..end{abstract} differs from base")
     lim = lambda t: [l for l in t.splitlines() if l.startswith("The result has three limitations")]
-    if len(lim(old["P"])) != 1 or lim(cur["P"]) != lim(c1a_expected(old["P"], C1A.PAPER, {"E1"})):
+    exp_p = c1a_expected(old["P"], C1A.PAPER, {"E1"})
+    if len(lim(old["P"])) != 1 or exp_p is None or lim(cur["P"]) != lim(exp_p):
         fails.append("PROTECTED: the limitations paragraph of Sec. I differs from base (it is step (c)'s)")
     for k in FILES:
         h_old = [l for l in old[k].splitlines() if "\\pubhold" in l]
@@ -187,7 +197,7 @@ def check(wt, cur, old, ledger_text, note_override=None):
         fails.append(f"LABEL REMOVED: {lab}")
     for lab in sorted(ln - lo - ADDABLE):
         fails.append(f"LABEL ADDED, not approved: {lab}")
-    for k in ("J", "Q", "Z"):
+    for k in ("J", "Q", "Z", "F", "A"):
         lo = set(re.findall(r"\\label\{([^}]*)\}", old[k])); ln = set(re.findall(r"\\label\{([^}]*)\}", cur[k]))
         for lab in sorted(lo - ln):
             fails.append(f"NOTE LABEL REMOVED ({FILES[k]}): {lab}")
@@ -270,6 +280,21 @@ def main():
             hit = any(x.startswith("PROTECTED") for x in fg)
             ok &= hit
             print(f"{name}:", "caught" if hit else "MISSED")
+        # (h) the allowance's pair edited together with the paper (review N5): the pin must refuse it
+        k0, o0, n0 = next(e for e in C1A.PAPER if e[0] == "E1")
+        w0, w1 = "finds the estimator's bias below", "finds the estimator's bias well below"
+        n1 = n0.replace(w0, w1, 1)
+        cur_h = dict(cur, P=cur["P"].replace(w0, w1, 1))
+        assert n1 != n0 and cur_h["P"] != cur["P"], "the allowance plant did not apply"
+        keep = list(C1A.PAPER)
+        C1A.PAPER[:] = [(k, o, n1 if k == "E1" else n) for k, o, n in keep]
+        try:
+            fh, *_ = check(wt, cur_h, old, ledger_text)
+        finally:
+            C1A.PAPER[:] = keep
+        hit = any(x.startswith("PROTECTED: the limitations paragraph") for x in fh)
+        ok &= hit
+        print("allowance pair edited with the paper:", "caught" if hit else "MISSED")
         first = next(rows(ledger_text))[0]          # duplicate the ledger's own first row id, whatever the ledger
         fdup, *_ = check(wt, cur, old, ledger_text + "\n| %s | duplicate | — | KEEP | — | `P::Each OmniFold iteration consists of two classification steps.` |\n" % first)
         hit = any(x == f"DUPLICATE row id: {first}" for x in fdup)

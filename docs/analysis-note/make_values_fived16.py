@@ -369,6 +369,9 @@ def values(d):
     assert not held, f"unexpected held-out records: {sorted(held)}"
     assert v["f1-g18-n"] == v["f1-ar23-n"] and v["f1-closure-g18-n"] == v["f1-closure-ar23-n"] == "1"
     v["f1-n"] = v["f1-g18-n"]
+    # the note prints the model-only cells once, for AR23's "both its records", and none at G18 (review of 589f0780, SF2)
+    assert v["f1-ar23-mo-cells"] == v["f1-closure-ar23-mo-cells"] != "---", "AR23's two records differ in model-only cells"
+    assert v["f1-g18-mo-cells"] == v["f1-closure-g18-mo-cells"] == "---", "a G18 record has a model-only cell beyond 2 sigma"
     # "below the reported uncertainty in every cell": |b| / sigma, sigma from C_total + C_resp alone, under one in all
     # four records; z's denominator also carries the noise of the mean, so |b| / sigma >= |z|. Ceiled to bound them.
     assert max(bsig) < 1 and max(bsig) >= max(zmax)
@@ -465,6 +468,12 @@ def self_test():
                          lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "A7_gibuu")["grade"].update(chi2=1.0)),
                         ("lists a held-out record",
                          lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_genie_v3_ar23").update(listed=True)),
+                        ("gives AR23's closure no model-only cell beyond 2 sigma",
+                         lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_closure_genie_v3_ar23")["model_only"]
+                         .update(cells_abs_z_gt_2=[])),
+                        ("gives a G18 record a model-only cell beyond 2 sigma",
+                         lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_genie_v3_g18")["model_only"]
+                         .update(cells_abs_z_gt_2=["R00"])),
                         ("has a held-out cell with |b| above its sigma",
                          lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_closure_genie_v3_g18")["bias"]
                          .__setitem__(11, 2 * d["f1"]["relative_sigma_plus_C_resp"]["C_total"][11]))):

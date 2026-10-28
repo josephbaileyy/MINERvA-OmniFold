@@ -1,0 +1,3 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops "a coverage test" from the list of validation studies that BEFORE explicitly states.
+END

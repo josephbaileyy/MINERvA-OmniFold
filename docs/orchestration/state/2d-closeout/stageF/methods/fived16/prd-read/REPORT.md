@@ -313,10 +313,12 @@ CITABLE FOR.
 
 **Runs:** `r5/runs/`, with two sol2 runs (both logs `model: gpt-6.1-sol`) and one gemini run.
 
-**The rule** (round 3's):
+**The rule** (round 3's, in full):
 - apply what is unanimous and true;
 - where the models split, apply sol2's form if it is true, and otherwise keep the text;
-- where sol2's two runs disagree, keep the text.
+- where sol2's two runs disagree, keep the text;
+- where sol2's two runs both shorten and both forms are true, apply the shorter (H1 was decided by this clause);
+- never apply a form that drops a limitation.
 
 A form is applied whole or not at all (director, ruling 2).
 
@@ -356,9 +358,20 @@ A form is applied whole or not at all (director, ruling 2).
 **The guards** follow the applied text: `r19/ledger.md` GC1–GC14, with C1A-1 and C1A-5 re-pointed. The self-test plants
 each one.
 
-**agy** (`../c1a/agy/README.txt`): three passes with controls, every control 4 of 4 caught. Pass 1 led to "but does not
+**agy** (`../c1a/agy/README.txt`): five passes with controls, every control 4 of 4 caught. Pass 1 led to "but does not
 test interval widths" in both abstracts, and pass 2 to H1's "the detector response is the simulation's and is not
-probed". Pass 3, on the final text: all five SAME.
+probed". Pass 5, on the final text: all five SAME. P02's pass (`../c1a/agy/p02/`): the control was caught, and it reads
+DIFFERS only on the register changes that rounds 4 and 5 accepted. Those go to Joseph as reading notes.
+
+**Composites (review of 589f0780, N1).** Three printed items are not one rater's form as read:
+- A1 and A2: the form all three raters accepted, plus L1's "but does not test interval widths" (agy pass 1);
+- H1: sol2 r1's form, plus agy pass 2's detector-response clause and the review's N2 and N3 wording ("the same
+  quasielastic cross-section model"; "the tune's shape ratio to GENIE CV, built as for the C_model components").
+
+Each edit adds or sharpens a qualifier and drops none. No PRD rater read them as printed. Ruling 2 calls a composite
+an untested reading, and round 3 sent its composite (P02) to the next PRD read, so they go to the (d) read, unless the
+director accepts them as printed. agy passes 4 and 5 read them as printed.
+<!-- absence-ok: quotes ruling 2's term for a composite rater form; not a claim that a result is absent -->
 
 **For Joseph in (d):** the abstracts' 1A sentences are drafts, and Sec. I's "Interval coverage" (r5's form) differs from
 the abstracts' "The coverage of the intervals" (`../c1a/REPORT.md`).

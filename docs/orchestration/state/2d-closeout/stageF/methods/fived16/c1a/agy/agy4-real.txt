@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately reports the bias test results at the two held-out GENIE v3 truths without claiming coverage or evaluating interval widths, which is fully supported by BEFORE. The separate sentence reporting an earlier fake-data study is not judged, per the instructions.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER correctly states that interval coverage has not been validated and that the bias test does not evaluate interval widths, with all statements supported by BEFORE. The passage avoids all non-citable uses and introduces no misleading ambiguity about what was tested.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER accurately reports the bias test findings and confirms that coverage of the intervals has not been validated, which aligns directly with the limitation plan and readout in BEFORE. Referring to "the result's intervals" in this context makes no unsupported claims and remains entirely consistent with BEFORE.
+
+Q4: VERDICT: SAME
+DETAIL: Every statistic, parameter, and model description is fully supported by BEFORE, including the chi-square values, p-values, cell bias limits, and descriptive comparisons. The text also explicitly adheres to all citation restrictions by noting that detector response is not probed, coverage is not tested, and the two truths are not independent.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces technical claims and external references not found in or supported by BEFORE, specifically stating "with a z-expansion form factor" and "defined as in Table 15". These additions state properties and context about the study beyond the facts recorded in BEFORE.
+
+END

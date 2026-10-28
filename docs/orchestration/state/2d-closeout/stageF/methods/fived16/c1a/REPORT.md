@@ -8,6 +8,19 @@
   descriptive; the overlaps are stated; the two truths are not counted as independent tests.
 - The director's approval of the plan, 2026-10-28, after #413 moved to `22314565`, with five conditions (below).
 
+**The director's conditions,** verbatim, from the message of 2026-10-28 that released the hold at `22314565`:
+
+> Your (c) 1A plan is approved, with these conditions.
+> 1. **"below the reported uncertainty in every cell":** your assert computes max |b|/σ < 1 from bias and relative_sigma_plus_C_resp, without the noise term. Keep that assert. Also probe, by key, that it holds for all four records (ensembles and closures). The z the report prints uses C + N; say in the ledger which one the sentence rests on.
+> 2. **The abstract additions are drafts for (d).** The abstracts' final wording is Joseph's. Your guards' plants on "below the reported uncertainty" and "cannot test the intervals' width" are right. Add one plant that drops "GENIE v3", since the family qualifier carries the partial-evidence scope in the abstract.
+> 3. **IV H's "partial evidence, not two independent tests" and "a bias test, not a coverage test"** both need guards, and the report's overlap facts need ledger probes into FD-F1-REPORT.md.
+> 4. **The protected-span allowance:** yes, an explicit (c)-1A allowance for Sec. I's limitations paragraph in r19/check_ledger.py, recorded as a ledger row citing this message. After the edit, re-pin the byte check to the new paragraph so it stays protected.
+> 5. **The pointer fix** sec:result16 → sec:fd16 is approved.
+
+**Condition 4 names only Sec. I's paragraph.** The allowance also covers the protected title-to-abstract span, by E2
+only. That follows from condition 2's approval of the abstract additions as drafts, and it is put to the director to
+confirm.
+
 **Written by** the paper rewrite lane, for the director, who merges.
 
 **The readout:** `measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json`, sha256 `cbe411a9…`
@@ -59,7 +72,7 @@ The self-test plants a wrong control 9, a listed held-out record and a cell with
 - **C1A-1 to C1A-6:** the changed sentences P20, P21, M2, A3 and F47, and the two additions. Their probes reach into
   `FD-F1-REPORT.md`, `FD-F1-DECLARATION.md`, `FD-F1-BINDING.md`, `LIMITATION-PLAN.md`, the readout and the four
   `bsig` keys (director conditions 1 and 3);
-- **GC1–GC16, scope guards:**
+- **GC1–GC24, scope guards** (GC17–GC24 after the review):
   - "has not been validated", in Sec. I and both abstracts;
   - the dropped "GENIE v3", in Sec. I and the paper abstract (director condition 2);
   - "below the reported uncertainty in every cell";
@@ -86,7 +99,7 @@ The self-test plants a wrong control 9, a listed held-out record and a cell with
 - H2: kept, because both sol2 forms drop the |b|/σ sentence;
 - A1, A2 and P02: unanimous ACCEPT, kept.
 
-**agy** (`agy/README.txt`): three passes, each with a control that plants four strengthenings. Every control caught 4
+**agy** (`agy/README.txt`): five passes, each with a control that plants four strengthenings. Every control caught 4
 of 4.
 - **Pass 1, the first drafts:** both abstracts read DIFFERS. Without "cannot test the width" they could read as
   validating the intervals, so both now add L1's "but does not test interval widths".
@@ -95,13 +108,48 @@ of 4.
   simulation's and is not probed".
 - **Twice declined:** the reading that the note abstract's "the result's intervals" misleads. That clause is the base
   wording and is right.
-- **Pass 3, the final text:** all five SAME.
+- **Pass 3:** all five SAME, before the review's N2 and N3 wording.
+- **Pass 4, after N2 and N3:** Q5 read DIFFERS only because BEFORE lacked the declaration's model facts. BEFORE was
+  fixed, not the text.
+- **Pass 5, the final text with the fuller BEFORE:** all five SAME.
+- **P02** (`agy/p02/`): the control was caught. It reads DIFFERS on the two register changes the raters accepted ("show
+  how far the result can be trusted" → "assess the result"; "the background subtraction" → "background-subtraction
+  tests"). Neither strengthens anything, so they go to Joseph as reading notes.
+
+## The independent review (of `589f0780`)
+
+**Verdict: ADOPT-AFTER-FIXES, with no BLOCKING finding.** The reviewer re-derived every printed claim and the four
+|b|/σ values from the readout. It found the truth-column decisions right. `apply_c1a.py` reproduces the commit byte
+for byte, and the protected files are unchanged. Fixed in the next commit:
+- **SF1:** guards GC17–GC24 on every sentence that ruling 2 needs: the shared quasielastic model, G18's MEC family, the
+  descriptive leave-out, the note's "so they are context only", "the detector response is not probed" and
+  "Descriptively,". There is also a probe for "Both tunes satisfy both bias criteria".
+- **SF2:** `make_values` asserts that AR23's two records share their model-only cell, and that neither G18 record has
+  one, with two self-test plants.
+- **N2:** "share their quasielastic model" becomes "use the same quasielastic cross-section model". The note adds
+  `NievesQELCCPXSec`, with AR23's z-expansion form factor (FD-F1-DECLARATION.md:296-298).
+- **N3:** the truth is "the tune's shape ratio to GENIE CV, built as for the C_model components". The note's wording
+  is "built as the reweighting ratios of the C_model vertices are".
+- **N5:**
+  - E1's and E2's pairs are pinned by sha256 in `check_ledger.py`, so editing a pair together with the paper fails
+    PROTECTED. A self-test plants that, and a run with the pin moved shows the pin is what catches it.
+  - Labels in sec_fived16.tex and main_note.tex are now checked.
+- **N1:** Round 5 records the composites (A1, A2, H1) and round 3's full rule.
+- **N6:** the conditions are quoted above.
+- **N7:** P02's agy pass (`agy/p02/`).
+
+**Not changed:** N4, a pointer of its own for the Sec. I bias-test sentence. It is optional, and the truth column
+accepted one pointer for both sentences.
+
+**The reviewer's observation, for Joseph:** at G18's R11, the −8.5 % bias stays below σ mainly through C_model's
+GiBUU vertex. |b|/σ is 0.62 in full, 0.93 without GiBUU and 1.07 with C_e + C_resp alone. The sentence is right as
+written, because C_model is part of the reported uncertainty, which the paper calls "not a calibrated bound".
 
 ## Checks
 
 | check | result |
 |---|---|
-| `r19/check_ledger.py . --base 9df8f748` | 227 rows, 396 probes, 192 changed sentences, 0 failures; `--self-test` PASS (47 scope guards, each planted strengthening caught) |
+| `r19/check_ledger.py . --base 9df8f748` | 235 rows, 406 probes, 192 changed sentences, 0 failures; `--self-test` PASS (55 scope guards, each planted strengthening caught; the allowance pin's plant caught) |
 | `make_values_fived16.py --check`, `--self-test` | PASS |
 | fived16 rule 7 (no numeral typed by hand in the new prose) | 0. "2p2h" became "MEC" because of it |
 | `build_all.sh` | rc 0; paper 12 pp (11 before: the reference list's last column), note 130 pp (129); no undefined reference; no `??`; no pending placeholder; SEC4 15/15 |

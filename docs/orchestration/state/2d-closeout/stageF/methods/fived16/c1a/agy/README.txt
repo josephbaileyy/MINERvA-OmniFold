@@ -18,4 +18,19 @@ pass 2 (pairs2*.txt; prd-read/r5/applied.txt as it stood after the round-5 forms
 pass 3 (pairs3*.txt; prd-read/r5/applied.txt as committed, the final text):
   control: 4 of 4 caught; Q3 SAME.
   real: all five SAME.
-pairs2*.txt are kept as run. applied.txt now regenerates pass 3's input, since make_r5.py reads the worktree.
+pass 4 (pairs4*.txt; after the review of 589f0780: N2 "the same quasielastic cross-section model", with AR23's
+z-expansion form factor in the note; N3 "the tune's shape ratio to GENIE CV"):
+  control: 4 of 4 caught; Q3 SAME.
+  real: Q1-Q4 SAME. Q5 DIFFERS on "with a z-expansion form factor" and "defined as in Table 15". BEFORE lacked the
+  declaration's model facts (FD-F1-DECLARATION.md:296-298), and the table is the note's own cross-reference. Fixed in
+  BEFORE (make_pairs.py quotes the declaration; the prompt note says a cross-reference is not judged), not in the text.
+pass 5 (pairs5*.txt; the final text, the fuller BEFORE):
+  control: 4 of 4 caught; Q3 SAME.
+  real: all five SAME.
+p02/ (director ruling 3, after 0a87881c): P02 as printed against its pre-round-3 text (r4/input.txt's OLD), with round
+  3's agy prompt. The control drops "a coverage test": caught. Real: DIFFERS. "show how far the result can be trusted"
+  becomes "assess the result", and "the background subtraction" becomes "background-subtraction tests". These are the
+  register changes that PRD reads r4 and r5 accepted 3 of 3 each. Neither strengthens anything, so they go to Joseph in (d)
+  as reading notes, not edits.
+pairs2*.txt-pairs4*.txt are kept as run. prd-read/r5/applied.txt now regenerates pass 5's input (make_r5.py reads the
+worktree; run it with base 22314565).

@@ -12,6 +12,7 @@ FD = f"{W}/docs/orchestration/state/measurement-paper/5d-community-20261024"
 M = f"{W}/docs/orchestration/state/2d-closeout/stageF/methods/fived16"
 ro = json.load(open(f"{FD}/fd/readout/fd_f1_readout.json"))
 rep = open(f"{FD}/FD-F1-REPORT.md").read()
+dec = re.sub(r"\s+", " ", open(f"{FD}/FD-F1-DECLARATION.md").read())
 new = dict(re.findall(r"^(L1|A1|A2|H1|H2) \([^)]*\)\. OLD: .*\nNEW: (.*)$", open(INP or f"{M}/prd-read/r5/input.txt").read(), re.M))
 assert sorted(new) == ["A1", "A2", "H1", "H2", "L1"]
 sig = ro["relative_sigma_plus_C_resp"]["C_total"]
@@ -52,6 +53,8 @@ facts = ("Facts from the study's report and readout (accepted as correct): "
          + quote("The four records are not four independent tests.", "it is printed here only as the readout records it.") + " "
          + quote("G18_10a_02_11b's 2p2h is", "partial evidence (") + "LIMITATION-PLAN.md). "
          + quote("The two truths are not two independent tests.", "combines them as independent.") + " "
+         # pass 5: the declaration's model facts, which the note's N2 wording uses (pass 4 Q5)
+         + "From the declaration: " + re.search(r"Its configuration on CVMFS.*?G18_10a names `NievesQELCCPXSec` and `NievesSimoVacasMECPXSec`\.", dec).group(0).replace("`", "") + " "
          f"Control 9 passed: the 18 earlier fake-data truths grade exactly as their committed readout records them. "
          "The study is NOT CITABLE FOR: a coverage result or any statement that the intervals' coverage or width is "
          "validated; a test of the detector response; the two truths as independent tests.")
@@ -64,7 +67,8 @@ plants = {  # one strengthening per planted pair: (pair, old, new)
     "H2": [("0 of 4 records with p<0.01", "1 of 4 records with p<0.01")],
 }
 prompt_note = ("(Q4 and Q5 are additions; Q1's second sentence reports an earlier study, which BEFORE does not cover and "
-               "which is not to be judged.)")
+               "which is not to be judged. A reference to a table or section of the note is a cross-reference, not a "
+               "claim about the study, and is not to be judged.)")
 for name, plant in ((f"{PFX}.txt", False), (f"{PFX}-control.txt", True)):
     out = []
     for n, k in enumerate(("L1", "A1", "A2", "H1", "H2"), 1):

@@ -27,7 +27,7 @@ def plain(t):
     t = re.sub(r"\\fvval\{([^}]*)\}", lambda m: vals[m.group(1)], t)
     t = re.sub(r"\\ref\{([^}]*)\}", lambda m: labs[m.group(1)].replace("\\,", " "), t)
     for a, b in [(r"$\chi^2$", "χ²"), (r"$\chi^{2}$", "χ²"), (r"$C_{\mathrm{model}}$", "C_model"), (r"$q_{3}$", "q3"), (r"\chi^2", "χ²"), (r"\leq", "≤"),
-                 (r"\_", "_"), (r"\sigma", "σ"), (r"\emph{", "{"), (r"\S", "§"), ("~", " "), ("--", "–"), (r"\%", "%")]:
+                 (r"\_", "_"), (r"\sigma", "σ"), (r"\emph{", "{"), (r"\texttt{", "{"), (r"\S", "§"), ("~", " "), ("--", "–"), (r"\%", "%")]:
         t = t.replace(a, b)
     t = re.sub(r"\$([^$]*)\$", r"\1", t).replace("{", "").replace("}", "")
     return t
