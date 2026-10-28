@@ -15,6 +15,10 @@ Four checks:
      must be named in the "before" column of some row, as P<n> or M<n>.
   4. Protected text. The span of main_paper.tex from \\begin{acknowledgments} to \\end{document} must be
      byte-identical to --base, and so must every line of either file that holds \\pubhold.
+  6. Scope guards (director, 2026-10-28; agy missed a strengthening of a structural sentence twice, so its SAME is no
+     evidence there). A GUARD row pins a structural or scope sentence's scope words with a P: or MP: probe, and its
+     "after" column names a planted strengthening, `plant: OLD => NEW`. OLD must occur in the probe. --self-test applies
+     each plant to the paper and requires that row's probe to fail.
   5. Labels (director, Q2 ruling; DECISION-20261028 item 5). A label of paper_body.tex at --base may be missing now only
      if it is in REMOVABLE, and a label new now must be in ADDABLE.
 Adapted from r18/check_ledger.py for r19 (base: step 0, 9df8f748). The five-observable integration's ledger
@@ -92,6 +96,9 @@ def check(wt, cur, old, ledger_text, note_override=None):
         return note_cache[key]
 
     named, n_rows, n_probes = set(), 0, 0
+    ids = [r[0] for r in rows(ledger_text)]
+    for d in sorted({x for x in ids if ids.count(x) > 1}):
+        fails.append(f"DUPLICATE row id: {d}")
     for rid, fact, before, disp, after, probe in rows(ledger_text):
         n_rows += 1
         named |= set(re.findall(r"\b[PMJQZ]\d+\b", before))
@@ -111,6 +118,13 @@ def check(wt, cur, old, ledger_text, note_override=None):
         note_row = disp.startswith(("MOVE→note", "NOTE"))  # NOTE: an r19 note addition or note accuracy fix (N1-N4)
         if note_row and "N" not in kinds:
             fails.append(f"{rid}: note row without a note probe")
+        if disp.startswith("GUARD"):
+            pm = re.match(r"plant: (.+?) => (.+)$", after)
+            lits = [re.sub(r"\s+", " ", re.sub(r"^(P|MP)::", "", q.strip().strip("`"))) for q in probe.split(" && ")]
+            if not pm:
+                fails.append(f"{rid}: GUARD row without a 'plant: OLD => NEW' in its after column")
+            elif not any(pm.group(1) in l for l in lits):
+                fails.append(f"{rid}: GUARD plant {pm.group(1)!r} is not in its probe")
         if not note_row and "P" not in kinds:
             fails.append(f"{rid}: in-paper row without a paper probe")
     ch = changed(cur, old)
@@ -215,6 +229,32 @@ def main():
             hit = any(x.startswith("PROTECTED") for x in fg)
             ok &= hit
             print(f"{name}:", "caught" if hit else "MISSED")
+        fdup, *_ = check(wt, cur, old, ledger_text + "\n| T0 | duplicate | — | KEEP | — | `P::Each OmniFold iteration consists of two classification steps.` |\n")
+        hit = any(x == "DUPLICATE row id: T0" for x in fdup)
+        ok &= hit
+        print("duplicate row id:", "caught" if hit else "MISSED")
+        # (g) every GUARD row's planted strengthening must make that row fail
+        n_g = 0
+        for rid, fact, before, disp, after, probe in rows(ledger_text):
+            if not disp.startswith("GUARD"):
+                continue
+            pm = re.match(r"plant: (.+?) => (.+)$", after)
+            q = probe.split(" && ")[0].strip().strip("`")
+            key = "M" if q.startswith("MP::") else "P"
+            lit = re.sub(r"^(P|MP)::", "", q)
+            src = cur[key]
+            # plant in the source: the probe's first word run containing OLD, whitespace-tolerant
+            rx = re.compile(r"\s+".join(re.escape(w) for w in lit.split()))
+            m = rx.search(src)
+            if not pm or not m:
+                ok = False; print(f"guard {rid}: could not plant"); continue
+            planted = src[:m.start()] + m.group(0).replace(pm.group(1), pm.group(2), 1) + src[m.end():]
+            fg, *_ = check(wt, dict(cur, **{key: planted}), old, ledger_text)
+            hit = any(x.startswith(f"{rid}: NOT FOUND") for x in fg)
+            ok &= hit; n_g += 1
+            if not hit:
+                print(f"guard {rid}: planted {pm.group(1)!r} -> {pm.group(2)!r} MISSED")
+        print(f"scope guards: {n_g} planted strengthenings, each caught" if ok else f"scope guards: {n_g} planted")
         print("SELF-TEST ::", "PASS" if ok else "FAIL")
         return 0 if ok else 1
     fails, n_rows, n_probes, n_ch = check(wt, cur, old, ledger_text)

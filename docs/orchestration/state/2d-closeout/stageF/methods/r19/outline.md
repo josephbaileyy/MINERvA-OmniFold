@@ -256,3 +256,11 @@ as a flagged item. Both sites are named, so a fix reaches both.
   FIVED16 block that moves keeps a BEGIN/END pair.
 
 **The B ledger pass** (#433 item 3, before any B writing): [move-pass.md](move-pass.md), with its paper-only list P1–P7 and the proposed note additions N1–N4.
+
+**Not standalone until b3** (second review F1, 2026-10-28). From `ac1508ec` until b3 removes Sec. VI, the paper is
+intermediate, and is not merged to main, made into a rater copy or measured for P1.
+- **Why:** b1's knock-on edits removed text that Sec. VI still relies on:
+  - the GiBUU test domain, on which VI A's "tested … on the supported coarse cells of Sec. II" depends;
+  - "its domain" in VI C.
+- **What follows:** r19's baseline stays `00428d10` / `9df8f748`, and the pairwise and P1 measurements run only on
+  the finished B.
