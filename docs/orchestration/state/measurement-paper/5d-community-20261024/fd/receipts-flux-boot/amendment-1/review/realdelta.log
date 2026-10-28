@@ -1,0 +1,6 @@
+# python3 -I -B realdelta.py <review-3da> <worktree> <tmp>; head = the reviewer's copy of 5d0105f8; 2026-10-28T02:48:36Z
+x1: worst total 9.12e-15, shape-only 0.00e+00
+x-1: worst total 3.80e-15, shape-only 0.00e+00
+x10: worst total 3.48e-14, shape-only 0.00e+00
+x100: worst total 3.06e-13, shape-only 1.61e-11
+rc=0
