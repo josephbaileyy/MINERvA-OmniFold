@@ -1,9 +1,11 @@
 #!/bin/bash
 # usage: merge_main.sh <worktree> <remote-branch>; merges origin/main into it, resolves generated files, commits, pushes; prints new head
+# Run it in a clean worktree of its own; it works on a detached HEAD and pushes HEAD:<branch>.
 set -u
 W=$1; B=$2
 cd "$W" || exit 3
-git fetch -q origin "$B" && git fetch -q origin && git checkout -q -B mm-tmp "origin/$B" || exit 3
+# Detached, not a named temp branch: a branch name shared by several worktrees moves under the others (2026-10-28).
+git fetch -q origin "$B" && git fetch -q origin && git checkout -q --detach "origin/$B" || exit 3
 git -c user.name="paper-tighten lane (Claude)" -c user.email="paper-tighten@minerva-omnifold.invalid" merge --no-commit origin/main >/dev/null 2>&1
 for f in docs/orchestration/MANIFEST-overrides.tsv docs/orchestration/CATALOG.md; do
   if git diff --name-only --diff-filter=U | grep -qx "$f"; then
