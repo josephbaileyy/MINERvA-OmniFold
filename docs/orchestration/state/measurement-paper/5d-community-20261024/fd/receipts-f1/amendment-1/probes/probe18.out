@@ -1,0 +1,111 @@
+=== s60010
+total 4268
+drwxrwx---  2 josephrb josephrb    4096 Oct 27 19:23 .
+drwxrwx--- 66 josephrb josephrb    4096 Oct 27 19:13 ..
+-rw-rw----  1 josephrb josephrb    5329 Oct 27 19:23 genie-mcjob-60010.status
+-rw-rw----  1 josephrb josephrb  208366 Oct 27 19:23 gevgen.log
+-rw-r-----  1 josephrb josephrb 4136428 Oct 27 19:23 gntp.60010.ghep.root
+-rw-r-----  1 josephrb josephrb    5226 Oct 27 19:22 input-flux.root
+1552 /pscratch/sd/j/josephrb/fd-f1-20261027/f1b/work/G18_10a_02_11b/s60010/gevgen.log
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.530164, y = 0.335224, t = 0.335492
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.171999, y = 0.88479, t = 0.138418
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.394273, y = 0.312229, t = 0.181082
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.609218, y = 0.431995, t = 0.0851117
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.982305, y = 0.858671, t = 0.249122
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0646883, y = 0.67454, t = 0.226994
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.3461, y = 0.998597, t = 0.248462
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.00343385, y = 0.809937, t = 0.198885
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.105148, y = 0.423173, t = 0.239458
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0564633, y = 0.576812, t = 0.190968
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0792898, y = 0.91268, t = 0.323733
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.817875, y = 0.80605, t = 0.0405055
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.733161, y = 0.48432, t = 0.0401732
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.747313, y = 0.247618, t = 0.0526025
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.440064, y = 0.953439, t = 0.328951
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.340261, y = 0.221944, t = 0.0461411
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.668137, y = 0.589616, t = 0.175649
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.90731, y = 0.688944, t = 0.0107472
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.610561, y = 0.188531, t = 0.190748
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.569468, y = 0.67423, t = 0.222188
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.786877, y = 0.157519, t = 0.277466
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.273732, y = 0.957972, t = 0.185388
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.288636, y = 0.45909, t = 0.204879
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.27268, y = 0.623007, t = 0.21344
+1793154223 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.466735, y = 0.4
+0
+=== s60011
+total 12016
+drwxrwx---  2 josephrb josephrb     4096 Oct 27 19:23 .
+drwxrwx--- 66 josephrb josephrb     4096 Oct 27 19:13 ..
+-rw-rw----  1 josephrb josephrb     5049 Oct 27 19:24 genie-mcjob-60011.status
+-rw-rw----  1 josephrb josephrb   548557 Oct 27 19:24 gevgen.log
+-rw-r-----  1 josephrb josephrb 11728681 Oct 27 19:24 gntp.60011.ghep.root
+-rw-r-----  1 josephrb josephrb     5226 Oct 27 19:22 input-flux.root
+4008 /pscratch/sd/j/josephrb/fd-f1-20261027/f1b/work/G18_10a_02_11b/s60011/gevgen.log
+1793154244 WARN KNOHad : [n] <AGKYLowW2019.cxx::SelectParticles (349)> : *** Decay forbidden by kinematics! ***
+1793154244 WARN KNOHad : [n] <AGKYLowW2019.cxx::SelectParticles (350)> : sum{mass} = 1.82254, W = 1.78306
+1793154244 WARN KNOHad : [n] <AGKYLowW2019.cxx::SelectParticles (351)> : Discarding hadronic system & re-trying!
+1793154244 WARN KNOHad : [n] <AGKYLowW2019.cxx::SelectParticles (349)> : *** Decay forbidden by kinematics! ***
+1793154244 WARN KNOHad : [n] <AGKYLowW2019.cxx::SelectParticles (350)> : sum{mass} = 1.60928, W = 1.30249
+1793154244 WARN KNOHad : [n] <AGKYLowW2019.cxx::SelectParticles (351)> : Discarding hadronic system & re-trying!
+1793154244 NOTICE DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (94)> : x: [1e-06, 0.999999]
+1793154244 NOTICE DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (95)> : y: [0.0195496, 0.9852]
+1793154244 NOTICE DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (96)> : t: [0, 0.35]
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.420589, y = 0.852404, t = 0.288265
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.3934, y = 0.897339, t = 0.240879
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.344021, y = 0.30536, t = 0.346221
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.408561, y = 0.750892, t = 0.291265
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.466515, y = 0.343253, t = 0.185921
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.336352, y = 0.656071, t = 0.255353
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.18817, y = 0.813295, t = 0.0038623
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.72541, y = 0.795642, t = 0.285948
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0896873, y = 0.768487, t = 0.0553678
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.295144, y = 0.032031, t = 0.131071
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.911256, y = 0.981376, t = 0.138153
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.757605, y = 0.657939, t = 0.239546
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.412093, y = 0.546271, t = 0.130666
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.691157, y = 0.267799, t = 0.0238671
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0690609, y = 0.50375, t = 0.313641
+1793154244 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.
+0
+=== s60050
+total 15740
+drwxrwx---  2 josephrb josephrb     4096 Oct 27 19:23 .
+drwxrwx--- 66 josephrb josephrb     4096 Oct 27 19:13 ..
+-rw-rw----  1 josephrb josephrb     5329 Oct 27 19:24 genie-mcjob-60050.status
+-rw-rw----  1 josephrb josephrb   576860 Oct 27 19:24 gevgen.log
+-rw-r-----  1 josephrb josephrb 15514348 Oct 27 19:24 gntp.60050.ghep.root
+-rw-r-----  1 josephrb josephrb     5226 Oct 27 19:22 input-flux.root
+4310 /pscratch/sd/j/josephrb/fd-f1-20261027/f1b/work/G18_10a_02_11b/s60050/gevgen.log
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.393388, y = 0.399869, t = 0.233878
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.148274, y = 0.584124, t = 0.201011
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.327834, y = 0.778509, t = 0.167502
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.334312, y = 0.533048, t = 0.152764
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.375233, y = 0.836002, t = 0.171133
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.357483, y = 0.0973516, t = 0.0284256
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.8665, y = 0.40485, t = 0.171687
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.625685, y = 0.728233, t = 0.317789
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.247464, y = 0.450548, t = 0.21624
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.993664, y = 0.645551, t = 0.0873737
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.613296, y = 0.203395, t = 0.0298438
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.221328, y = 0.515618, t = 0.0604721
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.509125, y = 0.155666, t = 0.0225191
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.375993, y = 0.488902, t = 0.184252
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0102342, y = 0.642622, t = 0.0691449
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.788613, y = 0.736888, t = 0.0274182
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.905983, y = 0.33707, t = 0.11512
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0170712, y = 0.873566, t = 0.0893537
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.0645221, y = 0.269298, t = 0.332861
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.824523, y = 0.836638, t = 0.282499
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.212079, y = 0.115198, t = 0.341296
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.42946, y = 0.819295, t = 0.24291
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.123345, y = 0.113528, t = 0.220884
+1793154260 DEBUG DFRKinematics : [n] <DFRKinematicsGenerator.cxx::ProcessEventRecord (150)> : Trying: x = 0.897853, y = 0.34712, t = 0.16235
+17
+0
+=== a finished one for comparison
+1793154268 INFO DFRHadronicVtx : [n] <DFRHadronicSystemGenerator.cxx::ProcessEventRecord (131)> : |to| = -0.169246
+1793154268 INFO DFRHadronicVtx : [n] <DFRHadronicSystemGenerator.cxx::ProcessEventRecord (132)> : q2   = -0.337233
+1793154268 INFO DFRHadronicVtx : [n] <DFRHadronicSystemGenerator.cxx::ProcessEventRecord (133)> : xi   = 0.949937
+1793154268 INFO DFRHadronicVtx : [s] <ProcessEventRecord (138)> : cos(pion, q) = 0.949937
+1793154269 ERROR PDG : [n] <PDGLibrary.cxx::Find (93)> : Requested missing particle with PDG: 1000060060

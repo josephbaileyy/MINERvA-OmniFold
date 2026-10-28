@@ -1,0 +1,255 @@
+............FFFFF.FE......................................................................................................................../pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_g_diag.py:692: RuntimeWarning: divide by zero encountered in divide
+  with mock.patch.object(D, "residual", lambda f, g, i, sc: ((f - g) / g * sc)[i]):
+...................PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+FAIL control G2 C_total = C_e + C_model_abs: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+FAIL control G2 U is S1's float32 functional matrix: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+FAIL control G2 C_total is positive definite, rank 16: differs
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+FAIL control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12): differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+FAIL control G2 C_total = C_e + C_model_abs: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+FAIL control G2 C_total's relative sigma is the committed one: differs
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+FAIL control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes: they are [0, 1, 2, 3, 8, 9, 10, 11]
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control G4 every prediction's integrals are positive on its cells
+[G] genie_cv   16 cells, reported: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] genie_mec  16 cells, reported: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] nuwro      16 cells, reported: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] gibuu       8 cells, reported: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
+[G] mnvtune_v1 16 cells, reported: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+{"wrote": "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/tmp/fd-g-bfeglqcv/t/out/readout.json", "sha256": "cae8b27becd2d396933342039f9ff9ae24ca6934804481db2ef6e0c8269d053b"}
+.PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+......PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp is a finite 16 x 16 matrix
+FAIL control G2 C_resp is symmetric: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp is a finite 16 x 16 matrix
+FAIL control G2 C_resp is symmetric: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp is a finite 16 x 16 matrix
+PASS control G2 C_resp is symmetric
+FAIL control G2 C_resp is positive semidefinite: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp is a finite 16 x 16 matrix
+PASS control G2 C_resp is symmetric
+FAIL control G2 C_resp is positive semidefinite: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+FAIL control G2 C_resp is a finite 16 x 16 matrix: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+FAIL control G2 C_resp is a finite 16 x 16 matrix: differs
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+....PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control G4 every prediction's integrals are positive on its cells
+[G] genie_cv   16 cells, reported: total chi2 24.56/16 p 0.0779 [C_total + V_g, 16x16, rank 16]; shape-only chi2 24.54/15 p 0.0565 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] genie_mec  16 cells, reported: total chi2 52.35/16 p 9.61e-06 [C_total + V_g, 16x16, rank 16]; shape-only chi2 32.38/15 p 0.00571 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] nuwro      16 cells, reported: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G] gibuu       8 cells, reported: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
+[G] mnvtune_v1 16 cells, reported: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+{"wrote": "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/tmp/fd-g-s4pao6gj/t/out/readout.json", "sha256": "2b8fbfd5aa576ee3cb402add2e115b6c254df96f8f2fcda5c71169fa0b87a86c"}
+.............................
+======================================================================
+ERROR: test_the_two_variants_differ_and_the_correlation_one_keeps_variances (test_fd_flux_boot.EndToEnd.test_the_two_variants_differ_and_the_correlation_one_keeps_variances)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 372, in test_the_two_variants_differ_and_the_correlation_one_keeps_variances
+    self.assertEqual(self.run_inproc(tree), 0)
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 162, in run_inproc
+    return FB.run(FB.build_args(tree.bargv), tree.bpins, tree.predictions)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/fd_flux_boot.py", line 282, in run
+    report("B2", f"the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to {REPRO:g} "
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/fd_flux_boot.py", line 103, in report
+    G.report(control, name, ok, why)
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/fd_g_compare.py", line 103, in report
+    raise Stop(control, f"{name}: {why}")
+fd_g_compare.Stop: FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10
+
+======================================================================
+FAIL: test_b3_another_index_matrix (test_fd_flux_boot.Controls.test_b3_another_index_matrix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 449, in test_b3_another_index_matrix
+    self.assertStops(tree, "B3", "index matrix")
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 167, in assertStops
+    self.assertIn(f"FAIL control {control}:", str(cm.exception.code))
+AssertionError: 'FAIL control B3:' not found in "FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10"
+
+======================================================================
+FAIL: test_b4_a_replicate_with_a_non_positive_variance (test_fd_flux_boot.Controls.test_b4_a_replicate_with_a_non_positive_variance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 462, in test_b4_a_replicate_with_a_non_positive_variance
+    self.assertStops(tree, "B4", "flux variance is not positive")
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 167, in assertStops
+    self.assertIn(f"FAIL control {control}:", str(cm.exception.code))
+AssertionError: 'FAIL control B4:' not found in "FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10"
+
+======================================================================
+FAIL: test_b4_an_indefinite_swapped_matrix (test_fd_flux_boot.Controls.test_b4_an_indefinite_swapped_matrix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 476, in test_b4_an_indefinite_swapped_matrix
+    self.assertStops(tree, "B4", "positive definite")
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 167, in assertStops
+    self.assertIn(f"FAIL control {control}:", str(cm.exception.code))
+AssertionError: 'FAIL control B4:' not found in "FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10"
+
+======================================================================
+FAIL: test_b4_an_indefinite_uniform_matrix_refuses (test_fd_flux_boot.Controls.test_b4_an_indefinite_uniform_matrix_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 490, in test_b4_an_indefinite_uniform_matrix_refuses
+    self.assertStops(tree, "B4", "uniform")
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 167, in assertStops
+    self.assertIn(f"FAIL control {control}:", str(cm.exception.code))
+AssertionError: 'FAIL control B4:' not found in "FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10"
+
+======================================================================
+FAIL: test_b5_a_swap_that_moves_a_variance_by_one_ulp (test_fd_flux_boot.Controls.test_b5_a_swap_that_moves_a_variance_by_one_ulp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 501, in test_b5_a_swap_that_moves_a_variance_by_one_ulp
+    self.assertStops(tree, "B5", "bit for bit")
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 167, in assertStops
+    self.assertIn(f"FAIL control {control}:", str(cm.exception.code))
+AssertionError: 'FAIL control B5:' not found in "FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10"
+
+======================================================================
+FAIL: test_run_as_invoked_and_recomputed_by_hand (test_fd_flux_boot.EndToEnd.test_run_as_invoked_and_recomputed_by_hand)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b/nd-unfolding/tests/test_fd_flux_boot.py", line 311, in test_run_as_invoked_and_recomputed_by_hand
+    self.assertEqual(r.returncode, 0, r.stderr[-3000:])
+AssertionError: 1 != 0 : FAIL control B2: the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 1.0e-10): worst 1.025e-10
+
+
+----------------------------------------------------------------------
+Ran 203 tests in 95.449s
+
+FAILED (failures=6, errors=1)
+{"wrote": ["/pscratch/sd/j/josephrb/fd-flux-boot-20261027/tmp/s1-e2e-1flahf8v/s1.npz", "/pscratch/sd/j/josephrb/fd-flux-boot-20261027/tmp/s1-e2e-1flahf8v/s1.json"], "sha256": "f80d9a99cf6b9684f98f470d2c8ca727b5f0db63ae5df07b8ebaf347526927ed", "blocks": 46}

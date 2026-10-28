@@ -1,0 +1,6 @@
+[setup_genie_v3] GENIE=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator
+[setup_genie_v3] gevgen=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+[setup_genie_v3] tune=AR23_20i_00_000 xsec=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data splines=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/AR23_20i_00_000_CH.xml.gz
+[v3] genie AR23_20i_00_000 N=1000 seed=61108 flux=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/flux_phi_t_0_100.root start 2026-10-28 06:21:21 UTC
+[v3] gevgen rc=0 2026-10-28 06:22:13 UTC
+[v3] gntpc done 2026-10-28 06:22:57 UTC

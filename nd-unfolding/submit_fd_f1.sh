@@ -5,6 +5,9 @@
 #   submit_fd_f1.sh f1a <deploy> <pin> <OUT>
 #   submit_fd_f1.sh f1b <deploy> <pin> <OUT>          --time from <OUT>/f1a/budget.json (f1b_time_limit); GO required
 #   submit_fd_f1.sh f1c <deploy> <pin> <OUT> <table>  <table>: tasks-f1c.tsv inside the deploy (the receipt commit)
+#   submit_fd_f1.sh f1a2 <deploy> <pin> <OUT> <priced> <ceiling>  the re-pilot (amendment 1), with the binding's
+#                                                      priced F1 total and ceiling
+#   submit_fd_f1.sh f1b2 <deploy> <pin> <OUT>          --time from <OUT>/f1a2/budget2.json (f1b2_time_limit); GO required
 #
 # Every job: account m3246, QOS regular (never premium), constraint cpu, one exclusive node, --no-requeue, no GPU.
 set -eo pipefail
@@ -28,5 +31,21 @@ case "$STAGE" in
     sbatch "${COMMON[@]}" --time=00:54:00 --job-name=fd_f1c \
       "$D/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh" \
       "$D" "$PIN" "$TABLE" "$OUT/f1c" 32 56G 0 7 none ;;
+  f1a2)
+    PRICED="${5:?priced node-h}"; CEIL="${6:?ceiling node-h}"
+    sbatch "${COMMON[@]}" --time=00:20:00 --job-name=fd_f1a2 "$D/nd-unfolding/sbatch_fd_f1a2.sh" "$D" "$PIN" "$OUT" "$PRICED" "$CEIL" ;;
+  f1b2)
+    B="$OUT/f1a2/budget2.json"
+    grep -q '"decision": "GO"' "$B" || { echo "refusing: $B is not GO" >&2; exit 2; }
+    J=$(sed -n 's/.*"repilot_job_id": "\([0-9]*\)".*/\1/p' "$B")
+    [ -n "$J" ] || { echo "refusing: no repilot_job_id in $B" >&2; exit 2; }
+    S=$(sacct -n -P -X -j "$J" -o State | head -1)
+    [ "$S" = COMPLETED ] || { echo "refusing: re-pilot job $J is $S, not COMPLETED" >&2; exit 2; }
+    R=$(sacct -n -P -j "$J.batch" -o MaxRSS | head -1)        # the re-pilot's node-level peak (a 30 s cgroup sample)
+    K=$(awk -v r="$R" 'BEGIN{n=r+0; u=substr(r,length(r)); if(u=="M")n*=1024; else if(u=="G")n*=1048576; else if(u=="T")n*=1073741824; printf "%d", n}')
+    [ "$K" -gt 0 ] && [ "$K" -le $((487802 * 1024 * 3 / 4)) ] || { echo "refusing: re-pilot batch MaxRSS $R exceeds 75 % of the node" >&2; exit 2; }
+    T=$(sed -n 's/.*"f1b2_time_limit": "\([0-9][0-9]:[0-9][0-9]:00\)".*/\1/p' "$B")
+    [ -n "$T" ] || { echo "refusing: no f1b2_time_limit in $B" >&2; exit 2; }
+    sbatch "${COMMON[@]}" --time="$T" --job-name=fd_f1b2 "$D/nd-unfolding/sbatch_fd_f1b2.sh" "$D" "$PIN" "$OUT" ;;
   *) echo "unknown stage $STAGE" >&2; exit 2 ;;
 esac
