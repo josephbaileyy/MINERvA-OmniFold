@@ -1,0 +1,34 @@
+Q1: VERDICT: SAME
+DETAIL: The omitted sentences describe generator tests that were moved to the companion analysis note, which does not count as dropped under the context rules. The remaining statements regarding the scope, central values, and unvalidated coverage are identical to BEFORE.
+
+Q2: VERDICT: SAME
+DETAIL: The revisions update the roadmap to reflect the reordered sections, the removal of Table I, and the relocation of the generator tests to the companion note. These organizational updates introduce no unsupported physics claims and omit nothing unexcused under the context rules.
+
+Q3: VERDICT: SAME
+DETAIL: The only omission is the 1.05% sensitivity sentence, which was moved to the companion note and is explicitly permitted under the context rules. The definition and consistent usage of the 135 MeV constant are identical.
+
+Q4: VERDICT: SAME
+DETAIL: The omissions of the 1.5% clamp fraction, the ~1 mrad angle, and the ±2 MeV residual are explicitly permitted under the context rules. The physical statements regarding the kinematic relations and independent constraints are fully preserved.
+
+Q5: VERDICT: SAME
+DETAIL: The omissions of the Monte Carlo standard error sentence, the GiBUU evaluation limitation sentence, and the ±4 MeV figure are explicitly permitted under the context rules. The descriptions of target differences, energy cutoffs, and uncorrected predictions are fully retained.
+
+Q6: VERDICT: SAME
+DETAIL: The omission of GiBUU's test domain is explicitly permitted under the context rules, and referring to "joint cells" aligns with the note-relocated joint-test terminology. The grid specifications, selection thresholds, and event fractions are identical.
+
+Q7: VERDICT: SAME
+DETAIL: The text and table updates reflect the relocation of the simulation-calibrated generator tests to the companion note and the renumbering of the table. The description of the joint-test estimator and its bias-removal properties is fully preserved.
+
+Q8: VERDICT: SAME
+DETAIL: The omission of the sentence on the route to inference is explicitly permitted under the context rules. The reported median envelope range and comparison with generator differences are identical.
+
+Q9: VERDICT: SAME
+DETAIL: AFTER inserts a subsection header and slightly reorders the initial sentences of the subsection without altering any meaning. All definitions, cell counts, covariance components, coverage qualifications, and numerical uncertainties are preserved exactly.
+
+Q10: VERDICT: SAME
+DETAIL: The omission of the reference to Table I is permitted under the context rules because the summary table was removed. The statement identifying the principal result, covariance, and generator comparison is unchanged.
+
+Q11: VERDICT: SAME
+DETAIL: AFTER is a direct stylistic rewording that preserves all listed validation checks and the exact question being investigated. It introduces no unsupported claims, drops no qualifications, and creates no ambiguity.
+
+END

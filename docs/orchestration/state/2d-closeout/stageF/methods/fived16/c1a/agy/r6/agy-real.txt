@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately reports the bias test's findings and disclaims coverage and interval-width validation without exceeding BEFORE or touching on any non-citable uses.
+
+Q2: VERDICT: SAME
+DETAIL: Stating that coverage of the result's intervals has not been validated faithfully reflects BEFORE's limitation that interval widths and coverage were not tested and are not citable.
+
+Q3: VERDICT: SAME
+DETAIL: All numerical values, model descriptions, and methodological limitations match the report and readout, correctly noting that the tunes are partial evidence, not independent tests, and do not test coverage or detector response.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER pluralizes the test into "bias tests with two held-out GENIE v3 tunes" without stating that they are not independent, which can be read as treating the two truths as independent tests—a use the study is explicitly not citable for.
+
+Q5: VERDICT: SAME
+DETAIL: The passage correctly conveys the study's numerical results, model overlap, and non-independent nature, while explicitly affirming that detector response is not probed and coverage and interval widths are not tested.
+
+END

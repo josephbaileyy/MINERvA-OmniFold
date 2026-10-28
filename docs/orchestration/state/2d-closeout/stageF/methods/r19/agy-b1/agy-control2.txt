@@ -1,0 +1,34 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER retains the statements on scope, central values, and unvalidated coverage verbatim; omitting the details of the generator tests is excused by context because they were moved to the companion note.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER updates the paper's section outline to reflect the restructured sections, the removal of Table I, and the transfer of the generator tests to the companion note, which is permitted by the context.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER preserves the definition and consistent application of the 135 MeV constant; omission of the 1.05% sensitivity sentence is excused by context.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER faithfully describes the kinematic relations and constraints connecting reconstructed and truth variables; omitting the 1.5% clamp fraction, the "about 1 mrad" angle, and the ±2 MeV residual is excused by context.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER retains the target difference descriptions and generator conventions; omitting the sentences on the Monte Carlo standard error and GiBUU evaluation, as well as the ±4 MeV figure, is excused by context.
+
+Q6: VERDICT: SAME
+DETAIL: AFTER preserves the reporting criteria and properties of the coarse reporting grid; omitting GiBUU's test domain is excused by context.
+
+Q7: VERDICT: SAME
+DETAIL: AFTER correctly specifies the joint-test estimator and its role, accounting for the renumbered table and noting that the companion note's tests use the same estimator.
+
+Q8: VERDICT: SAME
+DETAIL: AFTER preserves the median envelope percentage and its comparability to generator differences; omitting the sentence on the route to inference is excused by context.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER states that Cmodel represents "a calibrated bound", omitting the word "not" from BEFORE's specification that it is "not a calibrated bound". This asserts an unvalidated statistical property that BEFORE directly contradicts.
+
+Q10: VERDICT: SAME
+DETAIL: AFTER preserves the statement of the principal sixteen-cell result and its covariance; omitting the reference to Table I is permitted by context because the summary table was removed.
+
+Q11: VERDICT: SAME
+DETAIL: AFTER provides an accurate rewording that preserves all listed validation studies, their purpose, and their evaluation of unfolding robustness under generator-sized mismodeling.
+
+END

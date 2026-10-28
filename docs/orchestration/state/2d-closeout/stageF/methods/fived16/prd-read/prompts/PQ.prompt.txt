@@ -1,0 +1,25 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below is an excerpt from a manuscript on a neutrino cross-section measurement, converted from LaTeX to plain text. Part 1 is two subsections of the paper; Part 2 lists sentences from elsewhere in the same paper that refer to the result of those subsections. A companion technical note gives the full details of the analysis. After the excerpt comes a numbered list of qualifying clauses, each quoted from the excerpt.
+
+For each listed clause, say how a comparable published PRD paper (an experimental cross-section measurement with a companion technical document) would handle it:
+- AS-WRITTEN: it would state it as written;
+- BRIEFER: it would state it more briefly (give the briefer wording);
+- COMPANION: it would leave it to the companion document or supplemental material;
+- OMIT: it would not state it anywhere.
+Judge language, register and what PRD readers expect. Do not judge whether a clause is true or whether the analysis is sound.
+
+Then answer question T about the number format in a table.
+
+Answer in exactly this format, one block per clause, in the order listed:
+C<nn>: VERDICT: <AS-WRITTEN, BRIEFER, COMPANION or OMIT>
+BRIEFER-FORM: <the briefer wording, or ->
+REASON: <one sentence>
+
+Then:
+T: CHOICE: <INTEGER, ONE-DECIMAL or TWO-DECIMALS>
+REASON: <one sentence>
+
+Then:
+OTHER: <any other clause in the excerpt that a PRD paper would state more briefly, leave to the companion document or omit, quoted exactly, each with its verdict and a one-sentence reason; or NONE>
+END

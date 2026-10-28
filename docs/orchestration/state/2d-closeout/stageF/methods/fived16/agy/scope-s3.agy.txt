@@ -1,0 +1,44 @@
+PASSAGE: sec_5d:4
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:37
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:51
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:77
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:95
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:135
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:146
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_5d:244
+VERDICT: AGREE
+ISSUE: none
+FIX: none
+
+PASSAGE: sec_joint:5
+VERDICT: AGREE
+ISSUE: none
+FIX: none

@@ -1,0 +1,21 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but repeated qualifications, internal estimator labels, and development and release bookkeeping recur sufficiently often to require a dedicated language pass.
+
+1. QUOTE: "Scope. The findings are those of one OmniFold implementation on one data set, for the observables, configurations and deformations studied here, not of multidimensional OmniFold in general. The three- and fourobservable results are central values without intervals of
+validated coverage: the output of the joint-test estimator
+of Sec. III, with the observable definitions, simulated detector response, background treatment, and regularization
+
+given there."
+   REWRITE: These findings apply to the OmniFold implementation, data set, observables, configurations, and truth deformations studied here. The three- and four-observable results are central estimates obtained with the estimator, observable definitions, simulated detector response, background treatment, and regularization described in Sec. III; no intervals with validated coverage are provided.
+
+2. QUOTE: "Ten, 15 or 20 iterations did not reduce the joint-test
+estimator’s model dependence, measured as the largest
+residual proxy over the truth changes used in its development, so it keeps five (Ref. [14], Sec. 9.4)."
+   REWRITE: Increasing the iteration count from five to 10, 15, or 20 did not reduce the maximum residual used to assess model dependence across the truth deformations considered during estimator development. We therefore use five iterations (Ref. [14], Sec. 9.4).
+
+3. QUOTE: "A candidate release package
+of about 16 MB, not yet deposited, requires only numpy,
+scipy, and matplotlib. It recomputes every p value, decision, robustness result, and power figure of the joint tests
+and the numbers quoted in Sec. V C, and it regenerates
+the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+   REWRITE: A software package prepared for release, approximately 16 MB in size and requiring NumPy, SciPy, and Matplotlib, has not yet been deposited. It reproduces the joint-test p values, hypothesis-test decisions, robustness and power results, numerical results in Sec. V C, and the companion note’s plots of the joint-test null distributions and the (Eavail , W ) map.

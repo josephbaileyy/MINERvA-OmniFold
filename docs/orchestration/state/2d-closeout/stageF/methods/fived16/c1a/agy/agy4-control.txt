@@ -1,0 +1,16 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that the test "confirms interval widths", but BEFORE explicitly states that Poisson pseudo-data cannot test interval widths and specifies that the study is not citable for validating interval width or coverage.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states the scope more broadly and ambiguously by referring to "two held-out truths", omitting that they are specifically GENIE v3 tunes sharing the same model family as the simulation.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER accurately reports the study's findings, correctly identifies the truths as GENIE v3, and explicitly notes that interval widths are not tested and coverage is not validated.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states "They are two independent tests", which directly contradicts BEFORE's explicit finding that the two truths are not independent tests and violates the condition that the study is not citable for treating them as independent.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER reports "1 of 4 records with p<0.01", which contradicts BEFORE's group tally recording 0 of 4 records with p < 0.01.
+
+END

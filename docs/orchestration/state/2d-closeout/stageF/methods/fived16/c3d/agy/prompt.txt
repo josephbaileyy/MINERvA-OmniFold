@@ -1,0 +1,11 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking passages of a physics paper against the facts of the study they report. Each numbered pair has a BEFORE block, the study's facts and the uses it is not citable for, which are accepted as correct, and an AFTER passage, which reports the study (the AFTER passage also repeats an earlier sensitivity result, which BEFORE states too). For each pair, say:
+(a) whether AFTER states anything about the study that BEFORE does not support, or states it more strongly or more broadly, including any number that does not follow from BEFORE's numbers;
+(b) whether AFTER can be read as one of the uses the study is NOT CITABLE FOR;
+(c) whether AFTER is ambiguous in a way that could mislead a reader about what the study measured.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END

@@ -1,0 +1,26 @@
+C01	is reported separately from those reporting definitions
+C02	of which the study's 27 coarser cells are the supported ones; each supported box with purity below 0.1 is merged into a neighbour, 4 boxes remain unreported, and every reported cell passes the support rule
+C03	Its model term differs from the study's envelope: there, the largest shift of a cell over five generator-sized truth changes, added linearly to the half-width; here, a covariance built from three generator shifts.
+C04	a training-seed term measured to be zero
+C05	it is generator-shape model dependence, unscaled and not a calibrated bound
+C06	and its coverage at truths held out of its construction has not been validated
+C07	it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale
+C08	and it does not enter the generator tests of Sec. VII or the paper's other results
+C09	(6.74% without C_resp)
+C10	so that no such truth is compared with a covariance that includes its own generator's component
+C11	6 further truths, whose offset correction failed its control, are ungraded and given in the note
+C12	Under the reported covariance, without the GiBUU component for the two GiBUU truths,
+C13	the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths or at the q_3 tilt
+C14	no diagonal-only χ² is formed
+C15	so it is compared on the 8 cells with p_∥<4.5 GeV/c only
+C16	The reported uncertainty does not cover the fake-data bias at the GiBUU-like truths (Sec. V F).
+C17	NuWro and GiBUU are on carbon, with no correction to CH
+C18	Because C_model is built from shifts toward GENIE + MEC, NuWro and GiBUU, each relative to GENIE CV, those comparisons use a covariance built in part from the compared generator, and the GENIE CV comparison does through that reference.
+C19	The sixteen-cell result of Sec. V F also has total uncertainties, whose coverage is not validated.
+C20	This bias is not included in the uncertainties quoted for the configuration-(a) central value.
+C21	No uncertainty quoted for the configuration-(a) central value includes the regularization bias, and its five-observable covariance omits it.
+C22	unscaled and not a calibrated bound, and Sec. V F gives the fake-data study's measured comparison of the estimator's bias with the reported covariance
+C23	The seed dependence of this five-observable covariance rests on one seed pair, and the spread over seed pairs has not been measured.
+C24	The higher-dimensional results are central values without intervals of validated coverage, and no uncertainty quoted for the configuration-(a) five-observable central value includes its regularization bias (Sec. V B).
+C25	The sixteen-cell result also has total uncertainties, whose coverage is not validated; Sec. V F gives the fake-data study's measured comparison of the estimator's bias with its reported covariance.
+C26	the configuration-(a) central value

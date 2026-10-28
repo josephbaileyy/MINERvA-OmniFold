@@ -1,0 +1,190 @@
+clause	sol2-fwd | sol2-rev | gemini-fwd | gemini-rev	agreement	text
+C01	BRIEFER | BRIEFER | OMIT | BRIEFER	BRIEFER 3 / OMIT 1	is reported separately from those reporting definitions
+C02	BRIEFER | BRIEFER | COMPANION | COMPANION	BRIEFER 2 / COMPANION 2	of which the study's 27 coarser cells are the supported ones; each supported box with puri
+C03	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	Its model term differs from the study's envelope: there, the largest shift of a cell over 
+C04	COMPANION | COMPANION | OMIT | OMIT	COMPANION 2 / OMIT 2	a training-seed term measured to be zero
+C05	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	it is generator-shape model dependence, unscaled and not a calibrated bound
+C06	AS-WRITTEN | AS-WRITTEN | OMIT | OMIT	AS-WRITTEN 2 / OMIT 2	and its coverage at truths held out of its construction has not been validated
+C07	AS-WRITTEN | BRIEFER | COMPANION | COMPANION	COMPANION 2 / AS-WRITTEN 1 / BRIEFER 1	it does not cover neutron or muon deposits, nor species, energy-dependence or resolution e
+C08	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	and it does not enter the generator tests of Sec. VII or the paper's other results
+C09	AS-WRITTEN | AS-WRITTEN | AS-WRITTEN | AS-WRITTEN	4/4 AS-WRITTEN	(6.74% without C_resp)
+C10	OMIT | OMIT | OMIT | OMIT	4/4 OMIT	so that no such truth is compared with a covariance that includes its own generator's comp
+C11	COMPANION | BRIEFER | COMPANION | COMPANION	COMPANION 3 / BRIEFER 1	6 further truths, whose offset correction failed its control, are ungraded and given in th
+C12	AS-WRITTEN | AS-WRITTEN | AS-WRITTEN | AS-WRITTEN	4/4 AS-WRITTEN	Under the reported covariance, without the GiBUU component for the two GiBUU truths,
+C13	AS-WRITTEN | BRIEFER | AS-WRITTEN | AS-WRITTEN	AS-WRITTEN 3 / BRIEFER 1	the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths or a
+C14	OMIT | OMIT | OMIT | OMIT	4/4 OMIT	no diagonal-only χ² is formed
+C15	AS-WRITTEN | AS-WRITTEN | AS-WRITTEN | AS-WRITTEN	4/4 AS-WRITTEN	so it is compared on the 8 cells with p_∥<4.5 GeV/c only
+C16	AS-WRITTEN | AS-WRITTEN | AS-WRITTEN | AS-WRITTEN	4/4 AS-WRITTEN	The reported uncertainty does not cover the fake-data bias at the GiBUU-like truths (Sec. 
+C17	AS-WRITTEN | AS-WRITTEN | AS-WRITTEN | AS-WRITTEN	4/4 AS-WRITTEN	NuWro and GiBUU are on carbon, with no correction to CH
+C18	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	Because C_model is built from shifts toward GENIE + MEC, NuWro and GiBUU, each relative to
+C19	AS-WRITTEN | AS-WRITTEN | BRIEFER | BRIEFER	AS-WRITTEN 2 / BRIEFER 2	The sixteen-cell result of Sec. V F also has total uncertainties, whose coverage is not va
+C20	AS-WRITTEN | AS-WRITTEN | BRIEFER | BRIEFER	AS-WRITTEN 2 / BRIEFER 2	This bias is not included in the uncertainties quoted for the configuration-(a) central va
+C21	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	No uncertainty quoted for the configuration-(a) central value includes the regularization 
+C22	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	unscaled and not a calibrated bound, and Sec. V F gives the fake-data study's measured com
+C23	BRIEFER | BRIEFER | COMPANION | COMPANION	BRIEFER 2 / COMPANION 2	The seed dependence of this five-observable covariance rests on one seed pair, and the spr
+C24	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	The higher-dimensional results are central values without intervals of validated coverage,
+C25	BRIEFER | BRIEFER | BRIEFER | BRIEFER	4/4 BRIEFER	The sixteen-cell result also has total uncertainties, whose coverage is not validated; Sec
+C26	AS-WRITTEN | AS-WRITTEN | BRIEFER | BRIEFER	AS-WRITTEN 2 / BRIEFER 2	the configuration-(a) central value
+T	ONE-DECIMAL | ONE-DECIMAL | INTEGER | INTEGER	ONE-DECIMAL 2 / INTEGER 2	Q4 chi-square precision
+
+## C01 is reported separately from those reporting definitions
+- PQ__fwd__sol2: BRIEFER | BRIEFER: uses a different binning from those studied above | The distinction matters, but “reporting definitions” makes it unnecessarily abstract.
+- PQ__rev__sol2: BRIEFER | BRIEFER: is reported separately | The backward reference to “those reporting definitions” is cumbersome and unnecessary in this context.
+- PQ__fwd__gemini: OMIT | PRD papers report measurements directly without meta-textual commentary contrasting them with candidate definitions tested in preceding subsections.
+- PQ__rev__gemini: BRIEFER | BRIEFER: is also reported | PRD style introduces results directly rather than using awkward internal references to exploratory reporting definitions.
+
+## C02 of which the study's 27 coarser cells are the supported ones; each supported box with purity below 0.1 is merged into a neighbour, 4 boxes remain unreported, and every reported cell passes the support rule
+- PQ__fwd__sol2: BRIEFER | BRIEFER: Supported boxes with purity below 0.1 are merged with neighbors, yielding 16 reported cells; four boxes remain unreported. | The merging criterion and unreported region belong in the paper, while the correspondence with the study’s 27 cells can remain in the companion document.
+- PQ__rev__sol2: BRIEFER | BRIEFER: Among the study’s 27 supported boxes, those with purity below 0.1 are merged with neighbors; four boxes remain unreported, and all reported cells satisfy the support rule. | The construction and reporting exclusions are relevant, but the sentence can describe them more economically.
+- PQ__fwd__gemini: COMPANION | Procedural binning algorithms, purity-merging thresholds, and cell-support pruning rules belong in the companion technical document rather than the main text.
+- PQ__rev__gemini: COMPANION | Algorithmic bin-merging recipes, purity thresholds, and intermediate support criteria belong in the companion technical note, with only the final 16 reported cells defined in the main paper.
+
+## C03 Its model term differs from the study's envelope: there, the largest shift of a cell over five generator-sized truth changes, added linearly to the half-width; here, a covariance built from three generator shifts.
+- PQ__fwd__sol2: BRIEFER | BRIEFER: Unlike the study’s linearly added envelope, this result uses a model covariance constructed from three generator shifts. | Readers need the distinction between the uncertainty prescriptions without a repetition of the preceding subsection’s definition.
+- PQ__rev__sol2: BRIEFER | BRIEFER: This model term is a covariance from three generator shifts; the study’s envelope instead uses five shifts and is added linearly to the half-width. | Readers need the distinction between the two uncertainty constructions, but the original explanation repeats previously supplied detail.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: Its model covariance is built from three generator shifts. | PRD style favors stating the reported model covariance directly without a comparative recap of the envelope method tested in an auxiliary study.
+- PQ__rev__gemini: BRIEFER | BRIEFER: Unlike the linear envelope of Sec. V E, the model uncertainty here is a covariance constructed from three generator shifts. | The contrast with the preceding envelope method is useful context but should be stated as a concise comparative sentence rather than an informal, multi-clause explanation.
+
+## C04 a training-seed term measured to be zero
+- PQ__fwd__sol2: COMPANION | A component measured to contribute zero is normally documented with the detailed uncertainty studies.
+- PQ__rev__sol2: COMPANION | The assessment of a vanishing training-seed contribution is a detailed uncertainty-budget item suited to the companion document.
+- PQ__fwd__gemini: OMIT | An uncertainty component determined to be zero is omitted from the definition of the covariance sum rather than listed as a vanishing term.
+- PQ__rev__gemini: OMIT | An uncertainty component evaluated to be zero is not listed as an active summand in the definition of the total covariance matrix.
+
+## C05 it is generator-shape model dependence, unscaled and not a calibrated bound
+- PQ__fwd__sol2: BRIEFER | BRIEFER: an unscaled generator-shape uncertainty, not a calibrated bound | This preserves the interpretation and limitation in more direct language.
+- PQ__rev__sol2: BRIEFER | BRIEFER: it represents unscaled generator-shape dependence, not a calibrated bound | This directly states the model term’s interpretation and limitation.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: it represents generator-shape model uncertainty | PRD papers describe model systematic uncertainties directly without apologetic qualifications about uncalibrated bounds.
+- PQ__rev__gemini: BRIEFER | BRIEFER: representing uncalibrated generator model dependence | PRD style describes systematic uncertainties neutrally and concisely rather than using informal, colloquial disclaimers like "not a calibrated bound."
+
+## C06 and its coverage at truths held out of its construction has not been validated
+- PQ__fwd__sol2: AS-WRITTEN | The absence of validation on held-out truths materially qualifies the reported uncertainty.
+- PQ__rev__sol2: AS-WRITTEN | The absence of independent coverage validation is a substantive limitation of the reported uncertainty.
+- PQ__fwd__gemini: OMIT | Experimental PRD papers do not issue disclaimers that systematic uncertainties lack formal coverage validation on unseen models.
+- PQ__rev__gemini: OMIT | This negative disclaimer is redundant and confusing because the empirical validation of coverage across held-out truths is explicitly reported in the very next paragraph.
+
+## C07 it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale
+- PQ__fwd__sol2: AS-WRITTEN | These exclusions define the scope of the response uncertainty and are appropriate in the main paper.
+- PQ__rev__sol2: BRIEFER | BRIEFER: it excludes neutron and muon deposits and response effects beyond the specified scales | The principal exclusions belong in the paper, while the preceding scale definition makes the longer enumeration unnecessary.
+- PQ__fwd__gemini: COMPANION | Exhaustive enumerations of specific detector response mechanisms and particle species excluded from an energy-scale variation belong in the companion technical document.
+- PQ__rev__gemini: COMPANION | Detailed enumerations of unsimulated secondary detector response effects and model approximations belong in the companion technical document.
+
+## C08 and it does not enter the generator tests of Sec. VII or the paper's other results
+- PQ__fwd__sol2: BRIEFER | BRIEFER: it is excluded from the generator tests of Sec. VII and all other results | The scope restriction is useful but can be expressed more compactly.
+- PQ__rev__sol2: BRIEFER | BRIEFER: and is excluded from the Sec. VII generator tests and the paper’s other results | The scope of the added covariance matters, but the wording can be tightened.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: and is excluded from the generator comparisons of Sec. VII | The exclusion of this covariance term from the model comparisons can be stated concisely without vague reference to other results.
+- PQ__rev__gemini: BRIEFER | BRIEFER: and is excluded from the generator tests of Sec. VII | The scope restriction should be stated concisely without vague conversational phrasing such as "or the paper's other results."
+
+## C09 (6.74% without C_resp)
+- PQ__fwd__sol2: AS-WRITTEN | The parenthesis efficiently quantifies the response term’s effect on the reported precision.
+- PQ__rev__sol2: AS-WRITTEN | The compact comparison shows the numerical contribution of the additional response uncertainty.
+- PQ__fwd__gemini: AS-WRITTEN | Quoting summary uncertainties both with and without a specific systematic contribution is standard, concise PRD practice.
+- PQ__rev__gemini: AS-WRITTEN | Parenthetically stating the uncertainty without a specific systematic component alongside the total uncertainty is standard, compact PRD practice.
+
+## C10 so that no such truth is compared with a covariance that includes its own generator's component
+- PQ__fwd__sol2: OMIT | The preceding clause already states exactly the same exclusion rule.
+- PQ__rev__sol2: OMIT | This clause repeats the immediately preceding statement that the corresponding generator contribution is removed.
+- PQ__fwd__gemini: OMIT | The clause is entirely redundant with the preceding statement that the generator's component is excluded from the covariance.
+- PQ__rev__gemini: OMIT | The clause is completely redundant with the immediately preceding description of the leave-one-out comparison procedure in the same sentence.
+
+## C11 6 further truths, whose offset correction failed its control, are ungraded and given in the note
+- PQ__fwd__sol2: COMPANION | The additional ungraded cases and their control failures fit naturally in the companion’s detailed account of the validation procedure.
+- PQ__rev__sol2: BRIEFER | BRIEFER: Six additional truths failed the offset-correction check and were not evaluated; see the companion note. | The exclusion should remain visible in the paper, with its technical details documented in the companion note.
+- PQ__fwd__gemini: COMPANION | Failed diagnostic controls, unvalidated mock-data samples, and internal tests belong in the companion technical note rather than the journal article.
+- PQ__rev__gemini: COMPANION | Discussion of auxiliary mock-data samples that failed quality control checks and were excluded from the analysis belongs entirely in the companion technical note.
+
+## C12 Under the reported covariance, without the GiBUU component for the two GiBUU truths,
+- PQ__fwd__sol2: AS-WRITTEN | Identifying the covariance actually used is necessary for interpreting these particular results.
+- PQ__rev__sol2: AS-WRITTEN | This qualification specifies the covariance used for the immediately following results.
+- PQ__fwd__gemini: AS-WRITTEN | It clearly and precisely specifies the exact covariance conditions used to evaluate the GiBUU pseudo-data test statistics.
+- PQ__rev__gemini: AS-WRITTEN | It precisely defines the specific covariance matrix condition under which the subsequent test statistics and p-values are evaluated.
+
+## C13 the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths or at the q_3 tilt
+- PQ__fwd__sol2: AS-WRITTEN | This is a central finding of the bias study and warrants an explicit statement.
+- PQ__rev__sol2: BRIEFER | BRIEFER: the biases at these GiBUU-like truths and the q_3 tilt exceed the reported uncertainties | The substantive finding belongs in the paper and can be stated with fewer words.
+- PQ__fwd__gemini: AS-WRITTEN | It reports the physical outcome of the fake-data validation test directly and objectively in appropriate scientific register.
+- PQ__rev__gemini: AS-WRITTEN | It clearly and concisely summarizes the empirical outcome of the mock-data validation tests for these specific kinematic models.
+
+## C14 no diagonal-only χ² is formed
+- PQ__fwd__sol2: OMIT | Specifying the reported comparison statistic does not ordinarily require enumerating an alternative statistic that was not calculated.
+- PQ__rev__sol2: OMIT | Unless a diagonal-only comparison has been promised or requires discussion, listing an unperformed calculation adds nothing.
+- PQ__fwd__gemini: OMIT | PRD papers report the statistical metrics that were evaluated rather than noting uncalculated alternative metrics.
+- PQ__rev__gemini: OMIT | PRD papers describe the statistical tests that were performed rather than explicitly noting standard alternative metrics that were not used.
+
+## C15 so it is compared on the 8 cells with p_∥<4.5 GeV/c only
+- PQ__fwd__sol2: AS-WRITTEN | The restricted comparison region and cell count are essential to interpreting the GiBUU statistic.
+- PQ__rev__sol2: AS-WRITTEN | Readers need the restricted comparison domain to interpret the reported degrees of freedom.
+- PQ__fwd__gemini: AS-WRITTEN | It succinctly states the kinematic boundary of the generator and explains the reduced degrees of freedom in the comparison table.
+- PQ__rev__gemini: AS-WRITTEN | Explaining phase-space restrictions and the resulting degrees of freedom for a model comparison is necessary information that PRD requires in the main text.
+
+## C16 The reported uncertainty does not cover the fake-data bias at the GiBUU-like truths (Sec. V F).
+- PQ__fwd__sol2: AS-WRITTEN | A short reminder of the relevant bias limitation is appropriate where readers encounter the generator comparisons.
+- PQ__rev__sol2: AS-WRITTEN | A brief reminder of the relevant validation limitation is appropriate where the comparisons are presented.
+- PQ__fwd__gemini: AS-WRITTEN | It provides necessary context for interpreting the GiBUU model comparison by directly citing the validation limitation established in Sec. V F.
+- PQ__rev__gemini: AS-WRITTEN | Succinctly reminding the reader of a specific coverage limitation when interpreting that particular generator comparison is appropriate and concise.
+
+## C17 NuWro and GiBUU are on carbon, with no correction to CH
+- PQ__fwd__sol2: AS-WRITTEN | The target mismatch and absence of a correction are directly relevant qualifications of the comparison.
+- PQ__rev__sol2: AS-WRITTEN | The target mismatch and absence of a correction directly qualify the generator comparisons.
+- PQ__fwd__gemini: AS-WRITTEN | Target composition is an essential physical distinction that directly affects cross-section predictions and must be stated in the text.
+- PQ__rev__gemini: AS-WRITTEN | Specifying target composition differences between generator simulations and the experimental target is standard, essential physics context in PRD cross-section papers.
+
+## C18 Because C_model is built from shifts toward GENIE + MEC, NuWro and GiBUU, each relative to GENIE CV, those comparisons use a covariance built in part from the compared generator, and the GENIE CV comparison does through that reference.
+- PQ__fwd__sol2: BRIEFER | BRIEFER: C_model uses the compared GENIE + MEC, NuWro, and GiBUU predictions, with GENIE CV as the reference. | This makes the shared generator inputs explicit without repeating the covariance construction at length.
+- PQ__rev__sol2: BRIEFER | BRIEFER: The GENIE + MEC, NuWro, and GiBUU comparisons use covariance contributions derived from those generators; GENIE CV enters as their common reference. | The dependence between the predictions and covariance belongs in the paper but can be explained more directly.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: Because C_model incorporates shifts from these generators relative to GENIE CV, the comparisons are not independent of the tested models. | The shared model dependence between the covariance matrix and the tested predictions can be expressed concisely without repetitive phrasing.
+- PQ__rev__gemini: BRIEFER | BRIEFER: Because C_model incorporates shifts from GENIE + MEC, NuWro, and GiBUU relative to GENIE CV, the test covariances are not strictly independent of the compared generators. | The methodological caveat is necessary for interpreting the hypothesis tests but should be stated directly and concisely rather than through a rambling explanation.
+
+## C19 The sixteen-cell result of Sec. V F also has total uncertainties, whose coverage is not validated.
+- PQ__fwd__sol2: AS-WRITTEN | The introduction should distinguish the availability of total uncertainties from validation of their coverage.
+- PQ__rev__sol2: AS-WRITTEN | The introduction appropriately identifies the additional result and its principal uncertainty limitation.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: A sixteen-cell five-observable result with total uncertainties is also presented (Sec. V F). | In the Introduction, the paper's scope should concisely summarize the results presented without premature disclaimers regarding coverage validation.
+- PQ__rev__gemini: BRIEFER | BRIEFER: A sixteen-cell five-observable result with total uncertainties is also presented (Sec. V F). | The introductory scope section should define the reported measurements neutrally rather than introducing premature caveats about statistical coverage that are addressed in the analysis.
+
+## C20 This bias is not included in the uncertainties quoted for the configuration-(a) central value.
+- PQ__fwd__sol2: AS-WRITTEN | This is a concise and consequential statement about what the quoted uncertainties include.
+- PQ__rev__sol2: AS-WRITTEN | This concise statement establishes how readers should interpret the quoted uncertainties.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: This bias is not included in the nominal five-observable uncertainties. | Internal analysis designations like "configuration (a)" should be replaced with concise, descriptive physical terminology.
+- PQ__rev__gemini: BRIEFER | BRIEFER: This bias is not included in the reported uncertainties. | PRD style states omissions of systematic uncertainties plainly without convoluted references to internal configuration labels and central values.
+
+## C21 No uncertainty quoted for the configuration-(a) central value includes the regularization bias, and its five-observable covariance omits it.
+- PQ__fwd__sol2: BRIEFER | BRIEFER: The configuration-(a) uncertainties omit regularization bias. | The original states the same omission twice.
+- PQ__rev__sol2: BRIEFER | BRIEFER: The quoted uncertainties and five-observable covariance for configuration (a) exclude regularization bias. | One direct statement can cover both exclusions.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: The five-observable covariance omits regularization bias. | The sentence needlessly repeats that the bias is omitted while employing internal configuration jargon.
+- PQ__rev__gemini: BRIEFER | BRIEFER: The configuration (a) covariance omits regularization bias. | The clause contains internal redundancy and should be condensed to a single direct statement that regularization bias is omitted from the covariance.
+
+## C22 unscaled and not a calibrated bound, and Sec. V F gives the fake-data study's measured comparison of the estimator's bias with the reported covariance
+- PQ__fwd__sol2: BRIEFER | BRIEFER: unscaled and not a calibrated bound; Sec. V F reports tests of bias against the quoted uncertainties | “The fake-data study’s measured comparison of the estimator’s bias” is unnecessarily cumbersome.
+- PQ__rev__sol2: BRIEFER | BRIEFER: unscaled and not a calibrated bound; the bias tests are reported in Sec. V F | The qualification matters, but the repeated description of the comparison is unnecessarily elaborate.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: with fake-data validation described in Sec. V F | Phrasing regarding uncalibrated bounds should be omitted and the cross-reference to the validation study stated concisely.
+- PQ__rev__gemini: BRIEFER | BRIEFER: and is compared against mock-data bias in Sec. V F | Forward references to validation studies in PRD should be stated concisely without informal commentary about uncalibrated bounds.
+
+## C23 The seed dependence of this five-observable covariance rests on one seed pair, and the spread over seed pairs has not been measured.
+- PQ__fwd__sol2: BRIEFER | BRIEFER: Seed dependence was assessed with a single seed pair. | This directly communicates the limited assessment without separately stating its immediate consequence.
+- PQ__rev__sol2: BRIEFER | BRIEFER: The seed dependence of this five-observable covariance was studied with only one seed pair. | The restricted study is relevant, while the second clause largely restates its limitation.
+- PQ__fwd__gemini: COMPANION | Technical details regarding neural-network seed sampling and stability checks belong in the companion technical document.
+- PQ__rev__gemini: COMPANION | Details of neural network training-seed stability and unperformed secondary cross-checks belong in the companion technical documentation rather than the main journal article.
+
+## C24 The higher-dimensional results are central values without intervals of validated coverage, and no uncertainty quoted for the configuration-(a) five-observable central value includes its regularization bias (Sec. V B).
+- PQ__fwd__sol2: BRIEFER | BRIEFER: The higher-dimensional central values lack intervals with validated coverage; configuration-(a) uncertainties also omit regularization bias (Sec. V B). | Both limitations belong in the conclusions, but their wording can be tightened.
+- PQ__rev__sol2: BRIEFER | BRIEFER: The higher-dimensional central values lack intervals of validated coverage, and uncertainties on the configuration-(a) five-observable result exclude regularization bias (Sec. V B). | Both limitations belong in the conclusion, but their wording can be more direct.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: The five-observable results are presented as central values omitting regularization bias (Sec. V B). | Limitations in the Conclusions should be stated cleanly using descriptive terminology rather than repeating defensive caveats and internal configuration labels.
+- PQ__rev__gemini: BRIEFER | BRIEFER: The higher-dimensional results are presented as central values without regularization uncertainties (Sec. V B). | Concluding limitation paragraphs in PRD state the scope of reported distributions concisely rather than repeating verbose, multi-clause caveats about coverage validation.
+
+## C25 The sixteen-cell result also has total uncertainties, whose coverage is not validated; Sec. V F gives the fake-data study's measured comparison of the estimator's bias with its reported covariance.
+- PQ__fwd__sol2: BRIEFER | BRIEFER: Coverage of the sixteen-cell uncertainties is unvalidated; Sec. V F reports tests of bias against these uncertainties. | The conclusion needs the qualification and reference without the elaborate description of the study.
+- PQ__rev__sol2: BRIEFER | BRIEFER: The sixteen-cell result includes total uncertainties whose coverage has not been validated; Sec. V F reports the bias tests. | The conclusion should retain the limitation and reference without repeating the study’s full description.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: For the sixteen-cell result, total uncertainties are reported, with fake-data bias evaluated in Sec. V F. | The Conclusions should summarize the reporting and validation of the 16-cell uncertainties compactly without repeating defensive disclaimers.
+- PQ__rev__gemini: BRIEFER | BRIEFER: The sixteen-cell result includes total uncertainties evaluated against mock data in Sec. V F. | In concluding sections, PRD papers summarize results and their validation status succinctly without repeating defensive disclaimers and detailed cross-references.
+
+## C26 the configuration-(a) central value
+- PQ__fwd__sol2: AS-WRITTEN | This precise label distinguishes the relevant central value from results obtained with other configurations.
+- PQ__rev__sol2: AS-WRITTEN | The configuration label identifies which result carries the stated limitation.
+- PQ__fwd__gemini: BRIEFER | BRIEFER: the nominal five-observable central value | Internal software labels like "configuration (a)" should be replaced by descriptive terminology.
+- PQ__rev__gemini: BRIEFER | BRIEFER: the configuration (a) result | Physical Review D papers refer to unfolded distributions as measurements or results rather than repeatedly qualifying them as central values with internal hyphenated configuration labels.
+
+## T 
+- PQ__fwd__sol2: ONE-DECIMAL | One decimal provides sufficient reporting precision while preserving small differences between the full and shape-only statistics.
+- PQ__rev__sol2: ONE-DECIMAL | One decimal provides useful resolution between the full and shape-only values without suggesting that hundredths are important to the comparison.
+- PQ__fwd__gemini: INTEGER | For chi-squared values of this magnitude with 7 to 16 degrees of freedom, the statistical variance makes fractional digits physically meaningless, so PRD papers round chi-squared to integers.
+- PQ__rev__gemini: INTEGER | Given degrees of freedom of 16 (where the expected statistical variation is $\sqrt{2k} \approx 5.7$) and $\chi^2$ values in the tens to hundreds, decimal places represent statistically meaningless precision, so PRD experimental tables conventionally report $\chi^2/\text{d.o.f.}$ as integer ratios.

@@ -10,14 +10,52 @@ Move it to just before the acknowledgments' first sentence.
 Case 3 (r18): the headings are in reading order, but the data-availability text after its first line was emitted
 between the acknowledgments' end and the DATA AVAILABILITY heading, and the heading and first sentence come last,
 just before the reference list. Move the continuation to just after the first sentence's block.
-Fail if the section's first sentence is not found once, or if case 2's tail is not the acknowledgments' end."""
+Case 4 (#413 at a55e2686, before r19): the first lines of reference [1] were emitted inside the last paragraph of the
+body, ahead of the ACKNOWLEDGMENTS heading, and the rest of [1] follows the data-availability text. Blinding cuts the
+references at '[1] ', so it dropped the end of the body, the acknowledgments and the data-availability section. Move the
+fragment to just before the rest of [1] and rejoin the paragraph it split. This runs first; cases 1-3 then apply.
+Fail if the section's first sentence is not found once, if case 2's tail is not the acknowledgments' end, if case 4's
+fragment or its continuation is not where that layout puts them, or if a reference line precedes the heading in a layout
+no case describes. Every move keeps the word multiset."""
 import sys
 p = sys.argv[1]; L = open(p, encoding="utf-8").read().split("\n")
+words0 = sorted(" ".join(L).split())
 h = [i for i, l in enumerate(L) if l.strip() == "DATA AVAILABILITY"]
 r = [i for i, l in enumerate(L) if l.startswith("[1] ")]
 a = [i for i, l in enumerate(L) if l.strip() == "ACKNOWLEDGMENTS"]
 if len(h) != 1: sys.exit("FAIL: expected one DATA AVAILABILITY heading, found %d" % len(h))
 first = "The input data and simulation are the MINERvA open"
+if len(r) == 1 and len(a) == 1 and r[0] < a[0] < h[0]:  # case 4
+    k = r[0]
+    while k < len(L) and L[k].strip():
+        k += 1
+    frag = L[r[0]:k]
+    if frag[-1].rstrip().endswith((".", "]")):
+        sys.exit("FAIL: a [1] line precedes ACKNOWLEDGMENTS but it reads as a whole reference, not a fragment")
+    end = [i for i in range(h[0], len(L)) if L[i].rstrip().endswith("does not reproduce.")]
+    if len(end) != 1: sys.exit("FAIL: case 4 layout but the data-availability text's last sentence not found once")
+    c = end[0] + 1
+    while c < len(L) and not L[c].strip():
+        c += 1
+    nxt = [i for i in range(c, len(L)) if L[i].startswith("[")]
+    if c == len(L) or L[c].startswith("[") or not nxt or not L[nxt[0]].startswith("[2] ") or nxt[0] - c > 4:
+        sys.exit("FAIL: case 4 layout but the rest of [1] is not the block between the data-availability text and [2]")
+    # the fragment split a sentence when the text before it does not end one; then drop the blank lines on both sides
+    s0, s1 = r[0], k
+    while s1 < len(L) and not L[s1].strip():
+        s1 += 1
+    if s0 > 1 and not L[s0 - 1].strip() and L[s0 - 2].rstrip()[-1:] not in ".?!:":
+        while s0 > 0 and not L[s0 - 1].strip():
+            s0 -= 1
+    L[c:c] = frag
+    del L[s0:s1]
+    r = [i for i, l in enumerate(L) if l.startswith("[1] ")]
+    h = [i for i, l in enumerate(L) if l.strip() == "DATA AVAILABILITY"]
+    a = [i for i, l in enumerate(L) if l.strip() == "ACKNOWLEDGMENTS"]
+    assert len(r) == 1 and a[0] < h[0] < r[0], (a, h, r)
+    assert sorted(" ".join(L).split()) == words0, "word multiset changed"
+    open(p, "w", encoding="utf-8").write("\n".join(L))
+    print("moved reference [1]'s first %d lines out of the body, to before the rest of [1]" % len(frag))
 if len(a) == 1 and h[0] < a[0]:
     t1 = h[0]
     while t1 > 0 and not L[t1 - 1].strip():  # blank lines between the tail and the heading
@@ -74,5 +112,8 @@ if len(a) == 1 and a[0] < h[0]:  # case 3: the DA text's continuation precedes i
 if not r or h[0] < r[0]: print("data-availability heading in reading order"); sys.exit(0)
 b = [i for i, l in enumerate(L) if l.startswith(first)]
 if len(b) != 1: sys.exit("FAIL: heading out of order and the section's first sentence not found once")
+if h[0] < b[0]:  # case 1 is a heading emitted after its text; this is some other layout
+    sys.exit("FAIL: a reference line precedes the DATA AVAILABILITY heading, which already precedes its text: no case describes this layout")
 del L[h[0]]; L[b[0]:b[0]] = ["DATA AVAILABILITY", ""]
+assert sorted(" ".join(L).split()) == words0, "word multiset changed"
 open(p, "w", encoding="utf-8").write("\n".join(L)); print("moved DATA AVAILABILITY heading back before its text")

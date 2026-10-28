@@ -256,7 +256,7 @@ def reflow_text(text: str, move_comments: bool) -> tuple[str, list[int]]:
 
 NOTE_DIR = Path(__file__).resolve().parent
 #: Written by generators, which own their layout: results_index.py and check_note_records.py entry-numbers.
-GENERATED = {"records_results_index.tex", "records_estimators.tex", "records_entry_numbers.tex"}
+GENERATED = {"records_results_index.tex", "records_estimators.tex", "records_entry_numbers.tex", "values_fived16.tex"}
 #: The records closure. check_note_records.py P5 splits record paragraphs at comment-only lines, so a comment there
 #: keeps its line.
 KEEP_IN_PLACE = {"app_provenance.tex", "app_release_records.tex", "app_codebase_records.tex", "app_history.tex",

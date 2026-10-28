@@ -1,0 +1,15 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately reports the bias test results without claiming interval coverage or width validation, introduces no unsupported statements or numbers, and cannot be read as any non-citable use.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER is fully supported by BEFORE, explicitly disclaiming interval coverage and width testing while accurately reporting that cell biases remain below reported uncertainties.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER is fully consistent with BEFORE, correctly noting that interval coverage has not been validated and accurately describing the scope and findings of the bias test.
+
+Q4: VERDICT: SAME
+DETAIL: All reported statistics, tune descriptions, and model variations follow directly from BEFORE, with the study's coverage limitations, unprobed detector response, and non-independent truths explicitly stated.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER comprehensively and faithfully reproduces the numerical records, group tallies, control checks, and qualitative limitations from BEFORE, strictly adhering to all non-citable constraints.
+END

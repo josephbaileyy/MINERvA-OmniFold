@@ -1,0 +1,28 @@
+Q1: VERDICT: SAME
+DETAIL: All omitted statements are covered by the note context, and the remaining text is identical in content and meaning to BEFORE.
+
+Q2: VERDICT: SAME
+DETAIL: Dropping the sentence comparing the systematic-universe and run-period blocks is covered by the note context, and no other content is modified.
+
+Q3: VERDICT: SAME
+DETAIL: Omitting the final sentence on the superseded bands is covered by the note context, leaving the remaining statements identical to BEFORE.
+
+Q4: VERDICT: SAME
+DETAIL: The omissions of the shape-component sentence and the integrated-uncertainty sentence are covered by the note context, and the rest of the text is unchanged.
+
+Q5: VERDICT: SAME
+DETAIL: Omitting the thirty-iteration and larger-classifier results is covered by the note context, and the added note reference \nsec{sec:val-departure} accurately preserves the attribution.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "and the fixed truth changes used to develop the estimator" (as well as "bears on the first of these results"), which is not covered by the note context. Dropping this limitation states the equivalence of the median residuals between the binned unfolding and boosted-tree estimator more broadly than BEFORE supports.
+
+Q7: VERDICT: SAME
+DETAIL: All omitted details regarding the reweighting definition, the figure reference, the Gaussian fit, and secondary findings are covered by the note context, and the remaining text accurately conveys the findings without ambiguity.
+
+Q8: VERDICT: SAME
+DETAIL: Omitting the final reference sentence is covered by the note context, and the slight syntactic rewording of the rounding instability preserves the exact numerical values, qualifiers, and meaning of BEFORE.
+
+Q9: VERDICT: SAME
+DETAIL: Defining the hybrid truths directly rather than referencing the relocated generator tests is explicitly covered by the note context, and the remaining descriptions of truths and covariance comparisons match BEFORE.
+
+END

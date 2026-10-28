@@ -1,0 +1,28 @@
+Q1: VERDICT: SAME
+DETAIL: The detailed statements about the generator tests moved to the companion note and do not count as dropped under the context instructions, and all qualifiers kept in AFTER ("hybrid null hypotheses", "calibrated within the implemented simulation model", and "not physical exclusions of the generators") are supported by BEFORE.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported and misleading phrase "target 3 difference", whereas BEFORE only supports "a target difference".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER states something BEFORE does not support by asserting "; these are the joint cells", and drops the fact that the grid is used for the generator tests ("The generator tests use").
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER adds a claim not stated or supported in BEFORE with an ambiguous pronoun referent: "Its covariance is given in Sec. IV A."
+
+Q5: VERDICT: SAME
+DETAIL: AFTER preserves the substantive findings and checks of BEFORE, correctly resolving the antecedent of "them" to "the validation findings" after removing the cross-reference to Table I, which is permissible under the cross-reference and numbering conventions.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating "Their power exceeds that of a reconstruction-level test" (BEFORE states "We have not compared their power with that of a reconstruction-level test"), and drops the clause explaining what makes the unfolded results reusable and usable.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds a definition and concept not stated or supported in BEFORE: "That rate is the probability of falsely rejecting at least one true hypothesis among them."
+
+Q8: VERDICT: SAME
+DETAIL: AFTER matches the substantive content of BEFORE in full; omitting the figure label "FIG. 4." and updating the section cross-reference to "(§9.5)" are numbering and cross-reference differences permitted by the context instructions.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds new empirical claims not found in BEFORE ("it continues falling slowly, while the q3 residual grows with iterations") and drops both the interpretation of the residual as regularization bias and the classifier capacity study ("We interpret the residual as regularization bias because it persists over the tested iteration numbers and classifier capacities" and "while a larger classifier improves the reconstruction-level fit without reducing it").
+
+END

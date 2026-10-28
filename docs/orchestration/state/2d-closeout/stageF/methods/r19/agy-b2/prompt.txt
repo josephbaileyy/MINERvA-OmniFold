@@ -1,0 +1,23 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking proposed rewordings of passages of a physics paper, given as LaTeX source. Each numbered pair has a BEFORE passage, whose content is accepted as correct, and an AFTER passage, a proposed rewording of it. For each pair, compare AFTER with BEFORE only, and say:
+(a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+(b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+(c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds.
+
+Context, to apply to (b) only. These details were moved to the paper's companion analysis note, where they are stated, and do not count as dropped:
+- Q1: the share of bins agreeing within 10%, and "No single band carries more than 15%";
+- Q2: the sentence on which block dominates and how much the run-period block raises the median;
+- Q3: the last sentence, on the superseded bands;
+- Q4: the shape-component sentence and the integrated-uncertainty sentence;
+- Q5: the noise-free thirty-iteration result and the larger-classifier result;
+- Q6: the detailed counts of the binned diagnostic (144, 15, 121, the Cramer-Rao widths, the longer exact iteration, the non-convergence) and its out-of-scope sentence, and the table it cites;
+- Q7: the sentence on how the tested change reweights the truth, the figure reference, and the method of the diagnosis (a Gaussian fit) and its two secondary findings (the rate change recovered; the intervals not too narrow);
+- Q8: the last sentence, a pointer to an earlier covariance;
+- Q9: the generator tests have moved to the note, so the hybrid truths are now defined directly.
+The macro \nsec{...} is a pointer to the companion note. Every other omission counts.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END

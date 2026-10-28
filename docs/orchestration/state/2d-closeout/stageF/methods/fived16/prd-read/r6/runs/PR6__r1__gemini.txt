@@ -1,0 +1,13 @@
+A1: VERDICT: SHORTEN
+SHORTER-FORM: The coverage of the intervals has not been validated; a bias test at two held-out GENIE v3 truths finds the estimator's bias below the reported uncertainty in every cell.
+REASON: The concluding clause "but does not test interval widths" is redundant with the opening statement that coverage has not been validated and should be excised to maintain the conciseness expected of a PRD abstract.
+A2: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: In a companion technical note, explicitly stating that the bias test does not test interval widths is appropriate register to ensure technical readers do not conflate small estimator bias with validated interval coverage.
+H1: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The addition provides the necessary statistical metrics, modeling context, and methodological caveats with the precision and transparency expected in the fake-data section of a PRD paper.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: The revisions replace informal phrasing ("show how far the result can be trusted", "They ask") with formal, objective scientific prose suitable for a PRD introduction.
+END

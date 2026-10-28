@@ -1,0 +1,12 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking passages of a physics paper, given as LaTeX source. Each numbered pair has a BEFORE block, whose content is accepted as correct, and an AFTER passage. In Q1, BEFORE is the companion note's description of the same table and the data product's labels, and AFTER is the paper's new text and caption for that table; in Q2-Q4, BEFORE is the paper's earlier text and AFTER its rewording. For each pair, say:
+(a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+(b) whether AFTER drops any qualifier or limitation that BEFORE states (in Q1, ignore that the paper's table has one uncertainty column where the note's has three, which is intended);
+(c) whether AFTER is ambiguous in a way that could mislead a reader.
+Context: the paper's simulation-calibrated tests of generator predictions have moved to the companion note, so AFTER may call them "the note's calibrated tests" and point to the note (\nsec{...}). Section numbers differ between versions; ignore numbering.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END

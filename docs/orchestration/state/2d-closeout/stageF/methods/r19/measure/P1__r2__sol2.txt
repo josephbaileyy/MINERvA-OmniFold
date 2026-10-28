@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but repeated caveats, internal bookkeeping, and development-history narrative give several sections the register of an analysis note and warrant a dedicated language pass.
+1. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development. The comparison and its
+values are given in Ref. [14], Sec. 9.4."
+   REWRITE: We use five iterations because increasing the number to 10, 15, or 20 did not reduce the maximum residual measure across the tested truth deformations (Ref. [14], Sec. 9.4).
+2. QUOTE: "A truth is listed when
+p < 0.01 or when a cell has |z| > 2. Table II gives the
+results under the reported covariance and under Ctotal
+alone; 6 further truths are ungraded and given in the
+note."
+   REWRITE: We flag a bias when p < 0.01 or |z| > 2 in any cell. Table II reports the results using the reported covariance and Ctotal alone. Six additional truth distributions are discussed in the companion note without assessment against these criteria.
+3. QUOTE: "A candidate release package
+of about 16 MB, not yet deposited, requires only numpy,
+scipy, and matplotlib. It recomputes every p value, decision, robustness result, and power figure of the joint tests
+and the numbers quoted in Sec. V C, and it regenerates
+the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+   REWRITE: A release package of approximately 16 MB has been prepared but has not yet been deposited. It requires NumPy, SciPy, and Matplotlib and reproduces the joint tests’ p values, decisions, robustness results, and power estimates; the numerical results in Sec. V C; and the companion note’s figures showing the joint-test null distributions and the (Eavail , W ) map.

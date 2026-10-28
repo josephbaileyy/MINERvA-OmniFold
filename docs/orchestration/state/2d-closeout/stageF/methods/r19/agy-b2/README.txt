@@ -1,0 +1,5 @@
+r19 b2: agy on Sec. IV's nine content units. BEFORE = a7158e16 and AFTER = e893ead7, both as comment-stripped LaTeX (pdftotext interleaved figure text into these paragraphs). The structural sentences are covered by the GUARD rows of r19/ledger.md.
+
+- agy-control.txt (pairs-control.txt; plants "so it fails" -> "so it meets" in Q8 and "The truths are not held out" -> "The truths are held out" in Q9): both CAUGHT.
+- agy-real.txt: 8 SAME. Q6 DIFFERS: O1 had dropped "the fixed truth changes used to develop the estimator", the same finding as the review's S2. Fixed in apply_b2_fixes.py.
+- A defect of the prompt, not of agy: the context block listed O1's out-of-scope sentence ("What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope.") as moved to the note. agy therefore could not flag its deletion. The review flagged it as BLOCKING (B1), because DECISION-20261023 item 3b keeps it. It is restored verbatim and guarded by G22. Lesson: a context block that excuses omissions must be checked against the KEEP list and the standing rulings before it is sent.

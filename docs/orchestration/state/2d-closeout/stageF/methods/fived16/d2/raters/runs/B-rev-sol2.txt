@@ -1,0 +1,51 @@
+B1: CHOICE: Z
+RANKING: Z, Y, X
+STRENGTH: 2 clear
+REASON: “Interval coverage” is concise, conventional statistical terminology that works naturally in both the abstract and introduction.
+
+B2: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 2 clear
+REASON: The additional sentences give readers a concrete comparison between sensitivity to altered correlations and scatter from estimating them.
+
+B3: CHOICE: X
+RANKING: X, Y
+STRENGTH: 1 slight
+REASON: The qualification distinguishes the proposed interpretation from an established causal attribution.
+
+B4: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 2 clear
+REASON: The direct wording avoids the vague and cumbersome qualification “directly or through its pointers.”
+
+B5: CHOICE: X
+RANKING: X, Y
+STRENGTH: 2 clear
+REASON: Explicitly identifying configuration (a) prevents ambiguity in a note reporting two five-observable results.
+
+B6: CHOICE: X
+RANKING: X, Y
+STRENGTH: 2 clear
+REASON: The additional sentence gives readers a useful access reference for the numerical information needed to use the table.
+
+B7: CHOICE: X
+RANKING: X, Y
+STRENGTH: 3 strong
+REASON: X provides a concise publication-ready availability statement, whereas Y includes extensive release logistics and an editorial hold instruction.
+
+B8: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 2 clear
+REASON: The added sentence repeats the listed quantities while introducing a provisional deposit and placeholder reference.
+
+B9: CHOICE: X
+RANKING: X, Y
+STRENGTH: 1 slight
+REASON: The added sentence makes the specific dependence on the reported covariance explicit alongside the aggregate bias results.
+
+B0: CHOICE: Y
+RANKING: Y, X
+STRENGTH: 3 strong
+REASON: Y uses precise, formal measurement-paper prose instead of conversational filler and an imprecise quantity.
+
+END

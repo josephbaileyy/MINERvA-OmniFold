@@ -1,0 +1,10 @@
+A1 (paper): CHOICE: Y
+RANKING: Y, X, Z
+REASON: Y best balances the measurement, generator comparisons, a validation limitation and comparison with a published result, while X emphasizes procedural detail and Z devotes disproportionate space to validation qualifications.
+A2 (note): CHOICE: X
+RANKING: X, Y
+REASON: X offers a broader technical summary of the result, uncertainty model, generator comparisons and covariance sensitivity, whereas Y concentrates too much of its abstract on one validation distinction.
+P02: VERDICT: ACCEPT
+SHORTER-FORM: -
+REASON: NEW preserves the scope and motivation while adopting a more neutral, precise register appropriate to a PRD paper.
+END

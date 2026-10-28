@@ -1,0 +1,1229 @@
+PASSAGE note-10.0
+PRINTED TEXT:
+This section gives a five-dimensional cross-section result with total uncertainties: the data result of
+configuration (e) (§3.2) on 16 cells, R00–R15, with the reported covariance Ctotal + Cresp . It is a
+separate product from the configuration-(a) five-dimensional central value of Secs. 8 and 9 and from
+the five-axis covariance used with that central value (§9.6). Statements in those sections about that
+central value and that covariance do not describe this result, and statements here do not describe
+them. The section gives the cells and the result (§10.1), the covariance and what it is built from
+(§10.2), the fake-data tests of the estimator’s bias against the covariance (§10.3) and the comparison
+with generator predictions (§10.4).
+
+PASSAGE note-10.1
+PRINTED TEXT:
+Cells and result
+
+The cells are those of the H2 grid of §9.4 after a purity merge. H2 divides each axis once, giving
+32 boxes, with edges pT = (0, 0.7, 4.5), p∥ = (1.5, 4.5, 60), Eavail = (0, 0.8, 100), q3 = (0, 2, 100) and
+W = (0, 1.8, 100), in the units of App. B.2; 27 of them pass that appendix’s support rule. Each
+box whose purity is below τ = 0.1 is merged into a neighbour, in 12 declared steps; 4 boxes remain
+unreported, and each of the 16 resulting cells passes the support rule. Table 11 gives each cell’s box,
+its cell-integrated cross section f and its relative uncertainty.
+Table 11: The sixteen reported cells: boxes, cell-integrated cross section f in units of
+10−40 cm2 /nucleon, and per-cell relative σ (%) under Ctotal , under Cresp alone and under the
+reported Ctotal + Cresp (§10.2).
+cell
+
+pT
+
+p∥
+
+Eavail
+
+q3
+
+W
+
+f
+
+Ctotal
+
+Cresp
+
+Ctotal + Cresp
+
+R00
+R01
+R02
+R03
+R04
+R05
+R06
+R07
+R08
+R09
+R10
+R11
+R12
+R13
+R14
+R15
+
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+
+1.5–4.5
+1.5–4.5
+1.5–4.5
+1.5–4.5
+4.5–60
+4.5–60
+4.5–60
+4.5–60
+1.5–4.5
+1.5–4.5
+1.5–4.5
+1.5–4.5
+4.5–60
+4.5–60
+4.5–60
+4.5–60
+
+0–0.8
+0–100
+0.8–100
+0.8–100
+0–0.8
+0–100
+0.8–100
+0.8–100
+0–0.8
+0–100
+0.8–100
+0.8–100
+0–0.8
+0–100
+0–100
+0.8–100
+
+0–2
+2–100
+0–2
+0–2
+0–2
+2–100
+0–2
+0–2
+0–100
+0–100
+0–2
+2–100
+0–2
+2–100
+2–100
+0–2
+
+0–100
+1.8–100
+0–1.8
+1.8–100
+0–100
+1.8–100
+0–1.8
+1.8–100
+0–1.8
+1.8–100
+0–1.8
+0–1.8
+0–100
+0–1.8
+1.8–100
+0–100
+
+32.6
+36.7
+6.31
+4.30
+49.0
+9.98
+5.57
+3.21
+13.9
+39.6
+7.83
+5.61
+22.0
+9.04
+49.6
+11.3
+
+6.79
+6.69
+13.69
+12.50
+4.14
+6.49
+5.60
+7.82
+5.13
+5.84
+8.16
+13.39
+6.25
+10.87
+4.94
+7.77
+
+2.07
+2.35
+2.95
+1.85
+0.70
+3.71
+1.81
+1.55
+3.58
+2.26
+2.69
+2.85
+2.20
+2.08
+1.82
+1.64
+
+7.10
+7.10
+14.00
+12.64
+4.20
+7.47
+5.89
+7.98
+6.25
+6.26
+8.59
+13.69
+6.63
+11.07
+5.27
+7.94
+
+6.74
+
+2.14
+
+7.29
+
+median
+
+PASSAGE note-10.2
+PRINTED TEXT:
+The reported covariance
+
+The reported covariance is Ctotal + Cresp , with Ctotal = Ce + Cmodel . Ce sums the statistical bootstrap
+of configuration (e), the flux universes weighted by the neutrino–electron and inverse-muon-decay
+constraint, the interaction and detector bands, the lateral bands, the normalization and the trainingseed block. The training-seed block was measured and is zero in every cell: with full-sample binning
+and deterministic training, the unfolds at the other seeds are bitwise equal to the central one.
+Table 12 gives each group’s per-cell relative σ.
+Cmodel is built from the change in the unfolded data when the prior is reweighted to each of three
+generators, GENIE + MEC, NuWro and GiBUU: each vertex is that relative shift of the data result,
+and Cmodel is the sum of their outer products, unscaled. It is generator-shape model dependence,
+not a calibrated bound. Its coverage at truths held out of its construction has not been validated.
+GiBUU’s shape is applied only below p∥ = 10 GeV/c, above which the prior is unchanged; between
+p∥ = 6 and 10 GeV/c GiBUU’s sample lacks the part above Eν = 20 GeV, 4.9–5.3% of the cross
+section there. GiBUU’s vertex carries 0.890 of Cmodel ’s trace, NuWro’s 0.095 and GENIE + MEC’s
+0.014. In every cell, 77–100% of the prior weight lies beside a step in the reweighting ratio larger
+than 0.1 drawn by the noise gate or a cut, and the shifts enter as measured.
+Cresp is the response of configuration (e)’s data result to a one-standard-deviation scale of the
+simulation’s reconstructed recoil energy, for protons, mesons, electromagnetic deposits and other
+deposits separately, summed over the four. It does not cover neutron or muon deposits, the null
+distributions of the joint tests, the configuration-(a) products or the two-, three- and four-dimensional
+results. Its median per-cell relative σ is 2.14%, and adding it raises the total’s σ by a factor of
+1.011–1.220 (median 1.048). Of the trace of (Ctotal + Cresp )/f f T , Ctotal carries 0.9262 and the four
+response species 0.0168, 0.0436, 0.0071 and 0.0062.
+Table 12: Per-cell relative σ (%) of the covariance groups. Ce is the sum of the first six groups and
+the training-seed block (zero in every cell); Ctotal = Ce + Cmodel . The response species of Cresp are
+in the last four columns.
+cell
+
+stat. flux interaction detector lateral norm.
+
+Ce Cmodel
+
+R00
+R01
+R02
+R03
+R04
+R05
+R06
+R07
+R08
+R09
+R10
+R11
+R12
+R13
+R14
+R15
+
+0.20
+0.23
+0.33
+0.33
+0.14
+0.37
+0.33
+0.30
+0.22
+0.18
+0.25
+0.31
+0.18
+0.28
+0.16
+0.22
+
+6.77
+6.66
+7.65
+8.27
+4.05
+5.48
+4.61
+7.02
+4.86
+4.87
+7.10
+7.42
+6.23
+8.47
+4.87
+6.13
+
+3.93
+3.58
+3.75
+3.52
+3.47
+4.14
+3.48
+3.90
+3.74
+3.52
+3.42
+3.35
+3.48
+3.85
+3.73
+3.48
+
+0.98
+1.18
+3.56
+5.39
+0.58
+2.13
+2.25
+5.08
+1.52
+1.85
+5.53
+5.16
+1.95
+5.93
+1.22
+3.19
+
+1.56
+2.14
+1.96
+1.66
+1.31
+1.68
+1.21
+1.76
+2.17
+2.18
+2.42
+2.56
+1.68
+2.08
+2.14
+1.82
+
+5.01
+4.85
+5.08
+4.70
+0.57
+1.85
+0.73
+1.75
+0.77
+1.08
+0.43
+2.91
+4.25
+3.93
+1.34
+3.16
+
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+1.40
+
+median 0.24 3.55
+
+2.19
+
+1.89
+
+2.38
+
+1.40 6.45
+
+0.43
+0.67
+11.36
+9.38
+0.88
+3.46
+3.19
+3.45
+1.63
+3.24
+4.03
+11.15
+0.51
+6.81
+0.82
+4.78
+
+p meson EM other
+1.10
+0.66
+0.44
+0.29
+0.52
+1.45
+1.67
+1.45
+2.51
+0.99
+0.04
+0.13
+1.66
+0.26
+0.69
+0.90
+
+3.34 0.79
+
+1.69
+2.02
+2.27
+1.49
+0.46
+3.15
+0.42
+0.09
+2.46
+1.85
+2.31
+2.37
+1.41
+1.69
+1.54
+1.07
+
+0.39
+0.80
+1.39
+0.54
+0.09
+1.13
+0.39
+0.14
+0.56
+0.60
+0.95
+1.08
+0.33
+0.87
+0.52
+0.62
+
+0.28
+0.61
+1.18
+0.91
+0.04
+0.68
+0.42
+0.52
+0.46
+0.58
+0.98
+1.14
+0.12
+0.82
+0.45
+0.59
+
+1.69 0.58
+
+0.58
+
+The full covariance and correlation matrices are [PENDING: the declared export of Ce ,
+Cmodel , Cresp and Ctotal + Cresp with the correlation matrix and the cell boxes, from the
+5D measurement session].
+
+PASSAGE note-10.3
+PRINTED TEXT:
+Fake-data tests of the estimator’s bias
+
+The fake-data tests ask how the estimator’s bias at a truth different from the simulation compares
+with the reported covariance. Pseudo-data are generated at 12 graded truths and unfolded with
+configuration (e), and the mean unfolded result is compared with each truth on the 16 cells, through
+χ2 with 16 degrees of freedom and the per-cell pull z. The truths are the simulation’s prior; the
+five hybrid truths of the generator tests (Sec. 11), each a prediction on the fine grid; the historical
+shapes W1, W2 and W3 of §9.4; a GiBUU-to-GENIE Eavail shape; a noise-free closure at the NuWro
+shape; and a synthetic tilt of the q3 distribution at fixed (Eavail , W ). A truth from a generator
+that contributes a vertex to Cmodel is compared with the covariance without that vertex, so that no
+truth is compared with a covariance that contains its own generator’s shift. A truth is listed when
+p < 0.01, or when a cell has |z| > 2. Table 13 gives each truth under the reported covariance and,
+beside it, under Ctotal alone.
+Under the reported covariance, 3 truths are listed: the GiBUU Eavail shape, by its cell R06
+(z = 2.01); the GiBUU hybrid truth, by p and by its cells R02, R06, R07; and the q3 tilt, by p
+Table 13: Fake-data tests on the sixteen cells: χ2 (16 degrees of freedom), p and the cells with
+|z| > 2 of the bias of the mean against the reported Ctotal + Cresp , and against Ctotal alone, each
+without the truth’s own generator vertex where the second column says so (−). n is the number of
+pseudo-experiments.
+truth
+
+covariance
+
+n
+χ2
+
+simulation prior (MINERvA Tune v1)
+MINERvA Tune v1, hybrid
+GENIE CV, hybrid
+GENIE + MEC, hybrid
+GENIE + MEC, (Eavail , W ) shape (W2)
+NuWro, hybrid
+NuWro, Eavail shape (W1)
+NuWro, (pT , p∥ , Eavail ) shape (W3)
+NuWro, closure (noise-free)
+GiBUU, Eavail shape
+GiBUU, hybrid
+synthetic q3 tilt
+
+full
+full
+full
+−GENIE + MEC
+−GENIE + MEC
+−NuWro
+−NuWro
+−NuWro
+−NuWro
+−GiBUU
+−GiBUU
+full
+
+Ctotal + Cresp
+p cells
+0.00
+1.00
+0.01
+1.00
+16 16.14
+0.44
+16 14.54
+0.56
+0.57
+1.00
+16 24.92
+0.071
+5.01
+1.00
+20 30.83
+0.014
+1 11.60
+0.77
+20 25.46
+0.062
+16 175.13 8.0 × 10−29
+20 53.42 6.4 × 10−6
+
+χ2
+
+Ctotal
+p cells
+
+—
+0.00
+1.00
+—
+0.01
+1.00
+—
+17.37
+0.36
+—
+16.18
+0.44
+—
+0.77
+1.00
+—
+29.96
+0.018
+—
+5.69
+0.99
+—
+36.19
+0.0027
+—
+13.08
+0.67
+R06
+35.75
+0.0031
+R02, R06, R07 246.75
+< 10−30
+—
+59.83 5.6 × 10−7
+
+—
+—
+—
+—
+—
+—
+—
+—
+—
+R06
+R02, R06, R07
+—
+
+(p = 6.4 × 10−6 ). The reported uncertainty does not cover the fake-data bias at these GiBUU-like
+truths or at the q3 tilt. At the other 9 truths neither trigger fires.
+The counts are read by group, never pooled. Under the reported covariance, the vertex-family
+truths have 4 of 128 cells with |z| > 2 (Gaussian reference 5.82) and 1 of 8 truths with p < 0.01
+(reference 0.08); the non-vertex truths 0 of 32 and 1 of 2; and the prior truths 0 of 32 and 0 of 2.
+The references are context only, because the bias is deterministic.
+Controls 0, 1, 2, 3, 4, 5, 6, 8 passed. The offset control, which compares two hybrid truths’ offset
+corrections, failed (χ2 = 245.74 for 16 degrees of freedom). As declared, the six power alternatives
+built on that correction are therefore descriptive and ungraded, and they are not in Table 13.
+
+PASSAGE note-10.4
+PRINTED TEXT:
+Comparison with generator predictions
+
+Table 14 compares the result with five predictions through χ2 against the reported covariance
+plus each prediction’s own statistical covariance, Ctotal + Cresp + Vg , with its number of degrees of
+freedom, and through the shape-only χ2 , which frees the normalization. No diagonal-only χ2 is
+formed. GiBUU’s sample has no events above Eν = 20 GeV, so it is compared on the 8 cells below
+p∥ = 4.5 GeV/c only, and no value is formed on the other 8. The NuWro and GiBUU predictions
+are on a carbon target, with no correction to CH. MINERvA Tune v1 is the simulation’s prior, not
+an independent prediction. Each Cmodel vertex is a data shift unfolded with a prior reweighted by
+one generator’s ratio to GENIE CV, so the GENIE + MEC, NuWro and GiBUU comparisons each
+use a covariance built in part from the compared generator, and the GENIE CV comparison does
+through the ratios’ reference.
+Table 14: χ2 with its number of degrees of freedom, against Ctotal + Cresp + Vg ; shape-only χ2 beside
+it; and, for reference, χ2 against Ctotal + Vg without Cresp .
+prediction
+
+χ2 and ndf
+
+shape-only
+
+without Cresp
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+109.35/16
+272.12/16
+188.03/16
+58.46/8
+329.72/16
+
+108.51/15
+258.07/15
+188.00/15
+27.69/7
+311.19/15
+
+160.62/16
+318.26/16
+298.69/16
+68.44/8
+360.79/16
+The fake-data tests list the GiBUU-like truths under the reported covariance (§10.3), so the
+GiBUU comparison carries that limitation.
+Weakening only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 24–
+48 %. The same change to the detector or lateral correlations lowers it by at most 18 %. With the
+correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction
+keeps χ2 ≥ 45 for 16 degrees of freedom. Table 15 gives each group’s sensitivity, GiBUU’s eight-cell
+values included. These are descriptive sensitivities of the reported χ2 , not alternative results: one
+group’s correlations are shrunk toward the diagonal by a fraction α of the way, with its variances
+kept.
+Table 15: χ2 against Ctotal + Cresp + Vg with one group’s correlations shrunk by α toward the diagonal
+(α of the declared grid; the first column is the reported χ2 ). Degrees of freedom as in Table 14.
+group
+
+prediction
+
+α=0
+
+α = 0.1
+
+α = 0.25
+
+α = 0.5
+
+α=1
+
+interaction
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+109.35
+272.12
+188.03
+58.46
+329.72
+
+96.25
+245.60
+159.94
+57.59
+299.42
+
+87.15
+222.06
+141.30
+56.63
+266.01
+
+78.97
+195.79
+123.29
+55.46
+226.91
+
+72.97
+171.20
+107.83
+54.34
+183.85
+
+flux
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+109.35
+272.12
+188.03
+58.46
+329.72
+
+83.35
+158.95
+103.72
+55.00
+172.92
+
+67.47
+110.78
+76.77
+53.47
+116.47
+
+54.85
+79.17
+60.69
+55.24
+83.57
+
+46.91
+55.24
+55.08
+70.81
+67.41
+
+detector
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+109.35
+272.12
+188.03
+58.46
+329.72
+
+98.88
+235.23
+154.38
+58.01
+278.32
+
+89.55
+200.36
+130.75
+57.75
+232.10
+
+80.62
+166.28
+111.28
+58.06
+189.45
+
+71.55
+132.03
+94.11
+60.51
+149.83
+
+lateral
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+109.35
+272.12
+188.03
+58.46
+329.72
+
+92.28
+243.06
+157.72
+51.44
+299.58
+
+82.37
+220.25
+140.34
+46.36
+270.68
+
+74.86
+197.09
+124.54
+42.43
+238.99
+
+69.24
+169.99
+120.77
+39.43
+203.29
+
+the four together
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+109.35
+272.12
+188.03
+58.46
+329.72
+
+70.68
+133.31
+90.41
+50.51
+146.34
+
+55.78
+87.57
+66.48
+48.89
+93.46
+
+45.84
+61.09
+55.61
+53.32
+66.64
+
+45.47
+45.33
+69.24
+89.88
+67.59
+
+The χ2 can be decomposed along the eigenmodes of each prediction’s matrix (Table 16). The
+decomposition is a breakdown, not an alternative result; a mode is that matrix’s own, and its
+dominant block is the covariance group with the largest share of its variance. [PENDING: the
+figure of the cell-contrast modes that carry the χ2 , with each prediction’s distance along
+them, from the 5D measurement session]
+Cell R04 (pT < 0.7, p∥ ≥ 4.5, Eavail < 0.8, q3 < 2) has the smallest relative σ of the sixteen,
+4.20 %, of which flux is the largest group at 3.47 %. Under the flux block alone its correlation with
+the 7 cells that load with it in the top modes is 0.972–0.998; under the reported covariance it is
+0.40–0.81.
+Table 16: Eigenmode breakdown of the reported χ2 : the fewest modes, in χ2 order, carrying
+50/90/99 % of it, and the top mode’s share of the χ2 , its relative σ and its dominant block.
+prediction
+
+modes for 50/90/99 %
+
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+2
+2
+7
+9
+5
+10
+6
+top mode (% of χ2 )
+
+σ (%)
+
+block
+
+40.6
+45.5
+31.3
+26.8
+47.9
+
+3.15
+1.15
+0.61
+13.54
+0.97
+
+interaction
+interaction
+Vg
+flux
+interaction
+
+PASSAGE paper-Vf
+PRINTED TEXT:
+A sixteen-cell five-observable measurement
+
+A five-observable cross section with total uncertainties
+is reported separately from those reporting definitions:
+configuration (e)’s data result on 16 cells, R00–R15. They
+are the cells of the coarser joint grid of the study above
+after a purity merge: each of the 32 boxes formed by
+one interior edge per axis whose purity is below 0.1 is
+merged into a neighbour, 4 boxes remain unreported, and
+(a) with unbinned background refinement,
+refinement classifier 100 trees, 8 leaves
+0–0.1
+
+(unfolded ¡ truth)/truth (%)
+0.1–0.2
+
+0.2–0.4
+
+0.4–0.8
+
+0.8–1.5
+
+(b) joint-test estimator: as (a), with refinement
+classifier 400 trees, 31 leaves
+1.5–3
+
+¸3
+injected truth change (deformed/nominal ¡ 1)
+80
+
+residual, GiBUU/GENIE Eavail (60 exp.)
+60
+40
+20
+0
+
+−20
+
+−20
+
+−40
+
+0–0.1
+
+0.1–0.2
+
+0.2–0.4
+
+0.4–0.8
+
+0.8–1.5
+
+1.5–3
+
+¸3
+
+§ quoted total ¾ of the (Eavail ; W) projection
+NuWro Eavail (20 exp.)
+
+GENIE MEC (Eavail ; W) (20 exp.)
+NuWro (pT ; p ∥ ; Eavail ) (20 exp.)
+
+−40
+123456123456123456123456123456123456123456
+
+123456123456123456123456123456123456123456
+
+(Eavail ; W) cell: W bin 1–6 within each Eavail bin (GeV, top)
+
+(Eavail ; W) cell: W bin 1–6 within each Eavail bin (GeV, top)
+
+FIG. 3. Fractional recovery residual, (unfolded − truth)/truth, per (Eavail , W ) cell, where the truth is each pseudo-experiment’s
+deformed truth; all pseudo-experiments include backgrounds. (a) Configuration (d), with the truth reweighted by the
+GiBUU/GENIE Eavail shape ratio (60 pseudo-experiments); the grey step is the injected change of the cell truth. At nominal
+truth this configuration’s largest residual is 0.39 % (the squares of Fig. 2a). (b) Configuration (e), the joint-test estimator, for
+three shape changes not used while it was chosen (NuWro in Eavail ; GENIE + MEC in (Eavail , W ); NuWro in (pT , p∥ , Eavail )),
+20 pseudo-experiments each; the grey band is ± the total uncertainty of the (Eavail , W ) projection of the covariance of Sec. V D.
+At nominal truth (40 pseudo-experiments) its largest residual is 0.09 %. Neither seed set was held out from the estimator’s
+development. W bin 6 is W ≥ 3 GeV. Error bars are the standard error of the mean.
+68% interval, upper bound ¸ 0.66
+
+95% interval, upper bound ¸ 0.94
+
+68% interval, upper bound < 0.66
+
+95% interval, upper bound < 0.94
+
+signal rate lowered by about 10%, weak Eavail slope: upper bound below threshold for 51 (68%) and 42 (95%) of 153
+
+empirical coverage
+
+(Eavail ; W) cells 0–41 and their sum
+
+109 coarse joint cells, by index in the 3 5 grid
+
+total
+
+1.0
+0.8
+0.6
+0.4
+0.2
+0.0
+10
+30
+13
+90
+148
+222
+
+total
+
+cell index (projection cell, or coarse joint cell in the 3 5 grid), then the total
+
+FIG. 4. Empirical coverage of the 153 reported cell and projection integrals for statistical intervals corrected for the nominal-truth
+bias, from configuration (c) of Table II, with 400 pseudo-experiments, at the truth with the signal rate lowered by about 10 %
+and a weak Eavail slope (Sec. V C). At nominal truth (not drawn) none lies below the 0.66 threshold, and two lie below the 0.94
+threshold. Circles: 68% intervals; squares: 95% intervals. Bars are one-sided Clopper–Pearson lower and upper bounds, each at
+level 0.05/459, a Bonferroni correction over the 153 integrals and the three truths of the study. The third truth, a change of the
+q3 dependence at fixed (Eavail , W ), is omitted because its reweighting does not implement the intended change; the test’s verdict
+does not depend on it. Solid lines mark the nominal coverage and dashed lines the acceptance thresholds 0.66 and 0.94; filled
+markers have an upper bound below the threshold. The integrals are ordered as the (Eavail , W ) projection (cells 0–41 and their
+sum), the 109 coarse joint cells (labelled by their index in the 35 grid), and the total.
+
+every reported cell passes the study’s support rule. The
+reported covariance is Ctotal + Cresp . Ctotal sums the
+statistical, flux, interaction, detector, lateral and normalization uncertainties of configuration (e), a training-seed
+term measured to be zero, and Cmodel . Cmodel is built
+from the change in the unfolded data when the prior is
+reweighted to GENIE + MEC, NuWro and GiBUU in
+
+turn; it is generator-shape model dependence, unscaled,
+and its coverage at truths held out of its construction has
+not been validated. Cresp is the response of the result
+to a one-standard-deviation scale of the simulated recoil
+energy of protons, mesons, electromagnetic and other deposits; it does not cover neutron or muon deposits. The
+median per-cell relative uncertainty is 7.29% (6.74% with-
+out Cresp ). The note gives the cells, the central values,
+the per-group uncertainties and the covariance.
+To compare the estimator’s bias with the reported
+covariance when the truth differs from the simulation,
+we unfold pseudo-data at 12 truths and compare the
+mean unfolded result with each truth on the 16 cells
+through χ2 with 16 degrees of freedom. The truths are the
+simulation’s prior; the five hybrid truths of the generator
+tests of Sec. VII, each a prediction on the fine grid; NuWro
+shape changes in Eavail and in (pT , p∥ , Eavail ); a GENIE
++ MEC shape change in (Eavail , W ); a GiBUU-to-GENIE
+Eavail ratio; a noise-free closure at the NuWro shape; and
+a synthetic tilt of the q3 distribution at fixed (Eavail , W ).
+A truth from a generator that contributes to Cmodel is
+compared with the covariance without that generator’s
+component, so that no truth is compared with a covariance
+that includes its own model’s dependence. A truth is listed
+when p < 0.01 or when a cell has |z| > 2. Table IV gives
+the results under the reported covariance and under Ctotal
+alone.
+Under the reported covariance, the bias is listed at the
+GiBUU Eavail shape (cell R06, z = 2.01), at the GiBUU
+hybrid truth (p = 8.0 × 10−29 ; cells R02, R06, R07) and
+at the synthetic q3 tilt (p = 6.4 × 10−6 ): the reported
+uncertainty does not cover the fake-data bias at these
+GiBUU-like truths or at the q3 tilt. At the other 9 truths
+neither criterion is met.
+
+VI.
+
+PASSAGE paper-VIIb
+PRINTED TEXT:
+Comparison on the sixteen reported cells
+
+Table V compares the sixteen-cell result of Sec. V F
+with five predictions through χ2 against the reported covariance plus each prediction’s statistical covariance, with
+shape-only χ2 beside it; no diagonal-only χ2 is formed.
+[PENDING: the ratio figure, prediction over data
+on the sixteen cells, from the 5D measurement
+session] GiBUU’s sample stops at Eν = 20 GeV, so it is
+compared on the 8 cells with p∥ < 4.5 GeV/c only, where
+the fake-data tests list the GiBUU-like truths (Sec. V F).
+NuWro and GiBUU are on carbon, with no correction to
+CH, and MINERvA Tune v1 is the simulation’s prior. Because Cmodel is built from shifts toward GENIE + MEC,
+NuWro and GiBUU, those comparisons use a covariance
+built in part from the compared generator.
+Weakening only the flux correlations by 10 % lowers
+the χ2 of the 16-cell predictions by 24–48 %. The same
+change to the detector or lateral correlations lowers it by
+at most 18 %. With the correlations of the interaction,
+flux, detector and lateral groups removed, every 16-cell
+prediction keeps χ2 ≥ 45 for 16 degrees of freedom.
+
+Ctotal
+
+p cells
+
+Truth
+
+χ2
+
+p cells
+
+—
+0.00
+1.00
+—
+0.01
+1.00
+—
+17.37
+0.36
+—
+16.18
+0.44
+—
+0.77
+1.00
+—
+29.96
+0.018
+—
+5.69
+0.99
+—
+36.19
+0.0027
+—
+13.08
+0.67
+R06
+35.75
+0.0031
+R02, R06, R07 246.75
+< 10−30
+—
+59.83 5.6 × 10−7
+
+—
+—
+—
+—
+—
+—
+—
+—
+—
+R06
+R02, R06, R07
+—
+
+TABLE V. χ2 and its number of degrees of freedom of each
+prediction against the sixteen-cell result, under Ctotal + Cresp
+plus the prediction’s statistical covariance; shape-only χ2 frees
+the normalization.
+χ2 and ndf shape-only
+
+Prediction
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09
+GiBUU 2019
+MINERvA Tune v1
+
+C.
+
+109/16
+272/16
+188/16
+58/8
+330/16
+
+109/15
+258/15
+188/15
+28/7
+311/15

@@ -1,0 +1,34 @@
+Q1: VERDICT: SAME
+DETAIL: The omitted sentences describe the simulation-calibrated generator tests, which were moved to the companion analysis note and do not count as dropped under the context rules; the remaining text is identical to BEFORE.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states roadmap details for Section II ("describes the data, the simulation and the observables"), Section III ("the unfolding and the reporting cells"), Section IV, and Section VII that are unsupported by BEFORE, and it drops the fact that the generator predictions are ones "that the published muon-kinematic measurement already disfavours [13]".
+
+Q3: VERDICT: SAME
+DETAIL: The only omission is the sentence regarding the 1.05% sensitivity, which was moved to the companion analysis note and is explicitly exempted by the context rules.
+
+Q4: VERDICT: SAME
+DETAIL: The omitted details (the 1.5% clamp fraction, the "about 1 mrad" angle, and the ±2 MeV residual) were moved to the companion analysis note and are explicitly exempted by the context rules; the retained statements are otherwise identical.
+
+Q5: VERDICT: SAME
+DETAIL: The omitted sentences and the ±4 MeV figure are explicitly exempted by the context rules, the removal of the reference to the Section VI tests reflects their relocation to the note, and the remaining facts and limitations match BEFORE.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported term "The joint cells form" in place of "The generator tests use", creating ambiguity by stating that "A coarse cell is reported" and "109 pass" without making clear that this grid was the domain of the generator tests in the note rather than cross sections reported by the paper.
+
+Q7: VERDICT: SAME
+DETAIL: Attributing the simulation-calibrated tests to the companion note and omitting them from the table reflects their relocation to the note as covered by the context rules, with all substantive descriptions and table contents preserved.
+
+Q8: VERDICT: SAME
+DETAIL: The omission of the sentence motivating the route to inference is explicitly exempted by the context rules, and the preceding statement is identical to BEFORE.
+
+Q9: VERDICT: SAME
+DETAIL: AFTER preserves all facts, figures, qualifiers, and limitations from BEFORE, merely adding a subsection heading and slightly reordering two sentences without altering meaning or scope.
+
+Q10: VERDICT: SAME
+DETAIL: Omitting the mention of Table I is explicitly exempted by the context rules following the removal of the summary table, and the description of the principal result is unchanged.
+
+Q11: VERDICT: SAME
+DETAIL: AFTER rewords the passage stylistically ("assess the result through" and "examine whether") while preserving all validation studies, questions, qualifiers, and scope without introducing ambiguity or unsupported claims.
+
+END

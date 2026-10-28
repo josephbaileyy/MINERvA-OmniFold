@@ -134,10 +134,10 @@ It requires that both builds have no unresolved references and that the text con
   - `tools/holddiff.py`: a word-level diff against the normal build.
   - If that diff fails only through reflow order, `tools/multiset_check.py` must find equal word multisets.
 
-**Before blinding,** `tools/fix_da_order.py` restores the data-availability heading to reading order.
+**Before blinding,** `tools/fix_da_order.py` restores the data-availability heading to reading order. Since 2026-10-27 (case 4) it also moves a fragment of reference [1] that pdftotext emitted inside the body back to the rest of that reference, and it fails on a layout none of its cases describes.
 
 **After blinding,** the script fails if:
-- the heading or the section's last sentence is missing;
+- the heading, the section's first sentence after it, or its last sentence is missing;
 - any identifying text, `HOLD` or `??` survives.
 
 **Tests:**

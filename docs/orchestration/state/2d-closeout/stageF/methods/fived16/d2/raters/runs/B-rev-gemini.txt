@@ -1,0 +1,51 @@
+B1: CHOICE: Form Z
+RANKING: Form Z, Form Y, Form X
+STRENGTH: 2 clear
+REASON: Form Z is concise and idiomatic for PRD style, avoiding both the dangling definite article of Form Y and the awkward possessive in Form X.
+
+B2: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 2 clear
+REASON: Form Y reports the quantitative sensitivity of the χ² to correlation variations, providing necessary context to understand the bootstrap bands and resolving what would otherwise be an unexplained reference to correlation sensitivity.
+
+B3: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 2 clear
+REASON: Form Y delivers a clean, direct interpretation supported by technical evidence without the self-undermining qualification in Form X.
+
+B4: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 3 strong
+REASON: Form Y avoids the colloquial and ambiguous phrasing "directly or through its pointers," adhering to standard scientific documentation register.
+
+B5: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 3 strong
+REASON: Because the companion note reports two distinct five-observable results, Form X provides essential technical precision by specifying configuration (a), whereas Form Y is ambiguous.
+
+B6: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 2 clear
+REASON: Form X follows standard PRD practice for measurement tables by directing readers to the machine-readable repository for the full covariance matrix and cell definitions needed for quantitative comparisons.
+
+B7: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 3 strong
+REASON: Form X adheres to standard published PRD Data Availability conventions, whereas Form Y contains unedited draft placeholders and inappropriate internal release details.
+
+B8: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 2 clear
+REASON: Form Y provides a complete and definitive statement of data availability, avoiding the redundant and tentative language of future repository preparation found in Form X.
+
+B9: CHOICE: Form X
+RANKING: Form X, Form Y
+STRENGTH: 2 clear
+REASON: Including this sentence provides critical transparency regarding cell R11, directly motivating the subsequent discussion and evaluation of the C_model systematic.
+
+B0: CHOICE: Form Y
+RANKING: Form Y, Form X
+STRENGTH: 3 strong
+REASON: Form Y employs the formal, precise, and objective academic register required by Physical Review D, whereas Form X uses excessively casual colloquialisms.
+
+END

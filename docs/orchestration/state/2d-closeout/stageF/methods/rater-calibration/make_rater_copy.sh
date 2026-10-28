@@ -104,4 +104,8 @@ grep -nE 'HOLD|Bailey|Nachman|Stanford|stanford\.edu|SLAC|Dated' "${OUT%.txt}.bl
 grep -q '^DATA AVAILABILITY$' "${OUT%.txt}.blind.txt" || { echo "FAIL: blinded text lost the data-availability heading"; exit 1; }
 # last sentence of the data-availability text (Joseph's protected text, 2026-10-21); if he rewrites it, update this
 grep -q 'does not reproduce\.' "${OUT%.txt}.blind.txt" || { echo "FAIL: blinded text lost the end of the data-availability section"; exit 1; }
+# and its first sentence, which the acknowledgments cut removes if the heading lands after it (the P1 re-score of #413
+# at a55e2686 was scored on such a copy, 2026-10-27); same protected text, same update rule
+awk '/^DATA AVAILABILITY$/{h=1; next} h && /^The input data and simulation are the MINERvA open/{ok=1} END{exit !ok}' "${OUT%.txt}.blind.txt" \
+  || { echo "FAIL: blinded text lost the first sentence of the data-availability section, or it precedes its heading"; exit 1; }
 echo "wrote $OUT and ${OUT%.txt}.{normal,holddiff,blind}.txt"

@@ -1,0 +1,768 @@
+
+===== SOURCE: S1-REPORT.md (section 6, the readout) =====
+## 6. The readout, as computed
+
+Per-cell relative σ, in %, by component group. These are from `s1_assembly.json` `relative_sigma` and
+`median_relative_sigma`, rounded to 0.01.
+
+| cell | stat | flux | interaction | detector | lateral | normalization | seed | C_e | C_model | C_total |
+|---|---|---|---|---|---|---|---|---|---|---|
+| R00 | 0.20 | 3.93 | 0.98 | 1.56 | 5.01 | 1.40 | 0.00 | 6.77 | 0.43 | 6.79 |
+| R01 | 0.23 | 3.58 | 1.18 | 2.14 | 4.85 | 1.40 | 0.00 | 6.66 | 0.67 | 6.69 |
+| R02 | 0.33 | 3.75 | 3.56 | 1.96 | 5.08 | 1.40 | 0.00 | 7.65 | 11.36 | 13.69 |
+| R03 | 0.33 | 3.52 | 5.39 | 1.66 | 4.70 | 1.40 | 0.00 | 8.27 | 9.38 | 12.50 |
+| R04 | 0.14 | 3.47 | 0.58 | 1.31 | 0.57 | 1.40 | 0.00 | 4.05 | 0.88 | 4.14 |
+| R05 | 0.37 | 4.14 | 2.13 | 1.68 | 1.85 | 1.40 | 0.00 | 5.48 | 3.46 | 6.49 |
+| R06 | 0.33 | 3.48 | 2.25 | 1.21 | 0.73 | 1.40 | 0.00 | 4.61 | 3.19 | 5.60 |
+| R07 | 0.30 | 3.90 | 5.08 | 1.76 | 1.75 | 1.40 | 0.00 | 7.02 | 3.45 | 7.82 |
+| R08 | 0.22 | 3.74 | 1.52 | 2.17 | 0.77 | 1.40 | 0.00 | 4.86 | 1.63 | 5.13 |
+| R09 | 0.18 | 3.52 | 1.85 | 2.18 | 1.08 | 1.40 | 0.00 | 4.87 | 3.24 | 5.84 |
+| R10 | 0.25 | 3.42 | 5.53 | 2.42 | 0.43 | 1.40 | 0.00 | 7.10 | 4.03 | 8.16 |
+| R11 | 0.31 | 3.35 | 5.16 | 2.56 | 2.91 | 1.40 | 0.00 | 7.42 | 11.15 | 13.39 |
+| R12 | 0.18 | 3.48 | 1.95 | 1.68 | 4.25 | 1.40 | 0.00 | 6.23 | 0.51 | 6.25 |
+| R13 | 0.28 | 3.85 | 5.93 | 2.08 | 3.93 | 1.40 | 0.00 | 8.47 | 6.81 | 10.87 |
+| R14 | 0.16 | 3.73 | 1.22 | 2.14 | 1.34 | 1.40 | 0.00 | 4.87 | 0.82 | 4.94 |
+| R15 | 0.22 | 3.48 | 3.19 | 1.82 | 3.16 | 1.40 | 0.00 | 6.13 | 4.78 | 7.77 |
+| **median** | **0.24** | **3.55** | **2.19** | **1.89** | **2.38** | **1.40** | **0.00** | **6.45** | **3.34** | **6.74** |
+
+**Trace shares** of C_total (`trace_share`):
+
+| component | stat | interaction | flux | detector | lateral | normalization | seed | C_model | sum |
+|---|---|---|---|---|---|---|---|---|---|
+| trace share | 0.0010 | 0.1705 | 0.1881 | 0.0525 | 0.1406 | 0.0276 | 0.0000 | 0.4196 | 1.0000 |
+
+**Eigenvalue extremes and rank** (`eigen`; absolute, (cm²/nucleon)²):
+
+| matrix | min eigenvalue | max eigenvalue | rank at 1e-12 relative |
+|---|---|---|---|
+| C_e | 9.3509e-84 | 1.8690e-79 | 16 |
+| C_total | 1.1947e-83 | 1.8939e-79 | 16 |
+
+**What the components are** (declaration §3.1):
+- **stat** is set A's 50 bootstrap replicas.
+- **flux** is the 100 Flux universes, weighted by the ν-e + IMD constraint. `flux_weights`: sum 211.012, n_eff 19.06.
+- **interaction** and **detector** are the MAT mean-centred bands. GEANT comes from the detector dump.
+- **lateral** is the 5 lateral bands, with X01 applied to Muon_Energy_MINOS.
+- **normalization** is 1.4 %.
+- **seed** is C08 over seeds 42, 45, 48, 51 and 54 (§7).
+- C_e is the sum of the above, and C_total = C_e + C_model_abs.
+- `not_included`: "inflation D", "C_ML", "bounded envelope h", "Rvp1pi".
+- `integral`: "sum_f xsec_flat_f * vol_f (cm^2/nucleon)".
+
+**Labels, verbatim.**
+- The S1 readout carries no label strings of its own.
+- The C_model input's labels are in `cmodel_5d.json`, sha256 `3cfdc6a5…`, on pscratch and committed at
+  `nd-unfolding/pv-ladder/readouts/cmodel_5d.json`:
+  - **component:** "generator-shape model dependence; not a calibrated bound (M2, kappa = 1, unscaled)"
+  - **coverage:** "coverage at held-out truths was not validated (DECISION-20261024-joseph-5d-community-standard-route.md item 3); the paper states this as a limitation"
+    <!-- absence-ok: a verbatim label quoting cmodel_5d.json, which quotes DECISION-20261024-joseph-5d-community-standard-route.md item 3 -->
+  - **gibuu:** "GiBUU's shape is applied on p_parallel < 10 GeV/c; above it the prior is unchanged. At 6 <= p_parallel < 10 GeV/c GiBUU's sample lacks the E_nu > 20 GeV part, 4.9-5.3 % of the cross section there. The paper's joint tests use the narrower p_parallel < 6 GeV/c (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md)"
+  - **step_adjacent:** "in every reporting cell 77-100 % of the prior weight lies beside a step in r > 0.1 drawn by the noise gate or a cut, where PV-2D found the large-shift tail; the shifts go in as measured (H2-DEFINITION-DECLARATION.md §1.3, §3.4)"
+  - **positive_control:** "positive control passed on the 27 base H2 cells"
+  - **positive_control.reporting16:** "not powered: the 16 reporting cells cannot carry the declared rule (ungraded)".
+    S1's readout is on these 16 reporting cells.
+
+
+===== SOURCE: S1-DIRECTOR-RULINGS.md (section 2) =====
+## 2. The seed block: ruling
+
+**The finding** (report §7):
+- All 80 seed-block products are bitwise equal to seed 42's at the same replicas, so C_seed = 0 in every cell.
+- **D1:** the seed reaches every booster. `seed` and every seed derived from it differ between seeds, and nothing
+  else does.
+- **D2:** with one stochastic setting turned on, the fits respond to the seed. With the production settings they are
+  bitwise invariant.
+- **D3:** configuration (e) builds every fit's histogram bins from all rows (`s5c_unfold.py:57` at `d5617470`). It
+  runs with bagging and feature subsampling off, and with `deterministic` and `force_row_wise` on. s5c P1
+  (`state/s5c/p1/p1_summary.json` at `6fab459b`) had already isolated that setting on 5D:
+  - with full binning only, seeds 42 and 43 differ by a median of 1.3 × 10⁻¹³;
+  - with `deterministic` on, they are bitwise equal.
+- **D4:** the code-byte differences between set A and S1 cannot touch the fit (read from code).
+
+**Ruling:**
+1. **The seed block's zero is a measurement, not a defect.** Configuration (e)'s estimator-seed main effect on these
+   inputs is zero by construction.
+   - C_seed = 0 is kept in C_e and C_total as computed.
+   - The readout (`81e5ef3f…`) and the npz (`db000707…`) **stand**. Nothing is rerun.
+2. **Choice 9 is discharged.** The declaration added the seed block to measure an effect that had never been
+   measured for (e) in 5D. It is now measured, and found to be zero.
+   - The 1.83 CPU node-h it cost bought that measurement.
+   - The plan priced the seed block as an add-on; Joseph approved it as one. A zero result is a result.
+3. **Where the estimator's numerical variation is carried.** Set A, the C_stat set, is refit-per-replica with jitter.
+   The numerical component is absorbed there (declaration choice 6). The zero seed term therefore does not leave the
+   estimator's numerical variation uncounted.
+4. **The 2D precedent is unchanged.**
+   - 2D's `a-refined-400-31` does not set `bin_construct_sample_cnt`. Its bin sample of 200,000 rows is drawn by
+     seed, and its C08 is nonzero but small: per-bin median **0.048 %** for the refined estimator. That is `RE2-PARTC-REPORT.md:452`, whose values table carries no unit, and `docs/analysis-note/sec_results.tex:200` at `d4bc7fbe`, which prints it in percent.
+   - `S1-REPORT.md` §7 D3 says that 0.057 is "now printed". That was true before the RE-2 integration merged (PR #343). Main now prints 0.048 % (`sec_results.tex:200`, `sec_systematics.tex:173`).
+   - That this sample is *why* 2D's C08 is nonzero is an inference. It is consistent with D2, s5c P1 and
+     `next-preparation-20261009/two-d-path/REPORT.md:133-141`, but no 2D full-binning run is recorded (D3's Search
+     line). <!-- absence-ok: restates S1-REPORT.md §7 D3, whose Search line covers it -->
+   - 2D's C08 measures its own estimator's seed dependence, and it stays as adopted.
+5. **For the paper,** when Joseph takes up wording:
+   - the 5D seed main effect is stated as measured and zero, with the reason: full-sample binning and deterministic
+     training;
+   - the 2D seed term is described as arising from the estimator's seed-dependent binning sample. That causal step
+     is labelled an inference unless it is tested.
+
+===== SOURCE: CRESP-REPORT.md (header and section 6) =====
+# C_resp build report (2026-10-26, session "2d test")
+
+**Status: sensitivity variant, not adopted.** Whether C_resp joins the reported total is Joseph's decision, made from
+this readout, before Stage G runs (`DECISION-20261026-joseph-abstract-and-cresp-build.md` item 3).
+
+**What ran.** The one bound run of [`C-RESP-SPEC.md`](../C-RESP-SPEC.md) §6.2:
+- bound by [`C-RESP-BINDING.md`](../C-RESP-BINDING.md) (PR #371, main `35c46aed`);
+- on login node `login37`, 2026-10-26T07:18:19Z to 07:19:14Z, at 0 node-h;
+- once, with no retries, no Slurm job and nothing written to CFS.
+
+**Outcome:**
+- **The build completed.** Both test modules passed in the clone, and every refusal and check in the spec's §5 held.
+- **The npz:** `/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz`, sha256
+  `4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a`, 12,952 bytes. It stays on pscratch.
+- **The readout:** [`cresp.json`](cresp.json), sha256 `19bb2ee12827207fa346242ac901af48f6c80785eff5a14ff54133dff1ea01f0`,
+  byte-identical to the file on pscratch.
+- **Median per-cell relative σ over R00–R15:**
+  - C_resp 2.14 %;
+  - C_total 6.74 %, which is S1's;
+  - C_total_resp 7.29 %.
+
+**CITABLE FOR:** the size, rank and trace share of C_resp and its species blocks on R00–R15, and C_total_resp's σ beside
+C_total's.
+
+**NOT CITABLE FOR:**
+- adoption of C_resp into the reported total;
+- any data-against-generator quantity. None was computed.
+- coverage, or any claim.
+<!-- absence-ok: a statement about this session's own run: the argv is the spec's §6.2 (receipts/run.sh), whose only computation is build_cresp.py, which reads no generator prediction -->
+
+## 6. What C_resp covers, and what it does not
+
+This is unchanged from [`C-RESP-SPEC.md`](../C-RESP-SPEC.md) §7.
+
+**Covers:** configuration (e)'s 5D result on R00–R15, as unfolded from the data, under a ±1σ scale of the simulation's
+reconstructed recoil energy, for proton, meson, EM and other at D1's sizes.
+
+**Does not cover:**
+- the joint tests' null distributions (MP1-A-full);
+- neutron and muon deposits;
+- configuration (a)'s products;
+- the 3D, 4D and 2D results.
+
+## 7. Next, by the decision's order
+
+===== SOURCE: cmodel_5d.json (labels) =====
+{
+ "component": "generator-shape model dependence; not a calibrated bound (M2, kappa = 1, unscaled)",
+ "coverage": "coverage at held-out truths was not validated (DECISION-20261024-joseph-5d-community-standard-route.md item 3); the paper states this as a limitation",
+ "gibuu": "GiBUU's shape is applied on p_parallel < 10 GeV/c; above it the prior is unchanged. At 6 <= p_parallel < 10 GeV/c GiBUU's sample lacks the E_nu > 20 GeV part, 4.9-5.3 % of the cross section there. The paper's joint tests use the narrower p_parallel < 6 GeV/c (H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md)",
+ "step_adjacent": "in every reporting cell 77-100 % of the prior weight lies beside a step in r > 0.1 drawn by the noise gate or a cut, where PV-2D found the large-shift tail; the shifts go in as measured (H2-DEFINITION-DECLARATION.md \u00a71.3, \u00a73.4)",
+ "positive_control": "positive control passed on the 27 base H2 cells"
+}
+trace_share_by_vertex {'genie_mec': 0.014122380351084684, 'nuwro': 0.09547322826327943, 'gibuu': 0.8904043913856358}
+
+===== SOURCE: H2 definition and stage-1 receipt (counts) =====
+stage1_inspect mc.H2: n_cells 32 n_reported 27
+h2_definition: tau 0.1 merge steps 12 unreported_boxes [[2], [6], [10], [14]] n_reporting_cells 16
+support rule (App. B.2 of the note): expected reconstructed signal and selected truth weight at data exposure both at least 1000
+R00 {'pt': [0.0, 0.7], 'pz': [1.5, 4.5], 'eavail': [0.0, 0.8], 'q3': [0.0, 2.0], 'W': [0.0, 100.0]}
+R01 {'pt': [0.0, 0.7], 'pz': [1.5, 4.5], 'eavail': [0.0, 100.0], 'q3': [2.0, 100.0], 'W': [1.8, 100.0]}
+R02 {'pt': [0.0, 0.7], 'pz': [1.5, 4.5], 'eavail': [0.8, 100.0], 'q3': [0.0, 2.0], 'W': [0.0, 1.8]}
+R03 {'pt': [0.0, 0.7], 'pz': [1.5, 4.5], 'eavail': [0.8, 100.0], 'q3': [0.0, 2.0], 'W': [1.8, 100.0]}
+R04 {'pt': [0.0, 0.7], 'pz': [4.5, 60.0], 'eavail': [0.0, 0.8], 'q3': [0.0, 2.0], 'W': [0.0, 100.0]}
+R05 {'pt': [0.0, 0.7], 'pz': [4.5, 60.0], 'eavail': [0.0, 100.0], 'q3': [2.0, 100.0], 'W': [1.8, 100.0]}
+R06 {'pt': [0.0, 0.7], 'pz': [4.5, 60.0], 'eavail': [0.8, 100.0], 'q3': [0.0, 2.0], 'W': [0.0, 1.8]}
+R07 {'pt': [0.0, 0.7], 'pz': [4.5, 60.0], 'eavail': [0.8, 100.0], 'q3': [0.0, 2.0], 'W': [1.8, 100.0]}
+R08 {'pt': [0.7, 4.5], 'pz': [1.5, 4.5], 'eavail': [0.0, 0.8], 'q3': [0.0, 100.0], 'W': [0.0, 1.8]}
+R09 {'pt': [0.7, 4.5], 'pz': [1.5, 4.5], 'eavail': [0.0, 100.0], 'q3': [0.0, 100.0], 'W': [1.8, 100.0]}
+R10 {'pt': [0.7, 4.5], 'pz': [1.5, 4.5], 'eavail': [0.8, 100.0], 'q3': [0.0, 2.0], 'W': [0.0, 1.8]}
+R11 {'pt': [0.7, 4.5], 'pz': [1.5, 4.5], 'eavail': [0.8, 100.0], 'q3': [2.0, 100.0], 'W': [0.0, 1.8]}
+R12 {'pt': [0.7, 4.5], 'pz': [4.5, 60.0], 'eavail': [0.0, 0.8], 'q3': [0.0, 2.0], 'W': [0.0, 100.0]}
+R13 {'pt': [0.7, 4.5], 'pz': [4.5, 60.0], 'eavail': [0.0, 100.0], 'q3': [2.0, 100.0], 'W': [0.0, 1.8]}
+R14 {'pt': [0.7, 4.5], 'pz': [4.5, 60.0], 'eavail': [0.0, 100.0], 'q3': [2.0, 100.0], 'W': [1.8, 100.0]}
+R15 {'pt': [0.7, 4.5], 'pz': [4.5, 60.0], 'eavail': [0.8, 100.0], 'q3': [0.0, 2.0], 'W': [0.0, 100.0]}
+
+===== SOURCE: FD-F0-REPORT.md (section 0) =====
+## 0. Summary
+
+- **Cost:** 0 node-h. Both steps ran on login37, with no Slurm job. Nothing went to CFS.
+- **The HPSS copy** of the 80 `f4` products passed in 5 s, with hashverify and a retrieval check (§2).
+- **The re-grade** exited 0 in 44 s (§3).
+  - Controls 0–6 and 8 passed.
+  - **Control 7, the offset control, failed:** χ²_16 = 245.74, with p below 10⁻³⁰. As declared and bound, row 6 (P1r,
+    P2r, P3r, P1g, P2g, P3g) is therefore **descriptive and ungraded**. The graded set is 12 truths and 192 cells.
+- **Triggers** (ruling 2: |z| > 2 per cell, p < 0.01 per truth, against the grade matrix), by group:
+
+  | group | truths | cells \|z\| > 2 | Gaussian ref. | truths p < 0.01 | Gaussian ref. |
+  |---|---:|---:|---:|---:|---:|
+  | vertex-family | 8 | 4 of 128 | 5.82 | 3 of 8 | 0.08 |
+  | — NuWro | 4 | 0 of 64 | 2.91 | 1 of 4 | 0.04 |
+  | — GENIE MEC | 2 | 0 of 32 | 1.46 | 0 of 2 | 0.02 |
+  | — GiBUU | 2 | 4 of 32 | 1.46 | 2 of 2 | 0.02 |
+  | non-vertex | 2 | 0 of 32 | 1.46 | 1 of 2 | 0.02 |
+  | prior | 2 | 0 of 32 | 1.46 | 0 of 2 | 0.02 |
+  | all graded: ruling 2's denominator line, "read by group, never pooled". It reads 192 and 12, not 288 and 18, because control 7 failed (declaration §7 item 5) | 12 | 4 of 192 | 8.74 | 4 of 12 | 0.12 |
+
+  - The Gaussian references are context only, because b is a deterministic bias.
+  - The per-family references are computed here, not read from the readout: 16 × truths × 0.0455, and truths ×
+    0.01.
+- **The truths listed by the triggers:**
+  - W3, by p;
+  - q3, by p;
+  - Stage 0c GiBUU, by p and cell R06;
+  - A7 GiBUU, by p and cells R02, R06 and R07.
+
+
+===== SOURCE: FD-F0b-REPORT.md (header and sections 2-6) =====
+# REPORT F0b: F0's re-grade against C^(T) + C_resp, and the HPSS copy of cresp.npz (2026-10-26)
+
+**By** the measurement session.
+
+**Under** [`FD-F0b-AND-G-BINDING.md`](FD-F0b-AND-G-BINDING.md) (PR #376, main `659363d5`), which binds
+[`FD-F0b-DECLARATION.md`](FD-F0b-DECLARATION.md) §§2.1–2.3 at deploy pin `c4396756`.
+
+**MEASURES:** the (e) estimator's fake-data bias at F0's 18 truths on R00–R15, graded against C^(T) + C_resp, beside
+F0's grades against C^(T); and the HPSS copy of `cresp.npz`.
+
+**CANNOT AUTHORIZE:** Stage G's run, which the binding orders after this report is merged; any reading of these
+numbers; a claim, printed wording, or a conclusion on limitations or publishability, which are Joseph's.
+
+**CITABLE FOR:** the counts, χ² and p below, each beside its matrix; the equality of control 7 and the model-only
+grades with F0's; and the HPSS copy's verification.
+
+**NOT CITABLE FOR:**
+- any data-against-generator quantity, since F0b reads only fake-data products;
+- coverage, held-out truths or the detector response, exactly as for F0 (`FD-F0-REPORT.md`);
+- any reading of the difference between the two columns.
+
+**Outcome:**
+- **The order was kept,** with every step exiting 0 on login37 at 0 node-h. No step names a CFS path:
+  1. deploy and tests;
+  2. the HPSS copy;
+  3. the re-grade.
+- **HPSS:** PASS by hashverify and by retrieval. The tar is `8d791bed…`, 20,480 B, at
+  `/home/j/josephrb/mnv-5d-cresp-20261026`.
+- **The re-grade:** exit 0 in 70 s. The readout is `b9db935a…`, and the per-experiment table is `7384c651…`,
+  byte-identical to F0's table.
+- **The binding's §2 item 3 condition holds** (§3): control 7's χ²₁₆ and all 18 model-only grades equal F0's
+  committed readout exactly.
+- **Control 7 failed again,** as expected and as in F0. Row 6 is descriptive and ungraded.
+
+## 2. Controls
+
+| control | outcome |
+|---|---|
+| 0 | PASS: the 80 `f4` products match their D16 sha256 |
+| 1 | PASS: 8,545 products and **9** records match, the ninth being `cresp.npz` against `--extra-block-sha256` |
+| 2, 3 | PASS, as in F0 |
+| 4 | PASS on all 23 checks: F0's 19, and for C_resp a finite 16 × 16 matrix, symmetric, PSD, and C_total + C_resp positive definite |
+| 5 | PASS: the closure bias equals `cmodel_5d.json` |
+| 6 | PASS: the closure floor max |bias| is 3.217964e-05, the recorded value |
+| 7 | **FAIL, as in F0:** χ²₁₆ = 245.742, p below 10⁻³⁰. As declared, it gates row 6 only, so row 6 is descriptive and ungraded |
+| 8 | PASS: every truth integral is positive on all 16 cells |
+
+## 3. The binding's §2 item 3 condition: equality with F0, to a relative 10⁻¹²
+
+This was checked by [`receipts-f0b/summarize_f0b.py`](fd/receipts-f0b/summarize_f0b.py) against the committed
+`fd/readout/fd_f0_readout.json`. Its output is [`receipts-f0b/summary.txt`](fd/receipts-f0b/summary.txt).
+
+| quantity | F0 | F0b | equal |
+|---|---|---|---|
+| control 7 χ²₁₆ | 245.7422835730337 | 245.7422835730337 | yes, exactly; the whole `controls` record is identical |
+| model-only grades (χ², z, p), 18 truths | — | — | 18 of 18 equal; all 18 records identical |
+| bias, noise σ, B_eff, graded, per truth | — | — | identical for all 18 |
+| per-experiment table | `7384c651…` | `7384c651…` | byte-identical |
+
+**The condition holds, so Stage G is not held by it.**
+
+## 4. Trigger counts by group (FD-F0b §7 item 4)
+
+The denominators and Gaussian references are F0's. The counts are read by group, never pooled (ruling 2).
+
+| group | cells \|z\| > 2, against C^(T) (F0) | against C^(T) + C_resp (F0b) | Gaussian ref | truths p < 0.01, against C^(T) (F0) | against C^(T) + C_resp (F0b) | ref |
+|---|---:|---:|---:|---:|---:|---:|
+| vertex-family | 4 of 128 | 4 of 128 | 5.82 | 3 of 8 | 1 of 8 | 0.08 |
+| non-vertex | 0 of 32 | 0 of 32 | 1.46 | 1 of 2 | 1 of 2 | 0.02 |
+| prior | 0 of 32 | 0 of 32 | 1.46 | 0 of 2 | 0 of 2 | 0.02 |
+| denominators | 4 of 192 | 4 of 192 | 8.74 | 4 of 12 | 2 of 12 | 0.12 |
+
+**By vertex family:**
+- NuWro (4 truths): 0 and 0 cells; p < 0.01 in 1 truth (F0) and 0 (F0b).
+- GENIE+MEC (2): 0 and 0 cells; 0 and 0 truths.
+- GiBUU (2): 4 and 4 cells; 2 and 1 truths.
+
+## 5. Listed truths
+
+A truth is listed if it has a cell with |z| > 2 or p < 0.01 against its grade matrix.
+
+| truth | F0, against C^(T): cells \|z\| > 2; p < 0.01 | F0b, against C^(T) + C_resp |
+|---|---|---|
+| W3 | none; yes | **not listed** (p 0.0141) |
+| q3 | none; yes | none; yes |
+| Stage 0c GiBUU | R06; yes | R06; **no** (p 0.0621) |
+| A7 GiBUU | R02, R06, R07; yes | R02, R06, R07; yes |
+
+**Truths whose listing changes between F0 and F0b:**
+- **W3** is listed in F0 and not in F0b.
+- **Stage 0c GiBUU** is listed in both. Its p < 0.01 entry is yes in F0 and no in F0b, and its cell R06 is in both.
+- No truth is listed in F0b only.
+
+## 6. Per truth: χ² / p
+
+ndf is 16, and 8 for the eight-cell variant. "<1e-30" marks `p_below_floor`.
+- **The F0 column's matrices:** the grade is against C^(T); the in-sample matrix is C_total with every vertex; the
+  sensitivity matrix leaves out the declared vertex; the eight-cell matrix is the grade matrix on R00–R03, R08–R11.
+- **The F0b column's matrices** are the same, each + C_resp.
+- **The model-only matrix,** C_stat + C_model with the own vertex left out, is the same in both, and so is its χ².
+- Rows 6 (P1r–P3g) are **ungraded and descriptive** in both, since control 7 failed.
+
+| truth | row | group | grade, F0 | grade, F0b | in-sample, F0 | in-sample, F0b | sensitivity, F0 | sensitivity, F0b | model-only (both) | 8-cell, F0 | 8-cell, F0b |
+|---|---:|---|---|---|---|---|---|---|---|---|---|
+| nominal | 1 | prior | 0.00 / 1 | 0.00 / 1 | – | – | – | – | 0.39 / 1 | – | – |
+| W1 | 1 | vertex-family | 5.69 / 0.991 | 5.01 / 0.996 | 5.69 / 0.991 | 4.99 / 0.996 | – | – | 1647.66 / <1e-30 | – | – |
+| W2 | 1 | vertex-family | 0.77 / 1 | 0.57 / 1 | 0.42 / 1 | 0.35 / 1 | – | – | 117.49 / 1.66e-17 | – | – |
+| W3 | 1 | vertex-family | 36.19 / 0.00273 | 30.83 / 0.0141 | 34.82 / 0.00421 | 28.82 / 0.0252 | – | – | 5552.98 / <1e-30 | – | – |
+| q3 | 1 | non-vertex | 59.83 / 5.59e-07 | 53.42 / 6.44e-06 | – | – | 61.24 / 3.23e-07 | 54.57 / 4.18e-06 | 11642.59 / <1e-30 | – | – |
+| Stage 0c GiBUU | 2 | vertex-family | 35.75 / 0.00313 | 25.46 / 0.0621 | 29.30 / 0.022 | 23.05 / 0.113 | – | – | 7990.52 / <1e-30 | 20.93 / 0.00734 | 12.42 / 0.133 |
+| closure NuWro | 3 | vertex-family | 13.08 / 0.667 | 11.60 / 0.771 | 13.03 / 0.671 | 11.59 / 0.772 | – | – | 2890.73 / <1e-30 | – | – |
+| A7 MnvTune | 4 | prior | 0.01 / 1 | 0.01 / 1 | – | – | – | – | 0.20 / 1 | – | – |
+| A7 GENIE CV | 4 | non-vertex | 17.37 / 0.362 | 16.14 / 0.443 | – | – | 18.29 / 0.307 | 17.04 / 0.383 | 1794.19 / <1e-30 | – | – |
+| A7 GENIE+MEC | 4 | vertex-family | 16.18 / 0.44 | 14.54 / 0.558 | 11.86 / 0.753 | 11.00 / 0.809 | – | – | 1006.75 / <1e-30 | – | – |
+| A7 NuWro | 4 | vertex-family | 29.96 / 0.0182 | 24.92 / 0.0713 | 29.23 / 0.0224 | 24.78 / 0.0738 | – | – | 3028.41 / <1e-30 | – | – |
+| A7 GiBUU | 4 | vertex-family | 246.75 / <1e-30 | 175.13 / 7.96e-29 | 180.99 / 5.32e-30 | 142.62 / 2.21e-22 | – | – | 24824.55 / <1e-30 | 197.77 / <1e-30 | 133.91 / 4.38e-25 |
+| P1r | 6 | vertex-family | 50.64 / 1.81e-05 | 44.55 / 0.000163 | 47.43 / 5.84e-05 | 39.68 / 0.000866 | – | – | 1686.44 / <1e-30 | – | – |
+| P2r | 6 | vertex-family | 40.73 / 0.000609 | 37.04 / 0.00207 | 31.34 / 0.0122 | 29.55 / 0.0205 | – | – | 4309.11 / <1e-30 | – | – |
+| P3r | 6 | vertex-family | 2.96 / 1 | 2.50 / 1 | 2.66 / 1 | 2.15 / 1 | – | – | 69.81 / 1.08e-08 | – | – |
+| P1g | 6 | vertex-family | 85.50 / 1.67e-11 | 82.48 / 5.93e-11 | 80.27 / 1.49e-10 | 77.57 / 4.55e-10 | – | – | 2988.64 / <1e-30 | – | – |
+| P2g | 6 | vertex-family | 39.38 / 0.000959 | 37.97 / 0.00153 | 32.74 / 0.008 | 31.86 / 0.0104 | – | – | 5171.70 / <1e-30 | – | – |
+| P3g | 6 | vertex-family | 24.83 / 0.0728 | 23.25 / 0.107 | 22.63 / 0.124 | 21.31 / 0.167 | – | – | 1174.19 / <1e-30 | – | – |
+
+**The matrix names in the F0b readout** are "C_total + C_resp", or "C_total minus genie_mec / nuwro / gibuu + C_resp".
+The sensitivity matrices are "C_total minus nuwro + C_resp" (q3) and "C_total minus genie_mec + C_resp" (A7 GENIE CV).
+
+Each model-only record carries F0's label: descriptive, with no threshold, and without the interaction, flux,
+detector, lateral and normalization blocks (`MODEL_ONLY_LABEL`).
+
+
+===== SOURCE: FD-PLAN.md (section 1 truths) =====
+  "deterministic" with `code_sha256.candidate` "R" and the 400/31 override. Their estimator and refinement parameters
+  as built are S1's. The F0 meta check accepts both labels and compares the parameters.
+- **Half A:** "half MC" means the products unfold with MC half A at weight × 2 and draw pseudo-data from half B
+  (`nd-unfolding/s5p_nullexp.py:4-6`, which is `s5n_pseudo.build_pseudo`). The data result unfolds with all of the MC.
+
+| # | item | truth | prior | graded before on | configuration as run | products, sha256 | proposed use in F0 |
+|---|---|---|---|---|---|---|---|
+| 1 | **Stage 0 / s5e assessment** (`state/s5e/contract-amendment-3-candidate-R-and-assessment.json`, `assessment`) | <ul><li>nominal (40, seeds 800000–800039);</li><li>W1, NuWro/GENIE E_avail (20, 803000–);</li><li>W2, GENIE MEC/CV (E_avail, W) (20, 804000–);</li><li>W3, NuWro/GENIE (p_T, p_∥, E_avail), with 300 empty cells at ratio 1 and 36 clipped (20, 805000–);</li><li>**q3**, `q3_given_eavail_w` at a = 0.3: a synthetic within-(E_avail, W) tilt that keeps that marginal (`nd-unfolding/s5c_pseudo.py:55-63`) (20, 802000–).</li></ul> The W ratios come from the 3D-study samples (`3d-unfolding/genie/*_xsec3d.root`, `*_eavailW.root`; `state/s5e/w2-…json`, `w3-…json`, `state/s5n/eavail-ratio-nuwro-over-genie.json`), which predate the flux fix (`KNOWN_ISSUES` 83) | Tune v1 (MC CV) | J and **H2's 27 base cells** (Stage 0 0a and 0b; EW reported) | R, half A; Poisson pseudo-data with background and refinement; no nuisance draws (meta: `no_background` False, refinement ran) | `$P/s5e-20260925/runs/cand/assess/{nominal,W1,W2,W3,q3}/`, 120 files, 22,072,674 B; each in `5d-design-20261023/stage0/INVENTORY.sha256` (checked at Stage 0 C1). W1 s803000 `03fc8dc9…` and q3 s802000 `9ad0cdc0…` re-measured equal | **graded** |
+| 2 | **Stage 0c GiBUU** | GiBUU/GENIE E_avail shape at a = 1, ratio `c001dce8…`: GiBUU `gen5d/gibuu_cv_xsec5d.npz` `b183fcca…`, which was not rebuilt, over the repaired GENIE `cfa42210…` (`STAGE0-PARTA-DECLARATION.md` §3). Seeds 801000–801019 | Tune v1 | J and the 27 base H2 cells; c_F GiBUU **0.259** on H2 (`STAGE0-REPORT.md` §2) | as row 1 | `$P/5d-stage0-20261023/runs/new_gibuu/`, 20 files, 3,677,768 B, in `stage0/receipts-A/products.sha256`; also tracked in `receipts-A/`. s801000 `dd5805f5…` re-measured equal | **graded.** s5e's 801000–801019 under the superseded ratio (`assess/eavail_gibuu/`, contaminated per `KNOWN_ISSUES` 83) are not used |
+| 3 | **L-5D-PV closure at NuWro** | `w_truth` × r_NuWro: the full-5D NuWro/GENIE-CV shape, gated and k-normalized. It is **the same r as the NuWro vertex** (`pv-ladder/DECLARATION.md` §2.2, §3.2) | Tune v1 | the PC on the **27 base cells**: PASS, n 21, corr 0.790, slope 0.683, with thin margins. The **16-cell readout is NOT_POWERED** (n 9). The leave-own-vertex-out C_model reach is 17 of 21 PC cells (`BUILD-REPORT.md` §3) | (e) with **all** of the MC; noise-free and signal-only. The pseudo-data are the MC's own signal reco rows: no Poisson, no background, and **the refinement does not run** (meta: "no negative weights (signal-only reference)") | `$P/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz` `fff9030e…`; floor `…closure_tune_v1.npz` `eb3e2188…` (both re-measured) | **graded.** Its 16-cell bias is already printed (`cmodel_5d.json`, `positive_control.reporting16.bias_cells`); no grade against C_total exists. The floor is a control |
+| 4 | **A7 truths, expectation mode** (`state/s5p/s3r-f4-tasks.tsv`, `s3r-f4b-tasks.tsv`, `s3v-f4-tasks.tsv`; the D pairs of A7 condition 4, summarized in `state/s5p/stage3/f4/D16-<truth>.json`) | the five A7 truths of row 5, with the same hypothesis files (meta `hypothesis.sha256` `ceea00e7`, `8c37f545`, `9033c952`, `9297a698`, `0080495c`) | Tune v1 | used for the MC-size shift D, never graded as bias | R, half A; **expectation**, so no Poisson and no nuisance draws (meta `development` {expectation: true, mc_fraction: half}). 16 split seeds 970000–970015 per truth | `$P/s5p-20260926/runs/s3r/f4/<truth>_half/`, 80 files, 14,738,583 B. Each file's sha256 is recorded in `state/s5p/stage3/f4/D16-<truth>.json` (`inputs[].a_sha256`); all 80 were re-measured equal (review, 2026-10-25). **They are not on HPSS**: F0 control 0 checks and archives them | **graded: the bias at the five A7 truths.** The `_quarter` set (80) measures MC size and is not used |
+| 5 | **A7 calibration truths** (`state/s5p/contract-amendment-7-production-admission.json`; `RECORD-20261005-s5p-joint-5d-inference-result.md`) | MnvTune v1 (1,365, ρ = 1); **GENIE 2.12.10 CV** (1,366); GENIE MEC (1,343); NuWro 21.09 (1,751); GiBUU 2019 (1,351). Each is a hybrid: G's fine-grid shape and rate on all 109 supported J cells, p_∥ ≥ 6 included, and MnvTune v1 elsewhere (`state/s5p/ratios/nullsF/null-*-F.json`, numerators `cfa42210…`, `c179855d…`, `475a2871…`, `48917692…`, over `bf7bd278…`) | Tune v1 | J only, through the joint test's T statistic; GiBUU on the 72 J cells with p_∥ < 6. **Never on H2** | R, half A; Poisson with background and refinement, plus **nuisance draws** on the pseudo-data source: one flux universe of 100, uniform; every model band at one universe, **Rvp1pi included**, with the truth kept fixed in every fine cell; 4 detector bands at ±1. Lateral and normalization z are recorded but not applied to `xsec_flat` (`s5p_nullexp.py:13-30`) | `$P/s5p-20260926/runs/prod/cal/<truth>/`; every file in `state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt` (7,176 entries). Two re-measured equal: `4e766288…` (MnvTune s1200000) and `152616be…` (GENIE CV s1220000). HPSS `s5p-archive-20261006.tar`, 2,324,167,680 B (`state/2d-closeout/preservation-20261014/outputs/hsi_ls_lR.txt:204`) | **the offset control only** (§3.1). Not graded as bias |
+| 6 | **A7 power alternatives** (amendment 7, `power`) | P1r = W3 (the NuWro 3D shape), P2r = D5 (NuWro q3 \| (E_avail, W)), P3r = W2 (the GENIE MEC (E_avail, W) shape), each at a = 1 and rebuilt from the repaired predictions. They sit on the MnvTune truth (193 / 195 / 195) and on the GENIE CV truth (P1g 199, P2g 193, P3g 172) (`state/s5p/ratios/altR/`) | Tune v1 | J only (power, context) | as row 5 | `$P/s5p-20260926/runs/prod/pow/`; 1,147 entries in the same SHA256SUMS | **graded after the offset correction** (§3.1), or descriptive if its control fails |
+| 7 | other (A7 subsets listed by the review, then re-counted) | <ul><li>A7 lost-seed reruns, `recovery/recovery/{cal,pow}` (224, 53), plus `recovery/determinism`;</li><li>Stage 2 numerics `runs/s2/num/{c1,c2,c3,c4,nom,gibuu}` (160, 100, 40, 41, 101, 101);</li><li>the `s3v`/`s3r` pilots;</li><li>s5e `assess/a3` (4) and `dev/{k1_R,k1_B0,k2,k3,k4,sigma}`;</li><li>the Stage 0 vertex products `prior_R5fix_*`, which are real-data unfolds;</li><li>the L-EW / L-3D / L-4D closures;</li><li>the MP-2 full-event reweights (`phase1/mp2/S2-CLOSURE-SUMMARY.md`: no generator was established).</li></ul> | — | — | — | — | **not used.** <ul><li>The recovery set is report-only (`RECORD-20261006-s5p-lost-seed-recovery-resolution.md`), and rows 5–6 use the recorded B.</li><li>c1–c4, nom and gibuu are numerics studies: replicas of one draw, or nominal ensembles that rows 1 and 4 already cover.</li><li>Pilots and development runs repeat the same truths.</li><li>k1_B0 is not (e).</li><li>`prior_R5fix_*` are data, not fake data.</li><li>The other rungs are not (e) on 5D, and MP-2 is not established.</li></ul> |
+
+**What a re-grade reads, besides the products:**
+
+===== SOURCE: FD-G-REPORT.md (header, section 2, section 6) =====
+# REPORT G: the data result on the 16 H2 cells against five generator predictions, C_resp adopted (2026-10-26)
+
+**By** the measurement session.
+
+**Under** [`FD-F0b-AND-G-BINDING.md`](FD-F0b-AND-G-BINDING.md) (PR #376) §3 and §4 item 5. That binding binds
+[`FD-G-DECLARATION.md`](FD-G-DECLARATION.md) as amended (amendment 1) at deploy pin `c4396756`. It runs after F0b's
+report, PR #377, merged on main as `5bb5e179`.
+
+**MEASURES:** for each of the five predictions:
+- the total and shape-only χ², ndf and p of configuration (e)'s data result f on R00–R15;
+- the per-cell pulls, g/f − 1 and σ/f;
+- the reported comparison, against C_total + C_resp + V_g, and the variant without C_resp, against C_total + V_g.
+
+**CANNOT AUTHORIZE:** any reading of these numbers, a claim, printed wording, or a conclusion on the generators or on
+publishability. All of these are Joseph's.
+
+**CITABLE FOR:** the numbers below, each beside its matrix's name, size and rank, as `fd/readout/fd_g_readout.json`
+holds them.
+
+**NOT CITABLE FOR:**
+- any interpretation;
+- any 16-cell GiBUU quantity, since none was formed;
+- anything about targets other than CH, since NuWro and GiBUU are on C12 with no correction applied.
+
+**Outcome:**
+- **Both steps exited 0** on login37 at 0 node-h.
+  - **The deploy:** "Ran 49 tests … OK".
+  - **The comparison:** it took about 1 s, and controls G0–G4 passed.
+- **The readout** is `75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee`, schema `fd-g-readout/2`.
+- **Binding §3 item 3:** the run without an extra block was not made. The variant record carries C_total + V_g.
+
+## 2. χ² by prediction
+
+There is no reading of these numbers.
+- **The reported comparison** is against C_total + C_resp + V_g. The **variant without C_resp** is against
+  C_total + V_g.
+- **The shape-only form** adds 100 f fᵀ, a free normalization along f with ndf n − 1. The readout prints its
+  mode-direction note beside each one: a mode along g would differ, by 2.4 % on 16 cells and 7 % on 8 cells, in
+  review A's synthetic check.
+- **GiBUU** is on the eight p_∥ < 4.5 cells only.
+- **Matrix names are shortened here:** the readout's strings also carry "(free normalization)" on the shape-only
+  matrix and write fᵀ as `f^T`. Prediction names are shown in words (GENIE CV for `genie_cv`, and so on).
+
+| prediction | cells | comparison | statistic | χ² | ndf | p | matrix | size | rank |
+|---|---:|---|---|---:|---:|---:|---|---|---:|
+| GENIE CV | 16 | reported | total | 109.35 | 16 | 5.95e-16 | C_total + C_resp + V_g | 16×16 | 16 |
+| GENIE CV | 16 | reported | shape-only | 108.51 | 15 | 3.12e-16 | C_total + C_resp + V_g + 100 f fᵀ | 16×16 | 16 |
+| GENIE CV | 16 | without C_resp | total | 160.62 | 16 | 6.19e-26 | C_total + V_g | 16×16 | 16 |
+| GENIE CV | 16 | without C_resp | shape-only | 158.70 | 15 | 4.46e-26 | C_total + V_g + 100 f fᵀ | 16×16 | 16 |
+| GENIE+MEC | 16 | reported | total | 272.12 | 16 | 1.47e-48 | C_total + C_resp + V_g | 16×16 | 16 |
+| GENIE+MEC | 16 | reported | shape-only | 258.07 | 15 | 2.69e-46 | C_total + C_resp + V_g + 100 f fᵀ | 16×16 | 16 |
+| GENIE+MEC | 16 | without C_resp | total | 318.26 | 16 | 4.18e-58 | C_total + V_g | 16×16 | 16 |
+| GENIE+MEC | 16 | without C_resp | shape-only | 305.26 | 15 | 4.51e-56 | C_total + V_g + 100 f fᵀ | 16×16 | 16 |
+| NuWro | 16 | reported | total | 188.03 | 16 | 2.06e-31 | C_total + C_resp + V_g | 16×16 | 16 |
+| NuWro | 16 | reported | shape-only | 188.00 | 15 | 5.77e-32 | C_total + C_resp + V_g + 100 f fᵀ | 16×16 | 16 |
+| NuWro | 16 | without C_resp | total | 298.69 | 16 | 4.76e-54 | C_total + V_g | 16×16 | 16 |
+| NuWro | 16 | without C_resp | shape-only | 298.64 | 15 | 1.07e-54 | C_total + V_g + 100 f fᵀ | 16×16 | 16 |
+| GiBUU | 8 | reported | total | 58.46 | 8 | 9.32e-10 | C_total + C_resp + V_g | 8×8 | 8 |
+| GiBUU | 8 | reported | shape-only | 27.69 | 7 | 0.00025 | C_total + C_resp + V_g + 100 f fᵀ | 8×8 | 8 |
+| GiBUU | 8 | without C_resp | total | 68.44 | 8 | 1.01e-11 | C_total + V_g | 8×8 | 8 |
+| GiBUU | 8 | without C_resp | shape-only | 36.15 | 7 | 6.8e-06 | C_total + V_g + 100 f fᵀ | 8×8 | 8 |
+| MnvTune v1 (prior) | 16 | reported | total | 329.72 | 16 | 1.73e-60 | C_total + C_resp + V_g | 16×16 | 16 |
+| MnvTune v1 (prior) | 16 | reported | shape-only | 311.19 | 15 | 2.63e-57 | C_total + C_resp + V_g + 100 f fᵀ | 16×16 | 16 |
+| MnvTune v1 (prior) | 16 | without C_resp | total | 360.79 | 16 | 5.8e-67 | C_total + V_g | 16×16 | 16 |
+| MnvTune v1 (prior) | 16 | without C_resp | shape-only | 341.29 | 15 | 1.39e-63 | C_total + V_g + 100 f fᵀ | 16×16 | 16 |
+
+**Each prediction carries its label from the readout:**
+- **GENIE CV:** "GENIE 2.12.10 CV, no MEC; CH".
+- **GENIE+MEC:** "GENIE 2.12.10 + Valencia MEC; CH".
+- **NuWro:** "NuWro 21.09; C12 target; no correction to CH applied".
+- **GiBUU:** "GiBUU 2019; C12 target; no correction to CH applied; no events above E_ν = 20 GeV (KNOWN_ISSUES 82)",
+  so it is compared on the eight p_∥ < 4.5 cells only.
+- **MnvTune v1:** "MINERvA Tune v1, the analysis MC truth: prior (not an independent prediction)".
+
+**The covariance label also says:** each C_model,5D vertex is a data shift, unfolded with a prior reweighted by that
+generator's ratio to GENIE 2.12.10 CV. So the GENIE+MEC, NuWro and GiBUU comparisons each carry a covariance built
+partly from the compared generator, and so does the GENIE CV comparison, through the ratios' reference (FD-G §7.3).
+
+## 6. GiBUU above p_∥ 4.5
+
+- **The readout's GiBUU record** holds eight cells, R00–R03 and R08–R11, and its only ndf values are 8 and 7, in both
+  the reported comparison and the variant.
+- **No GiBUU value on R04–R07 or R12–R15 appears,** in the readout, on stdout or in this report. The tests show that
+  the tool never forms one (FD-G §5).
+
+
+===== SOURCE: FD-G-DIAG-REPORT.md (section 2) =====
+## 2. Overview, relative to f (ruling 1)
+
+**The columns:**
+- **χ²:** Stage G's total χ².
+- **total − shape-only:** Stage G's total χ² less its shape-only χ², the normalization's share (ruling 2).
+- **cond:** M's condition number.
+- **modes 50/90/99 %:** the fewest modes, in χ² order, carrying that fraction of the χ².
+- **top mode:** its share of the χ², its relative σ √λ, and the block with the largest share vᵀBv/λ.
+- **The two flags:** `ridge_sensitive` is conditioning sensitivity, and `methods_disagree` is the numerical-artefact
+  signal (ruling 7).
+
+| prediction | comparison | matrix | chi2/ndf | total - shape-only | cond | rank | modes 50/90/99 % | top mode: % of chi2, sigma, dominant | ridge_sensitive | methods_disagree |
+|---|---|---|---|---:|---:|---:|---|---|---|---|
+| genie_cv | reported | C_total + C_resp + V_g | 109.35/16 | 0.85 | 1.18e+03 | 16 | 2/7/13 | 40.6 %, 3.15 %, interaction | False | False |
+| genie_cv | variant | C_total + V_g | 160.62/16 | 1.92 | 1.27e+03 | 16 | 3/7/11 | 23.9 %, 1.15 %, interaction | False | False |
+| genie_mec | reported | C_total + C_resp + V_g | 272.12/16 | 14.05 | 1.15e+03 | 16 | 2/4/10 | 45.5 %, 1.15 %, interaction | False | False |
+| genie_mec | variant | C_total + V_g | 318.26/16 | 13.00 | 1.24e+03 | 16 | 2/5/10 | 33.3 %, 1.12 %, interaction | False | False |
+| nuwro | reported | C_total + C_resp + V_g | 188.03/16 | 0.03 | 1.38e+03 | 16 | 3/9/13 | 31.3 %, 0.61 %, V_g | False | False |
+| nuwro | variant | C_total + V_g | 298.69/16 | 0.05 | 1.47e+03 | 16 | 2/6/11 | 34.3 %, 0.59 %, V_g | False | False |
+| gibuu | reported | C_total + C_resp + V_g | 58.46/8 | 30.77 | 142 | 8 | 2/5/6 | 26.8 %, 13.54 %, flux | False | False |
+| gibuu | variant | C_total + V_g | 68.44/8 | 32.29 | 166 | 8 | 2/5/6 | 29.1 %, 12.95 %, flux | False | False |
+| mnvtune_v1 | reported | C_total + C_resp + V_g | 329.72/16 | 18.53 | 2.64e+03 | 16 | 2/5/9 | 47.9 %, 0.97 %, interaction | False | False |
+| mnvtune_v1 | variant | C_total + V_g | 360.79/16 | 19.50 | 3.17e+03 | 16 | 2/5/7 | 46.4 %, 1.15 %, interaction | False | False |
+
+
+===== SOURCE: FD-G-FOLLOWUP-REPORT.md (section 2 head (R04)) =====
+## 2. G-R04
+
+### 2.0 Provenance: the cells in G-DIAG's top modes
+
+G-DIAG's reported comparison, relative to f, for the four 16-cell predictions. The columns give each top mode's
+number, σ, χ² fraction, R04's rank by |loading|, and the eight cells' loadings. Mode numbers index that matrix's
+eigenvalues in descending order. The predictions' labels:
+
+| prediction | label (the readout's, verbatim) |
+|---|---|
+| genie_cv | GENIE 2.12.10 CV, no MEC; CH |
+| genie_mec | GENIE 2.12.10 + Valencia MEC; CH |
+| nuwro | NuWro 21.09; C12 target; no correction to CH applied |
+| gibuu | GiBUU 2019; C12 target; no correction to CH applied; no events above E_nu = 20 GeV (KNOWN_ISSUES 82), so it is compared on the eight p_parallel < 4.5 cells only and not shown above p_parallel 4.5 (FD-DIRECTOR-RULINGS.md section 5) |
+| mnvtune_v1 | MINERvA Tune v1, the analysis MC truth: prior (not an independent prediction) |
+
+| prediction | mode | sigma % | fraction % | R04 rank | R04 | R00 | R01 | R07 | R08 | R09 | R10 | R14 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| genie_cv | 7 | 3.15 | 40.6 | 16 | -0.02 | -0.04 | +0.17 | -0.10 | +0.10 | +0.11 | -0.27 | -0.19 |
+| genie_cv | 13 | 1.14 | 19.1 | 1 | +0.45 | +0.32 | -0.36 | -0.29 | -0.42 | +0.30 | -0.16 | -0.33 |
+| genie_cv | 12 | 1.21 | 11.5 | 14 | +0.08 | -0.33 | -0.23 | -0.09 | +0.10 | +0.53 | +0.12 | +0.20 |
+| genie_mec | 13 | 1.15 | 45.5 | 1 | +0.45 | +0.30 | -0.37 | -0.30 | -0.42 | +0.33 | -0.15 | -0.32 |
+| genie_mec | 7 | 3.17 | 22.3 | 16 | -0.01 | -0.04 | +0.17 | -0.10 | +0.10 | +0.11 | -0.27 | -0.19 |
+| genie_mec | 15 | 0.67 | 15.6 | 1 | +0.72 | -0.35 | +0.13 | +0.07 | +0.13 | -0.27 | -0.27 | -0.02 |
+| nuwro | 15 | 0.61 | 31.3 | 1 | +0.63 | -0.34 | +0.11 | +0.05 | +0.18 | -0.22 | -0.37 | -0.03 |
+| nuwro | 10 | 1.98 | 11.5 | 11 | +0.12 | +0.22 | -0.33 | -0.28 | +0.15 | -0.14 | +0.04 | +0.57 |
+| nuwro | 5 | 6.60 | 10.7 | 8 | +0.16 | +0.40 | +0.08 | -0.38 | +0.58 | -0.02 | +0.08 | -0.07 |
+| mnvtune_v1 | 13 | 0.97 | 47.9 | 1 | +0.54 | +0.26 | -0.22 | -0.28 | -0.38 | +0.05 | -0.05 | -0.41 |
+| mnvtune_v1 | 7 | 3.01 | 16.4 | 16 | -0.02 | -0.05 | +0.16 | -0.08 | +0.11 | +0.10 | -0.28 | -0.21 |
+| mnvtune_v1 | 14 | 0.63 | 13.6 | 1 | +0.60 | -0.24 | +0.23 | +0.26 | -0.09 | -0.39 | +0.31 | +0.15 |
+
+### 2.1 Item 1: the definition
+
+The box edges are in GeV. Neighbours share a face on the 2⁵ H2 grid, and the axis
+named is the one along which they touch.
+
+| cell | H2 boxes | p_T | p_par | E_avail | q3 | W | fine bins | neighbours (axis) |
+|---|---|---|---|---|---|---|---|---|
+| R04 | 8, 9 | 0–0.7 | 4.5–60 | 0–0.8 | 0–2 | 0–100 | 11520 | R00 (pz), R05 (q3), R06 (eavail), R07 (eavail), R12 (pt), unreported H2 box 10 (q3) |
+| R00 | 0, 1 | 0–0.7 | 1.5–4.5 | 0–0.8 | 0–2 | 0–100 | 6912 | R01 (q3), R02 (eavail), R03 (eavail), R04 (pz), R08 (pt), R09 (pt), unreported H2 box 2 (q3) |
+| R01 | 3, 7 | 0–0.7 | 1.5–4.5 | 0–100 | 2–100 | 1.8–100 | 1008 | R00 (q3), R03 (q3), R05 (pz), R09 (pt), unreported H2 box 2 (W), unreported H2 box 6 (W) |
+| R07 | 13 | 0–0.7 | 4.5–60 | 0.8–100 | 0–2 | 1.8–100 | 4320 | R03 (pz), R04 (eavail), R05 (q3), R06 (W), R15 (pt) |
+| R08 | 16, 18 | 0.7–4.5 | 1.5–4.5 | 0–0.8 | 0–100 | 0–1.8 | 3024 | R00 (pt), R09 (W), R10 (eavail), R11 (eavail), R12 (pz), R13 (pz), unreported H2 box 2 (pt) |
+| R09 | 17, 19, 21, 23 | 0.7–4.5 | 1.5–4.5 | 0–100 | 0–100 | 1.8–100 | 5292 | R00 (pt), R01 (pt), R03 (pt), R08 (W), R10 (W), R11 (W), R12 (pz), R14 (pz), R15 (pz) |
+| R10 | 20 | 0.7–4.5 | 1.5–4.5 | 0.8–100 | 0–2 | 0–1.8 | 1944 | R02 (pt), R08 (eavail), R09 (W), R11 (q3), R15 (pz) |
+| R14 | 27, 31 | 0.7–4.5 | 4.5–60 | 0–100 | 2–100 | 1.8–100 | 1260 | R05 (pt), R09 (pz), R12 (q3), R13 (W), R15 (q3) |
+
+### 2.2 Item 2: f's relative σ, by block (%)
+
+√diag(B)/f. A vertex's is |s_j|.
+
+| block | R04 | R00 | R01 | R07 | R08 | R09 | R10 | R14 | median of 16 |
+|---|---|---|---|---|---|---|---|---|---|
+| stat | 0.14 | 0.20 | 0.23 | 0.30 | 0.22 | 0.18 | 0.25 | 0.16 | 0.24 |
+| interaction | 0.58 | 0.98 | 1.18 | 5.08 | 1.52 | 1.85 | 5.53 | 1.22 | 2.19 |
+| flux | 3.47 | 3.93 | 3.58 | 3.90 | 3.74 | 3.52 | 3.42 | 3.73 | 3.55 |
+| detector | 1.31 | 1.56 | 2.14 | 1.76 | 2.17 | 2.18 | 2.42 | 2.14 | 1.89 |
+| lateral | 0.57 | 5.01 | 4.85 | 1.75 | 0.77 | 1.08 | 0.43 | 1.34 | 2.38 |
+| normalization | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 | 1.40 |
+
+===== SOURCE: G-SENS2 and G-FOLLOWUP readouts (chi2 by family and alpha) =====
+label: descriptive sensitivity of the reported chi2, not an alternative result: one family of S1 groups has its correlations shrunk toward the diagonal, C(alpha) = D^1/2 [(1 - alpha) rho + alpha I] D^1/2, its variances kept; families: interaction, flux, detector, lateral, and c_e_systematic = interaction+flux+detector+lateral
+c_e_systematic genie_cv alpha 0.0 chi2 109.35 ndf 16 chi2_at_alpha_0 109.35
+c_e_systematic genie_cv alpha 0.1 chi2 70.68 ndf 16 chi2_at_alpha_0 109.35
+c_e_systematic genie_cv alpha 0.25 chi2 55.78 ndf 16 chi2_at_alpha_0 109.35
+c_e_systematic genie_cv alpha 0.5 chi2 45.84 ndf 16 chi2_at_alpha_0 109.35
+c_e_systematic genie_cv alpha 1.0 chi2 45.47 ndf 16 chi2_at_alpha_0 109.35
+c_e_systematic genie_mec alpha 0.0 chi2 272.12 ndf 16 chi2_at_alpha_0 272.12
+c_e_systematic genie_mec alpha 0.1 chi2 133.31 ndf 16 chi2_at_alpha_0 272.12
+c_e_systematic genie_mec alpha 0.25 chi2 87.57 ndf 16 chi2_at_alpha_0 272.12
+c_e_systematic genie_mec alpha 0.5 chi2 61.09 ndf 16 chi2_at_alpha_0 272.12
+c_e_systematic genie_mec alpha 1.0 chi2 45.33 ndf 16 chi2_at_alpha_0 272.12
+c_e_systematic gibuu alpha 0.0 chi2 58.46 ndf 8 chi2_at_alpha_0 58.46
+c_e_systematic gibuu alpha 0.1 chi2 50.51 ndf 8 chi2_at_alpha_0 58.46
+c_e_systematic gibuu alpha 0.25 chi2 48.89 ndf 8 chi2_at_alpha_0 58.46
+c_e_systematic gibuu alpha 0.5 chi2 53.32 ndf 8 chi2_at_alpha_0 58.46
+c_e_systematic gibuu alpha 1.0 chi2 89.88 ndf 8 chi2_at_alpha_0 58.46
+c_e_systematic mnvtune_v1 alpha 0.0 chi2 329.72 ndf 16 chi2_at_alpha_0 329.72
+c_e_systematic mnvtune_v1 alpha 0.1 chi2 146.34 ndf 16 chi2_at_alpha_0 329.72
+c_e_systematic mnvtune_v1 alpha 0.25 chi2 93.46 ndf 16 chi2_at_alpha_0 329.72
+c_e_systematic mnvtune_v1 alpha 0.5 chi2 66.64 ndf 16 chi2_at_alpha_0 329.72
+c_e_systematic mnvtune_v1 alpha 1.0 chi2 67.59 ndf 16 chi2_at_alpha_0 329.72
+c_e_systematic nuwro alpha 0.0 chi2 188.03 ndf 16 chi2_at_alpha_0 188.03
+c_e_systematic nuwro alpha 0.1 chi2 90.41 ndf 16 chi2_at_alpha_0 188.03
+c_e_systematic nuwro alpha 0.25 chi2 66.48 ndf 16 chi2_at_alpha_0 188.03
+c_e_systematic nuwro alpha 0.5 chi2 55.61 ndf 16 chi2_at_alpha_0 188.03
+c_e_systematic nuwro alpha 1.0 chi2 69.24 ndf 16 chi2_at_alpha_0 188.03
+detector genie_cv alpha 0.0 chi2 109.35 ndf 16 chi2_at_alpha_0 109.35
+detector genie_cv alpha 0.1 chi2 98.88 ndf 16 chi2_at_alpha_0 109.35
+detector genie_cv alpha 0.25 chi2 89.55 ndf 16 chi2_at_alpha_0 109.35
+detector genie_cv alpha 0.5 chi2 80.62 ndf 16 chi2_at_alpha_0 109.35
+detector genie_cv alpha 1.0 chi2 71.55 ndf 16 chi2_at_alpha_0 109.35
+detector genie_mec alpha 0.0 chi2 272.12 ndf 16 chi2_at_alpha_0 272.12
+detector genie_mec alpha 0.1 chi2 235.23 ndf 16 chi2_at_alpha_0 272.12
+detector genie_mec alpha 0.25 chi2 200.36 ndf 16 chi2_at_alpha_0 272.12
+detector genie_mec alpha 0.5 chi2 166.28 ndf 16 chi2_at_alpha_0 272.12
+detector genie_mec alpha 1.0 chi2 132.03 ndf 16 chi2_at_alpha_0 272.12
+detector gibuu alpha 0.0 chi2 58.46 ndf 8 chi2_at_alpha_0 58.46
+detector gibuu alpha 0.1 chi2 58.01 ndf 8 chi2_at_alpha_0 58.46
+detector gibuu alpha 0.25 chi2 57.75 ndf 8 chi2_at_alpha_0 58.46
+detector gibuu alpha 0.5 chi2 58.06 ndf 8 chi2_at_alpha_0 58.46
+detector gibuu alpha 1.0 chi2 60.51 ndf 8 chi2_at_alpha_0 58.46
+detector mnvtune_v1 alpha 0.0 chi2 329.72 ndf 16 chi2_at_alpha_0 329.72
+detector mnvtune_v1 alpha 0.1 chi2 278.32 ndf 16 chi2_at_alpha_0 329.72
+detector mnvtune_v1 alpha 0.25 chi2 232.10 ndf 16 chi2_at_alpha_0 329.72
+detector mnvtune_v1 alpha 0.5 chi2 189.45 ndf 16 chi2_at_alpha_0 329.72
+detector mnvtune_v1 alpha 1.0 chi2 149.83 ndf 16 chi2_at_alpha_0 329.72
+detector nuwro alpha 0.0 chi2 188.03 ndf 16 chi2_at_alpha_0 188.03
+detector nuwro alpha 0.1 chi2 154.38 ndf 16 chi2_at_alpha_0 188.03
+detector nuwro alpha 0.25 chi2 130.75 ndf 16 chi2_at_alpha_0 188.03
+detector nuwro alpha 0.5 chi2 111.28 ndf 16 chi2_at_alpha_0 188.03
+detector nuwro alpha 1.0 chi2 94.11 ndf 16 chi2_at_alpha_0 188.03
+flux genie_cv alpha 0.0 chi2 109.35 ndf 16 chi2_at_alpha_0 109.35
+flux genie_cv alpha 0.1 chi2 83.35 ndf 16 chi2_at_alpha_0 109.35
+flux genie_cv alpha 0.25 chi2 67.47 ndf 16 chi2_at_alpha_0 109.35
+flux genie_cv alpha 0.5 chi2 54.85 ndf 16 chi2_at_alpha_0 109.35
+flux genie_cv alpha 1.0 chi2 46.91 ndf 16 chi2_at_alpha_0 109.35
+flux genie_mec alpha 0.0 chi2 272.12 ndf 16 chi2_at_alpha_0 272.12
+flux genie_mec alpha 0.1 chi2 158.95 ndf 16 chi2_at_alpha_0 272.12
+flux genie_mec alpha 0.25 chi2 110.78 ndf 16 chi2_at_alpha_0 272.12
+flux genie_mec alpha 0.5 chi2 79.17 ndf 16 chi2_at_alpha_0 272.12
+flux genie_mec alpha 1.0 chi2 55.24 ndf 16 chi2_at_alpha_0 272.12
+flux gibuu alpha 0.0 chi2 58.46 ndf 8 chi2_at_alpha_0 58.46
+flux gibuu alpha 0.1 chi2 55.00 ndf 8 chi2_at_alpha_0 58.46
+flux gibuu alpha 0.25 chi2 53.47 ndf 8 chi2_at_alpha_0 58.46
+flux gibuu alpha 0.5 chi2 55.24 ndf 8 chi2_at_alpha_0 58.46
+flux gibuu alpha 1.0 chi2 70.81 ndf 8 chi2_at_alpha_0 58.46
+flux mnvtune_v1 alpha 0.0 chi2 329.72 ndf 16 chi2_at_alpha_0 329.72
+flux mnvtune_v1 alpha 0.1 chi2 172.92 ndf 16 chi2_at_alpha_0 329.72
+flux mnvtune_v1 alpha 0.25 chi2 116.47 ndf 16 chi2_at_alpha_0 329.72
+flux mnvtune_v1 alpha 0.5 chi2 83.57 ndf 16 chi2_at_alpha_0 329.72
+flux mnvtune_v1 alpha 1.0 chi2 67.41 ndf 16 chi2_at_alpha_0 329.72
+flux nuwro alpha 0.0 chi2 188.03 ndf 16 chi2_at_alpha_0 188.03
+flux nuwro alpha 0.1 chi2 103.72 ndf 16 chi2_at_alpha_0 188.03
+flux nuwro alpha 0.25 chi2 76.77 ndf 16 chi2_at_alpha_0 188.03
+flux nuwro alpha 0.5 chi2 60.69 ndf 16 chi2_at_alpha_0 188.03
+flux nuwro alpha 1.0 chi2 55.08 ndf 16 chi2_at_alpha_0 188.03
+interaction genie_cv alpha 0.0 chi2 109.35 ndf 16 chi2_at_alpha_0 109.35
+interaction genie_cv alpha 0.1 chi2 96.25 ndf 16 chi2_at_alpha_0 109.35
+interaction genie_cv alpha 0.25 chi2 87.15 ndf 16 chi2_at_alpha_0 109.35
+interaction genie_cv alpha 0.5 chi2 78.97 ndf 16 chi2_at_alpha_0 109.35
+interaction genie_cv alpha 1.0 chi2 72.97 ndf 16 chi2_at_alpha_0 109.35
+interaction genie_mec alpha 0.0 chi2 272.12 ndf 16 chi2_at_alpha_0 272.12
+interaction genie_mec alpha 0.1 chi2 245.60 ndf 16 chi2_at_alpha_0 272.12
+interaction genie_mec alpha 0.25 chi2 222.06 ndf 16 chi2_at_alpha_0 272.12
+interaction genie_mec alpha 0.5 chi2 195.79 ndf 16 chi2_at_alpha_0 272.12
+interaction genie_mec alpha 1.0 chi2 171.20 ndf 16 chi2_at_alpha_0 272.12
+interaction gibuu alpha 0.0 chi2 58.46 ndf 8 chi2_at_alpha_0 58.46
+interaction gibuu alpha 0.1 chi2 57.59 ndf 8 chi2_at_alpha_0 58.46
+interaction gibuu alpha 0.25 chi2 56.63 ndf 8 chi2_at_alpha_0 58.46
+interaction gibuu alpha 0.5 chi2 55.46 ndf 8 chi2_at_alpha_0 58.46
+interaction gibuu alpha 1.0 chi2 54.34 ndf 8 chi2_at_alpha_0 58.46
+interaction mnvtune_v1 alpha 0.0 chi2 329.72 ndf 16 chi2_at_alpha_0 329.72
+interaction mnvtune_v1 alpha 0.1 chi2 299.42 ndf 16 chi2_at_alpha_0 329.72
+interaction mnvtune_v1 alpha 0.25 chi2 266.01 ndf 16 chi2_at_alpha_0 329.72
+interaction mnvtune_v1 alpha 0.5 chi2 226.91 ndf 16 chi2_at_alpha_0 329.72
+interaction mnvtune_v1 alpha 1.0 chi2 183.85 ndf 16 chi2_at_alpha_0 329.72
+interaction nuwro alpha 0.0 chi2 188.03 ndf 16 chi2_at_alpha_0 188.03
+interaction nuwro alpha 0.1 chi2 159.94 ndf 16 chi2_at_alpha_0 188.03
+interaction nuwro alpha 0.25 chi2 141.30 ndf 16 chi2_at_alpha_0 188.03
+interaction nuwro alpha 0.5 chi2 123.29 ndf 16 chi2_at_alpha_0 188.03
+interaction nuwro alpha 1.0 chi2 107.83 ndf 16 chi2_at_alpha_0 188.03
+lateral genie_cv alpha 0.0 chi2 109.35 ndf 16 chi2_at_alpha_0 109.35
+lateral genie_cv alpha 0.1 chi2 92.28 ndf 16 chi2_at_alpha_0 109.35
+lateral genie_cv alpha 0.25 chi2 82.37 ndf 16 chi2_at_alpha_0 109.35
+lateral genie_cv alpha 0.5 chi2 74.86 ndf 16 chi2_at_alpha_0 109.35
+lateral genie_cv alpha 1.0 chi2 69.24 ndf 16 chi2_at_alpha_0 109.35
+lateral genie_mec alpha 0.0 chi2 272.12 ndf 16 chi2_at_alpha_0 272.12
+lateral genie_mec alpha 0.1 chi2 243.06 ndf 16 chi2_at_alpha_0 272.12
+lateral genie_mec alpha 0.25 chi2 220.25 ndf 16 chi2_at_alpha_0 272.12
+lateral genie_mec alpha 0.5 chi2 197.09 ndf 16 chi2_at_alpha_0 272.12
+lateral genie_mec alpha 1.0 chi2 169.99 ndf 16 chi2_at_alpha_0 272.12
+lateral gibuu alpha 0.0 chi2 58.46 ndf 8 chi2_at_alpha_0 58.46
+lateral gibuu alpha 0.1 chi2 51.44 ndf 8 chi2_at_alpha_0 58.46
+lateral gibuu alpha 0.25 chi2 46.36 ndf 8 chi2_at_alpha_0 58.46
+lateral gibuu alpha 0.5 chi2 42.43 ndf 8 chi2_at_alpha_0 58.46
+lateral gibuu alpha 1.0 chi2 39.43 ndf 8 chi2_at_alpha_0 58.46
+lateral mnvtune_v1 alpha 0.0 chi2 329.72 ndf 16 chi2_at_alpha_0 329.72
+lateral mnvtune_v1 alpha 0.1 chi2 299.58 ndf 16 chi2_at_alpha_0 329.72
+lateral mnvtune_v1 alpha 0.25 chi2 270.68 ndf 16 chi2_at_alpha_0 329.72
+lateral mnvtune_v1 alpha 0.5 chi2 238.99 ndf 16 chi2_at_alpha_0 329.72
+lateral mnvtune_v1 alpha 1.0 chi2 203.29 ndf 16 chi2_at_alpha_0 329.72
+lateral nuwro alpha 0.0 chi2 188.03 ndf 16 chi2_at_alpha_0 188.03
+lateral nuwro alpha 0.1 chi2 157.72 ndf 16 chi2_at_alpha_0 188.03
+lateral nuwro alpha 0.25 chi2 140.34 ndf 16 chi2_at_alpha_0 188.03
+lateral nuwro alpha 0.5 chi2 124.54 ndf 16 chi2_at_alpha_0 188.03
+lateral nuwro alpha 1.0 chi2 120.77 ndf 16 chi2_at_alpha_0 188.03
+
+===== SOURCE: DECISION-20261025-joseph-f0-limitation-stage-g-and-paper-scope.md (what is decided) =====
+## What is decided
+
+1. **The F0 limitation is accepted.** The 5D measurement states that its reported uncertainty does not cover the
+   fake-data bias at GiBUU-like truths or at the q3 tilt, with the fake-data results as support.
+   - **Presentation** follows PRD practice, under the caveat-study rules: a short fake-data study in the uncertainty or
+     validation discussion, with a table of the truths and their χ², the limitation stated once where the result is
+     described, and the detail in the note.
+   - **The paper rewrite lane drafts the wording as a proposal** for when the 5D result is integrated into the
+     documents. The draft is not printed now: integrating the S1 result is its own step, and its wording needs
+     Joseph's approval.
+   - Nothing rescales C_model. κ = 1 stands, and no cell is merged.
+2. **Stage G is approved.** It compares the data result with the five generator predictions on R00–R15, with GiBUU
+   on the eight p_∥ < 4.5 cells, as FD-PLAN §4 and `FD-DIRECTOR-RULINGS.md` §5 describe.
+   - It runs at 0 node-h, on a login node, through a declaration and a binding.
+   - This is the first data-against-generator comparison on these cells, and Joseph's approval covers that read
+     (DECISION-20261025, `-scope-5d-fake-data-test`, item 2).
+3. **F1 is skipped for now,** and F1-W is deferred with it.
+4. **r18 may propose a change to the abstract** under R-P8. The proposal comes to Joseph, and the abstract does not
+   change without his approval of the wording.
+5. **Moving the paper's secondary results to the note is to be seriously considered** (R-P9, R-N7). The paper rewrite
+   lane lists the candidate secondary results, each with:
+   - its caveats;
+   - where it would print in the note;
+   - the one-line pointer left in the paper;
+   - what the paper would stop claiming.
+
+   The list comes to Joseph for a decision before any round acts on it.
+6. **The assigned-uncertainty options (caveat study §6) are to be scoped,** at about 0 node-h, as a costed plan for
+   Joseph before anything runs:
+   - the purity non-closure;
+   - a model-dependence covariance for the residual regularization bias;
+   - the hadronic-response band;
+   - a seed ensemble;
+   - statistical-band scaling.
+
+   The plan states the usual practice of comparable papers for each, ranks the options by value against cost, and
+   places them against the work already queued. In that practice an assigned uncertainty is a named component in the
+   uncertainty breakdown, included in the total covariance.
+
+## Not changed
+
+===== SOURCE: DECISION-20261026-joseph-adopt-cresp.md (what is decided) =====
+## What is decided
+
+1. **The 5D reported total on R00–R15 is C_total_resp = C_e + C_model,abs + C_resp,** with C_resp the summed block of
+   proton, meson, EM and other at D1's sizes. Cross-talk is reported beside it and not summed. C_resp is a named
+   component in the uncertainty breakdown.
+   - **Where it is stated:** this record supersedes the "sensitivity variant, not adopted" labels of the C_resp
+     records. Those records stay as they were written, and CRESP-REPORT.md gains a dated status line.
+   - **What it covers:** what `C-RESP-SPEC.md` §7 states, and nothing more. The paper and the note state that scope
+     when the 5D result is integrated.
+2. **Stage G** reports its comparisons on C_total_resp + V_g as the adopted comparison. C_total + V_g, without C_resp,
+   is reported beside it, labelled as the variant without the response block. The binding records that assignment.
+3. **F0 consistency.** F0 graded the fake-data bias against C_total without C_resp. So that the fake-data table
+   matches the reported uncertainty, the director has F0's grades recomputed against C_total_resp, as a declared
+   addendum: 0 node-h, fake data only, F0's statistics and triggers unchanged.
+   - Both sets are reported, each labelled with its matrix.
+   - This does not reread the data against any generator.
+4. **Preservation.** `cresp.npz` is not byte-reproducible, so it is copied to HPSS with hashverify and a retrieval
+   check before Stage G runs.
+
+## Not changed
+
+===== SOURCE: DECISION-20261026-joseph-5d-generator-comparison-presentation.md (what is decided) =====
+## What is decided
+
+1. **The paper uses option 1.** It prints the χ²/ndf table of each prediction under the reported covariance,
+   C_total + C_resp + V_g, with shape-only beside it and GiBUU on its eight cells. A ratio figure goes with it, and one
+   quantified sentence on the correlation sensitivity.
+   - That sentence names the covariance group that carries the sensitivity, once the per-group split has reported.
+   - The fake-data limitation for GiBUU-like truths is stated where the GiBUU comparison is given.
+2. **The note uses option 4.** It carries option 1's table and sentence. It adds:
+   - a figure of the cell-contrast modes that carry the χ², with each prediction's distance along them;
+   - the G-SENS sensitivity tables;
+   - the G-DIAG breakdown;
+   - the R04 look;
+   - the fake-data results.
+3. **No diagonal-only χ² is printed.**
+4. **A comparator check comes before any wording is written.** The paper rewrite lane runs it, read-only.
+   - At least four published neutrino cross-section papers that compare data with generator predictions using a full
+     covariance, each verified on its arXiv abstract page.
+   - For each, it records with quotes:
+     - the form of the χ² table;
+     - full against diagonal χ²;
+     - any statement about correlation sensitivity, its wording and where it sits;
+     - any sensitivity variant or mode decomposition.
+   - If the practice differs from this decision, the lane reports it to the director, and Joseph decides again.
+5. **The wording itself is Joseph's.** It is drafted with the 5D section's integration, and agy checks it.
+
+## Not changed
+
+===== SOURCE: DECISION-20261027-joseph-chi2-table-format.md (what is decided) =====
+## What is decided
+
+1. **The table prints χ² with its ndf** (for example 109/16), as a pair or as two columns. It does not print the
+   ratio.
+2. **The only companion column is the shape-only χ².**
+   - No log-normal χ² is computed or printed.
+   - If a reviewer asks for one, it becomes a declared, 0 node-h addition.
+
+## Not changed

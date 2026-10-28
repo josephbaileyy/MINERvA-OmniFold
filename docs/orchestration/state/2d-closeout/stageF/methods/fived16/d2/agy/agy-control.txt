@@ -1,0 +1,16 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER introduces the phrase "validated covariance", which makes an unsupported and stronger claim than BEFORE, where interval coverage is explicitly described as having "not been validated".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER claims that the coverage of the result's intervals "has been validated", directly contradicting BEFORE, which states that coverage "has not been validated".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER states "and this cause is established", directly contradicting BEFORE, which explicitly specifies that "No single cause is established".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER claims that "the bias lies below the reported uncertainty even without C_model", which contradicts BEFORE; without C_model (with C_e + C_resp alone), |b|/σ is 1.07, meaning the bias exceeds the reported uncertainty.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER claims the measurement is "in all observables", which characterizes the measurement far more broadly than BEFORE supports, where it is restricted to "five observables".
+
+END
