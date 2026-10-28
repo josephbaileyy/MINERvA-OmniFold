@@ -1,0 +1,45 @@
+You are an independent referee with a working knowledge of how neutrino cross-section measurements and unfolded
+measurements are published in Physical Review D, including how their uncertainties are validated. You have no stake
+in this paper.
+
+## The files in this directory (all read-only)
+
+- `paper.txt`: the printed text of the paper as it stands today, about 8,500 words. It is a measurement paper led by a
+  sixteen-cell five-observable cross section unfolded with OmniFold.
+- `coverage-options.md`: the authors' costed scoping of one of its stated limitations, "interval coverage is not
+  validated": what exists, the designs considered (1C, 1A, 1B, 1B′) and their costs. Since it was written, option 1A
+  (a held-out GENIE v3 bias test) has been run; its results are in the paper's Sec. IV (the paragraph on two GENIE v3
+  tunes).
+
+## The question
+
+How important would running a nuisance-drawn coverage test (option 1B or 1B′) be to the quality and credibility of this
+measurement as a PRD publication?
+
+## Answer in this form
+
+1. **Your rating, on this scale,** with one sentence of justification:
+   - 1 = cosmetic: few readers or referees would notice its absence;
+   - 2 = a nice addition that strengthens a secondary point;
+   - 3 = a real improvement a careful referee might suggest, but not request;
+   - 4 = a referee would likely request it, or the paper is noticeably weaker without it;
+   - 5 = a referee would likely require it before acceptance, or the headline result is not credible without it.
+2. **Standard practice:** do comparable published PRD unfolded neutrino measurements validate interval coverage, and
+   how (fake-data studies, mock-data tests, coverage of toy ensembles, none)? Name the papers you rely on, with arXiv
+   identifiers if you know them, and mark any you are not sure of as UNSURE. They will be checked.
+3. **This paper's case:** what in its text makes the test more or less important than it is for those papers. Consider
+   what the paper already shows (closure, fake-data bias tests, the bias test at GENIE v3 truths) and how it states the
+   limitation.
+4. **What the paper gains** if the test passes, and what it shows if the test fails, given that the result's intervals
+   would not be changed after the fact.
+5. **Design and cost:** given the costs in `coverage-options.md` (about 37–146 node-hours, with a development phase),
+   which design you would run (1B, 1B′ or another), and whether the cost is proportionate. Name any cheaper design
+   that would give most of the value, and any risk that could make the test uninformative.
+6. **Anything that matters more** for this paper's credibility than this test, if you think something does.
+
+## Rules
+
+- Base everything on the files and your knowledge of the literature.
+- Do not invent numbers about this paper. If you estimate, say so.
+- Do not soften the rating to be polite, in either direction.
+- You may not edit any file. Write your answer only as your final message.
