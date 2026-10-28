@@ -1,0 +1,228 @@
+#!/usr/bin/env python3
+"""Check the r19 fact ledger against a worktree, and check that the round dropped no sentence silently.
+
+usage: check_ledger.py <worktree> [--base SHA] [--ledger PATH]   # exit 1 on any failure
+       check_ledger.py <worktree> --list [--base SHA]            # print the changed sentences with their ids
+       check_ledger.py <worktree> --self-test [--base SHA]       # planted defects must each be caught
+
+Four checks:
+  1. Probes. Every probe of every row must occur in the printed source, after comments are stripped and whitespace is
+     collapsed. P::text is looked up in docs/analysis-note/paper_body.tex, MP::text in main_paper.tex, and
+     N:file::text in docs/analysis-note/<file>.
+  2. Dispositions. A MOVE->note row needs an N: probe. Every other row (KEEP, MOVE->L, MOVE->S, COLLAPSED, REPOINT)
+     needs a P: or MP: probe.
+  3. Coverage. Every printed sentence of paper_body.tex and main_paper.tex at --base that no longer prints verbatim
+     must be named in the "before" column of some row, as P<n> or M<n>.
+  4. Protected text. The span of main_paper.tex from \\begin{acknowledgments} to \\end{document} must be
+     byte-identical to --base, and so must every line of either file that holds \\pubhold.
+  5. Labels (director, Q2 ruling; DECISION-20261028 item 5). A label of paper_body.tex at --base may be missing now only
+     if it is in REMOVABLE, and a label new now must be in ADDABLE.
+Adapted from r18/check_ledger.py for r19 (base: step 0, 9df8f748). The five-observable integration's ledger
+(fived16/ledger.md) covers 8b0f83fd..9df8f748 and is checked on that revision, not on this worktree.
+"""
+REMOVABLE = {  # variant B: Sec. VI's seven labels, Table III and Fig. 4 (O1, O4), and Table I (Q1, folded)
+    "sec:joint", "sec:hypotheses", "sec:calibration", "sec:conditions", "sec:response", "sec:joint-results",
+    "tab:joint", "tab:binned", "fig:coverage", "tab:findings"}
+ADDABLE = {"sec:cov16", "tab:result16"}
+import argparse
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+FILES = {"P": "paper_body.tex", "M": "main_paper.tex",
+         # the note files r19 adds to (N1-N4): a changed sentence there needs a row too (J, Q, Z ids)
+         "J": "sec_joint.tex", "Q": "sec_5d.tex", "Z": "app_codebase.tex"}
+NOTE_ADDABLE = {"fig:coverage-5d-paper"}
+
+
+def printed(src):
+    src = "\n".join(re.sub(r"(?<!\\)%.*", "", l) for l in src.splitlines())
+    return re.sub(r"\s+", " ", src).strip()
+
+
+def sentences(t):
+    return [p.strip() for p in re.split(r"(?<=[.?!])\s+(?=[A-Z\\$(0-9])", t) if p.strip()]
+
+
+def at_base(wt, base, name, old_dir=None):
+    if old_dir:  # a directory holding the base files (for scratch copies that are not git trees)
+        return (Path(old_dir) / name).read_text()
+    return subprocess.run(["git", "-C", str(wt), "show", f"{base}:docs/analysis-note/{name}"],
+                          capture_output=True, text=True, check=True).stdout
+
+
+def load(wt, base, old_dir=None):
+    D = wt / "docs/analysis-note"
+    cur = {k: (D / f).read_text() for k, f in FILES.items()}
+    old = {k: at_base(wt, base, f, old_dir) for k, f in FILES.items()}
+    return cur, old
+
+
+def changed(cur, old):
+    out = []
+    for k in FILES:
+        a = printed(cur[k])
+        for i, s in enumerate(sentences(printed(old[k]))):
+            if s not in a:
+                out.append((f"{k}{i}", s))
+    return out
+
+
+def rows(ledger_text):
+    for line in ledger_text.splitlines():
+        if not line.startswith("| ") or line.startswith("| id ") or line.startswith("|---"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split(" | ")]
+        if len(cells) == 6:
+            yield cells
+
+
+def check(wt, cur, old, ledger_text, note_override=None):
+    fails = []
+    note_cache = {}
+
+    def text(key):
+        if key in ("P", "M"):
+            return printed(cur[key])
+        if note_override and key in note_override:
+            return printed(note_override[key])
+        if key not in note_cache:
+            note_cache[key] = printed((wt / "docs/analysis-note" / key).read_text())
+        return note_cache[key]
+
+    named, n_rows, n_probes = set(), 0, 0
+    for rid, fact, before, disp, after, probe in rows(ledger_text):
+        n_rows += 1
+        named |= set(re.findall(r"\b[PMJQZ]\d+\b", before))
+        kinds = set()
+        for p in probe.split(" && "):
+            p = p.strip().strip("`")
+            m = re.match(r"(P|MP|N:[\w.]+)::(.*)$", p)
+            if not m:
+                fails.append(f"{rid}: malformed probe {p!r}")
+                continue
+            where, lit = m.group(1), re.sub(r"\s+", " ", m.group(2))
+            key = "P" if where == "P" else "M" if where == "MP" else where[2:]
+            kinds.add("N" if where.startswith("N:") else "P")
+            n_probes += 1
+            if lit not in text(key):
+                fails.append(f"{rid}: NOT FOUND in {FILES.get(key, key)}: {lit[:90]!r}")
+        note_row = disp.startswith(("MOVE→note", "NOTE"))  # NOTE: an r19 note addition or note accuracy fix (N1-N4)
+        if note_row and "N" not in kinds:
+            fails.append(f"{rid}: note row without a note probe")
+        if not note_row and "P" not in kinds:
+            fails.append(f"{rid}: in-paper row without a paper probe")
+    ch = changed(cur, old)
+    for sid, s in ch:
+        if sid not in named:
+            fails.append(f"UNCOVERED {sid}: {s[:100]!r}")
+    # protected text
+    def span(t):
+        i, j = t.find("\\begin{acknowledgments}"), t.find("\\end{document}")
+        return t[i:j] if i >= 0 and j > i else None
+    if span(cur["M"]) is None or span(cur["M"]) != span(old["M"]):
+        fails.append("PROTECTED: main_paper.tex acknowledgments..end{document} differs from base")
+    # the title and both abstracts' paper text (Joseph's), and the limitations paragraph whose sentences step (c) owns
+    # (review S5): byte-identical to --base
+    def tspan(t):
+        i, j = t.find("\\title{"), t.find("\\end{abstract}")
+        return t[i:j] if i >= 0 and j > i else None
+    if tspan(cur["M"]) is None or tspan(cur["M"]) != tspan(old["M"]):
+        fails.append("PROTECTED: main_paper.tex title..end{abstract} differs from base")
+    lim = lambda t: [l for l in t.splitlines() if l.startswith("The result has three limitations")]
+    if len(lim(old["P"])) != 1 or lim(cur["P"]) != lim(old["P"]):
+        fails.append("PROTECTED: the limitations paragraph of Sec. I differs from base (it is step (c)'s)")
+    for k in FILES:
+        h_old = [l for l in old[k].splitlines() if "\\pubhold" in l]
+        h_cur = [l for l in cur[k].splitlines() if "\\pubhold" in l]
+        if h_old != h_cur:
+            fails.append(f"PROTECTED: \\pubhold lines of {FILES[k]} differ from base")
+    lo = set(re.findall(r"\\label\{([^}]*)\}", old["P"])); ln = set(re.findall(r"\\label\{([^}]*)\}", cur["P"]))
+    for lab in sorted(lo - ln - REMOVABLE):
+        fails.append(f"LABEL REMOVED: {lab}")
+    for lab in sorted(ln - lo - ADDABLE):
+        fails.append(f"LABEL ADDED, not approved: {lab}")
+    for k in ("J", "Q", "Z"):
+        lo = set(re.findall(r"\\label\{([^}]*)\}", old[k])); ln = set(re.findall(r"\\label\{([^}]*)\}", cur[k]))
+        for lab in sorted(lo - ln):
+            fails.append(f"NOTE LABEL REMOVED ({FILES[k]}): {lab}")
+        for lab in sorted(ln - lo - NOTE_ADDABLE):
+            fails.append(f"NOTE LABEL ADDED, not approved ({FILES[k]}): {lab}")
+    return fails, n_rows, n_probes, len(ch)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("worktree")
+    ap.add_argument("--base", default="9df8f748")
+    ap.add_argument("--ledger", default=str(Path(__file__).with_name("ledger.md")))
+    ap.add_argument("--old-dir", help="read the base files from this directory instead of git show BASE:")
+    ap.add_argument("--list", action="store_true")
+    ap.add_argument("--self-test", action="store_true")
+    a = ap.parse_args()
+    wt = Path(a.worktree).resolve()
+    cur, old = load(wt, a.base, a.old_dir)
+    ledger_text = Path(a.ledger).read_text()
+    if a.list:
+        for sid, s in changed(cur, old):
+            print(f"{sid}: {s}\n")
+        return 0
+    if a.self_test:
+        ok = True
+        f0, *_ = check(wt, cur, old, ledger_text)
+        if f0:
+            print("self-test needs a clean ledger first:", *f0[:5], sep="\n  ")
+            return 1
+        # (a) a planted probe that does not print must fail
+        bad = ledger_text + "\n| X1 | planted | P0 | KEEP | I | `P::this sentence was never printed anywhere` |\n"
+        fa, *_ = check(wt, cur, old, bad)
+        ok &= any(x.startswith("X1: NOT FOUND") for x in fa)
+        print("planted bad paper probe:", "caught" if any(x.startswith("X1: NOT FOUND") for x in fa) else "MISSED")
+        # (b) a MOVE->note row whose note probe does not print must fail
+        bad = ledger_text + "\n| X2 | planted | P0 | MOVE→note | sec_joint.tex | `N:sec_joint.tex::this sentence was never printed in the note` |\n"
+        fb, *_ = check(wt, cur, old, bad)
+        hit = any(x.startswith("X2: NOT FOUND") for x in fb)
+        ok &= hit
+        print("moved fact missing from the note:", "caught" if hit else "MISSED")
+        # (c) deleting an unchanged printed sentence from the paper must be UNCOVERED
+        victim = "Each OmniFold iteration consists of two classification steps."
+        cur_c = dict(cur, P=cur["P"].replace(victim, ""))
+        fc, *_ = check(wt, cur_c, old, ledger_text)
+        hit = any(x.startswith("UNCOVERED") and "Each OmniFold iteration" in x for x in fc)
+        ok &= hit
+        print("silently dropped sentence:", "caught" if hit else "MISSED")
+        # (d) an edit inside the protected span must fail
+        cur_d = dict(cur, M=cur["M"].replace("under project m3246", "under project m3247"))
+        fd, *_ = check(wt, cur_d, old, ledger_text)
+        hit = any(x.startswith("PROTECTED") for x in fd)
+        ok &= hit
+        print("edit in the protected span:", "caught" if hit else "MISSED")
+        # (e) removing a label outside REMOVABLE must fail; adding an unapproved one must fail
+        cur_e = dict(cur, P=cur["P"].replace("\\label{sec:closure}", "", 1))
+        fe, *_ = check(wt, cur_e, old, ledger_text)
+        hit = any(x == "LABEL REMOVED: sec:closure" for x in fe)
+        ok &= hit
+        print("removed label outside the approved set:", "caught" if hit else "MISSED")
+        cur_f = dict(cur, P=cur["P"] + "\n\\label{sec:unapproved}\n")
+        ff, *_ = check(wt, cur_f, old, ledger_text)
+        hit = any(x == "LABEL ADDED, not approved: sec:unapproved" for x in ff)
+        ok &= hit
+        print("unapproved new label:", "caught" if hit else "MISSED")
+        for name, cg in [("an edit to the abstract", dict(cur, M=cur["M"].replace("\\begin{abstract}", "\\begin{abstract}\nAn edit.", 1))),
+                         ("an edit to the limitations paragraph", dict(cur, P=cur["P"].replace("The result has three limitations", "The result has two limitations", 1)))]:
+            fg, *_ = check(wt, cg, old, ledger_text)
+            hit = any(x.startswith("PROTECTED") for x in fg)
+            ok &= hit
+            print(f"{name}:", "caught" if hit else "MISSED")
+        print("SELF-TEST ::", "PASS" if ok else "FAIL")
+        return 0 if ok else 1
+    fails, n_rows, n_probes, n_ch = check(wt, cur, old, ledger_text)
+    for f in fails:
+        print(f)
+    print(f"ledger rows {n_rows}, probes {n_probes}, changed sentences {n_ch}, failures {len(fails)}")
+    return 1 if fails else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
