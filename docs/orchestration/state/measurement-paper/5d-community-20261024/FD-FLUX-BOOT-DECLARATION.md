@@ -90,7 +90,7 @@ Everything is relative to f, as in G-SENS. Each distribution gets:
 - **the percentile band q:** the 2.5, 16, 50, 84 and 97.5 percentiles (numpy `linear`), with the minimum and maximum.
   The same percentiles from replicates 1–1000 and 1001–2000 show the Monte Carlo scatter;
 - **the centre χ̂:** Stage G's own χ², which is the identity replicate, printed beside each band;
-- **the offset,** median − χ̂, labelled as the estimator's bias in the same direction as χ̂'s own (§4.3);
+- **the offset,** median − χ̂, labelled as the bootstrap's estimate of χ̂'s bias (§4.3);
 - **the basic (reflected) band,** 2χ̂ − q at the mirrored percentile. For example, key 16 holds 2χ̂ − q₈₄. It is a
   declared companion.
 
@@ -341,11 +341,13 @@ above carries to them only to first order. It fails for inverse and eigenvalue f
 re-estimated from these 100 universes, as PPFX and the constraint give them. They are not a sensitivity, and not a
 confidence interval with guaranteed coverage.
 
-**The centre is biased, and the bootstrap follows the bias.**
+**The centre can be biased, and the bootstrap shifts the same way.**
 - The flux group is near-degenerate. Its correlations are 0.97–0.998, its λ_min is about 2 × 10⁻⁷ relative, and it has
   16 cells against n_eff ≈ 19.
-- In that regime the χ² of an estimated matrix, χ̂, is biased high relative to the χ² under the true matrix. The
-  percentile bootstrap of χ²(C*) adds a further shift in the same direction.
+- In the review's synthetic check, the χ² of the estimated matrix, χ̂, was biased high relative to the χ² under the
+  matrix the ensemble estimates. The percentile bootstrap of χ²(C*) added a further shift in the same direction.
+- On the real inputs, the direction and size are whatever the readout's offset shows. The offset is the bootstrap's
+  estimate of χ̂'s bias.
 - **The review's synthetic check,** which this declaration extends (`review/sim_coverage.py`,
   `review/sim_coverage_basic.py` and their logs), used a flux-like 16-cell block with spectrum 10⁻³–10⁻⁷, n_eff ≈ 19,
   S1's estimator, 3D's resampling and 150 ensembles. With weights independent of the universes:
@@ -353,13 +355,19 @@ confidence interval with guaranteed coverage.
   - the median of (bootstrap median − χ̂) is +0.56 (correlation) and +1.24 (block);
   - the 16–84 % percentile band covers χ²(C_true) in **0.37** and **0.32** of ensembles, against a nominal 0.68;
   - the basic band covers it in **0.48** and **0.57**.
-- **When the weights follow the universes' values,** as a constraint likelihood does:
-  - the median χ̂ is 117.36, against 100.65;
-  - neither band covers χ²(C_true) in any ensemble (**0.00**).
+- **When the weights follow the universes' values,** as a constraint likelihood does, the weighted ensemble estimates
+  the constrained covariance C_post = (C_true⁻¹ + s²q₀q₀ᵀ/λ₀)⁻¹, not the prior C_true. The right target is therefore
+  χ²(C_post). The reviewer's rerun on the same seeds (`review/sim_followsx_target.py` and `.log`) found:
+  - χ²(C_post) has median 115.47, and χ̂ has median 116.95 (+1.49);
+  - **correlation:** median offset +0.43; the percentile band covers χ²(C_post) in **0.47** of ensembles, and the
+    basic band in **0.57**;
+  - **block:** median offset +1.11; the percentile band covers it in **0.45**, and the basic band in **0.61**.
+- The follows-x arm of `review/sim_coverage.py` and `review/sim_coverage_basic.py` compared against χ²(C_true). Its
+  0.00 is an artefact of that wrong target, and is superseded by the rerun.
 
-**So the readout gives the offset beside each band.** Neither band is presented as an interval for χ² under the true
-correlations. The basic band removes the bootstrap's own extra shift to first order. It cannot remove χ̂'s bias, or the
-effect of weights that follow the values.
+**So the readout gives the offset beside each band.** Neither band is presented as an interval for the χ² under the
+true correlations. In the toy, coverage of the nominal 0.68 is about 0.32–0.61, whether or not the weights follow the
+values. The basic band removes the bootstrap's own extra shift to first order, but it cannot remove χ̂'s own bias.
 
 ### 4.4 Reused code
 
@@ -460,7 +468,7 @@ At this declaration's commit:
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_flux_boot.py` | `33b0a709bbb0f6268f6ae9c4ca435c10eadbe704e9a022564266017299be49f4` |
+| `nd-unfolding/fd_flux_boot.py` | `48c6eb04a212155bde8d6ce03db6d0f3a859b158fdf2f9c28822edd9e224a209` |
 | `nd-unfolding/tests/test_fd_flux_boot.py` | `84d724ce64bd9e40f9105408e0d3ff0af7ed00bc2d1f44b4b53c68e4d5ffc219` |
 | `nd-unfolding/fd_g_followup.py` | `ec8cbc6880f7a3f67eea5703ddeff958acb10462053696d2cfdb64de0ee5f60d` |
 | `nd-unfolding/fd_g_diag.py` | `241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03` |
@@ -517,7 +525,8 @@ Its scripts and logs are committed under `fd/receipts-flux-boot/declaration/revi
 - §4.3 states the bias and the review's synthetic numbers, and the tool records the offset, median − χ̂, with its
   label.
 - The basic (reflected) band is a declared companion. Its coverage was measured by extending the reviewer's script:
-  0.48 and 0.57 against the percentile band's 0.37 and 0.32, and 0.00 for both when the weights follow the values.
+  0.48 and 0.57, against the percentile band's 0.37 and 0.32, with independent weights. (That script's follows-x arm
+  used the wrong target; see the focused re-review below.)
 - Which band a sentence would use is §7 item 2.
 - §4.2's claim that the scaling carries to the band is now stated as first order only, and as failing for inverse and
   eigenvalue functionals.
@@ -544,6 +553,24 @@ stated in §0, in the docstring, in the `variants` label and in §7 item 1.
 - A non-positive-definite uniform matrix refuses at B4, with a test, instead of raising a TypeError.
 - §4.1 says why the jackknife was not chosen.
 
-**Second mutation receipt** (`mutants.log`, 2026-10-27T20:18–20:30Z): **30 of 30 killed.** The tool was restored, and
+**Second mutation receipt** (2026-10-27T20:18–20:30Z, on `33b0a709…`; its log is in this branch's history at `49c20780`): **30 of 30 killed.** The tool was restored, and
 its sha256 checked after every mutant. The first round's survivor, ddof 0, is now killed too, because the end-to-end
 and pure tests recompute `sd_over_sigma_w_root_n_eff` by hand with ddof 1.
+
+**Focused re-review of `49c20780`.** Everything else was resolved; the reviewer's three new mutants were killed, and
+the 29 tests passed. It found one high and two lows, all done:
+- **High: the follows-x arm compared against the wrong target.** With likelihood weights, the weighted ensemble
+  estimates C_post, not the prior C_true, so the comparison with χ²(C_true) was bound to give 0.00. The reviewer said
+  the fault began with them: they wrote that arm in their first round, then dropped it without saying so. §4.3 now uses
+  their C_post rerun on the same seeds: 0.47 and 0.45 percentile coverage, and 0.57 and 0.61 basic, with median offsets
+  +0.43 and +1.11. Their script and log are committed under `review/`. The conclusion is that neither band is an interval
+  for the true-correlation χ². In the toy, coverage of the nominal 0.68 is about 0.32–0.61 across both arms, whether or
+  not the weights follow the values. The re-review's "about 0.45–0.61" covers the C_post arm. With independent weights,
+  the percentile band's 0.37 and 0.32 sit below it.
+- **Low: "biased high" was stated as fact.** §4.3 and the tool's docstring now attribute it to the review's synthetic
+  check. On real inputs, the direction is whatever the offset shows.
+- **Low: the offset's label.** It now calls median − χ̂ the bootstrap's estimate of χ̂'s bias, in §0, the readout's
+  `band` label and §4.3.
+
+**Third mutation receipt** (`mutants.log`, 2026-10-27T23:16Z–2026-10-28T00:06Z, on `48c6eb04…`, whose changes from
+`33b0a709…` are text only: the docstring and the `band` label): **30 of 30 killed**, with the tool restored.

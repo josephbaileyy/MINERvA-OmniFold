@@ -23,8 +23,9 @@ Each is swapped for the flux group in Stage G's reported matrix, C_total + C_res
 unchanged, and each prediction's total and shape-only chi2 is recomputed on its own cells (GiBUU on its eight). The
 statistic is the distribution of each chi2 over the replicates; the band is its declared percentiles q, beside the
 basic (reflected) band 2 chi2_hat - q, with chi2_hat Stage G's own chi2 (the identity replicate), and the offset
-median - chi2_hat. In this near-degenerate regime chi2 of an estimated matrix is biased high and the bootstrap follows
-the same bias, so neither band is an interval for chi2 under the true correlations (section 4.3). One named
+median - chi2_hat, the bootstrap's estimate of chi2_hat's bias. In the review's synthetic check of this near-degenerate
+regime, chi2 of the estimated matrix was biased high and the bootstrap shifted the same way; on real inputs the
+direction is whatever the offset shows. Neither band is an interval for chi2 under the true correlations (section 4.3). One named
 alternative, ``uniform``: the block from the 100 universes with equal weights (the flux prior without the constraint),
 a single chi2 per prediction. No p-value anywhere.
 
@@ -87,7 +88,7 @@ LABELS = {
     "band": f"estimation uncertainty, not sensitivity: percentiles {list(PERCENTILES)} of each chi2 over the "
             f"{B_REPLICATES} replicates (numpy '{PERCENTILE_METHOD}'); basic: the reflected band 2 chi2_hat - q at the "
             f"mirrored percentile, chi2_hat Stage G's chi2 (the identity replicate); offset: median - chi2_hat, the "
-            "estimator's bias in the same direction as the bias of chi2_hat itself; halves: the percentiles from "
+            "bootstrap's estimate of chi2_hat's bias; halves: the percentiles from "
             f"replicates 1-{B_REPLICATES // 2} and {B_REPLICATES // 2 + 1}-{B_REPLICATES}, the Monte Carlo scatter. "
             "Neither band is an interval for the chi2 under the true correlations",
     "units": "relative to f, as G-SENS: M = (C + V_g)/(f f^T); chi2 and ndf are unit-free; shape-only adds 100 * 11^T",

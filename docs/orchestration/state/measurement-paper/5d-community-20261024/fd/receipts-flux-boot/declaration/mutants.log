@@ -1,4 +1,4 @@
-2026-10-27T20:18:45Z
+2026-10-27T23:16:55Z
 KILLED: replicate without weights (FAILED (failures=9, errors=1))
 KILLED: swap keeps no variance (FAILED (failures=2, errors=1))
 KILLED: swap returns the replicate (FAILED (failures=3, errors=1))
@@ -29,6 +29,6 @@ KILLED: spread ratio without n_eff (FAILED (failures=2))
 KILLED: uniform non-PD unguarded (FAILED (errors=1))
 KILLED: basic band not mirrored (FAILED (failures=2))
 KILLED: offset sign flipped (FAILED (failures=2))
-30 of 30 killed; tool restored, sha256 33b0a709bbb0f6268f6ae9c4ca435c10eadbe704e9a022564266017299be49f4 (expected 33b0a709bbb0f6268f6ae9c4ca435c10eadbe704e9a022564266017299be49f4)
+30 of 30 killed; tool restored, sha256 48c6eb04a212155bde8d6ce03db6d0f3a859b158fdf2f9c28822edd9e224a209 (expected 48c6eb04a212155bde8d6ce03db6d0f3a859b158fdf2f9c28822edd9e224a209)
 rc=0
-2026-10-27T20:30:02Z
+2026-10-28T00:06:40Z
