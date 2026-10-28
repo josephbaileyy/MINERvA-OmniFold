@@ -19,6 +19,7 @@ This file covers machine-local state. The tracked tree's own removals (families 
 | `MINERvA-OmniFold-Analysis-Note/` | checkout of the standalone note repository (see `AGENTS.md`, deliverable synchronization) |
 | `minerva-ml-gregor-audit/`, `gregor-audit/` | read-only clones of Gregor Krzmanc's `minerva-ml` and the two audit write-ups |
 | `evidence-epochs/<epoch>/` | out-of-repo preservation archives (next section); immutable, never cleanup targets |
+| `model-search-*/` | the private neutrino-model search campaign: one directory per study, recovery, or probe, each with its own frozen controller copy. Not part of this repository. It is driven by `~/Library/LaunchAgents/local.minerva.modelsearch.*.plist`. On 2026-10-28, 12 of the 13 jobs were disabled, and only `persistent-model-research-20261019-transport-recovery` remained enabled. Model calls go through the `claude-school` and `codex-school2` accounts only. Its code was removed from this checkout on 2026-10-28 (see the cleanup record below) |
 
 On NERSC the epoch mirrors are under `/global/homes/j/josephrb/evidence/repository-epochs/`. Cluster
 checkouts and frozen run worktrees on `/pscratch` are governed by their own run records, not this file.
@@ -87,3 +88,21 @@ Scope, proofs and recovery are in `evidence-epochs/housekeeping-20261007-b/RECOV
 
 Together the two batches freed 24.2 GiB. The remaining linked worktrees are the harness worktrees of
 running sessions, if any.
+
+### 2026-10-28 shared checkout — state: EXECUTED 2026-10-28
+
+Joseph approved each step. Before the cleanup, the shared checkout's `main` was 1,142 commits behind `origin/main`.
+It also held uncommitted edits and 16 untracked root files or folders. One of them was `tools/model_search/`
+(111 files), which existed in no git ref.
+
+- Everything uncommitted or untracked was archived first, with checksums and a tested restoration, in
+  `evidence-epochs/housekeeping-20261028-uncommitted/`. Read its `RECOVERY.md` before restoring anything.
+- At Joseph's instruction, `tools/model_search/` and the four `AGENTS.md` paragraphs that routed to it were
+  removed from the checkout and kept only in that archive. They were not published.
+- Superseded registry edits, duplicates and spent handoffs or prompts were removed. The Ben presentation (#451)
+  and the authorship statement (#454) were committed. `HANDOFF-20260911-production-interface.md` was kept, untracked.
+- `main` was fast-forwarded. Eight worktree registrations whose directories no longer existed were pruned.
+- 414 local branches were deleted, each fully merged into `origin/main` and checked out nowhere. The archive's
+  `deleted-merged-branches.tsv` lists name and sha; recreate one with `git branch <name> <sha>`.
+  Branches on GitHub were not touched by this step. From 2026-10-28, both repositories delete a PR's
+  branch automatically when it merges.
