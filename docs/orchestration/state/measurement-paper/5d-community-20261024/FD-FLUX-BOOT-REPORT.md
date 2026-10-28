@@ -61,6 +61,11 @@ G-SENS2's α results stand.
 by up to 27 ulp (`FD-FLUX-BOOT-DECLARATION-AMENDMENT-1.md` §2.3).
 - So on the real inputs, B2 carried no difference through the swap, and its 0.0 is Stage G's own computation on Stage
   G's own bits, as D5 checks.
+- **B2's margin on real inputs is therefore still unmeasured.** The amendment expected it to be measured in the run
+  (`FD-FLUX-BOOT-DECLARATION-AMENDMENT-1.md` §2.3). On login36, B2's 0.0 is by construction, as the fixture's
+  first-round 0.0 was (amendment §2.3). Where B2 carried a last-bit difference, it was on the fixture: worst
+  3.5 × 10⁻¹⁴ on login38 and 3.9 × 10⁻¹⁴ locally (amendment §2.3).
+  <!-- absence-ok: a scoping statement about what this run's B2 exercised, from B1 = 0.0 in this readout -->
 - B6, the swap's matrix-level check, ran over the identity, the 4,000 replicate variants and `uniform`, and its worst
   was 3.4 × 10⁻¹⁶.
 
@@ -83,6 +88,13 @@ The basic band covered **0.48** and **0.57**, and **0.57** and **0.61**.
 
 The readout's `labels.band` says: "estimation uncertainty, not sensitivity … Neither band is an interval for the chi2
 under the true correlations".
+
+**The band records carry a stale label, and `labels.band` governs.** Each of the readout's 10 band records has the
+`label` "descriptive band on the reported χ²'s flux-correlation dependence, not an alternative result". That is the
+constant `LABEL` at `nd-unfolding/fd_flux_boot.py:70` (at 91312bc8), and it is also the `[3D]` header line in
+`fd/receipts-flux-boot/run/boot.out`. It describes a sensitivity, so it contradicts `labels.band` and ruling 2.
+- The readout is the run's product and is left as it is: changing it would need a rerun.
+- The constant is unchanged on this branch. Correcting it for any future run is for the director.
 
 ### 2.1 `correlation` (primary): S1's flux variances kept bit for bit, the replicate's correlations
 
@@ -177,8 +189,8 @@ These receipts are from `fd/flux-boot-report` at `79c013ac`, and are merged here
 - **What happened:** deploy `f370da5b` on login12, at 2026-10-28T00:39:31–00:41:35Z, under `FD-FLUX-BOOT-BINDING.md`
   condition 1.
   - HEAD was the pin, porcelain was 0 before and after, and all §8 digests matched.
-  - The tests failed: `tests rc=1`, "Ran 203 tests … FAILED (failures=6, errors=1)". All seven failures were control
-    B2 refusing the synthetic fixture, at 1.025 × 10⁻¹⁰ against 10⁻¹⁰.
+  - The tests failed: `tests rc=1`, "Ran 203 tests … FAILED (failures=6, errors=1)". All seven, six failures and one error, were
+    control B2 refusing the synthetic fixture, at 1.025 × 10⁻¹⁰ against 10⁻¹⁰.
 - **What followed:** the run was not started, and nothing was rerun or repaired.
 - **Where it is:**
   - the receipts are `fd/receipts-flux-boot/run/s1.sh`, `s1.out`, `logs/deploy-tests.log` and
