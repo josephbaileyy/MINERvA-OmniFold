@@ -1,0 +1,9 @@
+# python3 -I -B realblock.py <review-3da> <worktree> <tmp>; head = the reviewer's copy of 5d0105f8; 2026-10-28T02:48:34Z
+npz keys sample ['f', 'U', 'C_band_Flux']
+n_eff 19.060534772246488 sum 211.01200325082078
+real B1: bitwise False max|C1-C0|/max|C0| 1.7530320776841912e-15 max ulps 27.0
+f from cmodel (16,)
+real rebuild: corr quantiles 0/5/25/50/75/95/100 % [0.913, 0.9391, 0.9643, 0.9776, 0.9863, 0.9965, 0.9981]; frac>=0.97 0.658; lmin 2.189e-07 lmax 2.082e-02; sigma/f range 0.0335-0.0414
+relative_sigma keys ['stat', 'interaction', 'flux', 'detector', 'lateral', 'normalization', 'seed', 'C_e']
+amended fixture: corr quantiles 0/5/25/50/75/95/100 % [0.9128, 0.9423, 0.9736, 0.9897, 0.9964, 0.9991, 0.9993]; frac>=0.97 0.775; lmin 2.325e-07 lmax 2.122e-02; sigma/f range 0.0358-0.0384
+rc=0

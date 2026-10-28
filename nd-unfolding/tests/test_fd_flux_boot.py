@@ -31,7 +31,7 @@ from test_fd_g_followup import find_p  # noqa: E402
 
 REPO = ND.parent
 FD = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024"
-CONTROLS = ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5"]
+CONTROLS = ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5", "B6"]
 
 
 def heavy_weights(n=100, seed=3, target=19.0):
@@ -73,7 +73,12 @@ class BootTree(DiagTree):
         self.w = heavy_weights()
         self.universe_fine = [self.fine_of(x) for x in self.Xint]
         self.X = np.array([self.U @ v for v in self.universe_fine])
-        self.blocks["band:Flux"] = sa.mat_cov(self.X, self.w)
+        # amendment 1 (review): S1's block differs from its rebuild in the last bits, as the real one does (up to 27
+        # ulp, 1.75e-15 of its largest entry), so B2 and B6 carry a non-zero difference through the swap
+        self.rebuild = sa.mat_cov(self.X, self.w)
+        k = np.random.default_rng(seed + 300).integers(-27, 28, (16, 16))
+        k = np.triu(k) + np.triu(k, 1).T
+        self.blocks["band:Flux"] = self.rebuild + k * np.spacing(np.abs(self.rebuild))
         self.Ce = sum(self.blocks[k] for k in sorted(self.blocks))
         self.Ct = self.Ce + self.Cma
 
@@ -327,6 +332,11 @@ class Regime(Base):
         self.assertTrue(1e-7 <= e[0] <= 5e-7, e[0])
         self.assertTrue(1.5e-2 <= e[-1] <= 3e-2, e[-1])
         self.assertAlmostEqual(FB.n_eff(tree.w), 19.0, delta=0.3)
+        C0, C1 = tree.blocks["band:Flux"], tree.rebuild
+        ulp = np.abs(C1 - C0) / np.spacing(np.abs(C0))
+        self.assertFalse(np.array_equal(C1, C0))
+        self.assertLessEqual(ulp.max(), 28)
+        self.assertGreaterEqual(ulp.max(), 20)
 
 
 class EndToEnd(Base):
@@ -392,6 +402,22 @@ class EndToEnd(Base):
         lines = [ln for ln in r.stdout.splitlines() if ln.startswith("[3D]")]
         self.assertEqual(len(lines), 1 + 2 * 5 + 1)
         self.assertIn(FB.LABEL, lines[0])
+
+    def test_the_identity_is_stage_gs_compare_on_the_declared_swap_bit_for_bit(self):
+        """Amendment 1 (review): the identity record is compare() on C_total + C_resp + (C1 - C0), exactly, with C1 the
+        rebuild and C0 S1's block, which differ in the last bits here as on real inputs."""
+        tree = self.tree
+        self.assertEqual(self.run_inproc(tree), 0)
+        out = json.loads((tree.out / "boot.json").read_text())
+        with mock.patch("sys.stdout"):
+            x = FB.D.load(FB.build_args(tree.bargv), tree.bpins, tree.predictions)
+        M = (tree.Ct + tree.Cx) + (sa.mat_cov(tree.X, tree.w) - tree.blocks["band:Flux"])
+        for spec in tree.predictions:
+            cells, g, Vg = x.integ[spec["name"]]
+            ref = G.compare(x.f, g, Vg, M, list(cells), "hand")
+            rec = out["identity"][spec["name"]]
+            self.assertEqual(rec["chi2_rebuilt"], ref["total"]["chi2"], spec["name"])
+            self.assertEqual(rec["shape_only_rebuilt"], ref["shape_only"]["chi2"], spec["name"])
 
     def test_the_two_variants_differ_and_the_correlation_one_keeps_variances(self):
         tree = self.tree
@@ -514,6 +540,20 @@ class Controls(Base):
             return C
         with mock.patch.object(FB.sa, "mat_cov", bad):
             self.assertStops(tree, "B4", "uniform")
+
+    def test_b6_a_swap_that_scales_the_difference_by_one_plus_1e_6(self):
+        """A swap error too small for B2 (the identity's difference is a few ulp) or B4 (every matrix stays positive
+        definite): only the matrix-level check sees it, on the replicates."""
+        tree = self.tree
+        with mock.patch.object(FB, "swapped", lambda Cg, C, C0: Cg + (1 + 1e-6) * (C - C0)):
+            self.assertStops(tree, "B6", "C_resp + its flux block")
+
+    def test_gross_swap_errors_refuse_before_b6(self):
+        tree = self.tree
+        with mock.patch.object(FB, "swapped", lambda Cg, C, C0: Cg + 2 * (C - C0)):
+            self.assertStops(tree, "B4", "positive definite")
+        with mock.patch.object(FB, "swapped", lambda Cg, C, C0: Cg - tree.Cx + (C - C0)):
+            self.assertStops(tree, "B2", "reproduces Stage G")
 
     def test_b5_a_swap_that_moves_a_variance_by_one_ulp(self):
         tree = self.tree

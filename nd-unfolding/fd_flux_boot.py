@@ -30,7 +30,8 @@ direction is whatever the offset shows. Neither band is an interval for chi2 und
 alternative, ``uniform``: the block from the 100 universes with equal weights (the flux prior without the constraint),
 a single chi2 per prediction. No p-value anywhere.
 
-Controls D0-D5 (G-DIAG's, through fd_g_diag.load) and B0-B5 each refuse (exit 1, nothing written).
+Controls D0-D5 (G-DIAG's, through fd_g_diag.load) and B0-B6 each refuse (exit 1, nothing written); B6, the
+matrix-level check of every swap, is amendment 1's.
 
 MEASURES: arithmetic on Stage G's pinned inputs, the 100 committed Flux universe products and the constraint file.
 CANNOT AUTHORIZE: any reading of the comparison, a claim, or paper text.
@@ -145,6 +146,12 @@ def chi2s(f: np.ndarray, g: np.ndarray, Vg: np.ndarray, C: np.ndarray, cells) ->
     except np.linalg.LinAlgError:
         return None
     return r["total"]["chi2"], r["shape_only"]["chi2"]
+
+
+def swapped(C_stage_g: np.ndarray, C: np.ndarray, C0: np.ndarray) -> np.ndarray:
+    """Stage G's matrix with S1's flux block C0 replaced by C, as C_stage_g + (C - C0) in absolute units (amendment 1).
+    Every chi2 of the run is taken on a matrix from here, and B6 checks each one against its parts."""
+    return C_stage_g + (C - C0)
 
 
 def correlation(C: np.ndarray, a: int, b: int) -> float:
@@ -273,8 +280,21 @@ def run(a, pins=None, predictions=None) -> int:
         preds.append((spec, [f"R{c:02d}" for c in cells], cells, g, Vg))
     worst = 0.0
     identity = {}
+    # B6's parts: every S1 block but the flux one, C_model_abs = diag(f) S^T S diag(f) and C_resp, summed apart from
+    # C_stage_g; each swapped matrix must equal parts + C to TOL relative (checked after the replicates)
+    parts = sum(B for k, B in x.blocks_abs.items() if sa.group_of(k) != FLUX_GROUP) + (x.S.T @ x.S) * ff + \
+        (x.Cx if carries else 0)
+    p6 = [0.0]
+
+    def checked(C):
+        M = swapped(C_stage_g, C, C0)
+        want = parts + C
+        p6[0] = max(p6[0], float(np.abs(M - want).max() / np.abs(want).max()))
+        return M
+
+    M1 = checked(C1)
     for spec, names, cells, g, Vg in preds:
-        got = chi2s(x.f, g, Vg, C_stage_g + (C1 - C0), cells)
+        got = chi2s(x.f, g, Vg, M1, cells)
         ref = x.grp[spec["name"]]
         want = (ref["total"]["chi2"], ref["shape_only"]["chi2"])
         rel = max(abs(g_ - w_) / abs(w_) for g_, w_ in zip(got, want)) if got else float("inf")
@@ -310,16 +330,18 @@ def run(a, pins=None, predictions=None) -> int:
                 p5.append(f"replicate {b}")
             Crel = Cv / ff
             corr[f"reported_matrix_{v}"].append(correlation(total_rest + Crel, *pair))
+            Mv = checked(Cv)
             for spec, names, cells, g, Vg in preds:
-                got = chi2s(x.f, g, Vg, C_stage_g + (Cv - C0), cells)
+                got = chi2s(x.f, g, Vg, Mv, cells)
                 if got is None:
                     p4.append(f"replicate {b} {v} {spec['name']}")
                     continue
                 chi[v][spec["name"]].append(got)
     Cu = sa.mat_cov(X)
     uniform = {}
+    Mu = checked(Cu)
     for spec, names, cells, g, Vg in preds:
-        got = chi2s(x.f, g, Vg, C_stage_g + (Cu - C0), cells)
+        got = chi2s(x.f, g, Vg, Mu, cells)
         if got is None:
             p4.append(f"uniform {spec['name']}")
             continue
@@ -328,6 +350,9 @@ def run(a, pins=None, predictions=None) -> int:
                  "is positive definite", not p4, f"{len(p4)}: {p4[:3]}")
     report("B5", "the correlation variant keeps S1's flux variances bit for bit in every replicate", not p5,
            f"{len(p5)}: {p5[:3]}")
+    report("B6", f"every swapped matrix, the identity, {2 * B_REPLICATES} replicate variants and the uniform one, is "
+                 f"S1's other blocks + C_model + C_resp + its flux block to {TOL:g} relative (worst {p6[0]:.1e})",
+           p6[0] <= TOL, f"worst {p6[0]:.3e}")
 
     bands = {v: {spec["name"]: {"cells": names, "ndf": len(names), "chi2_stage_g": identity[spec["name"]]["chi2_stage_g"],
                                 "shape_only_stage_g": identity[spec["name"]]["shape_only_stage_g"],
@@ -337,7 +362,7 @@ def run(a, pins=None, predictions=None) -> int:
                                                    identity[spec["name"]]["shape_only_stage_g"]), "label": LABEL}
                  for spec, names, *_ in preds} for v in VARIANTS}
     readout = {"schema": "fd-flux-boot-readout/1", "labels": LABELS,
-               "controls_passed": ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5"],
+               "controls_passed": ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5", "B6"],
                "constants": {"replicates": B_REPLICATES, "universes": N_UNIVERSES, "seed": SEED,
                              "index_sha256": INDEX_SHA256, "percentiles": list(PERCENTILES),
                              "percentile_method": PERCENTILE_METHOD, "variants": list(VARIANTS), "pair": list(PAIR),
