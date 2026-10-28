@@ -1,0 +1,19 @@
+2026-10-28T00:39:57Z
+login12
+f370da5bef042c47573a8348f51a94e43de5c432
+porcelain_ignored_lines 0
+48c6eb04a212155bde8d6ce03db6d0f3a859b158fdf2f9c28822edd9e224a209  nd-unfolding/fd_flux_boot.py
+84d724ce64bd9e40f9105408e0d3ff0af7ed00bc2d1f44b4b53c68e4d5ffc219  nd-unfolding/tests/test_fd_flux_boot.py
+ec8cbc6880f7a3f67eea5703ddeff958acb10462053696d2cfdb64de0ee5f60d  nd-unfolding/fd_g_followup.py
+241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03  nd-unfolding/fd_g_diag.py
+0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f  nd-unfolding/fd_g_compare.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd-unfolding/s5p_stage1_inspect.py
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json
+81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21  docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json
+a5166316dc66470de61ae5374698cb7edae43a6ad5af556a9a5e870203ff04e3  docs/orchestration/state/measurement-paper/5d-community-20261024/FD-FLUX-BOOT-DECLARATION.md
+tests rc=1
+porcelain_ignored_lines_after_tests 0
+s1 start 2026-10-28T00:39:31Z login12
+s1 end 2026-10-28T00:41:35Z login12
