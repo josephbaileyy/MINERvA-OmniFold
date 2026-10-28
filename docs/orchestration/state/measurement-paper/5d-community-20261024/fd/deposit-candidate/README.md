@@ -20,8 +20,9 @@ Every number is copied from the committed data product, `fd/data-product/fd_data
 `fd_deposit_candidate.py check` verifies them against it and against Stage G's readout (`fd/readout/fd_g_readout.json`,
 sha256 `75a9ddee…`).
 
-**Apart from the measurement,** `predictions-reference.json` holds the five predictions' g and V_g that the paper's χ²
-uses, copied from Stage G's readout. It is labelled "reference predictions used for the paper's χ²; not part of the
+**Apart from the measurement,** `predictions-reference.json` holds the five predictions' g, copied from Stage G's
+readout, and V_g recomputed from the `sigma_Vg_over_f` that the readout prints; with them, the paper's χ² is
+reproduced. It is labelled "reference predictions used for the paper's χ²; not part of the
 measurement". `deposit.json` does not name it, so the measurement stands without it.
 
 | file | contents |
@@ -62,8 +63,9 @@ apart from the measurement.
 - **The covariance:**
   - C_total + C_resp = C_e + C_model_abs + C_resp, the data's reported covariance (`DECISION-20261026-joseph-adopt-cresp.md`).
     Its parts are in the data product, not here.
-  - It is symmetric to 2.2 × 10⁻¹⁶ of its largest entry. Fourteen off-diagonal pairs differ, each by at most 3.4 × 10⁻¹⁶
-    of the entry, carried from S1's C_e (C_model_abs and C_resp are exactly symmetric). It is copied as committed.
+  - It is not bit-exactly symmetric. Fourteen off-diagonal pairs differ, by up to 8 ulp: at most 1.45 × 10⁻¹⁵ of the
+    entry itself, and 2.2 × 10⁻¹⁶ of the matrix's largest entry. They are among C_e's fifteen asymmetric pairs, from
+    S1's assembly; C_model_abs and C_resp are exactly symmetric. The matrix is copied as committed.
   - `numpy.linalg.cholesky`, which Stage G uses, reads the lower triangle (`../receipts-deposit/probe_ulp_and_triangle.log`).
 
 ## Reproducing the paper's χ²
@@ -86,10 +88,17 @@ against `fd_g_readout.json` (`../receipts-deposit/`):
 - **On login36, in Stage G's environment** (Python 3.11.14, numpy 1.26.4): every one of the ten matches **bit for bit**
   (`check-login36.log`).
 - **On a macOS host** (Python 3.12.2, numpy 1.26.4): the totals match to 1.2 × 10⁻¹⁶–2.4 × 10⁻¹⁵ relative, and the
-  shape-only values to 1.3 × 10⁻¹¹–5.7 × 10⁻¹¹ (`check-local.log`).
-  - On that host, the shape-only values do not move at all under one-ulp changes of C or V_g, or under the other
-    summation order of C's parts (`probe_ulp_and_triangle.log`). So the difference is between the two hosts'
-    arithmetic, not in the inputs.
+  shape-only values to 1.3 × 10⁻¹¹–5.7 × 10⁻¹¹ (`check-local.log`). The inputs are bit-identical to Stage G's (P2,
+  P6), so the difference is the two hosts' arithmetic.
+
+**How precisely the shape-only χ² can be reproduced** (`probe_ulp_and_triangle.log`, section iii):
+- Its matrix C + V_g + 100 f fᵀ is dominated by the free-normalization term: 100 f fᵀ is about 3.5 × 10⁴ times the
+  largest entry of C + V_g, and the matrix's condition number is 2 × 10⁷–6 × 10⁸.
+- So a one-ulp change of every C entry changes none of the matrix's entries; that change is lost in rounding. One ulp
+  of f does move the shape-only χ², by up to 3.9 × 10⁻¹¹.
+- An independent solver (`numpy.linalg.solve`, with 100 f fᵀ built entry by entry) reproduces Stage G's shape-only χ²
+  to 1.3 × 10⁻¹¹–2.9 × 10⁻¹⁰ relative. Check P5's tolerance, 10⁻¹⁰, is defined on Stage G's own `compare()`. **Outside
+  `compare()`, expect the shape-only χ² to about 3 × 10⁻¹⁰ and the total χ² to about 10⁻¹⁵.**
 
 The CSVs carry every number as Python's shortest round-trip repr, so they read back as the same IEEE doubles.
 
@@ -121,8 +130,18 @@ From the repository root:
         --g-readout <fd>/readout/fd_g_readout.json --out-dir <new dir>
     python3 -I -B nd-unfolding/fd_deposit_candidate.py check --package <dir> \
         --data-product <fd>/data-product/fd_data_product.json --g-readout <fd>/readout/fd_g_readout.json
+    python3 -I -B nd-unfolding/fd_deposit_candidate.py check --package <dir> \
+        --data-product <fd>/data-product/fd_data_product.json --measurement-only
 
-`build` (which also takes `--g-readout <fd>/readout/fd_g_readout.json`) refuses an existing file. `check` refuses
-(exit 1) unless controls P0–P6 hold (the script's docstring lists them). The tests are
-`nd-unfolding/tests/test_fd_deposit_candidate.py`: 30 tests, with planted defects that each reach and assert their
-own control's clause. 23 of 23 source mutants are killed (`../receipts-deposit/mutants.log`).
+- `build` (which also takes `--g-readout`) refuses an existing file.
+- `check` refuses (exit 1) unless controls P0–P7 hold; the script's docstring lists them. P7 requires every file to
+  be what `build` writes from the pinned inputs: the CSVs byte for byte, and every field of both JSON files, including
+  labels, units, status and domains, except `code_sha256`.
+- `check --measurement-only` checks the four measurement files alone (P0–P4 and P7), without
+  `predictions-reference.json` or Stage G's readout, so the measurement can be checked if the reference file is not
+  deposited (`../receipts-deposit/check-local-measurement-only.log`).
+- The tests are `nd-unfolding/tests/test_fd_deposit_candidate.py`: 45 tests, with planted defects that each reach and
+  assert their own control's clause.
+- 31 of 31 source mutants are killed by a targeted test (`../receipts-deposit/mutants.log`). The test that compares
+  the committed package with a fresh build is skipped for this count, because every file embeds the code's sha256 and
+  that test fails on any source change.

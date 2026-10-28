@@ -3,22 +3,29 @@
 DECISION-20261028-joseph-result-table-and-deposit-package.md item 2): the sixteen-cell result's cell definitions,
 measured vector, reported covariance C_total + C_resp and its correlation matrix, as CSV and one JSON, written from
 the committed data product (fd/data-product/fd_data_product.json) and nothing else; and, apart from the measurement,
-predictions-reference.json: the five predictions' g and V_g that the paper's chi2 uses, from Stage G's readout
-(fd/readout/fd_g_readout.json). Whether that file goes into a deposit is Joseph's call at release.
+predictions-reference.json: the five predictions' g and V_g (V_g recomputed from the sigma_Vg_over_f that Stage G's
+readout, fd/readout/fd_g_readout.json, prints), with which the paper's chi2 is reproduced. Whether that file goes into a deposit is Joseph's call at release.
 
 ``build`` writes the package; ``check`` re-reads it from disk and refuses (exit 1) unless every control holds:
-* P0  the data product and Stage G's readout are the pinned bytes, and the package's own file digests hold;
+* P0  the data product and Stage G's readout are the pinned bytes, every file exists, and the CSVs' digests in
+      deposit.json hold (the files' bytes, not newline-translated text);
 * P1  the cells, their boxes and H2 boxes are the data product's; each cell's box is exactly the union of its H2
-      boxes; no two cells share an H2 box; the unreported boxes are exactly the H2 boxes in no cell;
+      boxes (the boxes inside it are exactly its listed ones, and their bounding box is it); no two cells share an H2
+      box; the unreported boxes are exactly the H2 boxes in no cell;
 * P2  f, the covariance and the correlation, from every CSV and from the JSON, are the data product's bit for bit;
 * P3  the covariance is symmetric to 1e-12 of its largest entry and positive definite; sigma is sqrt(diag); the correlation is the covariance's;
-* P4  GiBUU's subset is Stage G's eight cells and is exactly the cells with p_parallel's upper edge at 4.5 GeV/c;
+* P4  GiBUU's subset is exactly the eight cells with p_parallel's upper edge at 4.5 GeV/c, and Stage G's eight;
 * P5  every Stage G chi2 in fd_g_readout.json (five predictions, total and shape-only) is recomputed by Stage G's own
       compare() from the package files alone (cells.csv's f, covariance.csv, predictions-reference.json's g and V_g),
       to 1e-10 relative; the readout's f is the package's;
 * P6  predictions-reference.json is Stage G's readout: the same five predictions in order, each with fd_g_compare's
       source path, sha256 and label, its cells (GiBUU's eight), g and sigma_Vg_over_f bit for bit, V_g =
-      (sigma_Vg_over_f f)^2 bit for bit, and Stage G's chi2 and ndf.
+      (sigma_Vg_over_f f)^2 bit for bit, and Stage G's chi2 and ndf;
+* P7  every file is what ``build`` writes from the pinned inputs: the CSVs byte for byte, and every field of
+      deposit.json and predictions-reference.json (labels, units, status, domains included) but code_sha256.
+
+``check --measurement-only`` checks the measurement without predictions-reference.json or Stage G's readout:
+P0-P3, P4's p_parallel rule and P7 on the four measurement files.
 
 MEASURES: nothing; a copy of the committed data product in a deposit layout, with its checks.
 CANNOT AUTHORIZE: an upload, a deposit, a DOI, a release, supplemental material, a claim or paper text.
@@ -69,7 +76,8 @@ LABELS = {
     "covariance": "C_total + C_resp = C_e + C_model_abs + C_resp, the data's reported covariance (the data "
                   "product's C_total_plus_C_resp). The paper's chi2 for a prediction g on its cells c is "
                   "d^T (C + V_g)^-1 d with d = f - g, C this covariance on c, and V_g = diag of g's own "
-                  "finite-MC variance; g and V_g are the prediction's, not part of the measurement",
+                  "finite-MC variance, ndf n; its shape-only chi2 adds 100 f f^T (f on c, absolute units) to "
+                  "C + V_g, ndf n - 1; g and V_g are the prediction's, not part of the measurement",
     "gibuu": "GiBUU is compared on the eight cells with p_parallel < 4.5 GeV/c only (gibuu_subset = 1)",
     "unreported": "the sixteen cells cover 28 of the 32 H2 boxes; the four unreported boxes are listed with their "
                   "bounds and are in no cell",
@@ -182,12 +190,24 @@ def reference(gr: dict, f: np.ndarray) -> str:
     return json.dumps(js, indent=1, allow_nan=False) + "\n"
 
 
-def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
+def bounding_box(boxes: list) -> dict:
+    return {ax: [min(h2_box(b)[ax][0] for b in boxes), max(h2_box(b)[ax][1] for b in boxes)] for ax in AXES}
+
+
+def without_code(text: str) -> dict:
+    js = json.loads(text)
+    js.pop("code_sha256", None)
+    return js
+
+
+def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
+    """Every control; with ``g_path`` None (``--measurement-only``), the measurement's alone."""
     dp = load_pinned(dp_path, "data_product")
-    gr = load_pinned(g_path, "g_readout")
-    for n in (*FILES, REFERENCE):
+    gr = None if g_path is None else load_pinned(g_path, "g_readout")
+    names = FILES if gr is None else (*FILES, REFERENCE)
+    for n in names:
         report("P0", f"{n} exists", (pkg / n).is_file())
-    text = {n: (pkg / n).read_text() for n in (*FILES, REFERENCE)}
+    text = {n: (pkg / n).read_bytes().decode() for n in names}   # the bytes: read_text() would translate newlines
     js = json.loads(text["deposit.json"])
     for n in FILES[:-1]:
         report("P0", f"{n}'s sha256 is deposit.json's", hashlib.sha256(text[n].encode()).hexdigest()
@@ -202,7 +222,8 @@ def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
         box = {ax: [float(r[f"{ax}_lo"]), float(r[f"{ax}_hi"])] for ax in AXES}
         report("P1", f"{CELLS[i]}'s box and H2 boxes are the data product's", box == d["box"] == c["box"]
                and [int(x) for x in r["h2_boxes"].split()] == d["h2_boxes"] == c["h2_boxes"])
-        report("P1", f"{CELLS[i]}'s box is exactly the union of its H2 boxes", boxes_inside(box) == set(d["h2_boxes"]))
+        report("P1", f"{CELLS[i]}'s box is exactly the union of its H2 boxes", boxes_inside(box) == set(d["h2_boxes"])
+               and bounding_box(d["h2_boxes"]) == box)
     used = [b for d in dp["cells"] for b in d["h2_boxes"]]
     report("P1", "no two cells share an H2 box", len(used) == len(set(used)))
     unrep = [u["h2_box"] for u in js["unreported_h2_boxes"]]
@@ -239,12 +260,16 @@ def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
     report("P3", "the correlation is the covariance's, to 1e-15", rho_worst <= 1e-15, f"{rho_worst}")
 
     # P4: GiBUU's subset
-    gib = [p for p in gr["predictions"] if p["name"] == "gibuu"]
     sub = [r["cell"] for r in rows if r["gibuu_subset"] == "1"]
-    report("P4", "GiBUU's subset is Stage G's eight cells and the cells with p_parallel's upper edge 4.5 GeV/c",
-           len(gib) == 1 and sub == gib[0]["cells"] == js["gibuu_subset"] == [CELLS[i] for i, d in
-                                                                              enumerate(dp["cells"]) if d["box"]["pz"][1] <= 4.5]
-           and len(sub) == 8)
+    report("P4", "GiBUU's subset is the eight cells with p_parallel's upper edge 4.5 GeV/c", len(sub) == 8
+           and sub == js["gibuu_subset"] == [CELLS[i] for i, d in enumerate(dp["cells"]) if d["box"]["pz"][1] <= 4.5])
+    summary = {"controls_passed": ["P0", "P1", "P2", "P3", "P4", "P7"], "correlation_worst_abs_diff": rho_worst,
+           "covariance_asymmetry_over_max": asym, "covariance_eigen_min_max": [float(ev.min()), float(ev.max())]}
+    if gr is None:
+        check_as_built(text, package(dp), FILES)
+        return {**summary, "mode": "measurement only: predictions-reference.json and Stage G's readout not read"}
+    gib = [p for p in gr["predictions"] if p["name"] == "gibuu"]
+    report("P4", "GiBUU's subset is Stage G's eight cells", len(gib) == 1 and sub == gib[0]["cells"])
 
     # P6: the reference predictions are Stage G's
     ref = json.loads(text[REFERENCE])
@@ -288,9 +313,21 @@ def check(pkg: Path, dp_path: Path, g_path: Path) -> dict:
                         "chi2_package": got, "chi2_stage_g": want, "rel_diff": rel})
             report("P5", f"{p['name']} {key} chi2 from the package is Stage G's to {CHI2_TOL} relative",
                    rel <= CHI2_TOL and out[key]["ndf"] == p[key]["ndf"], f"{got} vs {want} ({rel})")
-    return {"controls_passed": ["P0", "P1", "P2", "P3", "P4", "P6", "P5"], "chi2": rec, "chi2_worst_rel_diff": worst,
-            "correlation_worst_abs_diff": rho_worst, "covariance_asymmetry_over_max": asym,
-            "covariance_eigen_min_max": [float(ev.min()), float(ev.max())]}
+    built = package(dp)
+    built[REFERENCE] = reference(gr, f_dp)
+    check_as_built(text, built, names)
+    return {**summary, "controls_passed": ["P0", "P1", "P2", "P3", "P4", "P6", "P5", "P7"], "chi2": rec,
+            "chi2_worst_rel_diff": worst}
+
+
+def check_as_built(text: dict, built: dict, names) -> None:
+    """P7: each file is what build writes from the pinned inputs; the JSONs field by field, but code_sha256."""
+    for n in names:
+        if n.endswith(".csv"):
+            report("P7", f"{n} is what build writes, byte for byte", text[n] == built[n])
+        else:
+            report("P7", f"every field of {n} (but code_sha256) is what build writes",
+                   without_code(text[n]) == without_code(built[n]))
 
 
 def main(argv=None) -> int:
@@ -303,7 +340,10 @@ def main(argv=None) -> int:
     c = sub.add_parser("check")
     c.add_argument("--package", type=Path, required=True)
     c.add_argument("--data-product", type=Path, required=True)
-    c.add_argument("--g-readout", type=Path, required=True)
+    g = c.add_mutually_exclusive_group(required=True)
+    g.add_argument("--g-readout", type=Path)
+    g.add_argument("--measurement-only", action="store_true",
+                   help="check the measurement alone, without predictions-reference.json or Stage G's readout")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "build":

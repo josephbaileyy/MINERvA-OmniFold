@@ -1,15 +1,15 @@
-start 2026-10-28T09:37:19Z login36
+start 2026-10-28T09:55:35Z login36
 b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072  fd_data_product.json
 75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee  fd_g_readout.json
-f410321c63edb62af26cb5a30ae915229be38bfca4958b58ad52c92d78edb026  nd/fd_deposit_candidate.py
+113ac78602ec2c8a20c64d120a9f7467ee561c2b620c31c71e8795d71e4ba5ae  nd/fd_deposit_candidate.py
 0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f  nd/fd_g_compare.py
 b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd/s1_assemble.py
 26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd/s5p_stage1_inspect.py
 640a0f931cd3c3681449edbc9ceae2398b2794dfc19bfd9f816db1c7c4a318da  pkg/cells.csv
 838f16617ed88f86329ee4eb9c2955e16ffe99e14791890b786c7548b35cd171  pkg/correlation.csv
 20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8  pkg/covariance.csv
-224c18cbfe0c6b180681da21702836786aba93f9cd8a98bdab96aa4e6c9a30ca  pkg/deposit.json
-856d13c39c4e4ffdab45bc8a93471652696db0a6213928c541a3d1953bb5027f  pkg/predictions-reference.json
+01ff317b8181003b86a194817cc6ad57032d8eac6099b153f49a85e7540882f4  pkg/deposit.json
+28526450094b12cef0c3777260d276db563501ab8832edcb361f01561a68d81c  pkg/predictions-reference.json
 python 3.11.14 numpy 1.26.4
 check rc=0
 {"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
@@ -66,7 +66,8 @@ check rc=0
 {"control": "P3", "check": "the covariance is positive definite", "ok": true}
 {"control": "P3", "check": "sigma in cells.csv and deposit.json is sqrt(diag), bit for bit", "ok": true}
 {"control": "P3", "check": "the correlation is the covariance's, to 1e-15", "ok": true}
-{"control": "P4", "check": "GiBUU's subset is Stage G's eight cells and the cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P4", "check": "GiBUU's subset is the eight cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P4", "check": "GiBUU's subset is Stage G's eight cells", "ok": true}
 {"control": "P6", "check": "predictions-reference.json is labelled apart from the measurement and names the pinned readout", "ok": true}
 {"control": "P6", "check": "it holds Stage G's five predictions, in order", "ok": true}
 {"control": "P6", "check": "genie_cv: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
@@ -101,6 +102,11 @@ check rc=0
 {"control": "P5", "check": "gibuu shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
 {"control": "P5", "check": "mnvtune_v1 total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
 {"control": "P5", "check": "mnvtune_v1 shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P7", "check": "cells.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "covariance.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "correlation.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "every field of deposit.json (but code_sha256) is what build writes", "ok": true}
+{"control": "P7", "check": "every field of predictions-reference.json (but code_sha256) is what build writes", "ok": true}
 {
  "controls_passed": [
   "P0",
@@ -109,7 +115,14 @@ check rc=0
   "P3",
   "P4",
   "P6",
-  "P5"
+  "P5",
+  "P7"
+ ],
+ "correlation_worst_abs_diff": 0.0,
+ "covariance_asymmetry_over_max": 2.1936904858711652e-16,
+ "covariance_eigen_min_max": [
+  1.4415871887509932e-83,
+  1.947669071683371e-79
  ],
  "chi2": [
   {
@@ -203,12 +216,18 @@ check rc=0
    "rel_diff": 0.0
   }
  ],
- "chi2_worst_rel_diff": 0.0,
- "correlation_worst_abs_diff": 0.0,
- "covariance_asymmetry_over_max": 2.1936904858711652e-16,
- "covariance_eigen_min_max": [
-  1.4415871887509932e-83,
-  1.947669071683371e-79
- ]
+ "chi2_worst_rel_diff": 0.0
 }
-end 2026-10-28T09:37:20Z
+measurement-only check rc=0
+ "controls_passed": [
+  "P0",
+  "P1",
+  "P2",
+  "P3",
+  "P4",
+  "P7"
+ ],
+--
+ "mode": "measurement only: predictions-reference.json and Stage G's readout not read"
+}
+end 2026-10-28T09:55:37Z

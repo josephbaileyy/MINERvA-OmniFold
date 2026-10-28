@@ -52,7 +52,8 @@
 {"control": "P3", "check": "the covariance is positive definite", "ok": true}
 {"control": "P3", "check": "sigma in cells.csv and deposit.json is sqrt(diag), bit for bit", "ok": true}
 {"control": "P3", "check": "the correlation is the covariance's, to 1e-15", "ok": true}
-{"control": "P4", "check": "GiBUU's subset is Stage G's eight cells and the cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P4", "check": "GiBUU's subset is the eight cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P4", "check": "GiBUU's subset is Stage G's eight cells", "ok": true}
 {"control": "P6", "check": "predictions-reference.json is labelled apart from the measurement and names the pinned readout", "ok": true}
 {"control": "P6", "check": "it holds Stage G's five predictions, in order", "ok": true}
 {"control": "P6", "check": "genie_cv: source, sha256 and label are fd_g_compare's and the readout's", "ok": true}
@@ -87,6 +88,11 @@
 {"control": "P5", "check": "gibuu shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
 {"control": "P5", "check": "mnvtune_v1 total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
 {"control": "P5", "check": "mnvtune_v1 shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P7", "check": "cells.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "covariance.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "correlation.csv is what build writes, byte for byte", "ok": true}
+{"control": "P7", "check": "every field of deposit.json (but code_sha256) is what build writes", "ok": true}
+{"control": "P7", "check": "every field of predictions-reference.json (but code_sha256) is what build writes", "ok": true}
 {
  "controls_passed": [
   "P0",
@@ -95,7 +101,14 @@
   "P3",
   "P4",
   "P6",
-  "P5"
+  "P5",
+  "P7"
+ ],
+ "correlation_worst_abs_diff": 0.0,
+ "covariance_asymmetry_over_max": 2.1936904858711652e-16,
+ "covariance_eigen_min_max": [
+  1.4415871887505872e-83,
+  1.9476690716833715e-79
  ],
  "chi2": [
   {
@@ -189,11 +202,5 @@
    "rel_diff": 4.4143297798249724e-11
   }
  ],
- "chi2_worst_rel_diff": 5.695405224056319e-11,
- "correlation_worst_abs_diff": 0.0,
- "covariance_asymmetry_over_max": 2.1936904858711652e-16,
- "covariance_eigen_min_max": [
-  1.4415871887505872e-83,
-  1.9476690716833715e-79
- ]
+ "chi2_worst_rel_diff": 5.695405224056319e-11
 }

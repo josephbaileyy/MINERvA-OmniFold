@@ -6,7 +6,7 @@
   "order": "every vector and matrix is in the cell order R00, R01, ..., R15 (cells.csv's row order)",
   "units": "f: each cell's integrated cross section, cm^2/nucleon (a cell integral, not a differential density); covariance: (cm^2/nucleon)^2; sigma = sqrt(diag(covariance)), cm^2/nucleon; box edges: p_T and p_parallel in GeV/c, E_avail, q3 and W in GeV",
   "edges": "the upper edge 100 GeV on E_avail, q3 and W is the analysis grid's last edge: the last bin on those axes is a catch bin to 100 GeV; 4.5 GeV/c on p_T and 60 GeV/c on p_parallel are the grid's outer edges too. A cell's integral covers only its box inside the grid; no edge is infinity",
-  "covariance": "C_total + C_resp = C_e + C_model_abs + C_resp, the data's reported covariance (the data product's C_total_plus_C_resp). The paper's chi2 for a prediction g on its cells c is d^T (C + V_g)^-1 d with d = f - g, C this covariance on c, and V_g = diag of g's own finite-MC variance; g and V_g are the prediction's, not part of the measurement",
+  "covariance": "C_total + C_resp = C_e + C_model_abs + C_resp, the data's reported covariance (the data product's C_total_plus_C_resp). The paper's chi2 for a prediction g on its cells c is d^T (C + V_g)^-1 d with d = f - g, C this covariance on c, and V_g = diag of g's own finite-MC variance, ndf n; its shape-only chi2 adds 100 f f^T (f on c, absolute units) to C + V_g, ndf n - 1; g and V_g are the prediction's, not part of the measurement",
   "gibuu": "GiBUU is compared on the eight cells with p_parallel < 4.5 GeV/c only (gibuu_subset = 1)",
   "unreported": "the sixteen cells cover 28 of the 32 H2 boxes; the four unreported boxes are listed with their bounds and are in no cell",
   "not_citable_for": "coverage; any reading, claim or release text"
@@ -1275,6 +1275,6 @@
   "sha256": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072"
  },
  "code_sha256": {
-  "fd_deposit_candidate.py": "f410321c63edb62af26cb5a30ae915229be38bfca4958b58ad52c92d78edb026"
+  "fd_deposit_candidate.py": "113ac78602ec2c8a20c64d120a9f7467ee561c2b620c31c71e8795d71e4ba5ae"
  }
 }

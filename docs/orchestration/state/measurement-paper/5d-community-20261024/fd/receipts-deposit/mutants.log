@@ -20,5 +20,13 @@ KILLED  P6 chi2 compare dropped
 KILLED  P0 file-exists check dropped
 KILLED  reference V_g written as sigma
 KILLED  build writes sigma squared
+KILLED  P1 coverage (bounding box) dropped
+KILLED  P7 dropped
+KILLED  P7 measurement-only dropped
+KILLED  P7 CSV byte compare dropped
+KILLED  P7 JSON compare dropped
+KILLED  bytes read as newline-translated text
+KILLED  P4 Stage G compare dropped
+KILLED  measurement-only reads the readout anyway
 KILLED  no-overwrite dropped
-23/23 killed
+31/31 killed

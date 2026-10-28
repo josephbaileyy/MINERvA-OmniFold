@@ -1,4 +1,7 @@
 import subprocess, sys, shutil, tempfile, os
+# The committed-bytes test fails on ANY source change (every file embeds the code's sha256), so it is skipped here:
+# DEPOSIT_TARGETED_ONLY=1 makes each kill a targeted test's.
+os.environ["DEPOSIT_TARGETED_ONLY"] = "1"
 from pathlib import Path
 W = Path(sys.argv[1]); SRC = W / "nd-unfolding/fd_deposit_candidate.py"; orig = SRC.read_text()
 M = [
@@ -24,6 +27,14 @@ M = [
  ("P0 file-exists check dropped", "report(\"P0\", f\"{n} exists\", (pkg / n).is_file())", "pass"),
  ("reference V_g written as sigma", "Vg = (np.array(p[\"sigma_Vg_over_f\"], float) * f[idx]) ** 2", "Vg = np.array(p[\"sigma_Vg_over_f\"], float) * f[idx]"),
  ("build writes sigma squared", "float(f[i]), float(sigma[i])]", "float(f[i]), float(sigma[i] ** 2)]"),
+ ("P1 coverage (bounding box) dropped", "and bounding_box(d[\"h2_boxes\"]) == box)", ")"),
+ ("P7 dropped", "    check_as_built(text, built, names)\n", "    pass\n"),
+ ("P7 measurement-only dropped", "        check_as_built(text, package(dp), FILES)\n", "        pass\n"),
+ ("P7 CSV byte compare dropped", "is what build writes, byte for byte\", text[n] == built[n])", "is what build writes, byte for byte\", True)"),
+ ("P7 JSON compare dropped", "without_code(text[n]) == without_code(built[n]))", "True)"),
+ ("bytes read as newline-translated text", "(pkg / n).read_bytes().decode() for n in names}", "(pkg / n).read_text() for n in names}"),
+ ("P4 Stage G compare dropped", "len(gib) == 1 and sub == gib[0][\"cells\"])", "len(gib) == 1)"),
+ ("measurement-only reads the readout anyway", "gr = None if g_path is None else load_pinned(g_path, \"g_readout\")", "gr = load_pinned(g_path, \"g_readout\")"),
  ("no-overwrite dropped", "\"no package file exists (no overwrite)\", not any(", "\"no package file exists (no overwrite)\", True or any("),
 ]
 killed = 0

@@ -28,3 +28,25 @@ for p in gr["predictions"]:
 A = np.array([[4.0, 1.0], [2.0, 3.0]])
 L1 = np.linalg.cholesky(A); L2 = np.linalg.cholesky(np.tril(A) + np.tril(A, -1).T); L3 = np.linalg.cholesky(np.triu(A) + np.triu(A, 1).T)
 print("cholesky reads the lower triangle:", np.array_equal(L1, L2) and not np.array_equal(L1, L3))
+
+# (iii) after the independent review of 9ea78b92: what a one-ulp change of C does to the shape-only matrix, what one
+# ulp of f does, the shape-only matrix's condition, and an independent solver (np.linalg.solve, 100 f f^T built as
+# 100 * f_i * f_j) against Stage G's chi2
+print("--- (iii)")
+for p in gr["predictions"]:
+    idx = [cells.index(c) for c in p["cells"]]; g = np.zeros(16); Vg = np.zeros(16)
+    g[idx] = p["g"]; Vg[idx] = (np.array(p["sigma_Vg_over_f"]) * f[idx]) ** 2
+    ii = np.ix_(idx, idx); fs = f[idx]
+    Ms = C[ii] + np.diag(Vg[idx]) + G.SHAPE_LAMBDA * np.outer(fs, fs)
+    Cp = C + np.spacing(np.abs(C))
+    Msp = Cp[ii] + np.diag(Vg[idx]) + G.SHAPE_LAMBDA * np.outer(fs, fs)
+    fp = f.copy(); k = idx[3]; fp[k] = np.nextafter(fp[k], np.inf)
+    s0 = G.compare(f, g, Vg, C, idx, "x")["shape_only"]["chi2"]
+    s1 = G.compare(fp, g, Vg, C, idx, "x")["shape_only"]["chi2"]
+    d = (f - g)[idx]
+    Mi = C[ii] + np.diag(Vg[idx]) + np.array([[100.0 * a * b for b in fs] for a in fs])
+    lu = float(d @ np.linalg.solve(Mi, d))
+    print(f"{p['name']}: entries of the shape-only matrix changed by +1 ulp on every C entry: "
+          f"{int(np.sum(Msp != Ms))} of {Ms.size}; 100 f f^T max / M max {np.abs(G.SHAPE_LAMBDA * np.outer(fs, fs)).max() / np.abs(C[ii] + np.diag(Vg[idx])).max():.2e}; "
+          f"cond {np.linalg.cond(Ms):.2e}; one ulp of f[{cells[k]}] moves the shape-only chi2 by {abs(s1 / s0 - 1):.2e}; "
+          f"np.linalg.solve vs Stage G shape-only {abs(lu / p['shape_only']['chi2'] - 1):.2e}")
