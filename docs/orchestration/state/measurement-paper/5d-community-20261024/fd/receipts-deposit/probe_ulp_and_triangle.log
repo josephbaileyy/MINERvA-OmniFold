@@ -1,0 +1,8 @@
+numpy 1.26.4
+C == (C_e + C_model_abs) + C_resp bit for bit: True
+genie_cv: other order total 2.22e-15 shape 0.00e+00; 20 one-ulp draws: total max 6.99e-15, shape max 0.00e+00; this host vs Stage G: total 4.44e-16 shape 1.30e-11
+genie_mec: other order total 4.44e-16 shape 0.00e+00; 20 one-ulp draws: total max 7.33e-15, shape max 0.00e+00; this host vs Stage G: total 1.78e-15 shape 3.34e-11
+nuwro: other order total 4.00e-15 shape 0.00e+00; 20 one-ulp draws: total max 1.11e-14, shape max 0.00e+00; this host vs Stage G: total 2.44e-15 shape 5.70e-11
+gibuu: other order total 1.11e-16 shape 0.00e+00; 20 one-ulp draws: total max 1.44e-15, shape max 0.00e+00; this host vs Stage G: total 2.22e-16 shape 1.39e-11
+mnvtune_v1: other order total 4.00e-15 shape 0.00e+00; 20 one-ulp draws: total max 8.88e-15, shape max 0.00e+00; this host vs Stage G: total 2.11e-15 shape 4.41e-11
+cholesky reads the lower triangle: True

@@ -1,0 +1,170 @@
+{"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
+{"control": "P0", "check": "g_readout sha256 is the pin", "ok": true}
+{"control": "P0", "check": "cells.csv's sha256 is deposit.json's", "ok": true}
+{"control": "P0", "check": "covariance.csv's sha256 is deposit.json's", "ok": true}
+{"control": "P0", "check": "correlation.csv's sha256 is deposit.json's", "ok": true}
+{"control": "P0", "check": "deposit.json names the pinned data product", "ok": true}
+{"control": "P1", "check": "cells.csv and deposit.json list R00-R15 in order", "ok": true}
+{"control": "P1", "check": "R00's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R00's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R01's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R01's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R02's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R02's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R03's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R03's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R04's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R04's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R05's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R05's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R06's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R06's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R07's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R07's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R08's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R08's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R09's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R09's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R10's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R10's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R11's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R11's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R12's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R12's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R13's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R13's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R14's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R14's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "R15's box and H2 boxes are the data product's", "ok": true}
+{"control": "P1", "check": "R15's box is exactly the union of its H2 boxes", "ok": true}
+{"control": "P1", "check": "no two cells share an H2 box", "ok": true}
+{"control": "P1", "check": "the unreported boxes are exactly the H2 boxes in no cell, with their bounds", "ok": true}
+{"control": "P1", "check": "the H2 edges are s5p_stage1_inspect's", "ok": true}
+{"control": "P2", "check": "f from cells.csv and deposit.json is the data product's, bit for bit", "ok": true}
+{"control": "P2", "check": "the covariance from covariance.csv and deposit.json is the data product's C_total_plus_C_resp, bit for bit", "ok": true}
+{"control": "P2", "check": "the correlation from correlation.csv and deposit.json is the data product's, bit for bit", "ok": true}
+{"control": "P3", "check": "the covariance is symmetric to 1e-12 of its largest entry (the data product's Q4 rule)", "ok": true}
+{"control": "P3", "check": "the covariance is positive definite", "ok": true}
+{"control": "P3", "check": "sigma in cells.csv and deposit.json is sqrt(diag), bit for bit", "ok": true}
+{"control": "P3", "check": "the correlation is the covariance's, to 1e-15", "ok": true}
+{"control": "P4", "check": "GiBUU's subset is Stage G's eight cells and the cells with p_parallel's upper edge 4.5 GeV/c", "ok": true}
+{"control": "P5", "check": "Stage G's f is the package's, bit for bit", "ok": true}
+{"control": "P5", "check": "genie_cv total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "genie_cv shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "genie_mec total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "genie_mec shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "nuwro total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "nuwro shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "gibuu total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "gibuu shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "mnvtune_v1 total chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{"control": "P5", "check": "mnvtune_v1 shape_only chi2 from the package is Stage G's to 1e-10 relative", "ok": true}
+{
+ "controls_passed": [
+  "P0",
+  "P1",
+  "P2",
+  "P3",
+  "P4",
+  "P5"
+ ],
+ "chi2": [
+  {
+   "prediction": "genie_cv",
+   "kind": "total",
+   "n_cells": 16,
+   "ndf": 16,
+   "chi2_package": 109.35416053614003,
+   "chi2_stage_g": 109.35416053613997,
+   "rel_diff": 5.19810298777083e-16
+  },
+  {
+   "prediction": "genie_cv",
+   "kind": "shape_only",
+   "n_cells": 16,
+   "ndf": 15,
+   "chi2_package": 108.50814492021327,
+   "chi2_stage_g": 108.50814491879996,
+   "rel_diff": 1.3024940524498052e-11
+  },
+  {
+   "prediction": "genie_mec",
+   "kind": "total",
+   "n_cells": 16,
+   "ndf": 16,
+   "chi2_package": 272.1207846602805,
+   "chi2_stage_g": 272.12078466028,
+   "rel_diff": 1.8800135770075422e-15
+  },
+  {
+   "prediction": "genie_mec",
+   "kind": "shape_only",
+   "n_cells": 16,
+   "ndf": 15,
+   "chi2_package": 258.07329990836826,
+   "chi2_stage_g": 258.07329991698805,
+   "rel_diff": 3.340056054711756e-11
+  },
+  {
+   "prediction": "nuwro",
+   "kind": "total",
+   "n_cells": 16,
+   "ndf": 16,
+   "chi2_package": 188.02938276582336,
+   "chi2_stage_g": 188.0293827658238,
+   "rel_diff": 2.418490898589063e-15
+  },
+  {
+   "prediction": "nuwro",
+   "kind": "shape_only",
+   "n_cells": 16,
+   "ndf": 15,
+   "chi2_package": 187.99710442100553,
+   "chi2_stage_g": 187.99710443171273,
+   "rel_diff": 5.695405224056319e-11
+  },
+  {
+   "prediction": "gibuu",
+   "kind": "total",
+   "n_cells": 8,
+   "ndf": 8,
+   "chi2_package": 58.46327773847566,
+   "chi2_stage_g": 58.463277738475654,
+   "rel_diff": 1.21536588991568e-16
+  },
+  {
+   "prediction": "gibuu",
+   "kind": "shape_only",
+   "n_cells": 8,
+   "ndf": 7,
+   "chi2_package": 27.68994874245953,
+   "chi2_stage_g": 27.689948742075618,
+   "rel_diff": 1.3864718535039147e-11
+  },
+  {
+   "prediction": "mnvtune_v1",
+   "kind": "total",
+   "n_cells": 16,
+   "ndf": 16,
+   "chi2_package": 329.7156796540789,
+   "chi2_stage_g": 329.71567965407957,
+   "rel_diff": 2.068815856878089e-15
+  },
+  {
+   "prediction": "mnvtune_v1",
+   "kind": "shape_only",
+   "n_cells": 16,
+   "ndf": 15,
+   "chi2_package": 311.1899612560827,
+   "chi2_stage_g": 311.18996126981966,
+   "rel_diff": 4.4143297798249724e-11
+  }
+ ],
+ "chi2_worst_rel_diff": 5.695405224056319e-11,
+ "correlation_worst_abs_diff": 0.0,
+ "covariance_asymmetry_over_max": 2.1936904858711652e-16,
+ "covariance_eigen_min_max": [
+  1.4415871887505872e-83,
+  1.9476690716833715e-79
+ ]
+}
