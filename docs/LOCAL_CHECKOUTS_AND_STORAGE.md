@@ -104,5 +104,7 @@ It also held uncommitted edits and 16 untracked root files or folders. One of th
 - `main` was fast-forwarded. Eight worktree registrations whose directories no longer existed were pruned.
 - 414 local branches were deleted, each fully merged into `origin/main` and checked out nowhere. The archive's
   `deleted-merged-branches.tsv` lists name and sha; recreate one with `git branch <name> <sha>`.
-  Branches on GitHub were not touched by this step. From 2026-10-28, both repositories delete a PR's
-  branch automatically when it merges.
+  409 merged branches on GitHub were then deleted the same way, after excluding any with an open PR
+  or checked out in a local worktree. They are listed in `deleted-remote-branches.tsv`; restore one with
+  `git push origin <sha>:refs/heads/<name>`. From 2026-10-28, both repositories delete a PR's branch
+  automatically when it merges.
