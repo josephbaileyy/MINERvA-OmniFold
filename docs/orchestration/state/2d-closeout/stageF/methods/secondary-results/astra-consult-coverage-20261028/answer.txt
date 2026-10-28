@@ -1,0 +1,78 @@
+1. **Rating: 4 — the paper is noticeably weaker without it**, because its principal result combines a 7.29% median uncertainty with substantial generator discrepancies, while the existing validation establishes neither the calibration of the experimental uncertainty nor the coverage of the reported intervals.
+
+   I would request a bounded, well-defined coverage study in a referee report. I would not make successful passage of precisely 1B a universal condition of publication: a paper documenting a measurement’s performance and limitations can remain valuable after a negative result. But the distinction between that contribution and a quantitatively reliable cross-section measurement must remain explicit.
+
+2. **Standard practice**
+
+   Comparable PRD publications commonly use fake-data recovery tests and systematic-universe propagation. An independent ensemble test measuring how frequently the final total intervals contain the truth is a stronger requirement than those procedures, and is not uniformly demonstrated in the published examples below.
+
+   | Paper | What it establishes |
+   |---|---|
+   | **MINERvA, D. Ruterbories et al., “Measurement of inclusive charged-current νμ cross sections as a function of muon kinematics…”**, PRD **104**, 092007 (2021), **arXiv:2106.16210** | Uses ten alternative model predictions as pseudo-data and compares unfolded results with truth using correlated χ² to choose the iteration count. Only statistical uncertainties enter that choice. This is fake-data validation of regularization; it does not report measured coverage rates for final total intervals. [Paper, Sec. IV](https://arxiv.org/html/2106.16210). |
+   | **MINERvA, M. V. Ascencio et al., “Measurement of inclusive charged-current νμ scattering on hydrocarbon at ⟨Eν⟩ ∼ 6 GeV with low three-momentum transfer”**, PRD **106**, 032001 (2022), **arXiv:2110.13372** | Unfolds alternative-model pseudo-data with Poisson fluctuations, studies χ² versus iteration count, and propagates systematic variations through cross-section extraction. These are recovery and uncertainty-propagation studies, without an explicit final-total-interval coverage ensemble reported in those sections. [Paper, Secs. V–VI](https://arxiv.org/pdf/2110.13372). |
+   | **T2K, K. Abe et al., “Measurement of inclusive double-differential νμ charged-current cross section with improved acceptance in the T2K off-axis near detector”**, PRD **98**, 012004 (2018), **arXiv:1801.05148** | Describes alternative-model mock-data validation and uses toy experiments to propagate statistical and correlated systematic uncertainties. The spread of unfolded toys defines uncertainties; that is distinct from independently measuring the coverage of those uncertainties. [Published paper, Sec. IV](https://doi.org/10.1103/PhysRevD.98.012004). |
+   | **R. G. Huang et al., “Machine Learning Assisted Unfolding for Neutrino Cross-Section Measurements with the OmniFold Technique”**, PRD **112**, 012008 (2025), **arXiv:2504.06857** | This is a simulation methods study, rather than a data measurement. It uses modified-model fake data and 500 throws incorporating systematic and statistical variations, then compares ensemble means with truth using the ensemble covariance. It does not report an independent empirical interval-coverage validation. [Paper, Secs. IV–V](https://arxiv.org/html/2504.06857). |
+
+   These examples support treating 1B as substantial additional validation, rather than a routine PRD publication checkbox. They do **not** establish that collaborations performed no further internal checks. My statements concern the published procedures; I am not relying on uncertain recollections of other papers.
+
+3. **This paper’s case**
+
+   Several features make coverage more consequential here than in an otherwise conventional measurement.
+
+   The sixteen-cell cross section is explicitly the principal result. Its covariance supports generator χ² values prominently quoted in the abstract. Readers therefore need to know what quantitative interpretation those uncertainties can sustain.
+
+   More importantly, there is already evidence of substantial regularization bias. The twelve-truth study identifies failures at GiBUU-like truths and the synthetic \(q_3\) tilt. The model covariance is built from shifts obtained by changing the unfolding prior; the paper correctly acknowledges that these shifts are not a calibrated bound on bias. Adding that covariance does not itself demonstrate that intervals behave properly.
+
+   The **completed GENIE v3 test is a meaningful improvement**. Both tunes pass the stated bias criteria, with \(|z|\leq0.65\) in every cell of the means and closures. But those are comparisons of mean bias with reported uncertainty. They leave open whether repeated nuisance-perturbed estimates fluctuate by the amount that the covariance predicts. The tunes also remain related to the GENIE models involved in construction, as the paper acknowledges.
+
+   Other evidence helps, but has narrower scope:
+
+   - Nominal closure and improved background subtraction establish important implementation properties.
+   - The two-dimensional reproduction checks normalization and familiar projections, but its learner was selected after comparison and its correlated shape discrepancy remains unexplained.
+   - The statistical coverage failure in Sec. IV F concerns a different, purity-subtracted estimator. It is a warning about this analysis problem, **not direct evidence that the final sixteen-cell total intervals fail**.
+   - The repeated, prominent disclosure of the limitation substantially improves credibility. It prevents the absence of validation from becoming a concealed assumption.
+
+   These disclosures and existing studies keep my rating below 5. Nevertheless, acknowledging an unresolved uncertainty-calibration question does not answer it.
+
+4. **What a pass or failure would add**
+
+   **A pass would supply conditional evidence that is currently missing:** the nominal control would check whether the drawn uncertainty components describe estimator fluctuations, and the alternative truths would test whether the published widths accommodate bias and fluctuations together.
+
+   The conclusion must be narrower than “coverage is validated.” Nuisance draws test coverage averaged over the declared nuisance distribution, at the selected truths and within the implemented response model. They do not establish coverage at every fixed nuisance value, for arbitrary generator truths, or under omitted detector effects.
+
+   Also, the proposed one-sided failure rule cannot establish absence of undercoverage merely because it does not reject. Report measured rates and confidence intervals. “No undercoverage detected at the study’s sensitivity” is defensible; “the intervals do not undercover” may not be.
+
+   **A failure would replace an unspecified limitation with a measured one.** If the nominal control fails, the uncertainty construction or its toy implementation needs diagnosis before interpreting the alternative arms. That need not mean a coding error: nonlinear propagation or an inadequate covariance approximation could also be responsible. If the control passes but a truth arm fails, the reported intervals are inadequate at that truth under the declared ensemble.
+
+   Keeping the intervals fixed preserves the study’s diagnostic value. It does not make a failure inconsequential: the manuscript’s interpretation and recommendations for downstream use must reflect it. Conversely, a pass at the GENIE v3 truths would not erase the existing GiBUU and \(q_3\)-tilt concerns.
+
+5. **Design and cost**
+
+   **I would run 1B, with the nominal control validated first.** Now that both GENIE v3 samples and the bias tests exist, the original generation/build uncertainty motivating 1B′ has largely been resolved. The extra production cost of three arms rather than two is about **7.5 node-hours under the supplied unit-cost assumption**. Development and verification dominate the total, so dropping the second alternative truth saves comparatively little.
+
+   The estimated **45–146 node-hours and approximately one–two weeks** are proportionate to checking the uncertainties of the principal publication result. The development effort is the material cost; its scientific justification depends on obtaining a coherent ensemble, rather than simply accumulating unfolds.
+
+   I would retain the separation between the drawn-block control intervals and the full reported intervals. Since fixed-truth nuisance draws do not generate \(C_{\rm model}\), demanding nominal coverage from the full covariance at zero bias would be inappropriate. The expected overcoverage is useful context, not evidence of calibration by itself.
+
+   The design needs several qualifications:
+
+   - **Define the repeated experiment and target explicitly.** Flux variations, flux normalization, interaction variations and truth reweighting must have a consistent interpretation. A systematic variation of the unfolding inputs is not automatically equivalent to generating repeated experiments.
+   - **Report every cell as well as the pooled result.** Overcoverage in some cells can conceal undercoverage in others. Resample whole toys when estimating pooled uncertainty to preserve correlations.
+   - **State the power limitation.** With 300 toys, the supplied per-cell standard error near 68% coverage is about 2.7 percentage points. The stringent decision threshold will leave modest deficits unresolved.
+   - **State that covariance widths are held fixed.** This tests the frozen published bands under the chosen ensemble, rather than the complete procedure that would estimate a new covariance for each new dataset. The expensive nested design is unnecessary for this narrower claim.
+
+   **The cheaper design giving most of the value is the nominal control plus one predeclared GENIE v3 truth**, with 300 toys each. Under the scoping assumptions, that has the same 600-unfold production count as 1B′ while testing a truth held out of estimator construction. The truth-selection rationale should be disclosed because its bias result is already known. The development cost remains.
+
+   Option 1C is useful for debugging and descriptive checks, but its documented mismatch to the reported uncertainty mechanics prevents it from substituting for this test.
+
+   The main risks of an uninformative result are an internally inconsistent nuisance ensemble, using the generous model term to conceal a deficient experimental covariance, and treating a pooled non-rejection as validation of every cell. The scoping document’s predictions of inevitable undercoverage at biased truths also remain conditional on the bias persisting under nuisance draws and the stated symmetry assumptions.
+
+6. **What matters more**
+
+   **The known model-dependent bias and the adequacy of the hadronic response deserve higher priority than obtaining a coverage pass at two GENIE-related truths.** Every existing deformation test uses the analysis simulation’s detector response, while \(C_{\rm resp}\) represents a restricted recoil-scale variation. A targeted test of response mismodeling outside that variation could probe a more consequential vulnerability.
+
+   The covariance’s suitability for generator comparisons is also at least as important. Marginal interval coverage does not validate the full covariance or the sampling distribution of the quoted χ². The reported 24–48% reductions in sixteen-cell χ² after weakening flux correlations by 10% make that distinction practically important.
+
+   Finally, the unexplained run-period discrepancy should be traced into the final sixteen-cell uncertainty treatment; the text’s discussion of a two-dimensional run-period block does not by itself establish that treatment. A deposited release containing the headline central values, cell definitions, covariance components and comparison calculations is also essential for reuse.
+
+   I would therefore request the bounded coverage study, while judging publication credibility primarily by whether the known bias, response dependence and covariance limitations are handled consistently with the measurement’s claimed uses.
