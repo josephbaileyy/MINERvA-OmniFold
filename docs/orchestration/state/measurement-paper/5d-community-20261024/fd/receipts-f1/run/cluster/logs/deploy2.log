@@ -1,0 +1,33 @@
+2026-10-28T05:04:08Z
+login38
+HEAD 4b7a9892ef4d739afc45f6bfb6cc5f8d7a36fe54
+porcelain_ignored_lines 0
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/README: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml: OK
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/README: OK
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz: OK
+/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/4b7a9892/nd-unfolding/pv-ladder/config.json: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz: OK
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz: OK
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz: OK
+/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz: OK
+/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/4b7a9892/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json: OK
+section 8 digests rc=0
+reused lines 5
+./flux_phi_t_0_100.root: OK
+./graphs_AR23_20i_00_000.root: OK
+./graphs_G18_10a_02_11b.root: OK
+./splines/AR23_20i_00_000_CH.xml.gz: OK
+./splines/G18_10a_02_11b_CH.xml.gz: OK
+reused products rc=0
+amendment 2060a15e8c99925c884372f1c67b30b965a64691802faa073cd8f1db51006601
+test_fd_f1_amend rc=0
+test_fd_f1 rc=0
+test_fd_f0_regrade rc=0
+porcelain_ignored_lines_after_tests 0
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1a2 exists=no
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b2 exists=no
+2026-10-28T05:11:29Z

@@ -1,0 +1,23 @@
+	Command being timed: "timeout 900 bash /pscratch/sd/j/josephrb/fd-f1-20261027/deploy/4b7a9892/3d-unfolding/genie/run_gevgen_v3.sh genie G18_10a_02_11b /pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines 1000 60110 /pscratch/sd/j/josephrb/fd-f1-20261027/f1a2/work/G18_10a_02_11b/s60110 /pscratch/sd/j/josephrb/fd-f1-20261027/f1a/flux_phi_t_0_100.root"
+	User time (seconds): 98.74
+	System time (seconds): 7.90
+	Percent of CPU this job got: 108%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:38.74
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 20971308
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 309198
+	Voluntary context switches: 12997
+	Involuntary context switches: 1915
+	Swaps: 0
+	File system inputs: 316
+	File system outputs: 3824
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
