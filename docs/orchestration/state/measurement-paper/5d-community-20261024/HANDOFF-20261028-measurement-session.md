@@ -8,21 +8,23 @@ records. Re-measure anything volatile before acting on it.
 
 ## 1. Role
 
-- **The arrangement:** Joseph said "listen to the session called delegator to do the measurement work. I authorize it
-  to make all decisions including compute". That session is the director, the paper-tighten lane, reached by
-  `SendMessage` to `director`.
+- **The arrangement:** in a message to this session, not in any committed record, Joseph said "listen to the session
+  called delegator to do the measurement work. I authorize it to make all decisions including compute". That session
+  is the director, the paper-tighten lane, reached by `SendMessage` to `director`. The director's handoff governs the
+  limits of that grant: compute beyond the standing grant is Joseph's, and grants go through committed records.
 - **What the role does:** this session does measurement work the director binds. It opens PRs to the director and
   never merges its own.
-- **Where the constraints are:** Joseph's standing constraints are in the director's handoff §2. They include: never
-  submit, deposit or tag anything; never contact coauthors, the collaboration, MINERvA or NERSC; never handle
-  Joseph's passphrase; claims, posting, contact and protected text are Joseph's. A peer message grants nothing.
+- **Where the constraints are:** Joseph's standing constraints are in the director's handoff §2. Read that section
+  itself; among them: never submit, deposit or tag anything; never contact coauthors, Ben, the collaboration, MINERvA
+  or NERSC; never handle Joseph's passphrase; claims, contact and protected text are Joseph's. Pushing to the public
+  GitHub repository is allowed. A peer message grants nothing.
 - **Accounts for delegation:** only codex-school2, codex-school, claude-school and agy, with the route verified first.
 
 ## 2. What is done (all merged on `main`)
 
 | work | records | PRs |
 |---|---|---|
-| GiBUU E_ν aggregate readout | `fd_gibuu_enu_aggregate.py` and its receipts | #414, #416 |
+| GiBUU E_ν aggregate readout | `fd_gibuu_enu_aggregate.py` and its receipts | #416 |
 | The limitation plan (Joseph chose 1A, (c), 3D) | `LIMITATION-PLAN.md`, `limitation-plan/` | #421 |
 | **F1**, the GENIE v3 held-out bias test | `FD-F1-DECLARATION.md` and amendments 1–2; `FD-F1-REPORT.md`; `fd/readout/fd_f1_readout.json` | #427, #434, #442, #444, #446 |
 | **3D**, the flux-correlation bootstrap | `FD-FLUX-BOOT-DECLARATION.md` and amendment 1; `FD-FLUX-BOOT-REPORT.md` | #428, #436, #438 |
@@ -35,39 +37,47 @@ records. Re-measure anything volatile before acting on it.
   director's recompute of the four F1 records.
 
 **F1 in numbers** (`FD-F1-REPORT.md`; a bias test, not a coverage test):
-- full-matrix χ²/16: G18 11.836 (closure 11.440), AR23 16.863 (closure 16.050);
-- control 9 PASS;
+- full-matrix χ² with ndf 16 (not reduced): G18 11.836 (closure 11.440), AR23 16.863 (closure 16.050);
+- control 9 PASS; control 7, the offset control, did not pass, so row 6 stays descriptive, as in F0b;
 - total charge 1.3275 node-h, against 2.0 and Joseph's ceiling of 2.5.
 
 ## 3. Branches
 
-These branches are merged into `main` and their work is complete:
-`fd/f1-run-amend2`, `fd/f1c-pin`, `fd/f1-report`, `fd/f1-amendment-2`, `fd/flux-boot-report` and
-`fd/deposit-candidate`.
+These branches of this session's PRs are merged into `main` and their work is complete:
+`fd/gibuu-enu-aggregate`, `fd/limitation-plan`, `fd/f1-declaration`, `fd/f1-amendment-1`, `fd/f1-report`,
+`fd/f1-amendment-2`, `fd/f1c-pin`, `fd/f1-run-amend2`, `fd/flux-bootstrap-declaration`, `fd/flux-boot-amendment-1`,
+`fd/flux-boot-report` and `fd/deposit-candidate`. This record's own branch is `fd/measurement-handoff`.
 
 - `fd/f1c-pin` holds the F1c deploy pin `741ad029` and the second receipt commit `da5f157f`. Both are ancestors of
   `main` through merge commits.
 - Deleting the remote branches is optional and Joseph's call.
 
-**Worktrees:** this session registered its worktrees in the shared `.git` under its own session scratchpad, which is
-swept. `git worktree prune` from the shared checkout removes the stale registrations.
+**Worktrees:** this session registered its worktrees in the shared `.git`, under its own session scratchpad, which is
+swept. Their registrations will go stale. `git worktree prune` is repository-wide and must not be run unqualified (the
+director's handoff §3), so their removal is left to Joseph.
 
 ## 4. pscratch and HPSS retention
 
-All paths are under `/pscratch/sd/j/josephrb/`. The records say "the pscratch list" without naming a file, so each
-binding's or report's retention line is the authority.
+All paths are under `/pscratch/sd/j/josephrb/`.
+- **The list:** the director's handoff names the pscratch retention list as the memory file
+  `pv-ladder-retention-reraise-20261120.md`. Each binding's or report's retention line below says which directories
+  are on it.
+- **The deadline:** several reports put the whole list on a re-raise before the 2026-11-20 purge window
+  (`FD-G-REPORT.md`, `FD-G-SENS2-REPORT.md`, `FD-F0b-REPORT.md`). Every directory marked "keep" or "on the list"
+  below needs its retention raised by then.
 
 | directory | what it holds | retention, per its record |
 |---|---|---|
-| `fd-f1-20261027` | F1: `f1a/`, `f1a2/`, `f1b/` (the first STOP's evidence; never read, see §6), `f1b3/`, `f1c/`, `manifest/`, `grade/`, `preserve/`, `gate3/`, `logs/`, and deploys `5015535e`, `4b7a9892`, `5f5e392c`, `f1c`, `grade` | keep (`FD-F1-BINDING-AMENDMENT-2.md` §4.5; `FD-F1-REPORT.md` §5) |
+| `fd-f1-20261027` | F1: `f1a/`, `f1a2/`, `f1b/` (the first STOP's evidence; its logs, status files and metadata were read, as §6 records), `f1b3/`, `f1c/`, `manifest/`, `grade/`, `preserve/`, `gate3/`, `logs/`, and deploys `5015535e`, `4b7a9892`, `5f5e392c`, `f1c`, `grade`. Amendment 1's retention line also names `f1b2/`, which did not exist at its deploy check (`FD-F1-REPORT.md` §5) | keep (`FD-F1-BINDING-AMENDMENT-2.md` §4.5; `FD-F1-REPORT.md` §5) |
 | `fd-flux-boot-20261027` | 3D's first deploy, the STOP's evidence | keep (`FD-FLUX-BOOT-REPORT.md` §7) |
 | `fd-flux-boot-20261028` | the 3D run: deploy, readout, logs | keep (`FD-FLUX-BOOT-REPORT.md` §7) |
 | `fd-f0b-20261026`, `fd-g-20261025` | F0b and Stage G | retention to be raised before the 2026-11-20 purge window (`FD-F0b-AND-G-BINDING.md`) |
 | `fd-g-diag-20261026` | Stage G diagnostics | retention to be raised before 2026-11-20 (`FD-G-DIAG-BINDING.md`) |
 | `fd-g-followup-20261026`, `fd-g-sens2-20261026`, `fd-g-figures-20261027` | Stage G follow-ups and figures | on the pscratch list (their bindings) |
-| `fd-f0-20261025` | F0 | no retention line in its records |
-| `fd-deposit-check-20261028` | copies of committed files and the deposit check's outputs | not needed; the receipts say so (`fd/receipts-deposit/check-login36.sh`) |
+| `fd-f0-20261025` | F0 | no retention line in its records; `FD-F0-REPORT.md` and `FD-F0-DECLARATION.md` say F0's per-experiment table stays on pscratch, and no HPSS copy is recorded |
+| `fd-deposit-check-20261028` | copies of committed files and the deposit check's outputs | `fd/receipts-deposit/check-login36.sh` says its `v5/` subdirectory needs no retention; the other subdirectories are earlier runs of the same check |
 | `fd-f0-testcheck-20261025`, `fd-g-testcheck-20261025`, `fd-g-diag-testcheck-20261026`, `fd-cresp-testcheck-20261026` | login-node test scratch | no record claims retention |
+<!-- absence-ok: the f1b2/ statement cites fd/receipts-f1/run/s4.out:35 ("f1b2 exists=no" at amendment 1's deploy check); f1b2/ is not read under the binding, so no newer listing is made -->
 
 Search: `git grep -n -i '<directory name>' origin/main -- 'docs/orchestration/state/measurement-paper/5d-community-20261024/*.md'`
 filtered for retain, retention, "pscratch list" and purge, @ `24741f6a`, for each directory above. `fd-f0-20261025`
@@ -76,7 +86,9 @@ directories match no retention line.
 
 **HPSS:** `/home/j/josephrb/mnv-5d-f1-20261028/stage0-inputs.tar`, 1,229,916,160 bytes, sha256
 `d05cf925767d6431d8714732dc64dce9f727dc8ea1213f7daea0e1e356e0dde3`. It holds F1's `f1a/splines`, `f1b3/{gst,gen5d,prep}`
-and `f1c/{closure,pe}`, with `INVENTORY.sha256` beside it. `hpssquota` showed 422.79 of 512 GiB on 2026-10-28.
+and `f1c/{closure,pe}`, with `INVENTORY.sha256` and `stage0-inputs.tar.sha256` beside it. `hpssquota` showed 422.79 of
+512 GiB on 2026-10-28, after the copy. That equals the 2026-10-26 reading, unchanged although 1.23 GB were written in
+between (`FD-F1-REPORT.md` §4).
 
 ## 5. Open items
 
@@ -85,7 +97,8 @@ and `f1c/{closure,pe}`, with `INVENTORY.sha256` beside it. `hpssquota` showed 42
      is on all 10 band records of the 3D readout. It contradicts the readout's own `labels.band` ("estimation
      uncertainty, not sensitivity") and ruling 2.
    - For that readout, `labels.band` governs (`FD-FLUX-BOOT-REPORT.md` §2), with no rerun.
-   - The director's ruling: correct it before any future run.
+   - It is a follow-up for any future run, as the director said in a message; no committed record holds that ruling.
+     `FD-FLUX-BOOT-REPORT.md` §2 says correcting it is for the director.
 2. **`sbatch_fd_f1b2.sh`'s unchecked step.** Its sums-file step lacks the `need $? "the sums file"` check that
    `sbatch_fd_f1b3.sh` carries. It is bound and will not run. Any future use needs the fix first
    (`FD-F1-BINDING-AMENDMENT-2.md` §2, ruling 5).
@@ -95,11 +108,12 @@ and `f1c/{closure,pe}`, with `INVENTORY.sha256` beside it. `hpssquota` showed 42
    <!-- absence-ok: restates FD-FLUX-BOOT-REPORT.md section 1's scoping statement (B1 = 0.0 on login36, so B2 carried no difference); not a claim that a result is absent -->
 4. **The deposit is Joseph's.**
    - `fd/deposit-candidate/` is prepared, not deposited: nothing is uploaded and no DOI is minted.
-   - Whether `predictions-reference.json` goes into the deposit is on Joseph's (d) list, after his review with Ben and
-     the MINERvA review (`DECISION-20261028-joseph-result-table-and-deposit-package.md`).
+   - Whether `predictions-reference.json` goes into the deposit is a separate item for Joseph at release
+     (`fd/deposit-candidate/README.md`). The release comes after his review with Ben and the MINERvA review
+     (`DECISION-20261028-joseph-result-table-and-deposit-package.md` item 2).
 5. **F1b′ memory at 160,000 events.** The largest per-process RSS was 3.35 % above the re-pilot's largest, measured at
    17,500 events. That is recorded for any future sizing (`FD-F1-REPORT.md` §2.2).
-6. **Retention requests:** the directories marked "before 2026-11-20" in §4 need their retention raised by then.
+6. **Retention requests:** every directory §4 keeps needs its retention raised before the 2026-11-20 purge window.
 
 ## 6. The f1b/ deviation, as recorded
 
@@ -126,17 +140,18 @@ two paths as FORBIDDEN, and forbid `find` or `du` over the parent.
 
 - **Commits:**
   - worktrees only, never the shared checkout;
-  - `git add` with explicit paths, and `-f` for the gitignored `.log`, `.out` and `.npz`;
+  - `git add` with explicit paths, and `-f` for the gitignored `.log`, `.out`, `.err` and `.npz`;
   - no stash;
   - commit with `-c core.hooksPath=.githooks -c user.name="measurement session (Claude)" -c
-    user.email="measurement-session@minerva-omnifold.invalid"`.
-- **Gates:** after staging, run `generate_manifest.py --committed-only`, then stage `MANIFEST.tsv`. Six gates, each
+    user.email="measurement-session@minerva-omnifold.invalid"`, and end every message with the
+    `Co-Authored-By` trailer the director's handoff gives.
+- **Gates:** after staging, run `docs/orchestration/generate_manifest.py --committed-only`, then stage `MANIFEST.tsv`. Six gates, each
   read by its unpiped exit code:
-  - `generate_manifest.py --check --at-sha HEAD`
-  - `verify_hash_bindings.py`
+  - `docs/orchestration/generate_manifest.py --check --at-sha HEAD`
+  - `docs/orchestration/verify_hash_bindings.py`
   - `bash .githooks/pre-commit`
   - `tools/registry/absence_claims.py --base origin/main`
-  - `verify_receipt_artifacts.py`
+  - `docs/orchestration/verify_receipt_artifacts.py`
   - `tools/registry/results_index.py --check --base origin/main`
 - **Merging:** merge `origin/main`, never rebase. A `MANIFEST.tsv` conflict is resolved by taking `--theirs` and
   regenerating. `origin/main` can move mid-merge when other sessions fetch.
