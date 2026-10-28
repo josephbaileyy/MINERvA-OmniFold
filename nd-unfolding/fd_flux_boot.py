@@ -20,7 +20,8 @@ swapped block:
 * ``block`` (second): the replicate's block C*_b itself, variances included; its variances are biased low by about
   (1 - 1/n_eff) under resampling, which pushes its chi2 high.
 Each is swapped for the flux group in Stage G's reported matrix, C_total + C_resp + V_g, with every other block
-unchanged, and each prediction's total and shape-only chi2 is recomputed on its own cells (GiBUU on its eight). The
+unchanged, and each prediction's total and shape-only chi2 is recomputed on its own cells (GiBUU on its eight), by Stage
+G's own compare() in Stage G's absolute units on C_total + C_resp + (C - C_0) (amendment 1). The
 statistic is the distribution of each chi2 over the replicates; the band is its declared percentiles q, beside the
 basic (reflected) band 2 chi2_hat - q, with chi2_hat Stage G's own chi2 (the identity replicate), and the offset
 median - chi2_hat, the bootstrap's estimate of chi2_hat's bias. In the review's synthetic check of this near-degenerate
@@ -50,7 +51,6 @@ if str(_ND) not in sys.path:
     sys.path.insert(0, str(_ND))
 import fd_g_compare as G  # noqa: E402  (PREDICTIONS, ROLES, SHAPE_LAMBDA, Stop, report, sa_call)
 import fd_g_diag as D  # noqa: E402  (load, PINS, GROUPS, finite, REPRO, TOL)
-import fd_g_followup as F  # noqa: E402  (prediction_blocks)
 import s1_assemble as sa  # noqa: E402  (sha256, mat_cov, flux_weights, xs, FLUX, CONSTRAINT_SHA256)
 
 N_CELLS, TOL, REPRO = D.N_CELLS, D.TOL, D.REPRO
@@ -91,7 +91,9 @@ LABELS = {
             "bootstrap's estimate of chi2_hat's bias; halves: the percentiles from "
             f"replicates 1-{B_REPLICATES // 2} and {B_REPLICATES // 2 + 1}-{B_REPLICATES}, the Monte Carlo scatter. "
             "Neither band is an interval for the chi2 under the true correlations",
-    "units": "relative to f, as G-SENS: M = (C + V_g)/(f f^T); chi2 and ndf are unit-free; shape-only adds 100 * 11^T",
+    "units": "every chi2 by Stage G's compare() in Stage G's absolute units, on C_total + C_resp + (C - C_0) + V_g with "
+             "C the swapped flux block and C_0 S1's; shape-only adds Stage G's 100 f f^T; chi2 and ndf are unit-free; "
+             "correlations are unit-free",
     "not": "no p-value, reading, claim or paper text",
     "not_citable_for": ["that the chi2 is insensitive to the flux correlations",
                         "that the PPFX or constraint correlations are correct",
@@ -133,17 +135,16 @@ def correlation_swap(Cstar: np.ndarray, C0: np.ndarray) -> np.ndarray:
     return out
 
 
-def chi2s(d: np.ndarray, M: np.ndarray) -> tuple[float, float] | None:
-    """Total and shape-only chi2 (Stage G's free normalization, 100 * 11^T relative to f), or None if M is not
-    positive definite."""
+def chi2s(f: np.ndarray, g: np.ndarray, Vg: np.ndarray, C: np.ndarray, cells) -> tuple[float, float] | None:
+    """Total and shape-only chi2 of f against g on ``cells`` under C + V_g, by Stage G's own compare() in Stage G's
+    absolute representation, or None if a matrix is not positive definite. The shape-only matrix adds 100 f f^T, about
+    1e4-1e5 times M's entries, so forming it rounds M at about 1e-11 relative; doing so in another representation
+    (M relative to f, then 100 * 11^T) rounds differently and moved the chi2 by up to about 1e-10 (amendment 1)."""
     try:
-        out = []
-        for mat in (M, M + G.SHAPE_LAMBDA * np.ones_like(M)):
-            y = np.linalg.solve(np.linalg.cholesky(mat), d)
-            out.append(float(y @ y))
-        return out[0], out[1]
+        r = G.compare(f, g, Vg, C, list(cells), "3D")
     except np.linalg.LinAlgError:
         return None
+    return r["total"]["chi2"], r["shape_only"]["chi2"]
 
 
 def correlation(C: np.ndarray, a: int, b: int) -> float:
@@ -262,17 +263,18 @@ def run(a, pins=None, predictions=None) -> int:
                  f"(worst {worst:.1e})", members == [f"band:{sa.FLUX}"] and worst <= TOL,
            f"members {members}, worst {worst:.3e}")
 
-    # B2. swapped in, the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction
+    # B2. swapped in, the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction. Every
+    # chi2 is Stage G's compare() on Stage G's own matrix with the flux block's difference added, C_stage_g + (C - C0),
+    # in absolute units: for the identity the difference is S1's block against its rebuild (B1)
+    C_stage_g = x.Ct + (x.Cx if carries else 0)          # the matrix Stage G's reported comparison passed (D5)
     preds = []
     for spec in predictions:
-        names, d, B0, _ = F.prediction_blocks(x, spec, carries)
-        i = np.array([int(c[1:]) for c in names])
-        rest = sum(v for k, v in B0.items() if k != FLUX_GROUP)
-        preds.append((spec, names, d, i, rest))
+        cells, g, Vg = x.integ[spec["name"]]
+        preds.append((spec, [f"R{c:02d}" for c in cells], cells, g, Vg))
     worst = 0.0
     identity = {}
-    for spec, names, d, i, rest in preds:
-        got = chi2s(d, rest + (C1 / ff)[np.ix_(i, i)])
+    for spec, names, cells, g, Vg in preds:
+        got = chi2s(x.f, g, Vg, C_stage_g + (C1 - C0), cells)
         ref = x.grp[spec["name"]]
         want = (ref["total"]["chi2"], ref["shape_only"]["chi2"])
         rel = max(abs(g_ - w_) / abs(w_) for g_, w_ in zip(got, want)) if got else float("inf")
@@ -308,16 +310,16 @@ def run(a, pins=None, predictions=None) -> int:
                 p5.append(f"replicate {b}")
             Crel = Cv / ff
             corr[f"reported_matrix_{v}"].append(correlation(total_rest + Crel, *pair))
-            for spec, names, d, i, rest in preds:
-                got = chi2s(d, rest + Crel[np.ix_(i, i)])
+            for spec, names, cells, g, Vg in preds:
+                got = chi2s(x.f, g, Vg, C_stage_g + (Cv - C0), cells)
                 if got is None:
                     p4.append(f"replicate {b} {v} {spec['name']}")
                     continue
                 chi[v][spec["name"]].append(got)
     Cu = sa.mat_cov(X)
     uniform = {}
-    for spec, names, d, i, rest in preds:
-        got = chi2s(d, rest + (Cu / ff)[np.ix_(i, i)])
+    for spec, names, cells, g, Vg in preds:
+        got = chi2s(x.f, g, Vg, C_stage_g + (Cu - C0), cells)
         if got is None:
             p4.append(f"uniform {spec['name']}")
             continue
@@ -353,7 +355,6 @@ def run(a, pins=None, predictions=None) -> int:
                                  **{p["name"]: p["sha256"] for p in predictions},
                                  "flux_universes": "S1's committed readout meta.inputs_sha256 (S1_Flux_0..99), checked by B0"},
                "code_sha256": {"fd_flux_boot.py": sa.sha256(Path(__file__).resolve()),
-                               "fd_g_followup.py": sa.sha256(Path(F.__file__).resolve()),
                                "fd_g_diag.py": sa.sha256(Path(D.__file__).resolve()),
                                "fd_g_compare.py": sa.sha256(Path(G.__file__).resolve()),
                                "s1_assemble.py": sa.sha256(Path(sa.__file__).resolve())},
