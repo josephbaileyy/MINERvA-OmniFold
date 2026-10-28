@@ -24,10 +24,10 @@ at `183b31e4`, so this amendment lands after that branch.
 
 | | as bound | as amended |
 |---|---|---|
-| pilot | F1a: 2 processes, 10,000 events each; no memory rule | **F1a′**: 16 processes, F1b′'s own concurrency. Per tune, 4 run one full 17,500-event task and 4 run 1,000 events twice. Every run is under `/usr/bin/time -v` |
-| gate | `fd_f1_budget.py`: a declared contention factor of 1.25 | **`fd_f1_budget2.py`**: F1b′'s wall is the measured full-task wall × 8 waves. **STOP if 16 × the largest per-process RSS exceeds 75 % of the node**, plus the wall, priced and ceiling rules |
-| production | F1b: 128 tasks at once | **F1b′**: the same 128 tasks and seeds, at most 16 at once (`xargs -P 16`) in 8 waves; a failure stops new launches |
-| submission | — | `submit_fd_f1.sh f1b2` also refuses unless `sacct`'s batch MaxRSS for F1a′, the node-level peak, is within 75 % of the node |
+| pilot | F1a: 2 processes, 10,000 events each; no memory rule | **F1a′**: 14 processes, F1b′'s own concurrency. Per tune, 4 run one full 17,500-event task and 3 run 1,000 events twice. Every run is under `/usr/bin/time -v`, with a 900 s timeout |
+| gate | `fd_f1_budget.py`: a declared contention factor of 1.25 | **`fd_f1_budget2.py`**: F1b′'s wall is the measured full-task wall × 10 waves. **STOP if 14 × the largest per-process RSS exceeds 75 % of the node**, plus the wall, priced and ceiling rules. It sets a per-task timeout |
+| production | F1b: 128 tasks at once | **F1b′**: the same 128 tasks and seeds, at most 14 at once (`xargs -P 14`) in 10 waves. Each task has a timeout of 3 × the measured full-task wall; a failure or timeout stops new launches |
+| submission | — | `submit_fd_f1.sh f1b2` also refuses unless F1a′'s job is COMPLETED and `sacct`'s batch MaxRSS for it, the node-level peak, is within 75 % of the node |
 | output paths | `f1a/`, `f1b/` | `f1a2/` and `f1b2/`, both new. `f1b/` is left untouched as the STOP's evidence |
 | F1c, the grade | — | unchanged, reading F1b′'s prep |
 
@@ -52,20 +52,26 @@ at `183b31e4`, so this amendment lands after that branch.
 
   So **the event loop ran at the pilot's speed; start-up took over 10× as long**. The independent review measured these
   phases from file birth times.
-- **The three tasks without a gst** (G18 seeds 60010, 60011, 60050) were still in their event loops when the job ended.
-  - GENIE's status files read events 4,200, 11,900 and 15,850, at 3.82, 3.35 and 3.41 ms per event
-    (`probes/probe19.out`).
-  - Their logs end mid-line, and their task logs have no rc and no "Killed" line.
-  - The batch script exited on the first failed task (02:25:25Z), and the job's teardown ended them. So they show no
-    sign of a failure tied to their seeds.
-  - The earlier statement that they "died in gntpc" was wrong.
+- **The three tasks without a gst** (G18 seeds 60010, 60011, 60050) were in their event loops, then **stalled**.
+  - Up to their last update, GENIE's status files read events 4,200, 11,900 and 15,850, at 3.82, 3.35 and 3.41 ms per
+    event (`probes/probe19.out`).
+  - GENIE rewrites that file every 50 events, but these three, and their logs, stopped changing at 19:23:43, 19:24:07
+    and 19:24:21 local time. The batch script exited at 19:25:25 local time (02:25:25Z), on the first failed task, and the
+    job's teardown ended them. So they made no progress for 102, 78 and 64 s before then.
+  - All three logs end mid-line, inside DFRKinematics "Trying" output (`probes/probe18.out`), which suggests a long
+    diffractive rejection loop. Their task logs have no rc and no "Killed" line.
+  - **Whether the stall depends on the seed is not known.** The node was under memory pressure at the time.
+  - The earlier statements that they "died in gntpc", and then that they ran "at normal speed" until teardown, were
+    both wrong.
 - **The earlier "37.5 ms per event, about 3× the bound" was a misreading.** It divided the whole 656 s by the events.
   Per-event speed did not change.
 
 **The lesson: memory was measured, and set aside.**
 - F1a's batch step recorded MaxRSS 45,610,936 K, about 43.5 GiB (`sacct`, job 60415571, `probes/probe14.out`). The
-  only GENIE stages that ran two at a time in F1a were two `gspl2root`, then the two gevgen pilots. So that peak bounds
-  one gevgen process's start-up at about **22 GiB** (inference).
+  only GENIE stages that ran two at a time in F1a were two `gspl2root`, then the two gevgen pilots. So that peak puts one
+  gevgen process's start-up at about **22 GiB** (21.75 GiB; inference).
+  - That is an estimate, not a bound either way. Perlmutter samples job memory every 30 s through cgroups, so a
+    transient can fall between samples, and a sample can include page cache.
 - Nobody read it before F1b ran 128 such processes. That needs about 2.8 TiB, against a 476 GiB node. The first gate
   had no memory rule.
 - F1b's own evidence agrees: 128 processes exceeded the node (more than 3.7 GiB each on average), and the 25 that fit
@@ -147,48 +153,56 @@ Every process seen is in the list, and nothing outside it appears.
 | `graphs_G18_10a_02_11b.root` | `f5840cb8970cff7554e3ea67873e6a6a70a49fdbc4dc49bd22f4978c5fd10d3d` |
 | `graphs_AR23_20i_00_000.root` | `5afa412be71e5d9517336b5e5af860066d4034bd6b6b9f6423caa022f6226fd0` |
 
-**The concurrency, P = 16.** 16 × about 22 GiB, the bound in §1, is about 352 GiB, or 72 % of the node. This is the
-re-pilot's own risk: if a process needs more than about 29 GiB, the re-pilot itself runs out of memory, and that is a
-STOP.
+**The concurrency, P = 14.** 14 × 21.75 GiB, the estimate in §1, is 304.5 GiB: 64 % of the node's 476.4 GiB.
+- That leaves the 75 % rule 17 % headroom per process, a limit of 25.5 GiB.
+- An OOM in the re-pilot itself needs more than 34 GiB per process.
+- The review measured P = 16 as sitting within 2.7 % of the rule, so the re-pilot would likely have STOPped itself.
 
 **The runs** (`nd-unfolding/sbatch_fd_f1a2.sh`, through `submit_fd_f1.sh f1a2 <deploy> <pin> <OUT> <priced> <ceiling>`,
 with a 0:20 limit):
-- Per tune, 4 processes run **one full F1b′ task** of 17,500 events, and 4 run 1,000 events twice in a row. So all 16
+- Per tune, 4 processes run **one full F1b′ task** of 17,500 events, and 3 run 1,000 events twice in a row. So all 14
   run together for about one task's length.
+- Every run is bounded by a 900 s timeout, so a stalled run becomes a STOP instead of using up the 0:20 limit.
 - Every run is timed with `/usr/bin/time -v`. That gives the elapsed wall, the exit status, and the maximum RSS of the
   largest single process in the gevgen-and-gntpc tree.
-- The NOWIDTH flux-check runs on all 24 work directories.
-- Seeds: G18 60101–60112 and AR23 61101–61112. They are disjoint from F1a's (60000, 61000), F1b′'s and the
+- The NOWIDTH flux-check runs on all 20 work directories.
+- Seeds: G18 60101–60110 and AR23 61101–61110. They are disjoint from F1a's (60000, 61000), F1b′'s and the
   pseudo-experiments', and a test checks it.
 
 **The gate,** `nd-unfolding/fd_f1_budget2.py`:
-- **The wall:** F1b′'s wall = 8 waves × the largest long-run wall + 900 s. The long runs *are* F1b′ tasks at 16-way
+- **The wall:** F1b′'s wall = 10 waves × the largest long-run wall + 900 s. The long runs *are* F1b′ tasks at 14-way
   load, so no fit and no contention factor is involved.
-- **Memory:** F1b′'s memory = 16 × the largest RSS over every run. That covers both the start-up peak (seen in the short
+- **Memory:** F1b′'s memory = 14 × the largest RSS over every run. That covers both the start-up peak (seen in the short
   runs) and the full-task peak (seen in the long runs). It must be **at most 75 % of the node's 487,802 MiB**.
 - **GO only if:**
   - every run exited 0;
   - the memory rule holds;
-  - 1.25 × the wall ≤ 55 min;
+  - 1.25 × the wall ≤ 57 min;
   - spent + re-pilot + F1b′ + 0.75 ≤ the priced total;
   - the worst case (spent + re-pilot + F1b′'s limit + F1c's 0:54) ≤ the ceiling.
-- **On GO** it writes `f1b2_time_limit` and the re-pilot's job id.
+- **On GO** it writes `f1b2_time_limit`, the re-pilot's job id and `f1b2_task_timeout_s`, which is 3 × the largest
+  full-task wall.
 - **Descriptive only:** the per-event time and the load, fitted from the long and short runs.
-- **The sacct cross-check:** `submit_fd_f1.sh f1b2` reads `sacct`'s batch MaxRSS for that job, the node-level peak,
-  which `/usr/bin/time` cannot see. It refuses F1b′ unless that peak is within 75 % of the node.
+- **The sacct cross-check:** `submit_fd_f1.sh f1b2` requires that job to be COMPLETED. It then reads `sacct`'s batch
+  MaxRSS, the node-level peak that `/usr/bin/time` cannot see, as a 30 s cgroup sample. It refuses F1b′ unless that peak
+  is within 75 % of the node.
 
 ## 4. F1b′ (new path `$OUT/f1b2`) and what follows
 
 - **The tasks:** the same 128 as the bound F1b, with the same seeds, **60001–60064 and 61001–61064**, at 17,500 events
-  each. They run at most 16 at once (`xargs -P 16`), in 8 waves. Each is timed with `/usr/bin/time -v`.
-- **A failed task exits 255,** so xargs starts no further task.
+  each. They run at most 14 at once (`xargs -P 14`), in 10 waves. Each is timed with `/usr/bin/time -v`.
+- **Each task has a timeout** of the gate's `f1b2_task_timeout_s`, 3 × the re-pilot's full-task wall.
+- **A failed or timed-out task exits 255,** so xargs starts no further task.
 - **Guards:**
-  - the script refuses unless `budget2.json` says GO with concurrency 16, and unless F1a's five products still
-    re-verify;
+  - the script refuses unless `budget2.json` says GO with concurrency 14 and a per-task timeout, and unless F1a's five
+    products still re-verify;
   - it refuses if `f1b2/` exists;
   - it never reads `f1b/`. **The 22 gst files from F1b are never read.**
-- **Seeds 60010, 60011 and 60050 are reused.** §1 shows they were ended by teardown, not by a failure tied to their
-  seeds. If any of them fails in F1b′, that is a STOP.
+- **Seeds 60010, 60011 and 60050 are reused, with an open risk.** They stalled in F1b (§1), and whether the stall
+  depends on the seed is not known.
+  - If any of them stalls again, the per-task timeout turns it into a STOP after at most 3 × a task's wall, about 8
+    minutes, and xargs launches nothing further.
+  - It does not run on to the job's limit.
 - **Everything after generation is F1b's, unchanged:** the NOWIDTH flux-check on all 128, the gst counts, `hadd`,
   `gen5d_v3.py convert` with its sampling test, and `fd_f1_prep.py`.
 - **F1c and the grade are as bound.** The receipt commit's tables come from `f1b2/prep`.
@@ -206,9 +220,10 @@ with a 0:20 limit):
   - **a STOP from each rule with every other rule holding**;
   - the memory boundary, counting the short runs too;
   - the run-record refusals;
-  - **`submit_fd_f1.sh f1b2` run with stub `sbatch` and `sacct`**: it refuses a STOP budget, a missing job id, and a
-    re-pilot whose MaxRSS exceeds 75 % in K, M or G units, and submits with the gate's time limit otherwise;
-  - the scripts' constants and their xargs stop-on-failure.
+  - **`submit_fd_f1.sh f1b2` run with stub `sbatch` and `sacct`**: it refuses a STOP budget, a missing job id, a
+    re-pilot not COMPLETED, and a re-pilot whose MaxRSS exceeds 75 % in K, M or G units, and submits with the gate's
+    time limit otherwise;
+  - the scripts' constants, their timeouts and their xargs stop-on-failure.
 
 **Changed:** `nd-unfolding/submit_fd_f1.sh` gains the stages `f1a2` and `f1b2`. Its f1a, f1b and f1c lines are
 unchanged.
@@ -225,14 +240,16 @@ binding requires.
 |---|---:|---:|
 | spent: F1a 0.104722 + F1b 0.202778 | 0.3075 | 0.3075 |
 | F1a′ re-pilot | 0.05–0.10 | 0.33 (0:20) |
-| F1b′, 8 waves of 16 | 0.45–0.65 | ≤ 0.92 (from the gate, at most 0:55) |
+| F1b′, 10 waves of 14 | 0.69–0.76 | ≤ 0.95 (from the gate, at most 0:57) |
 | F1c | 0.68–0.75 | 0.90 (0:54) |
-| **F1 total** | **1.49–1.80** | **ceiling 2.45**, within Joseph's 2.5 |
+| **F1 total** | **1.73–1.92** | **ceiling 2.491**, within Joseph's 2.5 |
 
-- **Assumptions.** These are estimates, not measurements: one task at 16-way load takes 60–120 s of start-up plus about
-  60 s of events. The gate replaces them with the re-pilot's measured full-task wall before any production job.
+- **Assumptions.** These are estimates, not measurements: one task at 14-way load takes 45–120 s of start-up, about
+  60 s of events and about 55 s of gntpc.
+- **The wall rule binds at a long-run wall of 183.6 s.** That leaves about 1.16× headroom over an uncontended task of
+  about 158 s. The gate replaces them with the re-pilot's measured full-task wall before any production job.
 - **The binding.** Joseph's ceiling is 2.5. For the re-binding I propose `<priced>` = `<ceiling>` = 2.5.
-  - With those values neither cost rule can fire, because the caps sum to 2.45.
+  - With those values neither cost rule can fire, because the caps sum to 2.491.
   - **The rules that actually bind are the memory rule and the 55-minute wall rule.**
   - A tighter `<priced>` is the director's to set.
 
@@ -240,7 +257,8 @@ binding requires.
 
 1. The corrected cause (§1): the OOM came at start-up, F1a's MaxRSS was set aside, and the three tasks without a gst
    were ended by teardown.
-2. P = 16, from F1a's MaxRSS. The re-pilot runs full-size tasks, so wall and memory are measured, not extrapolated.
+2. P = 14, from F1a's sampled MaxRSS. The re-pilot runs full-size tasks, so wall and memory are measured, not
+   extrapolated. A higher P would sit on the memory rule; a lower one would run into the 57-minute wall rule.
 3. The memory rule at 75 % of the node, with the sacct cross-check enforced in the submit line.
 4. Reusing F1a's five products after re-verification, and F1b's seeds in `f1b2/`, never reading `f1b/`.
 5. The generator-list finding in §2, as not a STOP.
@@ -248,16 +266,21 @@ binding requires.
 
 ## 8. Review
 
-An independent read-only review ran on the first draft (`08a0b3ab`); §9 gives its findings and dispositions.
+An independent read-only review ran on the first draft (`08a0b3ab`), and a focused re-review on the second
+(`f09b9a9c`). §9 gives both rounds' findings and dispositions.
 
 ## 9. Review dispositions
 
 | finding | severity | done |
 |---|---|---|
-| The OOM came at gevgen's start-up, not about 16,000 events in. The 64-process re-pilot was unsafe; "37.5 ms per event" was not contention | high | §1 rewritten. P = 16, from F1a's MaxRSS. The re-pilot runs full-size tasks, so nothing is extrapolated. §6 re-priced |
+| The OOM came at gevgen's start-up, not about 16,000 events in. The 64-process re-pilot was unsafe; "37.5 ms per event" was not contention | high | §1 rewritten. P from F1a's MaxRSS. The re-pilot runs full-size tasks, so nothing is extrapolated. §6 re-priced |
 | The three tasks "died in gntpc" (false), and F1b′ reuses their seeds | high | read from GENIE's status files: they were in their event loops at normal speed when teardown ended them (§1). Reused, and a repeat failure is a STOP |
 | The negative cross sections cited the wrong generator | medium | `QELEventGenerator.cxx:195-203` cited; the dinucleon look-back dropped |
 | The time fit was fragile | medium | the gate uses the measured full-task wall; the fit is descriptive only |
 | The sacct cross-check was prose only; `/usr/bin/time` reports the largest single process | medium | sacct's batch MaxRSS is enforced in `submit_fd_f1.sh f1b2` and tested with stubs; the RSS semantics are stated |
 | The tests overstated "each rule on its own"; shell guards were only string-checked; the ledger test was vacuous; the seeds were retyped | medium | each-rule-alone test, stub-run submit tests, the xargs stop-on-failure check, the seeds read from `fd_f1_tasks.SEEDS`; the ledger test removed |
 | priced = ceiling = 2.5 cannot fire; the F1b′ range topped above its own STOP; xargs ran on after a failure; the charm claim; the GetXMLFilePath resolution; 49 % | low | stated (§6); range corrected and the cap raised to 55 min within 2.5; `|| exit 255`; "equal count"; resolution stated (§2); the percentage recomputed for P = 16 |
+| Re-review: P = 16 sat within 2.7 % of the 75 % rule, so the re-pilot would likely STOP itself; "72 %" was wrong | high | P = 14 (64 % at F1a's estimate, 17 % headroom), 10 waves; the F1b′ limit raised to 57 min, caps 2.491 ≤ 2.5; the percentages recomputed |
+| Re-review: the three tasks were stalled for 64–102 s, not running at normal speed; seed dependence unknown | medium-high | §1 corrected; stated as an open risk (§4); per-task timeouts in F1a′ (900 s) and F1b′ (3 × the full-task wall) turn a hang into a STOP |
+| Re-review: sacct and F1a's 22 GiB are 30 s cgroup samples; the submit check ignored the job state | medium | "estimate, not a bound" stated (§1, §3); the submit check requires COMPLETED, tested |
+| Re-review: caps 2.4575 rounded down; the wall rule's headroom | low | the caps are now 2.491, stated to three places; the headroom is stated (§6) |

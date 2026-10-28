@@ -6,11 +6,12 @@
 #SBATCH --no-requeue
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 # F1b' (state/measurement-paper/5d-community-20261024/FD-F1-DECLARATION-AMENDMENT-1.md section 4): F1b's 128 gevgen
-# tasks (64 per tune, 17,500 events, seeds 60001-60064 and 61001-61064), at most 16 at once (budget2.json's
-# concurrency), each timed by /usr/bin/time -v; a failed task exits 255, so xargs starts no further task; the NOWIDTH flux-check on all 128; hadd; gen5d_v3.py convert; then
+# tasks (64 per tune, 17,500 events, seeds 60001-60064 and 61001-61064), at most 14 at once (budget2.json's
+# concurrency), each timed by /usr/bin/time -v and bounded by budget2.json's per-task timeout (3 x the re-pilot's
+# full-task wall, so a stalled task becomes a STOP); a failed task exits 255, so xargs starts no further task; the NOWIDTH flux-check on all 128; hadd; gen5d_v3.py convert; then
 # fd_f1_prep.py. Runs only if F1a''s budget2.json says GO, from a clean deploy at <pin>. Writes only under
 # <OUT>/f1b2, refuses if that exists, and never reads F1b's <OUT>/f1b (the STOP's evidence).
-# Submitted only by submit_fd_f1.sh f1b2, with --time from budget2.json (at most 0:55).
+# Submitted only by submit_fd_f1.sh f1b2, with --time from budget2.json (at most 0:57).
 set -o pipefail   # NOT set -u
 D="${1:?deploy}"; PIN="${2:?pin}"; OUT="${3:?out}"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
@@ -21,7 +22,9 @@ fi
 A="$OUT/f1a"; A2="$OUT/f1a2"; F="$OUT/f1b2"
 grep -q '"decision": "GO"' "$A2/budget2.json" 2>/dev/null || { echo "[f1b2] refusing: F1a''s budget is not GO" >&2; exit 2; }
 P=$(sed -n 's/.*"concurrency": \([0-9]*\).*/\1/p' "$A2/budget2.json")
-[ "$P" = 16 ] || { echo "[f1b2] refusing: concurrency $P is not the declared 16" >&2; exit 2; }
+[ "$P" = 14 ] || { echo "[f1b2] refusing: concurrency $P is not the declared 14" >&2; exit 2; }
+TO=$(sed -n 's/.*"f1b2_task_timeout_s": \([0-9]*\).*/\1/p' "$A2/budget2.json")
+[ -n "$TO" ] && [ "$TO" -gt 0 ] || { echo "[f1b2] refusing: no per-task timeout in budget2.json" >&2; exit 2; }
 [ ! -e "$F" ] || { echo "[f1b2] refusing: $F exists" >&2; exit 2; }
 G="$D/3d-unfolding/genie"
 ( cd "$A" && sha256sum -c "$A2/reused.sha256" ) > /dev/null 2>&1 || { echo "[f1b2] refusing: F1a's products changed" >&2; exit 2; }
@@ -34,8 +37,8 @@ need() { [ "$1" -eq 0 ] || { echo "[f1b2] STOP: $2 rc=$1" >&2; exit 1; }; }
 anaenv() { source "$D/setup_salloc_env.sh" > "$F/logs/env-$1.log" 2>&1; case "$(python3 -V 2>&1)" in *3.11*) ;; *) exit 7 ;; esac; }
 
 for T in $TUNES; do for k in $(seq 1 $NT); do echo "$T $(( ${BASE[$T]} + k ))"; done; done > "$F/queue.txt"
-export G A F NEV
-xargs -P "$P" -L 1 bash -c 'mkdir -p "$F/runs/$0" && /usr/bin/time -v -o "$F/runs/$0/task_s$1.time" \
+export G A F NEV TO
+xargs -P "$P" -L 1 bash -c 'mkdir -p "$F/runs/$0" && /usr/bin/time -v -o "$F/runs/$0/task_s$1.time" timeout "$TO" \
     bash "$G/run_gevgen_v3.sh" genie "$0" "$A/splines" "$NEV" "$1" "$F/work/$0/s$1" "$A/flux_phi_t_0_100.root" \
     > "$F/logs/gen_$0_s$1.log" 2>&1 || exit 255' < "$F/queue.txt"
 need $? "generation"

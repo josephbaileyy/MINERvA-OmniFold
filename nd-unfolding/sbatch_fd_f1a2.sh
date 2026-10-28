@@ -7,8 +7,9 @@
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 # F1a' (state/measurement-paper/5d-community-20261024/FD-F1-DECLARATION-AMENDMENT-1.md section 3): the re-pilot at
 # F1b''s concurrency, from a clean deploy at <pin>. F1a's splines, flux file and graphs are reused only after they
-# re-verify against the committed f1a-SHA256SUMS. Per tune, 4 processes run one full F1b' task (17,500 events) and 4
-# run 1,000 events twice in a row, so all 16 run together for about one task; every run is timed by /usr/bin/time -v.
+# re-verify against the committed f1a-SHA256SUMS. Per tune, 4 processes run one full F1b' task (17,500 events) and 3
+# run 1,000 events twice in a row, so all 14 run together for about one task; every run is timed by /usr/bin/time -v
+# and bounded by a 900 s timeout (a stalled run becomes a STOP).
 # Then the NOWIDTH flux-check on every run and fd_f1_budget2.py's GO/STOP. Writes only under <OUT>/f1a2, and refuses
 # if that exists.
 # Submitted only by submit_fd_f1.sh f1a2 (regular QOS, --time=00:20:00).
@@ -39,17 +40,17 @@ grep -E '  \./(splines/[A-Za-z0-9_]+_CH\.xml\.gz|flux_phi_t_0_100\.root|graphs_[
 need $? "F1a's reused products re-verify"
 
 run() {  # run <tune> <role> <events> <seed>
-  /usr/bin/time -v -o "$F/runs/$1/$2_s$4.time" \
+  /usr/bin/time -v -o "$F/runs/$1/$2_s$4.time" timeout 900 \
     bash "$G/run_gevgen_v3.sh" genie "$1" "$A/splines" "$3" "$4" "$F/work/$1/s$4" "$A/flux_phi_t_0_100.root" \
     > "$F/logs/gen_$1_s$4.log" 2>&1
 }
 pids=()
 for T in $TUNES; do
   mkdir -p "$F/runs/$T"
-  b=${BASE2[$T]}                                # fd_f1_budget2.seeds: long b+1..b+4, short b+5..b+12
-  L=($(seq $((b + 1)) $((b + 4)))); S=($(seq $((b + 5)) $((b + 12))))
+  b=${BASE2[$T]}                                # fd_f1_budget2.seeds: long b+1..b+4, short b+5..b+10
+  L=($(seq $((b + 1)) $((b + 4)))); S=($(seq $((b + 5)) $((b + 10))))
   for s in "${L[@]}"; do run "$T" long 17500 "$s" & pids+=($!); done
-  for k in $(seq 0 2 6); do ( run "$T" short 1000 "${S[$k]}" && run "$T" short 1000 "${S[$((k + 1))]}" ) & pids+=($!); done
+  for k in $(seq 0 2 4); do ( run "$T" short 1000 "${S[$k]}" && run "$T" short 1000 "${S[$((k + 1))]}" ) & pids+=($!); done
 done
 for p in "${pids[@]}"; do wait "$p"; need $? "re-pilot generation"; done
 ( anaenv fc; python3 "$G/gen5d_v3.py" flux-check --flux "$A/flux_phi_t_0_100.root" --work "$F"/work/*/s* ) \

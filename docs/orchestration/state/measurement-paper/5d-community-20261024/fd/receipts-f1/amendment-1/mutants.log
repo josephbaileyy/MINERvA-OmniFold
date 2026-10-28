@@ -11,15 +11,15 @@
 11 KILLED nd-unfolding/fd_f1_budget2.py '        if extra:'
 12 KILLED nd-unfolding/fd_f1_budget2.py '"long": list(range(b + 1, b + 1 + N_LONG))'
 13 KILLED nd-unfolding/fd_f1_budget2.py 'return parts[0] * 60 + parts[1]'
-14 KILLED nd-unfolding/fd_f1_budget2.py 'P = 16 '
-15 KILLED nd-unfolding/fd_f1_budget2.py 'F1B_MAX_S = 55 * 60'
+14 KILLED nd-unfolding/fd_f1_budget2.py 'P = 14 '
+15 KILLED nd-unfolding/fd_f1_budget2.py 'F1B_MAX_S = 57 * 60'
 16 KILLED nd-unfolding/fd_f1_budget2.py 'd["repilot_job_id"] = a.job_id'
 17 KILLED nd-unfolding/sbatch_fd_f1a2.sh 'run "$T" long 17500 "$s"'
 18 KILLED nd-unfolding/sbatch_fd_f1a2.sh 'SPENT=0.307500'
 19 KILLED nd-unfolding/sbatch_fd_f1a2.sh 'declare -A BASE2=([G18_10a_02_11b]=60100 [AR23_20i_00_000]=6'
 20 KILLED nd-unfolding/sbatch_fd_f1a2.sh "graphs_[A-Za-z0-9_]+\\.root)$'"
 21 KILLED nd-unfolding/sbatch_fd_f1a2.sh '--job-id "$SLURM_JOB_ID"'
-22 KILLED nd-unfolding/sbatch_fd_f1b2.sh '[ "$P" = 16 ]'
+22 KILLED nd-unfolding/sbatch_fd_f1b2.sh '[ "$P" = 14 ]'
 23 KILLED nd-unfolding/sbatch_fd_f1b2.sh 'F="$OUT/f1b2"'
 24 KILLED nd-unfolding/sbatch_fd_f1b2.sh '2>&1 || exit 255\' < "$F/queue.txt"'
 25 KILLED nd-unfolding/submit_fd_f1.sh '--time=00:20:00 --job-name=fd_f1a2'
@@ -27,5 +27,10 @@
 27 KILLED nd-unfolding/submit_fd_f1.sh '[ "$K" -gt 0 ] && [ "$K" -le $((487802 * 1024 * 3 / 4)) ]'
 28 KILLED nd-unfolding/submit_fd_f1.sh '[ -n "$J" ] || { echo "refusing: no repilot_job_id in $B" >&'
 29 KILLED nd-unfolding/submit_fd_f1.sh 'if(u=="G")n*=1048576'
-total 29 killed 29 survived []
+30 KILLED nd-unfolding/fd_f1_budget2.py 'TIMEOUT_FACTOR = 3.0'
+31 KILLED nd-unfolding/sbatch_fd_f1a2.sh '.time" timeout 900 \\'
+32 KILLED nd-unfolding/sbatch_fd_f1b2.sh 'task_s$1.time" timeout "$TO"'
+33 KILLED nd-unfolding/submit_fd_f1.sh '[ "$S" = COMPLETED ] ||'
+34 KILLED nd-unfolding/sbatch_fd_f1a2.sh 'for k in $(seq 0 2 4)'
+total 34 killed 34 survived []
 rc=0

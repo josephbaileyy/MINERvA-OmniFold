@@ -3,7 +3,7 @@ section 5): the re-pilot gate fd_f1_budget2.py on synthetic /usr/bin/time -v rec
 stub sbatch and sacct, and the new scripts against the gate's constants. No real product is read.
 
 * parse_time_v reads GNU time -v's wall, maximum RSS and exit status, and refuses an incomplete record.
-* the seeds: 12 per tune, distinct, disjoint from F1a's, F1b''s (60001-60064, 61001-61064) and the pseudo-experiments'
+* the seeds: 10 per tune, distinct, disjoint from F1a's, F1b''s (60001-60064, 61001-61064) and the pseudo-experiments'
   (fd_f1_tasks.SEEDS), and the batch script's arithmetic.
 * decide: GO with every number recomputed, and a STOP from each rule with every other rule holding.
 * load_runs refuses a missing, an undeclared and a failed run.
@@ -54,7 +54,7 @@ def runs(long_w=120.0, short_w=60.0, long_m=20 * GIB, short_m=19 * GIB, scale=No
     for tune in B2.TUNES:
         k = (scale or {}).get(tune, 1.0)
         out[tune] = {"long": [{"elapsed_s": long_w * k - i, "maxrss_kib": long_m - i, "exit": 0} for i in range(4)],
-                     "short": [{"elapsed_s": short_w * k - i, "maxrss_kib": short_m - i, "exit": 0} for i in range(8)]}
+                     "short": [{"elapsed_s": short_w * k - i, "maxrss_kib": short_m - i, "exit": 0} for i in range(6)]}
     return out
 
 
@@ -79,7 +79,7 @@ class Seeds(unittest.TestCase):
             s = B2.seeds(tune)
             self.assertEqual((len(s["long"]), len(s["short"])), (B2.N_LONG, 2 * B2.N_SHORT))
             both = set(s["long"]) | set(s["short"])
-            self.assertEqual(len(both), 12)
+            self.assertEqual(len(both), 10)
             self.assertFalse(both & f1b or both & pe or both & seen or both & {60000, 61000})
             seen |= both
         text = (ND / "sbatch_fd_f1a2.sh").read_text()
@@ -87,7 +87,7 @@ class Seeds(unittest.TestCase):
         for tune in B2.TUNES:
             b = int(base[tune])
             self.assertEqual(B2.seeds(tune)["long"], list(range(b + 1, b + 5)))
-            self.assertEqual(B2.seeds(tune)["short"], list(range(b + 5, b + 13)))
+            self.assertEqual(B2.seeds(tune)["short"], list(range(b + 5, b + 11)))
 
 
 class Decide(unittest.TestCase):
@@ -95,20 +95,22 @@ class Decide(unittest.TestCase):
 
     def test_go_with_every_number_recomputed(self):
         d = B2.decide(runs(scale={"AR23_20i_00_000": 1.1}), **self.ARGS)
-        wall = 8 * 120.0 * 1.1 + 900
+        wall = 10 * 120.0 * 1.1 + 900
         self.assertAlmostEqual(d["f1b2_projected_wall_s"], wall)
-        self.assertEqual(d["f1b2_projected_mem_kib"], 16 * 20 * GIB)
+        self.assertEqual(d["f1b2_projected_mem_kib"], 14 * 20 * GIB)
+        self.assertAlmostEqual(max(v["long_wall_s"] for v in d["runs"].values()), 120.0 * 1.1)
+        self.assertEqual(d["f1b2_task_timeout_s"], math.ceil(3.0 * max(v["long_wall_s"] for v in d["runs"].values())))
         lim = math.ceil(wall * 1.25 / 60)
         self.assertEqual(d["f1b2_time_limit"], f"{lim // 60:02d}:{lim % 60:02d}:00")
         self.assertAlmostEqual(d["worst_case_node_h"], 0.3075 + 0.08 + lim / 60 + 0.9)
         self.assertAlmostEqual(d["f1_projected_node_h"], 0.3075 + 0.08 + wall / 3600 + 0.75)
         t = (120.0 * 1.1 - 60.0 * 1.1) / (17500 - 1000)
         self.assertAlmostEqual(d["runs"]["AR23_20i_00_000"]["per_event_s_descriptive"], t)
-        self.assertEqual((d["concurrency"], d["waves"], d["decision"]), (16, 8, "GO"))
+        self.assertEqual((d["concurrency"], d["waves"], d["decision"]), (14, 10, "GO"))
 
     def test_each_rule_stops_with_the_others_holding(self):
         cases = {
-            "mem_ok": (runs(long_m=24 * GIB), self.ARGS),
+            "mem_ok": (runs(long_m=26 * GIB), self.ARGS),
             "f1b2_fits_its_limit": (runs(long_w=260.0), dict(self.ARGS, priced_node_h=9.0, ceiling_node_h=9.0)),
             "within_priced": (runs(), dict(self.ARGS, priced_node_h=1.2)),
             "within_ceiling": (runs(), dict(self.ARGS, ceiling_node_h=1.5)),
@@ -122,7 +124,7 @@ class Decide(unittest.TestCase):
                 self.assertEqual(d["decision"], "STOP")
 
     def test_memory_boundary_counts_the_short_runs_too(self):
-        cap = int(0.75 * B2.NODE_MEM_KIB / 16)
+        cap = int(0.75 * B2.NODE_MEM_KIB / 14)
         self.assertTrue(B2.decide(runs(long_m=cap, short_m=cap), **self.ARGS)["mem_ok"])
         self.assertFalse(B2.decide(runs(long_m=cap + 1, short_m=cap), **self.ARGS)["mem_ok"])
         self.assertFalse(B2.decide(runs(long_m=cap, short_m=cap + 1), **self.ARGS)["mem_ok"])   # the start-up peak
@@ -140,7 +142,7 @@ class LoadRuns(unittest.TestCase):
 
     def test_reads_every_declared_run_and_main_decides(self):
         r = B2.load_runs(self.tmp)
-        self.assertEqual({t: (len(v["long"]), len(v["short"])) for t, v in r.items()}, {t: (4, 8) for t in B2.TUNES})
+        self.assertEqual({t: (len(v["long"]), len(v["short"])) for t, v in r.items()}, {t: (4, 6) for t in B2.TUNES})
         out = self.tmp / "b.json"
         argv = ["--runs", str(self.tmp), "--spent-node-h", "0.3075", "--repilot-node-h", "0.08", "--priced-node-h",
                 "2.5", "--ceiling-node-h", "2.5", "--job-id", "123", "--out", str(out)]
@@ -180,19 +182,19 @@ class SubmitHelper(unittest.TestCase):
         self.bin = self.tmp / "bin"
         self.bin.mkdir()
         (self.bin / "sbatch").write_text('#!/bin/bash\necho "SBATCH $*" > "$STUB_LOG"\necho "Submitted batch job 1"\n')
-        (self.bin / "sacct").write_text('#!/bin/bash\necho "$STUB_MAXRSS"\n')
+        (self.bin / "sacct").write_text('#!/bin/bash\ncase "$*" in *State*) echo "$STUB_STATE" ;; *) echo "$STUB_MAXRSS" ;; esac\n')
         for f in ("sbatch", "sacct"):
             (self.bin / f).chmod(0o755)
         self.out = self.tmp / "OUT"
         (self.out / "f1a2").mkdir(parents=True)
 
-    def submit(self, decision="GO", job="777", maxrss="300000000K"):
+    def submit(self, decision="GO", job="777", maxrss="300000000K", state="COMPLETED"):
         b = {"decision": decision, "f1b2_time_limit": "00:41:00"}
         if job:
             b["repilot_job_id"] = job
         (self.out / "f1a2/budget2.json").write_text(json.dumps(b, indent=1))
         env = dict(os.environ, PATH=f"{self.bin}:{os.environ['PATH']}", STUB_LOG=str(self.tmp / "sbatch.log"),
-                   STUB_MAXRSS=maxrss)
+                   STUB_MAXRSS=maxrss, STUB_STATE=state)
         (self.tmp / "sbatch.log").unlink(missing_ok=True)
         return subprocess.run(["bash", str(ND / "submit_fd_f1.sh"), "f1b2", "/D", "PIN", str(self.out)], env=env,
                               capture_output=True, text=True)
@@ -207,7 +209,7 @@ class SubmitHelper(unittest.TestCase):
     def test_refusals(self):
         limit_k = 487802 * 1024 * 3 // 4
         for kw in (dict(decision="STOP"), dict(job=None), dict(maxrss=f"{limit_k + 1}K"), dict(maxrss="400G"),
-                   dict(maxrss="")):
+                   dict(maxrss=""), dict(state="RUNNING"), dict(state="OUT_OF_MEMORY")):
             with self.subTest(**kw):
                 p = self.submit(**kw)
                 self.assertNotEqual(p.returncode, 0)
@@ -221,7 +223,8 @@ class Scripts(unittest.TestCase):
         a = (ND / "sbatch_fd_f1a2.sh").read_text()
         self.assertIn(f'run "$T" long {B2.N_TASK} "$s"', a)
         self.assertIn(f'run "$T" short {B2.N1} "${{S[$k]}}" && run "$T" short {B2.N1}', a)
-        self.assertIn("for k in $(seq 0 2 6)", a)
+        self.assertIn("for k in $(seq 0 2 4)", a)
+        self.assertIn('-o "$F/runs/$1/$2_s$4.time" timeout 900', a)
         self.assertEqual(a.count("/usr/bin/time -v -o"), 1)
         self.assertIn('--job-id "$SLURM_JOB_ID"', a)
         self.assertIn("flux-check", a)
@@ -235,8 +238,10 @@ class Scripts(unittest.TestCase):
         self.assertIn(f'[ "$P" = {B2.P} ]', b)
         self.assertIn('xargs -P "$P"', b)
         self.assertIn("|| exit 255' < \"$F/queue.txt\"", b)
+        self.assertIn('task_s$1.time" timeout "$TO"', b)
+        self.assertIn("f1b2_task_timeout_s", b)
         self.assertIn("NT=64; NEV=17500", b)
-        self.assertEqual((B2.N_TASK, B2.N_TASKS, B2.WAVES), (17500, 128, 8))
+        self.assertEqual((B2.N_TASK, B2.N_TASKS, B2.WAVES), (17500, 128, 10))
         self.assertIn("declare -A BASE=([G18_10a_02_11b]=60000 [AR23_20i_00_000]=61000)", b)
         self.assertIn("reused.sha256", b)
 

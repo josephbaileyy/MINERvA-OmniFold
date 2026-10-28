@@ -33,20 +33,22 @@ import sys
 from pathlib import Path
 
 TUNES = ("G18_10a_02_11b", "AR23_20i_00_000")
-P = 16                      # F1b''s concurrency, and the re-pilot's: 16 x ~22 GiB start-up peak (F1a) is ~74 % of the node
-N_LONG, N_SHORT = 4, 4      # per tune: full-task processes, and short processes that each run twice
+P = 14                      # F1b''s concurrency, and the re-pilot's: 14 x ~21.75 GiB (F1a's sampled peak / 2) is 64 % of
+                            # the node, leaving the 75 % rule 17 % headroom per process (25.5 GiB)
+N_LONG, N_SHORT = 4, 3      # per tune: full-task processes, and short processes that each run twice
 N1 = 1_000                  # events per short run
 N_TASK = 17_500             # events per F1b' task (unchanged), and per long re-pilot run
 N_TASKS = 128               # F1b' tasks (unchanged)
 WAVES = math.ceil(N_TASKS / P)
 FIXED_S = 900.0             # hadd, two conversions and the prep (as the first gate)
-F1B_MAX_S = 55 * 60         # F1b''s largest allowed limit: 0.3075 + 0.33 + 0.917 + 0.9 = 2.45 <= Joseph's 2.5
+F1B_MAX_S = 57 * 60         # F1b''s largest allowed limit: 0.3075 + 0.3333 + 0.95 + 0.9 = 2.491 <= Joseph's 2.5
+TIMEOUT_FACTOR = 3.0        # F1b''s per-task timeout: 3 x the largest measured full-task wall (a hang becomes a STOP)
 WALL_MARGIN = 1.25
 NODE_MEM_KIB = 487_802 * 1024   # the exclusive CPU node's allocation (sacct AllocTRES mem=487802M)
 MEM_FRACTION = 0.75
 F1C_NODE_H = 0.75
 F1C_LIMIT_H = 54 / 60
-SEED_BASE = {"G18_10a_02_11b": 60100, "AR23_20i_00_000": 61100}   # re-pilot seeds base+1 .. base+12 per tune
+SEED_BASE = {"G18_10a_02_11b": 60100, "AR23_20i_00_000": 61100}   # re-pilot seeds base+1 .. base+10 per tune
 
 _ELAPSED = re.compile(r"Elapsed \(wall clock\) time \(h:mm:ss or m:ss\): (\S+)")
 _RSS = re.compile(r"Maximum resident set size \(kbytes\): (\d+)")
@@ -125,6 +127,7 @@ def decide(runs: dict, spent_node_h: float, pilot_node_h: float, priced_node_h: 
     limit_min = int(-(-(wall * WALL_MARGIN) // 60))
     h, m = divmod(limit_min, 60)
     worst = spent_node_h + pilot_node_h + limit_min / 60.0 + F1C_LIMIT_H
+    task_timeout = int(math.ceil(TIMEOUT_FACTOR * max(v["long_wall_s"] for v in s.values())))
     capped = worst <= ceiling_node_h
     go = mem_ok and fits and within and capped
     return {"runs": s, "concurrency": P, "waves": WAVES, "f1b2_projected_wall_s": wall, "f1b2_fits_its_limit": fits,
@@ -132,8 +135,9 @@ def decide(runs: dict, spent_node_h: float, pilot_node_h: float, priced_node_h: 
             "mem_ok": mem_ok, "spent_node_h": spent_node_h, "repilot_node_h": pilot_node_h,
             "f1c_node_h_priced": F1C_NODE_H, "f1_projected_node_h": total, "priced_node_h": priced_node_h,
             "within_priced": within, "f1b2_time_limit": f"{h:02d}:{m:02d}:00", "worst_case_node_h": worst,
-            "ceiling_node_h": ceiling_node_h, "within_ceiling": capped, "decision": "GO" if go else "STOP",
-            "rule": "GO iff 16 x the largest per-process RSS <= 75 % of the node, 1.25 x the F1b' wall <= 55 min, "
+            "ceiling_node_h": ceiling_node_h, "within_ceiling": capped, "f1b2_task_timeout_s": task_timeout,
+            "decision": "GO" if go else "STOP",
+            "rule": "GO iff 14 x the largest per-process RSS <= 75 % of the node, 1.25 x the F1b' wall <= 57 min, "
                     "spent + re-pilot + F1b' + 0.75 <= the priced total, and the worst case <= the ceiling"}
 
 
