@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B reads more economically, with fewer extended qualifications and procedural digressions interrupting the formal exposition.
+2. B improves sentence control, notably by separating the estimator’s instability claim from the sentence quantifying its sensitivity to rounding.
+3. Although much wording is shared, B sustains a smoother, more focused journal register, whereas A more often reads like an expanded technical report.

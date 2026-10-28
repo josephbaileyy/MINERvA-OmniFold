@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and technically formal, but repeated caveats, internal development bookkeeping, and opaque or conversational phrasing require a dedicated language pass to reach PRD register.
+1. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The principal ones
+are these."
+   REWRITE: The principal limitations concern covariance validation, interval coverage, and the interpretation of the calibrated tests.
+2. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development. The comparison and its
+values are given in Ref. [14], Sec. 9.4."
+   REWRITE: We use five iterations because increasing the number to 10, 15, or 20 did not reduce the model dependence, as assessed by the maximum residual diagnostic across the truth deformations considered during estimator development (Ref. [14], Sec. 9.4).
+3. QUOTE: "The note’s calibrated tests show
+the same pull: their null distributions for the external
+predictions are displaced upward by it, as the calibration
+reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: The residual dependence on the prior also shifts the null distributions for the external predictions upward in the calibrated tests; the calibration reproduces this shift (Ref. [14], Sec. 11.5).
