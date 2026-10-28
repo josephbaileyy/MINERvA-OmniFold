@@ -1,0 +1,979 @@
+{
+  "snapshot": "3892e769043cddebfd58ec19e1ab1a567eb01784",
+  "xr_snapshot": "9be8bfb4d4acace2ec64273970130d6404f1813c",
+  "slides": [
+    {
+      "title": "MINERvA OmniFold",
+      "sub": "Research catch-up with Ben",
+      "kind": "cover",
+      "lines": [
+        "Joseph Bailey",
+        "2D validation, higher-dimensional inference, and full-event learning",
+        "10 October 2026"
+      ],
+      "sec": 28,
+      "refs": [
+        "docs/analysis-note/main_note.tex",
+        "docs/publication/submission/PACKAGE-MANIFEST-20261006.md"
+      ],
+      "script": "Ben, this is the current state of the OmniFold analysis: a reproduced two-dimensional central result, higher-dimensional inference and validation limits, and full-event PET development. I will separate what the data show from what the uncertainty and calibration studies justify.",
+      "key": "cover",
+      "old": 1
+    },
+    {
+      "title": "Reproduction, conditional inference and PET development",
+      "kind": "rows",
+      "rows": [
+        [
+          "2D reproduction",
+          "Central result established; uncertainty transfer and coverage unresolved"
+        ],
+        [
+          "3D to 5D scalar studies",
+          "Specific recovery tests pass; later tests expose limits"
+        ],
+        [
+          "Full-event PET studies",
+          "Better recovery on some simulated shapes; intervals fail calibration"
+        ]
+      ],
+      "sec": 51,
+      "refs": [
+        "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+        "3d-unfolding/3D_OMNIFOLD_STATUS.md",
+        "docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md",
+        "nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md",
+        "docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/REPORT.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/logs/compare-interim-L1.json"
+      ],
+      "script": "The two-dimensional central result reproduces the published muon measurement. XR has now regenerated the LightGBM reference centrals at both seeds, which closes specific reproducibility questions. It does not yet establish that those error bars describe the quoted exact-tree central. The higher-dimensional program reveals hadronic structure and supports a conditional generator test, but did not qualify a joint-five-dimensional measurement. PET improves recovery of some simulated departures while its tested intervals remain miscalibrated. These are different scientific outcomes, and the plots will show both the achievements and the limits.",
+      "key": "overview",
+      "old": 2
+    },
+    {
+      "title": "The selected neutrino sample and its truth domain",
+      "kind": "rows",
+      "rows": [
+        [
+          "Sample",
+          "Medium-energy neutrino mode, about 6 GeV. 4.12 million selected events"
+        ],
+        [
+          "Signal",
+          "Muon-neutrino charged-current interactions in the tracker"
+        ],
+        [
+          "Reference domain",
+          "Muon angle < 20°, 1.5 < p∥ < 60 GeV/c, pT < 4.5 GeV/c"
+        ],
+        [
+          "Detector",
+          "MINERvA measures activity. Downstream MINOS measures the muon"
+        ]
+      ],
+      "sec": 51,
+      "refs": [
+        "docs/analysis-note/sec_experiment.tex",
+        "2d-unfolding/2D_OMNIFOLD_REFERENCE.md"
+      ],
+      "script": "We use about 4.12 million selected events from the twelve medium-energy neutrino-mode playlists. The signal is inclusive muon-neutrino charged-current scattering in the tracker. The reference truth domain has a forward muon within the published momentum cuts, and selected reconstruction includes a downstream MINOS match. Those are distinct definitions: a truth signal event can miss reconstructed selection. The extended-fiducial PET studies keep the reconstructed selection while enlarging the truth domain. The September PET selection studies are signal-only simulations on fixed banks, rather than a complete real-data background analysis.",
+      "key": "data",
+      "old": 3
+    },
+    {
+      "title": "Closure, dimensional anchors and coverage",
+      "kind": "rows",
+      "rows": [
+        [
+          "Closure",
+          "Create simulated data with known truth and test recovery"
+        ],
+        [
+          "Dimensional anchor",
+          "Integrate an added observable and compare with the earlier result"
+        ],
+        [
+          "Coverage",
+          "Repeat simulated experiments and count how often intervals contain truth"
+        ]
+      ],
+      "foot": "A closure pass applies to the tested deformation and detector response",
+      "sec": 71,
+      "refs": [
+        "docs/analysis-note/sec_validation.tex",
+        "docs/analysis-note/sec_3d.tex"
+      ],
+      "script": "Your shorthand is useful: closure primarily tests the point-estimation procedure, and coverage tests the interval procedure. In closure we know the simulated truth, optionally deform it away from the starting simulation, then ask how accurately unfolding recovers it. A dimensional anchor instead integrates away an added observable and checks consistency with the earlier result. Coverage counts repeated experiments whose intervals contain the target bin value. It is not event classification. Bias in the central estimate can also spoil coverage, so the two tests are connected. Passing a few closures cannot establish coverage, and wide intervals can cover even a biased estimate. Every verdict needs its target, simulated response, departures and sample construction. The one-dimensional binned study was a completed equivalence and debugging check, not a separate publication result.",
+      "key": "tests",
+      "old": 5
+    },
+    {
+      "title": "The 2D central result reproduces the published scale",
+      "kind": "figure",
+      "image": "validation",
+      "side": [
+        "3.073 × 10⁻³⁸ cm²/nucleon",
+        "1.11% above the published total",
+        "205 reported bins. Five iterations",
+        "Same data and shared systematics"
+      ],
+      "foot": "Projection of the validated 2D central result. This is a reproduction, not an independent measurement",
+      "sec": 51,
+      "refs": [
+        "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+        "docs/analysis-note/figures/MEFHC_5iter_xsec_proj_pt.pdf",
+        "docs/analysis-note/sec_method.tex",
+        "docs/analysis-note/figures/paper_fig1_validation.pdf"
+      ],
+      "script": "The central result reproduces the published scale: the integrated cross section is 3.073 times ten to the minus 38 square centimetres per nucleon, 1.11 percent above the published total. This figure also shows the bin-by-bin agreement. It uses the same data and shares systematic sources with the publication, so this is a reproduction, not an independent measurement. The quoted central uses exact-split scikit-learn trees; the uncertainty ensembles use LightGBM. XR has now reproduced the LightGBM references, but their uncertainty transfer to the exact central remains unmeasured.",
+      "key": "reproduction",
+      "old": 6
+    },
+    {
+      "title": "Most iteration movement occurs before five iterations",
+      "kind": "rows",
+      "rows": [
+        [
+          "Closure tests",
+          "Injected shapes: 0.046% / 0.013% median residual; limit 1.5%"
+        ],
+        [
+          "Bookkeeping",
+          "Missed truth events preserve the full signal denominator"
+        ],
+        [
+          "Iteration stability",
+          "5 → 10: total changes 0.026%; per-bin shape RMS 1.54%"
+        ],
+        [
+          "Harder closure",
+          "Hidden-resolution amplitude 0.30: 3.43% residual; limit 3%"
+        ]
+      ],
+      "sec": 55,
+      "refs": [
+        "docs/analysis-note/sec_validation.tex",
+        "docs/analysis-note/sec_method.tex",
+        "2d-unfolding/2D_OMNIFOLD_REFERENCE.md",
+        "evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/2D_OMNIFOLD_RUN_LOG_ARCHIVE.md",
+        "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md"
+      ],
+      "script": "This is the archived playlist-1A iteration scan, with each tree estimator compared to its own ten-iteration result. The exact-tree shape RMS falls from 5 percent at one iteration to 1.54 percent at five and 0.55 percent at eight. The histogram-tree version reaches 0.86 percent at five. Ten is the reference, so its zero is automatic. This supports five as a practical stopping choice, not proof that every bin has reached an unbiased limit. The reported five-to-ten total-cross-section change is only 0.026 percent. Iteration stability and closure ask different questions: a stable answer can still be biased.",
+      "key": "iteration",
+      "old": 7
+    },
+    {
+      "script": "The easy truth deformations close very well: median residuals are 0.046 and 0.013 percent against a 1.5 percent limit. The more revealing test changes a hidden resolution variable, reconstructed minus truth transverse momentum. Its residual rises with the deformation, reaching 3.43 percent at amplitude 0.30 and exceeding the 3 percent criterion. These are playlist-1A, LightGBM, five-iteration tests. They validate the tested situations, not arbitrary detector errors. Missed events are a separate bookkeeping requirement: retaining truth events without selected reconstruction preserves the signal denominator, but cannot create data constraints in zero-acceptance regions.",
+      "refs": [
+        "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+        "docs/analysis-note/sec_validation.tex",
+        "docs/analysis-note/sec_method.tex"
+      ],
+      "key": "closure",
+      "title": "Closure passes depend on what the test changes",
+      "old": null,
+      "sec": 53
+    },
+    {
+      "script": "The newer XR record changes the previous presentation. The seed-42 run agrees with the systematic-sweep central to a maximum relative bin difference of 1.38 times ten to the minus eleven. Against the July background-aware central the difference is 9.81 times ten to the minus thirteen. The seed-one run reproduces its reference to 2.41 times ten to the minus twelve. All are below the frozen ten-to-the-minus-eight criterion in 205 cells. These are committed interim results, not the completed campaign review. The exact-tree reproduction and one-seed comparisons remain incomplete in that snapshot. Reproducing the LightGBM references establishes their provenance and reproducibility; it does not measure covariance transfer between LightGBM and the quoted exact-tree central.",
+      "refs": [
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/REPORT.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/logs/compare-interim-L1.json"
+      ],
+      "key": "xr",
+      "title": "XR reproduces both LightGBM reference centrals",
+      "old": null,
+      "sec": 63
+    },
+    {
+      "title": "The repaired 2D band still needs a coverage test",
+      "kind": "rows",
+      "rows": [
+        [
+          "Estimator pairing",
+          "Exact-split central; LightGBM uncertainties. Transfer unmeasured"
+        ],
+        [
+          "Old band failed",
+          "91.21% containment; acceptable window 92.81–97.22%"
+        ],
+        [
+          "Band repaired",
+          "Completeness fixed; adopted VL170 has no independent coverage re-test"
+        ],
+        [
+          "Current status",
+          "Re-test deferred; Oct 7 diagnostic supports under-scattering of same-event toys"
+        ]
+      ],
+      "foot": "6.87% is the median bin budget against the LightGBM seed-42 central; not the error on the integral.",
+      "sec": 59,
+      "refs": [
+        "VALIDATION_LEDGER.md: VL169–VL172",
+        "docs/analysis-note/sec_systematics.tex",
+        "docs/analysis-note/sec_validation.tex",
+        "KNOWN_ISSUES.md: 84–85",
+        "docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md",
+        "docs/orchestration/state/ki85-diag-20261006/ki85_result.json",
+        "docs/orchestration/DELIVERY-20261008-uncertainty-preparation.md",
+        "docs/orchestration/state/next-preparation-20261009/two-d-path/REPORT.md",
+        "docs/orchestration/state/next-preparation-20261009/two-d-followup/REPORT.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/REPORT.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/logs/compare-interim-L1.json"
+      ],
+      "script": "The old statistical band contained truth only 91.21 percent of the time for its nominal 95.45 percent intervals. Its 99.5 percent confidence interval lies wholly below the predeclared acceptable window, so this is a statistical failure rather than a demand for exactly 95 percent. Completeness was repaired in the adopted VL170 band, but that replacement has not received an independent coverage re-test. The October diagnostic supports under-scattering of same-event toys; it does not certify the real-data band. The later split-sample design supports conditional width agreement only, and finds the original objective infeasible under the current inputs. XR addresses reproduction, not this coverage question.",
+      "key": "coverage2d",
+      "old": 8
+    },
+    {
+      "title": "Added coordinates expose hadronic structure",
+      "kind": "rows",
+      "rows": [
+        [
+          "2D: pT, p∥",
+          "Muon kinematics anchor the published measurement"
+        ],
+        [
+          "3D: add Eavail",
+          "Visible hadronic energy resolves recoil structure"
+        ],
+        [
+          "4D: add q3",
+          "Magnitude of momentum transfer adds interaction information"
+        ],
+        [
+          "5D: add W",
+          "An inferred hadronic mass separates regions of the spectrum"
+        ]
+      ],
+      "foot": "Five recorded coordinates ≠ five independent degrees of freedom. Reco q3 and W share muon + recoil inputs.",
+      "sec": 52,
+      "refs": [
+        "docs/analysis-note/sec_3d.tex",
+        "docs/analysis-note/sec_eavailw.tex",
+        "MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h"
+      ],
+      "script": "The muon variables reproduce the established two-dimensional result. Available energy adds a species-defined visible-energy measurement, and the calorimetric energy transfer q-zero supplies additional reconstructed information. The derived variables q-three and W then express those inputs in useful interaction coordinates. Available energy excludes invisible outgoing neutrinos and also omits neutrons under the implemented convention; the incoming neutrino supplies energy rather than being an outgoing deposit. The key distinction is between a useful coordinate and a new independent observation. Five scalar inputs do not automatically mean five independent degrees of freedom.",
+      "key": "stack",
+      "old": 9
+    },
+    {
+      "script": "Both quantities use the muon energy and direction and the same calorimetric q-zero. The neutrino-energy estimate is muon energy plus q-zero. From that we calculate Q-squared, then q-three and W using the displayed equations. In the physical interior, muon kinematics and q-three already determine q-zero, so adding reconstructed W supplies no independent detector measurement. It can still organize the interaction physics and help a finite learner by presenting a useful nonlinear transformation. That is why it is too strong to say we should expect nothing useful. Truth W uses a struck-nucleon mass and its own generator convention; exact identities between stored truth coordinates need those conventions checked. Clipping at the reconstruction boundaries can also break invertibility.",
+      "refs": [
+        "MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h",
+        "docs/analysis-note/sec_eavailw.tex"
+      ],
+      "key": "shared",
+      "title": "Reconstructed q3 and W share the same event inputs",
+      "old": null,
+      "sec": 65
+    },
+    {
+      "title": "Hadronic energy reveals model differences",
+      "kind": "figure",
+      "image": "generators",
+      "side": [
+        "3D normalization anchors to 2D",
+        "The tested Eavail injection closes",
+        "Valencia 2p2h fills 52% of the gap at Eavail ≤ 0.4 GeV",
+        "Central-value comparison only"
+      ],
+      "foot": "Generator predictions use repaired samples. Historical covariance significances stay unquoted",
+      "sec": 47,
+      "refs": [
+        "3d-unfolding/3D_OMNIFOLD_STATUS.md",
+        "VALIDATION_LEDGER.md: VL159–VL160",
+        "docs/analysis-note/figures/generators_vs_unfolded_band_central.pdf"
+      ],
+      "script": "Adding available energy preserves the lower-dimensional normalization and closes the injected available-energy shape. It also exposes model differences hidden by the muon projection. The measured spectrum is harder than several generator predictions. Valencia two-particle–two-hole strength fills 52 percent of the low-energy gap in this comparison, but that observation does not uniquely identify an interaction mechanism. These are central-value comparisons. The historical three-dimensional covariance significances remain withheld; the conditional joint-five-dimensional test later in the talk is a separate result.",
+      "key": "hadronic",
+      "old": 10
+    },
+    {
+      "title": "The excess concentrates at high Eavail and high W",
+      "kind": "figure",
+      "image": "joint",
+      "side": [
+        "67% of positive excess at Eavail ≥ 0.8 GeV",
+        "83% of that at W ≥ 1.8 GeV",
+        "Largest cell: 22% of this map’s positive excess"
+      ],
+      "foot": "Cell-integrated central differences from MINERvA Tune v1. No ranking of significance across observables.",
+      "sec": 52,
+      "refs": [
+        "docs/analysis-note/sec_eavailw.tex",
+        "docs/analysis-note/figures/paper_fig2_joint.pdf",
+        "VALIDATION_LEDGER.md: VL149–VL152"
+      ],
+      "script": "The E-avail versus W map localizes the difference from the MINERvA Tune prediction. Sixty-seven percent of this map’s positive excess lies above 0.8 GeV available energy, and 83 percent of that lies above W of 1.8 GeV. The largest cell contains 22 percent of the positive excess, partly because it spans a broad region. This is not a ranking of significance or fractional discrepancy across all variables. It suggests hadronic physics questions but does not isolate a cause; prior support, regularization and detector modelling can also affect the result.",
+      "key": "ew",
+      "old": 11
+    },
+    {
+      "title": "Extending truth acceptance increases extrapolation",
+      "kind": "figure",
+      "image": "fps",
+      "side": [
+        "Remove truth-muon kinematic cuts",
+        "Keep the reconstructed MINOS selection",
+        "27.7% of truth rate lies where efficiency < 2%",
+        "Central-value and prior tests only"
+      ],
+      "foot": "Extended fiducial domain. No corrected covariance for this extension",
+      "sec": 44,
+      "refs": [
+        "docs/analysis-note/sec_fps.tex",
+        "docs/analysis-note/figures/fps_acceptance_MEFHC.pdf"
+      ],
+      "script": "Removing the truth-level muon cuts enlarges the signal domain while retaining reconstructed selection. The efficiency plot shows the consequence: about 27.7 percent of the weighted truth rate lies below two percent efficiency. Those regions rely heavily on simulation and extrapolation through missed events. The dimensional anchors and available-energy closure still pass, and the muon marginal is recovered, but these are central-value and prior tests. No corrected covariance was adopted for this extended-domain result.",
+      "key": "fps",
+      "old": 12
+    },
+    {
+      "script": "The bound was a declared numerical-stability tolerance, motivated by the precision of a 160-throw estimate of a standard deviation. For independent Gaussian throws, the approximate relative standard error of a sample standard deviation is one over the square root of twice N minus one. At 160 this is about 5.61 percent. Five percent was chosen as a direct movement tolerance of roughly that scale. It is not a derived confidence threshold for a maximum over correlated projections. We compare the same nuisance throws under different estimator seeds and calculate each projected standard deviation. The largest relative width change is 6.145 percent, above five. If a reference width were ten units, that magnitude would mean a change of 0.6145 units, not a 6.145 percent shift in the cross section. A perfectly seed-invariant estimator would give zero; the tolerated value is at most five percent.",
+      "refs": [
+        "docs/orchestration/AUTHORIZATION-20260918-d-resource-required-deliverable-path.md",
+        "nd-unfolding/z_statistics.py",
+        "docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md"
+      ],
+      "key": "bound",
+      "title": "The 5% bound limits seed-induced movement of error bars",
+      "old": null,
+      "sec": 78
+    },
+    {
+      "title": "Four measurements accompany the adopted 5D covariance",
+      "kind": "four",
+      "rows": [
+        [
+          "1. Seed sensitivity",
+          "6.145% projected-width movement versus a 5% bound"
+        ],
+        [
+          "2. Tested ensemble sizes",
+          "6.02%, 6.02%, 6.145% at N = 40, 80, 160. One seed pair"
+        ],
+        [
+          "3. Unprobed bands",
+          "Five seed-pinned bands: 6.75% of trace. Direction of missing effect unknown"
+        ],
+        [
+          "4. Central shifts",
+          "Up to 6.02% of projected uncertainty. Up to 49.8% in individual 5D bins"
+        ]
+      ],
+      "foot": "Digest 3d7465f6… adopted under a byte-specific exception. Product fields remain NON-PASSING / adoptable: false",
+      "sec": 60,
+      "refs": [
+        "docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md: §4",
+        "docs/orchestration/CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md",
+        "docs/orchestration/CORRECTION-20260920-lower-bound-inference-withdrawn.md",
+        "docs/orchestration/AUTHORIZATION-20260918-d-resource-required-deliverable-path.md",
+        "docs/orchestration/PREREGISTRATION-20260919-cause3-two-member-campaign.md"
+      ],
+      "script": "These four measurements travel with the adopted covariance. First, the largest projected-width movement is 6.145 percent against the five percent bound. Second, it stays near six percent across nested 40, 80 and 160 throw subsets at one seed pair, while the same-seed resampling floor falls. Larger ensembles and other seed pairs remain unmeasured. Third, five fixed-seed bands carry 6.75 percent of the trace; their seed effect is unprobed in either direction. Fourth, central values move by up to 6.02 percent of projected uncertainty and 49.8 percent of individual-bin uncertainty. The exception adopts specific bytes without changing their NON-PASSING status or computing the missing production criterion.",
+      "technical": "Expanded measurements for slide 16 (reference, not additional timed speech):\nM1: The maximum fractional change in a declared projected uncertainty width is s_proj = 6.145%, above the 5% bound. The aggregate and median diagnostics are 0.471% and 0.485%. The comparison products are different from the adopted digest.\nM2: s_proj is 6.02%, 6.02% and 6.145% on nested N = 40, 80 and 160 subsets at one seed pair. The same-seed resampling control falls from 20.91% to 7.57% between 40 and 80. The quoted 6.04% ± 0.39% summarizes subset scatter, not the width over seed pairs. Larger N and seed-pair width remain unmeasured.\nM3: BeamAngleX, BeamAngleY, MuonResolution, Muon_Energy_MINERvA and Muon_Energy_MINOS remain at literal seed 42. These five of 45 bands carry 6.75% of covariance trace, or 26.0% of the square-root trace scale, and contribute zero seed movement by construction. Releasing their seeds could change the total statistic in either direction.\nM4: On 43 projection functionals, central relative shifts have median 0.104% and maximum 0.761%, compared with median relative uncertainty 10.1%. In units of their own uncertainties the shifts have median 1.06%, maximum 6.02%, and total-rate movement 1.13%. Per individual 5D bin, median is 3.77%, 90th percentile 13.6%, maximum 49.8% of uncertainty. The same-seed control is 9.4e-13.\nCriterion scope: the 5% bound was approved with the roughly 5.6% finite-ensemble width precision as motivation. The seed comparison grades comparison products; the adopted digest did not evaluate C3 in its own production. Adoption does not change that history.",
+      "key": "four",
+      "old": 13
+    },
+    {
+      "script": "The standard two-dimensional and scalar five-dimensional production chains use binned purity weights: all data events in a reconstructed bin receive the same nonnegative background correction. Negative-weight injection instead appends simulated background with negative weight and leaves data at positive one. The two constructions share bin totals when the floor is inactive, but they generally differ within bins. A synthetic example shows why: purity preserves the data shape, while pointwise subtraction removes the background shape. Signed injection is a comparison method, not the adopted standard chain. The later scalar diagnostic and inference candidates use a learned positive-weight refinement of the signed target, rather than feeding raw signed weights to the final classifier. The refinement can itself underfit. Clipped negative GENIE systematic weights in the inference calibration are a different operation.",
+      "refs": [
+        "docs/analysis-note/app_negweight.tex",
+        "docs/analysis-note/sec_method.tex",
+        "docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md",
+        "docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md"
+      ],
+      "key": "subtraction",
+      "title": "Purity weights and negative-weight subtraction",
+      "old": null,
+      "sec": 71
+    },
+    {
+      "title": "Repairing background bias did not repair truth recovery",
+      "kind": "rows",
+      "rows": [
+        [
+          "Background treatment",
+          "Purity subtraction biases the highest-W column by about 4% in nominal toys"
+        ],
+        [
+          "Truth departures",
+          "Generator-sized deformations leave residuals up to 74% in tested cells"
+        ],
+        [
+          "Targeted repair",
+          "More refinement-classifier capacity repairs nominal background bias"
+        ],
+        [
+          "Remaining failure",
+          "Candidate R fails real-data numerical stability. No estimator adoption"
+        ]
+      ],
+      "sec": 65,
+      "refs": [
+        "VALIDATION_LEDGER.md: VL149–VL152",
+        "docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md",
+        "docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md"
+      ],
+      "script": "The nominal background bias was traced to an underpowered positive-weight refinement classifier. Increasing it from 100 trees and eight leaves to 400 trees and 31 leaves reduced that paired bias by more than 80 percent in every worst cell, with a median reduction of 93 percent. But the physical truth-departure residuals barely changed: the largest E-avail residual remained about 74 percent. They also persist in signal-only tests, so negative weights cannot explain the entire failure. Candidate R subsequently failed the real-data numerical-stability criterion. These studies identify one repairable approximation and a distinct unresolved recovery limitation. They do not show that correct background subtraction is intrinsically biased or establish the generator as the unique source of the discrepancy.",
+      "key": "bias",
+      "old": 14
+    },
+    {
+      "title": "A separate test asks whether specified models fit the data",
+      "kind": "flow",
+      "rows": [
+        [
+          "Assume a generator truth",
+          "Specify the fine-grid cross section and sub-grid model",
+          "This defines the null hypothesis"
+        ],
+        [
+          "Simulate repeated experiments",
+          "Apply the declared nuisance variations and the estimator",
+          "Measure its behavior under that null"
+        ],
+        [
+          "Compare the observed statistic",
+          "Count simulated tests at least as extreme",
+          "Correct for the ten comparisons"
+        ]
+      ],
+      "foot": "s5p measurement branch: NOT ADMITTED. The separate inference branch supplies no new reportable uncertainty",
+      "sec": 52,
+      "refs": [
+        "docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md",
+        "docs/orchestration/RECORD-20260927-s5p-stage2-exit.md",
+        "docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md"
+      ],
+      "script": "The joint-five-dimensional measurement branch did not qualify, so a separately authorized branch tested specified generator hypotheses. Each null includes generator fine-cell rates, an imposed within-cell distribution, and a detector and nuisance model. Repeated simulated experiments calibrate the same test statistic used on data. The unfolding still uses unbinned events; the hypothesis and statistic use a finite grid to make the null and calibration explicit. An unbinned test is possible in principle, but would need its own calibration. This inference supplies neither a new measured cross section nor a reportable uncertainty.",
+      "key": "modeltest",
+      "old": 15
+    },
+    {
+      "title": "All ten specified joint-5D null hypotheses are rejected",
+      "kind": "conditions",
+      "sub": "Five predictions × total and shape, familywise α = 0.05",
+      "rows": [
+        [
+          "1",
+          "Sub-grid shape is model-imposed. Refinement has not converged"
+        ],
+        [
+          "2",
+          "Declared detector bands only. No recoil-energy-scale band"
+        ],
+        [
+          "3",
+          "34 interaction-model bands. Two negative-weight variations clipped"
+        ],
+        [
+          "4",
+          "Half-MC toys versus full-MC data fit. Shift assessed and included"
+        ],
+        [
+          "5",
+          "GiBUU has no Eν > 20 GeV. All predictions stop at 100 GeV"
+        ],
+        [
+          "6",
+          "Generator finite-sample uncertainty enters the metric and draws"
+        ]
+      ],
+      "foot": "Conditional inference with candidate R, not a measured cross section. Independent recomputation agrees on the calculation",
+      "sec": 56,
+      "refs": [
+        "docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md: §3",
+        "docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md: §1",
+        "docs/publication/CLAIMS-20261005-claim-to-evidence.md: §§E–F"
+      ],
+      "script": "All five predictions are rejected in both total and shape tests after Holm correction across the ten hypotheses. Total retains normalization; shape removes it. The familywise five percent level controls false rejections across this stated family. That is the same multiple-opportunity principle as the look-elsewhere effect, though this is a fixed family rather than a continuous bump scan. The rejection applies to the full hybrid null. The six conditions displayed alongside it restrict its interpretation. Independent recomputation agrees on the calculation; it does not establish every calibration assumption. Monte Carlo p-values have finite resolution and are never zero.",
+      "technical": "Expanded conditions for slide 20 (reference, not additional timed speech):\n1. The fine-grid null uses generator G's cross section, with MnvTune shapes and G's finite-MC fine-cell fluctuations below it. Refinement has not converged. The 0.50–0.86 comparison is the L2 norm of per-cell relative changes. The frozen kappa = 2 variants and the report-only kappa = 3 check follow the last refinement shift. The true sub-fine residual remains unmeasured and potentially material.\n2. Detector calibration assumes the simulated per-event response beyond the drawn MinosEfficiency and GEANT neutron, pion and proton bands at plus or minus one standard deviation, together with the linear surrogate for five lateral bands. There is no recoil-energy-scale band. Hadronic-response completeness is not established.\n3. Every pseudo-experiment draws all 34 vertical interaction-model bands. Negative LowQ2_1 and HighQ2_1 weights are clipped per universe under the recorded exception, at no more than 0.35% of a band's shift in the covariance-standardized norm.\n4. Toys unfold with half the MC, whereas the data use the full MC. The shift measured in 16 pairs has median absolute size 0.02–0.075% per cell. Along the null's bias direction it is not always consistent with zero, but is at most about 0.05 null standard deviations. A bias-aligned upper-bound variant enters the rule.\n5. GiBUU lacks neutrino energy above 20 GeV. Its truth outside p_parallel < 6 GeV/c still migrates into the tested domain under that energy truncation. All generator samples lack neutrino energy above 100 GeV; the record treats that tail as negligible.\n6. Each prediction's finite simulation enters both as a diagonal variance term in the comparison metric and as a sampled residual. Independent recomputation establishes arithmetic agreement under these choices, not calibration adequacy.",
+      "key": "reject",
+      "old": 16
+    },
+    {
+      "title": "The rejection survives a bounded refinement stress test",
+      "kind": "rows",
+      "rows": [
+        [
+          "Grid refinement",
+          "Split cells more finely; κ scales the last observed change"
+        ],
+        [
+          "Sensitivity scale",
+          "Primary κ = 2; robustness κ = 3; first loss ≈ 5.25 (frozen)"
+        ],
+        [
+          "Muon-only comparison",
+          "Matched coarse muon projection does not reject GENIE CV"
+        ],
+        [
+          "Limits",
+          "Recovered draws: ≈ 5.17. No convergence or complete response test"
+        ]
+      ],
+      "sec": 54,
+      "refs": [
+        "publication/kappa/RECORD-20261008-kappa-breakdown.md",
+        "publication/w2/W2B-REPORT-20261006.md",
+        "docs/publication/CLAIMS-20261005-claim-to-evidence.md: §§D–F"
+      ],
+      "script": "Refinement splits truth cells to test sensitivity to the imposed within-cell shape. Kappa scales the last observed change: two is the primary test and three the robustness check. There is no universal typical kappa or confidence-level interpretation. In frozen ensembles, the first loss of determinate rejection is around 5.25; recovered draws shift it to about 5.17. That is not determinate acceptance, and the grid has not converged. The matched coarse muon-only comparison does not reject GENIE CV. This post-hoc comparison supports the relevance of joint hadronic information without establishing a universal power advantage.",
+      "foot": "Muon comparison is post hoc. No qualified extra-power claim over all lower-dimensional tests.",
+      "key": "refinement",
+      "old": 17
+    },
+    {
+      "title": "PET uses particle and detector-object structure",
+      "kind": "petdiagram",
+      "side": [
+        "Point cloud: an unordered collection of objects",
+        "Attention learns relationships between objects",
+        "Muon information conditions the full-event model",
+        "Stored clouds retain at most 12 tokens"
+      ],
+      "foot": "Historical recoil-only PET and the later full-event candidate have different input contracts",
+      "sec": 56,
+      "refs": [
+        "docs/analysis-note/sec_pet.tex",
+        "docs/analysis-note/figures/pet_event_displays_energy_angle.pdf"
+      ],
+      "script": "PET receives sets of objects rather than only scalar summaries. This archived event display places truth hadrons, reconstructed recoil clusters and the muon on a common energy-angle plane. Detector clusters are not individual reconstructed hadrons: a single particle can produce many deposits. The original recoil-cloud representation gives the muon separately as event-level features; the later full-event models incorporate aligned event scalars. The plot uses a nominal vertex to illustrate cluster angle, while the model consumes the stored view and position features. PET can learn relationships among objects, but more tokens do not automatically produce more independently measurable physics.",
+      "key": "pet",
+      "old": 18
+    },
+    {
+      "script": "This is the actual cardinality distribution after truncation. Truth clouds are relatively sparse, with mean 4.57 including nuclear-remnant bookkeeping particles. Only 2.31 percent reach twelve. Reconstructed clusters pile up strongly at the cap, because a hadron can leave many deposits. The twelfth truth constituent carries 0.09 percent of retained truth energy on average, but that is neither the total discarded energy nor a bound on lost reconstruction information. Twelve was a compute and memory choice, not the winner of a controlled cap scan. Attention pair costs grow roughly quadratically with token count, although total training cost has other terms. The correct conclusion is that the optimal cap and the effect of discarded structure remain unmeasured.",
+      "refs": [
+        "docs/analysis-note/sec_pet.tex",
+        "docs/analysis-note/figures/pet_cardinality_withremnant.pdf"
+      ],
+      "key": "cap",
+      "title": "The 12-token cap truncates reco clouds much more often",
+      "old": null,
+      "sec": 65
+    },
+    {
+      "title": "The earlier PET central disagrees with its bootstrap family",
+      "kind": "rows",
+      "rows": [
+        [
+          "Integral mismatch",
+          "Nominal / bootstrap mean = 1.1027 on 257 common cells"
+        ],
+        [
+          "Localized mismatch",
+          "44 of 63 affected cells: nominal above all 50 replicas"
+        ],
+        [
+          "Pairing declined",
+          "Median cell ratio 1.00032; mechanism unresolved"
+        ],
+        [
+          "Scientific scope",
+          "Covariance unverified; no CML or adopted PET total covariance"
+        ]
+      ],
+      "sec": 49,
+      "refs": [
+        "docs/analysis-note/sec_pet.tex",
+        "VALIDATION_LEDGER.md: VL132",
+        "docs/OPEN_ITEMS.md: OI-126",
+        "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
+        "docs/orchestration/state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction.json"
+      ],
+      "script": "The earlier PET nominal and its bootstrap family disagree locally. On 257 common cells, the width-weighted total ratio is 1.1027, while the median cell ratio is only 1.0003. Sixty-three cells have nominal-to-mean ratio above 1.5; in 44 of those, nominal is above all fifty replicas. This localized anomaly motivated declining the central/statistical pairing. Its mechanism remains unresolved, and the covariance construction lacks independent verification. No full-event PET total covariance or ML covariance was adopted. The later PET studies therefore focus on method development.",
+      "key": "petmismatch",
+      "old": 19
+    },
+    {
+      "title": "PET recovers more of the tested Eavail tilt",
+      "kind": "recovery",
+      "rows": [
+        [
+          "Historical control",
+          "0.306"
+        ],
+        [
+          "Compact hybrid finalist",
+          "0.895"
+        ],
+        [
+          "Larger hybrid finalist",
+          "0.863"
+        ]
+      ],
+      "foot": "Final-bank Eavail tilt, 60 draws. R = 1 is exact recovery, R = 0 retains the prior discrepancy",
+      "sec": 47,
+      "refs": [
+        "nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md",
+        "docs/analysis-note/sec_pet_campaigns.tex",
+        "VALIDATION_LEDGER.md: VL164–VL167"
+      ],
+      "script": "The final-bank available-energy tilt measures recovery with R: one means the injected change is recovered, and zero means the prior discrepancy remains. The historical control reaches 0.306, the compact hybrid 0.895, and the larger hybrid 0.863. These are substantial improvements on that tested departure. The full selection study also required accuracy and stress performance, and no design passed every requirement. It used signal-only simulated banks. This plot establishes neither a universal architecture ranking nor a calibrated real-data cross-section measurement.",
+      "key": "recovery",
+      "old": 20
+    },
+    {
+      "script": "These are deliberately synthetic histograms, to isolate the idea. The true value in the highlighted bin is 80. Experiment A estimates 84 with an interval from 76 to 92, which contains 80. Experiment B estimates 90 with an interval from 84 to 96, which misses it. Repeat the whole procedure on many experiments and count the containing intervals for that target. A nominal 68 percent procedure aims to contain the target 68 percent of the time under the declared experiment model. It is not a statement that 68 percent of events are truth-like. The next slide shows the actual PET study, whose target is the known truth-bin value for each simulated draw and whose reported entries pool bin-draw checks.",
+      "refs": [
+        "nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md",
+        "docs/analysis-note/sec_pet_campaigns.tex"
+      ],
+      "key": "coverageidea",
+      "title": "Coverage counts intervals that contain the true bin value",
+      "old": null,
+      "sec": 66
+    },
+    {
+      "title": "PET intervals over-cover overall and under-cover low acceptance",
+      "kind": "coverage",
+      "rows": [
+        [
+          "Aggregate Eavail",
+          "89.6%",
+          "99.0%"
+        ],
+        [
+          "Low acceptance",
+          "25.7%",
+          "78.9%"
+        ],
+        [
+          "Moderate acceptance",
+          "70.1%",
+          "96.4%"
+        ],
+        [
+          "Good acceptance",
+          "92.9%",
+          "99.8%"
+        ]
+      ],
+      "foot": "120 pseudo-experiments. Entries pool bin–draw interval checks; these are not event-classification rates.",
+      "sec": 50,
+      "refs": [
+        "nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md",
+        "docs/analysis-note/sec_pet_campaigns.tex"
+      ],
+      "script": "Here are the measured coverage fractions, pooled over bin-draw checks in 120 simulated experiments. The nominal 68 percent intervals contain truth 89.6 percent of the time in aggregate, but only 25.7 percent in low acceptance. The 95 percent intervals also under-cover there, at 78.9 percent. Moderate and good acceptance behave differently. A common rescaling cannot fix both broad aggregate intervals and the narrow low-acceptance intervals. These are intervals for truth-bin values, not event classifications or simultaneous coverage of all bins. No eligible design was selected.",
+      "key": "petcoverage",
+      "old": 21
+    },
+    {
+      "title": "PET gains depend on the tested departure",
+      "kind": "rows",
+      "rows": [
+        [
+          "Available-energy tilt",
+          "PET gains +0.102 / +0.070 over the paired tree comparator"
+        ],
+        [
+          "Generator-shaped changes",
+          "Trees recover NuWro, NuWro′ and GiBUU reweightings better"
+        ],
+        [
+          "Measured cost",
+          "PET: 1.768 / 1.517 A100-h per unfolding at declared packing"
+        ],
+        [
+          "Tree campaign",
+          "352 tasks + control/retries: 5.306 charged CPU core-h total"
+        ]
+      ],
+      "sec": 53,
+      "refs": [
+        "docs/analysis-note/sec_pet_campaigns.tex",
+        "VALIDATION_LEDGER.md: VL168",
+        "nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md",
+        "nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md",
+        "nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md"
+      ],
+      "script": "The matched comparison uses identical simulated events and declared truth deformations. PET improves recovery of the available-energy tilt; trees do better on the NuWro, NuWro-prime and GiBUU reweightings, which retain the same detector simulation. The compact and larger PET finalists cost median 1.768 and 1.517 A100-hours per unfolding at study scale. The tree campaign used 5.306 charged CPU-core-hours across 352 tasks plus a control and retries. Those are different hardware and workload units, so they do not yield a clean speedup factor. The conclusion depends on the departure and training configuration.",
+      "foot": "Exploratory point-estimate comparison. Hardware hours are not a controlled speedup benchmark.",
+      "key": "comparison",
+      "old": 22
+    },
+    {
+      "title": "Reproducibility and scientific validation answer different questions",
+      "kind": "rows",
+      "rows": [
+        [
+          "Execution integrity",
+          "An import-path defect could run another checkout’s code despite matching file hashes"
+        ],
+        [
+          "Scientific verification",
+          "Independent recomputation checks the calculation. It cannot validate every assumption"
+        ],
+        [
+          "Stopping rules",
+          "Closed failed studies preserve useful limits and prevent retrospective selection"
+        ],
+        [
+          "Deliverables",
+          "Note, primer, article and replay materials now separate claims by scope"
+        ]
+      ],
+      "sec": 44,
+      "refs": [
+        "docs/OPEN_ITEMS.md: OI-136",
+        "docs/orchestration/CAMPAIGN-REVIEW-20260929.md",
+        "docs/publication/submission/PACKAGE-MANIFEST-20261006.md",
+        "reproduction/s5p/README.md"
+      ],
+      "script": "Reproducibility work distinguishes execution integrity, numerical agreement and scientific validation. An import-path defect once caused a different checkout’s code to run despite matching file hashes. XR now answers specific numerical-reproduction questions for the LightGBM centrals. Closure and coverage answer different questions about recovery and calibration. No result becomes scientifically validated just because several people repeat the same calculation. The note, primer, paper and replay materials should preserve those distinctions when they quote results.",
+      "key": "repro",
+      "old": 23
+    },
+    {
+      "title": "The next decision is what measurement claim can be supported",
+      "kind": "rows",
+      "rows": [
+        [
+          "Article",
+          "Assembled, not submitted; publication-ready measurement still unmet"
+        ],
+        [
+          "2D decision",
+          "Keep and disclose now; estimator/uncertainty transfer remains open"
+        ],
+        [
+          "Proposed route",
+          "Matched LightGBM design with narrower claims; no adoption or run"
+        ],
+        [
+          "Discussion",
+          "Which claim should lead, and what missing evidence matters most?"
+        ]
+      ],
+      "sec": 72,
+      "refs": [
+        "docs/publication/submission/PACKAGE-MANIFEST-20261006.md",
+        "docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md",
+        "docs/orchestration/state/next-preparation-20261009/closeout/REPORT.md",
+        "docs/orchestration/state/next-preparation-20261009/two-d-path/REPORT.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/REPORT.md",
+        "9be8bfb4d4acace2ec64273970130d6404f1813c:docs/orchestration/state/next-preparation-20261009/xr-linux/logs/compare-interim-L1.json",
+        "docs/orchestration/state/next-preparation-20261009/two-d-followup/REPORT.md"
+      ],
+      "script": "The article is assembled but not submitted, and the remaining scientific choices are consequential. XR now establishes reproduction of the LightGBM reference centrals. The exact-tree comparisons are not complete in the inspected committed snapshot, and covariance transfer remains unmeasured. Coverage of the corrected statistical band also remains open. The proposed matched-LightGBM route would narrow the claim to conditional precision and nuisance propagation; it is not an adopted replacement or an empirical total-coverage result. For higher dimensions, the most useful existing result is the conditional generator test and the diagnosis of why a measurement did not qualify. For PET, the next design would need to connect better recovery, low-acceptance calibration and representation choices such as the token cap. These are the decisions I would like to discuss with Ben.",
+      "key": "discussion",
+      "old": 24
+    }
+  ],
+  "backups": [
+    {
+      "title": "Backup: exact available-energy convention",
+      "kind": "rows",
+      "rows": [
+        [
+          "Truth",
+          "Protons: E − 938.27 MeV. Charged pions: E − 135 MeV"
+        ],
+        [
+          "Truth continued",
+          "Neutral pions and photons: total energy. All other species contribute zero"
+        ],
+        [
+          "Reconstruction",
+          "1.17 × (tracker + ECAL blob energy after muon-fuzz subtraction)"
+        ],
+        [
+          "Comparison limit",
+          "The inherited charged-pion constant and species exclusions differ from some published definitions"
+        ]
+      ],
+      "refs": [
+        "docs/analysis-note/sec_3d.tex: operational definition"
+      ],
+      "script": "ECAL means electromagnetic calorimeter. A blob is a reconstructed aggregate of detector energy. Muon fuzz is energy associated with the muon’s nearby deposits and subtracted from the recoil estimate. No final nonnegative clamp is applied to the reconstructed quantity. The truth definition excludes secondary electrons, neutrons, kaons and other species not explicitly listed. The charged-pion subtraction uses 135 MeV rather than about 139.57 MeV. The effect has been measured, but its materiality against the adopted 5D projection is not established. There is no universal published available-energy convention. Do not describe this implementation as generically matching all low-recoil publications.",
+      "key": "backup1",
+      "old": 25
+    },
+    {
+      "title": "Backup: the adopted covariance’s exact boundary",
+      "kind": "rows",
+      "rows": [
+        [
+          "Identity",
+          "z-cv.npz, SHA-256 prefix 3d7465f6, 890,500,272 bytes"
+        ],
+        [
+          "Four measurements",
+          "M1–M4 on slide 16 travel with every use of this product"
+        ],
+        [
+          "Unresolved criterion",
+          "Cause 3 remains predeclared and not computed for this digest"
+        ],
+        [
+          "Decision meaning",
+          "Exception covers these bytes only. No inherited adoption for other candidates"
+        ]
+      ],
+      "refs": [
+        "docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md",
+        "docs/orchestration/OPERATIVE-SHEET-scalar5d.md"
+      ],
+      "script": "The full digest is 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5. The projection digest begins 835828bf. Identity verification establishes which covariance was projected, not its statistical adequacy. The predeclaration ordering defect is ratified by exception, not cured, and no declared cause-3 boundary was evaluated by production. The paired measurement products used for the seed comparison are different digests and are not separately adopted. Five pinned bands are BeamAngleX, BeamAngleY, MuonResolution, Muon_Energy_MINERvA and Muon_Energy_MINOS. Their seed effect is unprobed in either direction. See slide 16 for the mandatory numerical measurements and their finite-ensemble scope.",
+      "key": "backup3",
+      "old": 27
+    },
+    {
+      "title": "Backup: reading the conditional p-values",
+      "kind": "rows",
+      "rows": [
+        [
+          "Finite simulation",
+          "p = (k + 1) / (B + 1), with k exceedances in B toys"
+        ],
+        [
+          "Resolution",
+          "B = 1,343–1,751. Never report p = 0 or turn it into a Gaussian significance"
+        ],
+        [
+          "Test domain",
+          "109 supported joint cells. 72 for GiBUU with p∥ < 6 GeV/c"
+        ],
+        [
+          "Missing draws",
+          "224 calibration + 53 power draws recovered. Frozen decisions unchanged"
+        ]
+      ],
+      "refs": [
+        "docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md",
+        "docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md"
+      ],
+      "script": "These statistics belong only to the hybrid-null construction and the six conditions on slide 20. The frozen family has zero exceedances in nine tests and one in NuWro shape. Clopper–Pearson intervals are exact binomial confidence intervals for the exceedance probability. Determinacy requires those Monte Carlo intervals to resolve the decision relative to the multiple-testing threshold. The lost-draw recovery is report-only. Four nulls would have stopped one batch earlier with complete batches, with the same decisions. The closest recovered margin is 4.6 statistic units for GENIE plus MEC shape at kappa three. Independent checks cover the frozen-shift reading; the union reading is a same-code consistency replay. A small conditional p-value does not identify a nuclear mechanism or localize a discrepancy.",
+      "key": "backup4",
+      "old": 28
+    },
+    {
+      "title": "Backup: the PET representation studies",
+      "kind": "rows",
+      "rows": [
+        [
+          "Pooling versus individual objects",
+          "Synthetic routing comparison found no resolved accuracy difference"
+        ],
+        [
+          "Production cloud",
+          "The top-12 cap removes substantial reconstructed activity"
+        ],
+        [
+          "Improvement campaign",
+          "No frozen ten-iteration candidate passed adequacy plus stress"
+        ],
+        [
+          "Final design and pretraining",
+          "No tested PET2 recipe passed every development screen"
+        ]
+      ],
+      "refs": [
+        "nd-unfolding/pet/direct_token_comparison/REPORT_FOR_BEN.md",
+        "nd-unfolding/pet/direct_token_comparison/GO_NO_GO-20260918.md",
+        "docs/analysis-note/sec_pet_campaigns.tex"
+      ],
+      "script": "Pooling summarizes several objects into one representation. Individual routing gives each object its own attention token. The synthetic comparison used a small fixed object fixture and cannot settle production-multiplicity performance. The production cap acts on generic calorimeter clusters, not simply a thin typed-object tail. Later hybrid designs use energy summaries to recover some omitted information. PDG is the particle-identity code assigned by the Particle Data Group. One-hot encoding represents identity with separate category indicators rather than treating the code as a continuous number. PET2 is a tested pretrained model family. Pretraining means learning on another sample before this task. Its failure here applies to the tested recipes, not all possible pretraining. CPU–GPU optimizer differences were also investigated; numerical reproducibility does not establish physical accuracy.",
+      "key": "backup5",
+      "old": 29
+    },
+    {
+      "title": "Backup: the closed scalar sequence",
+      "kind": "rows",
+      "rows": [
+        [
+          "s5c",
+          "Futility stop. Nominal purity-background bias confirmed"
+        ],
+        [
+          "s5n",
+          "Refined subtraction improves nominal behavior. Departure failure persists"
+        ],
+        [
+          "s5e",
+          "Diagnosed refinement underfitting. Candidate R fails fresh assessment"
+        ],
+        [
+          "s5p",
+          "Measurement not admitted. Conditional inference completes with no new uncertainty"
+        ]
+      ],
+      "refs": [
+        "VALIDATION_LEDGER.md: VL149–VL155",
+        "docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md",
+        "docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md"
+      ],
+      "script": "These labels identify successive bounded campaigns, not distinct published measurements. They are all terminal. The background repair is a causal diagnosis for one nominal-bias component. The physical truth-departure failure remains without a single established cause. Reopening a closed study would require a new decision and contract. R is a targeted refinement change, not the production central-value estimator. A nominal-truth calibration check cannot establish performance over every alternative truth, and a pooled calibration result can hide individual functionals with poor coverage. A functional is any declared quantity extracted from the distribution, such as a bin, integral or projection.",
+      "key": "backup6",
+      "old": 30
+    },
+    {
+      "title": "Backup: what the release can reproduce",
+      "kind": "rows",
+      "rows": [
+        [
+          "Available",
+          "Article sources, analysis note, primer and saved inference inputs"
+        ],
+        [
+          "Replay",
+          "Recompute conditional inference from sufficient products"
+        ],
+        [
+          "Different task",
+          "Regenerate training and calibration pseudo-experiments end to end"
+        ],
+        [
+          "Release limits",
+          "Several closure, uncertainty and sensitivity results remain outside RC4 replay"
+        ]
+      ],
+      "refs": [
+        "docs/publication/submission/PACKAGE-MANIFEST-20261006.md",
+        "docs/publication/release/RC4-README.md",
+        "reproduction/s5p/README.md"
+      ],
+      "script": "Sufficient products are the stored quantities needed to recompute the reported inference without regenerating every event or training run. RC4 is a local release candidate, not a public deposit. Its scope excludes reproducing the 2D uncertainty, closure, bias, low-recoil, W2 and covariance-status numbers, as listed in its README. Those results retain their own evidence routes. The article still needs author decisions and external-release actions, including coauthor review, deposit and submission. None of those acts is authorized by preparing this talk.",
+      "key": "backup7",
+      "old": 31
+    },
+    {
+      "kind": "four",
+      "title": "More events: distinguish three different proposals",
+      "rows": [
+        [
+          "Same measured exposure",
+          "Current 2D uses all 12 ME-FHC playlists and about 4.12M selected events"
+        ],
+        [
+          "Larger training sample",
+          "PET used subsamples; more MC can improve support and sampling precision"
+        ],
+        [
+          "Different data / selection",
+          "RHC or new channels need their own flux, response and signal definition"
+        ],
+        [
+          "Current uncertainty issue",
+          "More resampling does not create independent validation populations"
+        ]
+      ],
+      "foot": "Current MINERvA release lists ME FHC and RHC; low-energy availability should be checked before planning.",
+      "script": "We should distinguish more measured data from more training simulation and a different physics sample. The scalar reproduction already uses the twelve medium-energy forward-horn-current playlists for this signal. PET has trained on smaller subsets of the truth inventory, so increasing that sample is a possible design change, with substantial cost. It does not automatically repair bias, a misspecified response, or interval calibration. The current open release also lists reverse-horn-current data. That enables an antineutrino-dominated analysis, not a direct extension of the same neutrino cross section without new modeling. Enlarging truth acceptance with unchanged reconstructed selection adds extrapolation, not observed events. Finally, more bootstrap replicas only reduce the numerical noise in a bootstrap estimate; they do not provide the independent detector-simulated populations missing from the coverage design.",
+      "refs": [
+        "docs/analysis-note/sec_3d.tex",
+        "docs/analysis-note/sec_fps.tex",
+        "nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md",
+        "docs/orchestration/DELIVERY-20261008-uncertainty-preparation.md",
+        "https://minerva.fnal.gov/getdata/"
+      ],
+      "key": "backup10",
+      "old": 34
+    }
+  ]
+}
