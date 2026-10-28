@@ -1,0 +1,28 @@
+Q1: VERDICT: SAME
+DETAIL: The omissions of the bin agreement share and the 15% band contribution are permitted by the context note, and AFTER introduces no unsupported statements or ambiguities.
+
+Q2: VERDICT: SAME
+DETAIL: Omitting the sentence regarding which block dominates and the impact of the run-period block is covered by the context note, and the remaining content is unchanged.
+
+Q3: VERDICT: SAME
+DETAIL: Dropping the final sentence regarding superseded statistical bands is permitted by the context note, and the rest of the text is identical to BEFORE.
+
+Q4: VERDICT: SAME
+DETAIL: The omissions of the shape-component sentence and the integrated-uncertainty sentence are permitted by the context note, and no other changes are made.
+
+Q5: VERDICT: SAME
+DETAIL: Omitting the thirty-iteration and larger-classifier results is permitted by the context note, and replacing them with a pointer macro preserves the supported interpretation.
+
+Q6: VERDICT: SAME
+DETAIL: All omitted numerical counts, Cramér–Rao widths, iteration behaviors, the table reference, and the out-of-scope statement are permitted by the context note, and the condensed text preserves the original qualifiers.
+
+Q7: VERDICT: SAME
+DETAIL: Omitting the reweighting details, figure citation, Gaussian fit method, and secondary findings is permitted by the context note, and AFTER introduces no unsupported claims.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER states that the estimator "meets a data-stability requirement", directly contradicting BEFORE, which states that "it fails a data-stability requirement".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "[t]he truths are held out", directly contradicting BEFORE's explicit statement that "[t]hese are not held-out truths."
+
+END
