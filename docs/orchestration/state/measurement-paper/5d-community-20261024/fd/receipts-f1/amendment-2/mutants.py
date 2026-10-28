@@ -45,6 +45,8 @@ MUTANTS = [
     (37, S, '[ ! -e "$OUT/gate3" ] && [ ! -e "$OUT/f1b3" ] ||', 'true ||'),
     (38, S, '--priced-node-h "$PRICED" --ceiling-node-h "$CEIL" --out "$B"', '--priced-node-h "$CEIL" --ceiling-node-h "$CEIL" --out "$B"'),
     (39, S, '--time="$T" --job-name=fd_f1b3', '--time=02:00:00 --job-name=fd_f1b3'),
+    (41, L, '> "$F/f1b3-SHA256SUMS"\nneed $? "the sums file"', '> "$F/f1b3-SHA256SUMS"'),
+    (42, L, '( cd "$A" && sha256sum -c "$A2/reused.sha256" ) > /dev/null 2>&1 ||', 'true ||'),
     (40, S, '|| { cat "$OUT/gate3/budget3.log" >&2; echo "refusing: $B is not GO" >&2; exit 2; }\n    grep -q \'"decision": "GO"\' "$B" ||', '|| true\n    true ||'),
 ]
 ONLY = {int(x) for x in sys.argv[2:]}

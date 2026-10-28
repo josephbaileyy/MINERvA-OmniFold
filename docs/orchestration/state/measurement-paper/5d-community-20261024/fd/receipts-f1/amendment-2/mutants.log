@@ -37,5 +37,7 @@
 37 KILLED nd-unfolding/submit_fd_f1.sh '[ ! -e "$OUT/gate3" ] && [ ! -e "$OUT/f1b3" ] ||'
 38 KILLED nd-unfolding/submit_fd_f1.sh '--priced-node-h "$PRICED" --ceiling-node-h "$CEIL" --out "$B'
 39 KILLED nd-unfolding/submit_fd_f1.sh '--time="$T" --job-name=fd_f1b3'
+41 KILLED nd-unfolding/sbatch_fd_f1b3.sh '> "$F/f1b3-SHA256SUMS"\nneed $? "the sums file"'
+42 KILLED nd-unfolding/sbatch_fd_f1b3.sh '( cd "$A" && sha256sum -c "$A2/reused.sha256" ) > /dev/null '
 40 KILLED nd-unfolding/submit_fd_f1.sh '|| { cat "$OUT/gate3/budget3.log" >&2; echo "refusing: $B is'
-total 40 killed 40 survived []
+total 42 killed 42 survived []

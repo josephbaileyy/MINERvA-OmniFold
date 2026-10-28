@@ -64,4 +64,5 @@ for p in "${pids[@]}"; do wait "$p"; need $? "hadd or conversion"; done
   python3 "$D/nd-unfolding/fd_f1_prep.py" "${args[@]}" --out "$F/prep" ) > "$F/logs/prep.log" 2>&1
 need $? "prep"
 ( cd "$F" && find gst gen5d prep runs -type f -print0 | sort -z | xargs -0 sha256sum ) > "$F/f1b3-SHA256SUMS"
+need $? "the sums file"
 echo "[f1b3] done end=$(date -u +%FT%TZ)"

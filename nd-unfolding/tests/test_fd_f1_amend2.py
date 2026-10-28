@@ -13,6 +13,7 @@ throwaway git deploy. No job runs and no cluster path is read.
 * submit_fd_f1.sh f1b3 and sbatch_fd_f1b3.sh: refusal on a missing, non-GO or malformed gate file, on a re-pilot not
   in its gate's STOP state or over the memory rule, and on an existing output; F1b' never touches f1b/ or f1b2/."""
 import contextlib
+import hashlib
 import io
 import json
 import math
@@ -258,7 +259,11 @@ class LauncherRefusals(unittest.TestCase):
         (self.out / "gate3").mkdir(parents=True)
         (self.out / "f1a").mkdir()
         (self.out / "f1a2").mkdir()
-        (self.out / "f1a2/reused.sha256").write_text("")
+        # a valid one-line checksum file, so the products check passes on GNU and BSD sha256sum alike and each
+        # refusal below is the guard it names
+        (self.out / "f1a/p.txt").write_text("p\n")
+        h = hashlib.sha256(b"p\n").hexdigest()
+        (self.out / "f1a2/reused.sha256").write_text(f"{h}  ./p.txt\n")
 
     def launch(self, budget=None, pin=None):
         if budget is not None:
@@ -268,16 +273,25 @@ class LauncherRefusals(unittest.TestCase):
 
     def test_refusals(self):
         good = {"decision": "GO", "concurrency": 14, "f1b3_task_timeout_s": 5115}
-        cases = {"wrong pin": (good, "0" * 40), "missing gate file": (None, None),
-                 "STOP": (dict(good, decision="STOP"), None), "concurrency 16": (dict(good, concurrency=16), None),
-                 "no timeout": ({k: v for k, v in good.items() if k != "f1b3_task_timeout_s"}, None),
-                 "zero timeout": (dict(good, f1b3_task_timeout_s=0), None)}
-        for name, (budget, pin) in cases.items():
+        cases = {"wrong pin": (good, "0" * 40, "deploy HEAD="), "missing gate file": (None, None, "is not GO"),
+                 "STOP": (dict(good, decision="STOP"), None, "is not GO"),
+                 "concurrency 16": (dict(good, concurrency=16), None, "concurrency 16 is not the declared 14"),
+                 "no timeout": ({k: v for k, v in good.items() if k != "f1b3_task_timeout_s"}, None,
+                                "no per-task timeout"),
+                 "zero timeout": (dict(good, f1b3_task_timeout_s=0), None, "no per-task timeout")}
+        for name, (budget, pin, why) in cases.items():
             with self.subTest(name):
                 (self.out / "gate3/budget3.json").unlink(missing_ok=True)
                 p = self.launch(budget, pin)
                 self.assertEqual(p.returncode, 2, p.stderr)
+                self.assertIn(why, p.stderr)
                 self.assertFalse((self.out / "f1b3").exists())
+        reused = (self.out / "f1a2/reused.sha256").read_text()
+        (self.out / "f1a2/reused.sha256").write_text("0" * 64 + "  ./p.txt\n")
+        p = self.launch(good)
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("F1a's products changed", p.stderr)
+        (self.out / "f1a2/reused.sha256").write_text(reused)
         (self.out / "f1b3").mkdir()
         p = self.launch(good)
         self.assertEqual(p.returncode, 2)
@@ -291,6 +305,7 @@ class LauncherRefusals(unittest.TestCase):
         self.assertIn('"f1b3_task_timeout_s"', s)
         self.assertIn('B3="$OUT/gate3/budget3.json"', s)
         self.assertIn('sha256sum -c "$A2/reused.sha256"', s)
+        self.assertIn('> "$F/f1b3-SHA256SUMS"\nneed $? "the sums file"', s)
 
 
 if __name__ == "__main__":

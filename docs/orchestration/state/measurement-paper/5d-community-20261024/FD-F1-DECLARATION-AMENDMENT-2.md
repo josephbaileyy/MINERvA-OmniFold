@@ -148,7 +148,7 @@ to be within 75 % of the node. It refuses otherwise.
     `|| exit 255`;
   - runs the NOWIDTH flux-check on all 14, the gst counts (7 per tune), `hadd`, `gen5d_v3.py convert` and
     `fd_f1_prep.py`, as F1b′ did;
-  - writes `f1b3-SHA256SUMS`.
+  - writes `f1b3-SHA256SUMS`, and STOPs if that step fails.
 - **It never reads `$OUT/f1b` or `$OUT/f1b2`.** A test checks the script text.
 - **F1c, the grade, the HPSS copy and the report** follow `FD-F1-BINDING.md` §4, items 4–9, and
   `FD-F1-BINDING-AMENDMENT-1.md` §4.4–4.6, reading `f1b3/prep`. The receipt commit's tables come from
@@ -175,8 +175,10 @@ to be within 75 % of the node. It refuses otherwise.
   - **`submit_fd_f1.sh f1b3` run with stub `sbatch` and `sacct`:** it refuses a gate STOP (priced 1.0, or a ceiling of
     2.0), a re-pilot not at `FAILED|3:0`, a MaxRSS over 75 % in K or G units or empty, and an existing `gate3/` or
     `f1b3/`; otherwise it submits with the gate's 0:55;
-  - **`sbatch_fd_f1b3.sh` run against a throwaway git deploy:** it exits 2 on a wrong pin, a missing gate file, a STOP,
-    concurrency 16, a missing or zero timeout, and an existing `f1b3/`, creating nothing.
+  - **`sbatch_fd_f1b3.sh` run against a throwaway git deploy,** with a valid one-line checksum fixture so that the
+    products check passes on GNU and BSD `sha256sum` alike: it exits 2, with each guard's own message, on a wrong pin, a
+    missing gate file, a STOP, concurrency 16, a missing or zero timeout, changed F1a products, and an existing `f1b3/`,
+    creating nothing; and it checks the sums-file step.
 
 **Changed:** `nd-unfolding/submit_fd_f1.sh` gains the stage `f1b3`. Its other stages are unchanged.
 
@@ -184,7 +186,13 @@ to be within 75 % of the node. It refuses otherwise.
 
 **Receipts** (`fd/receipts-f1/amendment-2/`):
 - `tests-local.log`: this module, `test_fd_f1_amend.py`'s 13, `test_fd_f1.py`'s 31 and `test_fd_f0_regrade.py`'s 47;
-- `mutants.py` and `mutants.log`: 40 planted defects in the gate, the launcher and the f1b3 stage.
+- `mutants.py`, with 42 planted defects in the gate, the launcher and the f1b3 stage:
+  - `mutants.log`: 42 of 42 killed with this machine's BSD `sha256sum`;
+  - `mutants-gnu-shim.log`: 42 of 42 killed with `gnu-strict-sha256sum.sh` first on PATH. It refuses a checksum file
+    with no well-formed line, as GNU `sha256sum` does on the cluster;
+  - `control-old-fixture-gnu-strict.log`: the control. With the first draft's empty fixture under that shim, mutants 32–34
+    (the GO, timeout and pin guards removed) survive. That is the review's finding (§9), now fixed;
+- `disclosure_sweep.py` and `disclosure-sweep.out`: §7's evidence.
 
 ## 6. Re-priced budget
 
@@ -204,10 +212,13 @@ partial F1b output "stays untouched as the STOP's evidence and is never read". `
 later made "any read of `f1b/`" something it cannot authorize. Nothing under `f1b/` has been modified since F1b ended
 (the review of the F1a′ receipts: no mtime or ctime after 19:25:25 PDT).
 
-**Every read after 19:56:16 PDT.**
-Search: every Bash and Monitor command sent over ssh in this session's transcript and its 71 subagent transcripts after
-02:56:16Z on 10-28, including the text of each script fed to `bash -s`, matched for `f1b` paths other than `f1b2` and
-`f1b3`.
+**Every read after 19:56:16 PDT.** The evidence is `fd/receipts-f1/amendment-2/disclosure-sweep.out`, the output of
+`disclosure_sweep.py` over this session's transcript and its subagents' (73 files).
+- Its §1 lists every line of a command sent over ssh after 02:56:16Z on 10-28 that names an `f1b` path other than `f1b2` and
+  `f1b3`: 18 lines. 16 are cluster commands. The last two are the sweep's own pattern text, run locally.
+- Its §3 holds the F1a′ review's access-time listings of `f1b/`.
+- The transcripts are files on the machine this session ran on, not in git, so that output is the committed record.
+Search: f1b paths in ssh commands after 2026-10-28T02:56:16Z @ disclosure-sweep.out
 
 | when (PDT) | who | what was read | content or metadata |
 |---|---|---|---|
@@ -216,17 +227,25 @@ Search: every Bash and Monitor command sent over ssh in this session's transcrip
 | 10-27 21:12 | this session, probe 19 (`probe19.sh`) | `stat` of the status files and `gevgen.log` of 60010, 60011, 60050 and 60001; a grep of those four status files; the last 4 lines of the task logs of 60010, 60011 and 60050; `grep -c Killed` over all 128 `f1b/logs/gen_*.log` | **status-file and log content** |
 | 10-28 02:12–02:17 | the F1a′ receipts' independent review | `sha256sum` of the 128 `f1b/logs/gen_*.log`; `find` over `f1b/` printing modify, change and access times; `ls -la` and `ls -lR --time=atime` of `f1b/` | **log content** (hashed); otherwise metadata |
 
-- **No gst or ghep file's event content was read** in any of these. The gst files appear only as names in directory
-  listings (`ls`, `find`). No ROOT file under `f1b/` was opened.
-  Search: the same sweep, for `gst`, `ghep`, `ROOT`, `RDataFrame`, `TFile` and `uproot` in the matched commands.
-- **The 21:12 access times** that the F1a′ review found, on the 128 task logs and the four work directories, are probes 18
-  and 19's. The review recorded them before its own reads overwrote them.
+- **No gst or ghep file's event content was read** in any of these. Among the matched lines, gst and ghep files appear
+  only as names in `ls` and `find` listings (the sweep's §2: one `ls -l` of `gntp.*.ghep.root`; the other two lines are
+  its own pattern text).
+  - The access times agree. In the F1a′ review's listing (sweep §3, taken before its own reads), every
+    `genie_v3.gst.root` under `f1b/` (22 files) was last accessed at 19:25 PDT, when F1b wrote it, and the three
+    `gntp.*.ghep.root` at 19:23.
+  - A caveat: that holds only if Lustre updates access times on reads, as it did for the logs and status files below.
+  Search: gst, ghep, ROOT, RDataFrame, TFile, uproot in the matched lines @ disclosure-sweep.out
+- **The 21:12 access times** are probes 18 and 19's. In sweep §3's first listing, 136 files were last accessed at
+  21:12 PDT: the 128 task logs (probe 19's `grep -c`), plus the status files and `gevgen.log` of 60001, 60010, 60011
+  and 60050. The F1a′ review took that listing before its own reads, which then moved 135 directories' access times to
+  02:12.
 - **How it happened.** Probes 18 and 19 ran about 76 minutes after the decision was committed. I did not connect its sentence to
   the diagnosis I was writing. Amendment 1's §1 cites both probes. The F1a′ review's reads came from my own prompt, which
   asked it to compare times "with the prior receipts' f1b/ logs".
-- **The director's account,** as they gave it: "I accepted amendment 1 with §1 citing probes 18 and 19 and didn't connect
-  them to Joseph's "never read" either."
-- **What still holds:** the F1a′ re-pilot neither read nor modified `f1b/` (its review: no access time in its window).
+- **The director's account,** as they gave it by correspondence on 2026-10-28 (not in a committed file): "I accepted
+  amendment 1 with §1 citing probes 18 and 19 and didn't connect them to Joseph's "never read" either."
+- **What still holds:** the F1a′ re-pilot neither read nor modified `f1b/`. Sweep §3 shows no access time between
+  23:18 and 23:24 PDT, the re-pilot's window, and no mtime or ctime after 19:25:25.
   Every F1b number used anywhere in F1 comes from receipts committed before the decision (`183b31e4`), from sacct, or
   from the reads above, which amendment 1 cites.
 
@@ -248,4 +267,11 @@ and to read on the cluster only under `f1a/`, `f1a2/`, `deploy/` and `logs/` (§
 
 ## 9. Review
 
-An independent read-only review ran on the first draft. Its findings and dispositions follow.
+An independent read-only review (codex-school2, gpt-6.1-sol, high, sandbox read-only, no cluster access) ran on the
+first draft at `e2dcad59`. Its prompt forbade any access to `$OUT/f1b/` and `$OUT/f1b2/`.
+
+| finding | severity | done |
+|---|---|---|
+| The launcher refusal tests could pass for the wrong reason: the empty checksum fixture makes GNU `sha256sum -c` refuse, so mutants removing the GO, timeout or pin guard would survive on the cluster although they died locally on BSD `sha256sum` | medium | a valid one-line fixture, each refusal's own message asserted, a changed-products case added. Mutants rerun natively and under a GNU-strict shim: 42 of 42 killed. The old fixture under the shim lets 32–34 survive, which confirms the finding (§5) |
+| The sums-file step's status was unchecked, so a failed hash could end the job as a success | medium | `need $? "the sums file"` added, with a test and mutant 41. The same pattern in the bound `sbatch_fd_f1b2.sh` is left unchanged, because that file is bound and will not run |
+| The disclosure rested on an uncommitted transcript search, and on statements about other reviews without receipts | medium | `disclosure_sweep.py` and its output committed. §7 now cites them line by line, adds the access-time evidence, and marks the director's words as correspondence |
