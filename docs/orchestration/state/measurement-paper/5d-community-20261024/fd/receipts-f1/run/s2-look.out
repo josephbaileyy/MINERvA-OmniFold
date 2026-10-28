@@ -1,0 +1,86 @@
+JobID|JobName|State|ExitCode|Start|End|Elapsed|Timelimit|AllocTRES
+60415571|fd_f1a|COMPLETED|0:0|2026-10-27T18:12:40|2026-10-27T18:18:57|00:06:17|00:20:00|billing=256,cpu=256,energy=106170,mem=487802M,node=1
+deploy.log
+deploy-test_fd_f0_regrade.log
+deploy-test_fd_f1.log
+expected-sha256.txt
+fd_f1a_60415571.out
+fd_f1b_60417614.out
+[f1a] job=60415571 host=nid005953 pin=5015535e5567c42827e2b618b9b679d534ec47cf start=2026-10-28T01:12:47Z
+{"f1b_projected_wall_s": 1343.5475000000001, "f1_projected_node_h": 1.224596638888889, "decision": "GO"}
+[f1a] budget rc=0 end=2026-10-28T01:18:57Z
+{
+ "pilot_walls_s": {
+  "G18_10a_02_11b": 126.214,
+  "AR23_20i_00_000": 129.032
+ },
+ "per_event_upper_bound_s": {
+  "G18_10a_02_11b": 0.0126214,
+  "AR23_20i_00_000": 0.012903200000000002
+ },
+ "f1b_task_wall_s": {
+  "G18_10a_02_11b": 433.860625,
+  "AR23_20i_00_000": 443.5475
+ },
+ "f1b_projected_wall_s": 1343.5475000000001,
+ "f1b_fits_its_limit": true,
+ "contention": 1.25,
+ "f1b_time_limit": "00:28:00",
+ "f1c_time_limit": "00:54:00",
+ "worst_case_node_h": 1.4680556666666669,
+ "f1a_node_h": 0.101389,
+ "f1c_node_h_priced": 0.75,
+ "f1_projected_node_h": 1.224596638888889,
+ "within_priced": true,
+ "decision": "GO",
+ "rule": "GO iff 1.25 x the projected F1b wall fits 45 min and F1a + F1b + F1c <= 1.25 node-h; F1b is submitted with --time f1b_time_limit"
+}{"checked": 2, "refused": []}
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/flux_phi_t_0_100.root
+{"tune": "G18_10a_02_11b", "header": {"tune": "G18_10a_02_11b", "format": "3.00", "n_splines": 937}, "readme_version_line": "version v3_02_00 qualifier G1810a0211b:k250:e1000", "refused": []}
+{"tune": "AR23_20i_00_000", "header": {"tune": "AR23_20i_00_000", "format": "3.00", "n_splines": 937}, "readme_version_line": "version v3_04_00 qualifier AR2320i00000:k250:e1000", "refused": []}
+== G18_10a_02_11b
+{
+ "tune": "G18_10a_02_11b",
+ "source": {
+  "path": "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml",
+  "sha256": "1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35"
+ },
+ "reduced": {
+  "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/G18_10a_02_11b_CH.xml.gz",
+  "sha256": "dbd305df75dcd731a25dd0b20064ba52c20f095196ea21694997169831788c82"
+ },
+ "header": {
+  "tune": "G18_10a_02_11b",
+  "format": "3.00",
+  "n_splines": 937
+ },
+ "n_ch_splines_source": 937,
+ "readme_version_line": "version v3_02_00 qualifier G1810a0211b:k250:e1000",
+ "note": "the spline XML names its tune and format only, not a GENIE version; the README line is the product's own statement of the version that made the splines",
+ "refused": []
+}
+{"wrote": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/pilot/G18_10a_02_11b/pilot_xsec5d.npz", "sha256": "8475e0679689955a84dadf0fcf3c1dc94257ad34b022725912a35184e7b78c1d", "n_in_grid": 4666, "f_MEC": 0.027838727372462974, "sampling_p": 0.6852800929051102}
+1793150134.218323450 1793150260.432021324
+== AR23_20i_00_000
+{
+ "tune": "AR23_20i_00_000",
+ "source": {
+  "path": "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml",
+  "sha256": "185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb"
+ },
+ "reduced": {
+  "path": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/AR23_20i_00_000_CH.xml.gz",
+  "sha256": "f3a763e5e22e7f0246a838d6d2e8b94287f6f7137f71882dad5582cbab5439ba"
+ },
+ "header": {
+  "tune": "AR23_20i_00_000",
+  "format": "3.00",
+  "n_splines": 937
+ },
+ "n_ch_splines_source": 937,
+ "readme_version_line": "version v3_04_00 qualifier AR2320i00000:k250:e1000",
+ "note": "the spline XML names its tune and format only, not a GENIE version; the README line is the product's own statement of the version that made the splines",
+ "refused": []
+}
+{"wrote": "/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/pilot/AR23_20i_00_000/pilot_xsec5d.npz", "sha256": "2ead92c09834fd803217c0653c32d2fc8b575380e00fa40c6300ffc6b33cc550", "n_in_grid": 4801, "f_MEC": 0.03824324324324324, "sampling_p": 0.936702642177083}
+1793150134.213847548 1793150263.245484941

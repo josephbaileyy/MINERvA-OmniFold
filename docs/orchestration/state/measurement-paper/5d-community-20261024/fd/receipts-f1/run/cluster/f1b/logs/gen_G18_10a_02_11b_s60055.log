@@ -1,0 +1,5 @@
+[setup_genie_v3] GENIE=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator
+[setup_genie_v3] gevgen=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+[setup_genie_v3] tune=G18_10a_02_11b xsec=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data splines=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/splines/G18_10a_02_11b_CH.xml.gz
+[v3] genie G18_10a_02_11b N=17500 seed=60055 flux=/pscratch/sd/j/josephrb/fd-f1-20261027/f1a/flux_phi_t_0_100.root start 2026-10-28 02:13:35 UTC
+/pscratch/sd/j/josephrb/fd-f1-20261027/deploy/5015535e/3d-unfolding/genie/run_gevgen_v3.sh: line 19: 1630828 Killed                  gevgen -n "$N" -e 0,100 -p 14 -t '1000060120[0.9225],1000010010[0.0775]' -f "${FLUX},flux_numu,NOWIDTH" --tune "$TUNE" --cross-sections "$GENIE_SPLINES_V3" --seed "$SEED" -r "$SEED" ${MSG:+--message-thresholds "$MSG"} > gevgen.log 2>&1
