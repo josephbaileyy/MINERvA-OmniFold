@@ -123,6 +123,7 @@ q4 = grab("paper_body.tex", "The joint-test estimator is unstable at the level o
 da = grab("main_paper.tex", "The input data and simulation are the MINERvA open-data AnaTuples", "release decision.}", "paper")
 da_pkg = grab("main_paper.tex", "A candidate release package of about", "and the $(\\Eavail,W)$ map.", "paper")
 da_prop = rec(wp, r"^\*\*Data availability\*\*.*Proposed: \"(.*)\"$")
+assert "of the joint tests" in da_prop and "Sec." not in da_prop, "WORDING-PACKET's proposal no longer keeps the joint-test clause"
 # the REWRITE that answers the QUOTE of the release-package sentence, not the file's first REWRITE
 da_r = {r: rec(S / f"r19/measure/P1__{r}__sol2.txt", r'QUOTE: "A candidate release package.*?REWRITE: ([^\n]*)', re.S)
         for r in ("r2", "r3")}
@@ -253,7 +254,11 @@ Sec. I:
 
 **6.3 Data Availability (protected), as it prints:**
 {q(da)}
-- **"of the joint tests" is stale:** the paper no longer prints the joint tests' numbers, and "the numbers quoted in Sec. {LAB['paper']['sec:central']}" points at a section that now quotes none. **Proposal** (`WORDING-PACKET.md`, after the move): "{da_prop}"
+- **One stale pointer, one clause still true.** "of the joint tests" is still true of the package: it recomputes the
+  joint tests' p values and decisions, which now print in the note rather than the article. The stale part is "the
+  numbers quoted in Sec. {LAB['paper']['sec:central']}": that section now quotes none. **Proposal** (`WORDING-PACKET.md`, after
+  the move), which keeps "of the joint tests", replaces the Sec. {LAB['paper']['sec:central']} clause with the map's numbers
+  as quoted in the note, and so refers the figure clause to "that map": "{da_prop}"
 - **The release-package sentence**, quoted by 2 of 3 P1 runs after r19:
 {q(da_pkg)}
   The raters' readings (their own rewrites: not fact-checked, and both carry the stale "Sec. V C"):
