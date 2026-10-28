@@ -11,7 +11,10 @@ for f in docs/orchestration/MANIFEST-overrides.tsv docs/orchestration/CATALOG.md
   fi
 done
 if git diff --name-only --diff-filter=U | grep -qx docs/orchestration/MANIFEST.tsv; then git checkout --ours docs/orchestration/MANIFEST.tsv; git add -- docs/orchestration/MANIFEST.tsv; fi
-for f in $(git diff --name-only --diff-filter=U); do case $f in docs/orchestration/registry/*|docs/analysis-note/records_*) git checkout --theirs -- "$f" && git add -- "$f";; esac; done
+# The generated records_*.tex files are regenerated below, so main's copy is a safe start. A conflicted registry TSV is
+# NOT: a lane may have re-cited rows that main's copy would silently drop (seen 2026-10-28 on #413). Stop for a hand
+# resolution: take the side whose rows are current, then `check_registry.py --repoint` and rerun the steps below.
+for f in $(git diff --name-only --diff-filter=U); do case $f in docs/analysis-note/records_*) git checkout --theirs -- "$f" && git add -- "$f";; esac; done
 left=$(git diff --name-only --diff-filter=U); if [ -n "$left" ]; then echo "UNRESOLVED: $left"; exit 4; fi
 if grep -q -E '^(<<<<<<<|>>>>>>>)' docs/orchestration/CATALOG.md docs/orchestration/MANIFEST-overrides.tsv; then echo "MARKERS LEFT"; exit 4; fi
 git add -u -- docs/orchestration/registry >/dev/null 2>&1
