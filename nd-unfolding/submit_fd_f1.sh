@@ -8,7 +8,12 @@
 #   submit_fd_f1.sh f1a2 <deploy> <pin> <OUT> <priced> <ceiling>  the re-pilot (amendment 1), with the binding's
 #                                                      priced F1 total and ceiling
 #   submit_fd_f1.sh f1b2 <deploy> <pin> <OUT>          --time from <OUT>/f1a2/budget2.json (f1b2_time_limit); GO required
+#   submit_fd_f1.sh f1b3 <deploy> <pin> <OUT> <priced> <ceiling>  F1b' in one wave (amendment 2): runs fd_f1_budget3.py
+#                                                      here on the committed re-pilot records, writing
+#                                                      <OUT>/gate3/budget3.json; GO required; --time from it
 #
+# f1b3's gate runs on the login node with root_6_28's Python (F1_PY overrides it, for the tests); it reads only the
+# deploy's committed records, and sacct for the re-pilot's job.
 # Every job: account m3246, QOS regular (never premium), constraint cpu, one exclusive node, --no-requeue, no GPU.
 set -eo pipefail
 STAGE="${1:?f1a|f1b|f1c}"; D="${2:?deploy}"; PIN="${3:?pin}"; OUT="${4:?out}"
@@ -47,5 +52,25 @@ case "$STAGE" in
     T=$(sed -n 's/.*"f1b2_time_limit": "\([0-9][0-9]:[0-9][0-9]:00\)".*/\1/p' "$B")
     [ -n "$T" ] || { echo "refusing: no f1b2_time_limit in $B" >&2; exit 2; }
     sbatch "${COMMON[@]}" --time="$T" --job-name=fd_f1b2 "$D/nd-unfolding/sbatch_fd_f1b2.sh" "$D" "$PIN" "$OUT" ;;
+  f1b3)
+    PRICED="${5:?priced node-h}"; CEIL="${6:?ceiling node-h}"
+    [ ! -e "$OUT/gate3" ] && [ ! -e "$OUT/f1b3" ] || { echo "refusing: $OUT/gate3 or $OUT/f1b3 exists" >&2; exit 2; }
+    J=60425719                                                 # the re-pilot: FAILED 3:0 is its gate's STOP exit
+    S=$(sacct -n -P -X -j "$J" -o State,ExitCode | head -1)
+    [ "$S" = "FAILED|3:0" ] || { echo "refusing: re-pilot job $J is $S, not its gate's STOP (FAILED|3:0)" >&2; exit 2; }
+    R=$(sacct -n -P -j "$J.batch" -o MaxRSS | head -1)        # the re-pilot's node-level peak (a 30 s cgroup sample)
+    K=$(awk -v r="$R" 'BEGIN{n=r+0; u=substr(r,length(r)); if(u=="M")n*=1024; else if(u=="G")n*=1048576; else if(u=="T")n*=1073741824; printf "%d", n}')
+    [ "$K" -gt 0 ] && [ "$K" -le $((487802 * 1024 * 3 / 4)) ] || { echo "refusing: re-pilot batch MaxRSS $R exceeds 75 % of the node" >&2; exit 2; }
+    mkdir "$OUT/gate3"
+    B="$OUT/gate3/budget3.json"
+    PY3="${F1_PY:-$HOME/.conda/envs/root_6_28/bin/python3}"
+    env -u PYTHONPATH "$PY3" -I -B "$D/nd-unfolding/fd_f1_budget3.py" \
+      --records "$D/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1a2" \
+      --priced-node-h "$PRICED" --ceiling-node-h "$CEIL" --out "$B" > "$OUT/gate3/budget3.log" 2>&1 \
+      || { cat "$OUT/gate3/budget3.log" >&2; echo "refusing: $B is not GO" >&2; exit 2; }
+    grep -q '"decision": "GO"' "$B" || { echo "refusing: $B is not GO" >&2; exit 2; }
+    T=$(sed -n 's/.*"f1b3_time_limit": "\([0-9][0-9]:[0-9][0-9]:00\)".*/\1/p' "$B")
+    [ -n "$T" ] || { echo "refusing: no f1b3_time_limit in $B" >&2; exit 2; }
+    sbatch "${COMMON[@]}" --time="$T" --job-name=fd_f1b3 "$D/nd-unfolding/sbatch_fd_f1b3.sh" "$D" "$PIN" "$OUT" ;;
   *) echo "unknown stage $STAGE" >&2; exit 2 ;;
 esac
