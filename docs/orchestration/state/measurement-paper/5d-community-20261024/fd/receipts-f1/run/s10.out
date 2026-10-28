@@ -1,0 +1,21 @@
+2026-10-28T11:27:14Z
+login36
+clone rc=0
+HEAD 741ad029e63732cfe6b7db07568bb2af86e47ebd
+porcelain_ignored_lines 0
+parent 5f5e392c4be9c6f8bb035a72d4a60f7dd8be8803
+files outside fd/receipts-f1/ since the bound pin: 0
+ 63 files changed, 1634 insertions(+)
+tables: 6ed430f4747cb7c0519a342984c295b2568a0ff7f742f590fd9b2b01d79f0dad tasks-f1c.tsv, 70b287c372855e2bd10eaeab6febd4fe56c106a9ebea03ff437a65d0a2e88679 f1c-steps.tsv
+./bridged/genie_v3_ar23.json: OK
+./bridged/genie_v3_g18.json: OK
+./config-f1.json: OK
+./ratios/L-5D-PV/genie_v3_ar23.json: OK
+./ratios/L-5D-PV/genie_v3_ar23_sq.json: OK
+./ratios/L-5D-PV/genie_v3_g18.json: OK
+./ratios/L-5D-PV/genie_v3_g18_sq.json: OK
+./ratios/L-5D-PV/ratios.json: OK
+./ratios/L-5D-PV/tune_v1.json: OK
+F1b' prep against the pin's f1-prep-SHA256SUMS rc=0
+Submitted batch job 60439400
+submit rc=0
