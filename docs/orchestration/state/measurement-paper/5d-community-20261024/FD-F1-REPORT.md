@@ -281,7 +281,8 @@ and porcelain was 0. Its 8 lanes ran the pin's 10 steps (`f1c/f1c-steps.tsv`, `f
   product manifest, 60 of 60.
 - **The copy** was verified by `hsi hashverify` and by retrieval and sha256 compare (`cluster/logs/preserve-f1.out`).
   `hpssquota` at 14:12:59Z, after the copy, shows 422.79 of 512 GiB used (`s15-look.out`). That equals F0b's
-  2026-10-26 reading (`FD-F0b-REPORT.md`); this run took no reading before the copy.
+  2026-10-26 reading (`FD-F0b-REPORT.md`), unchanged although 1,229,916,160 bytes were written to HPSS in between;
+  this run took no reading before the copy.
 
 ## 5. Records and retention
 
@@ -292,7 +293,7 @@ and porcelain was 0. Its 8 lanes ran the pin's 10 steps (`f1c/f1c-steps.tsv`, `f
   - the F1c pin `741ad029` and the second receipt commit `da5f157f`, on `fd/f1c-pin`;
   - both merged into the report branch `fd/f1-run-amend2` with merge commits, so both are its ancestors.
 - **Retention:** `fd-f1-20261027` stays on the pscratch list. It holds `f1a/`, `f1a2/`, `f1b3/`, `f1c/`, `manifest/`,
-  `grade/`, `preserve/`, `gate3/`, the deploys, and `f1b/`, unmodified (its disclosed reads are in §3.1). (`f1b2/` did not exist at amendment 1's deploy check,
+  `grade/`, `preserve/`, `gate3/`, the deploys, and `f1b/`, unmodified (its disclosed reads are in §3, item 1). (`f1b2/` did not exist at amendment 1's deploy check,
   `s4.out`, and amendment 1's F1b′ was never submitted after F1a′'s STOP.)
   <!-- absence-ok: s4.out:35 records "f1b2 exists=no" at amendment 1's deploy check; f1b2/ is not read under the binding, so no newer listing is made -->
 
