@@ -1,0 +1,69 @@
+host=login25 date=2026-10-27T19:21:03Z
+Linux64bit+3.10-2.17-c7-debug
+Linux64bit+3.10-2.17-c7-prof
+Linux64bit+3.10-2.17-gcc820-debug
+Linux64bit+3.10-2.17-gcc820-prof
+Linux64bit+3.10-2.17-gcc930-debug
+Linux64bit+3.10-2.17-gcc930-prof
+source
+ups
+P=/cvmfs/larsoft.opensciencegrid.org/products/pythia/v6_4_28r/Linux64bit+3.10-2.17-gcc930-prof
+libPythia6.so
+== ldd gevgen: resolved=121 notfound:
+== ldd gntpc: resolved=121 notfound:
+== ldd gspl2root: resolved=121 notfound:
+== v2 sample dir on pscratch
+-rw-r----- 1 josephrb josephrb      5580 May 30 23:10 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu_nuwro.root
+-rw-r----- 1 josephrb josephrb      5538 May 30 23:10 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu.root
+-rw-r----- 1 josephrb josephrb 999514329 Jun  8 12:37 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root
+-rw-r----- 1 josephrb josephrb 997606940 Jun  8 12:51 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root
+-rw-rw---- 1 josephrb josephrb   4780351 May 30 16:43 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gxspl_CH.xml.gz
+-rw-r----- 1 josephrb josephrb   2510485 Jun  3 05:14 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1001 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1002 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1003 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1004 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1005 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1006 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1007 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_mecseed1008 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed1 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed10 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed2 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed3 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed4 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed5 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed6 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed7 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed8 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_seed9 
+total 274396
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 10:16 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb      5754 Jun  8 10:16 genie-mcjob-1.status
+-rw-r-----  1 josephrb josephrb 100023729 Jun  8 10:16 genie_mefhc_seed1.gst.root
+-rw-rw----  1 josephrb josephrb   1315524 Jun  8 10:16 gevgen_seed1.log
+-rw-r-----  1 josephrb josephrb 179559848 Jun  8 10:16 gntp.1.ghep.root
+-rw-r-----  1 josephrb josephrb      5121 Jun  8 10:09 input-flux.root
+total 341764
+drwxrwx---  2 josephrb josephrb      4096 Jun  8 11:03 .
+drwxrwx--- 34 josephrb josephrb     40960 Aug 29 13:56 ..
+-rw-rw----  1 josephrb josephrb      4912 Jun  8 11:03 genie-mcjob-1001.status
+-rw-r-----  1 josephrb josephrb 124750936 Jun  8 11:04 genie_mefhc_mecseed1001.gst.root
+-rw-rw----  1 josephrb josephrb   1638301 Jun  8 11:03 gevgen_mecseed1001.log
+-rw-r-----  1 josephrb josephrb 223496938 Jun  8 11:03 gntp.1001.ghep.root
+-rw-r-----  1 josephrb josephrb      5121 Jun  8 10:54 input-flux.root
+
+
+********************************************************************************************************
+********************************************************************************************************
+**                                                                                                    **
+**   .oooooo.    oooooooooooo ooooo      ooo ooooo oooooooooooo                                       **
+**  d8P'  `Y8b   `888'     `8 `888b.     `8' `888' `888'     `8      NEUTRINO MONTE CARLO GENERATOR   **
+** 888            888          8 `88b.    8   888   888                                               **
+** 888            888oooo8     8   `88b.  8   888   888oooo8              Version 2.12.10             **
+** 888     ooooo  888    "     8     `88b.8   888   888    "                                          **
+** `88.    .88'   888       o  8       `888   888   888       o         http://www.genie-mc.org       **
+**  `Y8bood8P'   o888ooooood8 o8o        `8  o888o o888ooooood8                                       **
+**                                                                                                    **
+**                                                                                                    **
+**              Luis Alvarez-Ruso [8], Costas Andreopoulos (*) [2,5], Christopher Barry [2],          **
+**   Francis Bench [2], Steve Dennis [2], Steve Dytman [3], Hugh Gallagher [7], Tomasz Golan [1,4],   **
+**         Robert Hatcher [1], Rhiannon Jones [2], Libo Jiang [3], Anselmo Meregaglia [6],            **
+**                      Donna Naples [3], Gabriel Perdue [1], Marco Roda [2],                         **
+**                                Jeremy Wolcott [7], Julia Yarba [1]                                 **
+**                                                                                                    **
+**                                     (The GENIE Collaboration)                                      **
+**                                                                                                    **
+**                          (1) Fermi National Accelerator Laboratory, USA                            **
+**                                 (2) University of Liverpool, UK                                    **
+**                                (3) University of Pittsburgh, USA                                   **
+**                                 (4) University of Rochester, USA                                   **
+**                             (5) STFC Rutherford Appleton Laboratory UK                             **
+**                                   (6) Strasbourg IPHC, France                                      **
+**                                    (7) Tufts University, USA                                       **
+**                                 (8) University of Valencia, Spain                                  **
+1780938556 NOTICE gevgen : [n] <gEvGen.cxx::GetCommandLineArgs (717)> : Random number seed: 1

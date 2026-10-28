@@ -1,0 +1,9 @@
+# 2026-10-27T23:56:37Z Python 3.12.2 numpy 1.26.4 at worktree base 289f4457 plus the declaration's files
+$ python3 -I -B nd-unfolding/tests/test_fd_f1.py
+Ran 31 tests in 28.251s
+OK
+rc=0
+$ python3 -I -B nd-unfolding/tests/test_fd_f0_regrade.py
+Ran 47 tests in 274.492s
+OK
+rc=0
