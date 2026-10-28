@@ -214,22 +214,28 @@ later made "any read of `f1b/`" something it cannot authorize. Nothing under `f1
 
 **Every read after 19:56:16 PDT.** The evidence is `fd/receipts-f1/amendment-2/disclosure-sweep.out`, the output of
 `disclosure_sweep.py` over this session's transcript and its subagents' (73 files).
-- Its §1 lists every line of a command sent over ssh after 02:56:16Z on 10-28 that names an `f1b` path other than `f1b2` and
-  `f1b3`: 18 lines. 16 are cluster commands. The last two are the sweep's own pattern text, run locally.
-- Its §3 holds the F1a′ review's access-time listings of `f1b/`.
+- Its §1 gives, complete and numbered C1–C14, every command after 02:56:16Z on 10-28 that runs ssh (or `bash -s`) and
+  names an `f1b` path other than `f1b2` and `f1b3`, directly or through a variable.
+  - C1–C11 are the reads in the table below.
+  - C12–C14 are this amendment's own local sweeps and edits. They match only because their text contains the sweep's
+    patterns, and they touch no cluster path.
+- Its §2 lists, per command, every line that names a gst, ghep or `.root` file or calls a content reader.
+- Its §3 holds the complete outputs of the F1a′ review's access-time listings of `f1b/` (C7, C8, C10, C11).
 - The transcripts are files on the machine this session ran on, not in git, so that output is the committed record.
 Search: f1b paths in ssh commands after 2026-10-28T02:56:16Z @ disclosure-sweep.out
 
 | when (PDT) | who | what was read | content or metadata |
 |---|---|---|---|
-| 10-27 20:24–20:32 | amendment 1's independent review | `ls -l` of eight work directories (G18 60001, 60002, 60003, 60010, 60011, 60050; AR23 61001, 61012); `ls -l` of every work directory's `gevgen.log` and any `gntp.*.ghep.root`; `stat` of s60010's files and of `s60001/gevgen.log`; a `stat` loop over every work directory's `input-flux.root`, status file and `gevgen.log` (birth and modify times); `ls` counts of `input-flux.root` and `gntpc.log` | metadata only |
-| 10-27 21:11–21:12 | this session, probe 18 (`fd/receipts-f1/amendment-1/probes/probe18.sh`) | `ls -la` of the work directories of G18 60010, 60011 and 60050; `wc -l`, the last 25 lines of, and a grep of each one's `gevgen.log`; the last 5 lines of `s60001/gevgen.log` | **log content** |
-| 10-27 21:12 | this session, probe 19 (`probe19.sh`) | `stat` of the status files and `gevgen.log` of 60010, 60011, 60050 and 60001; a grep of those four status files; the last 4 lines of the task logs of 60010, 60011 and 60050; `grep -c Killed` over all 128 `f1b/logs/gen_*.log` | **status-file and log content** |
-| 10-28 02:12–02:17 | the F1a′ receipts' independent review | `sha256sum` of the 128 `f1b/logs/gen_*.log`; `find` over `f1b/` printing modify, change and access times; `ls -la` and `ls -lR --time=atime` of `f1b/` | **log content** (hashed); otherwise metadata |
+| 10-27 20:24–20:32 | amendment 1's independent review (C1–C4) | `ls -l` of eight work directories (G18 60001, 60002, 60003, 60010, 60011, 60050; AR23 61001, 61012); `ls -l` of every work directory's `gevgen.log` and any `gntp.*.ghep.root`; `stat` of s60010's files and of `s60001/gevgen.log`; a `stat` loop over every work directory's `input-flux.root`, status file and `gevgen.log` (birth and modify times); `ls` counts of `input-flux.root` and `gntpc.log`. C4's `cat` and `grep` read the committed copies of the task logs in git, not the cluster | metadata only |
+| 10-27 21:11–21:12 | this session, probe 18 (C5; `fd/receipts-f1/amendment-1/probes/probe18.sh`) | `ls -la` of the work directories of G18 60010, 60011 and 60050; `wc -l`, the last 25 lines of, and a grep of each one's `gevgen.log`; the last 5 lines of `s60001/gevgen.log` | **log content** |
+| 10-27 21:12 | this session, probe 19 (C6; `probe19.sh`) | `stat` of the status files and `gevgen.log` of 60010, 60011, 60050 and 60001; a grep of those four status files; the last 4 lines of the task logs of 60010, 60011 and 60050; `grep -c Killed` over all 128 `f1b/logs/gen_*.log` | **status-file and log content** |
+| 10-28 02:12–02:17 | the F1a′ receipts' independent review (C7–C11) | `sha256sum` of the 128 `f1b/logs/gen_*.log` (C9); `find` over `f1b/` printing modify, change and access times; `ls -la` and `ls -lR --time=atime` of `f1b/` | **log content** (hashed); otherwise metadata |
 
-- **No gst or ghep file's event content was read** in any of these. Among the matched lines, gst and ghep files appear
-  only as names in `ls` and `find` listings (the sweep's §2: one `ls -l` of `gntp.*.ghep.root`; the other two lines are
-  its own pattern text).
+- **No gst or ghep file's event content was read** in any of these.
+  - In the sweep's §2, the only C1–C11 lines that name a gst, ghep or `.root` file under `f1b/` are C1's `ls -l` of
+    `gntp.*.ghep.root`, C3's `[ -e ]` and `stat` of `input-flux.root`, and C4's `ls` of `input-flux.root`.
+  - Each reader on those lines (`awk`, `head`, `wc`) reads the listing's output, not the file.
+  - Every other content reader in C1–C11 acts on a log, a status file, GENIE source on CVMFS, or a local file.
   - The access times agree. In the F1a′ review's listing (sweep §3, taken before its own reads), every
     `genie_v3.gst.root` under `f1b/` (22 files) was last accessed at 19:25 PDT, when F1b wrote it, and the three
     `gntp.*.ghep.root` at 19:23.
@@ -275,3 +281,4 @@ first draft at `e2dcad59`. Its prompt forbade any access to `$OUT/f1b/` and `$OU
 | The launcher refusal tests could pass for the wrong reason: the empty checksum fixture makes GNU `sha256sum -c` refuse, so mutants removing the GO, timeout or pin guard would survive on the cluster although they died locally on BSD `sha256sum` | medium | a valid one-line fixture, each refusal's own message asserted, a changed-products case added. Mutants rerun natively and under a GNU-strict shim: 42 of 42 killed. The old fixture under the shim lets 32–34 survive, which confirms the finding (§5) |
 | The sums-file step's status was unchecked, so a failed hash could end the job as a success | medium | `need $? "the sums file"` added, with a test and mutant 41. The same pattern in the bound `sbatch_fd_f1b2.sh` is left unchanged, because that file is bound and will not run |
 | The disclosure rested on an uncommitted transcript search, and on statements about other reviews without receipts | medium | `disclosure_sweep.py` and its output committed. §7 now cites them line by line, adds the access-time evidence, and marks the director's words as correspondence |
+| Focused re-review of the fold-in (`d92e2430`): the sweep dropped variable-assigned lines and truncated the rest, so the receipt did not show the probes' reads or the hashing command, and the no-event-content conclusion did not follow from a filtered search | medium | the sweep now commits each selected command complete and numbered, with a per-line scan of file kinds and content readers. §7 cites C1–C14 |
