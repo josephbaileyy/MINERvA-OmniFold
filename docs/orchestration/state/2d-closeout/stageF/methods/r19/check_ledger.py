@@ -229,8 +229,9 @@ def main():
             hit = any(x.startswith("PROTECTED") for x in fg)
             ok &= hit
             print(f"{name}:", "caught" if hit else "MISSED")
-        fdup, *_ = check(wt, cur, old, ledger_text + "\n| T0 | duplicate | — | KEEP | — | `P::Each OmniFold iteration consists of two classification steps.` |\n")
-        hit = any(x == "DUPLICATE row id: T0" for x in fdup)
+        first = next(rows(ledger_text))[0]          # duplicate the ledger's own first row id, whatever the ledger
+        fdup, *_ = check(wt, cur, old, ledger_text + "\n| %s | duplicate | — | KEEP | — | `P::Each OmniFold iteration consists of two classification steps.` |\n" % first)
+        hit = any(x == f"DUPLICATE row id: {first}" for x in fdup)
         ok &= hit
         print("duplicate row id:", "caught" if hit else "MISSED")
         # (g) every GUARD row's planted strengthening must make that row fail

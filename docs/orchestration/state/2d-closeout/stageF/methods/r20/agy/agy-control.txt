@@ -1,0 +1,19 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that additional iterations "reduced" model dependence, directly contradicting BEFORE, which states that they "did not reduce" it.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER accurately preserves the meaning of BEFORE, condensing the passage to introduce the principal limitations while correctly retaining where they qualify the results across the referenced sections and companion note.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER states more broadly that the findings "apply to" the implementation and data set rather than being the empirical results ("are those of") of them, and it drops the limiting qualifier "one" from "one OmniFold implementation on one data set".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that the binned unfolding residuals are "smaller than" those of the boosted-tree estimator rather than "about the same" (which the companion note characterizes as "agree"), and it unsupported adds the qualifier "absolute" to the residuals.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "[t]he bias at a truth is listed", whereas BEFORE only supports that "[a] truth is listed" without stating that bias is the quantity reported.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER states the displacement significantly more strongly than BEFORE supports by asserting that the distributions are displaced "far upward" rather than simply "displaced upward".
+
+END

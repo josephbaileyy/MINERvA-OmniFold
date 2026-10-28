@@ -1,0 +1,24 @@
+Q1.
+BEFORE: The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development. The comparison and its values are given in \nsec{sec:gbdt-model-dependence}.
+AFTER: Ten, 15 or 20 iterations reduced the joint-test estimator's model dependence, measured as the largest residual proxy over the truth changes used in its development, so it keeps five (\nsec{sec:gbdt-model-dependence}).
+
+Q2.
+BEFORE: The limitations of these results are stated with the results they qualify, in Secs.~\ref{sec:method}--\ref{sec:result16}, and those of the calibrated tests in the companion note. The principal ones are these.
+AFTER: The principal limitations, each stated with the result it qualifies (Secs.~\ref{sec:method}--\ref{sec:result16}; for the calibrated tests, the companion note), are these.
+
+Q3.
+BEFORE: \emph{Scope.} The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.
+AFTER: \emph{Scope.} The findings apply to the OmniFold implementation, data set, observables, configurations and deformations studied here, not to multidimensional OmniFold in general.
+
+Q4.
+BEFORE: In a binned, signal-only and noise-free diagnostic on the \jtNcells{} joint cells and the truth changes used to develop the estimator, with the detector response fixed at the simulation's, an exact binned iterative unfolding with five iterations leaves about the same median residual as the boosted-tree estimator. It covers only the residuals whose diagnosis is stable under the truth resolution (\SI{38}{\percent} of the joint-cell residuals above \SI{2}{\percent}). What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope.
+AFTER: An exact binned iterative unfolding with five iterations gives median absolute residuals that are smaller than those of the boosted-tree estimator in a binned, signal-only and noise-free diagnostic on the \jtNcells{} joint cells and the truth changes used to develop the estimator, at the simulation's detector response. The diagnostic covers only the residuals whose diagnosis is stable under the truth resolution (\SI{38}{\percent} of the joint-cell residuals above \SI{2}{\percent}). What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope.
+
+Q5.
+BEFORE: A truth is listed when $p<\fvval{trig-p}$ or when a cell has $|z|>\fvval{trig-z}$. Table~\ref{tab:fd16} gives the results under the reported covariance and under $C_{\mathrm{total}}$ alone; \fvval{f0b-nungraded} further truths are ungraded and given in the note.
+AFTER: The bias at a truth is listed when $p<\fvval{trig-p}$ or when a cell has $|z|>\fvval{trig-z}$. Table~\ref{tab:fd16} gives the results under the reported covariance and under $C_{\mathrm{total}}$ alone. The note gives \fvval{f0b-nungraded} further, ungraded truths.
+
+Q6.
+BEFORE: The note's calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (\nsec{sec:joint5d-results}).
+AFTER: In the note's calibrated tests, the same pull displaces the null distributions of the external predictions far upward, and the calibration reproduces it (\nsec{sec:joint5d-results}).
+
