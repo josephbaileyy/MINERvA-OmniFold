@@ -103,6 +103,13 @@ and `uniform`. B6 runs after B5. It refuses like the other controls: exit 1, wit
   - `test_b6_a_swap_that_scales_the_difference_by_one_plus_1e_6` is a swap error too small for B2 or B4, which only B6
     sees;
   - `test_gross_swap_errors_refuse_before_b6`: a doubled difference refuses at B4, and a swap without C_resp at B2.
+- **What B6 adds, and what it doesn't** (the focused re-review's finding 1):
+  - It is in effect "the swap helper is the declared swap", plus a re-check of D2's identity: S1's other blocks + C_model
+    + C_resp = Stage G's matrix less S1's flux block.
+  - D2 already checks that identity and refuses first, so B6's independent sum of parts is never what fails. A mutant
+    that builds B6's parts as `C_stage_g − C0` survives every test.
+  - On the real inputs the re-review measured that identity's residual at 3.1 × 10⁻¹⁶ of max |C_total|, from the
+    fetched `s1_assembly.npz`, so B6 is expected to pass there.
 
 ### 2.3 What B2 now tests
 
@@ -112,7 +119,7 @@ committed total and shape-only χ² for every prediction, to 10⁻¹⁰.
 **What it can catch has changed:**
 - It runs Stage G's own code on Stage G's matrix plus the difference between the rebuild and S1's block, C₁ − C₀. It is
   a reproduction check: the committed Stage G χ², the swap path and `compare()` must agree on these inputs.
-- **It catches gross errors in the swap path.** A swap that drops C_resp moves the χ² by a relative 4.9 (`test_gross_swap…`).
+- **It catches gross errors in the swap path.** A swap that drops C_resp refuses at B2 (`test_gross_swap…`).
 - **It does not add power over B1 for the rebuild itself.** A rebuild at B1's edge, max |C₁ − C₀| = 10⁻¹² of the
   largest entry, moves B2 by only 2.5 × 10⁻¹¹ (`review/perturb.log`). B1 is the rebuild's guard, and B6 the swap's.
 - **It cannot see an ulp-level misrouting of the identity.** Mutants that drop the rebuild or flip its sign on B2's own
@@ -145,8 +152,11 @@ weights (`e38ad7d2…`). Its σ/f matches the S1 readout's to 6.2 × 10⁻¹⁷ 
 lognormal weights.
 - Its widths are 0.0325, 0.0092 and 0.00093, against 0.035, 0.01 and 0.004 before.
 - S1's block in the fixture is the rebuild plus k ulp per entry, with k a symmetric random integer in [−27, 27]. It
-  therefore differs from its rebuild as the real block does: by 27 ulp at most, 4.4 × 10⁻¹⁵ of its largest entry
-  (B1's worst).
+  therefore differs from its rebuild by **at least as much as the real block does**: up to 27 ulp, with a mean of about
+  13.7 ulp and 4.4 × 10⁻¹⁵ of its largest entry (B1's worst).
+  - The re-review measured the real rebuild against S1's block: 96 % of entries differ, with a median of 5 ulp, a mean
+    of 6.3, a maximum of 27, and 1.75 × 10⁻¹⁵ of the largest entry.
+  - So the fixture errs on the harsher side.
 
 | | real block | amended fixture | pre-amendment fixture |
 |---|---:|---:|---:|
@@ -272,7 +282,8 @@ The STOP's receipts stay on `fd/flux-boot-report` (`79c013ac`), with its ledger 
 ## 8. Constraints, as met
 
 1. **B2's tolerance is unchanged at 10⁻¹⁰,** in the tool and the declaration. A refusal on real inputs is a STOP.
-2. **The fixture is in the real regime (§3),** and its rebuild differs from S1's block as the real one does. The cause
+2. **The fixture is in the real regime (§3),** and its rebuild differs from S1's block by at least as much as the real one
+   does. The cause
    is fixed at its source (§1–2).
 3. **B2's worst is at most 10⁻¹² on both platforms (§4):** 3.9 × 10⁻¹⁴ locally and 3.5 × 10⁻¹⁴ on login38, measured
    with a non-zero difference. The suite ran on a login node, in a scratch clone at the amendment's code head, and its
@@ -306,3 +317,11 @@ verified.
 4. **Low: the fixture's bulk** is added to §3's table.
 5. **Low: declaration §6.3 and §11's outcome** are listed as replaced (§6).
 6. **Trivial: σ's unit** is given (§3).
+
+**A focused re-review of `80a7d3eb`** found every finding above resolved, with nothing blocking. It ran ten mutants of
+its own: nine die, and the survivor is item 1 below. Three low findings, folded in:
+1. **B6's independent sum of parts is never what fails,** because D2 refuses first. §2.2 now says what B6 adds and what it
+   doesn't. It also gives the re-review's real-input residual, 3.1 × 10⁻¹⁶.
+2. **The fixture's last-bit difference is harsher than the real one,** not "as the real block does". §3 gives both
+   distributions.
+3. **"A relative 4.9" had no source.** It is dropped. The test asserts that B2 refuses.
