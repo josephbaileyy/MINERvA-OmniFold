@@ -92,13 +92,14 @@ against `fd_g_readout.json` (`../receipts-deposit/`):
   P6), so the difference is the two hosts' arithmetic.
 
 **How precisely the shape-only χ² can be reproduced** (`probe_ulp_and_triangle.log`, section iii):
-- Its matrix C + V_g + 100 f fᵀ is dominated by the free-normalization term: 100 f fᵀ is about 3.5 × 10⁴ times the
-  largest entry of C + V_g, and the matrix's condition number is 2 × 10⁷–6 × 10⁸.
+- Its matrix C + V_g + 100 f fᵀ is dominated by the free-normalization term: the largest entry of 100 f fᵀ is
+  2.3 × 10⁴–3.6 × 10⁴ times the largest entry of C + V_g, and the matrix's condition number is 2 × 10⁷–6 × 10⁸.
 - So a one-ulp change of every C entry changes none of the matrix's entries; that change is lost in rounding. One ulp
-  of f does move the shape-only χ², by up to 3.9 × 10⁻¹¹.
+  of one entry of f (R03, the one the probe perturbs) moves the shape-only χ² by 1.8 × 10⁻¹²–3.9 × 10⁻¹¹.
 - An independent solver (`numpy.linalg.solve`, with 100 f fᵀ built entry by entry) reproduces Stage G's shape-only χ²
-  to 1.3 × 10⁻¹¹–2.9 × 10⁻¹⁰ relative. Check P5's tolerance, 10⁻¹⁰, is defined on Stage G's own `compare()`. **Outside
-  `compare()`, expect the shape-only χ² to about 3 × 10⁻¹⁰ and the total χ² to about 10⁻¹⁵.**
+  to 1.3 × 10⁻¹¹–2.9 × 10⁻¹⁰ relative, and its total χ² to 1.1 × 10⁻¹⁶–4.0 × 10⁻¹⁵. Check P5's tolerance, 10⁻¹⁰, is
+  defined on Stage G's own `compare()`. **Outside `compare()`, expect the shape-only χ² to about 3 × 10⁻¹⁰ and the
+  total χ² to a few × 10⁻¹⁵.**
 
 The CSVs carry every number as Python's shortest round-trip repr, so they read back as the same IEEE doubles.
 
@@ -135,13 +136,13 @@ From the repository root:
 
 - `build` (which also takes `--g-readout`) refuses an existing file.
 - `check` refuses (exit 1) unless controls P0–P7 hold; the script's docstring lists them. P7 requires every file to
-  be what `build` writes from the pinned inputs: the CSVs byte for byte, and every field of both JSON files, including
-  labels, units, status and domains, except `code_sha256`.
+  be what `build` writes from the pinned inputs: the CSVs byte for byte, and every field of both JSON files, value and
+  JSON type, including labels, units, status and domains, except `code_sha256`.
 - `check --measurement-only` checks the four measurement files alone (P0–P4 and P7), without
   `predictions-reference.json` or Stage G's readout, so the measurement can be checked if the reference file is not
   deposited (`../receipts-deposit/check-local-measurement-only.log`).
-- The tests are `nd-unfolding/tests/test_fd_deposit_candidate.py`: 45 tests, with planted defects that each reach and
+- The tests are `nd-unfolding/tests/test_fd_deposit_candidate.py`: 48 tests, with planted defects that each reach and
   assert their own control's clause.
-- 31 of 31 source mutants are killed by a targeted test (`../receipts-deposit/mutants.log`). The test that compares
+- 32 of 32 source mutants are killed by a targeted test (`../receipts-deposit/mutants.log`). The test that compares
   the committed package with a fresh build is skipped for this count, because every file embeds the code's sha256 and
   that test fails on any source change.

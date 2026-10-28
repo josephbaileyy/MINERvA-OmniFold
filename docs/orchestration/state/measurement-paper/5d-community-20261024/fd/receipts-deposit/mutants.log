@@ -28,5 +28,6 @@ KILLED  P7 JSON compare dropped
 KILLED  bytes read as newline-translated text
 KILLED  P4 Stage G compare dropped
 KILLED  measurement-only reads the readout anyway
+KILLED  P7 compares values, not JSON types
 KILLED  no-overwrite dropped
-31/31 killed
+32/32 killed

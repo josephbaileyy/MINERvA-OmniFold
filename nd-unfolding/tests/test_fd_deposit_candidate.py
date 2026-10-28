@@ -334,6 +334,19 @@ class Defects(Base):
         self.restamp("covariance.csv")
         self.assertStops("covariance.csv is what build writes, byte for byte")
 
+    def test_p7_a_json_type_that_compares_equal_in_python(self):
+        self.edit_json("deposit.json", lambda js: js["cells"][0].update(gibuu_subset=True))     # 1 == True
+        self.assertStops("every field of deposit.json (but code_sha256) is what build writes")
+
+    def test_p7_an_integer_ndf_written_as_a_float(self):
+        self.edit_reference(lambda js: js["predictions"][0]["stage_g"]["total"].update(ndf=16.0))
+        self.assertStops("every field of predictions-reference.json (but code_sha256) is what build writes")
+
+    def test_p0_a_crlf_file_left_unstamped(self):
+        p = self.pkg / "cells.csv"
+        p.write_bytes(p.read_bytes().replace(b"\n", b"\r\n"))    # newline-translated text would hash as before
+        self.assertStops("cells.csv's sha256 is deposit.json's")
+
     def test_p0_the_reference_file_missing(self):
         (self.pkg / D.REFERENCE).unlink()
         self.assertStops("predictions-reference.json exists")

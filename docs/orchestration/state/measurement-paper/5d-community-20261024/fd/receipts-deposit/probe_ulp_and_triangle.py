@@ -46,7 +46,10 @@ for p in gr["predictions"]:
     d = (f - g)[idx]
     Mi = C[ii] + np.diag(Vg[idx]) + np.array([[100.0 * a * b for b in fs] for a in fs])
     lu = float(d @ np.linalg.solve(Mi, d))
+    Mt = C[ii] + np.diag(Vg[idx])
+    lut = float(d @ np.linalg.solve(Mt, d))
     print(f"{p['name']}: entries of the shape-only matrix changed by +1 ulp on every C entry: "
           f"{int(np.sum(Msp != Ms))} of {Ms.size}; 100 f f^T max / M max {np.abs(G.SHAPE_LAMBDA * np.outer(fs, fs)).max() / np.abs(C[ii] + np.diag(Vg[idx])).max():.2e}; "
           f"cond {np.linalg.cond(Ms):.2e}; one ulp of f[{cells[k]}] moves the shape-only chi2 by {abs(s1 / s0 - 1):.2e}; "
-          f"np.linalg.solve vs Stage G shape-only {abs(lu / p['shape_only']['chi2'] - 1):.2e}")
+          f"np.linalg.solve vs Stage G shape-only {abs(lu / p['shape_only']['chi2'] - 1):.2e}, "
+          f"total {abs(lut / p['total']['chi2'] - 1):.2e}")

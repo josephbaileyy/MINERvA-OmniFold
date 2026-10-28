@@ -22,7 +22,8 @@ readout, fd/readout/fd_g_readout.json, prints), with which the paper's chi2 is r
       source path, sha256 and label, its cells (GiBUU's eight), g and sigma_Vg_over_f bit for bit, V_g =
       (sigma_Vg_over_f f)^2 bit for bit, and Stage G's chi2 and ndf;
 * P7  every file is what ``build`` writes from the pinned inputs: the CSVs byte for byte, and every field of
-      deposit.json and predictions-reference.json (labels, units, status, domains included) but code_sha256.
+      deposit.json and predictions-reference.json (labels, units, status, domains included), value and JSON type,
+      but code_sha256.
 
 ``check --measurement-only`` checks the measurement without predictions-reference.json or Stage G's readout:
 P0-P3, P4's p_parallel rule and P7 on the four measurement files.
@@ -194,10 +195,11 @@ def bounding_box(boxes: list) -> dict:
     return {ax: [min(h2_box(b)[ax][0] for b in boxes), max(h2_box(b)[ax][1] for b in boxes)] for ax in AXES}
 
 
-def without_code(text: str) -> dict:
+def without_code(text: str) -> str:
+    """The JSON without code_sha256, canonically serialized: types are kept (1, 1.0 and true differ)."""
     js = json.loads(text)
     js.pop("code_sha256", None)
-    return js
+    return json.dumps(js, sort_keys=True, allow_nan=False)
 
 
 def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:

@@ -35,6 +35,7 @@ M = [
  ("bytes read as newline-translated text", "(pkg / n).read_bytes().decode() for n in names}", "(pkg / n).read_text() for n in names}"),
  ("P4 Stage G compare dropped", "len(gib) == 1 and sub == gib[0][\"cells\"])", "len(gib) == 1)"),
  ("measurement-only reads the readout anyway", "gr = None if g_path is None else load_pinned(g_path, \"g_readout\")", "gr = load_pinned(g_path, \"g_readout\")"),
+ ("P7 compares values, not JSON types", "return json.dumps(js, sort_keys=True, allow_nan=False)", "return js"),
  ("no-overwrite dropped", "\"no package file exists (no overwrite)\", not any(", "\"no package file exists (no overwrite)\", True or any("),
 ]
 killed = 0
