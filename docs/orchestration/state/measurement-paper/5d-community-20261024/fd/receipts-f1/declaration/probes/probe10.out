@@ -1,0 +1,174 @@
+host=login25 2026-10-27T19:55:06Z
+1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35  /cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml
+abfca258817a3f7d8169cdd2dbf9349a025ab38312435c718347598b53f16726  /cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1810a0211b-k250-e1000/data/README
+185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb  /cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml
+744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2  /cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/AR2320i00000-k250-e1000/data/README
+5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root
+cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz
+GLIBC_2.2.5 () from /lib64/libc.so.6
+entry=0x56020687918d "PyInit", shortname=shortname
+entry=0x7fc00358e540 "libcppyy3_11", pathname=pathname
+entry=0x7fc00357a2d0 "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so", fp=fp
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/dynload_shlib.c:80
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b30700, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+entry=0x560206ac14d8 <_PyRuntime+166328>, func=func
+entry=0x7fc003589c60, locals=locals
+entry=0x7fc003575e00, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+entry=0x560206b85090, globals=globals
+entry=0x7fc003575e00, locals=locals
+entry=0x7fc003575e00) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b30408, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+entry=0x560206ac14d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fc00370fce0, vargs=0x7ffdd232cae0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+entry=0x560206aa0ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+entry=0x7fc003596670, globals=<optimized out>, locals=locals
+entry=0x7fc003575440, fromlist=fromlist
+entry=0x560206a83c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b303a0, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+entry=0x560206ac14d8 <_PyRuntime+166328>, func=func
+entry=0x7fc003588ea0, locals=locals
+entry=0x7fc003575440, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+entry=0x560206b9d770, globals=globals
+entry=0x7fc003575440, locals=locals
+entry=0x7fc003575440) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b300a8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+entry=0x560206ac14d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fc00370fce0, vargs=0x7ffdd232d230) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+entry=0x560206aa0ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+entry=0x7fc003564cb0, globals=<optimized out>, locals=locals
+entry=0x7fc003564ac0, fromlist=fromlist
+entry=0x560206a83c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b30020, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+entry=0x560206ac14d8 <_PyRuntime+166328>, func=func
+entry=0x7fc0037a6160, locals=locals
+entry=0x7fc003564ac0, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+entry=0x560206b9b2c0, globals=globals
+entry=0x7fc003564ac0, locals=locals
+entry=0x7fc003564ac0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+entry=0x560206ac14d8 <_PyRuntime+166328>, co=co
+entry=0x560206b9b2c0, globals=globals
+entry=0x7fc003564ac0, locals=locals
+entry=0x7fc003564ac0) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1741
+entry=0x560206b7bb70, filename=filename
+entry=0x560206a9e030 <_PyRuntime+21776>, globals=globals
+entry=0x7fc003564ac0, locals=locals
+entry=0x7fc003564ac0, flags=flags
+entry=0x7ffdd232d6f8, arena=arena
+entry=0x7fc0036db650) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1762
+entry=0x7ffdd232d6f8) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:487
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+GLIBC_2.2.5 () from /lib64/libc.so.6
+entry=0x56020687918d "PyInit", shortname=shortname
+entry=0x7fc00358e540 "libcppyy3_11", pathname=pathname
+entry=0x7fc00357a2d0 "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so", fp=fp
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/dynload_shlib.c:80
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b30700, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+entry=0x560206ac14d8 <_PyRuntime+166328>, func=func
+entry=0x7fc003589c60, locals=locals
+entry=0x7fc003575e00, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+entry=0x560206b85090, globals=globals
+entry=0x7fc003575e00, locals=locals
+entry=0x7fc003575e00) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b30408, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+entry=0x560206ac14d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fc00370fce0, vargs=0x7ffdd232cae0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+entry=0x560206aa0ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+entry=0x7fc003596670, globals=<optimized out>, locals=locals
+entry=0x7fc003575440, fromlist=fromlist
+entry=0x560206a83c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b303a0, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+entry=0x560206ac14d8 <_PyRuntime+166328>, func=func
+entry=0x7fc003588ea0, locals=locals
+entry=0x7fc003575440, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+entry=0x560206b9d770, globals=globals
+entry=0x7fc003575440, locals=locals
+entry=0x7fc003575440) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b300a8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+entry=0x560206ac14d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fc00370fce0, vargs=0x7ffdd232d230) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+entry=0x560206aa0ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+entry=0x7fc003564cb0, globals=<optimized out>, locals=locals
+entry=0x7fc003564ac0, fromlist=fromlist
+entry=0x560206a83c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+entry=0x560206ac14d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fc003b30020, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+entry=0x560206ac14d8 <_PyRuntime+166328>, func=func
+entry=0x7fc0037a6160, locals=locals
+entry=0x7fc003564ac0, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+entry=0x560206b9b2c0, globals=globals
+entry=0x7fc003564ac0, locals=locals
+entry=0x7fc003564ac0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+entry=0x560206ac14d8 <_PyRuntime+166328>, co=co
+entry=0x560206b9b2c0, globals=globals
+entry=0x7fc003564ac0, locals=locals
+entry=0x7fc003564ac0) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1741
+entry=0x560206b7bb70, filename=filename
+entry=0x560206a9e030 <_PyRuntime+21776>, globals=globals
+entry=0x7fc003564ac0, locals=locals
+entry=0x7fc003564ac0, flags=flags
+entry=0x7ffdd232d6f8, arena=arena
+entry=0x7fc0036db650) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1762
+entry=0x7ffdd232d6f8) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:487
+bash: line 10: 2166452 Segmentation fault      env -u PYTHONPATH $HOME/.conda/envs/root_6_28/bin/python3 -I -B -c "
+import ROOT
+f=ROOT.TFile.Open('$H'); print([k.GetName() for k in f.GetListOfKeys()][:20]); h=f.Get('hFluxCV'); print('hFluxCV', bool(h), h.GetNbinsX() if h else None, h.GetBinContent(1) if h else None)
+"
+total 79
+drwxrwx---  2 josephrb josephrb  4096 Sep 27 01:51 .
+drwx------ 52 josephrb josephrb 32768 Oct 20 01:07 ..
+lrwxrwxrwx  1 josephrb josephrb    96 Sep 27 01:51 libcrypto.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.10
+lrwxrwxrwx  1 josephrb josephrb    98 Sep 27 01:51 libpcreposix.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0
+lrwxrwxrwx  1 josephrb josephrb   102 Sep 27 01:51 libpcreposix.so.0.0.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0
+lrwxrwxrwx  1 josephrb josephrb    89 Sep 27 01:51 libpcre.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0
+lrwxrwxrwx  1 josephrb josephrb    93 Sep 27 01:51 libpcre.so.0.0.1 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1
+lrwxrwxrwx  1 josephrb josephrb    93 Sep 27 01:51 libssl.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libssl.so.10
+lrwxrwxrwx  1 josephrb josephrb    65 May 30 20:58 libxxhash.so.0 -> /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch   44P   30P   14P  69% /pscratch
+/usr/bin/hsi
+/usr/bin/htar
+/global/common/software/nersc/bin/hpssquota
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh
