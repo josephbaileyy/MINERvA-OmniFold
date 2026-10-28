@@ -6,11 +6,11 @@
 #SBATCH --no-requeue
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 # F1b' (state/measurement-paper/5d-community-20261024/FD-F1-DECLARATION-AMENDMENT-1.md section 4): F1b's 128 gevgen
-# tasks (64 per tune, 17,500 events, seeds 60001-60064 and 61001-61064), at most P at once (P from F1a''s
-# budget2.json), each timed by /usr/bin/time -v; the NOWIDTH flux-check on all 128; hadd; gen5d_v3.py convert; then
+# tasks (64 per tune, 17,500 events, seeds 60001-60064 and 61001-61064), at most 16 at once (budget2.json's
+# concurrency), each timed by /usr/bin/time -v; a failed task exits 255, so xargs starts no further task; the NOWIDTH flux-check on all 128; hadd; gen5d_v3.py convert; then
 # fd_f1_prep.py. Runs only if F1a''s budget2.json says GO, from a clean deploy at <pin>. Writes only under
 # <OUT>/f1b2, refuses if that exists, and never reads F1b's <OUT>/f1b (the STOP's evidence).
-# Submitted only by submit_fd_f1.sh f1b2, with --time from budget2.json (at most 0:45).
+# Submitted only by submit_fd_f1.sh f1b2, with --time from budget2.json (at most 0:55).
 set -o pipefail   # NOT set -u
 D="${1:?deploy}"; PIN="${2:?pin}"; OUT="${3:?out}"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
@@ -21,7 +21,7 @@ fi
 A="$OUT/f1a"; A2="$OUT/f1a2"; F="$OUT/f1b2"
 grep -q '"decision": "GO"' "$A2/budget2.json" 2>/dev/null || { echo "[f1b2] refusing: F1a''s budget is not GO" >&2; exit 2; }
 P=$(sed -n 's/.*"concurrency": \([0-9]*\).*/\1/p' "$A2/budget2.json")
-[ "$P" = 64 ] || { echo "[f1b2] refusing: concurrency $P is not the declared 64" >&2; exit 2; }
+[ "$P" = 16 ] || { echo "[f1b2] refusing: concurrency $P is not the declared 16" >&2; exit 2; }
 [ ! -e "$F" ] || { echo "[f1b2] refusing: $F exists" >&2; exit 2; }
 G="$D/3d-unfolding/genie"
 ( cd "$A" && sha256sum -c "$A2/reused.sha256" ) > /dev/null 2>&1 || { echo "[f1b2] refusing: F1a's products changed" >&2; exit 2; }
@@ -37,7 +37,7 @@ for T in $TUNES; do for k in $(seq 1 $NT); do echo "$T $(( ${BASE[$T]} + k ))"; 
 export G A F NEV
 xargs -P "$P" -L 1 bash -c 'mkdir -p "$F/runs/$0" && /usr/bin/time -v -o "$F/runs/$0/task_s$1.time" \
     bash "$G/run_gevgen_v3.sh" genie "$0" "$A/splines" "$NEV" "$1" "$F/work/$0/s$1" "$A/flux_phi_t_0_100.root" \
-    > "$F/logs/gen_$0_s$1.log" 2>&1' < "$F/queue.txt"
+    > "$F/logs/gen_$0_s$1.log" 2>&1 || exit 255' < "$F/queue.txt"
 need $? "generation"
 echo "[f1b2] generation done $(date -u +%FT%TZ)"
 ( anaenv fc; python3 "$G/gen5d_v3.py" flux-check --flux "$A/flux_phi_t_0_100.root" --work "$F"/work/*/s* ) \

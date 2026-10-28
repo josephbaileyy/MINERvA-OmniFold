@@ -37,6 +37,11 @@ case "$STAGE" in
   f1b2)
     B="$OUT/f1a2/budget2.json"
     grep -q '"decision": "GO"' "$B" || { echo "refusing: $B is not GO" >&2; exit 2; }
+    J=$(sed -n 's/.*"repilot_job_id": "\([0-9]*\)".*/\1/p' "$B")
+    [ -n "$J" ] || { echo "refusing: no repilot_job_id in $B" >&2; exit 2; }
+    R=$(sacct -n -P -j "$J.batch" -o MaxRSS | head -1)        # the re-pilot's node-level peak, e.g. 45610936K
+    K=$(awk -v r="$R" 'BEGIN{n=r+0; u=substr(r,length(r)); if(u=="M")n*=1024; else if(u=="G")n*=1048576; else if(u=="T")n*=1073741824; printf "%d", n}')
+    [ "$K" -gt 0 ] && [ "$K" -le $((487802 * 1024 * 3 / 4)) ] || { echo "refusing: re-pilot batch MaxRSS $R exceeds 75 % of the node" >&2; exit 2; }
     T=$(sed -n 's/.*"f1b2_time_limit": "\([0-9][0-9]:[0-9][0-9]:00\)".*/\1/p' "$B")
     [ -n "$T" ] || { echo "refusing: no f1b2_time_limit in $B" >&2; exit 2; }
     sbatch "${COMMON[@]}" --time="$T" --job-name=fd_f1b2 "$D/nd-unfolding/sbatch_fd_f1b2.sh" "$D" "$PIN" "$OUT" ;;
