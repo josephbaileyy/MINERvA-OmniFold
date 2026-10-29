@@ -192,6 +192,19 @@ orders object to the structure itself:
 - the limitations paragraph is a pointer "alongside a single disconnected remark". That remark is the frozen 2D
   sentence (ruling 2's recorded exception).
 Under ruling 3 the structure is not reverted, and both runs go to the director. P1N on N10b holds (+0.25).
+
+**The director accepted N10b as it stands** (2026-10-28): gemini's remaining reasons concern the structure that ruling
+3 fixed, not the wording, and P1N fell for neither rater. The split is recorded verbatim:
+- the first wording: sol2 AB NEW 2, BA NEW 1; gemini AB OLD 2, BA OLD 2;
+- the revision: sol2 AB NEW 1, BA NEW 1; gemini AB OLD 2, BA OLD 2.
+
+Gemini's two structural reasons, verbatim from the revision's reads:
+- AB: "In the \"Principal limitations\" section, Document A delivers a cohesive, dense, and self-contained technical synthesis characteristic of a PRD companion note, whereas Document B reads like an unedited draft that inappropriately defers to an executive summary before trailing off with an isolated, orphaned sentence." (`scores/p2n-rev/N10b.gemini.AB.txt`);
+- BA: "In the \"Principal limitations\" section, Document B uses precise, publication-grade passive and active
+  constructions to articulate methodological caveats, while Document A reads like an unfinished outline that merely
+  defers to another section alongside a single disconnected remark."
+
+It is not revised again.
 The reads are in `scores/` (P2N, P2N after the revision, and the base, n4 and revised P1N).
 
 **Checks:**
@@ -202,3 +215,55 @@ The reads are in `scores/` (P2N, P2N after the revision, and the base, n4 and re
 - `reflow_tex.py --note --check`: PASS.
 - `check_body_pointers.py`: PASS.
 - `build_all.sh`: rc 0; note 126 pp, paper 11, primer 15; no undefined reference.
+
+## Batch R: `app_release.tex` (outline sec. 3; the director's rulings A–D)
+
+**The claim table** (`release-claims.md`, built by an independent read-only agent):
+- 95 atomic claims: 90 TRUE, 4 FALSE, 1 UNVERIFIABLE (the deposit snapshot, `\depositsnapshot`, which stays: ruling D).
+- How it was checked:
+  - the RC7 tarball matches its recorded sha256, and its 32 inner checksums pass;
+  - `verify_rc.py` printed `VERIFY: PASS` (exit 0, 277 s) in a fresh environment built from `requirements-lock.txt`
+    (`release-verify-run.txt`);
+  - the jitter recomputation was retried single-threaded and finished in 35 s, matching the recorded
+    `observed_jitter_p` in 10 of 10 tests (`release-jitter-check.json`).
+- **Two runs were stopped after about 5 h each:** a standalone Fig. 4 regeneration and the first jitter recomputation.
+  Both were thrashing in OpenBLAS's thread pool and contending with each other. The Fig. 4 claim is graded from the
+  verifier's own `[ok] Fig. 4 … regenerated` line.
+
+**What is applied** (8 pairs, each pinned by sha256 in `check_ledger.REL_PINS`):
+- **R2–R4:** d2's scoped "five-axis covariance of the configuration-(a) central value", imported from
+  `fived16/d2/options.py`. Each is TRUE in the table (ruling A).
+- **R1 is not applied** (ruling A). "the quoted closure, bias and covariance-status measurements of the
+  configuration-(a) central value" is FALSE as read: the closure and bias numbers come from configurations (c)–(e).
+- **RL-21, RL-27 and RL-39:** RC7 regenerates the figures of the earlier version of the article it was assembled for.
+  The article cites no note figure. Neither document now prints the one-dimensional projections, and today's Figs.
+  1–3 are not RC7's (ruling B).
+- **RL-59:** "2,374 inventoried input files (2,307 AnaTuples and 67 flux, reweight and parameter files)". This was
+  re-measured at the n4 head from `ANATUPLE-SHA256.tsv` (sha256 `913e004d…`, the record's): 1,818 data and 489
+  simulation AnaTuples, 58 MAT flux and reweight files and 9 parameter files. RC7's own inventory has 2,374 rows.
+- **Line 45:** "NERSC project storage" for "collaboration storage". The copies are in
+  `/global/cfs/cdirs/m3246/josephrb` (ruling C).
+
+**agy** (`agy/r`; `agy/make_pairs_r.py`; the CONTEXT of each pair is its claim-table row):
+- The control caught 8 of 8.
+- **RL-21, RL-27, RL-39, RL-59 and line 45:**
+  - run 1 is SAME on all five;
+  - run 2's five DIFFERS each describe the correction itself ("correcting the repository where the copies actually
+    reside"), and none calls a fix unsupported. A truth fix contradicts its BEFORE by design.
+- **R2–R4:**
+  - run 2 is SAME;
+  - run 1 is DIFFERS: "of the configuration-(a) central value" is not supported by the single CONTEXT sentence given,
+    which says "used with that central value".
+  - At `371cccec` the note already prints "five-axis covariance of the configuration-(a) central value" 15 times, in
+    nine files, so the objection comes from the narrow CONTEXT, not from the note. They stand.
+- Run 1 first came back empty (agy's headless tool denial) and was re-run unchanged.
+
+**Records:**
+- `check_note_records.py`'s comment no longer calls `app_release.tex` protected. Its reader-paragraph plant on the
+  scope heading still holds, because n4 does not edit that heading.
+- `fived16/HANDOFF.md` records the release. The fived16 and r19 checkers stay records of their rounds (ruling 4).
+- **The records-move ledger** (`records-move-ledger.md`): six of its probes read the folded front matter or the
+  edited release lines, and each is updated in place with the round named (L9b, L11, L16, L-bhi6, L-thin-C55,
+  L-thin-C56). `check_note_records.py probe` and `--self-test` now pass.
+- The pre-commit hook does not run that check, and only CI does. So every `record-checks.yml` step is now run locally
+  before a push.

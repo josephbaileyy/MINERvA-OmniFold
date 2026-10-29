@@ -1,0 +1,41 @@
+(Each pair is one sentence of an analysis note's release appendix, BEFORE and AFTER a correction. The CONTEXT is the evidence from a check of the release package against the appendix; it is accepted as correct. Judge AFTER against BEFORE read with its CONTEXT: does AFTER state anything the CONTEXT does not support, state it more strongly, or mislead?)
+
+Q1.
+CONTEXT: The note: "It is a separate product from the configuration-(a) five-dimensional central value of Secs.~\ref{sec:eavailw} and~\ref{sec:5d} and from the five-axis covariance used with that central value (\S\ref{sec:eavailw-adopted})."
+BEFORE: \item \textbf{Covariances} $\checkmark$: the five-axis covariance used in this note and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the declared centering variant, and the band partition.
+AFTER: \item \textbf{Covariances} $\checkmark$: the five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the declared centering variant, and the band partition.
+
+Q2.
+CONTEXT: The note: "It is a separate product from the configuration-(a) five-dimensional central value of Secs.~\ref{sec:eavailw} and~\ref{sec:5d} and from the five-axis covariance used with that central value (\S\ref{sec:eavailw-adopted})."
+BEFORE: \item \textbf{The four measurements} that travel with the five-axis covariance used in this note (\S\ref{sec:eavailw-adopted}), carried in the package that readers will quote and not only in this note.
+AFTER: \item \textbf{The four measurements} that travel with the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-adopted}), carried in the package that readers will quote and not only in this note.
+
+Q3.
+CONTEXT: The note: "It is a separate product from the configuration-(a) five-dimensional central value of Secs.~\ref{sec:eavailw} and~\ref{sec:5d} and from the five-axis covariance used with that central value (\S\ref{sec:eavailw-adopted})."
+BEFORE: The five-axis covariance used in this note is the file \texttt{z-cv.npz}, with \texttt{sha256} \zcvDigest\ldots\ and $\sqrt{\Tr C}=\SI{5.6742e-38}{}$, so a loaded $C_{Z}$ can be checked against both.
+AFTER: The five-axis covariance of the configuration-(a) central value is the file \texttt{z-cv.npz}, with \texttt{sha256} \zcvDigest\ldots\ and $\sqrt{\Tr C}=\SI{5.6742e-38}{}$, so a loaded $C_{Z}$ can be checked against both.
+
+Q4.
+CONTEXT: | RL-21 | 9 | these are "figures that the article cites from this note" | `paper_body.tex`/`main_paper.tex` have no `\ref*{N-fig:…}`. The `N-` references are to sections and to `tab:fived16-cells`/`tab:fived16-corr`. In prose, `main_paper.tex:77` names "the analysis note's figures of the joint-test null distributions and the $(\Eavail,W)$ map". The one-dimensional generator projections (`paper_fig3_generators.pdf`) are `\includegraphics`'d in neither the note nor the article. `sec_eavailw.tex:131` comment: "its figure left the article" | FALSE |
+BEFORE: It also regenerates, from packaged arrays, figures that the article cites from this note: the $(\Eavail,W)$ excess map (Fig.~\ref{fig:eavailWexcess}), the null distributions of the joint tests (Fig.~\ref{fig:joint5d-nulls}), and the one-dimensional generator projections.
+AFTER: It also regenerates, from packaged arrays, figures drawn for the earlier version of the article for which it was assembled: the $(\Eavail,W)$ excess map, which this note prints as Fig.~\ref{fig:eavailWexcess}, the null distributions of the joint tests, which it prints as Fig.~\ref{fig:joint5d-nulls}, and one-dimensional generator projections, which neither this note nor the article now prints.
+
+Q5.
+CONTEXT: | RL-27 | 29 | "the arrays behind the article's figures" | `fig_arrays.npz` holds the arrays of RC7-era Figs. 1–3 (README:144). Today's article prints `paper_fig1_validation`, `paper_fig_bkg_residual`, `paper_fig_deformation` and `fd_g_fig_ratio` (`paper_body.tex:134,177,192,316`). The package holds no arrays for Figs. 2–4. For Fig. 1 it lacks the drawn central value E_R and the band covariance Q_R: `ours_v` is exact-split and there is no `cov_ours` key | FALSE |
+BEFORE: \paragraph{Contents and use.} The package holds the sufficient inputs of the joint tests, as evaluated for the decisions and in the reading with the recovered pseudo-experiments added; the arrays behind the article's figures; the noise-free differences behind the $L_2$ ratios; an inventory of the analyzed AnaTuples; the replay and figure code; and the expected outputs.
+AFTER: \paragraph{Contents and use.} The package holds the sufficient inputs of the joint tests, as evaluated for the decisions and in the reading with the recovered pseudo-experiments added; the arrays behind the figures drawn for that earlier version; the noise-free differences behind the $L_2$ ratios; an inventory of the analyzed AnaTuples; the replay and figure code; and the expected outputs.
+
+Q6.
+CONTEXT: | RL-39 | 29 | "for the article's Figs. 1–3 themselves, the check is that the three figure files are produced" | The check (`verify_rc.py:84-88`) requires that `make_figs.py` exits 0 with ≥3 PDFs. Those PDFs are RC7's Figs. 1–3. The article's current Figs. 1–3 are the validation (`71a2ea48…`, not RC7's `938c4fc9…`), background-residual and deformation figures, and RC7 produces none of them | FALSE |
+BEFORE: Each quoted figure number must agree with its printed value to within half a unit of its last printed digit, and the $L_2$ ratios must reproduce their printed range; for the article's Figs.~1--3 themselves, the check is that the three figure files are produced.
+AFTER: Each quoted figure number must agree with its printed value to within half a unit of its last printed digit, and the $L_2$ ratios must reproduce their printed range; for Figs.~1--3 of that earlier version themselves, the check is that the three figure files are produced.
+
+Q7.
+CONTEXT: | RL-59 | 45 | record "identifies all 2,374 inventoried AnaTuple input files by SHA256 checksum" | The record (`RECORD-20261010-ost61-…md`) has 2,374 of 2,374 files hashed, but the inventory classifies as Data 1,818 + MC 489 = **2,307 AnaTuples**, plus 58 `MATFluxAndReweightFiles/` + 9 `MParamFiles/` = 67 flux/parameter files (including CVS metadata). Counted with `awk` on `PKG/data/anatuple-inventory.tsv`. The appendix's own next sentence adds up the same way (1,885 + 489) | FALSE |
+BEFORE: The record of Ref.~\cite{AnaTuplePreservation2026} identifies all 2,374 inventoried AnaTuple input files by SHA256 checksum; RC7's own inventory lists their names, sizes and modification times, without checksums.
+AFTER: The record of Ref.~\cite{AnaTuplePreservation2026} identifies all 2,374 inventoried input files (2,307 AnaTuples and 67 flux, reweight and parameter files) by SHA256 checksum; RC7's own inventory lists their names, sizes and modification times, without checksums.
+
+Q8.
+CONTEXT: The record's copy is at /global/cfs/cdirs/m3246/josephrb (RECORD-20261010-ost61-hashed-and-data-addition.md sec. 3), the analysis group's NERSC project storage, not MINERvA collaboration storage. | RL-60 | 45 | "RC7's own inventory lists their names, sizes and modification times, without checksums" | Header `path…\tbytes\tmtime_utc`, 2,374 rows, no digest column | TRUE |
+BEFORE: The same record, dated 2026-10-10, verifies copies of all 1,885 data, flux and parameter files on collaboration storage; it identifies the 489 simulation AnaTuples by checksum but holds no preservation copy of them.
+AFTER: The same record, dated 2026-10-10, verifies copies of all 1,885 data, flux and parameter files on NERSC project storage; it identifies the 489 simulation AnaTuples by checksum but holds no preservation copy of them.
