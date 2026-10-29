@@ -2565,6 +2565,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/r20/measure/P2__BA__gemini.t
 docs/orchestration/state/2d-closeout/stageF/methods/r20/measure/P2__BA__sol2.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r20/measure/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r20/outline.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/r21/outline.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/ratefail/diag.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/ratefail/diag_out.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/ratefail/group.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
