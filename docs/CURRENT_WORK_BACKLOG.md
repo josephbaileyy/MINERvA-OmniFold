@@ -52,7 +52,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-54 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-57 | NOW | migration-carried-forward | CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked |
 | OI-58 | NOW | migration-carried-forward | OPEN RE-TRIAGE RECOMMENDATION 2026-08-20 AFTER THE OI-126 RULING — RECOMMENDED, NOT RULED. Recommend reclassifying as a |
-| OI-59 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — whether the freeze permits the Ascencio super-grid recom |
+| OI-59 | NOW | migration-carried-forward | OPEN (raised 2026-08-13 by lane A) |
 | OI-60 | BLOCKED-EXTERNAL | migration-carried-forward | RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW |
 | OI-61 | NOW | migration-carried-forward | OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d |
 | OI-62 | WAITING-JOSEPH | migration-carried-forward | (a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER |
@@ -63,5 +63,5 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-121 | NOW | migration-carried-forward | AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT |
 | OI-132 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON |
 | OI-133 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
-| OI-137 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W |
+| OI-137 | NOW | migration-carried-forward | OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA |
 | OI-138 | NOW | migration-carried-forward | OPEN |
