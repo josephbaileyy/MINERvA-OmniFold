@@ -12,6 +12,8 @@ for f in docs/orchestration/MANIFEST-overrides.tsv docs/orchestration/CATALOG.md
     sed -i '' -e '/^<<<<<<< /d' -e '/^=======$/d' -e '/^>>>>>>> /d' "$f"; git add -- "$f"
   fi
 done
+# CURRENT_WORK.md is generated from control-plane/work-items.tsv: take either side, regenerate it below.
+if git diff --name-only --diff-filter=U | grep -qx docs/CURRENT_WORK.md; then git checkout --ours -- docs/CURRENT_WORK.md; git add -- docs/CURRENT_WORK.md; fi
 if git diff --name-only --diff-filter=U | grep -qx docs/orchestration/MANIFEST.tsv; then git checkout --ours docs/orchestration/MANIFEST.tsv; git add -- docs/orchestration/MANIFEST.tsv; fi
 # The generated records_*.tex files are regenerated below, so main's copy is a safe start. A conflicted registry TSV is
 # NOT: a lane may have re-cited rows that main's copy would silently drop (seen 2026-10-28 on #413). Stop for a hand
@@ -24,6 +26,7 @@ if grep -q -E '^(<<<<<<<|>>>>>>>)' docs/orchestration/CATALOG.md docs/orchestrat
 dup=$(grep '^| ' docs/orchestration/CATALOG.md | awk -F'|' '{print $(NF-1)}' | grep '\](' | sort | uniq -d; cut -f1 docs/orchestration/MANIFEST-overrides.tsv | grep . | sort | uniq -d)
 if [ -n "$dup" ]; then echo "DUPLICATE ROW: $dup"; exit 4; fi
 git add -u -- docs/orchestration/registry >/dev/null 2>&1
+python3 docs/orchestration/control_plane_lint.py --write >/dev/null 2>&1; git add -- docs/CURRENT_WORK.md
 python3 tools/registry/check_registry.py --repoint >/dev/null 2>&1; git add -u -- docs/orchestration/registry
 python3 tools/registry/results_index.py --write >/dev/null 2>&1; git add -u -- docs/orchestration/registry docs/analysis-note/records_results_index.tex docs/analysis-note/records_estimators.tex; python3 tools/registry/results_index.py --write >/dev/null 2>&1
 git add -u -- docs/orchestration/registry docs/analysis-note/records_results_index.tex docs/analysis-note/records_estimators.tex
