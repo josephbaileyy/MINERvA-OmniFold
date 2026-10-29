@@ -1,0 +1,46 @@
+(Each pair is one sentence of a physics analysis note, BEFORE and AFTER a terminology fix. The CONTEXT gives the definitions and records the AFTER's wording rests on; it is accepted as correct. Judge AFTER against BEFORE read with its CONTEXT.)
+
+Q1.
+CONTEXT: The note defines: "Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d})." The record of the test: | A2: calibration | pooled pull SD 1.023 (window 0.9–1.1); 3.9% outside 1 ± 3 SE (≤ 10%); Mahalanobis 43.1 in [33.6, 50.4]; pooled coverage 0.680 / 0.942. **A pooled pass, not per-functional calibration:** 6 functionals lie outside 3 SE against ≈ 0.4 expected, repeating between development and assessment (EW41 pull SD 1.42 with 68% coverage 0.375, J206, J215) | **PASS** (pooled) |
+BEFORE: A candidate with raised refinement capacity passes the nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation 2.7 standard errors) and a pooled calibration test of its statistical intervals (pull width 1.02).
+AFTER: A candidate with raised refinement capacity passes the nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation 2.7 standard errors) and a pooled test of its statistical intervals (pull width 1.02).
+
+Q2.
+CONTEXT: The note defines: "Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d})." The record of the test: | A2: calibration | pooled pull SD 1.023 (window 0.9–1.1); 3.9% outside 1 ± 3 SE (≤ 10%); Mahalanobis 43.1 in [33.6, 50.4]; pooled coverage 0.680 / 0.942. **A pooled pass, not per-functional calibration:** 6 functionals lie outside 3 SE against ≈ 0.4 expected, repeating between development and assessment (EW41 pull SD 1.42 with 68% coverage 0.375, J206, J215) | **PASS** (pooled) |
+BEFORE: The pooled test does not establish calibration for every functional.
+AFTER: The pooled test does not establish coverage for every functional.
+
+Q3.
+CONTEXT: The note defines: "Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d})." The record of the test: | A2: calibration | pooled pull SD 1.023 (window 0.9–1.1); 3.9% outside 1 ± 3 SE (≤ 10%); Mahalanobis 43.1 in [33.6, 50.4]; pooled coverage 0.680 / 0.942. **A pooled pass, not per-functional calibration:** 6 functionals lie outside 3 SE against ≈ 0.4 expected, repeating between development and assessment (EW41 pull SD 1.42 with 68% coverage 0.375, J206, J215) | **PASS** (pooled) |
+BEFORE: At nominal truth, EW41 contains the truth in 15 of 40 68\% intervals (37.5\%, pointwise exact 95\% interval [22.7\%, 54.2\%]), so a pooled calibration pass cannot qualify this cell.
+AFTER: At nominal truth, EW41 contains the truth in 15 of 40 68\% intervals (37.5\%, pointwise exact 95\% interval [22.7\%, 54.2\%]), so a pooled pass cannot qualify this cell.
+
+Q4.
+CONTEXT: The note defines: "Coverage asks whether the resulting intervals contain their specified target at the stated rate (\S\ref{sec:coverage-5d})."
+BEFORE: Repeating a numerical calculation checks neither interval calibration nor the adequacy of the physical model.
+AFTER: Repeating a numerical calculation checks neither interval coverage nor the adequacy of the physical model.
+
+Q5.
+CONTEXT: The PET campaign record: | 2026-10-05 | **Coverage of H2S1T24 K5, development tilt (look 1 of the coverage rule, N_cov 120): C1 FAIL, C2 PASS, C3 PASS, C4 FAIL — the aggregate E_avail intervals are too wide.** C1: pooled 68 % coverage **0.896** (LB 0.858) against the "not trivially conservative" ceiling 0.80 (decisive); pooled 95 % 0.990 against ≤ 0.99 (straddles). C4: mean 95 % half-width **1.32–1.72 ×** the 1.25 × calibrated limit in bins 1–6 (point rule; bin 0 0.83 ×; top-bin resolution limit passes). C2 (every bin's 95 % coverage ≥ 0.85; 0.98–1.00) and C3 (moderate/good LB 0.949 / 0.993 ≥ 0.85) pass. The member sp | 2026-10-05 | **TERMINAL OUTCOME: NO_ELIGIBLE_DESIGN.** H2S1T24 K5 INELIGIBLE (C1, C4: its simulation-only uncertainty procedure, B = 6 Poisson-bootstrap members, is decisively over-conservative in aggregate; it under-covers in the low-acceptance region); L128S1T24 K4 INELIGIBLE (B2, point-decided, statistically unresolved). No design is selected and no default is named (the 3a.1 default must itself be eligible). **Citable for:** neither frozen finalist meets every frozen eligibility rule at its exact configuration; H2S1T24's point estimator passes every §6.1–6.3 rule (R_E0 0.895, LB 0.876; +
+BEFORE: The terminal outcome remains \texttt{NO\_ELIGIBLE\_DESIGN}: H2S1T24 fails interval calibration and L128S1T24 fails B2 by the frozen point rule (statistically unresolved).
+AFTER: The terminal outcome remains \texttt{NO\_ELIGIBLE\_DESIGN}: H2S1T24 fails interval coverage and L128S1T24 fails B2 by the frozen point rule (statistically unresolved).
+
+Q6.
+CONTEXT: The PET campaign record: | 2026-10-05 | **Coverage of H2S1T24 K5, development tilt (look 1 of the coverage rule, N_cov 120): C1 FAIL, C2 PASS, C3 PASS, C4 FAIL — the aggregate E_avail intervals are too wide.** C1: pooled 68 % coverage **0.896** (LB 0.858) against the "not trivially conservative" ceiling 0.80 (decisive); pooled 95 % 0.990 against ≤ 0.99 (straddles). C4: mean 95 % half-width **1.32–1.72 ×** the 1.25 × calibrated limit in bins 1–6 (point rule; bin 0 0.83 ×; top-bin resolution limit passes). C2 (every bin's 95 % coverage ≥ 0.85; 0.98–1.00) and C3 (moderate/good LB 0.949 / 0.993 ≥ 0.85) pass. The member sp | 2026-10-05 | **TERMINAL OUTCOME: NO_ELIGIBLE_DESIGN.** H2S1T24 K5 INELIGIBLE (C1, C4: its simulation-only uncertainty procedure, B = 6 Poisson-bootstrap members, is decisively over-conservative in aggregate; it under-covers in the low-acceptance region); L128S1T24 K4 INELIGIBLE (B2, point-decided, statistically unresolved). No design is selected and no default is named (the 3a.1 default must itself be eligible). **Citable for:** neither frozen finalist meets every frozen eligibility rule at its exact configuration; H2S1T24's point estimator passes every §6.1–6.3 rule (R_E0 0.895, LB 0.876; +
+BEFORE: There is no GBDT interval procedure in this comparison, and the measured PET procedure failed calibration.
+AFTER: There is no GBDT interval procedure in this comparison, and the measured PET procedure failed its coverage test.
+
+Q7.
+CONTEXT: The cited paper's title: "Confidence intervals for functionals in constrained inverse problems via data-adaptive sampling-based calibration".
+BEFORE: Recent work constructs calibrated intervals for selected functionals in constrained inverse problems~\cite{Stanley:2025functionals} and joint confidence regions for multiple functionals~\cite{Batlle:2025simultaneous}, which could provide independent benchmarks for specified integrals or contrasts.
+AFTER: Recent work constructs confidence intervals for selected functionals in constrained inverse problems~\cite{Stanley:2025functionals} and joint confidence regions for multiple functionals~\cite{Batlle:2025simultaneous}, which could provide independent benchmarks for specified integrals or contrasts.
+
+Q8.
+CONTEXT: The note's abstract opens: "We report a simultaneous measurement of the $\nu_{\mu}$ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is \fvval{sigmed-C_total_resp}\%." The companion paper's Conclusions: "\section{Discussion and conclusions} \label{sec:conclusions} The principal result is the sixteen-cell cross section of Sec.~\ref{sec:result16}, with its covariance and generator comparison."
+BEFORE: The main results are the validation findings. They hold for this implementation, one data set, and the configurations, observables and deformations tested (\S\ref{sec:intro}).
+AFTER: The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison. The results hold for this implementation, one data set, and the configurations, observables and deformations tested (\S\ref{sec:intro}).
+
+Q9.
+CONTEXT: The note's abstract opens: "We report a simultaneous measurement of the $\nu_{\mu}$ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is \fvval{sigmed-C_total_resp}\%." The companion paper's Conclusions: "\section{Discussion and conclusions} \label{sec:conclusions} The principal result is the sixteen-cell cross section of Sec.~\ref{sec:result16}, with its covariance and generator comparison."
+BEFORE: The main results are the validation findings, within the scope stated in \S\ref{sec:intro}.
+AFTER: The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison. The results hold within the scope stated in \S\ref{sec:intro}.
