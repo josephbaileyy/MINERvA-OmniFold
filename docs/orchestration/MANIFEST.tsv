@@ -6177,6 +6177,13 @@ docs/orchestration/state/oi126-successor-iteration-sweep-adjudication-20260823.j
 docs/orchestration/state/oi126-successor-phase0-replay-and-phase1-prerun-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes
 docs/orchestration/state/oi126-successor-t1-endpoint-predeclaration-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes
 docs/orchestration/state/oi137-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only	no
+docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
+docs/orchestration/state/oi160-reproduction-20261029/code.sha256	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/repro_compare.py	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/repro_run.py	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run_job.sh	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/stored.sha256	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/test_repro.py	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
