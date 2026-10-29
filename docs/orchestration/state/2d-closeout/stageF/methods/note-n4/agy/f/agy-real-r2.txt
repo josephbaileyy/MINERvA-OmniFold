@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: In the sixteen-cell cross section item, AFTER states that "the GiBUU comparison carries the fake-data limitation of \S\ref{sec:fived16-fd}", which narrows and misattributes a limitation that BEFORE applies to the sixteen-cell result as a whole, and adds generator $\chi^{2}$ statistics not present in BEFORE.
+
+Q2: VERDICT: SAME
+DETAIL: The omissions are removals by design of findings stated in the executive summary or body, and the retained conclusions accurately reflect BEFORE without asserting broader claims or introducing misleading ambiguities.
+
+Q3: VERDICT: SAME
+DETAIL: Replacing the detailed interval limitations with a pointer to the executive summary list is a removal by design, and relocating the companion paper sentence preserves the strategy and scope without alteration.
+
+Q4: VERDICT: SAME
+DETAIL: The added sentences and citations in the body faithfully restore the limitations and references accepted in BEFORE without stating anything more broadly or introducing ambiguity.
+
+END

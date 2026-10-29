@@ -1,0 +1,12 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is publication-ready, but recurrent bookkeeping language, compressed internal terminology, and repetitive qualifications warrant a dedicated language pass.
+1. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every
+submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments that exceeded the time limit were subsequently completed for reporting purposes. Their results leave all decisions unchanged (§11.6).
+2. QUOTE: "Principal limitations: The body states each limitation with the result it qualifies; the principal
+ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage
+studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912,
+vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the reported 2D statistical covariance. Fixed-truth coverage studies evaluated two earlier statistical uncertainty bands; the first exhibited undercoverage in its tails (C2 = 0.912, compared with 0.954; §4.2, §5.2).
+3. QUOTE: "Neither closure is graded (§7.4, Table 5)."
+   REWRITE: Neither closure test was assessed against a quantitative acceptance criterion (§7.4, Table 5).

@@ -10,7 +10,8 @@
 - `apply_n4.py`: every edit, by batch;
 - `ledger.md`, checked by `check_ledger.py`;
 - `agy/`: the batch reads;
-- `release-claims.md`: the release appendix's claim table (pending).
+- `release-claims.md`: the release appendix's claim table, built by an independent read-only agent from the RC7 tarball (`release-verify-run.txt`, `release-jitter-check.json`); its FALSE claims are with the director;
+- `compose_f.py`, `map-doubtful.md`, `tools/`, `scores/`: batch F.
 
 This is the first round in which the structure is not on trial (ruling 3). Joseph decided the front matter's
 structure, so the pairwise and P1N judge only its wording.
@@ -62,12 +63,12 @@ sentence that mentions an interval, a pull, a width, a band or the bootstrap. Al
   - run 1 is SAME on all of C1–C7;
   - run 2 is SAME on C5–C7. On C1–C4 its stated reasons are only that the word "calibration" was removed. Any
     terminology fix trips that when BEFORE is accepted as correct.
-- **agy is noisy here:** the same C5 text was SAME in one read and DIFFERS in the next (`agy/c` Q5, `agy/c2` Q5). So
+- **agy is noisy here (the director accepted stopping at this point):** the same C5 text was SAME in one read and DIFFERS in the next (`agy/c` Q5, `agy/c2` Q5). So
   the reads were stopped at that point, and the director decides.
 - **M1 and M2 are DIFFERS in every read:** "AFTER drops BEFORE's statement that the main results are the validation
   findings". That is the change ruling 2a decided, so it stands.
 
-**The primer (ruling 5) is not edited. It goes to the director:**
+**The primer (ruling 5) is not edited; the director ruled (a), leave it and flag it for Joseph:**
 - `primer_body.tex:13` and `:57` say its main results are the tests of the method.
 - The primer prints no sixteen-cell result: no sentence names it, and it predates the five-dimensional integration.
   It also says "the study does not deliver a validated five-quantity cross-section measurement".
@@ -75,6 +76,7 @@ sentence that mentions an interval, a pull, a width, a band or the bootstrap. Al
   result the primer never describes.
 - Making the primer consistent needs a paragraph on that result, which is a content addition beyond n4's scope.
 - The primer is 15 pp before, and is unchanged.
+- **For Joseph:** the primer is stale against the five-dimensional integration. It predates the sixteen-cell result and says the study "does not deliver a validated five-quantity cross-section measurement". That is a content question, outside n4.
 
 **Checks:**
 - `check_ledger.py .`: 9 rows, 15 probes, 10 changed base sentences, 0 failures.
@@ -86,3 +88,117 @@ sentence that mentions an interval, a pull, a width, a band or the bootstrap. Al
 - `printed_diff`: exactly the 21 intended sentence lines.
 - `reflow_tex.py --note --check`: PASS.
 - `build_all.sh`: rc 0; note 130 pp, paper 11, primer 15; SEC4 15/15; no undefined reference.
+
+## Batch F: the front-matter fold
+
+These edits are under ruling 1, the length ruling (b)+(c), and ruling 2. They are written by `compose_f.py`, which
+cuts every sentence it keeps out of the sources at `a2e89c5f` by its anchors, so nothing kept is retyped.
+
+**What changed:**
+- **The executive summary is now about one page.** It is 651 printed words and runs from below the abstract on p. 1 to
+  the foot of p. 2.
+  - It opens with the framing paragraph.
+  - Each of seven results gets its headline sentences and a pointer to its body home. The first is the sixteen-cell
+    result, using the abstract's numbers.
+  - The limitations paragraph is the base ES's pointer list, as it stood at the base, with two additions:
+    - the frozen 2D sentence;
+    - one new clause, "No result's intervals have validated coverage", pointing to its three homes.
+  - The readiness sentence moved verbatim from the status table into the 2D paragraph.
+  - The joint-test paragraph keeps both frozen recovery disclosures and the NuWro-CH sentences verbatim.
+- **The status table and `result_status_rows.tex` are deleted.** Its label, `tab:result-status`, had no reference.
+- **§12 (sec_summary.tex)** keeps the two conclusions the ES does not state: the refined subtraction's effect, and the
+  joint tests' design and reach. Its limitations paragraph is a pointer plus the frozen sentence, which is the one
+  recorded exception to "limitations once" (ruling 2). Outlook and "Reusing" are unchanged.
+- **§1:** Scope points to the list, the Topic → Section table is cut, and the companion-article sentence closes
+  "Analysis strategy".
+- **Three body sentences give homes to facts that only the front matter carried:**
+  - the Valencia 2p2h citations, at the model's sentence in sec_3d.tex;
+  - "Beyond this methodological band, the source of the shape difference has not been identified." in
+    sec:results-tension, from the paper's wording;
+  - "The coverage of the result's intervals has not been validated." in sec:fived16-fd, from the note abstract's
+    wording.
+- **The note:** 130 → 126 pp.
+<!-- absence-ok: quotes the limitation sentences the fold gave body homes; not a claim that a result does not exist -->
+
+**The fact-to-home map (the director's two conditions):**
+- An independent read-only agent built the rows twice: once for the first composition, and again after the length
+  ruling.
+- Every changed sentence is covered: 79 rows and 334 probes, 0 failures. Every limitation of §12's former list is
+  probed at its body home, not in the ES or §12.
+- **Its LOST findings, each settled:**
+  - the Valencia citations: moved to the body;
+  - the 2D shape difference's unknown source: body home added;
+  - the sixteen-cell coverage status, judged near-lost: body home added;
+  - the roadmap's organizing rule ("each topic is treated in full in the section listed below"): metatext about the
+    cut table, removed with it.
+- **Its doubtful homes, accepted:**
+  - the low-$W$ excess "in ratio": sec:eavailw-map with the figure's ratio panel;
+  - the 4D closure "not graded", stated only as "no predeclared threshold";
+  - rounding only: 0.10 against 0.102, and "a fifth" against 22%.
+  The agent's full list is `map-doubtful.md`.
+
+**The two-direction review** (a fresh read-only agent; 2 BLOCKER, 4 MAJOR, 7 MINOR), all fixed within the
+structure:
+- **B1:** the PDF predated the two body sentences. Rebuilt and checked in the PDF text.
+- **B2:** Scope's "including the coverage status of each result … listed once" was false. Scope now just points to
+  the list, and the list gained the coverage clause.
+- **M1:** the post-hoc learner sentence is restored, verbatim.
+- **M2 and M4:** the excess sentence is restored with its bias and generator context, verbatim.
+- **M3:** the $W$-redundancy sentence is restored, verbatim.
+- **The MINORs:** "part of tier~1"; the dip's pointer §7.6; which unfolds are central values; the §12 antecedent; the
+  tension sentence placed after the methodological band, with a current Search line; the unified-throw sentence. The
+  review's optional GiBUU clause was added, then removed on agy's objection (below).
+
+**agy** (`agy/f`, `agy/f2`; four pairs built by `agy/make_pairs_f.py`):
+- **First read:** both runs DIFFERS on the ES, for the same reason: the added "GiBUU comparison carries the fake-data
+  limitation" made a result-wide limitation read as GiBUU's alone. It was removed.
+- **Second read:** both runs SAME on all four pairs. The control caught 4 of 4 in each read.
+- One run came back empty, because agy's headless mode denied a tool call. It was re-run unchanged.
+
+**Scoring.** This is the first round in which the structure is not on trial (ruling 3): Joseph decided the front
+matter's structure, so P2N and P1N judge only its wording within it.
+- OLD is the note at `371cccec`.
+- The pieces are cut by `tools/split_front.py`, which uses the n1–n3 pieces and blinding.
+- The runs use `tools/p2n_pieces.sh` and `tools/p1n_pieces.sh`, copied from the lane scratchpad so that they survive.
+- The base P1N was re-scored at `371cccec`, because the note changed after n3's baseline (the 5D integration and d2's
+  abstract). sol2's first base runs hit codex-school2's usage limit and were re-run on the same account after the reset.
+
+| piece | content | sol2 AB | sol2 BA | gemini AB | gemini BA | NEW wins | P2N |
+|---|---|---|---|---|---|---:|---|
+| N01 | abstract, ES, §1 | NEW 2 | NEW 2 | OLD 2 | NEW 2 | 3 | yes |
+| N10b | §12, first wording | NEW 2 | NEW 1 | OLD 2 | OLD 2 | 2 | no: revised once |
+| N10b | §12, revised once | NEW 1 | NEW 1 | OLD 2 | OLD 2 | 2 | **no: to the director, structure kept (ruling 3)** |
+
+| piece | sol2 base | sol2 n4 | Δ (2-run) | gemini base → n4 | noise rule |
+|---|---|---|---:|---|---|
+| N01 | 3, 3 | 3.5, 3.5 | +0.50 | 2 → 2.5 | holds |
+| N10b (revised) | 3, 3 | 3, 3.5 | +0.25 | 2.5 → 3 | holds |
+
+**The N10b revision** (ruling 3: revise the wording once inside the same structure, then re-measure). Gemini's
+reasons, in both orders, named three things, and each was revised:
+- the opening, "This section adds the conclusions it does not state", became "The executive summary … gives each
+  result with its scope and lists the principal limitations. Two further conclusions follow from the body.";
+- "the purity-subtraction bias" had no antecedent, so it now reads "the bias that purity-based background
+  subtraction leaves in the highest-$W$ cells";
+- the limitations pointer read as a placeholder. It now reads "The executive summary lists the principal limitations
+  (p. …), each with the section that states it."
+The frozen sentence after it is unchanged.
+
+**N10b still loses P2N after the revision,** 2 of 4 both times, split by model: sol2 prefers NEW in both orders in
+both reads, and gemini prefers OLD in both. Gemini's second-read reasons no longer name a wording defect. Both
+orders object to the structure itself:
+- §12 "defers to an executive summary" instead of being "self-contained";
+- the bullets do not restate "the hypotheses or baseline analyses";
+- the limitations paragraph is a pointer "alongside a single disconnected remark". That remark is the frozen 2D
+  sentence (ruling 2's recorded exception).
+Under ruling 3 the structure is not reverted, and both runs go to the director. P1N on N10b holds (+0.25).
+The reads are in `scores/` (P2N, P2N after the revision, and the base, n4 and revised P1N).
+
+**Checks:**
+- `check_ledger.py .`: 79 rows, 334 probes, 90 changed base sentences, 0 failures.
+- `--self-test`: PASS. The move plants are now built on the base files, so they hold before and after the move.
+- `compose_f.py --check`: OK.
+- printed_diff on every body addition.
+- `reflow_tex.py --note --check`: PASS.
+- `check_body_pointers.py`: PASS.
+- `build_all.sh`: rc 0; note 126 pp, paper 11, primer 15; no undefined reference.

@@ -1,0 +1,13 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but repeated self-referential signposting, release-status bookkeeping, and defensive qualifications give several passages an internal-report tone that requires a dedicated language pass.
+1. QUOTE: "Summary. The executive summary (p. 1) states each result with its scope, and the principal
+limitations. This section adds the conclusions it does not state."
+   REWRITE: The following conclusions supplement the results and limitations presented in the executive summary.
+2. QUOTE: "A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+but no release has been tagged or deposited;"
+   REWRITE: A local release candidate includes checksums and a program that recomputes and verifies the results; the release has not yet been tagged or deposited.
+3. QUOTE: "The release design
+and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a)
+central value (§9.6)."
+   REWRITE: The five-axis covariance used for the configuration-(a) central value (§9.6) is independent of the release format and its public example.

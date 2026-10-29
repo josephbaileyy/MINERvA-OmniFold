@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A consistently maintains complete, grammatically well-formed sentences and cohesive transitions, whereas Document B frequently lapses into telegraphic fragments, awkward syntax, and outline-like notes (such as "Neither closure is graded," "In ratio," and "are in §7.7").
+2. Document A adheres to a formal, objective publication register, avoiding the colloquialisms and informal laboratory phrasing present in Document B (such as describing rate that "sits in" an overflow cell or models that are "flux-repaired").
+3. Document B incorporates internal project-tracking shorthand and audit-memo commentary (e.g., "protocol implemented, not yet run," "audit trail of the numbers," and notes on covariances used despite failing pre-construction criteria) that reflects an unedited working document rather than a polished PRD companion note.

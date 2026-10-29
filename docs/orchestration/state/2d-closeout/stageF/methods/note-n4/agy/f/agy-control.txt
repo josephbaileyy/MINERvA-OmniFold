@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that the tests "reject all ten unconditionally", whereas BEFORE explicitly states that they reject all ten "under six stated conditions".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states that the refined negative-weight subtraction "removes all background bias", whereas BEFORE only claims that it "largely removes it".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER introduces the claim that "There are no significant limitations; minor ones are listed in the executive summary", contradicting BEFORE's explicit scope limitation stating that intervals lack validated coverage.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER adds the assertion that "The coverage of the result's intervals has been validated", which is unsupported by BEFORE and contradicts its statement that the test cannot evaluate interval width or coverage.
+
+END

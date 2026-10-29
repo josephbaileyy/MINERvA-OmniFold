@@ -204,3 +204,17 @@ text that is otherwise folded:
   the director before any edit. R1–R4 apply only where the table says TRUE. The framing: name the three figures as
   this note's figures, and describe RC7 as assembled for an earlier version of the article.
 - **Process:** accepted, including the PR-wide absence check before every push. Batch 1 may start.
+
+## Director's further rulings (2026-10-28, after batch C)
+
+- **Batch C is accepted:** the C1–C6 revisions after agy's dispersion objection; "the frozen coverage rule" as the PET
+  record's own name; stopping the agy reads at its observed noise; M1/M2's DIFFERS, which is the decided change.
+- **The primer: (a).** It is not edited. The n4 report and the list for Joseph flag it as stale against the
+  five-dimensional integration: it predates the sixteen-cell result and says the study "does not deliver a validated
+  five-quantity cross-section measurement". That is a content question for Joseph, outside n4.
+- **Batch F's length: (b)+(c), about one page.**
+  - "Limitations once" means one home per limitation. Each limitation prints at its body home, and the ES points to
+    it (the R01 ruling).
+  - The frozen 2D sentence stays verbatim in the ES, and the readiness sentence stays in its 2D paragraph.
+  - Two conditions: the ledger probes every §12 limitation at its body home before the full list stops printing as
+    one paragraph; and the fact-to-home map covers all changed sentences.

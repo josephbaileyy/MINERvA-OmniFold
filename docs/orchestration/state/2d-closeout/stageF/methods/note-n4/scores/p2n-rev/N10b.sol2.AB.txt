@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B has smoother paragraph development, whereas A more often reads as a succession of individually qualified statements with abrupt transitions.
+2. A’s repeated formulations about scope, quoted uncertainties, and validation give its prose a more procedural and repetitive cadence.
+3. Both use an appropriate specialist register, and much of their wording is identical, so B’s advantage is modest and concerns editorial flow rather than length or technical density.

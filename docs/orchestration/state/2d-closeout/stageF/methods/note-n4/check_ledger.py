@@ -43,7 +43,7 @@ PREFIX = {"sec_execsummary.tex": "ES", "sec_intro.tex": "IN", "sec_summary.tex":
           "sec_5d.tex": "FD", "sec_joint.tex": "JT", "sec_fps.tex": "FP", "app_statmethods.tex": "AA",
           "app_statmethods_nd.tex": "AB", "app_negweight.tex": "AC", "app_response_mismatch.tex": "AD",
           "result_status_rows.tex": "RS", "sec_pet_campaigns.tex": "PC", "primer_body.tex": "PR",
-          "app_release.tex": "RL"}
+          "app_release.tex": "RL", "sec_fived16.tex": "FV", "sec_results.tex": "RE"}
 RECORDS = {"app_provenance.tex", "app_history.tex", "app_release_records.tex", "app_codebase_records.tex",
            "main_records.tex"}
 PROTECTED = ["values.tex", "values_inference.tex", "app_history.tex", "main_note.tex", "main_paper.tex",
@@ -67,6 +67,8 @@ FROZEN = [
 ]
 # Ruling 2: the readiness sentence may move verbatim from the status table into the ES's 2D paragraph.
 MOVES = {FROZEN[6]: ("result_status_rows.tex", "sec_execsummary.tex")}
+# Labels removed by decision (check 3 allows exactly these): the status table goes with its rows file (ruling 1).
+LABELS_REMOVED = {"sec_execsummary.tex": {"tab:result-status"}}
 IDRX = re.compile(r"\b(" + "|".join(sorted(PREFIX.values(), key=len, reverse=True)) + r")\d+\b")
 
 
@@ -176,7 +178,7 @@ def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, all_cur, all_old
             fails.append(f"UNCOVERED {sid} ({f}): {s[:100]!r}")
     for f in files:
         lo = set(re.findall(r"\\label\{([^}]*)\}", old[f])); ln = set(re.findall(r"\\label\{([^}]*)\}", cur[f]))
-        for lab in sorted(lo - ln):
+        for lab in sorted(lo - ln - LABELS_REMOVED.get(f, set())):
             fails.append(f"LABEL REMOVED {f}: {lab}")
     for f in PROTECTED:
         if prot_cur.get(f) != prot_old.get(f):
@@ -232,7 +234,7 @@ def main():
         rel_old = "The bin edges are the one thing a reader cannot recover from a checksum:"
         rel_new = rel_old.replace("one thing", "only thing")
         fake = [("T-REL", RELEASED, rel_old, rel_new)]
-        es = "sec_execsummary.tex"
+        es, RS = "sec_execsummary.tex", "result_status_rows.tex"
         planted = [
             ("missing probe", dict(cur), lt + "\n| T1 | t | — | KEEP | — | `N:%s::@@NO SUCH TEXT@@` |\n" % f0, {}),
             ("dropped sentence", {**cur, f0: cur[f0].replace(s0.split()[0] + " " + s0.split()[1], "@@", 1)}, lt, {}),
@@ -244,15 +246,15 @@ def main():
              {"prot": {RELEASED: prot_old[RELEASED].replace(rel_old, rel_new)}, "rel": fake, "pins": {}}),
             ("frozen sentence edited", dict(cur), lt,
              {"all": {es: all_cur[es].replace("has been observed.", "was observed.")}}),
+            # The move plants are built on the base files, so they hold before and after the move is made.
             ("frozen sentence duplicated by the move", dict(cur), lt,
-             {"all": {es: all_cur[es] + "\n" + FROZEN[6] + "\n"}}),
+             {"all": {es: all_old[es] + "\n" + FROZEN[6] + "\n", RS: all_old[RS]}}),
         ]
         # The silent direction: a pinned pair is allowed, and the declared verbatim move is allowed.
         silent = [
             ("pinned app_release pair", {"prot": {RELEASED: prot_old[RELEASED].replace(rel_old, rel_new)}, "rel": fake,
                                          "pins": {"T-REL": pin(rel_old, rel_new)}}),
-            ("declared verbatim move", {"all": {es: all_cur[es] + "\n" + FROZEN[6] + "\n",
-                                                "result_status_rows.tex": all_cur["result_status_rows.tex"].replace(FROZEN[6], "")}}),
+            ("declared verbatim move", {"all": {es: all_old[es] + "\n" + FROZEN[6] + "\n", RS: ""}}),
         ]
         base_fails, *_ = check(wt, cur, old, files, lt, *args)
 
@@ -264,7 +266,7 @@ def main():
             ok &= caught
             print(f"  {name}: {'caught' if caught else 'NOT CAUGHT'}")
         for name, o in silent:
-            quiet = run(cur, lt, o) == base_fails
+            quiet = frozen_fails({**all_cur, **o["all"]}, all_old) == [] if "all" in o else run(cur, lt, o) == base_fails
             ok &= quiet
             print(f"  {name}: {'silent' if quiet else 'FIRED (should be silent)'}")
         print("SELF-TEST ::", "PASS" if ok else "FAIL")

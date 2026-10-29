@@ -2,113 +2,22 @@
 \addcontentsline{toc}{section}{Executive summary}
 \label{sec:execsummary}
 
-% Methods-paper sync (METHODS-IMPLEMENTATION.md sec. 4, framing; paper_body.tex sec:intro): validation study first, the generator tests as an application.
+% Note round n4 (DECISION-20261028-joseph-protections-n4-release-retrospective.md item 2; note-n4/outline.md, rulings 1-2): folded to about a page as the note's single results summary, with the one list of principal limitations, moved here from sec_summary.tex. Each result points to its body home, where every fact the fold removed still prints (note-n4/ledger.md, batch F); the status table and its rows file are cut. The sentences frozen until Joseph's inventory decision (outline sec. 4) are kept byte-identical. The earlier text and its source comments are in git history at 371cccec.
 We apply \emph{unbinned machine-learning unfolding} (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's medium-energy neutrino data. The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison. The results hold for this implementation, one data set, and the configurations, observables and deformations tested (\S\ref{sec:intro}). The generator tests are an application that illustrates calibrated inference with a biased estimator.
-% Note register round n2 (R-N2a): one claim per sentence in this summary and in its "Principal limitations"; every
-% qualifier kept with its result (ledger-n2-A.md rows ES*).
-% Register round n1 (R-N5): the scope is stated once in sec_intro.tex (paragraph "Scope"); this is its one restatement.
-% Register pass b8 (2026-10-22): each item states its result once, with its scope; ledger.md rows E*.
-% Cut (lane 1 skeleton; the migration-matrix/morphing mechanism): sec_method.tex:7-14, sec_3d.tex:4.
-% Cut (one-page summary): "Reporting binning is imposed only at the end, so a recorded observable
-% can be added without constructing a new response tensor, though higher dimensions complicate
-% training, support, and uncertainty propagation": sec_intro.tex:35, sec_method.tex:12,
-% sec_3d.tex:4.
-% Cut (one-page summary; restated by the first two bullets and the abstract): "We reproduce and
-% extend a published measurement to simultaneous three-, four-, and five-observable scalar cross
-% sections": sec_intro.tex:8, sec_summary.tex:11-14.
-% Cut (one-page summary; restated by the last two bullets): "We also study a preliminary extended
-% fiducial domain with relaxed truth-muon cuts and a recoil-only point-cloud representation":
-% sec_intro.tex:46-47, sec_fps.tex:4-6, sec_pet.tex:165-167.
-% Cut (lane 1 skeleton, lane 5 R2; "no direct binned MINERvA counterparts"): sec_3d.tex:6-7.
-% Cut (lane 1 K4, optional drop; GBDTs and their validation): sec_summary.tex:4-11,
-% sec_method.tex:28-31, 119-123.
 
-\paragraph{Results overview:}
+\paragraph{Results:}
+% Ruling of 2026-10-28 on the length conflict: (b)+(c). Each result is its headline sentence with a pointer to its body home; the limitations paragraph is the ES's pointer list as it stood at the base, with the frozen 2D sentence. Every limitation prints at its body home (note-n4/ledger.md, batch F).
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
-  \item \textbf{Reproduction.} Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published integrated cross section~\cite{MINERvA:2021owq} within about one percent, with a correlated shape difference. The total cross-section ratio is $\ratioTot$, and \SI{\binsTen}{\percent} of bins are within \SI{10}{\percent}. A separately constructed uncertainty is comparable to the published one: its per-bin median is \SI{\uqMedian}{\percent} against \SI{\uqPaper}{\percent}, and its integral \SI{\uqIntegral}{\percent} against \SI{\uqPaperIntegral}{\percent}. Its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights (\S\ref{sec:results-uq}). A generator-shape model-dependence component, reported beside that uncertainty and absent from the published one, raises the per-bin median to \SI{\qrCmodelMedian}{\percent} (\S\ref{sec:uq-2d-scope}). The central value and that uncertainty share the LightGBM estimator, with refined negative-weight background subtraction. LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). Against the full published covariance, $\chi^{2}/\mathrm{ndf}=\chiPaper$ (exact-split: $\chiPaperExact$) is a descriptive distance. Its source has not been identified (\S\ref{sec:results-tension}).
-  % Search: source of the shape difference; source has not been identified (note sources: only paper_body.tex sec:repro2d and primer_body.tex print it; sec_results.tex sec:results-tension calls about one unit of the distance a methodological band, and App. sec:tension attributes about one chi-square unit to the estimator's implicit regularization) @ 03e98d3d
-  % Methods-paper sync (M8, narrowed: "bin by bin" withdrawn; paper abstract and sec:repro2d, values.tex:10, :16, :46).
-  % \uqMedian, \uqIntegral are Q (values.tex; budget_Q.json.gz Q.median_pct, Q.integral_sigma_pct); \uqPaperIntegral 4.61.
-  % J3/J4 provisional (DECISION-20261018, packet C2: median and integral; W5: the 6.87 % value is left to sec:results-uq
-  % and App. history, to which this clause points (dropped here, and "cross-check" after "exact-split" below, to keep the summary at its page count); W3: the run-period block
-  % (D5) is described in sec:uq-combine, not here).
-  % Pointers \S\ref{sec:systematics} and Fig.~\ref{fig:xsec} dropped (one-page summary): both are
-  % cited from the results section this item points to (sec_results.tex:8, 136).
-  % Cut (one-page summary): "per-bin standardized differences sub-$1\sigma$": sec_results.tex:35, 89-90;
-  % "not a normalization one": sec_results.tex:92-93.
-
-  \item \textbf{Unbinned 3D/4D/5D MINERvA unfolds.} Adding $\Eavail$, $q_{3}$ and $W$ gives simultaneous unfolds. In configuration (a), the 4D and 5D marginal-normalization checks against the lower-dimensional result pass to $\approx$1--2\,\%. The configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to \SI{0.141}{\percent} in total, a comparison across configurations (\S\ref{sec:3d}). Binned MINERvA measurements already reach triple-differential~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme}. The 3D and 4D injected-bump closures, of configuration (a), leave 0.10 of the injected $\Eavail$ change and close $q_{3}$ to \SI{1.1}{\percent}. Neither closure is graded (\S\ref{sec:3d-closure}, Table~\ref{tab:closure-map}). Reconstructed $W$ is fixed by $(\pT,\pPar,q_{3})$, so the five are simultaneous, not independent, observables (\S\ref{sec:eavailw-definitions}). $\Eavail$ keeps the inherited \SI{135}{MeV} charged-pion constant (\S\ref{sec:eavail-definition}).
-  % Search: threshold near 3D, 4D, closure, bump or q3 in 3d-unfolding/*.md and the note sources (none; sec_validation.tex tab:closure-map prints "no predeclared threshold" for both closures; the 3D search of its home, sec_3d.tex sec:3d-closure) @ 03e98d3d
-  % Methods-paper sync (M8, narrowed and definitions): paper_body.tex sec:validation (0.10; 1.1%; "No record shows an
-  % acceptance threshold fixed before either test"), sec:data (W redundancy; 135 MeV "inherited").
-  % plain-language pass, review fix M2, director ruling on base defect note M2 (DECISION-20261018-joseph-plain-language-pass)
-  % Cut (one-page summary): the axis names (available energy, momentum transfer, hadronic mass):
-  % abstract, sec_3d.tex:4, sec_eavailw.tex:7-10; "the distinction here is the unbinned,
-  % simultaneously-unfolded formulation, not multi-dimensionality itself": abstract (main_note.tex:42-43),
-  % sec_3d.tex:6.
-
-  % Methods-paper sync (M8, removed: the low-recoil mechanism attribution and the 2p2h gap fraction as a measurement; paper_body.tex sec:central keeps a descriptive statement that points to these sections).
-  \item \textbf{Low-$\Eavail$ central values (descriptive).} All four truth-level generators, GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx} and GiBUU~\cite{Buss:2011mx}, under-predict the unfolded central value in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$), the region of the established MINERvA low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}. The GENIE and NuWro predictions are flux-repaired (\S\ref{sec:3d-models}). The comparisons with the tested pion-FSI dials and with Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} are in \S\ref{sec:3d-2p2h} (Fig.~\ref{fig:3dmodels}).
-  % Register round n1 (R-N1): "central values without uncertainties" and "no nuclear mechanism" are stated once at the
-  % sec_3d.tex lead and restated once under "Principal limitations" below. Note consolidation (R01): they are now named there
-% with a pointer to the body home only.
-  % Cut (lane 1 R6, lane 5 R1a): "63 % of the integrated deficit": sec_3d.tex:145-144;
-  % flux-repair scope and its ledger row: sec_3d.tex:100-108.
-
-  \item \textbf{High-$\Eavail$, high-$W$ excess (descriptive).} In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$. A fifth of the positive difference sits in the single widest overflow cell. The high-$\Eavail$, high-$W$ region carries the largest regularization bias measured in \S\ref{sec:5d}. In ratio, the excess also extends to low $W$. The four external generators also fall below the data in this corner, each by about its overall shortfall once GiBUU's sample limit is allowed for (\S\ref{sec:eavailw-band}). The NuWro and GiBUU ratios contain an uncorrected carbon-versus-CH target difference (\S\ref{sec:eavailw-generators}).
-  % Methods-paper sync (M8, corrections: the target per-nucleon effect, KNOWN_ISSUES 97; paper_body.tex sec:data, sec:central).
-  % Register round n1 (R-N1): the descriptive reading and the status of the projection's covariance are restated once
-  % under "Principal limitations" below (homes: sec_3d.tex lead; sec:eavailw-adopted). Deposit pass: the exception
-  % restated as its content (sec:eavailw-adopted); old text in git history. Note consolidation (R01): both are now named
-% under "Principal limitations" with a pointer to the body home only.
-  % plain-language pass, review fix m4 (DECISION-20261018-joseph-plain-language-pass)
-  % Pointers \S\ref{sec:eavailw} and Fig.~\ref{fig:eavailWband} dropped (one-page summary): the
-  % section is the item's subject and is reached from \S\ref{sec:eavailw-adopted}; the figure is
-  % cited from sec_eavailw.tex:43.
-  % Cut (one-page summary): "that 2p2h cannot explain": sec_3d.tex:144-145, sec_eavailw.tex:4-5.
-  % Cut (one-page summary): "GENIE and NuWro fall short in the corner by about as much as overall
-  % (corner data/generator 1.14--1.16 against 1.07--1.15 integrated). GiBUU falls further short
-  % (1.61 against 1.39 integrated)": sec_eavailw.tex:55-62; the measured sensitivity
-  % \sprojMeasured % against the \sprojBound % limit: sec_eavailw.tex:119-121;
-  % "we quote no compatibility metric": sec_eavailw.tex:57.
-  % Cut (lane 1 R9-R11, lane 5 R3/R4): GiBUU energy-share arithmetic: sec_eavailw.tex:57;
-  % covariance digests and digest-identity pairing: sec_eavailw.tex:80-85, 256-260;
-  % the exception: sec_eavailw.tex:84-88.
-
-  % Methods-paper sync (M8, tests): hybrid nulls, nuisance-averaged size, familywise control at 5% under the stated calibration assumptions (0.8902 alpha in sec:joint5d-fwer), margins, not physical exclusions, no gain over matched coarse projections, the missing calorimetric response (paper_body.tex sec:intro scope, sec:calibration, sec:conditions, sec:joint-results, sec:response). "Simple hypotheses" was wrong: the nulls are hybrid.
-  \item \textbf{Application: joint five-dimensional generator tests.} Calibrated tests of hybrid null hypotheses for five predictions, in total (rate and shape) and in shape, reject all ten under six stated conditions. The five predictions are Tune~v1, GENIE with and without MEC, NuWro and GiBUU; each null uses the prediction on the fine grid, with the Tune~v1 composition below it. The family-wise error rate is controlled at 5\% under the stated calibration assumptions, and the size is averaged over the nuisance priors (\S\ref{sec:joint5d-fwer}). The closest decisions, the NuWro and GENIE~CV shape tests, lie 1.11 and 1.30 null standard deviations beyond their boundary, with the Holm order held fixed (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions, and matched coarse projections reject as well (\S\ref{sec:joint5d-projections}). Each rejection also holds in a robustness variant, not used for the decisions, that assumes a larger residual below the finest tested grid (\S\ref{sec:joint5d-conditions}). The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (\S\ref{sec:joint5d-lost}). Correcting the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data. In this descriptive re-evaluation, NuWro's total-test rejection is not robust to the correction, and the ten decisions are unchanged (\S\ref{sec:joint5d-ch}).
-  % Search: below the fine grid; fine-grid convergence; delta_fine; per halving (the search of its home in sec_joint.tex) @ ddf16f10
-  % Note register round n2: "with the Holm order held fixed" is the condition of the two margins at their home
-  % (sec_joint.tex sec:joint5d-conditions), carried into this restatement.
-  % Methods-paper rewrite draft 6 (REVIEW-2 finding 19): the CH caveat (DECISION-20261020-joseph-nuwro-ch-claim.md).
-  % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
-  % Register round n1 (R-N6): "the ten decisions are unchanged" keeps both elements of DECISION-20261020 line 37
-  % (descriptive; the decisions stand), as in sec_joint.tex sec:joint5d-ch. The recoil band moved to "Principal
-  % limitations"; "hypothesis tests, not a measured uncertainty" is stated in sec_intro.tex "Scope" and the
-  % sec_joint.tex lead ("add no reportable uncertainty").
-
+  \item \textbf{Sixteen-cell five-observable cross section.} The cross section in $\pT$, $\pPar$, $\Eavail$, $q_{3}$ and $W$ is reported in sixteen cells with a covariance whose median per-cell uncertainty is \fvval{sigmed-C_total_resp}\%. Three external generator predictions compared on all sixteen cells give $\chi^{2}$ between \fvval{g-ext-chi2int-min16} and \fvval{g-ext-chi2int-max16} for 16 degrees of freedom, and GiBUU, on its 8 cells, \fvval{g-gibuu-total-chi2int} (\S\ref{sec:fived16-gen}).
+  \item \textbf{Reproduction.} Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published integrated cross section~\cite{MINERvA:2021owq} within about one percent, with a correlated shape difference (\S\ref{sec:results}). Whether it is ready for publication as a measurement has not been established. LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}).
+  \item \textbf{Unbinned 3D/4D/5D central values.} Adding $\Eavail$, $q_{3}$ and $W$ gives simultaneous unfolds, and the 3D, 4D and configuration-(a) five-dimensional unfolds are reported as central values. In configuration (a), the 4D and 5D marginal-normalization checks against the lower-dimensional result pass to $\approx$1--2\,\%. The configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to \SI{0.141}{\percent} in total, a comparison across configurations (\S\ref{sec:3d}). Reconstructed $W$ is fixed by $(\pT,\pPar,q_{3})$, so the five are simultaneous, not independent, observables (\S\ref{sec:eavailw-definitions}).
+  \item \textbf{Descriptive comparisons of the central values.} All four truth-level generators, GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx} and GiBUU~\cite{Buss:2011mx}, under-predict the unfolded central value in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$), the region of the established MINERvA low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl} (\S\ref{sec:3d-models}, \S\ref{sec:3d-2p2h}). In cell-integrated terms, most of the positive difference from the Tune~v1 prior lies at $\Eavail\ge\SI{0.8}{GeV}$, much of it at $W\ge\SI{1.8}{GeV}$ (\S\ref{sec:eavailw-map}). The high-$\Eavail$, high-$W$ region carries the largest regularization bias measured in \S\ref{sec:5d}. The four external generators also fall below the data in this corner, each by about its overall shortfall once GiBUU's sample limit is allowed for (\S\ref{sec:eavailw-band}).
+  \item \textbf{Application: joint five-dimensional generator tests.} Calibrated tests of hybrid null hypotheses for five predictions, in total (rate and shape) and in shape, reject all ten under six stated conditions (\S\ref{sec:joint5d-conditions}). The rejections are not physical exclusions, and matched coarse projections reject as well (\S\ref{sec:joint5d-projections}). The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (\S\ref{sec:joint5d-lost}). Correcting the carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data. In this descriptive re-evaluation, NuWro's total-test rejection is not robust to the correction, and the ten decisions are unchanged (\S\ref{sec:joint5d-ch}).
   \item \textbf{A methodological finding.} The standard covariance sums single-source systematic matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms. A corrected unified-throw test perturbs all reweightable sources together and stores the joint mean shift separately (\S\ref{sec:uq-combine}).
-  % Cut (lane 1 R12, lane 5 R4; the adoption sentence): kept under "Adopted covariance" below;
-  % sec_eavailw.tex:80-85, sec_systematics.tex:95-99.
-
-  \item \textbf{A preliminary extended-fiducial study.} Removing truth-muon cuts, with the fiducial volume and MINOS-based selection kept, puts about \SI{6}{\percent} of the scalar 2D rate in newly acceptance-supported cells, which are part of tier~1. It puts about \SI{28}{\percent} in low- or zero-efficiency cells, which form tier~2 (\S\ref{sec:fps}).
-  % Shortened (one-page summary): "truth-muon kinematic cuts", "MINOS-based reconstructed
-  % selection", "tracker fiducial volume": sec_fps.tex:4-6; "a newly acceptance-supported extension": sec_fps.tex:51-53.
-
-  % Register round n1 (R-N5): the former item "Future work: point-cloud representations" is stated once in sec_intro.tex "Scope" and restated in one clause under "Principal limitations".
+  \item \textbf{A preliminary extended-fiducial study.} Removing truth-muon cuts, with the fiducial volume and MINOS-based selection kept, puts about \SI{6}{\percent} of the scalar 2D rate in newly acceptance-supported cells (part of tier~1) and about \SI{28}{\percent} in low- or zero-efficiency cells (tier~2; \S\ref{sec:fps}).
 \end{itemize}
 
-\input{result_status_rows}
-\begin{table}[H]
-\centering\footnotesize
-\begin{tabular}{@{}p{0.20\textwidth}p{0.20\textwidth}p{0.27\textwidth}p{0.24\textwidth}@{}}
-\resultstatusrows
-\end{tabular}
-\caption{Scalar results: for each, the central estimator, the construction of its uncertainty, the recovery and interval checks applied, and the interpretation it supports. Details: \S\ref{sec:method-config}, \S\ref{sec:coverage}, \S\ref{sec:val-fiveaxis}, \S\ref{sec:eavailw-adopted}, \S\ref{sec:fived16} and \S\ref{sec:joint5d}.}
-\label{tab:result-status}
-\end{table}
-
-\paragraph{Principal limitations:} The body states each limitation with the result it qualifies; the principal ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}). The others are stated with their results: the generator comparisons (\S\S\ref{sec:3d}--\ref{sec:eavailw}); the absence of a 3D or 4D covariance (\S\ref{sec:3d}); the five-dimensional estimator's regularization bias (\S\ref{sec:val-departure}) and the purity-subtraction bias of configurations (a) and (c) (\S\ref{sec:val-negweight}); five-dimensional intervals and their coverage (\S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage-5d}); the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-adopted}); the calibration and nuisance model of the generator tests (\S\ref{sec:joint5d-frozen}, \S\ref{sec:joint5d-response}); tier~2 of the extended-fiducial study (\S\ref{sec:fps}); the fake-data limitation of the sixteen-cell result (\S\ref{sec:fived16-fd}); and point-cloud work (App.~\ref{sec:pet}).
+\paragraph{Principal limitations:}\label{sec:execsummary-limitations} The body states each limitation with the result it qualifies; the principal ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}). No result's intervals have validated coverage (two dimensions: \S\ref{sec:uq-2d-scope}; five dimensions: \S\ref{sec:coverage-5d}; the sixteen cells: \S\ref{sec:fived16-fd}). The others are stated with their results: the generator comparisons (\S\S\ref{sec:3d}--\ref{sec:eavailw}); the absence of a 3D or 4D covariance (\S\ref{sec:3d}); the five-dimensional estimator's regularization bias (\S\ref{sec:val-departure}) and the purity-subtraction bias of configurations (a) and (c) (\S\ref{sec:val-negweight}); five-dimensional intervals and their coverage (\S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage-5d}); the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-adopted}); the calibration and nuisance model of the generator tests (\S\ref{sec:joint5d-frozen}, \S\ref{sec:joint5d-response}); tier~2 of the extended-fiducial study (\S\ref{sec:fps}); the fake-data limitation of the sixteen-cell result (\S\ref{sec:fived16-fd}); and point-cloud work (App.~\ref{sec:pet}).
 % Register round n1 (S1; caveat-study R-N1; the model is paper_body.tex sec:limitations): the former "What is not
 % claimed" list. Each fact of each former item prints at its home in the body; ledger-nA.md rows A* map each one.
 % Sources of the former items: 2D coverage, OUTCOME-20261005-2d-fixed-truth-coverage-fail.md (VL169) and

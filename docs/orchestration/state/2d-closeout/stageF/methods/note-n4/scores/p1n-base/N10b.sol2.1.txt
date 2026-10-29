@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is technically formal but repeatedly shifts into internal reporting through project-specific labels, stacked qualifications, and document-production bookkeeping, requiring a dedicated language pass.
+1. QUOTE: "The executive summary (p. 1) lists each result with its scope. This section states the
+conclusions they support. The main results are the validation findings, within the scope stated in §1.
+The generator tests are an application that illustrates calibrated inference with a biased estimator."
+   REWRITE: The principal results concern validation within the scope defined in §1. The generator tests illustrate an application of calibrated inference with a biased estimator.
+2. QUOTE: "None of the precision study’s
+reporting definitions (RD1–RD3) met a precision target (§9.4); the sixteen-cell result is reported on
+the precision study’s H2 grid after a purity merge of its supported boxes (§10.1)."
+   REWRITE: The precision targets were not met under any of the three reporting definitions (§9.4). The sixteen-cell result uses the precision study’s H2 grid, with supported regions merged according to purity (§10.1).
+3. QUOTE: "A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents
+
+and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a program that recomputes and verifies the results, but no release has been tagged or deposited (App. G). Rebuilding the note’s PDFs does not reproduce the scientific results.
