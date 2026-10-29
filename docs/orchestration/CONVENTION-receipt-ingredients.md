@@ -59,7 +59,10 @@ Do not add an author field to the JSON. A name written into the file is self-rep
 checked, and it duplicates what git already holds. What matters is that the adding commit names a lane,
 so pass your own identity per commit (`git -c user.name=… -c user.email=… commit`). The pre-commit hook
 refuses a commit that adds a `docs/orchestration/state/*.json` under the shared default identity
-*"MINERvA-OmniFold agent (unattributed)"* (`receipt_author.py`). Measured over the 30 days to
+*"MINERvA-OmniFold agent (unattributed)"* (`receipt_author.py`). **A script that runs `.githooks/pre-commit` directly**,
+outside `git commit` (for example `merge_main.sh`), must export `GIT_AUTHOR_NAME` and `GIT_AUTHOR_EMAIL` first. A
+`-c user.name=…` given to a later `git commit` does not reach the hook's `git var GIT_AUTHOR_IDENT` when the hook
+runs on its own, so the check sees the checkout's default and refuses (found by the director on 2026-10-29). Measured over the 30 days to
 2026-10-28: 144 of the 154 commits that added state receipts named a lane, and 10 used the shared
 default.
 
