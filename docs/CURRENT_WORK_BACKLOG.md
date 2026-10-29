@@ -7,12 +7,10 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
-| OI-188 | NOW | migration-carried-forward | OPEN |
+| OI-188 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh |
 | OI-148 | NOW | migration-carried-forward | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
 | OI-74 | NOW | migration-carried-forward | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
-| OI-2 | NOW | migration-carried-forward | 4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13 |
-| OI-3 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED — now SCOPED, and the blocker is a decision not compute |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
 | OI-12 | NOW | migration-carried-forward | OPEN |
@@ -20,21 +18,14 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-29 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-30 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See |
 | OI-31 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-32 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-34 | NOW | migration-carried-forward | OPEN |
 | OI-35 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-37 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-40 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-47 | NOW | migration-carried-forward | OPEN (re-scoped 2026-08-12, owner Session A) |
 | OI-50 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the |
 | OI-51 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-52 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the premise is false (lanes read Iris; state/measurement-scoping/iris |
 | OI-53 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-54 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-59 | WAITING-JOSEPH | declared | OWNER THE DIRECTOR 2026-10-28, WAITING-JOSEPH, on the director's ruling — the next step is Joseph's freeze question, whi |
-| OI-60 | BLOCKED-EXTERNAL | migration-carried-forward | RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW |
+| OI-60 | WAITING-JOSEPH | declared | ON JOSEPH'S QUEUE 2026-10-29 (owner Joseph, WAITING-JOSEPH) for the RETROSPECTIVE CLOSE, which is his. The RE-RUN half i |
 | OI-62 | WAITING-JOSEPH | migration-carried-forward | (a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER |
 | OI-120 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129) |
-| OI-121 | NOW | migration-carried-forward | AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT |
-| OI-132 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON |
 | OI-137 | WAITING-JOSEPH | declared | OWNER THE DIRECTOR 2026-10-28, HELD until a session holds the "scalar-5D adoption/statistics owner" role that Ruling 7 ( |
