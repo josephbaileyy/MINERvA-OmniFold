@@ -1,0 +1,19 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER conveys the same facts, numbers, qualifiers, citations, and scope as BEFORE without introducing any unsupported claims or ambiguities.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER introduces the label ``support rule'' for the previously defined 1000-event threshold and makes minor stylistic rephrasings, but retains all definitions, numerical values, qualifiers, and generator comparisons without altering meaning.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER reorders the discussion of the estimators and classifier training details, but preserves all parameters, procedural specifications, numerical findings, and limitations unchanged.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER restructures several sentences for flow, but preserves all numerical values, covariance definitions, validation findings, qualifiers, and caveats intact.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER maintains all reporting specifications, comparison results, sensitivity figures, and descriptive trends with the same meaning and qualifiers as BEFORE.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds the statement, ``The low stability of four of the sixteen cells is stated only here.'' This claim is unsupported by BEFORE, which instead states without exception that the limitations of the results are given with the results they qualify in Secs.~\ref{sec:method}--\ref{sec:result16}.
+
+END

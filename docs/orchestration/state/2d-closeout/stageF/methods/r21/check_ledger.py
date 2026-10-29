@@ -41,6 +41,16 @@ def show(wt, rev, f):
                           text=True, check=True).stdout
 
 
+def unspan(s):
+    """A ledger cell's code span, unwrapped: `x`, or ``x`` when x holds LaTeX's own `` quotes; \\| is markdown's
+    escape for a literal | inside a table cell."""
+    s = s.strip()
+    m = re.match(r"^(`+)( ?)(.*?)\2\1$", s, re.S)      # a code span of any backtick-run length (markdown)
+    if m:
+        s = m.group(3)
+    return s.replace("\\|", "|")
+
+
 def rows(text):
     out = []
     for line in text.splitlines():
@@ -49,10 +59,8 @@ def rows(text):
         c = [x.strip() for x in line.strip().strip("|").split(" | ")]
         rid, sec, fact, atoms, base, status = c[:6]
         after = c[7] if len(c) > 7 else ""
-        at = [a.strip()[1:-1] if a.strip().startswith("`") and a.strip().endswith("`") else a.strip()
-              for a in atoms.split(" && ")]
-        aft = after.strip()
-        aft = aft[1:-1] if aft.startswith("`") and aft.endswith("`") else aft
+        at = [unspan(a) for a in atoms.split(" && ")]
+        aft = unspan(after)
         out.append({"id": rid, "atoms": [re.sub(r"\s+", " ", a) for a in at if a], "base": base, "status": status,
                     "after": re.sub(r"\s+", " ", aft)})
     return out

@@ -1,0 +1,11 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking proposed rewrites of the sections of a physics paper. Each numbered pair has a BEFORE passage, whose content is accepted as correct, and an AFTER passage, a proposed rewording of it. For each pair, compare AFTER with BEFORE only, and say:
+(a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+(b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+(c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END

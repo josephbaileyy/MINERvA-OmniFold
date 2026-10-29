@@ -1,0 +1,19 @@
+Q1: VERDICT: SAME
+DETAIL: The rewording preserves all facts, numbers, citations, qualifiers, and section cross-references. No facts are dropped and no statements are broadened or made ambiguous.
+
+Q2: VERDICT: SAME
+DETAIL: All dataset parameters, selection criteria, observable definitions, generator details, and binning rules are preserved with identical meaning. Introducing the name "the support rule" merely labels the 1000-event threshold defined in that same sentence and supported by the cross-references.
+
+Q3: VERDICT: SAME
+DETAIL: The extraction procedure, classifier capacity settings, background-subtraction treatments, envelope sensitivity definitions, and 16-cell construction are preserved across the paragraph reordering. No qualifiers, facts, or numbers are dropped or altered.
+
+Q4: VERDICT: SAME
+DETAIL: All numerical values, covariance constructions, benchmark comparisons, closure tests, deformation findings, stability bounds, and fake-data results match BEFORE in full. The stylistic adjustments and sentence splits introduce no unsupported claims or ambiguities.
+
+Q5: VERDICT: SAME
+DETAIL: The presentation of the sixteen-cell cross section, generator comparison $\chi^2$ values and degrees of freedom, correlation sensitivity tests, and low-recoil central-value comparisons is preserved without alteration of facts, numbers, or qualifiers.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER introduces a factual claim about the organization of the paper that BEFORE does not state or support, namely that "The low stability of four of the sixteen cells is stated only here."
+
+END
