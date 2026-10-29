@@ -19,6 +19,10 @@ if git diff --name-only --diff-filter=U | grep -qx docs/orchestration/MANIFEST.t
 for f in $(git diff --name-only --diff-filter=U); do case $f in docs/analysis-note/records_*) git checkout --theirs -- "$f" && git add -- "$f";; esac; done
 left=$(git diff --name-only --diff-filter=U); if [ -n "$left" ]; then echo "UNRESOLVED: $left"; exit 4; fi
 if grep -q -E '^(<<<<<<<|>>>>>>>)' docs/orchestration/CATALOG.md docs/orchestration/MANIFEST-overrides.tsv; then echo "MARKERS LEFT"; exit 4; fi
+# Stripping markers keeps BOTH sides, so a row edited on one side survives twice, old and new (FD-CT-RETENTION's row,
+# 2026-10-28). Stop when a record link, or an override path, is listed twice.
+dup=$(grep '^| ' docs/orchestration/CATALOG.md | awk -F'|' '{print $(NF-1)}' | grep '\](' | sort | uniq -d; cut -f1 docs/orchestration/MANIFEST-overrides.tsv | grep . | sort | uniq -d)
+if [ -n "$dup" ]; then echo "DUPLICATE ROW: $dup"; exit 4; fi
 git add -u -- docs/orchestration/registry >/dev/null 2>&1
 python3 tools/registry/check_registry.py --repoint >/dev/null 2>&1; git add -u -- docs/orchestration/registry
 python3 tools/registry/results_index.py --write >/dev/null 2>&1; git add -u -- docs/orchestration/registry docs/analysis-note/records_results_index.tex docs/analysis-note/records_estimators.tex; python3 tools/registry/results_index.py --write >/dev/null 2>&1
