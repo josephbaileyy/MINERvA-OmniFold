@@ -1,0 +1,18 @@
+2026-10-29T11:56:15Z
+nid004089
+job 60489457_5 cpus_per_task=36
+a310bb352ad64aaa3875bdb2f129450fa07594d6
+porcelain_ignored_lines 0
+A/bootstrap_nd.py: OK
+B/bootstrap_nd.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_boot_85.npz: OK
+affinity_cpus=36
+s85_A start 2026-10-29T11:56:16Z
+s85_A rc=0 end 2026-10-29T12:14:16Z
+s85_B start 2026-10-29T12:14:16Z
+s85_B rc=0 end 2026-10-29T12:34:26Z
+done 2026-10-29T12:34:26Z

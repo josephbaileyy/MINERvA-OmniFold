@@ -1,0 +1,21 @@
+NODE=login37 UTC=2026-10-29T11:13:16Z
+T-absent-before: yes
+===== deploy.log
+2026-10-29T11:13:51Z
+login37
+a310bb352ad64aaa3875bdb2f129450fa07594d6
+porcelain_ignored_lines 0
+c21d188ec9d6479283fcf73dd8f5eacd0ee0fb0dd9b4664c3a863df12a9388da  run_array.sh
+47ff57c950a7e539c7d580f360f8984ead4d6643645bd85388582bcec329cb3f  tol_compare.py
+82cbe3a12f7ffbc3d010f79c93149d2f8b39070e0ab4287844f032e6f0177868  test_tol.py
+d20298721bb99d5a319d036a90558c75de7ee691d9aba6987b8f5e32ab3587d5  seeds.tsv
+9197ee78994455ec5ac960cdc32bb011281159677934935e8ce1f7ecba0afc4b  stored.sha256
+5da5283b212e94e21ccfaa69f266a34136fc45d6c34eb84a25a1fbfe1cecadc0  code.sha256
+cb87a939d47c877c6bdf2b7231301e7ae0ac5e2d41f4e3ecdabbec12e9525f57  DECLARATION.md
+649b12916b4fe43df1626f9809d89817ba3e57ee04238be793918eaa968396ae  ../oi160-reproduction-20261029/repro_run.py
+tests rc=0
+porcelain_ignored_lines_after_tests 0
+===== tests tally
+Ran 9 tests in 0.309s
+OK
+first-run B kept: /pscratch/sd/j/josephrb/oi160-repro-20261029/out

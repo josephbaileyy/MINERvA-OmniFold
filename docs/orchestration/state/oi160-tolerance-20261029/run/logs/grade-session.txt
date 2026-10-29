@@ -1,0 +1,42 @@
+NODE=login37 UTC=2026-10-29T15:11:37Z
+===== grade.log
+[tol_compare] floor_ok=True producers={'55805463': 'CORRECTED', '55871150': 'CORRECTED', 'interactive-20260713': 'CORRECTED'} overall=CORRECTED
+grade rc=0
+===== sacct
+60489457_0|COMPLETED|00:51:52|0:0|billing=36,cpu=36,energy=1786531,mem=64G,node=1
+60489457_0.batch|COMPLETED|00:51:52|0:0|cpu=36,mem=64G,node=1
+60489457_0.extern|COMPLETED|00:51:52|0:0|billing=36,cpu=36,mem=64G,node=1
+60489457_1|COMPLETED|00:35:05|0:0|billing=36,cpu=36,energy=1037462,mem=64G,node=1
+60489457_1.batch|COMPLETED|00:35:05|0:0|cpu=36,mem=64G,node=1
+60489457_1.extern|COMPLETED|00:35:05|0:0|billing=36,cpu=36,mem=64G,node=1
+60489457_2|COMPLETED|00:18:54|0:0|billing=36,cpu=36,energy=749791,mem=64G,node=1
+60489457_2.batch|COMPLETED|00:18:54|0:0|cpu=36,mem=64G,node=1
+60489457_2.extern|COMPLETED|00:18:54|0:0|billing=36,cpu=36,mem=64G,node=1
+60489457_3|COMPLETED|00:53:01|0:0|billing=36,cpu=36,energy=1420748,mem=64G,node=1
+60489457_3.batch|COMPLETED|00:53:01|0:0|cpu=36,mem=64G,node=1
+60489457_3.extern|COMPLETED|00:53:01|0:0|billing=36,cpu=36,mem=64G,node=1
+60489457_4|COMPLETED|00:17:45|0:0|billing=36,cpu=36,energy=530464,mem=64G,node=1
+60489457_4.batch|COMPLETED|00:17:45|0:0|cpu=36,mem=64G,node=1
+60489457_4.extern|COMPLETED|00:17:45|0:0|billing=36,cpu=36,mem=64G,node=1
+60489457_5|COMPLETED|00:38:17|0:0|billing=36,cpu=36,energy=1093380,mem=64G,node=1
+60489457_5.batch|COMPLETED|00:38:17|0:0|cpu=36,mem=64G,node=1
+60489457_5.extern|COMPLETED|00:38:17|0:0|billing=36,cpu=36,mem=64G,node=1
+===== task STOPs
+control_A1 rc=0 end 2026-10-29T12:12:01Z
+control_A2 rc=0 end 2026-10-29T12:36:17Z
+done 2026-10-29T12:36:17Z
+s2_A rc=0 end 2026-10-29T12:04:54Z
+s2_B rc=0 end 2026-10-29T12:20:24Z
+done 2026-10-29T12:20:24Z
+s3_A rc=0 end 2026-10-29T11:59:09Z
+s3_B rc=0 end 2026-10-29T12:08:25Z
+done 2026-10-29T12:08:25Z
+s6_A rc=0 end 2026-10-29T12:19:22Z
+s6_B rc=0 end 2026-10-29T12:43:21Z
+done 2026-10-29T12:43:21Z
+s40_A rc=0 end 2026-10-29T12:03:05Z
+s40_B rc=0 end 2026-10-29T12:12:13Z
+done 2026-10-29T12:12:13Z
+s85_A rc=0 end 2026-10-29T12:14:16Z
+s85_B rc=0 end 2026-10-29T12:34:26Z
+done 2026-10-29T12:34:26Z

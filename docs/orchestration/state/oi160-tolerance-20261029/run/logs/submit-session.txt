@@ -1,0 +1,4 @@
+Submitted batch job 60489457
+sbatch rc=0
+2026-10-29T11:14:03Z
+login37

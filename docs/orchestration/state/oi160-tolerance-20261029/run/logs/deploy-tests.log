@@ -1,0 +1,41 @@
+/pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-lzun61me/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-40y12n8n/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-01pfjhmn/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-ry4xwht1/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-6cokggf8/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-krnun_ql/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-suab2i12/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-_pho2hxl/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py:92: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-tol-20261029/tmp/oi160-tol-v76omv56/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 9 tests in 0.309s
+
+OK
+[tol_compare] floor_ok=True producers={'p1': 'NEITHER'} overall=NEITHER
+[tol_compare] floor_ok=False producers={'p1': 'VOID'} overall=VOID
+[tol_compare] floor_ok=True producers={'p1': 'VOID'} overall=VOID
+[tol_compare] stored res_boot_2.npz is missing or not the pinned file
+[tol_compare] floor_ok=True producers={'p1': 'VOID'} overall=VOID
+[tol_compare] floor_ok=True producers={'p1': 'CORRECTED', 'p2': 'OLD', 'p3': 'NEITHER'} overall=MIXED
+[tol_compare] floor_ok=True producers={'p2': 'MIXED'} overall=MIXED
+[tol_compare] floor_ok=True producers={'p1': 'CORRECTED', 'p2': 'CORRECTED', 'p3': 'CORRECTED'} overall=CORRECTED
+[tol_compare] floor_ok=True producers={'p1': 'MIXED'} overall=MIXED
