@@ -1256,20 +1256,29 @@ def check_freshness(repo_root) -> int:
         print("CANNOT CHECK :: no `- Git:` line in LIVE-STATE.md")
         return 2
     recorded = m.group(1)
+    # `rev-parse --short` picks its length per repository, so the host that rendered the file and
+    # the host checking it can abbreviate the same commit differently (2026-10-28: a fresh
+    # Perlmutter clone wrote `fb4cd395`, this checkout's HEAD is `fb4cd395b`, and a file rendered
+    # AT HEAD read STALE). Compare the recorded abbreviation as a prefix of the full sha instead.
+    if len(recorded) < 7:
+        print(f"CANNOT CHECK :: recorded Git sha {recorded!r} is shorter than 7 hex digits")
+        return 2
     def rev(spec):
-        r = subprocess.run(["git", "-C", str(repo_root), "rev-parse", "--short", spec],
-                           capture_output=True, text=True)
+        r = subprocess.run(["git", "-C", str(repo_root), "rev-parse", "--verify", "--quiet",
+                            f"{spec}^{{commit}}"], capture_output=True, text=True)
         return r.stdout.strip() if r.returncode == 0 else None
     def _scope_of_a_green():
         print("  SCOPE OF THIS GREEN: only the recorded Git relationship is checked.")
         print("        Probe TTLs and route-registry health remain separate fields in the file.")
 
-    head, parent = rev("HEAD"), rev("HEAD^")
-    if recorded == head:
+    head_full, parent_full = rev("HEAD"), rev("HEAD^")
+    head = head_full[:9] if head_full else None
+    parent = parent_full[:9] if parent_full else None
+    if head_full and head_full.startswith(recorded):
         print(f"FRESH :: Git: {recorded} == HEAD")
         _scope_of_a_green()
         return 0
-    if parent and recorded == parent:
+    if parent_full and parent_full.startswith(recorded):
         print(f"FRESH :: Git: {recorded} is HEAD's parent ({head}) -- the normal born-stale-by-one state")
         _scope_of_a_green()
         return 0
