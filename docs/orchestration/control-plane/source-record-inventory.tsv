@@ -3,20 +3,20 @@ OI-190	retired	-	declared	e214d52d14a140d0d82a31fd62930d02d508e67ba26293a2f75564
 OI-191	retired	-	declared	6c39adc76363598db781194ee7a5e33b1b8f7a8f13348fb79ede241ec84579d1	CLOSED 2026-09-25
 OI-192	retired	-	declared	fbebadf8c31f99a692d1538b286aa3824adf54939abf6a5d0bdbd21594b4d6c5	CLOSED 2026-09-26
 OI-193	retired	-	declared	bfd6105d976b47886ab47d1d707dfa7d2b95aa3f3065ea5f5e7b590157f0f2c1	CLOSED 2026-10-06
-OI-188	active	NOW	migration-carried-forward	577c1bbba8cc1c763a60ebee78f9401dcb67c3698ae30f1b756af23fb5c8dfab	OPEN
+OI-188	active	WAITING-JOSEPH	declared	6b9b4e8533d14c31b51d49f5c927fc15a28719727d8a4f4ac13a7e2adb27027d	OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh
 OI-187	retired	-	migration-carried-forward	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	retired	-	declared	da08ed506f48e869f028cc8757e1989de12421d1e8ff7849c4c73f9ceae973a1	RETIRED 2026-10-28 by the close-items session — uq_math.py was corrected to VL33's 5.3478x at c9ba1b274. See [RECORD-202
 OI-185	retired	-	migration-carried-forward	6e212c982f2864fbc83fbe82ceddbfc129b93295cda51725b2976f6330d4acf6	DISCHARGED 2026-09-01 — RATIFIED AND RESTRUCTURED. Joseph ruled in his own turn: "Okay I like your recommendation for OI
 OI-184	retired	-	declared	9406c14c53830c3d4d8741ae83b88f3f1496047a564eeff79360e4415d494781	RETIRED 2026-10-28 on the director's ruling (the paper lane may veto) — 2504.06857 is settled as a mock-data study (LITE
 OI-183	retired	-	declared	1a7e6872f5523ee3f9abe370db957fc509710879e565a160938242d7daec3cdf	RETIRED 2026-10-28 on the director's ruling, subject to the paper rewrite lane's veto this round — neither phrase remain
-OI-182	active	NOW	migration-carried-forward	397784efd2e1604c1830aad8eefe2fe6bb6b4e447915dad571e632a3c47884a5	OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions
+OI-182	deferred	-	declared	c39296aaa3e1161963d3ef5fedf12848a370f174fb187ecbf01f6ab3af69efd7	DEFERRED 2026-10-29 by the close-items session, until the next legitimate change to extract_fullevent_fps.py. See [RECOR
 OI-181	retired	-	declared	599944024aa18ac0c95e964dba3572d5718dc488ce11c1ee668aa45c013db13c	RETIRED 2026-10-28 by the close-items session (the director had picked it for promotion; it was found moot first) — curr
 OI-180	retired	-	declared	1854fdc9a22a3616e9fd5879b7b088c1af28e90d75c440faac00fc29481ef33c	RETIRED 2026-10-28 by the close-items session — the stripper uses tokenize, and the triage is in OI-182. See [RECORD-202
 OI-179	retired	-	migration-carried-forward	97002c06cb54d34cd2f268b77c517c5beed31998b744810ade42db97a1455dc9	DISCHARGED 2026-09-01 — DEFECT 3 IS ENFORCED, which was the sole thing holding this row open. Joseph authorized it in hi
 OI-177	retired	-	migration-carried-forward	78273ec3c82962d11374e24c73e5a7b025fa6fd3985f5c79b325f6e4fac0411f	DISCHARGED 2026-09-01 BY JOSEPH'S SIGNATURE. He ratified the amended per-arm ceilings in his own turn — "I sign" — recor
 OI-176	retired	-	migration-carried-forward	34517ff3b245dd1e7ad19779e7f4edf1d501da6d5897ec1d5566dc510fc384a5	DISCHARGED
 OI-173	retired	-	declared	5a76d561061a7c8263d98143f3b93863e6c920a24baa73615d6841958a03e79c	RETIRED 2026-10-28 on the director's ruling — the grade was applied (DECISION-20260902-joseph-applies-oi173-cause4-m.md)
-OI-174	active	NOW	migration-carried-forward	46e62d8dbf1f49130bcf3d2a385b4fe4582c2328836efa34c1b7ac2a5ecc6c8c	OPEN
+OI-174	deferred	-	declared	97c41862794d99745520e3c4d831feaadd16be4d02b8a1d094fe39c90df5cb1b	DEFERRED 2026-10-29 by the close-items session, until the next F-17/k=0 rehearsal, or a deliberate decision to edit the
 OI-175	retired	-	migration-carried-forward	1893c9ab84ba9f51382fd77b2bcd640b2500c9ec6a5406b460be06df3b9ab0cf	DISCHARGED
 OI-172	active	NOW	declared	34cbc55a78add5553db6137c4e9e78bf15cc3ee2d3e688754d41296a2b364242	KEPT 2026-10-28 by the director, owner the paper rewrite lane after n4 and r21 — the question was answered by Joseph's 2
 OI-171	retired	-	migration-carried-forward	fa3fffb13b0ba23bf4534d00733e5d26e522090b93bcd13a864f5478701da097	DISCHARGED
@@ -32,7 +32,7 @@ OI-147	retired	-	migration-carried-forward	087ed39c939011bd21f97a0705a67cfe6ab89
 OI-148	active	NOW	migration-carried-forward	99f0ca156a72b4a124ffea9065ed747c672fe9d39569f90ebd54c9d26c218c9e	OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n
 OI-140	retired	-	migration-carried-forward	1b42ec8fd6a971989a4e3ab9144ad28628711a80d446ba0de4fe3e7af962c6a6	VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file
 OI-141	retired	-	migration-carried-forward	182e2d52a1023ff49f33990f4e4fa01030216fce7661be86816983df1be1952d	FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab
-OI-142	active	NOW	migration-carried-forward	a1e28d670068b62611450ada9480822611b53878a2a3f4c17ee94d9dcd5e34fa	SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi
+OI-142	deferred	-	declared	db1631c7e4fb605d9f6476e9b778200176f93e8b1e32c6c0a96a760b3bf5633d	DEFERRED 2026-10-29 by the close-items session, until the next PET Gate-4 code-gate re-run and receipt re-issue. See [RE
 OI-143	active	WAITING-JOSEPH	migration-carried-forward	f8e601a791e4edb1acd364fcebda74c1c53c068df9dde1d36605d370ca4341f0	(a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out
 OI-144	retired	-	migration-carried-forward	e5928037f0366b68fc68e67e65a99f362b97fccbd2eedef0c25c1b7f55eb80b8	DISCHARGED 2026-08-21. The fix landed at e135a657/fc4293ef and the residual it was left open on is now closed by measure
 OI-145	retired	-	migration-carried-forward	f8663be3ba263c3dec175e6d870c5fcddd79c7e3b2d369079d778c2442ad1739	REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified
@@ -44,9 +44,9 @@ OI-73	retired	-	declared	8baf4351d1559700801c030b2994fc7f8449cbb47cbd756016c3daf
 OI-74	active	NOW	migration-carried-forward	530d7ab97903cfe7527771d8104be29bb7c6470c6eaaf051f2c708336ff7b8f9	CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI
 OI-75	active	WAITING-JOSEPH	migration-carried-forward	f612cad2e7e9069f8ea688568c42980f480048666f419247006054a3a4d196b1	CARRIES OI-43 SINCE 2026-10-28 (director's ruling) — the cluster P4 hold that OI-43 asked to lift is this row's standing
 OI-1	retired	-	declared	bf16595b42c225b0f9a51c749dd31156083dec013d724c2970f43f433681c2d2	RETIRED 2026-10-28 by the close-items session — repository CI exists (f96949944, .github/workflows/record-checks.yml). S
-OI-2	active	NOW	migration-carried-forward	b67224d83254be9e57038c6f2853865ce3ac3c655584903989847753d4b1846a	4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13
-OI-3	active	BLOCKED-EXTERNAL	migration-carried-forward	9beffe579cee1bdcf03e096cb727ed65e060c9b35d7b99a3aa363d695c788fe2	BLOCKED — now SCOPED, and the blocker is a decision not compute
-OI-4	active	BLOCKED-EXTERNAL	migration-carried-forward	063c2bfc4c2053134774e14f9b93293287a08503e6301379243a601419ff3b69	BLOCKED
+OI-2	deferred	-	declared	f3a7b20f4ceb1b543df41be0d836f5e18b3410f9c24a86991ddb07d9c83e375a	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision to quote a scalar-FPS (extended-fiducial)
+OI-3	deferred	-	declared	aafebb79404f35ba787c26d160752665cf1b9f7124ce16b01ea7eb46b6b5accf	DEFERRED 2026-10-29 on the director's ruling, until PET being reconsidered for publication (Joseph's decision). See [REC
+OI-4	deferred	-	declared	5f7f176d3c8c5c8811197c45c1492090cd296e026e669a8b924bf691bd08acd0	DEFERRED 2026-10-29 by the close-items session, until PET full-event work resuming toward publication: the row's full-ev
 OI-5	retired	-	migration-carried-forward	81768a5cabbc5f3a442b62ac4058b697eaacd5406ad111342b58e4b04082ca77	DISCHARGED 2026-08-13 — the conflict was a scope collision, both statements are true
 OI-6	active	NOW	declared	2e9d690e763a63540535b20ed7af1a2cc811a7bbfa7ca257d8270e14f0a9708e	KEPT AND NARROWED 2026-10-28 by the director, owner the paper rewrite lane — 2D is done (E_R adopted, DECISION-20261024-
 OI-7	active	BLOCKED-EXTERNAL	migration-carried-forward	7cb58f4d5b73854fc970c468fba745d5f9118adaabb74c8d40b84b79bb8c549c	BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S
@@ -56,41 +56,41 @@ OI-10	retired	-	declared	27ee96465117fa87f31197455e1808c176ab54d75434b4770b5ffd9
 OI-11	retired	-	declared	74b86c98ff751b6ac797af356e1fc3eadd245ba1594a107fa31d89c73bff8787	RETIRED 2026-10-28 on the director's ruling — KNOWN_ISSUES row J36 is closed with a measured bound (Joseph's choice). Se
 OI-12	active	NOW	migration-carried-forward	664998ca4bb7a148a09de85f5e88c42b5677fc90fa6e00445ec2afa19b7f91e0	OPEN
 OI-13	active	WAITING-JOSEPH	migration-carried-forward	c899bf49b52d5749e43415e88370f87157d28249520d181c134e71651e3e2935	WAITING-USER
-OI-14	active	NOW	migration-carried-forward	3e3b2d71beb783599766fba6f34e267bf360871acdd05175e49ad03ffe6bed0c	OPEN
+OI-14	deferred	-	declared	9e904244a4f34e4d653509ff1e4d15c90f0a253595d8e99bb75fca0e02be4066	DEFERRED 2026-10-29 by the close-items session, until PET closure-test work resuming (the row: re-offer to whoever owns
 OI-15	retired	-	migration-carried-forward	865afc899570c06c1594dbe81423a8a5f5f7e7d67fb55c13a3d59b3f1378a7d6	PREMISE FALSE 2026-08-13 — the seed control already exists and is already receipt-bound; what is missing is execution-en
 OI-16	retired	-	migration-carried-forward	f0a268219dc04e993dadbcf2f272af4d89434e7c701e43ac9ed199d1e94157ea	DISCHARGED 2026-08-13 — reopens only if k is lowered
 OI-17	retired	-	declared	cb937f4f4860fd6b78bb1e052f17069e66dda4ff227229e998666743f12498f1	RETIRED 2026-10-28 on the director's ruling — regeneration 56427580 restored the ensemble to 160/160 (VALIDATION_LEDGER.
 OI-18	retired	-	declared	0f367e7b0ee915b24d1a328d5bba44d0a98d7b201caa390c4178a51351d51cd8	RETIRED 2026-10-28 on the director's ruling — KNOWN_ISSUES.md row 36 is resolved and the publication covariance is VL143
-OI-19	active	BLOCKED-EXTERNAL	migration-carried-forward	56fd397d67ce82b43a23da6c3fa7f6aff3b99f91a4716cd82ff42ddd9b89b273	BLOCKED
-OI-20	active	BLOCKED-EXTERNAL	migration-carried-forward	3a5cc0cb4b2c3f9b8d864f82719e3d1c743ba0194aef1ba4fead059bdf76650c	BLOCKED
+OI-19	deferred	-	declared	aae5a6ac246965f768b3379186364133615397faa1c2af08685e096fb70ef849	DEFERRED 2026-10-29 by the close-items session, until PET full-event publication training being reinstated (the row need
+OI-20	deferred	-	declared	d91401268fd3d51c33f6bc76a125081b45d161fae78e385c93aa1fe0be7c5c44	DEFERRED 2026-10-29 by the close-items session, until PET full-event publication work resuming (the row: the publication
 OI-21	retired	-	migration-carried-forward	48e84509e00d1d3d0fbb16a3ead1287a0ae102b08c4cdc8e9e06d6d1231a2973	DISCHARGED 2026-08-13 — and the tests are behavioural, not prose
-OI-22	active	NOW	migration-carried-forward	0b5b3069f6e271d31165387d9198f7266ee900d4e0998519ac2450bd9cffc5d9	STILL OPEN — but RECLASSIFIED 2026-08-13: technical verification, NOT a user decision
+OI-22	deferred	-	declared	636390dafc6767bcf04dfc2629ceec1d393a90eb8bba1f81ea4bd1ee989b9317	DEFERRED 2026-10-29 by the close-items session, until PET full-event input being used for publication again (the row ver
 OI-23	retired	-	migration-carried-forward	5886a0c74d8051215d3f545fc8f04d1f6b0a36905f48bed304cee968f7fee2f0	DISCHARGED 2026-08-14 on the configuration question, with its second residual TRANSFERRED to OI-71 rather than dropped.
-OI-24	active	BLOCKED-EXTERNAL	migration-carried-forward	1ba53f10227e6b78134feca6da57a8a30163819ae4e6510562591a8cf991ae16	BLOCKED
-OI-25	active	BLOCKED-EXTERNAL	migration-carried-forward	808103caf5af4fc507354bffd5f3bafb809400e123567138e2d6fde515e386ed	BLOCKED
-OI-26	active	BLOCKED-EXTERNAL	migration-carried-forward	396b1623edc7a9fe6e648965035de9e2bf1db13412a917602273e11520e3cf91	BLOCKED
-OI-27	active	BLOCKED-EXTERNAL	migration-carried-forward	e9926f3ab72e043684d57ee895e0d6fcca2e27746de0ab2b0258e02cf5ff613a	BLOCKED
-OI-28	active	BLOCKED-EXTERNAL	migration-carried-forward	2785185d9fe8dab015f78e67b0c088498cbe4a34ec7831f48024074869c49e83	BLOCKED
+OI-24	deferred	-	declared	934cedadec7c1fda85c1938f0589ba79721ba09c5a7a3e48b474b0cc331803b4	DEFERRED 2026-10-29 by the close-items session, until the PET feature, measurement, nominal and closure gates freezing (
+OI-25	deferred	-	declared	d8166de53494c54c699508fd821adf2fffd2c57333af4259df2a5d5d6e595263	DEFERRED 2026-10-29 by the close-items session, until the next required Gate-4 re-issue. See [RECORD-20261029-close-item
+OI-26	deferred	-	declared	28852f84906c84127bb7a004c90b121176cd6f026bf6eb00c5c60bef7b7ed60f	DEFERRED 2026-10-29 by the close-items session, until the next required Gate-4 re-issue. See [RECORD-20261029-close-item
+OI-27	deferred	-	declared	505ba72b28b9d5b59e3df2f57c8ceff14a7c67cf618ab699b364bc7e0dd954cc	DEFERRED 2026-10-29 by the close-items session, until the next Gate-4 re-issue. See [RECORD-20261029-close-items-defer-g
+OI-28	deferred	-	declared	7151b750d5f7b4eba5aa8707dfa0d605612ba3a0bbbd5adfbe03caeb69fd52e4	DEFERRED 2026-10-29 by the close-items session, until the full-event FPS measurement and its acceptance diagnostics fini
 OI-29	active	WAITING-JOSEPH	migration-carried-forward	fbe9c87f2a4567a2387fdaf1468d85864bb15e55f4386aefbaafa906d2623f0f	WAITING-USER
 OI-30	active	WAITING-JOSEPH	declared	ab04e51e9fa079beed2b4394e8b0f76478a8c69d655cc4b377a0963e8aead63f	KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See
 OI-56	deferred	-	migration-carried-forward	04c5fd460f7864c0e7d4ec759dc00afca91511008b83cbb1ae0c8193522f3ef1	FROZEN — do not action pending the reco-underflow repair choice
 OI-31	active	WAITING-JOSEPH	migration-carried-forward	e044a73d211daa9aae2cb36f29badf314b03a582dbf5f79728b4954cb357a33e	WAITING-USER
-OI-32	active	BLOCKED-EXTERNAL	migration-carried-forward	e0c29123a707966dbf952019f310bd82e5e82451232c5e8f13bc090619a35d6e	BLOCKED
-OI-33	active	NOW	migration-carried-forward	6d5628a4ca75e6bf6aeb30661f23248289b95c39dbc08eabf98cef0c4e26b5ff	OPEN
-OI-34	active	NOW	migration-carried-forward	be6fd59d50fa8cf699d8be425eabf8f680631af7444dcf127371104d5031e5d2	OPEN
+OI-32	deferred	-	declared	be3f1b081c7217dc4d2608d13c699d79656e72597ee24a841724a766ff9a87b6	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision to quote a fine-grid full-covariance chi-
+OI-33	deferred	-	declared	3b46c9cd761c4c4165844ff7acdaed74c4f8d1be345f81ef6b37d201a49d203f	DEFERRED 2026-10-29 by the close-items session, until a decision to run full per-universe PET lateral retraining, meanin
+OI-34	deferred	-	declared	f06cb62d95fd42e387d4f19a04bfd9c0e18e4653997d271d99ae293a08a13463	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision authorizing a new scalar unified-throw co
 OI-35	active	WAITING-JOSEPH	migration-carried-forward	f3ddee43bc2fc6fd2e4f5705d6432267962ec7c467b6d224828c52d865b6517c	WAITING-USER
-OI-36	active	BLOCKED-EXTERNAL	migration-carried-forward	8322494144ac54513835c9950ebf5b5699dc5f0d53f00ddbce229911c48b1628	BLOCKED
-OI-37	active	WAITING-JOSEPH	migration-carried-forward	531ce9a3511023cdeb0f00edd2fa98d968e64a059fa381804f92641fa3be60ff	WAITING-USER
+OI-36	deferred	-	declared	25a22cb8399d946951ee95d375dd3b41886ddfe4ac9476f665daa571a38c24e2	DEFERRED 2026-10-29 by the close-items session, until the next authorized event-loop rerun (the row: add the true-neutri
+OI-37	deferred	-	declared	def0b829aa8256fe0492de25bae075060bf99e5d799a89d9d0755884fe2472b6	DEFERRED 2026-10-29 on the director's ruling, until an FPS covariance adoption being scheduled (Joseph's decision). See
 OI-38	retired	-	migration-carried-forward	78ff510a1fa694cedd454374924b23ebf09db011e23351e965637012453eb3cd	SUPERSEDED 2026-08-13 — historical control; preserve provenance, do not resume
-OI-39	active	NOW	migration-carried-forward	c66e8da54ab39fe840e2fa4454e36f10e575a11cb842cab7b2f3c155cf0d4714	OPEN
-OI-40	active	BLOCKED-EXTERNAL	migration-carried-forward	c2ed000033e96e2372a1f246b1da4cdfb3d98da6017fce64c79ec0bbce27a521	BLOCKED
+OI-39	deferred	-	declared	f61ad35e652b826ed5e8bb192b6e162883a73ab3d1c10e0eca49bbc4f551457b	DEFERRED 2026-10-29 by the close-items session, until the PET 5D unified/block covariance comparison being revived (the
+OI-40	retired	-	declared	bf566043f54cd57b1be00184fdda2a931ecff8d778cbbd2a900a0cad9311eed2	RETIRED 2026-10-29 on the director's ruling, as moot: the adopted UQ products are in the note, and the PET half cannot f
 OI-41	retired	-	migration-carried-forward	e6620d28f5af653b0205f177c448c0add720cb9676a8993ef9f350d8ab3f05d2	CLOSED 2026-08-17 (lane E) BY DISPOSITION (a), on the mediator's explicit instruction — the rule now lives beside the nu
-OI-42	active	BLOCKED-EXTERNAL	migration-carried-forward	7931ffaed1eedd39ffef04844cbb54e5efa08ca14d0e9f6b0f706c3b9bcb9e70	BLOCKED
+OI-42	deferred	-	declared	01b8db6d394762d4d1a3030c814125eb4131c7a2d97e5fef913a247854dbb3c0	DEFERRED 2026-10-29 by the close-items session, until the publication freeze (the row: classify the untracked cluster pa
 OI-43	retired	-	declared	32bb12c43bb4aed6d27343d2be4a913c71e43deffe8e0a286d063243099f5655	FOLDED INTO OI-75 2026-10-28 on the director's ruling — the P4 hold is the same standing no-run hold OI-75 asks Joseph t
 OI-44	retired	-	declared	b0fba88e1197fecdf1724192633031e0f05b98990f574f904af8d90bc2d58c0b	RETIRED 2026-10-28 on the director's ruling as objectless — the 240 objects were deleted from tape on 2026-08-18; the li
 OI-45	retired	-	declared	230a231100eb132452e964885c2ec913804aa38dee1b6ccce50f783c6ee11d53	RETIRED 2026-10-29 by its owner, the close-items session — a receipt's author is its adding commit's git author (documen
 OI-46	retired	-	migration-carried-forward	36ffc3c94a84f03f1d0c7b9352bf1fd217c7c9a98973ac6074cf61e02203d09b	DISCHARGED 2026-08-13 as a commit-gate question — the artifact is separately superseded
-OI-47	active	NOW	migration-carried-forward	3ed755c361fc481291d704a942fcbc69bdd405021c75ab1a1eb20dea83e32441	OPEN (re-scoped 2026-08-12, owner Session A)
+OI-47	retired	-	declared	9469dd81994f457d9c8f4b9b540760fa1b46f46de0ce96a8ca6d345567f6e187	RETIRED 2026-10-29 on the director's ruling, as superseded by the per-session worktree practice — worktree.bgIsolation i
 OI-48	retired	-	migration-carried-forward	0b0bf4e60bb0a46ec892b797b000f021550645f46fa7ebfc123dc808f126c785	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat
 OI-49	retired	-	declared	628e9089804cbbc59606e4d47d16d714e02e4b1089bac8b9424692cf132ffa84	RETIRED 2026-10-28 on the director's ruling as objectless — there is no tape copy to measure; the live question is OI-13
 OI-50	active	WAITING-JOSEPH	declared	ac8e9b038d3461e9b464bd1400910d3b62b52abd1723dde63325a8853e1ed7ce	OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the
@@ -99,24 +99,24 @@ OI-52	active	WAITING-JOSEPH	declared	77797765d8bfa310ddeddb4d85f5a92c73d36bd1c9e
 OI-53	active	WAITING-JOSEPH	migration-carried-forward	cd180f58f86fc63a4066c7b9b5f3421efb4995311fc64baf449e698d0fa93cf5	WAITING-USER
 OI-54	active	WAITING-JOSEPH	migration-carried-forward	9ebe8c18130428f4faf9db3581d05f4d0fa68f24077347e85e673177ba5c3685	WAITING-USER
 OI-55	retired	-	migration-carried-forward	3b5ad0a71fd3df25863bbe657fa374ebb1a513f54628ef7d53ab17ded4c9d407	CLOSED 2026-08-13 — recorded here because the answer existed only in a message for four hours
-OI-57	active	NOW	migration-carried-forward	bf4e8b61d23195e2ff51ccc5da6146afc65f1fe43dcc7cabc328a5670b8f1840	CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked
-OI-58	active	NOW	migration-carried-forward	8a525d27c66c322b1e9153b1ce90db572743f18de6b72731c8658f59a5fe96ff	OPEN RE-TRIAGE RECOMMENDATION 2026-08-20 AFTER THE OI-126 RULING — RECOMMENDED, NOT RULED. Recommend reclassifying as a
+OI-57	deferred	-	declared	929c2f0945ed36d1fa1b7ec69d17594260005f6587c89b941ab51e215b150e58	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 launch. See [RECORD-20261029-close-items-defer-gat
+OI-58	deferred	-	declared	bcb8212a9e673d33741fddcc653ff37476c477eaa3daec1b93b65002fedbf4c4	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 re-issue. See [RECORD-20261029-close-items-defer-g
 OI-59	active	WAITING-JOSEPH	declared	300a75b51ba8a9a5b704b74297d0d7762d9d07c356d55945146a1808d3611353	OWNER THE DIRECTOR 2026-10-28, WAITING-JOSEPH, on the director's ruling — the next step is Joseph's freeze question, whi
-OI-60	active	BLOCKED-EXTERNAL	migration-carried-forward	d00d3b9f3d5163740174960d2883121597fc28dafface9cd59e4552326541a07	RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW
-OI-61	active	NOW	migration-carried-forward	ae33eeba324e9c64329c7e85dc4f88a7bb7e475914e2ac917102b31b31738da1	OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d
+OI-60	active	WAITING-JOSEPH	declared	5bb011b57a9826891604817e03e164b92f9bc893c2c6bacec9953b2a55bdcf2b	ON JOSEPH'S QUEUE 2026-10-29 (owner Joseph, WAITING-JOSEPH) for the RETROSPECTIVE CLOSE, which is his. The RE-RUN half i
+OI-61	deferred	-	declared	a39651474261f5d29221a8e52f1f8236134192083fd84b891ba026ff6a8b2a0a	DEFERRED 2026-10-29 by the close-items session, until whatever Gate-5 re-issue OI-60 rides. See [RECORD-20261029-close-i
 OI-62	active	WAITING-JOSEPH	migration-carried-forward	366c7d73466dcc171ce01c01f2bde0eb237924f7d99b2206b69efeb9eaeb9e52	(a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER
 OI-64#1	retired	-	declared	4ecfb397bee04799899934820d24bfa066e72980f6d8fb2a923a1060f9f37d01	RETIRED 2026-10-28 by the close-items session — the gate runs in the hook and CI; (f) and (g) were replaced by exact and
 OI-65#1	retired	-	declared	6ac25f218d289b4b95c408a100753760f297013b7dd4ceaebaf2e5348a9c4bee	RETIRED 2026-10-28 by the close-items session — its own text says the dependency is gone and asks that nothing be spent
 OI-63	deferred	-	migration-carried-forward	00d5e0acfbc5480f1f2beaf45f6dcb61aa8e79b03688675c79475d565cdde3e8	DEFERRED 2026-08-13 by Joseph — do not re-raise before the publication reorganisation
-OI-64#2	active	NOW	migration-carried-forward	aa00d4a7669ddb3e42e1756d59a4860676bb01db80d537bb98ecff7d190a6224	⚠ ID COLLISION — this is LANE C's OI-64. Lane A independently allocated the same id (see the other OI-64 row above, A's:
-OI-65#2	active	NOW	migration-carried-forward	7b43a62df905d745429578bd1f158a64d80dd1e63174ef9cb9d52bb582808f07	⚠ ID COLLISION — this is LANE C's OI-65. Lane A independently allocated the same id (see the other OI-65 row above, A's:
+OI-64#2	deferred	-	declared	00d7efe39aa9144627fe454dd8742440e6b9c5566c752a53e95bdf7db7eaaf6d	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 launcher, or the next edit to reconcile_gate5_fami
+OI-65#2	retired	-	declared	62b21f2ec5175fc797dbc03cfa96ce18c17d3a684a49bcd664513b69df167484	RETIRED 2026-10-29 by the close-items session — the repaired reconciler ran against the campaign at full strength with p
 OI-90	retired	-	migration-carried-forward	33eef247854f276d8681eab915b20e1f8241b8946b3961ede901a8b5741ae054	CLOSED 2026-08-17 (lane E) — the narrowing is landed in RUNS.tsv:296, verbatim as this row prescribed, with the original
 OI-91	retired	-	migration-carried-forward	5f1d4759e941537c8d96e78f3266efc3156db917eb48f3c4b0f5ade3dc059775	CLOSED BY REFERENCE 2026-08-14, SAME DAY IT WAS RAISED — rank was dispositioned BEFORE LAUNCH and I should have been rea
 OI-93	retired	-	declared	e70b5f94379bf2cd14ee2b0d10464b151f1be5dd2b8ed52435bbb583b29cd159	RETIRED 2026-10-28 on the director's ruling — no publication consumer inverts a truncated C_stat; the generic hazard liv
 OI-92	retired	-	migration-carried-forward	46814e957d7f5411a0d96e7d821bafeaeb6b83574fc9aa9107dbfc591c220ce6	CLOSED 2026-08-14 — PREMISE REFUTED, C_stat IS CORRECTLY NAMED, NO JOSEPH TURN NEEDED. (raised same day by lane C)
-OI-94	active	NOW	migration-carried-forward	ce4f9c7d75f3e1339936d56392ae051c9d2aa7b0e5d85f9ef6593a40245686eb	OPEN (raised 2026-08-14 by lane C, as what survives OI-92's refutation)
+OI-94	deferred	-	declared	0f37375f3f2219a431cd6c95fa84e986437efc2210f80d2f031392e1b59e94e4	DEFERRED 2026-10-29 by the close-items session, until the PET extraction-stage subtraction landing, and only if PET C_st
 OI-120	active	WAITING-JOSEPH	migration-carried-forward	5984185f2ccca724621947d58cd424c79d14db17a51cd8a60baca3f09e86acb1	WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129)
-OI-121	active	NOW	migration-carried-forward	3f88868dfb4baaadd565771c54f03f3725a18840595dad0d6ab85e2729adcbbe	AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT
+OI-121	deferred	-	declared	eda33318be02f0d18fb2c07b36a772a864a36bbabedfb951ff070f76662849ae	DEFERRED 2026-10-29 on the director's ruling, until OI-126 being reconsidered (estimator-equivalence plus coverage, DECI
 OI-122	retired	-	migration-carried-forward	c68f553dc1b0e9f5d2d42a8252593ce5d12b989562c8b80cfe35a2c1030e3123	BOTH ACTIONS EXECUTED 2026-08-14 by lane C. Action 1 authorized by Joseph, verbatim "Yes I authorize it", committed at 4
 OI-80	retired	-	declared	e8b4350c306744ab52cfc0c2ea217f3047188e8db47a71b519681f34b64426de	OPEN — POINTER, not a second row. Raised 2026-08-14 by lane B independently and CONCURRENTLY with OI-122; that row is th
 OI-81	retired	-	migration-carried-forward	b9c97be8f83de7dd6c2cc5488b14a4e9c3b080542d100176286ef72d823ee8ea	CLOSED 2026-08-15 by lane C (PET), the script's owner, holding this lane BY DESIGNATION and not by continuity (BEN-324).
@@ -131,13 +131,13 @@ OI-128	deferred	-	declared	be387549bac5a8f6ea6878e57f1897cfb34068d5bcb8b6ef5de3b
 OI-129	deferred	-	declared	8ddd7fd320c3ab7da0dde5b605c0a478991d3ac0480bceedae8cfad16d23804d	DEFERRED 2026-10-28 by the close-items session, until the next run of p4_project_4d.py or the next authorized edit to th
 OI-130	active	NOW	declared	d4b8054efe337e382b4defcfc52eb2e259b37253ac967bef9aabbe979eb0dbef	KEPT 2026-10-28 by the director's ruling, owner the paper rewrite lane after its n4 and r21 work; measured partial cover
 OI-131	active	NOW	migration-carried-forward	25772bf369c0bf850beae55aa9061ff864402175fc110b57da2281e2bcdfdc30	OPEN — filed 2026-08-18. Supersedes OI-48, whose decision was reversed. (b) IS NOW DISCHARGED BY MEASUREMENT, 2026-08-20
-OI-132	active	NOW	migration-carried-forward	de13b6579dd187b6f84bbab7c5ed8e66a391794b2128c649096dab72d078d634	OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON
-OI-133	active	NOW	migration-carried-forward	cd0cfeeb6947403f799be81d7ff9aff35e9f8a3b9dad870e5ac6fbe62e16eed1	OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check
+OI-132	deferred	-	declared	ae7d87d987d0f2002205da3a97db2b32dc31150271eab0a977b4f5c26be67d74	DEFERRED 2026-10-29 on the director's ruling, until anyone needing to quote the OI-132 split, or to grade a data-only C_
+OI-133	deferred	-	declared	da56c4bbebc2b11cfc4095118461e18eaf0b73f406de246060a258dd3254018f	DEFERRED 2026-10-29 by the close-items session, until the next data-only launch, or a ruling on the artifact-schema chan
 OI-134	retired	-	migration-carried-forward	9f3018a7e1255cef48a068da6d14de467b7d7f6b2c18dded8c0b4fb3adf29d0f	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
 OI-135	deferred	-	declared	1b28ec7cd9bc00538df308cbdc36465932a8ac1bae95639505130bd8807164d8	DEFERRED 2026-10-28 on the director's ruling, until profiles.json and waker-config.json deploy — job 57266000 is termina
 OI-136	deferred	-	declared	efe8c263bd1d710806dcf194fd80e0c349330f05a23a816af5d67beb0020dc69	DEFERRED 2026-10-28 by the close-items session on the director's ruling, until the next re-issue of the bindings that pi
 OI-137	active	WAITING-JOSEPH	declared	c558f18e801c8050e18a97755c42f4b9925f41ce2ff51669d4989f16d6ad4c4d	OWNER THE DIRECTOR 2026-10-28, HELD until a session holds the "scalar-5D adoption/statistics owner" role that Ruling 7 (
-OI-138	active	NOW	migration-carried-forward	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
+OI-138	deferred	-	declared	0526c7f1357e173fef9b40d5932db84d83e75408b3b8af191a0c837d125b6c12	DEFERRED 2026-10-29 by the close-items session, until Gate 6 being picked up again. See [RECORD-20261029-close-items-def
 OI-139	retired	-	declared	4197a8638d84679ff7206771688329189c6bfa36ea0a8583a2471c2b816b0d54	RETIRED 2026-10-28 by its owner, the close-items session, on the director's ruling — all 14 active-named receipts measur
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30
 OI-189	retired	-	migration-carried-forward	5ef9e418bb5a2190b63dd09cd24c4bd4f65c480a17c19047bd4e2a288dcb622c	REPAIRED 2026-09-20 via RULING-20260908 exit (2) — fix the gate. Joseph ruled in session that the guard is over-strict h

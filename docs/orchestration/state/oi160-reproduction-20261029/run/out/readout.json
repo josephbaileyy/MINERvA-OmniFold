@@ -1,0 +1,74 @@
+{
+  "schema": "oi160-repro-readout/1",
+  "criterion": "bitwise-equal xsec_flat (float64), equal shape and seed; no tolerance",
+  "files": {
+    "A1": "b67521976b0ee4b522fa9fe373926be3c431cebede89024bb1cfa58cd8029513",
+    "A2": "68e1174c46f9a2a841d804b6afc27add5fad6df787599f1a1d3365a7e6411b5b",
+    "B1": "fd430e023e43a9dbcfae9f0ffad5a4de36aa30cee81ead1f6c6e44a6d2097056",
+    "S_top": "5e1c42d2607171e90c798811f5a9e07439c88fe8a20779c60180333b3ab69930",
+    "S_pre": "2836ff561db044614ebb575574c108649e8f42f7cdd9378844682a87552e9c0f"
+  },
+  "K1_A1_equals_A2": false,
+  "K2_B1_equals_S_pre": false,
+  "A1_equals_S_top": false,
+  "B1_equals_S_top": false,
+  "A1_equals_S_pre": false,
+  "outcome": "VOID",
+  "reading": "the corrected code does not reproduce itself, so no difference can be read",
+  "describe": {
+    "A1_vs_A2": {
+      "equal": false,
+      "n_differing": 10504,
+      "n_union_nonzero": 10510,
+      "max_abs_diff": 1.446529494465913e-50,
+      "median_rel_diff_union_nonzero": 2.8012866886483717e-13,
+      "max_rel_diff_union_nonzero": 3.0097295230284946e-12
+    },
+    "B1_vs_S_pre": {
+      "equal": false,
+      "n_differing": 10527,
+      "n_union_nonzero": 10527,
+      "max_abs_diff": 4.296782486087668e-50,
+      "median_rel_diff_union_nonzero": 9.20855995296084e-13,
+      "max_rel_diff_union_nonzero": 8.066647837988835e-12
+    },
+    "A1_vs_S_top": {
+      "equal": false,
+      "n_differing": 10506,
+      "n_union_nonzero": 10510,
+      "max_abs_diff": 2.268717857433727e-50,
+      "median_rel_diff_union_nonzero": 3.385692795230543e-13,
+      "max_rel_diff_union_nonzero": 2.8967396653834303e-12
+    },
+    "B1_vs_S_top": {
+      "equal": false,
+      "n_differing": 10653,
+      "n_union_nonzero": 10653,
+      "max_abs_diff": 4.818889587276722e-40,
+      "median_rel_diff_union_nonzero": 0.0074163205483402635,
+      "max_rel_diff_union_nonzero": 1.0
+    },
+    "A1_vs_S_pre": {
+      "equal": false,
+      "n_differing": 10653,
+      "n_union_nonzero": 10653,
+      "max_abs_diff": 4.81888958721387e-40,
+      "median_rel_diff_union_nonzero": 0.007416320546101317,
+      "max_rel_diff_union_nonzero": 1.0
+    },
+    "S_top_vs_S_pre": {
+      "equal": false,
+      "n_differing": 10653,
+      "n_union_nonzero": 10653,
+      "max_abs_diff": 4.818889587254797e-40,
+      "median_rel_diff_union_nonzero": 0.0074163205442175925,
+      "max_rel_diff_union_nonzero": 1.0
+    }
+  },
+  "not_citable_for": [
+    "any other replica than seed 1",
+    "C_ML or seedscan_split",
+    "whether either contract is correct",
+    "any change to C_stat, C_ML or the adopted trunk"
+  ]
+}

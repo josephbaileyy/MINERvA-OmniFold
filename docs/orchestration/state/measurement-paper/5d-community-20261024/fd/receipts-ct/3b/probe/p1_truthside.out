@@ -1,0 +1,15 @@
+login37
+2026-10-29T10:23:45Z
+zero {'MCgen': (32846302, 5), 'MCreco': (32846302, 5), 'measured': (4091707, 5)} axes ['eavail', 'q3', 'W']
+lat_proton_m1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_proton_p1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_meson_m1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_meson_p1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_em_m1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_em_p1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_other_m1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_other_p1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_xtalk_m1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_xtalk_p1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_w2b_rr0.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}
+lat_w2b_rr1.npz truth-side identical: False {'measured_weights': False} | reco (same shape, differs): {'MCreco': (True, True), 'w_reco': (True, False), 'pass_reco': (True, False)}

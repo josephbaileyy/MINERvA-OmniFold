@@ -197,6 +197,7 @@ docs/orchestration/DECISION-20261028-joseph-protections-remade-and-r21.md	LIVE	o
 docs/orchestration/DECISION-20261028-joseph-r19-variant-b-and-moves.md	LIVE	open	""
 docs/orchestration/DECISION-20261028-joseph-result-table-and-deposit-package.md	LIVE	open	""
 docs/orchestration/DECISION-20261029-joseph-oi160-reproduction-and-q8.md	LIVE	open	""
+docs/orchestration/DECISION-20261029-joseph-oi160-tolerance-run.md	LIVE	open	""
 docs/orchestration/DECISION-20261029-joseph-retention-archive-a1.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
@@ -449,6 +450,9 @@ docs/orchestration/RECORD-20261028-close-items-oi161-hold-comments.md	ARCHIVAL	t
 docs/orchestration/RECORD-20261028-close-items-overrides-sorted.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261028-close-items-revert-oi59-oi137.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261028-close-items-third-batch.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261029-close-items-conditional-proposals-ruled.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261029-close-items-defer-gate-rows.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261029-close-items-defer-pet-rows.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-close-items-oi45-oi151.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	LIVE	open	""
 docs/orchestration/RECORDS-RULES.md	LIVE	open	""
@@ -879,8 +883,10 @@ docs/orchestration/state/ki98-wbias-test/REPORT.md	LIVE	open	""
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/live-state.schema.json	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-INPUTS.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-PRESERVE-REPORT.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-5A-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-AMENDMENT-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-BINDING-AMENDMENT-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-BINDING.md	LIVE	open	""
@@ -926,6 +932,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-REPO
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PSCRATCH-RETENTION-PROPOSAL.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261028-measurement-session.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261029-coverage-session.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN-ADDENDUM-20261028.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING-AMENDMENT-1.md	LIVE	open	""
@@ -1030,6 +1037,9 @@ docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/REPORT.md	
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	LIVE	open	""
 docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	LIVE	open	""
+docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-tolerance-20261029/BINDING.md	LIVE	open	""
+docs/orchestration/state/oi160-tolerance-20261029/DECLARATION.md	LIVE	open	""
 docs/orchestration/state/probe-z-consumer-inversion-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-projected-stability-20260910.py	MACHINE	open	

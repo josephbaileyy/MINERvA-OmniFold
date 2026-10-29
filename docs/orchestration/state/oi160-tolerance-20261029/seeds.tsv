@@ -1,0 +1,6 @@
+task	seed	producer	mtime_minus0700	sha256	identified_by
+1	2	55805463	2026-07-11T17:59:40	074344ff3e9cf6ce8e96d15cc3a14fad96c7d9c9ceae78434d0b83b965db8971	sacct 55805463_2 COMPLETED, end 17:59:40 = file mtime; 55871150_2 ran 00:00:16 (skip-if-exists); no iboot_2.log
+2	3	55871150	2026-07-13T16:43:21	c8d81b15fb9f6733ff9e04fae8781eaa74afabfc7fb1fe2f0001abbec022ed80	sacct 55871150_3 COMPLETED (00:08:31), end within 5 s of file mtime; no iboot_3.log
+3	6	55871150	2026-07-13T16:59:32	399293930772cdbb43ff117ed9fdf0d859bbbe88dd76d27a3728a1741ce8c105	sacct 55871150_6 COMPLETED (00:08:29), end within 5 s of file mtime; no iboot_6.log
+4	40	interactive-20260713	2026-07-13T17:32:10	0d0143b75162b10dad1d0b70ca4527071923c75885891ec9cc035c6e20725d4d	iboot_40.log mtime within 5 s of file mtime; 55871150_40 ran 00:00:12 (skip-if-exists)
+5	85	interactive-20260713	2026-07-13T16:00:45	240bcd5077781519781270fb9e215537ded2dcc436ec3b6846be37ec7c5688e2	iboot_85.log mtime within 5 s of file mtime; no 55871150 task for id 85
