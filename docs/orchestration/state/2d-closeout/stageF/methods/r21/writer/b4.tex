@@ -1,0 +1,46 @@
+\section{Discussion and conclusions}
+\label{sec:conclusions}
+
+The principal result is the sixteen-cell cross section of Sec.~\ref{sec:result16}, with its covariance and generator
+comparison.
+
+\label{sec:limits}
+Two validation findings point to the unfolded result retaining part of its prior.
+The first is the residual under a generator-sized change of the truth in Sec.~\ref{sec:departure}, which we
+interpret as regularization bias.
+The second is the envelope of Sec.~\ref{sec:uncertainty-status}, which tracks the same bias and alone exceeds the
+precision target in two of the three tested reporting definitions.
+The note's calibrated tests show the same pull: their null distributions for the external predictions are displaced
+upward by it, as the calibration reproduces (\nsec{sec:joint5d-results}).
+The miscoverage of Sec.~\ref{sec:coverage} is also attributed to a residual bias, but whether that bias has the same
+origin is not established.
+
+The studies of Sec.~\ref{sec:validation} show what must be checked before unfolded intervals are interpreted:
+closure with the backgrounds included; truth changes of generator size, not only nominal closure; coverage under
+changes of the truth, not only at nominal truth; stability under training seeds and rounding-level input changes;
+and run-period consistency.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+The limitations of these results are stated with the results they qualify, in
+Secs.~\ref{sec:method}--\ref{sec:result16}, and those of the calibrated tests in the companion note.
+The low stability of four of the sixteen cells is stated only here.
+The principal ones are these.
+\begin{enumerate}
+\item The two-dimensional covariance has not been independently validated, and its coverage has not been tested
+(Sec.~\ref{sec:uq2d}).
+\item The three- and four-observable central values lack intervals of validated coverage (Sec.~\ref{sec:central}).
+\item The sixteen-cell result also has total uncertainties, whose coverage is not validated; Sec.~\ref{sec:fd16}
+reports the fake-data tests of the estimator's bias.
+\item Four of the sixteen cells, \fvval{h2-lowstab-cells}, have a stability of
+\fvval{h2-lowstab-min}--\fvval{h2-lowstab-max}: of the simulated signal events generated in such a cell and
+reconstructed, only that fraction is reconstructed in the same cell.
+\item The note's calibrated tests reject hybrid nulls, conditionally on the simulation's hadronic response.
+However, the rejections carry over to the generator predictions themselves only under a bound on the residual below
+the fine grid, which has not been shown.
+Their calibration is valid to the extent that the simulated chain reproduces the analysis of the data
+(\nsec{sec:joint5d-conditions}).
+They are not physical exclusions of the generators, and they show no evidence of additional discrimination beyond
+matched coarse projections.
+\end{enumerate}

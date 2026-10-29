@@ -1,0 +1,7 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+
+1. B more often divides overloaded sentences into manageable units, particularly in the introduction and data description.
+2. B improves grammatical parallelism and clarifies referents, giving the prose a slightly smoother, more precise journal register.
+3. B’s Figure 1 caption presents qualifications in separate sentences rather than nested parentheses, making it easier to follow.

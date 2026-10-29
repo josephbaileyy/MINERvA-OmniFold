@@ -1,0 +1,19 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states "Interval coverage has been validated.", whereas BEFORE explicitly states that "Interval coverage has not been validated." This drops a critical negative qualifier and falsely asserts that interval coverage was validated.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states that the input is "in the form of every analysis ntuple MINERvA has produced", whereas BEFORE only specifies "an earlier production of the MINERvA open-data release of pre-selected analysis ntuples (AnaTuples)". This makes a broader, unsupported claim about the scope of data analyzed.
+
+Q3: VERDICT: DIFFERS
+DETAIL: For the 27-cell partition, AFTER asserts that "the same estimator's envelope alone always exceeds it", directly contradicting BEFORE, which states that the envelope alone "does not exceed it". This reverses a key finding and contradicts the explanation that follows.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states "These tests provide complete and independent evidence.", which directly contradicts BEFORE's explicit limitation that "These tests provide partial evidence and are not independent." This makes a much stronger, unsupported claim regarding the validation tests.
+
+Q5: VERDICT: DIFFERS
+DETAIL: In the caption of Table~\ref{tab:result16}, AFTER states that "Quantitative comparisons need only the diagonal uncertainties", directly contradicting BEFORE's statement that "Quantitative comparisons need the full covariance". This drops the requirement to use the full covariance matrix and misleads the reader about what is needed for quantitative comparisons.
+
+Q6: VERDICT: DIFFERS
+DETAIL: In item 5 of the limitations, AFTER states "They are physical exclusions of the generators", omitting the negation from BEFORE's statement "They are not physical exclusions of the generators". This introduces an unsupported claim that contradicts the actual limitation.
+
+END

@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally grammatical and formal, but recurring internal jargon, manuscript bookkeeping, repetitive qualifications, and development narrative require a dedicated language pass.
+1. QUOTE: "The limitations of these results are stated with the results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of four of the sixteen cells is stated only here. The principal ones are these."
+   REWRITE: The principal limitations concern covariance validation, interval coverage, cell stability, and the interpretation of the calibrated tests.
+2. QUOTE: "The note’s calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: The calibration also reproduces the upward shift in the null distributions of the test statistic for the external predictions caused by this bias (Ref. [14], Sec. 11.5).
+3. QUOTE: "A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+   REWRITE: A software package of approximately 16 MB reproduces the null-distribution figures and the (Eavail , W ) map in the companion note using NumPy, SciPy, and Matplotlib; the package has not yet been deposited.

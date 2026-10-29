@@ -1,0 +1,21 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but recurrent internal labels, development history, repeated caveats, and dense procedural qualifications require a dedicated language pass to reach typical PRD register.
+
+1. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development. The comparison and its
+values are given in Ref. [14], Sec. 9.4."
+   REWRITE: We use five iterations because increasing the number to 10, 15, or 20 did not reduce the estimated model dependence, quantified by the maximum residual proxy across the tested truth deformations (Ref. [14], Sec. 9.4).
+
+2. QUOTE: "The note’s calibrated tests show
+the same pull: their null distributions for the external
+predictions are displaced upward by it, as the calibration
+reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: The calibrated tests reproduce the upward shift in the null distributions of the test statistic for the external predictions caused by residual dependence on the prior (Ref. [14], Sec. 11.5).
+
+3. QUOTE: "A
+candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and
+regenerates the analysis note’s figures of the joint-test
+null distributions and the (Eavail , W ) map."
+   REWRITE: A software package of approximately 16 MB reproduces the null-distribution figures for the joint-test estimator and the (Eavail , W ) map in the companion analysis note using NumPy, SciPy, and Matplotlib; deposition is pending.
