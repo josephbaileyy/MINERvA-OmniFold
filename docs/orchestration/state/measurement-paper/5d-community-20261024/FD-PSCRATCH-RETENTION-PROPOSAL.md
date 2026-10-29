@@ -107,6 +107,9 @@ filtered for cmodel, experiments, pv-ladder, h2def, ibu1, r10 and proj1d (`rp4.o
 
 ## 4. Proposed actions, each Joseph's
 
+- **A0. First: F0's per-experiment table** `fd_f0_experiments.npz` (`7384c651…`, 1,068,642 B), as the director
+  asked. At 1 MB it can go to git beside F0's readout (`fd/readout/`, with `-f`, since `.npz` is gitignored), or into
+  A1's archive, or both. It is the one product here whose rebuild would also have to reproduce a committed digest.
 - **A1. One HPSS archive,** about 25 MB, of `fd_f0_experiments.npz`, `cmodel5d-20261024/out/` and pv-ladder's `prep/`
   and `products/`, by `stage0_preserve.sh` as for 3b's inputs. It would cost nothing in node-h and about 25 MB of HPSS.
 - **A2. Delete the git clones** listed in §2 after A1, about 21.6 GB of pscratch. Each is re-clonable at its HEAD.
