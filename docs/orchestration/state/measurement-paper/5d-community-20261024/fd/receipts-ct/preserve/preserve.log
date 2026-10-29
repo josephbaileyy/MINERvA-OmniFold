@@ -1,0 +1,18 @@
+[P] 2026-10-28T22:11:07Z start host=login08
+[P] 2026-10-28T22:12:42Z inventory verified: 42 files
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[P] 2026-10-28T22:15:49Z tar 32c8b826da5c9b9d72b0a502ef683709770d651b966d67bd37c4e07b5ffd6ef5  /pscratch/sd/j/josephrb/fd-ct-preserve-20261028/stage0-inputs.tar bytes=22076692480
+mkdir: /home/j/josephrb/mnv-5d-ct-3b-inputs-20261028
+put  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar' ( 22076692480 bytes, 2371368.9 KBS (cos=5))
+2e1b9b2b5599c00576d7859f4b0dad6f (md5) /home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar
+put  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/stage0-inputs.tar.sha256' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar.sha256' ( 132 bytes, 29.9 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/INVENTORY.sha256' ( 6163 bytes, 402.3 KBS (cos=4))
+/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028:
+-rw-r-----    1 josephrb  josephrb        6163 Oct 28 15:16 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb 22076692480 Oct 28 15:15 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 28 15:16 stage0-inputs.tar.sha256
+get  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/retrieve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar' (2026/10/28 15:15:59 22076692480 bytes, 885114.4 KBS )
+[P] 2026-10-28T22:19:14Z PASS: HPSS copy verified by hashverify and by retrieval (32c8b826da5c9b9d72b0a502ef683709770d651b966d67bd37c4e07b5ffd6ef5)

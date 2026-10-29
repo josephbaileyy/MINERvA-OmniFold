@@ -1,0 +1,45 @@
+[R] 2026-10-28T22:09:18Z start host=login08
+[R] hpssquota before:
+|                                pscratch |   17.01TiB |    20.00TiB |          85.0% |      2.09M |      10.00M |          20.9% |
+| josephrb usage on HPSS charged to m3246 |  422.79GiB |   512.00GiB |          82.6% |          - |           - |              - |
+[R] sources: 42 files, 22076611454 B
+[R] 2026-10-28T22:11:06Z inventory written: 42 lines, sha256 52eaa265c89a6e553558bc57410d71aaa80df4fe7cda442ddffb838c6bbda3b9
+[R] W2b cross-check against /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/W2-SHA256SUMS (match = same digest recorded for the same pscratch-relative name):
+  1  lat_w2b_rr0_bkg.npz
+  1  lat_w2b_rr0.npz
+  1  lat_w2b_rr1_bkg.npz
+  1  lat_w2b_rr1.npz
+  1  lat_w2b_rrzero_bkg.npz
+  1  lat_w2b_rrzero.npz
+  0  w2b_rr0_b-_j-.npz
+  0  w2b_rr1_b-_j-.npz
+  0  w2b_rrzero_b-_j-.npz
+[R] 2026-10-28T22:11:06Z calling stage0_preserve.sh
+[P] 2026-10-28T22:11:07Z start host=login08
+[P] 2026-10-28T22:12:42Z inventory verified: 42 files
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+[P] 2026-10-28T22:15:49Z tar 32c8b826da5c9b9d72b0a502ef683709770d651b966d67bd37c4e07b5ffd6ef5  /pscratch/sd/j/josephrb/fd-ct-preserve-20261028/stage0-inputs.tar bytes=22076692480
+mkdir: /home/j/josephrb/mnv-5d-ct-3b-inputs-20261028
+put  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar' ( 22076692480 bytes, 2371368.9 KBS (cos=5))
+2e1b9b2b5599c00576d7859f4b0dad6f (md5) /home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar
+put  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/stage0-inputs.tar.sha256' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar.sha256' ( 132 bytes, 29.9 KBS (cos=4))
+put  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/INVENTORY.sha256' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/INVENTORY.sha256' ( 6163 bytes, 402.3 KBS (cos=4))
+/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar: (md5) OK
+
+/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028:
+-rw-r-----    1 josephrb  josephrb        6163 Oct 28 15:16 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb 22076692480 Oct 28 15:15 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 28 15:16 stage0-inputs.tar.sha256
+get  '/pscratch/sd/j/josephrb/fd-ct-preserve-20261028/retrieve/stage0-inputs.tar' : '/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/stage0-inputs.tar' (2026/10/28 15:15:59 22076692480 bytes, 885114.4 KBS )
+[P] 2026-10-28T22:19:14Z PASS: HPSS copy verified by hashverify and by retrieval (32c8b826da5c9b9d72b0a502ef683709770d651b966d67bd37c4e07b5ffd6ef5)
+[R] 2026-10-28T22:19:14Z stage0_preserve rc=0
+[R] hpssquota after:
+|                                pscratch |   17.03TiB |    20.00TiB |          85.1% |      2.09M |      10.00M |          20.9% |
+| josephrb usage on HPSS charged to m3246 |  422.79GiB |   512.00GiB |          82.6% |          - |           - |              - |
+
+/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028:
+-rw-r-----    1 josephrb  josephrb        6163 Oct 28 15:16 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb 22076692480 Oct 28 15:15 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 28 15:16 stage0-inputs.tar.sha256
+[R] 2026-10-28T22:19:15Z end rc=0

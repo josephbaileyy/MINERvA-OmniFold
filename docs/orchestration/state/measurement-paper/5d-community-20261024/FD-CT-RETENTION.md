@@ -24,6 +24,25 @@ here); which per-playlist inputs 5B will use.
 **Receipts:** [`fd/receipts-ct/retention/`](fd/receipts-ct/retention/), probes `ret1.sh`–`ret6.sh` and their outputs.
 `$P` = `/pscratch/sd/j/josephrb`.
 
+## 0. Correction and update, 2026-10-28 (after PR #460)
+
+**Correction.** As merged in #460, the three W2b rows of §2 said "CFS: no". That was wrong.
+- The cause: the CFS part of §2's Search was only a glob for `*bkgaware*` (`ret4.out:15-41`). It never covered W2b,
+  so the "no" outran the search.
+- **The existing copy** is `/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/`.
+  It holds `evloop/`, `lateral/`, `merged/` and `unf/`, made by `publication/release/preservation/preserve_w2_outputs_20261008.sh`
+  (evloop, lateral, merged; listed in that directory's `W2-SHA256SUMS`) and by the first preservation pass (unf; listed
+  in its `SHA256SUMS`). A name search of our whole CFS area found it (`fd/receipts-ct/preserve/ret7.out`).
+- **Checked against pscratch:** the six lateral dumps' sha256 equal `W2-SHA256SUMS` (`fd/receipts-ct/preserve/run.log`),
+  and the three unf products' equal `SHA256SUMS` (`fd/receipts-ct/preserve/decl1.out`). The event loops' and merged files'
+  digests were not compared here.
+- **Unchanged:** MP-1 S1 has no CFS copy (the same name search found none under `mp1`), and the bkgaware universe
+  loops have none. The HPSS rows were measured by a covering search and stand.
+
+**Update.** Under the director's ruling of 2026-10-28, the 42 npz of 3b (MP-1 S1 lateral and unf, W2b lateral and unf)
+are on HPSS at `/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028/`, verified by hashverify and by retrieval
+(`FD-CT-PRESERVE-REPORT.md`). §2's HPSS column is left as measured on 2026-10-28 before that copy.
+
 ## 1. The rule used for exposure
 
 - NERSC: "assume that any file not accessed within 8 weeks may be purged at any time"
@@ -36,9 +55,9 @@ here); which per-playlist inputs 5B will use.
 
 | item | input | size | oldest access | exposed from | HPSS | CFS |
 |---|---|---:|---|---|---|---|
-| 3a, 3b | W2b data unfolds `$P/w2-recoil-20261006/w2b/unf/` (3 npz) | 285 K | 2026-10-20 (`ret3.out:11`) | 2026-12-15 | **no** | **no** |
-| 3b | W2b lateral dumps `w2b/lateral/` (6 npz, with `_bkg`) | 4.5 G | 2026-10-08 (`ret3.out:10`) | 2026-12-03 | **no** | **no** |
-| 3b | W2b merged and per-playlist event loops `w2b/{merged,evloop}/` (3 + 36 ROOT) | 14 G + 14 G | 2026-10-08 (`ret3.out:8-9`) | 2026-12-03 | **no** | **no** |
+| 3a, 3b | W2b data unfolds `$P/w2-recoil-20261006/w2b/unf/` (3 npz) | 285 K | 2026-10-20 (`ret3.out:11`) | 2026-12-15 | **no** | **yes** (corrected, §0) |
+| 3b | W2b lateral dumps `w2b/lateral/` (6 npz, with `_bkg`) | 4.5 G | 2026-10-08 (`ret3.out:10`) | 2026-12-03 | **no** | **yes** (corrected, §0) |
+| 3b | W2b merged and per-playlist event loops `w2b/{merged,evloop}/` (3 + 36 ROOT) | 14 G + 14 G | 2026-10-08 (`ret3.out:8-9`) | 2026-12-03 | **no** | **yes** (corrected, §0) |
 | 3b | MP-1 S1 lateral dumps `$P/measurement-paper/phase1/mp1/s1/lateral/` (22 npz: 11 variants and their `_bkg`) | 17 G | 2026-10-20 (`ret3.out:6`) | 2026-12-15 | **no** | **no** |
 | 3b | MP-1 S1 data unfolds `mp1/s1/unf/` (11 npz) | 1.1 M | 2026-10-26 (`ret3.out:7`) | 2026-12-21 | **no** | **no** |
 | 3b, 5B | MP-1 S1 per-playlist event loops `mp1/s1/evloop/<variant>/` (11 × 12 ROOT), and `merged/` (11 ROOT) | 50 G + 50 G | 2026-10-20 (`ret3.out:4-5`) | 2026-12-15 | **no** | **no** |
