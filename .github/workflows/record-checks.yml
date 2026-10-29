@@ -144,6 +144,14 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 docs/orchestration/live_doc_indexed.py --unrowed
 
+      - name: "pre-commit: state receipt names carry time (state_receipt_names.py --base)"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/state_receipt_names.py --base "${BASE:?the base was not resolved}"
+
+      - name: "pre-commit: state-receipt-names self-test"
+        if: ${{ !cancelled() }}
+        run: python3 docs/orchestration/state_receipt_names.py --self-test
+
       - name: "pre-commit: bounded control plane"
         if: ${{ !cancelled() }}
         run: python3 docs/orchestration/control_plane_lint.py
