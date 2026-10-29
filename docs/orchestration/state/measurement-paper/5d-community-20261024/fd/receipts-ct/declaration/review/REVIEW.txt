@@ -1,0 +1,238 @@
+# Review: nd-unfolding/fd_ct_readers.py and tests/test_fd_ct_readers.py at 0cdb2cb4
+
+Independent, read-only review. The reviewer used a detached worktree at `0cdb2cb4e28ef473182a671a698221823c79768f`.
+Mutants ran on copies ("mirrors") under this scratch dir, and no tracked file was written.
+Scratch dir: `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/4ddb8e26-d8ce-4841-bbeb-6b0f99a3fec7/scratchpad/review-ct-notes/` (written `$N` below).
+
+- Baseline: `TMPDIR=$N python3 -B -m unittest test_fd_ct_readers` gave **Ran 38 tests, OK** (`$N/baseline_tests.log`).
+- Probes: `$N/probes.py` writes `$N/probes.log`.
+- Mutants: `$N/review_mutants.py` writes `$N/review_mutants.log`. 31 mutants ran on copies of the tool at sha256
+  `0946c088…`. **28 survived, 3 were killed, none failed to apply.**
+
+Line numbers refer to `nd-unfolding/fd_ct_readers.py` (written T:) and `nd-unfolding/tests/test_fd_ct_readers.py` (written
+t:) at 0cdb2cb4.
+
+---
+
+## HIGH
+
+### H1. The test suite leaves most of the tool's own refusals and most of its written readout untested. 28 of 31 one-line mutants survive.
+
+The test docstring (t:4-6) says "Each refusing control refuses on a one-entry defect" and "Each reader's readout is
+recomputed here by an independent route". The author's round-1 receipt (`mutants-round1.log`, 43/44 killed) covers
+only the lines it chose. Every mutant below **passes the whole suite**, so a defect of that kind would ship green and
+run on the real data (`$N/review_mutants.log`).
+
+**Refusals that no test makes fire. Removing each one leaves the suite OK:**
+- S (T:107-111):
+  - "U is S1's float32 functional matrix"
+  - "f is positive on every cell"
+  - "C_total = C_e + C_model_abs"
+  - the C_resp pin (T:97)
+- R0: the shape or non-finite refusal (T:181)
+- C0: the F0b readout pin (T:267)
+- C1: the repeated-seed clause (T:288)
+- C4 (T:331). See M4: it cannot fire anyway.
+- P0:
+  - "the e_X sum to 1" (T:434)
+  - "205 distinct 2D cells" (T:430)
+  - "every period array has one entry per cell" (T:432)
+- P1: the central-value pin (T:441) and its meta check (T:442)
+- P2: the prior pin (T:448) and the edges check (T:452-455)
+- P4: the PSD and rank branch (T:397). See M4.
+
+**Written numbers whose arithmetic no test checks. Each wrong formula below passes:**
+- 3a:
+  - `curvature_ratio` (T:204). Numerator replaced by the denominator, so it always writes 1.0.
+  - `abs_half_span_over_sigma.C_resp` (T:206). Divided by sigma_total_resp instead.
+  - `half_span_quadratic_form.C_total` (T:216). Computed against C_total + C_resp.
+  - `sigma_rel.C_total` (T:198). Taken from C_total + C_resp.
+  - `half_span_summary_abs` (T:211). The abs is dropped.
+- 4C:
+  - `about_weighted_mean` (T:338). Weighted mean and weighted percentiles computed with unit weights. The test checks
+    only that entry's unweighted mean (t:420).
+  - The written `B_eff` per truth (T:319). Replaced by the unweighted count N.
+  - `width_ratio_summary` (T:341). Taken against C_e.
+
+**The leak guard's integral tables are untested in every reader:**
+- Emptying the integral table in recoil (T:194), chi2 (T:311) or period (T:464) leaves the suite OK.
+- The only planted-leak test (t:372-375) plants f itself, which stays in the table.
+- So a regression that drops the forbidden forms f − X, f/X, X/f, f/X − 1 and X/f − 1 of every product ships green.
+- A planted (U@xc)/(U@xp) − 1 in the period readout *is* refused at present. That mutant was killed through the
+  guard. Nothing would keep it so.
+
+**Scenario.** Someone edits the 3a curvature or the 4C B_eff, or swaps a matrix in 3a's C_total entries. The real-data
+run then prints and commits a wrong descriptive number under a green suite and a green mutation receipt.
+
+---
+
+## MEDIUM
+
+### M1. 5A's S_ref16 is projected by a different rule from C_PL,16, so the two sensitivities beside each other are not like-for-like.
+
+**Where:** T:389 and T:394. The test restates the same rule at t:527-529 and t:534, so it cannot disagree.
+
+- **g_X,R:** the tool averages the 2D relative offset g_X linearly over the footprint, `om @ g_X`. This is the
+  linear projection of a per-bin relative offset onto a cell integral, under 5A's assumption.
+- **S_ref16:** the tool averages the double ratio r_X itself over the footprint, `r_X,R = om @ r_X`, and only then
+  forms `e_X (r_X,R / r_A,R − 1)`.
+- **The 2D DESIGN** (`2d-closeout/playlist-term/DESIGN.md:69`) defines b_X = e_X (r_X/r_A − 1) ∘ x per 2D cell. The
+  footprint average consistent with g is `e_X · om @ (r_X/r_A − 1)`.
+- **The difference is first order, not second.** r_X = m(1 + g_X) and m (data over MC) varies across 2D bins. So the
+  tool's ratio-of-averages re-weights the footprint by m, with weights om∘m instead of om.
+
+**Probe P-A** (`$N/probes.log`), on the test's own fixture:
+- Per-cell |tool − linear| / |linear| of b_PB: median 0.15, max 7.3.
+- Per-cell σ(S_ref16), tool over linear: 0.80 to 1.50, and 0.92 to 1.66 with a 2D-like 7 % p_∥ step in m.
+- The mutant that uses the linear rule is KILLED only because the test hand-codes the tool's rule.
+
+**Scenario.** The real readout prints `sigma_rel.S_ref16` beside `C_PL16` as "S-ref projected". A reader then compares
+two projections that differ by tens of percent per cell for a reason unrelated to the reference choice.
+
+### M2. The period readout writes a forbidden form X/f − 1 for a product integral the guard does not hold.
+
+**Where:** T:383 and T:408. The guard is built at T:464.
+
+- For the central variant, `weight_outside_2d_support[R] = (tot − sup)/tot = 1 − X_sup,R / f_R`.
+- X_sup,R is the central value's integral over the part of R's footprint inside the 2D support.
+- That is |X/f − 1| for a product integral X. LeakGuard's docstring forbids exactly that form "for any such X". The
+  guard is passed only f and U@prior, so it cannot see it.
+- The quantity also carries the blinded result's sub-cell (p_T, p_∥) distribution.
+
+**Probe P-C:**
+- The written vector equals 1 − X_sup/f to 2e-16.
+- The tool's guard counts 0 offending numbers.
+- The same guard with X_sup added counts **24**.
+- Mutant "planted supported-footprint share of f (1 − outside)" SURVIVES (`$N/review_mutants.log`).
+
+This may be acceptable, since it is a shape fraction and not f. But nothing in the governing records sanctions it,
+and it should be the director's call, not an untested omission.
+
+**The comment at T:462-463 is correct as far as it goes:**
+- U@xc equals f to 1e-12 (P1). Its omitted forms are about 1, about 1e-16, or below the 1e-30 floor.
+- Adding U@xc would put 1 in the table and refuse every "1" in a string, for example "R01" or "1A-1F".
+- So the exclusion itself is sound. The gap is the *partial* integrals.
+
+### M3. 5A weights the footprint by the central data value as primary. The governing addendum says the cell's prior weight. The record that authorizes the change is not in any ref.
+
+**Where:** T:457, labelled at T:469-470. The addendum (`LIMITATION-PLAN-ADDENDUM-20261028.md:394`) says "weighted
+by the cell's prior weight".
+
+- The tool's docstring (T:2) and the test docstring cite `FD-CT-READERS-DECLARATION.md`, sections 1, 3 and 6.3.
+- That file exists at no ref. The reviewer checked the worktree, `origin/fd/ct-readers-declaration` (whose
+  `diff --stat` against main is only the tool, the tests, mutants.py and its log) and every local and remote branch.
+- So the deviation from the addendum (central primary, prior as sensitivity) is unrecorded. So are these declared
+  constants: EXTRAPOLATED = 0.10, the PERCENTILES set, the renormalization over the supported cells, and the
+  UNSUPPORTED layout the test calls "the measured binning's" (t:36-37).
+- None of these can be checked against a declaration. If the declaration is bound, the binding names a file that does
+  not exist on any branch.
+
+### M4. Three listed controls cannot fire on any input. C4 and P4 are algebraic identities, so `controls_passed` overstates what was checked.
+
+**C4 (T:325-333).**
+- b~ is the w-weighted mean, so Σ w (r − b~) = 0. Then mean_w χ²_truth = mean_w χ²_b~ + b~ᵀM⁻¹b~ exactly.
+- Probe P-D: over 2000 random (r, w, M) sets, the worst normalized gap is 1.4e-14, against a 1e-9 refusal.
+- It guards only a code change.
+
+**P4 (T:388-398).**
+- om is shared by all three periods. So Σ e_X g_X,R = om @ (Σ e_X g_X), which is ≤ 1e-12 once P0 passes.
+- With k > 0 and e > 0, k Σ e g gᵀ is PSD of rank ≤ 2 by construction, because g_C is a combination of g_A and g_B.
+- Probe P-E: over 500 random footprints, the worst |Σ e g_R| is 7e-18, the worst rank is 2 and the worst min/max
+  eigenvalue is −4e-16. It never fires.
+- Its only test (t:577-587) bypasses P0 by calling `period_variant` on hand-broken inputs.
+
+**Effect.** Both appear in `controls_passed` (T:350 and T:466) beside controls that test inputs. The 2D DESIGN §4
+check 3 labels its analogous symmetry check "guards only against a code change". Here no such label exists.
+
+### M5. 3a's in-span fraction has no stated reference, and its value depends on the coordinates.
+
+**Where:** T:199-203, labelled at T:218-221.
+
+- C_resp has rank 4, from four rank-1 species. So an isotropic random d has an expected in-span fraction of 4/16 =
+  0.25. Probe P-F measured 0.249, with a 16–84 % range of 0.10 to 0.40.
+- The label explains only what 1 means. A real value of, say, 0.4 cannot be read without the 0.25 chance level
+  beside it.
+- The Euclidean projector depends on units. For one d in probe P-F, the fraction is 0.24 in relative units and 0.99
+  in absolute units (the fixture's f spans 6.7e5).
+- The label does say "relative units", which is correct but is the only safeguard.
+
+**Minor:** d is relative to rrzero (z) while the projector is built in f-relative units. That is an O(z/f − 1) mismatch.
+
+---
+
+## LOW
+
+### L1. 4C mixes two percentile definitions between the weighted and unweighted columns.
+
+**Where:** T:251 and T:259.
+
+- Weighted percentiles use the inverted ECDF.
+- Unweighted percentiles use `np.percentile`'s default, linear interpolation.
+- At equal weights the two differ. Probe P-B, on χ²₁₆ draws of A7's sizes: up to 0.14 at the 95th percentile and
+  0.08 at the 84th.
+- Each test restates its own branch (t:291 and t:421-422), so neither checks that they agree.
+- Small against B_eff ≈ 244–321 sampling noise, but it is a definitional difference that the two columns invite a
+  reader to compare.
+
+### L2. 3a's `curvature_ratio` is not MP-1's G3 form that build_cresp prints for C_resp.
+
+**Where:** T:204 against `build_cresp.py` `curvature_ratio`.
+
+- The tool uses relative-unit norms ||s+ + s−|| / ||s+ − s−||.
+- build_cresp uses absolute norms ||f+ + f− − 2f0|| / ||f+ − f−||.
+- Probe P-G, on the same three products: 0.17 against 0.23, 0.25 against 0.29, and 0.24 against 0.10.
+- Labelled only "descriptive". Set beside C_resp's per-species curvatures, the two are not comparable.
+- No test checks this field (H1).
+
+### L3. 4C's "no p value, no tail fraction" test (ruling 4) checks key names only.
+
+**Where:** t:432-434.
+
+- The test forbids only the key "p" and keys containing "share", "tail" or "above".
+- A tail fraction written under, for example, `frac_gt_95`, `exceed` or `n_over` would pass.
+- The ruling is enforced against the former `share` mutant's spelling, not against the quantity.
+
+### L4. Footprint robustness.
+
+- `footprint` (T:365-384) does not check that the fine-cell weights x_f·vol_f are non-negative. A negative fine value
+  in the central or prior array would give negative om entries without refusal.
+- The tool never checks that the fine grid's (p_T, p_∥) edges equal the 2D grid, or that the 2D cells use the
+  `ipt*16 + ipz` encoding.
+  - Both hold at present: `s5p_stage1_inspect.FINE` equals `common.py` PT_A/PZ_A, and `cell_ipt_ipz` is `// NPZ`.
+  - But the encoding is assumed at T:370.
+- C1 has no test for a repeated pseudo_seed. It can occur through two filenames ending in the same `_s<seed>`.
+
+### L5. The shared `not_citable_for` reads against 4C's own content.
+
+**Where:** T:85-87.
+
+- Every readout, the 4C chi2 readout included, carries NOT CITABLE FOR "a coverage, calibration or
+  chi2-distribution result".
+- The 4C readout *is* a set of χ² distribution percentiles.
+- The intent, presumably "the χ² distribution under the full model", is not what it says.
+- Addendum §5.3's "a validated size" is not stated for 5A, though "cannot fail" partly covers it.
+
+### L6. GIBUU_CELLS are taken from F0's constant and not re-derived from the definition.
+
+**Where:** T:318. F0 checks them against the boxes (`fd_f0_regrade.py`, control 4). Here the definition is
+sha-pinned by `sa.fine_map`, so the risk is only a future edit of the constant.
+
+---
+
+## Verified as correct (no finding)
+
+- **Pins against committed records:**
+  - W2B products (`W2B-REPORT-20261006.md:177`).
+  - W2B input and bkg digests: they equal `lat_w2b_rr{0,1,zero}{,_bkg}.npz` in
+    `publication/release/preservation/w2-addition/W2-SHA256SUMS:37-42`.
+  - s1_npz, cresp, central and prior appear in the committed records.
+- **4C label figures:** "chi2_16 = 245.74" equals `fd_f0b_readout.json` offset_control_7.chi2 = 245.742…. B_eff keys
+  equal the five A7 truths.
+- **5A g_R construction:** linear in the relative offset, with k = V2/(1 − V2), e from P0, C = k Σ e g gᵀ relative to
+  f. This is consistent with 2D DESIGN §2.
+- **The exclusion of U@xc from the period guard:** sound (see M2).
+- **chi2_quantile** against scipy at 8 and 16 dof: tested and correct.
+
+## Worktree status
+
+`git -C …/review-ct status --porcelain` printed nothing (empty).
