@@ -1,0 +1,28 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER's wording "pooled coverage test" is unsupported and misleading because the quoted diagnostic "(pull width 1.02)" measures pull dispersion/calibration rather than coverage (containment rate). The words concerned are "pooled coverage test".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the accepted limitation that per-functional calibration was not established (which rested on six functionals being 3 SE pull outliers) and asserts instead that "coverage" was not established, which was not systematically tested for every functional. The word concerned is "coverage".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER misnames the test pass recorded in CONTEXT (which was granted for test "A2: calibration") by calling it "a pooled coverage pass", introducing ambiguity about what pass was granted. The words concerned are "pooled coverage pass".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "interval calibration" with "interval coverage", dropping the broader qualifier that repeating a calculation checks neither general interval calibration (such as uncertainty scaling and pull distributions) nor model adequacy. The words concerned are "interval coverage".
+
+Q5: VERDICT: SAME
+DETAIL: Read with its CONTEXT, H2S1T24's ineligibility was decided under look 1 of the frozen coverage rule, where it failed interval coverage (failing criterion C1 and under-covering in the low-acceptance region); "fails interval coverage" conveys the same finding without adding unsupported claims or omitting qualifiers.
+
+Q6: VERDICT: SAME
+DETAIL: Read with its CONTEXT, the PET procedure failed look 1 of the frozen coverage rule; changing "failed calibration" to "failed its coverage test" accurately reflects the specific evaluation failed without altering the meaning.
+
+Q7: VERDICT: SAME
+DETAIL: Read with its CONTEXT, the cited work explicitly constructs confidence intervals, so replacing "calibrated intervals" with "confidence intervals" adopts the exact terminology of the cited paper without altering the scope or meaning.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's core statement that the main results are the validation findings, asserting instead that the principal result is the cross section, covariance, and generator comparison. The words concerned are "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison."
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's accepted statement that the main results are the validation findings and substitutes an unsupported claim about the cross section being the principal result. The words concerned are "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison."
+
+END

@@ -1,0 +1,27 @@
+Q1: VERDICT: SAME
+DETAIL: When read with the test record noting "A pooled pass, not per-functional calibration", removing "calibration" to say "a pooled test of its statistical intervals (pull width 1.02)" preserves the exact measurement and outcome without dropping any substantive fact or qualifier.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER replaces "calibration" with "coverage", which is unsupported by BEFORE read with CONTEXT because the record specifically evaluated per-functional calibration ("not per-functional calibration") rather than the distinct property of target containment rate defined as coverage.
+
+Q3: VERDICT: SAME
+DETAIL: In CONTEXT, the outcome is explicitly recorded as "A pooled pass, not per-functional calibration" with verdict "PASS (pooled)", so changing "a pooled calibration pass" to "a pooled pass" preserves the exact meaning and aligns with the test record.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "interval calibration" with "interval coverage", dropping BEFORE's statement regarding the broader property of interval calibration and narrowing the claim to the specific target-containment definition of coverage.
+
+Q5: VERDICT: SAME
+DETAIL: In the campaign record, H2S1T24 was disqualified specifically under the frozen "coverage rule" (failing C1 and C4), so changing "fails interval calibration" to "fails interval coverage" conveys the exact same disqualification and grounds.
+
+Q6: VERDICT: SAME
+DETAIL: Reading BEFORE with CONTEXT shows that the measured PET procedure failed the frozen coverage rule, so replacing "failed calibration" with "failed its coverage test" states the exact same fact and test failure.
+
+Q7: VERDICT: SAME
+DETAIL: In CONTEXT, the cited paper explicitly constructs confidence intervals via calibration, so changing "calibrated intervals" to "confidence intervals" states the exact same construct and matches the cited work.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", which BEFORE does not support, while dropping BEFORE's statement that "The main results are the validation findings."
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER replaces "The main results are the validation findings" with "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", dropping BEFORE's stated main result and asserting a different principal finding unsupported by BEFORE.
+END

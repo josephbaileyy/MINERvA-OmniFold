@@ -1,0 +1,11 @@
+RATING: 2.5
+JUSTIFICATION: While the introductory literature review is competent and appropriately framed, the abstract and summary frequently lapse into the register of an internal collaboration note or computing log, characterized by batch-job record-keeping, defensive hedging, developmental history, and internal workflow jargon.
+
+1. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: To ensure completeness, pseudo-experiments that initially terminated prematurely due to wall-clock time limits were re-evaluated; incorporating these completed draws does not alter any hypothesis-test conclusions (§11.6).
+
+2. QUOTE: "Whether it is ready for publication as a measurement has not been established. LightGBM was chosen over the exactsplit estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2)."
+   REWRITE: The baseline results employ the LightGBM estimator, while the exact-split estimator is retained as an independent cross-check (§3.2).
+
+3. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: Frequentist coverage has not been validated for the reported two-dimensional statistical uncertainties; an earlier iteration of the uncertainty band exhibited tail undercoverage ($C_2 = 0.912$, compared to the nominal $0.954$; §§4.2, 5.2).

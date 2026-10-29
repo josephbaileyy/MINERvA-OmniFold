@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B maintains a more consistent formal register, whereas A occasionally uses conversational phrasing such as “keeps this bias” and “A fifth of that positive difference sits.”
+2. A contains awkward or ambiguous formulations, including “In ratio” and “raises its per-bin median,” that would benefit from copy editing.
+3. B integrates technical qualifications more smoothly into its sentences, while A frequently stacks qualifications and parenthetical references in ways that interrupt the prose.

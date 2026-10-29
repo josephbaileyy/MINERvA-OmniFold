@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A maintains smoother paragraph development, whereas B more often reads as a succession of terse assessment statements.
+2. B’s expressions “keeps this bias,” “sits in the single widest overflow cell,” and “Neither closure is graded” are less polished than the surrounding formal technical register.
+3. A’s sentence structures are generally cleaner, while some of B’s added sentences accumulate possessives and qualifications that make their grammatical relationships harder to follow.

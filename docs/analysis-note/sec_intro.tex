@@ -32,9 +32,9 @@ Closest to this analysis is the study of Huang \emph{et al.}~\cite{Huang:2025omn
   \item OmniFold regularizes through model capacity and through an iteration count, which it shares with IBU. Comparing the two methods on the same data probes the result's method dependence (\S\ref{sec:results}).
 \end{itemize}
 
-\paragraph{Analysis strategy.} The published 2D cross section provides a quantitative validation of unbinned OmniFold on MINERvA data and a size comparison for its uncertainty budget (\S\S\ref{sec:experiment}--\ref{sec:results}). The same pipeline then adds $\Eavail$, $q_{3}$ (\S\ref{sec:3d}) and $W$ (\S\ref{sec:eavailw}) as classifier inputs, tested by marginalization to each lower-dimensional result, closure, coverage and classifier-family comparisons. The validation and uncertainty of the five-dimensional estimator (\S\ref{sec:5d}), the sixteen-cell result (\S\ref{sec:fived16}) and the calibrated generator tests built on the estimator (\S\ref{sec:joint5d}) follow these central values. A scalar study with relaxed truth-muon cuts (\S\ref{sec:fps}) probes an alternative signal definition.
+\paragraph{Analysis strategy.} The published 2D cross section provides a quantitative validation of unbinned OmniFold on MINERvA data and a size comparison for its uncertainty budget (\S\S\ref{sec:experiment}--\ref{sec:results}). The same pipeline then adds $\Eavail$, $q_{3}$ (\S\ref{sec:3d}) and $W$ (\S\ref{sec:eavailw}) as classifier inputs, tested by marginalization to each lower-dimensional result, closure, coverage and classifier-family comparisons. The validation and uncertainty of the five-dimensional estimator (\S\ref{sec:5d}), the sixteen-cell result (\S\ref{sec:fived16}) and the calibrated generator tests built on the estimator (\S\ref{sec:joint5d}) follow these central values. A scalar study with relaxed truth-muon cuts (\S\ref{sec:fps}) probes an alternative signal definition. The companion journal article is a shortened account, and this note gives the detail it omits.
 
-\paragraph{Scope.} The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the configurations, observables and deformations tested. The two-dimensional result has an uncertainty budget whose coverage has not been tested (\S\ref{sec:uq-boot}, \S\ref{sec:uq-2d-scope}, \S\ref{sec:coverage}). Above two dimensions the results are central values without intervals of validated coverage (\S\S\ref{sec:3d}--\ref{sec:5d}); the sixteen-cell result also has total uncertainties, whose coverage is not validated (\S\ref{sec:fived16}). The generator tests of \S\ref{sec:joint5d} evaluate hybrid null hypotheses and add no reportable uncertainty. Point-cloud (PET) unfolding of the full event is future work, under development and documented separately (App.~\ref{sec:pet}). No result in this note depends on it.
+\paragraph{Scope.} The results hold for one implementation of unbinned OmniFold, applied to one data set, and for the configurations, observables and deformations tested. The principal limitations are listed in the executive summary (p.~\pageref{sec:execsummary-limitations}). The generator tests of \S\ref{sec:joint5d} evaluate hybrid null hypotheses and add no reportable uncertainty. Point-cloud (PET) unfolding of the full event is future work, under development and documented separately (App.~\ref{sec:pet}). No result in this note depends on it.
 % Register round n1 (R-N5): the note's scope, stated once; the executive summary restates it once, and the
 % summaries point here. The PET sentence gathers the former Analysis-strategy sentence and the executive summary's
 % PET items ("under development and documented separately"; "no result in this note depends on it").
@@ -43,37 +43,4 @@ Closest to this analysis is the study of Huang \emph{et al.}~\cite{Huang:2025omn
 % coverage is therefore claimed"; sec_3d.tex lead: no 3D or 4D covariance).
 % Search: held-out simulation; held-out-MC re-test; S1 has not been coverage-tested; coverage statement about Q_R (the search of its home, sec_systematics.tex sec:uq-boot) @ ddf16f10
 
-\paragraph{Roadmap.} Each topic is treated in full in the section listed below; other sections summarize it and refer there. The companion journal article is a shortened account, and these sections give the detail it omits.
-% Register pass b8 (2026-10-22): the D and E rows added so that the table covers every appendix of the posted
-% note; the release and code rows are as set by the records move (records-move-ledger.md L11); the records row and
-% the audit-record pointer were dropped by the records-citation thinning (DECISION-20261022, rows L-thin-C55/C56).
-% Register round n1: the 2D-covariance row also points to sec:uq-2d-scope, where the earlier-budget defects are now stated
-% ("Changes from the earlier 2D budget").
-\begin{center}
-\small
-\begin{tabular}{@{}p{0.47\textwidth}p{0.47\textwidth}@{}}
-\toprule
-Topic & Section \\
-\midrule
-Data, selection, simulation & \S\ref{sec:experiment} \\
-Algorithm, estimators, binning & \S\ref{sec:method}; estimator pairing \S\ref{sec:method-config} \\
-2D covariance blocks and the limitations of their construction & \S\ref{sec:systematics}; limitations \S\ref{sec:uq-2d-construction}, \S\ref{sec:uq-2d-scope} \\
-2D closure, injected features & \S\ref{sec:validation}; procedures App.~\ref{sec:closure} \\
-2D fixed-truth coverage & \S\ref{sec:coverage} \\
-2D result, budget, comparison to the publication & \S\ref{sec:results}; $\chi^{2}$ conventions App.~\ref{sec:chisq}; pulls App.~\ref{sec:pull}; tension App.~\ref{sec:tension}; audit trail of the numbers App.~\ref{sec:assemble} \\
-$\Eavail$, $q_{3}$, 2p2h, flux-repaired generators & \S\ref{sec:3d} \\
-$(\Eavail,W)$ plane and generator band & \S\ref{sec:eavailw} \\
-Five-axis validation, model dependence, 5D coverage & \S\S\ref{sec:val-fiveaxis}--\ref{sec:coverage-5d} \\
-The five-axis covariance of the configuration-(a) central value & \S\ref{sec:eavailw-construction} \\
-Sixteen-cell five-observable result & \S\ref{sec:fived16} \\
-Joint generator tests (design, conditions, decisions, recovery, recoil study) & \S\ref{sec:joint5d} \\
-Extended fiducial phase space & \S\ref{sec:fps} \\
-Point-cloud (PET) representations & App.~\ref{sec:pet} \\
-Unbinned background subtraction & App.~\ref{app:negweight} \\
-Detector-response-mismatch closure (protocol implemented, not yet run) & App.~\ref{app:response-mismatch} \\
-Survey of MINERvA measurement dimensionality & App.~\ref{app:landscape} \\
-N-D rank/ndf declarations, scalar-5D reductions, extended-fiducial fractions, inference from unfolded events & App.~\ref{app:statmethods-nd} \\
-Release contents, code layout & Apps.~\ref{app:release}, \ref{app:codebase} \\
-\bottomrule
-\end{tabular}
-\end{center}
+% Note round n4 (ruling 1): the Roadmap paragraph and its Topic -> Section table are cut; the table held pointers and one fact, "protocol implemented, not yet run", which prints in app_response_mismatch.tex and sec_validation.tex. The companion-article sentence closes "Analysis strategy". Earlier text: git history, 371cccec.

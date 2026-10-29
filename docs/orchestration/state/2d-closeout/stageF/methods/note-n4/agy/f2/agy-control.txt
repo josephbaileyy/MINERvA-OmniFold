@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the tests "reject all ten unconditionally", which contradicts and broadens BEFORE's explicit limitation that they reject "under six stated conditions".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER claims that the refined negative-weight subtraction "removes all background bias", stating as an absolute what BEFORE only supports as "largely removes it".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds the assertion that "[t]here are no significant limitations; minor ones are listed", which is unsupported by BEFORE and misleadingly minimizes the principal limitations.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER adds the statement that "[t]he coverage of the result's intervals has been validated", which is unsupported by BEFORE and directly contradicts its finding that coverage has not been validated.
+
+END

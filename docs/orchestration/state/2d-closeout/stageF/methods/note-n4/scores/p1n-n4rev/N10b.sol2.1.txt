@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriately technical, but repeated document bookkeeping, project-specific terminology, and defensive qualifications create several noticeable departures from polished PRD register.
+1. QUOTE: "App. G specifies this release for our analysis, including which of its objects already have fixed identities and which are still to be produced."
+   REWRITE: Appendix G specifies the release contents, identifying the objects whose identities have been established and those that remain to be produced.
+2. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a verification program that recomputes the results, but a versioned release has not yet been deposited. Rebuilding the PDFs generates only the documents; it does not rerun the scientific analysis (App. G).
+3. QUOTE: "The release design and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a) central value (§9.6)."
+   REWRITE: The five-axis covariance for the configuration-(a) central value is chosen independently of the release design and its public example (§9.6).

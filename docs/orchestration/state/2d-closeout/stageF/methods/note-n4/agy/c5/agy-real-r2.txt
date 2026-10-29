@@ -1,0 +1,28 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "calibration" from "a pooled calibration test", leaving "a pooled test of its statistical intervals" ambiguous as to what specific property of the intervals was evaluated.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER replaces "calibration" with "coverage and width", which drops the broader criteria of the calibration test (such as correlation and outlier bounds) and is ambiguous about whether both or either property fails for each functional.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops "calibration" and states more broadly that "a pooled pass" cannot qualify the cell, whereas BEFORE specifically limits this disqualification to "a pooled calibration pass".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "interval calibration" with "the coverage and width of the intervals", which incorrectly implies that repeating a calculation cannot determine interval width and drops the specific concept of calibration.
+
+Q5: VERDICT: SAME
+DETAIL: Read with its CONTEXT, AFTER's reference to failing "the frozen coverage rule" refers to the exact eligibility test and outcome that BEFORE describes as failing "interval calibration", without dropping qualifiers or introducing ambiguity.
+
+Q6: VERDICT: SAME
+DETAIL: Read with its CONTEXT, stating that the PET procedure failed "the frozen coverage rule" rather than failed "calibration" accurately identifies the specific frozen test that was failed, preserving the substantive meaning of BEFORE.
+
+Q7: VERDICT: SAME
+DETAIL: Read with its CONTEXT, replacing "calibrated intervals" with "confidence intervals" directly reflects the cited paper's title and method, preserving the exact factual meaning and scope of BEFORE.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", which BEFORE does not support, while dropping BEFORE's explicit statement that "The main results are the validation findings."
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER replaces BEFORE's finding with the unsupported claim that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", dropping BEFORE's statement that the main results are the validation findings.
+
+END

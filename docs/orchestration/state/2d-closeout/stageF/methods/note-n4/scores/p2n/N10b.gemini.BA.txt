@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B consistently maintains the formal, authoritative syntax and framing expected in experimental particle physics (e.g., "states the conclusions they support"), avoiding unidiomatic formulations found in Document A (such as "adds the conclusions it does not state").
+2. Document B employs cohesive topic sentences and transitional phrasing that contextualize each technical point, whereas Document A presents abrupt, fragmented statements that lack the expository flow of a well-edited PRD paper.
+3. Document B delivers its qualifications in a rigorous, declarative prose style appropriate for an archival companion note, in contrast to Document A's unpolished, placeholder-like cross-reference in the limitations section.

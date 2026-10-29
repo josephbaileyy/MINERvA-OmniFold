@@ -1,0 +1,28 @@
+Q1: VERDICT: SAME
+DETAIL: Read with CONTEXT, replacing "a pooled calibration test" with "a pooled test" accurately reflects that the candidate achieved a pooled pass on interval width rather than per-functional calibration, preserving the substantive test results without dropping any necessary qualifier or introducing ambiguity.
+
+Q2: VERDICT: DIFFERS
+DETAIL: By substituting "coverage or width" for "calibration", AFTER states that the test establishes neither property for every functional, which is broader than failing calibration (a failure of the joint requirement) and unsupported by BEFORE read with CONTEXT; the phrase "coverage or width" also introduces ambiguity about whether either property holds.
+
+Q3: VERDICT: SAME
+DETAIL: Read with CONTEXT, which explicitly records the outcome as "A pooled pass, not per-functional calibration", changing "a pooled calibration pass" to "a pooled pass" accurately characterizes the pass without dropping any fact or altering the conclusion that it cannot qualify cell EW41.
+
+Q4: VERDICT: SAME
+DETAIL: Replacing "interval calibration" with "the coverage and width of the intervals" directly spells out the constituent requirements of interval calibration based on the note's definitions, introducing no unsupported claims, omissions, or ambiguity.
+
+Q5: VERDICT: SAME
+DETAIL: Replacing "fails interval calibration" with "fails the frozen coverage rule" correctly identifies the specific protocol rule failed by H2S1T24 as recorded in the campaign record, preserving the exact meaning and outcome of BEFORE read with CONTEXT.
+
+Q6: VERDICT: SAME
+DETAIL: Replacing "failed calibration" with "failed its coverage test" accurately references the specific evaluation designated in the campaign record ("Coverage of H2S1T24 K5"), preserving the facts without adding or dropping any limitation.
+
+Q7: VERDICT: SAME
+DETAIL: Replacing "calibrated intervals" with "confidence intervals" adopts the exact terminology of the cited paper's title to describe the constructed intervals, preserving the factual scope and meaning without introducing ambiguity.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", which is completely unsupported by BEFORE, and it drops BEFORE's explicit statement that "The main results are the validation findings".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER replaces the note's stated scope with "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", which is unsupported by BEFORE and omits the original statement that "The main results are the validation findings".
+
+END

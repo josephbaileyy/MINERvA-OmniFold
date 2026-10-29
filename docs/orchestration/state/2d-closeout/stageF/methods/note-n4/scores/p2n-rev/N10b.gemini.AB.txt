@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A maintains an authoritative, formal technical register throughout its summary, whereas Document B lapses into awkward meta-commentary such as "Two further conclusions follow from the body."
+2. Document A exhibits superior syntactic and referential cohesion by defining the joint tests and their outcomes before detailing their parameters, whereas Document B introduces "The joint tests’ design" abruptly without an antecedent or statement of what was tested.
+3. In the "Principal limitations" section, Document A delivers a cohesive, dense, and self-contained technical synthesis characteristic of a PRD companion note, whereas Document B reads like an unedited draft that inappropriately defers to an executive summary before trailing off with an isolated, orphaned sentence.

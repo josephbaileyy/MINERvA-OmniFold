@@ -1,0 +1,109 @@
+--Simo--Vacas MEC channel~\cite{Nieves:2011pp,Gran:2013kda} is present in the splines but absent from the total-CC cross-section graph written by GENIE's \texttt{gspl2root}, so we normalize by the non-MEC CC count: QE$+$RES$+$DIS$+$COH is fixed to the known total, and MEC is added through $1/(1-f_{\mathrm{MEC}})$ with $f_{\mathrm{MEC}}=\SI{2.87}{\percent}$.`
+
+    WAIT! Look at Q4 compared to BEFORE:
+    Does BEFORE of Q4 have:
+    "Beyond this methodological band, the source of the shape difference has not been identified."?
+    Does BEFORE of Q4 have:
+    "The coverage of the result's intervals has not been validated."?
+    Does BEFORE of Q4 have:
+    `~\cite{Nieves:2011pp,Gran:2013kda}`?
+
+    WAIT A MINUTE! Look at the prompt instruction:
+    "Each numbered pair has a BEFORE passage, whose content is accepted as correct, and an AFTER passage, a proposed rewording of it. For each pair, compare AFTER with BEFORE only, and say:
+    (a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+    (b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+    (c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds."
+
+    Wait, what does BEFORE say in Q4?
+    Does BEFORE in Q4 support those two added sentences?
+    Wait, why does the preamble say:
+    "For Q4, AFTER adds sentences to the body."?
+    Look at the words in the preamble:
+    "(The note's front matter was folded by design: the executive summary now gives one headline sentence per result, each with a pointer to the body section where the result is stated in full, and one list of limitations as pointers; the summary section keeps only conclusions the executive summary does not state; the introduction points to the list. A sentence removed because its body section states it is a removal by design and is not to be flagged as such. Judge whether what AFTER keeps or adds states anything more strongly or more broadly than BEFORE, or reads in a way that could mislead once the removed sentences are gone. For Q4, AFTER adds sentences to the body.)"
+
+    WHY did the prompt include that parenthetical note?
+    Because if the prompt didn't say that, you would look at Q1, Q2, Q3 and say:
+    "DIFFERS! It removed 20 sentences from the executive summary! It removed sentences from the summary! It removed sentences from the intro!"
+    And you would look at Q4 and say:
+    "DIFFERS! It added sentences to the body that were not in BEFORE of Q4!"
+    The prompt is telling you:
+    The front matter was folded by design. Sentences removed from front matter are removed by design because their body section states them. AND for Q4, AFTER adds sentences to the body (which were moved from the front matter).
+    THEREFORE: "Judge whether what AFTER keeps or adds states anything more strongly or more broadly than BEFORE, or reads in a way that could mislead once the removed sentences are gone."
+
+    Now: Under this instruction, what is the verdict for each question?
+    Let's check if ANY of the questions DIFFERS!
+    Could ONE of them be DIFFERS? Which one?
+    Let's re-read all 4 AFTER passages with extreme care to see if ANY sentence states something MORE STRONGLY, MORE BROADLY, DROPS a limitation, or is AMBIGUOUS/MISLEADING!
+
+13. **Let's check every single detail of each pair again!**
+
+    ---
+    ### Pair Q1:
+    Let's check Q1 again.
+    Wait, in Q1 AFTER:
+    Is there anything that states something MORE STRONGLY or MORE BROADLY than BEFORE?
+    Wait! Look at the limitations in Q1:
+    BEFORE:
+    `\paragraph{Principal limitations:} The body states each limitation with the result it qualifies; the principal ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}). The others are stated with their results: the generator comparisons (\S\S\ref{sec:3d}--\ref{sec:eavailw}); the absence of a 3D or 4D covariance (\S\ref{sec:3d}); the five-dimensional estimator's regularization bias (\S\ref{sec:val-departure}) and the purity-subtraction bias of configurations (a) and (c) (\S\ref{sec:val-negweight}); five-dimensional intervals and their coverage (\S\ref{sec:gbdt-model-dependence}, \S\ref{sec:coverage-5d}); the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-adopted}); the calibration and nuisance model of the generator tests (\S\ref{sec:joint5d-frozen}, \S\ref{sec:joint5d-response}); tier~2 of the extended-fiducial study (\S\ref{sec:fps}); the fake-data limitation of the sixteen-cell result (\S\ref{sec:fived16-fd}); and point-cloud work (App.~\ref{sec:pet}).`
+
+    AFTER:
+    `\paragraph{Principal limitations:}\label{sec:execsummary-limitations} The body states each limitation with the result it qualifies; the principal ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage}). **No result's intervals have validated coverage (two dimensions: \S\ref{sec:uq-2d-scope}; five dimensions: \S\ref{sec:coverage-5d}; the sixteen cells: \S\ref{sec:fived16-fd}).** The others are stated with their results: ...`
+
+    Wait! Look at:
+    "No result's intervals have validated coverage (two dimensions: \S\ref{sec:uq-2d-scope}; five dimensions: \S\ref{sec:coverage-5d}; the sixteen cells: \S\ref{sec:fived16-fd})."
+    Wait! Does BEFORE Q1 support this?
+    In BEFORE Q1:
+    - 2D: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails ($C_2=\covTwoDCTwo$, vs.\ $0.954$; \S\ref{sec:uq-boot}, \S\ref{sec:coverage})."
+    - Status table row for 2D:
+      "Earlier statistical band failed fixed-truth coverage; rebuilt band and quoted statistical block lack an independent test."
+    - Status table row for 3D/4D/5D:
+      "No validated total-interval coverage."
+    - Status table row for 16-cell:
+      "Fake-data study (\S\ref{sec:fived16-fd})."
+    - Status table row for Joint tests:
+      "no new uncertainty on the cross section."
+
+    Wait, what about 2D in AFTER?
+    "two dimensions: \S\ref{sec:uq-2d-scope}"
+    What is \S\ref{sec:uq-2d-scope}?
+    In BEFORE Q1:
+    "A generator-shape model-dependence component, reported beside that uncertainty and absent from the published one, raises the per-bin median to \SI{\qrCmodelMedian}{\percent} (\S\ref{sec:uq-2d-scope})."
+    Wait, in \S\ref{sec:uq-2d-scope}, does it say the 2D intervals do not have validated coverage?
+    In BEFORE Q3:
+    "The two-dimensional result has an uncertainty budget whose coverage has not been tested (\S\ref{sec:uq-boot}, \S\ref{sec:uq-2d-scope}, \S\ref{sec:coverage})."
+    Yes!
+
+    Wait, what about the sixteen cells?
+    In AFTER: "the sixteen cells: \S\ref{sec:fived16-fd}".
+    In BEFORE Q2:
+    "the sixteen-cell result also has total uncertainties, whose coverage is not validated (\S\ref{sec:fived16})."
+    In BEFORE Q3:
+    "the sixteen-cell result also has total uncertainties, whose coverage is not validated (\S\ref{sec:fived16})."
+    Wait! Notice that \S\ref{sec:fived16-fd} is the fake-data study.
+
+    Wait! Look at the results overview in Q1 AFTER:
+    Is there ANY difference between BEFORE and AFTER that DIFFERS?
+    Wait, look at Q1 Results overview:
+    BEFORE had:
+    "Reproduction: ... The total cross-section ratio is $\ratioTot$, and \SI{\binsTen}{\percent} of bins are within \SI{10}{\percent}. A separately constructed uncertainty is comparable to the published one: its per-bin median is \SI{\uqMedian}{\percent} against \SI{\uqPaper}{\percent}, and its integral \SI{\uqIntegral}{\percent} against \SI{\uqPaperIntegral}{\percent}. Its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights (\S\ref{sec:results-uq}). A generator-shape model-dependence component, reported beside that uncertainty and absent from the published one, raises the per-bin median to \SI{\qrCmodelMedian}{\percent} (\S\ref{sec:uq-2d-scope}). The central value and that uncertainty share the LightGBM estimator, with refined negative-weight background subtraction."
+    AFTER drops all that. But the preamble says:
+    "the executive summary now gives one headline sentence per result, each with a pointer to the body section where the result is stated in full, and one list of limitations as pointers; ... A sentence removed because its body section states it is a removal by design and is not to be flagged as such."
+
+    Wait, what about the sixteen-cell result in Q1 AFTER?
+    BEFORE had:
+    "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison."
+    AFTER has:
+    "\item \textbf{Sixteen-cell five-observable cross section.} The cross section in $\pT$, $\pPar$, $\Eavail$, $q_{3}$ and $W$ is reported in sixteen cells with a covariance whose median per-cell uncertainty is \fvval{sigmed-C_total_resp}\%. Three external generator predictions compared on all sixteen cells give $\chi^{2}$ between \fvval{g-ext-chi2int-min16} and \fvval{g-ext-chi2int-max16} for 16 degrees of freedom, and GiBUU, on its 8 cells, \fvval{g-gibuu-total-chi
+Q1: VERDICT: SAME
+DETAIL: The folded executive summary accurately condenses the results to headline statements pointing to body sections, incorporates the status table's limitations and central-value designations, and adds no unsupported or overly broad claims.
+
+Q2: VERDICT: SAME
+DETAIL: The summary section retains the specific conclusions not stated in the executive summary and points to the executive summary for the limitations list, preserving the accepted content and scope without misleading omissions.
+
+Q3: VERDICT: SAME
+DETAIL: The introduction streamlines the analysis strategy and scope by pointing directly to the executive summary's limitations list as designed, leaving the described scope and qualifiers unchanged.
+
+Q4: VERDICT: SAME
+DETAIL: The sentences added to the body correctly absorb the limitations relocated from the front matter—documenting the unidentified source of the shape difference beyond the estimator band and the unvalidated interval coverage—without stating them more broadly or introducing ambiguity.
+
+END
