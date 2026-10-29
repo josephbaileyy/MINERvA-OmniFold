@@ -40,7 +40,7 @@ OI-146	retired	-	migration-carried-forward	6f571478221b81d9eacb508c4988297ac9ef6
 OI-70	retired	-	declared	a524e3b485fcbb80e031d41bf20bd2713e6aecec5264b53076da61d00c182923	RETIRED 2026-10-28 by the close-items session — every defect this row files is discharged (3d518f271, 18e942ee5, 1fc2394
 OI-71	active	WAITING-JOSEPH	migration-carried-forward	6bf07285524a7460c8b3cf2e1d2cbab687481a66bc037dd2902476de8f9d2540	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE
 OI-72	retired	-	migration-carried-forward	08453ed7dad41224c113f311a9defc28e773c9cdaa2bff715178f9fc3d76c751	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
-OI-73	active	NOW	declared	3531e1a177d2703be0e974e2b1a8dccb9fc1e31599d37cda7518519d54dc95a4	KEPT 2026-10-28 by the director's ruling, owner the close-items session: this is the owner assignment that DECISION-2026
+OI-73	retired	-	declared	8baf4351d1559700801c030b2994fc7f8449cbb47cbd756016c3daf186ca74b1	RETIRED 2026-10-28 by its owner, the close-items session — LIVE-STATE.md is regenerated and FRESH, with the unread-waker
 OI-74	active	NOW	migration-carried-forward	530d7ab97903cfe7527771d8104be29bb7c6470c6eaaf051f2c708336ff7b8f9	CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI
 OI-75	active	WAITING-JOSEPH	migration-carried-forward	f612cad2e7e9069f8ea688568c42980f480048666f419247006054a3a4d196b1	CARRIES OI-43 SINCE 2026-10-28 (director's ruling) — the cluster P4 hold that OI-43 asked to lift is this row's standing
 OI-1	retired	-	declared	bf16595b42c225b0f9a51c749dd31156083dec013d724c2970f43f433681c2d2	RETIRED 2026-10-28 by the close-items session — repository CI exists (f96949944, .github/workflows/record-checks.yml). S
@@ -138,6 +138,6 @@ OI-135	deferred	-	declared	1b28ec7cd9bc00538df308cbdc36465932a8ac1bae95639505130
 OI-136	deferred	-	declared	efe8c263bd1d710806dcf194fd80e0c349330f05a23a816af5d67beb0020dc69	DEFERRED 2026-10-28 by the close-items session on the director's ruling, until the next re-issue of the bindings that pi
 OI-137	active	WAITING-JOSEPH	declared	b04fd7af70a81246092da86f4b092fea2afab2dea140ab6d61de06074eb758d8	KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W
 OI-138	active	NOW	migration-carried-forward	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
-OI-139	active	NOW	migration-carried-forward	1ccc6f28d6820f5e7b5b83821c7f2e22ad677dd069e2348a6296d55b3b656262	OPEN
+OI-139	active	NOW	declared	221d46a65c301abd75c008f1cc3cdc184ef1403e851ecc14d10072d8f08249e4	PROMOTED 2026-10-28 from the director's standing list, owner the close-items session. See [RECORD-20261028-close-items-l
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30
 OI-189	retired	-	migration-carried-forward	5ef9e418bb5a2190b63dd09cd24c4bd4f65c480a17c19047bd4e2a288dcb622c	REPAIRED 2026-09-20 via RULING-20260908 exit (2) — fix the gate. Joseph ruled in session that the guard is over-strict h

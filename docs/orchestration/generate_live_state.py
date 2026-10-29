@@ -756,6 +756,26 @@ def _watch_store_readable(ctx: Any) -> bool:
         return False
 
 
+def _state_dir_readable(ctx: Any) -> bool:
+    """True only if this host can read the waker state dir that holds the tick receipt.
+
+    A fresh clone or a laptop has no state dir (it is untracked and lives in the canonical cluster
+    checkout). Without it, `last-tick.json` was never read, so a missing receipt is NO EVIDENCE, not
+    the measurement "never" (2026-10-28: a render from a fresh clone printed `Last tick: never on
+    unknown` and embedded the clone's absolute path).
+    """
+    try:
+        store = pathlib.Path(ctx.state_dir)
+        return store.is_dir() and os.access(store, os.R_OK)
+    except Exception:
+        return False
+
+
+def _without_checkout_path(text: str) -> str:
+    """Replace this checkout's absolute path, which names a host-local tree, with a label."""
+    return text.replace(str(REPO), "<checkout>")
+
+
 def _events_dir_readable(ctx: Any) -> bool:
     """True only if this host can actually enumerate the event store.
 
@@ -860,6 +880,18 @@ def tick_line(last_tick: dict[str, Any], waker_ctx) -> tuple[str, str]:
     # scron job RUNNABLE in Slurm, not merely scheduled), and
     # `check_tick_freshness` (is the heartbeat younger than its own interval).
     problems = safe_health_call(wakerctl.check_cron_ticker, waker_ctx)
+    if not _state_dir_readable(waker_ctx):
+        # The scrontab and scron-job findings are per-user scheduler measurements and stand. A
+        # finding about a file inside a state dir this host cannot read is not a measurement.
+        state_dir = str(waker_ctx.state_dir)
+        kept = [_without_checkout_path(str(item)) for item in problems if state_dir not in str(item)]
+        severity = LOUD if classify_problems(kept) == LOUD else NO_EVIDENCE
+        detail = " | ".join(kept) if kept else "no scheduler finding"
+        prefix = ("- Last tick: **NO EVIDENCE** -- the waker state dir is not present or not "
+                  "readable on this host, so no tick receipt was read and no tick time is claimed")
+        if severity == LOUD:
+            return LOUD, f"{prefix}. **\u26a0 SUPERVISION NET NOT HEALTHY: {detail}**{suffix}"
+        return NO_EVIDENCE, f"{prefix}; NOT A LIVENESS CLAIM: {detail}{suffix}"
     severity = classify_problems(problems)
     if severity == QUIET:
         return QUIET, f"{prefix} -- FRESH, {age_text}; {bound}; scron tick job runnable.{suffix}"
@@ -1072,11 +1104,13 @@ def render(
         last_tick = waker.get("last_tick") or {}
         tick_severity, tick_text = tick_line(last_tick, waker_ctx)
         tick_entry = store.get("waker:last-tick")
-        if tick_severity == NO_EVIDENCE:
+        # An unread receipt is never recorded as the last known tick, whatever the scheduler said.
+        tick_unread = waker_ctx is None or not _state_dir_readable(waker_ctx)
+        if tick_severity == NO_EVIDENCE or tick_unread:
             tick_text += " " + carried(tick_entry, observed_at, _fmt_tick, "a waker tick receipt")
             recorded = tick_entry.get("value") if isinstance(tick_entry, dict) else None
             stamp_age = age_between((recorded or {}).get("at_utc"), observed_at) if isinstance(recorded, dict) else ""
-            if stamp_age:
+            if stamp_age and tick_severity == NO_EVIDENCE:
                 tick_text += (
                     f" Arithmetic on that carried stamp alone puts it {stamp_age} behind this"
                     " snapshot's clock -- arithmetic ONLY, and deliberately not a verdict: this"
@@ -1099,7 +1133,12 @@ def render(
                 " or ticker check was unhealthy.",
                 "",
             ])
-        elif NO_EVIDENCE in severities or tick_severity == NO_EVIDENCE:
+        if (LOUD in severities or tick_severity == LOUD) and (
+                NO_EVIDENCE in severities or tick_unread):
+            lines.insert(len(lines) - 1,
+                "- **\u26a0 NOT A COMPLETE READING:** at least one required wake source was NO"
+                " EVIDENCE on this host, so the verdict above covers only what this host could read.")
+        elif NO_EVIDENCE in severities or tick_severity == NO_EVIDENCE or tick_unread:
             lines.extend([
                 "- Wake health: **UNKNOWN** at the observed time; at least one required source"
                 " was unavailable on this host.",

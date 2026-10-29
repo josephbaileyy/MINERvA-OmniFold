@@ -444,6 +444,7 @@ docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	tracked	
 docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-director-rulings.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-live-state-option-b.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-third-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
@@ -6971,6 +6972,7 @@ docs/orchestration/test_generate_live_state.py	tracked	MACHINE	test-script			gen
 docs/orchestration/test_generate_live_state_carry_forward.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_freshness.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_routes.py	tracked	MACHINE	test-script			generated		exact-path-only	no
+docs/orchestration/test_generate_live_state_unread_state.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_loader_ordering_reco_before_truth_weight.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_measure_m1_m6.py	tracked	MACHINE	test-script			generated		exact-path-only	no
