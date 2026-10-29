@@ -6338,6 +6338,7 @@ docs/orchestration/state/oi160-tolerance-20261029/run/logs/deploy-tests.log	trac
 docs/orchestration/state/oi160-tolerance-20261029/run/logs/deploy.log	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-tolerance-20261029/run/logs/grade-session.txt	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-tolerance-20261029/run/logs/grade.log	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-tolerance-20261029/run/logs/removal-session.txt	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-tolerance-20261029/run/logs/s2_A.log	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-tolerance-20261029/run/logs/s2_B.log	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-tolerance-20261029/run/logs/s3_A.log	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
