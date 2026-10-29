@@ -24,6 +24,7 @@ import numpy as np
 
 ND = Path(__file__).resolve().parents[1]
 sys.path.insert(1, str(ND))
+import build_cresp as bc  # noqa: E402
 import fd_ct_readers as ct  # noqa: E402
 import fd_f0_regrade as F  # noqa: E402
 import s1_assemble as sa  # noqa: E402
@@ -206,6 +207,57 @@ class Tree:
     def chi2_patches(self):
         return [mock.patch.dict(F.COUNTS, {"cal": {c: N_CAL for _, c, _ in ct.CAL}}),
                 mock.patch.object(sa, "CONSTRAINT_SHA256", self.constraint_sha)]
+
+    # ---------------------------------------------------------------- 3b
+    def write_mismatch(self, meta_override=None, xtrue_defect=None, drop=None):
+        """The 13 closure products (fd_ct_closure.py's form) from known cell integrals, the 11 MP-1 data unfolds and a
+        3a readout; and the pins they must match, patched in by mismatch_patches()."""
+        R, rng = self.root, self.rng
+        self.cdir, self.udir = R / "closures", R / "mp1unf"
+        self.cdir.mkdir(parents=True, exist_ok=True); self.udir.mkdir(parents=True, exist_ok=True)
+        variants = ["zero"] + [f"{sp}_{t}" for sp in ct.SPECIES for t in ("m1", "p1")] + ["w2b_rr0", "w2b_rr1"]
+        self.cpins = {v: fake(v, "pseudo") for v in variants}
+        self.T = self.f * rng.uniform(0.9, 1.1, 16)
+        self.b = {v: rng.normal(0, 0.003 if v == "zero" else 0.02, 16) for v in variants}
+        for v in variants:
+            m = {"schema": "fd-ct-closure/1", "variant": v, "construction": "mismatch-closure", "truth": "nominal",
+                 "arm": "e", "features": ["pt", "pz", "eavail", "q3", "W"], "response_npz_sha256": self.cpins["zero"],
+                 "pseudo_npz_sha256": self.cpins[v], "estimator_seed": 42, "iters": 5,
+                 "refinement": {"ran": False, "reason": "no negative weights (signal-only reference)"},
+                 "experiment": {"pseudo_reco_identical": v == "zero"},
+                 "estimator_params": [{"n_estimators": 100, "num_leaves": 8, "random_state": 42}] * 3}
+            m.update((meta_override or {}).get(v, {}))
+            xt = self.cellwise(self.T)
+            if xtrue_defect == v:
+                xt = xt.copy(); xt[int(np.flatnonzero(self.fm == 3)[0])] *= 1.001
+            if v != drop:
+                np.savez_compressed(self.cdir / f"closure_{v}.npz", xsec_flat=self.cellwise(self.T * (1 + self.b[v])),
+                                    xtrue_flat=xt, shape=np.array(sa.s1.fine_shape()), meta=json.dumps(m))
+        # the MP-1 data unfolds, build_cresp's form, with build_cresp's pins patched to them
+        self.D = {v: self.f * (1 + rng.normal(0, 0.01, 16)) for v in bc.PRODUCTS}
+        self.bpins = {}
+        for v in bc.PRODUCTS:
+            npz_sha = self.cpins[v]
+            mm = data_meta(npz_sha, fake(v, "bkg"))
+            p = bc.product_path(self.udir, v)
+            np.savez_compressed(p, xsec_flat=self.cellwise(self.D[v]), shape=np.array(sa.s1.fine_shape()),
+                                meta=json.dumps(mm))
+            self.bpins[v] = (digest(p), npz_sha, fake(v, "bkg"))
+        self.d_w2b = rng.normal(0, 0.03, 16)
+        self.recoil = R / "fd_ct_recoil.json"
+        self.recoil.write_text(json.dumps({"half_span": self.d_w2b.tolist()}))
+        w2b = dict(ct.W2B)
+        w2b["rr0"] = ("0" * 64, self.cpins["w2b_rr0"], "0" * 64, 0.96)
+        w2b["rr1"] = ("0" * 64, self.cpins["w2b_rr1"], "0" * 64, 1.04)
+        w2b["rrzero"] = ("0" * 64, self.cpins["zero"], "0" * 64, 1.0)
+        self.w2b = w2b
+        self.argv_mismatch = ["mismatch", *self.common_argv("mismatch"), "--closures-dir", str(self.cdir),
+                              "--mp1-unf", str(self.udir), "--recoil-readout", str(self.recoil)]
+        return self
+
+    def mismatch_patches(self):
+        return [mock.patch.dict(bc.PRODUCTS, self.bpins, clear=True),
+                mock.patch.object(ct, "RECOIL_READOUT_SHA256", digest(self.recoil))]
 
     # ---------------------------------------------------------------- 5A
     def write_period(self, e=(0.53, 0.30, 0.17), gsum_defect=0.0, cpl_defect=0.0, e_ripple=0.0, json_npz=None,
@@ -810,6 +862,111 @@ class Period(Base):
         text = (t.out / "period.json").read_text()
         for v in t.f:
             self.assertNotIn(repr(float(v)), text)
+
+
+# ------------------------------------------------------------------------------------------------ 3b
+
+
+class Mismatch(Base):
+    def test_end_to_end_recomputed_by_hand(self):
+        t = self.tree().write_mismatch()
+        self.assertEqual(self.run_tool(t, t.argv_mismatch, t.mismatch_patches()), 0, self.stderr)
+        r = self.readout(t, "mismatch")
+        ff = np.outer(t.f, t.f)
+        Mrel = (t.Ct + t.Cr) / ff
+        sm = np.sqrt(np.diag(t.Ct + t.Cr)) / t.f
+        np.testing.assert_allclose(r["closure_floor_zero_on_zero"], t.b["zero"], rtol=1e-8, atol=1e-13)
+        dl = {v: t.b[v] - t.b["zero"] for v in t.b}
+        for v, rec in r["variants"].items():
+            np.testing.assert_allclose(rec["delta"], dl[v], rtol=1e-8, atol=1e-13)
+            np.testing.assert_allclose(rec["abs_delta_over_sigma_total_resp"], np.abs(dl[v]) / sm, rtol=1e-8, atol=1e-13)
+            self.assertAlmostEqual(rec["quadratic_form_total_resp"], float(dl[v] @ np.linalg.solve(Mrel, dl[v])), places=6)
+        self.assertEqual(set(r["variants"]), set(t.b) - {"zero"})
+        for sp in ct.SPECIES:
+            h = (dl[f"{sp}_p1"] - dl[f"{sp}_m1"]) / 2
+            d = (t.D[f"{sp}_p1"] - t.D[f"{sp}_m1"]) / (2 * t.f)
+            rec = r["species"][sp]
+            np.testing.assert_allclose(rec["closure_half_span"], h, rtol=1e-8, atol=1e-13)
+            np.testing.assert_allclose(rec["data_half_span"], d, rtol=1e-8, atol=1e-13)
+            self.assertAlmostEqual(rec["cosine"], float(h @ d / np.linalg.norm(h) / np.linalg.norm(d)), places=8)
+            self.assertAlmostEqual(rec["norm_ratio_closure_over_data"], float(np.linalg.norm(h) / np.linalg.norm(d)), places=8)
+        hw = (dl["w2b_rr1"] - dl["w2b_rr0"]) / 2
+        np.testing.assert_allclose(r["w2b_recoil_4pct"]["closure_half_span"], hw, rtol=1e-8, atol=1e-13)
+        np.testing.assert_allclose(r["w2b_recoil_4pct"]["data_half_span"], t.d_w2b, rtol=1e-12)
+        H = sum(np.outer(h, h) for h in ((dl[f"{sp}_p1"] - dl[f"{sp}_m1"]) / 2 for sp in ct.PRIMARY))
+        np.testing.assert_allclose(r["closure_analogue_of_C_resp"]["sigma_rel"], np.sqrt(np.diag(H)), rtol=1e-8)
+        np.testing.assert_allclose(r["closure_analogue_of_C_resp"]["ratio_to_sigma_C_resp"],
+                                   np.sqrt(np.diag(H)) / (np.sqrt(np.diag(t.Cr)) / t.f), rtol=1e-8)
+        self.assertEqual(r["controls_passed"], ["S", "M0", "M1", "M2"])
+        self.assertEqual(r["labels"]["no_threshold"], ct.LABELS["mismatch_threshold"])
+
+    def test_refuses_a_missing_closure(self):
+        t = self.tree().write_mismatch(drop="em_p1")
+        self.assertRefuses(t, t.argv_mismatch, "FAIL control M0: the closures directory holds", t.mismatch_patches())
+
+    def test_refuses_a_closure_from_another_pseudo_dump(self):
+        t = self.tree().write_mismatch(meta_override={"meson_m1": {"pseudo_npz_sha256": "0" * 64}})
+        self.assertRefuses(t, t.argv_mismatch, "FAIL control M0: closure_meson_m1.npz: pseudo_npz_sha256", t.mismatch_patches())
+
+    def test_refuses_a_closure_whose_refinement_ran(self):
+        t = self.tree().write_mismatch(meta_override={"other_p1": {"refinement": {"ran": True}}})
+        self.assertRefuses(t, t.argv_mismatch, "the refinement must not run", t.mismatch_patches())
+
+    def test_refuses_a_zero_closure_with_shifted_reco(self):
+        t = self.tree().write_mismatch(meta_override={"zero": {"experiment": {"pseudo_reco_identical": False}}})
+        self.assertRefuses(t, t.argv_mismatch, "pseudo_reco_identical must be true for zero", t.mismatch_patches())
+
+    def test_refuses_a_closure_of_another_estimator(self):
+        t = self.tree().write_mismatch(meta_override={"xtalk_m1": {"estimator_params": [{"n_estimators": 100,
+                                                                                        "num_leaves": 8,
+                                                                                        "random_state": 43}] * 3}})
+        self.assertRefuses(t, t.argv_mismatch, "estimator parameters", t.mismatch_patches())
+
+    def test_refuses_closures_of_different_truths(self):
+        t = self.tree().write_mismatch(xtrue_defect="w2b_rr1")
+        self.assertRefuses(t, t.argv_mismatch, "FAIL control M1 every closure's truth reference is the same", t.mismatch_patches())
+
+    def test_refuses_another_3a_readout(self):
+        t = self.tree().write_mismatch()
+        ps = [t.mismatch_patches()[0], mock.patch.object(ct, "RECOIL_READOUT_SHA256", "0" * 64)]
+        self.assertRefuses(t, t.argv_mismatch, "FAIL control M2: 3a readout", ps)
+
+    def test_refuses_a_data_unfold_that_is_not_build_cresps(self):
+        t = self.tree().write_mismatch()
+        t.bpins["proton_p1"] = ("0" * 64,) + t.bpins["proton_p1"][1:]
+        self.assertRefuses(t, t.argv_mismatch, "FAIL control M2:", t.mismatch_patches())
+
+    def test_the_guard_refuses_a_planted_closure_integral(self):
+        t = Tree(self.tmp / "unit", scale=1.0).write_common().write_mismatch()   # O(1) units: the table, not the floor
+        with np.load(t.cdir / "closure_em_m1.npz") as z:
+            X = float((t.U @ np.asarray(z["xsec_flat"], float))[5])
+        with mock.patch.object(ct, "quad", lambda v, M: X):
+            self.assertRefuses(t, t.argv_mismatch, "REFUSED leak guard", t.mismatch_patches(), rc=3)
+
+    def test_the_guard_refuses_a_planted_data_integral(self):
+        t = Tree(self.tmp / "unit", scale=1.0).write_common().write_mismatch()
+        with np.load(bc.product_path(t.udir, "meson_p1")) as z:
+            X = float((t.U @ np.asarray(z["xsec_flat"], float))[2])
+        with mock.patch.object(ct, "quad", lambda v, M: X):
+            self.assertRefuses(t, t.argv_mismatch, "REFUSED leak guard", t.mismatch_patches(), rc=3)
+
+    def test_closure_pins_are_build_cresps_and_w2bs(self):
+        pins = ct.closure_pins()
+        self.assertEqual(len(pins), 13)
+        for v in bc.PRODUCTS:
+            self.assertEqual(pins[v], bc.PRODUCTS[v][1])
+        self.assertEqual((pins["w2b_rr0"], pins["w2b_rr1"]), (ct.W2B["rr0"][1], ct.W2B["rr1"][1]))
+        self.assertEqual(pins["zero"], ct.W2B["rrzero"][1])
+
+    def test_the_committed_tables_are_the_generators(self):
+        R = STATE / "measurement-paper/5d-community-20261024/fd/receipts-ct/3b"
+        out = self.tmp / "tables"
+        out.mkdir()
+        r = subprocess.run([sys.executable, "-I", "-B", str(R / "make_3b_tables.py"), str(REPO), str(out)],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        for name in ("3b-steps.tsv", "tasks-3b.tsv"):
+            self.assertEqual((out / name).read_text(), (R / name).read_text(), name)
 
 
 # ------------------------------------------------------------------------------------------------ as invoked

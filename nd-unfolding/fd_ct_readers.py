@@ -11,6 +11,9 @@ R00-R15 of configuration (e), at 0 node-h, from products that already exist.
   chi2_i = r_i^T M^-1 r_i (about the truth) and (r_i - b~)^T M^-1 (r_i - b~) (about the NuE-weighted mean b~), for
   M = (C_total + C_resp)/(f f^T) and C_e/(f f^T). Descriptive only: F0's offset control 7 failed, A7's draws are not
   S1's, the truths are hybrids on J and the products use half of the MC.
+* ``mismatch`` (3b): the 13 response-mismatch closures that fd_ct_closure.py writes, integrated onto the cells; each
+  closure's bias against its truth less the zero-on-zero floor, and per species the closure half-span beside the data
+  half-span that C_resp is built from (3a's for W2b's +-4%). Descriptive; no threshold.
 * ``period`` (5A): the 2D run-period offsets g_X (playlist_term.npz) averaged over each cell's (p_T, p_parallel)
   footprint with the cell's own fine-cell weights, and C_PL,16 = k sum_X e_X g_X,R g_X,R^T relative to f. A size
   under the assumption that the offset does not depend on E_avail, q3 or W inside a 2D bin, which only 5B can test.
@@ -85,6 +88,12 @@ LABELS = {
               "inside a (p_T, p_parallel) bin; only 5B can test it; built from the observed offsets, so it "
               "contains them by construction and cannot fail; not a 5D run-period block, and printed beside the "
               "reported matrix, not in it (LIMITATION-PLAN-ADDENDUM-20261028.md section 5.4)",
+    "mismatch": "3b, descriptive response-mismatch closures at the nominal truth, noise-free and signal-only: pseudo-data "
+                "from a shifted lateral dump (MP-1's species at their D1 +-1 sigma, W2b's whole recoil at +-4%), the "
+                "unfolding on the zero dump's response; delta is each closure's bias less the zero-on-zero floor; the "
+                "data half-span is C_resp's (or 3a's) own, from the data unfolds; no relation between the two is assumed",
+    "mismatch_threshold": "no pass threshold is set (docs/analysis-note/app_response_mismatch.tex:22); Joseph deferred "
+                          "the closure's settings on 2026-10-14; the amplitudes are the existing products' own",
     "not_citable_for": ["a coverage or calibration result, or that any chi2 follows or departs from chi2_ndf", "a covariance component or a change "
                         "to the reported matrix", "a bias under response mismatch", "a run-period effect in the "
                         "hadronic variables"],
@@ -520,13 +529,138 @@ def run_period(a) -> int:
     return write(a, out, guard, lines)
 
 
+# ---------------------------------------------------------------- 3b: mismatch
+
+
+def closure_pins() -> dict[str, str]:
+    """variant -> the pseudo dump's sha256 its closure must record. MP-1's from build_cresp.PRODUCTS (each data unfold's
+    input dump), W2b's from W2B; the response is MP-1's zero dump, which is bitwise W2b's rrzero dump."""
+    import build_cresp as bc
+
+    pins = {v: bc.PRODUCTS[v][1] for v in bc.PRODUCTS}
+    pins.update({f"w2b_{v}": W2B[v][1] for v in ("rr0", "rr1")})
+    if pins["zero"] != W2B["rrzero"][1]:
+        raise f0.Stop("M0", "MP-1's zero dump is not W2b's rrzero dump")
+    return pins
+
+
+SPECIES = PRIMARY + ("xtalk",)
+RECOIL_READOUT_SHA256 = "c8458dd0023e88bfc60336cdd77f7d502a4bedaafe236523b63abae7b2ab262c"   # fd/readout/fd_ct_recoil.json
+
+
+def closure_meta_problems(m: dict, variant: str, pins: dict) -> list[str]:
+    bad = []
+    want = {"schema": "fd-ct-closure/1", "variant": variant, "construction": "mismatch-closure", "truth": "nominal",
+            "arm": "e", "features": ["pt", "pz", "eavail", "q3", "W"], "response_npz_sha256": pins["zero"],
+            "pseudo_npz_sha256": pins[variant], "estimator_seed": 42, "iters": 5}
+    for k, v in want.items():
+        if m.get(k) != v:
+            bad.append(f"{k} {m.get(k)!r} != {v!r}")
+    ev = m.get("refinement") or {}
+    if (ev.get("ran"), ev.get("reason")) != (False, "no negative weights (signal-only reference)"):
+        bad.append("the refinement must not run in a signal-only closure")
+    if (m.get("experiment") or {}).get("pseudo_reco_identical") != (variant == "zero"):
+        bad.append("pseudo_reco_identical must be true for zero and false for every shifted variant")
+    ep = m.get("estimator_params") or []
+    if len(ep) != 3 or any((e.get("n_estimators"), e.get("num_leaves"), e.get("random_state")) != (100, 8, 42)
+                           for e in ep):
+        bad.append("estimator parameters")
+    return bad
+
+
+def run_mismatch(a) -> int:
+    import build_cresp as bc
+
+    U = sa.functional_matrix(f0.sa_call("S", sa.fine_map, a.definition))
+    pins = closure_pins()
+    want = sorted(f"closure_{v}.npz" for v in pins)
+    have = sorted(p.name for p in a.closures_dir.glob("closure_*.npz"))
+    if have != want:
+        raise f0.Stop("M0", f"the closures directory holds {have}, not the declared {len(want)}")
+    xs, xt, digests = {}, {}, {}
+    for v in pins:
+        p = a.closures_dir / f"closure_{v}.npz"
+        with np.load(p, allow_pickle=False) as z:
+            m = json.loads(str(z["meta"]))
+            bad = closure_meta_problems(m, v, pins)
+            if bad:
+                raise f0.Stop("M0", f"{p.name}: {'; '.join(bad)}")
+            xs[v], xt[v] = np.asarray(z["xsec_flat"], float), np.asarray(z["xtrue_flat"], float)
+        if xs[v].shape != (int(np.prod(sa.s1.fine_shape())),) or not np.all(np.isfinite(xs[v])):
+            raise f0.Stop("M0", f"{p.name}: xsec_flat shape or non-finite entries")
+        digests[v] = sa.sha256(p)
+    f0.report("M0", f"{len(pins)} closures, each made by (e) from its declared pseudo dump on the zero response", True)
+    T0 = xt["zero"]
+    f0.report("M1", "every closure's truth reference is the same, bitwise",
+              all(np.array_equal(xt[v], T0) for v in pins), "differs")
+    S = common(a, U)
+    f, ff = S["f"], S["ff"]
+    T = U @ T0
+    X = {v: U @ xs[v] for v in pins}
+    f0.report("M1", "the truth and every closure integral are positive on all 16 cells",
+              bool(np.all(T > 0) and all(np.all(X[v] > 0) for v in pins)), "are not")
+    dat = {}
+    for v in bc.PRODUCTS:
+        dat[v] = U @ f0.sa_call("M2", bc.load_product, bc.product_path(a.mp1_unf, v), v)
+    f0.report("M2", "the 11 MP-1 data unfolds match build_cresp's recorded digests and dumps", True)
+    f0.require("M2", a.recoil_readout, RECOIL_READOUT_SHA256, "3a readout")
+    rec = json.loads(a.recoil_readout.read_text())
+    d_w2b = np.asarray(rec["half_span"], float)
+    # a data integral equal to f to the guard's precision IS f, already in the table (amendment 1's rule)
+    guard = f0.LeakGuard(f, [T, *X.values(), *(np.where(near_f(x, f), np.nan, x) for x in dat.values())])
+    M_rel = S["M"] / ff
+    sig_m, sig_resp = rel_sigma(S["M"], f), rel_sigma(S["C_resp"], f)
+    b = {v: X[v] / T - 1.0 for v in pins}
+    delta = {v: b[v] - b["zero"] for v in pins}
+
+    def pair(h, d):
+        nh, nd = float(np.linalg.norm(h)), float(np.linalg.norm(d))
+        return {"closure_half_span": h.tolist(), "data_half_span": d.tolist(),
+                "cosine": float(h @ d / (nh * nd)) if nh > 0 and nd > 0 else None,
+                "norm_ratio_closure_over_data": nh / nd if nd > 0 else None,
+                "closure_half_span_over_sigma_total_resp": (np.abs(h) / sig_m).tolist(),
+                "closure_half_span_quadratic_form": quad(h, M_rel)}
+
+    variants = {v: {"delta": delta[v].tolist(), "abs_delta_over_sigma_total_resp": (np.abs(delta[v]) / sig_m).tolist(),
+                    "abs_delta_over_sigma_total_resp_summary": summary(np.abs(delta[v]) / sig_m),
+                    "quadratic_form_total_resp": quad(delta[v], M_rel)} for v in pins if v != "zero"}
+    species = {}
+    for s in SPECIES:
+        h = (delta[f"{s}_p1"] - delta[f"{s}_m1"]) / 2.0
+        d = (dat[f"{s}_p1"] - dat[f"{s}_m1"]) / (2.0 * f)
+        species[s] = pair(h, d)
+    w2b = pair((delta["w2b_rr1"] - delta["w2b_rr0"]) / 2.0, d_w2b)
+    H = sum(np.outer(np.asarray(species[s]["closure_half_span"]), np.asarray(species[s]["closure_half_span"]))
+            for s in PRIMARY)
+    out = {"schema": "fd-ct-mismatch/1", "labels": {"what": LABELS["mismatch"], "not_citable_for": LABELS["not_citable_for"],
+                                                   "no_threshold": LABELS["mismatch_threshold"]},
+           "controls_passed": ["S", "M0", "M1", "M2"], "cells": cells(),
+           "closure_floor_zero_on_zero": b["zero"].tolist(),
+           "closure_floor_summary_abs": summary(np.abs(b["zero"])),
+           "sigma_rel": {"C_total_resp": sig_m.tolist(), "C_resp": sig_resp.tolist()},
+           "variants": variants, "species": species, "w2b_recoil_4pct": w2b,
+           "closure_analogue_of_C_resp": {"sigma_rel": np.sqrt(np.diag(H)).tolist(),
+                                          "ratio_to_sigma_C_resp": (np.sqrt(np.diag(H)) / sig_resp).tolist(),
+                                          "label": "sum over the four primary species of h h^T, h the closure "
+                                                   "half-span; descriptive, beside C_resp, not a component"},
+           "inputs_sha256": {"closures": digests, "pseudo_dumps": pins, "recoil_readout": RECOIL_READOUT_SHA256,
+                             "s1_npz": PINS["s1_npz"], "cresp": PINS["cresp"], "definition": sa.DEFINITION_SHA256,
+                             "mp1_data_unfolds": {v: bc.PRODUCTS[v][0] for v in bc.PRODUCTS}},
+           "code_sha256": {**code_sha(), "build_cresp.py": sa.sha256(Path(bc.__file__).resolve())}, "argv": sys.argv}
+    lines = [f"[3b] {s}: cosine(closure, data half-span) {species[s]['cosine']:.4f}, norm ratio "
+             f"{species[s]['norm_ratio_closure_over_data']:.4f}" for s in SPECIES]
+    lines.append(f"[3b] w2b +-4%: cosine {w2b['cosine']:.4f}, norm ratio {w2b['norm_ratio_closure_over_data']:.4f}; "
+                 f"closure floor max |b0| {out['closure_floor_summary_abs']['max']:.3e}")
+    return write(a, out, guard, lines)
+
+
 # ---------------------------------------------------------------- main
 
 
 def build_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="reader", required=True)
-    for name in ("recoil", "chi2", "period"):
+    for name in ("recoil", "chi2", "period", "mismatch"):
         p = sub.add_parser(name)
         p.add_argument("--definition", type=Path, required=True)
         p.add_argument("--s1-npz", type=Path, required=True)
@@ -539,6 +673,10 @@ def build_args(argv):
             p.add_argument("--s5p-root", type=Path, required=True)
             p.add_argument("--f0b-readout", type=Path, required=True)
             p.add_argument("--flux-constraint", type=Path, required=True)
+        elif name == "mismatch":
+            p.add_argument("--closures-dir", type=Path, required=True)
+            p.add_argument("--mp1-unf", type=Path, required=True)
+            p.add_argument("--recoil-readout", type=Path, required=True)
         else:
             p.add_argument("--playlist-npz", type=Path, required=True)
             p.add_argument("--playlist-json", type=Path, required=True)
@@ -553,7 +691,7 @@ def main(argv=None) -> int:
         print(f"FAIL refusing to overwrite {a.out_json}", file=sys.stderr)
         return 1
     try:
-        return {"recoil": run_recoil, "chi2": run_chi2, "period": run_period}[a.reader](a)
+        return {"recoil": run_recoil, "chi2": run_chi2, "period": run_period, "mismatch": run_mismatch}[a.reader](a)
     except f0.Stop as e:
         print(e.code, file=sys.stderr, flush=True)
         return 1
