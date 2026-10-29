@@ -10,7 +10,7 @@ OI-8	OI-8	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_I
 OI-9	OI-9	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-9`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-10	OI-10	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md#oi-10	-	docs/OPEN_ITEMS.md (`OI-10`)	-
 OI-11	OI-11	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-third-batch.md#retired	-	docs/OPEN_ITEMS.md (`OI-11`)	-
-OI-12	OI-12	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-12`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
+OI-12	OI-12	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261029-close-items-oi12-relative-diagonal.md#oi-12--retired-as-fixed	-	docs/OPEN_ITEMS.md (`OI-12`)	-
 OI-13	OI-13	active	WAITING-JOSEPH	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-13`)	sha256:4db9b7ca4d7efb4cc1f6bebb998a1752984d1ba8b1065394f69759b15b1c74a7
 OI-14	OI-14	deferred	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261029-close-items-defer-pet-rows.md#deferred	-	docs/OPEN_ITEMS.md (`OI-14`)	-
 OI-15	OI-15	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-15`)	sha256:b96040bddaf69edb21354b3ad26923829621aea5c9aad04652b11342f4f27d49

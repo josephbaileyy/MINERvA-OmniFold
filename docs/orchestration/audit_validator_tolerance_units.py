@@ -9,8 +9,8 @@ and twice the correct scale was two lines away:
            written relative, on a matrix whose entries are ~1e-79.
   BEN-070  `p4_lib` covariance validator -- symmetry `/max(1e-300, max|C|)` and PSD `-ratio*abs(ev[-1])`
            both RELATIVE, then the diagonal `>= -1e-30` ABSOLUTE.
-  (live)   `p4_validate_active_lateral_fps.mat_gates` -- lines 66 and 68 relative, line 70 absolute, in
-           one function, with the eigenvalues already in scope.
+  OI-12    `p4_validate_active_lateral_fps.mat_gates` -- asymmetry and PSD relative, the diagonal `>= -1e-30`
+           absolute, in one function, with the eigenvalues already in scope. Repaired 2026-10-29.
 
 The inconsistency is far easier to see than either check's correctness, which is what makes it a
 mechanisable review rule rather than a judgement call.
@@ -31,10 +31,10 @@ BARS (recovery >= 0.80, floor/gap <= 0.10, residual/gap <= 0.20), which are abso
 and would otherwise flag every criterion function spuriously. The cut is stated because it is the one
 judgement in the tool.
 
-POWER: `--power` requires the sweep to flag the known instances. One of them
-(`p4_validate_active_lateral_fps.mat_gates`) is LIVE in the tree, so this tool has a real positive control
-rather than only synthetic ones -- and if a future repair fixes it, the power test will say so instead of
-silently passing.
+POWER: the sweep must flag a known instance before it prints. Until OI-12 that was the live
+`p4_validate_active_lateral_fps.mat_gates`. Its repair made the control fail, as designed. The control is now
+`nd-unfolding/tests/fixtures/units_auditor_control/mat_gates_pre_oi12.py`, the pre-repair function frozen verbatim.
+The sweep has to discover it by its own walk, so a walk that skips the tree still fails.
 """
 import argparse
 import ast
@@ -178,7 +178,8 @@ def sweep(root):
     return hits, n_files
 
 
-KNOWN_LIVE = ("p4_validate_active_lateral_fps.py", "mat_gates")
+KNOWN_LIVE = (os.path.join("nd-unfolding", "tests", "fixtures", "units_auditor_control", "mat_gates_pre_oi12.py"),
+              "mat_gates")
 
 
 def main():
@@ -196,13 +197,13 @@ def main():
                          f"{a.min_files}); a sweep that matches nothing reports success, so this fails "
                          f"closed rather than printing a clean table.")
 
-    # POWER: the live instance must be found, or the classifier has regressed.
-    found_live = any(h["file"].endswith(KNOWN_LIVE[0]) and h["func"] == KNOWN_LIVE[1] for h in hits)
-    print(f"POWER (live positive control {KNOWN_LIVE[0]}:{KNOWN_LIVE[1]}): "
+    # POWER: the frozen control must be found, or the walk or the classifier has regressed.
+    found_live = any(h["file"] == KNOWN_LIVE[0] and h["func"] == KNOWN_LIVE[1] for h in hits)
+    print(f"POWER (positive control {KNOWN_LIVE[0]}:{KNOWN_LIVE[1]}): "
           f"{'FOUND' if found_live else '*** NOT FOUND ***'}")
     if not found_live:
-        print("  -> either that instance was repaired (good: update KNOWN_LIVE and re-verify) or the "
-              "classifier has regressed (bad). Refusing to present the table until resolved.")
+        print("  -> the frozen control was moved or edited, or the walk or classifier has regressed. "
+              "Refusing to present the table until resolved.")
         raise SystemExit(3)
     print()
 

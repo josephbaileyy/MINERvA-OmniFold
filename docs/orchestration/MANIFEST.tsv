@@ -457,6 +457,7 @@ docs/orchestration/RECORD-20261028-close-items-third-batch.md	tracked	ARCHIVAL	d
 docs/orchestration/RECORD-20261029-close-items-conditional-proposals-ruled.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-close-items-defer-gate-rows.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-close-items-defer-pet-rows.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261029-close-items-oi12-relative-diagonal.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-close-items-oi45-oi151.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
