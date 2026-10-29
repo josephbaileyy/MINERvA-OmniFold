@@ -1,0 +1,246 @@
+{
+ "schema": "fd-ct-recoil/1",
+ "labels": {
+  "what": "data-side sensitivity at a second construction: W2b's whole simulated-recoil scale s = 0.96 and 1.04 (the test-beam agreement level, an exploratory size, not an uncertainty prescription), relative to its own delta = 0 chain, which is not bitwise the production product; not a mismatch closure and not a bias; beside C_resp, which it neither replaces nor validates",
+  "not_citable_for": [
+   "a coverage or calibration result, or that any chi2 follows or departs from chi2_ndf",
+   "a covariance component or a change to the reported matrix",
+   "a bias under response mismatch",
+   "a run-period effect in the hadronic variables"
+  ]
+ },
+ "controls_passed": [
+  "S",
+  "R0",
+  "R1"
+ ],
+ "cells": [
+  "R00",
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+  "R13",
+  "R14",
+  "R15"
+ ],
+ "scales": {
+  "rr0": 0.96,
+  "rr1": 1.04,
+  "rrzero": 1.0
+ },
+ "shift_minus": [
+  -0.03496670174749228,
+  0.04070853055171053,
+  -0.022875109141312522,
+  -0.02243575325704339,
+  -0.013551881607585914,
+  0.053663811923330584,
+  0.026225635546066606,
+  0.01684100844238068,
+  -0.06986640552305545,
+  0.03680149783230502,
+  -0.0469839615512091,
+  -0.03237306479598012,
+  -0.039325918382133174,
+  -0.02893940401690609,
+  0.033652963101036715,
+  -0.016873306143086686
+ ],
+ "shift_plus": [
+  0.037396465766133646,
+  -0.03913044380813813,
+  0.02292536856949412,
+  0.023306826001188607,
+  0.0109549316913502,
+  -0.05700331656702473,
+  -0.01604909333985627,
+  -0.013000268321055275,
+  0.05726407421372004,
+  -0.03836490823608352,
+  0.025800344528441377,
+  0.03368667653482915,
+  0.04764307360932052,
+  0.026809351260769665,
+  -0.036810508302910105,
+  0.014626259203968539
+ ],
+ "half_span": [
+  0.036181583756812914,
+  -0.039919487179924294,
+  0.02290023885540328,
+  0.02287128962911598,
+  0.012253406649468095,
+  -0.055333564245177616,
+  -0.021137364442961375,
+  -0.014920638381718008,
+  0.06356523986838773,
+  -0.0375832030341942,
+  0.03639215303982518,
+  0.033029870665404616,
+  0.04348449599572681,
+  0.02787437763883795,
+  -0.03523173570197336,
+  0.015749782673527595
+ ],
+ "half_span_summary_abs": {
+  "median": 0.03413080318368899,
+  "min": 0.012253406649468095,
+  "max": 0.06356523986838773
+ },
+ "sigma_rel": {
+  "C_resp": [
+   0.020716825132607256,
+   0.023533772101976685,
+   0.029461921431937717,
+   0.018527401100638035,
+   0.006987244657742561,
+   0.03714840487480828,
+   0.018132197071913544,
+   0.015525220788735698,
+   0.03584608588234728,
+   0.022560889941858658,
+   0.026865561683455993,
+   0.028458940118652947,
+   0.022040194651043284,
+   0.020838086185988883,
+   0.01818861624592176,
+   0.016388003862211942
+  ],
+  "C_total": [
+   0.06787477183429821,
+   0.06693753310862673,
+   0.13690604515063584,
+   0.12500144449720274,
+   0.04144166752047048,
+   0.06486023316850874,
+   0.05604540217141655,
+   0.07824351963281938,
+   0.05125867189869045,
+   0.05844575024211142,
+   0.0816089037047764,
+   0.13386789318103295,
+   0.06254739770629805,
+   0.1087283117629938,
+   0.049411090662297916,
+   0.0777014345038092
+  ],
+  "C_total_resp": [
+   0.07096598829814936,
+   0.07095401164145884,
+   0.1400402442630318,
+   0.12636702781157427,
+   0.042026579622714604,
+   0.07474525959160219,
+   0.05890554876419142,
+   0.0797689215488738,
+   0.0625491272353357,
+   0.06264901815936087,
+   0.08591723673665866,
+   0.13685950495820715,
+   0.06631701998797666,
+   0.11070714346746317,
+   0.052652460924245824,
+   0.0794108279426529
+  ]
+ },
+ "abs_half_span_over_sigma": {
+  "C_resp": [
+   1.7464830409687098,
+   1.6962638631386813,
+   0.7772825987709902,
+   1.2344575207759902,
+   1.753682209465802,
+   1.489527327799245,
+   1.1657365270810331,
+   0.9610580477247483,
+   1.773282585915217,
+   1.6658564059773053,
+   1.3546023518367656,
+   1.1606149254924545,
+   1.972963337402669,
+   1.337664955891205,
+   1.9370212239137763,
+   0.9610555871202849
+  ],
+  "C_total_resp": [
+   0.5098440059032681,
+   0.5626107144109538,
+   0.16352612762079097,
+   0.18099095962927397,
+   0.29156326209438543,
+   0.7402952982906554,
+   0.3588348616796308,
+   0.18704826506368458,
+   1.0162450329519226,
+   0.5999009104754598,
+   0.42357220066759427,
+   0.2413414448305287,
+   0.6557064235336659,
+   0.25178481501539446,
+   0.6691374929780266,
+   0.19833293622000028
+  ],
+  "C_resp_summary": {
+   "median": 1.4220648398180051,
+   "min": 0.7772825987709902,
+   "max": 1.972963337402669
+  },
+  "C_total_resp_summary": {
+   "median": 0.3912035311736125,
+   "min": 0.16352612762079097,
+   "max": 1.0162450329519226
+  }
+ },
+ "half_span_quadratic_form": {
+  "C_total_resp": 4.967626005046062,
+  "C_total": 64.38286903738762,
+  "label": "d^T M^-1 d of the half-span: a length in sigma units, descriptive, not a test"
+ },
+ "fraction_of_half_span_in_C_resp_span": {
+  "value": 0.9876389116662063,
+  "C_resp_rank": 4,
+  "random_direction_expectation": 0.25,
+  "label": "||P d||^2 / ||d||^2 in relative units (d and C_resp divided by f), P the projector onto C_resp's range; 1 means the scale moves the cells only in C_resp's directions, and a direction drawn at random gives rank/16 in expectation; the value depends on the units"
+ },
+ "curvature_ratio": {
+  "value": 0.05755260371570474,
+  "label": "build_cresp's G3 form on the cell integrals, ||X(+) + X(-) - 2 X(0)|| / ||X(+) - X(-)||; descriptive"
+ },
+ "inputs_sha256": {
+  "rr0": "df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b",
+  "rr1": "36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8",
+  "rrzero": "ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e",
+  "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "cresp": "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "code_sha256": {
+  "fd_ct_readers.py": "cccc47aaff9b7c7f3b211d0d40d363cdceee3750f99dd451909ffa4c8db7e39c",
+  "fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-ct-readers-20261028/deploy/28ea789e/nd-unfolding/fd_ct_readers.py",
+  "recoil",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-ct-readers-20261028/deploy/28ea789e/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--s1-npz",
+  "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+  "--cresp",
+  "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+  "--w2b-unf",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf",
+  "--out-json",
+  "/pscratch/sd/j/josephrb/fd-ct-readers-20261028/fd_ct_recoil.json"
+ ]
+}

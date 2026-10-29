@@ -1,0 +1,10 @@
+PASS control R0 the three W2b products match their recorded sha256 and were made by (e) on their own dumps
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control R1 every W2b cell integral is positive
+[3a] median |d|/sigma_resp 1.4221, median |d|/sigma_total_resp 0.3912, in-span fraction 0.9876, curvature 0.0576
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-readers-20261028/fd_ct_recoil.json", "sha256": "c8458dd0023e88bfc60336cdd77f7d502a4bedaafe236523b63abae7b2ab262c"}
+rc=0

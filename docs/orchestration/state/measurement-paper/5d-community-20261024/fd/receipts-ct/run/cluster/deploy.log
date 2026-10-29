@@ -1,0 +1,14 @@
+2026-10-29T06:17:41Z
+login37
+28ea789edd8e0211ac95d57957ba01b06380c862
+porcelain_ignored_lines 0
+cccc47aaff9b7c7f3b211d0d40d363cdceee3750f99dd451909ffa4c8db7e39c  nd-unfolding/fd_ct_readers.py
+c68d412a069e863f7744cad4abf58c5ad53b84cce2cc47046f730f3a79fa48f2  nd-unfolding/tests/test_fd_ct_readers.py
+0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2  nd-unfolding/fd_f0_regrade.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd-unfolding/s5p_stage1_inspect.py
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89  nd-unfolding/pv-ladder/readouts/h2_definition.json
+0571c97372df3f59fccdcac9a22a04dc774d9e2748cc71df62de80e2b024438e  docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-DECLARATION.md
+tests rc=0
+porcelain_ignored_lines_after_tests 0
+2026-10-29T06:24:20Z
