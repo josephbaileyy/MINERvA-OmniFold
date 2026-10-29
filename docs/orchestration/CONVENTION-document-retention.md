@@ -50,7 +50,8 @@ override row.
 - **Do not backfill status front matter into receipts, prompts, transcripts, or findings.** Editing
   those bytes falsifies the record. Status lives in the manifest; the artifact stays as written.
 - **Do not mark a document `DEAD` while anything still cites it.** `DEAD` means unreachable and
-  superseded, not merely finished; `MANIFEST.tsv` carries `inbound_count` so this is checkable.
+  superseded, not merely finished. Check it with `generate_manifest.py --retention`, which measures
+  `inbound_count` at the time of the run (`MANIFEST.tsv` no longer commits it, since 2026-10-28).
 - **Do not hand-edit `MANIFEST.tsv`.** It is generated. Edit the overrides file and regenerate.
 
 ## ⚠ BEFORE A RETENTION PASS: A BASENAME INVENTORY CANNOT SEE AN ELLIPSISED CITATION
@@ -85,9 +86,17 @@ renders, and only the read path degrades.
 ## Enforcement
 
 ```bash
-python3 docs/orchestration/generate_manifest.py           # regenerate
-python3 docs/orchestration/generate_manifest.py --check   # nonzero if stale
+python3 docs/orchestration/generate_manifest.py               # regenerate
+python3 docs/orchestration/generate_manifest.py --check       # nonzero if stale
+python3 docs/orchestration/generate_manifest.py --retention   # uncited LIVE docs, cited DEAD rows
+python3 docs/orchestration/generate_manifest.py --query PATH  # one row with its derived columns
 ```
+
+`MANIFEST.tsv` commits only the classification columns. `consumer`, `inbound_count`, `lines` and
+`bytes` changed whenever any file cited a record, so committing them made every concurrent change
+stale against `main`. They are measured on demand by `--query` and `--retention` (both read-only;
+add `--at-sha REV` to measure a commit). The citation count is a basename match that excludes
+`MANIFEST-overrides.tsv`, so read the retention-pass rule above before acting on it.
 
 `--check` is the guard: it fails when the tree and the manifest disagree, which is what catches a
 document added without a classification. Run it before committing documentation changes.
