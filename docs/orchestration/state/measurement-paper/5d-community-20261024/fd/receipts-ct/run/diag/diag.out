@@ -1,0 +1,32 @@
+module /pscratch/sd/j/josephrb/fd-ct-readers-20261028/deploy/28ea789e/nd-unfolding/fd_ct_readers.py  sha256 cccc47aaff9b7c7f3b211d0d40d363cdceee3750f99dd451909ffa4c8db7e39c
+guard check of 'readout': 22 offending number(s); tool's own count 22
+  OFFENDING readout.schema (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.controls_passed[2] (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.cells[1] (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PA (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PA (string, number token #1): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PB (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PB (string, number token #1): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PB (string, number token #2): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PC (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.periods.PC (string, number token #1): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.constants.weights.prior (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.inputs_sha256.central (string, number token #10): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.inputs_sha256.prior (string, number token #3): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.inputs_sha256.<key s1_npz> (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.inputs_sha256.definition (string, number token #4): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.inputs_sha256.definition (string, number token #8): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.code_sha256.<key s1_assemble.py> (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.code_sha256.<key s5p_stage1_inspect.py> (string, number token #1): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.argv[5] (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.argv[6] (string, number token #0): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.argv[6] (string, number token #2): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  OFFENDING readout.argv[16] (string, number token #3): matches ['central X_sup/f cell R09', 'f/central X_sup cell R09']
+  prior integral X_p: cells with |X/f - 1| < LEAK_REL: []; cells masked (NaN): []
+  central X_sup: cells with |X/f - 1| < LEAK_REL: ['R09']; cells masked (NaN): ['R00', 'R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15']
+  prior X_sup: cells with |X/f - 1| < LEAK_REL: []; cells masked (NaN): []
+diagnostic ends here: no readout written
+tool exit 3; controls that printed PASS: 17; tool stderr lines: 0
+--out-json exists after: False
+rc=0
+host login37 2026-10-29T06:29:57Z
