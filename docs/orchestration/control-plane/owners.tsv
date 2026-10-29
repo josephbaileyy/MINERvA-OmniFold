@@ -14,3 +14,5 @@ lane_d	lane D (audit / inventory / verification, READ-ONLY)	lane D	Joseph	assign
 z-criteria-designer	Z scientific acceptance criteria	z-criteria-designer session [91eaa2]	Joseph	assigned
 z-independent-assessor	Z criteria independent assessment	z-independent-assessor session [cb0b6b]	Joseph	assigned
 scalar5d_campaign	scalar5d campaign	scalar5d campaign session [eb3ae0]	Joseph	assigned
+close_items	close-items session	close-items session [46ca5a]	Joseph	assigned
+paper_rewrite	paper rewrite lane	paper rewrite session [f64680]	Joseph	assigned

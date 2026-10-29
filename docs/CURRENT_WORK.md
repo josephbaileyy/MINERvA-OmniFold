@@ -14,16 +14,13 @@ never derived from OI state prose; terminal and deferred records never enter thi
 | OI-71 | WAITING-JOSEPH | Joseph | publication/P1 | Decide whether recovery evidence may be quoted without a measurement at the promoted configuration. | docs/OPEN_ITEMS.md (`OI-71`) |
 | OI-125 | NOW | PET lane | publication/P1 | Record the end-of-run fold-forward scalar, not the neighbouring consumption-time reduction, and bind the like-for-like result. | docs/OPEN_ITEMS.md (`OI-125`) |
 | OI-93 | NOW | lane B | publication/P2 | Require every truncated C_stat consumer to declare effective rank, ensemble size, precision-bias treatment, and the PPP diagnostic. | docs/OPEN_ITEMS.md (`OI-93`) |
-| OI-130 | NOW | lane D (audit / inventory / verification, READ-ONLY) | publication/P2 | Enumerate quoted values to artifacts and preservation status, then remediate by evidence class. | docs/OPEN_ITEMS.md (`OI-130`) |
+| OI-130 | NOW | paper rewrite lane | publication/P2 | After the paper lane's n4 and r21 work: enumerate every quoted value to its artifact and preservation state, report the counts, then remediate by class. | docs/OPEN_ITEMS.md (`OI-130`) |
 | OI-75 | WAITING-JOSEPH | Joseph | provenance/P1 | Reconcile the unrecorded standard-P4 Stage-3 run with the standing no-run hold before preserving or using its products. | docs/OPEN_ITEMS.md (`OI-75`) |
 | OI-131(a) | WAITING-JOSEPH | Joseph | provenance/P1 | Decide whether an irreplaceable subset of the CFS-only P3F objects warrants a second copy. | docs/OPEN_ITEMS.md (`OI-131`) |
 | OI-123 | NOW | Gate-6 Leg F / Leg X roles | provenance/P1 | Choose frozen per-leg checkouts or re-issue the affected launchers with their owning receipts before the next run. | docs/OPEN_ITEMS.md (`OI-123`) |
-| OI-129 | NOW | standard-P4 lane | provenance/P2 | Digest the projected covariance and read back the closed-file row-index object before recording its digest. | docs/OPEN_ITEMS.md (`OI-129`) |
 | OI-131(b) | BLOCKED-EXTERNAL | storage / Joseph | provenance/P1 | Re-read and record measured HPSS quota after accounting catches up; do not promote the predicted reduction. | docs/OPEN_ITEMS.md (`OI-131`) |
-| OI-127 | NOW | lane B (implementation / write) | safety/P2 | Make unresolved role-keyed hashes visible as a separate cell in integrity-check accounting. | docs/OPEN_ITEMS.md (`OI-127`) |
-| OI-128 | NOW | lane B (implementation / write) | safety/P2 | Put the adopter on the protected execution surface and move the gate-name constant to the shared protected module. | docs/OPEN_ITEMS.md (`OI-128`) |
-| OI-70 | NOW | lane C (rulings / schema / launcher policy) | infrastructure/P1 | Fix manifest tracking semantics so ignored and merely intended paths cannot masquerade as committed repository inventory. | docs/OPEN_ITEMS.md (`OI-70`) |
-| OI-73 | BLOCKED-EXTERNAL | lane C (rulings / schema / launcher policy) | infrastructure/P1 | Correct the live-state.json lifecycle classification and distinguish authored input from generated output. | docs/OPEN_ITEMS.md (`OI-73`) |
+| OI-136 | NOW | close-items session | safety/P2 | Re-measure the fail-open set with the OI-136 probe, then repair each remaining file or record why it stays (receipt-bound or a frozen record). | docs/OPEN_ITEMS.md (`OI-136`) |
+| OI-73 | NOW | close-items session | infrastructure/P1 | As owner, regenerate LIVE-STATE.md under its existing rules: the regeneration two Joseph decisions withhold pending OI-73's owner. | docs/OPEN_ITEMS.md (`OI-73`) |
 
 ## Machine-enforced contract
 
