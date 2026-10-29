@@ -8,39 +8,21 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-188 | NOW | migration-carried-forward | OPEN |
-| OI-186 | NOW | migration-carried-forward | OPEN |
-| OI-184 | NOW | migration-carried-forward | OPEN |
-| OI-183 | NOW | migration-carried-forward | OPEN |
 | OI-182 | NOW | migration-carried-forward | OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions |
-| OI-181 | NOW | migration-carried-forward | TRAP DEFUSED 2026-08-31 — the structural question stays open with OI-73 |
-| OI-180 | NOW | migration-carried-forward | REPAIRED 2026-08-31 — awaiting a decision only on the triage of what it now reveals |
-| OI-173 | NOW | migration-carried-forward | RE-ISSUED 2026-09-02 BY JOSEPH — THE REFERENT IS THE STAMPED CANDIDATE. He ruled in his own turn: "okay do c", where (c) |
 | OI-174 | NOW | migration-carried-forward | OPEN |
-| OI-172 | NOW | migration-carried-forward | RULED 2026-09-01 BY JOSEPH — MATERIAL ENOUGH TO NEED ITS OWN STATEMENT IN THE NOTE, the unfavourable branch this row nam |
-| OI-162 | NOW | migration-carried-forward | OPEN |
-| OI-160 | NOW | migration-carried-forward | OPEN |
-| OI-161 | NOW | migration-carried-forward | OPEN |
-| OI-152 | NOW | migration-carried-forward | OPEN |
 | OI-151 | NOW | migration-carried-forward | OPEN |
-| OI-150 | NOW | migration-carried-forward | OPEN |
 | OI-148 | NOW | migration-carried-forward | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
 | OI-142 | NOW | migration-carried-forward | SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
 | OI-74 | NOW | migration-carried-forward | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
-| OI-1 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-2 | NOW | migration-carried-forward | 4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13 |
 | OI-3 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED — now SCOPED, and the blocker is a decision not compute |
 | OI-4 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-6 | NOW | migration-carried-forward | DECIDED 2026-08-15 (purity, reading (A)); the NOTE OBLIGATION IS DISCHARGED; the REVISIT OBLIGATION SURVIVES AS THE OPEN |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
-| OI-10 | NOW | migration-carried-forward | OPEN |
-| OI-11 | NOW | migration-carried-forward | OPEN |
 | OI-12 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-14 | NOW | migration-carried-forward | OPEN |
-| OI-17 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-18 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-19 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-20 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-22 | NOW | migration-carried-forward | STILL OPEN — but RECLASSIFIED 2026-08-13: technical verification, NOT a user decision |
@@ -50,7 +32,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-27 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-28 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-29 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-30 | NOW | migration-carried-forward | OPEN |
+| OI-30 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See |
 | OI-31 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-32 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-33 | NOW | migration-carried-forward | OPEN |
@@ -61,34 +43,26 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-39 | NOW | migration-carried-forward | OPEN |
 | OI-40 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-42 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-43 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER (named action DONE 2026-08-12) |
-| OI-44 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-45 | NOW | migration-carried-forward | OPEN |
 | OI-47 | NOW | migration-carried-forward | OPEN (re-scoped 2026-08-12, owner Session A) |
-| OI-49 | NOW | migration-carried-forward | OPEN |
-| OI-50 | NOW | migration-carried-forward | NARROWED 2026-08-18 — one of the two archives is now ANSWERED, the other is not. mnv-p3f-pet-fullevent-final's 240 objec |
+| OI-50 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the |
 | OI-51 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-52 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
+| OI-52 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the premise is false (lanes read Iris; state/measurement-scoping/iris |
 | OI-53 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-54 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-57 | NOW | migration-carried-forward | CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked |
 | OI-58 | NOW | migration-carried-forward | OPEN RE-TRIAGE RECOMMENDATION 2026-08-20 AFTER THE OI-126 RULING — RECOMMENDED, NOT RULED. Recommend reclassifying as a |
-| OI-59 | NOW | migration-carried-forward | OPEN (raised 2026-08-13 by lane A) |
+| OI-59 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — whether the freeze permits the Ascencio super-grid recom |
 | OI-60 | BLOCKED-EXTERNAL | migration-carried-forward | RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW |
 | OI-61 | NOW | migration-carried-forward | OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d |
 | OI-62 | WAITING-JOSEPH | migration-carried-forward | (a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER |
-| OI-64#1 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE A's OI-64. Lane C independently allocated the same id (see the other OI-64 row below, C's: |
-| OI-65#1 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE A's OI-65. Lane C independently allocated the same id (see the other OI-65 row below, C's: |
 | OI-64#2 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE C's OI-64. Lane A independently allocated the same id (see the other OI-64 row above, A's: |
 | OI-65#2 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE C's OI-65. Lane A independently allocated the same id (see the other OI-65 row above, A's: |
 | OI-94 | NOW | migration-carried-forward | OPEN (raised 2026-08-14 by lane C, as what survives OI-92's refutation) |
 | OI-120 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129) |
 | OI-121 | NOW | migration-carried-forward | AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT |
-| OI-96 | NOW | migration-carried-forward | OPEN — a whole-file occurrence count is a crude proxy for pinning one line, and it is the instrument now standing in for |
 | OI-132 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON |
 | OI-133 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
-| OI-135 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
-| OI-136 | NOW | migration-carried-forward | OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat |
-| OI-137 | NOW | migration-carried-forward | OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA |
+| OI-137 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W |
 | OI-138 | NOW | migration-carried-forward | OPEN |
 | OI-139 | NOW | migration-carried-forward | OPEN |

@@ -285,6 +285,10 @@ run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.
 # (11 hermetic tests, ~12 s measured 2026-10-28, including the retention test that fires on an uncited
 # LIVE doc and is silent once one is cited) -- over this hook's budget. Run it when changing
 # generate_manifest.py, live_doc_indexed.py or lib/tree_state.py.
+# DECLINED HERE (they run in the CI workflow instead): the two OI-136 ratchets,
+# nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py and test_oi136_rooted_insert_ratchet.py,
+# which hold the fail-open sys.path[0] set exact with a reason per file -- over this hook's budget
+# (the rooted one takes minutes). Run both when adding a .py that inserts a path at sys.path[0].
 # ADDED 2026-10-22 (paper-tighten lane; Joseph: "yes do all three"). Rules and their checks:
 # docs/orchestration/RECORDS-RULES.md. WHY: a session said coverage under configuration (e) was untested; it had
 # been measured in s5e under the contract letter R, and no tool resolved one name to the other. Each check reads

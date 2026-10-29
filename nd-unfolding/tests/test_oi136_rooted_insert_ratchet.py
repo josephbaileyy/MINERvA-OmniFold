@@ -85,6 +85,11 @@ _R = {
     # files and orders them preserved byte-for-byte. Classification only: no file below changed.
     'frozen_record':
         "FROZEN ANALYSIS RECORD (2026-10-03..06). A one-off script committed beside the JSON it produced, as the record of a finished analysis; editing it falsifies that record, so it is classified, never patched. Nothing imports or launches it (measured 2026-10-09). Its insert puts the canonical checkout's 2d-unfolding/uq at sys.path[0], so a re-run from another tree imports the canonical analyzers: a re-run must go through nd-unfolding/mnv_guarded_run.py, which refuses that import.",
+    # ADDED 2026-10-28 by the close-items session (OI-136, director's ruling of 2026-10-28). Four
+    # files landed 2026-10-12..17 while neither ratchet ran in the hook or CI, so both suites went
+    # red unnoticed. Classification only: no file below changed.
+    'closeout_bound':
+        "HASH-BOUND 2D CLOSE-OUT DRIVER (2026-10-12..17). Its sha256 is pinned by the stage B/C records and authorizations named at its entry, so editing it voids those bindings; the insert changes only with the next re-issue of those bindings.",
 }
 
 KNOWN_UNREPAIRED = {
@@ -192,6 +197,22 @@ KNOWN_UNREPAIRED = {
         _R['frozen_record'],
     'docs/orchestration/state/uqpaper-median-20261006/paper_median.py':
         _R['frozen_record'],
+    # --- closeout_bound: what pins each one's bytes (sha256 prefix searched over the tree, 2026-10-28):
+    #   2d-closeout/stageB/diagnostics/p5/driver_p5.py  f71b5759…  its SHA256SUMS, DESIGN.md, analyze_p5.py, result/report_s4{2,3}.json
+    #   2d-closeout/stageC/pilot/p1/driver_p1.py        3056e625…  AUTHORIZATION-20261013-…-pilot-binding.md,
+    #                                                              AUTHORIZATION-20261015-…-production-binding.md,
+    #                                                              2d-unfolding/re2/partc/re2c_analyze.py, evidence/results/p1*.json
+    #   2d-closeout/stageC/pilot/p2g2/driver_g2.py      eb258cad…  AUTHORIZATION-20261013-…-pilot-binding.md, pilot/manifest.json,
+    #                                                              analyze_g2.py, evidence/results/g2_s4{2,3}.json
+    #   2d-unfolding/driver_p1.py                       3056e625…  byte-identical to the stageC p1 driver (fa11e3fd4), same pins
+    'docs/orchestration/state/2d-closeout/stageB/diagnostics/p5/driver_p5.py':
+        _R['closeout_bound'],
+    'docs/orchestration/state/2d-closeout/stageC/pilot/p1/driver_p1.py':
+        _R['closeout_bound'],
+    'docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/driver_g2.py':
+        _R['closeout_bound'],
+    '2d-unfolding/driver_p1.py':
+        _R['closeout_bound'],
 }
 
 def _canonical_form(value):

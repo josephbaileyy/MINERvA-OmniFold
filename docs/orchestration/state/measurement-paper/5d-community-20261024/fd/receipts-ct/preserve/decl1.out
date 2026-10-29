@@ -1,0 +1,39 @@
+host=login08 date=2026-10-28T22:14:31Z
+[P] 2026-10-28T22:11:07Z start host=login08
+[P] 2026-10-28T22:12:42Z inventory verified: 42 files
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz
+36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz
+ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz
+c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476  /pscratch/sd/j/josephrb/tmp-playlist-term-20261016/out/playlist_term.npz
+fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c  /pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
+bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c  /pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz
+4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a  /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
+db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4  /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz
+7ab440f4524360badc9703b160faf871d48a031a9da21e99dc75b1fe2d92bd48  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr0_bkg.npz
+45de5c7f54588bf82907a0490302500aa2668c81ac896844b7508854b7a55641  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr0.npz
+6a848eb425ed8ee298ab0e9f4ceabe8fd23b4982272c53f4a50cfed3e33fedd7  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr1_bkg.npz
+4c98d8cbc087e3b32f600b7301673c96e60ab6830b81baa71921934cc6131a0e  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr1.npz
+c715d07e02ac8e941c5deccd3c858f71653b997b4e6331e055bbe9144f3c98c3  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rrzero_bkg.npz
+6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rrzero.npz
+df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz
+36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz
+ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e  /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz
+5b023478eb5825a298fd3e851b614fd4780ab27b927214e253f5c4c0df52f7b9  playlist_term.json
+c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476  playlist_term.npz
+16239
+df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b  pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz
+36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8  pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz
+ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e  pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz
+== product metas
+w2b_rr0_b-_j-.npz ['meta', 'shape', 'xsec_flat'] {'schema': 's5p-numerics/1', 'construction': 'data', 'truth': 'nominal', 'input_npz_sha256': '45de5c7f54588bf82907a0490302500aa2668c81ac896844b7508854b7a55641', 'bkg_dump_sha256': '7ab440f4524360badc9703b160faf871d48a031a9da21e99dc75b1fe2d92bd48', 'bootstrap_seed': None, 'jitter_seed': None, 'coords': 'float32'}
+w2b_rr1_b-_j-.npz ['meta', 'shape', 'xsec_flat'] {'schema': 's5p-numerics/1', 'construction': 'data', 'truth': 'nominal', 'input_npz_sha256': '4c98d8cbc087e3b32f600b7301673c96e60ab6830b81baa71921934cc6131a0e', 'bkg_dump_sha256': '6a848eb425ed8ee298ab0e9f4ceabe8fd23b4982272c53f4a50cfed3e33fedd7', 'bootstrap_seed': None, 'jitter_seed': None, 'coords': 'float32'}
+w2b_rrzero_b-_j-.npz ['meta', 'shape', 'xsec_flat'] {'schema': 's5p-numerics/1', 'construction': 'data', 'truth': 'nominal', 'input_npz_sha256': '6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f', 'bkg_dump_sha256': 'c715d07e02ac8e941c5deccd3c858f71653b997b4e6331e055bbe9144f3c98c3', 'bootstrap_seed': None, 'jitter_seed': None, 'coords': 'float32'}
+data_b-_j-.npz ['meta', 'shape', 'xsec_flat'] {'schema': 's5p-numerics/1', 'construction': 'data', 'truth': 'nominal', 'input_npz_sha256': '07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f', 'bkg_dump_sha256': '2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955', 'bootstrap_seed': None, 'jitter_seed': None, 'coords': 'float32'}
+mp1s1_zero_b-_j-.npz ['meta', 'shape', 'xsec_flat'] {'schema': 's5p-numerics/1', 'construction': 'data', 'truth': 'nominal', 'input_npz_sha256': '6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f', 'bkg_dump_sha256': 'f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66', 'bootstrap_seed': None, 'jitter_seed': None, 'coords': 'float32'}
+playlist_term {'C_PL': (205, 205), 'S_ref': (205, 205), 'S_raw': (205, 205), 'S_ref_raw': (205, 205), 'cells': (205,), 'x': (205,), 'F': (31, 205), 'g_PA': (205,), 'g_PB': (205,), 'g_PC': (205,), 'e_PA': (205,), 'e_PB': (205,), 'e_PC': (205,), 'r_PA': (205,), 'r_PB': (205,), 'r_PC': (205,)}
+PA e ptp 0.0 e mean 0.5333794294273275
+PB e ptp 0.0 e mean 0.2945414379385886
+PC e ptp 0.0 e mean 0.172079132634084
+mnvtune ['xsec_flat', 'sumw2_flat', 'nevt_flat', 'shape', 'edges_pt', 'edges_pz', 'edges_eavail', 'edges_q3', 'edges_W', 'meta_json']
