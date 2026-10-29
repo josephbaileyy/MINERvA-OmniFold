@@ -23,7 +23,7 @@ OI-171	retired	-	migration-carried-forward	fa3fffb13b0ba23bf4534d00733e5d26e5220
 OI-170	retired	-	migration-carried-forward	ec9a5a3a9e5401064563a01babd43ae69a6d85c51ec5f0f45978f6355707d010	DISCHARGED
 OI-162	retired	-	declared	9be1fcd1cf5e555e47885478b580441d457149b8048e727feee4c96196690608	RETIRED 2026-10-28 on the director's ruling — Joseph took the preferred option (DECISION-20260830-joseph-accept-forward-
 OI-160	active	NOW	declared	fe2e0eaedc12fbeb35c8b2b6ead91b25216a3a2e2aeb85a48a491bd27e787031	PROMOTED 2026-10-28 by the director, owner the close-items session — classification only, never deletion. See [RECORD-20
-OI-161	active	NOW	declared	3b564e135b565a91d570d5016770b0d7f02448d0b49eba80d00125e8aaaadc9a	PROMOTED 2026-10-28 from the director's standing list, owner the close-items session. See [RECORD-20261028-close-items-t
+OI-161	retired	-	declared	913cace9e6bdf56cf4faa2cde151673b5a8d549092f6cfe78770c36732adb117	RETIRED 2026-10-28 by its owner, the close-items session — both hold comments now state the discharge (P2 at 2e8c214a, A
 OI-152	retired	-	declared	001d9ad6cf2e4b6941b91ef73d2d5b3e0d037fb61d4aa4fad6c84407da8b8a0b	RETIRED 2026-10-28 — the practice is written in docs/LOCAL_CHECKOUTS_AND_STORAGE.md (#471). See [RECORD-20261028-close-i
 OI-151	active	NOW	migration-carried-forward	f79832d5d1e92142a752a0410a5d356c0ffc8a32eef8e65fef12135b3c0ef003	OPEN
 OI-150	retired	-	declared	314c3e77306e3a9cfedc6e87ee53c39fc88f327ab0b5e235779463d4832db91e	RETIRED 2026-10-28 by the close-items session — the prose classifier was deleted at 4e296f06a; routing reads the declare
@@ -88,7 +88,7 @@ OI-41	retired	-	migration-carried-forward	e6620d28f5af653b0205f177c448c0add720cb
 OI-42	active	BLOCKED-EXTERNAL	migration-carried-forward	7931ffaed1eedd39ffef04844cbb54e5efa08ca14d0e9f6b0f706c3b9bcb9e70	BLOCKED
 OI-43	retired	-	declared	32bb12c43bb4aed6d27343d2be4a913c71e43deffe8e0a286d063243099f5655	FOLDED INTO OI-75 2026-10-28 on the director's ruling — the P4 hold is the same standing no-run hold OI-75 asks Joseph t
 OI-44	retired	-	declared	b0fba88e1197fecdf1724192633031e0f05b98990f574f904af8d90bc2d58c0b	RETIRED 2026-10-28 on the director's ruling as objectless — the 240 objects were deleted from tape on 2026-08-18; the li
-OI-45	active	NOW	migration-carried-forward	8888e55507e89605d7b169e099bbebac60eee8f8bd8ebed0eaab40d0d1fcb227	OPEN
+OI-45	active	NOW	declared	3c9755222d64f94618c8e8b74226ca3c8374737052e8c04f344321c4c9bd7f16	PROMOTED 2026-10-28 from the director's standing list, owner the close-items session. See [RECORD-20261028-close-items-o
 OI-46	retired	-	migration-carried-forward	36ffc3c94a84f03f1d0c7b9352bf1fd217c7c9a98973ac6074cf61e02203d09b	DISCHARGED 2026-08-13 as a commit-gate question — the artifact is separately superseded
 OI-47	active	NOW	migration-carried-forward	3ed755c361fc481291d704a942fcbc69bdd405021c75ab1a1eb20dea83e32441	OPEN (re-scoped 2026-08-12, owner Session A)
 OI-48	retired	-	migration-carried-forward	0b0bf4e60bb0a46ec892b797b000f021550645f46fa7ebfc123dc808f126c785	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat

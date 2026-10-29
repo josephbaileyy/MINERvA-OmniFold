@@ -18,9 +18,9 @@ never derived from OI state prose; terminal and deferred records never enter thi
 | OI-75 | WAITING-JOSEPH | Joseph | provenance/P1 | Reconcile the unrecorded standard-P4 Stage-3 run with the standing no-run hold before preserving or using its products. | docs/OPEN_ITEMS.md (`OI-75`) |
 | OI-131(a) | WAITING-JOSEPH | Joseph | provenance/P1 | Decide whether an irreplaceable subset of the CFS-only P3F objects warrants a second copy. | docs/OPEN_ITEMS.md (`OI-131`) |
 | OI-131(b) | BLOCKED-EXTERNAL | storage / Joseph | provenance/P1 | Re-read and record measured HPSS quota after accounting catches up; do not promote the predicted reduction. | docs/OPEN_ITEMS.md (`OI-131`) |
+| OI-45 | NOW | close-items session | maintenance/P3 | Record effective author and committer identity in each new lane receipt where practical: propose the field and a lint scoped to newly added receipts. | docs/OPEN_ITEMS.md (`OI-45`) |
 | OI-139 | NOW | close-items session | maintenance/P3 | Propose one of the row's three remedy shapes for receipts that assert scheduler state without a timestamp, cheapest first, with its blast radius measured. | docs/OPEN_ITEMS.md (`OI-139`) |
 | OI-160 | NOW | close-items session | maintenance/P3 | Classify run_budget_5d.sh and sbatch_combine_5d_budget.sh as superseded pre-M(ii) launchers, or state why they are live. Classification only, never deletion. | docs/OPEN_ITEMS.md (`OI-160`) |
-| OI-161 | NOW | close-items session | maintenance/P3 | Update the two discharged DO NOT LAUNCH hold comments, citing 2e8c214a, without shifting any line a record cites. Not a launch authorization. | docs/OPEN_ITEMS.md (`OI-161`) |
 
 ## Machine-enforced contract
 

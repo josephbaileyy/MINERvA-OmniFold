@@ -8,8 +8,8 @@
 #SBATCH --output=active_universe_5d/fps/logs/ev5d_active_fps_%A_%a.out
 #SBATCH --error=active_universe_5d/fps/logs/ev5d_active_fps_%A_%a.err
 # =====================================================================================
-# P3F FPS active-universe event loops (Agent C). DO NOT LAUNCH until Agent A commits P2
-# (interface validation) and records the validated installed-binary fingerprint. This is
+# P3F FPS active-universe event loops (Agent C). Hold DISCHARGED: P2 committed 2e8c214a,
+# gate table ALL PASS, binary fingerprint recorded (OI-161; not a launch grant). This is
 # a PREPARED launcher (a distinct FPS-owned file; Agent A's shared
 # sbatch_evloop_array_5d_active_laterals.sh is left untouched).
 #

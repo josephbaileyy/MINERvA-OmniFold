@@ -43,7 +43,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-39 | NOW | migration-carried-forward | OPEN |
 | OI-40 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-42 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-45 | NOW | migration-carried-forward | OPEN |
 | OI-47 | NOW | migration-carried-forward | OPEN (re-scoped 2026-08-12, owner Session A) |
 | OI-50 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the |
 | OI-51 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
