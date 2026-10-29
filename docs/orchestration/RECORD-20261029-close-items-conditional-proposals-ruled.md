@@ -49,18 +49,27 @@ re-issue. Dependency check: 0 hits.
 ## Unchanged
 
 - **OI-35** stays WAITING-JOSEPH as it is: requesting NEUT access is his.
-- **OI-188** is left untouched. The director's ruling says it stays WAITING-JOSEPH, but the register shows it `NOW` and
-  unassigned, and that mismatch is reported to the director rather than repaired here.
+- **OI-188** goes to owner `joseph`, `WAITING-JOSEPH`, on the director's second ruling of 2026-10-29. The register had
+  shown it `NOW` and unassigned, and that mismatch was reported, then ruled. The record that makes continuing his decision
+  is `DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md` R5 (`:143`): *"Continuing past the stop requires a
+  fresh decision; continuation is not the default."* The row itself says *"(d) → Joseph, since it touches a ruling he
+  confirmed directly."*
 
-## OI-47 — checked read-only, brought back to the director
+## OI-47 — retired, as superseded by the per-session worktree practice
 
-Not retired: the trigger has fired, but the setting is not right. Measured on 2026-10-29, reading only the key named here:
+On the director's second ruling of 2026-10-29, option (a). Lanes no longer run as harness background jobs whose
+isolation that key would set. Each session makes its own `git worktree` (`docs/LOCAL_CHECKOUTS_AND_STORAGE.md`;
+`CONVENTION-lane-worktrees.md`). **Option (b), writing the key into a Claude settings file, is not taken. No one edits
+a Claude settings file for this.** The trigger (*"the next natural lane restart"*) has fired many times. Measured
+read-only on 2026-10-29, reading only the key named here:
 - `CLAUDE_CONFIG_DIR` is `/Users/josephbailey/.claude-school`;
 - `worktree.bgIsolation` is **absent** from `~/.claude/settings.json`, `~/.claude-school/settings.json` and
   `~/.claude-personal/settings.json`, and no project `.claude/settings*.json` exists;
 - `~/.claude-school/jobs/` holds **no** job directories;
 - the only job state anywhere is `~/.claude-personal/jobs/76a4b8ef/state.json` (2026-08-25): `"bgIsolation": "none"`.
 
-No credential or auth file was opened, and nothing outside the checkout was edited.
+No credential or auth file was opened, and nothing outside the checkout was edited. Dependency check: one hit,
+`AUTHORIZATION-20260812-hpss-copy-and-delegation.md:96`, which scheduled the fix for that restart. It is a mention, and
+nothing waits on OI-47 staying active.
 
 No row text is deleted. Each changed row gains a dated prefix pointing here.

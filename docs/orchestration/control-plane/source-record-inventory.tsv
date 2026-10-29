@@ -3,7 +3,7 @@ OI-190	retired	-	declared	e214d52d14a140d0d82a31fd62930d02d508e67ba26293a2f75564
 OI-191	retired	-	declared	6c39adc76363598db781194ee7a5e33b1b8f7a8f13348fb79ede241ec84579d1	CLOSED 2026-09-25
 OI-192	retired	-	declared	fbebadf8c31f99a692d1538b286aa3824adf54939abf6a5d0bdbd21594b4d6c5	CLOSED 2026-09-26
 OI-193	retired	-	declared	bfd6105d976b47886ab47d1d707dfa7d2b95aa3f3065ea5f5e7b590157f0f2c1	CLOSED 2026-10-06
-OI-188	active	NOW	migration-carried-forward	577c1bbba8cc1c763a60ebee78f9401dcb67c3698ae30f1b756af23fb5c8dfab	OPEN
+OI-188	active	WAITING-JOSEPH	declared	6b9b4e8533d14c31b51d49f5c927fc15a28719727d8a4f4ac13a7e2adb27027d	OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh
 OI-187	retired	-	migration-carried-forward	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	retired	-	declared	da08ed506f48e869f028cc8757e1989de12421d1e8ff7849c4c73f9ceae973a1	RETIRED 2026-10-28 by the close-items session — uq_math.py was corrected to VL33's 5.3478x at c9ba1b274. See [RECORD-202
 OI-185	retired	-	migration-carried-forward	6e212c982f2864fbc83fbe82ceddbfc129b93295cda51725b2976f6330d4acf6	DISCHARGED 2026-09-01 — RATIFIED AND RESTRUCTURED. Joseph ruled in his own turn: "Okay I like your recommendation for OI
@@ -90,7 +90,7 @@ OI-43	retired	-	declared	32bb12c43bb4aed6d27343d2be4a913c71e43deffe8e0a286d06324
 OI-44	retired	-	declared	b0fba88e1197fecdf1724192633031e0f05b98990f574f904af8d90bc2d58c0b	RETIRED 2026-10-28 on the director's ruling as objectless — the 240 objects were deleted from tape on 2026-08-18; the li
 OI-45	retired	-	declared	230a231100eb132452e964885c2ec913804aa38dee1b6ccce50f783c6ee11d53	RETIRED 2026-10-29 by its owner, the close-items session — a receipt's author is its adding commit's git author (documen
 OI-46	retired	-	migration-carried-forward	36ffc3c94a84f03f1d0c7b9352bf1fd217c7c9a98973ac6074cf61e02203d09b	DISCHARGED 2026-08-13 as a commit-gate question — the artifact is separately superseded
-OI-47	active	NOW	migration-carried-forward	3ed755c361fc481291d704a942fcbc69bdd405021c75ab1a1eb20dea83e32441	OPEN (re-scoped 2026-08-12, owner Session A)
+OI-47	retired	-	declared	9469dd81994f457d9c8f4b9b540760fa1b46f46de0ce96a8ca6d345567f6e187	RETIRED 2026-10-29 on the director's ruling, as superseded by the per-session worktree practice — worktree.bgIsolation i
 OI-48	retired	-	migration-carried-forward	0b0bf4e60bb0a46ec892b797b000f021550645f46fa7ebfc123dc808f126c785	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat
 OI-49	retired	-	declared	628e9089804cbbc59606e4d47d16d714e02e4b1089bac8b9424692cf132ffa84	RETIRED 2026-10-28 on the director's ruling as objectless — there is no tape copy to measure; the live question is OI-13
 OI-50	active	WAITING-JOSEPH	declared	ac8e9b038d3461e9b464bd1400910d3b62b52abd1723dde63325a8853e1ed7ce	OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the
