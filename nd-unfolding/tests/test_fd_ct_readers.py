@@ -100,6 +100,16 @@ class Tree:
         self.Cr = sum(self.species.values())
         self.xtalk = np.outer(*(2 * [rng.normal(0, 0.01, 16) * self.f]))
 
+    def shrink_central_outside(self, cell, factor):
+        """Scale the central value's fine content outside the 2D support in one cell, before write_common, so that its
+        partial integral X_sup comes within any chosen distance of f (amendment 1's mechanism)."""
+        shape = sa.s1.fine_shape()
+        ipt, ipz = np.unravel_index(np.arange(N), shape)[:2]
+        out = (self.fm == cell) & np.isin(ipt * 16 + ipz, UNSUPPORTED)
+        self.xc = np.where(out, self.xc * factor, self.xc)
+        self.f = self.U @ self.xc
+        return self
+
     def cellwise(self, X, filler=0.4):
         """A fine array whose cell integrals are exactly X."""
         return np.where(self.fm >= 0, (X / self.volc)[np.clip(self.fm, 0, None)], filler * self.scale)
@@ -715,6 +725,36 @@ class Period(Base):
         t = self.tree().write_period()
         self.hand(t, t.xc)
         X_sup = float(self.ins[8])
+        for planted in (X_sup, 1.0 - X_sup / float(t.f[8])):
+            (t.out / "period.json").unlink(missing_ok=True)
+            with mock.patch.object(ct, "summary", lambda v, x=planted: {"median": x, "min": x, "max": x}):
+                self.assertRefuses(t, t.argv_period, "REFUSED leak guard", rc=3)
+
+    def test_near_f_is_the_guards_precision(self):
+        f = np.array([1.0, 1.0, 1.0, 1.0])
+        x = np.array([1.0, 1.0 + 5e-14, 1.0 - 2e-13, 1.0 + 1e-12])
+        self.assertEqual(ct.near_f(x, f).tolist(), [True, True, False, False])
+        self.assertEqual(ct.near_f(np.array([np.nan]), np.array([1.0])).tolist(), [False])
+
+    def test_a_central_partial_integral_within_leak_rel_of_f_is_dropped(self):
+        # amendment 1: R12's central content outside the support is made tiny, so its X_sup is f to within LEAK_REL
+        # but not exactly; the first run's rule (drop only where the outside share is 0) refused every '1' in a string
+        t = Tree(self.tmp / "tree").shrink_central_outside(12, 1e-12).write_common().write_period()
+        with np.errstate(divide="ignore", invalid="ignore"):
+            om, outside, sup, _ = ct.footprint(t.U, t.fm, t.xc, t.support)
+        self.assertGreater(outside[12], 0.0)                        # not the exactly-zero case
+        self.assertLess(abs(sup[12] / t.f[12] - 1), F.LEAK_REL)     # but f to the guard's precision
+        self.assertEqual(self.run_tool(t, t.argv_period), 0, self.stderr)
+        r = self.readout(t, "period")
+        self.assertIn("R12", [c for c in r["cells"]])
+        self.assertTrue((t.out / "period.json").exists())
+
+    def test_a_planted_partial_integral_off_f_is_still_refused_after_the_fix(self):
+        # the other direction: with R12 near f (dropped), R08's X_sup and its share 1 - X_sup/f stay in the table
+        t = Tree(self.tmp / "tree").shrink_central_outside(12, 1e-12).write_common().write_period()
+        self.hand(t, t.xc)
+        X_sup = float(self.ins[8])
+        self.assertGreater(abs(X_sup / float(t.f[8]) - 1), 1e-6)
         for planted in (X_sup, 1.0 - X_sup / float(t.f[8])):
             (t.out / "period.json").unlink(missing_ok=True)
             with mock.patch.object(ct, "summary", lambda v, x=planted: {"median": x, "min": x, "max": x}):

@@ -402,6 +402,12 @@ def footprint(U: np.ndarray, fm: np.ndarray, x: np.ndarray, support: np.ndarray)
     return om, outside, sup_int, negative
 
 
+def near_f(x: np.ndarray, f: np.ndarray) -> np.ndarray:
+    """Cells where x equals f to the leak guard's own relative precision, |x/f - 1| < LEAK_REL."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.abs(x / f - 1.0) < f0.LEAK_REL
+
+
 def period_variant(om, outside, z, e, k, S, write_outside: bool = True, negative=None) -> dict:
     """g_X,R = om @ g_X and S-ref's b_X,R = om @ b_X, both projected linearly from the 2D cells, with
     b_X = e_X (r_X / r_A - 1) as 2D's DESIGN section 2 defines it."""
@@ -485,9 +491,11 @@ def run_period(a) -> int:
         om, outside, sup_int, negative = footprint(U, fm, xw, support)
         # the central variant's outside share is 1 - X_sup/f, the X/f - 1 form of a partial data integral: not written
         variants[vn] = period_variant(om, outside, z, e, k, S, write_outside=vn == "prior", negative=negative)
-        # where a cell lies wholly inside the support its central partial integral is f itself: dropped (NaN), as for
-        # the central integrals below
-        partial.append(np.where(outside > 0, sup_int, np.nan) if vn == "central" else sup_int)
+        # where a cell's central partial integral is f to the guard's own precision, |X_sup/f - 1| < LEAK_REL (a cell
+        # wholly inside the support, or one whose content outside is that small), it IS f, already in the table:
+        # dropped (NaN), as for the central integrals below. Amendment 1: the first run kept R09's, whose X_sup is f
+        # to within LEAK_REL but not exactly, and the guard then refused every '1' in a string
+        partial.append(np.where(near_f(sup_int, f), np.nan, sup_int) if vn == "central" else sup_int)
     f0.report("P3", "every cell has positive weight on the 2D term's cells", True)
     f0.report("P4", "assertion: sum_X e_X g_X,R = 0 and C_PL,16 is PSD of rank <= 2, for both weightings", True)
     # the central value's integrals are f itself (P1), already in the guard's table; passing them again would
