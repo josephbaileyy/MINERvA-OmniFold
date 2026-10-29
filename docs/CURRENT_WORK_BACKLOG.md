@@ -74,4 +74,3 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-135 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
 | OI-137 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W |
 | OI-138 | NOW | migration-carried-forward | OPEN |
-| OI-139 | NOW | migration-carried-forward | OPEN |
