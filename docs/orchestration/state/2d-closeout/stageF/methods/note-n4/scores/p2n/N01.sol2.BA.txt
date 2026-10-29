@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A establishes a clearer rhetorical hierarchy, with more focused summary paragraphs and smoother transitions between results, qualifications, and scope.
+2. B more often adopts internal review shorthand, such as “Neither closure is graded” and “Marginal anchors agree,” which sounds less polished than conventional journal prose.
+3. A integrates qualifications more fluently, whereas B repeatedly interrupts its exposition with procedural asides and overlapping caveats.

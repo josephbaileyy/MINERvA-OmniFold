@@ -1,0 +1,28 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER replaces "pooled calibration test" with "per-functional coverage test", asserting a per-functional pass that is unsupported by BEFORE and contradicted by the context.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER changes "does not establish calibration for every functional" to "establishes coverage for every functional", asserting a claim directly opposite to what BEFORE states.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER claims that the pass "qualifies this cell", directly contradicting BEFORE which states that it "cannot qualify this cell".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER claims that repeating a numerical calculation "checks interval coverage", directly contradicting BEFORE which states it "checks neither interval calibration nor the adequacy of the physical model".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states that the candidate "fails interval coverage everywhere", broadening and strengthening BEFORE's statement that it "fails interval calibration" with a claim unsupported by the record.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER broadens "failed calibration" to "failed every test", asserting an absolute failure that is unsupported by BEFORE and contradicts the record of passed tests.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER introduces the stronger qualifiers "exact, assumption-free", which are not stated or supported in BEFORE.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER claims that "[t]he only result is the sixteen-cell cross section", dropping BEFORE's statement that "[t]he main results are the validation findings" and asserting an exclusive result unsupported by BEFORE.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's statement that "[t]he main results are the validation findings" and asserts instead that "[t]he only result is the sixteen-cell cross section", contradicting BEFORE.
+
+END

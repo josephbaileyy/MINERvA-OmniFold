@@ -1,0 +1,9 @@
+RATING: 2.5
+JUSTIFICATION: While the core physical discussion and statistical comparisons are technically competent, the text frequently lapses into an internal-memo register characterized by document build tracking, software release bookkeeping, and cross-references to an executive summary that require substantial rewriting.
+Then the three passages that most depart from PRD register, each quoted exactly as it appears in the text, each with a rewrite:
+1. QUOTE: "The executive summary (p. 1) states each result with its scope, and the principal limitations. This section adds the conclusions it does not state."
+   REWRITE: This section summarizes the principal conclusions and technical implications of the analysis that extend beyond the primary results stated above.
+2. QUOTE: "The principal limitations are listed in the executive summary (p. 2). The quoted two-dimensional statistical block has had no coverage test (§4.2, §5.2)."
+   REWRITE: A primary limitation of the present results is that frequentist coverage has not yet been demonstrated for the two-dimensional statistical uncertainties (§4.2, §5.2).
+3. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   REWRITE: While a prototype release package with automated verification scripts has been developed locally, the finalized data release will be deposited in a public repository upon publication (App. G).

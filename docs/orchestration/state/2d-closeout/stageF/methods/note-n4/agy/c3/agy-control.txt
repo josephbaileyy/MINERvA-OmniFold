@@ -1,0 +1,27 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims the candidate passed "a per-functional coverage test", whereas BEFORE only supports a "pooled calibration test". This states an unperformed per-functional test that BEFORE does not support and that could mislead the reader.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states that the pooled test "establishes coverage for every functional", directly contradicting BEFORE which states that it "does not establish calibration for every functional".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "a pooled pass qualifies this cell", reversing BEFORE's explicit statement and qualifier that a pooled pass "cannot qualify this cell".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER claims that repeating a numerical calculation "checks interval coverage", directly contradicting BEFORE which states that it checks "neither interval calibration nor the adequacy of the physical model".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds the absolute qualifier "everywhere" to assert that the candidate "fails interval coverage everywhere", which states the failure much more broadly than BEFORE supports and misleads about the test results.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER replaces "failed calibration" with "failed every test", stating the failure far more broadly than BEFORE supports and dropping the specific nature of the failure.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER describes the intervals as "exact, assumption-free confidence intervals" instead of "calibrated intervals", asserting strong mathematical guarantees that BEFORE does not state or support.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's core statement that "The main results are the validation findings" and introduces an unsupported, exclusive claim that "The only result is the sixteen-cell cross section".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER claims "The only result is the sixteen-cell cross section", dropping BEFORE's finding that "The main results are the validation findings" and introducing an unsupported exclusivity claim.
+END

@@ -1,0 +1,28 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims the candidate passed "a per-functional coverage test", whereas BEFORE and its context support only "a pooled calibration test".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the test "establishes coverage and width for every functional", directly contradicting BEFORE's statement that it "does not establish calibration for every functional".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER concludes that "a pooled pass qualifies this cell", reversing BEFORE's conclusion that a pooled pass "cannot qualify this cell".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER claims that repeating a calculation "checks the coverage and width of the intervals", directly contradicting BEFORE's assertion that it checks "neither interval calibration nor the adequacy of the physical model".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER claims H2S1T24 fails the coverage rule "in every region", an overstatement unsupported by BEFORE and contradicted by context showing passes on certain criteria.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the procedure "failed every test", improperly broadening BEFORE's specific statement that it "failed calibration".
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER characterizes the intervals as "exact, assumption-free", adding strong theoretical claims unsupported by BEFORE's description of "calibrated intervals".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER claims "[t]he only result is the sixteen-cell cross section", dropping BEFORE's assertion that "[t]he main results are the validation findings" and stating an unsupported exclusivity claim.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's statement that "[t]he main results are the validation findings" and replaces it with the unsupported assertion that "[t]he only result is the sixteen-cell cross section".
+
+END

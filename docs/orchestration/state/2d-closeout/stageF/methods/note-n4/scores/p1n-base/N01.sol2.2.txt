@@ -1,0 +1,11 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is clear and technically fluent, but repeated qualifications, internal bookkeeping, and informal validation terminology create several departures from PRD register that require a dedicated language pass.
+1. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage
+studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912,
+vs. 0.954; §4.2, §5.2)."
+   REWRITE: The reported 2D statistical covariance has not been tested for coverage. Fixed-truth studies evaluated two earlier statistical uncertainty estimates; the initial estimate exhibited insufficient coverage in the tails (C2 = 0.912 compared with 0.954; §4.2, §5.2).
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every
+submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments interrupted by execution time limits were subsequently completed for a supplementary assessment. These results were excluded from the original decisions, but their inclusion would leave every decision unchanged (§11.6).
+3. QUOTE: "Neither closure is graded (§7.4, Table 5)."
+   REWRITE: Neither closure test was assessed against a quantitative acceptance criterion (§7.4, Table 5).

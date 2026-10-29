@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically appropriate, but repeated cross-referential bookkeeping, release-status reporting, and configuration-specific labels give several passages the register of an internal project note.
+1. QUOTE: "Summary. The executive summary (p. 1) states each result with its scope, and the principal limitations. This section adds the conclusions it does not state."
+   REWRITE: The conclusions below supplement the results and principal limitations presented in the executive summary.
+2. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   REWRITE: A candidate release includes checksums and a verification script that recomputes and checks the results, but has not yet been tagged or deposited (App. G). Building the PDFs does not reproduce the scientific results.
+3. QUOTE: "The release design and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a) central value (§9.6)."
+   REWRITE: The five-axis covariance used for the central value in configuration (a) (§9.6) was chosen independently of the release design and its public example.

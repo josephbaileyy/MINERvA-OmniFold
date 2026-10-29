@@ -1,0 +1,15 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise, but repeated scope statements, dense accumulations of qualifications, and project-internal terminology give several passages an internal-report register that requires a dedicated language pass.
+1. QUOTE: "Summary. The executive summary (p. 1) lists each result with its scope. This section states the
+conclusions they support. The main results are the validation findings, within the scope stated in §1.
+The generator tests are an application that illustrates calibrated inference with a biased estimator."
+   REWRITE: The principal results concern validation within the scope defined in §1. The generator tests illustrate the application of calibrated inference with a biased estimator.
+2. QUOTE: "None of the precision study’s
+reporting definitions (RD1–RD3) met a precision target (§9.4); the sixteen-cell result is reported on
+the precision study’s H2 grid after a purity merge of its supported boxes (§10.1)."
+   REWRITE: The precision target was not met under any of the three reporting definitions (§9.4). The sixteen-cell result uses the H2 grid, with supported cells merged according to purity (§10.1).
+3. QUOTE: "App. G specifies this release for our analysis,
+including which of its objects already have fixed identities and which are still to be produced. A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+but no release has been tagged or deposited;"
+   REWRITE: Appendix G specifies the release contents, identifies the existing objects, and lists those still to be produced. A local release candidate includes checksums and software that recomputes and verifies the results, but no version has been tagged or deposited.

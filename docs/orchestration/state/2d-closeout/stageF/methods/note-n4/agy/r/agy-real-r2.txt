@@ -1,0 +1,25 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER refers to the same five-axis covariance as BEFORE, identifying it specifically by the configuration-(a) central value it accompanies rather than as "used in this note"; this introduces no unsupported claims, drops no necessary limitations, and causes no ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER specifies "of the configuration-(a) central value" in place of "used in this note", which is directly supported by the cited section (\S\ref{sec:eavailw-adopted}) and the note's context without altering the measurement or meaning.
+
+Q3: VERDICT: SAME
+DETAIL: Naming the file \texttt{z-cv.npz} as the covariance "of the configuration-(a) central value" instead of "used in this note" designates the identical covariance matrix and digest check without adding unsupported claims or dropping qualifiers.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces the claim that these are figures the article cites from this note with "figures drawn for the earlier version of the article for which it was assembled", and adds that the one-dimensional generator projections are figures "which neither this note nor the article now prints".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the claim that the arrays correspond to "the article's figures", narrowing them instead to "the figures drawn for that earlier version".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER changes the scope of the verification check from "the article's Figs.~1--3" to "Figs.~1--3 of that earlier version", reflecting that the generated figures do not match the current article's figures.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the claim that all 2,374 files are "AnaTuple input files", replacing it with the qualified breakdown "input files (2,307 AnaTuples and 67 flux, reweight and parameter files)".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER changes the verified storage location from "collaboration storage" to "NERSC project storage", correcting the repository where the copies actually reside.
+
+END

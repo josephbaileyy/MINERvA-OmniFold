@@ -1,0 +1,11 @@
+RATING: 2.5
+JUSTIFICATION: While the underlying physics and mathematical details are sound, the text frequently slips into the register of an internal collaboration report, quality-assurance audit, or repository management log, weighed down by defensive hedging, project-internal jargon, and procedural record-keeping.
+
+1. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   REWRITE: A verified data and code release is in preparation (App. G); data tables and verification scripts will be deposited in a public repository upon publication.
+
+2. QUOTE: "The five-axis covariance of the configuration-(a) central value does not meet its specification’s acceptance criteria. Two companion covariances, built at different estimator seeds, show a seed sensitivity above the limit set before production, so no significance based on the configuration-(a) covariance is quoted (§9.6; the comparison on the sixteen cells: §10.4)."
+   REWRITE: Because the five-dimensional covariance matrix in configuration (a) displays substantial sensitivity to the estimator random seed (§9.6), numerical stability criteria are not satisfied, and significance values based on this full covariance are omitted.
+
+3. QUOTE: "None of the precision study’s reporting definitions (RD1–RD3) met a precision target (§9.4); the sixteen-cell result is reported on the precision study’s H2 grid after a purity merge of its supported boxes (§10.1)."
+   REWRITE: Because the preliminary binning schemes (RD1–RD3) evaluated in §9.4 did not achieve the target precision, the sixteen-cell result is reported on an adapted grid obtained by merging adjacent phase-space intervals to ensure adequate purity (§10.1).

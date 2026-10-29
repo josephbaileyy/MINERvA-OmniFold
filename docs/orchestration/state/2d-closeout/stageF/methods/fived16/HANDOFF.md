@@ -13,7 +13,7 @@
 - **No fact leaves both documents** (the paper and the companion note).
 - **The guardrail.** A qualifier stays wherever leaving it out would make a printed sentence false as read. For every cut or shortening a rater proposes, state from the records whether the sentence stays true.
 - **Never adopt a rater's rewrite without checking every fact in it.**
-- **The wording is Joseph's.** So are the claims, KI-85, `\pubhold`, data availability, release text (`app_release.tex`), the abstracts' final text and the title.
+- **The wording is Joseph's.** So are the claims, KI-85, `\pubhold`, data availability, release text (`app_release.tex`), the abstracts' final text and the title. (Since 2026-10-28: `app_release.tex` is released to the lanes, DECISION-20261028-joseph-protections-n4-release-retrospective.md item 3, and Data Availability by DECISION-20261028-joseph-protections-remade-and-r21.md; see `note-n4/REPORT.md`.)
   - You draft. Joseph approves.
   - Nothing is submitted, deposited or tagged. Write nothing to CFS. Contact no one, Ben included.
   - Do not push to the standalone note repository or to Overleaf.
@@ -28,7 +28,7 @@
 - **The tree hook.** `bash .githooks/pre-commit` (19 checks) must pass before every commit. Run it on the staged index.
 - **Every new `.md` under `docs/orchestration`** needs a CATALOG.md row and a MANIFEST-overrides.tsv row. Then, after `git add`, run `generate_manifest.py --committed-only` and `--check`.
 - **Protected files.**
-  - `values.tex`, `values_inference.tex`, `app_history.tex` and `app_release.tex` are byte-identical to the protected base.
+  - `values.tex`, `values_inference.tex`, `app_history.tex` and `app_release.tex` are byte-identical to the protected base (`app_release.tex` until 2026-10-28; note round n4 edits it by sha256-pinned pairs, `note-n4/check_ledger.py`).
   - `main_note.tex` and `main_paper.tex` may differ only by the approved `\input` lines (STRUCTURAL) and inside their abstract blocks (ABSTRACT_OPEN, the director's exception, 2026-10-27).
   - `check_ledger.py` enforces both, with plants. **The title is outside the abstract block, so it is not edited.**
 - **Raters** run only through `register-method/tools/run_x.sh`:

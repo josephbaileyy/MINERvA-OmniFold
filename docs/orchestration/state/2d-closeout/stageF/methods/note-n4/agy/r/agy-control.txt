@@ -1,0 +1,25 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states more broadly that the covariance applies to "every result in this note", whereas BEFORE and the CONTEXT specify it only for an adopted central value and note it is a separate product. The words concerned are "of every result in this note".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER broadens the association of the covariance to "every result in this note", which is unsupported by BEFORE and contradicts the CONTEXT. The words concerned are "of every result in this note".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER claims that the file represents the covariance "of every result in this note", which broadens BEFORE and is unsupported by the CONTEXT. The words concerned are "of every result in this note".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER claims that the generator projections are figures "which the article prints as its Fig. 3", which is unsupported by BEFORE and contradicted by the CONTEXT showing they were not included in the article. The words concerned are "which the article prints as its Fig. 3" (as well as "figures drawn for the earlier version of the article for which it was assembled").
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states far more broadly that the package holds arrays for figures "drawn for every version of the article", which is unsupported by BEFORE and contradicted by the CONTEXT showing arrays are only held for RC7-era figures. The words concerned are "drawn for every version of the article".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the verification check produces figures "of the current article", whereas the CONTEXT establishes that RC7 produces none of the current article's Figs. 1–3. The words concerned are "of the current article".
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds the explicit assertion "(all of them AnaTuples)", stating more strongly that every single inventoried file is an AnaTuple, which the CONTEXT contradicts by showing 67 of them are flux and parameter files. The words concerned are "(all of them AnaTuples)".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER adds unsupported qualifiers specifying the location as "MINERvA collaboration storage" and introducing "and on tape", neither of which is supported by BEFORE or the CONTEXT. The words concerned are "MINERvA" and "and on tape".
+
+END

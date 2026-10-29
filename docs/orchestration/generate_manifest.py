@@ -187,6 +187,20 @@ def inventory(committed_only: bool = False,
     return paths, states
 
 
+def override_order_problem(paths: list[str]) -> str | None:
+    """None if the overrides rows are in strictly increasing path order, else where they are not.
+
+    Sorted rows put each new row at its own position, so two changes adding different documents
+    no longer collide on the file's last line (2026-10-28). Byte order, as `LC_ALL=C sort`.
+    """
+    for line_number, (before, after) in enumerate(zip(paths, paths[1:]), start=3):
+        if not before < after:
+            return (f"override rows must be sorted by path: line {line_number} `{after}` sorts "
+                    f"before line {line_number - 1} `{before}`; insert each row at its sorted "
+                    "position, never at the end")
+    return None
+
+
 def load_overrides(source: TreeSource | None = None) -> dict[str, dict[str, str]]:
     source = source or TreeSource()
     try:
@@ -210,6 +224,9 @@ def load_overrides(source: TreeSource | None = None) -> dict[str, dict[str, str]
             if row["event_status"] not in EVENT_STATUSES:
                 raise ValueError(f"invalid event_status at override line {line_number}")
             result[path] = row
+        problem = override_order_problem(list(result))
+        if problem:
+            raise ValueError(problem)
         return result
 
 
@@ -648,7 +665,13 @@ def self_test() -> int:
             {"path": "docs/orchestration/DEAD-cited.md", "class": "DEAD", "inbound_count": 1},
             {"path": "docs/orchestration/DEAD-uncited.md", "class": "DEAD", "inbound_count": 0},
         ])
-        checks = (
+        order_checks = (
+            override_order_problem(["a/x.md", "a/y.md", "b/a.md"]) is None,
+            override_order_problem(["a/y.md", "a/x.md"]) is not None,   # out of order fires
+            override_order_problem(["a/x.md", "a/x.md"]) is not None,   # a repeat fires too
+            override_order_problem([]) is None,
+        )
+        checks = order_checks + (
             repo_path(intended_path) in rels,
             states.get(repo_path(intended_path)) == "intended",
             repo_path(ignored_path) not in rels,
