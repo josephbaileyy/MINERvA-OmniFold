@@ -411,6 +411,7 @@ docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	tracked	
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document		20260810	open		route-only	no
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only	no
 docs/orchestration/QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md	tracked	LIVE	document		20260920	open		route-only	no
+docs/orchestration/QUESTION-20261028-trunk-stat-ml-replica-provenance.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/QUIET-PERIODS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	no
 docs/orchestration/R5-METER.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RANK-AND-INVERSION-20260810.md	tracked	LIVE	document		20260810	open		route-only	no
@@ -445,6 +446,7 @@ docs/orchestration/RECORD-20261028-close-items-director-rulings.md	tracked	ARCHI
 docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-live-state-option-b.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-third-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	tracked	LIVE	document		20261006	open		route-only	no
