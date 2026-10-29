@@ -297,7 +297,6 @@ class Pure(unittest.TestCase):
 
     def test_the_declared_constants(self):
         self.assertEqual(ct.PERCENTILES, (5.0, 16.0, 50.0, 84.0, 95.0))
-        self.assertEqual(ct.REFERENCE_QUANTILES, (0.68, 0.95))
         self.assertEqual(ct.EXTRAPOLATED, 0.10)
         self.assertEqual(ct.PERIODS, ("PA", "PB", "PC"))
         self.assertEqual({v: s for v, (*_, s) in ct.W2B.items()}, {"rr0": 0.96, "rr1": 1.04, "rrzero": 1.0})
@@ -425,18 +424,28 @@ class Chi2(Base):
                     cum = np.cumsum(ws[o]) / ws.sum()
                     med = float(c2t[o][np.argmax(cum >= 0.5)])
                     self.assertAlmostEqual(got["about_truth"]["weighted"]["percentiles"]["50.0"], med, places=10)
-                    q95 = ct.chi2_quantile(0.95, len(idx))
-                    self.assertAlmostEqual(got["about_truth"]["weighted"]["share_above_reference"]["0.95"],
-                                           float(ws[c2t > q95].sum() / ws.sum()), places=12)
+                    np.testing.assert_allclose(list(got["about_truth"]["reference_chi2"]["percentiles"].values()),
+                                               [ct.chi2_quantile(p / 100, len(idx)) for p in ct.PERCENTILES], rtol=1e-12)
                     self.assertAlmostEqual(got["chi2_of_weighted_mean_bias"], float(b @ Minv @ b), places=8)
                     sd = np.sqrt((ws[:, None] * (ri - b) ** 2).sum(0) / ws.sum())
                     np.testing.assert_allclose(got["width_ratio"], sd / np.sqrt(np.diag(Mi)), rtol=1e-9)
-        self.assertNotIn("p", set(keys_anywhere(r)))
+        keys = set(keys_anywhere(r))
+        self.assertNotIn("p", keys)
+        self.assertFalse([k for k in keys if "share" in k or "tail" in k or "above" in k], "a tail fraction is written")
 
     def test_refuses_a_b_eff_that_is_not_f0bs(self):
         t = self.t
         t.write_chi2_records(beff_scale=1 + 1e-9)
         self.assertRefuses(t, t.argv_chi2, "FAIL control C2 A7_mnvtune: B_eff", t.chi2_patches())
+
+    def test_refuses_a_product_changed_after_its_manifest(self):
+        t = self.t
+        p, u = t.cal["A7_gibuu"][11]
+        with np.load(p) as z:
+            arr = {k: z[k] for k in z.files}
+        arr["xsec_flat"] = arr["xsec_flat"] * (1 + 1e-9)
+        np.savez_compressed(p, **arr)
+        self.assertRefuses(t, t.argv_chi2, f"FAIL control C0: A7_gibuu {p}: sha256", t.chi2_patches())
 
     def test_refuses_an_unlisted_product(self):
         t = self.t

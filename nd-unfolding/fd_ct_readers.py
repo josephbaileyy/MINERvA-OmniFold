@@ -66,7 +66,6 @@ W2B = {
 # 4C: the five A7 calibration truths (FD-PLAN row 5), as fd_f0_regrade names them
 CAL = tuple((t["name"], t["cal"], f0.HYP[t["d16"]]) for t in f0.TRUTHS if t["row"] == 4)
 PERCENTILES = (5.0, 16.0, 50.0, 84.0, 95.0)
-REFERENCE_QUANTILES = (0.68, 0.95)
 # 5A
 PERIODS = ("PA", "PB", "PC")
 EXTRAPOLATED = 0.10   # a cell whose footprint weight outside the 2D term's 205 cells exceeds this is labelled
@@ -253,15 +252,13 @@ def weighted_percentiles(v: np.ndarray, w: np.ndarray, ps) -> list[float]:
 
 
 def distribution(c2: np.ndarray, w: np.ndarray, ndf: int) -> dict:
-    refs = {str(q): chi2_quantile(q, ndf) for q in REFERENCE_QUANTILES}
+    """Means and percentiles only, beside chi2_ndf's own: no p value and no tail fraction (the 3D binding's ruling 4)."""
     return {"weighted": {"mean": float(w @ c2 / w.sum()),
-                         "percentiles": dict(zip(map(str, PERCENTILES), weighted_percentiles(c2, w, PERCENTILES))),
-                         "share_above_reference": {q: float(w[c2 > v].sum() / w.sum()) for q, v in refs.items()}},
+                         "percentiles": dict(zip(map(str, PERCENTILES), weighted_percentiles(c2, w, PERCENTILES)))},
             "unweighted": {"mean": float(c2.mean()),
                            "percentiles": dict(zip(map(str, PERCENTILES), np.percentile(c2, PERCENTILES).tolist()))},
             "reference_chi2": {"ndf": ndf, "mean": float(ndf),
-                               "percentiles": {str(p): chi2_quantile(p / 100.0, ndf) for p in PERCENTILES},
-                               "quantiles": refs}}
+                               "percentiles": {str(p): chi2_quantile(p / 100.0, ndf) for p in PERCENTILES}}}
 
 
 def run_chi2(a) -> int:
@@ -349,9 +346,9 @@ def run_chi2(a) -> int:
                      f"median width ratio {m16['width_ratio_summary']['median']:.4f}")
     f0.report("C4", "the mean-chi2 decomposition holds for every truth, matrix and cell set", True, guard=guard)
     out = {"schema": "fd-ct-chi2/1", "labels": {"what": LABELS["chi2"], "not_citable_for": LABELS["not_citable_for"],
-                                                "no_p_values": "no p value is computed or written"},
+                                                "no_p_values": "no p value and no tail fraction is computed or written"},
            "controls_passed": ["S", "C0", "C1", "C2", "C3", "C4"],
-           "constants": {"percentiles": list(PERCENTILES), "reference_quantiles": list(REFERENCE_QUANTILES),
+           "constants": {"percentiles": list(PERCENTILES),
                          "weights": "nu-e + IMD constraint weight of each experiment's drawn flux universe",
                          "matrices": {"C_total_resp": "the reported C_total + C_resp, relative to f (no V_g)",
                                       "C_e": "S1's drawn-block analogue C_e, relative to f"}},
