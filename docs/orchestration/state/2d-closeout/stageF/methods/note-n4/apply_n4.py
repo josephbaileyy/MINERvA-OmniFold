@@ -81,6 +81,8 @@ REL = [("R2", "app_release.tex", *_d2.R14["pairs"][1]),
        # Line 45: the copies are in /global/cfs/cdirs/m3246/josephrb (RECORD-20261010-ost61-hashed-and-data-addition.md sec. 3).
        ("RL45", "app_release.tex", "on collaboration storage;", "on NERSC project storage;")]
 BATCHES = {"C": C, "R": REL}
+# Edits a later batch removed by design: --check verifies that neither the old nor the new text prints any more.
+SUPERSEDED = {"M2": "batch F: section 12 no longer states the principal result; the ES does (ledger row M2)"}
 
 
 def main():
@@ -91,6 +93,10 @@ def main():
     for eid, f, old, new in BATCHES[batch]:
         t = texts.setdefault(f, (D / f).read_text())
         if check:
+            if eid in SUPERSEDED:
+                if new in t or old in t:
+                    bad.append(f"{eid}: superseded ({SUPERSEDED[eid]}), but its text still prints in {f}")
+                continue
             if t.count(new) != 1 or old in t:
                 bad.append(f"{eid}: not applied ({f}: new x{t.count(new)}, old x{t.count(old)})")
             continue
