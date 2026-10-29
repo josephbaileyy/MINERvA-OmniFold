@@ -1,0 +1,15 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that the bias tests, fake-data study, and flux correlation sensitivity "are shown to be negligible", which directly contradicts BEFORE's statement that "the reported uncertainty does not cover the estimator's bias at the GiBUU-like truths or at a synthetic $q_{3}$ tilt".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states that the findings are those "and of multidimensional OmniFold in general", directly reversing BEFORE's restriction "rather than of multidimensional OmniFold in general" and substantially broadening the scope.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the calibrated tests "exclude the generators", which is not supported by BEFORE and makes an overly strong claim contradicting the fact that they "are not physical exclusions of the generators".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that Sec.~\ref{sec:fd16} "shows the estimator to be unbiased", directly contradicting BEFORE's finding that the "reported uncertainty does not cover the fake-data bias at the GiBUU-like truths".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER describes the release package as "deposited", contradicting BEFORE's statement that it is "not yet deposited", and introduces "Supplemental Material" not mentioned in BEFORE.
+END

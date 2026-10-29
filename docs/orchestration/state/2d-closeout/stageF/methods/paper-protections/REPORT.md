@@ -12,7 +12,7 @@
 **Records** (this directory):
 - `apply_p.py`: every edit, by item;
 - `ledger.md`, checked by `check_ledger.py`;
-- `agy/`: three reads, `run1` to `run3`.
+- `agy/`: four reads, `run1` to `run4`.
 
 These edits are unscored and truth-checked. They are the base of the r21 round.
 
@@ -43,6 +43,24 @@ These edits are unscored and truth-checked. They are the base of the r21 round.
   because that limitation is one a reader of the statement needs (agy).
 - B7's Supplemental Material sentence is not applied. No machine-readable files exist, and Q8 is with Joseph.
 - The pair is pinned in `check_ledger.DA_PINS`.
+
+**Item 2, option (a), after Joseph answered Q8 yes** (`DECISION-20261029-joseph-oi160-reproduction-and-q8.md` item 2).
+- `docs/analysis-note/make_supplemental.py` writes three plain-text files from the pinned data product only
+  (`fd_data_product.json`, sha256 `b79556f0…`), into `docs/analysis-note/supplemental/`:
+  - `xsec16_cells.csv`: each cell's edges, with units;
+  - `xsec16_cross_section.csv`: the cell-integrated cross section in cm²/nucleon, σ and σ/f;
+  - `xsec16_covariance.csv`: the reported covariance C_total + C_resp in (cm²/nucleon)².
+- Each file is pinned by sha256. `--check` runs in `build_all.sh` and requires:
+  - the pins;
+  - a byte-for-byte regeneration;
+  - agreement with every printed box, f (three significant figures), relative σ (percent) and correlation (two
+    decimals);
+  - agreement to 1e-9 with the data product's own covariance CSV, written on the cluster by different code.
+- Its self-test refuses a planted cross section, edge and covariance change. Outside the full repository it reports
+  SKIP, as the values generator does.
+- d2 B7's sentence, "The sixteen-cell cross section, its covariance matrix and the cell definitions are provided as
+  machine-readable files in the Supplemental Material.", is now true. It goes in after the CC0 sentence, imported from
+  `fived16/d2/options.py` and pinned as DA2. Nothing is deposited or submitted, and `\pubhold` stays.
 
 **Items 3 and 4, duplicate limitations and the Scope wording.** The rule: the body home keeps the evidence, §VI is the
 one numbered home, §I keeps "Interval coverage has not been validated.", and the abstract is untouched.
@@ -77,9 +95,13 @@ The pairs are built by `agy/make_pairs.py`: five pairs, each with the home text 
   - run 2 is SAME on four. On DA, its only reason is the director-ruled narrowing itself: "drops … recomputes every
     p value … of the joint tests". The paper does not print those numbers, and the release appendix does. It stands.
 
+- **run4** (after option (a), with the files' check in the DA CONTEXT): run 1 is SAME on all five. Run 2 is SAME on
+  four, and on DA it repeats run3's objection to the ruled narrowing. The reads stop there.
+
 ## Checks
 
-- `check_ledger.py .`: 16 rows, 28 probes, 13 changed base sentences, 0 failures.
+- `check_ledger.py .`: 17 rows, 29 probes, 13 changed base sentences, 0 failures.
+- `make_supplemental.py --check` and `--self-test`: PASS.
 - `--self-test`: PASS. It plants a missing probe, an abstract edit, an edit inside a `\pubhold`, an undeclared DA
   edit, an unpinned DA pair, the dropped kept-coverage sentence and a hand-typed numeral, and catches each. A pinned
   pair stays silent.

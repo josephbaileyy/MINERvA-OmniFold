@@ -77,6 +77,15 @@ ITEM34 = [
      "Sec.~\\ref{sec:fd16} reports the fake-data tests of the estimator's bias.",
      "For the sixteen-cell result, Sec.~\\ref{sec:fd16} reports the fake-data tests of the estimator's bias."),
 ]
+# Data Availability (a): Joseph answered Q8 yes (DECISION-20261029-joseph-oi160-reproduction-and-q8.md item 2). The
+# files exist (docs/analysis-note/supplemental/, make_supplemental.py --check), so d2 B7's sentence on them is now true and
+# goes in after the CC0 sentence. It is imported from fived16/d2/options.py, not retyped.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "fived16" / "d2"))
+import options as _d2  # noqa: E402
+_B7_SM = _d2.DA_TYPICAL.split("~\\cite{MINERvA:OpenData}. ")[1]
+assert _B7_SM.startswith("The sixteen-cell cross section, its covariance matrix and the cell definitions are provided")
+ITEM2.append(("DA2", "main_paper.tex", "released under CC0~\\cite{MINERvA:OpenData}.  This analysis used",
+              "released under CC0~\\cite{MINERvA:OpenData}.  " + _B7_SM + "  This analysis used"))
 ITEMS = {"1": ITEM1, "2": ITEM2, "34": ITEM34}
 
 
@@ -91,6 +100,8 @@ def main():
             if (new and t.count(new) != 1) or (old in t and old not in new):   # a deletion: old must be gone
                 bad.append(f"{eid}: not applied ({f}: new x{t.count(new) if new else '-'}, old x{t.count(old)})")
             continue
+        if new and t.count(new) == 1 and (old not in t or old in new) and t.count(old) <= 1 and new in t:
+            continue                                         # already applied (an item extended by a later edit)
         if t.count(old) != 1:
             bad.append(f"{eid}: old text matches {f} {t.count(old)} times")
             continue

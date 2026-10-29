@@ -39,6 +39,27 @@ exist, and Q8 is with Joseph.
 | D3 | "the numbers quoted in Sec. central": FALSE as read, because sec:central quotes no numbers | MP14 | REMOVED (truth fix) | — | `P::These comparisons use the three- and four-observable central values of the joint-test estimator, without uncertainties.` |
 | D4 | the other quoted numbers and the event-level processing need the archived products, the AnaTuples and the generator samples; the stale "except the multiplier scan" goes, because the paper quotes no multiplier scan | MP15 | KEPT-REWORDED | the same sentence without the exception, as "The paper's quoted numbers" (agy run1 Q5: the limitation stays; run2 Q5: "other" had lost its antecedent) | `MP::The paper's quoted numbers and the event-level processing require the archived analysis products, the open-data AnaTuples, and the generator samples produced for this analysis; \napp{app:release} states what each part of the release does and does not reproduce.` && `N:app_release.tex::The multiplier scan of the joint tests is recomputable from RC7's sufficient inputs` |
 
+### Item 2, option (a): the Supplemental Material (Joseph answered Q8 yes, DECISION-20261029-joseph-oi160-reproduction-and-q8.md item 2)
+
+`docs/analysis-note/make_supplemental.py` generates three files from the pinned data product (`fd_data_product.json`,
+sha256 `b79556f0…`) into `docs/analysis-note/supplemental/`:
+- `xsec16_cells.csv`: each cell's edges, with units;
+- `xsec16_cross_section.csv`: the cell-integrated cross section, σ and σ/f;
+- `xsec16_covariance.csv`: the reported covariance C_total + C_resp.
+
+`--check` runs in `build_all.sh` and passes only if:
+- each file's sha256 equals its pin;
+- each file regenerates byte for byte;
+- each reproduces the printed boxes, f (3 significant figures), relative σ (percent) and correlations (two decimals);
+- the covariance equals, to 1e-9, the data product's own CSV, which was written on the cluster by different code.
+
+Its self-test plants a changed cross section, a changed edge and a changed covariance entry, and refuses each. d2 B7's
+Supplemental Material sentence is now true, so it is added after the CC0 sentence, as pair DA2, pinned.
+
+| id | fact | before | disposition | after | probe |
+|---|---|---|---|---|---|
+| D5 | the sixteen-cell cross section, its covariance matrix and the cell definitions are provided as machine-readable files in the Supplemental Material | — | ADDED | Data Availability | `MP::The sixteen-cell cross section, its covariance matrix and the cell definitions are provided as machine-readable files in the Supplemental Material.` |
+
 ## Items 3 and 4: duplicate limitations, and the Scope wording (the director's rulings)
 
 The rule: the body home keeps the evidence; §VI (Limitations) is the one numbered home; §I keeps "Interval coverage has

@@ -152,6 +152,10 @@ python3 check_note_records.py entry-numbers --check
 echo "=== five-observable values (generated file fresh; readouts pinned) ==="
 python3 make_values_fived16.py --self-test
 python3 make_values_fived16.py --check
+# The paper's machine-readable Supplemental Material (DECISION-20261029-joseph-oi160-reproduction-and-q8.md item 2):
+# each file pinned by sha256, reproduced from the pinned data product, and equal to the printed table to its precision.
+python3 make_supplemental.py --self-test
+python3 make_supplemental.py --check
 
 # (2) The instant every PDF must postdate. `sleep 1` removes the same-second ambiguity in
 # `test -nt` on filesystems with coarse timestamps: one second, once, against a LaTeX build.

@@ -39,7 +39,7 @@ import apply_p  # noqa: E402
 # Item 2, the director's ruling (b) of 2026-10-28: apply_p.ITEM2's pair, pinned here, so that an edit of the pair in
 # apply_p.py without a new pin allows nothing.
 DA_PAIRS = [(eid, old, new) for eid, _f, old, new in apply_p.ITEM2]
-DA_PINS = {"DA1": "7cbceaf999d9b799"}
+DA_PINS = {"DA1": "7cbceaf999d9b799", "DA2": "64d9d9bc70e74de3"}   # DA2: option (a), after Q8
 NUMERAL = re.compile(r"(?<![\\\w{-])\d[\d,.]*")
 
 

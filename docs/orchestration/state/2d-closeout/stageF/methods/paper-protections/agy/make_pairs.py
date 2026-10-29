@@ -73,7 +73,11 @@ PAIRS = [
      ("reports the fake-data tests of the estimator's bias", "shows the estimator to be unbiased")),
     ("Q5", "the Data Availability statement", line_with(mp0, "The input data and simulation are the MINERvA open-data AnaTuples"),
      line_with(mp1, "The input data and simulation are the MINERvA open-data AnaTuples"),
-     home["rel"] + " The paper's Sec. central quotes no numbers, and the paper quotes no multiplier scan.",
+     home["rel"] + " The paper's Sec. central quotes no numbers, and the paper quotes no multiplier scan. The repository "
+     "now holds supplemental/xsec16_cells.csv (each cell's edges, with units), xsec16_cross_section.csv (each cell's "
+     "cross section and uncertainty) and xsec16_covariance.csv (the reported covariance), generated from the pinned data "
+     "product; a check confirms they reproduce the paper's printed table and covariance. Joseph decided the article "
+     "carries them as machine-readable Supplemental Material.",
      ("not yet deposited", "deposited")),
 ]
 NOTE = ("(These are edits to a physics paper that drop duplicate copies of limitations, keeping each at one home, and "
