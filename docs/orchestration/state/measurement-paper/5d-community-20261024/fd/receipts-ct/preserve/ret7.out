@@ -1,0 +1,69 @@
+host=login08 date=2026-10-28T22:06:04Z
+== prd-release-preservation-20261008 top
+total 9530
+drwxr-sr-x  8 josephrb m3246    4096 2026-10-09 .
+drwxrws--- 23 josephrb m3246    4096 2026-10-18 ..
+drwxr-sr-x  2 josephrb m3246   16384 2026-10-10 anatuple-checksums-20261008
+drwxr-sr-x  5 josephrb m3246    4096 2026-10-10 anatuple-data-20261009
+-rw-r--r--  1 josephrb m3246 1739153 2026-10-08 .files.txt
+-rw-r--r--  1 josephrb m3246    1856 2026-10-08 hpss_second_copy_20261008.sh
+-rw-r--r--  1 josephrb m3246    5350 2026-10-08 preserve_prd_evidence_20261008.sh
+-rw-r--r--  1 josephrb m3246    4395 2026-10-08 preserve_w2_outputs_20261008.sh
+drwxr-xr-x  3 josephrb m3246    4096 2025-08-13 pscratch
+drwxr-sr-x  2 josephrb m3246    4096 2026-10-08 rc4
+drwxr-sr-x  2 josephrb m3246    4096 2026-10-08 rc5
+drwxr-sr-x  2 josephrb m3246    4096 2026-10-08 rc6
+-rw-r--r--  1 josephrb m3246   10400 2026-10-10 README.md
+-rw-r--r--  1 josephrb m3246 1722914 2026-10-08 .rel.txt
+-rw-r--r--  1 josephrb m3246 2794688 2026-10-08 SHA256SUMS
+-rw-r--r--  1 josephrb m3246 3228284 2026-10-08 SOURCE-INVENTORY.tsv
+-rw-r--r--  1 josephrb m3246    2270 2026-10-08 SOURCE-SUMMARY.tsv
+-rw-r--r--  1 josephrb m3246   51562 2026-10-08 SYMLINKS.tsv
+-rw-r--r--  1 josephrb m3246     397 2026-10-08 VERIFY-RECEIPT.txt
+-rw-r--r--  1 josephrb m3246    2125 2026-10-08 verify_tar_stream.py
+-rw-r--r--  1 josephrb m3246    5017 2026-10-08 .w2-files.txt
+-rw-r--r--  1 josephrb m3246    4964 2026-10-08 .w2-rel.txt
+-rw-r--r--  1 josephrb m3246    8462 2026-10-08 W2-SHA256SUMS
+-rw-r--r--  1 josephrb m3246   10100 2026-10-08 W2-SOURCE-INVENTORY.tsv
+-rw-r--r--  1 josephrb m3246       0 2026-10-08 W2-SYMLINKS.tsv
+-rw-r--r--  1 josephrb m3246     502 2026-10-08 W2-VERIFY-RECEIPT.txt
+== every CFS file whose path matches w2b|mp1|lat_|universes_full_bkgaware (find over our CFS area, names only)
+find rc=0 matches=144
+     10 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf
+      5 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/design
+      3 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/dump-run/inventory
+      3 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/dump-run/logs
+      2 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval
+      5 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rr0
+      5 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rr1
+      5 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rrzero
+     12 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0
+     12 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr1
+     12 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rrzero
+      6 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral
+     50 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/logs
+      3 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/merged
+      2 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/tables
+      3 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf
+      3 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unfold-run/inventory
+      3 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unfold-run/logs
+95562 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_BeamAngleX_0_b-_j-.npz
+95587 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_BeamAngleX_1_b-_j-.npz
+95571 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_BeamAngleY_0_b-_j-.npz
+95588 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_BeamAngleY_1_b-_j-.npz
+95538 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_Muon_Energy_MINERvA_0_b-_j-.npz
+95547 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_Muon_Energy_MINERvA_1_b-_j-.npz
+95603 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_Muon_Energy_MINOS_0_b-_j-.npz
+95565 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_Muon_Energy_MINOS_1_b-_j-.npz
+95549 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_MuonResolution_0_b-_j-.npz
+95583 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf/lat_MuonResolution_1_b-_j-.npz
+28492272 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr0_bkg.npz
+1548308170 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr0.npz
+28496296 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr1_bkg.npz
+1548318853 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rr1.npz
+28494567 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rrzero_bkg.npz
+1548311762 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/lateral/lat_w2b_rrzero.npz
+95520 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz
+95654 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz
+95555 /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz
+== find errors (permission) count
