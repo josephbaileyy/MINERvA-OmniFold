@@ -11,7 +11,7 @@ OI-184	retired	-	declared	9406c14c53830c3d4d8741ae83b88f3f1496047a564eeff79360e4
 OI-183	active	NOW	migration-carried-forward	2a367a48274713e3e2c51d4a7aa49a9e02df24c1e7a6141acad52bf6f8027adc	OPEN
 OI-182	active	NOW	migration-carried-forward	397784efd2e1604c1830aad8eefe2fe6bb6b4e447915dad571e632a3c47884a5	OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions
 OI-181	retired	-	declared	599944024aa18ac0c95e964dba3572d5718dc488ce11c1ee668aa45c013db13c	RETIRED 2026-10-28 by the close-items session (the director had picked it for promotion; it was found moot first) — curr
-OI-180	active	NOW	migration-carried-forward	36b25aa9d1ea66bd87d47283c4862e1c6c4bed60690aa43bc91311b5d27946b8	REPAIRED 2026-08-31 — awaiting a decision only on the triage of what it now reveals
+OI-180	retired	-	declared	1854fdc9a22a3616e9fd5879b7b088c1af28e90d75c440faac00fc29481ef33c	RETIRED 2026-10-28 by the close-items session — the stripper uses tokenize, and the triage is in OI-182. See [RECORD-202
 OI-179	retired	-	migration-carried-forward	97002c06cb54d34cd2f268b77c517c5beed31998b744810ade42db97a1455dc9	DISCHARGED 2026-09-01 — DEFECT 3 IS ENFORCED, which was the sole thing holding this row open. Joseph authorized it in hi
 OI-177	retired	-	migration-carried-forward	78273ec3c82962d11374e24c73e5a7b025fa6fd3985f5c79b325f6e4fac0411f	DISCHARGED 2026-09-01 BY JOSEPH'S SIGNATURE. He ratified the amended per-arm ceilings in his own turn — "I sign" — recor
 OI-176	retired	-	migration-carried-forward	34517ff3b245dd1e7ad19779e7f4edf1d501da6d5897ec1d5566dc510fc384a5	DISCHARGED
@@ -52,7 +52,7 @@ OI-6	active	NOW	declared	2e9d690e763a63540535b20ed7af1a2cc811a7bbfa7ca257d8270e1
 OI-7	active	BLOCKED-EXTERNAL	migration-carried-forward	7cb58f4d5b73854fc970c468fba745d5f9118adaabb74c8d40b84b79bb8c549c	BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S
 OI-8	retired	-	migration-carried-forward	2d549f64b9a7187ec6fd0d3a0add89acac6bdd6980505ae0c178eb77a3cc0250	CLOSED 2026-08-15 — ruled, corroboration MET, and the RULING'S BASIS WAS REFUTED WHILE ITS DISPOSITION HELD
 OI-9	active	NOW	migration-carried-forward	00e9f8796f268caab4914f3c9c5df07ec2c63a613d4f4ca1577216627e4c3eb9	OPEN
-OI-10	active	NOW	migration-carried-forward	1fff73e47df2038fcc4ff6a1df898ae153347e732447c037b81f262e221b468f	OPEN
+OI-10	retired	-	declared	27ee96465117fa87f31197455e1808c176ab54d75434b4770b5ffd959476f275	RETIRED 2026-10-28 by the close-items session — KNOWN_ISSUES row 8 is FIXED (bce7fa4b, af542919). See [RECORD-20261028-c
 OI-11	active	NOW	migration-carried-forward	42958d4e5a134926c1ddc76d5acff00a1fde9446781e5fe09d59b6eb71370ce4	OPEN
 OI-12	active	NOW	migration-carried-forward	664998ca4bb7a148a09de85f5e88c42b5677fc90fa6e00445ec2afa19b7f91e0	OPEN
 OI-13	active	WAITING-JOSEPH	migration-carried-forward	c899bf49b52d5749e43415e88370f87157d28249520d181c134e71651e3e2935	WAITING-USER
@@ -105,8 +105,8 @@ OI-59	active	WAITING-JOSEPH	declared	ca4eca2a8c522de1c80d02de7c1d816a370e81411c7
 OI-60	active	BLOCKED-EXTERNAL	migration-carried-forward	d00d3b9f3d5163740174960d2883121597fc28dafface9cd59e4552326541a07	RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW
 OI-61	active	NOW	migration-carried-forward	ae33eeba324e9c64329c7e85dc4f88a7bb7e475914e2ac917102b31b31738da1	OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d
 OI-62	active	WAITING-JOSEPH	migration-carried-forward	366c7d73466dcc171ce01c01f2bde0eb237924f7d99b2206b69efeb9eaeb9e52	(a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER
-OI-64#1	active	NOW	migration-carried-forward	2ea76206e4028fab5d0c0c864878bfc33dbb51a9b7bc362377faa320b3d32d32	⚠ ID COLLISION — this is LANE A's OI-64. Lane C independently allocated the same id (see the other OI-64 row below, C's:
-OI-65#1	active	NOW	migration-carried-forward	495fbffe70c6ea66cfe69b7c55eaadbe0d0638606c58391f597c5c0d3a617a8b	⚠ ID COLLISION — this is LANE A's OI-65. Lane C independently allocated the same id (see the other OI-65 row below, C's:
+OI-64#1	retired	-	declared	4ecfb397bee04799899934820d24bfa066e72980f6d8fb2a923a1060f9f37d01	RETIRED 2026-10-28 by the close-items session — the gate runs in the hook and CI; (f) and (g) were replaced by exact and
+OI-65#1	retired	-	declared	6ac25f218d289b4b95c408a100753760f297013b7dd4ceaebaf2e5348a9c4bee	RETIRED 2026-10-28 by the close-items session — its own text says the dependency is gone and asks that nothing be spent
 OI-63	deferred	-	migration-carried-forward	00d5e0acfbc5480f1f2beaf45f6dcb61aa8e79b03688675c79475d565cdde3e8	DEFERRED 2026-08-13 by Joseph — do not re-raise before the publication reorganisation
 OI-64#2	active	NOW	migration-carried-forward	aa00d4a7669ddb3e42e1756d59a4860676bb01db80d537bb98ecff7d190a6224	⚠ ID COLLISION — this is LANE C's OI-64. Lane A independently allocated the same id (see the other OI-64 row above, A's:
 OI-65#2	active	NOW	migration-carried-forward	7b43a62df905d745429578bd1f158a64d80dd1e63174ef9cb9d52bb582808f07	⚠ ID COLLISION — this is LANE C's OI-65. Lane A independently allocated the same id (see the other OI-65 row above, A's:

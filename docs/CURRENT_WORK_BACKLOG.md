@@ -10,7 +10,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-188 | NOW | migration-carried-forward | OPEN |
 | OI-183 | NOW | migration-carried-forward | OPEN |
 | OI-182 | NOW | migration-carried-forward | OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions |
-| OI-180 | NOW | migration-carried-forward | REPAIRED 2026-08-31 — awaiting a decision only on the triage of what it now reveals |
 | OI-173 | NOW | migration-carried-forward | RE-ISSUED 2026-09-02 BY JOSEPH — THE REFERENT IS THE STAMPED CANDIDATE. He ruled in his own turn: "okay do c", where (c) |
 | OI-174 | NOW | migration-carried-forward | OPEN |
 | OI-162 | NOW | migration-carried-forward | OPEN |
@@ -25,7 +24,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-4 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
-| OI-10 | NOW | migration-carried-forward | OPEN |
 | OI-11 | NOW | migration-carried-forward | OPEN |
 | OI-12 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
@@ -66,8 +64,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-60 | BLOCKED-EXTERNAL | migration-carried-forward | RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW |
 | OI-61 | NOW | migration-carried-forward | OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d |
 | OI-62 | WAITING-JOSEPH | migration-carried-forward | (a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER |
-| OI-64#1 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE A's OI-64. Lane C independently allocated the same id (see the other OI-64 row below, C's: |
-| OI-65#1 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE A's OI-65. Lane C independently allocated the same id (see the other OI-65 row below, C's: |
 | OI-64#2 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE C's OI-64. Lane A independently allocated the same id (see the other OI-64 row above, A's: |
 | OI-65#2 | NOW | migration-carried-forward | ⚠ ID COLLISION — this is LANE C's OI-65. Lane A independently allocated the same id (see the other OI-65 row above, A's: |
 | OI-94 | NOW | migration-carried-forward | OPEN (raised 2026-08-14 by lane C, as what survives OI-92's refutation) |
