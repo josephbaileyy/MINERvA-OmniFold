@@ -13,7 +13,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-74 | NOW | migration-carried-forward | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
-| OI-12 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-29 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-30 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See |
