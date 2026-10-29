@@ -1,0 +1,28 @@
+2026-10-29T15:24:47Z
+login37
+e904d635d8769fae9f8cebbb9174ca081a5b214c
+porcelain_ignored_lines 0
+85e21d6da8cb595ed40f210a0d10cfabe445091ea6e6b01f1f72ceb8a09d20ad  nd-unfolding/fd_ct_closure.py
+a84bebc414868e432e4c9af6c5cbd02ee4a1c944073bda51fcccd0d228010450  nd-unfolding/tests/test_fd_ct_closure.py
+f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464  nd-unfolding/fd_ct_readers.py
+6ca4172937351ff60b8c5611403c0e519b2dbb6ae10a789baf8f578121a543a6  nd-unfolding/tests/test_fd_ct_readers.py
+7073d4027cf4314432cbcd21d6fce428ed145d34cbe7927ab24ccccd916712d9  nd-unfolding/submit_fd_ct.sh
+fbcb786923cabd8ab9177525a4b95afaec60486b2a0670ca598d048ebe835a7c  nd-unfolding/fd_f1_lane.py
+dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f  nd-unfolding/s5c_array.sh
+b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3  docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh
+59ab0e1154ca287082f6d206d0a344769ef435faef5670b90373312a97636ec1  nd-unfolding/pv-ladder/pvl_unfold.py
+f8a7d2c2fcd37b025ae3c028088d496b1aea7519d347febb3d63da6511015481  nd-unfolding/pv-ladder/pvl_lib.py
+fe1aec8b74ab59e5ffa3bc824c4284065c5e8e97b2ce3c2e4bd1a34bec192f22  nd-unfolding/build_cresp.py
+e6ef5eeaca158928f2397aa0214b6bd7b50c3e86f53e002e9d2e6a407b35c10b  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b/make_3b_tables.py
+0d3657ad3a50e81decc559a74d53461185871e8d15da03c39d919789f5ccf68c  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b/3b-steps.tsv
+680bad854071d77bf4ed3b07b2d26f47cabc2b9932c80b7cf6df7ccbb5406fda  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b/tasks-3b.tsv
+0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2  nd-unfolding/fd_f0_regrade.py
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7  nd-unfolding/s1_assemble.py
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71  nd-unfolding/s5p_stage1_inspect.py
+0cb17e1f03ddbd670b50809ad21fd557cd1e843b673b7019390ecaac67fb433e  docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-DECLARATION.md
+tests rc=0
+wrote /pscratch/sd/j/josephrb/fd-ct-3b-20261029/tables/3b-steps.tsv /pscratch/sd/j/josephrb/fd-ct-3b-20261029/tables/tasks-3b.tsv
+table 3b-steps.tsv identical
+table tasks-3b.tsv identical
+porcelain_ignored_lines_after_tests 0
+2026-10-29T15:32:16Z

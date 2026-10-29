@@ -1,0 +1,13 @@
+[R] 2026-10-29T16:28:00Z host login37
+[R] hpssquota before:
+| josephrb usage on HPSS charged to m3246 |  444.50GiB |   512.00GiB |          86.8% |          - |           - |              - |
+[R] sources 13
+[R] inventory sha256 847221983ed5475c7df26da250281cbf41003788c277ee1e92dfe45eaf6638f3
+[R] stage0_preserve rc=0 2026-10-29T16:28:06Z
+[R] hpssquota after:
+| josephrb usage on HPSS charged to m3246 |  444.50GiB |   512.00GiB |          86.8% |          - |           - |              - |
+
+/home/j/josephrb/mnv-5d-ct-3b-closures-20261029:
+-rw-r-----    1 josephrb  josephrb        1784 Oct 29 09:28 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb     2478080 Oct 29 09:28 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         135 Oct 29 09:28 stage0-inputs.tar.sha256
