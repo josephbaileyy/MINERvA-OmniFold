@@ -10,6 +10,9 @@ row can be manufactured without touching any shared checkout.
       into `tail -1` still shows it.
   (3) `live_doc_indexed.py` fires on a newly added doc with NO overrides row, is silent once any
       row (ARCHIVAL) exists, and `--unrowed` lists the whole-tree set and exits 1.
+  (4) the committed table carries no derived column: editing a record, or adding a record that
+      cites it, moves no existing row, while `--query` and `--retention` measure the citation
+      count on demand -- an uncited LIVE doc is reported and is silent once something cites it.
 """
 import os
 import shutil
@@ -63,15 +66,29 @@ class ObjectIdentityChecks(unittest.TestCase):
     def manifest(self, *args):
         return self.run_py("generate_manifest.py", *args)
 
+    def reclassify_a(self):
+        """An unstaged change to a COMMITTED column: A.md's overrides row LIVE -> ARCHIVAL."""
+        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
+        ov.write_text(ov.read_text().replace(f"{ORCH}/A.md\tLIVE\topen", f"{ORCH}/A.md\tARCHIVAL\tterminal"))
+
+    def add_doc(self, name, text, cls="LIVE", status="open"):
+        (self.tmp / ORCH / name).write_text(text)
+        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
+        ov.write_text(ov.read_text() + f"{ORCH}/{name}\t{cls}\t{status}\t\n")
+        git(self.tmp, "add", f"{ORCH}/{name}", f"{ORCH}/MANIFEST-overrides.tsv")
+        self.assertEqual(self.manifest().returncode, 0)
+        git(self.tmp, "add", f"{ORCH}/MANIFEST.tsv")
+        git(self.tmp, "commit", "-q", "-m", f"add {name}")
+
     # ---- (1) + (2) ------------------------------------------------------------------------
     def test_at_sha_output_does_not_move_with_an_unstaged_or_staged_edit(self):
         before = self.manifest("--at-sha", "HEAD")
         self.assertEqual(before.returncode, 0, before.stderr)
         self.assertEqual(before.stdout, (self.tmp / ORCH / "MANIFEST.tsv").read_text())
-        (self.tmp / ORCH / "A.md").write_text("alpha, edited and much longer than before\n")
+        self.reclassify_a()
         unstaged = self.manifest("--at-sha", "HEAD")
         self.assertEqual(unstaged.stdout, before.stdout)
-        git(self.tmp, "add", f"{ORCH}/A.md")
+        git(self.tmp, "add", f"{ORCH}/MANIFEST-overrides.tsv")
         staged = self.manifest("--at-sha", "HEAD")
         self.assertEqual(staged.stdout, before.stdout)
         # the direction that makes the above meaningful: the working-tree mode DOES move
@@ -90,7 +107,7 @@ class ObjectIdentityChecks(unittest.TestCase):
         self.assertEqual(ok.stdout.splitlines()[-1],
                          f"MANIFEST-CHECK :: OK exit=0 :: head={head} "
                          f"tree=at-sha(working tree not read) scope=.")
-        (self.tmp / ORCH / "A.md").write_text("alpha, edited\n")
+        self.reclassify_a()
         bad = self.manifest("--check", "--committed-only")
         self.assertEqual(bad.returncode, 1)
         last = bad.stdout.splitlines()[-1]
@@ -128,6 +145,43 @@ class ObjectIdentityChecks(unittest.TestCase):
         ov.write_text(ov.read_text() + f"{ORCH}/B-unrowed.md\tARCHIVAL\tterminal\t\n")
         git(self.tmp, "add", f"{ORCH}/MANIFEST-overrides.tsv")
         self.assertEqual(self.run_py("live_doc_indexed.py", "--unrowed").returncode, 0)
+
+    # ---- (4) ------------------------------------------------------------------------------
+    def test_editing_or_citing_a_record_moves_no_committed_row(self):
+        self.assertNotIn("inbound_count", (self.tmp / ORCH / "MANIFEST.tsv").read_text())
+        self.add_doc("D.md", "delta\n")
+        before = (self.tmp / ORCH / "MANIFEST.tsv").read_text()
+        (self.tmp / ORCH / "D.md").write_text("delta, edited and much longer than before\n")
+        git(self.tmp, "add", f"{ORCH}/D.md")
+        git(self.tmp, "commit", "-q", "-m", "edit D")
+        self.assertEqual(self.manifest("--at-sha", "HEAD", "--check").returncode, 0)
+        # a new record citing D.md adds exactly its own row and leaves D.md's untouched
+        self.add_doc("E.md", "epsilon, cites D.md\n", "ARCHIVAL", "terminal")
+        after = (self.tmp / ORCH / "MANIFEST.tsv").read_text()
+        self.assertEqual(set(after.splitlines()) - set(before.splitlines()),
+                         {f"{ORCH}/E.md\ttracked\tARCHIVAL\tdocument\t\t\tterminal\t\t"
+                          "exact-path-only\tyes"})
+        self.assertEqual(set(before.splitlines()) - set(after.splitlines()), set())
+
+    def test_query_measures_the_citation_count_on_demand(self):
+        self.add_doc("D.md", "delta\n")
+        self.add_doc("E.md", "epsilon, cites D.md\n", "ARCHIVAL", "terminal")
+        r = self.manifest("--query", f"{ORCH}/D.md", "--at-sha", "HEAD")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        header, row = r.stdout.splitlines()
+        cells = dict(zip(header.split("\t"), row.split("\t")))
+        self.assertEqual((cells["inbound_count"], cells["lines"], cells["bytes"]), ("1", "1", "6"))
+        self.assertEqual(self.manifest("--query", f"{ORCH}/nope.md").returncode, 2)
+
+    def test_retention_fires_on_an_uncited_live_doc_and_is_silent_once_cited(self):
+        self.add_doc("D.md", "delta\n")
+        r = self.manifest("--retention", "--at-sha", "HEAD")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn(f"uncited LIVE  {ORCH}/D.md", r.stdout)
+        self.assertNotIn(f"uncited LIVE  {ORCH}/A.md", r.stdout)     # CATALOG.md cites A.md
+        self.add_doc("E.md", "epsilon, cites D.md\n", "ARCHIVAL", "terminal")
+        r = self.manifest("--retention", "--at-sha", "HEAD")
+        self.assertNotIn(f"uncited LIVE  {ORCH}/D.md", r.stdout)
 
     # ---- the shared helper ------------------------------------------------------------------
     def test_tree_state_names_clean_dirty_and_no_git(self):

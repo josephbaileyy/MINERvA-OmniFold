@@ -12,6 +12,14 @@ overrides, every inventoried file and every reference source from the COMMIT ins
 compares against that commit's own MANIFEST.tsv: its verdict is a statement about REV alone and no
 working-tree edit, staged or not, can move it. `--at-sha` never writes; without `--check` it
 prints the generated table to stdout.
+
+DERIVED COLUMNS ARE COMPUTED, NEVER COMMITTED (2026-10-28). `consumer`, `inbound_count`, `lines` and
+`bytes` move whenever ANY file cites a record or a record's own bytes change, so committing them made
+every concurrent PR stale against `main` (489 manifest-touching commits in the 7 days to 10-28, against
+443 non-merge commits). The committed file now carries only the classification columns, which change
+only when the inventory or the overrides do. `--query [PATH ...]` prints the table with the derived
+columns measured now, and `--retention` reports the retention convention's two citation tests from
+that measurement (`CONVENTION-document-retention.md`). `--check` needs no corpus scan.
 """
 
 from __future__ import annotations
@@ -44,12 +52,11 @@ COLUMNS = (
     "event_status",
     "canonical_successor",
     "read_policy",
-    "consumer",
     "immutable",
-    "inbound_count",
-    "lines",
-    "bytes",
 )
+# Measured on demand (`--query`, `--retention`) and never written to MANIFEST.tsv; see the docstring.
+DERIVED_COLUMNS = ("consumer", "inbound_count", "lines", "bytes")
+QUERY_COLUMNS = COLUMNS + DERIVED_COLUMNS
 OVERRIDE_COLUMNS = ("path", "class", "event_status", "canonical_successor")
 CLASSES = {"LIVE", "ARCHIVAL", "MACHINE", "DEAD"}
 EVENT_STATUSES = {"open", "terminal", "superseded", "generated"}
@@ -386,7 +393,9 @@ def reference_sources(paths: list[Path], states: dict[str, str],
     intended = [path for path in paths if states[repo_path(path)] == "intended"]
     # At a sha there is no filesystem to resolve through, and the key only dedups.
     key = (lambda path: path) if source.sha else (lambda path: path.resolve())
-    unique = {key(path): path for path in tracked + intended if path != TARGET}
+    # The overrides file names every classified document, so as a source it counted one
+    # "citation" for each of them and no LIVE document could read uncited (2026-10-28).
+    unique = {key(path): path for path in tracked + intended if path not in {TARGET, OVERRIDES}}
     return sorted(unique.values(), key=lambda path: repo_path(path))
 
 
@@ -394,13 +403,31 @@ def sanitize(value: object) -> str:
     return str(value).replace("\t", " ").replace("\r", " ").replace("\n", " ")
 
 
-def render(rows: list[dict[str, object]]) -> bytes:
+def render(rows: list[dict[str, object]], columns: tuple[str, ...] = COLUMNS) -> bytes:
     stream = io.StringIO(newline="")
-    writer = csv.DictWriter(stream, fieldnames=COLUMNS, delimiter="\t", lineterminator="\n")
+    writer = csv.DictWriter(stream, fieldnames=columns, delimiter="\t", lineterminator="\n")
     writer.writeheader()
     for row in rows:
-        writer.writerow({column: sanitize(row[column]) for column in COLUMNS})
+        writer.writerow({column: sanitize(row[column]) for column in columns})
     return stream.getvalue().encode("utf-8")
+
+
+def retention_report(rows: list[dict[str, object]]) -> tuple[list[str], list[str]]:
+    """The retention convention's two citation tests, from `inbound_count` measured now.
+
+    Returns (uncited LIVE documents, DEAD rows that something still cites). The first is the
+    safety filter of the convention's retention pass and never the criterion: a basename search is
+    blind to ellipsised citations, so score a candidate by its `TYPE-YYYYMMDD` stem as well before
+    acting. The second is the "do not mark DEAD while anything still cites it" test. A basename
+    shared by many files (`README.md`) inflates the count, so read the citing files before acting
+    on either list.
+    """
+    uncited = [str(row["path"]) for row in rows
+               if row["class"] == "LIVE" and str(row["path"]).endswith(".md")
+               and row["inbound_count"] == 0]
+    cited_dead = [str(row["path"]) for row in rows
+                  if row["class"] == "DEAD" and row["inbound_count"] != 0]
+    return uncited, cited_dead
 
 
 def classify_inventory_status(
@@ -459,14 +486,21 @@ def status_warnings(
     return warnings
 
 
-def generate(committed_only: bool = False, source: TreeSource | None = None) -> tuple[
-        bytes, Counter[str], int, int, Counter[str], list[str]]:
+def generate(committed_only: bool = False, source: TreeSource | None = None,
+             derived: bool = False) -> tuple[
+        bytes, Counter[str], int, int, Counter[str], list[str], list[dict[str, object]]]:
+    """Render the committed table; with `derived`, also measure DERIVED_COLUMNS into the rows.
+
+    The corpus scan behind `inbound_count` and `consumer` runs only when `derived` is set.
+    """
     source = source or TreeSource()
     paths, states = inventory(committed_only, source)
     overrides = load_overrides(source)
-    basename_bytes = {path.name.encode("utf-8") for path in paths}
-    matches = build_match_index(basename_bytes, reference_sources(paths, states, source),
-                                source)
+    matches: dict[bytes, set[str]] = {}
+    if derived:
+        basename_bytes = {path.name.encode("utf-8") for path in paths}
+        matches = build_match_index(basename_bytes, reference_sources(paths, states, source),
+                                    source)
 
     rows: list[dict[str, object]] = []
     applied_overrides: set[str] = set()
@@ -512,48 +546,35 @@ def generate(committed_only: bool = False, source: TreeSource | None = None) -> 
         if read_policy not in READ_POLICIES:
             raise ValueError(f"invalid read policy for {rel}")
 
-        source_hits = matches[path.name.encode("utf-8")]
-        inbound = len(source_hits - {rel})
-        consumers = sorted(
-            source
-            for source in source_hits - {rel}
-            if Path(source).suffix.lower() in SCRIPT_SUFFIXES
-        )
         date_match = DATE_RE.search(path.name)
-        rows.append(
-            {
-                "path": rel,
-                "tracking": states[rel],
-                "class": classification,
-                "kind": derive_kind(path, rel),
-                "campaign": derive_campaign(path, rel, data),
-                "event_date": date_match.group(1) if date_match else "",
-                "event_status": event_status,
-                "canonical_successor": successor,
-                "read_policy": read_policy,
-                "consumer": ";".join(consumers),
-                "immutable": derive_immutable(classification, rel, event_status),
-                "inbound_count": inbound,
-                "lines": data.count(b"\n"),
-                "bytes": len(data),
-            }
-        )
+        row: dict[str, object] = {
+            "path": rel,
+            "tracking": states[rel],
+            "class": classification,
+            "kind": derive_kind(path, rel),
+            "campaign": derive_campaign(path, rel, data),
+            "event_date": date_match.group(1) if date_match else "",
+            "event_status": event_status,
+            "canonical_successor": successor,
+            "read_policy": read_policy,
+            "immutable": derive_immutable(classification, rel, event_status),
+        }
+        if derived:
+            source_hits = matches[path.name.encode("utf-8")] - {rel}
+            row["consumer"] = ";".join(sorted(
+                hit for hit in source_hits if Path(hit).suffix.lower() in SCRIPT_SUFFIXES))
+            row["inbound_count"] = len(source_hits)
+            row["lines"] = data.count(b"\n")
+            row["bytes"] = len(data)
+        rows.append(row)
 
     rows.sort(key=lambda row: str(row["path"]))
-    target_row = next(row for row in rows if row["path"] == repo_path(TARGET))
-    target_row["lines"] = len(rows) + 1
-    target_row["bytes"] = 0
-    for _ in range(20):
-        output = render(rows)
-        output_size = len(output)
-        if target_row["bytes"] == output_size:
-            break
-        target_row["bytes"] = output_size
-    else:
-        raise ValueError("MANIFEST.tsv byte-count fixed point did not converge")
     output = render(rows)
-    if target_row["bytes"] != len(output):
-        raise ValueError("MANIFEST.tsv self-size is inconsistent")
+    if derived:
+        # The committed file no longer describes its own size, so this is a plain measurement.
+        target_row = next(row for row in rows if row["path"] == repo_path(TARGET))
+        target_row["lines"] = output.count(b"\n")
+        target_row["bytes"] = len(output)
 
     class_counts = Counter(str(row["class"]) for row in rows)
     tracking_counts = Counter(states.values())
@@ -565,6 +586,7 @@ def generate(committed_only: bool = False, source: TreeSource | None = None) -> 
         len(rows) - len(applied_overrides),
         tracking_counts,
         unused,
+        rows,
     )
 
 
@@ -617,6 +639,15 @@ def self_test() -> int:
         direct_f14_messages = status_warnings(direct_f14_shape, [], False)
         intended_default_messages = status_warnings([], intended_paths, False)
         intended_committed_only_messages = status_warnings([], intended_paths, True)
+        # The retention tests, both directions: each list fires on its case and is silent on
+        # the neighbouring one.
+        uncited, cited_dead = retention_report([
+            {"path": "docs/orchestration/LIVE-uncited.md", "class": "LIVE", "inbound_count": 0},
+            {"path": "docs/orchestration/LIVE-cited.md", "class": "LIVE", "inbound_count": 3},
+            {"path": "docs/orchestration/live-uncited.py", "class": "LIVE", "inbound_count": 0},
+            {"path": "docs/orchestration/DEAD-cited.md", "class": "DEAD", "inbound_count": 1},
+            {"path": "docs/orchestration/DEAD-uncited.md", "class": "DEAD", "inbound_count": 0},
+        ])
         checks = (
             repo_path(intended_path) in rels,
             states.get(repo_path(intended_path)) == "intended",
@@ -625,6 +656,9 @@ def self_test() -> int:
             not TreeSource().is_file(repo_path(link_path)),
             set(states.values()) <= {"tracked", "intended"},
             "tracking" in COLUMNS,
+            not set(DERIVED_COLUMNS) & set(COLUMNS),
+            uncited == ["docs/orchestration/LIVE-uncited.md"],
+            cited_dead == ["docs/orchestration/DEAD-cited.md"],
             "if is_runs_or_state(rel) and override is None:" in source,
             # an AUTHORED input under state/ is editable by its owner...
             derive_immutable("LIVE", authored, "open") == "no",
@@ -683,16 +717,39 @@ def main() -> int:
              "instead of the working tree, so the verdict is about REV alone. Implies "
              "--committed-only; never writes (prints the table to stdout without --check)",
     )
+    measure = parser.add_mutually_exclusive_group()
+    measure.add_argument(
+        "--query",
+        nargs="*",
+        metavar="PATH",
+        help="print the table WITH the derived columns (consumer, inbound_count, lines, bytes) "
+             "measured now, for the given repo-relative paths or for every row; never writes",
+    )
+    measure.add_argument(
+        "--retention",
+        action="store_true",
+        help="list uncited LIVE documents and cited DEAD rows from inbound_count measured now "
+             "(CONVENTION-document-retention.md); a report, exit 0; never writes",
+    )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
     if args.self_test:
         return self_test()
 
+    derived = args.query is not None or args.retention
+    if derived and args.check:
+        parser.error("--query and --retention never write and do not combine with --check")
     committed_only = args.committed_only or args.at_sha is not None
     try:
         source = TreeSource(args.at_sha)
-        output, counts, overridden, defaults, tracking, unused = generate(committed_only, source)
+        output, counts, overridden, defaults, tracking, unused, rows = generate(
+            committed_only, source, derived)
+        if args.query:
+            known = {str(row["path"]) for row in rows}
+            missing = [path for path in args.query if path not in known]
+            if missing:
+                raise ValueError(f"not in the inventory: {', '.join(missing)}")
         unstaged, intended = ([], []) if source.sha else inventory_status()
         object_line = source.object_line()
     except (OSError, subprocess.CalledProcessError, ValueError, IndexError) as exc:
@@ -717,13 +774,34 @@ def main() -> int:
     # DISCLOSED, never silent. An exclusion nobody is told about is how `MANIFEST-overrides.tsv`
     # went inert reporting as applied (BEN-321), and a transient published as repo state is
     # BEN-183. Both are announced on stdout beside the summary rather than left to be inferred.
+    # `--query` keeps stdout a clean table, so its disclosures go to stderr.
+    notes = sys.stderr if args.query is not None else sys.stdout
     if committed_only and not source.sha:
         excluded = git_lines("ls-files", "--others", "--exclude-standard", "--",
                              "docs/orchestration")
         print(f"committed-only: {len(excluded)} nonignored untracked path(s) EXCLUDED from "
-              f"both the table and the reference sources")
+              f"both the table and the reference sources", file=notes)
     for warning in status_warnings(unstaged, intended, committed_only):
-        print(warning)
+        print(warning, file=notes)
+    if args.query is not None:
+        wanted = set(args.query)
+        selected = [row for row in rows if not wanted or row["path"] in wanted]
+        sys.stdout.flush()
+        sys.stdout.buffer.write(render(selected, QUERY_COLUMNS))
+        return 0
+
+    if args.retention:
+        uncited, cited_dead = retention_report(rows)
+        print(f"retention: {len(uncited)} LIVE .md document(s) with inbound_count 0 "
+              "(a safety filter, never the criterion: also score by TYPE-YYYYMMDD stem)")
+        for path in uncited:
+            print(f"  uncited LIVE  {path}")
+        print(f"retention: {len(cited_dead)} DEAD row(s) still cited by basename "
+              "(read the citing files: a shared basename inflates the count)")
+        for path in cited_dead:
+            print(f"  cited DEAD    {path}")
+        print(f"RETENTION :: {summary} :: {object_line.removeprefix('object: ')}")
+        return 0
 
     if args.check:
         if source.sha:

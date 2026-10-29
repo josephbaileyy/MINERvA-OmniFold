@@ -1,0 +1,27 @@
+[R] 2026-10-28T22:09:18Z start host=login08
+[R] hpssquota before:
+|                                pscratch |   17.01TiB |    20.00TiB |          85.0% |      2.09M |      10.00M |          20.9% |
+| josephrb usage on HPSS charged to m3246 |  422.79GiB |   512.00GiB |          82.6% |          - |           - |              - |
+[R] sources: 42 files, 22076611454 B
+[R] 2026-10-28T22:11:06Z inventory written: 42 lines, sha256 52eaa265c89a6e553558bc57410d71aaa80df4fe7cda442ddffb838c6bbda3b9
+[R] W2b cross-check against /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/W2-SHA256SUMS (match = same digest recorded for the same pscratch-relative name):
+  1  lat_w2b_rr0_bkg.npz
+  1  lat_w2b_rr0.npz
+  1  lat_w2b_rr1_bkg.npz
+  1  lat_w2b_rr1.npz
+  1  lat_w2b_rrzero_bkg.npz
+  1  lat_w2b_rrzero.npz
+  0  w2b_rr0_b-_j-.npz
+  0  w2b_rr1_b-_j-.npz
+  0  w2b_rrzero_b-_j-.npz
+[R] 2026-10-28T22:11:06Z calling stage0_preserve.sh
+[R] 2026-10-28T22:19:14Z stage0_preserve rc=0
+[R] hpssquota after:
+|                                pscratch |   17.03TiB |    20.00TiB |          85.1% |      2.09M |      10.00M |          20.9% |
+| josephrb usage on HPSS charged to m3246 |  422.79GiB |   512.00GiB |          82.6% |          - |           - |              - |
+
+/home/j/josephrb/mnv-5d-ct-3b-inputs-20261028:
+-rw-r-----    1 josephrb  josephrb        6163 Oct 28 15:16 INVENTORY.sha256
+-rw-r-----    1 josephrb  josephrb 22076692480 Oct 28 15:15 stage0-inputs.tar
+-rw-r-----    1 josephrb  josephrb         132 Oct 28 15:16 stage0-inputs.tar.sha256
+[R] 2026-10-28T22:19:15Z end rc=0
