@@ -70,7 +70,9 @@ In CI the index equals HEAD, so those arms judge nothing there: `whose_row.py --
 new ids; its duplicate-id arm is whole-tree) and `live_doc_indexed.py --check` (newly LIVE and newly added docs;
 its whole-tree arm and `--unrowed` still bind). They run in CI for their whole-tree arms. `generate_manifest.py
 --check --at-sha HEAD` judges the merge commit: a pull request whose own head is fresh can still fail if the merge
-with a newer `main` leaves `MANIFEST.tsv` stale. Merge `main` into the branch and regenerate.
+with a newer `main` leaves `MANIFEST.tsv` stale. Since 2026-10-28 that needs a change to the inventory or the
+overrides on both sides, because citation counts and sizes are no longer committed. Merge `main` into the branch and
+regenerate.
 
 **Local only.** These do not run in CI:
 - the LaTeX builds of the note, paper and records document (they need a TeX installation and `biber`; build them

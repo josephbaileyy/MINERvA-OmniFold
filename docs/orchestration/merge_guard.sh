@@ -38,8 +38,9 @@
 # both ending in a green run: remove the cause and re-run, or -- if the gate is genuinely over-strict
 # -- FIX THE GATE, which is reviewable and protects the next operator instead of this one merge.
 # For a conflict confined to a GENERATED file, the file is the symptom and the generators disagreeing
-# is the event: regenerate from the merged sources and re-run this gate. MANIFEST.tsv carries a row
-# describing its own line and byte count, so it conflicts on every concurrent merge by construction.
+# is the event: regenerate from the merged sources and re-run this gate. MANIFEST.tsv no longer
+# commits line, byte or citation counts (2026-10-28), so it conflicts only when both sides change
+# the inventory or the overrides near the same rows.
 # Full ruling, including why "the guard refused" is an underspecified report and you must name WHICH
 # exit: docs/orchestration/RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md
 
