@@ -156,6 +156,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 docs/orchestration/generate_manifest.py --self-test
 
+      # Hermetic: the retention test (fires on an uncited LIVE doc, silent once cited) and the
+      # no-derived-column test run in a throwaway repository. Over the hook's time budget.
+      - name: Manifest and LIVE-index object tests (test_object_identity_checks.py)
+        if: ${{ !cancelled() }}
+        run: python3 nd-unfolding/tests/test_object_identity_checks.py
+
       # Over the pre-commit hook's time budget (declined there), not over CI's.
       - name: Registry fixture tests (test_registry.py)
         if: ${{ !cancelled() }}

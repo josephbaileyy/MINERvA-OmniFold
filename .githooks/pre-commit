@@ -281,6 +281,10 @@ run "every doc has an overrides row" python3 docs/orchestration/live_doc_indexed
 run "bounded control plane"        python3 docs/orchestration/control_plane_lint.py
 run "control-plane self-test"      python3 docs/orchestration/control_plane_lint.py --self-test
 run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.py --self-test
+# DECLINED HERE (it runs in the CI workflow instead): nd-unfolding/tests/test_object_identity_checks.py
+# (11 hermetic tests, ~12 s measured 2026-10-28, including the retention test that fires on an uncited
+# LIVE doc and is silent once one is cited) -- over this hook's budget. Run it when changing
+# generate_manifest.py, live_doc_indexed.py or lib/tree_state.py.
 # ADDED 2026-10-22 (paper-tighten lane; Joseph: "yes do all three"). Rules and their checks:
 # docs/orchestration/RECORDS-RULES.md. WHY: a session said coverage under configuration (e) was untested; it had
 # been measured in s5e under the contract letter R, and no tool resolved one name to the other. Each check reads
