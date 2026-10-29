@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B maintains the sustained, authoritative, and self-contained academic register expected of a formal PRD technical companion note, whereas Document A lapses into draft-like meta-textual signposting (such as citing executive summary page numbers and stating that "Two further conclusions follow from the body").
+2. The bulleted summary in Document B provides complete narrative framing and clear antecedents for its technical findings, whereas Document A's truncated entries open abruptly without establishing the hypotheses or baseline analyses under discussion.
+3. In the "Principal limitations" section, Document B uses precise, publication-grade passive and active constructions to articulate methodological caveats, while Document A reads like an unfinished outline that merely defers to another section alongside a single disconnected remark.

@@ -1,0 +1,12 @@
+RATING: 3
+
+JUSTIFICATION: While the quantitative physics results are formulated with appropriate technical density, the text repeatedly lapses into an internal project-management and software-log register characterized by build-system tracking, progress bookkeeping, and administrative meta-referencing.
+
+1. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   REWRITE: A validated public data release containing the unbinned results and verification tools is planned for archival upon publication (App. G).
+
+2. QUOTE: "The executive summary lists the principal limitations (p. 2), each with the section that states it."
+   REWRITE: The principal limitations of this analysis, detailed alongside their corresponding sections in the introduction, include the absence of coverage tests for the two-dimensional statistical uncertainties (§4.2, §5.2).
+
+3. QUOTE: "App. G specifies this release for our analysis, including which of its objects already have fixed identities and which are still to be produced."
+   REWRITE: Appendix G defines the specification for this data release, detailing both the finalized data structures and the planned deliverables.

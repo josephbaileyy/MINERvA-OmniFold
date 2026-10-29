@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A maintains cohesive rhetorical structure and natural academic transitions, whereas Document B uses unpolished and awkward phrasing such as "This section adds the conclusions it does not state."
+2. Document A properly contextualizes technical topics before elaborating on them, whereas Document B introduces specific terms abruptly with missing antecedents (such as referencing "the purity-subtraction bias" without prior introduction).
+3. Document A demonstrates the sustained, measured, and disciplined syntactic register expected of a technical companion report in particle physics, whereas Document B reads like a disjointed and abruptly truncated set of draft notes.

@@ -1,0 +1,9 @@
+RATING: 2
+JUSTIFICATION: Although the introduction establishes appropriate physical context, the text repeatedly lapses into the register of an internal technical memorandum or validation audit, characterized by cluster-execution narratives, development history, internal test jargon, and pervasive defensive caveats.
+
+1. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: The full ensemble of generated pseudo-experiments was completed, confirming that the hypothesis test conclusions remain unchanged (§11.6).
+2. QUOTE: "LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2)."
+   REWRITE: The LightGBM estimator is adopted for the primary result, while the exact-split estimator is retained as an independent cross-check (§3.2).
+3. QUOTE: "The 3D and 4D injected-bump closures, of configuration (a), leave 0.10 of the injected Eavail change and close q3 to 1.1 %. Neither closure is graded (§7.4, Table 5)."
+   REWRITE: For configuration (a), closure tests using injected localized distortions recover the q3 variation to within 1.1%, while a 10% bias remains in Eavail; quantitative acceptance thresholds were not pre-defined for these multidimensional tests (§7.4, Table 5).

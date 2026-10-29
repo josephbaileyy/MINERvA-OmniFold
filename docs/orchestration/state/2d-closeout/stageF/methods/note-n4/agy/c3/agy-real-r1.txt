@@ -1,0 +1,28 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "calibration" from "a pooled calibration test", leaving "a pooled test" ambiguous about what property of the statistical intervals was evaluated. While the candidate achieved only a pooled pass, the test itself remains a calibration test ("A2: calibration") in the record.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER replaces "calibration" with "coverage", asserting that the pooled test does not establish "coverage for every functional". Under the note's definitions and test record, coverage is distinct from calibration, and the test's recorded finding was specifically "not per-functional calibration".
+
+Q3: VERDICT: SAME
+DETAIL: Read with its context, where the outcome is explicitly recorded as "A pooled pass, not per-functional calibration", AFTER's wording "a pooled pass" refers to the exact same test outcome as BEFORE's "pooled calibration pass" and preserves the conclusion that it cannot qualify EW41.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "interval calibration" with "interval coverage", narrowing BEFORE's broader statement about interval calibration down to coverage alone. Under the note's definition, coverage is only containment rate, so dropping "interval calibration" drops a broader qualifier stated by BEFORE.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER replaces "fails interval calibration" with "fails interval coverage", which mischaracterizes the failure mode under the note's definition of coverage. In the PET campaign record, H2S1T24 failed due to interval half-widths exceeding the calibrated limit (C4) and aggregate over-conservatism (C1), not a failure to cover the target.
+
+Q6: VERDICT: SAME
+DETAIL: Read with its context, where the PET procedure's evaluation was specifically "look 1 of the coverage rule", AFTER's "failed its coverage test" correctly identifies the exact test that BEFORE termed "failed calibration" without changing what holds.
+
+Q7: VERDICT: SAME
+DETAIL: Read with its context, where the cited paper is titled "Confidence intervals for functionals in constrained inverse problems via data-adaptive sampling-based calibration", AFTER's "confidence intervals" adopts the paper's exact terminology and describes the identical construct as BEFORE's "calibrated intervals".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER replaces BEFORE's statement that "The main results are the validation findings" with the claim that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison." This asserts a completely different primary result not supported by BEFORE and drops BEFORE's main finding.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's finding that "The main results are the validation findings, within the scope stated in \S\ref{sec:intro}" and replaces it with the unsupported assertion that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison."
+
+END

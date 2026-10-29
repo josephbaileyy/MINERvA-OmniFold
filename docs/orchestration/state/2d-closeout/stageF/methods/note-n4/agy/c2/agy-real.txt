@@ -1,0 +1,28 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER replaces "pooled calibration test" with "pooled pull test", dropping the broader calibration scope recorded in the test (which evaluated coverage and Mahalanobis distance as well as pulls) and misleadingly narrowing what was tested to pulls alone.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the substantive property "calibration" and replaces "does not establish calibration for every functional" with the ambiguous phrase "does not extend to every functional", which could mislead a reader about whether per-functional calibration failed or whether the test was simply not evaluated for every functional.
+
+Q3: VERDICT: SAME
+DETAIL: Read with the test record designating the outcome as a "PASS (pooled)" and "A pooled pass, not per-functional calibration", AFTER's phrase "a pooled pass" refers to the same test result and preserves the exact claim that this pooled outcome cannot qualify cell EW41.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "interval calibration" with "the statistical intervals", dropping the concept of calibration and introducing a misleading category error, since repeating a calculation can reproduce statistical intervals but cannot check their calibration.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER replaces "interval calibration" with "interval coverage", which drops the interval width failure mode (C4: half-width 1.32–1.72× limit) or mischaracterizes interval width as coverage, which is defined specifically as the target containment rate.
+
+Q6: VERDICT: SAME
+DETAIL: In context, the PET procedure's evaluation is titled "Coverage of H2S1T24 K5 ... (look 1 of the coverage rule)", so AFTER's statement that it "failed its coverage test" refers directly to this recorded test suite and preserves the fact that it failed the required uncertainty evaluation.
+
+Q7: VERDICT: SAME
+DETAIL: AFTER replaces "calibrated intervals" with "confidence intervals", which directly matches the cited paper's title ("Confidence intervals for functionals... via... calibration") and standard statistical terminology without altering the substantive meaning, dropping any limitation, or introducing ambiguity.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", completely dropping BEFORE's core assertion that "The main results are the validation findings" and substituting an unsupported primary claim.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER replaces BEFORE's statement that "The main results are the validation findings" with "The principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", dropping the validation findings as the main result and asserting a different principal result.
+
+END

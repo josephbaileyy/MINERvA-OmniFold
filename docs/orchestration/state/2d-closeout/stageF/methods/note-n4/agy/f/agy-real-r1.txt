@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states that "the GiBUU comparison carries the fake-data limitation of \S\ref{sec:fived16-fd}", whereas BEFORE supports this limitation only as a qualification of the sixteen-cell result as a whole ("the fake-data limitation of the sixteen-cell result"). Attaching it specifically to the GiBUU comparison is unsupported and misleadingly implies the limitation is unique to GiBUU rather than applying to the sixteen-cell result.
+
+Q2: VERDICT: SAME
+DETAIL: In accordance with the folding design, the summary section retains only the specific conclusions not stated in the executive summary while pointing to the executive summary for the principal limitations. What AFTER keeps is fully supported by BEFORE and introduces no broader claims, omissions, or misleading ambiguities.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER faithfully executes the folding design by replacing the detailed list of limitations in the scope paragraph with a pointer to the executive summary's limitations list. It preserves the scope and strategy without dropping facts, overstating results, or creating ambiguity.
+
+Q4: VERDICT: SAME
+DETAIL: The sentences added to the body in AFTER restore limitations relocated from the front matter—specifically identifying the unresolved source of the shape difference beyond the methodological band and noting unvalidated interval coverage. These additions accurately reflect what BEFORE accepted as correct without stating anything broader or misleading.
+
+END

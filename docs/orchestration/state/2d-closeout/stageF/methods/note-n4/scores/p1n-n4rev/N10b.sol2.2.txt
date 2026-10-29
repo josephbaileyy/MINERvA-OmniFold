@@ -1,0 +1,16 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion, but repeated document navigation, release bookkeeping, and defensive scope statements warrant a dedicated language pass.
+1. QUOTE: "Principal limitations. The executive summary lists the principal limitations (p. 2), each with
+the section that states it. The quoted two-dimensional statistical block has had no coverage test
+(§4.2, §5.2)."
+   REWRITE: Principal limitations are summarized on p. 2. In particular, the quoted two-dimensional statistical block has not been tested for coverage (§4.2, §5.2).
+2. QUOTE: "A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+
+but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a verifier that recomputes and validates the results, but has not yet been deposited or assigned a release tag. The document build does not rerun the scientific analysis (App. G).
+3. QUOTE: "The release design
+and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a)
+central value (§9.6)."
+   REWRITE: The five-axis covariance used for the configuration-(a) central value (§9.6) was selected independently of the release design and its public example.

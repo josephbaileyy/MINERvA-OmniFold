@@ -1,0 +1,25 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER introduces the phrase `"of the configuration-(a) central value"`, which is unsupported by CONTEXT; the note establishes that the covariance is `"used with that central value"` rather than a property or covariance "of" the central value vector itself.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces the words `"of the configuration-(a) central value"`, which CONTEXT does not support and which misleads by framing the covariance as belonging to a central value rather than being `"used with that central value"`.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER attributes the file \texttt{z-cv.npz} as the covariance `"of the configuration-(a) central value"`, whereas CONTEXT supports only that it is the covariance `"used with that central value"`.
+
+Q4: VERDICT: SAME
+DETAIL: Judged against BEFORE read with CONTEXT, AFTER accurately states that the regenerated figures were drawn for the earlier version of the article and correctly notes that the one-dimensional generator projections are printed in neither document, introducing no unsupported or misleading claims.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER accurately reflects the check in CONTEXT by clarifying that the packaged arrays correspond to figures drawn for that earlier version rather than the current article, introducing no unsupported statements.
+
+Q6: VERDICT: SAME
+DETAIL: AFTER correctly aligns with CONTEXT by specifying that the check verifies the production of Figs. 1–3 of that earlier version rather than those of the current article.
+
+Q7: VERDICT: SAME
+DETAIL: AFTER accurately updates the file count to match CONTEXT by distinguishing the 2,307 AnaTuples from the 67 flux, reweight, and parameter files, stating nothing unsupported or misleading.
+
+Q8: VERDICT: SAME
+DETAIL: AFTER correctly identifies the location of the verified copies as NERSC project storage rather than collaboration storage, in exact accordance with CONTEXT.
+
+END

@@ -1,0 +1,28 @@
+Q1: VERDICT: SAME
+DETAIL: Read with context, AFTER drops "calibration" to reflect that the test established only a pooled pass rather than per-functional calibration, preserving the substantive meaning without dropping facts or introducing ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: Replacing "calibration" with "coverage and width" explicitly states the properties evaluated in the test according to context, preserving the exact meaning without adding or dropping qualifiers.
+
+Q3: VERDICT: SAME
+DETAIL: Changing "pooled calibration pass" to "pooled pass" aligns directly with the record's specification of "A pooled pass, not per-functional calibration", preserving the finding and its qualifications.
+
+Q4: VERDICT: SAME
+DETAIL: Replacing "interval calibration" with "the coverage and width of the intervals" spells out the specific components of interval calibration defined in the note without altering the scope or meaning.
+
+Q5: VERDICT: SAME
+DETAIL: Replacing "fails interval calibration" with "fails the frozen coverage rule" adopts the precise name of the failed check from the PET campaign record, maintaining exact factual equivalence.
+
+Q6: VERDICT: SAME
+DETAIL: Changing "failed calibration" to "failed the frozen coverage rule" specifies the exact rule recorded as failed in the campaign record without adding unsupported claims or dropping qualifications.
+
+Q7: VERDICT: SAME
+DETAIL: Replacing "calibrated intervals" with "confidence intervals" matches the title and object of the cited paper (Stanley:2025) provided in context, preserving the reference without changing substantive scope.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER states that the "principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison", which BEFORE does not state or support, and drops BEFORE's claim that "The main results are the validation findings."
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops BEFORE's statement that "The main results are the validation findings" and introduces an unsupported claim that the "principal result is the sixteen-cell cross section of \S\ref{sec:fived16}, with its covariance and generator comparison."
+
+END

@@ -101,7 +101,7 @@ OI-54	active	WAITING-JOSEPH	migration-carried-forward	9ebe8c18130428f4faf9db3581
 OI-55	retired	-	migration-carried-forward	3b5ad0a71fd3df25863bbe657fa374ebb1a513f54628ef7d53ab17ded4c9d407	CLOSED 2026-08-13 — recorded here because the answer existed only in a message for four hours
 OI-57	active	NOW	migration-carried-forward	bf4e8b61d23195e2ff51ccc5da6146afc65f1fe43dcc7cabc328a5670b8f1840	CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked
 OI-58	active	NOW	migration-carried-forward	8a525d27c66c322b1e9153b1ce90db572743f18de6b72731c8658f59a5fe96ff	OPEN RE-TRIAGE RECOMMENDATION 2026-08-20 AFTER THE OI-126 RULING — RECOMMENDED, NOT RULED. Recommend reclassifying as a
-OI-59	active	WAITING-JOSEPH	declared	ca4eca2a8c522de1c80d02de7c1d816a370e81411c71ea183d0322a3bf5bf763	KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — whether the freeze permits the Ascencio super-grid recom
+OI-59	active	NOW	migration-carried-forward	4bb7cd09f2d50a716dccbd0e4d1730b5e2334e500ab61aedc72ca92f6bd40e8d	OPEN (raised 2026-08-13 by lane A)
 OI-60	active	BLOCKED-EXTERNAL	migration-carried-forward	d00d3b9f3d5163740174960d2883121597fc28dafface9cd59e4552326541a07	RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW
 OI-61	active	NOW	migration-carried-forward	ae33eeba324e9c64329c7e85dc4f88a7bb7e475914e2ac917102b31b31738da1	OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d
 OI-62	active	WAITING-JOSEPH	migration-carried-forward	366c7d73466dcc171ce01c01f2bde0eb237924f7d99b2206b69efeb9eaeb9e52	(a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER
@@ -136,7 +136,7 @@ OI-133	active	NOW	migration-carried-forward	cd0cfeeb6947403f799be81d7ff9aff35e9f
 OI-134	retired	-	migration-carried-forward	9f3018a7e1255cef48a068da6d14de467b7d7f6b2c18dded8c0b4fb3adf29d0f	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
 OI-135	deferred	-	declared	1b28ec7cd9bc00538df308cbdc36465932a8ac1bae95639505130bd8807164d8	DEFERRED 2026-10-28 on the director's ruling, until profiles.json and waker-config.json deploy — job 57266000 is termina
 OI-136	deferred	-	declared	efe8c263bd1d710806dcf194fd80e0c349330f05a23a816af5d67beb0020dc69	DEFERRED 2026-10-28 by the close-items session on the director's ruling, until the next re-issue of the bindings that pi
-OI-137	active	WAITING-JOSEPH	declared	b04fd7af70a81246092da86f4b092fea2afab2dea140ab6d61de06074eb758d8	KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W
+OI-137	active	NOW	migration-carried-forward	85713f9290390b74f9b9fb7aa554c903713857f122fdb656423681849e200b30	OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA
 OI-138	active	NOW	migration-carried-forward	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
 OI-139	active	NOW	declared	221d46a65c301abd75c008f1cc3cdc184ef1403e851ecc14d10072d8f08249e4	PROMOTED 2026-10-28 from the director's standing list, owner the close-items session. See [RECORD-20261028-close-items-l
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30

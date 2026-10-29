@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally clear and appropriate for a detailed particle-physics note, but repeated qualifications, internal bookkeeping, and development-history narration require a dedicated language pass.
+1. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments that exceeded the original time limits were subsequently completed for a supplementary check. Their inclusion leaves every test decision unchanged (§11.6).
+2. QUOTE: "Principal limitations: The body states each limitation with the result it qualifies; the principal ones are these. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the reported 2D statistical uncertainty. Fixed-truth coverage studies evaluated two earlier statistical uncertainty bands; the first showed undercoverage in its tails (C2 = 0.912, compared with the nominal value of 0.954; §4.2, §5.2).
+3. QUOTE: "Whether it is ready for publication as a measurement has not been established. LightGBM was chosen over the exactsplit estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2)."
+   REWRITE: Further validation is needed before this result can be reported as a measurement. LightGBM was selected after both estimators had been compared with the published measurement; the exactsplit estimator is retained as a cross-check (§3.2).

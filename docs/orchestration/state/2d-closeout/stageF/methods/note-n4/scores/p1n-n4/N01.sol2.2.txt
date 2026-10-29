@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally clear and appropriate for a detailed technical companion note, but recurrent internal bookkeeping, development-history narration, and repetitive qualifications prevent it from consistently matching well-edited PRD register.
+1. QUOTE: "Whether it is ready for
+publication as a measurement has not been established. LightGBM was chosen over the exactsplit estimator, which is kept as a cross-check, after both comparisons with the publication
+were known (§3.2)."
+   REWRITE: Further validation is required before this reproduction can be presented as a cross-section measurement. LightGBM was selected after both estimators had been compared with the published result; the exact-split estimator is retained as a cross-check (§3.2).
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun,
+for reporting only, so every submitted draw has been observed. No recovered draw changes a
+decision (§11.6)."
+   REWRITE: All pseudo-experiments that initially exceeded the time limit were subsequently completed for reporting purposes. None changes a test decision (§11.6).
+3. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage
+studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912,
+vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the reported 2D statistical uncertainty. Fixed-truth studies evaluated two earlier statistical uncertainty bands; the earlier of these showed tail undercoverage, with C2 = 0.912 compared with the nominal value of 0.954 (§4.2, §5.2).
