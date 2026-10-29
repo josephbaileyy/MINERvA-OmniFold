@@ -1,0 +1,18 @@
+PASS control P0 the committed playlist_term.json names this npz
+PASS control P0 the fine grid's p_T and p_parallel edges are the 2D grid's
+PASS control P0 205 distinct 2D cells on the 14 x 16 grid
+PASS control P0 every period array has one entry per cell
+PASS control P0 e_X is constant over cells
+PASS control P0 the e_X sum to 1
+PASS control P0 sum_X e_X g_X = 0 on every cell
+PASS control P0 C_PL rebuilt from k, e, x and g equals the stored C_PL
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control P1 the central value's cell integrals are S1's f
+PASS control P2 the prior is MnvTune v1's s5p-mc-truth-pred/1 on the fine grid
+PASS control P3 every cell has positive weight on the 2D term's cells
+PASS control P4 assertion: sum_X e_X g_X,R = 0 and C_PL,16 is PSD of rank <= 2, for both weightings
+rc=3

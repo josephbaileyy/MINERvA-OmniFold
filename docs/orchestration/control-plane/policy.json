@@ -2,7 +2,7 @@
   "version": 1,
   "canonical_adoption_allowed": true,
   "registry_scope": "all-open-items-records",
-  "current_work_min": 10,
+  "current_work_min": 1,
   "current_work_cap": 15,
   "playbook_min": 15,
   "playbook_cap": 25,

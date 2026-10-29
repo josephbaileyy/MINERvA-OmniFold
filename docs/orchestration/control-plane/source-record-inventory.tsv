@@ -25,7 +25,7 @@ OI-162	retired	-	declared	9be1fcd1cf5e555e47885478b580441d457149b8048e727feee4c9
 OI-160	active	NOW	declared	fe2e0eaedc12fbeb35c8b2b6ead91b25216a3a2e2aeb85a48a491bd27e787031	PROMOTED 2026-10-28 by the director, owner the close-items session — classification only, never deletion. See [RECORD-20
 OI-161	retired	-	declared	913cace9e6bdf56cf4faa2cde151673b5a8d549092f6cfe78770c36732adb117	RETIRED 2026-10-28 by its owner, the close-items session — both hold comments now state the discharge (P2 at 2e8c214a, A
 OI-152	retired	-	declared	001d9ad6cf2e4b6941b91ef73d2d5b3e0d037fb61d4aa4fad6c84407da8b8a0b	RETIRED 2026-10-28 — the practice is written in docs/LOCAL_CHECKOUTS_AND_STORAGE.md (#471). See [RECORD-20261028-close-i
-OI-151	active	NOW	declared	e679af55f54569df48f2574a932ef4e0892631cad277a13185643aa85c40d2a4	PROMOTED 2026-10-28 from the director's standing list (fourth and last), owner the close-items session. See [RECORD-2026
+OI-151	active	WAITING-JOSEPH	declared	aa81a3fa68deb4a4e6516b107d6d164df27c13d8ba16ea77c4fd3840a3e259a6	OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — (B) invert the laptop's codex-home links, or (C) acc
 OI-150	retired	-	declared	314c3e77306e3a9cfedc6e87ee53c39fc88f327ab0b5e235779463d4832db91e	RETIRED 2026-10-28 by the close-items session — the prose classifier was deleted at 4e296f06a; routing reads the declare
 OI-149	retired	-	migration-carried-forward	d94c61d5e71df2f309e8dae79c14eedccbcdb73b9368ade67418db98379c58de	FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert
 OI-147	retired	-	migration-carried-forward	087ed39c939011bd21f97a0705a67cfe6ab89edcebd3799471fb5ea2d7e6949e	COMPLETE 2026-08-21. The seven configuration keys landed at aa989794, the eighth (hDiagCombinedOld, via the raw diagonal
@@ -88,7 +88,7 @@ OI-41	retired	-	migration-carried-forward	e6620d28f5af653b0205f177c448c0add720cb
 OI-42	active	BLOCKED-EXTERNAL	migration-carried-forward	7931ffaed1eedd39ffef04844cbb54e5efa08ca14d0e9f6b0f706c3b9bcb9e70	BLOCKED
 OI-43	retired	-	declared	32bb12c43bb4aed6d27343d2be4a913c71e43deffe8e0a286d063243099f5655	FOLDED INTO OI-75 2026-10-28 on the director's ruling — the P4 hold is the same standing no-run hold OI-75 asks Joseph t
 OI-44	retired	-	declared	b0fba88e1197fecdf1724192633031e0f05b98990f574f904af8d90bc2d58c0b	RETIRED 2026-10-28 on the director's ruling as objectless — the 240 objects were deleted from tape on 2026-08-18; the li
-OI-45	active	NOW	declared	3c9755222d64f94618c8e8b74226ca3c8374737052e8c04f344321c4c9bd7f16	PROMOTED 2026-10-28 from the director's standing list, owner the close-items session. See [RECORD-20261028-close-items-o
+OI-45	retired	-	declared	230a231100eb132452e964885c2ec913804aa38dee1b6ccce50f783c6ee11d53	RETIRED 2026-10-29 by its owner, the close-items session — a receipt's author is its adding commit's git author (documen
 OI-46	retired	-	migration-carried-forward	36ffc3c94a84f03f1d0c7b9352bf1fd217c7c9a98973ac6074cf61e02203d09b	DISCHARGED 2026-08-13 as a commit-gate question — the artifact is separately superseded
 OI-47	active	NOW	migration-carried-forward	3ed755c361fc481291d704a942fcbc69bdd405021c75ab1a1eb20dea83e32441	OPEN (re-scoped 2026-08-12, owner Session A)
 OI-48	retired	-	migration-carried-forward	0b0bf4e60bb0a46ec892b797b000f021550645f46fa7ebfc123dc808f126c785	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat
