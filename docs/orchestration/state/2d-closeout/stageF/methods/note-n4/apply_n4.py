@@ -51,8 +51,36 @@ C = [
      "The principal result is the sixteen-cell cross section of \\S\\ref{sec:fived16}, with its covariance and "
      "generator comparison. The results hold within the scope stated in \\S\\ref{sec:intro}."),
 ]
-REL = []          # app_release.tex pairs: none until the director rules on note-n4/release-claims.md
-BATCHES = {"C": C}
+# Batch R: app_release.tex, released by DECISION-20261028-joseph-protections-n4-release-retrospective.md item 3, under
+# the director's rulings on note-n4/release-claims.md (2026-10-28): A, R2-R4 apply, R1 does not (FALSE as read: the
+# closure and bias numbers are of configurations (c)-(e)); B, the four FALSE claims' truth fixes; C, "NERSC project
+# storage"; D, \depositsnapshot stays. R2-R4 are d2's declared pairs, imported, not retyped.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "fived16" / "d2"))
+import options as _d2  # noqa: E402
+assert _d2.R14["site"] == "app_release.tex" and len(_d2.R14["pairs"]) == 4
+REL = [("R2", "app_release.tex", *_d2.R14["pairs"][1]),
+       ("R3", "app_release.tex", *_d2.R14["pairs"][2]),
+       ("R4", "app_release.tex", *_d2.R14["pairs"][3]),
+       # RL-21: the article cites no note figure; RC7 was built for an earlier version of the article; neither document
+       # now prints the projections (release-claims.md).
+       ("RL21", "app_release.tex",
+        "It also regenerates, from packaged arrays, figures that the article cites from this note: the $(\\Eavail,W)$ excess map "
+        "(Fig.~\\ref{fig:eavailWexcess}), the null distributions of the joint tests (Fig.~\\ref{fig:joint5d-nulls}), and the "
+        "one-dimensional generator projections.",
+        "It also regenerates, from packaged arrays, figures drawn for the earlier version of the article for which it was "
+        "assembled: the $(\\Eavail,W)$ excess map, which this note prints as Fig.~\\ref{fig:eavailWexcess}, the null "
+        "distributions of the joint tests, which it prints as Fig.~\\ref{fig:joint5d-nulls}, and one-dimensional generator "
+        "projections, which neither this note nor the article now prints."),
+       ("RL27", "app_release.tex", "the arrays behind the article's figures;", "the arrays behind the figures drawn for that earlier version;"),
+       ("RL39", "app_release.tex", "for the article's Figs.~1--3 themselves, the check is that the three figure files are produced.",
+        "for Figs.~1--3 of that earlier version themselves, the check is that the three figure files are produced."),
+       # RL-59: re-measured at the n4 head from ANATUPLE-SHA256.tsv (sha256 913e004d..., the record's): 2,374 rows, of
+       # which 1,818 data and 489 simulation AnaTuples (2,307) and 67 others (58 MATFluxAndReweightFiles, 9 MParamFiles).
+       ("RL59", "app_release.tex", "identifies all 2,374 inventoried AnaTuple input files by SHA256 checksum",
+        "identifies all 2,374 inventoried input files (2,307 AnaTuples and 67 flux, reweight and parameter files) by SHA256 checksum"),
+       # Line 45: the copies are in /global/cfs/cdirs/m3246/josephrb (RECORD-20261010-ost61-hashed-and-data-addition.md sec. 3).
+       ("RL45", "app_release.tex", "on collaboration storage;", "on NERSC project storage;")]
+BATCHES = {"C": C, "R": REL}
 
 
 def main():

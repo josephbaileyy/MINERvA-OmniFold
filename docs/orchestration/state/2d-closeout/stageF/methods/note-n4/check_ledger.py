@@ -49,7 +49,10 @@ RECORDS = {"app_provenance.tex", "app_history.tex", "app_release_records.tex", "
 PROTECTED = ["values.tex", "values_inference.tex", "app_history.tex", "main_note.tex", "main_paper.tex",
              "paper_body.tex"]
 RELEASED = "app_release.tex"
-REL_PINS = {}     # id -> sha256(old + "\0" + new)[:16]; filled when the director rules on the release claim table
+# id -> sha256(old + "\0" + new)[:16] of apply_n4.REL's pairs, as the director ruled on note-n4/release-claims.md
+# (2026-10-28, A-D). A pair edited in apply_n4.py without a new pin here allows nothing.
+REL_PINS = {"R2": "a40c5661e07280bf", "R3": "287df4be9b55d18b", "R4": "750991e4fd0a6520", "RL21": "b8c59fcf4fac8e65",
+            "RL27": "49e8da093e93e2f6", "RL39": "25fcf156ee677074", "RL59": "abb5edb8c52c467d", "RL45": "517e6da81a1ab7d5"}
 SEC4 = [r"lies entirely below its window \(Gaussian 0\.954\)",
         r"removes the tail undercoverage: \$C_2=0\.977\$ \$\[0\.974,0\.980\]\$ and \$C_1=0\.781\$"]
 # Outline sec. 4, approved 2026-10-28 (ruling 2): left byte-identical wherever they print until Joseph decides on

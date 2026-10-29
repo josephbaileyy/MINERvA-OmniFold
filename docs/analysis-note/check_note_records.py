@@ -1178,8 +1178,10 @@ PLANTS = [
     # archive paragraph, the first anchor, was rewritten by the register pass (batch bhi, director F6, 2026-10-21),
     # so the plant moved to the codebase appendix's PET paragraph. The note consolidation (DECISION-20261027 item 1,
     # cost-list R10; records-move-ledger.md L-con-R10) rewrote that one too, so the plant moved to the release
-    # appendix's scope heading: of the 20 base reader paragraphs it is the one still verbatim, and app_release.tex is
-    # a protected file.
+    # appendix's scope heading: of the 20 base reader paragraphs it is the one still verbatim. app_release.tex was then
+    # a protected file; it was released to the lanes on 2026-10-28 (DECISION-20261028-joseph-protections-n4-release-
+    # retrospective.md item 3). Note round n4 edits it only by pinned pairs and leaves this heading unchanged, so the
+    # anchor still holds; a later edit of the heading must move the plant.
     ("edited reader paragraph", "P5 READER paragraph", "app_release.tex",
      "can and cannot recompute}", "can and cannot rerun}"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
