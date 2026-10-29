@@ -64,4 +64,3 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-133 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
 | OI-137 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W |
 | OI-138 | NOW | migration-carried-forward | OPEN |
-| OI-139 | NOW | migration-carried-forward | OPEN |
