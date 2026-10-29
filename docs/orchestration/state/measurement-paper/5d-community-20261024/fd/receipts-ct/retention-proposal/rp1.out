@@ -1,0 +1,81 @@
+host=login28 date=2026-10-29T02:01:23Z
+== fd-f1-20261027: children (f1b/ and f1b2/ not entered)
+total 136
+drwxrwx---  17 josephrb josephrb  4096 2026-10-28 .
+drwx------ 316 josephrb josephrb 69632 2026-10-28 ..
+drwxrwx---   7 josephrb josephrb  4096 2026-10-28 deploy
+drwxrwx---   5 josephrb josephrb  4096 2026-10-27 f1a
+drwxrwx---   5 josephrb josephrb  4096 2026-10-27 f1a2
+drwxrwx---   6 josephrb josephrb  4096 2026-10-27 f1b
+drwxrwx---   8 josephrb josephrb  4096 2026-10-28 f1b3
+drwxrwx---   6 josephrb josephrb  4096 2026-10-28 f1c
+drwxrwx---   2 josephrb josephrb  4096 2026-10-28 gate3
+drwxrwx---   2 josephrb josephrb  4096 2026-10-28 grade
+drwxrwx---   2 josephrb josephrb  4096 2026-10-28 logs
+drwxrwx---   2 josephrb josephrb  4096 2026-10-28 manifest
+drwxrwx---   3 josephrb josephrb  4096 2026-10-28 preserve
+drwxrwx---   2 josephrb josephrb  4096 2026-10-27 tmp
+drwxrwx---   2 josephrb josephrb  4096 2026-10-27 tmp2
+drwxrwx---   2 josephrb josephrb  4096 2026-10-28 tmp3
+drwxrwx---   2 josephrb josephrb  4096 2026-10-28 tmp-grade
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/deploy bytes=5167303416 files=68701 oldest_atime=2026-10-27 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/f1a bytes=26342456 files=44 oldest_atime=2026-10-27 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/f1a2 bytes=98705543 files=148 oldest_atime=2026-10-27 newest_atime=2026-10-28
+SKIPPED /pscratch/sd/j/josephrb/fd-f1-20261027/f1b (forbidden: never read)
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3 bytes=2614825781 files=126 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/f1c bytes=8093675 files=66 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/gate3 bytes=6133 files=2 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/grade bytes=1185797 files=2 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/logs bytes=184510 files=35 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/manifest bytes=8645 files=1 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/preserve bytes=1229939912 files=5 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/tmp bytes=4096 files=0 oldest_atime= newest_atime=
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/tmp2 bytes=4096 files=0 oldest_atime= newest_atime=
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/tmp3 bytes=4096 files=0 oldest_atime= newest_atime=
+DIR /pscratch/sd/j/josephrb/fd-f1-20261027/tmp-grade bytes=4096 files=0 oldest_atime= newest_atime=
+== the other directories
+DIR /pscratch/sd/j/josephrb/fd-flux-boot-20261027 bytes=1029773038 files=13496 oldest_atime=2026-10-27 newest_atime=2026-10-27
+DIR /pscratch/sd/j/josephrb/fd-flux-boot-20261028 bytes=1031381793 files=13557 oldest_atime=2026-10-27 newest_atime=2026-10-27
+DIR /pscratch/sd/j/josephrb/fd-f0-20261025 bytes=1019530132 files=12909 oldest_atime=2026-10-25 newest_atime=2026-10-25
+DIR /pscratch/sd/j/josephrb/fd-f0b-20261026 bytes=1022334084 files=13005 oldest_atime=2026-10-26 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-g-20261025 bytes=1021564833 files=12995 oldest_atime=2026-10-26 newest_atime=2026-10-26
+DIR /pscratch/sd/j/josephrb/fd-g-diag-20261026 bytes=1022455233 files=13048 oldest_atime=2026-10-26 newest_atime=2026-10-26
+DIR /pscratch/sd/j/josephrb/fd-g-followup-20261026 bytes=1024230244 files=13101 oldest_atime=2026-10-26 newest_atime=2026-10-26
+DIR /pscratch/sd/j/josephrb/fd-g-sens2-20261026 bytes=1026222330 files=13236 oldest_atime=2026-10-26 newest_atime=2026-10-26
+DIR /pscratch/sd/j/josephrb/fd-g-figures-20261027 bytes=1030282312 files=13412 oldest_atime=2026-10-27 newest_atime=2026-10-27
+DIR /pscratch/sd/j/josephrb/cresp-20261026 bytes=939996326 files=12965 oldest_atime=2026-10-26 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/cmodel5d-20261024 bytes=888076628 files=12494 oldest_atime=2026-10-24 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/h2def-20261024 bytes=252334 files=13 oldest_atime=2026-10-24 newest_atime=2026-10-24
+DIR /pscratch/sd/j/josephrb/s1-20261024 bytes=2962664205 files=37992 oldest_atime=2026-10-24 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/pv-ladder-20261024 bytes=892887122 files=12296 oldest_atime=2026-10-24 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/proj1d-20261027 bytes=449291 files=22 oldest_atime=2026-10-27 newest_atime=2026-10-27
+DIR /pscratch/sd/j/josephrb/r10-20261024 bytes=6463072480 files=24186 oldest_atime=2026-10-23 newest_atime=2026-10-24
+DIR /pscratch/sd/j/josephrb/ibu1-20261022 bytes=904318095 files=15523 oldest_atime=2026-10-22 newest_atime=2026-10-24
+DIR /pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/unf bytes=1055303 files=11 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-ct-preserve-20261028 bytes=22076725347 files=10 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-deposit-check-20261028 bytes=1192263 files=83 oldest_atime=2026-10-28 newest_atime=2026-10-28
+DIR /pscratch/sd/j/josephrb/fd-f0-testcheck-20261025 bytes=57415 files=5 oldest_atime=2026-10-25 newest_atime=2026-10-25
+DIR /pscratch/sd/j/josephrb/fd-g-testcheck-20261025 bytes=32751 files=3 oldest_atime=2026-10-26 newest_atime=2026-10-26
+DIR /pscratch/sd/j/josephrb/fd-g-diag-testcheck-20261026 bytes=32732 files=2 oldest_atime=2026-10-26 newest_atime=2026-10-26
+DIR /pscratch/sd/j/josephrb/fd-cresp-testcheck-20261026 bytes=67816 files=2 oldest_atime=2026-10-26 newest_atime=2026-10-26
+== RE-1 k1_p5_rerun.npz
+-rw-rw---- 1 josephrb josephrb 95311 2026-10-22 /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
+2026-10-28 04:34:25.000000000 -0700 95311 /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
+DIR /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out bytes=4621671787 files=158 oldest_atime=2026-10-22 newest_atime=2026-10-28
+== F0 per-experiment table
+total 1220
+drwxrwx---   6 josephrb josephrb    4096 2026-10-25 .
+drwx------ 316 josephrb josephrb   69632 2026-10-28 ..
+drwxrwx---   3 josephrb josephrb    4096 2026-10-25 deploy
+-rw-rw----   1 josephrb josephrb 1068642 2026-10-25 fd_f0_experiments.npz
+-rw-rw----   1 josephrb josephrb   84840 2026-10-25 fd_f0_readout.json
+drwxrwx---   2 josephrb josephrb    4096 2026-10-25 logs
+drwxrwx---   3 josephrb josephrb    4096 2026-10-25 preserve
+drwxrwx---   2 josephrb josephrb    4096 2026-10-25 tmp
+1068642 2026-10-25 /pscratch/sd/j/josephrb/fd-f0-20261025/fd_f0_experiments.npz
+== cresp out
+total 32
+drwxrwx--- 2 josephrb josephrb  4096 2026-10-26 .
+drwxrwx--- 6 josephrb josephrb  4096 2026-10-26 ..
+-rw-rw---- 1 josephrb josephrb  7834 2026-10-26 cresp.json
+-rw-rw---- 1 josephrb josephrb 12952 2026-10-26 cresp.npz
