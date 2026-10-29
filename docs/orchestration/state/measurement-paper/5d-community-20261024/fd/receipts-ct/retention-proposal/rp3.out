@@ -1,0 +1,23 @@
+host=login28 date=2026-10-29T02:04:34Z
+7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9  /pscratch/sd/j/josephrb/fd-f0-20261025/fd_f0_experiments.npz
+7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9  /pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz
+3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60  /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.json
+3008d8f6b1f295cdd648f14e1ab2c20d864ce054a19f97e90e1620d22484e882  /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz
+e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
+/pscratch/sd/j/josephrb/r10-20261024/run2:
+total 24
+drwxrwx--- 6 josephrb josephrb 4096 Oct 24 01:09 .
+drwxrwx--- 7 josephrb josephrb 4096 Oct 24 01:07 ..
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 02:03 extract
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 02:03 inventory
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 01:09 logs
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 02:03 tmp
+
+/pscratch/sd/j/josephrb/r10-20261024/smoke:
+total 24
+drwxrwx--- 6 josephrb josephrb 4096 Oct 24 00:12 .
+drwxrwx--- 7 josephrb josephrb 4096 Oct 24 01:07 ..
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 00:13 extract
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 00:13 inventory
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 00:12 logs
+drwxrwx--- 2 josephrb josephrb 4096 Oct 24 00:14 tmp
