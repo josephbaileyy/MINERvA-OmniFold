@@ -25,7 +25,7 @@ OI-162	retired	-	declared	9be1fcd1cf5e555e47885478b580441d457149b8048e727feee4c9
 OI-160	active	NOW	declared	fe2e0eaedc12fbeb35c8b2b6ead91b25216a3a2e2aeb85a48a491bd27e787031	PROMOTED 2026-10-28 by the director, owner the close-items session — classification only, never deletion. See [RECORD-20
 OI-161	retired	-	declared	913cace9e6bdf56cf4faa2cde151673b5a8d549092f6cfe78770c36732adb117	RETIRED 2026-10-28 by its owner, the close-items session — both hold comments now state the discharge (P2 at 2e8c214a, A
 OI-152	retired	-	declared	001d9ad6cf2e4b6941b91ef73d2d5b3e0d037fb61d4aa4fad6c84407da8b8a0b	RETIRED 2026-10-28 — the practice is written in docs/LOCAL_CHECKOUTS_AND_STORAGE.md (#471). See [RECORD-20261028-close-i
-OI-151	active	NOW	migration-carried-forward	f79832d5d1e92142a752a0410a5d356c0ffc8a32eef8e65fef12135b3c0ef003	OPEN
+OI-151	active	NOW	declared	e679af55f54569df48f2574a932ef4e0892631cad277a13185643aa85c40d2a4	PROMOTED 2026-10-28 from the director's standing list (fourth and last), owner the close-items session. See [RECORD-2026
 OI-150	retired	-	declared	314c3e77306e3a9cfedc6e87ee53c39fc88f327ab0b5e235779463d4832db91e	RETIRED 2026-10-28 by the close-items session — the prose classifier was deleted at 4e296f06a; routing reads the declare
 OI-149	retired	-	migration-carried-forward	d94c61d5e71df2f309e8dae79c14eedccbcdb73b9368ade67418db98379c58de	FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert
 OI-147	retired	-	migration-carried-forward	087ed39c939011bd21f97a0705a67cfe6ab89edcebd3799471fb5ea2d7e6949e	COMPLETE 2026-08-21. The seven configuration keys landed at aa989794, the eighth (hDiagCombinedOld, via the raw diagonal
@@ -138,6 +138,6 @@ OI-135	deferred	-	declared	1b28ec7cd9bc00538df308cbdc36465932a8ac1bae95639505130
 OI-136	deferred	-	declared	efe8c263bd1d710806dcf194fd80e0c349330f05a23a816af5d67beb0020dc69	DEFERRED 2026-10-28 by the close-items session on the director's ruling, until the next re-issue of the bindings that pi
 OI-137	active	WAITING-JOSEPH	declared	c558f18e801c8050e18a97755c42f4b9925f41ce2ff51669d4989f16d6ad4c4d	OWNER THE DIRECTOR 2026-10-28, HELD until a session holds the "scalar-5D adoption/statistics owner" role that Ruling 7 (
 OI-138	active	NOW	migration-carried-forward	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
-OI-139	active	NOW	declared	221d46a65c301abd75c008f1cc3cdc184ef1403e851ecc14d10072d8f08249e4	PROMOTED 2026-10-28 from the director's standing list, owner the close-items session. See [RECORD-20261028-close-items-l
+OI-139	retired	-	declared	4197a8638d84679ff7206771688329189c6bfa36ea0a8583a2471c2b816b0d54	RETIRED 2026-10-28 by its owner, the close-items session, on the director's ruling — all 14 active-named receipts measur
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30
 OI-189	retired	-	migration-carried-forward	5ef9e418bb5a2190b63dd09cd24c4bd4f65c480a17c19047bd4e2a288dcb622c	REPAIRED 2026-09-20 via RULING-20260908 exit (2) — fix the gate. Joseph ruled in session that the guard is over-strict h

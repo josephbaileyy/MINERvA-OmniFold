@@ -10,7 +10,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-188 | NOW | migration-carried-forward | OPEN |
 | OI-182 | NOW | migration-carried-forward | OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions |
 | OI-174 | NOW | migration-carried-forward | OPEN |
-| OI-151 | NOW | migration-carried-forward | OPEN |
 | OI-148 | NOW | migration-carried-forward | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
 | OI-142 | NOW | migration-carried-forward | SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |

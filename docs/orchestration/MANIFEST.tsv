@@ -447,6 +447,7 @@ docs/orchestration/RECORD-20261028-close-items-fourth-batch.md	tracked	ARCHIVAL	
 docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-live-state-option-b.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-oi139-state-names.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi161-hold-comments.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-revert-oi59-oi137.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-third-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
@@ -7078,6 +7079,7 @@ docs/orchestration/state/wclosure-5d-20261012/wclos-N.oi136-inventory.jsonl	trac
 docs/orchestration/state/wclosure-5d-20261012/wclos-score.oi136-inventory.jsonl	tracked	MACHINE	state-artifact	wclosure-5d-20261012		generated		exact-path-only	yes
 docs/orchestration/state/wclosure-5d-20261012/wclos5d_59719296.err.txt	tracked	MACHINE	state-artifact	wclosure-5d-20261012		generated		exact-path-only	yes
 docs/orchestration/state/wclosure-5d-20261012/wclos5d_59719296.out.txt	tracked	MACHINE	state-artifact	wclosure-5d-20261012		generated		exact-path-only	yes
+docs/orchestration/state_receipt_names.py	tracked	MACHINE	script			generated		exact-path-only	no
 docs/orchestration/test_agent_session_notify.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_agentctl.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_campaignctl.py	tracked	MACHINE	test-script			generated		exact-path-only	no
