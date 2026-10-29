@@ -1027,6 +1027,7 @@ docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open
 docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	LIVE	open	""
 docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	LIVE	open	""
 docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-tolerance-20261029/DECLARATION.md	LIVE	open	""
 docs/orchestration/state/probe-z-consumer-inversion-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-projected-stability-20260910.py	MACHINE	open	
