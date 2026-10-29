@@ -63,6 +63,26 @@ PR #48 made 18 test files remove their temp directories. Two known leaks remain,
 per-process tool directories). Still run suites with `TMPDIR` set to a dated scratch directory, and delete that
 directory once the run's logs are copied out.
 
+## Working beside other sessions: what a clean status does not prove
+
+Several sessions edit the shared checkout at once (`CONVENTION-lane-worktrees.md` covers worktrees
+and row ownership). On 2026-08-21 two lanes lost a repair while both believed it had landed (`OI-152`).
+Three habits caused it, and each looks safe on its own:
+
+1. **A copied file carries another session's uncommitted edits.** Copying a shared file from the
+   primary checkout into your own worktree takes everything in it, including a peer's in-flight
+   edit. Make your edit inside your worktree, starting from the committed file
+   (`git show origin/main:<path>`). Never copy the working-tree file.
+2. **A pathspec bounds files, not authorship.** `git commit -- <path>` commits the whole file at that
+   path, including someone else's edit inside it. Your own edit also hides theirs from `git status`,
+   which reports the file and not the hunk. Before committing a shared file, read
+   `git diff --cached -- <path>` hunk by hunk and confirm every changed row is one you wrote.
+3. **An empty `git status` after HEAD moves proves nothing.** If another session moved the checkout to
+   its own HEAD, your uncommitted change is gone and there is nothing left to differ. A landed change
+   and a lost one show the same clean status. To tell them apart, read the content at the commit:
+   `git show <sha>:<path>`, or `git log -S '<your text>' -- <path>`. A diff against a HEAD that has
+   moved does not tell you.
+
 ## Local cleanup records
 
 ### 2026-10-07 batch 1 — state: EXECUTED 2026-10-07T23:35Z

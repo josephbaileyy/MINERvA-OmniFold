@@ -197,6 +197,7 @@ docs/orchestration/DECISION-20261028-joseph-protections-n4-release-retrospective
 docs/orchestration/DECISION-20261028-joseph-protections-remade-and-r21.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/DECISION-20261028-joseph-r19-variant-b-and-moves.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/DECISION-20261028-joseph-result-table-and-deposit-package.md	tracked	LIVE	document		20261028	open		route-only	no
+docs/orchestration/DECISION-20261029-joseph-retention-archive-a1.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md	tracked	LIVE	document		20261006	open		route-only	no
@@ -442,6 +443,7 @@ docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	tracked	
 docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-director-rulings.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	tracked	LIVE	document		20261006	open		route-only	no
@@ -6965,6 +6967,7 @@ docs/orchestration/test_fixtures_watch_report/train_57256638_0.err.txt	tracked	A
 docs/orchestration/test_fixtures_watch_report/train_57256638_0.out.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
 docs/orchestration/test_generate_live_state.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_carry_forward.py	tracked	MACHINE	test-script			generated		exact-path-only	no
+docs/orchestration/test_generate_live_state_freshness.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_routes.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_loader_ordering_reco_before_truth_weight.py	tracked	MACHINE	test-script			generated		exact-path-only	no
