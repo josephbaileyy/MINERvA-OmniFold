@@ -67,7 +67,8 @@ def mat_gates(C, tag):
     r["min_over_max_eig"] = float(ev[0] / max(1e-300, abs(ev[-1])))
     r["psd"] = bool(ev[0] >= -1e-12 * abs(ev[-1]))
     d = np.diag(C)
-    r["diag_finite_nonneg"] = bool(np.all(np.isfinite(d)) and np.all(d >= -1e-30))
+    # OI-12: relative, in line 68's units. This read `d >= -1e-30`, ~49 orders above a ~1e-79 diagonal.
+    r["diag_finite_nonneg"] = bool(np.all(np.isfinite(d)) and np.all(d >= -1e-12 * abs(ev[-1])))
     r["sqrt_trace"] = float(np.sqrt(np.clip(np.trace(Cs), 0, None)))
     # The matrix is defined on the reported cells, so its dimension IS the reported count.
     # sum(d > 0) undercounts: a reported cell with zero ensemble variance has d == 0.

@@ -6,10 +6,11 @@ and BEN-071: read a validator's checks against each other before reading any aga
 times in two days a guard was written in different units from its neighbours, twice with the correct
 scale two lines away.
 
-The auditor's power control is REAL rather than synthetic -- `p4_validate_active_lateral_fps.mat_gates`
-mixes units in the current tree -- so these tests pin both directions:
-  * the control must be found (a silent classifier reports a clean repo, which is the defect class the
-    tool exists to find);
+The auditor's power control is a real instance: `p4_validate_active_lateral_fps.mat_gates` as it stood before
+OI-12 repaired it, frozen verbatim under `tests/fixtures/units_auditor_control/`. These tests pin both directions:
+  * the control must be found, and a tree without it must be refused (a silent classifier reports a clean
+    repo, which is the defect class the tool exists to find);
+  * the repaired `mat_gates` must not be flagged again;
   * and the classifier must get ABSOLUTE / RELATIVE / FLOOR right on constructed cases, because the
     whole table's value rests on that call being defensible rather than plausible.
 
@@ -82,9 +83,40 @@ class MixedUnitsAuditor(unittest.TestCase):
         self.assertIn("FOUND", r.stdout)
         self.assertNotIn("NOT FOUND", r.stdout)
 
+    def test_a_tree_without_the_frozen_control_is_refused_and_with_it_passes(self):
+        """Both directions, on a constructed tree that clears the file floor."""
+        import shutil
+        import tempfile
+        root = tempfile.mkdtemp(prefix="units-aud-")
+        try:
+            for i in range(200):
+                with open(os.path.join(root, f"m{i}.py"), "w") as f:
+                    f.write("def f(x):\n    return x\n")
+            cmd = [sys.executable, AUD, "--root", root]
+            r = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO)
+            self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+            self.assertIn("NOT FOUND", r.stdout)
+            dst = os.path.join(root, self.m.KNOWN_LIVE[0])
+            os.makedirs(os.path.dirname(dst))
+            shutil.copy(os.path.join(REPO, self.m.KNOWN_LIVE[0]), dst)
+            r = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertNotIn("NOT FOUND", r.stdout)
+        finally:
+            shutil.rmtree(root)
+
+    def test_the_repaired_mat_gates_is_not_flagged(self):
+        """OI-12 reintroduction guard: the live function no longer mixes units."""
+        rel = os.path.join("nd-unfolding", "p4_validate_active_lateral_fps.py")
+        hits = self.m.sweep_file(os.path.join(REPO, rel), rel)
+        self.assertEqual([h["func"] for h in hits if h["func"] == "mat_gates"], [], hits)
+
     def test_sweep_refuses_a_root_with_no_code(self):
-        r = subprocess.run([sys.executable, AUD, "--root", os.path.dirname(AUD)],
-                           capture_output=True, text=True, cwd=REPO)
+        """An empty directory. This used `docs/orchestration`, which now holds over 200 `.py` files."""
+        import tempfile
+        with tempfile.TemporaryDirectory(prefix="units-aud-empty-") as root:
+            r = subprocess.run([sys.executable, AUD, "--root", root],
+                               capture_output=True, text=True, cwd=REPO)
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("visited only", r.stdout + r.stderr)
 
