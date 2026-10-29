@@ -3,6 +3,10 @@
 # Run it in a clean worktree of its own; it works on a detached HEAD and pushes HEAD:<branch>.
 set -u
 W=$1; B=$2
+# The hook's receipt-author check (OI-45) reads `git var GIT_AUTHOR_IDENT`; the hook runs outside `git commit` here,
+# so -c user.name on the commit line cannot reach it. Export the lane identity for every step.
+export GIT_AUTHOR_NAME="paper-tighten lane (Claude)" GIT_AUTHOR_EMAIL="paper-tighten@minerva-omnifold.invalid"
+export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME" GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 cd "$W" || exit 3
 # Detached, not a named temp branch: a branch name shared by several worktrees moves under the others (2026-10-28).
 git fetch -q origin "$B" && git fetch -q origin && git checkout -q --detach "origin/$B" || exit 3
