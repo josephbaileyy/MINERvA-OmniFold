@@ -8,12 +8,8 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-188 | NOW | migration-carried-forward | OPEN |
-| OI-183 | NOW | migration-carried-forward | OPEN |
 | OI-182 | NOW | migration-carried-forward | OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions |
-| OI-173 | NOW | migration-carried-forward | RE-ISSUED 2026-09-02 BY JOSEPH — THE REFERENT IS THE STAMPED CANDIDATE. He ruled in his own turn: "okay do c", where (c) |
 | OI-174 | NOW | migration-carried-forward | OPEN |
-| OI-162 | NOW | migration-carried-forward | OPEN |
-| OI-161 | NOW | migration-carried-forward | OPEN |
 | OI-151 | NOW | migration-carried-forward | OPEN |
 | OI-148 | NOW | migration-carried-forward | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
 | OI-142 | NOW | migration-carried-forward | SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi |
@@ -24,7 +20,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-4 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
-| OI-11 | NOW | migration-carried-forward | OPEN |
 | OI-12 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-14 | NOW | migration-carried-forward | OPEN |
@@ -48,14 +43,11 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-39 | NOW | migration-carried-forward | OPEN |
 | OI-40 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-42 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-43 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER (named action DONE 2026-08-12) |
-| OI-44 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-45 | NOW | migration-carried-forward | OPEN |
 | OI-47 | NOW | migration-carried-forward | OPEN (re-scoped 2026-08-12, owner Session A) |
-| OI-49 | NOW | migration-carried-forward | OPEN |
-| OI-50 | NOW | migration-carried-forward | NARROWED 2026-08-18 — one of the two archives is now ANSWERED, the other is not. mnv-p3f-pet-fullevent-final's 240 objec |
+| OI-50 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the |
 | OI-51 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-52 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
+| OI-52 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the premise is false (lanes read Iris; state/measurement-scoping/iris |
 | OI-53 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-54 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-57 | NOW | migration-carried-forward | CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked |
@@ -71,7 +63,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-121 | NOW | migration-carried-forward | AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT |
 | OI-132 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON |
 | OI-133 | NOW | migration-carried-forward | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
-| OI-135 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
 | OI-137 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph per Ruling 7 (DECISION-20260822-joseph-b1-lift-and-clause-c.md:186-200), W |
 | OI-138 | NOW | migration-carried-forward | OPEN |
 | OI-139 | NOW | migration-carried-forward | OPEN |
