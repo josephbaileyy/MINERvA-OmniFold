@@ -1,0 +1,16 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER claims that the bias tests, fake-data study, and flux-correlation dependence "are shown to be negligible", contradicting BEFORE which reports that the uncertainty does not cover the bias at GiBUU-like truths and that flux correlations significantly impact the generator $\chi^2$.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER broadens the scope to claim findings hold "and of multidimensional OmniFold in general", directly contradicting BEFORE which explicitly limits findings to one implementation "rather than of multidimensional OmniFold in general".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds the claim that "[t]hey exclude the generators", which is unsupported by BEFORE and contradicts the established finding that these tests are not physical exclusions of the generators.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the study "shows the estimator to be unbiased", directly contradicting BEFORE's statement that the reported uncertainty fails to cover fake-data bias at GiBUU-like truths.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER describes the package as "deposited", falsely stating that deposit has occurred when BEFORE explicitly qualifies it as "not yet deposited".
+
+END

@@ -175,6 +175,56 @@ Paths are relative to the worktree root. `F = docs/orchestration/state/2d-closeo
 - the voided duplicate-pool sol2 outputs of round 1, never read;
 - build logs.
 
+## 5a. Before every push: the CI-only record checks, step by step
+
+The pre-commit hook does not run all of `.github/workflows/record-checks.yml`. In note round n4,
+`check_note_records.py probe` failed only in CI, on six `records-move-ledger.md` probes that read text the round had
+changed. So run every step of that workflow locally, from the worktree root, on the committed head:
+
+```
+export BASE=origin/main            # what CI resolves for a pull request (not the merge base)
+git fetch -q origin
+python3 docs/orchestration/generate_manifest.py --check --at-sha HEAD
+python3 docs/orchestration/verify_hash_bindings.py
+python3 tools/registry/check_registry.py
+python3 tools/registry/results_index.py --check --base "$BASE"
+python3 tools/registry/absence_claims.py --base "$BASE"
+python3 tools/registry/check_registry.py --self-test
+python3 tools/registry/results_index.py --self-test
+python3 tools/registry/absence_claims.py --self-test
+python3 docs/orchestration/findings_row_lint.py --longform
+python3 docs/orchestration/whose_row.py --check-ledger-ids
+python3 docs/orchestration/whose_row.py --check-owners
+python3 docs/orchestration/whose_row.py --self-test
+python3 docs/orchestration/whose_row.py --check-oi-ids
+python3 docs/orchestration/verify_receipt_artifacts.py
+python3 docs/orchestration/live_doc_indexed.py --check
+python3 docs/orchestration/live_doc_indexed.py --self-test
+python3 docs/orchestration/live_doc_indexed.py --unrowed
+python3 docs/orchestration/control_plane_lint.py
+python3 docs/orchestration/control_plane_lint.py --self-test
+python3 docs/orchestration/generate_manifest.py --self-test
+python3 nd-unfolding/tests/test_object_identity_checks.py
+python3 tools/registry/test_registry.py
+python3 -m pytest -q -p no:cacheprovider docs/analysis-note/test_check_sec4_receipts.py
+python3 docs/analysis-note/check_note_records.py --self-test docs/analysis-note/records-inventory-base.json docs/analysis-note
+python3 docs/analysis-note/check_note_records.py probe docs/analysis-note/records-inventory-base.json docs/analysis-note
+python3 docs/analysis-note/check_note_records.py --self-test-pin
+python3 docs/analysis-note/reflow_tex.py --note --check
+python3 docs/analysis-note/check_note_records.py entry-numbers --check docs/analysis-note
+python3 docs/analysis-note/check_note_records.py --self-test-entry-numbers
+python3 docs/analysis-note/make_values_fived16.py --self-test
+python3 docs/analysis-note/make_values_fived16.py --check
+python3 docs/analysis-note/check_note_records.py pin docs/analysis-note
+git status --short                 # CI's last step: the checks must leave the checkout clean
+```
+
+- **Read each exit code, not the last line.** A pipe through `tail` hides a failure.
+- **Set `BASE` before the loop.** An empty `BASE` fails `results_index` and `absence_claims` for no real reason.
+- **When a round edits text that `records-move-ledger.md` probes** (the executive summary, the introduction's
+  roadmap, the release appendix), update the probe in place and name the round in its row, as n4 did for L9b, L11,
+  L16, L-bhi6, L-thin-C55 and L-thin-C56.
+
 ## 6. Pitfalls met, one line each
 
 - **Comment-swallowing edits:** an edit can push printed text into, or out of, a `%` comment. A cut that keeps "comment lines only" can orphan source notes. Check with `register-method/tools/swallowed_text.py`, and diff the printed text.

@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: The specific quantitative results and limitations removed from the introductory summary are printed at their primary locations in Secs.~\ref{sec:fd16} and~\ref{sec:gen16}, and AFTER accurately points to where they are given without adding unsupported claims or introducing ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: The detailed limitations removed from the Scope paragraph are printed at their designated home in Sec.~\ref{sec:limitations}, to which AFTER explicitly directs the reader.
+
+Q3: VERDICT: SAME
+DETAIL: The additions to the Limitations subsection accurately reflect the low-stability cell disclosure established in the decision and the generator non-exclusion qualification relocated from Scope, stating neither more strongly nor ambiguously.
+
+Q4: VERDICT: SAME
+DETAIL: The removed statements detailing the definition of $C_{\mathrm{model}}$ and the uncovered bias at GiBUU-like truths are printed in CONTEXT, and the retained sentence correctly references the fake-data tests in Sec.~\ref{sec:fd16}.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the critical capability that the candidate release package "recomputes every $p$ value, decision, robustness result, and power figure of the joint tests", leaving the package described only as regenerating figures and misleadingly implying that all numerical computations require the archived products.
+
+END

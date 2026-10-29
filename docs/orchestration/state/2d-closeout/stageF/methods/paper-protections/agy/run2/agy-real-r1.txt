@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER drops the specific numerical results of the bias tests and flux sensitivity because their primary home is in the context (Table~\ref{tab:fd16} and Sec.~\ref{sec:gen16}), accurately directing readers to those sections without broadening claims or introducing ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER shortens the Scope paragraph by replacing duplicate discussions of central values, uncertainty coverage, and generator test caveats with a pointer to Sec.~\ref{sec:limitations}, where each limitation is fully documented.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER consolidates the limitations by incorporating the generator test caveat from Scope and disclosing the low-stability cells per the documented decision, stating nothing more strongly or broadly than what is supported by the context.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER removes duplicate descriptions of $C_{\mathrm{model}}$ and the GiBUU bias coverage that print in their context home in Sec.~\ref{sec:fd16}, retaining an accurate pointer without altering meaning or misleading the reader.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops "It recomputes every $p$ value, decision, robustness result, and power figure of the joint tests", which omits a key capability of the release package and leaves "The other quoted numbers" without an antecedent, misleadingly implying that all quoted numbers require the archived analysis products.
+
+END

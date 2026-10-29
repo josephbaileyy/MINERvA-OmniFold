@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER condenses the specific bias findings and flux-correlation sensitivity numbers into a concise cross-reference to Secs.~\ref{sec:fd16} and~\ref{sec:gen16}, where those facts are fully printed in the context without altering meaning or introducing ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER shortens the Scope paragraph by replacing duplicate recitations of coverage limitations and generator exclusions with a direct reference to Sec.~\ref{sec:limitations}, where those limitations remain fully printed.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds claims and numbers not found in or supported by BEFORE, specifically stating that "Four of the sixteen cells, \fvval{h2-lowstab-cells}, have a stability of \fvval{h2-lowstab-min}--\fvval{h2-lowstab-max}: of the simulated signal events generated in such a cell and reconstructed, only that fraction is reconstructed in the same cell." It also adds from outside BEFORE that the tests "are not physical exclusions of the generators, and they show no evidence of additional discrimination beyond matched coarse projections."
+
+Q4: VERDICT: SAME
+DETAIL: The omitted descriptions concerning the unscaled model covariance term and the undercoverage at GiBUU-like truths are already printed in the context, and the retained sentence makes no unsupported or misleading claims.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops a prerequisite and limitation not printed in the context, omitting that "The other quoted numbers, except the multiplier scan, and the event-level processing require the archived analysis products, the open-data AnaTuples, and the generator samples produced for this analysis".
+
+END

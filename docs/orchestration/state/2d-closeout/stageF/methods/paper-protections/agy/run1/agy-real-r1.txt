@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER removes duplicate details of the bias tests, fake-data tests, and flux correlation sensitivity that are fully printed in CONTEXT, keeping only an accurate cross-reference without adding or strengthening any claim.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER condenses the Scope paragraph by replacing duplicate recitations of limitations with a direct reference to Sec.~\ref{sec:limitations}, where CONTEXT prints all of the omitted qualifiers in full.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER introduces a new quantitative limitation ("Four of the sixteen cells, \fvval{h2-lowstab-cells}, have a stability of \fvval{h2-lowstab-min}--\fvval{h2-lowstab-max}: of the simulated signal events generated in such a cell and reconstructed, only that fraction is reconstructed in the same cell") that is neither stated in BEFORE nor present in CONTEXT.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER drops statements defining the covariance model term and its non-coverage at GiBUU-like truths that are printed verbatim in CONTEXT, retaining only an unembellished reference to the fake-data bias tests.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the requirement that "The other quoted numbers, except the multiplier scan, and the event-level processing require the archived analysis products, the open-data AnaTuples, and the generator samples produced for this analysis", a fact not printed in CONTEXT, and misleadingly restricts \napp{app:release} to stating what "it" (the 16 MB package alone) reproduces rather than each part of the release.
+
+END
