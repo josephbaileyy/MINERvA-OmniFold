@@ -8,9 +8,9 @@
         "counts": "FAILED=1",
         "errors": "0"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527866": {
       "value": {
@@ -18,9 +18,9 @@
         "counts": "COMPLETED=100",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527869": {
       "value": {
@@ -28,9 +28,9 @@
         "counts": "COMPLETED=24",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527870": {
       "value": {
@@ -38,9 +38,9 @@
         "counts": "COMPLETED=19",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527872": {
       "value": {
@@ -48,9 +48,9 @@
         "counts": "COMPLETED=40",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527873": {
       "value": {
@@ -58,9 +58,9 @@
         "counts": "COMPLETED=21",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527874": {
       "value": {
@@ -68,9 +68,9 @@
         "counts": "COMPLETED=169",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "compute:57527875": {
       "value": {
@@ -78,9 +78,9 @@
         "counts": "COMPLETED=1",
         "errors": "none"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "usage:codex-personal": {
       "value": "98.0% weekly remaining; reset 2026-09-27T06:19:57+00:00; Full resets 0 available/0 protected",
@@ -89,10 +89,10 @@
       "git_head": "7257b255"
     },
     "usage:codex-school": {
-      "value": "0.0% weekly remaining; reset 2026-09-23T22:24:14+00:00; Full resets 0 available/0 protected",
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "value": "88.0% weekly remaining; reset 2026-11-02T17:59:27+00:00; Full resets 0 available/0 protected",
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "usage:gate": {
       "value": {
@@ -114,13 +114,13 @@
     },
     "waker:last-tick": {
       "value": {
-        "at_utc": "2026-09-09T14:35:16+00:00",
-        "node": "login40",
+        "at_utc": "never",
+        "node": "unknown",
         "verdict": "loud"
       },
-      "host": "login27",
-      "at_utc": "2026-09-21T05:24:49Z",
-      "git_head": "7257b255"
+      "host": "login28",
+      "at_utc": "2026-10-29T02:19:39Z",
+      "git_head": "fb4cd395"
     },
     "waker:watches": {
       "value": {

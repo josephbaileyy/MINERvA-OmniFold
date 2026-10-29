@@ -6964,6 +6964,7 @@ docs/orchestration/test_fixtures_watch_report/train_57256638_0.err.txt	tracked	A
 docs/orchestration/test_fixtures_watch_report/train_57256638_0.out.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
 docs/orchestration/test_generate_live_state.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_carry_forward.py	tracked	MACHINE	test-script			generated		exact-path-only	no
+docs/orchestration/test_generate_live_state_freshness.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_routes.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_generate_live_state_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_loader_ordering_reco_before_truth_weight.py	tracked	MACHINE	test-script			generated		exact-path-only	no
