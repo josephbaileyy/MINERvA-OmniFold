@@ -8,7 +8,7 @@ OI-6	OI-6	active	NOW	promoted	paper_rewrite	publication	P2	docs/analysis-note/ap
 OI-7	OI-7	active	BLOCKED-EXTERNAL	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-7`)	sha256:25841aa387d77ad7936293de67fd2b37f1070e991a2afd547434d3ee5673f0a1
 OI-8	OI-8	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-8`)	sha256:353a094583ed5dd086c7f735694ba0368dde76b7677807554d6a2ed4c02b37e2
 OI-9	OI-9	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-9`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
-OI-10	OI-10	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-10`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
+OI-10	OI-10	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md#oi-10	-	docs/OPEN_ITEMS.md (`OI-10`)	-
 OI-11	OI-11	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-11`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-12	OI-12	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-12`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-13	OI-13	active	WAITING-JOSEPH	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-13`)	sha256:4db9b7ca4d7efb4cc1f6bebb998a1752984d1ba8b1065394f69759b15b1c74a7
@@ -62,9 +62,9 @@ OI-60	OI-60	active	BLOCKED-EXTERNAL	backlog	unassigned	-	-	-	-	migration-carried
 OI-61	OI-61	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-61`)	sha256:a44438e85dff56eacc328abf51217aaece09c4ed7595a855ac5a0a64f5e8c50a
 OI-62	OI-62	active	WAITING-JOSEPH	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-62`)	sha256:9989eec846b8ff9dbbbdf7d8c67d8a9552eb81c9660557efc7948b6e87c18320
 OI-63	OI-63	deferred	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-63`)	sha256:4b70740ffa74f842002f42b3639ca79bc6a16baf787603e7bac27611f4ea6e78
-OI-64#1	OI-64#1	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-64#1`)	sha256:a025a14aea0f28a6ae4796bb1575693baec07044c970dcdda495f8e62cfca435
+OI-64#1	OI-64#1	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md#oi-641	-	docs/OPEN_ITEMS.md (`OI-64#1`)	-
 OI-64#2	OI-64#2	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-64#2`)	sha256:745f9aeb9622be3b78014c7d113c332fa4c9c29c3686a522fc9892eb0144d00d
-OI-65#1	OI-65#1	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-65#1`)	sha256:fecc5617ccb55feeea71a1c3fb6160c20a2424275cf921d589ccff6bbb5e9216
+OI-65#1	OI-65#1	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md#oi-651	-	docs/OPEN_ITEMS.md (`OI-65#1`)	-
 OI-65#2	OI-65#2	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-65#2`)	sha256:3bf6d929253e7f3faa5c5b32d91cced46c474be21cafbde1d54a0b7b11548d54
 OI-70	OI-70	retired	-	-	lane_c	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md#oi-70--retired	-	docs/OPEN_ITEMS.md (`OI-70`)	-
 OI-71	OI-71	active	WAITING-JOSEPH	promoted	joseph	publication	P1	migration-carried-forward	Decide whether recovery evidence may be quoted without a measurement at the promoted configuration.	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-71`)	sha256:d3d98522c1b93ddba9054af7ea131e8b46a4b266a71af2e9db960cae97e55ac1
@@ -129,7 +129,7 @@ OI-176	OI-176	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OP
 OI-177	OI-177	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-177`)	sha256:a362ef22bb750289e549b9693d4688cd804661c954301f89d52f3164c92c3424
 OI-178	OI-178	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-178`)	sha256:c25460eacee259fccdcc6ea432710c14aacebf401553b77451d2765626558e55
 OI-179	OI-179	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-179`)	sha256:b60e4073d7806d4db240dab91869f3caea321d1418da87c0bd64493145c5a8e7
-OI-180	OI-180	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-180`)	sha256:f49d21b22d93f36a707eb91c196cb06c4bf624dd814d122c0dec9cd615c3f39e
+OI-180	OI-180	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md#oi-180	-	docs/OPEN_ITEMS.md (`OI-180`)	-
 OI-181	OI-181	retired	-	-	unassigned	-	-	-	-	docs/orchestration/RECORD-20261028-close-items-director-rulings.md#oi-181--retired-instead-of-promoted	-	docs/OPEN_ITEMS.md (`OI-181`)	-
 OI-182	OI-182	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-182`)	sha256:c3b57cb4c660609908e02ec6842931a749585d59b598ed7a039c64c7b55668a5
 OI-183	OI-183	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-183`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
