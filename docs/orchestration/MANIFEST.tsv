@@ -197,6 +197,7 @@ docs/orchestration/DECISION-20261028-joseph-protections-n4-release-retrospective
 docs/orchestration/DECISION-20261028-joseph-protections-remade-and-r21.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/DECISION-20261028-joseph-r19-variant-b-and-moves.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/DECISION-20261028-joseph-result-table-and-deposit-package.md	tracked	LIVE	document		20261028	open		route-only	no
+docs/orchestration/DECISION-20261029-joseph-oi160-reproduction-and-q8.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-20261029-joseph-retention-archive-a1.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
@@ -307,7 +308,7 @@ docs/orchestration/INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md	track
 docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	document	z-two-member-campaign	20260920	open		route-only	no
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	no
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only	no
-docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	no
+docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260922-pet-improvement-campaign		generated		exact-path-only	no
 docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	no
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only	no
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	no
@@ -443,12 +444,16 @@ docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.
 docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	tracked	LIVE	document		20261006	open		route-only	no
 docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-director-rulings.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-fourth-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-live-state-option-b.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-oi139-state-names.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi161-hold-comments.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-overrides-sorted.md	tracked	ARCHIVAL	document	20260919-cause3-two-member-campaign	20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-revert-oi59-oi137.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-third-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261029-close-items-oi45-oi151.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
@@ -626,6 +631,7 @@ docs/orchestration/probes/probe-20260923-citation-resolution.py	tracked	MACHINE	
 docs/orchestration/probes/probe-20260923-no-unowned-open-issue.py	tracked	MACHINE	script		20260923	generated		exact-path-only	no
 docs/orchestration/profiles.json	tracked	MACHINE	machine-data			generated		exact-path-only	no
 docs/orchestration/r5_meter.py	tracked	MACHINE	script			generated		exact-path-only	no
+docs/orchestration/receipt_author.py	tracked	MACHINE	script			generated		exact-path-only	no
 docs/orchestration/receipts/2d-c04-adopt-20261012/RUN.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only	yes
 docs/orchestration/receipts/2d-c04-adopt-20261012/make_fig1_vl175.py	tracked	MACHINE	script			generated		exact-path-only	no
 docs/orchestration/receipts/2d-lgbm42-20261011/RECEIPT-2d-agreement-windows-lgbm42-20261011.json	tracked	MACHINE	machine-data		20261011	generated		exact-path-only	no
@@ -1430,6 +1436,7 @@ docs/orchestration/state/2d-closeout/stageF/PLAIN-LANGUAGE.md	tracked	LIVE	state
 docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/HANDOFF.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/tools/ci_merge.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/tools/merge_main.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/tools/union_overrides.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/f4-verify/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/f4-verify/SHA256SUMS.pscratch.cfs	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/f4-verify/extra.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -3717,6 +3724,7 @@ docs/orchestration/state/laned-cstat-crosscheck/LANED_CSTAT_CROSSCHECK.npz	track
 docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-INPUTS.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-PRESERVE-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
@@ -7100,6 +7108,7 @@ docs/orchestration/state/wclosure-5d-20261012/wclos-N.oi136-inventory.jsonl	trac
 docs/orchestration/state/wclosure-5d-20261012/wclos-score.oi136-inventory.jsonl	tracked	MACHINE	state-artifact	wclosure-5d-20261012		generated		exact-path-only	yes
 docs/orchestration/state/wclosure-5d-20261012/wclos5d_59719296.err.txt	tracked	MACHINE	state-artifact	wclosure-5d-20261012		generated		exact-path-only	yes
 docs/orchestration/state/wclosure-5d-20261012/wclos5d_59719296.out.txt	tracked	MACHINE	state-artifact	wclosure-5d-20261012		generated		exact-path-only	yes
+docs/orchestration/state_receipt_names.py	tracked	MACHINE	script			generated		exact-path-only	no
 docs/orchestration/test_agent_session_notify.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_agentctl.py	tracked	MACHINE	test-script			generated		exact-path-only	no
 docs/orchestration/test_campaignctl.py	tracked	MACHINE	test-script			generated		exact-path-only	no

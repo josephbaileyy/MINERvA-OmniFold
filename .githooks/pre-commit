@@ -278,6 +278,15 @@ run "LIVE-index self-test"         python3 docs/orchestration/live_doc_indexed.p
 # at line 11 because the backlog was driven to 0 (106 -> 0, 1fc23944) before this was switched on, and
 # a row saying ARCHIVAL is always available to the committer. Reads the index, like --check.
 run "every doc has an overrides row" python3 docs/orchestration/live_doc_indexed.py --unrowed
+# ADDED 2026-10-28 (OI-139). A state/*.json this commit ADDS and names with active/live/armed must carry
+# recorded_at_utc; existing files are never judged. Self-test fires and stays silent in both directions.
+run "state receipt names carry time" python3 docs/orchestration/state_receipt_names.py --check
+# ADDED 2026-10-28 (OI-45). A commit that ADDS a state/*.json must not be authored as the shared default
+# identity; the refusal prints the exact -c user.name fix, so a committer who did nothing wrong can always
+# pass. HOOK ONLY, deliberately not in CI: CI cannot change who authored an existing commit.
+run "receipt author is a lane"       python3 docs/orchestration/receipt_author.py --check
+run "receipt-author self-test"       python3 docs/orchestration/receipt_author.py --self-test
+run "state-receipt-names self-test" python3 docs/orchestration/state_receipt_names.py --self-test
 run "bounded control plane"        python3 docs/orchestration/control_plane_lint.py
 run "control-plane self-test"      python3 docs/orchestration/control_plane_lint.py --self-test
 run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.py --self-test
