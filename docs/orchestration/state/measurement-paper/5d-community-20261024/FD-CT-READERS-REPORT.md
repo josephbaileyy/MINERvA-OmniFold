@@ -208,8 +208,9 @@ No `fd_ct_period.json` exists. As binding §3 condition 3 requires, nothing was 
   LEAK_REL = 10⁻¹³ but not exactly.** The tool dropped a central X_sup only where the outside share was exactly 0, as
   it is in the other fifteen cells. So R09's f/X_sup ≈ 1 entered the guard's table, and every "1" in a string matched
   it. This is a false refusal: no written number carried f or an absolute value.
-- The diagnostic also printed the cells whose central X_sup equals f exactly: every cell but R09. That is the
-  |X_sup/f − 1| = 0 case of the condition the ruling named, one list more than it enumerated.
+- **Disclosure:** the diagnostic also printed the cells masked because their central X_sup equals f exactly (outside
+  share 0): R00–R08 and R10–R15. That is the |X_sup/f − 1| = 0 case of the condition the ruling named, but it is one
+  list more than the ruling enumerated. The director accepted it as the zero case of the authorized condition.
 
 **The repair** is amendment 1 (`FD-CT-READERS-AMENDMENT-1.md`, its own PR). It drops a central X_sup wherever
 |X_sup/f − 1| < LEAK_REL, with tests in both directions and a mutation round. It runs nothing until the director
