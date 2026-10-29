@@ -51,8 +51,9 @@ def truth_side_problems(resp: dict, pseudo: dict) -> list[str]:
     if len(resp["edges"]) != len(pseudo["edges"]) or any(
             not np.array_equal(x, y) for x, y in zip(resp["edges"], pseudo["edges"])):
         bad.append("edges")
-    if np.asarray(resp["MCreco"]).shape != np.asarray(pseudo["MCreco"]).shape:
-        bad.append("MCreco shape")
+    if np.asarray(resp["MCreco"]).shape != np.asarray(pseudo["MCreco"]).shape or \
+            np.asarray(resp["MCreco"]).dtype != np.asarray(pseudo["MCreco"]).dtype:
+        bad.append("MCreco shape or dtype")
     return bad
 
 

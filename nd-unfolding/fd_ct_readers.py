@@ -90,8 +90,19 @@ LABELS = {
               "reported matrix, not in it (LIMITATION-PLAN-ADDENDUM-20261028.md section 5.4)",
     "mismatch": "3b, descriptive response-mismatch closures at the nominal truth, noise-free and signal-only: pseudo-data "
                 "from a shifted lateral dump (MP-1's species at their D1 +-1 sigma, W2b's whole recoil at +-4%), the "
-                "unfolding on the zero dump's response; delta is each closure's bias less the zero-on-zero floor; the "
-                "data half-span is C_resp's (or 3a's) own, from the data unfolds; no relation between the two is assumed",
+                "unfolding on the zero dump's response; delta is each closure's bias less the zero-on-zero floor; h is "
+                "the closure half-span, d the data half-span C_resp is built from (3a's for W2b). Shifting the "
+                "pseudo-data and shifting the response move the result oppositely, so to first order h = -d (an "
+                "expectation from the closure identity, not a test): the readout compares h with -d, and the residual "
+                "h + d is where the two constructions differ",
+    "mismatch_construction": "h and d differ in construction as well as in sign: d's data unfolds carry each variant's "
+                             "shifted background template and shifted fakes, are measured at the data's truth and are "
+                             "relative to f (W2b's d to its own delta = 0 chain); h is signal-only, without fakes, at the "
+                             "MC truth and relative to it. A residual h + d can come from these differences. Cross-talk "
+                             "is built beside C_resp and is not in it",
+    "mismatch_not_citable_for": ["a bias under the true detector response", "a validation of C_resp or of its species "
+                                 "sizes", "anything about response variants outside the tested species and W2b's "
+                                 "scale", "a covariance component or a change to the reported matrix"],
     "mismatch_threshold": "no pass threshold is set (docs/analysis-note/app_response_mismatch.tex:22); Joseph deferred "
                           "the closure's settings on 2026-10-14; the amplitudes are the existing products' own",
     "not_citable_for": ["a coverage or calibration result, or that any chi2 follows or departs from chi2_ndf", "a covariance component or a change "
@@ -565,7 +576,17 @@ def closure_meta_problems(m: dict, variant: str, pins: dict) -> list[str]:
     if len(ep) != 3 or any((e.get("n_estimators"), e.get("num_leaves"), e.get("random_state")) != (100, 8, 42)
                            for e in ep):
         bad.append("estimator parameters")
+    code = m.get("code_sha256") or {}
+    for name, path in closure_code_files().items():
+        if code.get(name) != sa.sha256(path):
+            bad.append(f"code_sha256[{name}] is not this deploy's")
     return bad
+
+
+def closure_code_files() -> dict[str, Path]:
+    """The driver files a closure must have been made by: this deploy's own (L2: a pilot or stale product refuses)."""
+    return {"fd_ct_closure.py": _ND / "fd_ct_closure.py", "pvl_unfold.py": _ND / "pv-ladder/pvl_unfold.py",
+            "pvl_lib.py": _ND / "pv-ladder/pvl_lib.py"}
 
 
 def run_mismatch(a) -> int:
@@ -591,7 +612,7 @@ def run_mismatch(a) -> int:
         digests[v] = sa.sha256(p)
     f0.report("M0", f"{len(pins)} closures, each made by (e) from its declared pseudo dump on the zero response", True)
     T0 = xt["zero"]
-    f0.report("M1", "every closure's truth reference is the same, bitwise",
+    f0.report("M1", "assertion: every closure's truth reference is the same, bitwise",
               all(np.array_equal(xt[v], T0) for v in pins), "differs")
     S = common(a, U)
     f, ff = S["f"], S["ff"]
@@ -615,11 +636,15 @@ def run_mismatch(a) -> int:
 
     def pair(h, d):
         nh, nd = float(np.linalg.norm(h)), float(np.linalg.norm(d))
+        res = h + d
         return {"closure_half_span": h.tolist(), "data_half_span": d.tolist(),
-                "cosine": float(h @ d / (nh * nd)) if nh > 0 and nd > 0 else None,
+                "cosine_closure_vs_minus_data": float(-h @ d / (nh * nd)) if nh > 0 and nd > 0 else None,
                 "norm_ratio_closure_over_data": nh / nd if nd > 0 else None,
                 "closure_half_span_over_sigma_total_resp": (np.abs(h) / sig_m).tolist(),
-                "closure_half_span_quadratic_form": quad(h, M_rel)}
+                "closure_half_span_quadratic_form": quad(h, M_rel),
+                "residual_h_plus_d": res.tolist(),
+                "residual_over_sigma_total_resp": (np.abs(res) / sig_m).tolist(),
+                "residual_quadratic_form": quad(res, M_rel)}
 
     variants = {v: {"delta": delta[v].tolist(), "abs_delta_over_sigma_total_resp": (np.abs(delta[v]) / sig_m).tolist(),
                     "abs_delta_over_sigma_total_resp_summary": summary(np.abs(delta[v]) / sig_m),
@@ -632,9 +657,13 @@ def run_mismatch(a) -> int:
     w2b = pair((delta["w2b_rr1"] - delta["w2b_rr0"]) / 2.0, d_w2b)
     H = sum(np.outer(np.asarray(species[s]["closure_half_span"]), np.asarray(species[s]["closure_half_span"]))
             for s in PRIMARY)
-    out = {"schema": "fd-ct-mismatch/1", "labels": {"what": LABELS["mismatch"], "not_citable_for": LABELS["not_citable_for"],
+    out = {"schema": "fd-ct-mismatch/1", "labels": {"what": LABELS["mismatch"],
+                                                   "construction": LABELS["mismatch_construction"],
+                                                   "not_citable_for": LABELS["mismatch_not_citable_for"],
                                                    "no_threshold": LABELS["mismatch_threshold"]},
-           "controls_passed": ["S", "M0", "M1", "M2"], "cells": cells(),
+           "controls_passed": ["S", "M0", "M1", "M2"],
+           "assertions_passed": {"M1": "the closures' common truth: each xtrue_flat comes from the pinned zero dump, "
+                                       "so it guards the code, not the inputs"}, "cells": cells(),
            "closure_floor_zero_on_zero": b["zero"].tolist(),
            "closure_floor_summary_abs": summary(np.abs(b["zero"])),
            "sigma_rel": {"C_total_resp": sig_m.tolist(), "C_resp": sig_resp.tolist()},
@@ -642,15 +671,21 @@ def run_mismatch(a) -> int:
            "closure_analogue_of_C_resp": {"sigma_rel": np.sqrt(np.diag(H)).tolist(),
                                           "ratio_to_sigma_C_resp": (np.sqrt(np.diag(H)) / sig_resp).tolist(),
                                           "label": "sum over the four primary species of h h^T, h the closure "
-                                                   "half-span; descriptive, beside C_resp, not a component"},
+                                                   "half-span; descriptive, beside C_resp, not a component; its sigma "
+                                                   "is relative to the MC truth, C_resp's to f, so the ratio mixes "
+                                                   "the two divisors"},
            "inputs_sha256": {"closures": digests, "pseudo_dumps": pins, "recoil_readout": RECOIL_READOUT_SHA256,
                              "s1_npz": PINS["s1_npz"], "cresp": PINS["cresp"], "definition": sa.DEFINITION_SHA256,
                              "mp1_data_unfolds": {v: bc.PRODUCTS[v][0] for v in bc.PRODUCTS}},
            "code_sha256": {**code_sha(), "build_cresp.py": sa.sha256(Path(bc.__file__).resolve())}, "argv": sys.argv}
-    lines = [f"[3b] {s}: cosine(closure, data half-span) {species[s]['cosine']:.4f}, norm ratio "
-             f"{species[s]['norm_ratio_closure_over_data']:.4f}" for s in SPECIES]
-    lines.append(f"[3b] w2b +-4%: cosine {w2b['cosine']:.4f}, norm ratio {w2b['norm_ratio_closure_over_data']:.4f}; "
-                 f"closure floor max |b0| {out['closure_floor_summary_abs']['max']:.3e}")
+    def fmt(x):
+        return "undefined" if x is None else f"{x:.4f}"
+    lines = [f"[3b] {s}: cosine(h, -d) {fmt(species[s]['cosine_closure_vs_minus_data'])}, |h|/|d| "
+             f"{fmt(species[s]['norm_ratio_closure_over_data'])}, residual (h + d) quadratic form "
+             f"{fmt(species[s]['residual_quadratic_form'])}" for s in SPECIES]
+    lines.append(f"[3b] w2b +-4%: cosine(h, -d) {fmt(w2b['cosine_closure_vs_minus_data'])}, |h|/|d| "
+                 f"{fmt(w2b['norm_ratio_closure_over_data'])}; closure floor max |b0| "
+                 f"{out['closure_floor_summary_abs']['max']:.3e}")
     return write(a, out, guard, lines)
 
 

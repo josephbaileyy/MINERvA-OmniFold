@@ -209,7 +209,7 @@ class Tree:
                 mock.patch.object(sa, "CONSTRAINT_SHA256", self.constraint_sha)]
 
     # ---------------------------------------------------------------- 3b
-    def write_mismatch(self, meta_override=None, xtrue_defect=None, drop=None):
+    def write_mismatch(self, meta_override=None, xtrue_defect=None, drop=None, antisym=False):
         """The 13 closure products (fd_ct_closure.py's form) from known cell integrals, the 11 MP-1 data unfolds and a
         3a readout; and the pins they must match, patched in by mismatch_patches()."""
         R, rng = self.root, self.rng
@@ -219,13 +219,20 @@ class Tree:
         self.cpins = {v: fake(v, "pseudo") for v in variants}
         self.T = self.f * rng.uniform(0.9, 1.1, 16)
         self.b = {v: rng.normal(0, 0.003 if v == "zero" else 0.02, 16) for v in variants}
+        self.D = {v: self.f * (1 + rng.normal(0, 0.01, 16)) for v in bc.PRODUCTS}
+        if antisym:   # closures planted at exactly h = -d, the first-order expectation
+            for sp in ct.SPECIES:
+                d = (self.D[f"{sp}_p1"] - self.D[f"{sp}_m1"]) / (2 * self.f)
+                self.b[f"{sp}_p1"], self.b[f"{sp}_m1"] = self.b["zero"] - d, self.b["zero"] + d
+        code = {n: sa.sha256(pth) for n, pth in ct.closure_code_files().items()}
         for v in variants:
             m = {"schema": "fd-ct-closure/1", "variant": v, "construction": "mismatch-closure", "truth": "nominal",
                  "arm": "e", "features": ["pt", "pz", "eavail", "q3", "W"], "response_npz_sha256": self.cpins["zero"],
                  "pseudo_npz_sha256": self.cpins[v], "estimator_seed": 42, "iters": 5,
                  "refinement": {"ran": False, "reason": "no negative weights (signal-only reference)"},
                  "experiment": {"pseudo_reco_identical": v == "zero"},
-                 "estimator_params": [{"n_estimators": 100, "num_leaves": 8, "random_state": 42}] * 3}
+                 "estimator_params": [{"n_estimators": 100, "num_leaves": 8, "random_state": 42}] * 3,
+                 "code_sha256": dict(code)}
             m.update((meta_override or {}).get(v, {}))
             xt = self.cellwise(self.T)
             if xtrue_defect == v:
@@ -234,7 +241,6 @@ class Tree:
                 np.savez_compressed(self.cdir / f"closure_{v}.npz", xsec_flat=self.cellwise(self.T * (1 + self.b[v])),
                                     xtrue_flat=xt, shape=np.array(sa.s1.fine_shape()), meta=json.dumps(m))
         # the MP-1 data unfolds, build_cresp's form, with build_cresp's pins patched to them
-        self.D = {v: self.f * (1 + rng.normal(0, 0.01, 16)) for v in bc.PRODUCTS}
         self.bpins = {}
         for v in bc.PRODUCTS:
             npz_sha = self.cpins[v]
@@ -888,8 +894,12 @@ class Mismatch(Base):
             rec = r["species"][sp]
             np.testing.assert_allclose(rec["closure_half_span"], h, rtol=1e-8, atol=1e-13)
             np.testing.assert_allclose(rec["data_half_span"], d, rtol=1e-8, atol=1e-13)
-            self.assertAlmostEqual(rec["cosine"], float(h @ d / np.linalg.norm(h) / np.linalg.norm(d)), places=8)
+            self.assertAlmostEqual(rec["cosine_closure_vs_minus_data"],
+                                   float(-h @ d / np.linalg.norm(h) / np.linalg.norm(d)), places=8)
             self.assertAlmostEqual(rec["norm_ratio_closure_over_data"], float(np.linalg.norm(h) / np.linalg.norm(d)), places=8)
+            np.testing.assert_allclose(rec["residual_h_plus_d"], h + d, rtol=1e-8, atol=1e-13)
+            self.assertAlmostEqual(rec["residual_quadratic_form"], float((h + d) @ np.linalg.solve(Mrel, h + d)), places=6)
+            self.assertNotIn("cosine", rec)
         hw = (dl["w2b_rr1"] - dl["w2b_rr0"]) / 2
         np.testing.assert_allclose(r["w2b_recoil_4pct"]["closure_half_span"], hw, rtol=1e-8, atol=1e-13)
         np.testing.assert_allclose(r["w2b_recoil_4pct"]["data_half_span"], t.d_w2b, rtol=1e-12)
@@ -898,7 +908,26 @@ class Mismatch(Base):
         np.testing.assert_allclose(r["closure_analogue_of_C_resp"]["ratio_to_sigma_C_resp"],
                                    np.sqrt(np.diag(H)) / (np.sqrt(np.diag(t.Cr)) / t.f), rtol=1e-8)
         self.assertEqual(r["controls_passed"], ["S", "M0", "M1", "M2"])
+        self.assertEqual(set(r["assertions_passed"]), {"M1"})
         self.assertEqual(r["labels"]["no_threshold"], ct.LABELS["mismatch_threshold"])
+        self.assertEqual(r["labels"]["not_citable_for"], ct.LABELS["mismatch_not_citable_for"])
+        self.assertNotIn("a bias under response mismatch", r["labels"]["not_citable_for"])
+        self.assertIn("construction", r["labels"])
+
+    def test_closures_at_exactly_minus_d_read_as_agreement(self):
+        # the review's H1: the first-order expectation h = -d must print cosine +1 and a zero residual
+        t = self.tree().write_mismatch(antisym=True)
+        self.assertEqual(self.run_tool(t, t.argv_mismatch, t.mismatch_patches()), 0, self.stderr)
+        r = self.readout(t, "mismatch")
+        for sp in ct.SPECIES:
+            self.assertAlmostEqual(r["species"][sp]["cosine_closure_vs_minus_data"], 1.0, places=10)
+            self.assertAlmostEqual(r["species"][sp]["norm_ratio_closure_over_data"], 1.0, places=8)
+            self.assertLess(max(abs(x) for x in r["species"][sp]["residual_h_plus_d"]), 1e-12)
+        self.assertIn("cosine(h, -d) 1.0000", self.stdout)
+
+    def test_refuses_a_closure_made_by_other_code(self):
+        t = self.tree().write_mismatch(meta_override={"em_m1": {"code_sha256": {"fd_ct_closure.py": "0" * 64}}})
+        self.assertRefuses(t, t.argv_mismatch, "code_sha256[fd_ct_closure.py] is not this deploy's", t.mismatch_patches())
 
     def test_refuses_a_missing_closure(self):
         t = self.tree().write_mismatch(drop="em_p1")
@@ -924,7 +953,7 @@ class Mismatch(Base):
 
     def test_refuses_closures_of_different_truths(self):
         t = self.tree().write_mismatch(xtrue_defect="w2b_rr1")
-        self.assertRefuses(t, t.argv_mismatch, "FAIL control M1 every closure's truth reference is the same", t.mismatch_patches())
+        self.assertRefuses(t, t.argv_mismatch, "FAIL control M1 assertion: every closure's truth reference", t.mismatch_patches())
 
     def test_refuses_another_3a_readout(self):
         t = self.tree().write_mismatch()

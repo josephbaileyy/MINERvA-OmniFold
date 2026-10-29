@@ -90,7 +90,9 @@ class Unit(unittest.TestCase):
         other["edges"][2][1] += 0.01
         self.assertIn("edges", C.truth_side_problems(base, other))
         other = dict(base, MCreco=base["MCreco"][:-1])
-        self.assertIn("MCreco shape", C.truth_side_problems(base, other))
+        self.assertIn("MCreco shape or dtype", C.truth_side_problems(base, other))
+        other = dict(base, MCreco=base["MCreco"].astype(np.float64))
+        self.assertIn("MCreco shape or dtype", C.truth_side_problems(base, other))   # a dtype change alone
         other = dict(base, w_truth=base["w_truth"].astype(np.float32))
         self.assertIn("w_truth", C.truth_side_problems(base, other))   # a dtype change alone
 
@@ -206,6 +208,74 @@ class Main(unittest.TestCase):
         self.assertEqual(rc, 4)
         self.assertIn("axes", self.err)
         self.assertFalse((self.tmp / "closure.npz").exists())
+
+
+class Submit(unittest.TestCase):
+    """submit_fd_ct.sh 3b in a throwaway git repo carrying tables that write under a temporary B, with a stub sbatch on
+    PATH that records its arguments; and each refusal, before anything is created."""
+
+    REL = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b"
+
+    def setUp(self):
+        import subprocess
+        self.sp = subprocess
+        self.tmp = Path(tempfile.mkdtemp(prefix="ct3b-submit-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.B = self.tmp / "B"
+        self.D = self.tmp / "deploy"
+        committed = ND.parent / self.REL
+        (self.D / self.REL).mkdir(parents=True)
+        real_b = "/pscratch/sd/j/josephrb/fd-ct-3b-20261029"
+        for name in ("3b-steps.tsv", "tasks-3b.tsv"):
+            (self.D / self.REL / name).write_text((committed / name).read_text().replace(real_b, str(self.B)))
+        run = lambda *a: subprocess.run(["git", "-C", str(self.D), *a], check=True, capture_output=True)
+        run("init", "-q"); run("add", "-A")
+        run("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "t")
+        self.pin = subprocess.run(["git", "-C", str(self.D), "rev-parse", "HEAD"], capture_output=True,
+                                  text=True).stdout.strip()
+        bin_ = self.tmp / "bin"; bin_.mkdir()
+        (bin_ / "sbatch").write_text(f"#!/bin/bash\nprintf '%s\\n' \"$@\" > {self.tmp}/sbatch.args\necho Submitted\n")
+        (bin_ / "sbatch").chmod(0o755)
+        self.env = {**__import__("os").environ, "PATH": f"{bin_}:{__import__('os').environ['PATH']}"}
+
+    def submit(self, *args):
+        return self.sp.run(["bash", str(ND / "submit_fd_ct.sh"), *args], capture_output=True, text=True, env=self.env)
+
+    def test_the_committed_submission(self):
+        r = self.submit("3b", str(self.D), self.pin, str(self.B))
+        self.assertEqual(r.returncode, 0, r.stderr)
+        a = (self.tmp / "sbatch.args").read_text().splitlines()
+        for want in ("--account=m3246", "--qos=regular", "--constraint=cpu", "--nodes=1", "--exclusive",
+                     "--no-requeue", "--time=00:45:00", "--job-name=fd_ct_3b", "32", "56G", "0", "7", "none"):
+            self.assertIn(want, a)
+        self.assertFalse([x for x in a if "gpu" in x.lower() and "gpu-timing" not in x], "a GPU request")
+        self.assertIn(str(self.B / "lanes"), a)
+        self.assertTrue((self.B / "closures").is_dir())
+
+    def test_refuses_a_deploy_not_at_the_pin(self):
+        r = self.submit("3b", str(self.D), "0" * 40, str(self.B))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("is not at", r.stderr)
+        self.assertFalse(self.B.exists())
+
+    def test_refuses_an_existing_closures_directory(self):
+        (self.B / "closures").mkdir(parents=True)
+        r = self.submit("3b", str(self.D), self.pin, str(self.B))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("exists", r.stderr)
+        self.assertFalse((self.tmp / "sbatch.args").exists())
+
+    def test_refuses_a_B_the_tables_do_not_write_under(self):
+        other = self.tmp / "other"
+        r = self.submit("3b", str(self.D), self.pin, str(other))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("0 of them writing under", r.stderr)
+        self.assertFalse(other.exists())
+
+    def test_refuses_another_stage(self):
+        r = self.submit("4c", str(self.D), self.pin, str(self.B))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("unknown stage", r.stderr)
 
 
 @unittest.skipUnless(HAVE_LGBM, "LightGBM is not importable here; this runs in the cluster deploy tests")

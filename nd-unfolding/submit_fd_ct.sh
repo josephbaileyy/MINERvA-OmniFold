@@ -8,16 +8,20 @@
 set -eo pipefail
 STAGE="${1:?3b}"; D="${2:?deploy}"; PIN="${3:?pin}"; B="${4:?B}"
 REL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b
-mkdir -p "$B/logs"
 COMMON=(--account=m3246 --qos=regular --constraint=cpu --nodes=1 --exclusive --no-requeue
         --output="$B/logs/%x_%j.out")
 case "$STAGE" in
   3b)
-    TABLE="$D/$REL/tasks-3b.tsv"
-    [ -f "$TABLE" ] || { echo "refusing: $TABLE is missing" >&2; exit 2; }
+    # every refusal comes before anything is created; there is no resume: a failed or partial job is a STOP, and a
+    # rerun needs the director and a new B in recommitted tables
+    TABLE="$D/$REL/tasks-3b.tsv"; STEPS="$D/$REL/3b-steps.tsv"
+    [ -f "$TABLE" ] && [ -f "$STEPS" ] || { echo "refusing: $TABLE or $STEPS is missing" >&2; exit 2; }
     [ "$(git -C "$D" rev-parse HEAD)" = "$PIN" ] || { echo "refusing: $D is not at $PIN" >&2; exit 2; }
     [ ! -e "$B/closures" ] && [ ! -e "$B/lanes" ] || { echo "refusing: $B/closures or $B/lanes exists" >&2; exit 2; }
-    mkdir -p "$B/closures"
+    n=$(grep -v '^#' "$STEPS" | grep -c . || true)
+    m=$(grep -v '^#' "$STEPS" | grep -c -F -- "--out	$B/closures/closure_" || true)
+    [ "$n" -eq 13 ] && [ "$m" -eq 13 ] || { echo "refusing: $n steps, $m of them writing under $B/closures/" >&2; exit 2; }
+    mkdir -p "$B/logs" "$B/closures"
     sbatch "${COMMON[@]}" --time=00:45:00 --job-name=fd_ct_3b \
       "$D/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh" \
       "$D" "$PIN" "$TABLE" "$B/lanes" 32 56G 0 7 none ;;
