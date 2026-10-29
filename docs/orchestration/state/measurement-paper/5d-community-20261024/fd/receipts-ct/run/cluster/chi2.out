@@ -1,0 +1,22 @@
+PASS control C0 7176 calibration products match the s5p archive sums
+PASS control C1 every product is an A7 calibration experiment at its declared truth, in the declared count
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control C1 the p_parallel < 4.5 cells of the definition are F0's eight GiBUU cells
+PASS control C2 A7_mnvtune: B_eff 272.695961 equals F0b's
+PASS control C2 A7_genie_cv: B_eff 243.857824 equals F0b's
+PASS control C2 A7_genie_mec: B_eff 245.975265 equals F0b's
+PASS control C2 A7_nuwro: B_eff 320.819408 equals F0b's
+PASS control C2 A7_gibuu: B_eff 262.800962 equals F0b's
+PASS control C3 every truth integral is positive on all 16 cells
+PASS control C4 assertion: the mean-chi2 decomposition holds for every truth, matrix and cell set
+[4C] A7_mnvtune: weighted mean chi2 about truth 42.690, about b~ 40.466 (ndf 16, C_total + C_resp), median width ratio 0.8678
+[4C] A7_genie_cv: weighted mean chi2 about truth 55.981, about b~ 38.995 (ndf 16, C_total + C_resp), median width ratio 0.8681
+[4C] A7_genie_mec: weighted mean chi2 about truth 47.316, about b~ 36.388 (ndf 16, C_total + C_resp), median width ratio 0.8096
+[4C] A7_nuwro: weighted mean chi2 about truth 57.961, about b~ 35.719 (ndf 16, C_total + C_resp), median width ratio 0.8954
+[4C] A7_gibuu: weighted mean chi2 about truth 178.352, about b~ 37.995 (ndf 16, C_total + C_resp), median width ratio 0.7965
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-readers-20261028/fd_ct_chi2.json", "sha256": "27f37040f39b66748ea60a27a38ea0cb2829dae1121c96fb23b5d459fa920bcb"}
+rc=0
