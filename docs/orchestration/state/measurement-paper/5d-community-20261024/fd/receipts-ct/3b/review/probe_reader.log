@@ -1,0 +1,28 @@
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.528s
+
+OK
+
+P1 rc 0
+PASS control M0 13 closures, each made by (e) from its declared pseudo dump on the zero response
+PASS control M1 every closure's truth reference is the same, bitwise
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control M1 the truth and every closure integral are positive on all 16 cells
+PASS control M2 the 11 MP-1 data unfolds match build_cresp's recorded digests and dumps
+[3b] proton: cosine(closure, data half-span) -1.0000, norm ratio 1.0000
+[3b] meson: cosine(closure, data half-span) -1.0000, norm ratio 1.0000
+[3b] em: cosine(closure, data half-span) -1.0000, norm ratio 1.0000
+[3b] other: cosine(closure, data half-span) -1.0000, norm ratio 1.0000
+[3b] xtalk: cosine(closure, data half-span) -1.0000, norm ratio 1.0000
+[3b] w2b +-4%: cosine -0.2871, norm ratio 0.4279; closure floor max |b0| 6.443e-03
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/4ddb8e26-d8ce-4841-bbeb-6b0f99a3fec7/scratchpad/review-3b-notes/fd-ct-fv3elzor/tree/out/mismatch.json", "sha256": "cf083013dd9ef72a55602f597db9d3a7b5278389641b3ecdcf127f91a59edafb"}
+
+
+P2 rc 0 osure floor max |b0| 6.443e-03
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/4ddb8e26-d8ce-4841-bbeb-6b0f99a3fec7/scratchpad/review-3b-notes/fd-ct-4ri87d16/tree/out/mismatch.json", "sha256": "6ae45d0a66272ee12957a28f11e8116a6eff1483a1d7445c50da0911c5443b98"}
+

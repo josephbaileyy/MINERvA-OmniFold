@@ -1,0 +1,127 @@
+# Review of 1a6955bd (3b mismatch closure driver, reader, tables, submit line)
+
+Reviewer: independent, read-only. Worktree: scratchpad/review-3b at 1a6955bd (detached). Probes are in this dir.
+Test suite: `TMPDIR=<notes> python3 -B -m unittest test_fd_ct_closure test_fd_ct_readers`: 86 run, OK, 1 skipped
+(RealUnfold, no LightGBM locally).
+
+## HIGH
+
+### H1. The cosine has the wrong sign for the expected relation. When the two constructions agree, it prints -1.
+- Where: `nd-unfolding/fd_ct_readers.py:616-632` (`pair`, `h`, `d`, `w2b`), `:650-653` (stdout), label `:91-94`.
+- Defect: C_resp's `d = (x(+1) - x(-1))/2` comes from unfolding fixed DATA with a +1 sigma response. 3b's
+  `h = (delta(+1) - delta(-1))/2` comes from +1 sigma PSEUDO-DATA unfolded with the nominal response. Take the
+  closure identity F(R t, R) = t and differentiate it: dF/dD * dD/dR + dF/dR = 0. So, to first order,
+  closure bias = -(response-shift effect), and h ~ -d. The addendum's "To first order the two agree" (§3.2, 3b)
+  means agreement up to that sign. The reader correlates h with d without flipping the sign, and no label says
+  which sign to expect. The label even says "no relation between the two is assumed".
+- Failure scenario: a perfect first-order agreement prints `[3b] proton: cosine(closure, data half-span) -1.0000`.
+  A reader primed by the addendum's "agree" takes that as the closure contradicting C_resp. Run on real products,
+  the director or the report would read the result backwards.
+- Probes:
+  - `probe_sign.py` / `probe_sign.log`: a binned toy (D'Agostini, 5 iterations) at ±4 % gives cos(h, d) = -0.9996
+    and norm ratio 0.97.
+  - `probe_reader.py` / `probe_reader.log` P1: the real reader on the test harness, with closures planted at
+    h = -d, prints -1.0000 for all five species and exits 0.
+- Fix direction: state the sign convention. Either correlate h with -d, or label the expected value (-1 under the
+  first-order identity) in the JSON and on the printed line.
+
+## MEDIUM
+
+### M1. The 3b readout declares itself "not citable for a bias under response mismatch", which is what 3b measures.
+- Where: `fd_ct_readers.py:635`, which reuses the shared `LABELS["not_citable_for"]` (`:97-99`). That list was
+  written for 3a/4C/5A.
+- Failure scenario: as written, the mismatch JSON's `labels.not_citable_for` disowns the closure bias. Addendum
+  §3.3 names that bias as 3b's answer ("the 16-cell closure bias under the tested response mismatches"). Either
+  the label or the readout gets misquoted.
+- Fix direction: give 3b its own not-citable list, e.g. "the true detector response", "untested forms", "a
+  verdict" (there is no threshold).
+
+### M2. The closure and data half-spans are not like-for-like beyond the sign, and nothing says so.
+- Where: `fd_ct_readers.py:629-632`, label `:91-94`. Inputs: `build_cresp.PRODUCTS` (each variant has its own
+  `bkg_dump_sha256`), and `fd_ct_closure.py:59-73` / `pvl_lib.closure_inputs`.
+- Defect: the data half-span d differs from the closure in four ways:
+  - It includes the background template's shift under the same lateral variant: each MP-1 data unfold uses that
+    variant's own bkg dump.
+  - It includes the shifted fakes (pass_reco & !pass_truth) in the MC response.
+  - It sits at the data's truth, relative to f.
+  - The 3a half-span, used for W2b, is relative to rrzero.
+
+  The closure is signal-only, has no fakes in the pseudo-data, and is relative to the MC truth T. Cosine and norm
+  ratio therefore mix construction differences with the response-mismatch effect. The label "the data half-span is
+  C_resp's (or 3a's) own" is also false for xtalk: `SPECIES` includes xtalk (`:547`), but C_resp excludes it
+  (build_cresp: "built and reported beside C_resp, not summed").
+- Failure scenario: a norm ratio or cosine away from ±1 gets read as "the mismatch closure finds something C_resp
+  misses". It may instead be the background/fake shift that only d contains.
+- Fix direction: list these differences in the mismatch label. Label xtalk as outside C_resp.
+
+### M3. The products' location is baked into the tables, not taken from submit's `<B>`, and there is no resume or recovery route.
+- Where: `docs/.../fd/receipts-ct/3b/make_3b_tables.py:16,31` (B = `/pscratch/sd/j/josephrb/fd-ct-3b-20261029`
+  is written into every `--out`) and `nd-unfolding/submit_fd_ct.sh:9,19-20` (takes `<B>`, guards and creates
+  `$B/closures`).
+- Defect:
+  - `submit_fd_ct.sh` never checks that `$B` equals the tables' B. With any other `$B`, the closures land silently
+    in the hard-coded directory (`s5n_pseudo.write_product` mkdirs parents), outside `$B`. The "`$B/closures`
+    exists" refusal then guards an empty directory.
+  - On a partial run (TIMEOUT at 45 min, a node failure), the finished closures sit at the hard-coded paths. The
+    submit refuses an existing `$B/lanes`, so a resubmit needs a new `$B`. But each lane's already-finished first
+    step then returns rc 3 ("refusing to overwrite"), and `fd_f1_lane.py` stops at the first non-zero step. So the
+    unfinished second steps of lanes 0-4 can never run without a new commit of the tables.
+  - The s5c_array resume-skip keys on `$B/lanes/ct3b_laneK.npz`, which is never written.
+- Probe: `resume/steps.tsv`, `resume/lane.log`. With step 0's product present, the lane prints
+  `ct3b_closure_zero rc=3` and never starts the next step. (The "lane rc=0" in the terminal output is tee's
+  status, not the lane's.)
+- Fix direction: have submit refuse unless `$B` is the tables' B, or generate `--out` from `{OUT}`/`$B`. Decide
+  whether an existing identical product is a skip.
+
+## LOW
+
+- **L1. The M1 truth control cannot fire on real inputs.** `fd_ct_readers.py:594-595`. `xtrue_flat` is computed
+  only from the response dump (`fd_ct_closure.py:64`), and M0 already pins `response_npz_sha256` for all 13. So
+  "every closure's truth reference is the same, bitwise" restates M0. The test
+  (`test_refuses_closures_of_different_truths`) plants a defect that the driver cannot produce.
+- **L2. The reader does not check the closures' code digest.** `closure_meta_problems` (`:550-569`) checks schema,
+  variant, digests and estimator, but not `code_sha256["fd_ct_closure.py"]` or the pin. M3's fixed shared path
+  makes it plausible that a pilot or earlier-commit product sits in the directory the reader accepts.
+- **L3. Mixed divisors.** h and H are relative to T (the MC truth). d and `sigma_rel` C_resp are relative to f,
+  and W2b's d to rrzero. `closure_analogue_of_C_resp.ratio_to_sigma_C_resp` (`:642-646`) divides a T-relative σ by
+  an f-relative one. This is small if the effects are multiplicative, but unlabelled.
+- **L4. Possible crash on None.** `pair()` returns `cosine=None` for a zero norm (`:619`). The stdout f-string
+  `:650` then raises TypeError after every control has passed. Nothing is written, so this is fail-closed but
+  unclean.
+- **L5. Tests restate the code.** `Mismatch.test_end_to_end_recomputed_by_hand` recomputes h, d, cosine and norm
+  ratio with the reader's own formulas. The random fixture b and D are independent, so no test encodes the physical
+  h ~ -d relation (H1) or any construction expectation. `submit_fd_ct.sh` has no refusal or mutation tests; F1's
+  submit had them.
+- **L6. Docstrings cite a missing file.** Three docstrings cite `FD-CT-3B-DECLARATION.md`, which does not exist at
+  1a6955bd ("declaration to follow"). The commit is WIP, but the bound pin should carry it.
+- **L7. Small driver nits.** `fd_ct_closure.py:41` `SAME` does not compare MCreco dtype. The submit runs
+  `mkdir -p "$B/logs"` before its refusals.
+
+## Checked and found sound
+
+- **Closure construction.**
+  - With pseudo = response, the experiment is `pvl_lib.closure_inputs(r = 1)` array for array (test, and read).
+  - The shifted dump changes only obs/obs_counts. The response side (MCgen, MCreco, pass_*, w_*, tmpl) is the zero
+    dump's, and the unfold receives the zero MCreco. No shifted response leaks in.
+  - The pseudo rows use the shifted reco for the 5-axis window, with pass_reco (pT/pz-only in `collect_signal_nd`,
+    bitwise equal across dumps), pass_truth and w_reco > 0. This matches how `s5n_pseudo.build_data` windows real
+    data on all 5 axes while the MC reco side stays unwindowed, so there is no extra window asymmetry.
+  - Fakes and background are treated as in pv-ladder.
+  - x_true is the zero dump's truth through its own completeness. This is correct because the truth side is
+    bitwise shared.
+- **Refinement reason string.** It matches `s5e_trace.measured_side`'s literal (`:429`). The estimator-params
+  shape (3 × 100/8/42) is consistent with fd_f0_regrade's convention.
+- **Pins.** All 13 (path, sha256) pairs in `3b-steps.tsv` (pseudo and response) occur verbatim in
+  `fd/receipts-ct/preserve/INVENTORY.sha256` (`steps_pairs.txt`, 13/13). The 3a readout sha
+  `c8458dd0...` matches the committed `fd_ct_recoil.json`. `closure_pins` ties MP-1's pseudo dumps to build_cresp's
+  data-unfold input digests.
+- **Leak guard.** Integrals passed: T, the 13 closure X, and the 11 MP-1 data integrals with near_f cells set to
+  NaN. Probe P2 (`probe_reader.log`): with MP-1's zero data unfold set exactly to f, the run exits 0, with no false
+  refusal. T and closure X are MC-truth-side and not near f.
+- **Launch plumbing.**
+  - `s5c_array.sh` cds to the deploy before running `fd_f1_lane.py`, so the relative `--steps` path resolves.
+  - `fd_f1_lane` runs each step with cwd = deploy, and `fd_ct_closure.py` is a valid entry.
+  - Table line indexing skips the `#` header.
+- **Sizing.** F1c's closures at the same packing (8 × 32 cpus × 56G, job 60439400) took 812 s wall per closure
+  step (774 s unfold) and max RSS ≈ 16.7 GiB. Lanes 0-4 run 2 steps, about 1,700 s plus a second-dump load against
+  2,700 s, a 1.6× margin (F1c's was 1.48×). The second dump adds a few GiB, well under 56G.

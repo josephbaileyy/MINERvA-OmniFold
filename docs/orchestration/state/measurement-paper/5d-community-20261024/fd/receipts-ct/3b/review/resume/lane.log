@@ -1,0 +1,4 @@
+[f1-lane] lane=0 steps=['ct3b_closure_zero', 'ct3b_closure_other_p1'] start=2026-10-29T10:48:55Z
+[f1-lane] ct3b_closure_zero start=2026-10-29T10:48:55Z
+refusing to overwrite /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/4ddb8e26-d8ce-4841-bbeb-6b0f99a3fec7/scratchpad/review-3b-notes/resume/closures/closure_zero.npz
+[f1-lane] ct3b_closure_zero rc=3 end=2026-10-29T10:48:56Z
