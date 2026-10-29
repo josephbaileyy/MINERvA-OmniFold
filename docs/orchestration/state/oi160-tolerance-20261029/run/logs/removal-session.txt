@@ -1,0 +1,81 @@
+OI-160 run directories, removed on the director's word (2026-10-29) after #506 merged.
+Session: close-items, from the Mac via ssh saul.nersc.gov (login37). Commands and their output, verbatim.
+
+== 1. Every non-empty out/ and logs/ file, sha256 on pscratch, compared with origin/main (git show) ==
+$ ssh saul.nersc.gov 'P=/pscratch/sd/j/josephrb; for d in oi160-repro-20261029 oi160-tol-20261029; do (cd $P/$d && find out logs -type f -size +0 -print0 | sort -z | xargs -0 sha256sum | sed "s|^|$d |"); done'
+oi160-repro-20261029 acfef5cab5cc6b179acb94342254ccd93ed656aa0dc82c4d0509ab350e8e6166  logs/A1.log
+oi160-repro-20261029 2830bfc112fbec8353a9b09a4ba4f82c07f9623c736b364e99dbe1f271cf9a4e  logs/A2.log
+oi160-repro-20261029 45890f64cdc8c33deb28129dbeffb53e2c3c77c7ee5bcd49df984992354a8a70  logs/B1.log
+oi160-repro-20261029 c64c2b7aa4151cca45f0994e3efb32bb8ddd89d966c43b500f77041f51d515af  logs/deploy.log
+oi160-repro-20261029 634d7956ba5611297faa5975ec7f8cfe8521da0849d4391b8017eeb06d9ca266  logs/deploy-tests.log
+oi160-repro-20261029 3aab60cdab9f39c04a6176a47044020fdb5e99d5c38fe184782dbe95a5915b24  logs/job.log
+oi160-repro-20261029 b67521976b0ee4b522fa9fe373926be3c431cebede89024bb1cfa58cd8029513  out/A1.npz
+oi160-repro-20261029 36b312291530e2eee1fd46ca3a2bbf7bbc4ddc03dbc543597649aa36be498539  out/A1.provenance.json
+oi160-repro-20261029 68e1174c46f9a2a841d804b6afc27add5fad6df787599f1a1d3365a7e6411b5b  out/A2.npz
+oi160-repro-20261029 ee3803758f7bfccc6bfd371627c6d2e3c6c844d3a9b5de9599303582481e0087  out/A2.provenance.json
+oi160-repro-20261029 fd430e023e43a9dbcfae9f0ffad5a4de36aa30cee81ead1f6c6e44a6d2097056  out/B1.npz
+oi160-repro-20261029 60cc7ef5f52cbb6e5e1d50f8df1d243ed5e3b9ea8b8db770c8a7bfd9885e3ab2  out/B1.provenance.json
+oi160-repro-20261029 edd559c35fcc1d1f9ab1393f8a2ab6178c48b70a1342e772f0c74acd5d17681f  out/readout.json
+oi160-tol-20261029 bf346312c7e992c371483a1c22aaa4c3f79165457a0cc94eeb8b5d5063892269  logs/control_A1.log
+oi160-tol-20261029 992522352eaa46b5f8366ae881cb8d0afb94d2108822a7ae215ebd54d260ed0a  logs/control_A2.log
+oi160-tol-20261029 32b22101f2140b66db0765ee993cd7a2d982a9bc0bde61db49950f07c017ba2c  logs/deploy.log
+oi160-tol-20261029 026d37998053b9193d42b4a41ec1c3cb4dfdb4a8f3faa036c58a650b81435fe4  logs/deploy-tests.log
+oi160-tol-20261029 d4ab64caa5a912147eaf8d969843652724a3d9af37e8fbb97aeb230254bb8efb  logs/grade.log
+oi160-tol-20261029 9a7d0d9e1cd6460c64c2848010d6b3535a18d28feff51f7076bf7dbd05d68ce9  logs/s2_A.log
+oi160-tol-20261029 517a8aea69d17f47dd5dc7406132313f845f0bfc6b63f0de383f3ce0a9468e27  logs/s2_B.log
+oi160-tol-20261029 5a8619a4c22830f07a2145e635c08d55b0510358950aeec4ad81da6035f096bd  logs/s3_A.log
+oi160-tol-20261029 6fd158b45fb62c93ed8c73a4df34a75266879c179981f222d71733a8caef0fbc  logs/s3_B.log
+oi160-tol-20261029 f4abc70bf07e5d116c01f63f0b75da9bb9e5dd7076a56ed4674e7717f94a4401  logs/s40_A.log
+oi160-tol-20261029 4139c419437492ed3a96cce2e225620b5bb9de3a4778aa5ade012735621f484d  logs/s40_B.log
+oi160-tol-20261029 66ffb1f261d265b8207f5a01d829e2e1d6f878ea11ccfa81daa55f12f014316f  logs/s6_A.log
+oi160-tol-20261029 4a6457b80de88e51cbb2c0a361fa106afbe900d18d770d7f89c9f4e218c41834  logs/s6_B.log
+oi160-tol-20261029 5366497ccbad8ef28bc182d39c34c6c6b505f4ce7d2c4bde6b0d5a6f482a8709  logs/s85_A.log
+oi160-tol-20261029 009f7a8dfbd3c4cb25779bab19fba7dca86c121e1b750e676e318adb199f5b85  logs/s85_B.log
+oi160-tol-20261029 051e05c7629ca9632790e83e7ec440b76bf77e6135be5fe0d68693c7bd405957  logs/sacct.txt
+oi160-tol-20261029 fc26efdb95932873218b3f3472d3730f6697ca3d65a358b6821dc74af4cef35a  logs/task0.log
+oi160-tol-20261029 413385ef1667e770a3da5082f81fa0ef6e2d15bf43c9f954f18f88a5962c453e  logs/task1.log
+oi160-tol-20261029 0442423e74685b0bf6b74c08ef18e003437a3e986d05b6ffdaab9169c5de4556  logs/task2.log
+oi160-tol-20261029 0d9ed14818e694804cf6af77466bc3c41cec3691d3c44814c0684a00045aedba  logs/task3.log
+oi160-tol-20261029 6312bf14d038628ee8664933db3726cbaf4b8ca27632791ccd42fe7bbb9abd2d  logs/task4.log
+oi160-tol-20261029 47f548cd92333019e876cab5b0d686d007f9e8652146a4e517e858eab002f8b4  logs/task5.log
+oi160-tol-20261029 a955f18a3c9d974da3ebe174e06d58314658adf2e42c79ed4bb0cccc8860146e  out/control_A1.npz
+oi160-tol-20261029 81a3b6a386ed95344522eda281cde82d16a9be231d54aa4e042e2994d199c84b  out/control_A1.provenance.json
+oi160-tol-20261029 1f2cd4219cef8b435354252d7330973efee5e53c77e998c16490a0febb027d13  out/control_A2.npz
+oi160-tol-20261029 c5aa4303b543207ca640b6d0b0f833bc40a7bc9f66f132aa2da78a8f86fab6c9  out/control_A2.provenance.json
+oi160-tol-20261029 238006ef449585613cea6e0a2930f027e06064e90dc5004582c9e9da3731526c  out/readout.json
+oi160-tol-20261029 983ad2f9a4ff3d0c9fc18e2694ff97c265cb883dbe621fc2f557c581b1a2d822  out/s2_A.npz
+oi160-tol-20261029 9ea824ad97031ac3878b942bc58cf13d907721f936ed22a65bf4e95f664db391  out/s2_A.provenance.json
+oi160-tol-20261029 f6cad1d3266e6b1395258dec592bcd553799d2c9215253a3319ad80e058aeffc  out/s2_B.npz
+oi160-tol-20261029 2eb59b7626ac341de0c1dfa4516ea470183578565c6b428f4bf7f29f8f7f981f  out/s2_B.provenance.json
+oi160-tol-20261029 586d3648c93e91ab16277ae5ae2c590cb5ea226d7a1cf2bacf815cb27f3d9aa7  out/s3_A.npz
+oi160-tol-20261029 2d6e3a51657fc6a29952023da35d57d16a412096d083b2b5d6597ea1ed89af3b  out/s3_A.provenance.json
+oi160-tol-20261029 24d4c11b289ce5cee7babf2221da89637c3bf59cee9da2685f98130eef43bd75  out/s3_B.npz
+oi160-tol-20261029 7fcdeda5f52ffbb15102728b1014b6be9a92cf297a7358184acdf6f0156ecb8f  out/s3_B.provenance.json
+oi160-tol-20261029 23936c6baa4197c1fc43e32cb6d0019c069503a89e6b584bec54cf509d49360f  out/s40_A.npz
+oi160-tol-20261029 36ffc56931bdae596de391131176064ba2dd5084a15cb67756711202ad0cbbde  out/s40_A.provenance.json
+oi160-tol-20261029 e9a47951a1a343ba353bb422d443bdb12f938050f2695a877e9bcb40847eabe2  out/s40_B.npz
+oi160-tol-20261029 6180dc77d39488a7e3d0df9339ee68af97c6992df1b1b28732ea3dfff6881ea4  out/s40_B.provenance.json
+oi160-tol-20261029 ec96a2ad5ddc348f66b5cf731372093bb391d9741eda98e4b3c952454aeee554  out/s6_A.npz
+oi160-tol-20261029 f1ee229b03e944aa1bb584de411f0c82dbb75b56f2854b29e51071edda88001e  out/s6_A.provenance.json
+oi160-tol-20261029 af11f9362f0c18acd9f8e16183a6d9d605be88ac0ed765272777168d07c5f8f0  out/s6_B.npz
+oi160-tol-20261029 29b22b04aa39a2e01fc2eda9653ee4faa737aeeefb0065b76ccf285a2d18a95d  out/s6_B.provenance.json
+oi160-tol-20261029 0f076d5e6d61f81c04c4e03fc903fc8f8b28214b49fe41cd6e39cce26ffa2087  out/s85_A.npz
+oi160-tol-20261029 60215432db5fa629580e9270e3f9706731c4453af76e2b8505dcefd8d9b84871  out/s85_A.provenance.json
+oi160-tol-20261029 ae9828b3b78a2a1a0bc5c094c7fb550cf0aca5fe611a3901b9bb6d510378e9eb  out/s85_B.npz
+oi160-tol-20261029 c70ee6b987dd1064404205361f6805974ffd330a7896be5da295e915376f7563  out/s85_B.provenance.json
+compare (local, against origin/main d84124c50, run/<path> under docs/orchestration/state/oi160-{reproduction,tolerance}-20261029/):
+identical 60 mismatch 0
+The only other files under out/ and logs/ were the scheduler's 0-byte .out/.err (2 in the first run, 12 in the second).
+Besides out/ and logs/, each directory held only deploy/ (the deploy clone), work/ (per-task code copies) and tmp/.
+
+== 2. Removal and re-listing ==
+$ ssh saul.nersc.gov 'set -u; P=/pscratch/sd/j/josephrb; for d in oi160-repro-20261029 oi160-tol-20261029; do t=$P/$d; if [ -L "$t" ] || [ ! -d "$t" ]; then echo "REFUSE $t"; continue; fi; rm -rf -- "$t"; echo "rm rc=$? $t"; done; hostname; date -u +%FT%TZ; ls -la $P | grep -c . ; ls -d $P/oi160-* 2>&1; ls -d $P/MINERvA-OmniFold && git -C $P/MINERvA-OmniFold rev-parse --short HEAD'
+rm rc=0 /pscratch/sd/j/josephrb/oi160-repro-20261029
+rm rc=0 /pscratch/sd/j/josephrb/oi160-tol-20261029
+login37
+2026-10-29T15:35:24Z
+1004
+ls: cannot access '/pscratch/sd/j/josephrb/oi160-*': No such file or directory
+/pscratch/sd/j/josephrb/MINERvA-OmniFold
+32e403b84
+Both directories shared one parent, /pscratch/sd/j/josephrb. Nothing was written to CFS or to the canonical checkout.
