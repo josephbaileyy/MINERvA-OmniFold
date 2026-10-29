@@ -162,6 +162,17 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 nd-unfolding/tests/test_object_identity_checks.py
 
+      # OI-136 / KNOWN_ISSUES 89. Both ratchets hold the fail-open sys.path[0] set EXACT, with a
+      # reason per file. They ran nowhere, so they sat red on main twice (2026-10-03..06, 9 files;
+      # 2026-10-12..17, 4 files) before anyone looked. Over the hook's time budget.
+      - name: "OI-136: fail-open inventory ratchet (test_oi136_failopen_inventory_ratchet.py)"
+        if: ${{ !cancelled() }}
+        run: python3 nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py
+
+      - name: "OI-136: rooted-insert ratchet (test_oi136_rooted_insert_ratchet.py)"
+        if: ${{ !cancelled() }}
+        run: python3 nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py
+
       # Over the pre-commit hook's time budget (declined there), not over CI's.
       - name: Registry fixture tests (test_registry.py)
         if: ${{ !cancelled() }}

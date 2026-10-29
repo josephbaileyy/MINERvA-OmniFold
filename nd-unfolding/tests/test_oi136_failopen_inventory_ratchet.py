@@ -315,8 +315,21 @@ PROBE = os.path.join("docs", "orchestration", "state",
 #                                                            DATA root, so the file moves to insert-but-not-rooted (66 -> 67)
 # On the canonical checkout each derived path equals the literal it replaced. Superseded pair:
 #   2026-10-09 classification   18 / 04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0
-FAILOPEN_COUNT = 16
-FAILOPEN_SHA256 = "7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9"
+#
+# ===== 16 -> 20 on 2026-10-28: FOUR HASH-BOUND CLOSE-OUT DRIVERS, CLASSIFIED (close-items session) =====
+# Authority: the director's ruling of 2026-10-28 on OI-136. The four landed 2026-10-12..17 while
+# neither OI-136 suite ran in the hook or CI, so this file sat red on main until today; CI now runs
+# it. Each file's bytes are pinned by the records named at its entry in
+# test_oi136_rooted_insert_ratchet.py (class `closeout_bound`), so they are classified, not repaired:
+#   docs/orchestration/state/2d-closeout/stageB/diagnostics/p5/driver_p5.py
+#   docs/orchestration/state/2d-closeout/stageC/pilot/p1/driver_p1.py
+#   docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/driver_g2.py
+#   2d-unfolding/driver_p1.py   (byte-identical to the stageC p1 driver, fa11e3fd4)
+# Measured with this file's own `failopen_set()`: dropping these four from the 20 reproduces the
+# 16-file digest below exactly, so nothing else moved. Superseded pair:
+#   2026-10-09 repair   16 / 7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9
+FAILOPEN_COUNT = 20
+FAILOPEN_SHA256 = "547508b384f322b6a2b7b47b8de971377e4e6dfdd9b91a25443f562c99149266"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.
