@@ -1,0 +1,2 @@
+[tol_compare] floor_ok=True producers={'55805463': 'CORRECTED', '55871150': 'CORRECTED', 'interactive-20260713': 'CORRECTED'} overall=CORRECTED
+grade rc=0

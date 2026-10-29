@@ -1,0 +1,13 @@
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 4.760s
+
+OK
+[repro_compare] outcome INCONCLUSIVE: today's environment reproduces neither stored replica
+[repro_compare] outcome R1: the old code (07c18aee^) reproduces the top-level replica bit for bit
+[repro_compare] outcome R2: the corrected code (07c18aee) reproduces the top-level replica bit for bit
+[repro_compare] outcome THIRD: the old code reproduces the June replica, but neither committed code reproduces the top-level one: a third producer, or a July-only environment
+[repro_compare] outcome VOID: the corrected code does not reproduce itself, so no difference can be read
+[repro_compare] outcome R2: the corrected code (07c18aee) reproduces the top-level replica bit for bit
+[repro_compare] a stored replica's sha256 is not the pinned one
+[repro_compare] outcome THIRD: the old code reproduces the June replica, but neither committed code reproduces the top-level one: a third producer, or a July-only environment

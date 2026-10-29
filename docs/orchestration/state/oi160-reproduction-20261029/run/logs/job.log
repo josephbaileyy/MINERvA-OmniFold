@@ -1,0 +1,22 @@
+2026-10-29T07:51:01Z
+nid004104
+job 60484242 cpus_per_task=36
+a1630dd04e73b46c602cee29f1a4f54aa8bd1757
+porcelain_ignored_lines 0
+A/bootstrap_nd.py: OK
+B/bootstrap_nd.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+input size=1548438020 mtime_epoch=1782610308 sha256=07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f
+boot_nd_5d/res_boot_1.npz: OK
+boot_nd_5d_prehm_20260711/res_boot_1.npz: OK
+affinity_cpus=36
+A1 start 2026-10-29T07:51:10Z
+A1 rc=0 end 2026-10-29T08:05:33Z
+A2 start 2026-10-29T08:05:33Z
+A2 rc=0 end 2026-10-29T08:19:06Z
+B1 start 2026-10-29T08:19:06Z
+B1 rc=0 end 2026-10-29T08:36:27Z
+[repro_compare] outcome VOID: the corrected code does not reproduce itself, so no difference can be read
+compare rc=0
+2026-10-29T08:36:29Z

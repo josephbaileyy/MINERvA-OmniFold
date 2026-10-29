@@ -1,0 +1,27 @@
+{
+  "schema": "oi160-repro-provenance/1",
+  "script": "/pscratch/sd/j/josephrb/oi160-tol-20261029/work/t2/B/bootstrap_nd.py",
+  "script_args": [
+    "--npz",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+    "--seed",
+    "3",
+    "--iters",
+    "5",
+    "--out",
+    "/pscratch/sd/j/josephrb/oi160-tol-20261029/out/s3_B.npz"
+  ],
+  "preimported_from": {
+    "omnifold_nn_core": "/pscratch/sd/j/josephrb/oi160-tol-20261029/work/t2/lib/omnifold_nn_core.py",
+    "xsec_nd": "/pscratch/sd/j/josephrb/oi160-tol-20261029/work/t2/lib/xsec_nd.py"
+  },
+  "preimported_under_lib": true,
+  "modules_under_forbidden_root": [],
+  "lightgbm": "4.6.0",
+  "numpy": "1.26.4",
+  "python": "3.11.14",
+  "affinity_cpus": 36,
+  "omp_num_threads_env": null,
+  "script_exit": 0,
+  "script_error": null
+}
