@@ -8,35 +8,23 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-188 | NOW | migration-carried-forward | OPEN |
-| OI-174 | NOW | migration-carried-forward | OPEN |
 | OI-148 | NOW | migration-carried-forward | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
 | OI-74 | NOW | migration-carried-forward | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
 | OI-2 | NOW | migration-carried-forward | 4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13 |
 | OI-3 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED — now SCOPED, and the blocker is a decision not compute |
-| OI-4 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
 | OI-12 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-14 | NOW | migration-carried-forward | OPEN |
-| OI-19 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-20 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-22 | NOW | migration-carried-forward | STILL OPEN — but RECLASSIFIED 2026-08-13: technical verification, NOT a user decision |
-| OI-24 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-28 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-29 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-30 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See |
 | OI-31 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-32 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-33 | NOW | migration-carried-forward | OPEN |
 | OI-34 | NOW | migration-carried-forward | OPEN |
 | OI-35 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-36 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-37 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
-| OI-39 | NOW | migration-carried-forward | OPEN |
 | OI-40 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
-| OI-42 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-47 | NOW | migration-carried-forward | OPEN (re-scoped 2026-08-12, owner Session A) |
 | OI-50 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the |
 | OI-51 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
