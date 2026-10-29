@@ -42,7 +42,7 @@ class ObjectIdentityChecks(unittest.TestCase):
                     "lib/tree_state.py"):
             shutil.copy2(REPO / rel, self.tmp / rel)
         (self.tmp / ORCH / "MANIFEST-overrides.tsv").write_text(
-            HDR + f"{ORCH}/CATALOG.md\tLIVE\topen\t\n{ORCH}/A.md\tLIVE\topen\t\n")
+            HDR + f"{ORCH}/A.md\tLIVE\topen\t\n{ORCH}/CATALOG.md\tLIVE\topen\t\n")
         (self.tmp / ORCH / "CATALOG.md").write_text("# router\n- [`A.md`](A.md)\n")
         (self.tmp / ORCH / "A.md").write_text("alpha, see CATALOG.md\n")
         (self.tmp / ORCH / "B-unrowed.md").write_text("beta\n")
@@ -71,10 +71,15 @@ class ObjectIdentityChecks(unittest.TestCase):
         ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
         ov.write_text(ov.read_text().replace(f"{ORCH}/A.md\tLIVE\topen", f"{ORCH}/A.md\tARCHIVAL\tterminal"))
 
+    def add_override_row(self, row):
+        """Insert at the row's sorted position; the generator refuses an unsorted file."""
+        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
+        header, *rows = ov.read_text().splitlines()
+        ov.write_text("\n".join([header] + sorted(rows + [row], key=lambda r: r.split("\t")[0])) + "\n")
+
     def add_doc(self, name, text, cls="LIVE", status="open"):
         (self.tmp / ORCH / name).write_text(text)
-        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
-        ov.write_text(ov.read_text() + f"{ORCH}/{name}\t{cls}\t{status}\t\n")
+        self.add_override_row(f"{ORCH}/{name}\t{cls}\t{status}\t")
         git(self.tmp, "add", f"{ORCH}/{name}", f"{ORCH}/MANIFEST-overrides.tsv")
         self.assertEqual(self.manifest().returncode, 0)
         git(self.tmp, "add", f"{ORCH}/MANIFEST.tsv")
@@ -129,8 +134,7 @@ class ObjectIdentityChecks(unittest.TestCase):
 
     def test_the_same_doc_with_an_archival_row_passes(self):
         (self.tmp / ORCH / "C-new.md").write_text("gamma\n")
-        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
-        ov.write_text(ov.read_text() + f"{ORCH}/C-new.md\tARCHIVAL\tterminal\t\n")
+        self.add_override_row(f"{ORCH}/C-new.md\tARCHIVAL\tterminal\t")
         git(self.tmp, "add", f"{ORCH}/C-new.md", f"{ORCH}/MANIFEST-overrides.tsv")
         r = self.run_py("live_doc_indexed.py", "--check")
         self.assertEqual(r.returncode, 0, r.stdout)
@@ -141,8 +145,7 @@ class ObjectIdentityChecks(unittest.TestCase):
         self.assertEqual(r.returncode, 1, r.stdout)
         self.assertIn(f"{ORCH}/B-unrowed.md", r.stdout)
         self.assertNotIn(f"{ORCH}/A.md", r.stdout)
-        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
-        ov.write_text(ov.read_text() + f"{ORCH}/B-unrowed.md\tARCHIVAL\tterminal\t\n")
+        self.add_override_row(f"{ORCH}/B-unrowed.md\tARCHIVAL\tterminal\t")
         git(self.tmp, "add", f"{ORCH}/MANIFEST-overrides.tsv")
         self.assertEqual(self.run_py("live_doc_indexed.py", "--unrowed").returncode, 0)
 
@@ -182,6 +185,17 @@ class ObjectIdentityChecks(unittest.TestCase):
         self.add_doc("E.md", "epsilon, cites D.md\n", "ARCHIVAL", "terminal")
         r = self.manifest("--retention", "--at-sha", "HEAD")
         self.assertNotIn(f"uncited LIVE  {ORCH}/D.md", r.stdout)
+
+    def test_an_unsorted_overrides_file_is_refused_and_a_sorted_one_passes(self):
+        ov = self.tmp / ORCH / "MANIFEST-overrides.tsv"
+        sorted_text = ov.read_text()
+        header, *rows = sorted_text.splitlines()
+        ov.write_text("\n".join([header] + rows[::-1]) + "\n")          # reverse: out of order
+        r = self.manifest("--check", "--committed-only")
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertIn("must be sorted by path", r.stderr)
+        ov.write_text(sorted_text)
+        self.assertEqual(self.manifest("--check", "--committed-only").returncode, 0)
 
     # ---- the shared helper ------------------------------------------------------------------
     def test_tree_state_names_clean_dirty_and_no_git(self):

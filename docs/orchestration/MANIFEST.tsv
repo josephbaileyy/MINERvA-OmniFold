@@ -307,7 +307,7 @@ docs/orchestration/INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md	track
 docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	document	z-two-member-campaign	20260920	open		route-only	no
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	no
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only	no
-docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	no
+docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260922-pet-improvement-campaign		generated		exact-path-only	no
 docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	no
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only	no
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	no
@@ -449,6 +449,7 @@ docs/orchestration/RECORD-20261028-close-items-live-state-option-b.md	tracked	AR
 docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi139-state-names.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi161-hold-comments.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-overrides-sorted.md	tracked	ARCHIVAL	document	20260919-cause3-two-member-campaign	20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-revert-oi59-oi137.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-third-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	tracked	LIVE	document		20261029	open		route-only	no
