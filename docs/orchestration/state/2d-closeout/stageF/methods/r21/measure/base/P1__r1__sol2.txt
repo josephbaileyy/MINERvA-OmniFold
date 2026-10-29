@@ -1,0 +1,21 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically fluent, but recurrent development history, internal bookkeeping, dense qualifications, and opaque shorthand give several sections the register of an analysis note.
+1. QUOTE: "The three- and four-observable central values
+and the sixteen-cell five-observable result (Sec. V) use
+the joint-test estimator, a deterministic LightGBM with
+the same background treatment and refinement capacity,
+which removes most of the bias of purity-based subtraction at nominal truth in the highest-W cells (Sec. IV); the
+note’s simulation-calibrated tests use the same estimator.
+The variants used in development, and the results that
+rest on them, are described in Ref. [14], Sec. 3.2."
+   REWRITE: The three- and four-observable central values and the sixteen-cell result (Sec. V) use the deterministic LightGBM estimator labeled “joint-test” in Table I, with the same background subtraction and refinement settings. This estimator removes most of the nominal-truth closure bias from purity-based subtraction in the highest-W cells (Sec. IV). It is also used in the calibrated simulation tests. Other estimator configurations and their applications are documented in Ref. [14], Sec. 3.2.
+2. QUOTE: "The note’s calibrated tests show
+the same pull: their null distributions for the external
+predictions are displaced upward by it, as the calibration
+reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: In the calibrated tests, this bias shifts the null distributions of the comparison statistic toward larger values for the external predictions (Ref. [14], Sec. 11.5).
+3. QUOTE: "A
+candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and
+regenerates the analysis note’s figures of the joint-test
+null distributions and the (Eavail , W ) map."
+   REWRITE: A software package reproduces the analysis note’s figures showing the joint-test null distributions and the (Eavail , W ) map using NumPy, SciPy, and Matplotlib. The package has not yet been deposited.
