@@ -118,6 +118,13 @@ MUTANTS = [
     ("S_ref from projected r", 'bref = {X: om @ (e[X] * (z[f"r_{X}"] / z["r_PA"] - 1.0)) for X in ("PB", "PC")}',
      'bref = {X: e[X] * ((om @ z[f"r_{X}"]) / (om @ z["r_PA"]) - 1.0) for X in ("PB", "PC")}'),
     ("negative counts never counted", "        negative[R] = int(np.sum(om[R] < 0))\n", "        pass\n"),
+    # amendment 1: the near-f masking of the central partial integrals
+    ("near-f masking reverted to the outside-share rule", 'np.where(near_f(sup_int, f), np.nan, sup_int)',
+     'np.where(outside > 0, sup_int, np.nan)'),
+    ("near_f threshold zero", "return np.abs(x / f - 1.0) < f0.LEAK_REL", "return np.abs(x / f - 1.0) < 0.0"),
+    ("near_f threshold 1 (drops off-f integrals too)", "return np.abs(x / f - 1.0) < f0.LEAK_REL",
+     "return np.abs(x / f - 1.0) < 1.0"),
+    ("every central partial dropped", 'np.where(near_f(sup_int, f), np.nan, sup_int)', 'np.full_like(sup_int, np.nan)'),
 ]
 
 
