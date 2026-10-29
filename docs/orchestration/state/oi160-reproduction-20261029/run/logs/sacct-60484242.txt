@@ -1,0 +1,3 @@
+60484242|oi160-repro|shared_milan_ss11|shared|36|64G||00:45:34|18:32:39|COMPLETED|0:0|nid004104|billing=36,cpu=36,energy=1864854,mem=64G,node=1
+60484242.batch|batch|||36||12931692K|00:45:34|18:32:39|COMPLETED|0:0|nid004104|cpu=36,mem=64G,node=1
+60484242.extern|extern|||36|||00:45:35|00:00:00|COMPLETED|0:0|nid004104|billing=36,cpu=36,mem=64G,node=1
