@@ -1434,6 +1434,7 @@ docs/orchestration/state/2d-closeout/stageF/PLAIN-LANGUAGE.md	tracked	LIVE	state
 docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/HANDOFF.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/tools/ci_merge.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/tools/merge_main.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/director-handoff-20261027/tools/union_overrides.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/f4-verify/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/f4-verify/SHA256SUMS.pscratch.cfs	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/f4-verify/extra.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
