@@ -1,0 +1,21 @@
+NODE=login37 UTC=2026-10-29T07:37:06Z
+B-absent-before: yes
+===== deploy.log
+2026-10-29T07:37:45Z
+login37
+a1630dd04e73b46c602cee29f1a4f54aa8bd1757
+porcelain_ignored_lines 0
+46d0afacd50fb5e417238c5a9e3a2b49355f54af82aa0913d77c3a2f46eb2df4  run_job.sh
+649b12916b4fe43df1626f9809d89817ba3e57ee04238be793918eaa968396ae  repro_run.py
+456d6bced4135ae8f40e7ee175a27555d7dc733ead6210ac2017226ba261c32d  repro_compare.py
+30589eec55c233bb8c18710b4804b3078f84cda532087768af0739eee4de9c96  test_repro.py
+5da5283b212e94e21ccfaa69f266a34136fc45d6c34eb84a25a1fbfe1cecadc0  code.sha256
+8e3cf24852d883eb41ac2b8e7c99878929d5e66802db6b71cbe255d3badb397f  stored.sha256
+c82b9306447b8674e37a25bcd3a96ef644930af9c28fefb9197ba1297ba7ec31  DECLARATION.md
+tests rc=0
+porcelain_ignored_lines_after_tests 0
+===== deploy-tests.log (tail)
+[repro_compare] outcome VOID: the corrected code does not reproduce itself, so no difference can be read
+[repro_compare] outcome R2: the corrected code (07c18aee) reproduces the top-level replica bit for bit
+[repro_compare] a stored replica's sha256 is not the pinned one
+[repro_compare] outcome THIRD: the old code reproduces the June replica, but neither committed code reproduces the top-level one: a third producer, or a July-only environment

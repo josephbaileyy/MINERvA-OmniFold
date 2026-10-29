@@ -6223,9 +6223,17 @@ docs/orchestration/state/oi126-successor-t1-endpoint-predeclaration-20260823.jso
 docs/orchestration/state/oi137-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only	no
 docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
 docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
+docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	tracked	ARCHIVAL	state-artifact	oi160-reproduction-20261029		terminal		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/code.sha256	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/repro_compare.py	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/repro_run.py	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/logs/deploy-session.txt	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/logs/sacct-60484242.txt	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/logs/submit-session.txt	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/out/A1.provenance.json	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/out/A2.provenance.json	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/out/B1.provenance.json	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-reproduction-20261029/run/out/readout.json	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/run_job.sh	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/stored.sha256	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/test_repro.py	tracked	MACHINE	state-artifact	oi160-reproduction-20261029		generated		exact-path-only	yes
