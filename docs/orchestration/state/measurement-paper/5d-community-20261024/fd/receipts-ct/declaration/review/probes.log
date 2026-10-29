@@ -1,0 +1,34 @@
+
+==== P-A  5A S_ref16: ratio of footprint-averaged r (tool) vs footprint average of the 2D relative b_X/x (linear)
+fixture m ~ U(0.8, 1.2): b_PB: |tool - linear| / |linear| per cell median 1.510e-01 max 7.318e+00; out-of-span share of C_PL16: tool 8.327e-02, linear 3.213e-02
+fixture m ~ U(0.8, 1.2): b_PC: |tool - linear| / |linear| per cell median 3.782e-01 max 1.734e+00; out-of-span share of C_PL16: tool 8.434e-02, linear 7.310e-02
+fixture m ~ U(0.8, 1.2): sigma(S_ref16) tool/linear per cell: median 0.8998 min 0.7995 max 1.5036
+m with a p_parallel step of 7 % (2D-like): b_PB: |tool - linear| / |linear| per cell median 1.017e-01 max 2.508e+00; out-of-span share of C_PL16: tool 2.841e-02, linear 3.213e-02
+m with a p_parallel step of 7 % (2D-like): b_PC: |tool - linear| / |linear| per cell median 3.719e-01 max 1.403e+00; out-of-span share of C_PL16: tool 6.815e-02, linear 7.310e-02
+m with a p_parallel step of 7 % (2D-like): sigma(S_ref16) tool/linear per cell: median 0.9680 min 0.9176 max 1.6601
+
+==== P-C  5A weight_outside_2d_support (central) = |X_sup / f - 1| for X_sup = the central value's supported-footprint integral, which is not in the guard's table
+tool rc 0
+max | outside - (1 - X_sup/f) | : 2.0122792321330962e-16
+tool's guard (f, U@prior): offending numbers in the written readout: 0
+guard with X_sup added:    offending numbers in the written readout: 24
+
+==== P-B  4C weighted percentiles (inverted ECDF) vs unweighted (np.percentile, linear interpolation): difference at EQUAL weights, chi2_16 samples of A7's sizes
+n=1343: mean (weighted@w=1 - unweighted) per percentile {5.0: -0.0023, 16.0: -0.0092, 50.0: 0.0, 84.0: 0.0162, 95.0: 0.0061}; max |diff| {5.0: 0.0089, 16.0: 0.0533, 50.0: 0.0, 84.0: 0.0782, 95.0: 0.0394}
+n=1365: mean (weighted@w=1 - unweighted) per percentile {5.0: -0.0052, 16.0: -0.0032, 50.0: 0.0, 84.0: 0.0044, 95.0: 0.0096}; max |diff| {5.0: 0.0251, 16.0: 0.0175, 50.0: 0.0, 84.0: 0.0312, 95.0: 0.0727}
+n=1751: mean (weighted@w=1 - unweighted) per percentile {5.0: -0.0091, 16.0: 0.0, 50.0: 0.0, 84.0: 0.0, 95.0: 0.0205}; max |diff| {5.0: 0.0498, 16.0: 0.0, 50.0: 0.0, 84.0: 0.0, 95.0: 0.1381}
+
+==== P-D  4C control C4 (weighted mean chi2 about truth = about b~ + chi2(b~)) on arbitrary inputs
+2000 random (r, w, M) sets: worst normalized gap 1.355e-14 against the 1e-9 refusal: C4 cannot fire on any input
+
+==== P-E  5A control P4 on any footprint of offsets that pass P0 (sum_X e_X g_X = 0 on the 2D cells)
+500 random footprints: worst |sum e g_R| 6.939e-18 (refusal > 1e-12), worst rank 2 (refusal > 2), worst min/max eigenvalue -4.135e-16 (refusal < -1e-12): P4 cannot fire once P0 passes
+
+==== P-F  3a fraction_of_half_span_in_C_resp_span for a direction-free d (isotropic random) and a rank-4 C_resp
+rank 4: random-direction in-span fraction mean 0.2489 (rank/16 = 0.2500), 16-84 % 0.104-0.397
+one d: in-span fraction in relative units 0.2445, in absolute units 0.9920, in C_total_resp's metric (M-orthogonal) 0.0049 (Euclidean projector, metric norm)
+
+==== P-G  3a curvature_ratio (relative-unit norms) vs build_cresp.curvature_ratio (MP-1 G3 form, absolute norms)
+draw 0: tool form 0.1667; build_cresp G3 form on the same three products 0.2305; f max/min 671485.4
+draw 1: tool form 0.2534; build_cresp G3 form on the same three products 0.2895; f max/min 671485.4
+draw 2: tool form 0.2435; build_cresp G3 form on the same three products 0.1010; f max/min 671485.4

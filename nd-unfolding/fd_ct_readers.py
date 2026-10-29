@@ -69,6 +69,9 @@ PERCENTILES = (5.0, 16.0, 50.0, 84.0, 95.0)
 # 5A
 PERIODS = ("PA", "PB", "PC")
 EXTRAPOLATED = 0.10   # a cell whose footprint weight outside the 2D term's 205 cells exceeds this is labelled
+# the 2D grid (state/2d-closeout/playlist-spread-20261014/coverage/scripts/common.py:17-18); 2D cell = ipt * 16 + ipz
+PT_2D = (0.0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55, 0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50)
+PZ_2D = (1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0)
 LABELS = {
     "recoil": "data-side sensitivity at a second construction: W2b's whole simulated-recoil scale s = 0.96 and 1.04 "
               "(the test-beam agreement level, an exploratory size, not an uncertainty prescription), relative to "
@@ -82,7 +85,7 @@ LABELS = {
               "inside a (p_T, p_parallel) bin; only 5B can test it; built from the observed offsets, so it "
               "contains them by construction and cannot fail; not a 5D run-period block, and printed beside the "
               "reported matrix, not in it (LIMITATION-PLAN-ADDENDUM-20261028.md section 5.4)",
-    "not_citable_for": ["a coverage, calibration or chi2-distribution result", "a covariance component or a change "
+    "not_citable_for": ["a coverage or calibration result, or that any chi2 follows or departs from chi2_ndf", "a covariance component or a change "
                         "to the reported matrix", "a bias under response mismatch", "a run-period effect in the "
                         "hadronic variables"],
 }
@@ -201,7 +204,7 @@ def run_recoil(a) -> int:
     keep = lam > TOL * lam.max()
     Pd = V[:, keep] @ (V[:, keep].T @ d)
     span = float(Pd @ Pd / (d @ d)) if d @ d > 0 else None
-    curv = float(np.linalg.norm(s_plus + s_minus) / np.linalg.norm(s_plus - s_minus))
+    curv = float(np.linalg.norm(X["rr1"] + X["rr0"] - 2.0 * z) / np.linalg.norm(X["rr1"] - X["rr0"]))
     with np.errstate(divide="ignore", invalid="ignore"):
         r_resp, r_m = np.abs(d) / sig_resp, np.abs(d) / sig_m
     out = {"schema": "fd-ct-recoil/1", "labels": {"what": LABELS["recoil"], "not_citable_for": LABELS["not_citable_for"]},
@@ -216,10 +219,14 @@ def run_recoil(a) -> int:
            "half_span_quadratic_form": {"C_total_resp": quad(d, M_rel), "C_total": quad(d, Ct_rel),
                                         "label": "d^T M^-1 d of the half-span: a length in sigma units, descriptive, not a test"},
            "fraction_of_half_span_in_C_resp_span": {"value": span, "C_resp_rank": int(keep.sum()),
-                                                    "label": "||P d||^2 / ||d||^2, P the projector onto C_resp's "
-                                                             "range (relative units); 1 means the scale moves the "
-                                                             "cells only in C_resp's directions"},
-           "curvature_ratio": {"value": curv, "label": "||s+ + s-|| / ||s+ - s-||, descriptive"},
+                                                    "random_direction_expectation": float(keep.sum()) / N_CELLS,
+                                                    "label": "||P d||^2 / ||d||^2 in relative units (d and C_resp "
+                                                             "divided by f), P the projector onto C_resp's range; 1 "
+                                                             "means the scale moves the cells only in C_resp's "
+                                                             "directions, and a direction drawn at random gives "
+                                                             "rank/16 in expectation; the value depends on the units"},
+           "curvature_ratio": {"value": curv, "label": "build_cresp's G3 form on the cell integrals, "
+                                                       "||X(+) + X(-) - 2 X(0)|| / ||X(+) - X(-)||; descriptive"},
            "inputs_sha256": {**{v: W2B[v][0] for v in W2B}, "s1_npz": PINS["s1_npz"], "cresp": PINS["cresp"],
                              "definition": sa.DEFINITION_SHA256},
            "code_sha256": code_sha(), "argv": sys.argv}
@@ -252,11 +259,13 @@ def weighted_percentiles(v: np.ndarray, w: np.ndarray, ps) -> list[float]:
 
 
 def distribution(c2: np.ndarray, w: np.ndarray, ndf: int) -> dict:
-    """Means and percentiles only, beside chi2_ndf's own: no p value and no tail fraction (the 3D binding's ruling 4)."""
+    """Means and percentiles only, beside chi2_ndf's own: no p value and no tail fraction (the 3D binding's ruling 4).
+    Both percentile sets use the inverted (weighted) ECDF, the unweighted one with unit weights."""
     return {"weighted": {"mean": float(w @ c2 / w.sum()),
                          "percentiles": dict(zip(map(str, PERCENTILES), weighted_percentiles(c2, w, PERCENTILES)))},
             "unweighted": {"mean": float(c2.mean()),
-                           "percentiles": dict(zip(map(str, PERCENTILES), np.percentile(c2, PERCENTILES).tolist()))},
+                           "percentiles": dict(zip(map(str, PERCENTILES),
+                                                   weighted_percentiles(c2, np.ones_like(w), PERCENTILES)))},
             "reference_chi2": {"ndf": ndf, "mean": float(ndf),
                                "percentiles": {str(p): chi2_quantile(p / 100.0, ndf) for p in PERCENTILES}}}
 
@@ -290,6 +299,9 @@ def run_chi2(a) -> int:
     f0.report("C1", "every product is an A7 calibration experiment at its declared truth, in the declared count", True)
     S = common(a, U)
     f, ff = S["f"], S["ff"]
+    lo = sorted(c["id"] for c in json.loads(a.definition.read_text())["reporting_cells"] if c["box"]["pz"][1] <= 4.5)
+    f0.report("C1", "the p_parallel < 4.5 cells of the definition are F0's eight GiBUU cells", lo == list(f0.GIBUU_CELLS),
+              f"they are {lo}")
     w_all = f0.sa_call("C2", sa.flux_weights, a.flux_constraint)
     f0b = json.loads(a.f0b_readout.read_text())["controls"]["offset_control_7"]["B_eff_calibration"]
     W, R, ints = {}, {}, []
@@ -315,7 +327,7 @@ def run_chi2(a) -> int:
         r, w = R[name], W[name]
         sets_cells = {"all16": list(range(N_CELLS))}
         if name == "A7_gibuu":
-            sets_cells["gibuu8"] = list(f0.GIBUU_CELLS)
+            sets_cells["gibuu8"] = lo
         rec = {"cal": cal, "n_experiments": int(r.shape[0]), "B_eff": float(w.sum() ** 2 / (w ** 2).sum()), "matrices": {}}
         for mn, M in mats.items():
             rec["matrices"][mn] = {}
@@ -344,10 +356,12 @@ def run_chi2(a) -> int:
         lines.append(f"[4C] {name}: weighted mean chi2 about truth {m16['about_truth']['weighted']['mean']:.3f}, "
                      f"about b~ {m16['about_weighted_mean']['weighted']['mean']:.3f} (ndf 16, C_total + C_resp), "
                      f"median width ratio {m16['width_ratio_summary']['median']:.4f}")
-    f0.report("C4", "the mean-chi2 decomposition holds for every truth, matrix and cell set", True, guard=guard)
+    f0.report("C4", "assertion: the mean-chi2 decomposition holds for every truth, matrix and cell set", True, guard=guard)
     out = {"schema": "fd-ct-chi2/1", "labels": {"what": LABELS["chi2"], "not_citable_for": LABELS["not_citable_for"],
                                                 "no_p_values": "no p value and no tail fraction is computed or written"},
-           "controls_passed": ["S", "C0", "C1", "C2", "C3", "C4"],
+           "controls_passed": ["S", "C0", "C1", "C2", "C3"],
+           "assertions_passed": {"C4": "an identity for a weighted mean: it cannot fail on any input and guards the "
+                                       "code, not the inputs"},
            "constants": {"percentiles": list(PERCENTILES),
                          "weights": "nu-e + IMD constraint weight of each experiment's drawn flux universe",
                          "matrices": {"C_total_resp": "the reported C_total + C_resp, relative to f (no V_g)",
@@ -364,12 +378,14 @@ def run_chi2(a) -> int:
 
 def footprint(U: np.ndarray, fm: np.ndarray, x: np.ndarray, support: np.ndarray):
     """Per cell R and 2D cell b (index ipt * 16 + ipz): W_Rb = sum over R's fine cells in b of x_f vol_f. Returns the
-    weights normalized over the supported 2D cells (16 x 205) and the share of R's weight outside them."""
+    weights normalized over the supported 2D cells (16 x 205), the share of R's weight outside them, R's integral over
+    the supported part (for the leak guard only, never written) and the number of 2D cells with negative weight."""
     shape = sa.s1.fine_shape()
     idx = np.unravel_index(np.arange(fm.size), shape)
     c2 = idx[0] * NPZ_2D + idx[1]
     contrib = x * sa.s1.fine_volume()
-    om, outside = np.zeros((N_CELLS, support.size)), np.zeros(N_CELLS)
+    om, outside, sup_int = np.zeros((N_CELLS, support.size)), np.zeros(N_CELLS), np.zeros(N_CELLS)
+    negative = np.zeros(N_CELLS, int)
     pos = {int(c): k for k, c in enumerate(support)}
     for R in range(N_CELLS):
         m = fm == R
@@ -381,32 +397,40 @@ def footprint(U: np.ndarray, fm: np.ndarray, x: np.ndarray, support: np.ndarray)
         for b in np.unique(c2[inside]):
             om[R, pos[int(b)]] = contrib[inside & (c2 == b)].sum() / sup
         outside[R] = (tot - sup) / tot
-    return om, outside
+        sup_int[R] = sup
+        negative[R] = int(np.sum(om[R] < 0))
+    return om, outside, sup_int, negative
 
 
-def period_variant(om, outside, z, e, k, S) -> dict:
+def period_variant(om, outside, z, e, k, S, write_outside: bool = True, negative=None) -> dict:
+    """g_X,R = om @ g_X and S-ref's b_X,R = om @ b_X, both projected linearly from the 2D cells, with
+    b_X = e_X (r_X / r_A - 1) as 2D's DESIGN section 2 defines it."""
     g = {X: om @ z[f"g_{X}"] for X in PERIODS}
-    r = {X: om @ z[f"r_{X}"] for X in PERIODS}
+    bref = {X: om @ (e[X] * (z[f"r_{X}"] / z["r_PA"] - 1.0)) for X in ("PB", "PC")}
     ident = float(np.max(np.abs(sum(e[X] * g[X] for X in PERIODS))))
     if ident > TOL:
         raise f0.Stop("P4", f"sum_X e_X g_X,R is {ident:.3e}, not 0")
     C = k * sum(e[X] * np.outer(g[X], g[X]) for X in PERIODS)
-    Sref = sum(np.outer(e[X] * (r[X] / r["PA"] - 1.0), e[X] * (r[X] / r["PA"] - 1.0)) for X in ("PB", "PC"))
+    Sref = sum(np.outer(bref[X], bref[X]) for X in ("PB", "PC"))
     lam = np.linalg.eigvalsh(C)
     rank = int(np.sum(lam > TOL * lam.max())) if lam.max() > 0 else 0
     if rank > 2 or lam.min() < -TOL * max(lam.max(), 1e-300):
         raise f0.Stop("P4", f"C_PL,16 rank {rank} or min eigenvalue {lam.min():.3e}")
     M_rel = S["M"] / S["ff"]
     sig, sig_m = np.sqrt(np.diag(C)), np.sqrt(np.diag(M_rel))
-    return {"g": {X: g[X].tolist() for X in PERIODS},
+    out = {"g": {X: g[X].tolist() for X in PERIODS},
             "sigma_rel": {"C_PL16": sig.tolist(), "S_ref16": np.sqrt(np.diag(Sref)).tolist(), "C_total_resp": sig_m.tolist()},
             "sigma_rel_summary": {"C_PL16": summary(sig), "S_ref16": summary(np.sqrt(np.diag(Sref)))},
             "sigma_ratio_to_C_total_resp": (sig / sig_m).tolist(),
             "sigma_ratio_summary": summary(sig / sig_m),
             "trace_share": float(np.trace(C) / np.trace(M_rel + C)),
             "C_PL16_rel": C.tolist(), "rank": rank,
-            "weight_outside_2d_support": outside.tolist(),
             "extrapolated_cells": [f"R{c:02d}" for c in range(N_CELLS) if outside[c] > EXTRAPOLATED]}
+    if write_outside:
+        out["weight_outside_2d_support"] = outside.tolist()
+    if negative is not None:
+        out["negative_weight_2d_cells"] = [int(v) for v in negative]
+    return out
 
 
 def run_period(a) -> int:
@@ -427,6 +451,9 @@ def run_period(a) -> int:
     C_re = k * sum(e[X] * np.outer(x * z[f"g_{X}"], x * z[f"g_{X}"]) for X in PERIODS)
     checks = {
         "the committed playlist_term.json names this npz": pj.get("npz", {}).get("sha256") == PINS["playlist_npz"],
+        "the fine grid's p_T and p_parallel edges are the 2D grid's": bool(
+            np.array_equal(sa.s1.FINE["pt"], PT_2D) and np.array_equal(sa.s1.FINE["pz"], PZ_2D)
+            and len(PT_2D) - 1 == 14 and len(PZ_2D) - 1 == NPZ_2D),
         "205 distinct 2D cells on the 14 x 16 grid": bool(n2 == 205 and np.unique(support).size == n2
                                                           and support.min() >= 0 and support.max() < 14 * NPZ_2D),
         "every period array has one entry per cell": all(z[f"{q}_{X}"].shape == (n2,) for q in "egr" for X in PERIODS),
@@ -453,17 +480,24 @@ def run_period(a) -> int:
                        for ax in sa.s1.AXES)
     f0.report("P2", "the prior is MnvTune v1's s5p-mc-truth-pred/1 on the fine grid",
               bool(pm.get("schema") == "s5p-mc-truth-pred/1" and edges_ok and xp.shape == xc.shape), "is not")
-    variants = {}
+    variants, partial = {}, []
     for vn, xw in (("central", xc), ("prior", xp)):
-        om, outside = footprint(U, fm, xw, support)
-        variants[vn] = period_variant(om, outside, z, e, k, S)
+        om, outside, sup_int, negative = footprint(U, fm, xw, support)
+        # the central variant's outside share is 1 - X_sup/f, the X/f - 1 form of a partial data integral: not written
+        variants[vn] = period_variant(om, outside, z, e, k, S, write_outside=vn == "prior", negative=negative)
+        # where a cell lies wholly inside the support its central partial integral is f itself: dropped (NaN), as for
+        # the central integrals below
+        partial.append(np.where(outside > 0, sup_int, np.nan) if vn == "central" else sup_int)
     f0.report("P3", "every cell has positive weight on the 2D term's cells", True)
-    f0.report("P4", "sum_X e_X g_X,R = 0 and C_PL,16 is PSD of rank <= 2, for both weightings", True)
+    f0.report("P4", "assertion: sum_X e_X g_X,R = 0 and C_PL,16 is PSD of rank <= 2, for both weightings", True)
     # the central value's integrals are f itself (P1), already in the guard's table; passing them again would
-    # forbid f/f = 1 and refuse every '1' in a string
-    guard = f0.LeakGuard(f, [U @ xp])
+    # forbid f/f = 1 and refuse every '1' in a string. The supported-part integrals are passed, so that neither
+    # variant's 1 - X_sup/X can be written by accident
+    guard = f0.LeakGuard(f, [U @ xp, *partial])
     out = {"schema": "fd-ct-period/1", "labels": {"what": LABELS["period"], "not_citable_for": LABELS["not_citable_for"]},
-           "controls_passed": ["S", "P0", "P1", "P2", "P3", "P4"], "cells": cells(),
+           "controls_passed": ["S", "P0", "P1", "P2", "P3"], "cells": cells(),
+           "assertions_passed": {"P4": "implied by P0 for the linear projection: it cannot fail on inputs that pass "
+                                       "P0, and guards the code, not the inputs"},
            "constants": {"periods": {"PA": "1A-1F", "PB": "1G 1L 1M", "PC": "1N-1P"}, "e": e, "k": k,
                          "extrapolated_above": EXTRAPOLATED,
                          "weights": {"central": "primary: the (e) central value's fine-cell contributions x_f vol_f",

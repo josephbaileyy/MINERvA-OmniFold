@@ -105,13 +105,14 @@ class Tree:
         return np.where(self.fm >= 0, (X / self.volc)[np.clip(self.fm, 0, None)], filler * self.scale)
 
     # ---------------------------------------------------------------- shared records
-    def write_common(self, Cr_override=None, Ctr_override=None, f_override=None):
+    def write_common(self, Cr_override=None, Ctr_override=None, f_override=None, U_override=None, Ct_override=None):
         R = self.root
         R.mkdir(parents=True, exist_ok=True)
         self.s1 = R / "s1_assembly.npz"
         self.s1.unlink(missing_ok=True)
-        np.savez_compressed(self.s1, f=self.f if f_override is None else f_override, U=self.U.astype(np.float32),
-                            C_e=self.Ce, C_model_abs=self.Cma, C_total=self.Ct)
+        np.savez_compressed(self.s1, f=self.f if f_override is None else f_override,
+                            U=(self.U if U_override is None else U_override).astype(np.float32),
+                            C_e=self.Ce, C_model_abs=self.Cma, C_total=self.Ct if Ct_override is None else Ct_override)
         self.cresp = R / "cresp.npz"
         self.cresp.unlink(missing_ok=True)
         Cr = self.Cr if Cr_override is None else Cr_override
@@ -127,12 +128,13 @@ class Tree:
                 "--out-json", str(self.out / f"{name}.json")]
 
     # ---------------------------------------------------------------- 3a
-    def write_recoil(self, positive=True, meta_extra=None):
+    def write_recoil(self, positive=True, meta_extra=None, short=None):
         d = self.root / "w2b/unf"
         d.mkdir(parents=True, exist_ok=True)
         rng = self.rng
         self.Z = self.f * (1 + rng.normal(0, 0.01, 16))
         self.sm, self.sp = rng.normal(-0.03, 0.01, 16), rng.normal(0.03, 0.01, 16)
+        self.sm[2], self.sp[2] = 0.02, -0.02     # one cell whose half-span is negative
         self.X = {"rrzero": self.Z, "rr0": self.Z * (1 + self.sm), "rr1": self.Z * (1 + self.sp)}
         if not positive:
             self.X["rr1"] = self.X["rr1"].copy()
@@ -141,7 +143,10 @@ class Tree:
         for v, X in self.X.items():
             p = d / f"w2b_{v}_b-_j-.npz"
             m = data_meta(fake(v, "npz"), fake(v, "bkg"), **((meta_extra or {}).get(v, {})))
-            np.savez_compressed(p, xsec_flat=self.cellwise(X), shape=np.array(sa.s1.fine_shape()), meta=json.dumps(m))
+            arr = self.cellwise(X)
+            if v == short:
+                arr = arr[:-1]
+            np.savez_compressed(p, xsec_flat=arr, shape=np.array(sa.s1.fine_shape()), meta=json.dumps(m))
             self.w2b[v] = (digest(p), fake(v, "npz"), fake(v, "bkg"), ct.W2B[v][3])
         self.argv_recoil = ["recoil", *self.common_argv("recoil"), "--w2b-unf", str(d)]
         return self
@@ -194,9 +199,13 @@ class Tree:
 
     # ---------------------------------------------------------------- 5A
     def write_period(self, e=(0.53, 0.30, 0.17), gsum_defect=0.0, cpl_defect=0.0, e_ripple=0.0, json_npz=None,
-                     central_scale=1.0, prior_schema="s5p-mc-truth-pred/1"):
+                     central_scale=1.0, prior_schema="s5p-mc-truth-pred/1", dup_cell=False, short_array=None,
+                     prior_edges_defect=0.0, central_meta_extra=None, prior_negative=False):
         R, rng = self.root, self.rng
         self.support = np.array([c for c in range(14 * 16) if c not in UNSUPPORTED])
+        cells_written = self.support.copy()
+        if dup_cell:
+            cells_written[1] = cells_written[0]
         n2 = self.support.size
         self.e = dict(zip(ct.PERIODS, e))
         gA, gB = rng.normal(0, 0.02, n2), rng.normal(0, 0.03, n2)
@@ -213,17 +222,25 @@ class Tree:
         ev["PA"] = ev["PA"] * (1 + e_ripple * (np.arange(n2) == 2))
         npz = R / "playlist_term.npz"
         npz.unlink(missing_ok=True)
-        np.savez(npz, C_PL=C_PL, cells=self.support, x=x, **{f"g_{X}": self.g[X] for X in ct.PERIODS},
-                 **{f"e_{X}": ev[X] for X in ct.PERIODS}, **{f"r_{X}": self.r[X] for X in ct.PERIODS})
+        arrays = {**{f"g_{X}": self.g[X] for X in ct.PERIODS}, **{f"e_{X}": ev[X] for X in ct.PERIODS},
+                  **{f"r_{X}": self.r[X] for X in ct.PERIODS}}
+        if short_array:
+            arrays[short_array] = arrays[short_array][:-1]
+        np.savez(npz, C_PL=C_PL, cells=cells_written, x=x, **arrays)
         pj = R / "playlist_term.json"
         pj.write_text(json.dumps({"npz": {"sha256": json_npz or digest(npz)}}))
         central = R / "data_b-_j-.npz"
         np.savez_compressed(central, xsec_flat=self.xc * central_scale, shape=np.array(sa.s1.fine_shape()),
-                            meta=json.dumps(data_meta(sa.INPUT_NPZ_SHA256, sa.BKG_SHA256)))
+                            meta=json.dumps(data_meta(sa.INPUT_NPZ_SHA256, sa.BKG_SHA256, **(central_meta_extra or {}))))
         self.xp = np.where(self.fm >= 0, rng.uniform(0.2, 2.0, N), 0.1) * self.scale
+        if prior_negative:   # one 2D cell of R03 with negative net prior weight
+            shape = sa.s1.fine_shape()
+            ipt, ipz = np.unravel_index(np.arange(N), shape)[:2]
+            m3 = (self.fm == 3) & (ipt * 16 + ipz == int(np.unique((ipt * 16 + ipz)[self.fm == 3])[0]))
+            self.xp = np.where(m3, -self.xp, self.xp)
         prior = R / "mnvtune_v1_xsec5d.npz"
         np.savez(prior, xsec_flat=self.xp, meta_json=json.dumps({"schema": prior_schema}),
-                 **{f"edges_{a}": np.asarray(sa.s1.FINE[a]) for a in sa.s1.AXES})
+                 **{f"edges_{a}": np.asarray(sa.s1.FINE[a]) * (1 + prior_edges_defect * (a == "W")) for a in sa.s1.AXES})
         self.pins.update(playlist_npz=digest(npz), playlist_json=digest(pj), central=digest(central), prior=digest(prior))
         self.argv_period = ["period", *self.common_argv("period"), "--playlist-npz", str(npz), "--playlist-json", str(pj),
                             "--central", str(central), "--prior", str(prior)]
@@ -271,6 +288,17 @@ def keys_anywhere(obj):
     elif isinstance(obj, list):
         for v in obj:
             yield from keys_anywhere(v)
+
+
+# the 4C readout's declared keys (FD-CT-READERS-DECLARATION.md section 5): anything else, a tail fraction under any
+# name included, fails the schema test
+CHI2_KEYS = {"schema", "labels", "what", "not_citable_for", "no_p_values", "controls_passed", "assertions_passed", "C4",
+             "constants", "percentiles", "weights", "matrices", "C_total_resp", "C_e", "truths", "cal", "n_experiments",
+             "B_eff", "all16", "gibuu8", "cells", "ndf", "about_truth", "about_weighted_mean", "weighted", "unweighted",
+             "mean", "reference_chi2", "chi2_of_weighted_mean_bias", "width_ratio", "width_ratio_summary", "median",
+             "min", "max", "inputs_sha256", "s5p_sums", "f0b_readout", "s1_npz", "cresp", "constraint", "definition",
+             "code_sha256", "fd_ct_readers.py", "fd_f0_regrade.py", "s1_assemble.py", "s5p_stage1_inspect.py",
+             "argv"} | {str(p) for p in ct.PERCENTILES}
 
 
 # ------------------------------------------------------------------------------------------------ pure
@@ -331,6 +359,18 @@ class Recoil(Base):
         p = dirs @ coef
         self.assertAlmostEqual(r["fraction_of_half_span_in_C_resp_span"]["value"], float(p @ p / (d @ d)), places=9)
         self.assertEqual(r["fraction_of_half_span_in_C_resp_span"]["C_resp_rank"], 4)
+        self.assertEqual(r["fraction_of_half_span_in_C_resp_span"]["random_direction_expectation"], 0.25)
+        ff = np.outer(t.f, t.f)
+        st = np.sqrt(np.diag(t.Ct)) / t.f
+        np.testing.assert_allclose(r["sigma_rel"]["C_total"], st, rtol=1e-12)
+        np.testing.assert_allclose(r["sigma_rel"]["C_total_resp"], sm, rtol=1e-12)
+        np.testing.assert_allclose(r["abs_half_span_over_sigma"]["C_resp"], np.abs(d) / sr, rtol=1e-9)
+        self.assertAlmostEqual(r["abs_half_span_over_sigma"]["C_resp_summary"]["median"], float(np.median(np.abs(d) / sr)), places=9)
+        self.assertAlmostEqual(r["abs_half_span_over_sigma"]["C_total_resp_summary"]["max"], float(np.max(np.abs(d) / sm)), places=9)
+        self.assertAlmostEqual(r["half_span_summary_abs"]["min"], float(np.abs(d).min()), places=14)
+        self.assertAlmostEqual(r["half_span_quadratic_form"]["C_total"], float(d @ np.linalg.solve(t.Ct / ff, d)), places=6)
+        curv = float(np.linalg.norm(X["rr1"] + X["rr0"] - 2 * Z) / np.linalg.norm(X["rr1"] - X["rr0"]))
+        self.assertAlmostEqual(r["curvature_ratio"]["value"], curv, places=9)
         self.assertEqual(r["scales"], {"rr0": 0.96, "rr1": 1.04, "rrzero": 1.0})
         self.assertEqual(r["labels"]["not_citable_for"], ct.LABELS["not_citable_for"])
 
@@ -362,6 +402,42 @@ class Recoil(Base):
         t = self.tree().write_recoil()
         t.pins["s1_npz"] = "0" * 64
         self.assertRefuses(t, t.argv_recoil, "FAIL control S: S1 assembly")
+
+    def test_refuses_a_U_that_is_not_the_definitions(self):
+        t = Tree(self.tmp / "tree")
+        U = t.U.copy()
+        U[0, int(np.flatnonzero(t.fm == 0)[0])] *= 2
+        t.write_common(U_override=U).write_recoil()
+        self.assertRefuses(t, t.argv_recoil, "FAIL control S U is S1's float32 functional matrix")
+
+    def test_refuses_a_non_positive_f(self):
+        t = Tree(self.tmp / "tree")
+        f = t.f.copy()
+        f[5] = 0.0
+        t.write_common(f_override=f).write_recoil()
+        self.assertRefuses(t, t.argv_recoil, "FAIL control S f is positive on every cell")
+
+    def test_refuses_a_C_total_that_is_not_C_e_plus_C_model(self):
+        t = Tree(self.tmp / "tree")
+        t.write_common(Ct_override=t.Ct * (1 + 1e-9)).write_recoil()
+        self.assertRefuses(t, t.argv_recoil, "FAIL control S C_total = C_e + C_model_abs")
+
+    def test_refuses_another_C_resp_file(self):
+        t = self.tree().write_recoil()
+        t.pins["cresp"] = "0" * 64
+        self.assertRefuses(t, t.argv_recoil, "FAIL control S: C_resp")
+
+    def test_refuses_a_product_of_the_wrong_length(self):
+        t = self.tree().write_recoil(short="rrzero")
+        self.assertRefuses(t, t.argv_recoil, "FAIL control R0: rrzero: xsec_flat shape (65855,)")
+
+    def test_the_guard_refuses_a_planted_product_integral(self):
+        # O(1) units, so that the guard's 1e-30 floor cannot be what refuses it: only its table of integrals can
+        t = self.tree(scale=1.0).write_recoil()
+        with np.load(t.root / "w2b/unf/w2b_rrzero_b-_j-.npz") as z:
+            X0 = float((t.U @ np.asarray(z["xsec_flat"], float))[0])
+        with mock.patch.object(ct, "quad", lambda v, M: X0):
+            self.assertRefuses(t, t.argv_recoil, "REFUSED leak guard", rc=3)
 
     def test_refuses_to_overwrite(self):
         t = self.tree().write_recoil()
@@ -405,6 +481,7 @@ class Chi2(Base):
             rs, ws = np.array(rs), np.array(ws)
             rec = r["truths"][name]
             self.assertEqual(rec["n_experiments"], N_CAL)
+            self.assertAlmostEqual(rec["B_eff"], float(ws.sum() ** 2 / (ws ** 2).sum()), places=10)
             self.assertEqual(set(rec["matrices"]["C_e"]), {"all16", "gibuu8"} if name == "A7_gibuu" else {"all16"})
             for mn, M in mats.items():
                 for cn, idx in (("all16", list(range(16))), ("gibuu8", list(F.GIBUU_CELLS))):
@@ -418,18 +495,30 @@ class Chi2(Base):
                     got = rec["matrices"][mn][cn]
                     self.assertAlmostEqual(got["about_truth"]["weighted"]["mean"], float(ws @ c2t / ws.sum()), places=8)
                     self.assertAlmostEqual(got["about_weighted_mean"]["unweighted"]["mean"], float(c2c.mean()), places=8)
-                    np.testing.assert_allclose(list(got["about_truth"]["unweighted"]["percentiles"].values()),
-                                               np.percentile(c2t, ct.PERCENTILES), rtol=1e-9)
-                    o = np.argsort(c2t)
-                    cum = np.cumsum(ws[o]) / ws.sum()
-                    med = float(c2t[o][np.argmax(cum >= 0.5)])
-                    self.assertAlmostEqual(got["about_truth"]["weighted"]["percentiles"]["50.0"], med, places=10)
+                    n = len(c2t)
+                    for key, c2 in (("about_truth", c2t), ("about_weighted_mean", c2c)):
+                        srt = np.sort(c2)
+                        want = [float(srt[int(np.ceil(p / 100 * n)) - 1]) for p in ct.PERCENTILES]
+                        np.testing.assert_allclose(list(got[key]["unweighted"]["percentiles"].values()), want, rtol=1e-12)
+                        o = np.argsort(c2)
+                        cum = np.cumsum(ws[o]) / ws.sum()
+                        for pct in ct.PERCENTILES:
+                            self.assertAlmostEqual(got[key]["weighted"]["percentiles"][str(pct)],
+                                                   float(c2[o][np.argmax(cum >= pct / 100 - 1e-15)]), places=10)
+                    self.assertAlmostEqual(got["about_weighted_mean"]["weighted"]["mean"], float(ws @ c2c / ws.sum()), places=8)
+                    self.assertAlmostEqual(got["about_truth"]["unweighted"]["mean"], float(c2t.mean()), places=8)
                     np.testing.assert_allclose(list(got["about_truth"]["reference_chi2"]["percentiles"].values()),
                                                [ct.chi2_quantile(p / 100, len(idx)) for p in ct.PERCENTILES], rtol=1e-12)
                     self.assertAlmostEqual(got["chi2_of_weighted_mean_bias"], float(b @ Minv @ b), places=8)
                     sd = np.sqrt((ws[:, None] * (ri - b) ** 2).sum(0) / ws.sum())
                     np.testing.assert_allclose(got["width_ratio"], sd / np.sqrt(np.diag(Mi)), rtol=1e-9)
+                    self.assertAlmostEqual(got["width_ratio_summary"]["median"], float(np.median(sd / np.sqrt(np.diag(Mi)))), places=10)
+                    self.assertEqual(got["cells"], [f"R{c:02d}" for c in idx])
         keys = set(keys_anywhere(r))
+        self.assertEqual(r["controls_passed"], ["S", "C0", "C1", "C2", "C3"])
+        self.assertEqual(set(r["assertions_passed"]), {"C4"})
+        self.assertLessEqual(keys - CHI2_KEYS - {n for n, _, _ in ct.CAL}, set(),
+                             "a key outside the declared schema")
         self.assertNotIn("p", keys)
         self.assertFalse([k for k in keys if "share" in k or "tail" in k or "above" in k], "a tail fraction is written")
 
@@ -482,6 +571,35 @@ class Chi2(Base):
         t.write_chi2_records()
         self.assertRefuses(t, t.argv_chi2, "FAIL control C3: A7_genie_cv: a truth integral is not positive", t.chi2_patches())
 
+    def test_refuses_gibuu_cells_that_are_not_the_definitions(self):
+        t = self.t
+        ps = [*t.chi2_patches(), mock.patch.object(F, "GIBUU_CELLS", (0, 1, 2, 3, 8, 9, 10, 12))]
+        self.assertRefuses(t, t.argv_chi2, "FAIL control C1 the p_parallel < 4.5 cells of the definition are F0's", ps)
+
+    def test_refuses_another_f0b_readout(self):
+        t = self.t
+        t.pins["f0b_readout"] = "0" * 64
+        self.assertRefuses(t, t.argv_chi2, "FAIL control C0: F0b readout", t.chi2_patches())
+
+    def test_refuses_a_repeated_seed(self):
+        t = self.t
+        p, u = t.cal["A7_nuwro"][0]
+        q = p.with_name("calB_" + p.name)          # another file name with the same pseudo_seed suffix
+        shutil.copy(p, q)
+        t.cal["A7_nuwro"].append((q, u))
+        t.write_chi2_records()
+        counts = {c: N_CAL for _, c, _ in ct.CAL}
+        counts["NuWro_21_09"] = N_CAL + 1
+        ps = [mock.patch.dict(F.COUNTS, {"cal": counts}), t.chi2_patches()[1]]
+        self.assertRefuses(t, t.argv_chi2, "FAIL control C1: NuWro_21_09: 41 products, 41 declared, or a repeated seed", ps)
+
+    def test_the_guard_refuses_a_planted_truth_integral(self):
+        t = Tree(self.tmp / "unit", scale=1.0).write_common().write_chi2()   # O(1) units: the table, not the floor
+        with np.load(t.cal["A7_genie_mec"][2][0]) as z:
+            Xt0 = float((t.U @ np.asarray(z["xtrue_flat"], float))[0])
+        with mock.patch.object(ct, "summary", lambda v: {"median": Xt0, "min": Xt0, "max": Xt0}):
+            self.assertRefuses(t, t.argv_chi2, "REFUSED leak guard", t.chi2_patches(), rc=3)
+
     def test_refuses_another_s5p_manifest(self):
         t = self.t
         t.pins["s5p_sums"] = "0" * 64
@@ -514,6 +632,7 @@ class Period(Base):
             for c2, w in acc[R].items():
                 om[R, pos[c2]] = w / ins[R]
             outside[R] = (tot[R] - ins[R]) / tot[R]
+        self.ins = ins
         return om, outside
 
     def test_end_to_end_recomputed_by_hand(self):
@@ -524,23 +643,82 @@ class Period(Base):
         for vn, x in (("central", t.xc), ("prior", t.xp)):
             om, outside = self.hand(t, x)
             g = {X: om @ t.g[X] for X in ct.PERIODS}
-            rr = {X: om @ t.r[X] for X in ct.PERIODS}
             C = t.k * sum(t.e[X] * np.outer(g[X], g[X]) for X in ct.PERIODS)
-            Sref = sum(np.outer(t.e[X] * (rr[X] / rr["PA"] - 1), t.e[X] * (rr[X] / rr["PA"] - 1)) for X in ("PB", "PC"))
+            bref = {X: om @ (t.e[X] * (t.r[X] / t.r["PA"] - 1)) for X in ("PB", "PC")}   # DESIGN section 2's b_X, projected
+            Sref = sum(np.outer(bref[X], bref[X]) for X in ("PB", "PC"))
             v = r["variants"][vn]
             for X in ct.PERIODS:
                 np.testing.assert_allclose(v["g"][X], g[X], rtol=1e-9, atol=1e-15)
             np.testing.assert_allclose(v["C_PL16_rel"], C, rtol=1e-9, atol=1e-18)
             np.testing.assert_allclose(v["sigma_rel"]["S_ref16"], np.sqrt(np.diag(Sref)), rtol=1e-9)
             np.testing.assert_allclose(v["sigma_ratio_to_C_total_resp"], np.sqrt(np.diag(C)) / sm, rtol=1e-9)
-            np.testing.assert_allclose(v["weight_outside_2d_support"], outside, rtol=1e-9, atol=1e-15)
+            if vn == "prior":
+                np.testing.assert_allclose(v["weight_outside_2d_support"], outside, rtol=1e-9, atol=1e-15)
+            else:   # 1 - X_sup/f is not written for the data
+                self.assertNotIn("weight_outside_2d_support", v)
+            self.assertEqual(v["negative_weight_2d_cells"], [0] * 16)
+            np.testing.assert_allclose(v["sigma_rel"]["C_PL16"], np.sqrt(np.diag(C)), rtol=1e-9)
+            self.assertAlmostEqual(v["sigma_rel_summary"]["C_PL16"]["median"], float(np.median(np.sqrt(np.diag(C)))), places=12)
+            self.assertAlmostEqual(v["sigma_ratio_summary"]["max"], float(np.max(np.sqrt(np.diag(C)) / sm)), places=10)
             self.assertEqual(v["extrapolated_cells"], [f"R{c:02d}" for c in range(16) if outside[c] > ct.EXTRAPOLATED])
             self.assertLessEqual(v["rank"], 2)
             self.assertAlmostEqual(v["trace_share"], float(np.trace(C) / np.trace((t.Ct + t.Cr) / np.outer(t.f, t.f) + C)), places=12)
         # the synthetic support leaves R08-R15 partly outside, and R00-R07 wholly inside
-        self.assertEqual(r["variants"]["central"]["weight_outside_2d_support"][:8], [0.0] * 8)
-        self.assertTrue(all(v > 0 for v in r["variants"]["central"]["weight_outside_2d_support"][8:]))
+        self.assertEqual(r["variants"]["prior"]["weight_outside_2d_support"][:8], [0.0] * 8)
+        self.assertTrue(all(v > 0 for v in r["variants"]["prior"]["weight_outside_2d_support"][8:]))
+        self.assertEqual(r["controls_passed"], ["S", "P0", "P1", "P2", "P3"])
+        self.assertEqual(set(r["assertions_passed"]), {"P4"})
         self.assertAlmostEqual(r["constants"]["k"], t.k, places=14)
+
+    def test_refuses_exposure_shares_that_do_not_sum_to_1(self):
+        t = self.tree().write_period(e=(0.53, 0.30, 0.18))
+        self.assertRefuses(t, t.argv_period, "FAIL control P0 the e_X sum to 1")
+
+    def test_refuses_a_repeated_2d_cell(self):
+        t = self.tree().write_period(dup_cell=True)
+        self.assertRefuses(t, t.argv_period, "FAIL control P0 205 distinct 2D cells on the 14 x 16 grid")
+
+    def test_refuses_a_period_array_of_another_length(self):
+        t = self.tree().write_period(short_array="r_PB")
+        self.assertRefuses(t, t.argv_period, "FAIL control P0 every period array has one entry per cell")
+
+    def test_refuses_a_2d_grid_that_is_not_the_fine_grids(self):
+        t = self.tree().write_period()
+        with mock.patch.object(ct, "PZ_2D", ct.PZ_2D[:-1] + (61.0,)):
+            self.assertRefuses(t, t.argv_period, "FAIL control P0 the fine grid's p_T and p_parallel edges are the 2D grid's")
+
+    def test_refuses_another_central_value(self):
+        t = self.tree().write_period()
+        t.pins["central"] = "0" * 64
+        self.assertRefuses(t, t.argv_period, "FAIL control P1: the (e) central value")
+
+    def test_refuses_a_central_value_that_is_not_data(self):
+        t = self.tree().write_period(central_meta_extra={"construction": "closure"})
+        self.assertRefuses(t, t.argv_period, "FAIL control P1: data_b-_j-.npz: construction")
+
+    def test_refuses_another_prior(self):
+        t = self.tree().write_period()
+        t.pins["prior"] = "0" * 64
+        self.assertRefuses(t, t.argv_period, "FAIL control P2: MnvTune v1 prediction")
+
+    def test_refuses_a_prior_on_other_edges(self):
+        t = self.tree().write_period(prior_edges_defect=1e-6)
+        self.assertRefuses(t, t.argv_period, "FAIL control P2 the prior is MnvTune v1's")
+
+    def test_counts_2d_cells_with_negative_weight(self):
+        t = self.tree().write_period(prior_negative=True)
+        self.assertEqual(self.run_tool(t, t.argv_period), 0, self.stderr)
+        neg = self.readout(t, "period")["variants"]["prior"]["negative_weight_2d_cells"]
+        self.assertEqual(neg, [0, 0, 0, 1] + [0] * 12)
+
+    def test_the_guard_refuses_a_planted_partial_data_integral_or_its_share(self):
+        t = self.tree().write_period()
+        self.hand(t, t.xc)
+        X_sup = float(self.ins[8])
+        for planted in (X_sup, 1.0 - X_sup / float(t.f[8])):
+            (t.out / "period.json").unlink(missing_ok=True)
+            with mock.patch.object(ct, "summary", lambda v, x=planted: {"median": x, "min": x, "max": x}):
+                self.assertRefuses(t, t.argv_period, "REFUSED leak guard", rc=3)
 
     def test_refuses_a_stored_C_PL_that_is_not_rebuilt(self):
         t = self.tree().write_period(cpl_defect=1e-9)
@@ -576,7 +754,7 @@ class Period(Base):
 
     def test_p4_refuses_offsets_that_do_not_cancel_on_the_cells(self):
         t = self.tree().write_period()
-        om, outside = ct.footprint(t.U, t.fm, t.xc, t.support)
+        om, outside, *_ = ct.footprint(t.U, t.fm, t.xc, t.support)
         z = {f"g_{X}": t.g[X] for X in ct.PERIODS}
         z.update({f"r_{X}": t.r[X] for X in ct.PERIODS})
         S = {"M": t.Ct + t.Cr, "ff": np.outer(t.f, t.f)}
@@ -634,6 +812,14 @@ class CommittedPins(unittest.TestCase):
         self.assertEqual(digest(STATE / "2d-closeout/playlist-term/outputs/playlist_term.json"), ct.PINS["playlist_json"])
         pj = json.loads((STATE / "2d-closeout/playlist-term/outputs/playlist_term.json").read_text())
         self.assertEqual(pj["npz"]["sha256"], ct.PINS["playlist_npz"])
+
+    def test_the_2d_grid_is_the_committed_common_py(self):
+        import re
+        text = (STATE / "2d-closeout/playlist-spread-20261014/coverage/scripts/common.py").read_text()
+        for name, have in (("PT_A", ct.PT_2D), ("PZ_A", ct.PZ_2D)):
+            m = re.search(rf"^{name} = np\.array\(\[([^\]]*)\]\)", text, re.M)
+            self.assertIsNotNone(m, name)
+            self.assertEqual(tuple(float(v) for v in m.group(1).split(",")), have, name)
 
     def test_the_w2b_pins_are_the_w2b_reports(self):
         text = (REPO / "publication/w2/W2B-REPORT-20261006.md").read_text()
