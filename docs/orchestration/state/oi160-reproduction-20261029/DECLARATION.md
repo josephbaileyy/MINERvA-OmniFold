@@ -97,7 +97,7 @@ git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold $D && git -C
   echo "porcelain_ignored_lines $(git -C $D status --porcelain --ignored | wc -l)"
   cd $H && sha256sum run_job.sh repro_run.py repro_compare.py test_repro.py code.sha256 stored.sha256 DECLARATION.md
 } > $B/logs/deploy.log 2>&1
-cd $H && TMPDIR=$B/tmp $PY -m unittest test_repro > $B/logs/deploy-tests.log 2>&1; echo "tests rc=$?" >> $B/logs/deploy.log
+cd / && TMPDIR=$B/tmp $PY -m unittest discover -s $H -p test_repro.py > $B/logs/deploy-tests.log 2>&1; echo "tests rc=$?" >> $B/logs/deploy.log
 echo "porcelain_ignored_lines_after_tests $(git -C $D status --porcelain --ignored | wc -l)" >> $B/logs/deploy.log
 ```
 
@@ -205,20 +205,28 @@ replica whose producer is known (K2).
 Each unfold also leaves `out/<label>.provenance.json`: the module files, LightGBM, numpy and Python versions, the
 affinity, `OMP_NUM_THREADS`, and the script's exit. **Committed in the report's PR:** the readout, the three
 provenance files, `A1.npz`, `A2.npz` and `B1.npz` (about 92 kB each), and the logs, under `run/` here. The report goes
-to Joseph through the director (decision item 1).
+to Joseph through the director (decision item 1). **Beside the outcome, the report restates §4's
+limits:** seed 1 speaks only for its own producer, among the 99 others' several, and `C_ML` is untouched.
 
 ## 6. Code and tests
 
 - **`repro_run.py`:** the import-isolating wrapper (P4).
 - **`repro_compare.py`:** the criterion (`same`), the description, and the reading table (`read`).
 - **`run_job.sh`:** P0–P3, the three unfolds and the comparison.
-- **`test_repro.py`, 10 tests, synthetic:**
-  - the wrapper uses `lib/` and not a decoy `omnifold_nn_core` under the canonical root;
-  - a module present only under the canonical root is refused with exit 3;
-  - each outcome (R2, R1, THIRD, INCONCLUSIVE, VOID) is reached from the matching inputs;
-  - one ulp of difference is a difference;
-  - a missing B output matches nothing;
-  - a stored file that is not the pinned one is refused.
+- **`test_repro.py`, 10 tests, synthetic.**
+  - **How they are run.** §2.1 uses `$PY -m unittest discover -s $H -p test_repro.py` from `/`. Under `-I`, Python
+    3.11+ does not put the current directory on `sys.path`, so `-m unittest test_repro` cannot import the module (the
+    director's review of `88b2f9f8` measured that failure). `discover -s` adds the start directory itself.
+  - Measured locally with Python 3.12.2 and `-I -B`: the old command gives `ModuleNotFoundError … Ran 1 test, FAILED`;
+    the new one gives `Ran 10 tests … OK`. The first runs behind this declaration used `python3 -m unittest test_repro`
+    from `$H`, without `-I`, which is why they passed.
+  - **What they cover:**
+    - the wrapper uses `lib/` and not a decoy `omnifold_nn_core` under the canonical root;
+    - a module present only under the canonical root is refused with exit 3;
+    - each outcome (R2, R1, THIRD, INCONCLUSIVE, VOID) is reached from the matching inputs;
+    - one ulp of difference is a difference;
+    - a missing B output matches nothing;
+    - a stored file that is not the pinned one is refused.
 
 ## 7. Pinned bytes
 
@@ -250,3 +258,5 @@ to Joseph through the director (decision item 1).
 - **No same-code control is skipped.** K1 tests the unfold's determinism today, and K2 tests the environment against a
   known producer.
 - **Not changed:** any receipt, covariance, product or published value; the canonical checkout.
+- **The director's review of `88b2f9f8` (2026-10-29):** `shared` with 36 CPUs, exact equality with K1 and K2, the §3.3
+  table and §4's limits are accepted. The one blocker, §2.1's test command under `-I`, is fixed above (§6).
