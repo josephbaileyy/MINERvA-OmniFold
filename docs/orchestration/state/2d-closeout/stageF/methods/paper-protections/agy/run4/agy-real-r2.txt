@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately condenses the text and points to the relevant sections where the bias tests, fake-data study, and flux-correlation sensitivity are given. The dropped specific values and statements are intentional removals whose primary descriptions remain in the context sections.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER shortens the Scope paragraph by replacing the duplicate descriptions of the result limitations with a direct cross-reference to Sec.~\ref{sec:limitations}. All removed qualifications are printed in the Limitations section, and no unsupported or misleading claims are introduced.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER incorporates the disclosure of the four low-stability cells and the companion note's generator exclusion limitations into the Limitations section as authorized by the context. The additions accurately state the limitations without broadening or overstating any findings.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER removes duplicate explanations of the model covariance term and fake-data bias coverage that have their home in the context table and surrounding text. The retained sentence accurately directs the reader to the fake-data tests without ambiguity or distortion.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that the candidate package recomputes the joint-test results, and by replacing "The other quoted numbers" with "The paper's quoted numbers", it states too broadly that all quoted numbers in the paper require the archived analysis products and raw samples.
+
+END

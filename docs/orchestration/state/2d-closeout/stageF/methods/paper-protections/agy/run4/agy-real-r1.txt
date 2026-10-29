@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER retains the statement that interval coverage is not validated and directs the reader to Secs.~\ref{sec:fd16} and~\ref{sec:gen16} for the bias tests, fake-data study, and flux correlation dependence, all of whose specific details print in their CONTEXT homes. It introduces no stronger or broader claims and creates no misleading ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER shortens the Scope paragraph by replacing the duplicate enumeration of limitations with a direct reference to Sec.~\ref{sec:limitations}, where all the removed facts print in CONTEXT. It preserves the exact scope of the findings without adding broader claims or misleading the reader.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER accurately incorporates the disclosure of the four low-stability cells and their definition from the CONTEXT decision, and retains the companion note's exclusion limitation moved from Scope. It states nothing more strongly or broadly than supported and introduces no ambiguity.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER removes duplicate descriptions of the model covariance term and the fake-data under-coverage, both of which print in full in their CONTEXT home, while retaining the pointer to Sec.~\ref{sec:fd16}. What remains is completely consistent with BEFORE and introduces no misleading claims.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER accurately adds the machine-readable Supplemental Material files supported by CONTEXT, updates the data requirements to reflect that the paper contains no numbers in Sec.~\ref{sec:central} and no multiplier scan, and leaves the joint-test details to their home in the note's release appendix. It states nothing unsupported, drops no unprinted facts, and is not misleading.
+
+END

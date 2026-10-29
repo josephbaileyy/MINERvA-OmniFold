@@ -230,6 +230,16 @@ def values(d):
         assert len(edges) == 3
         v[f"h2-mid-{ax}"] = f"{edges[1]:g}"
     assert d["stage1"]["mc"]["H2"]["n_cells"] == int(v["h2-nboxes"])
+    # The four low-stability cells, disclosed in the paper's limitations (DECISION-20261024-joseph-h2-16-cell-definition.md
+    # item 3; DECISION-20261028-joseph-protections-remade-and-r21.md item 1). A cell's stability is the fraction of the
+    # simulated signal events generated in it, and reconstructed, that are reconstructed in it (pv-ladder
+    # h2_definition.py, Stats.of). The decided cells must be the four lowest and print the decided 0.16-0.25.
+    lowstab = ("R02", "R06", "R10", "R15")
+    stab = {f"R{c['id']:02d}": c["stability"] for c in h2["reporting_cells"]}
+    assert set(sorted(stab, key=stab.get)[:len(lowstab)]) == set(lowstab), "the decided cells are not the lowest-stability cells"
+    v["h2-lowstab-cells"] = ", ".join(lowstab[:-1]) + " and " + lowstab[-1]
+    v["h2-lowstab-min"], v["h2-lowstab-max"] = (f"{min(stab[k] for k in lowstab):.2f}", f"{max(stab[k] for k in lowstab):.2f}")
+    assert (v["h2-lowstab-min"], v["h2-lowstab-max"]) == ("0.16", "0.25"), "the printed range differs from the decision's"
     # C_model,5D: its vertices' trace shares, and the numbers its labels state (parsed, so a changed label stops here)
     for k, x in d["cmodel"]["trace_share_by_vertex"].items():
         v[f"cmodel-trace-{k}"] = f"{x:.3f}"
@@ -484,6 +494,13 @@ def self_test():
             print(f"  FAIL an F1 readout that {what} was accepted"); ok = False
         except AssertionError:
             print(f"  ok   an F1 readout that {what} is refused")
+    d = load()                                               # a fifth cell below the decided four must be refused
+    next(c for c in d["h2"]["reporting_cells"] if c["id"] == 11)["stability"] = 0.15
+    try:
+        values(d)
+        print("  FAIL an H2 definition whose four lowest-stability cells differ from the decided ones was accepted"); ok = False
+    except AssertionError:
+        print("  ok   an H2 definition whose four lowest-stability cells differ from the decided ones is refused")
     name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
     with tempfile.TemporaryDirectory() as tmp:
         fig = OUT.parent / "figures" / name

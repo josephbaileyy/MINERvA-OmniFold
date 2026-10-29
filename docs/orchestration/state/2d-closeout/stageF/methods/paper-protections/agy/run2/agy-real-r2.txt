@@ -1,0 +1,15 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER removes detailed test statistics and sensitivity percentages whose home is in the referenced text and tables, retaining the unvalidated coverage limitation and referencing the relevant sections without stating anything more broadly or misleadingly.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER shortens the Scope paragraph by removing duplicate copies of limitations that print in the Limitations section and replacing them with a direct cross-reference, introducing no broader claims or ambiguity.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER adds the low-stability cell disclosure and the generator non-exclusion statement into their designated home in the Limitations section as authorized by project records, without overstatement or ambiguity.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER removes duplicate statements concerning the definition of the model covariance and bias at GiBUU-like truths that print in the accompanying context table and text, preserving the pointer to the fake-data tests.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops "It recomputes every $p$ value, decision, robustness result, and power figure of the joint tests", omitting the core deliverables reproduced by the package and leaving the phrase "The other quoted numbers" in the following sentence without an antecedent.
+END

@@ -1,0 +1,16 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER accurately condenses the paragraph by pointing to Secs.~\ref{sec:fd16} and~\ref{sec:gen16} for the bias tests, fake-data study, and flux-correlation dependence, which are fully printed in the context of those sections. It states nothing more strongly or broadly than BEFORE and introduces no ambiguity.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER shortens the Scope paragraph by directing the reader to Sec.~\ref{sec:limitations}, where the duplicate limitations that were dropped are printed in full. It introduces no unsupported claims and does not mislead about the findings or scope.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER adds the disclosure of the four low-stability cells and relocates the statement that calibrated tests are not physical exclusions to its single home in Limitations, both supported by the context and decision record. These additions properly state qualifiers and limitations without claiming anything more strongly or broadly than BEFORE and its context.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER removes duplicate descriptions of the model covariance term and the GiBUU fake-data bias uncoverage that have their home in the context of Sec.~\ref{sec:fd16}. The retained reference to the fake-data bias tests is accurate and introduces no misleading ambiguity.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER drops the duplicate description of joint-test reproduction (whose home is the companion note's release appendix) and removes references to nonexistent Sec.~\ref{sec:central} numbers and a multiplier scan. The remaining text accurately states data availability and what requires archived products without stating anything broader or unsupported.
+
+END
