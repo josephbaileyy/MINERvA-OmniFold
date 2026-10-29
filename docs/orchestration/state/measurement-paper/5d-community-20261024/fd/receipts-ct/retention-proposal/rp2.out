@@ -1,0 +1,145 @@
+host=login28 date=2026-10-29T02:03:43Z
+== fd-flux-boot-20261027
+  1029737899            13493  deploy
+  26947                     3  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-flux-boot-20261027/deploy/f370da5b HEAD=f370da5bef042c47573a8348f51a94e43de5c432
+== fd-flux-boot-20261028
+  1031311341            13545  deploy
+  33774                     1  fd_flux_boot_readout.json
+  28486                    11  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-flux-boot-20261028/deploy/91312bc8 HEAD=91312bc8f22b90e90724741e6edffdb1b15f0c72
+== fd-f0-20261025
+  1018322129            12894  deploy
+  1068642                   1  fd_f0_experiments.npz
+  84840                     1  fd_f0_readout.json
+  28838                    10  logs
+  17491                     3  preserve
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-f0-20261025/deploy/7fad6e83 HEAD=7fad6e8335003dd1466b78517478f88b80eea487
+== fd-f0b-20261026
+  1021096455            12988  deploy
+  1068642                   1  fd_f0b_experiments.npz
+  88532                     1  fd_f0b_readout.json
+  62087                    12  logs
+  10176                     3  preserve
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-f0b-20261026/deploy/c4396756 HEAD=c4396756ec843248b00e788a20f2760b43bdc55f
+== fd-g-20261025
+  1021500528            12988  deploy
+  33315                     1  fd_g_readout.json
+  22798                     6  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-g-20261025/deploy/c4396756 HEAD=c4396756ec843248b00e788a20f2760b43bdc55f
+== fd-g-diag-20261026
+  1022153313            13041  deploy
+  269309                    1  fd_g_diag_readout.json
+  24419                     6  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-g-diag-20261026/deploy/d02ce2f2 HEAD=d02ce2f21818963fca5836e4dc4462dd81ad6175
+== fd-g-followup-20261026
+  1024032476            13095  deploy
+  155395                    1  fd_g_followup_readout.json
+  34181                     5  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-g-followup-20261026/deploy/02bf756a HEAD=02bf756a453e52b2e96dc31bd6d3ebc34f4e0842
+== fd-g-sens2-20261026
+  1025998269            13230  deploy
+  176661                    1  fd_g_sens2_readout.json
+  39208                     5  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-g-sens2-20261026/deploy/3ed50ed5 HEAD=3ed50ed5ad88d151254af46d5dbd23c7f65df256
+== fd-g-figures-20261027
+  82480                     7  data-product
+  1029008399            13388  deploy
+  238159                    6  figures
+  945082                   11  logs
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/fd-g-figures-20261027/deploy/933cfe35 HEAD=933cfe354ba6a3505c5b232df33d3d905de1de40
+== cresp-20261026
+  14092                     2  logs
+  24882                     2  out
+  939949160             12961  repo
+  4096                      0  tmp
+== cmodel5d-20261024
+  10983                     6  logs
+  25202                     2  out
+  888036347             12486  repo
+== h2def-20261024
+  17331                     5  addendum
+  36725                     2  code
+  18414                     4  out
+  2609                      1  run_cmodel5d.sh
+  173159                    1  stage1_inspect.json
+== s1-20261024
+  354857                    5  assembly-hpss
+  2755                      1  assembly_hpss.sh
+  1939048528            25039  deploy
+  9518                      2  diag
+  48379                    31  logs
+  79328                     7  preserve
+  120887                    1  preserve-inv
+  26552761                  5  products-hpss
+  2657                      1  products_hpss.sh
+  25816549                352  runs
+  33421                     1  s1_assembly.json
+  119273                    1  s1_assembly.npz
+  970469837             12545  tmp
+  1359                      1  watch.sh
+  git clone: /pscratch/sd/j/josephrb/s1-20261024/deploy/3f545564 HEAD=3f5455648ff9b2c8ce85315f8f95458d87ea5673
+  git clone: /pscratch/sd/j/josephrb/s1-20261024/deploy/d5617470 HEAD=d5617470a7d08215e1da5622722d348da6a148d1
+== pv-ladder-20261024
+  867160175             12134  deploy
+  4750                      4  gates
+  365995                   38  inventory
+  191103                   44  logs
+  22230869                 36  prep
+  2539209                  30  products
+  386829                   10  readouts
+  4096                      0  tmp
+  git clone: /pscratch/sd/j/josephrb/pv-ladder-20261024/deploy/repo HEAD=ee299e106ca0a79fc5710666a9bcb3a9587f4677
+== proj1d-20261027
+  50286                     1  proj1d.json
+  16721                     1  pvl_lib.py
+  7108                      1  pvl_proj1d.py
+  34637                     1  __pycache__
+  336443                   18  tree
+== r10-20261024
+  1732613872            24169  deploy
+  47907                     3  probe
+  43135                     4  run
+  2365192685                5  run2
+  2365170785                5  smoke
+  git clone: /pscratch/sd/j/josephrb/r10-20261024/deploy/289a1ff7 HEAD=289a1ff755fe8c21aeef4f19aebe559cf7849bc1
+  git clone: /pscratch/sd/j/josephrb/r10-20261024/deploy/b4b1136c HEAD=b4b1136c1bde6ad29281151156237ca3f3042118
+== ibu1-20261022
+  824341624             11440  deploy
+  2633658                  14  kb1
+  77338717               4069  run
+  git clone: /pscratch/sd/j/josephrb/ibu1-20261022/deploy/7ea30e3d HEAD=7ea30e3dbb98cfff67ef07314fcfe04fded81e4c
+== fd-deposit-check-20261028
+  0                         1  check2.err
+  7972                      1  check2.out
+  0                         1  check.err
+  7972                      1  check.out
+  47111                     1  fd_data_product.json
+  33315                     1  fd_g_readout.json
+  79349                     8  nd
+  39934                     9  pkg
+  228959                   13  v2
+  229091                   13  v3
+  237535                   15  v4
+  276929                   19  v5
+== fd-f1-20261027/deploy clones
+  /pscratch/sd/j/josephrb/fd-f1-20261027/deploy/4b7a9892 HEAD=4b7a9892ef4d739afc45f6bfb6cc5f8d7a36fe54
+  /pscratch/sd/j/josephrb/fd-f1-20261027/deploy/5015535e HEAD=5015535e5567c42827e2b618b9b679d534ec47cf
+  /pscratch/sd/j/josephrb/fd-f1-20261027/deploy/5f5e392c HEAD=5f5e392c4be9c6f8bb035a72d4a60f7dd8be8803
+  /pscratch/sd/j/josephrb/fd-f1-20261027/deploy/f1c HEAD=741ad029e63732cfe6b7db07568bb2af86e47ebd
+  /pscratch/sd/j/josephrb/fd-f1-20261027/deploy/grade HEAD=da5f157f4a4780eaefddb0ac8536138fd35ddfb2
+== HPSS inventories (names only)
+-- mnv-5d-cresp-20261026/INVENTORY.sha256
+      1 cresp-20261026/out/cresp.npz
+-- mnv-5d-fd-f4-20261025/INVENTORY.sha256
+     80 s5p-20260926/runs/s3r
+4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a  /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz
