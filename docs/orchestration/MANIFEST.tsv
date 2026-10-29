@@ -443,6 +443,7 @@ docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.
 docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	tracked	LIVE	document		20261006	open		route-only	no
 docs/orchestration/RECORD-20261028-close-items-backlog-tooling-retirements.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-director-rulings.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261028-close-items-fourth-batch.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-infra-dispositions.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-live-state-option-b.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261028-close-items-oi136-ratchets.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
