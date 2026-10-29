@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but repeated caveats, internal bookkeeping, development history, and occasionally opaque phrasing create several departures from PRD register that require a dedicated language pass.
+1. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of
+four of the sixteen cells is stated only here. The principal
+ones are these."
+   REWRITE: The principal limitations are summarized below, including the low reconstruction stability of four reported cells. Further details appear in Secs. III–V and, for the calibrated tests, in the companion note.
+2. QUOTE: "A
+candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and
+regenerates the analysis note’s figures of the joint-test
+null distributions and the (Eavail , W ) map."
+   REWRITE: A release package of approximately 16 MB is in preparation. It uses NumPy, SciPy, and Matplotlib to reproduce the null-distribution figures and the (Eavail, W) map in the analysis note.
+3. QUOTE: "The note’s calibrated tests show
+the same pull: their null distributions for the external
+predictions are displaced upward by it, as the calibration
+reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: In the calibrated tests, residual dependence on the prior shifts the null distributions for the external predictions upward; the calibration reproduces this shift (Ref. [14], Sec. 11.5).

@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A more consistently divides qualification-heavy passages into manageable sentences, particularly in the introduction and Figure 1 caption.
+2. A uses more idiomatic phrasing, avoiding B’s awkward constructions such as “the bias is listed at.”
+3. A more often supplies explicit subjects and referents, making its technical exposition easier to follow while maintaining an appropriately formal register.
