@@ -14,17 +14,23 @@ standing constraints are [`HANDOFF-20261029-coverage-session.md`](HANDOFF-202610
 - [`FD-CT-READERS-5A-REPORT.md`](FD-CT-READERS-5A-REPORT.md) and its readout `fd/readout/fd_ct_period.json` (`d7d518ac…`);
 - 2D's construction, `2d-closeout/playlist-term/DESIGN.md` §2–§4.
 
-**Declares:** the audit's four measurements, their methods and units, and a STOP CONDITION (§7). It also states the
-exact revised covariance and every product it would flow into (§8). **This is a design freeze, in the order 2D's
-DESIGN used** (`2d-closeout/playlist-term/DESIGN.md` §5: the DESIGN, then the script, then a verifier, then the run).
-The reader `nd-unfolding/fd_ct_5b_audit.py`, its tests, a mutation receipt and an independent review follow as
-amendment 1, with their pins, for a second binding. Amendment 1 may not change §2–§8 except to correct an error,
-which it must name.
+**Declares:**
+- the audit's four measurements, their methods and units, and a STOP CONDITION (§7);
+- the exact revised covariance and every product it would flow into (§8);
+- the reader `nd-unfolding/fd_ct_5b_audit.py`, its tests, a mutation receipt, an independent review, the exact
+  commands and the pins (§9, §10, §14).
 
-**MEASURES:** nothing. No audit quantity has been computed.
+**The order.** §2–§8 were first committed as a design freeze (PR #546, `28499ab5`), in the order 2D's DESIGN used
+(`2d-closeout/playlist-term/DESIGN.md` §5). The director then ruled by message, on 2026-10-30, that the code be folded
+into this PR and bound once: "The STOP condition is accepted as frozen design: O, N and R, with a refused control
+leaving the question undecided and the block not added. Don't change those thresholds while you write the code. If
+the code shows one can't be computed as written, tell me before changing it." No threshold changed. §13 lists what
+writing the code corrected or found, each item named.
+
+**MEASURES:** nothing. No audit quantity has been computed; the code has run only on synthetic fixtures.
 
 **CANNOT AUTHORIZE:**
-- running the reader, which needs amendment 1 and its binding;
+- running the reader, which needs the director's binding;
 - the addition itself. If the stop condition does not fire, the addition is its own declared step (§8.3);
 - any write to the reported matrix C_total + C_resp, to `s1_assembly.npz`, to `cresp.npz` or to any committed readout;
 - a generator χ², a reading of the data against any prediction, a claim or printed wording;
@@ -224,8 +230,8 @@ offsets of the two smaller exposures. PA's fit is written beside them, with no r
   candidates is at most N_cand × 0.0022 (about 0.12 for 55), before the amplitude bound. If they were independent, it
   is about N_cand × 0.0022². The report writes this bound beside the clause, with N_cand as counted.
 - **Also written, with no role in O:**
-  - the three best candidates per group by min(E_PB, E_PC), with E, a and the residual against χ²₁₅'s 95 % quantile
-    (24.996). The residual answers whether the pattern is reproduced to within noise;
+  - the three best candidates per group by min(E_PB, E_PC), with E, a and the residual against χ²₁₄'s 95 % quantile
+    (23.685; corrected from χ²₁₅, §13 item 1). The residual answers whether the pattern is reproduced to within noise;
   - the same for the best pair within DR. A pair has no stop role, since pairs multiply the candidates about 1,500-fold.
 - **Tests:** a planted g = 1.5 d′ + noise + a free normalization fires O; the same g at 3 d′ does not, by the amplitude
   bound; a g orthogonal to every candidate does not; a uniform candidate is excluded
@@ -269,8 +275,10 @@ r_X^(k) = X_X,b=k / T_X:
 - Cells with σ(P)/σ(floor) < 2 are flagged noise-dominated: R08 at 0.878 and R00 at 1.796 in the 5B report.
 
 **4.4 Three periods, the dominant term, disclosed and not a clause.**
-- The variance rests on about 1.83 effective dof (DESIGN §3).
-- The 68 % interval for σ_true/σ̂ from χ²_ν at ν = 1.83 is **[0.73, 2.56]** (arithmetic).
+- The variance rests on about 1.83 effective dof (DESIGN §3). That is the Satterthwaite dof of the exposure-weighted
+  spread, ν = (1 − V2)² / (V2 − 2 Σ e³ + V2²), which is 1.8244 at 5B's committed e (§13 item 2). It also gives
+  DESIGN's "about 105 %" as √(2/ν).
+- The 68 % interval for σ_true/σ̂ from χ²_ν at that ν is **[0.73, 2.56]** (arithmetic: 0.7339 to 2.5643).
 - This depends only on e, and was known before 5B ran, so it cannot be a stop clause that any result decides. The
   report prints it beside the block, and §8.2 carries it into the block's label.
 - The ten replicas test the data noise only, not this term. §11 item 3 names the test that would.
@@ -491,33 +499,89 @@ the generator χ², and the F1 and flux-bootstrap readouts":
 - the standalone `MINERvA-OmniFold-Analysis-Note` repository, synced by the director;
 - the HPSS copy of the new matrix, by hashverify and retrieval, as for `cresp.npz`.
 
-## 9. Controls and tests (delivered in amendment 1)
+## 9. Controls and tests
 
-**The reader** is `nd-unfolding/fd_ct_5b_audit.py`. It is a login reader that imports `fd_ct_readers` (`common`,
-`near_f`, `write`) and `fd_f0_regrade`'s `LeakGuard`, both unchanged.
-- **Leak guard:** it receives f, every unfold and MC-truth integral (5B and 2D), and drops those within LEAK_REL of f,
-  as in amendment 1. Every written number is relative to the cells' own values, or a ratio of relative quantities.
-- **Refusals:** it refuses an existing output, and writes only to `$P/fd-ct-5b-audit-<date>/`.
+**The reader** is `nd-unfolding/fd_ct_5b_audit.py`, a login reader. It imports, unchanged:
+- `fd_ct_periods` (`receipt`, `unfold`, `unf_path`, `guarded`, `cell_sets_problems`, the seed blocks);
+- `fd_ct_readers` (`common`, `footprint`, `write`, the 2D grid);
+- `fd_f0_regrade` (`LeakGuard`, `Stop`, `report`, `require`).
 
-**Its tests act in both directions** for each clause and identity named above (§3–§6), plus:
-- the controls of §7, each in its refusing direction;
-- the leak guard on planted absolute values;
-- a hand recomputation of every written statistic on planted inputs.
+**Leak guard.** Its table holds f and every 5B period unfold's and MC truth's cell integrals, each within LEAK_REL of f
+dropped (`fd_ct_periods.guarded`). Every written number is relative to the cells' own values, or a ratio of relative
+quantities. 2D's absolute values are not in the table (§13 item 4).
 
-**Mutation receipt:** every clause's threshold, comparison and operand, each control, and the guard's table.
+**Refusals.** It refuses an existing output, and every control in §7 and §13 item 3 refuses with nothing written.
 
-**Review:** an independent read-only review in its own worktree. It is given the code and this record, not this
-session's expectations.
+**The tests,** `nd-unfolding/tests/test_fd_ct_5b_audit.py`: 48 tests, 2 of them ROOT-only. They run on synthetic
+trees built by the 5B and readers' fixtures. The 5B periods readout in each tree is made by `fd_ct_periods` itself,
+and 5A's readout by `fd_ct_readers period`. 2D's draws are planted through `load_2d`.
+
+| declared item | test(s) |
+|---|---|
+| §3.1 the identity | `test_a_period_common_factor_leaves_the_block_unchanged` (also: a period-dependent factor is not cancelled) |
+| §3.2 OV | `test_ov_in_both_directions` |
+| §3.3 identification and O | `test_identification_by_hand`, `test_o_fires_and_stays_silent`, `test_the_clauses_at_their_thresholds`, `test_a_uniform_candidate_has_no_shape`; end to end, `test_o_fires_on_a_planted_detector_pattern` and `test_o_stays_silent_beyond_the_amplitude_bound` |
+| §3.3 the look-elsewhere constant | `test_the_beta_tail_by_integration` |
+| §4.1 N | `test_n_fires_when_the_replica_blocks_size_is_unstable`, `test_n_and_r_stay_silent_on_small_noise`, `test_n_is_silent_when_the_noise_is_as_large_as_the_offsets` (§13 item 5), and the boundaries |
+| §4.4 ν and the interval | `test_nu_eff_and_the_interval` |
+| §6.1 rank two | `test_rank_two_span`; the reference bound in `test_runs_and_is_recomputed_by_hand` |
+| §6.2 the χ² bound | `test_the_chi2_bound_is_attained_along_the_top_mode` |
+| §6.3 R | `test_r_fires_alone_on_a_rotated_plane`, `test_n_and_r_stay_silent_on_small_noise`, and the boundaries |
+| §7 the decision | `test_the_clauses_at_their_thresholds` |
+| §7 and §13 item 3 controls | `Refusals`: 19 tests, one per control, each by its message on a FAIL line, with nothing written |
+| the written statistics | `HandChecks` (7 tests, each by its own route) and `test_runs_and_is_recomputed_by_hand`: s_med, R_k, 5A's σ, the uniform share, the E_avail contrast, the debiased block, the look-elsewhere and √(2k) numbers, the candidate set |
+| the leak guard | `test_a_planted_leak_is_refused` (a 5B unfold's absolute integrals) |
+| `load_2d` | `RootLoader`, 2 tests (cluster only): x and t against the formula by hand; another grid refuses |
+
+**Mutation receipt:** `fd/receipts-ct/5b/audit/mutants_5b_audit.{py,log}`. Its 46 mutants cover every clause's
+threshold, comparison and operand, the statistics behind the clauses, each refusing control, and the guard's table.
+
+**Review:** an independent, read-only review in its own detached worktree, given the code and this record. Its
+report and probes are kept under `fd/receipts-ct/5b/audit/review/`, and its findings are dispositioned in §13.
 
 ## 10. Order, cost, platform and storage
 
 **The order:**
-1. this declaration, bound;
-2. amendment 1 (the code, tests, mutation receipt, review and pins), bound;
-3. a deploy at the bound pin: a clean clone, tests with root_6_28 activated by prefix, as the 5B declaration §2.1, and
-   0/0 porcelain lines;
-4. the reader on a login node, `timeout 1200`, once;
-5. `FD-CT-5B-AUDIT-REPORT.md` as a PR to the director, with the verdict and every number beside its reference.
+1. this declaration, with its code, bound once;
+2. a deploy at the bound pin (§10.1);
+3. the reader on a login node, once (§10.2);
+4. `FD-CT-5B-AUDIT-REPORT.md` as a PR to the director, with the verdict and every number beside its reference.
+
+### 10.1 Deploy and tests (login node)
+
+`BA=$P/fd-ct-5b-audit-<date>`, which must not exist beforehand, and `D=$BA/deploy/<pin8>`. The deploy is as 5B's
+`fd/receipts-ct/5b/run/s1_deploy.sh`, with:
+- this record's digest list (§14);
+- the test modules `test_fd_ct_5b_audit test_fd_ct_periods test_fd_ct_readers`, run with root_6_28 activated by
+  prefix (the conda hook, then `conda activate`, with no `set -u`).
+
+**It must show:** HEAD equal to the pin; 0 porcelain lines before and after; the §14 digests; and `tests rc=0` with
+"Ran … tests … OK" and no skip, so that `RootLoader` and the 5B and readers' ROOT tests run.
+
+### 10.2 The run (login node, after §10.1)
+
+```bash
+mkdir -p $BA/tmp $BA/logs && cd $BA && eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)" \
+  && conda activate $HOME/.conda/envs/root_6_28 && TMPDIR=$BA/tmp timeout 1200 env -u PYTHONPATH python3 -I -B \
+  $D/nd-unfolding/fd_ct_5b_audit.py \
+  --definition $D/nd-unfolding/pv-ladder/readouts/h2_definition.json \
+  --s1-npz $P/s1-20261024/s1_assembly.npz --cresp $P/cresp-20261026/out/cresp.npz \
+  --cmodel-json $D/nd-unfolding/pv-ladder/readouts/cmodel_5d.json --b5 $P/fd-ct-5b-20261030 \
+  --readout-5b $D/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_periods.json \
+  --readout-5a $D/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_period.json \
+  --playlist-npz $P/tmp-playlist-term-20261016/out/playlist_term.npz \
+  --playlist-json $D/docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json \
+  --analysis-2d $D/docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/analysis.json \
+  --central $P/s5p-20260926/runs/s2/num/data/data_b-_j-.npz \
+  --out-json $BA/fd_ct_5b_audit.json > $BA/logs/audit.out 2> $BA/logs/audit.err; echo "rc=$?" >> $BA/logs/audit.out
+```
+
+- **Exit codes:** 0 written; 1 a refused control, with nothing written and the condition undecided; 2 argparse; 3 the
+  leak guard; 124 the timeout.
+- **The paths:** the 5A inputs are the ones 5A's run read (`fd_ct_period.json` `argv`), and the 5B run directory is
+  the one 5B's read (`fd_ct_5b_periods.json` `argv`). The 2D draws are the absolute paths in `analysis.json` `_roles`.
+- **Committed in the report's PR:** the readout as `fd/readout/fd_ct_5b_audit.json`; the logs and step scripts under
+  `fd/receipts-ct/5b/audit/run/`; a ledger row.
 
 **Cost and platform:**
 - 0 node-h, with no Slurm job;
@@ -544,9 +608,122 @@ session's expectations.
    similar per-unit cost, and its own declaration.
 4. **Not available at 0 node-h:** a per-period flux-universe readout, which could attribute the uniform offsets to the
    flux or exclude it (§3.1). It needs PlotUtils, or per-period universe loops.
-5. **Code in a second step.** The design is frozen here, and the code follows in amendment 1. If you would rather bind
-   once, I fold amendment 1 into this PR before binding.
+5. **Code in a second step: ruled.** On 2026-10-30 the director chose to bind once, with the code in this PR.
 6. **Readouts in (B)** (§8.3): they stay in M, as recommended, or you rule otherwise.
+
+## 13. What writing the code corrected, added or found
+
+None of these changes a threshold of O, N or R, or what any clause measures. The director is told of each.
+
+1. **Corrected: the residual's quantile (§3.3).** A fit of two parameters on 16 cells leaves 14 dof, so the residual is
+   compared with χ²₁₄'s 95 % quantile, 23.685, not χ²₁₅'s 24.996. It has no stop role.
+2. **Made exact: ν_eff (§4.4).** DESIGN's "about 1.83" is the Satterthwaite dof ν = (tr A)² / tr(A²), with
+   A = diag(e) − e eᵀ. That is 1.8244 at 5B's committed e, and it gives DESIGN's 105 % as √(2/ν). The interval is
+   unchanged at two decimals.
+3. **Added: refusing controls beyond §7's list.** Each makes the reader refuse more often, and none changes a
+   statistic:
+   - A1: every 5B unfold and check receipt at the digest the 5B readout records; the unfold directories hold exactly
+     the declared 11 files; each MC truth is `s5p_mc_truth_pred`'s of its own period's npz; every integral positive;
+   - A2: S1 has 38 bands, 5 laterals, normalization, stat and seed; C_e is the sum of S1's blocks; C_model's vertices
+     reproduce `C_model_frac` and `C_model_abs`; the blocks, vertices and species sum to M (an identity of the others);
+   - A3: every 2D draw at its `analysis.json` digest; 2D's seed-42 r = x/t equals `playlist_term.npz`'s r_X; the
+     central value integrates to f; 5A's g, reprojected through `footprint`, equals the committed 5A readout's;
+   - S: the E_avail cell sets of (3c) are the definition's boxes;
+   - assertions: A4, P's column space is span{g_X} (§6.1); A5, P − floor has at most two positive eigenvalues (Weyl).
+4. **Corrected: the leak guard's table (§9).** It holds the 5B integrals only. 2D's values are on another grid (205
+   cells, against the guard's 16) and in other units. No 2D absolute value, or ratio to one, is written; only the
+   draws' fractional fluctuations are, projected onto the cells.
+5. **Found: clause N's power.** In a synthetic test, replica noise as large as the offsets themselves (5 % per cell)
+   gives s_med = 0.39, and N does not fire. That is because such noise inflates every replica block alike. N fires
+   when the replica blocks' size is itself unstable (`test_n_fires_when_the_replica_blocks_size_is_unstable`). The
+   threshold is unchanged, as the director ruled, and the test that records this is kept.
+6. **Corrected: 5A's noise is on double ratios (§5.3, 3b).** It is d = (x/t)_b / (x/t)_s42 − 1, as 2D's own
+   construction has it (`2d-closeout/playlist-term/scripts/playlist_term.py:201-205`), not x_b / x_s42 − 1 as §5.3
+   wrote. The two are equal only if 2D's bootstrap leaves t unchanged. A3 reproduces 2D's committed noise share in this
+   form.
+7. **Chosen: 2D's loader is retyped, not imported.** `analyze_periods.py` puts cluster paths at `sys.path[0]` on
+   import (`2d-closeout/period-unfold-20261014/scripts/analyze_periods.py:46-51`), the OI-136 hazard. So `load_2d`
+   repeats its `load()` formula, in its operation order. Two guards check it: `RootLoader` tests it against the formula
+   on a synthetic ROOT file, and A3's r check compares it on the real files with r as `analyze_periods.load` made it.
+8. **Chosen: where §3–§6 were ambiguous** (review L5):
+   - the 1 % candidate cut is λ ≥ 0.01 tr(B);
+   - a candidate is uniform if its shape is below 10⁻¹² under either PB's or PC's weights;
+   - OV's pattern part uses each offset's Euclidean cell mean, as (3a) does;
+   - N's SD uses ddof = 1;
+   - (3c)'s σ assumes independent cells;
+   - §4.1's mean shift is written as diag(E_k P^(k)) − diag(P), beside diag(floor).
+9. **Applied: §2's numerical zero in OV.** A block variance below 10⁻²⁴ along a mode of P is written as 0. Without it, an
+   exactly uniform block against P's pattern part leaves residue of order 10⁻³⁶, which the guard's 10⁻³⁰ floor refuses
+   (review L2).
+10. **Test names.** §9's table supersedes the test names given in §3–§6.
+
+### The review, and what was done
+
+The review is kept verbatim as `fd/receipts-ct/5b/audit/review/REVIEW.txt`, with its five probes and their logs. It
+found no defect that would make the stop verdict wrong on real inputs.
+- **M1, the planted-leak test never reached the guard's table:** it now plants a ratio to f, which only the table
+  refuses. The mutant "guard: no integrals" is killed.
+- **M2, controls without a refusing test:** the floor, σ_M, the exposure shares, the A0 schema and the A4 span now
+  each have one. A5 cannot fire on PSD inputs, and is kept as an assertion that guards the code.
+- **M3, missing tests and unchecked statistics:** `HandChecks` recomputes by its own route:
+  - the reference bound and the χ² bound;
+  - the jackknife and split halves;
+  - OV on every group and on the pattern;
+  - the candidate population and the best pair;
+  - the noise against stat;
+  - the plane angles and the pattern correlations;
+  - the mean shift.
+- **M4 and M5:** named, as items 1 and 4.
+- **L1, L2 and L5:** items 6, 9 and 8.
+- **L3, A1's 10⁻¹² margin:** A1 rebuilds with 5B's own code in 5B's environment (root_6_28, numpy 1.26.4), where
+  the rebuild is bitwise. Under another summation order the review measured up to 3.4 × 10⁻¹³. A failure would be a
+  refusal, not a wrong verdict.
+- **L4:** the 5B receipts are now compared with the 5B readout's. 2D's seed share is not added as a control, since the
+  bootstrap share already reproduces the chain. The output path is the argv of §10.2.
+- **L6:** the interval is tested at its values; OV and the candidate count are recomputed by hand; `HandChecks` builds
+  its own bases with numpy.
+- **L7:** item 5.
+
+### Mutation passes
+
+- **Pass 1** (`mutants_5b_audit-pass1.log`, at `93642cdd`): 41 of 46 killed. The five survivors were test gaps, each
+  also found by the review:
+  - R's stop;
+  - the DR group's composition;
+  - two refusals matched on a PASS line;
+  - the guard's table.
+
+  The tests were fixed, not the thresholds.
+- **Pass 2** (`mutants_5b_audit.log`, at `5ea379b4`): **54 of 54 killed**, none unapplied, and the file restored to its pinned digest.
+
+## 14. Pinned bytes
+
+At this declaration's commit:
+
+| file | sha256 |
+|---|---|
+| `nd-unfolding/fd_ct_5b_audit.py` | `d969d1ffbd06fec7254db029a5785080d4bd28613a3a9763fab5face99a8cdb6` |
+| `nd-unfolding/tests/test_fd_ct_5b_audit.py` | `bd5f1f321a38b2098f4dfb822b54e3581ce11235cb7da11d58a421422920b627` |
+| `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/audit/mutants_5b_audit.py` | `0206b2d3579f396c908e17c64e2a57d6653b495ccc032b2cfbedf6ea3c207574` |
+| `nd-unfolding/fd_ct_periods.py` | `ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e` (unchanged from main) |
+| `nd-unfolding/fd_ct_readers.py` | `f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464` (unchanged from main) |
+| `nd-unfolding/fd_f0_regrade.py` | `0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2` (unchanged from main) |
+| `nd-unfolding/s1_assemble.py` | `b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7` (unchanged from main) |
+| `nd-unfolding/s5p_stage1_inspect.py` | `26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71` (unchanged from main) |
+| `nd-unfolding/fd_ct_period_inputs.py` | `4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1` (unchanged from main) |
+| `nd-unfolding/s5p_mc_truth_pred.py` | `e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5` (unchanged from main) |
+| `nd-unfolding/s5p_numerics.py` | `7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185` (unchanged from main) |
+| `nd-unfolding/tests/test_fd_ct_periods.py` | `933c740d93f03e524906f161d2c4ee8e11a69bdd114cedd210832cbd1eb78d60` (unchanged from main) |
+| `nd-unfolding/tests/test_fd_ct_readers.py` | `6ca4172937351ff60b8c5611403c0e519b2dbb6ae10a789baf8f578121a543a6` (unchanged from main) |
+| `nd-unfolding/pv-ladder/readouts/h2_definition.json` | `b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89` (unchanged from main) |
+| `nd-unfolding/pv-ladder/readouts/cmodel_5d.json` | `3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60` (unchanged from main) |
+| `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_periods.json` | `a5b17895b1189543d773e94717e14cd9b1409535e366c96788f94bf6f40759db` (unchanged from main) |
+| `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_period.json` | `d7d518ac20acd90d9d411dbd1353c509e734e8588b6bc3965ae5f14cf9303728` (unchanged from main) |
+| `docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json` | `5b023478eb5825a298fd3e851b614fd4780ab27b927214e253f5c4c0df52f7b9` (unchanged from main) |
+| `docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/analysis.json` | `05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b` (unchanged from main) |
+
+**Locally,** the audit's, 5B's and the readers' test modules ran 210 tests, OK, with 4 skipped: the ROOT-only tests
+(`test_fd_ct_5b_audit` 2, `test_fd_ct_periods` 2). The deploy must run them with none skipped (§10.1).
 
 ## 12. Not changed
 

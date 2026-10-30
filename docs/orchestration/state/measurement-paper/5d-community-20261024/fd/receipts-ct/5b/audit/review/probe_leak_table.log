@@ -1,0 +1,2 @@
+(a) planted-leak test passes with the integral table EMPTIED: True
+(b) ratio leak |X_PB/f - 1| ~ 0.708: exit with real guard 3, with emptied table 0
