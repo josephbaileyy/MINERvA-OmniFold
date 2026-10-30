@@ -1,0 +1,5 @@
+nonzeros per row: 324 - 11520
+typical |D|: 0.002955992714039346
+max rel diff floor sigma over 20 seeds: 2.327027459614328e-13  median: 8.704148513061227e-14
+max rel diff g_sig over 20 seeds: 3.432809592140984e-13  median: 1.4627188349436437e-13
+A1 tolerance 1e-12 exceeded in 0 of 40
