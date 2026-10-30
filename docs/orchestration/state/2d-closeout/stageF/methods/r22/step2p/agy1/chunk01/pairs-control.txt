@@ -1,0 +1,81 @@
+(Each pair is one passage of a physics paper, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [paper_body.tex PB18]
+BEFORE: \emph{Scope.} The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general. The limitations are listed in Sec.~\ref{sec:limitations}.
+AFTER: The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.
+
+Q2. [paper_body.tex PB40]
+BEFORE: This constant is inherited from the analysis framework's definition. It defines the reported observable and is used consistently by the analysis and every prediction.
+AFTER: The constant defines the reported observable and is used consistently by the analysis and every prediction.
+
+Q3. [paper_body.tex PB68]
+BEFORE: Of the coarse cells, \jtNcells{} pass; these are the joint cells.
+AFTER: The \jtNcells{} coarse cells that meet it, the joint cells, are the populated cells of the five-observable grid.
+
+Q4. [paper_body.tex PB86]
+BEFORE: The variants used in development, and the results that rest on them, are described in \nsec{sec:method-config}.
+AFTER: The other configurations used below, and their results, are described in \nsec{sec:method-config}.
+
+Q5. [paper_body.tex PB92]
+BEFORE: Each classifier is trained on the full sample whose weights it then sets, without a held-out or cross-fitted split, early stopping, or class balancing (\nsec{sec:method-algo}).
+AFTER: Each classifier is trained on the full sample whose weights it then sets, so held-out or cross-fitted split is used, and it fits its full number of trees with each class at its own total weight (\nsec{sec:method-algo}).
+
+Q6. [paper_body.tex PB99]
+BEFORE: \nsec{sec:method-config} gives the full matrix, including the variants used in development.} \label{tab:estimators} \centering\scriptsize \begin{tabular}{@{}lll@{}} \toprule \pcell{0.24\columnwidth}{Estimator} & \pcell{0.30\columnwidth}{Background treatment} & \pcell{0.38\columnwidth}{Used for} \\ \midrule \pcell{0.24\columnwidth}{joint-test estimator} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{3D and 4D central values; sixteen-cell 5D result (Sec.~\ref{sec:result16}); held-out shapes (Fig.~\ref{fig:deformation}b); precision study} \\ \pcell{0.24\columnwidth}{two-observable estimator: LightGBM, seed 42} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{2D central value and covariance (Sec.~\ref{sec:repro2d})} \\ \bottomrule \end{tabular} \end{table} \subsection{Reporting definitions and the precision target} \label{sec:uncertainty-status} To include model dependence, a dedicated study defines the envelope of a cell as the largest shift of its data result when the simulation's prior is reweighted to each of five generator-sized changes of the truth, and adds it linearly to the probabilistic half-width.
+AFTER: \nsec{sec:method-config} gives the configuration behind each result.} \label{tab:estimators} \centering\scriptsize \begin{tabular}{@{}lll@{}} \toprule \pcell{0.24\columnwidth}{Estimator} & \pcell{0.30\columnwidth}{Background treatment} & \pcell{0.38\columnwidth}{Used for} \\ \midrule \pcell{0.24\columnwidth}{joint-test estimator} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{3D and 4D central values; sixteen-cell 5D result (Sec.~\ref{sec:result16}); held-out shapes (Fig.~\ref{fig:deformation}b); precision study} \\ \pcell{0.24\columnwidth}{two-observable estimator: LightGBM, seed 42} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{2D central value and covariance (Sec.~\ref{sec:repro2d})} \\ \bottomrule \end{tabular} \end{table} \subsection{Reporting definitions and the precision target} \label{sec:uncertainty-status} To include model dependence, a dedicated study defines the envelope of a cell as the largest shift of its data result when the simulation's prior is reweighted to each of five generator-sized changes of the truth, and adds it linearly to the probabilistic half-width.
+
+Q7. [paper_body.tex PB103]
+BEFORE: With the joint-test estimator, the envelope alone exceeds it for the \jtNcells{} coarse joint cells and for the fallback definition, the 39 supported $(\Eavail,W)$ cells. For a coarser, non-nested partition of all five observables into 27 cells, the same estimator's envelope alone does not exceed it, but the \SI{1.4}{\percent} normalization contained in every probabilistic half-width lifts the median above it.
+AFTER: With the joint-test estimator, the envelope alone exceeds the target for the \jtNcells{} coarse joint cells and for the 39 supported $(\Eavail,W)$ cells. For a coarser, non-nested partition of all five observables into 27 cells, the same estimator's envelope alone does not exceed the target, but the \SI{1.4}{\percent} normalization contained in every probabilistic half-width lifts the median above it.
+
+Q8. [paper_body.tex PB120]
+BEFORE: The model term $C_{\mathrm{model}}$ is built from the change in the unfolded data when the prior is reweighted to GENIE + MEC, NuWro and GiBUU in turn; it represents unscaled generator-shape dependence, not a calibrated bound, and its coverage at truths held out of its construction has not been validated. The response term $C_{\mathrm{resp}}$ is the response of the result to a one-standard-deviation scale of the reconstructed recoil energy in the simulation, for protons, mesons, electromagnetic and other deposits, but it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result, its fake-data tests and its comparison in Sec.~\ref{sec:gen16}.
+AFTER: The model term $C_{\mathrm{model}}$ is built from the change in the unfolded data when the prior is reweighted to GENIE + MEC, NuWro and GiBUU in turn. It represents unscaled generator-shape dependence, a calibrated bound, and its coverage at truths held out of its construction has not been validated. The response term $C_{\mathrm{resp}}$ is the response of the result to a one-standard-deviation scale of the reconstructed recoil energy in the simulation. The scale is applied to proton, meson, electromagnetic and other deposits. It does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale. The term enters only this result, its fake-data tests and its comparison in Sec.~\ref{sec:gen16}.
+
+Q9. [paper_body.tex PB138]
+BEFORE: The band of this analysis contains the statistical, systematic-universe (including the normalization), training-seed and run-period blocks of the covariance, Sec.~\ref{sec:uq2d}, and it omits the learner dependence and $C_{\mathrm{model}}$.
+AFTER: The band of this analysis is the four-block covariance of Sec.~\ref{sec:uq2d}, without $C_{\mathrm{model}}$.
+
+Q10. [paper_body.tex PB141]
+BEFORE: Bottom right: median relative uncertainties and residual summary.} \label{fig:validation} \end{figure*} \subsection{Two-dimensional covariance} \label{sec:uq2d} The two-dimensional covariance is the sum of four blocks, each from LightGBM unfoldings with the central value's estimator: systematic universes (187 universes), statistical (300 bootstrap replicas), run period (three period groups), and training seed (five seed settings, so that its own size is poorly determined).
+AFTER: Bottom right: median relative uncertainties and residual summary.} \label{fig:validation} \end{figure*} \subsection{Two-dimensional covariance} \label{sec:uq2d} The two-dimensional covariance is the sum of four blocks, each from LightGBM unfoldings with the central value's estimator: systematic universes (187 universes, including the normalization), statistical (300 bootstrap replicas), run period (three period groups), and training seed (five seed settings, so that its own size is poorly determined).
+
+Q11. [paper_body.tex PB145]
+BEFORE: The covariance has not been independently validated. It provides no calibrated significance for generator comparisons.
+AFTER: The covariance has been independently validated and provides no calibrated significance for generator comparisons.
+
+Q12. [paper_body.tex PB154]
+BEFORE: The run-period block is built from double ratios among the three period groups (each group's unfolded result over its own simulated truth, with no group chosen as the reference), includes this inconsistency in the combined result, and amounts to \SI{2.0}{\percent} on the integrated cross section.
+AFTER: The run-period block is built from double ratios among the three period groups, each group's unfolded result over its own simulated truth, with no group chosen as the reference. It includes this inconsistency in the combined result and amounts to \SI{2.0}{\percent} on the integrated cross section.
+
+Q13. [paper_body.tex PB197]
+BEFORE: It covers only the residuals whose diagnosis is stable under the truth resolution (\SI{38}{\percent} of the joint-cell residuals above \SI{2}{\percent}). What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope.
+AFTER: It covers only the residuals whose diagnosis does not change with the resolution of the truth binning (\SI{38}{\percent} of the joint-cell residuals above \SI{2}{\percent}).
+
+Q14. [paper_body.tex PB207]
+BEFORE: \subsection{Estimator stability} \label{sec:cov5d} The joint-test estimator is unstable at the level of rounding.
+AFTER: \subsection{Sensitivity to input rounding} \label{sec:cov5d} The joint-test estimator is sensitive to perturbations of its inputs within floating-point rounding.
+
+Q15. [paper_body.tex PB214]
+BEFORE: Table~\ref{tab:fd16} gives the results under the reported covariance and under $C_{\mathrm{total}}$ alone, and \fvval{f0b-nungraded} further truths are ungraded and given in the note.
+AFTER: Table~\ref{tab:fd16} gives the results under the reported covariance and under $C_{\mathrm{total}}$ alone, and \fvval{f0b-nungraded} further truths, given in the note, are descriptive and not judged against these criteria.
+
+Q16. [paper_body.tex PB235]
+BEFORE: This makes the two-dimensional result reusable, the higher-dimensional central values usable for qualitative comparison, and the sixteen-cell result usable for the comparison that follows.
+AFTER: The two-dimensional result is therefore reusable, the sixteen-cell result supports the comparison that follows, and the higher-dimensional central values support qualitative comparison.
+
+Q17. [paper_body.tex PB260]
+BEFORE: The note's calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (\nsec{sec:joint5d-results}).
+AFTER: The note's calibrated tests show the same bias toward the prior: it displaces their null distributions for the external predictions upward, and the calibration, which simulates the whole analysis chain, reproduces that displacement (\nsec{sec:joint5d-results}).
+
+Q18. [paper_body.tex PB262]
+BEFORE: The studies of Sec.~\ref{sec:validation} show what must be checked before unfolded intervals are interpreted: closure with the backgrounds included; truth changes of generator size, not only nominal closure; coverage under changes of the truth, not only at nominal truth; stability under training seeds and rounding-level input changes; and run-period consistency.
+AFTER: The studies of Sec.~\ref{sec:validation} show what must be checked before unfolded intervals are interpreted: closure with the backgrounds included; truth changes of generator size, not only nominal closure; coverage under changes of the truth, not only at nominal truth; robustness to training seeds and rounding-level input changes; and run-period consistency.
+
+Q19. [paper_body.tex PB266]
+BEFORE: \begin{enumerate} \item The two-dimensional covariance has not been independently validated, and its coverage has not been tested (Sec.~\ref{sec:uq2d}). \item The three- and four-observable central values lack intervals of validated coverage (Sec.~\ref{sec:central}). \item The sixteen-cell result also has total uncertainties, whose coverage is not validated; Sec.~\ref{sec:fd16} reports the fake-data tests of the estimator's bias. \item Four of the sixteen cells, \fvval{h2-lowstab-cells}, have a stability of \fvval{h2-lowstab-min}--\fvval{h2-lowstab-max}: of the simulated signal events generated in such a cell and reconstructed, only that fraction is reconstructed in the same cell.
+AFTER: \begin{enumerate} \item The two-dimensional covariance has not been independently validated, and its coverage has not been tested (Sec.~\ref{sec:uq2d}); the three- and four-observable central values lack intervals of validated coverage (Sec.~\ref{sec:central}); and the coverage of the sixteen-cell total uncertainties is not validated, their fake-data tests in Sec.~\ref{sec:fd16} assessing the estimator's bias. \item Four of the sixteen cells, \fvval{h2-lowstab-cells}, have a reconstruction stability of \fvval{h2-lowstab-min}--\fvval{h2-lowstab-max}: of the simulated signal events generated in such a cell and reconstructed, only that fraction is reconstructed in the same cell.
+
+Q20. [paper_body.tex PB271]
+BEFORE: However, the rejections carry over to the generator predictions themselves only under a bound on the residual below the fine grid, which has not been shown.
+AFTER: However, a rejection extends to the generator prediction itself only if the residual below the fine grid, where each null takes the simulation's event composition, is bounded, and no such bound has been shown.

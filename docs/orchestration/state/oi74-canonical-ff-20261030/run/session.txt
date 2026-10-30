@@ -1,0 +1,89 @@
+$ ssh saul.nersc.gov 'bash -s' < ff.sh   # ff.sh sha256 afe92465…
+host login37
+date_utc 2026-10-30T21:02:48Z
+git git version 2.51.0
+P1 squeue_me_jobs 0
+P2 head 32e403b84e9e8f9d9bc435028749f896653c7a43
+P2 branch main
+P3 tracked_rc 0
+  tracked|  M docs/orchestration/LIVE-STATE.md
+  tracked|  M docs/orchestration/state/live-state-last-known.json
+P4 untracked_before 731
+W1 aside /pscratch/sd/j/josephrb/oi74-ff-20261030
+  aside| 568ea13f22b580e804583b061983431253f7fd28941e5b84a4d8de148f4943e1  LIVE-STATE.md
+  aside| 73727bb932d2ce23fd4f08dbdc96fceb87f7c01e1085a727bb0b1e1b58331aca  live-state-last-known.json
+W2 checkout_rc 0
+W2 tracked_after_restore 0
+From github.com:josephbaileyy/MINERvA-OmniFold
+   9e78a8cfa..eac51ab2e  main                   -> github/main
+ * [new branch]          5d-community/fd-f0-20261025 -> github/5d-community/fd-f0-20261025
+ * [new branch]          5d-community/fd-f0-prebinding-receipts -> github/5d-community/fd-f0-prebinding-receipts
+ * [new branch]          5d-community/fd-f0-report-20261025 -> github/5d-community/fd-f0-report-20261025
+ * [new branch]          5d-community/fd-g-20261025 -> github/5d-community/fd-g-20261025
+ * [new branch]          5d-community/fd-g-diag-report-20261026 -> github/5d-community/fd-g-diag-report-20261026
+ * [new branch]          5d-community/fd-plan-20261025 -> github/5d-community/fd-plan-20261025
+ * [new branch]          5d-community/s1-declaration-20261024 -> github/5d-community/s1-declaration-20261024
+ * [new branch]          5d-community/s1-plan-20261024 -> github/5d-community/s1-plan-20261024
+ * [new branch]          5d-community/s1-preserve-report-20261024 -> github/5d-community/s1-preserve-report-20261024
+ * [new branch]          5d-community/s1-report-20261025 -> github/5d-community/s1-report-20261025
+ * [new branch]          ci/sec4-fixture-20261026 -> github/ci/sec4-fixture-20261026
+ * [new branch]          closeout/stage-a-selective-io-20261012-reviewed -> github/closeout/stage-a-selective-io-20261012-reviewed
+ * [new branch]          decision/5d-community-route-20261024 -> github/decision/5d-community-route-20261024
+ * [new branch]          decl/1b-coverage-stage1-20261030 -> github/decl/1b-coverage-stage1-20261030
+ * [new branch]          decl/fd-ct-5b-audit-20261030 -> github/decl/fd-ct-5b-audit-20261030
+ * [new branch]          director/handoff-20261027 -> github/director/handoff-20261027
+ * [new branch]          docs/integrate-preparation-20261017 -> github/docs/integrate-preparation-20261017
+ * [new branch]          docs/r22-g1b-step2-rules-20261030 -> github/docs/r22-g1b-step2-rules-20261030
+ * [new branch]          fd/deposit-candidate   -> github/fd/deposit-candidate
+ * [new branch]          fd/f1-amendment-1      -> github/fd/f1-amendment-1
+ * [new branch]          fd/f1-amendment-2      -> github/fd/f1-amendment-2
+ * [new branch]          fd/f1-declaration      -> github/fd/f1-declaration
+ * [new branch]          fd/f1-report           -> github/fd/f1-report
+ * [new branch]          fd/f1-run-amend2       -> github/fd/f1-run-amend2
+ * [new branch]          fd/f1c-pin             -> github/fd/f1c-pin
+ * [new branch]          fd/flux-boot-amendment-1 -> github/fd/flux-boot-amendment-1
+ * [new branch]          fd/flux-boot-report    -> github/fd/flux-boot-report
+ * [new branch]          fd/flux-bootstrap-declaration -> github/fd/flux-bootstrap-declaration
+ * [new branch]          fd/measurement-handoff -> github/fd/measurement-handoff
+ * [new branch]          pvl/proj1d-addendum-20261027 -> github/pvl/proj1d-addendum-20261027
+ * [new branch]          stageF/5d-fd-presentation-20261025 -> github/stageF/5d-fd-presentation-20261025
+ * [new branch]          stageF/absence-items-3-4-20261027 -> github/stageF/absence-items-3-4-20261027
+ * [new branch]          stageF/abstract-measure-20261026 -> github/stageF/abstract-measure-20261026
+ * [new branch]          stageF/caveat-study-20261025 -> github/stageF/caveat-study-20261025
+ * [new branch]          stageF/comparator-chi2-practice-20261027 -> github/stageF/comparator-chi2-practice-20261027
+ * [new branch]          stageF/grandfathered-absence-audit-20261027 -> github/stageF/grandfathered-absence-audit-20261027
+ * [new branch]          stageF/note-negweight-scope-fix-20261025 -> github/stageF/note-negweight-scope-fix-20261025
+ * [new branch]          stageF/note-register-n1-20261025 -> github/stageF/note-register-n1-20261025
+ * [new branch]          stageF/note-register-n2-20261026 -> github/stageF/note-register-n2-20261026
+ * [new branch]          stageF/note-register-n3-20261027 -> github/stageF/note-register-n3-20261027
+ * [new branch]          stageF/re2-integration-20261024 -> github/stageF/re2-integration-20261024
+ * [new branch]          stageF/records-redit-20261026 -> github/stageF/records-redit-20261026
+ * [new branch]          stageF/records-redit1-rvp1pi-20261026 -> github/stageF/records-redit1-rvp1pi-20261026
+ * [new branch]          stageF/redit-full-digests-20261026 -> github/stageF/redit-full-digests-20261026
+ * [new branch]          stageF/register-r14-20261021 -> github/stageF/register-r14-20261021
+ * [new branch]          stageF/register-r17-20261025 -> github/stageF/register-r17-20261025
+ * [new branch]          stageF/register-r18-20261025 -> github/stageF/register-r18-20261025
+ * [new branch]          stageF/secondary-results-20261025 -> github/stageF/secondary-results-20261025
+ * [new tag]             evidence/preparation-2026-09-24-bf34a12c -> evidence/preparation-2026-09-24-bf34a12c
+ * [new tag]             evidence/preserved-feat-production-interface-20260912-7a2d9897 -> evidence/preserved-feat-production-interface-20260912-7a2d9897
+ * [new tag]             evidence/simplification-2026-10-07-fc97eaf9 -> evidence/simplification-2026-10-07-fc97eaf9
+ * [new tag]             evidence/z-assembling-revision-fb9ec356 -> evidence/z-assembling-revision-fb9ec356
+W3 fetch_rc 0
+W3 github_main eac51ab2eae896c802d58aae03b42cad0c02cabe
+W3 behind 3726 ahead 0
+  untracked-not-ignored| docs/orchestration/dashboard.html
+  untracked-not-ignored| docs/orchestration/dashboard_collector.py
+  untracked-not-ignored| docs/orchestration/test_dashboard_collector.py
+  untracked-not-ignored| nd-unfolding/tests/test_cstat_100rep.py
+P5 added 13646 present 6 identical 6 differ 0 untracked_not_ignored 4
+ROLLBACK: restoring the two live-state files from /pscratch/sd/j/josephrb/oi74-ff-20261030
+rollback_cp_rc 0
+568ea13f22b580e804583b061983431253f7fd28941e5b84a4d8de148f4943e1  LIVE-STATE.md
+73727bb932d2ce23fd4f08dbdc96fceb87f7c01e1085a727bb0b1e1b58331aca  live-state-last-known.json
+568ea13f22b580e804583b061983431253f7fd28941e5b84a4d8de148f4943e1  docs/orchestration/LIVE-STATE.md
+73727bb932d2ce23fd4f08dbdc96fceb87f7c01e1085a727bb0b1e1b58331aca  docs/orchestration/state/live-state-last-known.json
+rollback_head 32e403b84e9e8f9d9bc435028749f896653c7a43
+rollback_tracked OK (the two files, as before)
+STOP 26: 4 added path(s) exist as untracked, not-ignored files
+date_utc_end 2026-10-30T21:03:13Z
+ssh_rc 26

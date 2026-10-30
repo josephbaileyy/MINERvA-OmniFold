@@ -1,0 +1,7 @@
+P2	sol2	BA	attempt=1	rc=0	secs=12
+P2	sol2	AB	attempt=1	rc=0	secs=17
+P1	sol2	r1	attempt=1	rc=0	secs=35
+P2	gemini	BA	attempt=1	rc=0	secs=42
+P2	gemini	AB	attempt=1	rc=0	secs=47
+P1	sol2	r3	attempt=1	rc=0	secs=36
+P1	sol2	r2	attempt=1	rc=0	secs=42

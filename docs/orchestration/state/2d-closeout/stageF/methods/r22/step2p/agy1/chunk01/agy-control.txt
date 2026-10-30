@@ -1,0 +1,61 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit cross-reference to the paper's limitations, omitting the sentence "The limitations are listed in Sec.~\ref{sec:limitations}."
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops a fact stated in BEFORE, omitting that the constant is "inherited from the analysis framework's definition."
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER makes an unsupported assertion not found in BEFORE by stating that the joint cells "are the populated cells of the five-observable grid", and introduces the ambiguous reference "meet it".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "variants used in development" with "other configurations used below", mischaracterizing the nature of the configurations and where they are used.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER asserts that a "held-out or cross-fitted split is used", directly contradicting BEFORE's statement that training proceeds "without a held-out or cross-fitted split".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops specific details present in BEFORE by omitting "the full matrix, including the variants used in development" and substituting "the configuration behind each result."
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "the fallback definition," when identifying the 39 supported $(\Eavail,W)$ cells.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER omits the negation and asserts that $C_{\mathrm{model}}$ represents "a calibrated bound", directly contradicting BEFORE's statement that it is "not a calibrated bound".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that the band omits "the learner dependence", and omits the specific enumeration of the covariance blocks ("including the normalization").
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER adds the qualification "including the normalization" to the systematic universes block, which is not stated or supported in this passage of BEFORE.
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER omits "not" and asserts that the covariance "has been independently validated", directly contradicting BEFORE's statement that it "has not been independently validated."
+
+Q12: VERDICT: SAME
+DETAIL: The rewording splits the sentence and replaces parentheses with commas while preserving all facts, numbers, and qualifiers without changing the meaning.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER omits the second sentence describing the limitations of the analysis: "What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope."
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER shifts from the estimator being "unstable at the level of rounding" to being "sensitive to perturbations of its inputs within floating-point rounding", specifying input perturbations and floating-point rounding not stated in BEFORE.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER introduces unsupported descriptions by stating that the further truths "are descriptive and not judged against these criteria", which goes beyond BEFORE's statement that they "are ungraded".
+
+Q16: VERDICT: SAME
+DETAIL: The rewording reorders the clauses and uses active phrasing ("supports") while preserving all results, qualifiers, and comparisons with identical meaning.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER introduces an unsupported claim by asserting that the calibration "simulates the whole analysis chain", and rewords "pull" as "bias toward the prior".
+
+Q18: VERDICT: SAME
+DETAIL: Replacing "stability under" with "robustness to" training seeds and rounding-level input changes is a stylistic variation that preserves the identical check, qualifiers, and scope.
+
+Q19: VERDICT: DIFFERS
+DETAIL: AFTER introduces the qualifier "reconstruction stability", drops the standalone assertion that "The sixteen-cell result also has total uncertainties", and creates ambiguity by linking "their fake-data tests" to the uncertainties.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER adds an explanatory statement not supported by BEFORE, asserting "where each null takes the simulation's event composition".
+
+END

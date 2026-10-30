@@ -1,0 +1,61 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the paragraph header `\emph{Scope.}` and drops the limitation reference "The limitations are listed in Sec.~\ref{sec:limitations}."
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the factual provenance that the constant "is inherited from the analysis framework's definition."
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds unsupported statements not in BEFORE by claiming the cells "meet it" and "are the populated cells of the five-observable grid."
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER replaces "variants used in development" with "other configurations used below", dropping the qualification that these were development variants and claiming instead that they are used later in the text.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces specific model mechanics not supported by BEFORE by stating "it fits its full number of trees with each class at its own total weight", while dropping the explicit qualifiers "early stopping" and "class balancing".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops "the full matrix, including the variants used in development", replacing it with "the configuration behind each result."
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifying phrase "the fallback definition,", which defines the status of the 39 supported $(\Eavail,W)$ cells.
+
+Q8: VERDICT: SAME
+DETAIL: The rewording splits compound sentences into shorter sentences while preserving all facts, quantities, qualifiers, and scope limitations exactly.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit exclusion of "the learner dependence" and drops the qualifier "(including the normalization)".
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER adds the qualifier ", including the normalization", which is not stated in BEFORE (it appears to have been moved here from neighbouring passage PB138).
+
+Q11: VERDICT: SAME
+DETAIL: The two sentences are joined into a single sentence with "and" with no change in meaning, scope, or qualifiers.
+
+Q12: VERDICT: SAME
+DETAIL: The parenthetical remark is converted to an appositive clause and the passage is split into two sentences without altering any facts or qualifiers.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire second sentence stating that "What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope."
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER replaces "unstable at the level of rounding" with "sensitive to perturbations of its inputs within floating-point rounding", which narrows the instability specifically to input perturbations and weakens "unstable" to "sensitive".
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER replaces "ungraded" with the broader, unsupported claim that the truths "are descriptive and not judged against these criteria."
+
+Q16: VERDICT: SAME
+DETAIL: Rephrasing "usable for" as "supports" and reordering the clauses preserves the meaning that each result provides the basis for its respective qualitative or subsequent comparison.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER adds the unsupported claim "which simulates the whole analysis chain" and replaces "pull" with "bias toward the prior."
+
+Q18: VERDICT: SAME
+DETAIL: Replacing "stability under" with "robustness to" preserves the identical check and scope without adding or dropping any facts.
+
+Q19: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit fact that "The sixteen-cell result also has total uncertainties", adds "reconstruction" to "stability", and introduces misleading ambiguity by using "their fake-data tests" where "their" grammatically attaches to the uncertainties rather than the estimator.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER adds the unsupported explanatory condition "where each null takes the simulation's event composition."
+
+END

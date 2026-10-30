@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B adheres more closely to standard Physical Review D register by eliminating nonstandard informal subheadings (such as "Scope.") and replacing unscholarly colloquialisms (such as labeling test truths as "ungraded") with appropriate scientific phrasing.
+2. Document B demonstrates superior copy-editing by restructuring cumbersome, multi-clause run-on sentences—most notably the lengthy description of the response covariance in Sec. IV A—into crisp, grammatically well-formed sentences.
+3. Document B improves precision and flow by resolving vague pronoun references (specifying "exceeds the target" rather than "exceeds it"), eliminating clunky rhetorical repetitions, and employing conventional technical terminology such as "perturbations of its inputs within floating-point rounding" and "reconstruction stability."

@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent, but recurring internal terminology, development history, repeated caveats, and release bookkeeping require a dedicated language pass to reach published PRD register.
+1. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development."
+   REWRITE: Five iterations are used because increasing the number to 10, 15, or 20 did not reduce the maximum residual used to assess model dependence across the tested truth deformations.
+2. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of
+four of the sixteen cells is stated only here. The principal
+ones are these."
+   REWRITE: The principal limitations concern uncertainty coverage, reconstruction stability in four of the sixteen cells, and the interpretation of the calibrated tests.
+3. QUOTE: "A
+candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and
+regenerates the analysis note’s figures of the joint-test
+null distributions and the (Eavail , W ) map."
+   REWRITE: A software package of approximately 16 MB reproduces the analysis note’s joint-test null-distribution figures and (Eavail, W) map using NumPy, SciPy, and Matplotlib; the package has not yet been deposited.

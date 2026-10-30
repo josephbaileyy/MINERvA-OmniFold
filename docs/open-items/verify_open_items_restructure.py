@@ -208,6 +208,8 @@ def verify_table() -> None:
     # known and accepted weakness rather than an oversight -- a count pin belongs to a reviewer, not
     # to a gate three lanes commit through.
     #
+    # TAKEN 2026-10-30 by Joseph's decision (item 2): check_open_items_columns.py --check now runs in .githooks/pre-commit
+    # and in CI. The paragraph below is as it stood.
     # STILL NOT TAKEN HERE, and still Joseph's: it is a shared-gate change that would land while
     # three lanes are mid-commit. What blocks the WHOLE FILE from the hook is unchanged and measured
     # at 46993255 -- `expected_ids` (113 data rows, ids spanning 1..152 with 41 archived away, so it
@@ -223,7 +225,12 @@ def verify_table() -> None:
     # and OI-148 could not have been closed against a green run without moving it.
     # Re-derive rather than trust: `git show <sha>:docs/OPEN_ITEMS.md | awk '{ if (length($0) > 400) n++ } END { print n }'`
     # under-counts (awk counts characters); count encoded bytes per line as this function does.
-    OVER_LIMIT_PINNED = 112        # 97 predate 2026-08-21; 15 are rows filed on 2026-08-21
+    # RESET 112 -> 147, 2026-10-30, by Joseph's decision (DECISION-20261030-joseph-canonical-checkout-and-table-check.md
+    # item 2): 147 is the count measured on main that day (RECORD-20261030-close-items-oi148-row-repair.md). THE PIN CAN
+    # ONLY FALL FROM HERE. Lower it when the count drops; raising it needs a new decision. Enforced by
+    # docs/open-items/test_open_items_wiring.py, which fails if this value is above 147. The test reads the value, never
+    # the tree's count, so the ratchet itself stays unhooked.
+    OVER_LIMIT_PINNED = 147
     LONGEST_LINE_PINNED = 23503    # unchanged by those rows and by this repair; it is an older row
     over = [n for n in byte_lengths if n > LONG_LINE_BYTES]
     assert len(over) <= OVER_LIMIT_PINNED, (

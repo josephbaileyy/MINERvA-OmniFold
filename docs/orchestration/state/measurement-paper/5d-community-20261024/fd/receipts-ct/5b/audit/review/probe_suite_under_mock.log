@@ -1,0 +1,5 @@
+guard_empty: ran 34, failures 0, errors 0, skipped 2 -> SURVIVED
+no_floor_check: ran 34, failures 0, errors 0, skipped 2 -> SURVIVED
+no_sigmaM_check: ran 34, failures 0, errors 0, skipped 2 -> SURVIVED
+ref_bound_wrong: ran 34, failures 0, errors 0, skipped 2 -> SURVIVED
+no_a4: ran 34, failures 9, errors 0, skipped 2 -> KILLED

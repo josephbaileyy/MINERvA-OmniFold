@@ -246,6 +246,13 @@ run "whose_row self-test"         python3 docs/orchestration/whose_row.py --self
 # Two existing duplicates are WAIVED IN THE SOURCE with reasons (whose_row.OI_ID_WAIVERS); they are
 # annotated rather than renumbered because both ids are cited in pushed commits.
 run "OPEN_ITEMS OI ids"           python3 docs/orchestration/whose_row.py --check-oi-ids
+# ADDED 2026-10-30 (OI-148; Joseph, DECISION-20261030-joseph-canonical-checkout-and-table-check.md item 2). Every
+# pipe-table row of docs/OPEN_ITEMS.md has exactly 7 fields and the header names them. It reads the INDEX, so a
+# pathspec commit is judged on its own content (git hands it its own index). It passes the admitting rule at line 11:
+# a well-formed row always passes, and the only failure is a malformed row. It was unwired from 2026-08-22, and two
+# rows sat malformed on main from 2026-08-30 until #538. The long-line ratchet is deliberately NOT reachable from it.
+# Wiring tested in both directions by docs/open-items/test_open_items_wiring.py, which CI runs.
+run "OPEN_ITEMS seven columns"    python3 docs/open-items/check_open_items_columns.py --check
 # WHOLE-TREE AND UNSCOPED, on purpose. Added 2026-08-13 (OI-64; Joseph authorized, lane D reviewed,
 # receipt: AUTHORIZATION-20260813-hash-binding-gate-in-precommit.md). It guards every gate's code
 # freeze, it is the reason the 2026-07-28 de-rooting refactor's six broken bindings were findable, and
