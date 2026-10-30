@@ -1,0 +1,26 @@
+## deploy session 2026-10-30T03:38:54Z login37
+T absent: ok
+## deploy.log
+2026-10-30T03:39:29Z
+login37
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+8c237939118eb1c79d28c297fb423fc0fdba8158d03571b01a0f31ac223f28b6  run_array.sh
+2a5a8343300ba647d12b95c1a1de35a3797769d7f59d8973d891ac1e628380e4  cml_compare.py
+d8656ecb9461b39e3d4011a1c7e3d5fe905ebf7fefe9bb59e72b042c2315f0ad  test_cml.py
+4bc994b1ceccd93df4df7fd4f2c80ede897c1d7d2cb459bd4b780b0852052227  seeds.tsv
+f8107e3612a302446f63c5adab6809b905a1a3c7503e446dbbe28ce27e420ac5  stored.sha256
+1b4c781e0d2420e91c3b8c1f2c41b9d2e0973e78580e4b0f8b6221c15df8968b  code.sha256
+c665e7c126fa4b92b42017a7714f5c92f8260f8ad5d4f0f6a48d8f943458a7b2  DECLARATION.md
+649b12916b4fe43df1626f9809d89817ba3e57ee04238be793918eaa968396ae  ../oi160-reproduction-20261029/repro_run.py
+tests rc=0
+porcelain_ignored_lines_after_tests 0
+## deploy-tests.log tail
+[cml_compare] floor_ok=True producers={'p1': 'CORRECTED', 'p2': 'OLD', 'p3': 'NEITHER'} overall=MIXED
+[cml_compare] floor_ok=True producers={'p1': 'MIXED'} overall=MIXED
+[cml_compare] floor_ok=True producers={'p1': 'CORRECTED'} overall=CORRECTED
+[cml_compare] floor_ok=True producers={'p1': 'MIXED'} overall=MIXED
+## end 2026-10-30T03:39:33Z
+## tests summary 2026-10-30T03:39:41Z login37
+Ran 13 tests in 0.429s
+OK

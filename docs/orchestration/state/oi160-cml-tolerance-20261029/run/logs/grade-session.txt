@@ -1,0 +1,400 @@
+--- session
+2026-10-30T05:01:14Z
+login37
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+readout absent before grading
+--- task logs
+## task0.log
+2026-10-30T03:59:37Z
+nid004124
+job 60530414_0 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+affinity_cpus=36
+control_A1 start 2026-10-30T03:59:39Z
+control_A1 rc=0 end 2026-10-30T04:13:59Z
+control_A2 start 2026-10-30T04:13:59Z
+control_A2 rc=0 end 2026-10-30T04:27:21Z
+done 2026-10-30T04:27:21Z
+## task1.log
+2026-10-30T04:01:37Z
+nid004126
+job 60530414_1 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_split_4.npz: OK
+affinity_cpus=36
+s4_A start 2026-10-30T04:01:38Z
+s4_A rc=0 end 2026-10-30T04:11:44Z
+s4_B start 2026-10-30T04:11:44Z
+s4_B rc=0 end 2026-10-30T04:20:42Z
+done 2026-10-30T04:20:42Z
+## task2.log
+2026-10-30T04:13:54Z
+nid004111
+job 60530414_2 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_split_9.npz: OK
+affinity_cpus=36
+s9_A start 2026-10-30T04:13:55Z
+s9_A rc=0 end 2026-10-30T04:25:25Z
+s9_B start 2026-10-30T04:25:25Z
+s9_B rc=0 end 2026-10-30T04:36:31Z
+done 2026-10-30T04:36:31Z
+## task3.log
+2026-10-30T04:15:49Z
+nid004113
+job 60530414_3 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_split_14.npz: OK
+affinity_cpus=36
+s14_A start 2026-10-30T04:15:50Z
+s14_A rc=0 end 2026-10-30T04:28:09Z
+s14_B start 2026-10-30T04:28:09Z
+s14_B rc=0 end 2026-10-30T04:39:40Z
+done 2026-10-30T04:39:40Z
+## task4.log
+2026-10-30T04:29:02Z
+nid004139
+job 60530414_4 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_split_19.npz: OK
+affinity_cpus=36
+s19_A start 2026-10-30T04:29:03Z
+s19_A rc=0 end 2026-10-30T04:37:34Z
+s19_B start 2026-10-30T04:37:34Z
+s19_B rc=0 end 2026-10-30T04:45:44Z
+done 2026-10-30T04:45:44Z
+## task5.log
+2026-10-30T04:34:05Z
+nid004136
+job 60530414_5 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_split_24.npz: OK
+affinity_cpus=36
+s24_A start 2026-10-30T04:34:06Z
+s24_A rc=0 end 2026-10-30T04:45:52Z
+s24_B start 2026-10-30T04:45:52Z
+s24_B rc=0 end 2026-10-30T04:57:56Z
+done 2026-10-30T04:57:56Z
+--- STOP lines
+none
+--- err files (sizes)
+-rw-rw---- 1 josephrb josephrb 0 Oct 29 20:59 /pscratch/sd/j/josephrb/oi160-cml-20261029/logs/60530414_0.err
+-rw-rw---- 1 josephrb josephrb 0 Oct 29 21:01 /pscratch/sd/j/josephrb/oi160-cml-20261029/logs/60530414_1.err
+-rw-rw---- 1 josephrb josephrb 0 Oct 29 21:13 /pscratch/sd/j/josephrb/oi160-cml-20261029/logs/60530414_2.err
+-rw-rw---- 1 josephrb josephrb 0 Oct 29 21:15 /pscratch/sd/j/josephrb/oi160-cml-20261029/logs/60530414_3.err
+-rw-rw---- 1 josephrb josephrb 0 Oct 29 21:29 /pscratch/sd/j/josephrb/oi160-cml-20261029/logs/60530414_4.err
+-rw-rw---- 1 josephrb josephrb 0 Oct 29 21:34 /pscratch/sd/j/josephrb/oi160-cml-20261029/logs/60530414_5.err
+--- out dir
+total 1200
+-rw-rw---- 1 josephrb josephrb 96263 Oct 29 21:13 control_A1.npz
+-rw-rw---- 1 josephrb josephrb   859 Oct 29 21:13 control_A1.provenance.json
+-rw-rw---- 1 josephrb josephrb 96246 Oct 29 21:27 control_A2.npz
+-rw-rw---- 1 josephrb josephrb   859 Oct 29 21:27 control_A2.provenance.json
+-rw-rw---- 1 josephrb josephrb 96232 Oct 29 21:28 s14_A.npz
+-rw-rw---- 1 josephrb josephrb   855 Oct 29 21:28 s14_A.provenance.json
+-rw-rw---- 1 josephrb josephrb 96261 Oct 29 21:39 s14_B.npz
+-rw-rw---- 1 josephrb josephrb   855 Oct 29 21:39 s14_B.provenance.json
+-rw-rw---- 1 josephrb josephrb 96257 Oct 29 21:37 s19_A.npz
+-rw-rw---- 1 josephrb josephrb   855 Oct 29 21:37 s19_A.provenance.json
+-rw-rw---- 1 josephrb josephrb 96266 Oct 29 21:45 s19_B.npz
+-rw-rw---- 1 josephrb josephrb   855 Oct 29 21:45 s19_B.provenance.json
+-rw-rw---- 1 josephrb josephrb 96241 Oct 29 21:45 s24_A.npz
+-rw-rw---- 1 josephrb josephrb   855 Oct 29 21:45 s24_A.provenance.json
+-rw-rw---- 1 josephrb josephrb 96200 Oct 29 21:57 s24_B.npz
+-rw-rw---- 1 josephrb josephrb   855 Oct 29 21:57 s24_B.provenance.json
+-rw-rw---- 1 josephrb josephrb 96229 Oct 29 21:11 s4_A.npz
+-rw-rw---- 1 josephrb josephrb   853 Oct 29 21:11 s4_A.provenance.json
+-rw-rw---- 1 josephrb josephrb 96242 Oct 29 21:20 s4_B.npz
+-rw-rw---- 1 josephrb josephrb   853 Oct 29 21:20 s4_B.provenance.json
+-rw-rw---- 1 josephrb josephrb 96218 Oct 29 21:25 s9_A.npz
+-rw-rw---- 1 josephrb josephrb   853 Oct 29 21:25 s9_A.provenance.json
+-rw-rw---- 1 josephrb josephrb 96252 Oct 29 21:36 s9_B.npz
+-rw-rw---- 1 josephrb josephrb   853 Oct 29 21:36 s9_B.provenance.json
+--- grading
+## sacct.txt
+60530414_0|COMPLETED|00:27:56|0:0|billing=36,cpu=36,energy=994503,mem=64G,node=1
+60530414_0.batch|COMPLETED|00:27:56|0:0|cpu=36,mem=64G,node=1
+60530414_0.extern|COMPLETED|00:27:56|0:0|billing=36,cpu=36,mem=64G,node=1
+60530414_1|COMPLETED|00:19:12|0:0|billing=36,cpu=36,energy=487430,mem=64G,node=1
+60530414_1.batch|COMPLETED|00:19:12|0:0|cpu=36,mem=64G,node=1
+60530414_1.extern|COMPLETED|00:19:12|0:0|billing=36,cpu=36,mem=64G,node=1
+60530414_2|COMPLETED|00:22:44|0:0|billing=36,cpu=36,energy=764493,mem=64G,node=1
+60530414_2.batch|COMPLETED|00:22:44|0:0|cpu=36,mem=64G,node=1
+60530414_2.extern|COMPLETED|00:22:44|0:0|billing=36,cpu=36,mem=64G,node=1
+60530414_3|COMPLETED|00:23:56|0:0|billing=36,cpu=36,energy=1008386,mem=64G,node=1
+60530414_3.batch|COMPLETED|00:23:56|0:0|cpu=36,mem=64G,node=1
+60530414_3.extern|COMPLETED|00:23:56|0:0|billing=36,cpu=36,mem=64G,node=1
+60530414_4|COMPLETED|00:16:47|0:0|billing=36,cpu=36,energy=613696,mem=64G,node=1
+60530414_4.batch|COMPLETED|00:16:47|0:0|cpu=36,mem=64G,node=1
+60530414_4.extern|COMPLETED|00:16:47|0:0|billing=36,cpu=36,mem=64G,node=1
+60530414_5|COMPLETED|00:23:59|0:0|billing=36,cpu=36,energy=946074,mem=64G,node=1
+60530414_5.batch|COMPLETED|00:23:59|0:0|cpu=36,mem=64G,node=1
+60530414_5.extern|COMPLETED|00:23:59|0:0|billing=36,cpu=36,mem=64G,node=1
+## grade.log
+[cml_compare] floor_ok=True producers={'55849763': 'CORRECTED'} overall=CORRECTED
+grade rc=0
+## readout.json
+{
+  "schema": "oi160-cml-tolerance-readout/1",
+  "criterion": {
+    "tau_max_rel_union_nonzero": 1e-08,
+    "zero_pattern": "must be identical",
+    "floor_limit": 1e-10,
+    "separation_min": 1e-06
+  },
+  "fresh_floor_control_split1_A_twice": {
+    "comparable": true,
+    "ids_equal": true,
+    "zero_pattern_equal": true,
+    "max_rel_union_nonzero": 1.5652084177818603e-12,
+    "median_rel_union_nonzero_descriptive": 8.25965240114208e-14,
+    "agree": true
+  },
+  "fresh_floor_ok": true,
+  "seeds": [
+    {
+      "seed": 4,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 6.460071800879834e-12,
+        "median_rel_union_nonzero_descriptive": 2.904070438476582e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11472204858866061,
+        "median_rel_union_nonzero_descriptive": 0.0046791160765431656,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11472204858670826,
+        "median_rel_union_nonzero_descriptive": 0.0046791160768011935,
+        "agree": false
+      },
+      "files": {
+        "A": "47d85220d5572a2e262ccd3991b3c72fbb39e8dbee69bc6cd5d33fb7d4b21f98",
+        "B": "ee165a2494bf3ef7c495d33a984df884b69e82e02d46b8369cc900a846c7c599",
+        "stored": "77d720496318fefa54a1d6ac0ccf96ef60c043965746d52a48af443f5a78f917"
+      }
+    },
+    {
+      "seed": 9,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 5.792665024318216e-13,
+        "median_rel_union_nonzero_descriptive": 2.7061787401470756e-14,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.07644378314670991,
+        "median_rel_union_nonzero_descriptive": 0.005148886426077493,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.07644378314680014,
+        "median_rel_union_nonzero_descriptive": 0.005148886426086232,
+        "agree": false
+      },
+      "files": {
+        "A": "0a34f669ad8eee8c20973c0e6bb0843b1059c35168578cb772e598da6f260480",
+        "B": "98a81347dc513b6ef9f8953352148abc69646fd442f184ba5656ba916b674173",
+        "stored": "c059a5ac787ad3ba01b66781f3871d28f67d88b57d8c1ec38f7bdcfc1295caab"
+      }
+    },
+    {
+      "seed": 14,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 3.1078172700419937e-12,
+        "median_rel_union_nonzero_descriptive": 2.61715353890211e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.08348372462530264,
+        "median_rel_union_nonzero_descriptive": 0.00534785624264047,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.08348372462568819,
+        "median_rel_union_nonzero_descriptive": 0.005347856242358874,
+        "agree": false
+      },
+      "files": {
+        "A": "f7ac2c31a04c82f5485ed31b0f272b6acf6e24a884ade5e96c6022d882e1c5dc",
+        "B": "fbd6e49e32aaefb6cd55c4f09c99564c793e2de76a1a7030afa5c6492f32bd05",
+        "stored": "1140673c9cf2b61d695a284e4fad2088cfbd75320f9cd6124dfbc687b244aae0"
+      }
+    },
+    {
+      "seed": 19,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 2.7104740842005314e-12,
+        "median_rel_union_nonzero_descriptive": 1.530279951294343e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.1410727876820818,
+        "median_rel_union_nonzero_descriptive": 0.005137459922635773,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.1410727876832568,
+        "median_rel_union_nonzero_descriptive": 0.005137459922486456,
+        "agree": false
+      },
+      "files": {
+        "A": "195b424eb4de7338a86f376bbd9f8f5ac94857961a0865d7a9382e8545e56fea",
+        "B": "eba08a45494b226889e98fe9b2c23bc39b7d6e2afc90579e114b4a01396eebc3",
+        "stored": "e58b6e99b77e4364001256161de303ce4a0c43b5f4c590569ca731720fbfb05c"
+      }
+    },
+    {
+      "seed": 24,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 3.3723439001775162e-12,
+        "median_rel_union_nonzero_descriptive": 1.5544464539898844e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11596651980613536,
+        "median_rel_union_nonzero_descriptive": 0.005471439916538852,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11596651980684283,
+        "median_rel_union_nonzero_descriptive": 0.005471439917007294,
+        "agree": false
+      },
+      "files": {
+        "A": "d917993337481e813205de5a81a4d71d6d6f34599449df17b1f5328c97cf1ca1",
+        "B": "50c405b21f8c106d067c8138c972185270ac0bb6f56eea1bfb77a672befe9390",
+        "stored": "5b8bc56ae35ecb078026f0d23f8dd62324574e832ce49df1bf929e88876ea2fd"
+      }
+    }
+  ],
+  "producers": {
+    "55849763": "CORRECTED"
+  },
+  "overall": "CORRECTED",
+  "not_citable_for": [
+    "seeds not graded here, beyond what their producer's verdict covers",
+    "C_stat",
+    "whether either contract is correct",
+    "any change to C_ML, C_stat or the trunk"
+  ]
+}
+## sha256
+c6e269f1d40220392985d628fcfed29d02cbd4db07aed53a94a634954b8183fe  logs/sacct.txt
+c393bf0ca98281d7ae7e98c5f66ba4d7bed78a028986c39d2f84cd92ee9c4f71  logs/grade.log
+e5073ffac2d927c5b3e186beaea7136a867095cbc282e9d9e84e2abed072fbe2  out/readout.json
+porcelain_ignored_lines_after 0
+ssh rc=0

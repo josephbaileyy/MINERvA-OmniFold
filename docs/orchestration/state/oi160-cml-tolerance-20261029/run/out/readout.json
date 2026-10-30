@@ -1,0 +1,215 @@
+{
+  "schema": "oi160-cml-tolerance-readout/1",
+  "criterion": {
+    "tau_max_rel_union_nonzero": 1e-08,
+    "zero_pattern": "must be identical",
+    "floor_limit": 1e-10,
+    "separation_min": 1e-06
+  },
+  "fresh_floor_control_split1_A_twice": {
+    "comparable": true,
+    "ids_equal": true,
+    "zero_pattern_equal": true,
+    "max_rel_union_nonzero": 1.5652084177818603e-12,
+    "median_rel_union_nonzero_descriptive": 8.25965240114208e-14,
+    "agree": true
+  },
+  "fresh_floor_ok": true,
+  "seeds": [
+    {
+      "seed": 4,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 6.460071800879834e-12,
+        "median_rel_union_nonzero_descriptive": 2.904070438476582e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11472204858866061,
+        "median_rel_union_nonzero_descriptive": 0.0046791160765431656,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11472204858670826,
+        "median_rel_union_nonzero_descriptive": 0.0046791160768011935,
+        "agree": false
+      },
+      "files": {
+        "A": "47d85220d5572a2e262ccd3991b3c72fbb39e8dbee69bc6cd5d33fb7d4b21f98",
+        "B": "ee165a2494bf3ef7c495d33a984df884b69e82e02d46b8369cc900a846c7c599",
+        "stored": "77d720496318fefa54a1d6ac0ccf96ef60c043965746d52a48af443f5a78f917"
+      }
+    },
+    {
+      "seed": 9,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 5.792665024318216e-13,
+        "median_rel_union_nonzero_descriptive": 2.7061787401470756e-14,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.07644378314670991,
+        "median_rel_union_nonzero_descriptive": 0.005148886426077493,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.07644378314680014,
+        "median_rel_union_nonzero_descriptive": 0.005148886426086232,
+        "agree": false
+      },
+      "files": {
+        "A": "0a34f669ad8eee8c20973c0e6bb0843b1059c35168578cb772e598da6f260480",
+        "B": "98a81347dc513b6ef9f8953352148abc69646fd442f184ba5656ba916b674173",
+        "stored": "c059a5ac787ad3ba01b66781f3871d28f67d88b57d8c1ec38f7bdcfc1295caab"
+      }
+    },
+    {
+      "seed": 14,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 3.1078172700419937e-12,
+        "median_rel_union_nonzero_descriptive": 2.61715353890211e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.08348372462530264,
+        "median_rel_union_nonzero_descriptive": 0.00534785624264047,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.08348372462568819,
+        "median_rel_union_nonzero_descriptive": 0.005347856242358874,
+        "agree": false
+      },
+      "files": {
+        "A": "f7ac2c31a04c82f5485ed31b0f272b6acf6e24a884ade5e96c6022d882e1c5dc",
+        "B": "fbd6e49e32aaefb6cd55c4f09c99564c793e2de76a1a7030afa5c6492f32bd05",
+        "stored": "1140673c9cf2b61d695a284e4fad2088cfbd75320f9cd6124dfbc687b244aae0"
+      }
+    },
+    {
+      "seed": 19,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 2.7104740842005314e-12,
+        "median_rel_union_nonzero_descriptive": 1.530279951294343e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.1410727876820818,
+        "median_rel_union_nonzero_descriptive": 0.005137459922635773,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.1410727876832568,
+        "median_rel_union_nonzero_descriptive": 0.005137459922486456,
+        "agree": false
+      },
+      "files": {
+        "A": "195b424eb4de7338a86f376bbd9f8f5ac94857961a0865d7a9382e8545e56fea",
+        "B": "eba08a45494b226889e98fe9b2c23bc39b7d6e2afc90579e114b4a01396eebc3",
+        "stored": "e58b6e99b77e4364001256161de303ce4a0c43b5f4c590569ca731720fbfb05c"
+      }
+    },
+    {
+      "seed": 24,
+      "producer": "55849763",
+      "verdict": "CORRECTED",
+      "why": "the corrected code (07c18aee) reproduces it within tolerance; the old code does not",
+      "separation": "SEPARATED",
+      "stored_train_frac_is_declared": true,
+      "A_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 3.3723439001775162e-12,
+        "median_rel_union_nonzero_descriptive": 1.5544464539898844e-13,
+        "agree": true
+      },
+      "B_vs_stored": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11596651980613536,
+        "median_rel_union_nonzero_descriptive": 0.005471439916538852,
+        "agree": false
+      },
+      "A_vs_B": {
+        "comparable": true,
+        "ids_equal": true,
+        "zero_pattern_equal": true,
+        "max_rel_union_nonzero": 0.11596651980684283,
+        "median_rel_union_nonzero_descriptive": 0.005471439917007294,
+        "agree": false
+      },
+      "files": {
+        "A": "d917993337481e813205de5a81a4d71d6d6f34599449df17b1f5328c97cf1ca1",
+        "B": "50c405b21f8c106d067c8138c972185270ac0bb6f56eea1bfb77a672befe9390",
+        "stored": "5b8bc56ae35ecb078026f0d23f8dd62324574e832ce49df1bf929e88876ea2fd"
+      }
+    }
+  ],
+  "producers": {
+    "55849763": "CORRECTED"
+  },
+  "overall": "CORRECTED",
+  "not_citable_for": [
+    "seeds not graded here, beyond what their producer's verdict covers",
+    "C_stat",
+    "whether either contract is correct",
+    "any change to C_ML, C_stat or the trunk"
+  ]
+}
