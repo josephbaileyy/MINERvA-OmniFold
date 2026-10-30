@@ -128,6 +128,15 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 docs/orchestration/whose_row.py --check-oi-ids
 
+      # OI-148 (DECISION-20261030-joseph-canonical-checkout-and-table-check.md item 2). In CI the index equals HEAD.
+      - name: "pre-commit: OPEN_ITEMS seven columns"
+        if: ${{ !cancelled() }}
+        run: python3 docs/open-items/check_open_items_columns.py --check
+
+      - name: "OI-148: the column check is wired, and the long-line pin can only fall (test_open_items_wiring.py)"
+        if: ${{ !cancelled() }}
+        run: python3 docs/open-items/test_open_items_wiring.py
+
       - name: "pre-commit: receipt artifact tracking"
         if: ${{ !cancelled() }}
         run: python3 docs/orchestration/verify_receipt_artifacts.py
