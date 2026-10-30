@@ -1,6 +1,6 @@
 """Check that every held paper sentence still prints in NEW's paper (STEP2-PAPER.md section 1; STEP2-PLAN.md section 3).
 
-usage: python3 -I check_held.py R22_DIR ANALYZE_PY NEW_MANUSCRIPT [--pair-applied ID ...] [--fact-held]
+usage: python3 -I check_held.py R22_DIR ANALYZE_PY NEW_MANUSCRIPT [--pair-applied ID ...] [--fact-held [--a7-released]]
                                  [--self-test BASE_MANUSCRIPT]
 The held quotes are step2p/held.tsv (written by tools/step2p_gaps.py): every out-of-scope paper gap of G1 and G1b
 with a located quote. Each must still locate in NEW_MANUSCRIPT (the blinded rater copy, make_rater_copy.sh's
@@ -21,9 +21,11 @@ R, AN, NEW = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
 args = sys.argv[4:]
 EXEMPT_BY_PAIR = {"G1:paper-s-09": {"G1b:paper-s-05"}}
 # STEP2-PAPER.md section 5's table: held ids whose sentence an in-scope gap acts on (gaps.tsv held_overlap), plus the
-# limitations pointer (R-1's two gaps).
+# limitations pointer (R-1's two gaps). A7_PENDING: the three whose out-of-scope gap a classifier tags A7 (claims) stay
+# exact until the director rules whether their wording is Joseph's (section 5); --a7-released adds them.
 FACT_HELD = {"G1b:paper-g-01", "G1b:paper-g-06", "G1b:paper-g-03", "G1:paper-g-02", "G1b:paper-g-08", "G1:paper-g-06",
-             "G1:paper-g-10", "G1b:paper-g-13", "G1b:paper-g-18", "G1b:paper-g-20", "G1b:paper-s-20"}
+             "G1b:paper-g-18", "G1b:paper-s-20"}
+A7_PENDING = {"G1:paper-g-10", "G1b:paper-g-13", "G1b:paper-g-20"}
 applied = set()
 if "--pair-applied" in args:
     i = args.index("--pair-applied") + 1
@@ -31,7 +33,7 @@ if "--pair-applied" in args:
         applied.add(args[i])
         i += 1
 exempt = set().union(*(EXEMPT_BY_PAIR.get(p, set()) for p in applied)) if applied else set()
-fact_held = FACT_HELD if "--fact-held" in args else set()
+fact_held = (FACT_HELD | (A7_PENDING if "--a7-released" in args else set())) if "--fact-held" in args else set()
 exempt |= fact_held
 ns = {}
 for node in ast.parse(AN.read_text()).body:
@@ -39,7 +41,7 @@ for node in ast.parse(AN.read_text()).body:
         exec(compile(ast.Module([node], []), str(AN), "exec"), ns)
 exec("import unicodedata, re", ns)
 held = list(csv.DictReader(open(R / "step2p" / "held.tsv"), delimiter="\t"))
-assert FACT_HELD <= {g["id"] for g in held}, sorted(FACT_HELD - {g["id"] for g in held})
+assert FACT_HELD | A7_PENDING <= {g["id"] for g in held}, sorted((FACT_HELD | A7_PENDING) - {g["id"] for g in held})
 
 
 def run(text):

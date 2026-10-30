@@ -134,7 +134,7 @@ SAME read.
   print in substance if its sentence is reworded.
 
 **Which sentences this pass may reword.** These are the held sentences that an in-scope gap acts on (`held_overlap`
-in `gaps.tsv`). `tools/check_held.py --fact-held` exempts exactly these from the exact check, and the ledger and agy
+in `gaps.tsv`). `tools/check_held.py --fact-held` exempts these from the exact check (the A7 three only with `--a7-released`), and the ledger and agy
 checks above take its place:
 
 | held id | sentence | in-scope gaps that act on it |
@@ -151,6 +151,14 @@ checks above take its place:
 | G1b:paper-s-20 | the limitations pointer | G1:paper-s-10, G1b:paper-s-15 (R-1's two gaps) |
 <!-- absence-ok: the table quotes printed paper sentences by name; not a claim that something has not been run -->
 
+- **A7: three stay exact (the director, 2026-10-30).** The out-of-scope gaps on three of these sentences are tagged A7
+  (claims) by a classifier: G1:paper-g-10 (the flux reason), G1b:paper-g-13 (the Fig. 3 covariance) and G1b:paper-g-20
+  (the coverage claim). The director ruled that they scope the result's claims, so rewording them is claim-wording
+  work, which is Joseph's under A7. None is what P1 quotes.
+  - They stay byte-exact (`check_held.py` A7_PENDING, never passed `--a7-released` in this pass).
+  - Their gaps G1b:paper-g-12, G1b:paper-s-04 and G1b:paper-s-19 are skipped under A7.
+  - If a later P1 quotes one of them, it goes to the director as a pinned pair for Joseph.
+  - Eight held ids remain held for facts.
 - **The limitations pointer.** The metatext "The low stability of four of the sixteen cells is stated only here." is
   dropped. The low-stability fact (C18) stays in the paper's Limitations, with its `P::` probe. The pointer to the
   note's limitations stays (Joseph, #522 item 2).
@@ -174,3 +182,34 @@ are applied through `PAIRS` / `PAIR_PINS`.
   - NEW's sol2 P1 ×3 mean is at least 3.0, and its lowest run at least 3.
 - **If the rule fails,** neither the pairs nor the rewrites are adopted, and the paper stays as merged.
 - **Outputs** go to `step2p/pass2/`.
+
+### The text judged (fixed 2026-10-30, before the runs)
+
+The writer's pass ([step2p/pass2/WRITER-BRIEF.md](step2p/pass2/WRITER-BRIEF.md)) went through the two-direction review
+and agy ([step2p/pass2/agy1/](step2p/pass2/agy1/)). Under rule (c), only the changes that agy and the review read as
+SAME were kept.
+
+**Kept:**
+- **The note pointer.** It is reordered: "…note [14], cited below by section, gives …". agy read it SAME twice.
+- **The seed-42 sentence.** It now reads "uses LightGBM [23] at seed 42, with …", so the seed stays attached to
+  LightGBM (review R2-4). agy read it SAME twice. Line 50 is re-pinned: ALIASES 38 and ATTRIBUTION 17 move from
+  `52bd6f35a5367d1e` to `07a348c82f88db98`.
+- **The limitations opener.** It now reads "Apart from the low stability of four of the sixteen cells (below), the
+  limitations of these results are stated with the results they qualify, …". The exception stays because dropping
+  "is stated only here" alone made the opener false (review R2-1).
+  - agy ([step2p/pass2/agy2/](step2p/pass2/agy2/)) gave this pair two verdicts. On the real file: "DIFFERS: AFTER drops
+    the explicit exclusivity statement 'is stated only here' … replacing it with the locational pointer '(below)'". In
+    the control run, on the same text: "SAME".
+  - **The director's ruling (2026-10-30): accepted as written.** The clause keeps the exception true, and "(below)"
+    carries the location. agy's DIFFERS concerns the metatext that the director ordered dropped.
+
+**Reverted to the merged text** (their gaps skipped):
+- **The Scope sentence.** agy read it DIFFERS: "apply to" is stronger, and "one … one" is lost (review R2-5).
+- **The five-iterations sentence.** Defining the residual proxy adds a fact and a new quantity, the 1 % threshold.
+  The no-new-fact rule holds (the director).
+- **The envelope target.** agy read both wordings DIFFERS.
+- **The run-period block.** "A consistency check that reuses those differences" broadens "its own" (review R2-2,
+  agy).
+
+**agy2's control** caught 3 of 3. A chunk with fewer than three negations is now topped up with identity fillers
+(`make_agy_pairs.py`), and all 3 fillers read SAME in the real file.

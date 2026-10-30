@@ -1,0 +1,25 @@
+(Each pair is one passage of a physics paper, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [paper_body.tex PB21]
+BEFORE: The companion analysis note~\cite{AnalysisNote2026} gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section.
+AFTER: The companion analysis note~\cite{AnalysisNote2026}, cited below by section, gives the full validation record, the construction of the uncertainties, and the tests with their assumptions.
+
+Q2. [paper_body.tex PB79]
+BEFORE: The two-observable central value uses LightGBM at seed~42~\cite{Ke:2017lightgbm} with negative-weight background subtraction and a refinement of 400 trees and 31 leaves.
+AFTER: The two-observable central value uses LightGBM~\cite{Ke:2017lightgbm} at seed~42, with negative-weight background subtraction and a refinement of 400 trees and 31 leaves.
+
+Q3. [paper_body.tex PB264]
+BEFORE: \subsection{Limitations} \label{sec:limitations} The limitations of these results are stated with the results they qualify, in Secs.~\ref{sec:method}--\ref{sec:result16}, and those of the calibrated tests in the companion note. The low stability of four of the sixteen cells is stated only here.
+AFTER: \subsection{Limitations} \label{sec:limitations} Apart from the low stability of four of the sixteen cells (below), the limitations of these results are stated with the results they qualify, in Secs.~\ref{sec:method}--\ref{sec:result16}, and those of the calibrated tests in the companion note.
+
+Q4. [paper_body.tex filler]
+BEFORE: Each classifier is trained on the full sample whose weights it then sets, so no held-out or cross-fitted split is used; it is trained without early stopping, and the two classes keep their physical weights (\nsec{sec:method-algo}).
+AFTER: Each classifier is trained on the full sample whose weights it then sets, so held-out or cross-fitted split is used; it is trained without early stopping, and the two classes keep their physical weights (\nsec{sec:method-algo}).
+
+Q5. [paper_body.tex filler]
+BEFORE: $C_{\mathrm{resp}}$ does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale.
+AFTER: $C_{\mathrm{resp}}$ does cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale.
+
+Q6. [paper_body.tex filler]
+BEFORE: Interval coverage has not been validated.
+AFTER: Interval coverage has been validated.
