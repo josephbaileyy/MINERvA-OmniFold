@@ -84,7 +84,7 @@ docs/orchestration/CLAIM-CLM-009.md	ARCHIVAL	terminal
 docs/orchestration/CLAIM-CLM-010.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-011.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-012.md	ARCHIVAL	terminal	
-docs/orchestration/CLAIMS.md	LIVE	open	
+docs/orchestration/CLAIMS.md	ARCHIVAL	terminal	
 docs/orchestration/CLARIFICATION-20260928-s5p-recompute-A6-A8.md	LIVE	open	
 docs/orchestration/CLARIFICATION-20261004-s5p-10pct-pool-limit.md	LIVE	open	
 docs/orchestration/CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md	LIVE	open	
@@ -459,6 +459,7 @@ docs/orchestration/RECORD-20261029-close-items-defer-gate-rows.md	ARCHIVAL	termi
 docs/orchestration/RECORD-20261029-close-items-defer-pet-rows.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-close-items-oi12-relative-diagonal.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-close-items-oi45-oi151.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261029-close-items-oi53-claims-freeze.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	LIVE	open	""
 docs/orchestration/RECORDS-RULES.md	LIVE	open	""
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	LIVE	open	

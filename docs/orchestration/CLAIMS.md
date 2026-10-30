@@ -1,5 +1,10 @@
 # OmniFold claims ledger (fe-fps-campaign)
 
+> **ARCHIVAL (2026-10-29).** Frozen by Joseph's decision
+> [`DECISION-20261029-joseph-freeze-claims-md.md`](DECISION-20261029-joseph-freeze-claims-md.md) (#516). The twelve
+> rows are recorded as they stood at `b8a0e117e` (2026-08-18), and none is edited. Their owners stay `UNASSIGNED` in
+> [`ROW-OWNERS.tsv`](ROW-OWNERS.tsv) because no row is edited. A new claim needs its own record.
+
 Allowed status values: `PROVED`, `VERIFIED-NUMERIC`, `VERIFIED-CODE`, `CITED`, `ASSUMED`, `OPEN`, `REFUTED`.
 Worker agreement is not verification; promotion needs a recoverable artifact + an independent check.
 Verifiers this campaign: codex-personal gpt-5.6-sol xhigh (V1 code audit), claude-school opus (V2
