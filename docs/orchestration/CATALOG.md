@@ -1475,6 +1475,7 @@ valid and does not carry forward** — round 11 below says so in its own first b
 
 - Verified numbers: [`../../VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md).
 - Physics claims: [`CLAIMS.md`](CLAIMS.md).
+- **Who owns `CLAIMS.md` rows CLM-001..012** (2026-10-29, `OI-53`): the open decision packet, with three options for Joseph, [`DECISION-PACKET-20261029-oi53-clm-row-ownership.md`](DECISION-PACKET-20261029-oi53-clm-row-ownership.md).
 - Active BEN identifiers: [`FINDINGS.md`](FINDINGS.md); full evidence is at the frozen tag.
 - Bugs and traps: [`../../KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md).
 - **Reading a state/ receipt's name** (2026-10-28, `OI-139`): a word such as `active`, `live` or `armed` in a `docs/orchestration/state/` filename was true when the file was written, never "now". All 14 `*-active-*.json` receipts describe finished jobs, as measured in [`RECORD-20261028-close-items-oi139-state-names.md`](RECORD-20261028-close-items-oi139-state-names.md). New ones must carry `recorded_at_utc` (`state_receipt_names.py`).
