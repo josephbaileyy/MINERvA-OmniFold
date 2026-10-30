@@ -1,0 +1,460 @@
+Validation of the two-dimensional measurement
+
+In a simulated experiment, truth is the known target distribution, the prior is the starting simulated
+truth distribution, and the response describes reconstruction and selection conditional on truth. A
+closure test compares the unfolded estimate with its known target under a specified deformation.
+Bias is the mean estimate minus that target over repeated experiments; a single closure residual also
+contains sampling fluctuations. Coverage is the fraction of repeated intervals containing the specified
+truth, and tests the estimator and interval procedure together. Table 3 separates these questions
+before the results. Repeating a numerical calculation checks neither the coverage and width of the
+intervals nor the adequacy of the physical model.
+Check
+
+Target and estimator
+
+Sample relation / measured
+quantity
+
+Rule and conclusion
+
+Injected closure
+
+Reweighted simulated truth; 1A
+LightGBM, five iterations
+
+Same simulated response;
+residual under named truth or
+hidden-variable deformation
+
+Thresholds below; passes
+depend on deformation and
+amplitude
+
+Miss completeness
+
+Full truth inventory; production
+event mapping
+
+Same event keys; truth-only
+entries retained
+
+Membership and completeness conditions; no recovery
+or coverage claim
+
+Iteration stability
+
+Same data, exact-split crosscheck; five versus ten iterations
+
+Shared sample; movement of
+total and shape
+
+Small observed movement;
+not a known-truth accuracy
+test
+
+Fixed-truth coverage
+
+Fixed unfluctuated MC truth;
+LightGBM statistical estimator
+
+Poisson pseudo-data; MC resampling shares the band’s
+mechanism; pooled toy–bin
+containment
+
+Predeclared coverage windows; earlier band fails
+(§5.2)
+
+Table 3: Validation questions, targets and limits. Shared simulation is not an independent detectorresponse test. Coverage pooled over bins is not a simultaneous probability that every bin is covered.
+Closure. Three closure families were run on playlist 1A with LightGBM and five iterations
+(thresholds in parentheses).
+• Truth reweighting (the same factor on truth and reco weights): residuals 0.046 % for a
+Gaussian in pT and 0.013 % for a tilt in p∥ (threshold 1.5 %). The injected truth is recovered.
+• Hidden variable (a bias in ∆pT = preco
+− ptruth
+, a resolution variable outside the feature set):
+T
+T
+the leakage is linear in amplitude, A = 0.05/0.10/0.30 → 0.57/1.14/3.43 % (threshold 3.0 %);
+the first two amplitudes pass, and the deliberately large A = 0.30 arm exceeds the threshold.
+
+• Alternative model (training on the CV, pseudo-data from an alternative universe): MaCCQE
+0.068 %, Flux 0.376 % (threshold 2.0 %).
+Injected-feature recovery. The 2D truth-reweighting closure with a Gaussian bump passes the
+recovery test of the unbinned-unfolding guide [18]. In the feature bins the residual from the injected
+truth is 1.69 % for an injected 17.2 % feature (ratio 0.098), about ten times smaller. The test requires
+the residual left after recovering a deviation from the prior to be far smaller than the deviation itself;
+unfolding cannot create discriminating power (3D: §7.4).
+A naive data-versus-prior χ2 with a statistical-only diagonal is larger at truth level than at reco
+level. This is expected at high resolution: detector smearing lowers the reco-level value, and the
+diagonal omits the unfolding covariance. The full-covariance comparisons are the χ2 against the
+published result (§6.4) and the generator comparisons.
+These closure tests validate the estimator; no non-closure uncertainty is assigned from them.
+Assigning one would require a predeclared suite of injection shapes and amplitudes, not calibration
+to a single Gaussian bump.
+None of these tests uses pseudo-data whose detector response differs from the unfolding response.
+Appendix D defines such a test, a closure that rescales only the reconstructed Eavail of the pseudodata, together with a more complete leading-nucleon follow-up. No result from it is reported here.
+The five-dimensional estimator, including its background subtraction, is validated in §9.1.
+What the remaining validation needs. The follow-up assessment [42] distinguishes a proposed
+split-sample width check from repeated-sampling coverage. With the MC sample, binning maps and
+background subtraction held fixed, such a check could establish only the precision conditional on
+them, at its tested exposure. Nonlinear unfolding does not guarantee a simple scaling from half to
+full exposure. It cannot supply the variation across independent MC populations. Validated total
+uncertainties for all 205 bins, the integral and the projections therefore cannot be obtained from
+the current inputs. They would require independent populations or a validated generative law, a
+continuous nuisance generator for tests of total intervals, and an untouched generator-truth domain
+for bias checks (§4.6). This is a limit of the available inputs, not a general impossibility result for 2D
+unfolding.
+
+5.1
+
+Closure tests across dimensions: what each test changes
+
+Only the MINERvA simulation supplies a detector response, the conditional distribution of reconstructed events given truth. Other generators (GiBUU, NuWro, GENIE variants) supply truth
+only. Every closure test here therefore keeps the simulated MINERvA response and changes the
+truth distribution, by reweighting the simulated events, or changes the analysis chain around it.
+Reweighting to another generator’s shape is a valid known-truth test of the unfolding; it is not a
+test of the detector model. A closure test is only as informative as what it changes: an ordinary
+closure, whose pseudo-data are the simulation itself, is an identity check that a constant estimator
+would pass. Table 4 collects the tests by what they change.
+
+
+Table 4: Closure tests by what they change relative to the
+unfolding’s own simulation. “Marginal” means the metric is a
+one-dimensional projection; “joint” means multidimensional
+cells.
+Test
+
+What changes
+
+Dim.
+
+Result and what it can detect
+
+Ordinary closure
+
+Nothing: pseudo-data are
+the simulated reco
+
+any
+
+Bookkeeping only; cannot detect estimator bias
+
+Truth reweight
+
+Gaussian in pT , tilt in p∥ , 2D
+applied to truth and reco
+weights
+
+Residuals 0.046 % and 0.013 % (thr.
+1.5 %); pass
+
+Injected feature
+
+Gaussian truth feature of
+17.2 %
+
+Residual 1.69 % (ratio 0.098); passes
+the recovery test
+
+2D
+
+Alternative uni- Pseudo-data from MaC- 2D
+verse
+CQE or flux universe
+
+0.068 %, 0.376 % (thr. 2.0 %); pass
+
+Hidden variable
+
+Bias in ∆pT , a resolution 2D
+variable outside the features
+
+Leakage linear in amplitude; A = 0.30
+exceeds its 3 % threshold
+
+Injected
+bump
+
+Eavail
+
++30 % Gaussian in truth
+Eavail at 0.3 GeV, width
+0.15 GeV; configuration (a)
+
+3D
+
+Marginal residual 1.84 % of 18.1 % injected (ratio 0.102); no predeclared
+threshold. Per-3D-bin spread 3.2 %
+(§7.4)
+
+Injected q3 bump
+
+Same Gaussian form in
+truth q3 (mean weight
+1.014); configuration (a)
+
+4D
+
+Marginal q3 ratios within 1.1 %; no
+predeclared threshold
+
+Injected
+bump
+
++30 % Gaussian in truth 5D
+W at 1.23 GeV (the ∆
+peak), width 0.15 GeV;
+mean weight 1.053
+
+Marginal residual 4.2 % of 23.1 % injected in the 1.1 GeV to 1.4 GeV bin
+(ratio 0.180; threshold 0.20, set in
+advance); pass, by a narrow margin.
+Neighbouring W bins come out 3.1 %
+and 2.7 % high, and joint (Eavail , W )
+cells in the peak column 2.2 % to 9.4 %
+low. Per-5D-bin spread 3.7 %. Signal
+only
+
+Backgroundinclusive
+
+Adds background simula- 5D
+tion and rebuilds purity
+weights; nominal truth
+
+Highest-W column 3.5 % to 4.1 % low;
+negative-weight treatment 0.11 % to
+0.24 %, with joint cells 0.7 % to 1.1 %
+high (§9.2)
+
+Generatorshaped
+
+Truth
+reweighted
+by
+GiBUU/GENIE ratio in
+Eavail (0.70–1.33 per bin)
+
+Joint (Eavail , W ) residuals median
+9.7 %, up to 74 % at highest W ; regularization bias outside every uncertainty quoted for the configuration(a) central value (sixteen-cell result:
+§§10.2, 10.3)
+
+W
+
+5D
+
+
+Test
+
+What changes
+
+Dim.
+
+Result and what it can detect
+
+Withheld genera- NuWro/GENIE and GE- 5D
+tor shapes
+NIE MEC/CV ratios
+
+Median 2 % to 6 %, at most 16 %
+to 31 % per joint cell; within the
+configuration-(a) total uncertainty in
+20 of 42 (Eavail , W ) cells (§9.3)
+
+Hidden q3
+
+(Eavail , W ) cells shift by up to 37 %
+
+Response
+match
+
+q3 at fixed (Eavail , W ) 5D
+truth, amplitude 0.3
+mis- Reconstructed Eavail
+pseudo-data scaled
+
+of
+
+5D
+
+Protocol
+(App. D)
+
+implemented,
+
+not
+
+run
+
+Why injected bumps close while generator-shaped tests do not. The closing tests and the
+failing tests measure different things, so they do not contradict each other.
+• Deformation. The closing injections are single smooth bumps in one variable the classifiers
+see directly. A generator ratio changes correlated structure across Eavail , W and q3 , including directions the reconstructed observables constrain weakly (§9.5, response-information
+diagnostic).
+• Metric. The 3D, 4D and 5D closures are judged on one-dimensional marginals, where per-cell
+errors average out; the 3D test’s per-bin spread is already 3.2 %, and the 5D test’s is 3.7 %.
+The generator-shaped failures are measured in joint (Eavail , W ) cells.
+• Iterations. At five iterations the estimator retains part of the prior wherever the data pull
+weakly. Thirty iterations reduce the Eavail residual by 26 % while the q3 residual grows (§9.3).
+• The five-dimensional W test passes only in the marginal, and narrowly. A W bump at the
+∆ peak is recovered to a ratio of 0.180 against a threshold of 0.20. The same unfold leaves
+joint (Eavail , W ) cells in the peak column up to 9.4 % low and moves part of the bump into the
+neighbouring W bins. A single smooth bump in a marginal is therefore weaker evidence than
+the generator-shaped tests, which remain the main five-dimensional recovery evidence of §9.
+
+5.2
+
+Fixed-truth coverage of the 2D statistical band
+
+This test asks whether the 2D statistical band quoted when it ran covers a fixed truth at its nominal
+rate. That band is an earlier one, not the quoted statistical block. The design, criteria and positive
+control of the test were specified before any toy was generated (Ref. [37], R1.1).
+Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
+reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap and
+unfolds with the statistical band’s estimator (LightGBM, five iterations, fixed training seed): the
+learner of the quoted central value, at a different seed (§3.2). The reference T is the unfluctuated
+simulated truth, identical in every toy. The no-fluctuation configuration reproduces both the
+production closure output and T exactly.
+In reported bin b of toy t, ztb = (Utb − Tb )/(rb Tb ), where rb is the production band’s relative
+spread. Coverage Ck is the fraction of all (toy, bin) pairs with |z| ≤ k, with intervals from resampling
+whole toys. The band counts as nominal if its ratio to the true scatter lies in [0.9, 1.1], which gives
+the windows C1 ∈ [0.632, 0.729] and C2 ∈ [0.928, 0.972]. A failure at the interim analysis of 100 toys,
+with 99.5% intervals, stops the study.
+The band fails: it undercovers in its tails. At the interim analysis (Ntoy = 100, 205 bins):
+
+• C1 = 0.679 [0.669, 0.690] is nominal (Gaussian 0.683).
+• C2 = 0.912 [0.907, 0.918] lies entirely below its window (Gaussian 0.954).
+• The pull RMS is 1.60, and the mean pull is consistent with zero.
+By the criteria above this is a failure by undercoverage, and the study stopped at the interim analysis.
+An independent recomputation with its own code reproduces the pooled coverages, their intervals,
+the controls and the secondary analysis below.
+The positive control rescales the band on the same toys. At ×0.7 and ×1.3, C2 moves to 0.809
+and 0.955, and the test flags both directions.
+The failure is one of width, not bias. The per-bin pattern below is descriptive and post hoc.
+• Uneven in both directions. The band is too wide in 82 bins (pull RMS below 0.9) and
+too narrow in 71 (above 1.1). The pooled C1 is nominal partly through this cancellation; the
+median bin’s pull RMS is 0.97.
+• Where it is too narrow. 35 bins have a per-bin C2 below 0.85. Of these, 21 form a block
+at p∥ ≥ 15 GeV/c and pT < 0.55 GeV/c. Six more lie in the highest-pT row (2.5 GeV/c to
+4.5 GeV/c) at p∥ 6 GeV/c to 20 GeV/c. The 14 bins with pull RMS above 2 carry 72 % of the
+C2 deficit.
+The band’s replicas divide by a bootstrapped completeness, whereas the central value’s completeness is exactly 1. A secondary analysis, added by amendment after the pilot, applies the same
+division to the toys. Scored against the same band, it overcovers: C1 = 0.833, with its interval above
+the window. The attribution rule was fixed before the full run, but its clause for the undercoverage
+outcome was written after the pilot pulls had been seen. Under it, the primary undercoverage is
+attributed to this term of the band. The attribution is partial: in the replica form, the p∥ 40 GeV/c
+to 60 GeV/c column still undercovers.
+The band was then rebuilt without this term. The quoted statistical block is a third, different
+ensemble, 300 replicas at the central value’s training seed (§4.2). The rebuilt band was only rescored
+post hoc (below), and the quoted block has not been tested.
+Post hoc rescoring against the rebuilt (since superseded) band. Scoring the same
+100 toys against the rebuilt band removes the tail undercoverage: C2 = 0.977 [0.974, 0.980] and
+C1 = 0.781 [0.771, 0.790], both above their nominal windows, so the rebuilt band is wider than the
+toy scatter (pull RMS 0.84, mean pull consistent with zero). The rescoring is post hoc and partly
+circular, because the band’s MC part reuses the toys’ resampling mechanism.
+The excess width lies in the data-statistics component. The per-bin pull RMS falls as that
+component’s share of the band’s variance rises, which corresponds to a data-statistics part about
+1.6× wider in σ than the toys produce. Background purity does not explain it, and its cause is
+not established. A post hoc diagnostic that bootstraps a single toy, under a decision rule recorded
+before it ran, is consistent with the closure toys scattering too little, because their pseudo-data are
+built on the training MC events, rather than with the data bootstrap scattering too much. It is
+neither an independent-population coverage test nor a calibration on real data. A re-test on held-out
+simulation would separate the two explanations; it has not been run.
+Scope. The result concerns the statistical band only.
+• It changes no central value or quoted uncertainty.
+• It tests the LightGBM statistical estimator at the band’s training seed (seed 1), not at the
+quoted central value’s seed 42.
+• It says nothing about systematic, total or five-dimensional coverage.
+• Its simulation-side scatter reuses the resampling that built the band, so only the data-side
+fluctuation is tested by an independent mechanism.
+• Because T equals the prior, it cannot detect regularization bias toward the prior.
+
+
+5.3
+
+Other validation diagnostics
+
+Unbinned diagnostic (C2ST). In the classifier two-sample test (C2ST), a classifier is trained
+to separate the data from the (reweighted) simulation in the full unbinned feature space, and its
+held-out AUC or accuracy is compared with the chance value 0.5. The AUC drops from ≈ 0.535
+before unfolding to ≈ 0.501 after, indicating removal of the reconstructed data ↔ MC mismatch.
+This binning-free check is descriptive, and no calibrated p-value is quoted. As run, the C2ST trains
+and evaluates on the same sample without cross-fitting; a valid null would require re-running the full
+cross-fitted OmniFold pipeline per pseudoexperiment. Calibrated unbinned goodness-of-fit remains
+open [18].
+Same-ensemble pull diagnostic (not a coverage test). An earlier ensemble of Ntoy = 200 2D
+closure unfolds (Ref. [37], R1.2) uses weighted MC reco pseudo-data and stores the truth marginals
+in truth histograms. Each toy has its own bootstrap seed k and per-event Poisson(1) draws, as in
+production, with seeds chosen not to collide with the production replicas. Toy seeds are independent;
+bins within a toy are correlated. The MC bootstrap multiplies the truth weight, so it fluctuates
+both the unfolded result and the stored truth. The stored truth varies in all 205 reported bins, and
+its all-toy mean X̄ truth is therefore not an independent fixed truth for a split-sample coverage claim;
+it only centers a same-ensemble diagnostic.
+In reported bin i with X̄itruth > 0, define the across-toy standard deviation σi (ddof = 1) and
+(t)
+(t)
+(t)
+standardized residual ri = (Ui − X̄itruth )/σ
+√ i . Compare the per-bin fraction ci of toys with |rip| ≤ 1
+to the unit-normal Φ(1) − Φ(−1) = erf(1/ 2) ≈ 0.6827 and the mean absolute pull ⟨|r|⟩ to 2/π.
+The fraction with |r| ≤
+p1 is 68.71 % (Gaussian reference 68.27%; ∆ = +0.44%; median 68.50%), and
+⟨|r|⟩ = 0.794 against 2/π = 0.798 (within 0.5%). The signed residual mean is +0.006 ± 0.082 σ
+(no bias). The within-bin fraction is above 65 % in 97.6 % of bins (only 5 of 205 fall below). These
+show that the standardized toy residuals are approximately normal.
+Because σi is estimated from the same toys that are scored, these figures are standardized-pull
+and Gaussianity diagnostics only: they do not certify the bootstrap band, and no coverage number
+is quoted from this ensemble. The 2D coverage statement is the fixed-truth test of §5.2.
+Stability and efficiency. With five and with ten iterations the total cross section agrees to within
+0.026 %; the per-bin shape differs by 1.54 % RMS. The histogram-based and exact-split backends
+agree on the total cross section to 0.04 %. Both comparisons were measured for the exact-split
+cross-check. The selection efficiency (Fig. 6) reproduces Fig. 5 of the published measurement.
+
+
+4.5
+
+1.0
+
+4.0
+0.8
+
+3.5
+
+0.6
+
+2.5
+
+Efficiency
+
+pT (GeV/c)
+
+3.0
+
+2.0
+
+0.4
+
+1.5
+1.0
+
+0.2
+
+0.5
+0.0
+
+10
+
+20
+
+30
+p|| (GeV/c)
+
+40
+
+50
+
+60
+
+0.0
+
+Figure 6: Selection efficiency on the (pT , p∥ ) truth grid. Efficiency is diagnostic only; OmniFold’s
+miss treatment natively corrects acceptance (§3.1).

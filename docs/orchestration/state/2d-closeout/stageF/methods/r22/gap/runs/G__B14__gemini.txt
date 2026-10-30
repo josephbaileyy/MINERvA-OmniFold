@@ -1,0 +1,48 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "This appendix records a validation protocol, not a result or an uncertainty component."
+   SCOPE: "pattern: about 4 passages like it"
+   PROBLEM: The text reads like an internal project-management log tracking unperformed tasks rather than an established technical methodology, departing from the authoritative, neutral register of the reference chapters.
+   CHANGE: Remove the progress-tracking disclaimers and frame the test as a prospective sensitivity study, adopting the neutral register of reference-2 Sec. VIII D ("A Monte Carlo study was performed in order to explore the sensitivity of the analysis to multi-nucleon effects").
+   SHARE: 20
+2. QUOTE: "Kevin McFarland suggested this distinction and proposed stressing the hadronic record, especially for quasielastic events, to inspect low-W bias (private communication)."
+   SCOPE: "this passage"
+   PROBLEM: Attributing an analysis proposal to a personal communication from an individual collaborator reflects internal collaboration meeting notes rather than the objective, impersonal rationale standard in published technical papers.
+   CHANGE: State the physical rationale for stressing the hadronic response directly and impersonally, removing the personal attribution and private communication citation.
+   SHARE: 15
+3. QUOTE: "That work is in progress and is documented separately (docs/analysis-note/pet_note.tex, [repository] No central value, uncertainty or comparison from it is used or claimed in this note."
+   SCOPE: "this passage"
+   PROBLEM: Citing internal filesystem directory paths and unexpanded repository placeholders alongside defensive disclaimers belongs to an unedited internal draft rather than a published technical write-up.
+   CHANGE: Replace the internal file path and repository placeholder with a formal citation to a citable technical note or preprint, or omit the unfinished project entirely.
+   SHARE: 15
+4. QUOTE: "It labels every output as a diagnostic that must not be quoted."
+   SCOPE: "this passage"
+   PROBLEM: Mandating that outputs must not be quoted employs internal collaboration confidentiality and preliminary-result marking boilerplate rather than public scholarly prose.
+   CHANGE: State the diagnostic purpose of the test objectively as an internal cross-check and remove the collaboration-internal prohibition on quoting it.
+   SHARE: 10
+5. QUOTE: "The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model."
+   SCOPE: "this passage"
+   PROBLEM: Colloquial expressions such as "cheap and adversarial" and informal labels like "arm" depart from the formal, precise vocabulary of the reference papers.
+   CHANGE: Replace the colloquial phrasing with standard technical terminology, describing the procedure as a simplified, conservative stress test designed to establish sensitivity bounds.
+   SHARE: 10
+6. QUOTE: "It is deferred unless the reconstruction-only test shows material bias or the collaboration asks for the stronger response model."
+   SCOPE: "this passage"
+   PROBLEM: Conditioning an analysis workflow on whether "the collaboration asks for" it documents internal committee politics and administrative governance rather than scientific decision criteria.
+   CHANGE: Define the trigger for executing the more detailed simulation strictly through quantitative physics and statistical criteria rather than collaboration requests.
+   SHARE: 10
+7. QUOTE: "A large bias would require a decision on the response model or an uncertainty component, and would not be absorbed silently into a non-closure error."
+   SCOPE: "pattern: about 2 passages like it"
+   PROBLEM: The contentious assertion that a discrepancy "would not be absorbed silently" introduces defensive internal review argumentation and polemics that are absent from the neutral register of the reference chapters.
+   CHANGE: Formulate the systematic treatment neutrally, stating that any discrepancy exceeding tolerance would be evaluated as a separate systematic uncertainty rather than folded into the nonclosure budget.
+   SHARE: 8
+8. QUOTE: "The current scalar event-loop outputs lack the information for that recomputation, so this arm needs dedicated diagnostic output from the event loop."
+   SCOPE: "pattern: about 3 passages like it"
+   PROBLEM: Documenting internal software infrastructure limitations such as "scalar event-loop outputs" narrates code mechanics rather than the physical observables and mathematical procedures described in the reference chapters.
+   CHANGE: Describe the necessary inputs in terms of particle kinematics and reconstruction variables rather than software event loops, matching the expository register of reference-3 Sec. 4.1.2 ("Initial charge waveforms are obtained for each channel by subtracting the pedestal from each of the ADC counts and multiplying this difference by the gain assigned to the channel").
+   SHARE: 7
+9. QUOTE: "Recent additions follow; the inventory is not exhaustive through 2026."
+   SCOPE: "pattern: about 2 passages like it"
+   PROBLEM: Including an informal caveat that "the inventory is not exhaustive" conveys an unfinalized working-notebook register rather than the definitive, clearly bounded scope of published literature surveys.
+   CHANGE: Define the scope and timeframe of the survey definitively (e.g., as covering published measurements through 2025) and remove conversational disclaimers about ongoing cataloging.
+   SHARE: 5
+ENOUGH: Yes, making the changes above in full would eliminate the internal record-keeping tone, collaboration politics, software implementation mechanics, and defensive hedging, thereby bringing chapter.txt to the acceptable register of a typical published PRD paper with only minor line-level lapses.

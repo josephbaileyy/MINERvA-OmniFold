@@ -1,0 +1,58 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records."
+   SCOPE: this passage
+   PROBLEM: Revision rounds, review tickets and archival instructions are internal editorial bookkeeping.
+   CHANGE: Delete this sentence.
+   SHARE: 12%
+2. QUOTE: "The z2m lane's tier-S gate stayed green on every rerun of the FIVED16 package."
+   SCOPE: this passage
+   PROBLEM: Unexplained workflow identifiers and status language read like an internal software report.
+   CHANGE: Delete this sentence, retaining any scientifically relevant validation outcome elsewhere in ordinary technical language.
+   SHARE: 10%
+3. QUOTE: "We then went back and reran the whole chain a second time, just to be safe, and nothing changed."
+   SCOPE: this passage
+   PROBLEM: The conversational chronology and reassurance depart from the references’ direct reporting of methods and results.
+   CHANGE: Delete the anecdote or replace it with a precise reproducibility statement if the repetition establishes a relevant property.
+   SHARE: 6%
+4. QUOTE: "Controls 0, 1, 2, 3, 4, 5, 6, 8 passed."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Numbered control inventories and repeated references to grading, records and declared outcomes give the validation discussion a project-ledger tone.
+   CHANGE: Identify controls by their purpose, describe results against the stated criteria, replace grading terminology with test terminology, and remove the later rerun-reproduction bookkeeping.
+   SHARE: 14%
+5. QUOTE: "lies beside a step in the reweighting ratio larger than 0.1 drawn by the noise gate"
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Locally coined or figurative expressions obscure otherwise technical statements, including “vertex,” “noise gate,” “reach” and what a sample can “hold.”
+   CHANGE: Use explicit terms such as shift vector, statistical threshold, discontinuity and unavailable energy range, defining retained nonstandard terms or pointing to their existing definitions.
+   SHARE: 12%
+6. QUOTE: "Each enters as its gated, normalized shape ratio to GENIE CV on the fine grid, built as the reweighting ratios of the Cmodel vertices are, pooled over a coarser cell or set to one where the tune’s sample fails the ratio’s statistical gate, and applied to the simulated truth under the simulation’s detector response."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Successive qualifications and participial clauses require readers to reconstruct the order and scope of the operations.
+   CHANGE: Split these sentences into ordered statements with explicit subjects, preserving the technical detail while separating construction, conditional treatment and application.
+   SHARE: 12%
+7. QUOTE: "These are not held-out truths, and the detector response is not probed."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Repeated exclusions and reminders about evidential limits interrupt the argument and produce a defensive register.
+   CHANGE: State each distinct limitation once at the relevant definition or conclusion, retaining the separate qualifications concerning generator dependence, detector response and coverage.
+   SHARE: 10%
+8. QUOTE: "Statements in those sections about that central value and that covariance do not describe this result, and statements here do not describe them."
+   SCOPE: this passage
+   PROBLEM: The opening explains the relationship between results through reciprocal exclusions and ambiguous demonstratives.
+   CHANGE: Introduce the configuration-(e) result and covariance directly, then distinguish them from the configuration-(a) result in one concise sentence with the relevant cross-references.
+   SHARE: 7%
+9. QUOTE: "Ce sums the statistical bootstrap"
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Compressed covariance descriptions blur the distinction between a procedure, its resulting covariance and the matrices being summed.
+   CHANGE: Name the covariance contributions explicitly and state which variations or procedures determine each contribution.
+   SHARE: 5%
+10. QUOTE: "Its median per-cell relative σ is 2.14%, and adding it raises the total’s σ by a factor of 1.011–1.220 (median 1.048)."
+   SCOPE: this passage
+   PROBLEM: Following the cross-talk sentence, “Its” and “it” have an ambiguous antecedent, while “the total” leaves the covariance combination implicit.
+   CHANGE: Name Cresp explicitly and identify Ctotal as the covariance to which it is added.
+   SHARE: 6%
+11. QUOTE: "each without the truth’s own generator vertex where the second column says so (−)."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Several captions combine compressed conditions, conversational table instructions and evaluative shorthand that require readers to decode the presentation.
+   CHANGE: Rewrite those captions as direct definitions of the quantities, covariance choices and symbols, retaining all conditions needed to interpret the tables.
+   SHARE: 6%
+ENOUGH: Yes; these changes, applied throughout the indicated patterns, would bring the chapter to 4 without reducing its specialist detail or removing substantive limitations.

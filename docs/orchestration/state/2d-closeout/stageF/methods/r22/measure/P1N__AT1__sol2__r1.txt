@@ -1,0 +1,13 @@
+RATING: 4
+JUSTIFICATION: The chapter largely uses standard particle-physics terminology and clear, quantitative exposition, with occasional wordiness, subjective phrasing, and informal diction that would benefit from light line editing.
+1. QUOTE: "A total of 18 events were rejected as flashers from all run periods, although from
+event timing information and visual scans we are confident that all are in fact due to beam
+neutrino interactions. Nevertheless, these events are discarded and the resulting selection
+inefficiency is taken into account."
+   REWRITE: Across all run periods, the flasher rejection criterion removes 18 events whose timing information and visual scans indicate that they originate from beam neutrino interactions. These events are excluded, and the resulting selection inefficiency is included in the analysis.
+2. QUOTE: "Events are timed with respect to the leading edge of the beam spill, taking into account
+the time of flight of the neutrino and myriad other sources of delay [94, 95]."
+   REWRITE: Event times are measured relative to the leading edge of the beam spill, with corrections for the neutrino time of flight and other timing delays [94, 95].
+3. QUOTE: "This section describes the studies and treatment of uncertainty in modeling the SK detector that lead to systematic uncertainty in estimating the selection efficiency and background
+for the oscillation samples."
+   REWRITE: This section describes how uncertainties in the SK detector model are evaluated and propagated to the selection efficiencies and background estimates for the oscillation samples.

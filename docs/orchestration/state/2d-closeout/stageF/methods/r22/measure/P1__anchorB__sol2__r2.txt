@@ -1,0 +1,17 @@
+RATING: 3.5
+JUSTIFICATION: The prose largely follows PRD conventions, but recurring colloquialisms, repetitive descriptions of agreement, and loose or cumbersome phrasing warrant a dedicated language pass.
+
+1. QUOTE: "There are some new models on the market which
+may be able to alleviate some of the tensions we see."
+   REWRITE: Alternative models may reduce some of the discrepancies between predictions and data.
+
+2. QUOTE: "Turning these modifications
+on and off is a major part of the discussion later in the
+paper."
+   REWRITE: We compare predictions with and without these modifications to assess their effects.
+
+3. QUOTE: "However, the results presented here show that when all of these modifications are
+applied inclusively, having to contend with a large phase
+space with many contributing interaction channels, their
+predictive power is substantially diminished."
+   REWRITE: However, the modified models show substantially poorer agreement with the inclusive data, which span a broad phase space with contributions from multiple interaction channels.

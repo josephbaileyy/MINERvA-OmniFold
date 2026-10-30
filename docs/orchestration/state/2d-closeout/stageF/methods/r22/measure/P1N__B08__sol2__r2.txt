@@ -1,0 +1,22 @@
+RATING: 3
+JUSTIFICATION: Much of the exposition is precise, but recurring internal bookkeeping, development-history narration, and repetitive scope qualifications require a dedicated language pass.
+1. QUOTE: "The covariance does not meet the acceptance criteria
+of its specification, and its metadata mark it as not passing and as not to be used. The specification
+requires the null bound to be fixed before production. That was not done for this covariance, so it
+cannot meet the requirement. This note nevertheless uses this file and its projection; the use covers
+only them, not any other covariance built to the same specification, including the two companion
+covariances of the measurements below."
+   REWRITE: The covariance fails its specified acceptance criteria because the null bound was not fixed before production; its metadata therefore flag it as unsuitable for use. Nevertheless, this note uses the covariance and its projection. This use does not extend to other covariances constructed under the same specification, including the two companion covariances discussed below.
+2. QUOTE: "The comparison is binned, signal-only and noise-free, at the simulation’s
+detector response, on the development truths, and for these 144 residuals only. It does not address
+what unbinned or biased estimators could recover, the coverage failure of §9.5 or the validity of any
+interval. The diagnostic establishes no impossibility, and the precision thresholds it proposes are not
+acceptance criteria for any result in this note. The exclusions, definitions and numerical verification
+are in the binned response diagnostic record (Ref. [37], R1.14)."
+   REWRITE: This comparison is restricted to 144 selected residuals for the development truth deformations, using binned, signal-only, noise-free samples with the simulated detector response. It establishes no general limit on recoverability, does not assess unbinned or biased estimators, and does not address interval validity or the coverage failure in §9.5. Its precision thresholds apply only to this diagnostic. Definitions, exclusions and numerical checks are documented in Ref. [37], R1.14.
+3. QUOTE: "The instability also explains the difference of at most 1.2 % on data between the driver and the
+development pipeline. The data bootstrap, which refits everything per replica, already contains
+this spread: each replica carries the same spread (median 0.23 % per joint cell), about 37 % of the
+bootstrap variance and below a tenth of any total uncertainty. Central values are reproducible only
+to this size."
+   REWRITE: This numerical instability also accounts for differences of up to 1.2 % on data between the two implementations. The data bootstrap repeats all fits for each replica and includes this variability, with a median spread of 0.23 % per joint cell and an estimated contribution of about 37 % to the bootstrap variance. The numerical spread is less than 10 % of each total uncertainty and limits the reproducibility of the central values.

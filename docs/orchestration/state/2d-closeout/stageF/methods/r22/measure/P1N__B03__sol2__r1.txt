@@ -1,0 +1,13 @@
+RATING: 3
+JUSTIFICATION: The prose is technically precise in many places, but recurrent internal bookkeeping, development history, repeated defensive qualifications, and occasional conversational phrasing require a dedicated language pass.
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver;
+the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: The committed driver reproduces seven universes of the July sweep (§4.1) to ≤ 1.4 × 10−11; the remaining universes were generated with the same code but have not been individually verified (Ref. [37], R1.16).
+2. QUOTE: "Because the block is built from the observed differences among the periods,
+it contains them automatically. That says nothing about its coverage, that is, about whether its size
+is right."
+   REWRITE: The block incorporates the observed differences among run periods by construction; reproducing those differences therefore does not establish its coverage.
+3. QUOTE: "The band is small,
+0.088 %, but this is a real defect in how the covariance was built; no conclusion about the published
+analysis’s implementation follows."
+   REWRITE: The earlier covariance construction double-counted this 0.088 % band; whether the published analysis used the same implementation has not been established.

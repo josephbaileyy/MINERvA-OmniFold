@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally clear and technically conventional, but repeated qualifications, compressed internal terminology, and passages framed as project bookkeeping warrant a dedicated language pass.
+1. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments interrupted by execution time limits were subsequently completed for reporting purposes; none of these additional results changes a rejection decision (§11.6).
+2. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: The reported 2D statistical uncertainties have not been tested for coverage. Fixed-truth coverage studies evaluated two earlier statistical uncertainty bands; the first showed undercoverage in the tails (C2 = 0.912, compared with the nominal value of 0.954; §4.2, §5.2).
+3. QUOTE: "LightGBM was chosen over the exactsplit estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2)."
+   REWRITE: LightGBM was selected as the nominal estimator after the results of comparing both estimators with the published measurement were available; the exactsplit estimator is retained as a cross-check (§3.2).

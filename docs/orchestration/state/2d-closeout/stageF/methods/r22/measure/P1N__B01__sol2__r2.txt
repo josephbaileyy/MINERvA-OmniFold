@@ -1,0 +1,14 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and technically formal, but repeated caveats, internal bookkeeping, and development-history language create several conspicuous departures from journal register that require a dedicated language pass.
+1. QUOTE: "Whether it is ready for
+publication as a measurement has not been established. LightGBM was chosen over the exactsplit estimator, which is kept as a cross-check, after both comparisons with the publication
+were known (§3.2)."
+   REWRITE: Further validation is required before the 2D result can be presented as a measurement. LightGBM was selected after both estimators had been compared with the published measurement; the exact-split estimator is retained as a cross-check (§3.2).
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun,
+for reporting only, so every submitted draw has been observed. No recovered draw changes a
+decision (§11.6)."
+   REWRITE: Pseudo-experiments that exceeded the time limit were rerun solely to complete the reporting of all submitted draws. None of these additional results changes a test decision (§11.6).
+3. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage
+studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912,
+vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the reported 2D statistical uncertainty. Fixed-truth coverage studies evaluated two earlier statistical uncertainty bands; the first exhibited tail undercoverage (C2 = 0.912 compared with 0.954; §§4.2 and 5.2).

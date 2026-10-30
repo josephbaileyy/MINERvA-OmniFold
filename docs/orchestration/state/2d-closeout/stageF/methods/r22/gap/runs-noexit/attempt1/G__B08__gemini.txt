@@ -1,0 +1,43 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The truth labels denote fixed historical deformations, built before the generator flux was repaired: D1 is a GiBUU/GENIE Eavail ratio, W1 a NuWro/GENIE Eavail ratio, W2 a GENIE MEC/CV (Eavail , W ) ratio, and W3 a NuWro/GENIE (pT , p∥ , Eavail ) ratio."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: The pervasive reliance on project-internal alphanumeric codes and arbitrary sample shorthand ("D1", "W1–W3", "configuration (a)", "J", "H2", "EW") reads like an internal working memorandum rather than a published paper.
+   CHANGE: Replace all internal labels with self-contained physical descriptions of the models and binning schemes, adopting the register of reference-1: "Other studies of systematic uncertainty in SK modeling divide simulated events into categories according to their final state (FS) topologies, with the criteria shown in Tab. XVI."
+   SHARE: 20
+2. QUOTE: "For the joint-test estimator, a rule fixed before the comparison would have replaced its five iterations by 10, 15 or 20 only if one of them lowered the rule’s measure of model dependence, the largest residual proxy over the development truth changes, on the J or the H2 cells."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Structuring technical choices around pre-registered decision protocols, formal stopping criteria, and computing-budget constraints reflects an internal governance audit rather than standard physics exposition.
+   CHANGE: State the selected operational settings and their objective statistical justification directly without recounting internal decision protocols, matching the register of reference-2: "Both νµ -disappearance fits consider a total of 48 parameters: 6 oscillation parameters, 16 flux parameters, 20 neutrino interaction parameters and 6 parameters related to the response of SK."
+   SHARE: 18
+3. QUOTE: "The GENIE prediction behind the ratio uses a mis-sampled flux (§7.6), so the ratio is a valid known-truth deformation of generator size but not a measured GiBUU–GENIE difference."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Recounting intermediate development errors, software bugs, and debugging history departs from the journal register, which reports only the finalized methods and models.
+   CHANGE: Describe the test directly in terms of the alternative model variation evaluated without narrating software history, following the register of reference-2: "As an alternative, we turn off PDD and use a model by Nieves [24] to simulate multi-nucleon interactions for neutrino energies below 1.5 GeV."
+   SHARE: 15
+4. QUOTE: "The diagnostic establishes no impossibility, and the precision thresholds it proposes are not acceptance criteria for any result in this note."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: The defensive, argumentative tone hedges against unstated criticisms and disputes interpretations instead of presenting neutral scientific evaluation.
+   CHANGE: Replace defensive disclaimers with an affirmative statement of what the test demonstrates and its established physical scope, as in reference-4: "These explanations are at present speculative; more detailed study is ongoing and will be reported in a future work."
+   SHARE: 13
+5. QUOTE: "It comes from the purity-based subtraction (§C), enters no quoted covariance, and has no established size on data."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Leaving identified biases uncorrected, unpropagated, and relegated to open-ended disclaimers departs from standard PRD practice, where systematic effects must be bounded or assigned an explicit systematic uncertainty.
+   CHANGE: Incorporate all identified methodological biases into the systematic uncertainty budget or establish an explicit bound, matching the register of reference-1: "The remaining background from νµ interactions are assigned a conservative 150% error."
+   SHARE: 11
+6. QUOTE: "The exclusions, definitions and numerical verification are in the binned response diagnostic record (Ref. [37], R1.14)."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Referencing internal version-control records, logbook tracking numbers, and reconciliation between internal code pipelines reflects project management bookkeeping inappropriate for external publication.
+   CHANGE: State the relevant selection criteria in the text or cite public technical documentation, following the register of reference-1: "Further details of the detector and its calibration may be found in [9, 93, 94]."
+   SHARE: 9
+7. QUOTE: "Its bounded unfolding-model component, the largest shift over five generator-sized truth departures at the smallest envelope the vertices allow, has median 12.0 %, 9.6 % and 13.4 % respectively (90th percentile 38.6, 22.5 and 39.2 %), with GiBUU the dominant vertex in most cells."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The passage uses improvised, opaque terminology ("bounded unfolding-model component", "residual proxy", "smallest envelope the vertices allow") rather than standard statistical vocabulary for systematic variations.
+   CHANGE: Express systematic variations using conventional, clearly defined metrics, adopting the register of reference-4: "The difference between the lifetime value obtained using this alternate map and the lifetime value obtained using the SCE calibration discussed in section 6.1 is defined to be 1𝜎 of the SCE systematic uncertainty."
+   SHARE: 8
+8. QUOTE: "All 2D closures in §5 unfold reweighted simulated signal without background, so they do not test background subtraction."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: The prose frequently lapses into clipped, informal memo syntax that reads like an internal presentation bullet rather than polished scholarly exposition.
+   CHANGE: Expand informal, abrupt assertions into complete, professionally framed expository prose, matching the register of reference-3: "These operations are necessary in order to optimize the performance of subsequent stages of event reconstruction."
+   SHARE: 6
+ENOUGH: Yes, implementing the changes above in full would remove the internal record-keeping, defensive hedging, and informal jargon, bringing chapter.txt to the typical published PRD register of rating 4.

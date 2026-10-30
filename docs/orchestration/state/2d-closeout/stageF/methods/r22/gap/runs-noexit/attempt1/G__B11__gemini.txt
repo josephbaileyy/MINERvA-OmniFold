@@ -1,0 +1,76 @@
+CURRENT RATING: 2
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-06-10), not with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App. C)."
+   SCOPE: this passage
+   PROBLEM: The text records internal run dates ("the battery of 2026-06-10") and task delegation notes ("the treatment designated for...") instead of stating the chosen correction method and its physical justification directly, whereas published papers (e.g., reference-1, Sec. VI C) state correction techniques without calendar timestamps or internal task tracking.
+   CHANGE: Remove the date stamp and procedural tracking, stating directly that the extended central value is evaluated using the binned purity correction and citing the method in the appendix.
+   SHARE: 15
+
+2. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   SCOPE: this passage
+   PROBLEM: The prose reads like internal developer notes on repository status, git tagging, and build scripts rather than an archival description of a published data release.
+   CHANGE: Eliminate the discussion of unexecuted repository tagging and PDF build mechanics, stating directly the location, format, and permanent accession details of the public data release.
+   SHARE: 15
+
+3. QUOTE: "The sample’s mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the flux repair."
+   SCOPE: this passage
+   PROBLEM: The passage chronicles an internal pipeline defect and an unperformed correction ("was not rebuilt after the flux repair") rather than defining the systematic variation and evaluating its physical effect neutrally.
+   CHANGE: State the alternative prior variation and its impact on the high-$p_\parallel$ spectrum directly, removing the narrative about the unrepaired workflow step.
+   SHARE: 12
+
+4. QUOTE: "The quoted 2D result, with refined negative-weight subtraction, is 3.069 × 10−38 cm2 /nucleon, 0.14 % lower, so the control no longer reproduces it."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The sentence adopts an analyst's debugging diary tone recording that two internal code versions drifted out of agreement ("so the control no longer reproduces it"), unlike reference-2 where independent analyses are reported with neutral cross-check agreement (e.g., "Results from the alternate analysis agree with the results presented in Secs. IX A and IX B.").
+   CHANGE: Present the comparative cross-check neutrally by reporting the level of numerical consistency (0.14%) between the two treatments rather than framing it as a failure of reproduction.
+   SHARE: 10
+
+5. QUOTE: "The executive summary (p. 1) gives each result with its scope and lists the principal limitations."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: The text uses internal corporate or technical-report framing by referencing an "executive summary" and literal document page numbers ("p. 1", "p. 2") rather than self-contained journal summary prose.
+   CHANGE: Replace the pointers to the executive summary and page numbers with an in-text synthesis summarizing the principal results and their methodological scope directly.
+   SHARE: 10
+
+6. QUOTE: "No covariance is quoted for it, so the result consists of central values and these validation tests."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: The sentence exhibits a defensive, apologetic posture disclaiming absent deliverables rather than affirmatively defining the scope of the reported central values and validation tests.
+   CHANGE: State affirmatively what the extended-domain measurement provides—namely, the central cross section and its systematic validation tests—without apologetic disclaimers.
+   SHARE: 8
+
+7. QUOTE: "The release design and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a) central value (§9.6)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The text employs opaque internal project labels ("configuration-(a)") and reads like an internal collaboration rebuttal rather than an objective description of covariance choices.
+   CHANGE: Replace the internal configuration label with a descriptive physical name and frame the covariance treatment directly without defensive boundary disclaimers.
+   SHARE: 7
+
+8. QUOTE: "OmniFold’s treatment of events that fail reconstruction already corrects for acceptance, so removing the truth-level kinematic cuts is a change of configuration only: the truth denominator grows from 32.8 million to 49 million events, and the reconstruction selection, including the MINOS match, is unchanged."
+   SCOPE: this passage
+   PROBLEM: The description focuses on software parameter settings and raw sample counts ("change of configuration only", "truth denominator grows") rather than the physical phase space definition and unfolding efficiency across acceptance boundaries.
+   CHANGE: Recast the explanation in physical terms, stating that removing truth-level kinematic limits extends the fiducial phase space while the unfolding algorithm accounts for unmeasured events outside detector acceptance.
+   SHARE: 6
+
+9. QUOTE: "Panels (a) and (b) are ratios (diverging scale centered at unity); (c) gives absolute magnitude on a sequential scale — hence the two color schemes."
+   SCOPE: this passage
+   PROBLEM: The caption introduces colloquial, conversational meta-commentary ("— hence the two color schemes") justifying the graphic's layout instead of maintaining an objective descriptive register.
+   CHANGE: Replace the conversational justification with a concise, neutral statement identifying the physical variables and color mappings for each panel.
+   SHARE: 5
+
+10. QUOTE: "The statistical-band, pull and regional fractions are in App. B.3; none is used as a covariance-certification test."
+    SCOPE: pattern: about 2 passages like it
+    PROBLEM: The sentence relies on specialized internal project jargon ("covariance-certification test") to disclaim validation metrics rather than using standard statistical terminology.
+    CHANGE: Describe the coverage and pull tests using standard statistical language and specify their exact role in validating the uncertainties.
+    SHARE: 4
+
+11. QUOTE: "A flux–muon-energy-scale posterior derived from MAT-MINERvA, independent of the published analysis, would let the correlation ρ between the leading flux mode and the muon-energy-scale band (§4) be derived entirely within this analysis."
+    SCOPE: this passage
+    PROBLEM: The phrasing reads like an internal analysis proposal or task wishlist referencing internal framework packages ("MAT-MINERvA") rather than a formal outlook discussing future systematic treatment.
+    CHANGE: Reframe the sentence as an outlook describing prospective data-driven constraints on the flux and energy-scale correlations, omitting internal software package names.
+    SHARE: 4
+
+12. QUOTE: "App. G specifies this release for our analysis, including which of its objects already have fixed identities and which are still to be produced."
+    SCOPE: this passage
+    PROBLEM: The text tracks workflow status ("which are still to be produced") like an ongoing project-management task list rather than definitively specifying the release structure.
+    CHANGE: Replace the work-in-progress status tracking with a definitive specification of the format, metadata, and contents provided in the data release.
+    SHARE: 4
+
+ENOUGH: Yes, making these changes in full would bring chapter.txt to 4 by removing all project-internal bookkeeping, run logs, software build narratives, and defensive hedging in favor of the direct, objective register seen in the reference chapters.

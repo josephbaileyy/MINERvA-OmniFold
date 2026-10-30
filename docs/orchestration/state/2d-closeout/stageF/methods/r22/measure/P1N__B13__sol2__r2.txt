@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically precise, but repeated scope disclaimers, internal provenance language, and accounts of production decisions give several sections the register of an internal analysis note and warrant a dedicated language pass.
+1. QUOTE: "Here negative-weight injection is an equivalence study and the natural extended-fiducial treatment;
+this appendix establishes no supported production path and changes no default. The two covariance
+ratios are agreement diagnostics between two realizations of one subtraction, not quoted uncertainties.
+Two provenance limits apply to the production numbers: the driver revision that produced them is
+corroborated but not pinned, and no output records the job that produced them (Ref. [37], R1.7)."
+   REWRITE: This appendix compares negative-weight injection with binned purity subtraction and motivates its use in the extended-fiducial analysis. These comparisons do not validate a production implementation or change the default treatment. The covariance ratios quantify agreement between the methods rather than measurement uncertainties. The numerical results have incomplete provenance: supporting evidence identifies the likely driver revision, but the exact revision and producing job are not recorded (Ref. [37], R1.7).
+2. QUOTE: "Second, switching would have meant rerunning every
+unfold above and would have invalidated the flux-corrected covariance just chosen for use. That
+consequence, not the computing cost, decided the choice."
+   REWRITE: Second, changing the background treatment would require repeating all unfolding calculations listed above and recomputing the selected flux-corrected covariance. Purity subtraction was retained to preserve consistency with that covariance.
+3. QUOTE: "The status of that five-axis covariance and the scope of its
+use are stated in §9.6. Neither fact follows from this appendix, and the appendix relies on neither.
+The choice of background treatment settles one of the conditions for using a component; every other
+condition still applies."
+   REWRITE: Section 9.6 specifies the validation status and permitted uses of the five-axis covariance. The background-treatment comparisons presented here do not establish its validity; each covariance component must also satisfy the other validation requirements.

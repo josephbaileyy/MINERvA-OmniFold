@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally precise, but recurrent internal bookkeeping, development-history narration, and repetitive defensive qualifications call for a dedicated language pass.
+1. QUOTE: "The diagnostic establishes no impossibility, and the precision thresholds it proposes are not
+acceptance criteria for any result in this note. The exclusions, definitions and numerical verification
+are in the binned response diagnostic record (Ref. [37], R1.14)."
+   REWRITE: This diagnostic does not exclude recovery by other estimators, and its precision thresholds do not define acceptance criteria for the reported results. Reference [37] (R1.14) documents the exclusions, definitions, and numerical checks.
+2. QUOTE: "With seed 42,
+its 40 nominal experiments and 20 at each of five departures include Poisson pseudo-data, changing
+MC splits and background refinement. Because these samples were used during development, they
+provide no independent validation here. Their assessment seeds are separate but also entered the
+estimator’s later development."
+   REWRITE: Using seed 42, the study generated 40 nominal pseudo-experiments and 20 for each of five truth deformations, including Poisson fluctuations, varying MC splits, and background refinement. These samples were used in estimator development and therefore provide no independent validation. The separate assessment seeds were also subsequently used in development.
+3. QUOTE: "The file and the projection are identified by their SHA-256
+checksums (Ref. [37], identities already fixed). The covariance does not meet the acceptance criteria
+of its specification, and its metadata mark it as not passing and as not to be used. The specification
+requires the null bound to be fixed before production. That was not done for this covariance, so it
+cannot meet the requirement. This note nevertheless uses this file and its projection; the use covers
+only them, not any other covariance built to the same specification, including the two companion
+covariances of the measurements below."
+   REWRITE: Reference [37] identifies the covariance file and its projection by their SHA-256 checksums. The covariance fails the specified acceptance criteria because the null bound was not fixed before production; its metadata accordingly designate it as unsuitable for use. This note nevertheless uses this covariance and its projection. The assessments reported here apply only to these objects and do not extend to other covariances constructed under the same specification, including the two companion covariances discussed below.

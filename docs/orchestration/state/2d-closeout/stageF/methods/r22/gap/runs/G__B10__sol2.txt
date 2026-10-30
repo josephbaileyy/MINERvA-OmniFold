@@ -1,0 +1,51 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "They are quoted below from the test specification, changed only in typesetting."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The transcribed conditions retain specification shorthand, implementation labels and editorial annotations, whereas the reference chapters explain comparable assumptions in continuous technical prose.
+   CHANGE: Replace the quoted conditions and their subsequent restatement with one integrated explanation that preserves every substantive assumption, numerical qualification and limitation.
+   SHARE: 22%
+
+2. QUOTE: "The recovery is for reporting only: the primary decisions are those of the evaluation before recovery, at the B at which its rule stopped."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Repeated declarations about reporting status, unchanged decisions and what a check does not establish give the chapter a defensive cadence beyond the scoped qualifications customary in the references.
+   CHANGE: Consolidate recurring qualifications at the relevant methodological or interpretive point, retaining local reminders only where they are needed to understand a particular result.
+   SHARE: 20%
+
+3. QUOTE: "An independent recomputation, with separately written code, of every p value and decision from the stored products agrees with the production evaluation on all 1379 compared rows."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Accounts of reviewers, production monitoring, checked rows, rerun procedures and successive evaluations frequently foreground the project's verification history rather than the method and its implications.
+   CHANGE: Recast these accounts around the verification performed, its result and its scope, retaining operational particulars needed for reproducibility while compressing review history and administrative counts.
+   SHARE: 17%
+
+4. QUOTE: "The recovered draws were evaluated in two readings: with the variant shifts of the primary evaluation, and with the shift recomputed on all draws."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Local terminology such as “readings,” “claim p,” “frozen V” and the B3 status label makes the prose sound tied to an internal specification even when the underlying quantities are explained.
+   CHANGE: Use standard statistical or descriptive names consistently, define necessary local terms at first use, and replace implementation codes and status labels with their substantive meaning.
+   SHARE: 14%
+
+5. QUOTE: "A post hoc bias check of that check’s premise, declared before it was computed, met its criterion of at most 0.1 σc in every cell, moving the CH prediction by at most 5.1 × 10−4 σc ."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Nested references and interposed qualifications make readers reconstruct which assumption, calculation and result each clause concerns.
+   CHANGE: Separate the assumption being checked, the timing of its specification and the numerical result into direct sentences with explicit subjects, preserving the distinctions among them.
+   SHARE: 10%
+
+6. QUOTE: "Every test rejects, so power is context only (the specification attaches power only to non-rejections)."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Compressed expressions and metacommentary such as “power is context only” read like annotations to an analysis record rather than finished explanatory prose.
+   CHANGE: Replace telegraphic commentary and fragments with complete statements of the statistical result or its interpretive role, including in captions and subsection openings.
+   SHARE: 8%
+
+7. QUOTE: "With the null recomputed on all draws, the first GENIE 2.12.10 set moves to 0.72."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Shorthand referents such as “the first … set” obscure the quantity being reported, while “moves to” substitutes for naming its change.
+   CHANGE: Identify the alternative and its estimated power explicitly, and similarly replace ambiguous references to a “size,” “value,” “step” or “set” wherever the intended quantity requires reconstruction.
+   SHARE: 5%
+
+8. QUOTE: "The design takes the step, in a proxy of the test metric, to shrink by a factor of 0.45–0.76 per halving."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Awkward constructions such as “takes the step … to shrink” express otherwise precise technical content less naturally than the prose of the reference chapters.
+   CHANGE: Replace these constructions with idiomatic statements that name the assumption and quantity directly, specifying here which refinement change is assumed to decrease and in which metric.
+   SHARE: 4%
+
+ENOUGH: Yes; applied throughout while preserving the specialist detail and substantive qualifications, these changes would bring chapter.txt to 4 without requiring additional scientific work.

@@ -1,0 +1,14 @@
+RATING: 4
+JUSTIFICATION: The prose largely matches the register of a published long technical paper, with occasional internal workflow narration, informal wording, and wordy or imprecise constructions that would benefit from light line editing.
+1. QUOTE: "The pedestal histograms and a few waveforms for all channels were scanned by eye to obtain an
+initial list of sticky codes and this list is extended when other problematic channels are uncovered."
+   REWRITE: Visual inspection of pedestal histograms and several waveforms for each channel identified an initial set of sticky codes; additional codes are included as affected channels are identified.
+2. QUOTE: "The solidly unresponsive channels mentioned in section 2.4 are
+also flagged as bad. A total of 133 channels are flagged as bad or noisy. The data for these channels
+are prepared like any others, but downstream processing such as deconvolution or track finding may
+choose to ignore these channels or treat them in a special manner."
+   REWRITE: The unresponsive channels described in section 2.4 are also flagged as bad, bringing the total number of bad or noisy channels to 133. Data from these channels undergo the standard preparation procedure, but subsequent processing, such as deconvolution or track finding, may exclude them or process them differently.
+3. QUOTE: "A suite of tools has been produced
+for ProtoDUNE-SP analysers to easily access this hierarchical information in order to perform the
+analyses."
+   REWRITE: ProtoDUNE-SP analysis tools provide access to the reconstructed particle hierarchy.

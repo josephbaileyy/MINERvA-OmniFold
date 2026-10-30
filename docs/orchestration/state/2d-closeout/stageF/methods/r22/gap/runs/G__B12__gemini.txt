@@ -1,0 +1,63 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The provenance of the records the note cites, the fixed identities and audit record of the five-axis covariance of the configuration-(a) central value, the test-suite discipline, and superseded values and withdrawn results are kept in the analysis repository’s records document, Ref. [37]; each citation names the entry’s number or heading."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Unlike the reference chapters, which document scientific procedures directly, this passage adopts an internal project-management and archiving record-keeping tone ("audit record", "test-suite discipline", "superseded values and withdrawn results").
+   CHANGE: Remove internal repository provenance and audit-trail commentary entirely, citing the companion records document neutrally as a data release without cataloging repository maintenance procedures.
+   SHARE: 15
+2. QUOTE: "Read from the MAT source (MnvVertErrorBand::CalcCovMx, MnvH1D::GetTotalErrorMatrix); our universe block compared with it element by element, Flux with MAT’s universe weights"
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Unlike published papers that describe algorithms conceptually (e.g., Ref-3 Sec. 4.5.2, "Pattern recognition in ProtoDUNE-SP is performed using the Pandora software package"), this passage quotes C++ class paths and member functions (`MnvVertErrorBand::CalcCovMx`, `MnvH1D::GetTotalErrorMatrix`), reading like internal code documentation.
+   CHANGE: Replace all internal software classes and member function names with the mathematical formulas and statistical definitions of the covariance estimators.
+   SHARE: 15
+3. QUOTE: "The comparison calls np.linalg.pinv at its default, NumPy’s documented cutoff τ = rcond · σmax with rcond = 10−15 ; this is not the n σmax εmachine convention of np.linalg.lstsq and MATLAB."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Rather than specifying mathematical criteria in the neutral tone of the reference chapters, this passage documents language-specific library calls (`np.linalg.pinv`, `np.linalg.lstsq`) and software default parameters.
+   CHANGE: State the pseudo-inverse and eigenvalue truncation threshold as a mathematical formula ($\tau = 10^{-15}\sigma_{\max}$) without citing software libraries, function names, or MATLAB conventions.
+   SHARE: 12
+4. QUOTE: "Where a repository label is needed to find the object, it is given once in parentheses at first use, or here."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The inclusion of an explicit glossary mapping internal repository shorthands, command-line arguments (`--bkg-mode`), and environment variables (`MNV101_ACTIVE_UNIVERSE`) belongs in a software repository README rather than a journal article or technical supplement.
+   CHANGE: Delete the repository label table and associated text, referring to backends and selection modes throughout solely by their descriptive physical or statistical names.
+   SHARE: 12
+5. QUOTE: "That check could not detect that the Flux band omitted those constraint weights, because it filled the MnvH1D without MAT’s per-universe weights (SetUnivWgts), so both sides were unweighted; it also ran on a sweep from before the flux fix, not on a quoted product."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The passage narrates an internal debugging history and post-mortem of an earlier defective script ("before the flux fix"), whereas reference chapters present only the final, validated procedure.
+   CHANGE: Eliminate the narrative recounting of failed past checks and software bugs, stating only the validated weighting method and its final numerical precision.
+   SHARE: 10
+6. QUOTE: "It leaves to MAT, or does not state, the per-band covariance construction, any ±1σ pair formula and any band-independence or block-sum statement; the rank, condition number and regularization of V ; and any bootstrap or coverage validation (it uses D’Agostini iterative unfolding)."
+   SCOPE: this passage
+   PROBLEM: The prose adopts an adversarial, polemical register criticizing what a prior publication omitted ("What the paper does not say. It leaves to MAT..."), departing from the measured, objective tone seen in Ref-1 Sec. VI B ("In earlier published T2K $\nu_e$ appearance analysis results... we used a $\pi^0$ rejection method which is different from what is described above").
+   CHANGE: Rewrite the critique as an objective, neutral statement explaining that the present work explicitly defines the covariance construction and matrix regularization that were previously encapsulated within the experiment's analysis framework.
+   SHARE: 9
+7. QUOTE: "The July model sweep used by the quoted budget has 187 universes across 44 bands, dominated by the 100-universe PPFX flux band (hadron-production sampling); the quoted band sum drops Rvp1pi and holds 43 bands plus the normalization."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Designating systematic model productions by their calendar dates ("July model sweep", "May sweep") uses internal project scheduling labels rather than physical or systematic configuration names.
+   CHANGE: Replace calendar-based sweep labels with descriptive technical designations characterizing the specific systematic variations or model configurations evaluated.
+   SHARE: 8
+8. QUOTE: "The folk “MINERvA-101 ±1σ pair” formula 12 (∆+ ∆⊤+ + ∆− ∆⊤− ) agrees only for CV-symmetric shifts."
+   SCOPE: this passage
+   PROBLEM: Slang descriptors such as "folk 'MINERvA-101 ±1σ pair' formula" inject conversational internal jargon into what should be formal mathematical exposition.
+   CHANGE: Replace the informal phrase with standard statistical terminology, such as "the conventional pairwise symmetric covariance approximation."
+   SHARE: 6
+9. QUOTE: "The training-seed block is built from five settings s ∈ {42, 45, 48, 51, 54} of the GBDT seed triplet, each unfolded on the same 20 bootstrap replicas (at s = 42, the first 20 of the 300 of §A.2.2)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Documenting literal script-level random number seeds (`s ∈ {42, 45, 48, 51, 54}`, `k + 10^7`) reflects code execution bookkeeping rather than the scientific description of ensemble generation found in Ref-2 Sec. VIII B ("Each toy dataset had a set of values of the systematic parameters sampled from a multi-dimensional Gaussian").
+   CHANGE: Describe the ensemble as generated from multiple independent pseudo-random initializations without enumerating specific integer seed values in the text.
+   SHARE: 5
+10. QUOTE: "Almost all other bands are ±1σ pairs (Nu = 2), including Muon_Energy_MINOS and lateral Muon_Energy_MINERvA (muon energy scale), MinosEfficiency (MINOS muon-match efficiency), GENIE knobs MaRES, MvRES, MaCCQE, and lateral FSI response GEANT_{Neutron,Pion,Proton}."
+    SCOPE: pattern: about 5 passages like it
+    PROBLEM: Using literal code variable identifiers (`Muon_Energy_MINOS`, `MaRES`, `MvRES`, `MaCCQE`, `Rvp1pi`) rather than formal physics notation departs from the standard typography of the reference chapters (e.g., Ref-2 Sec. VIII A).
+    CHANGE: Typeset parameter variations and systematic categories using standard physics symbols and formal descriptions (such as $M_A^{\mathrm{RES}}$, $M_V^{\mathrm{RES}}$, $M_A^{\mathrm{CCQE}}$, and MINOS muon energy scale).
+    SHARE: 4
+11. QUOTE: "the detector-response-mismatch closure, a protocol implemented but not yet run (App. D); and the survey of MINERvA measurement dimensionality (App. E)."
+    SCOPE: this passage
+    PROBLEM: Describing an analysis study as "a protocol implemented but not yet run" conveys an in-progress internal draft status rather than the completed status of an archival report.
+    CHANGE: Rephrase the description to focus objectively on the methodology of the proposed closure test without internal project-status disclaimers.
+    SHARE: 2
+12. QUOTE: "These are reference material; a physics reading can skip them."
+    SCOPE: pattern: about 3 passages like it
+    PROBLEM: Conversational directives advising the reader on what to skip ("a physics reading can skip them"), along with fragmented bulleted outlines, depart from the formal roadmap style seen in Ref-4 Sec. 6 ("This section describes the procedure and results of the calibration...").
+    CHANGE: Replace informal editorial advice and telegraphic bullet points with continuous, formal expository paragraphs defining the structure and scope of the appendices.
+    SHARE: 2
+ENOUGH: Yes, implementing the changes above in full would eliminate the internal repository bookkeeping, software implementation minutiae, debugging narratives, and informal jargon, leaving a dense, mathematically rigorous, and fully documented technical appendix that meets the register of a typical published PRD paper.

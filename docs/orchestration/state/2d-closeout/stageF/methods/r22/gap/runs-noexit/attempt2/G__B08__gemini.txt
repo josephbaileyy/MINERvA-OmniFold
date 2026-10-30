@@ -1,0 +1,64 @@
+CURRENT RATING: 2
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "For the joint-test estimator, a rule fixed before the comparison would have replaced its five iterations by 10, 15 or 20 only if one of them lowered the rule’s measure of model dependence, the largest residual proxy over the development truth changes, on the J or the H2 cells."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The text reads like an internal committee audit or referee rebuttal defending methodological pre-commitment, whereas published PRD papers state operational procedures and selection criteria concisely without litigating counterfactual decisions.
+   CHANGE: Replace the defensive narrative of pre-registered rules and rejected hyperparameter alternatives with a direct statement of the chosen estimator configuration and its physical justification, matching the direct register of reference-1 ("The selection criteria for both νe CC and νµ CC events were fixed using MC studies before being applied to data").
+   SHARE: 18%
+
+2. QUOTE: "The truth labels denote fixed historical deformations, built before the generator flux was repaired: D1 is a GiBUU/GENIE Eavail ratio, W1 a NuWro/GENIE Eavail ratio, W2 a GENIE MEC/CV (Eavail , W ) ratio, and W3 a NuWro/GENIE (pT , p∥ , Eavail ) ratio."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The text reads like an internal progress log recounting past simulation defects and superseded iterations, whereas PRD papers present only the final, validated physical models and systematic variations.
+   CHANGE: Eliminate the narrative history of uncorrected fluxes and discarded development runs, defining the stress models strictly by their physical and kinematic properties as done in reference-2 ("As an alternative, we turn off PDD and use a model by Nieves [24] to simulate multi-nucleon interactions for neutrino energies below 1.5 GeV").
+   SHARE: 16%
+
+3. QUOTE: "The exclusions, definitions and numerical verification are in the binned response diagnostic record (Ref. [37], R1.14)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The text incorporates internal repository record-keeping, run seeds, and internal tracking codes that belong in collaboration archives rather than the archival journal prose of PRD.
+   CHANGE: Remove internal notebook tracking codes, pipeline comparisons, and random seeds, retaining only standard citations to published literature or permanent data releases as in reference-1 ("Further details of the detector and its calibration may be found in [9, 93, 94]").
+   SHARE: 14%
+
+4. QUOTE: "The diagnostic establishes no impossibility, and the precision thresholds it proposes are not acceptance criteria for any result in this note."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The prose adopts aggressive defensive hedging and preemptive legalistic disclaimers to ward off anticipated criticism, departing sharply from the objective, neutral tone of published PRD papers.
+   CHANGE: Reframe methodological boundaries as matter-of-fact statements of scope and systematic uncertainty rather than polemical rebuttals, adopting the neutral tone of reference-2 ("For the present exposure, the effect can be ignored, but future analyses will need to incorporate multi-nucleon effects in their model of neutrino-nucleus interactions").
+   SHARE: 12%
+
+5. QUOTE: "Saved fine-grid outputs are integrated into 109 supported joint cells (J), 27 supported coarser joint cells (H2) and 39 supported (Eavail , W ) cells (EW)."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: The text relies heavily on project-internal alphanumeric shorthand labels without physical context, making it read like an internal working memorandum rather than a paper accessible to a specialist reader.
+   CHANGE: Replace cryptic internal labels with standard terminology designating the physical observables, kinematic phase-space regions, or binning granularities, following the conventions of reference-1 and reference-4.
+   SHARE: 11%
+
+6. QUOTE: "It comes from the purity-based subtraction (§C), enters no quoted covariance, and has no established size on data."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: The prose repeatedly emphasizes what is omitted or unassigned in a negative record-keeping style, reading like an internal audit memo rather than a journal report of evaluated uncertainties.
+   CHANGE: State the evaluated systematic uncertainties and their assigned treatments directly, stating any negligible contribution cleanly rather than recording what was left out, as in reference-1 ("Overall, the event rate uncertainty related to the decay-electron requirements is small").
+   SHARE: 9%
+
+7. QUOTE: "The 144 eligible residuals are those whose diagnosis is stable under the truth resolution: of 376 J-cell and deformation combinations with residuals above 2 %, 232 changed classification with the truth resolution or the response weighting and were excluded, leaving the 144 (38 %)."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: The passage details intermediate diagnostic filtering arithmetic and development accounting that distract from the physical result, characteristic of a technical log rather than a PRD write-up.
+   CHANGE: Summarize the criteria and final scope of the diagnostic study directly in one concise sentence without walking the reader through the chronological ledger of discarded combinations.
+   SHARE: 7%
+
+8. QUOTE: "For the sixteen-cell result (§10), the model term of its reported covariance is the change in the unfolded data when the prior is reweighted to each generator (GENIE + MEC, NuWro, GiBUU; §10.2), unscaled and not a calibrated bound; §10.3 gives the fake-data study’s measured comparison of the estimator’s bias with the reported covariance."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The sentence is overloaded with stacked parentheticals, dense qualifiers, and forward-referencing section pointers that obscure the methodology and disrupt readability.
+   CHANGE: Deconstruct dense, parenthetical-heavy sentences into direct, sequential statements that explain the covariance calculation and validation separately, following the clear expository structure of reference-2.
+   SHARE: 5%
+
+9. QUOTE: "The studies do not establish a bias–variance tradeoff across estimator settings, and regularization bias can invalidate intervals based solely on estimator variability [51]; neither reference supplies the variance measurement that is missing for this estimator."
+   SCOPE: this passage
+   PROBLEM: The text adopts an argumentative commentary tone debating theoretical literature and pointing out what cited references fail to supply, which departs from the impersonal expository style of PRD.
+   CHANGE: Restate the point as an objective summary of the study's scope and the specific variance components evaluated, eliminating argumentative critiques of external literature.
+   SHARE: 4%
+
+10. QUOTE: "The coarser muon projection retained only three cases and is uninformative."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The phrasing lapses into casual, dismissive lab shorthand that belongs in an informal working meeting rather than a formal PRD paper.
+   CHANGE: Replace informal colloquialisms with objective scientific descriptions of statistical power and resolution, stating that the projection provides insufficient statistical sensitivity to evaluate the trend.
+   SHARE: 4%
+
+ENOUGH: Yes, implementing these changes in full by replacing internal bookkeeping, defensive pre-commitment narratives, and project-specific shorthand with direct, objective descriptions of the final methodology and systematic uncertainties would successfully elevate chapter.txt to rating 4.

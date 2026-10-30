@@ -1,0 +1,58 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records."
+   SCOPE: "this passage"
+   PROBLEM: This sentence documents internal editorial revision history and collaboration tracking ticket numbers, which belong in private project management records rather than published PRD text.
+   CHANGE: Delete this sentence entirely, as published papers present only the final scientific text without internal revision provenance.
+   SHARE: 15
+2. QUOTE: "The z2m lane's tier-S gate stayed green on every rerun of the FIVED16 package."
+   SCOPE: "this passage"
+   PROBLEM: This sentence reports software continuous-integration build status and computing pipeline jargon ("tier-S gate stayed green"), which is entirely alien to the physical and methodological prose of PRD papers.
+   CHANGE: Delete the sentence completely, because build-system health and automated test-pipeline statuses are internal computing infrastructure details that have no role in a PRD write-up.
+   SHARE: 14
+3. QUOTE: "Statements in those sections about that central value and that covariance do not describe this result, and statements here do not describe them."
+   SCOPE: "pattern: about 7 passages like it"
+   PROBLEM: The text frequently lapses into repetitive, defensive hedging and adversarial disclaimers that dominate the narrative, whereas PRD papers state the scope and limitations of an analysis constructively and concisely without argumentative self-auditing.
+   CHANGE: Replace defensive legalistic warnings with direct, constructive statements of scope, adopting the measured tone of reference-2.txt where limitations are stated plainly once without argumentative disclaimers ("For the present exposure, the effect can be ignored, but future analyses will need to incorporate multi-nucleon effects in their model of neutrino-nucleus interactions").
+   SHARE: 13
+4. QUOTE: "We then went back and reran the whole chain a second time, just to be safe, and nothing changed."
+   SCOPE: "this passage"
+   PROBLEM: This sentence adopts an informal, diary-like developer narrative ("just to be safe") describing procedural development history rather than the formal, objective voice of PRD papers.
+   CHANGE: Remove the colloquial procedural anecdote, or state concisely in the passive voice that the analysis pipeline is fully reproducible.
+   SHARE: 12
+5. QUOTE: "Controls 0, 1, 2, 3, 4, 5, 6, 8 passed."
+   SCOPE: "pattern: about 3 passages like it"
+   PROBLEM: The prose treats validation studies as an automated software unit-test suite with numbered pass/fail checks rather than describing the physical checks and statistical outcomes as in PRD articles.
+   CHANGE: Replace the numbered test-harness pass/fail inventory with narrative explanations of the validation benchmarks and their specific physical and statistical implications.
+   SHARE: 10
+6. QUOTE: "GiBUU’s vertex carries 0.890 of Cmodel ’s trace, NuWro’s 0.095 and GENIE + MEC’s 0.014."
+   SCOPE: "pattern: about 6 passages like it"
+   PROBLEM: The text invents idiosyncratic jargon by using "vertex" to denote an outer-product component or systematic difference vector of a covariance matrix, conflicting with the established physics meaning of an interaction vertex.
+   CHANGE: Replace "vertex" and its derivatives throughout with standard statistical terminology such as "systematic variation," "outer-product component," or "generator variation vector."
+   SHARE: 9
+7. QUOTE: "As declared, the six power alternatives built on that correction are therefore descriptive and ungraded; Table 14 gives them, with the two descriptive variants of each graded truth."
+   SCOPE: "pattern: about 5 passages like it"
+   PROBLEM: The passage relies on internal benchmarking jargon ("graded", "ungraded", "grade", "records", "as declared") that mimics an academic grading sheet or internal evaluation rubric rather than PRD scientific reporting.
+   CHANGE: Reframe the discussion to distinguish primary validation tests from supplementary or illustrative cross-checks using standard technical phrasing instead of grading terminology.
+   SHARE: 8
+8. QUOTE: "It does not cover neutron or muon deposits, the effects of particle species, energy dependence and resolution beyond a scale, the null distributions of the joint tests, the configuration-(a) products or the two-, three- and four-dimensional results."
+   SCOPE: "this passage"
+   PROBLEM: This sentence presents an exhaustive, defensive catalogue of everything the systematic uncertainty does not evaluate, reading like a liability disclaimer rather than PRD prose that clearly defines the parameterization and physical scope of an uncertainty.
+   CHANGE: State positively and concisely what the response uncertainty parameterizes and evaluates, following the standard register of reference-1.txt (Sec. VI C) where uncertainties are defined by their active model parameters without reciting exhaustive exclusion lists.
+   SHARE: 6
+9. QUOTE: "The training-seed block was measured and is zero in every cell: with full-sample binning and deterministic training, the unfolds at the other seeds are bitwise equal to the central one."
+   SCOPE: "pattern: about 2 passages like it"
+   PROBLEM: The sentence focuses on algorithmic software implementation and execution trivia ("bitwise equal", "deterministic training") rather than the physical statement that initialization seed fluctuations contribute negligible uncertainty.
+   CHANGE: Replace the discussion of bitwise software equality with a concise statement that variations from network or algorithm initialization seeds were evaluated and found to be negligible.
+   SHARE: 5
+10. QUOTE: "The truths are the simulation’s prior; the five hybrid truths of the generator tests (Sec. 11), each a prediction on the fine grid; the historical shapes W1, W2 and W3 of §9.4; a GiBUU-to-GENIE Eavail shape; a noise-free closure at the NuWro shape; and a synthetic tilt of the q3 distribution at fixed (Eavail , W )."
+   SCOPE: "pattern: about 4 passages like it"
+   PROBLEM: The text relies on project-internal development history and opaque shorthand labels ("historical shapes W1, W2 and W3", "in 12 declared steps") that reflect internal working notes rather than self-contained physical models.
+   CHANGE: Identify model variations by their physical parameterizations or model origins rather than obsolete project milestones, citing relevant model configurations with descriptive names instead of historical shorthand.
+   SHARE: 4
+11. QUOTE: "In every cell, 77–100% of the prior weight lies beside a step in the reweighting ratio larger than 0.1 drawn by the noise gate or a cut, and the shifts enter as measured."
+   SCOPE: "pattern: about 2 passages like it"
+   PROBLEM: The description uses obscure software pipeline jargon ("drawn by the noise gate", "beside a step", "shifts enter as measured") that reads like internal laboratory documentation rather than intelligible journal exposition.
+   CHANGE: Clarify the methodology by explaining in standard terms how reweighting ratio discontinuities, thresholds, and statistical regularization are incorporated into the model uncertainty.
+   SHARE: 4
+ENOUGH: Yes, implementing these changes in full would bring chapter.txt to a rating of 4 by eliminating the internal bookkeeping, conversational logs, defensive caveats, and project jargon that currently degrade its technical register.

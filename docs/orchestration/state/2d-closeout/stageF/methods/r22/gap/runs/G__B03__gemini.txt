@@ -1,0 +1,64 @@
+CURRENT RATING: 2
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver; the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: This passage reads like an internal software regression test log or continuous-integration report rather than experimental physics prose, departing from published technical papers that describe simulation and validation methods without citing git drivers, repository commits, or floating-point unit-test tolerances (e.g., Reference 4: "A dedicated simulation of space charge effects was developed for ProtoDUNE-SP, using a software package originally developed for MicroBooNE [58, 59].").
+   CHANGE: Remove all references to committed drivers, code-chain assertions, repository commits, and floating-point tolerance checks, replacing them with a concise description of the simulation framework and the verified stability of the reweighting procedure.
+   SHARE: 20
+
+2. QUOTE: "We therefore make no claim about coverage, and goodness-of-fit values computed with this covariance are indicative only."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The text adopts an excessively defensive, disclaimer-heavy tone that repudiates the validity of the result instead of stating the methodology, scope, and estimated systematic uncertainties with professional objectivity (e.g., Reference 1: "The observed differences between the nominal and corrected efficiencies may indicate mismodeling of the detector response, so additional covariance is included, with the diagonal elements being the square of these differences and the off-diagonal terms calculated by assuming full correlation.").
+   CHANGE: Replace apologetic disclaimers and declarations of what the analysis cannot claim with direct, objective descriptions of the validation scope and the standard systematic coverage provided by the covariance matrix.
+   SHARE: 18
+
+3. QUOTE: "Its per-bin σ is a median 0.27 of that of the earlier ten-seed block, because the bootstrap × seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block; the training-seed block carries it only at its 1/20 share, a median 0.763 of its diagonal."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The passage chronicles intermediate project development history and compares results to private, unquoted earlier iterations ("earlier ten-seed block," "earlier scan"), whereas PRD register presents only the final methodology and established external baselines (e.g., Reference 1: "In earlier published T2K νe appearance analysis results [3, 97], we used a π 0 rejection method which is different from what is described above [98].").
+   CHANGE: Excise all mentions of discarded internal iterations, scratchpad scans, and calendar milestones, describing the training-seed uncertainty strictly through its final formulation and properties.
+   SHARE: 15
+
+4. QUOTE: "The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (§4.6), and holds 43 bands plus the flat normalization."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Raw code variable names and framework-specific labels (`Rvp1pi`, `Rvn1pi`, `MAT-MINERvA`) are used as shorthand without defining the underlying physical interactions or detector parameters they represent, unlike published PRD papers that use standardized physics terminology (e.g., Reference 1: "Charged current interactions (ν + N → l− + X) in the narrow energy range of the T2K beam tend to produce single ring events at SK because most of the particles produced, except for the primary lepton, do not escape the nucleus or are below detection threshold.").
+   CHANGE: Replace raw code parameter names and internal framework acronyms with standard physics terminology defining the specific interaction channels (such as charged-current single-pion production), defining every technical term upon first introduction.
+   SHARE: 12
+
+5. QUOTE: "The run-period block CPL is an uncertainty assigned for an observed inconsistency between run periods whose cause is unknown; it is not a measured systematic uncertainty from an identified source."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Framing a dataset disagreement as an unresolved inconsistency where "data cannot establish which period, if any, is correct" reads like an internal collaboration dispute rather than a standard empirical systematic uncertainty evaluation (e.g., Reference 4: "These explanations are at present speculative; more detailed study is ongoing and will be reported in a future work.").
+   CHANGE: Recast the run-period variation conventionally as an empirical systematic uncertainty covering run-to-run beam and detector stability, stating the evaluation procedure and resulting error envelope factually.
+   SHARE: 10
+
+6. QUOTE: "One systematic category provided in the input products, NormDISCC, is identically zero; we carry it as zero, which we have not been able to confirm is intended."
+   SCOPE: this passage
+   PROBLEM: Speculating in print about whether an upstream collaboration input file contains an unintended defect ("which we have not been able to confirm is intended") reflects unfinished internal communication rather than a vetted scientific publication.
+   CHANGE: State neutrally that the charged-current deep-inelastic scattering normalization uncertainty is set to zero or omitted from the active variations, removing all conjecture about unconfirmed collaborator intent.
+   SHARE: 8
+
+7. QUOTE: "This observed covariance difference does not demonstrate a causal efficiency advantage (App. A.4)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Preemptively arguing against unasserted conclusions ("does not demonstrate a causal efficiency advantage") introduces a combative, defensive tone that departs from the objective reporting typical of journal register (e.g., Reference 2: "The overall bias for both is negligible, compared to the precision obtained for the parameters.").
+   CHANGE: Remove argumentative disclaimers against unasserted claims, stating simply and neutrally the quantitative relationship between the bootstrap covariance and the published statistical block.
+   SHARE: 6
+
+8. QUOTE: "Figure 4 shows the grouped fractional-uncertainty projections in the published Fig. 6/7 style (the full 205×205 covariance projected exactly, C1D = P C2D P ⊤ , before dividing by the 1D central value)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Informal expressions such as "in the published Fig. 6/7 style" and "Bashyal [41] joint block" read like laboratory conversational shorthand rather than formal scientific cross-referencing (e.g., Reference 2: "The νµ -disappearance analysis is performed by comparing the rate and spectrum of reconstructed neutrino energies, Eq. (11), in the νµ CC candidate event sample with predictions calculated from Monte Carlo simulation.").
+   CHANGE: Revise conversational phrasing into formal journal prose, citing prior publications and figures using standard citation and cross-reference forms (e.g., "following the grouping format of Ref. [3]").
+   SHARE: 4
+
+9. QUOTE: "No coverage test on held-out simulation has been run, and no design for one has been registered in advance."
+   SCOPE: this passage
+   PROBLEM: Importing clinical-trial meta-procedural language ("registered in advance") to record an unperformed check departs from the register of physical science papers, which document actual validation procedures rather than meta-scientific procedural protocols (e.g., Reference 3: "A charge calibration is carried out so that ADC counts read out for each channel may be converted to collected charge.").
+   CHANGE: Delete meta-scientific commentary regarding unregistered test designs, stating directly the closure and validation tests that were conducted and the scope of their results.
+   SHARE: 4
+
+10. QUOTE: "Added to the other blocks, it raises the per-bin σ by a median of 5.8 % (at most 39.1 %), the integral by 9.9 % and the p∥ projections by at most 21 %; it carries a median 10.6 % of the per-bin variance and 17.1 % of the integral’s."
+    SCOPE: pattern: about 4 passages like it
+    PROBLEM: Clustering dense strings of uncontextualized bin counts, medians, and percentiles directly in the narrative overwhelms the prose, whereas reference chapters report uncertainty ranges succinctly or summarize complex multidimensional distributions in tables (e.g., Reference 1: "Relative uncertainties on the efficiency, calculated for 17 bins in reconstructed electron momentum and angle, are in the range 2-60%.").
+    CHANGE: Condense long strings of raw bin statistics into clear summary ranges in the text or tabulate them, focusing the narrative on the leading physical contributions to the uncertainty budget.
+    SHARE: 3
+
+ENOUGH: Yes, implementing these changes in full would bring chapter.txt to 4 by removing internal record-keeping, defensive hedging, and unintroduced project jargon, leaving only minor sentence-level polish typical of published PRD papers.

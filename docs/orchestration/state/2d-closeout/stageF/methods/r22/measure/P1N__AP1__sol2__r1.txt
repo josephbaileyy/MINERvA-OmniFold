@@ -1,0 +1,13 @@
+RATING: 4
+JUSTIFICATION: The prose largely matches the register of a detailed particle-physics detector paper, with occasional informal or evaluative phrasing, vague descriptions of processing choices, and grammatical lapses that light line editing would resolve.
+1. QUOTE: "Approximately 70 channels are flagged as bad due to very high fractions of sticky codes or
+population of multiple widely-separated sticky values. Another 35 are flagged as noisy due to serious
+but less-severe sticky-code issues."
+   REWRITE: Approximately 70 channels are classified as bad because a large fraction of their samples have sticky-code values or because multiple widely separated sticky values are populated. A further 35 channels with less severe sticky-code effects are classified as noisy.
+2. QUOTE: "One very important goal for ProtoDUNE-SP is to demonstrate that noise levels are well below
+signals from charged tracks; this is found to be the case for nearly all of the channels in the detector."
+   REWRITE: A goal of ProtoDUNE-SP is to demonstrate noise levels well below the signal amplitudes from charged tracks. This condition is satisfied for nearly all detector channels.
+3. QUOTE: "A suite of tools has been produced
+for ProtoDUNE-SP analysers to easily access this hierarchical information in order to perform the
+analyses."
+   REWRITE: Analysis tools provide access to the reconstructed particle hierarchies.

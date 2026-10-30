@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Do not check a rank: the spectrum decays smoothly with no plateau, so the cutoff sets the retained count, which is 26 at 10−6 , 36 at the projector’s hardcoded 10−12 , 41 at numpy.linalg.matrix_rank’s default, and 42 with no cutoff."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: The imperative tutorial style instructing the reader on how to run scripts and what not to check reads like an interactive debugging guide rather than the objective exposition of PRD papers, which formulate computational procedures declaratively (e.g., reference-2, Sec. VIII A: "The oscillation parameters are estimated using two independent maximum likelihood fits to the reconstructed energy spectrum").
+   CHANGE: Recast all procedural instructions and assert statements into declarative prose describing the matrix properties, spectral behavior, and conditioning of the covariance data.
+   SHARE: 20
+2. QUOTE: "RC7, a local release candidate with a README, checksums and a replay verifier [97], has not been deposited or released under a publication tag."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Narrating development history, differences between internal release candidates, and superseded drafts reads like a project changelog rather than the PRD register, which presents only the final, released scientific data products (e.g., reference-1, Sec. VI A: "The selection criteria for both νe CC and νµ CC events were fixed using MC studies before being applied to data").
+   CHANGE: Remove all discussion of obsolete intermediate candidates, superseded figures, and draft evolution to describe solely the permanent, publicly released data package.
+   SHARE: 18
+3. QUOTE: "Driver (Python): per-analysis orchestration in 2d-unfolding/unfold_2d_omnifold_unbinned.py and its N -dimensional generalization nd-unfolding/unfold_nd_omnifold_unbinned.py."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Enumerating internal repository paths, script names, and directory structures reads like a local README file rather than a published technical write-up, which designates software components by their functional roles and formal citations (e.g., reference-3, Sec. 4.5.2: "Pattern recognition in ProtoDUNE-SP is performed using the Pandora software package [46]").
+   CHANGE: Replace repository file paths and internal script names with functional descriptions of the software stages and archival software citations.
+   SHARE: 15
+4. QUOTE: "An earlier version of the package, RC1, was replayed from an empty directory by a separate AI agent session (Opus 5.5) that had no access to the repository and used only the package and its README; its verifier passed."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Reporting ad hoc test sessions by specific AI agents, console verification banners, and personal storage locations departs from the PRD register into informal lab-notebook journaling (contrast reference-2, Sec. IX B: "In order to thoroughly cross-check the analysis described above, an alternate frequentist joint fit analysis was performed which differs in the treatment of the systematic errors").
+   CHANGE: Excise anecdotes about automated test sessions, console strings, and private storage allocations in favor of a concise statement of the verification protocol and independent reproducibility criteria.
+   SHARE: 12
+5. QUOTE: "Rebuilding this note’s PDFs assembles documents; it does not reproduce scientific results."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Defensive warnings, apologetic hedging, and repeated disclaimers about what the reader cannot reproduce introduce a defensive record-keeping tone absent from PRD papers, which define the scope of their data and methods neutrally and positively (e.g., reference-3, Sec. 4.1: "The data preparation comprises evaluation of pedestals, charge calibration, mitigation of readout issues, tail removal and noise suppression").
+   CHANGE: Reframe negative disclaimers and document-compilation caveats into direct, neutral definitions of the scope and purpose of the released reproduction materials.
+   SHARE: 10
+6. QUOTE: "A ✓ marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already fixed); the rest are packaging."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Using checkmark symbols (✓) and unresolved placeholder tags like "acceptance_question: UNDECLARED" resembles an internal project-tracking punch list or unfinished draft rather than the completed schemas and tables of a published paper (e.g., reference-1, Tab. XIV).
+   CHANGE: Remove checkmarks, task-tracker symbols, and placeholder tags, presenting the release schema as a clean, standardized descriptive specification.
+   SHARE: 8
+7. QUOTE: "Scripts, figure files and stored outputs call training-seed variation seedscan; the two names denote the same variance source."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Introducing project-internal nicknames, script jargon, and conflicting variable aliases reads like developer documentation rather than the standard, rigorous terminology expected in a PRD paper (e.g., reference-4, Sec. 6.3: "In the first step, the detector response is equalized using throughgoing cosmic-ray muons").
+   CHANGE: Standardize all naming conventions to consistent physical and mathematical terms, eliminating references to internal colloquialisms and conflicting script aliases.
+   SHARE: 6
+8. QUOTE: "Do not check the sign of λmin , which sits at the noise floor and carries no information; a second host reproduces λmin to only five significant digits."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Documenting machine-specific floating-point variations across secondary host computers reads like a local debugging diary rather than a formal discussion of matrix conditioning and numerical precision (e.g., reference-1, Sec. VI C: "The binning of this matrix is chosen to match that of the detector error covariance matrix shown in Table XVIII").
+   CHANGE: Replace reports of host-dependent numerical discrepancies with formal discussions of matrix conditioning, regularized inversion, and precision limits.
+   SHARE: 5
+9. QUOTE: "No producing revision or job is recorded for the other objects, and the assembled package carries none."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Confessing missing internal job numbers and incomplete version tracking reflects an internal administrative audit rather than a published specification of provenance (e.g., reference-4, Sec. 6.1: "The result of this procedure is a set of three-dimensional spatial distortion and electric field maps that are included in the ProtoDUNE-SP simulation used in the first results showcased in this work").
+   CHANGE: State the provenance schema and integrity verification standards uniformly without narrating internal bookkeeping omissions or incomplete records.
+   SHARE: 4
+10. QUOTE: "Figure 36 shows, integral by integral, the coverage test of §9.5 under the reduction of the signal rate."
+   SCOPE: this passage
+   PROBLEM: An isolated, one-sentence section serving as a bare figure pointer reads like an incomplete draft placeholder rather than a fully edited PRD appendix (e.g., reference-1, Sec. VI B).
+   CHANGE: Expand the section into a self-contained explanation of the coverage test procedure and its physical significance, or integrate the figure reference directly into the relevant main-text section.
+   SHARE: 2
+ENOUGH: Yes, implementing these changes in full would bring chapter.txt to a rating of 4 by eliminating internal bookkeeping, tutorial imperatives, and development history in favor of the objective, declarative register typical of published PRD technical write-ups.

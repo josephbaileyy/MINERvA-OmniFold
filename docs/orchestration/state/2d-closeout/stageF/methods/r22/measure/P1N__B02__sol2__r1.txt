@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is precise and appropriate for a detailed technical companion, but repeated provenance audits, internal bookkeeping, and development-history explanations create conspicuous departures from PRD register that require a dedicated language pass.
+1. QUOTE: "Both of those central values are regenerated to ≲ 2 × 10−11 by runs with one driver and one input that differ only in the seed, so the difference is attributable to the seed, as inferred from the two regenerations."
+   REWRITE: Runs using the same driver and input, differing only in the training seed, reproduce both central values to ≲ 2 × 10−11, confirming that their difference arises from the seed choice.
+2. QUOTE: "Its seed was not fixed: the driver version it ran had no seed option, and its production job script passed no seed. The run’s own log was not found. Two driver revisions regenerate it to 7 × 10−15 ."
+   REWRITE: The exact-split calculation used a driver without a seed-setting option, and no seed was specified in the production script. Although the original run log is unavailable, two driver revisions reproduce the result to 7 × 10−15.
+3. QUOTE: "Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed."
+   REWRITE: Using seed 42 for both the central value and the statistical ensemble was the less computationally expensive of the two options considered for ensuring a common training seed.

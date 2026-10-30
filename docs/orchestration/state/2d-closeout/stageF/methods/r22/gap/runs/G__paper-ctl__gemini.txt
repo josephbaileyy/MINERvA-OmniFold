@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: This injects collaboration-internal review tickets, revision history, and informal diary remarks into the text, which is wholly incompatible with PRD journal style.
+   CHANGE: Delete all internal issue-tracking tickets, continuous-integration build notes, and informal logbook remarks from the text and figure captions.
+   SHARE: 20
+2. QUOTE: "The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: The text continuously defers basic definitions, methodology, and validation results to an unpublished collaboration analysis note rather than presenting a self-contained paper.
+   CHANGE: Incorporate essential procedures directly into the text or public supplemental material and remove all section citations to the internal analysis note.
+   SHARE: 18
+3. QUOTE: "Interval coverage has not been validated."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: The manuscript repeatedly resorts to defensive, audit-style disclaimers of what has not been validated instead of presenting the statistical methodology and its evaluated systematic scope objectively.
+   CHANGE: Recast defensive disclaimers into objective statements of the analysis assumptions and evaluated systematic uncertainties, matching the direct register of reference papers such as reference-1 ("To maintain comparability between the unfolding methods under consideration, we use the same set of 500 variations for each of the procedures.").
+   SHARE: 16
+4. QUOTE: "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: The text relies on ad hoc internal pipeline labels and development nicknames ("joint-test estimator", "joint cells", "support rule", "AnaTuples") instead of standard, physically or algorithmically descriptive terminology.
+   CHANGE: Replace internal project labels with transparent, standard algorithmic and physical terms defined at first use, following the convention of reference-1 (e.g., "UniFold", "MultiFold", and "OmniFold").
+   SHARE: 12
+5. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The narrative details historical development iterations, abandoned tunings, and internal collaboration acceptance criteria rather than presenting the final validated model and its scientific rationale.
+   CHANGE: State only the final operational configuration and its evaluated performance, omitting developmental trial-and-error narrative and references to internal acceptance thresholds.
+   SHARE: 10
+6. QUOTE: "Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations, and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Algorithmic precision and classifier sensitivity are reported as a failed internal quality-assurance requirement rather than being treated as standard systematic uncertainties.
+   CHANGE: Characterize numerical and initialization variance as an evaluated systematic uncertainty component or stabilize it through ensembling as in reference-1 ("The neural network (NN) uncertainty indicates the standard error due to just the neural network's stochastic training process, obtained by running the procedure 5 separate times.").
+   SHARE: 8
+7. QUOTE: "The cause is not known, and these data cannot establish which period is correct."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Dataset stability across run periods is documented in a helpless record-keeping logbook tone ("cause is not known", "cannot establish which period is correct") rather than being handled as an empirical systematic uncertainty.
+   CHANGE: Report time-dependent dataset variations neutrally as an evaluated systematic uncertainty covering beam and detector conditions without conversational admissions of bafflement.
+   SHARE: 6
+8. QUOTE: "The source of the shape difference has not been identified."
+   SCOPE: this passage
+   PROBLEM: The discrepancy with a previous publication is dismissed with a blunt, conversational assertion that reads like an unresolved note to coauthors.
+   CHANGE: Characterize the comparison with the published benchmark quantitatively and discuss it in terms of known physical or regularization differences between the two unfolding frameworks.
+   SHARE: 4
+9. QUOTE: "This constant is inherited from the analysis framework’s definition."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: A kinematic observable definition is justified by appealing to the quirks of an inherited software framework rather than physical or experimental principles.
+   CHANGE: Define the observable directly by its operational mathematical formula and detector threshold conventions, omitting mention of legacy software inheritance.
+   SHARE: 3
+10. QUOTE: "The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general."
+   SCOPE: this passage
+   PROBLEM: The manuscript introduces an abrupt, memo-like "Scope." heading and legalistic disclaimer rather than integrating the study's boundaries into the narrative.
+   CHANGE: Remove the memo-style heading and articulate the scope and applicability of the results smoothly within the standard introductory or concluding prose.
+   SHARE: 3
+ENOUGH: Yes, implementing these changes in full would eliminate the internal-note record-keeping tone, defensive hedging, and unstandardized jargon, bringing the manuscript to the register of a typical published PRD paper.

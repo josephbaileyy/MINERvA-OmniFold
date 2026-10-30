@@ -1,0 +1,799 @@
+{
+ "per_run": {
+  "B01|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 60.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 28.0,
+    "WORDING": 12.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 60.0
+   },
+   "n": {
+    "PROTECTED": 6,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 1,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 6
+   }
+  },
+  "B01|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 16.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 18.0,
+    "WORDING": 66.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 16.0
+   },
+   "n": {
+    "PROTECTED": 2,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 1,
+    "WORDING": 7,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 2
+   }
+  },
+  "B02|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 51.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 27.0,
+    "WORDING": 22.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 51.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 4,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 5
+   }
+  },
+  "B02|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 74.0,
+    "WORDING": 26.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 5,
+    "WORDING": 3,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B03|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 81.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 3.0,
+    "WORDING": 16.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 81.0
+   },
+   "n": {
+    "PROTECTED": 7,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 1,
+    "WORDING": 2,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 7
+   }
+  },
+  "B03|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 52.0,
+    "WORDING": 48.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 4,
+    "WORDING": 6,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B04|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 55.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 15.0,
+    "WORDING": 30.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 55.0
+   },
+   "n": {
+    "PROTECTED": 4,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 4,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 4
+   }
+  },
+  "B04|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 36.0,
+    "WORDING": 64.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 7,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B05|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 62.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 0.0,
+    "WORDING": 38.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 62.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 0,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 5
+   }
+  },
+  "B05|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 50.0,
+    "WORDING": 50.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B06|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 12.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 58.0,
+    "WORDING": 30.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 12.0
+   },
+   "n": {
+    "PROTECTED": 1,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 4,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 1
+   }
+  },
+  "B07|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 33.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 15.0,
+    "WORDING": 52.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 33.0
+   },
+   "n": {
+    "PROTECTED": 3,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 1,
+    "WORDING": 6,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 3
+   }
+  },
+  "B07|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 37.0,
+    "WORDING": 63.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 6,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B08|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 54.0,
+    "WORDING": 46.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B09|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 39.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 5.0,
+    "WORDING": 56.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 39.0
+   },
+   "n": {
+    "PROTECTED": 4,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 1,
+    "WORDING": 7,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 4
+   }
+  },
+  "B09|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 43.0,
+    "WORDING": 57.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B10|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 45.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 15.0,
+    "WORDING": 40.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 45.0
+   },
+   "n": {
+    "PROTECTED": 4,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 3,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 4
+   }
+  },
+  "B10|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 59.0,
+    "WORDING": 41.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B11|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 69.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 10.0,
+    "WORDING": 21.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 69.0
+   },
+   "n": {
+    "PROTECTED": 7,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 1,
+    "WORDING": 3,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 7
+   }
+  },
+  "B11|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 69.0,
+    "WORDING": 31.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 5,
+    "WORDING": 3,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B12|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 33.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 34.0,
+    "WORDING": 18.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 15.0,
+    "PROTECTED+DETAIL": 33.0
+   },
+   "n": {
+    "PROTECTED": 4,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 4,
+    "WORDING": 3,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 1,
+    "PROTECTED+DETAIL": 4
+   }
+  },
+  "B12|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 69.0,
+    "WORDING": 31.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 5,
+    "WORDING": 4,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B13|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 55.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 10.0,
+    "WORDING": 35.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 55.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 1,
+    "WORDING": 4,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 5
+   }
+  },
+  "B13|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 56.0,
+    "WORDING": 44.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 3,
+    "WORDING": 5,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B14|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 50.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 0.0,
+    "WORDING": 35.0,
+    "UNRESOLVED": 15.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 50.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 0,
+    "WORDING": 3,
+    "UNRESOLVED": 1,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 5
+   }
+  },
+  "B14|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 51.0,
+    "WORDING": 49.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 4,
+    "WORDING": 4,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "B15|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 47.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 17.0,
+    "WORDING": 36.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 47.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 3,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 5
+   }
+  },
+  "B15|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 0.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 30.0,
+    "WORDING": 70.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 0.0
+   },
+   "n": {
+    "PROTECTED": 0,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 8,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 0
+   }
+  },
+  "paper|gemini": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 50.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 40.0,
+    "WORDING": 0.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 10.0,
+    "PROTECTED+DETAIL": 50.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 4,
+    "WORDING": 0,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 1,
+    "PROTECTED+DETAIL": 5
+   }
+  },
+  "paper|sol2": {
+   "raw_sum": 100.0,
+   "share": {
+    "PROTECTED": 13.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 40.0,
+    "WORDING": 42.0,
+    "UNRESOLVED": 5.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 13.0
+   },
+   "n": {
+    "PROTECTED": 3,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 4,
+    "UNRESOLVED": 1,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 3
+   }
+  }
+ },
+ "summary": {
+  "paper|sol2": {
+   "runs": 1,
+   "pieces": [
+    "paper"
+   ],
+   "share": {
+    "PROTECTED": 13.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 40.0,
+    "WORDING": 42.0,
+    "UNRESOLVED": 5.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 13.0
+   },
+   "n": {
+    "PROTECTED": 3,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 2,
+    "WORDING": 4,
+    "UNRESOLVED": 1,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 3
+   },
+   "raw_sums_not_100": []
+  },
+  "paper|gemini": {
+   "runs": 1,
+   "pieces": [
+    "paper"
+   ],
+   "share": {
+    "PROTECTED": 50.0,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 40.0,
+    "WORDING": 0.0,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 10.0,
+    "PROTECTED+DETAIL": 50.0
+   },
+   "n": {
+    "PROTECTED": 5,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 4,
+    "WORDING": 0,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 1,
+    "PROTECTED+DETAIL": 5
+   },
+   "raw_sums_not_100": []
+  },
+  "note|sol2": {
+   "runs": 15,
+   "pieces": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15"
+   ],
+   "share": {
+    "PROTECTED": 1.8666666666666667,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 50.4,
+    "WORDING": 47.733333333333334,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 1.8666666666666667
+   },
+   "n": {
+    "PROTECTED": 3,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 49,
+    "WORDING": 78,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 3
+   },
+   "raw_sums_not_100": []
+  },
+  "note|sol2 (13)": {
+   "runs": 13,
+   "pieces": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B07",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15"
+   ],
+   "share": {
+    "PROTECTED": 1.2307692307692308,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 49.53846153846154,
+    "WORDING": 49.23076923076923,
+    "UNRESOLVED": 0.0,
+    "UNVERIFIED": 0.0,
+    "PROTECTED+DETAIL": 1.2307692307692308
+   },
+   "n": {
+    "PROTECTED": 2,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 42,
+    "WORDING": 68,
+    "UNRESOLVED": 0,
+    "UNVERIFIED": 0,
+    "PROTECTED+DETAIL": 2
+   },
+   "raw_sums_not_100": []
+  },
+  "note|gemini": {
+   "runs": 13,
+   "pieces": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B07",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15"
+   ],
+   "share": {
+    "PROTECTED": 52.30769230769231,
+    "PROTECTED-B2-DETAIL": 0.0,
+    "STRUCTURE": 13.76923076923077,
+    "WORDING": 31.615384615384617,
+    "UNRESOLVED": 1.1538461538461537,
+    "UNVERIFIED": 1.1538461538461537,
+    "PROTECTED+DETAIL": 52.30769230769231
+   },
+   "n": {
+    "PROTECTED": 64,
+    "PROTECTED-B2-DETAIL": 0,
+    "STRUCTURE": 21,
+    "WORDING": 48,
+    "UNRESOLVED": 1,
+    "UNVERIFIED": 1,
+    "PROTECTED+DETAIL": 64
+   },
+   "raw_sums_not_100": []
+  }
+ }
+}

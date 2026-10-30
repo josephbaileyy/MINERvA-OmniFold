@@ -1,0 +1,38 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Controls 0, 1, 2, 3, 4, 5, 6, 8 passed."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Numbered control-status reports, declarations, grading records and assurances about exact reruns give parts of the chapter the tone of an internal validation log.
+   CHANGE: Replace this bookkeeping with named checks and their relevant outcomes, remove development and regression-check history, and retain procedural details that explain or permit reproduction of the analysis.
+   SHARE: 25%
+2. QUOTE: "GiBUU’s vertex carries 0.890 of Cmodel ’s trace, NuWro’s 0.095 and GENIE + MEC’s 0.014."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: The accumulation of local terms such as “vertex,” “vertex-family,” “graded,” “records” and “model-only reach” makes otherwise conventional uncertainty and validation statements sound project-specific.
+   CHANGE: Prefer explicit terms such as generator-induced shift vector, covariance contribution, test criterion and test result, defining necessary local labels or referring directly to their existing definitions.
+   SHARE: 18%
+3. QUOTE: "Statements in those sections about that central value and that covariance do not describe this result, and statements here do not describe them."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Repeated exclusions and instructions about how results must not be interpreted make the prose more defensive and administratively framed than the reference chapters.
+   CHANGE: Consolidate repeated qualifications into a concise scope statement for each result or diagnostic, preserving distinct limitations concerning generator dependence, detector response, independence and coverage.
+   SHARE: 18%
+4. QUOTE: "Each enters as its gated, normalized shape ratio to GENIE CV on the fine grid, built as the reweighting ratios of the Cmodel vertices are, pooled over a coarser cell or set to one where the tune’s sample fails the ratio’s statistical gate, and applied to the simulated truth under the simulation’s detector response."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Several sentences stack construction steps, conditions, qualifications and comparisons without a clear grammatical hierarchy, exceeding the manageable density of the reference prose.
+   CHANGE: Divide these sentences into ordered statements of construction, exceptional treatment and application, and separate numerical summaries from the qualifications governing them.
+   SHARE: 16%
+5. QUOTE: "In every cell, 77–100% of the prior weight lies beside a step in the reweighting ratio larger than 0.1 drawn by the noise gate or a cut, and the shifts enter as measured."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Expressions such as “lies beside,” “drawn by,” “enter as measured,” “cannot hold” and “read by group” substitute loose verbal shorthand for precise relationships and operations.
+   CHANGE: State directly which weights are affected, how the discontinuities arise and how the shifts are used, applying the same concrete wording to sample restrictions, group comparisons and correlation modifications.
+   SHARE: 10%
+6. QUOTE: "Cresp is the response of configuration (e)’s data result to a one-standard-deviation scale of the simulation’s reconstructed recoil energy, for protons, mesons, electromagnetic deposits and other deposits separately, summed over the four."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The wording blurs the distinctions between an energy-scale variation, the resulting shift in the unfolded estimate and its covariance contribution, while “species” elsewhere inadequately names the mixed deposit categories.
+   CHANGE: Describe the applied scale variations, resulting shifts and construction of the summed covariance explicitly, and use consistent names for the four energy-deposit categories.
+   SHARE: 8%
+7. QUOTE: "Its median per-cell relative σ is 2.14%, and adding it raises the total’s σ by a factor of 1.011–1.220 (median 1.048)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Pronouns and abbreviated references occasionally have competing antecedents, especially here, where the preceding sentence introduces the separate cross-talk term.
+   CHANGE: Name Cresp explicitly in this sentence and replace similarly ambiguous references to matrices, groups, corrections and totals with the specific quantities intended.
+   SHARE: 5%
+ENOUGH: Yes; these changes, applied throughout, would bring the chapter to 4 while retaining its technical depth, reproducibility details and substantive limitations.

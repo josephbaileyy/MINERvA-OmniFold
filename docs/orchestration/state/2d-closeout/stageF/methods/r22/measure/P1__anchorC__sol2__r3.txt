@@ -1,0 +1,15 @@
+RATING: 4
+JUSTIFICATION: The prose generally matches published PRD register, but occasional conversational asides, emphatic phrasing, and redundant explanations warrant light line editing.
+1. QUOTE: "One cannot get away with training a model on
+a single zT instance and expecting it to work everywhere!"
+   REWRITE: Training at a single value of zT does not ensure applicability at other values.
+2. QUOTE: "We focus on the ATLAS and CMS
+experiments at the Large Hadron Collider (LHC) for our
+examples, but this discussion is relevant for all of HEP
+(and really any experiment)."
+   REWRITE: Our examples focus on the ATLAS and CMS experiments at the Large Hadron Collider (LHC), but the discussion applies more broadly to calibration in HEP and other experimental fields.
+3. QUOTE: "Luckily,
+classifiers are almost never used this way in HEP, since
+the classification score is not interpreted directly as a
+probability."
+   REWRITE: In HEP, classifier scores are rarely interpreted directly as signal probabilities.

@@ -1,0 +1,58 @@
+CURRENT RATING: 2
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "They are quoted below from the test specification, changed only in typesetting."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Quoting an internal specification verbatim alongside editorial commentary regarding bracketed annotations reflects an internal compliance audit rather than an authoritative, integrated journal narrative.
+   CHANGE: Recast the six formal conditions into standard descriptive exposition that directly introduces the physical assumptions and modeling scope in the authorial voice of the collaboration.
+   SHARE: 25
+
+2. QUOTE: "Second, a bounded extension of the production budget was decided during production, while the calibration’s monitoring output showed observed claim p values, so that the sequential rule, rather than the budget, could set the stop."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Chronicling procedural deliberations, reviewer interactions, and real-time computing budget adjustments reads like an administrative project log rather than a published methodology.
+   CHANGE: Remove all accounts of internal review history and computational budget negotiations, presenting the sequential stopping rule and sample-size bounds purely as established statistical criteria.
+   SHARE: 15
+
+3. QUOTE: "That conditioning has not been validated."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Inserting blunt disclaimers about unvalidated choices imparts a defensive, adversarial self-audit tone that contrasts sharply with the confident, balanced evaluation of systematic limitations seen in PRD papers.
+   CHANGE: Reframe the discussion from defensive disclaimers into an objective, neutral statement of the conditioning assumption and its expected impact on the test distributions.
+   SHARE: 15
+
+4. QUOTE: "An independent recomputation, with separately written code, of every p value and decision from the stored products agrees with the production evaluation on all 1379 compared rows."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Reporting software verification by citing exact row matches across internal database tables mimics an internal quality assurance sign-off rather than published scientific prose.
+   CHANGE: State concisely that an independent software implementation verified all calculated p-values and decisions, omitting the internal database row counts and record-keeping commentary.
+   SHARE: 10
+
+5. QUOTE: "A2 requires the lost pseudo-experiments to have been lost independently of their outcomes, which has not been shown."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Treating routine batch-computing job drops and re-executions as formal methodological conditions and section headings reflects an internal execution log rather than a journal report.
+   CHANGE: Remove the references to lost computing runs from the main narrative and incorporate the completed reruns directly into the total statistics of the ensemble.
+   SHARE: 10
+
+6. QUOTE: "GiBUU: Eν > 20 GeV absent [the GiBUU sample’s energy limit, §8.5] and its out-ofdomain truth (p∥ ≥ 6 GeV/c, Eν -truncated) enters the migrations into the domain cells; all generators: Eν > 100 GeV absent (only the data’s flux integral stops there; negligible)"
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The use of verbless bullet fragments, bracketed explanations, and truncated shorthand reads like informal meeting slides or developer scratch notes.
+   CHANGE: Rewrite the technical conditions in complete, grammatically standard sentences that clearly define the phase-space truncations and kinematic boundaries.
+   SHARE: 10
+
+7. QUOTE: "They do not use, and do not validate, the five-axis covariance of the configuration-(a) central value (§9.6)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Incorporating opaque internal project labels like "configuration-(a)" without immediate definition marks the text as an unedited internal report meant strictly for study insiders.
+   CHANGE: Replace project-internal configuration tags with clear, descriptive terminology explaining the specific physical dataset or unfolding variant being discussed.
+   SHARE: 5
+
+8. QUOTE: "This factor comes from the review of the design, and its derivation is not given."
+   SCOPE: this passage
+   PROBLEM: Explicitly noting that a parameter lacks a derivation from an internal design review reads like an internal referee grievance rather than an agreed-upon collaboration manuscript.
+   CHANGE: State the parameter value and its associated systematic spread directly with a succinct physical or empirical justification, omitting any reference to review-committee origins.
+   SHARE: 5
+
+9. QUOTE: "They are not a measured cross section, and they add no reportable uncertainty."
+   SCOPE: this passage
+   PROBLEM: Leading the chapter introduction with a succession of negative disclaimers establishes an unnecessarily apologetic and defensive posture.
+   CHANGE: Open the chapter with a direct, positive definition of the goals and physical scope of the generator hypothesis tests before identifying their relationship to the cross-section analysis.
+   SHARE: 5
+
+ENOUGH: Yes, implementing these changes in full would eliminate the prevailing record-keeping, defensive, and compliance-audit tone, bringing the chapter into alignment with the established PRD register at a solid rating of 4.

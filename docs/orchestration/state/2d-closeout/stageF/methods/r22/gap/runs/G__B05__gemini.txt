@@ -1,0 +1,64 @@
+CURRENT RATING: 2
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "With the purity-based subtraction, the choice of GBDT estimator spreads the distance over about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04, and LightGBM with seeds 1–10 gives 2.64–2.75."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Logging trial-by-trial software runs, specific machine-learning random seeds, and incremental iteration tweaks reads like an optimization notebook rather than the synthesized treatment of systematic variations found in the reference chapters.
+   CHANGE: Consolidate the estimator comparisons into a bounded systematic uncertainty on the unfolding method without detailing individual training seeds or iteration counts, matching the concise cross-check register of reference-2 ("Since the M1 and M2 analyses are consistent with each other, only results from M1 are given below").
+   SHARE: 20
+
+2. QUOTE: "The systematic row holds 43 bands from the July universe sweep (which has 44 bands and 187 universes) plus the normalization; the ML row has five training-seed settings and the run-period row three run periods."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Citing project-internal chronological milestones such as "the July universe sweep" introduces project-management record keeping that does not belong in published journal prose.
+   CHANGE: Replace the internal calendar reference with an objective physical description of the systematic variations, in the register of reference-1 ("Altered CC sample distributions are produced using 16 representative points ~xFk SI on the 1-σ surface for the parameters").
+   SHARE: 15
+
+3. QUOTE: "The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram and its projections (hXSec2D, hXSec_pt, hXSec_pz), not the covariance of §4."
+   SCOPE: this passage
+   PROBLEM: Exposing internal software object names and code-level histogram identifiers (`hXSec2D`, `hXSec_pt`, `hXSec_pz`) belongs to a software repository or user manual rather than archival physics prose.
+   CHANGE: Remove the code variable names entirely and state directly that the error bars represent the diagonal statistical uncertainties of the unfolded cross sections.
+   SHARE: 15
+
+4. QUOTE: "We therefore quote the per-bin pulls and the truncated result together, with a regularization scan made for the exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App. A.4)."
+   SCOPE: this passage
+   PROBLEM: Recounting the historical progression of unrepeated intermediate checks and defensively justifying omitted calculations reads like an internal review response rather than a settled presentation of methodology.
+   CHANGE: State the chosen regularization and matrix inversion procedure directly and authoritatively, adopting the confident register of reference-2 ("In order to find the best-fit values and confidence intervals for sin2 θ23 and |∆m2 |, the profiled likelihood is maximized").
+   SHARE: 12
+
+5. QUOTE: "The public release does not let us determine the origin of this difference; our leading hypothesis is the FHC-only constraint file."
+   SCOPE: this passage
+   PROBLEM: Speculating informally about unconfirmed causes of discrepancies while commenting on external data release limitations introduces a conversational memo tone absent from the reference chapters.
+   CHANGE: State the observed numerical difference and its bounds objectively without speculative or conversational phrasing such as "our leading hypothesis", mirroring the objective style of reference-4 ("These explanations are at present speculative; more detailed study is ongoing and will be reported in a future work").
+   SHARE: 10
+
+6. QUOTE: "Neither map is flat near unity: both show the same tune deficit, with ratios above unity over most of the plane and below it at the lowest pT ."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Stacking defensive hedges and negative disclaimers ("Neither map is flat...", "Neither map has...", "descriptive, not...") creates an argumentative posture rather than the neutral, declarative register of published papers.
+   CHANGE: Recast negative and defensive disclaimers into direct, positive descriptions of what the distributions demonstrate, following the affirmative register of reference-1 ("We see a clear separation between the two event types, and we accept an event as a νe CC candidate if it satisfies...").
+   SHARE: 10
+
+7. QUOTE: "6.4 Anatomy of the χ2 = 2.27 tension"
+   SCOPE: this passage
+   PROBLEM: Using dramatic, informal phrasing such as "Anatomy of the... tension" departs from the conventional, neutral section headings seen throughout the reference papers.
+   CHANGE: Rename the heading to an objective, standard technical title such as "Investigation of consistency with published covariance" or "Covariance eigenspectrum analysis", matching headings like "Multi-Nucleon Effects Study" in reference-2.
+   SHARE: 6
+
+8. QUOTE: "Figure 14: Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of the published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Remarking within a figure caption on the cosmetic absence of panel titles constitutes informal meta-editorial banter rather than physical or graphical documentation.
+   CHANGE: Delete the commentary regarding missing panel titles and restrict the caption strictly to describing the plotted physical quantities and display conventions, in the register of reference-3 ("The color scale represents the charge for each channel averaged over five ticks with the range chosen to make the noise visible").
+   SHARE: 5
+
+9. QUOTE: "Our flux band carries MAT’s per-universe ν–e and inverse-muon-decay constraint weights."
+   SCOPE: this passage
+   PROBLEM: Introducing an undefined internal collaboration software acronym ("MAT") treats local codebase tools as common knowledge, departing from the standard definitions provided in the reference chapters.
+   CHANGE: Define the acronym on first use or refer to the package formally with an appropriate citation, as done for detector software in reference-1 ("We use SKDETSIM [3, 9], a GEANT3-derived simulation of the SK detector...").
+   SHARE: 4
+
+10. QUOTE: "Table 5: Agreement with arXiv:2106.16210."
+    SCOPE: this passage
+    PROBLEM: Inserting a raw arXiv preprint identifier into a table title departs from the formal bibliographic citation conventions of PRD.
+    CHANGE: Replace the raw preprint string with a formal reference callout (e.g., "Ref. [3]"), in keeping with standard journal citation style.
+    SHARE: 3
+
+ENOUGH: Yes, implementing these changes in full would eliminate the internal-note record keeping, software-level variable names, defensive hedging, and informal tone, bringing chapter.txt cleanly to a rating of 4.

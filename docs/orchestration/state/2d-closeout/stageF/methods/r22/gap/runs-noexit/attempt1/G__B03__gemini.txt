@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "We therefore make no claim about coverage, and goodness-of-fit values computed with this covariance are indicative only."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: This defensive disclaimer and hedging posture departs from the objective, authoritative statement of uncertainties characteristic of the reference chapters.
+   CHANGE: State the validation scope and statistical coverage neutrally and factually without self-deprecating disclaimers, adopting the register of Ref. 1 ("The covariance of these parameters, Vs , is used to propagate the uncertainties in the detector simulation to the oscillation analyses.").
+   SHARE: 20
+2. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver; the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Software verification benchmarks, commit logs, and machine-precision regression checks belong in internal code reviews and technical repositories, whereas the reference chapters report only physical and analytical methodology.
+   CHANGE: Remove all version-control, commit-driver, and floating-point regression logs, reporting only the validated physical model variations.
+   SHARE: 15
+3. QUOTE: "The band sum drops Rvp1pi, which encodes the same shift as Rvn1pi (§4.6), and holds 43 bands plus the flat normalization."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The use of raw code variable names without physical definition departs from the standard particle physics terminology maintained throughout the reference chapters.
+   CHANGE: Replace raw code identifiers with standard physical descriptions, as demonstrated in Ref. 1 ("suppression of backgrounds, particularly those from NC and single-pion production processes, is needed").
+   SHARE: 15
+4. QUOTE: "Its per-bin σ is a median 0.27 of that of the earlier ten-seed block, because the bootstrap × seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block; the training-seed block carries it only at its 1/20 share, a median 0.763 of its diagonal."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Narrating the history of discarded project phases and superseded iterations reads like an internal development notebook rather than the polished presentation of the final methodology found in the reference chapters.
+   CHANGE: Excise narrative comparisons to earlier, superseded scans or pilot budgets, presenting only the final uncertainty estimation method.
+   SHARE: 10
+5. QUOTE: "Detector and model systematics use the July universe sweep: MAT-MINERvA’s 44 error bands and 187 universes, identical to the standard systematics set of the published analysis."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Relying on opaque internal framework names and calendar milestone labels reads like an internal collaboration memo rather than self-contained journal prose.
+   CHANGE: Replace project-internal framework acronyms and calendar sweeps with neutral descriptive physics terminology explaining the systematic evaluation framework.
+   SHARE: 10
+6. QUOTE: "Each setting is a triplet (s, s+1, s+2) of seeds for the step-1 classifier, step-2 classifier and miss regressor, with s ∈ {42, 45, 48, 51, 54}; the block has rank 4 (§A.2.1)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Cataloging literal pseudo-random integer seeds reflects software execution logging rather than the general algorithmic description expected in journal articles.
+   CHANGE: Describe the optimization spread as an ensemble variance across multiple random training initializations without recording literal integer seeds.
+   SHARE: 8
+7. QUOTE: "The five lateral bands are taken from re-unfolds of re-selected universes (event loops that re-apply the selection to each universe’s shifted kinematics; §4.7) at the same seed."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Colloquial laboratory jargon and casual procedural phrases depart from the formal, passive or standard active constructions used in the reference chapters.
+   CHANGE: Restructure informal lab slang and procedural phrasing into standard formal prose describing systematic variations, as in Ref. 1 ("Altered CC sample distributions are produced using 16 representative points...").
+   SHARE: 7
+8. QUOTE: "Top 2D bands: Flux 3.71 % (with MAT’s ν–e and inverse-muon-decay constraint weights), Muon_Energy_MINOS 2.36 %, MinosEfficiency 1.50 %, Muon_Energy_MINERvA 1.44 %."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Telegraphic notes and fragmented bullet-style summaries depart from the complete, grammatically structured paragraphs and formal tables of the reference chapters.
+   CHANGE: Convert telegraphic bullet fragments into full expository sentences or dedicated summary tables, matching the presentation in Ref. 1 ("Table XIV: Event reduction for the νe CC selection at the far detector.").
+   SHARE: 5
+9. QUOTE: "Figure 4 shows the grouped fractional-uncertainty projections in the published Fig. 6/7 style (the full 205×205 covariance projected exactly, C1D = P C2D P ⊤ , before dividing by the 1D central value)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Self-conscious commentary on external paper styling and explicit justification for omitted analyses depart from the autonomous, direct exposition of results in the reference chapters.
+   CHANGE: Describe figures and projections strictly by their physical observables and mathematical projection operators, omitting meta-commentary on the graphic styles of other publications.
+   SHARE: 5
+10. QUOTE: "One systematic category provided in the input products, NormDISCC, is identically zero; we carry it as zero, which we have not been able to confirm is intended."
+   SCOPE: this passage
+   PROBLEM: Reporting an unverified upstream anomaly as an unresolved suspicion reflects an unfinished internal issue tracker rather than the vetted, decisive register of the reference chapters.
+   CHANGE: State the treatment of deep-inelastic-scattering normalization decisively as an adopted modeling choice or verified parameter rather than an unconfirmed implementation doubt.
+   SHARE: 5
+ENOUGH: Yes, making the changes above in full would eliminate the internal-note record-keeping, developer jargon, and defensive posture, thereby raising chapter.txt to a rating of 4.

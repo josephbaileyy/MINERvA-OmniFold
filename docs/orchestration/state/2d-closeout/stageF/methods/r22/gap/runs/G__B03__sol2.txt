@@ -1,0 +1,53 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "These findings left the earlier printed budget unchanged."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Repeated references to earlier budgets, dated sweeps, later builds and superseded values make the exposition follow the project’s revision history rather than the final analysis.
+   CHANGE: Describe the final construction directly, identify earlier constructions by stable references, and consolidate historically framed material into methodological comparisons that explain the relevant differences.
+   SHARE: 18%
+2. QUOTE: "The block does not identify which period is correct."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Qualifications, exclusions and assurances recur after their scope has already been established, giving parts of the chapter a defensive and repetitive register.
+   CHANGE: State each limitation or convention fully at its principal location and use concise cross-references elsewhere, preserving distinctions between genuinely different limitations.
+   SHARE: 16%
+3. QUOTE: "The universe × retraining values and the band-centering numbers cannot be recomputed from the saved covariance products, so they were not recomputed independently; the verification compared only the checksums of their inputs."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Accounts of checksum verification, committed drivers, passing program checks and available saved products often read as an internal audit record rather than an explanation of the method and its limitations.
+   CHANGE: State the reproducibility constraint and its consequence directly, retaining necessary implementation and verification details in a compact reproducibility account without narrating the checking process.
+   SHARE: 15%
+4. QUOTE: "The two examined small-input responses, EtaNCEL and NormNCRES, are consistent with trainer instability contributing at the ML-noise scale."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Workflow shorthand and software labels sometimes carry the explanation without sufficiently explicit physical or statistical descriptions.
+   CHANGE: Explain analysis-specific expressions such as small-input responses, knob bands, noise-gated cells and the ML-noise scale, and pair necessary software identifiers with descriptive names or clear references to their definitions.
+   SHARE: 12%
+5. QUOTE: "The cells beside a step of more than 0.1 in a generator’s reweighting ratio drawn by its construction, where a pooled, noise-gated or unreported cell meets another cell, enter as measured."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Awkward modifier attachment, vague antecedents and expressions such as “enter as measured” obscure the intended statement.
+   CHANGE: Rewrite these passages with explicit subjects and antecedents, placing conditions beside the quantities they qualify and stating the treatment of the affected cells directly.
+   SHARE: 10%
+6. QUOTE: "Its per-bin σ is a median 0.27 of that of the earlier ten-seed block, because the bootstrap × seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block; the training-seed block carries it only at its 1/20 share, a median 0.763 of its diagonal."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Several sentences combine numerical comparisons, causal explanations and variance allocations in nested clauses whose referents are difficult to follow.
+   CHANGE: Separate the comparison, explanation and variance allocation into successive sentences, explicitly naming each denominator and retaining the numerical detail.
+   SHARE: 8%
+7. QUOTE: "Its per-cell median is 3.71 % (84th percentile 7.10 %, maximum 21.10 %)."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Numerical summaries sometimes refer grammatically to a covariance or block while leaving the reader to infer whether the reported quantity is a relative standard deviation, variance contribution or another statistic.
+   CHANGE: Name the summarized quantity consistently, specify the population over which medians and percentiles are taken, and distinguish covariance elements, standard deviations and variance fractions in the prose.
+   SHARE: 7%
+8. QUOTE: "That says nothing about its coverage, that is, about whether its size is right."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Conversational explanations and emphatic judgments such as “genuinely smaller,” “a real defect” and “the test is not tight” interrupt the otherwise technical register.
+   CHANGE: Replace these expressions with neutral statements of the statistical implication, comparison or sensitivity limit, without weakening the substantive qualification.
+   SHARE: 6%
+9. QUOTE: "The five-axis covariance of the configuration-(a) central value"
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Repeated long product descriptions and shifting labels make distinctions between covariance constructions unnecessarily cumbersome to track.
+   CHANGE: Define concise, unambiguous names for the reported covariance products and their seed-varied or split-varied components, then use those names consistently.
+   SHARE: 5%
+10. QUOTE: "Top 2D bands:"
+    SCOPE: this passage
+    PROBLEM: The telegraphic introduction and ensuing list of software identifiers read like a results worksheet rather than edited technical exposition.
+    CHANGE: Present the leading contributions in a complete sentence or compact table, naming the uncertainty statistic and using descriptive source names alongside any necessary identifiers.
+    SHARE: 3%
+ENOUGH: Yes; applied throughout while preserving the methodological detail and substantive limitations, these changes would bring the chapter to 4 at the register of the reference chapters.

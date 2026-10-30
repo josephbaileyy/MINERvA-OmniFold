@@ -1,0 +1,11 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but recurring internal bookkeeping, development history, repeated caveats and occasional conversational phrasing require a dedicated language pass to reach well-edited PRD register.
+
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver; the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: Checks with the version-controlled analysis code reproduce seven universes of the July sweep (§4.1) to ≤ 1.4 × 10−11; the remaining universes were generated with the same code but were not checked individually (Ref. [37], R1.16).
+
+2. QUOTE: "Because the block is built from the observed differences among the periods, it contains them automatically. That says nothing about its coverage, that is, about whether its size is right."
+   REWRITE: The block contains the observed differences among periods by construction; this property does not establish the coverage of the assigned uncertainty.
+
+3. QUOTE: "The band is small, 0.088 %, but this is a real defect in how the covariance was built; no conclusion about the published analysis’s implementation follows."
+   REWRITE: The earlier budget double-counted this 0.088 % band; this finding does not establish whether the published analysis also double-counted the shift.

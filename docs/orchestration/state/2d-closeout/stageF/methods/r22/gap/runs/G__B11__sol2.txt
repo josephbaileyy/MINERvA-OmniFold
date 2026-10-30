@@ -1,0 +1,51 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The sample’s mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the flux repair."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Accounts of repairs, dated validation batches, pending artifact identities, and document builds give parts of the chapter the register of a project status report.
+   CHANGE: State the properties and limitations of the inputs actually used, including the flux mismatch and background treatment, and remove or relocate validation-batch dates, rebuild history, pending-artifact inventories, and PDF-build commentary.
+   SHARE: 26%
+
+2. QUOTE: "The diagnostic probes the statistical closure-toy stream, not a full uncertainty band."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Expressions such as “closure-toy stream,” “paper grid,” “dead cells,” “catch bins,” “validation battery,” and the noun “unfold” make the prose depend more heavily on local shorthand than the reference chapters do.
+   CHANGE: Replace incidental shorthand with explicit technical descriptions, consistently use “unfolding” or “unfolding result,” and define or precisely cross-reference sample, binning, and configuration labels whose meaning is needed for the comparison.
+   SHARE: 22%
+
+3. QUOTE: "The statistical-band, pull and regional fractions are in App. B.3; none is used as a covariance-certification test."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Repeated statements about what the diagnostics do not establish give the discussion a defensive, qualification-led rhythm.
+   CHANGE: Consolidate repeated exclusions into clear scope statements attached to the relevant results, preserving the distinct limitations concerning statistical containment, coverage, covariance, and downstream inference.
+   SHARE: 18%
+
+4. QUOTE: "In the published sub-block, the extended unfold reproduces the control (standard 2D input, paper grid, identical settings) with integral ratio 0.9994, median cell ratio 1.0013, and median deviation 0.57 % across all 185 reported cells: in the published region the extended unfold agrees with the control at this level."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Several sentences combine compressed setup information, multiple numerical comparisons, and interpretation, sometimes restating the conclusion within the same sentence.
+   CHANGE: Separate the comparison definition from its numerical results, unpack parenthetical noun lists, and remove redundant restatements while retaining the technical detail.
+   SHARE: 12%
+
+5. QUOTE: "The executive summary (p. 1) gives each result with its scope and lists the principal limitations."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: The summary’s repeated directions to the executive summary read as document navigation rather than a concluding scientific account.
+   CHANGE: Replace these directions with a brief synthesis of the conclusions and limitations relevant here, using section references only to locate supporting detail.
+   SHARE: 9%
+
+6. QUOTE: "The recovered cross section reproduces the bump-reweighted (pT , p∥ ) truth to median 0.17 % (90th percentile 0.65 %) in the published cells and median 0.77 % (max 4.05 %) in the extension, both well inside the prior envelope."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Compressed constructions such as “to median,” “half-spread/mean,” and widths that “contain the fixed truth” leave the reader to reconstruct the precise statistical statement.
+   CHANGE: Name the deviation or ratio being summarized, define the envelope statistic in ordinary mathematical prose, and describe containment in terms of intervals constructed from the estimated widths.
+   SHARE: 7%
+
+7. QUOTE: "The release design and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a) central value (§9.6)."
+   SCOPE: this passage
+   PROBLEM: This abrupt negative assurance introduces an internal methodological distinction without explaining its relevance to the release discussion.
+   CHANGE: If the distinction is needed here, state directly which covariance applies to the released result and refer to its justification in §9.6; otherwise place the explanation there.
+   SHARE: 4%
+
+8. QUOTE: "Repeating the unfold with three priors (MINERvA Tune v1, bare GENIE, and NuWro-shaped) spans the total cross section by only ±1.5 %."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Phrases such as “spans the total cross section by only” and “equals at the printed precision that of” are awkward where the reference register favors direct numerical comparisons.
+   CHANGE: State what changes relative to which reference value, and express agreement at the reported precision with straightforward comparative syntax.
+   SHARE: 2%
+
+ENOUGH: Yes; these changes would bring the chapter to 4 without reducing its specialist detail, removing substantive limitations, or requiring additional scientific work.

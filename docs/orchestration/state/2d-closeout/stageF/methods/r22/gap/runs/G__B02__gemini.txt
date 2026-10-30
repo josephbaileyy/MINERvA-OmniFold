@@ -1,0 +1,76 @@
+CURRENT RATING: 2.0
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The run’s own log was not found."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: This reads like an internal incident post-mortem documenting lost project files and driver limitations rather than formal physics prose.
+   CHANGE: Remove the narrative of missing run logs and script limitations, reporting the exact-split CART cross-check and its results directly in the register of reference-2 ("Results from the alternate analysis agree with the results presented in Secs. IX A and IX B.").
+   SHARE: 20
+
+2. QUOTE: "Both of those central values are regenerated to ≲ 2 × 10−11 by runs with one driver and one input that differ only in the seed, so the difference is attributable to the seed, as inferred from the two regenerations."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Logging numerical regeneration tests down to machine precision ($10^{-11}$–$10^{-15}$) across software drivers represents developer regression tracking rather than journal methodology.
+   CHANGE: Replace the granular driver-level regeneration tolerances and seed-iteration tracking with a concise statement of algorithmic stability across random seeds.
+   SHARE: 15
+
+3. QUOTE: "The twelve outputs are then merged, with a tree-size-aware merger for the trees with per-universe content, which exceed 100 GB."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Documenting file-merging utilities, intermediate flat-tree data structures, and disk usage footprints exceeds necessary procedural detail and lapses into software-pipeline record-keeping.
+   CHANGE: Describe the event-processing pipeline conceptually in terms of extracted physics observables and systematic weights rather than file mergers and disk sizes, matching the register of reference-1 ("All aspects of SK detector simulation that can affect the modeling of the SK candidate event selection described above are propagated using a vector of systematic parameters...").
+   SHARE: 12
+
+4. QUOTE: "Reconstructed events require a vertex in the same fiducial volume and apothem, a muon track with θµ < 20◦ matched to a MINOS track with a passing fit (isMinosMatchTrack==1 && minos_trk_is_ok==1), no dead-time overlap, and a neutrino (rather than antineutrino) candidate."
+   SCOPE: this passage
+   PROBLEM: Direct insertion of raw C++ and ROOT boolean syntax into prose violates journal conventions that require physics-level descriptions of selection requirements.
+   CHANGE: Replace the raw code expressions with standard physics descriptions of track quality and spectrometer matching, following the register of reference-1 ("Events are also removed if a single ID PMT hit constitutes more than half of the total p.e. observed, in order to reject events due to noise.").
+   SHARE: 10
+
+5. QUOTE: "Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Justifying estimator configurations by exposing internal computational budget trade-offs and post-hoc deliberations adopts the tone of an internal project debrief rather than objective methodological exposition.
+   CHANGE: State the chosen estimator configuration and seed choice directly and neutrally based on statistical consistency, removing the discussion of computing costs and post-hoc timing.
+   SHARE: 10
+
+6. QUOTE: "The full Geant4-based [34] MINERvA detector simulation underlies the production AnaTuples."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Using unedited collaboration-internal labels like "production AnaTuples" and "MAT reweighters" introduces undefined software jargon foreign to published technical papers.
+   CHANGE: Replace experiment-specific data tier and framework names with standard descriptive terminology, following the register of reference-1 ("We use SKDETSIM [3, 9], a GEANT3-derived simulation of the SK detector, to model the propagation of particles produced by neutrino interactions.").
+   SHARE: 8
+
+7. QUOTE: "The systematic-universe trees also carry every universe’s weight and each lateral band’s shifted observables (in MAT’s terms, a lateral band shifts reconstructed kinematics and a vertical band reweights events; §4)."
+   SCOPE: this passage
+   PROBLEM: Defining internal software dialect through an overt gloss ("in MAT’s terms...") prioritizes private framework vocabulary over standard physics concepts.
+   CHANGE: Formulate systematic variations directly as kinematic shifts and event weights without referencing internal software terminology.
+   SHARE: 6
+
+8. QUOTE: "PET design-study recovery does not validate real-data background subtraction; PET remains diagnostic method development."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: The defensive hedging and emphatic caveats read like a rebuttal in an internal collaboration dispute rather than a neutral, scholarly appraisal of methodological scope.
+   CHANGE: State the developmental status and boundaries of the method neutrally without defensive disclaimers, in the register of reference-4 ("A detailed study of the time dependence of space charge effects at ProtoDUNE-SP will be presented in a future work.").
+   SHARE: 6
+
+9. QUOTE: "The refined form is the background treatment of configurations (d), (e) and (f) (§3.2): (d) in the background-bias and generator-sized-change studies of §9.2; (e), the joint-test estimator, in §§9.3–9.4, the generator tests, the 3D and 4D central values and the sixteen-cell result; and (f) for the 2D result and its covariance (App. C, §7, §6)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Cataloging arbitrary lettered configuration tags across varied analysis sections creates an unedited bookkeeping index that disrupts narrative flow.
+   CHANGE: Structure the description conceptually around the two background subtraction strategies and their physical application domains rather than enumerating project-internal letter labels.
+   SHARE: 5
+
+10. QUOTE: "The agreement of that median with the LightGBM seed-1 to seed-42 median above is a coincidence."
+   SCOPE: this passage
+   PROBLEM: Dismissing a numerical correlation as "a coincidence" introduces an informal, conversational tone that is out of place in a peer-reviewed technical paper.
+   CHANGE: Replace the informal remark with a precise, formal comparison of estimator sensitivity to random seeds or remove the editorial comment entirely.
+   SHARE: 4
+
+11. QUOTE: "Completeness is c = 1.000000 by construction at ME FHC (32 849 103 entries; §3.4)."
+   SCOPE: this passage
+   PROBLEM: Presenting an exact theoretical condition as a six-digit floating-point number alongside raw entry counts reads like an automated script log rather than formal text.
+   CHANGE: State in plain technical terms that the simulated sample is complete by construction, omitting artificial floating-point formatting and raw event counts.
+   SHARE: 2
+
+12. QUOTE: "Out-of-phase-space signal (fakes: reconstructed in phase space, true muon outside it) is treated separately."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Relying on informal lab jargon such as "fakes" and "misses" as primary designations departs from the formal descriptive register of standard technical reports.
+   CHANGE: Use formal physics terminology, such as "out-of-acceptance events" and "reconstruction inefficiencies," introducing informal labels only secondarily if at all.
+   SHARE: 2
+
+ENOUGH: Yes, implementing these changes in full would bring chapter.txt to a rating of 4 by eliminating internal bookkeeping, software-level post-mortems, and defensive hedging while restoring standard journal register throughout the text.
