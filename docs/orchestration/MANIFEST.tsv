@@ -478,6 +478,7 @@ docs/orchestration/RECORD-20261030-close-items-5d-budget-launcher-classification
 docs/orchestration/RECORD-20261030-close-items-oi148-row-repair.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-oi160-closed.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-oi74-canonical-drift.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261030-close-items-oi74-tracked-changes.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-quarantine-receipt-anchored-patterns.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
@@ -7008,6 +7009,7 @@ docs/orchestration/state/oi160-tolerance-20261029/stored.sha256	tracked	MACHINE	
 docs/orchestration/state/oi160-tolerance-20261029/test_tol.py	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-tolerance-20261029/tol_compare.py	tracked	MACHINE	state-artifact	oi160-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only	yes
+docs/orchestration/state/oi74-canonical-drift-20261030/connect-session-2.txt	tracked	MACHINE	state-artifact	oi74-canonical-drift-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-drift-20261030/connect-session.txt	tracked	MACHINE	state-artifact	oi74-canonical-drift-20261030		generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
