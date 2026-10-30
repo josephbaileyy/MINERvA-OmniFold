@@ -169,6 +169,14 @@ class StageFlux(InputsBase):
         self.assertIn("PB flux source", err)
         self.assertFalse((self.tmp / "flux").exists())
 
+    def test_refuses_a_copy_that_is_not_its_source(self):
+        src, pins = self.make_src()
+        bad = lambda a, b: Path(b).write_bytes(b"torn copy")  # noqa: E731
+        rc, _, err = self.run_pi(["stage-flux", "--src-dir", str(src), "--out-dir", str(self.tmp / "flux")],
+                                 [mock.patch.dict(pi.FLUX, pins), mock.patch.object(pi.shutil, "copyfile", bad)])
+        self.assertEqual(rc, 4)
+        self.assertIn("flux copy", err)
+
     def test_refuses_an_existing_directory(self):
         src, pins = self.make_src()
         (self.tmp / "flux").mkdir()
@@ -188,6 +196,14 @@ class Merge(InputsBase):
             pins[pl] = digest(p)
         return d, pins
 
+    def merge_argv(self, period, d, out, pot=(1.0e21, 1.0e21)):
+        flux = self.tmp / f"flux_{period}.root"
+        flux.write_bytes(f"flux {period}".encode())
+        self.pot_patches = [mock.patch.dict(pi.FLUX, {period: digest(flux)}),
+                            mock.patch.object(pi, "merged_data_pot", lambda p: pot[0]),
+                            mock.patch.object(pi, "flux_data_pot", lambda p: pot[1])]
+        return ["merge", "--period", period, "--loops-dir", str(d), "--flux", str(flux), "--out", str(out)]
+
     def fake_hadd(self, rc=0):
         calls = []
 
@@ -202,8 +218,8 @@ class Merge(InputsBase):
         d, pins = self.loops("PB")
         calls, patch = self.fake_hadd()
         out = self.tmp / "m" / "PB.root"
-        rc, _, err = self.run_pi(["merge", "--period", "PB", "--loops-dir", str(d), "--out", str(out)],
-                                 [mock.patch.dict(pi.ZERO_LOOPS, pins), patch])
+        argv = self.merge_argv("PB", d, out)
+        rc, _, err = self.run_pi(argv, [mock.patch.dict(pi.ZERO_LOOPS, pins), patch, *self.pot_patches])
         self.assertEqual(rc, 0, err)
         self.assertEqual(Path(calls[0][1]).relative_to(pi.DEPLOY), Path("2d-unfolding/uq/hadd_universes_full.py"))
         self.assertEqual([Path(c).name for c in calls[0][3:]],
@@ -218,8 +234,8 @@ class Merge(InputsBase):
         pins["1C"] = "1" * 64
         calls, patch = self.fake_hadd()
         out = self.tmp / "m" / "PA.root"
-        rc, _, err = self.run_pi(["merge", "--period", "PA", "--loops-dir", str(d), "--out", str(out)],
-                                 [mock.patch.dict(pi.ZERO_LOOPS, pins), patch])
+        argv = self.merge_argv("PA", d, out)
+        rc, _, err = self.run_pi(argv, [mock.patch.dict(pi.ZERO_LOOPS, pins), patch, *self.pot_patches])
         self.assertEqual(rc, 4)
         self.assertIn("zero loop 1C", err)
         self.assertEqual(calls, [])
@@ -230,18 +246,31 @@ class Merge(InputsBase):
         out = self.tmp / "PC.root"
         out.write_bytes(b"x")
         calls, patch = self.fake_hadd()
-        rc, _, _ = self.run_pi(["merge", "--period", "PC", "--loops-dir", str(d), "--out", str(out)],
-                               [mock.patch.dict(pi.ZERO_LOOPS, pins), patch])
+        argv = self.merge_argv("PC", d, out)
+        rc, _, _ = self.run_pi(argv, [mock.patch.dict(pi.ZERO_LOOPS, pins), patch, *self.pot_patches])
         self.assertEqual((rc, calls), (3, []))
 
     def test_a_failed_merge_leaves_nothing(self):
         d, pins = self.loops("PC")
         calls, patch = self.fake_hadd(rc=1)
         out = self.tmp / "PC.root"
-        rc, _, err = self.run_pi(["merge", "--period", "PC", "--loops-dir", str(d), "--out", str(out)],
-                                 [mock.patch.dict(pi.ZERO_LOOPS, pins), patch])
+        argv = self.merge_argv("PC", d, out)
+        rc, _, err = self.run_pi(argv, [mock.patch.dict(pi.ZERO_LOOPS, pins), patch, *self.pot_patches])
         self.assertEqual(rc, 6)
         self.assertFalse(any(self.tmp.glob("PC.root*")))
+
+    def test_refuses_a_merge_whose_pot_the_flux_was_not_weighted_with_before_any_dump(self):
+        d, pins = self.loops("PB")
+        calls, patch = self.fake_hadd()
+        out = self.tmp / "PB.root"
+        for pot, rc_want in (((1.0e21, 1.0e21 * (1 + 2e-12)), 5), ((1.0e21, 1.0e21 * (1 + 5e-13)), 0)):
+            for p in self.tmp.glob("PB.root*"):
+                p.unlink()
+            argv = self.merge_argv("PB", d, out, pot)
+            rc, _, err = self.run_pi(argv, [mock.patch.dict(pi.ZERO_LOOPS, pins), patch, *self.pot_patches])
+            self.assertEqual(rc, rc_want, err)
+            self.assertEqual(out.exists(), rc_want == 0)
+            self.assertFalse(out.with_name("PB.root.partial").exists())
 
 
 class Check(InputsBase):
@@ -309,6 +338,14 @@ class Check(InputsBase):
             self.assertEqual(rc, 0, err)
             self.assertEqual(json.loads((self.tmp / "check.json").read_text())["flux_constant_over_pt"], want)
 
+    def test_creates_its_own_output_folders(self):
+        self.build()
+        i, j = self.argv.index("--out") + 1, self.argv.index("--truth-out") + 1
+        self.argv[i], self.argv[j] = str(self.tmp / "inputs/check.json"), str(self.tmp / "truth/truth.npz")
+        rc, _, err = self.run_pi(self.argv, self.patches())
+        self.assertEqual(rc, 0, err)
+        self.assertTrue((self.tmp / "inputs/check.json").is_file() and (self.tmp / "truth/truth.npz").is_file())
+
     def test_each_npz_key_is_compared(self):
         base = dict(np.load(nn_npz(self.tmp / "ref.npz"), allow_pickle=True))
         for k in pi.NPZ_KEYS:
@@ -326,9 +363,17 @@ class Check(InputsBase):
                 self.assertRefuses(f"'{k}'")
 
     def test_a_dtype_change_alone_is_refused(self):
-        self.build(lat_over={"w_truth": nn_npz.__defaults__ and np.load(nn_npz(self.tmp / "r.npz"))["w_truth"]
-                             .astype(np.float32)})
-        self.assertRefuses("'w_truth'")
+        # the same values in another dtype: the pass flags as 0/1 integers, and float32-exact weights as float32
+        ref = dict(np.load(nn_npz(self.tmp / "ref.npz"), allow_pickle=True))
+        exact = ref["w_truth"].astype(np.float32).astype(np.float64)
+        for k, nn_v, lat_v in (("pass_reco", ref["pass_reco"], ref["pass_reco"].astype(np.int8)),
+                               ("w_truth", exact, exact.astype(np.float32))):
+            with self.subTest(k=k):
+                self.assertTrue(np.array_equal(nn_v, lat_v))
+                self.build(lat_over={k: lat_v})
+                self.nn = nn_npz(self.tmp / "nn.npz", **{k: nn_v})
+                self.argv[self.argv.index("--nn-npz") + 1] = str(self.nn)
+                self.assertRefuses(f"'{k}'")
 
     def test_refuses_a_background_dump_of_another_npz(self):
         self.build(bkg_over={"meta": json.dumps({"npz_sha256": "0" * 64, "omnifile": "x"})})
@@ -467,16 +512,22 @@ class PTree:
                   "PC": 1.0 + self.rng.normal(0, 0.01, 16)}
         self.X = {P: self.T[P] * self.r[P] for P in cp.PER}
         self.X["ALL"] = f * (1.0 + 0.3 * TAU * np.sign(self.rng.normal(size=16)))
-        self.d = {P: [self.rng.normal(0, 0.004, 16) for _ in cp.BOOT] for P in cp.PER}
+        self.d = {P: [self.rng.normal(0, 0.004, 16) for _ in cp.BOOT[P]] for P in cp.PER}
 
     def write(self, receipt_over=None, meta_over=None):
+        """Everything job A and the inputs make; the period unfolds come after the control (write_periods)."""
         B, t = self.B, self.t
+        self.dumps = {}
         for d in ("inputs", "dumps", "truth", "flux"):
             (B / d).mkdir(parents=True, exist_ok=True)
         code_pi = sa.sha256(Path(pi.__file__).resolve())
+        # each period its own flux; ALL's is the POT-weighted mean, so that POT_ALL Phi_ALL = sum_X POT_X Phi_X
+        phis = {"PA": 2.0, "PB": 2.6, "PC": 1.7}
+        pots = {P: E_RAW[P] / phis[P] * 1e21 for P in cp.PER}
+        pots["ALL"] = sum(pots.values())
+        phis["ALL"] = sum(pots[P] * phis[P] for P in cp.PER) / pots["ALL"]
         for P in cp.PER + ("ALL",):
-            phi = 2.0
-            pot = (1.0 if P == "ALL" else E_RAW[P]) / phi * 1e21
+            phi, pot = phis[P], pots[P]
             lat = B / "dumps" / f"lat_{P}.npz"
             np.savez(lat, data_pot=pot, flux=np.full(14, phi))
             bkg = B / "dumps" / f"lat_{P}_bkg.npz"
@@ -499,7 +550,9 @@ class PTree:
                     "lat_npz_bytes_equal": True, "mp1_sha256": "MP1"}
             rec.update((receipt_over or {}).get(P, {}))
             (B / "inputs" / f"check_{P}.json").write_text(json.dumps(rec))
-            self.write_unfolds(P, lat, bkg, meta_over)
+            self.dumps[P] = (lat, bkg)
+        self.meta_over = meta_over
+        self.write_unfolds("ALL")
         self.mp1_path = self.root / "mp1s1_zero_b-_j-.npz"
         np.savez(self.mp1_path, xsec_flat=self.fine("ALL", None), meta="{}")
         self.mp1 = {"unfold": digest(self.mp1_path), "lat_npz": "a" * 64, "lat_bkg": "b" * 64}
@@ -512,11 +565,18 @@ class PTree:
         return self
 
     def fine(self, P, b):
-        X = self.X[P] if b is None else self.X[P] * (1.0 + self.d[P][b - 1])
+        X = self.X[P] if b is None else self.X[P] * (1.0 + self.d[P][cp.BOOT[P].index(b)])
         return self.t.cellwise(X)
 
-    def write_unfolds(self, P, lat, bkg, meta_over):
-        for b in ((None,) if P == "ALL" else (None, *cp.BOOT)):
+    def write_periods(self):
+        for P in cp.PER:
+            self.write_unfolds(P)
+        return self
+
+    def write_unfolds(self, P):
+        lat, bkg = self.dumps[P]
+        meta_over = self.meta_over
+        for b in ((None,) if P == "ALL" else (None, *cp.BOOT[P])):
             p = cp.unf_path(self.B, P, b)
             p.parent.mkdir(parents=True, exist_ok=True)
             m = TR.data_meta(digest(lat), digest(bkg), bootstrap_seed=b,
@@ -599,9 +659,23 @@ class Control(PeriodsBase):
         self.assertEqual(self.control(t), 0, self.stderr)
         o = self.control_json(t)
         self.assertEqual(o["verdict"], "PASS")
-        q = np.abs(t.X["ALL"] / t.f - 1) / TAU
-        np.testing.assert_allclose(o["K3_within_tolerance_of_f"]["q"], q, rtol=1e-9)
+        self.assertEqual(o["K3_within_tolerance_of_f"]["within_by_cell"], [True] * 16)
         self.assertTrue(o["K1_inputs_bitwise_mp1_zero"]["pass"] and o["K2_unfold_bitwise_mp1_zero"]["pass"])
+
+    def test_the_record_does_not_give_f_back_with_the_public_x_all(self):
+        # review H2: X_ALL is public once K2 holds; no written number may be |X/f - 1| or its ratio to tau
+        t = self.tree().write()
+        self.assertEqual(self.control(t), 0, self.stderr)
+        text = (t.B / "control" / "fd_ct_5b_control.json").read_text() + self.stdout
+        nums = np.array([abs(float(v)) for v in F._NUM.findall(text)])
+        rel = np.abs(t.X["ALL"] / t.f - 1.0)
+        for target in (*rel, *(rel / TAU)):
+            self.assertFalse(np.any(np.abs(nums - target) <= 1e-9 * target), target)
+
+    def test_refuses_while_a_period_unfold_exists(self):
+        t = self.tree().write()
+        (t.B / "unf" / "PB").mkdir(parents=True, exist_ok=True)
+        self.assertRefuses(t, "period unfolds exist before the control")
 
     def test_k3_decides_in_both_directions(self):
         for factor, verdict, rc in ((0.99, "PASS", 0), (1.01, "FAIL", 1)):
@@ -678,6 +752,12 @@ class Control(PeriodsBase):
         t.mp1["unfold"] = "0" * 64
         self.assertRefuses(t, "MP-1 mp1s1_zero")
 
+    def test_refuses_a_non_positive_all_integral(self):
+        t = self.tree()
+        t.X["ALL"][3] = -t.X["ALL"][3]
+        t.write()
+        self.assertRefuses(t, "every ALL cell integral is positive")
+
     def test_refuses_a_tolerance_not_the_declared_one(self):
         t = self.tree().write()
         bad = list(cp.SIGMA_JITTER)
@@ -687,7 +767,6 @@ class Control(PeriodsBase):
     def test_reads_no_period_product(self):
         t = self.tree().write()
         for P in cp.PER:
-            shutil.rmtree(t.B / "unf" / P)
             (t.B / "inputs" / f"check_{P}.json").write_text("not json")
         self.assertEqual(self.control(t), 0, self.stderr)
 
@@ -711,12 +790,79 @@ class Control(PeriodsBase):
         self.assertFalse((t.B / "control" / "fd_ct_5b_control.json").exists())
 
 
+class Precheck(PeriodsBase):
+    def precheck(self, t, extra=()):
+        argv = t.control_argv(t.B / "control" / "fd_ct_5b_precheck.json")
+        argv[0] = "precheck"
+        return self.run_cp(t, argv, extra)
+
+    def test_decides_k3_on_mp1s_zero_in_both_directions_and_writes_flags_only(self):
+        for factor, verdict, rc in ((0.99, "PASS", 0), (1.01, "FAIL", 1)):
+            with self.subTest(factor=factor):
+                t = self.tree()
+                t.X["ALL"][11] = t.f[11] * (1.0 + factor * TAU[11])
+                t.write()
+                self.assertEqual(self.precheck(t), rc, self.stderr)
+                o = json.loads((t.B / "control" / "fd_ct_5b_precheck.json").read_text())
+                self.assertEqual((o["verdict"], o["K3_within_tolerance_of_f"]["cells_over"]),
+                                 (verdict, [] if rc == 0 else ["R11"]))
+                self.assertNotIn("q", o["K3_within_tolerance_of_f"])
+
+    def test_refuses_another_mp1_zero(self):
+        t = self.tree().write()
+        t.mp1["unfold"] = "0" * 64
+        self.assertEqual(self.precheck(t), 1)
+        self.assertIn("MP-1 mp1s1_zero", self.stderr)
+
+
+class Gate(PeriodsBase):
+    def gate(self, t, stage):
+        return self.run_cp(t, ["gate", "--stage", stage, "--b", str(t.B)])
+
+    def precheck(self, t):
+        argv = t.control_argv(t.B / "control" / "fd_ct_5b_precheck.json")
+        argv[0] = "precheck"
+        return self.run_cp(t, argv)
+
+    def test_inputs_gate(self):
+        t = self.tree().write()
+        (t.B / "control").mkdir(exist_ok=True)
+        self.assertEqual(self.gate(t, "inputs"), 1)
+        self.assertEqual(self.precheck(t), 0, self.stderr)
+        self.assertEqual(self.gate(t, "inputs"), 0, self.stderr)
+        p = t.B / "control" / "fd_ct_5b_precheck.json"
+        o = json.loads(p.read_text())
+        for over, msg in (({"verdict": "FAIL"}, "does not record a PASS"), ({"schema": "fd-ct-5b-control/1"}, "PASS"),
+                          ({"code_sha256": {"fd_ct_periods.py": "0" * 64}}, "this deploy")):
+            with self.subTest(over=over):
+                p.write_text(json.dumps({**o, **over}))
+                self.assertEqual(self.gate(t, "inputs"), 1)
+                self.assertIn(msg, self.stderr)
+
+    def test_periods_gate(self):
+        t = self.tree().write()
+        self.assertEqual(self.gate(t, "periods"), 1)
+        self.assertEqual(self.control(t), 0, self.stderr)
+        self.assertEqual(self.gate(t, "periods"), 0, self.stderr)
+        (t.B / "inputs" / "check_PC.json").unlink()
+        self.assertEqual(self.gate(t, "periods"), 1)
+        self.assertIn("no check receipt", self.stderr)
+        t2 = self.tree().write()
+        self.assertEqual(self.control(t2), 0, self.stderr)
+        p = cp.unf_path(t2.B, "ALL", None)
+        z = dict(np.load(p))
+        z["meta"] = str(z["meta"]) + " "
+        np.savez(p, **z)
+        self.assertEqual(self.gate(t2, "periods"), 1)
+        self.assertIn("not the one the control read", self.stderr)
+
+
 class Periods(PeriodsBase):
     def ready(self, **kw):
         t = self.tree(**kw).write()
         p5a = t.with_5a()
         self.assertEqual(self.control(t), 0, self.stderr)
-        return t, p5a
+        return t.write_periods(), p5a
 
     def periods(self, t, p5a, extra=()):
         return self.run_cp(t, t.periods_argv(), [p5a, *extra])
@@ -759,8 +905,8 @@ class Periods(PeriodsBase):
             C += V2 / (1 - V2) * e[P] * np.outer(g, g)
         np.testing.assert_allclose(o["C_PL5D"]["C_PL5D_rel"], C, rtol=1e-9, atol=1e-18)
         self.assertLessEqual(o["C_PL5D"]["rank"], 2)
-        J = sum(e[P] * t.X[P] for P in cp.PER) / t.X["ALL"] - 1
-        np.testing.assert_allclose(o["comparisons"]["J36"]["shift"], J, rtol=1e-10)
+        # review H2: nothing relative to ALL, whose committed integrals would make a ratio absolute
+        self.assertFalse([k for k in o["comparisons"] if "ALL" in k or "J36" in k])
         self.assertIn("[5B] dr_PB/PA", self.stdout)
 
     def test_consistent_periods_read_as_zero(self):
@@ -773,6 +919,7 @@ class Periods(PeriodsBase):
         t.write()
         p5a = t.with_5a()
         self.assertEqual(self.control(t), 0, self.stderr)
+        t.write_periods()
         self.assertEqual(self.periods(t, p5a), 0, self.stderr)
         o = self.readout(t)
         for nm in ("dr_PB/PA", "dr_PC/PA", "dr_PC/PB"):
@@ -790,6 +937,7 @@ class Periods(PeriodsBase):
         t.write()
         p5a = t.with_5a()
         self.assertEqual(self.control(t), 0, self.stderr)
+        t.write_periods()
         self.assertEqual(self.periods(t, p5a), 0, self.stderr)
         c = self.readout(t)["comparisons"]["dr_PB/PA"]
         self.assertAlmostEqual(c["pz_contrast"], 0.07, places=12)
@@ -818,6 +966,7 @@ class Periods(PeriodsBase):
         t.write()
         p5a = t.with_5a()
         self.assertEqual(self.control(t), 1)
+        t.write_periods()
         self.assertRefuses(t, p5a, "did not PASS")
 
     def test_refuses_an_all_unfold_changed_after_the_control(self):
@@ -832,20 +981,21 @@ class Periods(PeriodsBase):
 
     def test_refuses_a_missing_or_extra_replica(self):
         t, p5a = self.ready()
-        cp.unf_path(t.B, "PC", 7).unlink()
+        cp.unf_path(t.B, "PC", 3007).unlink()
         self.assertRefuses(t, p5a, "PC: the unfold directory")
         t, p5a = self.ready()
-        shutil.copy(cp.unf_path(t.B, "PB", 1), t.B / "unf/PB/5b_PB_b11_j-.npz")
+        shutil.copy(cp.unf_path(t.B, "PB", 2001), t.B / "unf/PB/5b_PB_b2011_j-.npz")
         self.assertRefuses(t, p5a, "PB: the unfold directory")
 
     def test_refuses_a_replica_not_made_as_declared(self):
-        for key, over, msg in ((("PA", 4), {"bootstrap_seed": 5}, "bootstrap_seed"),
+        for key, over, msg in ((("PA", 1004), {"bootstrap_seed": 2004}, "bootstrap_seed"),
                                (("PB", None), {"jitter_seed": 1}, "jitter_seed"),
-                               (("PC", 2), {"code_sha256": {"s5p_numerics.py": "0" * 64}}, "s5p_numerics.py")):
+                               (("PC", 3002), {"code_sha256": {"s5p_numerics.py": "0" * 64}}, "s5p_numerics.py")):
             with self.subTest(key=key):
                 t = self.tree().write(meta_over={key: over})
                 p5a = t.with_5a()
                 self.assertEqual(self.control(t), 0, self.stderr)
+                t.write_periods()
                 self.assertRefuses(t, p5a, msg)
                 shutil.rmtree(self.tmp)
                 (self.tmp / "out").mkdir(parents=True)
@@ -864,10 +1014,41 @@ class Periods(PeriodsBase):
         t, _ = self.ready()
         self.assertRefuses(t, mock.patch.object(cp, "READOUT_5A_SHA256", "0" * 64), "5A readout")
 
+    def test_refuses_a_non_positive_integral(self):
+        t, p5a = self.ready()
+        tp = t.B / "truth/truth_PB.npz"
+        z = dict(np.load(tp))
+        x = z["xsec_flat"].copy()
+        x[t.t.fm == 6] *= -1.0
+        z["xsec_flat"] = x
+        np.savez(tp, **z)
+        p = t.B / "inputs/check_PB.json"
+        rec = json.loads(p.read_text())
+        rec["files"]["truth"][1] = digest(tp)
+        p.write_text(json.dumps(rec))
+        self.assertRefuses(t, p5a, "positive on all 16 cells")
+
+    def test_refuses_another_cell_definition(self):
+        t, p5a = self.ready()
+        self.assertRefuses(t, p5a, "p_parallel cell sets", [mock.patch.object(cp, "PZ_LO", (0, 1, 2, 3, 8, 9, 10, 12))])
+
+    def test_refuses_a_truth_of_other_code(self):
+        t, p5a = self.ready()
+        tp = t.B / "truth/truth_PA.npz"
+        z = dict(np.load(tp))
+        z["meta_json"] = json.dumps({**json.loads(str(z["meta_json"])), "code_sha256": "0" * 64})
+        np.savez(tp, **z)
+        p = t.B / "inputs/check_PA.json"
+        rec = json.loads(p.read_text())
+        rec["files"]["truth"][1] = digest(tp)
+        p.write_text(json.dumps(rec))
+        self.assertRefuses(t, p5a, "code or shape")
+
     def test_refuses_a_flux_that_is_not_pt_constant(self):
         t = self.tree().write(receipt_over={"PC": {"flux_constant_over_pt": False}})
         p5a = t.with_5a()
         self.assertEqual(self.control(t), 0, self.stderr)
+        t.write_periods()
         self.assertRefuses(t, p5a, "not constant over p_T")
 
     def test_an_integral_within_leak_rel_of_f_is_dropped_from_the_guard(self):
@@ -887,6 +1068,7 @@ class Periods(PeriodsBase):
         t.write()
         p5a = t.with_5a()
         self.assertEqual(self.control(t), 0, self.stderr)
+        t.write_periods()
         self.assertEqual(self.periods(t, p5a), 3)
         self.assertFalse((t.root / "out" / "periods.json").exists())
 
@@ -897,6 +1079,12 @@ class Periods(PeriodsBase):
         self.assertEqual(self.periods(t, p5a, [leak]), 3)
         self.assertIn("REFUSED leak guard", self.stderr)
         self.assertFalse((t.root / "out" / "periods.json").exists())
+
+    def test_the_guard_refuses_a_planted_mc_truth_integral(self):
+        t, p5a = self.ready()
+        planted = float(t.T["PB"][3] / t.f[3] - 1.0)   # relative, so only the truths in the table can catch it
+        leak = mock.patch.object(cp.ct, "summary", lambda v, x=planted: {"median": x, "min": x, "max": x})
+        self.assertEqual(self.periods(t, p5a, [leak]), 3)
 
     def test_the_guard_refuses_a_planted_ratio_of_a_period_to_f(self):
         t, p5a = self.ready()
@@ -927,6 +1115,8 @@ class Tables(unittest.TestCase):
             names = [r[1] for r in rows if r[0] == str(lane)]
             want = [f"ct5b_{s}_{P}" for s in ("merge", "nndump", "lateral", "check")]
             self.assertEqual(names, want + (["ct5b_unfold_ALL_s42"] if P == "ALL" else []))
+        for r in (r for r in rows if r[1].startswith("ct5b_merge")):
+            self.assertTrue(r[r.index("--flux") + 1].endswith(f"/flux/runEventLoopMC_{r[1].split('_')[-1]}.root"))
         nn = [r for r in rows if r[1].startswith("ct5b_nndump")]
         for r in nn:
             self.assertEqual(r[r.index("--axes") + 1], "eavail,q3,W")
@@ -938,10 +1128,19 @@ class Tables(unittest.TestCase):
         u = [r for r in rows if r[1] == "ct5b_unfold_ALL_s42"][0]
         self.assertIn("--pairs=-:-", u)
 
+    def test_each_period_has_its_own_seed_block(self):
+        seeds = [b for P in cp.PER for b in cp.BOOT[P]]
+        self.assertEqual(len(seeds), len(set(seeds)))
+        self.assertEqual({P: (min(cp.BOOT[P]), max(cp.BOOT[P])) for P in cp.PER},
+                         {"PA": (1001, 1010), "PB": (2001, 2010), "PC": (3001, 3010)})   # 2D's blocks
+        # and s5n_pseudo's three streams of one replica (seeds b, b + 1e7, b + 2e7) do not overlap another's
+        streams = {b + o for b in seeds for o in (0, 10_000_000, 20_000_000)}
+        self.assertEqual(len(streams), 3 * len(seeds))
+
     def test_job_b_runs_each_declared_unfold_once(self):
         rows = self.rows("5b-periods-steps.tsv")
         got = sorted((r[r.index("--period") + 1], [a for a in r if a.startswith("--pairs=")][0]) for r in rows)
-        want = sorted((P, f"--pairs={b}:-") for P in cp.PER for b in ("-", *map(str, cp.BOOT)))
+        want = sorted((P, f"--pairs={b}:-") for P in cp.PER for b in ("-", *map(str, cp.BOOT[P])))
         self.assertEqual(got, want)
         self.assertEqual(sorted({r[0] for r in rows}), [str(k) for k in range(8)])
         for r in rows:
@@ -970,8 +1169,12 @@ class Submit(unittest.TestCase):
         b = self.tmp / "bin"
         b.mkdir()
         (b / "sbatch").write_text(f"#!/bin/bash\nprintf '%s\\n' \"$@\" > {self.tmp}/sbatch.args\necho Submitted\n")
-        (b / "py").write_text("#!/bin/bash\nif [ \"$2\" = stage-flux ]; then echo \"$@\" > " + str(self.tmp)
-                              + "/stage.args; mkdir -p \"$4\"; exit 0; fi\nexec " + sys.executable + " \"$@\"\n")
+        # the stub records the flux staging and the gate call; the gate passes only where the test put gate-ok
+        (b / "py").write_text(
+            "#!/bin/bash\n"
+            f"if [ \"$2\" = stage-flux ]; then echo \"$@\" > {self.tmp}/stage.args; mkdir -p \"$4\"; exit 0; fi\n"
+            f"if [ \"$2\" = gate ]; then echo \"$@\" >> {self.tmp}/gate.args; [ -e \"$6/control/gate-ok-$4\" ]; exit; fi\n"
+            "exit 9\n")
         for x in ("sbatch", "py"):
             (b / x).chmod(0o755)
         self.env = {**os.environ, "PATH": f"{b}:{os.environ['PATH']}", "FD_CT_PY": str(b / "py")}
@@ -980,19 +1183,45 @@ class Submit(unittest.TestCase):
         return subprocess.run(["bash", str(ND / "submit_fd_ct.sh"), *args], capture_output=True, text=True,
                               env=self.env)
 
+    def gate_ok(self, stage):
+        (self.B / "control").mkdir(parents=True, exist_ok=True)
+        (self.B / "control" / f"gate-ok-{stage}").write_text("")
+
     def args(self):
         return (self.tmp / "sbatch.args").read_text().splitlines()
 
     def test_the_committed_inputs_submission(self):
+        self.gate_ok("inputs")
         r = self.submit("5b-inputs", str(self.D), self.pin, str(self.B))
         self.assertEqual(r.returncode, 0, r.stderr)
         a = self.args()
         for want in ("--account=m3246", "--qos=regular", "--constraint=cpu", "--nodes=1", "--exclusive",
-                     "--no-requeue", "--time=01:00:00", "--job-name=fd_ct_5b_inputs", "64", "120G", "0", "3", "none",
+                     "--no-requeue", "--time=01:00:00", "--job-name=fd_ct_5b_inputs", "32", "56G", "0", "3", "none",
                      str(self.B / "lanes-inputs")):
             self.assertIn(want, a)
         self.assertFalse([x for x in a if "gpu" in x.lower() and "gpu-timing" not in x], "a GPU request")
+        self.assertEqual([x for x in a if x.startswith(("--qos", "--time"))], ["--qos=regular", "--time=01:00:00"])
         self.assertIn(f"stage-flux --out-dir {self.B}/flux", (self.tmp / "stage.args").read_text())
+        self.assertIn(f"gate --stage inputs --b {self.B}", (self.tmp / "gate.args").read_text())
+        for d in ("dumps", "truth", "inputs"):   # review H1: the steps' output folders exist before the job
+            self.assertTrue((self.B / d).is_dir(), d)
+
+    def test_inputs_refuse_without_the_precheck_gate(self):
+        (self.B / "control").mkdir(parents=True)
+        r = self.submit("5b-inputs", str(self.D), self.pin, str(self.B))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("the gate did not pass", r.stderr)
+        self.assertFalse((self.tmp / "sbatch.args").exists() or (self.B / "flux").exists() or (self.B / "dumps").exists())
+
+    def test_the_lanes_fit_one_node(self):
+        # review M4: an exclusive node through this launcher is allocated 487,802M (sacct, job 60439400) and 256 CPUs
+        for stage, lanes in (("5b-inputs", 4), ("5b-periods", 8)):
+            text = (ND / "submit_fd_ct.sh").read_text()
+            block = text[text.index(f'if [ "$STAGE" = 5b-inputs ]; then' if stage == "5b-inputs" else "    else\n      TABLE"):]
+            cpt = int(block.split("CPT=")[1].split(";")[0])
+            mem = int(block.split("MEM=")[1].split("G")[0])
+            self.assertLessEqual(lanes * cpt, 256, stage)
+            self.assertLessEqual(lanes * mem * 1024, 487802, stage)
 
     def test_inputs_refuse_an_existing_run_directory(self):
         for d in ("merged", "dumps", "unf", "flux"):
@@ -1005,37 +1234,35 @@ class Submit(unittest.TestCase):
                 shutil.rmtree(self.B)
 
     def test_refuses_a_deploy_not_at_the_pin_or_a_B_the_tables_do_not_write_under(self):
-        r = self.submit("5b-inputs", str(self.D), "0" * 40, str(self.B))
-        self.assertEqual(r.returncode, 2)
+        for stage in ("inputs", "periods"):
+            self.gate_ok(stage)   # so that only the pin can refuse
+            r = self.submit(f"5b-{stage}", str(self.D), "0" * 40, str(self.B))
+            self.assertEqual(r.returncode, 2)
+            self.assertIn("is not at", r.stderr)
+            self.assertFalse((self.tmp / "sbatch.args").exists())
         other = self.tmp / "other"
         r = self.submit("5b-inputs", str(self.D), self.pin, str(other))
         self.assertEqual(r.returncode, 2)
         self.assertIn("0 of them writing under", r.stderr)
         self.assertFalse(other.exists())
 
-    def control(self, verdict):
+    def test_periods_only_after_the_control_gate(self):
         (self.B / "control").mkdir(parents=True)
-        (self.B / "control/fd_ct_5b_control.json").write_text(json.dumps({"verdict": verdict}))
-
-    def test_periods_only_after_a_pass(self):
         r = self.submit("5b-periods", str(self.D), self.pin, str(self.B))
         self.assertEqual(r.returncode, 2)
-        self.assertIn("does not record a PASS", r.stderr)
-        self.control("FAIL")
-        r = self.submit("5b-periods", str(self.D), self.pin, str(self.B))
-        self.assertEqual(r.returncode, 2)
+        self.assertIn("the gate did not pass", r.stderr)
         self.assertFalse((self.tmp / "sbatch.args").exists())
-        shutil.rmtree(self.B)
-        self.control("PASS")
+        self.gate_ok("periods")
         r = self.submit("5b-periods", str(self.D), self.pin, str(self.B))
         self.assertEqual(r.returncode, 0, r.stderr)
         a = self.args()
         for want in ("--qos=regular", "--constraint=cpu", "--exclusive", "--no-requeue", "--time=01:30:00",
                      "--job-name=fd_ct_5b_periods", "32", "56G", "0", "7", "none", str(self.B / "lanes-periods")):
             self.assertIn(want, a)
+        self.assertEqual([x for x in a if x.startswith(("--qos", "--time"))], ["--qos=regular", "--time=01:30:00"])
 
     def test_periods_refuse_existing_period_unfolds(self):
-        self.control("PASS")
+        self.gate_ok("periods")
         (self.B / "unf/PB").mkdir(parents=True)
         r = self.submit("5b-periods", str(self.D), self.pin, str(self.B))
         self.assertEqual(r.returncode, 2)

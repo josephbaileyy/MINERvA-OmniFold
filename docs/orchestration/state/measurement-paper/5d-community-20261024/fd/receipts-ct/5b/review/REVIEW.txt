@@ -1,0 +1,216 @@
+# Review of ba440b19f (5B per-period inputs, pooled control, period reader, tables, submit stages)
+
+Reviewer: independent, read-only. Worktree: scratchpad/review-wt at ba440b19f (detached). Probes and logs are in
+scratchpad/review-out/ (probe_dirs.py/.log, probe_leak.py/.log, probe_shared_seeds.py/.log).
+Test suite: `cd nd-unfolding/tests && python3 -B -m unittest test_fd_ct_periods`: 65 run, OK, 2 skipped (RootReaders,
+no ROOT locally).
+
+## HIGH
+
+### H1. Job A cannot finish: three of its output directories are never created.
+- Where: `5b-inputs-steps.tsv` (each lane writes `$B/dumps/`, `$B/truth/`, `$B/inputs/`);
+  `nn_dump_inputs.py:92` (`np.savez_compressed(args.out, ...)`, no mkdir); `s5p_mc_truth_pred.py:56` (no mkdir);
+  `fd_ct_period_inputs.py:126-129` (`write_json`, no mkdir); `submit_fd_ct.sh` (refuses if `dumps`, `truth` or
+  `inputs` exist, and creates only `logs`). Only `merge` (`:162`), `lateral` (`s5p_input_dumps.py:153`) and
+  `s5p_numerics` (`:175`) create their parents. The 3b stage did `mkdir -p "$B/closures"` for this reason.
+- Failure scenario: every lane runs merge, which creates `$B/merged`. Then `nn_dump_inputs.py` reads the whole
+  merged file (about 6 min for ALL) and raises FileNotFoundError on `$B/dumps/nn_<P>.npz`. All four lanes stop at
+  step 2, and no check, MC truth or ALL unfold is made. If `dumps/` existed, check would fail next at the truth write
+  (exit 6). If `truth/` also existed, `write_json` would raise on `inputs/check_<P>.json.partial` after the truth was
+  written. Because there is no resume, `merged/` now exists, so a resubmit to the same B is refused. The tables
+  hard-code B, so recovery needs a recommit with a new B.
+- Probe: `probe_dirs.log` shows all three failures, using the tools' own write calls on a fresh B layout:
+  `nn_dump write FAILS: FileNotFoundError ... B/dumps/nn_ALL.npz`; `truth write FAILS ... B/truth/truth_PB.npz` and
+  check rc 6; and with `truth/` present, `RAISES FileNotFoundError ... B/inputs/check_PB.json.partial`.
+- Why the tests miss it: `Check.build` and `Unfold.build` write into an existing tmp dir. No test runs one step into
+  a fresh B. The Submit stub's `py` mkdirs only `flux`.
+- Fix direction: in `submit_fd_ct.sh` 5b-inputs, `mkdir -p "$B/dumps" "$B/truth" "$B/inputs"` after the refusals.
+  Also make `run_check` create `a.out.parent` and `a.truth_out.parent`. Add a test that runs the merge, check and
+  unfold steps of one lane with only `$B` existing.
+
+### H2. The control record leaks f per cell, to machine precision, through q and tau_rel.
+- Where: `fd_ct_periods.py:211-222` (writes `q` and `tau_rel` per cell, plus `sigma_jitter_rel`); `:228` (prints
+  `max q` to 4 decimals); docstring `:13-14` ("q_R ..., never X_ALL / f - 1 itself").
+- Defect: q x tau = |X_ALL/f - 1| exactly. When K2 passes, X_ALL = U x_mp1, where x_mp1 is
+  `phase1/mp1/jitter-receipts/mp1s1_zero_b-_j-.npz`. That product is committed (`xsec_flat`, 65,856 entries;
+  `git ls-files` lists it). So f = X/(1 +- q tau) per cell, with two candidates separated by 2|X/f - 1|, about 0.1-1%
+  here. Even without `tau_rel`, tau follows from `SIGMA_JITTER` in the code or from the committed jitter receipts.
+  So q alone is |X/f - 1| under a public key. LeakGuard checks one number at a time, so it cannot see this.
+- Probe: `probe_leak.log`. Run on the test's synthetic tree, the control exits 0 (PASS, no guard refusal). From the
+  written JSON and the MP-1 zero product alone, the better of the two candidates matches f to 2.2e-16 on every cell.
+  The candidates are 5.5e-3 apart (median).
+- Lesser, same mechanism: in `periods`, `raw_X/ALL.shift` = x_X/x_ALL - 1 with x_ALL public (K2). So every period's
+  absolute cell integrals can be recovered, which ruling 6 also forbids ("an absolute cell integral of any
+  product X").
+- Fix direction:
+  - In the control, write only per-cell booleans `q <= 1` and the cells over. Drop `q`, `q_max` and the printed
+    `max q`. tau_rel is harmless once q is gone.
+  - Decide whether ratios to the ALL chain may be written when ALL is a public product. If not, report period-vs-ALL
+    only as chi2 and summaries.
+  - Add a test that tries to reconstruct f from the written record plus the committed product (as the probe does)
+    and requires that it fail.
+
+## MEDIUM
+
+### M1. All three periods use bootstrap seeds 1-10, so the paired noise draws are correlated. 2D used distinct seeds per period.
+- Where: `make_5b_tables.py:68` (`b in range(1, 11)` for each of PA, PB, PC); `fd_ct_periods.py:50,271-273,372-373,382`;
+  `s5n_pseudo.bootstrap_replica:210-218` (`default_rng(b)`, `b+10_000_000`, `b+20_000_000`). The 2D analogue, by
+  contrast, used distinct seeds per period by design: `analyze_periods.py:32` ("a distinct bootstrap seed per
+  period"); `jobs.tsv` uses 1001-1010, 2001-2010 and 3001-3010.
+- Defect:
+  - Replica b of PA and replica b of PB draw the same Poisson stream. So row i of each period's observed, MC and
+    template arrays gets the same weight, for every i < min(N_A, N_B). Checked: the prefixes are identical
+    (`probe_shared_seeds.py` first lines).
+  - This makes the period fluctuations d_A,k and d_B,k positively correlated in every summed direction. The
+    correlation is about p_S sqrt(N_small/N_large), where p_S is the fraction of rows in the summed set; for the
+    normalization mode it is up to sqrt(N_B/N_A), about 0.74.
+  - Toy (`probe_shared_seeds.log`, 533k and 295k rows): the 16-of-40-bin sum has corr +0.24 with shared seeds and
+    -0.02 with distinct ones. sd(dA - dB) is 0.88 of its independent value.
+- What it biases: the paired draws `draw_chi2_M` and `exceeds_every_draw`, `g_5b_noise_sigma` and
+  `abs_difference_over_noise` (vs 5A), and the C_PL,5D noise floor (`gn`, `Cn`) all come out low in correlated
+  directions. `expected_chi2_M` is built from per-period second moments, so it is unaffected. The two noise
+  references then disagree, and in the direction that makes a period difference look significant. `pz_contrast`
+  cancels to first order.
+- Fix direction: give each period its own seed block, e.g. PA 1001-1010, PB 2001-2010, PC 3001-3010, through
+  `--pairs`. Carry it into `BOOT`, `unf_path`, the `bootstrap_seed` check_meta expectation and the Q1 file set. This
+  must be done before job B, because nothing can be rerun afterwards.
+
+### M2. K3 is a constant once K2 passes. It tests MP-1's zero chain against production, not 5B's chain, and can be decided now at 0 node-h.
+- Where: `fd_ct_periods.py:194-213`.
+- Defect: K2 requires the ALL unfold to be bitwise `mp1s1_zero_b-_j-.npz`, so K3 = |U x_mp1 / f - 1| <= tau on 16
+  cells. That is a fixed property of two existing products (one committed, S1's f held by the session), measurable
+  today without any job.
+  - If it fails, the pooled control fails however correct the 5B chain is. Job A's node would have been spent to
+    learn something knowable in advance.
+  - If it passes, it carries no information about 5B. W2B-REPORT §4 records that the δ = 0 chain is not bitwise the
+    frozen product and passed only a p-value fallback, not a per-cell tolerance. So the outcome is not foregone.
+- Fix direction: compute K3 on the login node before submitting job A, using the same function, and record it in
+  the declaration as a precondition. Do not write q (H2). State in the label that K3 bounds MP-1's zero chain
+  against production, given K2.
+
+### M3. K2 demands bitwise reproduction, but the ALL unfold runs in a 64-CPU step. MP-1's ran in a 32-CPU step.
+- Where: `submit_fd_ct.sh` 5b-inputs `CPT=64`; `5b-inputs-steps.tsv:6` (`--threads 32`); MP-1:
+  `mp1_s1_pipeline.sh:52` (`CPU=32` for unfolds).
+- Defect: LightGBM's `num_threads` is pinned to 32 (`s5c_unfold.py:59`). Nothing pins the OpenMP or BLAS pools that
+  numpy and the refinement use: the unfold code sets no `OMP_NUM_THREADS` or threadpool limit. Those pools size
+  from the affinity mask, which is 64 here and was 32 for MP-1. Any threaded reduction whose summation order
+  follows the thread count would then break K2 spuriously, and 5B stops.
+- Not verified: no LightGBM or BLAS locally, so I could not show such a reduction exists. The point is that the
+  execution context differs for the one check that demands bit-identity.
+- Fix direction: run the ALL unfold with `-c 32`. Put it as a single step in job B's shape, or in its own 32-CPU
+  step after the ALL check. That reproduces MP-1's context rather than relying on thread-count invariance.
+
+### M4. Job A's four steps ask for more memory than the exclusive allocation holds.
+- Where: `submit_fd_ct.sh` 5b-inputs `MEM=120G`; `sbatch_timing_packed.sh:34` (`srun --exact ... --mem`).
+- Defect: 4 x 120G is 491,520M. An exclusive regular CPU job through this same launcher, with no `--mem`, is
+  allocated `mem=487802M` (`fd/receipts-f1/run/s11.out:4`, job 60439400; also gpu-timing `sacct.txt`).
+- Failure scenario: the fourth `srun` step (line 3, PC) cannot start until another lane releases memory. It runs
+  serially rather than concurrently. From MP-1's 350 s dumps and 711 s unfold the 1:00 limit probably still holds,
+  but that is an estimate, and the declared four-lane concurrency is not what runs. Peak use is about 21 GB per
+  lane (MP-1), so 120G is not needed.
+- Fix direction: use 112G or less (4 x 112G = 458,752M), or MP-1's 110G. Add a table test that lanes x MEM is at
+  most the allocation, as the 2D stage-C authorization required.
+
+### M5. The 5b-periods gate accepts any JSON whose `verdict` is "PASS".
+- Where: `submit_fd_ct.sh` 5b-periods (`json.load(...).get("verdict") != "PASS"`).
+  `test_periods_only_after_a_pass` writes exactly `{"verdict": "PASS"}` and expects submission.
+- Defect: it does not check:
+  - the schema `fd-ct-5b-control/1`;
+  - that `code_sha256["fd_ct_periods.py"]` is the file at `$PIN`;
+  - that `inputs_sha256.all_unfold` is the digest of `$B/unf/ALL/5b_ALL_b-_j-.npz`;
+  - that `$B/inputs/check_{PA,PB,PC}.json` exist.
+- Failure scenario: a stale or hand-written PASS, or a PASS made at another pin, starts the 33 unfolds. If job A's
+  PA lane failed while ALL succeeded, 11 job-B steps die with an uncaught FileNotFoundError traceback
+  (`fd_ct_period_inputs.py:301`, a traceback, not a Refuse code), after allocation. The reader's Q0 catches a wrong
+  result later, but the node-hours are spent.
+- Fix direction: check schema, code digest and all_unfold digest at the gate, and refuse unless all three period
+  check receipts exist and parse.
+
+## LOW
+
+- **L1. The nn_dump step and the lateral `--cv-npz` check add cost but cannot fail, and they contradict the design
+  record.**
+  - `--cv-npz <own nn npz>` turns lateral's two refusals (`s5p_input_dumps.py:165-166`) into self-comparisons. Both
+    tools read the same merged file with the same `und` collectors, so check's "the lateral npz is the nn_dump npz"
+    (`fd_ct_period_inputs.py:239-241`) is a tautology. It costs one extra full dump per lane.
+  - FD-CT-5B-INPUTS.md §5 says lateral "cannot be used" and prescribes `s5c_dump_bkg.py`. The code uses lateral's
+    float64 background, which K1 does need for MP-1 parity.
+  - The declaration should record which governs. Consider dropping nn_dump, or say what it is for.
+- **L2. Cheap refusals come after expensive steps, and partial failures leave unrecoverable state.**
+  - The data-POT check (merge vs flux, ROOT-only, seconds) runs only after two full dumps. It could run at merge
+    time.
+  - `run_check` writes the truth before its receipt.
+  - `stage-flux` can leave a partial `flux/`.
+  - `run_unfold` and `receipt()` raise tracebacks on a missing or malformed receipt instead of Refuse codes.
+  - With no resume, each of these forces a new B and a recommit.
+- **L3. Tests.**
+  - (a) The fixtures always pre-create output directories, so H1 cannot show.
+  - (b) PTree's replica draws are independent normals, so M1 cannot show.
+  - (c) The controls Q2 (exposure sums to ALL), Q3 and K0 (positivity) and S (`cell_sets_problems`) have no test
+    in the direction they act. Each passes only on good input.
+  - (d) The submit test enshrines the schema-free PASS (M5).
+  - (e) `test_the_committed_tables_are_the_generators` restates the generator, and the Submit test's B substitution
+    makes the under-B count partly tautological. Both guard drift only.
+  - (f) No test of lanes x MEM (M4), or of the leak by composition (H2).
+- **L4. The p_parallel contrast splits at 4.5 GeV/c, but the 2D step is near 8.** The 16 cells only split at 4.5
+  (`h2_definition.json`). The hi side [4.5, 60] mixes 2D's low-side 4.5-8 with 8-60, so a 2D-like step is diluted.
+  Label `pz_contrast` so a small value is not read as "the 2D step is absent".
+- **L5. Docstrings cite a missing file.** `FD-CT-5B-DECLARATION.md` (cited for `SIGMA_JITTER` "as declared", for
+  the tables' section 2 and for the tests' section 3) does not exist at ba440b19f. The departures from addendum
+  §5.2 need to be in it: no seed-43 runs (justified by S1-DIRECTOR-RULINGS §2), 34 rather than 37 unfolds, lateral
+  instead of s5c_dump_bkg, and the 4.5 contrast.
+- **L6. Nits.**
+  - The control does not refuse if period unfolds already exist. "Before any period unfold exists" is enforced
+    only by submit order.
+  - Q1's `glob("*.npz")` also matches s5p_numerics' `*.partial-<pid>.npz` temps. This fails closed, but with a
+    misleading message.
+  - `J36` carries no noise and no label. 2D gave it a seed-only lower bound.
+  - 5b-inputs does not refuse an existing `$B/control`.
+
+## Checked and found sound
+
+- **The ALL chain is MP-1's zero chain.**
+  - `PERIODS` equals 2D `periods.py`, and ALL equals MP-1's `PLS` order (tests).
+  - The merge argv is OUT first, then inputs in production order, through the same `hadd_universes_full.py`, with
+    `.partial` then rename.
+  - The lateral code is unchanged since MP-1's dump pin c1cba7bf; only `detector()` changed.
+    `unfold_2d_omnifold_unbinned.py`'s diff touches only `main()` and new opt-in functions, so `get_pot_scales`,
+    `load_flux_bins`, the edges and N_nucleons are unchanged.
+  - `unfold_nd_omnifold_unbinned`, `s5p_numerics`, `s5n_pseudo`, `s5c_unfold`, `s5e_*`, `omnifold_nn_core`,
+    `xsec_nd` and the 2D helper are unchanged since MP-1's unfold pin 4e4b4f56 (`git diff --name-only`).
+  - The `--cv-npz` choice affects no compared array; it reaches only the bkg `meta`, which K1 excludes.
+  - The ALL flux bins, errors, POTUsed and DataPOT are bitwise the production flux that MP-1's lateral read by
+    default (2D `inputs_verify.json`), so K1's `flux` key can match.
+  - The unfold arguments equal MP-1's table: R, 5 iterations, data, `-:-`, `--threads 32`, seed 42.
+- **Pins.** The flux pins match the 2D `SHA256SUMS.inputs`, and the committed copies are at their pins.
+  `MP1_ZERO` equals `build_cresp.PRODUCTS["zero"]`, and the unfold pin equals the committed product. The 5A readout
+  pin matches the committed `fd_ct_period.json`, whose `variants.central.g` has 16 entries per period.
+- **Control isolation.** `control` reads only the ALL receipt, the ALL unfold, S1, C_resp and the committed jitter
+  receipts. The test with garbage period receipts and no period unfolds passes. K1 requires every declared key and
+  the MP-1 digests in the receipt.
+- **Tolerance.** sigma_R is the pooled SD about each variant's own mean, with 20 dof. It reproduces `SIGMA_JITTER`
+  to 1e-12, independently computed in the test. TAU_K = 5 sqrt(2).
+- **Statistics against analyze_periods.py and DESIGN §2-4.** All of the following match 2D's construction:
+  - N = sum_X a a^T o mean d d^T, with paired draws sum_X a_X d_X,k;
+  - B/A coefficients (1, -1) and X/ALL coefficients (1 - e_X, -e_Y);
+  - contrast noise by shifting the numerator;
+  - e = POT x Phi, scalar because the flux is p_T-constant (Q2) and summing to ALL's exposure;
+  - k = V2/(1 - V2), C_PL = k sum e g g^T with g = r/m - 1 and sum e g = 0;
+  - the noise floor, by d_X - sum e d (DESIGN §4);
+  - J36 and J36_potw.
+  Treating the r-draws as equal to the x-draws is right, because the replica leaves `denom_nd` and so T unchanged.
+- **Leak guard, number by number.** All 34 unfold integrals and the 4 truths are passed, with near-f cells dropped.
+  The tests show no false refusal at 3e-14 and 2e-14 from f, and refusal of planted ratios and absolute values.
+  Labels and paths do not hit the tables.
+- **Submit and tables.**
+  - QOS regular, constraint cpu, one exclusive node, `--no-requeue`, `--gres=none` steps, and the pin check.
+  - Every step line writes under `$B` and the count must match; the refusals come before any mkdir or staging.
+  - CPU totals are 4 x 64 and 8 x 32. Job B's 8 x 56G = 458,752M fits.
+  - Time: job B's heaviest lane is 1.49 ALL-unfold equivalents by bytes (about 18 min at MP-1's 711 s) against
+    1:30. Job A's ALL lane is merge, two dumps of about 350 s, check, and about 711 s, roughly 30 min against 1:00.
+  - The tables regenerate byte-identically. There are 17 and 33 steps, and each declared unfold appears once.
+
+## Worktree status after review
+
+`git -C scratchpad/review-wt status --porcelain`: (empty). Probes are kept in scratchpad/review-out/, outside the
+worktree.

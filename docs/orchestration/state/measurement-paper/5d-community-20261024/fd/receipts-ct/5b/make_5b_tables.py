@@ -5,8 +5,8 @@ sbatch_timing_packed.sh -> s5c_array.sh -> fd_f1_lane.py on one exclusive CPU no
 * Job A, ``5b-inputs``: four lanes, one per period (ALL, PA, PB, PC), each running merge -> nn_dump_inputs.py ->
   s5p_input_dumps.py lateral -> check (with the MC truth); the ALL lane then runs the ALL unfold, which the pooled
   control reads.
-* Job B, ``5b-periods`` (submitted only after the control PASSes): 33 unfolds, the seed-42 unfold and bootstrap
-  replicas 1-10 of each period, one unfold per step, packed into eight lanes longest first (the cost of a step
+* Job B, ``5b-periods`` (submitted only after the control PASSes): 33 unfolds, the seed-42 unfold and the ten
+  bootstrap replicas of each period's own seed block (PA 1001-1010, PB 2001-2010, PC 3001-3010), one unfold per step, packed into eight lanes longest first (the cost of a step
   taken as its period's share of the twelve zero loops' bytes), each step to the least-loaded lane.
 
     python3 -I -B make_5b_tables.py <repo root> <output dir>
@@ -17,6 +17,7 @@ from pathlib import Path
 REPO = Path(sys.argv[1]).resolve()
 sys.path.insert(0, str(REPO / "nd-unfolding"))
 import fd_ct_period_inputs as pi  # noqa: E402
+import fd_ct_periods as cp  # noqa: E402
 
 P = "/pscratch/sd/j/josephrb"
 B = f"{P}/fd-ct-5b-20261030"
@@ -40,7 +41,7 @@ def paths(per):
 
 def unfold_args(per, b):
     q = paths(per)
-    pair = f"{'-' if b is None else b}:-"
+    pair = f"{'-' if b is None else b}:-"   # b from the period's own seed block, fd_ct_periods.BOOT
     return ["unfold", "--period", per, "--receipt", q["receipt"], f"--pairs={pair}", "--estimator-seed", "42",
             "--tag", f"5b_{per}", "--threads", "32", "--out", q["unf"]]
 
@@ -49,7 +50,8 @@ steps_a = ["# 5B job A (steps), written by make_5b_tables.py; FD-CT-5B-DECLARATI
 for lane, per in enumerate(LANES_A):
     q = paths(per)
     rows = [
-        (f"ct5b_merge_{per}", "fd_ct_period_inputs.py", ["merge", "--period", per, "--loops-dir", LOOPS, "--out", q["merged"]]),
+        (f"ct5b_merge_{per}", "fd_ct_period_inputs.py", ["merge", "--period", per, "--loops-dir", LOOPS, "--flux", q["flux"],
+                                                  "--out", q["merged"]]),
         (f"ct5b_nndump_{per}", "nn_dump_inputs.py", ["--omnifile", q["merged"], "--mcfile", q["flux"], "--axes", "eavail,q3,W",
                                                      "--out", q["nn"]]),
         (f"ct5b_lateral_{per}", "s5p_input_dumps.py", ["lateral", "--omnifile", q["merged"], "--cv-npz", q["nn"], "--mcfile",
@@ -65,7 +67,7 @@ for lane, per in enumerate(LANES_A):
         steps_a.append("\t".join([str(lane), name, entry, *args]))
 
 cost = {per: sum(LOOP_BYTES[pl] for pl in pi.PERIODS[per]) for per in ("PA", "PB", "PC")}
-work = sorted(((cost[per], per, b) for per in ("PA", "PB", "PC") for b in (None, *range(1, 11))),
+work = sorted(((cost[per], per, b) for per in ("PA", "PB", "PC") for b in (None, *cp.BOOT[per])),
               key=lambda w: (-w[0], w[1], -1 if w[2] is None else w[2]))
 load = [0] * N_LANES_B
 steps_b = ["# 5B job B (steps), written by make_5b_tables.py; FD-CT-5B-DECLARATION.md section 2. Longest first, each "
@@ -73,7 +75,7 @@ steps_b = ["# 5B job B (steps), written by make_5b_tables.py; FD-CT-5B-DECLARATI
 for c, per, b in work:
     lane = min(range(N_LANES_B), key=lambda k: (load[k], k))
     load[lane] += c
-    tag = "s42" if b is None else f"b{b:02d}"
+    tag = "s42" if b is None else f"b{b}"
     steps_b.append("\t".join([str(lane), f"ct5b_unfold_{per}_{tag}", "fd_ct_period_inputs.py", *unfold_args(per, b)]))
 
 

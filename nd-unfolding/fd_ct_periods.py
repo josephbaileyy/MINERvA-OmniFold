@@ -2,23 +2,30 @@
 """The cheap tier's 5B readers (state/measurement-paper/5d-community-20261024/FD-CT-5B-DECLARATION.md): the pooled
 control on the ALL chain, then the per-period readout on the 16 H2 reporting cells R00-R15. Login node, 0 node-h.
 
-    fd_ct_periods.py control --definition ... --s1-npz ... --cresp ... --b <B> --mp1-zero <mp1s1_zero_b-_j-.npz> --out-json ...
-    fd_ct_periods.py periods --definition ... --s1-npz ... --cresp ... --b <B> --control-json ... --readout-5a ... --out-json ...
+    fd_ct_periods.py precheck --definition ... --s1-npz ... --cresp ... --b <B> --mp1-zero <mp1s1_zero_b-_j-.npz> --out-json ...
+    fd_ct_periods.py control  --definition ... --s1-npz ... --cresp ... --b <B> --mp1-zero <mp1s1_zero_b-_j-.npz> --out-json ...
+    fd_ct_periods.py gate     --stage inputs|periods --b <B>
+    fd_ct_periods.py periods  --definition ... --s1-npz ... --cresp ... --b <B> --control-json ... --readout-5a ... --out-json ...
+
+* ``precheck`` decides K3 (below) on MP-1's own zero unfold before job A runs: if K2 holds, that unfold is X_ALL.
+* ``gate`` is the submit stages' refusal: job A only after this deploy's precheck PASSed, job B only after its control.
 
 * ``control`` reads only the ALL chain, before any period unfold exists (the period unfolds are a second job, whose
   submit line refuses unless this record says PASS). It decides three things, fixed here before anything runs:
   K1, the ALL dump's npz and background arrays are bitwise MP-1's zero dump's, key by key (from the ALL check
   receipt); K2, the ALL unfold's xsec_flat is bitwise MP-1's mp1s1_zero_b-_j-.npz; K3, |X_ALL / f - 1| <= tau_R on
   every cell, tau_R = 5 sqrt(2) sigma_R with sigma_R the pooled per-cell SD of MP-1's 25 committed jittered data
-  unfolds about their own variant means (zero, em +-1, other +-1; 20 dof). It writes the verdict, and q_R =
-  |X_ALL / f - 1| / tau_R, never X_ALL / f - 1 itself.
-* ``periods`` reads the three periods' seed-42 unfolds and 10 bootstrap replicas each, their MC truths and the ALL
-  unfold, and writes: the double ratios r_X = X_X / T_X of the periods against each other and against ALL, the raw
-  and MC-truth ratios beside them; per comparison the chi2 against M = (C_total + C_resp)/(f f^T) beside its
+  unfolds about their own variant means (zero, em +-1, other +-1; 20 dof). It writes the verdict and, for K3, a flag
+  per cell: never X_ALL / f - 1 or its ratio to tau, which with the committed mp1s1_zero would give f back.
+* ``periods`` reads the three periods' seed-42 unfolds and 10 bootstrap replicas each (a seed block per period),
+  their MC truths and the ALL unfold, and writes: the double ratios r_X = X_X / T_X of the periods against each other,
+  the raw and MC-truth ratios beside them; per comparison the chi2 against M = (C_total + C_resp)/(f f^T) beside its
   bootstrap-noise expectation and the 10 paired noise draws; C_PL,5D by 2D's DESIGN section 2, printed beside the
   reported matrix; and 5B's period offsets g_X against 5A's projected ones (5A's untested assumption).
 
-Every output is relative. Nothing written or printed carries f, an absolute cell value or f - g: each output passes
+Every output is relative, and nothing is written relative to ALL: X_ALL is MP-1's committed zero unfold once K2 holds,
+so a ratio to it would give an absolute period integral back. Nothing written or printed carries f, an absolute cell
+value or f - g: each output passes
 ``fd_f0_regrade.LeakGuard`` first (exit 3, nothing written). Following amendment 1, an integral within LEAK_REL of f is
 not passed to the guard, since it IS f. A control that refuses exits 1 with nothing written; K1-K3 are written with
 the verdict, which is FAIL (exit 1) unless all three hold.
@@ -47,7 +54,9 @@ import s1_assemble as sa  # noqa: E402  (fine_map, functional_matrix, check_meta
 N_CELLS = 16
 PER = ("PA", "PB", "PC")
 N_BOOT = 10
-BOOT = tuple(range(1, N_BOOT + 1))
+# a distinct bootstrap seed block per period, as 2D's (review M1): s5n_pseudo.bootstrap_replica seeds its streams from
+# the seed alone, so a seed shared between periods gives their rows a common Poisson prefix and correlates their noise
+BOOT = {"PA": tuple(range(1001, 1011)), "PB": tuple(range(2001, 2011)), "PC": tuple(range(3001, 3011))}
 TOL = 1e-12
 EIG_FLOOR = 1e-24   # a relative variance below this (sigma 1e-12) counts as zero in C_PL,5D's rank
 # the p_parallel < 4.5 and >= 4.5 cells of the H2 definition (checked against its boxes)
@@ -92,10 +101,15 @@ READOUT_5A_SHA256 = "d7d518ac20acd90d9d411dbd1353c509e734e8588b6bc3965ae5f14cf93
 LABELS = {
     "control": "the pooled control of 5B: the ALL chain built from MP-1's zero loops through 5B's own merge, dumps and "
                "unfold, against MP-1's zero chain bitwise (K1 inputs, K2 unfold) and against S1's f within a "
-               "tolerance fixed from MP-1's committed jitter scatter before any period output existed (K3); q is "
-               "|X/f - 1| / tau, written instead of X/f - 1",
+               "tolerance fixed from MP-1's committed jitter scatter before any period output existed (K3); K3 is "
+               "written as a flag per cell, never as |X/f - 1| or its ratio to tau",
+    "precheck": "K3 decided on MP-1's own zero unfold before job A runs: if K2 holds, X_ALL is that unfold; a flag "
+                "per cell, never |X/f - 1| or its ratio to tau",
+    "contrast": "the p_parallel contrast across 4.5 GeV/c, the only p_parallel boundary of the 16 cells; it is not 2D's "
+                "step near 8 GeV/c, which lies inside the cells' [4.5, 60) range, so a 2D-like step is diluted in it",
     "periods": "5B, descriptive: the per-period (e) data unfolds of 1A-1F, 1G/1L/1M and 1N-1P on the 16 cells, each "
-               "over its own MC truth (the double ratio), against each other and the ALL chain, with a noise "
+               "over its own MC truth (the double ratio), against each other (not against ALL, whose committed "
+               "integrals would make a ratio absolute), with a noise "
                "reference of 10 bootstrap replicas per period (refit per replica; (e)'s seed term is zero by "
                "construction, S1-DIRECTOR-RULINGS.md section 2); chi2 values are distances in the reported matrix's "
                "metric beside their noise expectation, not tests",
@@ -180,8 +194,49 @@ def guarded(f: np.ndarray, integrals) -> f0.LeakGuard:
 # ---------------------------------------------------------------- control
 
 
+def k3(a, U: np.ndarray, X: np.ndarray, integrals) -> tuple[bool, dict, f0.LeakGuard]:
+    """K3 on the cell integrals X: |X / f - 1| <= tau_R on every cell. Only a flag per cell is written: q tau is
+    |X / f - 1| itself, and X_ALL is public once K2 holds (mp1s1_zero is committed), so a written q would give f
+    back cell by cell (review H2)."""
+    sigma = jitter_sigma(_ND.parent, U)
+    if not np.allclose(sigma, SIGMA_JITTER, rtol=TOL, atol=0.0):
+        raise f0.Stop("K3", "the jitter sigma recomputed from the pinned receipts is not the declared one")
+    tau = TAU_K * sigma
+    S = ct.common(a, U)
+    f = S["f"]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        within = np.abs(X / f - 1.0) <= tau
+    ok = bool(np.all(within))
+    rec = {"pass": ok, "within_by_cell": [bool(v) for v in within],
+           "cells_over": ct.cells([int(i) for i in np.flatnonzero(~within)]),
+           "tau_rel": tau.tolist(), "tau_k": TAU_K, "sigma_jitter_rel": sigma.tolist(),
+           "written": "a flag per cell, never |X/f - 1| or its ratio to tau (review H2)"}
+    return ok, rec, guarded(f, integrals)
+
+
+def run_precheck(a) -> int:
+    """K3 on MP-1's own zero unfold, before job A (review M2): if K2 holds, X_ALL is that unfold and K3 is decided
+    by it; a FAIL here blocks 5B at 0 node-h. The tolerance is the one fixed above, before any read of f."""
+    U = sa.functional_matrix(f0.sa_call("S", sa.fine_map, a.definition))
+    f0.require("K0", a.mp1_zero, pi.MP1_ZERO["unfold"], "MP-1 mp1s1_zero_b-_j-.npz")
+    X = U @ sa.xs(a.mp1_zero)
+    f0.report("K0", "every cell integral of MP-1's zero unfold is positive", bool(np.all(X > 0)), "is not")
+    ok, rec, guard = k3(a, U, X, [X])
+    verdict = "PASS" if ok else "FAIL"
+    out = {"schema": "fd-ct-5b-precheck/1", "labels": {"what": LABELS["precheck"]}, "verdict": verdict,
+           "controls_passed": ["S", "K0"], "cells": ct.cells(), "K3_within_tolerance_of_f": rec,
+           "inputs_sha256": {"mp1_zero": pi.MP1_ZERO["unfold"], "jitter": JITTER, "s1_npz": ct.PINS["s1_npz"],
+                             "cresp": ct.PINS["cresp"], "definition": sa.DEFINITION_SHA256},
+           "code_sha256": code_sha(), "argv": sys.argv}
+    rc = ct.write(a, out, guard, [f"[5B precheck] K3 on mp1s1_zero: {verdict}, cells over {rec['cells_over']}"])
+    return rc if ok else 1
+
+
 def run_control(a) -> int:
     U = sa.functional_matrix(f0.sa_call("S", sa.fine_map, a.definition))
+    present = [P for P in PER if (a.b / "unf" / P).exists()]
+    if present:
+        raise f0.Stop("K0", f"period unfolds exist before the control: {present}")
     rec = receipt(a.b, "ALL", "K0")
     f0.report("K0", "the ALL check receipt is this deploy's and its files are at their recorded digests", True)
     cmp_ = rec.get("all_vs_mp1_zero") or {}
@@ -193,12 +248,6 @@ def run_control(a) -> int:
     f0.require("K0", a.mp1_zero, pi.MP1_ZERO["unfold"], "MP-1 mp1s1_zero_b-_j-.npz")
     x_all = unfold(a.b, "ALL", None, rec, "K0")
     x_mp1 = sa.xs(a.mp1_zero)
-    sigma = jitter_sigma(_ND.parent, U)
-    if not np.allclose(sigma, SIGMA_JITTER, rtol=TOL, atol=0.0):
-        raise f0.Stop("K3", "the jitter sigma recomputed from the pinned receipts is not the declared one")
-    tau = TAU_K * sigma
-    S = ct.common(a, U)
-    f = S["f"]
     X = U @ x_all
     f0.report("K0", "every ALL cell integral is positive", bool(np.all(X > 0)), "is not")
     k1_failed = sorted(f"{d}:{k}" for d in ("lat_npz", "lat_bkg") for k, v in cmp_[d].items() if not v)
@@ -207,28 +256,45 @@ def run_control(a) -> int:
     # for the report only: (e) is bit-reproducible run to run on the records, so any difference is a STOP
     nz = (x_mp1 != 0) if x_all.shape == x_mp1.shape else np.zeros(0, bool)
     k2_diff = float(np.max(np.abs(x_all[nz] / x_mp1[nz] - 1.0))) if nz.any() else None
-    with np.errstate(divide="ignore", invalid="ignore"):
-        q = np.abs(X / f - 1.0) / tau
-    k3 = bool(np.all(q <= 1.0))
-    verdict = "PASS" if (k1 and k2 and k3) else "FAIL"
-    guard = guarded(f, [X, U @ x_mp1])
+    k3_ok, k3_rec, guard = k3(a, U, X, [X, U @ x_mp1])
+    verdict = "PASS" if (k1 and k2 and k3_ok) else "FAIL"
     out = {"schema": "fd-ct-5b-control/1", "labels": {"what": LABELS["control"]}, "verdict": verdict,
            "controls_passed": ["S", "K0"], "cells": ct.cells(),
            "K1_inputs_bitwise_mp1_zero": {"pass": k1, "failed_keys": k1_failed,
                                           "lat_npz_bytes_equal": bool(cmp_.get("lat_npz_bytes_equal"))},
            "K2_unfold_bitwise_mp1_zero": {"pass": k2, "max_rel_diff_fine_cells": k2_diff},
-           "K3_within_tolerance_of_f": {"pass": k3, "q": q.tolist(), "q_max": float(np.max(q)),
-                                        "cells_over": ct.cells([int(i) for i in np.flatnonzero(q > 1.0)]),
-                                        "tau_rel": tau.tolist(), "tau_k": TAU_K, "sigma_jitter_rel": sigma.tolist()},
+           "K3_within_tolerance_of_f": k3_rec,
            "inputs_sha256": {"all_receipt": sa.sha256(a.b / "inputs/check_ALL.json"),
                              "all_unfold": sa.sha256(unf_path(a.b, "ALL", None)), "mp1_zero": pi.MP1_ZERO,
                              "jitter": JITTER, "s1_npz": ct.PINS["s1_npz"], "cresp": ct.PINS["cresp"],
                              "definition": sa.DEFINITION_SHA256},
            "code_sha256": code_sha(), "argv": sys.argv}
-    lines = [f"[5B control] K1 inputs bitwise {k1}, K2 unfold bitwise {k2}, K3 max q {float(np.max(q)):.4f} "
-             f"(<= 1 on every cell: {k3}); verdict {verdict}"]
+    lines = [f"[5B control] K1 inputs bitwise {k1}, K2 unfold bitwise {k2}, K3 within tolerance on every cell "
+             f"{k3_ok} (over: {k3_rec['cells_over']}); verdict {verdict}"]
     rc = ct.write(a, out, guard, lines)
     return rc if verdict == "PASS" else 1
+
+
+def run_gate(a) -> int:
+    """The submit stages' gate (review M5): job A only after this deploy's precheck PASSed; job B only after this
+    deploy's control PASSed on the ALL unfold now on disk, with the three period check receipts this deploy's."""
+    name = {"inputs": "fd_ct_5b_precheck.json", "periods": "fd_ct_5b_control.json"}[a.stage]
+    schema = {"inputs": "fd-ct-5b-precheck/1", "periods": "fd-ct-5b-control/1"}[a.stage]
+    p = a.b / "control" / name
+    if not p.is_file():
+        raise f0.Stop("G", f"no {p}")
+    r = json.loads(p.read_text())
+    if (r.get("schema"), r.get("verdict")) != (schema, "PASS"):
+        raise f0.Stop("G", f"{p.name} does not record a PASS")
+    if (r.get("code_sha256") or {}).get("fd_ct_periods.py") != sa.sha256(Path(__file__).resolve()):
+        raise f0.Stop("G", f"{p.name} was not made by this deploy's fd_ct_periods.py")
+    if a.stage == "periods":
+        if r["inputs_sha256"]["all_unfold"] != sa.sha256(unf_path(a.b, "ALL", None)):
+            raise f0.Stop("G", "the ALL unfold is not the one the control read")
+        for P in PER:
+            receipt(a.b, P, "G")
+    print(f"PASS gate {a.stage}", flush=True)
+    return 0
 
 
 # ---------------------------------------------------------------- periods
@@ -303,11 +369,11 @@ def run_periods(a) -> int:
     f0.report("Q0", "the pooled control is this deploy's and PASSed on this ALL unfold", True)
     rec = {P: receipt(a.b, P, "Q1") for P in PER + ("ALL",)}
     for P in PER:
-        want = sorted(unf_path(a.b, P, b).name for b in (None, *BOOT))
+        want = sorted(unf_path(a.b, P, b).name for b in (None, *BOOT[P]))
         have = sorted(p.name for p in (a.b / "unf" / P).glob("*.npz"))
         if have != want:
             raise f0.Stop("Q1", f"{P}: the unfold directory holds {have}, not the declared {len(want)}")
-    xs = {P: {b: unfold(a.b, P, b, rec[P], "Q1") for b in (None, *BOOT)} for P in PER}
+    xs = {P: {b: unfold(a.b, P, b, rec[P], "Q1") for b in (None, *BOOT[P])} for P in PER}
     xs["ALL"] = {None: unfold(a.b, "ALL", None, rec["ALL"], "Q1")}
     f0.report("Q1", "3 x 11 period unfolds and the ALL unfold, each (e) on its own period's dumps", True)
     T, e_raw = {}, {}
@@ -333,7 +399,7 @@ def run_periods(a) -> int:
     S = ct.common(a, U)
     f = S["f"]
     x = {P: U @ xs[P][None] for P in PER + ("ALL",)}
-    D = {P: [U @ xs[P][b] / x[P] - 1.0 for b in BOOT] for P in PER}
+    D = {P: [U @ xs[P][b] / x[P] - 1.0 for b in BOOT[P]] for P in PER}
     allX = [U @ v for P in xs for v in xs[P].values()]
     f0.report("Q3", "every unfold and MC-truth integral is positive on all 16 cells",
               bool(all(np.all(v > 0) for v in allX) and all(np.all(T[P] > 0) for P in T)), "is not")
@@ -350,19 +416,8 @@ def run_periods(a) -> int:
         val = (lambda n, d: r[n] / r[d] - 1.0) if q == "dr" else (lambda n, d: x[n] / x[d] - 1.0)
         for n, d in (("PB", "PA"), ("PC", "PA"), ("PC", "PB")):
             comps[f"{q}_{n}/{d}"] = assess(val(n, d), x[n], x[d], *tt(n, d), {n: one, d: -one}, D, Mi)
-        for X in PER:
-            coef = {Y: (1.0 - e[Y]) * one if Y == X else -e[Y] * one for Y in PER}
-            comps[f"{q}_{X}/ALL"] = assess(val(X, "ALL"), x[X], x["ALL"], *tt(X, "ALL"), coef, D, Mi)
     for n, d in (("PB", "PA"), ("PC", "PA"), ("PC", "PB")):
         comps[f"mc_{n}/{d}"] = assess(T[n] / T[d] - 1.0, T[n], T[d], None, None, None, D, Mi)
-    with_pot = {}
-    for P in PER:
-        with np.load(rec[P]["files"]["lat_npz"][0], allow_pickle=True) as z:
-            with_pot[P] = float(z["data_pot"])
-    potw = {P: with_pot[P] / sum(with_pot.values()) for P in PER}
-    for nm, w in (("J36", e), ("J36_potw", potw)):
-        synth = sum(w[P] * x[P] for P in PER)
-        comps[nm] = assess(synth / x["ALL"] - 1.0, synth, x["ALL"], None, None, None, D, Mi)
     # C_PL,5D (2D DESIGN section 2) and its noise floor: the same construction on pure noise around consistent periods
     mbar = sum(e[P] * r[P] for P in PER)
     g = {P: r[P] / mbar - 1.0 for P in PER}
@@ -389,12 +444,13 @@ def run_periods(a) -> int:
                    "difference_chi2_M": float(dlt @ Mi @ dlt)}
     out = {"schema": "fd-ct-5b-periods/1",
            "labels": {"what": LABELS["periods"], "cpl": LABELS["cpl"], "vs_5a": LABELS["vs_5a"],
+                      "contrast": LABELS["contrast"],
                       "no_threshold": LABELS["no_threshold"], "not_citable_for": LABELS["not_citable_for"]},
            "controls_passed": ["S", "Q0", "Q1", "Q2", "Q3", "Q4"],
            "assertions_passed": {"Q5": "implied by the construction: it guards the code, not the inputs"},
            "cells": ct.cells(), "cell_sets": {"pz_lo": ct.cells(PZ_LO), "pz_hi": ct.cells(PZ_HI)},
            "constants": {"periods": {"PA": "1A-1F", "PB": "1G 1L 1M", "PC": "1N-1P"}, "exposure_share": e,
-                         "data_pot_share": potw, "k": k, "n_boot": N_BOOT,
+                         "k": k, "n_boot": N_BOOT, "bootstrap_seeds": {P: list(BOOT[P]) for P in PER},
                          "metric": "M = (C_total + C_resp) / (f f^T), S1's reported matrix with C_resp",
                          "noise": "per period, d_k = X_b,k / X_s42 - 1 over 10 bootstrap replicas (s5n_pseudo."
                                   "bootstrap_replica, refit per replica); the replica leaves denom_nd and so the MC "
@@ -434,14 +490,17 @@ def code_sha() -> dict:
 def build_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="reader", required=True)
-    for name in ("control", "periods"):
+    g = sub.add_parser("gate")
+    g.add_argument("--stage", choices=("inputs", "periods"), required=True)
+    g.add_argument("--b", type=Path, required=True)
+    for name in ("precheck", "control", "periods"):
         p = sub.add_parser(name)
         p.add_argument("--definition", type=Path, required=True)
         p.add_argument("--s1-npz", type=Path, required=True)
         p.add_argument("--cresp", type=Path, required=True)
         p.add_argument("--b", type=Path, required=True)
         p.add_argument("--out-json", type=Path, required=True)
-        if name == "control":
+        if name in ("precheck", "control"):
             p.add_argument("--mp1-zero", type=Path, required=True)
         else:
             p.add_argument("--control-json", type=Path, required=True)
@@ -451,11 +510,11 @@ def build_args(argv):
 
 def main(argv=None) -> int:
     a = build_args(argv)
-    if a.out_json.exists():
+    if a.reader != "gate" and a.out_json.exists():
         print(f"FAIL refusing to overwrite {a.out_json}", file=sys.stderr)
         return 1
     try:
-        return {"control": run_control, "periods": run_periods}[a.reader](a)
+        return {"precheck": run_precheck, "control": run_control, "gate": run_gate, "periods": run_periods}[a.reader](a)
     except f0.Stop as e:
         print(e.code, file=sys.stderr, flush=True)
         return 1

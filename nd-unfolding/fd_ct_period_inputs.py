@@ -4,7 +4,8 @@
 each a lane step of the committed tables (fd_f1_lane.py under s5c_array.sh), after the login-node flux staging:
 
     fd_ct_period_inputs.py stage-flux --out-dir <B>/flux
-    fd_ct_period_inputs.py merge  --period P --loops-dir <MP-1 evloop/zero> --out <B>/merged/runEventLoopOmniFold_5D_<P>_zero.root
+    fd_ct_period_inputs.py merge  --period P --loops-dir <MP-1 evloop/zero> --flux <B>/flux/runEventLoopMC_<P>.root \
+                                  --out <B>/merged/runEventLoopOmniFold_5D_<P>_zero.root
     fd_ct_period_inputs.py check  --period P --merged ... --nn-npz ... --lat-npz ... --lat-bkg ... --flux ... \
                                   --truth-out ... --out <B>/inputs/check_<P>.json [--mp1-lat-npz ... --mp1-lat-bkg ...]
     fd_ct_period_inputs.py unfold --period P --receipt <B>/inputs/check_<P>.json --pairs=-:- --tag 5b_<P> --out <B>/unf/<P>
@@ -14,7 +15,8 @@ each a lane step of the committed tables (fd_f1_lane.py under s5c_array.sh), aft
 * ``merge``: the period's playlists, in production order (1A ... 1P, as MP-1 and W2b merged them), each required to be
   its pinned MP-1 zero loop, merged by ``2d-unfolding/uq/hadd_universes_full.py`` as MP-1 merged them
   (measurement-paper/phase1/mp1/mp1_s1_pipeline.sh, stage merge), so each period file carries its own POT. ALL is all
-  twelve. It writes ``<out>.json`` beside the merge.
+  twelve. It refuses (exit 5, the merge removed) unless the merge's data POT is the period flux file's
+  DataPOTUsedForFluxWeighting, before any dump reads it, and writes ``<out>.json`` beside the merge.
 * Between merge and check the lane runs ``nn_dump_inputs.py --axes eavail,q3,W --mcfile <period flux>`` (the period's
   npz) and ``s5p_input_dumps.py lateral --cv-npz <that npz> --mcfile <period flux>`` (the same npz again, in MP-1's
   lateral form, and its background dump with float64 coordinates, MP-1's form).
@@ -166,9 +168,17 @@ def run_merge(a) -> int:
     if rc != 0 or not partial.is_file():
         partial.unlink(missing_ok=True)
         raise Refuse(6, f"hadd_universes_full.py exited {rc}")
+    # the cheap POT check before any dump reads the merge (review L2); check repeats it on the dump
+    require(a.flux, FLUX[a.period], f"{a.period} flux file")
+    m_pot, f_pot = merged_data_pot(partial), flux_data_pot(a.flux)
+    pot_rel = f_pot / m_pot - 1.0
+    if abs(pot_rel) > POT_REL:
+        partial.unlink()
+        raise Refuse(5, f"the merge's dataPOTUsed is not the flux file's DataPOTUsedForFluxWeighting ({pot_rel:.3e})")
     partial.replace(a.out)
     os.chmod(a.out, 0o440)
     write_json(receipt, {"schema": "fd-ct-5b-merge/1", "period": a.period, "playlists": list(PERIODS[a.period]),
+                         "flux_weighting_over_merge_data_pot_minus_1": pot_rel,
                          "inputs": inputs, "out": str(a.out), "out_sha256": sha256(a.out),
                          "out_bytes": a.out.stat().st_size, "code_sha256": code_sha(),
                          "seconds": round(time.time() - t0, 1)})
@@ -225,6 +235,8 @@ def compare(p: Path, q: Path, keys) -> dict:
 
 def run_check(a) -> int:
     fresh(a.out, a.truth_out)
+    for d in (a.out.parent, a.truth_out.parent):
+        d.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     is_all = a.period == "ALL"
     if is_all != (a.mp1_lat_npz is not None and a.mp1_lat_bkg is not None):
@@ -328,6 +340,7 @@ def build_args(argv):
     m = sub.add_parser("merge")
     m.add_argument("--period", choices=sorted(PERIODS), required=True)
     m.add_argument("--loops-dir", type=Path, required=True)
+    m.add_argument("--flux", type=Path, required=True)
     m.add_argument("--out", type=Path, required=True)
     c = sub.add_parser("check")
     c.add_argument("--period", choices=sorted(PERIODS), required=True)
