@@ -1,0 +1,9 @@
+# 5B job B (lanes), written by make_5b_tables.py; FD-CT-5B-DECLARATION.md section 2. The steps path is relative to the deploy root, where s5c_array.sh and fd_f1_lane.py run
+ct5b_b_lane0	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	0
+ct5b_b_lane1	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	1
+ct5b_b_lane2	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	2
+ct5b_b_lane3	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	3
+ct5b_b_lane4	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	4
+ct5b_b_lane5	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	5
+ct5b_b_lane6	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	6
+ct5b_b_lane7	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv	--lane	7
