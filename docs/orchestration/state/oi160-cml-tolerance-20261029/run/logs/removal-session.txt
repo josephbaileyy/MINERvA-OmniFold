@@ -1,0 +1,72 @@
+OI-160 C_ML run directory, removed on the director's word (2026-10-30) after #526 merged.
+Session: close-items, from the Mac via ssh saul.nersc.gov (login37). Commands and their output, verbatim.
+
+== 1. Every non-empty out/ and logs/ file, sha256 on pscratch, compared with origin/main (git show) ==
+$ ssh saul.nersc.gov 'T=/pscratch/sd/j/josephrb/oi160-cml-20261029; hostname; date -u +%FT%TZ; cd $T && find out logs -type f -size +0 -print0 | sort -z | xargs -0 sha256sum; echo "empty files: $(find out logs -type f -size 0 | sort | tr "\n" " ")"; echo "top level: $(ls -A $T | tr "\n" " ")"'
+login37
+2026-10-30T08:02:14Z
+e2ba129cf985bcf80d4c4f8a6d452f09f45a9e8c3d1140d9f486f0d610cdb580  logs/control_A1.log
+32faa40a343f37f55d881d02703b180a9aec30a9c75019a3e71a669f72bcfe1d  logs/control_A2.log
+4c1e49d535839bc975b4c2c7af3944abcec1e949cbf6986ef32573f87da548d5  logs/deploy.log
+7a38013c55ef8ab91b609301cc1759c94790523250716a92300b893659e93762  logs/deploy-tests.log
+c393bf0ca98281d7ae7e98c5f66ba4d7bed78a028986c39d2f84cd92ee9c4f71  logs/grade.log
+71b3a9c2c3994c6839b344463cdf3dc8623db0e6735c69da9c9b710162e943a9  logs/s14_A.log
+069d06806eaf1dad899fde371d87741746f86bb6101ae785d472a4cbaff00a9c  logs/s14_B.log
+4ce9193dfce9a82371208252f1edaae6b14dcd25f5fa3f53b81a30839830e52e  logs/s19_A.log
+ef195b6e1ed8af7d8d95c1e42e11879ae111464833708560029c69701e48b26e  logs/s19_B.log
+e3c9f330865111b238e38842115f4b6c6b463d1126c8cdbf0e5e280d551759ce  logs/s24_A.log
+7e70001dfcfcb6188b3979a0b8bc0ad2bd5f6f57226be67d64a8334f2eca76fe  logs/s24_B.log
+cc5b85ddb8eb37ebc4a114414f1ad7e443f3ae58314de2effe75362b70e9b436  logs/s4_A.log
+e5fefee65ad2a10f9661431cabfdf30c2106924234d3263eecc32ef0a3975f14  logs/s4_B.log
+82efe3b2e5d89a2b26f77ae9f34872de469a8a076791225e186bc464932a3f4c  logs/s9_A.log
+a745bbe20bffae7b40d0e0dfa4e4c59b71efd8762a70c2b14769b83adfcba41d  logs/s9_B.log
+c6e269f1d40220392985d628fcfed29d02cbd4db07aed53a94a634954b8183fe  logs/sacct.txt
+8884785b0d321855f1772b31022060c9b611f60199afda37bab40b05a71eccc6  logs/task0.log
+16391848ad55a8f5e3ad45426bda1b64e14da9e112c5e6ac3d2d67c829f44767  logs/task1.log
+399240a8bcda5c973401244e53111b99d71552a10667deedd880ff72aa990c3f  logs/task2.log
+3a3942b04a9020ab896758852feec9e86e889201e194cd1ac256a41c56f14ba9  logs/task3.log
+b8d7e522b03c283f6dc55056aaec159740686ca496db74ee097094332b308a1e  logs/task4.log
+763b54122412314fd29648e000ca7d050ba2fd0dbca29567b0f47836ad5a4257  logs/task5.log
+762b745a28e581fcadd1b670d6b025a11dcad9164d22e9f0bf2bc68e9101cf66  out/control_A1.npz
+8b1469edc2fec5c76562c239b3b54b2a76605476f9750bcf8db37b031d31dc8f  out/control_A1.provenance.json
+44eacff6dc22daad56103ad35163408245b2ea88951ec64f152c285a633ccfd7  out/control_A2.npz
+be0aec9bf64ff1e4124286b64ad2afde649c9140d0506182c00b748fadd8f9ea  out/control_A2.provenance.json
+e5073ffac2d927c5b3e186beaea7136a867095cbc282e9d9e84e2abed072fbe2  out/readout.json
+f7ac2c31a04c82f5485ed31b0f272b6acf6e24a884ade5e96c6022d882e1c5dc  out/s14_A.npz
+8e13daa1b70f2a0237020585c70ecfcb1d06e9423dcc1a333664a7dd0fcde246  out/s14_A.provenance.json
+fbd6e49e32aaefb6cd55c4f09c99564c793e2de76a1a7030afa5c6492f32bd05  out/s14_B.npz
+19f866329c79a11ec36448712dc4ec2b506437b79e038dd4c4340e9b84717395  out/s14_B.provenance.json
+195b424eb4de7338a86f376bbd9f8f5ac94857961a0865d7a9382e8545e56fea  out/s19_A.npz
+25ee166a8af9c3ccb71957d7f8b3b33e09466638d1f52be58de81642c76075f1  out/s19_A.provenance.json
+eba08a45494b226889e98fe9b2c23bc39b7d6e2afc90579e114b4a01396eebc3  out/s19_B.npz
+472527b36cb29436d6da90f9bb8861730aca2d62ad2cd7c8ead9b7286d722406  out/s19_B.provenance.json
+d917993337481e813205de5a81a4d71d6d6f34599449df17b1f5328c97cf1ca1  out/s24_A.npz
+fb982a537cfd6ef4561c9e627673831abb3f56951769e29bd90e15500956c264  out/s24_A.provenance.json
+50c405b21f8c106d067c8138c972185270ac0bb6f56eea1bfb77a672befe9390  out/s24_B.npz
+82cabd5c4ad55e9979b12cc390f4a5f30e0f42ddc35241a68629ea5e3ba4b262  out/s24_B.provenance.json
+47d85220d5572a2e262ccd3991b3c72fbb39e8dbee69bc6cd5d33fb7d4b21f98  out/s4_A.npz
+36b28b2003c9afb898c917ccb2398f246d4a1ef27c6e90b0ca3ef168bf4d95f6  out/s4_A.provenance.json
+ee165a2494bf3ef7c495d33a984df884b69e82e02d46b8369cc900a846c7c599  out/s4_B.npz
+836639824c5645e55461c06c1b11951f30ef9b32c9617effb1dd930db19560a2  out/s4_B.provenance.json
+0a34f669ad8eee8c20973c0e6bb0843b1059c35168578cb772e598da6f260480  out/s9_A.npz
+b5c617b1442fde7acf6634a04271544a705e82aa5994a27cf23ec004f52a8f6b  out/s9_A.provenance.json
+98a81347dc513b6ef9f8953352148abc69646fd442f184ba5656ba916b674173  out/s9_B.npz
+cda7e8d92c09f857311d410179b2f3a4d8013a328a3d96db85bf94078c432b06  out/s9_B.provenance.json
+empty files: logs/60530414_0.err logs/60530414_0.out logs/60530414_1.err logs/60530414_1.out logs/60530414_2.err logs/60530414_2.out logs/60530414_3.err logs/60530414_3.out logs/60530414_4.err logs/60530414_4.out logs/60530414_5.err logs/60530414_5.out 
+top level: deploy logs out tmp work 
+ssh rc=0
+compare (local, against origin/main ebd579e2c, run/<path> under docs/orchestration/state/oi160-cml-tolerance-20261029/):
+identical 47 mismatch 0
+#526 merged as 4c256563c; origin/main was ebd579e2c at the compare.
+Besides out/ and logs/, the directory held only deploy/ (the deploy clone), work/ (per-task code copies) and tmp/.
+
+== 2. Removal and re-listing ==
+$ ssh saul.nersc.gov 'set -u; P=/pscratch/sd/j/josephrb; t=$P/oi160-cml-20261029; if [ -L "$t" ] || [ ! -d "$t" ]; then echo "REFUSE $t"; else rm -rf -- "$t"; echo "rm rc=$? $t"; fi; hostname; date -u +%FT%TZ; ls -la $P | grep -c . ; ls -d $P/oi160-* 2>&1; ls -d $P/MINERvA-OmniFold'
+rm rc=0 /pscratch/sd/j/josephrb/oi160-cml-20261029
+login37
+2026-10-30T08:02:36Z
+1006
+ls: cannot access '/pscratch/sd/j/josephrb/oi160-*': No such file or directory
+/pscratch/sd/j/josephrb/MINERvA-OmniFold
+ssh rc=0
+The directory's parent is /pscratch/sd/j/josephrb. Nothing was written to CFS or to the canonical checkout.
