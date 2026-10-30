@@ -1,0 +1,25 @@
+(Each pair is one passage of a physics analysis note, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [app_release.tex RL62]
+BEFORE: \item Read the per-cell relative uncertainty as $\sqrt{(C_{EW})_{rr}}/y_{r}$.
+AFTER: \item The per-cell relative uncertainty is $\sqrt{(C_{EW})_{rr}}/y_{r}$.
+
+Q2. [app_release.tex RL65]
+BEFORE: \item Do \emph{not} invert $C_{EW}$ without a declared regularization: its spectrum runs continuously down to the double-precision noise floor, so the inverse is set by the regularizer rather than by the data, and \S\ref{sec:eavailw-adopted}'s first measurement is the reason no significance is computed from it at all.
+AFTER: \item $C_{EW}$ should \emph{not} be inverted without a declared regularization: its spectrum runs continuously down to the double-precision noise floor, so an inverse is set by the regularizer rather than by the data. The estimator-seed sensitivity, which exceeds its limit (the first measurement of \S\ref{sec:eavailw-adopted}), is why significance is computed from it.
+
+Q3. [app_codebase.tex AH5]
+BEFORE: \item \emph{Driver} (Python): per-analysis orchestration in \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} and its $N$-dimensional generalization \texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}. The driver builds training arrays from the event-loop outputs, applies the background subtraction its background-mode option selects (by default the purity weight; \S\ref{sec:method-algo}), runs the engine, and extracts the cross section. \item \emph{Engine} (Python): \texttt{unbinned\_unfolding/python/omnifold.py} implements the OmniFold iteration independently of the learner backend: LightGBM for the central value and the uncertainty ensembles, scikit-learn's exact-split gradient boosting (\texttt{exact}) for the cross-check, its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP) for a further cross-check.
+AFTER: \item \emph{Driver} (Python): per-analysis orchestration, by a two-dimensional driver and its $N$-dimensional generalization. The driver builds training arrays from the event-loop outputs, subtracts the background by the method an option selects, the purity weight by default (\S\ref{sec:method-algo}), or negative-weight injection with or without the Stay-Positive refinement (App.~\ref{app:negweight}), runs the engine, and extracts the cross section. \item \emph{Engine} (Python, \texttt{unbinned\_unfolding/python/omnifold.py}): the OmniFold iteration, implemented independently of the learner backend: LightGBM for the central value and the uncertainty ensembles, scikit-learn's exact-split gradient boosting (\texttt{exact}) for the cross-check, its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP) for a further cross-check.
+
+Q4. [app_codebase.tex AH9]
+BEFORE: Scripts, figure files and stored outputs call \emph{training-seed variation} \texttt{seedscan}; the two names denote the same variance source. The quoted training-seed block is assembled by the aggregation step of the 2D production, not by the \texttt{seedscan} scripts.
+AFTER: The quoted training-seed block is assembled by the aggregation step of the 2D production, by the scripts that run the training-seed variation.
+
+Q5. [app_codebase.tex AH12]
+BEFORE: \item Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
+AFTER: \item Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py}, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
+
+Q6. [app_codebase.tex AH14]
+BEFORE: \end{itemize} \section{Supplementary figure: coverage of a purity-subtracted variant} \label{app:coverage-fig} Figure~\ref{fig:coverage-5d-paper} shows, integral by integral, the coverage test of \S\ref{sec:coverage-5d} under the reduction of the signal rate.
+AFTER: \end{itemize} \section{Supplementary figure: coverage of a purity-subtracted variant} \label{app:coverage-fig} The coverage test of \S\ref{sec:coverage-5d} measures, for each reported integral, the fraction of bias-corrected statistical intervals that contain the true value. Figure~\ref{fig:coverage-5d-paper} shows it integral by integral at the truth with a reduced signal rate.

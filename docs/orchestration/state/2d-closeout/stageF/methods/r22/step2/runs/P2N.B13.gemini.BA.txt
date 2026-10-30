@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A maintains a consistently formal and disciplined scientific register, whereas Document B repeatedly lapses into colloquial diction and conversational idioms unsuited to PRD (such as "cheapest estimate," "yardsticks," and "a mismatch, not an upgrade").
+2. Document A adheres to complete, grammatically sound prose throughout, while Document B frequently slips into telegraphic shorthand and note-style sentence fragments (such as "Same-ensemble 68.9 % (⟨|r|⟩ ≈ 0.79) remains a pull/Gaussianity diagnostic" and casual abbreviations like "sample SD").
+3. Document A exhibits rigorous technical copy editing, avoiding Document B's unpolished editorial flaws such as the redundant double approximation "About ∼45" and awkward within-paragraph phrase repetitions.

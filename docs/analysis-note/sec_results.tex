@@ -29,17 +29,17 @@ The shapes are those expected for CC-inclusive scattering at $\langle E_\nu\rang
 \label{sec:results-compare}
 The published and unbinned results share the data and the flux, detector and generator systematics, and their cross-covariance is not available. Every $\chi^{2}$ and standardized difference here is therefore descriptive, not a calibrated goodness-of-fit test.
 
-Over the 205 reported bins, the total cross section reproduces the published result~\cite{MINERvA:2021owq} to \SI{1.0}{\percent} (ratio $\ratioTot$; Table~\ref{tab:compare}). The median per-bin ratio is $\medianBinRatio$; $\binsFive\%$ of bins agree within \SI{5}{\percent} and $\binsTen\%$ within \SI{10}{\percent}. Indicative values of $\chi^{2}$ per reported bin are $\chiPaper$ with the published covariance alone (analysed in \S\ref{sec:results-tension}) and $\chiCombined$ with the combined covariance, which includes our uncertainty.
+Over the 205 reported bins, the total cross section reproduces the published result~\cite{MINERvA:2021owq} to \SI{1.0}{\percent} (ratio $\ratioTot$; Table~\ref{tab:compare}). The median per-bin ratio is $\medianBinRatio$; $\binsFive\%$ of bins agree within \SI{5}{\percent} and $\binsTen\%$ within \SI{10}{\percent}. Indicative values of $\chi^{2}$ per reported bin are $\chiPaper$ with the published covariance alone (analysed in \S\ref{sec:results-tension}) and $\chiCombined$ with the sum of the published covariance and that of this measurement.
 
 % chi^2 caveat, moved here from sec_systematics.tex (formerly \paragraph{$\chi^{2}$ caveat.}).
-The combined (published plus ours) $\chi^{2}/\mathrm{ndf}=\chiCombined$ double-counts the flux, GENIE and MINOS systematics that the two results share. With our covariance alone, $\chi^{2}$ is computed only in the covariance's well-constrained subspace, with a truncated spectral pseudo-inverse. We therefore quote the per-bin pulls and the truncated result together, with a regularization scan made for the exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App.~\ref{sec:rank}).
+The latter, $\chi^{2}/\mathrm{ndf}=\chiCombined$, double-counts the flux, GENIE and MINOS systematics that the two results share. With the covariance of this measurement alone, $\chi^{2}$ is computed only in the covariance's well-constrained subspace, with a truncated spectral pseudo-inverse. We therefore quote the per-bin pulls and the truncated result together, with a regularization scan made for the exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App.~\ref{sec:rank}).
 % NR: the regularization scan was not recomputed for Q (no committed producer; rebuild REPORT §6).
 % J3/J4 provisional (DECISION-20261018, packet C7: kept, labelled historical). Register pass b6: the printed label is now the
 % factual "on an earlier covariance and not repeated for the quoted one"; the "(historical ...)" heading label is in
 % App. statmethods, \paragraph{Regularization scans (historical; all cutoff-dependent).}
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass)
 
-Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pull}) are centered (mean $\pullMean$), with RMS $\pullRMSr$, well inside the published uncertainties. Figures~\ref{fig:ptslices}--\ref{fig:pzslices} compare our unfolded result with \emph{simulated truth} in the published panel format; published data do not enter this data-versus-prior comparison.
+Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pull}) are centered (mean $\pullMean$), with RMS $\pullRMSr$, well inside the published uncertainties. Figures~\ref{fig:ptslices}--\ref{fig:pzslices} compare the unfolded result with \emph{simulated truth}, the MC prior, in the published panel format.
 
 \begin{table}[h]
   \centering
@@ -47,29 +47,29 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
     \toprule
     Quantity (205 reported bins) & Value \\
     \midrule
-    $\sigma_{\mathrm{tot}}(\mathrm{ours})/\sigma_{\mathrm{tot}}(\mathrm{paper})$ & $\ratioTot$ \\
-    Median bin ratio (ours/paper) & $\medianBinRatio$ \\
+    $\sigma_{\mathrm{tot}}(\mathrm{this})/\sigma_{\mathrm{tot}}(\mathrm{published})$ & $\ratioTot$ \\
+    Median bin ratio (this/published) & $\medianBinRatio$ \\
     Bins within \SI{5}{\percent}/\SI{10}{\percent}/\SI{20}{\percent} & $\binsFive/\binsTen/\binsTwenty\,\%$ \\
-    Indicative $\chi^{2}$/bin, paper covariance & $\chiPaper$ \\
-    Indicative $\chi^{2}$/bin, paper $+$ ours & $\chiCombined$ \\
+    Indicative $\chi^{2}$/bin, published covariance & $\chiPaper$ \\
+    Indicative $\chi^{2}$/bin, published $+$ this covariance & $\chiCombined$ \\
     Published-$\sigma$ standardized-difference mean / RMS & $\pullMean/\pullRMS$ \\
     \bottomrule
   \end{tabular}
-  \caption{Agreement with arXiv:2106.16210. Per-bin differences standardized by published uncertainties (Fig.~\ref{fig:pull}) are sub-$1\sigma$; the $\chi^{2}$ values are descriptive.}
+  \caption{Agreement of this measurement with the published measurement of Ref.~\cite{MINERvA:2021owq}. Per-bin differences standardized by published uncertainties (Fig.~\ref{fig:pull}) are sub-$1\sigma$; the $\chi^{2}$ values are descriptive.}
   \label{tab:compare}
 \end{table}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full}
-  \caption{Per-bin standardized difference $(\mathrm{ours}-\mathrm{paper})/\sigma_{\mathrm{paper}}$ on the $14\times16$ grid and its distribution. It is descriptive, not a pull between independent results.}
+  \caption{Per-bin standardized difference $(\mathrm{this}-\mathrm{published})/\sigma_{\mathrm{published}}$ on the $14\times16$ grid, and its distribution. It is descriptive, not a pull between independent results.}
   \label{fig:pull}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption{Unfolded cross section (points) and GENIE 2.12.6 $+$ MINERvA Tune~v1 \emph{simulated truth} (histogram), sliced in $\pT$ versus $\pPar$. The histogram is the analysis MC truth denominator with the unfolded result's flux, nucleon-count and efficiency normalization, so the two differ only as data versus MC prior; no published measurement is used, and only the \emph{panel format} follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. Points carry statistical errors only, and only these enter the annotated per-panel $\chi^{2}$, which is a descriptive scale. Comparisons \emph{with the published data} are in Fig.~\ref{fig:pull} (per-bin standardized differences), Table~\ref{tab:compare} and Fig.~\ref{fig:model} (projections).}
+  \caption{Unfolded cross section (points) and GENIE 2.12.6 $+$ MINERvA Tune~v1 \emph{simulated truth} (histogram), sliced in $\pT$ versus $\pPar$. The histogram is the analysis MC truth denominator with the unfolded result's flux, nucleon-count and efficiency normalization, so the two differ only as data versus MC prior; no published measurement is used, and only the \emph{panel format} follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. Points carry statistical errors only, and only these enter the annotated per-panel $\chi^{2}$, which is a descriptive scale. Comparisons \emph{with the published data} are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}.}
   %
   % (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
   % \texttt{hOFTruthDenom2D}; listed in App.~\ref{app:codebase})
@@ -79,13 +79,13 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pz_slices}
-  \caption{Unfolded versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$. Statistical errors only; no published measurement is used.}
+  \caption{Unfolded cross section versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$, with statistical errors only and no published measurement.}
   \label{fig:pzslices}
 \end{figure}
 
 \subsection{Uncertainty budget}
 \label{sec:results-uq}
-Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as described in \S\ref{sec:systematics}. Our own combined budget, without the published covariance, is comparable to the published total: its per-bin median, \SI{\uqMedian}{\percent}, is smaller than the published \SI{\uqPaper}{\percent}, and its value on the integrated cross section, \SI{\uqIntegral}{\percent}, is larger than the published \SI{\uqPaperIntegral}{\percent} (the width-weighted total $\sigma$ of App.~\ref{sec:chisq}). The comparison leaves out the generator-shape component $C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}), because the published uncertainty has no such component either; with it, the per-bin median is \SI{\qrCmodelMedian}{\percent}. The systematic-universe block carries a median 0.87 of each bin's variance and 0.83 of the integral's, and the run-period block (\S\ref{sec:uq-combine}) raises the per-bin median from \SI{\uqSFiveMedian}{\percent} to \SI{\uqMedian}{\percent}. The largest band is the flux, as in the publication (Fig.~\ref{fig:uqbands}), and it accounts for part of the difference between the per-bin medians: its median is \SI{\fluxBand}{\percent}, against \SI{4.01}{\percent} for the published flux block. The public release does not let us determine the origin of this difference; our leading hypothesis is the FHC-only constraint file. Our flux band carries MAT's per-universe $\nu$--$e$ and inverse-muon-decay constraint weights. The statistical and ML blocks together contribute under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$. Every block is computed with the LightGBM estimator of the quoted central value (\S\ref{sec:method-config}), and relative uncertainties are taken with respect to that central value, which is the universe sweep's central value at training seed~42. Taken with respect to the exact-split cross-check instead, the same combined covariance has a per-bin median of \SI{6.462}{\percent}.
+Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as described in \S\ref{sec:systematics}. Our own combined budget, without the published covariance, is comparable to the published total: its per-bin median, \SI{\uqMedian}{\percent}, is smaller than the published \SI{\uqPaper}{\percent}, and its value on the integrated cross section, \SI{\uqIntegral}{\percent}, is larger than the published \SI{\uqPaperIntegral}{\percent} (the width-weighted total $\sigma$ of App.~\ref{sec:chisq}). The comparison leaves out the generator-shape component $C_{\mathrm{model}}$ (\S\ref{sec:uq-2d-scope}), because the published uncertainty has no such component either; with it, the per-bin median is \SI{\qrCmodelMedian}{\percent}. The systematic-universe block accounts for a median 0.87 of the per-bin variance and 0.83 of the integral's variance, and the run-period block (\S\ref{sec:uq-combine}) raises the per-bin median from \SI{\uqSFiveMedian}{\percent} to \SI{\uqMedian}{\percent}. The largest band is the flux, as in the publication (Fig.~\ref{fig:uqbands}), and it accounts for part of the difference between the per-bin medians: its median is \SI{\fluxBand}{\percent}, against \SI{4.01}{\percent} for the published flux block. The public release does not let us determine the origin of this difference; our leading hypothesis is the FHC-only constraint file. Our flux band carries the per-universe $\nu$--$e$ and inverse-muon-decay constraint weights of the MINERvA Analysis Toolkit. The statistical and ML blocks together contribute under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$. Every block is computed with the LightGBM estimator of the quoted central value (\S\ref{sec:method-config}), and relative uncertainties are taken with respect to that central value, which is the universe sweep's central value at training seed~42. Taken with respect to the exact-split cross-check instead, the same combined covariance has a per-bin median of \SI{6.462}{\percent}.
 % RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): DECISION-20261024-joseph-2d-model-dependence-component.md item 1 (like-for-like with Q
 % alone) and item 3; \qrCmodelMedian from cmodel_R.json (values.tex).
 % J3/J4 provisional (DECISION-20261018, packet C2: median and integral; W3: D0; W5: the history clause was kept until
@@ -111,24 +111,24 @@ Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as d
     \midrule
     ML noise (LightGBM training-seed settings) & 5 & \num{1.35e-41} & \SI{0.048}{\percent} \\
     Statistical (Poisson bootstrap) & 300 & \num{1.89e-40} & \SI{0.676}{\percent} \\
-    Systematic (universe sweep $+$ \SI{1.4}{\percent} norm) & 43 bands${+}1$ & \num{2.69e-39} & \SI{5.935}{\percent} \\
+    Systematic (universe sweep $+$ \SI{1.4}{\percent} normalization) & 43 bands${+}1$ & \num{2.69e-39} & \SI{5.935}{\percent} \\
     Run period & 3 & \num{8.31e-40} & \SI{2.087}{\percent} \\
     \textbf{Combined (block sum)} & --- & \num{2.82e-39} & \SI{6.414}{\percent} \\
-    Paper TotalCov (reference) & --- & \num{2.68e-39} & \SI{\uqPaper}{\percent} \\
+    Published total covariance (reference) & --- & \num{2.68e-39} & \SI{\uqPaper}{\percent} \\
     % Q rows: rebuild/outputs/outA/budget_Q.json.gz {c08,stat,universe,C_PL,Q}.{sqrt_trace,median_pct};
     % paper: paper_ratios.paper_sqrt_trace_TotalCovariance_205 (2.676e-39). Row labels:
     % J3/J4 provisional (DECISION-20261018, packet W3: D0, D5; W10: block names as in the text).
     \bottomrule
   \end{tabular}
-  \caption{2D uncertainty budget over 205 reported bins. Each component has a $205\times205$ covariance matrix $C$; $\sqrt{\mathrm{Tr}\,C}$ gives its absolute per-bin uncertainties in quadrature. The flux band carries MAT's constraint weights. The systematic row holds 43 bands from the July universe sweep (which has 44 bands and 187 universes) plus the normalization; the ML row has five training-seed settings and the run-period row three run periods. Our combined median relative uncertainty (\SI{6.414}{\percent}) is below the published total (\SI{\uqPaper}{\percent}).}
+  \caption{2D uncertainty budget over 205 reported bins. Each component has a $205\times205$ covariance matrix $C$; $\sqrt{\mathrm{Tr}\,C}$ gives its absolute per-bin uncertainties in quadrature. The systematic row combines 43 of the 44 bands of the systematic-universe sweep (187 universes) with the normalization; the ML row combines five training-seed settings, and the run-period row three run periods. Our combined median relative uncertainty (\SI{6.414}{\percent}) is below the published total (\SI{\uqPaper}{\percent}).}
   \label{tab:uq}
 \end{table}
-\subsection{Anatomy of the $\chi^{2}=\chiPaper$ tension}
+\subsection{Eigenmode analysis of the published-covariance tension, $\chi^{2}=\chiPaper$}
 \label{sec:results-tension}
-With the published uncertainties as a descriptive scale, the central values have a pull RMS of $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be $0.29$), whereas the distance with the full published covariance is $\chiPaper$ per bin. The eightfold increase lies entirely in the off-diagonal structure of the published covariance, and it is a difference in \emph{shape}, not normalization ($\chi^{2}_{\mathrm{norm}}=0.04$ against $\chi^{2}_{\mathrm{shape}}=465$). The eigenmode decomposition (Fig.~\ref{fig:tension}) spreads it over many modes: the largest has a paper-covariance-standardized component of magnitude $4.8$, and the next nine $3.4$--$3.8$. The 10 smallest-$\lambda$ modes carry \SI{9.6}{\percent}, two of the five largest contributors lie in the smallest-$\lambda$ tenth, and keeping the 73 best-measured directions gives $0.66$. Of the six leading modes, the three in the highest-$\pPar$ bins are all poorly determined directions ($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the other three are moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and $6\times10^{-5}$) and lie below the highest $\pPar$ bins (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$ band carries more than \SI{15}{\percent} of the total.
+With the published uncertainties as a descriptive scale, the central values have a pull RMS of $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be $0.29$), whereas $\chi^{2}$ per bin with the full published covariance is $\chiPaper$. The eightfold increase lies entirely in the off-diagonal structure of the published covariance, and it is a difference in \emph{shape}, not normalization ($\chi^{2}_{\mathrm{norm}}=0.04$ against $\chi^{2}_{\mathrm{shape}}=465$). The eigenmode decomposition (Fig.~\ref{fig:tension}) spreads it over many modes: the largest has a paper-covariance-standardized component of magnitude $4.8$, and the next nine $3.4$--$3.8$. The 10 smallest-$\lambda$ modes carry \SI{9.6}{\percent} of the total $\chi^{2}$. Of the five largest contributors, two lie in the smallest-$\lambda$ tenth of the spectrum. Restricted to the 73 best-measured directions, $\chi^{2}/\mathrm{ndf}$ is $0.66$. Of the six leading modes, the three in the highest-$\pPar$ bins are all poorly determined directions ($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the other three are moderate-$\lambda$ modes ($\lambda/\lambda_{\max}$ between $4\times10^{-6}$ and $6\times10^{-5}$) and lie below the highest $\pPar$ bins (Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$ band carries more than \SI{15}{\percent} of the total.
 
 % RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): the purity-subtracted values are unchanged (RE2-PARTC-REPORT.md sec. 5, "Unchanged"); 2.654 -> 2.27: values_table.tsv m-chiPaper (\chiPaperPurity, \chiPaper).
-With the purity-based subtraction, the choice of GBDT estimator spreads the distance over about one unit, a methodological band: the exact-split cross-check gives $\chiPaperExact$, HistGBT $2.70\pm0.04$, and LightGBM with seeds 1--10 gives 2.64--2.75. Beyond this methodological band, the source of the shape difference has not been identified. At the central value's seed, the refined negative-weight subtraction of the quoted result lowers the LightGBM distance from $\chiPaperPurity$ to $\chiPaper$. For the exact-split cross-check the distance is larger and distributed differently, with magnitude-$5$--$6$ components in moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak; the 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of it, and the 73 best-measured directions give $1.42$ (App.~\ref{sec:tension}). The number of iterations has a negligible effect: going from 5 to 10 iterations moves the LightGBM (seed~1) distance by $+0.01$. See App.~\ref{sec:tension} for the full treatment and Figs.~\ref{fig:tension}--\ref{fig:tensionmodes} for eigenmode-localization maps.
+With the purity-based subtraction, the choice of GBDT estimator spreads the distance over about one unit, a methodological band: the exact-split cross-check gives $\chiPaperExact$, HistGBT $2.70\pm0.04$, and LightGBM with seeds 1--10 gives 2.64--2.75. Beyond this estimator dependence, the source of the shape difference has not been identified. At the central value's seed, the refined negative-weight subtraction of the quoted result lowers the LightGBM $\chi^{2}$ per bin from $\chiPaperPurity$ to $\chiPaper$. For the exact-split cross-check, $\chi^{2}$ is larger and distributed differently: its components of magnitude $5$--$6$ lie in moderate-$\lambda$ modes on the low-$\pT$ ridge of the cross-section peak. Its 10 smallest-$\lambda$ modes carry \SI{3}{\percent} of the $\chi^{2}$, and the 73 best-measured directions give $\chi^{2}/\mathrm{ndf}=1.42$ (App.~\ref{sec:tension}). Going from 5 to 10 iterations changes the LightGBM (seed~1) value by a negligible $+0.01$. App.~\ref{sec:tension} gives the full treatment and Figs.~\ref{fig:tension}--\ref{fig:tensionmodes} the eigenmode-localization maps.
 % Search: source of the shape difference; source has not been identified (note sources: this sentence, paper_body.tex sec:repro2d and primer_body.tex; App. sec:tension attributes about one chi-square unit to the estimator's implicit regularization, the band named here) @ 03e98d3d. Note round n4: the home of the former executive-summary sentence (note-n4/ledger.md, batch F).
 % 2026-10-11: LightGBM seed-42 values from diagnose_tension.py at e1216e9c,
 % docs/orchestration/receipts/2d-lgbm42-20261011/tension_report.txt; the exact-split control
@@ -139,32 +139,32 @@ With the purity-based subtraction, the choice of GBDT estimator spreads the dist
   \centering
   \includegraphics[width=0.49\textwidth]{tension_spectrum}
   \includegraphics[width=0.49\textwidth]{tension_chi2_map}
-  \caption{Tension anatomy: eigenvalue spectrum with cumulative $\chi^{2}$ (left) and the per-bin $\chi^{2}$-contribution map (right).}
+  \caption{Eigenmode decomposition of the published-covariance $\chi^{2}$: eigenvalue spectrum with cumulative $\chi^{2}$ (left) and the per-bin $\chi^{2}$-contribution map (right).}
   \label{fig:tension}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{tension_mode_maps}
-  \caption{Leading tension-carrying eigenmodes of the published covariance in bin space, for the LightGBM central value. Three of the six, all smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; the other three, moderate-$\lambda$ modes, lie below them.}
+  \caption{Leading $\chi^{2}$-carrying eigenmodes of the published covariance in bin space, for the LightGBM central value. Three of the six, all smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; the other three, moderate-$\lambda$ modes, lie below them.}
   \label{fig:tensionmodes}
 \end{figure}
 
 \subsection{Comparison to GENIE MINERvA Tune v1}
 \label{sec:results-model}
-GENIE 2.12.6~\cite{Andreopoulos:2009rq} MINERvA Tune v1 under-predicts the total by $\sim\SI{9}{\percent}$ ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), concentrated in the low-$\pT$ peak. Figure~\ref{fig:model} compares the prediction from the published ancillary files with both the published data and our result. The data covariance strongly disfavors the tune ($\chi^{2}/\mathrm{ndf}$: data vs tune $33.0$, ours vs tune $31.3$; $26.5$ for the exact-split cross-check), and our result tracks the data far more closely than the model does (Fig.~\ref{fig:modelmaps}). The published analysis~\cite{MINERvA:2021owq} also compares with NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and NEUT~\cite{Hayato:2009zz}. OmniFold's per-event reweighted truth ensemble can be compared with any such prediction in \emph{any} projection of the classifier features without re-unfolding. An observable outside that space requires a new unfolding, not a projection: the 3D extension (\S\ref{sec:3d}) adds $\Eavail$ as a classifier feature and is unfolded again.
+GENIE 2.12.6~\cite{Andreopoulos:2009rq} with MINERvA Tune v1 under-predicts the total cross section by $\sim\SI{9}{\percent}$ ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), and the deficit is concentrated in the low-$\pT$ peak. Figure~\ref{fig:model} compares the prediction from the published ancillary files with both the published data and this measurement. The data covariance strongly disfavors the tune, with $\chi^{2}/\mathrm{ndf}=33.0$ for the published data and $31.3$ for this measurement ($26.5$ for the exact-split cross-check), and our result tracks the data far more closely than the model does (Fig.~\ref{fig:modelmaps}). The published analysis~\cite{MINERvA:2021owq} also compares with NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and NEUT~\cite{Hayato:2009zz}. OmniFold's per-event reweighted truth ensemble can be compared with any such prediction in \emph{any} projection of the classifier features without re-unfolding. An observable outside that space requires a new unfolding, as in the 3D extension (\S\ref{sec:3d}), which adds $\Eavail$ as a classifier feature.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{model_comp_projections}
-  \caption{Our result (dashed) on top of the published data (black); MINERvA Tune v1 (orange) dips below in the peak.}
+  \caption{Projections of this measurement (dashed) and the published data (black); MINERvA Tune v1 (orange) lies below the data in the peak.}
   \label{fig:model}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps}
-  \caption{Bin-by-bin ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid of our result (left) and of the published data (right), on a common colour scale of $0.7$--$1.3$; the panels have no printed titles. Neither map is flat near unity: both show the same tune deficit, with ratios above unity over most of the plane and below it at the lowest $\pT$. The two maps are close because our result departs from the tune in the same places and by similar amounts as the published data. Neither map has the published data as its denominator; the direct comparison with the published data is the median bin ratio of Table~\ref{tab:compare} and the residual map of Fig.~\ref{fig:pull}.}
+  \caption{Bin-by-bin ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid of our result (left) and of the published data (right), on a common colour scale of $0.7$--$1.3$; the panels have no printed titles. Both maps show the same tune deficit, with ratios above unity over most of the plane and below it at the lowest $\pT$. The maps are close because both results depart from the tune in the same places by similar amounts. The direct comparison with the published data is the median bin ratio of Table~\ref{tab:compare} and the residual map of Fig.~\ref{fig:pull}.}
   %
   % (\texttt{2d-unfolding/compare\_to\_models.py}; listed in App.~\ref{app:codebase})
   \label{fig:modelmaps}

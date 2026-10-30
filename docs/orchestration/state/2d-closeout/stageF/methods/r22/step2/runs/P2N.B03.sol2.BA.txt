@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A maintains a more consistent formal register, avoiding B’s conversational emphasis in phrases such as “genuinely smaller,” “a real defect,” and “the test is not tight.”
+2. A integrates technical details into complete, precise sentences more smoothly than B’s compressed formulations such as “Top 2D bands” and “MC reco and truth weights.”
+3. A reduces redundant explanations and clarifies awkward constructions, giving the prose the editorial polish expected of a long technical particle-physics paper.

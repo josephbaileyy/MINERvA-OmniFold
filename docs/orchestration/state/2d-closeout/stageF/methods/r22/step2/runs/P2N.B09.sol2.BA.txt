@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A uses more controlled sentence structure, separating procedural steps that B compresses into long chains of clauses.
+2. A’s “generator shift,” “test result” and “failure criteria” read more naturally in formal technical prose than B’s repeated “vertex,” “grade” and “ungraded.”
+3. A identifies referents more clearly, explicitly naming Cresp where B’s “Its median per-cell relative σ” ambiguously follows a sentence about the cross-talk term.

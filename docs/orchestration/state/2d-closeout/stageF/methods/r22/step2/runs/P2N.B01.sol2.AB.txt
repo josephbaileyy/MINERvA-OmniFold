@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B gives the abstract better sentence structure, dividing A’s overloaded opening and elliptical generator comparison into clear, complete statements.
+2. B introduces specialist terminology more carefully, expanding GBDT and explaining configuration labels and coverage notation while maintaining an appropriate technical register.
+3. B uses more precise references and phrasing, such as “this in-method subtraction” and “published measurements,” giving the prose a more consistently edited tone.

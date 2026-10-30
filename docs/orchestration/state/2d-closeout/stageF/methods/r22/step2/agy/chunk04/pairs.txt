@@ -1,0 +1,161 @@
+(Each pair is one passage of a physics analysis note, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [sec_3d.tex TD74]
+BEFORE: We generated and processed GENIE, NuWro and GiBUU samples, and extracted MINERvA Tune~v1 from analysis MC truth with its full tune weight. No spectra were digitized or externally supplied.
+AFTER: The GENIE, NuWro and GiBUU samples were generated for this analysis, and MINERvA Tune~v1 is the analysis simulation's truth with its full tune weight; no spectra were digitized or externally supplied.
+
+Q2. [sec_3d.tex TD82]
+BEFORE: Each prediction is normalized by its own flux-averaged total CC cross section per nucleon. \paragraph{Flux repair of the GENIE and NuWro predictions.} Except in three studies that keep the unrepaired samples, the GENIE and NuWro predictions in \S\S\ref{sec:3d}--\ref{sec:eavailw} are repaired by exact per-event reweighting to the analysis PPFX central-value flux on 0--\SI{100}{GeV}, with correctly sampled 50--\SI{100}{GeV} supplements. The three studies, each of which says so where it appears, are the FSI-dial studies, the departure ratio of \S\ref{sec:val-negweight} and the NuWro-shaped prior of \S\ref{sec:fps}. The repair corrects the flux from which the GENIE (CV and $+$Valencia~2p2h) and NuWro samples were generated. That flux had no PPFX weights, was capped at \SI{50}{GeV}, and stored flux \emph{densities} in variable-width bins that were sampled and normalized as \emph{contents}, which under-weighted every wide high-energy bin and suppressed the high-$\pPar$ predictions and the integrated rates (Ref.~\cite{NoteRecords2026}, \recentry{flux-repair}).
+AFTER: \paragraph{Flux repair and normalization.} The GENIE (CV and $+$Valencia~2p2h) and NuWro samples were generated from a flux that had no PPFX weights, was capped at \SI{50}{GeV}, and stored flux \emph{densities} in variable-width bins that were sampled and normalized as \emph{contents}, which under-weighted every wide high-energy bin and suppressed the high-$\pPar$ predictions and the integrated rates (Ref.~\cite{NoteRecords2026}, \recentry{flux-repair}). The repair reweights each event exactly to the analysis PPFX central-value flux on 0--\SI{100}{GeV}, with correctly sampled 50--\SI{100}{GeV} supplements. The repaired GENIE and NuWro predictions are used in \S\S\ref{sec:3d}--\ref{sec:eavailw}, except in three studies, flagged where they appear, that keep the unrepaired samples: the FSI-dial studies, the departure ratio of \S\ref{sec:val-negweight} and the NuWro-shaped prior of \S\ref{sec:fps}.
+
+Q3. [sec_3d.tex TD94]
+BEFORE: All closely track the $(\pT,\pPar)$ shape. The $\Eavail$ axis discriminates among them; NuWro and Tune v1 \emph{suppress} the lowest-$\Eavail$ (quasielastic) bin below bare GENIE through RPA and nuclear effects, while GiBUU does not.
+AFTER: All four closely track the $\pT$ and $\pPar$ projections but differ in $\Eavail$: NuWro and Tune v1 \emph{suppress} the lowest-$\Eavail$ (quasielastic) bin below the untuned GENIE CV through RPA and nuclear effects, while GiBUU does not.
+
+Q4. [sec_3d.tex TD97]
+BEFORE: The $\Eavail$ axis exposes this excess, invisible in 2D.
+AFTER: Of the displayed projections, only $\Eavail$ locates this excess; the 2D $(\pT,\pPar)$ measurement does not resolve it.
+
+Q5. [sec_3d.tex TD102]
+BEFORE: The 3D covariance, if quoted, would be the exact projection of the five-dimensional covariance of \S\ref{sec:eavailw-construction}; none is quoted (\S\ref{sec:3d}), and that projection has been computed but is not used for any result in this note.
+AFTER: The exact projection of the five-dimensional covariance of \S\ref{sec:eavailw-construction} would supply a 3D covariance; it has been computed but is not quoted (\S\ref{sec:3d}) or used for any result in this note.
+
+Q6. [sec_3d.tex TD105]
+BEFORE: The empirical tune was built to absorb it; our muon-kinematics $\times\,\Eavail$ central values show the predictions falling short in the same region.
+AFTER: The empirical tune was built to absorb it; our central values in muon kinematics and $\Eavail$ show the predictions falling short in the same region.
+
+Q7. [sec_3d.tex TD110]
+BEFORE: The integrated rate moves only $\pm\SI{0.02}{}$--$\SI{0.03}{\percent}$ at $\pm1\sigma$.
+AFTER: The integrated rate moves by $\pm\SI{0.02}{}$--$\SI{0.03}{\percent}$ at $\pm1\sigma$.
+
+Q8. [sec_3d.tex TD112]
+BEFORE: This is MINERvA's current practice (private communication from the collaboration, 2026), and the reason is a degeneracy (of overlapping pion-FSI dials, one must be dropped), not a defect of that dial.} A dial that moves the spectrum by less than \SI{1}{\percent} cannot account for an excess of \SIrange{8}{36}{\percent} per bin over the GENIE central value below $\Eavail=\SI{0.4}{GeV}$, so the tested variations do not account for the excess.
+AFTER: This is MINERvA's current practice (private communication from the collaboration, 2026), and the reason is a degeneracy (of overlapping pion-FSI dials, one must be dropped), not a defect of that dial.} A dial that moves the spectrum by less than \SI{1}{\percent} cannot account for an excess of \SIrange{8}{36}{\percent} per bin over the GENIE central value below $\Eavail=\SI{0.4}{GeV}$.
+
+Q9. [sec_3d.tex TD120]
+BEFORE: The mode decomposition of central-value $d\sigma/d\Eavail$ (per-bin mode count-fractions $\times$ bin value), overlaid with data, locates the largest positive gaps in the quasielastic--$\Delta$ dip, $[0.10,0.20)$ and $[0.20,0.40)$, while central values are much closer in the QE-dominated $[0,0.10)$ and $[0.40,1.50)$ regions.
+AFTER: The mode decomposition multiplies each bin of the central-value $d\sigma/d\Eavail$ by the fraction of its events in each mode. Overlaid with data, it places the largest positive data$-$CV gaps in the quasielastic--$\Delta$ dip, $[0.10,0.20)$ and $[0.20,0.40)$. The CV is much closer to data in the QE-dominated $[0,0.10)$ and $[0.40,1.50)$ regions.
+
+Q10. [sec_3d.tex TD122]
+BEFORE: Closing the integrated deficit requires 2p2h at $\approx\SI{45}{\percent}$ of the QE rate (\SIrange{68}{71}{\percent} in the two dip bins), the standard magnitude of the empirical and Valencia MEC models, compared with sub-percent FSI shifts (Fig.~\ref{fig:modedecomp}).
+AFTER: Closing the integrated deficit requires 2p2h at $\approx\SI{45}{\percent}$ of the QE rate (\SIrange{68}{71}{\percent} in the two dip bins). This is the standard magnitude of the empirical and Valencia MEC models; the FSI shifts are below one percent (Fig.~\ref{fig:modedecomp}).
+
+Q11. [sec_3d.tex TD128]
+BEFORE: Tune v1 layers MINERvA's empirical low-recoil 2p2h \emph{enhancement} and RPA on top of the stock Valencia MEC. The central values are consistent with the known need for that enhancement, and with NuWro and GiBUU (native, un-enhanced 2p2h) sitting low in the dip as well, but they do not establish it.
+AFTER: Tune v1 adds MINERvA's empirical low-recoil 2p2h \emph{enhancement} and RPA to the stock Valencia MEC model. The central values are consistent with the known need for that enhancement, and with the NuWro and GiBUU predictions, whose native 2p2h is not enhanced, also falling below the data in the dip; they do not establish that need.
+
+Q12. [sec_3d.tex TD151]
+BEFORE: \paragraph{What $q_{3}$ adds.} The resolved $(\Eavail,q_{3})$ plane (Fig.~\ref{fig:q3excess}, left) reveals structure beneath the mild $q_{3}$-marginal discrepancy integrated over $\Eavail$ ($1.03$--$1.19$, center).
+AFTER: \paragraph{The $(\Eavail,q_{3})$ plane.} The $(\Eavail,q_{3})$ plane (Fig.~\ref{fig:q3excess}, left) shows structure that the $q_{3}$ marginal, integrated over $\Eavail$, does not resolve; the marginal's data/Tune~v1 ratio is $1.03$--$1.19$ (center).
+
+Q13. [sec_3d.tex TD154]
+BEFORE: The muon-only or fixed-$q_{3}$ projections considered here do not resolve this correlation, which is a natural input to the bin-compatible comparison with Ascencio \emph{et al.} The map's comparator is the MINERvA Tune~v1 prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}. \paragraph{No 4D uncertainty is reported.} Nor is any ratio of the unified-throw to the block covariance.
+AFTER: The muon-only or fixed-$q_{3}$ projections considered here do not resolve this correlation. It bears on the bin-compatible comparison with Ascencio \emph{et al.} The map's comparator is the MINERvA Tune~v1 prior, distinct from the untuned GENIE sample of \S\ref{sec:3d-2p2h}. \paragraph{No 4D uncertainty.} Neither a 4D uncertainty nor a ratio of the covariance from simultaneous variation of all reweightable interaction-model bands and the flux universes (the unified throw of \S\ref{sec:uq-combine}) to the block covariance is reported.
+
+Q14. [sec_3d.tex TD172]
+BEFORE: A finer comparison on all 44 cells remains future work; it requires re-unfolding on the Ascencio edges, which is straightforward for the unbinned method, \emph{and} a systematic sweep on that binning.
+AFTER: A comparison on all 44 cells has not been made; it requires re-unfolding on the Ascencio edges, which is straightforward for the unbinned method, \emph{and} a systematic sweep on that binning.
+
+Q15. [sec_3d.tex TD176]
+BEFORE: The joint plane shows genuine $q_{3}$ structure in the data\,$-$\,MC discrepancy (ratio rising with $q_{3}$ across the quasielastic--$\Delta$ dip).
+AFTER: In the displayed joint plane the data/Tune~v1 ratio rises with $q_{3}$ across the quasielastic--$\Delta$ dip.
+
+Q16. [sec_eavailw.tex EW0]
+BEFORE: \section{Fifth axis: $W$ and the $(\Eavail,W)$ plane} \label{sec:eavailw} In central values, Valencia 2p2h closes about half of the low-recoil gap (\S\ref{sec:3d-2p2h}) but leaves a separate excess over the MINERvA Tune~v1 prior at high $\Eavail$. There 2p2h contributes nothing, and the sub-percent pion-FSI dials cannot reach the excess. The qualifications of the covariance are given in \S\ref{sec:eavailw-adopted}. The comparison with external generators depends on the generator. GiBUU is low throughout the $\Eavail$ tail: its $W$-integrated five-dimensional data/generator ratio, in configuration~(a), is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$ ($E_\nu\approx\SI{20}{GeV}$ limit: \S\ref{sec:eavailw-band}). GENIE CV instead matches $[0.8,1.5)$ and is low in $[1.5,3.0)$, with a three-dimensional data/CV ratio, in configuration~(e), of $1.10$ there (\S\ref{sec:3d-2p2h}).
+AFTER: \section{Fifth axis: $W$ and the $(\Eavail,W)$ plane} \label{sec:eavailw} For the central values, Valencia 2p2h closes about half of the low-recoil gap (\S\ref{sec:3d-2p2h}) but leaves a separate excess over the MINERvA Tune~v1 prior at high $\Eavail$. There the predicted 2p2h contribution is zero, and the two tested pion final-state-interaction variations change the prediction by less than one percent, too little to explain the excess. GiBUU is low throughout the $\Eavail$ tail. Its $W$-integrated five-dimensional data/generator ratio is $1.59$ at $\Eavail\in[0.8,1.5)$ and $1.37$ at $[1.5,3.0)$, in configuration~(a), the LightGBM unfolding with purity-based subtraction (\S\ref{sec:method-config}); its sample stops at $E_\nu\approx\SI{20}{GeV}$ (\S\ref{sec:eavailw-band}). GENIE CV instead matches data at $[0.8,1.5)$ and is low at $[1.5,3.0)$, where its three-dimensional data/CV ratio is $1.10$ (\S\ref{sec:3d-2p2h}) in configuration~(e), the deterministic learner with refined negative-weight subtraction.
+
+Q17. [sec_eavailw.tex EW7]
+BEFORE: The validation of \S\ref{sec:val-fiveaxis} includes a model-dependence study, which establishes no bias--variance tradeoff and no new total uncertainty for this projection. \subsection{$W$ as a fifth axis} \label{sec:eavailw-axis} Truth $W$ is the experimenter's invariant mass $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^{2}}$, with struck-nucleon mass $M$ (\texttt{CVUniverse::GetTrueExperimentersW()}). Reconstructed $W$ combines the calorimetric energy transfer $q_{0}$ of the reconstructed-$q_{3}$ estimator and the muon-kinematic $Q^{2}$ with the average nucleon mass (\texttt{CVUniverse::RecoW()}).
+AFTER: The validation of \S\ref{sec:val-fiveaxis} includes a model-dependence study; it does not establish a bias--variance tradeoff across estimator settings and provides no new total uncertainty for this projection. \subsection{$W$ as a fifth axis} \label{sec:eavailw-axis} Truth $W$ is the experimenter's invariant mass $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^{2}}$, with struck-nucleon mass $M$. Reconstructed $W$ combines the calorimetric energy transfer $q_{0}$ of the reconstructed-$q_{3}$ estimator and the muon-kinematic $Q^{2}$ with the average nucleon mass.
+
+Q18. [sec_eavailw.tex EW18]
+BEFORE: The configuration-(a) five-dimensional unfolding in $(\pT,\pPar,\Eavail,q_{3},W)$ passes the marginalization checks against the lower-dimensional results: integrating over $W$ recovers the configuration-(a) 4D normalization to \SI{\eavailMargin}{\percent} (5D/4D total $=1.0011$), with median differences of \SIrange{0.3}{1.5}{\percent} per axis, and $d\sigma/dW$ is finite and non-negative in all six bins. \subsection{Implemented definitions of the five observables} \label{sec:eavailw-definitions} \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}} Table~\ref{tab:observables-impl} gives the implemented truth and reconstructed definitions of the five unfolded observables, as used by the article.
+AFTER: The configuration-(a) five-dimensional unfolding in $(\pT,\pPar,\Eavail,q_{3},W)$ agrees under marginalization with the lower-dimensional results: integrating over $W$ reproduces the configuration-(a) 4D normalization to \SI{\eavailMargin}{\percent} (5D/4D total $=1.0011$) with median differences per axis of \SIrange{0.3}{1.5}{\percent}, and $d\sigma/dW$ is finite and non-negative in all six bins. \subsection{Implemented definitions of the five observables} \label{sec:eavailw-definitions} \providecommand{\pcell}[2]{\parbox[t]{#1}{\raggedright\strut#2\strut}} Table~\ref{tab:observables-impl} gives the implemented truth and reconstructed definitions of the five unfolded observables, as used in the companion journal article.
+
+Q19. [sec_eavailw.tex EW27]
+BEFORE: The article distinguishes the five classifier inputs, the lower-dimensional support they populate, and the five reported observables.
+AFTER: The analysis distinguishes the five classifier inputs, the lower-dimensional support they populate, and the five reported observables.
+
+Q20. [sec_eavailw.tex EW30]
+BEFORE: The analysis excludes events with negative truth $W^{2}$, a weight fraction of $4.9\times10^{-5}$, from its five-observable truth sample and normalization (the external predictions' convention is given in \S\ref{sec:eavailw-axis}).
+AFTER: The analysis excludes events with negative truth $W^{2}$, a weight fraction of $4.9\times10^{-5}$, from its five-observable truth sample and normalization; \S\ref{sec:eavailw-axis} gives the external predictions' convention.
+
+Q21. [sec_eavailw.tex EW32]
+BEFORE: Over the 109 joint-test cells, this convention changes the analysis simulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the level of its Monte Carlo precision, and shifts GENIE's central prediction by between $-0.47$ and $+0.53$ of each cell's null spread.
+AFTER: Over the 109 joint-test cells, this convention changes the analysis simulation's cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the level of its Monte Carlo precision, and shifts GENIE's central prediction by between $-0.47$ and $+0.53$ of each cell's null standard deviation.
+
+Q22. [sec_eavailw.tex EW40]
+BEFORE: \subsection{Where the excess lives in the $(\Eavail,W)$ plane} \label{sec:eavailw-map} Figure~\ref{fig:eavailWexcess} shows the unfolded five-dimensional result projected onto $(\Eavail,W)$, with the MINERvA Tune~v1 prediction subtracted.
+AFTER: \subsection{Distribution of the excess in the $(\Eavail,W)$ plane} \label{sec:eavailw-map} Figure~\ref{fig:eavailWexcess} shows the unfolded five-dimensional result projected onto $(\Eavail,W)$, with the MINERvA Tune~v1 prediction subtracted.
+
+Q23. [sec_eavailw.tex EW44]
+BEFORE: The largest cell, the corner $\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$, holds \SI{22}{\percent}.
+AFTER: The corner cell $\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$ holds the largest share, \SI{22}{\percent}.
+
+Q24. [sec_eavailw.tex EW47]
+BEFORE: Estimator-seed shifts are a small fraction of the projected uncertainties (\S\ref{sec:eavailw-adopted}, item~4).
+AFTER: Estimator-seed shifts of central values are a small fraction of the projected uncertainties (\S\ref{sec:eavailw-adopted}).
+
+Q25. [sec_eavailw.tex EW55]
+BEFORE: The density ratio is area-free; the bottom panel instead subtracts \emph{cell-integrated} cross sections, $(\mathrm{d}^{2}\sigma/\mathrm{d}\Eavail\,\mathrm{d}W)\times \Delta\Eavail\,\Delta W$ in \si{cm^2/nucleon}, so the catch-bin cells, which are wide, carry correspondingly larger values.
+AFTER: The density ratio is independent of cell area; the bottom panel instead subtracts \emph{cell-integrated} cross sections, $(\mathrm{d}^{2}\sigma/\mathrm{d}\Eavail\,\mathrm{d}W)\times \Delta\Eavail\,\Delta W$ in \si{cm^2/nucleon}, so the catch-bin cells, which are wide, carry correspondingly larger values.
+
+Q26. [sec_eavailw.tex EW57]
+BEFORE: Quoted percentage shares refer to cell-integrated positive excess in the bottom panel.} \label{fig:eavailWexcess} \end{figure} \subsection{Generator band: the corner against four external generators} \label{sec:eavailw-band} All four external generators fall below the data in the high-$\Eavail$, high-$W$ corner. Figure~\ref{fig:eavailWband} compares the spline-normalized $(\Eavail,W)$ predictions of GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro and GiBUU, with the GENIE and NuWro predictions flux-repaired as in \S\ref{sec:3d-models}. The 3D and $(\Eavail,W)$ comparisons are made from the same five-dimensional histogram of each generator.
+AFTER: Quoted percentage shares refer to cell-integrated positive excess in the bottom panel.} \label{fig:eavailWexcess} \end{figure} \subsection{Comparison with four external generators} \label{sec:eavailw-band} All four external generators fall below the data in the high-$\Eavail$, high-$W$ corner. Figure~\ref{fig:eavailWband} compares the $(\Eavail,W)$ predictions of GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro and GiBUU. As in \S\ref{sec:3d-models}, each is normalized by its flux-averaged total CC cross section per nucleon, and those of GENIE and NuWro are flux-corrected. The 3D and $(\Eavail,W)$ comparisons use the same five-dimensional histogram of each generator.
+
+Q27. [sec_eavailw.tex EW61]
+BEFORE: In the corner ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$), data/generator $=1.14$, $1.14$, $1.16$ and $1.61$, respectively; none reaches the data. For GENIE and NuWro this is close to their whole-plane shortfall (integrated ratios $1.11$, $1.07$ and $1.15$). Their corner ratios exceed their integrated ratios by \SIrange{1}{7}{\percent}, compared with \SI{16}{\percent} for GiBUU (integrated $1.39$; $\sigma=\SI{2.22e-38}{cm^2/nucleon}$ versus data \SI{3.07e-38}{}).
+AFTER: In the corner ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$), data/generator $=1.14$, $1.14$, $1.16$ and $1.61$, respectively. For GENIE and NuWro the corner ratios exceed their integrated ratios ($1.11$, $1.07$ and $1.15$) by \SIrange{1}{7}{\percent}, compared with \SI{16}{\percent} for GiBUU, whose integrated ratio is $1.39$ ($\sigma=\SI{2.22e-38}{cm^2/nucleon}$, against \SI{3.07e-38}{} for the data).
+
+Q28. [sec_eavailw.tex EW68]
+BEFORE: With the flux repaired, the corner therefore has no distinct deficit for any of the four generators. GiBUU is lower than the others everywhere, and its energy limit accounts for the larger corner shortfall.
+AFTER: With the GENIE and NuWro fluxes corrected and GiBUU supplied with the shares above this energy, each generator's central-value corner ratio lies close to its integrated ratio. GiBUU is lower than the others everywhere.
+
+Q29. [sec_eavailw.tex EW73]
+BEFORE: These are central-value ratios; no compatibility metric based on the configuration-(a) covariance is quoted, for the reason given in \S\ref{sec:eavailw-adopted}, item~1 (comparison on the sixteen cells: \S\ref{sec:fived16-gen}).
+AFTER: These are central-value ratios. No compatibility metric based on the configuration-(a) five-axis covariance is quoted, because the estimator-seed sensitivity of its construction, measured with two companion covariances, exceeds the limit set before production (\S\ref{sec:eavailw-adopted}); \S\ref{sec:fived16-gen} gives a sixteen-cell $\chi^{2}$ comparison.
+
+Q30. [sec_eavailw.tex EW75]
+BEFORE: \begin{figure}[H] \centering \includegraphics[width=0.99\textwidth]{eavailW_band} \caption{Unfolded $(\Eavail,W)$ cross section versus the four-generator band (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-repaired, \S\ref{sec:3d-models}).
+AFTER: \begin{figure}[H] \centering \includegraphics[width=0.99\textwidth]{eavailW_band} \caption{Unfolded $(\Eavail,W)$ cross section versus the four-generator band (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}).
+
+Q31. [sec_eavailw.tex EW77]
+BEFORE: They motivate tests across the resonance--DIS transition, but their selections and reported observables differ from this inclusive projection. They therefore provide physics context, not an independent confirmation of the same localized excess. A future significance for the location identified in the central-value map must account for any selection of the tested region using these data.
+AFTER: They motivate tests across the resonance--DIS transition, but their selections and reported observables differ from this inclusive projection, so they provide physics context, not an independent confirmation of the same localized excess. A later significance for the location identified in the central-value map must account for any selection of the tested region made with these data (the look-elsewhere effect).
+
+Q32. [sec_5d.tex FD0]
+BEFORE: \section{Five-dimensional estimator: validation and uncertainty} \label{sec:5d} This section gives the validation of the five-dimensional estimator behind the central values of \S\S\ref{sec:3d}--\ref{sec:eavailw}: what each validation test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does not follow such changes (\S\ref{sec:val-departure}), model dependence and the reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the five-dimensional coverage test (\S\ref{sec:coverage-5d}), and the status of the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-construction}).
+AFTER: \section{Five-dimensional estimator: validation and uncertainty} \label{sec:5d} This section validates the five-dimensional estimator behind the central values of \S\S\ref{sec:3d}--\ref{sec:eavailw}. It covers what each test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does not follow such changes (\S\ref{sec:val-departure}), model dependence and the reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the coverage test (\S\ref{sec:coverage-5d}) and the status of the five-axis covariance of the configuration-(a) central value (\S\ref{sec:eavailw-construction}).
+
+Q33. [sec_5d.tex FD12]
+BEFORE: At nominal truth they return the highest-$W$ column of $(\Eavail,W)$ \SIrange{3.5}{4.1}{\percent} low and the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high; without background, the same experiments close to \SI{0.22}{\percent}.
+AFTER: At nominal truth they return the highest-$W$ column of $(\Eavail,W)$ \SIrange{3.5}{4.1}{\percent} low and the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high; without background, the same experiments recover the truth to \SI{0.22}{\percent}.
+
+Q34. [sec_5d.tex FD14]
+BEFORE: It comes from the purity-based subtraction (\S\ref{app:negweight}), enters no quoted covariance, and has no established size on data. With a deterministic variant of the five-dimensional LightGBM production estimator, refined unbinned negative-weight subtraction (\texttt{negweight-refined}, App.~\ref{app:negweight}) brings the highest-$W$ column to \SIrange{0.11}{0.24}{\percent} and the corner cell to \SI{0.24}{\percent} over sixty nominal-truth experiments.
+AFTER: The bias comes from the purity-based subtraction (\S\ref{app:negweight}), enters no quoted covariance, and has no established size on data. Refined unbinned negative-weight subtraction (App.~\ref{app:negweight}), applied with a deterministic variant of the five-dimensional LightGBM production estimator, brings the highest-$W$ column to \SIrange{0.11}{0.24}{\percent} and the corner cell to \SI{0.24}{\percent} over sixty nominal-truth experiments.
+
+Q35. [sec_5d.tex FD22]
+BEFORE: Residuals in $(\Eavail,W)$ are median \SI{9.7}{\percent}, up to \SI{74}{\percent} in the highest-$W$ column, and several percent in the largest cells.
+AFTER: The $(\Eavail,W)$ residuals have a median of \SI{9.7}{\percent}; they reach \SI{74}{\percent} in the highest-$W$ column and several percent in the largest cells.
+
+Q36. [sec_5d.tex FD25]
+BEFORE: Signal-only experiments with the same seeds reproduce both results, so they are a property of the estimator (five iterations, the GBDT configuration of \S\ref{sec:method}), not of the background treatment (status in the quoted uncertainties: \S\ref{sec:val-departure}). \subsection{Why the estimator does not follow a generator-sized change} \label{sec:val-departure} Both OmniFold steps behave as intended: the first matches the reco pseudo-data within statistical noise, and the second reproduces the truth-level weight sums to \SI{0.5}{\percent}.
+AFTER: Signal-only experiments with the same seeds reproduce both results. The residuals are therefore a property of the estimator (five iterations, the GBDT configuration of \S\ref{sec:method}), not of the background treatment; their status in the quoted uncertainties is given in \S\ref{sec:val-departure}. \subsection{Why the estimator does not follow a generator-sized change} \label{sec:val-departure} Both OmniFold steps behave as intended: the first matches the reconstructed pseudo-data within statistical noise, and the second reproduces the truth-level weight sums to \SI{0.5}{\percent}.
+
+Q37. [sec_5d.tex FD28]
+BEFORE: With noise-free pseudo-data it recovers more than \SI{99}{\percent} of the departure's reco signal, while $(\Eavail,W)$ residuals remain median \SIrange{5}{11}{\percent} and up to \SI{74}{\percent} in the worst cell. The remaining reco imprint is small relative to the departure but statistically significant at the analysis exposure. With noise-free pseudo-data, thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}; it continues falling slowly, while the $q_3$ residual grows with iterations. A larger classifier improves the reco-level fit without improving the $\Eavail$ truth residual, and removing the regression for events that fail reconstruction does not help it.
+AFTER: With noise-free pseudo-data the unfolding recovers more than \SI{99}{\percent} of the change that the departure produces in the reconstructed distribution, whereas the median $(\Eavail,W)$ truth residual ranges from \SI{5}{\percent} to \SI{11}{\percent}, with \SI{74}{\percent} in the worst cell. The unrecovered reconstructed-level difference is small relative to the departure but statistically significant at the analysis exposure. With noise-free pseudo-data, thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}; the $\Eavail$ residual continues to fall slowly, while the $q_3$ residual grows with iterations. A larger classifier improves the reconstructed-level fit without reducing the $\Eavail$ truth residual, and removing the regression for events that fail reconstruction does not reduce that residual either.
+
+Q38. [sec_5d.tex FD34]
+BEFORE: For the sixteen-cell result (\S\ref{sec:fived16}), the model term of its reported covariance is the change in the unfolded data when the prior is reweighted to each generator (GENIE + MEC, NuWro, GiBUU; \S\ref{sec:fived16-cov}), unscaled and not a calibrated bound; \S\ref{sec:fived16-fd} gives the fake-data study's measured comparison of the estimator's bias with the reported covariance.
+AFTER: For the sixteen-cell result (\S\ref{sec:fived16}), the model term of the reported covariance is the change in the unfolded data when the prior is reweighted to each generator (GENIE + MEC, NuWro, GiBUU; \S\ref{sec:fived16-cov}). This term is unscaled and is not a calibrated bound. The fake-data study of \S\ref{sec:fived16-fd} measures the estimator's bias and compares it with the reported covariance.
+
+Q39. [sec_5d.tex FD40]
+BEFORE: Of the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation, 2 of them in identified quantities, a share of 0.014. Most of the 144 (121) lie in quantities that the binned response constrains weakly at the analysis exposure. Their Cram\'er--Rao widths exceed \SI{10}{\percent} at both truth resolutions tested (median \SI{31}{\percent} at the coarser, the J cells themselves), so the regularization trades a large variance for the bias.
+AFTER: Of the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation. Only 2 of these 15 lie in identified quantities (as defined in the diagnostic record cited below), a share of 0.014 of the 144. Of the 144, 121 lie in quantities that the binned response constrains weakly at the analysis exposure. Their Cram\'er--Rao widths exceed \SI{10}{\percent} at both truth resolutions tested (median \SI{31}{\percent} at the coarser resolution, that of the J cells themselves), so the regularization trades a large variance for the bias.
+
+Q40. [sec_5d.tex FD49]
+BEFORE: The comparison is binned, signal-only and noise-free, at the simulation's detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval. The diagnostic establishes no impossibility, and the precision thresholds it proposes are not acceptance criteria for any result in this note.
+AFTER: This conclusion holds for a binned, signal-only and noise-free comparison at the simulation's detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of \S\ref{sec:coverage-5d} or the validity of any interval, and it establishes no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria for any result in this note.

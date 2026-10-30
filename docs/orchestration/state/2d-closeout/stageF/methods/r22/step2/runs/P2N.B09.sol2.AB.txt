@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B divides overloaded sentences into more coherent explanatory sequences, particularly in the cell construction and covariance discussion.
+2. B uses more conventional technical phrasing, replacing A’s compressed expressions such as “none of them a grade” with clearer descriptions of testing criteria.
+3. B makes referents more explicit, notably by naming Cresp when reporting its uncertainty, whereas A’s adjacent uses of “its” create ambiguity.

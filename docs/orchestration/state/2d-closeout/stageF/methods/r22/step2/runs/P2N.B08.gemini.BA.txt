@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A consistently maintains the formal register of a published PRD article, whereas Document B frequently relies on informal particle-physics laboratory jargon and shorthand, such as repeatedly using "reco" instead of "reconstructed," using code variable names like "negweight-refined," and employing colloquial phrases like "refits everything."
+2. Document A exhibits superior logical organization by defining specialized terms and sample subsets—such as the criteria for eligible residuals and the definition of data jitters—before analyzing them, whereas Document B mentions them prematurely and disrupts narrative flow with awkward forward references.
+3. Document A features cleaner syntax and more polished editorial precision, avoiding Document B's telegraphic notes, redundant phrasing, and unidiomatic expressions (such as "are the same bytes" and "belong to the estimator").

@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion, but repeated defensive qualifications, development-history narration, and internal bookkeeping require a dedicated language pass.
+1. QUOTE: "This conclusion holds
+for a binned, signal-only and noise-free comparison at the simulation’s detector response, on the
+development truths, and for these 144 residuals only. It does not address what unbinned or biased
+estimators could recover, the coverage failure of §9.5 or the validity of any interval, and it establishes
+no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria
+for any result in this note."
+   REWRITE: This conclusion is restricted to the 144 selected residuals in binned, signal-only, noise-free tests of the development truth distributions with the simulated detector response. It establishes no limit on recovery by unbinned or biased estimators and does not explain the coverage failure in §9.5 or validate any interval. The diagnostic precision thresholds are not used as acceptance criteria in this study.
+2. QUOTE: "The diagnosis below uses the stored
+outputs and the code. The rate change itself is recovered: in the one locally stored pseudo-experiment
+the total changes by −9.58 % against −9.56 % injected, and over the 400 the total covers at 0.74
+(68%), so the miscoverage is not a normalization failure."
+   REWRITE: Examination of the saved outputs and implementation indicates that the miscoverage is not caused by failure to recover the total rate. In the single pseudo-experiment with detailed output available, the recovered rate change is −9.58 %, compared with the injected −9.56 %. Across 400 pseudo-experiments, the nominal 68% interval for the total rate has coverage 0.74.
+3. QUOTE: "The specification
+requires the null bound to be fixed before production, which was not done for this covariance, so
+it cannot meet that requirement. This note nevertheless uses this covariance and its projection.
+The use does not extend to any other covariance built to the same specification, including the two
+companion covariances of the measurements below."
+   REWRITE: This covariance fails the requirement that the null bound be fixed before production. Despite this failure, it and its projection are used in this note. This use is restricted to the specified covariance; it does not include the two companion covariances discussed below or other covariances constructed under the same specification.

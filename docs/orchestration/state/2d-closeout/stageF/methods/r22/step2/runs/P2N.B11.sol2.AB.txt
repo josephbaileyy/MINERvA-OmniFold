@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B more consistently uses polished technical phrasing, including “unfolding” and “validation tests,” where A favors compressed shorthand.
+2. B integrates statistical quantities into complete, explicit sentences, making the specialist prose easier to follow without reducing its detail.
+3. B removes redundant explanations and smooths awkward constructions, producing a more controlled register closer to a well-edited PRD technical write-up.

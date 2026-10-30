@@ -1,0 +1,11 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically appropriate, but implementation-status reporting, internal bookkeeping, and occasional colloquial wording create several departures from polished PRD register.
+1. QUOTE: "Its first stage has been implemented but not yet run: no output has
+been produced and no pass threshold has been set."
+   REWRITE: The reconstruction-only test is implemented but has not yet been performed; acceptance criteria remain to be defined.
+2. QUOTE: "The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model."
+   REWRITE: The reconstruction-only test uses a computationally inexpensive perturbation to probe sensitivity to response mismatch. This simplified perturbation does not constitute a physical detector-response model.
+3. QUOTE: "That work is in progress and is documented separately (docs/analysis-note/pet_note.tex,
+[repository] No central value, uncertainty or comparison from
+it is used or claimed in this note."
+   REWRITE: This ongoing development is described in a separate technical note. It contributes no central values, uncertainties, or comparisons to the present analysis.

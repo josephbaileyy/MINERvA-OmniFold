@@ -1,0 +1,20 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally direct and technically focused, but repeated scope disclaimers, internal bookkeeping and telegraphic captions create several departures from journal register that require a dedicated language pass.
+1. QUOTE: "It is a
+separate product from the configuration-(a) five-dimensional central value of Secs. 8 and 9 and from
+the five-axis covariance used with that central value (§9.6). Statements in those sections about that
+central value and that covariance do not describe this result, and statements here do not describe
+them."
+   REWRITE: This measurement is distinct from the configuration-(a) five-dimensional result presented in Secs. 8 and 9 and its covariance (§9.6); the descriptions and qualifications in this section apply specifically to configuration (e).
+2. QUOTE: "One control check failed: the offset check, which compares the offset corrections of two hybrid
+truths, gives χ2 = 245.74 for 16 degrees of freedom. The other control checks (numbers 0, 1, 2, 3, 4,
+5, 6, 8) passed. As fixed in advance, the six power alternatives built on that correction are therefore
+descriptive and not judged against the failure criteria; Table 15 gives them, with two descriptive
+variants of each tested truth."
+   REWRITE: The offset control test, which compares the offset corrections for two hybrid truths, failed, yielding χ2 = 245.74 for 16 degrees of freedom; all other control tests passed. Under the predefined analysis procedure, the six power alternatives that use this correction are therefore reported descriptively, without applying the failure criteria. Table 15 presents these alternatives and two descriptive variants for each tested truth.
+3. QUOTE: "Table 15: Descriptive fake-data numbers, none of them a test result. In-sample: against Ctotal + Cresp
+including the truth’s own generator shift, which is not evidence (— where the test already uses the
+full matrix). Model-only: against the statistical block and Cmodel without the truth’s own generator
+shift, omitting the interaction, flux, detector, lateral and normalization blocks, so a lower bound
+on Cmodel ’s reach."
+   REWRITE: Table 15: Descriptive diagnostics for the fake-data studies. The in-sample comparison uses Ctotal + Cresp including the shift from the generator used to construct the truth and therefore does not provide independent validation; a dash indicates that the test already uses the full covariance. The model-only comparison uses the statistical covariance and Cmodel, excluding that generator’s shift and omitting the interaction, flux, detector, lateral and normalization contributions. It therefore provides a lower bound on the range of biases accommodated by Cmodel.

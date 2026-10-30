@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B more consistently uses complete, formal exposition where A resorts to compressed shorthand such as “Top 2D bands” and “small-input responses.”
+2. B identifies quantities and technical labels more precisely in prose, making dense passages easier to follow without reducing specialist detail.
+3. B improves sentence structure and removes redundant statements, producing a smoother register more characteristic of a well-edited technical paper.

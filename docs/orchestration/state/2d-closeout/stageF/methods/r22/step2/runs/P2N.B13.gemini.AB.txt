@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B systematically replaces informal and colloquial phrasing found in Document A—such as "cheapest estimate," "is a mismatch, not an upgrade," and "The yardsticks are"—with precise, formal scientific prose appropriate for Physical Review D.
+2. Document B resolves telegraphic syntax and awkward draft-like fragments present in Document A, expanding shorthand notes like "Same-ensemble 68.9 % (⟨|r|⟩ ≈ 0.79) remains a pull/Gaussianity diagnostic" and redundant modifiers like "About ∼45" into fluent, grammatically complete sentences.
+3. Document B exhibits superior editorial polish by defining notations and acronyms upon their first appearance (such as $C_Z$ and ML), removing typos such as "finiteensemble," excising internal working jargon like "validation ledger," and restructuring sections C.5 and C.7 to eliminate repetitive reporting.

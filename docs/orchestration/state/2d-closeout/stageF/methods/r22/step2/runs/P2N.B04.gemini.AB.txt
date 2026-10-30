@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B replaces informal, conversational section headings and telegraphic bulleted lists with formal academic titles and cohesive, publication-ready running prose appropriate for Physical Review journals.
+2. Document B adheres to rigorous scientific and mathematical conventions—such as defining acronyms on first use (e.g., "area under the ROC curve (AUC)") and replacing coding syntax like NumPy's `ddof = 1` with standard statistical notation `(denominator Ntoy − 1)`—whereas Document A retains programming artifacts and raw notebook notes.
+3. Document B systematically eliminates colloquialisms and experimental lab slang, substituting phrases like the nominalized "unfold," unexpanded "CV," and "data pull weakly" with standard scholarly formulations such as "unfolding result," "central-value simulation," and "reconstructed data constrain the truth weakly."

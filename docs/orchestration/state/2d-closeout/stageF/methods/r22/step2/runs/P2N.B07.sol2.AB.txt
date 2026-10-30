@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B uses a more consistently formal register, replacing expressions such as “pion-FSI dials,” “area-free,” and “flux-repaired” with explicit technical phrasing.
+2. B organizes dense explanations into more coherent paragraphs, improving readability while preserving the detail appropriate to a long specialist write-up.
+3. B’s descriptive subsection headings and clearer explanations of analysis configurations and methodological qualifications give the prose a more polished journal style.

@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A maintains continuous, formal academic prose with proper transitional phrasing, whereas Document B repeatedly lapses into presentation-style bulleted lists and informal section labels like "Why unbinned:".
+2. Document A exhibits superior syntactic structure and clarity, avoiding the unwieldy run-on sentences and clipped, telegraphic phrasing found in Document B (e.g., ", and GiBUU, on its 8 cells, 58").
+3. Document A adheres consistently to standard particle physics publishing conventions and scholarly vocabulary rather than drifting into software-engineering idioms like "production measurements."

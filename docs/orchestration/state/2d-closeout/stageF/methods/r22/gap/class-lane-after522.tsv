@@ -49,7 +49,7 @@ B02-g-07	WORDING		Restates MAT's terms as shifts and weights.
 B02-g-08	WORDING		Restates the PET status and its boundaries neutrally; the boundaries are kept.
 B02-g-09	STRUCTURE		Reorganizes the passage around the two background strategies instead of letters.
 B02-g-10	PROTECTED	B2	"The ""or remove the editorial comment entirely"" option drops the finding that the agreement of the two medians is a coincidence (mixed change: highest class)."
-B02-g-11	PROTECTED	B2	Omits the raw entry count (32 849 103), a reported number with no other copy.
+B02-g-11	STRUCTURE	"home: note B02 Sec. 2 (line 26: ""32 849 103 true signal events"")"	Drops the entry count and six-digit form here; the count prints again earlier in the same piece (corrected 2026-10-30: my Step 1 pass missed that copy).
 B02-g-12	WORDING		Uses standard terms for out-of-phase-space events.
 B02-s-01	STRUCTURE		Consolidates the history, keeping the disclosures that affect interpretation.
 B02-s-02	STRUCTURE		Puts the configuration-to-result mapping in one table.

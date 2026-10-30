@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B integrates the conditions into coherent technical prose, avoiding A’s specification-style quotations, nested annotations and repeated explanations.
+2. B defines terms such as “claim p value” and distinguishes the two recovery evaluations more explicitly, improving continuity and precision.
+3. B’s fuller sentence constructions and clearer referents give the power discussion and generation checks a more polished journal register.

@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 3
+REASONS:
+1. Document B adheres to a formal academic register, replacing colloquial titles and phrasing in Document A (such as "Where the excess lives", "pion-FSI dials", "area-free", and "flux-repaired") with standard scientific prose ("Distribution of the excess", "independent of cell area", and "flux-corrected").
+2. Document A contains unedited software artifacts, leaking C++ class methods (`CVUniverse::GetTrueExperimentersW()` and `CVUniverse::RecoW()`) directly into the descriptive physics prose, whereas Document B presents the mathematical definitions cleanly.
+3. Document B replaces draft-like shorthand, colloquialisms ("The comparison with external generators depends on the generator"), and incomplete cross-references ("§9.6, item 1") with fully articulated, well-edited technical explanations.

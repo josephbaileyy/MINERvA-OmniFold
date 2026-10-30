@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops "and processed" from "generated and processed", and replaces "extracted MINERvA Tune~v1 from analysis MC truth" with "MINERvA Tune~v1 is the analysis simulation's truth", mischaracterizing the simulation truth.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire opening statement: "Each prediction is normalized by its own flux-averaged total CC cross section per nucleon" (which appears to have been moved to a later passage).
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER replaces "the $(\pT,\pPar)$ shape" (the 2D joint distribution) with "the $\pT$ and $\pPar$ projections", dropping the claim about the 2D joint shape in favor of 1D marginal projections.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that "the 2D $(\pT,\pPar)$ measurement does resolve it", which directly contradicts BEFORE ("invisible in 2D").
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states that the 3D covariance "is quoted (\S\ref{sec:3d}) or used for any result in this note", directly contradicting BEFORE ("none is quoted ... is not used").
+
+Q6: VERDICT: SAME
+DETAIL: Changing "our muon-kinematics $\times\,\Eavail$ central values" to "our central values in muon kinematics and $\Eavail$" preserves the exact meaning and measurement scope without dropping facts or introducing ambiguity.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "only" from "moves only", which explicitly limited the magnitude of the rate shift to convey that it is negligible.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops the concluding factual deduction: ", so the tested variations do not account for the excess."
+
+Q9: VERDICT: SAME
+DETAIL: The explanation of the mode decomposition and the data-versus-CV agreement across $\Eavail$ bins is faithfully preserved with identical numerical ranges and conclusions.
+
+Q10: VERDICT: SAME
+DETAIL: The quantitative requirements on 2p2h and the comparison to sub-percent FSI shifts are completely preserved, with "sub-percent" rendered as "below one percent".
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER states that the predictions are "falling below the data in the dip" (where BEFORE only said "sitting low in the dip as well"), and changes "do not establish it" to "do not establish that need", altering what the central values fail to establish.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER introduces "the marginal's data/Tune~v1 ratio", specifying a comparator and metric not stated or supported in BEFORE, which only refers to a "discrepancy ($1.03$--$1.19$)".
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER adds an extensive explanation not present in BEFORE: "the covariance from simultaneous variation of all reweightable interaction-model bands and the flux universes (the unified throw of \S\ref{sec:uq-combine})".
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "finer" from "A finer comparison" and replaces "remains future work" with "has not been made", dropping the indication of planned work.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops "genuine $q_{3}$ structure in the data\,$-$\,MC discrepancy" and introduces the specific comparator "Tune~v1", which is unsupported by BEFORE.
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER drops "The qualifications of the covariance are given in \S\ref{sec:eavailw-adopted}" and adds descriptions of configurations (a) and (e) ("the LightGBM unfolding with purity-based subtraction" and "the deterministic learner with refined negative-weight subtraction") not found in BEFORE.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER drops the code method identifiers "(\texttt{CVUniverse::GetTrueExperimentersW()})" and "(\texttt{CVUniverse::RecoW()})", and adds the unsupported phrase "across estimator settings".
+
+Q18: VERDICT: SAME
+DETAIL: The marginalization agreement, numerical values, and reference to the journal article's observable definitions are completely preserved.
+
+Q19: VERDICT: DIFFERS
+DETAIL: AFTER replaces "The article distinguishes" with "The analysis distinguishes", changing the entity making the distinction from the companion journal article to the analysis itself.
+
+Q20: VERDICT: SAME
+DETAIL: The exclusion of negative truth $W^2$ events, the weight fraction, and the cross-reference are preserved exactly, changing only punctuation from parentheses to a semicolon clause.
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER replaces "null spread" with "null standard deviation", stating a specific statistical metric that BEFORE does not support.
+
+Q22: VERDICT: SAME
+DETAIL: The subsection heading is changed from informal phrasing ("Where the excess lives") to formal register ("Distribution of the excess") without any change in meaning or content.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the corner cell "holds the largest share", whereas BEFORE only stated that it is "The largest cell", thereby dropping the description of the cell's physical size and adding an unsupported claim about its relative share.
+
+Q24: VERDICT: DIFFERS
+DETAIL: AFTER adds "of central values" and drops the specific citation location "item~4" from "(\S\ref{sec:eavailw-adopted}, item~4)".
+
+Q25: VERDICT: SAME
+DETAIL: Replacing "area-free" with "independent of cell area" is an exact synonym in formal register, and the rest of the mathematical definition and rationale is verbatim identical.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops "spline-normalized" and adds "each is normalized by its flux-averaged total CC cross section per nucleon" (which appears to have been moved from Q2).
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit qualification "none reaches the data" as well as the comparison "For GENIE and NuWro this is close to their whole-plane shortfall".
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER adds the unsupported procedural claim "and GiBUU supplied with the shares above this energy", and drops the explanation that GiBUU's "energy limit accounts for the larger corner shortfall".
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER adds a substantive explanation of why no metric is quoted ("because the estimator-seed sensitivity of its construction, measured with two companion covariances, exceeds the limit set before production") and specifies a "$\chi^{2}$ comparison", neither of which is stated in BEFORE.
+
+Q30: VERDICT: SAME
+DETAIL: Replacing "flux-repaired" with "flux-corrected" preserves the exact meaning and context in this analysis note.
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER adds the parenthetical qualification "(the look-elsewhere effect)", which is not stated in BEFORE.
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER states "why the estimator does follow such changes", dropping "not" and directly contradicting BEFORE ("does not follow"), and drops "five-dimensional" from "the five-dimensional coverage test".
+
+Q33: VERDICT: SAME
+DETAIL: Replacing "close to \SI{0.22}{\percent}" with "recover the truth to \SI{0.22}{\percent}" expresses the closure test result in standard formal register with no change in meaning or precision.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific implementation identifier "\texttt{negweight-refined}" from the citation.
+
+Q35: VERDICT: SAME
+DETAIL: All numerical values (median 9.7%, up to 74%, several percent), regions, and qualifications are fully preserved across the slightly restructured sentences.
+
+Q36: VERDICT: SAME
+DETAIL: Resolving the pronoun "they" to "The residuals" and expanding the abbreviation "reco" to "reconstructed" preserves all facts, configurations, and section references.
+
+Q37: VERDICT: SAME
+DETAIL: The numerical values, iteration effects, and estimator behavior descriptions are completely preserved while clarifying pronouns and expanding abbreviations.
+
+Q38: VERDICT: SAME
+DETAIL: Splitting the passage into shorter sentences preserves the description of the model term, the generators, and the fake-data study comparison without loss or addition.
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER adds the parenthetical statement "(as defined in the diagnostic record cited below)", which is not present in BEFORE.
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER replaces "The comparison is..." with "This conclusion holds for...", introducing an unsupported referent ("This conclusion"), and replaces "The diagnostic establishes no impossibility" with "and it establishes no impossibility", ambiguously conflating the comparison with the diagnostic.
+
+END

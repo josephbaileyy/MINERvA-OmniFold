@@ -1,0 +1,265 @@
+Result package and reproduction limits
+
+This appendix describes RC7, the existing local replay package, and specifies the broader event-level
+and covariance release, with the identities that are fixed and what each part does and does not
+reproduce. Rebuilding this note’s PDFs assembles documents; it does not reproduce scientific results.
+The code paths and file names in this appendix and in App. H refer to the snapshot of the
+code repository, [repository].
+Release status. RC7, a local release candidate with a README, checksums and a replay
+verifier [97], has not been deposited or released under a publication tag. Run on the packaged files
+in an empty directory, RC7’s own verifier reproduces the recorded observed statistics of the joint
+tests; the p value and count of every test and variant; the decision of every test; the robustness
+results and power figures; and every number quoted from a figure that it checks. The package, about
+16 MB of sufficient inputs, reproduces the joint-test p values, decisions, robustness labels and power
+results; the same results with the recovered pseudo-experiments added to the calibration and the
+
+variant shifts recomputed on all draws (§11.6); the matched coarse-projection comparison (§11.7);
+and the fine-grid L2 ratios of condition (i) (§11.4). From packaged arrays it also regenerates figures
+of the earlier article version for which it was assembled: the (Eavail , W ) excess map (Fig. 24 of this
+note), the null distributions of the joint tests (Fig. 31), and one-dimensional generator projections,
+which neither this note nor the current article prints. RC7’s two-dimensional curve is the exact-split
+one, which was the two-dimensional central value when the package was assembled. The current
+article’s two-dimensional validation figure and its numbers were instead drawn separately, from the
+committed values and covariance of the refined LightGBM result, with RC7’s plotting code extended
+to draw this analysis’s band.
+Contents and use. The package holds:
+• the sufficient inputs of the joint tests, for the evaluation behind the decisions and for the
+evaluation with the recovered pseudo-experiments added;
+• the arrays behind the figures of the earlier article version;
+• the noise-free differences behind the L2 ratios;
+• an inventory of the analyzed AnaTuples;
+• the replay and figure code, and the expected outputs.
+The package’s verifier (publication/release/verify_rc.py in the repository) runs from the top
+directory of the unpacked package, in a fresh Python environment with the package’s pinned
+requirements (numpy, scipy and matplotlib). It performs every replay and figure check and prints
+VERIFY: PASS if all agree. In the two replays of the joint tests, floating-point values must agree to a
+relative 10−12 , and integers and decisions must agree exactly. Each number that the earlier article
+version quoted from its Figs. 1–3 must agree with its printed value to within half a unit of its last
+printed digit, and the L2 ratios must reproduce their printed range. For the three figures themselves,
+the check is that their files are produced. The package also carries the 20 rounding jitters of the
+data, from which the stability of the observed p values (§11.4) can be recomputed; no packaged
+script recomputes it.
+
+G.1
+
+Scope of reproduction and required inputs
+
+The public ancillary files of Ref. [3] supply the published inputs for the comparisons to its central
+values and covariance, the standardized differences, the tension anatomy, and the MINERvA Tune v1
+model comparison, but not for this analysis’s unfolded 2D uncertainty construction.
+RC7 supports replay of the higher-dimensional inference from sufficient inputs. It does not support
+extraction from the archived pseudo-experiment products (about 2.3 GB), event-level unfolding, the
+quoted closure and bias measurements, or the measurements behind the covariance’s status (§9.6).
+Nor does it reproduce the 2D uncertainty and coverage figures, the low-recoil comparisons, the
+recoil-response sensitivity, or the proxy convergence rate of joint-test condition (i). The multiplier
+scan of the joint tests is recomputable from RC7’s sufficient inputs with the scan code of Ref. [56], but
+it is not part of RC7’s own verification. An earlier version of the package, RC1, was replayed from an
+empty directory by a separate AI agent session (Opus 5.5) that had no access to the repository and
+used only the package and its README; its verifier passed. Event processing requires the earlier
+production of MINERvA open-data AnaTuples, event-loop outputs, and the generator samples used
+here.
+All 2,374 inventoried input files (2,307 AnaTuples and 67 flux, reweight and parameter files)
+are identified by SHA256 checksum in Ref. [98]; RC7’s own inventory lists their names, sizes and
+modification times, without checksums. As of that record (2026-10-10), verified copies of all 1,885
+data, flux and parameter files are held on NERSC project storage; the record identifies the 489
+
+simulation AnaTuples by checksum but holds no preservation copy of them. Neither the checksums
+nor the preservation copies are a public deposit, and they do not make the full event-level analysis
+reproducible from the small candidate package.
+
+G.2
+
+Release schema
+
+The broader result package must contain every item below; RC7 does not contain all of them. A ✓
+marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already
+fixed); the rest are packaging. A fixed identity specifies which object is meant, not whether the
+object is scientifically qualified.
+1. Reporting bin edges and units, per axis ✓: pT and p∥ in GeV/c, Eavail , q3 and W in
+GeV, with each wide terminal catch bin identified.
+2. The flattened-cell ordering ✓: the dense 14 × 16 × 7 × 7 × 6 grid in C order, with the
+reported subset supplied as an explicit index array, never inferred from a positivity cut.
+3. Central values: the five-axis array and every projection quoted, each with its own checksum,
+on the density scale in cm2 /nucleon divided by the product of its kept axes’ units.
+4. Covariances ✓: the five-axis covariance of the configuration-(a) central value and its (Eavail , W )
+projection, with the algebra of Eqs. (4)–(5), the declared centering variant, and the band
+partition.
+5. Masks ✓: the support mask, the pinned mask (bins where the inflation denominator vanished
+and g was declared 1), and the unreported-cell mask.
+6. Projection matrices ✓: M itself, with its content checksum, its shape, and the explicit
+statement that its entries are the dropped axes’ bin-width products, which is needed to specify
+the destination units.
+7. Generator predictions: the four truth-level (Eavail , W ) predictions (GENIE-CV,
+GENIE+Valencia 2p2h, NuWro, GiBUU) and the MINERvA Tune v1 ancillary model,
+as arrays on the release binning rather than figure curves, each with generator version,
+configuration, target and flux. GENIE and NuWro require the flux-repaired predictions of
+2026-09-27 (per-event reweight to the analysis PPFX flux plus the 50–100 GeV supplements);
+GiBUU requires its reweight to the same flux convention (§7.6).
+8. Provenance: for each object, the producing code revision, the job, and the checksum of the
+bytes read back from the closed file. Of these, only the following are fixed: the assembling
+revision and job of CZ , the job of CEW , and the read-back checksum of the row index. No
+producing revision or job is recorded for the other objects, and the assembled package carries
+none.
+9. One minimal worked example: §G.4.
+10. Limiting measurements: the four measurements of §9.6 that limit what the five-axis
+covariance of the configuration-(a) central value supports, stored with it in the released
+package, not only in this note.
+
+G.3
+
+Bin edges
+
+The bin edges are the one thing a reader cannot recover from a checksum:
+
+• pT , GeV/c: 0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55, 0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50 (14
+bins).
+• p∥ , GeV/c: 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20, 40, 60 (16 bins).
+• Eavail , GeV: 0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100 (7 bins).
+• q3 , GeV: 0, 0.2, 0.4, 0.6, 0.8, 1.2, 2.0, 100 (7 bins).
+• W , GeV: 0, 1.1, 1.4, 1.8, 2.2, 3.0, 100 (6 bins).
+The last bin on Eavail , q3 and W is a catch bin to 100 GeV, and the pT × p∥ grid carries the 19
+unreported high-pT , low-p∥ acceptance cells of §3.5.
+
+G.4
+
+One minimal projection example
+
+The released package is to support the following computation, which checks the package’s ordering,
+mask and weights from end to end.
+1. The five-axis central values x have 65 856 entries, and the reported-cell index array has 10 694
+entries.
+2. M has shape 42 × 10 694, and CZ has shape 10 694 × 10 694. The five-axis covariance
+of
+central value is the file z-cv.npz, with sha256 3d7465f6. . . and
+√ the configuration-(a)
+TrC = 5.6742 × 10−38 , so a loaded CZ can be checked against both.
+3. The projection y = M xreported , reshaped to 7 × 6 in C order, must reproduce the (Eavail , W )
+central-value map of Fig. 24. The F-order control establishes the ordering: C order agrees with
+the figure to a relative 1.7 × 10−16 ; F order disagrees at relative 1.0.
+√
+4. The projected covariance CEW = M CZ M ⊤ is checked by TrCEW = 4.4552 × 10−39 and
+exact symmetry (max |C − C ⊤ | = 0). Its numerical rank depends on the cutoff, because
+the spectrum decays smoothly with no plateau: the retained count is 26 at 10−6 , 36 at the
+projector’s hardcoded 10−12 , 41 at numpy.linalg.matrix_rank’s default, and 42 with no
+cutoff. The rank is therefore not an integrity check: with NumPy’s default cutoff, an intact
+matrix fails a test for 36. The check is instead that |λmin |/λmax is of order 10−15 , the edge of
+double precision; the matrix is ill-conditioned, without a definite rank. Do not check the sign
+of λmin , which sits at the noise floor and carries no information; a second host reproduces λmin
+to only five significant digits.
+p
+5. The per-cell relative uncertainty is (CEW )rr /yr . Because M carries the dropped axes’ widths,
+y and CEW are on the density scale. Converting cell r to an integrated cross section requires
+multiplying by that cell’s own ∆Eavail ∆W , and the catch bins make that factor large.
+6. CEW should not be inverted without a declared regularization: its spectrum runs continuously
+down to the double-precision noise floor, so an inverse is set by the regularizer rather than
+by the data. The estimator-seed sensitivity, which exceeds its limit (the first measurement of
+§9.6), is why no significance is computed from it.
+Undeclared acceptance field. The record of the projection carries acceptance_question:
+UNDECLARED: when the projection was built, it had not been decided whether an acceptance correction
+is needed at the destination binning. The package must carry this field with its value until that is
+decided, so that no default in the data format makes that scientific choice.
+
+
+H
+
+Codebase layout and terminology
+
+The analysis chain has four components; the note refers to them by the names in italics below.
+• Event loop (C++): runEventLoopOmniFold, built on the MINERvA Analysis Toolkit (MAT)
+and the MINERvA-101 framework. It reads production AnaTuples, applies selection and
+systematic-universe machinery, and writes per-event ROOT trees.
+• Event-loop outputs (omnifiles in the code): per-event records for data, for simulated signal
+with paired true and reconstructed quantities, for simulated background, and for the truthlevel efficiency denominator, together with the exposure in protons on target (POT). The
+_universes_full variants add per-universe weight and shifted-kinematics branches.
+• Driver (Python): per-analysis orchestration, by a two-dimensional driver and its N -dimensional
+generalization. The driver builds training arrays from the event-loop outputs, subtracts the
+background by the method an option selects, the purity weight by default (§3.1), or negativeweight injection with or without the Stay-Positive refinement (App. C), runs the engine, and
+extracts the cross section.
+• Engine (Python, unbinned_unfolding/python/omnifold.py): the OmniFold iteration, implemented independently of the learner backend: LightGBM for the central value and the
+uncertainty ensembles, scikit-learn’s exact-split gradient boosting (exact) for the cross-check,
+its histogram gradient boosting (hist) as an alternate, and a multilayer perceptron (MLP) for
+a further cross-check.
+Point-cloud (PET) code is under nd-unfolding/pet/ (App. F).
+The quoted training-seed block is assembled by the aggregation step of the 2D production, not
+by the scripts that run the training-seed variation.
+Code identifiers cited in the note.
+• Event loop (§2.4): MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp;
+its four trees are mc_truth_denom (efficiency denominator), mc_signal_reco, mc_background
+and data; the flux histogram is pTmu_reweightedflux_integrated.
+• Cross-section extraction (§3.4): extract_cross_section_2d in the 2D driver, 2dunfolding/unfold_2d_omnifold_unbinned.py, and its N-dimensional generalization
+nd-unfolding/xsec_nd.py.
+• Figures of §6: 2d-unfolding/plot_2d_paper_comparison.py builds the simulated-truth curve
+of Fig. 9 from hOFTruthDenom2D; 2d-unfolding/compare_to_models.py draws Fig. 14.
+
+I
+
+Supplementary figure: coverage of a purity-subtracted variant
+
+The coverage test of §9.5 measures, for each reported integral, the fraction of bias-corrected statistical
+intervals that contain the true value. Figure 36 shows it integral by integral at the truth with a
+reduced signal rate.
+
+
+68% interval, upper bound ¸ 0.66
+
+95% interval, upper bound ¸ 0.94
+
+68% interval, upper bound < 0.66
+
+95% interval, upper bound < 0.94
+
+signal rate lowered by about 10%, weak Eavail slope: upper bound below threshold for 51 (68%) and 42 (95%) of 153
+
+empirical coverage
+
+(Eavail ; W) cells 0–41 and their sum
+
+109 coarse joint cells, by index in the 3 5 grid
+
+total
+
+1.0
+0.8
+0.6
+0.4
+0.2
+0.0
+0
+
+10
+
+20
+
+30
+
+41
+
+13
+
+52
+
+90
+
+118
+
+148
+
+193
+
+222
+
+total
+
+cell index (projection cell, or coarse joint cell in the 3 5 grid), then the total
+
+Figure 36: Empirical coverage of statistical intervals for the 153 reported cell and projection integrals,
+corrected for nominal-truth bias (§9.5). The study uses a deterministic LightGBM estimator with
+purity-based subtraction and 400 pseudo-experiments at a truth with an approximately 10 % lower
+signal rate and a weak Eavail slope. At nominal truth (not drawn) none lies below the 0.66 threshold,
+and two lie below the 0.94 threshold. Circles: 68% intervals; squares: 95% intervals. Bars are onesided Clopper–Pearson lower and upper bounds, each at level 0.05/459, a Bonferroni correction over
+the 153 integrals and the three truths of the study. The third truth, a change of the q3 dependence
+at fixed (Eavail , W ), is omitted because its reweighting does not implement the intended change; the
+test’s verdict does not depend on it. Solid lines mark the nominal coverage and dashed lines the
+acceptance thresholds 0.66 and 0.94; filled markers have an upper bound below the threshold. The
+integrals are ordered as the (Eavail , W ) projection (cells 0–41 and their sum), the 109 coarse joint
+cells (labelled by their index in the 35 grid), and the total.

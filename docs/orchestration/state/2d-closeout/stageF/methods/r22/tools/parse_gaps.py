@@ -1,10 +1,10 @@
 """Parse r22's gap-prompt outputs (G1, G1N), locate each quote in the rated text, and score the planted controls.
 
-usage: python3 -I parse_gaps.py R22_DIR ANALYZE_PY      writes R22_DIR/gap/gaps.json and prints a summary
+usage: python3 -I parse_gaps.py R22_DIR ANALYZE_PY [SUB]      writes R22_DIR/SUB/gaps.json (SUB: gap, the default, or g1b)
 
 Quote location is the calibration's rule: key() and locate() are taken from ANALYZE_PY
 (rater-calibration/tools/analyze.py) by ast and executed alone, since that file runs on import.
-Run files: R22_DIR/gap/runs/G__<input>__<model>.txt; the rated text is gap/inputs/<input>/{manuscript,chapter}.txt.
+Run files: R22_DIR/SUB/runs/G__<input>__<model>.txt; the rated text is SUB/inputs/<input>/{manuscript,chapter}.txt.
 A control run passes when at least 2 of its 3 plants are quoted (a located quote whose span lies within a plant)."""
 import ast
 import json
@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 R, AN = Path(sys.argv[1]), Path(sys.argv[2])
+SUB = sys.argv[3] if len(sys.argv) > 3 else "gap"
 src = AN.read_text()
 ns = {}
 for node in ast.parse(src).body:
@@ -45,9 +46,9 @@ def parse(t):
 
 
 out = {}
-for f in sorted((R / "gap" / "runs").glob("G__*.txt")):
+for f in sorted((R / SUB / "runs").glob("G__*.txt")):
     _, inp, model = f.stem.split("__")
-    d = R / "gap" / "inputs" / inp
+    d = R / SUB / "inputs" / inp
     text = next(p for p in (d / "manuscript.txt", d / "chapter.txt") if p.exists()).read_text(encoding="utf-8")
     ns["doc_key"] = {inp: ns["key"](text)}
     rating, gaps, enough = parse(f.read_text(encoding="utf-8"))
@@ -69,7 +70,7 @@ for f in sorted((R / "gap" / "runs").glob("G__*.txt")):
         rec["plants_found"] = found
         rec["control_pass"] = len(found) >= 2
     out[f.stem] = rec
-(R / "gap" / "gaps.json").write_text(json.dumps(out, indent=1, ensure_ascii=False))
+(R / SUB / "gaps.json").write_text(json.dumps(out, indent=1, ensure_ascii=False))
 for k, r in out.items():
     extra = f" plants={r['plants_found']} {'PASS' if r['control_pass'] else 'FAIL'}" if "control_pass" in r else ""
     print(f"{k:28s} rating={r['rating']} gaps={len(r['gaps'])} share_sum={r['share_sum']:.0f} "

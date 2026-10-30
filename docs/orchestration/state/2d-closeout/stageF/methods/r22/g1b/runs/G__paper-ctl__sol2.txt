@@ -1,0 +1,125 @@
+CURRENT RATING: 3
+
+GAPS (at most 20, the most important first, one passage each; the SHARE values sum to 100):
+
+1. QUOTE: "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records."
+   SCOPE: this passage
+   PROBLEM: Revision rounds, review tickets, and retained wording are internal editorial bookkeeping with no place in the published argument.
+   CHANGE: Delete this sentence.
+   SHARE: 12%
+
+2. QUOTE: "The z2m lane's tier-S gate stayed green on every rerun of the FIVED16 package."
+   SCOPE: this passage
+   PROBLEM: Undefined workflow identifiers and the phrase “stayed green” make this read entirely like an internal testing log.
+   CHANGE: Delete the sentence, retaining any scientifically relevant verification only through a plainly named test and its quantitative result.
+   SHARE: 10%
+
+3. QUOTE: "We then went back and reran the whole chain a second time, just to be safe, and nothing changed."
+   SCOPE: this passage
+   PROBLEM: The conversational chronology and reassurance substitute a work-log account for a precise verification statement.
+   CHANGE: Delete it unless the repeat establishes a relevant reproducibility result, in which case identify what was repeated and the agreement obtained.
+   SHARE: 10%
+
+4. QUOTE: "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity."
+   SCOPE: this passage
+   PROBLEM: “Joint-test estimator” reads as a project label, while “a deterministic LightGBM” imprecisely names the software as the estimator.
+   CHANGE: Introduce this configuration through its LightGBM classifiers and deterministic training settings, using a descriptive estimator name if a recurring distinction is necessary.
+   SHARE: 8%
+
+5. QUOTE: "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2."
+   SCOPE: this passage
+   PROBLEM: The sentence organizes the account around development history and result provenance rather than the configurations relevant to the reader.
+   CHANGE: Identify the relevant alternative configurations and the results obtained with them directly, leaving their development chronology to the companion note.
+   SHARE: 7%
+
+6. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   SCOPE: this passage
+   PROBLEM: “Keeps,” “residual proxy,” and “used in its development” combine informal wording, an unexplained metric, and development narrative.
+   CHANGE: State that five iterations were used because larger iteration counts did not reduce a clearly defined maximum residual over the tested truth deformations.
+   SHARE: 6%
+
+7. QUOTE: "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6)."
+   SCOPE: this passage
+   PROBLEM: “Earlier” and “fails its specified acceptance criteria” invoke an internal sequence and assessment framework without explaining the limitation in the sentence.
+   CHANGE: Identify the covariance configuration and state the relevant limitation directly, preserving the qualification on these uncertainty bands.
+   SHARE: 5%
+
+8. QUOTE: "The note’s calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (Ref. [14], Sec. 11.5)."
+   SCOPE: this passage
+   PROBLEM: “The same pull,” “by it,” and “as the calibration reproduces” leave the mechanism and the quantity being displaced difficult to follow.
+   CHANGE: Name the test statistic and state directly how the residual prior dependence affects its calibrated null distribution.
+   SHARE: 5%
+
+9. QUOTE: "It covers only the residuals whose diagnosis is stable under the truth resolution (38 % of the joint-cell residuals above 2 %)."
+   SCOPE: this passage
+   PROBLEM: “Covers,” “diagnosis,” and “truth resolution” make the diagnostic’s scope opaque and give “covers” an avoidably ambiguous statistical meaning.
+   CHANGE: Specify which changes to the truth binning leave the diagnostic conclusion unchanged and state explicitly which residuals satisfy that condition.
+   SHARE: 5%
+
+10. QUOTE: "Table II gives the results under the reported covariance and under Ctotal alone, and 6 further truths are ungraded and given in the note."
+    SCOPE: this passage
+    PROBLEM: “Ungraded” is internal assessment terminology, and “given in the note” does not explain what distinguishes these additional tests.
+    CHANGE: Replace “ungraded” with a direct statement of whether the additional truth scenarios were evaluated against the stated criteria.
+    SHARE: 4%
+
+11. QUOTE: "A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+    SCOPE: this passage
+    PROBLEM: “Candidate release package” and its packaging details give the availability statement the tone of a release-status report.
+    CHANGE: State the package’s actual availability and reproducibility scope directly, preserving the fact that it has not been deposited and moving incidental packaging details to documentation.
+    SHARE: 4%
+
+12. QUOTE: "The low stability of four of the sixteen cells is stated only here."
+    SCOPE: this passage
+    PROBLEM: This comments on the manuscript’s placement of information instead of communicating the limitation itself.
+    CHANGE: Delete the sentence and let the following quantitative stability statement carry the qualification.
+    SHARE: 4%
+
+13. QUOTE: "The response term Cresp is the response of the result to a one-standard-deviation scale of the reconstructed recoil energy in the simulation, for protons, mesons, electromagnetic and other deposits, but it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result, its fake-data tests and its comparison in Sec. V B."
+    SCOPE: this passage
+    PROBLEM: The definition, deposit categories, exclusions, and applicability are crowded into one sentence, obscuring the meaning of the uncertainty term.
+    CHANGE: Separate the scale-variation definition, excluded response effects, and results to which the term is applied into short sentences.
+    SHARE: 3%
+
+14. QUOTE: "The two-dimensional covariance is the sum of four blocks, each from LightGBM unfoldings with the central value’s estimator: systematic universes (187 universes), statistical (300 bootstrap replicas), run period (three period groups), and training seed (five seed settings, so that its own size is poorly determined)."
+    SCOPE: this passage
+    PROBLEM: The parenthetical “its own size” has an uncertain referent and interrupts an otherwise useful specification of the covariance components.
+    CHANGE: Keep the component list parallel and state separately that the training-seed covariance is estimated imprecisely from five settings.
+    SHARE: 3%
+
+15. QUOTE: "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail."
+    SCOPE: this passage
+    PROBLEM: “Its own consistency check cannot fail” sounds like commentary on an internal validation gate and does not identify the check.
+    CHANGE: State directly that a covariance constructed from the observed period differences does not provide an independent test of consistency among those periods.
+    SHARE: 3%
+
+16. QUOTE: "We report a simultaneous measurement of the νµ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, threemomentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is 7.29%."
+    SCOPE: this passage
+    PROBLEM: The opening sentence stacks the measurement, observable list, method, data source, reporting partition, and precision into a strained grammatical structure.
+    CHANGE: Divide it into a measurement-and-method statement and a reporting-and-uncertainty statement, attaching the median relative uncertainty to the cell cross sections.
+    SHARE: 3%
+
+17. QUOTE: "Three external generator predictions compared on all sixteen cells give χ2 of 109–272 for 16 degrees of freedom, and GiBUU, on 8 cells, 58."
+    SCOPE: this passage
+    PROBLEM: The compressed GiBUU clause reads like a table annotation rather than a complete abstract statement.
+    CHANGE: Give the GiBUU comparison a complete clause specifying its χ2 and number of degrees of freedom.
+    SHARE: 2%
+
+18. QUOTE: "The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general."
+    SCOPE: this passage
+    PROBLEM: The stacked restrictions repeat the preceding account of the validation scope and give the introduction a defensive cadence.
+    CHANGE: Condense this to one direct statement that the conclusions apply to the implementation and test conditions studied here.
+    SHARE: 2%
+
+19. QUOTE: "To include model dependence, a dedicated study defines the envelope of a cell as the largest shift of its data result when the simulation’s prior is reweighted to each of five generator-sized changes of the truth, and adds it linearly to the probabilistic half-width."
+    SCOPE: this passage
+    PROBLEM: The procedural framing and nested definition make the reader work to distinguish the envelope’s construction from its subsequent use.
+    CHANGE: Define the envelope directly as the maximum shift under the five prior deformations, then state separately how it is combined with the probabilistic half-width.
+    SHARE: 2%
+
+20. QUOTE: "This reproducible central value is that of its own systematicuniverse ensemble, so its covariance is built with the same estimator."
+    SCOPE: this passage
+    PROBLEM: “Is that of its own” is awkward and makes a straightforward consistency condition sound like bookkeeping about analysis products.
+    CHANGE: State simply that the central value and the systematic-universe unfoldings use the same estimator.
+    SHARE: 2%
+
+ENOUGH: Yes; these changes would remove the conspicuous internal-note passages and resolve the principal terminology, density, and repetition problems, leaving minor lapses compatible with a rating of 4.

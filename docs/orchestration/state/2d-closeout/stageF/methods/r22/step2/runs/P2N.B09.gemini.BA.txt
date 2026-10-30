@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A consistently employs standard experimental particle-physics and statistical terminology (such as "generator shifts," "deposit categories," and statistical "tests" meeting predefined criteria), whereas Document B relies on jarring, unidiomatic phrasing such as calling systematic variations "vertices," deposit types "response species," and validation checks "grades."
+2. Document A maintains clean and precise syntax throughout, avoiding Document B's awkward phrasing (such as "a mode is that matrix’s own") and ambiguous pronoun antecedents (such as an "Its" in Sec. 10.2 that confusingly appears to refer to the cross-talk term rather than $C_{\text{resp}}$).
+3. Document A follows standard scientific expository flow by defining procedures (such as the correlation-shrinkage method) before presenting their quantitative results, whereas Document B presents numerical shifts prematurely and strings together unwieldy run-on sentences.

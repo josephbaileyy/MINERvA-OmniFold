@@ -1,0 +1,22 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally precise, but several passages use internal bookkeeping, retrospective workflow narration, and repetitive qualifications that warrant a dedicated language pass.
+1. QUOTE: "Because the closure uses configuration (a) and the data comparison sets (e) against (f),
+the ratio of the two scatters is not quoted. Total normalization matches to better than 1 %. In
+the metric of §5 (Eavail projection) the residual is 1.84 % against 18.1 % injected (ratio 0.102). No
+acceptance threshold set before the test is documented, so it has no pass or fail verdict."
+   REWRITE: The closure and data comparisons use different configurations, so their scatters are not directly compared. The total normalization agrees to within 1 %. For the Eavail projection, the residual defined in §5 is 1.84 %, compared with an injected deformation of 18.1 % (ratio 0.102). These results are descriptive because no prespecified acceptance criterion is documented.
+2. QUOTE: "The GENIE (CV and +Valencia 2p2h) and NuWro samples
+were generated from a flux that had no PPFX weights, was capped at 50 GeV, and stored flux
+densities in variable-width bins that were sampled and normalized as contents, which under-weighted
+every wide high-energy bin and suppressed the high-p∥ predictions and the integrated rates (Ref. [37],
+R1.3). The repair reweights each event exactly to the analysis PPFX central-value flux on 0–100 GeV,
+with correctly sampled 50–100 GeV supplements."
+   REWRITE: The original GENIE (CV and +Valencia 2p2h) and NuWro samples used a flux without PPFX weights, truncated at 50 GeV. Flux densities in variable-width bins were treated as bin contents during sampling and normalization, underweighting the wide high-energy bins and suppressing the high-p∥ predictions and integrated rates (Ref. [37], R1.3). Event weights correct these samples to the analysis PPFX central-value flux over 0–100 GeV, with additional events generated using the correct sampling over 50–100 GeV.
+3. QUOTE: "Neither a 4D uncertainty nor a ratio of the covariance from simultaneous
+variation of every reweightable band and the flux multisim (the unified throw of §4.5) to the block
+covariance is reported. A corrected 4D covariance would use the actual minus and plus variation
+endpoints; MAT’s mean-centered covariance blocks, normalized by 1/N ; one fixed estimator seed;
+and mean-centered joint throws, with the mean shift reported separately. It would not subtract a
+scalar jitter floor. Because the single-pass shifted observables exist only for events selected at the
+central value, re-selected event loops (§4.7) would be needed to bound migration effects."
+   REWRITE: No 4D uncertainty is reported, and the covariance from joint variations of all reweightable bands and the flux multisim (§4.5) is not compared with the block covariance. A consistent 4D covariance calculation would require the actual minus and plus variation endpoints, MAT’s mean-centered covariance blocks normalized by 1/N, a fixed estimator seed, and mean-centered joint throws with the mean shift reported separately, without subtracting a scalar jitter floor. Bounding migration effects would also require repeating the event selection for each variation (§4.7), because shifted observables are available only for events selected under the central-value conditions.

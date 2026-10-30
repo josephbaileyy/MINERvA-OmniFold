@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B systematically replaces informal collaboration jargon and lab colloquialisms present in Document A (such as "playlists", "toy", "catch bins", "dead region", and using "unfold" as a noun) with standard, publication-grade terminology ("data-taking periods", "pseudo-experiment", "overflow bins", "low-acceptance region", and "unfolding").
+2. Document B replaces telegraphic, abbreviated shorthand (such as "Per-cell half-spread/mean has median...", "median deviation", and "max") with precise, fully articulated statistical descriptions (such as "median absolute relative deviation" and "maximum").
+3. Document B demonstrates superior copy-editing polish by smoothing sentence transitions, eliminating redundant restatements, and maintaining the formal, objective scholarly register expected of a PRD article.

@@ -1,0 +1,18 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and recognizably technical, but repeated scope disclaimers, internal bookkeeping, and compressed descriptions of validation tests call for a dedicated language pass.
+1. QUOTE: "It is a
+separate product from the configuration-(a) five-dimensional central value of Secs. 8 and 9 and from
+the five-axis covariance used with that central value (§9.6). Statements in those sections about that
+central value and that covariance do not describe this result, and statements here do not describe
+them."
+   REWRITE: This measurement is distinct from the configuration-(a) five-dimensional result presented in Secs. 8 and 9 and its covariance (§9.6); the descriptions and conclusions in each section apply only to the corresponding measurement.
+2. QUOTE: "One control check failed: the offset check, which compares the offset corrections of two hybrid
+truths, gives χ2 = 245.74 for 16 degrees of freedom. The other control checks (numbers 0, 1, 2, 3, 4,
+5, 6, 8) passed. As fixed in advance, the six power alternatives built on that correction are therefore
+descriptive and not judged against the failure criteria; Table 15 gives them, with two descriptive
+variants of each tested truth."
+   REWRITE: The comparison of offset corrections between two hybrid truths fails the control criterion, yielding χ² = 245.74 for 16 degrees of freedom; all other control checks pass. Under the predefined procedure, the six power alternatives that use this correction are therefore reported descriptively, without applying the failure criteria. Table 15 lists these alternatives and two supplementary comparisons for each tested truth.
+3. QUOTE: "Table 15: Descriptive fake-data numbers, none of them a test result. In-sample: against Ctotal + Cresp
+including the truth’s own generator shift, which is not evidence (— where the test already uses the
+full matrix)."
+   REWRITE: Table 15: Supplementary fake-data comparisons, excluded from the assessment against the failure criteria. In-sample comparisons use Ctotal + Cresp including the truth’s own generator shift and therefore do not provide independent validation. A dash indicates that the primary test already uses the full covariance.

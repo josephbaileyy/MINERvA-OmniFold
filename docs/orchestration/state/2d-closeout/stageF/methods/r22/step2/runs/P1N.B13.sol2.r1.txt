@@ -1,0 +1,28 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally precise, but recurrent internal bookkeeping, development history, and repetitive scope qualifications require a dedicated language pass to achieve the register of a well-edited long PRD write-up.
+
+1. QUOTE: "Negative-weight injection is studied here for its equivalence to binned purity and
+as the extended-fiducial treatment; this appendix establishes no supported production path and
+changes no default. The two covariance ratios are agreement diagnostics between two realizations of
+one subtraction. Two provenance limits apply to the production numbers: the driver revision that
+produced them is corroborated but not pinned, and no output records the job that produced them
+(Ref. [37], R1.7)."
+   REWRITE: This appendix compares negative-weight injection with binned purity subtraction and examines its application to the extended-fiducial analysis; it does not establish a validated production implementation or change the background treatments specified in §§3.1–3.2. The two covariance ratios quantify agreement between implementations of the same subtraction. The code revision used to obtain these results is supported by indirect evidence but has not been uniquely identified, and the outputs do not identify the originating jobs (Ref. [37], R1.7).
+
+2. QUOTE: "The existing endpoint unfolds, produced in July 2026, used purity, as established by elimination
+from their job scripts and logs (Ref. [37], R1.17). Current production fixes the background treatment
+in a configuration object that rejects every other mode. The standard job script passes the driver’s
+background-mode option (--bkg-mode) explicitly from that configuration, and the value is written
+into the record of every endpoint unfold as it is produced, so the background treatment of each new
+component can be read from the component itself; this changes how the treatment is recorded, not
+the treatment itself."
+   REWRITE: The endpoint unfolds produced in July 2026 used purity subtraction, as inferred by excluding alternative treatments from the job scripts and logs (Ref. [37], R1.17). Subsequent production enforces purity subtraction through a fixed configuration and records the treatment in each endpoint output.
+
+3. QUOTE: "Background treatment and choice of covariance. The choice of background treatment is
+independent of the choice of covariance, and this appendix selects no five-dimensional covariance
+for use. The lateral-band component from re-selected event loops is built, with five bands and ten
+endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of
+the configuration-(a) central value. The status of that five-axis covariance and the scope of its use
+are stated in §9.6. The choice of background treatment settles one of the conditions for using a
+component; every other condition still applies."
+   REWRITE: Background treatment and covariance selection. The background treatment does not determine the choice of five-dimensional covariance, which is discussed in §9.6. The lateral-band component comprises five bands and ten endpoint unfolds obtained with event reselection; their checksums are documented with the covariance of the configuration-(a) central value. Consistent background treatment is one requirement for including this component; the remaining requirements are unchanged.

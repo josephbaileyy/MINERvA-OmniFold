@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A’s abstract uses manageable sentences and explicit statistical statements, whereas B compresses several claims into an overloaded opening sentence and an awkwardly elliptical GiBUU comparison.
+2. A maintains a more consistent formal register through precise expressions such as “published measurements” and “this in-method subtraction,” where B uses “production measurements” and “that route.”
+3. A more carefully defines terminology and clarifies referents, including the GBDT abbreviation, estimator configurations, and the distinction between the original test decisions and the descriptive re-evaluation.

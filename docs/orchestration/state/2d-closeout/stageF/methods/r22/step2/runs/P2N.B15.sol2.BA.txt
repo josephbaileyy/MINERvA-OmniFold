@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A maintains a more consistent formal register, whereas B uses conversational formulations such as “What today’s reader can and cannot recompute” and measurements that “travel with” a covariance.
+2. A uses more precise wording, distinguishing “every number quoted from a figure” from B’s ambiguous “every figure number” and avoiding B’s awkward “in the reading with” construction.
+3. A’s clearer enumeration and more measured explanatory prose make the technical qualifications easier to follow, particularly in the package description and covariance checks.

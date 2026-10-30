@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 3
+REASONS:
+1. Document A consistently maintains a formal publication register with fully articulated sentences, whereas Document B frequently lapses into telegraphic, note-taking fragments such as "Top 2D bands: Flux 3.71 %...".
+2. Document A adheres to professional editorial standards by avoiding informal laboratory slang and coding shorthand that appear throughout Document B, including "MC reco", "no-op", "knob bands", "multisim", and "sqrt-trace".
+3. Document A demonstrates superior syntactic precision and mathematical convention, properly phrasing comparisons ("weights equal those of...") and defining the concise notation $C_Z$, whereas Document B contains faulty comparative grammar ("weights equal the constraint file") and clumsy, repetitive phrasings.

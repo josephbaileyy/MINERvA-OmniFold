@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 3
+REASONS:
+1. Document A maintains a formal publication register throughout, whereas Document B leaves internal software implementation artifacts directly in the prose (specifically raw C++ method names like `CVUniverse::GetTrueExperimentersW()` and `CVUniverse::RecoW()`).
+2. Document A uses standard scholarly terminology and conventional headings (e.g., "Distribution of the excess...", "flux-corrected", and "standard deviation"), avoiding Document B's colloquial laboratory jargon (e.g., "Where the excess lives...", "pion-FSI dials", "area-free", and "flux-repaired").
+3. Document A exhibits polished editorial structure with natural paragraph breaks and fully articulated prose, whereas Document B collapses multiple conceptual steps into an unformatted wall of text in Sec. 8.2 and frequently relies on telegraphic, note-like shorthand.

@@ -1,0 +1,14 @@
+RATING: 3
+JUSTIFICATION: Much of the prose uses an appropriate specialist register, but recurrent internal bookkeeping, development history, self-referential explanations and repeated qualifications require a dedicated language pass.
+1. QUOTE: "A split bootstrap of the earlier rebuilt bootstrap (Ref. [37], superseded values: retired material)
+separated the first two from an MC-statistics omission but not from the third, and it has not been
+repeated for the quoted statistical block."
+   REWRITE: An earlier data/MC split bootstrap excluded omitted MC statistical fluctuations as an explanation but did not distinguish differences in statistical efficiency or covariance content from regularization effects [37]. This test has not been repeated for the statistical covariance reported here.
+2. QUOTE: "Each ratio
+states which power of the trace it uses, because the two ratios describe the same comparison and
+differ by more than a factor of two."
+   REWRITE: The square-root-trace ratio is 0.407, corresponding to a trace ratio of approximately 0.166.
+3. QUOTE: "The thresholds lie comfortably above the 0.166% ML floor
+of the earlier ten-seed scan, which was in force when the tests were graded (Ref. [37], superseded
+values: retired material)."
+   REWRITE: The closure tests were evaluated against thresholds exceeding the 0.166% training-seed variation measured in an earlier ten-seed study [37].

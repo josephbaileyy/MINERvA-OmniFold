@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B replaces Document A's confusing and nonstandard jargon—such as referring to systematic model variations as "vertices" (which conflicts with the standard particle-physics meaning of interaction vertices) and calorimetry depositions as "species"—with standard experimental terminology like "shifts" and "deposit categories."
+2. Document B adopts conventional particle-physics and statistical terminology for validation procedures ("tested," "failed," "check"), avoiding Document A's unidiomatic academic evaluation metaphors ("graded," "grade," "ungraded").
+3. Document B resolves syntactic flaws and unidiomatic phrasing present in Document A, including a misplaced pronoun referent in the discussion of recoil-energy uncertainty and colloquialisms such as "a mode is that matrix’s own."

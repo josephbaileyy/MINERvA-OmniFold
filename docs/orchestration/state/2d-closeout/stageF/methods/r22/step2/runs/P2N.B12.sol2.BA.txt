@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A uses more complete, smoothly connected sentences, particularly in its account of the published uncertainty treatment, where B resorts to fragments such as “Specifics quoted.”
+2. A maintains a more neutral scholarly tone, avoiding B’s colloquial or pointed expressions such as “Where it lives,” “folk,” “headroom,” and “the paper admits.”
+3. A more consistently explains quantities and procedures in descriptive prose, making passages easier to follow than B’s compressed formulations such as “ours-only,” “paper-cov,” and “inflation operand.”

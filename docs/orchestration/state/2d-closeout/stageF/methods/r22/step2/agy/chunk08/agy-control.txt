@@ -1,0 +1,121 @@
+Q1: VERDICT: SAME
+DETAIL: The factual statement and limitation are identical; clarifying "Coverage" to "Coverage fractions" and "to certify cells" to "across cells to certify them" represents a direct register rewrite without altering what holds.
+
+Q2: VERDICT: SAME
+DETAIL: All numerical values (\SI{68.9}{\percent}, $\langle|r|\rangle\approx0.79$, \SI{68.5}{\percent}, and \SI{70.0}{\percent}) and the qualification that neither fraction certifies covariance are fully preserved.
+
+Q3: VERDICT: SAME
+DETAIL: Both versions state the identical limitation that no numbers in the appendix are quoted uncertainties and that the derivation, identity, and displacement argument do not depend on them.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit limitation `not quoted uncertainties.` applied to the covariance ratios, drops the qualifier `natural`, and introduces the specific qualifier `binned purity` not stated in BEFORE.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds `the histogram backend` as a fixed setting isolating the background treatment, which BEFORE does not state or support here.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds `at full statistics with LightGBM, the estimator of the quoted 2D central value.`, stating additional facts not supported in BEFORE (moved from AC116).
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds facts and numbers not in BEFORE, including `The two covariances differ by one to two percent.`, `187-universe`, `from \SI{2.9828e-39}{cm^2/nucleon} and \SI{3.0242e-39}{cm^2/nucleon}`, `matched-seed`, and `from \SI{1.7260e-40}{cm^2/nucleon} and \SI{1.7576e-40}{cm^2/nucleon}` (moved from AC116).
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific summary numbers `(median $\nwMedianBin$, RMS \SI{\nwRmsBin}{\percent}, worst bin \SI{\nwWorstBin}{\percent})`, substituting a cross-reference `(\S\ref{sec:negweight-2d})`.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire first sentence, `Its background treatment is positively identified, by different evidence for the existing unfolds and for current production.`, omitting the broader scope and the contrast with current production.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory contrast `rather than inheriting the driver's default` and drops the concluding limitation `rather than inferred from the absence of an option`.
+
+Q11: VERDICT: SAME
+DETAIL: All arguments, qualifications, and causal conclusions are preserved, with colloquial expressions ("worse than", "mismatch, not an upgrade") converted cleanly into formal academic register ("inferior to", "would be inconsistent with").
+
+Q12: VERDICT: SAME
+DETAIL: The definition of the standard deviations ($\sigma_{\mathrm{stat}}$ and $\sigma_{\mathrm{total}}$ on the 205 reported cells) as units of difference preserves the exact meaning and scope of BEFORE.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER drops `in the validation ledger`, omitting the specific location where the central value and check are recorded.
+
+Q14: VERDICT: SAME
+DETAIL: The substantive limitation that the number quoted in \S\ref{sec:fps} was not produced this way is fully preserved; omitting the deictic cross-reference "as stated above" does not alter any fact or qualification about what was measured or what holds.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire subsection title and the "Measured size" paragraph containing the 1-to-2 percent agreement and all systematic and statistical covariance ratios and numerical operands (moved to AC72 and AC75).
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER introduces the specific cross-reference `of \S\ref{sec:negweight-uq}`, which is not stated or supported in BEFORE (where the text only referred deictically to `these 2D systematic and statistical covariances`).
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit qualification and limitation `; the choice is safe, though not shown to be immaterial.`
+
+Q18: VERDICT: SAME
+DETAIL: Both versions convey the exact same meaning, with "cheapest" appropriately rendered in formal register as "least computationally expensive".
+
+Q19: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating `this appendix selects five-dimensional covariance for use`, whereas BEFORE explicitly states `nothing in this appendix selects a five-dimensional covariance for use.`
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER drops the critical status qualification `(protocol implemented; not yet run)` from the section title.
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER adds two opening sentences (`This appendix gives a validation protocol for such a test, not a result or an uncertainty component. Its first stage has been implemented but not yet run: no output has been produced and no pass threshold has been set.`) that are not present in BEFORE (moved from AD18).
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by asserting that the factor `is by itself a sufficient basis`, whereas BEFORE states that it `is not enough on its own`.
+
+Q23: VERDICT: SAME
+DETAIL: The definition of the primary observable and the separate reporting of the $W<\SI{1.1}{GeV}$ region are identically stated.
+
+Q24: VERDICT: SAME
+DETAIL: The limitations restricting execution to pseudo-data closure on the five observables and barring truth-reweight injection or bootstrapping are identically preserved.
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER drops `lack the information for that recomputation` and introduces the garbled and ambiguous appositive `that low-level record`, confounding the current scalar outputs with the low-level record.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the two sentences stating `This appendix records a validation protocol, not a result or an uncertainty component. No response-mismatch output has been produced and no pass threshold has been set.` (moved to AD3).
+
+Q27: VERDICT: SAME
+DETAIL: Both versions state the identical methodological requirement that a large bias requires addressing the response model or assigning an uncertainty component rather than absorbing it into a non-closure error.
+
+Q28: VERDICT: SAME
+DETAIL: All survey facts and dimensional definitions are retained; moving the definition of dimensionality into the text and referencing it in the caption preserves the full meaning without duplication.
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER drops the characterization `it is a direct dimensional precedent`, stating instead that `it has the dimensionality of our three-dimensional result`.
+
+Q30: VERDICT: SAME
+DETAIL: The contents, scope, and reproduction limits of RC7 and the broader release are preserved with identical meaning.
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER drops the limitation `It does not recompute the recorded stability of the observed $p$ values under the data's rounding noise.` (moved to RL14).
+
+Q32: VERDICT: SAME
+DETAIL: All reproduction details, package contents, pinned dependencies, script paths, and verifier outputs ("VERIFY: PASS") are completely preserved in the list format.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER adds the package size `(about \SI{2.3}{GB})` and the section reference `(\S\ref{sec:eavailw-adopted})`, neither of which is present in BEFORE.
+
+Q34: VERDICT: SAME
+DETAIL: All file counts (2,374, 2,307, 67, 1,885, 489), storage locations, checksum verifications, and the date 2026-10-10 are identically stated.
+
+Q35: VERDICT: SAME
+DETAIL: Both versions state the identical distinction between specifying an object's identity and qualifying it scientifically.
+
+Q36: VERDICT: SAME
+DETAIL: The list of fixed components ($C_{Z}$ revision and job, $C_{EW}$ job, and read-back row-index checksum) is identical in meaning and scope.
+
+Q37: VERDICT: DIFFERS
+DETAIL: AFTER adds the characterization `\textbf{Limiting measurements}` and asserts `that limit what the five-axis covariance of the configuration-(a) central value supports` (which BEFORE does not state here), while dropping `that readers will quote`.
+
+Q38: VERDICT: SAME
+DETAIL: The dimensions (\num{65856}, \latBins), matrix shapes ($\zprojCells\times\latBins$, $\latBins\times\latBins$), and validation purpose are identical across the rewrite from procedural to declarative style.
+
+Q39: VERDICT: SAME
+DETAIL: The projection formula, reshaping dimensions ($7\times6$ in C order), and reproduction of Fig.~\ref{fig:eavailWexcess} are identically preserved.
+
+Q40: VERDICT: SAME
+DETAIL: All numerical values ($\sqrt{\Tr C_{EW}}=\SI{4.4552e-39}{}$, retained counts 26, 36, 41, 42, and ratio $10^{-15}$) and the conclusion that rank is not an integrity check are completely preserved.
+
+END

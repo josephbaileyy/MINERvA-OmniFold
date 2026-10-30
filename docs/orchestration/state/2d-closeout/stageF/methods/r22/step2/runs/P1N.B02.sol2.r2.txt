@@ -1,0 +1,13 @@
+RATING: 3
+JUSTIFICATION: Most of the chapter uses appropriate specialist prose, but extended passages of run bookkeeping, development history, and repetitive qualification give the estimator discussion an internal-note register that requires a dedicated language pass.
+1. QUOTE: "The purity-subtracted seed-42 central value has no recorded run configuration. An
+independent rerun reproduces it to 1.4 × 10−11 , and so does a regeneration whose run configuration
+is recorded (Ref. [37], R1.12)."
+   REWRITE: Although the original run configuration was not recorded, two independent reruns reproduce the purity-subtracted seed-42 central value to 1.4 × 10−11; one has a documented configuration (Ref. [37], R1.12).
+2. QUOTE: "Its seed was not fixed: the driver version it ran
+had no seed option, and its production job script passed no seed. The run’s own log was not found.
+Two driver revisions regenerate it to 7 × 10−15 ."
+   REWRITE: The estimator seed was unspecified, and the original execution log is unavailable. Nevertheless, two versions of the driver reproduce the result to 7 × 10−15.
+3. QUOTE: "The exact-split central value was the quoted
+2D central value until 2026-10-11; studies labeled exact-split use it and have not been recomputed."
+   REWRITE: Studies labeled exact-split retain the original exact-split central value; the reported 2D central value uses configuration (f).

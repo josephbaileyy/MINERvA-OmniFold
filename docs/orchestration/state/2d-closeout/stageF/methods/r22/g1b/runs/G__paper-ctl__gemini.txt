@@ -1,0 +1,124 @@
+CURRENT RATING: 2
+
+GAPS (at most 20, the most important first, one passage each; the SHARE values sum to 100):
+1. QUOTE: "The z2m lane's tier-S gate stayed green on every rerun of the FIVED16 package."
+   SCOPE: this passage
+   PROBLEM: This sentence introduces automated continuous-integration pipeline jargon and internal software test-suite tracking that never appear in published PRD papers.
+   CHANGE: Delete this sentence entirely.
+   SHARE: 10
+
+2. QUOTE: "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records."
+   SCOPE: this passage
+   PROBLEM: This is an internal revision-tracking log from an issue-tracking system, departing completely from the archival register of published PRD papers.
+   CHANGE: Delete this sentence entirely.
+   SHARE: 10
+
+3. QUOTE: "We then went back and reran the whole chain a second time, just to be safe, and nothing changed."
+   SCOPE: this passage
+   PROBLEM: The informal, conversational phrasing ("went back and reran", "just to be safe") reads like an informal lab notebook rather than the objective, professional register of PRD.
+   CHANGE: Remove this sentence or replace it with a formal statement confirming that re-executing the analysis pipeline yields identical results.
+   SHARE: 9
+
+4. QUOTE: "The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section."
+   SCOPE: this passage
+   PROBLEM: Published PRD papers are self-contained archival records and do not repeatedly cite an inaccessible internal collaboration note by section as a proxy for methodology and validation records.
+   CHANGE: Replace the reference to the internal note with a self-contained summary in the text or an accessible supplemental material document.
+   SHARE: 8
+
+5. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   SCOPE: this passage
+   PROBLEM: Narrating the chronological sequence of discarded test configurations and development history departs from the concise, outcome-oriented reporting of PRD papers (e.g., Ref. [2], Sec. V B: "As a result of these studies, unfolding is performed with 10 iterations for this analysis.").
+   CHANGE: State directly that five iterations were chosen because additional iterations yielded no significant reduction in model dependence.
+   SHARE: 7
+
+6. QUOTE: "The two-observable central value uses LightGBM at seed 42 [23] with negative-weight background subtraction and a refinement of 400 trees and 31 leaves."
+   SCOPE: this passage
+   PROBLEM: Citing an arbitrary software execution seed ("seed 42") elevates code-level scripting details into methodological specifications, which PRD papers omit (e.g., Ref. [1], Sec. IV).
+   CHANGE: Remove the specific random seed number and describe the gradient-boosting setup purely in terms of its algorithmic architecture and hyperparameters.
+   SHARE: 6
+
+7. QUOTE: "The joint-test estimator is a deterministic LightGBM (fixed seeds, reproducible training), and the refinement classifier of the two-observable estimator is seeded at the estimator seed plus three."
+   SCOPE: this passage
+   PROBLEM: Explaining that a component is "seeded at the estimator seed plus three" reports software implementation bookkeeping rather than physical or statistical methodology.
+   CHANGE: Delete the reference to relative seed arithmetic and state simply that fixed random seeds were used to ensure reproducible classifier training.
+   SHARE: 6
+
+8. QUOTE: "Interval coverage has not been validated."
+   SCOPE: this passage
+   PROBLEM: This clipped, isolated declaration reads like an internal review checklist bullet or auditor caveat rather than the continuous, integrated prose of a PRD article.
+   CHANGE: Expand this note into a complete, professional explanation describing the specific coverage checks performed and the statistical boundaries of the evaluation.
+   SHARE: 5
+
+9. QUOTE: "Our precision target is a 10 % median half-width for the total 68% interval."
+   SCOPE: this passage
+   PROBLEM: Framing the analysis around an internal project management requirement or milestone target departs from the standard PRD register of reporting observed measurement uncertainties.
+   CHANGE: Rephrase to report the achieved precision across the phase space directly without reference to internal project design targets.
+   SHARE: 5
+
+10. QUOTE: "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity."
+   SCOPE: this passage
+   PROBLEM: The term "joint-test estimator" is an unedited project-internal moniker rather than a standard, descriptive scientific label (contrast with "UniFold, MultiFold, and OmniFold" in Ref. [1], Sec. IV).
+   CHANGE: Replace the project-internal moniker with a descriptive designation such as "multidimensional boosted-decision-tree estimator."
+   SHARE: 5
+
+11. QUOTE: "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2."
+   SCOPE: this passage
+   PROBLEM: Chronicling intermediate development variants and directing readers to an internal technical note for them clutters the article with obsolete development history.
+   CHANGE: Remove the reference to discarded development variants and focus the narrative strictly on the estimator configuration used in the final measurement.
+   SHARE: 4
+
+12. QUOTE: "Table II gives the results under the reported covariance and under Ctotal alone, and 6 further truths are ungraded and given in the note."
+   SCOPE: this passage
+   PROBLEM: Classifying test models as "ungraded" and referring to an internal collaboration note reflects internal working-group grading terminology rather than journal prose.
+   CHANGE: Replace "ungraded and given in the note" with a neutral statement that six additional model variations were tested and are summarized in an appendix.
+   SHARE: 4
+
+13. QUOTE: "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6)."
+   SCOPE: this passage
+   PROBLEM: Accounting for earlier, discarded covariance matrices that failed internal collaboration acceptance criteria introduces internal quality-assurance bookkeeping into a published paper.
+   CHANGE: Omit the discussion of obsolete, failed covariance matrices and evaluate the results solely against the accepted, final covariance matrix.
+   SHARE: 4
+
+14. QUOTE: "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail."
+   SCOPE: this passage
+   PROBLEM: The cynical, editorializing tone ("its own consistency check cannot fail") reads like an internal audit memo rather than objective scientific prose.
+   CHANGE: State objectively that the systematic uncertainty associated with the run periods is assigned directly from the observed empirical differences between run periods.
+   SHARE: 3
+
+15. QUOTE: "We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections."
+   SCOPE: this passage
+   PROBLEM: The phrasing "We make no coverage claim" reads like a legal liability disclaimer rather than a standard scientific description of statistical scope.
+   CHANGE: State neutrally that coverage properties were evaluated on pointwise bins and projections within the available simulated samples.
+   SHARE: 3
+
+16. QUOTE: "With the joint-test estimator, the envelope alone exceeds it for the 109 coarse joint cells and for the fallback definition, the 39 supported (Eavail , W ) cells."
+   SCOPE: this passage
+   PROBLEM: Using the phrase "fallback definition" exposes internal project contingency debates rather than presenting the analyzed kinematic binnings as deliberate scientific choices.
+   CHANGE: Refer to the 39 (Eavail, W) cells objectively as an alternative two-dimensional projection rather than a "fallback definition."
+   SHARE: 3
+
+17. QUOTE: "We call this requirement the support rule."
+   SCOPE: this passage
+   PROBLEM: Coining idiosyncratic named rules ("the support rule") for routine occupancy cuts creates non-standard internal jargon absent from PRD papers.
+   CHANGE: Delete the coining of the named rule and state directly that coarse cells are retained if their expected reconstructed and truth event counts exceed 1000 events.
+   SHARE: 2
+
+18. QUOTE: "The learner was selected after the LightGBM and exact-split comparisons with the published result, so the benchmark is a reproduction rather than an independent validation."
+   SCOPE: this passage
+   PROBLEM: This procedural self-justification reads like a defensive response to an internal reviewer rather than a neutral description of benchmark methodology.
+   CHANGE: State directly that the two-dimensional comparison serves as a benchmark reproduction of the published measurement using the new unfolding framework.
+   SHARE: 2
+
+19. QUOTE: "This constant is inherited from the analysis framework’s definition."
+   SCOPE: this passage
+   PROBLEM: Justifying an operational kinematic definition by appealing to legacy software codebase definitions is an internal bookkeeping rationale unsuitable for PRD.
+   CHANGE: Define the observable directly as adopted for this measurement and cite the relevant experimental convention without attributing it to software framework inheritance.
+   SHARE: 2
+
+20. QUOTE: "The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine."
+   SCOPE: this passage
+   PROBLEM: The phrasing "for a reason the released inputs do not let us determine" has a defensive, complaining tone that departs from PRD's dispassionate register.
+   CHANGE: State dispassionately that the observed difference between the flux uncertainties reflects differences in the input flux models available in the open data release.
+   SHARE: 2
+
+ENOUGH: Yes, making these twenty changes in full would bring manuscript.txt to a rating of 4 by eliminating internal tracking notes, software jargon, notebook-style record-keeping, and defensive hedging, leaving only minor sentence-level tightening required for typical PRD publication.

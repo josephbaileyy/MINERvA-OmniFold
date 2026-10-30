@@ -1,0 +1,11 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally suits a detailed particle-physics supplement, but internal terminology, repeated qualifications, and extended accounts of analysis chronology prevent it from consistently reading like a well-edited PRD paper.
+
+1. QUOTE: "The test scored the completeness-divided band, the first-built statistical band, quoted when the test ran, whose replicas divide by a bootstrapped completeness. The undivided band is the rebuilt band, without the division, since superseded. The quoted statistical block (§4.2) is a separate ensemble of 300 replicas at the central value’s training seed."
+   REWRITE: The coverage test evaluated the statistical band then in use, whose replicas were divided by a bootstrap estimate of completeness. A subsequent band omitted this division and was itself later superseded. The quoted statistical uncertainties (§4.2) use a separate ensemble of 300 replicas generated at the central value’s training seed.
+
+2. QUOTE: "The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness term of the band."
+   REWRITE: The attribution rule identifies the band’s completeness term as the source of the primary undercoverage. The rule was specified before the full run, although its criterion for undercoverage was formulated after inspection of the pilot pulls.
+
+3. QUOTE: "A post hoc diagnostic bootstraps a single toy; its decision rule was recorded before it ran. Its result is consistent with the closure toys scattering too little, rather than with the data bootstrap scattering too much. The toys would scatter too little because their pseudo-data are built on the training MC events."
+   REWRITE: A post hoc diagnostic based on bootstrapping a single toy, with a decision rule specified before execution, supports an underestimate of the closure-toy scatter over an overestimate of the data-bootstrap scatter. Reuse of the training MC events to construct the pseudo-data could explain the reduced toy scatter.

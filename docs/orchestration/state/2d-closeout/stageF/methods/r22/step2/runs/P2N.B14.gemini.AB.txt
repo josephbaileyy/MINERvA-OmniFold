@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B maintains a professional, publication-ready heading structure, avoiding Document A's informal workflow annotations in section titles such as "(protocol implemented; not yet run)" and "implemented in the pipeline."
+2. Document B consistently adopts formal scientific register and precise technical diction, replacing conversational expressions like "is not enough on its own" with standard journal phrasing such as "is not by itself a sufficient basis" while providing concrete equation references.
+3. Document B exhibits smoother syntactic integration by incorporating the protocol's status and scope directly into the introductory paragraph and defining metrics like "dimensionality" with academic precision rather than colloquial phrasing.

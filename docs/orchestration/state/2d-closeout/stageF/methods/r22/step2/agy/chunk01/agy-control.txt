@@ -1,0 +1,254 @@
+overflow appears in the reported product, by construction rather than by truncation: the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids."
+      In Q40, AFTER adds an entire clause explaining WHY it is by construction rather than by truncation. That is indisputably DIFFERS.
+      In Q29, AFTER adds a clause stating WHAT Table 1 gives.
+      Isn't that also adding a statement not found in BEFORE?
+      Yes! It adds "Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results".
+      Wait, what if Q29 is DIFFERS?
+      DETAIL: "AFTER adds a description of the table's contents ('Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results'), which is not present in BEFORE."
+      Wait, what if an evaluator considers Q29 SAME because it's just describing the table referenced in the citation?
+      Wait, let's look at the wording:
+      "DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>"
+      Notice: "if DIFFERS, quote the words concerned".
+      If you quote "Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results", that is precise and clear.
+      Wait, let's weigh whether Q29 is SAME or DIFFERS.
+      Let's look at what the prompt says:
+      "For each pair, compare AFTER with BEFORE only, and say:
+      (a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+      (b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+      (c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds."
+      Notice:
+      Does "Table 1 gives each one's learner, background treatment and results" state anything that BEFORE does not support?
+      BEFORE does not support that Table 1 gives learner, background treatment, and results.
+      Wait, but what if Table 1 DOES give learner, background treatment, and results?
+      We know from Q33 that Table 1 has columns: Configuration, Learner, Background treatment, Results!
+      So AFTER is factually true about Table 1, BUT BEFORE in Q29 does not contain those words or facts.
+      And the prompt says: "compare AFTER with BEFORE only"!
+      So comparing with BEFORE only, AFTER states something that BEFORE does not support.
+
+      Wait! What about Q8?
+      In Q8:
+      BEFORE: "Ref.~\cite{Canelli:2025guide} recommends that route for nontrivial backgrounds."
+      AFTER: "Ref.~\cite{Canelli:2025guide} recommends this in-method subtraction for nontrivial backgrounds."
+      Does Canelli:2025guide recommend in-method subtraction?
+      Yes, in the paper, that route IS in-method subtraction.
+      BUT BEFORE does not state what "that route" is!
+      So comparing with BEFORE only, AFTER states something that BEFORE does not support.
+      Thus, Q8 DIFFERS.
+
+      Now what about Q7?
+      In Q7:
+      BEFORE: "Three of the practices it audits appear in our uncertainty budget: the ensemble-mean cross-check of the central value, the bootstrap statistical block, and the unified-throw covariance check of \S\ref{sec:uq-combine}."
+      AFTER: "Three of the practices it audits appear in our uncertainty budget: the ensemble-mean cross-check of the central value, the bootstrap statistical covariance, and the joint-perturbation (unified-throw) covariance check of \S\ref{sec:uq-combine}."
+      Wait! In Q7, AFTER adds "joint-perturbation".
+      Does BEFORE support "joint-perturbation"?
+      No!
+      Wait, why did AFTER add "joint-perturbation"?
+      Because in Canelli:2025guide (the audit), the practice is called "joint perturbation", while MINERvA calls it "unified throw".
+      If you compare AFTER with BEFORE *only*, does BEFORE state that the practice is called "joint-perturbation"?
+      No!
+      Wait, could Q7 ALSO be DIFFERS?
+      Wait! Let's think: what if Q7 is DIFFERS or SAME?
+      Let's look at the wording in Q7:
+      "the joint-perturbation (unified-throw) covariance check"
+      If DIFFERS: "AFTER introduces the term 'joint-perturbation' to characterize the unified-throw check, which is not stated in BEFORE, and replaces 'statistical block' with 'statistical covariance'."
+      Wait, but is Q7 really DIFFERS?
+      Let's look at Q10 again:
+      BEFORE: "GBDT learners suited to a low-dimensional tabular feature set."
+      AFTER: "Its gradient-boosted decision-tree (GBDT) learners suit a low-dimensional tabular feature set."
+      In Q10, BEFORE does NOT state "gradient-boosted decision-tree". It only states "GBDT".
+      Why is Q10 SAME?
+      Because "gradient-boosted decision-tree" IS the definition of GBDT!
+      In Q16, BEFORE does NOT state "flux-and-central-value" or "model-parameter". It states "flux-and-CV" and "dial".
+      Why is Q16 SAME?
+      Because "central value" is what CV means, and "model parameter" is what dial means!
+      In Q23, BEFORE does NOT state "point-cloud". It states "PET".
+      Why is Q23 SAME?
+      Because "point cloud" is what PET stands for!
+      In Q36, BEFORE does NOT state "contains no out-of-phase-space signal". It states "fake-free".
+      Why is Q36 SAME?
+      Because "contains no out-of-phase-space signal" is what fake-free means!
+      In Q38, BEFORE does NOT state "truth events without a reconstructed partner". It states "truth-only misses".
+      Why is Q38 SAME?
+      Because that is what "miss" means!
+
+      Now look at Q7:
+      "unified-throw" -> "joint-perturbation (unified-throw)".
+      Does "unified-throw" mean "joint-perturbation"?
+      Yes! The unified throw IS the joint perturbation of all reweightable sources!
+      So just like Q10, Q16, Q23, Q36, Q38, in Q7 "joint-perturbation" is simply the technical definition of the local term "unified-throw"!
+      And "block" -> "covariance" is simply the formal term for the uncertainty block!
+      So Q7 is completely consistent with Q10, Q16, Q23, Q36, Q38: it is **SAME**!
+
+      Now look at Q8:
+      BEFORE: "Ref.~\cite{Canelli:2025guide} recommends that route for nontrivial backgrounds."
+      AFTER: "Ref.~\cite{Canelli:2025guide} recommends this in-method subtraction for nontrivial backgrounds."
+      Is "that route" a technical term whose definition is "this in-method subtraction"?
+      NO! "that route" is NOT a technical term! "that route" is an anaphoric pronoun referring to an unspecified antecedent outside the snippet!
+      You cannot look up "that route" in a physics glossary and find "in-method subtraction".
+      Therefore, replacing "that route" with "this in-method subtraction" injects a specific factual claim that BEFORE alone does not define or support!
+      Therefore, Q8 is **DIFFERS**!
+
+      Now look at Q29:
+      BEFORE: "\paragraph{The estimator configurations.} Six estimator configurations, labeled (a)--(f) (Table~\ref{tab:estimators-matrix}), are used, and each result names the one it uses."
+      AFTER: "\paragraph{The estimator configurations.} Six estimator configurations, labeled (a)--(f), are used; Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results, and each result names the configuration it uses."
+      In Q29, AFTER adds:
+      "; Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results"
+      Is "Table 1" a technical term whose definition is "learner, background treatment and results"?
+      No! It adds a factual sentence about what the table presents, which is not in BEFORE.
+      Therefore, Q29 is **DIFFERS**!
+
+      Now look at Q37:
+      BEFORE: "...so closure exercises the same code path as the measurement rather than an idealized shortcut."
+      AFTER: "...so closure exercises the same code path as the measurement."
+      AFTER drops "rather than an idealized shortcut".
+      Is "rather than an idealized shortcut" an explicit qualification in BEFORE?
+      Yes! It is an explicit negative qualification.
+      Therefore, Q37 is **DIFFERS**!
+
+      Wait! What if someone considers Q29 SAME?
+      Let's think: Could Q29 be SAME?
+      What if someone says: "In Q29, BEFORE says '(Table~\ref{tab:estimators-matrix})'. Writing 'Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results' is just a standard lead-in sentence to the table; it doesn't change what was measured or what holds."
+      Wait, but look at the format of the prompt:
+      "say:
+      (a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+      (b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+      (c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds."
+      Notice (a): "whether AFTER states anything that BEFORE does not support".
+      Does BEFORE support that Table 1 gives learner, background treatment and results?
+      No.
+      And look at Q26: in Q26, AFTER dropped:
+      "The refined form is the background treatment of configurations (d), (e) and (f) (\S\ref{sec:method-config}): (d) in the background-bias...; (e), the joint-test estimator, in ...; and (f) for the 2D result..."
+      and replaced it with:
+      "Table~\ref{tab:estimators-matrix} (\S\ref{sec:method-config}) gives the configuration behind each result."
+      And in Q29, AFTER added:
+      "Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results".
+      Clearly, the text in Q26 and Q29 was altered: configuration mappings were stripped from Q26 and table metadata was added to Q29.
+      Both Q26 and Q29 differ from their respective BEFORE passages!
+
+      Wait, let's also check if Q37 could be SAME.
+      What if someone says:
+      "Is 'rather than an idealized shortcut' a fact, number, qualifier or limitation? It is a rhetorical contrast, not a technical qualification."
+      Wait! Let's re-read Q37 carefully:
+      BEFORE:
+      "No additional efficiency-histogram division is applied. Step-1 miss regression already gives an efficiency-corrected truth spectrum; dividing again would double-correct. \item \textbf{Closure mirrors production.} In closure tests the pseudo-data are simulated events passing both the reconstructed and truth selections, weighted identically to the production data path, so closure exercises the same code
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit scope limitation "The results hold for this implementation, one data set, and the configurations, observables and deformations tested (\S\ref{sec:intro})" and drops the sentence "The generator tests are an application that illustrates calibrated inference with a biased estimator." (moved to Q4).
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER adds descriptive characterizations not found in BEFORE, specifying configuration (a) as "the purity-subtracted estimator of the five-dimensional central value", (e) as "a deterministic estimator with refined negative-weight subtraction", and (f) as "the nominal estimator with that subtraction".
+
+Q3: VERDICT: SAME
+DETAIL: AFTER converts the bullet heading into a complete introductory sentence without modifying any facts, values, ranges, or citations.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER inserts the sentence "The generator tests are an application that illustrates calibrated inference with a biased estimator", which was not present in this passage in BEFORE (moved from ES1/Q1).
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states the exact opposite of BEFORE regarding NuWro ("is robust to the correction" instead of "is not robust to the correction") and adds the definition "$C_k$ denotes coverage within $\pm k$ standard deviations."
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER asserts "published measurements" where BEFORE only supports "production measurements", and downgrades "method paper" to "method proposal".
+
+Q7: VERDICT: SAME
+DETAIL: AFTER formalizes "bootstrap statistical block" to "bootstrap statistical covariance" and pairs "unified-throw" with its standard descriptive term "joint-perturbation" without changing any substantive claims.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER specifies "this in-method subtraction", whereas BEFORE only supports the generic reference "that route", asserting a specific technique not identified within this passage.
+
+Q9: VERDICT: SAME
+DETAIL: AFTER rephrases "we budget that component explicitly as" to "we include that component explicitly, as" without changing any factual content or qualifiers.
+
+Q10: VERDICT: SAME
+DETAIL: AFTER spells out the acronym GBDT and formalizes "blocks" to "covariance components" while preserving the exact technical meaning.
+
+Q11: VERDICT: SAME
+DETAIL: AFTER turns the bullet list heading into a section title and the bullet into narrative text without altering any facts.
+
+Q12: VERDICT: SAME
+DETAIL: AFTER converts the bullet point to the running transition "Second," leaving all technical statements identical.
+
+Q13: VERDICT: SAME
+DETAIL: AFTER converts the bullet point to the running transition "Third," leaving all statements identical.
+
+Q14: VERDICT: SAME
+DETAIL: The text, scope, and section references are identical.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER omits "No", stating "and result in this note depends on it", which contradicts BEFORE's statement that "No result in this note depends on it."
+
+Q16: VERDICT: SAME
+DETAIL: AFTER standardizes the register by expanding abbreviations and domain terms ("flux-and-CV", "dial", "AnaTuples") while preserving all facts and tool names.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER drops "no" before "dead-time overlap", changing the event selection requirement from "no dead-time overlap" to requiring "dead-time overlap".
+
+Q18: VERDICT: SAME
+DETAIL: AFTER replaces the parenthetical informal label "fakes" with its explicit definition ("reconstructed inside the phase space with its true muon outside it"), preserving the exact meaning.
+
+Q19: VERDICT: SAME
+DETAIL: AFTER replaces informal wording ("machinery", "flat trees") with standard technical descriptions ("tools", "per-event samples") with no change in meaning.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific entry count "\num{32849103} entries" and the size threshold and merge condition "with a tree-size-aware merger for the trees with per-universe content, which exceed \SI{100}{GB}."
+
+Q21: VERDICT: SAME
+DETAIL: AFTER streamlines the phrasing from "has a clear $\pT$ trend, rising from" to "rises with $\pT$, from", preserving all numbers and kinematic trends.
+
+Q22: VERDICT: SAME
+DETAIL: AFTER clarifies the informal phrase "the data pull" as "its reweighting toward the data", leaving the factual physics claim unchanged.
+
+Q23: VERDICT: SAME
+DETAIL: AFTER spells out "point-cloud (PET)" and updates older computing terminology ("banks", "bank population") to "samples" and "sample population" without altering content.
+
+Q24: VERDICT: SAME
+DETAIL: AFTER replaces the noun "unfold" with the gerund "unfolding", with no change in meaning.
+
+Q25: VERDICT: SAME
+DETAIL: AFTER combines the two sentences into a single continuous thought, retaining all percentages, qualifiers, and cross-references.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit in-text assignment of configurations (d), (e), and (f) to specific studies ("(d) in the background-bias...; (e), the joint-test estimator, in...; and (f) for the 2D result..."), replacing them with a general pointer to Table~\ref{tab:estimators-matrix}.
+
+Q27: VERDICT: SAME
+DETAIL: AFTER substitutes "unfolding results" for "unfolds", leaving the statement identical in substance.
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER drops the hyperparameters and seed specification for the refinement classifier ("whose refinement classifier has 400 trees and 31 leaves and takes the estimator seed plus three as its seed").
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER adds a descriptive statement of the table's contents ("Table~\ref{tab:estimators-matrix} gives each one's learner, background treatment and results"), which is not stated in BEFORE's simple parenthetical citation.
+
+Q30: VERDICT: SAME
+DETAIL: AFTER splits the sentence into independent clauses with semicolons, preserving all definitions, configurations, and study names.
+
+Q31: VERDICT: SAME
+DETAIL: AFTER streamlines the phrasing into a single sentence and changes "unfold" to "unfolding", preserving all facts.
+
+Q32: VERDICT: SAME
+DETAIL: AFTER reorders the clauses while keeping all conditions, dates, and labels identical.
+
+Q33: VERDICT: DIFFERS
+DETAIL: In Table~\ref{tab:estimators-matrix}, AFTER adds "; studies labeled \emph{exact-split}" to the Results column for configuration (b), which is not present in BEFORE.
+
+Q34: VERDICT: SAME
+DETAIL: AFTER rephrases "Our prior" to "The simulation prior" and "the data pull" to "the correction the data impose on it", leaving the substantive meaning intact.
+
+Q35: VERDICT: SAME
+DETAIL: AFTER replaces "the unfold reproduces" with "the unfolded result reproduces", retaining all empirical validation facts and numbers.
+
+Q36: VERDICT: SAME
+DETAIL: AFTER replaces the colloquial term "fake-free" with "within the phase space" and "contains no out-of-phase-space signal by construction", preserving the identical technical meaning.
+
+Q37: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit negative qualification "rather than an idealized shortcut" and drops the qualifier "additional" from "No additional efficiency-histogram division is applied".
+
+Q38: VERDICT: SAME
+DETAIL: AFTER spells out the domain jargon "truth-only misses" as "truth events without a reconstructed partner", leaving the logic and conditions ($c\equiv1$, $c<1$) identical.
+
+Q39: VERDICT: SAME
+DETAIL: AFTER substitutes "unfolding" for "unfold", preserving the exact statement.
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER adds an entire technical explanation not supported or stated in BEFORE: ": the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids."
+
+END

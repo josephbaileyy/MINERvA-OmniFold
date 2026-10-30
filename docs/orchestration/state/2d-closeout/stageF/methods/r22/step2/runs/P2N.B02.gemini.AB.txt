@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B replaces raw code expressions and internal ntuple variable names, such as `isMinosMatchTrack==1 && minos_trk_is_ok==1`, with polished, descriptive scientific prose.
+2. Document B systematically removes colloquial experimental shorthand and informal nominalizations—such as using "unfold" as a noun, "misses", "fakes", and "blocks"—in favor of standard publication terminology like "unfolding", "unreconstructed truth events", "out-of-phase-space signal", and "covariances".
+3. Document B maintains a more professional PRD register by introducing and defining software and modeling terms formally rather than relying on unedited internal lab jargon and ad-hoc file-processing minutiae.

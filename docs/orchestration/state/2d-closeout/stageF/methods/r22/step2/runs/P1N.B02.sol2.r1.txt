@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is precise and appropriate for a detailed technical companion, but repeated implementation bookkeeping, development history, and cumbersome configuration narratives require a dedicated language pass.
+1. QUOTE: "Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed."
+   REWRITE: Seed 42 was used for both the central value and the statistical uncertainty calculation to reduce computational cost.
+2. QUOTE: "Its seed was not fixed: the driver version it ran had no seed option, and its production job script passed no seed. The run’s own log was not found."
+   REWRITE: The exact-split calculation used an unspecified random seed, and the original run log is unavailable.
+3. QUOTE: "The five-dimensional central value of §8 and its five-axis covariance use configuration (a): they were produced before the purity bias was found and the refinement was developed."
+   REWRITE: The five-dimensional central value in §8 and its five-axis covariance use configuration (a), with purity-based background subtraction; the subsequent refinement is not included in these results.

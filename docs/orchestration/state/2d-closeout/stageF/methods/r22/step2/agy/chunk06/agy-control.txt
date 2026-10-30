@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualification "on all \jtRecompRows{} compared rows" and states more broadly that it "reproduces every $p$ value and decision of the production evaluation".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the verbatim block quotation of test specification conditions (i) through (vi) and their quantitative convergence and clipping bounds (suspected moved to neighbouring passages JT118--JT138).
+
+Q3: VERDICT: SAME
+DETAIL: AFTER rephrases "takes the step... to shrink by a factor of ... per halving" into formal register as "assumes that each twofold refinement of the grid multiplies the refinement change... by a factor of", preserving the mathematical meaning and bounds.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER clarifies the pronoun "it" to "the change" and "last step" to "last refinement change", preserving the geometric extrapolation and residual estimate.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER replaces "the robustness check" with "the robustness variants", matching the established terminology for the $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ variants without altering meaning.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds "with the fixed metric $V$", which is not supported by BEFORE.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER states that the samples enter "the calibration as a drawn residual term", whereas BEFORE states that "the simulated residuals" enter "as a drawn term" without mentioning calibration.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER adds numerous facts and numbers from JT101 not supported by BEFORE, including the shift label "$D$", "16 pairs", "median relative shift $|D|/f$ of 0.02--0.075\%", "proxy significance $a/\mathrm{se}$ of $+4.7$ for the Tune~v1 and $-3.4$ for NuWro", the exact bound "0.068", "with the fixed metric $V$", and superseding "about 0.05".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds details not present in BEFORE, including "per event", the parenthetical listing "(MINOS muon-matching efficiency and the GEANT4 neutron, pion and proton reweights, each at $\pm1\sigma$)", and specifying "five" lateral bands (moved from JT101).
+
+Q10: VERDICT: DIFFERS
+DETAIL: In the first sentence, AFTER omits "no" in "has recoil-energy-scale band", erroneously asserting that the systematic set includes such a band, and imports numerous details from JT101 not present in BEFORE (e.g., "LowQ2\_1 and HighQ2\_1", "Measured on the pilot", "in whitened norm", and "$\pPar\ge\SI{6}{GeV/c}$").
+
+Q11: VERDICT: SAME
+DETAIL: AFTER merely names the scanned multiplier as $\kappa$ and sets "(for reporting only)" in parentheses, preserving all findings, ensembles, and the 5.25 bound.
+
+Q12: VERDICT: SAME
+DETAIL: AFTER is an exact stylistic rephrasing of BEFORE, fully preserving the premise that every test rejects and the role of power as context.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER adds specific details not supported by BEFORE, stating that "the shape power at 0.005 against the first alternative at that null is 0.72", whereas BEFORE only states that "the first GENIE~2.12.10 set moves to 0.72".
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER drops the scope number "(856 of 856 quantities)", drops the limitation "The recovery is for reporting only", and drops the concluding sentence confirming that "the ten rejections hold".
+
+Q15: VERDICT: SAME
+DETAIL: AFTER uses the defined shorthand ("fixed-shift and the recomputed-shift evaluations") and replaces "the same in both readings" with "identical in the two evaluations", preserving the exact criterion and outcome.
+
+Q16: VERDICT: SAME
+DETAIL: AFTER merely changes "The size" to "This scale", preserving all facts, particle species, momentum ranges, and citations identically.
+
+Q17: VERDICT: SAME
+DETAIL: AFTER merely replaces "size" with "scale", leaving the qualifier that $\pm4\%$ is not a validated uncertainty prescription unchanged.
+
+Q18: VERDICT: SAME
+DETAIL: AFTER expands the table caption fragment "Descriptive." into the complete sentence "The values are descriptive.", with no change in meaning or content.
+
+Q19: VERDICT: SAME
+DETAIL: AFTER breaks a long sentence into shorter declarative sentences while preserving the post hoc declaration, the $0.1\,\sigma_{c}$ criterion, and the $5.1\times10^{-4}\,\sigma_{c}$ result.
+
+Q20: VERDICT: SAME
+DETAIL: AFTER replaces the colloquial term "200-toy" with its standard formal synonym "200-pseudo-experiment", leaving the description unchanged.
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER drops the factual specification that "the reconstruction selection, including the MINOS match, is unchanged".
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "the control does reproduce it", directly contradicting BEFORE's statement that "the control no longer reproduces it".
+
+Q23: VERDICT: SAME
+DETAIL: AFTER spells out the comparison metric as the "per-cell absolute relative deviation" and uses formal phrasing while preserving all numbers, percentiles, priors, and conclusions.
+
+Q24: VERDICT: SAME
+DETAIL: AFTER expands the shorthand "half-spread/mean" into "half-spread of the three results, divided by their mean", leaving all percentiles and regional concentrations identical.
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER states that "a full uncertainty band is tested", directly contradicting BEFORE's statement that the diagnostic probes the statistical stream and "not a full uncertainty band".
+
+Q26: VERDICT: SAME
+DETAIL: AFTER replaces the colloquial term "dead cells" with "low-acceptance cells" and "control unfold" with "control unfolding", keeping all captions, numbers, and the central value equation identical.
+
+Q27: VERDICT: SAME
+DETAIL: AFTER replaces the informal label "dead cells" with "low-acceptance cells", preserving the Tier 2 definition, the rate fraction ($\sim 28\%$), and the additional envelope band requirement.
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that the executive summary "lists the principal limitations" (as well as dropping the page reference `(p.~\pageref{sec:execsummary})`).
+
+Q29: VERDICT: SAME
+DETAIL: AFTER removes only the parenthetical page cross-reference `(p.~\pageref{sec:execsummary-limitations})`, fully preserving the substantive statement that the executive summary lists the principal limitations with their respective sections.
+
+Q30: VERDICT: SAME
+DETAIL: AFTER merely replaces the noun "unfold" with the standard gerund "unfolding", preserving the central value, control value, and restricted phase-space comparison.
+
+Q31: VERDICT: SAME
+DETAIL: AFTER eliminates the duplicate verb "derived" by rewording "would let the correlation $\rho$... be derived" to "would determine the correlation $\rho$...", preserving all parameters and the MAT-MINERvA context.
+
+Q32: VERDICT: SAME
+DETAIL: AFTER converts the bulleted list into running prose while preserving all appendix descriptions, topics, and citation details identically.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER adds a new row to the table defining implementation calls (`np.cov`, `np.random.default_rng().poisson`, `np.linalg.pinv`, and `--add-norm 0`), which is not present in BEFORE.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER replaces "the provenance of the 2D comparison numbers" with "a summary of the 2D comparison numbers", narrowing the stated scope from origin/derivation history to a mere summary.
+
+Q35: VERDICT: DIFFERS
+DETAIL: AFTER drops the implementation facts that "The comparison calls \texttt{np.linalg.pinv} at its default" with NumPy's `rcond` parameter and that the alternative convention is that "of \texttt{np.linalg.lstsq} and MATLAB" (moved to the glossary table in AG8).
+
+Q36: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific seed values "$s \in \{42,45,48,51,54\}$", the seed triplet formula "$(s,s{+}1,s{+}2)$", and the parameter name "\texttt{random\_state}", and replaces "July sweep" with "Quoted sweep".
+
+Q37: VERDICT: SAME
+DETAIL: AFTER merely expands the abbreviation "total-$\sigma$" to "total cross section", keeping all boxed percentages and trace values identical.
+
+Q38: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific code call "i.e.\ \texttt{np.cov(Xrep, rowvar=False, ddof=1)}" (moved to the table in AG8).
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific implementation call "\texttt{np.random.default\_rng().poisson(1.0)}" in favor of the generic "Poisson(1) factor" (moved to the table in AG8).
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER drops the environment mode flag "\texttt{MNV101\_ACTIVE\_UNIVERSE}" and replaces specific code band names (such as "\texttt{Muon\_Energy\_MINOS}" and "\texttt{BeamAngleX/Y}") with descriptive physics names.
+
+END

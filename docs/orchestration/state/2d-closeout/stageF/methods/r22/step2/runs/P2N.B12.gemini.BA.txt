@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A describes mathematical procedures and statistical methods using standard formal notation rather than embedding raw Python/NumPy code snippets, internal function names, and command-line flags directly into the running text.
+2. Document A maintains an appropriate academic publication register throughout, whereas Document B frequently lapses into colloquial laboratory slang and casual phrasing (such as "Where it lives," "knob," "headroom," "folk formula," and "paper-cov").
+3. Document A is written in complete, polished sentences, avoiding the telegraphic sentence fragments and unedited note-taking shorthand found in Document B (notably in §A.2.6).

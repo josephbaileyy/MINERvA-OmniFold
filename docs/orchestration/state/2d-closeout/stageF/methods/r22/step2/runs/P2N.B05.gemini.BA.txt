@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A consistently employs formal scholarly terminology and conventional bibliographic referencing (e.g., "Ref. [3]", "published measurement", and "this measurement") rather than Document B's informal shorthand and colloquial designations (e.g., "ours", "paper", and bare arXiv identifiers).
+2. Document A adheres to professional publication standards by avoiding internal draft artifacts, code-level variable names, and unexpanded lab jargon that appear in Document B (such as "Paper TotalCov", "norm", undefined "MAT", and "the July universe sweep").
+3. Document A maintains a precise, objective mathematical register in its titles, captions, and text, avoiding Document B's conversational descriptors ("on top of", "dips below"), journalistic section headings ("Anatomy of the..."), and loose references to chi-squared statistics as "distances".

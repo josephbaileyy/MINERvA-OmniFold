@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A maintains a more consistent formal register, avoiding B’s conversational expressions such as “sitting low in the dip” and “neither manufactures nor destroys the feature.”
+2. A uses cleaner sentence structure, particularly when explaining the inherited energy definitions and the sequence of flux corrections.
+3. A more often expresses technical relationships in complete prose, whereas B occasionally uses compressed shorthand such as “per-bin mode count-fractions × bin value.”

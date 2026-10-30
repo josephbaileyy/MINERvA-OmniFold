@@ -1,0 +1,18 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically appropriate, but repeated implementation-status reporting, internal workflow restrictions, and development-planning language require a dedicated editing pass to reach PRD register.
+1. QUOTE: "The implementation runs only as a pseudo-data closure and only on the
+five observables, and cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted."
+   REWRITE: The test is restricted to pseudo-data closure in the five observables, without injected truth reweighting or bootstrapping. Its outputs serve solely as response diagnostics and do not enter the reported measurement.
+2. QUOTE: "Physically correlated follow-up. The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model. A more faithful follow-up would select quasielastic events,
+shift the leading-nucleon energy up and down, and recompute reconstructed Eavail , q3 , W , and any
+affected selection from the altered low-level record. The current per-event outputs hold only scalar
+observables, not that low-level record, so the follow-up requires dedicated diagnostic output from
+the event processing. It is deferred unless the reconstruction-only test shows material bias or the
+collaboration asks for the stronger response model."
+   REWRITE: Physically correlated response variation. The reconstruction-only test provides a simplified stress test of the response. A more realistic study would vary the leading-nucleon energy in quasielastic events and recompute reconstructed Eavail, q3, W, and any affected event selection from the modified low-level record. This study would require additional event-processing output because the available per-event data contain only scalar observables. It is reserved for cases in which the simplified test indicates substantial bias or a more detailed response model is required.
+3. QUOTE: "We are developing unfolding with point-cloud transformer (PET) representations of the full event,
+which could use low-level detector and particle information that the scalar observables of this note summarize. That work is in progress and is documented separately (docs/analysis-note/pet_note.tex,
+[repository] No central value, uncertainty or comparison from
+it is used or claimed in this note."
+   REWRITE: Point-cloud transformer (PET) representations are being investigated for unfolding with low-level detector and particle information beyond the scalar observables considered here. This ongoing study is documented separately; its central values, uncertainties, and comparisons are outside the scope of the present analysis.

@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER adds "configuration (e) of the sixteen-cell result (\S\ref{sec:fived16})", which is not stated or supported in BEFORE (moved from FD63).
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces "rounding-level variability" and "refits the full chain", adding the unsupported qualifier "rounding-level" not present in BEFORE.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops "This candidate is configuration (e), which gives the sixteen-cell result (\S\ref{sec:fived16});", which was moved to FD54.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER expands the abbreviation "reco" to "reconstructed" without changing the meaning, facts, or qualifiers.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds "the raised-refinement-capacity candidate of \S\ref{sec:val-departure}:", an identification and cross-reference not present in BEFORE.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific cell counts ("109", "27", "39") and the structural description "Both joint partitions subdivide all five axes; H2 is not nested within J", referring instead to "the table below".
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds "also subdividing all five axes" to the table description of H2, which is not stated in BEFORE (moved from FD72).
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER specifies "of the W3 residual", adding an identification of the truth deformation and residual not stated in BEFORE.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire final sentence: "With the study's precision targets and computing budget, none of its reporting definitions (RD1--RD3, next paragraph) met a precision target."
+
+Q10: VERDICT: DIFFERS
+DETAIL: In BEFORE, "from the model component alone" specifies that adding the model component (without normalization) to the half-width causes the target to be missed, whereas AFTER asserts "The model component alone therefore exceeds the total-width target", claiming the model component itself exceeds the target.
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER narrows the statement to "their smaller residuals", dropping "spread" ("smaller residuals and spread") from the statement that the reduction is not an improvement in precision on an unchanged quantity.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER adds "(every input coordinate moved within half a single-precision rounding unit, values on bin edges kept)", introducing a detailed definition of edge-safe data jitters not present in BEFORE.
+
+Q13: VERDICT: SAME
+DETAIL: In BEFORE, "71% of supported cells" in the context of J correlation and alongside parenthetical figures for H2 and EW refers to J cells; AFTER clarifies this as "supported J cells" without altering the measured values or facts.
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER drops ", so it is in effect a \SI{10}{\percent} lower signal rate with a weak $\Eavail$ slope" and drops the statement that the diagnosis "accounts for the failure under the rate reduction".
+
+Q15: VERDICT: SAME
+DETAIL: The phrasing "the term may also arise from" is a stylistic rephrasing of "it may also belong to", preserving all facts, qualifiers, and meaning.
+
+Q16: VERDICT: SAME
+DETAIL: The rewording is semantically identical, replacing "this file" with "this covariance" and splitting a semicolon into two sentences while preserving all facts and restrictions.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER replaces "The same information" with "The same inflation of the vertical bands", introducing terminology and an interpretation not supported by BEFORE.
+
+Q18: VERDICT: SAME
+DETAIL: The text is semantically identical, with "byte-identical" conveying "the same bytes" and "cross-check" conveying "corroborating check".
+
+Q19: VERDICT: SAME
+DETAIL: The rewording rearranges phrasing ("fixed on 2026-09-18 before production") while preserving all facts, numbers, dates, and limitations.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER adds the qualifying condition "Within the limits stated below" and the theoretical explanation "which would fall with $N$", neither of which is present in BEFORE.
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER adds "(minimum expected signal and truth weight)", introducing a substantive definition of the support rule not present in BEFORE.
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER adds "PPFX", the explanation "which reweight simulated events", and the description and citation "which shift reconstructed kinematics (\S\ref{sec:systematics})", none of which appears in BEFORE.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER adds that the prior is reweighted "by the ratio of GENIE + MEC, NuWro or GiBUU to GENIE CV, and the data are unfolded again", naming the reference generator GENIE CV and the second unfolding step, and changes "noise gate" to "statistical gate".
+
+Q24: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire first sentence containing quantitative facts: "Its median per-cell relative $\sigma$ is \fvval{sigmed-C_resp}\%, and adding it raises the total's $\sigma$ by a factor of \fvval{sigratio-min}--\fvval{sigratio-max} (median \fvval{sigratio-med})".
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "graded" from "\fvval{f0b-all-truths} graded truths" and replaces "response species" with "four deposit categories".
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory clause "so that no such truth is compared with a covariance that contains its own generator's shift" and adds "as failing" to "A truth is listed".
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER drops the essential qualification "without the vertex of the truth's own generator where one exists" and replaces "truths are listed" with "truths fail".
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit definition of passing the criteria ("no cell beyond $\fvval{trig-z}\sigma$ and $p\geq\fvval{trig-p}$") and adds ", the pseudo-experiment mean and the closure at each tune" at the end.
+
+Q29: VERDICT: SAME
+DETAIL: The substitution of "This group" for "The group" is semantically identical, preserving all counts, references, and facts.
+
+Q30: VERDICT: SAME
+DETAIL: Replacing "vertex" with "shift" is a direct terminological substitution for the GENIE + MEC systematic component, leaving all models, form factors, and facts unchanged.
+
+Q31: VERDICT: SAME
+DETAIL: The changes ("vertex" to "shift", adding "cell" before the cell identifier, and rephrasing the final sentence with "tunes" and "earlier fake-data result") preserve all numbers, test outcomes, and facts.
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER drops the identification of $C_{\mathrm{total}}+C_{\mathrm{resp}}$ as "the reported covariance", stating only the formula $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact and number ", which stop at $E_\nu=\fvval{gagg-range-max}$~GeV,", omitting the explicit upper energy cutoff of the samples.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER drops how the shifts were produced, omitting "Each $C_{\mathrm{model}}$ vertex is a data shift unfolded with a prior reweighted by one generator's ratio to GENIE CV".
+
+Q35: VERDICT: DIFFERS
+DETAIL: AFTER adds two sentences explaining the correlation-shrinking procedure ("The sensitivity of the reported $\chi^2$ to the correlations is probed by shrinking one group's correlations toward the diagonal by a fraction $\alpha$ of the way, with its variances kept. These are descriptive sensitivities, not alternative results.") which were moved from FV76.
+
+Q36: VERDICT: DIFFERS
+DETAIL: AFTER drops the definition of the correlation sensitivity procedure (moved to FV71) and drops the qualifier ", weighted by the neutrino--electron and inverse-muon-decay constraint".
+
+Q37: VERDICT: SAME
+DETAIL: Replacing "weakening" with "shrinking" is a direct synonym for the same correlation modification without altering meaning, scope, or qualifiers.
+
+Q38: VERDICT: DIFFERS
+DETAIL: AFTER specifies the matrix formula "$C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$" and adds "an eigenvector of that covariance", which are not stated in BEFORE.
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER adds observables, testing scopes ("each in total and in shape"), and methodology details ("against a null distribution...", "unfolded with purity-based background subtraction") not present in BEFORE, while dropping "in the words of the test specification" and "with their numbers".
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER adds "The $p$ value on which each decision rests", introducing an unsupported assertion regarding how decisions are made.
+
+END

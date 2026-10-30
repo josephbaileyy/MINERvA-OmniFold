@@ -1,0 +1,1183 @@
+Guide to the appendices
+The appendices fall into three groups. The first gives methods and context for the body: statistical
+methods and the 2D comparison (App. A) and those for the multidimensional results and inference
+(App. B); unbinned background subtraction (App. C); the detector-response-mismatch closure,
+a protocol implemented but not yet run (App. D); and the survey of MINERvA measurement
+dimensionality (App. E). The second, on future work, covers point-cloud (PET) representations
+(App. F). The third describes the result package and what it reproduces (App. G) and the code layout
+(App. H); it is reference material and is not needed to follow the physics results. The provenance
+of the records the note cites, the fixed identities and audit record of the five-axis covariance of the
+
+configuration-(a) central value, the test-suite discipline, and superseded values and withdrawn results
+are kept in the analysis repository’s records document, Ref. [37]; each citation names the entry’s
+number or heading.
+Labels used in the repository. The body describes each object in words. Where a repository
+label is needed to find the object, it is given once in parentheses at first use, or here.
+Label
+
+Meaning in this note
+
+lgbm, exact, hist
+
+the learner backends: LightGBM (the quoted central values and their
+uncertainty ensembles; also the joint-test estimator), the scikit-learn
+exact-split estimator (the exact-split cross-check), and the scikit-learn
+histogram estimator (§3.2)
+the values of the drivers’ background-mode option (--bkg-mode): puritybased subtraction, negative-weight injection, and refined negative-weight
+subtraction (§3.1, App. C)
+the two variants of the five-axis covariance, with the unified-throw covariance centered on the central value or on the throw mean; this note uses
+cv (§9.6)
+the event-loop mode that re-applies the selection with one lateral universe
+active (“re-selected” universes, §4.7)
+the calls behind Eq. (10), §A.2.3 and §A.1 (default cutoff), and the earlier
+MAT check’s option without the normalization band (§A.2.6)
+
+purity,
+negweight,
+negweight-refined
+cv, mean
+
+MNV101_ACTIVE_UNIVERSE
+np.cov(Xrep,
+rowvar=False, ddof=1),
+np.random.default_rng().poisson(1.0),
+np.linalg.pinv,
+--add-norm 0
+July sweep, May sweep
+J28
+
+A
+
+the two productions of 2D systematic-universe re-unfolds; the quoted
+universe block uses the July sweep (§4.4)
+the audit finding that the N -dimensional code divided every flux universe
+by the central-value flux; “flux-corrected” and “(J28)” products are those
+repaired for it (App. C)
+
+Statistical methods and the 2D comparison
+
+This appendix gives the statistical methods of this note’s measurements, centered on the 2D
+comparison: covariance inversion; the training-seed, bootstrap and universe estimators, with the
+Poisson limit and the ±1σ pair covariance; their MAT-conformant construction and combination;
+the χ2 , pull and shape-only conventions; the rank and conditioning of the covariances; the anatomy
+of the tension in the 2D comparison; the closure procedures; and a summary of the 2D comparison
+numbers. It covers analysis-specific conventions, not general statistics. The χ2 convention used
+throughout is Eq. (17) in §A.3.2. The N-D declarations, scalar-5D reductions, extended-fiducial
+fractions and unfolded-event inference are in App. B; the 2D fixed-truth coverage test is in §5.2 and
+the same-ensemble pull diagnostic in §5.3.
+
+A.1
+
+Numerical conventions: inverting a covariance (Cholesky, ridge jitter,
+pseudo-inverse)
+
+Equation (17) requires inverting C.
+
+
+Cholesky and ridge jitter. C is positive-definite (PD) iff its Cholesky factorization C = LL⊤
+exists with lower-triangular L; then Eq. (17) is well-posed. Numerical noise that leaves a PD matrix
+barely non-PD is repaired with an isotropic ridge ε I, set to
+ε = 10−12
+
+TrC
+,
+n
+
+(7)
+
+twelve orders below the mean diagonal, far below any real signal in C and safely above floating-point
+round-off.
+Rank deficiency at N ≤ n. A sample covariance from N ≤ n replicas in n bins has rank at most
+N − 1. The 300-replica bootstrap (N = 300 > 205) is full-rank. The rank of the systematic block is
+limited at any universe count (§A.4).
+Pseudo-inverse. For the χ2 against the paper covariance, the comparison replaces C−1 with the
+Moore–Penrose pseudo-inverse computed via SVD, C = UΣV⊤ with Σ = diag(σ1 , . . . , σn ):
+(
+1/σi σi > τ,
+C+ = V Σ+ U⊤ ,
+Σ+
+(8)
+ii =
+0
+otherwise.
+The cutoff is τ = 10−15 σmax , not the n σmax εmachine convention. Modes below the cutoff receive
+inverse weight 0 rather than ∞, keeping the quadratic form stable for zero or near-zero eigenvalues.
+
+A.2
+
+Variance-source procedures
+
+Table 24 summarizes the four variance sources, their MAT reference and combination. Definitions
+and otherwise unreported values follow; §4 describes the measurement’s block construction, and
+Table 6 gives the 2D budget.
+A.2.1
+
+Training-seed variation
+
+The training-seed block is built from five settings of the GBDT seed triplet, each unfolded on the
+same 20 bootstrap replicas (at the central value’s seed, 42, the first 20 of the 300 of §A.2.2). With
+¯ the mean over the five settings,
+X̄(s) the mean of the 20 replica 205-vectors at setting s and X̄
+CML =
+
+1 X (s) ¯  (s) ¯ ⊤
+X̄ − X̄ X̄ − X̄ ,
+4 s
+
+(9)
+
+a sample covariance of rank 4 that includes the bootstrap × seed interaction at its 1/20 share. The
+relative spread of its total cross section is 0.0010% , the per-bin median relative spread 0.048% ,
+√
+and TrCML = 1.351 × 10−41 .
+A.2.2
+
+Poisson bootstrap
+
+A coherent bootstrap carries each data factor through step-1 classifier training and final cross-section
+construction. Each MC factor is shared by the reco-tree and truth-tree copies, preserving migration
+consistency. The three sub-RNGs (data, signal MC, background MC; Table 24) make the sources
+uncorrelated by construction, and pinning the GBDT seed isolates the bootstrap from the ML noise
+of §A.2.1. A Poisson(1) factor can be zero, so some events are dropped from each replica, mimicking
+a resample with replacement; Poisson(1) is the large-N limit of the multinomial counts (§A.2.3).
+
+Source
+
+What it estimates
+
+Training-seed Variance from
+random choices
+variation
+inside the GBDT
+(ML)
+optimizer at
+matched inputs
+(the same 20
+bootstrap replicas
+at each setting; the
+“ML noise floor”)
+Poisson
+Data- and
+bootstrap
+MC-statistical
+(stat)
+variance,
+propagated
+coherently through
+the full pipeline
+Universes
+(syst)
+
+Run period
+
+MAT
+reference
+
+Block sum
+
+Procedure
+
+Ensemble
+
+Full 5-iteration ME FHC LightGBM unfolds 5 × 20
+(the backend of the quoted central value and
+of the bootstrap and universe ensembles) on
+the same 20 bootstrap replicas at each of five
+settings of the GBDT seed triplet (step-1
+classifier, step-2 classifier, miss regressor);
+sample covariance of the five per-setting
+means
+
+Per-event Poisson(1) factors from
+N = 300
+independent data (seeded from k), signal-MC
+(seeded from k + 107 ) and background-MC
+(seeded from k + 2 · 107 ) sub-RNGs; one MC
+factor on both reco and truth copies of each
+event; 5-iteration re-unfold with the GBDT
+seed pinned at the central value’s (42)
+Flux, detector and The event loop writes truth and reco weights Quoted
+interaction-model
+per (band B, universe u); each (B, u) is
+sweep: 187
+uncertainty, by
+re-unfolded with a fixed seed against a
+universes,
+re-unfolding under matched CV job (same event-loop output file, 44 bands;
+backend, seed, iteration count and flux, so
+reweighted MC
+band sum
+ML noise cancels); MAT per-band covariance, 43 bands +
+Eq. (11), plus a rank-1 normalization
+norm
+Inconsistency
+Separate seed-42 unfolds of three run periods; 3 periods
+between the run
+spread of each period’s unfolded-to-simulated
+periods’ results
+ratio about the exposure-weighted mean,
+applied to the central value (§4.5)
+How MINERvA
+Read from the MAT source
+the 43
+builds its published (MnvVertErrorBand::CalcCovMx, MnvH1D::
+bands of
+covariance
+GetTotalErrorMatrix); our universe block
+the
+compared with it element by element, Flux
+universe
+with MAT’s universe weights
+block
+Total uncertainty
+Element-wise sum of the four blocks, Eq. (16) —
+covariance
+
+Value / where
+reported
+median 0.048%;
+Table 26
+
+median 0.676%;
+Table 26
+
+median 5.935%;
+Table 25
+
+median 2.087%;
+Table 26
+
+largest
+difference
+1.3 × 10−16 of
+the largest
+element
+median 6.414%;
+Table 26
+
+Table 24: Variance-source procedures for the 2D measurement (205 reported bins).
+
+
+Each replica’s 14 × 16 histogram becomes a 205-vector X(k) of reported bins, row-major over (pT , p∥ ),
+with unbiased sample covariance
+N
+
+
+Cboot ij =
+
+ (k)
+
+1 X
+(k)
+Xi − X̄i Xj − X̄j ,
+N −1
+
+X̄i =
+
+k=1
+
+1 X (k)
+Xi ,
+N
+
+(10)
+
+k
+
+checked with the Cholesky factorization and ridge jitter of §A.1. The quoted N = 300 block varies
+only the bootstrap seed and carries no training-seed variation.
+For these replicas (205 bins, ME FHC LightGBM, seed 42) the relative standard deviation of
+the total cross section is 0.061% , the per-bin median relative spread 0.676% , and the per-bin p84
+1.602%. With
+p 300 replicas the per-bin σ has a relative standard error of about 4.1% by the Gaussian
+formula 1/ 2(N − 1); N = 300 is chosen for full rank.
+A.2.3
+
+Multinomial → independent Poisson bootstrap limit
+
+Drawing N events with replacement from an
+P N -event sample gives counts (n1 , . . . , nN ) ∼
+Multinomial(N, p) with uniform pi = 1/N and i ni = N . Each marginal ni ∼ Binomial(N, 1/N )
+has mean 1, variance (N − 1)/N → 1, and converges
+P to Poisson(1) as N grows (many trials, small
+success probability, fixed expected count). The
+ni = N constraint induces O(1/N ) correlations
+that vanish at large N . The multinomial is an independent Poisson process conditioned on N
+counts; removing that constraint gives independent Poisson(1) variables (Poissonization). One
+Poisson(1)
+factor is drawn per event. For N ≳ 106 , our regime, the relative total-count error is
+√
+O(1/ N ), far smaller than the per-bin Poisson variance.
+A.2.4
+
+Universes
+
+The universe sweep used by the quoted budget (the July sweep) has 187 universes across 44 bands,
+dominated by the 100-universe PPFX flux band (hadron-production sampling). The quoted band
+sum drops one band (Rvp1pi) and holds 43 bands plus the normalization. Almost all other bands
+are ±1σ pairs (Nu = 2). They include the MINOS and lateral MINERvA muon energy scales, the
+MINOS muon-match efficiency, the GENIE parameters MaRES, MvRES and MaCCQE, and the lateral
+GEANT FSI responses for neutrons, pions and protons. Where selection migration matters, the five
+kinematic bands (the two beam-angle components, the muon resolution and the two muon energy
+scales) require re-selected event loops, run with one universe active at a time (weight-only bands:
+§4.7). The quoted universe block takes these five bands from re-unfolds of re-selected universes.
+MINERvA’s MAT framework (PlotUtils/MnvVertErrorBand::CalcCovMx, §A.2.6) uses the
+mean-centered, biased sample covariance of the 205-vectors X(B,u) , referenced to the universe mean
+with normalization 1/Nu ,
+N
+
+CB =
+
+u
+
+⊤
+1 X
+X(B,u) − ⟨X⟩B X(B,u) − ⟨X⟩B ,
+Nu
+
+u=1
+
+⟨X⟩B =
+
+1 X (B,u)
+X
+.
+Nu u
+
+(11)
+
+uniformly for all Nu ≥ 2, with no special ±1σ pair formula. At Nu = 2 it reduces to rank-1
+1
+⊤
+4 (X+ − X− )(X+ − X− ) . Mean-centering removes the symmetric component, correctly giving
+near-zero variance for a one-sided or asymmetric pair where naive CV-centering would give rank 2
+(§A.2.5). The 1.4% target-nucleon normalization uncertainty (Aliaga NIM, arXiv:1305.5199) lies
+outside MnvVertErrorBand and is added as a fully-correlated rank-1 outer product. Bands are
+
+
+assumed independent, with different physics sources and RNGs,
+Cnorm = (σN XCV )(σN XCV )⊤ ,
+X
+Csyst =
+CB + Cnorm .
+
+(12)
+
+σN = 0.014,
+
+(13)
+
+B
+
+Independence is a modeling assumption with one known correlated exception, the Bashyal
+flux ↔ Muon_Energy_MINOS joint block (§A.4).
+Equation (13) omits a larger correction. The band sum is linear, but OmniFold responds
+nonlinearly to input perturbations, so joint re-unfolding produces a cross term beyond any pairwise
+correlation. A unified throw measures it through N re-unfolds,
+Q gB simultaneously perturbing every
+reweightable band and the flux multisim per event (wCV B ρB , gB ∼ N (0, 1)), then re-extracting
+the cross section. The corrected construction is in §4.5; its use in the five-axis covariance of the
+configuration-(a) central value is in §9.6 (Eq. (5)).
+Band
+
+Per-bin median rel. σ
+
+MINOS muon energy scale (Muon_Energy_MINOS)
+MINERvA muon energy scale (Muon_Energy_MINERvA)
+MINOS muon-match efficiency (MinosEfficiency)
+Flux (PPFX, Nu = 100, constraint-weighted)
+MaRES
+MvRES
+MaCCQE
+
+2.358%
+1.435%
+1.505%
+3.712%
+0.627%
+0.362%
+0.336%
+5.935% (median)
+√
+TrC = 2.689 × 10−39
+
+Systematic total
+(43 bands + norm)
+
+Table 25: Top contributing bands of the quoted universe block (the quoted universe sweep, with the
+lateral bands from re-unfolds of re-selected universes and Rvp1pi dropped): per-bin median relative
+σi /XiCV over the 205 reported bins. Flux carries MAT’s ν–e and inverse-muon-decay constraint
+weights, and Muon_Energy_MINOS is divided by its own flux.
+Grouped by category as in Fig. 4, which follows Figs. 6–7 of Ref. [3], the medians are: Muon
+reconstruction 3.437%, Models 1.401%, Flux 3.712%, Hadronic response 0.743%, Statistical 0.676%,
+Normalization 1.400%, Training seed 0.048%, Run period 2.087%. (MINOS+MINERvA) and the
+MINOS-efficiency band dominate; these are the bands that the Ruterbories paper identifies as
+flux-correlated (§A.4).
+A.2.5
+
+The ±1σ pair covariance: mean-centered (MAT-conformant)
+
+For two universes u = 0, 1 at ±1σ, with vectors X0 , X1 and mean ⟨X⟩ = 12 (X0 + X1 ), Eq. (11) at
+Nu = 2 gives
+X
+1
+CB
+=
+(Xu − ⟨X⟩)(Xu − ⟨X⟩)⊤ = 41 (X0 − X1 )(X0 − X1 )⊤ ,
+(14)
+mean
+2
+u=0,1
+
+a rank-1 outer product of the half-difference. A common offset from XCV contributes nothing. Naive
+CV-centering instead uses ∆u = Xu − XCV , ∆0 = m + a, ∆1 = m − a,
+
+⊤
+⊤
+1
+CB
+= mm⊤ + aa⊤ .
+(15)
+CV-centered = 2 ∆0 ∆0 + ∆1 ∆1
+
+The estimators agree only for CV-symmetric pairs (m = 0), both reducing to aa⊤ . For asymmetric or
+one-sided pairs, CV-centering adds the rank-1 mm⊤ common-offset direction. Every per-band block
+Cb here is mean-centered to match MAT (§A.2.6); this matters for BeamAngle, MuonResolution and
+the one-sided NC band.
+Scope of mean-centering. Mean-centering applies to the ±1σ band estimator only. The five-axis
+covariance of the configuration-(a) central value deliberately retains the CV-centered term: the
+unified-throw covariance diagonal that enters its inflation is centered on the central value (§9.6,
+Eqs. (5) and (6)).
+A.2.6
+
+How MINERvA builds its published covariance
+
+MAT’s C++ framework defines the covariance construction that the published paper leaves unspecified. It is the mean-centered 1/N per-band sample covariance and element-wise band sum used
+here.
+Ruterbories 2021, Section V. The paper evaluates three uncertainty categories (flux, detector
+response and the neutrino-interaction model) by “re-extracting the cross section using modified
+simulations”, i.e. the universe method, and gives no covariance formula. It reports a flux uncertainty below 4% across most of phase space as a result of the ν-e-scattering constraint (Valencia,
+arXiv:1906.00111); a 1.4% target-nucleon normalization; an in-situ test-beam hadron response with
+per-particle GEANT inelastic variations; and a 1% muon energy scale constrained by the low-recoil
+fit of Bashyal (JINST 16 P08068). It states that “the fit causes the flux and muon energy scale
+uncertainties to be correlated and that correlation is propagated to the final result”; this is the only
+correlation between bands that the paper specifies. The only covariance in its equations is V in the
+model-test χ2 (Eq. 1, “the measurement covariance matrix”), with 205 degrees of freedom (Table I);
+the paper also gives a log-normal χ2 variant, motivated by the highly correlated flux normalization
+(Peelle’s Pertinent Puzzle). It leaves to MAT, or does not state, the per-band covariance construction,
+any ±1σ pair formula and any band-independence or block-sum statement; the rank, condition
+number and regularization of V ; and any bootstrap or coverage validation (it uses D’Agostini iterative
+unfolding).
+MAT per band and in total. MnvVertErrorBand::CalcCovMx implements Eq. (11), referenced
+to the universe mean ⟨x⟩u rather than XCV , normalized by biased 1/N rather than Bessel’s 1/(N − 1)
+(a 1% offset for PPFX, N = 100), with no special case for N = 2. The conventional CV-centered pair
+formula (“MINERvA-101 ±1σ pair”), 12 (∆+ ∆⊤+ + ∆− ∆⊤− ), agrees with it only for CV-symmetric
+shifts. The quoted universe block, filled into a PlotUtils::MnvH1D with MAT’s universe weights on
+Flux, agrees with MnvH1D::GetTotalErrorMatrix to 1.3 × 10−16 of its largest element; the quoted
+Flux band carries MAT’s ν–e and inverse-muon-decay constraint weights. An earlier check compared
+MnvH1D::GetTotalErrorMatrix with our band sum without the normalization band, over 44 bands
+/ 187√universes, and gave a maximum difference of 5.5 × 10−17 of the largest element (machine ε)
+and TrC matching to seven digits. That check could not detect that the Flux band omitted those
+constraint weights, because it filled the MnvH1D without MAT’s per-universe weights (SetUnivWgts),
+so both sides were unweighted; it also ran on a sweep from before the flux fix, not on a quoted
+product.
+MnvH1D::GetTotalErrorMatrix sums bands and the statistical matrix element-wise, assuming
+band independence. Cross-band correlations exist only if encoded in a combined band, such as the
+Bashyal joint fit handled outside this loop. MAT applies no ridge, shrinkage, SVD truncation or
+
+rank-deficiency handling to the published total covariance. The statistical block makes V full-rank;
+its systematic-only rank is 120, below the 138 of our universe block (eigenvalues above 10−12 λmax ;
+§A.4).
+Upstream references that set each band’s ±1σ amplitude.
+• Flux / PPFX (100 universes), Aliaga, PRD 94 092005 (2016), arXiv:1607.00704;
+• ν-e flux constraint (< 4%), Valencia, PRD 100 092001 (2019), arXiv:1906.00111;
+• muon-E scale ↔ flux fit, Bashyal, JINST 16 (2021) P08068;
+• test-beam / GEANT hadron response, Aliaga, NIM A 789 28 (2015), arXiv:1501.06431;
+• GENIE reweighting parameters, Andreopoulos, NIM A 614 87 (2010), and the GENIE manual
+arXiv:1510.05494;
+• 1.4% normalization (detector mass), Aliaga, NIM A 743 130 (2014), arXiv:1305.5199.
+A.2.7
+
+Block-sum combination
+
+The bootstrap varies events through distinct data, signal-MC and background-MC sub-RNGs;
+universes vary model weights at a pinned GBDT seed; the training-seed block varies the GBDT
+seed over five settings, each on the same 20 bootstrap replicas (at seed 42, replicas of the statistical
+block); the run-period block compares separate unfolds of three run periods. The bootstrap and the
+universes use the central value’s LightGBM seed (42), and the training-seed settings include it. The
+block sum is
+Ctot = CML + Cstat + Csyst + CPL .
+(16)
+The comparison adds OmniFold covariances to the paper’s TotalCovariance by this rule. CML is
+the smallest block (Table 26); it is included in the quoted total but numerically negligible.
+√
+
+Component
+
+TrC
+
+Per-bin median rel. σ
+
+ML noise (LightGBM training-seed settings, n = 5)
+Statistical (Poisson bootstrap, N = 300)
+Systematic (universe sweep + norm)
+Run period (three periods)
+
+1.351 × 10−41
+1.886 × 10−40
+2.689 × 10−39
+8.314 × 10−40
+
+0.048%
+0.676%
+5.935%
+2.087%
+
+Combined (block sum)
+Paper TotalCov (reference)
+
+2.821 × 10−39
+2.676 × 10−39
+
+6.414%
+6.85%
+
+Table 26: Component traces and per-bin median relative spreads of the 2D uncertainty envelope
+(205 reported bins): the full-precision form of Table 6.
+√
+The combined TrC is the quadrature sum of the component square-root traces. The per-bin
+median 6.414% is not the quadrature sum of the component medians; both combined entries are
+evaluated on the summed covariance. The relative entries divide by the quoted central value, the
+LightGBM seed-42 central value of the universe sweep; dividing the combined covariance by the
+exact-split cross-check instead gives a combined median of 6.462 %. The universe, statistical and
+training-seed blocks are LightGBM ensembles, the first two at the central value’s training seed and
+the third over five settings that include it (§3.2). The universe and statistical blocks together give
+5.982%, again evaluated on their sum rather than combined from the printed medians.
+Tables 25 and 26 give the blocks of the quoted 2D covariance (§4).
+
+
+A.3
+
+Comparing to the paper
+
+These conventions and tables support the comparison and interpretation limits in §6.2.
+A.3.1
+
+The 205-bin selection
+
+The paper reports d2 σ/(dpT dp∥ ) on 14 pT bins × 16 p∥ bins = 224 cells (edges in minerva_paper_anc/bin_mapping.txt). Of these, 205 have xpaper > 0 in data_result_ptpl_2D_minerva_inclusive_6GeV.txt. The paper suppresses the remaining 19 through an efficiency cut; every χ2
+and pull excludes them on both sides.
+low
+A secondary strict-interior mask, used only as a sensitivity check, keeps cells with phigh
+T /p∥ ≤
+tan 20◦ , removing the 20 reported cells that straddle the θµ < 20◦ kinematic cut. The 185-bin check
+tests whether the main tension comes from the boundary. The main metric throughout uses the
+205-bin set.
+A.3.2
+
+Covariance-aware χ2 /ndf
+
+With ∆ ≡ xours − xpaper on the 205-bin set and C the chosen covariance,
+χ2 = ∆⊤ C+ ∆,
+
+ndf = nreported = 205,
+
+χ2 /ndf = χ2 /205.
+
+(17)
+
+The comparison applies the pseudo-inverse of §A.1 to the 205 × 205 block and computes the quadratic
+form. Options add OmniFold covariances via Eq. (16) or subtract the paper’s stat block to avoid
+counting it alongside the bootstrap (§A.4).
+Dimension-conditional ndf. Setting ndf = nreported requires nearly that many well-determined
+directions. The choice rests on the 205-bin 2D truncation scan rather than being assumed: the
+scan rises smoothly with the retained rank r, 0.39 (r=50) → 1.04 (100) → 1.76 (180) → 2.27 (205)
+(exact-split cross-check: 0.69 → 2.35 → 3.30 → 3.66), with no plateau or late jump, indicating an
+effective rank comparable to the dimension. This evidence is specific to 2D and does not transfer to
+N-D covariances (§B.1).
+Worked example: comparison to paper (quoted numbers).
+Metric (205 bins)
+
+Paper
+
+√
+
+Width-weighted total σ, w⊤ C w/(w⊤ x)
+Per-bin median relative σ
+χ2 /ndf
+Log-normal χ2 /ndf
+
+OmniFold (combined)
+
+4.61%
+6.85%
+2.27 (paper-only)
+—
+
+4.76%
+6.414%
+0.929 (paper+ours)
+0.945
+
+tot
+The log-normal χ2 uses δi = ln xours
+− ln xpaper
+and Cln
+/(xpaper
+xpaper
+); both
+i
+ij = TotalCov + C
+i
+i
+j
+ij
+covariances are scaled by the paper’s values. This is the definition used for the quoted value: of
+five definitions recomputed, only this one reproduces 0.945. The others give 1.197 (our covariance
+scaled by our own values), 0.958 (both scaled by ours), 0.963 (scaled by the geometric mean)
+and 1.015 (ln(1 + C/(xi xj )) in place of the ratio). Adding the OmniFold error budget lowers the
+summed-covariance distance from 2.27 to 0.929 per bin. It is a descriptive distance, not a validation
+result, and three limits apply to every use of it.
+(i) Missing cross-covariance prevents calibration. For estimates x and y from the same data,
+Cov(x − y) = Cx + Cy − Cxy − Cyx ,
+96
+
+(18)
+
+and the published IBU-era and OmniFold results share MINERvA data and flux, detector and
+GENIE systematics. Without Cxy , the summed Cx + Cy double-counts shared systematics and omits
+their correlation. Its net error has unknown size and sign. No value of the statistic, including 1.5 or
+1, can be converted to a goodness-of-fit probability or a p-value.
+(ii) Near-one realizations are not evidence ofp
+correct uncertainties. Under calibrated assumptions,
+χ2 /ndf has expectation 1 and spread of order 2/ndf, about 0.10 for ndf = 205. One realization
+near 1, such as the quoted 0.929, is not evidence of correct uncertainties. Nor is the exact-split
+cross-check’s 1.47, computed with an earlier covariance built before the flux-band repair, evidence
+against them on its own (Ref. [37], superseded values).
+(iii) It does not address coverage (§4.6, §5.2). The covariance and the central value share the
+LightGBM estimator and, in the universe and statistical blocks, its training seed (§3.2). Agreement
+claims use per-bin standardized differences and ratios (§A.3.3); this scalar is only a distance and
+ratio to the paper. The log-normal value 0.945 depends on the definition given with the worked
+example.
+External statistical floor of the quoted combined χ2 . The quoted 0.929 inverts the sum of
+the paper’s covariance and ours, not our blocks alone. That sum contains the paper’s StatOnlyCov,
+which has rank 205 and is near-diagonal (§A.4), so it places a variance floor under every eigendirection
+of the combined matrix. It is the larger of the two statistical contributions. Our statistical block is
+0.407 of it in square-root trace, and the square of that factor in trace (operands in §A.4). Each ratio
+states which power of the trace it uses, because the two ratios describe the same comparison and
+differ by more than a factor of two. An external, published block, rather than any ensemble of ours,
+therefore sets the small-eigenvalue directions on which a finite-N debiasing factor would act. This
+bounds the quoted number’s exposure to declaration (v) of §B.1.
+Trace share alone cannot justify this protection: trace weights eigenvalues by λ, precision by 1/λ,
+so even a negligible-trace block can dominate an inverse. Without the external floor, our finite-N
+blocks fill Csyst ’s null space (rank 138 → 205, eigenvalues above 10−12 λmax ) and, inverted directly,
+yield χ2 /ndf = 22.29 (§A.4). Protection depends on the source of the smallest retained eigenvalues.
+Edge-bin sensitivity (p∥ -min cut). The comparison recomputes χ2 /ndf on shrinking subsets
+using only the paper covariance, with no OmniFold addition, for the exact-split cross-check (not
+recomputed for the LightGBM central value),
+p∥ ≥ (GeV/c)
+
+Nbins
+
+χ2
+
+χ2 /ndf
+
+median ratio
+
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+
+205
+196
+186
+175
+163
+151
+
+750.49
+685.36
+545.87
+474.84
+452.95
+428.72
+
+3.661
+3.497
+2.935
+2.713
+2.779
+2.839
+
+1.0064
+1.0059
+1.0059
+1.0059
+1.0073
+1.0068
+
+The residual is concentrated in the low-p∥ , near-edge cells; the high-p∥ tails carry sub-2% shape
+disagreement. This is a robustness check, not a separate method.
+
+
+A.3.3
+
+Pull distribution
+
+For each of the 205 reported bins,
+xours
+− xpaper
+i
+i
+p
+pulli =
+,
+tot
+Cii
+
+E[pulli ] = 0,
+
+Var[pulli ] = 1 under the null,
+
+(19)
+
+summarized by mean, RMS, a 14 × 16 heatmap and histogram. The combined covariance (paper
+TotalCov + the quoted 2D covariance of §4) gives mean 0.034 , centered on zero with no global offset,
+and RMS 0.388 . For the exact-split cross-check, on the earlier covariance built before the flux-band
+repair, they are 0.051 and 0.405. RMS < 1 is descriptive and does not establish conservatism: the
+summed covariance is wrong by an unknown amount (Eq. (18)).
+The paper covariance alone gives mean 0.060 (similar, no bias) and RMS 0.535, slightly wider
+before our uncertainties are added.
+A.3.4
+
+Shape-only χ2 with Jacobian propagation
+
+This tests whether the shape of the (pT , p∥ ) cross section matches the paper independently of absolute
+normalization, which depends on the flux integral, target nucleon count, and POT (each can drift
+by O(%));
+(∆pT )j (∆p∥ )j and total
+P the shape is a pure unfolding diagnostic. For bin widths wj =P
+T (x) = j∈mask wj xj , the unit-area shape is si (x) = xi /T (x), satisfying i wi si = 1, with
+
+∂si
+1
+=
+δij − si wj ,
+∂xj
+T
+
+J =
+
+
+1
+I − s w⊤ ,
+T
+
+Cshape = J Cpaper J⊤ .
+
+(20)
+
+The unit-area constraint removes one degree of freedom: w⊤ J = 0⊤ . The “all-bins-up” direction is J’s kernel, leaving Cshape one zero eigenvalue and rank n − 1. Thus χ2shape = (sours −
+spaper )⊤ (Cshape )+ (sours − spaper ) drops that direction, with ndf = nbins − 1 = 204 for 205 bins. For
+the exact-split cross-check (not recomputed for the LightGBM central value), with the paper’s
+TotalCovariance (Jacobian-propagated) the shape χ2 /ndf on 205 bins is 3.596 : essentially the
+absolute-normalization 3.661 minus the contribution of overall scale. The total-cross-section ratio
+ours /σ paper = 1.0111 is a 1% scale difference. The remaining residual comes from ∼ 1% shape
+σtot
+tot
+disagreement (median bin ratio 1.0064; 94% of bins within 10% of the paper).
+
+A.4
+
+Ill-conditioning and rank deficiency
+
+The obstruction. A data-to-model χ2 /ndf with this analysis’s covariance alone, χ2ours , requires
+inverting Cours = Csyst + Cboot + CML + CPL instead of the paper’s V . Its universe block is
+rank-deficient,
+rank(Csyst
+cond(Csyst ) = 9.78 × 1011 ,
+(21)
+sample ) = 138/205,
+counting eigenvalues of (C + C⊤ )/2 above 10−12 λmax , with cond the ratio of λmax to the smallest
+retained eigenvalue (124 and 9.45 × 109 above 10−10 λmax ). Every rank and condition number of our
+blocks quoted below uses this definition. Band count, not universe count, limits the rank: Eq. (11)
+gives each ±1σ pair rank 1 and the 100-universe PPFX band rank ≤ 99. PPFX is effectively rank-1
+(§4.1). The 43 bands cannot span 205 bins. The deficit does not come from missing bands. The
+paper’s systematic-only covariance (TotalCov − StatOnlyCov) has rank 120, below our 138. We
+use the same GetStandardSystematics and propagate at least as many independent systematic
+directions. The statistical block (StatOnlyCov, rank 205, near-diagonal) alone makes the paper’s V
+full-rank (rank = 205, with 204 eigenvalues above 10−12 λmax ; cond = 1.5 × 1012 ). Our 300-replica
+bootstrap similarly gives rank(Csyst +Cboot ) = 205 (eigenvalues above 10−12 λmax ; cond = 7.91×1011
+by the definition above).
+
+The real obstruction is statistical, not rank. Even at full rank (205) a defensible single χ2ours
+is out of reach, for a statistical-precision reason.
+in global scale:
+√ The bootstrap block is smaller
+√
+its square-root trace is 0.407 of the paper’s ( TrCboot = 1.886 × 10−40 vs Tr StatOnlyCov =
+4.639 × 10−40 ). The paper’s full-rank, near-diagonal StatOnlyCov supplies a variance floor in every
+reported eigendirection; because the covariance structures differ, this should not be read as a uniform
+per-mode effect. The direct inverse of Csyst + Cboot gives χ2 /ndf = 22.29 (21.77 for all four blocks)
+for the LightGBM central value, against the paper covariance’s 2.27 with its larger stat floor, so a
+usable χ2ours depends on the statistical block, not on more systematic bands. The gap is not a missing
+MC-statistical term: our bootstrap already draws independent Poisson(1) multipliers on data, signal
+MC and background MC per replica (§A.2.2; Practical Guide 2507.09582 §5.1). The remaining
+candidates are a real difference in statistical efficiency between the unbinned reweighting and the
+published binned D’Agostini unfold, a difference in what the paper’s StatOnlyCov encompasses, or a
+regularization effect in our own estimator that suppresses dispersion without improving information.
+A split bootstrap of the earlier rebuilt bootstrap (Ref. [37], superseded values: retired material)
+separated the first two from an MC-statistics omission but not from the third, and it has not been
+repeated for the quoted statistical block.
+Data/MC split bootstrap. The
+split bootstrap was run on the earlier rebuilt bootstrap.
+√data/MC√
+boot
+For the quoted statistical block, TrC
+/ Tr StatOnly = 0.407 and the per-bin median ratio
+of the two σ is 0.425. The fixed-truth test (§5.2, §4.2) does not decide between the explanations
+above. The measured statement is the ratio; “higher statistical efficiency” is one of at least three
+explanations of it and is not established here.
+The inverse of Cours remains regularizer-dependent, so pulls and the scan lead the reporting.
+χ2ours uses the truncated-spectral pseudo-inverse (retaining λ > 10−10 λmax ), the convention of the
+earlier 3D generator scan over all 1431 reported bins.
+Regularization scans (earlier covariance; all cutoff-dependent). For the exact-split crosscheck and an earlier Cours over the 205 reported bins, neither recomputed for the quoted central
+value and covariance, no regularizer gives a stable single number:
+Method
+Eigenvalue truncation
+Ridge C + ελmax I
+Diagonal-target shrinkage
+
+Setting
+
+Result
+> {10−3 , 10−4 , 10−5 }
+
+λ/λmax
+ε = {10−3 , 10−4 , 10−5 }
+λ = 0.05
+
+rank {19, 49, 82}; χ2 /205 = {0.13, 1.12, 3.08}
+χ2 /205 = {0.35, 1.38, 4.30}
+rank 178 → 204, cond 1.3 × 1011 , χ2 /205 = 3.29
+
+Each method spans roughly two decades of χ2 /205 across a two-decade scan of its regularization
+parameter, with no defensible single cutoff. The useful conclusion is diagnostic, not a number: the
+naive inverse is dominated by tiny, poorly-determined modes, and in the retained high-variance
+modes the central-value difference is not large. We therefore report direct per-bin pulls (§A.3.3) and
+this scan rather than a single unqualified χ2ours .
+Bootstrap/paper-stat double-count. The combined distance (§A.3.2) adds Cboot to TotalCov,
+double-counting the paper’s included statistical block. Subtracting that block uses TotalCov −
+StatOnlyCov
+as baseline before our additions, changing χ2 /ndf 0.929 → 6.72. It over-corrects: our
+√
+√
+TrCboot = 1.886 × 10−40 is 0.407 of the paper’s Tr StatOnlyCov = 4.639 × 10−40 , leaving no
+comparable replacement. The double-counted 0.929 is kept as the combined distance, a well-defined
+
+
+measure of what OmniFold’s uncertainty estimate adds on top of the published V ; the subtraction
+result is a secondary diagnostic.
+Remaining refinements. The known band-independence exception, the Bashyal flux ↔ Muon_Energy_MINOS joint block, has been rederived (ρ = 0.900). It preserves systematic rank because
+its directions already lie in the universe covariance’s span (§4.1). The quoted 2D covariance therefore
+remains the block sum, with the cross term as a diagnostic. A fitted (Φnorm , Φshape , MuonEscale )
+posterior from MAT-MINERvA could supply a paper-independent ρ. The collaboration uses the
+same truncated-spectral pseudo-inverse as χ2ours (private communication), so the convention is
+collaboration practice rather than one introduced by this analysis. No published reference for it has
+been identified.
+What is reported. The combined χ2 /ndf = 0.929 is the descriptive distance of §A.3.2, not a
+quoted result or validation statistic, with the limits stated there (Eq. (18)). The per-band sum is
+MAT-conformant, with the Flux band weighted as MAT weights it (the earlier machine-precision
+check of §A.2.6 covers the unweighted bands) and the 1.4% normalization as a rank-1 band. The
+truncated-spectral χ2ours uses Cours , which for the quoted covariance has rank 197 above 10−10 λmax ;
+the regularization scan shown above is of an earlier Cours . The 2D agreement claims are the
+total-cross-section ratio, per-bin ratio distribution and published-σ standardized differences; no
+covariance-based goodness-of-fit is claimed.
+
+A.5
+
+Anatomy of the paper-covariance tension
+
+This derivation supports §6.4. Its numbers are for the exact-split cross-check, the quoted 2D central
+value when the derivation was made (§3.2). For the quoted LightGBM central value, §6.4 gives
+the same decomposition from the same code: a smaller distance (2.27), an 8× rather than 10×
+off-diagonal inflation, 9.6 % rather than 3 % in the ten smallest-λ modes, and its leading poorly
+determined modes in the highest-p∥ bins, while its moderate-λ modes remain at low-to-moderate pT .
+ours /σ paper = 1.011, median bin ratio 1.006), and
+The paradox. The central values agree well (σtot
+tot
+the per-bin pull RMS against the paper covariance is only 0.598 for the exact-split cross-check
+(§A.3.3 gives 0.535 for the quoted value). A diagonal-only χ2 , ignoring all off-diagonal correlations,
+is therefore
+1 X ∆2i
+χ2diag /ndf =
+= RMS(pull)2 + mean(pull)2 ≈ 0.366,
+(22)
+n
+Cii
+i
+
+versus full-covariance χ2 /ndf = 3.661. The 10× inflation comes entirely from published TotalCov’s
+off-diagonal and small-eigenvalue structure.
+Eigenmode decomposition. Diagonalizing the reported-block paper covariance, C =
+(λ1 ≥ · · · ≥ λn ), and projecting ck = u⊤k ∆,
+χ2 = ∆⊤ C+ ∆ =
+
+X c2
+
+k
+
+k
+
+λk
+
+,
+
+ck
+“eigen-pull” k ≡ √ ,
+λk
+
+⊤
+k λk uk uk
+
+P
+
+(23)
+
+reproduces the pseudo-inverse χ2 = 750.49 to 3 × 10−9 . The tension is neither a few pathological null
+directions nor the absolute smallest eigenvalues. The largest contributions lie at λk /λmax ∼ 10−4 –
+10−5 , in the lower-middle spectrum, ∼ 7–8 decades above the condition floor (λ/λmax ∼ 10−12 ).
+
+Their standardized-component magnitudes 5–6 are descriptive coordinates in the published basis,
+without calibrated significance for independent results. The ten smallest-λ modes carry only 3% of
+the χ2 and about 90 modes are needed to reach 90%: the χ2 is broadly distributed, not localized to
+the ill-conditioned tail. A scan of the pseudo-inverse cutoff excludes a numerical artifact: the 73
+best-determined directions (λk /λmax > 10−4 ) give χ2 /ndf = 1.42, and 139 directions (> 10−6 ) give
+2.79. The rank-truncation scan of §A.3.2 rises smoothly with no late jump, so the tension does not
+depend on the last few least-determined modes.
+Shape contribution. Splitting ∆ along xpaper and its orthogonal remainder gives χ2norm = 0.10
+for scale, χ2shape = 750.1 for shape, and cross term 0.28; the split is not C+ -orthogonal. The +1.1%
+normalization offset is statistically irrelevant to the tension; it is a correlated shape difference,
+consistent with Jacobian shape-only χ2 /ndf = 3.60 (§A.3.4).
+Location in the (pT , p∥ ) plane. Mapping dominant eigenvectors and per-bin contributions
+∆i (C+ ∆)i to the 14 × 16 grid (numbers for the exact-split cross-check; Figs. 11 and 12 show the
+LightGBM central value) locates tension on the low-pT peak ridge (pT ≲ 0.4 GeV/c, pT -bins 2/7/10
+carry 16/11/12%) and low-p∥ near-edge cells (p∥ -bins 0/1/8). Carrier modes oscillate in sign across
+the peak. They form neither vertical pT -columns characteristic of a flux 1/Φ(pT ) normalization error
+nor the θµ < 20◦ acceptance boundary. Flux and Muon_Energy, the largest bands and only named
+cross-band correlation (Bashyal, §A.4), dominate there. Tight bin-to-bin correlations leave little
+freedom to absorb a coherent ∼ 1–2% shape difference, so a small OmniFold-vs-IBU shape difference
+becomes a large χ2 .2
+A methodological component (estimator and iteration). Changing the GBDT backend
+on the same data and normalization (Σσ within 0.1%) shifts the χ2 against the paper covariance
+by ∼ 1 unit. The integrated agreement does not mean the bins agree: the LightGBM seed-1 and
+exact-split central values differ by a median of 0.97 % per bin, 1.3 statistical standard deviations
+(seed 42: 0.98 %, 1.32; §3.2). Iteration-count effects are negligible,
+OmniFold configuration
+exact-split, 5 iter (cross-check; earlier central value)
+HistGBT, 5 iter (10-seed mean)
+LightGBM, 5 iter, seed 42, refined subtraction (quoted)
+LightGBM, 5 iter, seed 42
+LightGBM, 5 iter, seed 1
+LightGBM, 10 iter, seed 1
+
+χ2 /ndf, paper covariance
+
+pull RMS
+
+3.66
+2.70 ± 0.04
+2.270
+2.654
+2.65
+2.66
+
+0.598
+0.56
+0.535
+0.564
+0.563
+0.565
+
+All rows except the quoted one use the purity-based subtraction. (i) Iteration count is negligible:
+LightGBM 5 → 10 iters moves the χ2 by +0.01 (2.645 → 2.657), so OmniFold is well-converged
+at 5 iters and the tension is not an under-iteration artifact. (ii) The GBDT estimator carries
+a ∼ 1-unit band: the exact-split cross-check (3.66) is the outlier, while both histogram-binned
+backends agree at 2.65–2.70 (HistGBT is a 10-seed mean, range 2.63–2.74; the ±0.04 ML-seed jitter
+is ∼ 25× smaller than the 0.96 exact→hist gap, so that gap is attributable to the estimator, not
+2
+The pipeline uses one global POTdata /POT
+MC ratio; per-playlist ratios span 0.1707–0.2371. Sensitivity at 1–2%
+P
+P
+motivated a direct mixture check: Rglob p MCp versus
+p Rp MCp over twelve playlists changes reco shape by
+at most 0.07% in pT , 0.14% in p∥ , and 0.03% on the low-pT ridge. The residual +0.12% is normalization. Nearly
+shape-identical playlists make even large mixture reweighting almost pure normalization, leaving the statement above
+unaffected at the 14–30× level.
+
+
+to seed noise). The exact-gradient trees fit finer shape structure (less implicit smoothing) and so
+deviate more from the paper’s IBU-regularized result. This is direct evidence that ∼ 1 χ2 -unit of
+the exact-split cross-check’s tension is due to OmniFold’s implicit regularization rather than to a
+physical data–MC disagreement.
+Conclusion. For the exact-split cross-check, the tension is a broadly distributed, correlated
+shape difference concentrated on the low-pT peak dominated by flux/Muon_Energy bands; for
+the LightGBM central value the distance is smaller and a larger share lies in poorly determined
+directions (§6.4). Normalization and small-λ inversion artifacts do not drive it. A ∼ 1-χ2 -unit
+GBDT estimator/iteration regularization band adds a methodological component. Both point to the
+same structure: the Bashyal flux ↔ Muon_Energy joint block (§A.4) is the covariance structure that
+governs the region carrying the tension.
+
+A.6
+
+Closure tests: detecting bias
+
+The variance methods of §A.2 quantify the scatter of the unfolded result. Closure tests measure its
+bias, a consistent offset from a known injected truth, which the variance methods cannot show. Each
+of three tests injects a known MC deformation, unfolds, and compares the median per-bin |residual|
+of the recovered answer with a threshold. The thresholds lie comfortably above the 0.166% ML floor
+of the earlier ten-seed scan, which was in force when the tests were graded (Ref. [37], superseded
+values: retired material). All use playlist-1A LightGBM 5-iteration unfolds. Thresholds and results
+are in §5; procedures and otherwise unreported values follow.
+A.6.1
+
+Truth-reweight closure
+
+For known f (pT , p∥ ), both reco and truth MC event weights are multiplied by f . Reweighted
+pseudo-data are unfolded with the unchanged CV response and
+ compared0 with 2the
+ reweighted
+truth marginal. Two shapes are tested: gauss_pt, f = 1 + A exp − ((pT − pT )/σ) with A = 0.2,
+ref
+p0T = 0.4 GeV/c, σ = 0.1 GeV/c; and tilt_pz, f = 1 + α(p∥ − pref
+∥ ) with α = 0.1, p∥ = 5 GeV/c.
+Both residuals are at least 30× below the threshold: OmniFold recovers the injected truth shape.
+A.6.2
+
+Hidden-variable closure
+
+OmniFold sees reco and truth (pT , p∥ ) but excludes resolution variable ∆pT ≡ preco
+− ptruth
+. A bias
+T
+T
+confined to this hidden axis tests leakage into the measured marginal. Pseudo-data receive
+
+
+
+wreco → wreco · 1 + A exp − ((∆pT − c)/σ∆pT )2 ,
+(24)
+with c = +0.1 GeV/c, σ∆pT = 0.05 GeV/c, and amplitude scanned over A ∈ {0.05, 0.10, 0.30}. Truth
+weights are unchanged, so the reference is the unaltered CV truth marginal. For median per-bin
+signed residual r̄(A), a linear fit gives r̄(A) ≈ κleak A, with κleak = ∂ r̄/∂A, the fraction of hidden
+∆pT bias entering the visible answer. The 3.0% acceptance bound is looser than the truth-reweight
+bound because the weak ∆pT –pT correlation prevents complete removal of the leakage.
+On the 205 reported bins the per-amplitude median residuals, 0.57%/1.14%/3.43% for A =
+0.05/0.10/0.30, are linear in A, as expected for small perturbations, with fitted slope κleak = 0.113 :
+about 11% of a hidden ∆pT bias leaks into the measured (pT , p∥ ) marginal. Against the 3.0%
+acceptance bound, two of the three arms pass and the largest does not: A = 0.30 gives 3.43%,
+which exceeds 3.0% (§5). The scan establishes the linearity and the coefficient: the acceptance
+bound is satisfied for hidden-∆pT deformations up to roughly A ≃ 0.26 and is violated above it. No
+
+non-closure uncertainty is assigned from this scan either way (§5). A ∆pT -shaped mismodeling at
+the 30% level would leak more than the analysis declared tolerable; this is an open sensitivity, not a
+passing test.
+A.6.3
+
+Alternative-model closure
+
+The OmniFold response is trained on the CV weights and the pseudo-data are built from an alternativeuniverse reweighting: MaCCQE:0 (+1σ), which probes an interaction-model shape change, or Flux:50
+(PPFX index 50), which probes flux reweighting — two distinct kinds of model dependence. The
+reference is the in-acceptance-extrapolated alternative truth,
+X̃iref
+
+=
+
+alt,in-acc
+CV,truth Xi
+Xi
+· CV,in-acc ,
+Xi
+
+(25)
+
+scaling the CV truth marginal by the alternative-to-CV in-acceptance count ratio to isolate modelshape response from acceptance/efficiency effects. In-acceptance biases are −1.68% for MaCCQE:0,
+removed by extrapolation, and −7.32% for Flux:50. Both residuals are below the 2.0% bound by at
+least a factor of 5, showing robustness to model variations of order ±1σ GENIE and full PPFX flux
+universes.
+
+A.7
+
+Summary of the 2D comparison numbers
+
+Across 205 reported bins, combined OmniFold + paper uncertainties give χ2 /ndf = 0.929 and pull
+mean/RMS 0.034/0.388. This distance is descriptive, without calibrated goodness-of-fit (§A.3.2).
+Same-ensemble toy pulls are approximately Gaussian; the 0.048% training-seed block is more than
+an order of magnitude below the systematic block.
+Sources of the 2D comparison numbers
+Number
+
+Section
+
+Procedure
+
+χ2 /ndf = 0.929
+
+§A.3.2
+§A.2.4
+§A.2.2
+§A.2.1
+§4.5
+§A.2.6
+§A.3.3
+§A.2.7
+§5.2
+§5.3
+
+Eq. (17) with Cpaper + Csyst + Cstat + CML + CPL
+Universe sweep (187 universes; 43 bands in the band sum), M
+Poisson bootstrap, 300 replicas, seed 42, three streams, Eq. (1
+LightGBM training-seed settings, 5 × 20 replicas
+Run-period block, three run periods
+Paper’s published TotalCovariance
+Per-bin
+standardized residual on combined C
+p
+diagCtot /XCV , XCV the LightGBM seed-42 central value
+Earlier statistical band vs. fixed truth, Ntoy = 100: fails
+Pull diagnostic, Ntoy = 200
+
+Csyst
+Cstat
+CML
+CPL
+Cpaper
+Pull RMS = 0.388
+Combined median rel. = 6.414%
+Fixed-truth C2 = 0.912 (nominal 0.954)
+Same-ensemble |r| ≤ 1: 68.71%
+Standing assumptions
+
+1. Pulls and χ2 approximate bins as Gaussian: weighted sums of O(104 ) MC events justify the
+central-limit approximation.
+2. Independence of error sources. Eq. (16) requires no cross-correlations between ML,
+statistical, systematic and run-period blocks. The bootstrap pins the GBDT seed (so ML noise
+cancels at first order); universes pin the seed too; the training-seed block averages the same
+
+20 bootstrap replicas at each seed setting and includes the bootstrap × seed interaction at its
+1/20 share. Among the first three, cross-terms are higher-order. The run-period block is built
+from separate unfolds of the same data, and its noise share is not subtracted (§4.5).
+3. Same-ensemble 68.71% (§5.3) checks Gaussianity; it does not certify Cstat at the half-percent
+level. The fixed-truth test (§5.2) found the diagonal of the first-built Cstat undercovering in
+its tails (C2 = 0.912, unevenly across bins); the band was rebuilt in response, and the rebuilt
+band has not been independently re-tested. The statistical block quoted here is a different
+ensemble and has not been tested either.
+4. Band independence in Csyst . Different physics sources are taken as uncorrelated; the one
+known exception, the Bashyal flux ↔ muon-E joint block, is treated in §A.4.
+5. Closure passes apply to tested perturbations; unphysical deformations far outside training
+have no guarantee of passing.

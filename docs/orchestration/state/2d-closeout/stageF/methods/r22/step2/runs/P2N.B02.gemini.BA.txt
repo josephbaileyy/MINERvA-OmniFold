@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A consistently maintains a formal, scholarly physics register, employing standard terminology (such as "unfolding" as a noun, "out-of-phase-space signal", and "unreconstructed truth events") where Document B frequently relies on informal lab shorthand (such as "unfold" as a noun, "fakes", "fake-free", and "misses").
+2. Document A removes raw code-level artifacts and internal script implementation notes that unprofessionally persist in Document B, such as C++ boolean expressions (`isMinosMatchTrack==1 && minos_trk_is_ok==1`) and comments on disk-merging trees exceeding 100 GB.
+3. Document A provides properly edited, standard technical phrasing for domain concepts (such as explaining "flux-and-central-value" and defining dial weights), whereas Document B lapses into casual laboratory jargon like "data pull" and "MAT reweighters".

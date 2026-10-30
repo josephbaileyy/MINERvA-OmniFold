@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A maintains a more polished register, replacing B’s conversational captions such as “on top of” and “dips below” with precise descriptions.
+2. A improves sentence clarity by explicitly identifying quantities where B uses compressed expressions such as “keeping the 73 best-measured directions gives 0.66.”
+3. A’s descriptive headings and table labels read more like finished technical prose than B’s “Tension anatomy,” “ours/paper,” and “Paper TotalCov.”

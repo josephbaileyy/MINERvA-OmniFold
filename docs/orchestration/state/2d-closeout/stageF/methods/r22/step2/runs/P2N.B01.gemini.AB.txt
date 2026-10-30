@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B adheres to standard journal style by integrating results and motivations into cohesive narrative prose paragraphs rather than relying on informal, presentation-style bulleted lists.
+2. Document B maintains a consistently professional and formal academic register, eliminating colloquial phrasing and informal shorthand present in Document A (such as "in this corner," "that route," and the heading "Why unbinned:").
+3. Document B exhibits superior editorial precision by defining abbreviations and statistical notation upon first mention (e.g., GBDT and $C_k$) and resolving telegraphic sentence fragments into grammatically complete technical statements.

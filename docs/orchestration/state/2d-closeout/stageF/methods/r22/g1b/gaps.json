@@ -1,0 +1,854 @@
+{
+ "G__paper-ctl__gemini": {
+  "input": "paper-ctl",
+  "model": "gemini",
+  "rating": 2.0,
+  "enough": "Yes, making these twenty changes in full would bring manuscript.txt to a rating of 4 by eliminating internal tracking notes, software jargon, notebook-style record-keeping, and defensive hedging, leaving only minor sentence-level tightening required for typical PRD publication.",
+  "gaps": [
+   {
+    "n": 1,
+    "quote": "The z2m lane's tier-S gate stayed green on every rerun of the FIVED16 package.",
+    "scope": "this passage",
+    "problem": "This sentence introduces automated continuous-integration pipeline jargon and internal software test-suite tracking that never appear in published PRD papers.",
+    "change": "Delete this sentence entirely.",
+    "share": 10.0,
+    "located": "exact",
+    "plant": 3
+   },
+   {
+    "n": 2,
+    "quote": "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records.",
+    "scope": "this passage",
+    "problem": "This is an internal revision-tracking log from an issue-tracking system, departing completely from the archival register of published PRD papers.",
+    "change": "Delete this sentence entirely.",
+    "share": 10.0,
+    "located": "exact",
+    "plant": 1
+   },
+   {
+    "n": 3,
+    "quote": "We then went back and reran the whole chain a second time, just to be safe, and nothing changed.",
+    "scope": "this passage",
+    "problem": "The informal, conversational phrasing (\"went back and reran\", \"just to be safe\") reads like an informal lab notebook rather than the objective, professional register of PRD.",
+    "change": "Remove this sentence or replace it with a formal statement confirming that re-executing the analysis pipeline yields identical results.",
+    "share": 9.0,
+    "located": "exact",
+    "plant": 2
+   },
+   {
+    "n": 4,
+    "quote": "The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section.",
+    "scope": "this passage",
+    "problem": "Published PRD papers are self-contained archival records and do not repeatedly cite an inaccessible internal collaboration note by section as a proxy for methodology and validation records.",
+    "change": "Replace the reference to the internal note with a self-contained summary in the text or an accessible supplemental material document.",
+    "share": 8.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 5,
+    "quote": "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.",
+    "scope": "this passage",
+    "problem": "Narrating the chronological sequence of discarded test configurations and development history departs from the concise, outcome-oriented reporting of PRD papers (e.g., Ref. [2], Sec. V B: \"As a result of these studies, unfolding is performed with 10 iterations for this analysis.\").",
+    "change": "State directly that five iterations were chosen because additional iterations yielded no significant reduction in model dependence.",
+    "share": 7.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 6,
+    "quote": "The two-observable central value uses LightGBM at seed 42 [23] with negative-weight background subtraction and a refinement of 400 trees and 31 leaves.",
+    "scope": "this passage",
+    "problem": "Citing an arbitrary software execution seed (\"seed 42\") elevates code-level scripting details into methodological specifications, which PRD papers omit (e.g., Ref. [1], Sec. IV).",
+    "change": "Remove the specific random seed number and describe the gradient-boosting setup purely in terms of its algorithmic architecture and hyperparameters.",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 7,
+    "quote": "The joint-test estimator is a deterministic LightGBM (fixed seeds, reproducible training), and the refinement classifier of the two-observable estimator is seeded at the estimator seed plus three.",
+    "scope": "this passage",
+    "problem": "Explaining that a component is \"seeded at the estimator seed plus three\" reports software implementation bookkeeping rather than physical or statistical methodology.",
+    "change": "Delete the reference to relative seed arithmetic and state simply that fixed random seeds were used to ensure reproducible classifier training.",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 8,
+    "quote": "Interval coverage has not been validated.",
+    "scope": "this passage",
+    "problem": "This clipped, isolated declaration reads like an internal review checklist bullet or auditor caveat rather than the continuous, integrated prose of a PRD article.",
+    "change": "Expand this note into a complete, professional explanation describing the specific coverage checks performed and the statistical boundaries of the evaluation.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 9,
+    "quote": "Our precision target is a 10 % median half-width for the total 68% interval.",
+    "scope": "this passage",
+    "problem": "Framing the analysis around an internal project management requirement or milestone target departs from the standard PRD register of reporting observed measurement uncertainties.",
+    "change": "Rephrase to report the achieved precision across the phase space directly without reference to internal project design targets.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 10,
+    "quote": "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity.",
+    "scope": "this passage",
+    "problem": "The term \"joint-test estimator\" is an unedited project-internal moniker rather than a standard, descriptive scientific label (contrast with \"UniFold, MultiFold, and OmniFold\" in Ref. [1], Sec. IV).",
+    "change": "Replace the project-internal moniker with a descriptive designation such as \"multidimensional boosted-decision-tree estimator.\"",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 11,
+    "quote": "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2.",
+    "scope": "this passage",
+    "problem": "Chronicling intermediate development variants and directing readers to an internal technical note for them clutters the article with obsolete development history.",
+    "change": "Remove the reference to discarded development variants and focus the narrative strictly on the estimator configuration used in the final measurement.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 12,
+    "quote": "Table II gives the results under the reported covariance and under Ctotal alone, and 6 further truths are ungraded and given in the note.",
+    "scope": "this passage",
+    "problem": "Classifying test models as \"ungraded\" and referring to an internal collaboration note reflects internal working-group grading terminology rather than journal prose.",
+    "change": "Replace \"ungraded and given in the note\" with a neutral statement that six additional model variations were tested and are summarized in an appendix.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 13,
+    "quote": "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6).",
+    "scope": "this passage",
+    "problem": "Accounting for earlier, discarded covariance matrices that failed internal collaboration acceptance criteria introduces internal quality-assurance bookkeeping into a published paper.",
+    "change": "Omit the discussion of obsolete, failed covariance matrices and evaluate the results solely against the accepted, final covariance matrix.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 14,
+    "quote": "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail.",
+    "scope": "this passage",
+    "problem": "The cynical, editorializing tone (\"its own consistency check cannot fail\") reads like an internal audit memo rather than objective scientific prose.",
+    "change": "State objectively that the systematic uncertainty associated with the run periods is assigned directly from the observed empirical differences between run periods.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 15,
+    "quote": "We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.",
+    "scope": "this passage",
+    "problem": "The phrasing \"We make no coverage claim\" reads like a legal liability disclaimer rather than a standard scientific description of statistical scope.",
+    "change": "State neutrally that coverage properties were evaluated on pointwise bins and projections within the available simulated samples.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 16,
+    "quote": "With the joint-test estimator, the envelope alone exceeds it for the 109 coarse joint cells and for the fallback definition, the 39 supported (Eavail , W ) cells.",
+    "scope": "this passage",
+    "problem": "Using the phrase \"fallback definition\" exposes internal project contingency debates rather than presenting the analyzed kinematic binnings as deliberate scientific choices.",
+    "change": "Refer to the 39 (Eavail, W) cells objectively as an alternative two-dimensional projection rather than a \"fallback definition.\"",
+    "share": 3.0,
+    "located": "gapped",
+    "plant": null
+   },
+   {
+    "n": 17,
+    "quote": "We call this requirement the support rule.",
+    "scope": "this passage",
+    "problem": "Coining idiosyncratic named rules (\"the support rule\") for routine occupancy cuts creates non-standard internal jargon absent from PRD papers.",
+    "change": "Delete the coining of the named rule and state directly that coarse cells are retained if their expected reconstructed and truth event counts exceed 1000 events.",
+    "share": 2.0,
+    "located": null,
+    "plant": null
+   },
+   {
+    "n": 18,
+    "quote": "The learner was selected after the LightGBM and exact-split comparisons with the published result, so the benchmark is a reproduction rather than an independent validation.",
+    "scope": "this passage",
+    "problem": "This procedural self-justification reads like a defensive response to an internal reviewer rather than a neutral description of benchmark methodology.",
+    "change": "State directly that the two-dimensional comparison serves as a benchmark reproduction of the published measurement using the new unfolding framework.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 19,
+    "quote": "This constant is inherited from the analysis framework’s definition.",
+    "scope": "this passage",
+    "problem": "Justifying an operational kinematic definition by appealing to legacy software codebase definitions is an internal bookkeeping rationale unsuitable for PRD.",
+    "change": "Define the observable directly as adopted for this measurement and cite the relevant experimental convention without attributing it to software framework inheritance.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 20,
+    "quote": "The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine.",
+    "scope": "this passage",
+    "problem": "The phrasing \"for a reason the released inputs do not let us determine\" has a defensive, complaining tone that departs from PRD's dispassionate register.",
+    "change": "State dispassionately that the observed difference between the flux uncertainties reflects differences in the input flux models available in the open data release.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   }
+  ],
+  "share_sum": 100.0,
+  "n_unlocated": 1,
+  "plants_found": [
+   1,
+   2,
+   3
+  ],
+  "control_pass": true
+ },
+ "G__paper-ctl__sol2": {
+  "input": "paper-ctl",
+  "model": "sol2",
+  "rating": 3.0,
+  "enough": "Yes; these changes would remove the conspicuous internal-note passages and resolve the principal terminology, density, and repetition problems, leaving minor lapses compatible with a rating of 4.",
+  "gaps": [
+   {
+    "n": 1,
+    "quote": "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records.",
+    "scope": "this passage",
+    "problem": "Revision rounds, review tickets, and retained wording are internal editorial bookkeeping with no place in the published argument.",
+    "change": "Delete this sentence.",
+    "share": 12.0,
+    "located": "exact",
+    "plant": 1
+   },
+   {
+    "n": 2,
+    "quote": "The z2m lane's tier-S gate stayed green on every rerun of the FIVED16 package.",
+    "scope": "this passage",
+    "problem": "Undefined workflow identifiers and the phrase “stayed green” make this read entirely like an internal testing log.",
+    "change": "Delete the sentence, retaining any scientifically relevant verification only through a plainly named test and its quantitative result.",
+    "share": 10.0,
+    "located": "exact",
+    "plant": 3
+   },
+   {
+    "n": 3,
+    "quote": "We then went back and reran the whole chain a second time, just to be safe, and nothing changed.",
+    "scope": "this passage",
+    "problem": "The conversational chronology and reassurance substitute a work-log account for a precise verification statement.",
+    "change": "Delete it unless the repeat establishes a relevant reproducibility result, in which case identify what was repeated and the agreement obtained.",
+    "share": 10.0,
+    "located": "exact",
+    "plant": 2
+   },
+   {
+    "n": 4,
+    "quote": "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity.",
+    "scope": "this passage",
+    "problem": "“Joint-test estimator” reads as a project label, while “a deterministic LightGBM” imprecisely names the software as the estimator.",
+    "change": "Introduce this configuration through its LightGBM classifiers and deterministic training settings, using a descriptive estimator name if a recurring distinction is necessary.",
+    "share": 8.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 5,
+    "quote": "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2.",
+    "scope": "this passage",
+    "problem": "The sentence organizes the account around development history and result provenance rather than the configurations relevant to the reader.",
+    "change": "Identify the relevant alternative configurations and the results obtained with them directly, leaving their development chronology to the companion note.",
+    "share": 7.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 6,
+    "quote": "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.",
+    "scope": "this passage",
+    "problem": "“Keeps,” “residual proxy,” and “used in its development” combine informal wording, an unexplained metric, and development narrative.",
+    "change": "State that five iterations were used because larger iteration counts did not reduce a clearly defined maximum residual over the tested truth deformations.",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 7,
+    "quote": "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6).",
+    "scope": "this passage",
+    "problem": "“Earlier” and “fails its specified acceptance criteria” invoke an internal sequence and assessment framework without explaining the limitation in the sentence.",
+    "change": "Identify the covariance configuration and state the relevant limitation directly, preserving the qualification on these uncertainty bands.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 8,
+    "quote": "The note’s calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (Ref. [14], Sec. 11.5).",
+    "scope": "this passage",
+    "problem": "“The same pull,” “by it,” and “as the calibration reproduces” leave the mechanism and the quantity being displaced difficult to follow.",
+    "change": "Name the test statistic and state directly how the residual prior dependence affects its calibrated null distribution.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 9,
+    "quote": "It covers only the residuals whose diagnosis is stable under the truth resolution (38 % of the joint-cell residuals above 2 %).",
+    "scope": "this passage",
+    "problem": "“Covers,” “diagnosis,” and “truth resolution” make the diagnostic’s scope opaque and give “covers” an avoidably ambiguous statistical meaning.",
+    "change": "Specify which changes to the truth binning leave the diagnostic conclusion unchanged and state explicitly which residuals satisfy that condition.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 10,
+    "quote": "Table II gives the results under the reported covariance and under Ctotal alone, and 6 further truths are ungraded and given in the note.",
+    "scope": "this passage",
+    "problem": "“Ungraded” is internal assessment terminology, and “given in the note” does not explain what distinguishes these additional tests.",
+    "change": "Replace “ungraded” with a direct statement of whether the additional truth scenarios were evaluated against the stated criteria.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 11,
+    "quote": "A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map.",
+    "scope": "this passage",
+    "problem": "“Candidate release package” and its packaging details give the availability statement the tone of a release-status report.",
+    "change": "State the package’s actual availability and reproducibility scope directly, preserving the fact that it has not been deposited and moving incidental packaging details to documentation.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 12,
+    "quote": "The low stability of four of the sixteen cells is stated only here.",
+    "scope": "this passage",
+    "problem": "This comments on the manuscript’s placement of information instead of communicating the limitation itself.",
+    "change": "Delete the sentence and let the following quantitative stability statement carry the qualification.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 13,
+    "quote": "The response term Cresp is the response of the result to a one-standard-deviation scale of the reconstructed recoil energy in the simulation, for protons, mesons, electromagnetic and other deposits, but it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result, its fake-data tests and its comparison in Sec. V B.",
+    "scope": "this passage",
+    "problem": "The definition, deposit categories, exclusions, and applicability are crowded into one sentence, obscuring the meaning of the uncertainty term.",
+    "change": "Separate the scale-variation definition, excluded response effects, and results to which the term is applied into short sentences.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 14,
+    "quote": "The two-dimensional covariance is the sum of four blocks, each from LightGBM unfoldings with the central value’s estimator: systematic universes (187 universes), statistical (300 bootstrap replicas), run period (three period groups), and training seed (five seed settings, so that its own size is poorly determined).",
+    "scope": "this passage",
+    "problem": "The parenthetical “its own size” has an uncertain referent and interrupts an otherwise useful specification of the covariance components.",
+    "change": "Keep the component list parallel and state separately that the training-seed covariance is estimated imprecisely from five settings.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 15,
+    "quote": "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail.",
+    "scope": "this passage",
+    "problem": "“Its own consistency check cannot fail” sounds like commentary on an internal validation gate and does not identify the check.",
+    "change": "State directly that a covariance constructed from the observed period differences does not provide an independent test of consistency among those periods.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 16,
+    "quote": "We report a simultaneous measurement of the νµ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, threemomentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is 7.29%.",
+    "scope": "this passage",
+    "problem": "The opening sentence stacks the measurement, observable list, method, data source, reporting partition, and precision into a strained grammatical structure.",
+    "change": "Divide it into a measurement-and-method statement and a reporting-and-uncertainty statement, attaching the median relative uncertainty to the cell cross sections.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 17,
+    "quote": "Three external generator predictions compared on all sixteen cells give χ2 of 109–272 for 16 degrees of freedom, and GiBUU, on 8 cells, 58.",
+    "scope": "this passage",
+    "problem": "The compressed GiBUU clause reads like a table annotation rather than a complete abstract statement.",
+    "change": "Give the GiBUU comparison a complete clause specifying its χ2 and number of degrees of freedom.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 18,
+    "quote": "The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.",
+    "scope": "this passage",
+    "problem": "The stacked restrictions repeat the preceding account of the validation scope and give the introduction a defensive cadence.",
+    "change": "Condense this to one direct statement that the conclusions apply to the implementation and test conditions studied here.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 19,
+    "quote": "To include model dependence, a dedicated study defines the envelope of a cell as the largest shift of its data result when the simulation’s prior is reweighted to each of five generator-sized changes of the truth, and adds it linearly to the probabilistic half-width.",
+    "scope": "this passage",
+    "problem": "The procedural framing and nested definition make the reader work to distinguish the envelope’s construction from its subsequent use.",
+    "change": "Define the envelope directly as the maximum shift under the five prior deformations, then state separately how it is combined with the probabilistic half-width.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 20,
+    "quote": "This reproducible central value is that of its own systematicuniverse ensemble, so its covariance is built with the same estimator.",
+    "scope": "this passage",
+    "problem": "“Is that of its own” is awkward and makes a straightforward consistency condition sound like bookkeeping about analysis products.",
+    "change": "State simply that the central value and the systematic-universe unfoldings use the same estimator.",
+    "share": 2.0,
+    "located": "exact",
+    "plant": null
+   }
+  ],
+  "share_sum": 100.0,
+  "n_unlocated": 0,
+  "plants_found": [
+   1,
+   2,
+   3
+  ],
+  "control_pass": true
+ },
+ "G__paper__gemini": {
+  "input": "paper",
+  "model": "gemini",
+  "rating": 2.0,
+  "enough": "Yes, making these changes in full would remove the pervasive internal-note bookkeeping, development history, and defensive hedging, bringing the manuscript to a rating of 4.",
+  "gaps": [
+   {
+    "n": 1,
+    "quote": "The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section.",
+    "scope": "this passage",
+    "problem": "Citing an unpublished internal collaboration note repeatedly by section treats the manuscript as an abridged memo rather than a self-contained, archival PRD article.",
+    "change": "Remove the references to the internal analysis note and incorporate the essential methodological rationale and validation summaries directly into the manuscript text or a technical appendix.",
+    "share": 8.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 2,
+    "quote": "Interval coverage has not been validated.",
+    "scope": "this passage",
+    "problem": "An abrupt, unintegrated declaration of non-validation reads like a bullet point from an internal audit checklist or referee report rather than professional journal prose.",
+    "change": "Integrate the discussion of coverage behavior smoothly into the systematic evaluation of the unfolding procedure, framing it constructively as an open systematic characteristic rather than a blunt disclaimer.",
+    "share": 7.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 3,
+    "quote": "The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.",
+    "scope": "this passage",
+    "problem": "Framing the analysis boundaries as an explicit legalistic disclaimer under a \"Scope\" heading mimics corporate technical memos rather than the standard physical scope statements of PRD papers.",
+    "change": "State the specific dataset and measurement configurations directly in the narrative without defensive meta-commentary, adopting the measured register of published studies (e.g., Ref. 1: \"This paper demonstrates OmniFold’s application to a neutrino cross-section measurement for the first time using a public T2K near detector simulated dataset, comparing its performance with traditional approaches using a mock data study\").",
+    "share": 7.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 4,
+    "quote": "The input is an earlier production of the MINERvA open-data release (see Data availability), in the form of pre-selected analysis ntuples (AnaTuples) [12].",
+    "scope": "this passage",
+    "problem": "Referring to software-level pipeline files (\"AnaTuples\") and historical generation milestones (\"earlier production\") injects project-internal data-handling jargon.",
+    "change": "Replace the internal file format label and historical production note with a standard physical description of the data exposure and processed event sample.",
+    "share": 6.0,
+    "located": null,
+    "plant": null
+   },
+   {
+    "n": 5,
+    "quote": "This constant is inherited from the analysis framework’s definition.",
+    "scope": "this passage",
+    "problem": "Explaining an observable's definition as a legacy inherited from an internal software framework reads like an informal code comment rather than an intentional scientific choice.",
+    "change": "State the kinematic definition directly and define the subtracted constant objectively on physical or operational grounds without referencing the software framework's heritage.",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 6,
+    "quote": "The two-observable central value uses LightGBM at seed 42 [23] with negative-weight background subtraction and a refinement of 400 trees and 31 leaves.",
+    "scope": "this passage",
+    "problem": "Cataloging specific execution seeds (\"seed 42\") and tree hyperparameter counts in the running text gives it the record-keeping tone of an execution log rather than published PRD prose.",
+    "change": "Describe the boosted decision-tree architecture and background subtraction in standard methodological terms, moving exact random seeds and execution configurations to a public code repository reference as in Ref. 1 (\"Code used in the following analysis is publicly available [61]\").",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 7,
+    "quote": "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity.",
+    "scope": "this passage",
+    "problem": "Naming the primary extraction configuration using an ad hoc project label (\"joint-test estimator\") reads like an internal benchmarking memorandum contrasting temporary code branches.",
+    "change": "Refer to the extraction method by a standard descriptive physical name (such as \"the five-dimensional BDT unfolding\") rather than a project-internal development label.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 8,
+    "quote": "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.",
+    "scope": "this passage",
+    "problem": "Recounting the historical trial-and-error optimization of iterations and internal metrics (\"residual proxy\") reads like an internal development narrative rather than a concise journal justification.",
+    "change": "State the chosen regularization parameter and its physical basis directly, following the concise register of Ref. 2 (\"As a result of these studies, unfolding is performed with 10 iterations for this analysis\").",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 9,
+    "quote": "The learner was selected after the LightGBM and exact-split comparisons with the published result, so the benchmark is a reproduction rather than an independent validation.",
+    "scope": "this passage",
+    "problem": "Narrating the historical order of model selection while defensively disqualifying the benchmark as a \"reproduction rather than an independent validation\" sounds like internal self-scrutiny.",
+    "change": "Present the comparison with the published two-dimensional measurement straightforwardly as an end-to-end consistency check without apologetic procedural history.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 10,
+    "quote": "Each classifier is trained on the full sample whose weights it then sets, without a held-out or cross-fitted split, early stopping, or class balancing (Ref. [14], Sec. 3.1).",
+    "scope": "this passage",
+    "problem": "Compiling a negative list of unused ML procedures reads like a defensive memo answering an internal reviewer rather than a direct description of the method.",
+    "change": "State the training protocol positively and directly by describing the training sample and loss function without detailing techniques that were not employed.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 11,
+    "quote": "With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target.",
+    "scope": "this passage",
+    "problem": "Reporting that candidate definitions failed an internal \"precision target\" reflects internal project management deliberations rather than standard scientific reporting of results.",
+    "change": "State the achieved uncertainty and sensitivity of the reported binning directly, omitting references to discarded definitions and unmet internal milestones.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 12,
+    "quote": "The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine.",
+    "scope": "this passage",
+    "problem": "Speculating helplessly about discrepancies with past work (\"for a reason the released inputs do not let us determine\") introduces an informal, defeated tone alien to PRD.",
+    "change": "State the numerical difference between the evaluated flux uncertainties factually without speculating about deficiencies in the released data files.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 13,
+    "quote": "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6).",
+    "scope": "this passage",
+    "problem": "Invoking an obsolete \"earlier purity-subtracted\" covariance that failed private \"acceptance criteria\" burdens the reader with dead-end development history and undefined internal jargon.",
+    "change": "Remove all discussion of discarded preliminary covariance matrices and present only the validated uncertainty methodology adopted for the final measurement.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 14,
+    "quote": "Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations, and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.",
+    "scope": "this passage",
+    "problem": "Quoting numerical failure thresholds against an internal \"data-stability requirement\" and comparing against a \"development variant\" reads like an internal software quality-assurance report.",
+    "change": "Discuss numerical stability and sensitivity to input precision as a systematic consideration in measured, objective terms without referencing internal pass/fail thresholds.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 15,
+    "quote": "We call this requirement the support rule.",
+    "scope": "this passage",
+    "problem": "Bestowing a formal internal label (\"the support rule\") on an ordinary minimum event-occupancy cut creates unnecessary in-house jargon.",
+    "change": "Describe the selection threshold descriptively as an event-occupancy or statistical threshold for reporting cells without coining a proper-noun rule.",
+    "share": 4.0,
+    "located": null,
+    "plant": null
+   },
+   {
+    "n": 16,
+    "quote": "Of the coarse cells, 109 pass; these are the joint cells.",
+    "scope": "this passage",
+    "problem": "Introducing the internal shorthand label \"joint cells\" for an intermediate grid partition adds idiosyncratic project jargon to the phase-space description.",
+    "change": "Refer to these bins directly by their physical characteristics as the multidimensional reporting cells that satisfy the minimum population threshold.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 17,
+    "quote": "The covariance has not been independently validated.",
+    "scope": "this passage",
+    "problem": "Issuing a blunt disclaimer disowning the validity of the presented covariance matrix departs from the authoritative tone expected in published journal articles.",
+    "change": "Replace the blanket disclaimer with a precise physical description of the specific systematic sources accounted for and the limitations of the correlation model.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 18,
+    "quote": "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail.",
+    "scope": "this passage",
+    "problem": "Arguing that an uncertainty's \"consistency check cannot fail\" reads like an internal methodological audit commentary rather than standard physical uncertainty estimation.",
+    "change": "State directly how the run-period variation is evaluated and incorporated as a systematic uncertainty without meta-commentary on the impossibility of failing consistency checks.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 19,
+    "quote": "The cause is not known, and these data cannot establish which period is correct.",
+    "scope": "this passage",
+    "problem": "Pleading ignorance about period-to-period variations (\"The cause is not known, and these data cannot establish which period is correct\") conveys a helpless internal-log tone.",
+    "change": "Frame the variation objectively as an unmodeled beam- or detector-related systematic effect and describe the systematic uncertainty assigned to account for it.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 20,
+    "quote": "We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.",
+    "scope": "this passage",
+    "problem": "Disclaiming statistical coverage through a legalistic assertion (\"We make no coverage claim...\") departs from the objective, descriptive voice of PRD papers.",
+    "change": "State precisely how the statistical and systematic intervals were constructed and note the single-cell coverage properties neutrally without defensive disclaimers.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   }
+  ],
+  "share_sum": 100.0,
+  "n_unlocated": 2
+ },
+ "G__paper__sol2": {
+  "input": "paper",
+  "model": "sol2",
+  "rating": 3.0,
+  "enough": "Yes; these changes, made while preserving the substantive qualifications, would remove the dominant internal-report features and leave minor density and repetition consistent with a rating of 4.",
+  "gaps": [
+   {
+    "n": 1,
+    "quote": "The note’s calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (Ref. [14], Sec. 11.5).",
+    "scope": "this passage",
+    "problem": "“The same pull,” “by it,” and “as the calibration reproduces” leave the conclusion dependent on internal shorthand rather than a clearly stated relationship.",
+    "change": "Name the bias, identify the quantity displaced, and state directly what the calibration demonstrates.",
+    "share": 9.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 2,
+    "quote": "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity.",
+    "scope": "this passage",
+    "problem": "“Joint-test estimator” names an internal analysis configuration without giving readers a useful technical distinction.",
+    "change": "Introduce the estimator through its relevant methodological differences and give it a descriptive designation.",
+    "share": 8.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 3,
+    "quote": "However, the rejections carry over to the generator predictions themselves only under a bound on the residual below the fine grid, which has not been shown.",
+    "scope": "this passage",
+    "problem": "“Carry over” and “the residual below the fine grid” compress an important qualification into informal and insufficiently explained shorthand.",
+    "change": "Identify the residual explicitly and express the condition for interpreting the rejections in ordinary statistical language.",
+    "share": 8.0,
+    "located": "gapped",
+    "plant": null
+   },
+   {
+    "n": 4,
+    "quote": "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6).",
+    "scope": "this passage",
+    "problem": "The sentence describes the status of a superseded analysis product through unspecified internal acceptance criteria.",
+    "change": "State which uncertainties are displayed and the specific limitation affecting their interpretation, retaining the citation for procedural details.",
+    "share": 7.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 5,
+    "quote": "A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map.",
+    "scope": "this passage",
+    "problem": "“Candidate,” package size, dependency inventory, and pending deposit status give the availability statement the register of a release checklist.",
+    "change": "Replace the package-status narrative with a concise statement of what materials are available and what they reproduce.",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 6,
+    "quote": "The response term Cresp is the response of the result to a one-standard-deviation scale of the reconstructed recoil energy in the simulation, for protons, mesons, electromagnetic and other deposits, but it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result, its fake-data tests and its comparison in Sec. V B.",
+    "scope": "this passage",
+    "problem": "The sentence stacks the definition, affected deposits, exclusions, and applications into a difficult sequence of qualifications.",
+    "change": "Separate the variation defining Cresp from its physical scope and the results to which it applies.",
+    "share": 6.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 7,
+    "quote": "We report a simultaneous measurement of the νµ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, threemomentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is 7.29%.",
+    "scope": "this passage",
+    "problem": "The opening sentence overloads the measurement statement with the observable list, method, data source, reporting scheme, and precision.",
+    "change": "Divide it into a direct measurement statement and a separate sentence giving the reporting scheme and median relative uncertainty.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 8,
+    "quote": "The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.",
+    "scope": "this passage",
+    "problem": "The repeated restrictions and contrastive ending make a reasonable scope qualification sound defensive.",
+    "change": "State once that the conclusions apply to the implementation, data set, and tests studied.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 9,
+    "quote": "With the joint-test estimator, the envelope alone exceeds it for the 109 coarse joint cells and for the fallback definition, the 39 supported (Eavail , W ) cells.",
+    "scope": "this passage",
+    "problem": "“Fallback definition” introduces development terminology, while “it” and the nested cell descriptions obscure the comparison.",
+    "change": "Name the precision target explicitly and describe the two partitions directly without assigning one a development role.",
+    "share": 5.0,
+    "located": "gapped",
+    "plant": null
+   },
+   {
+    "n": 10,
+    "quote": "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.",
+    "scope": "this passage",
+    "problem": "“Keeps,” “largest residual proxy,” and “used in its development” mix an iteration-choice justification with undefined diagnostic shorthand and project history.",
+    "change": "Define the residual metric and state directly that increasing the iteration count did not improve it for the tested truth distributions.",
+    "share": 5.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 11,
+    "quote": "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2.",
+    "scope": "this passage",
+    "problem": "This is an internal provenance statement rather than an explanation of a method or result.",
+    "change": "Identify any scientifically relevant alternative configuration explicitly, or remove the sentence if the preceding definitions suffice.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 12,
+    "quote": "Ref. [14], Sec. 3.2 gives the full matrix, including the variants used in development.",
+    "scope": "this passage",
+    "problem": "“Full matrix” and “variants used in development” read as configuration bookkeeping in a table caption.",
+    "change": "Specify what additional methodological information the reference provides and omit the development inventory.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 13,
+    "quote": "This reproducible central value is that of its own systematicuniverse ensemble, so its covariance is built with the same estimator.",
+    "scope": "this passage",
+    "problem": "“This reproducible central value is that of its own” is circular and cumbersome, obscuring the straightforward consistency statement.",
+    "change": "State directly that the central value and systematic variations use the same estimator.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 14,
+    "quote": "Table II gives the results under the reported covariance and under Ctotal alone, and 6 further truths are ungraded and given in the note.",
+    "scope": "this passage",
+    "problem": "“Ungraded” is an internal evaluation label, and “given in the note” describes record placement without explaining the tests’ status.",
+    "change": "State that additional truth distributions were tested, specify whether the stated criteria were applied, and cite their results.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 15,
+    "quote": "The low stability of four of the sixteen cells is stated only here.",
+    "scope": "this passage",
+    "problem": "The sentence comments on manuscript organization instead of conveying the limitation.",
+    "change": "Delete the location commentary and introduce the four cells’ reconstruction stability directly.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 16,
+    "quote": "What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope.",
+    "scope": "this passage",
+    "problem": "The loosely parallel list and vague reference to “the coverage failure” turn the diagnostic’s scope into a defensive catalogue.",
+    "change": "State precisely which conclusion the diagnostic supports and briefly identify the questions it does not assess.",
+    "share": 4.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 17,
+    "quote": "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail.",
+    "scope": "this passage",
+    "problem": "“Its own consistency check cannot fail” is conversational shorthand that leaves the relationship between construction and validation unclear.",
+    "change": "Explain directly that a check using the same period differences does not independently validate the uncertainty estimate.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 18,
+    "quote": "This makes the two-dimensional result reusable, the higher-dimensional central values usable for qualitative comparison, and the sixteen-cell result usable for the comparison that follows.",
+    "scope": "this passage",
+    "problem": "Repeated forms of “usable” produce an administrative classification of outputs rather than a direct statement of their interpretation.",
+    "change": "State concisely which results support quantitative comparisons and which support qualitative comparisons.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 19,
+    "quote": "We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.",
+    "scope": "this passage",
+    "problem": "This repeats the adjacent statement that coverage has not been tested and adopts a disclaimer-like formulation.",
+    "change": "Consolidate it with the preceding coverage statement, specifying the untested pointwise and simultaneous coverage in one sentence.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   },
+   {
+    "n": 20,
+    "quote": "The limitations of these results are stated with the results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note.",
+    "scope": "this passage",
+    "problem": "The limitations section opens with an inventory of where qualifications have been recorded rather than their substantive implications.",
+    "change": "Remove the inventory and introduce the principal limitations directly.",
+    "share": 3.0,
+    "located": "exact",
+    "plant": null
+   }
+  ],
+  "share_sum": 100.0,
+  "n_unlocated": 0
+ }
+}

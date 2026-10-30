@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically fluent, but recurrent audit-style bookkeeping, development history, and repetitive defensive qualifications call for a dedicated language pass.
+
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver;
+the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: Recomputing seven universes of the July sweep (§4.1) reproduces the stored results to ≤ 1.4 × 10−11. The remaining universes were generated with the same code but have not been independently reproduced (Ref. [37], R1.16).
+
+2. QUOTE: "The statistical block quoted here has had no coverage test: the fixed-truth coverage studies of
+§5.2 scored two earlier statistical bands, not this block. No coverage test on held-out simulation has
+been run, and no design for one has been registered in advance."
+   REWRITE: Coverage has not been evaluated for the quoted statistical covariance, including on held-out simulation. The fixed-truth coverage studies in §5.2 evaluated two earlier statistical bands.
+
+3. QUOTE: "The universe × retraining values and the band-centering numbers cannot be
+recomputed from the saved covariance products; they were therefore not recomputed independently,
+and their verification is limited to the checksums of their inputs."
+   REWRITE: The saved covariance products do not permit independent recomputation of the universe × retraining and band-centering results; only the input checksums have been verified.

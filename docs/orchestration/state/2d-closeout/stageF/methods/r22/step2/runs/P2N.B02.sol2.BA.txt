@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A maintains a more polished scientific register, replacing compressed expressions such as “data pull,” “miss regressor,” and “scalar unfolds” with explicit descriptions.
+2. A expresses selection requirements in readable prose and introduces software terminology more carefully, reducing the impression of internal implementation notes.
+3. A improves the exposition through clearer paragraph divisions and less repetition, particularly in the background-subtraction and estimator sections.
