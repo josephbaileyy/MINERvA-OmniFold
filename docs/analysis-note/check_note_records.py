@@ -1180,10 +1180,12 @@ PLANTS = [
     # cost-list R10; records-move-ledger.md L-con-R10) rewrote that one too, so the plant moved to the release
     # appendix's scope heading: of the 20 base reader paragraphs it is the one still verbatim. app_release.tex was then
     # a protected file; it was released to the lanes on 2026-10-28 (DECISION-20261028-joseph-protections-n4-release-
-    # retrospective.md item 3). Note round n4 edits it only by pinned pairs and leaves this heading unchanged, so the
-    # anchor still holds; a later edit of the heading must move the plant.
-    ("edited reader paragraph", "P5 READER paragraph", "app_release.tex",
-     "can and cannot recompute}", "can and cannot rerun}"),
+    # retrospective.md item 3). Round r22 Step 2 rewrote that heading too (records-move-ledger.md L-r22-1), so no
+    # base reader paragraph still prints verbatim and a note-side edit has no target. The plant therefore makes the
+    # other half of the same condition false: it drops the heading's REWRITE row hash from the ledger, so a reader
+    # paragraph that is no longer printed verbatim has no REWRITE record and P5 must fire.
+    ("edited reader paragraph", "P5 READER paragraph", LEDGER,
+     "READER 2e4dfdaf3190", "READER (hash removed)"),
     ("renamed tag (every occurrence)", "P2 tag joint-5d", "app_provenance.tex",
      lambda p: p.write_text(p.read_text().replace(r"\texttt{joint-5d}", r"\texttt{joint-5e}")), None),
     # Every copy of one path is lost: since n2 two paths print twice in App. G (a table row and the full-width entry
