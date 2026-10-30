@@ -611,7 +611,10 @@ At this declaration's commit:
 ## 10. Not changed
 
 C_resp, every covariance, cell, readout and κ; 3a's, 4C's, 5A's and 3b's readers and readouts; `fd_ct_readers.py`;
-`docs/analysis-note/**`. Claims and publication are Joseph's.
+`docs/analysis-note/**` by hand. The merge of main regenerated `docs/analysis-note/records_estimators.tex`, as
+`merge_main.sh` does: its three CATALOG line pointers moved from `:688`, which main's copy cited although main's
+CATALOG holds that line at `:716`, to `:717`. The standalone note's sync is the director's. Claims and publication
+are Joseph's.
 
 ## 11. Review dispositions
 
