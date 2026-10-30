@@ -247,6 +247,12 @@ def verify_table() -> None:
     assert widths == {7}, f"column widths differ: {sorted(widths)}"
     assert rows[0] == ["id", "state", "lane/owner", "blocker", "next action", "detail", "as_of"]
 
+    # RETIRED 2026-10-30 by Joseph's decision (DECISION-20261030-joseph-oi74-second-run-and-pr-p6.md, item 2): the row
+    # rules from here to the end of this function -- contiguous OI-1..OI-N ids, CONTROLLED_STATES, the terminal period
+    # and the detail pointer -- are retired, not repaired. No ids are renumbered and no rows rewritten. Table shape is
+    # gated by check_open_items_columns.py in the hook and CI. The rules are kept as they stood, so this script still
+    # stops at the first of them; nothing runs its main. See
+    # docs/orchestration/RECORD-20261030-close-items-pr-p6-row-rules-retired.md.
     data = rows[2:]
     expected_ids = [f"OI-{number}" for number in range(1, len(data) + 1)]
     assert [row[0] for row in data] == expected_ids
