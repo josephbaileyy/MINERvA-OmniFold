@@ -1,0 +1,146 @@
+Abstract
+We report a simultaneous measurement of the νµ charged-current inclusive cross section
+in five observables: the muon transverse and longitudinal momenta, available hadronic energy,
+three-momentum transfer and hadronic invariant mass. The cross section is unfolded without
+binning with OmniFold from MINERvA medium-energy open data. It is reported in sixteen
+cells, with a covariance whose median per-cell uncertainty is 7.29%. Three external generator
+predictions, compared on all sixteen cells, give χ2 between 109 and 272 for 16 degrees of freedom.
+GiBUU, compared only on the 8 cells its sample covers, gives χ2 = 58 on those cells. The
+coverage of the result’s intervals has not been validated; a bias test at two held-out GENIE v3
+truths finds the estimator’s bias below the reported uncertainty in every cell but does not test
+interval widths. In a fake-data study, the reported uncertainty does not cover the estimator’s
+bias at GiBUU-like truths or at a synthetic q3 tilt.
+
+Executive summary
+We apply unbinned machine-learning unfolding (OmniFold [1, 2]) to MINERvA’s medium-energy
+neutrino data. The principal result is the sixteen-cell cross section of §10 in the five observables pT ,
+p∥ , Eavail , q3 and W . Its covariance gives a median per-cell uncertainty of 7.29%. Three external
+generator predictions, compared on all sixteen cells, give χ2 between 109 and 272 for 16 degrees
+of freedom. GiBUU, compared only on the 8 cells its sample covers, gives χ2 = 58 on those cells
+(§10.4).
+The unbinned result for d2 σ/(dpT dp∥ ) reproduces the published integrated cross section [3]
+within about one percent, with a correlated shape difference (§6). The comparison is descriptive; its
+covariance lacks independent validation, validated coverage and calibrated significance (§4.6), and
+its readiness for publication as a measurement has not been established. LightGBM was chosen over
+∗
+†
+
+
+
+the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication
+were known (§3.2).
+Adding Eavail , q3 and W gives simultaneous unfolds in three, four and five dimensions; the 3D,
+4D and configuration-(a) five-dimensional unfolds are reported as central values. In configuration (a),
+the purity-subtracted estimator of the five-dimensional central value, the 4D and 5D marginalnormalization checks against the lower-dimensional result pass to ≈1–2 %. The 3D marginal of
+configuration (e), a deterministic estimator with refined negative-weight subtraction, agrees to
+0.141 % in total with the 2D result of configuration (f), the nominal estimator with that subtraction,
+a cross-configuration comparison (§7). Reconstructed W is fixed by (pT , p∥ , q3 ), so the five are
+simultaneous, not independent, observables (§8.2).
+The generator comparisons of the central values are descriptive. All four truth-level generators,
+GENIE [4], MINERvA Tune [5], NuWro [6] and GiBUU [7], under-predict the unfolded central
+value in the quasielastic–∆ dip (0.1 ≤ Eavail < 0.4 GeV), the region of the established MINERvA
+low-recoil discrepancy [5, 8] (§7.6, §7.7). In cell-integrated terms, most of the positive difference
+from the Tune v1 prior lies at Eavail ≥ 0.8 GeV, much of it at W ≥ 1.8 GeV (§8.4). The high-Eavail ,
+high-W region carries the largest regularization bias measured in §9. The four external generators
+also fall below the data in this region, each by about its overall shortfall once GiBUU’s sample limit
+is allowed for (§8.5).
+The generator tests are an application that illustrates calibrated inference with a biased estimator.
+Calibrated joint five-dimensional tests of hybrid null hypotheses for five predictions, in total (rate and
+shape) and in shape, reject all ten under six stated conditions (§11.4). The rejections are not physical
+exclusions, and matched coarse projections reject as well (§11.7). The decisions use completed
+pseudo-experiments; lost ones, recovered for reporting only, change none (§11.6). Correcting the
+carbon-only NuWro and GiBUU predictions to the CH target moves both toward the data. The ten
+decisions, made with the carbon-only predictions, are unchanged. In the descriptive re-evaluation
+with corrected predictions, NuWro’s total-test rejection is not robust to the correction (§11.9).
+A methodological finding concerns the standard covariance, which sums single-source systematic
+matrices, each with all other sources nominal, and so omits nonlinear cross-source response terms.
+A corrected unified-throw test, which re-unfolds with all reweightable sources perturbed together,
+stores the joint mean shift separately (§4.5).
+A preliminary extended-fiducial study removes the truth-muon cuts and keeps the fiducial volume
+and MINOS-based selection. It puts about 6 % of the scalar 2D rate in newly acceptance-supported
+cells (part of tier 1, the interpreted measurement) and about 28 % in low- or zero-efficiency cells
+(tier 2, extrapolated from the prior; §12).
+The body states each limitation with the result it qualifies; the principal ones are these. Ck
+denotes coverage within ±k standard deviations. The quoted 2D statistical block has had no coverage
+test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built
+undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2). No result’s intervals have validated
+coverage (two dimensions: §4.6; five dimensions: §9.5; the sixteen cells: §10.3). The others are
+stated with their results: the generator comparisons (§§7–8); the absence of a 3D or 4D covariance
+(§7); the five-dimensional estimator’s regularization bias (§9.3) and the purity-subtraction bias
+of configurations (a) and (c) (§9.2); five-dimensional intervals and their coverage (§9.4, §9.5); the
+five-axis covariance of the configuration-(a) central value (§9.6); the calibration and nuisance model of
+the generator tests (§11.3, §11.8); tier 2 of the extended-fiducial study (§12); the fake-data limitation
+of the sixteen-cell result (§10.3); and point-cloud work (App. F).
+Introduction and motivation
+
+MINERvA (Main Injector Experiment for ν-A) is a dedicated neutrino–nucleus scattering experiment
+in Fermilab’s NuMI beamline, immediately upstream of the MINOS near detector [9]. During
+roughly a decade of operation ending in 2019, it recorded high-statistics samples in low-energy and
+medium-energy (ME) beam configurations [10] and in neutrino-dominated (forward horn current,
+FHC) and antineutrino-dominated modes. MINERvA measures neutrino–nucleus cross sections
+
+on a range of nuclear targets in the few-GeV region most relevant to accelerator-based oscillation
+experiments. These cross sections and their nuclear effects are a leading systematic uncertainty
+for T2K [11], NOvA [12], Hyper-Kamiokande [13], and DUNE [14]. The few-GeV regime combines
+quasielastic, resonant, and deep-inelastic processes that no single model describes well. This analysis
+uses the public ME FHC CC-inclusive data product (detector details in §2).
+The MINERvA ME FHC charged-current (CC) inclusive double-differential cross section in muon
+transverse and longitudinal momentum, d2 σ/(dpT dp∥ ), was published by Ruterbories et al. [3] using
+D’Agostini iterative Bayesian unfolding (IBU) [15] with a binned response matrix. We reproduce it
+with unbinned OmniFold [1, 2], which iteratively reweights events using machine-learned likelihood
+ratios on per-event observables rather than on a fixed histogram binning.
+Machine-learning advances have enabled unbinned unfolding (overviews in Refs. [16, 17]; crossexperiment guidance in Ref. [18]). One broad family iteratively reweights a starting simulation;
+OmniFold [1, 2, 19] is its most widely adopted method. The other generates new samples directly
+with a neural network [20–23]. Both lift the binned-response limitations of widely-used classical
+methods [24] such as IBU, the SVD method [25], and TUnfold [26].
+Prior OmniFold applications. In the last few years OmniFold has progressed from a method
+proposal to published measurements. H1 published the first real-data applications in deep-inelastic
+scattering: lepton–jet correlations unfolded simultaneously in eight dimensions [27], followed by jet
+substructure at high Q2 [28]. LHCb unfolded identified-hadron distributions in Z-tagged jets [29].
+ATLAS performed a simultaneous unbinned measurement of twenty-four Z+jets observables [30].
+Ref. [18] collects these and other applications and distills cross-experiment practice. Three of the
+practices it audits appear in our uncertainty budget: the ensemble-mean cross-check of the central
+value, the bootstrap statistical covariance, and the joint-perturbation (unified-throw) covariance
+check of §4.5.
+H1 cut backgrounds to a negligible level; LHCb corrected per track before unfolding. ATLAS left
+its less-than-0.25 % background in place and assigned it as an uncertainty, while identifying negativelyweighted simulated events as the natural in-method subtraction [2, 30]. Ref. [18] recommends this
+in-method subtraction for nontrivial backgrounds. Recent methodological work explicitly treats
+backgrounds, fakes, acceptance, and inefficiency in OmniFold-HI [31] and generative unfolding [32].
+These constructions address related problems; their subtraction prescriptions can differ.
+Closest to this analysis is the study of Huang et al. [33], the first application of OmniFold to a
+neutrino cross section: a mock-data unfolding of muon kinematics on the public T2K near-detector
+simulated dataset, benchmarked against traditional binned approaches. Two of its findings bear on
+neutrino applications. The first is its iteration count, which we do not adopt (§3.2). The second
+is an ensemble of reweighting trials with different train/test splits that controls the ML stochastic
+component; we include that component explicitly, as the training-seed variation band (§4). The
+present work differs from that study in three ways. It unfolds real MINERvA data to an absolutely
+normalized cross section, with a 2D uncertainty budget whose covariance components are all built
+with the central value’s own learner (§3.2). Its gradient-boosted decision-tree (GBDT) learners suit
+a low-dimensional tabular feature set. It validates the method directly against a published binned
+measurement of the same data (§6).
+Motivation for unbinned unfolding. First, OmniFold learns event weights in the full observable
+space and histograms only the final result, so reported bins can be chosen or refined after unfolding
+without rerunning it. Background subtraction is unbinned too in the 2D result and its covariance,
+in the 3D and 4D central values and in the sixteen-cell five-dimensional result (§10), which use
+
+refined negative-weight subtraction (§3.1). The configuration-(a) five-dimensional central value and
+its five-axis covariance, and the extended-fiducial value, use the binned purity weight, a per-reco-bin
+(D − B)/D weight fixed before training. Second, additional observables enter as input features,
+without multiplying response-matrix bins. The available-energy extension (§7) is built this way; a
+binned method such as IBU would need a correspondingly larger multidimensional response matrix
+to include it. Third, OmniFold regularizes through model capacity and through an iteration count,
+which it shares with IBU. Comparing the two methods on the same data probes the result’s method
+dependence (§6).
+Analysis strategy. The published 2D cross section provides a quantitative validation of unbinned
+OmniFold on MINERvA data and a size comparison for its uncertainty budget (§§2–6). The same
+pipeline then adds Eavail , q3 (§7) and W (§8) as classifier inputs, tested by marginalization to each
+lower-dimensional result, closure, coverage and classifier-family comparisons. The validation and
+uncertainty of the five-dimensional estimator (§9), the sixteen-cell result (§10) and the calibrated
+generator tests built on the estimator (§11) follow these central values. A scalar study with relaxed
+truth-muon cuts (§12) probes an alternative signal definition. The companion journal article is a
+shortened account, and this note gives the detail it omits.
+Scope. The results hold for one implementation of unbinned OmniFold, applied to one data set,
+and for the configurations, observables and deformations tested. The principal limitations are listed
+in the executive summary (p. 2). The generator tests of §11 evaluate hybrid null hypotheses and add
+no reportable uncertainty. Full-event unfolding with point-cloud transformer (PET) representations
+is in progress and documented separately (App. F), and no result in this note depends on it.

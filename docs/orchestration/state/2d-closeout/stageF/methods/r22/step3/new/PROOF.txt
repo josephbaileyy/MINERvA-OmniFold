@@ -1,0 +1,22 @@
+OK  B01: its readiness for publication as a measurement has not been established
+OK  B02: The reseeded run's median agrees with the
+OK  B02: Its seed was not fixed, and its run log was not found
+OK  B03: Block's share of total variance
+OK  B04: the undivided band, rebuilt without this term
+OK  B04: OmniFold's miss treatment corrects acceptance
+OK  B05: unconfirmed hypothesis of this analysis
+OK  B05: the panels have no printed titles
+OK  B07: hadronic diagnostics are also stored
+OK  B09: are bitwise equal to the central one
+OK  B09: and the detector response is not probed
+OK  B09: the last column gives the
+OK  B11: widths learned from the calibration set
+OK  B12: The learner backends are labelled lgbm, exact and hist
+OK  B12: but no separate pair formula
+OK  B13: to have been lost independently of their outcomes
+OK  B14: proposed stressing the hadronic record, especially for quasielastic events, to inspect low
+OK  B15: An earlier release candidate, RC1, passed its packaged verifier
+KEY PROOF: 18/18 changed phrases print in NEW's pieces
+
+Built from the committed tree 928fec6b77ae37797d475f40002f4f5de430fcc3 (tracked tree clean).
+main_note.pdf sha256 f79724876177c219152dd638ac92f33f68f3b22f38c30ba38916c2f1aff668e9; pieces cut by tools/split_base.py, 56,293 words.
