@@ -270,6 +270,7 @@ docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	tr
 docs/orchestration/FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md	tracked	ARCHIVAL	finding		20260910	terminal		exact-path-only	yes
 docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	tracked	LIVE	finding		20260910	open		route-only	no
 docs/orchestration/FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md	tracked	LIVE	finding	member-campaign	20260919	open		route-only	no
+docs/orchestration/FINDING-20261030-close-items-5d-replica-cpu36-is-a-scheduler-raise.md	tracked	ARCHIVAL	finding		20261030	terminal		exact-path-only	yes
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	tracked	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	yes
 docs/orchestration/FINDINGS.md	tracked	LIVE	ledger			open		route-only	no
 docs/orchestration/FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md	tracked	LIVE	followup-prompt		20260906	open		route-only	no
@@ -7399,6 +7400,7 @@ docs/orchestration/state/s5p/transition-r6/plan.json	tracked	MACHINE	state-artif
 docs/orchestration/state/s5p/transition-r6/runner_r6.sh	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	yes
 docs/orchestration/state/s5p/transition-r6/validate_deploy_r6.py	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	yes
 docs/orchestration/state/sessions.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
+docs/orchestration/state/ssplit5d-cpu36-20261030/sacct-session.txt	tracked	MACHINE	state-artifact	ssplit5d-cpu36-20261030		generated		exact-path-only	yes
 docs/orchestration/state/step1-dynamics-submit-56531057.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/step1-ihedge-launch-56525829.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/step1-traj-ihedge-56525829.salloc.log	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
