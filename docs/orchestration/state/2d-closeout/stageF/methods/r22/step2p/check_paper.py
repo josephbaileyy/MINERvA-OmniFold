@@ -22,8 +22,9 @@ Checks:
   2. every printed base sentence of paper_body.tex that no longer prints verbatim is named in some row's "before"
      column, by its id (PB + index, as --list prints);
   3. every \\label of the base paper_body.tex still exists;
-  4. every other note-directory .tex/.bib file is byte-identical to the base; main_paper.tex equals its base with the
-     pinned PAIRS applied;
+  4. every other note-directory .tex/.bib file is byte-identical to the base, apart from the two files that
+     tools/registry/results_index.py generates from the registry (GENERATED; its --check proves them fresh, and the
+     B4 re-pin changes them); main_paper.tex equals its base with the pinned PAIRS applied;
   5. each of the eight GATE phrases prints exactly once in paper_body.tex, and the FROZEN sentence prints exactly once;
   6. no new number: every numeral token of the new body's printed text, outside macro names, occurs in the base's;
   7. the registered alias "the joint-test estimator" still prints (STEP2-PLAN.md section 7, ruling 4).
@@ -53,6 +54,7 @@ GATE = [r"with a median statistical uncertainty of \SI{0.676}{\percent}",
         r"it is \SIrange{16}{31}{\percent} in the most affected",
         r"within the quoted total uncertainty in about half of those cells"]
 FROZEN = "Interval coverage has not been validated."
+GENERATED = {"records_estimators.tex", "records_results_index.tex"}
 ALIAS = "the joint-test estimator"
 NUM = re.compile(r"(?<![A-Za-z\\{])\d+(?:[.,]\d+)*")
 IDRX = re.compile(r"\bPB\d+\b")
@@ -138,7 +140,7 @@ def check(cur, old, ledger_text, prot_cur, prot_old, notes, pairs=None, pins=Non
     for lab in sorted(set(re.findall(r"\\label\{([^}]*)\}", old)) - set(re.findall(r"\\label\{([^}]*)\}", cur))):
         fails.append(f"LABEL REMOVED {BODY}: {lab}")
     for f in sorted(set(prot_old) | set(prot_cur)):
-        if f != PAIRED and prot_cur.get(f) != prot_old.get(f):
+        if f != PAIRED and f not in GENERATED and prot_cur.get(f) != prot_old.get(f):
             fails.append(f"PROTECTED changed: {f}")
     exp = paired_expected(prot_old.get(PAIRED, ""), pairs, pins)
     if exp is None:
