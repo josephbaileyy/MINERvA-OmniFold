@@ -85,7 +85,7 @@ docs/orchestration/CLAIM-CLM-009.md	tracked	ARCHIVAL	document			terminal		exact-
 docs/orchestration/CLAIM-CLM-010.md	tracked	ARCHIVAL	document			terminal		exact-path-only	yes
 docs/orchestration/CLAIM-CLM-011.md	tracked	ARCHIVAL	document			terminal		exact-path-only	yes
 docs/orchestration/CLAIM-CLM-012.md	tracked	ARCHIVAL	document			terminal		exact-path-only	yes
-docs/orchestration/CLAIMS.md	tracked	LIVE	ledger	fe-fps-campaign		open		route-only	no
+docs/orchestration/CLAIMS.md	tracked	ARCHIVAL	ledger	fe-fps-campaign		terminal		exact-path-only	yes
 docs/orchestration/CLARIFICATION-20260928-s5p-recompute-A6-A8.md	tracked	LIVE	document		20260928	open		route-only	no
 docs/orchestration/CLARIFICATION-20261004-s5p-10pct-pool-limit.md	tracked	LIVE	document		20261004	open		route-only	no
 docs/orchestration/CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md	tracked	LIVE	document		20260830	open		route-only	no
@@ -197,14 +197,17 @@ docs/orchestration/DECISION-20261028-joseph-protections-n4-release-retrospective
 docs/orchestration/DECISION-20261028-joseph-protections-remade-and-r21.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/DECISION-20261028-joseph-r19-variant-b-and-moves.md	tracked	LIVE	document		20261028	open		route-only	no
 docs/orchestration/DECISION-20261028-joseph-result-table-and-deposit-package.md	tracked	LIVE	document		20261028	open		route-only	no
+docs/orchestration/DECISION-20261029-joseph-freeze-claims-md.md	tracked	LIVE	document		20261029	open		route-only	no
+docs/orchestration/DECISION-20261029-joseph-limitations-may-leave-paper.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-20261029-joseph-oi160-close-cml-and-5b-session.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-20261029-joseph-oi160-reproduction-and-q8.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-20261029-joseph-oi160-tolerance-run.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-20261029-joseph-register-rounds-reopen.md	tracked	LIVE	document		20261029	open		route-only	no
+docs/orchestration/DECISION-20261029-joseph-relax-b2-internal-ledger.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-20261029-joseph-retention-archive-a1.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
-docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	LIVE	document	fe-fps-campaign	20261029	open		route-only	no
+docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
 docs/orchestration/DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md	tracked	LIVE	document		20261006	open		route-only	no
 docs/orchestration/DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md	tracked	LIVE	document		20260916	open		route-only	no
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	tracked	LIVE	document		20260822	open		route-only	no
@@ -462,6 +465,8 @@ docs/orchestration/RECORD-20261029-close-items-defer-gate-rows.md	tracked	ARCHIV
 docs/orchestration/RECORD-20261029-close-items-defer-pet-rows.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-close-items-oi12-relative-diagonal.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-close-items-oi45-oi151.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261029-close-items-oi53-claims-freeze.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261029-director-analysis-note-sync-2d94cbc5.md	tracked	ARCHIVAL	document		20261029	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
@@ -6506,6 +6511,15 @@ docs/orchestration/state/oi126-successor-iteration-sweep-adjudication-20260823.j
 docs/orchestration/state/oi126-successor-phase0-replay-and-phase1-prerun-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes
 docs/orchestration/state/oi126-successor-t1-endpoint-predeclaration-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes
 docs/orchestration/state/oi137-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only	no
+docs/orchestration/state/oi160-cml-tolerance-20261029/BINDING.md	tracked	LIVE	state-artifact	oi160-cml-tolerance-20261029		open		route-only	no
+docs/orchestration/state/oi160-cml-tolerance-20261029/DECLARATION.md	tracked	LIVE	state-artifact	oi160-cml-tolerance-20261029		open		route-only	no
+docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/code.sha256	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/metadata-session.txt	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/run_array.sh	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/seeds.tsv	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/stored.sha256	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/test_cml.py	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
 docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
 docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	tracked	ARCHIVAL	state-artifact	oi160-reproduction-20261029		terminal		exact-path-only	yes
