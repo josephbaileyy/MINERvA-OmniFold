@@ -7,10 +7,14 @@
 # group) and one retry per run. A run that fails both attempts is logged FAILED; the adoption rule counts a failed
 # pairwise run as a loss for NEW. At most 3 concurrent runs per model. Outputs: <out>/<P2N|P1N>.<id>.<model>.<AB|BA|rN>.md
 # and <out>/status.tsv.
+# SOL_RX (default sol2) is the run_x.sh key for the sol rater: sol2 is gpt-6.1-sol on codex-school2, sol the same model on
+# codex-school. Step 3 sets SOL_RX=sol (the director, 2026-10-30: codex-school2 reported its usage limit until
+# 2026-11-04). Output names keep "sol2", the rater; status.tsv records the key used for each run.
 set -u
 T=$(cd "$(dirname "$0")" && pwd); M=${M:?set M to the stageF/methods directory}
 export RX=$M/register-method/tools/run_x.sh P2N=$M/note-rating/P2N.prompt.txt P1N=$M/rater-calibration/prompts/P1N.prompt.txt
-export XMODEL_DIR=${XMODEL_DIR:?set XMODEL_DIR to a scratch directory} OLD=$1 NEW=$2 OUT=$3 T; shift 3
+export XMODEL_DIR=${XMODEL_DIR:?set XMODEL_DIR to a scratch directory} OLD=$1 NEW=$2 OUT=$3 T SOL_RX=${SOL_RX:-sol2}; shift 3
+case $SOL_RX in sol|sol2) ;; *) echo "SOL_RX must be sol or sol2"; exit 2 ;; esac
 mkdir -p "$OUT"
 one() { kind=$1; m=$2; id=$3; o=$4; out=$OUT/$kind.$id.$m.$o.md
   eval "$(sed -n '/^with_timeout() {/,/^}/p' "$T/gapjob.sh")"
@@ -23,8 +27,9 @@ one() { kind=$1; m=$2; id=$3; o=$4; out=$OUT/$kind.$id.$m.$o.md
     set -- "$d/Document_A.txt" "$d/Document_B.txt"
   else p=$P1N; cp "$NEW/$id.txt" "$d/chapter.txt"; set -- "$d/chapter.txt"; fi
   for a in 1 2; do t0=$(date +%s)
-    with_timeout 900 bash "$RX" "$m" "$p" "$out" "$@" > /dev/null 2>&1 < /dev/null; rc=$?
-    printf '%s\t%s\t%s\t%s\tattempt=%s\trc=%s\tsecs=%s\n' "$kind" "$id" "$m" "$o" $a $rc $(( $(date +%s) - t0 )) >> "$OUT/status.tsv"
+    key=$m; [ "$m" = sol2 ] && key=$SOL_RX
+    with_timeout 900 bash "$RX" "$key" "$p" "$out" "$@" > /dev/null 2>&1 < /dev/null; rc=$?
+    printf '%s\t%s\t%s\t%s\tattempt=%s\trc=%s\tsecs=%s\tkey=%s\n' "$kind" "$id" "$m" "$o" $a $rc $(( $(date +%s) - t0 )) "$key" >> "$OUT/status.tsv"
     [ "$rc" = 0 ] && grep -q "$want" "$out" 2>/dev/null && return 0
     [ -f "$out" ] && mv "$out" "$out.failed$a"
   done

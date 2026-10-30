@@ -3,32 +3,6 @@
 \section*{Guide to the appendices}
 \addcontentsline{toc}{section}{Guide to the appendices}
 
-The appendices fall into three groups. The first gives methods and context for the body: statistical methods and the 2D comparison (App.~\ref{app:statmethods}) and those for the multidimensional results and inference (App.~\ref{app:statmethods-nd}); unbinned background subtraction (App.~\ref{app:negweight}); the detector-response-mismatch closure, a protocol implemented but not yet run (App.~\ref{app:response-mismatch}); and the survey of MINERvA measurement dimensionality (App.~\ref{app:landscape}). The second, on future work, covers point-cloud (PET) representations (App.~\ref{sec:pet}). The third describes the result package and what it reproduces (App.~\ref{app:release}) and the code layout (App.~\ref{app:codebase}); it is reference material and is not needed to follow the physics results. The provenance of the records the note cites, the fixed identities and audit record of the five-axis covariance of the configuration-(a) central value, the test-suite discipline, and superseded values and withdrawn results are kept in the analysis repository's records document, Ref.~\cite{NoteRecords2026}; each citation names the entry's number or heading.
+The appendices fall into three groups. The first gives methods and context for the body: statistical methods and the 2D comparison (App.~\ref{app:statmethods}) and those for the multidimensional results and inference (App.~\ref{app:statmethods-nd}); unbinned background subtraction (App.~\ref{app:negweight}); the protocol for a detector-response-mismatch closure, which rescales the reconstructed available energy of the pseudo-data while OmniFold keeps its nominal response (App.~\ref{app:response-mismatch}); and the survey of MINERvA measurement dimensionality (App.~\ref{app:landscape}). The second, on future work, covers point-cloud (PET) representations (App.~\ref{sec:pet}). The third describes the result package and what it reproduces (App.~\ref{app:release}) and the code layout (App.~\ref{app:codebase}); it is reference material and is not needed to follow the physics results. The provenance of the records the note cites, the fixed identities and audit record of the five-axis covariance of the configuration-(a) central value, the test-suite discipline, and superseded values and withdrawn results are kept in the analysis repository's records document, Ref.~\cite{NoteRecords2026}; each citation names the entry's number or heading.
 
-\paragraph{Labels used in the repository.} The body describes each object in words. Where a repository label is needed to find the object, it is given once in parentheses at first use, or here.
-\begin{center}
-\small
-\begin{tabular}{@{}p{0.27\textwidth}p{0.67\textwidth}@{}}
-\toprule
-Label & Meaning in this note \\
-\midrule
-\texttt{lgbm}, \texttt{exact}, \texttt{hist} & the learner backends: LightGBM (the quoted central values and their
-  uncertainty ensembles; also the joint-test estimator), the scikit-learn exact-split estimator (the exact-split cross-check), and the scikit-learn histogram
-  estimator (\S\ref{sec:method-config}) \\
-\texttt{purity}, \texttt{negweight}, \texttt{negweight-refined} & the values of the drivers' background-mode
-  option (\texttt{-{}-bkg-mode}): purity-based subtraction, negative-weight injection, and refined negative-weight
-  subtraction
-  (\S\ref{sec:method-algo}, App.~\ref{app:negweight}) \\
-\texttt{cv}, \texttt{mean} & the two variants of the five-axis covariance, with the unified-throw covariance
-  centered on the central value or on the throw mean; this note uses \texttt{cv}
-  (\S\ref{sec:eavailw-construction}) \\
-\texttt{MNV101\_ACTIVE\_UNIVERSE} & the event-loop mode that re-applies the selection with one lateral universe
-  active (``re-selected'' universes, \S\ref{sec:uq-higherdim}) \\
-\texttt{np.cov(Xrep, rowvar=False, ddof=1)}, \texttt{np.random.\allowbreak default\_rng().\allowbreak poisson(1.0)}, \texttt{np.linalg.pinv}, \texttt{-{}-add-norm 0} & the calls behind Eq.~\eqref{eq:bootcov}, \S\ref{app:poisson} and \S\ref{sec:invert} (default cutoff), and the earlier MAT check's option without the normalization band (\S\ref{sec:minerva}) \\
-July sweep, May sweep & the two productions of 2D systematic-universe re-unfolds; the quoted universe block uses
-  the July sweep (\S\ref{sec:uq-2d-construction}) \\
-J28 & the audit finding that the $N$-dimensional code divided every flux universe by the central-value flux;
-  ``flux-corrected'' and ``(J28)'' products are those repaired for it (App.~\ref{app:negweight}) \\
-\bottomrule
-\end{tabular}
-\end{center}
+\paragraph{Labels used in the repository.} The body describes each object in words: the learner backends (\S\ref{sec:method-config}), the background-subtraction modes (\S\ref{sec:method-algo}, App.~\ref{app:negweight}), the two centerings of the five-axis covariance (\S\ref{sec:eavailw-construction}), the re-selected universes (\S\ref{sec:uq-higherdim}) and the two universe sweeps (\S\ref{sec:uq-2d-construction}). Where a repository label is needed to find the object, it is given once in parentheses at first use. The learner backends are labelled \texttt{lgbm}, \texttt{exact} and \texttt{hist}: LightGBM (the quoted central values and their uncertainty ensembles; also the joint-test estimator), the scikit-learn exact-split estimator (the exact-split cross-check) and the scikit-learn histogram estimator (\S\ref{sec:method-config}). Products described as flux-corrected are those repaired for an audit finding that the $N$-dimensional code divided every flux universe by the central-value flux (App.~\ref{app:negweight}). The calls behind Eq.~\eqref{eq:bootcov}, \S\ref{app:poisson} and \S\ref{sec:invert} (default cutoff) are \texttt{np.cov(Xrep, rowvar=False, ddof=1)}, \texttt{np.random.\allowbreak default\_rng().\allowbreak poisson(1.0)} and \texttt{np.linalg.pinv}; the earlier MAT check without the normalization band (\S\ref{sec:minerva}) used the option \texttt{-{}-add-norm 0}.

@@ -1,0 +1,120 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER adds substantive claims not supported by BEFORE, stating that "The comparison is descriptive; the covariance lacks independent validation, validated coverage and calibrated significance (\S\ref{sec:uq-2d-scope})".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific cause "to time limits" and the observed status "so every submitted draw has been observed", while reframing the decision process with "The decisions use completed pseudo-experiments".
+
+Q3: VERDICT: SAME
+DETAIL: The two independent clauses joined by a semicolon are inverted in order with "its" replacing "PET", preserving the exact meaning and qualifiers.
+
+Q4: VERDICT: SAME
+DETAIL: The sentence is restructured to make "Two regenerations" the subject, preserving all facts, numbers, and causal inferences without addition or omission.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanation of why the seed was not fixed: ": the driver version it ran had no seed option, and its production job script passed no seed."
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER introduces a specific number not stated in BEFORE, quoting "\SI{0.18}{\percent}".
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops a key limitation and disclaimer stated in BEFORE: "This \emph{observed} covariance difference does not demonstrate a causal efficiency advantage (App.~\ref{sec:rank})."
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops several numerical metrics and qualifiers: "(at most \SI{39.1}{\percent}), the integral by \SI{9.9}{\percent} and the $\pPar$ projections by at most \SI{21}{\percent}; it carries a median \SI{10.6}{\percent} of the per-bin variance and \SI{17.1}{\percent} of the integral's" (moved to Table~\ref{tab:pl-added} in Q9).
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds an entire table ("\begin{table}[htbp] ... \caption{The run-period block added to the other blocks.} \label{tab:pl-added} \end{table}") containing numbers moved from the preceding passage.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER drops "The band was then rebuilt without this term", adds "Two bands were scored: the completeness-divided band above and", and narrows the untested scope to "tested for coverage".
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "natively" from "natively corrects acceptance" and replaces the specific term "miss treatment" with "unmatched-event treatment".
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific histogram identifiers "(\texttt{hXSec2D}, \texttt{hXSec\_pt}, \texttt{hXSec\_pz})".
+
+Q13: VERDICT: SAME
+DETAIL: The compound sentence is divided into two sentences, preserving all statements, qualifiers, conditions, and the cross-reference to App.~\ref{sec:rank}.
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER adds "remains" and "unconfirmed" while dropping "our" in "remains the leading, unconfirmed hypothesis", which broadens the hypothesis beyond the authors' own framing.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the descriptive limitation "; the panels have no printed titles." from the caption.
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER drops "The event-loop output files" (and "store"), omitting where the truth hadronic diagnostics are retained.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER replaces the strict technical qualifier "bitwise equal" with "identical" and broadens "the other seeds" to "every tested seed".
+
+Q18: VERDICT: DIFFERS
+DETAIL: AFTER adds "Gaussian" in "the Gaussian references" and "descriptive" in "descriptive context only", neither of which is stated in BEFORE.
+
+Q19: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the test was run with "the detector response fixed", which is an operational claim not supported by BEFORE's statement that "the detector response is not probed".
+
+Q20: VERDICT: SAME
+DETAIL: The five numerical values given in the running text of BEFORE are integrated directly into a fourth table column in AFTER, preserving all values, formulas, and meaning.
+
+Q21: VERDICT: SAME
+DETAIL: The statement is reordered to "consists only of ... without a quoted covariance", conveying the identical facts and scope as BEFORE.
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER drops the methodological qualifier "learned" from "widths learned from", and replaces "bin--toy cells" with "(bin, pseudo-experiment) pairs".
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory limitation and rationale "--- hence the two color schemes."
+
+Q24: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific production batch and date identifier "(the battery of 2026-06-10)".
+
+Q25: SAME
+DETAIL: The passage splits the text across a semicolon into two sentences, preserving all claims, qualifiers, and the appendix citation intact.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the status qualifier "implemented but not yet run" and adds technical implementation details ("which rescales the reconstructed available energy of the pseudo-data while OmniFold keeps its nominal response") not found in BEFORE.
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER omits repository labels and details present in BEFORE's table, including "\texttt{lgbm}, \texttt{exact}, \texttt{hist}", "\texttt{purity}, \texttt{negweight}, \texttt{negweight-refined}", "\texttt{cv}, \texttt{mean}", "\texttt{MNV101\_ACTIVE\_UNIVERSE}", and the specific sweep names.
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER asserts affirmatively that "MAT's code supplies these (below)", whereas BEFORE only stated that the paper "leaves to MAT, or does not state" them.
+
+Q29: SAME
+DETAIL: Minor punctuation and phrasing adjustments across the sentences maintain the exact technical meaning, conditions, and citations without adding or dropping information.
+
+Q30: VERDICT: DIFFERS
+DETAIL: AFTER adds a new qualification and section reference not present in BEFORE: ", which has not been shown (\S\ref{sec:joint5d-frozen}, with the design's data-informed elements)."
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER asserts as a fact that stressing the hadronic record "probes low-$W$ bias", whereas BEFORE only stated that Kevin McFarland "proposed stressing ... to inspect low-$W$ bias".
+
+Q32: SAME
+DETAIL: Replaces informal terminology ("arm", "cheap", "intentionally") with standard formal register ("test", "computationally inexpensive adversarial stress test", "by design") while preserving the exact technical meaning.
+
+Q33: SAME
+DETAIL: Inverts the two clauses and rewords "the inventory is not exhaustive" to "The survey is nonexhaustive", preserving the identical meaning and table caption.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific file path and repository link "(\texttt{docs/analysis-note/pet\_note.tex}, \repolink)".
+
+Q35: SAME
+DETAIL: Rephrases the sentence into active voice ("passed its packaged verifier when replayed...") while fully preserving every operational condition, model identifier, and test result.
+
+Q36: SAME
+DETAIL: Changes "A $\checkmark$ marks" to "Items labelled (fixed) have" to match the updated list label style, retaining all references, definitions, and qualifiers.
+
+Q37: SAME
+DETAIL: Replaces the symbol "$\checkmark$" with the label "(fixed)" on each item, leaving the bin definitions, units, dimensions, and ordering rules identical.
+
+Q38: SAME
+DETAIL: Replaces the symbol "$\checkmark$" with the label "(fixed)" across items, leaving all mathematical specifications, equations, masks, and matrix definitions identical.
+
+Q39: SAME
+DETAIL: Restructures the clause order and spells out "The smallest eigenvalue $\lambda_{\min}$", preserving all facts regarding the noise floor, information content, and five-digit cross-host agreement.
+
+Q40: SAME
+DETAIL: The text, mathematical symbols, labels, and figure environment are completely identical, with only a LaTeX `\clearpage` layout command appended.
+END
