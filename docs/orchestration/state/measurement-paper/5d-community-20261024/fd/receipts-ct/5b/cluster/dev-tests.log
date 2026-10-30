@@ -1,0 +1,2146 @@
+ERROR in cling::CIFactory::createCI(): cannot extract standard library include paths!
+Invoking:
+  LC_ALL=C x86_64-conda-linux-gnu-c++  -O3 -DNDEBUG -xc++ -E -v /dev/null 2>&1 | sed -n -e '/^.include/,${' -e '/^ \/.*++/p' -e '}'
+Results was:
+With exit code 0
+error: entry with relative path at the root level is not discoverable
+{ 'name': '', 'type': 'directory',
+          ^~
+Error in modulemap.overlay!
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+
+Thread 191 (Thread 0x7ff78e0f36c0 (LWP 247008) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 190 (Thread 0x7ff78d8f26c0 (LWP 247009) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 189 (Thread 0x7ff78d0f16c0 (LWP 247010) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 188 (Thread 0x7ff78c8f06c0 (LWP 247011) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 187 (Thread 0x7ff78c0ef6c0 (LWP 247012) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 186 (Thread 0x7ff78b8ee6c0 (LWP 247013) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 185 (Thread 0x7ff78b0ed6c0 (LWP 247014) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 184 (Thread 0x7ff78a8ec6c0 (LWP 247015) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 183 (Thread 0x7ff78a0eb6c0 (LWP 247016) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 182 (Thread 0x7ff7898ea6c0 (LWP 247017) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 181 (Thread 0x7ff7890e96c0 (LWP 247018) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 180 (Thread 0x7ff7888e86c0 (LWP 247019) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 179 (Thread 0x7ff7880e76c0 (LWP 247020) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 178 (Thread 0x7ff7878e66c0 (LWP 247021) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 177 (Thread 0x7ff7870e56c0 (LWP 247022) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 176 (Thread 0x7ff7868e46c0 (LWP 247023) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 175 (Thread 0x7ff7860e36c0 (LWP 247024) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 174 (Thread 0x7ff7858e26c0 (LWP 247025) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 173 (Thread 0x7ff7850e16c0 (LWP 247026) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 172 (Thread 0x7ff7848e06c0 (LWP 247027) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 171 (Thread 0x7ff7840df6c0 (LWP 247028) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 170 (Thread 0x7ff7838de6c0 (LWP 247029) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 169 (Thread 0x7ff7830dd6c0 (LWP 247030) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 168 (Thread 0x7ff7828dc6c0 (LWP 247031) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 167 (Thread 0x7ff7820db6c0 (LWP 247032) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 166 (Thread 0x7ff7818da6c0 (LWP 247033) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 165 (Thread 0x7ff7810d96c0 (LWP 247034) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 164 (Thread 0x7ff7808d86c0 (LWP 247035) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 163 (Thread 0x7ff7800d76c0 (LWP 247036) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 162 (Thread 0x7ff77f8d66c0 (LWP 247037) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 161 (Thread 0x7ff77f0d56c0 (LWP 247038) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 160 (Thread 0x7ff77e8d46c0 (LWP 247039) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 159 (Thread 0x7ff77e0d36c0 (LWP 247040) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 158 (Thread 0x7ff77d8d26c0 (LWP 247041) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 157 (Thread 0x7ff77d0d16c0 (LWP 247042) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 156 (Thread 0x7ff77c8d06c0 (LWP 247043) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 155 (Thread 0x7ff77c0cf6c0 (LWP 247044) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 154 (Thread 0x7ff77b8ce6c0 (LWP 247045) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 153 (Thread 0x7ff77b0cd6c0 (LWP 247046) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 152 (Thread 0x7ff77a8cc6c0 (LWP 247047) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 151 (Thread 0x7ff77a0cb6c0 (LWP 247048) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 150 (Thread 0x7ff7798ca6c0 (LWP 247049) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 149 (Thread 0x7ff7790c96c0 (LWP 247050) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 148 (Thread 0x7ff7788c86c0 (LWP 247051) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 147 (Thread 0x7ff7780c76c0 (LWP 247052) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 146 (Thread 0x7ff7778c66c0 (LWP 247053) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 145 (Thread 0x7ff7770c56c0 (LWP 247054) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 144 (Thread 0x7ff7768c46c0 (LWP 247055) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 143 (Thread 0x7ff7760c36c0 (LWP 247056) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 142 (Thread 0x7ff7758c26c0 (LWP 247057) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 141 (Thread 0x7ff7750c16c0 (LWP 247058) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 140 (Thread 0x7ff7748c06c0 (LWP 247059) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 139 (Thread 0x7ff7740bf6c0 (LWP 247060) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 138 (Thread 0x7ff7738be6c0 (LWP 247061) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 137 (Thread 0x7ff7730bd6c0 (LWP 247062) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 136 (Thread 0x7ff7728bc6c0 (LWP 247063) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 135 (Thread 0x7ff7720bb6c0 (LWP 247064) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 134 (Thread 0x7ff7718ba6c0 (LWP 247065) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 133 (Thread 0x7ff7710b96c0 (LWP 247066) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 132 (Thread 0x7ff7708b86c0 (LWP 247067) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 131 (Thread 0x7ff7700b76c0 (LWP 247068) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 130 (Thread 0x7ff76f8b66c0 (LWP 247069) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 129 (Thread 0x7ff76f0b56c0 (LWP 247070) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 128 (Thread 0x7ff76e8b46c0 (LWP 247071) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 127 (Thread 0x7ff76e0b36c0 (LWP 247072) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 126 (Thread 0x7ff76d8b26c0 (LWP 247073) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 125 (Thread 0x7ff76d0b16c0 (LWP 247074) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 124 (Thread 0x7ff76c8b06c0 (LWP 247075) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 123 (Thread 0x7ff76c0af6c0 (LWP 247076) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 122 (Thread 0x7ff76b8ae6c0 (LWP 247077) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 121 (Thread 0x7ff76b0ad6c0 (LWP 247078) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 120 (Thread 0x7ff76a8ac6c0 (LWP 247079) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 119 (Thread 0x7ff76a0ab6c0 (LWP 247080) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 118 (Thread 0x7ff7698aa6c0 (LWP 247081) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 117 (Thread 0x7ff7690a96c0 (LWP 247082) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 116 (Thread 0x7ff7688a86c0 (LWP 247083) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 115 (Thread 0x7ff7680a76c0 (LWP 247084) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 114 (Thread 0x7ff7678a66c0 (LWP 247085) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 113 (Thread 0x7ff7670a56c0 (LWP 247086) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 112 (Thread 0x7ff7668a46c0 (LWP 247087) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 111 (Thread 0x7ff7660a36c0 (LWP 247088) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 110 (Thread 0x7ff7658a26c0 (LWP 247089) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 109 (Thread 0x7ff7650a16c0 (LWP 247090) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 108 (Thread 0x7ff7648a06c0 (LWP 247091) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 107 (Thread 0x7ff76409f6c0 (LWP 247092) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 106 (Thread 0x7ff76389e6c0 (LWP 247093) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 105 (Thread 0x7ff76309d6c0 (LWP 247094) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 104 (Thread 0x7ff76289c6c0 (LWP 247095) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 103 (Thread 0x7ff76209b6c0 (LWP 247096) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 102 (Thread 0x7ff76189a6c0 (LWP 247097) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 101 (Thread 0x7ff7610996c0 (LWP 247098) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 100 (Thread 0x7ff7608986c0 (LWP 247099) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 99 (Thread 0x7ff7600976c0 (LWP 247100) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 98 (Thread 0x7ff75f8966c0 (LWP 247101) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 97 (Thread 0x7ff75f0956c0 (LWP 247102) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 96 (Thread 0x7ff75e8946c0 (LWP 247103) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 95 (Thread 0x7ff75e0936c0 (LWP 247104) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 94 (Thread 0x7ff75d8926c0 (LWP 247105) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 93 (Thread 0x7ff75d0916c0 (LWP 247106) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 92 (Thread 0x7ff75c8906c0 (LWP 247107) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 91 (Thread 0x7ff75c08f6c0 (LWP 247108) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 90 (Thread 0x7ff75b88e6c0 (LWP 247109) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 89 (Thread 0x7ff75b08d6c0 (LWP 247110) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 88 (Thread 0x7ff75a88c6c0 (LWP 247111) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 87 (Thread 0x7ff75a08b6c0 (LWP 247112) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 86 (Thread 0x7ff75988a6c0 (LWP 247113) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 85 (Thread 0x7ff7590896c0 (LWP 247114) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 84 (Thread 0x7ff7588886c0 (LWP 247115) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 83 (Thread 0x7ff7580876c0 (LWP 247116) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 82 (Thread 0x7ff7578866c0 (LWP 247117) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 81 (Thread 0x7ff7570856c0 (LWP 247118) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 80 (Thread 0x7ff7568846c0 (LWP 247119) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 79 (Thread 0x7ff7560836c0 (LWP 247120) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 78 (Thread 0x7ff7558826c0 (LWP 247121) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 77 (Thread 0x7ff7550816c0 (LWP 247122) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 76 (Thread 0x7ff7548806c0 (LWP 247123) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 75 (Thread 0x7ff75407f6c0 (LWP 247124) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 74 (Thread 0x7ff75387e6c0 (LWP 247125) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 73 (Thread 0x7ff75307d6c0 (LWP 247126) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 72 (Thread 0x7ff75287c6c0 (LWP 247127) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 71 (Thread 0x7ff75207b6c0 (LWP 247128) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 70 (Thread 0x7ff75187a6c0 (LWP 247129) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 69 (Thread 0x7ff7510796c0 (LWP 247130) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 68 (Thread 0x7ff7508786c0 (LWP 247131) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 67 (Thread 0x7ff7500776c0 (LWP 247132) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 66 (Thread 0x7ff74f8766c0 (LWP 247133) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 65 (Thread 0x7ff74f0756c0 (LWP 247134) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ffb8e9c866c in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/core/../../../../libcblas.so.3
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 64 (Thread 0x7ff6cb1ff6c0 (LWP 247260) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 63 (Thread 0x7ff6ca9fe6c0 (LWP 247261) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 62 (Thread 0x7ff6ca1fd6c0 (LWP 247262) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 61 (Thread 0x7ff6c99fc6c0 (LWP 247263) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 60 (Thread 0x7ff6c91fb6c0 (LWP 247264) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 59 (Thread 0x7ff6c89fa6c0 (LWP 247265) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 58 (Thread 0x7ff6c81f96c0 (LWP 247266) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 57 (Thread 0x7ff6c79f86c0 (LWP 247267) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 56 (Thread 0x7ff6c71f76c0 (LWP 247268) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 55 (Thread 0x7ff6c69f66c0 (LWP 247269) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 54 (Thread 0x7ff6c61f56c0 (LWP 247270) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 53 (Thread 0x7ff6c59f46c0 (LWP 247271) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 52 (Thread 0x7ff6c51f36c0 (LWP 247272) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 51 (Thread 0x7ff6c49f26c0 (LWP 247273) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 50 (Thread 0x7ff6c41f16c0 (LWP 247274) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 49 (Thread 0x7ff6c39f06c0 (LWP 247275) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 48 (Thread 0x7ff6c31ef6c0 (LWP 247276) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 47 (Thread 0x7ff6c29ee6c0 (LWP 247277) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 46 (Thread 0x7ff6c21ed6c0 (LWP 247278) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 45 (Thread 0x7ff6c19ec6c0 (LWP 247279) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 44 (Thread 0x7ff6c11eb6c0 (LWP 247280) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 43 (Thread 0x7ff6c09ea6c0 (LWP 247281) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 42 (Thread 0x7ff6c01e96c0 (LWP 247282) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 41 (Thread 0x7ff6bf9e86c0 (LWP 247283) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 40 (Thread 0x7ff6bf1e76c0 (LWP 247284) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 39 (Thread 0x7ff6be9e66c0 (LWP 247285) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 38 (Thread 0x7ff6be1e56c0 (LWP 247286) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 37 (Thread 0x7ff6bd9e46c0 (LWP 247287) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 36 (Thread 0x7ff6bd1e36c0 (LWP 247288) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 35 (Thread 0x7ff6bc9e26c0 (LWP 247289) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 34 (Thread 0x7ff6bc1e16c0 (LWP 247290) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 33 (Thread 0x7ff6bb9e06c0 (LWP 247291) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 32 (Thread 0x7ff6bb1df6c0 (LWP 247292) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 31 (Thread 0x7ff6ba9de6c0 (LWP 247293) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 30 (Thread 0x7ff6ba1dd6c0 (LWP 247294) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 29 (Thread 0x7ff6b99dc6c0 (LWP 247295) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 28 (Thread 0x7ff6b91db6c0 (LWP 247296) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 27 (Thread 0x7ff6b89da6c0 (LWP 247297) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 26 (Thread 0x7ff6b81d96c0 (LWP 247298) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 25 (Thread 0x7ff6b79d86c0 (LWP 247299) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 24 (Thread 0x7ff6b71d76c0 (LWP 247300) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 23 (Thread 0x7ff6b69d66c0 (LWP 247301) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 22 (Thread 0x7ff6b61d56c0 (LWP 247302) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 21 (Thread 0x7ff6b59d46c0 (LWP 247303) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 20 (Thread 0x7ff6b51d36c0 (LWP 247304) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 19 (Thread 0x7ff6b49d26c0 (LWP 247305) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 18 (Thread 0x7ff6b41d16c0 (LWP 247306) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 17 (Thread 0x7ff6b39d06c0 (LWP 247307) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 16 (Thread 0x7ff6b31cf6c0 (LWP 247308) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 15 (Thread 0x7ff6b29ce6c0 (LWP 247309) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 14 (Thread 0x7ff6b21cd6c0 (LWP 247310) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 13 (Thread 0x7ff6b19cc6c0 (LWP 247311) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 12 (Thread 0x7ff6b11cb6c0 (LWP 247312) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 11 (Thread 0x7ff6b09ca6c0 (LWP 247313) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 10 (Thread 0x7ff6b01c96c0 (LWP 247314) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 9 (Thread 0x7ff6af9c86c0 (LWP 247315) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 8 (Thread 0x7ff6af1c76c0 (LWP 247316) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 7 (Thread 0x7ff6ae9c66c0 (LWP 247317) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 6 (Thread 0x7ff6ae1c56c0 (LWP 247318) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 5 (Thread 0x7ff6ad9c46c0 (LWP 247319) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 4 (Thread 0x7ff6ad1c36c0 (LWP 247320) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 3 (Thread 0x7ff6ac9c26c0 (LWP 247321) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 2 (Thread 0x7ff6ac1c16c0 (LWP 247322) "python3"):
+#0  0x00007ffb92ad50fe in __futex_abstimed_wait_common () from /lib64/libc.so.6
+#1  0x00007ffb92ad7a28 in pthread_cond_wait
+
+GLIBC_2.3.2 () from /lib64/libc.so.6
+#2  0x00007ff74c0dec7b in blas_thread_server () from /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/linalg/../../scipy.libs/libscipy_openblas-b75cc656.so
+#3  0x00007ffb92ad844c in start_thread () from /lib64/libc.so.6
+#4  0x00007ffb92b5f898 in clone3 () from /lib64/libc.so.6
+
+Thread 1 (Thread 0x7ffb92a30b80 (LWP 246964) "python3"):
+#0  0x00007ffb92b48187 in wait4 () from /lib64/libc.so.6
+#1  0x00007ffb92a9a6cb in do_system () from /lib64/libc.so.6
+#2  0x00007ff6a860986b in TUnixSystem::StackTrace() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#3  0x00007ff6a86091d6 in TUnixSystem::DispatchSignals(ESignals) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#4  <signal handler called>
+#5  0x00007ff6a3e4ecc2 in llvm::vfs::OverlayFileSystem::pushOverlay(llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#6  0x00007ff69f98286c in (anonymous namespace)::collectModuleMaps(clang::CompilerInstance&, llvm::SmallVectorImpl<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#7  0x00007ff69f9838b7 in (anonymous namespace)::setupCxxModules(clang::CompilerInstance&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#8  0x00007ff69f988b1b in (anonymous namespace)::createCIImpl(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, cling::CompilerOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, bool, bool) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#9  0x00007ff69f98a362 in cling::CIFactory::createCI(llvm::StringRef, cling::InvocationOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#10 0x00007ff69fa53c10 in cling::IncrementalParser::IncrementalParser(cling::Interpreter*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#11 0x00007ff69f9d25b1 in cling::Interpreter::Interpreter(int, char const* const*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, void*, bool, cling::Interpreter const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#12 0x00007ff69f91e258 in TCling::TCling(char const*, char const*, char const* const*, void*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#13 0x00007ff69f91fba5 in CreateInterpreter () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#14 0x00007ff6a8495063 in TROOT::InitInterpreter() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#15 0x00007ff6a8495550 in ROOT::Internal::GetROOT2() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#16 0x00007ff6a87c5007 in __static_initialization_and_destruction_0(int, int) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libcppyy_backend3_11.so.6.28
+#17 0x00007ffb92d5c82e in call_init () from /lib64/ld-linux-x86-64.so.2
+#18 0x00007ffb92d5c924 in _dl_init () from /lib64/ld-linux-x86-64.so.2
+#19 0x00007ffb92d58b66 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#20 0x00007ffb92d6345e in dl_open_worker () from /lib64/ld-linux-x86-64.so.2
+#21 0x00007ffb92d58ad9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#22 0x00007ffb92d63828 in _dl_open () from /lib64/ld-linux-x86-64.so.2
+#23 0x00007ffb92ad44e8 in dlopen_doit () from /lib64/libc.so.6
+#24 0x00007ffb92d58ad9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#25 0x00007ffb92d58c0f in _dl_catch_error () from /lib64/ld-linux-x86-64.so.2
+#26 0x00007ffb92ad3fa7 in _dlerror_run () from /lib64/libc.so.6
+#27 0x00007ffb92ad45a9 in dlopen
+GLIBC_2.2.5 () from /lib64/libc.so.6
+#28 0x000055b55e8d436a in _PyImport_FindSharedFuncptr (prefix=prefix
+entry=0x55b55e93618d "PyInit", shortname=shortname
+entry=0x7ff6a8987770 "libcppyy3_11", pathname=pathname
+entry=0x7ff6a894d150 "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so", fp=fp
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/dynload_shlib.c:80
+#29 0x000055b55e8d2bb1 in _PyImport_LoadDynamicModuleWithSpec (spec=0x7ff6a89ad2d0, fp=0x0) at /usr/local/src/conda/python-3.11.14/Python/importdl.c:139
+#30 _imp_create_dynamic_impl (module=<optimized out>, spec=0x7ff6a89ad2d0, file=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/import.c:2397
+#31 _imp_create_dynamic (module=<optimized out>, args=<optimized out>, nargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/import.c.h:446
+#32 0x000055b55e8089c3 in cfunction_vectorcall_FASTCALL (func=0x7ffb92962840, args=0x7ff6a8987898, nargsf=1, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/methodobject.c:427
+#33 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92962840, callargs=0x7ff6a8987880, kwdict=0x7ff6a89acf40, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#34 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d4a000, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#35 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d4a000, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#36 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ff6a89a22a0, locals=locals
+entry=0x7ff6a8966f80, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#37 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x55b560185af0, globals=globals
+entry=0x7ff6a8966f80, locals=locals
+entry=0x7ff6a8966f80) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#38 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x55b560185af0, globals=0x7ff6a8966f80, locals=0x7ff6a8966f80, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#39 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#40 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ff6a891fdd8, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#41 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92960f90, callargs=0x7ff6a891fdc0, kwdict=0x7ff6a8966f40, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#42 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49d08, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#43 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49d08, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#44 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92927ce0, locals=0x0, args=0x7ffc72b5bec0, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#45 _PyFunction_Vectorcall (func=0x7ffb92927ce0, stack=0x7ffc72b5bec0, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#46 0x000055b55e8009f6 in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92927ce0, args=0x7ffc72b5bec0, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#47 object_vacall (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7ffb92927ce0, vargs=0x7ffc72b5bf50) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#48 0x000055b55e830ad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x55b55eb5dba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#49 0x000055b55e830581 in import_find_and_load (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, abs_name=0x7ff6a8966c30) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#50 PyImport_ImportModuleLevelObject (name=name
+entry=0x7ff6a8966c30, globals=<optimized out>, locals=locals
+entry=0x7ff6a8964d00, fromlist=fromlist
+entry=0x55b55eb40c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#51 0x000055b55e7f2199 in import_name (tstate=<optimized out>, frame=0x7ffb92d49ca0, name=0x7ff6a8966c30, fromlist=0x55b55eb40c00 <_Py_NoneStruct>, level=0x55b55eb55e68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#52 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49ca0, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#53 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49ca0, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#54 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ff6a89a2160, locals=locals
+entry=0x7ff6a8964d00, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#55 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x55b55f4334f0, globals=globals
+entry=0x7ff6a8964d00, locals=locals
+entry=0x7ff6a8964d00) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#56 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x55b55f4334f0, globals=0x7ff6a8964d00, locals=0x7ff6a8964d00, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#57 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#58 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ffb91ccc958, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#59 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92960f90, callargs=0x7ffb91ccc940, kwdict=0x7ff74dff6c80, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#60 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d499a8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#61 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d499a8, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#62 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92927ce0, locals=0x0, args=0x7ffc72b5c610, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#63 _PyFunction_Vectorcall (func=0x7ffb92927ce0, stack=0x7ffc72b5c610, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#64 0x000055b55e8009f6 in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92927ce0, args=0x7ffc72b5c610, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#65 object_vacall (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7ffb92927ce0, vargs=0x7ffc72b5c6a0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#66 0x000055b55e830ad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x55b55eb5dba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#67 0x000055b55e830581 in import_find_and_load (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, abs_name=0x7ffb91c5feb0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#68 PyImport_ImportModuleLevelObject (name=name
+entry=0x7ffb91c5feb0, globals=<optimized out>, locals=locals
+entry=0x7ffb91dbcf80, fromlist=fromlist
+entry=0x55b55eb40c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#69 0x000055b55e7f2199 in import_name (tstate=<optimized out>, frame=0x7ffb92d49928, name=0x7ffb91c5feb0, fromlist=0x55b55eb40c00 <_Py_NoneStruct>, level=0x55b55eb55e68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#70 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49928, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#71 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49928, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#72 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ffb91cd0ae0, locals=locals
+entry=0x7ffb91dbcf80, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#73 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x55b55ed82ad0, globals=globals
+entry=0x7ffb91dbcf80, locals=locals
+entry=0x7ffb91dbcf80) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#74 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x55b55ed82ad0, globals=0x7ffb91dbcf80, locals=0x7ffb91dbcf80, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#75 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#76 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ffb91c45ed8, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#77 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92960f90, callargs=0x7ffb91c45ec0, kwdict=0x7ffb91c5de80, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#78 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49630, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#79 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49630, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#80 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92927ce0, locals=0x0, args=0x7ffc72b5cd60, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#81 _PyFunction_Vectorcall (func=0x7ffb92927ce0, stack=0x7ffc72b5cd60, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#82 0x000055b55e8009f6 in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92927ce0, args=0x7ffc72b5cd60, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#83 object_vacall (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7ffb92927ce0, vargs=0x7ffc72b5cdf0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#84 0x000055b55e830ad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x55b55eb5dba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#85 0x000055b55e830581 in import_find_and_load (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, abs_name=0x7ffb92978c60) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#86 PyImport_ImportModuleLevelObject (name=0x7ffb92978c60, globals=<optimized out>, locals=<optimized out>, fromlist=0x0, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#87 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960b30, args=0x7ffb92d495f0, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#88 0x000055b55e7f83ec in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92960b30, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#89 PyObject_Vectorcall (callable=0x7ffb92960b30, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:299
+#90 0x000055b55e7ec3e5 in _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49218, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:4769
+#91 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49218, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#92 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb91e03f60, locals=0x0, args=0x7ffb9281bdb8, argcount=1, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#93 _PyFunction_Vectorcall (func=0x7ffb91e03f60, stack=0x7ffb9281bdb8, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#94 0x000055b55e819b33 in _PyObject_FastCallDictTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb91e03f60, args=0x7ffc72b5d1f0, nargsf=1, kwargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:152
+#95 _PyObject_Call_Prepend (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb91e03f60, obj=<optimized out>, args=<optimized out>, kwargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:482
+#96 slot_tp_init (self=<optimized out>, args=<optimized out>, kwds=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/typeobject.c:7855
+#97 0x000055b55e7de013 in type_call (type=<optimized out>, args=0x55b55eb64138 <_PyRuntime+58904>, kwds=0x7ffb927ed480) at /usr/local/src/conda/python-3.11.14/Objects/typeobject.c:1103
+#98 _PyObject_MakeTpCall (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x55b55ed618c0, args=<optimized out>, nargs=<optimized out>, keywords=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:214
+#99 0x000055b55e7ec3e5 in _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d491b8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:4769
+#100 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d491b8, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#101 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ffb92833f60, locals=locals
+entry=0x7ffb9277cb00, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#102 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x7ffb91eeb290, globals=globals
+entry=0x7ffb9277cb00, locals=locals
+entry=0x7ffb9277cb00) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#103 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x7ffb91eeb290, globals=0x7ffb9277cb00, locals=0x7ffb9277cb00, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#104 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#105 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ffb92d49180, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#106 0x000055b55e7f83ec in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92960f90, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#107 PyObject_Vectorcall (callable=0x7ffb92960f90, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:299
+#108 0x000055b55e7ec3e5 in _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49020, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:4769
+#109 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49020, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#110 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92833c40, locals=0x0, args=0x7ffb92820d98, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#111 _PyFunction_Vectorcall (func=0x7ffb92833c40, stack=0x7ffb92820d98, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#112 0x000055b55e8d06a3 in pymain_run_module (modname=<optimized out>, set_argv0=set_argv0
+entry=1) at /usr/local/src/conda/python-3.11.14/Modules/main.c:300
+#113 0x000055b55e8d0112 in pymain_run_python (exitcode=0x7ffc72b5d820) at /usr/local/src/conda/python-3.11.14/Modules/main.c:599
+#114 Py_RunMain () at /usr/local/src/conda/python-3.11.14/Modules/main.c:684
+#115 0x000055b55e897667 in Py_BytesMain (argc=<optimized out>, argv=<optimized out>) at /usr/local/src/conda/python-3.11.14/Modules/main.c:738
+#116 0x00007ffb92a72eec in __libc_start_call_main () from /lib64/libc.so.6
+#117 0x00007ffb92a72fb5 in __libc_start_main_impl () from /lib64/libc.so.6
+#118 0x000055b55e8974f9 in _start ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#5  0x00007ff6a3e4ecc2 in llvm::vfs::OverlayFileSystem::pushOverlay(llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#6  0x00007ff69f98286c in (anonymous namespace)::collectModuleMaps(clang::CompilerInstance&, llvm::SmallVectorImpl<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#7  0x00007ff69f9838b7 in (anonymous namespace)::setupCxxModules(clang::CompilerInstance&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#8  0x00007ff69f988b1b in (anonymous namespace)::createCIImpl(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, cling::CompilerOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, bool, bool) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#9  0x00007ff69f98a362 in cling::CIFactory::createCI(llvm::StringRef, cling::InvocationOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#10 0x00007ff69fa53c10 in cling::IncrementalParser::IncrementalParser(cling::Interpreter*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#11 0x00007ff69f9d25b1 in cling::Interpreter::Interpreter(int, char const* const*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, void*, bool, cling::Interpreter const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#12 0x00007ff69f91e258 in TCling::TCling(char const*, char const*, char const* const*, void*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#13 0x00007ff69f91fba5 in CreateInterpreter () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#14 0x00007ff6a8495063 in TROOT::InitInterpreter() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#15 0x00007ff6a8495550 in ROOT::Internal::GetROOT2() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#16 0x00007ff6a87c5007 in __static_initialization_and_destruction_0(int, int) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libcppyy_backend3_11.so.6.28
+#17 0x00007ffb92d5c82e in call_init () from /lib64/ld-linux-x86-64.so.2
+#18 0x00007ffb92d5c924 in _dl_init () from /lib64/ld-linux-x86-64.so.2
+#19 0x00007ffb92d58b66 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#20 0x00007ffb92d6345e in dl_open_worker () from /lib64/ld-linux-x86-64.so.2
+#21 0x00007ffb92d58ad9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#22 0x00007ffb92d63828 in _dl_open () from /lib64/ld-linux-x86-64.so.2
+#23 0x00007ffb92ad44e8 in dlopen_doit () from /lib64/libc.so.6
+#24 0x00007ffb92d58ad9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#25 0x00007ffb92d58c0f in _dl_catch_error () from /lib64/ld-linux-x86-64.so.2
+#26 0x00007ffb92ad3fa7 in _dlerror_run () from /lib64/libc.so.6
+#27 0x00007ffb92ad45a9 in dlopen
+GLIBC_2.2.5 () from /lib64/libc.so.6
+#28 0x000055b55e8d436a in _PyImport_FindSharedFuncptr (prefix=prefix
+entry=0x55b55e93618d "PyInit", shortname=shortname
+entry=0x7ff6a8987770 "libcppyy3_11", pathname=pathname
+entry=0x7ff6a894d150 "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so", fp=fp
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/dynload_shlib.c:80
+#29 0x000055b55e8d2bb1 in _PyImport_LoadDynamicModuleWithSpec (spec=0x7ff6a89ad2d0, fp=0x0) at /usr/local/src/conda/python-3.11.14/Python/importdl.c:139
+#30 _imp_create_dynamic_impl (module=<optimized out>, spec=0x7ff6a89ad2d0, file=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/import.c:2397
+#31 _imp_create_dynamic (module=<optimized out>, args=<optimized out>, nargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/import.c.h:446
+#32 0x000055b55e8089c3 in cfunction_vectorcall_FASTCALL (func=0x7ffb92962840, args=0x7ff6a8987898, nargsf=1, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/methodobject.c:427
+#33 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92962840, callargs=0x7ff6a8987880, kwdict=0x7ff6a89acf40, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#34 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d4a000, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#35 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d4a000, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#36 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ff6a89a22a0, locals=locals
+entry=0x7ff6a8966f80, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#37 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x55b560185af0, globals=globals
+entry=0x7ff6a8966f80, locals=locals
+entry=0x7ff6a8966f80) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#38 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x55b560185af0, globals=0x7ff6a8966f80, locals=0x7ff6a8966f80, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#39 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#40 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ff6a891fdd8, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#41 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92960f90, callargs=0x7ff6a891fdc0, kwdict=0x7ff6a8966f40, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#42 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49d08, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#43 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49d08, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#44 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92927ce0, locals=0x0, args=0x7ffc72b5bec0, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#45 _PyFunction_Vectorcall (func=0x7ffb92927ce0, stack=0x7ffc72b5bec0, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#46 0x000055b55e8009f6 in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92927ce0, args=0x7ffc72b5bec0, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#47 object_vacall (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7ffb92927ce0, vargs=0x7ffc72b5bf50) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#48 0x000055b55e830ad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x55b55eb5dba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#49 0x000055b55e830581 in import_find_and_load (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, abs_name=0x7ff6a8966c30) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#50 PyImport_ImportModuleLevelObject (name=name
+entry=0x7ff6a8966c30, globals=<optimized out>, locals=locals
+entry=0x7ff6a8964d00, fromlist=fromlist
+entry=0x55b55eb40c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#51 0x000055b55e7f2199 in import_name (tstate=<optimized out>, frame=0x7ffb92d49ca0, name=0x7ff6a8966c30, fromlist=0x55b55eb40c00 <_Py_NoneStruct>, level=0x55b55eb55e68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#52 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49ca0, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#53 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49ca0, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#54 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ff6a89a2160, locals=locals
+entry=0x7ff6a8964d00, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#55 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x55b55f4334f0, globals=globals
+entry=0x7ff6a8964d00, locals=locals
+entry=0x7ff6a8964d00) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#56 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x55b55f4334f0, globals=0x7ff6a8964d00, locals=0x7ff6a8964d00, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#57 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#58 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ffb91ccc958, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#59 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92960f90, callargs=0x7ffb91ccc940, kwdict=0x7ff74dff6c80, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#60 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d499a8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#61 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d499a8, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#62 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92927ce0, locals=0x0, args=0x7ffc72b5c610, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#63 _PyFunction_Vectorcall (func=0x7ffb92927ce0, stack=0x7ffc72b5c610, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#64 0x000055b55e8009f6 in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92927ce0, args=0x7ffc72b5c610, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#65 object_vacall (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7ffb92927ce0, vargs=0x7ffc72b5c6a0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#66 0x000055b55e830ad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x55b55eb5dba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#67 0x000055b55e830581 in import_find_and_load (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, abs_name=0x7ffb91c5feb0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#68 PyImport_ImportModuleLevelObject (name=name
+entry=0x7ffb91c5feb0, globals=<optimized out>, locals=locals
+entry=0x7ffb91dbcf80, fromlist=fromlist
+entry=0x55b55eb40c00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#69 0x000055b55e7f2199 in import_name (tstate=<optimized out>, frame=0x7ffb92d49928, name=0x7ffb91c5feb0, fromlist=0x55b55eb40c00 <_Py_NoneStruct>, level=0x55b55eb55e68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#70 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49928, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#71 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49928, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#72 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ffb91cd0ae0, locals=locals
+entry=0x7ffb91dbcf80, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#73 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x55b55ed82ad0, globals=globals
+entry=0x7ffb91dbcf80, locals=locals
+entry=0x7ffb91dbcf80) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#74 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x55b55ed82ad0, globals=0x7ffb91dbcf80, locals=0x7ffb91dbcf80, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#75 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#76 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ffb91c45ed8, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#77 0x000055b55e7f4275 in do_call_core (tstate=<optimized out>, func=0x7ffb92960f90, callargs=0x7ffb91c45ec0, kwdict=0x7ffb91c5de80, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#78 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49630, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#79 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49630, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#80 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92927ce0, locals=0x0, args=0x7ffc72b5cd60, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#81 _PyFunction_Vectorcall (func=0x7ffb92927ce0, stack=0x7ffc72b5cd60, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#82 0x000055b55e8009f6 in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92927ce0, args=0x7ffc72b5cd60, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#83 object_vacall (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7ffb92927ce0, vargs=0x7ffc72b5cdf0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#84 0x000055b55e830ad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x55b55eb5dba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#85 0x000055b55e830581 in import_find_and_load (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, abs_name=0x7ffb92978c60) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#86 PyImport_ImportModuleLevelObject (name=0x7ffb92978c60, globals=<optimized out>, locals=<optimized out>, fromlist=0x0, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#87 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960b30, args=0x7ffb92d495f0, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#88 0x000055b55e7f83ec in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92960b30, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#89 PyObject_Vectorcall (callable=0x7ffb92960b30, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:299
+#90 0x000055b55e7ec3e5 in _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49218, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:4769
+#91 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49218, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#92 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb91e03f60, locals=0x0, args=0x7ffb9281bdb8, argcount=1, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#93 _PyFunction_Vectorcall (func=0x7ffb91e03f60, stack=0x7ffb9281bdb8, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#94 0x000055b55e819b33 in _PyObject_FastCallDictTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb91e03f60, args=0x7ffc72b5d1f0, nargsf=1, kwargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:152
+#95 _PyObject_Call_Prepend (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb91e03f60, obj=<optimized out>, args=<optimized out>, kwargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:482
+#96 slot_tp_init (self=<optimized out>, args=<optimized out>, kwds=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/typeobject.c:7855
+#97 0x000055b55e7de013 in type_call (type=<optimized out>, args=0x55b55eb64138 <_PyRuntime+58904>, kwds=0x7ffb927ed480) at /usr/local/src/conda/python-3.11.14/Objects/typeobject.c:1103
+#98 _PyObject_MakeTpCall (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x55b55ed618c0, args=<optimized out>, nargs=<optimized out>, keywords=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:214
+#99 0x000055b55e7ec3e5 in _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d491b8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:4769
+#100 0x000055b55e8a8035 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d491b8, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#101 _PyEval_Vector (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, func=func
+entry=0x7ffb92833f60, locals=locals
+entry=0x7ffb9277cb00, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#102 0x000055b55e8a777d in PyEval_EvalCode (co=co
+entry=0x7ffb91eeb290, globals=globals
+entry=0x7ffb9277cb00, locals=locals
+entry=0x7ffb9277cb00) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#103 0x000055b55e8beb5d in builtin_exec_impl (module=<optimized out>, source=0x7ffb91eeb290, globals=0x7ffb9277cb00, locals=0x7ffb9277cb00, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#104 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#105 0x000055b55e7f84ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7ffb92960f90, args=0x7ffb92d49180, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#106 0x000055b55e7f83ec in _PyObject_VectorcallTstate (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, callable=0x7ffb92960f90, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#107 PyObject_Vectorcall (callable=0x7ffb92960f90, args=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:299
+#108 0x000055b55e7ec3e5 in _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7ffb92d49020, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:4769
+#109 0x000055b55e812055 in _PyEval_EvalFrame (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, frame=0x7ffb92d49020, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#110 _PyEval_Vector (tstate=0x55b55eb7e4d8 <_PyRuntime+166328>, func=0x7ffb92833c40, locals=0x0, args=0x7ffb92820d98, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#111 _PyFunction_Vectorcall (func=0x7ffb92833c40, stack=0x7ffb92820d98, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#112 0x000055b55e8d06a3 in pymain_run_module (modname=<optimized out>, set_argv0=set_argv0
+entry=1) at /usr/local/src/conda/python-3.11.14/Modules/main.c:300
+#113 0x000055b55e8d0112 in pymain_run_python (exitcode=0x7ffc72b5d820) at /usr/local/src/conda/python-3.11.14/Modules/main.c:599
+#114 Py_RunMain () at /usr/local/src/conda/python-3.11.14/Modules/main.c:684
+#115 0x000055b55e897667 in Py_BytesMain (argc=<optimized out>, argv=<optimized out>) at /usr/local/src/conda/python-3.11.14/Modules/main.c:738
+#116 0x00007ffb92a72eec in __libc_start_call_main () from /lib64/libc.so.6
+#117 0x00007ffb92a72fb5 in __libc_start_main_impl () from /lib64/libc.so.6
+#118 0x000055b55e8974f9 in _start ()
+===========================================================
+
+

@@ -1,0 +1,215 @@
+{
+ "head": "ba440b19f",
+ "files": {
+  "nd-unfolding/s5p_input_dumps.py vs c1cba7bf": {
+   "against": "c1cba7bf",
+   "bytes_equal": false,
+   "sha256_then": "8ea98b26300db701",
+   "sha256_now": "7e925087b45b99dd",
+   "changed": [
+    "detector"
+   ],
+   "added": [],
+   "removed": []
+  },
+  "nd-unfolding/nn_dump_inputs.py vs c1cba7bf": {
+   "against": "c1cba7bf",
+   "bytes_equal": true,
+   "sha256_then": "6e8061f836e9ac94",
+   "sha256_now": "6e8061f836e9ac94"
+  },
+  "nd-unfolding/unfold_nd_omnifold_unbinned.py vs c1cba7bf": {
+   "against": "c1cba7bf",
+   "bytes_equal": true,
+   "sha256_then": "8a9bc84ecea206a8",
+   "sha256_now": "8a9bc84ecea206a8"
+  },
+  "2d-unfolding/unfold_2d_omnifold_unbinned.py vs c1cba7bf": {
+   "against": "c1cba7bf",
+   "bytes_equal": false,
+   "sha256_then": "8ebe0277ee4c277f",
+   "sha256_now": "74a4ed69c3fa9c4a",
+   "changed": [
+    "main"
+   ],
+   "added": [
+    "= BRANCH_SELECT_MODES",
+    "= _BRANCH_WILDCARD",
+    "BranchSelectionError",
+    "UnmodelledTreeAccess",
+    "_DiscoveryDone",
+    "_DiscoveryTree",
+    "_SelectedTree",
+    "_branch_address_api",
+    "_branch_has_address",
+    "active_branch_names",
+    "apply_branch_selection",
+    "branch_address_snapshot",
+    "branch_status_snapshot",
+    "call_loader",
+    "derive_loader_branches",
+    "discover_loader_branches",
+    "expected_loader_branches",
+    "file_sha256",
+    "loader_settings",
+    "restore_branch_addresses",
+    "restore_branch_status",
+    "run_provenance",
+    "tree_branch_names"
+   ],
+   "removed": []
+  },
+  "nd-unfolding/s5p_numerics.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "7ad8ca0f73989128",
+   "sha256_now": "7ad8ca0f73989128"
+  },
+  "nd-unfolding/s5n_pseudo.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "8981f97b96b418cf",
+   "sha256_now": "8981f97b96b418cf"
+  },
+  "nd-unfolding/s5c_pseudo.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "d81d4f46fb55f25f",
+   "sha256_now": "d81d4f46fb55f25f"
+  },
+  "nd-unfolding/s5c_unfold.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "510d749a2e82fa44",
+   "sha256_now": "510d749a2e82fa44"
+  },
+  "nd-unfolding/omnifold_nn_core.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "24f87f119073c4f1",
+   "sha256_now": "24f87f119073c4f1"
+  },
+  "nd-unfolding/xsec_nd.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "454001f3c9ac3aa6",
+   "sha256_now": "454001f3c9ac3aa6"
+  },
+  "nd-unfolding/s5e_candidate.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "bda8c48ce2365e17",
+   "sha256_now": "bda8c48ce2365e17"
+  },
+  "nd-unfolding/s5e_deform.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "6726ff99c7787d1e",
+   "sha256_now": "6726ff99c7787d1e"
+  },
+  "nd-unfolding/s5e_trace.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": true,
+   "sha256_then": "c47e9dd3feef9eab",
+   "sha256_now": "c47e9dd3feef9eab"
+  },
+  "nd-unfolding/s5p_truths.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": false,
+   "sha256_then": "da60de3faf9972e5",
+   "sha256_now": "40b6506d441d379e",
+   "changed": [
+    "fine_weight",
+    "main"
+   ],
+   "added": [
+    "merged_edges",
+    "mid_ratio"
+   ],
+   "removed": []
+  },
+  "2d-unfolding/unfold_2d_omnifold_unbinned.py vs 4e4b4f56": {
+   "against": "4e4b4f56",
+   "bytes_equal": false,
+   "sha256_then": "8ebe0277ee4c277f",
+   "sha256_now": "74a4ed69c3fa9c4a",
+   "changed": [
+    "main"
+   ],
+   "added": [
+    "= BRANCH_SELECT_MODES",
+    "= _BRANCH_WILDCARD",
+    "BranchSelectionError",
+    "UnmodelledTreeAccess",
+    "_DiscoveryDone",
+    "_DiscoveryTree",
+    "_SelectedTree",
+    "_branch_address_api",
+    "_branch_has_address",
+    "active_branch_names",
+    "apply_branch_selection",
+    "branch_address_snapshot",
+    "branch_status_snapshot",
+    "call_loader",
+    "derive_loader_branches",
+    "discover_loader_branches",
+    "expected_loader_branches",
+    "file_sha256",
+    "loader_settings",
+    "restore_branch_addresses",
+    "restore_branch_status",
+    "run_provenance",
+    "tree_branch_names"
+   ],
+   "removed": []
+  },
+  "2d-unfolding/uq/hadd_universes_full.py vs e9372b75": {
+   "against": "e9372b75",
+   "bytes_equal": true,
+   "sha256_then": "cfa457cb8e979db4",
+   "sha256_now": "cfa457cb8e979db4"
+  }
+ },
+ "mp1s1_zero_recorded_code": {
+  "s5n_pseudo.py": {
+   "recorded": "8981f97b96b418cf",
+   "at_head": "8981f97b96b418cf"
+  },
+  "s5c_pseudo.py": {
+   "recorded": "d81d4f46fb55f25f",
+   "at_head": "d81d4f46fb55f25f"
+  },
+  "s5c_unfold.py": {
+   "recorded": "510d749a2e82fa44",
+   "at_head": "510d749a2e82fa44"
+  },
+  "omnifold_nn_core.py": {
+   "recorded": "24f87f119073c4f1",
+   "at_head": "24f87f119073c4f1"
+  },
+  "xsec_nd.py": {
+   "recorded": "454001f3c9ac3aa6",
+   "at_head": "454001f3c9ac3aa6"
+  },
+  "unfold_2d_omnifold_unbinned.py": {
+   "recorded": "8ebe0277ee4c277f",
+   "at_head": "74a4ed69c3fa9c4a"
+  },
+  "s5e_candidate.py": {
+   "recorded": "bda8c48ce2365e17",
+   "at_head": "bda8c48ce2365e17"
+  },
+  "s5e_deform.py": {
+   "recorded": "6726ff99c7787d1e",
+   "at_head": "6726ff99c7787d1e"
+  },
+  "s5e_trace.py": {
+   "recorded": "c47e9dd3feef9eab",
+   "at_head": "c47e9dd3feef9eab"
+  },
+  "s5p_numerics.py": {
+   "recorded": "7ad8ca0f73989128",
+   "at_head": "7ad8ca0f73989128"
+  }
+ }
+}

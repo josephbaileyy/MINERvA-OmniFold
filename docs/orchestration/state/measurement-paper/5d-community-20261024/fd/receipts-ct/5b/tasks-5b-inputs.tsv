@@ -1,0 +1,5 @@
+# 5B job A (lanes), written by make_5b_tables.py; FD-CT-5B-DECLARATION.md section 2. The steps path is relative to the deploy root, where s5c_array.sh and fd_f1_lane.py run
+ct5b_a_lane0	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-inputs-steps.tsv	--lane	0
+ct5b_a_lane1	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-inputs-steps.tsv	--lane	1
+ct5b_a_lane2	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-inputs-steps.tsv	--lane	2
+ct5b_a_lane3	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-inputs-steps.tsv	--lane	3
