@@ -1,0 +1,161 @@
+{
+ "schema": "fd-ct-5b-control/1",
+ "labels": {
+  "what": "the pooled control of 5B: the ALL chain built from MP-1's zero loops through 5B's own merge, dumps and unfold, against MP-1's zero chain bitwise (K1 inputs, K2 unfold) and against S1's f within a tolerance fixed from MP-1's committed jitter scatter before any period output existed (K3); K3 is written as a flag per cell, never as |X/f - 1| or its ratio to tau"
+ },
+ "verdict": "PASS",
+ "controls_passed": [
+  "S",
+  "K0"
+ ],
+ "cells": [
+  "R00",
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+  "R13",
+  "R14",
+  "R15"
+ ],
+ "K1_inputs_bitwise_mp1_zero": {
+  "pass": true,
+  "failed_keys": [],
+  "lat_npz_bytes_equal": true
+ },
+ "K2_unfold_bitwise_mp1_zero": {
+  "pass": true,
+  "max_rel_diff_fine_cells": 0.0
+ },
+ "K3_within_tolerance_of_f": {
+  "pass": true,
+  "within_by_cell": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "cells_over": [],
+  "tau_rel": [
+   0.009114023056788191,
+   0.008713678387659874,
+   0.017922875688354108,
+   0.01338760293472896,
+   0.004341141374026841,
+   0.016157887682399227,
+   0.011576165580049902,
+   0.01992608042984082,
+   0.008567799061448056,
+   0.008090537665658502,
+   0.01082448385967111,
+   0.011683471041853659,
+   0.007375098341986779,
+   0.009337625119921922,
+   0.005842402154482632,
+   0.005312173733925547
+  ],
+  "tau_k": 7.0710678118654755,
+  "sigma_jitter_rel": [
+   0.0012889175014690953,
+   0.0012323002153985917,
+   0.00253467738751974,
+   0.0018932929637959543,
+   0.0006139301007327732,
+   0.0022850703899750164,
+   0.0016371170363583176,
+   0.0028179733188818,
+   0.0012116697632387316,
+   0.0011441748093664614,
+   0.001530813188003555,
+   0.0016522923202982758,
+   0.001042996409907303,
+   0.001320539608494928,
+   0.0008262404363707129,
+   0.0007512548140199633
+  ],
+  "written": "a flag per cell, never |X/f - 1| or its ratio to tau (review H2)"
+ },
+ "inputs_sha256": {
+  "all_receipt": "9d7bfcfe65d8e469e2906bfd386895fd689dc2460071712558d8c47f38582171",
+  "all_unfold": "573effcbb1f7b350c55fba89fe007066df2dd01dc4ae665d2d55cfbda3192bab",
+  "mp1_zero": {
+   "unfold": "f1d5178a86c1aa417d477d205669b642c66760b7e8e65f98b426e1d9d950d195",
+   "lat_npz": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+   "lat_bkg": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66"
+  },
+  "jitter": {
+   "zero_j1": "fb503e295fd275e08776ef9c112b04ac6aff73a69c4c728327efc3a03f4f1f8a",
+   "zero_j2": "c1622354582fd63083d003bb4ba5bf11f7185c2c34572be56b75e7843023431f",
+   "zero_j3": "c9a69b731c0523af64488bd2aa29805885f77f26089a8b54f64be417dfd2071c",
+   "zero_j4": "16845b817c93480b4746e235b6d21f72f60598be553c3b3cff788235f82ebf0d",
+   "zero_j5": "35f6b24ef3108636186d66b99acb58c844c575c8e6a73d68b153c12663204a2d",
+   "em_m1_j1": "c172ab3a71498772a41a26dd90fa4a9c3d1529abb76cc2ce531b6bd2457efb54",
+   "em_m1_j2": "c24a6ebeff13164f3b70676ef6af254bca1885aab53036769166e498521048e9",
+   "em_m1_j3": "1df24ce234bbc0da5d54a4ac465ac10b32ec9f58dc0e5501a55317d5198f27af",
+   "em_m1_j4": "d542dc9e50a161938c1519842ac2f5bacb1eb612f7cc81a4b6e71be799838330",
+   "em_m1_j5": "089d71dee47fe7a073335a282a0fb222cccfef7c2c7bf6f965098b365bdc6f78",
+   "em_p1_j1": "efeb1667887f8f2fa1efeb358997270a7317c336c0268e76696b12e37b5f6213",
+   "em_p1_j2": "576f575ef937343465c650aadd91d1500ddb016594068cb027a686da920306fc",
+   "em_p1_j3": "732b384cb23d79d25b2778efc68bcad781b0a4b1a16fc2c153a55564434e59dc",
+   "em_p1_j4": "51c47031c5689f1e0afeba40b95f41ef701e31bf85f7d41916d1e3094d227f7d",
+   "em_p1_j5": "ed16d6c9122aa9870bb5388379cdf7b184a0f05f7d99cf333430ab5070a4eb81",
+   "other_m1_j1": "62a4797bd97cf8977104fcf1daccaa520f24735e5127d6b11bbbf759565ea7ea",
+   "other_m1_j2": "f1923842fbaf0c1cf3a6cba2be7b2c65338acf12c30ce77232e0842ade021f00",
+   "other_m1_j3": "929386af5f3766dc5ef4f560440bf2cffbd5bce739ea524fc73c8c5c0d06d0bb",
+   "other_m1_j4": "84b0381840701754697546d2ff93ee1b0b94211cb79184ed8b74a2c2cbab7b2c",
+   "other_m1_j5": "16e38c277e09daa17acc97e39ed380e755f9a50bd4db29040dc59b26c0005053",
+   "other_p1_j1": "91d450d42d13b2a50a0ff437c6a5249cdb0de3875c326af6e67f176258a5ef23",
+   "other_p1_j2": "2314573e9a432f2713715727af752e6b833c9d5e0db42c6cdbbe80f3e8075873",
+   "other_p1_j3": "5aec72e9d14bde2e9b0edfef987cc06b986305badba24ee4b6f209e2ef5a308e",
+   "other_p1_j4": "43cef796d52bb03d06db035a1f471ecd34410077a5b06e68c83486599f88d912",
+   "other_p1_j5": "c2eb633377403b229547730138a5a10f22e76bff47199ea3ab08164a28c7cc52"
+  },
+  "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "cresp": "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "code_sha256": {
+  "fd_ct_readers.py": "f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464",
+  "fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+  "fd_ct_periods.py": "ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e",
+  "fd_ct_period_inputs.py": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/deploy/2c960659/nd-unfolding/fd_ct_periods.py",
+  "control",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/deploy/2c960659/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--s1-npz",
+  "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+  "--cresp",
+  "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+  "--b",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-20261030",
+  "--mp1-zero",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/deploy/2c960659/docs/orchestration/state/measurement-paper/phase1/mp1/jitter-receipts/mp1s1_zero_b-_j-.npz",
+  "--out-json",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/control/fd_ct_5b_control.json"
+ ]
+}

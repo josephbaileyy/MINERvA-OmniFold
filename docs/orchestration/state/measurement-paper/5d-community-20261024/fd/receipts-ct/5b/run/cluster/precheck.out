@@ -1,0 +1,11 @@
+PASS control K0 every cell integral of MP-1's zero unfold is positive
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+[5B precheck] K3 on mp1s1_zero: PASS, cells over []
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/control/fd_ct_5b_precheck.json", "sha256": "c11a398a97ec23c437c5c158afd5e04dc5d19b343bc10a901680381cee29d7d0"}
+rc=0
+2026-10-30T08:10:17Z
+login37

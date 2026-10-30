@@ -1,0 +1,19 @@
+PASS control Q0 the pooled control is this deploy's and PASSed on this ALL unfold
+PASS control Q1 3 x 11 period unfolds and the ALL unfold, each (e) on its own period's dumps
+PASS control Q2 each period's MC truth is s5p_mc_truth_pred's of its own npz, and its flux is p_T-constant
+PASS control Q2 the periods' exposure sums to ALL's
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control Q3 every unfold and MC-truth integral is positive on all 16 cells
+PASS control Q5 assertion: sum_X e_X g_X = 0 and C_PL,5D is PSD of rank <= 2
+[5B] dr_PB/PA: chi2_M 10.659 (noise expectation 1.298, draws max 2.971), integral -2.260%, pz contrast +0.023% (z 0.06)
+[5B] dr_PC/PA: chi2_M 10.996 (noise expectation 1.204, draws max 2.188), integral +5.186%, pz contrast +1.925% (z 6.05)
+[5B] dr_PC/PB: chi2_M 38.025 (noise expectation 1.669, draws max 4.564), integral +7.618%, pz contrast +1.902% (z 4.77)
+[5B] C_PL,5D median sigma 2.3370%, median ratio to sigma_M 0.3138
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/fd_ct_5b_periods.json", "sha256": "a5b17895b1189543d773e94717e14cd9b1409535e366c96788f94bf6f40759db"}
+rc=0
+2026-10-30T13:34:04Z
+login37
