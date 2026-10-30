@@ -2,6 +2,7 @@
 """Run the figure diagnosis's jobs (jobs.tsv), each through run_vision.sh, with one retry and a 900 s limit.
 
 usage: XMODEL_DIR=<scratch> python3 -I fig_runs.py <data-dir> <out-dir> [--kind abs|pair|probe] [--only RATER]
+                                                  [--items id,id,...]   # e.g. the controls first
 A job whose output already ends with "END" (or, for the probe, holds a NUMBER line) is not run again. A job that fails
 both attempts is logged FAILED in <out-dir>/status.tsv. sol2 runs 3 at a time and gemini 2 at a time, as the r22
 rater runs did. --kind probe runs the vision probe (PROBE.prompt.txt on probe.png) twice per rater instead."""
@@ -25,6 +26,9 @@ if kind == "probe":
 else:
     jobs = [r for r in csv.DictReader(open(D / "jobs.tsv"), delimiter="\t") if kind in (None, r["kind"])]
 jobs = [j for j in jobs if only in (None, j["rater"])]
+if "--items" in sys.argv:
+    want = set(sys.argv[sys.argv.index("--items") + 1].split(","))
+    jobs = [j for j in jobs if j.get("item") in want]
 
 
 def done(j):
