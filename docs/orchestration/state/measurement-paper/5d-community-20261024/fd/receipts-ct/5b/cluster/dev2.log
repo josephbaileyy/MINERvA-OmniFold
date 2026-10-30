@@ -1,0 +1,24 @@
+2026-10-30T04:48:03Z
+login37
+head_before 2635a99c8cd40fff93eb959ea3a6b9c313a22744
+porcelain_ignored_lines_before 0
+head 4514c01024d8c8704945e31b8f3c41efbceef51a
+porcelain_ignored_lines 0
+4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1  nd-unfolding/fd_ct_period_inputs.py
+ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e  nd-unfolding/fd_ct_periods.py
+933c740d93f03e524906f161d2c4ee8e11a69bdd114cedd210832cbd1eb78d60  nd-unfolding/tests/test_fd_ct_periods.py
+d16f52bc241357dbf51be5139cd172c601e206979a273cdbcc91227d0f14c705  nd-unfolding/submit_fd_ct.sh
+f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464  nd-unfolding/fd_ct_readers.py
+activation: eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)"; conda activate $HOME/.conda/envs/root_6_28
+python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+ROOT 6.28/12 lightgbm 4.6.0
+tests rc=0
+Ran 243 tests in 427.234s
+OK
+test_the_bare_recipes_modules_load_without_root (test_fd_ct_periods.BareInterpreter.test_the_bare_recipes_modules_load_without_root) ... ok
+test_the_bare_recipes_paths_run_without_root (test_fd_ct_periods.BareInterpreter.test_the_bare_recipes_paths_run_without_root) ... ok
+test_the_root_readers_do_need_root (test_fd_ct_periods.BareInterpreter.test_the_root_readers_do_need_root) ... ok
+test_flux_data_pot_reads_the_2d_records_value (test_fd_ct_periods.RootReaders.test_flux_data_pot_reads_the_2d_records_value) ... ok
+test_merged_data_pot_reads_dataPOTUsed (test_fd_ct_periods.RootReaders.test_merged_data_pot_reads_dataPOTUsed) ... ok
+test_zero_on_zero_is_bitwise_the_direct_pv_ladder_path (test_fd_ct_closure.RealUnfold.test_zero_on_zero_is_bitwise_the_direct_pv_ladder_path) ... /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+porcelain_ignored_lines_after_tests 0

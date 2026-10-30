@@ -1,0 +1,21 @@
+2026-10-30T04:45:36Z
+login37
+head 2635a99c8cd40fff93eb959ea3a6b9c313a22744
+porcelain_ignored_lines 0
+4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1  nd-unfolding/fd_ct_period_inputs.py
+ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e  nd-unfolding/fd_ct_periods.py
+7fa51f3eae2aeefe1a5b5909df4f82e2e9784602a9bdf8d89ba47ec6aca67a80  nd-unfolding/tests/test_fd_ct_periods.py
+d16f52bc241357dbf51be5139cd172c601e206979a273cdbcc91227d0f14c705  nd-unfolding/submit_fd_ct.sh
+f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464  nd-unfolding/fd_ct_readers.py
+4cc9ed7857a82b61078a355f3e5ed812e0913a8b0c803004cbac1ebc8e0b6c5c  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/make_5b_tables.py
+fc08be826620364ebbe62ab6f29d79aeac9133ac3031a7664b82f7cb79181eb4  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-inputs-steps.tsv
+74dba155b13821b082a67e927fbfd56bf2f55d09dabf5e1172a4f62399a22e4e  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv
+e72c65313478b5aa8cdea0b02346d4624d4c84c6ba33df52a457040c5011fe18  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/tasks-5b-inputs.tsv
+bf3d23cf2afa2f55409535a071d03aa48048502122aced42d6e84f9b1dd542e4  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/tasks-5b-periods.tsv
+e3dc9e63bc8db07ab545cee6d8b227cdaa7f8249c657cc1a60119020dd6a86de  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root
+927f5af214b15935c1093b83c7e703730b8a5993b5e8f43f60a56eb8f07963fe  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_PA.root
+c64637d58961c4681f83611ab79f057f741329398cde00df175fac28dad15f0d  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_PB.root
+95c45a5f91f1fc356bfde74b463e1a24a70d698d8693a766773a6a37c3bdfafc  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_PC.root
+tests rc=139
+skipped_lines 0
+porcelain_ignored_lines_after_tests 0
