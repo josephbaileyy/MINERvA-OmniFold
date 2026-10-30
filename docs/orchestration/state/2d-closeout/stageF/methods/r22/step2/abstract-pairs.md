@@ -1,6 +1,8 @@
 # r22 Step 2: proposed abstract pairs (main_note.tex), from writer B01
 
-Not applied: main_note.tex is unchanged. Each `before` is the exact current source text (main_note.tex line 72 at the round's start) and occurs once in the file. Each `after` keeps every fact, macro and number; it only splits the sentence. The director pins each pair (check_ledger.py ABSTRACT / ABSTRACT_PINS) and passes it to Joseph before adoption. `pin` below is sha256(before + NUL + after)[:16], as check_ledger.py's pin() computes it, for the director to verify, not to copy.
+**Approved and applied (2026-10-30).** Joseph approved both pairs exactly as pinned ([DECISION-20261030-joseph-note-abstract-pairs.md](../../../../../../DECISION-20261030-joseph-note-abstract-pairs.md), #536). They are applied to main_note.tex and registered in check_ledger.py `ABSTRACT` / `ABSTRACT_PINS`, so the note abstract may differ from its base by exactly these two pairs. They are adopted only with piece B01: if B01 is not adopted under the round's rule, neither pair is.
+
+At writing, each `before` is the exact current source text (main_note.tex line 72 at the round's start) and occurs once in the file. Each `after` keeps every fact, macro and number; it only splits the sentence. The director pins each pair (check_ledger.py ABSTRACT / ABSTRACT_PINS) and passes it to Joseph before adoption. `pin` below is sha256(before + NUL + after)[:16], as check_ledger.py's pin() computes it, for the director to verify, not to copy.
 
 ## B01-s-04
 

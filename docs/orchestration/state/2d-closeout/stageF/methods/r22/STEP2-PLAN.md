@@ -159,6 +159,11 @@ does not flip, and on the 3 sol2 P1 runs NEW's mean and lowest run are each at l
    - KEEP (31) join the out-of-scope list.
 
    They enter the next round, after this note round is measured, and are not spliced into it.
+6. **The note-abstract pairs**
+   ([DECISION-20261030-joseph-note-abstract-pairs.md](../../../../../DECISION-20261030-joseph-note-abstract-pairs.md),
+   #536): both are approved exactly as pinned and applied with `ABSTRACT` / `ABSTRACT_PINS`. B01 is judged on the text
+   with the pairs, and if B01 is not adopted, neither pair is. The seven B01 adoption runs already made on the
+   pairless text (#536 arrived after the runs started) are discarded unread and rerun.
 
 ## Files
 

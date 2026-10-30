@@ -53,8 +53,16 @@ PROTECTED = ["values.tex", "values_inference.tex", "values_fived16.tex", "app_hi
 PAIRED = "main_note.tex"
 # (id, old, new) of the abstract pairs; ABSTRACT_PINS[id] = sha256(old + "\0" + new)[:16], set when the director
 # passes the pinned pair to Joseph (#524 item 1). Empty until then: main_note.tex must stay byte-identical.
-ABSTRACT = []
-ABSTRACT_PINS = {}
+# Approved by Joseph exactly as pinned: DECISION-20261030-joseph-note-abstract-pairs.md (#536).
+ABSTRACT = [
+    ('B01-s-04',
+     'We report a simultaneous measurement of the $\\nu_{\\mu}$ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is \\fvval{sigmed-C_total_resp}\\%.',
+     'We report a simultaneous measurement of the $\\nu_{\\mu}$ charged-current inclusive cross section in five observables: the muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass. The cross section is unfolded without binning with OmniFold from MINERvA medium-energy open data. It is reported in sixteen cells, with a covariance whose median per-cell uncertainty is \\fvval{sigmed-C_total_resp}\\%.'),
+    ('B01-s-10',
+     'Three external generator predictions compared on all sixteen cells give $\\chi^{2}$ between \\fvval{g-ext-chi2int-min16} and \\fvval{g-ext-chi2int-max16} for 16 degrees of freedom, and GiBUU, on its 8 cells, \\fvval{g-gibuu-total-chi2int}.',
+     'Three external generator predictions, compared on all sixteen cells, give $\\chi^{2}$ between \\fvval{g-ext-chi2int-min16} and \\fvval{g-ext-chi2int-max16} for 16 degrees of freedom. GiBUU, compared only on the 8 cells its sample covers, gives $\\chi^{2}=\\fvval{g-gibuu-total-chi2int}$ on those cells.'),
+]
+ABSTRACT_PINS = {'B01-s-04': 'd2075a04421dcc5e', 'B01-s-10': '2b0420a3ab1e1432'}
 SEC4 = [r"lies entirely below its window \(Gaussian 0\.954\)",
         r"removes the tail undercoverage: \$C_2=0\.977\$ \$\[0\.974,0\.980\]\$ and \$C_1=0\.781\$"]
 # note-n4/check_ledger.py's FROZEN list (n4 outline sec. 4), printed (comment-stripped, whitespace-collapsed) source.
