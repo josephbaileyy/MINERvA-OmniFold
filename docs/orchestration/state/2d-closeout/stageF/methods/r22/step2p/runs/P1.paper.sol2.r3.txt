@@ -1,0 +1,18 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically formal, but repeated caveats, internal estimator labels, development history, and release bookkeeping give several sections the register of an analysis note and warrant a dedicated language pass.
+1. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of
+four of the sixteen cells is stated only here. The principal
+ones are these."
+   REWRITE: The principal limitations are summarized below, including the low reconstruction stability of four reporting cells. Further details are given in Secs. III–V and, for the calibrated tests, in the companion note.
+2. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development. The comparison and its
+values are given in Ref. [14], Sec. 9.4."
+   REWRITE: Five iterations are used because increasing the count to 10, 15, or 20 did not reduce the model dependence assessed with the truth deformations used to develop the estimator (Ref. [14], Sec. 9.4).
+3. QUOTE: "A
+candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and
+regenerates the analysis note’s figures of the joint-test
+null distributions and the (Eavail , W ) map."
+   REWRITE: A reproducibility package, approximately 16 MB in size and not yet deposited, regenerates the null-distribution figures and the (Eavail , W ) map in the analysis note using NumPy, SciPy, and Matplotlib.
