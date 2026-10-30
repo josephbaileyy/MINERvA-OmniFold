@@ -13,8 +13,11 @@ order. Measured at `origin/main` `82e4957ae`.
   `b8a0e117e` (2026-08-18).
 - **Nothing else in `CLAIMS.md`.** Every row, status, verifier field and detail link is byte-identical. The diff is the
   five added lines.
-- **Not changed:** `ROW-OWNERS.tsv`, whose twelve CLM rows stay `UNASSIGNED`. The decision does not ask for an edit
-  there, and the banner says why the cells stay as they are.
+- **`ROW-OWNERS.tsv`.** Its header gains a dated line, `:47-48`, after *"The twelve stay UNASSIGNED until someone RULES
+  them"*. The line says Joseph's ruling (#516) is that ruling. The packet's option A had offered this line, and the
+  director confirmed that it falls under it. The twelve owner cells stay `UNASSIGNED`.
+- **The packet.** `DECISION-PACKET-20261029-oi53-clm-row-ownership.md` moves from LIVE / open to ARCHIVAL / terminal,
+  now that it is decided.
 
 ## OI-53 — retired, as moot
 

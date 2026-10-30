@@ -44,6 +44,8 @@
 # would then describe a derivation that both resolves AND supports the cell it feeds. Today the
 # inconsistency is visible, which is what makes it fixable. The twelve stay UNASSIGNED until
 # someone RULES them.
+# 2026-10-29: Joseph ruled (#516, DECISION-20261029-joseph-freeze-claims-md.md): CLAIMS.md is frozen ARCHIVAL, so no
+# row is edited and no owner is needed. The twelve stay UNASSIGNED by that ruling, not for want of one.
 #
 # The abstention itself is correct and is deliberately preserved: adjudicating physics ownership
 # is not the orchestrator's job, and a raiser is not an owner.
