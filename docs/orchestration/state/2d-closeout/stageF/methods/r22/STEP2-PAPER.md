@@ -93,3 +93,84 @@ As STEP2-PLAN.md §3, for one document.
   are applied first. If he has not, the runs judge the paper without them, and any later application gets its own
   check. If the paper is not adopted, neither pair is.
 - **Score and stopping rule:** STEP2-PLAN.md §5. P1's resolution at 3 is reported.
+
+## 5. Rule change, 2026-10-30 (after #549 and #550): held for facts, and one judgement with the pairs
+
+Recorded before any text of this pass is written and before any of its runs.
+
+**What led to it.** All three P1 runs on the adopted paper quoted the same passages: the five-iterations sentence, the
+limitations pointer with "is stated only here", and the Data availability package sentence. sol2's own rewrites of the
+first two kept every fact and qualifier. The first two were frozen only by this round's byte-exact held rule (§1),
+which was the director's answer 4 of STEP2-PLAN.md §6, not a Joseph ruling. The director changed it on 2026-10-30.
+
+**The rule.** A sentence quoted by an out-of-scope gap is held for its FACTS, not its bytes. It may be reworded only
+when all of these hold:
+- (a) the out-of-scope gap's own change is not made: no fact, qualifier or KEEP item is dropped, and nothing is
+  softened;
+- (b) every fact and qualifier in it carries a probe. Where the note prints it, the probe is an `N:` probe of the note
+  source and a `P::` probe of its new paper wording. Where only the paper prints it (C18, the four low-stability cells),
+  it is a `P::` probe, and the fact may not leave the paper. Its sentence may still be reworded (the director,
+  2026-10-30);
+- (c) agy reads the old and new sentence as SAME, with a planted control.
+
+Byte-exact holding stays for:
+- Joseph's own text: Data availability beyond his approved A1 pair, the abstracts and title (A4, A5), and the claims
+  (A7);
+- the FROZEN sentence;
+- the B4 gate-bound phrases (`check_paper.py` GATE, and the registry-pinned lines, which are re-pinned with a record if
+  their line changes).
+
+**The KEEP list** (Joseph, `DECISION-20261028-joseph-protections-remade-and-r21.md` item 6) stays. It is read, as in
+`DECISION-20261029-joseph-limitations-may-leave-paper.md` item 2, as the qualifier staying with its claim, not as its
+bytes. The director confirmed this reading on 2026-10-30, citing Joseph's own wording in
+`DECISION-20261023-joseph-5d-a-and-register-round.md:35-36`: "The KEEP list stands: qualifiers whose removal makes a
+sentence false even under the stated scope stay where they are."
+`check_paper.py` now enforces it. Every r21 KEEP row (`r21/ledger.md`) whose probes print in the base paper must
+either still print verbatim or be named by its F-id in a ledger row, with a `P::` probe of its new wording and an agy
+SAME read.
+- The adopted paper (#549) already reworded five of the 64: F025, F145, F149, F246 and F305. None is dropped, and each
+  gets its row now.
+- F109, the five-iterations KEEP item ("because 10, 15, or 20 iterations did not reduce its model dependence…"), must
+  print in substance if its sentence is reworded.
+
+**Which sentences this pass may reword.** These are the held sentences that an in-scope gap acts on (`held_overlap`
+in `gaps.tsv`). `tools/check_held.py --fact-held` exempts exactly these from the exact check, and the ledger and agy
+checks above take its place:
+
+| held id | sentence | in-scope gaps that act on it |
+|---|---|---|
+| G1b:paper-g-01 | the note pointer ("The companion analysis note … cited below by section") | G1:paper-g-01 |
+| G1b:paper-g-06 | the seed-42 sentence | G1:paper-g-04 |
+| G1b:paper-g-03 | the Scope sentence ("one OmniFold implementation on one data set …") | G1:paper-g-07, G1b:paper-s-08 |
+| G1:paper-g-02, G1b:paper-g-08 | the five-iterations sentence (F109 KEEP) | G1:paper-s-03, G1b:paper-s-10 |
+| G1:paper-g-06 | the envelope target ("none of the reporting definitions … meets this target") | G1b:paper-g-11 |
+| G1:paper-g-10 | the flux reason ("for a reason the released inputs do not let us determine") | G1b:paper-g-12 |
+| G1b:paper-g-13 | the Fig. 3 covariance ("an earlier purity-subtracted … covariance that fails …") | G1b:paper-s-04 |
+| G1b:paper-g-18 | the run-period block ("its size is not validated and its own consistency check cannot fail") | G1b:paper-s-17 |
+| G1b:paper-g-20 | the coverage claim ("We make no coverage claim …") | G1b:paper-s-19 |
+| G1b:paper-s-20 | the limitations pointer | G1:paper-s-10, G1b:paper-s-15 (R-1's two gaps) |
+<!-- absence-ok: the table quotes printed paper sentences by name; not a claim that something has not been run -->
+
+- **The limitations pointer.** The metatext "The low stability of four of the sixteen cells is stated only here." is
+  dropped. The low-stability fact (C18) stays in the paper's Limitations, with its `P::` probe. The pointer to the
+  note's limitations stays (Joseph, #522 item 2).
+- **The gaps now included.** The nine skipped in the first pass because their held quote left no other passage
+  (G1:paper-g-01, -g-04; G1b:paper-g-11, -g-12, -s-04, -s-08, -s-10, -s-17, -s-19), R-1's two, and the remainder of
+  G1:paper-s-03.
+- **Still byte-exact.** The other held sentences (G1:paper-g-08, G1:paper-s-08, G1b:paper-g-07, -g-09, -g-14, -g-19,
+  -s-02, -s-13, the FROZEN pair G1:paper-g-03 and G1b:paper-g-02, and the abstract G1b:paper-s-07) are acted on by no
+  in-scope gap, and stay exact. G1b:paper-s-05 is exempt only through the applied A1 pair.
+- **R-6** was accepted by the director as a cut to the note: the note prints the fallback role (`sec_5d.tex`), and
+  ledger P-10 probes it.
+
+**One judgement.** Joseph approved both pairs exactly as pinned (`DECISION-20261030-joseph-paper-pairs.md`), and they
+are applied through `PAIRS` / `PAIR_PINS`.
+- **NEW** is the paper with both pairs and this pass's fact-held rewrites.
+- **The base** is the adopted paper as merged (#549, `e33a1ab0`), whose rater copy is `step2p/new/manuscript.txt`
+  (sol2 P1 3, 3, 3).
+- **The rule** is §4's, unchanged:
+  - NEW wins at least 3 of 4 blind P2 runs;
+  - sol2 does not flip;
+  - NEW's sol2 P1 ×3 mean is at least 3.0, and its lowest run at least 3.
+- **If the rule fails,** neither the pairs nor the rewrites are adopted, and the paper stays as merged.
+- **Outputs** go to `step2p/pass2/`.
