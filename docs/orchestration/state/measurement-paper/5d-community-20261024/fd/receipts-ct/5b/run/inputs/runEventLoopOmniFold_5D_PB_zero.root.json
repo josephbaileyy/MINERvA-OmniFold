@@ -1,0 +1,39 @@
+{
+ "schema": "fd-ct-5b-merge/1",
+ "period": "PB",
+ "playlists": [
+  "1G",
+  "1L",
+  "1M"
+ ],
+ "flux_weighting_over_merge_data_pot_minus_1": 0.0,
+ "inputs": [
+  {
+   "playlist": "1G",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1G_zero.root",
+   "sha256": "259aa1952e7586eb2f301ec7960f3003d4b995f7f59b36b32a68b47a31ca2821"
+  },
+  {
+   "playlist": "1L",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1L_zero.root",
+   "sha256": "d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c"
+  },
+  {
+   "playlist": "1M",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1M_zero.root",
+   "sha256": "f80bb016e78701dde9faf5faf53d0d906430525abaafa753c1a051e2f860cb45"
+  }
+ ],
+ "out": "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/merged/runEventLoopOmniFold_5D_PB_zero.root",
+ "out_sha256": "ee004a4cd42f552512265d66012825dabb447467a9f072739a8200b56004679b",
+ "out_bytes": 1500873366,
+ "code_sha256": {
+  "fd_ct_period_inputs.py": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+  "hadd_universes_full.py": "cfa457cb8e979db4df3e6c088c2b89a6e7a107b25763cdc2b05200d6fe720da0",
+  "nn_dump_inputs.py": "6e8061f836e9ac941f24ca518907c1c94efe772e9d92cf29eeeb940062c8b685",
+  "s5p_input_dumps.py": "7e925087b45b99dd94b75e45a09b5ef6dca826f594c86307c6c7d09f15058807",
+  "s5p_mc_truth_pred.py": "e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5",
+  "s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185"
+ },
+ "seconds": 125.8
+}

@@ -1,0 +1,79 @@
+{
+ "schema": "fd-ct-5b-inputs/1",
+ "period": "PA",
+ "playlists": [
+  "1A",
+  "1B",
+  "1C",
+  "1D",
+  "1E",
+  "1F"
+ ],
+ "files": {
+  "merged": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/merged/runEventLoopOmniFold_5D_PA_zero.root",
+   "a9be297e071affd74c8df0b7a7205556eaf12d3082081f4cd8355034ce3359ff"
+  ],
+  "flux": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/flux/runEventLoopMC_PA.root",
+   "927f5af214b15935c1093b83c7e703730b8a5993b5e8f43f60a56eb8f07963fe"
+  ],
+  "nn_npz": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/nn_PA.npz",
+   "b4e9704a00a454c2f41fe1b7804f8ced97679d04aebfeb917ae3a57d7bb7c4a3"
+  ],
+  "lat_npz": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/lat_PA.npz",
+   "b4e9704a00a454c2f41fe1b7804f8ced97679d04aebfeb917ae3a57d7bb7c4a3"
+  ],
+  "lat_bkg": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/lat_PA_bkg.npz",
+   "5742f52b42b3d215711602bc1a12703c924544d3f98eacb0908b38917fb54cc8"
+  ],
+  "truth": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PA.npz",
+   "c8bb23496fbc3adce34940936e654a1f9b18b406177c0898986cfc5b1cf7f8cf"
+  ]
+ },
+ "nn_npz_equals_lat_npz": {
+  "axes": true,
+  "MCgen": true,
+  "MCreco": true,
+  "measured": true,
+  "pass_reco": true,
+  "pass_truth": true,
+  "w_truth": true,
+  "w_reco": true,
+  "measured_weights": true,
+  "denom_nd": true,
+  "flux": true,
+  "data_pot": true,
+  "n_nucleons": true,
+  "edges_0": true,
+  "edges_1": true,
+  "edges_2": true,
+  "edges_3": true,
+  "edges_4": true,
+  "nedges": true,
+  "_key_sets_equal": true
+ },
+ "nn_npz_bytes_equal_lat_npz": true,
+ "bkg_reco_dtype": "float64",
+ "data_pot_checks": {
+  "npz_over_merge_minus_1": 0.0,
+  "flux_weighting_over_merge_minus_1": 0.0
+ },
+ "pot_rel_tolerance": 1e-12,
+ "flux_rel_spread_over_pt": 2.220446049250313e-16,
+ "flux_constant_over_pt": true,
+ "data_pot": 5.6520731956167836e+20,
+ "code_sha256": {
+  "fd_ct_period_inputs.py": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+  "hadd_universes_full.py": "cfa457cb8e979db4df3e6c088c2b89a6e7a107b25763cdc2b05200d6fe720da0",
+  "nn_dump_inputs.py": "6e8061f836e9ac941f24ca518907c1c94efe772e9d92cf29eeeb940062c8b685",
+  "s5p_input_dumps.py": "7e925087b45b99dd94b75e45a09b5ef6dca826f594c86307c6c7d09f15058807",
+  "s5p_mc_truth_pred.py": "e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5",
+  "s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185"
+ },
+ "seconds": 107.5
+}
