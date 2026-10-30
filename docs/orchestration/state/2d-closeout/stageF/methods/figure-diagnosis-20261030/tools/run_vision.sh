@@ -25,7 +25,7 @@ case $who in
     (cd "$wd" && CODEX_HOME=$ch /Users/josephbailey/.local/bin/codex exec -m gpt-6.1-sol \
       -s read-only --skip-git-repo-check --ephemeral -C "$wd" -o "$out" "${args[@]}" - < "$full" > "$out.log" 2>&1); rc=$? ;;
   gemini)
-    printf '\n\nThe image files are in your current working directory: %s. Open and view each of them before you answer; do not modify any file.\n' "${names[*]}" >> "$full"
+    printf '\n\nThe image files are in your current working directory: %s. Open and view each of them with your file-viewing tool before you answer. Do not run any shell command, and do not modify any file.\n' "${names[*]}" >> "$full"
     (cd "$wd" && agy --print "$(cat "$full")" --model gemini-3.8-flash-high --sandbox --print-timeout 0 > "$out" 2> "$out.err"); rc=$? ;;
   *) echo "unknown $who"; exit 2 ;;
 esac
