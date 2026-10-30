@@ -1093,6 +1093,46 @@ class Periods(PeriodsBase):
         self.assertEqual(self.periods(t, p5a, [leak]), 3)
 
 
+class BareInterpreter(PeriodsBase):
+    """The declared recipe (section 2) runs stage-flux, precheck, control, gate and periods with root_6_28's bare
+    interpreter, which segfaults on `import ROOT` without the env active (section 11). So each of those paths runs
+    here with ROOT unimportable: any import of it, at module load or inside a function, fails loudly."""
+
+    def test_the_bare_recipes_modules_load_without_root(self):
+        code = (f"import sys; sys.modules['ROOT'] = None; sys.path.insert(0, {str(ND)!r}); "
+                "import fd_ct_periods, fd_ct_period_inputs; print('ROOT' in sys.modules and sys.modules['ROOT'])")
+        r = subprocess.run([sys.executable, "-I", "-B", "-c", code], capture_output=True, text=True,
+                           env={k: v for k, v in os.environ.items() if k != "PYTHONPATH"})
+        self.assertEqual((r.returncode, r.stdout.strip()), (0, "None"), r.stderr)
+
+    def test_the_bare_recipes_paths_run_without_root(self):
+        with mock.patch.dict(sys.modules, {"ROOT": None}):
+            src = self.tmp / "src"
+            src.mkdir()
+            pins = {}
+            for P in pi.FLUX:
+                (src / f"runEventLoopMC_{P}.root").write_bytes(P.encode())
+                pins[P] = digest(src / f"runEventLoopMC_{P}.root")
+            with mock.patch.dict(pi.FLUX, pins):
+                rc, _, err = quiet(pi.main, ["stage-flux", "--src-dir", str(src), "--out-dir", str(self.tmp / "fx")])
+            self.assertEqual(rc, 0, err)
+            t = self.tree().write()
+            p5a = t.with_5a()
+            argv = t.control_argv(t.B / "control" / "fd_ct_5b_precheck.json")
+            argv[0] = "precheck"
+            self.assertEqual(self.run_cp(t, argv), 0, self.stderr)
+            self.assertEqual(self.run_cp(t, ["gate", "--stage", "inputs", "--b", str(t.B)]), 0, self.stderr)
+            self.assertEqual(self.control(t), 0, self.stderr)
+            t.write_periods()
+            self.assertEqual(self.run_cp(t, ["gate", "--stage", "periods", "--b", str(t.B)]), 0, self.stderr)
+            self.assertEqual(self.run_cp(t, t.periods_argv(), [p5a]), 0, self.stderr)
+
+    def test_the_root_readers_do_need_root(self):
+        # the direction the check acts in: a path that imports ROOT does fail with ROOT blocked
+        with mock.patch.dict(sys.modules, {"ROOT": None}), self.assertRaises(ImportError):
+            pi.flux_data_pot(self.tmp / "x.root")
+
+
 # ================================================================ tables and submit
 
 
