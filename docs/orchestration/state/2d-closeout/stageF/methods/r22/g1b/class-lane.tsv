@@ -1,0 +1,41 @@
+id	class	item	reason
+paper-g-01	STRUCTURE		Removes citations to the note and moves summaries into the paper or an appendix; the facts stay in the note.
+paper-g-02	PROTECTED	FROZEN,C12	Reframes "Interval coverage has not been validated." as an "open systematic characteristic": rewording the FROZEN sentence, which the director's reading of #522 does not allow.
+paper-g-03	PROTECTED	B3 (ledger KEEP)	Stating the scope "without defensive meta-commentary" drops the KEEP qualifier "rather than of multidimensional OmniFold in general".
+paper-g-04	UNVERIFIED		Quote not located.
+paper-g-05	STRUCTURE	#522; note B06 ("Both definitions were inherited from MAT-MINERvA")	Drops the framework-heritage remark from the paper; the note keeps the inheritance.
+paper-g-06	STRUCTURE	home: note B02 Sec. 3.2 (seed 42; the 400-tree, 31-leaf refinement)	Moves seeds and settings to a code reference; the note states them.
+paper-g-07	WORDING		Replaces the "joint-test estimator" label with a descriptive name.
+paper-g-08	PROTECTED	B3 (F109 KEEP)	"State the chosen regularization parameter and its physical basis directly" drops F109's justification (10, 15 or 20 iterations did not reduce the model dependence).
+paper-g-09	PROTECTED	B3 (KEEP: the post-selection disclosure), C8	Presenting the benchmark "without apologetic procedural history" drops the KEEP post-selection disclosure ("so the benchmark is a reproduction rather than an independent validation").
+paper-g-10	STRUCTURE	#522; note B02 Sec. 3.1 ("without a held-out or cross-fitted split")	Drops the training-protocol limitation from the paper; the note keeps it.
+paper-g-11	STRUCTURE	#522; note B08 Sec. 9 ("none of its reporting definitions ... met a precision target")	Drops the missed target from the paper; the note keeps it.
+paper-g-12	STRUCTURE	#522; note B05 ("The public release does not let us determine the origin of this difference")	Drops the undetermined flux reason (C7) from the paper; the note keeps it, and the paper's remaining comparison stays true.
+paper-g-13	PROTECTED	B1 (C20 at Fig. 3's band)	Removing the failed acceptance criteria and presenting "only the validated methodology" leaves Fig. 3's band reading as valid.
+paper-g-14	STRUCTURE	#522; note B08 (the 2.6 statistical standard deviations and the data-stability requirement)	Drops the failed data-stability requirement from the paper; the note keeps it.
+paper-g-15	UNVERIFIED		Quote not located.
+paper-g-16	WORDING		Refers to the cells by their properties.
+paper-g-17	STRUCTURE	#522; note B03 ("has not been independently validated")	Replaces C1's statement in the paper with a description of the systematic sources; the note keeps "not independently validated".
+paper-g-18	PROTECTED	C5, B2	Drops "its size is not validated and its own consistency check cannot fail", which no note piece prints, so the fact would leave both documents.
+paper-g-19	PROTECTED	C5, A7	Framing the run-period variation as "an unmodeled beam- or detector-related systematic effect" asserts a cause the paper says is unknown.
+paper-g-20	PROTECTED	B3 (ledger KEEP), A7	"Note the single-cell coverage properties neutrally" replaces the KEEP "We make no coverage claim ..." with coverage properties that were not established.
+paper-s-01	WORDING		Names the bias and states what the calibration shows.
+paper-s-02	WORDING		Introduces the estimator by its methodological differences.
+paper-s-03	WORDING		Expresses the condition in ordinary language; "which has not been shown" is kept.
+paper-s-04	WORDING		States which uncertainties are shown and their limitation, keeping the citation (C20 kept).
+paper-s-05	PROTECTED	A1	Rewrites the Data Availability package sentence. It is the same sentence as G1's paper-s-09, which #524 allowed as an A1 pair for Joseph.
+paper-s-06	WORDING		Splits the C_resp sentence, keeping its scope (C17).
+paper-s-07	PROTECTED	A4	The paper abstract's first sentence.
+paper-s-08	STRUCTURE		States the scope once ("apply to the implementation, data set and tests studied"), which keeps the KEEP restriction.
+paper-s-09	WORDING		Names the precision target and the two partitions.
+paper-s-10	WORDING		Defines the residual metric and states the iteration result; F109's fact is kept.
+paper-s-11	STRUCTURE		Removes the pointer to the development variants, or names a relevant one.
+paper-s-12	STRUCTURE		Says what the reference adds and omits the development inventory.
+paper-s-13	PROTECTED	B4 (check_registry pin)	Rewords "This reproducible central value is that of its own systematic-universe ensemble, so its covariance is built with the same estimator.", which check_registry.py pins (inventory B4).
+paper-s-14	WORDING		States that further truths were tested and how; the ungraded status is kept.
+paper-s-15	STRUCTURE	#522 (C18 placement relaxed)	Deletes "is stated only here" and introduces the low-stability cells directly. The round must keep the preceding sentence true, for example with paper-s-20.
+paper-s-16	WORDING		States what the diagnostic supports and what it does not assess (C11 kept).
+paper-s-17	WORDING		Restates that the period-difference check does not independently validate the block; the fact is kept.
+paper-s-18	WORDING		States which results support which comparisons.
+paper-s-19	STRUCTURE		Consolidates the two coverage statements into one, naming both the untested pointwise and simultaneous coverage.
+paper-s-20	PROTECTED	#522 item 2 (the paper's one pointer to its limitations in the note)	"Remove the inventory" deletes "The limitations of these results are stated with the results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note", which carries the paper's pointer to the note's limitations.

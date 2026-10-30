@@ -1,0 +1,41 @@
+id	class	item	reason
+paper-g-01	PROTECTED	#522 item 2	"Removing every reference to the note deletes the paper's one pointer to its limitations in the note (""those of the calibrated tests in the companion note"")."
+paper-g-02	PROTECTED	FROZEN F023, C12	"Rewrites ""Interval coverage has not been validated."" as an open systematic characteristic; the confirmed reading allows a move or consolidation but not rewording or replacement."
+paper-g-03	STRUCTURE	"note: B01 executive summary (""The results hold for this implementation, one data set, and the configurations, observables and deformations tested"")"	Turns the Scope disclaimer into narrative; under #522 the full scope statement may leave the paper because the note prints it.
+paper-g-04	UNVERIFIED		Located UNVERIFIED.
+paper-g-05	STRUCTURE	"note: B06 Sec. 7.1 (""Both definitions were inherited from MAT-MINERvA rather than chosen for this analysis"")"	"Drops the framework-heritage disclosure, which the note keeps; ""a defined constant of 135 MeV, rather than the charged-pion mass"" stays."
+paper-g-06	PROTECTED	B4 (check_registry pin paper_body.tex:52, ALIASES.tsv:38, whole-line digest)	Rewriting the seed-42 / 400-tree sentence edits pinned line 52, whose whole-line digest check_registry checks.
+paper-g-07	PROTECTED	B4 (check_registry pin paper_body.tex:52, ALIASES.tsv:38)	"Renames ""the joint-test estimator, a deterministic LightGBM"", the pinned alias text on line 52."
+paper-g-08	PROTECTED	F109 KEEP, B1	"Replacing the sentence with a bare iteration statement drops ""measured as the largest residual proxy over the truth changes used in its development""."
+paper-g-09	PROTECTED	B3, C8	"Drops the KEEP-list post-selection disclosure (""so the benchmark is a reproduction rather than an independent validation"") and presents it as an end-to-end check."
+paper-g-10	STRUCTURE	note: B02 Sec. 3.1 Training details (no held-out or cross-fitted split, no early stopping, no class balancing)	Restates the training protocol positively; the omitted-procedure disclosure stays in the note (#522).
+paper-g-11	STRUCTURE	"note: B08 Sec. 9.4 (""none of its reporting definitions (RD1-RD3) met a precision target"")"	Cuts the failed-target limitation from the paper; the note prints it (#522).
+paper-g-12	STRUCTURE	"note: B05 Sec. 6.2 (""The public release does not let us determine the origin of this difference"")"	Drops the undetermined-origin clause (C7) from the paper without asserting a cause; the note keeps it (#522).
+paper-g-13	PROTECTED	A7, B1	"Removes the disclosure that the Fig. 3 uncertainties come from a covariance that ""fails its specified acceptance criteria"" and presents ""only the validated uncertainty methodology"", implying a validation that does not exist."
+paper-g-14	PROTECTED	B2	"Drops the ""data-stability requirement of at most 0.3 (median) and 1.0 (maximum)"". B08 prints the failure and the 2.6/2.5 shifts but not these thresholds, so they would leave both documents."
+paper-g-15	UNVERIFIED		Located UNVERIFIED.
+paper-g-16	WORDING		"Replaces the ""joint cells"" label with a description."
+paper-g-17	STRUCTURE	"note: B03 Sec. 4.6 (""The result's intervals, bias and covariance have not been independently validated""); paper Limitations item 1"	Replaces the non-validation sentence with a description of sources and limitations; the fact stays in the paper's Limitations and in the note (#522).
+paper-g-18	STRUCTURE	"note: B03 Sec. 4.5 (""That says nothing about its coverage ... bounded whatever the data, so it is not a test"")"	Removes the run-period meta-limitation (C5) from the paper; the note keeps it (#522).
+paper-g-19	PROTECTED	A7, C5	"Reframes ""The cause is not known"" as an unmodeled beam- or detector-related effect, asserting a cause."
+paper-g-20	PROTECTED	F187 KEEP, B1, A7	"Replaces ""We make no coverage claim ..."" with a note on ""single-cell coverage properties"", which have not been tested."
+paper-s-01	WORDING		Names the bias and the displaced quantity in place.
+paper-s-02	PROTECTED	B4 (check_registry pin paper_body.tex:52, ALIASES.tsv:38)	"Replaces ""the joint-test estimator, a deterministic LightGBM"", the pinned alias text on line 52."
+paper-s-03	WORDING		"Restates the carry-over condition (F349) in ordinary language, keeping ""which has not been shown""."
+paper-s-04	WORDING		Names the displayed uncertainties and their limitation, keeping the citation (C20 stays).
+paper-s-05	PROTECTED	A1	Rewrites the Data Availability sentence.
+paper-s-06	WORDING		Splits the Cresp sentence, keeping its exclusions (C17).
+paper-s-07	PROTECTED	A4	Splits and rewords the paper abstract's first sentence.
+paper-s-08	WORDING		States the scope once (implementation, data set, tests studied).
+paper-s-09	WORDING		Names the target and partitions in place (F122 kept).
+paper-s-10	WORDING		"Defines the residual metric and keeps ""for the tested truth distributions""."
+paper-s-11	STRUCTURE		Cuts or replaces a pointer sentence on development variants.
+paper-s-12	STRUCTURE		Trims the caption's development-inventory pointer.
+paper-s-13	PROTECTED	B4 (check_registry pin paper_body.tex:52; inventory B4)	"Rewords ""This reproducible central value is that of its own systematic-universe ensemble ..."", on pinned line 52."
+paper-s-14	WORDING		"Replaces ""ungraded"" and states the criteria status for the six further truths."
+paper-s-15	STRUCTURE		"Deletes ""stated only here""; item 4 keeps the low-stability cells."
+paper-s-16	WORDING		Restates the diagnostic's scope (C11), keeping the questions it does not assess.
+paper-s-17	WORDING		Explains directly that the period-difference check does not validate the block.
+paper-s-18	WORDING		States which results support quantitative and which qualitative comparison (F305 kept).
+paper-s-19	WORDING		Merges F186 and F187 into one sentence stating the untested pointwise and simultaneous coverage; the gate phrase sits in the preceding sentence.
+paper-s-20	PROTECTED	#522 item 2	Removing the inventory sentence deletes the paper's only pointer to the limitations kept in the companion note.

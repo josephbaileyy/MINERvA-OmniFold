@@ -6,29 +6,29 @@ The analysis chain has four components; the note refers to them by the names in 
 \begin{itemize}[itemsep=2pt]
   \item \emph{Event loop} (C++): \texttt{runEventLoopOmniFold}, built on the MINERvA Analysis Toolkit (MAT) and the MINERvA-101 framework. It reads production AnaTuples, applies selection and systematic-universe machinery, and writes per-event ROOT trees.
   \item \emph{Event-loop outputs} (\emph{omnifiles} in the code): per-event records for data, for simulated signal with paired true and reconstructed quantities, for simulated background, and for the truth-level efficiency denominator, together with the exposure in protons on target (POT). The \texttt{\_universes\_full} variants add per-universe weight and shifted-kinematics branches.
-  \item \emph{Driver} (Python): per-analysis orchestration in \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} and its $N$-dimensional generalization \texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}. The driver builds training arrays from the event-loop outputs, applies the background subtraction its background-mode option selects (by default the purity weight; \S\ref{sec:method-algo}), runs the engine, and extracts the cross section.
+  \item \emph{Driver} (Python): per-analysis orchestration, by a two-dimensional driver and its $N$-dimensional generalization. The driver builds training arrays from the event-loop outputs, subtracts the background by the method an option selects, the purity weight by default (\S\ref{sec:method-algo}), or negative-weight injection with or without the Stay-Positive refinement (App.~\ref{app:negweight}), runs the engine, and extracts the cross section.
         % Accuracy fix (unscored; director ruling 2026-10-26): the option is --bkg-mode {purity, negweight,
         % negweight-refined}, default purity (2d-unfolding/unfold_2d_omnifold_unbinned.py:1362-1377 and :1825-1870 @ ddf16f10; nd-unfolding/unfold_nd_omnifold_unbinned.py:619-630 and :900-1030 @ ddf16f10);
         % the 2D result uses the refined negative-weight mode (sec:negweight-footing).
-  \item \emph{Engine} (Python): \texttt{unbinned\_unfolding/python/omnifold.py} implements the OmniFold iteration independently of the learner backend: LightGBM for the central value and the uncertainty ensembles, scikit-learn's exact-split gradient boosting (\texttt{exact}) for the cross-check, its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP) for a further cross-check.
+  \item \emph{Engine} (Python, \texttt{unbinned\_unfolding/python/omnifold.py}): the OmniFold iteration, implemented independently of the learner backend: LightGBM for the central value and the uncertainty ensembles, scikit-learn's exact-split gradient boosting (\texttt{exact}) for the cross-check, its histogram gradient boosting (\texttt{hist}) as an alternate, and a multilayer perceptron (MLP) for a further cross-check.
 \end{itemize}
 
 Point-cloud (PET) code is under \texttt{nd-unfolding/pet/} (App.~\ref{sec:pet}).
 
-Scripts, figure files and stored outputs call \emph{training-seed variation} \texttt{seedscan}; the two names denote the same variance source. The quoted training-seed block is assembled by the aggregation step of the 2D production, not by the \texttt{seedscan} scripts.
+The quoted training-seed block is assembled by the aggregation step of the 2D production, not by the scripts that run the training-seed variation.
 % J3/J4 provisional (DECISION-20261018, packet W3: D11 in sec:uq-2d-scope). C08: stageC/production/DESIGN.md §S5.
 
 \paragraph{Code identifiers cited in the note.}
 \begin{itemize}[itemsep=1pt]
   \item Event loop (\S\ref{sec:evloop}): \repopath{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}; its four trees are \texttt{mc\_truth\_denom} (efficiency denominator), \texttt{mc\_signal\_reco}, \texttt{mc\_background} and \texttt{data}; the flux histogram is \texttt{pTmu\_reweightedflux\_integrated}.
-  \item Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
+  \item Cross-section extraction (\S\ref{sec:method-xsec}): \texttt{extract\_cross\_section\_2d} in the 2D driver, \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py}, and its N-dimensional generalization \texttt{nd-unfolding/xsec\_nd.py}.
   \item Figures of \S\ref{sec:results}: \texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds the simulated-truth curve of Fig.~\ref{fig:ptslices} from \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py} draws Fig.~\ref{fig:modelmaps}.
 \end{itemize}
 
 \section{Supplementary figure: coverage of a purity-subtracted variant}
 \label{app:coverage-fig}
 
-Figure~\ref{fig:coverage-5d-paper} shows, integral by integral, the coverage test of \S\ref{sec:coverage-5d} under the reduction of the signal rate.
+The coverage test of \S\ref{sec:coverage-5d} measures, for each reported integral, the fraction of bias-corrected statistical intervals that contain the true value. Figure~\ref{fig:coverage-5d-paper} shows it integral by integral at the truth with a reduced signal rate.
 
 % Register round r19 (variant B, N3; director's ruling 2026-10-28): the methods paper's Fig. 4 and its caption, moved here when the paper's coverage figure left it (r19/move-pass.md, P5). Placed at the end of the last appendix so that no existing figure number of the note changes; pointed to from sec:coverage-5d. Third truth: OUTCOME-20260925-s5c-tier-s-futility-fail.md sec. 3; nd-unfolding/s5c_pseudo.py:56-60. Source: methods-m3 REPORT, Figure 3 (interim_400.json; evaluator nd-unfolding/s5c_coverage.py:147-174; bounds re-derived with scipy.stats.beta to 2e-16). Reproduced: 51, 0.060 (J224), 42; 2 (EW36, J161), 0.850 (EW36).
 \begin{figure}[tbp]

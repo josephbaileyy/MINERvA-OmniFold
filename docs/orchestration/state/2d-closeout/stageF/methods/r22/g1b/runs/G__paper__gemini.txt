@@ -1,0 +1,124 @@
+CURRENT RATING: 2
+
+GAPS (at most 20, the most important first, one passage each; the SHARE values sum to 100):
+1. QUOTE: "The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section."
+   SCOPE: this passage
+   PROBLEM: Citing an unpublished internal collaboration note repeatedly by section treats the manuscript as an abridged memo rather than a self-contained, archival PRD article.
+   CHANGE: Remove the references to the internal analysis note and incorporate the essential methodological rationale and validation summaries directly into the manuscript text or a technical appendix.
+   SHARE: 8
+
+2. QUOTE: "Interval coverage has not been validated."
+   SCOPE: this passage
+   PROBLEM: An abrupt, unintegrated declaration of non-validation reads like a bullet point from an internal audit checklist or referee report rather than professional journal prose.
+   CHANGE: Integrate the discussion of coverage behavior smoothly into the systematic evaluation of the unfolding procedure, framing it constructively as an open systematic characteristic rather than a blunt disclaimer.
+   SHARE: 7
+
+3. QUOTE: "The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general."
+   SCOPE: this passage
+   PROBLEM: Framing the analysis boundaries as an explicit legalistic disclaimer under a "Scope" heading mimics corporate technical memos rather than the standard physical scope statements of PRD papers.
+   CHANGE: State the specific dataset and measurement configurations directly in the narrative without defensive meta-commentary, adopting the measured register of published studies (e.g., Ref. 1: "This paper demonstrates OmniFold’s application to a neutrino cross-section measurement for the first time using a public T2K near detector simulated dataset, comparing its performance with traditional approaches using a mock data study").
+   SHARE: 7
+
+4. QUOTE: "The input is an earlier production of the MINERvA open-data release (see Data availability), in the form of pre-selected analysis ntuples (AnaTuples) [12]."
+   SCOPE: this passage
+   PROBLEM: Referring to software-level pipeline files ("AnaTuples") and historical generation milestones ("earlier production") injects project-internal data-handling jargon.
+   CHANGE: Replace the internal file format label and historical production note with a standard physical description of the data exposure and processed event sample.
+   SHARE: 6
+
+5. QUOTE: "This constant is inherited from the analysis framework’s definition."
+   SCOPE: this passage
+   PROBLEM: Explaining an observable's definition as a legacy inherited from an internal software framework reads like an informal code comment rather than an intentional scientific choice.
+   CHANGE: State the kinematic definition directly and define the subtracted constant objectively on physical or operational grounds without referencing the software framework's heritage.
+   SHARE: 6
+
+6. QUOTE: "The two-observable central value uses LightGBM at seed 42 [23] with negative-weight background subtraction and a refinement of 400 trees and 31 leaves."
+   SCOPE: this passage
+   PROBLEM: Cataloging specific execution seeds ("seed 42") and tree hyperparameter counts in the running text gives it the record-keeping tone of an execution log rather than published PRD prose.
+   CHANGE: Describe the boosted decision-tree architecture and background subtraction in standard methodological terms, moving exact random seeds and execution configurations to a public code repository reference as in Ref. 1 ("Code used in the following analysis is publicly available [61]").
+   SHARE: 6
+
+7. QUOTE: "The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity."
+   SCOPE: this passage
+   PROBLEM: Naming the primary extraction configuration using an ad hoc project label ("joint-test estimator") reads like an internal benchmarking memorandum contrasting temporary code branches.
+   CHANGE: Refer to the extraction method by a standard descriptive physical name (such as "the five-dimensional BDT unfolding") rather than a project-internal development label.
+   SHARE: 5
+
+8. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   SCOPE: this passage
+   PROBLEM: Recounting the historical trial-and-error optimization of iterations and internal metrics ("residual proxy") reads like an internal development narrative rather than a concise journal justification.
+   CHANGE: State the chosen regularization parameter and its physical basis directly, following the concise register of Ref. 2 ("As a result of these studies, unfolding is performed with 10 iterations for this analysis").
+   SHARE: 5
+
+9. QUOTE: "The learner was selected after the LightGBM and exact-split comparisons with the published result, so the benchmark is a reproduction rather than an independent validation."
+   SCOPE: this passage
+   PROBLEM: Narrating the historical order of model selection while defensively disqualifying the benchmark as a "reproduction rather than an independent validation" sounds like internal self-scrutiny.
+   CHANGE: Present the comparison with the published two-dimensional measurement straightforwardly as an end-to-end consistency check without apologetic procedural history.
+   SHARE: 5
+
+10. QUOTE: "Each classifier is trained on the full sample whose weights it then sets, without a held-out or cross-fitted split, early stopping, or class balancing (Ref. [14], Sec. 3.1)."
+   SCOPE: this passage
+   PROBLEM: Compiling a negative list of unused ML procedures reads like a defensive memo answering an internal reviewer rather than a direct description of the method.
+   CHANGE: State the training protocol positively and directly by describing the training sample and loss function without detailing techniques that were not employed.
+   SHARE: 5
+
+11. QUOTE: "With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target."
+   SCOPE: this passage
+   PROBLEM: Reporting that candidate definitions failed an internal "precision target" reflects internal project management deliberations rather than standard scientific reporting of results.
+   CHANGE: State the achieved uncertainty and sensitivity of the reported binning directly, omitting references to discarded definitions and unmet internal milestones.
+   SHARE: 5
+
+12. QUOTE: "The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine."
+   SCOPE: this passage
+   PROBLEM: Speculating helplessly about discrepancies with past work ("for a reason the released inputs do not let us determine") introduces an informal, defeated tone alien to PRD.
+   CHANGE: State the numerical difference between the evaluated flux uncertainties factually without speculating about deficiencies in the released data files.
+   SHARE: 5
+
+13. QUOTE: "Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6)."
+   SCOPE: this passage
+   PROBLEM: Invoking an obsolete "earlier purity-subtracted" covariance that failed private "acceptance criteria" burdens the reader with dead-end development history and undefined internal jargon.
+   CHANGE: Remove all discussion of discarded preliminary covariance matrices and present only the validated uncertainty methodology adopted for the final measurement.
+   SHARE: 4
+
+14. QUOTE: "Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations, and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations."
+   SCOPE: this passage
+   PROBLEM: Quoting numerical failure thresholds against an internal "data-stability requirement" and comparing against a "development variant" reads like an internal software quality-assurance report.
+   CHANGE: Discuss numerical stability and sensitivity to input precision as a systematic consideration in measured, objective terms without referencing internal pass/fail thresholds.
+   SHARE: 4
+
+15. QUOTE: "We call this requirement the support rule."
+   SCOPE: this passage
+   PROBLEM: Bestowing a formal internal label ("the support rule") on an ordinary minimum event-occupancy cut creates unnecessary in-house jargon.
+   CHANGE: Describe the selection threshold descriptively as an event-occupancy or statistical threshold for reporting cells without coining a proper-noun rule.
+   SHARE: 4
+
+16. QUOTE: "Of the coarse cells, 109 pass; these are the joint cells."
+   SCOPE: this passage
+   PROBLEM: Introducing the internal shorthand label "joint cells" for an intermediate grid partition adds idiosyncratic project jargon to the phase-space description.
+   CHANGE: Refer to these bins directly by their physical characteristics as the multidimensional reporting cells that satisfy the minimum population threshold.
+   SHARE: 4
+
+17. QUOTE: "The covariance has not been independently validated."
+   SCOPE: this passage
+   PROBLEM: Issuing a blunt disclaimer disowning the validity of the presented covariance matrix departs from the authoritative tone expected in published journal articles.
+   CHANGE: Replace the blanket disclaimer with a precise physical description of the specific systematic sources accounted for and the limitations of the correlation model.
+   SHARE: 4
+
+18. QUOTE: "Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail."
+   SCOPE: this passage
+   PROBLEM: Arguing that an uncertainty's "consistency check cannot fail" reads like an internal methodological audit commentary rather than standard physical uncertainty estimation.
+   CHANGE: State directly how the run-period variation is evaluated and incorporated as a systematic uncertainty without meta-commentary on the impossibility of failing consistency checks.
+   SHARE: 4
+
+19. QUOTE: "The cause is not known, and these data cannot establish which period is correct."
+   SCOPE: this passage
+   PROBLEM: Pleading ignorance about period-to-period variations ("The cause is not known, and these data cannot establish which period is correct") conveys a helpless internal-log tone.
+   CHANGE: Frame the variation objectively as an unmodeled beam- or detector-related systematic effect and describe the systematic uncertainty assigned to account for it.
+   SHARE: 3
+
+20. QUOTE: "We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections."
+   SCOPE: this passage
+   PROBLEM: Disclaiming statistical coverage through a legalistic assertion ("We make no coverage claim...") departs from the objective, descriptive voice of PRD papers.
+   CHANGE: State precisely how the statistical and systematic intervals were constructed and note the single-cell coverage properties neutrally without defensive disclaimers.
+   SHARE: 3
+
+ENOUGH: Yes, making these changes in full would remove the pervasive internal-note bookkeeping, development history, and defensive hedging, bringing the manuscript to a rating of 4.

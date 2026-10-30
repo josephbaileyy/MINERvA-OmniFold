@@ -127,3 +127,48 @@ does not flip, and on the 3 sol2 P1 runs NEW's mean and lowest run are each at l
 4. **Disagreements:** a gap that either classification calls PROTECTED stays out. The exceptions are the gaps #524
    allows: sol2's ten, and B2 history with a ledger home.
 5. **The base:** fixed by §2's rule.
+
+## 7. Rulings during the round
+
+1. **note-n4's frozen sentences no longer bind** (director, 2026-10-30). The n4 outline left eight sentences
+   byte-identical "until Joseph decides on the inventory of his requirements and protections".
+   - He did so in DECISION-20261028-joseph-protections-remade-and-r21 (#465), then #521, #522 and #524.
+   - No later decision names the eight sentences.
+   - So `step2/check_ledger.py` runs with `--no-n4-frozen`.
+   - Two in-scope gaps touch those sentences. Both go ahead as WORDING, with their facts probed:
+     - **B01-s-02:** that every lost draw was rerun and observed, for reporting only;
+     - **B01-s-06:** that readiness for publication as a measurement has not been established. C1's fact keeps its
+       exact meaning.
+2. **The gemini gaps that fail #524 item 2 go to the director's OpenAI review** (#524 item 3), with gemini's other 45
+   protected gaps: the 26 B2 gaps, and B12-g-04.
+3. **Integration of the note round** (director, 2026-10-30):
+   - restore the KEEP-unchanged pins of `records-move-ledger.md` and every records citation a writer removed;
+   - re-point a probe only where its fact still prints, and restore any lost fact;
+   - anything written from memory either gets a source or goes. This covers B02's PPFX expansion and B03's two GENIE
+     glosses, which revert to cited text.
+4. **The paper round and the `registry/ALIASES.tsv:38` line pin** on `paper_body.tex:52`: the inventory's B4 remedy.
+   - Where G1b's allowed gaps call for it, reword the line, then re-pin ALIASES and ATTRIBUTION with a record, as r21
+     did.
+   - The alias text "the joint-test estimator" stays registered, and the re-pin record names the old and new line
+     digests.
+5. **gemini's 72 protected gaps after the OpenAI review**
+   ([DECISION-20261030-joseph-adopt-openai-review.md](../../../../../DECISION-20261030-joseph-adopt-openai-review.md),
+   #534):
+   - ALLOW (5) enter as proposed;
+   - ALLOW-NARROW (36) enter only in the reviewer's narrowed form;
+   - KEEP (31) join the out-of-scope list.
+
+   They enter the next round, after this note round is measured, and are not spliced into it.
+
+## Files
+
+- **The writers' brief and lists:**
+  - [WRITER-BRIEF.md](step2/WRITER-BRIEF.md), the common rules;
+  - the per-piece lists [B01](step2/briefs/B01.md), [B02](step2/briefs/B02.md), [B03](step2/briefs/B03.md), [B04](step2/briefs/B04.md), [B05](step2/briefs/B05.md), [B06](step2/briefs/B06.md), [B07](step2/briefs/B07.md), [B08](step2/briefs/B08.md), [B09](step2/briefs/B09.md), [B10](step2/briefs/B10.md), [B11](step2/briefs/B11.md), [B12](step2/briefs/B12.md), [B13](step2/briefs/B13.md), [B14](step2/briefs/B14.md), [B15](step2/briefs/B15.md).
+- **The fact ledger:** [step2/ledger.md](step2/ledger.md), checked by `step2/check_ledger.py`, and the per-piece
+  ledgers it concatenates, [B01](step2/ledger-B01.md), [B02](step2/ledger-B02.md), [B03](step2/ledger-B03.md), [B04](step2/ledger-B04.md), [B05](step2/ledger-B05.md), [B06](step2/ledger-B06.md), [B07](step2/ledger-B07.md), [B08](step2/ledger-B08.md), [B09](step2/ledger-B09.md), [B10](step2/ledger-B10.md), [B11](step2/ledger-B11.md), [B12](step2/ledger-B12.md), [B13](step2/ledger-B13.md), [B14](step2/ledger-B14.md), [B15](step2/ledger-B15.md).
+- **The two-direction review:** [REVIEW-BRIEF.md](step2/REVIEW-BRIEF.md), with the three reviews
+  [B01–B05](step2/review-B01-B05.md), [B06–B10](step2/review-B06-B10.md) and [B11–B15](step2/review-B11-B15.md).
+- **The note abstract's pairs for Joseph:** [abstract-pairs.md](step2/abstract-pairs.md).
+- **Tools:** `tools/check_outscope.py`, `tools/step2_briefs.py`, `tools/make_agy_pairs.py`, `tools/agy_runs.sh`,
+  `tools/step2_runs.sh` and `tools/adopt_step2.py`.
