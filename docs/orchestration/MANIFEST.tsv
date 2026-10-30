@@ -7122,11 +7122,14 @@ docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	tracked
 docs/orchestration/state/oi74-canonical-drift-20261030/connect-session-2.txt	tracked	MACHINE	state-artifact	oi74-canonical-drift-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-drift-20261030/connect-session.txt	tracked	MACHINE	state-artifact	oi74-canonical-drift-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/BINDING.md	tracked	LIVE	state-artifact	oi74-canonical-ff-20261030		open		route-only	no
+docs/orchestration/state/oi74-canonical-ff-20261030/DECLARATION-2.md	tracked	LIVE	state-artifact	oi74-canonical-ff-20261030		open		route-only	no
 docs/orchestration/state/oi74-canonical-ff-20261030/DECLARATION.md	tracked	LIVE	state-artifact	oi74-canonical-ff-20261030		open		route-only	no
 docs/orchestration/state/oi74-canonical-ff-20261030/REPORT.md	tracked	ARCHIVAL	state-artifact	oi74-canonical-ff-20261030		terminal		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/ff.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
+docs/orchestration/state/oi74-canonical-ff-20261030/ff2.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/run/session.txt	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/test_ff.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
+docs/orchestration/state/oi74-canonical-ff-20261030/test_ff2.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
 docs/orchestration/state/p3f-hpss-to-cfs-20260818/delete_57214668.log.txt	tracked	MACHINE	state-artifact	p3f-hpss-to-cfs-20260818		generated		exact-path-only	yes
