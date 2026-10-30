@@ -1,0 +1,2 @@
+normalization: worst shape ratio over 500 f: 4.716922450440704e-16 (UNIFORM_REL 1e-12); modes per draw: 1
+95% interval at nu=1.8244: [0.510, 7.320] -> test's lo<1 and hi>2 pass: True

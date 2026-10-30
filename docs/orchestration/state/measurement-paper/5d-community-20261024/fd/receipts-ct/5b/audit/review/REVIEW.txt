@@ -1,0 +1,82 @@
+Independent read-only review of 93642cdd7 (fd_ct_5b_audit.py, its tests and mutation runner) against
+FD-CT-5B-AUDIT-DECLARATION.md, by a Claude Opus 5.5 subagent of the session coverage-5b-audit, in its own detached
+worktree, since removed. Its final report, verbatim:
+
+I found no defect that would make the stop verdict wrong on real inputs. The equations, populations, thresholds and comparisons of §3–§7 match the code. The defects are in what the declaration says versus what the code does, and in test coverage.
+
+**Test run** (`cd nd-unfolding/tests && TMPDIR=<review>/tmp python3 -B -m unittest test_fd_ct_5b_audit`). The runner printed `Ran 34 tests in 26.360s` / `OK (skipped=2)`. The file has 34 `def test_`. The 2 skips are `RootLoader`, because ROOT does not import locally, so `load_2d` was not exercised against real ROOT files here.
+
+## MEDIUM
+
+**M1. The planted-leak test never exercises the guard's integral table** (tests:510-520). It plants `X_PB`, an absolute value of about 1e-39, which the guard's 1e-30 floor refuses whatever the table holds.
+- Probe `probe_leak_table.py`: with the table emptied, the test still passes.
+- A ratio leak `X_PB/f − 1` (about 0.7) exits 3 with the real guard and exits 0 with the emptied one.
+- So the runner's own mutant "guard: no integrals" (`mutants_5b_audit.py`) would survive. `probe_suite_under_mock.py guard_empty` gives 34 run, 0 failures. I applied it by mock; I did not run the mutation receipt itself.
+
+**M2. Three §7 controls have no test in the refusing direction**: the floor (`fd_ct_5b_audit.py:277`), σ_M (`:279`) and the exposure shares (`:280`). Bypassing the floor or σ_M check leaves the whole suite green (`probe_suite_under_mock.py no_floor_check` / `no_sigmaM_check`: SURVIVED). Neither is in the mutant list, although §9 asks for every control. A0's schema/pin clause (`:230`) and assertions A4 and A5 (`:552`, `:611`) are also untested.
+
+**M3. Declared tests are missing, and some written statistics are never recomputed.**
+- `test_reference_bound` (§6.1), `test_identification_fires_and_stays_silent` (§3.3) and `test_plane_retention_in_both_directions` (§6.3) do not exist. The last two have substitutes under other names. The first has none.
+- A mock that multiplies `reference_bound.value` by 7, zeroes `whitened_eigenvalues` and sets the χ² fall to 0.99 survives the suite (`ref_bound_wrong`).
+- Also never compared with a value computed in the test: jackknife, split halves, OV_pattern, best pair, the plane angles, `floor_over_stat_sigma` and the pattern correlation. §9 promises "a hand recomputation of every written statistic."
+
+**M4. The residual quantile differs from the declaration** (`:482`, `:501`). §3.3 says χ²₁₅'s 95 % quantile, 24.996. The code uses χ²₁₄, 23.685. Fitting 2 parameters on 16 cells gives 14 dof, so the code is statistically right. But it changes §3.3, which amendment 1 must name as an error (declaration line 21). It has no stop role.
+
+**M5. The leak guard omits the 2D integrals** (`:651`). §9 says the guard receives "every unfold and MC-truth integral (5B and 2D)". The code passes only the 5B ones (`b5["integrals"]`).
+- Every 2D-derived output is a ratio to 2D's own values, and any absolute 2D number would fall below the 1e-30 floor.
+- The 2D arrays have 205 cells, and the guard matches cell by cell on 16. So the omission is safe in practice, but it is an undeclared deviation that amendment 1 should state.
+
+## LOW
+
+**L1. 5A's noise uses double ratios** (`:399-400`). §5.3(3b) defines d = x_b/x_s42 − 1. The code uses (x/t)_b/(x/t)_s42 − 1, which is playlist_term.py:201-205's form, the one control A3 must reproduce. The two are equal only if 2D's bootstrap leaves t unchanged. Name it.
+
+**L2. OV_pattern for the normalization group is rounding noise** (`:460-463`). The pattern modes are orthogonal to the uniform vector, so b is about 1e-20 and OV about 1e-17. If the normalization block were exactly uniform in relative units, b would be 6e-36 and the guard would refuse (exit 3), as it does on a planted exactly-uniform block. S1's construction `outer(NF f, NF f)/ff` gave 0 hits in 200 random f (`probe_ov_pattern_floor.py`). So this is low risk, but the written values carry no meaning.
+
+**L3. A1's 1e-12 rtol on the floor and g_sig has thin margin** if the 5B readout's numpy/BLAS summed `U @ x` in another order. The relative error reached 3.4e-13 at |D| about 0.3 % (`probe_a1_summation_order.py`). It scales as 1/|D|, so at 5B's smallest g_sig (0.00095) it is about 1e-12. In the same environment the result is bitwise, and the failure mode is a refusal, not a wrong verdict.
+
+**L4. Declared pins and records that are not enforced.**
+- 5B's check-receipt digests (§1) are recorded (`:290`) but never compared with the 5B readout's `inputs_sha256.receipts`. A1's numerical equality covers this indirectly.
+- 2D's committed seed share (0.001843) is available but not used as a control.
+- The output directory `$P/fd-ct-5b-audit-<date>/` (§9) is not enforced.
+
+**L5. Places where the declaration is ambiguous and the code chose.**
+- Candidates are kept only for λ strictly greater than 0.01 tr(B), not λ ≥ 0.01 tr(B).
+- The uniform test uses the smaller of the PB and PC weights.
+- OV_pattern's intercept is the Euclidean mean, not the noise-weighted one.
+- N's SD uses ddof = 1.
+- The (3c) contrast σ assumes cells are independent.
+- §4.1's "mean shift E_k[P^(k)] − P" is written as `sqrt(diag Pm)/σ − 1`, not as the shift.
+- The species "give exactly one candidate" claim is not asserted.
+
+**L6. Weak assertions.**
+- `test_nu_eff_and_the_interval` checks only lo < 1 and hi > 2. A 95 % interval, [0.51, 7.32], also passes.
+- OV is checked only to lie in [0, 1].
+- `n_candidates > 40`.
+- The hand recomputation uses `au.basis` from the code under test.
+- `RootLoader` checks against a formula retyped in the test, not against `analyze_periods.load` itself.
+
+**L7. Clause N's power (information only).** The suite records that N stays silent when replica noise equals the offsets (`test_n_is_silent_when_the_noise_is_as_large_as_the_offsets`). The thresholds are frozen; the director may want this in view.
+
+## Confirmed correct
+- **P and its rebuild:** `p_block` repeats 5B's operations in the same order, so the rebuild is bitwise in the same environment. The P, floor, g, g_sig and e checks match §7.
+- **Committed P:** the 5B P has rank 2 (λ₃/λ₁ = 1.1e-16, below the 1e-12 cut).
+- **Stop clauses:** O, N and R, their ≥/≤/>/< directions, |a| as sign-free, the PB∧PC conjunction, and `stop = O ∨ N ∨ R` all match §7.
+- **Item 1:** the WLS E_X and a_X match §3.3, and the candidate population (all blocks except stat and seed, at most 3 modes above 1 %) matches it. The normalization candidate is excluded, with worst shape ratio 4.7e-16 over 500 f. The group sums, including DR, match §1.
+- **Items 2, 4 and the bound:** R_k, ν_eff = 1.8244 with interval [0.734, 2.564], √(2k) = 1.157, and the Beta tail 0.0021892 are correct. The A5 Weyl assertion cannot fire on PSD inputs. The reference bound equals playlist_term's.
+- **Item 3:** the uniform share uses ū = ¼·1, a unit vector. σ_5A sums the bootstrap term and the seed term halved, both after centering.
+- **Control A3:**
+  - It reproduces playlist_term.py's Nb exactly. Its tolerances survive the JSON and ROOT round trips, since both sides use the same arithmetic.
+  - The repo copies of analyze_periods.py and common.py match playlist_term's pins, `912af1dd…` and `dcb78c52…`.
+- **Pins:** every pinned committed file matches its sha256.
+- **Leak guard:** no written number is absolute or a ratio to f, and the 5B integrals are in the table.
+- **`load_2d`:** it matches `analyze_periods.load` in formula, multiplication order, axes check, cell indexing and grid literals. The only differences are the error type, the unread metadata (runConfig, driverSha256, sha) and a file handle left open on the axis-mismatch path.
+
+**Porcelain** (`git -C <worktree> status --porcelain`): one line, `?? docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/audit/review/`. The probe scripts are in that directory. Their `.log` outputs are gitignored, the test tmp directory is empty, and no tracked file was modified.
+
+Files are in `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/review-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/audit/review/`:
+- `probe_leak_table.py`
+- `probe_suite_under_mock.py`
+- `probe_ov_pattern_floor.py`
+- `probe_a1_summation_order.py`
+- `probe_uniform_and_interval.py`
+- `unittest.log`

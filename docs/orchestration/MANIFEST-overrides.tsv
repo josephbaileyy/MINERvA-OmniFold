@@ -473,6 +473,8 @@ docs/orchestration/RECORD-20261029-close-items-oi53-claims-freeze.md	ARCHIVAL	te
 docs/orchestration/RECORD-20261029-director-analysis-note-sync-2d94cbc5.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	LIVE	open	""
 docs/orchestration/RECORD-20261030-close-items-5d-budget-launcher-classification.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261030-close-items-oi148-lint-state-cell.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261030-close-items-oi148-narrowed-to-pr-p6.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261030-close-items-oi148-row-repair.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261030-close-items-oi160-closed.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261030-close-items-oi74-canonical-drift.md	ARCHIVAL	terminal	""
@@ -965,9 +967,14 @@ docs/orchestration/state/ki98-wbias-test/REPORT.md	LIVE	open	""
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/live-state.schema.json	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-BINDING.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-REPORT.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-BINDING.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-DECLARATION.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-INPUTS.md	LIVE	open	""
@@ -1131,6 +1138,9 @@ docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	ARCHIVAL	terminal
 docs/orchestration/state/oi160-tolerance-20261029/BINDING.md	ARCHIVAL	terminal	""
 docs/orchestration/state/oi160-tolerance-20261029/DECLARATION.md	ARCHIVAL	terminal	""
 docs/orchestration/state/oi160-tolerance-20261029/REPORT.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi74-canonical-ff-20261030/BINDING.md	LIVE	open	""
+docs/orchestration/state/oi74-canonical-ff-20261030/DECLARATION.md	LIVE	open	""
+docs/orchestration/state/oi74-canonical-ff-20261030/REPORT.md	ARCHIVAL	terminal	""
 docs/orchestration/state/probe-z-consumer-inversion-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-projected-stability-20260910.py	MACHINE	open	
