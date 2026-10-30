@@ -4,7 +4,8 @@
 the committed H2 definition. No covariance, prediction or data product is opened.
 
 ratio (paper): each prediction's ratio to the data on R00-R15, from Stage G's readout. The default form is
-    data/prediction, f/g, with the error bar (f/g) sigma/f, where sigma/f = sqrt(diag(C_total + C_resp))/f is Stage
+    data/prediction, f/g, with the error bar (f/g) sigma/f, where sigma/f = sqrt(diag(C_total + C_resp))/f (C_resp: the
+    adopted extra block, --reported-block-name) is Stage
     G's sigma_total_over_f; --ratio-form prediction-over-data draws g/f = 1 + g_over_f_minus_1 against the data's band
     1 +- sigma/f. GiBUU is drawn on its eight p_parallel < 4.5 cells only, and nothing of it above p_parallel 4.5; by
     default on its own axis under the others' (--gibuu-axis). Each cell's box is printed in a key under the axes.
@@ -73,7 +74,15 @@ PINS = {
 SCHEMAS = {"g_readout": "fd-g-readout/2", "g_diag_readout": "fd-g-diag-readout/1",
            "g_followup_readout": "fd-g-followup-readout/1", "g_sens2_readout": "fd-g-sens2-readout/1",
            "f0b_readout": "fd-f0b-readout/1", "definition": "h2-definition/1"}
-REPORTED = "C_total + C_resp + V_g"
+BLOCK = "C_resp"                                # the adopted extra block Stage G names (--reported-block-name)
+
+
+def reported(name: str = BLOCK) -> str:
+    """Stage G's reported matrix with V_g, for the adopted extra block ``name``."""
+    return f"C_total + {name} + V_g"
+
+
+REPORTED = reported()
 REPRO = 1e-10                                   # K-controls' relative tolerance between two readouts
 EXACT = 1e-12                                   # K6: drawn against model (the same floats, so equal in practice)
 ORDER = tuple(p["name"] for p in G.PREDICTIONS)                 # Stage G's order: genie_cv ... mnvtune_v1
@@ -162,7 +171,7 @@ def load(a, pins: dict) -> dict:
     return r
 
 
-def check_chain(r: dict, pins: dict) -> None:
+def check_chain(r: dict, pins: dict, name: str = BLOCK) -> None:
     """K1: the readouts were made from one another and from the same inputs."""
     g, dg, fu, s2, b = (r[k] for k in INPUTS[:5])
     ins = {k: r[k]["inputs_sha256"] for k in INPUTS[:5]}
@@ -178,8 +187,8 @@ def check_chain(r: dict, pins: dict) -> None:
     report("K1", "every readout ran on Stage G's S1 product", all(ins[k]["s1_npz"] == ins["g_readout"]["s1_npz"]
                                                                   for k in INPUTS[:5]))
     xb = g["extra_block"]
-    report("K1", "C_resp is adopted, and every readout ran on the same C_resp",
-           xb["name"] == "C_resp" and xb["role"] == "adopted" and b["extra_block"]["sha256"] == xb["sha256"]
+    report("K1", f"{name} is adopted, and every readout ran on the same {name}",
+           xb["name"] == name and xb["role"] == "adopted" and b["extra_block"]["sha256"] == xb["sha256"]
            and all(ins[k]["extra_block"] == xb["sha256"] for k in INPUTS[1:4]))
     names = [p["name"] for p in g["predictions"]]
     report("K1", "Stage G holds the five predictions in order, with their labels", names == list(ORDER) and all(
@@ -255,7 +264,7 @@ def padded(vals: list[float]) -> list[float]:
     return [float(np.floor((lo - pad) * 20) / 20), float(np.ceil((hi + pad) * 20) / 20)]
 
 
-def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0]) -> dict:
+def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0], name: str = BLOCK) -> dict:
     g, b = r["g_readout"], r["f0b_readout"]
     P = {p["name"]: p for p in g["predictions"]}
     cells = list(g["cells"])
@@ -272,15 +281,15 @@ def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0]) -> dict:
         report("K2", f"{n}: f is the same data on its cells", np.array_equal(np.array(p["f"]), f16[idx]))
         report("K2", f"{n}: sigma_total_over_f is the same on its cells",
                np.array_equal(np.array(p["sigma_total_over_f"]), s16[idx]))
-        report("K2", f"{n}: the reported covariance is C_total + C_resp", p["reported_covariance"] == "C_total + C_resp")
+        report("K2", f"{n}: the reported covariance is C_total + {name}", p["reported_covariance"] == f"C_total + {name}")
         f, gg = np.array(p["f"]), np.array(p["g"])
         report("K2", f"{n}: f and g are positive", bool(np.all(f > 0) and np.all(gg > 0)))
         report("K2", f"{n}: g/f - 1 is g_over_f_minus_1", rel(gg / f - 1, p["g_over_f_minus_1"]) <= REPRO)
     var, cr = np.array(ref["variant"]["sigma_total_over_f"]), np.array(g["extra_block"]["relative_sigma"])
-    report("K2", "the error bar is C_total + C_resp: sigma^2 = sigma(C_total)^2 + sigma(C_resp)^2",
+    report("K2", f"the error bar is C_total + {name}: sigma^2 = sigma(C_total)^2 + sigma({name})^2",
            ref["variant"]["covariance"] == "C_total" and rel(s16 ** 2, var ** 2 + cr ** 2) <= REPRO)
-    report("K2", "F0b's sqrt(diag(C_total + C_resp))/f is the same", rel(
-        s16, b["relative_sigma_plus_C_resp"]["C_total"]) <= REPRO and rel(cr, b["extra_block"]["relative_sigma"]) <= REPRO)
+    report("K2", f"F0b's sqrt(diag(C_total + {name}))/f is the same", rel(
+        s16, b[f"relative_sigma_plus_{name}"]["C_total"]) <= REPRO and rel(cr, b["extra_block"]["relative_sigma"]) <= REPRO)
 
     separate = gibuu_axis == "separate"
     axes_of = {n: (1 if separate and n == "gibuu" else 0) for n in ORDER}
@@ -358,7 +367,7 @@ def mode_text(m: dict) -> tuple[str, str]:
             f"$\\sigma$ = {100 * m['sigma']:.2f}%, distance {m['distance']:+.2f}$\\sigma$")
 
 
-def modes_model(r: dict) -> dict:
+def modes_model(r: dict, name: str = BLOCK) -> dict:
     g, dg = r["g_readout"], r["g_diag_readout"]
     P = {p["name"]: p for p in g["predictions"]}
     cells = list(g["cells"])
@@ -367,8 +376,8 @@ def modes_model(r: dict) -> dict:
     for i, n in enumerate(SIXTEEN):
         rec = next(p for p in dg["predictions"] if p["name"] == n)
         comp = [c for c in rec["comparisons"] if c["comparison"] == "reported"]
-        report("K4", f"{n}: one reported comparison, on C_total + C_resp + V_g, with Stage G's chi2",
-               len(comp) == 1 and comp[0]["matrix"] == REPORTED
+        report("K4", f"{n}: one reported comparison, on {reported(name)}, with Stage G's chi2",
+               len(comp) == 1 and comp[0]["matrix"] == reported(name)
                and rel(comp[0]["chi2_stage_g"], P[n]["total"]["chi2"]) <= REPRO and rec["cells"] == cells)
         rt = comp[0]["relative_to_f"]
         top, ranked = rt["top_modes"], rt["modes_by_chi2"]
@@ -419,12 +428,12 @@ def family_text(fam: str, r: dict) -> str:
     return " + ".join(groups) + (" (joint)" if len(groups) > 1 else " alone")
 
 
-def sens_model(r: dict) -> dict:
+def sens_model(r: dict, name: str = BLOCK) -> dict:
     g = r["g_readout"]
     P = {p["name"]: p for p in g["predictions"]}
     for k in ("g_followup_readout", "g_sens2_readout"):
         s = r[k]["sens"]
-        report("K5", f"{k}: the reported matrix and label are G-SENS's", s["reported_matrix"] == REPORTED
+        report("K5", f"{k}: the reported matrix and label are G-SENS's", s["reported_matrix"] == reported(name)
                and s["label"] == SENS_LABEL and list(r[k]["constants"]["alphas"]) == list(ALPHAS))
     fams = r["g_sens2_readout"]["referenced"]["families"]
     report("K5", "G-SENS2's referenced families are G-FOLLOWUP's",
@@ -840,7 +849,8 @@ def sidecar(name: str, model: dict, pdf: bytes, a, pins: dict, code: dict) -> di
             "inputs_sha256": {k: pins[k] for k in INPUTS}, "code": code,
             "versions": {"python": sys.version.split()[0], "numpy": np.__version__,
                          "matplotlib": matplotlib.__version__},
-            "argv": list(sys.argv), "options": {"ratio_form": a.ratio_form, "gibuu_axis": a.gibuu_axis},
+            "argv": list(sys.argv), "options": {"ratio_form": a.ratio_form, "gibuu_axis": a.gibuu_axis,
+                                                **{f"reported_block_{k}": v for k, v in named(a).items()}},
             "plotted": model}
 
 
@@ -851,6 +861,8 @@ def build_args(argv):
     ap.add_argument("--figures", nargs="+", choices=FIGURES, required=True)
     ap.add_argument("--ratio-form", choices=RATIO_FORMS, default=RATIO_FORMS[0])
     ap.add_argument("--gibuu-axis", choices=GIBUU_AXES, default=GIBUU_AXES[0])
+    ap.add_argument("--reported-block-name", default=BLOCK,
+                    help="the adopted extra block every readout names; default C_resp")
     ap.add_argument("--out-dir", type=Path, required=True)
     a = ap.parse_args(argv)
     if len(set(a.figures)) != len(a.figures):
@@ -858,8 +870,15 @@ def build_args(argv):
     return a
 
 
-MODEL = {"ratio": lambda r, a: ratio_model(r, a.ratio_form, a.gibuu_axis), "modes": lambda r, a: modes_model(r),
-         "sens": lambda r, a: sens_model(r)}
+def named(a) -> dict:
+    """The block name as a keyword, only when it is not the default (so the default call is today's). An options
+    object without the attribute (a caller from before the option existed) means the default."""
+    name = vars(a).get("reported_block_name", BLOCK)
+    return {} if name == BLOCK else {"name": name}
+
+
+MODEL = {"ratio": lambda r, a: ratio_model(r, a.ratio_form, a.gibuu_axis, **named(a)),
+         "modes": lambda r, a: modes_model(r, **named(a)), "sens": lambda r, a: sens_model(r, **named(a))}
 
 
 def run(a, pins=None) -> int:
@@ -869,7 +888,7 @@ def run(a, pins=None) -> int:
     report("K0", "no output exists (no overwrite)", not any(p.exists() for p in outs),
            ", ".join(str(p) for p in outs if p.exists()))
     r = load(a, pins)
-    check_chain(r, pins)
+    check_chain(r, pins, **named(a))
     code = code_record()
     done = []
     for n in a.figures:

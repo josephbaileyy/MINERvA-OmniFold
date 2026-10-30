@@ -25,6 +25,10 @@ readout, fd/readout/fd_g_readout.json, prints), with which the paper's chi2 is r
       deposit.json and predictions-reference.json (labels, units, status, domains included), value and JSON type,
       but code_sha256.
 
+A ``Variant`` names the reported matrix the package carries (its data-product key, its name in Stage G's compare(),
+the labels, the pins and the source paths). The default is C_total + C_resp, the CLI's only variant; another is passed
+in-process to ``run`` (fd_cpl_addition.py's chain), with its pins, and changes nothing else.
+
 ``check --measurement-only`` checks the measurement without predictions-reference.json or Stage G's readout:
 P0-P3, P4's p_parallel rule and P7 on the four measurement files.
 
@@ -40,6 +44,7 @@ import io
 import json
 import os
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -84,6 +89,22 @@ LABELS = {
                   "bounds and are in no cell",
     "not_citable_for": "coverage; any reading, claim or release text",
 }
+
+
+@dataclass(frozen=True)
+class Variant:
+    """The reported matrix a package carries: ``key`` in the data product's matrices, ``name`` as Stage G's compare()
+    names it, the labels, the pins of the data product and Stage G's readout, and their source paths."""
+    key: str
+    name: str
+    labels: dict
+    pins: dict
+    sources: dict
+
+
+DEFAULT = Variant(key="C_total_plus_C_resp", name="C_total + C_resp", labels=LABELS, pins=PINS,
+                  sources={"data_product": "fd/data-product/fd_data_product.json",
+                           "g_readout": "fd/readout/fd_g_readout.json"})
 
 
 class Stop(Exception):
@@ -135,15 +156,15 @@ def gibuu_flag(cell: dict) -> int:
     return int(cell["box"]["pz"][1] <= GIBUU_PZ_HI)
 
 
-def load_pinned(path: Path, key: str) -> dict:
-    report("P0", f"{key} sha256 is the pin", sha256(path) == PINS[key], f"{sha256(path)} != {PINS[key]}")
+def load_pinned(path: Path, key: str, v: Variant = DEFAULT) -> dict:
+    report("P0", f"{key} sha256 is the pin", sha256(path) == v.pins[key], f"{sha256(path)} != {v.pins[key]}")
     return json.loads(path.read_text())
 
 
-def package(dp: dict) -> dict[str, str]:
+def package(dp: dict, v: Variant = DEFAULT) -> dict[str, str]:
     """The package's files, from the data product alone."""
     f = np.array(dp["f"], float)
-    C = np.array(dp["matrices"]["C_total_plus_C_resp"], float)
+    C = np.array(dp["matrices"][v.key], float)
     rho = np.array(dp["correlation"], float)
     sigma = np.sqrt(np.diag(C))
     head = ["cell", "h2_boxes", *[f"{ax}_{e}" for ax in AXES for e in ("lo", "hi")], "gibuu_subset",
@@ -152,21 +173,21 @@ def package(dp: dict) -> dict[str, str]:
              gibuu_flag(c), float(f[i]), float(sigma[i])] for i, c in enumerate(dp["cells"])]
     files = {"cells.csv": csv_text(head, rows), "covariance.csv": matrix_csv(C), "correlation.csv": matrix_csv(rho)}
     unreported = sorted(b for box in dp["h2"]["unreported_boxes"] for b in box)
-    js = {"schema": "fd-deposit-candidate/1", "labels": LABELS,
+    js = {"schema": "fd-deposit-candidate/1", "labels": v.labels,
           "axes": [{"name": ax, "unit": UNITS[ax], "h2_edges": H2_EDGES[ax]} for ax in AXES],
           "cells": [{**c, "gibuu_subset": gibuu_flag(c)} for c in dp["cells"]],
           "unreported_h2_boxes": [{"h2_box": b, "box": h2_box(b)} for b in unreported],
           "gibuu_subset": [c["cell"] for c in dp["cells"] if gibuu_flag(c)],
           "f": f.tolist(), "covariance": C.tolist(), "correlation": rho.tolist(), "sigma": sigma.tolist(),
-          "covariance_of": "C_total_plus_C_resp",
+          "covariance_of": v.key,
           "files_sha256": {n: hashlib.sha256(t.encode()).hexdigest() for n, t in files.items()},
-          "source": {"data_product": "fd/data-product/fd_data_product.json", "sha256": PINS["data_product"]},
+          "source": {"data_product": v.sources["data_product"], "sha256": v.pins["data_product"]},
           "code_sha256": {"fd_deposit_candidate.py": sha256(Path(__file__).resolve())}}
     files["deposit.json"] = json.dumps(js, indent=1, allow_nan=False) + "\n"
     return files
 
 
-def reference(gr: dict, f: np.ndarray) -> str:
+def reference(gr: dict, f: np.ndarray, v: Variant = DEFAULT) -> str:
     """predictions-reference.json, from Stage G's readout: g, sigma_Vg_over_f and V_g = (sigma_Vg_over_f f)^2 on each
     prediction's own cells, with its source and Stage G's chi2."""
     preds = []
@@ -186,7 +207,7 @@ def reference(gr: dict, f: np.ndarray) -> str:
                  "shape-only adds 100 f f^T on c, ndf n - 1; V_g = (sigma_Vg_over_f f)^2, recomputed from the "
                  "sigma_Vg_over_f that Stage G's readout prints, with which every Stage G chi2 is reproduced",
           "predictions": preds,
-          "source": {"g_readout": "fd/readout/fd_g_readout.json", "sha256": PINS["g_readout"]},
+          "source": {"g_readout": v.sources["g_readout"], "sha256": v.pins["g_readout"]},
           "code_sha256": {"fd_deposit_candidate.py": sha256(Path(__file__).resolve())}}
     return json.dumps(js, indent=1, allow_nan=False) + "\n"
 
@@ -202,10 +223,10 @@ def without_code(text: str) -> str:
     return json.dumps(js, sort_keys=True, allow_nan=False)
 
 
-def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
+def check(pkg: Path, dp_path: Path, g_path: Path | None, v: Variant = DEFAULT) -> dict:
     """Every control; with ``g_path`` None (``--measurement-only``), the measurement's alone."""
-    dp = load_pinned(dp_path, "data_product")
-    gr = None if g_path is None else load_pinned(g_path, "g_readout")
+    dp = load_pinned(dp_path, "data_product", v)
+    gr = None if g_path is None else load_pinned(g_path, "g_readout", v)
     names = FILES if gr is None else (*FILES, REFERENCE)
     for n in names:
         report("P0", f"{n} exists", (pkg / n).is_file())
@@ -214,7 +235,7 @@ def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
     for n in FILES[:-1]:
         report("P0", f"{n}'s sha256 is deposit.json's", hashlib.sha256(text[n].encode()).hexdigest()
                == js["files_sha256"].get(n))
-    report("P0", "deposit.json names the pinned data product", js["source"]["sha256"] == PINS["data_product"])
+    report("P0", "deposit.json names the pinned data product", js["source"]["sha256"] == v.pins["data_product"])
 
     # P1: the cells and their boxes
     rows = list(csv.DictReader(io.StringIO(text["cells.csv"])))
@@ -237,13 +258,13 @@ def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
 
     # P2: every number, bit for bit
     f_dp = np.array(dp["f"], float)
-    C_dp = np.array(dp["matrices"]["C_total_plus_C_resp"], float)
+    C_dp = np.array(dp["matrices"][v.key], float)
     rho_dp = np.array(dp["correlation"], float)
     f_csv = np.array([float(r["f_cm2_per_nucleon"]) for r in rows])
     C_csv, rho_csv = read_matrix_csv(text["covariance.csv"]), read_matrix_csv(text["correlation.csv"])
     report("P2", "f from cells.csv and deposit.json is the data product's, bit for bit",
            np.array_equal(f_csv, f_dp) and np.array_equal(np.array(js["f"]), f_dp))
-    report("P2", "the covariance from covariance.csv and deposit.json is the data product's C_total_plus_C_resp, "
+    report("P2", f"the covariance from covariance.csv and deposit.json is the data product's {v.key}, "
            "bit for bit", np.array_equal(C_csv, C_dp) and np.array_equal(np.array(js["covariance"]), C_dp))
     report("P2", "the correlation from correlation.csv and deposit.json is the data product's, bit for bit",
            np.array_equal(rho_csv, rho_dp) and np.array_equal(np.array(js["correlation"]), rho_dp))
@@ -268,7 +289,7 @@ def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
     summary = {"controls_passed": ["P0", "P1", "P2", "P3", "P4", "P7"], "correlation_worst_abs_diff": rho_worst,
            "covariance_asymmetry_over_max": asym, "covariance_eigen_min_max": [float(ev.min()), float(ev.max())]}
     if gr is None:
-        check_as_built(text, package(dp), FILES)
+        check_as_built(text, package(dp, v), FILES)
         return {**summary, "mode": "measurement only: predictions-reference.json and Stage G's readout not read"}
     gib = [p for p in gr["predictions"] if p["name"] == "gibuu"]
     report("P4", "GiBUU's subset is Stage G's eight cells", len(gib) == 1 and sub == gib[0]["cells"])
@@ -278,7 +299,7 @@ def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
     rp = ref["predictions"]
     spec = {s["name"]: s for s in G.PREDICTIONS}
     report("P6", "predictions-reference.json is labelled apart from the measurement and names the pinned readout",
-           ref["label"] == REFERENCE_LABEL and ref["source"]["sha256"] == PINS["g_readout"])
+           ref["label"] == REFERENCE_LABEL and ref["source"]["sha256"] == v.pins["g_readout"])
     report("P6", "it holds Stage G's five predictions, in order", [p["name"] for p in rp]
            == [p["name"] for p in gr["predictions"]] == [s["name"] for s in G.PREDICTIONS])
     for r, p in zip(rp, gr["predictions"]):
@@ -306,7 +327,7 @@ def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
         g, Vg = np.zeros(N), np.zeros(N)
         g[idx] = r["g_cm2_per_nucleon"]
         Vg[idx] = r["V_g_cm4_per_nucleon2"]
-        out = G.compare(f_csv, g, Vg, C, idx, "C_total + C_resp")
+        out = G.compare(f_csv, g, Vg, C, idx, v.name)
         for key in ("total", "shape_only"):
             got, want = out[key]["chi2"], p[key]["chi2"]
             rel = abs(got - want) / want
@@ -315,8 +336,8 @@ def check(pkg: Path, dp_path: Path, g_path: Path | None) -> dict:
                         "chi2_package": got, "chi2_stage_g": want, "rel_diff": rel})
             report("P5", f"{p['name']} {key} chi2 from the package is Stage G's to {CHI2_TOL} relative",
                    rel <= CHI2_TOL and out[key]["ndf"] == p[key]["ndf"], f"{got} vs {want} ({rel})")
-    built = package(dp)
-    built[REFERENCE] = reference(gr, f_dp)
+    built = package(dp, v)
+    built[REFERENCE] = reference(gr, f_dp, v)
     check_as_built(text, built, names)
     return {**summary, "controls_passed": ["P0", "P1", "P2", "P3", "P4", "P6", "P5", "P7"], "chi2": rec,
             "chi2_worst_rel_diff": worst}
@@ -332,7 +353,7 @@ def check_as_built(text: dict, built: dict, names) -> None:
                    without_code(text[n]) == without_code(built[n]))
 
 
-def main(argv=None) -> int:
+def build_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
@@ -346,16 +367,23 @@ def main(argv=None) -> int:
     g.add_argument("--g-readout", type=Path)
     g.add_argument("--measurement-only", action="store_true",
                    help="check the measurement alone, without predictions-reference.json or Stage G's readout")
-    a = ap.parse_args(argv)
+    return ap.parse_args(argv)
+
+
+def run(a, pins=None, variant: Variant | None = None) -> int:
+    """``build`` or ``check``; ``variant`` (with its own pins) is passed in-process only, ``pins`` replaces its pins."""
+    v = DEFAULT if variant is None else variant
+    if pins is not None:
+        v = Variant(key=v.key, name=v.name, labels=v.labels, pins=pins, sources=v.sources)
     try:
         if a.cmd == "build":
-            dp = load_pinned(a.data_product, "data_product")
-            gr = load_pinned(a.g_readout, "g_readout")
+            dp = load_pinned(a.data_product, "data_product", v)
+            gr = load_pinned(a.g_readout, "g_readout", v)
             report("P0", "no package file exists (no overwrite)", not any((a.out_dir / n).exists()
                                                                           for n in (*FILES, REFERENCE)))
             a.out_dir.mkdir(parents=True, exist_ok=True)
-            files = package(dp)
-            files[REFERENCE] = reference(gr, np.array(dp["f"], float))
+            files = package(dp, v)
+            files[REFERENCE] = reference(gr, np.array(dp["f"], float), v)
             for n, t in files.items():
                 out = a.out_dir / n
                 tmp = out.with_name(out.name + ".partial")
@@ -363,11 +391,15 @@ def main(argv=None) -> int:
                 os.replace(tmp, out)
                 print(json.dumps({"wrote": str(out), "sha256": sha256(out)}), flush=True)
         else:
-            print(json.dumps(check(a.package, a.data_product, a.g_readout), indent=1), flush=True)
+            print(json.dumps(check(a.package, a.data_product, a.g_readout, v), indent=1), flush=True)
     except Stop as e:
         print(f"[STOP] {e}", file=sys.stderr)
         return 1
     return 0
+
+
+def main(argv=None) -> int:
+    return run(build_args(argv))
 
 
 if __name__ == "__main__":

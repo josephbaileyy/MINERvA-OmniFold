@@ -17,7 +17,9 @@ through every downstream product".
 
 **The addition followed the data.** The block was constructed after the period double ratios were seen
 (`FD-CT-5B-REPORT.md`). Its audit's stop condition was fixed before any audit number was read, and it did not fire. This
-record adds the block because of that outcome, as decision item 2 requires. It says so in every product's label (§2.3).
+record adds the block because of that outcome, as decision item 2 requires. It says so in the label of every product
+this record's code writes: the block, the data product, the deposit candidate and the table (§2.3). The bound tools'
+readouts keep their own labels, and each names the block's file and sha256.
 
 **Declares:**
 - the revised matrix, exactly, and the file that carries it (§1);
@@ -122,8 +124,9 @@ The audit's §8.2 label, as fixed before the audit ran:
 
 ### 2.2 Context, labelled as context and not as a reason (the director's instruction)
 
-Every with-block readout's label set gains two `context` strings, copied from the audit report and marked "descriptive;
-not a reason for the addition":
+The label set of every product this record's code writes (the block, the data product, the deposit candidate and the
+table) gains two `context` strings, copied from the audit report and marked "descriptive; not a reason for the
+addition":
 - **the DR pair:** "the best detector-response pair (GEANT_Pion#1 with C_resp:meson#1) explains 0.853, 0.560 and 0.617
   of PA's, PB's and PC's noise-weighted offset patterns at |a| ≤ 1.51, reproducing PA's to within noise and not PB's or
   PC's; pairs have no stop role (FD-CT-5B-AUDIT-REPORT.md section 4)";
@@ -135,7 +138,7 @@ The two strings are pinned in the code and tested against the committed audit re
 
 ### 2.3 The decision
 
-Every with-block readout's labels carry "added under DECISION-20261030 item 2 after the audit's stop condition did not
+The same products' labels carry "added under DECISION-20261030 item 2 after the audit's stop condition did not
 fire (FD-CT-5B-AUDIT-REPORT.md); the decision followed the data; published with and without".
 
 ## 3. The chain: every consumer, with and without
@@ -147,7 +150,9 @@ tool. The chain stops at the first nonzero exit and writes nothing more.
 `fd_g_diag.py:391`, `fd_g_followup.py:367`, `fd_flux_boot.py:251`, `fd_g_figures.py:865`,
 `fd_data_product.py:296`, `fd_f0_regrade.py:524`). In the with arm, a downstream step's pins are its default pins with
 only the upstream readout's sha256 replaced, by the sha256 the chain itself computed of the file the previous step just
-wrote. No pin comes from the command line. The chain writes every pin set it used into its receipt.
+wrote. No downstream pin comes from the command line. The extra block's `--extra-block-sha256`, which F0b, F1, Stage G
+and the others take on their command line as before, is the chain's own digest of `cpl_block.npz`, as is F1's
+`--f0b-readout-sha256` of step 2's readout. The chain writes every pin set it used into its receipt and `pins/`.
 
 **The without arm** runs each tool with its default pins, on its committed inputs and C_resp, as its last bound run did.
 Its outputs go to `without/` and are compared by control R with the committed readouts. They are receipts, not new
@@ -166,7 +171,7 @@ change in the with arm):
 | 6 | G-FOLLOWUP | `fd_g_followup.py` | `fd/receipts-g-followup/f2.sh` | X; `g_readout` = 4's, `g_diag_readout` = 5's |
 | 7 | G-SENS2 | `fd_g_followup.py --part sens2` | `fd/receipts-g-sens2/s2.sh` | X; `g_readout` = 4's, `g_followup_readout` = 6's |
 | 8 | the flux bootstrap | `fd_flux_boot.py` | `fd/receipts-flux-boot/run/amended/logs/s2-body.sh` | X; `g_readout` = 4's |
-| 9 | the data product | `fd_cpl_addition.py product` | new (the bound tool, `fd/receipts-g-figures/run/s2.sh`, for the without arm) | `cpl_block.npz`; Stage G = 4's |
+| 9 | the data product | `fd_cpl_addition.py product` | new (the bound tool, `fd/receipts-g-figures/run/s2.sh`, for the without arm) | the committed data product, `cpl_block.npz` and `.json`, Stage G = 4's, the audit readout |
 | 10 | the deposit candidate | `fd_deposit_candidate.py build`, then `check` | `fd/deposit-candidate/README.md`, `fd/receipts-deposit/check-login36.sh` | data product = 9's; Stage G = 4's |
 | 11 | the figures | `fd_g_figures.py`, then `fd_g_figures_check.py` | `fd/receipts-g-figures/run/s3.sh`, `s4.sh` | readouts 4–7 and F0b = 2's; reported block name `C_resp + C_PL5D` |
 | 12 | the table | `fd_cpl_addition.py table` | new | the with-arm readouts and the committed ones |
@@ -184,59 +189,99 @@ the data product and Stage G, and the figures read 4–7 and F0b.
 
 `fd/with-cpl/table/fd_cpl_table.json` and `fd_cpl_table.md`. Each row gives the number without the block (from the
 committed readout), the number with it (from the with arm), and their matrices' names.
+Its named rows (`curated`, and the `.md`):
 - **σ per cell:** √diag/f of C_total + C_resp, C_PL,5D and C_rep,PL, and the ratio of the last to the first;
-- **Stage G:** every prediction's χ², ndf and p, total and shape-only;
-- **G-DIAG, G-FOLLOWUP and G-SENS2:** every χ² and every per-mode or per-block share that each readout prints at its
-  top level, by key;
-- **F0b and F1:** each truth's χ², p and |z|-trigger count, and the triggers by group;
-- **the flux bootstrap:** every prediction's χ² band percentiles and the uniform-replicate χ².
+- **Stage G:** every prediction's χ², ndf and p, total and shape-only, each side with its matrix's name;
+- **F0b and F1:** each graded truth's χ², p and count of cells with |z| > 2, with each side's grade matrix, and the
+  triggers by group;
+- **the flux bootstrap:** each variant's and prediction's total-χ² replicate percentiles 16, 50 and 84.
 
-The field lists are fixed in the code, by readout key, and tested against the committed readouts (§5, control T). The
-table is a state artifact. `values_fived16.tex` is the paper lane's later step.
+**Every other number,** G-DIAG's, G-FOLLOWUP's and G-SENS2's included, is in `leaves`: each numeric leaf of each
+readout, without and with, at the same path, with keys built from the block's name renamed to the committed spelling. The
+committed leaves without a partner are listed (`unpaired_without_leaves`).
+
+The named fields are read from the committed readouts in a test (`Committed`). The table is a state artifact.
+`values_fived16.tex` is the paper lane's later step.
 
 ## 4. The code
 
 **New:** `nd-unfolding/fd_cpl_addition.py`, with four subcommands:
 - `block` (§1);
-- `product`, the data product with the block. It reuses `fd_data_product.py`'s own functions (`h2_relation`,
-  `correlation`, `matrix_csv`, `cells_csv`, `read_matrix_csv`) by import, not retyped. It writes the four matrices of
-  the current product plus `C_PL5D` and `C_total_plus_C_resp_plus_C_PL5D`, the correlation of the latter, and every
-  relative σ;
+- `product`, the data product with the block, derived from the committed data product (`b79556f0…`, which passed its
+  Q0–Q6) and `cpl_block.npz`. Its cells, boxes, H2 relation, f, C_e, C_model_abs, C_resp and C_total_plus_C_resp are the
+  committed product's; C_PL5D and the revised matrix are the block's. It reuses `fd_data_product.py`'s own functions
+  (`correlation`, `csv_text`, `matrix_csv`, `read_matrix_csv`, `worst`) by import, not retyped. It writes six matrices,
+  the revised one's correlation and every relative σ, as `fd_data_product_cpl*` (controls K0–K6, §5);
 - `table` (§3.1);
 - `chain` (§3).
 
 **Parametrized, each keeping its current output under its default arguments** (control R tests that):
-- `fd_flux_boot.py`: its labels at `:22-24`, `:96` and `:355` name "C_resp" literally. They are built from
-  `--extra-block-name` instead. With the name `C_resp`, every label string is unchanged;
+- `fd_flux_boot.py`: its `units` label and B6's printed line named "C_resp" literally. The label is now built from
+  Stage G's reported matrix name (G-DIAG's `comps`, `C_total + <extra block name>`), and B6's line from
+  `--extra-block-name`. With the name `C_resp`, adopted, every written string is unchanged. A run with the role
+  `sensitivity`, none of them bound, would now read "C_total", which is its reported matrix;
 - `fd_g_figures.py`: K1's `xb["name"] == "C_resp"` (`:181-183`), K2's literal covariance names and its F0b key
   `relative_sigma_plus_C_resp` (`:275-283`), and `REPORTED` (`:76`) follow a new `--reported-block-name`, which
-  defaults to `C_resp`;
+  defaults to `C_resp`. The option enters the sidecar's `options` only when it is not the default, and a caller
+  whose options lack it (the existing tests' mocks) gets the default, so the default call is today's;
 - `fd_deposit_candidate.py`: the matrix key `C_total_plus_C_resp` (`:146`, `:161`, `:240`), the covariance label
-  (`:77-81`), the source paths (`:163`, `:189`) and `PINS` (`:60-61`) become a variant passed into `package`,
-  `reference` and the checks. The CLI gains `--variant with-cpl`, and in that variant the pins are read from the chain's
-  receipt. The default variant is today's.
+  (`:77-81`), the source paths (`:163`, `:189`) and `PINS` (`:60-61`) become a `Variant` passed into `package`,
+  `reference` and `check`. `main` is split into `build_args` and `run(a, pins=None, variant=None)`. **The CLI is
+  unchanged**: the variant is passed in-process only, by the chain's bootstrap, built by
+  `fd_cpl_addition.deposit_variant` with the chain's pins. So the deposit tool names no CPL string. The default
+  `Variant` is today's constants.
 
 **Unchanged:** `fd_g_compare.py`, `fd_g_diag.py`, `fd_g_followup.py`, `fd_f0_regrade.py`, `fd_g_figures_check.py`,
 `fd_data_product.py`, and every committed readout.
 
-**Tests:** `nd-unfolding/tests/test_fd_cpl_addition.py`, plus additions to the three parametrized tools' suites.
-- Each of the three tools' suites must still pass unchanged.
-- **Mutation receipt** and **independent review:** as for the audit, under `fd/receipts-ct/5b/addition/`.
+**Tests:** `nd-unfolding/tests/test_fd_cpl_addition.py`, 67 tests, each check in both directions:
+- **pure parts:** the npz's bytes (two calls, two processes, a changed array); R's comparison on a committed readout
+  (equal to itself; a changed number at 10⁻⁹ found and a last bit not; structure; bools and nulls by type; the
+  exclusions); the labels' context numbers against the committed audit readout, and a changed number, a missing label
+  and an unmarked context each firing L;
+- **the block** on synthetic inputs: written, read back and byte-reproduced; refused on a fired stop, an audit on
+  another 5B readout, a pin, rank 3, a σ or trace share not the 5B readout's, an asymmetric P and an existing output;
+- **the product:** written beside the without matrix and read back; refused without the chain's pins, on a Stage G σ
+  not the revised matrix's, a Stage G on another block name, and a data product whose C_resp or sum is not the block's;
+- **the deposit candidate, both directions:** the variant builds and checks the revised matrix and carries the labels;
+  the default refuses the revised product; the variant refuses another Stage G pin; the variant's package fails the
+  default check; an edited package fails the variant's; the default `Variant` is today's constants;
+- **the figures, both directions:** a renamed tree draws under its name; the default name refuses the renamed tree and
+  the new name the default tree (K1); the old F0b key and an old matrix name in G-SENS2 each refuse; the default
+  records no new option;
+- **the flux bootstrap, both directions:** the default `units` label equals the committed readout's; a run on a block
+  renamed in Stage G names it in `units`, changes no other label and no number; a name not Stage G's refuses (D5);
+- **the chain:** the runner passes pins in-process and sets the tool's argv, and stops on an exit code, a missing output
+  or a failed check; the deposit variant reaches the tool through the bootstrap; every step's flags equal its bound
+  run's script, in both arms (`StepArgv`); the without arm with each tool replaced by a copy of its committed output
+  passes every R check, and one planted difference in a readout, a data product CSV, deposit.json's labels or a PDF
+  fires R, while a changed code digest does not (`DryWithout`); the with arm with fakes that record their pins shows
+  each step's pins are the files the steps before wrote, and a stale upstream, a readout on another block and a Stage G
+  σ off the revised matrix each fire C or S (`DryWith`).
+
+**The three tools' own suites pass,** with one existing test changed: `test_fd_deposit_candidate`'s
+`test_the_committed_package_is_what_build_writes` compared deposit.json's bytes, including the tool's own code digest,
+which moves with any edit. It now compares the CSVs byte for byte and each JSON by the tool's own `without_code` (P7's
+rule), and requires the same `code_sha256` keys.
+
+**Mutation receipt:** `fd/receipts-ct/5b/addition/mutants_5b_addition.{py,log}`, 51 mutants over the four files.
+**Independent review:** as for the audit, under `fd/receipts-ct/5b/addition/review/`.
 
 ## 5. Controls (each refuses with nothing further written)
 
 | | control |
 |---|---|
 | **A** | the audit readout's sha256 is `6d34d7f8…`, its `stop_condition.stop` is false, and its `inputs_sha256` name this S1 assembly, C_resp and 5B readout |
-| **B0** | every input's sha256 is its pin: `s1_assembly.npz`, `cresp.npz`, `fd_ct_5b_periods.json`, the audit readout, the definition |
+| **B0** | every input's sha256 is its pin: `s1_assembly.npz`, `cresp.npz`, `fd_ct_5b_periods.json` and the audit readout; no output exists |
 | **B1** | P is 16 × 16, symmetric, PSD and of rank 2; √diag(P) equals the 5B readout's `sigma_rel` to 10⁻¹²; its trace share of M + P equals the 5B readout's `trace_share` |
 | **B2** | C_rep,PL = C_e + C_model_abs + C_resp + C_PL,5D,abs = cresp.npz's C_total_resp + C_PL,5D,abs, to 10⁻¹² relative; C_rep,PL is positive definite |
-| **B3** | the npz is read back key by key, and its sha256 equals the readout's |
-| **R** | each without-arm output's numbers equal its committed readout's, to 10⁻¹² relative. Every int, float and bool leaf is compared; strings, argv, paths and code digests are listed and excluded. For the data product and the deposit candidate, the files are byte-compared, except the code digest field |
-| **C** | in the with arm, each step's readout names X's sha256, key, name and role, and the upstream readouts' sha256, as the chain computed them |
-| **S** | the with arm's reported relative σ equals √diag(C_rep,PL)/f from `cpl_block.npz`, to 10⁻¹², in Stage G's, F0b's, the data product's and the deposit's readouts |
-| **L** | the label and context strings (§2) are present in every with-arm readout the chain writes itself (block, product and table). The context numbers equal the audit readout's to their printed digits |
-| **T** | the table's field lists exist in the committed readouts; each "without" number is the committed readout's, byte for byte as printed |
+| **B3** | the npz is the same bytes when written twice, reads back key by key bit for bit, and its sha256 is the readout's |
+| **K0–K6** | the product: no output exists and the chain's pins hold (K0); the committed product passed Q0–Q6 on this S1 and C_resp, the block names its npz, and Stage G adopted this block by name and key (K1); the block's f and C_resp are the product's bit for bit, and the revised matrix is the product's C_total_plus_C_resp + C_PL5D and the sum of its parts to 10⁻¹² (K2); Stage G's σ is √diag(C_rep,PL)/f to 10⁻¹² on every prediction's cells, with its covariance named (K3); symmetry, positive definiteness and C_PL5D's rank 2 (K4); the correlation, and the without matrix's σ the committed product's (K5); every CSV and the JSON read back bit for bit (K6) |
+| **R** | each without-arm output against its committed file. **Readouts** (F0b, F1, Stage G, G-DIAG, G-FOLLOWUP, G-SENS2, the flux bootstrap): the same structure (every dict's keys, every list's length) and every int, float, bool and null equal to 10⁻¹² relative (bools and nulls by type); strings are not compared, and `argv`, `code_sha256`, `code` and `versions` are excluded. **The data product:** every CSV byte for byte, and its JSON's numbers and strings equal but `argv`. **The deposit candidate:** the CSVs byte for byte, and deposit.json and predictions-reference.json equal under the tool's own `without_code`, which excludes `code_sha256` only. **The figures:** each PDF byte for byte, and each sidecar's numbers and strings equal but `argv`, `code` and `versions` |
+| **C** | a step exits 0 and writes every declared output; the block's readout names the npz it wrote; in the with arm, each readout names the block's sha256 wherever it records the extra block, and each upstream readout's sha256 as the chain computed it (G-DIAG, G-FOLLOWUP, G-SENS2, the flux bootstrap) |
+| **S** | the with arm's reported relative σ equals √diag(C_rep,PL)/f from `cpl_block.npz`, to 10⁻¹²: in Stage G's readout on every prediction's cells and in F0b's `relative_sigma_plus_C_resp + C_PL5D`; in the product by K3; in the deposit by its own P2 and P3 |
+| **L** | the block, decision and context strings (§2) are in the labels of the block, the product and the table, the contexts marked descriptive; every number a context quotes is the committed audit readout's as printed |
+| **T** | the table's "without" pins are the committed readouts'; each Stage G row names C_total + C_resp + V_g without and C_total + C_resp + C_PL5D + V_g with |
 | — | each tool's own controls, unchanged |
 
 Any refusal is reported unrepaired, and the addition is not complete until a bound rerun passes.
@@ -245,9 +290,26 @@ Any refusal is reported unrepaired, and the addition is not complete until a bou
 
 1. this declaration, with its code, bound once;
 2. a deploy at the bound pin into `BA=$P/fd-ct-5b-addition-<date>`, which must not exist beforehand. The deploy must
-   show HEAD = pin, 0/0 porcelain lines, the §8 digests, and every test module named in §4 passing with no skip;
+   show HEAD = pin, 0/0 porcelain lines, the §8 digests, and these test modules passing with no skip:
+   `test_fd_cpl_addition test_fd_deposit_candidate test_fd_g_figures test_fd_flux_boot test_fd_data_product
+   test_fd_g_compare test_fd_g_diag test_fd_g_followup test_fd_f0_regrade`, run with root_6_28 activated by prefix;
 3. `fd_cpl_addition.py chain`, once, on a login node;
 4. `FD-CT-5B-ADDITION-REPORT.md` as a PR to the director.
+
+**The chain's command** (step 3), with `D=$BA/deploy/<pin8>`:
+
+```bash
+mkdir -p $BA/tmp && cd $BA && eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)" \
+  && conda activate $HOME/.conda/envs/root_6_28 && TMPDIR=$BA/tmp timeout 1800 env -u PYTHONPATH python3 -I -B \
+  $D/nd-unfolding/fd_cpl_addition.py chain --scratch /pscratch/sd/j/josephrb --run-dir $BA \
+  > $BA/logs/chain.out 2> $BA/logs/chain.err; echo "rc=$?" >> $BA/logs/chain.out
+```
+
+- **Exit codes:** 0 done; 1 a refusal (any control, in any step), reported unrepaired; 2 argparse; 124 the timeout.
+- **What it writes:** `$BA/without/` and `$BA/with/` (each refused if it exists), `$BA/logs/<arm>-<step>.{out,err}`,
+  `$BA/pins/<arm>-<step>.json` and `$BA/chain.json`, the receipt of every step and check.
+- Every step runs as a subprocess of the same interpreter, with `PYTHONPATH` removed, under its last bound run's
+  timeout.
 
 **Cost:** 0 node-h. The last bound runs took 70 s (F0b), 71 s (F1) and at most 7 s each for the rest. Two arms make
 about 5 minutes. Each step runs under its last run's timeout, and the chain under 1,800 s.
@@ -294,9 +356,30 @@ To be filled when the code is committed. Inputs pinned now:
 3. **The 5B records' label.** 5B's NOT CITABLE FOR includes "a covariance component". This record supersedes that clause
    for C_PL,5D, as the C_resp adoption did for its records, without editing them. Should the report add a dated status
    line to `FD-CT-5B-REPORT.md`, as CRESP-REPORT.md gained one?
-4. **Code in this PR,** bound once, as with the audit (#546), unless you would rather bind this design first.
+4. **Code in this PR: ruled.** On 2026-10-30 the director asked for the code in this PR, bound once.
 
-## 10. Not changed
+## 10. What writing the code found
+
+1. **The committed readouts' strings do not all reproduce.** The flux bootstrap's readout keeps its band records' old
+   `LABEL`, by record (`FD-FLUX-BOOT-LABEL-FIX.md`, "That readout keeps the old label"), and F0b's was written by
+   `fd_f0_regrade.py` `37427d9d…`. So R compares the readouts' numbers and structure, as §5 always stated, and compares
+   strings only on the products: the data product, the deposit candidate and the figures.
+2. **The products' JSONs name their run.** The data product's JSON and the sidecars record `argv`, and the sidecars also
+   the deploy commit (`code`) and the library versions. Byte equality is impossible across deploys, so R names those
+   fields as its only exclusions. deposit.json and predictions-reference.json record no argv, so the tool's own
+   `without_code` is their whole rule, as the director asked.
+3. **The tools record `sys.argv`,** and G-DIAG's and the flux bootstrap's D5 read Stage G's recorded argv. So the chain's
+   bootstrap sets `sys.argv` to the tool's path and its argv before calling `run`, and a test checks it.
+4. **One existing test changed** (§4): the deposit candidate's committed-package test compared the code digest.
+5. **The figures' existing tests call `MODEL` with mocks** that lack the new option, and plant `ratio_model` with three
+   arguments. So the name is passed as a keyword only when it is not the default, and a missing option means the
+   default.
+6. **The design freeze said the deposit CLI would gain `--variant with-cpl`.** It does not: the variant is in-process
+   only, so no pin of the with-block product can come from a command line (§4).
+7. **The product is derived from the committed data product,** not rebuilt from S1 and C_resp, so its cells, boxes
+   and H2 relation keep the committed product's Q1 checks, and K2 ties the block to it bit for bit.
+
+## 11. Not changed
 
 - every committed readout, data product, deposit file and figure, and the reported matrix C_total + C_resp until the
   paper lane's step;
