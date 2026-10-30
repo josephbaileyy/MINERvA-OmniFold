@@ -268,6 +268,7 @@ docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	LI
 docs/orchestration/FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md	ARCHIVAL	terminal	
 docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
 docs/orchestration/FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md	LIVE	open	
+docs/orchestration/FINDING-20261030-close-items-5d-replica-cpu36-is-a-scheduler-raise.md	ARCHIVAL	terminal	""
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	terminal	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md	LIVE	open	

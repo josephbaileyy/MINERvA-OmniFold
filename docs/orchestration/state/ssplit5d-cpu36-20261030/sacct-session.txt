@@ -1,0 +1,17 @@
+$ ssh saul.nersc.gov 'hostname; date -u +%FT%TZ; sacct -V; sacct -X -n -P -j 55849763_1,57527869_1,57753243_1,58598278_1,60530414_0,60489457_0 --format=JobID,JobName,Submit,ReqCPUS,AllocCPUS,ReqMem,ReqTRES%60,AllocTRES%60,SubmitLine%400,WorkDir%120'
+login37
+2026-10-30T08:22:08Z
+slurm 25.11.8
+55849763_1|ssplit5d|2026-07-13T02:24:50|35|36|64G|billing=16,cpu=16,mem=64G,node=1|billing=36,cpu=36,energy=255415,mem=64G,node=1|sbatch --parsable --export=ALL,HOME=/global/homes/j/josephrb sbatch_seedscan_split_5d.sh|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+57527869_1|ssplit5d|2026-08-24T07:57:58|35|36|64G|billing=16,cpu=16,mem=64G,node=1|billing=36,cpu=36,energy=1001206,mem=64G,node=1|sbatch --parsable /pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_seedscan_split_5d.sh|/pscratch/sd/j/josephrb/k0r2/runs/k0-aa67c426-20260824T145751Z/log
+57753243_1|ssplit5d|2026-08-30T13:47:37|35|36|64G|billing=16,cpu=16,mem=64G,node=1|billing=36,cpu=36,energy=677897,mem=64G,node=1|sbatch --parsable /pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_seedscan_split_5d.sh|/pscratch/sd/j/josephrb/k0r2/runs/k0-7ac0edec-20260830T000215Z/log
+58598278_1|ssplit5d|2026-09-19T16:36:54|35|36|64G|billing=16,cpu=16,mem=64G,node=1|billing=36,cpu=36,energy=351669,mem=64G,node=1|sbatch --parsable --time=00:45:00 /pscratch/sd/j/josephrb/z2m-20260919/clean/nd-unfolding/sbatch_seedscan_split_5d.sh|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+60489457_0|oi160-tol|2026-10-29T04:14:03|36|36|64G|billing=36,cpu=36,mem=64G,node=1|billing=36,cpu=36,energy=1786531,mem=64G,node=1|sbatch --output=/pscratch/sd/j/josephrb/oi160-tol-20261029/logs/%A_%a.out --error=/pscratch/sd/j/josephrb/oi160-tol-20261029/logs/%A_%a.err --export=NONE,T=/pscratch/sd/j/josephrb/oi160-tol-20261029,D=/pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35 run_array.sh|/pscratch/sd/j/josephrb/oi160-tol-20261029/deploy/a310bb35/docs/orchestration/state/oi160-tolerance-20261029
+60530414_0|oi160-cml|2026-10-29T20:39:51|36|36|64G|billing=36,cpu=36,mem=64G,node=1|billing=36,cpu=36,energy=994503,mem=64G,node=1|sbatch --output=/pscratch/sd/j/josephrb/oi160-cml-20261029/logs/%A_%a.out --error=/pscratch/sd/j/josephrb/oi160-cml-20261029/logs/%A_%a.err --export=NONE,T=/pscratch/sd/j/josephrb/oi160-cml-20261029,D=/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1 run_array.sh|/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029
+ssh rc=0
+$ ssh saul.nersc.gov 'hostname; date -u +%FT%TZ; sacct -X -n -P -j 55805463_1,55151671_1 --format=JobID,JobName,Submit,ReqCPUS,AllocCPUS,ReqMem,ReqTRES%60,AllocTRES%60,SubmitLine%400,WorkDir%120'
+login37
+2026-10-30T08:23:08Z
+55151671_1|boot5d|2026-06-27T16:42:26|35|36|64G|billing=16,cpu=16,mem=64G,node=1|billing=36,cpu=36,energy=318384,mem=64G,node=1|sbatch --parsable --dependency=afterok:55151668 sbatch_bootstrap_5d.sh|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+55805463_1|boot5d|2026-07-11T17:11:35|35|36|64G|billing=16,cpu=16,mem=64G,node=1|billing=36,cpu=36,energy=457031,mem=64G,node=1|sbatch --parsable --export=ALL,HOME=/global/homes/j/josephrb sbatch_bootstrap_5d.sh|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+ssh rc=0
