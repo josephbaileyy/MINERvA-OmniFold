@@ -19,7 +19,7 @@
       "reviewed_sha256": {
         "docs/open-items/test_check_open_items_columns.py": "9b531f2873ad76eaa5336a5f0ac3b16c3f41ed9a0856d28f2e10266409f6a5f3",
         "docs/open-items/check_open_items_columns.py": "5cb82e856c34740cc8a0ca2754fb2251c93f3d19cc75138d327e74da0c448fb8",
-        "docs/open-items/verify_open_items_restructure.py": "025cb44136153d94ff8bf989c9dd48b32e36028c9da99a41f3d256194c75449a"
+        "docs/open-items/verify_open_items_restructure.py": "eae6654fb7a345da3077494d1dcef0f9d9bf0d225dcbdfb8e0c0fc0b619ab3e0"
       },
       "read_only_inputs": [
         "docs/OPEN_ITEMS.md"

@@ -40,10 +40,15 @@ the merge. Each check is its own named step, and every step runs even when an ea
   `absence_claims.py --base origin/<base>`;
 - the three registry `--self-test` runs, on every pull request (the hook runs them only when registry files are
   staged), and `tools/registry/test_registry.py`, which is over the hook's time budget but not CI's;
-- the hook's other thirteen run lines, all stdlib Python reading only the repository: findings long-form pointers,
-  ledger VL ids, row-owner side table, `whose_row` self-test, OPEN_ITEMS OI ids, receipt artifact tracking, LIVE doc
-  indexed and its self-test, every doc has an overrides row, bounded control plane and its self-test, manifest
-  inventory self-test;
+- fifteen more of the hook's run lines, all stdlib Python reading only the repository: findings long-form pointers,
+  ledger VL ids, row-owner side table, `whose_row` self-test, OPEN_ITEMS OI ids, OPEN_ITEMS seven columns
+  (`docs/open-items/check_open_items_columns.py --check`, added 2026-10-30 by Joseph's decision,
+  `DECISION-20261030-joseph-canonical-checkout-and-table-check.md` item 2), receipt artifact tracking, LIVE doc
+  indexed and its self-test, every doc has an overrides row, state receipt names carry time (with `--base`) and its
+  self-test, bounded control plane and its self-test, manifest inventory self-test. The count was "thirteen" until
+  2026-10-30, written before the two state-receipt steps were added;
+- `docs/open-items/test_open_items_wiring.py`, which tests the column check's hook line in both directions in a
+  scratch repository and fails if the long-line pin in `verify_open_items_restructure.py` is raised above 147;
 - the note checkers' tests: `pytest` on `docs/analysis-note/test_check_sec4_receipts.py` (one pinned package,
   `pytest==8.3.4`, is installed for it), and `check_note_records.py --self-test` (on `records-inventory-base.json`)
   and `--self-test-pin`. `build_all.sh` runs the checkers themselves locally, not these tests;
