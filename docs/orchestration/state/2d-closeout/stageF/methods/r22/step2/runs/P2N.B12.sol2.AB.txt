@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B maintains a more neutral scholarly register, replacing A’s “piece the paper admits,” “folk” formula and “headroom” with measured descriptions.
+2. B more consistently uses complete, connected sentences, particularly when summarizing the published uncertainty treatment, where A reads more like compressed working notes.
+3. B improves readability through descriptive terminology and headings, replacing expressions such as “ours-only,” “scan of its knob” and “Where it lives” with more precise technical prose.

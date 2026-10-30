@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B more consistently expands compressed phrasing into complete, clearly connected sentences, particularly in the covariance conventions and pull diagnostics.
+2. B uses a more formal technical register, replacing expressions such as “yardsticks” and “cheapest estimate” with precise, neutral wording.
+3. B consolidates repeated numerical comparisons and removes redundant qualifications, improving editorial flow while retaining the detail appropriate to a long technical appendix.

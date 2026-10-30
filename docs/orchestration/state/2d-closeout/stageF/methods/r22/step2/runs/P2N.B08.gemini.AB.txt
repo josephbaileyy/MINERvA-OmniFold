@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B consistently replaces informal experimental shorthand and code-level jargon present in Document A (such as repeatedly using "reco" instead of "reconstructed", the code identifier "negweight-refined", and laboratory slang like "close to 0.22 %") with standard, formal publication terminology.
+2. Document B markedly improves narrative structure and logical flow by introducing key concepts (such as "eligible residuals") before discussing their subsets, defining technical procedures explicitly (such as "edge-safe data jitters"), and eliminating clunky forward references and redundant definitions between prose and tables.
+3. Document B replaces telegraphic parentheticals, colloquial phrasings (e.g., "does not help it", "belong to the estimator", and referring to mathematical matrices as "files"), and circular phrasing with syntactically complete, polished, and precise prose characteristic of a well-edited PRD paper.

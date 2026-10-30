@@ -1,0 +1,19 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion note, but recurring configuration bookkeeping, procedural narration, and dense inventories of qualifications require a dedicated language pass.
+1. QUOTE: "The 3D marginal of
+configuration (e), a deterministic estimator with refined negative-weight subtraction, agrees to
+0.141 % in total with the 2D result of configuration (f), the nominal estimator with that subtraction,
+a cross-configuration comparison (§7)."
+   REWRITE: With refined negative-weight subtraction in both estimators, the total normalization of the three-dimensional marginal from the deterministic estimator [configuration (e)] agrees within 0.141 % with the nominal two-dimensional result [configuration (f)] (§7).
+2. QUOTE: "The pseudo-experiments
+lost to time limits have been rerun, for reporting only, so every submitted draw has been observed.
+No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments that exceeded the time limit were rerun to complete the reported sample. None of these additional results would alter the original test decisions (§11.6).
+3. QUOTE: "The others are
+stated with their results: the generator comparisons (§§7–8); the absence of a 3D or 4D covariance
+(§7); the five-dimensional estimator’s regularization bias (§9.3) and the purity-subtraction bias
+of configurations (a) and (c) (§9.2); five-dimensional intervals and their coverage (§9.4, §9.5); the
+five-axis covariance of the configuration-(a) central value (§9.6); the calibration and nuisance model of
+the generator tests (§11.3, §11.8); tier 2 of the extended-fiducial study (§12); the fake-data limitation
+of the sixteen-cell result (§10.3); and point-cloud work (App. F)."
+   REWRITE: The generator comparisons are descriptive (§§7–8), and no covariance is provided for the three- or four-dimensional results (§7). For the five-dimensional results, limitations concern subtraction and regularization biases (§9.2, §9.3), interval coverage (§9.4, §9.5), and the covariance associated with configuration (a) (§9.6). Further limitations concern the fake-data validation of the sixteen-cell result (§10.3), the calibration and nuisance model used in the generator tests (§11.3, §11.8), and the prior-dependent extrapolation in the extended-fiducial study (§12). Point-cloud unfolding remains work in progress (App. F).

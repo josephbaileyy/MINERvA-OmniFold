@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed particle-physics write-up, but several passages retain internal bookkeeping, work-in-progress narration, and cumbersome methodological qualifications that warrant a dedicated language pass.
+1. QUOTE: "The response-mismatch closure of Appendix D is designed to test whether an incorrect hadronic response can move strength into or out of the low-W component. It has not yet produced a result."
+   REWRITE: Appendix D describes a closure test of whether hadronic-response mismodelling redistributes strength into or out of the low-W component; results from this test are not yet available.
+2. QUOTE: "No compatibility metric based on the configuration-(a) five-axis covariance is quoted, because the estimator-seed sensitivity of its construction, measured with two companion covariances, exceeds the limit set before production (§9.6); §10.4 gives a sixteen-cell χ2 comparison."
+   REWRITE: No compatibility statistic using the configuration-(a) five-axis covariance is reported because its sensitivity to the estimator seed, evaluated using two additional covariance estimates, exceeds the predefined acceptance threshold (§9.6). Section 10.4 presents a sixteen-cell χ2 comparison.
+3. QUOTE: "The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the leading-hadron angle."
+   REWRITE: The recorded truth-level hadronic quantities also include the proton and pion multiplicities and the leading-hadron angle.

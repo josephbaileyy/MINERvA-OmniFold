@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B replaces informal draft shorthand, internal laboratory references, and code artifacts found in Document A (such as "ours/paper", "TotalCov", "July universe sweep", and the undefined acronym "MAT") with conventional, publication-standard scientific terminology.
+2. Document B adopts a formal scholarly register for section titles and figure captions, avoiding conversational, journalistic, or telegraphic phrasing such as "Anatomy of the χ2 = 2.27 tension" and "dips below in the peak".
+3. Document B provides complete, precise mathematical and statistical descriptions throughout the text, explicitly defining quantities (such as "χ2 /ndf = 0.66" and "total cross section") where Document A leaves them syntactically incomplete, ambiguous, or bare.

@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B uses clearer, more idiomatic phrasing, replacing awkward expressions such as “in the reading with” and the ambiguous “every figure number” with precise descriptions.
+2. B organizes dense material more effectively through parallel lists and better sentence division, making the technical prose easier to follow.
+3. B more consistently adopts a polished technical register, with descriptive subsection titles and smoother explanations of verification criteria and numerical limitations.

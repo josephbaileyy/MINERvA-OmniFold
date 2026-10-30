@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A uses more formal, explicit phrasing, replacing B’s shorthand such as “reco imprint” and “close to 0.22 %” with clearer technical prose.
+2. A improves sentence construction and reference clarity where B uses compressed expressions such as “residuals remain median” and “does not help it.”
+3. A introduces the residual eligibility criteria before discussing the selected residuals and trims repetitive statements in the covariance discussion, improving exposition.

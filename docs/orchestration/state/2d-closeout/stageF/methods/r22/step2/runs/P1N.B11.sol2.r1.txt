@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion, but recurring internal bookkeeping, project-specific shorthand, and administrative narration prevent it from consistently matching well-edited PRD register.
+1. QUOTE: "The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-0610), not with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App. C)."
+   REWRITE: The preliminary extended-fiducial central value uses the binned purity correction; the refined negative-weight subtraction specified for this analysis in App. C has not yet been applied.
+2. QUOTE: "Principal limitations. The executive summary lists the principal limitations (p. 2), each with the section that states it. The quoted two-dimensional statistical block has had no coverage test (§4.2, §5.2)."
+   REWRITE: The statistical block quoted for the two-dimensional result has not been tested for coverage (§4.2, §5.2). Other principal limitations are summarized on p. 2, with references to the relevant discussions.
+3. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a verifier that recomputes and validates its results, but it has not yet been tagged or deposited. Rebuilding the PDFs regenerates the documentation without rerunning the analysis (App. G).

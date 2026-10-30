@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A uses more complete, explicit sentences, particularly in B.3, where B’s compressed phrasing reads like working notes.
+2. A maintains a more measured technical register, avoiding B’s conversational expressions such as “yardsticks,” “a mismatch, not an upgrade,” and “the cheapest estimate.”
+3. A integrates the covariance comparisons into C.5 and reduces repetitive commentary, giving the exposition a more cohesive, edited flow.

@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B consistently replaces informal and colloquial lab-notebook phrasing found in Document A (such as "bare GENIE," "sitting low in the dip," "layers ... on top of," "manufactures nor destroys," and shorthand like "data ↔ MC") with objective, formal scientific prose.
+2. Document B demonstrates superior editorial organization and syntax by eliminating awkward run-on constructions, clunky sentence-initial transitions (e.g., "Nor is any ratio..."), and conversational subheadings ("What q3 adds") while introducing a clean summary table (Table 7) that declutters the methodological narrative.
+3. Document B adheres more closely to professional PRD style conventions, using standard physical terminology like the verbal noun "unfolding" rather than the colloquial noun "unfold," replacing telegraphic parenthetical formulas with proper explanatory sentences, and maintaining an appropriately neutral, unembellished register.

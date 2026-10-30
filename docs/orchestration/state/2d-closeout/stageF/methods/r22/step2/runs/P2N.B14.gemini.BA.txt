@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A uses clean, conventional academic headings and subheadings, whereas Document B embeds draft-like status updates and software-ticket labels into its section titles (e.g., "(protocol implemented; not yet run)" and "implemented in the pipeline").
+2. Document A consistently maintains a formal publication register with precise technical phrasing (e.g., "is not by itself a sufficient basis" and "main differential result"), avoiding Document B's colloquial and journalistic idioms (e.g., "not enough on its own" and "headline result").
+3. Document A integrates its scope and execution status naturally into the introductory context, whereas Document B relegates them to an ad hoc trailing section and includes awkward, disjointed phrasing like "Counting measured observables does not count simultaneously unfolded axes."

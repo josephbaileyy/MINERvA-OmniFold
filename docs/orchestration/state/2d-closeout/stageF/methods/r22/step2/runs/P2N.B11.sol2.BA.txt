@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A maintains a more consistently formal register through terms such as “unfolding,” “pseudo-experiment,” and “low-acceptance cells,” where B often uses compressed shorthand.
+2. A expresses quantitative comparisons more precisely, explicitly identifying the “median absolute relative deviation” where B gives only “median deviation.”
+3. A shows tighter editing by removing B’s repeated statement of agreement with the control and replacing “would let the correlation … be derived” with the more direct “would determine the correlation.”

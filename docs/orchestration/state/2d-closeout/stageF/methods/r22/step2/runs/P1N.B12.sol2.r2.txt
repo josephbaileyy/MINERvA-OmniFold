@@ -1,0 +1,15 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but repeated qualifications, internal bookkeeping, and accounts of superseded analyses give several sections an internal-note register that requires a dedicated language pass.
+1. QUOTE: "A split bootstrap of the earlier rebuilt bootstrap (Ref. [37], superseded values: retired material)
+separated the first two from an MC-statistics omission but not from the third, and it has not been
+repeated for the quoted statistical block."
+   REWRITE: A data/MC split bootstrap of an earlier ensemble excluded an omitted MC-statistical contribution as the explanation for the smaller variance, but did not exclude suppression of dispersion by regularization. This test has not been repeated for the reported statistical ensemble (Ref. [37]).
+2. QUOTE: "That check could not detect that the Flux band omitted those
+constraint weights, because it filled the MnvH1D without MAT’s per-universe weights (SetUnivWgts),
+so both sides were unweighted; it also ran on a sweep from before the flux fix, not on a quoted
+product."
+   REWRITE: The earlier comparison omitted MAT’s per-universe flux constraint weights from both calculations and therefore validated only the unweighted construction. It also used an ensemble generated before the flux correction, rather than the ensemble used for the reported results.
+3. QUOTE: "The thresholds lie comfortably above the 0.166% ML floor
+of the earlier ten-seed scan, which was in force when the tests were graded (Ref. [37], superseded
+values: retired material)."
+   REWRITE: The acceptance thresholds exceed the 0.166% training-seed variation measured in the ten-seed scan used to evaluate these tests. That scan has since been superseded (Ref. [37]).

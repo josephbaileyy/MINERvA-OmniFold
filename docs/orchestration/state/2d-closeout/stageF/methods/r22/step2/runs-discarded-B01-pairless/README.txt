@@ -1,0 +1,1 @@
+Discarded unread, 2026-10-30: the 7 B01 adoption runs below judged the pairless B01 (pieces-1b872953). DECISION-20261030-joseph-note-abstract-pairs.md (#536) arrived after they started (all had finished); the director ruled that B01 be judged on the text with the two approved abstract pairs. No output in this directory was opened.

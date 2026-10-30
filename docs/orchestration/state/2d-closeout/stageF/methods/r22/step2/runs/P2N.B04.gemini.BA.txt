@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 3
+REASONS:
+1. Document A maintains sustained, formal expository paragraphs and conventional journal headings, whereas Document B frequently breaks into slide-style bullet points with sentence fragments and colloquial headings (e.g., "What the remaining validation needs" and "Why injected bumps close while generator-shaped tests do not").
+2. Document A consistently adheres to the professional, objective tone of a published PRD paper, while Document B lapses into conversational phrasing and internal laboratory slang (e.g., using "unfold" as a noun, "come out [...] high", "data pull weakly", and "says nothing about").
+3. Document A describes statistical and computational procedures in standard scientific prose (e.g., "denominator Ntoy − 1" and "diagonal covariance of statistical variances only"), whereas Document B introduces code-level implementation syntax (such as Python's "ddof = 1") and unexpanded shorthand ("CV").

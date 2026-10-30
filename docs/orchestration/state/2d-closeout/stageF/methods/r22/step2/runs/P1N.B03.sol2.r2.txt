@@ -1,0 +1,14 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is precise and technically conventional, but repeated audit-style bookkeeping, development history, and defensive qualifications require a dedicated language pass to reach a well-edited PRD register.
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver;
+the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: The analysis driver reproduces seven universes of the July sweep (§4.1) to ≤ 1.4 × 10−11. The remaining universes were generated with the same code but were not individually checked (Ref. [37], R1.16).
+2. QUOTE: "The universe × retraining values and the band-centering numbers cannot be
+recomputed from the saved covariance products; they were therefore not recomputed independently,
+and their verification is limited to the checksums of their inputs."
+   REWRITE: The saved covariance products do not permit independent recomputation of the universe × retraining results or the band-centering offsets. Input checksums were verified, but the numerical results were not independently checked.
+3. QUOTE: "CZ is a separate construction in which the unified-throw covariance is centered on the central
+value (the CV-centered variant, cv; §9.6). A 5D covariance construction that preceded it used both
+mean-centered and CV-centered unified throws (§4.5); neither variant is used, and no magnitude
+from either is quoted."
+   REWRITE: In CZ, the unified-throw covariance is centered on the central value (the CV-centered variant, cv; §9.6).

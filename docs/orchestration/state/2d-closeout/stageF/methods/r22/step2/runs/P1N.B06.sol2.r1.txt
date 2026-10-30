@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and largely formal, but repeated defensive qualifications, internal bookkeeping, and prospective implementation checklists create several departures from PRD register that require a dedicated language pass.
+1. QUOTE: "Both definitions are inherited from MAT-MINERvA rather than chosen for this analysis; the comparisons below record differences between conventions, not the origin of the inherited one."
+   REWRITE: Both definitions follow MAT-MINERvA; their differences from other available-energy conventions are summarized below.
+2. QUOTE: "No acceptance threshold set before the test is documented, so it has no pass or fail verdict."
+   REWRITE: In the absence of a documented, predefined acceptance threshold, the closure test provides a quantitative assessment of recovery without a pass–fail classification.
+3. QUOTE: "A corrected 4D covariance would use the actual minus and plus variation endpoints; MAT’s mean-centered covariance blocks, normalized by 1/N ; one fixed estimator seed; and mean-centered joint throws, with the mean shift reported separately. It would not subtract a scalar jitter floor."
+   REWRITE: Constructing the 4D covariance would require the actual negative and positive variation endpoints, MAT’s mean-centered covariance blocks normalized by 1/N, a fixed estimator seed, and mean-centered joint throws. The mean shift would be reported separately, and no scalar jitter floor would be subtracted.

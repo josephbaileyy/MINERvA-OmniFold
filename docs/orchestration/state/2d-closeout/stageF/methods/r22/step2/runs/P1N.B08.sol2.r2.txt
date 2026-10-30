@@ -1,0 +1,11 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally precise, but frequent internal bookkeeping, procedural narration and accumulated scope disclaimers require a dedicated language pass to reach PRD register.
+
+1. QUOTE: "This conclusion holds for a binned, signal-only and noise-free comparison at the simulation’s detector response, on the development truths, and for these 144 residuals only. It does not address what unbinned or biased estimators could recover, the coverage failure of §9.5 or the validity of any interval, and it establishes no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria for any result in this note."
+   REWRITE: This conclusion is restricted to the 144 selected residuals in the binned, signal-only, noise-free comparison, using the simulated detector response and development truth distributions. It establishes neither a general limit on recoverability nor the validity or coverage of the intervals (§9.5). The precision thresholds used in this diagnostic are not acceptance criteria for the reported results.
+
+2. QUOTE: "The file and the projection are identified by their SHA-256 checksums (Ref. [37], identities already fixed). The covariance does not meet the acceptance criteria of its specification, and its metadata mark it as not passing and as not to be used."
+   REWRITE: Reference [37] provides SHA-256 checksums identifying the covariance file and its projection. The covariance fails its specified acceptance criteria, and its metadata designate it as unsuitable for use.
+
+3. QUOTE: "The diagnosis below uses the stored outputs and the code. The rate change itself is recovered: in the one locally stored pseudo-experiment the total changes by −9.58 % against −9.56 % injected, and over the 400 the total covers at 0.74 (68%), so the miscoverage is not a normalization failure."
+   REWRITE: Examination of the recorded outputs and implementation indicates that the coverage failure does not arise from the total normalization. In the single pseudo-experiment with detailed output available, the reconstructed total changes by −9.58 %, compared with the injected −9.56 %. Across 400 pseudo-experiments, the nominal 68% interval for the total has coverage 0.74.

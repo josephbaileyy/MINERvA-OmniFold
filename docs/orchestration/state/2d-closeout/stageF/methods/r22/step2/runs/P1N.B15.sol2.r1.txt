@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The technical detail is appropriate to a reproducibility appendix, but recurring internal release bookkeeping, development-history narration, and awkward qualifications require a dedicated language pass.
+1. QUOTE: "An earlier version of the package, RC1, was replayed from an
+empty directory by a separate AI agent session (Opus 5.5) that had no access to the repository and
+used only the package and its README; its verifier passed."
+   REWRITE: RC1 passed verification in an isolated session run from an empty directory, using only the package and its README, without repository access.
+2. QUOTE: "The broader result package must contain every item below; RC7 does not contain all of them. A ✓
+marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already
+fixed); the rest are packaging. A fixed identity specifies which object is meant, not whether the
+object is scientifically qualified."
+   REWRITE: The full release must contain all items listed below; RC7 contains only a subset. Check marks identify objects or values already specified through the bin edges in §G.3 or the checksums in Ref. [37]. The remaining work concerns packaging. These identifiers establish which objects are intended but do not establish their suitability for scientific use.
+3. QUOTE: "Undeclared acceptance field. The record of the projection carries acceptance_question:
+UNDECLARED: when the projection was built, it had not been decided whether an acceptance correction
+is needed at the destination binning. The package must carry this field with its value until that is
+decided, so that no default in the data format makes that scientific choice."
+   REWRITE: The projection metadata contain the field acceptance_question with the value UNDECLARED because the need for an acceptance correction at the destination binning was unresolved when the projection was constructed. The package must retain this value until the correction requirement is determined, to prevent a data-format default from implicitly specifying the treatment of acceptance.

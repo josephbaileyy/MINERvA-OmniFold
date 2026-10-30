@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B systematically replaces informal laboratory jargon, colloquialisms, and conversational headings (such as "knobs", "folk formula", "5× headroom", "paper-cov", and "Where it lives") with standard scientific terminology and formal section headings (such as "reweighting parameters", "conventional formula", and "Location in the (pT , p∥ ) plane").
+2. Document B removes raw programming code, library calls, and command-line flags from the mathematical and physical narrative, moving implementation-level tokens into the repository reference table.
+3. Document B replaces telegraphic bullet points, shorthand notes, and sentence fragments with complete, polished, and grammatically cohesive sentences appropriate for a journal publication.

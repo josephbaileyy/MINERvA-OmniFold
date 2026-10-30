@@ -1,0 +1,25 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical supplement, but recurring production history, internal bookkeeping, and repetitive scope qualifications require a dedicated language pass.
+
+1. QUOTE: "The existing endpoint unfolds, produced in July 2026, used purity, as established by elimination
+from their job scripts and logs (Ref. [37], R1.17). Current production fixes the background treatment
+in a configuration object that rejects every other mode. The standard job script passes the driver’s
+background-mode option (--bkg-mode) explicitly from that configuration, and the value is written
+into the record of every endpoint unfold as it is produced, so the background treatment of each new
+component can be read from the component itself; this changes how the treatment is recorded, not
+the treatment itself."
+   REWRITE: The July 2026 endpoint unfolds used binned purity subtraction, as inferred from their job scripts and logs (Ref. [37], R1.17). Subsequent production enforces the same treatment and records it in each endpoint output.
+
+2. QUOTE: "Negative-weight injection is studied here for its equivalence to binned purity and
+as the extended-fiducial treatment; this appendix establishes no supported production path and
+changes no default. The two covariance ratios are agreement diagnostics between two realizations of
+one subtraction. Two provenance limits apply to the production numbers: the driver revision that
+produced them is corroborated but not pinned, and no output records the job that produced them
+(Ref. [37], R1.7)."
+   REWRITE: This appendix compares negative-weight injection with binned purity subtraction and examines its use in the extended-fiducial analysis. These comparisons do not validate a production implementation or change the background treatments specified in §§3.1–3.2. The two covariance ratios quantify agreement between implementations of the subtraction. The production results have incomplete provenance: the driver revision is supported by available records but is not uniquely identified, and the generating job is unrecorded (Ref. [37], R1.7).
+
+3. QUOTE: "The reductions keep the per-cell values, the identity of each
+input and the exclusions, and distinguish complete outputs from checkpoints that carry no metadata.
+From a checkpoint, only the iterations that reproduce the originally recorded values are used; later
+entries are excluded. The analyst cross-checked the reductions numerically."
+   REWRITE: The reductions retain cell values, input identities, and exclusions. For intermediate outputs lacking metadata, only iterations that reproduce the originally recorded values are included; subsequent iterations are excluded. The reductions were checked numerically.

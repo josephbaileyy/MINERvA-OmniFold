@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B integrates the protocol’s purpose and implementation status into a coherent introduction, giving the appendix a more polished structure.
+2. B uses clearer phrasing, such as “explicit quantitative assumption” and “current per-event outputs,” where A occasionally reads like an internal implementation note.
+3. B explains the survey’s dimensionality more directly and uses smoother wording to compare measurements, although the documents otherwise share much of their prose.

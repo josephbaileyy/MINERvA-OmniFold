@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B uses more consistent formal terminology, favoring “unfolding” and explicit descriptions over A’s shorthand expressions such as “the unfold” and “data pull.”
+2. B integrates implementation terminology more smoothly into the prose, particularly when describing toolkit weights and the MINOS track-fit requirement.
+3. B improves paragraph organization and reduces repetition in the background-treatment and estimator descriptions, although much of the prose remains identical.

@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A consistently maintains a formal, scholarly register with standard academic section titles (such as "Scope of reproduction and required inputs"), whereas Document B lapses into conversational and informal headings ("What today’s reader can and cannot recompute").
+2. Document A describes test procedures and computations in the standard declarative specification style expected in PRD and technical design reports, whereas Document B repeatedly relies on an imperative, tutorial-style cookbook voice ("Load...", "Assert that...", "Form...").
+3. Document A employs precise, polished technical phrasing throughout, avoiding Document B's awkward colloquialisms such as "the local replay package that exists," "every figure number," and "measurements that travel with."

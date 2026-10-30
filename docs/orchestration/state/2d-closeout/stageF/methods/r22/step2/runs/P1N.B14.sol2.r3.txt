@@ -1,0 +1,11 @@
+RATING: 3
+JUSTIFICATION: The technical prose is generally clear and appropriately detailed, but implementation-status reporting, internal output restrictions, and informal descriptions repeatedly interrupt the journal register and warrant a dedicated language pass.
+1. QUOTE: "Its first stage has been implemented but not yet run: no output has
+been produced and no pass threshold has been set."
+   REWRITE: The first stage is implemented but has not been evaluated; an acceptance criterion remains to be specified.
+2. QUOTE: "The implementation runs only as a pseudo-data closure and only on the
+five observables, and cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted."
+   REWRITE: The implementation supports only five-dimensional pseudo-data closure, without truth reweighting or bootstrap resampling. Its outputs are diagnostic and are excluded from the reported measurement.
+3. QUOTE: "The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model."
+   REWRITE: The reconstruction-only test provides a computationally inexpensive probe of sensitivity to a deliberately imposed response mismatch; it does not model the detector response.

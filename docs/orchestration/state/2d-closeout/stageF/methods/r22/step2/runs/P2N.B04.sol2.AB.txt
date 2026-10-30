@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B maintains a more formal register, replacing conversational expressions such as “come out,” “data pull weakly,” and “the same unfold” with conventional technical prose.
+2. B integrates results and qualifications into more cohesive paragraphs, reducing the fragmented, briefing-like presentation found in parts of A.
+3. B uses clearer terminology and referents, including explicit names for the statistical bands and standard statistical wording in place of “ddof = 1.”

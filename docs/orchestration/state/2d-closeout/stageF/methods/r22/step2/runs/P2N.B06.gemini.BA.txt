@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A adheres to the measured, formal register expected in Physical Review publications, avoiding the colloquial, dramatic, or journalistic turns of phrase found in Document B (e.g., "bare GENIE," "sitting low in the dip," "manufactures nor destroys," and "exposes this excess, invisible in 2D").
+2. Document A maintains polished, grammatically complete sentence structures and adheres to standard journal typography, whereas Document B introduces awkward phrasing, a sentence fragment ("Nor is any ratio..."), and informal shorthand in prose (such as the symbol in "data ↔ MC" and unformatted "vs").
+3. Document A employs precise, conventional terminology (describing observables as "high-level event features" rather than Document B's idiosyncratic and repetitive use of "scalar") and cleanly tabulates the analysis configurations in Table 7 rather than burying them in dense running text.

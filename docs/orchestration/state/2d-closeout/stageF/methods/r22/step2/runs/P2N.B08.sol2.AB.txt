@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B uses smoother, more explicit syntax, replacing compressed phrases such as “the departure’s reco signal” with clearer descriptions appropriate to formal technical prose.
+2. B introduces labels, selection definitions and referents closer to where readers need them, improving the flow of dense methodological passages.
+3. B reduces repeated qualifications and awkward parenthetical constructions while preserving the specialist detail and restrained register expected in a long PRD write-up.

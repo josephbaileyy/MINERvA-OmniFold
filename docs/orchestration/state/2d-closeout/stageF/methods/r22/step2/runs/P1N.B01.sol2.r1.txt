@@ -1,0 +1,11 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate to a detailed particle-physics write-up, but recurring internal bookkeeping, development-history narration, and densely stacked qualifications warrant a dedicated language pass.
+
+1. QUOTE: "The body states each limitation with the result it qualifies; the principal ones are these. Ck denotes coverage within ±k standard deviations. The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage within ±k standard deviations is denoted by Ck. Coverage has not been tested for the reported 2D statistical uncertainties. Fixed-truth studies evaluated two earlier statistical uncertainty bands; the first constructed showed undercoverage at two standard deviations, with C2 = 0.912 compared with the nominal value of 0.954 (§4.2, §5.2).
+
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments that initially exceeded the time limit were rerun to complete the reported sample. These additional results are reported separately from the original decisions and would not change any decision (§11.6).
+
+3. QUOTE: "The 3D marginal of configuration (e), a deterministic estimator with refined negative-weight subtraction, agrees to 0.141 % in total with the 2D result of configuration (f), the nominal estimator with that subtraction, a cross-configuration comparison (§7)."
+   REWRITE: With refined negative-weight subtraction, the integrated normalization of the 3D marginal from the deterministic estimator [configuration (e)] differs by 0.141 % from that of the 2D result from the nominal estimator [configuration (f)] (§7).

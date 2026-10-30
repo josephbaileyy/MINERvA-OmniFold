@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A integrates the conditions into complete, formal explanatory prose, whereas B retains specification-style fragments, abbreviations and intrusive bracketed annotations.
+2. A uses more precise terminology, including “fixed-shift evaluation” and “recomputed-shift evaluation” in place of B’s vague “two readings.”
+3. A has smoother syntax and clearer referents in the recomputation, power and generation-check discussions, giving these passages a more consistently edited journal register.

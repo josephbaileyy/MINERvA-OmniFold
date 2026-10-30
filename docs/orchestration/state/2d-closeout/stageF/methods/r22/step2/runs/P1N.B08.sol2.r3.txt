@@ -1,0 +1,18 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally precise, but recurrent internal bookkeeping, development narrative, and stacked scope qualifications give substantial portions the tone of an internal report and warrant a dedicated language pass.
+1. QUOTE: "This conclusion holds
+for a binned, signal-only and noise-free comparison at the simulation’s detector response, on the
+development truths, and for these 144 residuals only. It does not address what unbinned or biased
+estimators could recover, the coverage failure of §9.5 or the validity of any interval, and it establishes
+no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria
+for any result in this note."
+   REWRITE: This conclusion is restricted to the 144 selected residuals in the binned comparison, which uses noise-free signal-only pseudo-data, the simulated detector response, and the development truth distributions. It establishes neither performance limits for unbinned or biased estimators nor interval validity, and it does not address the coverage failure in §9.5. The diagnostic precision thresholds are not acceptance criteria for the reported results.
+2. QUOTE: "The diagnosis below uses the stored
+outputs and the code. The rate change itself is recovered: in the one locally stored pseudo-experiment
+the total changes by −9.58 % against −9.56 % injected, and over the 400 the total covers at 0.74
+(68%), so the miscoverage is not a normalization failure."
+   REWRITE: Analysis of the available outputs and implementation indicates that the miscoverage does not arise from failure to recover the normalization change. One recorded pseudo-experiment gives a total-rate change of −9.58 %, compared with the injected −9.56 %, and the 68% intervals for the total rate contain the truth in 74% of the 400 pseudo-experiments.
+3. QUOTE: "The five-axis covariance used in this note is the variant centered on the central value (cv);
+its (Eavail , W ) projection has 42 cells. The file and the projection are identified by their SHA-256
+checksums (Ref. [37], identities already fixed)."
+   REWRITE: The five-axis covariance is centered on the central value (cv), and its (Eavail , W ) projection contains 42 cells. Ref. [37] provides SHA-256 checksums identifying the covariance file and its projection.

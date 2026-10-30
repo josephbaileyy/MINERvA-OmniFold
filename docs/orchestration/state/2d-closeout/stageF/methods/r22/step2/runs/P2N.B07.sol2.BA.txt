@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A maintains a more polished technical register, avoiding B’s colloquial expressions such as “dials cannot reach the excess,” “flux-repaired,” and “Where the excess lives.”
+2. A’s paragraph divisions give definitions, comparisons, and qualifications a clearer progression, particularly in Sections 8.2 and 8.5.
+3. A uses more precise, self-contained phrasing, such as “independent of cell area” and “null standard deviation,” where B uses compressed expressions such as “area-free” and “null spread.”

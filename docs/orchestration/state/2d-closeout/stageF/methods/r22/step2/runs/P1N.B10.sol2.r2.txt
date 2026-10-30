@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The technical exposition is generally clear and precise, but repeated qualifications, internal status labels, and accounts of review and verification procedures give several passages an audit-trail tone that requires a dedicated language pass.
+1. QUOTE: "Second, a bounded extension of the
+production budget was decided during production, while the calibration’s monitoring output showed
+observed claim p values, so that the sequential rule, rather than the budget, could set the stop."
+   REWRITE: Second, during calibration, the simulation budget was increased by a bounded amount to allow sampling to reach the sequential stopping criterion; the observed claim p values were visible when this decision was made.
+2. QUOTE: "The recovery’s checks are narrower in scope than the main recomputation. Only
+the fixed-shift evaluation was cross-checked independently. The recomputed-shift evaluation was
+reproduced only by a standalone rerun of the same code, a consistency check rather than an
+independent recomputation. The earlier stops rest on the calibration run’s own re-application of
+the sequential rule and have no independent check."
+   REWRITE: Verification of the recovery was less extensive than that of the primary evaluation. The fixed-shift evaluation was independently checked, whereas the recomputed-shift evaluation was checked only by rerunning the same code. The earlier stopping points were obtained by reapplying the sequential rule and were not independently verified.
+3. QUOTE: "The GiBUU re-evaluation is reported
+under the label “B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed
+at ≤ 0.1 σc ”."
+   REWRITE: For GiBUU, the hydrogen sample failed the sampling-closure check, but a post hoc test of the check’s underlying assumption satisfied the criterion of a change no greater than 0.1 σc in every cell.

@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B systematically replaces informal programming and collaboration jargon (such as "knob bands and the flux multisim," "no-op," "MC reco," and "sqrt-trace") with standard experimental particle physics terminology.
+2. Document B adheres to PRD editorial conventions by introducing physical descriptions alongside raw code identifiers (such as "MINOS muon energy scale" for `Muon_Energy_MINOS`), spelling out acronyms upon first use, and defining concise mathematical notation such as $C_Z$.
+3. Document B resolves telegraphic fragments, colloquial idioms, and ill-formed comparisons present in Document A (such as "Top 2D bands:", "the test is not tight," and equating weights to files), yielding polished, publication-ready academic prose.

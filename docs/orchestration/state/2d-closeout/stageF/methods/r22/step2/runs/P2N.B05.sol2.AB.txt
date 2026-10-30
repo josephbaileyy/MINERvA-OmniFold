@@ -1,0 +1,7 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+
+1. B uses more polished terminology in tables and comparisons, replacing shorthand such as “paper + ours” and “norm” with explicit descriptions.
+2. B improves sentence structure and reference clarity, particularly in the eigenmode discussion, where separate sentences identify the quantities being reported.
+3. B’s headings and captions adopt a more measured technical register, replacing “Tension anatomy” and “dips below” with more precise descriptions.

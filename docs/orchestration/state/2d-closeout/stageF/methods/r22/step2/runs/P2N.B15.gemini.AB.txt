@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B uses formal, scholarly headings and labels (such as "Scope of reproduction and required inputs" and "Limiting measurements") where Document A relies on conversational or colloquial phrasing ("What today’s reader can and cannot recompute" and "measurements that travel with").
+2. In the worked projection example, Document B consistently maintains an objective, declarative third-person register appropriate for a physics journal, avoiding the imperative software-tutorial instructions ("Load," "Assert," "Form") found in Document A.
+3. Document B exhibits superior editorial polish through disciplined list punctuation, concise parenthetical figure citations, and refined academic phrasing rather than Document A's run-on comma splices and clumsy relative clauses.

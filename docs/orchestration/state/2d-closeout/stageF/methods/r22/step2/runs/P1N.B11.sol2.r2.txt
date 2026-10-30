@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: Most of the prose suits a detailed particle-physics supplement, but recurring internal bookkeeping, compressed procedural terminology, and commentary on document production prevent it from reading as consistently well-edited PRD prose.
+1. QUOTE: "The
+extended-fiducial central value was produced with the binned purity correction (the battery of 2026-0610), not with refined negative-weight subtraction, the treatment designated for the extended-fiducial
+analysis (App. C)."
+   REWRITE: The preliminary extended-fiducial central value was obtained with a binned purity correction. Refined negative-weight subtraction is the prescribed treatment for the extended-fiducial analysis (App. C).
+2. QUOTE: "Summary. Beyond the results stated with their scopes in the executive summary (p. 1), the body
+supports two further conclusions."
+   REWRITE: The studies presented here support two conclusions in addition to those reported in the executive summary.
+3. QUOTE: "A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a verification program that recomputes the results, but no release has yet been tagged or deposited (App. G). Rebuilding the PDFs does not rerun the scientific analysis.

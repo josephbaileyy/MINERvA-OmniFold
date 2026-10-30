@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. A sustains a more formal register, avoiding B’s conversational expressions such as “come out,” “the data pull weakly,” and “the same unfold.”
+2. A’s descriptive headings and connected paragraphs give the discussion a more cohesive technical narrative than B’s frequent rhetorical headings and fragmented lists.
+3. A uses more polished, explicit terminology, including “sample standard deviation” with its denominator specified instead of “ddof = 1,” and expands AUC on introduction.

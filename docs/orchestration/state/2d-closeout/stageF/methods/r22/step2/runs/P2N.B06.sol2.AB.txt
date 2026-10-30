@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. B uses smoother syntax and more explicit phrasing, replacing compressed constructions such as A’s “per-bin mode count-fractions × bin value” with readable explanatory prose.
+2. B maintains a more measured technical register, replacing emphatic expressions such as “genuine q3 structure” with precise descriptions of the displayed ratios.
+3. B organizes configuration details and methodological qualifications more effectively, reducing repetition and interruptions while retaining the detail appropriate to a long technical write-up.

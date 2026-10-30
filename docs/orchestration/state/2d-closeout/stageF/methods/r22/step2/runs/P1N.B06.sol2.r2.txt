@@ -1,0 +1,27 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriate in technical depth, but repeated qualifications, configuration bookkeeping, and accounts of corrections and unfinished procedures give several passages an internal-note register that requires a dedicated language pass.
+1. QUOTE: "No 4D uncertainty. Neither a 4D uncertainty nor a ratio of the covariance from simultaneous
+variation of every reweightable band and the flux multisim (the unified throw of §4.5) to the block
+covariance is reported. A corrected 4D covariance would use the actual minus and plus variation
+endpoints; MAT’s mean-centered covariance blocks, normalized by 1/N ; one fixed estimator seed;
+and mean-centered joint throws, with the mean shift reported separately. It would not subtract a
+scalar jitter floor. Because the single-pass shifted observables exist only for events selected at the
+central value, re-selected event loops (§4.7) would be needed to bound migration effects."
+   REWRITE: Four-dimensional uncertainties are not reported, nor is the ratio of the covariance from joint variations of all reweightable bands and the flux multisim (§4.5) to the block covariance. A corrected covariance calculation would require the actual minus and plus variation endpoints, MAT covariance blocks centered on the mean and normalized by 1/N, a fixed estimator seed, and joint throws centered on their mean, with the mean shift reported separately and no scalar jitter subtraction. Bounding migration effects would additionally require repeating event selection for each variation (§4.7), because shifted observables are available only for events selected under the central-value configuration.
+2. QUOTE: "The test covers one shape, this Gaussian, injected into the pseudo-data and unfolded with the same
+detector response that the unfolding uses. For this injection the configuration-(a) estimator neither
+removes the injected feature nor creates a spurious one. That result is shown for configuration (a) only
+and does not extend to (e); since the data-versus-2D scatter sets (e) against (f), it is not interpreted as
+data–simulation structure resolved by the available-energy axis. The test does not exclude estimator
+bias for other deformations (§5.1). The hidden-variable closure exceeds its threshold at the largest
+amplitude (§5, App. D)."
+   REWRITE: For the tested Gaussian deformation, configuration (a) recovers the injected feature without introducing a spurious feature, using pseudo-data generated with the same detector response assumed in the unfolding. This result does not establish closure for configuration (e) or exclude bias for other deformations (§5.1). It therefore does not establish that the scatter between the 3D marginal from configuration (e) and the 2D result from configuration (f) reflects data–simulation differences resolved by the available-energy coordinate. The separate hidden-variable closure test exceeds its threshold at the largest amplitude (§5, App. D).
+3. QUOTE: "Flux repair and normalization. The GENIE (CV and +Valencia 2p2h) and NuWro samples
+were generated from a flux that had no PPFX weights, was capped at 50 GeV, and stored flux
+densities in variable-width bins that were sampled and normalized as contents, which under-weighted
+every wide high-energy bin and suppressed the high-p∥ predictions and the integrated rates (Ref. [37],
+R1.3). The repair reweights each event exactly to the analysis PPFX central-value flux on 0–100 GeV,
+with correctly sampled 50–100 GeV supplements. The repaired GENIE and NuWro predictions are
+used in §§7–8, except in three studies, flagged where they appear, that keep the unrepaired samples:
+the FSI-dial studies, the departure ratio of §9.2 and the NuWro-shaped prior of §12."
+   REWRITE: Flux weighting and normalization. The GENIE samples, with and without Valencia 2p2h, and the NuWro sample are reweighted to the analysis PPFX central-value flux over 0–100 GeV, with supplementary samples covering 50–100 GeV. This corrects the original flux treatment, which omitted PPFX weights, truncated the flux at 50 GeV, and treated densities in variable-width bins as bin contents, thereby suppressing high-energy contributions, high-p∥ predictions, and integrated rates (Ref. [37], R1.3). The corrected predictions are used in §§7–8 except for the FSI-dial studies. The departure ratio in §9.2 and the NuWro-shaped prior in §12 also use the original samples.

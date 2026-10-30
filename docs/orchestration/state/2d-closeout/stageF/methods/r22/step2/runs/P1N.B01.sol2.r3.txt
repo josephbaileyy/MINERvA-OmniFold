@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally clear and technically formal, but recurring internal bookkeeping, development-history narration, and awkward descriptions of validation keep several passages from reading like a well-edited PRD paper.
+1. QUOTE: "The 3D marginal of configuration (e), a deterministic estimator with refined negative-weight subtraction, agrees to 0.141 % in total with the 2D result of configuration (f), the nominal estimator with that subtraction, a cross-configuration comparison (§7)."
+   REWRITE: The total normalization of the 3D marginal obtained with the deterministic estimator, configuration (e), differs by 0.141 % from that of the nominal 2D result, configuration (f). Both estimators use refined negative-weight subtraction (§7).
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (§11.6)."
+   REWRITE: All pseudo-experiments interrupted by execution time limits were subsequently rerun. Their outcomes are reported for completeness; none would change the original test decisions (§11.6).
+3. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the reported 2D statistical covariance. Fixed-truth studies evaluated two earlier statistical uncertainty bands; the first constructed band undercovers at two standard deviations, with C2 = 0.912 compared with the nominal value of 0.954 (§4.2, §5.2).

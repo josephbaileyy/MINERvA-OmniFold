@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is precise and appropriate for a detailed technical companion, but extended passages of run bookkeeping, development history, and repetitive qualification require a dedicated language pass.
+1. QUOTE: "Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed."
+   REWRITE: Seed 42 was chosen to minimize the computational cost of using a common seed for the central value and the statistical uncertainty ensemble.
+2. QUOTE: "Both of those central values are regenerated to ≲ 2 × 10−11 by runs with one driver and one input that differ only in the seed, so the difference is attributable to the seed, as inferred from the two regenerations."
+   REWRITE: Runs using the same analysis driver and input, with only the seed changed, reproduce both central values to ≲ 2 × 10−11, confirming that their difference arises from the seed choice.
+3. QUOTE: "The exact-split central value was the quoted 2D central value until 2026-10-11; studies labeled exact-split use it and have not been recomputed."
+   REWRITE: Studies labeled exact-split retain the earlier nominal 2D estimator, configuration (b), without recomputation using the current nominal configuration (f).

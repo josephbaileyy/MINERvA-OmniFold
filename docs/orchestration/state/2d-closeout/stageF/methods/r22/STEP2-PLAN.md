@@ -167,6 +167,9 @@ does not flip, and on the 3 sol2 P1 runs NEW's mean and lowest run are each at l
 
 ## Files
 
+- **The note round's report:** [STEP2-NOTE-REPORT.md](step2/STEP2-NOTE-REPORT.md), with the measured pieces
+  (`step2/pieces/`), the adoption runs and `adoption.tsv` (`step2/runs/`), and the B01 discard record
+  (`step2/runs-discarded-B01-pairless/`).
 - **The writers' brief and lists:**
   - [WRITER-BRIEF.md](step2/WRITER-BRIEF.md), the common rules;
   - the per-piece lists [B01](step2/briefs/B01.md), [B02](step2/briefs/B02.md), [B03](step2/briefs/B03.md), [B04](step2/briefs/B04.md), [B05](step2/briefs/B05.md), [B06](step2/briefs/B06.md), [B07](step2/briefs/B07.md), [B08](step2/briefs/B08.md), [B09](step2/briefs/B09.md), [B10](step2/briefs/B10.md), [B11](step2/briefs/B11.md), [B12](step2/briefs/B12.md), [B13](step2/briefs/B13.md), [B14](step2/briefs/B14.md), [B15](step2/briefs/B15.md).

@@ -1,0 +1,2013 @@
+Results
+
+The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram
+and its projections (hXSec2D, hXSec_pt, hXSec_pz), not the covariance of §4. The published points
+in its top panel carry the square root of the diagonal of the published statistical covariance, and
+Figs. 9–10 carry statistical errors only. The uncertainty budget of §4 is shown in Fig. 4 and Table 6.
+
+6.1
+
+Double-differential cross section
+
+Figure 7 shows the unfolded d2 σ/(dpT dp∥ ) and its 1D projections. The total cross section is
+3.069 × 10−38 cm2 /nucleon (published: 3.039 × 10−38 cm2 /nucleon).
+The shapes are those expected for CC-inclusive scattering at ⟨Eν ⟩ ∼ 6 GeV. The pT projection
+vanishes at pT = 0 and peaks broadly at pT ≈ 0.55–0.70 GeV/c, reflecting the Q2 ≲ 1 GeV2 scale of
+
+few-GeV scattering through p2T ≃ Q2 Eµ /Eν , with Eµ /Eν ∼ 0.6 for these forward muons. It falls by
+more than two orders of magnitude toward the 4.5 GeV/c edge. The p∥ projection rises from the
+1.5 GeV/c threshold to a broad p∥ ≈ 3–4.5 GeV/c maximum (the NuMI medium-energy flux peak at
+Eν ≈ 6 GeV), then falls by two orders of magnitude by p∥ ≈ 20 GeV/c. The θµ < 20◦ acceptance
+empties the 2D map’s high-pT , low-p∥ corner (19 unreported diagonal cells; §3.5).
+
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+0.00 < p_T < 0.07
+
+d 2 /dpT dp|| (×10 39 cm2/(GeV/c)2/Nucleon)
+
+4
+
+0.15 < p_T < 0.25
+
+x 4.2
+
+0.25 < p_T < 0.33
+
+x 1.9
+
+x 1.1
+
+2
+0
+4
+
+4
+
+0.33 <10p_T <200.40 40 60
+x 0.8
+
+4
+
+0.40 <10p_T <200.47 40 60
+x 0.6
+
+4
+
+0.47 <10p_T <200.55 40 60
+x 0.5
+
+4
+
+0.55 <10p_T <200.70 40 60
+x 0.4
+
+4
+
+0.70 <10p_T <200.85 40 60
+x 0.4
+
+4
+
+0.85 <10p_T <201.00 40 60
+x 0.5
+
+4
+
+1.00 <10p_T <201.25 40 60
+x 0.7
+
+4
+
+1.25 <10p_T <201.50 40 60
+x 1.8
+
+4
+
+1.50 <10p_T <202.50 40 60
+x 25.3
+
+4
+
+2.50 <10p_T <204.50 40 60
+x 722
+
+4
+
+2
+0
+4
+2
+0
+4
+
+2
+
+4
+
+10
+
+20
+
+40
+
+1.50 < p_|| < 2.00
+
+60
+
+4
+
+10
+
+20
+
+40
+
+10
+
+20
+
+40
+
+60
+
+4
+
+10
+
+20
+
+40
+
+60
+
+GENIE 2.12.6 + MnvTune v1
+Published (PRD 104, 092007)
+This work (OmniFold)
+
+2
+0
+
+d 2 /dpT dp|| (×10 39 cm2/(GeV/c)2/Nucleon)
+
+0.07 < p_T < 0.15
+
+x 14.4
+
+60
+
+Muon Longitudinal Momentum (GeV/c)
+
+x 0.3
+
+2.00 < p_|| < 2.50
+
+2.50 < p_|| < 3.00
+
+x 0.2
+
+3.00 < p_|| < 3.50
+
+x 0.2
+
+x 0.2
+
+1
+0
+2
+
+0.43.50 < 1.0
+p_|| <1.54.002.5
+
+4.5
+
+x 0.2
+
+0.44.00 < 1.0
+p_|| <1.54.502.5
+
+4.5
+
+0.44.50 < 1.0
+p_|| <1.5.002.5
+
+x 0.3
+
+4.5
+
+x 0.3
+
+0.45.00 < 1.0
+p_|| <1.56.002.5
+
+4.5
+
+x 0.3
+
+1
+0
+2
+
+0.46.00 < 1.0
+p_|| <1.57.002.5
+
+4.5
+
+x 0.5
+
+0.47.00 < 1.0
+p_|| <1.58.002.5
+
+4.5
+
+0.48.00 < 1.0
+p_|| <1.59.002.5
+
+x1
+
+4.5
+
+x2
+
+0.49.00 < p_||
+1.0 <1.5
+10.002.5
+
+4.5
+
+x 3.8
+
+1
+0
+2
+
+0.4
+2.5
+10.00 < 1.0
+p_|| <1.515.00
+
+4.5
+
+x 9.4
+
+0.4
+2.5
+15.00 < 1.0
+p_|| <1.520.00
+
+4.5
+
+0.4
+
+4.5
+
+0.4
+2.5
+20.00 < 1.0
+p_|| <1.540.00
+
+x 22.6
+
+4.5
+
+x 80
+
+0.4
+2.5
+40.00 < 1.0
+p_|| <1.560.00
+
+4.5
+
+0.4
+
+4.5
+
+x 485
+
+1
+0
+
+0.4
+
+1.0 1.5 2.5
+
+4.5
+
+1.0 1.5 2.5
+
+0.4
+
+1.0 1.5 2.5
+
+4.5
+
+1.0 1.5 2.5
+
+Muon Transverse Momentum (GeV/c)
+MINERvA ME FHC, 1.06 × 1021 POT
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1e 39
+
+1e 38
+GENIE 2.12.6 + MnvTune v1
+This work (OmniFold)
+
+3.0
+
+d /dp|| (cm2/GeV/nucleon)
+
+d /dpT (cm2/GeV/nucleon)
+
+3.5
+
+2.5
+2.0
+1.5
+1.0
+
+0.0
+1.2
+
+Data / MC
+
+Data / MC
+
+5
+4
+3
+2
+1
+
+0.5
+
+1.0
+0.8
+0.0
+
+GENIE 2.12.6 + MnvTune v1
+This work (OmniFold)
+
+6
+
+0.5
+
+1.0
+
+1.5
+
+2.0
+2.5
+pT (GeV/c)
+
+3.0
+
+3.5
+
+4.0
+
+0
+1.2
+1.0
+0.8
+10
+
+4.5
+
+20
+
+30
+p|| (GeV/c)
+
+40
+
+50
+
+60
+
+Figure 7: Unfolded 2D cross section (top, in the format of Fig. 13 of Ref. [3]) and its pT and p∥
+projections (bottom). The pT peak at ∼0.6 GeV/c reflects the Q2 ≲ 1 GeV2 momentum-transfer
+scale; the p∥ peak reflects the medium-energy flux maximum.
+
+6.2
+
+Comparison to the published measurement
+
+The published and unbinned results share the data and the flux, detector and generator systematics,
+and their cross-covariance is not available. Every χ2 and standardized difference here is therefore
+descriptive, not a calibrated goodness-of-fit test.
+Over the 205 reported bins, the total cross section reproduces the published result [3] to 1.0 %
+(ratio 1.010; Table 5). The median per-bin ratio is 1.005; 86.8% of bins agree within 5 % and 95.1%
+within 10 %. Indicative values of χ2 per reported bin are 2.27 with the published covariance alone
+(analysed in §6.4) and 0.929 with the sum of the published covariance and that of this measurement.
+The latter, χ2 /ndf = 0.929, double-counts the flux, GENIE and MINOS systematics that the
+two results share. With the covariance of this measurement alone, χ2 is computed only in the
+covariance’s well-constrained subspace, with a truncated spectral pseudo-inverse. We therefore
+quote the per-bin pulls and the truncated result together, with a regularization scan made for the
+exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than
+treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App. A.4).
+Per-bin differences standardized by the published uncertainty (Fig. 8) are centered (mean 0.060),
+with RMS 0.54, well inside the published uncertainties. Figures 9–10 compare the unfolded result
+with simulated truth, the MC prior, in the published panel format.
+Quantity (205 reported bins)
+
+Value
+
+σtot (this)/σtot (published)
+Median bin ratio (this/published)
+Bins within 5 %/10 %/20 %
+Indicative χ2 /bin, published covariance
+Indicative χ2 /bin, published + this covariance
+Published-σ standardized-difference mean / RMS
+
+1.010
+1.005
+86.8/95.1/99.0 %
+2.27
+0.929
+0.060/0.535
+
+Table 5: Agreement of this measurement with the published measurement of Ref. [3]. Per-bin
+differences standardized by published uncertainties (Fig. 8) are sub-1σ; the χ2 values are descriptive.
+16
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+35
+4
+
+14
+12
+
+30
+
+mean=0.06
+rms =0.54
+2/ndf paper = 2.27
+
+25
+
+2
+
+0
+
+20
+pull
+
+8
+
+bins
+
+p_|| bin
+
+10
+
+15
+
+6
+2
+
+4
+2
+0
+
+10
+5
+
+4
+0
+
+2
+
+4
+
+6
+
+p_T bin
+
+8
+
+10
+
+12
+
+0
+
+14
+
+2
+
+1
+
+pull
+
+0
+
+1
+
+2
+
+Figure 8: Per-bin standardized difference (this − published)/σpublished on the 14 × 16 grid, and its
+distribution. It is descriptive, not a pull between independent results.
+
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1.4
+
+scaled d 2 /(dpT dp||)
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+0.0
+
+GENIE 2.12.6 + MnvTune v1
+This work (OmniFold)
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+20
+
+30
+
+1.4
+
+×1039
+2/n = 2614.2/16
+
+1.2
+
+10
+
+40
+
+50
+
+60
+
+20
+
+30
+
+1.4
+
+×1039
+2/n = 2819.5/16
+
+1.2
+
+10
+
+40
+
+50
+
+60
+
+0.0
+
+1.0
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+0.0
+
+0.0
+
+20
+
+30
+
+1.4
+
+40
+
+50
+
+60
+
+20
+
+30
+
+1.4
+
+×1039
+2/n = 23843.0/16
+
+1.2
+
+10
+
+40
+
+50
+
+60
+
+20
+
+30
+
+1.4
+
+×1039
+2/n = 30062.9/15
+
+1.2
+
+10
+
+40
+
+50
+
+60
+
+0.0
+
+1.0
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+0.0
+
+0.0
+
+20
+
+30
+
+1.4
+
+40
+
+50
+
+60
+
+1.0
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+10
+
+20
+
+30
+
+p|| (GeV/c)
+
+40
+
+50
+
+30
+
+40
+
+60
+
+0.0
+
+50
+
+60
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+0.0
+
+50
+
+60
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+×1039
+2/n = 19383.3/13
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+×1042
+2/n = 2847.1/8
+
+1.2
+
+1.0
+
+0.0
+
+20
+
+1.4
+
+×1040
+2/n = 17151.3/11
+
+1.2
+
+10
+
+40
+
+×1039
+2/n = 18265.8/16
+
+1.2
+
+1.0
+
+10
+
+30
+
+1.4
+
+×1039
+2/n = 43400.5/14
+
+1.2
+
+20
+
+1.2
+
+1.0
+
+10
+
+10
+
+1.4
+
+×1039
+2/n = 5084.1/16
+
+1.2
+
+×1039
+2/n = 3947.5/16
+
+1.2
+
+1.0
+
+1.4
+
+scaled d 2 /(dpT dp||)
+
+1.4
+
+×1039
+2/n = 3785.0/16
+
+1.2
+
+0.8
+
+0.0
+
+scaled d 2 /(dpT dp||)
+
+1.4
+
+×1040
+2/n = 3404.9/16
+
+1.2
+
+1.0
+
+0.2
+
+scaled d 2 /(dpT dp||)
+
+1.4
+
+×1040
+2/n = 1890.6/16
+
+1.2
+
+10
+
+20
+
+30
+
+p|| (GeV/c)
+
+40
+
+50
+
+60
+
+Figure 9: Unfolded cross section (points) and GENIE 2.12.6 + MINERvA Tune v1 simulated truth
+(histogram), sliced in pT versus p∥ . The histogram is the analysis MC truth denominator with the
+unfolded result’s flux, nucleon-count and efficiency normalization, so the two differ only as data
+versus MC prior; no published measurement is used, and only the panel format follows Fig. 13 of
+Ref. [3]. Points carry statistical errors only, and only these enter the annotated per-panel χ2 , which
+is a descriptive scale. Comparisons with the published data are in Figs. 8 and 13 and Table 5.
+
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1.4
+
+×1039
+2/n = 1425.5/9
+
+scaled d 2 /(dpT dp||)
+
+1.2
+
+1.4
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+0.0
+
+GENIE 2.12.6 + MnvTune v1
+This work (OmniFold)
+0
+
+1
+
+2
+
+3
+
+4
+
+×1039
+2/n = 23625.8/12
+
+1.2
+
+0
+
+1
+
+2
+
+1.4
+
+3
+
+4
+
+1
+
+2
+
+1.4
+
+×1039
+2/n = 20645.8/13
+
+1.2
+
+0
+
+3
+
+4
+
+×1039
+2/n = 15010.5/13
+
+1.2
+
+0.0
+
+1.0
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+0.0
+
+0.0
+
+2
+
+1.4
+
+3
+
+4
+
+×1039
+2/n = 10167.4/14
+
+1.2
+
+0
+
+1
+
+2
+
+1.4
+
+3
+
+4
+
+1
+
+2
+
+1.4
+
+×1039
+2/n = 7372.5/14
+
+1.2
+
+0
+
+3
+
+4
+
+×1040
+2/n = 6470.7/14
+
+1.2
+
+0.0
+
+1.0
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+1
+
+2
+
+1.4
+
+3
+
+4
+
+×1040
+2/n = 15381.7/14
+
+1.2
+
+0.0
+
+0
+
+1
+
+2
+
+1.4
+
+3
+
+0.0
+
+4
+
+1
+
+2
+
+3
+
+4
+
+×1041
+2/n = 8201.4/14
+
+1.2
+
+0.0
+
+1.0
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+0.0
+
+0.0
+
+2
+
+pT (GeV/c)
+
+3
+
+4
+
+0
+
+1
+
+2
+
+pT (GeV/c)
+
+3
+
+4
+
+1
+
+2
+
+3
+
+4
+
+×1040
+2/n = 5238.1/14
+
+0
+
+1
+
+2
+
+pT (GeV/c)
+
+3
+
+4
+
+0
+
+1
+
+2
+
+0.0
+
+3
+
+4
+
+×1042
+2/n = 2313.4/14
+
+1.2
+
+0.8
+
+1
+
+0
+
+1.4
+
+1.0
+
+0
+
+4
+
+0.2
+0
+
+1.4
+
+×1041
+2/n = 7706.0/14
+
+1.2
+
+3
+
+×1039
+2/n = 17561.5/13
+
+1.2
+
+0.8
+
+0
+
+2
+
+1.4
+
+1.0
+
+0.0
+
+1
+
+1.2
+
+0.8
+
+1
+
+0
+
+1.4
+
+1.0
+
+0
+
+×1039
+2/n = 20922.0/12
+
+1.2
+
+1.0
+
+1.4
+
+scaled d 2 /(dpT dp||)
+
+×1039
+2/n = 11552.6/11
+
+1.2
+
+0.8
+
+0.0
+
+scaled d 2 /(dpT dp||)
+
+1.4
+
+×1039
+2/n = 4904.7/10
+
+1.2
+
+1.0
+
+0.2
+
+scaled d 2 /(dpT dp||)
+
+1.4
+
+0
+
+1
+
+2
+
+pT (GeV/c)
+
+3
+
+4
+
+Figure 10: Unfolded cross section versus simulated truth (Fig. 9), sliced in p∥ versus pT , with
+statistical errors only and no published measurement.
+
+6.3
+
+Uncertainty budget
+
+Table 6 gives the budget over the 205 reported bins, constructed as described in §4. Our own combined
+budget, without the published covariance, is comparable to the published total: its per-bin median,
+6.41 %, is smaller than the published 6.85 %, and its value on the integrated cross section, 4.76 %, is
+larger than the published 4.61 % (the width-weighted total σ of App. A.3.2). The comparison leaves
+out the generator-shape component Cmodel (§4.6), because the published uncertainty has no such
+component either; with it, the per-bin median is 7.90 %. The systematic-universe block accounts
+for a median 0.87 of the per-bin variance and 0.83 of the integral’s variance, and the run-period
+block (§4.5) raises the per-bin median from 5.98 % to 6.41 %. The largest band is the flux, as in
+the publication (Fig. 4), and it accounts for part of the difference between the per-bin medians: its
+median is 3.71 %, against 4.01 % for the published flux block. The public release does not let us
+
+determine the origin of this difference; our leading hypothesis is the FHC-only constraint file. Our
+flux band carries the per-universe ν–e and inverse-muon-decay constraint weights of the MINERvA
+Analysis
+Toolkit. The statistical and ML blocks together contribute under a tenth of the combined
+√
+Tr C. Every block is computed with the LightGBM estimator of the quoted central value (§3.2),
+and relative uncertainties are taken with respect to that central value, which is the universe sweep’s
+central value at training seed 42. Taken with respect to the exact-split cross-check instead, the same
+combined covariance has a per-bin median of 6.462 %.
+Component
+
+N
+
+ML noise (LightGBM training-seed settings)
+Statistical (Poisson bootstrap)
+Systematic (universe sweep + 1.4 % normalization)
+Run period
+Combined (block sum)
+Published total covariance (reference)
+
+5
+300
+43 bands+1
+3
+—
+—
+
+√
+
+Tr C
+
+per-bin median rel. σ
+
+1.35 × 10−41
+1.89 × 10−40
+2.69 × 10−39
+8.31 × 10−40
+2.82 × 10−39
+2.68 × 10−39
+
+0.048 %
+0.676 %
+5.935 %
+2.087 %
+6.414 %
+6.85 %
+
+Table 6: 2D
+√ uncertainty budget over 205 reported bins. Each component has a 205 × 205 covariance
+matrix C; Tr C gives its absolute per-bin uncertainties in quadrature. The systematic row combines
+43 of the 44 bands of the systematic-universe sweep (187 universes) with the normalization; the ML
+row combines five training-seed settings, and the run-period row three run periods. Our combined
+median relative uncertainty (6.414 %) is below the published total (6.85 %).
+
+6.4
+
+Eigenmode analysis of the published-covariance tension, χ2 = 2.27
+
+With the published uncertainties as a descriptive scale, the central values have a pull RMS of 0.535
+(a diagonal-only χ2 /ndf would be 0.29), whereas χ2 per bin with the full published covariance is 2.27.
+The eightfold increase lies entirely in the off-diagonal structure of the published covariance, and
+it is a difference in shape, not normalization (χ2norm = 0.04 against χ2shape = 465). The eigenmode
+decomposition (Fig. 11) spreads it over many modes: the largest has a paper-covariance-standardized
+component of magnitude 4.8, and the next nine 3.4–3.8. The 10 smallest-λ modes carry 9.6 %
+of the total χ2 . Of the five largest contributors, two lie in the smallest-λ tenth of the spectrum.
+Restricted to the 73 best-measured directions, χ2 /ndf is 0.66. Of the six leading modes, the three
+in the highest-p∥ bins are all poorly determined directions (λ/λmax ≲ 4 × 10−9 ); the other three
+are moderate-λ modes (λ/λmax between 4 × 10−6 and 6 × 10−5 ) and lie below the highest p∥ bins
+(Fig. 12). No single pT or p∥ band carries more than 15 % of the total.
+With the purity-based subtraction, the choice of GBDT estimator spreads the distance over
+about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04,
+and LightGBM with seeds 1–10 gives 2.64–2.75. Beyond this estimator dependence, the source of
+the shape difference has not been identified. At the central value’s seed, the refined negative-weight
+subtraction of the quoted result lowers the LightGBM χ2 per bin from 2.65 to 2.27. For the
+exact-split cross-check, χ2 is larger and distributed differently: its components of magnitude 5–6 lie
+in moderate-λ modes on the low-pT ridge of the cross-section peak. Its 10 smallest-λ modes carry
+3 % of the χ2 , and the 73 best-measured directions give χ2 /ndf = 1.42 (App. A.5). Going from 5 to
+10 iterations changes the LightGBM (seed 1) value by a negligible +0.01. App. A.5 gives the full
+treatment and Figs. 11–12 the eigenmode-localization maps.
+
+
+16
+20
+
+14
+12
+
+p_|| bin
+
+90% of chi^2
+
+1.0
+10 1
+
+cumulative chi^2 fraction
+
+lambda / lambda_max
+
+10 3
+10 5
+10 7
+10 9
+
+0.8
+
+6
+
+0.6
+
+4
+
+0.4
+
+0
+
+25
+
+50
+
+75
+100
+125
+150
+mode (largest -> smallest lambda)
+
+175
+
+200
+
+0
+
+10
+
+2
+
+0.2
+
+10 11
+
+8
+
+0
+0
+
+25
+
+50
+75
+100
+125
+150
+modes ranked by chi^2 contribution
+
+175
+
+chi^2 contribution
+
+10
+
+10
+
+20
+0
+
+2
+
+4
+
+6
+
+200
+
+p_T bin
+
+8
+
+10
+
+12
+
+14
+
+0.2
+0.0
+0.2
+0.4
+0.6
+2.5
+
+5.0
+
+7.5 10.0 12.5
+p_T bin
+0.75
+0.50
+0.25
+0.00
+0.25
+0.50
+0.75
+
+2.5
+
+5.0
+
+7.5 10.0 12.5
+p_T bin
+
+16
+14
+12
+10
+8
+6
+4
+2
+0
+0.0
+
+2.5
+
+5.0
+
+7.5 10.0 12.5
+p_T bin
+
+0.8
+0.6
+0.4
+0.2
+0.0
+0.2
+0.4
+0.6
+0.8
+
+p_|| bin
+
+0.4
+
+16
+14
+12
+10
+8
+6
+4
+2
+0
+0.0
+
+0.4
+0.2
+0.0
+0.2
+0.4
+2.5
+
+5.0
+
+7.5 10.0 12.5
+p_T bin
+
+p_|| bin
+
+16
+14
+12
+10
+8
+6
+4
+2
+0
+0.0
+
+0.6
+
+p_|| bin
+
+16
+14
+12
+10
+8
+6
+4
+2
+0
+0.0
+
+p_|| bin
+
+p_|| bin
+
+p_|| bin
+
+Figure 11: Eigenmode decomposition of the published-covariance χ2 : eigenvalue spectrum with
+cumulative χ2 (left) and the per-bin χ2 -contribution map (right).
+16
+14
+12
+10
+8
+6
+4
+2
+0
+0.0
+16
+14
+12
+10
+8
+6
+4
+2
+0
+0.0
+
+0.4
+0.2
+0.0
+0.2
+0.4
+2.5
+
+5.0
+
+7.5 10.0 12.5
+p_T bin
+0.4
+0.2
+0.0
+0.2
+0.4
+
+2.5
+
+5.0
+
+7.5 10.0 12.5
+p_T bin
+
+Figure 12: Leading χ2 -carrying eigenmodes of the published covariance in bin space, for the
+LightGBM central value. Three of the six, all smallest-λ directions, concentrate in the highest-p∥
+bins; the other three, moderate-λ modes, lie below them.
+
+6.5
+
+Comparison to GENIE MINERvA Tune v1
+
+GENIE 2.12.6 [4] with MINERvA Tune v1 under-predicts the total cross section by ∼ 9 %
+(σtune /σdata = 0.91), and the deficit is concentrated in the low-pT peak. Figure 13 compares
+the prediction from the published ancillary files with both the published data and this measurement.
+The data covariance strongly disfavors the tune, with χ2 /ndf = 33.0 for the published data and 31.3
+for this measurement (26.5 for the exact-split cross-check), and our result tracks the data far more
+closely than the model does (Fig. 14). The published analysis [3] also compares with NuWro [6],
+GiBUU [7] and NEUT [43]. OmniFold’s per-event reweighted truth ensemble can be compared with
+
+any such prediction in any projection of the classifier features without re-unfolding. An observable
+outside that space requires a new unfolding, as in the 3D extension (§7), which adds Eavail as a
+classifier feature.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1e 38
+
+1e 39
+Published (PRD 104, 092007)
+This work (OmniFold)
+MINERvA_Tune_v1
+
+3.5
+
+d /dpz (cm2/(GeV/c)/nucleon)
+
+d /dpt (cm2/(GeV/c)/nucleon)
+
+3.0
+2.5
+2.0
+1.5
+1.0
+
+Published (PRD 104, 092007)
+This work (OmniFold)
+MINERvA_Tune_v1
+
+6
+5
+4
+3
+2
+1
+
+0.5
+
+0
+
+0.0
+0.0
+
+0.5
+
+1.0
+
+1.5
+2.0
+p_T (GeV/c)
+
+2.5
+
+3.0
+
+3.5
+
+0
+
+10
+
+20
+
+30
+p_|| (GeV/c)
+
+40
+
+50
+
+Figure 13: Projections of this measurement (dashed) and the published data (black); MINERvA
+Tune v1 (orange) lies below the data in the peak.
+16
+
+1.3
+
+14
+
+16
+14
+
+1.2
+
+12
+1.1
+1.0
+
+6
+
+ratio
+
+8
+
+1.1
+
+10
+p_|| bin
+
+ratio
+
+p_|| bin
+
+1.2
+
+12
+
+10
+
+8
+
+1.0
+
+6
+
+0.9
+
+4
+
+0.9
+
+4
+0.8
+
+2
+0
+
+1.3
+
+0
+
+2
+
+4
+
+6
+
+p_T bin
+
+8
+
+10
+
+12
+
+14
+
+0.8
+
+2
+
+0.7
+
+0
+
+0
+
+2
+
+4
+
+6
+
+p_T bin
+
+8
+
+10
+
+12
+
+14
+
+0.7
+
+Figure 14: Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of the
+published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles. Both
+maps show the same tune deficit, with ratios above unity over most of the plane and below it at
+the lowest pT . The maps are close because both results depart from the tune in the same places by
+similar amounts. The direct comparison with the published data is the median bin ratio of Table 5
+and the residual map of Fig. 8.
