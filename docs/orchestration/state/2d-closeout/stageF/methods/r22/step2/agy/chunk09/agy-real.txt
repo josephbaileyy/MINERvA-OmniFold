@@ -1,0 +1,19 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER converts the imperative instruction ("Read ... as") into a declarative definition ("is") while preserving the exact mathematical definition, qualifiers, and meaning.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces specific claims unsupported by BEFORE by stating that "The estimator-seed sensitivity, which exceeds its limit", whereas BEFORE states only that "\S\ref{sec:eavailw-adopted}'s first measurement is the reason".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops the script paths "\texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py}" and "\texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}", and introduces unsupported background subtraction options: "negative-weight injection with or without the Stay-Positive refinement (App.~\ref{app:negweight})". The 2D script path appears to have been moved to AH12.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire first sentence explaining that "Scripts, figure files and stored outputs call \emph{training-seed variation} \texttt{seedscan}; the two names denote the same variance source" as well as the name "\texttt{seedscan}" (which may have been moved to a neighbouring passage).
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds the explicit file path "\texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py}", which BEFORE does not state here (the path appears to have been moved from AH5).
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds a full explanatory sentence unsupported by BEFORE: "The coverage test of \S\ref{sec:coverage-5d} measures, for each reported integral, the fraction of bias-corrected statistical intervals that contain the true value."
+
+END

@@ -1,0 +1,120 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the scope limitation "The results hold for this implementation, one data set, and the configurations, observables and deformations tested (\S\ref{sec:intro})" as well as "The generator tests are an application that illustrates calibrated inference with a biased estimator" (the latter moved to ES16).
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces descriptions of configurations (a), (e), and (f) not supported by BEFORE ("the purity-subtracted estimator of the five-dimensional central value", "a deterministic estimator with refined negative-weight subtraction", and "the nominal estimator with that subtraction").
+
+Q3: VERDICT: SAME
+DETAIL: AFTER converts the bullet title into a complete opening sentence with no change in factual content, numbers, or citations.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER inserts "The generator tests are an application that illustrates calibrated inference with a biased estimator", which was moved here from ES1 and is not supported by BEFORE in this passage alone.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds several details not present in BEFORE, including "made with the carbon-only predictions", "which re-unfolds with all reweightable sources perturbed together", definitions of tiers 1 and 2, and the closing sentence "$C_k$ denotes coverage within $\pm k$ standard deviations."
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER replaces "production measurements" with "published measurements", claiming publication which BEFORE does not state, and replaces "method paper" with "method proposal".
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds the characterization "joint-perturbation" to describe the unified-throw covariance check, which is not stated in BEFORE alone.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER specifies "this in-method subtraction" where BEFORE only referred to "that route", stating a specific recommendation not supported by BEFORE alone.
+
+Q9: VERDICT: SAME
+DETAIL: AFTER rewords "we budget that component explicitly as" to "we include that component explicitly, as" without altering any facts or qualifiers.
+
+Q10: VERDICT: SAME
+DETAIL: AFTER expands the acronym GBDT to "gradient-boosted decision-tree (GBDT)" and rephrases "blocks" to "covariance components" with no change in meaning or facts.
+
+Q11: VERDICT: SAME
+DETAIL: AFTER replaces the itemize environment header with "Motivation for unbinned unfolding. First," with identical substantive wording and meaning.
+
+Q12: VERDICT: SAME
+DETAIL: AFTER replaces the list bullet with "Second," leaving the text and meaning identical.
+
+Q13: VERDICT: SAME
+DETAIL: AFTER replaces the list bullet with "Third," leaving the text and meaning identical.
+
+Q14: VERDICT: SAME
+DETAIL: AFTER preserves the exact wording, citations, and meaning of the analysis strategy paragraph.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "future work", replacing "future work, under development" with "is in progress", and introduces "transformer", which is not in BEFORE.
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "production" from AnaTuples and adds "pre-selected" to describe them, which is not stated in BEFORE.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit selection cut code "(\texttt{isMinosMatchTrack==1 \&\& minos\_trk\_is\_ok==1})" and adds the specification "near detector", which BEFORE does not state.
+
+Q18: VERDICT: SAME
+DETAIL: AFTER replaces the parenthetical jargon label "(\emph{fakes}: ...)" with the explicit definition inline, preserving all facts and the separate treatment.
+
+Q19: VERDICT: SAME
+DETAIL: AFTER replaces the informal terms "machinery" with "tools" and "flat trees" with "per-event samples" without changing any facts or outputs.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER drops the sample entry count "\num{32849103} entries" and the fact that outputs are merged with "a tree-size-aware merger for the trees with per-universe content, which exceed \SI{100}{GB}."
+
+Q21: VERDICT: SAME
+DETAIL: AFTER rephrases "has a clear $\pT$ trend, rising from" to "rises with $\pT$, from" while preserving all numbers and kinematic bounds.
+
+Q22: VERDICT: SAME
+DETAIL: AFTER clarifies "the data pull" as "its reweighting toward the data" while preserving the exact factual statements regarding simulation shapes and rate correction.
+
+Q23: VERDICT: SAME
+DETAIL: AFTER expands the acronym PET to "point-cloud (PET)" and replaces the informal term "banks" with "samples" in the table without changing any facts.
+
+Q24: VERDICT: SAME
+DETAIL: AFTER replaces "unfold" with "unfolding" with no change in meaning.
+
+Q25: VERDICT: SAME
+DETAIL: AFTER merges the two consecutive sentences to avoid redundancy while preserving all numbers, qualifiers, and cross-references.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit mapping of configurations "(d)", "(e)", and "(f)" to their respective studies and omits citation "\S\ref{sec:3d}" from the 2D result citations.
+
+Q27: VERDICT: SAME
+DETAIL: AFTER changes "unfolds" to "unfolding results" with no change in meaning.
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER drops the refinement classifier specifications: "whose refinement classifier has 400 trees and 31 leaves and takes the estimator seed plus three as its seed."
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER adds a description of what Table~\ref{tab:estimators-matrix} tabulates ("gives each one's learner, background treatment and results"), which is not stated in BEFORE alone.
+
+Q30: VERDICT: SAME
+DETAIL: AFTER changes "are used in" to "they serve" with no change in facts or qualifiers.
+
+Q31: VERDICT: SAME
+DETAIL: AFTER streamlines "A refined five-dimensional data unfold exists (configuration~(e)); it gives" into a single clause with no change in meaning.
+
+Q32: VERDICT: SAME
+DETAIL: AFTER reorders the clauses without changing any facts, qualifiers, or the date 2026-10-11.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER adds "; studies labeled \emph{exact-split}" to the Results column for configuration (b), which is not present in BEFORE.
+
+Q34: VERDICT: SAME
+DETAIL: AFTER rewords "Our prior" to "The simulation prior" and "the data pull" to "the correction the data impose on it" without changing any facts.
+
+Q35: VERDICT: SAME
+DETAIL: AFTER changes "the unfold reproduces" to "the unfolded result reproduces" with no change in meaning.
+
+Q36: VERDICT: SAME
+DETAIL: AFTER replaces the informal term "fakes" with its definition "out-of-phase-space signal" without altering the substance or scope.
+
+Q37: VERDICT: DIFFERS
+DETAIL: AFTER drops the contrast "rather than an idealized shortcut" from the closure test description and omits "additional" from "No additional efficiency-histogram division is applied."
+
+Q38: VERDICT: SAME
+DETAIL: AFTER replaces the jargon "misses" with "truth events without a reconstructed partner" while preserving all statements, definitions, and equations ($c\equiv1$).
+
+Q39: VERDICT: SAME
+DETAIL: AFTER changes "unfold" to "unfolding" with no change in meaning.
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER adds an explanation not supported by BEFORE: ": the unbinned unfolding has no response-matrix under- or overflow, and the reporting bins are applied once, to events that all lie inside the grids."
+END

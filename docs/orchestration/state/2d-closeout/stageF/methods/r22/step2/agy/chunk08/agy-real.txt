@@ -1,0 +1,121 @@
+Q1: VERDICT: SAME
+DETAIL: The addition of "fractions" and "across cells" simply makes the statistical terminology explicit without changing the factual statement or certifying criteria.
+
+Q2: VERDICT: SAME
+DETAIL: The rephrasing spells out the abbreviations and notation while preserving all numbers, statistical interpretations, and the limitation on covariance certification.
+
+Q3: VERDICT: SAME
+DETAIL: The rewording is purely stylistic and preserves the exact scope, assertions, and lack of dependency on the numbers.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit limitation that the two covariance ratios are ", not quoted uncertainties", and introduces the phrase "to binned purity" which BEFORE does not state here.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds ", the histogram backend", introducing a specific configuration detail not stated or supported in BEFORE.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds ", at full statistics with LightGBM, the estimator of the quoted 2D central value", stating specific implementation details not found in BEFORE.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds "The two covariances differ by one to two percent", "$187$-universe", "matched-seed", and the four explicit component numbers (such as "\SI{2.9828e-39}{cm^2/nucleon}"), which were likely moved here from AC116.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops the quantitative per-bin reproduction metrics "(median $\nwMedianBin$, RMS \SI{\nwRmsBin}{\percent}, worst bin \SI{\nwWorstBin}{\percent})" and replaces them with a cross-reference "(\S\ref{sec:negweight-2d})".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire opening sentence "Its background treatment is positively identified, by different evidence for the existing unfolds and for current production."
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit contrasts "rather than inheriting the driver's default" and "rather than inferred from the absence of an option", omitting the rationale and documentation mechanism stated in BEFORE.
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER drops the substantive qualification ", not an upgrade" and replaces the concrete description "inserted into a central and vertical set" with the hypothetical "would be inconsistent with central and vertical-band unfolds".
+
+Q12: VERDICT: SAME
+DETAIL: Defining "The yardsticks are" as "Differences are expressed in units of" clarifies the statistical unit convention without changing any facts, cells, or qualifiers.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER drops "in the validation ledger", omitting the specific record location where the central value and passed check are documented.
+
+Q14: VERDICT: SAME
+DETAIL: Omitting the discourse phrase ", as stated above" removes a metatextual pointer without dropping any scientific fact, number, qualifier, or limitation.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire paragraph "\paragraph{Measured size.}" along with all of its numerical covariance comparisons and ratio operands, which were moved to AC75.
+
+Q16: DIFFERS
+DETAIL: AFTER adds the specific section cross-reference "of \S\ref{sec:negweight-uq}", which is not stated or supported in BEFORE when compared in isolation.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit caveat "; the choice is safe, though not shown to be immaterial", removing a key limitation on the safety of the choice.
+
+Q18: VERDICT: SAME
+DETAIL: Clarifying "cheapest" as "least computationally expensive" preserves the exact comparative claim regarding the five-dimensional purity and refined negative-weight subtraction.
+
+Q19: VERDICT: SAME
+DETAIL: The rewording is purely syntactic and preserves both the independence of the two choices and the disclaimer that no five-dimensional covariance is selected.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER drops "(protocol implemented; not yet run)" from the section title, removing the status qualifier from the heading (moved to AD3).
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER adds the sentences stating that the appendix gives a validation protocol "not a result or an uncertainty component" and that its first stage has "not yet run: no output has been produced and no pass threshold has been set", which were moved from AD0 and AD18.
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER introduces the citation "Eq.~\eqref{eq:eavail-reco-implemented}" and asserts as a fact that the amplitude "remains to be specified", going beyond the requirement in BEFORE that a variation "should justify that amplitude".
+
+Q23: VERDICT: SAME
+DETAIL: The change from "reporting" to "with ... reported separately" is purely grammatical and maintains the exact same kinematic partition and observable.
+
+Q24: VERDICT: SAME
+DETAIL: Rephrasing "closure on pseudo-data" to "pseudo-data closure" preserves all scope restrictions and exclusions intact.
+
+Q25: VERDICT: SAME
+DETAIL: Describing scalar event-loop outputs as per-event outputs that "hold only scalar observables, not that low-level record" accurately restates the technical limitation without altering the requirements for the follow-up.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the statements that the appendix records "a validation protocol, not a result or an uncertainty component" and that "No response-mismatch output has been produced and no pass threshold has been set", which were moved to AD3.
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER drops the adverb "silently" from "absorbed silently" and adds "separate" to "uncertainty component", altering the qualifier on how the bias would be accounted for.
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER drops from the caption the operational definition and classification criteria: ": the number of kinematic variables unfolded simultaneously (Dim.), classified from each analysis's headline differential result."
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER drops the characterization that the measurement is "a direct dimensional precedent", replacing it with the descriptive phrase "has the dimensionality of our three-dimensional result".
+
+Q30: VERDICT: SAME
+DETAIL: Restructuring the clauses preserves the description of RC7, the fixed identities, and the reproduction scope without loss of information.
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit limitation: "It does not recompute the recorded stability of the observed $p$ values under the data's rounding noise."
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER replaces "regenerated separately" with "drawn separately", dropping the fact that the numbers were computationally regenerated and introducing potential ambiguity with statistical draws.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER adds the file size specification "(about \SI{2.3}{GB})" and the cross-reference "(\S\ref{sec:eavailw-adopted})", which do not appear in BEFORE.
+
+Q34: VERDICT: SAME
+DETAIL: The passive sentence structure preserves all file counts, checksum types, preservation dates, and storage locations identically.
+
+Q35: VERDICT: SAME
+DETAIL: Rephrasing "it does not qualify the object scientifically" to "not whether the object is scientifically qualified" preserves the exact distinction between identity and scientific qualification.
+
+Q36: VERDICT: SAME
+DETAIL: The introduction of a colon and minor article additions leave the list of fixed objects and checksums completely identical.
+
+Q37: VERDICT: DIFFERS
+DETAIL: AFTER adds that these are "\textbf{Limiting measurements}" that "limit what the five-axis covariance ... supports", and drops the fact that these are measurements "that readers will quote".
+
+Q38: VERDICT: DIFFERS
+DETAIL: AFTER drops the procedural commands and assertions ("Load" and "Assert that"), converting programmatic verification steps into descriptive statements about array shapes.
+
+Q39: VERDICT: SAME
+DETAIL: Changing the imperative command to participial phrasing preserves the projection formula, the reshape dimensions, C-ordering, and the exact reproduction condition.
+
+Q40: VERDICT: SAME
+DETAIL: The text preserves all numerical cutoff counts, the condition number order of magnitude, the ill-conditioned status, and the warning against using NumPy default cutoffs.
+
+END

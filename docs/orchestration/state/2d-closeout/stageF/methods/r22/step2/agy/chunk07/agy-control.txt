@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific dataset identifier "July sweep" in the caption (replacing it with "the quoted universe sweep") and adds physical descriptions (e.g., "MINOS muon energy scale", "MINOS muon-match efficiency") that BEFORE does not state.
+
+Q2: VERDICT: SAME
+DETAIL: Rewriting "these are exactly the bands the Ruterbories paper flags" to "these are the bands that the Ruterbories paper identifies" removes informal emphasis while preserving the exact factual identification.
+
+Q3: VERDICT: SAME
+DETAIL: Restructuring the appositive clause with a colon preserves all statements, formulas, and qualifiers.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the paper "gives covariance formula", directly contradicting BEFORE's explicit statement "with no covariance formula given".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds unsupported characterizations by labeling the formula "conventional CV-centered" instead of "folk", and introduces an ambiguous pronoun in "agrees with it" where "it" has no antecedent in the passage.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific command-line option "(\texttt{-{}-add-norm 0})" that BEFORE provides to specify how the band sum without the normalization band was executed.
+
+Q7: VERDICT: SAME
+DETAIL: Replacing informal "GENIE reweight knobs" with formal "GENIE reweighting parameters" is a faithful register rewrite that preserves all citations and facts.
+
+Q8: VERDICT: DIFFERS
+DETAIL: In the table, AFTER drops the specific dataset identifier "July" from "July sweep $+$ norm", replacing it with generic "universe sweep $+$ norm".
+
+Q9: VERDICT: SAME
+DETAIL: Replacing the code function name `\texttt{np.linalg.pinv}` with the mathematical prose "the pseudo-inverse of \S\ref{sec:invert}" preserves the exact mathematical operation and reference.
+
+Q10: VERDICT: SAME
+DETAIL: Removing font bolding and changing "This is" to "It is" leaves all facts, qualifiers, and limits unchanged.
+
+Q11: VERDICT: SAME
+DETAIL: Expanding "total-$\sigma$" to "total-cross-section" is a standard terminological expansion with identical meaning.
+
+Q12: VERDICT: SAME
+DETAIL: Defining the notation $\chi^{2}_{\ours}$ and expanding "An ours-only" to "with this analysis's covariance alone" preserves the exact meaning and formula.
+
+Q13: VERDICT: SAME
+DETAIL: Rewording "This is not a missing-bands problem." to "The deficit does not come from missing bands." preserves the logic and numerical ranks ($120$ and $138$).
+
+Q14: VERDICT: SAME
+DETAIL: Substituting the defined symbol $\chi^{2}_{\ours}$ for "ours-only $\chi^{2}$" preserves the full statement and precision qualifier.
+
+Q15: VERDICT: SAME
+DETAIL: Changing informal "lever toward an ours-only $\chi^{2}$ is" to "a usable $\chi^{2}_{\ours}$ depends on" preserves all numerical results and the underlying conclusion.
+
+Q16: VERDICT: SAME
+DETAIL: Replacing "genuine" with "real" preserves the meaning of the candidate list completely.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire opening statement "An ours-only $\chi^{2}$ must use our own $\mathbf{C}^{\ours}$", which BEFORE explicitly states.
+
+Q18: VERDICT: SAME
+DETAIL: Updating "ours-only $\chi^{2}$" to the notation $\chi^{2}_{\ours}$ preserves the reporting commitment and section reference.
+
+Q19: VERDICT: SAME
+DETAIL: Substituting the notation $\chi^{2}_{\ours}$ for "the ours-only $\chi^{2}$" leaves the statement of collaboration practice identical.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific count "three" from "three limits" and the condition "apply to every use", while ambiguously suggesting via "(Eq.~\eqref{eq:diffcov})" that the equation itself constitutes the limits.
+
+Q21: VERDICT: SAME
+DETAIL: Updating notation to $\chi^{2}_{\ours}$ preserves the stated rank of $197$ and the cutoff threshold $10^{-10}\lambda_{\max}$.
+
+Q22: VERDICT: SAME
+DETAIL: Clarifying the pronoun in "when it was made" to "when the derivation was made" preserves the exact meaning and reference.
+
+Q23: VERDICT: SAME
+DETAIL: Replacing code `\texttt{pinv}` with prose "the pseudo-inverse" preserves the numerical value $750.49$ and agreement to $3\times10^{-9}$.
+
+Q24: VERDICT: SAME
+DETAIL: Replacing code syntax `\texttt{pinv}-rcond` with "pseudo-inverse cutoff" and informal "ride on" with "depend on" preserves all modes and numerical values.
+
+Q25: VERDICT: SAME
+DETAIL: Replacing the colloquial heading "Where it lives." with "Location in the $(\pT,\pPar)$ plane." formalizes the section while leaving all bin numbers and percentages identical.
+
+Q26: VERDICT: SAME
+DETAIL: Expanding "paper-cov $\chi^{2}$" to "the $\chi^{2}$ against the paper covariance" is a faithful register rewrite that preserves the $1$-unit shift.
+
+Q27: VERDICT: SAME
+DETAIL: Formalizing the column header "paper-cov $\chi^{2}/\mathrm{ndf}$" to "$\chi^{2}/\mathrm{ndf}$, paper covariance" leaves all table rows, values, and footnotes unchanged.
+
+Q28: VERDICT: SAME
+DETAIL: Replacing informal "genuinely the estimator" with "attributable to the estimator" preserves the exact quantitative comparison between the $0.04$ seed jitter and the $0.96$ gap.
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER weakens "This is direct evidence that [it] is" to "We therefore attribute", dropping the claim of "direct evidence", and drops the qualifier "genuine" from the description of the shape difference.
+
+Q30: VERDICT: SAME
+DETAIL: Removing the informal intensifier "exactly" preserves the structural equivalence between the Bashyal block and the region carrying the tension.
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit physical limitations "Shared data and unavailable cross-covariance", which explain why the distance lacks a calibrated goodness-of-fit.
+
+Q32: VERDICT: DIFFERS
+DETAIL: In the audit table, AFTER drops the specific dataset identifier "July" from "July sweep", replacing it with generic "Universe sweep".
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER introduces the definition of $C_Z$ as "the five-axis covariance of the configuration-(a) central value", which is unsupported by BEFORE alone.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER adds the unsupported technical claim that bands contribute "rank-one outer products, one for each two-endpoint MAT systematic band", and drops the qualifier "not a defect".
+
+Q35: VERDICT: DIFFERS
+DETAIL: AFTER states that "$\mathrm{ndf}$ is the retained rank, $n_{\text{reported}}$", directly contradicting BEFORE's mandatory prohibition that "N-D covariances must not use $\mathrm{ndf}=n_{\text{reported}}$".
+
+Q36: DIFFERS
+DETAIL: AFTER drops ", and why no correction is prescribed" from the paragraph heading, omitting that limitation and topic from the text.
+
+Q37: VERDICT: DIFFERS
+DETAIL: AFTER drops the word "no" and states that the sum "has single debiasing factor" (directly contradicting BEFORE's "has no single debiasing factor"), drops "about 45", and adds the unsupported phrase "such as the earlier 5D covariance from the standard production chain".
+
+Q38: VERDICT: SAME
+DETAIL: Rewriting "must be chosen ... from" to "depends on ... and is to be determined from" faithfully preserves the procedural instruction.
+
+Q39: VERDICT: SAME
+DETAIL: Converting informal functional descriptions to formal cell-based prose preserves all differentials and integral distinctions.
+
+Q40: VERDICT: SAME
+DETAIL: Expanding "sample SD" to "sample standard deviation" and specifying "pseudo-experiment" preserves the sample size of 100 replicas and experiment identifier 700000.
+
+END

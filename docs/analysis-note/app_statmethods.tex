@@ -127,7 +127,7 @@ Drawing $N$ events with replacement from an $N$-event sample gives counts $(n_{1
 
 \subsubsection{Universes}
 \label{sec:universes}
-The universe sweep used by the quoted budget (the July sweep) has 187 universes across 44 bands, dominated by the $100$-universe PPFX flux band (hadron-production sampling). The quoted band sum drops one band (Rvp1pi) and holds $43$ bands plus the normalization. Almost all other bands are $\pm1\sigma$ pairs ($N_{u}=2$). They include the MINOS and lateral MINERvA muon energy scales, the MINOS muon-match efficiency, the GENIE parameters $M_{A}^{\mathrm{RES}}$, $M_{V}^{\mathrm{RES}}$ and $M_{A}^{\mathrm{CCQE}}$, and the lateral GEANT FSI responses for neutrons, pions and protons. Where selection migration matters, the five kinematic bands (the two beam-angle components, the muon resolution and the two muon energy scales) require re-selected event loops, run with one universe active at a time (weight-only bands: \S\ref{sec:uq-higherdim}). The quoted universe block takes these five bands from re-unfolds of re-selected universes.
+The universe sweep used by the quoted budget (the July sweep) has 187 universes across 44 bands, dominated by the $100$-universe PPFX flux band (hadron-production sampling). The quoted band sum drops one band (Rvp1pi) and holds $43$ bands plus the normalization. Almost all other bands are $\pm1\sigma$ pairs ($N_{u}=2$). They include the MINOS and lateral MINERvA muon energy scales, the MINOS muon-match efficiency, the GENIE parameters \texttt{MaRES}, \texttt{MvRES} and \texttt{MaCCQE}, and the lateral GEANT FSI responses for neutrons, pions and protons. Where selection migration matters, the five kinematic bands (the two beam-angle components, the muon resolution and the two muon energy scales) require re-selected event loops, run with one universe active at a time (weight-only bands: \S\ref{sec:uq-higherdim}). The quoted universe block takes these five bands from re-unfolds of re-selected universes.
 % stageC/production/DESIGN.md §S5 universe row (S3 laterals; Rvp1pi dropped); J3/J4 provisional (DECISION-20261018, packet W3: D10).
 
 MINERvA's MAT framework (\texttt{PlotUtils/\allowbreak MnvVertErrorBand::\allowbreak CalcCovMx}, \S\ref{sec:minerva}) uses the mean-centered, biased sample covariance of the $205$-vectors $\mathbf{X}^{(B,u)}$, referenced to the universe mean with normalization $1/N_{u}$,
@@ -179,9 +179,9 @@ MINOS muon energy scale (Muon\_Energy\_MINOS) & $2.358\%$ \\
 MINERvA muon energy scale (Muon\_Energy\_MINERvA) & $1.435\%$ \\
 MINOS muon-match efficiency (MinosEfficiency) & $1.505\%$ \\
 Flux (PPFX, $N_{u}=100$, constraint-weighted) & $3.712\%$ \\
-$M_{A}^{\mathrm{RES}}$ (MaRES) & $0.627\%$ \\
-$M_{V}^{\mathrm{RES}}$ (MvRES) & $0.362\%$ \\
-$M_{A}^{\mathrm{CCQE}}$ (MaCCQE) & $0.336\%$ \\
+MaRES & $0.627\%$ \\
+MvRES & $0.362\%$ \\
+MaCCQE & $0.336\%$ \\
 \midrule
 \shortstack[l]{Systematic total\\(43 bands $+$ norm)} & \shortstack[l]{$\boxed{5.935\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=2.689\times10^{-39}$} \\
 \bottomrule
@@ -549,7 +549,7 @@ LightGBM, 10 iter, seed 1 & $2.66$ & $0.565$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-All rows except the quoted one use the purity-based subtraction. (i) \textbf{Iteration count is negligible}: LightGBM $5\to10$ iters moves the $\chi^{2}$ by $+0.01$ ($2.645\to2.657$), so OmniFold is well-converged at $5$ iters and the tension is \emph{not} an under-iteration artifact. (ii) \textbf{The GBDT estimator carries a $\sim1$-unit band}: the exact-split cross-check ($3.66$) is the outlier, while both histogram-binned backends agree at $2.65$--$2.70$ (HistGBT is a $10$-seed mean, range $2.63$--$2.74$; the $\pm0.04$ ML-seed jitter is $\sim25\times$ smaller than the $0.96$ exact$\to$hist gap, so that gap is attributable to the estimator, not to seed noise). The exact-gradient trees fit finer shape structure (less implicit smoothing) and so deviate more from the paper's IBU-regularized result. We therefore attribute $\sim1$ $\chi^{2}$-unit of the exact-split cross-check's tension to OmniFold's implicit regularization rather than to a physical data--MC disagreement.
+All rows except the quoted one use the purity-based subtraction. (i) \textbf{Iteration count is negligible}: LightGBM $5\to10$ iters moves the $\chi^{2}$ by $+0.01$ ($2.645\to2.657$), so OmniFold is well-converged at $5$ iters and the tension is \emph{not} an under-iteration artifact. (ii) \textbf{The GBDT estimator carries a $\sim1$-unit band}: the exact-split cross-check ($3.66$) is the outlier, while both histogram-binned backends agree at $2.65$--$2.70$ (HistGBT is a $10$-seed mean, range $2.63$--$2.74$; the $\pm0.04$ ML-seed jitter is $\sim25\times$ smaller than the $0.96$ exact$\to$hist gap, so that gap is attributable to the estimator, not to seed noise). The exact-gradient trees fit finer shape structure (less implicit smoothing) and so deviate more from the paper's IBU-regularized result. This is direct evidence that $\sim1$ $\chi^{2}$-unit of the exact-split cross-check's tension is due to OmniFold's implicit regularization rather than to a physical data--MC disagreement.
 % RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): the seed-42 purity row is E_U (values_table.tsv cfg-lgbm42-chi2 / cfg-lgbm42-pullrms
 % purity_value 2.654, 0.564); the quoted row is E_R (refined 2.270, 0.535).
 % (\texttt{tension\_iter/})

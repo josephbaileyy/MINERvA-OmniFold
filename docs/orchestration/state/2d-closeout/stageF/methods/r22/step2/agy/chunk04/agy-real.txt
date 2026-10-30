@@ -1,0 +1,120 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops "and processed" and asserts that "MINERvA Tune~v1 is the analysis simulation's truth", incorrectly identifying the extracted tuned sample as the simulation truth itself rather than stating it was "extracted... from analysis MC truth".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER completely drops the opening sentence "Each prediction is normalized by its own flux-averaged total CC cross section per nucleon" (which appears to have been moved to a later passage).
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER replaces tracking the two-dimensional joint "$(\pT,\pPar)$ shape" with tracking "the $\pT$ and $\pPar$ projections", which drops the statement that the joint distribution is tracked and ambiguously refers only to 1D marginals.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "Of the displayed projections, only $\Eavail$ locates this excess", stating an exclusivity claim across all displayed projections that BEFORE does not support.
+
+Q5: VERDICT: SAME
+DETAIL: AFTER cleanly restructures the sentence while preserving all facts, conditions, and cross-references without adding or dropping any information.
+
+Q6: VERDICT: SAME
+DETAIL: AFTER rewords the awkward noun phrase "muon-kinematics $\times\,\Eavail$ central values" to "central values in muon kinematics and $\Eavail$" without changing what was measured or altering any factual claim.
+
+Q7: VERDICT: SAME
+DETAIL: AFTER replaces the rhetorical adverb "only" with the standard preposition "by" ("moves by" vs "moves only") while fully preserving the numerical range and physical meaning.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops the concluding clause ", so the tested variations do not account for the excess", omitting an explicit conclusion drawn in BEFORE.
+
+Q9: VERDICT: SAME
+DETAIL: AFTER clarifies the mathematical formulation of the mode decomposition and data$-$CV comparison while preserving all kinematic bins, ranges, and findings.
+
+Q10: VERDICT: SAME
+DETAIL: AFTER splits the passage into two sentences and writes "below one percent" for "sub-percent" while retaining all numerical values and model comparisons intact.
+
+Q11: VERDICT: SAME
+DETAIL: AFTER converts informal phrasing ("layers... on top of", "sitting low") into standard technical prose while preserving all qualitative conclusions and model descriptions.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER introduces "data/Tune~v1 ratio", specifying a comparator not identified in BEFORE, and drops the qualifier "mild" from "mild $q_{3}$-marginal discrepancy".
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER adds an explicit definition not present in BEFORE, stating that the covariance is "from simultaneous variation of all reweightable interaction-model bands and the flux universes (the unified throw of \S\ref{sec:uq-combine})".
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "finer" from "A finer comparison" and replaces the forward-looking statement "remains future work" with "has not been made".
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the finding of "genuine $q_{3}$ structure in the data\,$-$\,MC discrepancy" and introduces the specific comparator "data/Tune~v1 ratio" where BEFORE only stated "data\,$-$\,MC".
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualification "The qualifications of the covariance are given in \S\ref{sec:eavailw-adopted}" and adds descriptions of configurations (a) and (e) that BEFORE does not contain.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER shifts "establishes no bias--variance tradeoff" (an established absence) to "does not establish a bias--variance tradeoff" (a failure to establish), adds "across estimator settings", and drops the code symbols `\texttt{CVUniverse::GetTrueExperimentersW()}` and `\texttt{CVUniverse::RecoW()}`.
+
+Q18: VERDICT: SAME
+DETAIL: AFTER refines the wording into formal prose ("recovers" to "reproduces", "the article" to "the companion journal article") while maintaining all checks, tolerances, and observable definitions.
+
+Q19: VERDICT: DIFFERS
+DETAIL: AFTER changes "The article distinguishes" to "The analysis distinguishes", shifting the distinction from the published companion paper to the analysis itself.
+
+Q20: VERDICT: SAME
+DETAIL: AFTER changes a parenthetical cross-reference into a semicolon-separated independent clause while preserving all numbers and sample exclusion criteria.
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER replaces the generic term "null spread" with the specific statistical metric "null standard deviation", stating a more specific quantity than BEFORE supports.
+
+Q22: VERDICT: SAME
+DETAIL: AFTER rewrites the colloquial subsection heading "Where the excess lives" to formal register as "Distribution of the excess" while leaving the body text identical.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that the corner cell is "The largest cell" (in area) and instead asserts that it "holds the largest share", which is not stated in BEFORE.
+
+Q24: VERDICT: DIFFERS
+DETAIL: AFTER adds the qualification "of central values" to estimator-seed shifts and drops the specific citation location ", item~4".
+
+Q25: VERDICT: SAME
+DETAIL: AFTER replaces the colloquial compound "area-free" with "independent of cell area" while leaving all mathematical expressions and explanations identical.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER adds "each is normalized by its flux-averaged total CC cross section per nucleon" (moved from TD82) and drops the qualifier "spline-normalized".
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualitative conclusion "; none reaches the data" and the whole-plane characterization "this is close to their whole-plane shortfall".
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER introduces an unsupported condition, "and GiBUU supplied with the shares above this energy", and drops BEFORE's statement that "the corner therefore has no distinct deficit for any of the four generators".
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER adds an explicit rationale ("because the estimator-seed sensitivity... exceeds the limit set before production") and "$\chi^2$" not stated in BEFORE, while omitting the pointer "item~1".
+
+Q30: VERDICT: SAME
+DETAIL: AFTER substitutes "flux-corrected" for "flux-repaired", which are synonymous terms referring to the exact same procedure in \S\ref{sec:3d-models}.
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER adds the specific statistical label "(the look-elsewhere effect)", which is not stated in BEFORE.
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "five-dimensional" from "the five-dimensional coverage test (\S\ref{sec:coverage-5d})" and drops "validation" from "validation test".
+
+Q33: VERDICT: SAME
+DETAIL: AFTER replaces the informal phrasing "close to \SI{0.22}{\percent}" with standard technical terminology "recover the truth to \SI{0.22}{\percent}" while preserving all numerical values.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER drops the code identifier `\texttt{negweight-refined}` from the parenthetical reference `(App.~\ref{app:negweight})`.
+
+Q35: VERDICT: SAME
+DETAIL: AFTER converts the sentence structure to formal academic register while retaining all values, qualifiers, and ranges intact.
+
+Q36: VERDICT: SAME
+DETAIL: AFTER expands the informal abbreviation "reco" to "reconstructed" and splits the sentence cleanly, preserving all parameters and validation findings.
+
+Q37: VERDICT: DIFFERS
+DETAIL: AFTER replaces "up to \SI{74}{\percent} in the worst cell" with "with \SI{74}{\percent} in the worst cell", dropping the qualifier "up to" and stating the bound as a fixed value.
+
+Q38: VERDICT: SAME
+DETAIL: AFTER splits the compound sentence into separate sentences while preserving all generator names, terms, caveats, and cross-references.
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER adds an external definition and citation, "(as defined in the diagnostic record cited below)", not present in BEFORE.
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER changes "The comparison is binned, signal-only and noise-free..." to "This conclusion holds for a binned, signal-only and noise-free comparison...", shifting from a description of comparison limitations to an affirmative claim that a conclusion holds.
+END

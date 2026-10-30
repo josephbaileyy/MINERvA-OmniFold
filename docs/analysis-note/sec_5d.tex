@@ -165,7 +165,7 @@ Figure~\ref{fig:gbdt-recovery} shows the traces over the recorded iteration rang
 
 \paragraph{Variability and interval behavior at five iterations.}
 
-Figure~\ref{fig:gbdt-bias-spread} compares ensemble residual means and repeat standard deviations at the same setting. At historical W3 truth, EW29 has mean residual \SI{23.67}{\percent} and repeat SD \SI{0.56}{\percent}; EW7 has \SI{-6.81}{\percent} and \SI{0.30}{\percent}. Small spread does not imply small bias. Coarser cells can have smaller residuals and spread, but they estimate different integrals, so their smaller residuals are not an improvement in precision on an unchanged quantity. No matching repeat ensembles exist at more iterations or larger OmniFold capacity, so no tradeoff can be inferred.
+Figure~\ref{fig:gbdt-bias-spread} compares ensemble residual means and repeat standard deviations at the same setting. At historical W3 truth, EW29 has mean residual \SI{23.67}{\percent} and repeat SD \SI{0.56}{\percent}; EW7 has \SI{-6.81}{\percent} and \SI{0.30}{\percent}. Small spread does not imply small bias. Coarser cells can have smaller residuals and spread, but they estimate different integrals, so their smaller residuals and spread are not an improvement in precision on an unchanged quantity. No matching repeat ensembles exist at more iterations or larger OmniFold capacity, so no tradeoff can be inferred.
 
 \begin{figure}[tbp]
 \centering
@@ -189,7 +189,7 @@ The statistical intervals of the development assessment take their width from 10
 \label{fig:gbdt-coverage}
 \end{figure}
 
-A paired perturbation study supports the containment of rounding variability in the refit-per-replica bootstrap of $R$. Twenty edge-safe data jitters (every input coordinate moved within half a single-precision rounding unit, values on bin edges kept) give a J-cell median SD of \SI{0.228}{\percent}, against a bootstrap SD of \SI{0.368}{\percent}. Fifty bootstrap replicas with jittered partners give a median consistency ratio of 1.02 and an estimated numerical share of 0.37 of the bootstrap variance. In this design, adding the numerical variance to the bootstrap variance would count it twice. The stability failure and the study's scope are in \S\ref{sec:val-departure}, interval coverage in \S\ref{sec:coverage-5d}.
+A paired perturbation study supports the containment of rounding variability in the refit-per-replica bootstrap of $R$. Twenty edge-safe data jitters (uniform input perturbations within half a single-precision unit in the last place that keep the fine-grid membership fixed) give a J-cell median SD of \SI{0.228}{\percent}, against a bootstrap SD of \SI{0.368}{\percent}. Fifty bootstrap replicas with jittered partners give a median consistency ratio of 1.02 and an estimated numerical share of 0.37 of the bootstrap variance. In this design, adding the numerical variance to the bootstrap variance would count it twice. The stability failure and the study's scope are in \S\ref{sec:val-departure}, interval coverage in \S\ref{sec:coverage-5d}.
 
 \paragraph{Prior sensitivity is not a measured real-data bias.}
 

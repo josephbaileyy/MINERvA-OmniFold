@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER adds the identification ", configuration (e) of the sixteen-cell result (\S\ref{sec:fived16}),", which is not stated or supported in BEFORE.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER characterizes the spread as "rounding-level variability", introducing an origin and interpretation of the spread not stated in BEFORE.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops "This candidate is configuration (e), which gives the sixteen-cell result (\S\ref{sec:fived16});", which appears to have been moved to an earlier passage.
+
+Q4: VERDICT: SAME
+DETAIL: Expanding the abbreviation "reco" to "reconstructed" preserves the exact factual content and meaning of BEFORE without additions or omissions.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds the descriptive clause ", the raised-refinement-capacity candidate of \S\ref{sec:val-departure}:", which is not present in BEFORE.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific cell counts ("109", "27", "39"), the definition of EW, and the structural statements that "Both joint partitions subdivide all five axes; H2 is not nested within J", deferring them to the table below.
+
+Q7: VERDICT: DIFFERS
+DETAIL: In the table definition of H2, AFTER states that it is "nested within J", directly contradicting BEFORE which states that it is "not nested within J", and adds "also subdividing all five axes".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER specifies the persistence as being "of the W3 residual", adding a specific identification not stated in BEFORE.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the concluding sentence: "With the study's precision targets and computing budget, none of its reporting definitions (RD1--RD3, next paragraph) met a precision target."
+
+Q10: VERDICT: SAME
+DETAIL: The rewording preserves all facts, numerical values, and conclusions from BEFORE, phrasing the inability to meet the total-width targets equivalently as exceeding them.
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER restricts the conclusion to "their smaller residuals are not an improvement", dropping "spread" which BEFORE included in the statement ("smaller residuals and spread... this is not an improvement in precision").
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER adds parenthetical technical definitions of the jitters ("every input coordinate moved within half a single-precision rounding unit, values on bin edges kept"), which are not present in BEFORE.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER restricts the 71% figure specifically to "supported J cells" rather than "supported cells", and changes "(52\% on H2, 54\% on EW)" to "(52\% of H2 cells, 54\% of EW cells)", dropping the qualification that these percentages apply to supported cells.
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER asserts "so the miscoverage is a normalization failure", directly contradicting BEFORE which states "so this is not a normalization failure", and omits the explanation that the weight "is in effect a \SI{10}{\percent} lower signal rate with a weak $\Eavail$ slope."
+
+Q15: VERDICT: SAME
+DETAIL: Phrasing "it may also belong to" as "the term may also arise from" is an equivalent rewording that preserves all facts, numbers, and qualifiers.
+
+Q16: VERDICT: SAME
+DETAIL: The rewording conveys the identical facts, scope, and limitations as BEFORE without additions or omissions.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER replaces "information" with "inflation of the vertical bands", asserting a specific characterization not stated or supported in BEFORE.
+
+Q18: VERDICT: SAME
+DETAIL: Rephrasing "the same bytes" as "byte-identical" and "corroborating check" as "cross-check" preserves the exact meaning and claims of BEFORE.
+
+Q19: VERDICT: SAME
+DETAIL: The rewording is stylistically reordered but preserves all facts, values, dates, and qualifiers from BEFORE.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "the sensitivity is the statistic's own resampling noise", directly contradicting BEFORE which states "The sensitivity is not the statistic's own resampling noise."
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER adds the parenthetical qualification "(minimum expected signal and truth weight)" to specify what the support rule entails, which is not stated in BEFORE.
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER adds the qualifier "PPFX" and adds explanatory descriptions of the bands (", which reweight simulated events" and ", which shift reconstructed kinematics (\S\ref{sec:systematics})") that are not in BEFORE.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER adds that the reweighting is by the ratio "to GENIE CV", that "the data are unfolded again", and specifies that $C_{\mathrm{resp}}$ sums "the covariance contributions", none of which are stated in BEFORE.
+
+Q24: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire first sentence reporting the median per-cell relative $\sigma$ and the factor by which adding it raises the total uncertainty ("Its median per-cell relative $\sigma$ is \fvval{sigmed-C_resp}\%...").
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "graded" from "graded truths", altering the scope of the truths being described.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER states that a truth is "listed as failing" rather than simply "listed", and drops the explanatory clause "so that no such truth is compared with a covariance that contains its own generator's shift."
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the truths "fail" rather than "are listed", and omits the condition "without the vertex of the truth's own generator where one exists."
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit definition of the criteria ("no cell beyond $\fvval{trig-z}\sigma$ and $p\geq\fvval{trig-p}$"), drops "each compared without its vertex", and omits "ungraded because the offset control failed" from the table caption.
+
+Q29: VERDICT: SAME
+DETAIL: Changing "The group" to "This group" does not alter any factual claim, number, or qualifier.
+
+Q30: VERDICT: SAME
+DETAIL: Substituting "shift" for "vertex" preserves the exact meaning and references the identical generator component without adding or dropping any facts.
+
+Q31: VERDICT: SAME
+DETAIL: The rewording preserves all numerical values, test descriptions, and results, using equivalent terminology without adding or dropping any facts.
+
+Q32: VERDICT: SAME
+DETAIL: The rewording conveys the identical comparison, degrees of freedom, covariances, and normalization handling as BEFORE.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that the GENIE CV and NuWro samples "stop at $E_\nu=\fvval{gagg-range-max}$~GeV".
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanation that each vertex/shift is "a data shift unfolded with a prior reweighted by one generator's ratio to GENIE CV".
+
+Q35: VERDICT: DIFFERS
+DETAIL: AFTER asserts that the GiBUU-like truths "fail" rather than that tests "list" them, and includes two sentences describing the correlation-shrinking procedure ("The sensitivity of the reported $\chi^2$...") that were not present in BEFORE.
+
+Q36: VERDICT: DIFFERS
+DETAIL: AFTER drops the description of the sensitivity method (which was moved to the preceding passage) as well as the qualification that the flux universes are "weighted by the neutrino--electron and inverse-muon-decay constraint".
+
+Q37: VERDICT: SAME
+DETAIL: Replacing "weakening" with "shrinking" preserves the exact meaning, qualifications, and context of the passage.
+
+Q38: VERDICT: SAME
+DETAIL: The rewording explicitly identifies the matrix as the prediction's covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$ and each mode as an eigenvector, preserving the exact content and meaning.
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER adds several details not in BEFORE (the five observables, testing in total and in shape, simulating the full chain, and purity-based background subtraction), while dropping "in the words of the test specification" and ", with their numbers."
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER adds the assertion that the claim $p$ value is "[t]he $p$ value on which each decision rests", a role not stated in BEFORE.
+
+END

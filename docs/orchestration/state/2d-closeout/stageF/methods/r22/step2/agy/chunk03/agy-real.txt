@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the subtitle ": what each test changes" from the subsection heading, broadening the scope of the title relative to BEFORE.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the methodological principle "A closure test is only as informative as what it changes:" that BEFORE explicitly states.
+
+Q3: VERDICT: SAME
+DETAIL: Rewording "come out" to "are" preserves the exact findings, values, and meaning without dropping or adding any facts or qualifiers.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER introduces specific claims that BEFORE does not support in this passage, asserting that the tests "differ in deformation, metric and iteration dependence" where BEFORE states only that they "measure different things".
+
+Q5: VERDICT: SAME
+DETAIL: Rewording "wherever the data pull weakly" into formal register as "wherever the reconstructed data constrain the truth weakly" accurately preserves the physical meaning without adding or dropping any facts or limitations.
+
+Q6: VERDICT: SAME
+DETAIL: Moving the content of the run-in heading into the body sentence as "a narrow pass in the marginal only" preserves every number, qualifier, and limitation stated in BEFORE.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER introduces extensive definitions and details not supported by BEFORE in this passage, including definitions of the "completeness-divided band", the "undivided band", and the "ensemble of 300 replicas at the central value's training seed" (moved from later passages).
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "production" and adds the unsupported specifications "per-event" and "of the statistical band" when describing the Poisson(1) bootstrap.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER introduces the designation "the completeness-divided band", which is not supported in BEFORE at this point, replaces "recomputation with its own code" with "reimplementation of the scoring", and drops the lead-in declaration "The band fails:".
+
+Q10: VERDICT: SAME
+DETAIL: Inlining the bulleted list into continuous prose retains all facts, classifications, numbers, and threshold definitions without alteration.
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER drops the heading qualifier "\textbf{Where it is too narrow.}", which in BEFORE explicitly identifies these bins as representing the regions where the band is too narrow.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER drops the factual explanations that the band's replicas "divide by a bootstrapped completeness" and that the secondary analysis was "added by amendment", likely because the completeness division was moved to Q7.
+
+Q13: VERDICT: SAME
+DETAIL: Resolving the pronouns "it" to "this rule" and "this term" to "the completeness term" clarifies the referents without altering the meaning, attribution, or facts.
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanation that "The quoted statistical block is a third, different ensemble, 300 replicas at the central value's training seed (\S\ref{sec:uq-boot})" because this fact was moved to Q7.
+
+Q15: VERDICT: SAME
+DETAIL: Splitting the compound sentence into shorter statements preserves all facts, the pre-recorded decision rule, the causal attribution to training MC events, and the negative qualifiers.
+
+Q16: VERDICT: SAME
+DETAIL: Converting the itemized scope restrictions into prose and expanding the abbreviation "AUC" to "area under the ROC curve (AUC)" retains all qualifiers, seeds, and limitations exactly as stated in BEFORE.
+
+Q17: VERDICT: SAME
+DETAIL: Replacing the code-level parameter specification "(ddof $=1$)" with its mathematical definition "(denominator $N_{\text{toy}}-1$)" states the identical definition in standard register.
+
+Q18: VERDICT: SAME
+DETAIL: Replacing "(no bias)" with ", consistent with zero" expresses the statistical interpretation of $+0.006 \pm 0.082\,\sigma$ in standard formal register without altering what was measured.
+
+Q19: VERDICT: SAME
+DETAIL: Rewording "scored" to "evaluated" and restructuring the clauses preserves all qualifications, including that the ensemble serves only as a pull/Gaussianity diagnostic and quotes no coverage number.
+
+Q20: VERDICT: SAME
+DETAIL: Changing informal phrasing such as "our uncertainty" and "published plus ours" to "that of this measurement" and "the latter" retains all indicative values, double-counting caveats, and spectral truncation qualifiers.
+
+Q21: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit qualification and limitation "; published data do not enter this data-versus-prior comparison."
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER drops the parenthetical descriptors "(per-bin standardized differences)" and "(projections)" that specify what Fig.~\ref{fig:pull} and Fig.~\ref{fig:model} display.
+
+Q23: VERDICT: SAME
+DETAIL: Replacing "carries" with "accounts for" and clarifying "integral's" to "integral's variance" maintains all numbers, medians, and variance fractions identically.
+
+Q24: VERDICT: SAME
+DETAIL: Expanding the acronym "MAT's" to "of the MINERvA Analysis Toolkit" is a standard register expansion that introduces no differences in meaning or content.
+
+Q25: VERDICT: SAME
+DETAIL: Expanding the abbreviations "norm" to "normalization" and "Paper TotalCov" to "Published total covariance" preserves every table entry, count, and uncertainty value exactly.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific dataset/sweep identifier "July" from "July universe sweep", replacing it with "systematic-universe sweep".
+
+Q27: VERDICT: SAME
+DETAIL: Explicitly adding the implied quantities ("of the total $\chi^{2}$", "of the spectrum", and "$\chi^{2}/\mathrm{ndf}$") formalizes the elliptical phrasing of BEFORE without altering any values or assertions.
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER replaces the concept of a "methodological band" with "estimator dependence" and drops the explicit statement "The number of iterations has a negligible effect:".
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory contrast ", not a projection:" and "and is unfolded again", as well as the caption qualifiers "Neither map is flat near unity:" and "Neither map has the published data as its denominator;".
+
+Q30: VERDICT: DIFFERS
+DETAIL: AFTER drops the technical qualifier "scalar formulation" (replacing it with "unfolding") and adds the qualifier "high-level" to observables, which BEFORE does not state.
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER drops the technical term "scalar" and introduces the term "high-level event features" where BEFORE states "recorded observables".
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit disclaimer "We therefore do not claim that our definition matches ``the published definition.''" as well as the qualifier regarding agreement with published conventions.
+
+Q33: VERDICT: DIFFERS
+DETAIL: AFTER drops all explicit configuration details and background subtraction parameters from the text, replacing them with a reference to Table~\ref{tab:3d-configs} (which is moved to Q34).
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER inserts the entire Table~\ref{tab:3d-configs} and its caption into this passage, introducing configuration details and learner specifications that BEFORE does not contain here.
+
+Q35: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific implementation details "with a 400-tree, 31-leaf refinement; (e) uses the deterministic learner of (c), and (f) the seed-42 LightGBM learner of (a)", which were moved into Table~\ref{tab:3d-configs}.
+
+Q36: VERDICT: SAME
+DETAIL: Replacing ", which shows configuration~(a)," with parenthetical "(configuration~(a))" preserves the exact attribution and numerical value.
+
+Q37: VERDICT: SAME
+DETAIL: Phrasing "their ratio" as "the ratio of the two scatters" retains the exact reasoning and decision not to quote the ratio.
+
+Q38: VERDICT: SAME
+DETAIL: Stating that the test "has no pass or fail verdict" because no threshold "is documented" accurately conveys the meaning of "not graded, because no acceptance threshold fixed before the test is on record".
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER states more strongly that the estimator "recovers the feature" and refers to "The recovery", whereas BEFORE carefully limits its claim to stating that the estimator "neither manufactures nor destroys the feature".
+
+Q40: VERDICT: DIFFERS
+DETAIL: AFTER drops the technical qualifier "scalar" in three separate instances ("scalar cross-check", "scalar result", and "scalar OmniFold cross-check") and narrows "is not specific to its classifier family" to "agrees between the two tested classifier families".
+
+END

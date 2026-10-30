@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the second sentence: "The unbinned unfold has no response-matrix under/overflow to track; reporting bins are applied once to events that all lie inside the grids."
+
+Q2: VERDICT: SAME
+DETAIL: The rewording preserves the causal necessity of unfolding and the bias of bin-by-bin correction without changing any facts or qualifiers.
+
+Q3: VERDICT: SAME
+DETAIL: Replacing "unfold" with "unfolding" is purely stylistic and maintains identical technical meaning and context.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER introduces an unsupported ranking metric ("Ranked by per-bin median fractional standard deviation") and drops the parenthetical definition of re-selected universes ("event loops that re-apply the selection to each universe's shifted kinematics; \S\ref{sec:uq-higherdim}").
+
+Q5: VERDICT: SAME
+DETAIL: Replacing the identifier "Muon\_Energy\_MINOS" with the descriptive phrase "MINOS muon-energy-scale" preserves all quantitative facts and conditions.
+
+Q6: VERDICT: SAME
+DETAIL: Expanding "the rederived Bashyal~\cite{Bashyal:2021tqu} joint block" to "the joint flux and muon-energy-scale block of Ref.~\cite{Bashyal:2021tqu}, as rederived here" accurately specifies the block referenced by $\rho=\rhoFluxMuon$ without altering meaning.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "paper-derived" from "this paper-derived cross block", a fact that was likely moved to or subsumed by the preceding passage.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER omits the opening sentence ("The central value and its statistical block are therefore matched in estimator and seed.") and the explanation that "Statistical fluctuations of the background simulation are thus drawn independently of those of the signal simulation".
+
+Q9: VERDICT: SAME
+DETAIL: The rewrite preserves all facts, qualifications, and relationships regarding shared event draws and seed fixing with only minor phrasing adjustments.
+
+Q10: VERDICT: SAME
+DETAIL: Omitting the informal intensifier "genuinely" and splitting into two sentences preserves all numbers, ratios, and technical explanations.
+
+Q11: VERDICT: SAME
+DETAIL: Changing "The ML block" to "The training-seed block" aligns directly with the subsection title without altering the mathematical definition or scope of the covariance block.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire second sentence: "The block measures LightGBM seed variation, with the bootstrap\,$\times$\,seed interaction at its $1/20$ share."
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER adds details unsupported by BEFORE alone, specifically defining the bands as "the neutral-current elastic band EtaNCEL and the neutral-current resonant normalization band NormNCRES" and asserting that their universes "barely change the unfolding inputs".
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER replaces the specific statement that "The corrections the quoted budget makes to the earlier 2D budget are stated" with "with which \S\ref{sec:uq-2d-scope} compares the quoted construction", and replaces "knob bands and the flux multisim" with "interaction-model bands and the flux universes".
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER changes "matched block comparator" to "matched block-sum comparator" and adds "of each band", altering the scope and entity being evaluated.
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER omits the opening limitation: "The block sum is an approximation, valid only where the unfolding responds linearly."
+
+Q17: VERDICT: DIFFERS
+DETAIL: By replacing "Subsets of the data taken in different run periods" with "Data taken in different run periods", AFTER states an inconsistency more broadly and strongly as applying to data generally rather than to specific subsets.
+
+Q18: VERDICT: DIFFERS
+DETAIL: AFTER states that "so reference period is needed", directly contradicting BEFORE's statement that "the block needs no reference period".
+
+Q19: VERDICT: SAME
+DETAIL: The rewording conveys the identical rank, numbers, percentiles, and limitations, spelling out "median fractional standard deviation" for clarity.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit limitation: "The block does not identify which period is correct."
+
+Q21: VERDICT: SAME
+DETAIL: Replacing "weak test" with "low-sensitivity test" is synonymous and preserves all listed exclusions and qualifications.
+
+Q22: VERDICT: SAME
+DETAIL: Clarifying "per-cell median" as being over the 205 reported cells preserves all numerical values, percentiles, and the normalization limitation.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER adds unsupported implementation detail by stating that the noise gate sets a cell to one ("a cell set to one by the statistical-noise gate"), which BEFORE does not state.
+
+Q24: VERDICT: SAME
+DETAIL: Clarifying the phrasing to "Across bands, the per-bin median offset..." preserves all numerical ranges and relationships without altering meaning.
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER drops the opening sentence "A \SI{1.4}{\percent} normalization uncertainty is included as a rank-one block" (likely moved to a neighbouring passage) and omits "(the miss rows)".
+
+Q26: VERDICT: SAME
+DETAIL: Dropping the colloquial phrase "the test is not tight" does not alter any facts or bounds, as the quantitative exclusion limits and sensitivity to training noise are fully retained.
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER drops "the training-seed block includes it at its $1/20$ share", omits "Two seed-related terms are reported and not added to the covariance", and removes the itemized list of specific block limitations.
+
+Q28: VERDICT: SAME
+DETAIL: Replacing "no-op" with "leaves the event weights essentially unchanged" and updating the heading preserves all technical facts, counts, and comparisons.
+
+Q29: VERDICT: SAME
+DETAIL: Reordering the sentences preserves all facts, the numerical uncertainty of \SI{0.088}{\percent}, and the qualification regarding the published analysis.
+
+Q30: VERDICT: DIFFERS
+DETAIL: AFTER states that "The values printed for the earlier budget were changed by these findings", directly contradicting BEFORE's statement that "These findings left the earlier printed budget unchanged."
+
+Q31: VERDICT: SAME
+DETAIL: Replacing the description with the defined symbol "$C_Z$" and expanding band names preserves all technical statements and limitations.
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific mathematical characterization that the quantity is "a change in a square-root trace", substituting the vague phrase "This aggregate change".
+
+Q33: VERDICT: SAME
+DETAIL: Using the symbol "$C_Z$" in place of "the five-axis covariance of the configuration-(a) central value" preserves identical technical meaning.
+
+Q34: VERDICT: SAME
+DETAIL: The rewrite preserves all numerical values, causal conclusions, and the qualification that the scan is an auxiliary check rather than an independent matrix.
+
+Q35: VERDICT: SAME
+DETAIL: Using the defined symbol "$C_Z$" and polishing the phrasing retains all numbers, citations, and scope limitations.
+
+Q36: VERDICT: DIFFERS
+DETAIL: In the table, AFTER omits "no" to state "recovery or coverage claim" instead of "no recovery or coverage claim", and drops the caption sentence "Shared simulation is not an independent detector-response test."
+
+Q37: VERDICT: SAME
+DETAIL: Expanding "CV" to "central-value simulation" and "alternative universe" to "alternative systematic universe" preserves all facts and numerical thresholds.
+
+Q38: VERDICT: SAME
+DETAIL: Omitting the informal adjective "naive" and phrasing the diagonal covariance explicitly preserves all physical explanations and cross-references.
+
+Q39: VERDICT: SAME
+DETAIL: Updating the paragraph heading from "What the remaining validation needs." to "Requirements for validated total uncertainties." preserves the exact text and meaning.
+
+Q40: VERDICT: SAME
+DETAIL: Inverting the sentence structure preserves all factual assertions, the bin count of 205, and the conclusion regarding current inputs.
+
+END

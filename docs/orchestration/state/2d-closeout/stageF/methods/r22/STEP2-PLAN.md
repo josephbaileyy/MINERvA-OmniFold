@@ -170,5 +170,8 @@ does not flip, and on the 3 sol2 P1 runs NEW's mean and lowest run are each at l
 - **The two-direction review:** [REVIEW-BRIEF.md](step2/REVIEW-BRIEF.md), with the three reviews
   [B01–B05](step2/review-B01-B05.md), [B06–B10](step2/review-B06-B10.md) and [B11–B15](step2/review-B11-B15.md).
 - **The note abstract's pairs for Joseph:** [abstract-pairs.md](step2/abstract-pairs.md).
+- **The agy agreement check and its fixes:** [AGY-REPORT.md](step2/agy/AGY-REPORT.md), with the triage brief
+  [TRIAGE-BRIEF.md](step2/agy/TRIAGE-BRIEF.md) and the three triages [chunks 01–03](step2/agy/triage-01-03.md),
+  [04–05](step2/agy/triage-04-05.md) and [06–09](step2/agy/triage-06-09.md).
 - **Tools:** `tools/check_outscope.py`, `tools/step2_briefs.py`, `tools/make_agy_pairs.py`, `tools/agy_runs.sh`,
   `tools/step2_runs.sh` and `tools/adopt_step2.py`.
