@@ -6332,6 +6332,14 @@ docs/orchestration/state/oi126-successor-iteration-sweep-adjudication-20260823.j
 docs/orchestration/state/oi126-successor-phase0-replay-and-phase1-prerun-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes
 docs/orchestration/state/oi126-successor-t1-endpoint-predeclaration-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes
 docs/orchestration/state/oi137-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only	no
+docs/orchestration/state/oi160-cml-tolerance-20261029/DECLARATION.md	tracked	LIVE	state-artifact	oi160-cml-tolerance-20261029		open		route-only	no
+docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/code.sha256	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/metadata-session.txt	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/run_array.sh	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/seeds.tsv	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/stored.sha256	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
+docs/orchestration/state/oi160-cml-tolerance-20261029/test_cml.py	tracked	MACHINE	state-artifact	oi160-cml-tolerance-20261029		generated		exact-path-only	yes
 docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
 docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	tracked	LIVE	state-artifact	oi160-reproduction-20261029		open		route-only	no
 docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	tracked	ARCHIVAL	state-artifact	oi160-reproduction-20261029		terminal		exact-path-only	yes
