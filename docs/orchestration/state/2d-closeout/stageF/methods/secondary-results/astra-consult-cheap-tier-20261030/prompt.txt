@@ -1,0 +1,17 @@
+You are an independent senior physicist advising the lead author of a MINERvA open-data measurement (a ν_μ CC-inclusive cross section on hydrocarbon in five observables, unfolded with OmniFold and reported in 16 cells with a covariance C_total + C_resp). Work only from the files in this directory.
+
+Files:
+- COVERAGE-CONSULT-20261028.md: an earlier independent rating of the coverage limitation and its options.
+- LIMITATION-PLAN-ADDENDUM-20261028.md: the plan that scoped five items (1–5, with options A/B/C) and a "cheap tier" to run first.
+- FD-F1-REPORT.md: an earlier bias test at two held-out GENIE v3 truths.
+- FD-CT-READERS-REPORT.md (3a recoil-scale data unfolds, 4C χ² spread of existing nuisance-drawn experiments), FD-CT-READERS-5A-REPORT.md (5A, the 2D run-period term projected onto the 16 cells), FD-CT-3B-REPORT.md (3b, mismatch closures from existing shifted dumps), FD-CT-5B-REPORT.md (5B, per-period 5D unfolds). These are the cheap tier's results, reported as numbers only.
+
+The reports deliberately draw no reading. The author now has to decide (i) what the cheap tier's numbers mean for the publication, and (ii) whether to fund the plan's larger items 1B and 4B (see the addendum for what they are and cost), or other follow-ups.
+
+Write, in plain prose for a physicist, at most 900 words:
+1. For each of 3a, 4C, 5A, 3b, 5B: one or two sentences on what the numbers show and, separately, what they cannot show. Quote the key numbers with their reference values.
+2. Specifically for 5B: do the period double ratios differ beyond the bootstrap noise reference, and how large is the implied run-period block relative to the reported uncertainties? How does it compare with 5A's projected block? What does that mean for whether the reported covariance is missing a run-period component?
+3. A recommendation on 1B and on 4B (fund or not, and why), and on whether any cheap-tier result should change the reported covariance or only be printed beside it. Say what the paper would need to state in each case.
+4. Anything in these reports you think is wrong, unclear or over-claimed.
+
+Mark every inference as inference. Do not invent numbers; if something is not in the files, say so.
