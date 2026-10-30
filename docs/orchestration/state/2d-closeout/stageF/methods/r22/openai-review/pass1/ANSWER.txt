@@ -1,0 +1,181 @@
+GAP 1: ALLOW-NARROW
+REASON: Leading with the measurement improves the abstract, but unvalidated coverage cannot become a bounded uncertainty.
+NARROW: Reorder the abstract while retaining the explicit coverage limitation and the distinction between the two held-out bias tests and interval-width validation.
+
+GAP 2: KEEP
+REASON: Generic language about model sensitivity would obscure the specific finding that reported uncertainties fail to cover estimator bias at the named truths.
+NARROW: -
+
+GAP 3: KEEP
+REASON: The estimator spread is omitted from the covariance, so describing it as an assigned systematic uncertainty and dropping its numerical evidence would change the result.
+NARROW: -
+
+GAP 4: KEEP
+REASON: Substituting corrected results or an assigned uncertainty would misrepresent the uncorrected comparisons underlying the reported tests.
+NARROW: -
+
+GAP 5: KEEP
+REASON: Replacing the collaboration-request trigger with quantitative criteria changes the stated decision rule and introduces criteria absent from the supplied record.
+NARROW: -
+
+GAP 6: ALLOW-NARROW
+REASON: Integrating the limitation into the uncertainty discussion can improve presentation without weakening or rewording the frozen statement.
+NARROW: Retain “Interval coverage has not been validated.” verbatim within the integrated discussion and preserve the explanation of what the tests establish.
+
+GAP 7: ALLOW-NARROW
+REASON: Neutral wording is acceptable only if it preserves the distinction between design-study recovery and validation of real-data subtraction.
+NARROW: State that PET remains diagnostic method development and that its design-study recovery does not validate real-data background subtraction.
+
+GAP 8: ALLOW
+REASON: The supplied account identifies an equivalent limitation in the same paragraph, making this sentence redundant without introducing an efficiency claim.
+NARROW: -
+
+GAP 9: ALLOW-NARROW
+REASON: The diagnostic role of the efficiencies is substantive information needed to distinguish them from an applied correction.
+NARROW: Shorten the caption to identify the efficiencies as diagnostic and state that acceptance is handled by OmniFold’s unmatched-event treatment.
+
+GAP 10: ALLOW-NARROW
+REASON: Histogram identifiers are implementation details, but the supplied text does not establish that their stored errors are diagonal statistical uncertainties.
+NARROW: Remove the code names while retaining that the error bars are stored histogram bin errors rather than uncertainties derived from the covariance of Section 4.
+
+GAP 11: KEEP
+REASON: Calling the configurations complementary cross-checks adds a relationship not established by the statement that their central values, covariances and conclusions apply separately.
+NARROW: -
+
+GAP 12: ALLOW-NARROW
+REASON: The execution description can be shortened, but deterministic equality does not establish negligible algorithmic uncertainty generally.
+NARROW: State that full-sample binning and deterministic training give identical unfolded values for every tested seed, yielding a zero training-seed covariance in every cell.
+
+GAP 13: ALLOW-NARROW
+REASON: A concise benchmark definition is appropriate, but readers must still know that four records represent only two truths and do not support an independent-reference interpretation.
+NARROW: Define the four records as pseudo-experiment and closure results for two truths, and identify the independence-based Gaussian references as descriptive context only.
+
+GAP 14: KEEP
+REASON: An expected effect on test distributions cannot replace disclosure that conditioning on the data-derived nuisance inputs has not been validated.
+NARROW: -
+
+GAP 15: ALLOW-NARROW
+REASON: Availability can be stated directly without implying a public release or concealing the distinction between document building and scientific reproduction.
+NARROW: Describe the existing local candidate and verifier, state that it remains untagged and undeposited, and retain the PDF-build limitation in the cited release appendix.
+
+GAP 16: ALLOW
+REASON: Defining the result as consisting only of central values and the stated validation tests conveys the absence of a supplied covariance without a separate negative explanation.
+NARROW: -
+
+GAP 17: ALLOW-NARROW
+REASON: The fixed seed and single calibration–evaluation split define the scope of the containment result and are not disposable script details.
+NARROW: Use standard statistical terminology while preserving the fixed estimator seed, one disjoint 100/100 split, fixed truth, bin–pseudo-experiment counting unit, and 68.67% versus 68.27% comparison.
+
+GAP 18: ALLOW
+REASON: A guide entry describing a proposed protocol does not imply completed validation, and the supplied account says the linked appendix title retains its unexecuted status.
+NARROW: -
+
+GAP 19: ALLOW-NARROW
+REASON: The paragraph can become more concise without converting requirements for inference into evidence that those requirements have been validated.
+NARROW: Summarize the requirements for accounting for event correlations in parameter extraction while retaining that no new validation result is presented.
+
+GAP 20: KEEP
+REASON: Calling outputs an internal cross-check does not preserve the explicit restriction that they are diagnostics that must not be quoted.
+NARROW: -
+
+GAP 21: ALLOW-NARROW
+REASON: Replacing colloquial language improves register, but neither conservative bounds nor a detector model are established.
+NARROW: Describe the reconstruction-only arm as a computationally inexpensive adversarial stress test and retain that it is not a detector model, without claiming sensitivity bounds.
+
+GAP 22: ALLOW-NARROW
+REASON: A concise scope statement is appropriate, but the record establishes neither completeness nor the proposed alternative cutoff.
+NARROW: Describe the inventory as a nonexhaustive survey through 2026 without introducing a different cutoff or claiming comprehensive coverage.
+
+GAP 23: KEEP
+REASON: The proposed permanent public package does not exist in the supplied record, so replacing the candidate’s status with that description would be false.
+NARROW: -
+
+GAP 24: ALLOW-NARROW
+REASON: Verification can be summarized technically, but its version and execution conditions must remain explicit to avoid implying that the current candidate received independent validation.
+NARROW: State that the earlier RC1 candidate passed its packaged verifier in a separate AI-agent session using only the package and README without repository access.
+
+GAP 25: ALLOW-NARROW
+REASON: The failed precision target can remain in the cited note, but removing every acceptance-failure disclosure would misrepresent the covariance used for Figure 3.
+NARROW: Limit the deletion to the paper’s precision-target discussion, retain the envelope’s numerical size and diagnostic meaning with the note pointer, and preserve the acceptance-failure qualification where Figure 3’s covariance is used.
+
+GAP 26: ALLOW-NARROW
+REASON: Individual iteration counts can remain in the cited comparison, but the development-sample scope and residual-proxy definition are necessary to bound the justification.
+NARROW: State that five iterations were retained because larger tested counts did not reduce the largest residual proxy over the development truth changes, with the tested counts and values retained in the cited note.
+
+GAP 27: ALLOW-NARROW
+REASON: A publication-readiness judgment is less informative than explicit validation status, but numerical agreement alone cannot replace that status.
+NARROW: Replace the readiness sentence with the descriptive benchmark comparison and an explicit statement that the covariance lacks independent validation, validated coverage and calibrated goodness-of-fit significance.
+
+GAP 28: KEEP
+REASON: The proposal replaces absent coverage validation with evaluated coverage and assigned systematic uncertainties that the supplied record does not establish.
+NARROW: -
+
+GAP 29: KEEP
+REASON: An indicative covariance comparison cannot be recast as providing standard systematic coverage when coverage has not been established.
+NARROW: -
+
+GAP 30: ALLOW-NARROW
+REASON: Direct methodological wording is suitable, provided it preserves both the lack of systematic-parameter draws and the untested detector response.
+NARROW: State that the Poisson study evaluates bias with systematic parameters and detector response fixed, so it does not validate interval widths or detector response.
+
+GAP 31: KEEP
+REASON: Reporting verified performance for the final block would falsely transfer evidence from earlier bands and erase the documented undercoverage of 0.912 against 0.954.
+NARROW: -
+
+GAP 32: KEEP
+REASON: Listing completed tests does not disclose that held-out coverage remains untested and that no design for the deferred test was registered in advance.
+NARROW: -
+
+GAP 33: ALLOW-NARROW
+REASON: Chronological narration can be shortened, but earlier-band tests and post hoc rescoring must remain distinguishable from validation of the quoted block.
+NARROW: Replace the development narrative with a compact account identifying the tested bands, retaining their numerical outcomes and post hoc status, and stating that the final quoted block has not been coverage-tested.
+
+GAP 34: KEEP
+REASON: Deleting all unexecuted studies would conceal that the proposed discriminating test has not resolved the competing explanations.
+NARROW: -
+
+GAP 35: ALLOW-NARROW
+REASON: A direct description of matrix inversion is acceptable only if the regularization scan remains attached to the earlier covariance it actually tested.
+NARROW: Describe the reported pulls and truncated inversion concisely while retaining that the exact-split regularization scan used an earlier covariance, was not repeated for the quoted one, and supplies no standalone calibrated goodness-of-fit test.
+
+GAP 36: ALLOW-NARROW
+REASON: The calendar date is provenance, whereas the mismatch between the implemented and designated subtraction treatments defines the result’s scope.
+NARROW: Remove the date while retaining that the extended-fiducial central value used binned purity correction rather than the designated refined negative-weight subtraction.
+
+GAP 37: KEEP
+REASON: Omitting the unconfirmed status would turn an unexplained zero in the supplied inputs into an apparently justified uncertainty choice.
+NARROW: -
+
+GAP 38: KEEP
+REASON: Describing the run-period term as beam and detector stability assigns physical causes that the analysis explicitly has not established.
+NARROW: -
+
+GAP 39: KEEP
+REASON: Attributing the 4.01% versus 3.71% difference to release changes replaces an unknown cause with an unsupported explanation.
+NARROW: -
+
+GAP 40: KEEP
+REASON: Selection after both benchmark comparisons were known affects the interpretation of the reproduction and cannot be discarded as incidental chronology.
+NARROW: -
+
+GAP 41: KEEP
+REASON: Statistical consistency is not the recorded reason for choosing seed 42, and substituting it for computing cost changes the selection claim.
+NARROW: -
+
+GAP 42: ALLOW-NARROW
+REASON: The summary can omit repeated rerun details, but recovered draws must not become indistinguishable from those supporting the primary decisions.
+NARROW: Delete only the summary’s rerun narrative, retain a pointer to Section 11.6 with the lost-draw and reporting-only recovery disclosures, and distinguish primary from recovered ensemble totals.
+
+GAP 43: KEEP
+REASON: Removing the extension made with observed p values visible would conceal a data-informed production decision relevant to assessing the stopping procedure.
+NARROW: -
+
+GAP 44: KEEP
+REASON: Folding recovered draws into the primary ensemble changes the reported decision basis and does not establish the required outcome-independent loss assumption.
+NARROW: -
+
+GAP 45: ALLOW-NARROW
+REASON: A mathematical presentation can improve clarity, but the operational assumptions and their unverified applicability must remain available to readers.
+NARROW: Formulate A2 through conditional independent Bernoulli draws with common probability p, explicitly retain outcome-independent loss as a requirement, and link to the unverified-loss and data-informed-design disclosures.
+
+SUMMARY: ALLOW 3, ALLOW-NARROW 22, KEEP 20

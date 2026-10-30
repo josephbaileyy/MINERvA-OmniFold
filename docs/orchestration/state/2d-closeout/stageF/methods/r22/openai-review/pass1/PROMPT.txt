@@ -1,0 +1,20 @@
+You are an independent senior referee for Physical Review D, asked for a second opinion on proposed edits. Work only from the files in this directory; you have no other context.
+
+Files:
+- paper-blinded.txt: the current paper (author details removed). It reports a ν_μ charged-current inclusive cross-section measurement on hydrocarbon in five observables, unfolded with OmniFold from MINERvA open data, with a companion long technical note (not provided; quotes from it appear in gaps.md).
+- gaps.md: 45 proposed changes ("gaps") from another reviewer (an LLM rater) who was asked what it would take for the text to read like published PRD papers. Each gives the quoted sentence, the rater's proposed change, and two classifiers' reasons for why the change touches a protected element.
+- protections.md: the text of each protection (the authors' standing rules): A* are author-owned wording or claims, B1/B3 are qualifiers whose omission would make a sentence false, B4 gate-bound phrases, C* are disclosures the authors judged honesty-required.
+
+Since these protections were set, the authors relaxed two rules: implementation detail and provenance may leave both documents if an internal ledger keeps them; and limitations and disclosures may leave the paper if the companion note keeps them (with a pointer). Those relaxations are already applied; the 45 gaps below are the ones that still touch a protection.
+
+For each of the 45 gaps decide ALLOW or KEEP:
+- ALLOW if making the proposed change (possibly in a narrowed form you state) would bring the text closer to the register of published PRD measurement papers AND would not make any sentence false, not change what a claim states, and not withhold from readers (of the paper and note together) anything they need to judge the result.
+- KEEP otherwise.
+Be concrete and conservative about truth: if the change would turn a measured limitation into an unassigned "systematic uncertainty", drop a number the result depends on, or soften a disclosure into a vaguer one, say KEEP. If a narrower version of the change would be acceptable, say ALLOW-NARROW and state the narrower change in one sentence.
+
+Answer in exactly this format, one block per gap, in order, nothing else before or after except a final SUMMARY line:
+GAP <n>: <ALLOW | ALLOW-NARROW | KEEP>
+REASON: <one sentence>
+NARROW: <one sentence, only for ALLOW-NARROW; otherwise "-">
+
+SUMMARY: ALLOW <count>, ALLOW-NARROW <count>, KEEP <count>
