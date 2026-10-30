@@ -41,3 +41,7 @@ CT 5A period (fd_ct_readers.py period, login)	login37	2026-10-29T06:25:33Z	2026-
 CT 5A diagnostic (diag_period.py, director ruling (a), login)	login37	-	2026-10-29T06:29:57Z	0	-	none	0	22 offending string tokens, all f/central X_sup ~ 1 at R09; no value printed, nothing written
 CT am1 deploy+tests (s1_deploy_am1.sh, login)	login37	2026-10-29T07:55:50Z	2026-10-29T08:02:26Z	0	396	none	0	pin bb8dc101; porcelain 0/0; amendment section 6 digests; Ran 153 tests OK
 CT 5A period, amendment 1 (fd_ct_readers.py period, login)	login37	2026-10-29T10:11:17Z	2026-10-29T10:11:18Z	0	1	none	0	controls S P0-P3 PASS, P4 assertion; readout fd_ct_period.json d7d518ac...
+CT 3b deploy+tests (s1_deploy_3b.sh, login)	login37	2026-10-29T15:24:47Z	2026-10-29T15:32:16Z	0	449	none	0	pin e904d635; porcelain 0/0; section 8 digests; Ran 184 tests OK, none skipped; tables identical
+CT 3b closures (submit_fd_ct.sh 3b, one CPU node, 8 lanes)	nid (1 node)	2026-10-29T15:59:48Z	2026-10-29T16:25:56Z	0	1568	60499106	0.436	COMPLETED 0:0; 13 closures; every lane done; max step MaxRSS 20.1 GB; projected 0.45, cap 0.75
+CT 3b reader (fd_ct_readers.py mismatch, login)	login37	2026-10-29T16:27:41Z	2026-10-29T16:27:43Z	0	2	none	0	controls S M0-M2 PASS, M1 assertion; readout fd_ct_mismatch.json 14399419...
+CT 3b HPSS copy of the closures (stage0_preserve.sh, login)	login37	2026-10-29T16:28:00Z	2026-10-29T16:28:06Z	0	6	none	0	/home/j/josephrb/mnv-5d-ct-3b-closures-20261029/stage0-inputs.tar 2478080 bytes, sha256 f4d413d5...; hashverify and get-back PASS

@@ -1,0 +1,17 @@
+PASS control M0 13 closures, each made by (e) from its declared pseudo dump on the zero response
+PASS control M1 assertion: every closure's truth reference is the same, bitwise
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control M1 the truth and every closure integral are positive on all 16 cells
+PASS control M2 the 11 MP-1 data unfolds match build_cresp's recorded digests and dumps
+[3b] proton: cosine(h, -d) 0.9654, |h|/|d| 1.1107, residual (h + d) quadratic form 0.2066
+[3b] meson: cosine(h, -d) 0.9580, |h|/|d| 0.9341, residual (h + d) quadratic form 0.7271
+[3b] em: cosine(h, -d) 0.9131, |h|/|d| 0.8269, residual (h + d) quadratic form 0.2551
+[3b] other: cosine(h, -d) 0.9826, |h|/|d| 1.0029, residual (h + d) quadratic form 0.1029
+[3b] xtalk: cosine(h, -d) 0.6536, |h|/|d| 0.7751, residual (h + d) quadratic form 0.1661
+[3b] w2b +-4%: cosine(h, -d) 0.9402, |h|/|d| 1.0825; closure floor max |b0| 3.417e-05
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-3b-20261029/fd_ct_mismatch.json", "sha256": "14399419ba74c5017f5b8efbb15d420e74a71afa13ad059edc0c94c07f5b9ae7"}
+rc=0
