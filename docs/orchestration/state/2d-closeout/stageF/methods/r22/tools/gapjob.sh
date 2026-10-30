@@ -5,11 +5,13 @@
 # and note-refs/reference-1..4. Output: gap/runs/G__<input>__<model>.txt. Status goes to gap/runs/status.tsv.
 # Each attempt is killed after GAP_TIMEOUT seconds (default 900; rc=124), added 2026-10-29 after five agy runs printed
 # a full answer but never exited. Attempts are numbered on from status.tsv, so a rerun makes only the one retry left.
-R=$(cd "$(dirname "$0")/.." && pwd); inp=$1; m=$2; I=$R/gap/inputs
-cd "$R"; mkdir -p gap/runs; out=gap/runs/G__${inp}__${m}.txt
+# GAP_SUB (default gap) is the directory of inputs and runs; GAP_PAPER_PROMPT (default prompts/G1.prompt.txt) is the
+# paper prompt. G1b runs set GAP_SUB=g1b and GAP_PAPER_PROMPT=prompts/G1b.prompt.txt.
+R=$(cd "$(dirname "$0")/.." && pwd); inp=$1; m=$2; S=${GAP_SUB:-gap}; I=$R/$S/inputs
+cd "$R"; mkdir -p $S/runs; out=$S/runs/G__${inp}__${m}.txt
 [ -s "$out" ] && grep -q 'CURRENT RATING:' "$out" && exit 0
 case $inp in
-  paper|paper-ctl) p=prompts/G1.prompt.txt; set -- "$I/$inp"/reference-{1,2,3}.txt "$I/$inp/manuscript.txt" ;;
+  paper|paper-ctl) p=${GAP_PAPER_PROMPT:-prompts/G1.prompt.txt}; set -- "$I/$inp"/reference-{1,2,3}.txt "$I/$inp/manuscript.txt" ;;
   B[0-9][0-9]|B[0-9][0-9]-ctl) p=prompts/G1N.prompt.txt; set -- "$I"/note-refs/reference-{1,2,3,4}.txt "$I/$inp/chapter.txt" ;;
   *) echo "unknown input $inp" >&2; exit 2 ;;
 esac
@@ -28,12 +30,12 @@ with_timeout() {
   pkill -P $w sleep 2>/dev/null; kill -TERM $w 2>/dev/null; wait $w 2>/dev/null; rm -f "$flag"
   return $rc
 }
-done_n=$(awk -F'\t' -v i="$inp" -v m="$m" '$1==i && $2==m' gap/runs/status.tsv 2>/dev/null | wc -l | tr -d ' ')
+done_n=$(awk -F'\t' -v i="$inp" -v m="$m" '$1==i && $2==m' $S/runs/status.tsv 2>/dev/null | wc -l | tr -d ' ')
 for a in 1 2; do
   [ $a -le $done_n ] && continue
   t0=$(date +%s); XMODEL_DIR=$R/x with_timeout "${GAP_TIMEOUT:-900}" bash tools/run_x.sh "$m" "$p" "$out" "$@" > /dev/null 2>&1; rc=$?
   w=$(wc -w < "$out" 2>/dev/null || echo 0)
-  printf '%s\t%s\tattempt=%s\trc=%s\twords=%s\tsecs=%s\t%s\n' "$inp" "$m" $a $rc $w $(( $(date +%s) - t0 )) "$(date +%T)" >> gap/runs/status.tsv
+  printf '%s\t%s\tattempt=%s\trc=%s\twords=%s\tsecs=%s\t%s\n' "$inp" "$m" $a $rc $w $(( $(date +%s) - t0 )) "$(date +%T)" >> $S/runs/status.tsv
   [ $rc -eq 0 ] && [ "$w" -gt 0 ] && exit 0
 done
 exit 1
