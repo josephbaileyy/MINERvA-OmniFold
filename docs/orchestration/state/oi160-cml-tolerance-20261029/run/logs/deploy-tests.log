@@ -1,0 +1,57 @@
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-jwmbx69j/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-xqjumnky/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-3ufa46z9/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-ppvlhiou/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-0vusaml2/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-qkf2_fdd/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-s21g04j8/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-a6od60j5/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-b10z52uz/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-srvwknaz/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-sqz3f6eo/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-76cl1_ch/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-cml-tolerance-20261029/cml_compare.py:125: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/oi160-cml-20261029/tmp/oi160-cml-_d_44mf1/seeds.tsv' mode='r' encoding='UTF-8'>
+  rows = list(csv.DictReader(open(a.seeds), delimiter="\t"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 13 tests in 0.429s
+
+OK
+[cml_compare] floor_ok=True producers={'p1': 'NEITHER'} overall=NEITHER
+[cml_compare] floor_ok=True producers={'p1': 'NEITHER'} overall=NEITHER
+[cml_compare] floor_ok=False producers={'p1': 'VOID'} overall=VOID
+[cml_compare] floor_ok=True producers={'p1': 'VOID'} overall=VOID
+[cml_compare] stored res_split_4.npz is missing or not the pinned file
+[cml_compare] floor_ok=True producers={'p1': 'VOID'} overall=VOID
+[cml_compare] floor_ok=True producers={'p1': 'NEITHER'} overall=NEITHER
+[cml_compare] floor_ok=True producers={'p1': 'INERT'} overall=INERT
+[cml_compare] floor_ok=True producers={'p1': 'VOID'} overall=VOID
+[cml_compare] floor_ok=True producers={'p1': 'CORRECTED', 'p2': 'OLD', 'p3': 'NEITHER'} overall=MIXED
+[cml_compare] floor_ok=True producers={'p1': 'MIXED'} overall=MIXED
+[cml_compare] floor_ok=True producers={'p1': 'CORRECTED'} overall=CORRECTED
+[cml_compare] floor_ok=True producers={'p1': 'MIXED'} overall=MIXED

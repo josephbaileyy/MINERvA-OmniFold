@@ -1,0 +1,160 @@
+2026-10-30T13:33:54Z
+login37
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocTRES
+60549044|fd_ct_5b_periods|COMPLETED|0:0|00:19:09|1149|1|billing=256,cpu=256,energy=650282,mem=487802M,node=1
+--- steps
+JobID|JobName|State|ExitCode|ElapsedRaw|MaxRSS
+60549044|fd_ct_5b_periods|COMPLETED|0:0|1149|
+60549044.batch|batch|COMPLETED|0:0|1149|120172K
+60549044.extern|extern|COMPLETED|0:0|1149|
+60549044.0|line1|COMPLETED|0:0|1061|9614308K
+60549044.1|line7|COMPLETED|0:0|1006|9243120K
+60549044.2|line6|COMPLETED|0:0|1005|9282704K
+60549044.3|line3|COMPLETED|0:0|1142|9101832K
+60549044.4|line0|COMPLETED|0:0|1024|9221668K
+60549044.5|line4|COMPLETED|0:0|1137|9473944K
+60549044.6|line2|COMPLETED|0:0|1060|9554120K
+60549044.7|line5|COMPLETED|0:0|1004|9346280K
+--- line0-60549044.log
+[s5c] task=0 name=ct5b_b_lane0 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=0 steps=['ct5b_unfold_PA_s42', 'ct5b_unfold_PA_b1008', 'ct5b_unfold_PB_b2010'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_s42 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_s42 rc=0 end=2026-10-30T13:20:41Z
+[f1-lane] ct5b_unfold_PA_b1008 start=2026-10-30T13:20:41Z
+[f1-lane] ct5b_unfold_PA_b1008 rc=0 end=2026-10-30T13:26:53Z
+[f1-lane] ct5b_unfold_PB_b2010 start=2026-10-30T13:26:53Z
+[f1-lane] ct5b_unfold_PB_b2010 rc=0 end=2026-10-30T13:30:42Z
+[f1-lane] lane=0 done end=2026-10-30T13:30:42Z
+[s5c] task=0 name=ct5b_b_lane0 rc=0 end=2026-10-30T13:30:43Z
+--- line1-60549044.log
+[s5c] task=1 name=ct5b_b_lane1 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=1 steps=['ct5b_unfold_PA_b1001', 'ct5b_unfold_PA_b1009', 'ct5b_unfold_PC_s42', 'ct5b_unfold_PC_b3007'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1001 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1001 rc=0 end=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PA_b1009 start=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PA_b1009 rc=0 end=2026-10-30T13:26:42Z
+[f1-lane] ct5b_unfold_PC_s42 start=2026-10-30T13:26:42Z
+[f1-lane] ct5b_unfold_PC_s42 rc=0 end=2026-10-30T13:29:04Z
+[f1-lane] ct5b_unfold_PC_b3007 start=2026-10-30T13:29:04Z
+[f1-lane] ct5b_unfold_PC_b3007 rc=0 end=2026-10-30T13:31:19Z
+[f1-lane] lane=1 done end=2026-10-30T13:31:19Z
+[s5c] task=1 name=ct5b_b_lane1 rc=0 end=2026-10-30T13:31:20Z
+--- line2-60549044.log
+[s5c] task=2 name=ct5b_b_lane2 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=2 steps=['ct5b_unfold_PA_b1002', 'ct5b_unfold_PA_b1010', 'ct5b_unfold_PC_b3001', 'ct5b_unfold_PC_b3008'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1002 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1002 rc=0 end=2026-10-30T13:20:34Z
+[f1-lane] ct5b_unfold_PA_b1010 start=2026-10-30T13:20:34Z
+[f1-lane] ct5b_unfold_PA_b1010 rc=0 end=2026-10-30T13:26:42Z
+[f1-lane] ct5b_unfold_PC_b3001 start=2026-10-30T13:26:42Z
+[f1-lane] ct5b_unfold_PC_b3001 rc=0 end=2026-10-30T13:29:03Z
+[f1-lane] ct5b_unfold_PC_b3008 start=2026-10-30T13:29:03Z
+[f1-lane] ct5b_unfold_PC_b3008 rc=0 end=2026-10-30T13:31:19Z
+[f1-lane] lane=2 done end=2026-10-30T13:31:19Z
+[s5c] task=2 name=ct5b_b_lane2 rc=0 end=2026-10-30T13:31:19Z
+--- line3-60549044.log
+[s5c] task=3 name=ct5b_b_lane3 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=3 steps=['ct5b_unfold_PA_b1003', 'ct5b_unfold_PB_s42', 'ct5b_unfold_PB_b2005', 'ct5b_unfold_PC_b3002', 'ct5b_unfold_PC_b3009'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1003 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1003 rc=0 end=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PB_s42 start=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PB_s42 rc=0 end=2026-10-30T13:24:29Z
+[f1-lane] ct5b_unfold_PB_b2005 start=2026-10-30T13:24:29Z
+[f1-lane] ct5b_unfold_PB_b2005 rc=0 end=2026-10-30T13:28:14Z
+[f1-lane] ct5b_unfold_PC_b3002 start=2026-10-30T13:28:14Z
+[f1-lane] ct5b_unfold_PC_b3002 rc=0 end=2026-10-30T13:30:30Z
+[f1-lane] ct5b_unfold_PC_b3009 start=2026-10-30T13:30:30Z
+[f1-lane] ct5b_unfold_PC_b3009 rc=0 end=2026-10-30T13:32:40Z
+[f1-lane] lane=3 done end=2026-10-30T13:32:40Z
+[s5c] task=3 name=ct5b_b_lane3 rc=0 end=2026-10-30T13:32:41Z
+--- line4-60549044.log
+[s5c] task=4 name=ct5b_b_lane4 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=4 steps=['ct5b_unfold_PA_b1004', 'ct5b_unfold_PB_b2001', 'ct5b_unfold_PB_b2006', 'ct5b_unfold_PC_b3003', 'ct5b_unfold_PC_b3010'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1004 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1004 rc=0 end=2026-10-30T13:20:34Z
+[f1-lane] ct5b_unfold_PB_b2001 start=2026-10-30T13:20:34Z
+[f1-lane] ct5b_unfold_PB_b2001 rc=0 end=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2006 start=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2006 rc=0 end=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3003 start=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3003 rc=0 end=2026-10-30T13:30:24Z
+[f1-lane] ct5b_unfold_PC_b3010 start=2026-10-30T13:30:24Z
+[f1-lane] ct5b_unfold_PC_b3010 rc=0 end=2026-10-30T13:32:35Z
+[f1-lane] lane=4 done end=2026-10-30T13:32:35Z
+[s5c] task=4 name=ct5b_b_lane4 rc=0 end=2026-10-30T13:32:36Z
+--- line5-60549044.log
+[s5c] task=5 name=ct5b_b_lane5 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=5 steps=['ct5b_unfold_PA_b1005', 'ct5b_unfold_PB_b2002', 'ct5b_unfold_PB_b2007', 'ct5b_unfold_PC_b3004'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1005 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1005 rc=0 end=2026-10-30T13:20:34Z
+[f1-lane] ct5b_unfold_PB_b2002 start=2026-10-30T13:20:34Z
+[f1-lane] ct5b_unfold_PB_b2002 rc=0 end=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2007 start=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2007 rc=0 end=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3004 start=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3004 rc=0 end=2026-10-30T13:30:23Z
+[f1-lane] lane=5 done end=2026-10-30T13:30:23Z
+[s5c] task=5 name=ct5b_b_lane5 rc=0 end=2026-10-30T13:30:23Z
+--- line6-60549044.log
+[s5c] task=6 name=ct5b_b_lane6 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=6 steps=['ct5b_unfold_PA_b1006', 'ct5b_unfold_PB_b2003', 'ct5b_unfold_PB_b2008', 'ct5b_unfold_PC_b3005'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1006 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1006 rc=0 end=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PB_b2003 start=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PB_b2003 rc=0 end=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2008 start=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2008 rc=0 end=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3005 start=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3005 rc=0 end=2026-10-30T13:30:24Z
+[f1-lane] lane=6 done end=2026-10-30T13:30:24Z
+[s5c] task=6 name=ct5b_b_lane6 rc=0 end=2026-10-30T13:30:24Z
+--- line7-60549044.log
+[s5c] task=7 name=ct5b_b_lane7 job=60549044 host=nid004528 start=2026-10-30T13:13:51Z
+[f1-lane] lane=7 steps=['ct5b_unfold_PA_b1007', 'ct5b_unfold_PB_b2004', 'ct5b_unfold_PB_b2009', 'ct5b_unfold_PC_b3006'] start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1007 start=2026-10-30T13:13:53Z
+[f1-lane] ct5b_unfold_PA_b1007 rc=0 end=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PB_b2004 start=2026-10-30T13:20:33Z
+[f1-lane] ct5b_unfold_PB_b2004 rc=0 end=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2009 start=2026-10-30T13:24:24Z
+[f1-lane] ct5b_unfold_PB_b2009 rc=0 end=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3006 start=2026-10-30T13:28:11Z
+[f1-lane] ct5b_unfold_PC_b3006 rc=0 end=2026-10-30T13:30:24Z
+[f1-lane] lane=7 done end=2026-10-30T13:30:24Z
+[s5c] task=7 name=ct5b_b_lane7 rc=0 end=2026-10-30T13:30:25Z
+--- products
+PA 11
+5b_PA_b1001_j-.npz
+5b_PA_b1002_j-.npz
+5b_PA_b1003_j-.npz
+5b_PA_b1004_j-.npz
+5b_PA_b1005_j-.npz
+5b_PA_b1006_j-.npz
+5b_PA_b1007_j-.npz
+5b_PA_b1008_j-.npz
+5b_PA_b1009_j-.npz
+5b_PA_b1010_j-.npz
+5b_PA_b-_j-.npz
+PB 11
+5b_PB_b2001_j-.npz
+5b_PB_b2002_j-.npz
+5b_PB_b2003_j-.npz
+5b_PB_b2004_j-.npz
+5b_PB_b2005_j-.npz
+5b_PB_b2006_j-.npz
+5b_PB_b2007_j-.npz
+5b_PB_b2008_j-.npz
+5b_PB_b2009_j-.npz
+5b_PB_b2010_j-.npz
+5b_PB_b-_j-.npz
+PC 11
+5b_PC_b3001_j-.npz
+5b_PC_b3002_j-.npz
+5b_PC_b3003_j-.npz
+5b_PC_b3004_j-.npz
+5b_PC_b3005_j-.npz
+5b_PC_b3006_j-.npz
+5b_PC_b3007_j-.npz
+5b_PC_b3008_j-.npz
+5b_PC_b3009_j-.npz
+5b_PC_b3010_j-.npz
+5b_PC_b-_j-.npz

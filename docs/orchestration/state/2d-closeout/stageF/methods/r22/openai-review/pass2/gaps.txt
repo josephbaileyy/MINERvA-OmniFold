@@ -1,0 +1,188 @@
+### Gap 1 (protection group B2)
+**B02-g-01** (note B02, gemini, SHARE 20; PROTECTED: both)
+- Sentence: "The run’s own log was not found."
+- Rater's change: Remove the narrative of missing run logs and script limitations, reporting the exact-split CART cross-check and its results directly in the register of reference-2 ("Results from the alternate analysis agree with the results presented in Secs. IX A and IX B.").
+- Lane: PROTECTED [B2]: Removing the "narrative of missing run logs and script limitations" deletes the disclosure that the exact-split seed was not fixed and its log was not found.
+- Independent: PROTECTED [B2]: Removes the exact-split "script limitations" ("Its seed was not fixed: the driver version it ran had no seed option") along with the missing-log record.
+
+### Gap 2 (protection group B2)
+**B02-g-02** (note B02, gemini, SHARE 15; PROTECTED: both)
+- Sentence: "Both of those central values are regenerated to ≲ 2 × 10−11 by runs with one driver and one input that differ only in the seed, so the difference is attributable to the seed, as inferred from the two regenerations."
+- Rater's change: Replace the granular driver-level regeneration tolerances and seed-iteration tracking with a concise statement of algorithmic stability across random seeds.
+- Lane: PROTECTED [B2]: Replacing the regeneration evidence with "algorithmic stability across random seeds" drops the finding that the two central values differ because of the seed.
+- Independent: PROTECTED [A7, B2]: Replaces the seed-attributable difference and regeneration tolerances with a generic claim of stability across seeds.
+
+### Gap 3 (protection group B2)
+**B02-g-10** (note B02, gemini, SHARE 4; PROTECTED: both)
+- Sentence: "The agreement of that median with the LightGBM seed-1 to seed-42 median above is a coincidence."
+- Rater's change: Replace the informal remark with a precise, formal comparison of estimator sensitivity to random seeds or remove the editorial comment entirely.
+- Lane: PROTECTED [B2]: The "or remove the editorial comment entirely" option drops the finding that the agreement of the two medians is a coincidence (mixed change: highest class).
+- Independent: PROTECTED [B2]: The remove option deletes the finding that the agreement of the two 0.18 % medians "is a coincidence".
+
+### Gap 4 (protection group B2)
+**B03-g-01** (note B03, gemini, SHARE 20; PROTECTED: both)
+- Sentence: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver; the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+- Rater's change: Remove all references to committed drivers, code-chain assertions, repository commits, and floating-point tolerance checks, replacing them with a concise description of the simulation framework and the verified stability of the reweighting procedure.
+- Lane: PROTECTED [B2,B1]: Replacing "the others are accepted by inference" with "the verified stability" drops the disclosure that only seven universes were reproduced.
+- Independent: PROTECTED [B1, B2]: Replaces "the others are accepted by inference" with "verified stability", overstating the check beyond the seven reproduced universes.
+
+### Gap 5 (protection group B2)
+**B03-g-03** (note B03, gemini, SHARE 15; PROTECTED: both)
+- Sentence: "Its per-bin σ is a median 0.27 of that of the earlier ten-seed block, because the bootstrap × seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block; the training-seed block carries it only at its 1/20 share, a median 0.763 of its diagonal."
+- Rater's change: Excise all mentions of discarded internal iterations, scratchpad scans, and calendar milestones, describing the training-seed uncertainty strictly through its final formulation and properties.
+- Lane: PROTECTED [B2]: Excises the comparison with the earlier ten-seed block (median 0.27) and its explanation; the records document holds the ten-seed scan (app_history.tex:196) but not this ratio or explanation.
+- Independent: PROTECTED [B2]: Excises the superseded-value comparison ("a median 0.27 of that of the earlier ten-seed block" and its cause); app_history.tex:196 holds the ten-seed scan but not this ratio.
+
+### Gap 6 (protection group B2)
+**B03-g-10** (note B03, gemini, SHARE 3; PROTECTED: independent only)
+- Sentence: "Added to the other blocks, it raises the per-bin σ by a median of 5.8 % (at most 39.1 %), the integral by 9.9 % and the p∥ projections by at most 21 %; it carries a median 10.6 % of the per-bin variance and 17.1 % of the integral’s."
+- Rater's change: Condense long strings of raw bin statistics into clear summary ranges in the text or tabulate them, focusing the narrative on the leading physical contributions to the uncertainty budget.
+- Lane: STRUCTURE []: Condenses or tabulates the bin statistics.
+- Independent: PROTECTED [B2, C5]: Condenses the run-period block's reported medians, maxima and variance shares into ranges, dropping reported numbers.
+
+### Gap 7 (protection group B2)
+**B04-g-03** (note B04, gemini, SHARE 15; PROTECTED: both)
+- Sentence: "The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen."
+- Rater's change: Replace the narrative of procedural timing and protocol revisions with a direct, neutral definition of the systematic attribution criteria.
+- Lane: PROTECTED [B2,C2]: Replacing the timing narrative drops the disclosure that the undercoverage clause was written after the pilot pulls were seen.
+- Independent: PROTECTED [C2, B2]: Drops the disclosure that the undercoverage clause "was written after the pilot pulls had been seen".
+
+### Gap 8 (protection group B2)
+**B05-g-05** (note B05, gemini, SHARE 10; PROTECTED: both)
+- Sentence: "The public release does not let us determine the origin of this difference; our leading hypothesis is the FHC-only constraint file."
+- Rater's change: State the observed numerical difference and its bounds objectively without speculative or conversational phrasing such as "our leading hypothesis", mirroring the objective style of reference-4 ("These explanations are at present speculative; more detailed study is ongoing and will be reported in a future work").
+- Lane: PROTECTED [B2]: Drops "our leading hypothesis is the FHC-only constraint file", a stated hypothesis with no other copy.
+- Independent: PROTECTED [C7, B2]: Removes "The public release does not let us determine the origin of this difference" and the stated hypothesis for the flux-block difference.
+
+### Gap 9 (protection group B2)
+**B05-g-08** (note B05, gemini, SHARE 5; PROTECTED: both)
+- Sentence: "Figure 14: Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of the published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles."
+- Rater's change: Delete the commentary regarding missing panel titles and restrict the caption strictly to describing the plotted physical quantities and display conventions, in the register of reference-3 ("The color scale represents the charge for each channel averaged over five ticks with the range chosen to make the noise visible").
+- Lane: PROTECTED [B2]: Deletes the statement that the published panels have no printed titles (a figure fact, not implementation detail).
+- Independent: PROTECTED [B2]: Deletes a figure fact ("the panels have no printed titles") that prints nowhere else.
+
+### Gap 10 (protection group B2)
+**B07-g-02** (note B07, gemini, SHARE 15; PROTECTED: both)
+- Sentence: "It has not yet produced a result."
+- Rater's change: Either complete the closure test to assign a definitive systematic uncertainty or remove the procedural disclaimer in favor of a bounded systematic error evaluation.
+- Lane: PROTECTED [B2,A7]: Removing "It has not yet produced a result" "in favor of a bounded systematic error evaluation" drops the disclosure and asserts an evaluation that does not exist (completing the test is new work).
+- Independent: PROTECTED [B1, A7]: Replaces "It has not yet produced a result" (response-mismatch closure) with a bounded systematic error evaluation.
+
+### Gap 11 (protection group B2)
+**B07-g-03** (note B07, gemini, SHARE 12; PROTECTED: both)
+- Sentence: "The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the leading-hadron angle."
+- Rater's change: Eliminate mentions of event-loop output files and tuple storage, describing only the physical parameters extracted and their role in the analysis.
+- Lane: PROTECTED [B2]: Drops the mention of what the event-loop output files store. No ledger record found that states which truth hadronic diagnostics the event-loop output files store (searched the records document and the repository's .md/.tex records at d84124c5).
+- Independent: PROTECTED [B2]: Removes the statement that the event-loop outputs store proton and pion multiplicities and the leading-hadron angle; ledger searched (leading-hadron, leading hadron, hadron angle, multiplicities, proton/pion multiplicity, GetHadronAngleTrue, truth hadronic) and none states it.
+
+### Gap 12 (protection group B2)
+**B09-g-09** (note B09, gemini, SHARE 5; PROTECTED: independent only)
+- Sentence: "The variant without the response block, against Ctotal + Vg , gives χ2 of 160.62/16, 318.26/16, 298.69/16, 68.44/8 and 360.79/16, in the order of Table 15."
+- Rater's change: Incorporate secondary test statistics into a structured table or summarize the overall physical agreement and trends in the prose.
+- Lane: STRUCTURE []: Tabulates or summarizes the secondary statistics.
+- Independent: PROTECTED [B2]: Offers summarizing the variant chi2 values in prose instead of tabulating them, which drops reported numbers.
+
+### Gap 13 (protection group B2)
+**B10-g-08** (note B10, gemini, SHARE 5; PROTECTED: both)
+- Sentence: "This factor comes from the review of the design, and its derivation is not given."
+- Rater's change: State the parameter value and its associated systematic spread directly with a succinct physical or empirical justification, omitting any reference to review-committee origins.
+- Lane: PROTECTED [B2,A7]: Giving the factor "a succinct physical or empirical justification" drops "its derivation is not given" and supplies a derivation that does not exist.
+- Independent: PROTECTED [B1, B2]: Removes "its derivation is not given" and supplies a justification for the design factor.
+
+### Gap 14 (protection group B2)
+**B11-g-03** (note B11, gemini, SHARE 12; PROTECTED: both)
+- Sentence: "The sample’s mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the flux repair."
+- Rater's change: Remove the procedural history regarding unexecuted rebuilds and defective files, defining the model variations strictly in terms of their physical assumptions and coverage.
+- Lane: PROTECTED [B2]: Removing "this prior was not rebuilt after the flux repair" deletes a limitation of the prior.
+- Independent: PROTECTED [B1, B2]: Removes "this prior was not rebuilt after the flux repair".
+
+### Gap 15 (protection group B2)
+**B11-g-08** (note B11, gemini, SHARE 6; PROTECTED: lane only)
+- Sentence: "Panels (a) and (b) are ratios (diverging scale centered at unity); (c) gives absolute magnitude on a sequential scale — hence the two color schemes."
+- Rater's change: Delete the conversational rationale and state strictly the plotted physical quantities and color scales.
+- Lane: PROTECTED [B2]: Deletes the color-scheme rationale (a presentation fact, not implementation detail).
+- Independent: WORDING []: Removes "hence the two color schemes".
+
+### Gap 16 (protection group B2)
+**B11-g-10** (note B11, gemini, SHARE 5; PROTECTED: lane only)
+- Sentence: "The release design and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a) central value (§9.6)."
+- Rater's change: Delete this defensive disclaimer entirely, addressing covariance methodology objectively where that analysis configuration is defined.
+- Lane: PROTECTED [B2]: Deleting "entirely" the statement that the release design has no bearing on the covariance choice removes a fact with no other copy.
+- Independent: STRUCTURE []: Moves the covariance boundary statement to where configuration (a) is defined.
+
+### Gap 17 (protection group B2)
+**B12-g-04** (note B12, gemini, SHARE 12; PROTECTED: lane only)
+- Sentence: "Where a repository label is needed to find the object, it is given once in parentheses at first use, or here."
+- Rater's change: Delete the repository label table and associated text, referring to backends and selection modes throughout solely by their descriptive physical or statistical names.
+- Lane: PROTECTED [B2]: Deletes the repository label table. No single ledger record keeps the label table's mapping of repository labels to meanings (lgbm/exact/hist, the --bkg-mode values, cv/mean, ...).
+- Independent: STRUCTURE [cut; ledger: records_estimators.tex:10-12 (lgbm, exact, hist); :19-20 and app_provenance.tex:115 (--bkg-mode values); DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:8 (variant cv); 2D_OMNIFOLD_REFERENCE.md:432 (MNV101_ACTIVE_UNIVERSE); PLAN-20261011-2d-closeout.md:116 (May and July sweeps); AUDIT-FINDINGS-20260731.md:478 (J28)]: Deletes the repository label table; each label has a ledger home.
+
+### Gap 18 (protection group B2)
+**B12-g-05** (note B12, gemini, SHARE 10; PROTECTED: both)
+- Sentence: "That check could not detect that the Flux band omitted those constraint weights, because it filled the MnvH1D without MAT’s per-universe weights (SetUnivWgts), so both sides were unweighted; it also ran on a sweep from before the flux fix, not on a quoted product."
+- Rater's change: Eliminate the narrative recounting of failed past checks and software bugs, stating only the validated weighting method and its final numerical precision.
+- Lane: PROTECTED [B2]: Eliminating "the narrative recounting of failed past checks" deletes the disclosure that the check could not detect the missing constraint weights and ran on a pre-fix sweep.
+- Independent: PROTECTED [B2]: Removes the limitation of the earlier MAT check ("could not detect ... ran on a sweep from before the flux fix"), a check the note still cites for the unweighted bands.
+
+### Gap 19 (protection group B2)
+**B12-g-06** (note B12, gemini, SHARE 9; PROTECTED: both)
+- Sentence: "It leaves to MAT, or does not state, the per-band covariance construction, any ±1σ pair formula and any band-independence or block-sum statement; the rank, condition number and regularization of V ; and any bootstrap or coverage validation (it uses D’Agostini iterative unfolding)."
+- Rater's change: Rewrite the critique as an objective, neutral statement explaining that the present work explicitly defines the covariance construction and matrix regularization that were previously encapsulated within the experiment's analysis framework.
+- Lane: PROTECTED [B2]: Recasting as what "the present work explicitly defines" drops the list of what the published analysis leaves unstated (rank, condition number, regularization, coverage validation).
+- Independent: PROTECTED [B2]: Rewrites "What the paper does not say" as a claim about this work, dropping the finding that the publication states no rank, regularization, bootstrap or coverage validation.
+
+### Gap 20 (protection group B2)
+**B13-g-01** (note B13, gemini, SHARE 15; PROTECTED: both)
+- Sentence: "The superseded unified-throw 5D covariance has N = 160, truncated p = 100, giving 58/160 ≃ 0.363: uncorrected precision is too large by ≃ 2.76."
+- Rater's change: Excise discussions of superseded historical iterations, stating only the parameters, properties, and validation of the covariance matrices actually adopted for the final results.
+- Lane: PROTECTED [B2]: Excises the superseded unified-throw covariance's numbers (N = 160, 0.363, too large by 2.76); app_history.tex has that section but not these numbers.
+- Independent: PROTECTED [B2]: Excises the superseded unified-throw numbers (N = 160, p = 100, 0.363, 2.76); app_history.tex:249-254 states that no magnitude from it is quoted there.
+
+### Gap 21 (protection group B2)
+**B13-g-03** (note B13, gemini, SHARE 15; PROTECTED: both)
+- Sentence: "Two provenance limits apply to the production numbers: the driver revision that produced them is corroborated but not pinned, and no output records the job that produced them (Ref. [37], R1.7)."
+- Rater's change: Delete all internal software execution logs, git/driver provenance qualifications, checkpoint recovery details, and analyst attributions in favor of describing the validated analysis procedure.
+- Lane: PROTECTED [B2]: Deleting the "provenance qualifications" removes the stated limits on the production numbers (driver revision not pinned, no job record).
+- Independent: PROTECTED [B2]: Deletes "Two provenance limits apply to the production numbers: the driver revision ... is corroborated but not pinned, and no output records the job".
+
+### Gap 22 (protection group B2)
+**B13-g-07** (note B13, gemini, SHARE 10; PROTECTED: both)
+- Sentence: "Raw signed weights destabilize an exact-split boosted-tree classifier, inflating a full low-pT cross-section row by up to a factor ∼5 × 104 where local background is large."
+- Rater's change: State the mathematical formulation and stability of the adopted clipped refinement directly, omitting detailed narratives of numerical failure modes in discarded machine-learning backends.
+- Lane: PROTECTED [B2]: Omits the failure mode of the discarded backend (a row inflated by up to ~5 × 10^4), a finding with a number.
+- Independent: PROTECTED [B2]: Omits the finding that raw signed weights inflate a low-pT row by up to ~5e4 with an exact-split classifier.
+
+### Gap 23 (protection group B2)
+**B14-g-02** (note B14, gemini, SHARE 15; PROTECTED: independent only)
+- Sentence: "Kevin McFarland suggested this distinction and proposed stressing the hadronic record, especially for quasielastic events, to inspect low-W bias (private communication)."
+- Rater's change: State the physical rationale for stressing the hadronic response directly and impersonally, removing the personal attribution and private communication citation.
+- Lane: UNRESOLVED []: Removes the attribution of the suggestion to Kevin McFarland; the rules do not cover credit for an idea (sol2's B14-s-06 moves it to an acknowledgment instead).
+- Independent: PROTECTED [B2]: Removes the attribution of the proposal to McFarland (private communication), with no copy in either document.
+
+### Gap 24 (protection group B2)
+**B14-g-03** (note B14, gemini, SHARE 15; PROTECTED: lane only)
+- Sentence: "That work is in progress and is documented separately (docs/analysis-note/pet_note.tex, [repository] No central value, uncertainty or comparison from it is used or claimed in this note."
+- Rater's change: Replace the internal file path and repository placeholder with a formal citation to a citable technical note or preprint, or omit the unfinished project entirely.
+- Lane: PROTECTED [B2]: The "or omit the unfinished project entirely" option deletes the point-cloud work and its scope statement (mixed change: highest class).
+- Independent: STRUCTURE [cut; ledger: docs/analysis-note/README.md:8 (PET note pet_note.tex, companion split from the note); docs/orchestration/RECORD-20261029-close-items-conditional-proposals-ruled.md:34]: Replaces or omits the PET note path; the ledger keeps the file and its role, and the PET status still prints in the note.
+
+### Gap 25 (protection group B2)
+**B15-g-06** (note B15, gemini, SHARE 8; PROTECTED: both)
+- Sentence: "A ✓ marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already fixed); the rest are packaging."
+- Rater's change: Remove checkmarks, task-tracker symbols, and placeholder tags, presenting the release schema as a clean, standardized descriptive specification.
+- Lane: PROTECTED [B2]: Removes the ✓ markers, losing which identities are fixed and which are packaging (a release-status fact).
+- Independent: PROTECTED [B2]: Removes the marks for which identities are fixed and the UNDECLARED placeholders, so the schema reads as complete.
+
+### Gap 26 (protection group B2)
+**B15-g-08** (note B15, gemini, SHARE 5; PROTECTED: lane only)
+- Sentence: "Do not check the sign of λmin , which sits at the noise floor and carries no information; a second host reproduces λmin to only five significant digits."
+- Rater's change: Replace reports of host-dependent numerical discrepancies with formal discussions of matrix conditioning, regularized inversion, and precision limits.
+- Lane: PROTECTED [B2]: Replaces the remark that a second host reproduces λmin to five significant digits, a finding.
+- Independent: WORDING []: Discusses the precision limit formally.
+
+### Gap 27 (protection group B2)
+**B15-g-09** (note B15, gemini, SHARE 4; PROTECTED: both)
+- Sentence: "No producing revision or job is recorded for the other objects, and the assembled package carries none."
+- Rater's change: State the provenance schema and integrity verification standards uniformly without narrating internal bookkeeping omissions or incomplete records.
+- Lane: PROTECTED [B2]: Not "narrating ... incomplete records" drops "No producing revision or job is recorded for the other objects".
+- Independent: PROTECTED [B2]: Removes "No producing revision or job is recorded for the other objects, and the assembled package carries none".

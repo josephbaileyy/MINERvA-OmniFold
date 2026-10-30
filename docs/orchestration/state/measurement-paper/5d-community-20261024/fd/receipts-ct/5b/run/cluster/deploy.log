@@ -1,0 +1,42 @@
+2026-10-30T08:02:53Z
+login37
+head 2c96065956d59b29a1ec0e7c611d52536f92a785
+porcelain_ignored_lines 0
+declaration_sha256 bdfb23fd51c73ecba2dfb324ad8d48429c5d30ce29242181a82ec81c56736038
+4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1 nd-unfolding/fd_ct_period_inputs.py OK
+ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e nd-unfolding/fd_ct_periods.py OK
+933c740d93f03e524906f161d2c4ee8e11a69bdd114cedd210832cbd1eb78d60 nd-unfolding/tests/test_fd_ct_periods.py OK
+d16f52bc241357dbf51be5139cd172c601e206979a273cdbcc91227d0f14c705 nd-unfolding/submit_fd_ct.sh OK
+4cc9ed7857a82b61078a355f3e5ed812e0913a8b0c803004cbac1ebc8e0b6c5c docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/make_5b_tables.py OK
+fc08be826620364ebbe62ab6f29d79aeac9133ac3031a7664b82f7cb79181eb4 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-inputs-steps.tsv OK
+e72c65313478b5aa8cdea0b02346d4624d4c84c6ba33df52a457040c5011fe18 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/tasks-5b-inputs.tsv OK
+74dba155b13821b082a67e927fbfd56bf2f55d09dabf5e1172a4f62399a22e4e docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/5b-periods-steps.tsv OK
+bf3d23cf2afa2f55409535a071d03aa48048502122aced42d6e84f9b1dd542e4 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/tasks-5b-periods.tsv OK
+e3dc9e63bc8db07ab545cee6d8b227cdaa7f8249c657cc1a60119020dd6a86de docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_ALL.root OK
+927f5af214b15935c1093b83c7e703730b8a5993b5e8f43f60a56eb8f07963fe docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_PA.root OK
+c64637d58961c4681f83611ab79f057f741329398cde00df175fac28dad15f0d docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_PB.root OK
+95c45a5f91f1fc356bfde74b463e1a24a70d698d8693a766773a6a37c3bdfafc docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/flux/runEventLoopMC_PC.root OK
+f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464 nd-unfolding/fd_ct_readers.py OK
+0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2 nd-unfolding/fd_f0_regrade.py OK
+b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7 nd-unfolding/s1_assemble.py OK
+26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71 nd-unfolding/s5p_stage1_inspect.py OK
+7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185 nd-unfolding/s5p_numerics.py OK
+7e925087b45b99dd94b75e45a09b5ef6dca826f594c86307c6c7d09f15058807 nd-unfolding/s5p_input_dumps.py OK
+6e8061f836e9ac941f24ca518907c1c94efe772e9d92cf29eeeb940062c8b685 nd-unfolding/nn_dump_inputs.py OK
+e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5 nd-unfolding/s5p_mc_truth_pred.py OK
+cfa457cb8e979db4df3e6c088c2b89a6e7a107b25763cdc2b05200d6fe720da0 2d-unfolding/uq/hadd_universes_full.py OK
+fbcb786923cabd8ab9177525a4b95afaec60486b2a0670ca598d048ebe835a7c nd-unfolding/fd_f1_lane.py OK
+dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f nd-unfolding/s5c_array.sh OK
+b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3 docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh OK
+b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json OK
+pins 26 mismatches 0
+python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+tests rc=0
+Ran 243 tests in 420.115s
+OK
+skipped_lines 0
+table 5b-inputs-steps.tsv identical
+table tasks-5b-inputs.tsv identical
+table 5b-periods-steps.tsv identical
+table tasks-5b-periods.tsv identical
+porcelain_ignored_lines_after_tests 0

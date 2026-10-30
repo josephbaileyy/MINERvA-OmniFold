@@ -1,0 +1,6 @@
+## submit session 2026-10-30T03:39:50Z login37
+Submitted batch job 60530414
+sbatch rc=0
+             JOBID       NAME    STATE       TIME   CPUS NODELIST(REASON)
+    60530414_[0-5]  oi160-cml  PENDING       0:00     36 (None)
+## end 2026-10-30T03:39:57Z

@@ -1,0 +1,5 @@
+[5b-inputs] refusing: s5p_mc_truth_pred.py exited 1
+nn_dump write FAILS: FileNotFoundError [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6ufija5x/B/dumps/nn_ALL.npz'
+  truth write FAILS: FileNotFoundError [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6ufija5x/B/truth/truth_PB.npz'
+check rc: 6
+check with truth/ present RAISES: FileNotFoundError [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6ufija5x/B/inputs/check_PB.json.partial'

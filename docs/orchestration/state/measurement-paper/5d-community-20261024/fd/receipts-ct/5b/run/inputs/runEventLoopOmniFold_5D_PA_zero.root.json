@@ -1,0 +1,57 @@
+{
+ "schema": "fd-ct-5b-merge/1",
+ "period": "PA",
+ "playlists": [
+  "1A",
+  "1B",
+  "1C",
+  "1D",
+  "1E",
+  "1F"
+ ],
+ "flux_weighting_over_merge_data_pot_minus_1": 0.0,
+ "inputs": [
+  {
+   "playlist": "1A",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1A_zero.root",
+   "sha256": "2745e38c45a50fa644e32913c6d8bc9763edc96e21b6d058cde4dbee6714c192"
+  },
+  {
+   "playlist": "1B",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1B_zero.root",
+   "sha256": "a2b7e413f8ab727577eb70cf00881c9dedfaf3401c18e37c866f6dc296639948"
+  },
+  {
+   "playlist": "1C",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1C_zero.root",
+   "sha256": "7985c0f1ae44d99be3bf180748c9553672bc8f107b512310c961d728d9c62d34"
+  },
+  {
+   "playlist": "1D",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1D_zero.root",
+   "sha256": "52da8f2245be7f4529d6c24960fa56f3063db5368bf33e7640604d716742797d"
+  },
+  {
+   "playlist": "1E",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1E_zero.root",
+   "sha256": "7f9293a6ce7a0aee7e9549b93d86b4d201bb0db9da088bace988403a7a0faea5"
+  },
+  {
+   "playlist": "1F",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/evloop/zero/runEventLoopOmniFold_5D_1F_zero.root",
+   "sha256": "7481c94751a5df774e1c18cd453e92322d789d5568785ed8c026f6ef15778b4e"
+  }
+ ],
+ "out": "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/merged/runEventLoopOmniFold_5D_PA_zero.root",
+ "out_sha256": "a9be297e071affd74c8df0b7a7205556eaf12d3082081f4cd8355034ce3359ff",
+ "out_bytes": 2489987585,
+ "code_sha256": {
+  "fd_ct_period_inputs.py": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+  "hadd_universes_full.py": "cfa457cb8e979db4df3e6c088c2b89a6e7a107b25763cdc2b05200d6fe720da0",
+  "nn_dump_inputs.py": "6e8061f836e9ac941f24ca518907c1c94efe772e9d92cf29eeeb940062c8b685",
+  "s5p_input_dumps.py": "7e925087b45b99dd94b75e45a09b5ef6dca826f594c86307c6c7d09f15058807",
+  "s5p_mc_truth_pred.py": "e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5",
+  "s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185"
+ },
+ "seconds": 128.3
+}

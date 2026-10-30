@@ -1,0 +1,2 @@
+control rc 0
+verdict PASS | max over cells of min_candidate |f_rec/f - 1|: 2.22e-16 | candidate separation (median): 5.54e-03

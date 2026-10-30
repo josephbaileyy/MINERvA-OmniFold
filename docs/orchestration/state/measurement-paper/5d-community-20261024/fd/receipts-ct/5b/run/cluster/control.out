@@ -1,0 +1,12 @@
+PASS control K0 the ALL check receipt is this deploy's and its files are at their recorded digests
+PASS control K0 every ALL cell integral is positive
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+[5B control] K1 inputs bitwise True, K2 unfold bitwise True, K3 within tolerance on every cell True (over: []); verdict PASS
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/control/fd_ct_5b_control.json", "sha256": "09595bf32fa3f33f1bc4de0aa4b910d6117493a1cb36b5a736cb54256b567806"}
+rc=0
+2026-10-30T13:02:09Z
+login37

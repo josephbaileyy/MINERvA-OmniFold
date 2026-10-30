@@ -1,0 +1,76 @@
+{
+ "schema": "fd-ct-5b-inputs/1",
+ "period": "PB",
+ "playlists": [
+  "1G",
+  "1L",
+  "1M"
+ ],
+ "files": {
+  "merged": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/merged/runEventLoopOmniFold_5D_PB_zero.root",
+   "ee004a4cd42f552512265d66012825dabb447467a9f072739a8200b56004679b"
+  ],
+  "flux": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/flux/runEventLoopMC_PB.root",
+   "c64637d58961c4681f83611ab79f057f741329398cde00df175fac28dad15f0d"
+  ],
+  "nn_npz": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/nn_PB.npz",
+   "33c6f685e8bcace223953b0af11cab92fce7c89fbff82a5ae553bf98e078e09f"
+  ],
+  "lat_npz": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/lat_PB.npz",
+   "33c6f685e8bcace223953b0af11cab92fce7c89fbff82a5ae553bf98e078e09f"
+  ],
+  "lat_bkg": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/lat_PB_bkg.npz",
+   "842622acf2b399205f189e0ba3605cfac4ddcd889ecd081212115289a54736ca"
+  ],
+  "truth": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_PB.npz",
+   "b6462c4a27eba67dbd22b3198b56033fa3a0e689ac4357c14beb61a415d36ce2"
+  ]
+ },
+ "nn_npz_equals_lat_npz": {
+  "axes": true,
+  "MCgen": true,
+  "MCreco": true,
+  "measured": true,
+  "pass_reco": true,
+  "pass_truth": true,
+  "w_truth": true,
+  "w_reco": true,
+  "measured_weights": true,
+  "denom_nd": true,
+  "flux": true,
+  "data_pot": true,
+  "n_nucleons": true,
+  "edges_0": true,
+  "edges_1": true,
+  "edges_2": true,
+  "edges_3": true,
+  "edges_4": true,
+  "nedges": true,
+  "_key_sets_equal": true
+ },
+ "nn_npz_bytes_equal_lat_npz": true,
+ "bkg_reco_dtype": "float64",
+ "data_pot_checks": {
+  "npz_over_merge_minus_1": 0.0,
+  "flux_weighting_over_merge_minus_1": 0.0
+ },
+ "pot_rel_tolerance": 1e-12,
+ "flux_rel_spread_over_pt": 0.0,
+ "flux_constant_over_pt": true,
+ "data_pot": 3.090670318998869e+20,
+ "code_sha256": {
+  "fd_ct_period_inputs.py": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+  "hadd_universes_full.py": "cfa457cb8e979db4df3e6c088c2b89a6e7a107b25763cdc2b05200d6fe720da0",
+  "nn_dump_inputs.py": "6e8061f836e9ac941f24ca518907c1c94efe772e9d92cf29eeeb940062c8b685",
+  "s5p_input_dumps.py": "7e925087b45b99dd94b75e45a09b5ef6dca826f594c86307c6c7d09f15058807",
+  "s5p_mc_truth_pred.py": "e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5",
+  "s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185"
+ },
+ "seconds": 117.1
+}

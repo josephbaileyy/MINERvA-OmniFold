@@ -1,0 +1,109 @@
+GAP 1: ALLOW-NARROW
+REASON: A concise reproducibility qualification can replace the procedural narrative without concealing the uncontrolled seed or unavailable log.
+NARROW: Report the cross-check directly, retain that its seed was not fixed and its run log was unavailable, and move script mechanics to the internal ledger.
+
+GAP 2: ALLOW-NARROW
+REASON: Attribution of the central-value difference to the seed is a specific finding that a generic stability claim would change.
+NARROW: Condense the passage while retaining the two regenerations, their agreement within ≲ 2 × 10−11, and the inference that the difference arises from changing only the seed.
+
+GAP 3: ALLOW-NARROW
+REASON: Formal wording improves the register, but deleting the qualification would lose the stated interpretation of the matching medians.
+NARROW: State that the two comparisons yield the same median of 0.18%, but that this numerical agreement is coincidental.
+
+GAP 4: KEEP
+REASON: Replacing reproduction of seven universes and inference for the remainder with “verified stability” would overstate the scope and nature of the verification.
+NARROW: -
+
+GAP 5: KEEP
+REASON: The 0.27 ratio and its explanation describe the effect of allocating the bootstrap–seed interaction between uncertainty blocks, making them substantive uncertainty findings rather than merely discarded run history.
+NARROW: -
+
+GAP 6: ALLOW-NARROW
+REASON: Tabulation improves readability without losing the distinct uncertainty increases and variance shares that summary ranges could obscure.
+NARROW: Tabulate every quoted median, maximum, integral value and variance share with its corresponding quantity, and summarize the contribution in prose.
+
+GAP 7: KEEP
+REASON: A definition of the attribution criteria alone would conceal that the undercoverage clause was formulated after the pilot pulls were inspected.
+NARROW: -
+
+GAP 8: ALLOW-NARROW
+REASON: Impersonal wording can preserve both the unresolved origin and the explicitly tentative explanation.
+NARROW: State that the public release cannot establish the origin of the difference and that the FHC-only constraint file remains the leading, unconfirmed hypothesis.
+
+GAP 9: ALLOW
+REASON: The absence of printed panel titles is directly visible and unnecessary to interpreting panels already identified as left and right in the caption.
+NARROW: -
+
+GAP 10: KEEP
+REASON: An unfinished closure test supplies neither a measured bound nor an assigned systematic uncertainty, and completing it would require new analysis.
+NARROW: -
+
+GAP 11: ALLOW-NARROW
+REASON: Output-file storage is implementation detail covered by the relaxation, but its ledger preservation is not established in the supplied records.
+NARROW: Retain the named diagnostics and their documented analytical role in the text, and record their output-file storage in the internal ledger before removing that detail.
+
+GAP 12: ALLOW-NARROW
+REASON: A table preserves the quantitative comparison without burdening the prose, whereas a qualitative summary alone would discard the reported statistics.
+NARROW: Tabulate all five χ² values and their degrees of freedom, identifying the predictions and the covariance Ctotal + Vg without the response block.
+
+GAP 13: KEEP
+REASON: Replacing the absent derivation with a physical or empirical justification would supply evidence that the provided material does not contain.
+NARROW: -
+
+GAP 14: KEEP
+REASON: The unrepaired flux sampling affects the prior’s high-p∥ shape and therefore limits the interpretation of the model variation.
+NARROW: -
+
+GAP 15: ALLOW
+REASON: Naming the ratio panels, absolute-magnitude panel and their respective scales already conveys the information expressed by “hence the two color schemes.”
+NARROW: -
+
+GAP 16: ALLOW-NARROW
+REASON: Relocating the methodological boundary improves organization, whereas deleting it entirely loses the stated independence of the covariance choice from the release design.
+NARROW: State where configuration (a) is defined that its five-axis covariance choice is independent of the release design and public example, then remove the original disclaimer.
+
+GAP 17: ALLOW-NARROW
+REASON: Repository labels are implementation detail, but the conflicting classifier accounts do not establish that every mapping is preserved.
+NARROW: Use descriptive names in both documents after verifying or completing an internal ledger mapping for every removed label.
+
+GAP 18: KEEP
+REASON: Because the earlier check remains cited, its inability to detect omitted constraint weights and its use of a pre-fix, unquoted sweep are necessary qualifications of that evidence.
+NARROW: -
+
+GAP 19: ALLOW-NARROW
+REASON: Neutral comparison is appropriate, but saying the missing information was encapsulated in the framework would imply documentation or validation not established by the quotation.
+NARROW: Present an impersonal comparison retaining every listed omission and distinguishing information delegated to MAT from information not stated in the publication.
+
+GAP 20: KEEP
+REASON: The quantified precision bias is a scientific finding rather than execution history, and the supplied files do not establish that it is irrelevant to interpreting every retained use of earlier covariances.
+NARROW: -
+
+GAP 21: KEEP
+REASON: Describing a validated procedure does not disclose the stated uncertainty about which revision and execution produced the reported numbers.
+NARROW: -
+
+GAP 22: KEEP
+REASON: The factor ∼5 × 10⁴ inflation is a quantitative failure finding relevant to the background-treatment choice, which describing only the adopted refinement would conceal.
+NARROW: -
+
+GAP 23: ALLOW-NARROW
+REASON: The physical rationale can be stated impersonally without erasing credit for the proposal.
+NARROW: Move McFarland’s attribution and the private-communication identification to an acknowledgment while retaining the physical rationale in the discussion.
+
+GAP 24: ALLOW-NARROW
+REASON: Removing an internal path improves presentation, but neither a citable replacement nor the redundancy of the project’s status and scope statement is established.
+NARROW: Remove the path and placeholder while retaining the in-progress status and exclusion of its results, using a formal citation only if a citable document is verified.
+
+GAP 25: ALLOW-NARROW
+REASON: Symbols and placeholders can be replaced, but readers must still distinguish fixed identities from unfinished packaging and undeclared fields.
+NARROW: Replace the markers with explicit status text for each affected entry, preserving which values are fixed, pending or undeclared.
+
+GAP 26: ALLOW-NARROW
+REASON: Formal precision language is appropriate only if it preserves the observed reproducibility limit and the lack of information in the eigenvalue’s sign.
+NARROW: State that λmin lies at the numerical noise floor, its sign is uninformative, and agreement between the two hosts extends to only five significant digits.
+
+GAP 27: KEEP
+REASON: A provenance schema or verification standard cannot substitute for disclosure that the specified objects and assembled package lack producing-revision and job records.
+NARROW: -
+
+SUMMARY: ALLOW 2, ALLOW-NARROW 14, KEEP 11

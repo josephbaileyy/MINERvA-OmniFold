@@ -1,0 +1,111 @@
+2026-10-30T13:01:53Z
+login37
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocTRES
+60537730|fd_ct_5b_inputs|COMPLETED|0:0|00:34:38|2078|1|billing=256,cpu=256,energy=640597,mem=487802M,node=1
+--- steps
+JobID|JobName|State|ExitCode|ElapsedRaw|MaxRSS
+60537730|fd_ct_5b_inputs|COMPLETED|0:0|2078|
+60537730.batch|batch|COMPLETED|0:0|2078|71636K
+60537730.extern|extern|COMPLETED|0:0|2078|
+60537730.0|line3|COMPLETED|0:0|642|5647232K
+60537730.1|line2|COMPLETED|0:0|779|8970348K
+60537730.2|line1|COMPLETED|0:0|900|13329540K
+60537730.3|line0|COMPLETED|0:0|2069|24861652K
+--- line0-60537730.log
+[s5c] task=0 name=ct5b_a_lane0 job=60537730 host=nid005754 start=2026-10-30T08:34:37Z
+[f1-lane] lane=0 steps=['ct5b_merge_ALL', 'ct5b_nndump_ALL', 'ct5b_lateral_ALL', 'ct5b_check_ALL', 'ct5b_unfold_ALL_s42'] start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_ALL start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_ALL rc=0 end=2026-10-30T08:37:42Z
+[f1-lane] ct5b_nndump_ALL start=2026-10-30T08:37:42Z
+[f1-lane] ct5b_nndump_ALL rc=0 end=2026-10-30T08:44:54Z
+[f1-lane] ct5b_lateral_ALL start=2026-10-30T08:44:54Z
+[f1-lane] ct5b_lateral_ALL rc=0 end=2026-10-30T08:52:00Z
+[f1-lane] ct5b_check_ALL start=2026-10-30T08:52:00Z
+[f1-lane] ct5b_check_ALL rc=0 end=2026-10-30T08:55:14Z
+[f1-lane] ct5b_unfold_ALL_s42 start=2026-10-30T08:55:14Z
+[f1-lane] ct5b_unfold_ALL_s42 rc=0 end=2026-10-30T09:08:53Z
+[f1-lane] lane=0 done end=2026-10-30T09:08:53Z
+[s5c] task=0 name=ct5b_a_lane0 rc=0 end=2026-10-30T09:08:55Z
+--- line1-60537730.log
+[s5c] task=1 name=ct5b_a_lane1 job=60537730 host=nid005754 start=2026-10-30T08:34:37Z
+[f1-lane] lane=1 steps=['ct5b_merge_PA', 'ct5b_nndump_PA', 'ct5b_lateral_PA', 'ct5b_check_PA'] start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_PA start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_PA rc=0 end=2026-10-30T08:37:36Z
+[f1-lane] ct5b_nndump_PA start=2026-10-30T08:37:36Z
+[f1-lane] ct5b_nndump_PA rc=0 end=2026-10-30T08:42:11Z
+[f1-lane] ct5b_lateral_PA start=2026-10-30T08:42:11Z
+[f1-lane] ct5b_lateral_PA rc=0 end=2026-10-30T08:46:52Z
+[f1-lane] ct5b_check_PA start=2026-10-30T08:46:52Z
+[f1-lane] ct5b_check_PA rc=0 end=2026-10-30T08:49:20Z
+[f1-lane] lane=1 done end=2026-10-30T08:49:20Z
+[s5c] task=1 name=ct5b_a_lane1 rc=0 end=2026-10-30T08:49:26Z
+--- line2-60537730.log
+[s5c] task=2 name=ct5b_a_lane2 job=60537730 host=nid005754 start=2026-10-30T08:34:37Z
+[f1-lane] lane=2 steps=['ct5b_merge_PB', 'ct5b_nndump_PB', 'ct5b_lateral_PB', 'ct5b_check_PB'] start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_PB start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_PB rc=0 end=2026-10-30T08:37:31Z
+[f1-lane] ct5b_nndump_PB start=2026-10-30T08:37:31Z
+[f1-lane] ct5b_nndump_PB rc=0 end=2026-10-30T08:40:55Z
+[f1-lane] ct5b_lateral_PB start=2026-10-30T08:40:55Z
+[f1-lane] ct5b_lateral_PB rc=0 end=2026-10-30T08:44:34Z
+[f1-lane] ct5b_check_PB start=2026-10-30T08:44:34Z
+[f1-lane] ct5b_check_PB rc=0 end=2026-10-30T08:47:18Z
+[f1-lane] lane=2 done end=2026-10-30T08:47:18Z
+[s5c] task=2 name=ct5b_a_lane2 rc=0 end=2026-10-30T08:47:25Z
+--- line3-60537730.log
+[s5c] task=3 name=ct5b_a_lane3 job=60537730 host=nid005754 start=2026-10-30T08:34:37Z
+[f1-lane] lane=3 steps=['ct5b_merge_PC', 'ct5b_nndump_PC', 'ct5b_lateral_PC', 'ct5b_check_PC'] start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_PC start=2026-10-30T08:34:42Z
+[f1-lane] ct5b_merge_PC rc=0 end=2026-10-30T08:37:31Z
+[f1-lane] ct5b_nndump_PC start=2026-10-30T08:37:31Z
+[f1-lane] ct5b_nndump_PC rc=0 end=2026-10-30T08:40:08Z
+[f1-lane] ct5b_lateral_PC start=2026-10-30T08:40:08Z
+[f1-lane] ct5b_lateral_PC rc=0 end=2026-10-30T08:43:01Z
+[f1-lane] ct5b_check_PC start=2026-10-30T08:43:01Z
+[f1-lane] ct5b_check_PC rc=0 end=2026-10-30T08:45:01Z
+[f1-lane] lane=3 done end=2026-10-30T08:45:01Z
+[s5c] task=3 name=ct5b_a_lane3 rc=0 end=2026-10-30T08:45:08Z
+--- products
+/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps:
+total 6103924
+-rw-rw---- 1 josephrb josephrb   28494515 Oct 30 01:51 lat_ALL_bkg.npz
+-rw-rw---- 1 josephrb josephrb 1548311762 Oct 30 01:51 lat_ALL.npz
+-rw-rw---- 1 josephrb josephrb   14310842 Oct 30 01:46 lat_PA_bkg.npz
+-rw-rw---- 1 josephrb josephrb  799215024 Oct 30 01:46 lat_PA.npz
+-rw-rw---- 1 josephrb josephrb    8936843 Oct 30 01:44 lat_PB_bkg.npz
+-rw-rw---- 1 josephrb josephrb  478955123 Oct 30 01:44 lat_PB.npz
+-rw-rw---- 1 josephrb josephrb    5363360 Oct 30 01:42 lat_PC_bkg.npz
+-rw-rw---- 1 josephrb josephrb  270149780 Oct 30 01:42 lat_PC.npz
+-rw-rw---- 1 josephrb josephrb 1548311762 Oct 30 01:44 nn_ALL.npz
+-rw-rw---- 1 josephrb josephrb  799215024 Oct 30 01:41 nn_PA.npz
+-rw-rw---- 1 josephrb josephrb  478955123 Oct 30 01:40 nn_PB.npz
+-rw-rw---- 1 josephrb josephrb  270149780 Oct 30 01:39 nn_PC.npz
+
+/pscratch/sd/j/josephrb/fd-ct-5b-20261030/inputs:
+total 16
+-rw-rw---- 1 josephrb josephrb 3281 Oct 30 01:54 check_ALL.json
+-rw-rw---- 1 josephrb josephrb 2444 Oct 30 01:49 check_PA.json
+-rw-rw---- 1 josephrb josephrb 2401 Oct 30 01:46 check_PB.json
+-rw-rw---- 1 josephrb josephrb 2418 Oct 30 01:44 check_PC.json
+
+/pscratch/sd/j/josephrb/fd-ct-5b-20261030/merged:
+total 9455672
+-r--r----- 1 josephrb josephrb 4841279316 Oct 30 01:36 runEventLoopOmniFold_5D_ALL_zero.root
+-rw-rw---- 1 josephrb josephrb       3788 Oct 30 01:37 runEventLoopOmniFold_5D_ALL_zero.root.json
+-r--r----- 1 josephrb josephrb 2489987585 Oct 30 01:36 runEventLoopOmniFold_5D_PA_zero.root
+-rw-rw---- 1 josephrb josephrb       2364 Oct 30 01:37 runEventLoopOmniFold_5D_PA_zero.root.json
+-r--r----- 1 josephrb josephrb 1500873366 Oct 30 01:36 runEventLoopOmniFold_5D_PB_zero.root
+-rw-rw---- 1 josephrb josephrb       1653 Oct 30 01:37 runEventLoopOmniFold_5D_PB_zero.root.json
+-r--r----- 1 josephrb josephrb  850424490 Oct 30 01:36 runEventLoopOmniFold_5D_PC_zero.root
+-rw-rw---- 1 josephrb josephrb       1652 Oct 30 01:37 runEventLoopOmniFold_5D_PC_zero.root.json
+
+/pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth:
+total 848
+-rw-rw---- 1 josephrb josephrb 224711 Oct 30 01:54 truth_ALL.npz
+-rw-rw---- 1 josephrb josephrb 217756 Oct 30 01:48 truth_PA.npz
+-rw-rw---- 1 josephrb josephrb 211952 Oct 30 01:46 truth_PB.npz
+-rw-rw---- 1 josephrb josephrb 204984 Oct 30 01:44 truth_PC.npz
+
+/pscratch/sd/j/josephrb/fd-ct-5b-20261030/unf/ALL:
+total 96
+-rw-rw---- 1 josephrb josephrb 95555 Oct 30 02:08 5b_ALL_b-_j-.npz

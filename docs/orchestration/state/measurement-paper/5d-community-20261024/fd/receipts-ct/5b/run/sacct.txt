@@ -1,0 +1,3 @@
+JobID|JobName|Submit|Start|End|State|ExitCode|ElapsedRaw|AllocTRES
+60537730|fd_ct_5b_inputs|2026-10-30T08:10:30|2026-10-30T08:34:19|2026-10-30T09:08:57|COMPLETED|0:0|2078|billing=256,cpu=256,energy=640597,mem=487802M,node=1
+60549044|fd_ct_5b_periods|2026-10-30T13:07:23|2026-10-30T13:13:32|2026-10-30T13:32:41|COMPLETED|0:0|1149|billing=256,cpu=256,energy=650282,mem=487802M,node=1

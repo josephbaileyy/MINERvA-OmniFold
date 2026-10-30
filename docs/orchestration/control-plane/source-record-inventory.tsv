@@ -22,7 +22,7 @@ OI-172	active	NOW	declared	34cbc55a78add5553db6137c4e9e78bf15cc3ee2d3e688754d412
 OI-171	retired	-	migration-carried-forward	fa3fffb13b0ba23bf4534d00733e5d26e522090b93bcd13a864f5478701da097	DISCHARGED
 OI-170	retired	-	migration-carried-forward	ec9a5a3a9e5401064563a01babd43ae69a6d85c51ec5f0f45978f6355707d010	DISCHARGED
 OI-162	retired	-	declared	9be1fcd1cf5e555e47885478b580441d457149b8048e727feee4c96196690608	RETIRED 2026-10-28 on the director's ruling — Joseph took the preferred option (DECISION-20260830-joseph-accept-forward-
-OI-160	active	NOW	declared	9954cd722471e4c7764f5f3a42d40bde13834d5c3f1548ac10de3c53c7347a0c	CLOSED FOR C_stat 2026-10-29 by Joseph's decision (#515), on the tolerance run that read CORRECTED for all three July pr
+OI-160	retired	-	declared	212ff206b51ea71b66c25069bbaad1e3588a3edec4a21e4e6f06285007a021da	CPU COUNT EXPLAINED 2026-10-30 (read-only, sacct metadata): the 5D replica arrays requested --cpus-per-task=16 as commit
 OI-161	retired	-	declared	913cace9e6bdf56cf4faa2cde151673b5a8d549092f6cfe78770c36732adb117	RETIRED 2026-10-28 by its owner, the close-items session — both hold comments now state the discharge (P2 at 2e8c214a, A
 OI-152	retired	-	declared	001d9ad6cf2e4b6941b91ef73d2d5b3e0d037fb61d4aa4fad6c84407da8b8a0b	RETIRED 2026-10-28 — the practice is written in docs/LOCAL_CHECKOUTS_AND_STORAGE.md (#471). See [RECORD-20261028-close-i
 OI-151	active	WAITING-JOSEPH	declared	aa81a3fa68deb4a4e6516b107d6d164df27c13d8ba16ea77c4fd3840a3e259a6	OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — (B) invert the laptop's codex-home links, or (C) acc

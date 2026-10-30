@@ -204,6 +204,8 @@ docs/orchestration/DECISION-20261029-joseph-oi160-tolerance-run.md	LIVE	open	""
 docs/orchestration/DECISION-20261029-joseph-register-rounds-reopen.md	LIVE	open	""
 docs/orchestration/DECISION-20261029-joseph-relax-b2-internal-ledger.md	LIVE	open	""
 docs/orchestration/DECISION-20261029-joseph-retention-archive-a1.md	LIVE	open	""
+docs/orchestration/DECISION-20261030-joseph-adopt-openai-review.md	LIVE	open	""
+docs/orchestration/DECISION-20261030-joseph-note-abstract-pairs.md	LIVE	open	""
 docs/orchestration/DECISION-20261030-joseph-r22-protected-gaps.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
@@ -267,6 +269,7 @@ docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	LI
 docs/orchestration/FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md	ARCHIVAL	terminal	
 docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
 docs/orchestration/FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md	LIVE	open	
+docs/orchestration/FINDING-20261030-close-items-5d-replica-cpu36-is-a-scheduler-raise.md	ARCHIVAL	terminal	""
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	terminal	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md	LIVE	open	
@@ -417,7 +420,7 @@ docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	LIVE	ope
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open	
 docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open	
 docs/orchestration/QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md	LIVE	open	
-docs/orchestration/QUESTION-20261028-trunk-stat-ml-replica-provenance.md	LIVE	open	""
+docs/orchestration/QUESTION-20261028-trunk-stat-ml-replica-provenance.md	ARCHIVAL	terminal	""
 docs/orchestration/R5-METER.md	LIVE	open	
 docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open	
 docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open	
@@ -465,6 +468,9 @@ docs/orchestration/RECORD-20261029-close-items-oi45-oi151.md	ARCHIVAL	terminal	"
 docs/orchestration/RECORD-20261029-close-items-oi53-claims-freeze.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-director-analysis-note-sync-2d94cbc5.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	LIVE	open	""
+docs/orchestration/RECORD-20261030-close-items-5d-budget-launcher-classification.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261030-close-items-oi160-closed.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261030-close-items-quarantine-receipt-anchored-patterns.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORDS-RULES.md	LIVE	open	""
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	LIVE	open	
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	LIVE	open	
@@ -798,9 +804,16 @@ docs/orchestration/state/2d-closeout/stageF/methods/r22/PROTECTED-CHOICES.md	LIV
 docs/orchestration/state/2d-closeout/stageF/methods/r22/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/RULES.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/STEP2-PLAN.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/openai-review/REVIEW.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/REVIEW-BRIEF.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/STEP2-NOTE-REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/WRITER-BRIEF.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/abstract-pairs.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/AGY-REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/TRIAGE-BRIEF.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-01-03.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-04-05.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-06-09.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/briefs/B01.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/briefs/B02.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/briefs/B03.md	LIVE	open	""
@@ -835,12 +848,6 @@ docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/ledger.md	LIVE	ope
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/review-B01-B05.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/review-B06-B10.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/review-B11-B15.md	LIVE	open	""
-docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/AGY-REPORT.md	LIVE	open	""
-docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/TRIAGE-BRIEF.md	LIVE	open	""
-docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-01-03.md	LIVE	open	""
-docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-04-05.md	LIVE	open	""
-docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-06-09.md	LIVE	open	""
-docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/STEP2-NOTE-REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/rater-calibration/NOTE-BASELINE.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/rater-calibration/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/re1/RE1-AMENDMENT-BINDING-F.md	LIVE	open	""
@@ -891,6 +898,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/CANDIDATES
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/RESULTS-LIST.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-2-20261027/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-20261027/REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-coverage-20261028/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/tex-reflow-20261026/REPORT.md	LIVE	open	""
@@ -945,7 +953,10 @@ docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-REPORT.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-BINDING.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-INPUTS.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-PRESERVE-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-5A-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-READERS-AMENDMENT-1.md	LIVE	open	""
@@ -1096,13 +1107,14 @@ docs/orchestration/state/next-preparation-20261009/xr-linux/REPORT.md	MACHINE	op
 docs/orchestration/state/next-preparation-20261009/xr-recovery/REPORT.md	MACHINE	open	""
 docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/REPORT.md	MACHINE	open	""
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
-docs/orchestration/state/oi160-cml-tolerance-20261029/BINDING.md	LIVE	open	""
-docs/orchestration/state/oi160-cml-tolerance-20261029/DECLARATION.md	LIVE	open	""
-docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	LIVE	open	""
-docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	LIVE	open	""
+docs/orchestration/state/oi160-cml-tolerance-20261029/BINDING.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-cml-tolerance-20261029/DECLARATION.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-cml-tolerance-20261029/REPORT.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-reproduction-20261029/BINDING.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-reproduction-20261029/DECLARATION.md	ARCHIVAL	terminal	""
 docs/orchestration/state/oi160-reproduction-20261029/REPORT.md	ARCHIVAL	terminal	""
-docs/orchestration/state/oi160-tolerance-20261029/BINDING.md	LIVE	open	""
-docs/orchestration/state/oi160-tolerance-20261029/DECLARATION.md	LIVE	open	""
+docs/orchestration/state/oi160-tolerance-20261029/BINDING.md	ARCHIVAL	terminal	""
+docs/orchestration/state/oi160-tolerance-20261029/DECLARATION.md	ARCHIVAL	terminal	""
 docs/orchestration/state/oi160-tolerance-20261029/REPORT.md	ARCHIVAL	terminal	""
 docs/orchestration/state/probe-z-consumer-inversion-20260910.py	MACHINE	open	
 docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	

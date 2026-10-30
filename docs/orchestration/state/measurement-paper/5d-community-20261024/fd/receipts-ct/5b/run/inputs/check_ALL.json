@@ -1,0 +1,120 @@
+{
+ "schema": "fd-ct-5b-inputs/1",
+ "period": "ALL",
+ "playlists": [
+  "1A",
+  "1B",
+  "1C",
+  "1D",
+  "1E",
+  "1F",
+  "1G",
+  "1L",
+  "1M",
+  "1N",
+  "1O",
+  "1P"
+ ],
+ "files": {
+  "merged": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/merged/runEventLoopOmniFold_5D_ALL_zero.root",
+   "d44966d21727ade9dc7e7dac9c8a9130c29311f37734fa56d89f3f3a12518e72"
+  ],
+  "flux": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/flux/runEventLoopMC_ALL.root",
+   "e3dc9e63bc8db07ab545cee6d8b227cdaa7f8249c657cc1a60119020dd6a86de"
+  ],
+  "nn_npz": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/nn_ALL.npz",
+   "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f"
+  ],
+  "lat_npz": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/lat_ALL.npz",
+   "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f"
+  ],
+  "lat_bkg": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/dumps/lat_ALL_bkg.npz",
+   "a52b8069e6b92eddcab003507dde67d1fb84c5cb5d6f4abe4f25680fcf37f1ef"
+  ],
+  "truth": [
+   "/pscratch/sd/j/josephrb/fd-ct-5b-20261030/truth/truth_ALL.npz",
+   "92955b72d9ab1585b9e6f2054ee26cdd85ee1f9d8977089af6fd6f5ea6ae2348"
+  ]
+ },
+ "nn_npz_equals_lat_npz": {
+  "axes": true,
+  "MCgen": true,
+  "MCreco": true,
+  "measured": true,
+  "pass_reco": true,
+  "pass_truth": true,
+  "w_truth": true,
+  "w_reco": true,
+  "measured_weights": true,
+  "denom_nd": true,
+  "flux": true,
+  "data_pot": true,
+  "n_nucleons": true,
+  "edges_0": true,
+  "edges_1": true,
+  "edges_2": true,
+  "edges_3": true,
+  "edges_4": true,
+  "nedges": true,
+  "_key_sets_equal": true
+ },
+ "nn_npz_bytes_equal_lat_npz": true,
+ "bkg_reco_dtype": "float64",
+ "data_pot_checks": {
+  "npz_over_merge_minus_1": 0.0,
+  "flux_weighting_over_merge_minus_1": 0.0
+ },
+ "pot_rel_tolerance": 1e-12,
+ "flux_rel_spread_over_pt": 2.220446049250313e-16,
+ "flux_constant_over_pt": true,
+ "data_pot": 1.057394261158926e+21,
+ "all_vs_mp1_zero": {
+  "lat_npz": {
+   "axes": true,
+   "MCgen": true,
+   "MCreco": true,
+   "measured": true,
+   "pass_reco": true,
+   "pass_truth": true,
+   "w_truth": true,
+   "w_reco": true,
+   "measured_weights": true,
+   "denom_nd": true,
+   "flux": true,
+   "data_pot": true,
+   "n_nucleons": true,
+   "edges_0": true,
+   "edges_1": true,
+   "edges_2": true,
+   "edges_3": true,
+   "edges_4": true,
+   "nedges": true,
+   "_key_sets_equal": true
+  },
+  "lat_bkg": {
+   "bkg_reco": true,
+   "bkg_w": true,
+   "bkg_nd": true,
+   "_key_sets_equal": true
+  },
+  "lat_npz_bytes_equal": true,
+  "mp1_sha256": {
+   "lat_npz": "6ca02c3d8b09dfd168b5184c03d433a7bd65749f5f6fc4cefecdbed7b6ce052f",
+   "lat_bkg": "f09727d04521f77ba101a51eb77f6182305baaad8a342dc59b7a3d86cf37ea66"
+  }
+ },
+ "code_sha256": {
+  "fd_ct_period_inputs.py": "4d005f265ea6abf4ee7cfec988fe7c06553556ca7984387929f77409dfc244b1",
+  "hadd_universes_full.py": "cfa457cb8e979db4df3e6c088c2b89a6e7a107b25763cdc2b05200d6fe720da0",
+  "nn_dump_inputs.py": "6e8061f836e9ac941f24ca518907c1c94efe772e9d92cf29eeeb940062c8b685",
+  "s5p_input_dumps.py": "7e925087b45b99dd94b75e45a09b5ef6dca826f594c86307c6c7d09f15058807",
+  "s5p_mc_truth_pred.py": "e4518d0a75c82c7c232ec079e715d47a64111222e15fa60ac9d1ecec9265ddb5",
+  "s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185"
+ },
+ "seconds": 157.2
+}
