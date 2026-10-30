@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s abstract uses complete, explicit clauses for the generator comparisons, avoiding B’s awkward compression, “and GiBUU, on 8 cells, 58.”
+2. A integrates the companion note’s citation convention more smoothly, avoiding B’s appended “and it is cited below by section.”
+3. A’s limitations introduction flows more naturally than B’s self-referential “is stated only here,” although the manuscripts otherwise have nearly identical language and register.

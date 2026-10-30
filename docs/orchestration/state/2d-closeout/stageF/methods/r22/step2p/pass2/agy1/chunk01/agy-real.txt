@@ -1,0 +1,18 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states more strongly that the findings "apply to" the implementation and data set rather than stating they "are those of" them, and it drops the numerical limiter "one" from "one OmniFold implementation on one data set".
+
+Q2: VERDICT: SAME
+DETAIL: AFTER turns the final independent clause into a parenthetical modifier without adding, dropping, or altering any facts, qualifiers, or meaning.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER rearranges the list of settings and places the citation directly after LightGBM without changing any parameters, numerical values, or facts.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER adds a definition and a numerical threshold not supported by BEFORE: "; the proxy is the median ratio of the absolute fractional residual to the fractional truth departure, for departures above \SI{1}{\percent}".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces a specific metric and direction ("has a median half-width above this target") that BEFORE does not state, where BEFORE only says that none "meets this target".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER broadens the scope and adds an unstated mechanism by replacing "its own consistency check" with "a consistency check that reuses those differences".
+END
