@@ -160,7 +160,7 @@ def source_oi_rows(path: Path) -> list[tuple[str, str, str]]:
     for line in path.read_text(encoding="utf-8").splitlines():
         match = re.match(r"^\|\s*(OI-\d+)\s*\|\s*(.*?)\s*\|", line)
         if match:
-            matches.append((match.group(1), match.group(2), line))
+            matches.append((match.group(1), state_cell(line), line))
     totals = Counter(item for item, _, _ in matches)
     seen: Counter[str] = Counter()
     records: list[tuple[str, str, str]] = []
@@ -234,6 +234,29 @@ def tracked_paths(candidates: set[str]) -> tuple[set[str], str | None]:
     if proc.returncode != 0:
         return set(), f"git ls-files rc={proc.returncode}"
     return {n for n in proc.stdout.decode("utf-8", "replace").split("\0") if n}, None
+
+
+def _load_split_pipe_row():
+    """`split_pipe_row` from `verify_open_items_restructure.py`, imported rather than copied, so this
+    lint and the seven-column gate split a row the same way. It is loaded by path, and imported
+    here rather than at the top, so that no line above `tracked_paths`'s `git ls-files` call moves:
+    the git census in `nd-unfolding/tests/test_mnv_guarded_run.py` cites that call as `:230`."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "verify_open_items_restructure", REPO / "docs/open-items/verify_open_items_restructure.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.split_pipe_row
+
+
+SPLIT_PIPE_ROW = _load_split_pipe_row()
+
+
+def state_cell(line: str) -> str:
+    """A row's second cell. An escaped `\\|` stays inside the cell instead of ending it. A row with
+    no closing `|` is given one, so a malformed row is read rather than raised on; its width is
+    gated by `check_open_items_columns.py`."""
+    return SPLIT_PIPE_ROW(line if line.endswith("|") else line + "|")[1]
 
 
 def _is_artifact_reference(value: str) -> bool:
@@ -808,6 +831,10 @@ def self_test() -> int:
         duplicate_fixture.write_text(
             "| OI-1 | OPEN | x | x | x |\n| OI-1 | CLOSED | x | x | x |\n"
             "| OI-2 | OPEN | x | x | x |\n")
+        # ---- An escaped pipe stays inside the state cell, and an unescaped one still ends it.
+        escaped_fixture = root / "OPEN_ITEMS-escaped.md"
+        escaped_fixture.write_text("| OI-1 | OPEN \\| still the state | x |\n| OI-2 | OPEN | x | x |\n")
+        escaped_states = [state for _, state, _ in source_oi_rows(escaped_fixture)]
         # ---- Prose is inert. The fixture cell is the REAL OI-126 state cell, taken from the
         # ---- producer rather than written to match a rule: 3,715 characters whose head says the
         # ---- row needs no ruling and which still contains "NEEDS JOSEPH'S RULING" further in.
@@ -967,6 +994,7 @@ def self_test() -> int:
                   len(active_pb) == 1, len(inactive_pb) == 1,
                   len(source_records) == 3, not unpromoted,
                   source_oi_records(duplicate_fixture) == ["OI-1#1", "OI-1#2", "OI-2"],
+                  escaped_states == ["OPEN \\| still the state", "OPEN"],
                   {(record.lifecycle, record.queue) for record in prose_variants}
                   == {("active", "WAITING-JOSEPH")},
                   len({record.row_sha256 for record in prose_variants}) == len(prose_variants),

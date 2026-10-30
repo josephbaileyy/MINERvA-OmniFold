@@ -8,9 +8,9 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-188 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh |
-| OI-148 | NOW | migration-carried-forward | WIRED 2026-10-30 by the close-items session, on Joseph's decision (item 2) — check_open_items_columns.py --check runs in |
+| OI-148 | NOW | migration-carried-forward | STEP 2 RETIRED AS MET 2026-10-30, on the director's ruling — control_plane_lint.py runs in the same hook and CI as the w |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
-| OI-74 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-30 on the director's order — re-measured read-only: the canonical checkout is at 32e403b84 (2026-08 |
+| OI-74 | WAITING-JOSEPH | declared | FAST-FORWARD RUN STOPPED 2026-10-30 at STOP 26, and rolled back. The one bound run of ff.sh (afe92465) passed every prec |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
