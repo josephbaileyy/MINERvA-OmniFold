@@ -1,0 +1,51 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The run’s own log was not found."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: The extended account of missing logs, regenerated outputs, recorded configurations and numerical reproduction reads as a provenance audit rather than an account of the method and its limitations.
+   CHANGE: Consolidate this history into concise statements of the settings, reproducibility and limitations relevant to the reported results, retaining disclosures that affect their interpretation.
+   SHARE: 26%
+
+2. QUOTE: "Studies in this note labeled exact-split use the exact-split central value (the quoted 2D central value until 2026-10-11) and have not been recomputed."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Repeated accounts of which configuration formerly supplied which result make the reader reconstruct the document’s development history.
+   CHANGE: Give the final configuration-to-result mapping once in a consolidated table, with concise explanations of consequential differences and explicit identification of studies using other configurations.
+   SHARE: 19%
+
+3. QUOTE: "The unbinned unfold has no response-matrix under/overflow to track; reporting bins are applied once to events that all lie inside the grids."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Repeated assurances about binning, acceptance, completeness and efficiency correction give otherwise useful methodological explanations an insistent tone.
+   CHANGE: Explain each distinction fully where it is established, then retain only the brief reminders needed to understand subsequent operations.
+   SHARE: 15%
+
+4. QUOTE: "Our prior already describes the data shapes well (§2.5); the data pull is dominantly a normalization."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Expressions such as “data pull,” “statistical block,” “banks” and the recurring noun “unfold” give parts of the prose the shorthand register of an analysis discussion.
+   CHANGE: Replace informal shorthand with explicit descriptions of the distributions, uncertainty components, simulation samples and unfolding results, defining specialized operational terms where retaining them helps.
+   SHARE: 12%
+
+5. QUOTE: "The quoted 2D central value and all of its uncertainty ensembles (the systematic-universe sweep, the Poisson bootstrap, the training-seed block and the run-period unfolds) use LightGBM with 100 trees, 8 leaves and learning rate 0.1, with the same settings for the step-1 classifier, the step-2 classifier and the miss regressor."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Several sentences combine result identification, ensemble membership, settings and qualifications into structures whose main assertion is difficult to retain.
+   CHANGE: Separate the main methodological statement from its settings and scope, placing parallel configuration details in the existing table where appropriate.
+   SHARE: 10%
+
+6. QUOTE: "At the sub-percent genuine-background scale, a per-reco-bin weight is a conservative middle ground."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Evaluative expressions such as “conservative middle ground,” “far faster” and “badly biased” sometimes substitute advocacy or emphasis for a precisely bounded statement.
+   CHANGE: State the methodological rationale or observed comparison directly, with its applicable conditions, and remove evaluative wording that adds no specific meaning.
+   SHARE: 8%
+
+7. QUOTE: "These are the flux-and-CV and GENIE dial weights, the low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Some experiment-specific abbreviations and labels are introduced with less explanation than the references generally provide, particularly CV, PPFX, FHC and PET.
+   CHANGE: Expand or briefly explain these terms at their first use unless already defined earlier in the note, and replace opaque combinations such as “flux-and-CV” with an explicit description.
+   SHARE: 6%
+
+8. QUOTE: "with a passing fit (isMinosMatchTrack==1 && minos_trk_is_ok==1)"
+   SCOPE: this passage
+   PROBLEM: The selection description inserts raw implementation flags where the reader needs the physical or reconstruction requirement, and “passing fit” does not explain that requirement.
+   CHANGE: Describe the accepted match and track-fit status in prose, retaining the exact flag expressions in the implementation documentation if needed for reproduction.
+   SHARE: 4%
+
+ENOUGH: Yes; these changes, applied throughout while preserving the necessary specialist detail, methodological qualifications and consequential disclosures, would bring chapter.txt to 4, with only minor line-editing lapses remaining.

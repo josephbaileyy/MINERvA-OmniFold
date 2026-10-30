@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and often precise, but repeated qualifications, internal bookkeeping, and procedural narration give several sections the register of an internal validation note, requiring a dedicated language pass.
+1. QUOTE: "The section gives the design, the six conditions of the declared model in the words of the test specification (§11.4), the decisions (§11.5; lost pseudo-experiments: §11.6) and the later sensitivity studies, with their numbers. Reference [52] gives the specification and the decisions, and each later study’s own reference is cited where the study is described."
+   REWRITE: We describe the test design, the six conditions defining the model (§11.4), the decisions (§11.5), the recovery of incomplete pseudo-experiments (§11.6), and subsequent sensitivity studies. The specification and decisions are documented in Ref. [52]; references for the sensitivity studies accompany their descriptions.
+2. QUOTE: "The recovered draws were evaluated in two readings: with the variant shifts of the primary
+evaluation, and with the shift recomputed on all draws. The scope of the recovery’s checks is narrower
+than that of the main recomputation:
+• its independent cross-check (856 of 856 quantities) covers only the first reading;
+• the second reading was reproduced only by a standalone rerun of the same code, a consistency
+check rather than an independent recomputation;
+• the earlier-stop decisions rest on the calibration run’s own re-application of the sequential rule,
+with no independent check."
+   REWRITE: The recovered draws were evaluated using both the original variant shifts and shifts recomputed from all draws. An independent calculation reproduced all 856 quantities checked using the original shifts. Results obtained with recomputed shifts were reproduced by rerunning the same code, without an independent implementation. The earlier stopping points were determined by reapplying the sequential rule within the calibration code and were not independently verified.
+3. QUOTE: "For GiBUU, the sampling-closure check failed on the hydrogen sample. A
+post hoc bias check of that check’s premise, declared before it was computed, met its criterion
+of at most 0.1 σc in every cell, moving the CH prediction by at most 5.1 × 10−4 σc . Here σc is
+the standard deviation of the cell’s result over NuWro’s null distribution used for the decisions
+(B = 1751). The GiBUU re-evaluation is reported under the label “B3 (sampling closure) failed
+on hydrogen; a post-hoc bias check of its premise passed at ≤ 0.1 σc ”."
+   REWRITE: The GiBUU hydrogen sample failed the sampling-closure check. A subsequent assessment of the bias associated with the check’s underlying assumption was specified before calculation. It satisfied the criterion of at most 0.1 σc in every cell, with a maximum change in the CH prediction of 5.1 × 10−4 σc. Here σc denotes the cell’s standard deviation in the NuWro null ensemble used for the decisions (B = 1751). The GiBUU re-evaluation therefore retains the qualification that sampling closure failed, although the subsequent bias assessment satisfied its criterion.

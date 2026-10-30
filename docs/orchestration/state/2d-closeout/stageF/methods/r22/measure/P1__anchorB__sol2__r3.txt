@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: The prose largely follows PRD conventions, but recurring wordiness, repetitive comparisons, conversational evaluations, and commentary about the paper’s organization warrant a dedicated language pass.
+1. QUOTE: "There are some new models on the market which
+may be able to alleviate some of the tensions we see."
+   REWRITE: Several recently developed models may reduce these discrepancies.
+2. QUOTE: "Turning these modifications
+on and off is a major part of the discussion later in the
+paper."
+   REWRITE: We compare predictions with and without these modifications to assess their effects on agreement with the data.
+3. QUOTE: "As a best fit though, this
+model still fails to accurately produce the cross section
+shapes seen in the data across the full range of pT and
+p|| and does a worse job at predicting the overall normalization than other models and tunes."
+   REWRITE: Although this model yields the lowest χ2, it does not reproduce the measured cross-section shapes across the full ranges of pT and p|| and predicts the overall normalization less accurately than other models and tunes.

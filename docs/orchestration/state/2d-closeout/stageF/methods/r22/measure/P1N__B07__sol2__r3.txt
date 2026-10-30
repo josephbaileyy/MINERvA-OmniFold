@@ -1,0 +1,12 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate to a detailed technical companion, but recurring procedural bookkeeping, nonstandard shorthand, and awkwardly qualified sentences warrant a dedicated language pass.
+1. QUOTE: "The event-loop output files also store truth hadronic
+diagnostics: the proton and pion multiplicities and the leading-hadron angle."
+   REWRITE: The truth-level hadronic quantities retained for diagnostic studies are the proton and pion multiplicities and the leading-hadron angle.
+2. QUOTE: "The response-mismatch closure of Appendix D is
+designed to test whether an incorrect hadronic response can move strength into or out of the low-W
+component. It has not yet produced a result."
+   REWRITE: The closure test described in Appendix D evaluates whether mismodeling the hadronic response can redistribute strength into or out of the low-W component. Results from this test are not yet available.
+3. QUOTE: "With the
+flux repaired, the corner therefore has no distinct deficit for any of the four generators."
+   REWRITE: After accounting for differences in flux coverage, none of the four generators shows a shortfall specific to the high-Eavail, high-W region.

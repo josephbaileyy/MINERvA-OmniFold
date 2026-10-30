@@ -1,0 +1,15 @@
+RATING: 3
+JUSTIFICATION: Much of the prose is direct and technically appropriate, but extensive run-history bookkeeping, internal configuration terminology, and repetitive qualifications require a dedicated language pass.
+1. QUOTE: "The quoted
+central value records its run configuration; it repeats to 9 × 10−12 and equals the refined 2D data
+unfold of App. C.6 to 7 × 10−12 . The purity-subtracted seed-42 central value has no recorded run
+configuration. An independent rerun reproduces it to 1.4 × 10−11 , and so does a regeneration whose
+run configuration is recorded (Ref. [37], R1.12)."
+   REWRITE: The quoted central value has a documented run configuration, is reproducible to 9 × 10−12, and agrees with the refined 2D result in App. C.6 to 7 × 10−12. Although the original run configuration for the purity-subtracted seed-42 result was not recorded, two independent reruns reproduce it to 1.4 × 10−11; one has a documented configuration (Ref. [37], R1.12).
+2. QUOTE: "Its seed was not fixed: the driver version it ran
+had no seed option, and its production job script passed no seed. The run’s own log was not found.
+Two driver revisions regenerate it to 7 × 10−15 ."
+   REWRITE: The original calculation used an unspecified random seed: the driver provided no seed option, and the job script supplied none. Although the original run log is unavailable, two driver versions reproduce the result to 7 × 10−15.
+3. QUOTE: "Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of
+the two costed ways to give the central value and the statistical band a common seed."
+   REWRITE: Seed 42 was selected to give the central value and statistical uncertainty ensemble a common estimator seed at the lower of the two computational costs evaluated.

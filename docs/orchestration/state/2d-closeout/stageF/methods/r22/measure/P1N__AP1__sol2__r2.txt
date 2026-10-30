@@ -1,0 +1,15 @@
+RATING: 4
+JUSTIFICATION: The prose largely matches the register of a detailed particle-physics technical paper, with occasional colloquial descriptions, vague procedural wording, and project-internal commentary that would benefit from light line editing.
+1. QUOTE: "The solidly unresponsive channels mentioned in section 2.4 are
+also flagged as bad. A total of 133 channels are flagged as bad or noisy. The data for these channels
+are prepared like any others, but downstream processing such as deconvolution or track finding may
+choose to ignore these channels or treat them in a special manner."
+   REWRITE: Channels with no response (section 2.4) are also classified as bad. In total, 133 channels are classified as bad or noisy. These channels undergo the standard data preparation; subsequent processing stages, including deconvolution and track finding, may exclude them or process them separately.
+2. QUOTE: "In addition, to further reduce the noise
+contamination and improve the charge resolution, a technique for identifying the signal regions
+of interest (SROI) is adopted and adjusted accordingly."
+   REWRITE: Signal regions of interest (SROIs) are identified to reduce noise contamination and improve charge resolution.
+3. QUOTE: "A suite of tools has been produced
+for ProtoDUNE-SP analysers to easily access this hierarchical information in order to perform the
+analyses."
+   REWRITE: Software tools provide access to the reconstructed particle hierarchies for use in ProtoDUNE-SP analyses.

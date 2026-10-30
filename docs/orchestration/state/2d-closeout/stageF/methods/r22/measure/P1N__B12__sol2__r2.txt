@@ -1,0 +1,18 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and often precise, but recurring development history, internal labels, repetitive caveats, and informal or defensive phrasing require a dedicated language pass to reach well-edited PRD register.
+1. QUOTE: "That check could not detect that the Flux
+band omitted those constraint weights, because it filled the MnvH1D without MAT’s per-universe
+weights (SetUnivWgts), so both sides were unweighted; it also ran on a sweep from before the flux
+fix, not on a quoted product."
+   REWRITE: The earlier comparison used a systematic ensemble predating the flux correction and omitted MAT’s per-universe constraint weights (SetUnivWgts) from both covariance calculations. It therefore tested agreement between the unweighted calculations but did not validate the Flux band used in the reported results.
+2. QUOTE: "Each method spans roughly two decades of χ2 /205 across a two-decade scan of its knob, with no
+defensible single cutoff. The useful conclusion is diagnostic, not a number: the naive inverse is
+dominated by tiny, poorly-determined modes, and in the retained high-variance modes the centralvalue difference is not large. We therefore report direct per-bin pulls (§A.3.3) and this scan rather
+than a single unqualified ours-only χ2 ."
+   REWRITE: For each method, varying the regularization parameter over two orders of magnitude changes χ²/205 by roughly two orders of magnitude, providing no stable choice of parameter. The unregularized inverse is dominated by modes with small, poorly determined eigenvalues; the differences between central values are modest in the retained modes with larger eigenvalues. We therefore report per-bin pulls (§A.3.3) and the regularization scan without assigning a single χ² value based solely on the OmniFold covariance.
+3. QUOTE: "(ii) The GBDT estimator carries
+a ∼ 1-unit band: the exact-split cross-check (3.66) is the outlier, while both histogram-binned
+backends agree at 2.65–2.70 (HistGBT is a 10-seed mean, range 2.63–2.74; the ±0.04 ML-seed
+jitter is ∼ 25× smaller than the 0.96 exact→hist gap, so that gap is genuinely the estimator, not
+seed noise)."
+   REWRITE: (ii) The choice of GBDT estimator changes χ²/ndf by approximately one unit: the exact-split estimator gives 3.66, whereas the two histogram-based estimators give 2.65–2.70. For HistGBT, the mean over ten training seeds is 2.70, with a range of 2.63–2.74. The training-seed variation of ±0.04 is approximately 25 times smaller than the 0.96 difference between the exact-split and HistGBT results, indicating that the difference primarily reflects the estimator choice.

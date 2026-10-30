@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: The chapter largely uses conventional particle-physics prose, but recurrent wordiness, awkward syntax, stacked qualifications, and occasional development-oriented commentary warrant a dedicated language pass.
+1. QUOTE: "The first point above may be explained by a combination of potentially using an incorrect value for
+the argon ion drift velocity, which is not well known in liquid argon, and the possibility of liquid
+argon flow (not included in simulation) moving the argon ions around in the TPC in addition to their
+nominal drift in the applied electric field."
+   REWRITE: The larger spatial distortions in data may reflect uncertainty in the argon ion drift velocity and ion transport by liquid argon flow, which is not included in the simulation.
+2. QUOTE: "To avoid the space charge effect distortions on the location of a TPC hit, the CRT track is
+used to determine the hit’s position in X and Y as a function of Z, which is found through which
+collection plane wire the hit occurred."
+   REWRITE: To avoid positional distortions from space charge, the hit coordinates X and Y are inferred from the CRT track at the Z coordinate determined by the collection-plane wire.
+3. QUOTE: "This results demonstrates an
+understanding of the 𝑑𝐸/𝑑𝑥 metric for electrons that would be a valuable input for future analyses."
+   REWRITE: These results characterize the electron 𝑑𝐸/𝑑𝑥 response for use in future analyses.

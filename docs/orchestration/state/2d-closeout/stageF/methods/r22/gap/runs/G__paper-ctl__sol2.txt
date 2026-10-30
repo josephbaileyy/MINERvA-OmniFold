@@ -1,0 +1,58 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "This paragraph was rewritten in round r17 after review ticket OI-131, and the earlier wording is kept in the project records."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Editorial history, project-status language, and informal rerun commentary belong to internal records rather than the published argument.
+   CHANGE: Delete the revision-ticket sentence, the z2m/tier-S/FIVED16 sentence, the “just to be safe” rerun sentence, and the announcement that a limitation is stated “only here,” retaining any necessary methodological information in direct scientific prose.
+   SHARE: 18%
+2. QUOTE: "Interval coverage has not been validated."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Repeated declarations about unvalidated coverage, uncalibrated bounds, and restricted interpretations give substantial portions of the manuscript a defensive, qualification-dominated register.
+   CHANGE: State each distinct limitation clearly where it qualifies the relevant result, consolidate overlapping qualifications, and retain only brief reminders where readers could otherwise misinterpret a comparison.
+   SHARE: 16%
+3. QUOTE: "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Repeated references to earlier estimators, development variants, earlier covariances, and selection history make the exposition follow the project’s evolution.
+   CHANGE: Organize the account around the final estimators and the purpose of each reported test, retaining development history only where it affects interpretation and moving the remaining provenance to the companion note.
+   SHARE: 12%
+4. QUOTE: "The note’s calibrated tests reject hybrid nulls, conditionally on the simulation’s hadronic response."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Terms such as “hybrid nulls,” “joint-test estimator,” “residual proxy,” “exact-split,” and “ungraded” require readers to learn local analysis vocabulary beyond the terminology established in the reference papers.
+   CHANGE: Replace administrative labels with descriptive scientific terms where possible and define each necessary local term at first use, including what is tested, measured, or classified.
+   SHARE: 10%
+5. QUOTE: "but it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result, its fake-data tests and its comparison in Sec. V B."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Long sentences combine construction, exclusions, qualifications, and applicability, making their logical structure harder to follow than the usual exposition in the references.
+   CHANGE: Separate the definition of each quantity or procedure from its exclusions and applications, using shorter sentences with explicit subjects.
+   SHARE: 10%
+6. QUOTE: "A five-observable cross section with total uncertainties is reported separately from those reporting definitions: the joint-test estimator’s data result on 16 cells, R00–R15."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The succession of grids, fallback definitions, precision studies, and separately reported results obscures the hierarchy between the principal measurement and supporting studies.
+   CHANGE: Introduce the final sixteen-cell result and its estimator first, then explain the alternative partitions and precision study as supporting investigations with clearly stated purposes.
+   SHARE: 8%
+7. QUOTE: "A truth is listed when p < 0.01 or when a cell has |z| > 2."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Some symbols and abbreviations, including z, RMS, and PPFX, appear without an explicit first-use definition, while “stability” denotes different concepts in different sections.
+   CHANGE: Define the remaining symbols and abbreviations when introduced and distinguish sensitivity to input perturbations from the fraction of events reconstructed in their original cell.
+   SHARE: 6%
+8. QUOTE: "The others, which hold 0.47 % of the expected signal, stay in the total only."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Compressed expressions and uncertain referents leave readers to infer precisely which events, totals, normalizations, uncertainties, or comparisons a statement concerns.
+   CHANGE: Name the relevant quantity explicitly and replace phrases such as “stay in the total only,” “with its normalization kept,” “its own size,” and “the same pull” with precise descriptions.
+   SHARE: 7%
+9. QUOTE: "Three external generator predictions compared on all sixteen cells give χ2 of 109–272 for 16 degrees of freedom, and GiBUU, on 8 cells, 58."
+   SCOPE: this passage
+   PROBLEM: The abstract compresses the measurement definition, uncertainty description, and comparison results into overloaded or elliptical sentences.
+   CHANGE: Split the opening measurement sentence, describe the uncertainty as the median marginal relative uncertainty, and give the GiBUU comparison with an explicit χ2 value and number of degrees of freedom.
+   SHARE: 6%
+10. QUOTE: "The joint-test estimator is a deterministic LightGBM (fixed seeds, reproducible training), and the refinement classifier of the two-observable estimator is seeded at the estimator seed plus three."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Ancillary implementation details interrupt the explanation without consistently showing why readers need them at that point.
+   CHANGE: Consolidate essential classifier settings and reproducibility information in the methods table or companion note, keeping numerical detail in the main narrative when it explains a methodological choice or result.
+   SHARE: 4%
+11. QUOTE: "A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+   SCOPE: this passage
+   PROBLEM: The data-availability statement reads partly as a release-progress report, with package size and candidate status competing with the information needed to locate and use the materials.
+   CHANGE: State directly which materials are available, where they are available, what they reproduce, and which additional inputs are required, expressing any remaining availability limitation once.
+   SHARE: 3%
+ENOUGH: Yes—the changes above, applied throughout while preserving substantive qualifications and necessary reproducibility details, would bring the prose to 4 without requiring changes to the science or additional validation.

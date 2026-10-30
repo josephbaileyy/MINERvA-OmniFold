@@ -1,0 +1,63 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "This is a cross-configuration comparison: the 3D marginal is configuration (e), and the 2D result is configuration (f)."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Repeated configuration letters, learner identifiers and subtraction variants make the discussion read like project bookkeeping rather than a self-contained account of each comparison.
+   CHANGE: Consolidate the configuration definitions and figure assignments in a compact table, then identify the relevant methodological differences directly wherever they affect interpretation.
+   SHARE: 20%
+
+2. QUOTE: "In the metric of §5 (Eavail projection) the residual is 1.84 % vs 18.1 % injected (ratio 0.102) and is not graded, because no acceptance threshold fixed before the test is on record."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Expressions such as “not graded” and “on record,” together with descriptions of unused calculations and hypothetical corrections, introduce the register of an internal analysis audit.
+   CHANGE: State the reported result and its methodological limitation directly, and replace completion-status commentary and prospective covariance instructions with concise descriptions of the methods and limitations applicable to the results presented.
+   SHARE: 15%
+
+3. QUOTE: "No 4D uncertainty is reported."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Repeated declarations about unavailable covariance, restricted interpretation and what comparisons do not establish give the prose a defensive cadence beyond that of the references.
+   CHANGE: Consolidate each limitation with the result it qualifies, retaining brief reminders in independently readable captions but removing repetitions that add no further scope or consequence.
+   SHARE: 15%
+
+4. QUOTE: "No spectra were digitized or externally supplied."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Statements about execution history, sample repair and computing environment intermittently describe how the project was carried out rather than the procedure needed to understand or reproduce the reported prediction.
+   CHANGE: Present the final sample generation, flux correction and normalization procedures together, preserving relevant correction history and consequences while removing incidental execution and acquisition details.
+   SHARE: 12%
+
+5. QUOTE: "Nor is any ratio of the unified-throw to the block covariance."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Compound method labels and shorthand such as “unified-throw,” “scalar,” “catch bin” and “global OmniFold completeness” sometimes substitute for an immediately identifiable technical meaning.
+   CHANGE: Use standard descriptive terminology where possible and give each necessary analysis-specific term an explicit definition or a direct reference to its definition.
+   SHARE: 10%
+
+6. QUOTE: "We therefore do not claim that our definition matches “the published definition.”"
+   SCOPE: this passage
+   PROBLEM: The available-energy provenance discussion frames useful differences between conventions as a defense of the authors’ terminology and inherited choices.
+   CHANGE: Organize the passage around the adopted definition and its specific differences from the cited definitions, retaining the species contributions and mass convention while removing argumentative commentary about what the authors claim.
+   SHARE: 8%
+
+7. QUOTE: "The mode decomposition of central-value dσ/dEavail (per-bin mode count-fractions × bin value), overlaid with data, locates the largest positive gaps in the quasielastic–∆ dip, [0.10, 0.20) and [0.20, 0.40), while central values are much closer in the QE-dominated [0, 0.10) and [0.40, 1.50) regions."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Stacked modifiers, compressed computational descriptions and multiple findings within one sentence make some passages harder to parse than their technical content requires.
+   CHANGE: Separate the calculation from the observation, replace compressed noun strings with explicit verbal descriptions, and retain the numerical detail in shorter sentences.
+   SHARE: 7%
+
+8. QUOTE: "The primary methodological motivation is the absence of a practical analog of D’Agostini iterative Bayesian unfolding (IBU)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Some statements leave the object or scope of a comparison implicit, here without specifying the task for which a practical analog is unavailable.
+   CHANGE: Specify the relevant task, prediction, denominator or comparison range wherever the reader would otherwise have to infer it from surrounding material.
+   SHARE: 6%
+
+9. QUOTE: "On this injection the configuration-(a) estimator neither manufactures nor destroys the feature."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Figurative or conversational expressions such as “manufactures nor destroys,” “sitting low,” “layers” and “What q3 adds” interrupt the otherwise technical register.
+   CHANGE: Replace these expressions with literal descriptions of recovery, prediction differences, model components and the information supplied by an additional observable.
+   SHARE: 4%
+
+10. QUOTE: "Agreement in the populated bulk establishes that the configuration-(a) scalar result is not specific to its classifier family."
+    SCOPE: pattern: about 4 passages like it
+    PROBLEM: Categorical formulations such as “establishes,” “genuine” and “invisible in 2D” occasionally state a broader conclusion than the explicitly described comparison.
+    CHANGE: Attach the tested scope to each conclusion directly, describing agreement between the two tested classifier families or structure in the displayed projections without a categorical generalization followed by qualifications elsewhere.
+    SHARE: 3%
+
+ENOUGH: Yes; these changes, applied throughout, would bring the chapter to 4 while preserving the specialist detail, reproducibility information and substantive limitations appropriate to a long technical companion note.

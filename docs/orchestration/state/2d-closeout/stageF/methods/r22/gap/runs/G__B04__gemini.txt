@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The band was then rebuilt without this term."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The text adopts an internal development-log register that chronicles abandoned iterations and intermediate versions, whereas the reference chapters report only the final adopted methodology and its evaluated uncertainties.
+   CHANGE: Remove the narrative history of superseded versions and present only the construction, validation, and performance of the final quoted uncertainty ensemble.
+   SHARE: 20
+2. QUOTE: "A re-test on held-out simulation would separate the two explanations; it has not been run."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Documenting tests that were planned or implemented but never executed reflects lab-notebook record-keeping rather than the archival journal register of the reference chapters, which discuss only completed analyses.
+   CHANGE: Excise all mentions of unexecuted studies and untested follow-ups, limiting the text strictly to evaluations that were completed.
+   SHARE: 15
+3. QUOTE: "The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Recording protocol amendments, rule-drafting timelines, and internal oversight details resembles a bureaucratic compliance audit rather than the objective technical prose of the reference chapters.
+   CHANGE: Replace the narrative of procedural timing and protocol revisions with a direct, neutral definition of the systematic attribution criteria.
+   SHARE: 15
+4. QUOTE: "It changes no central value or quoted uncertainty."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Formatting sections around bulleted disclaimers of what an analysis does not claim or alter departs from the direct, positive definition of scope seen in the reference chapters.
+   CHANGE: State the operational scope and applicability of the statistical validation directly in flowing prose rather than compiling disclaimers into bullet points.
+   SHARE: 10
+5. QUOTE: "A closure test is only as informative as what it changes: an ordinary closure, whose pseudo-data are the simulation itself, is an identity check that a constant estimator would pass."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The passage lapses into an argumentative, pedagogical tone lecturing on validation philosophy, whereas the reference chapters articulate their methodological rationale through neutral, objective statements.
+   CHANGE: Recast the philosophical maxim into an objective technical statement specifying what physical variations the closure tests evaluate.
+   SHARE: 10
+6. QUOTE: "Why injected bumps close while generator-shaped tests do not."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Employing conversational, argumentative headings and defensive parenthetical disclaimers reads like an internal debate memorandum rather than the formal, topical headings standard in PRD.
+   CHANGE: Replace conversational and defensive headings with concise, topical noun phrases such as "Comparison of localized and model-dependent closure tests."
+   SHARE: 10
+7. QUOTE: "This is a limit of the available inputs, not a general impossibility result for 2D unfolding."
+   SCOPE: this passage
+   PROBLEM: The sentence introduces a defensive posture that anticipates and disputes an objection from an internal skeptic, which is foreign to the neutral tone of the reference chapters.
+   CHANGE: State the specific constraints imposed by the available simulation samples directly, omitting any polemical defense against hypothetical impossibility claims.
+   SHARE: 5
+8. QUOTE: "The band fails: it undercovers in its tails."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The abrupt, telegraphic announcement reads like an incident log or memo summary rather than a formal technical report of statistical performance.
+   CHANGE: Express the outcome in standard scientific prose stating that the evaluated coverage of the nominal 2σ interval falls below the expected window due to tail undercoverage.
+   SHARE: 5
+9. QUOTE: "An independent recomputation with its own code reproduces the pooled coverages, their intervals, the controls and the secondary analysis below."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Highlighting that another analyst's private code verified the calculation reflects internal collaboration audit-checking rather than the journal-level presentation of peer cross-checks shown in Reference 2.
+   CHANGE: Either present the recomputation as a distinct, formal cross-check analysis or omit the administrative mention of duplicate code bases.
+   SHARE: 5
+10. QUOTE: "Efficiency is diagnostic only; OmniFold’s miss treatment natively corrects acceptance (§3.1)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Captions and table entries are used to mount preemptive defenses and methodological disclaimers rather than to objectively describe the displayed data and conventions.
+   CHANGE: Confine captions and table entries to objective descriptions of the plotted variables, removing defensive editorial glosses.
+   SHARE: 5
+ENOUGH: Yes, making these ten changes in full would remove the audit-log, defensive, and memo-like features of the text, leaving only minor density lapses that are typical of a published PRD companion paper and thereby bringing chapter.txt to a rating of 4.

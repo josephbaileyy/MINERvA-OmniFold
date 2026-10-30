@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but repeated qualifications, internal estimator labels, development history, and editorial bookkeeping create several sustained departures from PRD register that require a dedicated language pass.
+1. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of
+four of the sixteen cells is stated only here. The principal
+ones are these."
+   REWRITE: The principal limitations are summarized below, with further details in Secs. III–V and the companion note.
+2. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development."
+   REWRITE: Five iterations are used because increasing the iteration count to 10, 15, or 20 did not reduce the estimated model dependence, quantified by the maximum residual proxy across the truth deformations used to develop the estimator.
+3. QUOTE: "The note’s calibrated tests show
+the same pull: their null distributions for the external
+predictions are displaced upward by it, as the calibration
+reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: This bias also shifts the null distributions of the test statistics for the external predictions toward larger values; the calibration studies reproduce this shift (Ref. [14], Sec. 11.5).

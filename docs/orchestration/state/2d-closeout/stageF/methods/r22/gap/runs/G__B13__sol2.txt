@@ -1,0 +1,51 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "For the existing endpoint unfolds, produced in July 2026, purity is established by elimination from the job scripts and logs (Ref. [37], R1.17)."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Accounts of reconstructing production history, changing software defaults, and reopening internal decisions give substantial portions the register of an analysis audit.
+   CHANGE: State the method used for each reported result and any consequential provenance limitation directly, replacing the surrounding development narrative with a compact configuration description and references to supporting records.
+   SHARE: 23%
+
+2. QUOTE: "These are the comparisons of §C.4 and §C.5, with the operands of each ratio given."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Repeated numerical comparisons, configuration assignments, and summaries of earlier conclusions make the appendix read as successive updates rather than a consolidated technical account.
+   CHANGE: Give each comparison and configuration assignment one authoritative presentation, retaining later repetitions only when they introduce a distinct inference or necessary qualification.
+   SHARE: 18%
+
+3. QUOTE: "Neither fact follows from this appendix, and the appendix relies on neither."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Repeated statements about what the appendix establishes, changes, requires, or does not certify interrupt the argument with defensive metacommentary.
+   CHANGE: Attach each substantive limitation once to the result it qualifies and remove the surrounding commentary about the appendix’s authority, dependencies, and administrative consequences.
+   SHARE: 15%
+
+4. QUOTE: "It comes from the extended-fiducial ME FHC battery of 2026-06-10."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Terms such as “battery,” “revisit,” “supported production path,” and “validation ledger” assume familiarity with the project’s internal vocabulary.
+   CHANGE: Replace administrative shorthand with descriptions of the samples, calculations, comparisons, or outstanding assessments, and provide one clear mapping for configuration identifiers and record labels that remain necessary.
+   SHARE: 12%
+
+5. QUOTE: "The treatment must be chosen for the covariance and inverse actually used, from the quantities that declaration (v) records."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Reporting mandates and references to numbered declarations sound like instructions to analysts rather than an account of statistical methods.
+   CHANGE: Express these passages as definitions, applicability conditions, and stated reporting conventions, preserving the technical requirements without the compliance-oriented voice.
+   SHARE: 10%
+
+6. QUOTE: "The interval diagnostic of the development assessment uses σf , the sample SD of 100 refitted bootstrap replicas of nominal development experiment 700000."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Nested modifiers and compressed combinations of assessment labels, estimator details, and sample identifiers obscure the main procedural statement.
+   CHANGE: Unpack these sentences into the diagnostic’s purpose, the quantity calculated, and the sample used, placing identifiers and secondary qualifications after the main statement.
+   SHARE: 9%
+
+7. QUOTE: "A lateral-band block built with negative-weight subtraction, inserted into a central and vertical set built with purity subtraction, is a mismatch, not an upgrade."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Polemical contrasts and expressions such as “cheapest estimate,” “yardsticks,” and “the choice is safe” introduce conversational or evaluative rhetoric beyond the references’ predominantly descriptive register.
+   CHANGE: Replace these expressions with neutral statements of consistency, computational requirements, comparison scales, and the specific behavior observed.
+   SHARE: 7%
+
+8. QUOTE: "Same-ensemble 68.9 % (⟨|r|⟩ ≈ 0.79) remains a pull/Gaussianity diagnostic."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Elliptical constructions leave the reader to supply the quantity being reported or the precise meaning of the diagnostic.
+   CHANGE: Name the fraction, ensemble, or comparison explicitly and replace compressed slash constructions and unexplained verdicts with complete statements of what was assessed.
+   SHARE: 6%
+
+ENOUGH: Yes; applying these changes throughout would bring the chapter to 4 while retaining its specialist detail, derivations, reproducibility information, and substantive limitations.

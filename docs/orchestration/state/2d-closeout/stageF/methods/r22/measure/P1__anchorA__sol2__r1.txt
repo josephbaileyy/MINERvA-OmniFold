@@ -1,0 +1,18 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally clear and uses conventional terminology, but recurring conversational phrasing, repetitive explanations, and procedural narration warrant a dedicated language pass.
+1. QUOTE: "Truth-level info for the
+fake data is not used during the unfolding procedures,
+but it is brought in for evaluation of the performance
+of each method in the final stage."
+   REWRITE: Truth-level information for the mock data is used only to evaluate the performance of each unfolding method.
+2. QUOTE: "After 45 iterations, we see the
+distribution is centered around 0 with not much of a
+tail. This suggests the unfolding procedure is mostly
+done at this point, which is also consistent with the
+behavior of the χ2 curves shown in Fig. 4."
+   REWRITE: After 45 iterations, the distribution is centered near zero and has small tails, suggesting approximate convergence consistent with the χ2 curves in Fig. 4.
+3. QUOTE: "From a practical perspective, an analyzer who knows the observables they will be interested
+in will usually want to include this information as direct
+input to the procedure anyway, sidestepping this problem, but this calls for caution when attempting to unfold
+arbitrarily complicated derived quantities from simple inputs."
+   REWRITE: When the observables of interest are known in advance, including them directly as classifier inputs can improve performance. Unfolding complex derived observables from basic kinematic inputs requires care.

@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but repeated caveats, colloquial formulations, and extensive narration of superseded checks give several sections the register of an internal analysis note requiring a dedicated language pass.
+
+1. QUOTE: "That check could not detect that the Flux
+band omitted those constraint weights, because it filled the MnvH1D without MAT’s per-universe
+weights (SetUnivWgts), so both sides were unweighted; it also ran on a sweep from before the flux
+fix, not on a quoted product."
+   REWRITE: The earlier comparison could not detect the omitted flux constraint weights because both calculations used unweighted universes: MAT’s per-universe weights were not supplied through SetUnivWgts. It also used an ensemble generated before the flux correction rather than the ensemble used for the reported results.
+
+2. QUOTE: "Each method spans roughly two decades of χ2 /205 across a two-decade scan of its knob, with no
+defensible single cutoff. The useful conclusion is diagnostic, not a number: the naive inverse is
+dominated by tiny, poorly-determined modes, and in the retained high-variance modes the centralvalue difference is not large."
+   REWRITE: For each method, χ2 /205 varies by approximately two orders of magnitude over the regularization scan, with no stable parameter choice. The scan indicates that poorly determined modes with small eigenvalues dominate the unregularized inverse, whereas the central values differ little in the retained modes with larger variances.
+
+3. QUOTE: "Same-ensemble 68.71% (§5.3) checks Gaussianity; it does not certify Cstat at the half-percent
+level. The fixed-truth test (§5.2) found the diagonal of the first-built Cstat undercovering in
+its tails (C2 = 0.912, unevenly across bins); the band was rebuilt in response, and the rebuilt
+band has not been independently re-tested. The statistical block quoted here is a different
+ensemble and has not been tested either."
+   REWRITE: The same-ensemble result of 68.71% (§5.3) tests Gaussianity but does not establish the accuracy of Cstat at the half-percent level. The fixed-truth test (§5.2) found insufficient tail coverage for the initial statistical covariance, with C2 = 0.912 and coverage varying across bins. Neither the subsequently rebuilt covariance nor the covariance from the separate ensemble used for the reported statistical block has undergone an independent fixed-truth coverage test.

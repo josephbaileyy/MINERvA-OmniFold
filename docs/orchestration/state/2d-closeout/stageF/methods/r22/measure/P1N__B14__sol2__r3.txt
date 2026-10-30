@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically fluent, but repeated implementation restrictions, internal project terminology, and planning language give several paragraphs the register of an internal note and warrant a dedicated language pass.
+1. QUOTE: "The implementation runs only as a closure on pseudo-data and only on the
+five observables, and it cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted."
+   REWRITE: The diagnostic is restricted to five-dimensional pseudo-data closure tests without injected truth reweighting or bootstrapping. Its outputs are intended solely for validation and are excluded from the reported results.
+2. QUOTE: "The current scalar event-loop outputs lack the
+information for that recomputation, so this arm needs dedicated diagnostic output from the event
+loop. It is deferred unless the reconstruction-only test shows material bias or the collaboration asks
+for the stronger response model."
+   REWRITE: Recomputing these quantities requires low-level event information absent from the current scalar outputs. The correlated response study is therefore deferred pending evidence of material bias in the reconstruction-only test or a requirement for a more detailed response model.
+3. QUOTE: "The protocol requires both signs of ϵ, at an amplitude
+fixed before the results are examined. A documented hadronic-response variation or a quantified
+assumption should justify that amplitude; the inherited factor in reconstructed Eavail is not enough
+on its own."
+   REWRITE: Both signs of ϵ are to be tested with a common magnitude specified before examining the results. That magnitude must be justified by a documented hadronic-response variation or an explicit quantitative assumption; the existing rescaling of reconstructed Eavail does not itself provide this justification.

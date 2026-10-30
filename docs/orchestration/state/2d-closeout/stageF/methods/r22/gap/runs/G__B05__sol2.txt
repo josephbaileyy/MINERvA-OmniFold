@@ -1,0 +1,51 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "We therefore quote the per-bin pulls and the truncated result together, with a regularization scan made for the exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App. A.4)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Development history and the provenance of individual checks interrupt the account of the reported analysis, producing an internal review tone.
+   CHANGE: State the reported configuration and the applicability of each check directly, placing supporting chronology in the methods or appendix while preserving the limitation that the scan used a different covariance.
+   SHARE: 20%
+
+2. QUOTE: "The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram and its projections (hXSec2D, hXSec_pt, hXSec_pz), not the covariance of §4."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Software object names, file descriptions, processing dates and comments about plot construction substitute implementation bookkeeping for a reader-facing description.
+   CHANGE: Describe the uncertainty prescription and relevant analysis inputs in physical or statistical terms, retaining implementation identifiers only where needed for reproducibility and removing incidental production metadata.
+   SHARE: 15%
+
+3. QUOTE: "Neither map has the published data as its denominator; the direct comparison with the published data is the median bin ratio of Table 5 and the residual map of Fig. 8."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Repeated explanations of what comparisons do not contain or establish give the prose a corrective, defensive rhythm beyond what is needed to specify their scope.
+   CHANGE: Define each comparison and its statistical limitations once in the running discussion, retain concise qualifications needed to read captions independently, and remove subsequent restatements.
+   SHARE: 15%
+
+4. QUOTE: "With the purity-based subtraction, the choice of GBDT estimator spreads the distance over about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04, and LightGBM with seeds 1–10 gives 2.64–2.75."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Expressions such as distance and methodological band, together with compressed project-specific labels and compound descriptions, make the register less conventional and precise than the references.
+   CHANGE: Name the statistic being compared, explain what the range represents, and replace coined shorthand with conventional descriptions or a concise definition and cross-reference.
+   SHARE: 15%
+
+5. QUOTE: "The 10 smallest-λ modes carry 9.6 %, two of the five largest contributors lie in the smallest-λ tenth, and keeping the 73 best-measured directions gives 0.66."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Several numerical findings are compressed into a single sentence with omitted quantities, implicit denominators and rapidly changing comparison sets.
+   CHANGE: Identify what each percentage and reported value measures, state the normalization explicitly, and divide the numerical sequences into sentences organized around their interpretation without reducing the technical detail.
+   SHARE: 15%
+
+6. QUOTE: "The combined (published plus ours) χ2 /ndf = 0.929 double-counts the flux, GENIE and MINOS systematics that the two results share."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Bare labels such as ours and paper, used across prose, captions and tables, read as working comparison labels rather than stable names for the measurements and covariance matrices.
+   CHANGE: Use consistent labels such as this measurement, the published measurement and their explicitly identified covariance matrices, while retaining ordinary first-person constructions where natural.
+   SHARE: 8%
+
+7. QUOTE: "Our result (dashed) on top of the published data (black); MINERvA Tune v1 (orange) dips below in the peak."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Sentence fragments and conversational or figurative descriptions in captions and headings weaken the otherwise technical register.
+   CHANGE: Use complete descriptive captions that identify the plotted quantities and state the observed agreement or deficit directly, and give the covariance analysis a conventional descriptive heading.
+   SHARE: 8%
+
+8. QUOTE: "GENIE 2.12.6 [4] MINERvA Tune v1 under-predicts the total by ∼ 9 % (σtune /σdata = 0.91), concentrated in the low-pT peak."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Loose modifier attachment and elliptical explanatory phrases occasionally leave the grammatical relationship between a result and its interpretation unclear.
+   CHANGE: Make the deficit the explicit subject of the localization statement and repair comparable attachments and parenthetical explanations elsewhere.
+   SHARE: 4%
+
+ENOUGH: Yes; applying these changes throughout would bring the chapter to 4 while preserving its specialist detail, numerical results and necessary qualifications.

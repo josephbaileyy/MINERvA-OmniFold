@@ -1,0 +1,19 @@
+RATING: 3
+JUSTIFICATION: Much of the technical exposition is precise and appropriate for a long specialist supplement, but recurring internal bookkeeping, development-history narrative, colloquial judgments, and repetitive scope disclaimers require a dedicated language pass.
+1. QUOTE: "Here negative-weight injection is an equivalence study and the natural extended-fiducial treatment;
+this appendix establishes no supported production path and changes no default. The two covariance
+ratios are agreement diagnostics between two realizations of one subtraction, not quoted uncertainties.
+Two provenance limits apply to the production numbers: the driver revision that produced them is
+corroborated but not pinned, and no output records the job that produced them (Ref. [37], R1.7)."
+   REWRITE: This appendix evaluates the equivalence of the subtraction methods and their applicability to the extended-fiducial analysis; it does not validate a production implementation. The two covariance ratios quantify agreement between the methods and are not uncertainty estimates. The provenance of the numerical results is incomplete: the driver revision is corroborated but not uniquely established, and the outputs do not identify the generating jobs (Ref. [37], R1.7).
+2. QUOTE: "The standard chain uses purity by choice, on two grounds (Ref. [37], R1.8). First, mixing
+background treatments inside one covariance is worse than either consistent choice. A lateral-band
+block built with negative-weight subtraction, inserted into a central and vertical set built with purity
+subtraction, is a mismatch, not an upgrade. Second, switching would have meant rerunning every
+unfold above and would have invalidated the flux-corrected covariance just chosen for use. That
+consequence, not the computing cost, decided the choice."
+   REWRITE: The standard chain retains purity subtraction to ensure consistent background treatment across the central value and all covariance components (Ref. [37], R1.8). Adopting negative-weight subtraction would require repeating all constituent unfolds and rebuilding the selected flux-corrected covariance; replacing only the lateral-band component would introduce inconsistent background treatments.
+3. QUOTE: "Neither fact follows from this appendix, and the appendix relies on neither.
+The choice of background treatment settles one of the conditions for using a component; every other
+condition still applies."
+   REWRITE: The background-treatment comparison does not establish whether a covariance component satisfies the remaining requirements for use, discussed in §9.6.

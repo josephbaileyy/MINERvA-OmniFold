@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Truth W is the experimenter’s invariant mass W = M 2 + 2M (Eν − Eµ ) − Q2 , with struck-nucleon mass M (CVUniverse::GetTrueExperimentersW())."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Particle physics journal papers specify kinematic variables using formal mathematical definitions and detector observables rather than C++ class and function calls.
+   CHANGE: Remove all software method signatures and state kinematic definitions purely through mathematical relations and reconstruction criteria, as done in Sec. VI A of reference-1.
+   SHARE: 15
+2. QUOTE: "It has not yet produced a result."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Archival PRD papers report completed analyses and bounded systematic uncertainties rather than logging incomplete studies or work in progress.
+   CHANGE: Either complete the closure test to assign a definitive systematic uncertainty or remove the procedural disclaimer in favor of a bounded systematic error evaluation.
+   SHARE: 15
+3. QUOTE: "The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the leading-hadron angle."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Chronicling internal data-storage formats and tuple-writing routines reads like a software user manual or computing log rather than a physics report.
+   CHANGE: Eliminate mentions of event-loop output files and tuple storage, describing only the physical parameters extracted and their role in the analysis.
+   SHARE: 12
+4. QUOTE: "For GENIE with MEC, NuWro and GiBUU its effect is not reliably determined (Ref. [37], R1.18)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Referring to internal analysis labels, undocumented configuration letters, and collaboration review tags renders the prose opaque to outside readers.
+   CHANGE: Replace internal identifiers such as "configuration (a)" and "R1.18" with explicit descriptions of the corresponding analysis choices or formal literature citations.
+   SHARE: 12
+5. QUOTE: "The configuration-(a) five-dimensional unfolding in (pT , p∥ , Eavail , q3 , W ) passes the marginalization checks against the lower-dimensional results: integrating over W recovers the configuration-(a) 4D normalization to 0.11 % (5D/4D total = 1.0011), with median differences of 0.3 % to 1.5 % per axis, and dσ/dW is finite and non-negative in all six bins."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Stating that an unfolding algorithm passes internal consistency checks and produces non-negative numbers reads like software quality assurance notes rather than a formal validation study.
+   CHANGE: Recast the passage into a standard technical report of mathematical consistency and unfolding closure, stating numerical closure tolerances without pass/fail software terminology.
+   SHARE: 10
+6. QUOTE: "Where the excess lives in the (Eavail , W ) plane"
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Colloquial section headings and informal modeling jargon depart noticeably from the objective, formal technical register of PRD.
+   CHANGE: Replace colloquial expressions with standard technical terminology, revising the section title to describe the distribution of the excess in $(E_\mathrm{avail}, W)$ and replacing informal terms like "dials" and "flux-repaired" with "model parameters" and "flux-corrected".
+   SHARE: 10
+7. QUOTE: "These are central-value ratios; no compatibility metric based on the configuration-(a) covariance is quoted, for the reason given in §9.6, item 1 (comparison on the sixteen cells: §10.4)."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Deferring explanations to specific itemized list entries in other sections creates fragmented bookkeeping that disrupts technical readability.
+   CHANGE: State the substantive reason for omitting the covariance metric directly in the sentence, using section cross-references only to point to broader topics rather than specific list items.
+   SHARE: 8
+8. QUOTE: "The article distinguishes the five classifier inputs, the lower-dimensional support they populate, and the five reported observables."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Referring to the companion publication in the third person as "the article" creates an awkward meta-commentary that breaks the self-contained authority of the text.
+   CHANGE: Rephrase the sentences to describe the analysis directly or cite the primary paper using standard bibliographic reference syntax.
+   SHARE: 6
+9. QUOTE: "The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of §11, as run, do not correct."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Recording that executed tests fail to correct for target differences sounds like an interim status report rather than an established technical result.
+   CHANGE: Present the target-corrected results directly or define the target mismatch as an evaluated systematic uncertainty in the comparison.
+   SHARE: 6
+10. QUOTE: "A future significance for the location identified in the central-value map must account for any selection of the tested region using these data."
+    SCOPE: pattern: about 4 passages like it
+    PROBLEM: Defensive remarks regarding future statistical significance and compressed parenthetical notes read like internal referee rejoinders rather than neutral scientific documentation.
+    CHANGE: Convert defensive guidance into standard discussions of trial factors and look-elsewhere effects, expressing shorthand parentheticals in complete, grammatically integrated sentences.
+    SHARE: 6
+ENOUGH: Yes, implementing these changes in full would systematically eliminate the internal-report tone, code leaks, and defensive commentary, bringing the chapter to a solid rating of 4 consistent with a well-edited PRD technical companion.

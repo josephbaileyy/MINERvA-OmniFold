@@ -1,0 +1,48 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Because σi is estimated from the same toys that are scored, these figures are standardized-pull and Gaussianity diagnostics only: they do not certify the bootstrap band, and no coverage number is quoted from this ensemble."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Limitations appropriate to this technical supplement are repeatedly restated across introductory prose, tables, results and scope lists, giving the chapter a defensive rhythm.
+   CHANGE: Consolidate repeated qualifications about coverage, shared simulation, prior dependence and detector-response testing, and repeated closure summaries, while retaining each distinct limitation beside the result it qualifies.
+   SHARE: 20%
+2. QUOTE: "The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The cumulative narration of amendments, recorded rules, pilots and recomputations reads like an analysis audit trail rather than an organized account of methods and findings.
+   CHANGE: Present each analysis with its method, result and relevant qualification together, retaining whether a decision was prespecified or post hoc but removing administrative narration and internal record identifiers from the exposition.
+   SHARE: 16%
+3. QUOTE: "The quoted statistical block is a third, different ensemble, 300 replicas at the central value’s training seed (§4.2)."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: References to the earlier, rebuilt, superseded and quoted bands require readers to reconstruct a version history to identify the uncertainty estimate being discussed.
+   CHANGE: Give the three uncertainty ensembles concise, stable names based on their construction, define their relationship once, and use those names consistently instead of chronological or publication-relative descriptions.
+   SHARE: 14%
+4. QUOTE: "Three closure families were run on playlist 1A with LightGBM and five iterations (thresholds in parentheses)."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Project-specific labels and compressed terms such as playlist, CV, production event mapping and configuration (a) sometimes stand in for descriptions of the relevant sample or procedure.
+   CHANGE: Supply a concise definition or precise cross-reference for each necessary internal label and replace workflow shorthand with the corresponding sample, estimator, event-matching or uncertainty construction where the label adds no useful information.
+   SHARE: 12%
+5. QUOTE: "A post hoc diagnostic that bootstraps a single toy, under a decision rule recorded before it ran, is consistent with the closure toys scattering too little, because their pseudo-data are built on the training MC events, rather than with the data bootstrap scattering too much."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Several sentences interleave the procedure, its provenance, its interpretation and competing explanations, making their logical structure harder to follow than the specialist content requires.
+   CHANGE: Separate the diagnostic construction, observed behavior and interpretation into direct sentences, and place qualifications immediately after the particular claim they restrict.
+   SHARE: 10%
+6. QUOTE: "At five iterations the estimator retains part of the prior wherever the data pull weakly."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Conversational expressions such as data pulling weakly, bins coming out high, the same unfold and tests being scored produce recurrent departures from the references’ predominantly descriptive technical register.
+   CHANGE: Replace these expressions with explicit descriptions of weak constraints, positive or negative residuals, unfolding results and evaluation criteria, and recast rhetorical headings as descriptive headings where they reinforce this conversational tone.
+   SHARE: 9%
+7. QUOTE: "These closure tests validate the estimator; no non-closure uncertainty is assigned from them."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Broad formulations such as validating the estimator, removing the mismatch and finding no bias state a wider conclusion than the locally described diagnostic, leaving later caveats to restore its scope.
+   CHANGE: State each conclusion in terms of the tested deformations, measured discrimination or ensemble mean, incorporating its scope directly into the claim rather than relying on subsequent qualifications.
+   SHARE: 8%
+8. QUOTE: "A naive data-versus-prior χ2 with a statistical-only diagonal is larger at truth level than at reco level."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Evaluative wording, compressed noun phrases and occasional awkward parallelism require local interpretation even when the underlying point is straightforward.
+   CHANGE: Apply a focused line edit to remove unnecessary evaluations such as naive, specify the diagonal covariance matrix explicitly, and repair vague or nonparallel constructions such as the sentence identifying the full-covariance comparisons.
+   SHARE: 6%
+9. QUOTE: "In reported bin i with X̄itruth > 0, define the across-toy standard deviation σi (ddof = 1)"
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Programming notation and incompletely introduced statistical shorthand occasionally give the prose an implementation-documentation register.
+   CHANGE: Express conventions such as ddof = 1 in mathematical prose and expand terms such as AUC at first use, or provide a clear reference if they have already been defined elsewhere in the note.
+   SHARE: 5%
+ENOUGH: Yes; applied throughout, these changes would bring the chapter to 4 while preserving its specialist density, procedural detail and substantive limitations.

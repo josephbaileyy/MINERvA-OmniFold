@@ -1,0 +1,171 @@
+[
+ {
+  "id": "B01",
+  "title": "Abstract, Executive summary, Sec. 1",
+  "lines": [
+   [
+    15,
+    92
+   ],
+   [
+    265,
+    343
+   ]
+  ],
+  "words": 1758
+ },
+ {
+  "id": "B02",
+  "title": "Secs. 2-3",
+  "lines": [
+   [
+    343,
+    1432
+   ]
+  ],
+  "words": 4645
+ },
+ {
+  "id": "B03",
+  "title": "Sec. 4",
+  "lines": [
+   [
+    1432,
+    1943
+   ]
+  ],
+  "words": 4088
+ },
+ {
+  "id": "B04",
+  "title": "Sec. 5",
+  "lines": [
+   [
+    1943,
+    2412
+   ]
+  ],
+  "words": 2785
+ },
+ {
+  "id": "B05",
+  "title": "Sec. 6",
+  "lines": [
+   [
+    2412,
+    4432
+   ]
+  ],
+  "words": 3103
+ },
+ {
+  "id": "B06",
+  "title": "Sec. 7",
+  "lines": [
+   [
+    4432,
+    5435
+   ]
+  ],
+  "words": 4548
+ },
+ {
+  "id": "B07",
+  "title": "Sec. 8",
+  "lines": [
+   [
+    5435,
+    6032
+   ]
+  ],
+  "words": 2302
+ },
+ {
+  "id": "B08",
+  "title": "Sec. 9",
+  "lines": [
+   [
+    6032,
+    6920
+   ]
+  ],
+  "words": 5621
+ },
+ {
+  "id": "B09",
+  "title": "Sec. 10",
+  "lines": [
+   [
+    6920,
+    8222
+   ]
+  ],
+  "words": 3766
+ },
+ {
+  "id": "B10",
+  "title": "Sec. 11",
+  "lines": [
+   [
+    8222,
+    9290
+   ]
+  ],
+  "words": 6282
+ },
+ {
+  "id": "B11",
+  "title": "Secs. 12-13",
+  "lines": [
+   [
+    9290,
+    9724
+   ]
+  ],
+  "words": 1581
+ },
+ {
+  "id": "B12",
+  "title": "Guide to the appendices, App. A",
+  "lines": [
+   [
+    9746,
+    10933
+   ]
+  ],
+  "words": 7058
+ },
+ {
+  "id": "B13",
+  "title": "Apps. B-C",
+  "lines": [
+   [
+    10933,
+    11536
+   ]
+  ],
+  "words": 5455
+ },
+ {
+  "id": "B14",
+  "title": "Apps. D-F",
+  "lines": [
+   [
+    11536,
+    11773
+   ]
+  ],
+  "words": 908
+ },
+ {
+  "id": "B15",
+  "title": "Apps. G-I",
+  "lines": [
+   [
+    11773,
+    11969
+   ]
+  ],
+  "words": 2067
+ }
+]

@@ -1,0 +1,53 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "RC7’s two-dimensional curve is the exact-split one, which was the two-dimensional central value when the package was assembled."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The account of earlier article versions, superseded central values and separately regenerated figures makes the appendix read like a development history.
+   CHANGE: Organize these passages around the package’s contents and their correspondence to the published results, retaining historical information only where needed to distinguish versions.
+   SHARE: 18%
+2. QUOTE: "An earlier version of the package, RC1, was replayed from an empty directory by a separate AI agent session (Opus 5.5) that had no access to the repository and used only the package and its README; its verifier passed."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Session identities, verification anecdotes and administrative inventory details give parts of the appendix an internal audit tone.
+   CHANGE: Report verification and preservation status directly, retaining the tested version, conditions, outcome and relevant file identifiers while removing incidental session and record-management narrative.
+   SHARE: 13%
+3. QUOTE: "A ✓ marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already fixed); the rest are packaging."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Completion markers and distinctions between what is “fixed” and what remains “packaging” present the release schema as a project task list.
+   CHANGE: Describe the proposed release specification and its implementation status in parallel, factual language, replacing completion markers and internal progress categories with explicit availability statements.
+   SHARE: 12%
+4. QUOTE: "It states which identities are fixed and what each part does and does not reproduce."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Repeated statements of reproduction capabilities and exclusions distribute the same scope qualifications across the introduction, release description, contents and limitations section.
+   CHANGE: Consolidate overlapping qualifications into one organized account of supported calculations and reproduction limits, retaining distinct limitations and referring back where necessary.
+   SHARE: 12%
+5. QUOTE: "the same results in the reading with the recovered pseudo-experiments added to the calibration and the variant shifts recomputed on all draws (§11.6)"
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Expressions such as “the reading,” “fixed identities,” “covariance-status measurements” and “the four measurements” make the prose depend on project-specific shorthand and indirect referents.
+   CHANGE: Replace opaque shorthand with explicit analytical descriptions and give each retained local term a clear definition or descriptive cross-reference at first use.
+   SHARE: 11%
+6. QUOTE: "The package holds the sufficient inputs of the joint tests, as evaluated for the decisions and in the reading with the recovered pseudo-experiments added; the arrays behind the figures drawn for that earlier version; the noise-free differences behind the L2 ratios; an inventory of the analyzed AnaTuples; the replay and figure code; and the expected outputs."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Long inventories combine several kinds of objects with embedded qualifications, obscuring their relationships more than the technical density itself warrants.
+   CHANGE: Divide these inventories into shorter sentences or parallel entries that identify each object, its purpose and any necessary qualification together.
+   SHARE: 10%
+7. QUOTE: "A “rank should be 36” check using NumPy defaults would return 41 and falsely flag corruption."
+   SCOPE: this passage
+   PROBLEM: The hypothetical failed check and surrounding sequence of corrective commands turn a useful numerical qualification into a troubleshooting narrative.
+   CHANGE: State directly that numerical rank depends on the cutoff, then specify the appropriate validation quantities and tolerances while retaining the relevant numerical evidence.
+   SHARE: 6%
+8. QUOTE: "The four measurements that travel with the five-axis covariance of the configuration-(a) central value (§9.6), carried in the package that readers will quote and not only in this note."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Conversational expressions and reader-directed rhetoric, including “travel with,” “today’s reader” and “the one thing,” interrupt the otherwise technical register.
+   CHANGE: Replace these expressions with literal statements of association, availability and required metadata, and use neutral descriptive headings.
+   SHARE: 7%
+9. QUOTE: "Each quoted figure number must agree with its printed value to within half a unit of its last printed digit, and the L2 ratios must reproduce their printed range;"
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: “Figure number” ambiguously denotes a figure identifier where the context appears to mean a numerical quantity reported in a figure.
+   CHANGE: Identify the quantities checked and their comparison targets explicitly, using distinct terms for figure identifiers, figure files and numerical results.
+   SHARE: 6%
+10. QUOTE: "The driver builds training arrays from the event-loop outputs, applies the background subtraction its background-mode option selects (by default the purity weight; §3.1), runs the engine, and extracts the cross section."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Compressed relative constructions and uneven grammatical forms create local awkwardness beyond the references’ ordinary sentence density.
+   CHANGE: Smooth these constructions, make lists grammatically parallel and express option-dependent operations explicitly, for example by naming the subtraction method selected by the option.
+   SHARE: 5%
+ENOUGH: Yes; these changes, applied throughout, would bring the chapter to 4 while preserving its specialist detail, reproducibility instructions and substantive limitations.

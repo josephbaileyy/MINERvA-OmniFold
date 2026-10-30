@@ -1,0 +1,57 @@
+CURRENT RATING: 3.5
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Figure 25 compares the spline-normalized (Eavail , W ) predictions of GENIE CV, GENIE+Valencia 2p2h/MEC, NuWro and GiBUU, with the GENIE and NuWro predictions flux-repaired as in §7.6."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Compressed local expressions such as “spline-normalized,” “flux-repaired,” “area-free,” and “null spread” make the prose less immediately precise than the reference chapters.
+   CHANGE: Describe the normalization and flux corrections in conventional terms, replace informal quantity labels with their mathematical or statistical meaning, and briefly recall earlier conventions where needed to interpret the comparison.
+   SHARE: 18%
+
+2. QUOTE: "The article distinguishes the five classifier inputs, the lower-dimensional support they populate, and the five reported observables."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The surrounding §8.2 paragraph combines observable definitions, functional dependence, information content, covariance interpretation, event exclusions, and generator conventions without sufficient paragraph structure.
+   CHANGE: Separate these subjects into paragraphs with clear topic sentences, and similarly divide the overloaded numerical comparisons in the opening and §8.5 while retaining their technical detail.
+   SHARE: 18%
+
+3. QUOTE: "For GENIE with MEC, NuWro and GiBUU its effect is not reliably determined (Ref. [37], R1.18)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Review-item identifiers, raw accessor names, and output-file inventories intermittently give the discussion the register of implementation documentation or an audit record.
+   CHANGE: Replace internal tracking references with conventional citations, describe calculations through their observable definitions, and retain implementation identifiers or storage details only when they resolve a reproducibility ambiguity.
+   SHARE: 12%
+
+4. QUOTE: "These are central-value ratios; no compatibility metric based on the configuration-(a) covariance is quoted, for the reason given in §9.6, item 1 (comparison on the sixteen cells: §10.4)."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Repeated qualifications and nested directions to numbered caveats interrupt the argument more often than in the references, even though the qualifications themselves are appropriate.
+   CHANGE: State each distinct limitation directly alongside the affected result, consolidate repeated reminders, and replace navigational parentheticals with a brief explanation and a straightforward cross-reference.
+   SHARE: 12%
+
+5. QUOTE: "There 2p2h contributes nothing, and the sub-percent pion-FSI dials cannot reach the excess."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Expressions such as “dials cannot reach,” “Where the excess lives,” and “the corner against four external generators” introduce an informal, occasionally promotional register.
+   CHANGE: Use direct descriptions of predicted contributions and systematic variations, and give the affected subsections neutral headings describing the distribution or generator comparison.
+   SHARE: 10%
+
+6. QUOTE: "The validation of §9.1 includes a model-dependence study, which establishes no bias–variance tradeoff and no new total uncertainty for this projection."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Categorical or underspecified conclusions, including “establishes no” and “no distinct deficit,” obscure the scope of the reported tests and comparisons.
+   CHANGE: State the observed outcome under the specified variations and uncertainty treatment, and express the corner comparison explicitly in terms of its central-value ratios and assumed corrections.
+   SHARE: 10%
+
+7. QUOTE: "It has not yet produced a result."
+   SCOPE: this passage
+   PROBLEM: This standalone progress announcement reads like project-status reporting rather than an explanation of the result’s limitations.
+   CHANGE: Combine it with the preceding discussion into a direct statement that sensitivity of the low-W component to hadronic-response mismodeling has not been evaluated.
+   SHARE: 8%
+
+8. QUOTE: "The comparison with external generators depends on the generator."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Content-free transitions and repeated statements that the generators lie below the data add verbal repetition without advancing the comparison.
+   CHANGE: Delete the tautological transition and consolidate repeated conclusions in the main text, retaining repetitions that serve a distinct comparison or make a caption self-contained.
+   SHARE: 7%
+
+9. QUOTE: "The qualifications of the covariance are given in §9.6."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: A few awkward formulations, particularly “qualifications of the covariance” and “In central values,” fall below the otherwise competent sentence-level register.
+   CHANGE: Replace them with precise conventional formulations such as “limitations of the covariance estimate” and “For the central predictions,” and clarify similarly compressed references to quantities.
+   SHARE: 5%
+
+ENOUGH: Yes; making these changes throughout would bring the prose to 4 while preserving its specialist detail and necessary scientific qualifications.

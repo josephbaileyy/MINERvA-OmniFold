@@ -1,0 +1,286 @@
+id	class	item	reason
+paper-g-01	STRUCTURE		Removes citations to the note and moves summaries into the paper or supplemental material; the facts stay in the note.
+paper-g-02	PROTECTED	B3,F109 KEEP	"Omitting the ""10, 15, or 20 iterations did not reduce"" justification drops ledger row F109 (KEEP)."
+paper-g-03	PROTECTED	FROZEN,C12	"Replaces the FROZEN sentence ""Interval coverage has not been validated."" with an integrated discussion."
+paper-g-04	STRUCTURE	home: note (sec_method.tex, seed 42; the 400-tree, 31-leaf refinement)	Moves seed and tree settings to a code repository; the note states them, so nothing leaves both documents.
+paper-g-05	UNVERIFIED		Quote not located.
+paper-g-06	PROTECTED	B1 (C20 at Fig. 3's band)	"Under #522, F121 (no reporting definition meets the target) may leave the paper, since the note keeps it (Sec. 9). But the CHANGE, as a pattern, removes every reference to failed acceptance criteria, including C20's ""fails its specified acceptance criteria"" where Fig. 3's band uses that covariance; without it that band reads as valid (B1)."
+paper-g-07	STRUCTURE		Merges the Scope paragraph into the introduction and conclusion, keeping its content.
+paper-g-08	PROTECTED	A4,C13	The quote is the paper abstract's sentence (A4); reframing it also rewords the C13 limitation.
+paper-g-09	STRUCTURE		Moves the Fig. 1 caption's list of included and omitted blocks (F168, F169 HONESTY) into the main text of the same paper.
+paper-g-10	PROTECTED	C7,F178 HONESTY	"Attributing the flux difference ""to known changes in input releases"" replaces ""for a reason the released inputs do not let us determine"" with a cause the record says is unknown."
+paper-s-01	STRUCTURE		Cuts development-variant accounts (F108 pointer) and keeps those that explain a choice; the note keeps them.
+paper-s-02	STRUCTURE		Consolidates repeated coverage statements beside their results; the FROZEN sentence can stay verbatim, so no protected text has to change.
+paper-s-03	WORDING		Replaces internal labels with descriptive names and defines diagnostics in place.
+paper-s-04	WORDING		Makes claims self-contained and defines terms in place.
+paper-s-05	WORDING		Splits the C_resp sentence by function, keeping every exclusion (C17).
+paper-s-06	PROTECTED	A4	The quote is the paper abstract's chi2 sentence (corrected: my first pass missed that it is in the abstract).
+paper-s-07	WORDING		Defines stability terms and states the rounding perturbation in place.
+paper-s-08	UNRESOLVED	C13,F277	"A rewording that keeps the fact (WORDING by the rules), but F277 is probed verbatim by the paper-protections ledger and C13 is ""Keep as stated""; the rules do not place a verbatim probe outside A1/A4/A5/GATE/FROZEN."
+paper-s-09	PROTECTED	A1	Rewrites the Data Availability paragraph and moves its package detail out.
+paper-s-10	STRUCTURE	#522: the note keeps the low-stability cells (pointer and probe required)	"Deleting ""... is stated only here."" and placing the low-stability item with its result: under #522 the item may leave the Limitations, and once it prints with its result the preceding sentence (""stated with the results they qualify"") is true, so B1 is met."
+B01-g-01	STRUCTURE		Removes the Executive summary and its lists, integrating them into prose.
+B01-g-02	PROTECTED	C9	Removes the disclosure that pseudo-experiments lost to time limits were rerun for reporting only.
+B01-g-03	PROTECTED	C1	"Replaces ""Whether it is ready for publication as a measurement has not been established."" with a statement of agreement, dropping the not-achieved closeout C1 says the package must state."
+B01-g-04	WORDING		Replaces configuration letters with physical descriptors in place.
+B01-g-05	PROTECTED	C12,C1,A7	"Reframing ""No result's intervals have validated coverage"" as ""evaluated coverage ... systematic uncertainties assigned"" changes what it states."
+B01-g-06	PROTECTED	C8	Removes the disclosure that LightGBM was chosen after both comparisons with the publication were known.
+B01-g-07	PROTECTED	A4,C12	The quote is the note abstract's sentence; the change restructures the abstract.
+B01-g-08	STRUCTURE		Converts a bulleted list to prose.
+B01-g-09	PROTECTED	C2	"Excising the earlier statistical bands and reporting only finalized bands removes KI-85's ""no coverage test"" and the earlier band's undercoverage history."
+B01-g-10	STRUCTURE		Removes the out-of-scope sentence or moves it to the outlook.
+B01-s-01	STRUCTURE		Consolidates overlapping disclaimers and keeps the principal qualifications beside their results.
+B01-s-02	WORDING		"Rewrites the rerun sentence while ""preserving ... recovered draws"" (C9 kept)."
+B01-s-03	WORDING		Replaces internal shorthand or defines it in place.
+B01-s-04	PROTECTED	A4	The quote is the note abstract's first sentence; the change splits the abstract's sentences.
+B01-s-05	WORDING		Introduces configurations by their features, in place.
+B01-s-06	WORDING		Replaces the readiness sentence with the specific unresolved requirement and its consequence; the limitation is kept.
+B01-s-07	WORDING		Clarifies the scope of the NuWro clause in place; the decisions-stand fact (C10) is kept.
+B01-s-08	WORDING		Replaces informal expressions in place.
+B01-s-09	WORDING		Expands abbreviations at first use.
+B01-s-10	PROTECTED	A4	The quote is in the note abstract.
+B02-g-01	PROTECTED	B2	"Removing the ""narrative of missing run logs and script limitations"" deletes the disclosure that the exact-split seed was not fixed and its log was not found."
+B02-g-02	PROTECTED	B2	"Replacing the regeneration evidence with ""algorithmic stability across random seeds"" drops the finding that the two central values differ because of the seed."
+B02-g-03	STRUCTURE	cut; ledger: 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:96-97 (the hadd 100 GB TTree trap for _universes_full merges)	Drops implementation detail (tree-size-aware merger, >100 GB) that would leave both documents.
+B02-g-04	STRUCTURE	cut; ledger: 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:464-479 (isMinosMatchTrack and MasterAnaDev_minos_trk_is_ok)	Replaces the code flag expressions (isMinosMatchTrack==1 && minos_trk_is_ok==1) with prose; the flags leave both documents.
+B02-g-05	PROTECTED	C8,A7	"Restating the seed choice ""based on statistical consistency"" replaces the recorded reason (computing cost) with a different one."
+B02-g-06	WORDING		Replaces framework and data-tier names with descriptive terms.
+B02-g-07	WORDING		Restates MAT's terms as shifts and weights.
+B02-g-08	WORDING		Restates the PET status and its boundaries neutrally; the boundaries are kept.
+B02-g-09	STRUCTURE		Reorganizes the passage around the two background strategies instead of letters.
+B02-g-10	PROTECTED	B2	"The ""or remove the editorial comment entirely"" option drops the finding that the agreement of the two medians is a coincidence (mixed change: highest class)."
+B02-g-11	PROTECTED	B2	Omits the raw entry count (32 849 103), a reported number with no other copy.
+B02-g-12	WORDING		Uses standard terms for out-of-phase-space events.
+B02-s-01	STRUCTURE		Consolidates the history, keeping the disclosures that affect interpretation.
+B02-s-02	STRUCTURE		Puts the configuration-to-result mapping in one table.
+B02-s-03	STRUCTURE		Explains each distinction once, with reminders later.
+B02-s-04	WORDING		Replaces informal shorthand.
+B02-s-05	STRUCTURE		Moves parallel settings into the existing table.
+B02-s-06	WORDING		States the rationale directly and drops evaluative words.
+B02-s-07	WORDING		Explains terms at first use.
+B02-s-08	STRUCTURE	cut; ledger: 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:464-479 (isMinosMatchTrack and MasterAnaDev_minos_trk_is_ok)	Moves the flag expressions to implementation documentation outside both documents.
+B03-g-01	PROTECTED	B2,B1	"Replacing ""the others are accepted by inference"" with ""the verified stability"" drops the disclosure that only seven universes were reproduced."
+B03-g-02	PROTECTED	C1,A7	"Replaces ""We therefore make no claim about coverage ... indicative only"" (C1) with ""the standard systematic coverage provided by the covariance matrix""."
+B03-g-03	PROTECTED	B2	Excises the comparison with the earlier ten-seed block (median 0.27) and its explanation; the records document holds the ten-seed scan (app_history.tex:196) but not this ratio or explanation.
+B03-g-04	WORDING		Replaces code parameter names with physics terms.
+B03-g-05	PROTECTED	C5	"Recasting the run-period block as covering ""run-to-run beam and detector stability"" gives a cause the record says is unknown."
+B03-g-06	PROTECTED	C4	"Removing ""which we have not been able to confirm is intended"" drops C4's ""unconfirmed""."
+B03-g-07	PROTECTED	B1	"Removes ""does not demonstrate a causal efficiency advantage"", the stated limit on what the covariance difference shows."
+B03-g-08	WORDING		Recasts the figure description into citation form.
+B03-g-09	PROTECTED	C2	"Deletes ""No coverage test on held-out simulation has been run, and no design for one has been registered in advance"" (KI-85, not pre-registered)."
+B03-g-10	STRUCTURE		Condenses or tabulates the bin statistics.
+B03-s-01	STRUCTURE		Consolidates historically framed material into methodological comparisons.
+B03-s-02	STRUCTURE		States each limitation once at its principal location, with cross-references elsewhere.
+B03-s-03	STRUCTURE		Moves verification details into a compact reproducibility account and keeps the constraint.
+B03-s-04	WORDING		Explains analysis-specific expressions.
+B03-s-05	WORDING		Gives explicit subjects and antecedents.
+B03-s-06	WORDING		Splits the sentence and keeps every number.
+B03-s-07	WORDING		Names the quantity and its population.
+B03-s-08	WORDING		"Neutral wording, ""without weakening the substantive qualification""."
+B03-s-09	WORDING		Defines names for the covariance products.
+B03-s-10	STRUCTURE		Converts a labelled list into a sentence or table.
+B04-g-01	PROTECTED	C2	"Removing ""the narrative history of superseded versions"" removes the earlier band's history, which C2 keeps printed in the note."
+B04-g-02	PROTECTED	C2	"Excising ""A re-test on held-out simulation ... has not been run"" removes KI-85's untested re-test."
+B04-g-03	PROTECTED	B2,C2	Replacing the timing narrative drops the disclosure that the undercoverage clause was written after the pilot pulls were seen.
+B04-g-04	STRUCTURE		Moves bulleted scope statements into prose.
+B04-g-05	WORDING		Recasts the maxim as a technical statement.
+B04-g-06	WORDING		Rewrites the heading.
+B04-g-07	WORDING		States the input constraints directly; the limitation is kept.
+B04-g-08	WORDING		Restates the tail undercoverage in standard prose; the fact is kept.
+B04-g-09	STRUCTURE	home: app_provenance.tex:91 (coverage-fixed-truth: receipts including the independent recomputation)	Presents the independent recomputation as a cross-check, or omits it; the records document keeps it.
+B04-g-10	PROTECTED	B1	"Removing ""Efficiency is diagnostic only"" lets the efficiency entries read as a correction that is applied."
+B04-s-01	STRUCTURE		Consolidates repeated qualifications and keeps each distinct limitation beside its result.
+B04-s-02	STRUCTURE	home: the app_provenance.tex entries the identifiers name	Groups method, result and qualification, keeps prespecified or post hoc status, and drops record identifiers, whose entries stay in the records document.
+B04-s-03	WORDING		Gives the ensembles stable names.
+B04-s-04	WORDING		Defines internal labels or replaces them.
+B04-s-05	WORDING		Splits the diagnostic sentence and places qualifiers beside their claims.
+B04-s-06	WORDING		Replaces informal expressions and headings.
+B04-s-07	WORDING		Builds scope into each conclusion.
+B04-s-08	WORDING		Line edit.
+B04-s-09	WORDING		Expresses conventions in prose and expands terms.
+B05-g-01	PROTECTED	A7,B2	"Consolidating the estimator comparisons into ""a bounded systematic uncertainty on the unfolding method"" adds an uncertainty the result does not assign, and drops the reported values 3.66, 2.70 and 2.64-2.75."
+B05-g-02	WORDING		Replaces the calendar reference with a physical description.
+B05-g-03	PROTECTED	B1	"Stating that the error bars ""represent the diagonal statistical uncertainties"" replaces the qualifier ""not the covariance of §4"" with a description the text does not establish."
+B05-g-04	PROTECTED	C2,B2	"Stating the regularization ""directly and authoritatively"" drops the limitation that the scan used an earlier covariance and was not repeated for the quoted one."
+B05-g-05	PROTECTED	B2	"Drops ""our leading hypothesis is the FHC-only constraint file"", a stated hypothesis with no other copy."
+B05-g-06	WORDING		Recasts the negative description positively.
+B05-g-07	WORDING		Rewrites the heading.
+B05-g-08	PROTECTED	B2	Deletes the statement that the published panels have no printed titles (a figure fact, not implementation detail).
+B05-g-09	WORDING		Defines the acronym or cites the package.
+B05-g-10	WORDING		Uses a reference callout.
+B05-s-01	STRUCTURE		"Moves the chronology to methods or an appendix, ""preserving the limitation that the scan used a different covariance""."
+B05-s-02	STRUCTURE	cut; ledger: docs/orchestration/state/2d-closeout/stageF/rebuild/PHASE2-IMPLEMENTATION.md:36 (hXSec2D bin errors; projections hXSec_pt / hXSec_pz)	Removes the histogram names (hXSec2D, hXSec_pt, hXSec_pz) and production metadata; they leave both documents.
+B05-s-03	STRUCTURE		Defines each comparison once and removes restatements.
+B05-s-04	WORDING		Names the statistic and replaces coined shorthand.
+B05-s-05	WORDING		Identifies each number's meaning and splits the sentences.
+B05-s-06	WORDING		Consistent labels.
+B05-s-07	WORDING		Complete captions and a descriptive heading.
+B05-s-08	WORDING		Line edit.
+B06-s-01	STRUCTURE		Puts configuration definitions in a table.
+B06-s-02	STRUCTURE		Replaces completion-status and prospective covariance instructions, keeping the limitation.
+B06-s-03	STRUCTURE		Consolidates each limitation with its result and removes repetitions.
+B06-s-04	PROTECTED	B2	"Removing ""incidental ... acquisition details"" drops ""No spectra were digitized or externally supplied"", a disclosure of how the predictions were obtained."
+B06-s-05	WORDING		Standard terms and definitions.
+B06-s-06	STRUCTURE		Reorganizes around the adopted definition and its differences, keeping the species and mass convention.
+B06-s-07	WORDING		Splits the sentence and keeps the numbers.
+B06-s-08	WORDING		Specifies the comparison.
+B06-s-09	WORDING		Literal descriptions.
+B06-s-10	WORDING		Attaches the tested scope to the conclusion.
+B07-g-01	STRUCTURE	cut; ledger: docs/orchestration/state/measurement-paper/EVIDENCE-MAP-20261019.md:264 (CVUniverse.h:396-410, GetTrueExperimentersW)	Removes the software method signature (CVUniverse::GetTrueExperimentersW()).
+B07-g-02	PROTECTED	B2,A7	"Removing ""It has not yet produced a result"" ""in favor of a bounded systematic error evaluation"" drops the disclosure and asserts an evaluation that does not exist (completing the test is new work)."
+B07-g-03	PROTECTED	B2	Drops the mention of what the event-loop output files store. No ledger record found that states which truth hadronic diagnostics the event-loop output files store (searched the records document and the repository's .md/.tex records at d84124c5).
+B07-g-04	WORDING		Replaces the internal label and record citation with descriptions or citations.
+B07-g-05	WORDING		Recasts the pass/fail wording.
+B07-g-06	WORDING		Standard terms and title.
+B07-g-07	WORDING		States the reason in the sentence.
+B07-g-08	WORDING		Rephrases.
+B07-g-09	PROTECTED	A7,C10	"Presenting target-corrected results directly, or as ""an evaluated systematic uncertainty"", changes what the generator tests state (C10: the target-corrected evaluations are descriptive)."
+B07-g-10	WORDING		Recasts the caution as a trial-factor discussion; the caution is kept.
+B07-s-01	WORDING		Conventional terms.
+B07-s-02	STRUCTURE		Splits the subjects into paragraphs.
+B07-s-03	WORDING		Conventional citations.
+B07-s-04	STRUCTURE		States limitations beside results and consolidates reminders.
+B07-s-05	WORDING		Direct descriptions and neutral headings.
+B07-s-06	WORDING		States the outcome under its variations.
+B07-s-07	WORDING		"Rewrites it with the preceding sentence as ""has not been evaluated""; the limitation is kept."
+B07-s-08	STRUCTURE		Deletes the transition and consolidates repeated conclusions.
+B07-s-09	WORDING		Conventional formulations.
+B08-s-01	STRUCTURE		Keeps provenance in a compact reproducibility statement and removes administrative commentary.
+B08-s-02	STRUCTURE		Consolidates limitations and removes repeated disclaimers.
+B08-s-03	WORDING		Introduces and defines labels.
+B08-s-04	WORDING		Separates definitions, results and qualifications into sentences.
+B08-s-05	STRUCTURE		Reorganizes around estimator, test and result and compresses the chronology, keeping the consequential facts.
+B08-s-06	WORDING		Names populations and denominators.
+B08-s-07	WORDING		Replaces ambiguous references.
+B08-s-08	WORDING		Standard terms.
+B09-g-01	WORDING		Recasts the control list as described tests.
+B09-g-02	PROTECTED	B1	"Restating ""do not describe this result"" as ""complementary measurements or cross-checks"" says the configurations cross-check each other, which the sentence denies."
+B09-g-03	PROTECTED	C14	"Replacing ""This is a bias test, not a coverage test ..."" with positive statements removes C14."
+B09-g-04	PROTECTED	B1	"Evaluated and found to be negligible replaces ""zero ... with full-sample binning and deterministic training"", recasting a zero by construction as a measured insensitivity."
+B09-g-05	WORDING		Conventional terminology.
+B09-g-06	WORDING		Descriptive narrative.
+B09-g-07	WORDING		Defines the sources at first use.
+B09-g-08	WORDING		Describes the binning in standard terms.
+B09-g-09	STRUCTURE		Tabulates or summarizes the secondary statistics.
+B09-g-10	WORDING		Conventional phrasing.
+B09-g-11	PROTECTED	B1	"Omitting ""they are two truths ... so they are context only"" lets the four records read as independent."
+B09-g-12	WORDING		Splits the sentence.
+B09-s-01	STRUCTURE		Removes development and regression-check history and names the checks.
+B09-s-02	WORDING		Explicit terms.
+B09-s-03	STRUCTURE		Consolidates qualifications into one scope statement, preserving the distinct limitations.
+B09-s-04	WORDING		Divides the sentences.
+B09-s-05	WORDING		Direct statements.
+B09-s-06	WORDING		Explicit description and consistent names.
+B09-s-07	WORDING		Names Cresp.
+B10-g-01	WORDING		Recasts the six quoted specification conditions as exposition; it paraphrases text quoted verbatim from the pre-registered specification.
+B10-g-02	PROTECTED	C9	Removing the account of the budget extension decided during production removes C9.
+B10-g-03	PROTECTED	B1	"Replacing ""That conditioning has not been validated."" with a neutral statement and its ""expected impact"" drops the limitation."
+B10-g-04	STRUCTURE	home: app_provenance.tex:96 (joint-5d: independent recomputation, 1379 of 1379 rows)	Omits row counts and record-keeping; the records document keeps them, and the verification result stays.
+B10-g-05	PROTECTED	C9,A7	"Folding the completed reruns into the ensemble's totals contradicts the primary decisions, which are the pre-recovery evaluation, and drops ""which has not been shown""."
+B10-g-06	WORDING		Complete sentences.
+B10-g-07	WORDING		"Descriptive terms; the ""do not use, do not validate"" scope is kept."
+B10-g-08	PROTECTED	B2,A7	"Giving the factor ""a succinct physical or empirical justification"" drops ""its derivation is not given"" and supplies a derivation that does not exist."
+B10-g-09	STRUCTURE		Opens with a positive definition before the relationship; the fact is kept and reordered.
+B10-s-01	STRUCTURE		Merges the quoted conditions and their restatement, preserving every assumption; it paraphrases the quoted specification.
+B10-s-02	STRUCTURE		Consolidates recurring qualifications.
+B10-s-03	STRUCTURE		Compresses review history and administrative counts.
+B10-s-04	WORDING		Standard names.
+B10-s-05	WORDING		Separates assumption, timing and result into sentences.
+B10-s-06	WORDING		Complete statements.
+B10-s-07	WORDING		Identifies the quantities.
+B10-s-08	WORDING		Idiomatic statements.
+B11-g-01	PROTECTED	C23	"Removing ""project management designations"" drops ""not with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis"", C23's scope fix (the date itself could go)."
+B11-g-02	PROTECTED	B1	"A ""direct specification of the public data release format and availability"" replaces ""no release has been tagged or deposited"" with an availability that does not exist."
+B11-g-03	PROTECTED	B2	"Removing ""this prior was not rebuilt after the flux repair"" deletes a limitation of the prior."
+B11-g-04	STRUCTURE		Removes meta-references to the executive summary.
+B11-g-05	PROTECTED	B1	"Recasting without ""No covariance is quoted for it"" drops the fact that the result has no covariance."
+B11-g-06	WORDING		"States the quantitative comparison; ""0.14 % lower"" is kept."
+B11-g-07	WORDING		Formal terms.
+B11-g-08	PROTECTED	B2	Deletes the color-scheme rationale (a presentation fact, not implementation detail).
+B11-g-09	PROTECTED	B1	"Omitting ""a fixed estimator seed and one 100/100 calibration-evaluation split"" drops the qualifiers on the 68.67 % containment."
+B11-g-10	PROTECTED	B2	"Deleting ""entirely"" the statement that the release design has no bearing on the covariance choice removes a fact with no other copy."
+B11-g-11	WORDING		Outlook framing and acronyms.
+B11-s-01	STRUCTURE	home: app_provenance.tex:101 (fps-battery, 2026-06-10)	Keeps the input limitations and removes or relocates dates and rebuild history (records).
+B11-s-02	WORDING		Explicit descriptions.
+B11-s-03	STRUCTURE		Consolidates exclusions into scope statements, preserving the distinct limitations.
+B11-s-04	STRUCTURE		Separates definition from results and removes redundant restatements.
+B11-s-05	STRUCTURE		Replaces directions with a synthesis.
+B11-s-06	WORDING		Names the quantities.
+B11-s-07	STRUCTURE		States which covariance applies, or moves the explanation to §9.6.
+B11-s-08	WORDING		Comparative syntax.
+B12-g-01	STRUCTURE	home: main_records.tex (the records document holds what the sentence lists)	Reduces the records pointer to a neutral citation.
+B12-g-02	UNVERIFIED		Quote not located.
+B12-g-03	STRUCTURE	cut; ledger: docs/analysis-note/app_history.tex:145 (records document: the pinv cutoff and the np.linalg.lstsq/MATLAB convention)	Drops the library names and the remark that this is not the lstsq/MATLAB cutoff convention.
+B12-g-04	PROTECTED	B2	Deletes the repository label table. No single ledger record keeps the label table's mapping of repository labels to meanings (lgbm/exact/hist, the --bkg-mode values, cv/mean, ...).
+B12-g-05	PROTECTED	B2	"Eliminating ""the narrative recounting of failed past checks"" deletes the disclosure that the check could not detect the missing constraint weights and ran on a pre-fix sweep."
+B12-g-06	PROTECTED	B2	"Recasting as what ""the present work explicitly defines"" drops the list of what the published analysis leaves unstated (rank, condition number, regularization, coverage validation)."
+B12-g-07	WORDING		Descriptive sweep designations.
+B12-g-08	WORDING		Standard terminology.
+B12-g-09	STRUCTURE	home: note Sec. 4.3 (B03: s in {42, 45, 48, 51, 54})	Drops the enumerated seed values here; the same list prints in the note's Sec. 4.3 (corrected: my first pass missed that copy).
+B12-g-10	WORDING		Typesetting with physics symbols.
+B12-g-11	PROTECTED	B1	"Removing the ""internal project-status disclaimers"" drops ""implemented but not yet run""."
+B12-g-12	STRUCTURE		Converts telegraphic bullets and advice into paragraphs.
+B12-s-01	STRUCTURE	home: main_records.tex by the proposed move; app_history.tex:43, :55, :89 already hold exact-split values	Moves obsolete checks, repair chronology and audit identities to the records document (a records move, as on 2026-10-21).
+B12-s-02	STRUCTURE		Consolidates each limitation into one discussion, preserving validation status.
+B12-s-03	STRUCTURE		Replaces production labels and moves repository identifiers to the implementation reference.
+B12-s-04	WORDING		Explicit subjects and verbs.
+B12-s-05	WORDING		Literal descriptions.
+B12-s-06	STRUCTURE		Rewrites list digests as sentences.
+B12-s-07	WORDING		Measured statement of the interpretation.
+B12-s-08	WORDING		Neutral attribution.
+B12-s-09	STRUCTURE		Collects identifiers into a compact implementation reference.
+B13-g-01	PROTECTED	B2	Excises the superseded unified-throw covariance's numbers (N = 160, 0.363, too large by 2.76); app_history.tex has that section but not these numbers.
+B13-g-02	WORDING		Neutral scope statement.
+B13-g-03	PROTECTED	B2	"Deleting the ""provenance qualifications"" removes the stated limits on the production numbers (driver revision not pinned, no job record)."
+B13-g-04	STRUCTURE	home: app_provenance.tex:113 (rank-inversion, R1.15), :99 (negweight-hpss, R1.7)	Removes the record identifiers; the entries stay in the records document.
+B13-g-05	WORDING		Defines acronyms.
+B13-g-06	PROTECTED	C9	"Not ""narrating ... lost jobs or unblinded looks"" removes the lost-draw condition of A2 and the data-informed elements (C9)."
+B13-g-07	PROTECTED	B2	Omits the failure mode of the discarded backend (a row inflated by up to ~5 × 10^4), a finding with a number.
+B13-g-08	WORDING		Declarative description.
+B13-g-09	PROTECTED	B1	"Replacing ""with no new validation result here"" with a neutral summary drops the qualifier that these are requirements, not validation."
+B13-g-10	WORDING		Precise mathematical terms.
+B13-s-01	STRUCTURE		States the method and provenance limitation, and replaces the development narrative with a configuration description and references.
+B13-s-02	STRUCTURE		One authoritative presentation per comparison.
+B13-s-03	STRUCTURE		Attaches each limitation once and removes commentary.
+B13-s-04	WORDING		Replaces administrative shorthand.
+B13-s-05	WORDING		Recasts as definitions and conventions.
+B13-s-06	WORDING		Unpacks the sentences.
+B13-s-07	WORDING		Neutral statements.
+B13-s-08	WORDING		Names the fraction.
+B14-g-01	WORDING		Frames the protocol as a prospective study, so it still reads as not performed.
+B14-g-02	UNRESOLVED		Removes the attribution of the suggestion to Kevin McFarland; the rules do not cover credit for an idea (sol2's B14-s-06 moves it to an acknowledgment instead).
+B14-g-03	PROTECTED	B2	"The ""or omit the unfinished project entirely"" option deletes the point-cloud work and its scope statement (mixed change: highest class)."
+B14-g-04	PROTECTED	B1	Remove the collaboration-internal prohibition on quoting it drops the qualifier that the outputs are diagnostics that must not be quoted.
+B14-g-05	PROTECTED	B1	"Describing the arm as ""a simplified, conservative stress test designed to establish sensitivity bounds"" replaces ""it is not a detector model"" with a bounding claim."
+B14-g-06	PROTECTED	A7	"Defining the trigger ""strictly through quantitative ... criteria"" drops the stated condition ""or the collaboration asks for the stronger response model""."
+B14-g-07	WORDING		Neutral formulation of the treatment of a large bias.
+B14-g-08	WORDING		Describes inputs physically.
+B14-g-09	PROTECTED	B1	"Defining the survey's scope ""definitively"" drops ""the inventory is not exhaustive through 2026""."
+B14-s-01	STRUCTURE		"Connected prose, ""retaining a concise statement that it has not been performed""."
+B14-s-02	WORDING		Direct statements of intended use and limits.
+B14-s-03	STRUCTURE		Consolidates status statements, preserving the limitations.
+B14-s-04	WORDING		Explicit technical terms.
+B14-s-05	WORDING		States the amplitude requirement directly.
+B14-s-06	STRUCTURE		Moves the attribution to an acknowledgment, footnote or citation.
+B14-s-07	WORDING		Defines dimensionality once.
+B14-s-08	STRUCTURE	cut; ledger: docs/orchestration/RECORD-20261029-close-items-conditional-proposals-ruled.md:34 (pet_note.tex)	"The ""or omit the locator"" option drops the file path docs/analysis-note/pet_note.tex."
+B15-g-01	WORDING		Declarative prose; the numbers are kept.
+B15-g-02	PROTECTED	B1	"Describing ""solely the permanent, publicly released data package"" replaces ""has not been deposited or released under a publication tag"" with a release that does not exist."
+B15-g-03	STRUCTURE	cut; ledger: 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:119 and README.md:89 (the 2D and N-D driver paths)	Replaces repository file paths and script names with functional descriptions.
+B15-g-04	PROTECTED	B1	"Excising the replay ""anecdote"" drops that the replay was of RC1, an earlier version, by a separate AI agent session, leaving the verification unattached to its version."
+B15-g-05	WORDING		Neutral scope definition.
+B15-g-06	PROTECTED	B2	Removes the ✓ markers, losing which identities are fixed and which are packaging (a release-status fact).
+B15-g-07	WORDING		Standard names.
+B15-g-08	PROTECTED	B2	Replaces the remark that a second host reproduces λmin to five significant digits, a finding.
+B15-g-09	PROTECTED	B2	"Not ""narrating ... incomplete records"" drops ""No producing revision or job is recorded for the other objects""."
+B15-g-10	STRUCTURE		Expands the section or integrates the figure reference elsewhere.
+B15-s-01	STRUCTURE		Organizes around package contents and keeps the history needed to distinguish versions.
+B15-s-02	WORDING		Keeps the tested version, conditions and outcome; removes session narrative.
+B15-s-03	WORDING		Explicit availability statements in place of markers.
+B15-s-04	STRUCTURE		Consolidates qualifications into one account.
+B15-s-05	WORDING		Explicit descriptions.
+B15-s-06	WORDING		Shorter sentences.
+B15-s-07	WORDING		Direct statement, keeping the evidence.
+B15-s-08	WORDING		Literal statements.
+B15-s-09	WORDING		Identifies the quantities.
+B15-s-10	WORDING		Parallel lists.

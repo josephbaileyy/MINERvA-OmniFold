@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically appropriate, but recurrent internal bookkeeping, conversational phrasing, and cumbersome qualifications warrant a dedicated language pass.
+1. QUOTE: "This test asks whether the 2D statistical band quoted when it ran covers a fixed truth at its nominal rate. That band is an earlier one, not the quoted statistical block."
+   REWRITE: This test evaluates the fixed-truth coverage of an earlier version of the 2D statistical uncertainty band. The statistical uncertainty ensemble used for the quoted result has not undergone this test.
+2. QUOTE: "The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under it, the primary undercoverage is attributed to this term of the band."
+   REWRITE: The attribution rule was specified before the full run, although its undercoverage criterion was formulated after inspection of the pilot pulls. Applying this rule attributes the primary undercoverage to the completeness correction in the band replicas.
+3. QUOTE: "A post hoc diagnostic that bootstraps a single toy, under a decision rule recorded before it ran, is consistent with the closure toys scattering too little, because their pseudo-data are built on the training MC events, rather than with the data bootstrap scattering too much."
+   REWRITE: A post hoc bootstrap diagnostic using a single toy followed a decision rule specified before execution. Its result is consistent with insufficient scatter in the closure toys arising from their use of training MC events to construct pseudo-data, rather than excessive scatter in the data bootstrap.

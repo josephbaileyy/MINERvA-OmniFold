@@ -1,0 +1,15 @@
+RATING: 4
+JUSTIFICATION: The prose largely matches the register of a published long technical paper, with occasional subjective phrasing, cumbersome sentences, and repetition that would benefit from light line editing.
+1. QUOTE: "A total of 18 events were rejected as flashers from all run periods, although from
+event timing information and visual scans we are confident that all are in fact due to beam
+neutrino interactions. Nevertheless, these events are discarded and the resulting selection
+inefficiency is taken into account."
+   REWRITE: Event timing and visual inspection indicate that all 18 events rejected by the flasher cut across all run periods are beam neutrino interactions. These events are excluded, and the resulting selection inefficiency is accounted for.
+2. QUOTE: "Events are timed with respect to the leading edge of the beam spill, taking into account
+the time of flight of the neutrino and myriad other sources of delay [94, 95]."
+   REWRITE: Event times are measured relative to the leading edge of the beam spill and corrected for the neutrino time of flight and other timing delays [94, 95].
+3. QUOTE: "The νe CC selection criteria 1-5 in Tab. XIV
+are based on the information provided by SK event reconstruction software which has been
+used at SK for atmospheric neutrino and nucleon decay analyses[1] and, as shown in the
+table, we reject most of the background events by these selection cuts."
+   REWRITE: Criteria 1–5 of the νe CC selection in Tab. XIV use quantities reconstructed by the SK software used in atmospheric neutrino and nucleon decay analyses [1]. These criteria reject most background events.

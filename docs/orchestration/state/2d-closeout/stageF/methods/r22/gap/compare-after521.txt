@@ -1,0 +1,160 @@
+rows 285  class agreement 247 (86.7 %)
+A \ B      PROTECTED PROTECTED STRUCTURE   WORDING UNRESOLVE UNVERIFIE
+PROTECTED         61         0        11         3         0         0
+PROTECTED-         0         0         0         0         0         0
+STRUCTURE          8         0        65         3         0         0
+WORDING            2         0         9       119         0         0
+UNRESOLVED         1         0         0         1         0         0
+UNVERIFIED         0         0         0         0         0         2
+
+B01-g-02 sh=15.0  A=PROTECTED [C9]  B=STRUCTURE []
+  A: Removes the disclosure that pseudo-experiments lost to time limits were rerun for reporting only.
+  B: Cuts the summary's rerun sentence; the lost-draw facts still print in Sec. 11.6.
+
+B02-g-08 sh=6.0  A=WORDING []  B=PROTECTED [B1]
+  A: Restates the PET status and its boundaries neutrally; the boundaries are kept.
+  B: Removes "PET design-study recovery does not validate real-data background subtraction" as a defensive disclaimer.
+
+B02-g-11 sh=2.0  A=PROTECTED [B2]  B=STRUCTURE [home: B02 Sec. 3.4 (32 849 103 entries)]
+  A: Omits the raw entry count (32 849 103), a reported number with no other copy.
+  B: Drops the six-digit formatting and the entry count, which still prints in Sec. 3.4.
+
+B02-s-01 sh=26.0  A=STRUCTURE []  B=PROTECTED [B2]
+  A: Consolidates the history, keeping the disclosures that affect interpretation.
+  B: Removes the account of the exact-split run (own log not found, regenerations to 7e-15); app_provenance.tex:110 covers only the purity-subtracted seed-42 value.
+
+B02-s-02 sh=19.0  A=STRUCTURE []  B=PROTECTED [B2]
+  A: Puts the configuration-to-result mapping in one table.
+  B: Consolidation drops the chronology "the quoted 2D central value until 2026-10-11", which no records file holds.
+
+B03-g-07 sh=6.0  A=PROTECTED [B1]  B=STRUCTURE []
+  A: Removes "does not demonstrate a causal efficiency advantage", the stated limit on what the covariance difference shows.
+  B: Cuts a disclaimer whose content the same paragraph restates ("cannot decide whether ... efficiency gain").
+
+B03-g-10 sh=3.0  A=STRUCTURE []  B=PROTECTED [B2, C5]
+  A: Condenses or tabulates the bin statistics.
+  B: Condenses the run-period block's reported medians, maxima and variance shares into ranges, dropping reported numbers.
+
+B03-s-01 sh=18.0  A=STRUCTURE []  B=PROTECTED [B2]
+  A: Consolidates historically framed material into methodological comparisons.
+  B: Cuts the record "These findings left the earlier printed budget unchanged", which no records file holds.
+
+B04-g-07 sh=5.0  A=WORDING []  B=STRUCTURE []
+  A: States the input constraints directly; the limitation is kept.
+  B: Cuts "not a general impossibility result"; the paragraph already limits the claim to the current inputs.
+
+B04-g-09 sh=5.0  A=STRUCTURE [home: app_provenance.tex:91 (coverage-fixed-truth: receipts including the independent recomputation)]  B=PROTECTED [B2]
+  A: Presents the independent recomputation as a cross-check, or omits it; the records document keeps it.
+  B: The omit option drops the result that an independent recomputation reproduces the pooled coverages, intervals, controls and secondary analysis; app_provenance.tex:91 only points to the receipts.
+
+B04-g-10 sh=5.0  A=PROTECTED [B1]  B=STRUCTURE []
+  A: Removing "Efficiency is diagnostic only" lets the efficiency entries read as a correction that is applied.
+  B: Cuts "Efficiency is diagnostic only" from the caption; the miss treatment is stated in Sec. 3.1.
+
+B05-g-02 sh=15.0  A=WORDING []  B=STRUCTURE [home: app_provenance.tex:114 (july-sweep)]
+  A: Replaces the calendar reference with a physical description.
+  B: Replaces the "July universe sweep" chronology label; the entry keeps the July sweep.
+
+B05-g-03 sh=15.0  A=PROTECTED [B1]  B=STRUCTURE [cut; ledger: docs/orchestration/state/2d-closeout/stageF/rebuild/PHASE2-IMPLEMENTATION.md:35-36 (Fig. 7 points carry hXSec2D, hXSec_pt, hXSec_pz bin errors)]
+  A: Stating that the error bars "represent the diagonal statistical uncertainties" replaces the qualifier "not the covariance of §4" with a description the text does not establish.
+  B: Removes the histogram names; the ledger keeps which histograms the error bars come from.
+
+B06-s-02 sh=15.0  A=STRUCTURE []  B=WORDING []
+  A: Replaces completion-status and prospective covariance instructions, keeping the limitation.
+  B: States the result and its limitation directly, without completion-status commentary.
+
+B07-g-04 sh=12.0  A=WORDING []  B=STRUCTURE [home: app_provenance.tex:116 (mp5-truth-axis)]
+  A: Replaces the internal label and record citation with descriptions or citations.
+  B: Replaces "configuration (a)" with a description and "R1.18" with a citation; the entry holds the fact.
+
+B07-s-03 sh=12.0  A=WORDING []  B=STRUCTURE [home: app_provenance.tex:116 (mp5-truth-axis)]
+  A: Conventional citations.
+  B: Replaces the R1.18 tracking reference; the entry states that the effect is not reliably determined for GENIE+MEC, NuWro and GiBUU.
+
+B09-g-09 sh=5.0  A=STRUCTURE []  B=PROTECTED [B2]
+  A: Tabulates or summarizes the secondary statistics.
+  B: Offers summarizing the variant chi2 values in prose instead of tabulating them, which drops reported numbers.
+
+B09-s-01 sh=25.0  A=STRUCTURE []  B=PROTECTED [B2]
+  A: Removes development and regression-check history and names the checks.
+  B: Removes the regression-check history ("The grading, rerun with the two truths, reproduces every record ... exactly"), which no records file holds.
+
+B10-g-01 sh=25.0  A=WORDING []  B=STRUCTURE []
+  A: Recasts the six quoted specification conditions as exposition; it paraphrases text quoted verbatim from the pre-registered specification.
+  B: Recasts the six quoted conditions as exposition.
+
+B11-g-05 sh=10.0  A=PROTECTED [B1]  B=WORDING []
+  A: Recasting without "No covariance is quoted for it" drops the fact that the result has no covariance.
+  B: Positive restatement that the result consists of central values and validation tests.
+
+B11-g-08 sh=6.0  A=PROTECTED [B2]  B=WORDING []
+  A: Deletes the color-scheme rationale (a presentation fact, not implementation detail).
+  B: Removes "hence the two color schemes".
+
+B11-g-10 sh=5.0  A=PROTECTED [B2]  B=STRUCTURE []
+  A: Deleting "entirely" the statement that the release design has no bearing on the covariance choice removes a fact with no other copy.
+  B: Moves the covariance boundary statement to where configuration (a) is defined.
+
+B11-s-04 sh=12.0  A=STRUCTURE []  B=WORDING []
+  A: Separates definition from results and removes redundant restatements.
+  B: Separates definition and results, removing an in-sentence restatement.
+
+B12-g-04 sh=12.0  A=PROTECTED [B2]  B=STRUCTURE [cut; ledger: records_estimators.tex:10-12 (lgbm, exact, hist); :19-20 and app_provenance.tex:115 (--bkg-mode values); DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:8 (variant cv); 2D_OMNIFOLD_REFERENCE.md:432 (MNV101_ACTIVE_UNIVERSE); PLAN-20261011-2d-closeout.md:116 (May and July sweeps); AUDIT-FINDINGS-20260731.md:478 (J28)]
+  A: Deletes the repository label table. No single ledger record keeps the label table's mapping of repository labels to meanings (lgbm/exact/hist, the --bkg-mode values, cv/mean, ...).
+  B: Deletes the repository label table; each label has a ledger home.
+
+B12-g-07 sh=8.0  A=WORDING []  B=STRUCTURE [home: app_provenance.tex:114 (july-sweep)]
+  A: Descriptive sweep designations.
+  B: Replaces the calendar sweep label; the entry keeps the July sweep.
+
+B12-g-11 sh=2.0  A=PROTECTED [B1]  B=STRUCTURE []
+  A: Removing the "internal project-status disclaimers" drops "implemented but not yet run".
+  B: Drops "not yet run" from the guide entry; App. D's title still states it.
+
+B12-s-03 sh=15.0  A=STRUCTURE []  B=WORDING []
+  A: Replaces production labels and moves repository identifiers to the implementation reference.
+  B: Replaces "ours-only" and production labels.
+
+B13-g-09 sh=5.0  A=PROTECTED [B1]  B=STRUCTURE []
+  A: Replacing "with no new validation result here" with a neutral summary drops the qualifier that these are requirements, not validation.
+  B: Condenses the inference-requirements paragraph and its disclaimer.
+
+B13-s-04 sh=12.0  A=WORDING []  B=STRUCTURE [home: app_provenance.tex:101 (fps-battery)]
+  A: Replaces administrative shorthand.
+  B: Replaces "battery of 2026-06-10" with a description; the entry keeps the date.
+
+B14-g-01 sh=20.0  A=WORDING []  B=STRUCTURE []
+  A: Frames the protocol as a prospective study, so it still reads as not performed.
+  B: Cuts the protocol-status disclaimer and frames the test as prospective; the not-yet-run status stays in the title.
+
+B14-g-02 sh=15.0  A=UNRESOLVED []  B=PROTECTED [B2]
+  A: Removes the attribution of the suggestion to Kevin McFarland; the rules do not cover credit for an idea (sol2's B14-s-06 moves it to an acknowledgment instead).
+  B: Removes the attribution of the proposal to McFarland (private communication), with no copy in either document.
+
+B14-g-03 sh=15.0  A=PROTECTED [B2]  B=STRUCTURE [cut; ledger: docs/analysis-note/README.md:8 (PET note pet_note.tex, companion split from the note); docs/orchestration/RECORD-20261029-close-items-conditional-proposals-ruled.md:34]
+  A: The "or omit the unfinished project entirely" option deletes the point-cloud work and its scope statement (mixed change: highest class).
+  B: Replaces or omits the PET note path; the ledger keeps the file and its role, and the PET status still prints in the note.
+
+B15-g-07 sh=6.0  A=WORDING []  B=STRUCTURE [cut; ledger: 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:258 (ML-noise covariance over the lgbm seedscan)]
+  A: Standard names.
+  B: Removes the seedscan alias; the ledger keeps the name for the training-seed product.
+
+B15-g-08 sh=5.0  A=PROTECTED [B2]  B=WORDING []
+  A: Replaces the remark that a second host reproduces λmin to five significant digits, a finding.
+  B: Discusses the precision limit formally.
+
+B15-s-02 sh=13.0  A=WORDING []  B=PROTECTED [B2]
+  A: Keeps the tested version, conditions and outcome; removes session narrative.
+  B: Removing the session narrative drops the replay agent's identity (separate AI session, Opus 5.5), which no records file holds.
+
+paper-s-02 sh=20.0  A=STRUCTURE []  B=PROTECTED [FROZEN F023, C12]
+  A: Consolidates repeated coverage statements beside their results; the FROZEN sentence can stay verbatim, so no protected text has to change.
+  B: Consolidating repeated limitations would reword or remove the frozen sentence "Interval coverage has not been validated."
+
+paper-s-08 sh=5.0  A=UNRESOLVED [C13,F277]  B=WORDING []
+  A: A rewording that keeps the fact (WORDING by the rules), but F277 is probed verbatim by the paper-protections ledger and C13 is "Keep as stated"; the rules do not place a verbatim probe outside A1/A4/A5/GATE/FROZEN.
+  B: Rewords "does not cover" as bias exceeding the quoted uncertainty, keeping the fact.
+
+paper-s-10 sh=3.0  A=PROTECTED [B1,C18]  B=STRUCTURE []
+  A: Deleting "The low stability of four of the sixteen cells is stated only here." makes the previous sentence ("limitations ... stated with the results they qualify") false, and placing the item with its result moves it out of the limitations, where C18 places it.
+  B: Deletes "stated only here"; item 4 keeps the low-stability fact.

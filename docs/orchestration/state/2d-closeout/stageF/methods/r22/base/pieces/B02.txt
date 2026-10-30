@@ -1,0 +1,1074 @@
+The MINERvA experiment, data and simulation samples
+
+2.1
+
+Detector and beam
+
+MINERvA [9] was a fine-grained scintillator-tracker neutrino experiment on Fermilab’s NuMI
+beamline. Its central tracker comprises hexagonal planes of triangular polystyrene scintillator
+strips in three stereo orientations, surrounded by electromagnetic and hadronic calorimetry. The
+magnetized MINOS near detector, 2 m downstream, serves as the muon spectrometer, measuring
+momentum and charge for MINOS-matched tracks. We use the medium-energy (ME) neutrino-mode
+(FHC) exposure with ⟨Eν ⟩ ∼ 6 GeV. The flux is the a posteriori constrained NuMI ME prediction
+of Ref. [10], combining PPFX hadron-production weights and the neutrino–electron-scattering
+constraint, identical to the published measurement’s flux [3].
+
+2.2
+
+Data and simulation samples
+
+The twelve ME FHC playlists (ME1A–ME1G, ME1L–ME1P) contain 1.057 × 1021 protons on target,
+the same exposure as Ref. [3]. The selection below leaves 4 119 797 reconstructed data events.
+The reference simulation uses GENIE 2.12.6 [4] and MINERvA Tune v1, applied as per-event
+weights through MAT (MINERvA Analysis Toolkit) reweighters. These are the flux-and-CV and
+GENIE dial weights, the low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction. The
+full Geant4-based [34] MINERvA detector simulation underlies the production AnaTuples. The
+simulated sample contains 32 849 103 true signal events, POT-normalized event-by-event to the data
+exposure and processed with identical reconstruction and selection.
+
+2.3
+
+Signal definition and event selection
+
+The signal definition and phase space follow Ref. [3] exactly. Truth-level signal events are chargedcurrent νµ interactions in the central-tracker fiducial volume with muon phase space
+θµ < 20◦ ,
+
+1.5 < p∥ < 60 GeV/c,
+
+pT < 4.5 GeV/c.
+
+The fiducial volume spans 5980 < z < 8422 mm within an 850 mm apothem and contains 3.2353×1030
+nucleons, the fixed tracker-geometry constant.
+Reconstructed events require a vertex in the same fiducial volume and apothem, a muon track
+with θµ < 20◦ matched to a MINOS track with a passing fit (isMinosMatchTrack==1 && minos_trk_is_ok==1), no dead-time overlap, and a neutrino (rather than antineutrino) candidate.
+Genuine backgrounds are reconstructed events whose true interaction fails the signal definition:
+charged-current events of other flavors or wrong sign, neutral-current interactions, and out-of-fiducialvertex events. Their predicted rate is 0.35 % of selected events, evaluated on playlist 1A. This
+is the same sub-percent scale as the 8655 (0.2 %) predicted background events of Ref. [3], which
+counts only the wrong-flavor, wrong-sign and neutral-current components; exact agreement is not
+expected given the differences in definition and selection, and neither prediction carries an uncertainty.
+Out-of-phase-space signal (fakes: reconstructed in phase space, true muon outside it) is treated
+separately. Both are POT-scaled and subtracted from the reconstructed-data target before unfolding
+(§3).
+Event selection determines which observations enter the analysis and which truth population is
+being estimated. Classifier features determine what the learner can use within that population. A
+muon can therefore be required for selection even when its momentum is absent from the classifier.
+Analysis
+
+Selected observations
+
+Truth domain
+
+Classifier information
+
+Scalar 2D–5D
+
+Tracker vertex and MINOSmatched muon; common reconstructed selection
+
+Published muon cuts
+
+Muon (pT , p∥ ); successively
+Eavail , q3 , W
+
+Scalar extended fiducial
+
+Same reconstructed selection
+
+Tracker CC νµ ; truth-muon
+cuts removed
+
+Muon kinematics; extendeddomain study
+
+Historical recoil-only
+PET
+
+MINOS-based selection, including the muon
+
+Standard or extended domain, as declared for each
+cross-check
+
+Recoil clusters at reco; hadron
+four-momenta at truth; no
+muon features
+
+Full-event PET candidate
+
+Same MINOS-based reconstructed selection
+
+Extended tracker CC νµ domain
+
+Muon event features plus recoil/hadron clouds
+
+PET design studies
+
+Signal-only simulation banks
+with fixed selection and sampling
+
+Declared bank population
+
+Muon and cloud features; finalists add detector energy
+summaries
+
+Table 1: Selection and classifier information are separate choices. Reporting bins are not classifier
+inputs. Extended fiducial domain: §12. PET design-study recovery does not validate real-data
+background subtraction; PET remains diagnostic method development.
+
+2.4
+
+Per-event analysis trees
+
+Unbinned unfolding needs per-event records rather than histograms. A dedicated event loop (App. H)
+built on MAT’s systematic-universe machinery writes four flat trees per playlist: all true signal events
+(the efficiency denominator), reconstructed truth-matched simulated events, simulated background,
+and data. Entries carry truth and reconstructed observables (pT , p∥ , and in extended runs Eavail , q3 ,
+
+W ) and the MINERvA Tune v1 central-value weight. The systematic-universe trees also carry every
+universe’s weight and each lateral band’s shifted observables (in MAT’s terms, a lateral band shifts
+reconstructed kinematics and a vertical band reweights events; §4). Two conditions make the truth
+tree the complete reference for the simulated signal:
+• A reconstructed signal event is filled only if its (run, subrun, event) key is in the truth denominator. Truth-only events enter as native OmniFold “miss” entries.
+• Completeness is c = 1.000000 by construction at ME FHC (32 849 103 entries; §3.4).
+The loop reads one playlist-wide flux and calibration from the first event, so it is run separately
+for each playlist. The twelve outputs are then merged, with a tree-size-aware merger for the trees
+with per-universe content, which exceed 100 GB. The corresponding baseline histogram event loop
+supplies the flux histogram, POT-weighted across playlists; playlist-to-playlist flux differences are a
+∼ 0.2 % effect.
+
+2.5
+
+Reco-level control distributions
+
+Selected data exceed the POT-scaled MINERvA Tune v1 prediction (signal + background) by
+∼ 12 % in overall normalization. Figure 1 compares all five reconstructed observables. The data/MC
+ratio has a clear pT trend, rising from 0.88 in the lowest bin to ∼ 1.2 above 1 GeV/c. Excess and
+trend together reflect the truth-level normalization deficit of §6.5 and §7.6. The simulation describes
+the shapes well, which is what the unfolding relies on; the data pull corrects the rate offset.
+The beam and acceptance set the shapes. The p∥ peak at 4–6 GeV/c reflects the ⟨Eν ⟩ ≈ 6 GeV
+NuMI medium-energy peak; spectrometer matching removes the lowest-p∥ muons. The pT spectrum
+peaks near 0.7 GeV/c and falls by over an order of magnitude across the measured range. Low-recoil
+(quasi-elastic and 2p2h) events dominate the sample. Available energy Eavail concentrates below
+∼0.5 GeV, with a long inelastic tail in the wide upper bins; q3 tracks this population’s momentum
+transfer. Reconstructed W rises through the smeared quasi-elastic and ∆(1232) region before the
+deep-inelastic continuum takes over above ∼2 GeV. Absolute background is at the few-percent level
+under the muon projections and concentrates at high recoil (highest Eavail , q3 and W bins). Beyond
+the pT trend noted above, the ratio panels also show a mild enhancement in the lowest Eavail bins,
+reflecting the low-recoil excess examined at truth level in §7.7.
+
+
+106
+
+106
+
+105
+
+105
+
+105
+
+104
+
+104
+
+104
+
+103
+1.2
+1.0
+0.8
+
+1.2
+1.0
+0.8
+
+Data / MC Events (POT-scaled)
+
+106
+
+103
+1.2
+1.0
+0.8
+
+0
+
+1
+
+2
+
+3
+
+4
+
+pT (GeV/c)
+
+Data / MC Events (POT-scaled)
+
+106
+
+10
+
+20
+
+30
+
+40
+
+p (GeV/c)
+
+50
+
+60
+
+0
+
+1
+
+2
+
+Eavail (GeV)
+
+3
+
+//
+
+100
+
+106
+
+105
+104
+
+105
+
+103
+
+104
+
+102
+1.2
+1.0
+0.8
+
+1.2
+1.0
+0.8
+
+0
+
+2
+
+4
+
+6
+
+q3 (GeV)
+
+8
+
+//
+
+10 100
+
+Data
+MC signal (MnvTune v1)
+MC background
+MINERvA ME FHC, 1.06 × 1021 POT
+0
+
+1
+
+2
+
+3
+
+W (GeV)
+
+4
+
+//
+
+5 100
+
+wide catch bin compressed to 100 at right
+
+Figure 1: Reconstructed pT , p∥ , Eavail , q3 and W for the analysis selection. Data points overlay
+POT-scaled simulated signal (blue) stacked on background (orange); data/MC ratios appear below.
+Wide hadronic catch bins extend to 100 GeV and are compressed at each panel’s right edge. The gray
+MC-statistical band on the ratio is mostly narrower than the points. The ∼ 12 % data normalization
+excess over MINERvA Tune v1 reflects the truth-level generator deficits in §7.6.
+
+
+MINERvA ME FHC, 1.06 × 1021 POT
+MC (sig+bkg)
+Data
+
+105
+
+rMC=+0.47
+rdata=+0.48
+
+p (GeV/c)
+
+45
+30
+15
+
+Eavail (GeV)
+
+2.4
+
+rMC=+0.05
+rdata=+0.05
+
+rMC=+0.59
+rdata=+0.59
+
+rMC=+0.00
+rdata=+0.00
+
+rMC=+0.81
+rdata=+0.82
+
+rMC=-0.02
+rdata=-0.03
+
+rMC=-0.12
+rdata=-0.10
+
+rMC=+0.73
+rdata=+0.74
+
+1.6
+0.8
+
+1.5
+
+q3 (GeV)
+
+rMC=+0.34
+rdata=+0.32
+
+1.0
+0.5
+
+W (GeV)
+
+2.4
+
+rMC=+0.57
+rdata=+0.57
+
+1.6
+0.8
+1.5
+
+3.0
+
+pT (GeV/c)
+
+15
+
+30
+
+p (GeV/c)
+
+45
+
+0.8
+
+1.6
+
+Eavail (GeV)
+
+2.4
+
+0.5
+
+1.0
+
+q3 (GeV)
+
+1.5
+
+0
+
+1
+
+2
+
+W (GeV)
+
+3
+
+Figure 2: Reco-level corner plot of five observables. The lower triangle shows pairwise POT-scaled
+MC (signal+background) densities on a logarithmic color scale, with wide catch bins dropped. Each
+panel annotates the simulation’s weighted Pearson correlation and the corresponding data value.
+The diagonal shows 1D marginals (data points over MC). The strongest correlations follow from
+kinematics: q3 with Eavail (r ≈ 0.81) and W with Eavail (r ≈ 0.73) share recoil energy; q3 with pT
+(r ≈ 0.59) shares the muon transverse kick. Both Eavail and W are nearly uncorrelated with the
+muon variables. Data reproduce every simulated coefficient within 0.02.
+
+3
+
+The unbinned OmniFold procedure
+
+3.1
+
+Algorithm
+
+OmniFold [1, 2] unfolds by iterated reweighting with machine-learned likelihood ratios, operating on
+per-event observables rather than on a fixed histogram binning. Each iteration has two steps:
+1. Step 1 (detector space). A classifier separates measured data from reconstructed simulation
+weighted by the current push-weights. Its calibrated output p gives the likelihood-ratio reweight
+
+w = p/(1 − p) for each reconstructed simulated event. Each simulated event is a (truth, reco)
+pair, allowing the weight to be pulled back directly to its truth record. Truth events without
+a reconstructed partner (“misses”) receive step-1 weights from a regressor trained on the
+reconstructed subsample, w(truth features). This native OmniFold acceptance treatment
+requires no separate efficiency correction.
+2. Step 2 (truth space). A second classifier separates the original truth-level simulation from
+the same sample carrying the pulled-back step-1 weights. Its smooth truth-space reweight
+becomes the next iteration’s push-weight.
+After n iterations, the push-weights define an efficiency-corrected truth-level reweighted simulation
+ensemble. Histogramming this ensemble in any binning chosen afterwards gives the unfolded spectrum.
+The iteration count and learner capacity regularize the unfold.
+Training details. Each classifier is trained on the full sample whose weights it then sets, with no
+held-out or cross-fitted split and no early stopping. The two classes keep their physical weights, with
+no class balancing and no renormalization between iterations, so the learned ratio p/(1 − p), with p
+restricted to [10−6 , 1 − 10−6 ], carries the normalization. Truth events without a reconstructed partner
+receive the prediction of an unweighted regressor of the step-1 weight on the truth observables. In
+the refined configurations, a classifier separating positive from negative weights, trained with |w|,
+gives each event the weight |w| max(0, 2g − 1). No effective sample size of the unfolded ensemble is
+computed.
+Background subtraction. In the binned purity subtraction, all selected data events enter step 1;
+none is discarded and no negative-weight events are injected. Each receives a reco-bin purity weight.
+The POT-scaled background prediction includes genuine backgrounds and out-of-phase-space signal
+(§2.3) and is binned on the reconstructed analysis grid. A data event in reco bin b receives
+
+wpur (b) = max 0, Ndata (b) − Nbkg (b) Ndata (b),
+the predicted signal purity, floored at zero in the rare bins where the background prediction exceeds
+the data. The step-1 classifier retains the full unbinned kinematics. Binning enters only through this
+multiplicative correction, an ∼3 % effect overall, largest where backgrounds concentrate (§2.3).
+This correction is, by design, the one place the analysis binning enters before the final histogramming; other experiments’ treatments are summarized in §1. At the sub-percent genuine-background
+scale, a per-reco-bin weight is a conservative middle ground. A fully unbinned alternative injects
+negatively weighted background simulation on the measured side, targeting the identical backgroundsubtracted density (D − B)/S. It reproduces the binned correction to −0.13 % on the total 2D cross
+section and its systematic and statistical covariances to within 2 % (App. C). It removes residual
+binning dependence and suits the extended-fiducial analysis, where backgrounds are larger. The
+quoted 2D result and its covariance, the 3D and 4D central values and the sixteen-cell 5D result and
+its covariance (§10) use its refined form; every other quoted cross section and uncertainty, including
+the configuration-(a) 5D central value and the extended-fiducial value, uses the binned correction.
+The refined form is the background treatment of configurations (d), (e) and (f) (§3.2): (d) in the
+background-bias and generator-sized-change studies of §9.2; (e), the joint-test estimator, in §§9.3–9.4,
+the generator tests, the 3D and 4D central values and the sixteen-cell result; and (f) for the 2D
+result and its covariance (App. C, §7, §6).
+
+
+3.2
+
+Estimators and configuration
+
+Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural networks for the scalar
+unfolds. With at most five high-level features per event, tree ensembles typically match or outperform
+neural networks [35] and train deterministically and far faster on CPU. Ref. [36] demonstrates their
+effectiveness for unbinned unfolding with few high-level features, complementing deep models for lowlevel event representations. We use GBDTs for all unfolds in this note (point-cloud representations:
+App. F). Calibration tests and MLP/transformer cross-checks test the implementation in §7.5.
+The unfolding code supports interchangeable learners (component terminology and code paths in
+App. H). The quoted 2D central value and all of its uncertainty ensembles (the systematic-universe
+sweep, the Poisson bootstrap, the training-seed block and the run-period unfolds) use LightGBM
+with 100 trees, 8 leaves and learning rate 0.1, with the same settings for the step-1 classifier, the
+step-2 classifier and the miss regressor. They use refined negative-weight background subtraction
+(App. C), whose refinement classifier has 400 trees and 31 leaves and takes the estimator seed plus
+three as its seed. This is configuration (f) below. The central value is the universe sweep’s own
+central value at seed 42, so the systematic block shares its estimator and seed (§4.1). The quoted
+statistical block, a bootstrap drawn in three independent streams (data, signal and background
+simulation), also uses seed 42, and the training-seed block uses five seed settings that include seed 42
+(§4.2, §4.3). A central unfold at seed 45 differs from the seed-42 one by at most 1.4 % in a cell. With
+the purity-based subtraction (configuration (a)), the seed-42 central value differs from the seed-1
+one by a per-bin median of 0.18 % (maximum 1.79 %). That is 0.30 (maximum 1.28) of the per-bin
+standard deviation of the earlier statistical band, which was built at seed 1. Both of those central
+values are regenerated to ≲ 2 × 10−11 by runs with one driver and one input that differ only in the
+seed, so the difference is attributable to the seed, as inferred from the two regenerations. The quoted
+central value records its run configuration; it repeats to 9 × 10−12 and equals the refined 2D data
+unfold of App. C.6 to 7 × 10−12 . The purity-subtracted seed-42 central value has no recorded run
+configuration. An independent rerun reproduces it to 1.4 × 10−11 , and so does a regeneration whose
+run configuration is recorded (Ref. [37], R1.12). Against the ten purity-subtracted LightGBM central
+values at seeds 1–10 it is mildly over-dispersed (RMS standardized difference 1.28, maximum 4.25).
+Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of
+the two costed ways to give the central value and the statistical band a common seed.
+The exact-split cross-check. The exact-split configuration (exact) uses scikit-learn GradientBoosting with single-threaded exact-split CART. Its seed was not fixed: the driver version it ran
+had no seed option, and its production job script passed no seed. The run’s own log was not found.
+Two driver revisions regenerate it to 7 × 10−15 . It is not invariant to the estimator seed, however:
+one reseeded run (random_state 1/2/3) moves every bin, by a median of 0.18 % (maximum 1.6 %),
+and gives χ2 /ndf = 3.57. The spread over seeds is unmeasured. The agreement of that median
+with the LightGBM seed-1 to seed-42 median above is a coincidence. The exact-split central value
+differs from the purity-subtracted LightGBM seed-42 central value by a per-bin median of 0.98 %
+(maximum 12.2 %), 1.32 statistical standard deviations. It differs from the quoted central value,
+which also differs from it in background treatment, by a per-bin median of 1.03 % (maximum 17.6 %).
+It gives χ2 /ndf = 3.66 (unseeded, reproducible) against the published covariance, against 2.65 for
+the purity-subtracted LightGBM central value and 2.27 for the quoted one (§6.4). It has no matched
+covariance: no exact-split bootstrap, universe sweep or seed scan exists. LightGBM was chosen for
+the central value after both comparisons with the publication were known, so that the central value
+and its covariance share an estimator. A third learner, the scikit-learn histogram backend (hist,
+HistGradientBoosting, matched 8-leaf configuration), is retained for method-dependence studies
+
+(§6.4).
+The estimator configurations. Six estimator configurations, labeled (a)–(f) (Table 2), are used,
+and each result names the one it uses. All use five OmniFold iterations and gradient-boosted trees of
+nominal capacity (100 trees, 8 leaves) in both OmniFold steps; “deterministic” means fixed seeds and
+reproducible training. Results from different configurations are not combined. Four are described in
+this section:
+• (f), the nominal LightGBM configuration above with refined negative-weight subtraction and
+the refinement classifier of (e), seeded at the estimator seed plus three: the 2D central value
+(seed 42) and its uncertainty ensembles (§6);
+• (a), the same learner with purity-based background subtraction (§3.1): the five-dimensional
+central value (§8), the 3D and 4D injected-bump closures and Figs. 17 and 23 (§7), and the
+purity-subtracted 2D comparisons of this section and §6.4;
+• (e), the joint-test estimator: a deterministic LightGBM variant with the unbinned negativeweight background treatment (App. C), whose refinement classifier has 400 trees and 31
+leaves. The negative-weight treatment reduces the purity method’s nominal-truth bias in the
+highest-W column at least fifteen-fold (from 3.5 % to 4.1 % to 0.11 % to 0.24 %, the level of the
+no-background closure), and the larger refinement classifier removes most of the backgroundrelated bias that remains (§§9.2–9.3). It gives the 3D and 4D central values (§7) and the
+sixteen-cell five-dimensional result (§10). It is used for the generator tests (§11), the study
+of generator shapes held out of its development (§9.3) and the precision study (§9.4). It was
+selected before the joint-test design was fixed (§11);
+• (b), the exact-split cross-check above.
+Configuration (c), the deterministic variant with purity-based subtraction, and (d), the same variant
+with negative weights and a nominal-capacity refinement, are used in the background-bias, generatorsized-change and coverage studies listed in the table. The five-dimensional central value of §8 and its
+five-axis covariance use configuration (a): they were produced before the purity bias was found and
+the refinement was developed. A refined five-dimensional data unfold exists (configuration (e)); it
+gives the sixteen-cell result, whose reported covariance on the sixteen cells is described in §10.2. The
+2D central value and its covariance were rebuilt with configuration (f) after a two-dimensional closure
+test with backgrounds found the purity bias (App. C.6). Studies in this note labeled exact-split
+use the exact-split central value (the quoted 2D central value until 2026-10-11) and have not been
+recomputed. The 3D and 4D central values have been regenerated with configuration (e); no 3D or
+4D covariance is quoted.
+Hyperparameter choice. The learner settings were fixed a priori; no hyperparameter search was
+performed on data, which avoids tuning on the result. They are the scikit-learn GradientBoosting
+defaults: 100 trees, learning rate 0.1, and depth-3 capacity. The LightGBM learner of the central
+value and its ensembles uses matched capacity (num_leaves = 8 = 23 ), giving every learner the
+same deliberately modest capacity, one of OmniFold’s regularizers (§3.1). The configuration is
+instead validated after the fact by closure and classifier-calibration tests (§5, §7.5), insensitivity to
+doubling the iteration count, measured for the exact-split cross-check (below), backend agreement
+in method-dependence studies (§6.4), and an explicit training-seed variation band for residual ML
+stochasticity (§4).
+Production uses n = 5 iterations. Huang et al. [33] select 45 iterations for OmniFold-family
+methods (20 for their binned benchmark) using a binned χ2 against known mock-data truth, a
+
+Table 2: Estimator configurations.
+Configuration
+
+Learner
+
+Background treatment
+
+Results
+
+(a) central-value
+estimator
+
+LightGBM; seed 42
+in two dimensions
+
+purity-based
+subtraction
+
+(b) exact-split
+cross-check
+(c) deterministic
+variant
+(d) deterministic
+variant with
+refinement
+(e) joint-test
+estimator
+
+scikit-learn exact
+splits; seed not fixed
+LightGBM,
+deterministic
+as (c)
+
+purity-based
+subtraction
+purity-based
+subtraction
+negative weights;
+refinement classifier 100
+trees, 8 leaves
+negative weights;
+refinement classifier 400
+trees, 31 leaves
+
+five-observable central value of
+§8 and its five-axis covariance
+(§9.6); three- and four-observable
+closures and Figs. 17, 23 (§7);
+two-observable purity-subtracted
+comparisons (§6.4)
+two-observable cross-check
+(above)
+background bias (§9.2); coverage
+test (§9.5)
+background bias; generator-sized
+Eavail change (§9.2)
+
+(f) refined
+central-value
+estimator
+
+as (a); refinement
+seeded at the
+estimator seed plus
+three
+
+as (c)
+
+negative weights;
+refinement classifier 400
+trees, 31 leaves
+
+three- and four-observable
+central values (§7); sixteen-cell
+five-observable result (§10);
+generator shapes held out of
+development; precision study
+(§9.4); generator tests (§11)
+two-observable central value and
+covariance (§6)
+
+criterion they note is infeasible on real data. We do not adopt that recommendation. Their mock
+data injects a large prior–data shape discrepancy through an RPA-modified quasielastic model,
+requiring many iterations. Our prior already describes the data shapes well (§2.5); the data pull is
+dominantly a normalization. Cross-experiment production also typically uses ∼5 iterations [18]. Our
+n = 5 is instead justified empirically: for the exact-split cross-check, the total cross section agrees to
+within 0.026 % between five and ten iterations (§5), and the unfold reproduces an independently
+published binned measurement of the same data (§6).
+
+3.3
+
+MINERvA driver and pipeline conventions
+
+The higher-dimensional MINERvA driver (App. H) extends the 2D driver using an axis list and the
+same 2D helpers. The first two axes are always (pT , p∥ ), carrying the fiducial phase-space cut and
+the per-pT flux. Higher-dimensional runs extend the muon observables (pT , p∥ ) with Eavail , q3 , W in
+the phase space of §2.3. Every production, universe-sweep, and closure run follows these conventions:
+• Reco-space masking. The measured events entering step-1 training are exactly those passing
+the reconstructed-level selection; nothing outside the reconstructed phase space reaches the
+classifier.
+• Fake-free step-1 training. Step 1 targets the background-subtracted data of §3.1, purityweighted or with background simulation injected at negative weight (refined to non-negative
+weights in the refined configurations). Genuine backgrounds and out-of-phase-space signal
+fakes are removed from the data side. The simulated reco sample is fake-free by construction,
+
+
+so neither side of the step-1 training contains events whose truth lies outside the measurement
+phase space.
+• At histogramming, each simulated truth event carries its final OmniFold push-weight times
+its central-value simulation weight, including MINERvA Tune v1 reweighting. No additional
+efficiency-histogram division is applied. Step-1 miss regression already gives an efficiencycorrected truth spectrum; dividing again would double-correct.
+• Closure mirrors production. In closure tests the pseudo-data are simulated events passing
+both the reconstructed and truth selections, weighted identically to the production data path,
+so closure exercises the same code path as the measurement rather than an idealized shortcut.
+
+3.4
+
+Cross-section extraction
+
+The differential cross section follows from unfolded truth-level counts:
+dn σ
+U
+=
+× 104 ,
+dx1 · · · dxn
+c Φ N POT ∆x1 · · · ∆xn
+where U is the unfolded yield and c the per-bin completeness, the fraction of truth events visible to
+the unfolding input. The event loop explicitly appends truth-only misses, so every truth event enters
+and c ≡ 1 bin-by-bin. The factor remains a monitored self-check; dropping misses would give c < 1.
+Φ is the per-pT flux integral, broadcast over other axes, N the fiducial nucleon count (3.2353 × 1030 ),
+and POT the data exposure (1.057 × 1021 ). The factor 104 converts flux tabulated per square
+meter to the reported cm2 (1 m2 = 104 cm2 ), giving units of cm2 per axis unit per nucleon. The
+implementation (App. H) is self-tested to reproduce stored lower-dimensional reference extractions
+to < 10−12 . Since σ ∝ 1/Φ, Φ varies per flux universe when building the systematic covariance. This
+variation dominates the Flux band (§4).
+For the higher-dimensional extractions the integrated flux is Φ = 6.243 × 10−8 cm−2 per proton on
+target, from 0 to 100 GeV after the neutrino–electron-scattering constraint, and the target contains
+3.235 × 1030 nucleons.
+
+3.5
+
+Binning
+
+The 2D grid has 14 pT × 16 p∥ bins; 205 of 224 are reported. The 19 unreported diagonal cells
+lo
+◦
+have phi
+T /p∥ > tan 20 . The extension axes use Eavail : [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100] GeV; q3 :
+[0, 0.2, 0.4, 0.6, 0.8, 1.2, 2.0, 100] GeV; W : [0, 1.1, 1.4, 1.8, 2.2, 3.0, 100] GeV. Each ends in a wide catch
+bin to capture the full CC-inclusive tails in marginals; truncating the top edge would break the
+marginalization checks of §7.3. Binning after unfolding allows these choices to be revisited without
+re-running the unfold. App. G (§G.3) gives all five axes’ edges. §A.3.1 defines the 205 reported cells;
+the authoritative mapping is the bin-mapping file of the published data release [3].
+Neither underflow nor overflow appears in the reported product, by construction rather than by
+truncation. Truth-level muon edges coincide with the measurement phase space (§2.3); no signal
+is defined beyond them. Hadronic axes span [0, 100] GeV, with catch-bin edges far beyond the
+kinematic reach at ⟨Eν ⟩ ∼ 6 GeV, so the truth grids are exhaustive. A selected reco event outside the
+grid is treated as unaccepted and excluded from the measured sample by §3.3’s masking convention.
+Its in-phase-space truth content is recovered by the miss treatment, as for any unreconstructed event.
+The unbinned unfold has no response-matrix under/overflow to track; reporting bins are applied
+once to events that all lie inside the grids.
+
+
+Truth→reco migration on the analysis binning (Fig. 3) summarizes the smearing OmniFold must
+undo, although it uses no response matrix. Median diagonal purity is ∼ 0.6 on every axis. These
+substantial migrations require unfolding; a bin-by-bin correction would be badly biased.
+The structure differs qualitatively between the muon and hadron sides. The spectrometer muon
+measurement makes the pT and p∥ maps nearly tridiagonal, with migrations rarely exceeding one
+bin. Purity dips to ∼0.45–0.5 for pT and ∼0.35 for p∥ where bins are finest, recovering in wide edge
+bins. The calorimetric axes have coarser bins but relatively broader, visibly asymmetric migrations.
+Eavail preferentially migrates downward because energy carried by neutrons and other unresponsive
+particles is not collected. Diagonal purity falls from 0.61 in the lowest bins to 0.43 in the highest. q3 ,
+built from Eavail and the muon, inherits a milder version of the same pattern. W compounds Eavail
+and muon smearing and has the broadest migrations; two-bin shifts are common in the resonance
+region. The lowest-W (quasi-elastic) bin remains purest at 0.71.
+14
+
+16
+
+diag median 0.58
+
+1.0
+
+12
+
+reco bin
+
+1.0
+
+0.8 12
+
+10
+8
+
+0.6
+
+6
+
+0.4
+
+2
+0
+0.0
+
+2.5
+
+5.0
+
+7.5
+
+truth bin
+
+10.0 12.5
+
+1.0
+
+0.4
+
+2
+
+4
+
+0.2
+
+0.0
+
+2
+
+0.0
+
+0
+
+5
+
+10
+
+truth bin
+
+15
+
+0.6
+
+0.4
+
+0.4
+
+0.2
+0.0
+
+0
+
+1
+
+2
+
+3
+
+truth bin
+
+4
+
+5
+
+0.2
+
+1
+0
+
+6
+
+2
+
+0
+
+1
+
+2
+
+3
+
+truth bin
+
+4
+
+5
+
+0.0
+
+0
+
+6
+
+1.0
+
+1.0
+
+1.0
+
+1.0
+
+0.8
+
+0.8
+
+0.8
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+0.2
+
+0.2
+
+0.2
+
+0.0
+
+2.5
+
+5.0
+
+7.5
+
+10.0 12.5
+
+pT (GeV/c) truth bin
+
+0.0
+
+0.0 2.5 5.0 7.5 10.0 12.5 15.0
+
+p (GeV/c) truth bin
+
+0.0
+
+0
+
+1
+
+2
+
+3
+
+4
+
+Eavail (GeV) truth bin
+
+5
+
+6
+
+0.0
+
+0.2
+
+1
+
+0.0
+
+1.0
+
+0.0
+
+0.8
+
+0.6 3
+
+2
+
+1
+0
+
+1.0
+
+4
+
+3
+
+0.4
+
+0.2
+
+0.8
+
+0.6
+
+3
+
+diag median 0.60
+
+1.0
+
+4
+
+0.6
+
+6
+
+5
+
+diag median 0.61
+
+5
+
+0.8
+
+4
+
+10
+
+0
+
+6
+
+diag median 0.59
+
+5
+
+0.8
+
+8
+
+4
+
+P(reco bin = truth bin)
+
+6
+
+diag median 0.59
+
+14
+
+0
+
+1
+
+2
+
+3
+
+4
+
+q3 (GeV) truth bin
+
+5
+
+6
+
+0.0
+
+0
+
+1
+
+0
+
+2
+
+3
+
+4
+
+truth bin
+
+1
+
+2
+
+3
+
+W (GeV) truth bin
+
+5
+
+4
+
+5
+
+Figure 3: Simulated signal truth→reco migration on the analysis binning for five observables. Top:
+column-normalized maps; bottom: diagonal purity per truth bin. Median diagonal purity is 0.58–0.61
+per axis. The figure is illustrative only; the unfold is unbinned.
+
+3.6
+
+Related developments and estimator scope
+
+Profile OmniFold [38] extends classifier-based EM to forward-model nuisance parameters. Its distinct
+algorithmic construction complements earlier unbinned profiled unfolding [19]. Profiling nuisances
+with observed data would change our inference model, which propagates an external nuisance
+ensemble through a fixed procedure. Neither a profiled estimator nor its uncertainty is used here.
+SPINUP learns a forward mapping [39]; AUSSIE replaces OmniFold’s second step with a different
+loss and avoids the outer iteration [40]. Both offer possible future cross-checks with different
+algorithmic assumptions. Reduced simulation-prior dependence does not establish detector-model
+independence, adequate phase-space support, or coverage for this measurement. Comparisons would
+require matched signal, selection, normalization, and uncertainty definitions.

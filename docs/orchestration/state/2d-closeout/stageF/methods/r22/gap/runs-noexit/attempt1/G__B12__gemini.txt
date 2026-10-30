@@ -1,0 +1,53 @@
+CURRENT RATING: 2.0
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "That check could not detect that the Flux band omitted those constraint weights, because it filled the MnvH1D without MAT’s per-universe weights (SetUnivWgts), so both sides were unweighted; it also ran on a sweep from before the flux fix, not on a quoted product."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Narrating past code failures, debugging post-mortems, and historical audit fixes reflects an internal troubleshooting log rather than the register of published PRD papers (such as reference-1 Sec. VI C), which report only the final validated systematic procedure.
+   CHANGE: Remove the narrative of historical bugs and flawed validation runs, describing only the final, validated weighting and systematic evaluation protocol.
+   SHARE: 20
+2. QUOTE: "We draw one np.random.default_rng().poisson(1.0) factor per event."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Directly citing programming syntax, library calls, and keyword arguments departs from the journal register of the reference texts, which express statistical procedures in formal mathematical notation.
+   CHANGE: Replace code snippets and script calls with standard mathematical notation denoting independent unit-mean Poisson weights.
+   SHARE: 15
+3. QUOTE: "Where a repository label is needed to find the object, it is given once in parentheses at first use, or here."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Documenting internal repository keys, driver CLI flags, and batch production tags reads like a software user manual rather than the technical design and experimental register of the reference chapters.
+   CHANGE: Eliminate the table of repository labels and command-line options, replacing all code-level handles with standard physical and algorithmic descriptions.
+   SHARE: 15
+4. QUOTE: "The provenance of the records the note cites, the fixed identities and audit record of the five-axis covariance of the configuration-(a) central value, the test-suite discipline, and superseded values and withdrawn results are kept in the analysis repository’s records document, Ref. [37]; each citation names the entry’s number or heading."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Tracking internal audit trails, test-suite protocols, and superseded or withdrawn results belongs to internal collaboration bookkeeping rather than archival PRD write-ups.
+   CHANGE: Excise all references to internal QA audit logs, test-suite records, and withdrawn analyses, retaining only permanent citations to public data releases or published tools.
+   SHARE: 12
+5. QUOTE: "MnvVertErrorBand::CalcCovMx implements Eq. (11), referenced to the universe mean ⟨x⟩u rather than XCV , normalized by biased 1/N rather than Bessel’s 1/(N − 1) (a 1% offset for PPFX, N = 100), with no special case for N = 2."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Specifying C++ framework class and method names reads like software source-code documentation rather than the standard physical and statistical descriptions used in PRD (such as reference-2 Sec. VIII A).
+   CHANGE: State the sample covariance estimator and its mathematical properties directly, citing the analysis framework generally without exposing member-function names.
+   SHARE: 10
+6. QUOTE: "The folk “MINERvA-101 ±1σ pair” formula 12 (∆+ ∆⊤+ + ∆− ∆⊤− ) agrees only for CV-symmetric shifts."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Using colloquialisms like "folk formula" and informal internal tutorial labels ("MINERvA-101") departs from the formal, objective terminology standard in PRD publications.
+   CHANGE: Replace informal project jargon with standard scientific phrasing, such as "the standard symmetric two-point systematic estimator".
+   SHARE: 8
+7. QUOTE: "What the paper does not say."
+   SCOPE: this passage
+   PROBLEM: Colloquial, punchy rhetorical fragments criticizing earlier literature depart from the measured, formal third-person exposition seen across all reference chapters.
+   CHANGE: Rephrase as a conventional, complete expository sentence neutrally specifying the methodological details not documented in the prior publication.
+   SHARE: 6
+8. QUOTE: "• Flux / PPFX (100 universes), Aliaga, PRD 94 092005 (2016), arXiv:1607.00704;"
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Formatting citations as an informal bulleted list of raw author-journal-arXiv strings resembles personal scratch notes rather than continuous journal prose with standard numeric references.
+   CHANGE: Convert the bulleted list into continuous prose citing formal bibliographic entries in the standard journal style.
+   SHARE: 5
+9. QUOTE: "The comparison calls np.linalg.pinv at its default, NumPy’s documented cutoff τ = rcond · σmax with rcond = 10−15 ; this is not the n σmax εmachine convention of np.linalg.lstsq and MATLAB."
+   SCOPE: this passage
+   PROBLEM: Digressing into package-specific default settings and comparing open-source versus commercial numerical libraries introduces software implementation trivia absent from PRD papers.
+   CHANGE: Define the eigenvalue truncation threshold strictly mathematically without discussing implementation differences across external programming packages.
+   SHARE: 5
+10. QUOTE: "the detector-response-mismatch closure, a protocol implemented but not yet run (App. D); and the survey of MINERvA measurement dimensionality (App. E)."
+   SCOPE: this passage
+   PROBLEM: Advertising unexecuted analyses or unfinished procedural protocols is characteristic of internal status reports and proposals rather than completed archival publications.
+   CHANGE: Omit references to unexecuted studies and document only completed, verified analyses.
+   SHARE: 4
+ENOUGH: Yes, making the changes above in full would bring chapter.txt to a rating of 4, as they comprehensively eliminate the software-repository, debugging-log, and internal-bookkeeping registers that currently dominate the text.

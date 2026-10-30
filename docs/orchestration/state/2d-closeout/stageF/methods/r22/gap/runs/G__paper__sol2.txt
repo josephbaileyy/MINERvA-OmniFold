@@ -1,0 +1,63 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The variants used in development, and the results that rest on them, are described in Ref. [14], Sec. 3.2."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Repeated accounts of development variants, superseded covariances and earlier results give the paper the register of an analysis history.
+   CHANGE: Organize the account around the estimators and results actually presented, retaining development comparisons only where they explain a methodological choice or qualify a reported finding.
+   SHARE: 20%
+
+2. QUOTE: "Interval coverage has not been validated."
+   SCOPE: pattern: about 12 passages like it
+   PROBLEM: Although the limitations are substantive, repeated statements about unvalidated coverage, uncalibrated bounds and restricted interpretations make the prose more defensive and repetitive than the reference papers.
+   CHANGE: State each distinct limitation with its precise scope beside the relevant result, consolidate shared restrictions, and use the conclusion to summarize their consequences without repeating the disclaimers.
+   SHARE: 20%
+
+3. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Labels such as “joint-test estimator,” “largest residual proxy,” “fallback definition” and “ungraded” retain project-internal meanings or assessment language.
+   CHANGE: Use stable, descriptive names for the estimators and reporting schemes, define each retained diagnostic operationally at first use, and replace internal grading language with the actual statistical criterion.
+   SHARE: 14%
+
+4. QUOTE: "The note’s calibrated tests show the same pull: their null distributions for the external predictions are displaced upward by it, as the calibration reproduces (Ref. [14], Sec. 11.5)."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Vague referents and analysis-specific concepts leave the reader dependent on the companion note to understand the claim itself.
+   CHANGE: Give each retained claim a self-contained statement of the quantity tested, the comparison and its meaning, defining terms such as hybrid truth and truth resolution while reserving supporting detail for the note.
+   SHARE: 12%
+
+5. QUOTE: "The response term Cresp is the response of the result to a one-standard-deviation scale of the reconstructed recoil energy in the simulation, for protons, mesons, electromagnetic and other deposits, but it does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result, its fake-data tests and its comparison in Sec. V B."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Long sentences accumulate definitions, qualifications, exclusions and applications, obscuring the main assertion and sometimes producing awkward constructions.
+   CHANGE: Divide these sentences by function, using explicit subjects and direct verbs to state the variation, its included contributions, its exclusions and its applications separately.
+   SHARE: 12%
+
+6. QUOTE: "Three external generator predictions compared on all sixteen cells give χ2 of 109–272 for 16 degrees of freedom, and GiBUU, on 8 cells, 58."
+   SCOPE: this passage
+   PROBLEM: The compressed numerical summary ends with an elliptical fragment whose value and degrees of freedom require reconstruction by the reader.
+   CHANGE: State the sixteen-cell comparison and the GiBUU comparison in complete clauses, explicitly attaching each χ2 value to its number of degrees of freedom.
+   SHARE: 7%
+
+7. QUOTE: "The joint-test estimator is unstable at the level of rounding."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: “Stability” denotes both sensitivity to input perturbations and retention of events within their generating cell, while “at the level of rounding” leaves the perturbation imprecise.
+   CHANGE: Distinguish input sensitivity from bin stability, define both at first use, and describe rounding perturbations with wording that specifies what inputs change and by how much.
+   SHARE: 4%
+
+8. QUOTE: "Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths or at the q3 tilt."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Using “cover” for a comparison between bias and quoted uncertainty blurs the distinction from repeated-experiment interval coverage established elsewhere.
+   CHANGE: Describe these findings explicitly as bias exceeding a quoted uncertainty or failing a stated bias criterion, reserving coverage terminology for the repeated-experiment property.
+   SHARE: 5%
+
+9. QUOTE: "A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map."
+   SCOPE: this passage
+   PROBLEM: “Candidate release package” and the packaging inventory read like a release-status report rather than a finished paper’s data-availability statement.
+   CHANGE: State current availability and reproducibility directly, preserving the actual access limitations and moving package size, dependencies and regeneration instructions to supporting documentation.
+   SHARE: 3%
+
+10. QUOTE: "The low stability of four of the sixteen cells is stated only here."
+    SCOPE: pattern: about 3 passages like it
+    PROBLEM: Commentary about where information is stated exposes editorial bookkeeping instead of communicating the result or its implication.
+    CHANGE: Delete such commentary, place each qualification where readers need it, and retain only useful scientific cross-references and the conventional section roadmap.
+    SHARE: 3%
+
+ENOUGH: Yes; applied consistently throughout, these language changes would bring the manuscript to 4 without requiring different scientific findings, additional studies or removal of substantive limitations.
