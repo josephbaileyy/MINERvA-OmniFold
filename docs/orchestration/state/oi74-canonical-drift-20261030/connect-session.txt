@@ -1,0 +1,21 @@
+$ ssh saul.nersc.gov 'bash -s' < oi74-remote.sh   # script follows
+  | set -u
+  | R=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+  | export GIT_OPTIONAL_LOCKS=0
+  | echo "host $(hostname)"; echo "date_utc $(date -u +%FT%TZ)"
+  | h=$(timeout 120 git -C "$R" rev-parse HEAD); echo "head_rc $? head $h"
+  | d=$(timeout 120 git -C "$R" log -1 --format=%cI HEAD); echo "head_date_rc $? head_date $d"
+  | b=$(git -C "$R" symbolic-ref -q --short HEAD); echo "symbolic_ref_rc $? branch ${b:-DETACHED}"
+  | a=$(timeout 600 git -C "$R" status --porcelain); rc=$?; echo "porcelain_all_rc $rc count $(printf '%s' "$a" | grep -c .)"
+  | t=$(timeout 600 git -C "$R" status --porcelain --untracked-files=no); rc=$?; echo "porcelain_tracked_rc $rc count $(printf '%s' "$t" | grep -c .)"
+  | echo "date_utc_end $(date -u +%FT%TZ)"
+--- output
+host login37
+date_utc 2026-10-30T16:07:09Z
+head_rc 0 head 32e403b84e9e8f9d9bc435028749f896653c7a43
+head_date_rc 0 head_date 2026-08-29T23:47:01+02:00
+symbolic_ref_rc 0 branch main
+porcelain_all_rc 0 count 733
+porcelain_tracked_rc 0 count 2
+date_utc_end 2026-10-30T16:07:12Z
+ssh_rc 0
