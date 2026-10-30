@@ -1064,15 +1064,13 @@ Comparison on the sixteen reported cells
 Unfolded results can be compared with any prediction
 at truth level without simulating each generator through
 the detector. The two-dimensional result is therefore
-reusable, the sixteen-cell result supports the comparison
-that follows, and the higher-dimensional central values
-support qualitative comparison. Table IV compares the
-sixteen-cell result of Sec. V with five predictions through a
-χ2 against the reported covariance plus each prediction’s
-finite-sample (diagonal) covariance Vg , with a shape-only
-χ2 beside it. Figure 4 shows the data over each prediction,
-cell by cell. GiBUU’s sample stops at Eν = 20 GeV, so
-GiBUU is compared on the 8 cells with p∥ < 4.5 GeV/c
+reusable, the sixteen-cell result can be used for the comparison that follows, and the higher-dimensional central
+values can be used for qualitative comparison. Table IV
+compares the sixteen-cell result of Sec. V with five predictions through a χ2 against the reported covariance plus
+each prediction’s finite-sample (diagonal) covariance Vg ,
+with a shape-only χ2 beside it. Figure 4 shows the data
+over each prediction, cell by cell. GiBUU’s sample stops
+at Eν = 20 GeV, so GiBUU is compared on the 8 cells
 
 Ctotal
 χ2
@@ -1127,9 +1125,11 @@ R06
 R02, R06, R07
 —
 
-only. NuWro and GiBUU are on carbon, with no correction to CH, and MINERvA Tune v1 is the simulation’s
-prior. The GENIE + MEC, NuWro and GiBUU comparisons use covariance contributions derived from those
-generators, and GENIE CV enters as their common reference.
+with p∥ < 4.5 GeV/c only. NuWro and GiBUU are on carbon, with no correction to CH, and MINERvA Tune v1 is
+the simulation’s prior. The GENIE + MEC, NuWro and
+GiBUU comparisons use covariance contributions derived
+from those generators, and GENIE CV enters as their
+common reference.
 Weakening only the flux correlations by 10 % lowers the
 χ2 of the 16-cell predictions by 24–48 %. The same change
 to the detector or lateral correlations lowers it by at most
