@@ -1,0 +1,18 @@
+2026-10-30T04:01:37Z
+nid004126
+job 60530414_1 cpus_per_task=36
+eb2282e1eedf89c51dda67102fd7f682bbc04976
+porcelain_ignored_lines 0
+A/seedscan_split.py: OK
+B/seedscan_split.py: OK
+lib/omnifold_nn_core.py: OK
+lib/xsec_nd.py: OK
+/pscratch/sd/j/josephrb/oi160-cml-20261029/deploy/eb2282e1/docs/orchestration/state/oi160-reproduction-20261029/repro_run.py: OK
+input size=1548438020 mtime_epoch=1782610308
+res_split_4.npz: OK
+affinity_cpus=36
+s4_A start 2026-10-30T04:01:38Z
+s4_A rc=0 end 2026-10-30T04:11:44Z
+s4_B start 2026-10-30T04:11:44Z
+s4_B rc=0 end 2026-10-30T04:20:42Z
+done 2026-10-30T04:20:42Z
