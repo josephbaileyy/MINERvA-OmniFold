@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion, but recurring procedural bookkeeping, awkward references to successive analysis versions, and repetitive qualifications require a dedicated language pass.
+1. QUOTE: "This test asks whether the 2D statistical band quoted when it ran covers a fixed truth at its nominal
+rate. That band is an earlier one, not the quoted statistical block."
+   REWRITE: This test evaluates whether an earlier version of the 2D statistical band provides nominal coverage of a fixed truth distribution. It does not evaluate the statistical block quoted in this work.
+2. QUOTE: "The attribution rule was fixed before the full run, but its clause for the undercoverage
+outcome was written after the pilot pulls had been seen. Under it, the primary undercoverage is
+attributed to this term of the band. The attribution is partial: in the replica form, the p∥ 40 GeV/c
+to 60 GeV/c column still undercovers."
+   REWRITE: The criterion for attributing undercoverage to the bootstrapped completeness term was specified after inspection of the pilot pulls and before the full study. Applying this criterion identifies the term as a contributor to the primary undercoverage. It does not explain the full discrepancy: the replica formulation still undercovers in the p∥ range from 40 GeV/c to 60 GeV/c.
+3. QUOTE: "A post hoc diagnostic that bootstraps a single toy, under a decision rule recorded
+before it ran, is consistent with the closure toys scattering too little, because their pseudo-data are
+built on the training MC events, rather than with the data bootstrap scattering too much."
+   REWRITE: A post hoc diagnostic applied the bootstrap to a single pseudoexperiment, using a decision rule specified before the diagnostic was run. The result favors underestimated scatter in the closure pseudoexperiments, whose pseudo-data use the training MC events, over excessive scatter from the data bootstrap.

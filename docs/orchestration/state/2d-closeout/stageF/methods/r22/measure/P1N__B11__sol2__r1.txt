@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but recurring internal bookkeeping, production-history references, and repetitive qualifications create several departures from PRD register that warrant a dedicated language pass.
+1. QUOTE: "The
+extended-fiducial central value was produced with the binned purity correction (the battery of 2026-0610), not with refined negative-weight subtraction, the treatment designated for the extended-fiducial
+analysis (App. C)."
+   REWRITE: The extended-fiducial central value uses the binned purity correction, whereas the procedure specified for this analysis in App. C calls for refined negative-weight subtraction.
+2. QUOTE: "The control’s total,
+3.073 × 10−38 cm2 /nucleon, equals at the printed precision that of the purity-subtracted 2D
+central values (exact-split and LightGBM). The quoted 2D result, with refined negative-weight
+subtraction, is 3.069 × 10−38 cm2 /nucleon, 0.14 % lower, so the control no longer reproduces it."
+   REWRITE: The control integral, 3.073 × 10−38 cm2 /nucleon, agrees at the quoted precision with both purity-subtracted two-dimensional estimates (exact-split and LightGBM). The quoted two-dimensional result uses refined negative-weight subtraction and is 0.14 % lower, at 3.069 × 10−38 cm2 /nucleon.
+3. QUOTE: "A
+local release candidate, with checksums and a verifier that recomputes and checks its results, exists,
+
+but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a verifier that independently recomputes its results, but it has not been tagged or deposited. Building the PDFs produces the documentation without rerunning the scientific analysis (App. G).

@@ -1,0 +1,51 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Reconstruction-only test implemented in the pipeline."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Implementation-status headings and statements make the discussion read as a project progress record rather than a technical account of a proposed validation study.
+   CHANGE: Present the proposed test, its implementation and its outstanding requirements in connected methodological prose, retaining a concise statement that it has not been performed.
+   SHARE: 22%
+
+2. QUOTE: "It labels every output as a diagnostic that must not be quoted."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Instructions about quoting outputs, justifying choices, obtaining collaboration requests and avoiding silent reassignment of errors introduce an internal governance register.
+   CHANGE: Replace these directives with direct statements of the diagnostic’s intended use, the basis required for the variation amplitude, the scientific condition for further study and the limits of interpretation.
+   SHARE: 18%
+
+3. QUOTE: "This appendix records a validation protocol, not a result or an uncertainty component."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: The unperformed status and exclusion from reported results are reiterated through the title, output restrictions, interpretation paragraph and future-work discussion, giving the qualifications disproportionate emphasis.
+   CHANGE: Consolidate repeated status and exclusion statements while preserving the distinct technical limitations and the conditional interpretations of possible outcomes.
+   SHARE: 15%
+
+4. QUOTE: "The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Expressions such as “cheap,” “stressing the hadronic record,” “stronger response model” and “absorbed silently” are conversational or evaluative where the references generally specify the operation or limitation.
+   CHANGE: Describe computational cost, the imposed perturbation, the additional physical correlations and the treatment of any resulting bias in explicit technical terms, and use a consistent name for each test.
+   SHARE: 12%
+
+5. QUOTE: "A documented hadronic-response variation or a quantified assumption should justify that amplitude; the inherited factor in reconstructed Eavail is not enough on its own."
+   SCOPE: this passage
+   PROBLEM: “The inherited factor” presupposes knowledge of an earlier implementation, while “should justify” and “not enough on its own” leave the methodological requirement in the form of an editorial instruction.
+   CHANGE: Identify the existing scale factor or remove the reference to its provenance, and state directly that the proposed amplitude remains to be specified from a documented response variation or an explicit quantitative assumption.
+   SHARE: 9%
+
+6. QUOTE: "Kevin McFarland suggested this distinction and proposed stressing the hadronic record, especially for quasielastic events, to inspect low-W bias (private communication)."
+   SCOPE: this passage
+   PROBLEM: The sentence interrupts the methodological motivation with the conversational history of how the study was proposed.
+   CHANGE: State the motivation directly and preserve the attribution, if desired, in an acknowledgment, footnote or unobtrusive private-communication citation.
+   SHARE: 6%
+
+7. QUOTE: "Counting measured observables does not count simultaneously unfolded axes."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: This compressed distinction, together with “headline result” and “direct dimensional precedent,” makes the survey’s classification sound like internal shorthand rather than a consistently stated definition.
+   CHANGE: Define dimensionality once as the number of kinematic variables unfolded jointly in the selected differential result, and describe the survey and additional measurements using that terminology and direct syntax.
+   SHARE: 10%
+
+8. QUOTE: "docs/analysis-note/pet_note.tex"
+   SCOPE: this passage
+   PROBLEM: A working repository path serves as an internal document locator rather than a reader-facing scholarly reference.
+   CHANGE: Replace the path with a conventional citation to an accessible technical account, or omit the locator and retain a self-contained statement of the proposed point-cloud work and its status.
+   SHARE: 8%
+
+ENOUGH: Yes; these changes would bring the chapter to 4 without requiring completed tests, additional results, reduced specialist detail or removal of scientifically necessary qualifications.

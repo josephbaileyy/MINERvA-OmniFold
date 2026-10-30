@@ -1,0 +1,53 @@
+CURRENT RATING: 2.0
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Executive summary"
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: The text adopts the format of an internal executive memo or briefing dashboard ("Results:", "Principal limitations:") rather than the continuous, section-based narrative structure characteristic of published PRD papers and technical supplements.
+   CHANGE: Eliminate the executive summary and bulleted lists, integrating the primary results and methodological context into standard continuous introductory prose and dedicated technical subsections.
+   SHARE: 20
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed."
+   SCOPE: this passage
+   PROBLEM: This sentence records operational batch-computing incidents and recovery bookkeeping rather than reporting the finalized statistical ensemble as done in PRD papers (e.g., reference-2.txt: "by creating 4000 toy MC experiments at fixed values of δCP...").
+   CHANGE: Remove the computational rerun narrative entirely and report only the final ensemble size and the resulting statistical properties.
+   SHARE: 15
+3. QUOTE: "Whether it is ready for publication as a measurement has not been established."
+   SCOPE: this passage
+   PROBLEM: This injects confessional, internal collaboration-review deliberation into the text rather than providing an objective, technical statement of the scope and precision of the cross-check.
+   CHANGE: Replace the self-deprecating hedging with an objective statement quantifying the agreement and correlated shape differences observed between the unbinned reproduction and the published binned cross section.
+   SHARE: 12
+4. QUOTE: "The configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to 0.141 % in total, a comparison across configurations (§7)."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The passage relies on opaque, project-internal alphanumeric run labels ("configuration-(a)", "configuration-(e)", "configuration-(f)", "tier 1", "tier 2") without defining their physical or algorithmic meaning.
+   CHANGE: Replace arbitrary lettered tags with explicit physical descriptors of the kinematic selections, feature spaces, or background treatments being compared.
+   SHARE: 12
+5. QUOTE: "No result’s intervals have validated coverage (two dimensions: §4.6; five dimensions: §9.5; the sixteen cells: §10.3)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Sweeping defensive disclaimers dominate the argument instead of stating the estimated uncertainties and their evaluated domains of validity in standard technical terms (e.g., reference-2.txt: "For the present exposure, the effect can be ignored, but future analyses will need to incorporate multi-nucleon effects...").
+   CHANGE: Reframe the disclaimers into objective statements specifying the evaluated coverage, the specific kinematic regions where coverage deviates, and the resulting systematic uncertainties assigned.
+   SHARE: 11
+6. QUOTE: "LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The prose narrates the chronological history and post-hoc awareness of the analysts instead of presenting the chosen methodology and its cross-checks on technical merits.
+   CHANGE: State the selected model architecture and the role of the exact-split estimator directly without chronicling the timeline or retrospective decisions of the investigators.
+   SHARE: 10
+7. QUOTE: "The coverage of the result’s intervals has not been validated; a bias test at two held-out GENIE v3 truths finds the estimator’s bias below the reported uncertainty in every cell but does not test interval widths."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: The abstract is heavily burdened with negative caveats and unvalidated test details rather than providing a concise summary of the measurement, the unfolding method, and the central findings.
+   CHANGE: Restructure the abstract to lead with the measured cross section, phase-space coverage, and generator comparisons, stating methodological limits concisely as bounded uncertainties.
+   SHARE: 8
+8. QUOTE: "Why unbinned:"
+   SCOPE: this passage
+   PROBLEM: The text adopts informal presentation-slide or FAQ phrasing followed by bullet points rather than flowing technical exposition.
+   CHANGE: Convert the bulleted list into continuous expository paragraphs introduced by standard academic transitions that explain the methodological motivations for unbinned unfolding.
+   SHARE: 5
+9. QUOTE: "The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   SCOPE: this passage
+   PROBLEM: It uses colloquial development-log jargon ("first-built") and chronicles discarded prototype iterations that are irrelevant to reporting the final statistical methodology.
+   CHANGE: Excise references to intermediate prototype artifacts and report only the finalized statistical bands along with their verified performance metrics.
+   SHARE: 4
+10. QUOTE: "Point-cloud (PET) unfolding of the full event is future work, under development and documented separately (App. F)."
+    SCOPE: pattern: about 2 passages like it
+    PROBLEM: It includes internal project roadmap disclaimers asserting what is under development elsewhere, which belongs in internal collaboration planning documents rather than a technical report.
+    CHANGE: Remove the defensive out-of-scope disclaimer, or convert it into a neutral sentence in the outlook mentioning full-event unfolding as a natural future extension.
+    SHARE: 3
+ENOUGH: Yes, making these changes in full would bring chapter.txt to a rating of 4 by eliminating the internal memorandum structure, operational computing logs, confessional caveats, and project-specific jargon in favor of direct, professionally framed PRD technical prose.

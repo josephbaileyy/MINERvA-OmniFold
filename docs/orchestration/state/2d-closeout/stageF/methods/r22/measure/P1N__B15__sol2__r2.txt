@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is technically focused, but recurrent development history, project-internal terminology, and cumbersome qualifications give several passages an internal-report register that requires a dedicated language pass.
+1. QUOTE: "It also regenerates, from packaged arrays, figures
+drawn for the earlier version of the article for which it was assembled: the (Eavail , W ) excess map,
+which this note prints as Fig. 24, the null distributions of the joint tests, which it prints as Fig. 31,
+and one-dimensional generator projections, which neither this note nor the article now prints."
+   REWRITE: RC7 also regenerates figures prepared for an earlier version of the article from packaged arrays: the (Eavail , W ) excess map (Fig. 24), the joint-test null distributions (Fig. 31), and one-dimensional generator projections omitted from the present note and article.
+2. QUOTE: "An earlier version of the package, RC1, was replayed from an empty
+directory by a separate AI agent session (Opus 5.5) that had no access to the repository and used only
+the package and its README; its verifier passed."
+   REWRITE: Independent verification of the earlier package RC1 succeeded in an AI-agent session (Opus 5.5), starting from an empty directory with access only to the package and its README.
+3. QUOTE: "The broader result package must contain every item below; RC7 does not contain all of them. A ✓
+marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already
+fixed); the rest are packaging. A fixed identity says which object is meant; it does not qualify the
+object scientifically."
+   REWRITE: The complete result package requires all items listed below; RC7 contains only a subset. Check marks identify objects or values whose definitions have been finalized, with bin edges specified in §G.3 and checksums in Ref. [37]. The remaining release tasks concern packaging. These identifiers establish which objects are referenced without implying scientific validation.

@@ -1,0 +1,19 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally clear and uses standard terminology, but recurrent conversational phrasing, repetition, and wordy procedural explanations leave several sections in need of a dedicated language pass.
+1. QUOTE: "After 45 iterations, we see the
+distribution is centered around 0 with not much of a
+tail. This suggests the unfolding procedure is mostly
+done at this point, which is also consistent with the
+behavior of the χ2 curves shown in Fig. 4."
+   REWRITE: After 45 iterations, the distribution is centered near zero with a small tail, suggesting approximate convergence, consistent with the behavior of the χ2 curves in Fig. 4.
+2. QUOTE: "From a practical perspective, an analyzer who knows the observables they will be interested
+in will usually want to include this information as direct
+input to the procedure anyway, sidestepping this problem, but this calls for caution when attempting to unfold
+arbitrarily complicated derived quantities from simple inputs."
+   REWRITE: When the observables of interest are known in advance, including them directly as inputs can reduce this difficulty; unfolding more complicated derived quantities requires caution.
+3. QUOTE: "That being said, the performance of the OmniFold
+method was likely also limited by the nature of the public dataset that we used. For instance, the dataset only
+contained information about the primary muon and leading proton in each event, but we would expect OmniFold
+to do a better job of dealing with background contributions if we could provide pion kinematic information
+where it existed."
+   REWRITE: OmniFold’s performance was likely also limited by the information available in the public dataset. The particle kinematics were restricted to the primary muon and leading proton; including pion kinematics, where available, could improve the treatment of backgrounds.

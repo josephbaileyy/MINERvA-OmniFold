@@ -1,0 +1,22 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally precise, but recurrent internal bookkeeping, audit-trail narration, and layered qualifications give several passages an internal-note register that warrants a dedicated language pass.
+1. QUOTE: "“below the fine grid the null truth carries MnvTune’s [MINERvA Tune v1’s] shapes [as
+implemented, the Tune v1 composition, varied by the drawn interaction-model universes,
+with every fine-cell integral held fixed at G’s; §11.1] and G’s finite-MC fine-cell fluctuations:
+the [fine-grid convergence] check is not converged (fine vs merged-×2 is 0.50–0.86 of coarse
+vs fine in L2 ); its effect enters the claim rule as the κ = 2 variants and its size in null-T
+units (with the frozen V ) is committed before the first look”"
+   REWRITE: Below the fine grid, the null truth uses the MINERvA Tune v1 composition, varied by the sampled interaction-model universes while preserving G’s integral in each fine cell (§11.1), and includes G’s finite-simulation fluctuations. Fine-grid convergence has not been demonstrated: in the L2 norm, the change from the twofold-merged grid to the fine grid is 0.50–0.86 times the change from the coarse grid to the fine grid. The decision rule includes κ = 2 variants to account for this sensitivity. Their magnitudes in null-statistic units, evaluated with the fixed covariance V, were specified before the observed statistics were examined.
+2. QUOTE: "The recovered draws were evaluated in two readings: with the variant shifts of the primary
+evaluation, and with the shift recomputed on all draws. The scope of the recovery’s checks is narrower
+than that of the main recomputation:
+• its independent cross-check (856 of 856 quantities) covers only the first reading;
+• the second reading was reproduced only by a standalone rerun of the same code, a consistency
+check rather than an independent recomputation;
+• the earlier-stop decisions rest on the calibration run’s own re-application of the sequential rule,
+with no independent check."
+   REWRITE: The recovered draws were evaluated using both the original variant shifts and shifts recomputed from all draws. An independent calculation reproduced all 856 quantities checked with the original shifts. Results with the recomputed shifts were reproduced by rerunning the same code, but were not independently verified. The inferred earlier stopping points were obtained by reapplying the sequential rule within the calibration code and were also not independently verified.
+3. QUOTE: "Generation checks. For GiBUU, the sampling-closure check failed on the hydrogen sample. A
+post hoc bias check of that check’s premise, declared before it was computed, met its criterion
+of at most 0.1 σc in every cell, moving the CH prediction by at most 5.1 × 10−4 σc ."
+   REWRITE: Generation checks. The GiBUU hydrogen sample failed the sampling-closure check. A subsequent bias assessment examined the premise underlying that check, using a procedure and acceptance criterion specified before the assessment was performed. The bias was below the criterion of 0.1 σc in every cell, and the resulting change in the CH prediction was at most 5.1 × 10−4 σc.

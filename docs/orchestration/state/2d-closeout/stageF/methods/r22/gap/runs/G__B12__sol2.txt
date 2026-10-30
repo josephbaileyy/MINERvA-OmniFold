@@ -1,0 +1,57 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Its numbers are for the exact-split cross-check, which was the quoted 2D central value when it was made (§3.2)."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Repeated accounts of former central values, repaired calculations, retired ensembles and earlier checks make substantial portions read like analysis records rather than a finished technical account.
+   CHANGE: Move obsolete numerical checks, repair chronology and audit identities to the repository record, retaining relevant methodological comparisons and stating the present consequences of earlier findings directly.
+   SHARE: 25%
+
+2. QUOTE: "The combined χ2 /ndf = 0.929 is a descriptive distance, not a quoted result or validation statistic; Eq. (18) and the three limits of §A.3.2 apply to every use."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: The same interpretation limits recur as warnings, qualifications and reporting declarations, giving the discussion a defensive register beyond the references’ ordinary methodological caution.
+   CHANGE: Consolidate each limitation and its consequence into one complete discussion, using brief cross-references only where a later application requires them and preserving the current validation status.
+   SHARE: 20%
+
+3. QUOTE: "The ours-only χ2 uses the truncated-spectral form"
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Expressions such as “ours-only,” “paper-cov,” “total-σ,” “inflation operand” and production names such as “July sweep” introduce internal shorthand alongside otherwise standard specialist terminology.
+   CHANGE: Replace informal compounds and production labels with precise descriptions of the estimator, covariance or sample, defining necessary analysis-specific terms at first relevant use and keeping repository identifiers in the implementation reference.
+   SHARE: 15%
+
+4. QUOTE: "The provenance of the records the note cites, the fixed identities and audit record of the five-axis covariance of the configuration-(a) central value, the test-suite discipline, and superseded values and withdrawn results are kept in the analysis repository’s records document, Ref. [37]; each citation names the entry’s number or heading."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Stacked noun phrases, nested qualifications and long lists obscure the governing statement more often than the occasional dense sentences in the reference chapters.
+   CHANGE: Recast these passages around explicit subjects and verbs, splitting independent claims and placing qualifications next to the particular quantity or procedure they restrict.
+   SHARE: 12%
+
+5. QUOTE: "Both residuals pass the 2.0% bound with at least 5× headroom, establishing robustness to model variations of order ±1σ GENIE and full PPFX flux universes."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: “Headroom” joins expressions such as “Where it lives,” “lever,” “ride on” and “knob” in giving parts of the explanation a conversational or workshop register.
+   CHANGE: Replace these metaphors with literal descriptions of residual magnitudes, parameter dependence, mode contributions and numerical settings.
+   SHARE: 10%
+
+6. QUOTE: "Specifics quoted:"
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Several literature and methodological discussions use clipped briefing labels and densely chained fragments where the references generally provide connected explanatory prose.
+   CHANGE: Rewrite these digests as complete sentences that identify the source, describe its procedure and explain its relevance, retaining lists for genuinely parallel information.
+   SHARE: 6%
+
+7. QUOTE: "This is direct evidence that ∼ 1 χ2 -unit of the exact-split cross-check’s tension is OmniFold’s implicit regularization rather than a physical data–MC disagreement."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Emphatic formulations such as “direct evidence,” “exactly,” “genuinely” and “excludes” sometimes make the prose sound argumentative rather than separating observations from their interpretation.
+   CHANGE: State the observed comparison first and identify the interpretation in measured language with its scope attached, without adding further layers of hedging.
+   SHARE: 5%
+
+8. QUOTE: "the only non-block-diagonal piece the paper admits."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: “Admits,” “folk” and repeated inventories of what the published paper does not say give the source discussion an unnecessarily adversarial tone.
+   CHANGE: Describe neutrally what the publication specifies, what is obtained from MAT and what remains unspecified, replacing judgments about the source with factual attribution.
+   SHARE: 4%
+
+9. QUOTE: "i.e. np.cov(Xrep, rowvar=False, ddof=1), checked with the Cholesky-plus-jitter pattern of §A.1."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Exact software calls, switches, paths and environment variables repeatedly interrupt mathematical explanations, producing a code-documentation register even where the algorithm has already been specified.
+   CHANGE: Retain implementation details that determine the numerical prescription, but collect identifiers and calls that merely duplicate the prose or equations into a compact implementation reference.
+   SHARE: 3%
+
+ENOUGH: Yes; applying these changes throughout would bring the chapter to 4 while preserving the specialist detail, reproducibility information and substantive limitations appropriate to a long technical companion note.

@@ -1,0 +1,13 @@
+RATING: 3.5
+JUSTIFICATION: The prose is largely precise and appropriate for a detailed technical companion, but conversational shorthand, occasional awkward or redundant phrasing, and progress-report language recur enough to warrant a dedicated language pass.
+1. QUOTE: "In central values, Valencia 2p2h closes about half of the low-recoil gap (§7.7) but leaves a separate
+excess over the MINERvA Tune v1 prior at high Eavail . There 2p2h contributes nothing, and the
+sub-percent pion-FSI dials cannot reach the excess."
+   REWRITE: At the level of central values, Valencia 2p2h accounts for about half of the low-recoil discrepancy (§7.7), but an excess over the MINERvA Tune v1 prior remains at high Eavail. In this region, 2p2h contributes no events, and variations of the pion final-state-interaction parameters produce sub-percent changes that cannot account for the excess.
+2. QUOTE: "The qualifications of the covariance are given in
+§9.6. The comparison with external generators depends on the generator."
+   REWRITE: Section 9.6 discusses the limitations of the covariance. The external generators show different levels of agreement with the data.
+3. QUOTE: "The response-mismatch closure of Appendix D is
+designed to test whether an incorrect hadronic response can move strength into or out of the low-W
+component. It has not yet produced a result."
+   REWRITE: The effect of hadronic-response mismodelling on the low-W component has not yet been quantified. Appendix D describes a closure test designed to assess whether such mismodelling redistributes strength into or out of this component.

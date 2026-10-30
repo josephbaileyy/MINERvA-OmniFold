@@ -1,0 +1,16 @@
+RATING: 4
+JUSTIFICATION: The prose largely matches published particle-physics register, with occasional cumbersome syntax, redundant phrasing, and development-history narrative that would benefit from light line editing.
+1. QUOTE: "In order to thoroughly cross-check the analysis described above, an alternate frequentist
+joint fit analysis was performed which differs in the treatment of the systematic errors. This
+originated as part of an effort to simplify and reduce the computing power needed for the
+analysis and to perform a study of the future sensitivity of the experiment [133]."
+   REWRITE: An alternative frequentist joint fit was performed to cross-check the analysis using a different treatment of systematic uncertainties. This formulation also supports computationally efficient studies of the experiment’s future sensitivity [133].
+2. QUOTE: "The best-fit spectrum from the normal hierarchy fit compared to the observed spectrum is
+shown in Figure 28, showing as well the ratio of the number of observed events to the
+predicted number of events with sin2 θ23 = 0."
+   REWRITE: Figure 28 compares the best-fit spectrum for the normal hierarchy with the observed spectrum and shows the ratio of observed event counts to those predicted with sin² θ23 = 0.
+3. QUOTE: "For the T2K data fit combined with the reactor constraint, described
+in Sec. IX B, the Feldman and Cousins method [101] is used to produce confidence intervals,
+by finding critical values of ∆χ2 as a function of δCP and we report excluded regions for
+δCP ."
+   REWRITE: For the fit combining T2K data with the reactor constraint (Sec. IX B), the Feldman and Cousins method [101] determines the critical values of ∆χ2 as a function of δCP. These values are used to construct confidence intervals and report excluded regions for δCP.

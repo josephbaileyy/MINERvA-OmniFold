@@ -1,0 +1,13 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally uses an appropriate specialist register, but recurring internal bookkeeping, development-history qualifications, and cumbersome explanations warrant a dedicated language pass.
+1. QUOTE: "The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram
+and its projections (hXSec2D, hXSec_pt, hXSec_pz), not the covariance of §4."
+   REWRITE: The error bars on the unfolded points in Fig. 7 are the stored bin uncertainties of the unfolded histogram and its projections; they are not derived from the covariance described in §4.
+2. QUOTE: "We therefore
+quote the per-bin pulls and the truncated result together, with a regularization scan made for the
+exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than
+treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App. A.4)."
+   REWRITE: We therefore report the per-bin standardized differences together with the truncated χ2 (App. A.4). A regularization scan was performed for the exact-split cross-check using an earlier covariance matrix, but was not repeated for the covariance used here. The result obtained with an untruncated pseudoinverse is not interpreted as a standalone goodness-of-fit test.
+3. QUOTE: "Figure 14: Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of
+the published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles."
+   REWRITE: Figure 14: Bin-by-bin ratios of our result (left) and the published data (right) to MINERvA Tune v1 on the (pT, p∥) grid. Both panels use a colour scale spanning 0.7–1.3.

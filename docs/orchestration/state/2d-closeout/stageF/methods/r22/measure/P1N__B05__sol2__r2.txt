@@ -1,0 +1,19 @@
+RATING: 3.5
+JUSTIFICATION: The prose largely fits a specialist technical write-up, but several passages introduce internal bookkeeping, convoluted qualifications, and repetitive explanations that warrant a dedicated language pass.
+
+1. QUOTE: "We therefore
+quote the per-bin pulls and the truncated result together, with a regularization scan made for the
+exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than
+treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App. A.4)."
+   REWRITE: We report the per-bin pulls together with χ2 evaluated using the truncated pseudo-inverse; an untruncated pseudo-inverse does not provide a calibrated goodness-of-fit test. The regularization scan in App. A.4 used an earlier covariance for the exact-split cross-check and was not repeated for the covariance used here.
+
+2. QUOTE: "The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram
+and its projections (hXSec2D, hXSec_pt, hXSec_pz), not the covariance of §4."
+   REWRITE: The error bars on the unfolded points in Fig. 7 are the uncertainties stored in the cross-section histograms; they do not represent the covariance-based uncertainty budget described in §4.
+
+3. QUOTE: "Neither map is flat near unity: both show the same tune deficit, with ratios above unity over most
+of the plane and below it at the lowest pT . The two maps are close because our result departs from
+the tune in the same places and by similar amounts as the published data. Neither map has the
+published data as its denominator; the direct comparison with the published data is the median bin
+ratio of Table 5 and the residual map of Fig. 8."
+   REWRITE: Both ratios use MINERvA Tune v1 as the denominator and show similar deviations from unity: the tune underpredicts the cross section over most of the plane and overpredicts it at the lowest pT. Direct comparisons between our result and the published data are given in Table 5 and Fig. 8.

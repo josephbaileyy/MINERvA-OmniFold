@@ -1,0 +1,24 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are an experienced copy editor and referee for Physical Review D (PRD). Below are five texts, each extracted from its PDF; equations, tables and figure labels may be garbled by the extraction, and you should ignore such artifacts. The files reference-1.txt to reference-4.txt are chapters of published long technical papers in particle physics. The file chapter.txt is one chapter of a long technical companion note posted to arXiv alongside a PRD paper, written for specialists who want the full detail. Judge ONLY language and register: how closely the prose reads like a well-edited long technical write-up in particle physics, such as a long PRD or JINST paper, a technical design report, or a detailed supplement. Throughout the scale and the instructions below, "PRD paper" and "PRD register" mean such a well-edited long technical write-up and its register; length, depth of detail and specialist density appropriate to that genre are not departures. Do not judge the science, the results, the completeness of the study, or the typesetting.
+
+Scale (half points allowed):
+5 = Indistinguishable from a well-edited published PRD paper. Direct, precise prose; each claim stated once with its scope; standard terminology, defined at first use; procedural detail only where a reader needs it to judge or reproduce the result; no internal bookkeeping.
+4 = A typical published PRD paper with minor lapses: occasional long or dense sentences, some redundant qualifiers or non-standard terms. Light line editing would suffice.
+3 = Competent, but recognizably departs from PRD register in several places: stacked qualifiers or defensive hedging, project-internal labels or jargon, development-history or procedural narrative, sentences a referee would ask to simplify. Needs a dedicated language pass.
+2 = Departs frequently: many paragraphs read like an internal note or report (record-keeping tone, undefined jargon, caveats dominating the argument). Needs substantial rewriting.
+1 = Not in journal register: largely memo, log or notebook style.
+
+The question: what would have to change in chapter.txt for it to rate 4 on this scale, at the register of the reference chapters? Name every change that is needed, the most important first. Quote chapter.txt exactly. Quote a reference chapter only to show the register you mean.
+
+Answer in exactly this format:
+CURRENT RATING: <number from 1 to 5; half points allowed>
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "<exact text from chapter.txt, one sentence or less>"
+   SCOPE: <"this passage" or "pattern: about N passages like it">
+   PROBLEM: <one sentence: how this departs from the register of the reference chapters>
+   CHANGE: <one sentence: what would have to change>
+   SHARE: <percent of the distance from the current rating to 4 that this change carries>
+2. QUOTE: ...
+(and so on)
+ENOUGH: <one sentence: would the changes above, made in full, bring chapter.txt to 4? If not, what else stands in the way>

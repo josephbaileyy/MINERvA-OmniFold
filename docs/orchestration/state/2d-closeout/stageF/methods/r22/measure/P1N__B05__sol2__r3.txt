@@ -1,0 +1,18 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally suits a detailed particle-physics companion note, but recurring internal bookkeeping, development-history asides, and repetitive qualifications prevent it from reading like a well-edited published paper.
+1. QUOTE: "The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram
+and its projections (hXSec2D, hXSec_pt, hXSec_pz), not the covariance of §4."
+   REWRITE: The error bars on the unfolded points and projections in Fig. 7 are the stored histogram bin uncertainties; they are not derived from the covariance matrix described in §4.
+2. QUOTE: "We therefore
+quote the per-bin pulls and the truncated result together, with a regularization scan made for the
+exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than
+treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App. A.4)."
+   REWRITE: We report the per-bin standardized differences alongside the truncated χ2 as descriptive measures (App. A.4). The regularization scan used an earlier covariance estimate for the exact-split cross-check and was not repeated for the covariance reported here.
+3. QUOTE: "Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of
+the published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles.
+Neither map is flat near unity: both show the same tune deficit, with ratios above unity over most
+of the plane and below it at the lowest pT . The two maps are close because our result departs from
+the tune in the same places and by similar amounts as the published data. Neither map has the
+published data as its denominator; the direct comparison with the published data is the median bin
+ratio of Table 5 and the residual map of Fig. 8."
+   REWRITE: Ratios of the unfolded cross sections from this work (left) and the published measurement (right) to MINERvA Tune v1, shown on the (pT, p∥) grid with a common colour scale of 0.7–1.3. Both measurements show similar deviations from the prediction, with ratios above unity over most of the plane and below unity at the lowest pT. Direct comparisons between the two measurements are presented in Table 5 and Fig. 8.

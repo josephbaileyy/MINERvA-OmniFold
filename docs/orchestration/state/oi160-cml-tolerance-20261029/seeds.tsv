@@ -1,0 +1,6 @@
+task	seed	producer	mtime_minus0700	sha256	identified_by
+1	4	55849763	2026-07-13T03:55:58	77d720496318fefa54a1d6ac0ccf96ef60c043965746d52a48af443f5a78f917	sacct 55849763_4 COMPLETED (00:10:44), end 03:56:00, 2 s after the file mtime; ssplit5d_4_55849763.out mtime equals the file's
+2	9	55849763	2026-07-13T05:09:09	c059a5ac787ad3ba01b66781f3871d28f67d88b57d8c1ec38f7bdcfc1295caab	sacct 55849763_9 COMPLETED (00:07:52), end 05:09:11, 2 s after the file mtime; ssplit5d_9_55849763.out mtime equals the file's
+3	14	55849763	2026-07-13T06:46:59	1140673c9cf2b61d695a284e4fad2088cfbd75320f9cd6124dfbc687b244aae0	sacct 55849763_14 COMPLETED (00:11:20), end 06:47:01, 2 s after the file mtime; ssplit5d_14_55849763.out mtime equals the file's
+4	19	55849763	2026-07-13T07:59:42	e58b6e99b77e4364001256161de303ce4a0c43b5f4c590569ca731720fbfb05c	sacct 55849763_19 COMPLETED (00:09:05), end 07:59:42, the file mtime; ssplit5d_19_55849763.out mtime equals the file's
+5	24	55849763	2026-07-13T09:31:57	5b8bc56ae35ecb078026f0d23f8dd62324574e832ce49df1bf929e88876ea2fd	sacct 55849763_24 COMPLETED (00:08:25), end 09:32:00, 3 s after the file mtime; ssplit5d_24_55849763.out mtime equals the file's

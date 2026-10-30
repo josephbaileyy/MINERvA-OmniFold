@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section."
+   SCOPE: pattern: about 15 passages like it
+   PROBLEM: Published PRD papers are self-contained or cite public archives and supplemental material, never relying on an unpublished internal collaboration note by section and appendix for core methodology and validation.
+   CHANGE: Remove all citations and section cross-references to the internal analysis note, incorporating essential technical summaries directly into the manuscript or into a public Supplemental Material repository (e.g., Ref. [1]: "Code used in the following analysis is publicly available [61].").
+   SHARE: 20
+2. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Narrating the internal trial-and-error optimization history of discarded runs and development milestones departs from the concise, result-oriented register of PRD papers.
+   CHANGE: State only the final operational configuration and its physical justification, omitting the chronological log of rejected parameter trials (e.g., Ref. [1]: "The final choice of 4 hidden layers with 100 nodes each was chosen as a point beyond which expanding the network size further had no obvious benefit.").
+   SHARE: 15
+3. QUOTE: "Interval coverage has not been validated."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Isolated, defensive compliance disclaimers read like an internal review checklist or quality-assurance punch list rather than a scholarly assessment of measurement uncertainties.
+   CHANGE: Replace blunt compliance disclaimers with an integrated, objective discussion of systematic uncertainties and domain of validity (e.g., Ref. [3]: "In the future, these uncertainties may be improved with uncertainty/inference-aware machine learning methods [32, 58–88].").
+   SHARE: 15
+4. QUOTE: "The two-observable central value uses LightGBM at seed 42 [23] with negative-weight background subtraction and a refinement of 400 trees and 31 leaves."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Specifying arbitrary pseudo-random seeds and low-level software flags confuses reproducible algorithmic principles with ephemeral software execution logs.
+   CHANGE: Describe the model architecture, objective function, and training procedure conceptually in the text while delegating specific random seeds and execution scripts to a public code repository (e.g., Ref. [3]: "The network is implemented in Keras with the Tensorflow backend and optimized with Adam using a batch size of 1000 and 50 epochs.").
+   SHARE: 10
+5. QUOTE: "The input is an earlier production of the MINERvA open-data release (see Data availability), in the form of pre-selected analysis ntuples (AnaTuples) [12]."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: The prose relies on project-internal data structure acronyms ("AnaTuples"), informal operational rules ("support rule"), and local tracking labels ("joint-test estimator", "ungraded") unfamiliar to a general physics audience.
+   CHANGE: Replace internal shorthand and idiosyncratic labels with standard physics and statistical terminology, referring to "preselected summary ntuples" and "minimum cell-occupancy threshold."
+   SHARE: 10
+6. QUOTE: "With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Contrasting experimental precision against internal project milestone goals reflects project-management record-keeping rather than journal-level reporting of experimental uncertainties.
+   CHANGE: Report the achieved precision and uncertainty envelopes directly as physical properties of the measurement without reference to failed internal targets or acceptance criteria.
+   SHARE: 10
+7. QUOTE: "Scope. The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: An abrupt bold sub-heading followed by an isolated qualifying sentence breaks paragraph flow and mimics an executive summary memo rather than cohesive scientific prose.
+   CHANGE: Integrate the scope and limitations of the study into continuous introductory and concluding paragraphs.
+   SHARE: 5
+8. QUOTE: "In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBUU-like truths or at a synthetic q3 tilt."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Casting mock-data stress tests as an inability to cover bias creates an unnecessarily apologetic tone instead of an objective evaluation of model-dependent systematic uncertainty.
+   CHANGE: Frame stress tests and fake-data studies neutrally as evaluations of model sensitivity and systematic coverage across alternative physics hypotheses (e.g., Ref. [2]: "None of the models or variants were able to successfully reproduce the data across the entire phase space, which includes areas dominated by each interaction channel.").
+   SHARE: 5
+9. QUOTE: "The band of this analysis contains the statistical, systematic-universe (including the normalization), training-seed and run-period blocks of the covariance, Sec. IV C, and it omits the learner dependence and Cmodel ."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Figure captions crowded with internal bookkeeping lists of included and excluded variance components read like technical compliance tracking rather than self-contained descriptions of the figures.
+   CHANGE: Streamline figure captions to define the plotted quantities, symbols, and uncertainty bands directly, moving discussions of variance components to the main text.
+   SHARE: 5
+10. QUOTE: "The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine."
+    SCOPE: pattern: about 3 passages like it
+    PROBLEM: Explaining a numerical discrepancy with a conversational phrase lacks the formal, precise register expected in PRD papers.
+    CHANGE: State numerical comparisons neutrally and attribute differences directly to known changes in input releases without conversational commentary.
+    SHARE: 5
+ENOUGH: Yes, implementing these changes in full would remove the pervasive internal-note characteristics—including private citations, record-keeping logs, defensive disclaimers, and local jargon—bringing the manuscript into the typical register of a published PRD paper.

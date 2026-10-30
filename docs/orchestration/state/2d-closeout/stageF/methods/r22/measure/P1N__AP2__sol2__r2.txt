@@ -1,0 +1,16 @@
+RATING: 3.5
+JUSTIFICATION: The chapter generally follows the register of a detailed detector paper, but recurrent wordiness, awkward grammar, repetition, and occasional speculative or development-oriented phrasing warrant a dedicated language pass.
+1. QUOTE: "The first point above may be explained by a combination of potentially using an incorrect value for
+the argon ion drift velocity, which is not well known in liquid argon, and the possibility of liquid
+argon flow (not included in simulation) moving the argon ions around in the TPC in addition to their
+nominal drift in the applied electric field. The second and third points are potentially explained by
+the effects of liquid argon flow alone. These explanations are at present speculative; more detailed
+study is ongoing and will be reported in a future work."
+   REWRITE: The larger spatial distortions in data may reflect uncertainty in the argon ion drift velocity and the effects of liquid argon flow, which is omitted from the simulation. Liquid argon flow may also explain the asymmetry and the differing spatial trends. These explanations remain speculative; further studies are ongoing and will be reported separately.
+2. QUOTE: "Data was taken using the CRT once it became operational on November 1st, 2018 and runs
+were taken with the CRT during beam data-taking from November 1st, 2018 to November 11th,
+2018, the last day of beam."
+   REWRITE: CRT data were collected from November 1, 2018, when the system became operational, through November 11, the final day of beam data-taking.
+3. QUOTE: "This results demonstrates an
+understanding of the 𝑑𝐸/𝑑𝑥 metric for electrons that would be a valuable input for future analyses."
+   REWRITE: These results characterize the electron 𝑑𝐸/𝑑𝑥 response for use in future analyses.

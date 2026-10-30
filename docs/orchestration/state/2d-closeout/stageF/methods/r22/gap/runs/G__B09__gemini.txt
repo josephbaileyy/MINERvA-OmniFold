@@ -1,0 +1,63 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Controls 0, 1, 2, 3, 4, 5, 6, 8 passed."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: The passage evaluates validation checks using the terminology of an automated software test suite and quality-assurance audit ("controls passed", "failed", "graded truths", "ungraded", "grades") rather than the physical validation register of journal papers.
+   CHANGE: Recast the validation suite into standard scientific descriptions of sensitivity studies and mock-data closure tests, adopting the register of reference-2: "A Monte Carlo study was performed in order to explore the sensitivity of the analysis to multi-nucleon effects."
+   SHARE: 18
+2. QUOTE: "Statements in those sections about that central value and that covariance do not describe this result, and statements here do not describe them."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: This sentence adopts a defensive, legalistic boundary-policing tone characteristic of an internal collaboration dispute or memo rather than an objective academic report.
+   CHANGE: State the relationship between different analysis configurations neutrally and constructively as complementary measurements or cross-checks, following reference-2: "The fits use different likelihoods and software in order to serve as cross-checks to each other."
+   SHARE: 14
+3. QUOTE: "This is a bias test, not a coverage test: Poisson pseudo-experiments with no draws of the systematic parameters cannot test the width of the intervals, and the detector response is not probed."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: The argument is dominated by defensive negative disclaimers emphasizing what the study cannot demonstrate rather than positively defining the scope and physical significance of the test.
+   CHANGE: Replace defensive hedging with direct, positive statements of the test methodology and its physical conclusions, as seen in reference-2: "For the present exposure, the effect can be ignored, but future analyses will need to incorporate multi-nucleon effects in their model of neutrino-nucleus interactions."
+   SHARE: 12
+4. QUOTE: "The training-seed block was measured and is zero in every cell: with full-sample binning and deterministic training, the unfolds at the other seeds are bitwise equal to the central one."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The text records low-level code implementation details and execution stability ("deterministic training", "bitwise equal") that belong in a software repository log rather than a physics paper.
+   CHANGE: State succinctly that algorithmic and seed-dependent systematic uncertainties were evaluated and found to be negligible, without recounting software-level execution mechanics.
+   SHARE: 10
+5. QUOTE: "Cmodel is built from the change in the unfolded data when the prior is reweighted to each of three generators, GENIE + MEC, NuWro and GiBUU: each vertex is that relative shift of the data result, and Cmodel is the sum of their outer products, unscaled."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Using geometric shorthand like "vertex" and "vertex-family truths" to refer to systematic variations or parameter shifts is project-internal jargon that obscures the statistical procedure.
+   CHANGE: Use conventional statistical and experimental terminology such as "systematic variations" or "model excursions", as in reference-1: "The covariance matrix V , which describes the variations in the number of events in the binned observables (Ni ) due to the variation in ~xF SI , is given by Eq. (13)."
+   SHARE: 10
+6. QUOTE: "The counts are read by group, never pooled."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Imperative commands directing how the reader or analyst must interpret data read like instructions from an internal analysis manual rather than peer-reviewed exposition.
+   CHANGE: Rephrase prescriptive rules as descriptive narrative explaining that candidate events and test categories were evaluated independently.
+   SHARE: 8
+7. QUOTE: "Ce sums the statistical bootstrap of configuration (e), the flux universes weighted by the neutrino–electron and inverse-muon-decay constraint, the interaction and detector bands, the lateral bands, the normalization and the training-seed block."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: The text strings together internal working-group labels ("flux universes", "lateral bands", "detector bands") without defining their physical origins.
+   CHANGE: Explicitly define the physical sources of systematic uncertainty and their propagation methods upon first introduction, following the practice in reference-1: "SKDETSIM incorporates the propagation of photons in water, subject to absorption, Rayleigh scattering, and Mie scattering."
+   SHARE: 7
+8. QUOTE: "Each supported box whose purity is below τ = 0.1 is merged into a neighbour, in 12 declared steps; 1 unsupported box is absorbed into R09 by these merges, the other 4 remain unreported, and each of the 16 resulting cells passes the support rule."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: The narrative relies on unexplained pipeline-internal jargon ("support rule", "purity merge", "declared steps") that reads like an execution transcript rather than a physical binning specification.
+   CHANGE: Describe the phase-space binning and cell aggregation in terms of standard kinematic acceptance and purity criteria, adopting the objective descriptive tone of reference-3: "The data preparation comprises evaluation of pedestals, charge calibration, mitigation of readout issues, tail removal and noise suppression."
+   SHARE: 6
+9. QUOTE: "The variant without the response block, against Ctotal + Vg , gives χ2 of 160.62/16, 318.26/16, 298.69/16, 68.44/8 and 360.79/16, in the order of Table 15."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Dumping raw strings of numerical test outputs into running prose reads like an unedited laboratory notebook entry rather than formal text.
+   CHANGE: Incorporate secondary test statistics into a structured table or summarize the overall physical agreement and trends in the prose.
+   SHARE: 5
+10. QUOTE: "The fake-data tests ask how the estimator’s bias at a truth different from the simulation compares with the reported covariance."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Informal colloquial phrasing such as "ask how" and "not GiBUU numbers" departs from the formal, impersonal voice expected in PRD.
+   CHANGE: Replace colloquial formulations with precise, conventional academic phrasing describing the evaluation of estimator bias against assigned uncertainties.
+   SHARE: 4
+11. QUOTE: "The references count the four records as independent, but they are two truths, each counted by its pseudo-experiments and by its closure, so they are context only."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Repeated meta-commentary declaring statistical benchmarks to be "context only" introduces an argumentative, self-conscious tone.
+   CHANGE: Define the statistical benchmark hypotheses and degrees of freedom directly once, omitting defensive justifications regarding how the reader should treat the reference figures.
+   SHARE: 3
+12. QUOTE: "In the GENIE CV and NuWro samples, which stop at Eν = 50 GeV, at least 11.71% and 12.59% of each generator’s cross section in the phase space above p∥ = 4.5 GeV/c comes from Eν > 20 GeV, against 0.83% and 0.77% between p∥ = 1.5 and 4.5 GeV/c: these are the parts that a sample stopping at Eν = 20 GeV cannot hold, not GiBUU numbers."
+   SCOPE: this passage
+   PROBLEM: The sentence is weighed down by stacked comparative clauses, nested percentages, and an informal colon splice that obscure the physical limitation being described.
+   CHANGE: Split the phase-space truncation rationale into distinct, syntactically clear sentences explaining the kinematic coverage limits of the generator samples.
+   SHARE: 3
+ENOUGH: Yes, implementing these twelve changes in full would eliminate the pervasive internal-note tone, audit-log jargon, and defensive framing, bringing the chapter to a solid rating of 4.

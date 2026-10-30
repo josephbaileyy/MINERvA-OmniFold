@@ -1,0 +1,14 @@
+RATING: 3
+JUSTIFICATION: The prose is technically focused and generally intelligible, but recurring internal bookkeeping, compressed jargon, and repetitive qualifications require a dedicated language pass to reach PRD register.
+1. QUOTE: "Controls 0, 1, 2, 3, 4, 5, 6, 8 passed. The offset control, which compares two hybrid truths’ offset
+corrections, failed (χ2 = 245.74 for 16 degrees of freedom). As declared, the six power alternatives
+built on that correction are therefore descriptive and ungraded; Table 14 gives them, with the two
+descriptive variants of each graded truth."
+   REWRITE: Eight control tests passed, but the comparison of the offset corrections for two hybrid truths failed (χ2 = 245.74 for 16 degrees of freedom). The six power alternatives that use this correction are therefore reported descriptively and excluded from the bias assessment. Table 14 presents these alternatives and two descriptive variants of each truth included in that assessment.
+2. QUOTE: "In every cell, 77–100%
+of the prior weight lies beside a step in the reweighting ratio larger than 0.1 drawn by the noise gate
+or a cut, and the shifts enter as measured."
+   REWRITE: In each cell, 77–100% of the prior weight lies adjacent to a discontinuity greater than 0.1 in the reweighting ratio, introduced by the noise-suppression threshold or a cut. The resulting shifts are included without modification.
+3. QUOTE: "The grading, rerun with
+the two truths, reproduces every record of the fake-data truths above exactly."
+   REWRITE: Repeating the bias assessment with the two additional truths leaves all previously reported fake-data test results unchanged.

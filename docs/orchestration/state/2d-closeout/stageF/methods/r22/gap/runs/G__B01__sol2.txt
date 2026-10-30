@@ -1,0 +1,63 @@
+CURRENT RATING: 3
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "No result’s intervals have validated coverage (two dimensions: §4.6; five dimensions: §9.5; the sixteen cells: §10.3)."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Repeated qualifications, limitation inventories and reminders about scope give parts of the chapter a defensive, administrative emphasis beyond the references’ ordinary repetition between summaries and detailed discussions.
+   CHANGE: Retain the principal qualifications in the abstract and beside the results they qualify, but consolidate overlapping disclaimers and replace the long inventory of limitations and section references with a compact account of their consequences.
+   SHARE: 18%
+
+2. QUOTE: "The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Accounts of completed reruns, earlier statistical bands and implementation choices read as a development record rather than a settled description of the analysis.
+   CHANGE: Describe the final procedures and their methodological consequences directly, preserving consequential information about estimator selection, earlier validation and recovered draws while removing incidental chronology and completion-status language.
+   SHARE: 16%
+
+3. QUOTE: "A corrected unified-throw test perturbs all reweightable sources together and stores the joint mean shift separately (§4.5)."
+   SCOPE: pattern: about 8 passages like it
+   PROBLEM: Expressions such as “unified-throw,” “statistical block,” “first-built” and “acceptance-supported cells” rely on compressed project vocabulary more heavily than the references’ explicitly explained technical terminology.
+   CHANGE: Replace internal shorthand with conventional descriptions of the statistical or computational operation, or define a necessary specialized term when it first appears.
+   SHARE: 14%
+
+4. QUOTE: "We report a simultaneous measurement of the νµ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is 7.29%."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Several sentences accumulate the observable list, method, data source, reporting scheme and qualifications before establishing a clear hierarchy among them.
+   CHANGE: Split these sentences into statements that separately identify the measurement, explain the method and reporting scheme, and state the uncertainty or qualification, retaining all necessary technical detail.
+   SHARE: 12%
+
+5. QUOTE: "The configuration-(e) 3D marginal agrees with the configuration-(f) 2D result to 0.141 % in total, a comparison across configurations (§7)."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Repeated lettered configurations without nearby descriptive identifiers make the opening sections read like navigation through an internal analysis matrix.
+   CHANGE: Introduce each relevant configuration by its distinguishing methodological feature, provide a concise mapping where needed, and retain letter labels only where they help the reader track a comparison.
+   SHARE: 10%
+
+6. QUOTE: "Whether it is ready for publication as a measurement has not been established."
+   SCOPE: this passage
+   PROBLEM: Publication readiness is an editorial status judgment, whereas the references state the particular validation or uncertainty limitation that constrains interpretation.
+   CHANGE: Replace this sentence with the specific unresolved validation requirement and its consequence for interpreting the reproduced cross section.
+   SHARE: 8%
+
+7. QUOTE: "In this descriptive re-evaluation, NuWro’s total-test rejection is not robust to the correction, and the ten decisions are unchanged (§11.9)."
+   SCOPE: this passage
+   PROBLEM: The sentence leaves the relationship between a rejection that is not robust and decisions that are unchanged insufficiently explicit.
+   CHANGE: Identify which decisions remain unchanged and distinguish their evaluation conditions from those under which the NuWro rejection changes, so that both clauses have an unambiguous scope.
+   SHARE: 7%
+
+8. QUOTE: "Over the last few years OmniFold has moved from a method paper to production measurements."
+   SCOPE: pattern: about 6 passages like it
+   PROBLEM: Conversational or software-project expressions such as “production measurements,” “that route,” “budget that component” and “this corner” intermittently loosen the otherwise technical register.
+   CHANGE: Use direct descriptions of published applications, subtraction methods, uncertainty contributions and specified kinematic regions wherever these expressions obscure or informally compress the intended meaning.
+   SHARE: 6%
+
+9. QUOTE: "It uses GBDT learners suited to a low-dimensional tabular feature set."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Specialized abbreviations or diagnostic labels, including GBDT, PET and C2, appear without an expansion or explanation at their first occurrence in the supplied chapter.
+   CHANGE: Expand the specialized abbreviations and identify the diagnostic quantity on first use, while leaving familiar particle-physics notation and previously explained terminology concise.
+   SHARE: 5%
+
+10. QUOTE: "Three external generator predictions compared on all sixteen cells give χ2 between 109 and 272 for 16 degrees of freedom, and GiBUU, on its 8 cells, 58."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: The heavily elliptical final clause makes a principal numerical result read like compressed notes rather than a fully stated comparison.
+   CHANGE: Give the GiBUU comparison its own complete clause or sentence and state explicitly the statistic and comparison scope associated with its value.
+   SHARE: 4%
+
+ENOUGH: Yes; applied throughout the chapter, these changes would bring it to 4 while preserving the length, specialist detail, necessary procedural explanations and substantive limitations appropriate to a technical companion note.

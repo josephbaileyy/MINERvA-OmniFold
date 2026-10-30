@@ -1,0 +1,14 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically focused, but internal workflow instructions, informal descriptions, and project-management contingencies recur sufficiently to require a dedicated language pass.
+
+1. QUOTE: "The implementation runs only as a closure on pseudo-data and only on the
+five observables, and it cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted."
+   REWRITE: The diagnostic is restricted to the five-dimensional pseudo-data closure test, with truth reweighting and bootstrapping disabled. Its outputs are intended solely for validation and are excluded from the reported measurement.
+
+2. QUOTE: "The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model."
+   REWRITE: The reconstruction-only test provides a computationally inexpensive probe of response mismatch through a deliberately imposed distortion, without modeling its detector-level origin.
+
+3. QUOTE: "It is deferred unless the reconstruction-only test shows material bias or the collaboration asks
+for the stronger response model."
+   REWRITE: This follow-up study is deferred pending evidence of substantial bias in the reconstruction-only test or a collaboration request for a more detailed response model.

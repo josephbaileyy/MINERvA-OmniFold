@@ -1,0 +1,17 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally follows PRD conventions, but recurrent conversational phrasing, wordiness, and repetitive explanation warrant a dedicated language pass.
+1. QUOTE: "This suggests the unfolding procedure is mostly
+done at this point, which is also consistent with the
+behavior of the χ2 curves shown in Fig. 4."
+   REWRITE: This suggests approximate convergence after 45 iterations, consistent with the behavior of the χ2 curves in Fig. 4.
+2. QUOTE: "From a practical perspective, an analyzer who knows the observables they will be interested
+in will usually want to include this information as direct
+input to the procedure anyway, sidestepping this problem, but this calls for caution when attempting to unfold
+arbitrarily complicated derived quantities from simple inputs."
+   REWRITE: Providing the observables of interest directly as classifier inputs can mitigate this limitation. Unfolding complex observables derived from simpler inputs therefore requires caution.
+3. QUOTE: "That being said, the performance of the OmniFold
+method was likely also limited by the nature of the public dataset that we used. For instance, the dataset only
+contained information about the primary muon and leading proton in each event, but we would expect OmniFold
+to do a better job of dealing with background contributions if we could provide pion kinematic information
+where it existed."
+   REWRITE: OmniFold performance was likely also limited by the information available in the public dataset, which contained only the primary muon and leading proton kinematics. Including pion kinematics where available could improve the treatment of backgrounds.

@@ -1,0 +1,13 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically focused, but recurrent implementation bookkeeping, informal phrasing, and project-internal terminology require a dedicated language pass.
+1. QUOTE: "The implementation runs only as a closure on pseudo-data and only on the
+five observables, and it cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted."
+   REWRITE: The test is restricted to five-dimensional pseudo-data closure, without injected truth reweighting or bootstrapping. Its outputs are diagnostic and are not intended for use as measurement results.
+2. QUOTE: "The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model."
+   REWRITE: The reconstruction-only test provides a computationally inexpensive stress test but does not represent a physical detector-response model.
+3. QUOTE: "The current scalar event-loop outputs lack the
+information for that recomputation, so this arm needs dedicated diagnostic output from the event
+loop. It is deferred unless the reconstruction-only test shows material bias or the collaboration asks
+for the stronger response model."
+   REWRITE: Recomputing these quantities requires low-level event information absent from the current scalar outputs. The correlated-response test would be performed if the reconstruction-only test indicated material bias or if the collaboration required a more detailed response model.

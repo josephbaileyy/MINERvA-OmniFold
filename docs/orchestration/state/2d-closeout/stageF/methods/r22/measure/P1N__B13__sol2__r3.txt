@@ -1,0 +1,19 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriate for specialists, but recurring internal bookkeeping, development-history narrative, and repetitive scope disclaimers require a dedicated language pass.
+1. QUOTE: "The reductions keep the per-cell values, the identity of each
+input and the exclusions, and distinguish complete outputs from checkpoints that carry no metadata.
+From a checkpoint, only the iterations that reproduce the originally recorded values are used; later
+entries are excluded. The analyst cross-checked the reductions numerically."
+   REWRITE: The reductions retain per-cell values, input identities and exclusions. For checkpoints without metadata, only iterations reproducing the originally recorded values are included. The reductions were checked numerically.
+2. QUOTE: "First, mixing
+background treatments inside one covariance is worse than either consistent choice. A lateral-band
+block built with negative-weight subtraction, inserted into a central and vertical set built with purity
+subtraction, is a mismatch, not an upgrade. Second, switching would have meant rerunning every
+unfold above and would have invalidated the flux-corrected covariance just chosen for use. That
+consequence, not the computing cost, decided the choice."
+   REWRITE: A consistent background treatment is required across the central estimate and all covariance components. Introducing negative-weight subtraction in the lateral-band component alone would violate this requirement. Adopting it throughout would require repeating all unfolds listed above and replacing the selected flux-corrected covariance. Purity subtraction was retained to preserve this consistency.
+3. QUOTE: "The status of that five-axis covariance and the scope of its
+use are stated in §9.6. Neither fact follows from this appendix, and the appendix relies on neither.
+The choice of background treatment settles one of the conditions for using a component; every other
+condition still applies."
+   REWRITE: Section 9.6 specifies the status and scope of use of the five-axis covariance. The background treatment determines whether one requirement for using a covariance component is satisfied; the remaining requirements must be assessed separately.

@@ -1,0 +1,53 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The superseded unified-throw 5D covariance has N = 160, truncated p = 100, giving 58/160 ≃ 0.363: uncorrected precision is too large by ≃ 2.76."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Detailing the numerical properties of abandoned or superseded covariance matrices records internal development history rather than describing the published results.
+   CHANGE: Excise discussions of superseded historical iterations, stating only the parameters, properties, and validation of the covariance matrices actually adopted for the final results.
+   SHARE: 15
+2. QUOTE: "No number in this appendix is a quoted uncertainty, and the analytic derivation, the estimand identity and the displacement argument require none of them."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: The prose engages in aggressive, defensive disclaimers against anticipated reviewer objections rather than presenting the scope of the method objectively.
+   CHANGE: Replace defensive disclaimers with direct, neutral statements defining the scope and purpose of the calculations, following the objective tone seen in Reference 1 ("Here we discuss the performance of SK in this context, focusing on the event selections and the estimation of systematic uncertainties...").
+   SHARE: 15
+3. QUOTE: "Two provenance limits apply to the production numbers: the driver revision that produced them is corroborated but not pinned, and no output records the job that produced them (Ref. [37], R1.7)."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Logging unpinned software driver revisions, missing metadata, job execution limits, and individual analyst cross-checks reads like an internal post-mortem log rather than an archival publication.
+   CHANGE: Delete all internal software execution logs, git/driver provenance qualifications, checkpoint recovery details, and analyst attributions in favor of describing the validated analysis procedure.
+   SHARE: 15
+4. QUOTE: "The measurements, the derivation and the requirement that N-D difference statistics use a rank cut fixed in advance are in Ref. [37] (R1.15)."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Citing internal collaboration review labels and referee tracking tags departs from the published journal register where citations refer solely to formal literature.
+   CHANGE: Remove internal review tracking identifiers like "(R1.15)" and "(R1.7)", citing the reference directly as Ref. [37] without internal review metadata.
+   SHARE: 10
+5. QUOTE: "It is distinct from CZ and was built before CZ was chosen for use."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Relying on undefined project-internal labels, acronyms, and cell shorthand departs from PRD register where all notation must be self-contained and defined at first use.
+   CHANGE: Define every acronym and technical label upon first appearance or replace internal shorthand (such as "CZ" and "MAT bands") with descriptive physical and mathematical terms.
+   SHARE: 10
+6. QUOTE: "Assumption A2 is that, given the data, these are independent Bernoulli draws with a common probability p, the calibrated tail probability of the observed statistic; this requires the lost pseudo-experiments to be lost independently of their outcomes."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Recounting operational accidents such as lost pseudo-experiments and ad hoc sequential stopping rules introduces informal procedural narrative into what should be a rigorous statistical derivation.
+   CHANGE: Formulate the statistical proof around well-defined mathematical conditions (such as optional stopping bounds and martingale properties) rather than narrating computational accidents like lost jobs or unblinded looks.
+   SHARE: 10
+7. QUOTE: "Raw signed weights destabilize an exact-split boosted-tree classifier, inflating a full low-pT cross-section row by up to a factor ∼5 × 104 where local background is large."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Documenting code blow-ups, training crashes, and divergence across unselected software backends reads like an internal benchmarking bug-report rather than a polished technical appendix.
+   CHANGE: State the mathematical formulation and stability of the adopted clipped refinement directly, omitting detailed narratives of numerical failure modes in discarded machine-learning backends.
+   SHARE: 10
+8. QUOTE: "N-D covariances must not use ndf = nreported ."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Using prescriptive policy imperatives ("must not use", "Every N-D χ2 must state") mimics internal collaboration directives rather than descriptive scientific reporting.
+   CHANGE: Convert prescriptive policy mandates into declarative descriptions of the chosen covariance inversion and rank-truncation methodology, as modeled in Reference 2 ("Both νµ -disappearance fits consider a total of 48 parameters...").
+   SHARE: 5
+9. QUOTE: "These are requirements on such inference, with no new validation result here."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Lecturing downstream users on general statistical principles while disclaiming any validation results creates a defensive, pedagogical meta-commentary foreign to PRD articles.
+   CHANGE: Replace didactic commentary and negative disclaimers with a concise, neutral summary of how event correlations affect parameter extraction from unfolded distributions.
+   SHARE: 5
+10. QUOTE: "About ∼45 two-endpoint MAT bands plus statistical and ML blocks cannot span 10 694 directions, so the rank limit is a consequence of the construction, not a defect."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Combining stacked approximations ("About ∼45"), shorthand jargon ("ML blocks"), and conversational rejoinders ("not a defect") degrades the precision and formality expected in PRD prose.
+   CHANGE: Rewrite the passage in precise mathematical terminology explaining the dimension of the subspace spanned by systematic variations without informal hedges or colloquial flourishes.
+   SHARE: 5
+ENOUGH: Yes, implementing these changes in full would bring chapter.txt to a rating of 4, as the underlying mathematical and statistical content is already rigorous and technically complete once stripped of internal bookkeeping, defensive hedging, and unedited development logs.

@@ -1,0 +1,43 @@
+CURRENT RATING: 2
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "Except where stated, the 3D and 4D central values in this section are those of configuration (e) (§3.2), with refined negative-weight background subtraction (a 400-tree, 31-leaf refinement)."
+   SCOPE: pattern: about 10 passages like it
+   PROBLEM: Labeling results by arbitrary internal development tags ("configuration (e)", "configuration (a)", "configuration (f)") and hyperparameter states ("400-tree, 31-leaf refinement", "seed-42") reads like an internal software log rather than the standardized method descriptions of PRD (such as Reference 2 designating distinct analyses systematically as M1 and M2).
+   CHANGE: Replace internal configuration letters and tuning tags with descriptive physical designations (e.g., "nominal unbinned model" and "alternative cross-check model") or standardize on a single nominal pipeline throughout the section.
+   SHARE: 22
+2. QUOTE: "The comparisons with generator predictions in this section and in Sec. 8 are descriptive comparisons of central values, and they do not identify a nuclear or interaction mechanism (§7.7)."
+   SCOPE: pattern: about 7 passages like it
+   PROBLEM: Framing scientific results through stacked defensive disclaimers and apologetic caveats departs from the direct, confident statement of scope standard in PRD (such as Reference 2, Sec. VIII D, which neutrally states the scope and limits of multi-nucleon models).
+   CHANGE: State the comparisons and their physical interpretation directly once, defining the quantitative treatment of uncertainties neutrally without pre-emptive self-disparaging hedging.
+   SHARE: 18
+3. QUOTE: "The repair corrects the flux from which the GENIE (CV and +Valencia 2p2h) and NuWro samples were generated."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Recounting intermediate mistakes, inherited bugs, and post-hoc correction procedures ("The repair corrects the flux...", "That flux had no PPFX weights, was capped at 50 GeV...") belongs to an internal erratum or analysis post-mortem rather than the publication register of PRD, which presents the finalized simulation setup directly.
+   CHANGE: Remove the retrospective bug-and-repair narrative and describe the incident flux and reweighting scheme objectively as the established simulation baseline.
+   SHARE: 16
+4. QUOTE: "In MeV, the truth function (CVUniverse::GetEAvailableTrue()) computes"
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Citing internal C++ class methods (`CVUniverse::GetEAvailableTrue()`, `CVUniverse::NewEavail()`) and generator script names (`gevgen`, `grwght1p`) to define physical observables reads like a software manual rather than a physics journal.
+   CHANGE: Define all physical and reconstructed quantities purely through standard mathematical equations and physical particle definitions, relegating software package names to formal citations.
+   SHARE: 14
+5. QUOTE: "This is a cross-configuration comparison: the 3D marginal is configuration (e), and the 2D result is configuration (f)."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: Splicing mismatched internal run configurations across primary figures and comparison baselines (e.g., comparing configuration (e) against (f) while reading numbers from (a)) departs from the cohesive presentation in PRD, where results are reported from a single coherent baseline with dedicated cross-checks.
+   CHANGE: Harmonize the primary analysis so that all presented distributions, marginals, and closure tests derive from a unified nominal pipeline, with secondary pipelines reserved strictly for clearly demarcated cross-check comparisons.
+   SHARE: 10
+6. QUOTE: "What distinguishes this analysis is the unbinned, simultaneous CC-inclusive scalar formulation extended to three, four and five recorded observables, not the number of dimensions by itself."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: Including self-referential advocacy, argumentative commentary on the novelty of the work, and meta-surveys of collaboration history (such as Figure 15 tracking unfolded variables across publications) departs from the objective, impersonal register of PRD papers.
+   CHANGE: Remove promotional meta-commentary and the collaboration publication-inventory figure, integrating prior MINERvA measurements solely as technical context in the literature citations.
+   SHARE: 8
+7. QUOTE: "In the metric of §5 (Eavail projection) the residual is 1.84 % vs 18.1 % injected (ratio 0.102) and is not graded, because no acceptance threshold fixed before the test is on record."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: Documenting why tests were not evaluated or confessing to an absence of pre-established thresholds ("is not graded, because no acceptance threshold fixed before the test is on record", "none is quoted (§7), and that projection has been computed but is not used") reflects internal collaboration audit logs rather than the journal register.
+   CHANGE: State the quantitative results of validation tests and their physical implications directly, omitting internal procedural justifications for absent criteria or withheld calculations.
+   SHARE: 6
+8. QUOTE: "The Eavail binning [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100] GeV ends in a wide catch bin, so that the Eavail marginal contains the full CC-inclusive recoil tail."
+   SCOPE: pattern: about 5 passages like it
+   PROBLEM: Using colloquial and non-standard project jargon such as "catch bin" and "flux repair" departs from standard technical nomenclature used in published literature (for example, Reference 1, Fig. 20 caption: "the rightmost bin includes overflow").
+   CHANGE: Replace informal lab jargon with standard terminology such as "overflow bin" and "flux reweighting."
+   SHARE: 6
+ENOUGH: Yes, implementing these changes in full would eliminate the internal record-keeping tone, defensive hedging, codebase jargon, and procedural post-mortems, bringing the text to a solid rating of 4 characterized by direct, conventional PRD technical exposition with only minor remaining line-editing needs.

@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent, but recurring audit-trail bookkeeping, development history, and repetitive or colloquial caveats require a dedicated language pass to reach PRD register.
+
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver;
+the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: The analysis code reproduces seven universes from the July sweep (§4.1) to within 1.4 × 10−11. The remaining universes were generated with the same code but were not individually checked (Ref. [37], R1.16).
+
+2. QUOTE: "Because the block is built from the observed differences among the periods,
+it contains them automatically. That says nothing about its coverage, that is, about whether its size
+is right. For the same reason, the block’s own double-ratio χ2 against any total that contains it is
+bounded whatever the data, so it is not a test."
+   REWRITE: Constructing the block from the observed period differences does not establish its coverage. The corresponding double-ratio χ2 is necessarily bounded when evaluated with a total covariance containing this block and therefore cannot independently validate the assigned uncertainty.
+
+3. QUOTE: "The statistical block quoted here has had no coverage test: the fixed-truth coverage studies of
+§5.2 scored two earlier statistical bands, not this block. No coverage test on held-out simulation has
+been run, and no design for one has been registered in advance."
+   REWRITE: The fixed-truth coverage studies in §5.2 evaluated two earlier statistical bands. Coverage of the present block has not been tested with held-out simulated samples.

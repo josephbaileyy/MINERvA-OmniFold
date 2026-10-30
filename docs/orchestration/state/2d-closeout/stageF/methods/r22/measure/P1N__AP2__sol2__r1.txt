@@ -1,0 +1,16 @@
+RATING: 3.5
+JUSTIFICATION: The chapter largely uses standard detector-physics prose, but recurrent awkward syntax, redundant phrasing, stacked qualifications, and development-oriented commentary warrant a dedicated language pass.
+1. QUOTE: "The first point above may be explained by a combination of potentially using an incorrect value for
+the argon ion drift velocity, which is not well known in liquid argon, and the possibility of liquid
+argon flow (not included in simulation) moving the argon ions around in the TPC in addition to their
+nominal drift in the applied electric field."
+   REWRITE: The larger spatial distortions observed in data may reflect uncertainties in the argon ion drift velocity and ion transport by liquid argon flow, which is not included in the simulation.
+2. QUOTE: "Calibrating the electron lifetime in situ via cathode-crossing muons
+is complicated by the very complex space charge effects. Using the CRT allowed a much more
+precise calibration, but that system was not operable until late in the run and therefore those more
+precise lifetime measurements were not available for runs taken before then. The effect of diffusion
+has not been measured yet."
+   REWRITE: Space charge distortions complicate the in situ electron lifetime calibration using cathode-crossing muons. The CRT provided a more precise calibration, but its measurements were available only for the final part of the run. The effect of diffusion has not been measured.
+3. QUOTE: "This results demonstrates an
+understanding of the 𝑑𝐸/𝑑𝑥 metric for electrons that would be a valuable input for future analyses."
+   REWRITE: The measured electron 𝑑𝐸/𝑑𝑥 distribution is consistent with the expected response to a single ionizing particle.

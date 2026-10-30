@@ -1,0 +1,70 @@
+CURRENT RATING: 2
+
+GAPS (at most 12, the most important first; the SHARE values sum to 100):
+1. QUOTE: "The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-06-10), not with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App. C)."
+   SCOPE: this passage
+   PROBLEM: This records project-internal production dates ("battery of 2026-06-10") and task-assignment protocol tracking ("treatment designated for..."), departing from the impersonal, archival presentation of analysis procedures in the reference chapters.
+   CHANGE: Remove all calendar dates and project management designations, stating directly and neutrally which background-subtraction method was used for the measurement.
+   SHARE: 15
+
+2. QUOTE: "A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but no release has been tagged or deposited; rebuilding this note’s PDFs assembles documents and reproduces no scientific result (App. G)."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: This reads like an internal software engineering log and repository status memo rather than the formal, objective documentation of data products found in published technical articles.
+   CHANGE: Replace internal build-system status and tagging reports with a direct specification of the public data release format and availability.
+   SHARE: 15
+
+3. QUOTE: "The sample’s mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the flux repair."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: This logs uncompleted maintenance and historical code defects in the manner of an internal diagnostic memo rather than characterizing the evaluated systematic model on its physical merits.
+   CHANGE: Remove the procedural history regarding unexecuted rebuilds and defective files, defining the model variations strictly in terms of their physical assumptions and coverage.
+   SHARE: 12
+
+4. QUOTE: "The executive summary (p. 1) gives each result with its scope and lists the principal limitations."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: This employs internal report bookkeeping with literal page-number citations to an external executive summary rather than presenting self-contained scientific conclusions within the journal chapter.
+   CHANGE: Eliminate all meta-references to the executive summary and document page numbers, presenting the primary findings and scope directly in continuous technical prose.
+   SHARE: 10
+
+5. QUOTE: "No covariance is quoted for it, so the result consists of central values and these validation tests."
+   SCOPE: pattern: about 3 passages like it
+   PROBLEM: This adopts an apologetic and defensive tone that foregrounds omitted deliverables rather than stating the positive scope of the reported measurement as seen in the reference chapters.
+   CHANGE: Recast the sentence in an objective, positive register that defines what is presented without defensive disclaimers explaining missing covariance matrices.
+   SHARE: 10
+
+6. QUOTE: "The quoted 2D result, with refined negative-weight subtraction, is 3.069 × 10−38 cm2 /nucleon, 0.14 % lower, so the control no longer reproduces it."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: This presents a chronological record-keeping narrative explaining numerical discrepancies across internal revisions rather than stating a clean, finalized benchmark comparison.
+   CHANGE: Remove the developmental narrative about the control drifting from the quoted value, stating only the quantitative comparison between the two estimation methods.
+   SHARE: 9
+
+7. QUOTE: "Figure 32: Extended-fiducial acceptance across all twelve playlists: (a) weighted truth rate (log10 ), (b) reconstruction efficiency, and (c) the dead region with ϵ < 2 %, on the extended (pT , p∥ ) grid (bin number; catch bins are too wide for a linear axis)."
+   SCOPE: pattern: about 4 passages like it
+   PROBLEM: This relies on informal collaboration jargon and colloquial drafting notes ("playlists", "dead region", "catch bins") that violate standard physics publication register.
+   CHANGE: Replace colloquial idioms with formal technical terminology such as "data-taking periods", "regions of negligible acceptance", and "overflow bins".
+   SHARE: 8
+
+8. QUOTE: "Panels (a) and (b) are ratios (diverging scale centered at unity); (c) gives absolute magnitude on a sequential scale — hence the two color schemes."
+   SCOPE: this passage
+   PROBLEM: This introduces casual, conversational editorializing ("— hence the two color schemes") into a figure caption instead of maintaining concise, objective description.
+   CHANGE: Delete the conversational rationale and state strictly the plotted physical quantities and color scales.
+   SHARE: 6
+
+9. QUOTE: "With a fixed estimator seed and one 100/100 calibration–evaluation split, widths learned from the disjoint calibration half contain the fixed truth in 68.67 % of evaluation bin–toy cells, compared with the 68.27 % Gaussian nominal."
+   SCOPE: pattern: about 2 passages like it
+   PROBLEM: This details low-level code configuration choices and pipeline mechanics ("fixed estimator seed", "100/100 calibration–evaluation split") that read like a machine learning testing log rather than standard statistical ensemble verification.
+   CHANGE: Describe the validation methodology and frequentist coverage in standard statistical terminology while omitting script-level configuration minutiae.
+   SHARE: 6
+
+10. QUOTE: "The release design and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a) central value (§9.6)."
+    SCOPE: this passage
+    PROBLEM: This reads like a defensive meeting note settling an internal collaboration argument while employing an arbitrary, undefined project label ("configuration-(a)").
+    CHANGE: Delete this defensive disclaimer entirely, addressing covariance methodology objectively where that analysis configuration is defined.
+    SHARE: 5
+
+11. QUOTE: "A flux–muon-energy-scale posterior derived from MAT-MINERvA, independent of the published analysis, would let the correlation ρ between the leading flux mode and the muon-energy-scale band (§4) be derived entirely within this analysis."
+    SCOPE: this passage
+    PROBLEM: This introduces undefined internal software packages ("MAT-MINERvA") and informal speculative roadmaps into the outlook rather than presenting concrete future technical developments.
+    CHANGE: Frame the outlook in terms of future independent constraints on flux and muon energy scales while defining or omitting collaboration-internal framework acronyms.
+    SHARE: 4
+
+ENOUGH: Yes, making these changes in full would remove all internal-note record-keeping, defensive hedging, and development narrative, leaving direct, professional technical exposition that meets the standard of a typical published PRD paper.

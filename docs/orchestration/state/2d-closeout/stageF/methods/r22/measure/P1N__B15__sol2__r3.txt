@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise, but recurrent internal release terminology, development-history narration, and conversational instructions call for a dedicated language pass.
+1. QUOTE: "A ✓
+marks identities or values already fixed (bin edges: §G.3; checksums: Ref. [37], identities already
+fixed); the rest are packaging. A fixed identity says which object is meant; it does not qualify the
+object scientifically."
+   REWRITE: Check marks indicate object identifiers or values that have already been specified (bin edges: §G.3; checksums: Ref. [37]); the remaining work concerns packaging. These identifiers specify the objects to be released but do not establish their scientific validity.
+2. QUOTE: "An earlier version of the package, RC1, was replayed from an empty
+directory by a separate AI agent session (Opus 5.5) that had no access to the repository and used only
+the package and its README; its verifier passed."
+   REWRITE: An independent replay of RC1 by an Opus 5.5 AI agent passed verification in an empty directory, using only the package and its README without repository access.
+3. QUOTE: "Do not check a rank: the spectrum decays smoothly with no plateau, so the cutoff
+sets the retained count, which is 26 at 10−6 , 36 at the projector’s hardcoded 10−12 , 41 at
+numpy.linalg.matrix_rank’s default, and 42 with no cutoff. A “rank should be 36” check using
+NumPy defaults would return 41 and falsely flag corruption."
+   REWRITE: A fixed numerical rank is unsuitable as a verification criterion because the spectrum decreases smoothly without a plateau. The retained count depends on the cutoff: 26 at 10−6, 36 at the projector’s fixed cutoff of 10−12, 41 with the default numpy.linalg.matrix_rank tolerance, and 42 without a cutoff. Requiring a rank of 36 while using NumPy’s default tolerance would therefore incorrectly indicate file corruption.

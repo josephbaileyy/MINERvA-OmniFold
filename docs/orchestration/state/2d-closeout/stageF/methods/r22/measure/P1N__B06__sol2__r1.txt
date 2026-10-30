@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and generally formal, but recurrent internal bookkeeping, retrospective procedural narration, and repeated qualifications call for a dedicated language pass.
+1. QUOTE: "In the metric of §5 (Eavail projection) the residual is 1.84 % vs 18.1 % injected (ratio 0.102) and is not graded, because no acceptance threshold fixed before the test is on record."
+   REWRITE: For the Eavail projection, the metric defined in §5 gives a residual of 1.84 %, compared with an injected deformation of 18.1 % (ratio 0.102). No acceptance threshold was specified before the test.
+2. QUOTE: "A corrected 4D covariance would use the actual minus and plus variation endpoints; MAT’s mean-centered covariance blocks, normalized by 1/N ; one fixed estimator seed; and mean-centered joint throws, with the mean shift reported separately. It would not subtract a scalar jitter floor."
+   REWRITE: Calculating the corrected four-dimensional covariance would require the negative and positive variation endpoints, MAT covariance blocks centered on their means and normalized by 1/N, a fixed estimator seed, and joint throws centered on their mean. The mean shift would be reported separately, and no scalar jitter floor would be subtracted from the covariance.
+3. QUOTE: "Both definitions were inherited from MAT-MINERvA rather than chosen for this analysis, so agreement with a published convention would support the inherited definition without explaining its origin; nor is there a unique published Eavail definition."
+   REWRITE: Both definitions were adopted from MAT-MINERvA. Published Eavail definitions differ, so agreement with a particular convention would not establish the provenance of the implementation.

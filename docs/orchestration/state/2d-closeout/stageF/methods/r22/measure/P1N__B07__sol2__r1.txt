@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally suits a detailed particle-physics companion note, but informal phrasing, awkwardly stacked qualifications, and occasional progress-report language warrant a dedicated language pass.
+1. QUOTE: "The response-mismatch closure of Appendix D is
+designed to test whether an incorrect hadronic response can move strength into or out of the low-W
+component. It has not yet produced a result."
+   REWRITE: The effect of hadronic-response mismodeling on the low-W component has not yet been quantified; Appendix D describes the closure test designed to assess it.
+2. QUOTE: "In central values, Valencia 2p2h closes about half of the low-recoil gap (§7.7) but leaves a separate
+excess over the MINERvA Tune v1 prior at high Eavail . There 2p2h contributes nothing, and the
+sub-percent pion-FSI dials cannot reach the excess."
+   REWRITE: At the central-value level, Valencia 2p2h accounts for about half of the low-recoil discrepancy (§7.7), while an excess relative to the MINERvA Tune v1 prior remains at high Eavail. The 2p2h contribution vanishes in this region, and variations of the pion-FSI parameters have sub-percent effects, insufficient to account for the excess.
+3. QUOTE: "The nearly degenerate correlation directions of the joint-test metric (§11.1) are consistent
+with this redundancy, but that origin has not been shown, and the information added by W has not
+been measured."
+   REWRITE: The nearly degenerate correlation directions of the joint-test metric (§11.1) may reflect this redundancy. This interpretation has not been verified, and the additional information provided by W has not been quantified.
