@@ -10,7 +10,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-188 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh |
 | OI-148 | NOW | migration-carried-forward | ROWS REPAIRED 2026-10-30 by the close-items session, on the director's order — the seven-column check had been red on ma |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
-| OI-74 | NOW | migration-carried-forward | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
+| OI-74 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-30 on the director's order — re-measured read-only: the canonical checkout is at 32e403b84 (2026-08 |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
 | OI-13 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
