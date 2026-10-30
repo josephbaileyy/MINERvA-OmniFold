@@ -133,7 +133,7 @@ def modes(C: np.ndarray, top: int | None = None, frac: float = 0.0):
     out = []
     tr = float(np.trace(C))
     for i in range(lam.size):
-        if lam[i] <= max(frac * tr, EIG_FLOOR, TOL * max(lam[0], 0.0)):
+        if lam[i] < frac * tr or lam[i] <= max(EIG_FLOOR, TOL * max(lam[0], 0.0)):
             break
         v = V[:, i]
         v = v if v[np.argmax(np.abs(v))] > 0 else -v
@@ -147,7 +147,9 @@ def ov(P: np.ndarray, B: np.ndarray) -> dict:
     """Section 3.2: the duplication bound on P's modes."""
     mp = modes(P)
     lam = [m[0] for m in mp]
-    b = [float(m[1] @ B @ m[1]) for m in mp]
+    # a variance below EIG_FLOOR counts as zero (declaration section 2): a pattern mode is orthogonal to a uniform
+    # block, which would otherwise leave rounding residue below the leak guard's 1e-30 floor (review L2)
+    b = [v if abs(v) >= EIG_FLOOR else 0.0 for v in (float(m[1] @ B @ m[1]) for m in mp)]
     return {"OV": float(sum(min(li, bi) for li, bi in zip(lam, b)) / sum(lam)), "lambda": lam, "b": b}
 
 
@@ -232,6 +234,9 @@ def load_5b(a, U: np.ndarray, S: dict) -> dict:
                    and pins.get("cresp") == ct.PINS["cresp"] and pins.get("definition") == sa.DEFINITION_SHA256),
               "it is not")
     rec = {X: cp.receipt(a.b5, X, "A1") for X in PER}
+    for X in PER:
+        if sa.sha256(a.b5 / "inputs" / f"check_{X}.json") != pins["receipts"][X]:
+            raise f0.Stop("A1", f"{X}: the check receipt is not the one the 5B readout read")
     for X in PER:
         want = sorted(cp.unf_path(a.b5, X, b).name for b in (None, *cp.BOOT[X]))
         have = sorted(p.name for p in (a.b5 / "unf" / X).glob("*.npz"))
@@ -558,6 +563,7 @@ def item2(P: np.ndarray, Pk: list, D: dict, e: dict, Cn: np.ndarray, M: np.ndarr
             "replica_median_sigma": med.tolist(), "s_med": s_med, "threshold_N": N_SMED,
             "replica_trace_share": [float(np.trace(C) / np.trace(M + C)) for C in Pk],
             "mean_block_sigma_over_P_sigma_minus_1": (np.sqrt(np.diag(Pm)) / sig - 1.0).tolist(),
+            "mean_shift_diag": (np.diag(Pm) - np.diag(P)).tolist(), "floor_diag": np.diag(Cn).tolist(),
             "floor_sigma_over_P_sigma": (sig_n / sig).tolist(),
             "jackknife": {"floor_sigma_se": jse(jfs).tolist(), "sigma_over_floor_se": jse(jratio).tolist(),
                           "expected_chi2_M_se": {kk: float(jse([c[kk] for c in jchi])) for kk in jchi[0]},

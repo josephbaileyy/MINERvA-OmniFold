@@ -45,7 +45,7 @@ MUTANTS = [
     ("block unweighted", "    return k * sum(e[X] * np.outer(g[X], g[X]) for X in PER), g",
      "    return k * sum(np.outer(g[X], g[X]) for X in PER) / 3.0, g"),
     ("OV: max", "float(sum(min(li, bi) for li, bi", "float(sum(max(li, bi) for li, bi"),
-    ("OV: along P", "    b = [float(m[1] @ B @ m[1]) for m in mp]", "    b = [float(m[1] @ P @ m[1]) for m in mp]"),
+    ("OV: along P", "(float(m[1] @ B @ m[1]) for m in mp)", "(float(m[1] @ P @ m[1]) for m in mp)"),
     ("DR misses C_resp", 'if G in ("detector", "lateral", "C_resp"):\n            groups["DR"] += B',
      'if G in ("detector", "lateral"):\n            groups["DR"] += B'),
     ("noise vs stat: sqrt k", "math.sqrt(2.0 * k),", "math.sqrt(k),"),
@@ -76,6 +76,18 @@ MUTANTS = [
     ("S: E_avail sets unchecked", "bad = cp.cell_sets_problems(a.definition) + ea_sets_problems(a.definition)",
      "bad = cp.cell_sets_problems(a.definition)"),
     ("guard: no integrals", 'guard = cp.guarded(f, b5["integrals"])', "guard = cp.guarded(f, [])"),
+    ("A0: schema unchecked", 'bool(ro.get("schema") == "fd-ct-5b-periods/1" and pins.get("s1_npz")', 'bool(pins.get("s1_npz")'),
+    ("A1: receipts unchecked", '            raise f0.Stop("A1", f"{X}: the check receipt is not the one the 5B readout read")\n',
+     "            pass\n"),
+    ("A1: floor unchecked", 'np.sqrt(np.diag(Cn)), ro["C_PL5D"]["noise_floor_sigma_rel"], rtol=TOL, atol=0),',
+     'np.sqrt(np.diag(Cn)), np.sqrt(np.diag(Cn)), rtol=TOL, atol=0),'),
+    ("A1: sigma_M unchecked", 'np.allclose(np.sqrt(np.diag(M)), ro["sigma_rel_M"], rtol=TOL, atol=0),',
+     'np.allclose(np.sqrt(np.diag(M)), np.sqrt(np.diag(M)), rtol=TOL, atol=0),'),
+    ("A1: exposure unchecked", 'abs(e[X] - ro["constants"]["exposure_share"][X]) <= TOL for X in PER),',
+     'abs(e[X] - e[X]) <= TOL for X in PER),'),
+    ("A4: span unchecked", "    if Q.shape[1] > 2 or worst > 1e-8:", "    if Q.shape[1] > 2:"),
+    ("OV: no zero floor", "    b = [v if abs(v) >= EIG_FLOOR else 0.0 for v in", "    b = [v for v in"),
+    ("mean shift sign", '"mean_shift_diag": (np.diag(Pm) - np.diag(P)).tolist(),', '"mean_shift_diag": (np.diag(P) - np.diag(Pm)).tolist(),'),
 ]
 
 

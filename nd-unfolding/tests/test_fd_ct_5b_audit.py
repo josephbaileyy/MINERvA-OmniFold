@@ -231,6 +231,16 @@ class Algebra(unittest.TestCase):
         B = 0.5 * lam[-1] * np.outer(u1, u1)
         self.assertAlmostEqual(au.ov(P, B)["OV"], 0.5 * lam[-1] / lam.sum(), places=10)
 
+    def test_a_variance_below_the_floor_is_zero_in_ov(self):
+        rng = np.random.default_rng(9)
+        V = rng.normal(size=(2, 16))
+        P = V.T @ V
+        Q, _ = np.linalg.qr(np.column_stack([V.T, rng.normal(size=(16, 1))]))
+        w = Q[:, 2]
+        o = au.ov(P, 1e-30 * np.outer(w, w) + 1e-40 * np.outer(V[0], V[0]))
+        self.assertEqual(o["b"], [0.0, 0.0])
+        self.assertEqual(o["OV"], 0.0)
+
     def test_identification_by_hand(self):
         rng = np.random.default_rng(3)
         d = rng.normal(0, 0.01, 16)
@@ -273,6 +283,8 @@ class Algebra(unittest.TestCase):
         self.assertEqual(au.decide([], 0.5, 0.5)["which"], [])
         self.assertEqual(au.decide([], 0.5001, 0.5)["which"], ["N"])
         self.assertEqual(au.decide([], 0.1, 0.4999)["which"], ["R"])
+        self.assertTrue(au.decide([], 0.1, 0.4999)["stop"])
+        self.assertTrue(au.decide([], 0.5001, 0.9)["stop"])
         d = au.decide(["band:x#1"], 0.1, 0.9)
         self.assertEqual((d["which"], d["stop"]), (["O"], True))
         self.assertFalse(au.decide([], 0.1, 0.9)["stop"])
@@ -309,8 +321,11 @@ class Algebra(unittest.TestCase):
         self.assertAlmostEqual(au.nu_eff(e), (1 - V2) ** 2 / (V2 - 2 * s3 + V2 ** 2), places=12)
         self.assertAlmostEqual(au.nu_eff({X: 1 / 3 for X in cp.PER}), 2.0, places=12)
         lo, hi = au.sigma_interval(au.nu_eff(e))
-        self.assertLess(lo, 1.0)
-        self.assertGreater(hi, 2.0)
+        self.assertAlmostEqual(lo, 0.7339, places=3)
+        self.assertAlmostEqual(hi, 2.564, places=2)
+        from scipy import stats
+        nu = au.nu_eff(e)
+        self.assertAlmostEqual(lo, math.sqrt(nu / stats.chi2.ppf(0.84, nu)), places=12)
         self.assertAlmostEqual(au.chi2_q95(15), 24.99579013972862, places=8)
 
     def test_the_beta_tail_by_integration(self):
@@ -531,7 +546,8 @@ class Audit(Base):
 
         def leaky(*a, **k):
             o = real(*a, **k)
-            o["leak"] = t.pt.X["PB"].tolist()     # a 5B period unfold's absolute cell integrals
+            # a ratio of a 5B period unfold to f: relative, so only the guard's table, not its floor, can refuse it
+            o["leak"] = (t.pt.X["PB"] / t.f - 1.0).tolist()
             return o
 
         self.assertEqual(t.run([mock.patch.object(au, "item3", leaky)]), 3, t.stderr)
@@ -544,10 +560,164 @@ class Audit(Base):
         self.assertIn("refusing to overwrite", t.stderr)
 
 
+class HandChecks(unittest.TestCase):
+    """Every written statistic recomputed here by its own route, on one shared tree (review M3)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = Path(tempfile.mkdtemp(prefix="ct5b-hand-"))
+        (cls.tmp / "out").mkdir()
+        cls.t = ATree(cls.tmp)
+        assert cls.t.run() == 0, cls.t.stderr
+        cls.o = cls.t.readout()
+        cls.P = np.asarray(json.loads(cls.t.readout_5b.read_text())["C_PL5D"]["C_PL5D_rel"])
+        cls.M = (cls.t.t.Ct + cls.t.t.Cr) / np.outer(cls.t.f, cls.t.f)
+        cls.k = sum(v * v for v in E.values()) / (1 - sum(v * v for v in E.values()))
+        cls.D = cls.t.pt.d
+        cls.g = {X: np.asarray(json.loads(cls.t.readout_5b.read_text())["g_vs_5A"]["periods"][X]["g_5b"]) for X in cp.PER}
+        cls.sig = {X: np.asarray(json.loads(cls.t.readout_5b.read_text())["g_vs_5A"]["periods"][X]["g_5b_noise_sigma"])
+                   for X in cp.PER}
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def span(self, C):
+        lam, V = np.linalg.eigh(C)
+        return V[:, lam > 1e-12 * lam.max()]
+
+    def floor(self, idx):
+        C = np.zeros((16, 16))
+        for i in idx:
+            h = {X: self.D[X][i] - sum(E[Y] * self.D[Y][i] for Y in cp.PER) for X in cp.PER}
+            C += self.k * sum(E[X] * np.outer(h[X], h[X]) for X in cp.PER) / len(idx)
+        return C
+
+    def groups(self):
+        rel = dict(self.t.rel)
+        ff = np.outer(self.t.f, self.t.f)
+        G = {"flux": rel["band:Flux"], "normalization": rel["normalization"],
+             "detector": sum(rel[f"band:{b}"] for b in sa.DETECTOR_BANDS),
+             "lateral": sum(rel[f"lat:{b}"] for b in sa.LATERAL_BANDS),
+             "C_resp": sum(self.t.t.species[p] for p in ct.PRIMARY) / ff}
+        G["DR"] = G["detector"] + G["lateral"] + G["C_resp"]
+        return G
+
+    def ov(self, P, B):
+        lam, V = np.linalg.eigh(P)
+        num = den = 0.0
+        for i in range(16):
+            if lam[i] > 1e-12 * lam.max():
+                b = V[:, i] @ B @ V[:, i]
+                num += min(lam[i], b if abs(b) >= 1e-24 else 0.0)
+                den += lam[i]
+        return num / den
+
+    def test_ov_per_group_and_on_the_pattern(self):
+        pat = {X: self.g[X] - self.g[X].mean() for X in cp.PER}
+        Ppat = self.k * sum(E[X] * np.outer(pat[X], pat[X]) for X in cp.PER)
+        for G, B in self.groups().items():
+            self.assertAlmostEqual(self.o["item1_overlap"]["OV"][G]["OV"], self.ov(self.P, B), places=9, msg=G)
+            self.assertAlmostEqual(self.o["item1_overlap"]["OV_pattern"][G]["OV"], self.ov(Ppat, B), places=9, msg=G)
+        # the pattern modes are orthogonal to a uniform block: OV is rounding residue at most
+        self.assertLess(self.o["item1_overlap"]["OV_pattern"]["normalization"]["OV"], 1e-12)
+
+    def test_the_candidate_population(self):
+        idf = self.o["item1_overlap"]["identification"]
+        want = 0
+        blocks = {**self.t.rel, **{f"C_model:{v}": np.outer(self.t.S[j], self.t.S[j]) for j, v in enumerate(au.VERTICES)},
+                  **{f"C_resp:{p}": self.t.t.species[p] / np.outer(self.t.f, self.t.f) for p in ct.PRIMARY}}
+        for nm, B in blocks.items():
+            if nm in ("stat", "seed"):
+                continue
+            lam = np.sort(np.linalg.eigvalsh(B))[::-1]
+            want += min(3, int(np.sum((lam >= 0.01 * np.trace(B)) & (lam > 1e-24))))
+        self.assertEqual(idf["n_candidates"] + len(idf["uniform_excluded"]), want)
+        names = [r_["candidate"] for r_ in idf["candidates"]]
+        for p in ct.PRIMARY:
+            self.assertEqual([n for n in names if n.startswith(f"C_resp:{p}#")], [f"C_resp:{p}#1"])
+
+    def test_the_best_pair_in_dr(self):
+        idf = self.o["item1_overlap"]["identification"]
+        dr = [r_ for r_ in idf["candidates"] if r_["group"] in ("detector", "lateral", "C_resp")]
+        lam_v = {}
+        blocks = {**self.t.rel, **{f"C_resp:{p}": self.t.t.species[p] / np.outer(self.t.f, self.t.f) for p in ct.PRIMARY}}
+        for r_ in dr:
+            nm, i = r_["candidate"].rsplit("#", 1)
+            lam, V = np.linalg.eigh(blocks[nm])
+            v = V[:, -int(i)]
+            v = v if v[np.argmax(np.abs(v))] > 0 else -v
+            lam_v[r_["candidate"]] = math.sqrt(lam[-int(i)]) * v
+        best = max(min(au.identify(self.g, self.sig, [lam_v[a], lam_v[b]])[X]["E"] for X in ("PB", "PC"))
+                   for a, b in __import__("itertools").combinations(lam_v, 2))
+        self.assertAlmostEqual(idf["best_pair_in_DR"]["score"], best, places=10)
+
+    def test_noise_against_stat(self):
+        nv = self.o["item1_overlap"]["noise_vs_stat"]
+        Cn = self.floor(range(10))
+        np.testing.assert_allclose(nv["floor_over_stat_sigma"], np.sqrt(np.diag(Cn) / np.diag(self.t.rel["stat"])), rtol=1e-9)
+        self.assertAlmostEqual(nv["floor_trace_share_of_P"], np.trace(Cn) / np.trace(self.P), places=12)
+
+    def test_jackknife_and_split_halves(self):
+        i2 = self.o["item2_stability"]
+        sig = np.sqrt(np.diag(self.P))
+        F = np.array([np.sqrt(np.diag(self.floor([j for j in range(10) if j != i]))) for i in range(10)])
+        se = np.sqrt(9 / 10 * np.sum((F - F.mean(axis=0)) ** 2, axis=0))
+        np.testing.assert_allclose(i2["jackknife"]["floor_sigma_se"], se, rtol=1e-8)
+        R = sig[None, :] / F
+        np.testing.assert_allclose(i2["jackknife"]["sigma_over_floor_se"], np.sqrt(9 / 10 * np.sum((R - R.mean(0)) ** 2, 0)),
+                                   rtol=1e-8)
+        full = np.sqrt(np.diag(self.floor(range(10))))
+        np.testing.assert_allclose(i2["split_half"]["1-5"]["floor_sigma_over_all"],
+                                   np.sqrt(np.diag(self.floor(range(5)))) / full, rtol=1e-9)
+        Mi = np.linalg.inv(self.M)
+        N = sum(np.mean([np.outer(self.D[X][i], self.D[X][i]) for i in range(5, 10)], axis=0) for X in ("PC", "PB"))
+        self.assertAlmostEqual(i2["split_half"]["6-10"]["expected_chi2_M"]["dr_PC/PB"], float(np.trace(Mi @ N)), places=9)
+        Pm = np.zeros((16, 16))
+        for kk in range(10):
+            r = {X: self.t.pt.r[X] * (1 + self.D[X][kk]) for X in cp.PER}
+            m = sum(E[X] * r[X] for X in cp.PER)
+            Pm += self.k * sum(E[X] * np.outer(r[X] / m - 1, r[X] / m - 1) for X in cp.PER) / 10
+        np.testing.assert_allclose(i2["mean_shift_diag"], np.diag(Pm) - np.diag(self.P), rtol=1e-7, atol=1e-15)
+
+    def test_the_reference_bound_and_the_chi2_bound(self):
+        i4 = self.o["item4_rank_two"]
+        lam, V = np.linalg.eigh(self.P)
+        keep = lam > 1e-12 * lam.max()
+        Pp = (V[:, keep] / lam[keep]) @ V[:, keep].T
+        r = self.t.pt.r
+        for X in ("PB", "PC"):
+            b = E[X] * (r[X] / r["PA"] - 1)
+            self.assertAlmostEqual(i4["reference_bound"][X]["value"], float(b @ Pp @ b), places=8)
+            self.assertAlmostEqual(i4["reference_bound"][X]["first_order_bound"], E[X] ** 2 * (1 / E["PA"] + 1 / E[X]) / self.k,
+                                   places=12)
+            # first order: b lies in P's span, so its value is close to the e-only bound
+            self.assertLess(abs(i4["reference_bound"][X]["value"] / i4["reference_bound"][X]["first_order_bound"] - 1), 0.3)
+        w, U = np.linalg.eigh(self.M)
+        Mh = U @ np.diag(w ** -0.5) @ U.T
+        lt = np.sort(np.linalg.eigvalsh(Mh @ self.P @ Mh))[::-1]
+        np.testing.assert_allclose(i4["whitened_eigenvalues"], lt[:2], rtol=1e-8)
+        self.assertAlmostEqual(i4["largest_chi2_fall_fraction"], lt[0] / (1 + lt[0]), places=9)
+
+    def test_planes_and_pattern_correlations(self):
+        i3 = self.o["item3_5a_vs_5b"]
+        P5a = np.asarray(json.loads(self.t.readout_5a.read_text())["variants"]["central"]["C_PL16_rel"])
+        g5a = {X: np.asarray(json.loads(self.t.readout_5a.read_text())["variants"]["central"]["g"][X]) for X in cp.PER}
+        s = np.linalg.svd(self.span(P5a).T @ self.span(self.P), compute_uv=False)
+        np.testing.assert_allclose(i3["planes"]["principal_angles_deg"], np.degrees(np.arccos(np.clip(s, -1, 1))), atol=1e-6)
+        Qb = self.span(self.P)
+        for X in cp.PER:
+            a_, b_ = self.g[X] - self.g[X].mean(), g5a[X] - g5a[X].mean()
+            self.assertAlmostEqual(i3["periods"][X]["pattern_correlation"], float(np.corrcoef(a_, b_)[0, 1]), places=10)
+            res = g5a[X] - Qb @ (Qb.T @ g5a[X])
+            self.assertAlmostEqual(i3["planes"]["g5a_outside_5B_plane"][X], float(res @ res / (g5a[X] @ g5a[X])), places=10)
+
+
 class Refusals(Base):
     def assertRefuses(self, t, msg, extra=(), **kw):
         self.assertEqual(t.run(extra, **kw), 1, t.stderr)
-        self.assertIn(msg, t.stderr)
+        fails = [ln for ln in t.stderr.splitlines() if ln.startswith("FAIL control")]
+        self.assertTrue(fails and all(msg in ln for ln in fails), (msg, fails))
         self.assertFalse((t.root / "audit.json").exists())
 
     def test_a_5b_readout_at_another_digest(self):
@@ -569,6 +739,42 @@ class Refusals(Base):
         bad = t.root / "tampered.json"
         bad.write_text(json.dumps(ro))
         self.assertRefuses(t, "g_X and its noise sigma", readout_5b=bad)
+
+    def tampered(self, t, edit):
+        ro = json.loads(t.readout_5b.read_text())
+        edit(ro)
+        bad = t.root / "tampered.json"
+        bad.write_text(json.dumps(ro))
+        return bad
+
+    def test_a_tampered_floor(self):
+        t = self.tree()
+        bad = self.tampered(t, lambda ro: ro["C_PL5D"]["noise_floor_sigma_rel"].__setitem__(2, ro["C_PL5D"]["noise_floor_sigma_rel"][2] * (1 + 1e-9)))
+        self.assertRefuses(t, "the noise floor rebuilt", readout_5b=bad)
+
+    def test_a_tampered_sigma_m(self):
+        t = self.tree()
+        bad = self.tampered(t, lambda ro: ro["sigma_rel_M"].__setitem__(7, ro["sigma_rel_M"][7] * (1 + 1e-9)))
+        self.assertRefuses(t, "sigma_M equals", readout_5b=bad)
+
+    def test_a_tampered_exposure_share(self):
+        t = self.tree()
+        bad = self.tampered(t, lambda ro: ro["constants"]["exposure_share"].__setitem__("PB", ro["constants"]["exposure_share"]["PB"] + 1e-9))
+        self.assertRefuses(t, "the exposure shares", readout_5b=bad)
+
+    def test_another_schema(self):
+        t = self.tree()
+        bad = self.tampered(t, lambda ro: ro.__setitem__("schema", "fd-ct-5b-periods/0"))
+        self.assertRefuses(t, "the 5B readout is fd-ct-5b-periods/1", readout_5b=bad)
+
+    def test_a_receipt_not_the_5b_readouts(self):
+        t = self.tree()
+        bad = self.tampered(t, lambda ro: ro["inputs_sha256"]["receipts"].__setitem__("PA", "0" * 64))
+        self.assertRefuses(t, "PA: the check receipt is not the one the 5B readout read", readout_5b=bad)
+
+    def test_the_span_assertion(self):
+        t = self.tree()
+        self.assertRefuses(t, "P's column space is not span(g)", [mock.patch.object(au, "outside_share", lambda Q, v: 1.0)])
 
     def test_an_extra_replica(self):
         t = self.tree()
