@@ -1,0 +1,24 @@
+id	lane	indep	quote
+G1:paper-g-02			The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.
+G1:paper-g-03			Interval coverage has not been validated.
+G1:paper-g-06			With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target.
+G1:paper-g-08			In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBUU-like truths or at a synthetic q3 tilt.
+G1:paper-g-10			The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine.
+G1:paper-s-08			Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths or at the q3 tilt.
+G1b:paper-g-01	STRUCTURE	PROTECTED	The companion analysis note [14] gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section.
+G1b:paper-g-02	PROTECTED	PROTECTED	Interval coverage has not been validated.
+G1b:paper-g-03	PROTECTED	STRUCTURE	The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.
+G1b:paper-g-06	STRUCTURE	PROTECTED	The two-observable central value uses LightGBM at seed 42 [23] with negative-weight background subtraction and a refinement of 400 trees and 31 leaves.
+G1b:paper-g-07	WORDING	PROTECTED	The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity.
+G1b:paper-g-08	PROTECTED	PROTECTED	The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.
+G1b:paper-g-09	PROTECTED	PROTECTED	The learner was selected after the LightGBM and exact-split comparisons with the published result, so the benchmark is a reproduction rather than an independent validation.
+G1b:paper-g-13	PROTECTED	PROTECTED	Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria (Ref. [14], Sec. 9.6).
+G1b:paper-g-14	STRUCTURE	PROTECTED	Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations, and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.
+G1b:paper-g-18	PROTECTED	STRUCTURE	Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail.
+G1b:paper-g-19	PROTECTED	PROTECTED	The cause is not known, and these data cannot establish which period is correct.
+G1b:paper-g-20	PROTECTED	PROTECTED	We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
+G1b:paper-s-02	WORDING	PROTECTED	The three- and four-observable central values and the sixteen-cell five-observable result (Sec. V) use the joint-test estimator, a deterministic LightGBM with the same background treatment and refinement capacity.
+G1b:paper-s-05	PROTECTED	PROTECTED	A candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and regenerates the analysis note’s figures of the joint-test null distributions and the (Eavail , W ) map.
+G1b:paper-s-07	PROTECTED	PROTECTED	We report a simultaneous measurement of the νµ charged-current inclusive cross section in five observables, the muon transverse and longitudinal momenta, available hadronic energy, threemomentum transfer and hadronic invariant mass, unfolded without binning with OmniFold from MINERvA medium-energy open data and reported in sixteen cells with a covariance whose median per-cell uncertainty is 7.29%.
+G1b:paper-s-13	PROTECTED	PROTECTED	This reproducible central value is that of its own systematicuniverse ensemble, so its covariance is built with the same estimator.
+G1b:paper-s-20	PROTECTED	PROTECTED	The limitations of these results are stated with the results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note.
