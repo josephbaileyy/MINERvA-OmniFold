@@ -1,0 +1,32 @@
+nominal C1 C2 0.682689 0.954500
+window C1 [0.631880, 0.728668] C2 [0.928139, 0.972193]
+N=100 k=1 per-cell binomial SE at nominal 0.0465
+N=100 k=2 per-cell binomial SE at nominal 0.0208
+N=300 k=1 per-cell binomial SE at nominal 0.0269
+N=300 k=2 per-cell binomial SE at nominal 0.0120
+dC1/ds at s=1 0.4839 dC2/ds 0.2160
+k=1: per-cell scale resolution (1 SE) 0.0555; pooled-independent SE 0.0067 -> scale 0.0139
+k=2: per-cell scale resolution (1 SE) 0.0557; pooled-independent SE 0.0030 -> scale 0.0139
+k=1: per-cell flag fires at <= 182/300 = 0.6067 (Wilson 99.5% upper 0.6821)
+k=2: per-cell flag fires at <= 276/300 = 0.9200 (Wilson 99.5% upper 0.9540)
+chi2_16 95th pct 26.296 mean SE N=300 0.3266 tail SE 0.0126
+4A mean window [13.223, 19.753]
+4A tail window [0.0106, 0.1673]
+toy wall s [727.1, 832.0]
+node-h per toy (8 lanes) [0.02525, 0.02889]
+S1 measured node-h per full-MC unfold (P1) 0.02283
+2a derivation runs (176) + pilot (16 full-MC) + correspondence (8 half-MC) + reproduction (2): 202 unfolds, 5.10-5.84 node-h, ceiling 9.12
+   lane wall at 8 lanes per node: 5.84 node-wall-h in all
+2b control interim (100): 100 unfolds, 2.52-2.89 node-h, ceiling 4.51
+   lane wall at 8 lanes per node: 2.89 node-wall-h in all
+2c control final (+200): 200 unfolds, 5.05-5.78 node-h, ceiling 9.03
+   lane wall at 8 lanes per node: 5.78 node-wall-h in all
+3 test arms (2 x 300): 600 unfolds, 15.15-17.33 node-h, ceiling 27.08
+   lane wall at 8 lanes per node: 17.33 node-wall-h in all
+total priced 27.82-31.84, sum of ceilings 49.74
+job 2a: 202 unfolds, 3 nodes, <= 9 per lane, projected wall 2.08 h, projected charge 6.24, limit 3.0 h, enforced cap 9.00
+job 2b: 100 unfolds, 2 nodes, <= 7 per lane, projected wall 1.62 h, projected charge 3.24, limit 2.5 h, enforced cap 5.00
+job 2c: 200 unfolds, 3 nodes, <= 9 per lane, projected wall 2.08 h, projected charge 6.24, limit 3.0 h, enforced cap 9.00
+job 3i: 200 unfolds, 3 nodes, <= 9 per lane, projected wall 2.08 h, projected charge 6.24, limit 3.0 h, enforced cap 9.00
+job 3f: 400 unfolds, 5 nodes, <= 10 per lane, projected wall 2.31 h, projected charge 11.56, limit 3.5 h, enforced cap 17.50
+jobs: projected 33.51 node-h, enforced caps 49.50 node-h
