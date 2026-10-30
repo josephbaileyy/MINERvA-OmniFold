@@ -1,0 +1,26 @@
+$ ssh saul.nersc.gov 'bash -s' < oi74-remote2.sh   # script follows
+  | set -u
+  | R=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+  | export GIT_OPTIONAL_LOCKS=0
+  | echo "host $(hostname)"; echo "date_utc $(date -u +%FT%TZ)"
+  | echo "head $(git -C "$R" rev-parse HEAD)"
+  | t=$(timeout 600 git -C "$R" status --porcelain --untracked-files=no); echo "porcelain_tracked_rc $?"
+  | printf '%s\n' "$t" | sed 's/^/  status| /'
+  | paths=$(printf '%s\n' "$t" | cut -c4-)
+  | echo "diff_stat (git diff --stat -- <those paths>):"
+  | printf '%s\n' "$paths" | tr '\n' '\0' | xargs -0 timeout 300 git -C "$R" diff --stat -- ; echo "diff_stat_rc $?"
+  | echo "date_utc_end $(date -u +%FT%TZ)"
+--- output
+host login37
+date_utc 2026-10-30T16:18:08Z
+head 32e403b84e9e8f9d9bc435028749f896653c7a43
+porcelain_tracked_rc 0
+  status|  M docs/orchestration/LIVE-STATE.md
+  status|  M docs/orchestration/state/live-state-last-known.json
+diff_stat (git diff --stat -- <those paths>):
+ docs/orchestration/LIVE-STATE.md                   | 18 ++---
+ .../orchestration/state/live-state-last-known.json | 84 +++++++++++-----------
+ 2 files changed, 50 insertions(+), 52 deletions(-)
+diff_stat_rc 0
+date_utc_end 2026-10-30T16:18:09Z
+ssh_rc 0
