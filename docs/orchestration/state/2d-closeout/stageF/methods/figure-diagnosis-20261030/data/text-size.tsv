@@ -1,0 +1,73 @@
+id	words	min_pt	p10_pt	median_pt	note
+paper-tab-I	50	6.16	6.16	6.16	
+paper-fig-1	136	2.28	5.81	7.58	
+paper-fig-2	152	4.10	5.43	5.92	
+paper-fig-3	139	3.82	5.46	6.91	
+paper-tab-II	171	4.42	6.16	6.16	
+paper-tab-III	143	5.31	7.04	7.04	
+paper-fig-4	237	2.48	6.06	6.06	
+paper-tab-IV	32	4.42	6.16	6.16	
+note-fig-7	535	1.71	5.86	6.60	
+note-tab-5	46	7.08	9.69	14.18	
+note-fig-8	58	4.02	4.43	7.17	
+note-fig-9	334	1.34	4.55	6.50	
+note-fig-10	364	1.35	4.57	6.53	
+note-tab-6	76	7.52	9.64	9.69	
+note-fig-11	81	0.83	4.63	4.63	
+note-fig-12	149	7.18	8.78	8.78	
+note-fig-13	71	1.89	6.43	8.04	
+note-fig-14	54	7.54	9.22	9.22	
+note-tab-8	199	4.70	6.19	8.80	
+note-tab-9	55	6.19	8.80	8.80	
+note-fig-24	162	2.48	7.72	7.72	
+note-fig-25	70	2.76	3.69	5.53	
+note-tab-11	184	5.31	7.92	7.92	
+note-tab-12	236	6.82	9.05	9.05	
+note-tab-13	150	7.04	7.04	7.04	
+note-tab-14	191	4.79	6.36	6.36	
+note-tab-15	142	5.31	7.04	7.04	
+note-tab-16	31	5.31	7.92	7.92	
+note-tab-17	217	7.57	7.57	7.57	
+note-tab-18	222	7.92	7.92	7.92	
+note-fig-30	244	3.78	5.39	6.82	
+note-tab-19	61	5.31	7.92	7.92	
+anchorB-fig-1	302	4.46	5.31	7.67	
+anchorB-fig-2	80	2.97	8.17	8.17	
+anchorB-fig-4	76	4.81	4.81	8.17	
+anchorB-fig-3	34	3.49	8.17	8.17	
+anchorB-fig-5	242	5.31	5.31	7.67	
+anchorB-fig-6	83	2.60	4.63	6.94	
+anchorB-fig-7	306	4.41	5.05	7.29	
+anchorB-fig-8	269	4.41	5.05	7.29	
+anchorB-fig-9	57	2.60	4.52	6.94	
+anchorB-fig-10	59	2.60	4.52	6.94	
+anchorB-fig-11	259	4.41	5.05	7.29	
+anchorB-fig-12	257	4.41	5.05	7.29	
+anchorB-tab-I	77	4.17	6.40	6.40	
+anchorB-fig-13	58	2.60	4.52	6.94	
+anchorB-fig-14	60	2.60	4.94	6.94	
+anchorB-fig-15	245	4.41	5.05	7.29	
+anchorB-fig-16	247	4.41	5.05	7.29	
+anchorC-fig-1	60	4.38	13.54	19.35	
+anchorC-fig-2	68	4.38	13.54	19.35	
+anchorC-fig-3	88	3.99	12.18	14.50	
+anchorC-fig-4	49	3.99	8.57	17.41	
+anchorC-fig-5	38	4.03	4.61	11.75	
+anchorC-fig-6	64	7.04	15.23	20.30	
+anchorC-fig-7	47	0.89	0.89	12.44	
+anchorA-fig-1	45	6.86	6.86	8.92	
+anchorA-fig-2	50	6.26	6.26	9.02	
+anchorA-tab-I	414	5.31	5.31	7.96	
+anchorA-tab-II	33	5.31	7.96	7.96	
+anchorA-fig-3	0				no text words (raster?)
+anchorA-fig-4	0				no text words (raster?)
+anchorA-fig-5	0				no text words (raster?)
+anchorA-tab-III	51	5.31	5.31	7.96	
+anchorA-fig-6	1	6.19	6.19	6.19	
+anchorA-tab-IV	47	5.31	5.31	7.96	
+anchorA-fig-7	0				no text words (raster?)
+anchorA-fig-8	0				no text words (raster?)
+anchorA-fig-9	0				no text words (raster?)
+anchorA-fig-10	0				no text words (raster?)
+anchorA-fig-11	0				no text words (raster?)
+anchorA-fig-12	0				no text words (raster?)

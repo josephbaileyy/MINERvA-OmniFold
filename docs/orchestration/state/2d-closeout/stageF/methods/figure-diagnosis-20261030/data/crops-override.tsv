@@ -1,0 +1,7 @@
+id	x0	y0	x1	y1	why
+note-tab-5	70.7	311.6	542.1	464.4	the auto box began with the last line of the text above ("with the MC prior, in the published panel format.", y 296.4-310.6)
+note-tab-6	70.7	170.0	566.4	363.4	the auto box began with the paragraph tail above ("combined covariance has a per-bin median of 6.462 %.", y 153.9-168.1)
+note-fig-13	71.6	115.0	541.5	316.9	the auto box began with the paragraph tail above ("classifier feature.", y 99.7-113.9)
+note-fig-25	71.5	399.5	541.8	679.7	the auto box began with a paragraph tail ("both overall and in the corner.", y 384.2-398.4) and its caption ran into the following paragraph (caption ends at "populates low W.", y 678.7)
+anchorB-tab-I	54.0	50.0	306.2	250.3	the table body prints above its caption (rows y 59-207), not below as revtex usually sets it
+anchorA-tab-II	54.0	54.6	306.0	208.0	the table has no bottom rule, so the auto box ended at the header rule; its last row ends at y 207
