@@ -478,6 +478,7 @@ docs/orchestration/RECORD-20261029-director-analysis-note-sync-2d94cbc5.md	track
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	tracked	LIVE	document		20261029	open		route-only	no
 docs/orchestration/RECORD-20261030-close-items-5d-budget-launcher-classification.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-oi148-lint-state-cell.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261030-close-items-oi148-narrowed-to-pr-p6.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-oi148-row-repair.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-oi160-closed.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-oi74-canonical-drift.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
