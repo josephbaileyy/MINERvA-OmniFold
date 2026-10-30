@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B uses more manageable sentence structures, particularly when separating the response covariance’s definition, scope, and limitations.
+2. B favors more precise, formal wording, replacing “ungraded” with an explicit description and “the same pull” with “the same bias toward the prior.”
+3. B integrates the scope statement more smoothly into the introduction and reduces repetitive explanation, although the extensive shared prose makes the overall preference slight.

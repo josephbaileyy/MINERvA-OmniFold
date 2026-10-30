@@ -1,0 +1,61 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the run-in heading "\emph{Scope.}" and the sentence "The limitations are listed in Sec.~\ref{sec:limitations}."
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the statement "This constant is inherited from the analysis framework's definition."
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported pronoun "it" in "that meet it", which has no antecedent in BEFORE and is ambiguous, whereas BEFORE simply stated that the coarse cells "pass".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states "The other configurations used below", claiming they are used later in the paper rather than having been "variants used in development" as stated in BEFORE.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces an unsupported causal claim ("so no held-out or cross-fitted split is used") and specifies that "the two classes keep their physical weights", which adds unstated specifics beyond BEFORE's "without ... class balancing".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops "the full matrix, including the variants used in development" and replaces it with "the configuration behind each result."
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifying phrase "the fallback definition," describing the 39 supported $(\Eavail,W)$ cells.
+
+Q8: VERDICT: SAME
+DETAIL: AFTER splits the passage into shorter sentences and makes minor grammatical adjustments, preserving all terms, qualifiers, numbers, and scope limitations unchanged.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that the band omits "the learner dependence", and it drops the explicit enumeration of the covariance blocks ("statistical, systematic-universe (including the normalization), training-seed and run-period").
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER adds ", including the normalization", which is not stated in or supported by BEFORE for this passage (likely moved from PB138).
+
+Q11: VERDICT: SAME
+DETAIL: AFTER joins the two sentences with "and" without adding, dropping, or altering any facts, qualifiers, or limitations.
+
+Q12: VERDICT: SAME
+DETAIL: AFTER converts the parenthetical explanation into a separate main clause, preserving all facts, numbers, and qualifiers verbatim.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire second sentence ("What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope."), removing major stated limitations.
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER changes the section heading from "Estimator stability" to "Sensitivity to input rounding" and adds unsupported specificity by stating the estimator is unstable "under perturbations of its inputs within floating-point rounding", which BEFORE does not state.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER replaces "ungraded" with "are descriptive and not judged against these criteria", introducing an unsupported characterization ("descriptive") and referring to unspecified "criteria".
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER replaces "usable for" with "supports" in "supports the comparison that follows" and "support qualitative comparison", which states the relationship more strongly and introduces ambiguity that could mislead a reader into believing the result corroborates the comparison rather than merely being usable for it.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported clause "which simulates the whole analysis chain", which is not stated in BEFORE, and changes "pull" to "bias toward the prior".
+
+Q18: VERDICT: SAME
+DETAIL: AFTER replaces "stability under" with "robustness to", which in this context describes the identical validation requirement with respect to training seeds and rounding perturbations without changing facts, scope, or qualifiers.
+
+Q19: VERDICT: SAME
+DETAIL: AFTER consolidates the list structure, writes "reconstruction stability" (which matches the definition explicitly provided in the text), and rephrases the parenthetical reference to fake-data tests, preserving all stated facts, numbers, citations, and limitations.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER adds the clause ", where each null takes the simulation's event composition,", which is new technical information not supported by BEFORE.
+
+END

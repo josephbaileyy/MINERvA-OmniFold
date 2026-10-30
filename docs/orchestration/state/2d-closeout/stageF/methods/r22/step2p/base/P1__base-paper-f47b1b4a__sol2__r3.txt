@@ -1,0 +1,19 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but repeated caveats, development narratives, internal bookkeeping, and occasionally opaque phrasing warrant a dedicated language pass.
+1. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of
+four of the sixteen cells is stated only here. The principal
+ones are these."
+   REWRITE: The principal limitations concern covariance validation, interval coverage, reconstruction stability in four cells, and the interpretation of the calibrated tests in the companion note.
+2. QUOTE: "The note’s calibrated tests show
+the same pull: their null distributions for the external
+predictions are displaced upward by it, as the calibration
+reproduces (Ref. [14], Sec. 11.5)."
+   REWRITE: This bias also shifts the test statistics for external predictions toward larger values under the null hypotheses, an effect reproduced by the calibration (Ref. [14], Sec. 11.5).
+3. QUOTE: "The
+response term Cresp is the response of the result to a
+one-standard-deviation scale of the reconstructed recoil
+energy in the simulation, for protons, mesons, electromagnetic and other deposits, but it does not cover neutron or
+muon deposits, nor species, energy-dependence or resolution effects beyond a scale, and it enters only this result,
+its fake-data tests and its comparison in Sec. V B."
+   REWRITE: The response term Cresp accounts for one-standard-deviation variations in the simulated reconstructed recoil-energy scales for proton, meson, electromagnetic, and other deposits. It excludes neutron and muon deposits and does not account for additional species dependence, energy dependence, or resolution effects. This term is included in the sixteen-cell covariance, its fake-data tests, and the generator comparison in Sec. V B.

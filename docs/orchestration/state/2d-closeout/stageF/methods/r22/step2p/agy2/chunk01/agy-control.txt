@@ -1,0 +1,61 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the heading "\emph{Scope.}" and the sentence "The limitations are listed in Sec.~\ref{sec:limitations}." (likely moved to a neighbouring passage).
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact that "This constant is inherited from the analysis framework's definition."
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER replaces "\jtNcells{} pass; these are the joint cells" with "The \jtNcells{} coarse cells that meet it are the joint cells", introducing an ambiguous pronoun "it" without an antecedent and dropping the explicit assertion that the cells pass.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER describes the configurations as "other configurations used below" rather than the "variants used in development" stated in BEFORE.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER states "so held-out or cross-fitted split is used" (asserting a split is used, contradicting BEFORE's "without a held-out or cross-fitted split") and adds that "the two classes keep their physical weights".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER replaces "gives the full matrix, including the variants used in development" with "gives the configuration behind each result", dropping the mention of development variants and the full matrix.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "the fallback definition," describing the 39 supported $(\Eavail,W)$ cells.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops "not" and states that $C_{\mathrm{model}}$ represents "a calibrated bound", directly contradicting BEFORE's "not a calibrated bound".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit statement that the band "omits the learner dependence", and replaces the itemized list of covariance blocks with "the four-block covariance".
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER adds ", including the normalization" to the systematic universes block, which is not stated in BEFORE.
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER drops "not" and asserts that "The covariance has been independently validated", directly contradicting BEFORE's statement that it "has not been independently validated".
+
+Q12: VERDICT: SAME
+DETAIL: AFTER preserves all facts, values, and qualifiers of BEFORE, changing only punctuation (parentheses to commas) and splitting a compound predicate into two sentences.
+
+Q13: VERDICT: DIFFERS
+DETAIL: AFTER drops the entire second sentence: "What unbinned information could recover, the coverage failure, and the validity of any interval lie outside its scope."
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER states that the estimator is unstable "under perturbations of its inputs within floating-point rounding", introducing specific mechanisms and floating-point precision not supported by BEFORE's "at the level of rounding".
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER replaces "ungraded" with "are descriptive and not judged against these criteria", introducing claims ("descriptive", "these criteria") not stated in BEFORE.
+
+Q16: VERDICT: SAME
+DETAIL: AFTER preserves all facts and claims of BEFORE, merely reordering the final two clauses and replacing "usable for" with "supports".
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER adds the clause "which simulates the whole analysis chain", stating an explanatory detail not found in or supported by BEFORE.
+
+Q18: VERDICT: SAME
+DETAIL: AFTER replaces "stability under" with "robustness to", which functions as a direct stylistic synonym in this context and preserves all stated checks and conditions.
+
+Q19: VERDICT: SAME
+DETAIL: AFTER preserves all numbers, definitions, and limitations from BEFORE, consolidating the coverage items into a single list item and clarifying "stability" as "reconstruction stability" in accordance with its explicit definition.
+
+Q20: VERDICT: DIFFERS
+DETAIL: AFTER adds the clause "where each null takes the simulation's event composition", asserting information about the null hypothesis not supported by BEFORE.
+
+END

@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and precise, but recurring internal bookkeeping, development history, and repetitive qualifications give several passages the register of an analysis note and warrant a dedicated language pass.
+1. QUOTE: "The limitations of these results are stated with the
+results they qualify, in Secs. III–V, and those of the calibrated tests in the companion note. The low stability of
+four of the sixteen cells is stated only here. The principal
+ones are these."
+   REWRITE: The principal limitations are summarized below and discussed with the relevant results in Secs. III–V. Limitations of the calibrated tests are discussed in the companion note. Four of the sixteen cells also have low reconstruction stability.
+2. QUOTE: "A
+candidate release package of about 16 MB, not yet deposited, requires only numpy, scipy, and matplotlib, and
+regenerates the analysis note’s figures of the joint-test
+null distributions and the (Eavail , W ) map."
+   REWRITE: A candidate software package of approximately 16 MB reproduces the companion note’s null-distribution figures and (Eavail , W ) map using NumPy, SciPy, and Matplotlib. The package has not yet been deposited.
+3. QUOTE: "Because the block is built from the observed differences
+among the periods, its size is not validated and its own
+consistency check cannot fail."
+   REWRITE: Because the run-period covariance is derived from the observed differences among periods, a consistency check using that covariance cannot independently validate its magnitude.

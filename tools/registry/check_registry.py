@@ -195,9 +195,12 @@ def self_test() -> int:
         # A registry conflict: "configuration (e)" also registered (with a valid citation) under d-N-B0.
         al = t / reglib.ALIASES
         clean_aliases = al.read_text()
-        l290 = (t / "docs/analysis-note/paper_body.tex").read_text().split("\n")[289]
+        # The cited line is the last element of paper_body.tex split on newlines (line 290 when this fixture was
+        # written; computed, so that a shorter or longer paper keeps the same fixture).
+        pb_lines = (t / "docs/analysis-note/paper_body.tex").read_text().split("\n")
         al.write_text(clean_aliases + "d-N-B0\tpaper-label\tconfiguration (e)\tzzz-no-match\tyes\tdefault\t"
-                      f"docs/analysis-note/paper_body.tex\t290\tconfiguration~(e)\t{reglib.line_digest(l290)}\n")
+                      f"docs/analysis-note/paper_body.tex\t{len(pb_lines)}\tconfiguration~(e)\t"
+                      f"{reglib.line_digest(pb_lines[-1])}\n")
         case("planted conflict: 'configuration (e)' registered under two estimators", good[1], True)
         al.write_text(clean_aliases)
         # The (f) alias removed: a printed "configuration (f)" is then an unregistered label inside the a-f pattern.

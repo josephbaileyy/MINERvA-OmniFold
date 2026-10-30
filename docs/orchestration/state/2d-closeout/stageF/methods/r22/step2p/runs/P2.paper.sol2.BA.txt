@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A divides the covariance discussion into more manageable sentences, whereas B overloads individual sentences with qualifications.
+2. A uses more precise phrasing, such as “bias toward the prior” and “perturbations of its inputs within floating-point rounding,” where B uses vaguer expressions.
+3. A integrates scope statements more smoothly into the introduction and avoids B’s redundant coverage definition and informal “ungraded” terminology.
