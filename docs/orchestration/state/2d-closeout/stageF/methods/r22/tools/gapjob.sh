@@ -22,8 +22,10 @@ with_timeout() {
   set -m; "$@" & local pid=$!; set +m
   ( sleep "$secs" && { : > "$flag"; kill -TERM -- -$pid 2>/dev/null; sleep 5; kill -KILL -- -$pid 2>/dev/null; } ) &
   local w=$!; wait $pid; local rc=$?
-  pkill -P $w sleep 2>/dev/null; kill -TERM $w 2>/dev/null; wait $w 2>/dev/null
-  if [ -e "$flag" ]; then rm -f "$flag"; return 124; fi
+  # On a timeout, let the watcher finish: CMD may die on TERM while a child that ignores TERM (agy) lives on in the
+  # group until the KILL. Killing the watcher here would orphan that child; it did on 2026-10-29.
+  if [ -e "$flag" ]; then wait $w 2>/dev/null; rm -f "$flag"; return 124; fi
+  pkill -P $w sleep 2>/dev/null; kill -TERM $w 2>/dev/null; wait $w 2>/dev/null; rm -f "$flag"
   return $rc
 }
 done_n=$(awk -F'\t' -v i="$inp" -v m="$m" '$1==i && $2==m' gap/runs/status.tsv 2>/dev/null | wc -l | tr -d ' ')
