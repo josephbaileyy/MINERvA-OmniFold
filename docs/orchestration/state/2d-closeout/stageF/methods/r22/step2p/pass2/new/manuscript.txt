@@ -1366,11 +1366,11 @@ A.
 
 Limitations
 
-Apart from the low reconstruction stability of four of
-the sixteen cells (below), the limitations of these results
-are stated with the results they qualify, in Secs. III–V,
-and those of the calibrated tests in the companion note.
-The principal ones are these.
+Apart from the low stability of four of the sixteen cells
+(below), the limitations of these results are stated with
+the results they qualify, in Secs. III–V, and those of the
+calibrated tests in the companion note. The principal
+ones are these.
 1. The two-dimensional covariance has not been independently validated, and its coverage has not been
 tested (Sec. IV C); the three- and four-observable
 central values lack intervals of validated coverage
