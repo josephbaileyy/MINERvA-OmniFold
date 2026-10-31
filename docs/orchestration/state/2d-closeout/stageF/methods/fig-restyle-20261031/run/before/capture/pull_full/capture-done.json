@@ -1,0 +1,9 @@
+{
+ "script": "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/base/deploy/2d-unfolding/compare_to_paper_fullcov.py",
+ "argv": [
+  "--ours",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "--out-prefix",
+  "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/before/out/MEFHC_5iter"
+ ]
+}

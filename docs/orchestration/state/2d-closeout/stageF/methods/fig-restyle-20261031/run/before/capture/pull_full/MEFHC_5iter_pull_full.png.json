@@ -1,0 +1,376 @@
+[
+ {
+  "i": 0,
+  "kind": "image",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "bf6f2b496adbdb281801f32d4d4524bd5fd6a6c799ff51c16b1d070c606de4b6",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0c4467b158dbdd46b16a1d8043c53548b99d2a1fef1b7970fe276ab8bb7a9d6b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "55f70395ce6f5010b5ed4ca732af7596f0fd4dcf58dd5fe43e2b5dd9ec7ecf0f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "2dc68d8c0077d115180d0adb609fc0846bea6a92c29f4b8d54e3a566483f4429",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "946236881896606e8f6d6c55e98c7cd530b8a0ee027dc81cb7cb1847d6f31e01",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "985411214be552f3d37f6a3b471f68499dcd65b233eb1e18bf99ef15cc0325a3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "d76120d3020a1c22fab1412f54af3313b041cc9e2cce4c35cdc689a30dcde3c1",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "204be01a00f211444330354e0553f29bf530a58d8a702edb4a6d5fb73196c837",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "64b530782e48e1049c9ca2c877f77de065702ca5ff1c24792615eb7d06efa510",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "9e1cf0d65b94c484b5ac59661b7b16665d5e60ce1d0e0cd1e3cdd08ded33c5bf",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "b9b2894ae8d75b55564216bfe254d1d5fd3c5163bba59e7c46c931f2e8f7d6e2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "e29d20b152d9b77ee5860c000cf8a5639f705de7130fec5bdbdd519ede8aff4b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "b81d622511a535214911eede27a8b2751aa2ac406de49aacf78e87b9a3964f0f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "8b67f071e58e2bb358334486d1368d1835e38dca622fcbd60a78e0d715badabd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "88a9774f53a3e4e40addc3cf7b0a2bb8562195c38eb5e6413b37309b9f9cbdab",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "80752b391226e19e8d167119dee4474f95daaa783879847413f6f5367e0d2f7b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "b5437e0a0014b60d00e5670a8b729a4a9977007f1bdc0f44094e353e827dcc3c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "7d3bb8cf6f745dc337bb2e20a5296d7d2fe719fb0790def7a35118a27679c2e3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 18,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "23927f34f9c89c6ac169720bfc339454ceab78fdc40fae0845d01c3d2459c212",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 19,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "56362d5798a15f73ac25bbeb79467746a6d25d4037b96f8e48f0aa096d10e6aa",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 20,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0870ea63debcc2beb5975e97b5cfda8372a8b54b7a90f53af6d9a255d3cad164",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 21,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "97bb186e7bd5de9fa4d35c25b19ab91e7fbad9db8db16e29265eb9b07ba33714",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 22,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "c0f6c17479be73d92c11f8a7e4f1f8cdff7980e3aaf72dda7a9fdc2b820c588e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 23,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "58ce689285967d10919b40d16a93183cc0a15657bf1a6c4c931dcf3d3b90848a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 24,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "8d5eaaa9ce3e74d71d764c07a43c726398538d726250b8b562fac0021e15bac2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 25,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "21a637bc3edebc4c5fca1717c3c4ec06dbda8d5f74260c4f684a2da896e711ad",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 26,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "90ab178a6b8a7716bd77180efa45591fa43cbc97dd59b535405313c54c42d608",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 27,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "5b3fd9c1a9f2f791b38edd728c2ef7ee705a50255e6ffe6b90cd29e021b8db95",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 28,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "2bc97dd14d0e48893400d8695e07fb8a12d78601c46a05973fe1f6722e837d60",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 29,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "bbb0375cc4f21403411c32d49b1a571f2c3402de8820aa717a8e6f427371db9e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 30,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "f503198c462fc97444277a83d57323efa6e20eb2cff9e7c7d1573b894ff8356f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 31,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child30",
+  "hash": "ca32f4304bdddc3ef22a328df5b1c112e4721937cfc96b44d1b1b1b90cd9fdad",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 32,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 33,
+  "kind": "QuadMesh",
+  "axes": 2,
+  "label": "_child1",
+  "hash": "ca4c343c6ab1cab43569290b334c482ba6996b31c0b72850282767d1c33f0fe6",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

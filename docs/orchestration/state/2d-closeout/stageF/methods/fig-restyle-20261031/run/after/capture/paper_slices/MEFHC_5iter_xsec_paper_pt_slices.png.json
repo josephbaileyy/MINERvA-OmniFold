@@ -1,0 +1,1234 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "94fb17c1a5e7063fada49f06f46d15eaa1a678e93fa4faa3efb19eb844a029df",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "857089e29b1a805381e394cd505cf7c7be801831e829145236e5e79ec108736f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "7588ec3680fa5d57816421e4e45901dc0a56d115d12cb5d3aaac7ddb58d536a7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "88145040325679d3d40b6cfe8d2b2bc348ac06be51944813a25e9d65e4847ae5",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "e8b89ae7987ad0df0590ec5c27cda47acb74c2d06b7fbcdd02e5dfc12dccfa67",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "7f547251ee7cb2cf1306dd1c36f2028c237ffbb7df898ce24fb8590c49b5e762",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "073b9b921a10bd14a81439d88dcebd4344da84936b4fe3652f69d7b035e318dd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "4f23057e09a4669bc095283fe08d25df4c4e2e925d97948b2058538c8882ca59",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "9eb8e34a832c2a3f35d3c0fc87977856f1cd2f788611efcf12f2cb23c395b9d8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "d1979ebe93e8961f48a9c9f8eaa0cc3f5e569f5b1d3b8c9288b9c649fd1549c6",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "c88da6a7d09be4f949d8ab6ff8584f7643238ab81e7706fc1ce11ec7206cdcaa",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "45090543e7a6f33be66a63d79648fdae575ba9fabfb6236cfa95f807e3b6c04a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "3c6d0ed268fa18a249a173df9ee6842f82ec27b875f2a411dd810e007c7644f2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "530c00fa24b3bc596d9dd9f714c543f3aa473edb08f967cf4c8c5a7ec157b472",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0a4217c12c8b44b848de5e18bd980f3fd3f3fda88eb4e8e405ebea70cc496f6f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "patch",
+  "axes": 1,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "607facc0679a58778b65b5cb2c5ee2b09bdb37012576da64579c58983af1508f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "b667b15c34c36ec018ee3159788654cb533c40d41961b52d8d3a40336951ad8e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "dd2b959140f558a6b90435534ad40f407c14db0fcfeae2075714e5f9eeaeee6e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 18,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "996c4365e23a292ebc1a90c4f2dbfd5a6fe44e88e15aaae92637329088cba839",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 19,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "e4907b82973e60f0b82dfb3e4e84115520995fbfddf07986888aee437434170d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 20,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "c6739c99aa6da06a5648c1d9b64248978bb472a78b7ebb01a6a6ccde7faddd9b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 21,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "d0020402511223d8ad45930d837110ffb649258987dee1c66572bba2bc4a9b2c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 22,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "ddea12a079abbd1e6aa2ed32286514c8f78c9ba365d6760d0b953aa4ff4f75d4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 23,
+  "kind": "patch",
+  "axes": 2,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "973e2ec5841b83202de51f36a16e1b111a9d1516bf6e6658eee44143e6bc6f85",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 24,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "dbf884f131d4652c59f54a712a22909b7aabfa4534f8ad1e123159b382e05172",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 25,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "356693c4332d201f89baae768c638acef8f07c04174644e7fb7d459cfdd78d1a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 26,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "d32d604d9f3dcd5c8e3c7b12983c82d428a86990d8cc7bc6440ed7391efd64ca",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 27,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "4d4bfff07e4c9a58ec9c898396fe33a86ccdc86c9ab188fb6ac5acc0a8b6e0c4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 28,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "bd9c06405cadbd8822bafbc622bae703b5f4875b8409a358b7716999ede8baf1",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 29,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "d0bf0d42be7d014f42693f88491b6fdd5ed1fb1b77dd987b97e8c7efbb718d54",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 30,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "7ec9a3230357e9eb7f509e3e9d65e09128cb3b3b012263c70a4b860379965fc0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 31,
+  "kind": "patch",
+  "axes": 3,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "c8abba75abadb5009edcca80b27cb263eb9b02c4941688faed97aadb6cb6d3c0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 32,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "100cb9045e97431b7a563af6e8b0fd12ab8b3f5773620a10890de65969ef97fa",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 33,
+  "kind": "LineCollection",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "19e7900d660a342e28990203f11ba55d45989c05f89406c67b7f925a347c06d1",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 34,
+  "kind": "LineCollection",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "9a47499e872c2f6e2e7f3640c39a8fad60d8532cde5352e9afaf466ae2327def",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 35,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "1a72c0544c15029476a4a506dea1eb99a403fa0327289c12a780392001071636",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 36,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "5c04cee93becdf4b11ae24621794152b017f772c5bb5dd2245d5bd92aadad347",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 37,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "29c3411e051d74e2c0f9bdf1c18c6e4e3121ab1dfcdea601ca274664653151e0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 38,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "e977474e57cfc86d707cf3efa1f634bedd328bead1f084919888ef5b5f95b408",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 39,
+  "kind": "patch",
+  "axes": 4,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "90aaf1cb6ad83793ae4951ec018b4653f6d71e7902d82dab433b515f80e40b20",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 40,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "1ecdda9527647c12b80dfc30ba11e4e549da336aebd94ab669e11f8c82a70835",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 41,
+  "kind": "LineCollection",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "608462fb1394d3810c684566f4e60626169571d8ffaf8ac2aa9fff78f9de35e0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 42,
+  "kind": "LineCollection",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "e5ed92adea34dcae14c0273273222e554135c382dd541337af81ec9c54556c91",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 43,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "a455ecc161d1a4a790469479b2b03adf7e7bfb51a94ad67f70ac4d0e61ac410d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 44,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "09a80fd19c2157e59a45498e7d3b4dee29253d373aa21f595d498b0b42bd906f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 45,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "96baacb753b1386a489e7b73f4fbf92202020e66f4f6d488a74bc25222a7eb2e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 46,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "6710354a569150935be40a05dc23ae0414107b1efccf9889f5340c11e1b479e2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 47,
+  "kind": "patch",
+  "axes": 5,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "1d8d6d1ee2b49b376c9eb01ea8ceab8de476a05784f7b8e2ffebdf9425bd51a3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 48,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "9b859452a1b276af70e57b7d90eac1578b1a16b28980034e6c99ebcd872243f9",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 49,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "37687cfa90b0322ba60d5d3d98d32e16826291e4212a952151d7e3024e65fa8f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 50,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "82f435f3adf13fbe8c990e201299af57259df87060b4d2c751f84d086b252b9a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 51,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "03e13688209f310062b465be61a5109746b42bd3ccc30c73f981638141f35769",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 52,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "1f638593ac3ca5285578ef69939b01c9c690b28a89cbec45c91f39ef3c88b3d7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 53,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "78554060909dd65811863a28579547e5df23d3b270b09e014b91d74f72130086",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 54,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "fd0bdf0a19564f70eec63034cc58b0e5e4678b532d18130e1220ebdd00f6559e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 55,
+  "kind": "patch",
+  "axes": 6,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "11b6e8118353a4ce19c34fa105ae67ab4714496a0a35e3cb29d286cc2f97e7e0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 56,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "db306f7e07045dc12fb07f12657f9863ca85aa5dda80b34fadc1f6ede1d08e05",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 57,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "dc5dd3aa5bc467327f38e8e61e75a8c8fee11600723edea32b0fc4bd8de68268",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 58,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "a3afeffe21a08c836eab36c533cc9293c69ea6c4a5867cf9855a9cef3f7f4212",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 59,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "b6e03109c54fbc955ffd57af68cad7dc748cce203da889aa95ffa10924ada161",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 60,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "d2cef0ec10632371bdd7ae53270b677c84c6492b97a7e8abf61aacb91d6ab825",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 61,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "1ac329769119be6458cf967df8c89c2eab0bd81a3f881c6401a7cbda59fded61",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 62,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "fc5669d414916bbf40570e8dc9e524882847b910a55a15a3c2da3c044ad5b333",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 63,
+  "kind": "patch",
+  "axes": 7,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "0cf898e400594300b8a276bdb1ad41502091a7c59be278f9b710cb5fef04f015",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 64,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "c6309fd268a5fc13dc6d90dee29ba796891b8e4dc67cfa3c7825e796d4188129",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 65,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "5c6288950490ba6e7f4efe026a8d51012c2d25a8af74991b15284af7ea62e777",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 66,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "36087d6b5e68efe84a9fcfe117006967eac2a87512cc3cfb656fe6ddf6b162ad",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 67,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "e9e9d1cc35a9974a146c9502540e2312caa841937698d5b8b65768524ac6679b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 68,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "e5b69e55535e0817725041577bc54a6fc621f998afec1825057df2ffb12549e4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 69,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "236c290fe1b127c50500fd1e23a6202c29027be6bfe614d43637e3b3aaf58f66",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 70,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "382a0454569ea814c94b95d984ee5d05d0cc8964d8a396e7b77f9109df3334cd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 71,
+  "kind": "patch",
+  "axes": 8,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "75768be353c53038ade18b861dfe0d464e027e6820165709486158c4c8cd31e5",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 72,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "57b2ce314a3e029e6a6d82ef7517f9c0b969b8505a9f91172c9b82b072e44fab",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 73,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "b09bd534c7e7ef9ef07bbd51e8a88a70fa11b034e10cc38c6601233a318316ec",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 74,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "2b95d1df57dacd97fcfda2c7c775faa6fb385986ff1f2edfb62e9edd79997d17",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 75,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "09d337accc957b3fc4a7e5768ae6e65fcd7ff95c27de69005b4d9837c4c2cc57",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 76,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "08701ffb3c47d9a32947fe178bbfddd97c212d3a9eae07c1165ba677e3a3dba8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 77,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "dfcd9b9dd0ffba77d5dae93440f3d5759d1f62840b0205c50b0ecd4e1c6563d0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 78,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "968298978818e6de71eb701ae6e920953bcbc5253d8acd32e8038159135aafed",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 79,
+  "kind": "patch",
+  "axes": 9,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "1b84051b708ed12dc6af15f9c99d04d5d5e09880d1f9cdd2974c12aac4b445aa",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 80,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "7a5a817f9e8b517e7c830ff665268ece0a2774a410573c54b759c8a35c3e7834",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 81,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "3293be1cbabe400f7a794789a626091127fd63df96c53e9149dd82269e822645",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 82,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "53dc00bcb96d832c45a1d3400568dc66dcb243510664e4a1b9f5b0e5eb74e576",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 83,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "9fcc160e1ef26376431daf0923752b1645bd642bf28ffe75a368fd0ae2969486",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 84,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "216281049b375a48cdcf1a7bc955603195ee0d818d1ad15df3ccd95f29fc7cf3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 85,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "f3bbdd11d9146be9c10702036044e301512a7dea77361e98108d320ca558b0cd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 86,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "fbc7784a9b7a9b5a147f6609a55cfc3aafaae7db4a8c563490f268afd653483f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 87,
+  "kind": "patch",
+  "axes": 10,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "2fc09718a0c66580dbc815516e05803861919add564e754726cbeb136ab30442",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 88,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "dec98c85226f3cd82999f222db12d663dbb8fbf65b2b1a7091169d7f59333b2c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 89,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "0ef4d574dc30c1d1afaefe79ed7846cf84a8f0174f14245e98fd361c6cd4e6f5",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 90,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "72351c2ad315db845878fd6cccc613fc54fe067bbcb204a8a49c594b009d0120",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 91,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "c126e7a6fcf0c874d12e9296b246d573b61c87c334b81e849a4e7dc703fb50af",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 92,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "abe11eba71a0a3fc9650659f1f1ccbc43b161ca803536822b302a711b227d75a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 93,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "b398f37f2cd66389395f8a272483edbfb3bf0bf65a4b58e9ab5ca0c398b26d93",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 94,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "20c86be013e2b7cadc3a0e7d98ff7407ee30f80d2d9cf15150537cf46cdee880",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 95,
+  "kind": "patch",
+  "axes": 11,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "c4b51b88b294d570f362f45c4bbb334f7df5e705635c79ceccb79d758e2f7508",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 96,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "c7721697a614ab888da88356e379d700890cd97f66bb0873221b273b1edaad4a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 97,
+  "kind": "LineCollection",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "a2a411b9b5ea1f7b86dd355c62da79a5f89eff770d9b7169eafb0a7bcd3b4214",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 98,
+  "kind": "LineCollection",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "0575de9d57ae83f57b443bbf0e383d1a09be8eb5c98dcad43c484044482888af",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 99,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "1af401c45774a92be74677db216edeaa8a066fd46782f20c585fb6f83e66796a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 100,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "80d858806a63706bc4ac1e36a51463c98a71c06f568894f87f5557a0eae9901a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 101,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "a9a1bb5c892c2a95faf29f4431b307057bba6a5778b1ac75736c3a73e4a5e93b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 102,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "cb8361ae6bd7f3e60de0aae1e4a6f5b58e75477502cec022d9ea76b419832e9c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 103,
+  "kind": "patch",
+  "axes": 12,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "d0cf4780d4b1437e872a8b2243a5e2c1a4f642dc825d408203264e10944fe2bd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 104,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "6722fe53bf6115b773e8c7e77408db904db3aed5b75765afae81ef73cbadeb4d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 105,
+  "kind": "LineCollection",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "a99eea484d6f58a82e4f578d967859db9ae05160a65082e888cc3d2c87826115",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 106,
+  "kind": "LineCollection",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "62223a4b243dd84b9724c6047e73f377da9d1fe53762ae3dfd6470b2a0d79228",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 107,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "ec0e825e8faa5fe735e5f892243c766adcf218e2bd6dfda534b1f1d344162d60",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 108,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "80553786542764f36cbdd0c866fe7e3bf92d9a2428e8db280957213aa0658235",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 109,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "9c0d784647b28e9924affdd7e5b2b48180133a3895d8f0815313e36df9258980",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 110,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "e6892088d4e2cd57d94b7b4db518e65bd3127a9673605bd786b9c6ec6b50df88",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 111,
+  "kind": "patch",
+  "axes": 13,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "496671261a2a3cb88812ad6023c353781674c2ac77a0bc716b3460e57d50fd65",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

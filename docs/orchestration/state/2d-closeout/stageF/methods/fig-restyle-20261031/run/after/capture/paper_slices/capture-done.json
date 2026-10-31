@@ -1,0 +1,11 @@
+{
+ "script": "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/bound/deploy/2d-unfolding/plot_2d_paper_comparison.py",
+ "argv": [
+  "--infile",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "--prefix",
+  "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/after/out/MEFHC_5iter_xsec_paper",
+  "--style",
+  "restyle-2026-10"
+ ]
+}

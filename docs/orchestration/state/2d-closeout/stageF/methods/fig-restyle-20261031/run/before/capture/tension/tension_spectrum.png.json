@@ -1,0 +1,35 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "c51ec8172ef8ec70f967a810479d2cf4c2ed56ad2f77b73cb4813dacb659bd7d",
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child0",
+  "hash": "9a6281a9c4b57e70c3af66f507638c2cd774ebd8b9318ceb65aea4c889a82b87",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 1,
+  "label": "90% of chi^2",
+  "hash": "efb8cf6ccf6e6d479f6af143e23d8c50e813d7fb586040f13f162383805fc26e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]
