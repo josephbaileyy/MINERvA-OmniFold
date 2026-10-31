@@ -1,0 +1,3514 @@
+{
+ "bank": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+ "detector_dir": "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector",
+ "files": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_0_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "b4bca3e0b5061dd752b41eef291dec2f476d36d9e174b7d8a7afb031c8ff7c03",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_0_tdw.npy": {
+   "mtime_ns": 1784034744000000000,
+   "sha256": "a3ad816fec7b3350e1d3d989e565ce03c2acd7a91900d13067873051836d858d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_0_wr.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "b134a04f792938f189799e31ec7c6206cc1bead0a4b72b913199118c57405971",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_0_wt.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "eb8a82ecd7d1ac974eacb77a5de4eba7413d6297f72c474ef5dbfe729b615e55",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_1_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "da1fec2c10408aa902b0c74393be7f74d64401cd8221ed2444df0a50754fe2d6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_1_tdw.npy": {
+   "mtime_ns": 1784034667000000000,
+   "sha256": "8cf5f8e2f19f984dc5632c416765594fbf94b102e890375805e911df2917b445",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_1_wr.npy": {
+   "mtime_ns": 1784034020000000000,
+   "sha256": "24a74969c5424141afb252b652106db59f2556da297dc10a8e2e89c8ee3e68e5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_1_wt.npy": {
+   "mtime_ns": 1784034020000000000,
+   "sha256": "7bfbd0caca861e393b2a3d6d3f49199277aefa86c168b8ae3908e21c4c1e1484",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_2_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "518ee31497b665e88d2a1051c28e227f475ed0c30876232a1f65c3cdb69a1091",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_2_tdw.npy": {
+   "mtime_ns": 1784035714000000000,
+   "sha256": "3a8121af97a6129117ff610d2c55c1eb3974584b096341b0fcf6d4893400cde1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_2_wr.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "1bdf6ba340406a8fe0cf648ff8e6eeb78be3aeeae7c7a22389750ce890102836",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/2p2h_2_wt.npy": {
+   "mtime_ns": 1784035027000000000,
+   "sha256": "96630feb2e00ccaa459ce24f3189382e2d88567289c39834f109e081621bf09f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_0_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "3963dd8386a9bd8fdd71c760927d6e853c2d33f6fa3c72ce6df10ac16f032230",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_0_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "6547b358b126290cd4bd1775f080bb770ec32abcc70a00ae7f1b738d9a88badf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_0_wr.npy": {
+   "mtime_ns": 1784035199000000000,
+   "sha256": "92b1f3ac51ac4acedc3fd3273cc0c765c052211f5d3d7220b2bfc0151cadc04f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_0_wt.npy": {
+   "mtime_ns": 1784035199000000000,
+   "sha256": "47c6270b791ac952bc04dda0910fa9c64e1f99aacf68125776f3438fb4c70da7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_1_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "24733b545bb01397d9c9b2310b6fa5efb78b521275bce78635fbfc7a995893a3",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_1_tdw.npy": {
+   "mtime_ns": 1784037506000000000,
+   "sha256": "a24a0fac0aa66502635e4cbc6dcb0c214c2bbb6df33e14ba2cda3f7433346125",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_1_wr.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "b4a09fdb5fe062a48edb89ba6a44a7d5b15a144343da6940468f6369519524d0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AGKYxF1pi_1_wt.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "fab1ee73cd488772e94f37fa7d95b250e270ecb06d94066e650b537e00c0d2f2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_0_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "ed2599213e59840cf9568507c5649858024923363802e03ca454fb5c5c58e1ee",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_0_tdw.npy": {
+   "mtime_ns": 1784038667000000000,
+   "sha256": "25ce786b448608414462e53385d9f8e6706903531b25dfdcbdac1af4c1fbd5d5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_0_wr.npy": {
+   "mtime_ns": 1784037952000000000,
+   "sha256": "6e5646573b37c2d87e1e435687d6f9ecb49c8455e13995036a6c06dbec113e7b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_0_wt.npy": {
+   "mtime_ns": 1784037952000000000,
+   "sha256": "d61d03a8c3d813913ceabfc413597b4878bd8d2af16b7949187ec22ca433f4f7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_1_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "1d566cf3869c16f11bb7d4153bfc750056576cd9cf54b3110803a22257eed534",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_1_tdw.npy": {
+   "mtime_ns": 1784039198000000000,
+   "sha256": "a1ffacff0a1e2e4c49e340860fe70f68b61b28675630c87fe9ea7d42836d7f93",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_1_wr.npy": {
+   "mtime_ns": 1784038519000000000,
+   "sha256": "82b44665ff72fed67a06f39bba7d2239f443b0f01dae58406af667722128c37e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/AhtBY_1_wt.npy": {
+   "mtime_ns": 1784038519000000000,
+   "sha256": "ca8244ff1dcf810111efe2ac24c3c306af9532acff9e4df8b9f8aa05a90a15d0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_0_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "d8c84df306472ddf6185fc39637b664e77adbc4ea3e975f044bdfb6f6d75eca1",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_0_tdw.npy": {
+   "mtime_ns": 1784040191000000000,
+   "sha256": "9ee9254699924f696c02d60dfd945b47accf9588805631825d0c0c16466df5dd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_0_wr.npy": {
+   "mtime_ns": 1784039567000000000,
+   "sha256": "2f3b8efc31a754eaa716d2615ee39e7e7740e671d835ddf06b7d1559cbfc256c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_0_wt.npy": {
+   "mtime_ns": 1784039567000000000,
+   "sha256": "19e429c702fb2e9cf9db87a3557e92ccb8f65c361f56c2102dd1c991754a22bd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_1_bkgw.npy": {
+   "mtime_ns": 1784041210000000000,
+   "sha256": "c2ffcf70b6f389dc74c28dcb1b308394cd46816dde3e4878220597084a83450e",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_1_tdw.npy": {
+   "mtime_ns": 1784041195000000000,
+   "sha256": "2e25facb96dba3088b7db7caab7f86e3db2ff06eccc6e34ed5548cc159d90fc8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_1_wr.npy": {
+   "mtime_ns": 1784040577000000000,
+   "sha256": "278dd466f2e6e2a8c13e35bc7911eb8fe60989b70c2d7b1dbe2a6048f6b3d833",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/BhtBY_1_wt.npy": {
+   "mtime_ns": 1784040577000000000,
+   "sha256": "9cafe86f16a05c2a408254dd974acffebb9896fb4f7571006ee49e720b4afbca",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_0_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "ed1153e8230d54b8b2f4c514ca1d948179821b0f1cee5ae073ce37e40720f086",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_0_tdw.npy": {
+   "mtime_ns": 1784041469000000000,
+   "sha256": "18350eb8cca17690f16c7710a831d0f7e27e7fa8a549f5db49f0094b65dc7ac9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_0_wr.npy": {
+   "mtime_ns": 1784040793000000000,
+   "sha256": "3fd7f2aa88eabaf566cf095cf30ceab756175955e2df6291f6c861cbd91d3af3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_0_wt.npy": {
+   "mtime_ns": 1784040793000000000,
+   "sha256": "2421cd0f5ad2b4693ae752dcb66aa061991345fd8aff26861e359da1f408cbe0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_1_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "7780c82ac659feca02dfbb68876ba4535ca11303aa3eb98fde64c7dba39d4d2f",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_1_tdw.npy": {
+   "mtime_ns": 1784043574000000000,
+   "sha256": "28d44e7928516aff7ff5f824e507d8bd1e3fb829c751ff1ce2c305ce789322e3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_1_wr.npy": {
+   "mtime_ns": 1784042916000000000,
+   "sha256": "af83c4fb8069ec49277d57cb78e7718d417e76e11e0b942279521be019cad4f0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CCQEPauliSupViaKF_1_wt.npy": {
+   "mtime_ns": 1784042916000000000,
+   "sha256": "68131fba1e4b68ca2ab28354b958de2021131c0330d4553c4033b11a56669da3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_0_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "2f5e22823041d03c83b485ac3e25a9139488447149a2646d288e569e962eaf9d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_0_tdw.npy": {
+   "mtime_ns": 1784045848000000000,
+   "sha256": "29abe7775bb6d2527bb40b0ceb4241d1d0fd9d655260f5f9b15474a2798f0f7f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_0_wr.npy": {
+   "mtime_ns": 1784045166000000000,
+   "sha256": "07e4e1a55c823fc740e8a4a9be1f885ac57b69eea064a586b18bc36753edec6b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_0_wt.npy": {
+   "mtime_ns": 1784045166000000000,
+   "sha256": "7f9fd82b0d95e50f19140e7305505dad37a92e29e98a0dc82bbccd913317e4a5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_1_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "ad0c79728565f3883dbe0f0a31a8eec4109d6056f3fcb4064ec530b7d68a585e",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_1_tdw.npy": {
+   "mtime_ns": 1784046499000000000,
+   "sha256": "2dbb5b4b5474690afd615960f75475af79b0184d1d5dd60482cd652c386035a2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_1_wr.npy": {
+   "mtime_ns": 1784045883000000000,
+   "sha256": "3d573fb36de5f809d01f303154275e817f2bd2a7bbfac5b3332afa56a6d5ec2c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV1uBY_1_wt.npy": {
+   "mtime_ns": 1784045883000000000,
+   "sha256": "1279d23fa8227563b6651c7dcad09b20264c39535edd686732c51e54ea0be1d1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_0_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "596adb88029aae124933d285eac2a280c62a09d5059dc0af2443fd1f7295d3a4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_0_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "d23addbb44453eabe1e831cfbc2c10a84bd54ace5e23e4a80368e62acfe88dec",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_0_wr.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "9038b908bd2bb0a8d8e7fa0a5b96dd71788f5b5bae454e5d65df2acd8c38dd46",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_0_wt.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "2bd43fad9dc28d64243b41f965b350c2312485067ef5343cb856a12c719e3b67",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_1_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "1fdb3e5d6c84bdac084825a376228898e57bcc00607c57ad0ab99e3a8d679ebf",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_1_tdw.npy": {
+   "mtime_ns": 1784050387000000000,
+   "sha256": "a5a1543448d1df2ec01565dd101269eed0adcc8d715e98cf3d714a901bf3e397",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_1_wr.npy": {
+   "mtime_ns": 1784049729000000000,
+   "sha256": "ed8ba34c4e7e255a30840ac4d6d456f239718787acde2a807449fcf2e3be6066",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/CV2uBY_1_wt.npy": {
+   "mtime_ns": 1784049729000000000,
+   "sha256": "c7645ce8c339f251f5e48974680d443f1c8de8104382008ac159cbc3875e2495",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_0_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "91ba1faf93c13ac2f4e8931a09aa55cfe8a820166698375e12ea82ac3a0690d5",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_0_tdw.npy": {
+   "mtime_ns": 1784051802000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_0_wr.npy": {
+   "mtime_ns": 1784051145000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_0_wt.npy": {
+   "mtime_ns": 1784051145000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_1_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "34c4a100e40db1be411d498f6eb482e01827cd8b96f8d857b8c0b904f3b60654",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_1_tdw.npy": {
+   "mtime_ns": 1784034744000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_1_wr.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/EtaNCEL_1_wt.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "2d6c934e6e1456f5e31854d45cd74a7087fd6bd6d7158235c3786a77d5b600a9",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "866f0f00709f1d0385183c5d941e62b61bcb21614f19d2c29a744e5d69136b81",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_wr.npy": {
+   "mtime_ns": 1784034020000000000,
+   "sha256": "b26907593412bb0b6a667d5bafcfb937bae7728a234d3ba241d70e504fb0a81c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_wt.npy": {
+   "mtime_ns": 1784034020000000000,
+   "sha256": "07d8d89da4de5e7f024bfb7126615c063796599126e8f0ed306a79d763eaf176",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_10_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "2f43a53e45e99a1315b0eb14a51c7658a19e946b1e5405dbd955789085537a5a",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_10_tdw.npy": {
+   "mtime_ns": 1784045848000000000,
+   "sha256": "9b00340fe591d05c1ec54ac4e393b623fab6b952661c42ac1aa64e5f972dc21d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_10_wr.npy": {
+   "mtime_ns": 1784045166000000000,
+   "sha256": "507bbcc711512a881f683950d6d116d5e6742dd652ae4dcd629a94517606c491",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_10_wt.npy": {
+   "mtime_ns": 1784045166000000000,
+   "sha256": "4b207f86dbc3fc4ad80cd0fefdba4b60f97ac692b9503d6477774f1e1151c305",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_11_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "70a1b8e17c6fcd880d7c66ac744406eb37c0b13a974d8f59cbdd84bfc6a21f41",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_11_tdw.npy": {
+   "mtime_ns": 1784046499000000000,
+   "sha256": "d53a680fe272448f72d0d24a08415b12a2cd3200bbb0dfe985f1bd89277aeec8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_11_wr.npy": {
+   "mtime_ns": 1784045883000000000,
+   "sha256": "142ebfe2501e8c38bce83d5202a2139edb0c892d0ad31aa960b461cca82a2d09",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_11_wt.npy": {
+   "mtime_ns": 1784045883000000000,
+   "sha256": "c4a7ebcb291be56e15a453916e3029e4e76550f4d503ff5d68de5ced5ea52310",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_12_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "c65b09d9c1dd06ec9f69f5d2d1de129a45dbc83a777dab93280ad115562c7f9b",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_12_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "8827492f2c9ed2bad5534dc6d1b6b307bc9610f7312986276b0b849d679166ed",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_12_wr.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "0e5a9b03f749806e3bbd0d0ec9dd14a0d58f7625f025a7ff77a7b539d3c5746b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_12_wt.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "71dd8c539a4a85715f8a224a8708e7fd1a0120b4b9b1c7e41665e4df174ff87a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_13_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "514db14699fc0713b59fd55706833edb058ae7b88c6a19be27fec05dd281e0e1",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_13_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "5805915451569058e7d74ffb46e461557bcda857442a5c2cae5e85b3ae47d7a5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_13_wr.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "f5f60cefed77541f8d422db06c8945a7692fea6e9a341985253540886ca6705c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_13_wt.npy": {
+   "mtime_ns": 1784049729000000000,
+   "sha256": "f02d9e20970b76e5bb080609f5b6b82170f87f169b72e0e9224924d9a7a496fb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_14_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "99ae94cdb71c1f5fac712de3daa303df989cad845ac644626086f734900a7f0b",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_14_tdw.npy": {
+   "mtime_ns": 1784051802000000000,
+   "sha256": "c54afd810583ca0d5d6acfa1337f01f7f0ed1dbf8c625306cf73d1e21edb5d16",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_14_wr.npy": {
+   "mtime_ns": 1784051145000000000,
+   "sha256": "b5c271ff328f827de98d0fc63d9554add583d8f6658041cd0aa89443df804935",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_14_wt.npy": {
+   "mtime_ns": 1784051145000000000,
+   "sha256": "f10b9202e0a7b2958d4169f2dbd073a89b4696f88027edb8ef8295b84aa342ca",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_15_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "c42e38e8ada6502c4717d7b101c7d78ee9fa8e7839a5137ed0ecaffa644e45f1",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_15_tdw.npy": {
+   "mtime_ns": 1784034744000000000,
+   "sha256": "376036cb62bc9c33f4f94b4fbf6b761708880c0cbd03eee522e884d202948abe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_15_wr.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "32d979b56f056e7ca1349ea0ff1cdd05486a827f28940affea1b24ec02b32f30",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_15_wt.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "690724d88fbbb40ac6d1ecfcd45530c7b454c4ea251857da4d80919424f1f71c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_16_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "ead01e02bede9087fef9fd4b94dc56656117b9e821c07d1b3839f46e911e7485",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_16_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "b97c0b272088fb1410c5eb3d59ce95b08b2ee6bc4e7c76a9228754ca6fd36057",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_16_wr.npy": {
+   "mtime_ns": 1784034021000000000,
+   "sha256": "f2fa30bade0072a8ef20aee2547b41c7d08d85854efac54db2b59f35be7ed31e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_16_wt.npy": {
+   "mtime_ns": 1784034020000000000,
+   "sha256": "e07f68040f7fd359881eb8bebc97016e6a3d65f4f74f7576f744090189213d15",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_17_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "b89061165921e84af33effb9ac49f8b4566b99c383f0308716b195f8a6bb3529",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_17_tdw.npy": {
+   "mtime_ns": 1784035714000000000,
+   "sha256": "3509394043ee84424f54c150e9e1d66fe623d1c7ba1d0e32c478373d0dd942e2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_17_wr.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "46577f9544ad68069cf3d05222148bb655881a24ade0478d1f1018d09c7e7ecd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_17_wt.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "c61c75835194423006674600f477387aba6cc227612f8bf21943d4b6f93b0868",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_18_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "04fc8f99dbad29ea4aa3b61f3c4f59fbfa07911538453e3e03f87089754fba34",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_18_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "b755094a2cc4f5fae004307d8d31e871c2bb177f5d71dfc447ddaab567fdeedf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_18_wr.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "bd989f71c7be16e997647b5159985c0cdcf3ee5632b0dc2f7e17c38d5a108fe6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_18_wt.npy": {
+   "mtime_ns": 1784035199000000000,
+   "sha256": "f3b04e6a54b42bab457dff75ffa616a156ed65d90d0fb09a11aa81f4b627ea4f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_19_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "f121d4c01700f60a21a0661b680d1134f1dfc95d646e2d0e28439ca1c6fb8acd",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_19_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "167d4ecde063fa38df42c7fa03b19edead097ca6de1098af74d986f26976a423",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_19_wr.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "35f7a55819f2d03f43c0186a199a395200e73f482668e1091df9ddba18742eaa",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_19_wt.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "1fa02d3c923000b4843faa882cd9e187eb2b772ed3b66b261e2afcb6b5d999f9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_1_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "c052aa078aa07fc33b63102e646ec52cb076b393c6c87e7b04a5e8cafe2347a4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_1_tdw.npy": {
+   "mtime_ns": 1784035714000000000,
+   "sha256": "446094f3add163fd134b8b5490d9345f9584e16762b0b34e5914dd6e6d6cbcda",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_1_wr.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "0282323ac8c9ad3033db224508adeb6878cc273c4fbbaf8b76ac55882248f3d0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_1_wt.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "1b18f21ce47ee20c1c32a14c8114b987ad7773d8f3f4812e325016f464320547",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_20_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "3d87a83644f99a1766d4f4c71784157c468e49aeabeeb79798478305de1d7a69",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_20_tdw.npy": {
+   "mtime_ns": 1784038667000000000,
+   "sha256": "344da5c2246819fe3bf9c6eabad0053d319524544f316b07d6d9dc2b3df71937",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_20_wr.npy": {
+   "mtime_ns": 1784037952000000000,
+   "sha256": "7ee305f80829d54cc16dc434e52c5a59a68f91ba77f692b514e1601072e2d797",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_20_wt.npy": {
+   "mtime_ns": 1784037952000000000,
+   "sha256": "5de48df4286b43004d3822a843ac2ee1b240cde974be2b8e55738736be2ffb2c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_21_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "ccc9599987232dce4b18cb7e4a8dc79f852ffcdd56a5fd71735119e3639b1080",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_21_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "a1dfd3b5ee82697081513c343b7d22d65bad58af04f07a21fff9d096a8bc0074",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_21_wr.npy": {
+   "mtime_ns": 1784038520000000000,
+   "sha256": "2e5d7b494681cf7e32538b443fae4188c1021eb02b4bcdf077b98d97a2e6c90c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_21_wt.npy": {
+   "mtime_ns": 1784038520000000000,
+   "sha256": "8de2bde92a6634b2eb19b95654dd651c204f2accbc569c49e26c829fb19cfc5d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_22_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "8692bb327bd505d31881e55ffd45dd41fd25c86e852afc99c87714ca3f1ae694",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_22_tdw.npy": {
+   "mtime_ns": 1784040191000000000,
+   "sha256": "06e2e3700722f8eda2d32bf9315e8d04092a50a96fca83fcf88ca21a175386a2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_22_wr.npy": {
+   "mtime_ns": 1784039567000000000,
+   "sha256": "266ad47eb24bf4dbfbe703f48c44c3dbe2d6488ebf232b7020f7946889c61ec3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_22_wt.npy": {
+   "mtime_ns": 1784039567000000000,
+   "sha256": "1441b5c44f228bb04327f36eb9416cd2f4da845d90d148003dab2791945c624a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_23_bkgw.npy": {
+   "mtime_ns": 1784041210000000000,
+   "sha256": "093e9fca09f8380677c534dea819f134bf8470faa8585a2908f642137a91752c",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_23_tdw.npy": {
+   "mtime_ns": 1784041195000000000,
+   "sha256": "aa29d48cf1b59294fa7cb8c4ac90d4e0dafc3b36948426d3e04fc35853838ee7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_23_wr.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "5b11c1822b96ab24be4865e316de9bcad02369e728fd0c0da7ebdaecc2364241",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_23_wt.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "5b5abf729ccfe9f2fcfc7f8259a828700243284f338642a5bc0c666ec9a971e0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_24_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "cdee602bbfac9a5781e5dab7ba3d0679abaabea1b35a85573e62a8608f1c7f73",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_24_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "2e686fd81b1a3198bf6ad7345fbf7cb36d72880345758094dab87ea6c0e16c3e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_24_wr.npy": {
+   "mtime_ns": 1784040794000000000,
+   "sha256": "0a3d75559e4dcffefedd7d3800813e1d2c8260496bce56ef6feaa8337694105e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_24_wt.npy": {
+   "mtime_ns": 1784040794000000000,
+   "sha256": "5cf13188162b14e8479b10fd57af0e83d9f39bcf6867087ac37f7d09a77c69ff",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_25_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "f46fc446e6951af99573bad1ac7a80a55a9f28c57d2003e696cb89db94125637",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_25_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "b30bfe5e9ed4d598916680f5b3884a09732453ec7544b9941eb8b3c6bb49f5ca",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_25_wr.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "de11bc8ac1a851c9dab94b730b2d9e8e5408c6d2253a23e3f689bb5c02284e66",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_25_wt.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "d9eaf60bc05d8f8c2f330cf45bc0c1846fd5e993025346376fce1176b6fa24fe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_26_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "4f57949590be337691b3e895ad8ef1393d545c1b8f05859054024e7c8091c45a",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_26_tdw.npy": {
+   "mtime_ns": 1784045848000000000,
+   "sha256": "1dc12e61e7a1745f664440c618888783cba01a74de76dc8da8b9825c268a2f0f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_26_wr.npy": {
+   "mtime_ns": 1784045166000000000,
+   "sha256": "66133153b497960dd0d0139911a3468a701ddf8848c7791a985bd317fad05f56",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_26_wt.npy": {
+   "mtime_ns": 1784045166000000000,
+   "sha256": "3da8a804847bcf09eacafff606a0c6f275967b9f1cb4ce44a61de8c5a87f4e21",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_27_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "fcb053927ade62607432051b66be67d4babc64b28c05ca577ba979a3f40b1c54",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_27_tdw.npy": {
+   "mtime_ns": 1784046499000000000,
+   "sha256": "18217a5be76f8caa174d6da49982d17e512fead22363331336f0c2f1fabab6bb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_27_wr.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "320cc03d1ea3aa7afa620550e0db0fea660a1f10b292beb79a1bfb22a6a6d60f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_27_wt.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "a1e1f1eff33df739f32e31cbb6b920487bddfe9f8029afa04a4314737ea70448",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_28_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "e91db3acaccb5875c28c62f7d546941e7777baab3f65d91197c3b1723062c428",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_28_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "99bfd796dcb7357954de7ffc9c5f2e76cb9e5fe8f9a04969a34273fb18b54073",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_28_wr.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "7771dd4ad54f42bfea2422a6ea71bc31f8245a23495594af5e4f5bc61b4e68e8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_28_wt.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "10525203383b6a0efc436569bdb225d583e06b44fb201e774ac1c73edcf5b0ff",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_29_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "e51dca4405070d281e3cea6b40d097da3447529927e3f7b8c40aa842c0514fef",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_29_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "4d6df46e0300687c42f4c3509dc3854aeae0d9624f62733f93daf6bf24535efd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_29_wr.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "463e3935a059105a65272472c86b0ef329933157caff8911436fbcc349b6a92f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_29_wt.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "b82d47c7ae3c2911e030ad42a19849a948d34f5c27a29d8f20a0e8bf8c47df63",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_2_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "80c375cb7607539b78eb9cc682e8a7eff0fea34c4b69d69b7e5135245f2d3843",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_2_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "ec52348b12f69a05a833cfed1348364c6759e13f621897ae435b03c973c0b8da",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_2_wr.npy": {
+   "mtime_ns": 1784035199000000000,
+   "sha256": "84cbb50f66f9c85c754d2d4e55d5c0b4b6c279cd6e31176b17567bd02740418a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_2_wt.npy": {
+   "mtime_ns": 1784035199000000000,
+   "sha256": "3c1f0073ce2d9f8a40672d14fd9711cadc91fd3bc74a3f598b4984c724a9bbfe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_30_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "4d2994c6fc75ccd31762539c0b8c7be7f041412f35cfa1e619ff7485594c08bc",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_30_tdw.npy": {
+   "mtime_ns": 1784051802000000000,
+   "sha256": "bfcba3e521ae00d829a98fd2959d07f55a1dab23016cd4b010e81b232c496e87",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_30_wr.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "355cf7d8400a80131fd3c9c2bb12ea41e1ffde539063020752dd342b03d20ea8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_30_wt.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "32be7e160e99cc93f8a064853a51cfcf0c5af4ca91929515c0063e6848287b9f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_31_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "1f73722c480b67db051d34fbee5eca9dad15d656b5745abb95f165b26d42b2b2",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_31_tdw.npy": {
+   "mtime_ns": 1784034744000000000,
+   "sha256": "5b071b68bf8ed681cc04650505cd39b0a74f89bd472a9e46e8435d831d713f5b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_31_wr.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "5fead33cd62ee15025c8061a6afe2f89c1e1c95273d7a41daa87273aa40041d8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_31_wt.npy": {
+   "mtime_ns": 1784034074000000000,
+   "sha256": "1752a5e744a43a621632ce70a8d04fdc0862020eea443123d510f336b84e0bc5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_32_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "2f025cc0988a93638baa888c951669916110d330367cd79d728ba2d2f6588fb7",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_32_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "9bc25e7d3107f6b7513a8a7229b791cc7f58fd4adaabb1a83a7249175a2aa33b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_32_wr.npy": {
+   "mtime_ns": 1784034021000000000,
+   "sha256": "8888cec75d6b94839d97c32ce15369c9f970623df3051892fb336245ea282030",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_32_wt.npy": {
+   "mtime_ns": 1784034021000000000,
+   "sha256": "82b3c57be79b14d7a3594b749bc1b735524dc0a7d5f82765b9784f76b540b4cc",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_33_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "92b080b6e40113806938c75ced8ab0140864d5c6d0cf8cd67ea35cd058027214",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_33_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "0f7ca772f33810bd7dfe38ceb28d7f3de9145d76f4250fa5a4bfcf4a421fd58a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_33_wr.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "cd32fd35293c046b2f364599dddac198a17879ebfc5bf98c97ed84dc083bbdbb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_33_wt.npy": {
+   "mtime_ns": 1784035028000000000,
+   "sha256": "5485523a91f1f92f3a517a8bd9a1c20e150056adb15865d070636cefc83256fa",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_34_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "518e121c65a81c31cf7b524310112620302e73a5261da438ee7a86589a72d6f9",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_34_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "67bab8f67a810c2c8f60d0fd0363eac741e2ad1ea005010bb68be46c2af3fa23",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_34_wr.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "68932f3a2e8a7063543a42ab7d4d221173caf2abfcfc08b2cc95c64bd0a20b45",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_34_wt.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "d1562879c777b0158aa5919f6f52114e345d59a9f79bf1907b11c2c292fbb4c5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_35_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "db436bf63e80f61d3bd43440a5e4d1feb88b0f8b4c1a93c2207fe8ccd0d3cb3c",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_35_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "c26705ef88c8806e568294bc23a6520831675956ed40c23f207676fd870bd762",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_35_wr.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "3bb431a41673e9ef6f811f9f025c2305fa8d2f149808bf87bd4d61538eb2806c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_35_wt.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "46ea3b04257a195427944881b2ff8a7dd029db68e790af76e076359f36447a6b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_36_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "05d52f08c4e1da204628a6e0db55d587ab401aff6a2788259d2c93dd88985567",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_36_tdw.npy": {
+   "mtime_ns": 1784038667000000000,
+   "sha256": "b5383dba98af77c6b178bb454151103bc96571b11f3f3167a752db52362a1fcf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_36_wr.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "b3058d77c949372458ffcb6cea16d2356fc58ed494ac8e1d906406ad9017a90b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_36_wt.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "c319a234fd693522ecf9c4a829828bf8f6123fff9c74d96990d65707338d30bf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_37_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "0b7ab15792fcc7626a23817277aabcca41bdf65245086e1c39d1c18f088ea943",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_37_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "dc5aae9fd4581869472c7f8847906a7179aa325b37b35ee545733f23afb08692",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_37_wr.npy": {
+   "mtime_ns": 1784038520000000000,
+   "sha256": "e874286f49884751640808a7ed65d87558d0dc72139ba801bf4cc563d2d2849c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_37_wt.npy": {
+   "mtime_ns": 1784038520000000000,
+   "sha256": "1e5599c55c6e660edd431bfbea0bb7a4a18c35fdacc4eada62b57eb2bf7a53a3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_38_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "a0574104367e8d1f7d6a51171e79d307cb3d66263052593029ddf1d46634b512",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_38_tdw.npy": {
+   "mtime_ns": 1784040191000000000,
+   "sha256": "9bc70da17841507f8a9ea4e6aeaf8c1f476e1f6b51c38c4b2768cfe72cc879b5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_38_wr.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "377a3506c05f1be900d23a47964f92211d3958faf7bedd5f0bb9a64e9e5c997c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_38_wt.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "0e126a7221de81d968f45a67c51c12ef859859785c39d0da58d17a9d4025d627",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_39_bkgw.npy": {
+   "mtime_ns": 1784041210000000000,
+   "sha256": "85190f0711c3ff250a8894f0d658e44047a68edcc42120fc88554d4cfba6dbae",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_39_tdw.npy": {
+   "mtime_ns": 1784041195000000000,
+   "sha256": "23c97e444f9223a8ba9283bb3e5e3d8746dd688e8c44460502464947397dc1fe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_39_wr.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "6848b43cf1830c474cbb62c3952617995b64cc72f515204f6afd174cb4203327",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_39_wt.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "4469553635d64a3467fbd2678e04f93346fe82d0f06c94ec803dafe02cda9449",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_3_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "5fbf62192245c276d91d2d3407746733380c336d439820a10d3d4163e13d96b4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_3_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "f32f094b35c7bef7506e72f52f8990611fda0489a2fa0977bbe0328febb6e80f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_3_wr.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "827b3e5bc2ac6471a3cfb1786625528bbb49a9c7216b562ba42b699b70512914",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_3_wt.npy": {
+   "mtime_ns": 1784036854000000000,
+   "sha256": "d887055dae3b358c833de1116e873e80780b63ca59ac7d4dc9ddfa7431dadbee",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_40_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "185ef21ccfc8f20f94c8b4c037bb41054e8ecd377b3c22b6afe9b94f243dd45d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_40_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "ec389711b86ecf3de6b1999ef72339ea9d0cd44a1d32e1fd62f85203a869a8ee",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_40_wr.npy": {
+   "mtime_ns": 1784040794000000000,
+   "sha256": "b10210d67ebb26762b7f8e3ec4a4dd734d2c6bc51b0334e2d776b7b4e56cbbf8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_40_wt.npy": {
+   "mtime_ns": 1784040794000000000,
+   "sha256": "2f4fd9bf208addae45881991c720f2a3e8abb0e8f28d04ead3ec0acf359b9097",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_41_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "cea89aabc1a04c9409c65a4ca5bc857c39e0b90ef735aca4aedd536b4448cef0",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_41_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "48cd1126eb5efaac8d8d784b026367497caa055670a07f2cbc061adffbacecf2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_41_wr.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "26b1c9f0da178526c2d5d12e7cd792cc87fc816dd76c1db034c06d193d90f86a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_41_wt.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "c32b6c4094ef2152d0890237beca99a8330664077d6fdc755ea560e8a127049c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_42_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "9b749411b01261fe48961169fa5bf551860b367e49e5c504bb2e3dd55b5e74b8",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_42_tdw.npy": {
+   "mtime_ns": 1784045848000000000,
+   "sha256": "ddc654868d82aca02bab0fd1b1609740ec54d209d8508e1dd6eadfb0a116ed01",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_42_wr.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "fc335cfa0cb4ba3d1edb951adb7ae437dd1801911bed8698a82c38db91ebf580",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_42_wt.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "bdba71b367e8f152e7d211849671f6314ffa66e77ef30b2ddf443b4cbcba6383",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_43_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "50159d815d7cc12ea461368fe0147fe1c85760c48e5b147f6b868b7d871a6eb4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_43_tdw.npy": {
+   "mtime_ns": 1784046499000000000,
+   "sha256": "a7e8abaf1060f0703c6cd6eac4444c5e535d27c9efd945b6a7401edd4ed80d3a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_43_wr.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "b80849b9f38bdde29e7aad80c30dfe0ce360dc0d80e0ab159111fc01a96e5ef0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_43_wt.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "fea07a9cdfef4dad2b9f494894543665d37706552334ca3e1f6c64bceb4bb281",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_44_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "25a9c54c0ddbffc54db9e22b16dfce39eda5ea80e918c6b358bceb975f0a0b52",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_44_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "3e8ad3d6afae0a05a93091f3b8c7fb65c533421f49d8f24a33cffdefffe2f8de",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_44_wr.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "b97d3981450c827d3a6d5a2b3c5d2f2de3cb1db72999ade69d876f45d1f4fdb3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_44_wt.npy": {
+   "mtime_ns": 1784048584000000000,
+   "sha256": "2289defab0dc6bcabdca15b477426e925ec4de35cec76eb24666f415b32bc88e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_45_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "9bd35b9b654d4ec74c26fadae7204ed1ead450d209dee1ae69968806a038c53d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_45_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "c187e63df6e24030bdbaa6e3d6cc81e69a6f0ed3ec64337197ced00d5f94774e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_45_wr.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "ad1aca4c1ff880b85a002542feede744057694871295c583125368d8f217870a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_45_wt.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "89efb8050d3bf8463c98159261c9316c5691d53adab6628e4fa79c8a21f3e4e6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_46_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "61339714f16882dd4a0bbd74c157ff831c3cacd7008d46fe5fee30d718349609",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_46_tdw.npy": {
+   "mtime_ns": 1784051802000000000,
+   "sha256": "9a098062e96469cabe346cc36c3e55c4994f50962ba7fa3d653ce3ab820434e2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_46_wr.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "f23969674d7381074c519a4f7ba7861ed90184890e693ddc0325c6572b938eae",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_46_wt.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "56205aee59e19637f47876276a50b1e5e0660ca7617370f99040107dc1e2b284",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_47_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "898f5fe9e56348378c7b5a1186774b93b5ee067572a1cd8e1e17d21e0e0e5542",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_47_tdw.npy": {
+   "mtime_ns": 1784034744000000000,
+   "sha256": "9c1757ef67850a2bfd013ee76cf4fb29cf4ed9f272aa21fc5abe31904f9b599b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_47_wr.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "11b0c210e4265210c7938aa6a63d16cfd70bc909af3d9ca246875e13cb86a80f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_47_wt.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "36dedb9acb22ad59eb9c4ad980c29fede1c8a1bae6072b8839c6126a70128f05",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_48_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "8166a6fa54224921cd966a033ecc595b1ab538c0d2731e806d709a893ed4bf4d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_48_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "21a51b2eef87d3f8c4f902a0546907091ff17676ab05b081ad32dc57a2ab3db0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_48_wr.npy": {
+   "mtime_ns": 1784034021000000000,
+   "sha256": "48ad501eb52b76207c970e8653b72c71eac26e01ee007f6377413607d791aaf4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_48_wt.npy": {
+   "mtime_ns": 1784034021000000000,
+   "sha256": "da9a7426bf157816d998fd0397d903ebf21d894161f16d2c954c4087a2867d3d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_49_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "dac3c131a39400ae744bcc4177995ad4d40a0bd10a53a36fd40a5bfa1b1d4c09",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_49_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "3d259fe82c12af21cb92c94222e45e1a9e0ed58de4c43cf36d050b89ce223c99",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_49_wr.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "18983e37e550c0d5c6c25d0427e091463a7d40927f9c67f3adec0da1e1ab1aef",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_49_wt.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "bc20ee0f2390d69fedcf2a795e971fcfb6a0b48205064d5779f44de87b868e06",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_4_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "6c1e31dc0424e0f3e807799f23ed9e432c8b337f7b8a8c8c06786a17abe6cabe",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_4_tdw.npy": {
+   "mtime_ns": 1784038667000000000,
+   "sha256": "937e5fd6085eb9200bb4e45d8400cbf4a9db52318e13767ab8b1e32f660f016f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_4_wr.npy": {
+   "mtime_ns": 1784037952000000000,
+   "sha256": "90dcfdeca438ffe0692f07a136a21756e45462389b25a952638716e71d88ed1e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_4_wt.npy": {
+   "mtime_ns": 1784037952000000000,
+   "sha256": "f49687c6c88c141ebeddcb92bb0b6f7aba4635f6a60741a3f21260f5a1fe0d9d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_50_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "85157931f5c0018a7ccb5a2488e7d5e468a93e473ac1513a5e49f4d477c08bc2",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_50_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "665a375b142bb9b807783c7511630df9983740559e9d8c9ca421083254d1cdab",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_50_wr.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "61c756bb481198ac7cca8ff95200e1547423e2a0160c5dee9803b1620307e6fe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_50_wt.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "5dd27879306e801c79ebc28d6bfe7e9c132159ad4b3a24e608f4834db75a9540",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_51_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "c71be5c871f1ff68a95da7486c8e2d584e1558ca66191deb3d141048cfd53f69",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_51_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "730ed9175bcbd4a0a000c60dd85fdb28b0921258b5758f3625bd9a450107a9da",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_51_wr.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "b4652a291b38c03ce6784d7b03187bff975afac5cf10f0276489b0db38bfd829",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_51_wt.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "fcd751605f29fb42556b594adbd8649df9c82a1768aa40d4df4cd80467241d3d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_52_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "3daa761a737af01277c39f8cce740c72515d66764351d9a9d8cbdb1c06f31c66",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_52_tdw.npy": {
+   "mtime_ns": 1784038667000000000,
+   "sha256": "d37f00440b008fdc50b6837756bbd7e70fae20f371b96f14c8d9c30d27e77264",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_52_wr.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "a2c56b8e8629e8ebd23eac921b286e3e9ab52c2108f03fb4a736c8c59b4fb363",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_52_wt.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "e9fc67b6726921ea8d2d5a2516923f4acee9c1088023ab68e97e49a71cd9a724",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_53_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "3317f1b4c514bb289484d4fce055042f5d3f4dcb2357cf356ba2d36b0d858b55",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_53_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "b185349ebeb082fa4cd918757a6abdb4212e9c734c1fd1d16b68699c7ff935fe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_53_wr.npy": {
+   "mtime_ns": 1784038521000000000,
+   "sha256": "6179f01d9cdaa2f1a57200d2730dabf7f289e1d5a7607de7eea8fc52136024d1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_53_wt.npy": {
+   "mtime_ns": 1784038521000000000,
+   "sha256": "13f5c8b3f354e61471dd64db20af61a577981df77a297faecb10a7d9b31fe3e0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_54_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "b9b0bc8b658eaf34ba23c0cdab61a4cfb8531fd6fc294cbe94c560abe75b2bcf",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_54_tdw.npy": {
+   "mtime_ns": 1784040191000000000,
+   "sha256": "b3bf6d45eb0d5707d32a5e1f8baf967636ede3f9e05ab4e1c04dafab51b97650",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_54_wr.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "2ee0b250d150fc742af3a55ea808bd6e62f5e29f256473903ae472e103cd4f0a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_54_wt.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "461646b0ca0bf9c3f90768880fbf910bc0cd0fe8ca64f72849cfe32ee342e614",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_55_bkgw.npy": {
+   "mtime_ns": 1784041210000000000,
+   "sha256": "6bb1f439d33dfc4087b6099146bf6a0d2a7f6f17aa5b1156d6f597b93ba6e372",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_55_tdw.npy": {
+   "mtime_ns": 1784041195000000000,
+   "sha256": "207146df51191517cc5d83ea807d9696e18df8c48da0c6fbc34d2c26d8092794",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_55_wr.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "0f065254adb3b63ede94fc27b190b91b2c2c8c4e606a8891099dad4531844e7c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_55_wt.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "0eb9094540a5e1f854d76e532d1ba5e6afaea4080b545ff14c95e7921619b1bb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_56_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "24ddbf5e2c6663e9d9e2749286390ed3b34ede0a7ddf7b7afafdb9752f56feba",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_56_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "0b4e466503667c506ab238846ca855324f56efd3aed60e6c1a0b4aaede8f8dcd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_56_wr.npy": {
+   "mtime_ns": 1784040794000000000,
+   "sha256": "34e2bed6bffdfec15e4c7bf3c1b904f99b128c438cc410a82a1fac75ecd9cacb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_56_wt.npy": {
+   "mtime_ns": 1784040794000000000,
+   "sha256": "842ccd1af4fdd84de1efcad4ed0140f78cdffe9d8db9225044b20eb90bea6b53",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_57_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "134322830e872bcdddacd4695a094c2a9ae5fb817536a942fc1e9dc476506c11",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_57_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "7ce06b712e24bea8199ace7807ca401c1213dab5eb9f3ab21bd3fad2867545fc",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_57_wr.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "8ce50aa073e6dcbc309a5d4ed641c4d9a956431442e07d9a8d19c256bda2498b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_57_wt.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "2684d36f1434ae47dc7c9c0d1fc045a3c3f4a25d14bf3bec311e7f6e8b8ac5a3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_58_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "4f1c23dc1c2025c0a062fc8e41ef25244e49b3b69deaab1c4311d8cd7d6f48a4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_58_tdw.npy": {
+   "mtime_ns": 1784045848000000000,
+   "sha256": "4da02ce7e7867bf7b6e59717564b08399542651b0c72c32823f216a5e4b25f67",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_58_wr.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "c7bbb6ba38ab5414a1d4bc4c83e84a8692578b0f80117960bbe6e172effab3db",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_58_wt.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "be5b74a191cd6b80e37fde92e5cbffca875c4ac4a5dd4b9dbe0fe3c2c6ae4924",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_59_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "07edea85219906d921fcee8cea6383efbe1ac891d8df482af06f14f0231ae97b",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_59_tdw.npy": {
+   "mtime_ns": 1784046500000000000,
+   "sha256": "2333cff8be489eef9634e58e2f65c1f2d341cf91872a72a1f6c4b185d0752837",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_59_wr.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "9f5483c1944330001fe407a976574a52b5d29036fdd73e067b0890eb5505cd5e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_59_wt.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "71a2791dabfe7fd79201575c1ab405acd14786591824cabac94a3324df7e0fbe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_5_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "12f1b0ef600fa31df9b973c32326789331939abcc4b7c95c48c065b85c91d3e5",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_5_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "5f6cc30485e0d1e2eb707dea384c20a4fdc9e3d1f375b4b54bfe38f9b98de9a1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_5_wr.npy": {
+   "mtime_ns": 1784038520000000000,
+   "sha256": "f3b16e0b06d1d25575448581f6e8fc7c5cbcc749ae8ad2f076584f0e3c6dba06",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_5_wt.npy": {
+   "mtime_ns": 1784038520000000000,
+   "sha256": "c812cd1c9d422cbee902372f491fd42989e6b43882c756d7bd9323d792486f37",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_60_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "9a7529768030e3b3fa8bbaba9b5d684d40393975e761dc0a1c039259f44bdf42",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_60_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "9b77bd621cf3047229c0febb157511fbb9aad377e0762213dd3c6d7bc604dfe6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_60_wr.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "877a03204cf9d2086de7796e75befc69594e2d70e2cadd3b129899af38b8bffa",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_60_wt.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "40ca3fb1c7ee8ea5c3970697df40c9029e02d9bc158f97a653b5510ba15c6392",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "2f9e3bac3a9aa9721248f72b5a7a005fae07997f555aa0e89c6828c6f752c142",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "3ba2ddf7fb2cb8e537797232e6eb4ba754979d97e9b249efe1d425f304ff3ad4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_wr.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "022e5f506f61fde73fc2d1766f49984cc868618184234a983818ef01cfeab077",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_wt.npy": {
+   "mtime_ns": 1784049730000000000,
+   "sha256": "3585b077cf511e4f148bad9d274f6895a0c0b25fc426b2d5223e8f71a6550433",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "529996f8e713c6dde785d796b31949a19cddf2b300708d64fb972045235a12ee",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_tdw.npy": {
+   "mtime_ns": 1784051802000000000,
+   "sha256": "6a19a05002fdd82f9240ae1949d36a0ef1bd955c60db8aef34719aa7190ae662",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_wr.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "6e2b00d8a738ea1ee50cf47b9628873bd86c12f0e559d0b7934ecbf27280a106",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_wt.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "93c4f2855f79f8960164cd1de8eb8dd21e1a9cbf6ac36efdc0e1996b53929ed0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "f45ef3f5c027575f5b3fbb944f8301d3670832247ffa9ec4380b7ae065e27893",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_tdw.npy": {
+   "mtime_ns": 1784034745000000000,
+   "sha256": "be0a3f02cf5da0c53384ec33215c9151fc40a54967309ceeef39e645203d106f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_wr.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "dfb89efa822985e486510669b0850fd6e98cb2a8fdf798d378bf33e42322c863",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_wt.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "a5c8d09920aa43aea0b2e023512938d6f7c2c257423ed43f16498c0a8b4fb39d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "7fa8d67102c995c24697687c577919c439216cc41836e32befc95859fa6a27ea",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "cef6625b33b3250731a2b13a80ab5e8d883014cb168949a11628a3535f158429",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_wr.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "1c43b80e4e0674a39256c0f582292bb59b9c76e6e6e31175ed6bb0dbd7fa92d4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_wt.npy": {
+   "mtime_ns": 1784034021000000000,
+   "sha256": "2b105e06ea0ce5548a16c1d657619016de57cd79e6300c58904776a7f0b5c0e1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "a08a47b899d2e227aee25d79dfad0058b5ef978e5af1b33c7ca577e4bee34ee4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "6c7d87f8bc1041c57990d28a12d5b1b465d46f20e0baa75d476f773598efeaa5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_wr.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "ac305f3c32ee509cf2f28d5ffadd656fa637135b2575753d4f07572ea8f657a9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_wt.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "14478641afd3cd4f6a4fa579fdf3d7e3d46ae9b690e0fc15ed31096ae312b019",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "4ad6c74877494c9b86498127a9948b5432ddee8623cb7c7cdd0ca3a433821a53",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "c0202bd873dab0244d8eda7b5592e4f5d0187b9333eea099edb339d07d0e2431",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_wr.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "e47a3e68bb97faa4d8b9e7d1192b8833601aa130e76ddb3990dba5687e6837f4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_wt.npy": {
+   "mtime_ns": 1784035200000000000,
+   "sha256": "2f9d0c933ba3ddfd4118a8205c165dcaae1da2a875cf7ac3700abb65f96f557c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_67_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "c7f4611e3d084911469cd15309363eb451b4fdf347837111079a21d052e35785",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_67_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "3dafac5627922653e32865c96cba26c147cf2f8787663784451bb03851932a7a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_67_wr.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "a2c0f1c5e2ba405bca9ff820a09e3ba65d382fbe4583fa2414599fef47fdcf98",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_67_wt.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "5c5184817e71904dc4dcad0af1aebd963dfb7f84d4c7674ea7ed4cbc21ccffdf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_68_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "8bb883181ed91e124bafc7de3e6a0695a5c5169d202715ca08dd148f4e9d0b5a",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_68_tdw.npy": {
+   "mtime_ns": 1784038667000000000,
+   "sha256": "eb101cddc558e194dbd6724e82dcf4ac8b629ab71e1db39fa56d8dbabc0b8fd8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_68_wr.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "d8afeeebc16666fb19d60235a186c1a3732708bdbf840009a097b09cd69a7f2f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_68_wt.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "441aa201d45e94924f209c42254f83147ff90c8e9fda3936c9897d7051cbabd4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_69_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "9abad33449bc81de2b173d1eaf98797f81933844dfe66bfe7d6833a8a58c634d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_69_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "231c4f31354bf47d046f1a4a287e6f00fab3c898b81b1dcc855aea28a6459965",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_69_wr.npy": {
+   "mtime_ns": 1784038521000000000,
+   "sha256": "5b91c09cf7d17108749637aec029e7f28f7e76a64498769207d47729b33ef8f6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_69_wt.npy": {
+   "mtime_ns": 1784038521000000000,
+   "sha256": "64a8739bcf0fe02a9b4447b8b68d5b7a42583f2a0065e9c49887dc913a63935d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_6_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "dcb6ead49b3d4fe4c88a1f7351f9e5cc272dafbb3141dbfdb37824a82fd95502",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_6_tdw.npy": {
+   "mtime_ns": 1784040191000000000,
+   "sha256": "a66d5526abc0c60e3b54a630235fa323faabd8def65e5c0d920ff548482279e9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_6_wr.npy": {
+   "mtime_ns": 1784039567000000000,
+   "sha256": "0986cb4335f428c6d7b980d648a3570bf5576b1669240cb7321fd2d0c63c1e33",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_6_wt.npy": {
+   "mtime_ns": 1784039567000000000,
+   "sha256": "8af1a517a21ef2a3604369bc66f47074549173e4eee2c7165a1d52ebbd321206",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_70_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "5fb72d6bf02984602c299fea720e66445a51d853e15afbdaef8a0a39b7611454",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_70_tdw.npy": {
+   "mtime_ns": 1784040191000000000,
+   "sha256": "289ff3d697e9869106b558aa24df01aa9b2ded701d1f0845414e52a366730577",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_70_wr.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "1658c5eaec511408f335f3823dce632dfd920ebc898d6f55a93336b75832ed06",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_70_wt.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "9494306447dbfe39f63aef6a995f88e3c01000dd39da79503f41144e01eb99f0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_71_bkgw.npy": {
+   "mtime_ns": 1784041210000000000,
+   "sha256": "6a6b95ee557b7e321460e51fef1233a412598d25aa696d39252fe5910fcca3d3",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_71_tdw.npy": {
+   "mtime_ns": 1784041195000000000,
+   "sha256": "ff1800b206afa8ff04f8697053f5f6c573fd0ff7a24e594f18e0d95a854dc961",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_71_wr.npy": {
+   "mtime_ns": 1784040579000000000,
+   "sha256": "86ea1bbbc3ed6b2a022c10633cb5992405b0d4abc3c2480a241cfffb5b23046e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_71_wt.npy": {
+   "mtime_ns": 1784040579000000000,
+   "sha256": "f534e7273e2a722ce1674e2686a11c7b77548bd216bb16c9fcc387e4e2dda161",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_72_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "fd9c01be98fd3017c6cc5f02e3ab607827b6be0265b33fbc3e2c3ef709803d29",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_72_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "3d8991a8385153f595d58f7ca5c3184311e22d7fa9fec4b86312166dc64ba1a9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_72_wr.npy": {
+   "mtime_ns": 1784040795000000000,
+   "sha256": "053c252f4da507c88ec4858834b5302264569d44767a667cc132d787ab3f48ac",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_72_wt.npy": {
+   "mtime_ns": 1784040795000000000,
+   "sha256": "dceb489d1fdce1026684e235bdc288fa55271925e8a1a24df60888ba568c6969",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_73_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "b8531edcd3388b29048d6e4a5990c23307b673bed7cadd471edd16b0034f22d1",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_73_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "e60a58ba63ac8f8759c744034e67da69b2f6729c4e9dcb5b281d39ff64993026",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_73_wr.npy": {
+   "mtime_ns": 1784042918000000000,
+   "sha256": "a60ee2fc57846d43ed9a0e9f5fb91a72318aaa1b1db60bc04f544dd745fa5517",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_73_wt.npy": {
+   "mtime_ns": 1784042917000000000,
+   "sha256": "594858d7a90760f611d82d9e1a99e0f68376502fb4b0f5ecfbfe3ad620ea81c6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_74_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "05537f02146d7f3b9c4780de46c684fc28398bdbec0d2ccb6e9913169d815fa6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_74_tdw.npy": {
+   "mtime_ns": 1784045849000000000,
+   "sha256": "905325125c5a245d3ce608987e85260268917800d5508545ad7f899530d47f13",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_74_wr.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "6df1ec739a6278599b951fdb867dbe39be1dc7efbbf73857e81bc125d78bfa9f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_74_wt.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "e7a21da91b30a89259d7869a79fa8396a7ddc01e5a4f006243c4a3f33a88c14c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_75_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "2d8ce24c8880e17a6c4630209c959e6495f3cadb8fde0cebf89a457915dc9720",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_75_tdw.npy": {
+   "mtime_ns": 1784046500000000000,
+   "sha256": "acf4fc0ace1a6401c34ffed7786cc49c179d5d52f485ffc456c39665addc1cd0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_75_wr.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "2084b7c4a36b388111ec94d2c2a0d454eb9c4a11d7927ac9b06ab44fe7eed1aa",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_75_wt.npy": {
+   "mtime_ns": 1784045884000000000,
+   "sha256": "f7eabf0ac7896f71f63256bf501888786ea3b75580ddd1ccd8a2e06b4dc94200",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_76_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "2165a2d5ace158ad98b4624f30ad51dca221c630e39ab277dfe3efa4e5da8b58",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_76_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "47a8b6b36d5a86508ef0975608b3abced4b72c6c415574ac809a8c1361b4aed9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_76_wr.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "6ec99e038948f2568a1823d4829a0fde85830be5b99277076ba1b533f2b7518f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_76_wt.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "0b5b48b837a5abe849c9d8e3606f4123d89349535812bda4016d335951e09192",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_77_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "7fb0f8fb983878a2fdb4709b7e290d9476a1f28504cd43b7c50e176dbd3f2fc6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_77_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "2a7c11d2da716cef13ded4452da1db455a0f6204f50b8864d7c243fcefbe6441",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_77_wr.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "83c8b5803ae603b155b0ef9f01f3bf548585bac7585d9b38951296372730e2cb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_77_wt.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "b618cbcfd11344d493379b7856c580c4dee0f4a71192b4d09dabd1c1a2f3803c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_78_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "be4ec400634dc0b9dfc72a7bced6e9ea76bc1cdb8fa4fd345e89f25fbd315327",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_78_tdw.npy": {
+   "mtime_ns": 1784051802000000000,
+   "sha256": "4b2710068e09248701dd75996bc85d606fce8e0cfe1f99f7444bbffad9fb0aad",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_78_wr.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "f7bfdf70d7ac73fd6554f849a8c0438cbd05242fb7eb16a4722d64f6f0dd2bb7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_78_wt.npy": {
+   "mtime_ns": 1784051146000000000,
+   "sha256": "df4297b2c12c73a7291980c8aa8ff1a9f2f17bc4b5c16ef8768dd971816f088a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_79_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "665721eccaff2419afcc3dfa1eaca78060cb668efd55c02aeb85ed83cca880f8",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_79_tdw.npy": {
+   "mtime_ns": 1784034745000000000,
+   "sha256": "9aa23815a315924beeedd0ef58583ed095ad980b8db47214d78b0a073b9002bf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_79_wr.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "b124cf60d095aa7d3c07ec1ec4c10342b410c8137b5a7996695844203f0b1ded",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_79_wt.npy": {
+   "mtime_ns": 1784034075000000000,
+   "sha256": "d7fd29587c1ecad2d4b94f965d7086ebb314b7d05e2d68af2d3cc2435690764e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_7_bkgw.npy": {
+   "mtime_ns": 1784041210000000000,
+   "sha256": "bdac7fa4a0ef7a984182fc4a3e4a66b4200023966323bda3e88cd80ec9fa2bc9",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_7_tdw.npy": {
+   "mtime_ns": 1784041195000000000,
+   "sha256": "a613ea03590e1da55d9367a07e72e1773d70493202a48fea295b73a94e78268e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_7_wr.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "767ff787e47fa8b8eff121d748c74bac3d53d6d89405574177999fa837894a0e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_7_wt.npy": {
+   "mtime_ns": 1784040578000000000,
+   "sha256": "049ca4bd994ab861fe866ad98e258c31f18e1965ccdc27f33d118e8256003374",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_80_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "e6d6a0a93fdb1a6a736a64bf13ba5082f3659b6bbc3dc2a1577ba7f5dbb9d9df",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_80_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "98fe7892aad543e071398e41b4851306ca370acb6b219bb3550f6e58c2877306",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_80_wr.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "7dc58dc4646ba42b706105e7e2f72b0223a3584f51354f626e07fd6a4a876325",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_80_wt.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "93f82a18694c0ba52ff751da1f549c02436e8f3180c408be9a510b9807cc4b6f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_81_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "2a5bd83c6a3b7ecb25f8011dc14cd9a70bd2dae712c5014c542dd603f46f8ed6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_81_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "56ea6c4d812f66345a442fe1ebf92b790023e3f2c7691a11ed4ddd53a0db8d97",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_81_wr.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "2afa0843553d9fc8b738edea5c4dbb4209093fffc6637cc17be1d0fab27a5146",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_81_wt.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "69a784ece6aab31ac41381d03cff886146629986acaf0d9c32867af068ae1252",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_82_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "45c586a76baf757830618d2a8fcefd0919c0c19f41436dff21537f015a0b4def",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_82_tdw.npy": {
+   "mtime_ns": 1784035875000000000,
+   "sha256": "c00c79160889f0fb051a3acee36767a16911de778c85f98e5603f2d039c28645",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_82_wr.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "f8d3e877503c9f81579c636e650dbd5aa142768277d0500d362012bc0ab9c8dd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_82_wt.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "ae11e759edd0270b56e45cf857a8fb3026862749fd18df5b894628351a80e58c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_83_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "d3c55a18ab6fb9062ba88678573d8ce63f2c00f8930a4d3b6d2bf3eacd9d6bd5",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_83_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "130abd803066601e1912ec6cdfa6716c9fba2592671b1aa36d694a3dffe6c7be",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_83_wr.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "f1aed675d4ad03916d0a3bdc74b562138b8fbb6c44408cae23737cae9518e2b2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_83_wt.npy": {
+   "mtime_ns": 1784036855000000000,
+   "sha256": "18e8494015cb79d589f0c4be17611c1963ee5a7e851764b7466b88d034a6e22e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_84_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "feda4962fde54d1a5193a4026542d38dfd5d9efe1338d56642675b18806ce5a9",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_84_tdw.npy": {
+   "mtime_ns": 1784038668000000000,
+   "sha256": "16a6ffb6f9f2445014578dabb1e073990dd48039a74c03da333c838a696823de",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_84_wr.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "ba48a3d3094acb5c2930dd6710105ce0aa827136ada2be65a52c60a8a29b9d2a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_84_wt.npy": {
+   "mtime_ns": 1784037953000000000,
+   "sha256": "1a86d0f343ac9a4b2b0307382a02c131f821b32544f8b9372eb7ab8141ec04d9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_85_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "cf3c42a3c7c880a1fe89d5f4761138c6bb0ba47f3de94c97726f3fbd527bf24b",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_85_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "a078bde19324650a50b6dd932a968c2913b3524a22c4ef585eed459cc390f7d6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_85_wr.npy": {
+   "mtime_ns": 1784038521000000000,
+   "sha256": "742e3beeaa36c15228a3de74da30d13f42ce9830b00c53326d7337a6a1204707",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_85_wt.npy": {
+   "mtime_ns": 1784038521000000000,
+   "sha256": "0b590cb3af4f86ae42e8b2cd0683339b87a9d5776bb62a5c3a0f1e306bf198c6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_86_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "0c2012a92f22292b94f7278a77c642fe6a80600068a6210cb417a334b73e205d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_86_tdw.npy": {
+   "mtime_ns": 1784040192000000000,
+   "sha256": "46743ed06fd357f77771694d1100355b1b52cb015a812197e16a0b1fa89b63ab",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_86_wr.npy": {
+   "mtime_ns": 1784039569000000000,
+   "sha256": "418293c6dd4d106231eca8cb0e98895858e9de155323c924bd06ec21f868d776",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_86_wt.npy": {
+   "mtime_ns": 1784039568000000000,
+   "sha256": "2ee2ab17f363c55a474aa1aef4937e247d569301c074b27e582e719a9808b379",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_87_bkgw.npy": {
+   "mtime_ns": 1784041211000000000,
+   "sha256": "88ad87b5db6c8352a4d45c7b881e1ecd01c0c4f166ccb8d311f9f4378f864c28",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_87_tdw.npy": {
+   "mtime_ns": 1784041196000000000,
+   "sha256": "f454ac19a66f663a9f32f6a3cb002b0407f8644c8695508bcb64769c42326e7b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_87_wr.npy": {
+   "mtime_ns": 1784040579000000000,
+   "sha256": "4058df897f6743f8900dfb8ba2c85b53386f86c8c7979a48f9816a6f3aa4d86d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_87_wt.npy": {
+   "mtime_ns": 1784040579000000000,
+   "sha256": "0e97d81e0862d1fc92fcb643986697a357699884f43fa50d536f0d58b928523e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_88_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "d38e12a235f64e20c81839475548194654ad28a8e5a7f8f74ad0d874688ce2fb",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_88_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "1ca00a9be2fafef54eb29015dd969f475dc0933f12319fc79afa6cf9e4e165be",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_88_wr.npy": {
+   "mtime_ns": 1784040795000000000,
+   "sha256": "5023f229ba016dce91783646b486c8bcb1f85e7d7c1121e11ec108b3a879004d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_88_wt.npy": {
+   "mtime_ns": 1784040795000000000,
+   "sha256": "1be4cba1b3fd0ae062ad1ad0397bd87a3462c150b5099fb9f236ee33e28a92d5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_89_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "644cb3ba6a0a5c976a8f96d6d72bc934cb1c06877c994d4aaf9b3e36d0a487c7",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_89_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "8d04b2e9e5351b658bf0cef16cab64b14d9b9329e6588ed0aadbc10be2e0068e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_89_wr.npy": {
+   "mtime_ns": 1784042918000000000,
+   "sha256": "21915bb2cc08e631b6b61fa59d13d62a21b3c5d0be90983da067a9144b1e584e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_89_wt.npy": {
+   "mtime_ns": 1784042918000000000,
+   "sha256": "dd8b884b5c49789b61607a153844fb55ff20b96ce4b896b1f7efa68c874f057b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_8_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "2e6c211e2a79ee73dac1dbd73ccc2a8e38ba452420c4b90dbb5327a998ae5f11",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_8_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "3a9f81dd91c6222f13fc45be2b4ea2414a77b247b20f58909cc8ea237c912539",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_8_wr.npy": {
+   "mtime_ns": 1784040793000000000,
+   "sha256": "a55308dc4ffd00d479bada4db312021d714d3e391051cfdb8fa11de5e60458d1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_8_wt.npy": {
+   "mtime_ns": 1784040793000000000,
+   "sha256": "0c5f27c18013dfd4fb5a9fc7aa25f92b227f4a2ebf1b1edfa81211af8d7e1bb3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_90_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "4a98b3eb6dc41864b0c081c87b205db9ec31f0b497d327dc1bc7f3a301e1716e",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_90_tdw.npy": {
+   "mtime_ns": 1784045849000000000,
+   "sha256": "c8e66a2845772e91496f58ad6cb4ca0ad9e4497c76cfbc9560f327a4a2964505",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_90_wr.npy": {
+   "mtime_ns": 1784045168000000000,
+   "sha256": "e2ae6c02b7dfd958daa4118d529812ab59790c88550401c7d7c1757e39097b24",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_90_wt.npy": {
+   "mtime_ns": 1784045167000000000,
+   "sha256": "3dee712ac6376ec032018e27ff9bbd46b8e7f9db4474e6bab6c9bf500528bdb8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_91_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "9666f68b6e15aa6ecd4e81a746be80c82fd1e3c26052b1f8af479dcbe59e72d6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_91_tdw.npy": {
+   "mtime_ns": 1784046500000000000,
+   "sha256": "68ed38118066f4f5cb1ed1389be4d5776cd89b5363c611930909cab8c5a075fd",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_91_wr.npy": {
+   "mtime_ns": 1784045885000000000,
+   "sha256": "9571c251f6b27667a01299e4d9dfcd5b5b8d965d9b00dfdcb56f729258eeb7f9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_91_wt.npy": {
+   "mtime_ns": 1784045885000000000,
+   "sha256": "7edb64c528ec701439dc22fdff39d50a362a9675bf2f464198260d2ec2b3eb23",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_92_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "19a363aa3f5090a88bc77d1b7b09b1a8cdc94d9068b63b91a3907b09ef30ef6a",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_92_tdw.npy": {
+   "mtime_ns": 1784049250000000000,
+   "sha256": "0ca4491968ccd28530cad6d3b2930a22ced623117d48f672964914bec29021ea",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_92_wr.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "98200ae2d3b385ae9b9eac39e4292c887e03143ab6a6c9964ef92ba38c998145",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_92_wt.npy": {
+   "mtime_ns": 1784048585000000000,
+   "sha256": "2faba2a589cc504a77b173df8f8e194d8bcc861120290ef3ca78506a88221119",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_93_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "a2e94c8a45eab7535c10e1c91b170f2bc8cb13d502043cc6977652721b3b472e",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_93_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "bfa623fd88ac2aa55fb823486ee25698b87dfe8199f25ff1834c62c58dea7db4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_93_wr.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "9bf895d79e8d1f8299976c38061fd2e6461674ad58d7cf32b29d49f6368d5d07",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_93_wt.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "3a069416daacc7637b6a0ac118cd7b88bbfb3f37f5ac5a31997bf84d295743c7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_94_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "9f03e0960814d495c4f79ab4c759287849829ca94696602b56e82bcf934bd687",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_94_tdw.npy": {
+   "mtime_ns": 1784051803000000000,
+   "sha256": "b9575098eae0e59620abceb75711d35828bd908828b6be8040ac719edffd7e65",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_94_wr.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "466cf10a1d95b5e325c26e08a3df7738c0a1303990aec131887eb4e244dac23a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_94_wt.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "c95c534b8a11a20422d7dd98d58d96948e1b3f821148be4296c1c4f9b99274d8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_95_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "4301326d1e4432722b88bc8fb262207c16c451df3535c1b7d7ac5027786cc36a",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_95_tdw.npy": {
+   "mtime_ns": 1784034745000000000,
+   "sha256": "258fd6cb705d3b94deae262057c30dd540345488f4657c398e5358d1679ee1c9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_95_wr.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "703050e3ff71e554e3e826da002b8949da077faf3793cdee20ffce95c077de47",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_95_wt.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "d0e32b4261b64821ba05b53aae0bdb2307119c3d3659a1cbe1787218f573d665",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_96_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "a9f250779028c58b06e3ae84a28289caa0894a0e5cfd294e700bdad31eb21b08",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_96_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "a21428218bd3ca3ae1b5afac5fbd9d5853b7b09a18eff3c249cbe7693feb8ef3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_96_wr.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "45a561d6a59e5fd8f4d03c0fe47fafa99d63a44abeef8930fabf80c743547018",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_96_wt.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "36e98e4469af7c50de1aa3d66ad275b39f5ff1a423b1e9435122b28385a985bb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "f4680455ca24e411f09a92c79776bf5f35d2f25eaaf14a8be780e59e0d155674",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "90c1b0f00de375129e4446dafd5b4619d3567fba2cc979e5972094f1b9495a16",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_wr.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "222dac6470092cd06ffe6e53895452e3c85f18b92440e50355a270c57499313b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_wt.npy": {
+   "mtime_ns": 1784035029000000000,
+   "sha256": "3069c99281ae06315981409981f319f9b8902ec2ff583b3fe8d3e886731092f6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "70f4a1fd750c587b4e812333ccde10491e40334f23fbe310d414cbb6a32c3bc6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_tdw.npy": {
+   "mtime_ns": 1784035876000000000,
+   "sha256": "023289e02306248a40ae59664503fdc280be748b268a739aaf3fdb6820ce0d5d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_wr.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "e46eebf2db80bedc76e7038920b2c8d8824e5e900f0a43c2135b832574caa941",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_wt.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "02545fe098396d6c00a98933b0fd6d269565e09b22e817ecdc053722ea6bac0a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "ecd54aaed7c2513d3ddbf41878e1e1322785a225bf6290b47018f19e066a26b6",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_tdw.npy": {
+   "mtime_ns": 1784037507000000000,
+   "sha256": "2284b3d79c81f7fc798b5deb7b15bcc8f5077737ad2fb969d8014cbc8ed0447a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_wr.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "454360c3997c183ce67c18a311f46d5acd6d78504ba5e7e8cee6b54e489807e9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_wt.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "20233b4709f3825164ad23e91ac59094ca285410de1bd70dd3ec1397ddef7762",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_9_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "1114aa670db1cef70fac9d0e7a50ddf12e7850a3355f425e3f740115ca4627d2",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_9_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "64e88f767eebebfc6b1869532f104a4fc52ad4656a0dfff2a18af4ab5266ff99",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_9_wr.npy": {
+   "mtime_ns": 1784042916000000000,
+   "sha256": "c41c110acf4bfbfd8e8c9dc935ee0295eb66395abb0d8ddde074c4fc36977920",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_9_wt.npy": {
+   "mtime_ns": 1784042916000000000,
+   "sha256": "366cab5e87c7acc561d30da63a51e7d590a693280af6a02b954a169f3f3cadad",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_0_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "5b093c84e4f49634b6066d33dca0d4556ac85657dc63d6efcbec6efedd1ea075",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_0_tdw.npy": {
+   "mtime_ns": 1784038668000000000,
+   "sha256": "04ab0cfb5e28a36b7d2050922431d7ec6f928a707b9e4a21596f3cfd3f05a83b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_0_wr.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "387712a27257156335c698f7c077b75b70bece6b731a0c38db53ef925e981844",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_0_wt.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "f372003998c372b614cd4fce4eaadfe2770bbe630f58d9e8099109c94b88796d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_1_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "ab9930c27983ea5cea1f610b8413b5663e76e9b79e1c8fce78ca497e9e04031f",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_1_tdw.npy": {
+   "mtime_ns": 1784039199000000000,
+   "sha256": "1cfeccdf2baf0609041fee3103d42b7ba86c84b619996a6aebfbc3e90090f1bc",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_1_wr.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "e8acb3da82beeb6c9a0f8b95b03f904ccf429d6ae288e010d50c6c6907cbe178",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_N_1_wt.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "a68527e97199171bb67997b6c545f5440bb7118fe18b416a78b4007c63df5ac1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_0_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "86e302db34d2312d55cebc5332e16d8d6417b44504db0398c0c9fb28f4f3001e",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_0_tdw.npy": {
+   "mtime_ns": 1784040192000000000,
+   "sha256": "31d8802045c9e1e990735c100b8bd73459226750e4d30f3686e55a8a2226297d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_0_wr.npy": {
+   "mtime_ns": 1784039569000000000,
+   "sha256": "3f4688226b454ae31a9ff6529f201165ae59f8add7ddc5c629d231e6234d51a2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_0_wt.npy": {
+   "mtime_ns": 1784039569000000000,
+   "sha256": "a0ab45f8154f7a66c3c8ee4bafa91263bec3fddcab47d832631c78b688842668",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_1_bkgw.npy": {
+   "mtime_ns": 1784041211000000000,
+   "sha256": "4cbd41ae188ae52c8e4ac6fa2b5358cf0b45f6f04a1abdf5edaa0c0eacd01a03",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_1_tdw.npy": {
+   "mtime_ns": 1784041196000000000,
+   "sha256": "46398697a7fb2f675aab65e349b8bbc868fede2e8a4933972c236986666b7095",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_1_wr.npy": {
+   "mtime_ns": 1784040579000000000,
+   "sha256": "629edd5dd07eec00f73916d79e87dba672f633fafc9fadb478320a1498d528c6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrAbs_pi_1_wt.npy": {
+   "mtime_ns": 1784040579000000000,
+   "sha256": "7bb07a8a819ab0230b091fd0d96c17689bc0dcdeb166bb1abdac7844fed7e140",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_0_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "60b00b6c664fd7dfdf12d685a786f08d9b1ce2a4ff5a2a9712c2ec791a2bbac4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_0_tdw.npy": {
+   "mtime_ns": 1784041470000000000,
+   "sha256": "545b2d1dc32a8d1911c00ac8518bf7f09e151f6b92f9b9fbb7bf4602f5129184",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_0_wr.npy": {
+   "mtime_ns": 1784040796000000000,
+   "sha256": "d46330a1051f8f283506646e95da5c085d3ce8801d9be04f03d9a71ea3fffcb8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_0_wt.npy": {
+   "mtime_ns": 1784040795000000000,
+   "sha256": "5c31fc9dff37d2b9ccf3449011a1b7f9fa835163a051c9cb07482ce6a90baca5",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_1_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "779296c30c66947ef11db9e2f506c917f785c9a2c69ec07640b612db25f1d6cc",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_1_tdw.npy": {
+   "mtime_ns": 1784043575000000000,
+   "sha256": "1a81f490c54c154cf9c1b22eeecfcdd43813a3fa126060c66169804c364b9a6e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_1_wr.npy": {
+   "mtime_ns": 1784042918000000000,
+   "sha256": "c0acc623980b4bacb16a75488f16103e30dbdb6973edb33cfe514630f1ef06e2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_N_1_wt.npy": {
+   "mtime_ns": 1784042918000000000,
+   "sha256": "2c9aca1c4773e1b7657f7d75448dd76732fbbef826c6b89ad6678e68c389f14b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_0_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "5dc29854c3a2e6b6d030a193d25ac6868f4ec59c203f689061c09033cbc7e31e",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_0_tdw.npy": {
+   "mtime_ns": 1784045849000000000,
+   "sha256": "aeff2ba3c2d4626779a9e5efbec2378e762b275aa1586cf43bc1c02e220ce304",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_0_wr.npy": {
+   "mtime_ns": 1784045168000000000,
+   "sha256": "154956e43f57f01bf43116a3d7aa2419be9018abc8a8ce2a440a93dff4dd300f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_0_wt.npy": {
+   "mtime_ns": 1784045168000000000,
+   "sha256": "11c39036092b7c66fe2cad2075eef5f26e1cd6353920dfefe4f22b6ded6f62d4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_1_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "fa6b769e23f4bf2fc9b8c5668fb201d1e41fba8152e2cdf4e0446be6c0b08c7b",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_1_tdw.npy": {
+   "mtime_ns": 1784046500000000000,
+   "sha256": "1a85322116c66e6bbcc6b14fe4551710e38bcf2c498d1d11d4ae3a9f12de53bb",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_1_wr.npy": {
+   "mtime_ns": 1784045885000000000,
+   "sha256": "93efa8089b8ca2256717536aecb33b6041c4fd3fa724c16a4b9f17a28000201f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrCEx_pi_1_wt.npy": {
+   "mtime_ns": 1784045885000000000,
+   "sha256": "f9f47bc496705f49e8ba24942781873e1f68b905272816edf803b1f3dd6b2a64",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_0_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "d45ec1b8e0af863c9af071fb58e34cdb4fe6529d60f9f405ba620b358f2d31b9",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_0_tdw.npy": {
+   "mtime_ns": 1784049251000000000,
+   "sha256": "fa2db1d70fb02014572ce7752adc9269dbc81327a04eb0949e9a6bc0fd844ee2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_0_wr.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "41e73d946e1fb913355ff5acb0ad06e88a904e6b893410533e757c0825a9b8e2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_0_wt.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "b5173c0fd4f0d1ab817e12eb7d28f212e3dc19c2a76bca0b30dd93b712aa8307",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_1_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "ac33bc4d4aa588ec4c21968d77e605d757fe39c35b5ba6ee80fbc39912983135",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_1_tdw.npy": {
+   "mtime_ns": 1784050388000000000,
+   "sha256": "804053e77b37dc6aee984728e59ed700a161908beed6645bc36035e72de412fa",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_1_wr.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "a0c586fd5a39683b34b72729da409442e914b4f37a582684a4389294c635b5ce",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_N_1_wt.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "888ba40b7d6b9d289ab0b2e691b0fc78a46b11d4c15e3be737b5f156fb644cc4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_0_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "bd1a796bc3bc6c0d7a68597eb40789dacce504620fc4fe86a7fd81c00db4aa4c",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_0_tdw.npy": {
+   "mtime_ns": 1784051803000000000,
+   "sha256": "47e6da7782130466ba3474dcff17705ea01b80ff11b39950bd73b91d0fda3929",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_0_wr.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "bb05768fb8f2d3c6288e62b8bbf73c9ed4ce46992ec8fc4953ec2a17c1146513",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_0_wt.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "47ae544edfd118ed20f7c6b302b989673226bbe9f2b39e7c5eb5fb9f551ab4e4",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_1_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "9dd52ace4d8142b3963d8881c5146f72dbc7684197d293e47b9389123f5ce8bf",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_1_tdw.npy": {
+   "mtime_ns": 1784034745000000000,
+   "sha256": "e9a4c0b538b051df955585b3d11c6a80b42b8f17321d9f1316803947e5c233de",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_1_wr.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "718851ebe1463d5747cce1f301059eff1125da8ecaf69d1d885b4f8880b93cb8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_1_wt.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "3615e8268a4c16f8e7f6d678c14aad0c6f0f88629fa0ba937d08ef0fe67a6765",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_0_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "c9342fb73ea5fffe15248adec7ee126d8c479c1ca26055f4742ebd4a63334643",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_0_tdw.npy": {
+   "mtime_ns": 1784034668000000000,
+   "sha256": "ceed59e69273c1e25a7cf7d08cd0322fad477da0c95b7dad2d492b22f96bc081",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_0_wr.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "d580423e58f62473acebaeef06e789213d4667cc2bfa54d6f68bcdf043b8079a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_0_wt.npy": {
+   "mtime_ns": 1784034022000000000,
+   "sha256": "07380ca51b9f8b34121f5dc6dd8dac10c66ba987f71c0301c46b5bd316c4d535",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_1_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "11ed980bcc42440dcbb606f0fa84c13584660cd559ed70f183bf9d42343cf95c",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_1_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "a4d438b271d189582c61a5a9f2e052b405de5250ed82ca2c51708755c403d204",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_1_wr.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "7c648cad5937966cbe7255d563755667ebaa1809b16ba73435a1b3cd42755572",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrInel_N_1_wt.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "0ad2ba38a9a7f0e4a17ba784b382d9fbdf1030319e14a2839527190c2404eb86",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_0_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "5d7475dfaea4a09ea40a97a922eb1ce2ab6d5bf8d49d2e3583d99039a0647412",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_0_tdw.npy": {
+   "mtime_ns": 1784035876000000000,
+   "sha256": "5db17111ca019191a924e9787f357224940bd91751c87c40207a6689fafdad00",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_0_wr.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "5cc718cfd60eb78054841c12895c46420034af7de77efa7f567d867fc8b408d8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_0_wt.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "c4f48f8d9704c56b541d263afb5d6c0b76ba18bfde4b30acb45e9603d5e9bf51",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_1_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "1cb6f26cebdad787d9e167e33d3cdc23dbf4e88eeaf39ceedf7a49a093374174",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_1_tdw.npy": {
+   "mtime_ns": 1784037508000000000,
+   "sha256": "4a8e1976d20447353497ae583a20ab4793c0c73fea06f083aded8f74324e851a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_1_wr.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "5cb093a907698700febb6072207256b0b51f45a33a45ee17862b2790689bdafe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_N_1_wt.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "3b1372df5fc1322516e7ecff21ad0c5e1a9d8284e040222b99c2b8af20a49788",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_0_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "30e520dce33045e10273cb7055a96a0119ee027abac426ea9fcc0a70c4c6a521",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_0_tdw.npy": {
+   "mtime_ns": 1784038668000000000,
+   "sha256": "9d7cf741769e250c32d018458e8f6d94db384b389da915b01ee66f5e9558a0b7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_0_wr.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "1c8f0f9a59b397c3141287f671b7f8b8f40cbb0ac492465e9ab206c7444106b6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_0_wt.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "5e8685d3c116c00c482401961a952b9070f155488f97017e234b0704708c49b9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_1_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "a1140d16b8dc9147522ac5fa030d41d0f8de196254c7fd0a86b7f5b15c18b110",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_1_tdw.npy": {
+   "mtime_ns": 1784039200000000000,
+   "sha256": "b0c7fb7e80596a1b2faffd2af3324e703d10f01872d2b4b6ef1322c6e932e2a2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_1_wr.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "d4faf5be1d00f1034265b15fb835bdaef9a2d5d8bda6ee9d9fecd3fbd9faf01f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrPiProd_pi_1_wt.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "83c15142f604e78229aea4be3978679f796d963c3e36d42ed4eb9417bfb8ee49",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_0_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "da236dd551a2f07169368258eb20138ae51a664db46bebeece026a2cf03e9f37",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_0_tdw.npy": {
+   "mtime_ns": 1784049251000000000,
+   "sha256": "e0c25b31f91e7b91ab32a2c73019dc52ebde54820c9955dbb2ea2dd5a49cb2ec",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_0_wr.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "4bd154123fb616f47b4116643351d443730a5e4a7d275a1d6357c9edc912191e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_0_wt.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "f17ce78f346cec5cc16b265bf4e599cc3410e3dc71fd29cf0db05696e1084e43",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_1_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "0ca06b57cf22ec49993f53c9643958988a8706905449c4ea7b7e49b1ac0473fb",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_1_tdw.npy": {
+   "mtime_ns": 1784050389000000000,
+   "sha256": "9e951bcf1a12e02f5d3fadb3087dc6798bbea697cdbd1e3aed80e29fad057c55",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_1_wr.npy": {
+   "mtime_ns": 1784049732000000000,
+   "sha256": "bc3f0bdfd231e9525bd5c888371f6375c033e9750bd5cef1cb54dd254f3dc22f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/HighQ2_1_wt.npy": {
+   "mtime_ns": 1784049731000000000,
+   "sha256": "0a666ed83bc7c90b3a218c1c836dd0a716913e99f4a2a36493f228b2da476534",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_0_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "0dad40fc4c84428f48973f03012dbd6fb1b83f4270e7abe627c7692151823ab8",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_0_tdw.npy": {
+   "mtime_ns": 1784051803000000000,
+   "sha256": "47c7925fa8a3e788d47f5d8ce34fb90d0ed9c40142fa71dfd290f79779b589ab",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_0_wr.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "4e819b8351afd4fe7286002391ca737d22bb2ebc448a0379c672088d278cc322",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_0_wt.npy": {
+   "mtime_ns": 1784051147000000000,
+   "sha256": "e4fc27450c806dbf824bb46a1fd6cd60ffb3ce5711a5a1f57c342299a863cdae",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_1_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "42a26c9c706a9fda5cb3554df6aa3c26e89e588e8834a666c729a40f3f90a414",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_1_tdw.npy": {
+   "mtime_ns": 1784034745000000000,
+   "sha256": "03d640c830f229439369662274caf140e1bd28f71e3c19cd973d857161899214",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_1_wr.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "0783b2f5403b9b731cc1353ff69d158f8731bd765dc1eda06d8639c591937854",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/LowQ2_1_wt.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "b7a3b486a5671f3a30e775344c3be579243948fe95f65a7669699dbd17da4ae0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_0_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "ea9f0a33f6ce21dadab0ba1c94c1020f44e428186fd7a173606774edd040ef44",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_0_tdw.npy": {
+   "mtime_ns": 1784034669000000000,
+   "sha256": "3ace3c35427812ba8bc57784f28d3f46d389b194fc536ecee5a6248727218146",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_0_wr.npy": {
+   "mtime_ns": 1784034023000000000,
+   "sha256": "c025512124421dd410b74943515fbd294b756782ef3ffdfbdc492cb225783dbe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_0_wt.npy": {
+   "mtime_ns": 1784034023000000000,
+   "sha256": "a43e49fec435e3168e0eaff832d00d0d72dcb900ac47ab83cb642ea94b0d4305",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_1_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "4c25a4ad295f1729ffbedaddca52da85436e342a05750e8f5888789242f143e4",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_1_tdw.npy": {
+   "mtime_ns": 1784035715000000000,
+   "sha256": "1c5653cddbbe93c604caff3abbad9a50adf7221362db819a41c721669b69738d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_1_wr.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "96fd3e01b434a54180bed043cb05ecb086386a03ff1fa03e988063be4154a1bf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_N_1_wt.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "e4765dc4f58600a3d6c65beaeb027b8e4fbec1b213aa28fb2515873481ce4e92",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_0_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "1ea30eaa8eaa448feff66620462bb01805d5ba99ee057c925c55ab721c3ee084",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_0_tdw.npy": {
+   "mtime_ns": 1784035876000000000,
+   "sha256": "d09bace3aa783939f87fd27e61edba10e1fe1c293fbe9ff9c97c95f6ce07f942",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_0_wr.npy": {
+   "mtime_ns": 1784035202000000000,
+   "sha256": "f04a16d9bbcf0400828a10c98e912c6f6a172478e6dcd0988adc33160bf581d7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_0_wt.npy": {
+   "mtime_ns": 1784035201000000000,
+   "sha256": "89b9c8f0669c10cba396a76824dfac7ac4e9b0e1e7f91f362d102a89d0918350",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_1_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "da1467dcf12dc311eccdad44fc01c2613e983d76aac97795e6e764407b95dd00",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_1_tdw.npy": {
+   "mtime_ns": 1784037508000000000,
+   "sha256": "6028c3704e9e000ec59afa6e07539eae79ac5647996d3e95e8be9fa0039dc3dc",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_1_wr.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "536893b4b6b7f206834ed733b3cacbb260548cc845d3397537f73c42a3ac82e8",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MFP_pi_1_wt.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "9876cee8f572b5a411270ece7139927e315dd51606ed51e57e8fc733a8360b7a",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_0_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "e426e87cac5679836f0222630a7f39d940d90f71b41ee6e70a3e262c10f8b441",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_0_tdw.npy": {
+   "mtime_ns": 1784038668000000000,
+   "sha256": "5bb916ff7d19a282bf70c06404fefa2d489908ab0bc293375062c9c210d89939",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_0_wr.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "936ffd1cdc64ed8b3b670641ffc4024074a8ad34f978b1b2f0d8f575fd80edba",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_0_wt.npy": {
+   "mtime_ns": 1784037954000000000,
+   "sha256": "5f1d051f3bab227606a5c8f4161ee1f21de9399b42e5b2862dbceb1e36193389",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_1_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "122efc6881908ff119781a433f594aba0ee4d1f4aa7f6e9b9a5882fd741e5944",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_1_tdw.npy": {
+   "mtime_ns": 1784039200000000000,
+   "sha256": "50d93b55c25c9c08357e71ea6a016e6189cb04c84a2e1933a3a4f68c19b9bc96",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_1_wr.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "15d816fac2b704c77fca9ec4c38bd1d83fd3731b3dacce531e355aebd0db85c1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaCCQE_1_wt.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "2bc130886cbd76565027a0ee3d68745ac8bd6342f5cb010036fa170f2edeeba2",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_0_bkgw.npy": {
+   "mtime_ns": 1784040206000000000,
+   "sha256": "e901609ef5a06c3ec5256990d2c215667ed292726a7b031daa0ad93406152984",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_0_tdw.npy": {
+   "mtime_ns": 1784040192000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_0_wr.npy": {
+   "mtime_ns": 1784039569000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_0_wt.npy": {
+   "mtime_ns": 1784039569000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_1_bkgw.npy": {
+   "mtime_ns": 1784041211000000000,
+   "sha256": "91df53c92363a0d608c7dde9fc7f1390545a9eeeecf12ea6f9e5721beb11f867",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_1_tdw.npy": {
+   "mtime_ns": 1784041196000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_1_wr.npy": {
+   "mtime_ns": 1784040580000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaNCEL_1_wt.npy": {
+   "mtime_ns": 1784040580000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_0_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "26e5d74b11ea29f022717faf646dd9946102163e2b2ecc75907f6c014c27c683",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_0_tdw.npy": {
+   "mtime_ns": 1784041471000000000,
+   "sha256": "b6adf5154ec299d65144499c9adc36f847b91d5db02886c88579731315e5b379",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_0_wr.npy": {
+   "mtime_ns": 1784040796000000000,
+   "sha256": "f47ddc67bdb786d90f4fe419808f18e9d2c40fa5a5092499561c71b38c2e783d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_0_wt.npy": {
+   "mtime_ns": 1784040796000000000,
+   "sha256": "13ac09032f021eb1f764e6827e7eec3053e34c4e0a490786f09948d6cb117025",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_1_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "1140e0eb164b9b4b7136f59dcab594bdcb5215de154e43575cb55a72926a38d2",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_1_tdw.npy": {
+   "mtime_ns": 1784043576000000000,
+   "sha256": "38d4f3a4861a1cd9c1b7ba93d7b93f47f1c937f29453c07d80cdf6181420f8b0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_1_wr.npy": {
+   "mtime_ns": 1784042919000000000,
+   "sha256": "5f3b2fbf3259421a150de5da5243153097432da948eb8b79f6fee8831bf494df",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_1_wt.npy": {
+   "mtime_ns": 1784042919000000000,
+   "sha256": "450a1c2073396b66ce59301623d8575604d3956dd4024d18526f5aa7657f5fe9",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_0_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "607e452a75689d403628648331c647f5ee986f115c1f03fbe144eac283633eee",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_0_tdw.npy": {
+   "mtime_ns": 1784045849000000000,
+   "sha256": "03502c4341d9ac9953bfbb6d8c1e60f5988be0999746f7943ad1acf092396319",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_0_wr.npy": {
+   "mtime_ns": 1784045168000000000,
+   "sha256": "0a5ae728f044474391e35f7614c697a793d8fdce13d74b83551eb340fcb31130",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_0_wt.npy": {
+   "mtime_ns": 1784045168000000000,
+   "sha256": "0a444364ca6246a72c883fbecf876f950794c3ab95aa2afcc15ed1427cef6463",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_1_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "72be04730dfefb9ab5b9422fc004c377a335db3c7f4f130b364cfd3e451b6d4d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_1_tdw.npy": {
+   "mtime_ns": 1784046500000000000,
+   "sha256": "1f05445732e3c4f461b9c3573e4135bf3e35cf6f67f6367d081df060dee1f5b0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_1_wr.npy": {
+   "mtime_ns": 1784045886000000000,
+   "sha256": "d9bd6b53800fa8d290da41b7415f121f9d4d73fa9395dedd5d71aa0087625459",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MvRES_1_wt.npy": {
+   "mtime_ns": 1784045885000000000,
+   "sha256": "20070f880bff3da9021b7cbb249b84d0a3033e30461284cb3ba4f4de98d73cd6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_0_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "fb177e142afa083fcf9fd314839d2652b8ab296f521ea882e00727ba33376942",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_0_tdw.npy": {
+   "mtime_ns": 1784049251000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_0_wr.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_0_wt.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_1_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "fb177e142afa083fcf9fd314839d2652b8ab296f521ea882e00727ba33376942",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_1_tdw.npy": {
+   "mtime_ns": 1784050389000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_1_wr.npy": {
+   "mtime_ns": 1784049732000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormDISCC_1_wt.npy": {
+   "mtime_ns": 1784049732000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_0_bkgw.npy": {
+   "mtime_ns": 1784051818000000000,
+   "sha256": "d4d0f1ad746ae4b98a9e6e29e84b888913de9f5d5e1204ed0964f5c7c3a95ffe",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_0_tdw.npy": {
+   "mtime_ns": 1784051803000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_0_wr.npy": {
+   "mtime_ns": 1784051148000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_0_wt.npy": {
+   "mtime_ns": 1784051148000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_1_bkgw.npy": {
+   "mtime_ns": 1784034760000000000,
+   "sha256": "fdbe18dad35409a71228c675bc53733ceae2e78637026ad016bf79ebbb4f41b0",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_1_tdw.npy": {
+   "mtime_ns": 1784034745000000000,
+   "sha256": "c0ae3c18b7dde9261509e4b6f1007d7578f028e9bee4fc3619291565b601524b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_1_wr.npy": {
+   "mtime_ns": 1784034077000000000,
+   "sha256": "28b168a068744f747ae3495f18b9ca85c060d53ffd5f6e8b3920c1b029b60a04",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/NormNCRES_1_wt.npy": {
+   "mtime_ns": 1784034076000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_0_bkgw.npy": {
+   "mtime_ns": 1784034683000000000,
+   "sha256": "a9c31338300048ac0ac179532c1c1d0845fa28a6a9236c73fc3b212c44b2bc72",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_0_tdw.npy": {
+   "mtime_ns": 1784034669000000000,
+   "sha256": "26d04458fcef7b37bf1808e5dd18a1e5c9124cdd6e67f89dfec66a1b9e53e222",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_0_wr.npy": {
+   "mtime_ns": 1784034023000000000,
+   "sha256": "e1d351afa91476687a0c80f21f6eb388e9131969f206514adaeb22bf2275e30d",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_0_wt.npy": {
+   "mtime_ns": 1784034023000000000,
+   "sha256": "9031ca30fcf5c25205bf9bc5f067523faba09ac52787cd97423be947b6df1999",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_1_bkgw.npy": {
+   "mtime_ns": 1784035729000000000,
+   "sha256": "0415da756d2239a1fe0be5c4613f3b5431f9c037e34dd24b69294479a28976d5",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_1_tdw.npy": {
+   "mtime_ns": 1784035716000000000,
+   "sha256": "3d8ca5864d70e6708fce3006eda93b8f1be656ff720203431399c7d32ace1e05",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_1_wr.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "a57b2297b82cb5f5c64854b2629b3a351e4440cb09cb23947bc29bcccd7a8156",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/RDecBR1gamma_1_wt.npy": {
+   "mtime_ns": 1784035030000000000,
+   "sha256": "4a11f7da4b65b643a2dc75a3c9051eaaf7f501e18e2dda86ab9a5549695497e0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_0_bkgw.npy": {
+   "mtime_ns": 1784035891000000000,
+   "sha256": "b1b0366c39c7c40275cd4f5d1aad59237d524fceabb1fad8b2e4aedadb1f2d98",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_0_tdw.npy": {
+   "mtime_ns": 1784035876000000000,
+   "sha256": "a0a164e8b5d80c3de5aeaf1fed7d427cf0119cbeb060852e498c31038235b46e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_0_wr.npy": {
+   "mtime_ns": 1784035202000000000,
+   "sha256": "ab7dbe3f56fd1342ce5a4fd958ffde51707e3f6ef11396ed79bf007d61224e46",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_0_wt.npy": {
+   "mtime_ns": 1784035202000000000,
+   "sha256": "c1a74b10e139cf1a52dd3d2383b546bc635a01e99bcc85727884b22d4b0c03e3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_1_bkgw.npy": {
+   "mtime_ns": 1784037522000000000,
+   "sha256": "5a593cfbcdec765e0cb335f72b8bf3d8c1e5d5e25afd48820ea96ceb8cc95279",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_1_tdw.npy": {
+   "mtime_ns": 1784037508000000000,
+   "sha256": "7aae8e4ddb31efba40ddef6731f725660b815c536df9bd12ae8acc490a1b8692",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_1_wr.npy": {
+   "mtime_ns": 1784036857000000000,
+   "sha256": "bb66c09d42781d38ea2c49a5ff0a001059d0c1fdf14877926203e7958273ce37",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn1pi_1_wt.npy": {
+   "mtime_ns": 1784036856000000000,
+   "sha256": "e49b9e08c14d076fffd15da85d69687b7dc3f9688fbd9a43344551ff9ad9d480",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_0_bkgw.npy": {
+   "mtime_ns": 1784038682000000000,
+   "sha256": "c02c30d0336f299df0d01d1694edcb542944b2f50484d74a3212b28a16e55ede",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_0_tdw.npy": {
+   "mtime_ns": 1784038668000000000,
+   "sha256": "3320f929c8f1ee2357acbc0bfb16d8fb3cbba35616ac47c39eab36469fde5fe6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_0_wr.npy": {
+   "mtime_ns": 1784037955000000000,
+   "sha256": "e90f96efab1f5c20ffbb4da2ccbbf57b098d887786e51c13d0cb64d348a9306f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_0_wt.npy": {
+   "mtime_ns": 1784037955000000000,
+   "sha256": "a2ed6148027d06571e70c76af0a022baef797101688da824286a4475f1fb08aa",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_1_bkgw.npy": {
+   "mtime_ns": 1784039214000000000,
+   "sha256": "7c54b6a798c12926a13ba5b2130e0aa97b3e99ef292d0df35ec4ddff29ebb55a",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_1_tdw.npy": {
+   "mtime_ns": 1784039200000000000,
+   "sha256": "453c8fc9c1c124da88983a44788e6ebb1c6c809ce4ba8fd77b92bd248d214e89",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_1_wr.npy": {
+   "mtime_ns": 1784038523000000000,
+   "sha256": "ebec1a913323200fb2c0a97b3a270449b3ad8b6e9dac59267ec417459ca28d46",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvn2pi_1_wt.npy": {
+   "mtime_ns": 1784038522000000000,
+   "sha256": "35a04d99746a6094e1a547f36462150c37afc24eb9aecc161644c5639e46538e",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_0_bkgw.npy": {
+   "mtime_ns": 1784041486000000000,
+   "sha256": "75e1b3f94811709d6bb8dca0096ee657b5872ff563b70914cdd809f0bd2598e0",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_0_tdw.npy": {
+   "mtime_ns": 1784041471000000000,
+   "sha256": "99f618ed7f54ae3a1a7de298c98d95a87fc7ba81b8c72d56bc8666a33fe9fc79",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_0_wr.npy": {
+   "mtime_ns": 1784040797000000000,
+   "sha256": "e750f78288b42d0780de34c7921169373212a148ce68a3e2518048c068244340",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_0_wt.npy": {
+   "mtime_ns": 1784040797000000000,
+   "sha256": "c3bf141589894c3f556f78b801df44cb5bc5bb66b20711eefe6638f57d8b1a71",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_1_bkgw.npy": {
+   "mtime_ns": 1784043590000000000,
+   "sha256": "1a3fc04b9a911e9fb553dfd974b7c9308c99af7a809bf3bfe14ac593163da5ac",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_1_tdw.npy": {
+   "mtime_ns": 1784043576000000000,
+   "sha256": "de7250dcd9608f60d0fabed0a30fca98798de283dcb92d1fb6d6618d38225437",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_1_wr.npy": {
+   "mtime_ns": 1784042919000000000,
+   "sha256": "8ca0c2505dd6d63fb15e548aec490e2dc25e8f285cb1de9e0ac48bf27236a93c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Rvp2pi_1_wt.npy": {
+   "mtime_ns": 1784042919000000000,
+   "sha256": "7fdfcc9bc34f34f3de5317ed7ce68b9ecb98bf20f1470e5dbcfea59471dd93b6",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_0_bkgw.npy": {
+   "mtime_ns": 1784045864000000000,
+   "sha256": "0117ee2cf343616bf78e1b77da9574def433df432620b5cbbe30da8c6f5c3116",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_0_tdw.npy": {
+   "mtime_ns": 1784045849000000000,
+   "sha256": "3f210790ca1a7ac8677b80a363b4da1b7ec0deebc9393fff93af3f82b91499b3",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_0_wr.npy": {
+   "mtime_ns": 1784045169000000000,
+   "sha256": "fcab560da9ba438c1ce453b7a7d4fef35b30b20ce6862767015cab5e2aa86289",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_0_wt.npy": {
+   "mtime_ns": 1784045169000000000,
+   "sha256": "07a66d999c2d0fd25ccf5e5a26945df0487d0e83e55767d43293cd83487f9d49",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_1_bkgw.npy": {
+   "mtime_ns": 1784046514000000000,
+   "sha256": "ae21223951f71e2a360dd9c35747e50181cf2b4ba184d5fdcb7b86e4e7432e42",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_1_tdw.npy": {
+   "mtime_ns": 1784046500000000000,
+   "sha256": "7a52152281cbf64e98f9170a7b6d25775ea02375a92fcb6fb802ae539dc83ff7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_1_wr.npy": {
+   "mtime_ns": 1784045886000000000,
+   "sha256": "506c477e52eb25479b8005b9c18379010909f30e42a02266e567549ea154b14c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Theta_Delta2Npi_1_wt.npy": {
+   "mtime_ns": 1784045886000000000,
+   "sha256": "9ca1ae4cd906fc8ea97c3d2e8d01264da9ba468db8e9cb5eafb4d51c396c2156",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_0_bkgw.npy": {
+   "mtime_ns": 1784049266000000000,
+   "sha256": "165973eb518b9a3c5dc5d79738b3302bb6730669462acf039dfd9cea5fc5d31d",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_0_tdw.npy": {
+   "mtime_ns": 1784049251000000000,
+   "sha256": "35a69093e9c61b993f181b302d714d0d33ce0743857cc2483044e53854e72bfe",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_0_wr.npy": {
+   "mtime_ns": 1784048587000000000,
+   "sha256": "0d383cd8f41d154604c9cd86236a3d7b6e4103937bd4626ff8fcb43edc5ddeca",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_0_wt.npy": {
+   "mtime_ns": 1784048586000000000,
+   "sha256": "8796790c19eb69e655db17d855ae51cbffd06da82512dd1b9af4fae182509f67",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_1_bkgw.npy": {
+   "mtime_ns": 1784050403000000000,
+   "sha256": "f312d5e63d0df47a4761aee0adec2ae08ceed1faae4f07a8180ff509cffa9711",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_1_tdw.npy": {
+   "mtime_ns": 1784050389000000000,
+   "sha256": "4a0437a1211e47bfa656a50cd75c3d8fbcf3676106d30a59efd70974ff0232ac",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_1_wr.npy": {
+   "mtime_ns": 1784049732000000000,
+   "sha256": "47d125a6e835bb26ae59bee96156dbd14eeaf9f51d18cd49365eb452ccda060b",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/VecFFCCQEshape_1_wt.npy": {
+   "mtime_ns": 1784049732000000000,
+   "sha256": "9258412f6c1f02e55b81a98ea7d36f61f42a9c1f46e82197a1cc684d2d7672b7",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz": {
+   "mtime_ns": 1784034785000000000,
+   "sha256": "072643e1e86ed0f359fa2dc94b87eebe5c9437615c05df5fbeb65e7d89ce9e3b",
+   "size": 2163648810
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_bkgw.npy": {
+   "mtime_ns": 1790522805000000000,
+   "sha256": "4f207f4600027a5878f43c8bcd88e13e0698c8fa45cb2435be23c0076f30f956",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_denom_nd.npy": {
+   "mtime_ns": 1790522805000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wr.npy": {
+   "mtime_ns": 1790522805000000000,
+   "sha256": "745de05b51596960edf3523a2ac68345a536cdec0a909049304433640cd9ad18",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wt.npy": {
+   "mtime_ns": 1790522804000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_bkgw.npy": {
+   "mtime_ns": 1790522817000000000,
+   "sha256": "fa8db1cc73920467145acc834990d1b363e89112fc27c482b7b8425165ce0a75",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_denom_nd.npy": {
+   "mtime_ns": 1790522817000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wr.npy": {
+   "mtime_ns": 1790522816000000000,
+   "sha256": "291d1bc5aeb65a4d90b5c434cc58eec74f5089ff9675ac57703a42c97b4f4254",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wt.npy": {
+   "mtime_ns": 1790522816000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_bkgw.npy": {
+   "mtime_ns": 1790522828000000000,
+   "sha256": "398583a19786a933df8252122d967007fc7c8e448b14e8d135bf30a934f2a9db",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_denom_nd.npy": {
+   "mtime_ns": 1790522828000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_wr.npy": {
+   "mtime_ns": 1790522828000000000,
+   "sha256": "76dc0d33de858f26da462cbce0b2d93930b723f474dca9cc91485ba49818fc5f",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_wt.npy": {
+   "mtime_ns": 1790522828000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_bkgw.npy": {
+   "mtime_ns": 1790522840000000000,
+   "sha256": "c95f59bb6f925a86d0f429a1eb955d19a5414ddcdcc91f6ac654869e39b81637",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_denom_nd.npy": {
+   "mtime_ns": 1790522840000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_wr.npy": {
+   "mtime_ns": 1790522840000000000,
+   "sha256": "2a9dbadc40ecac636d457055c9f53a8f22eaf93ee7fa48124eaf6e21232f2fd0",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_wt.npy": {
+   "mtime_ns": 1790522840000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_bkgw.npy": {
+   "mtime_ns": 1790522852000000000,
+   "sha256": "e69b6a2336155e10f6be4d3836113a138a101ddf11da45c95cf194f0eafc61f5",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_denom_nd.npy": {
+   "mtime_ns": 1790522852000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_wr.npy": {
+   "mtime_ns": 1790522852000000000,
+   "sha256": "bb074b8ce9f1ae8b4754f6aa622f21153b158e89730620b27a00167ac10a47d1",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_wt.npy": {
+   "mtime_ns": 1790522852000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_bkgw.npy": {
+   "mtime_ns": 1790522864000000000,
+   "sha256": "eaccb0dcfeff1590647eccbd938cafb579a61cd441d9b6fa28ce5ad4fb6753c2",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_denom_nd.npy": {
+   "mtime_ns": 1790522864000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_wr.npy": {
+   "mtime_ns": 1790522864000000000,
+   "sha256": "f514fc8600d5f70828563c8e84a54963a382362a8afc8288928b939c981819cf",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_wt.npy": {
+   "mtime_ns": 1790522864000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_bkgw.npy": {
+   "mtime_ns": 1790522781000000000,
+   "sha256": "3629ae7e1d9dc3b036ed457c0b31cdb887767f5405e44dd849871bf5b4719637",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_denom_nd.npy": {
+   "mtime_ns": 1790522781000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_wr.npy": {
+   "mtime_ns": 1790522781000000000,
+   "sha256": "de73eae6a0643180e737b9339d124c28ebfadc4844fec601b601c0635e1c978c",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_wt.npy": {
+   "mtime_ns": 1790522781000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_bkgw.npy": {
+   "mtime_ns": 1790522793000000000,
+   "sha256": "4dcf31a6af85f0c7a9559ff05fb385be0793b159e6783ab8de388058ddcbb4c0",
+   "size": 2486316
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_denom_nd.npy": {
+   "mtime_ns": 1790522793000000000,
+   "sha256": "eb19640913f8e712b8623f6ec9c0c86c2df33d19b12466a7fe22cac6eac432f2",
+   "size": 526976
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wr.npy": {
+   "mtime_ns": 1790522793000000000,
+   "sha256": "4d9f951c27a3a0e89028f6207c6aaadda95f367d0d036ba477a69728118b7903",
+   "size": 131396540
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wt.npy": {
+   "mtime_ns": 1790522792000000000,
+   "sha256": "df9d872711db61ab10f15a07c510052452cfe9c001c618142897e1b3bc4f0396",
+   "size": 131396540
+  }
+ },
+ "manifest_sha256": "3a50f502b5a425bc4d116245c36f79bbc279cbd876b87aa72bd0298b001b5031",
+ "receipt_sha256": "c52dca58d6eab1494c217fd3dc55296a20f09ca6c02db23307dd11cac55c562e",
+ "schema": "fd-1b-pins/1"
+}
