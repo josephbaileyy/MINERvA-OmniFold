@@ -4,7 +4,11 @@
 usage: make_values_fived16.py [--check | --self-test]     (run from the repository root or anywhere inside it)
 
 Each readout is pinned by sha256 in READOUTS; a mismatch stops the run. Every number becomes one key of \\fvval{<key>},
-formatted at its printed precision here, so no printed number is typed by hand. --check fails unless the committed
+formatted at its printed precision here, so no printed number is typed by hand.
+The reported covariance is C_total + C_resp + C_PL,5D (DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md item 2;
+PROPOSAL-20261031-5b-with-without.md): READOUTS pins the with-block readouts (fd/with-cpl/, FD-CT-5B-ADDITION-REPORT.md),
+and NOPL_READOUTS the committed ones without the block. Every key whose value differs without the block is also written
+with the suffix "-nopl", and a key outside the matrix-dependent families that differs stops the run. --check fails unless the committed
 values_fived16.tex equals a fresh generation (the build and CI run it, as for records_entry_numbers.tex).
 """
 import hashlib
@@ -28,22 +32,42 @@ READOUTS = {
     "s1": (f"{FD}/s1/readout/s1_assembly.json", "81e5ef3f"),
     "cresp": ("docs/orchestration/state/measurement-scoping/assigned-uncertainties/cresp/cresp.json", "19bb2ee1"),
     "f0": (f"{FD}/fd/readout/fd_f0_readout.json", "6e7d718b"),
+    # with the run-period block: the with arm of FD-CT-5B-ADDITION-REPORT.md section 3
+    "f0b": (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830"),
+    "g": (f"{FD}/fd/with-cpl/readout/fd_g_readout.json", "b55366b3"),
+    "diag": (f"{FD}/fd/with-cpl/readout/fd_g_diag_readout.json", "bfd529ab"),
+    "fup": (f"{FD}/fd/with-cpl/readout/fd_g_followup_readout.json", "5c95c6d0"),
+    "sens2": (f"{FD}/fd/with-cpl/readout/fd_g_sens2_readout.json", "cff60b63"),
+    "dp": (f"{FD}/fd/with-cpl/data-product/fd_data_product_cpl.json", "d6752d2c"),
+    "gagg": (f"{FD}/fd/readout/fd_gibuu_enu_aggregate.json", "66dcbd6d"),
+    "fboot": (f"{FD}/fd/with-cpl/readout/fd_flux_boot_readout.json", "7d117515"),   # 3D (PR #438), with the block
+    "f1": (f"{FD}/fd/with-cpl/readout/fd_f1_readout.json", "5ccc89e5"),              # 1A (PR #446), with the block
+    # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
+    "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
+    "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
+}
+# the committed readouts without the run-period block, for the "-nopl" keys
+NOPL_READOUTS = dict(READOUTS, **{
     "f0b": (f"{FD}/fd/readout/fd_f0b_readout.json", "b9db935a"),
     "g": (f"{FD}/fd/readout/fd_g_readout.json", "75a9ddee"),
     "diag": (f"{FD}/fd/readout/fd_g_diag_readout.json", "680dc5ef"),
     "fup": (f"{FD}/fd/readout/fd_g_followup_readout.json", "cd82517a"),
     "sens2": (f"{FD}/fd/readout/fd_g_sens2_readout.json", "0f6568ab"),
     "dp": (f"{FD}/fd/data-product/fd_data_product.json", "b79556f0"),
-    "gagg": (f"{FD}/fd/readout/fd_gibuu_enu_aggregate.json", "66dcbd6d"),
-    "fboot": (f"{FD}/fd/readout/fd_flux_boot_readout.json", "b7b5652c"),   # 3D, FD-FLUX-BOOT-REPORT.md (PR #438)
-    "f1": (f"{FD}/fd/readout/fd_f1_readout.json", "cbe411a9"),              # 1A, FD-F1-REPORT.md (PR #446)
-    # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
-    "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
-    "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
-}
-# the figures the note and the paper print, copied into figures/: each must equal its committed source and the digest
-# its sidecar records (FD-G-FIGURES-REPORT.md section 1)
-FIGURES = {"fd_g_fig_ratio.pdf": "6372244f", "fd_g_fig_modes.pdf": "5421815f"}
+    "fboot": (f"{FD}/fd/readout/fd_flux_boot_readout.json", "b7b5652c"),
+    "f1": (f"{FD}/fd/readout/fd_f1_readout.json", "cbe411a9"),
+})
+# each arm's names for its reported matrix and for the block the chain adds to C_total
+ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_resp + C_PL5D", "x": "C_resp + C_PL5D",
+                 "f1sig": "relative_sigma_plus_C_resp + C_PL5D"},
+        "without": {"dp": "C_total_plus_C_resp", "rep": "C_total + C_resp", "x": "C_resp",
+                    "f1sig": "relative_sigma_plus_C_resp"}}
+# the key families whose values depend on the reported matrix; any other key must be equal in the two arms
+MATRIX_KEYS = re.compile(r"^(g-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
+# the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
+# and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
+FIGURES = {"fd_g_fig_ratio.pdf": "b57cbb2c", "fd_g_fig_modes.pdf": "980351ed"}
+FIGURE_SRC = "fd/with-cpl/figures"
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -63,28 +87,31 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
                "A7_genie_mec": ("the GENIE + MEC hybrid truth", "GENIE + MEC hybrid"),
                "A7_nuwro": ("the NuWro hybrid truth", "NuWro hybrid"),
                "A7_gibuu": ("the GiBUU hybrid truth", "GiBUU hybrid")}
-# Every printed sentence that states which F0b truths the reported covariance lists. A re-pinned readout (the
-# run-period block's, PROPOSAL-20261031-5b-with-without.md section 3) changes that set while the hand-typed names stay,
-# so --check fails unless each sentence still agrees with the pinned F0b readout's triggers.listed:
-#   "keys": the truths the sentence's \fvval{f0b-<truth>-...} keys name, and the names it types, equal the listed set;
-#   "plural": at least `gibuu` listed GiBUU truths (the sentence says "GiBUU-like truths"), and every truth in `also`.
+# Every printed sentence that states which F0b truths are listed, under the reported covariance or without the run-period
+# block. A re-pinned readout changes those sets while the hand-typed names stay, so generation and --check fail unless
+# each sentence agrees with the pinned F0b readouts' triggers.listed (with the block: READOUTS; without: NOPL_READOUTS):
+#   "keys": the truths its \fvval{f0b-<truth>-...} keys name, and the names it types, equal the listed set with the block;
+#   "without": it names (types) every truth listed only without the block, and every truth it names or keys is listed
+#              without the block;
+#   "both": the truths it types (of the family, if given) equal the truths listed with or without the block;
+#   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also`.
 # The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
 LISTED_CLAIMS = [
-    ("paper_body.tex", "the listed truths are the", {"kind": "keys"}),
-    ("paper_body.tex", "at these GiBUU-like truths or at the $q_3$ tilt", {"kind": "plural", "gibuu": 2, "also": ["q3"]}),
-    ("sec_fived16.tex", "truths fail: the", {"kind": "keys"}),
-    ("sec_fived16.tex", "at these GiBUU-like truths or at the $q_3$ tilt", {"kind": "plural", "gibuu": 2, "also": ["q3"]}),
-    ("sec_fived16.tex", "The GiBUU-like truths fail the fake-data tests", {"kind": "plural", "gibuu": 2, "also": []}),
-    ("main_paper.tex", "at GiBUU-like truths or at a synthetic $q_{3}$ tilt", {"kind": "plural", "gibuu": 2, "also": ["q3"]}),
+    ("paper_body.tex", "the listed truths ($p<", {"kind": "keys"}),
+    ("paper_body.tex", "also meets the listing criterion", {"kind": "without"}),
+    ("paper_body.tex", "Thus the fake-data bias exceeds the stated thresholds", {"kind": "both"}),
+    ("sec_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
+    ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
+    ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
+    ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
+    ("main_paper.tex", "at a GiBUU-like truth and at a synthetic $q_{3}$ tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    ("main_note.tex", "at a GiBUU-like truth and at a synthetic $q_{3}$ tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
-# the self-test's world fixture: the F0b readout with the run-period block (FD-CT-5B-ADDITION-REPORT.md), whose listed
-# truths are the q3 tilt and the GiBUU hybrid only, so every LISTED_CLAIMS sentence must fail against it
-WITH_CPL_F0B = (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830")
 
 
-def load():
+def load(readouts=None):
     data = {}
-    for key, (rel, pin) in READOUTS.items():
+    for key, (rel, pin) in (READOUTS if readouts is None else readouts).items():
         raw = (ROOT / rel).read_bytes()
         sha = hashlib.sha256(raw).hexdigest()
         if not sha.startswith(pin):
@@ -106,7 +133,8 @@ def p_tex(p):            # a p-value: two significant figures, scientific below 
     return rf"{m}\times10^{{{int(e)}}}"
 
 
-def values(d):
+def values(d, arm="with"):
+    A = ARMS[arm]
     v = {}
     # the cells: boxes and central values (f in 10^-40 cm^2/nucleon, three significant figures)
     g0 = d["g"]["predictions"][0]
@@ -122,16 +150,40 @@ def values(d):
             v[f"box-{c}-{ax}"] = f"{lo:g}--{hi:g}"
     # the data product (FD-G-FIGURES-REPORT.md section 2) carries the same cells, boxes, f and reported sigma
     dp = d["dp"]
-    assert [c["cell"] for c in dp["cells"]] == CELLS and dp["correlation_of"] == "C_total_plus_C_resp"
+    assert [c["cell"] for c in dp["cells"]] == CELLS and dp["correlation_of"] == A["dp"]
     assert all(c["box"] == boxes[c["cell"]] for c in dp["cells"]), "the data product's boxes differ from H2's"
     assert max(abs(x / f[c] - 1) for c, x in zip(CELLS, dp["f"])) < 1e-12, "the data product's f differs"
     crt = d["cresp"]["relative_sigma"]["C_total_resp"]
     crt = [crt[c] for c in CELLS] if isinstance(crt, dict) else crt
     assert max(abs(a / b - 1) for a, b in zip(dp["relative_sigma"]["C_total_plus_C_resp"], crt)) < 1e-10
+    for grp, key in (("reported", A["dp"]),) + ((("C_PL5D", "C_PL5D"),) if arm == "with" else ()):
+        vals = dp["relative_sigma"][key]                 # the reported matrix's sigma, and the block's alone
+        assert len(vals) == 16
+        for c, x in zip(CELLS, vals):
+            v[f"sig-{grp}-{c}"] = pct(x)
+        srt = sorted(vals)
+        v[f"sigmed-{grp}"], v[f"sigmin-{grp}"], v[f"sigmax-{grp}"] = pct((srt[7] + srt[8]) / 2), pct(srt[0]), pct(srt[-1])
+    if arm == "with":                                     # the block's effect on the reported sigma (proposal section 1)
+        wo, wi = dp["relative_sigma"]["C_total_plus_C_resp"], dp["relative_sigma"][A["dp"]]
+        sw, so = sorted(wi), sorted(wo)
+        v["pl-medrise"] = f"{100 * ((sw[7] + sw[8]) / (so[7] + so[8]) - 1):.1f}"      # of the median, about 7.8 %
+        ratio = [b / a for a, b in zip(wo, wi)]
+        r = sorted(ratio)
+        v["pl-cellrise-med"] = f"{100 * ((r[7] + r[8]) / 2 - 1):.1f}"
+        i = max(range(16), key=lambda j: ratio[j])
+        v["pl-cellrise-max"], v["pl-cellrise-maxcell"] = f"{100 * (ratio[i] - 1):.1f}", CELLS[i]
+        share = sorted(1 - (a / b) ** 2 for a, b in zip(wo, wi))
+        v["pl-share-med"], v["pl-share-max"] = f"{100 * (share[7] + share[8]) / 2:.1f}", f"{100 * share[-1]:.1f}"
+        # the block's own label, which travels with every use (FD-CT-5B-ADDITION-DECLARATION.md section 2)
+        m = re.search(r"68% interval on sigma_true/sigma_hat is \[([\d.]+), ([\d.]+)\]\. Noise-dominated cells: "
+                      r"((?:R\d\d(?:, )?)+)\. Rank (\d); undebiased", dp["labels"]["block"])
+        assert m and "added after the data were seen" in dp["labels"]["block"], "the block's label changed"
+        v["pl-sigratio-lo"], v["pl-sigratio-hi"], v["pl-noise-cells"], v["pl-rank"] = m.groups()
+        assert min(range(16), key=lambda j: wi[j]) == CELLS.index("R04"), "R04 is no longer the smallest-sigma cell"
     rho = dp["correlation"]
     assert all(abs(rho[i][j] - rho[j][i]) < 1e-12 for i in range(16) for j in range(16))
     assert all(abs(rho[i][i] - 1) < 1e-12 for i in range(16))
-    for i in range(16):                    # the correlation matrix of C_total + C_resp, two decimals
+    for i in range(16):                    # the correlation matrix of the reported covariance, two decimals
         for j in range(i):
             x = f"{rho[i][j]:.2f}"
             v[f"corr-{CELLS[i]}-{CELLS[j]}"] = ("$-$" + x[1:]) if x.startswith("-") else x
@@ -229,6 +281,11 @@ def values(d):
     rat = sorted(b / a for a, b in zip(tot, tr))
     v["sigratio-med"], v["sigratio-min"], v["sigratio-max"] = (f"{(rat[7] + rat[8]) / 2:.3f}", f"{rat[0]:.3f}",
                                                                 f"{rat[-1]:.3f}")
+    # declaration (v) at the sixteen-cell chi2 (app_statmethods_nd.tex:12; PROVENANCE-20261031-declaration-v-fd-16-cell-
+    # blocks.md section 3): the statistical block's replicas and the flux block's effective number of weighted universes
+    meta = d["s1"]["meta"]
+    v["s1-stat-replicas"] = str(meta["stat_replicas"])
+    v["s1-flux-neff"] = f"{meta['flux_weights']['n_eff']:.0f}"
     for k, x in d["s1"]["trace_share"].items():
         v[f"trace-{k}"] = f"{x:.3f}"
     for k, x in d["cresp"]["trace_share_of_C_total_resp"].items():
@@ -332,12 +389,12 @@ def values(d):
     r04 = d["fup"]["r04"]
     rs = r04["item2_relative_sigma"]["R04"]
     v["r04-sigma-flux"] = pct(rs["flux"])
-    corr = list(r04["item3_correlation_with_R04"]["under"]["C_total + C_resp"].values())
+    corr = list(r04["item3_correlation_with_R04"]["under"][A["rep"]].values())
     v["r04-ncorr"] = str(len(corr))
     v["r04-corr-min"], v["r04-corr-max"] = f"{min(corr):.2f}", f"{max(corr):.2f}"     # under C_total + C_resp
     cf = list(r04["item3_correlation_with_R04"]["under"]["flux"].values())            # under the flux block alone
     v["r04-corrflux-min"], v["r04-corrflux-max"] = f"{min(cf):.3f}", f"{max(cf):.3f}"
-    v["r04-sigma-total"] = pct(rs["C_total + C_resp"])
+    v["r04-sigma-total"] = pct(rs[A["rep"]])
     assert min(range(16), key=lambda i: tr[i]) == CELLS.index("R04"), "R04 is no longer the smallest-sigma cell"
     assert v["gagg-ecut"] == v["cmodel-gibuu-enu"], "the aggregate's E_nu cut is not GiBUU's sample limit"
     # the abstracts' range: the three EXTERNAL predictions compared on all 16 cells. MINERvA Tune v1 is the unfolding's
@@ -386,15 +443,15 @@ def values(d):
     rest = {t["name"]: t for t in f1["truths"] if t["group"] != "held-out"}
     assert 9 in f1["controls"]["passed"] and rest == f0b_truths, "control 9: F1 does not re-grade F0b's truths as recorded"
     held = {t["name"]: t for t in f1["truths"] if t["group"] == "held-out"}
-    sig = f1["relative_sigma_plus_C_resp"]["C_total"]          # the per-cell relative sigma of C_total + C_resp
+    sig = f1[A["f1sig"]]["C_total"]          # the per-cell relative sigma of the reported matrix
     zmax, bsig, mo = [], [], []
     for tune in ("g18", "ar23"):
         v[f"f1-tune-{tune}"] = d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_")
         for rec, k in ((f"F1_genie_v3_{tune}", f"f1-{tune}"), (f"F1_closure_genie_v3_{tune}", f"f1-closure-{tune}")):
             t = held.pop(rec)
-            assert t["graded"] and t["own_vertex"] is None and t["grade_matrix"] == "C_total + C_resp"
+            assert t["graded"] and t["own_vertex"] is None and t["grade_matrix"] == A["rep"]
             gr, se, md = t["grade"], t["sensitivity"], t["model_only"]
-            assert gr["cells"] == CELLS and se["matrix"] == "C_total minus genie_mec + C_resp"
+            assert gr["cells"] == CELLS and se["matrix"] == "C_total minus genie_mec + " + A["x"]
             assert not t["listed"] and not gr["cells_abs_z_gt_2"] and not gr["p_lt_0.01"], f"{rec} is listed"
             v[f"{k}-chi2"], v[f"{k}-p"] = f"{gr['chi2']:.2f}", p_tex(gr["p"])
             i = max(range(16), key=lambda j: abs(gr["z"][j]))
@@ -430,6 +487,29 @@ def values(d):
     return v
 
 
+def all_values(d=None, d_nopl=None):
+    """The with-block values, and each matrix-dependent value without the block under the suffix "-nopl"."""
+    v = values(load() if d is None else d, "with")
+    w = values(load(NOPL_READOUTS) if d_nopl is None else d_nopl, "without")
+    assert set(w) <= set(v), f"keys only without the block: {sorted(set(w) - set(v))[:5]}"
+    moved = sorted(k for k in w if w[k] != v[k])
+    stray = [k for k in moved if not MATRIX_KEYS.match(k)]
+    assert not stray, f"values outside the matrix-dependent families differ without the block: {stray[:8]}"
+    # every matrix-dependent key, moved or not, so a table printing both arms never lacks a key
+    v.update({f"{k}-nopl": w[k] for k in w if MATRIX_KEYS.match(k)})
+    for part in ("total", "shape_only"):              # ndf is printed once per block of Table IV and Table 16
+        ndf16 = {v[f"g-{k}-{part}-ndf"] for k in PRED.values() if k != "gibuu"}
+        assert len(ndf16) == 1, f"the 16-cell predictions' {part} ndf differ: {ndf16}"
+    # the total and shape-only chi2 falls with the block, over the five predictions (the referee's corrections, #610)
+    gw = {p["name"]: p for p in (load() if d is None else d)["g"]["predictions"]}
+    go = {p["name"]: p for p in (load(NOPL_READOUTS) if d_nopl is None else d_nopl)["g"]["predictions"]}
+    for part in ("total", "shape_only"):
+        fall = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in PRED]
+        assert min(fall) > 0, f"a {part} chi2 rises with the block"
+        v[f"pl-chi2fall-{part}-lo"], v[f"pl-chi2fall-{part}-hi"] = f"{100 * min(fall):.1f}", f"{100 * max(fall):.1f}"
+    return v
+
+
 def render(v):
     lines = ["% Generated by make_values_fived16.py from the committed readouts it pins by sha256. Do not edit.",
              "% Regenerate: python3 docs/analysis-note/make_values_fived16.py",
@@ -449,7 +529,7 @@ def check_figures():
     bad = []
     for name, pin in FIGURES.items():
         got = OUT.parent / "figures" / name
-        src = ROOT / FD / "fd/figures" / name
+        src = ROOT / FD / FIGURE_SRC / name
         side = json.loads(src.with_suffix(".json").read_text())["pdf_sha256"]
         h = [hashlib.sha256(x.read_bytes()).hexdigest() if x.exists() else "missing" for x in (got, src)]
         if not (h[0] == h[1] == side and side.startswith(pin)):
@@ -460,14 +540,18 @@ def check_figures():
 def _sentence(text, anchor):
     """The sentence of `text` that contains `anchor` (sentences end at a full stop followed by a space and a capital)."""
     i = text.index(anchor)
-    start = max([m.end() for m in re.finditer(r"\.\s+(?=[A-Z\\])", text[:i])] + [text.rfind("\n", 0, i) + 1])
+    # a full stop before the anchor ends the previous sentence; the lookahead reads the whole text, so an anchor that
+    # opens its sentence is found (a search of text[:i] cannot see the capital at i)
+    start = max([m.end() for m in re.finditer(r"\.\s+(?=[A-Z\\])", text) if m.end() <= i] + [text.rfind("\n", 0, i) + 1])
     m = re.search(r"\.(\s+(?=[A-Z\\])|\s*$)", text[i:], re.M)
     return text[start:i + (m.start() + 1 if m else len(text) - i)]
 
 
-def check_listed_claims(f0b, texts):
-    """Each LISTED_CLAIMS sentence agrees with this F0b readout's listed truths; returns the failures."""
-    listed = [x["truth"] for x in f0b["triggers"]["listed"]]
+def check_listed_claims(f0b, texts, f0b_nopl=None):
+    """Each LISTED_CLAIMS sentence agrees with these F0b readouts' listed truths; returns the failures."""
+    f0b_nopl = load(NOPL_READOUTS)["f0b"] if f0b_nopl is None else f0b_nopl
+    listed = {x["truth"] for x in f0b["triggers"]["listed"]}
+    without = {x["truth"] for x in f0b_nopl["triggers"]["listed"]}
     graded = {t["name"] for t in f0b["truths"] if t.get("graded")}
     bad = []
     for name, anchor, rule in LISTED_CLAIMS:
@@ -476,21 +560,26 @@ def check_listed_claims(f0b, texts):
             bad.append(f"{name}: {anchor!r} occurs {text.count(anchor)} times, not once; re-declare the sentence")
             continue
         sent = _sentence(text, anchor)
-        if rule["kind"] == "keys":
-            keyed = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|cells|chi2)\}", sent))
-            unknown = keyed - graded
-            typed = {t for t in graded if TRUTH_LABEL[t][1] in sent}
-            if unknown:
-                bad.append(f"{name}: {anchor!r} keys truths the readout does not grade: {sorted(unknown)}")
-            if keyed != set(listed) or typed != set(listed):
-                bad.append(f"{name}: {anchor!r} names truths by key {sorted(keyed)} and by name {sorted(typed)}; "
-                           f"the pinned F0b readout lists {sorted(listed)}")
+        keyed = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|cells|chi2)\}", sent))
+        keyed_nopl = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|cells|chi2)-nopl\}", sent))
+        typed = {t for t in graded if TRUTH_LABEL[t][1] in sent}
+        unknown = (keyed | keyed_nopl) - graded
+        if unknown:
+            bad.append(f"{name}: {anchor!r} keys truths the readout does not grade: {sorted(unknown)}")
+        got = {"keyed": sorted(keyed), "keyed without": sorted(keyed_nopl), "typed": sorted(typed),
+               "listed with": sorted(listed), "listed without": sorted(without)}
+        kind = rule["kind"]
+        if kind == "keys":
+            ok = keyed == listed and typed == listed and not keyed_nopl
+        elif kind == "without":
+            ok = (without - listed) <= typed and (typed | keyed | keyed_nopl) <= without
+        elif kind == "both":
+            fam = (lambda t: rule["family"] in t.lower()) if "family" in rule else (lambda t: True)
+            ok = typed == {t for t in listed | without if fam(t)}
         else:
-            ng = sum("gibuu" in t for t in listed)
-            missing = [t for t in rule["also"] if t not in listed]
-            if ng < rule["gibuu"] or missing:
-                bad.append(f"{name}: {anchor!r} needs at least {rule['gibuu']} listed GiBUU truths and {rule['also']}; "
-                           f"the pinned F0b readout lists {sorted(listed)}")
+            ok = sum("gibuu" in t for t in listed) == rule["gibuu"] and all(t in listed for t in rule["also"])
+        if not ok:
+            bad.append(f"{name}: {anchor!r} ({kind}) disagrees with the pinned F0b readouts: {got}")
     return bad
 
 
@@ -515,18 +604,18 @@ def self_test():
     except SystemExit:
         print("  ok   a wrong sha256 pin is refused")
     READOUTS[key] = (rel, pin)
-    text = render(values(load()))
-    stale = text.replace(r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{2.01}", r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{2.0}")
+    text = render(all_values())
+    stale = text.replace(r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{1.76}", r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{1.8}")
     if stale == text:
-        print("  FAIL the plant did not apply (R06's z is not 2.01)"); ok = False
+        print("  FAIL the plant did not apply (R06's z is not 1.76)"); ok = False
     else:
         with tempfile.TemporaryDirectory() as tmp:          # run --check's own comparison against the stale file
             f = Path(tmp) / OUT.name
             f.write_text(stale)
             if check_file(f, text):
-                print("  FAIL --check passed a file with R06's z printed as 2.0"); ok = False
+                print("  FAIL --check passed a file with R06's z printed as 1.8"); ok = False
             else:
-                print("  ok   --check fails on a file with R06's z printed as 2.0")
+                print("  ok   --check fails on a file with R06's z printed as 1.8")
             f.write_text(text)
             if not check_file(f, text):
                 print("  FAIL --check failed a fresh file"); ok = False
@@ -559,7 +648,7 @@ def self_test():
                          .update(cells_abs_z_gt_2=["R00"])),
                         ("has a held-out cell with |b| above its sigma",
                          lambda d: next(t for t in d["f1"]["truths"] if t["name"] == "F1_closure_genie_v3_g18")["bias"]
-                         .__setitem__(11, 2 * d["f1"]["relative_sigma_plus_C_resp"]["C_total"][11]))):
+                         .__setitem__(11, 2 * d["f1"][ARMS["with"]["f1sig"]]["C_total"][11]))):
         d = load()
         plant(d)
         try:
@@ -575,48 +664,64 @@ def self_test():
     except AssertionError:
         print("  ok   an H2 definition whose four lowest-stability cells differ from the decided ones is refused")
     # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
-    d, texts = load(), read_claim_texts()
-    if check_listed_claims(d["f0b"], texts):
-        print("  FAIL the committed listed-truth sentences disagree with the pinned F0b readout"); ok = False
+    d, dn, texts = load(), load(NOPL_READOUTS), read_claim_texts()
+    if check_listed_claims(d["f0b"], texts, dn["f0b"]):
+        print("  FAIL the committed listed-truth sentences disagree with the pinned F0b readouts"); ok = False
     else:
-        print(f"  ok   the {len(LISTED_CLAIMS)} committed listed-truth sentences agree with the pinned F0b readout")
-    raw = (ROOT / WITH_CPL_F0B[0]).read_bytes()
-    assert hashlib.sha256(raw).hexdigest().startswith(WITH_CPL_F0B[1]), "the with-block F0b fixture changed"
-    bad = check_listed_claims(json.loads(raw), texts)
-    if len(bad) == len(LISTED_CLAIMS):
-        print(f"  ok   the with-block F0b readout fails all {len(LISTED_CLAIMS)} sentences")
+        print(f"  ok   the {len(LISTED_CLAIMS)} committed listed-truth sentences agree with the pinned F0b readouts")
+    # the world fixture: the two arms' readouts exchanged, as a re-pin to the wrong arm would leave them. The sentences
+    # that state the reported list, the without-only addition or the abstracts' single GiBUU truth must fail; the
+    # sentences that name the union cannot tell the arms apart and must stay silent
+    fails = check_listed_claims(dn["f0b"], texts, d["f0b"])
+    swapped = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if any(b.startswith(f"{n}: {a!r}") for b in fails)}
+    want = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if r["kind"] != "both"}
+    if swapped == want:
+        print(f"  ok   the arms' readouts exchanged fail exactly the {len(want)} sentences that tell them apart")
     else:
-        print(f"  FAIL the with-block F0b readout failed {len(bad)} of {len(LISTED_CLAIMS)} sentences"); ok = False
-    gibuu_key = r"($p=\fvval{f0b-A7_gibuu-p}$; cells \fvval{f0b-A7_gibuu-cells})"
+        print(f"  FAIL the arms' readouts exchanged failed {sorted(swapped)}, not {sorted(want)}"); ok = False
     for what, name, anchor, edit in (
-            ("keys a truth the readout does not list", "paper_body.tex", "the listed truths are the",
-             lambda t: t.replace(r"tilt ($p=\fvval{f0b-q3-p}$)", r"tilt ($p=\fvval{f0b-q3-p}$, $\fvval{f0b-W3-p}$)", 1)),
-            ("drops a listed truth's keys", "paper_body.tex", "the listed truths are the",
-             lambda t: t.replace(gibuu_key, "", 1)),
-            ("types a name its keys do not name", "sec_fived16.tex", "truths fail: the",
-             lambda t: t.replace(r"the GiBUU $\Eavail$ shape, by its cell", r"the NuWro $\Eavail$ shape, by its cell", 1)),
-            ("loses its anchor", "main_paper.tex", "at GiBUU-like truths or at a synthetic $q_{3}$ tilt",
-             lambda t: t.replace("at GiBUU-like truths or at a synthetic", "at some truths or at a synthetic", 1))):
+            ("keys a truth the readout does not list", "paper_body.tex", "the listed truths ($p<",
+             lambda t: t.replace(r"by $p$ alone ($p=\fvval{f0b-q3-p}$)", r"by $p$ alone ($p=\fvval{f0b-q3-p}$, $\fvval{f0b-W3-p}$)", 1)),
+            ("drops a listed truth's keys", "paper_body.tex", "the listed truths ($p<",
+             lambda t: t.replace(r"($p=\fvval{f0b-A7_gibuu-p}$; cells \fvval{f0b-A7_gibuu-cells})", "", 1)),
+            ("names the wrong truth as listed only without the block", "paper_body.tex", "also meets the listing criterion",
+             lambda t: t.replace(r"the GiBUU $\Eavail$ shape also meets", r"the NuWro $\Eavail$ shape also meets", 1)),
+            ("drops the truth listed only without the block", "sec_fived16.tex",
+             "The fake-data bias therefore exceeds the stated thresholds",
+             lambda t: t.replace(r"and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$; the bias", "; the bias", 1)),
+            ("drops a GiBUU truth of its family", "sec_fived16.tex", "so the GiBUU comparison carries that limitation",
+             lambda t: t.replace(r"thresholds at the GiBUU hybrid truth under the reported covariance, and also",
+                                 r"thresholds under the reported covariance, and also", 1)),
+            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and at a synthetic $q_{3}$ tilt",
+             lambda t: t.replace("at a GiBUU-like truth and at a synthetic", "at GiBUU-like truths and at a synthetic", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
             continue
-        hit = [b for b in check_listed_claims(d["f0b"], planted) if b.startswith(f"{name}: {anchor!r}")]
+        hit = [b for b in check_listed_claims(d["f0b"], planted, dn["f0b"]) if b.startswith(f"{name}: {anchor!r}")]
         if hit:
             print(f"  ok   a {name} sentence that {what} fails")
         else:
             print(f"  FAIL a {name} sentence that {what} passed"); ok = False
     d = load()                                               # a readout listing one more truth fails the "keys" sentences
     d["f0b"]["triggers"]["listed"].append({"truth": "W3", "cells": [], "p_lt_0.01": True})
-    if len([b for b in check_listed_claims(d["f0b"], texts) if "names truths by key" in b]) == 2:
+    if len([b for b in check_listed_claims(d["f0b"], texts, dn["f0b"]) if "(keys)" in b]) == 2:
         print("  ok   a readout that lists one more truth fails both enumerating sentences")
     else:
         print("  FAIL a readout that lists one more truth did not fail both enumerating sentences"); ok = False
-    v = values(load())
-    if v["f0b-listed-names"] != r"the synthetic $q_3$ tilt, the GiBUU $\Eavail$ shape and the GiBUU hybrid truth":
-        print(f"  FAIL f0b-listed-names is {v['f0b-listed-names']!r}"); ok = False
+    v = all_values()
+    if (v["f0b-listed-names"], v["f0b-listed-names-nopl"]) != (r"the synthetic $q_3$ tilt and the GiBUU hybrid truth",
+                                                                r"the synthetic $q_3$ tilt, the GiBUU $\Eavail$ shape and the GiBUU hybrid truth"):
+        print(f"  FAIL f0b-listed-names are {v['f0b-listed-names']!r} and {v['f0b-listed-names-nopl']!r}"); ok = False
     else:
-        print("  ok   f0b-listed-names names the three listed truths in the readout's order")
+        print("  ok   f0b-listed-names name the listed truths with and without the block, in the readouts' order")
+    dn = load(NOPL_READOUTS)                                 # a value outside the matrix-dependent families must not move
+    dn["s1"]["trace_share"] = {k: x * 1.01 for k, x in dn["s1"]["trace_share"].items()}
+    try:
+        all_values(load(), dn)
+        print("  FAIL a without-block value outside the matrix-dependent families that differs was accepted"); ok = False
+    except AssertionError:
+        print("  ok   a without-block value outside the matrix-dependent families that differs is refused")
     name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
     with tempfile.TemporaryDirectory() as tmp:
         fig = OUT.parent / "figures" / name
@@ -643,7 +748,7 @@ def main(argv):
     if argv[:1] == ["--self-test"]:
         return self_test()
     d = load()
-    text = render(values(d))
+    text = render(all_values(d))
     bad = check_listed_claims(d["f0b"], read_claim_texts())
     if bad:
         sys.exit("VALUES-FIVED16 :: FAIL (a sentence's listed fake-data truths disagree with the pinned F0b readout)\n  "

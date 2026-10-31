@@ -1,0 +1,9 @@
+# make_values_fived16.py --check after the re-pin to the with-block readouts, before any text (2026-10-31; the guard first, PROPOSAL-20261031-5b-with-without.md section 3)
+VALUES-FIVED16 :: FAIL (a sentence's listed fake-data truths disagree with the pinned F0b readout)
+  paper_body.tex: 'the listed truths are the' names truths by key ['A7_gibuu', 'q3', 'stage0c_gibuu'] and by name ['A7_gibuu', 'q3', 'stage0c_gibuu']; the pinned F0b readout lists ['A7_gibuu', 'q3']
+  paper_body.tex: 'at these GiBUU-like truths or at the $q_3$ tilt' needs at least 2 listed GiBUU truths and ['q3']; the pinned F0b readout lists ['A7_gibuu', 'q3']
+  sec_fived16.tex: 'truths fail: the' names truths by key ['A7_gibuu', 'q3', 'stage0c_gibuu'] and by name ['A7_gibuu', 'q3', 'stage0c_gibuu']; the pinned F0b readout lists ['A7_gibuu', 'q3']
+  sec_fived16.tex: 'at these GiBUU-like truths or at the $q_3$ tilt' needs at least 2 listed GiBUU truths and ['q3']; the pinned F0b readout lists ['A7_gibuu', 'q3']
+  sec_fived16.tex: 'The GiBUU-like truths fail the fake-data tests' needs at least 2 listed GiBUU truths and []; the pinned F0b readout lists ['A7_gibuu', 'q3']
+  main_paper.tex: 'at GiBUU-like truths or at a synthetic $q_{3}$ tilt' needs at least 2 listed GiBUU truths and ['q3']; the pinned F0b readout lists ['A7_gibuu', 'q3']
+rc=1

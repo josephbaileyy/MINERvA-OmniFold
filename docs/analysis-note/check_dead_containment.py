@@ -259,7 +259,11 @@ def token_hit(value: str, text: str) -> bool:
 #     2.26  -> "0.08--2.26 of the band's sigma" (sec_systematics.tex), struck as `2.26\%`.
 # The keys apply to every outward build, not only main_note, so for the paper and the primer the bare forms of these
 # three literals stopped being hits on 2026-10-21 (review N6). Measured then: neither prints any of them bare.
-UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%"}
+# Added 2026-10-31 (the 5B text round, when the sixteen-cell tables began to print the run-period block's readouts),
+# verified at the source:
+#     3.65  -> the live NuWro pull in cell R14 under the reported covariance (values_fived16.tex g-nuwro-pull-R14, the
+#              note's pulls table), struck as `3.65\%` (the superseded 2D Flux-band per-bin median, app_history.tex).
+UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": "%"}
 
 # A struck literal whose bare form also prints as a different, live quantity in ONE outward build, in ONE declared
 # context, and cannot be told apart by a unit. Added 2026-10-21 with main_note's move to outward-facing
@@ -275,10 +279,24 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%"}
 # main() itself refuses a stale entry (review F8): the build FAILS if an entry's build is not outward-facing, if its
 # source text no longer occurs in its source file, or if its literal is no longer struck in any strike-carrying build.
 # test_build_all.py::ContextExemptLiteralTest checks both directions of the exemption and that this guard fires.
+# Added 2026-10-31 (the 5B text round), each verified at the source:
+#     1.65  -> the live MINERvA Tune v1 pull in cell R15 under the reported covariance (values_fived16.tex
+#              g-tune-pull-R15, the note's pulls table); struck as the norm `1.65 x 10^-38 cm^2/nucleon` (the records'
+#              removed conservative-variant shift), which prints with its "x 10". Only a bare 1.65 not followed by "x"
+#              is removed, and only in main_note.
+#     6.86  -> the live relative sigma of NuWro's third chi2 mode, printed in the modes figure as "sigma = 6.86%,
+#              distance +4.85 sigma" (fd_g_fig_modes.json plotted.panels, sigma 0.0685863); struck as `6.86\%` (the
+#              superseded 2D per-bin median relative sigma). Only the figure's "= 6.86%, distance" context is removed.
 CONTEXT_EXEMPT = {
     ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_validation.tex", "(mean weight 1.014)"),
     ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
+    ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
+    ("main_note", "6.86"): (r"=\s*6\.86%,\s*distance",
+                            "../orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/figures/fd_g_fig_modes.json",
+                            '"sigma": 0.06858631491192879'),
 }
+# How an exempt context renders when its source is not the printed text (a figure's sidecar), for the tests.
+CONTEXT_RENDERED = {("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.85\u03c3"}
 
 
 def exempt_text(driver: str, text: str) -> str:
