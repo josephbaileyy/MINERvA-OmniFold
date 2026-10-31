@@ -1,0 +1,51 @@
+Q1: DIFFERENCES:
+1. Color representing MINERvA Tune v1:
+BEFORE: "MINERvA Tune v1 (orange)"
+AFTER: "MINERvA Tune v1 (blue)"
+AFTER changes the color identifying MINERvA Tune v1 from orange to blue.
+2. Presence of printed titles on the ratio map panels:
+BEFORE: "the panels have no printed titles."
+AFTER: "the panels have printed titles."
+AFTER reverses the claim, stating that the panels have printed titles rather than no printed titles.
+
+Q2: DIFFERENCES:
+1. The truth hadronic diagnostic stored in the output files:
+BEFORE: "the leading-hadron angle."
+AFTER: "the polar angle of the summed final-state hadronic momentum, with muons and neutrinos excluded."
+AFTER replaces the leading-hadron angle with the polar angle of the total final-state hadronic momentum, explicitly excluding muons and neutrinos.
+
+Q3: DIFFERENCES:
+1. What the figure displays:
+BEFORE: "Unfolded $(\Eavail,W)$ cross section versus the four-generator band"
+AFTER: "Projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators"
+AFTER changes the description from the full 2D cross section plotted against a generator band to 1D projections onto $\Eavail$ and $W$ shown against four generator predictions.
+2. Capability of the projections:
+BEFORE: [absent]
+AFTER: ", which the projections do resolve,"
+AFTER adds the claim that the 1D projections resolve the high-$W$, high-$\Eavail$ corner.
+3. Cross-reference for generator deficit in the corner:
+BEFORE: [absent]
+AFTER: "(\S\ref{sec:eavailw-band})"
+AFTER adds a section citation for the statement that every generator lies below the data in that corner.
+4. Effect of 2p2h on the corner:
+BEFORE: "leaves the corner unchanged"
+AFTER: "leaves the corner essentially unchanged"
+AFTER weakens the claim by adding the qualifier "essentially".
+
+Q4: DIFFERENCES:
+1. Kinematic scope and grouping of generator evaluations:
+BEFORE: All five models (including GiBUU) are listed together in an ungrouped table: "\fvval{label-gibuu}" is listed alongside the others without qualification.
+AFTER: Groups models under "\multicolumn{7}{@{}l}{All 16 cells}" (GENIE CV, GENIE+MEC, NuWro, Tune) and introduces a separate section "\multicolumn{7}{@{}l}{8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$}" containing "\fvval{label-gibuu}".
+AFTER specifies that GiBUU is evaluated only on an 8-cell subset restricted by $\pPar<\fvval{h2-mid-pz}$~GeV/$c$ rather than on the full 16-cell phase space, and explicitly attributes the other four models to all 16 cells.
+2. Caption description of columns:
+BEFORE: "the last column gives the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$."
+AFTER: "the last two columns give the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$, and its ndf."
+AFTER changes the description from "the last column" giving $\chi^2$ to "the last two columns" giving $\chi^2$ and ndf.
+
+Q5: DIFFERENCES:
+1. Effect of aggregate variance on bin relevance:
+BEFORE: "does not make a bin irrelevant to a quoted result."
+AFTER: "does make a bin irrelevant to a quoted result."
+AFTER reverses the claim from asserting that a small share of aggregate variance does not make a bin irrelevant to asserting that it does.
+
+END

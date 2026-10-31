@@ -183,17 +183,20 @@ Table~\ref{tab:fived16-gen} compares the result with five generator predictions.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{$\chi^2$ with its number of degrees of freedom, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, with the shape-only $\chi^2$ beside it; the last column gives the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$.}
+\caption{$\chi^2$ with its number of degrees of freedom, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, with the shape-only $\chi^2$ and its ndf beside it; the last two columns give the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$, and its ndf.}
 \label{tab:fived16-gen}
-\begin{tabular}{@{}lccc@{}}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-prediction & $\chi^2$ and ndf & shape-only & without $C_{\mathrm{resp}}$ \\
+prediction & $\chi^2$ & ndf & shape-only $\chi^2$ & ndf & $\chi^2$ without $C_{\mathrm{resp}}$ & ndf \\
 \midrule
-\fvval{label-gcv} & \fvval{g-gcv-total-chi2}/\fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2}/\fvval{g-gcv-shape_only-ndf} & \fvval{g-gcv-nocresp-chi2}/\fvval{g-gcv-total-ndf} \\
-\fvval{label-gmec} & \fvval{g-gmec-total-chi2}/\fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2}/\fvval{g-gmec-shape_only-ndf} & \fvval{g-gmec-nocresp-chi2}/\fvval{g-gmec-total-ndf} \\
-\fvval{label-nuwro} & \fvval{g-nuwro-total-chi2}/\fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2}/\fvval{g-nuwro-shape_only-ndf} & \fvval{g-nuwro-nocresp-chi2}/\fvval{g-nuwro-total-ndf} \\
-\fvval{label-gibuu} & \fvval{g-gibuu-total-chi2}/\fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2}/\fvval{g-gibuu-shape_only-ndf} & \fvval{g-gibuu-nocresp-chi2}/\fvval{g-gibuu-total-ndf} \\
-\fvval{label-tune} & \fvval{g-tune-total-chi2}/\fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2}/\fvval{g-tune-shape_only-ndf} & \fvval{g-tune-nocresp-chi2}/\fvval{g-tune-total-ndf} \\
+\multicolumn{7}{@{}l}{All 16 cells} \\
+\fvval{label-gcv} & \fvval{g-gcv-total-chi2} & \fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2} & \fvval{g-gcv-shape_only-ndf} & \fvval{g-gcv-nocresp-chi2} & \fvval{g-gcv-total-ndf} \\
+\fvval{label-gmec} & \fvval{g-gmec-total-chi2} & \fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2} & \fvval{g-gmec-shape_only-ndf} & \fvval{g-gmec-nocresp-chi2} & \fvval{g-gmec-total-ndf} \\
+\fvval{label-nuwro} & \fvval{g-nuwro-total-chi2} & \fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2} & \fvval{g-nuwro-shape_only-ndf} & \fvval{g-nuwro-nocresp-chi2} & \fvval{g-nuwro-total-ndf} \\
+\fvval{label-tune} & \fvval{g-tune-total-chi2} & \fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2} & \fvval{g-tune-shape_only-ndf} & \fvval{g-tune-nocresp-chi2} & \fvval{g-tune-total-ndf} \\
+\midrule
+\multicolumn{7}{@{}l}{8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$} \\
+\fvval{label-gibuu} & \fvval{g-gibuu-total-chi2} & \fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2} & \fvval{g-gibuu-shape_only-ndf} & \fvval{g-gibuu-nocresp-chi2} & \fvval{g-gibuu-total-ndf} \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -1,0 +1,19 @@
+Q1: DIFFERENCES:
+1. Changes the stated color for the MINERvA Tune v1 curve from orange to blue (BEFORE: "MINERvA Tune v1 (orange)"; AFTER: "MINERvA Tune v1 (blue)").
+
+Q2: DIFFERENCES:
+1. Changes the truth hadronic diagnostic from the angle of the single leading hadron to the polar angle of the aggregate final-state hadronic momentum, and adds the qualification that muons and neutrinos are excluded from this sum (BEFORE: "the leading-hadron angle"; AFTER: "the polar angle of the summed final-state hadronic momentum, with muons and neutrinos excluded").
+
+Q3: DIFFERENCES:
+1. Changes the description of the figure contents from the 2D unfolded cross section versus a generator band to 1D projections onto $\Eavail$ and $W$ with generator predictions (BEFORE: "Unfolded $(\Eavail,W)$ cross section versus the four-generator band"; AFTER: "Projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators").
+2. Adds a limitation stating that the 1D projections do not resolve the high-$W$, high-$\Eavail$ corner (BEFORE: not present; AFTER: "which the projections do not resolve,").
+3. Adds a section cross-reference for the generator deficit in the corner (BEFORE: not present; AFTER: "(\S\ref{sec:eavailw-band})").
+4. Weakens the claim about the effect of adding 2p2h in that corner from strictly unchanged to "essentially unchanged" (BEFORE: "adding 2p2h leaves the corner unchanged"; AFTER: "adding 2p2h leaves the corner essentially unchanged").
+
+Q4: DIFFERENCES:
+1. Specifies that GENIE CV, GENIE+MEC, NuWro, and Tune are evaluated over all 16 cells, while restricting GiBUU's evaluation to an 8-cell subset with $\pPar<\fvval{h2-mid-pz}$~GeV/$c$ (BEFORE: models are listed together without partitioning; AFTER: "\multicolumn{7}{@{}l}{All 16 cells}" and "\multicolumn{7}{@{}l}{8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$}").
+2. Changes the description of the final columns to state that both $\chi^2$ and ndf without the response block are reported across two columns, rather than just $\chi^2$ in the last column (BEFORE: "the last column gives the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$."; AFTER: "the last two columns give the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$, and its ndf.").
+
+Q5: DIFFERENCES: NONE
+
+END

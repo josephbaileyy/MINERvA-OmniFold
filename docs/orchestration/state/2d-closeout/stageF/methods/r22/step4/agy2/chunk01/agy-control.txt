@@ -1,0 +1,21 @@
+Q1: DIFFERENCES:
+1. Curve color in the caption: BEFORE states "MINERvA Tune v1 (orange)", whereas AFTER states "MINERvA Tune v1 (blue)".
+2. Status of figure panel titles: BEFORE states "the panels have no printed titles", whereas AFTER states "the panels have printed titles".
+
+Q2: DIFFERENCES:
+1. Hadronic angular diagnostic stored: BEFORE specifies "the leading-hadron angle", whereas AFTER specifies "the polar angle of the summed momentum of all final-state particles other than muons and neutrinos".
+
+Q3: DIFFERENCES:
+1. Nature of the cross-section presentation in the figure: BEFORE states "Unfolded $(\Eavail,W)$ cross section versus the four-generator band", whereas AFTER states "Projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators".
+2. Resolving capability of the projections: AFTER adds the claim ", which the projections do resolve,", which is absent in BEFORE.
+3. Cross-reference for generator deficit in the corner: AFTER adds the attribution/reference "(\S\ref{sec:eavailw-band})", which is absent in BEFORE.
+4. Effect of adding 2p2h on the corner: BEFORE states that it "leaves the corner unchanged", whereas AFTER weakens the claim to "leaves the corner essentially unchanged".
+
+Q4: DIFFERENCES:
+1. Caption description of degrees of freedom: BEFORE describes the reporting as "with the shape-only $\chi^2$ beside it; the last column gives the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$", whereas AFTER states "with the shape-only $\chi^2$ and its ndf beside it; the last two columns give the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$, and its ndf".
+2. Cell phase-space sample for predictions: In BEFORE, all predictions (including GiBUU) are listed together without partitioning, whereas AFTER explicitly divides the results by adding headings that restrict GCV, GMEC, NuWro, and Tune to "All 16 cells" and GiBUU to "8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$".
+
+Q5: DIFFERENCES:
+1. Effect of aggregate variance on bin relevance: BEFORE states that a small share "does not make a bin irrelevant to a quoted result", whereas AFTER states that it "does make a bin irrelevant to a quoted result".
+
+END

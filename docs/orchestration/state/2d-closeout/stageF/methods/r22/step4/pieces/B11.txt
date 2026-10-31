@@ -1,0 +1,433 @@
+Extended fiducial phase-space study
+
+This section gives a preliminary scalar central value for an extended fiducial domain, with a threeprior dependence envelope, a hidden-variable closure and a 200-pseudo-experiment containment
+diagnostic for the extension. The signal remains νµ CC in the tracker interaction fiducial volume. The
+truth-muon kinematic cuts are removed, but the reconstructed MINOS-based selection is unchanged,
+so the domain is an extended fiducial one, not unrestricted neutrino phase space. The result consists
+only of central values and these validation tests, without a quoted covariance.
+
+12.1
+
+Acceptance and the extended domain
+
+The published cuts (θµ < 20◦ , 1.5 < p∥ < 60 GeV/c, pT < 4.5 GeV/c) exclude a third of the signal.
+Of the weighted true νµ CC rate in the tracker fiducial volume, 66.4 % lies inside the cuts, 22.3 % at
+p∥ < 1.5 GeV/c, 11.3 % at θµ > 20◦ , and the high-pT /p∥ tails are negligible (Fig. 32). OmniFold’s
+
+treatment of events that fail reconstruction already corrects for acceptance, so removing the truthlevel kinematic cuts is a change of configuration only: the truth denominator grows from 32.8 million
+to 49 million events. In regions without acceptance the unfolding extrapolates through the step-1
+regressor for missed events; the validation tests below quantify the resulting prior dependence.
+
+15.0
+
+0.6
+
+15.0
+
+12.5
+
+0.5
+
+12.5
+
+5
+
+12.5
+
+4
+3
+2
+
+7.5
+
+1
+
+5.0
+
+0.0
+0.0
+
+1
+2.5
+
+5.0 7.5 10.0
+p_T bin (extended)
+
+12.5
+
+15.0
+
+0.3
+
+7.5
+
+0.2
+
+5.0
+
+0
+
+2.5
+
+0.4
+
+10.0
+
+0.1
+
+2.5
+0.0
+0.0
+
+0.0
+2.5
+
+5.0 7.5 10.0
+p_T bin (extended)
+
+12.5
+
+15.0
+
+p_|| bin (extended)
+
+17.5
+
+15.0
+
+10.0
+
+(b) reco efficiency
+
+0.7
+
+17.5
+
+p_|| bin (extended)
+
+p_|| bin (extended)
+
+(a) truth rate (log10)
+
+6
+
+17.5
+
+(c) dead region (eff < 0.02)
+
+1.0
+0.8
+0.6
+
+10.0
+7.5
+
+0.4
+
+5.0
+
+0.2
+
+2.5
+0.0
+0.0
+
+0.0
+2.5
+
+5.0 7.5 10.0
+p_T bin (extended)
+
+12.5
+
+15.0
+
+Figure 32: Extended-fiducial acceptance for all twelve data-taking periods: (a) weighted truth rate
+(log10 ), (b) reconstruction efficiency, and (c) the low-acceptance region, ϵ < 2 %, on the extended
+(pT , p∥ ) grid (bin number; the overflow bins are too wide for a linear axis). Cyan lines mark the
+published boundary. Efficiency is ∼ 0.65 and flat through the published region, degrades smoothly
+across the θ > 20◦ wedge, and falls to zero in the p∥ < 1.5 GeV/c strip and the high-pT corner. The
+low-acceptance region carries 27.7 % of the total truth rate.
+
+12.2
+
+Validation tests
+
+Four tests characterize the extension (Fig. 33):
+1. Published-region check. The control unfolds the standard 2D input on the published
+binning, with settings identical to the extended-domain unfolding’s. In the published sub-block,
+the extended-domain unfolding reproduces it with integral ratio 0.9994, median cell ratio
+1.0013 and median absolute relative deviation from the control 0.57 % over all 185 reported
+cells. The control’s total, 3.073 × 10−38 cm2 /nucleon, agrees at the printed precision with the
+purity-subtracted 2D totals (exact-split and LightGBM). The quoted 2D result, which uses
+refined negative-weight subtraction, is 3.069 × 10−38 cm2 /nucleon, 0.14 % lower, so the control
+does not reproduce it.
+2. Closure. Extended-grid self-closure using simulated reconstruction as pseudo-data returns
+recovered/truth = 1.0000 in every cell, including the extension, with no event-accounting or
+normalization bias from the enlarged denominator. In hidden-variable closure, a Gaussian
+truth bump is injected in true Eavail , unseen by the (pT , p∥ ) unfolding. The per-cell absolute
+relative deviation of the recovered cross section from the bump-reweighted (pT , p∥ ) truth has
+a median of 0.17 % (90th percentile 0.65 %) in the published cells and a median of 0.77 %
+(maximum 4.05 %) in the extension, both well inside the three-prior envelope.
+3. Three-prior envelope. The total cross section varies by ±1.5 % across three priors (MINERvA
+Tune v1, bare GENIE and NuWro-shaped). The NuWro-shaped prior reweights the truth
+(pT , p∥ ) shape to two million raw NuWro events without phase-space cuts. The sample’s
+mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the
+flux repair. The per-cell half-spread of the three results, divided by their mean, has a median
+
+
+of 2.9 % in the published region and 7.9 % (90th percentile 62 %) in the extension, concentrated
+in zero-acceptance cells (Fig. 34).
+4. Containment diagnostic. With a fixed estimator seed and one disjoint 100/100 split into
+calibration and evaluation sets, widths learned from the calibration set contain the fixed truth
+in 68.67 % of evaluation (bin, pseudo-experiment) pairs, compared with the 68.27 % Gaussian
+nominal. Bin correlations and estimated widths preclude a global binomial error or a calibrated
+test, and the closure pseudo-experiments fluctuate statistically only, so a full uncertainty band
+is not tested. The statistical-band, pull and regional fractions are in App. B.3; none is used to
+certify a covariance.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1.20
+
+p_|| bin (extended)
+
+15.0
+
+1.05
+
+10.0
+
+1.00
+
+7.5
+
+0.95
+
+5.0
+
+0.90
+0.85
+
+2.5
+
+0.80
+2.5
+
+5.0 7.5 10.0
+p_T bin (extended)
+
+12.5
+
+15.0
+
+(b) prior-swap ratio
+
+1.20
+1.10
+
+12.5
+
+1.05
+
+10.0
+
+1.00
+
+7.5
+
+0.95
+
+5.0
+
+0.90
+0.85
+
+2.5
+0.0
+0.0
+
+17.5
+
+1.15
+
+15.0
+
+1.10
+
+12.5
+
+0.0
+0.0
+
+17.5
+
+1.15
+
+0.80
+2.5
+
+5.0 7.5 10.0
+p_T bin (extended)
+
+12.5
+
+15.0
+
+p_|| bin (extended)
+
+(a) anchor ratio
+
+p_|| bin (extended)
+
+17.5
+
+(c) abs. xsec (log10)
+
+38
+
+15.0
+
+39
+
+12.5
+
+40
+
+10.0
+
+41
+
+7.5
+
+42
+
+5.0
+
+43
+
+2.5
+0.0
+0.0
+
+44
+2.5
+
+5.0 7.5 10.0
+p_T bin (extended)
+
+12.5
+
+15.0
+
+Figure 33: Extended-fiducial validation tests (all data-taking periods): (a) ratio to the control in
+the published sub-block (median 1.0013), (b) MINERvA Tune v1/bare-GENIE prior-swap ratio,
+and (c) extended-fiducial cross section (log10 ). Panels (a) and (b) are ratios on a diverging scale
+centered at unity; panel (c) gives the absolute magnitude on a sequential scale. Black lines mark the
+published boundary; axes are bin number on the extended grid.
+
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+30
+
+17.5
+25
+3-prior half-spread/mean (%)
+
+p_|| bin (extended)
+
+15.0
+
+20
+
+12.5
+10.0
+
+15
+
+7.5
+
+10
+5.0
+5
+
+2.5
+0.0
+
+0
+
+2
+
+4
+
+6
+8
+10
+p_T bin (extended)
+
+12
+
+14
+
+0
+
+Figure 34: Three-prior dependence envelope (per-cell half-spread/mean, in percent). Prior dependence
+is at the few-percent level wherever the detector has acceptance and reaches tens of percent only in
+low-acceptance cells, the quantitative basis for the two-tier reporting.
+
+12.3
+
+Central value and two-tier reporting
+
+The preliminary extended-fiducial CC-inclusive central value on the tracker fiducial volume is
+σext = 4.502 × 10−38 cm2 /nucleon (central value),
+compared with 3.073 × 10−38 cm2 /nucleon for the control unfolding in the restricted phase space.
+The extended-fiducial central value was produced with the binned purity correction, not with refined
+negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App. C).
+We adopt two-tier reporting. Tier 1 comprises the acceptance-supported cells (ϵ ≳ 2%): the
+published region and the measurable part of the extension, which carries ∼ 6 % of the rate, chiefly
+in the θ > 20◦ wedge and the p∥ ∈ [0.75, 1.5] GeV/c edge. Tier 2, prior-extrapolated, comprises the
+low-acceptance cells (∼ 28 % of the rate) and is flagged separately with an explicit additional threeprior envelope band. Both tiers enter the sum; only tier 1 is interpreted as an acceptance-supported
+measurement. No uncertainty magnitude is assigned beyond the three-prior envelope, because no
+extended-domain covariance has been constructed with re-selected lateral bands under the procedure
+of §4.5.
+
+13
+
+Summary and outlook
+
+Summary. Beyond the results stated with their scopes in the executive summary (p. 1), the body
+supports two further conclusions.
+• The refined negative-weight subtraction, which the sixteen-cell result uses (§10), largely removes
+the bias that purity-based background subtraction leaves in the highest-W cells (§9.2). In a
+two-dimensional closure test with backgrounds, the purity and refined estimates differ by more
+than one statistical standard deviation in 14 of the 205 cells. In those cells the purity estimate
+
+lies up to 5.9 σstat from the truth, and the refined one within 0.44 σstat . On this basis, the
+two-dimensional result uses the refined estimator (App. C).
+• The joint tests’ design was fixed before any production pseudo-experiment or observed statistic,
+with two data-informed elements (§11.3). The tests recover established discrepancies and show
+no evidence of discrimination beyond matched coarse projections (§11).
+Principal limitations. The executive summary lists the principal limitations (p. 2), each with
+the section that states it. The quoted two-dimensional statistical block has had no coverage test
+(§4.2, §5.2).
+Outlook. The scalar extended-fiducial study (§12) yields a preliminary central value σext =
+4.502 × 10−38 cm2 /nucleon, against 3.073 × 10−38 cm2 /nucleon for its control unfolding in the
+restricted phase space. New acceptance-supported cells contribute about 6 % of the rate; separately
+labeled prior-dominated extrapolation contributes about 28 %. Further refinements are a fifth
+external generator, NEUT, and a finer 44-cell comparison with the Ascencio et al. measurement
+(the maximal-common-grid comparison is in §7.8). A flux and muon-energy-scale posterior derived
+with MAT-MINERvA, independently of the published analysis, would determine the correlation ρ
+between the leading flux mode and the muon-energy-scale band (§4) entirely within this analysis.
+Reusing the unbinned result. The public ATLAS charged-particle phase-space release [61]
+exemplifies unbinned distribution. The emerging omnifold_publication proposal [62] emphasizes
+weight-family metadata, normalization, row alignment, and checksums. A MINERvA release
+should likewise specify event identity, estimator and uncertainty-family definitions, units, support,
+normalization, and a reproducible projection example. App. G specifies this release for our analysis,
+including which of its objects already have fixed identities and which are still to be produced. A
+local release candidate exists, with checksums and a verifier that recomputes and checks its results;
+no release has been tagged or deposited. Rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G). New projections require their own applicability checks;
+nominal weights alone cannot certify arbitrary downstream inference (App. B.4). The release design
+and its public example have no bearing on the choice of the five-axis covariance of the configuration-(a)
+central value (§9.6).
