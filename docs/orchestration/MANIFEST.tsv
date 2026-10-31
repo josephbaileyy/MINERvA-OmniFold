@@ -431,6 +431,7 @@ docs/orchestration/PROPOSAL-20260917-integrated-acceptance-existing-products.md	
 docs/orchestration/PROPOSAL-20260921-note-appendix-and-test-consolidation.md	tracked	LIVE	document		20260921	open		route-only	no
 docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md	tracked	LIVE	document	20261006-s5p-campaign	20261005	open		route-only	no
 docs/orchestration/PROPOSAL-20261014-q3-custodian-key-design.md	tracked	LIVE	document		20261014	open		route-only	no
+docs/orchestration/PROPOSAL-20261031-5b-with-without.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	tracked	LIVE	document		20260822	open		route-only	no
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document		20260810	open		route-only	no
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only	no
@@ -5109,6 +5110,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-cons
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-20261027/inputs/note-front.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-20261027/inputs/note-toc.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-20261027/inputs/paper.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -5123,6 +5128,11 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-cons
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-coverage-20261028/inputs/PROMPT.md.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-coverage-20261028/inputs/coverage-options.md.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-coverage-20261028/inputs/paper.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-protections-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-protections-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-protections-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-protections-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-protections-20261031/state-now.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
