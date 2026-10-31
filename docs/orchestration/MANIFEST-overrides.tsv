@@ -214,7 +214,9 @@ docs/orchestration/DECISION-20261030-joseph-paper-pairs.md	LIVE	open	""
 docs/orchestration/DECISION-20261030-joseph-r22-protected-gaps.md	LIVE	open	""
 docs/orchestration/DECISION-20261031-joseph-chi2-table-option-b.md	LIVE	open	""
 docs/orchestration/DECISION-20261031-joseph-note-abstract-reorder.md	LIVE	open	""
+docs/orchestration/DECISION-20261031-joseph-oi151-option-c.md	LIVE	open	""
 docs/orchestration/DECISION-20261031-joseph-rater-account-figures-chi2-consult.md	LIVE	open	""
+docs/orchestration/DECISION-20261031-joseph-restyle-review-and-palette.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -493,6 +495,7 @@ docs/orchestration/RECORD-20261031-close-items-oi143b-traced.md	ARCHIVAL	termina
 docs/orchestration/RECORD-20261031-close-items-oi62-retired-oi143-oi9-deferred.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261031-close-items-oi62-traced.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261031-close-items-oi9-traced.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261031-close-items-waiting-joseph-triage.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORDS-RULES.md	LIVE	open	""
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	LIVE	open	
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	LIVE	open	
@@ -1025,7 +1028,10 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE2-DE
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-3B-REPORT.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-ADDITION-BINDING.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-ADDITION-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-BINDING.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-DECLARATION-ERRATUM-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-AUDIT-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-BINDING.md	LIVE	open	""
