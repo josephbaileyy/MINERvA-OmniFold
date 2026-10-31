@@ -66,7 +66,12 @@ def savefig(self, fname, *a, **k):
             name = Path(str(fname)).name
             arrays, index = artists.collect(self)
             artists.write(out / name, arrays, index)
-        return _inner(self, fname, *a, **k)
+        result = _inner(self, fname, *a, **k)
+        if outer:  # after the save has drawn the figure, so every tick label exists
+            with open(out / f"{name}.textsizes.tsv", "w") as f:
+                f.write(f"# figure width (in)\t{self.get_size_inches()[0]!r}\n")
+                f.writelines(f"{s!r}\t{x}\n" for s, x in artists.texts(self))
+        return result
     finally:
         _depth[0] -= 1
 

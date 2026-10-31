@@ -117,6 +117,21 @@ def collect(fig):
     return arrays, index
 
 
+def texts(fig):
+    """(font size in pt, text) for every visible, non-empty text the figure draws: figure and axes texts, axis labels,
+    tick labels, offset texts, legend texts. Not hashed: a restyle changes these. textsize.py scales them to print."""
+    out = []
+    for t in fig.findobj(lambda a: hasattr(a, "get_text") and hasattr(a, "get_fontsize")):
+        try:
+            s = t.get_text()
+        except TypeError:
+            continue
+        shown = t.get_visible() and (t.axes is None or t.axes.get_visible())
+        if isinstance(s, str) and s.strip() and shown:
+            out.append((float(t.get_fontsize()), s.replace("\t", " ").replace("\n", " ")))
+    return out
+
+
 def write(stem, arrays, index):
     stem = str(stem)
     np.savez(stem + ".npz", **arrays)
