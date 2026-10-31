@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific iteration numbers tested ("10, 15, or 20 iterations"), replacing them with the broader phrase "the larger counts tested".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the numerical precision target ("\SI{10}{\percent} median half-width for the total 68\% interval"), the result that no tested reporting definition meets it, and the cell-by-cell breakdown ("\jtNcells{} coarse joint cells", "39 supported $(\Eavail,W)$ cells", "27 cells", and the "\SI{1.4}{\percent} normalization"). These details appear to have been deferred to \nsec{sec:gbdt-model-dependence}.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER introduces an "8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$" for \fvval{label-gibuu} and changes the caption to "in the indicated comparison region", whereas BEFORE evaluated all predictions including GiBUU "against the sixteen-cell result".
+
+Q4: VERDICT: SAME
+DETAIL: AFTER is identical to BEFORE word for word.
+
+END

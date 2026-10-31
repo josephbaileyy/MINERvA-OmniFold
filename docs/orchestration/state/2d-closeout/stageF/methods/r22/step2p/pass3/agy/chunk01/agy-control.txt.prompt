@@ -1,0 +1,34 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking proposed rewordings of a physics paper. Each numbered pair has a BEFORE passage, whose content is accepted as correct, and an AFTER passage, a proposed rewording of it in the note's LaTeX source. For each pair, compare AFTER with BEFORE only, and say:
+(a) whether AFTER states anything that BEFORE does not support, or states it more strongly or more broadly;
+(b) whether AFTER drops any fact, number, qualifier or limitation that BEFORE states;
+(c) whether AFTER is ambiguous in a way that could mislead a reader about what was measured or what holds.
+A fact BEFORE states may be missing from AFTER only because the rewording moved it to a neighbouring passage; say so in DETAIL if you suspect that, but still answer DIFFERS.
+
+Answer in this format, one block per pair, in order:
+Qn: VERDICT: SAME or DIFFERS
+DETAIL: <one or two sentences; if DIFFERS, quote the words concerned>
+End with a line: END
+
+
+===== BEGIN FILE pairs-control.txt =====
+(Each pair is one passage of a physics paper, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [paper_body.tex PB90]
+BEFORE: The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development. The comparison and its values are given in \nsec{sec:gbdt-model-dependence}.
+AFTER: The joint-test estimator keeps five iterations because the larger counts tested did reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development; the counts tested and their values are given in \nsec{sec:gbdt-model-dependence}.
+
+Q2. [paper_body.tex PB98]
+BEFORE: Our precision target is a \SI{10}{\percent} median half-width for the total 68\% interval. With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target. With the joint-test estimator, the envelope alone exceeds the target for the \jtNcells{} coarse joint cells and for the 39 supported $(\Eavail,W)$ cells. For a coarser, non-nested partition of all five observables into 27 cells, the same estimator's envelope alone does not exceed the target, but the \SI{1.4}{\percent} normalization contained in every probabilistic half-width lifts the median above it. Over these definitions, the envelope has a median of about 10--13\% per cell, comparable to the generator differences that such a measurement would need to resolve. The study is described in \nsec{sec:gbdt-model-dependence}.
+AFTER: Over the reporting definitions of a five-observable measurement tested in the study, the envelope has a median of about 10--13\% per cell, comparable to the generator differences that such a measurement would need to resolve. The study and its precision targets are described in \nsec{sec:gbdt-model-dependence}.
+
+Q3. [paper_body.tex PB246]
+BEFORE: The $\chi^2$ of Table~\ref{tab:gen16} uses the full covariance, whose correlations the error bars do not show.} \label{fig:ratio16} \end{figure*} \begin{table}[tb] \caption{$\chi^2$ and its number of degrees of freedom of each prediction against the sixteen-cell result, under $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, with $V_g$ the prediction's finite-sample (diagonal) covariance; shape-only $\chi^2$ frees the normalization.} \label{tab:gen16} \centering\scriptsize \begin{tabular}{@{}lcc@{}} \toprule Prediction & $\chi^2$ and ndf & shape-only \\ \midrule \fvval{label-gcv} & \fvval{g-gcv-total-chi2int}/\fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2int}/\fvval{g-gcv-shape_only-ndf} \\ \fvval{label-gmec} & \fvval{g-gmec-total-chi2int}/\fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2int}/\fvval{g-gmec-shape_only-ndf} \\ \fvval{label-nuwro} & \fvval{g-nuwro-total-chi2int}/\fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2int}/\fvval{g-nuwro-shape_only-ndf} \\ \fvval{label-gibuu} & \fvval{g-gibuu-total-chi2int}/\fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2int}/\fvval{g-gibuu-shape_only-ndf} \\ \fvval{label-tune} & \fvval{g-tune-total-chi2int}/\fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2int}/\fvval{g-tune-shape_only-ndf} \\ \bottomrule \end{tabular} \end{table} Weakening only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\chi^2$ of the 16-cell predictions by \fvval{sens-flux-fall-lo}--\fvval{sens-flux-fall-hi}\,\%.
+AFTER: The $\chi^2$ of Table~\ref{tab:gen16} uses the full covariance, whose correlations the error bars do show.} \label{fig:ratio16} \end{figure*} \begin{table}[tb] \caption{$\chi^2$ and ndf for each prediction in the indicated comparison region, using $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance. Shape-only $\chi^2$ frees the normalization.} \label{tab:gen16} \centering\scriptsize \begin{tabular}{@{}lcccc@{}} \toprule Prediction & $\chi^2$ & ndf & shape-only $\chi^2$ & ndf \\ \midrule \multicolumn{5}{@{}l}{All 16 cells} \\ \fvval{label-gcv} & \fvval{g-gcv-total-chi2int} & \fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2int} & \fvval{g-gcv-shape_only-ndf} \\ \fvval{label-gmec} & \fvval{g-gmec-total-chi2int} & \fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2int} & \fvval{g-gmec-shape_only-ndf} \\ \fvval{label-nuwro} & \fvval{g-nuwro-total-chi2int} & \fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2int} & \fvval{g-nuwro-shape_only-ndf} \\ \fvval{label-tune} & \fvval{g-tune-total-chi2int} & \fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2int} & \fvval{g-tune-shape_only-ndf} \\ \midrule \multicolumn{5}{@{}l}{8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$} \\ \fvval{label-gibuu} & \fvval{g-gibuu-total-chi2int} & \fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2int} & \fvval{g-gibuu-shape_only-ndf} \\ \bottomrule \end{tabular} \end{table} Weakening only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\chi^2$ of the 16-cell predictions by \fvval{sens-flux-fall-lo}--\fvval{sens-flux-fall-hi}\,\%.
+
+Q4. [paper_body.tex filler]
+BEFORE: Each classifier is trained on the full sample whose weights it then sets, so no held-out or cross-fitted split is used; it is trained without early stopping, and the two classes keep their physical weights (\nsec{sec:method-algo}).
+AFTER: Each classifier is trained on the full sample whose weights it then sets, so held-out or cross-fitted split is used; it is trained without early stopping, and the two classes keep their physical weights (\nsec{sec:method-algo}).
+
+===== END FILE pairs-control.txt =====

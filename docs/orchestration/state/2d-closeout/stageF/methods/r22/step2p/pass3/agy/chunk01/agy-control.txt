@@ -1,0 +1,13 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating that larger counts "did reduce its model dependence" instead of "did not reduce", and replaces the specific tested counts ("10, 15, or 20 iterations") with "the larger counts tested".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the numerical precision target ("\SI{10}{\percent} median half-width for the total 68\% interval") and omits the findings on whether specific cell definitions and the "\SI{1.4}{\percent} normalization" met or exceeded it, likely deferring them to "\nsec{sec:gbdt-model-dependence}".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER reverses the meaning of the opening caption by stating "whose correlations the error bars do show" instead of "do not show", and it modifies the table structure to evaluate GiBUU on an "8-cell subset" rather than the full sixteen-cell result.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER drops the word "no", changing "so no held-out or cross-fitted split is used" to "so held-out or cross-fitted split is used", which directly contradicts BEFORE.
+
+END
