@@ -478,8 +478,11 @@ class Product(unittest.TestCase):
             M = orig(text)
             M[0, 0] *= 1 + 1e-15
             return M
-        with mock.patch.object(A.F, "read_matrix_csv", off):
-            self.refuses(t, "K6")
+        with mock.patch.object(A.F, "read_matrix_csv", off), mock.patch("sys.stderr") as err:
+            self.assertEqual(t.product(self.tmp / "out"), 1)
+        self.assertIn("[STOP] K6: C_e: the CSV and the JSON read back bit for bit",
+                      "".join(str(c.args[0]) for c in err.write.call_args_list))
+        self.assertFalse((self.tmp / "out").exists())
 
     def test_a_data_product_whose_matrix_is_not_its_parts_plus_the_block_refuses(self):
         def m(dp):
@@ -589,13 +592,15 @@ class Table(unittest.TestCase):
         q.write_text(json.dumps(obj))
         self.paths[k], self.pins[f"{k}_with"] = q, digest(q)
 
-    def table(self):
+    def table(self, without=None):
+        """``without`` replaces a committed readout by another file, pinned by its own digest."""
+        wo = {k: REPO / A.COMMITTED[k][0] for k in (*A.READOUTS, "data_product")}
+        wo.update(without or {})
         argv = ["table"]
         for k in (*A.READOUTS, "data_product"):
-            argv += [f"--{k.replace('_', '-')}-without", str(REPO / A.COMMITTED[k][0]),
-                     f"--{k.replace('_', '-')}-with", str(self.paths[k])]
+            argv += [f"--{k.replace('_', '-')}-without", str(wo[k]), f"--{k.replace('_', '-')}-with", str(self.paths[k])]
         argv += ["--audit-json", str(AUDIT), "--out-dir", str(self.tmp / "out")]
-        pins = {**self.pins, **{f"{k}_without": A.COMMITTED[k][1] for k in (*A.READOUTS, "data_product")}}
+        pins = {**self.pins, **{f"{k}_without": digest(wo[k]) for k in wo}}
         with quiet(), mock.patch("sys.stderr") as err:
             rc = A.run(A.build_args(argv), pins=pins)
         return rc, "".join(str(c.args[0]) for c in err.write.call_args_list)
@@ -630,12 +635,13 @@ class Table(unittest.TestCase):
         self.assertIn("same order", err)
 
     def test_a_without_side_that_is_not_the_committed_readout_refuses(self):
-        self.pins["g_with"] = digest(self.paths["g"])
-        argv_pins = dict(self.pins)
-        with mock.patch.dict(A.COMMITTED, {"g": (A.COMMITTED["g"][0], "4" * 64)}):
-            rc, err = self.table()
+        # a file and its own correct digest, so only the check against the committed pin can refuse it
+        other = self.tmp / "g_other.json"
+        other.write_text((REPO / A.COMMITTED["g"][0]).read_text() + "\n")
+        rc, err = self.table(without={"g": other})
         self.assertEqual(rc, 1)
-        self.assertIn("[STOP] T", err)
+        self.assertIn("[STOP] T: g: the without readout's pin is the committed one", err)
+        self.assertFalse((self.tmp / "out").exists())
 
 
 # ------------------------------------------------------------------------------------------------ the figures
