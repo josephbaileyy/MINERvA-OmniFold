@@ -1,0 +1,54 @@
+# python3 mutation_stage2.py, 2026-10-31T18:04:43Z, local (macOS), rc=0
+sha256 7951c0388b5c18bbfeabe073003cbc50322bba18a1e196aef51b91eb430d0202  nd-unfolding/fd_1b_tasks.py
+sha256 4ca565ac80a24bac72c0b206ca2653dde7fd9b7d52bccfd6ab22a196510bd5df  nd-unfolding/tests/test_fd_1b.py
+CONTROL  rc=0  59 passed in 13.72s
+U01  KILLED   fd_1b_tasks.py   a derivation selection naming a universe S1 did not unfold is accepted
+     1 failed, 58 passed in 14.48s
+     dies: Tasks::test_a_derivation_selection_off_s1s_universes_is_refused
+U02  KILLED   fd_1b_tasks.py   an undeclared derivation selection runs every universe
+     1 failed, 58 passed in 14.14s
+     dies: Tasks::test_a_derivation_selection_off_s1s_universes_is_refused
+U03  KILLED   fd_1b_tasks.py   2a-0 runs three derivation universes, not the declared four
+     1 failed, 58 passed in 15.88s
+     dies: Tasks::test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table
+U04  KILLED   fd_1b_tasks.py   a pilot toy runs in both 2a-0 and 2a
+     4 failed, 55 passed in 15.96s
+     dies: Tasks::test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table
+     dies: Tasks::test_every_declared_toy_and_universe_runs_exactly_once
+     dies: Tasks::test_every_step_parses_as_a_declared_toy_run
+     dies: Tasks::test_walls_after_2a_take_the_16_pilot_toys_median
+U05  KILLED   fd_1b_tasks.py   2a-0's declared fullest lane departs
+     2 failed, 57 passed in 16.06s
+     dies: Tasks::test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table
+     dies: Tasks::test_every_step_parses_as_a_declared_toy_run
+U06  KILLED   fd_1b_tasks.py   2a keeps the first declaration's 3:00 limit
+     4 failed, 55 passed in 17.62s
+     dies: Tasks::test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table
+     dies: Tasks::test_submit_lines_are_regular_cpu_under_12_h_through_the_committed_packer
+     dies: Tasks::test_the_jobs_are_the_declarations_table
+     dies: Tasks::test_walls_after_2a_0_count_each_steps_load_against_2a_s_limit
+U07  KILLED   fd_1b_tasks.py   2a's declared cap stays at 9.00, so stage 2 would exceed 23.0
+     1 failed, 58 passed in 15.28s
+     dies: Tasks::test_submit_lines_are_regular_cpu_under_12_h_through_the_committed_packer
+W01  KILLED   fd_1b_tasks.py   the re-price rule drops each step's load
+     1 failed, 58 passed in 15.64s
+     dies: Tasks::test_walls_after_2a_0_count_each_steps_load_against_2a_s_limit
+W02  KILLED   fd_1b_tasks.py   a product made under another numpy passes the walls gate
+     1 failed, 58 passed in 15.53s
+     dies: Tasks::test_walls_refuse_a_missing_product_or_another_numpy
+W03  KILLED   fd_1b_tasks.py   a missing product passes the walls gate
+     1 failed, 58 passed in 17.25s
+     dies: Tasks::test_walls_refuse_a_missing_product_or_another_numpy
+W04  KILLED   fd_1b_tasks.py   the RSS re-price rule is dropped
+     1 failed, 58 passed in 22.12s
+     dies: Tasks::test_walls_after_2a_0_count_each_steps_load_against_2a_s_limit
+W05  KILLED   fd_1b_tasks.py   the pilot rule reads the fastest toy, not the median
+     1 failed, 58 passed in 25.01s
+     dies: Tasks::test_walls_after_2a_take_the_16_pilot_toys_median
+W06  KILLED   fd_1b_tasks.py   2a's re-price margin of 0.8 x its limit is dropped
+     1 failed, 58 passed in 27.76s
+     dies: Tasks::test_walls_after_2a_0_count_each_steps_load_against_2a_s_limit
+W07  KILLED   fd_1b_tasks.py   the protocol's 1.25 x 832 s pilot rule is loosened
+     1 failed, 58 passed in 26.53s
+     dies: Tasks::test_walls_after_2a_take_the_16_pilot_toys_median
+SUMMARY  14 of 14 killed; unkilled: none

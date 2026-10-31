@@ -43,6 +43,7 @@ import s5p_universe  # noqa: E402
 REPO = ND.parent
 DECL = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-DECLARATION.md"
 DECL_SHA256_PREFIX = "07d0e0b6b722c7de"   # the file the director bound (FD-1B-BINDING.md)
+DECL2 = DECL.with_name("FD-1B-STAGE2-DECLARATION.md")
 EDGES = [np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.array([0.0, 0.5, 1.0]),
          np.array([0.0, 1.0, 2.0, 3.0]), np.array([0.0, 1.5, 3.0])]
 SHAPE = tuple(len(e) - 1 for e in EDGES)
@@ -969,7 +970,7 @@ class Tasks(unittest.TestCase):
 
     def test_the_jobs_are_the_declarations_table(self):
         text = flat(DECL.read_text())
-        want = {"2a": (202, 3, 9, "3.0 h", "9.00"), "2b": (100, 2, 7, "2.5 h", "5.00"), "2c": (200, 3, 9, "3.0 h", "9.00"),
+        want = {"2b": (100, 2, 7, "2.5 h", "5.00"), "2c": (200, 3, 9, "3.0 h", "9.00"),
                 "3i": (200, 3, 9, "3.0 h", "9.00"), "3f": (400, 5, 10, "3.5 h", "17.50")}
         for job, (n, nodes, most, limit, cap) in want.items():
             spec = ft.JOBS[job]
@@ -982,6 +983,42 @@ class Tasks(unittest.TestCase):
         self.assertEqual(sum(ft.cap(j) for j in ft.JOBS), 49.5)
         self.assertEqual({s: sum(ft.cap(j) for j in ft.JOBS if j.startswith(s)) for s in "23"}, {"2": 23.0, "3": 26.5})
 
+    def test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table(self):
+        self.assertIn("| 2a | 202 | 3 | 9 |", flat(DECL.read_text()))
+        first = [("pilot", "toy", 2_600_000 + i) for i in range(16)] + \
+                [("pilot", "half", 2_600_000 + i) for i in range(8)] + \
+                [("repro-g18", "half", 806_000), ("repro-ar23", "half", 807_000)] + \
+                [("derivation", "derivation", u) for u in ["CV"] + toys.s1_universes()]
+        a0, a = ft.expand("2a-0"), ft.expand("2a")
+        self.assertEqual(sorted(a0 + a, key=repr), sorted(first, key=repr))
+        self.assertEqual(len(a0) + len(a), len(set(a0 + a)))
+        self.assertEqual(sorted(a0, key=repr), sorted(
+            [("derivation", "derivation", u) for u in ("CV", "Flux_0", "MaRES_1", "GEANT_Pion_0")]
+            + [("pilot", "toy", 2_600_000), ("pilot", "toy", 2_600_001),
+               ("repro-g18", "half", 806_000), ("repro-ar23", "half", 807_000)], key=repr))
+        self.assertAlmostEqual(ft.cap("2a-0") + ft.cap("2a"), 9.0)
+        text = flat(DECL2.read_text())
+        for job, (n, nodes, most, wall, limit, cap) in {"2a-0": (8, 1, 1, "832 s", "1:00", "1.00"),
+                                                         "2a": (194, 3, 9, "2.08 h", "2:40", "8.00")}.items():
+            spec = ft.JOBS[job]
+            self.assertEqual((len(ft.expand(job)), spec["nodes"], spec["most_per_lane"]), (n, nodes, most))
+            self.assertEqual(max(len(c) for c in ft.chunks(ft.expand(job), nodes * 8)), most)
+            h, m, _ = spec["limit"].split(":")
+            self.assertEqual(f"{int(h)}:{m}", limit)
+            self.assertEqual(f"{ft.cap(job):.2f}", cap)
+            secs = most * 832
+            self.assertEqual(f"{secs} s" if secs < 3600 else f"{secs / 3600:.2f} h", wall)
+            self.assertIn(f"| {nodes} | {most} | {wall} | {limit} | {cap} |", text)
+            self.assertGreaterEqual(ft.hours(spec["limit"]) * 3600, 1.25 * secs)
+        self.assertIn(f"| {ft.cap('2b') + ft.cap('2c') + 9.0:.2f} |", text)
+
+    def test_a_derivation_selection_off_s1s_universes_is_refused(self):
+        with mock.patch.object(ft, "DERIVATION_FIRST", ("CV", "Flux_100")), self.assertRaisesRegex(SystemExit, "S1"):
+            ft.expand("2a-0")
+        with mock.patch.dict(ft.JOBS, {"2a-0": dict(ft.JOBS["2a-0"], items=[("derivation", "derivation", "all", None)])}), \
+                self.assertRaisesRegex(SystemExit, "selection"):
+            ft.expand("2a-0")
+
     def test_every_declared_toy_and_universe_runs_exactly_once(self):
         got: dict = {}
         for job in ft.JOBS:
@@ -992,7 +1029,8 @@ class Tasks(unittest.TestCase):
             self.assertEqual(got[(arm, "toy")], list(range(lo, hi + 1)))
         self.assertEqual(got[("pilot", "toy")], list(range(2_600_000, 2_600_016)))
         self.assertEqual(got[("pilot", "half")], list(range(2_600_000, 2_600_008)))
-        self.assertEqual(got[("derivation", "derivation")], ["CV"] + toys.s1_universes())
+        derivation = got[("derivation", "derivation")]  # 2a-0's four first, then 2a's rest
+        self.assertEqual((sorted(derivation), len(derivation)), (sorted(["CV"] + toys.s1_universes()), 176))
         self.assertEqual((got[("repro-g18", "half")], got[("repro-ar23", "half")]), ([806_000], [807_000]))
 
     def test_every_step_parses_as_a_declared_toy_run(self):
@@ -1050,6 +1088,53 @@ class Tasks(unittest.TestCase):
             ft.submit_lines("2b", DEP, "abc")
         with mock.patch.dict(ft.JOBS, {"2b": dict(ft.JOBS["2b"], most_per_lane=6)}), self.assertRaises(SystemExit):
             ft.steps("2b", "a" * 64)
+
+    def _products(self, root, jobs, unfold=800.0, load=10.0, rss=1_000_000, numpy=None, skip=()):
+        for job in jobs:
+            for arm, mode, x in ft.expand(job):
+                path = ft.product_path(arm, mode, x)
+                if path.name in skip:
+                    continue
+                path.parent.mkdir(parents=True, exist_ok=True)
+                u = unfold(arm, mode, x) if callable(unfold) else unfold
+                meta = {"seconds_load": load, "seconds_unfold": u, "peak_rss_kib": rss,
+                        "numpy_version": numpy or np.__version__, "slurm_job": "1"}
+                np.savez(path, meta=np.array(json.dumps(meta)))
+
+    def test_walls_after_2a_0_count_each_steps_load_against_2a_s_limit(self):
+        # 2a's fullest lane has 2 steps and 9 unfolds: 2 L + 9 w against 0.8 x 2:40 = 7,680 s
+        for unfold, load, rss, verdict in ((800.0, 10.0, 1_000_000, "PASS"), (853.0, 0.0, 1_000_000, "PASS"),
+                                           (854.0, 0.0, 1_000_000, "REPRICE"), (850.0, 20.0, 1_000_000, "REPRICE"),
+                                           (800.0, 10.0, ft.RSS_LIMIT_KIB, "PASS"),
+                                           (800.0, 10.0, ft.RSS_LIMIT_KIB + 1, "REPRICE")):
+            with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+                self._products(d, ["2a-0"], unfold, load, rss)
+                out = ft.walls("2a-0")
+                self.assertTrue(out["verdict"].startswith(verdict), (unfold, load, rss, out["rule"]))
+                self.assertEqual(out["rule"]["2a_fullest_lane_s"], 2 * load + 9 * unfold)
+        self.assertEqual(ft.RSS_LIMIT_KIB, 44_040_192)
+
+    def test_walls_after_2a_take_the_16_pilot_toys_median(self):
+        for slow, verdict in ((1040.0, "PASS"), (1041.0, "REPRICE")):
+            # 8 of the 16 pilot toys at `slow` and 8 at 900 s: the median is their mean; other products are slower
+            fast = {f"fd1b_pilot_s{2_600_000 + i}.npz" for i in range(8)}
+            with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+                self._products(d, ["2a-0", "2a"], lambda arm, mode, x: (
+                    (900.0 if ft.product_path(arm, mode, x).name in fast else 2 * slow - 900.0)
+                    if (arm, mode) == ("pilot", "toy") else 5000.0))
+                out = ft.walls("2a")
+                self.assertTrue(out["verdict"].startswith(verdict), out["rule"])
+                self.assertEqual(out["rule"]["pilot_median_seconds_unfold"], slow)
+
+    def test_walls_refuse_a_missing_product_or_another_numpy(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+            self._products(d, ["2a-0"], skip={"fd1b_repro-ar23_s807000.npz"})
+            with self.assertRaisesRegex(SystemExit, "missing"):
+                ft.walls("2a-0")
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+            self._products(d, ["2a-0"], numpy="1.0.0")
+            with self.assertRaisesRegex(SystemExit, "numpy"):
+                ft.walls("2a-0")
 
     def test_tables_write_once(self):
         with tempfile.TemporaryDirectory() as d:
