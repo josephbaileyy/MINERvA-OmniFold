@@ -18,7 +18,6 @@ never derived from OI state prose; terminal and deferred records never enter thi
 | OI-75 | WAITING-JOSEPH | Joseph | provenance/P1 | Reconcile the unrecorded standard-P4 Stage-3 run with the standing no-run hold before preserving or using its products. | docs/OPEN_ITEMS.md (`OI-75`) |
 | OI-131(a) | WAITING-JOSEPH | Joseph | provenance/P1 | Decide whether an irreplaceable subset of the CFS-only P3F objects warrants a second copy. | docs/OPEN_ITEMS.md (`OI-131`) |
 | OI-131(b) | BLOCKED-EXTERNAL | storage / Joseph | provenance/P1 | Re-read and record measured HPSS quota after accounting catches up; do not promote the predicted reduction. | docs/OPEN_ITEMS.md (`OI-131`) |
-| OI-151 | WAITING-JOSEPH | Joseph | maintenance/P3 | Choose (B) invert the laptop's codex-home links, or (C) accept the laptop is not a usage host; the director recommends (C) unless laptop quota readings are wanted. | docs/OPEN_ITEMS.md (`OI-151`) |
 
 ## Machine-enforced contract
 
