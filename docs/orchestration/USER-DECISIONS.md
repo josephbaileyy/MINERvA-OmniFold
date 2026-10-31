@@ -21,21 +21,45 @@ open-item narratives; those remain in their canonical homes.
 | ID | State | Choice Joseph must make | Canonical evidence/owner | Recommendation | Implementation owner |
 |---|---|---|---|---|---|
 | UD-001 | NEEDS JOSEPH | After the current atomic tasks finish, authorize the staged rotation to fresh bounded A–D sessions and a fresh Claude Personal explainer session. | [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md); current process state remains in [`LIVE-STATE.md`](LIVE-STATE.md). | Rotate at task boundaries; preserve old sessions as continuity-only. Do not interrupt active writers. | Claude-school A coordinates; each role closes its own handoff. |
-| UD-002 | NEEDS JOSEPH | Choose whether the production definition should retain exact MAT behavior (`135` MeV subtraction) or use the physical charged-pion mass (`139.57` MeV). | `OI-30` in [`../OPEN_ITEMS.md`](../OPEN_ITEMS.md). | Finish the covariance-projected materiality comparison, then choose explicitly; do not describe exact MAT compatibility and physical-mass correctness as the same goal. | B analyzes; C implements only after the decision. |
 | UD-003 | NEEDS JOSEPH | Choose the reco-underflow repair/adoption path that governs whether the broader E_available species rule is adopted in production. | `OI-56` in [`../OPEN_ITEMS.md`](../OPEN_ITEMS.md). | Use the existing offline sensitivity result to inform the choice; keep production unchanged until the coupled choice is explicit. | B analyzes; C implements after the decision. |
 
 ## Recorded decisions
 
-No workflow-era decisions have been recorded yet. Move a row here only after
-Joseph's verbatim choice is captured.
+Move a row here only after Joseph's verbatim choice is captured.
+
+### UD-002 — keep 135 MeV as the defined constant in the E_avail definition
+
+- State: DECIDED
+- Created (UTC): 2026-08-13T12:36:16Z (`39b0021e8`, as a row of *Active decisions*)
+- Owning open item: `OI-30`, retired 2026-10-31
+- Decision requested: Choose whether the production definition should retain exact MAT behavior (`135` MeV
+  subtraction) or use the physical charged-pion mass (`139.57` MeV).
+- Options and consequences:
+  - A: keep `135` MeV as a defined constant of the observable, as the paper prints it.
+  - B: use `139.57` MeV, which changes the observable's definition.
+- Agent recommendation: A, as put to Joseph: *"UD-002: keep 135 MeV as the defined constant in the E_avail
+  definition (the paper already says 'a defined constant of 135 MeV'; the alternative was 139.57 MeV)?"*
+- Joseph verbatim: "Keep 135 MeV (Recommended)" (sha256 of the text plus a final newline begins
+  `2f53fcc2fb3a1160`)
+- Source context: Joseph's answer to the director, 2026-10-31, recorded in
+  [`DECISION-20261031-joseph-oi51-oi137-ud002.md`](DECISION-20261031-joseph-oi51-oi137-ud002.md#what-is-decided)
+  item 3 (#603).
+- Decision recorded (UTC): 2026-10-31T22:03:02Z (`96f539cd9`, the decision record's commit)
+- Agent interpretation: no change is owed. The paper says the constant *"is used consistently by the analysis and
+  every prediction"* (`docs/analysis-note/paper_body.tex:35` @ `4ede47e34`).
+- Implementation owner: none
+- Implementation commit: none owed
+- Verification/review commit: PENDING
 
 ## Operational safeguards that are not decisions
 
 - Do not interrupt or repurpose an active writer merely to enact this workflow.
 - Current jobs, owners, unique write paths, and declared gates are taken only
   from a freshly regenerated [`LIVE-STATE.md`](LIVE-STATE.md).
-- Current HPSS retention and verification actions remain in `OI-50`/`OI-55` of
-  [`../OPEN_ITEMS.md`](../OPEN_ITEMS.md).
+- HPSS: `OI-50`, `OI-52` and `OI-55` of [`../OPEN_ITEMS.md`](../OPEN_ITEMS.md) are retired. The latest
+  reading (446 of 512 GiB on the user quota, 2026-10-31) is in
+  [`RECORD-20261031-close-items-waiting-joseph-rows-retired.md`](RECORD-20261031-close-items-waiting-joseph-rows-retired.md#4-oi-52-retired-with-josephs-iris-reading)
+  §4. A new retention or verification action is filed as a new open item.
 
 ## Entry template
 
