@@ -1,0 +1,35 @@
+[
+ {
+  "i": 0,
+  "kind": "image",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "74e8aeec07e03db43e4eed8c9d3d93ba5114d76abad8d0e7b6f2412436c2c1ec",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "QuadMesh",
+  "axes": 1,
+  "label": "_child1",
+  "hash": "f4b74583fc1c5f838c171e9d07472784b90733a0f5923db6dce96e2e2e9f7ccf",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

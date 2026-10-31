@@ -1,0 +1,1410 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "89e4fbd41006821ca06b9367317a8a8ba851b938a4632f0dfe2211127e6dd107",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "1f9acb29cbc4d2954712ebcfa846618718b587ea4c6a189e97e22996e4fb5552",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "f5c35726d024b8513818225360dcfa4958c6daa94ad84862131b6fff2591de77",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "2cba4be37e1480a53ff3a34a30fc77ac1fbecc9c449452b1572dd879e80d42d7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "ecc89bc67bf559b462f657b5aea372e2e0385c32c8de210cb8a8a74857ac8a7d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "f0546d0040a74103a682b2d2ae1c1da9bbe39e21933eb16ab8f0b43166d3f7ee",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "11d8d1d0151580c203bced7d7bd9bca42043395c70c3ac93cd9b35087d5786f0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "0e6d14d3da59467afa16f41b71efeee62f187f84ef175ae0ebd996d49fb6c4a4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "cb47ed2d2a9e9b5a5f7b36c60d517b587c6160a4826eb80b8064930093ca9c04",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "597689ce76e2442011480ba76959cc7db45f01ab8837d75070888529a2d9eb56",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "31560080b027562c76dd719f99f820e738c8e8ccd6d5fb1833f52fa85b717d73",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "40452fdc5bcf167cc59887709ad3f4ee495f3c554d47c97845d87c7db65c0e66",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "396fa99d15571f5d1bdcd4ecb9d1766d1f170ecc3091e0661e92ef116bee25eb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "a9fec230060bc8913e46a526f04a57a581592aacbbb56f7f7b542996d5071049",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "5e195835cd8866089d80ef22743267ebbc231c649ecf7c8da710b27f6d344115",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "patch",
+  "axes": 1,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "a0e1d3fbc5a6afcc9a514d89c6bb218e4e2126ebd7e04b1941abc59d54f267f4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "eb88415fcadf592de4bae7f2b81ffcfe32deb102f6f506e0bdf771826da1e868",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "24b08dfe44c81718030fdeb885fd58df071cfb57e58b553202d16e148b69b8e3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 18,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "7d09979c897f3150d182022fe61a4f0bb88860ed1631ce9269ceadf1710d1203",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 19,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "247e93f312292e7661f9e69f38065a37f6a99cafc03ac9c86bf59f4d572179d8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 20,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "f1d369e73bdff4f7a241a224abe1ea03f22bb426e42e7874a26952b5cddcda96",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 21,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "8cc2bf05e1fd29cb8b372f2d508d731bd7ef18039b6e928240641c4c05be1bea",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 22,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "590650c461743642b9b7a65b18cbf4914b6df556718bbb41d265f00e1541c9f3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 23,
+  "kind": "patch",
+  "axes": 2,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "185b32e7d505cb4ade017a75c8748147daebfbc510fc1d1b6cda592f1d7c2d10",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 24,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "6010a7720da5526d9d5a19d5c35c998d94bb22d7a9b05789d16946c5a3fd0e80",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 25,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "ca7a5ecceb9e375dc93cd11296643dda018963a8d6e7092ec37a6412c63b2132",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 26,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "40f964f92955984f82995fd2a25ac9ba2bf6a2dff50ab064af2e9fa78bee7664",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 27,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "fd1be3ad0327fa91110156372279f7629527f31cbe315b6c4a6d599f87ccaf10",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 28,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "576b18cb11a171eb7bb25644c845aec8549fe131586057a408957e82c7e91f8f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 29,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "95828d12d1bf10aabba626e5bbf65894976e637b2fe1021806d2c1d000f14457",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 30,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "da5782db363e1ba7348b6bcf2ad307f944cfcf84de9fb4ef6f94dabb9699c761",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 31,
+  "kind": "patch",
+  "axes": 3,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "10b53cc1029e2cbbb9e0efcb0a3b2d5abe2d97af9a2d2e462abd5907fcb471a9",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 32,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "18d79e0e0c0d0e5704e62b80418aea7a86c3bce12d132536e59071cf8cc47fd5",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 33,
+  "kind": "LineCollection",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "a0301838c02bb938690eafdbef319026791942f707a824efb4c7842a930a5172",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 34,
+  "kind": "LineCollection",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "939b691317278811fc99e71dd9f3704c4fa75cd6a5598efa09dbaf0fbeea45f7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 35,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "465c1f7527e089efcfe73e7dcb6ced6df0dcc298548fab5b68c46ed518d1ca79",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 36,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "0ce747cc95a0bc985ffa5cbcefa4189ad000d05917faf2a6e53b99d30336d33e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 37,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "9c84c4f6c8039eec2edf767db3bd262f46252e8288166e3e750fd8e85abcc975",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 38,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "e76b2ed71dd859d626d8f5968842a17faead78f2dfef43dcd2c4cf4ee632900b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 39,
+  "kind": "patch",
+  "axes": 4,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "4d03521bb29f880dd58128c8fc9e9bcce835699b9c2de1e58d146f119b348579",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 40,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "b6f6b6503a7618636d7d3dadc89c1ded2f409f7b63d5c5bd33cd51b03dd97e9d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 41,
+  "kind": "LineCollection",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "026e00e2484a62b9a0a0c463cddf3581be5fbe3c59e0a1b02c4196e2dea37b03",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 42,
+  "kind": "LineCollection",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "fb3e73ce003796ffab9870219ff9f4a26eac5c1372665eab735349dbf504d016",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 43,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "59c9311e227d049e31faf7f8fec7377529513d67b7307970b67c32f02ac72a04",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 44,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "69e9e52e709394a38c19f6cea8648e35a10d991ae275bd1e006051c68534b3c8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 45,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "c8a2049aafc740f7abf4b404aff42bce86566c27f45d24669c07c9e8e9b5598d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 46,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "84cef64c059040b0d6d03c06b2342cc547f6a8008ddebcc2cf7435f6a5f734b2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 47,
+  "kind": "patch",
+  "axes": 5,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "eb3281e32eaf7c8eef8b072ce6fdd4000d95414dff0f97fe226795ad444c4680",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 48,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "b16125254cd52fb1cb2a62530f856b2cf7a5e33b19232b1f19a5e15044c139c9",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 49,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "8c88d6fcc0d2fae5ae440e7aa492e84fe840d67b7fcc4958f23c0083e44913c0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 50,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "9f888ff7616a51ab7285957f61e55db2e01a8e8e63cc997e0dc76da08c72fef5",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 51,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "85e268abf698187c379573bb38a32f1847e90af6b8c230c6b778f5252f4be5fb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 52,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "06442413657777385168a0353a1a1dc9947a1c625e0b8ac6e73a9519a3443fc6",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 53,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "a86bab4d3d4d6286cc4a19415f78bcf85ec6b41b373111b60af8ebf7c8c9b274",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 54,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "0b2f32ee182f7cf6fd59d015ee0efdd35ee94d2c1d9dc3a7230d146351ffb9b4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 55,
+  "kind": "patch",
+  "axes": 6,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "c1ce88e1af61946a48adbb8577a4d105421037bb4ebd219723d59df2b13908de",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 56,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "5940a896d0e2917a71de51a06658d91bac252cebb0ff0cda47a5d49338671154",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 57,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "9ee232edd543deaa85538b4efdb76aa11e39250498041f9dc612dfc830f2af53",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 58,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "341ae923ea9de703924201ab9ba42e02030a18113945d6d5d21cc4b21e49a887",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 59,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "c1ea1705eeeea3aaf17471dbae768b4fc39e8687abb56d0bc571c7d558d44688",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 60,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "c8cc7099d30300cb4d3f1138f2571ddef30af08d265b5f896bfd4bcff93f25a9",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 61,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "75f49d6edb7917291671111274beb795def6918abb268348c39e50cb4754fa09",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 62,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "67cb31bb21565f30858be818f81b4b193ae246861f0df1ea21babc8c71d4f0cb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 63,
+  "kind": "patch",
+  "axes": 7,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "7fec0adc489a262dda38d3e46e9566ffabc352d93b133594a97cbb511511f7b2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 64,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "0f304bef2307e621535578022836447e4804b82e2ff94580701c2aa730ab672c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 65,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "aa45beff0088299dbf5d2a4b872514c8e2bab4ebf96dc0f2093d307a47a8c6e7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 66,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "428dbb0d474925e1a42806c8df69763d69f56b7597282cde3bf739530a249eb9",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 67,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "da0cd8157f41bfd7b1479ca14a96e18120852dabd88c859432fa8e82a4c0864c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 68,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "c61c542f306189c401159aca14522f2d950dcd1c0564d952a96c80bb0fa41edf",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 69,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "236d66cfe381b3da880d7a9f062c410680e10a42a0c5a626c7483acc1033ef95",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 70,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "dd2abeaca9fbf1e02653faa52a5a9b42f0e4ffa4d74fe38b9726ccd66cbf8b47",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 71,
+  "kind": "patch",
+  "axes": 8,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "36b46df3cd6a27f7ce80450210c6327cccdab172e9920dfc92f93561fc76f85b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 72,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "99d012cc57f99728fae27b7f770f794b8e106f4ddabcaeb04a5fba0bbf31e211",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 73,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "531e651b89ae0f011d4221d066c31d7f12ef78ccc43576d3329c422704a2c0ea",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 74,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "9a98d9f95171a043d36247ea224b7dd79958150306c02e15fc21b868b5789a9c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 75,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "abba07bdd69040bb940105bcab36fae7c287c92fc8f1952ab495a125b7dcd159",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 76,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "0324365ac093eae732fb6e10887ea04d2fc79e5c6782204e131bc3fe5196c414",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 77,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "611c92a543f0868614ac28075e4663ead76dd4b8db7a7ee2b053be05ca27e060",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 78,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "9c6ff0ed9a2222c6918a4acca2f6935e00106164803769d7e9f2b12f0a6110ec",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 79,
+  "kind": "patch",
+  "axes": 9,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "cf635f8bfb8580d3b149b1e9ad2f6a1d9bfeec35474f8fe06edaddd182185e9a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 80,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "10bdc23ad4f95bf17d1add371b70f221f4db0eef6c51651bd0ce45a6bde360f9",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 81,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "dc385e7e88ab49e07bc80df3885ae7c0aaf61bd80900f6822e03993bf437af01",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 82,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "b291a7aa92004a39d4182b921ed82988d00ebb50d2e63b2719bfec6f1e599e3f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 83,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "12db81c4158b202cd774f52cb4c21730f14abb90a4863f23e5cf6722a77da49f",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 84,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "39406489ffc4153146f92c8e9ecd26140013b3004418118e118ad55760a3c65c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 85,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "82a834293ba5e97fe12b528e333a7f25a65757e9e55ee615c4bcfddad5229ad6",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 86,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "74932fcf735cde816ea7e66ad6308f52ae82ebd3b5f34fb1c3003406cb9176b6",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 87,
+  "kind": "patch",
+  "axes": 10,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "6601bab4597359d48516f591b79abc8526222b1b89a3151313bc17ec904b9c77",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 88,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "3dd692af29c8f57bca757d73c774e7762dedc530d809b7298972611240bf7e70",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 89,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "c71559f625f4cf7ee8e8de108dc2d151ded6e9f381e973b9c9ecc8a545a59fa1",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 90,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "4c78aa36b9bc531693307f7a35ba50d84b3b3671509c0d71124c7cc99f7dbfb7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 91,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "e441812457996b6e01c0559c11d74e96b5d4bc831f96b0429dd5202a875d1b5c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 92,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "a1d12df8889863a822714dc2f30b83deb8b912a8a8afc9c94d005684f5d0e4a8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 93,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "816a1c3f6b7f009d740a5fa20d0ea0527b39337bb068e7af265abb802b26d4f4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 94,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "64f641e541714c8d876e455156e8b979f64e23b9da93278d723c47025ed26f15",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 95,
+  "kind": "patch",
+  "axes": 11,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "a41e229c819a4efc1d33cc4cf26238d2d84746e3b79fd346c1e0572503e29bf7",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 96,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "d928728c11f913f33c0ecd53dce4040684f1c0c0035c0bd5ec9b84a1cdf265fb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 97,
+  "kind": "LineCollection",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "a48947cc3eaf8fb85f42355407004f48fe2710b2358906612a27576bcdca6729",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 98,
+  "kind": "LineCollection",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "0953bb0e7f16c50df2fc9d7e75991a44947e93cb638eb45e98fe3db81714d219",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 99,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "521ee60a1e4eff8963f05606a3e847e100716b5b501cb4e75df66655b4034989",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 100,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "9476d2441309207fea597e951a8819f00d6074cd4241af4b43d71850fbe12e5e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 101,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "34bf386497817daf5b33218434064e59e760310e7f8fefaa5f085fce932763bb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 102,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "468acebc97dce81223730212084dded4aab03f94415d77f8c477041894ba2c3b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 103,
+  "kind": "patch",
+  "axes": 12,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "924c44acb6a9b6a4cf8cb7a4ab22a3c16ecbc094e5faa04add447e184d5de67b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 104,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "60def4d5dee72a10f030013fee9d057d7e36c502529a2fce7a4b1851de676058",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 105,
+  "kind": "LineCollection",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "c18c2b738b427c9611b2525806eb1250a446dbda8c90ff721a44eb4f2c8fad2d",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 106,
+  "kind": "LineCollection",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "9efe34a26c2d0037eb999debdd62b3f399ec4ba33ead96a66f1358fe97c567a8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 107,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "ce0fcc32aaf5a62bb509594ef0d5613b70ff78a958b1ad59a275ae3e03e8256a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 108,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "f6f8fe4401c2450debe3542a01ae65ef046ac7a318e619cee872e8e57e9877f3",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 109,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "07f7deb74f2698a29961697bec54f476800c4f53f3e647e9f2e7d32a6e76aab5",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 110,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "c8d4c11d9200fec9d315286550c24633ca812f15e55f110c4a2fa0d1dbe2d57c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 111,
+  "kind": "patch",
+  "axes": 13,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "1a86d9f7fe2b7a7801f80d341fb46c825d3f776792f1fd34f8fa9f00a88aea40",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 112,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "c7074b8f515f34dcdda70cdc7c055d0aa1e3f40777a5f58a7e2849756bb3aa26",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 113,
+  "kind": "LineCollection",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "73eb4cef52d5843738c9f24215fa3b95d4dc9fe2c3811751672e4a930f8c7ef4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 114,
+  "kind": "LineCollection",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "a4765de505adf06f75ba8f47cdc8310da75ac172f6c0afc92e51899a1e796904",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 115,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "9f9ab58bd179b21cf9d71eef2c1159f03e59ef11bdffad975dec981f9cebf187",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 116,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "9bebd16db5375545c414ef637e3483d98b576ddfcd06fd6a18bb744eeffe9a7e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 117,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "67fb39d2cee489c53f21e79b081f905501648f3333507013e00f4586a6640d2a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 118,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "bc20daebc5e2015d203ca68cf771b614de8d544e7296dc23f0a7beed7f81e35a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 119,
+  "kind": "patch",
+  "axes": 14,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "ebe9aa1b5804555f93eacedd3626f7f06ca06a331562212ede5d2695cc78624e",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 120,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "c2bb71557ae09c3e7dbcd46baece976be211c71db9925893876862f69484fbfc",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 121,
+  "kind": "LineCollection",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "cbfb8f70b8fcd4f5fdc3ff668aec79260ee8e4d414d9b092593c2b66827e68dd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 122,
+  "kind": "LineCollection",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "b27c32f03d2e005ce1c9c86d268026134d816553af625b4948ac7427c02ca8bb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 123,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "0858c78d0181a50d6f18d03b9353c324c4ed2338305088d6b5862e8b6d2822fb",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 124,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "11f0eaa70ca2dea128198ab3577c243e1bf5753f5e6af661c9a25e692282f5e1",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 125,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "79f584c997c3381ba9d6e3a146a8dbb3ff00c3dbcbc3d6b08f2d682ebeff97b2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 126,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "87c53f9231776095419b710898adb8e66459e97b4186e163be2b87dde8c4ff36",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 127,
+  "kind": "patch",
+  "axes": 15,
+  "label": "GENIE 2.12.6 + MnvTune v1",
+  "hash": "76e93937db0d2c0e1ee9f1dbc78cd91f351e320e291bd46b318a4fd035aca407",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

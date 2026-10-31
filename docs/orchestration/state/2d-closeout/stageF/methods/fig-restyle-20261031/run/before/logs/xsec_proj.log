@@ -1,0 +1,15 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[INFO] Truth-normalization flux source: embedded hFlux_pt
+[OK] Saved /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/before/out/MEFHC_5iter_xsec_pt_slices.png
+[OK] Saved /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/before/out/MEFHC_5iter_xsec_pz_slices.png
+[OK] Saved /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/before/out/MEFHC_5iter_xsec_proj_pt.png
+[OK] Saved /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/before/out/MEFHC_5iter_xsec_proj_pz.png
+[OK] Saved /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/before/out/MEFHC_5iter_xsec_eff_heatmap.png

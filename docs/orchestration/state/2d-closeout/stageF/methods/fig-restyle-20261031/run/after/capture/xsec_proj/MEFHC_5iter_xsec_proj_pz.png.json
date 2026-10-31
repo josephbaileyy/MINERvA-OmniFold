@@ -1,0 +1,178 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "d65c9f61f94df7d1bffbd592bb990bcc558dbe441767d6ac68075d54184028bd",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "9ee2d2dda944ba49693fa52a5421b2d69629249cb4822bc9d0cfac34f9d90e4c",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "0d1429dce989eb75313e1423b2e508caab95af125016e9e468b88efc5f116648",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "d2f5382c82ff3b3b9749e9559dadfbc3d1e7c1857b27ab9e854d9c2e7cdb04a2",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "e8b0bf1f172cdb6484bf178fb9c51c5c3714c2611f23698d95567156e9a7dafa",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "f29505c5ba06d5dbfa526b125135ed083aea9fd20eccca703071b79c1849b522",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "253dc0a8174dc81ca7eade9bf425b67f50d8425e96659bb7e1b8b3a9fcba82d8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "9502b086c20a74849f4e85ee940b98baf86278cd0bd833b72bfa4c767995a8fe",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "8c0326ef1c07c8cb74644de2d241138ac66c1f2719fc1609dcccc6f6887c7856",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "c311245654406ee4a0a34b3a2652e5de103f548d4e8da6a2625c4570c65a6478",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "39d27cabb334e66c2757b5d5b944bf98e3cbd65f68f07062552315676a206036",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "1797551bb0c0061275f702895b6b07116124e07b54044261e3f531e621ff1436",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "168cb051a241950f96316e67d887d0ac4a56c5df62f4a37e77d0aa5f82abc81b",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "6989ebae5ff31ca9c2d2c1992a340c0743d0eb5df6466e84f5afbd08d609028a",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "cb5ee910714bb09deb1b7a611c3904471ef18316ed6bebef7427fdabd98bea20",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child7",
+  "hash": "ff8bf11471f5a3b81156b23df91caaeb2c796809c795e57bb90849817c3316c4",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]
