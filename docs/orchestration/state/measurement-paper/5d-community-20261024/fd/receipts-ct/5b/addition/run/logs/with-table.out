@@ -1,0 +1,44 @@
+PASS control T no output exists (no overwrite)
+PASS control T f0b: the without readout's pin is the committed one
+PASS control T f1: the without readout's pin is the committed one
+PASS control T g: the without readout's pin is the committed one
+PASS control T g_diag: the without readout's pin is the committed one
+PASS control T g_followup: the without readout's pin is the committed one
+PASS control T g_sens2: the without readout's pin is the committed one
+PASS control T flux_boot: the without readout's pin is the committed one
+PASS control T data_product: the without readout's pin is the committed one
+PASS control T f0b_without sha256 is the pin
+PASS control T f0b_with sha256 is the pin
+PASS control T f1_without sha256 is the pin
+PASS control T f1_with sha256 is the pin
+PASS control T g_without sha256 is the pin
+PASS control T g_with sha256 is the pin
+PASS control T g_diag_without sha256 is the pin
+PASS control T g_diag_with sha256 is the pin
+PASS control T g_followup_without sha256 is the pin
+PASS control T g_followup_with sha256 is the pin
+PASS control T g_sens2_without sha256 is the pin
+PASS control T g_sens2_with sha256 is the pin
+PASS control T flux_boot_without sha256 is the pin
+PASS control T flux_boot_with sha256 is the pin
+PASS control T data_product_without sha256 is the pin
+PASS control T data_product_with sha256 is the pin
+PASS control T Stage G's predictions are the same, in the same order, on both sides
+PASS control T f0b's truths are the same, in the same order, on both sides
+PASS control T f1's truths are the same, in the same order, on both sides
+PASS control T Stage G genie_cv total: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G genie_cv shape_only: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G genie_mec total: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G genie_mec shape_only: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G nuwro total: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G nuwro shape_only: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G gibuu total: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G gibuu shape_only: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G mnvtune_v1 total: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control T Stage G mnvtune_v1 shape_only: each side names its matrix (the with side the without's, with C_resp read as C_resp + C_PL5D)
+PASS control L the audit readout sha256 is the pin
+PASS control L the block, decision and both context labels are present, the contexts marked descriptive
+PASS control L context_dr_pair: every number it quotes is the audit readout's, in order (GEANT_Pion#1, meson#1, 0.853, 0.560, 0.617, 1.51)
+PASS control L context_5a_5b: every number it quotes is the audit readout's, in order (-2.724%, -2.699%, +4.671%, +4.806%, 81.6, 192.8)
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/table/fd_cpl_table.json", "sha256": "eb786bcf41f1fa2fcff59e3723c3fc66b933ef598ee0a082c4e341f7c34192c9"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/table/fd_cpl_table.md", "sha256": "08f76b4d4b1977de57542c2a730301301686d92dcebd7780e4bf4f02bacc02e6"}
