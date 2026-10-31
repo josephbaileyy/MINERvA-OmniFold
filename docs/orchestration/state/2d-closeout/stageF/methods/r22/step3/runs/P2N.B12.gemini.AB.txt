@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. In the introductory guide, Document B replaces internal workflow status phrasing ("implemented but not yet run") with a substantive methodological description of the detector-response closure test.
+2. Document B converts an informal repository lookup table featuring raw code options and internal issue tags (such as "J28") into polished, continuous expository prose appropriate for a published supplement.
+3. In Section A.2.6, Document B untangles an awkward, grammatically congested sentence from Document A, cleanly separating what the referenced paper omitted from what the analysis software framework implemented.

@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A describes the recovered pseudo-experiments in explicit, complete prose, whereas B’s “lost ones, recovered for reporting only, change none” reads as overly compressed.
+2. A’s executive summary avoids B’s cumbersome accumulation of abstract qualifications in “lacks independent validation, validated coverage and calibrated significance.”
+3. A’s abstract connects the coverage qualification directly to the bias test, giving that discussion a slightly more coherent progression.

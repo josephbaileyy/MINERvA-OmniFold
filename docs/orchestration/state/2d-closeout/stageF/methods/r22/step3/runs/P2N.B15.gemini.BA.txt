@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A adheres to formal scientific publishing conventions by using textual parenthetical qualifiers such as "(fixed)" rather than informal checkmark glyphs ("✓") across the list in Section G.2.
+2. Document A maintains a consistent objective, third-person academic register in Section G.4 ("its sign carries no information and should not be checked") instead of lapsing into the imperative software-manual tone of Document B ("Do not check the sign...").
+3. Document A integrates the description of the candidate package replay in Section G.1 into a smooth, well-subordinated sentence, whereas Document B relies on a clunkier, fragmented compound construction.

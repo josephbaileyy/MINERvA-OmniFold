@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. In the discussion of pseudo-experiments, Document B uses complete, professional scientific prose, whereas Document A lapses into colloquial and telegraphic shorthand ("lost ones, recovered for reporting only, change none") that is inappropriate for a published particle physics paper.
+2. In the abstract, Document B provides better rhetorical structure by stating the primary finding regarding unvalidated interval coverage upfront to frame the specific bias and fake-data studies, whereas Document A appends it as an abrupt afterthought.
+3. In the executive summary, Document B avoids the unwieldy, overloaded compound sentence structure of Document A, resulting in a cleaner and more natural academic register.

@@ -1,0 +1,18 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion, but several passages retain development-history narration, internal bookkeeping, and cumbersome qualifications that warrant a focused language pass.
+
+1. QUOTE: "The sample’s
+mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the
+flux repair."
+   REWRITE: The NuWro-shaped prior retains the flux-sampling error described in §7.6, which suppresses its high-p∥ contribution.
+
+2. QUOTE: "The extended-fiducial central value was produced with the binned purity correction, not with refined
+negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App. C)."
+   REWRITE: The preliminary extended-fiducial central value uses the binned purity correction; the refined negative-weight subtraction specified for this analysis in App. C has not yet been applied.
+
+3. QUOTE: "App. G specifies this release for our analysis,
+including which of its objects already have fixed identities and which are still to be produced. A
+local release candidate exists, with checksums and a verifier that recomputes and checks its results;
+no release has been tagged or deposited. Rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G)."
+   REWRITE: Appendix G specifies the proposed release, identifies its existing components, and lists those still required. An unpublished release candidate includes checksums and a verification script that recomputes and checks the results. Building the PDFs does not rerun the scientific analysis.

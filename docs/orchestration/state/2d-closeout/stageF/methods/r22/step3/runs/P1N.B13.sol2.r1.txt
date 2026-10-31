@@ -1,0 +1,22 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriate for a specialist technical supplement, but recurring internal bookkeeping, development-history narration, and repetitive scope qualifications require a dedicated language pass.
+1. QUOTE: "The reductions keep the per-cell values, the identity of each
+input and the exclusions, and distinguish complete outputs from checkpoints that carry no metadata.
+From a checkpoint, only the iterations that reproduce the originally recorded values are used; later
+entries are excluded. The analyst cross-checked the reductions numerically."
+   REWRITE: The reductions retain per-cell values, input identifiers, and exclusions. For checkpoints lacking metadata, only iterations that reproduce the recorded values are included. The reductions were checked numerically.
+2. QUOTE: "Second, switching would have required rerunning
+every unfold above and would have invalidated the flux-corrected covariance then just chosen for use;
+this consequence, rather than the computing cost, decided the choice. The background treatment
+has been revisited in two dimensions: the closure test below is its result, and the 2D result and its
+covariance use the refined estimator. For the configuration-(a) five-dimensional central value, which
+still uses purity, the revisit is open; the sixteen-cell result (§10) uses the refined estimator."
+   REWRITE: Second, changing the subtraction method would have required repeating all unfolds and replacing the selected flux-corrected covariance. Preserving that covariance determined the choice. The two-dimensional closure test below motivated adopting the refined estimator for the 2D result and its covariance. The sixteen-cell result (§10) also uses the refined estimator. The appropriate background treatment for the configuration-(a) five-dimensional central value remains under study.
+3. QUOTE: "Background treatment and choice of covariance. The choice of background treatment is
+independent of the choice of covariance, and this appendix selects no five-dimensional covariance
+for use. The lateral-band component from re-selected event loops is built, with five bands and ten
+endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of
+the configuration-(a) central value. The status of that five-axis covariance and the scope of its use
+are stated in §9.6. The choice of background treatment settles one of the conditions for using a
+component; every other condition still applies."
+   REWRITE: Background treatment and covariance selection are separate choices. The lateral-band covariance component for configuration (a) comprises five bands evaluated with ten endpoint unfolds from re-selected event loops; their checksums are recorded with the five-axis covariance. Section 9.6 specifies the validation status and permitted use of that covariance. Consistent background treatment satisfies one requirement for including a component; the remaining validation requirements must also be met.

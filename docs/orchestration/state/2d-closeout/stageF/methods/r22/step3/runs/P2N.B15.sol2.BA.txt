@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s explanation of the smallest eigenvalue uses measured, declarative prose, whereas B’s “Do not check” sounds more like an operational instruction.
+2. A’s explicit “(fixed)” labels give the release schema a more conventional technical-document register than B’s checkmarks.
+3. A states the earlier verifier result more compactly, although the documents otherwise share essentially the same prose and editorial quality.

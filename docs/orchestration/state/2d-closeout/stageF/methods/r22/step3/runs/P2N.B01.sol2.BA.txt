@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s abstract connects the coverage limitation directly to the bias test’s scope, producing a more cohesive qualification.
+2. B avoids A’s awkward accumulation of “independent validation, validated coverage and calibrated significance,” giving the executive summary smoother prose.
+3. B’s explicit account of rerun pseudo-experiments is clearer than A’s compressed “lost ones, recovered for reporting only,” although the otherwise nearly identical prose makes the preference slight.

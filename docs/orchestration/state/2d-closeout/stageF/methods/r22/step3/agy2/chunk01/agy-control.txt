@@ -1,0 +1,115 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating that "its readiness for publication as a measurement has been established" (BEFORE states it "has not been established"), and adds claims that the comparison "lacks independent validation, validated coverage and calibrated significance".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the reason the pseudo-experiments were lost ("to time limits") and the guarantee that "every submitted draw has been observed", while introducing the unstated premise that "The decisions use completed pseudo-experiments".
+
+Q3: VERDICT: SAME
+DETAIL: AFTER merely reverses the order of the two independent clauses while preserving all statements, technical terms, and qualifiers identically.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER restructures the sentence into active voice leading with the regenerations, preserving the driver and input conditions, the seed attribution, and the tolerance threshold of $\lesssim2\times10^{-11}$.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating that "Its seed was fixed" when BEFORE states "Its seed was not fixed", and drops the supporting explanation that "the driver version it ran had no seed option, and its production job script passed no seed".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER introduces the specific numerical value "\SI{0.18}{\percent}", which is neither present in nor supported by BEFORE alone.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifying limitation that "This \emph{observed} covariance difference does not demonstrate a causal efficiency advantage".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops several specific figures and statements present in BEFORE, including the maximum increase "(at most \SI{39.1}{\percent})", the integral increase ("\SI{9.9}{\percent}"), the $\pPar$ projection increase ("at most \SI{21}{\percent}"), and variance shares ("median \SI{10.6}{\percent}" and "\SI{17.1}{\percent}"), which appear to have been moved to Table~\ref{tab:pl-added} in the subsequent passage.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds a complete data table (\texttt{Table~\ref{tab:pl-added}}) with numerical values and captions not supported by BEFORE, which appear to have been moved from the preceding passage.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by asserting that "The quoted statistical block has been tested for coverage" (BEFORE states it "has not been tested"), and adds mention of the "completeness-divided band".
+
+Q11: VERDICT: SAME
+DETAIL: AFTER consolidates the figure caption into a single sentence and streamlines the phrasing, preserving that the efficiency is shown as a diagnostic only and that acceptance is corrected by OmniFold's miss treatment.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific ROOT histogram and projection object names, "(\texttt{hXSec2D}, \texttt{hXSec\_pt}, \texttt{hXSec\_pz})".
+
+Q13: VERDICT: SAME
+DETAIL: AFTER splits a complex sentence into two clearer sentences while retaining all statements regarding the per-bin pulls, truncated result, pseudo-inverse, and the regularization scan cross-check and citation.
+
+Q14: VERDICT: SAME
+DETAIL: AFTER recasts the sentence into a formal, third-person register ("does not let us determine" to "cannot establish", and "our leading hypothesis" to "the leading, unconfirmed hypothesis of this analysis"), preserving the exact scientific status of the hypothesis.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific location where the diagnostics are stored, namely "The event-loop output files".
+
+Q16: VERDICT: SAME
+DETAIL: AFTER reverses the clause order with a causal connective ("so"), preserving the full-sample binning, deterministic training, bitwise equality across seeds, and the zero training-seed block.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER introduces the specific qualifier "Gaussian" ("the Gaussian references"), which is not stated in or supported by BEFORE.
+
+Q18: VERDICT: SAME
+DETAIL: AFTER rephrases the explanation with active phrasing while preserving all statements regarding Poisson pseudo-experiments, lack of systematic parameter draws, interval widths, and unprobed detector response.
+
+Q19: VERDICT: SAME
+DETAIL: AFTER incorporates the values for the variant without the response block directly into a new fourth column of Table~\ref{tab:fived16-gen} and updates the caption, preserving all numbers, degrees of freedom, and model names.
+
+Q20: VERDICT: SAME
+DETAIL: AFTER reorders the clauses and adds "only", preserving the exact composition of the result (central values and validation tests) and the absence of a quoted covariance.
+
+Q21: VERDICT: SAME
+DETAIL: AFTER replaces informal wording ("bin--toy cells") with standard technical terminology ("(bin, pseudo-experiment) pairs"), preserving all split parameters, containment percentages, and the nominal Gaussian benchmark.
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory clause "--- hence the two color schemes", which explains why two different color palettes are used across panels.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific production dataset identifier, "(the battery of 2026-06-10)".
+
+Q24: VERDICT: SAME
+DETAIL: AFTER divides the passage into two sentences and slightly adjusts word order, retaining all statements regarding the release candidate, verification, untagged release, and document assembly.
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER drops the critical status qualification that the protocol was "implemented but not yet run", and adds implementation details ("which rescales the reconstructed available energy of the pseudo-data while OmniFold keeps its nominal response") not found in BEFORE.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops multiple explicit repository labels and option names present in BEFORE's table, including \texttt{purity}, \texttt{negweight}, \texttt{negweight-refined} (and \texttt{-{}-bkg-mode}), \texttt{cv}, \texttt{mean}, \texttt{MNV101\_ACTIVE\_UNIVERSE}, and \texttt{J28}.
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER asserts definitively that "MAT's code supplies the per-band construction and the independent band sum, but no separate pair formula", resolving what BEFORE left disjunctive or unstated ("leaves to MAT, or does not state").
+
+Q28: VERDICT: SAME
+DETAIL: AFTER makes minor punctuation and phrasing adjustments while preserving all warnings regarding correlated weighted events, replica fits, resampling limits, null calibration requirements, and the absence of new validation results.
+
+Q29: VERDICT: DIFFERS
+DETAIL: AFTER adds unsupported claims not present in BEFORE, stating that independence "has not been shown" and referencing "the design's two data-informed elements" in \S\ref{sec:joint5d-frozen}.
+
+Q30: VERDICT: SAME
+DETAIL: AFTER elevates the register to formal technical prose ("computationally inexpensive adversarial stress test" for "cheap and adversarial", "test" for "arm", and "by design" for "intentionally") without altering the meaning.
+
+Q31: VERDICT: SAME
+DETAIL: AFTER simply swaps the order of the two introductory clauses ("nonexhaustive through 2026" and "recent additions follow") while keeping all text and table contents identical.
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit document path and repository link, "(\texttt{docs/analysis-note/pet\_note.tex}, \repolink)".
+
+Q33: VERDICT: SAME
+DETAIL: AFTER converts the sentence to active voice while fully preserving the release candidate identifier (RC1), empty directory execution, AI agent session (Opus 5.5), absence of repository access, README reliance, and verification success.
+
+Q34: VERDICT: SAME
+DETAIL: AFTER replaces the checkmark symbol "$\checkmark$" with the text label "(fixed)" and updates the explanatory sentence accordingly, preserving all references, definitions, and packaging descriptions.
+
+Q35: VERDICT: SAME
+DETAIL: AFTER replaces "$\checkmark$" with "(fixed)" on both list items while preserving identical bin edge descriptions, units, grid dimensions, and ordering rules.
+
+Q36: VERDICT: SAME
+DETAIL: AFTER replaces "$\checkmark$" with "(fixed)" across the list items, keeping all equations, centering variants, masks, and projection matrix specifications unchanged.
+
+Q37: VERDICT: SAME
+DETAIL: AFTER spells out $\lambda_{\min}$ as "The smallest eigenvalue $\lambda_{\min}$" and restructures the causal flow, preserving the instruction not to check its sign, the noise floor rationale, and the five-digit agreement between two hosts.
+
+Q38: VERDICT: SAME
+DETAIL: AFTER appends a LaTeX formatting directive (\texttt{\textbackslash clearpage}) after the figure environment, leaving the entire caption text, ordering, and figure label identical.
+
+END

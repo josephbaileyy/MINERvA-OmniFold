@@ -1,0 +1,15 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but recurrent internal bookkeeping, development history, and repetitive scope caveats require a dedicated language pass to achieve PRD register.
+1. QUOTE: "The reductions keep the per-cell values, the identity of each
+input and the exclusions, and distinguish complete outputs from checkpoints that carry no metadata.
+From a checkpoint, only the iterations that reproduce the originally recorded values are used; later
+entries are excluded. The analyst cross-checked the reductions numerically."
+   REWRITE: The reductions retain per-cell values, input identities, and exclusions. For checkpoints without metadata, only iterations that reproduce the recorded values are included. All reductions were verified numerically.
+2. QUOTE: "Second, switching would have required rerunning
+every unfold above and would have invalidated the flux-corrected covariance then just chosen for use;
+this consequence, rather than the computing cost, decided the choice."
+   REWRITE: Second, changing the background treatment would have invalidated the selected flux-corrected covariance and required repeating all contributing unfolds. Purity subtraction was retained to preserve consistency with that covariance.
+3. QUOTE: "Negative-weight injection is studied here for its equivalence to binned purity and
+as the extended-fiducial treatment; this appendix establishes no supported production path and
+changes no default."
+   REWRITE: This appendix examines the equivalence of negative-weight injection to binned purity and its application to the extended-fiducial analysis. It does not establish a validated production implementation or alter the background treatments used for the reported results.

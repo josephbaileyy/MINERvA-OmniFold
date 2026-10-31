@@ -1,0 +1,15 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical supplement, but recurring internal bookkeeping, development-history narration, and self-referential summaries warrant a dedicated language pass.
+1. QUOTE: "A
+local release candidate exists, with checksums and a verifier that recomputes and checks its results;
+no release has been tagged or deposited. Rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G)."
+   REWRITE: The release candidate includes checksums and a program for recomputing and verifying the included results, but has not yet been publicly released. Compiling the PDFs does not rerun the scientific analysis (App. G).
+2. QUOTE: "Principal limitations. The executive summary lists the principal limitations (p. 2), each with
+the section that states it. The quoted two-dimensional statistical block has had no coverage test
+(§4.2, §5.2)."
+   REWRITE: The coverage of the reported two-dimensional statistical block has not been tested (§4.2, §5.2). The principal limitations are summarized on p. 2, with references to the relevant sections.
+3. QUOTE: "The sample’s
+mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the
+flux repair."
+   REWRITE: The NuWro-shaped prior retains the flux-sampling error described in §7.6, which suppresses its high-p∥ distribution.

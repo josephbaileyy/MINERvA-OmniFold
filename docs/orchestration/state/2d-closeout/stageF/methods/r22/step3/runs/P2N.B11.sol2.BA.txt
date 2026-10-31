@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A omits B’s internal-workflow phrase “the battery of 2026-06-10,” giving the discussion a more polished publication register.
+2. A’s “evaluation (bin, pseudo-experiment) pairs” is more explicit and readable than B’s compressed “evaluation bin–toy cells.”
+3. A’s more direct figure-caption wording and better-separated release-status sentences slightly improve the flow of otherwise nearly identical prose.
