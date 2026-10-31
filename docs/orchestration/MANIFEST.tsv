@@ -499,6 +499,7 @@ docs/orchestration/RECORD-20261031-close-items-oi143b-traced.md	tracked	ARCHIVAL
 docs/orchestration/RECORD-20261031-close-items-oi62-retired-oi143-oi9-deferred.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-oi62-traced.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-oi9-traced.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261031-close-items-waiting-joseph-triage.md	tracked	ARCHIVAL	document	20260924-scalar5d-campaign	20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	tracked	LIVE	document		20261006	open		route-only	no
