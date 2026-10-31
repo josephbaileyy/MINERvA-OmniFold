@@ -1,4 +1,6 @@
 OK  B01: its readiness for publication as a measurement has not been established
+OK  B01: does not test interval widths. In a fake-data study
+OK  B01: at a synthetic q3 tilt. The coverage of the result's intervals has not been validated.
 OK  B02: The reseeded run's median agrees with the
 OK  B02: Its seed was not fixed, and its run log was not found
 OK  B03: Block's share of total variance
@@ -16,7 +18,9 @@ OK  B12: but no separate pair formula
 OK  B13: to have been lost independently of their outcomes
 OK  B14: proposed stressing the hadronic record, especially for quasielastic events, to inspect low
 OK  B15: An earlier release candidate, RC1, passed its packaged verifier
-KEY PROOF: 18/18 changed phrases print in NEW's pieces
+KEY PROOF: 20/20 changed phrases print in NEW's pieces
 
-Built from the committed tree 928fec6b77ae37797d475f40002f4f5de430fcc3 (tracked tree clean).
-main_note.pdf sha256 f79724876177c219152dd638ac92f33f68f3b22f38c30ba38916c2f1aff668e9; pieces cut by tools/split_base.py, 56,293 words.
+Built from the committed tree 36ed8ea1e (tracked tree clean), which adds Joseph's approved abstract pair B01-g-07 to
+928fec6b. main_note.pdf sha256 90dc4f8f23674b652e339ba3d5bd9aac80f8d524b0f71ea36bb72752d9b19391; pieces cut by
+tools/split_base.py, 56,293 words. Only B01.txt differs from the cut of 928fec6b (main_note.pdf sha256 f7972487...),
+by that pair alone; the other 14 pieces are byte-identical.

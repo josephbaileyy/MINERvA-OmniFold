@@ -5,11 +5,11 @@ three-momentum transfer and hadronic invariant mass. The cross section is unfold
 binning with OmniFold from MINERvA medium-energy open data. It is reported in sixteen
 cells, with a covariance whose median per-cell uncertainty is 7.29%. Three external generator
 predictions, compared on all sixteen cells, give χ2 between 109 and 272 for 16 degrees of freedom.
-GiBUU, compared only on the 8 cells its sample covers, gives χ2 = 58 on those cells. The
-coverage of the result’s intervals has not been validated; a bias test at two held-out GENIE v3
-truths finds the estimator’s bias below the reported uncertainty in every cell but does not test
-interval widths. In a fake-data study, the reported uncertainty does not cover the estimator’s
-bias at GiBUU-like truths or at a synthetic q3 tilt.
+GiBUU, compared only on the 8 cells its sample covers, gives χ2 = 58 on those cells. A bias test
+at two held-out GENIE v3 truths finds the estimator’s bias below the reported uncertainty in
+every cell but does not test interval widths. In a fake-data study, the reported uncertainty does
+not cover the estimator’s bias at GiBUU-like truths or at a synthetic q3 tilt. The coverage of the
+result’s intervals has not been validated.
 
 Executive summary
 We apply unbinned machine-learning unfolding (OmniFold [1, 2]) to MINERvA’s medium-energy

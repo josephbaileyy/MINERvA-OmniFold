@@ -10,11 +10,16 @@
 # SOL_RX (default sol2) is the run_x.sh key for the sol rater: sol2 is gpt-6.1-sol on codex-school2, sol the same model on
 # codex-school. Step 3 sets SOL_RX=sol (the director, 2026-10-30: codex-school2 reported its usage limit until
 # 2026-11-04). Output names keep "sol2", the rater; status.tsv records the key used for each run.
+# RATERS (default "sol2 gemini") selects which raters' runs to launch, and JOBS (default 3) the concurrent runs per rater.
+# Step 3 runs RATERS=sol2 JOBS=1 alone, then the rest (the director, 2026-10-31: sol's runs sequentially on codex-school,
+# nothing else alongside).
 set -u
 T=$(cd "$(dirname "$0")" && pwd); M=${M:?set M to the stageF/methods directory}
 export RX=$M/register-method/tools/run_x.sh P2N=$M/note-rating/P2N.prompt.txt P1N=$M/rater-calibration/prompts/P1N.prompt.txt
 export XMODEL_DIR=${XMODEL_DIR:?set XMODEL_DIR to a scratch directory} OLD=$1 NEW=$2 OUT=$3 T SOL_RX=${SOL_RX:-sol2}; shift 3
+RATERS=${RATERS:-sol2 gemini} JOBS=${JOBS:-3}
 case $SOL_RX in sol|sol2) ;; *) echo "SOL_RX must be sol or sol2"; exit 2 ;; esac
+for r in $RATERS; do case $r in sol2|gemini) ;; *) echo "RATERS takes sol2 and gemini"; exit 2 ;; esac; done
 mkdir -p "$OUT"
 one() { kind=$1; m=$2; id=$3; o=$4; out=$OUT/$kind.$id.$m.$o.md
   eval "$(sed -n '/^with_timeout() {/,/^}/p' "$T/gapjob.sh")"
@@ -35,7 +40,9 @@ one() { kind=$1; m=$2; id=$3; o=$4; out=$OUT/$kind.$id.$m.$o.md
   done
   printf '%s\t%s\t%s\t%s\tFAILED\n' "$kind" "$id" "$m" "$o" >> "$OUT/status.tsv"; }
 export -f one
+case " $RATERS " in *" sol2 "*)
 ( for id in "$@"; do echo "P2N sol2 $id AB"; echo "P2N sol2 $id BA"; for r in r1 r2 r3; do echo "P1N sol2 $id $r"; done; done \
-  | xargs -P 3 -L 1 bash -c 'one "$@"' _ ) &
-( for id in "$@"; do echo "P2N gemini $id AB"; echo "P2N gemini $id BA"; done | xargs -P 3 -L 1 bash -c 'one "$@"' _ ) &
+  | xargs -P "$JOBS" -L 1 bash -c 'one "$@"' _ ) & ;; esac
+case " $RATERS " in *" gemini "*)
+( for id in "$@"; do echo "P2N gemini $id AB"; echo "P2N gemini $id BA"; done | xargs -P "$JOBS" -L 1 bash -c 'one "$@"' _ ) & ;; esac
 wait
