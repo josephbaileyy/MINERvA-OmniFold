@@ -13,8 +13,9 @@ rating. **Nothing in the paper or the note has been changed.** Every change belo
   - They lose their pairwise comparison nearly throughout: gemini 10 of 11, the exception being Fig. 30; sol 11 of
     11.
   - They score about 3.0 to 3.2 on every dimension.
-  - Their measured text is the smallest of any group: a median minimum glyph height of 2.5 pt, against the anchors'
-    4.0 to 6.3 pt.
+  - Their text prints small. Measured from the drawn font sizes, the smallest text in Figs. 7–14 prints at 2.45 to
+    4.88 pt; the median over the eight figures is 3.42 pt (§3, corrected 2026-10-31). The glyph-box medians first
+    given here (2.5 pt, against the anchors' 4.0 to 6.3 pt) are not on one scale with the anchors' (§3).
   - Eight independent rater runs agree on the same fixes, nearly all STYLE: larger text, math-typeset labels instead of
     raw ASCII, slice labels and physical units, and no blank bands.
 - **The note's tables are close to the anchors,** apart from their captions (D6).
@@ -85,6 +86,44 @@ reps.
 
 The smallest single glyph is in note Fig. 11 (0.83 pt). An anchor figure has one almost as small (C Fig. 7, 0.89 pt),
 so one figure's minimum is not a finding by itself; the group medians above are.
+
+**Correction (2026-10-31): this table's instrument does not measure matplotlib text.** The restyle of Figs. 7–14
+(`fig-restyle-20261031/DECLARATION.md` §5.4, #579) compared the pdftotext word boxes with the font sizes each figure
+draws, on the same PDFs.
+- **Type 3 fonts inflate ordinary text.** matplotlib embeds its text as Type 3 fonts by default, and pdftotext gives
+  an ordinary word a box about 1.9 times its font size (5.5 pt measures 10.4).
+- **Math glyphs are deflated, under any embedding.** Math sub- and superscripts, and a ")" after a superscript,
+  measure 2.2–2.9 pt for text set at 6.5 pt, in every font set tried, TrueType included.
+- **So a group's minimum and its 10th percentile mix both errors.**
+
+**Which items are affected.** The fonts on each item's page (`pdffonts`) show:
+- **Type 3:** note Figs. 7–14 embed Type 3 fonts. So do the pages of anchor C's figures.
+- **TrueType:** the paper's Figs. 1–4 and note Figs. 24 and 30 embed TrueType.
+- **Type 1:** note Fig. 25 (ROOT) and anchors A and B embed Type 1 only.
+
+So the note row above is not on one scale with the anchors' rows.
+
+**The finding, restated on drawn sizes.** These are known only for Figs. 7–14, whose producers the restyle runs. Each
+value is the smallest drawn text, scaled to the printed width, from the restyle's dry run, which reproduces the
+committed figures pixel for pixel:
+
+| figure | smallest printed text, drawn | the same figure in this table (glyph box) |
+|---|---|---|
+| 7 | 3.10 pt (top); 4.05 and 4.10 pt (projections) | 1.71 pt |
+| 8 | 3.03 pt | 4.02 pt |
+| 9 | 3.44 pt | 1.34 pt |
+| 10 | 3.45 pt | 1.35 pt |
+| 11 | 2.45 pt (spectrum); 4.55 pt (map) | 0.83 pt |
+| 12 | 4.64 pt | 7.18 pt |
+| 13 | 3.40 pt | 1.89 pt |
+| 14 | 4.88 pt | 7.54 pt |
+
+- **What holds:** the note's result figures print small text. The median of the eight figures' minima is 3.42 pt, and
+  six of the eleven PDFs have text below 3.5 pt. The restyle raises every one to 5.00–5.92 pt.
+- **What is withdrawn:** the comparison of the note's glyph-box medians with the anchors' (2.48 against 4.03–6.26 pt).
+  The glyph box gets the drawn size wrong in both directions, by as much as 7.54 against 4.88 pt for Fig. 14.
+- **Not restated:** Figs. 24, 25 and 30, the paper's figures and the anchors' drawn sizes are not measured here.
+<!-- absence-ok: scopes this correction to the figures whose producers the restyle runs; not a claim that a result does not exist -->
 
 **The anchors' colour scores are low (2.3 to 2.6).** Under the greyscale and colour-blindness renders, the raters
 marked many published figures down too. D3 is the dimension on which our figures most often match or beat the anchors.
@@ -160,7 +199,7 @@ whose producers are the `2d-unfolding` scripts that `make_figures.sh` runs at NE
    factors defined** (8 of 8): Figs. 9 and 10.
 4. **Remove blank bands and enlarge the panels into the space** (8 of 8): Figs. 9, 10 and 11.
 5. **Enlarge tick labels, axis titles, legends and annotations to printed size** (7 to 8 of 8): Figs. 7, 8, 10, 11 and
-   14. This matches the measured 2.5 pt median minimum.
+   14. The drawn sizes agree: the smallest printed text is 2.45–4.88 pt (§3, corrected).
 6. **Panel labels and titles,** "(a) Our result" and "(b) Published data" (8 of 8): Fig. 14.
 7. **"Pull" on Fig. 8's axes should read "standardized difference"** (8 of 8). The caption says it "is descriptive, not
    a pull".
@@ -206,6 +245,8 @@ whose producers are the `2d-unfolding` scripts that `make_figures.sh` runs at NE
 - **Matching:** the anchors match our items by kind (`data/match.tsv`). Several of our kinds have no close published
   counterpart: eigenmode maps, and fake-data tables.
 - **Coverage:** sol's pairwise ran in two parts, a day apart, on the same account and inputs (§2).
+- **Text size:** the glyph-box instrument of `data/text-size.tsv` misreads matplotlib text in both directions (§3,
+  corrected 2026-10-31). Drawn sizes are known only for Figs. 7–14.
 
 ## 9. Files
 
