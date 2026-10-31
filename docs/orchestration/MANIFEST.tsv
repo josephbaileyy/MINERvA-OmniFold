@@ -499,6 +499,7 @@ docs/orchestration/RECORD-20261031-close-items-oi143b-traced.md	tracked	ARCHIVAL
 docs/orchestration/RECORD-20261031-close-items-oi62-retired-oi143-oi9-deferred.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-oi62-traced.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-oi9-traced.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261031-close-items-waiting-joseph-rows-retired.md	tracked	ARCHIVAL	document	20260924-scalar5d-campaign	20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-waiting-joseph-triage.md	tracked	ARCHIVAL	document	20260924-scalar5d-campaign	20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
@@ -606,7 +607,7 @@ docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		ro
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	no
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	no
 docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	no
-docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data	20260924-scalar5d-campaign		open		route-only	no
+docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data	8-oi-188-retired-the-seven-cause-campaign		open		route-only	no
 docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only	no
 docs/orchestration/dashboard.html	tracked	MACHINE	artifact			generated		exact-path-only	no
 docs/orchestration/dashboard_collector.py	tracked	MACHINE	script			generated		exact-path-only	no

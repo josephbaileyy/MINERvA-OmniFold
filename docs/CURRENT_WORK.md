@@ -11,7 +11,6 @@ never derived from OI state prose; terminal and deferred records never enter thi
 
 | item | queue | accountable owner | basis | next action | evidence route |
 |---|---|---|---|---|---|
-| OI-71 | WAITING-JOSEPH | Joseph | publication/P1 | Decide whether recovery evidence may be quoted without a measurement at the promoted configuration. | docs/OPEN_ITEMS.md (`OI-71`) |
 | OI-6 | NOW | paper rewrite lane | publication/P2 | Narrowed to the configuration-(a) 5D central value, where the note says the revisit is open (app_negweight.tex:126); moot once (a) stops being reported in the note. | docs/OPEN_ITEMS.md (`OI-6`) |
 | OI-130 | NOW | paper rewrite lane | publication/P2 | After the paper lane's n4 and r21 work: enumerate every quoted value to its artifact and preservation state, report the counts, then remediate by class. | docs/OPEN_ITEMS.md (`OI-130`) |
 | OI-172 | NOW | paper rewrite lane | publication/P2 | After n4 and r21: draft the cause-1 statement the 2026-09-01 ruling requires. A grep did not find it in the note; that is not proven absent. | docs/OPEN_ITEMS.md (`OI-172`) |
