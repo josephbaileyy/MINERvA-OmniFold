@@ -212,6 +212,7 @@ docs/orchestration/DECISION-20261030-joseph-note-abstract-pairs.md	LIVE	open	""
 docs/orchestration/DECISION-20261030-joseph-oi74-second-run-and-pr-p6.md	LIVE	open	""
 docs/orchestration/DECISION-20261030-joseph-paper-pairs.md	LIVE	open	""
 docs/orchestration/DECISION-20261030-joseph-r22-protected-gaps.md	LIVE	open	""
+docs/orchestration/DECISION-20261031-joseph-note-abstract-reorder.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -474,6 +475,7 @@ docs/orchestration/RECORD-20261029-close-items-oi53-claims-freeze.md	ARCHIVAL	te
 docs/orchestration/RECORD-20261029-director-analysis-note-sync-2d94cbc5.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261029-director-oi160-readonly-checks.md	LIVE	open	""
 docs/orchestration/RECORD-20261030-close-items-5d-budget-launcher-classification.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261030-close-items-oi120-traced.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261030-close-items-oi13-traced.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261030-close-items-oi148-lint-state-cell.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261030-close-items-oi148-narrowed-to-pr-p6.md	ARCHIVAL	terminal	""
@@ -1032,6 +1034,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-2026102
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261029-coverage-session.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN-ADDENDUM-20261028.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/RECORD-20261030-director-pscratch-retention-additions.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING-AMENDMENT-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-DECLARATION.md	LIVE	open	""
