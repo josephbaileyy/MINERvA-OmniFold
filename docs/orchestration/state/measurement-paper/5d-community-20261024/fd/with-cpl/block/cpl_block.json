@@ -1,0 +1,137 @@
+{
+ "schema": "fd-cpl-block/1",
+ "labels": {
+  "block": "C_PL,5D: the 5B run-period block (FD-CT-5B-REPORT.md), audited (FD-CT-5B-AUDIT-REPORT.md); added after the data were seen; published with and without. Its sigma rests on three periods: the 68% interval on sigma_true/sigma_hat is [0.73, 2.56]. Noise-dominated cells: R00, R08. Rank 2; undebiased",
+  "decision": "added under DECISION-20261030 item 2 after the audit's stop condition did not fire (FD-CT-5B-AUDIT-REPORT.md); the decision followed the data; published with and without",
+  "context_dr_pair": "descriptive; not a reason for the addition: the best detector-response pair (GEANT_Pion#1 with C_resp:meson#1) explains 0.853, 0.560 and 0.617 of PA's, PB's and PC's noise-weighted offset patterns at |a| <= 1.51, reproducing PA's to within noise and not PB's or PC's; pairs have no stop role (FD-CT-5B-AUDIT-REPORT.md section 4)",
+  "context_5a_5b": "descriptive; not a reason for the addition: 5A's and 5B's mean period offsets agree, PB -2.724% against -2.699% and PC +4.671% against +4.806%, while their patterns about the mean differ beyond the combined noise, with sum (Delta/sigma)^2 of 81.6 and 192.8 over 16 cells (FD-CT-5B-AUDIT-REPORT.md section 6)",
+  "not_citable_for": [
+   "a validated size for C_PL,5D: a block built from the observed differences contains them by construction",
+   "the cause of a period difference, or which period is right",
+   "a coverage or calibration statement"
+  ]
+ },
+ "controls_passed": [
+  "A",
+  "L",
+  "B0",
+  "B1",
+  "B2",
+  "B3"
+ ],
+ "cells": [
+  "R00",
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+  "R13",
+  "R14",
+  "R15"
+ ],
+ "npz": {
+  "file": "cpl_block.npz",
+  "sha256": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+  "keys": [
+   "f",
+   "P_rel",
+   "C_PL5D",
+   "C_resp",
+   "C_resp_plus_C_PL5D",
+   "C_total_plus_C_resp_plus_C_PL5D"
+  ],
+  "extra_block": {
+   "key": "C_resp_plus_C_PL5D",
+   "name": "C_resp + C_PL5D"
+  }
+ },
+ "rank": 2,
+ "trace_share_of_M_plus_P": 0.060905345227048754,
+ "relative_sigma": {
+  "C_total_plus_C_resp": [
+   0.07096598829814936,
+   0.07095401164145884,
+   0.1400402442630318,
+   0.12636702781157427,
+   0.042026579622714604,
+   0.07474525959160219,
+   0.05890554876419142,
+   0.0797689215488738,
+   0.0625491272353357,
+   0.06264901815936087,
+   0.08591723673665866,
+   0.13685950495820715,
+   0.06631701998797666,
+   0.11070714346746317,
+   0.052652460924245824,
+   0.0794108279426529
+  ],
+  "C_PL5D": [
+   0.003999215894096078,
+   0.027056026227402444,
+   0.01136500226076502,
+   0.015015874363876996,
+   0.023127602046851516,
+   0.03164929986984313,
+   0.028848503682695297,
+   0.027933986008466097,
+   0.0027909508091058803,
+   0.027737918222324517,
+   0.012912270058424697,
+   0.023611981129471722,
+   0.021834690194155473,
+   0.026475586462809182,
+   0.02130764242898256,
+   0.023686645670063917
+  ],
+  "C_total_plus_C_resp_plus_C_PL5D": [
+   0.07107858484030659,
+   0.07593747640812253,
+   0.14050065227477346,
+   0.12725604976127036,
+   0.04796998406526628,
+   0.08116977278314418,
+   0.06559039441824555,
+   0.0845185684887739,
+   0.06261136258157192,
+   0.0685149004497583,
+   0.0868820941651658,
+   0.13888142334475137,
+   0.06981905782779116,
+   0.11382894312640858,
+   0.05680050411097256,
+   0.08286818917797577
+  ]
+ },
+ "inputs_sha256": {
+  "audit": "6d34d7f8034ea956cf22c092fb31d608f330daabdd721285302868806d50692c",
+  "periods": "a5b17895b1189543d773e94717e14cd9b1409535e366c96788f94bf6f40759db",
+  "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "cresp_npz": "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a"
+ },
+ "code_sha256": {
+  "fd_cpl_addition.py": "7c5fe70882599c1d1da0b0061397ccd162eca9c5baa2d27619c0ff5be9fd2685"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/fd_cpl_addition.py",
+  "block",
+  "--audit-json",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_audit.json",
+  "--periods-json",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_periods.json",
+  "--s1-npz",
+  "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+  "--cresp-npz",
+  "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+  "--out-dir",
+  "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block"
+ ]
+}

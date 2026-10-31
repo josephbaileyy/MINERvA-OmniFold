@@ -1,0 +1,47 @@
+PASS control K0 no output exists (no overwrite)
+PASS control K0 the committed data product's and the audit's pins are the declared ones
+PASS control K0 data_product sha256 is the pin
+PASS control K0 block_npz sha256 is the pin
+PASS control K0 block_json sha256 is the pin
+PASS control K0 g_readout sha256 is the pin
+PASS control K0 audit_json sha256 is the pin
+PASS control K1 the committed data product is Q0-Q6 on this S1 assembly and C_resp
+PASS control K1 the block readout names this npz, built on the same S1 assembly and C_resp
+PASS control K1 Stage G's reported comparison adopted this block
+PASS control K2 the block's f and C_resp are the data product's, bit for bit
+PASS control K2 the revised matrix is the data product's C_total_plus_C_resp + C_PL5D, to 1e-12
+PASS control K2 the revised matrix is C_e + C_model_abs + C_resp + C_PL5D, to 1e-12
+PASS control K3 genie_cv: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D
+PASS control K3 genie_mec: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D
+PASS control K3 nuwro: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D
+PASS control K3 gibuu: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D
+PASS control K3 mnvtune_v1: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D
+PASS control K4 C_e is symmetric
+PASS control K4 C_model_abs is symmetric
+PASS control K4 C_resp is symmetric
+PASS control K4 C_PL5D is symmetric
+PASS control K4 C_total_plus_C_resp is symmetric
+PASS control K4 C_total_plus_C_resp_plus_C_PL5D is symmetric
+PASS control K4 the revised matrix is positive definite
+PASS control K4 C_PL5D is positive semidefinite and of rank 2
+PASS control K5 the correlation is the revised matrix's, symmetric, within [-1, 1], with a unit diagonal
+PASS control K5 the without matrix's relative sigma is the committed product's
+PASS control K6 C_e: the CSV and the JSON read back bit for bit
+PASS control K6 C_model_abs: the CSV and the JSON read back bit for bit
+PASS control K6 C_resp: the CSV and the JSON read back bit for bit
+PASS control K6 C_PL5D: the CSV and the JSON read back bit for bit
+PASS control K6 C_total_plus_C_resp: the CSV and the JSON read back bit for bit
+PASS control K6 C_total_plus_C_resp_plus_C_PL5D: the CSV and the JSON read back bit for bit
+PASS control K6 the correlation's CSV and JSON read back bit for bit
+PASS control L the block, decision and both context labels are present, the contexts marked descriptive
+PASS control L context_dr_pair: every number it quotes is the audit readout's, in order (GEANT_Pion#1, meson#1, 0.853, 0.560, 0.617, 1.51)
+PASS control L context_5a_5b: every number it quotes is the audit readout's, in order (-2.724%, -2.699%, +4.671%, +4.806%, 81.6, 192.8)
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_cells.csv", "sha256": "b3a7d0cac19ab3ca17ecb603b5c4814fb8e072117cdd01c47383eb8f1d8cd6cd"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_C_e.csv", "sha256": "222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_C_model_abs.csv", "sha256": "ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_C_resp.csv", "sha256": "35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_C_PL5D.csv", "sha256": "03babead4dff1bf19980319a867c9b830a5b7f85896792edc6f07a62c6e991c9"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_C_total_plus_C_resp.csv", "sha256": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_C_total_plus_C_resp_plus_C_PL5D.csv", "sha256": "76730c5b7143f8933019a502ca23eed635e45340f7d1ed5534813b2242956170"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl_corr_C_total_plus_C_resp_plus_C_PL5D.csv", "sha256": "262e3a5b289a5620accd978938757f292315852468bdf0b7e402233e9f194b12"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl.json", "sha256": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50"}

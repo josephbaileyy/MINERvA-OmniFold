@@ -1,0 +1,26 @@
+PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
+PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
+PASS control G2 U is S1's float32 functional matrix
+PASS control G2 f is positive on every cell
+PASS control G2 f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control G2 C_total = C_e + C_model_abs
+PASS control G2 C_total's relative sigma is the committed one
+PASS control G2 C_total is positive definite, rank 16
+PASS control G2 C_resp + C_PL5D is a finite 16 x 16 matrix
+PASS control G2 C_resp + C_PL5D is symmetric
+PASS control G2 C_resp + C_PL5D is positive semidefinite
+PASS control G2 C_total + C_resp + C_PL5D is positive definite
+PASS control G3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control G4 every prediction's integrals are positive on its cells
+[G] genie_cv   16 cells, reported: total chi2 105.42/16 p 3.31e-15 [C_total + C_resp + C_PL5D + V_g, 16x16, rank 16]; shape-only chi2 100.57/15 p 1.02e-14 [C_total + C_resp + C_PL5D + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G]   variant without C_resp + C_PL5D: total chi2 160.62/16 p 6.19e-26 [C_total + V_g, 16x16, rank 16]; shape-only chi2 158.70/15 p 4.46e-26 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] genie_mec  16 cells, reported: total chi2 223.55/16 p 1.32e-38 [C_total + C_resp + C_PL5D + V_g, 16x16, rank 16]; shape-only chi2 223.46/15 p 3.49e-39 [C_total + C_resp + C_PL5D + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G]   variant without C_resp + C_PL5D: total chi2 318.26/16 p 4.18e-58 [C_total + V_g, 16x16, rank 16]; shape-only chi2 305.26/15 p 4.51e-56 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] nuwro      16 cells, reported: total chi2 130.68/16 p 4.73e-20 [C_total + C_resp + C_PL5D + V_g, 16x16, rank 16]; shape-only chi2 113.73/15 p 3.09e-17 [C_total + C_resp + C_PL5D + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G]   variant without C_resp + C_PL5D: total chi2 298.69/16 p 4.76e-54 [C_total + V_g, 16x16, rank 16]; shape-only chi2 298.64/15 p 1.07e-54 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+[G] gibuu       8 cells, reported: total chi2 45.25/8 p 3.29e-07 [C_total + C_resp + C_PL5D + V_g, 8x8, rank 8]; shape-only chi2 24.75/7 p 0.000839 [C_total + C_resp + C_PL5D + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
+[G]   variant without C_resp + C_PL5D: total chi2 68.44/8 p 1.01e-11 [C_total + V_g, 8x8, rank 8]; shape-only chi2 36.15/7 p 6.8e-06 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8]
+[G] mnvtune_v1 16 cells, reported: total chi2 262.06/16 p 1.73e-46 [C_total + C_resp + C_PL5D + V_g, 16x16, rank 16]; shape-only chi2 261.88/15 p 4.42e-47 [C_total + C_resp + C_PL5D + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
+[G]   variant without C_resp + C_PL5D: total chi2 360.79/16 p 5.8e-67 [C_total + V_g, 16x16, rank 16]; shape-only chi2 341.29/15 p 1.39e-63 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16]
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json", "sha256": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"}

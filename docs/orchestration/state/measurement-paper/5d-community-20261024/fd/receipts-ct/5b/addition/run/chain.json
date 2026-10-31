@@ -1,0 +1,1340 @@
+{
+ "schema": "fd-cpl-chain/1",
+ "steps": [
+  {
+   "step": "R f0b: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json"
+  },
+  {
+   "step": "R f1: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json"
+  },
+  {
+   "step": "R g: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R g_diag: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json"
+  },
+  {
+   "step": "R g_followup: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout.json"
+  },
+  {
+   "step": "R g_sens2: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_sens2_readout.json"
+  },
+  {
+   "step": "R flux_boot: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_flux_boot_readout.json"
+  },
+  {
+   "step": "R data_product: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json"
+  },
+  {
+   "step": "f0b",
+   "arm": "without",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_f0b_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/fd_f0b_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 104.2,
+   "start_utc": "2026-10-31T20:59:09Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_f0b_readout.json": "a7444266904e6ac7e99c212a09604d4abbdd8d1e21ddf60b7c90bbe3d1c2252a"
+   }
+  },
+  {
+   "step": "f1",
+   "arm": "without",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--f1-prep-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS",
+    "--f1-prep-sums-sha256",
+    "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+    "--f1-products-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/manifest/f1-products-SHA256SUMS",
+    "--f1-products-sums-sha256",
+    "fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09",
+    "--f1-root",
+    "/pscratch/sd/j/josephrb/fd-f1-20261027/f1c",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json",
+    "--f0b-readout-sha256",
+    "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_f1_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/fd_f1_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 44.7,
+   "start_utc": "2026-10-31T21:00:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_f1_readout.json": "995e191122863e9e0592164606435ee6ac4932e44db9b2109f0ff7ce2f402849"
+   }
+  },
+  {
+   "step": "g",
+   "arm": "without",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-10-31T21:01:38Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_readout.json": "4a5121eed92759a493cddbdbc987423e5be13e97b8a4dd2c1ccb775ae71499d8"
+   }
+  },
+  {
+   "step": "g_diag",
+   "arm": "without",
+   "tool": "fd_g_diag",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_diag_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-10-31T21:01:38Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_diag_readout.json": "21030bd6ac48d285138a8711ef621a3de7625e5cfa9e7c048d080df55b87e877"
+   }
+  },
+  {
+   "step": "g_followup",
+   "arm": "without",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_followup_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-10-31T21:01:39Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_followup_readout.json": "fd8c05a233b62acd9e1adc08069ccb77ba3c422fab8535798411c6b28f0c538c"
+   }
+  },
+  {
+   "step": "g_sens2",
+   "arm": "without",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--part",
+    "sens2",
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_sens2_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-10-31T21:01:40Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_sens2_readout.json": "ae0b1f8e33eb595749f75d83145efe7058dd716a6467f583000d14812a4c9fdb"
+   }
+  },
+  {
+   "step": "flux_boot",
+   "arm": "without",
+   "tool": "fd_flux_boot",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--flux-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_flux_boot_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 5.6,
+   "start_utc": "2026-10-31T21:01:41Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_flux_boot_readout.json": "bf27999ba219b40c00f69ae285434837a0b9207481e5c595212a5eada8a5c7ce"
+   }
+  },
+  {
+   "step": "R f0b: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R f1: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R g: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R g_diag: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R g_followup: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R g_sens2: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R flux_boot: every number and the structure are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "data_product",
+   "arm": "without",
+   "tool": "fd_data_product",
+   "argv": [
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cresp-npz",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--cresp-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-scoping/assigned-uncertainties/cresp/cresp.json",
+    "--cresp-report",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-scoping/assigned-uncertainties/cresp/CRESP-REPORT.md",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--stage1",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/stage1/stage1_inspect.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/data-product"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-10-31T21:01:46Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/data-product/fd_data_product.json": "277e9e798f6bf03f75b128504d2074bb4c70f5b39f3c63dd4fe065980f7b19f9"
+   }
+  },
+  {
+   "step": "R data_product: every CSV is the committed product's, byte for byte",
+   "check": true,
+   "ok": true,
+   "detail": [
+    "fd_data_product_C_e.csv",
+    "fd_data_product_C_model_abs.csv",
+    "fd_data_product_C_resp.csv",
+    "fd_data_product_C_total_plus_C_resp.csv",
+    "fd_data_product_cells.csv",
+    "fd_data_product_corr_C_total_plus_C_resp.csv"
+   ]
+  },
+  {
+   "step": "R data_product: its JSON is the committed one but argv",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "deposit_build",
+   "arm": "without",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "build",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/deposit-candidate"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.4,
+   "start_utc": "2026-10-31T21:01:47Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/deposit-candidate/cells.csv": "640a0f931cd3c3681449edbc9ceae2398b2794dfc19bfd9f816db1c7c4a318da",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/deposit-candidate/covariance.csv": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/deposit-candidate/correlation.csv": "838f16617ed88f86329ee4eb9c2955e16ffe99e14791890b786c7548b35cd171",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/deposit-candidate/deposit.json": "8b3b6587790e028e8d06852847910833dbe3f489dc0a5f8cd9a89833590669d4",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/deposit-candidate/predictions-reference.json": "32a4f4ea86812d47a53db3225d0615aa1faf1d8e302a1e911078f63d9315a054"
+   }
+  },
+  {
+   "step": "R deposit cells.csv: the committed file",
+   "check": true,
+   "ok": true,
+   "detail": "cells.csv"
+  },
+  {
+   "step": "R deposit covariance.csv: the committed file",
+   "check": true,
+   "ok": true,
+   "detail": "covariance.csv"
+  },
+  {
+   "step": "R deposit correlation.csv: the committed file",
+   "check": true,
+   "ok": true,
+   "detail": "correlation.csv"
+  },
+  {
+   "step": "R deposit deposit.json: the committed file but code_sha256 (without_code)",
+   "check": true,
+   "ok": true,
+   "detail": "deposit.json"
+  },
+  {
+   "step": "R deposit predictions-reference.json: the committed file but code_sha256 (without_code)",
+   "check": true,
+   "ok": true,
+   "detail": "predictions-reference.json"
+  },
+  {
+   "step": "figures",
+   "arm": "without",
+   "tool": "fd_g_figures",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures",
+    "ratio",
+    "modes",
+    "sens",
+    "--ratio-form",
+    "data-over-prediction",
+    "--gibuu-axis",
+    "separate",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 6.0,
+   "start_utc": "2026-10-31T21:01:47Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures/fd_g_fig_ratio.pdf": "6372244f9e15f065d4f2b99d6c82f6eaf4e7c5dc0fa87cd5ebba545229f81531",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures/fd_g_fig_ratio.json": "d2d3db7a8decabaf7096376a11be33db056f8d396df097bc57909360b703cffb",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures/fd_g_fig_modes.pdf": "5421815f4dfdfb4c972ef7bb9c0f4c4682c16333052ad59ad6215bc43d9a0748",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures/fd_g_fig_modes.json": "494505e28ca861b545484e14f79a44c409df88ce54d6939aac92f8c3e8089290",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures/fd_g_fig_sens.pdf": "96af0ed9dc2be870509f4a3ac5cb4afdfc57a717ffbd9b2556834e9d4cb29e6d",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/figures/fd_g_fig_sens.json": "ec7b5e22996ce03db0e2c9a787356a4ef1f55c8a11922d0a04ea14d5e624f81f"
+   }
+  },
+  {
+   "step": "R figure fd_g_fig_ratio: its sidecar is the committed one but argv, code and versions; the PDF the same bytes",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R figure fd_g_fig_modes: its sidecar is the committed one but argv, code and versions; the PDF the same bytes",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R figure fd_g_fig_sens: its sidecar is the committed one but argv, code and versions; the PDF the same bytes",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "block",
+   "arm": "with",
+   "tool": "fd_cpl_addition",
+   "argv": [
+    "block",
+    "--audit-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_audit.json",
+    "--periods-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_periods.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--cresp-npz",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-10-31T21:01:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.json": "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6"
+   }
+  },
+  {
+   "step": "C block: its readout names the npz it wrote",
+   "check": true,
+   "ok": true,
+   "detail": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+  },
+  {
+   "step": "f0b",
+   "arm": "with",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f0b_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/fd_f0b_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 43.4,
+   "start_utc": "2026-10-31T21:01:54Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f0b_readout.json": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6"
+   }
+  },
+  {
+   "step": "f1",
+   "arm": "with",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--f1-prep-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS",
+    "--f1-prep-sums-sha256",
+    "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+    "--f1-products-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/manifest/f1-products-SHA256SUMS",
+    "--f1-products-sums-sha256",
+    "fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09",
+    "--f1-root",
+    "/pscratch/sd/j/josephrb/fd-f1-20261027/f1c",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f0b_readout.json",
+    "--f0b-readout-sha256",
+    "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f1_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/fd_f1_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 46.3,
+   "start_utc": "2026-10-31T21:02:37Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f1_readout.json": "5ccc89e58096a14ab8dc0e3e6f508ca4b2b546b629077560a09a4596cde40395"
+   }
+  },
+  {
+   "step": "g",
+   "arm": "with",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-10-31T21:03:23Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+   }
+  },
+  {
+   "step": "g_diag",
+   "arm": "with",
+   "tool": "fd_g_diag",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_diag_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-10-31T21:03:24Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_diag_readout.json": "bfd529ab67ddf6e9d72de5ddda9d6318fe5b055b008b9af1bbd0af5d45a64de2"
+   }
+  },
+  {
+   "step": "g_followup",
+   "arm": "with",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_diag_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_followup_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "g_diag_readout": "bfd529ab67ddf6e9d72de5ddda9d6318fe5b055b008b9af1bbd0af5d45a64de2"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.9,
+   "start_utc": "2026-10-31T21:03:25Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_followup_readout.json": "5c95c6d0f43ba0288d293e6b21f97c082f4a090adf22ca97fec1396df30f0633"
+   }
+  },
+  {
+   "step": "g_sens2",
+   "arm": "with",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--part",
+    "sens2",
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_followup_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_sens2_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "g_followup_readout": "5c95c6d0f43ba0288d293e6b21f97c082f4a090adf22ca97fec1396df30f0633"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-10-31T21:03:26Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_sens2_readout.json": "cff60b63a951834df1793e7785da7314bf675696e888c1ff3fda58e5df604c20"
+   }
+  },
+  {
+   "step": "flux_boot",
+   "arm": "with",
+   "tool": "fd_flux_boot",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--flux-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_flux_boot_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 4.3,
+   "start_utc": "2026-10-31T21:03:26Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_flux_boot_readout.json": "7d11751577d4b2dbdac92ec576ee9d1f46d684ccc08fc419196996dcbd175f9d"
+   }
+  },
+  {
+   "step": "C f0b: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "C f1: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "C g: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "C g_diag: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {
+     "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+    }
+   }
+  },
+  {
+   "step": "C g_followup: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {
+     "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+     "g_diag_readout": "bfd529ab67ddf6e9d72de5ddda9d6318fe5b055b008b9af1bbd0af5d45a64de2"
+    }
+   }
+  },
+  {
+   "step": "C g_sens2: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {
+     "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+     "g_followup_readout": "5c95c6d0f43ba0288d293e6b21f97c082f4a090adf22ca97fec1396df30f0633"
+    }
+   }
+  },
+  {
+   "step": "C flux_boot: the readout names the combined block's sha256, and each upstream readout's as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "named": [
+     "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
+    ],
+    "upstream": {
+     "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+    }
+   }
+  },
+  {
+   "step": "S g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "S f0b: its sqrt(diag(C_total + X))/f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "data_product",
+   "arm": "with",
+   "tool": "fd_cpl_addition",
+   "argv": [
+    "product",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json",
+    "--block-npz",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz",
+    "--block-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--audit-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_audit.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product"
+   ],
+   "pins": {
+    "data_product": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072",
+    "block_npz": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "block_json": "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "audit_json": "6d34d7f8034ea956cf22c092fb31d608f330daabdd721285302868806d50692c"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-10-31T21:03:31Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl.json": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50"
+   }
+  },
+  {
+   "step": "deposit_build",
+   "arm": "with",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "build",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate"
+   ],
+   "pins": {
+    "data_product": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+   },
+   "variant": "with-cpl",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-10-31T21:03:31Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/cells.csv": "0b01400174ad99c6eba6d212b6e0f28094860d06193deeec78835a56c7b01bf8",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/covariance.csv": "76730c5b7143f8933019a502ca23eed635e45340f7d1ed5534813b2242956170",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/correlation.csv": "262e3a5b289a5620accd978938757f292315852468bdf0b7e402233e9f194b12",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/deposit.json": "67e6c22d915f4d7e64e922bbf09ef408be9221e2c13e8f4f523c831d7491f13e",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/predictions-reference.json": "cc94168ea9146d88f4bdaf8cb4b78c2b9c6299b21f1b8229f4bf227f49dcf1e4"
+   }
+  },
+  {
+   "step": "deposit_check",
+   "arm": "with",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "check",
+    "--package",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "data_product": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+   },
+   "variant": "with-cpl",
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-10-31T21:03:32Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/deposit.json": "67e6c22d915f4d7e64e922bbf09ef408be9221e2c13e8f4f523c831d7491f13e"
+   }
+  },
+  {
+   "step": "figures",
+   "arm": "with",
+   "tool": "fd_g_figures",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures",
+    "ratio",
+    "modes",
+    "sens",
+    "--ratio-form",
+    "data-over-prediction",
+    "--gibuu-axis",
+    "separate",
+    "--reported-block-name",
+    "C_resp + C_PL5D",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures"
+   ],
+   "pins": {
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "g_diag_readout": "bfd529ab67ddf6e9d72de5ddda9d6318fe5b055b008b9af1bbd0af5d45a64de2",
+    "g_followup_readout": "5c95c6d0f43ba0288d293e6b21f97c082f4a090adf22ca97fec1396df30f0633",
+    "g_sens2_readout": "cff60b63a951834df1793e7785da7314bf675696e888c1ff3fda58e5df604c20",
+    "f0b_readout": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+    "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 5.7,
+   "start_utc": "2026-10-31T21:03:33Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures/fd_g_fig_ratio.pdf": "b57cbb2ca95df8c9126a04a37cb9dd6ed5f12ef9e4d2b694cbad45467397ff4d",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures/fd_g_fig_ratio.json": "d885f3d4ec19b0acb5572b306eb15cfac18d45169d2e7a3840b7ce50d8eabfe7",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures/fd_g_fig_modes.pdf": "980351edbfe1294aae9968d2f556dc36500409e0c59651a77769c901e4bd4463",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures/fd_g_fig_modes.json": "c7f607e2b05ba51f3ab8aeeb3369a319807274b52991b54623496a61db96488b",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures/fd_g_fig_sens.pdf": "662e09acaf915ebcf220525a21f27f4b7a8b9e24397952a87171a4653d1c0e76",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures/fd_g_fig_sens.json": "aafac37e6901ac7fb4dac9891180fecd92bbcff43d2958f732d27577a517035f"
+   }
+  },
+  {
+   "step": "figures_check",
+   "arm": "with",
+   "tool": "fd_g_figures_check",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/figures"
+   ],
+   "pins": null,
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.1,
+   "start_utc": "2026-10-31T21:03:39Z",
+   "outputs": {}
+  },
+  {
+   "step": "table",
+   "arm": "with",
+   "tool": "fd_cpl_addition",
+   "argv": [
+    "table",
+    "--f0b-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json",
+    "--f0b-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f0b_readout.json",
+    "--f1-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json",
+    "--f1-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_f1_readout.json",
+    "--g-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json",
+    "--g-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_readout.json",
+    "--g-diag-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_diag_readout.json",
+    "--g-diag-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_diag_readout.json",
+    "--g-followup-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout.json",
+    "--g-followup-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_followup_readout.json",
+    "--g-sens2-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_sens2_readout.json",
+    "--g-sens2-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_g_sens2_readout.json",
+    "--flux-boot-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_flux_boot_readout.json",
+    "--flux-boot-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/readout/fd_flux_boot_readout.json",
+    "--data-product-without",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json",
+    "--data-product-with",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/data-product/fd_data_product_cpl.json",
+    "--audit-json",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/deploy/3b12c451/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_audit.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/table"
+   ],
+   "pins": {
+    "f0b_without": "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+    "f1_without": "cbe411a926a7392e4aa085c7beba6e1bda45aff55d937998c53e49f27e3516c7",
+    "g_without": "75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee",
+    "g_diag_without": "680dc5ef9c40b1ab006657ce020c6acac7e891c68ce36850cf7a7dd2df278d88",
+    "g_followup_without": "cd82517afdfb1dc8383580c8a4c57e82d9b87864e75d28528cb35c4455f6e379",
+    "g_sens2_without": "0f6568aba032e5d9a85f945048494d8fccde3525bb45a1762d6f5d5aaf15b77f",
+    "flux_boot_without": "b7b5652cbd163b6830655250c18bbcfd65f87bb199821c97c7abdbd671e70001",
+    "data_product_without": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072",
+    "f0b_with": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+    "f1_with": "5ccc89e58096a14ab8dc0e3e6f508ca4b2b546b629077560a09a4596cde40395",
+    "g_with": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "g_diag_with": "bfd529ab67ddf6e9d72de5ddda9d6318fe5b055b008b9af1bbd0af5d45a64de2",
+    "g_followup_with": "5c95c6d0f43ba0288d293e6b21f97c082f4a090adf22ca97fec1396df30f0633",
+    "g_sens2_with": "cff60b63a951834df1793e7785da7314bf675696e888c1ff3fda58e5df604c20",
+    "flux_boot_with": "7d11751577d4b2dbdac92ec576ee9d1f46d684ccc08fc419196996dcbd175f9d",
+    "data_product_with": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50"
+   },
+   "variant": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-10-31T21:03:39Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/table/fd_cpl_table.json": "eb786bcf41f1fa2fcff59e3723c3fc66b933ef598ee0a082c4e341f7c34192c9",
+    "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/table/fd_cpl_table.md": "08f76b4d4b1977de57542c2a730301301686d92dcebd7780e4bf4f02bacc02e6"
+   }
+  }
+ ]
+}

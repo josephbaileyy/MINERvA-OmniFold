@@ -1,0 +1,63 @@
+PASS control C without/ does not exist (no overwrite)
+PASS control C with/ does not exist (no overwrite)
+PASS control R R f0b: the committed readout is the pinned bytes
+PASS control R R f1: the committed readout is the pinned bytes
+PASS control R R g: the committed readout is the pinned bytes
+PASS control R R g_diag: the committed readout is the pinned bytes
+PASS control R R g_followup: the committed readout is the pinned bytes
+PASS control R R g_sens2: the committed readout is the pinned bytes
+PASS control R R flux_boot: the committed readout is the pinned bytes
+PASS control R R data_product: the committed readout is the pinned bytes
+[chain] without f0b: rc 0, 104.2 s
+[chain] without f1: rc 0, 44.7 s
+[chain] without g: rc 0, 0.5 s
+[chain] without g_diag: rc 0, 0.7 s
+[chain] without g_followup: rc 0, 0.7 s
+[chain] without g_sens2: rc 0, 0.7 s
+[chain] without flux_boot: rc 0, 5.6 s
+PASS control R R f0b: every number and the structure are the committed readout's
+PASS control R R f1: every number and the structure are the committed readout's
+PASS control R R g: every number and the structure are the committed readout's
+PASS control R R g_diag: every number and the structure are the committed readout's
+PASS control R R g_followup: every number and the structure are the committed readout's
+PASS control R R g_sens2: every number and the structure are the committed readout's
+PASS control R R flux_boot: every number and the structure are the committed readout's
+[chain] without data_product: rc 0, 0.5 s
+PASS control R R data_product: every CSV is the committed product's, byte for byte
+PASS control R R data_product: its JSON is the committed one but argv
+[chain] without deposit_build: rc 0, 0.4 s
+PASS control R R deposit cells.csv: the committed file
+PASS control R R deposit covariance.csv: the committed file
+PASS control R R deposit correlation.csv: the committed file
+PASS control R R deposit deposit.json: the committed file but code_sha256 (without_code)
+PASS control R R deposit predictions-reference.json: the committed file but code_sha256 (without_code)
+[chain] without figures: rc 0, 6.0 s
+PASS control R R figure fd_g_fig_ratio: its sidecar is the committed one but argv, code and versions; the PDF the same bytes
+PASS control R R figure fd_g_fig_modes: its sidecar is the committed one but argv, code and versions; the PDF the same bytes
+PASS control R R figure fd_g_fig_sens: its sidecar is the committed one but argv, code and versions; the PDF the same bytes
+[chain] with block: rc 0, 0.5 s
+PASS control C C block: its readout names the npz it wrote
+[chain] with f0b: rc 0, 43.4 s
+[chain] with f1: rc 0, 46.3 s
+[chain] with g: rc 0, 0.7 s
+[chain] with g_diag: rc 0, 0.7 s
+[chain] with g_followup: rc 0, 0.9 s
+[chain] with g_sens2: rc 0, 0.6 s
+[chain] with flux_boot: rc 0, 4.3 s
+PASS control C C f0b: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control C C f1: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control C C g: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control C C g_diag: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control C C g_followup: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control C C g_sens2: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control C C flux_boot: the readout names the combined block's sha256, and each upstream readout's as written
+PASS control S S g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f
+PASS control S S f0b: its sqrt(diag(C_total + X))/f is sqrt(diag(C_rep))/f
+[chain] with data_product: rc 0, 0.5 s
+[chain] with deposit_build: rc 0, 0.6 s
+[chain] with deposit_check: rc 0, 0.5 s
+[chain] with figures: rc 0, 5.7 s
+[chain] with figures_check: rc 0, 0.1 s
+[chain] with table: rc 0, 0.7 s
+[chain] done: 59 records in /pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/chain.json
+rc=0

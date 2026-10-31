@@ -1,0 +1,33 @@
+PASS control D0 S1, definition, 3 records, the Stage G readout, the extra block and 5 predictions match their digests
+PASS control D1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control D2 S1's blocks are all present
+PASS control D2 every block maps to one of S1's seven groups
+PASS control D2 U is S1's float32 functional matrix
+PASS control D2 f is positive on every cell
+PASS control D2 f is cmodel_5d.json's x (to 1e-12)
+PASS control D2 C_e is the sum of S1's blocks
+PASS control D2 C_total = C_e + C_model_abs
+PASS control D2 C_model's vertices are GENIE+MEC, NuWro, GiBUU
+PASS control D2 C_model = S^T S, S from cmodel_5d.json
+PASS control D2 C_model_abs = diag(f) C_model diag(f)
+PASS control D2 C_total's relative sigma is the committed one
+PASS control D2 C_resp is a finite 16 x 16 matrix
+PASS control D2 C_resp is symmetric
+PASS control D2 C_resp is positive semidefinite
+PASS control D3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control D4 every prediction's integrals are positive on its cells
+PASS control D5 the Stage G readout used this extra block, key, name and role
+PASS control D5 Stage G's total and shape-only chi2 and pulls reproduce to 1e-10 relative (worst 0.0e+00)
+PASS control D6 the blocks rebuild every comparison's M to 1e-12 relative in both units (worst 3.7e-16)
+PASS control D7 every stable breakdown's chi2 is Stage G's committed total chi2 to 1e-10 (worst 1.3e-14)
+[G-DIAG] genie_cv   reported [C_total + C_resp + V_g, 16x16]: chi2 109.35; relative units: cond 1.18e+03, modes for 50/90/99 % 2/7/13, top mode 7 carries 40.6 %, sigma 3.15 %, dominant interaction; absolute units: modes for 90 % 8, top dominant interaction; ridge change 2.6e-09
+[G-DIAG] genie_cv   variant  [C_total + V_g, 16x16]: chi2 160.62; relative units: cond 1.27e+03, modes for 50/90/99 % 3/7/11, top mode 12 carries 23.9 %, sigma 1.15 %, dominant interaction; absolute units: modes for 90 % 8, top dominant interaction; ridge change 3.3e-09
+[G-DIAG] genie_mec  reported [C_total + C_resp + V_g, 16x16]: chi2 272.12; relative units: cond 1.15e+03, modes for 50/90/99 % 2/4/10, top mode 13 carries 45.5 %, sigma 1.15 %, dominant interaction; absolute units: modes for 90 % 7, top dominant interaction; ridge change 6.2e-09
+[G-DIAG] genie_mec  variant  [C_total + V_g, 16x16]: chi2 318.26; relative units: cond 1.24e+03, modes for 50/90/99 % 2/5/10, top mode 13 carries 33.3 %, sigma 1.12 %, dominant interaction; absolute units: modes for 90 % 7, top dominant interaction; ridge change 4.8e-09
+[G-DIAG] nuwro      reported [C_total + C_resp + V_g, 16x16]: chi2 188.03; relative units: cond 1.38e+03, modes for 50/90/99 % 3/9/13, top mode 15 carries 31.3 %, sigma 0.61 %, dominant V_g; absolute units: modes for 90 % 7, top dominant detector; ridge change 9.0e-09
+[G-DIAG] nuwro      variant  [C_total + V_g, 16x16]: chi2 298.69; relative units: cond 1.47e+03, modes for 50/90/99 % 2/6/11, top mode 15 carries 34.3 %, sigma 0.59 %, dominant V_g; absolute units: modes for 90 % 5, top dominant interaction; ridge change 8.9e-09
+[G-DIAG] gibuu      reported [C_total + C_resp + V_g, 8x8]: chi2 58.46; relative units: cond 142, modes for 50/90/99 % 2/5/6, top mode 1 carries 26.8 %, sigma 13.54 %, dominant flux; absolute units: modes for 90 % 5, top dominant interaction; ridge change 8.7e-10
+[G-DIAG] gibuu      variant  [C_total + V_g, 8x8]: chi2 68.44; relative units: cond 166, modes for 50/90/99 % 2/5/6, top mode 1 carries 29.1 %, sigma 12.95 %, dominant flux; absolute units: modes for 90 % 3, top dominant interaction; ridge change 1.1e-09
+[G-DIAG] mnvtune_v1 reported [C_total + C_resp + V_g, 16x16]: chi2 329.72; relative units: cond 2.64e+03, modes for 50/90/99 % 2/5/9, top mode 13 carries 47.9 %, sigma 0.97 %, dominant interaction; absolute units: modes for 90 % 5, top dominant detector; ridge change 8.0e-09
+[G-DIAG] mnvtune_v1 variant  [C_total + V_g, 16x16]: chi2 360.79; relative units: cond 3.17e+03, modes for 50/90/99 % 2/5/7, top mode 11 carries 46.4 %, sigma 1.15 %, dominant interaction; absolute units: modes for 90 % 6, top dominant interaction; ridge change 6.5e-09
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/without/readout/fd_g_diag_readout.json", "sha256": "21030bd6ac48d285138a8711ef621a3de7625e5cfa9e7c048d080df55b87e877"}

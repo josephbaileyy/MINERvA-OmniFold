@@ -1,0 +1,8 @@
+{"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
+{"control": "P0", "check": "g_readout sha256 is the pin", "ok": true}
+{"control": "P0", "check": "no package file exists (no overwrite)", "ok": true}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/cells.csv", "sha256": "0b01400174ad99c6eba6d212b6e0f28094860d06193deeec78835a56c7b01bf8"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/covariance.csv", "sha256": "76730c5b7143f8933019a502ca23eed635e45340f7d1ed5534813b2242956170"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/correlation.csv", "sha256": "262e3a5b289a5620accd978938757f292315852468bdf0b7e402233e9f194b12"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/deposit.json", "sha256": "67e6c22d915f4d7e64e922bbf09ef408be9221e2c13e8f4f523c831d7491f13e"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/deposit-candidate/predictions-reference.json", "sha256": "cc94168ea9146d88f4bdaf8cb4b78c2b9c6299b21f1b8229f4bf227f49dcf1e4"}

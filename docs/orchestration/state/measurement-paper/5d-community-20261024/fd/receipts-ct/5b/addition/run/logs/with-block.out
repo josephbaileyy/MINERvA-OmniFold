@@ -1,0 +1,23 @@
+PASS control B0 no output exists (no overwrite)
+PASS control B0 the audit readout sha256 is the pin
+PASS control B0 the 5B readout sha256 is the pin
+PASS control B0 S1's assembly sha256 is the pin
+PASS control B0 cresp.npz sha256 is the pin
+PASS control A the audit's stop condition is false
+PASS control A the audit ran on this 5B readout, S1 assembly and C_resp
+PASS control A the 5B readout names this S1 assembly and C_resp
+PASS control L the block, decision and both context labels are present, the contexts marked descriptive
+PASS control L context_dr_pair: every number it quotes is the audit readout's, in order (GEANT_Pion#1, meson#1, 0.853, 0.560, 0.617, 1.51)
+PASS control L context_5a_5b: every number it quotes is the audit readout's, in order (-2.724%, -2.699%, +4.671%, +4.806%, 81.6, 192.8)
+PASS control B1 f is 16 positive cells; P is a finite 16 x 16 matrix
+PASS control B1 P is symmetric
+PASS control B1 P is positive semidefinite and of rank 2
+PASS control B1 sqrt(diag P) is the 5B readout's sigma_rel to 1e-12
+PASS control B1 its trace share of M + P is the 5B readout's to 1e-10
+PASS control B2 C_e + C_model_abs + C_resp + C_PL5D is C_total + X and cresp.npz's C_total_resp + C_PL5D, to 1e-12
+PASS control B2 S1's C_total is C_e + C_model_abs
+PASS control B2 the revised matrix is positive definite
+PASS control B3 the npz is the same bytes when written twice
+PASS control B3 the npz reads back key by key, bit for bit
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.npz", "sha256": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"}
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-addition-20261031/with/block/cpl_block.json", "sha256": "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6"}
