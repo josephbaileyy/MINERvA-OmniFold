@@ -1,0 +1,28 @@
+**J1. Choose (a): state both lists.** Suggested body text:
+
+> With the reported covariance, the GiBUU hybrid truth and synthetic \(q_3\) tilt satisfy the listing criterion; without \(C_{\mathrm{PL},5D}\), the GiBUU \(E_{\mathrm{avail}}\)-shape truth also satisfies it in R06 (\(z=2.01\), versus \(1.76\) with the block). For both GiBUU truths, the GiBUU contribution to \(C_{\mathrm{model}}\) is omitted in either comparison.
+
+Keep the definition “\(p<0.01\) or any cell with \(|z|>2\)” adjacent. The \(q_3\) tilt triggers the global criterion, not a cellwise \(2\sigma\) exceedance.
+
+The abstract’s proposed singular wording—“at a GiBUU-like truth or at a synthetic \(q_3\) tilt”—is appropriate. Prefer “the bias exceeds the stated comparison thresholds” over wording that could suggest measured interval coverage.
+
+The block was constructed from period differences, independently of these fake-data truths. That supports reporting the recalculated diagnostics, but does not establish a coverage gain: the bias is unchanged, and these tests do not fluctuate systematic parameters to test total-interval coverage. The \(2.01\rightarrow1.76\) crossing should not be presented as repaired bias or validated uncertainty.
+
+**Referee judgment (inference):** PRD readers would reasonably expect the changed classification to be disclosed in the main text. Printing only the new list would conceal a consequential dependence on the covariance choice.
+
+**J2. Choose (a): add the two without-block columns.** Group the columns under “reported covariance” and “without \(C_{\mathrm{PL},5D}\),” retaining the separate 16-cell and 8-cell blocks and giving each applicable ndf once. Specify that both versions include the same prediction covariance \(V_g\).
+
+**Referee judgment (inference):** A headline covariance with auxiliary sensitivity results in a companion note can be adequate; paired columns are preferable here because the addition followed inspection of the data and materially changes the paper’s central comparisons. Two extra columns for five predictions are proportionate.
+
+Distinguish total from shape-only changes: total χ² falls by 3.6–30.5%; the 39.5% maximum is NuWro’s shape-only result. Unchanged ordering among the four 16-cell predictions does not make these numerical changes immaterial. GiBUU’s eight-cell value should not enter that ranking.
+
+Retain a short sentence explaining the addition’s timing and directing readers to its construction and limitations. Paired columns expose sensitivity; they do not calibrate either set of χ² values or establish generator exclusions.
+
+Other corrections to the proposal:
+
+- **Separate two median summaries.** Calculated from the supplied cell table, the median uncertainty rises by about **7.8%**, from 7.29% to 7.86%. The **4.8%** figure is the median of the individual cellwise relative increases.
+- **Qualify the geometry claim.** The χ² reductions imply residual components along directions affected by the block; “lies along the directions the predictions’ residuals take” overstates alignment. Mark this interpretation as an inference.
+- **Scope the audit carefully.** Passing its frozen stop condition establishes neither validated size nor absence of overlap with existing uncertainties. Prefer “its size and coverage have not been independently validated” to suggesting that construction from data inherently precludes validation.
+- Update “the other 9 truths” to **10** for the reported covariance. Preserve the old count only when explicitly discussing the without-block result.
+
+**Recommendation:** Adopt J1(a) and J2(a), retain the with-block headline result, and describe the changes as covariance sensitivity rather than improved coverage.

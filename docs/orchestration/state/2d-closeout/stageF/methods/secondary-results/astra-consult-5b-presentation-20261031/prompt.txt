@@ -1,0 +1,14 @@
+You are an independent senior PRD referee and neutrino cross-section physicist. Work only from the files here.
+
+Files:
+- paper.txt: the current paper (a ν_μ CC-inclusive cross section in five observables, 16 cells, with a covariance C_total + C_resp).
+- AUDIT-REPORT.md and ADDITION-REPORT.md: a run-period ("C_PL,5D") covariance block was built from the observed differences between three run-period groups of the data, audited against a stop condition fixed in advance, and then added to the reported covariance. The decision to add it followed the data. Every product was recomputed with and without it.
+- PROPOSAL.md: the paper lane's proposal for presenting the result with and without the block, including two questions, J1 and J2.
+
+Effects of adding the block (from the reports): median per-cell uncertainty 7.29% → 7.86% (largest widening ×1.14); generator χ² fall 4–40% (GENIE CV 109→105, GENIE+MEC 272→224, NuWro 188→131, Tune v1 330→262, GiBUU 58→45 on 8 cells), order unchanged; in the fake-data bias study, one GiBUU-like truth (the E_avail-shape truth, z = 2.01 without, 1.76 with) stops being "listed" as uncovered; the GiBUU hybrid and a synthetic q3 tilt stay listed either way.
+
+Questions (answer each in at most 250 words, then a one-line recommendation):
+J1. How should the paper state the fake-data result? Options: (a) state both: "under the reported covariance the listed truths are the GiBUU hybrid and the q3 tilt; without the run-period block the GiBUU E_avail shape is also listed (z = 2.01)", with the abstract saying "at a GiBUU-like truth or at a synthetic q3 tilt"; (b) print only the with-block list. Consider that the block was built from data, not from these truths, so it cannot count as a coverage gain, and what PRD readers and referees expect.
+J2. Table IV (generator χ² with ndf, already split into a 16-cell block and GiBUU's 8-cell block): (a) add a pair of "without C_PL" columns (χ² and shape-only χ²); or (b) show only the reported with-block values plus one sentence giving the falls and pointing to the companion note. Consider typical PRD practice, clutter, and that the block was added after the data were seen.
+Also: anything in the proposal you consider wrong or over-claimed.
+Mark inferences as inferences. Do not invent numbers.
