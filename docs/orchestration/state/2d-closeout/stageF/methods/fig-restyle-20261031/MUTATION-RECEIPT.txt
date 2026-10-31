@@ -1,12 +1,14 @@
-python 3.12.2, matplotlib 3.10.1, numpy 1.26.4; deploy wt-con
+python 3.12.2, matplotlib 3.10.1, numpy 1.26.4; deploy wt-fig
 control (unmutated copy): PASS ['SELF-TEST :: PASS']
 M1 a line's colours are not hashed (line, marker face and marker edge) (artists.py): KILLED
      fires   a line's RGBA changed alone: WRONG
+     silent  restyle2: the step line restyled as the table declares: WRONG
 M2 values hashed as float32 (a tolerance) (artists.py): KILLED
      fires   one value moved by one ulp: WRONG
      fires   recolour: a one-ulp value change still fires: WRONG
      fires   rebin: a hist value moved by one ulp, the figure named: WRONG
      fires   rebin: a hist value moved by one ulp, plain check: WRONG
+     fires   restyle2: a one-ulp value change still fires: WRONG
 M3 patches are not captured (artists.py): KILLED
      fires   a series left out: WRONG
      fires   rebin: the same bins change, the figure not named: WRONG
@@ -40,9 +42,12 @@ M12 the printed-width scaling dropped (textsize.py): KILLED
 M13 amendment 1: series colours not checked against the palette (compare.py): KILLED
      fires   recolour: the palette colour wrong by one unit: WRONG
      fires   recolour: a series the table does not map recoloured: WRONG
+     fires   restyle2: the wrong marker: WRONG
+     fires   restyle2: a line style the table does not map changed: WRONG
 M14 amendment 1: the recolour table ignored (every colour must stay) (compare.py): KILLED
      silent  recolour: the series recoloured as the table maps it: WRONG
      silent  rebin: zero-aligned bins, the figure named: WRONG
+     silent  restyle2: the step line restyled as the table declares: WRONG
 M15 amendment 1: the binning exception applied to every figure (compare.py): KILLED
      fires   rebin: the same bins change, the figure not named: WRONG
 M16 amendment 1: the values given to hist not recorded (capture.py): KILLED
@@ -50,11 +55,27 @@ M16 amendment 1: the values given to hist not recorded (capture.py): KILLED
      fires   rebin: a hist value moved by one ulp, plain check: WRONG
 M17 amendment 1: the overlap test disabled (overlap.py): KILLED
      fires   overlap: a text on the line: WRONG
-M18 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
+M18 amendment 2: line styles not checked (compare.py): KILLED
+     fires   restyle2: the wrong marker: WRONG
+     fires   restyle2: a line style the table does not map changed: WRONG
+M19 amendment 2: the restyle table ignored (every line style must stay) (compare.py): KILLED
+     silent  restyle2: the step line restyled as the table declares: WRONG
+M20 amendment 2: the data-only hash includes the line-style fields (artists.py): KILLED
+     silent  restyle2: the step line restyled as the table declares: WRONG
+     fires   restyle2: the wrong marker: WRONG
+     fires   restyle2: a line style the table does not map changed: WRONG
+M21 amendment 2: the names gate disabled (names.py): KILLED
+     fires   names: 'MINERvA Tune v1' in a legend: WRONG
+M22 amendment 2: legend entries not captured (capture.py): KILLED
+     fires   names: 'MINERvA Tune v1' in a legend: WRONG
+M23 amendment 2: a named figure with no legend record passes (names.py): KILLED
+     fires   names: a named figure with no legend record: WRONG
+M24 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
      silent  identical rerun: WRONG
      silent  restyle (layout, fonts, labels, panel labels, text): WRONG
      silent  a different wall time in the report: WRONG
      silent  the figure unchanged when only the report is (check 3): WRONG
      silent  recolour: the series recoloured as the table maps it: WRONG
      silent  rebin: zero-aligned bins, the figure named: WRONG
+     silent  restyle2: the step line restyled as the table declares: WRONG
 MUTATION :: PASS (control passes, every mutant killed)

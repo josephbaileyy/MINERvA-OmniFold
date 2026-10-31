@@ -140,13 +140,14 @@ def check_figures(b, a, want):
 def check_figures_recoloured(b, a, want, pal, rec, sty=None, res=None):
     fails, fb, fa = [], figures(b), figures(a)
     hk = "dhash" if sty is None else "xhash"          # amendment 2: the hash with colours and line styles left out
+    check_style = sty is not None
 
     def look(x):                                       # what the comparison requires of an item beyond its data
-        return {"colours": x["colours"]} if sty is None else {"colours": x["colours"], "style": x["style"]}
+        return dict({"colours": x["colours"]}, **({"style": x["style"]} if check_style else {}))
 
     def want_look(x, fig):
         out = {"colours": expected(x["colours"], fig, pal, rec)}
-        if sty is not None:
+        if check_style:
             out["style"] = expected_style(x["colours"], x["style"], fig, sty, res)
         return out
     rebin = {sys.argv[i + 1] for i, x in enumerate(sys.argv) if x == "--rebin"}

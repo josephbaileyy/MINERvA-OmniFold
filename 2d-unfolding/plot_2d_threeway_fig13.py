@@ -207,16 +207,16 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
 
     sx, sy = stair_xy(x_plot_edges, truth_y * factor)
     ax.plot(sx, sy, color="red" if not RESTYLE else rs.PALETTE["tune"], lw=_fs(1.6, 0.8),
-            label="GENIE 2.12.6 + MnvTune v1" if not RESTYLE else "GENIE 2.12.6 + MINERvA Tune v1")
+            label="GENIE 2.12.6 + MnvTune v1" if not RESTYLE else rs.NAMES["tune"])
 
     ax.errorbar(centers, paper_y * factor, yerr=paper_err * factor,
                 xerr=half_widths, fmt="s", ms=_fs(2.5, 1.2), color="black",
                 ecolor="black", elinewidth=_fs(0.8, 0.4), capsize=_fs(1.5, 0.7),
-                label="Published (PRD 104, 092007)", zorder=3)
+                label="Published (PRD 104, 092007)" if not RESTYLE else rs.NAMES["published"], zorder=3)
     ax.errorbar(centers, omni_y * factor, yerr=omni_err * factor,
                 xerr=half_widths, fmt="o", ms=_fs(2.2, 1.1), color=_fs("#1f77b4", rs.PALETTE["this_work"]),
                 ecolor=_fs("#1f77b4", rs.PALETTE["this_work"]), elinewidth=_fs(0.8, 0.4), capsize=_fs(1.3, 0.6),
-                label="This work (OmniFold)", zorder=4)
+                label="This work (OmniFold)" if not RESTYLE else rs.NAMES["this_work"], zorder=4)
 
     ax.text(0.50, 0.96, title if not RESTYLE else rs.slice_label(title, unit=False), transform=ax.transAxes,
             ha="center", va="top", fontsize=_fs(9, 5))

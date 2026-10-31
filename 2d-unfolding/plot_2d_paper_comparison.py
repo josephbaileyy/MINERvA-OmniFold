@@ -100,9 +100,10 @@ def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
         ax.errorbar(centers, vals * scale, yerr=errs * scale,
                     xerr=widths / 2, **(dict(fmt="ko") if not restyle else dict(fmt="o", color=rs.PALETTE["this_work"])),
                     markersize=2.5,
-                    linewidth=0.9, capsize=1.5, label="This work (OmniFold)", zorder=3)
+                    linewidth=0.9, capsize=1.5, label="This work (OmniFold)" if not restyle else rs.NAMES["this_work"],
+                    zorder=3)
         ax.stairs(truth * scale, edges, color="C3" if not restyle else rs.PALETTE["tune"], linewidth=1.2,
-                  label="GENIE 2.12.6 + MnvTune v1" if not restyle else "GENIE 2.12.6 + MINERvA Tune v1", zorder=2)
+                  label="GENIE 2.12.6 + MnvTune v1" if not restyle else rs.NAMES["tune"], zorder=2)
 
         ax.set_xlim(edges[0], edges[-1])
         ax.set_ylim(0, 1.4)

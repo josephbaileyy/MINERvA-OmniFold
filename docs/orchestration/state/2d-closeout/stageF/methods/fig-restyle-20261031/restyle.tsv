@@ -1,0 +1,12 @@
+# RESTYLE AMENDMENT 2: each figure's series lines as the committed producers draw them (base bab87aeb3; before RGB, linestyle and marker as matplotlib reports them), and the identity whose style (styles.tsv) each must take. Rows whose before style is already the identity's are kept, so that every series line is declared. Derived from the base producers' code (AMENDMENT-2.md section 3), and checked by the bound run's compare.py.
+figure	before_rgb	before_linestyle	before_marker	identity
+MEFHC_5iter_fig13	#000000	None	s	published
+MEFHC_5iter_fig13	#1F77B4	None	o	this_work
+MEFHC_5iter_fig13	#FF0000	-	None	tune
+MEFHC_5iter_xsec_proj_pt	#000000	None	o	this_work
+MEFHC_5iter_xsec_proj_pz	#000000	None	o	this_work
+MEFHC_5iter_xsec_paper_pt_slices	#000000	None	o	this_work
+MEFHC_5iter_xsec_paper_pz_slices	#000000	None	o	this_work
+model_comp_projections	#000000	-	o	published
+model_comp_projections	#C44E52	--	None	this_work
+model_comp_projections	#4C72B0	-	s	tune
