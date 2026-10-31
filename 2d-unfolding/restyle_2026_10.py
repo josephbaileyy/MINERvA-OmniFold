@@ -18,6 +18,11 @@ WIDTH = {  # printed width (in) = the \includegraphics fraction of \textwidth
     "slices": 0.99 * TEXTWIDTH_IN, "spectrum": 0.49 * TEXTWIDTH_IN, "chi2_map": 0.49 * TEXTWIDTH_IN,
     "mode_maps": 0.9 * TEXTWIDTH_IN, "projections": 0.85 * TEXTWIDTH_IN, "ratio_maps": 0.9 * TEXTWIDTH_IN,
 }
+# RESTYLE AMENDMENT 1 (fig-restyle-20261031/AMENDMENT-1.md; Joseph, #591): one colour per series identity in all
+# eleven figures, colourblind-safe. Markers and line styles carry the greyscale separation (Tune v1 and This work are
+# close in lightness).
+PALETTE = {"published": "#000000", "tune": "#4C72B0", "this_work": "#D55E00"}
+PALETTE_NAME = {"published": "black", "tune": "blue", "this_work": "vermillion"}
 PT = r"$p_T$"
 PZ = r"$p_\parallel$"
 GEVC = r"(GeV/$c$)"

@@ -13,7 +13,15 @@ panel is removed), panel labels and a text note. The defects selftest.py plants:
   --report-ulp moves the reported value by one ulp and leaves the figure alone;
   --drop  leaves one series out;
   --timing T prints a different wall time, which the comparison must ignore;
-  --label-size S adds one text, "tiny label", drawn at S pt (for textsize.py's floor)."""
+  --label-size S adds one text, "tiny label", drawn at S pt (for textsize.py's floor);
+RESTYLE AMENDMENT 1 (a histogram of x - 1 is drawn in its own small axes in every case):
+  --palette        the error-bar series takes the palette's this_work colour (#D55E00), as the toy's recolour table
+                   maps it;
+  --palette-wrong  it takes #D55E01 instead;
+  --palette-extra  the scatter is recoloured too, which the toy's table does not map;
+  --rebin          the histogram's bins are zero-aligned (width 0.15) instead of 6 equal bins;
+  --hist-ulp       one value given to the histogram moves by one ulp;
+  --overlap        a text is placed on the step line's first point."""
 import sys
 
 import matplotlib.pyplot as plt
@@ -29,6 +37,10 @@ if "--ulp" in sys.argv:
     y = y.copy()
     y[3] = np.nextafter(y[3], np.inf)
 col = "#4C72B0" if "--rgba" not in sys.argv else "#4C72B1"
+if "--palette" in sys.argv:
+    col = "#D55E00"
+if "--palette-wrong" in sys.argv:
+    col = "#D55E01"
 
 if restyle:
     plt.rcParams.update({"font.size": 11, "axes.labelsize": 12, "legend.fontsize": 10})
@@ -43,7 +55,20 @@ ax.errorbar(x, y, yerr=e, fmt="o", color=col, label="MINERvA_Tune_v1" if not res
 ax.fill_between(x, y - e, y + e, color="#C44E52", alpha=0.3)
 if "--drop" not in sys.argv:
     ax.bar(x, 0.5 * y, width=0.4, color="#2ca02c")
-ax.scatter(x, y + 1, color="#9467bd" if "--scatter-rgba" not in sys.argv else "#9467be", s=12)
+ax.scatter(x, y + 1, color=("#9467bd" if "--scatter-rgba" not in sys.argv else "#9467be") if "--palette-extra" not in sys.argv
+           else "#000000", s=12)
+if "--overlap" in sys.argv:
+    ax.text(x[0], y[0], "on the line")
+hv = (x - 1.0).copy()
+if "--hist-ulp" in sys.argv:
+    hv[2] = np.nextafter(hv[2], np.inf)
+hax = fig.add_axes([0.80, 0.80, 0.15, 0.15])
+if "--rebin" in sys.argv:
+    w = 0.15
+    hbins = w * np.arange(int(np.floor(hv.min() / w)), int(np.ceil(hv.max() / w)) + 1)
+else:
+    hbins = 6
+hax.hist(hv, bins=hbins, color="steelblue")
 ax.set_xlabel("p_T (GeV/c)" if not restyle else r"$p_T$ (GeV/$c$)")
 ax.legend()
 im = axs[1].imshow(z, origin="lower", cmap="RdBu_r", vmin=0.7, vmax=1.3)

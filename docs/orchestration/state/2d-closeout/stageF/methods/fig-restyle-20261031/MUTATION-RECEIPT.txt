@@ -1,13 +1,18 @@
-python 3.12.2, matplotlib 3.10.1, numpy 1.26.4; deploy wt-fig
+python 3.12.2, matplotlib 3.10.1, numpy 1.26.4; deploy wt-con
 control (unmutated copy): PASS ['SELF-TEST :: PASS']
 M1 a line's colours are not hashed (line, marker face and marker edge) (artists.py): KILLED
      fires   a line's RGBA changed alone: WRONG
 M2 values hashed as float32 (a tolerance) (artists.py): KILLED
      fires   one value moved by one ulp: WRONG
+     fires   recolour: a one-ulp value change still fires: WRONG
+     fires   rebin: a hist value moved by one ulp, the figure named: WRONG
+     fires   rebin: a hist value moved by one ulp, plain check: WRONG
 M3 patches are not captured (artists.py): KILLED
      fires   a series left out: WRONG
+     fires   rebin: the same bins change, the figure not named: WRONG
 M4 collections' colours are not hashed (face and edge) (artists.py): KILLED
      fires   a scatter's RGBA changed alone: WRONG
+     fires   recolour: a series the table does not map recoloured: WRONG
 M5 labels are hashed (a restyle of a label fires) (artists.py): KILLED
      silent  restyle (layout, fonts, labels, panel labels, text): WRONG
 M6 figures compared by item count only (compare.py): KILLED
@@ -15,6 +20,7 @@ M6 figures compared by item count only (compare.py): KILLED
      fires   one series' RGBA changed: WRONG
      fires   a line's RGBA changed alone: WRONG
      fires   a scatter's RGBA changed alone: WRONG
+     fires   rebin: a hist value moved by one ulp, plain check: WRONG
 M7 wall-time lines not dropped (compare.py): KILLED
      silent  a different wall time in the report: WRONG
 M8 outputs not compared (compare.py): KILLED
@@ -31,9 +37,24 @@ M11 the size floor's comparison inverted (textsize.py): KILLED
 M12 the printed-width scaling dropped (textsize.py): KILLED
      fires   a text printed at 3.5 pt, floor 4.0 (check 7): WRONG
      fires     ... and the failing text is named: WRONG
-M13 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
+M13 amendment 1: series colours not checked against the palette (compare.py): KILLED
+     fires   recolour: the palette colour wrong by one unit: WRONG
+     fires   recolour: a series the table does not map recoloured: WRONG
+M14 amendment 1: the recolour table ignored (every colour must stay) (compare.py): KILLED
+     silent  recolour: the series recoloured as the table maps it: WRONG
+     silent  rebin: zero-aligned bins, the figure named: WRONG
+M15 amendment 1: the binning exception applied to every figure (compare.py): KILLED
+     fires   rebin: the same bins change, the figure not named: WRONG
+M16 amendment 1: the values given to hist not recorded (capture.py): KILLED
+     fires   rebin: a hist value moved by one ulp, the figure named: WRONG
+     fires   rebin: a hist value moved by one ulp, plain check: WRONG
+M17 amendment 1: the overlap test disabled (overlap.py): KILLED
+     fires   overlap: a text on the line: WRONG
+M18 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
      silent  identical rerun: WRONG
      silent  restyle (layout, fonts, labels, panel labels, text): WRONG
      silent  a different wall time in the report: WRONG
      silent  the figure unchanged when only the report is (check 3): WRONG
+     silent  recolour: the series recoloured as the table maps it: WRONG
+     silent  rebin: zero-aligned bins, the figure named: WRONG
 MUTATION :: PASS (control passes, every mutant killed)

@@ -155,11 +155,13 @@ def main():
         ctr = 0.5 * (edges[:-1] + edges[1:])
         ax.step(ctr, y_data, where="mid", color="k", lw=2 if not restyled else 1.1, label="Published (PRD 104, 092007)",
                 marker=technote_style.gen_marker("data"), markersize=msz)
-        ax.step(ctr, y_ours, where="mid", color="C0", lw=1.5 if not restyled else 0.9, ls="--",
+        ax.step(ctr, y_ours, where="mid", color="C0" if not restyled else rs.PALETTE["this_work"],
+                lw=1.5 if not restyled else 0.9, ls="--",
                 label="This work (OmniFold)")
         for j, (name, mv) in enumerate(model_vs.items()):
             _, y_m = project(mv[mask], mask, axis)
-            ax.step(ctr, y_m, where="mid", color=f"C{j+1}", lw=1.5 if not restyled else 0.9, label=shown(name),
+            mcol = f"C{j+1}" if not (restyled and "tune" in name.lower()) else rs.PALETTE["tune"]
+            ax.step(ctr, y_m, where="mid", color=mcol, lw=1.5 if not restyled else 0.9, label=shown(name),
                     marker=technote_style.gen_marker(name), markersize=msz)
         ax.set_xlabel(xlabel)
         if not restyled:

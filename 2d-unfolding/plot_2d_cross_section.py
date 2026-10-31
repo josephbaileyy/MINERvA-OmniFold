@@ -154,6 +154,9 @@ def _plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title="", rest
                                           sharex=True)
     fig.subplots_adjust(hspace=0.05)
     k = dict(markersize=4, linewidth=1, capsize=2) if not restyle else dict(markersize=2.2, linewidth=0.7, capsize=1.2)
+    # amendment 1: This work and Tune v1 in the palette's colours (the ratio's reference line is Tune v1's)
+    ours = dict(fmt='ko') if not restyle else dict(fmt='o', color=rs.PALETTE["this_work"])
+    tune = 'red' if not restyle else rs.PALETTE["tune"]
 
     nbins = h_xsec.GetNbinsX()
     centers = [h_xsec.GetBinCenter(i) for i in range(1, nbins + 1)]
@@ -164,9 +167,9 @@ def _plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title="", rest
     edges = [h_xsec.GetXaxis().GetBinLowEdge(i) for i in range(1, nbins + 2)]
 
     ax_top.errorbar(centers, vals, yerr=errs, xerr=widths,
-                     fmt='ko', **k,
+                     **ours, **k,
                      label="This work (OmniFold)")
-    ax_top.stairs(truth, edges, color='red', linewidth=1.2 if not restyle else 0.9,
+    ax_top.stairs(truth, edges, color=tune, linewidth=1.2 if not restyle else 0.9,
                   label="GENIE 2.12.6 + MnvTune v1" if not restyle else "GENIE 2.12.6 + MINERvA Tune v1")
     ax_top.set_ylabel(ylabel, fontsize=10 if not restyle else None)
     ax_top.legend(fontsize=9 if not restyle else None)
@@ -187,8 +190,8 @@ def _plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title="", rest
             ratio_errs.append(0)
 
     ax_bot.errorbar(centers, ratios, yerr=ratio_errs, xerr=widths,
-                     fmt='ko', **k)
-    ax_bot.axhline(1.0, color='red', linewidth=1 if not restyle else 0.7, linestyle='--')
+                     **ours, **k)
+    ax_bot.axhline(1.0, color=tune, linewidth=1 if not restyle else 0.7, linestyle='--')
     ax_bot.set_xlabel(xlabel, fontsize=10 if not restyle else None)
     ax_bot.set_ylabel("Data / MC" if not restyle else "This work / GENIE", fontsize=10 if not restyle else None)
     ax_bot.set_ylim(0.7, 1.3)
