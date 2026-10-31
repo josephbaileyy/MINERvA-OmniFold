@@ -1,0 +1,367 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "a25d1e1e2479ae080cb0f54011c1a002b3923fb1396e7cb6f326e9e8664ef845",
+  "dhash": "3b8835257759a0ecb86f4f48089d18044cc0519b4d0d5c6e4d7017dff0d675ac",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "9aebf8fae4292ebbfb32dc1c7be1f089c8b07035cf7beb8fd156358855d4c1b5",
+  "dhash": "09553046d8e111832688257e1f19f7d71a586cddbf7a92f11edbef4d5ee40c3b",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "530f0dc097e200edcee48a027fac72399490ef9c85db0c514181948787ed5fbb",
+  "dhash": "3652597247fa92aa81bf0a19d88094ceb44a6c28d15f811eeecd4ed5965312f1",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "7c8be37d944075dfc7c456f705f0b41f4c4de9e6d589a6b34410b7f7cba107cf",
+  "dhash": "b08b5f94b4580878dafea237c304dd6517aa74ae44068bd79b553828358d6825",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "d702e76169424eee7f3652ebd32d0c4c3d6472ba22808d90564d77428f634204",
+  "dhash": "8fbf1bf412132de36902d4b2b862035b542afc1555a5e8e244389f8e584d9a8e",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "c7484925f812c6c2ea441d7cd433f133e25188b7916b00fe45723f06bc8c402c",
+  "dhash": "7d2dd65a31f5a9360d3b3bcaa38fca31619a00f1f045d2a9a35443496b42ca1b",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "036c3ac92976f1e2cd44028135c537c1b6c2872cd90bcd7f849399ca9fe6d202",
+  "dhash": "bc6decca0a905d36de073622a73d95446ced63ac046a9bea5d13fccfc458db81",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "35b6ad6a8e206a933babb1e1b6125477c69175ac70704f5bac863e09063d4253",
+  "dhash": "e4114d3d74835b590876a237370348256bf72aca5a49c850774cb459b2da1868",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "11ab5eb200d8622cfbefcad34a77f4700335ec0b46db5c58c982bfe80f66c6a7",
+  "dhash": "f11baf9307b3a70b8ecf0e2183a54ec6b5dc9142e4ce4c0738060096408aa4af",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "6e0a6f4eb98be6cb9689c0018dc490d7da3c6ffb56db36a239fde53f1d896304",
+  "dhash": "50d0821d332d0a4e53e3063587a93499b7e59e7eb5a0471288d2924f7920d32a",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "a2011a2611b9d467fc70aa99bc4ef901deae25d3ea0889911114426cf4a02ef9",
+  "dhash": "d32c4385bba913dff54ef43112453ed4acafb00a4e5881ac2a5920319b1e505b",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "1c2e34c304172199afb9c86f08257b739ac56801e13bd76ab4c3bf215dea8e2d",
+  "dhash": "43ab6a6ee27bdd7cdcd3421396a509995f4e972a90ff2b1642ea9fcc9079e6f5",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "1410acae0d46a130fd61cbc8505d47fe40cc6386518faded818005e001006cb5",
+  "dhash": "3179bd6da2d8d7fa204732f22abbbc0b6aa3a13499acf6eae6edef33190ab981",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "306ddd24b87dbeaf8142e37c926b871a592e52b516627c1072593755979e8291",
+  "dhash": "b049141ce09f2b0cf6493a7a35dc20c50cccf96c10a187641ada85df7536470b",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "6c2944944d737100823e3dabc3e64c9e109c58fdff22298a20d5a095c61cac00",
+  "dhash": "c58311d1692077fe49af904638195001210458b419eb3a2d76db4dbf4e91d90e",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child7",
+  "hash": "ecb9254771134598c4179becf8053f24cbcef4e553e71c85dac4b682e38915e8",
+  "dhash": "e7264aa0ed09914cfdd2f1b30f55e7896f2217e5575bc30c046b984296d91a37",
+  "colours": {
+   "color": [
+    "#4C72B0FF"
+   ],
+   "mfc": [
+    "#4C72B0FF"
+   ],
+   "mec": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

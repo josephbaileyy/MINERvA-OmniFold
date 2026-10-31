@@ -1,0 +1,88 @@
+base bab87aeb37d2a2a278c81ede916e3fd2d5f2ae54, bound 18c92c0bc7f874cf2e61432ea65b0e092452d233
+check 2 (before) MEFHC_5iter_fig13: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) MEFHC_5iter_xsec_proj_pt: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) MEFHC_5iter_xsec_proj_pz: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) MEFHC_5iter_pull_full: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) MEFHC_5iter_xsec_paper_pt_slices: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) MEFHC_5iter_xsec_paper_pz_slices: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) tension_spectrum: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) tension_chi2_map: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) tension_mode_maps: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) model_comp_projections: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (before) model_comp_ratio_maps: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) MEFHC_5iter_fig13: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) MEFHC_5iter_xsec_proj_pt: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) MEFHC_5iter_xsec_proj_pz: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) MEFHC_5iter_pull_full: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) MEFHC_5iter_xsec_paper_pt_slices: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) MEFHC_5iter_xsec_paper_pz_slices: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) tension_spectrum: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) tension_chi2_map: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) tension_mode_maps: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) model_comp_projections: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+check 2 (off) model_comp_ratio_maps: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+  equal  fig13/MEFHC_5iter_fig13.png.json: 450 data artists, colours as the palette maps them
+  equal  models/model_comp_projections.png.json: 6 data artists, colours as the palette maps them
+  equal  models/model_comp_ratio_maps.png.json: 6 data artists, colours as the palette maps them
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pt_slices.png.json: 112 data artists, colours as the palette maps them
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pz_slices.png.json: 128 data artists, colours as the palette maps them
+  equal  pull_full/MEFHC_5iter_pull_full.png.json: 5 data artists, colours as the palette maps them (bins free: hist values equal)
+  equal  tension/tension_chi2_map.png.json: 3 data artists, colours as the palette maps them
+  equal  tension/tension_mode_maps.png.json: 18 data artists, colours as the palette maps them
+  equal  tension/tension_spectrum.png.json: 3 data artists, colours as the palette maps them
+  equal  xsec_proj/MEFHC_5iter_xsec_eff_heatmap.png.json: 3 data artists, colours as the palette maps them
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pt.png.json: 16 data artists, colours as the palette maps them
+  equal  xsec_proj/MEFHC_5iter_xsec_proj_pz.png.json: 16 data artists, colours as the palette maps them
+  equal  xsec_proj/MEFHC_5iter_xsec_pt_slices.png.json: 112 data artists, colours as the palette maps them
+  equal  xsec_proj/MEFHC_5iter_xsec_pz_slices.png.json: 128 data artists, colours as the palette maps them
+  equal  output out/model_comp_report.txt
+  equal  output out/tension_report.txt
+  equal  output logs/models.log
+  equal  output logs/tension.log
+  equal  output logs/fig13.log
+  equal  output logs/paper_slices.log
+  equal  output logs/xsec_proj.log
+  equal  output logs/pull_full.log
+  equal  inputs fig13: 4 rows
+  equal  inputs models: 3 rows
+  equal  inputs paper_slices: 2 rows
+  equal  inputs pull_full: 3 rows
+  equal  inputs tension: 3 rows
+  equal  inputs xsec_proj: 2 rows
+COMPARE :: PASS
+ok   MEFHC_5iter_fig13.png: 0 overlap(s)
+ok   model_comp_projections.png: 0 overlap(s)
+ok   model_comp_ratio_maps.png: 0 overlap(s)
+ok   MEFHC_5iter_xsec_paper_pt_slices.png: 0 overlap(s)
+ok   MEFHC_5iter_xsec_paper_pz_slices.png: 0 overlap(s)
+ok   MEFHC_5iter_pull_full.png: 0 overlap(s)
+ok   tension_chi2_map.png: 0 overlap(s)
+ok   tension_mode_maps.png: 0 overlap(s)
+ok   tension_spectrum.png: 0 overlap(s)
+ok   MEFHC_5iter_xsec_proj_pt.png: 0 overlap(s)
+ok   MEFHC_5iter_xsec_proj_pz.png: 0 overlap(s)
+OVERLAP :: PASS
+ok   MEFHC_5iter_fig13                  texts  127  min  5.00 pt  median  5.00 pt  smallest '$0.00 < p_T < 0.07$'
+ok   model_comp_projections             texts   50  min  5.50 pt  median  5.50 pt  smallest '$\\mathdefault{0.0}$'
+ok   model_comp_ratio_maps              texts   56  min  5.50 pt  median  5.50 pt  smallest '0'
+ok   MEFHC_5iter_xsec_paper_pt_slices   texts  193  min  5.48 pt  median  5.48 pt  smallest '$\\times 10^{39}$ $\\chi^2/n=18265.8/16$'
+ok   MEFHC_5iter_xsec_paper_pz_slices   texts  251  min  5.52 pt  median  5.52 pt  smallest '$\\times 10^{39}$ $\\chi^2/n=10167.4/14$'
+ok   MEFHC_5iter_pull_full              texts   46  min  5.12 pt  median  5.12 pt  smallest '0'
+ok   tension_chi2_map                   texts   27  min  5.50 pt  median  5.50 pt  smallest '0'
+ok   tension_mode_maps                  texts  162  min  5.50 pt  median  5.50 pt  smallest '0'
+ok   tension_spectrum                   texts   41  min  5.50 pt  median  5.50 pt  smallest '$\\mathdefault{10^{-10}}$'
+ok   MEFHC_5iter_xsec_proj_pt           texts   31  min  5.89 pt  median  5.89 pt  smallest '$\\mathdefault{0.0}$'
+ok   MEFHC_5iter_xsec_proj_pz           texts   27  min  5.92 pt  median  5.92 pt  smallest '$\\mathdefault{0}$'
+TEXTSIZE :: PASS (floor 4.0 pt)
+ascii MEFHC_5iter_fig13: 0 line(s) with _ or ^
+ascii MEFHC_5iter_xsec_proj_pt: 0 line(s) with _ or ^
+ascii MEFHC_5iter_xsec_proj_pz: 0 line(s) with _ or ^
+ascii MEFHC_5iter_pull_full: 0 line(s) with _ or ^
+ascii MEFHC_5iter_xsec_paper_pt_slices: 0 line(s) with _ or ^
+ascii MEFHC_5iter_xsec_paper_pz_slices: 0 line(s) with _ or ^
+ascii tension_spectrum: 0 line(s) with _ or ^
+ascii tension_chi2_map: 0 line(s) with _ or ^
+ascii tension_mode_maps: 0 line(s) with _ or ^
+ascii model_comp_projections: 0 line(s) with _ or ^
+ascii model_comp_ratio_maps: 0 line(s) with _ or ^
+RUN CHECKS :: PASS
