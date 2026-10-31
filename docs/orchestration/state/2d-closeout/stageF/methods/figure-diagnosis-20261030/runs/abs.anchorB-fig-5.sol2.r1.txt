@@ -1,0 +1,14 @@
+D1: 3 | Upper legend text and slice annotations are too small at printed size; thin component curves crowd the baseline.
+D2: 4 | -
+D3: 2 | Solid component curves become difficult to distinguish in greyscale; Models and Muon Reconstruction have similar colours under deuteranopia.
+D4: 5 | -
+D5: 3 | Normalization, Matching Efficiency and other small contributions overlap near zero, making individual curves difficult to follow.
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: Flux sets the largest systematic contribution across much of the displayed phase space, while muon reconstruction becomes comparable or larger in some regions.
+CHANGES:
+1. Enlarge the upper legend and slice annotations, moving the upper legend into dedicated space if necessary.
+2. Give systematic categories distinct dash patterns or sparse markers, reproduced consistently in both legends, so identification survives greyscale printing.
+3. Separate the Models and Muon Reconstruction colours under deuteranopia, retaining sufficient contrast against white.
+4. Provide a shared enlarged view of the low-uncertainty range so the overlapping contributions near zero can be compared.
+END

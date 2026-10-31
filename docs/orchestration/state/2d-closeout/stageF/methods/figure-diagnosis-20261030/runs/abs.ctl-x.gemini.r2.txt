@@ -1,0 +1,17 @@
+D1: 2 | bottom x-axis tick labels and overall text size
+D2: 3 | excessive canvas margins and cluttered panel headers
+D3: 1 | neon green background and monochromatic red foreground
+D4: 2 | bottom x-axis tick labels (colliding bin numbers 1–6)
+D5: 2 | overlapping identical-colour data markers in panel (b)
+D6: 3 | marker symbol distinguishability in panel (b) legend
+D7: 2 | neon green background and indistinguishable series in panel (b)
+TAKEAWAY: The joint-test estimator in panel (b) recovers truth across multiple shape deformations with residuals contained well within the quoted covariance uncertainty, demonstrating substantially better performance than the development variant in panel (a).
+CHANGES:
+1. Canvas background and typography: Replace the neon green canvas background with standard white and set all axis lines, tick marks, and text labels to black.
+2. Panel (b) series colours: Use distinct, colorblind-friendly colours (along with distinct marker shapes) for the three pseudo-experiment shape changes instead of identical red markers.
+3. Bottom x-axis tick labels: Add spacing and visual separators between Eavail bins so the repeating 1–6 sub-bin digits do not merge into an illegible continuous string.
+4. Font sizes: Increase the font size of the bottom tick labels, top Eavail bin labels, axis titles, and legend text to PRD legible standards at printed width.
+5. Layout and whitespace: Crop the large outer canvas margins around the subplots and share the y-axis between panels (a) and (b) to remove redundant interior y-axis ticks.
+6. Panel headers: Simplify the verbose multiline headers above the subplots to standard "(a)" and "(b)" labels, moving estimator tuning parameters (trees/leaves) into the caption or body text.
+7. Greyscale contrast: Adjust the grey step in (a) and the grey shaded uncertainty band in (b) to ensure clear contrast against the white plot background under greyscale printing.
+END

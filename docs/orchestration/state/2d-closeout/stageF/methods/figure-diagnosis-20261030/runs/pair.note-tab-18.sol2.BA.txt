@@ -1,0 +1,10 @@
+D1: EQUAL | Both use readable serif type with clear labels and numerals.
+D2: B | Whitespace separates groups cleanly, while A’s rules between every row add clutter.
+D3: EQUAL | Both are monochrome tables.
+D4: EQUAL | Both clearly label their dimensionless numerical columns.
+D5: B | Aligned α columns and consistent model ordering support systematic comparisons across groups.
+D6: A | Its caption states the degrees of freedom directly; B depends on another table and unexplained notation.
+D7: A | Its compact structure makes the models and two comparison measures immediately apparent.
+OVERALL: A
+GAP: 1. Rewrite B’s caption in plain, direct language. 2. Define the covariance symbols and explain the α endpoints locally. 3. State the degrees of freedom explicitly. 4. Emphasize group labels and identify α = 0 visually as the baseline.
+END

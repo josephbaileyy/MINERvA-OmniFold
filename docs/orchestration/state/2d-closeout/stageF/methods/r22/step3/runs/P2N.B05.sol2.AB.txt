@@ -1,0 +1,7 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+
+1. B improves sentence structure in §6.2 by separating the explanation of the pseudo-inverse treatment from the qualification about the earlier regularization scan.
+2. B’s opening reads more smoothly because the histogram identifiers no longer interrupt the description of the error bars.
+3. The preference is slight because most prose is identical, and B’s “leading, unconfirmed hypothesis of this analysis” is more cumbersome than A’s corresponding phrasing.

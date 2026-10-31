@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B avoids an unedited, inline enumeration of multiple raw numerical test statistics in running prose by appropriately integrating those values into a dedicated table column.
+2. Document B establishes superior syntactic cohesion and logical flow by phrasing conditions and causal relationships directly rather than relying on abrupt colon-separated assertions.
+3. Document B resolves ambiguous pronoun antecedents and awkward phrasing found in Document A, particularly when clarifying the statistical interpretation of the pseudo-experiment records.

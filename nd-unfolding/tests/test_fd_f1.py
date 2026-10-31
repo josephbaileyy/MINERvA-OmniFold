@@ -28,6 +28,10 @@ import numpy as np
 
 ND = Path(__file__).resolve().parents[1]
 REPO = ND.parent
+# F1c's own step table: committed after F1c ran (fd/receipts-f1/run/s10.out:9 records these bytes), so the no-reuse scan
+# below excludes exactly this file at exactly this digest.
+F1C_STEPS = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/f1c/f1c-steps.tsv"
+F1C_STEPS_SHA256 = "70b287c372855e2bd10eaeab6febd4fe56c106a9ebea03ff437a65d0a2e88679"
 GENIE = REPO / "3d-unfolding" / "genie"
 for p in (str(ND), str(ND / "pv-ladder"), str(GENIE), str(Path(__file__).resolve().parent)):
     if p not in sys.path:
@@ -54,6 +58,26 @@ def quiet(fn, *a, **k):
     with contextlib.redirect_stdout(io.StringIO()):
         return fn(*a, **k)
 
+
+
+def seed_hits(root: Path) -> tuple[list[str], int, list[str]]:
+    """--pseudo-seed(s) in every .tsv and .sh under root that overlap F1's seeds: (hits, matches seen, files skipped)."""
+    pat = re.compile(r"--pseudo-seeds?\s+(\d+)(?::(\d+))?")
+    lo, hi = min(TASKS.SEEDS.values()), max(TASKS.SEEDS.values()) + TASKS.N_PE - 1
+    hits, n, skipped = [], 0, []
+    for p in sorted([*root.rglob("*.tsv"), *root.rglob("*.sh")]):
+        if ".git" in p.parts:
+            continue
+        rel = p.relative_to(root).as_posix()
+        if rel == F1C_STEPS and hashlib.sha256(p.read_bytes()).hexdigest() == F1C_STEPS_SHA256:
+            skipped.append(rel)
+            continue
+        for m in pat.finditer(p.read_text(errors="ignore")):
+            n += 1
+            a, b = int(m.group(1)), int(m.group(2) or m.group(1))
+            if a <= hi and b >= lo:
+                hits.append(f"{rel}: {m.group(0)}")
+    return hits, n, skipped
 
 class Prep(unittest.TestCase):
     def setUp(self):
@@ -202,20 +226,31 @@ class Tasks(unittest.TestCase):
             self.assertTrue([r for r in rows if r[0] == str(lane)][0][1].startswith("f1_closure_"))
 
     def test_the_seeds_appear_in_no_committed_task_table(self):
-        """Every --pseudo-seed(s) in a committed .tsv or .sh, against 806000-807019."""
-        pat = re.compile(r"--pseudo-seeds?\s+(\d+)(?::(\d+))?")
-        lo, hi = min(TASKS.SEEDS.values()), max(TASKS.SEEDS.values()) + TASKS.N_PE - 1
-        hits, n = [], 0
-        for p in [*REPO.rglob("*.tsv"), *REPO.rglob("*.sh")]:
-            if ".git" in p.parts:
-                continue
-            for m in pat.finditer(p.read_text(errors="ignore")):
-                n += 1
-                a, b = int(m.group(1)), int(m.group(2) or m.group(1))
-                if a <= hi and b >= lo:
-                    hits.append(f"{p}: {m.group(0)}")
+        """Every --pseudo-seed(s) in a committed .tsv or .sh, against 806000-807019, except F1c's own step table at
+        the bytes its run recorded (it was committed after the run, and it is where these seeds belong)."""
+        hits, n, skipped = seed_hits(REPO)
         self.assertGreater(n, 100)                                      # the scan found the existing tables
         self.assertEqual(hits, [])
+        self.assertEqual(skipped, [F1C_STEPS])                          # the one exclusion is live, not vacuous
+
+    def test_the_seed_scan_still_fires_on_a_planted_table(self):
+        """A planted table with an F1 seed is a hit, beside F1c's excluded table; a changed F1c table is not excluded."""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / F1C_STEPS).parent.mkdir(parents=True)
+            shutil.copy2(REPO / F1C_STEPS, root / F1C_STEPS)
+            (root / "other").mkdir()
+            (root / "other/tasks-planted.tsv").write_text("t0\ts5e_candidate.py\t--pseudo-seeds\t806005:806010\n")
+            (root / "other/ok.tsv").write_text("t0\ts5e_candidate.py\t--pseudo-seeds\t805000:805019\n")
+            hits, n, skipped = seed_hits(root)
+            self.assertEqual(skipped, [F1C_STEPS])
+            self.assertEqual(len(hits), 1)
+            self.assertIn("tasks-planted.tsv", hits[0])
+            with open(root / F1C_STEPS, "a") as fh:                    # an edit to F1c's table voids its exclusion
+                fh.write("9\tx\ts5e_candidate.py\t--pseudo-seeds\t806000:806000\n")
+            hits, n, skipped = seed_hits(root)
+            self.assertEqual(skipped, [])
+            self.assertTrue(any(F1C_STEPS in h for h in hits))
 
     def test_main_writes_both_tables_and_refuses_to_overwrite(self):
         argv = ["tables", "--sums", str(self.sums), "--prep", "/P/prep", "--runs", "/P/runs", "--table-dir", "/D/t",

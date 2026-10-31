@@ -1,0 +1,19 @@
+Q1: VERDICT: SAME
+DETAIL: The rewording converts the final coordinate clause into a parenthetical modifier without adding, dropping, or altering any facts, citations, or qualifiers.
+
+Q2: VERDICT: SAME
+DETAIL: Moving the citation directly after "LightGBM" and adding a comma preserves all technical parameters and factual assertions identically.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit exclusivity statement "is stated only here" from BEFORE, replacing it with the locational pointer "(below)" and thereby omitting the factual restriction that this limitation appears nowhere else.
+
+Q4: VERDICT: SAME
+DETAIL: The text in AFTER is identical to BEFORE character for character.
+
+Q5: VERDICT: SAME
+DETAIL: The text in AFTER is identical to BEFORE character for character.
+
+Q6: VERDICT: SAME
+DETAIL: The text in AFTER is identical to BEFORE character for character.
+
+END

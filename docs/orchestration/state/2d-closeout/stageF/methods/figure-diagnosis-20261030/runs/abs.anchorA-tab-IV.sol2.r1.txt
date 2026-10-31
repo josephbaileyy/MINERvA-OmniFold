@@ -1,0 +1,10 @@
+D1: 5 | -
+D2: 4 | Numeric entries are centered rather than aligned on decimal points, especially visibly in the first numeric column.
+D4: 5 | -
+D6: 4 | Caption does not state that smaller discriminator values indicate closer agreement.
+D7: 5 | -
+TAKEAWAY: MultiFold has the smallest discriminator values for every observable, and all unfolding methods substantially reduce the values relative to the prior.
+CHANGES:
+1. Align all numeric columns on their decimal points.
+2. Add a brief statement to the caption explaining that smaller values indicate closer agreement with truth.
+END

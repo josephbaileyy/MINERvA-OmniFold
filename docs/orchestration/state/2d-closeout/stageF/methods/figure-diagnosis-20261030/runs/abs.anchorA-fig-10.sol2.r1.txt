@@ -1,0 +1,13 @@
+D1: 3 | Small tick labels, angular-range titles and legend text; fine markers and error-bar caps in crowded panels.
+D2: 4 | -
+D3: 3 | IBU-UniFold and MultiFold use identical circular markers and solid error bars, making them difficult to distinguish in greyscale.
+D4: 5 | -
+D5: 4 | -
+D6: 4 | The grey band associated with the prior is not explicitly explained.
+D7: 4 | -
+TAKEAWAY: Both unfolding methods give ratios close to unity across the angular slices, while the prior shows larger momentum-dependent departures.
+CHANGES:
+1. Increase tick-label, axis-label, angular-title and legend font sizes for the printed figure.
+2. Give IBU-UniFold and MultiFold different marker shapes, with sufficient contrast to distinguish their error bars in greyscale.
+3. Explain the grey prior band and its relationship to the prior step line in the caption.
+END

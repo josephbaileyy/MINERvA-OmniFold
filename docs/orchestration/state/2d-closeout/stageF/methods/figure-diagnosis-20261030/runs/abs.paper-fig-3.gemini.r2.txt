@@ -1,0 +1,18 @@
+D1: 3 | bottom x-axis tick labels
+D2: 3 | panel titles above plots
+D3: 4 | -
+D4: 3 | panel (b) y-axis label
+D5: 3 | overlapping markers in panel (b)
+D6: 4 | -
+D7: 3 | unrolled cell x-axis representation
+TAKEAWAY: The joint-test estimator in (b) keeps fractional recovery residuals within experimental systematic uncertainties across multiple shape deformations, whereas the development variant in (a) exhibits large residual biases correlated with the injected truth change.
+CHANGES:
+1. Panel (b) y-axis: add the missing axis title `(unfolded − truth)/truth (%)` or remove inner tick labels and join the panels with a shared y-axis.
+2. Panel titles: remove the multi-line descriptive text above panels (a) and (b), retain only simple "(a)" and "(b)" labels, and place the model specifications in the caption.
+3. Bottom x-axis tick labels: enlarge and declutter the 42 repeated "1 2 3 4 5 6" labels, using grouped labels or reduced tick frequency to improve readability.
+4. Top axis: add an explicit label and unit, such as "$E_{\text{avail}}\text{ (GeV)}$", directly on the top axis rather than annotating "(GeV, top)" in the bottom axis title.
+5. Panel (b) markers: apply horizontal dodging to the three data series so that overlapping markers do not obscure each other.
+6. Error bars: note in the caption that error bars are smaller than the marker size where not visible, or adjust marker sizing to make error bars visible.
+7. Reference styling: visually differentiate the injected truth change line in (a) from the uncertainty band in (b) to avoid confusing an injected deformation with an experimental uncertainty.
+8. Legend consistency: harmonize naming between the legend and caption, using consistent terms for "GENIE + MEC" vs "GENIE MEC" and "pseudo-experiments" vs "exp.".
+END

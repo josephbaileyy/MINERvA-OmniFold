@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A separates the interpretation of the pseudo-inverse result from the regularization-scan qualification, avoiding B’s overloaded sentence in §6.2.
+2. A’s opening reads more smoothly without the parenthetical histogram identifiers, which interrupt B’s explanation of the error bars.
+3. Both documents otherwise share nearly identical specialist prose and register, so A’s editorial improvements warrant only a slight preference.

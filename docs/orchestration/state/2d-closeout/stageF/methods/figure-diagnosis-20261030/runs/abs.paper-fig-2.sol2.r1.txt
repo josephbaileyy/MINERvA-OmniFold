@@ -1,0 +1,13 @@
+D1: 4 | Panel (b): small error bars are difficult to resolve among the dense markers.
+D2: 4 | Long x-axis labels dominate the space beneath both panels.
+D3: 4 | Greyscale series have similar tones; marker shapes distinguish them less clearly in crowded regions.
+D4: 5 | -
+D5: 4 | Panel (b): markers crowd the zero line, making small differences difficult to compare.
+D6: 5 | -
+D7: 4 | Dense joint-cell indexing slows identification of the regions with appreciable residuals.
+TAKEAWAY: Negative-weight refinement largely removes the roughly −4% projection residuals seen with purity subtraction, while both methods retain localized joint-cell residuals.
+CHANGES:
+1. Shorten both x-axis labels and move the detailed bin-edge and grid definitions into the caption.
+2. Improve greyscale separation by using open circles and filled squares with contrasting outlines.
+3. Give panel (b) more horizontal space per cell, for example by dividing its sequence into two aligned rows with the same vertical scale.
+END

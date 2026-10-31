@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s “Truth hadronic diagnostics are also stored” is more concise than B’s corresponding sentence about event-loop output files.
+2. This phrasing gives A a slightly smoother transition from systematic shifts to stored diagnostics and bin definitions.
+3. The remaining prose is essentially identical in register, organization, and technical density, making the preference marginal.

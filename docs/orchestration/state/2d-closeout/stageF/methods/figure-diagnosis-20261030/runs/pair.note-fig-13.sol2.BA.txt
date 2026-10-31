@@ -1,0 +1,10 @@
+D1: A | Larger labels, ticks and legend text remain easier to read at printed size.
+D2: A | Vertically aligned panels use space effectively; B compresses the plots and devotes substantial space to sparse tails.
+D3: A | Colours distinguish components clearly; B’s caption identifies an orange curve that is actually blue.
+D4: A | Mathematical notation is consistent; B mixes p_z and p_parallel and exposes plain-text variable formatting.
+D5: A | Data uncertainties and clearly separated predictions support comparison; B’s overlapping curves lack visible uncertainty context.
+D6: A | Legend and caption agree and identify the components; B has a colour mismatch and an implementation-style model label.
+D7: A | The data, total prediction and component contributions are apparent quickly; B requires closer inspection of nearly coincident curves.
+OVERALL: A
+GAP: 1) Enlarge B’s plot text and markers; 2) rebalance panel space around the populated ranges; 3) standardize mathematical axis notation; 4) show reference uncertainties; 5) make overlapping measurements distinguishable; 6) correct the caption colour and replace the underscore-separated model label.
+END

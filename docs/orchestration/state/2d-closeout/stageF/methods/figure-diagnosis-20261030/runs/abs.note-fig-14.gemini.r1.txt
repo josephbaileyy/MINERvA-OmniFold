@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | panel labels and redundant duplicate axes/colorbar
+D3: 2 | colormap greyscale luminance (diverging colormap folds onto itself, making ratios below and above unity indistinguishable in black and white)
+D4: 3 | axis labels (raw ASCII syntax "p_T bin" and "p_|| bin", lacking LaTeX formatting and physical units)
+D5: 3 | panel identification (no on-figure labels indicating our result vs published data)
+D6: 3 | duplicate colorbar between panels
+D7: 3 | missing panel titles and unphysical bin index axes
+TAKEAWAY: Both our unfolded result and the published data exhibit a similar pattern of discrepancy relative to MINERvA Tune v1 across the kinematic plane, characterized by a deficit (ratio < 1) at the lowest transverse momentum and an excess (ratio > 1) across the remainder of the phase space.
+CHANGES:
+1. Panel labels: Add titles or labels (e.g., "(a) Our result" and "(b) Published data") above or within each panel to identify them directly on the figure.
+2. Colorbar: Remove the redundant colorbar between the two panels and keep a single shared colorbar on the far right.
+3. Axis labels: Typeset axis labels with proper mathematical formatting and physical units (e.g., $p_T$ [GeV/$c$] and $p_\parallel$ [GeV/$c$]) instead of raw ASCII strings ("p_T bin", "p_|| bin").
+4. Axis ticks: Replace integer bin indices along the axes with physical momentum tick values or bin boundary ranges in GeV/$c$.
+5. Colormap: Use a colormap with distinct luminance progression or overlay a clear contour line at ratio = 1.0 so that ratios above and below unity are distinguishable in greyscale.
+6. Right-panel y-axis: Remove the redundant y-axis label and tick numbers from the right panel to reduce horizontal whitespace and place the panels side by side.
+END

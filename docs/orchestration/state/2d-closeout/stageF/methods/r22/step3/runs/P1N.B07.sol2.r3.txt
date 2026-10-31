@@ -1,0 +1,14 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed particle-physics companion note, but several passages retain internal bookkeeping, procedural language, and overloaded qualifications that warrant a dedicated language pass.
+1. QUOTE: "The response-mismatch closure of Appendix D is
+designed to test whether an incorrect hadronic response can move strength into or out of the low-W
+component. It has not yet produced a result."
+   REWRITE: The effect of hadronic-response mismodelling on the low-W component has not been quantified; Appendix D describes a closure test designed to assess this effect.
+2. QUOTE: "No compatibility
+metric based on the configuration-(a) five-axis covariance is quoted, because the estimator-seed
+sensitivity of its construction, measured with two companion covariances, exceeds the limit set before
+production (§9.6); §10.4 gives a sixteen-cell χ2 comparison."
+   REWRITE: The sensitivity of the configuration-(a) five-axis covariance to the estimator seed, assessed using two additional covariance estimates, exceeds the predefined acceptance threshold (§9.6). Compatibility statistics based on this covariance are therefore not reported. Section 10.4 presents a sixteen-cell χ2 comparison.
+3. QUOTE: "For GENIE with MEC, NuWro and GiBUU its effect is not reliably
+determined (Ref. [37], R1.18)."
+   REWRITE: The effect of the axis convention on the GENIE with MEC, NuWro and GiBUU predictions has not been reliably quantified.

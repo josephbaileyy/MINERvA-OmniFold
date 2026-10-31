@@ -1,0 +1,2 @@
+A: FIG. 12: Correlation matrices from the MultiFold method for the number of events per bin in the unfolded distributions of each observable of interest. The correlations in the results are roughly as expected given the nature of the systematic uncertainties applied to the simulation.
+B: Table 13: Correlation matrix of the reported covariance Ctotal + Cresp on the sixteen cells (lower triangle; the diagonal is one).

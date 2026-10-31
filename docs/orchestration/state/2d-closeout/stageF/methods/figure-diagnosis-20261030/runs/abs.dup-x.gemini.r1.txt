@@ -1,0 +1,17 @@
+D1: 4 | -
+D2: 3 | unlabelled panels and large empty whitespace in the lower panel for cells R04–R07 and R12–R15
+D3: 4 | -
+D4: 3 | missing horizontal axis label for kinematic cells R00–R15
+D5: 3 | separate panel and disparate y-axis scale for GiBUU impeding direct comparison with other predictions
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: Most generator predictions (GENIE variants, NuWro, and MINERvA tune v1) agree with the data within 10–20% across all 16 kinematic cells, whereas GiBUU significantly underpredicts the cross section with data-to-prediction ratios reaching up to 2.1 in several low-p∥ cells.
+CHANGES:
+1. Panel labels: Add "(a)" and "(b)" labels to the upper and lower panels, and reference them consistently in the caption.
+2. Horizontal axis: Add an explicit x-axis label such as "Kinematic cell" or "Cell index" above or beside the R00–R15 tick labels.
+3. Lower panel whitespace: Clearly mark or hatch the omitted cells (R04–R07 and R12–R15) in the lower panel, or compress the panel to remove the large blank area.
+4. Model comparison: Provide shared visual reference guides across panels so GiBUU can be directly compared against the other four models in the eight cells they share.
+5. Kinematic table key: Increase the font size and row spacing for the five kinematic cut rows below the x-axis to improve legibility.
+6. Colour accessibility: Adjust the luminance contrast between the green (NuWro) and orange (GENIE + Valencia MEC) markers to ensure clear distinction under deuteranopia.
+7. Lower panel y-axis: Extend the lower panel y-axis range slightly below 1.0 (e.g., to 0.8) so the 1.0 tick label and horizontal baseline do not collide with the lower spine.
+END

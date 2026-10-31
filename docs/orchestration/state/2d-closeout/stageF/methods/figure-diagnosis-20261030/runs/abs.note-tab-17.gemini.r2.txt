@@ -1,0 +1,16 @@
+D1: 4 | dense 16-row block without vertical grouping
+D2: 3 | missing sub-rules (\cmidrule) under model headers, uneven column spacing under GENIE 2.12.10 + Valencia MEC, and unspaced 16 rows
+D4: 3 | missing percent unit [%] in (g - f)/f column headers and unphysical -0.00 value in row R03
+D6: 2 | caption omits definitions of f, g, \sigma, covariance components, and the physical meaning of cells R00–R15
+D7: 3 | absence of summary statistics (such as \chi^2/ndf or mean pull) and missing kinematic labels for cells
+TAKEAWAY: MINERvA Tune v1 and GENIE 2.12.10 + Valencia MEC show the closest overall agreement with data, whereas GiBUU 2019 exhibits severe discrepancies with pulls exceeding 4.0 and deviations up to -52% across its eight reported cells.
+CHANGES:
+1. Model column headers: add `\cmidrule(lr)` beneath each model name to group the corresponding `pull` and `(g - f)/f` columns.
+2. Sub-headers for `(g - f)/f`: add the unit `(%)` or `[%]` to indicate that the values are percentages.
+3. Header `GENIE 2.12.10 + Valencia MEC`: split across two lines to balance column widths and eliminate the wide blank gap between its subcolumns.
+4. Table body rows: insert vertical whitespace (e.g., `\addlinespace`) every four rows to ease horizontal visual tracking across 11 columns.
+5. Caption text: define $f$ (data), $g$ (prediction), $\sigma$ (uncertainty from the covariance sum), the physical kinematics represented by cells R00–R15, and the reason GiBUU is restricted to eight cells.
+6. Row R03, GENIE 2.12.10 CV pull: format `-0.00` as `0.00` to eliminate the negative sign artifact.
+7. Table footer: add a summary row at the bottom displaying aggregate statistics (e.g., total $\chi^2/\text{ndf}$ or RMS pull) for each model.
+8. Caption title: change "Table 17:" to standard PRD format "TABLE XVII." followed by a period.
+END

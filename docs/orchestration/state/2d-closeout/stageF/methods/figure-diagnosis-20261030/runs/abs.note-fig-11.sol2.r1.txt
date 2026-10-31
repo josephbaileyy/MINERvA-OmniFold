@@ -1,0 +1,16 @@
+D1: 2 | Tick labels, axis labels and the legend in both left-hand plots are too small; curves and markers are thin.
+D2: 3 | The left-hand plots occupy much less vertical space than the heatmap, leaving excessive whitespace above them; panels lack identifiers.
+D3: 3 | The diverging heatmap loses sign discrimination in greyscale: positive and negative contributions both appear dark.
+D4: 4 | -
+D5: 4 | -
+D6: 4 | -
+D7: 3 | Small left-hand plots and absent panel identifiers hinder connecting the spectrum, cumulative curve and contribution map.
+TAKEAWAY: The eigenvalues span roughly twelve orders of magnitude, about 90 modes accumulate 90% of χ², and a few bins show conspicuously large positive contributions.
+CHANGES:
+1. Enlarge tick labels, axis labels and the legend in both left-hand plots to match the heatmap’s readable typography.
+2. Increase curve weights and marker sizes in the left-hand plots.
+3. Reorganize the panels to reduce the large blank region above the left-hand plots and balance their visual prominence.
+4. Add panel labels (a), (b) and (c), and refer to each explicitly in the caption.
+5. Add sign-specific contours or symbols to the heatmap so positive and negative contributions remain distinguishable in greyscale.
+6. Typeset axis quantities mathematically, including λ/λ_max, χ², p_T and p_∥.
+END

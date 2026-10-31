@@ -1,0 +1,17 @@
+D1: 4 | panel (a) top axis tick labels and verbose x-axis label
+D2: 4 | panel (b) total cross section appended to cell index axis without an axis break
+D3: 3 | marker luminance in greyscale (blue and red map to identical grey, obscuring overlapping points near zero)
+D4: 3 | panel (a) top axis missing quantity and unit label, and panel (b) x-axis using irregular unexplained index ticks
+D5: 5 | -
+D6: 4 | legend text ("experiments") inconsistent with caption ("pseudo-experiments")
+D7: 4 | panel (b) abstract cell indices obscure physical interpretation of residual features
+TAKEAWAY: Unbinned negative-weight refinement achieves near-zero closure across all projection cells and eliminates the persistent ~ -4% bias seen in purity-based subtraction at high W, with both methods closing to within ~1% on the total cross section.
+CHANGES:
+1. Marker style (both panels): change one series to open markers or use contrasting fill shades (e.g., filled vs. open symbols or black vs. light grey) so overlapping points near zero remain distinguishable in greyscale.
+2. Panel (a) top axis: add an explicit axis label with quantity and unit, "$E_{\text{avail}}\text{ (GeV)}$", and increase the tick label font size to match the bottom axis.
+3. Panel (a) bottom x-axis label: move the verbose bin-edge definitions ("$W$ edges 0, 1.1, 1.4, 1.8, 2.2, 3, $\infty\text{ GeV}$") into the caption or text to declutter the axis title.
+4. Panel (b) x-axis: replace the irregular, unexplained tick indices (0, 10, 27, 37...) with regular major ticks or group labels identifying the physical kinematic variables of the $3^5$ grid.
+5. Panel (b) total cross section: introduce an axis break or separate inset panel before "total" to decouple the integrated quantity from the differential cell indices.
+6. Legend: harmonize terminology by updating "experiments" to "pseudo-experiments" to match the caption text.
+7. Caption: correct the typo "35 grid" to "$3^5$ grid" (restore exponent), remove the extra space in "($E_{\text{avail}}$ , $W$)", and standardize the hyphenation of "pseudo-experiments".
+END

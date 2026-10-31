@@ -1,0 +1,17 @@
+D1: 2 | tick labels, axis labels, and legend text on the left subplots
+D2: 2 | large empty whitespace above the left subplots and lack of subpanel labels (a)-(c)
+D3: 2 | heatmap diverging colormap mapping both positive and negative extremes to dark grey in greyscale
+D4: 3 | raw ASCII axis labels without LaTeX math formatting and missing physical units on kinematic axes
+D5: 4 | -
+D6: 3 | microscopic legend text and caption describing three panels as only "(left)" and "(right)"
+D7: 3 | disproportionate panel sizing and illegible subpanel annotations
+TAKEAWAY: The $\chi^2$ decomposition reveals that approximately 80 modes account for 90% of the total $\chi^2$, with localized hotspot contributions concentrated in specific high-$p_\parallel$ kinematic bins.
+CHANGES:
+1. Reorganize the layout by stacking the two left subplots vertically to match the height of the right heatmap, eliminating the large empty whitespace.
+2. Add panel labels (a), (b), and (c) to the subplots and update the caption text to refer to them directly instead of "(left)" and "(right)".
+3. Substantially increase the font sizes of the tick labels, axis labels, and legend in the left subplots to match the right panel.
+4. Format all axis and legend text using LaTeX math notation ($\lambda/\lambda_{\max}$, $\chi^2$, $p_T$, $p_\parallel$) instead of raw ASCII strings.
+5. Replace the heatmap colormap with a perceptually uniform diverging colormap that maintains monotonic luminance contrast from negative to positive in greyscale.
+6. Add physical quantities and units (GeV/$c$) or bin edge kinematics to the $p_T$ and $p_\parallel$ axes.
+7. Enlarge the legend box and increase the line weight of the 90% reference line in the cumulative $\chi^2$ plot.
+END

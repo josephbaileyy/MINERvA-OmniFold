@@ -1,0 +1,16 @@
+D1: 5 | -
+D2: 3 | table horizontal placement (severe left indent leaving empty space) and column alignment (decimal points misaligned due to single- vs double-digit ndf)
+D4: 3 | column headers (column 3 lacks quantity symbol, and headers lack initial capitalization)
+D6: 3 | caption (fails to specify the dataset/observable, does not explain GiBUU's differing ndf, leaves covariance terms undefined, and uses informal phrasing)
+D7: 3 | model comparison (comparing raw $\chi^2$ across models with differing ndf without reduced $\chi^2$ or explanation impedes rapid assessment)
+TAKEAWAY: Among the evaluated models, GiBUU 2019 yields the lowest total and shape-only $\chi^2$ values (though evaluated with only 8 and 7 degrees of freedom, respectively), while GENIE 2.12.10 CV provides the best agreement among models evaluated across the full 16 degrees of freedom.
+CHANGES:
+1. Table placement: Center the table horizontally relative to the caption and column margins to remove the large blank space on the left.
+2. Column alignment: Align numerical entries on the decimal point (or separate $\chi^2$ and ndf into distinct columns) so the single-digit ndf entries for GiBUU align with the two-digit ndf entries.
+3. Column 3 header: Rename "shape-only" to "Shape-only $\chi^2/\text{d.o.f.}$" (or "Shape-only $\chi^2$") to explicitly identify the quantity and use proper capitalization.
+4. Column 1 and 2 headers: Capitalize "Prediction" and format column 2 as "Total $\chi^2/\text{d.o.f.}$" or "$\chi^2/\text{ndf}$".
+5. Caption context: State the experimental measurement, reaction channel, and kinematic distribution being compared against the predictions.
+6. Caption/footnote note: Add an explanation for why GiBUU 2019 has 8/7 degrees of freedom whereas all other models have 16/15.
+7. Caption phrasing and definitions: Replace informal language ("with the shape-only $\chi^2$ beside it") with formal phrasing, and explicitly define the covariance matrix components ($C_{\text{total}}$, $C_{\text{resp}}$, $V_g$).
+8. Quantitative comparison: Provide explicit reduced $\chi^2$ values ($\chi^2/\text{ndf}$) to facilitate immediate visual comparison across models with unequal degrees of freedom.
+END

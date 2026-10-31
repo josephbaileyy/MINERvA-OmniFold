@@ -1,0 +1,13 @@
+D1: 4 | -
+D2: 3 | The long Valencia MEC heading creates excessive space between its two numeric columns and uneven model-group widths.
+D4: 4 | GENIE CV R03 displays “−0.00”; percentage units appear only in the caption.
+D6: 3 | The caption leaves f, g, σ, the covariance terms, and the R00–R15 cell labels undefined.
+D7: 3 | The dense matrix lacks visual grouping or emphasis to help readers locate the largest discrepancies.
+TAKEAWAY: Most predictions lie below the reference, with GiBUU showing several of the largest discrepancies on its eight reported cells.
+CHANGES:
+1. Wrap the Valencia MEC model heading onto two lines and reduce the gap between its numeric columns.
+2. Add (%) to each fractional-difference subheader.
+3. Replace the rounded “−0.00” in GENIE CV R03 with “0.00”.
+4. Define the caption’s symbols and identify the cell mapping, using precise cross-references where needed.
+5. Add modest spacing between column groups and consistently emphasize pulls with |pull| ≥ 3.
+END

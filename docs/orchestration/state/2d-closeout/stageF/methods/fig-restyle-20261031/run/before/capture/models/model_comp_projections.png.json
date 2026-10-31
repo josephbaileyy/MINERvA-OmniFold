@@ -1,0 +1,68 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "Published (PRD 104, 092007)",
+  "hash": "59d44867da98676b4e69538fed3f57c6db40277d3dcbe62f5a41e955bf1d2016",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "line",
+  "axes": 0,
+  "label": "This work (OmniFold)",
+  "hash": "09987c5c5c89549d09eb0ba60185f55795dc95e573b71db5b133837a3b7ec1b8",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 0,
+  "label": "MINERvA_Tune_v1",
+  "hash": "056c3cbe364bfeda1df22f8113ad020c87ef13e84e42ddc431cb13d78761c537",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 1,
+  "label": "Published (PRD 104, 092007)",
+  "hash": "1b5da91e06eeba33e16b251dc6f494cd44dc212d171cc9cc70c7628e0e08a490",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 1,
+  "label": "This work (OmniFold)",
+  "hash": "ecadb9fe72425f7f43ea6344a4528fc3ed140519f4700beeb5cfb62a1fa863d0",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 1,
+  "label": "MINERvA_Tune_v1",
+  "hash": "53ad5d5a1ad90000f06e6e6af0b6133f71b4ed55ad6ad7171626ba8e16ea3e09",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

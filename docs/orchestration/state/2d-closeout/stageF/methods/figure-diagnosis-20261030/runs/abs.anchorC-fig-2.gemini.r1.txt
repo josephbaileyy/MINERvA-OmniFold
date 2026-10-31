@@ -1,0 +1,18 @@
+D1: 4 | low contrast of lightest markers and error bars in greyscale
+D2: 3 | redundant panel titles and duplicated y-axis label on panel (b)
+D3: 3 | reference line indistinguishable from analytic curves in greyscale and caption reliance on "dashed red"
+D4: 4 | missing units and capitalization mismatch between axis ($Z_T$) and caption ($z_T$)
+D5: 3 | overlapping markers, error bars, and resolution bands near $Z_T = 0$ in panel (b)
+D6: 2 | legend directly obstructing data points, error bars, and reference lines
+D7: 3 | visual clutter from legend obstruction and central data crowding
+TAKEAWAY: MSE calibration exhibits prior-dependent bias away from the ideal response, where varying the prior mean shifts calibration curves vertically and varying the prior width alters their slope.
+CHANGES:
+1. Legend placement (panels a and b): Move legends away from data curves (e.g., to the upper-left quadrant) or add an opaque background box to prevent data points, error bars, and reference lines from colliding with legend text.
+2. Legend definitions (panels a and b): Add legend entries defining the dashed lines and shaded resolution bands ($\Sigma_{\mathrm{MSE}}$) rather than only labeling the marker symbols.
+3. Reference line styling and caption (panels a and b, caption): Render the "Unbiased" line as a solid black line rather than a dashed line to distinguish it from analytic predictions in greyscale, and remove the color-specific phrase "in dashed red" from the caption.
+4. Panel titles (panels a and b): Remove the running top title "Simulation-Based Gaussian Example" from both panels and place this description in the caption per PRD style.
+5. Shared axis layout (panel b): Remove the duplicated y-axis title "Calibrated $\hat{Z}_T$" from panel (b) and horizontally align the panels to share the vertical scale.
+6. Central overlap resolution (panel b): Apply horizontal offsets (jitter) to the numerical data points near $Z_T = 0$ and reduce band fill opacity so individual series and error bars are distinguishable.
+7. Notation consistency (axes and caption): Standardize variable case between the axis labels ($Z_T$, $\hat{Z}_T$) and the caption ($z_T$, $\hat{z}_T$), specifying units or that the variables are dimensionless.
+8. Greyscale contrast (panels a and b): Darken the lightest blue shade used for $\mu = -2.0$ and $\sigma = 0.0$ so that data markers and error bars do not wash out in monochrome printing.
+END

@@ -1,0 +1,10 @@
+D1: 5 | -
+D2: 4 | Single-number values are centered rather than decimal-aligned.
+D4: 5 | -
+D6: 4 | “This measurement” and “the published measurement” leave the comparison unnamed in the caption.
+D7: 5 | -
+TAKEAWAY: The measurements agree closely overall, with a total ratio of 1.010 and 95.1% of bins agreeing within 10%.
+CHANGES:
+1. Decimal-align the single-number entries in the Value column; retain centered alignment for grouped values.
+2. Name the measurements being compared in the caption.
+END

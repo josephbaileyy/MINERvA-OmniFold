@@ -1,0 +1,15 @@
+D1: A | Item A has clear, well-proportioned fonts and visible markers at column width, whereas Item B has undersized plot labels and an excessively large caption font.
+D2: A | Item A features a clean, single-column vertical stack with optimal space usage, whereas Item B has redundant legends in each panel, a floating POT label, and excess whitespace.
+D3: A | Item A uses high-contrast, distinguishable colors, whereas Item B suffers from a severe error where the caption specifies orange but the curve is plotted in blue.
+D4: A | Item A typesets all mathematical symbols, subscripts, and scientific scales properly, while Item B uses raw programming syntax (`p_T`, `p_||`, `1e-38`, `dpt`) and ambiguous unit slashes.
+D5: A | Item A clearly presents data with uncertainties alongside decomposed model channels, whereas Item B lacks visible error bars and obscures differences between overlapping stepped histograms.
+D6: A | Item A strictly adheres to PRD caption style and typography, whereas Item B uses non-standard "Figure 13:", raw code identifiers (`MINERvA_Tune_v1`), duplicate legends, and a caption-color mismatch.
+D7: A | Item A conveys its kinematic distributions and physics breakdown instantly, while Item B slows comprehension through contradictory color descriptions and overlapping stepped curves.
+OVERALL: A
+GAP: 1. Fix the caption and legend discrepancies: change "Figure 13:" to PRD-standard "FIG. 13.", resolve the color contradiction (change the curve to orange or text to blue), and remove raw code underscores from labels.
+2. Typeset all axis titles, units, and scientific exponents using standard LaTeX math formatting ($d\sigma/dp_T$, $p_T$, $p_\parallel$, $\times 10^{-38}$) instead of raw code strings (`p_T`, `p_||`, `1e-38`, `dpt`).
+3. Display proper uncertainty error bars on the data points.
+4. Scale up the axis labels, tick labels, and plot markers so they remain legible at printed journal dimensions.
+5. Remove the duplicate legend across panels and incorporate the floating POT label into the caption.
+6. Add ratio or difference subpanels beneath the distributions to clearly separate and compare the overlapping histograms.
+END

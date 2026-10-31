@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. Document A maintains a consistently formal publication register by describing the retained analysis quantities rather than referencing internal computing mechanics ("The event-loop output files also store").
+2. Document A's phrasing provides a natural parallel construction with the preceding sentence ("so a shifted W is stored..."), yielding a smoother and more polished editorial flow.
+3. Because the two texts are otherwise identical in their high level of technical rigor and specialist vocabulary, this subtle difference in editorial finish warrants a slight preference for Document A.

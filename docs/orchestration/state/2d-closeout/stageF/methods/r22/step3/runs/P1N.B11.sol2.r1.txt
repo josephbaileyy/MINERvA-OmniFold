@@ -1,0 +1,10 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical supplement, but recurring internal bookkeeping, development-status reporting, and cumbersome statements of scope keep it from consistently matching well-edited PRD register.
+1. QUOTE: "Summary. Beyond the results stated with their scopes in the executive summary (p. 1), the body supports two further conclusions."
+   REWRITE: The analysis supports two additional conclusions.
+2. QUOTE: "Principal limitations. The executive summary lists the principal limitations (p. 2), each with the section that states it. The quoted two-dimensional statistical block has had no coverage test (§4.2, §5.2)."
+   REWRITE: The principal limitations are summarized on p. 2. Coverage has not been tested for the quoted two-dimensional statistical block (§4.2, §5.2).
+3. QUOTE: "A local release candidate exists, with checksums and a verifier that recomputes and checks its results;
+no release has been tagged or deposited. Rebuilding this note’s PDFs assembles documents
+and reproduces no scientific result (App. G)."
+   REWRITE: A local release candidate includes checksums and a verifier that recomputes and checks the results, but a tagged, deposited release is not yet available. Reproducing the scientific results requires running the analysis separately from the document build (App. G).

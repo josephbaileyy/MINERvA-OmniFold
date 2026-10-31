@@ -1,0 +1,241 @@
+Detector-response-mismatch closure test
+
+The truth-shape and hidden-variable closures in §5 test recovery of deliberately modified event
+populations. They do not directly test truth-distribution bias from a mismatch between the pseudodata detector response and OmniFold’s nominal response. Kevin McFarland suggested this distinction
+and proposed stressing the hadronic record, especially for quasielastic events, to inspect low-W bias
+(private communication). This appendix gives a validation protocol for such a test, not a result or
+an uncertainty component. Its first stage has been implemented but not yet run: no output has
+been produced and no pass threshold has been set.
+Reconstruction-only test. The test uses the ordinary five-dimensional closure sample. After the
+pseudo-data arrays are copied, and before background mixing or classifier training, it changes only
+the reconstructed pseudo-data record
+pseudo
+pseudo
+Eavail
+−→ (1 + ϵ)Eavail
+.
+
+(32)
+
+The nominal reconstructed simulation, all truth coordinates, event weights, and event membership
+stay fixed. The pseudo-data therefore have a deliberately incompatible conditional response; OmniFold still uses the nominal response. Both signs of ϵ are required, at an amplitude fixed before
+the results are examined. A documented hadronic-response variation or an explicit quantitative
+
+assumption should justify that amplitude; the overall factor in the reconstructed-Eavail definition,
+Eq. (2), is not by itself a sufficient basis.
+Outputs include the full five-dimensional unfolded/reference residual, one-dimensional Eavail and
+W projections, and an (Eavail , W ) ratio map. The primary observable is the signed bias versus W ,
+with W < 1.1 GeV reported separately from the high-W tail. The global integral is a control rather
+than the decision statistic. The implementation runs only as a pseudo-data closure and only on the
+five observables, and cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted.
+Physically correlated follow-up. The reconstruction-only test is by design a computationally
+inexpensive adversarial stress test; it is not a detector model. A more faithful follow-up would select
+quasielastic events, shift the leading-nucleon energy up and down, and recompute reconstructed
+Eavail , q3 , W , and any affected selection from the altered low-level record. The current per-event
+outputs hold only scalar observables, not that low-level record, so the follow-up requires dedicated
+diagnostic output from the event processing. It is deferred unless the reconstruction-only test shows
+material bias or the collaboration asks for the stronger response model.
+Interpretation. The test leaves the quoted central value and the current covariance construction
+unchanged. A small observed bias would support stability of the (Eavail , W ) interpretation only
+within the tested response envelope. A large bias would require a decision on the response model or
+an uncertainty component, and would not be absorbed silently into a non-closure error.
+
+E
+
+The MINERvA measurement-dimensionality survey
+
+The survey behind Fig. 15 lists MINERvA differential cross-section measurements through the
+listed 2025 entries, with references and dimensionality: the number of kinematic variables unfolded
+simultaneously in each analysis’s main differential result. The survey is nonexhaustive through 2026;
+recent additions follow.
+Table 29: MINERvA differential cross-section survey used for the
+landscape figure, with the dimensionality (Dim.) defined in the
+text. Channels: CC-inclusive (incl.), CCQE/QE-like incl. transverse
+kinematic imbalance (QE), pion production CC and coherent (π),
+deep-inelastic / kaon (DIS), electron-neutrino (νe ), nuclear-target
+ratio (ratio).
+Year
+
+Channel; observables
+
+2013
+2013
+2014
+2014
+2015
+2015
+2015
+2016
+2016
+2016
+2016
+
+QE; νµ CCQE pT , p∥
+QE; ν̄µ CCQE pT , p∥
+ratio; CC on C/Fe/Pb to CH
+π; coherent π ± (total & diff.)
+π; CC 1π + (Tπ , θπ )
+QE; µ+p final states
+π; ν̄µ single π 0
+νe ; CCQE-like on CH
+π; νµ /ν̄µ pion prod.
+DIS; partonic nuclear effects
+DIS; CC K + production
+
+Dim.
+
+Ref.
+
+2
+2
+1
+1
+1
+1
+1
+2
+2
+2
+1
+
+[68]
+[69]
+[70]
+[71]
+[72]
+[73]
+[74]
+[75]
+[76]
+[77]
+[78]
+
+continued. . .
+
+
+Year
+
+Channel; observables
+0
+
+Dim.
+
+Ref.
+
+2017
+2017
+2018
+2018
+2018
+2019
+2019
+2020
+2020
+2020
+2020
+2021
+2022
+2022
+2023
+2023
+2023
+2024
+2025
+
+π; CC single π
+QE; nuclear-dependence (multi-target)
+QE; ν̄µ QE-like pT , p∥
+QE; µ-p mesonless TKI
+π; coherent π ± on C
+QE; quasielastic-like νµ
+π; ν̄µ single π −
+incl.; CC-incl ⟨Eν ⟩ ∼ 3.5 GeV pT , p∥
+QE; nuclear binding & TKI
+QE; high-statistics QE-like
+π; CC π 0 nuclear effects
+incl.; CC-incl ⟨Eν ⟩ ∼ 6 GeV pT , p∥ (target)
+QE; QE-like pT , p∥ , ΣTp (triple-diff.)
+incl.; CC-incl low-q3 (Eavail , q3 )
+π; CC 1π + (multi-target)
+π; coherent π + (multi-target)
+QE; ν̄µ multi-neutron low-Eavail
+νe ; low-Q2 (Eavail , pT )
+QE; A-dependence TKI (multi-target)
+
+2
+1
+2
+2
+2
+2
+2
+2
+2
+2
+1
+2
+3
+2
+2
+1
+1
+2
+2
+
+[79]
+[80]
+[81]
+[82]
+[83]
+[84]
+[85]
+[86]
+[87]
+[88]
+[89]
+[3]
+[90]
+[8]
+[91]
+[92]
+[93]
+[45]
+[94]
+
+2026
+2026
+2026
+2026
+
+this work; unbinned pT , p∥
+this work; unbinned pT , p∥ , Eavail
+this work; unbinned pT , p∥ , Eavail , q3
+this work; unbinned pT , p∥ , Eavail , q3 , W
+
+2
+3
+4
+5
+
+—
+—
+—
+—
+
+Additional recent measurements. The low-/medium-energy comparison of quasielastic-like
+cross sections unfolds three variables simultaneously, pT , p∥ , and available recoil energy [44]; it
+has the dimensionality of our three-dimensional result, with a different signal from our inclusive
+one. The shallow-inelastic measurement reports one-dimensional neutrino and antineutrino cross
+sections [49]. Other measurements report single-differential charged-pion production down to zero
+pion kinetic energy [95] and inclusive antineutrino cross sections versus pT on several targets [96].
+These channel-specific additions are not plotted in Fig. 15.
+
+F
+
+Future work: point-cloud representations
+
+We are developing unfolding with point-cloud transformer (PET) representations of the full event,
+which could use low-level detector and particle information that the scalar observables of this note
+summarize. That work, in progress, is documented separately. No central value, uncertainty or
+comparison from it is used or claimed in this note.

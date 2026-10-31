@@ -1,0 +1,30 @@
+id	piece	base_match	hold	acted_on_by	lane	indep	quote
+B01-g-05	B01	EXACT	EXACT		PROTECTED C12,C1,A7	PROTECTED C1, C12, A7	No result’s intervals have validated coverage (two dimensions: §4.6; five dimensions: §9.5; the sixteen cells: §10.3).
+B01-g-06	B01	EXACT	EXACT		PROTECTED C8	PROTECTED C8, B3	LightGBM was chosen over the exact-split estimator, which is kept as a cross-check, after both comparisons with the publication were known (§3.2).
+B01-g-09	B01	EXACT	EXACT		PROTECTED C2	PROTECTED C2, A7	The quoted 2D statistical block has had no coverage test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2).
+B02-g-05	B02	EXACT	EXACT		PROTECTED C8,A7	PROTECTED C8, A7	Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed.
+B03-g-01	B03	EXACT	EXACT		PROTECTED B2,B1	PROTECTED B1, B2	Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver; the others are accepted by inference, because the same code produced them (Ref. [37], R1.16).
+B03-g-02	B03	EXACT	EXACT		PROTECTED C1,A7	PROTECTED C1, A7	We therefore make no claim about coverage, and goodness-of-fit values computed with this covariance are indicative only.
+B03-g-03	B03	EXACT	EXACT		PROTECTED B2	PROTECTED B2	Its per-bin σ is a median 0.27 of that of the earlier ten-seed block, because the bootstrap × seed interaction, which dominated the earlier scan, is already inside the fixed-seed statistical block; the training-seed block carries it only at its 1/20 share, a median 0.763 of its diagonal.
+B03-g-05	B03	EXACT	EXACT		PROTECTED C5	PROTECTED C5, A7	The run-period block CPL is an uncertainty assigned for an observed inconsistency between run periods whose cause is unknown; it is not a measured systematic uncertainty from an identified source.
+B03-g-06	B03	EXACT	EXACT		PROTECTED C4	PROTECTED C4	One systematic category provided in the input products, NormDISCC, is identically zero; we carry it as zero, which we have not been able to confirm is intended.
+B03-g-09	B03	EXACT	EXACT		PROTECTED C2	PROTECTED C2, B2	No coverage test on held-out simulation has been run, and no design for one has been registered in advance.
+B04-g-02	B04	EXACT	EXACT		PROTECTED C2	PROTECTED C2, B2	A re-test on held-out simulation would separate the two explanations; it has not been run.
+B04-g-03	B04	EXACT	EXACT		PROTECTED B2,C2	PROTECTED C2, B2	The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen.
+B05-g-01	B05	EXACT	EXACT		PROTECTED A7,B2	PROTECTED C1, A7, B2	With the purity-based subtraction, the choice of GBDT estimator spreads the distance over about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04, and LightGBM with seeds 1–10 gives 2.64–2.75.
+B07-g-02	B07	EXACT	EXACT		PROTECTED B2,A7	PROTECTED B1, A7	It has not yet produced a result.
+B07-g-09	B07	EXACT	EXACT		PROTECTED A7,C10	PROTECTED A7, C10	The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of §11, as run, do not correct.
+B09-g-02	B09	EXACT	EXACT		PROTECTED B1	PROTECTED B1, A7	Statements in those sections about that central value and that covariance do not describe this result, and statements here do not describe them.
+B10-g-02	B10	EXACT	EXACT		PROTECTED C9	PROTECTED C9	Second, a bounded extension of the production budget was decided during production, while the calibration’s monitoring output showed observed claim p values, so that the sequential rule, rather than the budget, could set the stop.
+B10-g-03	B10	EXACT	EXACT		PROTECTED B1	PROTECTED B1	That conditioning has not been validated.
+B10-g-05	B10	EXACT	EXACT		PROTECTED C9,A7	PROTECTED C9, A7	A2 requires the lost pseudo-experiments to have been lost independently of their outcomes, which has not been shown.
+B10-g-08	B10	EXACT	EXACT		PROTECTED B2,A7	PROTECTED B1, B2	This factor comes from the review of the design, and its derivation is not given.
+B11-g-03	B11	EXACT	EXACT		PROTECTED B2	PROTECTED B1, B2	The sample’s mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the flux repair.
+B12-g-05	B12	EXACT	EXACT		PROTECTED B2	PROTECTED B2	That check could not detect that the Flux band omitted those constraint weights, because it filled the MnvH1D without MAT’s per-universe weights (SetUnivWgts), so both sides were unweighted; it also ran on a sweep from before the flux fix, not on a quoted product.
+B13-g-01	B13	EXACT	EXACT		PROTECTED B2	PROTECTED B2	The superseded unified-throw 5D covariance has N = 160, truncated p = 100, giving 58/160 ≃ 0.363: uncorrected precision is too large by ≃ 2.76.
+B13-g-03	B13	EXACT	EXACT		PROTECTED B2	PROTECTED B2	Two provenance limits apply to the production numbers: the driver revision that produced them is corroborated but not pinned, and no output records the job that produced them (Ref. [37], R1.7).
+B13-g-07	B13	EXACT	EXACT		PROTECTED B2	PROTECTED B2	Raw signed weights destabilize an exact-split boosted-tree classifier, inflating a full low-pT cross-section row by up to a factor ∼5 × 104 where local background is large.
+B14-g-04	B14	EXACT	EXACT		PROTECTED B1	PROTECTED B1	It labels every output as a diagnostic that must not be quoted.
+B14-g-06	B14	EXACT	EXACT		PROTECTED A7	PROTECTED A7, B2	It is deferred unless the reconstruction-only test shows material bias or the collaboration asks for the stronger response model.
+B15-g-02	B15	EXACT	EXACT		PROTECTED B1	PROTECTED B1, A7	RC7, a local release candidate with a README, checksums and a replay verifier [97], has not been deposited or released under a publication tag.
+B15-g-09	B15	EXACT	EXACT		PROTECTED B2	PROTECTED B2	No producing revision or job is recorded for the other objects, and the assembled package carries none.

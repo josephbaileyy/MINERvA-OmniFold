@@ -1,0 +1,2 @@
+You are given one image file. It shows a simple line plot with a large number written on it. Reply with exactly one line, in this format, and nothing else:
+NUMBER: <the digits of the large number, exactly as printed>

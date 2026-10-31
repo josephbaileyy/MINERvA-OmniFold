@@ -1,0 +1,10 @@
+D1: EQUAL | Both tables feature sharp, well-scaled typography that is easily legible at printed size.
+D2: B | B follows standard PRD booktabs formatting with decimal alignment, whereas A has vertical rules, an orphan line artifact, and centered numbers.
+D3: EQUAL | Both items are black-and-white tables.
+D4: A | A provides degrees of freedom (DoF) for each observable's χ2 and uses capitalized headers, whereas B has lowercase headers and unsplit percentile sub-columns.
+D5: A | A includes an explicit baseline reference row (Prior) and DoF benchmarks, whereas B omits the overall benchmark χ2.
+D6: A | A uses PRD-compliant Roman numbering and clean punctuation, whereas B uses Arabic numbering and has stray spaces before colons and commas.
+D7: A | A conveys its results immediately through standalone χ2 values relative to DoF, whereas B requires external context to interpret the mode decomposition.
+OVERALL: A
+GAP: 1. Use PRD-standard Roman numerals for table numbering ("TABLE XIX." instead of "Table 19:"). 2. Remove spurious spaces before punctuation marks in the caption ("χ2:", "χ2,"). 3. Capitalize column headers to follow journal conventions ("Prediction", "Block"). 4. Split the "modes for 50/90/99 %" column into three distinct sub-columns with individual percentile headings (50%, 90%, 99%). 5. Report the total χ2 and degrees of freedom to make the eigenmode breakdown self-contained. 6. Include a reference benchmark row or baseline model to facilitate direct comparison.
+END

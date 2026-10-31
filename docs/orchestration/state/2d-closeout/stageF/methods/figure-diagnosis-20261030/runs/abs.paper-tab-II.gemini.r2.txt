@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | p-value column alignment and lack of row grouping
+D4: 3 | p-value precision and format, and incomplete "cells" header
+D6: 3 | caption missing definitions of z and cell identifiers (R02, R06, R07)
+D7: 4 | -
+TAKEAWAY: Most fake-data models show good statistical compatibility with the sixteen cells, whereas the GiBUU hybrid model and synthetic $q_3$ tilt are strongly excluded with very large $\chi^2$ and multiple outlier cells, with $C_{\mathrm{resp}}$ consistently providing a modest reduction in $\chi^2$.
+CHANGES:
+1. Columns 4 and 7 (p-values): align numbers on the decimal point.
+2. Columns 4 and 7 (p-values): standardize precision instead of mixing 2, 3, and 4 decimal places, and format tiny p-values consistently in scientific notation rather than using an ad hoc "$< 10^{-30}$" bound.
+3. Table body: add vertical whitespace between model families (baseline, GENIE, NuWro, GiBUU, and synthetic tilt) to establish clear row grouping.
+4. Columns 5 and 8 header: change "cells" to "Cells ($|z| > 2$)" so the entry definition is self-evident.
+5. Caption: explicitly define the pull variable $z$ and explain the cell identifiers (e.g., R02, R06, R07).
+6. Column spacing: rebalance column widths to provide adequate separation between column 5 ("cells") and column 6 ($\chi^2$), eliminating crowding in row 11.
+7. Caption: remove the stray space before the comma in "$C_{\mathrm{total}} ,$".
+8. Column 2 header and caption: clarify the "Cov." header and rephrase "where the second column says so (−)" to state clearly that the truth generator covariance component is subtracted.
+END

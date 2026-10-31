@@ -1,0 +1,18 @@
+D1: 3 | font sizes of y-axis labels, legend text, and panel annotations
+D2: 2 | missing $p_\parallel$ slice labels on panels and excessive blank whitespace at the top
+D3: 4 | contrast of the thin prediction line against black markers in greyscale
+D4: 2 | y-axis missing physical units and slice variable $p_\parallel$ omitted entirely
+D5: 3 | absence of ratio/residual sub-panels and arbitrary per-panel scaling preventing cross-slice comparison
+D6: 4 | terminology inconsistency between legend ("GENIE 2.12.6 + MnvTune v1") and caption ("simulated truth")
+D7: 2 | absence of $p_\parallel$ slice boundaries and axis units prevents understanding the kinematic distributions
+TAKEAWAY: The unfolded OmniFold cross section generally tracks the shape of the GENIE prediction across $p_T$, but exhibits massive statistical $\chi^2$ discrepancies across 16 unlabelled $p_\parallel$ kinematic slices.
+CHANGES:
+1. Panel labels: Add explicit $p_\parallel$ slice ranges (with units of $\text{GeV}/c$) to each panel header or row/column margins so readers can identify the phase space.
+2. Layout whitespace: Crop the large empty space at the top of the canvas and move the MINERvA POT header closer to the top panel row.
+3. Axis units: Add physical units to the y-axis label (e.g., $\text{cm}^2/\text{GeV}^2/\text{nucleon}$ or clear normalization) and explicitly define the scaling factor and "$\times 10^n$" notation.
+4. Comparison panels: Add ratio or difference/pull panels below each distribution to show where the extremely large $\chi^2$ discrepancies originate.
+5. Legibility: Increase font sizes for the y-axis title (especially subscripts $dp_T dp_\parallel$), panel annotations ($\chi^2/n$), and legend text.
+6. Shared axes: Remove redundant interior tick labels (0, 1, 2, 3, 4 and 0.0–1.4) between adjacent subplots to reduce visual clutter.
+7. Legend and caption: Harmonize terminology by identifying the curve as "GENIE 2.12.6 + MnvTune v1 (simulated truth)" in both the legend and caption.
+8. Line weight: Increase the stroke width of the prediction histogram to improve visibility and contrast in greyscale printing.
+END

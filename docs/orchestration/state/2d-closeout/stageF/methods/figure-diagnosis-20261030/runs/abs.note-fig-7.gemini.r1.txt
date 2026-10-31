@@ -1,0 +1,18 @@
+D1: 2 | POT header text and 2D slice/tick labels (font size too small to read at print size)
+D2: 2 | panel organization (excessive vertical whitespace, missing (a)-(c) subfigure labels, and mismatch with caption text)
+D3: 3 | data markers in 2D panels (black dots and blue crosses have identical dark tone and overlap indistinguishably in greyscale)
+D4: 2 | axis and panel labels (unrendered LaTeX `d\sigma`, raw `1e-38`/`1e-39` offsets, unformatted slice ranges without units, and inconsistent unit conventions)
+D5: 3 | comparison to benchmark (published PRD data is omitted from bottom 1D projections, and 2D slices lack ratio panels)
+D6: 2 | legend consistency (marker style for 'This work' flips from blue in 2D to black in 1D, and middle grid lacks a legend entirely)
+D7: 2 | overall readability (34-panel density without panel tags, conflicting marker conventions, and arbitrary per-panel scaling impede quick comprehension)
+TAKEAWAY: Unfolded cross sections from OmniFold agree with published MINERvA data and peak at $p_T \sim 0.6\text{ GeV}/c$ and $p_\parallel \sim 3.5\text{ GeV}/c$, showing that the GENIE prediction systematically underestimates the data across the peak regions.
+CHANGES:
+1. Fix unrendered LaTeX strings (`d\sigma`) in the bottom y-axes and replace raw `1e-38`/`1e-39` text with proper scientific notation ($\times 10^{-38}$, $\times 10^{-39}$).
+2. Maintain consistent marker styling across panels: keep OmniFold as blue (or filled markers) and add the published PRD data to the bottom 1D projections.
+3. Label the three major groups as (a), (b), and (c), update the caption to describe all three, and remove the excessive vertical whitespace between them.
+4. Add a legend to the middle 2D slice block or explicitly share the legend between blocks (a) and (b).
+5. Use distinct marker shapes (e.g., filled circles vs. open squares) so Published and OmniFold data points can be separated in greyscale printing.
+6. Increase the font size of the beam/POT header text, panel slice titles, and tick marks so they are legible at printed size.
+7. Format panel slice titles with proper math mode and physical units (e.g., $0.00 < p_T < 0.07\text{ GeV}/c$ instead of `0.00 < p_T < 0.07`).
+8. Harmonize y-axis units and capitalization across 1D and 2D panels (e.g., consistently using $\text{GeV}/c$ and lowercase `nucleon`).
+END

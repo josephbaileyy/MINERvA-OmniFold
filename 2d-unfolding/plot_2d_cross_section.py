@@ -130,16 +130,30 @@ def plot_panel_grid(xsec_slices, truth_slices, nrows, ncols, xlabel, ylabel,
     print(f"[OK] Saved {outname}")
 
 
-def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
-    """Plot a single 1D cross-section projection with ratio panel."""
+def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title="", restyle=False):
+    """Plot a single 1D cross-section projection with ratio panel; a restyled draw keeps its rcParams to itself."""
+    import matplotlib
+    with matplotlib.rc_context():
+        _plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title, restyle)
+
+
+def _plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title="", restyle=False):
+    """Plot a single 1D cross-section projection with ratio panel.
+
+    restyle (--style restyle-2026-10): drawn at the note's printed width with fonts for print, the axis offset in
+    math (x10^n), and the units and generator name spelled out; the plotted values are unchanged."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import restyle_2026_10 as rs
 
-    fig, (ax_top, ax_bot) = plt.subplots(2, 1, figsize=(7, 6),
+    if restyle:
+        rs.apply(6.5)
+    fig, (ax_top, ax_bot) = plt.subplots(2, 1, figsize=(7, 6) if not restyle else (rs.WIDTH["proj"], 2.9),
                                           gridspec_kw={"height_ratios": [3, 1]},
                                           sharex=True)
     fig.subplots_adjust(hspace=0.05)
+    k = dict(markersize=4, linewidth=1, capsize=2) if not restyle else dict(markersize=2.2, linewidth=0.7, capsize=1.2)
 
     nbins = h_xsec.GetNbinsX()
     centers = [h_xsec.GetBinCenter(i) for i in range(1, nbins + 1)]
@@ -150,11 +164,14 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
     edges = [h_xsec.GetXaxis().GetBinLowEdge(i) for i in range(1, nbins + 2)]
 
     ax_top.errorbar(centers, vals, yerr=errs, xerr=widths,
-                     fmt='ko', markersize=4, linewidth=1, capsize=2,
+                     fmt='ko', **k,
                      label="This work (OmniFold)")
-    ax_top.stairs(truth, edges, color='red', linewidth=1.2, label="GENIE 2.12.6 + MnvTune v1")
-    ax_top.set_ylabel(ylabel, fontsize=10)
-    ax_top.legend(fontsize=9)
+    ax_top.stairs(truth, edges, color='red', linewidth=1.2 if not restyle else 0.9,
+                  label="GENIE 2.12.6 + MnvTune v1" if not restyle else "GENIE 2.12.6 + MINERvA Tune v1")
+    ax_top.set_ylabel(ylabel, fontsize=10 if not restyle else None)
+    ax_top.legend(fontsize=9 if not restyle else None)
+    if restyle:
+        ax_top.ticklabel_format(axis="y", style="sci", scilimits=(0, 0), useMathText=True)
     ax_top.set_title(title, fontsize=11)
     ax_top.set_ylim(bottom=0)
 
@@ -170,10 +187,10 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
             ratio_errs.append(0)
 
     ax_bot.errorbar(centers, ratios, yerr=ratio_errs, xerr=widths,
-                     fmt='ko', markersize=4, linewidth=1, capsize=2)
-    ax_bot.axhline(1.0, color='red', linewidth=1, linestyle='--')
-    ax_bot.set_xlabel(xlabel, fontsize=10)
-    ax_bot.set_ylabel("Data / MC", fontsize=10)
+                     fmt='ko', **k)
+    ax_bot.axhline(1.0, color='red', linewidth=1 if not restyle else 0.7, linestyle='--')
+    ax_bot.set_xlabel(xlabel, fontsize=10 if not restyle else None)
+    ax_bot.set_ylabel("Data / MC" if not restyle else "This work / GENIE", fontsize=10 if not restyle else None)
     ax_bot.set_ylim(0.7, 1.3)
     ax_bot.set_xlim(edges[0], edges[-1])
 
@@ -182,7 +199,7 @@ def plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title=""):
     # scientific-notation offset (1e-38 / 1e-39), which the default "upper left"
     # tag overlapped.
     technote_style.minerva_tag(ax_top, loc="upper right")
-    fig.savefig(outname, dpi=200, bbox_inches="tight")
+    fig.savefig(outname, dpi=200 if not restyle else 300, bbox_inches="tight")
     plt.close(fig)
     print(f"[OK] Saved {outname}")
 
@@ -254,7 +271,10 @@ def main():
                      help="Fallback ROOT file for flux histogram when infile lacks hFlux_pt")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated",
                      help="Histogram name inside --mcfile for fallback flux loading")
+    import restyle_2026_10 as rs
+    rs.add_option(ap)
     args = ap.parse_args()
+    restyled = rs.on(args)
 
     f = ROOT.TFile.Open(args.infile, "READ")
     if not f or f.IsZombie():
@@ -329,18 +349,20 @@ def main():
     # --- 1D projections ---
     plot_1d_projection(
         hXSec_pt, hXSecTruth_pt,
-        xlabel="p$_T$ (GeV/c)",
-        ylabel="d$\\sigma$/dp$_T$ (cm$^2$/GeV/nucleon)",
+        xlabel="p$_T$ (GeV/c)" if not restyled else f"{rs.PT} {rs.GEVC}",
+        ylabel="d$\\sigma$/dp$_T$ (cm$^2$/GeV/nucleon)" if not restyled else
+        r"$d\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)",
         outname=f"{args.prefix}_proj_pt.png",
-        title="CC inclusive: d$\\sigma$/dp$_T$ (OmniFold)"
+        title="CC inclusive: d$\\sigma$/dp$_T$ (OmniFold)", restyle=restyled
     )
 
     plot_1d_projection(
         hXSec_pz, hXSecTruth_pz,
-        xlabel="p$_{||}$ (GeV/c)",
-        ylabel="d$\\sigma$/dp$_{||}$ (cm$^2$/GeV/nucleon)",
+        xlabel="p$_{||}$ (GeV/c)" if not restyled else f"{rs.PZ} {rs.GEVC}",
+        ylabel="d$\\sigma$/dp$_{||}$ (cm$^2$/GeV/nucleon)" if not restyled else
+        r"$d\sigma/dp_\parallel$ (cm$^2$/(GeV/$c$)/nucleon)",
         outname=f"{args.prefix}_proj_pz.png",
-        title="CC inclusive: d$\\sigma$/dp$_{||}$ (OmniFold)"
+        title="CC inclusive: d$\\sigma$/dp$_{||}$ (OmniFold)", restyle=restyled
     )
 
     # --- Efficiency map ---

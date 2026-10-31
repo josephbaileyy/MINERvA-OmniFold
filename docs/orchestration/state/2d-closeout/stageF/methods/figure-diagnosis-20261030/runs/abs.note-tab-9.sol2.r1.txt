@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | “Test cells” is insufficiently descriptive.
+D6: 3 | “Generator predictions” does not explain test cells, CV, MEC, or the reference flux used for reweighting.
+D7: 4 | The significance of the differing test-cell counts requires context.
+TAKEAWAY: Four predictions cover 109 test cells, while GiBUU covers 72 and has the most restricted neutrino-energy coverage.
+CHANGES:
+1. Clarify “Test cells” as a count and define what constitutes a test cell in the caption.
+2. Expand the caption to define CV and MEC and identify the reference flux used for reweighting.
+3. Replace “as GENIE CV” with “as GENIE 2.12.10 CV” to match the referenced row label.
+END

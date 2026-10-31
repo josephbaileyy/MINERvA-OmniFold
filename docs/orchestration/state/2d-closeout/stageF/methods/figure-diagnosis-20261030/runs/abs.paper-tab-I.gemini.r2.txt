@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | redundant "Background treatment" column and lack of row separation
+D4: 4 | -
+D6: 3 | overcrowded caption text with redundant technical details
+D7: 4 | -
+TAKEAWAY: The joint-test estimator is used for multidimensional (3D, 4D, and 5D) central values and precision studies, whereas the two-observable estimator is used for 2D central values and covariance.
+CHANGES:
+1. Column 2 ("Background treatment"): remove this redundant column or state the shared configuration in the caption, as both rows contain identical text.
+2. Row separation: add vertical whitespace between row 1 and row 2 to prevent multiline entries from visually running together.
+3. Column 1 ("Estimator"): widen the column to prevent awkward four-line text wrapping and eliminate the orphaned "42".
+4. Column 1 entries: remove ": LightGBM, seed 42" from row 2 or add corresponding classifier and seed specifications to row 1 for consistency.
+5. Column 3 header ("Used for"): replace the informal heading with a standard PRD header such as "Application" or "Observable".
+6. Column 3 text: change "sixteen-cell" to "16-cell" for consistency with the numerical representations "3D", "4D", "5D", and "2D".
+7. Caption body: condense the text by removing the duplicate description of background subtraction and moving hyperparameter/seed details into the main text.
+8. Caption title: expand the bare label "TABLE I. Estimators." into an informative phrase describing the scope of the table.
+END

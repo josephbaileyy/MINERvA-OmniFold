@@ -1,0 +1,10 @@
+D1: EQUAL | Both use clear, readable type and adequately separated text at printed size.
+D2: B | Consistent rows and grouped entries provide stronger organization; A has awkward wrapping and little separation between estimators.
+D3: EQUAL | Both are tables.
+D4: EQUAL | Both have descriptive headers; B supplies momentum units where needed.
+D5: EQUAL | Neither presents a comparison with reference results or predictions.
+D6: B | Its caption states purpose and provenance concisely; A overloads the caption with implementation details.
+D7: B | Clear bin groups support rapid lookup; A’s dense caption and fragmented labels slow orientation.
+OVERALL: B
+GAP: 1. Shorten A’s caption and move implementation details into the main text. 2. Rebalance column widths to keep estimator names and “seed 42” together. 3. Add vertical space between estimator rows.
+END

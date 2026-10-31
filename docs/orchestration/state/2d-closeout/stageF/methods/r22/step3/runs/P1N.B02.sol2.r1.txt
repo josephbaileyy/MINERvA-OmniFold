@@ -1,0 +1,14 @@
+RATING: 3
+JUSTIFICATION: Most of the chapter uses appropriate specialist prose, but several passages shift into internal record keeping, development history, and repetitive qualification, requiring a dedicated language pass.
+1. QUOTE: "The quoted central value records its run configuration; it repeats to
+9 × 10−12 and equals the refined 2D data unfold of App. C.6 to 7 × 10−12 . The purity-subtracted
+seed-42 central value has no recorded run configuration. An independent rerun reproduces it to
+1.4 × 10−11 , and so does a regeneration whose run configuration is recorded (Ref. [37], R1.12)."
+   REWRITE: The quoted central value has a documented run configuration, is reproducible to within 9 × 10−12, and agrees with the refined 2D unfolding of App. C.6 to within 7 × 10−12. Although the original configuration of the purity-subtracted seed-42 result was not recorded, two independent reruns reproduce it to within 1.4 × 10−11; one has a documented configuration (Ref. [37], R1.12).
+2. QUOTE: "Seed 42 was chosen on computing cost: building
+the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and
+the statistical band a common seed."
+   REWRITE: Of the two options evaluated for using a common seed for the central value and statistical covariance, seed 42 required less computation.
+3. QUOTE: "The exact-split central value was the quoted
+2D central value until 2026-10-11; studies labeled exact-split use it and have not been recomputed."
+   REWRITE: Studies labeled exact-split retain the original 2D central value obtained with that estimator and have not been repeated with the nominal estimator.

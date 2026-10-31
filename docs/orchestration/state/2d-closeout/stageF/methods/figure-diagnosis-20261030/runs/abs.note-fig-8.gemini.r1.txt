@@ -1,0 +1,18 @@
+D1: 3 | top metadata annotation and stats box text are too small at printed size
+D2: 3 | missing subpanel labels (a) and (b)
+D3: 3 | diverging colormap cannot distinguish positive from negative values in greyscale
+D4: 3 | axis labels lack physical units, proper math formatting (p_T bin, p_|| bin), and precise wording (bins)
+D5: 3 | colorbar range [-5, 5] washes out contrast relative to the actual data spread [-2.5, 2]
+D6: 2 | unrendered LaTeX syntax "\chi^2" in stats box and label "pull" contradicting the caption
+D7: 3 | contradictory "pull" labels and unphysical bin indices hinder rapid interpretation
+TAKEAWAY: The reanalyzed MINERvA data show good overall agreement with published results across the kinematic grid, with standardized differences centered near zero (mean 0.06) and a narrow spread (RMS 0.54).
+CHANGES:
+1. Add subpanel labels (a) and (b) to the two plots and reference them explicitly in the caption.
+2. Render the LaTeX code properly in the stats box so `\chi^2` displays as $\chi^2$, remove the colloquial word "paper", and standardize spacing around equal signs.
+3. Replace the axis and colorbar label "pull" with "standardized difference" or $(\text{this} - \text{published})/\sigma_{\text{published}}$ to match the caption text.
+4. Format the kinematic axes with proper mathematical notation ($p_{\mathrm{T}}$, $p_{\parallel}$) and provide physical kinematic ranges and units ($\text{GeV}/c$) rather than raw integer bin indices.
+5. Rename the right panel y-axis from "bins" to "Number of bins" or "Entries".
+6. Adjust the colorbar limits on the 2D plot to match the actual data range (e.g., from $-2.5$ to $+2.5$) to restore visual contrast across bins.
+7. Choose a colormap or encoding that preserves the distinction between positive and negative differences when converted to greyscale.
+8. Increase the font size of the top annotation ("MINERvA ME FHC...") and the right-panel stats box for legibility at journal column width.
+END

@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A maintains a consistently formal publication register, avoiding the unedited internal logbook notation found in Document B (e.g., "(the battery of 2026-0610)").
+2. Document A adheres to standard PRD terminology such as "(bin, pseudo-experiment) pairs," whereas Document B lapses into informal laboratory jargon like "bin–toy cells."
+3. Document A uses polished, objective phrasing throughout, whereas Document B introduces conversational asides in figure captions ("— hence the two color schemes") and clunkier sentence constructions.

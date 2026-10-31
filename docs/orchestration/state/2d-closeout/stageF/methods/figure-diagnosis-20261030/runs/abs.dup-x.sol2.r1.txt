@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 4 | Excess whitespace between the legend and upper panel; panels lack letter labels.
+D3: 4 | Upper-panel series have similar grey tones in greyscale, requiring identification by marker shape.
+D4: 5 | -
+D5: 5 | -
+D6: 4 | Long target and applicability qualifications make the legend slow to scan.
+D7: 4 | Interpreting individual cells requires repeated consultation of the dense five-row key.
+TAKEAWAY: Most upper-panel ratios cluster around unity, while GiBUU’s eight displayed ratios are consistently above unity and reach about 2.1.
+CHANGES:
+1. Reduce the whitespace between the legend and upper panel.
+2. Label the panels (a) and (b), identifying the lower panel as GiBUU.
+3. Increase greyscale contrast among the upper-panel series while retaining their distinct marker shapes.
+4. Shorten the legend entries by moving target and applicability qualifications into the caption.
+5. Add subtle alternating column shading to the cell-definition key to aid vertical tracking.
+END

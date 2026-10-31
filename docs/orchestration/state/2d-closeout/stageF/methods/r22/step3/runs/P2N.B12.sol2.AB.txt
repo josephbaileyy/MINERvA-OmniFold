@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s appendix guide describes the detector-response closure in concrete methodological terms, giving the opening a more explanatory technical register.
+2. B replaces A’s awkward “leaves to MAT, or does not state” construction with more direct sentences distinguishing the published account from the code.
+3. B introduces repository terminology through descriptive prose before listing implementation identifiers, although the largely identical remaining text makes the preference slight.

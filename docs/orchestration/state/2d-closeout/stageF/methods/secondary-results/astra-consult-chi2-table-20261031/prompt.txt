@@ -1,0 +1,15 @@
+You are an experienced referee and author for Physical Review D, asked for an independent second opinion. Work only from the files here.
+
+Files:
+- paper.txt: the current paper (a ν_μ CC-inclusive cross section in five observables, reported in 16 cells with a covariance). Its Table IV gives each generator prediction's χ² "and its number of degrees of freedom" against the reported covariance plus the prediction's own covariance; four predictions are compared on all 16 cells, and GiBUU only on its 8 cells with p∥ < 4.5 GeV/c (its sample has no events above E_ν = 20 GeV).
+- note-table16-excerpt.txt: the companion note's Table 16 and its surrounding text (the same comparison).
+- DECISION-chi2-format.md: the author's earlier decision on how the χ² table is formatted.
+- diagnosis-excerpt.md: from a figure/table readability study, the finding that two quick reads ranked the predictions by χ²/ndf across the unequal cell sets and called GiBUU (58 on 8 cells, about 7.3 per cell) best overall, ahead of GENIE CV (109 on 16, about 6.8).
+
+The author's question: how should the table (and caption) be changed so that readers do not compare GiBUU's 8-cell χ² with the 16-cell values, without adding more disclosure or caveat text than is typical of published PRD neutrino cross-section papers? The author worries that a caveat line would read as excess disclosure.
+
+Answer in at most 600 words:
+1. What published PRD (and similar journals') cross-section papers typically do when one prediction is compared on a subset of bins or a different number of degrees of freedom: e.g. separate rows/columns or a separate block, a footnote, χ²/ndf, p values, or nothing. Say what is typical and what is rare; if you are unsure, say so rather than invent specific papers.
+2. Two or three concrete options for this table and caption, each with: the exact proposed wording or layout change, how much text it adds, and whether it removes the misreading.
+3. Your recommendation, and whether printing χ²/ndf would help or worsen the misreading here.
+Do not change any number. Mark inferences as inferences.

@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | bottom-right quadrant whitespace and missing panel labels (a)-(d)
+D3: 2 | bottom-left heatmap diverging colormap (collapses in greyscale) and error bands (indistinguishable luminance in greyscale)
+D4: 4 | -
+D5: 4 | -
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: The OmniFold analysis closely reproduces the published MINERvA differential cross sections and uncertainties across $p_T$ and $p_\parallel$ with small standardized residuals (mean 0.060, RMS 0.535), while MINERvA Tune v1 systematically underpredicts the data.
+CHANGES:
+1. Subpanel labels: Add standard PRD subpanel labels (a), (b), (c), and (d) to the panels, and update the caption to reference (a)–(d) instead of "Top:", "Bottom left:", and "Bottom right:".
+2. Bottom-right quadrant: Eliminate the extensive blank whitespace by enclosing the summary statistics in a bordered table or adding a 1D residual distribution histogram.
+3. Heatmap colormap: Replace the blue-white-red diverging colormap in the bottom-left panel with one that maintains monotonic or distinguishable luminance across positive and negative values in greyscale.
+4. Error bands: Differentiate the "Published $\pm 1\sigma$" and "This work $\pm 1\sigma$" bands using distinct hatching or solid boundary lines so they can be separated in greyscale.
+5. Heatmap legend: Add a swatch or note adjacent to the colorbar defining the grey cells as "not reported" rather than defining it only in the caption.
+6. Ratio y-axis labels: Capitalize the y-axis labels on the ratio panels to "Ratio to published" to match PRD style.
+END

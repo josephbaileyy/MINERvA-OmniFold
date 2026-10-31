@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. In Sec. 10.4, Document A cleanly integrates the results without the response block into a dedicated table column rather than dumping an unedited list of numerical ratios into the running text with the awkward locution "in the order of Table 16" as Document B does.
+2. Document A eliminates the clumsy lexical repetition and backward phrasing found across the sentence boundary in Document B's Sec. 10.2 ("...training-seed block. The training-seed block was measured..."), providing a smoother, logically sequenced explanation.
+3. In Sec. 10.3, Document A demonstrates superior editorial polish by using clear syntactic subjects and natural phrasing instead of Document B's vague deictic opening ("This is a bias test...") and confused, repetitive phrasing ("each counted by its pseudo-experiments").

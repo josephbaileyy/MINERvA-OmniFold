@@ -1,0 +1,18 @@
+D1: 3 | beam/exposure annotation ("MINERvA ME FHC...") and scientific exponent labels ("1e-38", "1e-39") font size
+D2: 3 | panel labels (missing (a) and (b)) and compressed high-$p_\parallel$ tail layout
+D3: 4 | -
+D4: 3 | axis labels (raw ASCII syntax "p_T", "p_||", "1e-38", and notation mismatch between y-axis "dpz" and x-axis "p_||")
+D5: 3 | ratio panels and uncertainty bars (missing for both published data and new measurement)
+D6: 2 | legend-caption colour contradiction (caption states orange, curve is blue) and raw underscore in "MINERvA_Tune_v1"
+D7: 3 | caption colour mismatch and inability to evaluate agreement between overlapping curves without ratio panels
+TAKEAWAY: The OmniFold measurement closely reproduces the published MINERvA cross-section projections in both transverse and longitudinal muon momentum, whereas the MINERvA Tune v1 simulation visibly underestimates the peak cross section.
+CHANGES:
+1. Resolve the colour discrepancy between the caption ("orange") and the figure (where MINERvA Tune v1 is blue), either by changing the line colour to orange or updating the caption text.
+2. Remove the underscore in the legend label `MINERvA_Tune_v1` to read "MINERvA Tune v1".
+3. Add panel labels (a) and (b) to the two subplots and reference them explicitly in the caption.
+4. Typeset axis quantities using standard mathematical notation ($p_T$, $p_\parallel$, $d\sigma/dp_T$, $d\sigma/dp_\parallel$) and ensure the longitudinal momentum variable name matches between the x-axis and y-axis.
+5. Replace computer scientific notation ("1e-38", "1e-39") on the y-axes with proper exponential formatting ($\times 10^{-38}$, $\times 10^{-39}$) or absorb the scale factor into the axis label.
+6. Add lower ratio subpanels (e.g. Ratio to Published) to permit quantitative comparison between this work, the simulation, and the published data.
+7. Include statistical and systematic uncertainty error bars or bands on the published data and unfolded measurement.
+8. Increase the font size of the beam/POT annotation ("MINERvA ME FHC, 1.06 \times 10^{21} POT") and align it within the plot margins.
+END

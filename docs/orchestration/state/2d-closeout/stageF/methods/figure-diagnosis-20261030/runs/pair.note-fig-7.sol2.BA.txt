@@ -1,0 +1,10 @@
+D1: A | Larger labels, markers and error bars remain readable at printed size; B’s slice panels are too small.
+D2: A | Two compact, aligned panel groups use space more effectively than B’s widely separated blocks.
+D3: A | Component colours are easier to distinguish than B’s nearly overlapping black and blue measurements.
+D4: A | Axis titles, units, ticks and slice boundaries are substantially easier to read.
+D5: B | Dedicated data/prediction ratio panels make deviations easier to assess in the projections.
+D6: A | Readable legends and a concise caption explain the plotted content with less searching.
+D7: A | The slice structure and relationship between measurements, prediction and components are apparent more quickly.
+OVERALL: A
+GAP: 1. Split B’s slices and projections into separate figures. 2. Enlarge panel text, markers and error bars. 3. Reduce excessive whitespace between blocks. 4. Distinguish published and new measurements with different marker shapes. 5. Enlarge and standardize slice multipliers. 6. Identify both slice orientations explicitly in the caption.
+END

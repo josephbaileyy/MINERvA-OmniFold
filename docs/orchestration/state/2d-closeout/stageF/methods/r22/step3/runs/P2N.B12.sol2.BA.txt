@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A integrates repository terminology into explanatory prose more naturally, giving its opening a less administrative register than B’s label glossary.
+2. In §A.2.6, A uses clearer, more direct sentences where B compresses several qualifications into the awkward construction “It leaves to MAT, or does not state.”
+3. A’s description of the detector-response closure emphasizes the procedure itself, fitting the methodological register better than B’s implementation-status phrasing.

@@ -1,0 +1,16 @@
+D1: 5 | -
+D2: 3 | column grouping (columns 2 and 3 lack a spanning header and sub-rule)
+D4: 3 | column headers (Column 3 "shape-only" lacks quantity and title casing; Column 2 lacks "Total" label)
+D6: 3 | caption text (omits explanation for GiBUU 2019 having 8/7 degrees of freedom instead of 16/15)
+D7: 4 | -
+TAKEAWAY: All neutrino event generator predictions show poor agreement with the sixteen-cell data ($\chi^2/\text{ndf} \gg 1$), with GENIE 2.12.10 CV yielding the best overall agreement (and GiBUU best for shape-only) while MINERvA Tune v1 yields the worst.
+CHANGES:
+1. Column grouping and rules: Add a spanning header $\chi^2/\text{ndf}$ with a partial horizontal rule (`\cmidrule`) over columns 2 and 3 to group the total and shape-only results.
+2. Column 2 header: Change "$\chi^2$ and ndf" to "Total" (under the spanning header) or "Total $\chi^2/\text{ndf}$".
+3. Column 3 header: Capitalize and specify the quantity by changing "shape-only" to "Shape-only" (under the spanning header) or "Shape-only $\chi^2/\text{ndf}$".
+4. Caption: Explain why GiBUU 2019 has 8/7 degrees of freedom instead of 16/15 against the sixteen-cell result, either in the caption text or via a table footnote.
+5. Caption: Define the acronym "CV" in "GENIE 2.12.10 CV" (central value).
+6. Denominator alignment: Right-align or center the single-digit denominators ("8" and "7") in the GiBUU row to align with the two-digit denominators ("16" and "15") after the slash.
+7. Data formatting: Provide decimal reduced $\chi^2$ values ($\chi^2/\text{ndf}$) alongside the integer ratios to facilitate immediate comparison across differing degrees of freedom.
+8. Table width and spacing: Compress the excessive horizontal whitespace between the "Prediction" column and the numerical columns for a more balanced layout.
+END

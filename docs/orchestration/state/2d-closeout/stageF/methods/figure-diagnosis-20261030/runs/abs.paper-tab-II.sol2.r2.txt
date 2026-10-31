@@ -1,0 +1,10 @@
+D1: 4 | -
+D2: 3 | In the GiBUU hybrid row, “R02, R06, R07” nearly touches the following χ² value, 246.75.
+D4: 5 | -
+D6: 3 | The caption leaves z, the R cell identifiers, and the covariance components undefined.
+D7: 4 | -
+TAKEAWAY: GiBUU hybrid shows the largest discrepancy, while adding response covariance generally improves agreement across the tests.
+CHANGES:
+1. Increase the gutter between the first “cells” column and the second χ² column, especially beside “R02, R06, R07.”
+2. Define z, explain the R cell identifiers, and briefly identify Ctotal and Cresp in the caption.
+END

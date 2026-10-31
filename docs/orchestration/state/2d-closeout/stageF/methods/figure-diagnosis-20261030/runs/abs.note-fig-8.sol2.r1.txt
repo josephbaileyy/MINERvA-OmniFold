@@ -1,0 +1,16 @@
+D1: 3 | Tick labels, axis labels and statistics-box text are too small at printed size.
+D2: 4 | -
+D3: 2 | The heatmap’s positive and negative differences become indistinguishable in greyscale.
+D4: 3 | Both “pull” labels conflict with the caption’s descriptive standardized difference; “p_ll” is unclear notation.
+D5: 4 | -
+D6: 3 | The statistics-box entry “χ²/ndf paper” is unexplained.
+D7: 3 | The ±5 colour scale leaves most heatmap cells faint, obscuring spatial structure.
+TAKEAWAY: Standardized differences cluster near zero, with mean 0.06 and RMS 0.54, alongside a few larger deviations.
+CHANGES:
+1. Enlarge tick labels, axis labels, the exposure annotation and statistics-box text for printed reading.
+2. Replace “pull” on the colour bar and histogram axis with “Standardized difference.”
+3. Typeset the grid labels as conventional momentum components, such as “p_T bin” and “p_∥ bin,” using mathematical subscripts.
+4. Add signed contours or symbols to the heatmap so positive and negative differences remain distinguishable in greyscale.
+5. Tighten the colour limits around the populated range, clearly marking any saturated cells.
+6. Define “χ²/ndf paper” in the caption or remove that entry.
+END

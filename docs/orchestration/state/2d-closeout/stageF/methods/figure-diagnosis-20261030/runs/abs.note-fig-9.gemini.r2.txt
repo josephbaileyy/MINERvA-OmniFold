@@ -1,0 +1,17 @@
+D1: 3 | axis label and legend font sizes
+D2: 2 | missing panel $p_T$ slice labels and excessive panel whitespace
+D3: 5 | -
+D4: 2 | missing y-axis physical units and missing x-axis labels on columns 3 and 4
+D5: 2 | compressed x-axis scale obscuring distribution shapes and absence of ratio panels
+D6: 4 | -
+D7: 2 | unlabelled $p_T$ slices and heavily compressed distributions obscuring comparison
+TAKEAWAY: The unfolded cross section qualitatively tracks the GENIE simulation peak across longitudinal momentum, but unlabelled $p_T$ slices and severe horizontal compression prevent quantitative interpretation.
+CHANGES:
+1. Panel labels: add explicit $p_T$ slice ranges to each panel header to identify the kinematic binning.
+2. X-axis limits: reduce the upper x-axis limit for low-$p_T$ panels (e.g. to 15 or 20 GeV/c) to resolve the compressed distributions and eliminate empty whitespace.
+3. Y-axis label: include physical cross-section units (e.g., $\text{cm}^2/\text{GeV}^2/\text{nucleon}$) on the y-axis label rather than only "scaled".
+4. X-axis labels: add the $p_{||}\text{ (GeV/c)}$ label to the bottom of columns 3 and 4.
+5. Comparison: add data-to-simulation ratio panels beneath each distribution to make the large $\chi^2$ discrepancies interpretable.
+6. Layout: remove the large vertical blank whitespace above the top row of panels.
+7. Typography: enlarge the font size of the axis titles, tick labels, and panel legend for standard print legibility.
+END

@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | double horizontal rules and lack of spanner headers for C_resp categories
+D4: 3 | missing column units and missing C_total column
+D6: 3 | undefined cell labels (R00-R15) and definition of absent C_total
+D7: 3 | omitted C_total column and undefined cell kinematics
+TAKEAWAY: Systematic uncertainties heavily dominate over statistical errors across all cells, with experimental uncertainties ($C_{\text{e}}$, ~4–8%) driven primarily by flux, interaction, and lateral groups, while model uncertainty ($C_{\text{model}}$) remains under 4% in most cells but spikes above 11% in R02 and R11.
+CHANGES:
+1. Rules and spacing: Replace double horizontal rules at the top and bottom with standard single PRD rules (\toprule, \botrule) and add vertical space between the caption and top rule.
+2. Column headers: Add the unit (%) to column headers or include an overarching spanner header indicating all values are relative uncertainties in percent.
+3. Last four columns: Add a spanner header such as "$C_{\text{resp}}$ deposit categories" over the "p", "meson", "EM", and "other" columns to group and identify them.
+4. Missing column: Add the $C_{\text{total}}$ column explicitly defined in the caption ($C_{\text{total}} = C_{\text{e}} + C_{\text{model}}$), or remove the definition from the caption.
+5. Column grouping: Add extra horizontal spacing or a grouping rule to separate the six constituent covariance groups from the subtotal column $C_{\text{e}}$.
+6. Caption: Define the cell identifiers R00–R15 (e.g., kinematic bin definitions) so the table is self-contained.
+7. Caption: Define $C_{\text{resp}}$ and clarify how its deposit categories relate to the detector covariance group.
+8. Row spacing: Insert subtle vertical whitespace (\addlinespace) every four rows to help readers track across the 13 columns.
+END

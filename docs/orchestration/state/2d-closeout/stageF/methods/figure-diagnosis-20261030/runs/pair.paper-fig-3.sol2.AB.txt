@@ -1,0 +1,10 @@
+D1: B | Larger labels, ticks and markers remain easier to read at printed size.
+D2: B | Taller panels give the data more space; A compresses plots beneath dense headings and legends.
+D3: A | Distinct hues distinguish categorical tests more readily than B’s similar blue shades and overlapping bands.
+D4: B | Direct true-versus-calibrated axis labels are easier to decode than A’s repeated cell indices and upper bin labels.
+D5: B | The red identity line provides an immediate benchmark, with analytic predictions clearly paired to numerical results.
+D6: B | Legends and caption explain the visual encodings more economically; A’s extensive procedural detail obscures the essentials.
+D7: B | Parameter-dependent offsets and slopes relative to the unbiased reference are apparent within seconds.
+OVERALL: B
+GAP: 1. Enlarge A’s ticks, labels and markers. 2. Increase panel height. 3. Shorten panel headings and legend entries. 4. Simplify the repeated cell indexing and clarify the two-level bin structure. 5. Condense the caption, moving development history and ancillary results to the text. 6. Make error bars discernible at printed size.
+END

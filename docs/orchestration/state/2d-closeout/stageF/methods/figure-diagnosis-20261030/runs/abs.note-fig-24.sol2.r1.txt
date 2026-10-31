@@ -1,0 +1,13 @@
+D1: 5 | -
+D2: 4 | Stacked panels lack explicit panel labels.
+D3: 3 | In greyscale, positive and negative departures have similar shades; the deficit cells lose their visual distinction.
+D4: 5 | -
+D5: 5 | -
+D6: 5 | -
+D7: 4 | Equal-size cells give the wide catch bins the same visual footprint as narrow bins; interpretation depends on the caption.
+TAKEAWAY: The unfolded data mostly exceed Tune v1, with the largest cell-integrated excess at high Eavail and high W, a secondary excess at low W, and a localized deficit around W = 1.4–1.8 GeV.
+CHANGES:
+1. Add hatching or another sign-specific cue to cells below unity in the upper panel and below zero in the lower panel so deficits remain distinguishable in greyscale.
+2. Label the panels “(a) Data/Tune” and “(b) Data − Tune.”
+3. Mark the final row and column as catch bins and add a brief note beside the plots that displayed cell sizes do not represent physical bin widths.
+END

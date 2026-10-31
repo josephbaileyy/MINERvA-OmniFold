@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: Much of the prose matches a detailed particle-physics supplement, but repeated caveats, configuration bookkeeping, and compressed accounts of analysis development create several departures that warrant a dedicated language pass.
+1. QUOTE: "The comparison is descriptive; its covariance lacks independent validation, validated coverage and calibrated significance (§4.6), and its readiness for publication as a measurement has not been established."
+   REWRITE: The comparison is descriptive: the covariance has not been independently validated, interval coverage has not been established, and statistical significance has not been calibrated (§4.6).
+2. QUOTE: "The 3D marginal of configuration (e), a deterministic estimator with refined negative-weight subtraction, agrees to 0.141 % in total with the 2D result of configuration (f), the nominal estimator with that subtraction, a cross-configuration comparison (§7)."
+   REWRITE: The 3D marginal obtained with the deterministic estimator [configuration (e)] agrees in total normalization to 0.141 % with the 2D result from the nominal estimator [configuration (f)]; both use refined negative-weight subtraction (§7).
+3. QUOTE: "The decisions use completed pseudo-experiments; lost ones, recovered for reporting only, change none (§11.6)."
+   REWRITE: The rejection decisions are based on the completed pseudo-experiments; including those subsequently recovered would leave all ten decisions unchanged (§11.6).

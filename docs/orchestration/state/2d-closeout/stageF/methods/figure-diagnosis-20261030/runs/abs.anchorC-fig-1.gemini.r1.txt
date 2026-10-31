@@ -1,0 +1,18 @@
+D1: 4 | -
+D2: 3 | overhead panel titles and duplicated parameter annotations
+D3: 2 | panel (b) markers and dashed lines identical in greyscale
+D4: 3 | panel (a) 2D histogram missing colorbar and density scale
+D5: 3 | panel (b) error bars clipped by the top and bottom axis limits
+D6: 2 | caption contradicts panel (b) line colors and styles
+D7: 3 | caption contradictions and greyscale indistinguishability
+TAKEAWAY: While the MSE calibration suffers from attenuation bias with a flattened slope, the Gaussian Ansatz calibration recovers the true unit diagonal response across measured values at the cost of wider point resolution.
+CHANGES:
+1. Panel (b) series styling: Use distinct marker shapes (e.g., filled circles vs. open squares) and distinct line styles (e.g., solid vs. dashed) so the MSE and Gaussian Ansatz series can be distinguished in greyscale print.
+2. Caption text: Correct the caption to match the figure by replacing "red dotted line" with the actual line style and color for the analytic MSE prediction, and restore the missing parameter symbol "ε = 2".
+3. Panel (a) colorbar: Add a colorbar with labeled tick marks and a title/units (e.g., counts or probability density) for the 2D histogram.
+4. Overhead panel titles: Remove the redundant running titles "Simulation-Based Gaussian Example" above both panels.
+5. Parameter annotations: Remove the duplicate parameter label "(µ, σ, ε) = (0, 1, 2)" from panel (b) to reduce visual clutter.
+6. Vertical axis limits: Expand the y-axis limits in panel (b) (e.g., to [-6, 6]) so that the error bars of the Gaussian Ansatz points at xD = ±4 and ±5 are not clipped by the frame.
+7. Axis labels and notation: Harmonize variable capitalization between the axis labels (XD, ZT, ẐT) and the caption text (xD, zT, ẑT), and add units or indicate dimensionless quantities.
+8. Legend consistency: Align panel (b) legend labels ("Fit MSE", "Gaussian Ansatz", "Analytic MLC") with the mathematical notation defined in the caption (fMSE, fMLC).
+END

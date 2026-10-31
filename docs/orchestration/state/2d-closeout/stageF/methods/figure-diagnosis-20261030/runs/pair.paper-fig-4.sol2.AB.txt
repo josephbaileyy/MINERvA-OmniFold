@@ -1,0 +1,10 @@
+D1: A | Larger labels and distinct markers remain easier to read at printed size.
+D2: A | Aligned panels and a shared cell key provide clearer organization than B’s crowded small multiples.
+D3: A | Marker shapes reinforce colour distinctions; B’s prediction curves rely chiefly on colour.
+D4: B | Physical variables appear directly on the axes, with explicit units and panel ranges.
+D5: A | Separate prediction markers and a prominent unity line make departures from agreement easier to compare.
+D6: A | The caption explains uncertainties and coverage, while the legend identifies prediction qualifications explicitly.
+D7: A | The main pattern of agreement across predictions is apparent with less visual scanning.
+OVERALL: A
+GAP: 1. Split B’s complementary panel grids into separate figures to enlarge each panel. 2. Increase panel-label and tick-label sizes. 3. Add distinct line styles for prediction curves. 4. Simplify the long vertical axis labels using a clearly defined ratio. 5. Explain the data error bars in the caption.
+END

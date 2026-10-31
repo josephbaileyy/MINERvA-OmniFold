@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 3 | Full-width rules between every row create excessive visual segmentation.
+D4: 5 | -
+D6: 3 | The caption does not identify the data or measured distribution used in the χ² comparisons.
+D7: 4 | -
+TAKEAWAY: GENIE + RPA has the lowest χ² under both calculations, at 327 and 459, respectively.
+CHANGES:
+1. Remove the rules between individual body rows; retain the top, header, and bottom rules.
+2. Identify the compared data or measured distribution in the caption.
+3. Use “log-normal” consistently in the header and caption.
+END

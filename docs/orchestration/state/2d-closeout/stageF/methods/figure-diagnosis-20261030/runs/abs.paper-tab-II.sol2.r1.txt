@@ -1,0 +1,11 @@
+D1: 4 | -
+D2: 3 | The GiBUU hybrid cell list nearly abuts the following χ² column, weakening separation between covariance groups.
+D4: 4 | -
+D6: 3 | The caption leaves z, the covariance symbols, “hybrid,” and the cell identifiers unexplained.
+D7: 4 | -
+TAKEAWAY: Adding response covariance generally improves agreement, but GiBUU hybrid and the synthetic q₃ tilt remain strongly discrepant.
+CHANGES:
+1. Increase the gutter between the first “cells” column and the second χ² column, especially beside the GiBUU hybrid row.
+2. Expand “Cov.” to “Covariance” and explain “full” and the minus notation together.
+3. Define z and the covariance symbols in the caption, and explain or explicitly reference the hybrid constructions and cell identifiers.
+END

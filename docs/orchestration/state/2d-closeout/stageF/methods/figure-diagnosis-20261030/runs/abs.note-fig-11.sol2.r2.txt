@@ -1,0 +1,15 @@
+D1: 2 | Tick labels, axis labels and legend text in both left-hand plots are substantially too small.
+D2: 3 | Undersized left-hand plots leave excessive whitespace above them; the three panels lack identifiers.
+D3: 3 | The diverging heatmap loses sign information in greyscale because both colour-scale extremes become dark.
+D4: 4 | -
+D5: 5 | -
+D6: 4 | -
+D7: 3 | The size imbalance makes the eigenmode diagnostics difficult to read alongside the contribution map.
+TAKEAWAY: The eigenvalues span many orders of magnitude, roughly 90 modes accumulate 90% of χ², and a few bins have conspicuously large positive contributions.
+CHANGES:
+1. Enlarge both left-hand plots and their tick labels, axis labels and legend text to match the heatmap’s readability.
+2. Rebalance the panel arrangement to remove the large empty area above the left-hand plots.
+3. Label the panels (a), (b) and (c), and identify each explicitly in the caption.
+4. Add a redundant sign encoding to the heatmap, such as hatching negative contributions, so signs remain distinguishable in greyscale.
+5. Typeset the axis and colour-bar labels with mathematical notation, including λ/λmax, χ², p_T and p_∥.
+END

@@ -1,0 +1,115 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER adds claims not supported by BEFORE, specifically that "The comparison is descriptive" and that "its covariance lacks independent validation, validated coverage and calibrated significance (\S\ref{sec:uq-2d-scope})".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the reason the pseudo-experiments were lost ("to time limits") and the fact that "every submitted draw has been observed".
+
+Q3: VERDICT: SAME
+DETAIL: The two clauses joined by a semicolon are simply reordered without adding, dropping, or altering any scientific claims or qualifiers.
+
+Q4: VERDICT: SAME
+DETAIL: The sentence is restructured to make "Two regenerations" the subject while preserving all numerical thresholds ($\lesssim2\times10^{-11}$), input conditions, and the causal conclusion.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific supporting facts explaining why the seed was not fixed: "the driver version it ran had no seed option, and its production job script passed no seed".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER introduces a specific numerical value not stated in BEFORE ("\SI{0.18}{\percent}") and specifies "The reseeded run's median".
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the critical limitation that "This \emph{observed} covariance difference does not demonstrate a causal efficiency advantage".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops multiple quantitative findings ("at most \SI{39.1}{\percent}", "the integral by \SI{9.9}{\percent}", "$\pPar$ projections by at most \SI{21}{\percent}", "median \SI{10.6}{\percent} of the per-bin variance", and "\SI{17.1}{\percent} of the integral's"), which were moved to Table~\ref{tab:pl-added} in a neighbouring passage.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds an entire table (\texttt{Table~\ref{tab:pl-added}}) containing numerical results that were not present in BEFORE, evidently moved from the preceding passage.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER introduces an unsupported claim that "Two bands were scored: the completeness-divided band above" and narrows the general limitation "has not been tested" to "has not been tested for coverage".
+
+Q11: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualifier "natively" from "natively corrects acceptance", which specifies that acceptance correction is intrinsic to OmniFold's miss treatment.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER drops the explicit histogram and projection object names: "(\texttt{hXSec2D}, \texttt{hXSec\_pt}, \texttt{hXSec\_pz})".
+
+Q13: VERDICT: SAME
+DETAIL: The sentence is split into two sentences and rephrased from active to passive while preserving all statements regarding per-bin pulls, the truncated result, the pseudo-inverse, and the regularization scan.
+
+Q14: VERDICT: DIFFERS
+DETAIL: AFTER adds temporal persistence and an unstated qualifier by asserting that the hypothesis "remains the leading, unconfirmed hypothesis of this analysis", which goes beyond BEFORE's statement that "our leading hypothesis is the FHC-only constraint file".
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the fact specifying where the diagnostics are located: "The event-loop output files".
+
+Q16: VERDICT: SAME
+DETAIL: The clause order and connective are adjusted while preserving all facts, conditions (full-sample binning, deterministic training, bitwise equality), and the measured zero value of the block.
+
+Q17: VERDICT: DIFFERS
+DETAIL: AFTER adds a specific qualifier not found in BEFORE by describing the references as "the Gaussian references".
+
+Q18: VERDICT: SAME
+DETAIL: The phrasing is converted to active voice ("do not draw") while preserving the exact technical distinctions regarding the bias test, Poisson pseudo-experiments, interval widths, and unprobed detector response.
+
+Q19: VERDICT: SAME
+DETAIL: The passage converts the text's five $\chi^2$ values directly into a fourth column of Table~\ref{tab:fived16-gen} and updates the caption accordingly, preserving every model, number, and degree of freedom without adding or dropping information.
+
+Q20: VERDICT: SAME
+DETAIL: The phrasing is streamlined into a single clause while preserving the exact meaning that the result consists solely of central values and validation tests due to the absence of a quoted covariance.
+
+Q21: VERDICT: SAME
+DETAIL: The description replaces informal terms ("toy", "half") with formal equivalents ("pseudo-experiment", "set") while preserving the split ratio, numerical values, and containment findings verbatim.
+
+Q22: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory conclusion at the end of the sentence: "--- hence the two color schemes".
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific date and production batch identifier: "(the battery of 2026-06-10)".
+
+Q24: VERDICT: SAME
+DETAIL: The punctuation and sentence boundaries are slightly altered while preserving all statements regarding the local release candidate, checksums, verifier, unreleased status, and PDF rebuilding.
+
+Q25: VERDICT: DIFFERS
+DETAIL: AFTER drops the status limitation that the protocol is "implemented but not yet run" and adds descriptive details not supported by BEFORE ("which rescales the reconstructed available energy of the pseudo-data while OmniFold keeps its nominal response").
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER drops the repository table and omits numerous specific repository labels and options (including "\texttt{purity}, \texttt{negweight}, \texttt{negweight-refined}", "\texttt{cv}, \texttt{mean}", "\texttt{MNV101\_ACTIVE\_UNIVERSE}", "July sweep, May sweep", and "J28").
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER makes affirmative claims not supported by BEFORE about what MAT provides, asserting that "MAT's code supplies the per-band construction and the independent band sum, but no separate pair formula (below)".
+
+Q28: VERDICT: SAME
+DETAIL: The text streamlines sentence flow with semicolons while preserving all statements, technical requirements, warnings about event correlations and row resampling, and citations intact.
+
+Q29: DIFFERS
+DETAIL: AFTER adds an unverified assertion and extra context not present in BEFORE: ", which has not been shown (\S\ref{sec:joint5d-frozen}, which also states the design's two data-informed elements)".
+
+Q30: VERDICT: SAME
+DETAIL: Informal register words ("cheap", "arm") are replaced by standard formal equivalents ("computationally inexpensive", "adversarial stress test", "test") without altering the scope, characterization, or limitations of the test.
+
+Q31: VERDICT: SAME
+DETAIL: The two clauses are reordered and phrased with the synonym "nonexhaustive" without altering any factual claims or the survey caption.
+
+Q32: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific file path and repository link where the work is documented: "(\texttt{docs/analysis-note/pet\_note.tex}, \repolink)".
+
+Q33: VERDICT: SAME
+DETAIL: The sentence is consolidated while retaining all facts regarding release candidate RC1, the isolated AI-agent session (Opus 5.5), reliance solely on the README, lack of repository access, and the successful verifier pass.
+
+Q34: VERDICT: SAME
+DETAIL: The symbol $\checkmark$ is replaced by the textual label "(fixed)" to match the updated list formatting, preserving the exact meaning regarding fixed identities/values versus packaging.
+
+Q35: VERDICT: SAME
+DETAIL: The item marker $\checkmark$ is replaced with "(fixed)" while preserving all axes, units, catch-bin notes, grid dimensions ($14\times16\times7\times7\times6$), C-order, and index array specifications verbatim.
+
+Q36: VERDICT: SAME
+DETAIL: The item marker $\checkmark$ is replaced with "(fixed)" while preserving all equations, matrix definitions, mask types, and projection matrix specifications verbatim.
+
+Q37: VERDICT: SAME
+DETAIL: The text converts the imperative instruction to passive ("should not be checked") and defines $\lambda_{\min}$ as the smallest eigenvalue while preserving all physical reasoning, the noise floor statement, and the five-significant-digit agreement between hosts.
+
+Q38: VERDICT: SAME
+DETAIL: The text, figure caption, and labels are completely identical; AFTER merely appends a LaTeX page-break macro (`\clearpage`).
+
+END

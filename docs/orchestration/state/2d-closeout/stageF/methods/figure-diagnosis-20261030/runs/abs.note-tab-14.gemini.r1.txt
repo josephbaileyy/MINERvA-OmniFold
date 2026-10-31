@@ -1,0 +1,15 @@
+D1: 4 | -
+D2: 3 | Spanning column headers (missing \cmidrule and misaligned p-value columns)
+D4: 3 | p-value formatting and covariance header (inconsistent precision and detached \chi^2 headers)
+D6: 3 | Caption (undefined z statistic, undefined cell labels R02/R06/R07, and spacing error before comma)
+D7: 3 | Header hierarchy (detached \chi^2 columns obscure the grouping under each covariance matrix)
+TAKEAWAY: Most generator fake-data tests show acceptable consistency without outlier cells, whereas GiBUU and the synthetic q_3 tilt show severe tension with very large \chi^2, vanishing p-values, and localized outlier cells (R02, R06, R07).
+CHANGES:
+1. Spanning headers: Center "C_{total} + C_{resp}" and "C_{total}" across their respective (\chi^2, p, cells) triplets and add partial horizontal rules (\cmidrule) directly below them.
+2. Precision in p columns: Standardize numerical precision across the p columns instead of mixing two, three, and four decimal places with scientific notation.
+3. Number alignment: Re-align the p columns so that scientific notation and inequality symbols do not disrupt vertical alignment.
+4. Covariance header: Clarify the "covariance" column header to better explain what "full" and "−[Model]" represent.
+5. Row grouping: Insert subtle vertical spacing (\addlinespace) between different generator model families (MINERvA, GENIE, NuWro, GiBUU, synthetic) to aid scanning.
+6. Caption definitions: Explicitly define the z variable (e.g., standardized pull/bias) and explain what cell labels like R02, R06, and R07 denote.
+7. Caption typo: Remove the extraneous space before the comma in "C_{total} + C_{resp} ,".
+END

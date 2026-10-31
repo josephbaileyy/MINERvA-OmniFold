@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 4 | Percentage entries are centered rather than aligned on their decimal points.
+D4: 3 | The √(Tr C) column lacks units; N mixes replicate counts with “43 bands+1” without defining the counting convention.
+D6: 4 | The lengthy caption gives ensemble bookkeeping nearly as much prominence as the main result.
+D7: 5 | -
+TAKEAWAY: Systematic uncertainty dominates, and the combined median relative uncertainty of 6.414% is below the published reference of 6.85%.
+CHANGES:
+1. Add the applicable absolute units to the √(Tr C) column heading.
+2. Define N explicitly and replace “43 bands+1” with “43 bands + normalization,” using a table note if needed.
+3. Align percentage entries on their decimal points.
+4. Shorten the caption by moving detailed ensemble counts into a compact table note.
+END

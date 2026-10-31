@@ -1,0 +1,13 @@
+D1: 3 | Small in-panel annotations and tightly spaced, vertical R00–R15 tick labels require close reading at printed size.
+D2: 4 | -
+D3: 5 | -
+D4: 4 | -
+D5: 4 | -
+D6: 5 | -
+D7: 3 | Twelve similarly weighted panels and dense statistical annotations make the dominant comparison slow to extract.
+TAKEAWAY: The leading mode accounts for roughly 41–48% of χ² for the GENIE predictions and MINERvA tune, versus 31% for NuWro, with negative signed distances in all four leading modes.
+CHANGES:
+1. Enlarge the panel annotations and R00–R15 tick labels, adjusting panel spacing to accommodate them.
+2. Add a shared horizontal-axis label, “Cell,” to identify what R00–R15 represent.
+3. Emphasize each panel’s χ² percentage typographically and place σ and signed distance on a clearly subordinate line.
+END

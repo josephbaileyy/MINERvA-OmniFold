@@ -1,0 +1,10 @@
+D1: A | Larger ticks, axis labels and colour-bar labels remain substantially easier to read at printed size.
+D2: A | The balanced four-panel arrangement uses the available space more effectively; B leaves excessive surrounding whitespace.
+D3: B | The softer diverging palette conveys signed differences with less visual harshness than A’s saturated red–blue scale.
+D4: A | Proper mathematical notation identifies the observables clearly; B uses literal underscores and labels its descriptive difference “pull.”
+D5: B | The reference comparison is explicit, with a zero baseline and complementary spatial and distribution views.
+D6: B | The caption defines the plotted quantity and states its interpretive limitation; A’s concluding sentence is vague.
+D7: B | The histogram and numerical summary make the central comparison and spread quickly apparent.
+OVERALL: A
+GAP: 1. Enlarge B’s panels and all plot typography. 2. Reduce surrounding whitespace and the gap above the caption. 3. Typeset momentum components with proper subscripts and parallel notation. 4. Replace “pull” throughout with terminology consistent with the caption. 5. Define the “χ²/ndf paper” annotation clearly.
+END

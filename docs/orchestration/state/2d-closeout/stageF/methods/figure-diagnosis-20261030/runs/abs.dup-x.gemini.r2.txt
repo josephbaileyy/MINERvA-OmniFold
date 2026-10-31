@@ -1,0 +1,18 @@
+D1: 4 | -
+D2: 3 | unlabelled panels ((a)/(b)) and empty whitespace in the lower panel for omitted cells (R04–R07, R12–R15)
+D3: 3 | green (NuWro) and orange (GENIE + Valencia MEC) series indistinguishable under deuteranopia simulation
+D4: 3 | missing horizontal axis label for the kinematic cells (R00–R15)
+D5: 3 | GiBUU plotted in a separate panel with a different y-axis scale, impeding direct comparison with the other predictions
+D6: 3 | top legend lists GiBUU without indicating its panel assignment and contains overly verbose entry text
+D7: 3 | split-panel layout with disparate scales and dense parameter table slows immediate interpretation
+TAKEAWAY: Across the sixteen kinematic cells, GENIE, NuWro, and the MINERvA tune predict the measured cross section within 10–30%, whereas GiBUU substantially underpredicts the data with data-to-prediction ratios up to 2.1 in the low-$p_\parallel$ cells.
+CHANGES:
+1. Panel labels: Add panel identifiers "(a)" and "(b)" to the upper and lower panels and update the caption accordingly.
+2. Horizontal axis: Add an axis label (e.g., "Kinematic cell" or "Cell index") for the R00–R15 ticks.
+3. Panel organization: Either integrate GiBUU into the upper panel using a broken y-axis or compact/annotate the lower panel to remove the large blank gaps for omitted cells R04–R07 and R12–R15.
+4. Colour palette: Replace the green and orange hues with a colorblind-safe pair (such as cyan/sky blue and vermilion) to ensure separation under deuteranopia.
+5. Legend placement: Separate the legend entries by panel or explicitly denote panel assignments rather than grouping all five models in a single top header.
+6. Legend text: Move detailed model notes (e.g., target material, lack of CH correction, and prior status) from the legend keys into the caption text.
+7. Reference line styling: Make the horizontal unity line ($y = 1.0$) consistent across both panels (currently black in the upper panel and grey in the lower panel).
+8. Kinematic table: Slightly increase the font size of the five-row kinematic definition table below the axis to ensure legibility at standard PRD column width.
+END

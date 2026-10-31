@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically appropriate, but recurring internal labels, development chronology and repetitive qualifications give several passages an internal-note register that requires a dedicated language pass.
+1. QUOTE: "The test scored
+the completeness-divided band, the first-built statistical band, quoted when the test ran, whose
+replicas divide by a bootstrapped completeness. The undivided band is the rebuilt band, without
+the division, since superseded."
+   REWRITE: The test evaluated the statistical band quoted at the time, whose replicas were divided by a bootstrapped completeness. A subsequent band omitted this division and was itself later superseded.
+2. QUOTE: "The attribution rule was
+fixed before the full run, but its clause for the undercoverage outcome was written after the pilot
+pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness
+term of the band."
+   REWRITE: The attribution criterion associates the primary undercoverage with the band’s completeness term. Although the criterion was finalized before the full run, its treatment of undercoverage was specified after inspection of the pilot pulls.
+3. QUOTE: "A post hoc diagnostic bootstraps a single toy; its decision rule was recorded before it
+ran. Its result is consistent with the closure toys scattering too little, rather than with the data
+bootstrap scattering too much. The toys would scatter too little because their pseudo-data are built
+on the training MC events."
+   REWRITE: A post hoc bootstrap diagnostic using a single toy, with a decision rule specified before execution, is consistent with insufficient scatter in the closure toys rather than excessive scatter in the data bootstrap. The reduced scatter could arise from constructing pseudo-data from the training MC events.

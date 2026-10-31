@@ -16,6 +16,15 @@ import technote_style  # noqa: E402  (no titles + consistent colours)
 
 import argparse
 
+import restyle_2026_10 as rs
+
+# --style restyle-2026-10 sets this: the figure is drawn at its printed width with fonts for print (rs.WIDTH)
+RESTYLE = False
+
+
+def _fs(old, new):
+    return new if RESTYLE else old
+
 import numpy as np
 import ROOT
 
@@ -179,14 +188,14 @@ def setup_paper_axes(ax, row, col, nrows, ncols, xlim, ylim=(0, 4.2),
     ax.set_ylim(*ylim)
     if yticks is not None:
         ax.set_yticks(yticks)
-    ax.tick_params(direction="in", top=False, right=False, labelsize=8,
-                   length=3, pad=2)
+    ax.tick_params(direction="in", top=False, right=False, labelsize=_fs(8, 5),
+                   length=_fs(3, 1.8), pad=_fs(2, 1.2))
     if row != nrows - 1:
         ax.set_xticklabels([])
     if col != 0:
         ax.set_yticklabels([])
     for spine in ax.spines.values():
-        spine.set_linewidth(1.0)
+        spine.set_linewidth(_fs(1.0, 0.5))
 
 
 def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
@@ -197,27 +206,46 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
     factor = 1.0e39 * scale
 
     sx, sy = stair_xy(x_plot_edges, truth_y * factor)
-    ax.plot(sx, sy, color="red", lw=1.6, label="GENIE 2.12.6 + MnvTune v1")
+    ax.plot(sx, sy, color="red", lw=_fs(1.6, 0.8),
+            label="GENIE 2.12.6 + MnvTune v1" if not RESTYLE else "GENIE 2.12.6 + MINERvA Tune v1")
 
     ax.errorbar(centers, paper_y * factor, yerr=paper_err * factor,
-                xerr=half_widths, fmt="s", ms=2.5, color="black",
-                ecolor="black", elinewidth=0.8, capsize=1.5,
+                xerr=half_widths, fmt="s", ms=_fs(2.5, 1.2), color="black",
+                ecolor="black", elinewidth=_fs(0.8, 0.4), capsize=_fs(1.5, 0.7),
                 label="Published (PRD 104, 092007)", zorder=3)
     ax.errorbar(centers, omni_y * factor, yerr=omni_err * factor,
-                xerr=half_widths, fmt="o", ms=2.2, color="#1f77b4",
-                ecolor="#1f77b4", elinewidth=0.8, capsize=1.3,
+                xerr=half_widths, fmt="o", ms=_fs(2.2, 1.1), color="#1f77b4",
+                ecolor="#1f77b4", elinewidth=_fs(0.8, 0.4), capsize=_fs(1.3, 0.6),
                 label="This work (OmniFold)", zorder=4)
 
-    ax.text(0.50, 0.96, title, transform=ax.transAxes,
-            ha="center", va="top", fontsize=9)
-    ax.text(0.97, 0.78, f"x {scale:g}", transform=ax.transAxes,
-            ha="right", va="top", fontsize=9)
+    ax.text(0.50, 0.96, title if not RESTYLE else rs.slice_label(title, unit=False), transform=ax.transAxes,
+            ha="center", va="top", fontsize=_fs(9, 5))
+    ax.text(0.97, 0.78, f"x {scale:g}" if not RESTYLE else rf"$\times\,{scale:g}$", transform=ax.transAxes,
+            ha="right", va="top", fontsize=_fs(9, 5))
 
 
 def draw_legend_panel(ax, handles, labels):
     ax.axis("off")
+    if RESTYLE:  # left-aligned in the empty cell, clear of the neighbouring panel's scale note
+        ax.legend(handles, labels, loc="center left", bbox_to_anchor=(0.06, 0.5), frameon=False, fontsize=5,
+                  ncol=1, handlelength=1.8, borderaxespad=0)
+        return
     ax.legend(handles, labels, loc="center", frameon=False, fontsize=10,
               ncol=1, handlelength=2.5)
+
+
+def _inner_row(idx, n_panels, ncols=4):
+    """restyle: True if a drawn panel sits below panel idx, so its x tick labels would be hidden under it."""
+    return idx + ncols < n_panels
+
+
+def _ticklabels(labs, idx, n_panels, ncols=4):
+    """restyle: tick labels for panel idx, without the last one when a drawn panel adjoins on the right (its first
+    label would otherwise run into this one's last, as "60 4")."""
+    out = [str(x) for x in labs]
+    if idx % ncols != ncols - 1 and idx + 1 < n_panels:
+        out[-1] = ""
+    return out
 
 
 def plot_pt_slices(fig, outer, paper, paper_err, reported,
@@ -252,6 +280,8 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
         tick_labs = [4, 10, 20, 40, 60]
         ax.set_xticks(tick_positions(tick_labs, PZ_EDGES, PZ_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
+        if RESTYLE:
+            ax.set_xticklabels([] if _inner_row(ipt, N_PT) else _ticklabels(tick_labs, ipt, N_PT))
         if ipt == 0:
             handles, labels = ax.get_legend_handles_labels()
 
@@ -280,6 +310,8 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
         ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
+        if RESTYLE:
+            ax.set_xticklabels([] if _inner_row(ipz, N_PZ) else _ticklabels(tick_labs, ipz, N_PZ))
     return axes
 
 
@@ -294,7 +326,12 @@ def main():
                     help="landscape single grid of p_T slices only (keeps the "
                          "3-way Published/OmniFold/GENIE overlay) — for the talk "
                          "money slide, where the full two-grid figure is too tall")
+    rs.add_option(ap)
     args = ap.parse_args()
+    global RESTYLE
+    RESTYLE = rs.on(args)
+    if RESTYLE and args.pt_only:
+        ap.error("--style restyle-2026-10 restyles the note's two-grid figure, not --pt-only")
 
     import matplotlib
     matplotlib.use("Agg")
@@ -323,7 +360,8 @@ def main():
         print(f"[OK] wrote {args.out} (p_T-only landscape)")
         return
 
-    fig = plt.figure(figsize=(10.4, 13.2))
+    # restyle: the same layout fractions on a canvas of the printed width (10.4 x 13.2 scaled)
+    fig = plt.figure(figsize=(10.4, 13.2) if not RESTYLE else (rs.WIDTH["fig13"], rs.WIDTH["fig13"] * 13.2 / 10.4))
     outer = fig.add_gridspec(2, 1, height_ratios=[1, 1], hspace=0.28,
                              left=0.11, right=0.98, bottom=0.07, top=0.95)
 
@@ -336,16 +374,20 @@ def main():
     # bottom edge is at y~0.581 (bottom=0.07, hspace=0.28, two equal
     # rows); the label sits ~0.035 below to mirror the bottom grid's
     # label gap.
-    fig.text(0.5, 0.546, "Muon Longitudinal Momentum (GeV/c)",
-             ha="center", va="center", fontsize=15)
-    fig.text(0.5, 0.035, "Muon Transverse Momentum (GeV/c)",
-             ha="center", va="center", fontsize=15)
-    fig.text(0.027, 0.755,
-             r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
-             rotation=90, ha="center", va="center", fontsize=14)
-    fig.text(0.027, 0.285,
-             r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)",
-             rotation=90, ha="center", va="center", fontsize=14)
+    if not RESTYLE:
+        fig.text(0.5, 0.546, "Muon Longitudinal Momentum (GeV/c)",
+                 ha="center", va="center", fontsize=15)
+        fig.text(0.5, 0.035, "Muon Transverse Momentum (GeV/c)",
+                 ha="center", va="center", fontsize=15)
+        ylab = r"$d^2\sigma/dp_T\,dp_{||}$ ($\times 10^{-39}$ cm$^2$/(GeV/c)$^2$/Nucleon)"
+        ysize = 14
+    else:
+        fig.text(0.5, 0.531, f"Muon longitudinal momentum {rs.PZ} {rs.GEVC}", ha="center", va="center", fontsize=6)
+        fig.text(0.5, 0.035, f"Muon transverse momentum {rs.PT} {rs.GEVC}", ha="center", va="center", fontsize=6)
+        ylab = r"$d^2\sigma/dp_T\,dp_\parallel$ ($10^{-39}$ cm$^2$/(GeV/$c$)$^2$/nucleon)"
+        ysize = 5.5
+    fig.text(0.027, 0.755, ylab, rotation=90, ha="center", va="center", fontsize=ysize)
+    fig.text(0.027, 0.285, ylab, rotation=90, ha="center", va="center", fontsize=ysize)
 
     technote_style.minerva_tag(fig)
     fig.savefig(args.out, dpi=180)

@@ -1,0 +1,17 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally suits a detailed particle-physics companion note, but compressed configuration bookkeeping, procedural shorthand, and repetitive statements of scope require a dedicated language pass.
+
+1. QUOTE: "The decisions use completed
+pseudo-experiments; lost ones, recovered for reporting only, change none (§11.6)."
+   REWRITE: The test decisions use the completed pseudo-experiments; including the subsequently recovered pseudo-experiments in a consistency check leaves all decisions unchanged (§11.6).
+
+2. QUOTE: "The 3D marginal of
+configuration (e), a deterministic estimator with refined negative-weight subtraction, agrees to
+0.141 % in total with the 2D result of configuration (f), the nominal estimator with that subtraction,
+a cross-configuration comparison (§7)."
+   REWRITE: The 3D marginal obtained with the deterministic estimator and refined negative-weight subtraction [configuration (e)] agrees in total normalization to 0.141 % with the 2D nominal result using the same subtraction [configuration (f)] (§7).
+
+3. QUOTE: "The quoted 2D statistical block has had no coverage
+test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built
+undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the quoted 2D statistical covariance. Fixed-truth studies evaluated two earlier statistical uncertainty estimates; the first gave two-standard-deviation coverage of C2 = 0.912, below the nominal value of 0.954 (§4.2, §5.2).

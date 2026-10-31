@@ -115,3 +115,74 @@ P1's remaining quotes are the passages the protections hold, which is why it sta
 - The R-6 cut of "fallback definition".
 - P1 at 3 is held up by protected passages. Moving it would need Joseph's choices on the held sentences P1 quotes,
   and those are already in the PROTECTED lists.
+
+## Pass 2: Joseph's pairs and the held-for-facts sentences, one judgement (2026-10-30)
+
+The rules are those of STEP2-PAPER.md §5, committed before any text and any run.
+
+**Result: ADOPTED.**
+- **Pairwise:** NEW, which is the merged paper with both Joseph pairs and three rewordings, wins 4 of 4 runs.
+- **Order:** sol2 does not flip.
+- **P1:** sol2 gives 3, 3, 3, the same as the base (the merged paper `e33a1ab0`, 3, 3, 3), against a target of
+  3.667. Under §5 that is no movement, the second such round for the paper.
+
+### What changed
+
+- **Joseph's two pairs** (`DECISION-20261030-joseph-paper-pairs.md`) are applied exactly as pinned, through
+  `check_paper.py` `PAIRS` / `PAIR_PINS`:
+  - A4, the abstract's χ² split, `bbb99991e62f584b`;
+  - A1, the Data Availability reorder, `083bfb80f9fac8fd`.
+- **Three rewordings** of paper_body.tex:
+  - the note pointer;
+  - "LightGBM [23] at seed 42, with …";
+  - the Limitations opener, "Apart from the low stability of four of the sixteen cells (below), …".
+- **B4 re-pin.** ALIASES 38 and ATTRIBUTION 17, `paper_body.tex:50`, move from `52bd6f35a5367d1e` to
+  `07a348c82f88db98`. The alias "the joint-test estimator, a deterministic LightGBM" still prints. ALIASES 47 is
+  unchanged.
+
+### The gaps of pass 2
+
+| disposition | gaps |
+|---|---|
+| **applied** | G1:paper-s-10, G1b:paper-s-15: the "is stated only here" sentence is dropped, and its exception is kept as a clause (review R2-1; the director's ruling, below) |
+| **partly applied** | G1:paper-g-01: the citation is moved into the sentence, and every reference to the note stays (#522 item 2). G1:paper-g-04: the seed is placed after the citation, and nothing moves to a code repository |
+| **skipped: agy or review, under rule (c)** | G1b:paper-s-08 (Scope: "apply to" is stronger, and "one … one" is lost); G1b:paper-g-11 (envelope target: agy read both wordings DIFFERS); G1b:paper-s-17 (run-period: "its own" was broadened, R2-2) |
+| **skipped: no new fact** | G1:paper-s-03's remainder and G1b:paper-s-10. Defining the residual proxy adds a quantity, the 1 % threshold. The director ruled that the no-new-fact rule holds. The writer's brief had allowed a definition, and that was the lane's error. |
+| **skipped under A7** (the director) | G1b:paper-g-12 (the flux reason), G1b:paper-s-04 (the Fig. 3 covariance), G1b:paper-s-19 (the coverage claim). These sentences scope the result's claims, so rewording them is Joseph's under A7. If a later P1 quotes one of them, it goes to the director as a pinned pair. |
+
+### The checks
+
+- **Fact ledger:** 35 rows, 58 probes, 0 failures. The new rows are P-33 to P-35, and P-24 is updated.
+- **KEEP gate:** the new check 8 is clean. Rows P-28 to P-32 record the five KEEP qualifiers that #549 reworded (F025,
+  F145, F149, F246, F305); none was dropped.
+- **Checker self-test:** 17 planted defects caught, 2 silent controls.
+- **Held sentences:** 14 exact and 8 held for facts, with 0 failures. Without `--fact-held`, exactly the two
+  reordered sentences fail.
+- **Two-direction review** ([pass2/review.md](pass2/review.md)): 5 findings, all resolved.
+- **agy:**
+  - [pass2/agy1/](pass2/agy1/), on the writer's text: control 3 of 3; real pairs 2 SAME, 4 DIFFERS.
+  - [pass2/agy2/](pass2/agy2/), on the final text: control 3 of 3, and the 3 identity fillers SAME.
+  - In agy2, the note pointer and the seed sentence read SAME. On the Limitations opener, the real run read DIFFERS
+    on the dropped exclusivity, and the control run read SAME on the same text. The director accepted it as written:
+    the clause keeps the exception true, and the DIFFERS concerns the metatext the director ordered dropped.
+- **Build:** PASS, with SEC4 15/15, VALUES-FIVED16 PASS and 11 pages.
+
+### A void run set
+
+The first set of the 7 runs judged a rater copy that had been built before one word was removed ("low reconstruction
+stability" became "low stability", after agy1). P1 quoted the removed word, which is how the mismatch was found.
+- That set was discarded unscored.
+- The copy was rebuilt from the committed tree (`63872072`), and each changed sentence and both pairs were checked to
+  print in it.
+- The 7 runs were then made again ([pass2/runs/](pass2/runs/)).
+- `adopt_step2p.py` takes the base's P1 file pattern as an optional third argument. Its default, pass 1's, is
+  unchanged, and pass 1's `adoption.tsv` still reproduces.
+
+### What P1 quotes now
+
+All three runs quote the reordered Data Availability sentence, which is Joseph's approved A1 text. Beyond it:
+- **r1:** the five-iterations sentence (unchanged, under the no-new-fact rule) and the new Limitations opener;
+- **r2:** the estimator paragraph (the seed-42 sentence) and the binned-diagnostic scope sentence;
+- **r3:** the central value's covariance sentence (B4-registry-pinned) and the three-observable comparison.
+
+Apart from Data Availability, the quotes have spread from two fixed passages to six.

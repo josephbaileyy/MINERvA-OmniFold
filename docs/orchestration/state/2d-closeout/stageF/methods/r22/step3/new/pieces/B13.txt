@@ -1,0 +1,588 @@
+Statistical methods for the multidimensional results and inference
+
+This appendix gives the conventions for covariances and comparisons beyond the 2D result: rank,
+ndf and finite-ensemble declarations for N-D covariances, the scalar five-dimensional diagnostic
+reductions and interval definitions, the extended-fiducial band and pull fractions, and inference from
+unfolded events and selected projections. The 2D methods and their worked examples are in App. A.
+
+B.1
+
+Rank, ndf and finite-ensemble declarations for N-D covariances
+
+The 2D justification in §A.3.2 does not transfer to N-D. An earlier 5D covariance from the standard
+production chain has 10 694 reported bins, effective positive rank 263 and infinite numerical condition
+number. It is distinct from CZ , the five-axis covariance of the configuration-(a) central value, and
+was built before CZ was chosen for use. Its 4825-bin 5D→4D projection retains rank 263 exactly.
+The covariance is a sum of about 45 rank-one outer products, one for each two-endpoint MAT
+systematic band, and of the statistical and machine-learning (ML) sample blocks; such a sum cannot
+span 10 694 directions, so the rank deficiency follows from the construction. Quoting χ2 /nreported
+would understate tension by roughly 40× in 5D or 18× in 4D.
+For an N-D covariance, ndf is the retained rank, not nreported . Every N-D χ2 must state, where
+it is quoted, (i) the inverse actually used, including the pseudo-inverse rcond or the truncation rank;
+(ii) the retained rank, as ndf; (iii) the rank-truncation scan of that covariance, which is expected
+to lack the smoothness that supports the 2D choice in §A.3.2; (iv) the identity of the covariance,
+since the earlier 5D covariance, its 4D projection and the published 2D block differ in rank; and
+(v) for each sample block in the sum, the ensemble size N , the biased 1/N or unbiased 1/(N − 1)
+normalization, the effective inverted dimension p after truncation, and the finite-ensemble treatment,
+or that none is applied. The measurements, the derivation and the requirement that N-D difference
+statistics use a rank cut fixed in advance are in Ref. [37] (R1.15).
+Finite-ensemble bias of the inverse. Item (v) records the ensemble size of each block; without it,
+an uncorrected finite-ensemble bias could enter unnoticed. The inverse of a noisy sample covariance
+is biased upward. For an unbiased 1/(N − 1) estimator over N independent Gaussian realizations,
+the standard debiasing factor is (N − p − 2)/(N − 1). For this analysis’s production convention,
+
+
+universe-mean centered with biased 1/N normalization, it is (N − p − 2)/N . The superseded
+unified-throw 5D covariance has N = 160, truncated p = 100, giving 58/160 ≃ 0.363: uncorrected
+precision is too large by ≃ 2.76. For fixed residuals this inflates χ2 and overstates tension; confidence
+regions from the same over-tight covariance become over-optimistic.
+No generic correction is prescribed. A sum of deterministic rank-one band terms and statistical
+and ML sample blocks, such as the earlier 5D covariance from the standard production chain, has
+no single debiasing factor. The standard factor also assumes independent Gaussian realizations
+and a data-independent truncation dimension, neither established for a data-dependent cut. The
+appropriate treatment depends on the covariance and inverse actually used, and is to be determined
+from the quantities recorded under item (v).
+
+B.2
+
+Scalar-5D diagnostic reductions and interval definitions
+
+The synthesis in §9.4 reuses saved outputs; it involves no new unfolding, training or pseudoexperiments. Fine-grid cross-section densities are converted to integrals by multiplying by all five bin
+widths before aggregation. The saved trace functionals on the EW cells are differential in (Eavail , W )
+and are multiplied by the cell areas; those on the J and H2 cells are already integrals. Direct
+tensor-slice integration checks the index-map sums and full-domain rate. Reporting boundaries
+coincide with fine edges. The J boundaries are pT = (0, 0.55, 0.85, 4.5), p∥ = (1.5, 3.5, 6, 60),
+Eavail = (0, 0.4, 1.5, 100), q3 = (0, 1.2, 2, 100) and W = (0, 1.4, 2.2, 100); H2 uses interior boundaries
+(0.7, 4.5, 0.8, 2, 1.8), respectively, with the same outer boundaries. Energy units are GeV and
+momentum units GeV/c. A cell is supported when both its expected reconstructed signal and
+selected truth weight at data exposure are at least 1000. This gives 109 J, 27 H2 and 39 EW cells;
+the unsupported EW11, EW36 and EW37 are omitted from the supported-cell summaries only.
+For experiment i and cell f ,
+rif =
+
+fˆi − ftrue,i
+,
+ftrue,i
+
+r̄f =
+
+1X
+rif ,
+n
+i
+
+s2f =
+
+1 X
+(rif − r̄f )2 .
+n−1
+
+(26)
+
+i
+
+The truth of the stored pseudo-data source varies with the MC split, so sf measures relativeresidual spread,qnot unconditional fixed-truth cross-section variance. The saved table also reports
+P 2
+√
+bias-retaining n−1 i rif
+. Pointwise 95% mean intervals use t0.975,n−1 sf / n; SD intervals use
+q
+q
+sf (n − 1)/χ20.975,n−1 and sf (n − 1)/χ20.025,n−1 . These normal-model approximations condition
+on finite simulation and make no simultaneous claim across cells. A deterministic noise-free trace
+from one simulation receives no error band; its cell-to-cell variation is not sampling uncertainty.
+The development assessment includes an interval diagnostic. It uses σf , the sample standard
+deviation of 100 refitted bootstrap replicas of the nominal development pseudo-experiment (experiment 700000). Assessment results are scored against [fˆi − σf , fˆi + σf ] and [fˆi − 1.96σf , fˆi + 1.96σf ],
+without bias correction or model envelope. The table gives integer hits, both empirical fractions,
+exact pointwise 95% binomial intervals and fixed half-width relative to mean truth. It conditions on
+estimated bootstrap widths without propagating finite-replica uncertainty. Coverage fractions are
+not pooled across cells to certify them. The examples shown are a populated low-energy cell (EW7)
+and the corner cell EW41, already known to fail; they are not freshly selected validation targets.
+The rounding study keeps the fine-grid membership fixed under uniform input perturbations
+within half a float32 unit in the last place. With 20 base jitters, 50 unperturbed bootstrap replicas
+fb and their jittered partners fb′ , the reported quantities are
+
+√ 
+sbase = SD(fj ), sboot = SD(fb ), spair = SD (fb′ − fb )/ 2 .
+(27)
+
+The consistency ratio is spair /sbase ; the estimated numerical share is s2pair /s2boot . The paired-model
+√
+2 factor introduces no physical noise source. Containment, as defined before the study ran, requires
+a median consistency ratio in [0.7, 1.4] and s2boot ≥ s2pair in at least 95% of supported cells. All
+supported cells meet the inequality. This finite-sample diagnostic supports the construction without
+proving coverage or independence from every physical uncertainty.
+For prior vertex v, data sensitivity is dvf = fˆdata,v /fˆdata,0 − 1, with envelope hf = maxv |dvf |.
+Its denominator differs from the simulated residual’s. Neither hf nor an outer product of closure
+residuals is given a probability model. The reductions keep the per-cell values, the identity of each
+input and the exclusions, and distinguish complete outputs from checkpoints that carry no metadata.
+From a checkpoint, only the iterations that reproduce the originally recorded values are used; later
+entries are excluded. The analyst cross-checked the reductions numerically.
+
+B.3
+
+Extended-fiducial statistical-band and pull fractions
+
+For the containment diagnostic in §12, the independent scalar statistical-covariance band contains
+77.6 % of closure bin–toy cells and exceeds the closure-toy spread. The same-ensemble pull fraction is
+68.9 %, with mean absolute pull ⟨|r|⟩ ≈ 0.79; it remains a diagnostic of the pulls and their Gaussianity.
+The split-sample fractions in the published and extension regions are 68.5 % and 70.0 %, respectively;
+both are descriptive, and neither is used to certify a covariance.
+
+B.4
+
+Inference from unfolded events and selected projections
+
+Unfolding correlates weighted events; a downstream likelihood treating them as independent can
+underestimate parameter uncertainties [63]. Nominal weights do not specify uncertainty. Coherent
+unfolding replicas could propagate it through the fit; resampling unfolded rows independently is not
+equivalent to resampling inputs and repeating the learned estimator. Classifier and permutation
+goodness-of-fit tests require null calibration for fitting and data reuse. No new validation result
+accompanies these requirements.
+The uncertainty target matters: separate bin or projection coverage does not imply simultaneous
+coverage. A fixed linear projection y = P x propagates covariance as Cy = P Cx P ⊤ , with integrated
+bin widths in P for densities. The identity neither calibrates that covariance nor accounts for regions
+chosen after inspecting data.
+Recent work constructs confidence intervals for selected functionals in constrained inverse problems [64] and joint confidence regions for multiple functionals [65], which could provide independent
+benchmarks for specified integrals or contrasts. Their guarantees depend on the forward model, noise
+law, and parameter constraints and do not transfer automatically to a learned response with finite
+simulation and detector nuisances. A rank-deficient forward operator is also distinct from a rankdeficient sample covariance; neither truncating the latter nor validating a few projections certifies
+the full distribution. Such a benchmark would supplement, not replace, the scalar five-dimensional
+uncertainty construction that a measurement requires.
+
+B.5
+
+Familywise error of the sequential joint-test decisions
+
+This derivation supports the familywise statement of §11.3.
+Probability model. Fix one test, and condition on the data and on the simulated sample.
+The calibration pseudo-experiments, taken in their fixed seed order, give exceedance indicators
+Xb = 1[Tb ≥ tobs ]. Assumption A2 is that, given the data, these are independent Bernoulli draws
+with common probability p, the calibrated tail probability of the observed statistic; this requires
+
+the lost pseudo-experiments to have been lost independently of their outcomes, which has not been
+shown (§11.3, which also states the design’s two data-informed elements). Assumption A1 is that, for
+a true null, p is super-uniform over repetitions of the experiment, P (p ≤ u) ≤ u, with the nuisance
+parameters drawn from their priors; the size statement is therefore averaged over the nuisance priors.
+Let kB be the number of exceedances among the first B draws and U (k, B) the upper end of the
+two-sided 95% Clopper–Pearson interval, a one-sided 97.5% upper bound.
+Crossing event. The rule rejects at threshold c only if U (kB , B) < c at the number B ≤ 1999
+at which sampling stopped. Whatever rule chose that stopping point, including stops decided
+with results visible,
+S irregular looks, lost draws, and the budget extensions, the rejection lies in
+the event Ec = B≤1999 {U (kB , B) < c} that the bound crosses below c at some B. Hence
+P (reject at c) ≤ R(c) ≡ Ep [gc (p)], with gc (p) = P (Ec | p).
+Uniform p is the worst case. Coupling the Bernoulli draws in p shows that gc (p) does not
+increaseRwith p. For any super-uniform p its expectation is therefore at most its value for uniform p,
+1
+R(c) ≤ 0 gc (u) du.
+The decision rule, operationally. The tests are ordered by increasing (k + 1)/(B + 1), with
+ties broken in the fixed listing order (total before shape for each null). At step i the threshold
+is α/(m − i + 1): the test is rejected if U < α/(m − i + 1), it is not rejected if the lower end of
+its interval exceeds the threshold, and it is undetermined otherwise; a test that is not rejected or
+undetermined ends the step-down, and the tests after it take the same status. Equality U = c does
+not reject.
+Holm reduction without independence. Let m0 of the m = 10 hypotheses be true. The first true
+null to be rejected is reached after at most m − m0 rejections of false nulls, so its threshold is at
+most α/m0 . A familywise error therefore requires some true null to cross below α/m0 , and by the
+union bound FWER ≤ m0 R(α/m0 ) ≤ maxj≤m j R(α/j). The argument uses neither independence
+between tests nor the order of the Holm steps, so the shared ensemble of a null’s total and shape
+tests, their unequal stopping counts, and the ranking by (k + 1)/(B + 1) with its ties do not affect it.
+The decision p value is the largest over shifted nulls that include the unshifted one, evaluated at the
+same B, so its exceedance count is at least that of the unshifted test; since U increases with k, the
+bound for the unshifted test covers the decision rule.
+Certified constant. For each c = α/j, j = 1, . . . , 10, let k ∗ (B) be the largest k with U (k, B) < c.
+For fixed p, a dynamic program propagates the distribution of kB from B = 1 to 1999, moving
+the probability of every state with kB ≤ k ∗ (B) into an absorbing “crossed” state at each B, and
+pooling the counts above maxB k ∗ (B), which can never cross because counts never decrease; the
+absorbed probability is gc (p) exactly. This is evaluated on a grid of 6000 points in [0, 6c]. Because gc
+is nonincreasing, a left Riemann sum over-estimates its Rintegral on each grid interval, and with the
+1
+tail term (1 − 6c) gc (6c) it is a rigorous upper bound on 0 gc , so the integration error is included in
+the bound. The largest ratio R(c)/c, at j = 1, lies in [0.8892, 0.8902]; it decreases to [0.5138, 0.5148]
+at j = 10. Hence, for α = 0.05, the value used here, FWER ≤ 0.8902 α < 0.9 α under any stopping
+at or before 1999 pseudo-experiments. The bound rests on A1, the calibration’s fidelity, which §11.4
+discusses, and on A2.
+
+C
+
+Unbinned background subtraction by negative-weight injection
+
+Binned purity subtraction (§3.1) is the only step that uses analysis binning before final histogramming.
+Each data event in reconstructed bin b receives the purity weight wpur (b) = max(0, Ndata (b) −
+Nbkg (b))/Ndata (b). Injecting background simulation on the measured side with negative weight gives
+a fully unbinned correction with the same bin-integrated estimand. Its agreement with the binned
+
+correction is quantified on the 2D measurement below. It is the continuous version of the purity
+weight recommended for nontrivial backgrounds in Ref. [18], and the natural treatment for the larger
+backgrounds of the extended-fiducial analysis.
+Scope of the numbers. The numbers in this appendix are not quoted uncertainties, and the
+analytic derivation, the estimand identity and the displacement argument do not depend on any.
+Which background treatment each quoted result uses is stated in §3.1, and by configuration in
+§3.2 (Table 2). Negative-weight injection is studied here for its equivalence to binned purity and
+as the extended-fiducial treatment; this appendix establishes no supported production path and
+changes no default. The two covariance ratios are agreement diagnostics between two realizations of
+one subtraction. Two provenance limits apply to the production numbers: the driver revision that
+produced them is corroborated but not pinned, and no output records the job that produced them
+(Ref. [37], R1.7).
+
+C.1
+
+Estimator
+
+OmniFold step 1 trains a classifier to separate simulated reconstruction (class 0, weighted density S)
+from the measured sample (class 1, weighted density ρ1 ), then reweights simulation by the learned
+density ratio r(x) = p(x)/(1 − p(x)). Its population optimum is r⋆ (x) = ρ1 (x)/S(x). Background
+treatment is entirely a choice of ρ1 :
+• binned purity assigns every data event in reconstructed analysis bin b the same scalar. For
+x ∈ b,
+
+Bb 
+ρpur
+(x)
+=
+D(x)
+w
+(b)
+=
+D(x)
+max
+0,
+1
+−
+,
+(28)
+pur
+1
+Db
+where D is the data density, B the POT-scaled background density, and Db , Bb their bin
+masses;
+• negative-weight injection appends reconstructed background-simulation events to the measured
+side with weight −wbkg × (POT scale) and keeps data weights at +1, giving
+ρneg
+1 (x) = D(x) − B(x)
+
+(29)
+
+pointwise, without analysis binning.
+Equations (28) and (29) differ as functions of x. A bin-constant rescaling reproduces D(x) − B(x)
+inside bin b only when B/D is constant there. Otherwise, D(x) (1 − Bb /Db ) and D(x) − B(x) share
+a bin integral but differ within the bin. The constructions agree exactly on bin masses under the
+piecewise-constant sieve of §C.2; in general they differ by within-bin shape terms. Both target
+the bin-integrated estimand r⋆ (b) = (Db − Bb )/Sb ; they do not share the continuous estimand
+r⋆ (x) = (D(x) − B(x))/S(x). §C.4 and §C.5 measure the effect of that difference. The injected
+background and data occupy the same reconstructed fiducial window, giving identical support.
+The floor. Where D − B < 0, binned purity floors the correction at zero through max(0, ·). The
+unbinned classifier’s bounded output p ∈ (0, 1) forces r = p/(1 − p) ≥ 0. Non-negativity is structural,
+while the value at the floor follows from the bounded output and ordinary regularization rather than
+from a minimizer of the fit (§C.2). Locally negative class-1 mass makes the fit ill-posed and calls for
+a positive-target prescription. We apply the “Stay Positive” refinement of Ref. [66], then explicitly
+zero-clip the learned refinement factor before step-1 training. Agreement between plain injection
+and clipped refinement depends on the classifier.
+
+With the histogram-based gradient-boosted classifier used in this comparison, they agree to the
+reported median per-bin ratio 1.000 at this measurement’s sub-percent genuine-background scale.
+This histogram backend is neither the LightGBM estimator of the quoted 2D central value and its
+ensembles nor the exact-split cross-check (§3). The equivalence is therefore established on a third
+backend, and its transfer to the production configuration is assumed rather than demonstrated. Raw
+signed weights destabilize an exact-split boosted-tree classifier, inflating a full low-pT cross-section
+row by up to a factor ∼5 × 104 where local background is large. Clipped Stay-Positive refinement
+removes this pathology and recovers binned-purity agreement to a median 0.999 (141/148 bins
+within 5 %). This clipped refinement is therefore what makes the unbinned subtraction robust across
+estimators, and it matters most for the larger, more structured backgrounds of the extended-fiducial
+analysis.
+
+C.2
+
+Binned limit: exact reduction to the purity correction
+
+A step-1 classifier restricted to functions piecewise-constant on reconstructed analysis bins {b} gives
+the population-level binned limit of the OmniFold/Richardson–Lucy correspondence in Refs. [1,
+2]. Its output is a single p per bin. With common support and unnormalized class weights, step 1
+weighted cross-entropy separates into per-bin objectives
+Lb (p) = −W1 ln p − W0 ln(1 − p),
+
+(30)
+
+where W0 = S(b) > 0 is the integral of simulated class-0 density S in bin b, and W1 is the signed
+class-1 weight. Injecting background simulation at negative weight while keeping data at +1 gives
+W1 = D(b) − B(b). Here D(b) and B(b) are the bin masses of D and B, equivalently Ndata (b) and
+Nbkg (b) in §C.1.
+For D(b) > B(b), objective (30) is strictly convex on (0, 1) with unique interior minimizer
+p = W1 /(W0 + W1 ), giving
+r(b) =
+
+p
+W1
+D(b) − B(b)
+=
+=
+.
+1−p
+W0
+S(b)
+
+(31)
+
+Purity gives exactly this reweight under the same sieve, since its class-1 weight W1 = D(b) wpur (b) =
+max(0, D(b) − B(b)) equals D(b) − B(b) on this domain. At D(b) = B(b), the infimum lies at
+p → 0+ and r(b) → 0, again giving purity when the boundary is admitted. The treatments therefore
+agree bin by bin at the population optimum under the common sieve. Combined with the binned
+OmniFold/Richardson–Lucy correspondence, they give the traditional subtract-background-thenunfold update. Finite, regularized classifiers approximate this identity; their residual differences are
+tested below.
+The reduction fails where D(b) < B(b). With W1 < 0, Lb (p) = |W1 | ln p − W0 ln(1 − p) tends to
+−∞ as p → 0+ and is unbounded below, with no minimizer. A minimizing sequence gives r(b) → 0.
+The max(0, ·) floor is a prescription, not a minimizer’s value. A finite regularized classifier’s behavior
+depends on the estimator. Stay-Positive remains well behaved but can retain negative refined
+weights where the target density is genuinely negative. The zero clip used here is therefore an
+additional analysis prescription chosen to match the physical purity floor. Ref. [66] documents the
+same reweighting-loss divergence for negative targets; signed binary cross-entropy has an analogous
+pathology for sWeights [67].
+The binned D − B update, negative-weight classification of the measured side, and binned
+OmniFold/Richardson–Lucy correspondence already appear together in Ref. [2]. Equation (31)
+states their immediate binwise corollary and its precise validity domain for this analysis. It is a
+consistency check, not a separate method.
+
+Table 28: Binned purity versus unbinned negative-weight background subtraction on the 2D ME FHC
+measurement (common estimator and seed). The per-bin figures are the negative-weight/purity ratio
+over the populated cross-section bins.
+binned purity
+negative-weight
+2
+total σ (cm /nucleon)
+3.0727e − 38
+3.0687e − 38
+total ratio (neg/pur)
+0.9987 (−0.13 %)
+median per-bin ratio
+1.000
+per-bin RMS deviation
+1.4 %
+largest single-bin deviation −12.6 % (low pT , high background)
+
+C.3
+
+Closed-form toy
+
+A one-dimensional toy uses signal simulation N (0, 1), equally normalized data signal N (0.3, 1.1),
+and background N (2, 0.7) contributing 16.7 % of pseudo-data. The known target (D − B)/S =
+ϕ(x; 0.3, 1.1)/ϕ(x; 0, 1) is smooth and positive. A signed-weight gradient-boosted classifier recovers
+it with median 6.8 % relative error, matching binned purity’s 6.7 % and reproducing it bin-for-bin
+on the same problem. Omitting subtraction leaves 10.9 % residual-background bias. Results are
+stable across classifier seeds (±0.3 %), with no numerical instability from negative weights. Moving
+background into the sparse signal tail and deliberately over-subtracting makes the learned reweight
+floor cleanly at zero where B > D, as anticipated.
+
+C.4
+
+Comparison on the 2D measurement
+
+With identical unfolding settings, the histogram backend and a common classifier seed, the ME FHC
+comparison isolates background treatment (Table 28). Total cross sections agree to −0.13 %, an
+order of magnitude inside the ∼3 % purity correction. The per-bin ratio has median 1.000 and 1.4 %
+RMS scatter across the plane (Fig. 35). Only one low-pT , high-background edge bin differs by more
+than a few percent (−12.6 %); background concentrates there and subtraction is largest. Unbinned
+subtraction reproduces the binned correction wherever it is well determined. Departures occur only
+where the binned max(0, ·) and structural floor of §C.1 govern the result.
+
+C.5
+
+Propagation through systematics and statistics
+
+Replacing binned subtraction requires reproducing its uncertainty budget as well as the central value.
+The full 2D ME FHC covariance was rebuilt end to end with negative-weight injection and compared
+to binned purity at identical settings, at full statistics with LightGBM, the estimator of the quoted
+2D central value. The 187-universe systematic ensemble varied genuine background consistently
+within each universe instead of freezing it at nominal; a statistical bootstrap used matched seeds.
+Agreement is at the level predicted by the (D −√B)/S identity. The two covariances differ by one
+to two percent. The 187-universe systematic Tr ratio (negative-weight/purity) is 0.986, from
+2.9828 × 10−39 cm2 /nucleon and 3.0242 × 10−39 cm2 /nucleon, and the matched-seed statistical ratio
+is 0.982, from 1.7260 × 10−40 cm2 /nucleon and 1.7576 × 10−40 cm2 /nucleon. Residuals of 1.4 % and
+1.8 % are consistent with “to within 2 %” in §3. They are bootstrap and classifier-seed sampling
+noise, with no method bias. Negative-weight injection reproduces the central cross section per bin
+(§C.4) and the covariance in aggregate. The covariance comparison gives two trace ratios; per-bin,
+correlation and eigenmode equivalence are not established.
+
+
+1.020
+1.015
+1.010
+1.005
+1.000
+0.995
+0.990
+0.985
+0.980
+
+negative-weight / purity
+
+pT (GeV/c)
+
+4.5
+4.0
+3.5
+3.0
+2.5
+2.0
+1.5
+1.0
+0.5
+0.0
+
+10
+
+20
+
+30
+
+40
+
+p|| (GeV/c)
+
+50
+
+60
+
+Figure 35: Negative-weight/binned-purity cross-section ratio in populated bins of the 2D ME FHC
+measurement, with common estimator and seed. The median is 1.000 (near-white). Only the low-pT ,
+high-background edge bin departs by more than a few percent. Background is largest there, and the
+max(0, ·)/structural floor of §C.1 governs the result.
+The 2D central-value, closed-form recovery and full covariance comparisons, together with StayPositive robustness on larger extended-fiducial backgrounds, support negative-weight injection as an
+unbinned alternative at the 2D scale. The 2D result and its covariance, the 3D and 4D central values
+and the sixteen-cell five-dimensional result (§10) use its refined form (§3.1); binned purity remains
+the treatment of the configuration-(a) five-dimensional central value and its five-axis covariance and
+of the extended-fiducial value. Negative-weight injection is the designated extended-fiducial baseline
+(§12), where binning-independence and the continuous floor are essential.
+
+C.6
+
+Which background treatment each production chain uses
+
+Agreement between the two subtractions does not make the choice between them arbitrary, and the
+production chains choose differently.
+The standard N -dimensional chain uses purity. The entire standard five-dimensional chain,
+that of the configuration-(a) central value and its five-axis covariance, uses binned purity (§3.1):
+the central unfold, 169 vertical-band unfolds, 18 detector unfolds and 10 endpoint unfolds of the
+re-selected lateral bands.
+The existing endpoint unfolds, produced in July 2026, used purity, as established by elimination
+from their job scripts and logs (Ref. [37], R1.17). Current production fixes the background treatment
+in a configuration object that rejects every other mode. The standard job script passes the driver’s
+background-mode option (--bkg-mode) explicitly from that configuration, and the value is written
+into the record of every endpoint unfold as it is produced, so the background treatment of each new
+component can be read from the component itself; this changes how the treatment is recorded, not
+the treatment itself.
+
+The standard chain uses purity by choice, on two grounds (Ref. [37], R1.8). First, a covariance
+that mixes background treatments is inferior to one that uses either treatment consistently: a
+lateral-band block built with negative-weight subtraction would be inconsistent with central and
+vertical-band unfolds built with purity subtraction. Second, switching would have required rerunning
+every unfold above and would have invalidated the flux-corrected covariance then just chosen for use;
+this consequence, rather than the computing cost, decided the choice. The background treatment
+has been revisited in two dimensions: the closure test below is its result, and the 2D result and its
+covariance use the refined estimator. For the configuration-(a) five-dimensional central value, which
+still uses purity, the revisit is open; the sixteen-cell result (§10) uses the refined estimator.
+A two-dimensional closure test with backgrounds. Twenty pseudo-experiments at nominal
+truth (the truth model equals the prior), with background included and drawn as in the fivedimensional pseudo-experiments, were unfolded in two dimensions with the purity subtraction
+and with refined negative-weight subtraction (a 400-tree, 31-leaf refinement), both on the same
+pseudo-data. Differences are expressed in units of the statistical and total standard deviations, σstat
+and σtotal , of the purity-based 2D covariance on its 205 reported cells (the quoted covariance when
+the test ran). The mean difference between the two treatments exceeds 1 σstat in 14 of the 205 cells,
+at most 5.45 σstat , in the cell 0.70 ≤ pT < 0.85 GeV/c, 1.5 ≤ p∥ < 2.0 GeV/c. These cells are the
+whole lowest-p∥ row (1.5–2.0 GeV/c) and five cells along the high-pT , low-p∥ boundary. In them,
+the purity estimate’s mean residual against the truth is +0.78 to +5.89 σstat , above 1 σtotal in one
+cell (1.22); the refined estimate’s mean residual is within ±0.44 σstat in every cell. The integrated
+difference between the treatments is −0.198 %. In the median cell, the pseudo-experiments’ own
+spread is 0.46 σstat (purity) and 0.58 σstat (refined). The test is a closure with 20 pseudo-experiments,
+not a coverage test. On the data, the refined treatment moves the 2D result by at most 0.497 σtotal
+per cell (median 0.060), by more than 1 σstat in 43 of the 205 cells (at most 4.26 σstat ), and by a
+median of 0.44 % per cell (84th percentile 1.13 %, at most 10.1 %); its integral moves by −0.139 %.
+The 2D result quoted in this note uses the refined treatment, configuration (f), with its covariance
+and its comparison with the published result rebuilt for it (§6).
+What the quoted extended-fiducial number used. The σext = 4.502 × 10−38 cm2 /nucleon in
+§12 was not produced with negative-weight injection. It comes from the extended-fiducial ME FHC
+battery of 2026-06-10. Its ten endpoint unfolds used the purity correction and are recorded as purity
+controls, not publication inputs (Ref. [37], R1.9). Its central value, 4.502 × 10−38 cm2 /nucleon, is
+recorded with its passed published-region check against the control. The extended-fiducial central
+value was therefore produced with the binned purity correction, not with refined negative-weight
+subtraction, the intended extended-fiducial baseline.
+The extended-fiducial measurement and its control are designated different background
+treatments. For publication, the extended-fiducial analysis designates negative-weight injection
+with Stay-Positive refinement as its background treatment. The code fixes it, and a check stops
+the run if any endpoint’s recorded mode differs or is missing; the number quoted in §12 was not
+produced this way. The standard chain uses purity throughout. Each side of the measurement and
+matched-control pair therefore has an internally consistent background treatment; uniformity across
+the two sides is not claimed.
+
+
+C.7
+
+Displacement argument and scope of the agreement
+
+Displacement across universes. The displacement argument rests on a measured input; it
+assumes no identity of continuous estimands. The constructions share bin masses in the binned
+limit (§C.2) but differ by within-bin shape terms (§C.1). Switching background treatment produces
+a measured net per-universe displacement of order 0.1 %, including residual and shape effects, at
+this measurement’s sub-percent genuine-background scale. Systematic covariance measures spread
+across universes about their own mean. Similar small shifts of each universe leave that spread
+nearly unchanged, explaining the 187-universe ratio 0.986, far from the purity correction’s ∼3 %.
+This argument connects a handful-of-universes comparison to the 187-universe covariance; the full
+187-universe rebuild in §C.5 tests it at 2D and passes.
+Scope. The measured agreement concerns the 2D systematic and statistical covariances of §C.5 at
+the stated configurations. It is not a theorem that the two background treatments give the same
+covariance, because the underlying estimands are not pointwise identical, and covariance equivalence
+for the continuous estimator or in five dimensions is not established. The five-dimensional evidence
+is limited to the following two-universe spot check.
+Limits of the five-dimensional evidence. There is no full five-dimensional 187-universe comparison of the two background treatments at the publication configuration (5 iterations, LightGBM). The
+spot check uses one iteration and the histogram backend on the stored five-dimensional universe file:
+under both treatments 2p2h:0 gives 3.014 × 10−38 with per-bin median 1.0005, and MaCCQE:0 differs
+by −0.03 % with median 0.9990. Together with the displacement argument and the full-statistics
+2D result, this supports quoting the standard chain with purity subtraction, with its background
+treatment stated. It does not show that the background treatment is irrelevant in five dimensions,
+which would require the full comparison. Raw negative weights destabilize the exact-split backend
+(§C.1), but the standard chain uses LightGBM, so neither treatment is exposed to that instability
+here.
+
+C.8
+
+Five-dimensional pseudo-experiments with both background treatments
+
+The five-dimensional validation (§§9.1–9.3) reports end-to-end tests of both background treatments.
+They cover the purity bias in the highest-W column at nominal truth, its reduction with refined
+negative-weight subtraction, the data difference, and the estimator with higher refinement capacity.
+That estimator is configuration (e), which gives the 3D and 4D central values and the sixteen-cell
+result (§10) but not the configuration-(a) 5D central value; the quoted 2D central value uses the
+same refinement capacity, in configuration (f).
+Purity bias. Purity bias is 8–12 statistical standard deviations; signal-only experiments close.
+Subtraction is exact per reconstructed bin, but the widest bin (W ≥ 3 GeV, background 13 % of
+signal) contains background shape resolved by the unbinned classifier and missed by bin-uniform
+purity. The within-bin shape term of §C.1 is therefore measurable, and it is direct evidence for
+revisiting the background treatment of the configuration-(a) five-dimensional central value (§C.6).
+The difference between five-dimensional purity and refined negative-weight subtraction on data is
+the least computationally expensive estimate of its size on data.
+Refined negative-weight subtraction. Refinement used the unfold’s deterministic GBDT
+configuration, independent injection and subtraction halves of background simulation, and bootstrap
+
+replicas that individually resampled every pseudo-event and refit refinement. It preserves the signed
+total to 3 × 10−6 and clips 0.01 % to 0.05 % of events. Corner bias falls from 1.66 % to 0.24 %,
+but residuals in some joint cells fail the nominal closure criterion. The criterion allows none of
+the 153 reported quantities a mean residual beyond 3.6 standard errors of the mean (|t| > 3.6,
+the two-sided 5% level, Bonferroni-corrected over the 153), or beyond half its bootstrap standard
+deviation with |t| > 3. The data difference’s sign pattern matches simulated purity bias at an order
+of magnitude smaller size; the difference is method sensitivity, not a measured bias. With either
+treatment, the estimator does not follow generator-sized Eavail shape changes. No coverage test was
+run. Reducing one bias does not itself qualify an uncertainty, so this result does not close the revisit
+of the background treatment of the configuration-(a) five-dimensional central value (§C.6).
+Refinement capacity. Stay-Positive classifier underfitting causes the residual nominal bias of
+the refined subtraction. At the unfold’s GBDT setting (100 trees, 8 leaves), the positive-weight
+probability is underfit, leaving up to 4 % reco-level subtraction error per (Eavail , W ) reco cell. With
+400 trees and 31 leaves, error falls to 1.7 %, paired truth-level bias falls by more than 80 % in
+every affected cell, and nominal background-inclusive closure passes on 20 development and 40 fresh
+pseudo-experiments. Splitting background simulation into independent injection and subtraction
+halves is not the cause.
+Background treatment and choice of covariance. The choice of background treatment is
+independent of the choice of covariance, and this appendix selects no five-dimensional covariance
+for use. The lateral-band component from re-selected event loops is built, with five bands and ten
+endpoint unfolds whose distinct checksums are listed in the record of the five-axis covariance of
+the configuration-(a) central value. The status of that five-axis covariance and the scope of its use
+are stated in §9.6. The choice of background treatment settles one of the conditions for using a
+component; every other condition still applies.

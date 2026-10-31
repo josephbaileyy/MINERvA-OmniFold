@@ -1,0 +1,25 @@
+r22 Step 3: the adopted note, cut by tools/split_base.py from main_note.pdf built at the committed tree f13912b6
+(tracked tree clean); main_note.pdf sha256 cf94f7393d8810fdacfcf12fdfac8685d7e40b43bdcc8d84eff82687cb9e385e, 56,281 words.
+Each piece is compared with what it should equal: NEW (step3/new/pieces) if adopted or without a gap, else the base
+(step2/pieces). BYTE = byte-identical. MASKED = equal after masking table and figure numbers and collapsing
+whitespace. MOVED = the same words in another order (pdftotext emits a float or a page break elsewhere).
+
+B01  base     vs step2/pieces: BYTE
+B02  adopted  vs step3/new/pieces: BYTE
+B03  adopted  vs step3/new/pieces: BYTE
+B04  base     vs step2/pieces: MOVED, and words differ: {'pseudodata,': 1} -> {'data,': 1, 'pseudo26': 1}
+B05  adopted  vs step3/new/pieces: BYTE
+B06  no gap   vs step3/new/pieces: BYTE
+B07  base     vs step2/pieces: MASKED
+B08  no gap   vs step3/new/pieces: BYTE
+B09  adopted  vs step3/new/pieces: BYTE
+B10  no gap   vs step3/new/pieces: BYTE
+B11  adopted  vs step3/new/pieces: BYTE
+B12  adopted  vs step3/new/pieces: BYTE
+B13  base     vs step2/pieces: MOVED
+B14  adopted  vs step3/new/pieces: BYTE
+B15  base     vs step2/pieces: MASKED
+
+held check (tools/check_held_note.py): held quotes checked 29 (29 exact, gapped []), failures 0
+B04: "pseudo-data" is hyphenated across the foot of page 26, so pdftotext prints the page number inside the word.
+The source files of B01, B04, B07, B13 and B15 are byte-identical to the base 14a0415f (git diff --quiet).

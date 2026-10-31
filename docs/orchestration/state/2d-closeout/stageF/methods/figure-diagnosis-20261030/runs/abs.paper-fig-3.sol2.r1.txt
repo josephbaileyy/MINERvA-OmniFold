@@ -1,0 +1,17 @@
+D1: 4 | Small, tightly spaced repeated W-bin tick labels.
+D2: 4 | Long panel headings and repeated horizontal-axis descriptions crowd the upper and lower margins.
+D3: 3 | GENIE MEC triangles lose contrast against the grey uncertainty band in greyscale and the colour-blindness simulation.
+D4: 4 | W ticks identify bin numbers; their physical ranges are largely unavailable in the figure.
+D5: 4 | Overlapping markers near zero in panel (b) make individual series difficult to follow.
+D6: 3 | Panel (a)’s residual legend text overlaps the highest residual marker near 74%.
+D7: 4 | Dense headings, legends and caption slow identification of the comparison and the grey band’s meaning.
+TAKEAWAY: Panel (a) shows large, structured recovery residuals, while panel (b) shows generally smaller residuals for three different deformations, with several excursions beyond the grey reference band.
+CHANGES:
+1. Move panel (a)’s legend clear of the highest residual marker.
+2. Give the GENIE MEC triangles a dark outline and stronger tonal contrast against the grey band.
+3. Slightly offset the three series horizontally within each cell in panel (b) to expose overlapping markers.
+4. Enlarge the repeated W-bin tick labels and shorten the repeated horizontal-axis wording.
+5. Shorten the panel headings, retaining the classifier settings in compact annotations or the caption.
+6. Provide the physical W-bin boundaries in a compact key or an explicit caption reference.
+7. Shorten the grey-band legend to “Reference total uncertainty” and retain its detailed provenance in the caption.
+END

@@ -31,6 +31,7 @@ import matplotlib.pyplot as plt
 from plot_2d_cross_section import (th2_to_slices,
                                     compute_truth_xsec_2d,
                                     load_flux_bins_for_truth)
+import restyle_2026_10 as rs
 
 
 def panel_arrays(h):
@@ -54,10 +55,17 @@ def panel_chi2(vals, errs, truth):
 
 
 def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
-              nrows=4, ncols=4):
-    fig, axes = plt.subplots(nrows, ncols, figsize=(4 * ncols, 3.3 * nrows),
-                              squeeze=False)
-    fig.subplots_adjust(hspace=0.38, wspace=0.30)
+              nrows=4, ncols=4, restyle=False):
+    # restyle (--style restyle-2026-10): drawn at the note's printed width, the slice interval printed above each
+    # panel (technote_style suppresses titles, so set_title draws nothing), the legend in an empty cell
+    if restyle:
+        rs.apply(6.5)
+        fig, axes = plt.subplots(nrows, ncols, figsize=(rs.WIDTH["slices"], 1.42 * nrows), squeeze=False)
+        fig.subplots_adjust(left=0.075, right=0.995, bottom=0.075, top=0.925, hspace=0.42, wspace=0.26)
+    else:
+        fig, axes = plt.subplots(nrows, ncols, figsize=(4 * ncols, 3.3 * nrows),
+                                  squeeze=False)
+        fig.subplots_adjust(hspace=0.38, wspace=0.30)
 
     total_chi2 = 0.0
     total_ndf = 0
@@ -93,29 +101,42 @@ def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
                     xerr=widths / 2, fmt="ko", markersize=2.5,
                     linewidth=0.9, capsize=1.5, label="This work (OmniFold)", zorder=3)
         ax.stairs(truth * scale, edges, color="C3", linewidth=1.2,
-                  label="GENIE 2.12.6 + MnvTune v1", zorder=2)
+                  label="GENIE 2.12.6 + MnvTune v1" if not restyle else "GENIE 2.12.6 + MINERvA Tune v1", zorder=2)
 
         ax.set_xlim(edges[0], edges[-1])
         ax.set_ylim(0, 1.4)
         ax.set_title(label, fontsize=8, pad=3)
-        ax.tick_params(labelsize=7)
+        if restyle:
+            ax.text(0.5, 1.03, rs.slice_label(label), transform=ax.transAxes, ha="center", va="bottom")
+        else:
+            ax.tick_params(labelsize=7)
 
         # Annotate scale factor and chi2
         note = scale_str
         if ndf > 0:
             note = f"{scale_str}\n" + rf"$\chi^2/n={chi2:.1f}/{ndf}$"
         ax.text(0.97, 0.97, note, transform=ax.transAxes,
-                ha="right", va="top", fontsize=7,
+                ha="right", va="top", fontsize=7 if not restyle else 5.5,
                 bbox=dict(boxstyle="round,pad=0.18", facecolor="white",
                           edgecolor="none", alpha=0.8))
 
-        if r == nrows - 1:
-            ax.set_xlabel(axis_label, fontsize=8)
+        below = (r + 1) * ncols + c < len(xsec_slices)
+        if r == nrows - 1 or (restyle and not below):
+            ax.set_xlabel(axis_label, fontsize=8 if not restyle else None)
         if c == 0:
-            ax.set_ylabel("scaled $d^{2}\\sigma/(dp_{T}\\,dp_{||})$",
-                          fontsize=7)
+            ax.set_ylabel("scaled $d^{2}\\sigma/(dp_{T}\\,dp_{||})$" if not restyle else
+                          r"$d^2\sigma/dp_T\,dp_\parallel$, scaled", fontsize=7 if not restyle else None)
 
-    axes[0][0].legend(fontsize=7, loc="lower right")
+    if restyle and len(xsec_slices) < nrows * ncols:
+        r, c = divmod(len(xsec_slices), ncols)
+        h, l = axes[0][0].get_legend_handles_labels()
+        box = axes[r][c].get_position()
+        fig.legend(h, l, loc="center", bbox_to_anchor=(box.x0 + box.width / 2, box.y0 + box.height / 2))
+    elif restyle:  # no empty cell: one row in the top margin, beside the sample tag
+        h, l = axes[0][0].get_legend_handles_labels()
+        fig.legend(h, l, loc="upper right", bbox_to_anchor=(0.995, 0.995), ncol=2)
+    else:
+        axes[0][0].legend(fontsize=7, loc="lower right")
     total_line = ""
     if total_ndf > 0:
         total_line = (rf"   |   total stat $\chi^2/n = "
@@ -123,7 +144,7 @@ def draw_grid(xsec_slices, truth_slices, axis_label, out, suptitle,
                       rf"{total_chi2/total_ndf:.2f}$")
     fig.suptitle(suptitle + total_line, fontsize=11, y=0.995)
     technote_style.minerva_tag(fig)
-    fig.savefig(out, dpi=180, bbox_inches="tight")
+    fig.savefig(out, dpi=180 if not restyle else 300, bbox_inches="tight")
     plt.close(fig)
     print(f"wrote {out}  (chi2/ndf = "
           f"{total_chi2:.1f}/{total_ndf})")
@@ -139,6 +160,7 @@ def main():
                     help="Fallback ROOT file for flux histogram when infile lacks hFlux_pt")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated",
                     help="Histogram name inside --mcfile for fallback flux loading")
+    rs.add_option(ap)
     args = ap.parse_args()
 
     f = ROOT.TFile.Open(args.infile, "READ")
@@ -172,20 +194,20 @@ def main():
     truth_pt = th2_to_slices(hXSecTruth2D, "pt")
     c2_pt, n_pt = draw_grid(
         xsec_pt, truth_pt,
-        axis_label=r"$p_{||}$ (GeV/c)",
+        axis_label=r"$p_{||}$ (GeV/c)" if not rs.on(args) else f"{rs.PZ} {rs.GEVC}",
         out=f"{args.prefix}_pt_slices.png",
         suptitle=(f"arXiv:2106.16210 Fig.13-style: slices in $p_T$ "
-                  f"({niter} iter)"))
+                  f"({niter} iter)"), restyle=rs.on(args))
 
     # p_|| slices (each panel is p_T distribution for fixed p_||)
     xsec_pz = th2_to_slices(hXSec2D, "pz")
     truth_pz = th2_to_slices(hXSecTruth2D, "pz")
     c2_pz, n_pz = draw_grid(
         xsec_pz, truth_pz,
-        axis_label=r"$p_T$ (GeV/c)",
+        axis_label=r"$p_T$ (GeV/c)" if not rs.on(args) else f"{rs.PT} {rs.GEVC}",
         out=f"{args.prefix}_pz_slices.png",
         suptitle=(f"arXiv:2106.16210 Fig.13-style: slices in $p_{{||}}$ "
-                  f"({niter} iter)"))
+                  f"({niter} iter)"), restyle=rs.on(args))
 
     # Summary
     print()

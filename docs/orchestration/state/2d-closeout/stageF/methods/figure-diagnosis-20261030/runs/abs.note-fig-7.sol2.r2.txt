@@ -1,0 +1,16 @@
+D1: 2 | Tick labels, slice intervals, scale factors and legends in both upper grids are too small at printed size.
+D2: 3 | The two dense slice grids occupy narrow blocks, while the projections receive much larger panels; panel labels are absent.
+D3: 3 | Published and OmniFold markers are difficult to distinguish in greyscale; their colour distinction also weakens under deuteranopia.
+D4: 3 | Tick labels in the upper grids are tiny and crowd adjacent panel boundaries.
+D5: 3 | Overlapping published and OmniFold markers in the slice grids make their agreement difficult to assess.
+D6: 4 | -
+D7: 3 | Thirty small slice panels and numerous scale factors make the upper comparison difficult to absorb quickly.
+TAKEAWAY: OmniFold broadly follows the published slice measurements and exceeds the GENIE prediction over much of both projected spectra.
+CHANGES:
+1. Split the slice grids and projections into separate figures so the slice panels can be enlarged.
+2. Increase tick, legend, slice-interval and scale-factor text to readable sizes at final publication scale.
+3. Give published and OmniFold results distinct marker shapes, using open versus filled symbols for reliable greyscale identification.
+4. Suppress redundant interior tick labels and prevent labels from colliding at subplot boundaries.
+5. Add panel labels and identify the two slice orientations and projections explicitly in the caption.
+6. State in the caption what the per-panel multiplication factors mean.
+END

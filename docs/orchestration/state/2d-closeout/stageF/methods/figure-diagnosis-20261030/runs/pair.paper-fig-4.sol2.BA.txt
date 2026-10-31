@@ -1,0 +1,10 @@
+D1: B | More space around individual points makes markers and uncertainties easier to distinguish.
+D2: B | Two aligned panels and an orderly cell key provide a clearer visual hierarchy.
+D3: B | Distinct marker shapes reinforce colour coding and improve grayscale accessibility.
+D4: A | Physical coordinates and explicit slice headings allow direct reading without consulting a separate key.
+D5: A | A common denominator and consistent vertical scales support direct comparison across predictions and slices.
+D6: B | The legend and caption explicitly explain uncertainties, prediction coverage, and interpretation limits.
+D7: B | Departures from unity and differences among predictions are quicker to identify.
+OVERALL: B
+GAP: 1. Reduce panel density or divide A into separate figures. 2. Move the upper legend outside the data panels. 3. Add distinct line styles to distinguish predictions without colour. 4. Explain error-bar definitions and model-uncertainty treatment in the caption.
+END

@@ -1,0 +1,161 @@
+(Each pair is one passage of a physics analysis note, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [sec_execsummary.tex ES6]
+BEFORE: Whether it is ready for publication as a measurement has not been established.
+AFTER: The comparison is descriptive; the covariance lacks independent validation, validated coverage and calibrated significance (\S\ref{sec:uq-2d-scope}), and publication readiness as a measurement has not been established.
+
+Q2. [sec_execsummary.tex ES20]
+BEFORE: The pseudo-experiments lost to time limits have been rerun, for reporting only, so every submitted draw has been observed. No recovered draw changes a decision (\S\ref{sec:joint5d-lost}).
+AFTER: The decisions use completed pseudo-experiments; lost ones, recovered for reporting only, change none (\S\ref{sec:joint5d-lost}).
+
+Q3. [selection_features.tex SF6]
+BEFORE: PET design-study recovery does not validate real-data background subtraction; PET remains diagnostic method development.} \label{tab:selection-features} \end{table}
+AFTER: PET remains diagnostic method development; its design-study recovery does not validate real-data background subtraction.} \label{tab:selection-features} \end{table}
+
+Q4. [sec_method.tex ME43]
+BEFORE: Both of those central values are regenerated to $\lesssim2\times10^{-11}$ by runs with one driver and one input that differ only in the seed, so the difference is attributable to the seed, as inferred from the two regenerations.
+AFTER: Two regenerations, with one driver and one input and differing only in the seed, reproduce the two central values to $\lesssim2\times10^{-11}$, so the difference is attributable to the seed.
+
+Q5. [sec_method.tex ME50]
+BEFORE: Its seed was not fixed: the driver version it ran had no seed option, and its production job script passed no seed. The run's own log was not found. Two driver revisions regenerate it to $7\times10^{-15}$.
+AFTER: Its seed was not fixed, and its run log was not found; two driver revisions regenerate it to $7\times10^{-15}$.
+
+Q6. [sec_method.tex ME55]
+BEFORE: The agreement of that median with the LightGBM seed-1 to seed-42 median above is a coincidence.
+AFTER: This median agrees with the \SI{0.18}{\percent} LightGBM seed-1 to seed-42 median above, but the agreement is coincidental.
+
+Q7. [sec_systematics.tex SY31]
+BEFORE: The bootstrap block is smaller than the published statistical block (ratio of square-root traces 0.407). This \emph{observed} covariance difference does not demonstrate a causal efficiency advantage (App.~\ref{sec:rank}).
+AFTER: The bootstrap block is smaller than the published statistical block (ratio of square-root traces 0.407; App.~\ref{sec:rank}).
+
+Q8. [sec_systematics.tex SY73]
+BEFORE: Added to the other blocks, it raises the per-bin $\sigma$ by a median of \SI{5.8}{\percent} (at most \SI{39.1}{\percent}), the integral by \SI{9.9}{\percent} and the $\pPar$ projections by at most \SI{21}{\percent}; it carries a median \SI{10.6}{\percent} of the per-bin variance and \SI{17.1}{\percent} of the integral's.
+AFTER: Added to the other blocks, it raises the per-bin $\sigma$ by a median of \SI{5.8}{\percent} (Table~\ref{tab:pl-added}).
+
+Q9. [sec_systematics.tex SY75]
+BEFORE: The block's interpretation is limited by the small number of period groups, by possible shrinkage from the regularization, and by the statistical and training noise it retains.
+AFTER: \begin{table}[htbp] \centering \begin{tabular}{@{}lcc@{}} \toprule & Increase in $\sigma$ & Share of variance \\ \midrule Per bin, median & \SI{5.8}{\percent} & \SI{10.6}{\percent} \\ Per bin, maximum & \SI{39.1}{\percent} & --- \\ $\pPar$ projections, maximum & \SI{21}{\percent} & --- \\ Integrated cross section & \SI{9.9}{\percent} & \SI{17.1}{\percent} \\ \bottomrule \end{tabular} \caption{The run-period block added to the other blocks.} \label{tab:pl-added} \end{table} The block's interpretation is limited by the small number of period groups, by possible shrinkage from the regularization, and by the statistical and training noise it retains.
+
+Q10. [sec_validation.tex VA84]
+BEFORE: The band was then rebuilt without this term. The resulting undivided band was rescored only post hoc (below), and the quoted statistical block has not been tested.
+AFTER: Two bands were scored: the completeness-divided band above and, only post hoc (below), the undivided band. The quoted statistical block has not been tested for coverage.
+
+Q11. [sec_validation.tex VA121]
+BEFORE: \begin{figure}[H] \centering \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap} \caption{Selection efficiency on the $(\pT,\pPar)$ truth grid. Efficiency is diagnostic only; OmniFold's miss treatment natively corrects acceptance (\S\ref{sec:method-algo}).} \label{fig:eff} \end{figure}
+AFTER: \begin{figure}[H] \centering \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap} \caption{Selection efficiency on the $(\pT,\pPar)$ truth grid, shown as a diagnostic only; OmniFold's unmatched-event treatment corrects acceptance (\S\ref{sec:method-algo}).} \label{fig:eff} \end{figure}
+
+Q12. [sec_results.tex RE0]
+BEFORE: \section{Results} \label{sec:results} The error bars on the unfolded points of Fig.~\ref{fig:xsec} are the bin errors stored with the unfolded histogram and its projections (\texttt{hXSec2D}, \texttt{hXSec\_pt}, \texttt{hXSec\_pz}), not the covariance of \S\ref{sec:systematics}.
+AFTER: \section{Results} \label{sec:results} The error bars on the unfolded points of Fig.~\ref{fig:xsec} are the bin errors stored with the unfolded histogram and its projections, not the covariance of \S\ref{sec:systematics}.
+
+Q13. [sec_results.tex RE18]
+BEFORE: We therefore quote the per-bin pulls and the truncated result together, with a regularization scan made for the exact-split cross-check on an earlier covariance and not repeated for the quoted one, rather than treating an unconstrained pseudo-inverse as a goodness-of-fit test on its own (App.~\ref{sec:rank}).
+AFTER: The per-bin pulls and the truncated result are therefore quoted together, and an unconstrained pseudo-inverse is not used as a goodness-of-fit test on its own. The regularization scan (App.~\ref{sec:rank}) was made for the exact-split cross-check on an earlier covariance and was not repeated for the quoted one.
+
+Q14. [sec_results.tex RE31]
+BEFORE: The public release does not let us determine the origin of this difference; our leading hypothesis is the FHC-only constraint file.
+AFTER: The public release cannot establish the origin of this difference, for which the FHC-only constraint file remains the leading, unconfirmed hypothesis.
+
+Q15. [sec_results.tex RE61]
+BEFORE: \begin{figure}[H] \centering \includegraphics[width=0.85\textwidth]{model_comp_projections} \caption{Projections of this measurement (dashed) and the published data (black); MINERvA Tune v1 (orange) lies below the data in the peak.} \label{fig:model} \end{figure} \begin{figure}[H] \centering \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps} \caption{Bin-by-bin ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid of our result (left) and of the published data (right), on a common colour scale of $0.7$--$1.3$; the panels have no printed titles.
+AFTER: \begin{figure}[H] \centering \includegraphics[width=0.85\textwidth]{model_comp_projections} \caption{Projections of this measurement (dashed) and the published data (black); MINERvA Tune v1 (orange) lies below the data in the peak.} \label{fig:model} \end{figure} \begin{figure}[H] \centering \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps} \caption{Bin-by-bin ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid of our result (left) and of the published data (right), on a common colour scale of $0.7$--$1.3$.
+
+Q16. [sec_eavailw.tex EW15]
+BEFORE: The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the leading-hadron angle.
+AFTER: Truth hadronic diagnostics are also retained: the proton and pion multiplicities and the leading-hadron angle.
+
+Q17. [sec_fived16.tex FV12]
+BEFORE: The training-seed block was measured and is zero in every cell: with full-sample binning and deterministic training, the unfolds at the other seeds are bitwise equal to the central one.
+AFTER: With full-sample binning and deterministic training, the unfolds at every tested seed are identical to the central one, so the measured training-seed block is zero in every cell.
+
+Q18. [sec_fived16.tex FV60]
+BEFORE: The references count the four records as independent, but they are two truths, each counted by its pseudo-experiments and by its closure, so they are context only.
+AFTER: The four records are the pseudo-experiment and closure results for two truths, so the Gaussian references, which count them as independent, are descriptive context only.
+
+Q19. [sec_fived16.tex FV66]
+BEFORE: This is a bias test, not a coverage test: Poisson pseudo-experiments with no draws of the systematic parameters cannot test the width of the intervals, and the detector response is not probed.
+AFTER: The Poisson pseudo-experiments test the bias with the systematic parameters not drawn and the detector response fixed, so they cannot test the interval widths or probe the detector response: this is a bias test, not a coverage test.
+
+Q20. [sec_fived16.tex FV78]
+BEFORE: \begin{table}[htbp] \centering\footnotesize \caption{$\chi^2$ with its number of degrees of freedom, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, with the shape-only $\chi^2$ beside it.} \label{tab:fived16-gen} \begin{tabular}{@{}lcc@{}} \toprule prediction & $\chi^2$ and ndf & shape-only \\ \midrule \fvval{label-gcv} & \fvval{g-gcv-total-chi2}/\fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2}/\fvval{g-gcv-shape_only-ndf} \\ \fvval{label-gmec} & \fvval{g-gmec-total-chi2}/\fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2}/\fvval{g-gmec-shape_only-ndf} \\ \fvval{label-nuwro} & \fvval{g-nuwro-total-chi2}/\fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2}/\fvval{g-nuwro-shape_only-ndf} \\ \fvval{label-gibuu} & \fvval{g-gibuu-total-chi2}/\fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2}/\fvval{g-gibuu-shape_only-ndf} \\ \fvval{label-tune} & \fvval{g-tune-total-chi2}/\fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2}/\fvval{g-tune-shape_only-ndf} \\ \bottomrule \end{tabular} \end{table} The variant without the response block, against $C_{\mathrm{total}}+V_g$, gives $\chi^2$ of \fvval{g-gcv-nocresp-chi2}/\fvval{g-gcv-total-ndf}, \fvval{g-gmec-nocresp-chi2}/\fvval{g-gmec-total-ndf}, \fvval{g-nuwro-nocresp-chi2}/\fvval{g-nuwro-total-ndf}, \fvval{g-gibuu-nocresp-chi2}/\fvval{g-gibuu-total-ndf} and \fvval{g-tune-nocresp-chi2}/\fvval{g-tune-total-ndf}, in the order of Table~\ref{tab:fived16-gen}. Table~\ref{tab:fived16-pulls} gives each cell's pull and $(g-f)/f$.
+AFTER: \begin{table}[htbp] \centering\footnotesize \caption{$\chi^2$ with its number of degrees of freedom, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, the shape-only $\chi^2$ and the $\chi^2$ without the response block, against $C_{\mathrm{total}}+V_g$.} \label{tab:fived16-gen} \begin{tabular}{@{}lccc@{}} \toprule prediction & $\chi^2$ and ndf & shape-only & without $C_{\mathrm{resp}}$ \\ \midrule \fvval{label-gcv} & \fvval{g-gcv-total-chi2}/\fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2}/\fvval{g-gcv-shape_only-ndf} & \fvval{g-gcv-nocresp-chi2}/\fvval{g-gcv-total-ndf} \\ \fvval{label-gmec} & \fvval{g-gmec-total-chi2}/\fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2}/\fvval{g-gmec-shape_only-ndf} & \fvval{g-gmec-nocresp-chi2}/\fvval{g-gmec-total-ndf} \\ \fvval{label-nuwro} & \fvval{g-nuwro-total-chi2}/\fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2}/\fvval{g-nuwro-shape_only-ndf} & \fvval{g-nuwro-nocresp-chi2}/\fvval{g-nuwro-total-ndf} \\ \fvval{label-gibuu} & \fvval{g-gibuu-total-chi2}/\fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2}/\fvval{g-gibuu-shape_only-ndf} & \fvval{g-gibuu-nocresp-chi2}/\fvval{g-gibuu-total-ndf} \\ \fvval{label-tune} & \fvval{g-tune-total-chi2}/\fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2}/\fvval{g-tune-shape_only-ndf} & \fvval{g-tune-nocresp-chi2}/\fvval{g-tune-total-ndf} \\ \bottomrule \end{tabular} \end{table} Table~\ref{tab:fived16-pulls} gives each cell's pull and $(g-f)/f$.
+
+Q21. [sec_fps.tex FP3]
+BEFORE: No covariance is quoted for it, so the result consists of central values and these validation tests.
+AFTER: The result consists only of central values and these validation tests, without a quoted covariance.
+
+Q22. [sec_fps.tex FP22]
+BEFORE: \item \textbf{Containment diagnostic.} With a fixed estimator seed and one 100/100 calibration--evaluation split, widths learned from the disjoint calibration half contain the fixed truth in \SI{\covFPS}{\percent} of evaluation bin--toy cells, compared with the \SI{\covNominal}{\percent} Gaussian nominal.
+AFTER: \item \textbf{Containment diagnostic.} With a fixed estimator seed and one disjoint 100/100 split into calibration and evaluation sets, widths from the calibration set contain the fixed truth in \SI{\covFPS}{\percent} of evaluation (bin, pseudo-experiment) pairs, compared with the \SI{\covNominal}{\percent} Gaussian nominal.
+
+Q23. [sec_fps.tex FP26]
+BEFORE: Panels (a) and (b) are \emph{ratios} (diverging scale centered at unity); (c) gives \emph{absolute} magnitude on a sequential scale --- hence the two color schemes.
+AFTER: Panels (a) and (b) are \emph{ratios} on a diverging scale centered at unity; panel (c) gives the \emph{absolute} magnitude on a sequential scale.
+
+Q24. [sec_fps.tex FP29]
+BEFORE: The extended-fiducial central value was produced with the binned purity correction (the battery of 2026-06-10), not with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App.~\ref{app:negweight}).
+AFTER: The extended-fiducial central value was produced with the binned purity correction, not with refined negative-weight subtraction, the treatment designated for the extended-fiducial analysis (App.~\ref{app:negweight}).
+
+Q25. [sec_summary.tex SU17]
+BEFORE: A local release candidate, with checksums and a verifier that recomputes and checks its results, exists, but \textbf{no release has been tagged or deposited}; rebuilding this note's PDFs assembles documents and reproduces no scientific result (App.~\ref{app:release}).
+AFTER: A local release candidate exists, with checksums and a verifier that recomputes and checks its results; \textbf{no release has been tagged or deposited}. Rebuilding this note's PDFs assembles documents and reproduces no scientific result (App.~\ref{app:release}).
+
+Q26. [app_guide.tex AG1]
+BEFORE: The first gives methods and context for the body: statistical methods and the 2D comparison (App.~\ref{app:statmethods}) and those for the multidimensional results and inference (App.~\ref{app:statmethods-nd}); unbinned background subtraction (App.~\ref{app:negweight}); the detector-response-mismatch closure, a protocol implemented but not yet run (App.~\ref{app:response-mismatch}); and the survey of MINERvA measurement dimensionality (App.~\ref{app:landscape}).
+AFTER: The first gives methods and context for the body: statistical methods and the 2D comparison (App.~\ref{app:statmethods}) and those for the multidimensional results and inference (App.~\ref{app:statmethods-nd}); unbinned background subtraction (App.~\ref{app:negweight}); the protocol for a detector-response-mismatch closure, which rescales the reconstructed available energy of the pseudo-data while OmniFold keeps its nominal response (App.~\ref{app:response-mismatch}); and the survey of MINERvA measurement dimensionality (App.~\ref{app:landscape}).
+
+Q27. [app_guide.tex AG5]
+BEFORE: \paragraph{Labels used in the repository.} The body describes each object in words. Where a repository label is needed to find the object, it is given once in parentheses at first use, or here. \begin{center} \small \begin{tabular}{@{}p{0.27\textwidth}p{0.67\textwidth}@{}} \toprule Label & Meaning in this note \\ \midrule \texttt{lgbm}, \texttt{exact}, \texttt{hist} & the learner backends: LightGBM (the quoted central values and their uncertainty ensembles; also the joint-test estimator), the scikit-learn exact-split estimator (the exact-split cross-check), and the scikit-learn histogram estimator (\S\ref{sec:method-config}) \\ \texttt{purity}, \texttt{negweight}, \texttt{negweight-refined} & the values of the drivers' background-mode option (\texttt{-{}-bkg-mode}): purity-based subtraction, negative-weight injection, and refined negative-weight subtraction (\S\ref{sec:method-algo}, App.~\ref{app:negweight}) \\ \texttt{cv}, \texttt{mean} & the two variants of the five-axis covariance, with the unified-throw covariance centered on the central value or on the throw mean; this note uses \texttt{cv} (\S\ref{sec:eavailw-construction}) \\ \texttt{MNV101\_ACTIVE\_UNIVERSE} & the event-loop mode that re-applies the selection with one lateral universe active (``re-selected'' universes, \S\ref{sec:uq-higherdim}) \\ \texttt{np.cov(Xrep, rowvar=False, ddof=1)}, \texttt{np.random.\allowbreak default\_rng().\allowbreak poisson(1.0)}, \texttt{np.linalg.pinv}, \texttt{-{}-add-norm 0} & the calls behind Eq.~\eqref{eq:bootcov}, \S\ref{app:poisson} and \S\ref{sec:invert} (default cutoff), and the earlier MAT check's option without the normalization band (\S\ref{sec:minerva}) \\ July sweep, May sweep & the two productions of 2D systematic-universe re-unfolds; the quoted universe block uses the July sweep (\S\ref{sec:uq-2d-construction}) \\ J28 & the audit finding that the $N$-dimensional code divided every flux universe by the central-value flux; ``flux-corrected'' and ``(J28)'' products are those repaired for it (App.~\ref{app:negweight}) \\ \bottomrule \end{tabular} \end{center}
+AFTER: \paragraph{Labels used in the repository.} The body describes each object in words: the learner backends (\S\ref{sec:method-config}), the background-subtraction modes (\S\ref{sec:method-algo}, App.~\ref{app:negweight}), the two centerings of the five-axis covariance (\S\ref{sec:eavailw-construction}), the re-selected universes (\S\ref{sec:uq-higherdim}) and the two universe sweeps (\S\ref{sec:uq-2d-construction}). Where a repository label is needed to find the object, it is given once in parentheses at first use. Products described as flux-corrected are those repaired for an audit finding that the $N$-dimensional code divided every flux universe by the central-value flux (App.~\ref{app:negweight}). The calls behind Eq.~\eqref{eq:bootcov}, \S\ref{app:poisson} and \S\ref{sec:invert} (default cutoff) are \texttt{np.cov(Xrep, rowvar=False, ddof=1)}, \texttt{np.random.\allowbreak default\_rng().\allowbreak poisson(1.0)} and \texttt{np.linalg.pinv}; the earlier MAT check without the normalization band (\S\ref{sec:minerva}) used the option \texttt{-{}-add-norm 0}.
+
+Q28. [app_statmethods.tex AA66]
+BEFORE: It leaves to MAT, or does not state, the per-band covariance construction, any $\pm1\sigma$ pair formula and any band-independence or block-sum statement; the rank, condition number and regularization of $V$; and any bootstrap or coverage validation (it uses D'Agostini iterative unfolding).
+AFTER: The paper itself gives no per-band covariance construction, no $\pm1\sigma$ pair formula and no band-independence or block-sum statement; MAT's code supplies these (below). Nor does it state the rank, condition number and regularization of $V$, or any bootstrap or coverage validation (it uses D'Agostini iterative unfolding).
+
+Q29. [app_statmethods_nd.tex AB59]
+BEFORE: \subsection{Inference from unfolded events and selected projections} \label{sec:unbinned-inference} Unfolding correlates weighted events. Treating them as independent in a downstream likelihood can underestimate parameter uncertainties~\cite{Desai:2025correlated}; nominal weights do not specify uncertainty. Coherent unfolding replicas could propagate it through the fit. Resampling unfolded rows independently is not equivalent to resampling inputs and repeating the learned estimator. Classifier and permutation goodness-of-fit tests also require null calibration for their fitting and data reuse. These are requirements on such inference, with no new validation result here.
+AFTER: \subsection{Inference from unfolded events and selected projections} \label{sec:unbinned-inference} Unfolding correlates weighted events; a downstream likelihood treating them as independent can underestimate parameter uncertainties~\cite{Desai:2025correlated}. Nominal weights do not specify uncertainty. Coherent unfolding replicas could propagate it through the fit; resampling unfolded rows independently is not equivalent to resampling inputs and repeating the learned estimator. Classifier and permutation goodness-of-fit tests require null calibration for fitting and data reuse. No new validation result accompanies these requirements.
+
+Q30. [app_statmethods_nd.tex AB75]
+BEFORE: Assumption A2 is that, given the data, these are independent Bernoulli draws with a common probability $p$, the calibrated tail probability of the observed statistic; this requires the lost pseudo-experiments to be lost independently of their outcomes.
+AFTER: Assumption A2 is that, given the data, these are independent Bernoulli draws with common probability $p$, the calibrated tail probability of the observed statistic; this requires pseudo-experiments to be lost independently of their outcomes, which has not been shown (\S\ref{sec:joint5d-frozen}, with the design's data-informed elements).
+
+Q31. [app_response_mismatch.tex AD2]
+BEFORE: Kevin McFarland suggested this distinction and proposed stressing the hadronic record, especially for quasielastic events, to inspect low-$W$ bias (private communication). This appendix gives a validation protocol for such a test, not a result or an uncertainty component.
+AFTER: Stressing the hadronic record, especially for quasielastic events, probes low-$W$ bias.\footnote{We thank Kevin McFarland for suggesting this distinction and stress (private communication).} This appendix gives a validation protocol for such a test, not a result or an uncertainty component.
+
+Q32. [app_response_mismatch.tex AD16]
+BEFORE: \paragraph{Physically correlated follow-up.} The reconstruction-only arm is intentionally cheap and adversarial; it is not a detector model.
+AFTER: \paragraph{Physically correlated follow-up.} The reconstruction-only test is by design a computationally inexpensive adversarial stress test; it is not a detector model.
+
+Q33. [app_landscape.tex AE1]
+BEFORE: Recent additions follow; the inventory is not exhaustive through 2026. {\small \begin{longtable}{@{}clcl@{}} \caption{MINERvA differential cross-section survey used for the landscape figure, with the dimensionality (Dim.) defined in the text.
+AFTER: The survey is nonexhaustive through 2026; recent additions follow. {\small \begin{longtable}{@{}clcl@{}} \caption{MINERvA differential cross-section survey used for the landscape figure, with the dimensionality (Dim.) defined in the text.
+
+Q34. [app_pet_pointer.tex AF1]
+BEFORE: That work is in progress and is documented separately (\texttt{docs/analysis-note/pet\_note.tex}, \repolink).
+AFTER: That work, in progress, is documented separately.
+
+Q35. [app_release.tex RL21]
+BEFORE: An earlier version of the package, RC1, was replayed from an empty directory by a separate AI agent session (Opus~5.5) that had no access to the repository and used only the package and its README; its verifier passed.
+AFTER: An earlier release candidate, RC1, passed its packaged verifier when replayed from an empty directory in a separate AI-agent session (Opus~5.5) using only the package and its README, without repository access.
+
+Q36. [app_release.tex RL27]
+BEFORE: A $\checkmark$ marks identities or values already fixed (bin edges: \S\ref{app:release-edges}; checksums: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging.
+AFTER: Items labelled (fixed) have identities or values already fixed (bin edges: \S\ref{app:release-edges}; checksums: Ref.~\cite{NoteRecords2026}, identities already fixed); the rest are packaging.
+
+Q37. [app_release.tex RL29]
+BEFORE: \begin{enumerate}[itemsep=2pt] \item \textbf{Reporting bin edges and units, per axis} $\checkmark$: $\pT$ and $\pPar$ in \si{GeV/c}, $\Eavail$, $q_{3}$ and $W$ in \si{GeV}, with each wide terminal catch bin identified. \item \textbf{The flattened-cell ordering} $\checkmark$: the dense $14\times16\times7\times7\times6$ grid in C order, with the reported subset supplied as an explicit index array, never inferred from a positivity cut.
+AFTER: \begin{enumerate}[itemsep=2pt] \item \textbf{Reporting bin edges and units, per axis} (fixed): $\pT$ and $\pPar$ in \si{GeV/c}, $\Eavail$, $q_{3}$ and $W$ in \si{GeV}, with each wide terminal catch bin identified. \item \textbf{The flattened-cell ordering} (fixed): the dense $14\times16\times7\times7\times6$ grid in C order, with the reported subset supplied as an explicit index array, never inferred from a positivity cut.
+
+Q38. [app_release.tex RL32]
+BEFORE: \item \textbf{Covariances} $\checkmark$: the five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the declared centering variant, and the band partition. \item \textbf{Masks} $\checkmark$: the support mask, the pinned mask (bins where the inflation denominator vanished and $g$ was declared $1$), and the unreported-cell mask. \item \textbf{Projection matrices} $\checkmark$: $M$ itself, with its content checksum, its shape, and the explicit statement that its entries are the dropped axes' bin-width products, which is needed to specify the destination units.
+AFTER: \item \textbf{Covariances} (fixed): the five-axis covariance of the configuration-(a) central value and its $(\Eavail,W)$ projection, with the algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the declared centering variant, and the band partition. \item \textbf{Masks} (fixed): the support mask, the pinned mask (bins where the inflation denominator vanished and $g$ was declared $1$), and the unreported-cell mask. \item \textbf{Projection matrices} (fixed): $M$ itself, with its content checksum, its shape, and the explicit statement that its entries are the dropped axes' bin-width products, which is needed to specify the destination units.
+
+Q39. [app_release.tex RL58]
+BEFORE: Do not check the sign of $\lambda_{\min}$, which sits at the noise floor and carries no information; a second host reproduces $\lambda_{\min}$ to only five significant digits.
+AFTER: The smallest eigenvalue $\lambda_{\min}$ lies at the numerical noise floor, so its sign carries no information and should not be checked; two hosts agree on $\lambda_{\min}$ to only five significant digits.
+
+Q40. [app_codebase.tex AH22]
+BEFORE: The integrals are ordered as the $(\Eavail,W)$ projection (cells 0--41 and their sum), the \jtNcells{} coarse joint cells (labelled by their index in the $3^{5}$ grid), and the total.} \label{fig:coverage-5d-paper} \end{figure}
+AFTER: The integrals are ordered as the $(\Eavail,W)$ projection (cells 0--41 and their sum), the \jtNcells{} coarse joint cells (labelled by their index in the $3^{5}$ grid), and the total.} \label{fig:coverage-5d-paper} \end{figure} \clearpage

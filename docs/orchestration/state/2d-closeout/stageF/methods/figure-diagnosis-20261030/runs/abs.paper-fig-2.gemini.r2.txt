@@ -1,0 +1,18 @@
+D1: 4 | -
+D2: 3 | large unused whitespace in panel (a) and inconsistent vertical axis scales between panels (a) and (b)
+D3: 3 | identical luminance of blue and red markers in greyscale (img2) makes overlapping points indistinguishable
+D4: 3 | panel (b) x-axis uses unphysical grid indices with irregular ticks, and panel (a) top axis lacks quantity and unit labels
+D5: 3 | overlapping markers in panel (b) lack horizontal dodging and differing vertical scales distort comparison between panels
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: Unbinned negative-weight refinement achieves superior closure residuals near zero across all kinematic cells, avoiding the persistent ~ -4% underclosure bias observed with purity-based background subtraction at high W.
+CHANGES:
+1. Markers in greyscale: Use open/unfilled circles for purity-based subtraction and filled squares for unbinned negative-weight refinement (or distinct luminance levels) so overlapping series are distinguishable in black and white.
+2. Data points in panel (b): Apply horizontal dodging (offset) between the circle and square markers at each cell index so points and error bars do not obscure each other.
+3. Panel (b) x-axis: Replace or augment the unphysical 3^5 grid indices with physical kinematic labels or grouped region indicators, and use regularized tick intervals.
+4. Panel (a) top axis: Place an explicit axis label "E_avail (GeV)" along the top axis instead of relying on the descriptive text below the bottom axis.
+5. Vertical axis scales: Standardize the y-axis limits and tick spacing between panels (a) and (b) to allow direct visual comparison of closure residuals across projection and joint cells.
+6. Panel (a) whitespace: Address the large empty region between 0% and -3.5% in panel (a), for example by using an axis break or inset for the W bin 6 outliers, to better resolve the distribution near zero.
+7. Legend labels: Change "(9 experiments)" and "(60 experiments)" in the panel (a) legend to "(9 pseudo-experiments)" and "(60 pseudo-experiments)" to match the caption terminology.
+8. Total cross-section display: Separate the "total" cross section in panel (b) into an isolated subpanel or distinct break rather than appending an integrated scalar onto the differential cell-index axis.
+END

@@ -1,0 +1,16 @@
+D1: 4 | row spacing and density across 16 unbroken rows
+D2: 2 | columns f, C_total, C_resp, and C_total + C_resp (left-aligned numbers instead of decimal alignment) and lack of row grouping
+D4: 2 | column headers (missing physical units across all columns and covariance labels used instead of relative uncertainty)
+D6: 3 | caption (contains document cross-reference §10.2, offloads units from headers, and leaves median row unexplained)
+D7: 3 | table body and headers (missing units and unaligned decimals require decoding caption to interpret values)
+TAKEAWAY: Across the 16 kinematic cells, cross sections range from ~3 to 50 $\times 10^{-40}\text{ cm}^2/\text{nucleon}$, with total relative uncertainties of ~4–14% (median 7.3%) predominantly driven by $C_{\text{total}}$ while detector response uncertainty contributes modestly (median 2.1%).
+CHANGES:
+1. Column headers: Add physical units to all kinematic and cross-section columns ($p_T, p_\parallel, q_3$ in $\text{GeV}/c$; $E_{\text{avail}}, W$ in $\text{GeV}$; $f$ in $10^{-40}\text{ cm}^2/\text{nucleon}$).
+2. Column headers: Relabel $C_{\text{total}}$, $C_{\text{resp}}$, and $C_{\text{total}} + C_{\text{resp}}$ to indicate relative uncertainty $\sigma$ (%) or place them under a spanner header "Relative uncertainty (%)".
+3. Column alignment: Align numeric columns ($f$, $C_{\text{total}}$, $C_{\text{resp}}$, and $C_{\text{total}} + C_{\text{resp}}$) on the decimal point.
+4. Row grouping: Insert small vertical spacing (e.g., `\addlinespace`) every four rows to visually group the cells by $(p_T, p_\parallel)$ bins.
+5. Column grouping: Add a spanning header over the first five coordinate columns labeled "Kinematic cell boundaries" to separate phase-space definitions from results.
+6. Caption: Remove the section reference "(§10.2)" and briefly define $C_{\text{total}}$ and $C_{\text{resp}}$ so the table is fully self-contained.
+7. Median row: Document the "median" row in the caption, and either report the median cross section $f$ or explain why only uncertainty medians are listed.
+8. Kinematic ranges: Standardize decimal formatting in range bounds (e.g., "0.0–0.8" instead of "0–0.8").
+END

@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 4 | Panels lack identifiers for convenient reference.
+D3: 3 | RES and Soft DIS become similar solid grey curves; MnvGENIE v1 and RES have similar hues in the deuteranopia simulation.
+D4: 5 | -
+D5: 4 | Overlapping component curves are difficult to trace near their crossings.
+D6: 5 | -
+D7: 4 | Identifying individual components requires repeated consultation of the legend.
+TAKEAWAY: MnvGENIE v1 broadly follows both measured distributions but falls below several data points around the peaks, while the component contributions vary with momentum.
+CHANGES:
+1. Give RES, True DIS, Soft DIS and Other CC distinct line styles, preserving the dashed QE+2p2h curve and a heavier solid total prediction.
+2. Add panel identifiers (a) and (b) and identify their respective momentum distributions in the caption.
+END

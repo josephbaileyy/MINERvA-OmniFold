@@ -202,7 +202,10 @@ def main():
                          "not double-counted against the paper's stat block. "
                          "Stat-only and PAPER (full cov) chi^2 lines are "
                          "unaffected; only the combined number changes.")
+    import restyle_2026_10 as rs
+    rs.add_option(ap)
     args = ap.parse_args()
+    restyled = rs.on(args)
     global OURS, OUT_PREFIX
     OURS = args.ours
     OUT_PREFIX = args.out_prefix
@@ -280,21 +283,25 @@ def main():
             ptb, pzb = gid // N_PZ, gid % N_PZ
             pull_map[ptb, pzb] = pull[gid]
 
-    # Summary plot
+    # Summary plot. restyle (--style restyle-2026-10): the same 12 x 5 in canvas (make_figures.sh asserts its 864 x 360 pt
+    # page before cropping it), printed at 0.7 textwidth = 4.55 in, so text is set at 14.5 pt to print at about 5 pt;
+    # labels in math, and "pull" reads "standardized difference" (the caption: "descriptive, not a pull").
+    if restyled:
+        rs.apply(14.5)
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))
 
     im0 = axs[0].imshow(pull_map.T, aspect="auto", origin="lower",
                         cmap="RdBu_r", vmin=-5, vmax=5,
                         extent=[0, N_PT, 0, N_PZ])
-    axs[0].set_xlabel("p_T bin")
-    axs[0].set_ylabel("p_|| bin")
+    axs[0].set_xlabel("p_T bin" if not restyled else f"{rs.PT} bin")
+    axs[0].set_ylabel("p_|| bin" if not restyled else f"{rs.PZ} bin")
     axs[0].set_title("Per-bin pull (ours - paper) / sigma_total")
-    plt.colorbar(im0, ax=axs[0], label="pull")
+    plt.colorbar(im0, ax=axs[0], label="pull" if not restyled else "Standardized difference")
 
     axs[1].hist(pull[mask], bins=30, color="steelblue", edgecolor="black")
     axs[1].axvline(0, color="k", ls="--", lw=0.8)
-    axs[1].set_xlabel("pull")
-    axs[1].set_ylabel("bins")
+    axs[1].set_xlabel("pull" if not restyled else "Standardized difference")
+    axs[1].set_ylabel("bins" if not restyled else "Bins")
     axs[1].set_title(f"Pull distribution ({int(mask.sum())} reported bins)")
     mu, sd = pull[mask].mean(), pull[mask].std()
     headline = (
@@ -304,12 +311,14 @@ def main():
            if chi2_combined is not None else "")
     )
     axs[1].text(0.03, 0.95, headline,
-                transform=axs[1].transAxes, va="top", family="monospace",
+                transform=axs[1].transAxes, va="top", family="monospace" if not restyled else None,
                 bbox=dict(facecolor="white", alpha=0.85, edgecolor="gray"))
 
     fig.suptitle("Full-stats 2D OmniFold vs arXiv:2106.16210 Fig. 13", fontsize=11)
     fig.tight_layout()
     technote_style.minerva_tag(fig)
+    if restyled:
+        rs.size_tag(fig, 14.5)
     out = f"{OUT_PREFIX}_pull_full.png"
     fig.savefig(out, dpi=130)
     print(f"\nwrote {out}")

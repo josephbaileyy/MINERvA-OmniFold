@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. In Sec. B.4, Document A maintains a formal, authoritative publication register ("No new validation result accompanies these requirements"), whereas Document B lapses into awkward and colloquial phrasing ("These are requirements on such inference, with no new validation result here").
+2. In Sec. B.5, Document A demonstrates greater grammatical and temporal precision by employing the perfect infinitive ("to have been lost") for completed simulation runs rather than Document B's temporally mismatched and repetitive phrasing ("to be lost").
+3. Across the differing passages, Document A achieves superior syntactic cohesion and cadence by cleanly balancing complex technical clauses, whereas Document B relies on disjointed transitions and weak demonstrative sentence openings.

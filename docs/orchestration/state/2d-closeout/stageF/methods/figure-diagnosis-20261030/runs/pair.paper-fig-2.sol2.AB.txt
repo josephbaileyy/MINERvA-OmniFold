@@ -1,0 +1,10 @@
+D1: A | Larger lettering and markers remain easier to read at printed size.
+D2: B | Regular small multiples organize the kinematic slices cleanly with consistent vertical scales.
+D3: A | Blue circles and red squares provide stronger contrast and redundant identification by shape.
+D4: B | Physical momentum axes with units and explicit angular ranges are easier to interpret than cell indices.
+D5: B | Unity baselines and prior curves support direct comparison across all slices.
+D6: A | The legend and caption identify both methods and define the error bars; B leaves the shaded band unexplained.
+D7: A | The difference between the two methods is apparent quickly, especially the large residual excursions.
+OVERALL: A
+GAP: 1. Enlarge B’s panel lettering and markers. 2. Give the two unfolding methods distinct marker shapes. 3. Explicitly identify the purple curve and grey band and define what the band represents.
+END

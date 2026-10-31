@@ -1,0 +1,25 @@
+(Each pair is one passage of a physics paper, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [paper_body.tex PB17]
+BEFORE: The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.
+AFTER: The findings apply to the OmniFold implementation, data set, observables, configurations, and deformations tested here, not to multidimensional OmniFold in general.
+
+Q2. [paper_body.tex PB21]
+BEFORE: The companion analysis note~\cite{AnalysisNote2026} gives the full validation record, the construction of the uncertainties, and the tests with their assumptions, and it is cited below by section.
+AFTER: The companion analysis note~\cite{AnalysisNote2026}, cited below by section, gives the full validation record, the construction of the uncertainties, and the tests with their assumptions.
+
+Q3. [paper_body.tex PB79]
+BEFORE: The two-observable central value uses LightGBM at seed~42~\cite{Ke:2017lightgbm} with negative-weight background subtraction and a refinement of 400 trees and 31 leaves.
+AFTER: The two-observable central value uses LightGBM~\cite{Ke:2017lightgbm} with negative-weight background subtraction, a refinement of 400 trees and 31 leaves, and seed~42.
+
+Q4. [paper_body.tex PB90]
+BEFORE: The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development.
+AFTER: The joint-test estimator uses five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development; the proxy is the median ratio of the absolute fractional residual to the fractional truth departure, for departures above \SI{1}{\percent}.
+
+Q5. [paper_body.tex PB99]
+BEFORE: With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets this target.
+AFTER: With the envelope added, every reporting definition of a five-observable measurement tested in the study has a median half-width above this target.
+
+Q6. [paper_body.tex PB156]
+BEFORE: Because the block is built from the observed differences among the periods, its size is not validated and its own consistency check cannot fail.
+AFTER: Because it is built from the observed differences among the periods, its size is not validated, and a consistency check that reuses those differences cannot fail.

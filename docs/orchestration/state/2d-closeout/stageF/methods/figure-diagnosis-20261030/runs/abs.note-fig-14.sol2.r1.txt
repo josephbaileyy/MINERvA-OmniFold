@@ -1,0 +1,14 @@
+D1: 3 | Tick labels, axis labels and colour-bar text are small at the stated printed size.
+D2: 4 | Panel identities appear only in the caption.
+D3: 3 | Both ends of the diverging colour scale become dark in greyscale, obscuring whether ratios exceed or fall below unity.
+D4: 4 | Literal underscore notation in the axis labels reduces typographic clarity.
+D5: 5 | -
+D6: 5 | -
+D7: 4 | Identifying the panels and interpreting departures from unity requires consulting the caption and colour bars.
+TAKEAWAY: Both maps show broadly similar departures from the tune, with ratios above unity across much of the grid and below unity mainly at the lowest transverse-momentum bins.
+CHANGES:
+1. Enlarge axis labels, tick labels and colour-bar text for the final printed size.
+2. Label the panels “(a) Our result” and “(b) Published data”.
+3. Add a clearly identified ratio = 1 contour to both maps so the direction of departures remains readable in greyscale.
+4. Typeset axis quantities as mathematical symbols with proper subscripts, retaining “bin” to identify the coordinates as bin indices.
+END

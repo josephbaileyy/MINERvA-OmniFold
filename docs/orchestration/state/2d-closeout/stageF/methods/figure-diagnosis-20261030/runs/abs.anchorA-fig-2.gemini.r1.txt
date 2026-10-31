@@ -1,0 +1,17 @@
+D1: 4 | -
+D2: 3 | panel labels (a) and (b) missing
+D3: 2 | red and green vectors (-p_T^l and p_T^p)
+D4: 5 | -
+D5: 5 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: The figure illustrates the geometric definition of the three single transverse kinematic variables ($\delta p_T$, $\delta\phi_T$, $\delta\alpha_T$) measuring the transverse momentum imbalance between the final-state lepton and proton in quasi-elastic neutrino interactions.
+CHANGES:
+1. Replace the red and green colours for $\vec{p}_T^{\,p}$ and $-\vec{p}_T^{\,\ell}$ with a colour-blind friendly palette (e.g. orange and dark blue) that maintains distinct contrast in greyscale.
+2. Add panel labels (a) and (b) to the 3D projection and transverse plane panels, and update the caption to reference them directly.
+3. Increase the line weight of $-\vec{p}_T^{\,\ell} = \vec{q}_T$ and $\vec{p}_T^{\,p}$ in the transverse plane to match the line weight of $\delta p_T$.
+4. Darken and slightly thicken the faint dashed projection lines connecting the 3D interaction plane to the 2D transverse plane panel.
+5. Remove the confusing green dotted line and $\vec{p}^{\,\nu}$ label at the upper-left of the transverse plane panel, as the beam axis is already indicated by the circled dot at the vertex and the coordinate frame.
+6. Increase the font size of subscripts ($T$, $\ell$, $p$) in momentum and variable annotations for better readability at single-column width.
+7. Remove the grey background shading and double border from the transverse plane panel for a clean, uniform presentation.
+END

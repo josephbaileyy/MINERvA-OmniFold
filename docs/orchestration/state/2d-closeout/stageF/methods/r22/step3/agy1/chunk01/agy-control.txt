@@ -1,0 +1,121 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER introduces new, unsupported claims that "The comparison is descriptive; the covariance lacks independent validation, validated coverage and calibrated significance (\S\ref{sec:uq-2d-scope})".
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific cause of the loss ("to time limits") and the fact that "every submitted draw has been observed".
+
+Q3: VERDICT: SAME
+DETAIL: The two independent clauses are merely inverted in order across the semicolon with identical meaning and scope.
+
+Q4: VERDICT: SAME
+DETAIL: AFTER reorganizes the sentence into an active construction while preserving all numbers, conditions, and causal inferences.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating "Its seed was fixed" instead of "not fixed", and drops the explanations that "the driver version it ran had no seed option, and its production job script passed no seed".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds a specific numerical value, "\SI{0.18}{\percent}", that is not present in BEFORE.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops the qualification and limitation that "This \emph{observed} covariance difference does not demonstrate a causal efficiency advantage (App.~\ref{sec:rank})".
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops the maximum per-bin increase, the integral increase, the projection increase, and the variance shares (such as "(at most \SI{39.1}{\percent})", "\SI{9.9}{\percent}", "\SI{21}{\percent}", "\SI{10.6}{\percent}", and "\SI{17.1}{\percent}"), replacing them with a reference to "(Table~\ref{tab:pl-added})".
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds an entire table (`\label{tab:pl-added}`) containing numerical data that was not present in BEFORE, apparently moved from the preceding passage.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER contradicts BEFORE by asserting that "The quoted statistical block has been tested for coverage", whereas BEFORE explicitly states it "has not been tested".
+
+Q11: VERDICT: SAME
+DETAIL: AFTER adopts formal register ("unmatched-event treatment" for "miss treatment") and integrates the diagnostic clause into the caption without changing the technical meaning or scope.
+
+Q12: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific histogram names "(\texttt{hXSec2D}, \texttt{hXSec\_pt}, \texttt{hXSec\_pz})".
+
+Q13: VERDICT: SAME
+DETAIL: The sentence is split into two passive-voice sentences while fully preserving all facts, cross-references, and qualifications.
+
+Q14: VERDICT: SAME
+DETAIL: AFTER removes the first-person phrasing while preserving the exact epistemic status of the hypothesis and the limitation of the public release.
+
+Q15: VERDICT: DIFFERS
+DETAIL: AFTER drops the descriptive detail that "; the panels have no printed titles."
+
+Q16: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific storage location, "The event-loop output files", stating only that the diagnostics are retained.
+
+Q17: VERDICT: SAME
+DETAIL: The causal order of the clauses is inverted while preserving all computational conditions ("full-sample binning", "deterministic training") and the resulting zero block.
+
+Q18: VERDICT: DIFFERS
+DETAIL: AFTER introduces the unsupported modifier "Gaussian" in "Gaussian references", which is not specified in BEFORE.
+
+Q19: VERDICT: SAME
+DETAIL: The rewording reorganizes the clauses while preserving the limitations on the Poisson pseudo-experiments, the unvaried detector response, and the bias-versus-coverage distinction.
+
+Q20: VERDICT: SAME
+DETAIL: The five numerical values and model comparisons stated in the trailing text of BEFORE are cleanly tabulated into a fourth column in AFTER without loss or alteration of information.
+
+Q21: VERDICT: SAME
+DETAIL: AFTER is a direct stylistic rephrasing that preserves the exact scope of the result and the absence of a quoted covariance.
+
+Q22: VERDICT: SAME
+DETAIL: AFTER clarifies the terminology ("(bin, pseudo-experiment) pairs" for "bin--toy cells") while preserving all numbers, conditions, and the containment diagnostic conclusion.
+
+Q23: VERDICT: DIFFERS
+DETAIL: AFTER drops the explanatory rationale for the presentation: "--- hence the two color schemes."
+
+Q24: VERDICT: DIFFERS
+DETAIL: AFTER drops the production identifier date, "(the battery of 2026-06-10)".
+
+Q25: VERDICT: SAME
+DETAIL: The sentence structure and punctuation are slightly revised while preserving all statements regarding the local release candidate and the document build.
+
+Q26: VERDICT: DIFFERS
+DETAIL: AFTER adds substantive methodological details ("which rescales the reconstructed available energy of the pseudo-data while OmniFold keeps its nominal response") and drops the limitation that the protocol is "implemented but not yet run".
+
+Q27: VERDICT: DIFFERS
+DETAIL: AFTER removes the reference table and drops multiple explicit repository labels and option names, including "\texttt{lgbm}", "\texttt{exact}", "\texttt{hist}", "\texttt{purity}", "\texttt{negweight}", "\texttt{cv}", "\texttt{MNV101\_ACTIVE\_UNIVERSE}", and "J28".
+
+Q28: VERDICT: DIFFERS
+DETAIL: AFTER asserts definitively that "MAT's code supplies these (below)", whereas BEFORE stated more cautiously that it "leaves to MAT, or does not state" them.
+
+Q29: VERDICT: SAME
+DETAIL: The passage undergoes minor punctuation and register polishing while preserving all technical requirements, inferences, and citations.
+
+Q30: VERDICT: DIFFERS
+DETAIL: AFTER adds a new qualification and section citation that "which has not been shown (\S\ref{sec:joint5d-frozen}, with the design's data-informed elements)".
+
+Q31: VERDICT: DIFFERS
+DETAIL: AFTER asserts as an established fact that the procedure "probes low-$W$ bias", whereas BEFORE stated only that Kevin McFarland "proposed" it to "inspect" the bias.
+
+Q32: VERDICT: SAME
+DETAIL: AFTER elevates the register ("by design a computationally inexpensive adversarial stress test" for "intentionally cheap and adversarial") without altering the meaning.
+
+Q33: VERDICT: SAME
+DETAIL: The two clauses are inverted in order with identical meaning and scope.
+
+Q34: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific file path and repository link: "(\texttt{docs/analysis-note/pet\_note.tex}, \repolink)".
+
+Q35: VERDICT: SAME
+DETAIL: The sentence is cast into active voice while preserving all verification details, version identifiers, and sandbox conditions.
+
+Q36: VERDICT: SAME
+DETAIL: The label definition is updated from the symbol $\checkmark$ to the text "(fixed)" with identical explanatory meaning and references.
+
+Q37: VERDICT: SAME
+DETAIL: The checkmark symbol $\checkmark$ is replaced by the label "(fixed)", leaving all units, axes, and grid ordering specifications unchanged.
+
+Q38: VERDICT: SAME
+DETAIL: The checkmark symbol $\checkmark$ is replaced by "(fixed)", retaining all mathematical descriptions, mask definitions, and projection matrix properties.
+
+Q39: VERDICT: DIFFERS
+DETAIL: AFTER directly contradicts BEFORE by stating "so its sign carries information" instead of "carries no information".
+
+Q40: VERDICT: SAME
+DETAIL: The text, ordering, and caption remain identical; AFTER merely appends the LaTeX layout command `\clearpage`.
+
+END

@@ -1,0 +1,10 @@
+D1: A | Larger axis labels, ticks and colour-bar numerals are easier to read at printed size.
+D2: A | The four-panel arrangement is less crowded and better connected spatially to its caption.
+D3: A | A shared diverging colour scale supports direct comparison across panels; B uses differing ranges.
+D4: A | Properly typeset observable symbols identify panels more clearly than B’s plain-text axis notation.
+D5: EQUAL | Neither item displays an explicit reference or prediction comparison.
+D6: B | The caption gives a specific visual takeaway, although individual modes remain unidentified.
+D7: A | Panel identities and correlation patterns are apparent immediately; B requires more decoding.
+OVERALL: A
+GAP: 1. Enlarge B’s axis labels and tick numerals. 2. Typeset momentum symbols and subscripts properly. 3. Label each panel with its mode rank and eigenvalue. 4. Explain colour normalization and differing ranges, using a shared scale where appropriate. 5. Identify the white masked region. 6. Reduce the gap between panels and caption.
+END
