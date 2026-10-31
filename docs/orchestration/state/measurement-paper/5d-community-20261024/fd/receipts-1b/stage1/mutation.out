@@ -1,0 +1,175 @@
+# 1B stage 1 mutation receipt, run on the working tree (uncommitted); the files tested:
+2026-10-30T23:42:24Z
+python 3.12.2 numpy 1.26.4
+base c5460a351b2b2b385e426c14dc35822d1c54beaf
+d55c9eee020555fbf8a5e9dcba11b62452a7720630367b6583add1ddfb7de812  nd-unfolding/fd_1b_toys.py
+507fb2ac44b2ffb7f631a5f5615b73f11e69b1c33944110aa6f5305a466d5c49  nd-unfolding/fd_1b_score.py
+9f52870fa4fc0c959fb09f0443d092416a4132eb81c05b3a038da53129a389ed  nd-unfolding/fd_1b_tasks.py
+0d1ab9c30a2248f294c98bf899566df46778f5a3b1c69fa17b237060b695c464  nd-unfolding/tests/test_fd_1b.py
+5ded3127fd1a72c0ae1de721efb5afd9a41f7bef181dc92ff2f364134604dd32  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/mutation_fd_1b.py
+CONTROL  rc=0  54 passed in 15.21s
+M01  KILLED   fd_1b_toys.py    flux drawn uniformly, not with probability w_u / sum w
+     1 failed, 53 passed in 12.55s
+     dies: Universes::test_the_flux_probabilities_are_the_constraint_weights_over_their_sum
+M02  KILLED   fd_1b_toys.py    Rvp1pi kept as a drawn band
+     5 failed, 49 passed in 13.69s
+     dies: F1cReproduction::test_every_draw_off_reproduces_f1cs_experiment_and_product
+     dies: Factors::test_factors_are_s5p_nullexps_for_a_full_draw
+     dies: ToyRuns::test_a_control_toy_records_the_declared_estimator_draw_and_streams
+     dies: ToyRuns::test_a_derivation_run_is_noise_free_with_one_universe
+     dies: Universes::test_interaction_groups_drop_rvp1pi_and_are_s1s_set
+M03  KILLED   fd_1b_toys.py    detector bands always at endpoint 0
+     2 failed, 52 passed in 14.36s
+     dies: Draws::test_independent_band_draws_add_to_the_sum_of_s1s_blocks
+     dies: Draws::test_the_toys_draw_records_have_the_declared_frequencies
+M04  KILLED   fd_1b_toys.py    lateral sign always +1
+     1 failed, 53 passed in 13.50s
+     dies: Draws::test_the_toys_draw_records_have_the_declared_frequencies
+M05  KILLED   fd_1b_toys.py    interaction universe applied without the truth-preserving g_f
+     2 failed, 52 passed in 13.67s
+     dies: Factors::test_factors_are_s5p_nullexps_for_a_full_draw
+     dies: Factors::test_the_interaction_factor_keeps_the_source_truth_in_every_fine_cell
+M06  KILLED   fd_1b_toys.py    a detector band may come from somewhere other than the dump
+     1 failed, 53 passed in 11.81s
+     dies: Factors::test_a_detector_band_comes_from_the_dump_only
+M07  KILLED   fd_1b_toys.py    the streams also resample the pseudo-data (data statistics counted twice)
+     1 failed, 53 passed in 13.39s
+     dies: Experiments::test_the_streams_are_set_as_and_leave_the_observed_counts
+M08  KILLED   fd_1b_toys.py    the derivation runs are not noise-free
+     2 failed, 52 passed in 13.71s
+     dies: Experiments::test_the_expectation_is_the_mean_and_the_truth_is_all_of_the_mc
+     dies: ToyRuns::test_a_derivation_run_is_noise_free_with_one_universe
+M09  KILLED   fd_1b_toys.py    the truth moves with the draw
+     4 failed, 50 passed in 14.48s
+     dies: Experiments::test_the_expectation_is_the_mean_and_the_truth_is_all_of_the_mc
+     dies: Experiments::test_the_truth_does_not_move_with_the_draw
+     dies: ToyRuns::test_a_control_toy_records_the_declared_estimator_draw_and_streams
+     dies: ToyRuns::test_a_derivation_run_is_noise_free_with_one_universe
+M10  KILLED   fd_1b_toys.py    the full-MC truth taken over half of the MC
+     1 failed, 53 passed in 15.71s
+     dies: Experiments::test_the_expectation_is_the_mean_and_the_truth_is_all_of_the_mc
+M11  KILLED   fd_1b_toys.py    seeds outside the arm's declared range accepted
+     1 failed, 53 passed in 15.98s
+     dies: ToyRuns::test_runs_refuse_what_the_declaration_does_not_allow
+M12  KILLED   fd_1b_toys.py    draws switched off outside the reproduction arms
+     1 failed, 53 passed in 14.83s
+     dies: ToyRuns::test_runs_refuse_what_the_declaration_does_not_allow
+M13  KILLED   fd_1b_toys.py    a pinned weight file changed after pinning is accepted
+     1 failed, 53 passed in 15.26s
+     dies: Universes::test_pins_pass_the_recorded_files_and_refuse_a_wrong_or_changed_one
+M14  KILLED   fd_1b_toys.py    a truth ratio without the committed F1 digest is accepted
+     1 failed, 53 passed in 14.74s
+     dies: Universes::test_the_truth_ratio_must_carry_the_committed_digest
+M15  KILLED   fd_1b_toys.py    half mode applies the draw to the unfolding half too
+     1 failed, 53 passed in 15.02s
+     dies: Experiments::test_half_mode_applies_the_draw_to_the_source_halves_only
+M16  KILLED   fd_1b_toys.py    the estimator seed is not production's 42
+     4 failed, 50 passed in 13.68s
+     dies: Constants::test_the_matrices_and_estimator_are_the_declared_ones
+     dies: F1cReproduction::test_every_draw_off_reproduces_f1cs_experiment_and_product
+     dies: ToyRuns::test_a_control_toy_records_the_declared_estimator_draw_and_streams
+     dies: ToyRuns::test_a_derivation_run_is_noise_free_with_one_universe
+M17  KILLED   fd_1b_toys.py    production toys without set A's MC and template streams
+     1 failed, 53 passed in 10.43s
+     dies: ToyRuns::test_a_control_toy_records_the_declared_estimator_draw_and_streams
+M18  KILLED   fd_1b_toys.py    inputs with the wrong digest accepted
+     1 failed, 53 passed in 11.18s
+     dies: ToyRuns::test_runs_refuse_what_the_declaration_does_not_allow
+S01  KILLED   fd_1b_score.py   the bootstrap generator seed is VL169's, not this study's
+     1 failed, 53 passed in 12.32s
+     dies: Constants::test_windows_ses_flags_and_seeds_are_the_declarations_numbers
+S02  KILLED   fd_1b_score.py   the one-sided rule reads the interval's lower bound
+     2 failed, 52 passed in 10.16s
+     dies: Coverage::test_a_test_arm_is_one_sided
+     dies: Coverage::test_a_test_arms_interim_look_stops_only_on_a_fail
+S03  KILLED   fd_1b_score.py   a PASS stands when the positive control fails
+     1 failed, 53 passed in 10.25s
+     dies: Coverage::test_a_pass_is_void_when_the_positive_control_fails
+S04  KILLED   fd_1b_score.py   the lateral surrogate is not carried to the truth
+     1 failed, 53 passed in 10.19s
+     dies: Coverage::test_the_surrogates_are_carried_to_the_truth
+S05  KILLED   fd_1b_score.py   M_d includes the undrawn seed block
+     2 failed, 52 passed in 10.56s
+     dies: Coverage::test_the_drawn_matrix_leaves_out_the_seed_block
+     dies: GateD::test_toys_that_carry_s1s_blocks_pass_exactly
+S06  KILLED   fd_1b_score.py   a toy whose draw departs from its seed's declared draw is scored
+     1 failed, 53 passed in 13.82s
+     dies: ReadBack::test_a_departing_draw_a_departing_truth_or_a_wrong_arm_is_invalid
+S07  KILLED   fd_1b_score.py   toys with differing truths are scored together
+     1 failed, 53 passed in 11.32s
+     dies: ReadBack::test_a_departing_draw_a_departing_truth_or_a_wrong_arm_is_invalid
+S08  KILLED   fd_1b_score.py   cells flagged at the 95 % Wilson bound, not 99.5 %
+     2 failed, 52 passed in 12.91s
+     dies: Constants::test_windows_ses_flags_and_seeds_are_the_declarations_numbers
+     dies: Coverage::test_wilson_flags_at_the_declared_counts
+S09  KILLED   fd_1b_score.py   the mean-subtracted chi-square without N / (N - 1)
+     1 failed, 53 passed in 12.40s
+     dies: Coverage::test_4a_at_a_test_arm_grades_about_the_toy_mean
+S10  KILLED   fd_1b_score.py   4A with a ridge, so a singular matrix is not refused
+     3 failed, 51 passed in 18.15s
+     dies: Coverage::test_4a_at_a_test_arm_grades_about_the_toy_mean
+     dies: Coverage::test_4a_passes_a_matched_matrix_fails_a_small_one_and_refuses_a_singular_one
+     dies: ReadBack::test_a_4a_refusal_leaves_the_coverage_verdict_standing
+S11  KILLED   fd_1b_score.py   gate D's window wider than the control's
+     1 failed, 53 passed in 21.19s
+     dies: GateD::test_a_prior_part_s1_holds_and_the_toys_lack_is_a_stop
+S12  KILLED   fd_1b_score.py   gate D's flux block without the constraint weights
+     1 failed, 53 passed in 21.08s
+     dies: GateD::test_toys_that_carry_s1s_blocks_pass_exactly
+S13  KILLED   fd_1b_score.py   the interim look at 95 %, not 99.5 %
+     2 failed, 52 passed in 21.61s
+     dies: Constants::test_windows_ses_flags_and_seeds_are_the_declarations_numbers
+     dies: Coverage::test_the_interim_look_stops_only_on_a_fail
+S14  KILLED   fd_1b_score.py   a test arm's PASS stands when its x0.7 control does not fail
+     1 failed, 53 passed in 21.21s
+     dies: Coverage::test_a_test_arm_is_one_sided
+S15  KILLED   fd_1b_score.py   the interim look returns a final verdict
+     2 failed, 52 passed in 20.63s
+     dies: Coverage::test_the_interim_look_stops_only_on_a_fail
+     dies: ReadBack::test_the_score_readout_names_the_matrix_and_prints_no_cross_section
+S16  KILLED   fd_1b_score.py   gate D compares toy-space blocks with f-space blocks
+     1 failed, 53 passed in 21.59s
+     dies: GateD::test_toys_that_carry_s1s_blocks_pass_exactly
+S17  KILLED   fd_1b_score.py   gate D carried to f by the noise-free unfold instead of the truth (review finding 1)
+     1 failed, 53 passed in 21.41s
+     dies: GateD::test_toys_that_carry_s1s_blocks_pass_exactly
+S18  KILLED   fd_1b_score.py   a 4A refusal overrides the coverage verdict (review finding 2)
+     2 failed, 52 passed in 21.58s
+     dies: Coverage::test_4a_at_a_test_arm_grades_about_the_toy_mean
+     dies: ReadBack::test_a_4a_refusal_leaves_the_coverage_verdict_standing
+S19  KILLED   fd_1b_score.py   4A carries a verdict at a test arm (binding ruling 4; review finding 3)
+     1 failed, 53 passed in 20.75s
+     dies: Coverage::test_4a_at_a_test_arm_grades_about_the_toy_mean
+S20  KILLED   fd_1b_score.py   a scorer under another numpy grades instead of refusing (review finding 5)
+     1 failed, 53 passed in 21.11s
+     dies: ReadBack::test_a_scorer_under_another_numpy_refuses_rather_than_grading
+S21  KILLED   fd_1b_score.py   the toys' truth name is not checked (review finding 4)
+     1 failed, 53 passed in 20.89s
+     dies: ReadBack::test_a_wrong_truth_name_or_digest_differing_code_or_an_infinite_truth_is_invalid
+S22  KILLED   fd_1b_score.py   a non-finite truth is scored (review finding 4)
+     1 failed, 53 passed, 1 warning in 20.84s
+     dies: ReadBack::test_a_wrong_truth_name_or_digest_differing_code_or_an_infinite_truth_is_invalid
+T07  KILLED   fd_1b_tasks.py   a deploy off pscratch accepted (review finding 8)
+     1 failed, 53 passed in 21.51s
+     dies: Tasks::test_a_deploy_off_pscratch_is_refused
+T01  KILLED   fd_1b_tasks.py   the submit line on premium QOS
+     1 failed, 53 passed in 21.02s
+     dies: Tasks::test_submit_lines_are_regular_cpu_under_12_h_through_the_committed_packer
+T02  KILLED   fd_1b_tasks.py   a limit of 12 h or more accepted
+     1 failed, 53 passed in 21.38s
+     dies: Tasks::test_a_limit_of_12_h_or_more_is_refused_by_itself
+T03  KILLED   fd_1b_tasks.py   a packing whose fullest lane is not the declared one accepted
+     1 failed, 53 passed in 22.25s
+     dies: Tasks::test_a_cap_off_the_declared_one_or_over_the_stage_ceiling_is_refused
+T04  KILLED   fd_1b_tasks.py   a submit line through another script than the committed packer
+     1 failed, 53 passed in 22.62s
+     dies: Tasks::test_submit_lines_are_regular_cpu_under_12_h_through_the_committed_packer
+T05  KILLED   fd_1b_tasks.py   a declared G18 toy is never run
+     2 failed, 52 passed in 22.73s
+     dies: Tasks::test_every_declared_toy_and_universe_runs_exactly_once
+     dies: Tasks::test_the_jobs_are_the_declarations_table
+T06  KILLED   fd_1b_tasks.py   a job whose enforced cap is not the declared one accepted
+     1 failed, 53 passed in 21.29s
+     dies: Tasks::test_a_cap_off_the_declared_one_or_over_the_stage_ceiling_is_refused
+SUMMARY  47 of 47 killed; unkilled: none
+rc=0
